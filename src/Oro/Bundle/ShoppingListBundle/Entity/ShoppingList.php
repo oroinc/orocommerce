@@ -176,6 +176,13 @@ class ShoppingList extends ExtendShoppingList implements
     protected $subtotal;
 
     /**
+     * @var int
+     *
+     * @ORM\Column(name="line_items_count", type="smallint", options={"default"=0})
+     */
+    protected $lineItemsCount = 0;
+
+    /**
      * {@inheritdoc}
      */
     public function __construct()
@@ -424,6 +431,26 @@ class ShoppingList extends ExtendShoppingList implements
     public function setSubtotal(Subtotal $subtotal)
     {
         $this->subtotal = $subtotal;
+    }
+
+    /**
+     * @return null|int
+     */
+    public function getLineItemsCount(): ?int
+    {
+        return $this->lineItemsCount;
+    }
+
+    /**
+     * @param null|int $lineItemsCount
+     *
+     * @return $this
+     */
+    public function setLineItemsCount(?int $lineItemsCount): self
+    {
+        $this->lineItemsCount = $lineItemsCount;
+
+        return $this;
     }
 
     /**

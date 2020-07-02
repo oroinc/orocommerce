@@ -52,7 +52,7 @@ class OrderLineItemEventListener
             return;
         }
 
-        $variantFieldNames = $this->configurableProductProvider->getLineItemProduct($lineItem);
+        $variantFieldNames = $this->configurableProductProvider->getVariantFieldsValuesForLineItem($lineItem, false);
         if (!$variantFieldNames || !isset($variantFieldNames[$product->getId()])) {
             return;
         }

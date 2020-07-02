@@ -184,7 +184,7 @@ datagrids:
                     - shopping_list.label
                     - cachedTotal.subtotalValue as subtotal
                     - cachedTotal.currency
-                    - COALESCE(shopping_list.line_items_count, 0) AS lineItemsCount
+                    - COALESCE(shopping_list.lineItemsCount, 0) AS lineItemsCount
                     - shopping_list.createdAt
                     - shopping_list.updatedAt
                 from:
@@ -293,8 +293,6 @@ datagrids:
                         - 25
                         - 50
                         - 100
-                        - label: oro.shoppinglist.datagrid.toolbar.pageSize.all.label
-                          size: 10000
                 placement:
                     bottom: true
         source:
@@ -392,6 +390,8 @@ datagrids:
             image: ~
             note: ~
             link: ~
+            initial_subtotal: ~
+            discount: ~
             isConfigurable:
                 frontend_type: boolean
             isUpcoming:

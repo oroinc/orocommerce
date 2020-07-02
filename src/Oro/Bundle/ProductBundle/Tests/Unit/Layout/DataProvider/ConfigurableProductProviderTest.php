@@ -91,25 +91,6 @@ class ConfigurableProductProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(null, $this->configurableProductProvider->getProducts($lineItems));
     }
 
-    public function testGetLineItemProduct()
-    {
-        $expectedField = [
-            2 => [
-                'size' => [
-                    'value' => 'Yes',
-                    'label' => 'Size',
-                    'type' => 'boolean'
-                ]
-            ]
-        ];
-
-        /** @var LineItem $lineItem */
-        $lineItem = $this->getEntity(LineItem::class, ['id' => 1]);
-        $this->mockGetVariantFieldsValuesForLineItem($lineItem);
-
-        $this->assertEquals($expectedField, $this->configurableProductProvider->getLineItemProduct($lineItem));
-    }
-
     /**
      * @param LineItem $lineItem
      */

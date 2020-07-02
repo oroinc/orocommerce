@@ -15,29 +15,19 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class ConfigurableProductProvider
 {
-    /**
-     * @var CustomFieldProvider
-     */
+    /** @var CustomFieldProvider */
     protected $customFieldProvider;
 
-    /**
-     * @var ProductVariantAvailabilityProvider
-     */
+    /** @var ProductVariantAvailabilityProvider */
     protected $productVariantAvailabilityProvider;
 
-    /**
-     * @var ProductVariantFieldValueHandlerRegistry
-     */
+    /** @var ProductVariantFieldValueHandlerRegistry */
     protected $fieldValueHandlerRegistry;
 
-    /**
-     * @var PropertyAccessor
-     */
+    /** @var PropertyAccessor */
     private $propertyAccessor;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     private $customFields = [];
 
     /** @var array */
@@ -80,19 +70,10 @@ class ConfigurableProductProvider
         $variantFieldNames = [];
         foreach ($lineItems as $key => $value) {
             // Faster than array_replace(...$var) approximately by 8%.
-            $variantFieldNames += $this->getLineItemProduct($value);
+            $variantFieldNames += $this->getVariantFieldsValuesForLineItem($value, false);
         }
 
         return $variantFieldNames;
-    }
-
-    /**
-     * @param ProductHolderInterface|mixed $lineItem
-     * @return array
-     */
-    public function getLineItemProduct($lineItem)
-    {
-        return $this->getVariantFieldsValuesForLineItem($lineItem, false);
     }
 
     /**

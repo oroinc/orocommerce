@@ -4,6 +4,7 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Datagrid\Extension;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\MetadataObject;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\ResultsObject;
@@ -11,11 +12,20 @@ use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\ShoppingListBundle\Datagrid\Extension\MyShoppingListDatagridExtension;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
+use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Tests\Unit\Entity\Stub\ShoppingListStub;
 
 class MyShoppingListDatagridExtensionTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var LineItemRepository */
-    private $repository;
+    /** @var ShoppingListRepository|\PHPUnit\Framework\MockObject\MockObject */
+    private $shoppingListRepository;
+
+    /** @var LineItemRepository|\PHPUnit\Framework\MockObject\MockObject */
+    private $lineItemRepository;
+
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
 
     /** @var ParameterBag */
     private $parameters;
@@ -25,23 +35,29 @@ class MyShoppingListDatagridExtensionTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->repository = $this->createMock(LineItemRepository::class);
+        $this->shoppingListRepository = $this->createMock(ShoppingListRepository::class);
+        $this->lineItemRepository = $this->createMock(LineItemRepository::class);
 
         $manager = $this->createMock(ObjectManager::class);
         $manager->expects($this->any())
             ->method('getRepository')
-            ->with(LineItem::class)
-            ->willReturn($this->repository);
+            ->willReturnMap(
+                [
+                    [ShoppingList::class, $this->shoppingListRepository],
+                    [LineItem::class, $this->lineItemRepository]
+                ]
+            );
 
         $registry = $this->createMock(ManagerRegistry::class);
         $registry->expects($this->any())
             ->method('getManagerForClass')
-            ->with(LineItem::class)
             ->willReturn($manager);
+
+        $this->configManager = $this->createMock(ConfigManager::class);
 
         $this->parameters = new ParameterBag();
 
-        $this->extension = new MyShoppingListDatagridExtension($registry);
+        $this->extension = new MyShoppingListDatagridExtension($registry, $this->configManager);
         $this->extension->setParameters($this->parameters);
     }
 
@@ -59,13 +75,142 @@ class MyShoppingListDatagridExtensionTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($this->extension->isApplicable($config));
     }
 
+    public function testProcessConfigs(): void
+    {
+        $this->parameters->set('shopping_list_id', 42);
+
+        $config = DatagridConfiguration::create(
+            [
+                'options' => [
+                    'toolbarOptions' => [
+                        'pageSize' => [
+                            'items' => [10, 25, 50, 100],
+                        ],
+                    ],
+                ],
+            ]
+        );
+
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_shopping_list.my_shopping_lists_all_page_value')
+            ->willReturn(1000);
+
+        $this->shoppingListRepository->expects($this->once())
+            ->method('find')
+            ->with(42)
+            ->willReturn((new ShoppingListStub())->setLineItemsCount(900));
+
+        $this->extension->processConfigs($config);
+
+        $this->assertEquals(
+            [
+                'options' => [
+                    'toolbarOptions' => [
+                        'pageSize' => [
+                            'items' => [
+                                10,
+                                25,
+                                50,
+                                100,
+                                [
+                                    'label' => 'oro.shoppinglist.datagrid.toolbar.pageSize.all.label',
+                                    'size' => 1000
+                                ]
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            $config->toArray()
+        );
+    }
+
+    public function testProcessConfigsWithoutId(): void
+    {
+        $config = DatagridConfiguration::create(
+            [
+                'options' => [
+                    'toolbarOptions' => [
+                        'pageSize' => [
+                            'items' => [10, 25, 50, 100],
+                        ],
+                    ],
+                ],
+            ]
+        );
+
+        $this->configManager->expects($this->never())
+            ->method('get');
+
+        $this->shoppingListRepository->expects($this->never())
+            ->method('find');
+
+        $this->extension->processConfigs($config);
+
+        $this->assertEquals(
+            [
+                'options' => [
+                    'toolbarOptions' => [
+                        'pageSize' => [
+                            'items' => [10, 25, 50, 100],
+                        ],
+                    ],
+                ],
+            ],
+            $config->toArray()
+        );
+    }
+
+    public function testProcessConfigsCountMoreThanConfig(): void
+    {
+        $this->parameters->set('shopping_list_id', 42);
+
+        $config = DatagridConfiguration::create(
+            [
+                'options' => [
+                    'toolbarOptions' => [
+                        'pageSize' => [
+                            'items' => [10, 25, 50, 100],
+                        ],
+                    ],
+                ],
+            ]
+        );
+
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_shopping_list.my_shopping_lists_all_page_value')
+            ->willReturn(1000);
+
+        $this->shoppingListRepository->expects($this->once())
+            ->method('find')
+            ->with(42)
+            ->willReturn((new ShoppingListStub())->setLineItemsCount(2000));
+
+        $this->extension->processConfigs($config);
+
+        $this->assertEquals(
+            [
+                'options' => [
+                    'toolbarOptions' => [
+                        'pageSize' => [
+                            'items' => [10, 25, 50, 100],
+                        ],
+                    ],
+                ],
+            ],
+            $config->toArray()
+        );
+    }
+
     public function testVisitMetadata(): void
     {
         $this->parameters->set('shopping_list_id', 42);
 
         $data = MetadataObject::create([]);
 
-        $this->repository->expects($this->once())
+        $this->lineItemRepository->expects($this->once())
             ->method('hasEmptyMatrix')
             ->with(42)
             ->willReturn(true);
@@ -79,7 +224,7 @@ class MyShoppingListDatagridExtensionTest extends \PHPUnit\Framework\TestCase
     {
         $data = MetadataObject::create([]);
 
-        $this->repository->expects($this->never())
+        $this->lineItemRepository->expects($this->never())
             ->method('hasEmptyMatrix');
 
         $this->extension->visitMetadata(DatagridConfiguration::create([]), $data);
@@ -93,7 +238,7 @@ class MyShoppingListDatagridExtensionTest extends \PHPUnit\Framework\TestCase
 
         $data = ResultsObject::create([]);
 
-        $this->repository->expects($this->once())
+        $this->lineItemRepository->expects($this->once())
             ->method('hasEmptyMatrix')
             ->with(42)
             ->willReturn(true);
@@ -107,7 +252,7 @@ class MyShoppingListDatagridExtensionTest extends \PHPUnit\Framework\TestCase
     {
         $data = ResultsObject::create([]);
 
-        $this->repository->expects($this->never())
+        $this->lineItemRepository->expects($this->never())
             ->method('hasEmptyMatrix');
 
         $this->extension->visitResult(DatagridConfiguration::create([]), $data);

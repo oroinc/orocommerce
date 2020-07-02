@@ -146,15 +146,29 @@ class MyShoppingListGridEventListener
             $this->urlGenerator->generate('oro_product_frontend_product_view', ['id' => $productId])
         );
 
+        $event = new LineItemDataEvent([$item]);
+        $this->eventDispatcher->dispatch($event, LineItemDataEvent::NAME);
+
+        foreach ($event->getDataForLineItem($item->getId()) as $name => $value) {
+            $record->setValue($name, $value);
+        }
+
         $unitCode = $unit->getCode();
         /** @var Price $productPrice */
         $productPrice = $prices[$productId][$unitCode] ?? null;
         if ($productPrice) {
             $price = $productPrice->getValue();
             $currency = $productPrice->getCurrency();
+            $subtotal = $price * $qty;
+
+            $discount = $record->getValue('discountValue');
+            if ($discount) {
+                $record->setValue('initial_subtotal', $this->numberFormatter->formatCurrency($subtotal, $currency));
+                $subtotal -= $discount;
+            }
 
             $record->setValue('price', $this->numberFormatter->formatCurrency($price, $currency));
-            $record->setValue('subtotal', $this->numberFormatter->formatCurrency($price * $qty, $currency));
+            $record->setValue('subtotal', $this->numberFormatter->formatCurrency($subtotal, $currency));
         }
 
         /** @var ProductImage $image */
@@ -164,13 +178,6 @@ class MyShoppingListGridEventListener
                 'image',
                 $this->attachmentManager->getFilteredImageUrl($image->getImage(), 'product_small')
             );
-        }
-
-        $event = new LineItemDataEvent([$item]);
-        $this->eventDispatcher->dispatch($event, LineItemDataEvent::NAME);
-
-        foreach ($event->getDataForLineItem($item->getId()) as $name => $value) {
-            $record->setValue($name, $value);
         }
 
         $record->setValue('errors', $this->getErrors($errors, $product->getSku(), $unitCode));
@@ -184,9 +191,8 @@ class MyShoppingListGridEventListener
      */
     private function processConfigurableProduct(Record $record, array $items, array $prices, array $errors): void
     {
-        $rowQuantity = 0.0;
-        $rowSubtotal = 0.0;
-        $rowCurrency = null;
+        $rowQuantity = $rowSubtotal = $rowDiscount = 0.0;
+        $currency = null;
         $data = [];
         $displayed = explode(',', $record->getValue('displayedLineItemIds'));
 
@@ -196,59 +202,54 @@ class MyShoppingListGridEventListener
         foreach ($items as $item) {
             $product = $item->getProduct();
             $quantity = $item->getQuantity();
+            $rowQuantity += $quantity;
             $unit = $item->getProductUnit();
-            $unitCode = $unit->getCode();
-
-            $productId = $product->getId();
             $productStatus = $product->getInventoryStatus();
 
-            $itemData = [
-                'productId' => $productId,
-                'sku' => $product->getSku(),
-                'name' => (string) $this->localizationHelper->getLocalizedValue($product->getNames()),
-                'quantity' => $this->numberFormatter->formatDecimal($quantity),
-                'unit' => $this->formatUnitLabel($unit, $quantity),
-                'inventoryStatus' => ['name' => $productStatus->getId(), 'label' => $productStatus->getName()],
-                'note' => $item->getNotes(),
-                'price' => null,
-                'subtotal' => null,
-                'productConfiguration' => $this->getConfigurableProducts($item),
-                'errors' => $this->getErrors($errors, $product->getSku(), $unitCode),
-                'filteredOut' => !in_array($item->getId(), $displayed, false),
-            ];
+            $itemData = array_merge(
+                [
+                    'productId' => $product->getId(),
+                    'sku' => $product->getSku(),
+                    'name' => (string)$this->localizationHelper->getLocalizedValue($product->getNames()),
+                    'quantity' => $this->numberFormatter->formatDecimal($quantity),
+                    'unit' => $this->formatUnitLabel($unit, $quantity),
+                    'inventoryStatus' => ['name' => $productStatus->getId(), 'label' => $productStatus->getName()],
+                    'note' => $item->getNotes(),
+                    'price' => null,
+                    'subtotal' => null, 'discount' => null, 'total' => null,
+                    'productConfiguration' => $this->getConfigurableProducts($item),
+                    'errors' => $this->getErrors($errors, $product->getSku(), $unit->getCode()),
+                    'filteredOut' => !in_array($item->getId(), $displayed, false),
+                ],
+                $event->getDataForLineItem($item->getId())
+            );
 
-            /** @var Price $productPrice */
-            $productPrice = $prices[$productId][$unitCode] ?? null;
+            $productPrice = $prices[$product->getId()][$unit->getCode()] ?? null;
             if ($productPrice) {
                 $price = $productPrice->getValue();
                 $currency = $productPrice->getCurrency();
 
                 $subtotal = $price * $quantity;
+                if ($rowSubtotal !== null) {
+                    $rowSubtotal += $subtotal;
+                }
+
+                $discount = $itemData['discountValue'] ?? 0.0;
+                if ($discount) {
+                    $itemData['initial_subtotal'] = $this->numberFormatter->formatCurrency($subtotal, $currency);
+                    $rowDiscount += $discount;
+                    $subtotal -= $discount;
+                }
 
                 $itemData['price'] = $this->numberFormatter->formatCurrency($price, $currency);
                 $itemData['subtotal'] = $this->numberFormatter->formatCurrency($subtotal, $currency);
-
-                if ($rowSubtotal !== null) {
-                    $rowSubtotal += $subtotal;
-                    $rowCurrency = $currency;
-                }
             } else {
                 $rowSubtotal = null;
             }
 
-            $rowQuantity += $quantity;
-
-            /** @var ProductImage $image */
             $image = $product->getImagesByType('listing')->first();
             if ($image) {
-                $itemData['image'] = $this->attachmentManager->getFilteredImageUrl(
-                    $image->getImage(),
-                    'product_small'
-                );
-            }
-
-            foreach ($event->getDataForLineItem($item->getId()) as $name => $value) {
-                $itemData[$name] = $value;
+                $itemData['image'] = $this->attachmentManager->getFilteredImageUrl($image->getImage(), 'product_small');
             }
 
             $data[] = $itemData;
@@ -257,7 +258,13 @@ class MyShoppingListGridEventListener
         $record->setValue('subData', $data);
         $record->setValue('quantity', $this->numberFormatter->formatDecimal($rowQuantity));
         if ($rowSubtotal) {
-            $record->setValue('subtotal', $this->numberFormatter->formatCurrency($rowSubtotal, $rowCurrency));
+            if ($rowDiscount) {
+                $record->setValue('discount', $this->numberFormatter->formatCurrency($rowDiscount, $currency));
+                $record->setValue('initial_subtotal', $this->numberFormatter->formatCurrency($rowSubtotal, $currency));
+                $rowSubtotal -= $rowDiscount;
+            }
+
+            $record->setValue('subtotal', $this->numberFormatter->formatCurrency($rowSubtotal, $currency));
         }
 
         $lineItem = reset($items);
@@ -271,7 +278,6 @@ class MyShoppingListGridEventListener
             $this->urlGenerator->generate('oro_product_frontend_product_view', ['id' => $product->getId()])
         );
 
-        /** @var ProductImage $image */
         $image = $product->getImagesByType('listing')->first();
         if ($image) {
             $record->setValue(
@@ -330,7 +336,7 @@ class MyShoppingListGridEventListener
 
         $shoppingList = $repository->find($shoppingListId);
         if (!$shoppingList) {
-            return null;
+            return [];
         }
 
         $lineItemsCollection = $shoppingList->getLineItems();

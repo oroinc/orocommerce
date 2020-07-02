@@ -56,6 +56,10 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                     'value' => true,
                     'scope' => 'app',
                 ],
+                'my_shopping_lists_all_page_value' => [
+                    'value' => 1000,
+                    'scope' => 'app',
+                ],
             ]
         ];
         $this->assertEquals($expected, $processor->processConfiguration($configuration, []));

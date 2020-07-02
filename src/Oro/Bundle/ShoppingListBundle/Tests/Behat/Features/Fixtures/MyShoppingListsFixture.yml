@@ -66,6 +66,8 @@ Oro\Bundle\ProductBundle\Entity\ProductName:
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     attributeFamilyLabel:
         string: 'Attribute Family'
+    lineItemDiscountPromotionLabel:
+        string: 'Line Item Discount Promotion'
 
 Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
     attribute_family:
@@ -350,5 +352,41 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
         valid: true
     shoppingListTotal3:
         __construct: ['@shoppinglist3','USD']
-        subtotalValue: '8790'
+        subtotalValue: '8818'
         valid: true
+
+Oro\Bundle\SegmentBundle\Entity\Segment:
+    lineItemDiscountPromotionSegment:
+        name: 'Promotion Matching Products'
+        type: '@segment_dynamic_type'
+        entity: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
+        definition: <('{"filters":[[{"columnName":"id","criterion":{"filter":"number","data":{"value":0,"type":"2"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}')>
+        organization: '@organization'
+        owner: '@business_unit'
+
+Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration:
+    lineItemDiscountPromotionDiscountConfiguration:
+        type: 'line_item'
+        options:
+            discount_type: 'percent'
+            discount_product_unit_code: 'item'
+            discount_value: 0.5
+            apply_to: 'line_items_total'
+
+Oro\Bundle\RuleBundle\Entity\Rule:
+    lineItemDiscountPromotionRule:
+        enabled: true
+        sortOrder: 1
+        name: 'line Item Discount Promotion'
+
+Oro\Bundle\PromotionBundle\Entity\Promotion:
+    lineItemDiscountPromotion:
+        productsSegment: '@lineItemDiscountPromotionSegment'
+        rule: '@lineItemDiscountPromotionRule'
+        discountConfiguration: '@lineItemDiscountPromotionDiscountConfiguration'
+        organization: '@organization'
+        owner: '@admin'
+        useCoupons: false
+        __calls:
+            - addLabel: ['@lineItemDiscountPromotionLabel']
+            - addScope: ['@default_scope']
