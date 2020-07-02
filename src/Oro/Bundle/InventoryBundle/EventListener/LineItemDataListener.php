@@ -21,6 +21,11 @@ class LineItemDataListener
     /** @var LocaleSettings */
     private $localeSettings;
 
+    /**
+     * @param UpcomingProductProvider $provider
+     * @param DateTimeFormatterInterface $formatter
+     * @param LocaleSettings $localeSettings
+     */
     public function __construct(
         UpcomingProductProvider $provider,
         DateTimeFormatterInterface $formatter,

@@ -28,7 +28,7 @@ class LineItemDataListener
     /**
      * @param PromotionExecutor $promotionExecutor
      * @param UserCurrencyManager $currencyManager
-     * @param NumberFormatter $numberFormatter     
+     * @param NumberFormatter $numberFormatter
      */
     public function __construct(
         PromotionExecutor $promotionExecutor,
