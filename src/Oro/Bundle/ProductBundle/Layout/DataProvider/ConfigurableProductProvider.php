@@ -15,29 +15,19 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class ConfigurableProductProvider
 {
-    /**
-     * @var CustomFieldProvider
-     */
+    /** @var CustomFieldProvider */
     protected $customFieldProvider;
 
-    /**
-     * @var ProductVariantAvailabilityProvider
-     */
+    /** @var ProductVariantAvailabilityProvider */
     protected $productVariantAvailabilityProvider;
 
-    /**
-     * @var ProductVariantFieldValueHandlerRegistry
-     */
+    /** @var ProductVariantFieldValueHandlerRegistry */
     protected $fieldValueHandlerRegistry;
 
-    /**
-     * @var PropertyAccessor
-     */
+    /** @var PropertyAccessor */
     private $propertyAccessor;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     private $customFields = [];
 
     /** @var array */

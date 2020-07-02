@@ -520,6 +520,7 @@ services:
         class: 'Oro\Bundle\ShoppingListBundle\Datagrid\Extension\MyShoppingListDatagridExtension'
         arguments:
             - '@doctrine'
+            - '@oro_config.manager'
         tags:
             - { name: oro_datagrid.extension }
 

@@ -1,4 +1,8 @@
 <% if (subtotal !== null) { %>
+    <% if (discount !== null) { %>
+    <div class="mobile-row" data-name="price-value"><span class="show-in-mobile"><%- _.__('oro.frontend.shoppinglist.initial_subtotal.label') %>:</span><s><%- initial_subtotal %></s></div>
+    <div class="mobile-row" data-name="price-value"><span class="show-in-mobile"><%- _.__('oro.frontend.shoppinglist.discount.label') %>:</span>-<%- discount %></div>
+    <% } %>
 <div class="bold mobile-row" data-name="price-value"><span class="show-in-mobile"><%- _metadata.label %>:</span><%- subtotal %></div>
 <% } else { %>
 <div class="bold" data-name="price-not-found"

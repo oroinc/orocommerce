@@ -40,6 +40,10 @@ oro:
             matrix_grid_order:
                 item_number: 'Item #'
             label: 'Item #:'
+            initial_subtotal:
+                label: 'Initial subtotal'
+            discount:
+                label: 'Discount'
             btn:
                 show_all:
                     aria_label: 'Show all added products on one page'

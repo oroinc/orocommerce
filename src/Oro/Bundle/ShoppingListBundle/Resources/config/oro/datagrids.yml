@@ -293,8 +293,6 @@ datagrids:
                         - 25
                         - 50
                         - 100
-                        - label: oro.shoppinglist.datagrid.toolbar.pageSize.all.label
-                          size: 10000
                 placement:
                     bottom: true
         source:
@@ -392,6 +390,8 @@ datagrids:
             image: ~
             note: ~
             link: ~
+            initial_subtotal: ~
+            discount: ~
             isConfigurable:
                 frontend_type: boolean
             isUpcoming:
