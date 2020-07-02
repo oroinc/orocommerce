@@ -5,7 +5,6 @@ namespace Oro\Bundle\ConsentBundle\Tests\Unit\Provider;
 use Oro\Bundle\ConsentBundle\Provider\ConsentContextProvider;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
-use Oro\Bundle\ScopeBundle\Tests\Unit\Stub\StubScope;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -60,31 +59,13 @@ class ConsentContextProviderTest extends \PHPUnit\Framework\TestCase
         $contentScope = $this->getEntity(Scope::class, ['id' => 123]);
 
         $this->scopeManager->expects($this->once())
-            ->method('findOrCreate')
+            ->method('findMostSuitable')
             ->with('web_content')
             ->willReturn($contentScope);
 
         $this->assertSame(
             $contentScope,
             $this->provider->getScope()
-        );
-    }
-
-    public function testGetWebsiteByScope()
-    {
-        /** @var Website $website */
-        $website = $this->getEntity(Website::class, ['id' => 1]);
-        $contentScope = new StubScope();
-        $contentScope->setWebsite($website);
-
-        $this->scopeManager->expects($this->once())
-            ->method('findOrCreate')
-            ->with('web_content')
-            ->willReturn($contentScope);
-
-        $this->assertSame(
-            $website,
-            $this->provider->getWebsite()
         );
     }
 
@@ -95,7 +76,7 @@ class ConsentContextProviderTest extends \PHPUnit\Framework\TestCase
         $this->provider->setWebsite($website);
 
         $this->scopeManager->expects($this->never())
-            ->method('findOrCreate');
+            ->method('findMostSuitable');
 
         $this->assertSame(
             $website,
@@ -107,13 +88,6 @@ class ConsentContextProviderTest extends \PHPUnit\Framework\TestCase
     {
         /** @var Website $website */
         $website = $this->getEntity(Website::class, ['id' => 1]);
-        $contentScope = new StubScope();
-        $contentScope->setWebsite(null);
-
-        $this->scopeManager->expects($this->once())
-            ->method('findOrCreate')
-            ->with('web_content')
-            ->willReturn($contentScope);
 
         $this->websiteManager->expects($this->once())
             ->method('getCurrentWebsite')
@@ -129,13 +103,6 @@ class ConsentContextProviderTest extends \PHPUnit\Framework\TestCase
     {
         /** @var Website $website */
         $website = $this->getEntity(Website::class, ['id' => 1]);
-        $contentScope = new StubScope();
-        $contentScope->setWebsite(null);
-
-        $this->scopeManager->expects($this->once())
-            ->method('findOrCreate')
-            ->with('web_content')
-            ->willReturn($contentScope);
 
         $this->websiteManager->expects($this->once())
             ->method('getCurrentWebsite')

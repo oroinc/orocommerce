@@ -55,11 +55,6 @@ class ConsentContextProvider implements ConsentContextProviderInterface
         if ($this->website) {
             return $this->website;
         }
-        $website = $this->getScope()->getWebsite();
-
-        if ($website) {
-            return $website;
-        }
 
         //Returns current website if it is or default one otherwise (for admin panel)
         return $this->websiteManager->getCurrentWebsite() ?: $this->websiteManager->getDefaultWebsite();
@@ -70,6 +65,6 @@ class ConsentContextProvider implements ConsentContextProviderInterface
      */
     public function getScope()
     {
-        return $this->scopeManager->findOrCreate('web_content');
+        return $this->scopeManager->findMostSuitable('web_content');
     }
 }

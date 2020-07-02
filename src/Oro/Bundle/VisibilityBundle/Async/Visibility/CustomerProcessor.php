@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\VisibilityBundle\Async\Visibility;
 
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -14,6 +15,9 @@ use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Updated visibility for a customer.
+ */
 class CustomerProcessor implements MessageProcessorInterface
 {
     /**
@@ -68,6 +72,14 @@ class CustomerProcessor implements MessageProcessorInterface
 
             $this->partialUpdateDriver->updateCustomerVisibility($customer);
             $em->commit();
+        } catch (UniqueConstraintViolationException $e) {
+            $em->rollback();
+            $this->logger->warning(
+                'Couldn`t create scope because the scope already created with the same data.',
+                ['exception' => $e]
+            );
+
+            return self::REJECT;
         } catch (InvalidArgumentException $e) {
             $em->rollback();
             $this->logger->error(sprintf('Message is invalid: %s', $e->getMessage()));

@@ -70,4 +70,24 @@ class WebCatalogRepositoryTest extends WebTestCase
         $this->assertEquals($scope2->getId(), $scopes[0]->getId());
         $this->assertEquals($scope1->getId(), $scopes[1]->getId());
     }
+
+    public function testGetUsedScopesIds()
+    {
+        /** @var WebCatalog $webCatalog */
+        $webCatalog = $this->getReference(LoadWebCatalogData::CATALOG_1);
+        /** @var Scope $scope1 */
+        $scope1 = $this->getReference(LoadWebCatalogScopes::SCOPE1);
+        /** @var Scope $scope2 */
+        $scope2 = $this->getReference(LoadWebCatalogScopes::SCOPE2);
+
+        $usedScopesIds = $this->repository->getUsedScopesIds($webCatalog);
+        self::assertEquals(
+            [$scope2->getId(), $scope1->getId()],
+            $usedScopesIds,
+            '',
+            0.0,
+            10,
+            true //We need to ignore elements order because we do not know actual Id's order
+        );
+    }
 }
