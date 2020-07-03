@@ -24,7 +24,7 @@
 
 {% block __my_shopping_list__header_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' customer-profile__title-wrapper'
+        '~class': ' customer-profile__header'
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -43,11 +43,19 @@
 
 {%- block __my_shopping_list__header_title_container_widget -%}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' page-title with-ellipsis'
+        '~class': ' customer-profile__title-wrapper'
     }) %}
 
     <h1 {{ block('block_attributes') }}>{{ block_widget(block) }}</h1>
 {%- endblock -%}
+
+{% block __my_shopping_list__header_title_wrapper_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' page-title with-ellipsis'
+    }) %}
+
+    {{ parent_block_widget(block) }}
+{% endblock %}
 
 {%- block __my_shopping_list__header_title_text_widget -%}
     {% set attr = layout_attr_defaults(attr, {
@@ -66,6 +74,27 @@
         {{ block_widget(block) }}
     </span>
 {%- endblock -%}
+
+{% block __my_shopping_list__header_owner_wrapper_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' my-shopping-list-owner-wrapper'
+    }) %}
+
+    {% if block.children|length >= 2 %}
+        {% set attr = layout_attr_defaults(attr, {
+         '~class': ' show-separator'
+        }) %}
+    {% endif %}
+
+    {{ parent_block_widget(block) }}
+{%- endblock -%}
+
+{% block __my_shopping_list__shopping_list_actions_widget %}
+    {% if block.children %}
+        <span class="separator" aria-hidden="true"></span>
+        {{ block_widget(block) }}
+    {% endif %}
+{% endblock %}
 
 {% block __my_shopping_list__header_owner_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
@@ -147,4 +176,20 @@
     {% set actionButtonClass = 'btn btn--info btn--size-l btn--full direct-link' %}
 
     {{ block('combined_buttons_widget') }}
+{% endblock %}
+
+{% block __my_shopping_list__totals_placeholder_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' totals-placeholder',
+    }) %}
+
+    <div {{ block('block_attributes') }}>&nbsp;</div>
+{% endblock %}
+
+{% block __my_shopping_list__combined_button_placeholder_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' combined-buttons-placeholder',
+    }) %}
+
+    <div {{ block('block_attributes') }}>&nbsp;</div>
 {% endblock %}

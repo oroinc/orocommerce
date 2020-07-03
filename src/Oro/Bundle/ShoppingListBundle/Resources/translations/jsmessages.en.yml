@@ -54,3 +54,8 @@ oro:
             btn_more:
                 label: 'And {{ count }} more'
                 aria_label: 'And {{ count }} more variants of {{ name }} product'
+            dialog:
+                cancel.label: Cancel
+                assign.label: Assign
+                rename.label: Rename
+                rename.success: Shopping list has been successfully renamed

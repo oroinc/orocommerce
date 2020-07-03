@@ -1,0 +1,9 @@
+{% block _shopping_list_rename_form_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' shopping-list-rename-wrapper'
+    }) %}
+
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}

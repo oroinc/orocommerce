@@ -259,6 +259,41 @@ oro_behat_extension:
         type: xpath
         locator: '//div[contains(@class, "grid")]/descendant::button[contains(., "And 2 more")]'
 
+    Shopping List Actions:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class, "btn-group")]/button[contains(@aria-label, "Actions of ")]'
+
+    Shopping List Rename Action Form:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class, "shopping-list-rename-form")]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Label: 'label'
+
+    Shopping List Action Submit:
+      selector: 'div.form-actions button[type="submit"]'
+
+    Shopping List Action Reassign Grid:
+      selector: 'div[data-page-component-name="my-shopping-lists-assign-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    Shopping List Action Reassign GridFilters:
+      selector: 'div[data-page-component-name="my-shopping-lists-assign-grid"] div.filter-box'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
+
+    Shopping List Action Reassign GridToolbarActions:
+      selector: 'div[data-page-component-name="my-shopping-lists-assign-grid"] div.toolbar div.actions-panel'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
+
+    Shopping List Action Reassign GridFiltersState:
+      selector: 'div[data-page-component-name="my-shopping-lists-assign-grid"] div.filters-state'
+
+    Shopping List Action Reassign Radio:
+      selector: 'div[data-page-component-name="my-shopping-lists-assign-grid"] input[name="assigned"]'
+
   suites:
     OroShoppingListBundle:
       contexts:
