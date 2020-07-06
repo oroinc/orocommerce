@@ -5,10 +5,7 @@
 
     white-space: nowrap;
 
-    .content-widget & {
-        min-width: 100%;
-        width: 0;
-    }
+    min-height: $promo-slider-min-height;
 
     &--has-arrows,
     &.embedded-arrows {
@@ -140,6 +137,12 @@
 
     &.slick-initialized {
         overflow: visible;
+
+        .slick-slide {
+            display: flex;
+            align-items: center;
+            min-height: $promo-slider-min-height;
+        }
     }
 }
 
