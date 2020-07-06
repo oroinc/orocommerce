@@ -65,19 +65,13 @@ services:
             - '@form.factory'
             - '@router'
         calls:
-            - [setTransitionProvider, ['@oro_checkout.layout.data_provider.transition']]
+            - [setTransitionProvider, ['@oro_checkout.layout.data_provider.workflow_related_transition_provider']]
         tags:
+            - { name: layout.data_provider, alias: oro_checkout_single_page_transition_form }
             - { name: layout.data_provider, alias: oro_checkout_transition_form }
 
     oro_checkout.layout.data_provider.single_page_transition_form:
-        class: 'Oro\Bundle\CheckoutBundle\Layout\DataProvider\TransitionFormProvider'
-        arguments:
-            - '@form.factory'
-            - '@router'
-        calls:
-            - [setTransitionProvider, ['@oro_checkout.layout.data_provider.single_page_transition']]
-        tags:
-            - { name: layout.data_provider, alias: oro_checkout_single_page_transition_form }
+        alias: oro_checkout.layout.data_provider.transition_form
 
     oro_checkout.layout.data_provider.checkout_steps:
         class: 'Oro\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutStepsProvider'
@@ -85,6 +79,14 @@ services:
             - '@oro_workflow.manager'
         tags:
             - { name: layout.data_provider, alias: oro_checkout_steps }
+
+    oro_checkout.layout.data_provider.workflow_related_transition_provider:
+        class: 'Oro\Bundle\CheckoutBundle\Layout\DataProvider\WorkflowRelatedTransitionProvider'
+        arguments:
+            - '@oro_workflow.manager'
+            - '@oro_checkout.layout.data_provider.transition'
+        calls:
+            - ['addWorkflowRelatedProvider', ['b2b_flow_checkout_single_page', '@oro_checkout.layout.data_provider.single_page_transition']]
 
     oro_checkout.layout.data_provider.transition:
         class: 'Oro\Bundle\CheckoutBundle\Layout\DataProvider\TransitionProvider'
