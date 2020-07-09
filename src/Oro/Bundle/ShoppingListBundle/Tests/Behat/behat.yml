@@ -233,7 +233,7 @@ oro_behat_extension:
       class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select2Entity
 
     Customer Field:
-      selector: '.select2-container.input-widget'
+      selector: '.shopping-list-owner .select2-container .select2-choice'
 
     Customer Select Field:
       selector: 'select[name="oro_customer_frontend_owner_select"]'
