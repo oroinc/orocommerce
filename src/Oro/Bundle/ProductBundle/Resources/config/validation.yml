@@ -34,6 +34,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
             - Choice: { callback: getTypes }
         names:
             - Oro\Bundle\PlatformBundle\Validator\Constraints\ValidLoadedItems: ~
+            - Oro\Bundle\LocaleBundle\Validator\Constraints\NotBlankDefaultLocalizedFallbackValue:
+                  errorMessage: 'oro.product.names.default.blank'
         shortDescriptions:
             - Oro\Bundle\PlatformBundle\Validator\Constraints\ValidLoadedItems: ~
         descriptions:

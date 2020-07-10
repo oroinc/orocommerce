@@ -8,6 +8,7 @@ use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ImportExportBundle\Context\Context;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductName;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
@@ -187,6 +188,10 @@ class ProductStrategyTest extends WebTestCase
         AbstractEnumValue $inventoryStatus
     ) {
         $newProduct = new Product();
+        $productName = new ProductName();
+        $productName->setString($sku);
+        $newProduct->addName($productName);
+
         $newProduct->setSku($sku);
         $newProduct->setAttributeFamily($attributeFamily);
         $newProduct->setInventoryStatus($inventoryStatus);
