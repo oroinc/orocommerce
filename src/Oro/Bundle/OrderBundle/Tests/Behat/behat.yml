@@ -256,5 +256,6 @@ oro_behat_extension:
         - OroFrontendLocalizationBundle::LocalizationSwitcherContext
         - OroQueryDesignerBundle::QueryDesignerContext
         - OroProductBundle::QuickOrderFormContext
+        - OroEmailBundle::EmailContext
       paths:
         - '@OroOrderBundle/Tests/Behat/Features'
