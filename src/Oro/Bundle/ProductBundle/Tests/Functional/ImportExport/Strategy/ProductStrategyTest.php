@@ -187,6 +187,10 @@ class ProductStrategyTest extends WebTestCase
         AbstractEnumValue $inventoryStatus
     ) {
         $newProduct = new Product();
+        $productName = new LocalizedFallbackValue();
+        $productName->setString($sku);
+        $newProduct->addName($productName);
+
         $newProduct->setSku($sku);
         $newProduct->setAttributeFamily($attributeFamily);
         $newProduct->setInventoryStatus($inventoryStatus);

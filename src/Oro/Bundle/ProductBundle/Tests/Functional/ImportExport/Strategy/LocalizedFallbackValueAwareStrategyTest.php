@@ -248,7 +248,7 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
     public function skippedDataProvider()
     {
         return [
-            'new product, no fallback from another entity' => [
+            'New product will not be imported if names is empty' => [
                 [
                     'sku' => 'new_sku',
                     'attributeFamily' => 'default_family',
@@ -264,11 +264,7 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                     ],
                 ],
                 function ($product) {
-                    $this->assertInstanceOf('Oro\Bundle\ProductBundle\Entity\Product', $product);
-
-                    /** @var Product $product */
-                    $this->assertNull($product->getId());
-                    $this->assertEmpty($product->getNames()->toArray());
+                    $this->assertNull($product);
                 },
             ],
             'existing product with, id not mapped for new fallback' => [
