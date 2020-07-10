@@ -138,10 +138,17 @@
     &.slick-initialized {
         overflow: visible;
 
-        .slick-slide {
-            display: flex;
-            align-items: center;
-            min-height: $promo-slider-min-height;
+        &.embedded-arrows {
+            .slick-slide {
+                display: flex;
+                align-items: center;
+                min-height: $promo-slider-min-height;
+
+                > [data-role="slide-item-link"] {
+                    display: block;
+                    width: 100%;
+                }
+            }
         }
     }
 }
