@@ -45,7 +45,7 @@ Feature: Product Images Import
       |default_family      |SKU1  |enabled |simple |in_stock            |set                            |3                             |Product1           |true     |true       |
       |default_family      |SKU2  |enabled |simple |in_stock            |item                           |1                             |Product2           |true     |true       |
     When import file
-    #And Email should contains the following "Errors: 0 processed: 2, read: 2, added: 2, updated: 0, replaced: 0" text
+    And Email should contains the following "Errors: 0 processed: 2, read: 2, added: 2, updated: 0, replaced: 0" text
     And reload the page
     And should see following grid:
       |SKU   |NAME     |Inventory status|Status    |
