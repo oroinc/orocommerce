@@ -29,6 +29,8 @@ oro_behat_extension:
         - OroEntityExtendBundle::EntityExtendContext
         - OroActionBundle::OroActionContext
         - OroNavigationBundle::TabContext
+        - OroEmailBundle::EmailContext
+        - OroQueryDesignerBundle::QueryDesignerContext
       paths:
         - '@OroSaleBundle/Tests/Behat/Features'
 
