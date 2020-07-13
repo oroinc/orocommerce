@@ -101,4 +101,33 @@ class LineItemViolationsProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(1, $warnings['testPath']);
         $this->assertSame($warnings['testPath'][0], $constraintViolation);
     }
+
+    public function testGetLineItemgViolationListsReturnIndexedErrors(): void
+    {
+        $warning = $this->createMock(ConstraintViolation::class);
+        $warning->expects($this->once())
+            ->method('getPropertyPath')
+            ->willReturn('warningPath');
+
+        $error = $this->createMock(ConstraintViolation::class);
+        $error->expects($this->once())
+            ->method('getPropertyPath')
+            ->willReturn('errorPath');
+
+        $errorList = new ConstraintViolationList();
+        $errorList->add($warning);
+        $errorList->add($error);
+
+        $this->validator->expects($this->once())
+            ->method('validate')
+            ->willReturn($errorList);
+
+        $errors = $this->lineItemErrorsProvider->getLineItemViolationLists([]);
+        $this->assertArrayHasKey('warningPath', $errors);
+        $this->assertCount(1, $errors['warningPath']);
+        $this->assertSame($errors['warningPath'][0], $warning);
+        $this->assertArrayHasKey('errorPath', $errors);
+        $this->assertCount(1, $errors['errorPath']);
+        $this->assertSame($errors['errorPath'][0], $error);
+    }
 }

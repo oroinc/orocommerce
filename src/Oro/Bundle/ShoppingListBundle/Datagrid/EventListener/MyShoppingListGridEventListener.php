@@ -99,7 +99,7 @@ class MyShoppingListGridEventListener
         }
 
         $matchedPrices = $this->productPricesDataProvider->getProductsMatchedPrice($lineItems);
-        $errors = $this->violationsProvider->getLineItemErrors($lineItems);
+        $errors = $this->violationsProvider->getLineItemViolationLists($lineItems);
         $identifiedLineItems = $this->getIdentifiedLineItems($lineItems);
 
         foreach ($event->getRecords() as $record) {
