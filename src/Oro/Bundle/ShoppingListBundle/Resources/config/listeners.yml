@@ -11,3 +11,11 @@ services:
             - { name: kernel.event_listener, event: oro_pricing.customer_group.combined_price_list.update, method: onCustomerGroupPriceListUpdate }
             - { name: kernel.event_listener, event: oro_pricing.website.combined_price_list.update, method: onWebsitePriceListUpdate }
             - { name: kernel.event_listener, event: oro_pricing.config.combined_price_list.update, method: onConfigPriceListUpdate }
+
+    oro_shopping_list.migration.demo_data_fixtures_listener.shopping_list_totals:
+        class: 'Oro\Bundle\ShoppingListBundle\EventListener\ShoppingListTotalsDemoDataFixturesListener'
+        arguments:
+            - '@doctrine'
+            - '@oro_shopping_list.manager.shopping_list_total'
+        tags:
+            - { name: kernel.event_listener, event: oro_migration.data_fixtures.post_load, method: onPostLoad }
