@@ -228,7 +228,7 @@ datagrids:
                     type:      string
                     data_name: shopping_list.label
                 subtotal:
-                    type:      number
+                    type:      currency
                     data_name: subtotal
                 lineItemsCount:
                     type:      number
