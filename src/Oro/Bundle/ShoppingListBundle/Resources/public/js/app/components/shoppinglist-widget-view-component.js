@@ -5,6 +5,7 @@ define(function(require) {
     const mediator = require('oroui/js/mediator');
     const routing = require('routing');
     const $ = require('jquery');
+    const {debounce} = require('underscore');
     const __ = require('orotranslation/js/translator');
     const ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
 
@@ -30,7 +31,9 @@ define(function(require) {
 
             ShoppingListWidgetViewComponent.__super__.initialize.call(this, options);
 
-            this.$el.on(`change.${this.cid}`, this.elements.radio, this._onCurrentShoppingListChange.bind(this));
+            this.$el.on(`change.${this.cid}`,
+                this.elements.radio,
+                debounce(this._onCurrentShoppingListChange.bind(this), 300));
             this.$shoppingListWidget = this.$el.closest('.shopping-list-widget');
 
             this.bindShoppingListWidgetEvents();
@@ -75,7 +78,11 @@ define(function(require) {
                 [`focusout.${this.cid}`]: e => {
                     const $widget = $(e.currentTarget);
 
-                    if ($widget.hasClass('show') && !$.contains(e.currentTarget, e.relatedTarget)) {
+                    if (
+                        $widget.hasClass('show') &&
+                        e.relatedTarget &&
+                        !$.contains(e.currentTarget, e.relatedTarget)
+                    ) {
                         $widget.find('[data-toggle="dropdown"]').dropdown('toggle');
                     }
                 }

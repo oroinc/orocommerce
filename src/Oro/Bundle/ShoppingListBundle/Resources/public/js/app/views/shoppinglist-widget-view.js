@@ -88,11 +88,6 @@ define(function(require) {
                 const shoppingListId = $label.data('shopping-list-id');
                 const isCurrent = self.shoppingListCollection.get(shoppingListId).get('is_current');
 
-                $label.removeClass('checked');
-                if (isCurrent) {
-                    $label.addClass('checked');
-                }
-                $input.prop('checked', isCurrent);
                 $label.removeClass(self.options.currentClass);
                 if (isCurrent) {
                     $label.addClass(self.options.currentClass);
