@@ -516,13 +516,13 @@ services:
         tags:
             - { name: oro_datagrid.extension }
 
-    oro_shopping_list.datagrid.extension.frontend_my_shopping_list_grid:
-        class: 'Oro\Bundle\ShoppingListBundle\Datagrid\Extension\MyShoppingListDatagridExtension'
+    oro_shopping_list.datagrid.extension.frontend_customer_user_shopping_list_grid:
+        class: 'Oro\Bundle\ShoppingListBundle\Datagrid\Extension\ShoppingListGridExtension'
         arguments:
             - '@doctrine'
             - '@oro_config.manager'
         tags:
-            - { name: oro_datagrid.extension }
+            - { name: oro_datagrid.extension, priority: 10 }
 
     oro_shopping_list.line_item.factory.configurable_product:
         class: 'Oro\Bundle\ShoppingListBundle\LineItem\Factory\ConfigurableProductLineItemFactory'
@@ -628,12 +628,13 @@ services:
         tags:
             - { name: layout.context_configurator }
 
-    oro_shopping_list.datagrid.event_listener.my_shopping_list:
-        class: Oro\Bundle\ShoppingListBundle\Datagrid\EventListener\MyShoppingListGridEventListener
+    oro_shopping_list.datagrid.event_listener.frontend_customer_user_shopping_list_grid:
+        class: Oro\Bundle\ShoppingListBundle\Datagrid\EventListener\ShoppingListGridEventListener
         arguments:
             - '@router'
             - '@event_dispatcher'
             - '@oro_locale.formatter.number'
+            - '@oro_product.formatter.product_unit_label'
             - '@oro_product.formatter.product_unit_value'
             - '@oro_attachment.manager'
             - '@oro_pricing.provider.frontend_product_prices'
@@ -641,7 +642,7 @@ services:
             - '@oro_locale.helper.localization'
             - '@oro_shopping_list.validator_service.line_item'
         tags:
-            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.my-shopping-list-line-items-grid, method: onResultAfter }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-customer-user-shopping-list-grid, method: onResultAfter }
 
     oro_shopping_list.layout.data_provider.shopping_list_totals:
         class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\ShoppingListTotalsDataProvider'
@@ -649,3 +650,9 @@ services:
             - '@oro_pricing.subtotal_processor.total_processor_provider'
         tags:
             - { name: layout.data_provider, alias: oro_shopping_list_totals }
+
+    oro_shopping_list.extension.action.type.delete_product:
+        class: 'Oro\Bundle\ShoppingListBundle\Datagrid\Extension\Action\Actions\DeleteProductAction'
+        shared: false
+        tags:
+            - { name: oro_datagrid.extension.action.type, type: delete-product }

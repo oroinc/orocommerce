@@ -9,14 +9,14 @@ use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\MetadataObject;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\ResultsObject;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
-use Oro\Bundle\ShoppingListBundle\Datagrid\Extension\MyShoppingListDatagridExtension;
+use Oro\Bundle\ShoppingListBundle\Datagrid\Extension\ShoppingListGridExtension;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Unit\Entity\Stub\ShoppingListStub;
 
-class MyShoppingListDatagridExtensionTest extends \PHPUnit\Framework\TestCase
+class ShoppingListGridExtensionTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ShoppingListRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $shoppingListRepository;
@@ -30,7 +30,7 @@ class MyShoppingListDatagridExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var ParameterBag */
     private $parameters;
 
-    /** @var MyShoppingListDatagridExtension */
+    /** @var ShoppingListGridExtension */
     private $extension;
 
     protected function setUp(): void
@@ -57,13 +57,13 @@ class MyShoppingListDatagridExtensionTest extends \PHPUnit\Framework\TestCase
 
         $this->parameters = new ParameterBag();
 
-        $this->extension = new MyShoppingListDatagridExtension($registry, $this->configManager);
+        $this->extension = new ShoppingListGridExtension($registry, $this->configManager);
         $this->extension->setParameters($this->parameters);
     }
 
     public function testIsApplicable(): void
     {
-        $config = DatagridConfiguration::create(['name' => 'my-shopping-list-line-items-grid']);
+        $config = DatagridConfiguration::create(['name' => 'frontend-customer-user-shopping-list-grid']);
 
         $this->assertTrue($this->extension->isApplicable($config));
     }

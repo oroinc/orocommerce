@@ -60,6 +60,71 @@ class LineItemController extends RestController implements ClassResourceInterfac
     }
 
     /**
+     * @Delete(requirements={"productId"="\d+"})
+     *
+     * @ApiDoc(
+     *      description="Delete Line Item",
+     *      resource=true
+     * )
+     * @AclAncestor("oro_shopping_list_frontend_update")
+     *
+     * @param int $productId
+     * @param string $unitCode
+     *
+     * @return Response
+     */
+    public function deleteConfigurableAction(int $productId, string $unitCode): Response
+    {
+        $success = false;
+
+        /** @var LineItem[] $lineItems */
+        $lineItems = $this->getDoctrine()
+            ->getManagerForClass('OroShoppingListBundle:LineItem')
+            ->getRepository('OroShoppingListBundle:LineItem')
+            ->findBy(['parentProduct' => $productId, 'unit' => $unitCode]);
+
+        $view = $this->view(null, Response::HTTP_NO_CONTENT);
+
+        $allowed = false;
+        $ids = [];
+
+        if ($lineItems) {
+            foreach ($lineItems as $lineItem) {
+                if (!$this->isGranted('DELETE', $lineItem) || !$this->isGranted('EDIT', $lineItem->getShoppingList())) {
+                    break;
+                }
+
+                $allowed = true;
+            }
+
+            if ($allowed) {
+                $options = [];
+
+                foreach ($lineItems as $lineItem) {
+                    $this->get('oro_entity.delete_handler_registry')
+                        ->getHandler(LineItem::class)
+                        ->delete($lineItem, false);
+
+                    $options[]['entity'] = $lineItem;
+                    $ids[] = $lineItem->getId();
+                }
+
+                $this->get('oro_entity.delete_handler_registry')
+                    ->getHandler(LineItem::class)
+                    ->flushAll($options);
+
+                $success = true;
+            } else {
+                $view = $this->view(null, Response::HTTP_FORBIDDEN);
+            }
+        } else {
+            $view = $this->view(null, Response::HTTP_NOT_FOUND);
+        }
+
+        return $this->buildResponse($view, self::ACTION_DELETE, ['ids' => $ids, 'success' => $success]);
+    }
+
+    /**
      * @Put(requirements={"id"="\d+"})
      *
      * @ApiDoc(

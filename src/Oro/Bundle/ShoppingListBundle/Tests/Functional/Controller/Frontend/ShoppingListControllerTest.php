@@ -127,11 +127,11 @@ class ShoppingListControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_shopping_list_frontend_my_index'));
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertStringContainsString('my-shopping-lists-grid', $crawler->html());
+        $this->assertContains('frontend-customer-user-shopping-lists-grid', $crawler->html());
 
         $response = $this->client->requestFrontendGrid(
-            'my-shopping-lists-grid',
-            ['my-shopping-lists-grid[customer_user_id]' => $user->getId()],
+            'frontend-customer-user-shopping-lists-grid',
+            ['frontend-customer-user-shopping-lists-grid[customer_user_id]' => $user->getId()],
             true
         );
 
@@ -176,11 +176,11 @@ class ShoppingListControllerTest extends WebTestCase
         );
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertStringContainsString('my-shopping-list-line-items-grid', $crawler->html());
+        $this->assertContains('frontend-customer-user-shopping-list-grid', $crawler->html());
 
         $response = $this->client->requestFrontendGrid(
-            'my-shopping-list-line-items-grid',
-            ['my-shopping-list-line-items-grid[shopping_list_id]' => $shoppingList->getId()],
+            'frontend-customer-user-shopping-list-grid',
+            ['frontend-customer-user-shopping-list-grid[shopping_list_id]' => $shoppingList->getId()],
             true
         );
 

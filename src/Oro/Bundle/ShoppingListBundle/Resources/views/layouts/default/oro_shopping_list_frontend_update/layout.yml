@@ -11,7 +11,7 @@ layout:
         - '@setOption':
             id: datagrid
             optionName: grid_name
-            optionValue: frontend-customer-user-shopping-list-grid
+            optionValue: frontend-customer-user-shopping-list-edit-grid
 
         - '@add':
             id: datagrid_toggle_paginaton_view
@@ -32,16 +32,3 @@ layout:
         - '@move':
             id: checkout_container
             parentId: page_sidebar
-
-        - '@addTree':
-            items:
-                shopping_list_notes:
-                    blockType: container
-                shopping_list_notes_text:
-                    blockType: text
-                    options:
-                        text: '=data["entity"].getNotes()'
-            tree:
-                checkout_container:
-                    shopping_list_notes:
-                        shopping_list_notes_text: ~

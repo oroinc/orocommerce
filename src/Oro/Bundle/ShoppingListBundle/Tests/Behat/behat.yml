@@ -281,22 +281,22 @@ oro_behat_extension:
       selector: 'div.form-actions button[type="submit"]'
 
     Shopping List Action Reassign Grid:
-      selector: 'div[data-page-component-name="my-shopping-lists-assign-grid"]'
+      selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-assign-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
     Shopping List Action Reassign GridFilters:
-      selector: 'div[data-page-component-name="my-shopping-lists-assign-grid"] div.filter-box'
+      selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-assign-grid"] div.filter-box'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
 
     Shopping List Action Reassign GridToolbarActions:
-      selector: 'div[data-page-component-name="my-shopping-lists-assign-grid"] div.toolbar div.actions-panel'
+      selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-assign-grid"] div.toolbar div.actions-panel'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
 
     Shopping List Action Reassign GridFiltersState:
-      selector: 'div[data-page-component-name="my-shopping-lists-assign-grid"] div.filters-state'
+      selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-assign-grid"] div.filters-state'
 
     Shopping List Action Reassign Radio:
-      selector: 'div[data-page-component-name="my-shopping-lists-assign-grid"] input[name="oro_action_operation[customerUser]"]'
+      selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-assign-grid"] input[name="oro_action_operation[customerUser]"]'
 
   suites:
     OroShoppingListBundle:

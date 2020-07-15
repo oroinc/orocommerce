@@ -146,6 +146,39 @@ class ShoppingListController extends AbstractController
      */
     public function viewMyAction(ShoppingList $shoppingList, Request $request): array
     {
+        return [
+            'data' => [
+                'entity' => $this->preloadShoppingListData($shoppingList, $request),
+            ],
+        ];
+    }
+
+    /**
+     * @Route("/update/{id}", name="oro_shopping_list_frontend_update", requirements={"id"="\d+"})
+     * @Layout
+     * @AclAncestor("oro_shopping_list_frontend_update")
+     *
+     * @param ShoppingList $shoppingList
+     * @param Request $request
+     *
+     * @return array
+     */
+    public function updateAction(ShoppingList $shoppingList, Request $request): array
+    {
+        return [
+            'data' => [
+                'entity' => $this->preloadShoppingListData($shoppingList, $request),
+            ],
+        ];
+    }
+
+    /**
+     * @param ShoppingList $shoppingList
+     * @param Request $request
+     * @return ShoppingList
+     */
+    private function preloadShoppingListData(ShoppingList $shoppingList, Request $request): ShoppingList
+    {
         $this->get(ShoppingListManager::class)->actualizeLineItems($shoppingList);
 
         // Skips preloading of shopping list related entities in case of partial rendering.
@@ -162,11 +195,7 @@ class ShoppingListController extends AbstractController
         // actualize current shopping list
         $this->get(CurrentShoppingListManager::class)->getCurrent();
 
-        return [
-            'data' => [
-                'entity' => $shoppingList,
-            ],
-        ];
+        return $shoppingList;
     }
 
     /**

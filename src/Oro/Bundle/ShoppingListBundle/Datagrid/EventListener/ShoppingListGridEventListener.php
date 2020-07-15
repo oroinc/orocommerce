@@ -11,8 +11,10 @@ use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\ConfigurableProductProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -26,7 +28,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 /**
  * Populates line item records by required data.
  */
-class MyShoppingListGridEventListener
+class ShoppingListGridEventListener
 {
     /** @var UrlGeneratorInterface */
     private $urlGenerator;
@@ -37,8 +39,11 @@ class MyShoppingListGridEventListener
     /** @var NumberFormatter */
     private $numberFormatter;
 
+    /** @var UnitLabelFormatterInterface */
+    private $unitLabelFormatter;
+
     /** @var UnitValueFormatterInterface */
-    private $unitFormatter;
+    private $unitValueFormatter;
 
     /** @var AttachmentManager */
     private $attachmentManager;
@@ -59,7 +64,8 @@ class MyShoppingListGridEventListener
      * @param UrlGeneratorInterface $urlGenerator
      * @param EventDispatcherInterface $eventDispatcher
      * @param NumberFormatter $numberFormatter
-     * @param UnitValueFormatterInterface $unitFormatter
+     * @param UnitLabelFormatterInterface $unitLabelFormatter
+     * @param UnitValueFormatterInterface $unitValueFormatter
      * @param AttachmentManager $attachmentManager
      * @param FrontendProductPricesDataProvider $productPricesDataProvider
      * @param ConfigurableProductProvider $configurableProductProvider
@@ -70,7 +76,8 @@ class MyShoppingListGridEventListener
         UrlGeneratorInterface $urlGenerator,
         EventDispatcherInterface $eventDispatcher,
         NumberFormatter $numberFormatter,
-        UnitValueFormatterInterface $unitFormatter,
+        UnitLabelFormatterInterface $unitLabelFormatter,
+        UnitValueFormatterInterface $unitValueFormatter,
         AttachmentManager $attachmentManager,
         FrontendProductPricesDataProvider $productPricesDataProvider,
         ConfigurableProductProvider $configurableProductProvider,
@@ -80,7 +87,8 @@ class MyShoppingListGridEventListener
         $this->urlGenerator = $urlGenerator;
         $this->eventDispatcher = $eventDispatcher;
         $this->numberFormatter = $numberFormatter;
-        $this->unitFormatter = $unitFormatter;
+        $this->unitLabelFormatter = $unitLabelFormatter;
+        $this->unitValueFormatter = $unitValueFormatter;
         $this->attachmentManager = $attachmentManager;
         $this->productPricesDataProvider = $productPricesDataProvider;
         $this->configurableProductProvider = $configurableProductProvider;
@@ -106,7 +114,7 @@ class MyShoppingListGridEventListener
             /** @var LineItem[] $recordLineItems */
             $recordLineItems = array_intersect_key(
                 $identifiedLineItems,
-                array_flip(explode(',', $record->getValue('lineItemIds')))
+                array_flip(explode(',', $record->getValue('id')))
             );
 
             if ($record->getValue('isConfigurable')) {
@@ -135,6 +143,7 @@ class MyShoppingListGridEventListener
 
         $unit = $item->getUnit();
         $record->setValue('unit', $this->formatUnitLabel($unit, $qty));
+        $record->setValue('units', $this->getProductUnits($product, $unit));
 
         $status = $product->getInventoryStatus();
         $record->setValue('inventoryStatus', ['name' => $status->getId(), 'label' => $status->getName()]);
@@ -144,6 +153,13 @@ class MyShoppingListGridEventListener
         $record->setValue(
             'link',
             $this->urlGenerator->generate('oro_product_frontend_product_view', ['id' => $productId])
+        );
+        $record->setValue(
+            'delete_link',
+            $this->urlGenerator->generate(
+                'oro_api_shopping_list_frontend_delete_line_item',
+                ['id' => $item->getId()]
+            )
         );
 
         $event = new LineItemDataEvent([$item]);
@@ -194,10 +210,14 @@ class MyShoppingListGridEventListener
         $rowQuantity = $rowSubtotal = $rowDiscount = 0.0;
         $currency = null;
         $data = [];
-        $displayed = explode(',', $record->getValue('displayedLineItemIds'));
+        $displayed = explode(',', $record->getValue('lineItemIds'));
 
         $event = new LineItemDataEvent($items);
         $this->eventDispatcher->dispatch($event, LineItemDataEvent::NAME);
+
+        $lineItem = reset($items);
+        $parentProduct = $lineItem->getParentProduct();
+        $name = (string)$this->localizationHelper->getLocalizedValue($parentProduct->getNames());
 
         foreach ($items as $item) {
             $product = $item->getProduct();
@@ -205,14 +225,16 @@ class MyShoppingListGridEventListener
             $rowQuantity += $quantity;
             $unit = $item->getProductUnit();
             $productStatus = $product->getInventoryStatus();
-
             $itemData = array_merge(
                 [
+                    'id' => $item->getId(),
                     'productId' => $product->getId(),
                     'sku' => $product->getSku(),
-                    'name' => (string)$this->localizationHelper->getLocalizedValue($product->getNames()),
+                    'name' => $name,
                     'quantity' => $this->numberFormatter->formatDecimal($quantity),
                     'unit' => $this->formatUnitLabel($unit, $quantity),
+                    'unitCode' => null,
+                    'units' => null,
                     'inventoryStatus' => ['name' => $productStatus->getId(), 'label' => $productStatus->getName()],
                     'note' => $item->getNotes(),
                     'price' => null,
@@ -220,6 +242,10 @@ class MyShoppingListGridEventListener
                     'productConfiguration' => $this->getConfigurableProducts($item),
                     'errors' => $this->getErrors($errors, $product->getSku(), $unit->getCode()),
                     'filteredOut' => !in_array($item->getId(), $displayed, false),
+                    'delete_link' => $this->urlGenerator->generate(
+                        'oro_api_shopping_list_frontend_delete_line_item',
+                        ['id' => $item->getId()]
+                    ),
                 ],
                 $event->getDataForLineItem($item->getId())
             );
@@ -254,36 +280,52 @@ class MyShoppingListGridEventListener
 
             $data[] = $itemData;
         }
+        unset($product);
 
-        $record->setValue('subData', $data);
-        $record->setValue('quantity', $this->numberFormatter->formatDecimal($rowQuantity));
-        if ($rowSubtotal) {
-            if ($rowDiscount) {
-                $record->setValue('discount', $this->numberFormatter->formatCurrency($rowDiscount, $currency));
-                $record->setValue('initial_subtotal', $this->numberFormatter->formatCurrency($rowSubtotal, $currency));
-                $rowSubtotal -= $rowDiscount;
+        if (count($items) === 1) {
+            foreach (reset($data) as $name => $value) {
+                $record->setValue($name, $value);
+            }
+            $record->setValue('isConfigurable', false);
+            $record->setValue(
+                'link',
+                $this->urlGenerator->generate('oro_product_frontend_product_view', ['id' => $parentProduct->getId()])
+            );
+        } else {
+            $record->setValue('subData', $data);
+            $record->setValue('quantity', $this->numberFormatter->formatDecimal($rowQuantity));
+            if ($rowSubtotal) {
+                if ($rowDiscount) {
+                    $record->setValue('discount', $this->numberFormatter->formatCurrency($rowDiscount, $currency));
+                    $record->setValue('initial_subtotal', $this->numberFormatter->formatCurrency($rowSubtotal, $currency));
+                    $rowSubtotal -= $rowDiscount;
+                }
+
+                $record->setValue('subtotal', $this->numberFormatter->formatCurrency($rowSubtotal, $currency));
             }
 
-            $record->setValue('subtotal', $this->numberFormatter->formatCurrency($rowSubtotal, $currency));
-        }
-
-        $lineItem = reset($items);
-        $product = $lineItem->getParentProduct();
-
-        $record->setValue('productId', $product->getId());
-        $record->setValue('name', $this->localizationHelper->getLocalizedValue($product->getNames()));
-        $record->setValue('unit', $this->formatUnitLabel($lineItem->getUnit(), $rowQuantity));
-        $record->setValue(
-            'link',
-            $this->urlGenerator->generate('oro_product_frontend_product_view', ['id' => $product->getId()])
-        );
-
-        $image = $product->getImagesByType('listing')->first();
-        if ($image) {
+            $record->setValue('productId', $parentProduct->getId());
+            $record->setValue('name', $this->localizationHelper->getLocalizedValue($parentProduct->getNames()));
+            $record->setValue('unit', $this->formatUnitLabel($lineItem->getUnit(), $rowQuantity));
             $record->setValue(
-                'image',
-                $this->attachmentManager->getFilteredImageUrl($image->getImage(), 'product_small')
+                'link',
+                $this->urlGenerator->generate('oro_product_frontend_product_view', ['id' => $parentProduct->getId()])
             );
+            $record->setValue(
+                'delete_link',
+                $this->urlGenerator->generate(
+                    'oro_api_shopping_list_frontend_delete_line_item_configurable',
+                    ['productId' => $parentProduct->getId(), 'unitCode' => $lineItem->getProductUnitCode()]
+                )
+            );
+
+            $image = $parentProduct->getImagesByType('listing')->first();
+            if ($image) {
+                $record->setValue(
+                    'image',
+                    $this->attachmentManager->getFilteredImageUrl($image->getImage(), 'product_small')
+                );
+            }
         }
     }
 
@@ -344,7 +386,7 @@ class MyShoppingListGridEventListener
             $lineItemsIds = array_merge(
                 ...array_map(
                     static function (ResultRecordInterface $record) {
-                        return explode(',', $record->getValue('lineItemIds'));
+                        return explode(',', $record->getValue('id'));
                     },
                     $event->getRecords()
                 )
@@ -380,6 +422,41 @@ class MyShoppingListGridEventListener
     {
         $formattedQuantity = $this->numberFormatter->formatDecimal($quantity);
 
-        return trim(str_replace($formattedQuantity, '', $this->unitFormatter->format($quantity, $unit)));
+        return trim(str_replace($formattedQuantity, '', $this->unitValueFormatter->format($quantity, $unit)));
+    }
+
+    /**
+     * @param Product $product
+     * @param ProductUnit $productUnit
+     * @return array
+     */
+    private function getProductUnits(Product $product, ProductUnit $productUnit): array
+    {
+        $selectedCode = $productUnit->getCode();
+
+        $data = [];
+        foreach ($product->getUnitPrecisions() as $unitPrecision) {
+            if (!$unitPrecision->isSell()) {
+                continue;
+            }
+
+            $unitCode = $unitPrecision->getUnit()->getCode();
+
+            $data[$unitCode] = [
+                'label' => $this->unitLabelFormatter->format($unitCode),
+                'selected' => $unitCode === $selectedCode,
+                'disabled' => false,
+            ];
+        }
+
+        if (!isset($data[$selectedCode])) {
+            $data[$selectedCode] = [
+                'label' => $this->unitLabelFormatter->format($selectedCode),
+                'selected' => true,
+                'disabled' => true,
+            ];
+        }
+
+        return $data;
     }
 }

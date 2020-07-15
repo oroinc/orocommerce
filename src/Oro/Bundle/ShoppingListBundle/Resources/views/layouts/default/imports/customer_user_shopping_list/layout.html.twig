@@ -12,7 +12,7 @@
     </div>
 {% endblock %}
 
-{% block __my_shopping_list__container_widget %}
+{% block __customer_user_shopping_list__container_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' customer-profile customer-profile--no-offset'
     }) %}
@@ -22,7 +22,7 @@
     </div>
 {% endblock %}
 
-{% block __my_shopping_list__header_widget %}
+{% block __customer_user_shopping_list__header_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' customer-profile__header'
     }) %}
@@ -32,7 +32,7 @@
     </div>
 {% endblock %}
 
-{%- block __my_shopping_list__header_icon_widget -%}
+{%- block __customer_user_shopping_list__header_icon_widget -%}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' badge fa-shopping-cart',
         'aria-hidden': true
@@ -41,7 +41,7 @@
     <span {{ block('block_attributes') }}></span>
 {%- endblock -%}
 
-{%- block __my_shopping_list__header_title_container_widget -%}
+{%- block __customer_user_shopping_list__header_title_container_widget -%}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' page-title with-ellipsis'
     }) %}
@@ -49,7 +49,7 @@
     <h1 {{ block('block_attributes') }}>{{ block_widget(block) }}</h1>
 {%- endblock -%}
 
-{% block __my_shopping_list__header_title_wrapper_widget %}
+{% block __customer_user_shopping_list__header_title_wrapper_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' customer-profile__title-wrapper'
     }) %}
@@ -57,7 +57,7 @@
     {{ parent_block_widget(block) }}
 {% endblock %}
 
-{%- block __my_shopping_list__header_title_text_widget -%}
+{%- block __customer_user_shopping_list__header_title_text_widget -%}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' page-title__text page-title__text--offset-x-end-s'
     }) %}
@@ -65,7 +65,7 @@
     <span {{ block('block_attributes') }}>{{ shoppingList.label }}</span>
 {%- endblock -%}
 
-{%- block __my_shopping_list__header_status_widget -%}
+{%- block __customer_user_shopping_list__header_status_widget -%}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' badge-rectangle'
     }) %}
@@ -75,7 +75,7 @@
     </span>
 {%- endblock -%}
 
-{% block __my_shopping_list__header_owner_wrapper_widget %}
+{% block __customer_user_shopping_list__header_owner_wrapper_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' my-shopping-list-owner-wrapper'
     }) %}
@@ -89,14 +89,14 @@
     {{ parent_block_widget(block) }}
 {%- endblock -%}
 
-{% block __my_shopping_list__shopping_list_actions_container_widget %}
+{% block __customer_user_shopping_list__shopping_list_actions_container_widget %}
     {% if block.children %}
         <span class="separator" aria-hidden="true"></span>
         {{ block_widget(block) }}
     {% endif %}
 {% endblock %}
 
-{% block __my_shopping_list__header_owner_widget %}
+{% block __customer_user_shopping_list__header_owner_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
 
     {% set attr = layout_attr_defaults(attr, {
@@ -118,17 +118,7 @@
     </div>
 {% endblock %}
 
-{% block __my_shopping_list__header_notes_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': ' shipping-list-note shipping-list-note__page-title'
-    }) %}
-
-    <div{{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
-{% block __my_shopping_list__line_items_widget %}
+{% block __customer_user_shopping_list__line_items_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' my-shopping-list-datagrid-container'
     }) %}
@@ -138,7 +128,7 @@
     </div>
 {% endblock %}
 
-{% block __my_shopping_list__checkout_container_widget %}
+{% block __customer_user_shopping_list__checkout_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' order-checkout-widget order-checkout-widget--offset-none ',
         'data-sticky-target': 'top-sticky-panel',
@@ -158,7 +148,7 @@
     </div>
 {% endblock %}
 
-{% block __my_shopping_list__summary_container_widget %}
+{% block __customer_user_shopping_list__summary_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' order-checkout-widget__container-wrapper '
     }) %}
@@ -168,7 +158,7 @@
     </div>
 {% endblock %}
 
-{% block __my_shopping_list__combined_button_widget %}
+{% block __customer_user_shopping_list__combined_button_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' order-checkout-widget__col',
         'data-name': 'empty-items__hide'
@@ -178,7 +168,7 @@
     {{ block('combined_buttons_widget') }}
 {% endblock %}
 
-{% block __my_shopping_list__totals_placeholder_widget %}
+{% block __customer_user_shopping_list__totals_placeholder_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' totals-placeholder',
     }) %}
@@ -186,7 +176,7 @@
     <div {{ block('block_attributes') }}>&nbsp;</div>
 {% endblock %}
 
-{% block __my_shopping_list__combined_button_placeholder_widget %}
+{% block __customer_user_shopping_list__combined_button_placeholder_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' combined-buttons-placeholder',
     }) %}

@@ -1,9 +1,9 @@
 layout:
     imports:
         -
-            id: my_shopping_lists_grid
+            id: customer_user_shopping_lists_grid
             root: page_content
-            namespace: my_shopping_lists
+            namespace: customer_user_shopping_lists
 
     actions:
         - '@setOption':

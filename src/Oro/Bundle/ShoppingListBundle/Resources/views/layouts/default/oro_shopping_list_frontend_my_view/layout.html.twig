@@ -6,3 +6,17 @@
 
     <div {{ block('block_attributes') }}></div>
 {% endblock %}
+
+{% block _shopping_list_notes_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' shipping-list-note'
+    }) %}
+
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _shopping_list_notes_text_widget %}
+    {{ block_widget(block)|nl2br }}
+{% endblock %}

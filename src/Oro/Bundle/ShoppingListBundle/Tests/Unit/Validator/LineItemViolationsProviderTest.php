@@ -102,7 +102,7 @@ class LineItemViolationsProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($warnings['testPath'][0], $constraintViolation);
     }
 
-    public function testGetLineItemgViolationListsReturnIndexedErrors(): void
+    public function testGetLineItemViolationListsReturnIndexedErrors(): void
     {
         $warning = $this->createMock(ConstraintViolation::class);
         $warning->expects($this->once())
