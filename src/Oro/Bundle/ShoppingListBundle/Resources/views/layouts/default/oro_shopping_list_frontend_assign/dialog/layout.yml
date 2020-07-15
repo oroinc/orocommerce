@@ -1,7 +1,7 @@
 layout:
     imports:
         -
-            id: my_shopping_lists_assign_grid
+            id: customer_user_shopping_list_assign_grid
             root: shopping_list_assign_grid_container
 
     actions:

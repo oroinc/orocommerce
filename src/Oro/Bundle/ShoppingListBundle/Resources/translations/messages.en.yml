@@ -73,6 +73,10 @@ oro:
             add_to_multiple: add item to multiple lists
             copied: " (copied %copyDate%)"
 
+        mass_actions:
+            delete_line_items:
+                label: Delete
+
         menu:
             sales_tab.label: Sales
             shopping_lists.label: My Shopping Lists

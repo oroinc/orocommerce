@@ -146,6 +146,39 @@ class ShoppingListController extends AbstractController
      */
     public function viewMyAction(ShoppingList $shoppingList, Request $request): array
     {
+        return [
+            'data' => [
+                'entity' => $this->preloadShoppingListData($shoppingList, $request),
+            ],
+        ];
+    }
+
+    /**
+     * @Route("/update/{id}", name="oro_shopping_list_frontend_update", requirements={"id"="\d+"})
+     * @Layout
+     * @AclAncestor("oro_shopping_list_frontend_update")
+     *
+     * @param ShoppingList $shoppingList
+     * @param Request $request
+     *
+     * @return array
+     */
+    public function updateAction(ShoppingList $shoppingList, Request $request): array
+    {
+        return [
+            'data' => [
+                'entity' => $this->preloadShoppingListData($shoppingList, $request),
+            ],
+        ];
+    }
+
+    /**
+     * @param ShoppingList $shoppingList
+     * @param Request $request
+     * @return ShoppingList
+     */
+    private function preloadShoppingListData(ShoppingList $shoppingList, Request $request): ShoppingList
+    {
         $this->get(ShoppingListManager::class)->actualizeLineItems($shoppingList);
 
         // Skips preloading of shopping list related entities in case of partial rendering.
@@ -162,22 +195,18 @@ class ShoppingListController extends AbstractController
         // actualize current shopping list
         $this->get(CurrentShoppingListManager::class)->getCurrent();
 
-        return [
-            'data' => [
-                'entity' => $shoppingList,
-            ],
-        ];
+        return $shoppingList;
     }
 
     /**
-     * @Route("/my/{id}/assign", name="oro_shopping_list_frontend_my_assign", requirements={"id"="\d+"})
+     * @Route("/{id}/assign", name="oro_shopping_list_frontend_assign", requirements={"id"="\d+"})
      * @Layout
      * @AclAncestor("oro_shopping_list_frontend_assign")
      *
      * @param ShoppingList $shoppingList
      * @return array
      */
-    public function assignMyAction(ShoppingList $shoppingList): array
+    public function assignAction(ShoppingList $shoppingList): array
     {
         return [
             'data' => [
@@ -187,14 +216,14 @@ class ShoppingListController extends AbstractController
     }
 
     /**
-     * @Route("/my/{id}/rename", name="oro_shopping_list_frontend_my_rename", requirements={"id"="\d+"})
+     * @Route("/{id}/rename", name="oro_shopping_list_frontend_rename", requirements={"id"="\d+"})
      * @Layout
      * @AclAncestor("oro_shopping_list_frontend_update")
      *
      * @param ShoppingList $shoppingList
      * @return array
      */
-    public function renameMyAction(ShoppingList $shoppingList): array
+    public function renameAction(ShoppingList $shoppingList): array
     {
         return [
             'data' => [

@@ -5,15 +5,10 @@ layout:
             root: __root
 
     actions:
-        - '@setOption':
-            id: __datagrid
-            optionName: grid_name
-            optionValue: my-shopping-list-line-items-grid
-
         - '@appendOption':
-              id: __datagrid
-              optionName: grid_render_parameters.cssClass
-              optionValue: 'responsive-shopping-list-grid'
+            id: __datagrid
+            optionName: grid_render_parameters.cssClass
+            optionValue: 'responsive-shopping-list-grid'
 
         - '@setOption':
             id: __datagrid
@@ -26,9 +21,9 @@ layout:
             optionValue: false
 
         - '@setOption':
-              id: __datagrid
-              optionName: grid_render_parameters.responsiveGrids.enable
-              optionValue: false
+            id: __datagrid
+            optionName: grid_render_parameters.responsiveGrids.enable
+            optionValue: false
 
         - '@appendOption':
             id: __datagrid
@@ -48,7 +43,7 @@ layout:
                 transTemplate: 'oro_frontend.datagrid.pagination.totalRecords.shopping_list_line_items'
 
         - '@setOption':
-              id: __datagrid
-              optionName: grid_render_parameters.toolbarOptions.itemsCounter
-              optionValue:
-                  className: 'datagrid-tool datagrid-tool--short'
+            id: __datagrid
+            optionName: grid_render_parameters.toolbarOptions.itemsCounter
+            optionValue:
+                className: 'datagrid-tool datagrid-tool--short'

@@ -1,7 +1,7 @@
 layout:
     imports:
         -
-            id: my_shopping_lists_rename_form
+            id: customer_user_shopping_list_rename_form
             root: shopping_list_rename_form_container
 
     actions:

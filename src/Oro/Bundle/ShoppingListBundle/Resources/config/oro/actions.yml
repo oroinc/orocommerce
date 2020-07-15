@@ -180,6 +180,7 @@ operations:
         routes:
             - oro_shopping_list_frontend_view
             - oro_shopping_list_frontend_my_view
+            - oro_shopping_list_frontend_update
         acl_resource: oro_rfp_frontend_request_create
         order: 220
         button_options:
@@ -220,7 +221,8 @@ operations:
             - shopping-list-grid
             - customer-shopping-lists-grid
             - customer-user-shopping-lists-grid
-            - my-shopping-list-line-items-grid
+            - frontend-customer-user-shopping-list-grid
+            - frontend-customer-user-shopping-list-edit-grid
 
     DELETE:
         exclude_entities:
@@ -229,7 +231,8 @@ operations:
             - shopping-list-grid
             - customer-shopping-lists-grid
             - customer-user-shopping-lists-grid
-            - my-shopping-list-line-items-grid
+            - frontend-customer-user-shopping-list-grid
+            - frontend-customer-user-shopping-list-edit-grid
 
     oro_shoppinglist_delete:
         extends: DELETE
@@ -437,6 +440,7 @@ operations:
             - shopping_list_duplicate_action
         routes:
             - oro_shopping_list_frontend_my_view
+            - oro_shopping_list_frontend_update
         actions:
             - '@redirect':
                   route: 'oro_shopping_list_frontend_my_view'
@@ -452,6 +456,7 @@ operations:
             - shopping_list_delete_action
         routes:
             - oro_shopping_list_frontend_my_view
+            - oro_shopping_list_frontend_update
         actions:
             - '@redirect':
                   route: 'oro_shopping_list_frontend_my_index'

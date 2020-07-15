@@ -1,10 +1,10 @@
 layout:
     imports:
         -
-            id: my_shopping_list_line_items_grid
+            id: customer_user_shopping_list_line_items_grid
             root: __line_items
         -
-            id: my_shopping_list_actions
+            id: customer_user_shopping_list_actions
             root: __header
             namespace: header
 
@@ -56,12 +56,6 @@ layout:
                     options:
                         visible: '=data["entity"].getCustomerUser()!=null'
                         shoppingList: '=data["entity"]'
-                __header_notes:
-                    blockType: container
-                __header_notes_text:
-                    blockType: text
-                    options:
-                        text: '=data["entity"].getNotes()'
                 __line_items:
                     blockType: container
                 __checkout_container:
@@ -115,8 +109,6 @@ layout:
                                     __header_status: ~
                             __header_owner_wrapper:
                                 __header_owner: ~
-                            __header_notes:
-                                __header_notes_text: ~
                         __line_items: ~
                         __checkout_container:
                             __summary_container:

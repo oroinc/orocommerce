@@ -8,7 +8,7 @@ layout:
         - '@setOption':
             id: __datagrid
             optionName: grid_name
-            optionValue: my-shopping-lists-assign-grid
+            optionValue: frontend-customer-user-shopping-list-assign-grid
 
         - '@appendOption':
               id: __datagrid

@@ -171,7 +171,7 @@ datagrids:
             bind_parameters:
                 - customer_user_id
 
-    my-shopping-lists-grid:
+    frontend-customer-user-shopping-lists-grid:
         acl_resource: oro_shopping_list_frontend_view
         options:
             entityHint: oro.shoppinglist.entity_plural_label
@@ -260,7 +260,7 @@ datagrids:
                 params: [ id ]
             update_link:
                 type:  url
-                route: oro_shopping_list_frontend_view
+                route: oro_shopping_list_frontend_update
                 params: [ id ]
         actions:
             view:
@@ -277,7 +277,7 @@ datagrids:
                 icon:          pencil-square-o
                 acl_resource:  oro_shopping_list_frontend_update
 
-    my-shopping-list-line-items-grid:
+    frontend-customer-user-shopping-list-grid:
         acl_resource: oro_shopping_list_frontend_view
         options:
             entityHint: oro.shoppinglist.lineitem.entity_plural_label
@@ -299,7 +299,7 @@ datagrids:
             type: orm
             query:
                 select:
-                    - GROUP_CONCAT(lineItem.id) as displayedLineItemIds
+
                     - (CASE WHEN parentProduct.id IS NULL THEN false ELSE true END) as isConfigurable
                     - COALESCE(parentProduct.id, product.id) as mainProductId
                     - COALESCE(parentProduct.sku, product.sku) as sku
@@ -308,7 +308,8 @@ datagrids:
                         FROM Oro\Bundle\ShoppingListBundle\Entity\LineItem innerLineItem
                         WHERE (innerLineItem.parentProduct = lineItem.parentProduct OR innerLineItem.product = lineItem.product)
                         AND innerLineItem.shoppingList = lineItem.shoppingList
-                        AND innerLineItem.unit = lineItem.unit) as lineItemIds
+                        AND innerLineItem.unit = lineItem.unit) as id
+                    - GROUP_CONCAT(lineItem.id) as lineItemIds
                 from:
                     - { table: 'Oro\Bundle\ShoppingListBundle\Entity\LineItem', alias: lineItem }
                 join:
@@ -326,8 +327,6 @@ datagrids:
         columns:
             sku:
                 label:         oro.frontend.shoppinglist.lineitem.sku.label
-                frontend_type: html-template
-                frontend_template: tpl-loader!oroshoppinglist/templates/datagrid/cell/sku.html
             item:
                 label:         oro.frontend.shoppinglist.lineitem.item.label
                 frontend_type: html-template
@@ -400,18 +399,18 @@ datagrids:
                 frontend_type: datetime
             inventoryStatus:
                 frontend_type: row_array
+            productConfiguration:
+                frontend_type: row_array
             subData:
                 frontend_type: row_array
             errors:
                 frontend_type: row_array
 
-    my-shopping-lists-assign-grid:
+    frontend-customer-user-shopping-list-assign-grid:
         acl_resource: oro_shopping_list_frontend_assign
         options:
             entityHint: oro.customer.customeruser.entity_plural_label
             frontend: true
-            jsmodules:
-                - oroshoppinglist/js/datagrid/builder/shoppinglist-flat-data-builder
         source:
             type: orm
             query:
@@ -487,6 +486,47 @@ datagrids:
                     data_name: customerUser.enabled
                 confirmed:
                     data_name: customerUser.confirmed
+
+    frontend-customer-user-shopping-list-edit-grid:
+        extends: frontend-customer-user-shopping-list-grid
+        acl_resource: oro_shopping_list_frontend_update
+        columns:
+            quantity:
+                frontend_template: tpl-loader!oroshoppinglist/templates/datagrid/cell/quantity_update.html
+            unit:
+                frontend_type: html-template
+                frontend_template: tpl-loader!oroshoppinglist/templates/datagrid/cell/unit_update.html
+        properties:
+            id: ~
+            delete_link: ~
+            units:
+                frontend_type: row_array
+        actions:
+            delete:
+                type:          delete-product
+                link:          delete_link
+                icon:          trash-o
+                acl_resource:  oro_shopping_list_frontend_update
+                defaultMessages:
+                    confirm_title: oro.shoppinglist.actions.delete_line_item.confirm_title
+                    confirm_content: oro.shoppinglist.actions.delete_line_item.confirm_content
+                    success: oro.shoppinglist.actions.delete_line_item.success
+        mass_actions:
+            delete:
+                type: delete
+                icon: trash
+                label: oro.shoppinglist.mass_actions.delete_line_items.label
+                route: oro_datagrid_front_mass_action
+                entity_name: Oro\Bundle\ShoppingListBundle\Entity\LineItem
+                acl_resource:  oro_shopping_list_frontend_update
+                data_identifier: lineItem.id
+                object_identifier: lineItem
+                defaultMessages:
+                    confirm_content: oro.shoppinglist.mass_actions.delete_line_items.confirm_content
+                    confirm_ok: oro.shoppinglist.mass_actions.delete_line_items.confirm_ok
+                    confirm_title: oro.shoppinglist.mass_actions.delete_line_items.confirm_title
+                confirmMessages:
+                    selected_message: oro.shoppinglist.mass_actions.delete_line_items.selected_message
 
     shopping-list-line-items-grid:
         acl_resource:      oro_shopping_list_view

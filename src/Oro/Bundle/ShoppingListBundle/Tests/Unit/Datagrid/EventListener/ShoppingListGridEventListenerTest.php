@@ -19,10 +19,11 @@ use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\ConfigurableProductProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
-use Oro\Bundle\ShoppingListBundle\Datagrid\EventListener\MyShoppingListGridEventListener;
+use Oro\Bundle\ShoppingListBundle\Datagrid\EventListener\ShoppingListGridEventListener;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -32,7 +33,7 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
-class MyShoppingListGridEventListenerTest extends \PHPUnit\Framework\TestCase
+class ShoppingListGridEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -51,8 +52,11 @@ class MyShoppingListGridEventListenerTest extends \PHPUnit\Framework\TestCase
     /** @var NumberFormatter|\PHPUnit\Framework\MockObject\MockObject */
     private $numberFormatter;
 
+    /** @var UnitLabelFormatterInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $unitLabelFormatter;
+
     /** @var UnitValueFormatterInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $unitFormatter;
+    private $unitValueFormatter;
 
     /** @var AttachmentManager|\PHPUnit\Framework\MockObject\MockObject */
     private $attachmentManager;
@@ -69,7 +73,7 @@ class MyShoppingListGridEventListenerTest extends \PHPUnit\Framework\TestCase
     /** @var LineItemViolationsProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $violationsProvider;
 
-    /** @var MyShoppingListGridEventListener */
+    /** @var ShoppingListGridEventListener */
     private $listener;
 
     protected function setUp(): void
@@ -90,18 +94,20 @@ class MyShoppingListGridEventListenerTest extends \PHPUnit\Framework\TestCase
         $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->numberFormatter = $this->createMock(NumberFormatter::class);
-        $this->unitFormatter = $this->createMock(UnitValueFormatterInterface::class);
+        $this->unitLabelFormatter = $this->createMock(UnitLabelFormatterInterface::class);
+        $this->unitValueFormatter = $this->createMock(UnitValueFormatterInterface::class);
         $this->attachmentManager = $this->createMock(AttachmentManager::class);
         $this->productPricesDataProvider = $this->createMock(FrontendProductPricesDataProvider::class);
         $this->configurableProductProvider = $this->createMock(ConfigurableProductProvider::class);
         $this->localizationHelper = $this->createMock(LocalizationHelper::class);
         $this->violationsProvider = $this->createMock(LineItemViolationsProvider::class);
 
-        $this->listener = new MyShoppingListGridEventListener(
+        $this->listener = new ShoppingListGridEventListener(
             $this->urlGenerator,
             $this->eventDispatcher,
             $this->numberFormatter,
-            $this->unitFormatter,
+            $this->unitLabelFormatter,
+            $this->unitValueFormatter,
             $this->attachmentManager,
             $this->productPricesDataProvider,
             $this->configurableProductProvider,
@@ -153,8 +159,8 @@ class MyShoppingListGridEventListenerTest extends \PHPUnit\Framework\TestCase
             ->with([$lineItem1, $lineItem2, $lineItem3])
             ->willReturn($errors);
 
-        $record1 = new ResultRecord(['lineItemIds' => $lineItem1->getId()]);
-        $record2 = new ResultRecord(['lineItemIds' => $lineItem2->getId() . ',' . $lineItem3->getId() . ',4']);
+        $record1 = new ResultRecord(['id' => $lineItem1->getId()]);
+        $record2 = new ResultRecord(['id' => $lineItem2->getId() . ',' . $lineItem3->getId() . ',4']);
 
         $this->listener->onResultAfter(new OrmResultAfter(
             new Datagrid(

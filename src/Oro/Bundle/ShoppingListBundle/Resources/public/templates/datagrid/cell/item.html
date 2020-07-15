@@ -4,16 +4,18 @@
     <div class="grid-line-items">
         <div class="grid-line-items__row grid-line-items__row--offset-y-end"
              data-page-component-init-on="click,focusin">
-           <%= oroshoppinglist.renderProductItemImage({
+        <% if (!obj.isConfigurable || obj.image) { %>
+            <%= oroshoppinglist.renderProductItemImage({
                 src: obj.image,
                 placeholder: _metadata.image_placeholder,
                 productId: productId,
                 title: sku,
                 alt: name
             }) %>
+        <% } %>
         </div>
         <div class="grid-line-items__row">
-            <% if (!obj.productConfiguration) { %>
+            <% if (!obj._isVariant) { %>
                 <div class="grid-line-items__row-item grid-line-items__row-item-title-container">
                     <% if (name.length <= clipLength) { %>
                         <%= oroshoppinglist.renderProductItemName({link: link, name: name}) %>
@@ -31,6 +33,16 @@
                         <%= oroshoppinglist.renderInventoryStatus(inventoryStatus) %>
                     <% } %>
                 </div>
+                <% if (productConfiguration) { %>
+                <div class="grid-line-items__row-item grid-line-items__configuration">
+                    <% _.each(productConfiguration, function(field) { %>
+                    <div class="grid-line-items__field">
+                        <span class="grid-line-items__field-val"><%- field.label %>:</span>
+                        <span class="grid-line-items__field-val bold"><%- field.value %></span>
+                    </div>
+                    <% }) %>
+                </div>
+                <% } %>
                 <% if (note) { %>
                 <div class="grid-line-items__row-item grid-line-items__row-item--simple"
                      data-page-component-init-on="click,mouseover">
@@ -39,7 +51,6 @@
                 <% } %>
             <% } else { %>
                 <div class="grid-line-items__row-item mobile-row">
-                    <div class="grid-line-items__row-item highlighted-in-tablet"><%- sku %></div>
                     <div class="grid-line-items__row-item show-in-tablet">
                         <%= oroshoppinglist.renderInventoryStatus(inventoryStatus) %>
                     </div>

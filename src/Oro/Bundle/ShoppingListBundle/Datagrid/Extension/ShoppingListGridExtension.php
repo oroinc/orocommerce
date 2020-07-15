@@ -12,12 +12,15 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 /**
- * Adds price attribute columns, sorters, filters for each currency enabled in current price list.
+ * Adds additional configuration and metadata to the grid.
  */
-class MyShoppingListDatagridExtension extends AbstractExtension
+class ShoppingListGridExtension extends AbstractExtension
 {
-    /** @var string */
-    private const SUPPORTED_GRID = 'my-shopping-list-line-items-grid';
+    /** @var string[] */
+    private const SUPPORTED_GRIDS = [
+        'frontend-customer-user-shopping-list-grid',
+        'frontend-customer-user-shopping-list-edit-grid',
+    ];
 
     /** @var ManagerRegistry */
     private $registry;
@@ -43,7 +46,7 @@ class MyShoppingListDatagridExtension extends AbstractExtension
      */
     public function isApplicable(DatagridConfiguration $config): bool
     {
-        return static::SUPPORTED_GRID === $config->getName() && parent::isApplicable($config);
+        return \in_array($config->getName(), static::SUPPORTED_GRIDS, true) && parent::isApplicable($config);
     }
 
     /**
