@@ -2,6 +2,31 @@ method: getTax
 reference: simple_order
 configuration: { use_as_base_by_default: destination, digital_products_eu: ['TAX1'] }
 databaseBefore:
+    'Oro\Bundle\TaxBundle\Entity\TaxJurisdiction':
+        europe_germany_jurisdiction:
+            code: europe_germany_jurisdiction_code
+            country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'DE' } }
+        europe_germany_non_digital_jurisdiction_code:
+            code: europe_germany_non_digital_jurisdiction_code
+            country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'DE' } }
+            region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'DE-BW' } }
+    'Oro\Bundle\TaxBundle\Entity\TaxRule':
+        tax_rule.TAX3:
+            tax: { class: 'Oro\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX3' } }
+            taxJurisdiction: '@europe_germany_jurisdiction'
+            productTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode', query: { code: 'TAX1' } }
+            customerTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode', query: { code: 'TAX1' } }
+        tax_rule.TAX4:
+            tax: { class: 'Oro\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX2' } }
+            taxJurisdiction: '@europe_germany_jurisdiction'
+            productTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode', query: { code: 'TAX1' } }
+            customerTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode', query: { code: 'TAX1' } }
+        tax_rule.TAX5:
+            tax: { class: 'Oro\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX1' } }
+            taxJurisdiction: '@europe_germany_non_digital_jurisdiction_code'
+            productTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode', query: { code: 'TAX2' } }
+            customerTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode', query: { code: 'TAX1' } }
+databaseBeforeSecondPart:
     'Oro\Bundle\OrderBundle\Entity\OrderAddress':
         de_billing_address:
             country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'DE' } }
@@ -13,6 +38,10 @@ databaseBefore:
             currency: USD
             billingAddress: '@de_billing_address'
             shippingAddress: '@de_billing_address'
+            __calls:
+                - addLineItem: ['@order_line_item_1']
+                - addLineItem: ['@order_line_item_2']
+                - addLineItem: ['@order_line_item_3']
     'Oro\Bundle\CurrencyBundle\Entity\Price':
         usd_price_15.99:
             value: 15.99
@@ -42,31 +71,7 @@ databaseBefore:
             quantity: 7
             price: '@usd_price_12.22'
             product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-3' } }
-    'Oro\Bundle\TaxBundle\Entity\TaxJurisdiction':
-        europe_germany_jurisdiction:
-            code: europe_germany_jurisdiction_code
-            country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'DE' } }
-        europe_germany_non_digital_jurisdiction_code:
-            code: europe_germany_non_digital_jurisdiction_code
-            country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'DE' } }
-            region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'DE-BW' } }
-    'Oro\Bundle\TaxBundle\Entity\TaxRule':
-        tax_rule.TAX3:
-            tax: { class: 'Oro\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX3' } }
-            taxJurisdiction: '@europe_germany_jurisdiction'
-            productTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode', query: { code: 'TAX1' } }
-            customerTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode', query: { code: 'TAX1' } }
-        tax_rule.TAX4:
-            tax: { class: 'Oro\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX2' } }
-            taxJurisdiction: '@europe_germany_jurisdiction'
-            productTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode', query: { code: 'TAX1' } }
-            customerTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode', query: { code: 'TAX1' } }
-        tax_rule.TAX5:
-            tax: { class: 'Oro\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX1' } }
-            taxJurisdiction: '@europe_germany_non_digital_jurisdiction_code'
-            productTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode', query: { code: 'TAX2' } }
-            customerTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode', query: { code: 'TAX1' } }
-databaseBeforeSecondPart: []
+disableTaxCalculation: false
 expectedResult:
     total:
         includingTax: '238.83' # 101.93625 + 42.4575 + 94.43616 = 238.82991

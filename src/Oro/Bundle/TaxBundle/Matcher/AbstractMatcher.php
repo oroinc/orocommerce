@@ -92,4 +92,9 @@ abstract class AbstractMatcher implements MatcherInterface
             )
         );
     }
+
+    public function clearRulesCache()
+    {
+        $this->taxRulesCache = [];
+    }
 }
