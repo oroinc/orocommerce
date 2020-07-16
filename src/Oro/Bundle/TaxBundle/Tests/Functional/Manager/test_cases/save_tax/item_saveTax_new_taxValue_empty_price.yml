@@ -34,6 +34,7 @@ databaseBefore:
             price: '@usd_price_5.55'
             product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-2' } }
 databaseBeforeSecondPart: []
+disableTaxCalculation: false
 expectedResult:
     row:
         includingTax: '0'

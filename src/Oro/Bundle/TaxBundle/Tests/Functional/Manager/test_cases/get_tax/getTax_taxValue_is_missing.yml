@@ -8,4 +8,5 @@ databaseBefore:
             customer: { class: 'Oro\Bundle\CustomerBundle\Entity\Customer', query: {} }
             currency: USD
 databaseBeforeSecondPart: []
+disableTaxCalculation: false
 expectedResult: []

@@ -2,6 +2,18 @@ method: getTax
 reference: simple_order
 configuration: { use_as_base_by_default: destination, digital_products_us: ['TAX2'] }
 databaseBefore:
+    'Oro\Bundle\TaxBundle\Entity\TaxJurisdiction':
+        us_jurisdiction:
+            code: us_jurisdiction_code
+            country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+            region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-NV' } }
+    'Oro\Bundle\TaxBundle\Entity\TaxRule':
+        tax_rule.TAX3:
+            tax: { class: 'Oro\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX3' } }
+            taxJurisdiction: '@us_jurisdiction'
+            productTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode', query: { code: 'TAX1' } }
+            customerTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode', query: { code: 'TAX1' } }
+databaseBeforeSecondPart:
     'Oro\Bundle\OrderBundle\Entity\OrderAddress':
         us_nv_billing_address:
             country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
@@ -13,6 +25,9 @@ databaseBefore:
             currency: USD
             billingAddress: '@us_nv_billing_address'
             shippingAddress: '@us_nv_billing_address'
+            __calls:
+                -   addLineItem: ['@order_line_item_2']
+                -   addLineItem: ['@order_line_item_3']
     'Oro\Bundle\CurrencyBundle\Entity\Price':
         usd_price_12.22:
             value: 12.22
@@ -33,18 +48,7 @@ databaseBefore:
             quantity: 7
             price: '@usd_price_12.22'
             product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-3' } }
-    'Oro\Bundle\TaxBundle\Entity\TaxJurisdiction':
-        us_jurisdiction:
-            code: us_jurisdiction_code
-            country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
-            region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-NV' } }
-    'Oro\Bundle\TaxBundle\Entity\TaxRule':
-        tax_rule.TAX3:
-            tax: { class: 'Oro\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX3' } }
-            taxJurisdiction: '@us_jurisdiction'
-            productTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode', query: { code: 'TAX1' } }
-            customerTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode', query: { code: 'TAX1' } }
-databaseBeforeSecondPart: []
+disableTaxCalculation: false
 expectedResult:
     total:
         includingTax: '124.8'  # 39.26 + 85.54

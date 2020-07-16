@@ -55,3 +55,17 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
       groups: ['tax']
     currency:
       groups: ['tax']
+    product:
+      groups: ['tax']
+    productUnit:
+      groups: ['tax']
+
+Oro\Bundle\ProductBundle\Entity\Product:
+  attributes:
+    id:
+      groups: ['tax']
+
+Oro\Bundle\ProductBundle\Entity\ProductUnit:
+  attributes:
+    code:
+      groups: ['tax']
