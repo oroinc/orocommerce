@@ -74,28 +74,17 @@ export default GrapesJS.plugins.add('grapesjs-style-isolation', (editor, options
 
     editor.getIsolatedCss = () => {
         const wrapperCss = editor.getWrapper().styleToString();
-        const cssc = editor.CssComposer;
-        const components = editor.DomComponents.getComponent().get('components');
         let css = '';
 
         if (wrapperCss.length) {
             css += `#${scopeId}{${wrapperCss}}`;
         }
 
-        if (components.length) {
-            let childrenCss = '';
-
-            components.each(component => {
-                const componentCss = editor.CodeManager.getCode(component, 'css', {cssc});
-
-                if (componentCss.length) {
-                    // Do not remove space in replace phrase
-                    childrenCss += componentCss.replace(cssSelectorRegexp, ` #${scopeId} $&`);
-                }
-            });
-
-            css += childrenCss;
-        }
+        css += editor.CssComposer.getAll().reduce((acc, rule) => {
+            // Do not remove space in replace phrase
+            acc += rule.toCSS().replace(cssSelectorRegexp, ` #${scopeId} $&`);
+            return acc;
+        }, '');
 
         return css;
     };
@@ -107,9 +96,19 @@ export default GrapesJS.plugins.add('grapesjs-style-isolation', (editor, options
             return '';
         }
 
-        return css
+        css = css
             .replace(cssWrapperScopeRegexp, '#wrapper{')
             .replace(componentCssIdRegexp, '')
             .replace(cssChildrenScopeRegexp, '');
+
+        const _res = editor.Parser.parseCss(css).reduce((acc, rule, index, collection) => {
+            const {state = '', atRuleType = '', mediaText = '', selectorsAdd = ''} = rule;
+            const key = rule.selectors.join('') + state + atRuleType + mediaText + selectorsAdd;
+
+            acc[key] = $.extend(true, acc[key] || {}, rule);
+            return acc;
+        }, {});
+
+        return Object.values(_res);
     };
 });
