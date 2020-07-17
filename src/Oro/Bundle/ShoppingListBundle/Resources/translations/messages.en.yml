@@ -182,10 +182,15 @@ oro:
             list:
                 label: Duplicate List
                 aria_label: Duplicate Current Shopping List
-            action.label: Duplicate List Action
+            action.label: Duplicate
         delete:
-            action.label: Delete List Action
-
+            action.label: Delete
+        set_as_default:
+            action.label: Set as Default
+        rename:
+            action.label: Rename
+        assign:
+            action.label: Reassign
         visitors.label: 'Visitors'
 
     customer:
@@ -244,15 +249,11 @@ oro:
                 create_new_shopping_list.aria_label: 'Create New List. Opens a popup'
                 choose_assign_user.label: 'Choose a User to assign "%label%"'
                 rename.label: 'Rename Shopping List'
-                duplicate_confirmation.label: 'Duplicate Confirmation'
-                delete_confirmation.label: 'Delete Confirmation'
-                set_default_confirmation.label: 'Set as Default Confirmation'
             messages:
                 line_item_delete_confirm: 'Are you sure you want to delete this Shopping list item?'
-                duplicate_confirmation: 'Are you sure you want to duplicate this shopping list?'
-                delete_confirmation: 'Are you sure you want to delete this shopping list?'
-                set_default_confirmation: 'Are you sure you want to set as default this shopping list?'
-                set_default_success: 'Shopping list has been set as default'
+                set_default_success: 'Shopping list has been successfully set as default'
+                rename_success: 'Shopping list has been successfully renamed'
+                assign_success: 'Shopping list has been successfully re-assigned'
                 line_item_deleted: 'Shopping list item has been deleted'
                 cannot_create_order_no_line_item_with_price: 'Cannot create order because Shopping List has no items with price'
                 cannot_create_order_no_line_item_with_quantity: 'Cannot create order because Shopping List has no items'
@@ -268,15 +269,10 @@ oro:
                 rename:
                     label: 'Rename'
                     aria_label: 'Rename %name%'
-                set_default:
-                    label: 'Set as Default'
+                set_as_default:
                     aria_label: 'Set as Default %name%'
                 duplicate:
-                    label: 'Duplicate'
                     aria_label: 'Duplicate %name%'
-                duplicate_ok.label: 'Yes, duplicate'
-                delete_ok.label: 'Yes, delete'
-                set_default_ok.label: 'Yes, set as default'
                 cancel.label: 'Cancel'
                 apply_aria_label: 'Apply changes in the Shopping List'
                 decline_aria_label: 'Decline changes in the Shopping List'

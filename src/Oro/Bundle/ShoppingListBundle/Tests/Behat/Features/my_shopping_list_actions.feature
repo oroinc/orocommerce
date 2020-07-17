@@ -59,7 +59,7 @@ Feature: My Shopping List Actions
     Then I should see "Set as Default"
     When I click "Set as Default"
     And I click "Yes, set as default"
-    Then I should see "Shopping list has been set as default" flash message
+    Then I should see "Shopping list has been successfully set as default" flash message
 
   Scenario: Delete Action
     Given I click "Shopping List Actions"

@@ -37,11 +37,6 @@ layout:
                     blockType: shopping_list_awere_block
                     options:
                         shoppingList: '=data["entity"]'
-                __header_rename_action:
-                    blockType: shopping_list_action
-                    options:
-                        visible: '=data["acl"].isGranted("oro_shopping_list_frontend_update")'
-                        shoppingList: '=data["entity"]'
                 __header_status:
                     blockType: text
                     options:
@@ -102,8 +97,8 @@ layout:
                 __root:
                     __container:
                         __header:
-                            __header_title_container:
-                                __header_title_wrapper:
+                            __header_title_wrapper:
+                                __header_title_container:
                                     __header_icon: ~
                                     __header_title_text: ~
                                     __header_status: ~
@@ -120,7 +115,7 @@ layout:
                                 __combined_button_placeholder: ~
 
         - '@move':
-            id: __header_shopping_list_actions
+            id: __header_shopping_list_actions_container
             parentId: __header_owner_wrapper
             siblingId: __header_owner
             prepend: false

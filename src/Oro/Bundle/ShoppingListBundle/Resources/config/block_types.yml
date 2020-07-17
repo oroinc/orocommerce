@@ -110,10 +110,10 @@ services:
         tags:
              - { name: layout.block_type, alias: matrix_grid_order }
 
-    oro_shopping_list.layout.type.shopping_list_action:
+    oro_shopping_list.layout.type.shopping_list_actions:
         parent: oro_layout.block_type.abstract_configurable
         calls:
             - [setOptionsConfig, [{shoppingList: ~, buttons: ~}]]
-            - [setName, ['shopping_list_action']]
+            - [setName, ['shopping_list_actions']]
         tags:
-            - { name: layout.block_type, alias: shopping_list_action }
+            - { name: layout.block_type, alias: shopping_list_actions }
