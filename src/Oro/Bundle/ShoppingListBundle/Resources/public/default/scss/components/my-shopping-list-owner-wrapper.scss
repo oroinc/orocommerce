@@ -1,0 +1,23 @@
+/* @theme: default; */
+
+.my-shopping-list-owner-wrapper {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    margin-bottom: $offset-y-m;
+
+    .separator {
+        display: none;
+        margin: 0 ($offset-y-m + $offset-y-s);
+        width: 1px;
+        height: 16px;
+
+        line-height: 1;
+        background: get-color('additional', 'light');
+    }
+
+    &.show-separator .separator {
+        display: inline-flex;
+    }
+}

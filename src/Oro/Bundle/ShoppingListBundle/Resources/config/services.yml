@@ -642,3 +642,10 @@ services:
             - '@oro_shopping_list.validator_service.line_item'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.my-shopping-list-line-items-grid, method: onResultAfter }
+
+    oro_shopping_list.layout.data_provider.shopping_list_totals:
+        class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\ShoppingListTotalsDataProvider'
+        arguments:
+            - '@oro_pricing.subtotal_processor.total_processor_provider'
+        tags:
+            - { name: layout.data_provider, alias: oro_shopping_list_totals }

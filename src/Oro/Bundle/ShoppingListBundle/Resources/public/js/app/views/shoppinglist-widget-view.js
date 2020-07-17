@@ -11,11 +11,6 @@ define(function(require) {
             currentClass: ''
         },
 
-        elements: {
-            shoppingListTitle: '[data-role="shopping-list-title"]',
-            shoppingListCurrentLabel: '[data-role="shopping-list-current-label"]'
-        },
-
         /**
          * Backbone.Collection {Object}
          */
@@ -66,41 +61,6 @@ define(function(require) {
             $shoppingListWidget.find('.header-row__trigger')
                 .toggleClass('disabled', !showShoppingListDropdown)
                 .attr('disabled', !showShoppingListDropdown);
-
-            this.updateLabel();
-            this.updateRadio();
-        },
-
-        updateLabel: function() {
-            const self = this;
-            self.$el.find(this.elements.shoppingListTitle).each(function() {
-                const $title = $(this);
-                const shoppingListId = $title.data('shopping-list-id');
-                $title.html(_.escape(self.shoppingListCollection.get(shoppingListId).get('label')));
-            });
-        },
-
-        updateRadio: function() {
-            const self = this;
-            self.$el.find(this.elements.shoppingListCurrentLabel).each(function() {
-                const $label = $(this);
-                const $input = $label.find('input');
-                const shoppingListId = $label.data('shopping-list-id');
-                const isCurrent = self.shoppingListCollection.get(shoppingListId).get('is_current');
-
-                $label.removeClass('checked');
-                if (isCurrent) {
-                    $label.addClass('checked');
-                }
-                $input.prop('checked', isCurrent);
-                $label.removeClass(self.options.currentClass);
-                if (isCurrent) {
-                    $label.addClass(self.options.currentClass);
-                }
-                if ($input.length) {
-                    $input.prop('checked', isCurrent);
-                }
-            });
         }
     });
 

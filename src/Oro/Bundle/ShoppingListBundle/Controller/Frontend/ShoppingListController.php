@@ -140,28 +140,31 @@ class ShoppingListController extends AbstractController
      * @AclAncestor("oro_shopping_list_frontend_view")
      *
      * @param ShoppingList $shoppingList
+     * @param Request $request
+     *
      * @return array
      */
-    public function viewMyAction(ShoppingList $shoppingList): array
+    public function viewMyAction(ShoppingList $shoppingList, Request $request): array
     {
         $this->get(ShoppingListManager::class)->actualizeLineItems($shoppingList);
 
-        // It is required to ensure that enabled localizations are loaded before calling ::findForViewAction()
-        // because of partial hydrations on product names.
-        $this->get(UserLocalizationManager::class)->getEnabledLocalizations();
+        // Skips preloading of shopping list related entities in case of partial rendering.
+        if (!$request->get('layout_block_ids')) {
+            // It is required to ensure that enabled localizations are loaded before calling ::findForViewAction()
+            // because of partial hydrations on product names.
+            $this->get(UserLocalizationManager::class)->getEnabledLocalizations();
 
-        $shoppingList = $this->getDoctrine()->getManagerForClass(ShoppingList::class)
-            ->getRepository(ShoppingList::class)
-            ->findForViewAction($shoppingList->getId());
+            $shoppingList = $this->getDoctrine()->getManagerForClass(ShoppingList::class)
+                ->getRepository(ShoppingList::class)
+                ->findForViewAction($shoppingList->getId());
+        }
+
+        // actualize current shopping list
+        $this->get(CurrentShoppingListManager::class)->getCurrent();
 
         return [
             'data' => [
                 'entity' => $shoppingList,
-                'totals' => [
-                    'identifier' => 'totals',
-                    'data' => $this->get(TotalProcessorProvider::class)->getTotalWithSubtotalsAsArray($shoppingList)
-                ],
-                'shopping_list_buttons' => ['data' => $this->getButtons($shoppingList)],
             ],
         ];
     }
