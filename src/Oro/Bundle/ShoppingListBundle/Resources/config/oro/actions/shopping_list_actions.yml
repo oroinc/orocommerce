@@ -21,6 +21,7 @@ operations:
             - shopping_list_actions
         routes:
             - oro_shopping_list_frontend_my_view
+            - oro_shopping_list_frontend_update
         actions:
             - '@redirect':
                 route: 'oro_shopping_list_frontend_my_view'
@@ -49,6 +50,7 @@ operations:
             - shopping_list_actions
         routes:
             - oro_shopping_list_frontend_my_view
+            - oro_shopping_list_frontend_update
         actions:
             - '@redirect':
                 route: 'oro_shopping_list_frontend_my_index'
@@ -72,6 +74,7 @@ operations:
             - shopping_list_actions
         routes:
             - oro_shopping_list_frontend_my_view
+            - oro_shopping_list_frontend_update
         preconditions:
             '@equal': [false, $.data.current]
         actions:
@@ -116,6 +119,7 @@ operations:
             - shopping_list_actions
         routes:
             - oro_shopping_list_frontend_my_view
+            - oro_shopping_list_frontend_update
         actions:
             - '@flush_entity': $.data
             - '@flash_message':
@@ -160,6 +164,7 @@ operations:
             - shopping_list_actions
         routes:
             - oro_shopping_list_frontend_my_view
+            - oro_shopping_list_frontend_update
         actions:
             - '@flush_entity': $.data
             - '@flash_message':
