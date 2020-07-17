@@ -17,14 +17,32 @@ class ProductMessageFilterTest extends \PHPUnit\Framework\TestCase
         $this->filter = new ProductMessageFilter(self::TOPIC);
     }
 
-    public function testApplyForEmptyBuffer()
+    public function testApplyForEmptyBuffer(): void
     {
         $buffer = new MessageBuffer();
         $this->filter->apply($buffer);
         $this->assertEquals([], $buffer->getMessages());
     }
 
-    public function testApply()
+    public function testApplyWhenMultipleIds(): void
+    {
+        $buffer = new MessageBuffer();
+
+        $buffer->addMessage(self::TOPIC, ['id' => 42]);
+        $buffer->addMessage(self::TOPIC, ['id' => 123]);
+        $buffer->addMessage(self::TOPIC, ['id' => 321]);
+
+        $this->filter->apply($buffer);
+
+        $this->assertEquals(
+            [
+                0 => [self::TOPIC, ['id' => [42, 123, 321], 'scheduleReindex' => true]],
+            ],
+            $buffer->getMessages()
+        );
+    }
+
+    public function testApplyWhenMultipleIdsDuplicated(): void
     {
         $buffer = new MessageBuffer();
 
@@ -42,9 +60,42 @@ class ProductMessageFilterTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals(
             [
+                0 => [self::TOPIC, ['id' => [42, 123, 321], 'scheduleReindex' => true]],
+            ],
+            $buffer->getMessages()
+        );
+    }
+
+    public function testApplyWhenSingleIdDuplicated(): void
+    {
+        $buffer = new MessageBuffer();
+
+        // add same message twice
+        $buffer->addMessage(self::TOPIC, ['id' => 42]);
+        $buffer->addMessage(self::TOPIC, ['id' => 42]);
+
+        $this->filter->apply($buffer);
+
+        $this->assertEquals(
+            [
                 0 => [self::TOPIC, ['id' => 42]],
-                2 => [self::TOPIC, ['id' => 123]],
-                3 => [self::TOPIC, ['id' => 321]]
+            ],
+            $buffer->getMessages()
+        );
+    }
+
+    public function testApplyWhenSingleId(): void
+    {
+        $buffer = new MessageBuffer();
+
+        // add same message twice
+        $buffer->addMessage(self::TOPIC, ['id' => 42]);
+
+        $this->filter->apply($buffer);
+
+        $this->assertEquals(
+            [
+                0 => [self::TOPIC, ['id' => 42]],
             ],
             $buffer->getMessages()
         );

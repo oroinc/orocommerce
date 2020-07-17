@@ -7,6 +7,7 @@ use Oro\Bundle\MessageQueueBundle\Client\MessageFilterInterface;
 
 /**
  * Removes duplicated messages for a specific product visibility management related topic.
+ * Aggregates messages into single message.
  */
 class ProductMessageFilter implements MessageFilterInterface
 {
@@ -30,15 +31,42 @@ class ProductMessageFilter implements MessageFilterInterface
             return;
         }
 
-        $processedMessages = [];
+        $this->aggregateMessages($buffer);
+    }
+
+    /**
+     * Aggregates messages from the same topic into one message.
+     *
+     * @param MessageBuffer $buffer
+     */
+    private function aggregateMessages(MessageBuffer $buffer): void
+    {
+        $productIds = [];
+        $firstMessageId = null;
         $messages = $buffer->getMessagesForTopic($this->topic);
         foreach ($messages as $messageId => $message) {
-            $messageKey = (string)$message['id'];
-            if (isset($processedMessages[$messageKey])) {
-                $buffer->removeMessage($messageId);
+            if ($firstMessageId === null) {
+                $firstMessageId = $messageId;
             } else {
-                $processedMessages[$messageKey] = true;
+                $buffer->removeMessage($messageId);
             }
+
+            $productIds[$message['id']] = $message['id'];
+        }
+
+        if ($firstMessageId !== null) {
+            /** @var array $firstMessage */
+            $firstMessage = $buffer->getMessage($firstMessageId);
+
+            // Schedules reindex if number of products for visibility resolving is greater than 1.
+            if (count($productIds) > 1) {
+                $firstMessage['id'] = array_values($productIds);
+                $firstMessage['scheduleReindex'] = true;
+            } else {
+                $firstMessage['id'] = reset($productIds);
+            }
+
+            $buffer->replaceMessage($firstMessageId, $firstMessage);
         }
     }
 }

@@ -308,3 +308,10 @@ services:
             - '@oro_website_search.extension.no_data_messages.inner'
             - '@oro_frontend.request.frontend_helper'
             - '@oro_website_search.provider.search_mapping'
+
+    oro_website_search.async.message_filter.reindex:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Async\MessageFilter\ReindexMessageFilter'
+        arguments:
+            - !php/const Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer::TOPIC_REINDEX
+        tags:
+            - { name: oro_message_queue.message_filter, topic: !php/const Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer::TOPIC_REINDEX }

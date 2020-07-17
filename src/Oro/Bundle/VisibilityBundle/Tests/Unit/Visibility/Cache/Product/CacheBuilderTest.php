@@ -27,18 +27,38 @@ class CacheBuilderTest extends AbstractCacheBuilderTest
         }
     }
 
-    public function testProductCategoryChanged()
+    /**
+     * @dataProvider productCategoryChangedDataProvider
+     *
+     * @param bool $scheduleReindex
+     */
+    public function testProductCategoryChanged(bool $scheduleReindex): void
     {
         $product = new Product();
 
         /** @var \PHPUnit\Framework\MockObject\MockObject|ProductCaseCacheBuilderInterface $customBuilder */
         $customBuilder
-            = $this->createMock('Oro\Bundle\VisibilityBundle\Visibility\Cache\ProductCaseCacheBuilderInterface');
+            = $this->createMock(ProductCaseCacheBuilderInterface::class);
         $customBuilder->expects($this->once())
             ->method('productCategoryChanged')
-            ->with($product);
+            ->with($product, $scheduleReindex);
 
         $this->cacheBuilder->addBuilder($customBuilder);
-        $this->cacheBuilder->productCategoryChanged($product);
+        $this->cacheBuilder->productCategoryChanged($product, $scheduleReindex);
+    }
+
+    /**
+     * @return array
+     */
+    public function productCategoryChangedDataProvider(): array
+    {
+        return [
+            [
+                'scheduleReindex' => false,
+            ],
+            [
+                'scheduleReindex' => true,
+            ],
+        ];
     }
 }
