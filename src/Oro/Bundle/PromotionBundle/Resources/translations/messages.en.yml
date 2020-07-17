@@ -66,6 +66,7 @@ oro:
         scopes.label: Scopes
         use_coupons:
             label: Triggered by
+            tooltip: Select Coupons and Conditions if the promotion is going to use either only coupons, or coupons and conditions together. If you need to trigger the promotion solely by conditions, use the Conditions Only option.
             no: Conditions only
             yes: Coupons and Conditions
         rule:
