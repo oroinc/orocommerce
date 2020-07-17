@@ -170,7 +170,9 @@ oro:
         privilege:
             category.shopping.label: 'Shopping'
         permission:
-            duplicate_shopping_list.label: Duplicate
+            duplicate_shopping_list.label: Duplicated
+            rename_shopping_list.label: Rename
+            set_as_default_shopping_list.label: Set as Default
         duplicate:
             success.message: 'The shopping list has been duplicated'
             error.customer_user_is_guest: 'Unable to duplicate as only one shopping list is allowed for unregistered users'
@@ -178,7 +180,15 @@ oro:
             list:
                 label: Duplicate List
                 aria_label: Duplicate Current Shopping List
-
+            action.label: Duplicate
+        delete:
+            action.label: Delete
+        set_as_default:
+            action.label: Set as Default
+        rename:
+            action.label: Rename
+        assign:
+            action.label: Reassign
         visitors.label: 'Visitors'
 
     customer:
@@ -235,8 +245,13 @@ oro:
                 view_list.label: 'View List'
                 create_new_shopping_list.label: 'Create New List'
                 create_new_shopping_list.aria_label: 'Create New List. Opens a popup'
+                choose_assign_user.label: 'Choose a User to assign "%label%"'
+                rename.label: 'Rename Shopping List'
             messages:
                 line_item_delete_confirm: 'Are you sure you want to delete this Shopping list item?'
+                set_default_success: 'Shopping list has been successfully set as default'
+                rename_success: 'Shopping list has been successfully renamed'
+                assign_success: 'Shopping list has been successfully re-assigned'
                 line_item_deleted: 'Shopping list item has been deleted'
                 cannot_create_order_no_line_item_with_price: 'Cannot create order because Shopping List has no items with price'
                 cannot_create_order_no_line_item_with_quantity: 'Cannot create order because Shopping List has no items'
@@ -244,6 +259,19 @@ oro:
             open_modal_btn:
                 aria_label: 'Manage current product in the Shopping List'
             btn:
+                actions:
+                    aria_label: 'Actions of %name%'
+                assign:
+                    label: 'Reassign'
+                    aria_label: 'Reassign %name%'
+                rename:
+                    label: 'Rename'
+                    aria_label: 'Rename %name%'
+                set_as_default:
+                    aria_label: 'Set as Default %name%'
+                duplicate:
+                    aria_label: 'Duplicate %name%'
+                cancel.label: 'Cancel'
                 apply_aria_label: 'Apply changes in the Shopping List'
                 decline_aria_label: 'Decline changes in the Shopping List'
                 edit_aria_label: 'Change item quantity in the Shopping List'
@@ -251,6 +279,7 @@ oro:
                 request_quote_create_rfp: 'Request Quote'
                 create_order: 'Create Order'
                 delete: 'Delete'
+                delete_aria_label: 'Delete %name%'
                 delete_item_aria_label: 'Delete this Shopping list item'
             workflow:
                 remove_source.label: Delete this shopping list after submitting order

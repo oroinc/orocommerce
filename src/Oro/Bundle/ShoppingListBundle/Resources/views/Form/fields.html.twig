@@ -1,0 +1,19 @@
+{% block oro_shopping_list_owner_grid_widget %}
+    {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+    {{ dataGrid.renderGrid('my-shopping-lists-assign-grid', {'shopping_list_id': form.vars.shopping_list_id}, {
+        themeOptions: {
+            actionOptions: {
+                refreshAction: {
+                    launcherOptions: {
+                        className: 'btn btn--default btn--size-s refresh-action'
+                    }
+                },
+                resetAction: {
+                    launcherOptions: {
+                        className: 'btn btn--default btn--size-s reset-action'
+                    }
+                }
+            }
+        }
+    }) }}
+{% endblock %}

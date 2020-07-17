@@ -1,0 +1,22 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'layout.html.twig'
+
+        - '@addTree':
+            items:
+                __shopping_list_actions_container:
+                    blockType: container
+                    options:
+                        vars:
+                            shoppingList: '=data["entity"]'
+                __shopping_list_actions:
+                    blockType: shopping_list_actions
+                    options:
+                        visible: '=buttons'
+                        shoppingList: '=data["entity"]'
+                        buttons: '=data["buttons"].getByGroup(shoppingList, null, "shopping_list_actions")'
+            tree:
+                __root:
+                    __shopping_list_actions_container:
+                        __shopping_list_actions: ~

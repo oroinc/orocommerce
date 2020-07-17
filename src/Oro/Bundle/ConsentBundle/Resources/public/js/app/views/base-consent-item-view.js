@@ -3,6 +3,7 @@ define(function(require) {
 
     const _ = require('underscore');
     const $ = require('jquery');
+    const actionsTemplate = require('tpl-loader!oroconsent/templates/frontend-dialog/dialog-actions.html');
     const BaseView = require('oroui/js/app/views/base/view');
     const FrontendDialogWidget = require('orofrontend/js/app/components/frontend-dialog-widget');
 
@@ -90,6 +91,7 @@ define(function(require) {
                 title: this.consentTitle,
                 simpleActionTemplate: !this.$valueField.length,
                 renderActionsFromTemplate: true,
+                actionsTemplate: actionsTemplate,
                 staticPage: true,
                 fullscreenMode: false,
                 dialogOptions: {

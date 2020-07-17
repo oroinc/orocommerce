@@ -405,6 +405,87 @@ datagrids:
             errors:
                 frontend_type: row_array
 
+    my-shopping-lists-assign-grid:
+        acl_resource: oro_shopping_list_frontend_assign
+        options:
+            entityHint: oro.customer.customeruser.entity_plural_label
+            frontend: true
+        source:
+            type: orm
+            query:
+                select:
+                    - customerUser.id
+                    - customerUser.firstName
+                    - customerUser.lastName
+                    - customerUser.email
+                    - customerUser.enabled
+                    - customerUser.confirmed
+                    - shoppingList.id as shoppingListId
+                from:
+                    - { table: 'Oro\Bundle\CustomerBundle\Entity\CustomerUser', alias: customerUser }
+                join:
+                    left:
+                        -
+                            join: 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList'
+                            alias: shoppingList
+                            conditionType: WITH
+                            condition: "shoppingList.customerUser = customerUser AND shoppingList.id = :shopping_list_id"
+            bind_parameters:
+                - shopping_list_id
+        columns:
+            assigned:
+                label: ''
+                type: twig
+                frontend_type: html
+                template: OroShoppingListBundle:Datagrid:Column/customer_user_owner_radio.html.twig
+                manageable: false
+            firstName:
+                label: oro.customer.customeruser.first_name.label
+                order: 10
+            lastName:
+                label: oro.customer.customeruser.last_name.label
+                order: 20
+            email:
+                label: oro.customer.customeruser.email.label
+                order: 30
+            enabled:
+                label: oro.customer.customeruser.enabled.label
+                frontend_type: boolean
+                order: 40
+            confirmed:
+                label: oro.customer.customeruser.confirmed.label
+                frontend_type: boolean
+                order: 50
+        filters:
+            columns:
+                firstName:
+                    type: string
+                    data_name: customerUser.firstName
+                lastName:
+                    type: string
+                    data_name: customerUser.lastName
+                email:
+                    type: string
+                    data_name: customerUser.email
+                enabled:
+                    type: boolean
+                    data_name: customerUser.enabled
+                confirmed:
+                    type: boolean
+                    data_name: customerUser.confirmed
+        sorters:
+            columns:
+                firstName:
+                    data_name: customerUser.firstName
+                lastName:
+                    data_name: customerUser.lastName
+                email:
+                    data_name: customerUser.email
+                enabled:
+                    data_name: customerUser.enabled
+                confirmed:
+                    data_name: customerUser.confirmed
+
     shopping-list-line-items-grid:
         acl_resource:      oro_shopping_list_view
         extended_entity_name: 'Oro\Bundle\ShoppingListBundle\Entity\LineItem'

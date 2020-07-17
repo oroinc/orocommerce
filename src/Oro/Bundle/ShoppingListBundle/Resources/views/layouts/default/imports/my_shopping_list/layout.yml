@@ -3,6 +3,10 @@ layout:
         -
             id: my_shopping_list_line_items_grid
             root: __line_items
+        -
+            id: my_shopping_list_actions
+            root: __header
+            namespace: header
 
     actions:
         - '@setBlockTheme':
@@ -20,6 +24,11 @@ layout:
                     blockType: container
                 __header:
                     blockType: container
+                __header_title_wrapper:
+                    blockType: layout_subtree_update
+                    options:
+                        reloadEvents: ['layout-subtree:update:shopping_list_rename', 'layout-subtree:update:shopping_list_set_default']
+                        showLoading: false
                 __header_title_container:
                     blockType: container
                 __header_icon:
@@ -33,6 +42,10 @@ layout:
                     options:
                         visible: '=data["oro_shopping_list_customer_user_shopping_lists"].isCurrent(data["entity"])'
                         text: 'oro.frontend.shoppinglist.view.is_default.label'
+                __header_owner_wrapper:
+                    blockType: layout_subtree_update
+                    options:
+                        reloadEvents: ['layout-subtree:update:shopping_list_owner']
                 __header_owner:
                     blockType: shopping_list_awere_block
                     options:
@@ -50,11 +63,16 @@ layout:
                     blockType: container
                 __summary_container:
                     blockType: container
+                __totals_wrapper:
+                    blockType: layout_subtree_update
+                    options:
+                        reloadEvents: ['datagrid_create_before']
+                        showLoading: true
                 __totals:
                     blockType: price_totals
                     options:
-                        visible: '=data["entity"]!=null'
-                        totals: '=data["totals"]'
+                        visible: '=data["entity"]!=null && context["is_xml_http_request"]'
+                        totals: '=data["oro_shopping_list_totals"].getTotalWithSubtotalsAsArray(data["entity"])'
                         events:
                             - 'frontend:item:delete'
                             - 'frontend:shopping-list-item-quantity:update'
@@ -63,24 +81,49 @@ layout:
                         skipMaskView: true
                         vars:
                             itemsCount: '=data["entity"].getLineItemsCount()'
+                __totals_placeholder:
+                    blockType: block
+                    options:
+                        visible: '=!context["is_xml_http_request"]'
+                __combined_button_wrapper:
+                    blockType: layout_subtree_update
+                    options:
+                        reloadEvents: ['datagrid_create_before']
+                        showLoading: true
                 __combined_button:
                     blockType: combined_buttons
                     options:
-                        visible: '=data["entity"]!=null'
-                        buttons: '=data["shopping_list_buttons"]'
+                        visible: '=data["entity"]!=null && context["is_xml_http_request"]'
+                        buttons: '=data["buttons"].getAll(data["entity"])'
+                __combined_button_placeholder:
+                    blockType: block
+                    options:
+                        visible: '=!context["is_xml_http_request"]'
             tree:
                 __root:
                     __container:
                         __header:
-                            __header_title_container:
-                                __header_icon: ~
-                                __header_title_text: ~
-                                __header_status: ~
-                            __header_owner: ~
+                            __header_title_wrapper:
+                                __header_title_container:
+                                    __header_icon: ~
+                                    __header_title_text: ~
+                                    __header_status: ~
+                            __header_owner_wrapper:
+                                __header_owner: ~
                             __header_notes:
                                 __header_notes_text: ~
                         __line_items: ~
                         __checkout_container:
                             __summary_container:
-                                __totals: ~
-                            __combined_button: ~
+                                __totals_wrapper:
+                                    __totals: ~
+                                    __totals_placeholder: ~
+                            __combined_button_wrapper:
+                                __combined_button: ~
+                                __combined_button_placeholder: ~
+
+        - '@move':
+            id: __header_shopping_list_actions_container
+            parentId: __header_owner_wrapper
+            siblingId: __header_owner
+            prepend: false

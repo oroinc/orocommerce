@@ -1,3 +1,6 @@
+imports:
+    - { resource: 'actions/shopping_list_actions.yml' }
+
 operations:
     oro_shoppinglist_createorder:
         label: oro.shoppinglist.btn.create_order
@@ -427,6 +430,7 @@ operations:
                 route: 'oro_shopping_list_frontend_view'
                 route_parameters:
                     id: $.newShoppingList.id
+
 action_groups:
     oro_shoppinglist_frontend_addlineitem:
         parameters:
