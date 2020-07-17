@@ -410,8 +410,6 @@ datagrids:
         options:
             entityHint: oro.customer.customeruser.entity_plural_label
             frontend: true
-            jsmodules:
-                - oroshoppinglist/js/datagrid/builder/shoppinglist-flat-data-builder
         source:
             type: orm
             query:

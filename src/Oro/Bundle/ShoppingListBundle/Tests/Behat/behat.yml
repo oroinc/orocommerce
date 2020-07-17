@@ -265,13 +265,11 @@ oro_behat_extension:
         locator: '//div[contains(@class, "btn-group")]/button[contains(@aria-label, "Actions of ")]'
 
     Shopping List Rename Action Form:
-      selector:
-        type: xpath
-        locator: '//div[contains(@class, "shopping-list-rename-form")]'
+      selector: 'form[name="oro_action_operation"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
-          Label: 'label'
+          Label: 'oro_action_operation[label]'
 
     Shopping List Action Submit:
       selector: 'div.form-actions button[type="submit"]'
@@ -292,7 +290,7 @@ oro_behat_extension:
       selector: 'div[data-page-component-name="my-shopping-lists-assign-grid"] div.filters-state'
 
     Shopping List Action Reassign Radio:
-      selector: 'div[data-page-component-name="my-shopping-lists-assign-grid"] input[name="assigned"]'
+      selector: 'div[data-page-component-name="my-shopping-lists-assign-grid"] input[name="oro_action_operation[customerUser]"]'
 
   suites:
     OroShoppingListBundle:

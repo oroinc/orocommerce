@@ -170,40 +170,6 @@ class ShoppingListController extends AbstractController
     }
 
     /**
-     * @Route("/my/{id}/assign", name="oro_shopping_list_frontend_my_assign", requirements={"id"="\d+"})
-     * @Layout
-     * @AclAncestor("oro_shopping_list_frontend_assign")
-     *
-     * @param ShoppingList $shoppingList
-     * @return array
-     */
-    public function assignMyAction(ShoppingList $shoppingList): array
-    {
-        return [
-            'data' => [
-                'entity' => $shoppingList
-            ],
-        ];
-    }
-
-    /**
-     * @Route("/my/{id}/rename", name="oro_shopping_list_frontend_my_rename", requirements={"id"="\d+"})
-     * @Layout
-     * @AclAncestor("oro_shopping_list_frontend_update")
-     *
-     * @param ShoppingList $shoppingList
-     * @return array
-     */
-    public function renameMyAction(ShoppingList $shoppingList): array
-    {
-        return [
-            'data' => [
-                'entity' => $shoppingList
-            ],
-        ];
-    }
-
-    /**
      * Create shopping list form
      *
      * @Route("/create", name="oro_shopping_list_frontend_create")

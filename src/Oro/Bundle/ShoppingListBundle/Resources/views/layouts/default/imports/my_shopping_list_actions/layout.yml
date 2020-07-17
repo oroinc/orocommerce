@@ -5,43 +5,18 @@ layout:
 
         - '@addTree':
             items:
-                __shopping_list_actions:
+                __shopping_list_actions_container:
                     blockType: container
                     options:
                         vars:
                             shoppingList: '=data["entity"]'
-                __shopping_list_duplicate_action:
-                    blockType: shopping_list_action
+                __shopping_list_actions:
+                    blockType: shopping_list_actions
                     options:
-                        visible: '=data["acl"].isGranted("oro_shopping_list_frontend_duplicate")'
-                        buttons: '=data["buttons"].getByGroup(data["entity"], null, "shopping_list_duplicate_action")'
+                        visible: '=buttons'
                         shoppingList: '=data["entity"]'
-                __shopping_list_delete_action:
-                    blockType: shopping_list_action
-                    options:
-                        visible: '=data["acl"].isGranted("oro_shopping_list_frontend_delete")'
-                        buttons: '=data["buttons"].getByGroup(data["entity"], null, "shopping_list_delete_action")'
-                        shoppingList: '=data["entity"]'
-                __shopping_list_rename_action:
-                    blockType: shopping_list_action
-                    options:
-                        visible: '=data["acl"].isGranted("oro_shopping_list_frontend_update")'
-                        shoppingList: '=data["entity"]'
-                __shopping_list_set_default_action:
-                    blockType: shopping_list_action
-                    options:
-                        visible: '=data["acl"].isGranted("oro_shopping_list_frontend_update") && !data["entity"].isCurrent()'
-                        shoppingList: '=data["entity"]'
-                __shopping_list_assign_action:
-                    blockType: shopping_list_action
-                    options:
-                        visible: '=data["acl"].isGranted("oro_shopping_list_frontend_assign") && data["acl"].isGranted("oro_customer_frontend_customer_user_view")'
-                        shoppingList: '=data["entity"]'
+                        buttons: '=data["buttons"].getByGroup(shoppingList, null, "shopping_list_actions")'
             tree:
                 __root:
-                    __shopping_list_actions:
-                        __shopping_list_duplicate_action: ~
-                        __shopping_list_delete_action: ~
-                        __shopping_list_rename_action: ~
-                        __shopping_list_set_default_action: ~
-                        __shopping_list_assign_action: ~
+                    __shopping_list_actions_container:
+                        __shopping_list_actions: ~

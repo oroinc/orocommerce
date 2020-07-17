@@ -1,9 +1,0 @@
-{% block __my_shopping_lists_rename_form__rename_form_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': ' shopping-list-rename-form form-row'
-    }) %}
-
-    <div{{ block('block_attributes') }}>
-        <input type="text" name="label" value="{{ shoppingList.label }}" class="input input--full"/>
-    </div>
-{% endblock %}

@@ -51,11 +51,21 @@ oro:
                 show_less:
                     aria_label: 'Show all added products with pagination'
                     label: 'Show Less'
+                duplicate.aria_label: Duplicate Current Shopping List
             btn_more:
                 label: 'And {{ count }} more'
                 aria_label: 'And {{ count }} more variants of {{ name }} product'
             dialog:
                 cancel.label: Cancel
-                assign.label: Assign
-                rename.label: Rename
-                rename.success: Shopping list has been successfully renamed
+                duplicate_confirmation:
+                    label: Duplicate Confirmation
+                    message: Are you sure you want to duplicate this shopping list?
+                duplicate_ok.label: Yes, duplicate
+                delete_confirmation:
+                    label: Delete Confirmation
+                    message: Are you sure you want to delete this shopping list?
+                delete_ok.label: Yes, delete
+                set_as_default_confirmation:
+                    label: Set as Default Confirmation
+                    message: Are you sure you want to set as default this shopping list?
+                set_as_default_ok.label: Yes, set as default

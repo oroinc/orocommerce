@@ -43,7 +43,7 @@
 
 {%- block __my_shopping_list__header_title_container_widget -%}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' customer-profile__title-wrapper'
+        '~class': ' page-title with-ellipsis'
     }) %}
 
     <h1 {{ block('block_attributes') }}>{{ block_widget(block) }}</h1>
@@ -51,7 +51,7 @@
 
 {% block __my_shopping_list__header_title_wrapper_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' page-title with-ellipsis'
+        '~class': ' customer-profile__title-wrapper'
     }) %}
 
     {{ parent_block_widget(block) }}
@@ -82,14 +82,14 @@
 
     {% if block.children|length >= 2 %}
         {% set attr = layout_attr_defaults(attr, {
-         '~class': ' show-separator'
+            '~class': ' show-separator'
         }) %}
     {% endif %}
 
     {{ parent_block_widget(block) }}
 {%- endblock -%}
 
-{% block __my_shopping_list__shopping_list_actions_widget %}
+{% block __my_shopping_list__shopping_list_actions_container_widget %}
     {% if block.children %}
         <span class="separator" aria-hidden="true"></span>
         {{ block_widget(block) }}

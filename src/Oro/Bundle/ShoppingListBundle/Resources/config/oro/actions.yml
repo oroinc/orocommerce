@@ -1,3 +1,6 @@
+imports:
+    - { resource: 'actions/shopping_list_actions.yml' }
+
 operations:
     oro_shoppinglist_createorder:
         label: oro.shoppinglist.btn.create_order
@@ -427,36 +430,6 @@ operations:
                 route: 'oro_shopping_list_frontend_view'
                 route_parameters:
                     id: $.newShoppingList.id
-
-    oro_shoppinglist_frontend_duplicate_action:
-        label: oro.shoppinglist.duplicate.action.label
-        extends: oro_shoppinglist_frontend_duplicate
-        replace:
-            - groups
-        groups:
-            - shopping_list_duplicate_action
-        routes:
-            - oro_shopping_list_frontend_my_view
-        actions:
-            - '@redirect':
-                  route: 'oro_shopping_list_frontend_my_view'
-                  route_parameters:
-                      id: $.newShoppingList.id
-
-    oro_shoppinglist_frontend_delete_action:
-        label: oro.shoppinglist.delete.action.label
-        extends: oro_shoppinglist_delete
-        replace:
-            - groups
-        groups:
-            - shopping_list_delete_action
-        routes:
-            - oro_shopping_list_frontend_my_view
-        actions:
-            - '@redirect':
-                  route: 'oro_shopping_list_frontend_my_index'
-                  route_parameters:
-                      id: $.newShoppingList.id
 
 action_groups:
     oro_shoppinglist_frontend_addlineitem:
