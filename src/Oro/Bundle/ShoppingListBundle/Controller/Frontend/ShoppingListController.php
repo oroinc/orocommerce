@@ -199,6 +199,55 @@ class ShoppingListController extends AbstractController
     }
 
     /**
+     * @Route(
+     *      "/{gridName}/massAction/{actionName}",
+     *      name="oro_shopping_list_frontend_move_mass_action",
+     *      requirements={"gridName"="[\w\:\-]+", "actionName"="[\w\-]+"}
+     * )
+     * @Layout
+     * @AclAncestor("oro_shopping_list_frontend_update")
+     *
+     * @param Request $request
+     * @param string $gridName
+     * @param string $actionName
+     *
+     * @return array|Response
+     */
+    public function moveMassActionAction(Request $request, string $gridName, string $actionName)
+    {
+        if ($request->getMethod() === Request::METHOD_GET) {
+            $params = $request->get($gridName, []);
+            if (!isset($params['shopping_list_id'])) {
+                throw $this->createNotFoundException();
+            }
+
+            $shoppingList = $this->get('doctrine')
+                ->getManagerForClass(ShoppingList::class)
+                ->getRepository(ShoppingList::class)
+                ->find($params['shopping_list_id']);
+
+            if (!$shoppingList) {
+                throw $this->createNotFoundException();
+            }
+
+            return [
+                'data' => [
+                    'entity' => $shoppingList,
+                ],
+            ];
+        }
+
+        return $this->forward(
+            'OroDataGridBundle:Grid:massAction',
+            [
+                'gridName' => $gridName,
+                'actionName' => $actionName,
+            ],
+            $request->query->all()
+        );
+    }
+
+    /**
      * Create shopping list form
      *
      * @Route("/create", name="oro_shopping_list_frontend_create")

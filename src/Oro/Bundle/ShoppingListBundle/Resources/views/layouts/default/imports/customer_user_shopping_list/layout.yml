@@ -60,7 +60,7 @@ layout:
                 __totals_wrapper:
                     blockType: layout_subtree_update
                     options:
-                        reloadEvents: ['datagrid_create_before']
+                        reloadEvents: ['datagrid_create_before', 'shopping-list:refresh']
                         showLoading: true
                 __totals:
                     blockType: price_totals
@@ -82,7 +82,7 @@ layout:
                 __combined_button_wrapper:
                     blockType: layout_subtree_update
                     options:
-                        reloadEvents: ['datagrid_create_before']
+                        reloadEvents: ['datagrid_create_before', 'shopping-list:refresh']
                         showLoading: true
                 __combined_button:
                     blockType: combined_buttons

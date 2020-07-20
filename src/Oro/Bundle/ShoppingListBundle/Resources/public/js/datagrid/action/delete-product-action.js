@@ -1,9 +1,10 @@
 define([
     'underscore',
     'orotranslation/js/translator',
+    'oroui/js/mediator',
     'oroui/js/messenger',
     'oro/datagrid/action/delete-action'
-], function(_, __, messenger, DeleteAction) {
+], function(_, __, mediator, messenger, DeleteAction) {
     'use strict';
 
     /**
@@ -53,6 +54,8 @@ define([
                 wait: true,
                 success: function() {
                     messenger.notificationFlashMessage('success', success);
+
+                    mediator.trigger('shopping-list:refresh');
                 }
             });
         }

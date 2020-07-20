@@ -1,0 +1,17 @@
+layout:
+    imports:
+        -
+            id: customer_user_shopping_list_move_grid
+            root: shopping_list_move_grid_container
+
+    actions:
+        - '@setBlockTheme':
+              themes: 'layout.html.twig'
+
+        - '@addTree':
+              items:
+                  shopping_list_move_grid_container:
+                      blockType: container
+              tree:
+                  widget_content:
+                      shopping_list_move_grid_container: ~
