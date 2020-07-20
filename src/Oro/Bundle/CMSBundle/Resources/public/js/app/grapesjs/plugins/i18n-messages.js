@@ -124,8 +124,8 @@ const messages = {
                 // In a trait like select, these are used to translate option names
                 options: {
                     target: {
-                        'false': __('oro.cms.wysiwyg.trait_manager.traits.options.target.this_window'),
-                        '_blank': __('oro.cms.wysiwyg.trait_manager.traits.options.target.blank')
+                        _self: __('oro.cms.wysiwyg.trait_manager.traits.options.target.this_window'),
+                        _blank: __('oro.cms.wysiwyg.trait_manager.traits.options.target.blank')
                     }
                 }
             }

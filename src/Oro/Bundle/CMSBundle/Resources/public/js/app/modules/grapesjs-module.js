@@ -7,6 +7,7 @@ import ImageTypeBuilder from 'orocms/js/app/grapesjs/type-builders/image-type-bu
 import QuoteTypeBuilder from 'orocms/js/app/grapesjs/type-builders/quote-type-builder';
 import TableTypeBuilder from 'orocms/js/app/grapesjs/type-builders/table-type-builder';
 import TableResponsiveTypeBuilder from 'orocms/js/app/grapesjs/type-builders/table-responsive-type-builder';
+import LinkBLockTypeBuilder from 'orocms/js/app/grapesjs/type-builders/link-block-builder';
 import LinkButtonTypeBuilder from 'orocms/js/app/grapesjs/type-builders/link-button-type-builder';
 import LinkTypeBuilder from 'orocms/js/app/grapesjs/type-builders/link-type-builder';
 import CodeTypeBuilder from 'orocms/js/app/grapesjs/type-builders/code-type-builder';
@@ -44,6 +45,9 @@ ComponentManager.registerComponentTypes({
     },
     'link': {
         Constructor: LinkTypeBuilder
+    },
+    'link-block': {
+        Constructor: LinkBLockTypeBuilder
     },
     'link-button': {
         Constructor: LinkButtonTypeBuilder

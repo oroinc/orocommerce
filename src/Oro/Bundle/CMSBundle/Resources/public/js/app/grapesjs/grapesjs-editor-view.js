@@ -116,6 +116,18 @@ const GrapesjsEditorView = BaseView.extend({
     },
 
     /**
+     * Configurations for Trait Manager
+     * @property {Object}
+     */
+    traitManager: {
+        optionsTarget: [{
+            value: '_self'
+        }, {
+            value: '_blank'
+        }]
+    },
+
+    /**
      * Canvas options
      * @property {Object}
      */
@@ -476,6 +488,7 @@ const GrapesjsEditorView = BaseView.extend({
         if (!this.allow_tags) {
             return;
         }
+
         const _res = this.builder.ComponentRestriction.validate(
             this.builder.getIsolatedHtml(this.$el.val())
         );
@@ -680,6 +693,7 @@ const GrapesjsEditorView = BaseView.extend({
             , this._getStorageManagerConfig()
             , this._getCanvasConfig()
             , this._getStyleManagerConfig()
+            , this._getTaitManagerConfig()
             , this._getAssetConfig()
         );
 
@@ -707,6 +721,17 @@ const GrapesjsEditorView = BaseView.extend({
     _getStyleManagerConfig: function() {
         return {
             styleManager: this.styleManager
+        };
+    },
+
+    /**
+     * Get extended Tait Manager config
+     * @returns {{traitManager: *}}
+     * @private
+     */
+    _getTaitManagerConfig: function() {
+        return {
+            traitManager: this.traitManager
         };
     },
 

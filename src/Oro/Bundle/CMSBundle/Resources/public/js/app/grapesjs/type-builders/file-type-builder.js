@@ -12,12 +12,24 @@ function openDigitalAssetsManager(model) {
             title: __('oro.cms.wysiwyg.digital_asset.file.title'),
             routeName: 'oro_digital_asset_widget_choose_file',
             onSelect: function(digitalAssetModel) {
-                const {digitalAssetId, uuid, title, filename} = digitalAssetModel.get('previewMetadata');
+                const {
+                    digitalAssetId,
+                    uuid,
+                    title = '',
+                    filename = '',
+                    target = '_self'
+                } = digitalAssetModel.get('previewMetadata');
+                const traitText = model.getTrait('text');
 
                 model.setAttributes({
                     href: `{{ wysiwyg_file('${digitalAssetId}','${uuid}') }}`,
-                    title: title || ''
-                }).set('content', filename || '');
+                    title: title,
+                    target: target
+                }).set('content', filename);
+
+                if (traitText) {
+                    traitText.set('value', filename);
+                }
             }
         }
     );
@@ -46,7 +58,7 @@ const FileTypeBuilder = BaseTypeBuilder.extend({
             'editable': 1,
             'highlightable': 0,
             'resizable': 0,
-            'traits': ['title', 'target']
+            'traits': ['title', 'text', 'target']
         },
 
         initialize: function(...args) {
@@ -83,6 +95,10 @@ const FileTypeBuilder = BaseTypeBuilder.extend({
 
     viewMixin: {
         tagName: 'a',
+
+        events: {
+            dblclick: 'onActive'
+        },
 
         onActive: function(e) {
             e && e.stopPropagation();
