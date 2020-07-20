@@ -32,3 +32,16 @@ layout:
         - '@move':
             id: checkout_container
             parentId: page_sidebar
+
+        - '@addTree':
+            items:
+                shopping_list_notes:
+                    blockType: container
+                shopping_list_notes_text:
+                    blockType: shopping_list_notes_block
+                    options:
+                        shoppingList: '=data["entity"]'
+            tree:
+                checkout_container:
+                    shopping_list_notes:
+                        shopping_list_notes_text: ~
