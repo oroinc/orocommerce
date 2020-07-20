@@ -59,18 +59,21 @@ class ShoppingListGridExtension extends AbstractExtension
             return;
         }
 
-        $value = $this->configManager->get('oro_shopping_list.my_shopping_lists_all_page_value');
-        if ($this->getLineItemsCount($shoppingListId) > $value) {
-            return;
+        $item = $this->configManager->get('oro_shopping_list.my_shopping_lists_max_line_items_per_page');
+        if ($this->getLineItemsCount($shoppingListId) <= $item) {
+            $item = [
+                'label' => 'oro.shoppinglist.datagrid.toolbar.pageSize.all.label',
+                'size' => $item
+            ];
         }
 
-        $items = $config->offsetGetByPath('[options][toolbarOptions][pageSize][items]');
-        $items[] = [
-            'label' => 'oro.shoppinglist.datagrid.toolbar.pageSize.all.label',
-            'size' => $value
-        ];
-
-        $config->offsetSetByPath('[options][toolbarOptions][pageSize][items]', $items);
+        $config->offsetSetByPath(
+            '[options][toolbarOptions][pageSize][items]',
+            array_merge(
+                $config->offsetGetByPath('[options][toolbarOptions][pageSize][items]'),
+                [$item]
+            )
+        );
     }
 
     /**
