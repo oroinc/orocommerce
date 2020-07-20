@@ -171,7 +171,7 @@ datagrids:
             bind_parameters:
                 - customer_user_id
 
-    frontend-customer-user-shopping-lists-grid:
+    frontend-customer-user-shopping-lists-base-grid:
         acl_resource: oro_shopping_list_frontend_view
         options:
             entityHint: oro.shoppinglist.entity_plural_label
@@ -182,7 +182,7 @@ datagrids:
                 select:
                     - shopping_list.id
                     - shopping_list.label
-                    - cachedTotal.subtotalValue as subtotal
+                    - cachedTotal.subtotalValue AS subtotal
                     - cachedTotal.currency
                     - COALESCE(shopping_list.line_items_count, 0) AS lineItemsCount
                     - shopping_list.createdAt
@@ -253,6 +253,28 @@ datagrids:
                     data_name: shopping_list.updatedAt
             default:
                 createdAt: DESC
+        properties:
+            id: ~
+
+    frontend-customer-user-shopping-list-select-grid:
+        extends: frontend-customer-user-shopping-lists-base-grid
+        source:
+            query:
+                select:
+                    - (CASE WHEN shopping_list.id = :shopping_list_id THEN true ELSE false END) AS selected
+            bind_parameters:
+                - shopping_list_id
+        columns:
+            assigned:
+                label: ''
+                type: twig
+                frontend_type: html
+                template: OroShoppingListBundle:Datagrid:Column/shopping_list_select_radio.html.twig
+                manageable: false
+                order: 0
+
+    frontend-customer-user-shopping-lists-grid:
+        extends: frontend-customer-user-shopping-lists-base-grid
         properties:
             view_link:
                 type:  url
@@ -520,13 +542,27 @@ datagrids:
                 entity_name: Oro\Bundle\ShoppingListBundle\Entity\LineItem
                 acl_resource:  oro_shopping_list_frontend_update
                 data_identifier: lineItem.id
-                object_identifier: lineItem
                 defaultMessages:
                     confirm_content: oro.shoppinglist.mass_actions.delete_line_items.confirm_content
                     confirm_ok: oro.shoppinglist.mass_actions.delete_line_items.confirm_ok
                     confirm_title: oro.shoppinglist.mass_actions.delete_line_items.confirm_title
                 confirmMessages:
                     selected_message: oro.shoppinglist.mass_actions.delete_line_items.selected_message
+            move:
+                type: moveproducts
+                icon: level-up
+                label: oro.shoppinglist.mass_actions.move_line_items.label
+                entity_name: Oro\Bundle\ShoppingListBundle\Entity\LineItem
+                acl_resource:  oro_shopping_list_frontend_update
+                data_identifier: lineItem.id
+                frontend_options:
+                    contentElement: '.shopping-list-select-grid'
+                    renderActionsFromTemplate: true
+                    dialogOptions:
+                        modal: true
+                        resizable: true
+                        autoResize: true
+                        width: 800
 
     shopping-list-line-items-grid:
         acl_resource:      oro_shopping_list_view

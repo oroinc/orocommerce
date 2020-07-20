@@ -76,6 +76,10 @@ oro:
         mass_actions:
             delete_line_items:
                 label: Delete
+            move_line_items:
+                label: Move to another Shopping List
+                success_message: '{0} No items were moved.|{1} One entity has been moved successfully.|]1,Inf[ %count% items have been moved successfully.'
+                no_edit_permission_message: 'You do not have permission to edit the target shopping list.'
 
         menu:
             sales_tab.label: Sales
