@@ -4,6 +4,7 @@ namespace Oro\Bundle\SEOBundle\Tests\Unit\Sitemap\Manager;
 
 use Oro\Bundle\SEOBundle\Manager\RobotsTxtFileManager;
 use Oro\Bundle\SEOBundle\Sitemap\Manager\RobotsTxtSitemapManager;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class RobotsTxtSitemapManagerTest extends \PHPUnit\Framework\TestCase
 {
@@ -58,6 +59,7 @@ Sitemap : http://example.com/custom-sitemap1.xml
  Sitemap: http://example.com/custom-sitemap2.xml # with comment
  sitemap : http://example.com/custom-sitemap3.xml
 # Sitemap : http://example.com/custom-sitemap4.xml
+Sitemap: http://example.com/sitemap1.xml # auto-generated
 Sitemap: http://example.com/sitemap2.xml # auto-generated
 Allow: allowed_path
 Allow: another_allowed_path
@@ -76,7 +78,7 @@ EOF;
             ->method('dumpContent')
             ->with($expectedContent);
 
-        $this->manager->flush();
+        $this->manager->flush(new Website());
         $this->checkClear();
     }
 

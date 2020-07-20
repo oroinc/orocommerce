@@ -20,6 +20,7 @@ Sitemaps are an easy way for webmasters to inform search engines about pages on 
 For multi-language websites, OroSEOBundle provides a *hreflang* attribute on pages that have content in different languages.
 
 In the management console, this bundle provides the following system configuration options:
+* In enterprise edition, there is an ability to disable sitemap generation for specific website with `Enable Sitemap Generation For Website` option of sitemap configuration for the website.
 * Select the domain url that is used in the sitemap. You may call for using either secure or insecure domain. Secure URLs are preferable for *sitemap.xml* file. 
 * Frequency of page updates [changefreq](https://www.sitemaps.org/protocol.html#changefreqdef) and [priority](https://www.sitemaps.org/protocol.html#prioritydef) of the URL compared to other website URLs may be configured per an entity that is included in the sitemap (e.g. Product, Category, and CmsPage).
 
@@ -165,17 +166,65 @@ and should be tagged with the `oro_featuretogle.feature` tag for the `frontend_m
 ```
 **SitemapDumper**
 
-*SitemapDumper* creates sitemap files in the `web` folder of your Oro application and logs sitemap location into appropriate files depending on the storage type:
+*SitemapDumper* creates sitemap files for each configured website in the temp directory and logs sitemap location into appropriate files depending on the storage type:
 
 * XmlSitemapIndexStorage - for index sitemap file
 * XmlSitemapUrlsStorage - for particular sitemap file
 
 All sitemap files are compressed with gzip utility and have *.gz* file extension.
 
+At the end of the dumping process, the generated files are moved to the Gaufrette storage. By default, the storage is 
+configured to use a file adapter, and the files will be stored in the `public/media/sitemaps/{websiteId}/` directory of 
+your Oro application, where `{websiteId}` is the website Id.
+
 **Robots.txt file**
 
-The *DumpRobotsTxtListener.php* listener creates the *Robots.txt* file automatically based on the generated sitemaps.
+Robot txt files are created for every configured website's domain name of the system. 
+If some websites have the same domain name and different subfolders, the final robot txt file for such domain will have
+a links to sitemaps from all such websites. 
+
+
+The `config/{domain}.txt.dist`, where {domain} is the domain name, file is used as the base for every robots txt file.
+If the file is absent, the `config/robots.txt.dist` file is used.
+If the `robots.txt.dist` file is absent, the following data is used as the base:
+
+```text
+# www.robotstxt.org/
+# www.google.com/support/webmasters/bin/answer.py?hl=en&answer=156449
+
+User-agent: *
+
+```
+
+The *DumpRobotsTxtListener.php* adds the links to the sitemap index files.
+
+At the finish of dumping process, generated robot txt files are moves to the Gaufrette storage. By default,
+the storage is configured to use file adapter and files will be stored at `public/media/sitemaps/` directory
+of your Oro application. 
+
+The file names of dumped files have the next format: `robots.{domain}.txt`, where:
+
+ - {domain} - the domain name of configured website url for website
+
+To configure the redirect from the `/robots.txt` web request to the appropriate generated robot txt file, use
+the following configuration of the web server:
+
+- for Apache server, add the rewrite rule to the mod_rewire configuration block of the .htaccess file:
+
+```text
+RewriteRule ^robots.txt /media/sitemaps/3_your_domain.com.txt [L]
+```
+- for nginx web server, add the following configuration:
+
+```text
+location /robots.txt {
+    alias /media/sitemaps/3_your_domain.com.txt;
+} 
+```
 
 **Sitemap generation**
-The `oro:cron:sitemap:generate` command generates sitemap files for all providers into the `public/sitemaps/actual/` folder and logs the sitemap location in the *robots.txt* file.
+
+The cron command `oro:cron:sitemap:generate` adds a message to the queue to generate sitemap
+and robot txt files.
+
 Sitemap generation is a deferred process that is executed using the `SitemapGenerationProcessor.php` queue processor. For time-based sitemap generation on the predefined schedule, Oro application uses cron jobs.
