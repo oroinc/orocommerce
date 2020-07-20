@@ -6,3 +6,20 @@
 
     <div {{ block('block_attributes') }}></div>
 {% endblock %}
+
+{% block _shopping_list_notes_text_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' shopping-list-notes',
+        'data-page-component-module': "oroshoppinglist/js/app/components/shoppinglist-notes-editable-view-component",
+        'data-page-component-options': {
+            className: oro_class_name(shoppingList, true),
+            shoppingListId: shoppingList.id
+        }|json_encode
+    }) %}
+    <div{{ block('block_attributes') }}>
+        {{ form_widget(form) }}
+        <div class="shopping-list-notes-form-actions">
+            <button class="btn" type="submit">{{ 'oro.frontend.shoppinglist.btn.update'|trans }}</button>
+        </div>
+    </div>
+{% endblock %}

@@ -301,6 +301,7 @@ datagrids:
 
     frontend-customer-user-shopping-list-grid:
         acl_resource: oro_shopping_list_frontend_view
+        extended_entity_name: 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList'
         options:
             entityHint: oro.shoppinglist.lineitem.entity_plural_label
             frontend: true

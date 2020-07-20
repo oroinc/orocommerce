@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Layout\DataProvider;
 
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Form\Type\ShoppingListNotesType;
 use Oro\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
 use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\ShoppingListFormProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -96,5 +97,31 @@ class ShoppingListFormProviderTest extends \PHPUnit\Framework\TestCase
         // Get form with existing data in locale cache
         $result = $this->dataProvider->getShoppingListFormView($shoppingList);
         $this->assertInstanceOf(FormView::class, $result);
+    }
+
+    public function testGetShoppingListNotesFormView(): void
+    {
+        $formView = $this->createMock(FormView::class);
+
+        $form = $this->createMock(FormInterface::class);
+        $form->expects($this->once())
+            ->method('createView')
+            ->willReturn($formView);
+
+        $shoppingList = $this->getEntity(ShoppingList::class, ['id' => 42]);
+
+        $this->formFactory
+            ->expects($this->once())
+            ->method('create')
+            ->with(ShoppingListNotesType::class, $shoppingList)
+            ->willReturn($form);
+
+        // Get form without existing data in locale cache
+        $result = $this->dataProvider->getShoppingListNotesFormView($shoppingList);
+        $this->assertSame($formView, $result);
+
+        // Get form with existing data in locale cache
+        $result = $this->dataProvider->getShoppingListNotesFormView($shoppingList);
+        $this->assertSame($formView, $result);
     }
 }

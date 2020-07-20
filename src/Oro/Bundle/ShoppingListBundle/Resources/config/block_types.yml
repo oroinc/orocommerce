@@ -117,3 +117,16 @@ services:
             - [setName, ['shopping_list_actions']]
         tags:
             - { name: layout.block_type, alias: shopping_list_actions }
+
+    oro_shopping_list.layout.type.shopping_list_notes_block:
+        parent: oro_layout.block_type.abstract_configurable
+        calls:
+            -
+                - setOptionsConfig
+                -
+                    -
+                        shoppingList: {required: true}
+                        form: {required: true, default: '=data["oro_shopping_list_shopping_list_form"].getShoppingListNotesFormView(shoppingList)'}
+            - [setName, ['shopping_list_notes_block']]
+        tags:
+            - { name: layout.block_type, alias: shopping_list_notes_block }
