@@ -80,18 +80,19 @@ system_configuration:
             options:
                 label: oro.shoppinglist.system_configuration.fields.my_shopping_lists_page_enabled.label
                 required: false
-        oro_shopping_list.my_shopping_lists_all_page_value:
+        oro_shopping_list.my_shopping_lists_max_line_items_per_page:
             data_type: integer
             type: Symfony\Component\Form\Extension\Core\Type\IntegerType
             search_type: text
             options:
-                label: oro.shoppinglist.system_configuration.fields.my_shopping_lists_all_page_value.label
+                label: oro.shoppinglist.system_configuration.fields.my_shopping_lists_max_line_items_per_page.label
+                tooltip: oro.shoppinglist.system_configuration.fields.my_shopping_lists_max_line_items_per_page.tooltip
                 required: true
                 constraints:
                     - NotBlank: ~
                     - Range:
-                          min: 100
-                          max: 10000
+                          min: 200
+                          max: 1000
 
     tree:
         system_configuration:
@@ -122,4 +123,4 @@ system_configuration:
                                         children:
                                             - oro_shopping_list.mass_adding_on_product_listing_enabled
                                             - oro_shopping_list.my_shopping_lists_page_enabled
-                                            - oro_shopping_list.my_shopping_lists_all_page_value
+                                            - oro_shopping_list.my_shopping_lists_max_line_items_per_page

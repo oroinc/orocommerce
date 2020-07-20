@@ -93,7 +93,7 @@ class ShoppingListGridExtensionTest extends \PHPUnit\Framework\TestCase
 
         $this->configManager->expects($this->once())
             ->method('get')
-            ->with('oro_shopping_list.my_shopping_lists_all_page_value')
+            ->with('oro_shopping_list.my_shopping_lists_max_line_items_per_page')
             ->willReturn(1000);
 
         $this->shoppingListRepository->expects($this->once())
@@ -180,7 +180,7 @@ class ShoppingListGridExtensionTest extends \PHPUnit\Framework\TestCase
 
         $this->configManager->expects($this->once())
             ->method('get')
-            ->with('oro_shopping_list.my_shopping_lists_all_page_value')
+            ->with('oro_shopping_list.my_shopping_lists_max_line_items_per_page')
             ->willReturn(1000);
 
         $this->shoppingListRepository->expects($this->once())

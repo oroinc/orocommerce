@@ -173,7 +173,9 @@ oro:
                     label: 'Create Guest Shopping Lists Immediately'
                     tooltip: 'Enable this option to automatically create shopping lists for all guest users once they access the storefront. By default, this option is disabled and shopping lists are created only when guest users add at least one item to their shopping list.'
                 my_shopping_lists_page_enabled.label: 'Enable "My Shopping Lists" page'
-                my_shopping_lists_all_page_value.label: 'All Page Value'
+                my_shopping_lists_max_line_items_per_page:
+                    label: 'Maximum Line Items Per Page'
+                    tooltip: 'The provided value will be used as the implied maximum number of shopping list line items to display at once. If the number of shopping list line items exceeds this value, the "Show All Items" will no longer be available and this number will be shown as the maximum pager value.'
 
         privilege:
             category.shopping.label: 'Shopping'
