@@ -6,10 +6,13 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProviderRegistryInterface;
 use Oro\Component\Website\WebsiteInterface;
 
+/**
+ * Adds rules to robots.txt file according to system configuration.
+ */
 class RobotsTxtIndexingRulesBySitemapManager
 {
-    const ALLOW = 'Allow';
-    const DISALLOW = 'Disallow';
+    const ALLOW      = 'Allow';
+    const DISALLOW   = 'Disallow';
     const USER_AGENT = 'User-Agent';
 
     /**
@@ -48,7 +51,7 @@ class RobotsTxtIndexingRulesBySitemapManager
      */
     public function flush(WebsiteInterface $website, $version)
     {
-        $content = $this->robotsTxtFileManager->getContent();
+        $content = $this->robotsTxtFileManager->getContentForWebsite($website);
         $content = explode(PHP_EOL, $content);
         $regex = '/^\s*(%s|%s|%s)\s*:\s*(\/?.+)%s\s*$/i';
         $lineRegex = sprintf(
@@ -88,6 +91,6 @@ class RobotsTxtIndexingRulesBySitemapManager
             );
         }
 
-        $this->robotsTxtFileManager->dumpContent(implode(PHP_EOL, $content));
+        $this->robotsTxtFileManager->dumpContentForWebsite(implode(PHP_EOL, $content), $website);
     }
 }
