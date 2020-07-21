@@ -301,7 +301,7 @@ datagrids:
 
     frontend-customer-user-shopping-list-grid:
         acl_resource: oro_shopping_list_frontend_view
-        extended_entity_name: 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList'
+        extended_entity_name: 'Oro\Bundle\ShoppingListBundle\Entity\LineItem'
         options:
             entityHint: oro.shoppinglist.lineitem.entity_plural_label
             frontend: true
@@ -525,6 +525,17 @@ datagrids:
             units:
                 frontend_type: row_array
         actions:
+            notes:
+                type: add-notes
+                route: oro_api_frontend_patch_entity_data
+                route_parameters:
+                    className: 'Oro_Bundle_ShoppingListBundle_Entity_LineItem'
+                icon: file-text-o
+                acl_resource: oro_shopping_list_frontend_update
+                frontend_options:
+                    dialogOptions:
+                        modal: true
+                        width: 600
             delete:
                 type:          delete-product
                 link:          delete_link

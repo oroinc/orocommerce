@@ -656,3 +656,9 @@ services:
         shared: false
         tags:
             - { name: oro_datagrid.extension.action.type, type: delete-product }
+
+    oro_shopping_list.extension.action.type.add_notes:
+        class: 'Oro\Bundle\ShoppingListBundle\Datagrid\Extension\Action\Actions\AddNotesAction'
+        shared: false
+        tags:
+            - { name: oro_datagrid.extension.action.type, type: add-notes }
