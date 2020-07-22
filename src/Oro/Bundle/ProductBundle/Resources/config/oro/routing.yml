@@ -20,6 +20,13 @@ oro_product_frontend_product:
     options:
         frontend: true
 
+oro_product_frontend_brand:
+    resource: "@OroProductBundle/Controller/Frontend/BrandController.php"
+    type: annotation
+    prefix: /brand
+    options:
+        frontend: true
+
 oro_product_frontend_product_ajax:
     resource: "@OroProductBundle/Controller/Frontend/AjaxProductController.php"
     type: annotation
