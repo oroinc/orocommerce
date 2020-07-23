@@ -130,7 +130,7 @@
 
 {% block __customer_user_shopping_list__checkout_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' order-checkout-widget order-checkout-widget--offset-none ',
+        '~class': ' responsive-order-layout order-checkout-widget order-checkout-widget--offset-none ',
         'data-sticky-target': 'top-sticky-panel',
         'data-sticky': {
             isSticky: true,
@@ -160,10 +160,12 @@
 
 {% block __customer_user_shopping_list__combined_button_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' order-checkout-widget__col',
         'data-name': 'empty-items__hide'
     }) %}
-    {% set actionButtonClass = 'btn btn--info btn--size-l btn--full direct-link' %}
+
+    {% set actionButtonClass = actionButtonClass|default('btn btn--info btn--full direct-link') %}
+    {% set dropdownActionClass = dropdownActionClass|default('btn btn--block btn--info direct-link') %}
+    {% set dropdownToggleClass = dropdownToggleClass|default('btn btn--info  dropdown-toggle') %}
 
     {{ block('combined_buttons_widget') }}
 {% endblock %}
