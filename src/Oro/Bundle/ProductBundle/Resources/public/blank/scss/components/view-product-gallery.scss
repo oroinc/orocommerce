@@ -55,17 +55,13 @@
 
         border-radius: 0;
 
-        .view-product-gallery__icon:before {
+        &:before {
             margin: 0;
         }
     }
 
-    &__icon {
-        @include fa-icon($view-product-gallery-icon);
-
-        &:before {
-            margin: $view-product-gallery-icon-offset;
-        }
+    @include fa-icon($view-product-gallery-icon, before, true) {
+        margin: $view-product-gallery-icon-offset;
     }
 }
 

@@ -45,11 +45,15 @@
     {% endif %}
     {% placeholder oro_pricing_totals_before %}
 
+    {% if totalsConainerClassName is not defined %}
+        {% set totalsConainerClassName = 'order-checkout-widget__container order-checkout-widget__container--fixed-width' %}
+    {% endif %}
+
     {% set pageComponent = pageComponent|default('oropricing/js/app/components/totals-component') %}
     <div data-page-component-module="{{ pageComponent }}" data-page-component-options="{{ options|default({})|json_encode }}">
         <div class="totals-container">
             {% block data_totals_container %}
-                <div class="order-checkout-widget__container order-checkout-widget__container--fixed-width">
+                <div{% if totalsConainerClassName|length %} class="{{ totalsConainerClassName }}"{% endif %}>
                     <div class="totals-container">
                         <table class="order-checkout-widget__table">
                             {% if itemsCount is defined %}

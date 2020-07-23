@@ -75,6 +75,7 @@ layout:
                         skipMaskView: true
                         vars:
                             itemsCount: '=data["entity"].getLineItemsCount()'
+                            totalsConainerClassName: ''
                 __totals_placeholder:
                     blockType: block
                     options:
@@ -110,9 +111,9 @@ layout:
                                 __totals_wrapper:
                                     __totals: ~
                                     __totals_placeholder: ~
-                            __combined_button_wrapper:
-                                __combined_button: ~
-                                __combined_button_placeholder: ~
+                                __combined_button_wrapper:
+                                    __combined_button: ~
+                                    __combined_button_placeholder: ~
 
         - '@move':
             id: __header_shopping_list_actions_container

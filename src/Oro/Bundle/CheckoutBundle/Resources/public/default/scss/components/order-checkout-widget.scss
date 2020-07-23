@@ -23,6 +23,11 @@
     &__container-wrapper {
         margin-bottom: $offset-y-m;
 
+        padding: 20px;
+
+        border-radius: 4px;
+        background: get-color('additional', 'base');
+
         @include clearfix();
     }
 
@@ -36,6 +41,44 @@
 
         &--fixed-width {
             width: 280px;
+        }
+    }
+
+    &__note {
+        position: relative;
+
+        padding: 10px 0 0 20px;
+
+        clear: both;
+
+        &-content {
+            position: relative;
+
+            margin-top: $offset-y-m;
+            max-height: ($shopping-lists-note-font-size * $shopping-lists-note-line-height) * 4;
+
+            overflow: hidden;
+
+            @at-root .expanded & {
+                max-height: 200px;
+                overflow: auto;
+
+                &:after {
+                    content: none;
+                }
+            }
+
+            &:after {
+                position: absolute;
+                bottom: 0;
+
+                height: 20px;
+                width: 100%;
+
+                background: $collapse-view-trigger-overlay;
+
+                content: '';
+            }
         }
     }
 
@@ -113,6 +156,19 @@
     }
 }
 
+@include breakpoint('tablet') {
+    .order-checkout-widget {
+        &__note {
+            padding: 0 16px 0 0;
+            width: 50%;
+        }
+
+        &__container-wrapper {
+            width: 50%;
+        }
+    }
+}
+
 @include breakpoint('tablet-small') {
     .order-checkout-widget {
         &__container {
@@ -129,6 +185,18 @@
     }
 }
 
+@include breakpoint('mobile-landscape') {
+    .order-checkout-widget {
+        &__note {
+            padding-right: 0;
+            width: 100%;
+        }
+
+        &__container-wrapper {
+            width: 100%;
+        }
+    }
+}
 @include breakpoint('mobile') {
     .order-checkout-widget {
         &__col,

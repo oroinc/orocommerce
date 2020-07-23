@@ -37,6 +37,8 @@ layout:
             items:
                 shopping_list_notes:
                     blockType: container
+                    options:
+                        visible: '=data["entity"].getNotes()'
                 shopping_list_notes_text:
                     blockType: text
                     options:
