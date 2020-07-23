@@ -15,6 +15,11 @@ layout:
             optionName: grid_render_parameters.toolbarOptions.addDatagridSettingsManager
             optionValue: false
 
+        - '@appendOption':
+              id: __datagrid
+              optionName: grid_render_parameters.themeOptions.disableStickedScrollbar
+              optionValue: true
+
         - '@setOption':
             id: __datagrid
             optionName: split_to_cells
