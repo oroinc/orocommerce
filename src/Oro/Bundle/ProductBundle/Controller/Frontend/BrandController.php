@@ -2,11 +2,15 @@
 
 namespace Oro\Bundle\ProductBundle\Controller\Frontend;
 
-use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Brand;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * Frontend product brand controller.
+ */
 class BrandController extends Controller
 {
     const GRID_NAME = 'frontend-brand-search-grid';
@@ -20,7 +24,7 @@ class BrandController extends Controller
      */
     public function indexAction()
     {
-        return [];
+        throw new NotFoundHttpException();
     }
 
     /**
@@ -35,6 +39,6 @@ class BrandController extends Controller
      */
     public function viewAction(Request $request, Brand $brand)
     {
-        return [];
+        throw new NotFoundHttpException();
     }
 }
