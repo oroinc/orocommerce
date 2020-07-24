@@ -52,8 +52,24 @@
         line-height: $grid-line-items-line-height;
     }
 
+    &__note-container {
+        display: flex;
+        line-height: $shopping-lists-note-line-height;
+    }
+
     &__note {
-        @extend .shipping-list-note;
+        font-size: $shopping-lists-note-font-size;
+        font-style: $shopping-lists-note-font-s;
+    }
+
+    &__edit-note {
+        margin-left: 8px;
+        color: $launcher-item-icon-color;
+
+        @include hover-focus {
+            text-decoration: none;
+            color: $launcher-item-icon-hover-focus-color;
+        }
     }
 
     &__ellipsis {

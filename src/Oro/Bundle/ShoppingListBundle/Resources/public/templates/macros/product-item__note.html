@@ -4,11 +4,14 @@
     <div class="grid-line-items__note<%- clip ? ' grid-line-items__ellipsis' : '' %>" data-role="note"><%- note %></div>
 <% } %>
 <% if (note.length <= clipLength) { %>
+<div class="grid-line-items__note-container">
     <% renderNote() %>
+</div>
 <% } else { %>
 <div class="grid-line-items__clip-note-container"
+     data-page-component-init-on="click,mouseover"
      data-page-component-view="oroshoppinglist/js/app/views/preview-full-note-view">
-    <div class="grid-line-items__clip-placeholder">
+    <div class="grid-line-items__clip-placeholder grid-line-items__note-container">
         <% renderNote(true) %>
     </div>
 </div>

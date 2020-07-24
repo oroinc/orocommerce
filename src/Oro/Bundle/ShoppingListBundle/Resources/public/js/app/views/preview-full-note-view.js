@@ -5,7 +5,7 @@ const PreviewFullNoteView = BaseView.extend({
      * @inheritDoc
      */
     events: {
-        mouseenter: 'onMouseOver'
+        'mouseenter [data-role="note"]': 'onMouseOver'
     },
 
     autoRender: true,
@@ -50,7 +50,7 @@ const PreviewFullNoteView = BaseView.extend({
             content: note.innerText
         });
         this.$el.popover('show');
-        this.$el.one('mouseleave', () => this.$el.popover('dispose'));
+        this.$el.one('mouseleave [data-role="note"]', () => this.$el.popover('dispose'));
     }
 });
 
