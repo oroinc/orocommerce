@@ -31,6 +31,14 @@ layout:
             optionValue: false
 
         - '@appendOption':
+              id: __datagrid
+              optionName: grid_render_parameters.themeOptions
+              optionValue:
+                  cellActionsHideCount: 4
+                  cellLauncherOptions:
+                      launcherMode: 'icon-only'
+
+        - '@appendOption':
             id: __datagrid
             optionName: grid_parameters
             optionValue:

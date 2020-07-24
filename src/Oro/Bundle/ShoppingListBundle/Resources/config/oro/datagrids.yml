@@ -514,6 +514,8 @@ datagrids:
         extends: frontend-customer-user-shopping-list-grid
         acl_resource: oro_shopping_list_frontend_update
         columns:
+            item:
+                frontend_type: shoppinglist-item
             quantity:
                 frontend_template: tpl-loader!oroshoppinglist/templates/datagrid/cell/quantity_update.html
             unit:
@@ -525,8 +527,9 @@ datagrids:
             units:
                 frontend_type: row_array
         actions:
-            notes:
+            add_notes:
                 type: add-notes
+                label: oro.shoppinglist.actions.add_notes.label
                 route: oro_api_frontend_patch_entity_data
                 route_parameters:
                     className: 'Oro_Bundle_ShoppingListBundle_Entity_LineItem'
@@ -536,15 +539,29 @@ datagrids:
                     dialogOptions:
                         modal: true
                         width: 600
+            edit_notes:
+                type: add-notes
+                label: oro.shoppinglist.actions.edit_notes.label
+                route: oro_api_frontend_patch_entity_data
+                route_parameters:
+                    className: 'Oro_Bundle_ShoppingListBundle_Entity_LineItem'
+                icon: pencil
+                acl_resource: oro_shopping_list_frontend_update
+                frontend_options:
+                    dialogOptions:
+                        modal: true
+                        width: 600
             delete:
-                type:          delete-product
-                link:          delete_link
-                icon:          trash-o
-                acl_resource:  oro_shopping_list_frontend_update
+                type: delete-product
+                label: oro.shoppinglist.actions.delete_line_item.label
+                link: delete_link
+                icon: trash-o
+                acl_resource: oro_shopping_list_frontend_update
                 defaultMessages:
                     confirm_title: oro.shoppinglist.actions.delete_line_item.confirm_title
                     confirm_content: oro.shoppinglist.actions.delete_line_item.confirm_content
                     success: oro.shoppinglist.actions.delete_line_item.success
+# @todo       action_configuration: "@oro_user.role.datagrid_helper->getActionConfigurationClosure"
         mass_actions:
             delete:
                 type: delete

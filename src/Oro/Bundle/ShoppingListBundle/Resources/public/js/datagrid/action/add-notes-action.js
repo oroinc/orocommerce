@@ -1,13 +1,12 @@
-define([
-    'underscore',
-    'orotranslation/js/translator',
-    'routing',
-    'oroui/js/mediator',
-    'oro/datagrid/action/model-action',
-    'orofrontend/js/app/components/frontend-dialog-widget',
-    'tpl-loader!../../../templates/line-item-notes-dialog.html'
-], function(_, __, routing, mediator, ModelAction, DialogWidget, template) {
+define(function(require) {
     'use strict';
+
+    const __ = require('orotranslation/js/translator');
+    const routing = require('routing');
+    const mediator = require('oroui/js/mediator');
+    const ModelAction = require('oro/datagrid/action/model-action');
+    const DialogWidget = require('orofrontend/js/app/components/frontend-dialog-widget');
+    const template = require('tpl-loader!oroshoppinglist/templates/line-item-notes-dialog.html');
 
     /**
      * Add notes action, triggers REST PATCH request
@@ -22,6 +21,8 @@ define([
          */
         formWidget: null,
 
+        requestType: 'PATCH',
+
         /**
          * @inheritDoc
          */
@@ -32,17 +33,8 @@ define([
         /**
          * @inheritDoc
          */
-        initialize: function(options) {
-            AddNotesAction.__super__.initialize.call(this, options);
-
-            this.requestType = 'PATCH';
-        },
-
-        /**
-         * @inheritDoc
-         */
         getLink: function() {
-            return routing.generate(this.route, _.extend({id: this.model.get('id')}, this.route_parameters));
+            return routing.generate(this.route, {id: this.model.get('id'), ...this.route_parameters});
         },
 
         /**
@@ -78,9 +70,9 @@ define([
             mediator.execute(
                 'showFlashMessage',
                 'success',
-                _.__('oro.frontend.shoppinglist.lineitem.dialog.note.success')
+                __('oro.frontend.shoppinglist.lineitem.dialog.note.success')
             );
-        },
+        }
     });
 
     return AddNotesAction;

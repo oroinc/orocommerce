@@ -293,6 +293,7 @@ class ShoppingListGridEventListener
                 $this->urlGenerator->generate('oro_product_frontend_product_view', ['id' => $parentProduct->getId()])
             );
         } else {
+            $record->setValue('sku', null);
             $record->setValue('subData', $data);
             $record->setValue('quantity', $this->numberFormatter->formatDecimal($rowQuantity));
             if ($rowSubtotal) {
