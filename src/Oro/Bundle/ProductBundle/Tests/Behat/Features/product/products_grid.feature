@@ -59,24 +59,20 @@ Feature: Products Grid
     And records in grid should be 1
     And I reset "Type: Configurable" filter
 
-  @skip
-  # will be fixed in BB-19537
   Scenario: Enable & Check Created At filter
     Given records in grid should be 20
     And I show filter "Created At" in "Products Grid" grid
-    When I filter Created At as between "now" and "now + 1"
+    When I filter Created At as between "now + 1" and "now + 2"
     Then there are no records in grid
-    When I filter Created At as between "now - 1" and "now"
+    When I filter Created At as between "now - 1" and "now + 1"
     Then records in grid should be 20
     And I reset "Created At" filter
 
-  @skip
-  # will be fixed in BB-19537
   Scenario: Check Updated At filter
     Given records in grid should be 20
-    When I filter Updated At as between "now" and "now + 1"
+    When I filter Updated At as between "now + 1" and "now + 2"
     Then there are no records in grid
-    When I filter Updated At as between "now - 1" and "now"
+    When I filter Updated At as between "now - 1" and "now + 1"
     Then records in grid should be 20
     And I reset "Updated At" filter
 
