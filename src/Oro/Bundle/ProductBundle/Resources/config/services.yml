@@ -1052,7 +1052,7 @@ services:
             - { name: oro_entity_config.layout.attribute_block_type_mapper }
 
     oro_product.virtual_fields.decorator_cache:
-        parent: doctrine_cache.abstract.array
+        class: Doctrine\Common\Cache\ArrayCache
         public: false
         calls:
         - [ setNamespace, [ 'virtual_fields_decorator_cache' ] ]

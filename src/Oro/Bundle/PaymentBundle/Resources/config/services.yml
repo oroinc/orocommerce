@@ -61,7 +61,7 @@ services:
         parent: oro.cache.provider.memory_cache
 
     oro_payment.methods_provider.cache:
-        parent: doctrine_cache.abstract.array
+        class: Doctrine\Common\Cache\ArrayCache
         public: false
         calls:
             - [ setNamespace, [ 'payment_methods_provider_cache' ] ]

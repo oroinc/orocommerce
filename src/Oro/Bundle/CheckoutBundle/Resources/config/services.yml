@@ -14,13 +14,13 @@ services:
             - '@oro_checkout.payment_methods_provider'
 
     oro_checkout.checkout_to_order_converter.cache:
-        parent: doctrine_cache.abstract.array
+        class: Doctrine\Common\Cache\ArrayCache
         public: false
         calls:
             - [ setNamespace, [ 'checkout_to_order_converter' ] ]
 
     oro_checkout.product_availability.cache:
-        parent: doctrine_cache.abstract.array
+        class: Doctrine\Common\Cache\ArrayCache
         calls:
             - [ setNamespace, [ 'oro_product_availability' ] ]
 
