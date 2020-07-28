@@ -32,12 +32,12 @@ macros('oroshoppinglist', {
     renderInventoryStatus: require('tpl-loader!oroshoppinglist/templates/macros/product-item__inventory_status.html'),
 
     /**
-     * Renders note for product item
+     * Renders notes for product item
      *
-     * @param {string} note
+     * @param {string} notes
      * @param {number?} [clipLength = 30]
      */
-    renderNote: require('tpl-loader!oroshoppinglist/templates/macros/product-item__note.html'),
+    renderNotes: require('tpl-loader!oroshoppinglist/templates/macros/product-item__notes.html'),
 
     /**
      * Renders upcoming warning for product item

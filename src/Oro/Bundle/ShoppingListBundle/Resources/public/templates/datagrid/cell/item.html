@@ -39,9 +39,9 @@
                 <% }) %>
             </div>
             <% } %>
-            <% if (note) { %>
+            <% if (notes) { %>
             <div class="grid-line-items__row-item-shift">
-                <%= oroshoppinglist.renderNote({note: note}) %>
+                <%= oroshoppinglist.renderNotes({notes: notes}) %>
             </div>
             <% } %>
         <% } else { %>
@@ -60,9 +60,9 @@
                 </div>
                 <% }) %>
             </div>
-            <% if (note) { %>
+            <% if (notes) { %>
             <div class="grid-line-items__row-item-shift">
-                <%= oroshoppinglist.renderNote({note: note}) %>
+                <%= oroshoppinglist.renderNotes({notes: notes}) %>
             </div>
             <% } %>
         <% } %>

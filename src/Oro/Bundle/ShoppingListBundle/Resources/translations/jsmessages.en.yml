@@ -80,10 +80,10 @@ oro:
                     label: Set as Default Confirmation
                     message: Are you sure you want to set as default this shopping list?
                 set_as_default_ok.label: Yes, set as default
-                note.success: Shopping list note has been successfully updated
+                notes.success: Shopping list note has been successfully updated
 
             lineitem:
                 dialog:
                     cancel.label: Cancel
                     save.label: Save
-                    note.success: Line item note has been successfully updated
+                    notes.success: Line item note has been successfully updated

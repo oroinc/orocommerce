@@ -23,6 +23,8 @@ define(function(require) {
 
         requestType: 'PATCH',
 
+        reloadData: false,
+
         /**
          * @inheritDoc
          */
@@ -37,6 +39,11 @@ define(function(require) {
             return routing.generate(this.route, {id: this.model.get('id'), ...this.route_parameters});
         },
 
+        _onAjaxSuccess: function(data) {
+            this.model.set({notes: data.fields.notes});
+            this._showAjaxSuccessMessage(data);
+        },
+
         /**
          * @inheritDoc
          */
@@ -49,7 +56,7 @@ define(function(require) {
             this.frontend_options.title = this.model.get('name');
 
             this.formWidget = new DialogWidget(this.frontend_options);
-            this.formWidget.setContent(template({note: this.model.get('note')}));
+            this.formWidget.setContent(template({notes: this.model.get('notes')}));
 
             this.listenToOnce(this.formWidget, {
                 'frontend-dialog:accept': this._handleAjax.bind(this)
@@ -59,9 +66,23 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        _handleAjax: function() {
+            if (this.dispatched) {
+                return;
+            }
+
+            const notes = this.formWidget.find('textarea[data-role="notes"]').val();
+            this.model.set({notes});
+
+            AddNotesAction.__super__._handleAjax.call(this);
+        },
+
+        /**
+         * @inheritDoc
+         */
         getActionParameters: function() {
             const params = AddNotesAction.__super__.getActionParameters.call(this);
-            params.notes = this.formWidget.find('textarea[data-role="notes"]').val();
+            params.notes = this.model.get('notes');
 
             return JSON.stringify(params);
         },
@@ -70,7 +91,7 @@ define(function(require) {
             mediator.execute(
                 'showFlashMessage',
                 'success',
-                __('oro.frontend.shoppinglist.lineitem.dialog.note.success')
+                __('oro.frontend.shoppinglist.lineitem.dialog.notes.success')
             );
         }
     });
