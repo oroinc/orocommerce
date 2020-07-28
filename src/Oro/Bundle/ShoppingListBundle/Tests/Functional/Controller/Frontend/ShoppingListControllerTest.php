@@ -195,7 +195,7 @@ class ShoppingListControllerTest extends WebTestCase
         $this->assertEquals('$13.10', $data[0]['price']);
         $this->assertEquals('$104.80', $data[0]['subtotal']);
         $this->assertEquals('product-1.names.default', $data[0]['name']);
-        $this->assertEquals('Test Notes', $data[0]['note']);
+        $this->assertEquals('Test Notes', $data[0]['notes']);
         $this->assertFalse($data[0]['isConfigurable']);
         $this->assertFalse($data[0]['isUpcoming']);
         $this->assertNull($data[0]['availabilityDate']);

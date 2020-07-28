@@ -33,7 +33,7 @@
     }
 
     &__clip-container,
-    &__clip-note-container {
+    &__clip-notes-container {
         position: relative;
     }
 
@@ -41,8 +41,11 @@
         min-height: $grid-line-items-title-font-size * $grid-line-items-line-height;
     }
 
-    &__clip-note-container {
-        min-height: $shopping-lists-note-font-size * $shopping-lists-note-line-height;
+    &__clip-notes-container {
+        min-height: $grid-line-clip-none-offset + $shopping-lists-notes-font-size * $shopping-lists-notes-line-height;
+    }
+
+    &__notes-container {
         margin-top: $grid-line-clip-none-offset;
     }
 
@@ -52,17 +55,17 @@
         line-height: $grid-line-items-line-height;
     }
 
-    &__note-container {
+    &__notes-container {
         display: flex;
-        line-height: $shopping-lists-note-line-height;
+        line-height: $shopping-lists-notes-line-height;
     }
 
-    &__note {
-        font-size: $shopping-lists-note-font-size;
-        font-style: $shopping-lists-note-font-s;
+    &__notes {
+        font-size: $shopping-lists-notes-font-size;
+        font-style: $shopping-lists-notes-font-s;
     }
 
-    &__edit-note {
+    &__edit-notes {
         margin-left: 8px;
         color: $launcher-item-icon-color;
 

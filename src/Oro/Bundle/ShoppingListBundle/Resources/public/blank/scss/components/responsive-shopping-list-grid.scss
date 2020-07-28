@@ -80,6 +80,10 @@
         margin-top: $responsive-shopping-list-notification-container-offset;
     }
 
+    .price-value-container {
+        position: relative;
+    }
+
     .prices-hint-toggler {
         position: absolute;
         padding: 0;

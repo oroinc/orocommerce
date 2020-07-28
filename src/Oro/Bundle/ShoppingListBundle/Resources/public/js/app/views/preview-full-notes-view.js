@@ -1,11 +1,11 @@
 import BaseView from 'oroui/js/app/views/base/view';
 
-const PreviewFullNoteView = BaseView.extend({
+const PreviewFullNotesView = BaseView.extend({
     /**
      * @inheritDoc
      */
     events: {
-        'mouseenter [data-role="note"]': 'onMouseOver'
+        'mouseenter [data-role="notes"]': 'onMouseOver'
     },
 
     autoRender: true,
@@ -18,8 +18,8 @@ const PreviewFullNoteView = BaseView.extend({
     /**
      * @inheritDoc
      */
-    constructor: function PreviewFullNoteView(options) {
-        PreviewFullNoteView.__super__.constructor.call(this, options);
+    constructor: function PreviewFullNotesView(options) {
+        PreviewFullNotesView.__super__.constructor.call(this, options);
     },
 
     /**
@@ -27,7 +27,7 @@ const PreviewFullNoteView = BaseView.extend({
      */
     initialize(options) {
         this.popoverConfig = {...this.popoverConfig, ...options.popoverConfig};
-        PreviewFullNoteView.__super__.initialize.call(this, options);
+        PreviewFullNotesView.__super__.initialize.call(this, options);
     },
 
     dispose: function() {
@@ -35,23 +35,23 @@ const PreviewFullNoteView = BaseView.extend({
             return;
         }
         this.$el.popover('dispose');
-        PreviewFullNoteView.__super__.dispose.call(this);
+        PreviewFullNotesView.__super__.dispose.call(this);
     },
 
     onMouseOver() {
-        const note = this.$('[data-role="note"]')[0];
+        const notes = this.$('[data-role="notes"]')[0];
 
-        if (note.offsetWidth === note.scrollWidth) {
+        if (notes.offsetWidth === notes.scrollWidth) {
             return;
         }
 
         this.$el.popover({
             ...this.popoverConfig,
-            content: note.innerText
+            content: notes.innerText
         });
         this.$el.popover('show');
-        this.$el.one('mouseleave [data-role="note"]', () => this.$el.popover('dispose'));
+        this.$el.one('mouseleave [data-role="notes"]', () => this.$el.popover('dispose'));
     }
 });
 
-export default PreviewFullNoteView;
+export default PreviewFullNotesView;
