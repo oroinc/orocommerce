@@ -38,7 +38,7 @@ class ShoppingListUpdateConfigurableLinkCallback
     {
         $isConfigurable = $record->getValue('isConfigurable');
         if (!$isConfigurable) {
-            return ['update_configurable' => false, 'add_notes' => !$record->getValue('notes')];
+            return ['update_configurable' => false, 'add_notes' => !$record->getValue('notes'), 'edit_notes' => false];
         }
 
         $productRepository = $this->doctrineHelper->getEntityRepositoryForClass(Product::class);
@@ -47,6 +47,6 @@ class ShoppingListUpdateConfigurableLinkCallback
         $product = $productRepository->find($record->getValue('productId'));
         $isAvailable = $product && $this->productMatrixAvailabilityProvider->isMatrixFormAvailable($product);
 
-        return ['update_configurable' => $isAvailable, 'add_notes' => false];
+        return ['update_configurable' => $isAvailable, 'add_notes' => false, 'edit_notes' => false];
     }
 }

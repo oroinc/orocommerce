@@ -283,6 +283,7 @@ class ShoppingListGridEventListener
                 $itemData['action_configuration'] ?? [],
                 [
                     'add_notes' => !$item->getNotes(),
+                    'edit_notes' => false,
                 ]
             );
 
