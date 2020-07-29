@@ -117,7 +117,7 @@ class SegmentMessageFactory
 
     /**
      * @param array $data
-     * @return bool
+     * @return array
      */
     public function getAdditionalProductsFromMessage(array $data)
     {
