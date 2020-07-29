@@ -278,6 +278,13 @@ class ShoppingListGridEventListener
                 $itemData['image'] = $this->attachmentManager->getFilteredImageUrl($image->getImage(), 'product_small');
             }
 
+            $itemData['action_configuration'] = array_merge(
+                $itemData['action_configuration'] ?? [],
+                [
+                    'add_notes' => !$item->getNotes(),
+                ]
+            );
+
             $data[] = $itemData;
         }
         unset($product);

@@ -155,7 +155,7 @@ class ShoppingListGridEventListenerTest extends \PHPUnit\Framework\TestCase
 
         $errors = ['error1'];
         $this->violationsProvider->expects($this->once())
-            ->method('getLineItemErrors')
+            ->method('getLineItemViolationLists')
             ->with([$lineItem1, $lineItem2, $lineItem3])
             ->willReturn($errors);
 
