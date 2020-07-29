@@ -255,6 +255,11 @@ oro_behat_extension:
     Matrix Order Widget:
       selector: '.matrix-order-widget__totals'
 
+    # The FileField element must be defined in the same bundle with files to upload
+    ShoppingListImportFileField:
+      selector: ".import-widget-content .tab-pane.active input[id^='oro_importexport_import_file']"
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\FileField
+
   suites:
     OroShoppingListBundle:
       contexts:
