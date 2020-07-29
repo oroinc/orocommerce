@@ -115,7 +115,7 @@
                     data-role="shopping-list-current-label">
                     <span class="sr-only">{{ 'oro.frontend.shoppinglist.radio.label'|trans({'%shoppinglist%': shoppingList.label}) }}</span>
                     <input type="radio" name="{{ id }}-radio" data-role="set-default" {{ shoppingList.isCurrent ? 'checked' }}
-                        value="{{ shoppingList.id }}" data-label="{{ shoppingList.label }}"
+                        value="{{ shoppingList.id }}" data-label="{{ shoppingList.label|oro_html_escape|escape('html_attr') }}"
                         class="custom-radio__control">
                     <span class="custom-radio__text" aria-hidden="true"></span>
                 </label>
@@ -130,7 +130,7 @@
                 <span class="shopping-list-dropdown__title">
                     <span class="shopping-list-dropdown__name">
                         <span class="shopping-list-dropdown__name-inner shopping-list-dropdown__name-inner--{{ shoppingList.id }}"
-                            title="{{ shoppingList.label }}"
+                            title="{{ shoppingList.label|escape('html_attr') }}"
                             data-shopping-list-id="{{ shoppingList.id }}"
                             data-role="shopping-list-title">{{ shoppingList.label }}</span>
                     </span>
