@@ -561,7 +561,7 @@ datagrids:
                     confirm_title: oro.shoppinglist.actions.delete_line_item.confirm_title
                     confirm_content: oro.shoppinglist.actions.delete_line_item.confirm_content
                     success: oro.shoppinglist.actions.delete_line_item.success
-# @todo       action_configuration: "@oro_user.role.datagrid_helper->getActionConfigurationClosure"
+        action_configuration: ['@oro_shopping_list.datagrid.update_configurable_link_callback', checkActions]
         mass_actions:
             delete:
                 type: delete
