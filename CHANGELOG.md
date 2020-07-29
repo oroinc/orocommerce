@@ -42,7 +42,11 @@ etc. related to the old design.
     - `oro_shopping_list_products_units`
 * Removed the `oro_shoppinglist_frontend_duplicate` operation. The `oro_shoppinglist_frontend_duplicate_action` operation is now used.
 
-## 4.2.0-alpha.3
+## 4.2.0-beta (2020-09-28)
+[Show detailed list of changes](incompatibilities-4-2-beta.md)
+
+## 4.2.0-alpha.3 (2020-07-30)
+[Show detailed list of changes](incompatibilities-4-2-alpha-3.md)
 
 ### Changed
 
