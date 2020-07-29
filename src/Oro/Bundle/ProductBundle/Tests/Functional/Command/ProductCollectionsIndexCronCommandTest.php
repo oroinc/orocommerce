@@ -47,7 +47,11 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
         $metadata->name = $this->prevVariantClass;
     }
 
-    public function testCommandWhenWebCatalogIsUsed()
+    /**
+     * @dataProvider partialConfigDataProvider
+     * @param bool $isPartialConfig
+     */
+    public function testCommandWhenWebCatalogIsUsed($isPartialConfig)
     {
         $websiteManager = self::getContainer()->get('oro_website.manager');
         $configManager = self::getContainer()->get('oro_config.manager');
@@ -57,6 +61,10 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
             'oro_web_catalog.web_catalog',
             $this->getReference(LoadWebCatalogsData::FIRST_WEB_CATALOG)->getId(),
             $defaultWebsite
+        );
+        $configManager->set(
+            'oro_product.product_collections_indexation_partial',
+            $isPartialConfig
         );
 
         $configManager->flush();
@@ -70,7 +78,7 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
                     'id' => $this->getReference(LoadSegmentsWithRelationsData::FIRST_SEGMENT)->getId(),
                     'website_ids' => [$defaultWebsite->getId()],
                     'definition' => null,
-                    'is_full' => true,
+                    'is_full' => !$isPartialConfig,
                     'additional_products' => [],
                 ]
             ],
@@ -80,7 +88,7 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
                     'id' => $this->getReference(LoadSegmentsWithRelationsData::SECOND_SEGMENT)->getId(),
                     'website_ids' => [$defaultWebsite->getId()],
                     'definition' => null,
-                    'is_full' => true,
+                    'is_full' => !$isPartialConfig,
                     'additional_products' => [],
                 ]
             ],
@@ -90,7 +98,77 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
                     'id' => $this->getReference(LoadSegmentsWithRelationsData::WITH_CRITERIA_SEGMENT)->getId(),
                     'website_ids' => [$defaultWebsite->getId()],
                     'definition' => null,
-                    'is_full' => true,
+                    'is_full' => !$isPartialConfig,
+                    'additional_products' => [],
+                ]
+            ],
+        ];
+
+        $this->assertEquals(
+            $expectedMessage,
+            self::getMessageCollector()->getTopicSentMessages(Topics::REINDEX_PRODUCT_COLLECTION_BY_SEGMENT)
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function partialConfigDataProvider()
+    {
+        return [
+            'partial' => [true],
+            'full' => [false]
+        ];
+    }
+
+    public function testCommandWhenWebCatalogIsUsedPartialOptionPassed()
+    {
+        $websiteManager = self::getContainer()->get('oro_website.manager');
+        $configManager = self::getContainer()->get('oro_config.manager');
+
+        $defaultWebsite = $websiteManager->getDefaultWebsite();
+        $configManager->set(
+            'oro_web_catalog.web_catalog',
+            $this->getReference(LoadWebCatalogsData::FIRST_WEB_CATALOG)->getId(),
+            $defaultWebsite
+        );
+        $configManager->set(
+            'oro_product.product_collections_indexation_partial',
+            false
+        );
+
+        $configManager->flush();
+
+        self::runCommand(ProductCollectionsIndexCronCommand::getDefaultName(), ['--partial-reindex']);
+
+        $expectedMessage = [
+            [
+                'topic' => Topics::REINDEX_PRODUCT_COLLECTION_BY_SEGMENT,
+                'message' => [
+                    'id' => $this->getReference(LoadSegmentsWithRelationsData::FIRST_SEGMENT)->getId(),
+                    'website_ids' => [$defaultWebsite->getId()],
+                    'definition' => null,
+                    'is_full' => false,
+                    'additional_products' => [],
+                ]
+            ],
+            [
+                'topic' => Topics::REINDEX_PRODUCT_COLLECTION_BY_SEGMENT,
+                'message' => [
+                    'id' => $this->getReference(LoadSegmentsWithRelationsData::SECOND_SEGMENT)->getId(),
+                    'website_ids' => [$defaultWebsite->getId()],
+                    'definition' => null,
+                    'is_full' => false,
+                    'additional_products' => [],
+                ]
+            ],
+            [
+                'topic' => Topics::REINDEX_PRODUCT_COLLECTION_BY_SEGMENT,
+                'message' => [
+                    'id' => $this->getReference(LoadSegmentsWithRelationsData::WITH_CRITERIA_SEGMENT)->getId(),
+                    'website_ids' => [$defaultWebsite->getId()],
+                    'definition' => null,
+                    'is_full' => false,
                     'additional_products' => [],
                 ]
             ],

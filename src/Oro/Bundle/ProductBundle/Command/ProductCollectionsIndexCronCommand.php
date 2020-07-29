@@ -19,6 +19,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ProductCollectionsIndexCronCommand extends Command implements CronCommandInterface
 {
+    private const OPTION_PARTIAL_REINDEX = 'partial-reindex';
+
     /** @var string */
     protected static $defaultName = 'oro:cron:product-collections:index';
 
@@ -69,7 +71,14 @@ class ProductCollectionsIndexCronCommand extends Command implements CronCommandI
 Add message to queue to index product collections for which filter contains dependencies on other entities.
 DESC;
 
-        $this->setDescription($description);
+        $this
+            ->addOption(
+                self::OPTION_PARTIAL_REINDEX,
+                null,
+                null,
+                'Perform collection partial indexation for added/removed products only'
+            )
+            ->setDescription($description);
     }
 
     /**
@@ -78,6 +87,12 @@ DESC;
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $hasSchedules = false;
+        if ($input->getOption(self::OPTION_PARTIAL_REINDEX)) {
+            $isFull = false;
+        } else {
+            $isFull = !(bool)$this->configManager->get('oro_product.product_collections_indexation_partial');
+        }
+
         foreach ($this->segmentProvider->getSegments() as $segment) {
             $websiteIds = $this->productCollectionHelper->getWebsiteIdsBySegment($segment);
             if (empty($websiteIds)) {
@@ -85,7 +100,8 @@ DESC;
             }
             $output->writeln(
                 sprintf(
-                    '<info>Scheduling indexation of segment id %d for websites: %s</info>',
+                    '<info>Scheduling %s indexation of segment id %d for websites: %s</info>',
+                    $isFull ? 'full' : 'partial',
                     $segment->getId(),
                     implode(', ', $websiteIds)
                 )
@@ -94,7 +110,7 @@ DESC;
             $hasSchedules = true;
             $this->messageProducer->send(
                 Topics::REINDEX_PRODUCT_COLLECTION_BY_SEGMENT,
-                $this->messageFactory->createMessage($websiteIds, $segment)
+                $this->messageFactory->createMessage($websiteIds, $segment, null, $isFull)
             );
         }
 
