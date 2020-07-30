@@ -195,7 +195,58 @@ class ShoppingListGridExtensionTest extends \PHPUnit\Framework\TestCase
                 'options' => [
                     'toolbarOptions' => [
                         'pageSize' => [
+                            'items' => [10, 25, 50, 100, 1000],
+                        ],
+                    ],
+                ],
+            ],
+            $config->toArray()
+        );
+    }
+
+    public function testProcessConfigsCountLessThanConfig(): void
+    {
+        $this->parameters->set('shopping_list_id', 42);
+
+        $config = DatagridConfiguration::create(
+            [
+                'options' => [
+                    'toolbarOptions' => [
+                        'pageSize' => [
                             'items' => [10, 25, 50, 100],
+                        ],
+                    ],
+                ],
+            ]
+        );
+
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_shopping_list.my_shopping_lists_max_line_items_per_page')
+            ->willReturn(1000);
+
+        $this->shoppingListRepository->expects($this->once())
+            ->method('find')
+            ->with(42)
+            ->willReturn((new ShoppingListStub())->setLineItemsCount(999));
+
+        $this->extension->processConfigs($config);
+
+        $this->assertEquals(
+            [
+                'options' => [
+                    'toolbarOptions' => [
+                        'pageSize' => [
+                            'items' => [
+                                10,
+                                25,
+                                50,
+                                100,
+                                [
+                                    'label' => 'oro.shoppinglist.datagrid.toolbar.pageSize.all.label',
+                                    'size' => 1000
+                                ]
+                            ],
                         ],
                     ],
                 ],
