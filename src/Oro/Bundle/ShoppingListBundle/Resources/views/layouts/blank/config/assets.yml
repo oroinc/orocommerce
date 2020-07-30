@@ -15,6 +15,7 @@ styles:
         - 'bundles/oroshoppinglist/blank/scss/components/shopping-list-dropdown.scss'
         - 'bundles/oroshoppinglist/blank/scss/components/shopping-lists-link.scss'
         - 'bundles/oroshoppinglist/blank/scss/components/shopping-lists-modify.scss'
+        - 'bundles/oroshoppinglist/blank/scss/components/shopping-lists-notes-modal.scss'
         - 'bundles/oroshoppinglist/blank/scss/components/shopping-lists-outer.scss'
         - 'bundles/oroshoppinglist/blank/scss/components/shopping-lists-units.scss'
         - 'bundles/oroshoppinglist/blank/scss/components/shopping-list-view.scss'

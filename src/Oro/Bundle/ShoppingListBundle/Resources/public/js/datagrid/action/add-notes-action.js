@@ -5,9 +5,7 @@ define(function(require) {
     const routing = require('routing');
     const mediator = require('oroui/js/mediator');
     const ModelAction = require('oro/datagrid/action/model-action');
-    const DialogWidget = require('orofrontend/js/app/components/frontend-dialog-widget');
-    const template = require('tpl-loader!oroshoppinglist/templates/line-item-notes-dialog.html');
-
+    const Modal = require('oroui/js/modal');
     /**
      * Add notes action, triggers REST PATCH request
      *
@@ -52,29 +50,28 @@ define(function(require) {
                 return;
             }
 
-            this.frontend_options = this.frontend_options || {};
-            this.frontend_options.title = this.model.get('name');
+            const notes = this.model.get('notes');
+            const action = notes ? 'edit' : 'add';
 
-            this.formWidget = new DialogWidget(this.frontend_options);
-            this.formWidget.setContent(template({notes: this.model.get('notes')}));
-
-            this.listenToOnce(this.formWidget, {
-                'frontend-dialog:accept': this._handleAjax.bind(this)
+            const modal = new Modal({
+                className: 'modal oro-modal-normal shopping-list-notes-modal',
+                title: __(`oro.frontend.shoppinglist.lineitem.dialog.${action}.title`, {
+                    productName: this.model.get('name')
+                }),
+                okText: __(`oro.frontend.shoppinglist.lineitem.dialog.${action}.label`),
+                cancelText: __('oro.frontend.shoppinglist.lineitem.dialog.cancel.label'),
+                content: '<textarea class="textarea full shopping-list-notes-modal__editor"' +
+                    ' data-autoresize data-role="notes"></textarea>'
             });
-        },
 
-        /**
-         * @inheritDoc
-         */
-        _handleAjax: function() {
-            if (this.dispatched) {
-                return;
-            }
+            modal.on('ok', () => {
+                this.model.set('notes', modal.$('[data-role="notes"]').val());
+                this._handleAjax();
+            });
 
-            const notes = this.formWidget.find('textarea[data-role="notes"]').val();
-            this.model.set({notes});
+            modal.open();
 
-            AddNotesAction.__super__._handleAjax.call(this);
+            modal.$('[data-role="notes"]').focus().val(notes).click();
         },
 
         /**

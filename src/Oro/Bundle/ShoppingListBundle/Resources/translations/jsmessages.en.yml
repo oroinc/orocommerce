@@ -84,6 +84,9 @@ oro:
 
             lineitem:
                 dialog:
+                    add.title: 'Add note to "{{ productName }}" product'
+                    edit.title: 'Edit note for "{{ productName }}" product'
                     cancel.label: Cancel
-                    save.label: Save
+                    add.label: Add
+                    edit.label: Save
                     notes.success: Line item note has been successfully updated
