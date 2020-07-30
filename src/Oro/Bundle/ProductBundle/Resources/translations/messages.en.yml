@@ -449,7 +449,7 @@ oro:
                 product_collections_indexation_partial:
                     label: Enable Partial Indexation
                     tooltip: |
-                        Perform indexation only for products added/removed to the collection.
+                        Perform indexation only for products added to or removed from the collection.
                 product_collection_mass_action_limitation:
                     label: 'Mass action limit'
                     tooltip: 'This limitation prevents the handling of too many products when using mass action.'
