@@ -33,11 +33,11 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        getLink: function() {
+        getLink() {
             return routing.generate(this.route, {id: this.model.get('id'), ...this.route_parameters});
         },
 
-        _onAjaxSuccess: function(data) {
+        _onAjaxSuccess(data) {
             this.model.set({notes: data.fields.notes});
             this._showAjaxSuccessMessage(data);
         },
@@ -45,7 +45,7 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        _handleWidget: function() {
+        _handleWidget() {
             if (this.dispatched) {
                 return;
             }
@@ -65,7 +65,7 @@ define(function(require) {
             });
 
             modal.on('ok', () => {
-                this.model.set('notes', modal.$('[data-role="notes"]').val());
+                this.updateNotes(modal.$('[data-role="notes"]').val());
                 this._handleAjax();
             });
 
@@ -74,17 +74,27 @@ define(function(require) {
             modal.$('[data-role="notes"]').focus().val(notes).click();
         },
 
+        updateNotes(notes) {
+            this.model.set({
+                notes,
+                action_configuration: {
+                    ...(this.model.get('action_configuration') || {}),
+                    add_notes: !notes
+                }
+            });
+        },
+
         /**
          * @inheritDoc
          */
-        getActionParameters: function() {
+        getActionParameters() {
             const params = AddNotesAction.__super__.getActionParameters.call(this);
             params.notes = this.model.get('notes');
 
             return JSON.stringify(params);
         },
 
-        _showAjaxSuccessMessage: function() {
+        _showAjaxSuccessMessage() {
             mediator.execute(
                 'showFlashMessage',
                 'success',
