@@ -204,6 +204,9 @@ class ShoppingListGridEventListener
      * @param LineItem[] $items
      * @param array $prices
      * @param array $errors
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     private function processConfigurableProduct(Record $record, array $items, array $prices, array $errors): void
     {

@@ -4,6 +4,7 @@ define(function(require) {
     const MassAction = require('oro/datagrid/action/mass-action');
     const loadModules = require('oroui/js/app/services/load-modules');
     const mediator = require('oroui/js/mediator');
+    const $ = require('jquery');
 
     /**
      * Move products to another shopping list
@@ -80,7 +81,7 @@ define(function(require) {
             MoveProductsMassAction.__super__._onAjaxSuccess.call(this, data, textStatus, jqXHR);
 
             mediator.trigger('shopping-list:refresh');
-        },
+        }
     });
 
     return MoveProductsMassAction;
