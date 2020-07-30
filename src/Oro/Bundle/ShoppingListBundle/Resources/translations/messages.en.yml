@@ -75,9 +75,9 @@ oro:
             delete_line_item:
                 label: Delete
             add_notes:
-                label: Add note
+                label: Add Shopping List item Note
             edit_notes:
-                label: Edit
+                label: Edit Shopping List item Note
 
         mass_actions:
             delete_line_items:
