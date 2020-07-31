@@ -250,7 +250,7 @@ oro_behat_extension:
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
     # The FileField element must be defined in the same bundle with files to upload
-    ShoppingListImportFileField:
+    ImportFileField:
       selector: ".import-widget-content .tab-pane.active input[id^='oro_importexport_import_file']"
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\FileField
 

@@ -22,7 +22,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     # Import attributes
     And I go to Products / Product Attributes
     And I click "Import file"
-    And I upload "configurable_products_for_matrix_forms/products_attributes.csv" file to "ShoppingListImportFileField"
+    And I upload "configurable_products_for_matrix_forms/products_attributes.csv" file to "ImportFileField"
     And I click "Import file"
     And I reload the page
     And I confirm schema update
@@ -39,14 +39,14 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
   Scenario: Prepare products
     And I go to Products / Products
     And I click "Import file"
-    And I upload "configurable_products_for_matrix_forms/products.csv" file to "ShoppingListImportFileField"
+    And I upload "configurable_products_for_matrix_forms/products.csv" file to "ImportFileField"
     And I click "Import file"
 
   Scenario: Prepare product prices
     And I go to Sales/ Price Lists
     And click view "Default Price List" in grid
     And I click "Import file"
-    And I upload "configurable_products_for_matrix_forms/products.csv" file to "ShoppingListImportFileField"
+    And I upload "configurable_products_for_matrix_forms/products.csv" file to "ImportFileField"
     And I click "Import file"
 
   Scenario: Check prices container on configurable product view is visible only when there are prices
