@@ -114,14 +114,6 @@ class ProductImageNormalizerTest extends \PHPUnit\Framework\TestCase
             'image' => ['name' => 'imageName'],
         ];
 
-        $this->fileLocator->expects($this->once())
-            ->method('locate')
-            ->willReturn(
-                [
-                    'imagePath'
-                ]
-            );
-
         $this->fieldHelper->expects($this->once())
             ->method('setObjectValue')
             ->will(

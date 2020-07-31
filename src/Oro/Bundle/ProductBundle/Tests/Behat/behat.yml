@@ -1192,6 +1192,18 @@ oro_behat_extension:
       selector: ".import-widget-content .tab-pane.active input[id^='oro_importexport_import_file']"
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\FileField
 
+    Multi File Grid:
+      selector:
+        type: 'xpath'
+        locator: '//div[contains(@data-page-component-name,"attachment-files-grid:MultiFileField2")]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    DAM Multi File Grid:
+      selector:
+        type: 'xpath'
+        locator: '//div[contains(@data-page-component-name,"attachment-files-grid:DamMultiFileField3")]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
   pages:
     Product View:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Page\ProductView

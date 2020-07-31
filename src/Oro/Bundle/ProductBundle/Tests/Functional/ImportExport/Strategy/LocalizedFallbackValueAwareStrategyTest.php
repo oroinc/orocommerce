@@ -7,6 +7,7 @@ use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ImportExportBundle\Context\Context;
+use Oro\Bundle\LocaleBundle\Entity\AbstractLocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\ImportExport\Normalizer\LocalizationCodeFormatter;
@@ -45,7 +46,7 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
             $container->get('oro_entity.doctrine_helper'),
             $container->get('oro_importexport.field.related_entity_state_helper')
         );
-        $this->strategy->setLocalizedFallbackValueClass(LocalizedFallbackValue::class);
+        $this->strategy->setLocalizedFallbackValueClass(AbstractLocalizedFallbackValue::class);
     }
 
     /**
