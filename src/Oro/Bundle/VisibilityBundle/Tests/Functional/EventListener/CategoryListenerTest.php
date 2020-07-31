@@ -9,7 +9,8 @@ use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\VisibilityBundle\Model\ProductMessageHandler;
+use Oro\Bundle\VisibilityBundle\Model\VisibilityMessageFactory;
+use Oro\Bundle\VisibilityBundle\Model\VisibilityMessageHandler;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\MessageQueueTrait;
 
 class CategoryListenerTest extends WebTestCase
@@ -41,11 +42,11 @@ class CategoryListenerTest extends WebTestCase
     }
 
     /**
-     * @return ProductMessageHandler
+     * @return VisibilityMessageHandler
      */
-    protected function getMessageHandler()
+    protected function getMessageHandler(): VisibilityMessageHandler
     {
-        return self::getContainer()->get('oro_visibility.model.product_message_handler');
+        return self::getContainer()->get('oro_visibility.visibility_message_handler');
     }
 
     public function testChangeProductCategory()
@@ -66,7 +67,10 @@ class CategoryListenerTest extends WebTestCase
 
         self::assertMessageSent(
             'oro_visibility.visibility.change_product_category',
-            ['id' => $product->getId()]
+            [
+                VisibilityMessageFactory::ID => $product->getId(),
+                VisibilityMessageFactory::ENTITY_CLASS_NAME => Product::class,
+            ]
         );
     }
 
@@ -83,7 +87,10 @@ class CategoryListenerTest extends WebTestCase
 
         self::assertMessageSent(
             'oro_visibility.visibility.change_product_category',
-            ['id' => $product->getId()]
+            [
+                VisibilityMessageFactory::ID => $product->getId(),
+                VisibilityMessageFactory::ENTITY_CLASS_NAME => Product::class,
+            ]
         );
 
         $category->addProduct($product);
@@ -93,7 +100,10 @@ class CategoryListenerTest extends WebTestCase
 
         self::assertMessageSent(
             'oro_visibility.visibility.change_product_category',
-            ['id' => $product->getId()]
+            [
+                VisibilityMessageFactory::ID => $product->getId(),
+                VisibilityMessageFactory::ENTITY_CLASS_NAME => Product::class,
+            ]
         );
     }
 }

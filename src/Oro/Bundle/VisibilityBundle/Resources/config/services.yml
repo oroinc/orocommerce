@@ -261,6 +261,11 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.terminate, method: sendScheduledMessages }
 
+    oro_visibility.change_product_category_aware_visibility_message_handler:
+        parent: oro_visibility.visibility_message_handler
+        class: 'Oro\Bundle\VisibilityBundle\Model\ChangeProductCategoryAwareVisibilityMessageHandler'
+        decorates: oro_visibility.visibility_message_handler
+
     oro_visibility.entity_listener.abstract_visibility_listener:
         class: 'Oro\Bundle\VisibilityBundle\Entity\EntityListener\AbstractAffectVisibilityListener'
         abstract: true
@@ -306,7 +311,6 @@ services:
 
     oro_visibility.entity_listener.change_product_category:
         class: 'Oro\Bundle\VisibilityBundle\Entity\EntityListener\ProductListener'
-        public: false
         parent: oro_visibility.entity_listener.abstract_visibility_listener
         calls:
             - [setTopic, ['oro_visibility.visibility.change_product_category']]
@@ -347,6 +351,7 @@ services:
             - '@oro_visibility.visibility.cache.product.cache_builder'
         calls:
             - [setResolvedVisibilityClassName, ['Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerProductVisibilityResolved']]
+            - [setProductReindexManager, ['@oro_product.search.product_reindex_manager']]
         tags:
             - { name: 'oro_message_queue.client.message_processor', topicName: 'oro_visibility.visibility.change_product_category' }
 
@@ -393,6 +398,7 @@ services:
             - '@oro_visibility.model.product_message_handler'
         calls:
             - [setTopic, ['oro_visibility.visibility.change_product_category']]
+            - [setVisibilityMessageHandler, ['@oro_visibility.visibility_message_handler']]
         tags:
             - { name: kernel.event_listener, event: oro_catalog.event.products_change_relation, method: onProductsChangeRelation, priority: 100 }
 
@@ -610,3 +616,10 @@ services:
     Oro\Bundle\VisibilityBundle\Provider\ResolvedProductVisibilityProvider:
         alias: oro_visibility.provider.resolved_product_visibility_provider
         public: true
+
+    oro_visibility.async.extension.visibility_message_handler_extension:
+        class: Oro\Bundle\VisibilityBundle\Async\Extension\VisibilityMessageHandlerExtension
+        arguments:
+            - '@oro_visibility.visibility_message_handler'
+        tags:
+            - { name: oro_message_queue.consumption.extension }
