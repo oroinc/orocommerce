@@ -1,7 +1,7 @@
 import Backbone from 'backbone';
 import mediator from 'oroui/js/mediator';
 
-const shoppinglistRFPConfirmationBuilder = {
+const shoppingListRFPConfirmationBuilder = {
     init: function(deferred, options) {
         const observer = Object.create(Backbone.Events);
         let {hasEmptyMatrix} = options.metadata;
@@ -28,4 +28,4 @@ const shoppinglistRFPConfirmationBuilder = {
     }
 };
 
-export default shoppinglistRFPConfirmationBuilder;
+export default shoppingListRFPConfirmationBuilder;

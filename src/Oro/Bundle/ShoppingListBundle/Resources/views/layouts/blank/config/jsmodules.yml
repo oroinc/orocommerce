@@ -1,7 +1,9 @@
 aliases:
+    oro/datagrid/action/add-notes-action$: oroshoppinglist/js/datagrid/action/add-notes-action
     oro/datagrid/action/add-products-mass-action$: oroshoppinglist/js/datagrid/action/add-products-mass-action
     oro/datagrid/action/delete-product-action$: oroshoppinglist/js/datagrid/action/delete-product-action
     oro/datagrid/action/move-products-mass-action$: oroshoppinglist/js/datagrid/action/move-products-mass-action
+    oro/datagrid/cell/shoppinglist-item-cell$: oroshoppinglist/js/datagrid/cell/shoppinglist-item-cell
     oro/matrix-grid-order-widget$: oroshoppinglist/js/app/widget/matrix-grid-order-widget
     oro/product-shopping-lists-widget$: oroshoppinglist/js/app/widget/product-shopping-lists-widget
     oro/shopping-list-create-widget$: oroshoppinglist/js/app/widget/shopping-list-create-widget
@@ -9,9 +11,11 @@ app-modules:
     - oroshoppinglist/js/app/modules/template-macros-module
 dynamic-imports:
     orodatagrid:
+        - oro/datagrid/action/add-notes-action
         - oro/datagrid/action/add-products-mass-action
         - oro/datagrid/action/delete-product-action
         - oro/datagrid/action/move-products-mass-action
+        - oro/datagrid/cell/shoppinglist-item-cell
     oroshoppinglist:
         - oro/matrix-grid-order-widget
         - oro/product-shopping-lists-widget
@@ -28,7 +32,7 @@ dynamic-imports:
         - oroshoppinglist/js/app/views/line-items-view
         - oroshoppinglist/js/app/views/matrix-grid-add-to-shopping-list-view
         - oroshoppinglist/js/app/views/matrix-grid-popup-button-view
-        - oroshoppinglist/js/app/views/preview-full-note-view
+        - oroshoppinglist/js/app/views/preview-full-notes-view
         - oroshoppinglist/js/app/views/product-add-to-shopping-list-view
         - oroshoppinglist/js/app/views/product-quick-add-to-shopping-list-view
         - oroshoppinglist/js/app/views/product-shopping-lists-view

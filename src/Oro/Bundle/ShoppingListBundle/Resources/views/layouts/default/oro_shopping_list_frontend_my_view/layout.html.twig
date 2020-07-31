@@ -9,7 +9,7 @@
 
 {% block _shopping_list_notes_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': 'order-checkout-widget__note collapse-view collapse-view--overflow init',
+        '~class': 'order-checkout-widget__notes collapse-view collapse-view--overflow init',
         '~data-page-component-viewport': {
             widgetModule: 'oroui/js/widget/collapse-widget',
             animationSpeed: 0,
@@ -33,7 +33,7 @@
 
 {% block _shopping_list_notes_text_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' shipping-list-note'
+        '~class': ' shipping-list-notes'
     }) %}
 
     <div{{ block('block_attributes') }}>{{ block_widget(block)|nl2br }}</div>

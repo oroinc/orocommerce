@@ -39,10 +39,9 @@
                 <% }) %>
             </div>
             <% } %>
-            <% if (note) { %>
-            <div class="grid-line-items__row-item-shift"
-                 data-page-component-init-on="click,mouseover">
-                <%= oroshoppinglist.renderNote({note: note}) %>
+            <% if (notes) { %>
+            <div class="grid-line-items__row-item-shift">
+                <%= oroshoppinglist.renderNotes({notes: notes}) %>
             </div>
             <% } %>
         <% } else { %>
@@ -61,10 +60,9 @@
                 </div>
                 <% }) %>
             </div>
-            <% if (note) { %>
-            <div class="grid-line-items__row-item-shift"
-                 data-page-component-init-on="click,mouseover">
-                <%= oroshoppinglist.renderNote({note: note}) %>
+            <% if (notes) { %>
+            <div class="grid-line-items__row-item-shift">
+                <%= oroshoppinglist.renderNotes({notes: notes}) %>
             </div>
             <% } %>
         <% } %>
