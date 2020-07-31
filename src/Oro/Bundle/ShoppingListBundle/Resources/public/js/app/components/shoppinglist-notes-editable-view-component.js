@@ -68,7 +68,7 @@ define(function(require) {
                     mediator.execute(
                         'showFlashMessage',
                         'success',
-                        _.__('oro.frontend.shoppinglist.dialog.note.success')
+                        _.__('oro.frontend.shoppinglist.dialog.notes.success')
                     );
                 }
             });

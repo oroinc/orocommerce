@@ -149,7 +149,7 @@ class ShoppingListGridEventListener
         $record->setValue('inventoryStatus', ['name' => $status->getId(), 'label' => $status->getName()]);
 
         $record->setValue('name', $this->localizationHelper->getLocalizedValue($product->getNames()));
-        $record->setValue('note', $item->getNotes());
+        $record->setValue('notes', $item->getNotes());
         $record->setValue(
             'link',
             $this->urlGenerator->generate('oro_product_frontend_product_view', ['id' => $productId])
@@ -239,7 +239,7 @@ class ShoppingListGridEventListener
                     'unitCode' => null,
                     'units' => null,
                     'inventoryStatus' => ['name' => $productStatus->getId(), 'label' => $productStatus->getName()],
-                    'note' => $item->getNotes(),
+                    'notes' => $item->getNotes(),
                     'price' => null,
                     'subtotal' => null, 'discount' => null, 'total' => null,
                     'productConfiguration' => $this->getConfigurableProducts($item),
@@ -281,6 +281,14 @@ class ShoppingListGridEventListener
                 $itemData['image'] = $this->attachmentManager->getFilteredImageUrl($image->getImage(), 'product_small');
             }
 
+            $itemData['action_configuration'] = array_merge(
+                $itemData['action_configuration'] ?? [],
+                [
+                    'add_notes' => !$item->getNotes(),
+                    'edit_notes' => false,
+                ]
+            );
+
             $data[] = $itemData;
         }
         unset($product);
@@ -295,6 +303,7 @@ class ShoppingListGridEventListener
                 $this->urlGenerator->generate('oro_product_frontend_product_view', ['id' => $parentProduct->getId()])
             );
         } else {
+            $record->setValue('sku', null);
             $record->setValue('subData', $data);
             $record->setValue('quantity', $this->numberFormatter->formatDecimal($rowQuantity));
             if ($rowSubtotal) {

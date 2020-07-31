@@ -72,6 +72,12 @@ oro:
             failed_mesage: "You can't add these products to shopping list"
             add_to_multiple: add item to multiple lists
             copied: " (copied %copyDate%)"
+            delete_line_item:
+                label: Delete
+            add_notes:
+                label: Add Shopping List item Note
+            edit_notes:
+                label: Edit Shopping List item Note
 
         mass_actions:
             delete_line_items:
