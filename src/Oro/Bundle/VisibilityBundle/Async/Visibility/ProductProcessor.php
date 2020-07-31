@@ -101,7 +101,7 @@ class ProductProcessor implements MessageProcessorInterface, TopicSubscriberInte
      *
      * @return Product[]
      *
-     * @throws EntityNotFoundException if a product does not exist
+     * @throws EntityNotFoundException If all products have not been found
      */
     private function getProducts(array $productIds): array
     {
@@ -110,7 +110,26 @@ class ProductProcessor implements MessageProcessorInterface, TopicSubscriberInte
             ->getRepository(Product::class)
             ->findBy(['id' => $productIds]);
         if (count($productIds) !== count($products)) {
-            throw new EntityNotFoundException('Product was not found.');
+            $foundIds = array_map(
+                static function (Product $product) {
+                    return $product->getId();
+                },
+                $products
+            );
+            $notFoundProductsIds = array_diff($productIds, $foundIds);
+            $this->logger->warning(
+                'The following products have not been not found when trying to resolve visibility',
+                $notFoundProductsIds
+            );
+
+            if (!$products) {
+                throw new EntityNotFoundException(
+                    sprintf(
+                        'Products have not been found when trying to resolve visibility: %s',
+                        implode(', ', $notFoundProductsIds)
+                    )
+                );
+            }
         }
 
         return $products;

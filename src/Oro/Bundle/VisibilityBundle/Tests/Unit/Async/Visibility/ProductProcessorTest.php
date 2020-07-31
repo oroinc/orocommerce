@@ -285,10 +285,18 @@ class ProductProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('productCategoryChanged');
 
         $this->logger->expects($this->once())
+            ->method('warning')
+            ->with('The following products have not been not found when trying to resolve visibility');
+
+        $this->logger->expects($this->once())
             ->method('error')
             ->with(
                 'Unexpected exception occurred during Product Visibility resolve by Product.',
-                ['exception' => new EntityNotFoundException('Product was not found.')]
+                [
+                    'exception' => new EntityNotFoundException(
+                        'Products have not been found when trying to resolve visibility: 42'
+                    ),
+                ]
             );
 
         $this->assertEquals(
