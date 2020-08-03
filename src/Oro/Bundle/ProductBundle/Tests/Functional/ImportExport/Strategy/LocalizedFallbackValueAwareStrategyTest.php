@@ -46,6 +46,7 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
             $container->get('oro_importexport.field.related_entity_state_helper')
         );
         $this->strategy->setLocalizedFallbackValueClass(LocalizedFallbackValue::class);
+        $this->strategy->setOwnershipSetter($container->get('oro_organization.entity_ownership_associations_setter'));
     }
 
     /**
