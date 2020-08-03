@@ -71,6 +71,7 @@ class ProductPriceResetStrategyTest extends WebTestCase
         $this->context = new StepExecutionProxyContext($this->stepExecution);
         $this->strategy->setImportExportContext($this->context);
         $this->strategy->setEntityName(ProductPrice::class);
+        $this->strategy->setOwnershipSetter($container->get('oro_organization.entity_ownership_associations_setter'));
         $this->shardManager = $this->getContainer()->get('oro_pricing.shard_manager');
     }
 
