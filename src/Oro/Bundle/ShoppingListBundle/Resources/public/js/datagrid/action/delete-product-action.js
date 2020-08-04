@@ -1,11 +1,10 @@
-define([
-    'underscore',
-    'orotranslation/js/translator',
-    'oroui/js/mediator',
-    'oroui/js/messenger',
-    'oro/datagrid/action/delete-action'
-], function(_, __, mediator, messenger, DeleteAction) {
+define(function(require) {
     'use strict';
+
+    const __ = require( 'orotranslation/js/translator');
+    const mediator = require('oroui/js/mediator');
+    const messenger = require('oroui/js/messenger');
+    const DeleteAction = require('oro/datagrid/action/delete-action');
 
     /**
      * Delete action with confirm dialog, triggers REST DELETE request
@@ -25,7 +24,7 @@ define([
         /**
          * @inheritDoc
          */
-        getConfirmDialogOptions: function() {
+        getConfirmDialogOptions() {
             return {
                 title: this.getConfirmContentTitle(),
                 content: this.getConfirmContentMessage(),
@@ -39,22 +38,24 @@ define([
          *
          * @return {String}
          */
-        getConfirmContentTitle: function() {
+        getConfirmContentTitle() {
             return __(this.messages.confirm_title, this.model.toJSON());
         },
 
         /**
          * @inheritDoc
          */
-        doDelete: function() {
+        doDelete() {
             const success = __(this.messages.success, this.model.toJSON());
 
             this.model.destroy({
                 url: this.getLink(),
-                wait: true,
-                success: function() {
+                wait: false,
+                reset: false,
+                uniqueOnly: true,
+                toggleLoading: false,
+                success() {
                     messenger.notificationFlashMessage('success', success);
-
                     mediator.trigger('shopping-list:refresh');
                 }
             });

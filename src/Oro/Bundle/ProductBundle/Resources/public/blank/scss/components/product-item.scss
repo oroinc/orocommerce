@@ -146,8 +146,10 @@
                 left: 50%;
                 transform: translate(-50%, -50%);
 
+                margin-top: -1px;
+
                 color: get-color('additional', 'middle');
-                font-size: $base-font-size--l;
+                font-size: $base-font-size--l - 1;
                 line-height: 1;
             }
         }
