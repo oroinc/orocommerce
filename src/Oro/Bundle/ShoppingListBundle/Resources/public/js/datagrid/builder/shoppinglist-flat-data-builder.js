@@ -19,9 +19,9 @@ const flattenData = data => {
             let filteredOutVariants = 0;
             let lastFiltered = item;
 
-            item.id = item.productId + item.unit;
             itemClassName.push('group-row');
             item.row_class_name = itemClassName.join(' ');
+            item.ids = [];
             item._hasVariants = true;
             item._isVariant = false;
             flatData.push(item);
@@ -43,6 +43,7 @@ const flattenData = data => {
                     lastFiltered = subItem;
                 }
 
+                item.ids.push(subItem.id);
                 subItem._isVariant = true;
                 subItem.row_class_name = className.join(' ');
                 subItem.row_attributes = {
@@ -67,7 +68,7 @@ const flattenData = data => {
 };
 
 const shoppingListFlatDataBuilder = {
-    processDatagridOptions: function(deferred, options) {
+    processDatagridOptions(deferred, options) {
         Object.assign(options.metadata.options, {
             parseResponseModels: resp => {
                 return 'data' in resp ? flattenData(resp.data) : resp;
@@ -97,9 +98,7 @@ const shoppingListFlatDataBuilder = {
     /**
      * Init() function is required
      */
-    init: function(deferred, options) {
-        deferred.resolve();
-    }
+    init: deferred => deferred.resolve()
 };
 
 export default shoppingListFlatDataBuilder;
