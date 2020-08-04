@@ -13,13 +13,17 @@ const flattenData = data => {
         if (!subData) {
             item.row_class_name = itemClassName.join(' ');
             flatData.push(item);
+            item._hasVariants = false;
+            item._isVariant = false;
         } else {
             let filteredOutVariants = 0;
             let lastFiltered = item;
 
+            item.id = item.productId + item.unit;
             itemClassName.push('group-row');
             item.row_class_name = itemClassName.join(' ');
             item._hasVariants = true;
+            item._isVariant = false;
             flatData.push(item);
             subData.forEach((subItem, index) => {
                 const className = ['sub-row'];
@@ -67,6 +71,15 @@ const shoppingListFlatDataBuilder = {
         Object.assign(options.metadata.options, {
             parseResponseModels: resp => {
                 return 'data' in resp ? flattenData(resp.data) : resp;
+            },
+            parseResponseOptions: (resp = {}) => {
+                const {options = {}} = resp;
+                return {
+                    reset: false,
+                    uniqueOnly: true,
+                    wait: false,
+                    ...options
+                };
             }
         });
 
