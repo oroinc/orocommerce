@@ -1,4 +1,4 @@
-@fixture-OroProductBundle:configurable_products.yml
+@fixture-OroShoppingListBundle:MatrixForms.yml
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroCheckoutBundle:Checkout.yml
@@ -46,7 +46,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I go to Sales/ Price Lists
     And click view "Default Price List" in grid
     And I click "Import file"
-    And I upload "configurable_products_for_matrix_forms/products.csv" file to "ImportFileField"
+    And I upload "configurable_products_for_matrix_forms/products_prices.csv" file to "ImportFileField"
     And I click "Import file"
 
   Scenario: Check prices container on configurable product view is visible only when there are prices
@@ -191,6 +191,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And filter SKU as is equal to "CNFB"
     And I click Edit CNFB in grid
     And I click "Select related products"
+    And I sort "SelectRelatedProductsGrid" by NAME
     And I select following records in "SelectRelatedProductsGrid" grid:
       | SKU123 |
     And I click "Select products"
