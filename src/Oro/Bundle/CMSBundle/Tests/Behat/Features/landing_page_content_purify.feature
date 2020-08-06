@@ -36,9 +36,9 @@ Feature: Landing Page content purify
     And click "Create Landing Page"
     And I fill "CMS Page Form" with:
       | Titles  | Other page                                                                              |
-      | Content | Secure content <iframe src=\"https://www.youtube.com/embed/\" allowfullscreen></iframe> |
+      | Content | Secure content <button>sample button</button> |
     And I save and close form
-    Then I should see "Please remove not permitted HTML-tags in the content field: IFRAME (src, allowfullscreen)" error message
+    Then I should see "Please remove not permitted HTML-tags in the content field: BUTTON" error message
     When I fill "CMS Page Form" with:
       | Content | <div>Some Content</div> |
     And I save and close form
@@ -51,7 +51,7 @@ Feature: Landing Page content purify
     And go to Marketing / Landing Pages
     And I click edit Other page in grid
     And I fill "CMS Page Form" with:
-      | Content | Selective content <iframe src=\"https://www.youtube.com/embed/\" allowfullscreen></iframe> |
+      | Content | Selective content <button>sample button</button> |
     When I save and close form
     Then I should see "Page has been saved" flash message
     And should see "Selective content"
