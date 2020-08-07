@@ -4,6 +4,7 @@ dynamic-imports:
     oropayment:
         - oropayment/js/app/components/payment-method-component
         - oropayment/js/app/components/payment-method-selector-component
+    oroform-validate:
         - oropayment/js/validator/credit-card-expiration-date
         - oropayment/js/validator/credit-card-expiration-date-not-blank
         - oropayment/js/validator/credit-card-number

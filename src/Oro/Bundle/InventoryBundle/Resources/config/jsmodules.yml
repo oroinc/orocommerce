@@ -5,4 +5,5 @@ dynamic-imports:
         - oroinventory/js/app/views/decimals-number-editor-view
         - oroinventory/js/datagrid/builder/inventory-status-builder
         - oroinventory/js/datagrid/builder/level-quantity-builder
+    oroform-validate:
         - oroinventory/js/validator/decimals-number
