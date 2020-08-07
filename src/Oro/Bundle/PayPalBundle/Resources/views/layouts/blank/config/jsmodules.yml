@@ -1,5 +1,5 @@
 dynamic-imports:
-    oropaypal:
+    oropayment:
         - oropaypal/js/app/components/authorized-credit-card-component
         - oropaypal/js/app/components/credit-card-component
         - oropaypal/js/app/components/payflow-express-checkout-component

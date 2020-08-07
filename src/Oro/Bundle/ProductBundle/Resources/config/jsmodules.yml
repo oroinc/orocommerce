@@ -8,7 +8,7 @@ app-modules:
 configs:
     oroproduct/js/validator/sku-regex: {}
 dynamic-imports:
-    orodatagitd:
+    orodatagrid:
         - oro/datagrid/action/trigger-event-for-selected-product-ids-mass-action
         - oroproduct/js/app/datagrid/listener/related-product-listener
     oroproduct:
@@ -25,4 +25,5 @@ dynamic-imports:
         - oroproduct/js/app/components/product-variant-field-component
         - oroproduct/js/app/components/related-items-tabs-component
         - oroproduct/js/app/views/variant-fields-view
+    oroform-validate:
         - oroproduct/js/validator/sku-regex

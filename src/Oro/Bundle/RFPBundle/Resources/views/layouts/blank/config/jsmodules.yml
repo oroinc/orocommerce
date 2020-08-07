@@ -1,5 +1,5 @@
 dynamic-imports:
-    ororfp:
+    orocheckout:
         - ororfp/js/app/views/frontend-line-item-view
         - ororfp/js/app/views/line-item-offer-view
         - ororfp/js/app/views/line-item-view

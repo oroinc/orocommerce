@@ -5,7 +5,7 @@ dynamic-imports:
     orofilter:
         - oro/filter/frontend-product-price-filter
         - oro/filter/product-price-filter
-    oropricing:
+    oroproduct:
         - oropricing/js/app/components/currency-switcher-component
         - oropricing/js/app/components/totals-component
         - oropricing/js/app/views/base-product-matrix-view
