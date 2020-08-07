@@ -44,44 +44,6 @@
         }
     }
 
-    &__note {
-        position: relative;
-
-        padding: 10px 20px 0 20px;
-
-        clear: both;
-
-        &-content {
-            position: relative;
-
-            margin-top: $offset-y-m;
-            max-height: ($shopping-lists-notes-font-size * $shopping-lists-notes-line-height) * 4;
-
-            overflow: hidden;
-
-            @at-root .expanded & {
-                max-height: 200px;
-                overflow: auto;
-
-                &:after {
-                    content: none;
-                }
-            }
-
-            &:after {
-                position: absolute;
-                bottom: 0;
-
-                height: 20px;
-                width: 100%;
-
-                background: $collapse-view-trigger-overlay;
-
-                content: '';
-            }
-        }
-    }
-
     &__table {
         width: 100%;
 
@@ -158,11 +120,6 @@
 
 @include breakpoint('tablet') {
     .order-checkout-widget {
-        &__note {
-            padding: 0 16px 0 0;
-            width: 50%;
-        }
-
         &__container-wrapper {
             width: 50%;
         }
@@ -187,11 +144,6 @@
 
 @include breakpoint('mobile-landscape') {
     .order-checkout-widget {
-        &__note {
-            padding-right: 0;
-            width: 100%;
-        }
-
         &__container-wrapper {
             width: 100%;
         }
