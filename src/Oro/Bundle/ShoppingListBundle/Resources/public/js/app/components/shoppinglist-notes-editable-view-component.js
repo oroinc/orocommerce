@@ -1,89 +1,26 @@
-define(function(require) {
-    'use strict';
+import ViewComponent from 'oroui/js/app/components/view-component';
+import NotesModel from 'oroshoppinglist/js/app/models/shoppinglist-notes-editable-model';
 
-    const ViewComponent = require('oroui/js/app/components/view-component');
-    const mediator = require('oroui/js/mediator');
-    const routing = require('routing');
-    const $ = require('jquery');
-    const _ = require('underscore');
+const ShoppingListNotesEditableViewComponent = ViewComponent.extend({
+    /**
+     * @inheritDoc
+     */
+    constructor: function ShoppingListNotesEditableViewComponent(options) {
+        ShoppingListNotesEditableViewComponent.__super__.constructor.call(this, options);
+    },
 
-    const ShoppingListNotesEditableViewComponent = ViewComponent.extend({
-        /**
-         * @property {string}
-         */
-        className: null,
+    /**
+     * @param {Object} options
+     */
+    initialize(options) {
+        options.model = new NotesModel({
+            id: options.shoppingListId,
+            routingOptions: {...options.routingOptions},
+            notes: options.notes
+        });
 
-        /**
-         * @property {integer}
-         */
-        shoppingListId: null,
-
-        /**
-         * @property {jQuery.Element}
-         */
-        $textarea: null,
-
-        /**
-         * @property {jQuery.Element}
-         */
-        $button: null,
-
-        /**
-         * @inheritDoc
-         */
-        constructor: function ShoppingListNotesEditableViewComponent(options) {
-            ShoppingListNotesEditableViewComponent.__super__.constructor.call(this, options);
-        },
-
-        /**
-         * @param {Object} options
-         */
-        initialize: function(options) {
-            this.className = options.className;
-            this.shoppingListId = options.shoppingListId;
-
-            this.$textarea = options._sourceElement.find('textarea');
-
-            this.$button = options._sourceElement.find('[type="submit"]');
-            this.$button.on('click', _.bind(this._onShoppingListNotesSubmit, this));
-        },
-
-        /**
-         * Change shopping list notes event handler
-         */
-        _onShoppingListNotesSubmit: function() {
-            $.ajax({
-                method: 'PATCH',
-                url: routing.generate(
-                    'oro_api_frontend_patch_entity_data',
-                    {
-                        className: this.className,
-                        id: this.shoppingListId
-                    }
-                ),
-                data: JSON.stringify({
-                    notes: this.$textarea.val()
-                }),
-                success: function(response) {
-                    mediator.execute(
-                        'showFlashMessage',
-                        'success',
-                        _.__('oro.frontend.shoppinglist.dialog.notes.success')
-                    );
-                }
-            });
-        },
-
-        dispose: function() {
-            if (this.disposed) {
-                return;
-            }
-
-            this.$button.off('click', _.bind(this._onShoppingListNotesSubmit, this));
-
-            ShoppingListNotesEditableViewComponent.__super__.dispose.call(this);
-        }
-    });
-
-    return ShoppingListNotesEditableViewComponent;
+        ShoppingListNotesEditableViewComponent.__super__.initialize.call(this, options);
+    }
 });
+
+export default ShoppingListNotesEditableViewComponent;

@@ -27,6 +27,7 @@ dynamic-imports:
         - oroshoppinglist/js/app/components/shoppinglist-title-inline-editable-view-component
         - oroshoppinglist/js/app/components/shoppinglist-notes-editable-view-component
         - oroshoppinglist/js/app/components/shoppinglist-widget-view-component
+        - oroshoppinglist/js/app/views/shoppinglist-notes-editable-view
         - oroshoppinglist/js/app/views/line-item-form-submit-view
         - oroshoppinglist/js/app/views/line-item-view
         - oroshoppinglist/js/app/views/line-items-view

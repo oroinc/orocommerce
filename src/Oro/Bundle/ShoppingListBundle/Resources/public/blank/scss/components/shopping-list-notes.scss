@@ -1,0 +1,52 @@
+/* @theme: blank; */
+
+.shopping-list-notes {
+    position: relative;
+
+    margin: $shopping-lists-notes-offset;
+
+    &__title {
+        font-weight: $shopping-lists-notes-title-font-w;
+        margin-bottom: $shopping-lists-notes-title-offset;
+    }
+
+    &__content {
+        font-size: $shopping-lists-notes-font-size;
+        font-style: $shopping-lists-notes-font-s;
+
+        &--limited {
+            max-height: ($shopping-lists-notes-font-size * $shopping-lists-notes-line-height) * 3;
+
+            overflow: hidden;
+        }
+
+        @at-root .expanded & {
+            max-height: $shopping-lists-notes-expanded-height;
+            overflow: auto;
+
+            &:after {
+                content: none;
+            }
+        }
+    }
+
+    &.overflows .shopping-list-notes__content:after {
+        position: absolute;
+        bottom: 0;
+
+        display: block;
+        height: round($shopping-lists-notes-font-size * $shopping-lists-notes-line-height);
+        width: 100%;
+
+        background-image: $shopping-lists-notes-overflows-bg;
+
+        content: '';
+        pointer-events: none;
+    }
+
+    .shopping-lists-modify {
+        margin-top: $offset-y-m;
+
+        text-align: right;
+    }
+}

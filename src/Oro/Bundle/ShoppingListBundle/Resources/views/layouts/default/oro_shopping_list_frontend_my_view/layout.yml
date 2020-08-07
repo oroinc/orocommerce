@@ -33,6 +33,12 @@ layout:
             id: checkout_container
             parentId: page_sidebar
 
+        - '@move':
+              id: shopping_list_notes
+              parentId: container
+              siblingId: header
+              prepend: false
+
         - '@addTree':
             items:
                 shopping_list_notes:
@@ -44,6 +50,6 @@ layout:
                     options:
                         text: '=data["entity"].getNotes()'
             tree:
-                checkout_container:
+                container:
                     shopping_list_notes:
                         shopping_list_notes_text: ~

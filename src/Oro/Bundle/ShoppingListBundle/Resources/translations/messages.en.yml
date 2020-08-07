@@ -325,3 +325,10 @@ oro:
                     inventory_status.label: 'Availability'
                     quantity.label: 'Quantity'
                     unit.label: 'Unit'
+            note:
+                textarea:
+                    aria_label: 'Notes for %shoppinglist%'
+                add_entire_note: 'Add a note to entire Shopping List'
+                apply: 'Apply changes in the Note'
+                decline: 'Decline changes in the Note'
+                edit: 'Edit the Note'
