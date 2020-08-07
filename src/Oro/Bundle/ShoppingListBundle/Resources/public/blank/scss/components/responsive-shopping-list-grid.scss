@@ -104,6 +104,12 @@
         .grid-body-cell-subtotal {
             padding-top: 23px;
         }
+
+        // Need to increase weight of selector
+        .action.stretched .icon:before {
+            // Line height is equal to image height
+            line-height: $responsive-shopping-list-action-in-desktop-height;
+        }
     }
 }
 
@@ -142,6 +148,12 @@
         .grid-body-cell-sku,
         .grid-body-cell-inventoryStatus {
             display: none;
+        }
+
+        // Need to increase weight of selector
+        .action.stretched .icon:before {
+            // Line height is equal to row line item height
+            line-height: $responsive-shopping-list-action-in-tablet-height;
         }
     }
 }
