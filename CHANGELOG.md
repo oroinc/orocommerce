@@ -14,6 +14,11 @@ The current file describes significant changes in the code that may affect the u
 * The name for `/admin/api/rfpcustomerstatuses` REST API resource was changed to `/admin/api/rfqcustomerstatuses`.
 * The name for `/admin/api/rfpinternalstatuses` REST API resource was changed to `/admin/api/rfqinternalstatuses`.
 
+### Removed
+
+#### PricingBundle
+* The `unique_job_slug` option was removed during sending the import price list MQ message. 
+
 ## 4.2.0-alpha.2 (2020-05-29)
 [Show detailed list of changes](incompatibilities-4-2-alpha-2.md)
 
