@@ -6,6 +6,9 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
+/**
+ * Validate that a given value is a valid decimal including checking of formatted values.
+ */
 class DecimalValidator extends ConstraintValidator
 {
     /**
@@ -19,6 +22,12 @@ class DecimalValidator extends ConstraintValidator
 
         if (!is_scalar($value)) {
             throw new UnexpectedTypeException($value, 'string');
+        }
+        // Remove trailing zeroes if value is numeric to validate value correctly. "49.0100000" will fail
+        if (is_numeric($value) && is_string($value)) {
+            if (strpos($value, '.') !== false) {
+                $value = rtrim(preg_replace('/0+$/', '', $value), '.');
+            }
         }
 
         $formatter = new \NumberFormatter(\Locale::getDefault(), \NumberFormatter::DECIMAL);
