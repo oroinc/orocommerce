@@ -46,8 +46,13 @@ class LineItemController extends RestController implements ClassResourceInterfac
         $view = $this->view(null, Response::HTTP_NO_CONTENT);
 
         if ($lineItem) {
+            $request = $this->get('request_stack')->getCurrentRequest();
+
             if ($this->isGranted('DELETE', $lineItem) && $this->isGranted('EDIT', $lineItem->getShoppingList())) {
-                $this->get('oro_shopping_list.manager.shopping_list')->removeLineItem($lineItem);
+                $this->get('oro_shopping_list.manager.shopping_list')->removeLineItem(
+                    $lineItem,
+                    (bool) $request->get('only_current', false)
+                );
                 $success = true;
             } else {
                 $view = $this->view(null, Response::HTTP_FORBIDDEN);
@@ -99,19 +104,17 @@ class LineItemController extends RestController implements ClassResourceInterfac
 
             if ($allowed) {
                 $options = [];
+                $handler = $this->get('oro_entity.delete_handler_registry')
+                    ->getHandler(LineItem::class);
 
                 foreach ($lineItems as $lineItem) {
-                    $this->get('oro_entity.delete_handler_registry')
-                        ->getHandler(LineItem::class)
-                        ->delete($lineItem, false);
+                    $handler->delete($lineItem, false);
 
                     $options[]['entity'] = $lineItem;
                     $ids[] = $lineItem->getId();
                 }
 
-                $this->get('oro_entity.delete_handler_registry')
-                    ->getHandler(LineItem::class)
-                    ->flushAll($options);
+                $handler->flushAll($options);
 
                 $success = true;
             } else {

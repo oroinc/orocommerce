@@ -8,6 +8,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData as OroLoadCustomerUserData;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadConfigurableProductWithVariants;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -239,6 +240,10 @@ class LineItemRepositoryTest extends WebTestCase
             $this->getReference(LoadShoppingLists::SHOPPING_LIST_5)
         ];
 
+        $parentProductName = $this->getReference(LoadConfigurableProductWithVariants::CONFIGURABLE_SKU)
+            ->getName()
+            ->getString();
+
         $productName1 = $this->getReference(LoadProductData::PRODUCT_1)->getName()->getString();
         $productName5 = $this->getReference(LoadProductData::PRODUCT_5)->getName()->getString();
         $productName8 = $this->getReference(LoadProductData::PRODUCT_8)->getName()->getString();
@@ -252,6 +257,9 @@ class LineItemRepositoryTest extends WebTestCase
         $this->assertEquals(
             [
                 $shoppingListId1 => [
+                    [
+                        'name' => $parentProductName
+                    ],
                     [
                         'name' => $productName1
                     ]

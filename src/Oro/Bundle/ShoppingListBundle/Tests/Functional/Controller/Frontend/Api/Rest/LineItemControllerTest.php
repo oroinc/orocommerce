@@ -3,12 +3,20 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend\Api\Rest;
 
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListConfigurableLineItems;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+/**
+ * @dbIsolationPerTest
+ */
 class LineItemControllerTest extends WebTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],
@@ -17,18 +25,19 @@ class LineItemControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
-                'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits',
-                'Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists',
-                'Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems',
+                LoadProductData::class,
+                LoadProductUnits::class,
+                LoadShoppingLists::class,
+                LoadShoppingListLineItems::class,
+                LoadShoppingListConfigurableLineItems::class,
             ]
         );
     }
 
-    public function testDelete()
+    public function testDelete(): void
     {
         /** @var LineItem $lineItem */
-        $lineItem = $this->getReference('shopping_list_line_item.1');
+        $lineItem = $this->getReference('shopping_list_configurable_line_item.4');
 
         $this->client->request(
             'DELETE',
@@ -37,9 +46,42 @@ class LineItemControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertEmptyResponseStatusCodeEquals($result, 204);
+
+        $secondItem = $this->getContainer()
+            ->get('doctrine')
+            ->getManagerForClass(LineItem::class)
+            ->getRepository(LineItem::class)
+            ->findOneBy(['id' => $this->getReference('shopping_list_configurable_line_item.5')->getId()]);
+
+        $this->assertTrue($secondItem === null);
     }
 
-    public function testDeleteWhenNoLineItem()
+    public function testDeleteOnlyCurrent(): void
+    {
+        /** @var LineItem $lineItem */
+        $lineItem = $this->getReference('shopping_list_configurable_line_item.4');
+
+        $this->client->request(
+            'DELETE',
+            $this->getUrl(
+                'oro_api_shopping_list_frontend_delete_line_item',
+                ['id' => $lineItem->getId(), 'only_current' => true]
+            )
+        );
+
+        $result = $this->client->getResponse();
+        $this->assertEmptyResponseStatusCodeEquals($result, 204);
+
+        $secondItem = $this->getContainer()
+            ->get('doctrine')
+            ->getManagerForClass(LineItem::class)
+            ->getRepository(LineItem::class)
+            ->findOneBy(['id' => $this->getReference('shopping_list_configurable_line_item.5')->getId()]);
+
+        $this->assertFalse($secondItem === null);
+    }
+
+    public function testDeleteWhenNoLineItem(): void
     {
         $this->client->request(
             'DELETE',
