@@ -22,7 +22,7 @@ use Symfony\Component\HttpFoundation\Response;
 class LineItemController extends RestController implements ClassResourceInterface
 {
     /**
-     * @Delete(requirements={"id"="\d+"})
+     * @Delete(requirements={"id"="\d+", "onlyCurrent"="[0|1]"}, defaults={"onlyCurrent"=0})
      *
      * @ApiDoc(
      *      description="Delete Line Item",
@@ -31,10 +31,11 @@ class LineItemController extends RestController implements ClassResourceInterfac
      * @AclAncestor("oro_shopping_list_frontend_update")
      *
      * @param int $id
+     * @param int $onlyCurrent
      *
      * @return Response
      */
-    public function deleteAction(int $id)
+    public function deleteAction(int $id, int $onlyCurrent = 0)
     {
         $success = false;
         /** @var LineItem $lineItem */
@@ -47,7 +48,10 @@ class LineItemController extends RestController implements ClassResourceInterfac
 
         if ($lineItem) {
             if ($this->isGranted('DELETE', $lineItem) && $this->isGranted('EDIT', $lineItem->getShoppingList())) {
-                $this->get('oro_shopping_list.manager.shopping_list')->removeLineItem($lineItem);
+                $this->get('oro_shopping_list.manager.shopping_list')->removeLineItem(
+                    $lineItem,
+                    (bool) $onlyCurrent
+                );
                 $success = true;
             } else {
                 $view = $this->view(null, Response::HTTP_FORBIDDEN);
@@ -99,19 +103,17 @@ class LineItemController extends RestController implements ClassResourceInterfac
 
             if ($allowed) {
                 $options = [];
+                $handler = $this->get('oro_entity.delete_handler_registry')
+                    ->getHandler(LineItem::class);
 
                 foreach ($lineItems as $lineItem) {
-                    $this->get('oro_entity.delete_handler_registry')
-                        ->getHandler(LineItem::class)
-                        ->delete($lineItem, false);
+                    $handler->delete($lineItem, false);
 
                     $options[]['entity'] = $lineItem;
                     $ids[] = $lineItem->getId();
                 }
 
-                $this->get('oro_entity.delete_handler_registry')
-                    ->getHandler(LineItem::class)
-                    ->flushAll($options);
+                $handler->flushAll($options);
 
                 $success = true;
             } else {

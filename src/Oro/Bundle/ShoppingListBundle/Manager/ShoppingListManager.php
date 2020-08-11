@@ -234,10 +234,7 @@ class ShoppingListManager
             return 1;
         }
 
-        return $this->removeProduct(
-            $lineItem->getShoppingList(),
-            $parentProduct ? $parentProduct : $lineItem->getProduct()
-        );
+        return $this->removeProduct($lineItem->getShoppingList(), $parentProduct ?: $lineItem->getProduct());
     }
 
     /**

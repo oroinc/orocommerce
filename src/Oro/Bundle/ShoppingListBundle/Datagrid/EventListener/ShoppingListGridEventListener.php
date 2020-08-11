@@ -247,7 +247,7 @@ class ShoppingListGridEventListener
                     'filteredOut' => !in_array($item->getId(), $displayed, false),
                     'delete_link' => $this->urlGenerator->generate(
                         'oro_api_shopping_list_frontend_delete_line_item',
-                        ['id' => $item->getId()]
+                        ['id' => $item->getId(), 'onlyCurrent' => true]
                     ),
                 ],
                 $event->getDataForLineItem($item->getId())
