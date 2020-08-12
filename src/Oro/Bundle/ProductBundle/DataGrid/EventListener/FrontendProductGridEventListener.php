@@ -4,7 +4,6 @@ namespace Oro\Bundle\ProductBundle\DataGrid\EventListener;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
-use Oro\Bundle\DataGridBundle\Datagrid\Manager;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Provider\State\DatagridStateProviderInterface;
@@ -19,13 +18,11 @@ use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterTypeInterface;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Search\ProductRepository;
-use Oro\Bundle\SearchBundle\Datagrid\Datasource\SearchDatasource;
+use Oro\Bundle\ProductBundle\Provider\FamilyAttributeCountsProvider;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchAttributeTypeInterface;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\EnumIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
-use Oro\Component\DependencyInjection\ServiceLink;
 
 /**
  * Updates configuration of frontend products grid and add filter or sorter on it
@@ -45,12 +42,6 @@ class FrontendProductGridEventListener
     /** @var DoctrineHelper */
     private $doctrineHelper;
 
-    /** @var ProductRepository */
-    private $productRepository;
-
-    /** @var ServiceLink */
-    private $datagridManagerLink;
-
     /** @var DatagridStateProviderInterface */
     private $filtersStateProvider;
 
@@ -63,6 +54,9 @@ class FrontendProductGridEventListener
     /** @var DatagridParametersHelper|null */
     private $datagridParametersHelper;
 
+    /** @var FamilyAttributeCountsProvider */
+    private $familyAttributeCountsProvider;
+
     /** @var bool */
     private $inProgress = false;
 
@@ -73,41 +67,33 @@ class FrontendProductGridEventListener
      * @param AttributeManager $attributeManager
      * @param AttributeTypeRegistry $attributeTypeRegistry
      * @param AttributeConfigurationProviderInterface $configurationProvider
-     * @param ProductRepository $productRepository
      * @param DoctrineHelper $doctrineHelper
-     * @param ServiceLink $datagridManagerLink
      * @param DatagridStateProviderInterface $filtersStateProvider
      * @param DatagridStateProviderInterface $sortersStateProvider
      * @param ConfigManager $configManager
+     * @param DatagridParametersHelper $datagridParametersHelper
+     * @param FamilyAttributeCountsProvider $familyAttributeCountsProvider
      */
     public function __construct(
         AttributeManager $attributeManager,
         AttributeTypeRegistry $attributeTypeRegistry,
         AttributeConfigurationProviderInterface $configurationProvider,
-        ProductRepository $productRepository,
         DoctrineHelper $doctrineHelper,
-        ServiceLink $datagridManagerLink,
         DatagridStateProviderInterface $filtersStateProvider,
         DatagridStateProviderInterface $sortersStateProvider,
-        ConfigManager $configManager
+        ConfigManager $configManager,
+        DatagridParametersHelper $datagridParametersHelper,
+        FamilyAttributeCountsProvider $familyAttributeCountsProvider
     ) {
         $this->attributeManager = $attributeManager;
         $this->attributeTypeRegistry = $attributeTypeRegistry;
         $this->configurationProvider = $configurationProvider;
-        $this->productRepository = $productRepository;
         $this->doctrineHelper = $doctrineHelper;
-        $this->datagridManagerLink = $datagridManagerLink;
         $this->filtersStateProvider = $filtersStateProvider;
         $this->sortersStateProvider = $sortersStateProvider;
         $this->configManager = $configManager;
-    }
-
-    /**
-     * @param DatagridParametersHelper|null $datagridParametersHelper
-     */
-    public function setDatagridParametersHelper(?DatagridParametersHelper $datagridParametersHelper): void
-    {
         $this->datagridParametersHelper = $datagridParametersHelper;
+        $this->familyAttributeCountsProvider = $familyAttributeCountsProvider;
     }
 
     /**
@@ -349,27 +335,16 @@ class FrontendProductGridEventListener
     ): array {
         $gridName = $config->getName();
         if (!array_key_exists($gridName, $this->attributesToHide)
-            || !$this->isDatagridExtensionSkipped($parameterBag)) {
+            || !$this->datagridParametersHelper->isDatagridExtensionSkipped($parameterBag)) {
             $this->attributesToHide[$gridName] = [];
 
             $configKey = Configuration::getConfigKeyByName(Configuration::LIMIT_FILTERS_SORTERS_ON_PRODUCT_LISTING);
             if ($this->configManager->get($configKey)) {
-                /** @var Manager $datagridManager */
-                $datagridManager = $this->datagridManagerLink->getService();
-
-                /** @var SearchDatasource $datasource */
-                $datasource = $datagridManager->getDatagrid($config->getName())
-                    ->acceptDatasource()
-                    ->getDatasource();
-
-                $data = $this->productRepository
-                    ->getFamilyAttributeCountsQuery($datasource->getSearchQuery(), 'familyAttributesCount')
-                    ->getResult()
-                    ->getAggregatedData();
+                $familyAttributeCounts = $this->familyAttributeCountsProvider->getFamilyAttributeCounts($gridName);
 
                 $activeAttributeFamilyIds = [];
-                if (!empty($data['familyAttributesCount'])) {
-                    $activeAttributeFamilyIds = array_keys($data['familyAttributesCount']);
+                if (!empty($familyAttributeCounts['familyAttributesCount'])) {
+                    $activeAttributeFamilyIds = array_keys($familyAttributeCounts['familyAttributesCount']);
                 }
 
                 $this->attributesToHide[$gridName] = $this
@@ -378,20 +353,6 @@ class FrontendProductGridEventListener
         }
 
         return $this->attributesToHide[$gridName];
-    }
-
-    /**
-     * @param ParameterBag $parameterBag
-     *
-     * @return bool
-     */
-    private function isDatagridExtensionSkipped(ParameterBag $parameterBag): bool
-    {
-        if ($this->datagridParametersHelper) {
-            return $this->datagridParametersHelper->isDatagridExtensionSkipped($parameterBag);
-        }
-
-        return $parameterBag->get(DatagridParametersHelper::DATAGRID_SKIP_EXTENSION_PARAM, false);
     }
 
     /**
