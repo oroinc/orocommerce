@@ -2,9 +2,8 @@ define(function(require) {
     'use strict';
 
     const BaseView = require('oroui/js/app/views/base/view');
-    const mediator = require('oroui/js/mediator');
-    const $ = require('jquery');
     const _ = require('underscore');
+    const $ = require('jquery');
 
     const DefaultVariantCollectionView = BaseView.extend({
         $collection: null,
@@ -12,7 +11,26 @@ define(function(require) {
         options: {
             defaultSelector: '[name$="[default]"]',
             itemSelector: '[data-role="content-variant-item"]',
-            defaultItemClass: 'content-variant-item-default'
+            itemContent: '[name$="[content]"]',
+            activeItemSelector: '.content-variant-item-content.show',
+            defaultItemClass: 'content-variant-item-default',
+            defaultItemCollapseSelector: '.content-variant-item-default .collapse'
+        },
+
+        /**
+         * @inheritDoc
+         */
+        events() {
+            return {
+                [`shown.bs.collapse ${this.options.itemSelector}`]: 'handleToggleCollapse',
+                [`hide.bs.collapse ${this.options.itemSelector}`]: 'handleToggleCollapse',
+                [`click ${this.options.defaultSelector}`]: event => this.onDefaultChange($(event.target))
+            };
+        },
+
+        listen: {
+            'cms:content-variant-collection:add mediator': 'handleChange',
+            'cms:content-variant-collection:remove mediator': 'handleChange'
         },
 
         /**
@@ -27,31 +45,22 @@ define(function(require) {
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
+            this.handleChange();
+            this.enableActiveItem();
+            this.handleToggleCollapse = _.debounce(this.handleToggleCollapse, 300);
+            DefaultVariantCollectionView.__super__.initialize.call(this, options);
+        },
 
-            this.$el.on(
-                'click',
-                this.options.defaultSelector,
-                _.bind(
-                    function(e) {
-                        this.onDefaultChange($(e.target));
-                    },
-                    this
-                )
+        handleToggleCollapse(event) {
+            const target = $(event.currentTarget);
+            target.find(this.options.itemContent).trigger(
+                event.type === 'hide'
+                    ? 'wysiwyg:disable'
+                    : 'wysiwyg:enable'
             );
-            mediator.on('cms:content-variant-collection:add', this.handleAdd, this);
-            mediator.on('cms:content-variant-collection:remove', this.handleRemove, this);
-
-            this.handleAdd();
         },
 
-        handleRemove: function($container) {
-            // Check is default variant removed
-            if ($container.find(this.options.defaultSelector + ':checked').length === 0) {
-                this.checkDefaultVariant();
-            }
-        },
-
-        handleAdd: function() {
+        handleChange() {
             if (this.$el.find(this.options.itemSelector).length &&
                 this.$el.find(this.options.defaultSelector + ':checked').length === 0
             ) {
@@ -69,6 +78,13 @@ define(function(require) {
         onDefaultChange: function($default) {
             this.$el.find('.' + this.options.defaultItemClass).removeClass(this.options.defaultItemClass);
             $default.closest(this.options.itemSelector).addClass(this.options.defaultItemClass);
+        },
+
+        enableActiveItem() {
+            const activeItem = this.$el.find(this.options.activeItemSelector);
+            if (activeItem.length) {
+                activeItem.find(this.options.itemContent).trigger('wysiwyg:enable');
+            }
         }
     });
 
