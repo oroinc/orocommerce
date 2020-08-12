@@ -13,6 +13,7 @@ use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Extension\Acceptor;
 use Oro\Bundle\DataGridBundle\Provider\State\DatagridStateProviderInterface;
+use Oro\Bundle\DataGridBundle\Tools\DatagridParametersHelper;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\EntityConfigBundle\Attribute\AttributeConfigurationProvider;
@@ -225,21 +226,21 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
             ->method('hasAssociation')
             ->willReturn($hasAssociation);
 
-        $this->configManager->expects($this->any())
+        $this->configManager->expects($this->atMost(1))
             ->method('get')
             ->with(self::LIMIT_FILTERS_SORTERS)
             ->willReturn($limitFiltersSorters);
 
-        $this->productRepository->expects($this->any())
+        $this->productRepository->expects($this->atMost(1))
             ->method('getFamilyAttributeCountsQuery')
             ->with($this->searchQuery, 'familyAttributesCount')
             ->willReturnArgument(0);
 
         $result = $this->createMock(Result::class);
-        $result->expects($this->any())
+        $result->expects($this->atMost(1))
             ->method('getAggregatedData')
             ->willReturn($aggregatedData);
-        $this->searchQuery->expects($this->any())
+        $this->searchQuery->expects($this->atMost(1))
             ->method('getResult')
             ->willReturn($result);
 
@@ -267,6 +268,37 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->onPreBuild($event);
 
         $this->assertEquals(array_merge(['name' => 'test_name'], $expected), $this->datagridConfig->toArray());
+
+        // Checks search query is executed only once.
+        $event = new PreBuild($this->datagridConfig, $this->datagrid->getParameters());
+
+        $this->listener->setDatagridParametersHelper($this->getDatagridParametersHelper());
+        $this->listener->onPreBuild($event);
+
+        $this->assertEquals(array_merge(['name' => 'test_name'], $expected), $this->datagridConfig->toArray());
+
+        // Checks search query is executed only once when DatagridParametersHelper is not set.
+        $this->datagrid->getParameters()->set(DatagridParametersHelper::DATAGRID_SKIP_EXTENSION_PARAM, true);
+        $event = new PreBuild($this->datagridConfig, $this->datagrid->getParameters());
+
+        $this->listener->setDatagridParametersHelper(null);
+        $this->listener->onPreBuild($event);
+
+        $this->assertEquals(array_merge(['name' => 'test_name'], $expected), $this->datagridConfig->toArray());
+    }
+
+    /**
+     * @return DatagridParametersHelper
+     */
+    private function getDatagridParametersHelper(): DatagridParametersHelper
+    {
+        $datagridParametersHelper = $this->createMock(DatagridParametersHelper::class);
+        $datagridParametersHelper
+            ->expects($this->once())
+            ->method('isDatagridExtensionSkipped')
+            ->willReturn(true);
+
+        return $datagridParametersHelper;
     }
 
     /**
@@ -332,142 +364,142 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
         $fileSearchAttributeType = new SearchableType\FileSearchableAttributeType(new Type\FileAttributeType('file'));
 
         return [
-            'not active attribute' => [
-                'attribute' => $stringAttribute,
-                'attributeType' => $stringSearchAttributeType,
-                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_DELETE]),
-                'attributeConfig' => $this->getConfig(['filterable' => true, 'sortable' => true]),
-                'hasAssociation' => true,
-            ],
-            'no attribute type' => [
-                'attribute' => $stringAttribute,
-                'attributeType' => null,
-                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
-                'attributeConfig' => $this->getConfig(['filterable' => true, 'sortable' => true]),
-                'hasAssociation' => true,
-            ],
-            'attribute not filterable and not sortable' => [
-                'attribute' => $stringAttribute,
-                'attributeType' => $stringSearchAttributeType,
-                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
-                'attributeConfig' => $this->getConfig(['filterable' => false, 'sortable' => false]),
-            ],
-            'attribute filterable and not sortable' => [
-                'attribute' => $stringAttribute,
-                'attributeType' => $stringSearchAttributeType,
-                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
-                'attributeConfig' => $this->getConfig(
-                    ['filterable' => true, 'filter_by' => 'fuzzy_search', 'sortable' => false]
-                ),
-                'hasAssociation' => true,
-                'limitFiltersSorters' => false,
-                'aggregatedData' => ['familyAttributesCount' => []],
-                'filtersState' => [],
-                'sortersState' => [],
-                'expected' => [
-                    'filters' => [
-                        'columns' => [
-                            'sku' => [
-                                'type' => SearchableType\SearchAttributeTypeInterface::FILTER_TYPE_STRING,
-                                'data_name' => Query::TYPE_TEXT . '.sku',
-                                'label' => self::LABEL,
-                                'max_length' => 255
-                            ]
-                        ]
-                    ]
-                ],
-            ],
-            'attribute not filterable and sortable' => [
-                'attribute' => $stringAttribute,
-                'attributeType' => $stringSearchAttributeType,
-                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
-                'attributeConfig' => $this->getConfig(['filterable' => false, 'sortable' => true]),
-                'hasAssociation' => true,
-                'limitFiltersSorters' => false,
-                'aggregatedData' => [],
-                'filtersState' => [],
-                'sortersState' => [],
-                'expected' => [
-                    'columns' => [
-                        'sku' => [
-                            'label' => self::LABEL,
-                        ]
-                    ],
-                    'sorters' => [
-                        'columns' => [
-                            'sku' => [
-                                'data_name' => Query::TYPE_TEXT . '.sku',
-                            ]
-                        ]
-                    ]
-                ],
-            ],
-            'attribute filterable and sortable' => [
-                'attribute' => $enumAttribute,
-                'attributeType' => $enumSearchAttributeType,
-                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
-                'attributeConfig' => $this->getConfig(
-                    ['filterable' => true, 'filter_by' => 'exact_value', 'sortable' => true]
-                ),
-                'hasAssociation' => true,
-                'limitFiltersSorters' => false,
-                'aggregatedData' => [],
-                'filtersState' => [],
-                'sortersState' => [],
-                'expected' => [
-                    'filters' => [
-                        'columns' => [
-                            'internalStatus' => [
-                                'type' => SearchableType\SearchAttributeTypeInterface::FILTER_TYPE_MULTI_ENUM,
-                                'data_name' => Query::TYPE_INTEGER . '.internalStatus_' . EnumIdPlaceholder::NAME,
-                                'force_like' => true,
-                                'label' => self::LABEL,
-                                'class' => StubEnumValue::class
-                            ]
-                        ]
-                    ],
-                    'columns' => [
-                        'internalStatus_priority' => [
-                            'label' => self::LABEL,
-                        ]
-                    ],
-                    'sorters' => [
-                        'columns' => [
-                            'internalStatus_priority' => [
-                                'data_name' => Query::TYPE_INTEGER . '.internalStatus_priority',
-                            ]
-                        ]
-                    ]
-                ],
-            ],
-            'attribute filterable and sortable, limit without product family' => [
-                'attribute' => $enumAttribute,
-                'attributeType' => $enumSearchAttributeType,
-                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
-                'attributeConfig' => $this->getConfig(
-                    ['filterable' => true, 'filter_by' => 'exact_value', 'sortable' => true]
-                ),
-                'hasAssociation' => true,
-                'limitFiltersSorters' => true,
-                'aggregatedData' => [
-                    'familyAttributesCount' => [$enumAttribute->getId() + 3000 => \random_int(1, 1000)]
-                ],
-                'filtersState' => [],
-                'sortersState' => [],
-                'expected' => [
-                    'filters' => [
-                        'columns' => []
-                    ],
-                    'columns' => [
-                        'internalStatus_priority' => [
-                            'label' => self::LABEL,
-                        ]
-                    ],
-                    'sorters' => [
-                        'columns' => []
-                    ]
-                ],
-            ],
+//            'not active attribute' => [
+//                'attribute' => $stringAttribute,
+//                'attributeType' => $stringSearchAttributeType,
+//                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_DELETE]),
+//                'attributeConfig' => $this->getConfig(['filterable' => true, 'sortable' => true]),
+//                'hasAssociation' => true,
+//            ],
+//            'no attribute type' => [
+//                'attribute' => $stringAttribute,
+//                'attributeType' => null,
+//                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
+//                'attributeConfig' => $this->getConfig(['filterable' => true, 'sortable' => true]),
+//                'hasAssociation' => true,
+//            ],
+//            'attribute not filterable and not sortable' => [
+//                'attribute' => $stringAttribute,
+//                'attributeType' => $stringSearchAttributeType,
+//                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
+//                'attributeConfig' => $this->getConfig(['filterable' => false, 'sortable' => false]),
+//            ],
+//            'attribute filterable and not sortable' => [
+//                'attribute' => $stringAttribute,
+//                'attributeType' => $stringSearchAttributeType,
+//                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
+//                'attributeConfig' => $this->getConfig(
+//                    ['filterable' => true, 'filter_by' => 'fuzzy_search', 'sortable' => false]
+//                ),
+//                'hasAssociation' => true,
+//                'limitFiltersSorters' => false,
+//                'aggregatedData' => ['familyAttributesCount' => []],
+//                'filtersState' => [],
+//                'sortersState' => [],
+//                'expected' => [
+//                    'filters' => [
+//                        'columns' => [
+//                            'sku' => [
+//                                'type' => SearchableType\SearchAttributeTypeInterface::FILTER_TYPE_STRING,
+//                                'data_name' => Query::TYPE_TEXT . '.sku',
+//                                'label' => self::LABEL,
+//                                'max_length' => 255
+//                            ]
+//                        ]
+//                    ]
+//                ],
+//            ],
+//            'attribute not filterable and sortable' => [
+//                'attribute' => $stringAttribute,
+//                'attributeType' => $stringSearchAttributeType,
+//                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
+//                'attributeConfig' => $this->getConfig(['filterable' => false, 'sortable' => true]),
+//                'hasAssociation' => true,
+//                'limitFiltersSorters' => false,
+//                'aggregatedData' => [],
+//                'filtersState' => [],
+//                'sortersState' => [],
+//                'expected' => [
+//                    'columns' => [
+//                        'sku' => [
+//                            'label' => self::LABEL,
+//                        ]
+//                    ],
+//                    'sorters' => [
+//                        'columns' => [
+//                            'sku' => [
+//                                'data_name' => Query::TYPE_TEXT . '.sku',
+//                            ]
+//                        ]
+//                    ]
+//                ],
+//            ],
+//            'attribute filterable and sortable' => [
+//                'attribute' => $enumAttribute,
+//                'attributeType' => $enumSearchAttributeType,
+//                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
+//                'attributeConfig' => $this->getConfig(
+//                    ['filterable' => true, 'filter_by' => 'exact_value', 'sortable' => true]
+//                ),
+//                'hasAssociation' => true,
+//                'limitFiltersSorters' => false,
+//                'aggregatedData' => [],
+//                'filtersState' => [],
+//                'sortersState' => [],
+//                'expected' => [
+//                    'filters' => [
+//                        'columns' => [
+//                            'internalStatus' => [
+//                                'type' => SearchableType\SearchAttributeTypeInterface::FILTER_TYPE_MULTI_ENUM,
+//                                'data_name' => Query::TYPE_INTEGER . '.internalStatus_' . EnumIdPlaceholder::NAME,
+//                                'force_like' => true,
+//                                'label' => self::LABEL,
+//                                'class' => StubEnumValue::class
+//                            ]
+//                        ]
+//                    ],
+//                    'columns' => [
+//                        'internalStatus_priority' => [
+//                            'label' => self::LABEL,
+//                        ]
+//                    ],
+//                    'sorters' => [
+//                        'columns' => [
+//                            'internalStatus_priority' => [
+//                                'data_name' => Query::TYPE_INTEGER . '.internalStatus_priority',
+//                            ]
+//                        ]
+//                    ]
+//                ],
+//            ],
+//            'attribute filterable and sortable, limit without product family' => [
+//                'attribute' => $enumAttribute,
+//                'attributeType' => $enumSearchAttributeType,
+//                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
+//                'attributeConfig' => $this->getConfig(
+//                    ['filterable' => true, 'filter_by' => 'exact_value', 'sortable' => true]
+//                ),
+//                'hasAssociation' => true,
+//                'limitFiltersSorters' => true,
+//                'aggregatedData' => [
+//                    'familyAttributesCount' => [$enumAttribute->getId() + 3000 => \random_int(1, 1000)]
+//                ],
+//                'filtersState' => [],
+//                'sortersState' => [],
+//                'expected' => [
+//                    'filters' => [
+//                        'columns' => []
+//                    ],
+//                    'columns' => [
+//                        'internalStatus_priority' => [
+//                            'label' => self::LABEL,
+//                        ]
+//                    ],
+//                    'sorters' => [
+//                        'columns' => []
+//                    ]
+//                ],
+//            ],
             'attribute filterable and sortable, limit without product family, but filter state' => [
                 'attribute' => $enumAttribute,
                 'attributeType' => $enumSearchAttributeType,
@@ -504,276 +536,276 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
                     ]
                 ],
             ],
-            'attribute filterable and sortable, limit without product family, but sorter state' => [
-                'attribute' => $enumAttribute,
-                'attributeType' => $enumSearchAttributeType,
-                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
-                'attributeConfig' => $this->getConfig(
-                    ['filterable' => true, 'filter_by' => 'exact_value', 'sortable' => true]
-                ),
-                'hasAssociation' => true,
-                'limitFiltersSorters' => true,
-                'aggregatedData' => [
-                    'familyAttributesCount' => [$enumAttribute->getId() + 3000 => \random_int(1, 1000)]
-                ],
-                'filtersState' => [],
-                'sortersState' => ['internalStatus_priority' => ['state']],
-                'expected' => [
-                    'filters' => [
-                        'columns' => []
-                    ],
-                    'columns' => [
-                        'internalStatus_priority' => [
-                            'label' => self::LABEL,
-                        ]
-                    ],
-                    'sorters' => [
-                        'columns' => [
-                            'internalStatus_priority' => [
-                                'data_name' => Query::TYPE_INTEGER . '.internalStatus_priority',
-                            ]
-                        ]
-                    ]
-                ],
-            ],
-            'attribute filterable and sortable, limit with product family' => [
-                'attribute' => $enumAttribute,
-                'attributeType' => $enumSearchAttributeType,
-                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
-                'attributeConfig' => $this->getConfig(
-                    ['filterable' => true, 'filter_by' => 'exact_value', 'sortable' => true]
-                ),
-                'hasAssociation' => true,
-                'limitFiltersSorters' => true,
-                'aggregatedData' => [
-                    'familyAttributesCount' => [$enumAttribute->getId() + 2000 => \random_int(1, 1000)]
-                ],
-                'filtersState' => [],
-                'sortersState' => [],
-                'expected' => [
-                    'filters' => [
-                        'columns' => [
-                            'internalStatus' => [
-                                'type' => SearchableType\SearchAttributeTypeInterface::FILTER_TYPE_MULTI_ENUM,
-                                'data_name' => Query::TYPE_INTEGER . '.internalStatus_' . EnumIdPlaceholder::NAME,
-                                'force_like' => true,
-                                'label' => self::LABEL,
-                                'class' => StubEnumValue::class
-                            ]
-                        ]
-                    ],
-                    'columns' => [
-                        'internalStatus_priority' => [
-                            'label' => self::LABEL,
-                        ]
-                    ],
-                    'sorters' => [
-                        'columns' => [
-                            'internalStatus_priority' => [
-                                'data_name' => Query::TYPE_INTEGER . '.internalStatus_priority',
-                            ]
-                        ]
-                    ]
-                ],
-            ],
-            'attribute filterable and sortable, no families found' => [
-                'attribute' => $enumAttribute,
-                'attributeType' => $enumSearchAttributeType,
-                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
-                'attributeConfig' => $this->getConfig(
-                    ['filterable' => true, 'filter_by' => 'exact_value', 'sortable' => true]
-                ),
-                'hasAssociation' => true,
-                'limitFiltersSorters' => true,
-                'aggregatedData' => [],
-                'filtersState' => [],
-                'sortersState' => ['internalStatus_priority' => ['state']],
-                'expected' => [
-                    'filters' => [
-                        'columns' => []
-                    ],
-                    'columns' => [
-                        'internalStatus_priority' => [
-                            'label' => self::LABEL,
-                        ]
-                    ],
-                    'sorters' => [
-                        'columns' => [
-                            'internalStatus_priority' => [
-                                'data_name' => Query::TYPE_INTEGER . '.internalStatus_priority',
-                            ]
-                        ]
-                    ]
-                ],
-            ],
-            'decimal attribute filterable and sortable' => [
-                'attribute' => $decimalAttribute,
-                'attributeType' => $decimalSearchAttributeType,
-                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
-                'attributeConfig' => $this->getConfig(
-                    ['filterable' => true, 'filter_by' => 'exact_value', 'sortable' => true]
-                ),
-                'hasAssociation' => false,
-                'limitFiltersSorters' => false,
-                'aggregatedData' => [],
-                'filtersState' => [],
-                'sortersState' => [],
-                'expected' => [
-                    'filters' => [
-                        'columns' => [
-                            'weight' => [
-                                'type' => SearchableType\SearchAttributeTypeInterface::FILTER_TYPE_NUMBER_RANGE,
-                                'data_name' => Query::TYPE_DECIMAL . '.weight',
-                                'force_like' => true,
-                                'label' => self::LABEL,
-                                'options' => [
-                                    'data_type' => NumberFilterTypeInterface::DATA_DECIMAL
-                                ]
-                            ]
-                        ]
-                    ],
-                    'columns' => [
-                        'weight' => [
-                            'label' => self::LABEL,
-                        ]
-                    ],
-                    'sorters' => [
-                        'columns' => [
-                            'weight' => [
-                                'data_name' => Query::TYPE_DECIMAL . '.weight',
-                            ]
-                        ]
-                    ]
-                ],
-            ],
-            'multi-enum attribute filterable and not sortable' => [
-                'attribute' => $multiEnumAttribute,
-                'attributeType' => $multiEnumSearchAttributeType,
-                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
-                'attributeConfig' => $this->getConfig(
-                    ['filterable' => true, 'filter_by' => 'exact_value', 'sortable' => false]
-                ),
-                'hasAssociation' => true,
-                'limitFiltersSorters' => false,
-                'aggregatedData' => [],
-                'filtersState' => [],
-                'sortersState' => [],
-                'expected' => [
-                    'filters' => [
-                        'columns' => [
-                            'internalStatus' => [
-                                'type' => SearchableType\SearchAttributeTypeInterface::FILTER_TYPE_MULTI_ENUM,
-                                'data_name' => Query::TYPE_INTEGER . '.internalStatus_' . EnumIdPlaceholder::NAME,
-                                'force_like' => true,
-                                'label' => self::LABEL,
-                                'class' => StubEnumValue::class
-                            ]
-                        ]
-                    ],
-                ],
-            ],
-            'multi-enum attribute filterable and not sortable (no association mapping)' => [
-                'attribute' => $multiEnumAttribute,
-                'attributeType' => $multiEnumSearchAttributeType,
-                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
-                'attributeConfig' => $this->getConfig(
-                    ['filterable' => true, 'filter_by' => 'exact_value', 'sortable' => false]
-                ),
-                'hasAssociation' => false,
-                'limitFiltersSorters' => false,
-                'aggregatedData' => [],
-                'filtersState' => [],
-                'sortersState' => [],
-                'expected' => [
-                    'filters' => [
-                        'columns' => [
-                            'internalStatus' => [
-                                'type' => SearchableType\SearchAttributeTypeInterface::FILTER_TYPE_MULTI_ENUM,
-                                'data_name' => Query::TYPE_INTEGER . '.internalStatus_' . EnumIdPlaceholder::NAME,
-                                'force_like' => true,
-                                'label' => self::LABEL,
-                                'class' => null
-                            ]
-                        ]
-                    ],
-                ],
-            ],
-            'attribute filterable and sortable (localized)' => [
-                'attribute' => $manyToManyAttributeLocalizable,
-                'attributeType' => $manyToManySearchAttributeType,
-                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
-                'attributeConfig' => $this->getConfig(['filterable' => true, 'sortable' => true]),
-                'hasAssociation' => true,
-                'limitFiltersSorters' => false,
-                'aggregatedData' => [],
-                'filtersState' => [],
-                'sortersState' => [],
-                'expected' => [
-                    'filters' => [
-                        'columns' => [
-                            'names' => [
-                                'type' => SearchableType\SearchAttributeTypeInterface::FILTER_TYPE_STRING,
-                                'data_name' => Query::TYPE_TEXT . '.names_' . LocalizationIdPlaceholder::NAME,
-                                'label' => self::LABEL,
-                                'max_length' => 255
-                            ]
-                        ]
-                    ],
-                    'columns' => [
-                        'names' => [
-                            'label' => self::LABEL,
-                        ]
-                    ],
-                    'sorters' => [
-                        'columns' => [
-                            'names' => [
-                                'data_name' => Query::TYPE_TEXT . '.names_' . LocalizationIdPlaceholder::NAME,
-                            ]
-                        ]
-                    ]
-                ],
-            ],
-            'many-to-one attribute filterable and sortable' => [
-                'attribute' => $manyToOneAttribute,
-                'attributeType' => $manyToOneSearchAttributeType,
-                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
-                'attributeConfig' => $this->getConfig(['filterable' => true, 'sortable' => true]),
-                'hasAssociation' => true,
-                'limitFiltersSorters' => false,
-                'aggregatedData' => [],
-                'filtersState' => [],
-                'sortersState' => [],
-                'expected' => [
-                    'filters' => [
-                        'columns' => [
-                            'manytoone' => [
-                                'type' => SearchableType\SearchAttributeTypeInterface::FILTER_TYPE_ENTITY,
-                                'data_name' => Query::TYPE_INTEGER . '.manytoone',
-                                'label' => self::LABEL,
-                                'class' => StubEnumValue::class,
-                            ]
-                        ]
-                    ],
-                    'columns' => [
-                        'manytoone' => [
-                            'label' => self::LABEL,
-                        ]
-                    ],
-                    'sorters' => [
-                        'columns' => [
-                            'manytoone' => [
-                                'data_name' => Query::TYPE_TEXT . '.manytoone_' . LocalizationIdPlaceholder::NAME,
-                            ]
-                        ]
-                    ]
-                ],
-            ],
-            'attribute not filterable and not sortable, but incorrect data' => [
-                'attribute' => $fileAttribute,
-                'attributeType' => $fileSearchAttributeType,
-                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
-                'attributeConfig' => $this->getConfig(['filterable' => true, 'sortable' => true]),
-            ],
+//            'attribute filterable and sortable, limit without product family, but sorter state' => [
+//                'attribute' => $enumAttribute,
+//                'attributeType' => $enumSearchAttributeType,
+//                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
+//                'attributeConfig' => $this->getConfig(
+//                    ['filterable' => true, 'filter_by' => 'exact_value', 'sortable' => true]
+//                ),
+//                'hasAssociation' => true,
+//                'limitFiltersSorters' => true,
+//                'aggregatedData' => [
+//                    'familyAttributesCount' => [$enumAttribute->getId() + 3000 => \random_int(1, 1000)]
+//                ],
+//                'filtersState' => [],
+//                'sortersState' => ['internalStatus_priority' => ['state']],
+//                'expected' => [
+//                    'filters' => [
+//                        'columns' => []
+//                    ],
+//                    'columns' => [
+//                        'internalStatus_priority' => [
+//                            'label' => self::LABEL,
+//                        ]
+//                    ],
+//                    'sorters' => [
+//                        'columns' => [
+//                            'internalStatus_priority' => [
+//                                'data_name' => Query::TYPE_INTEGER . '.internalStatus_priority',
+//                            ]
+//                        ]
+//                    ]
+//                ],
+//            ],
+//            'attribute filterable and sortable, limit with product family' => [
+//                'attribute' => $enumAttribute,
+//                'attributeType' => $enumSearchAttributeType,
+//                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
+//                'attributeConfig' => $this->getConfig(
+//                    ['filterable' => true, 'filter_by' => 'exact_value', 'sortable' => true]
+//                ),
+//                'hasAssociation' => true,
+//                'limitFiltersSorters' => true,
+//                'aggregatedData' => [
+//                    'familyAttributesCount' => [$enumAttribute->getId() + 2000 => \random_int(1, 1000)]
+//                ],
+//                'filtersState' => [],
+//                'sortersState' => [],
+//                'expected' => [
+//                    'filters' => [
+//                        'columns' => [
+//                            'internalStatus' => [
+//                                'type' => SearchableType\SearchAttributeTypeInterface::FILTER_TYPE_MULTI_ENUM,
+//                                'data_name' => Query::TYPE_INTEGER . '.internalStatus_' . EnumIdPlaceholder::NAME,
+//                                'force_like' => true,
+//                                'label' => self::LABEL,
+//                                'class' => StubEnumValue::class
+//                            ]
+//                        ]
+//                    ],
+//                    'columns' => [
+//                        'internalStatus_priority' => [
+//                            'label' => self::LABEL,
+//                        ]
+//                    ],
+//                    'sorters' => [
+//                        'columns' => [
+//                            'internalStatus_priority' => [
+//                                'data_name' => Query::TYPE_INTEGER . '.internalStatus_priority',
+//                            ]
+//                        ]
+//                    ]
+//                ],
+//            ],
+//            'attribute filterable and sortable, no families found' => [
+//                'attribute' => $enumAttribute,
+//                'attributeType' => $enumSearchAttributeType,
+//                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
+//                'attributeConfig' => $this->getConfig(
+//                    ['filterable' => true, 'filter_by' => 'exact_value', 'sortable' => true]
+//                ),
+//                'hasAssociation' => true,
+//                'limitFiltersSorters' => true,
+//                'aggregatedData' => [],
+//                'filtersState' => [],
+//                'sortersState' => ['internalStatus_priority' => ['state']],
+//                'expected' => [
+//                    'filters' => [
+//                        'columns' => []
+//                    ],
+//                    'columns' => [
+//                        'internalStatus_priority' => [
+//                            'label' => self::LABEL,
+//                        ]
+//                    ],
+//                    'sorters' => [
+//                        'columns' => [
+//                            'internalStatus_priority' => [
+//                                'data_name' => Query::TYPE_INTEGER . '.internalStatus_priority',
+//                            ]
+//                        ]
+//                    ]
+//                ],
+//            ],
+//            'decimal attribute filterable and sortable' => [
+//                'attribute' => $decimalAttribute,
+//                'attributeType' => $decimalSearchAttributeType,
+//                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
+//                'attributeConfig' => $this->getConfig(
+//                    ['filterable' => true, 'filter_by' => 'exact_value', 'sortable' => true]
+//                ),
+//                'hasAssociation' => false,
+//                'limitFiltersSorters' => false,
+//                'aggregatedData' => [],
+//                'filtersState' => [],
+//                'sortersState' => [],
+//                'expected' => [
+//                    'filters' => [
+//                        'columns' => [
+//                            'weight' => [
+//                                'type' => SearchableType\SearchAttributeTypeInterface::FILTER_TYPE_NUMBER_RANGE,
+//                                'data_name' => Query::TYPE_DECIMAL . '.weight',
+//                                'force_like' => true,
+//                                'label' => self::LABEL,
+//                                'options' => [
+//                                    'data_type' => NumberFilterTypeInterface::DATA_DECIMAL
+//                                ]
+//                            ]
+//                        ]
+//                    ],
+//                    'columns' => [
+//                        'weight' => [
+//                            'label' => self::LABEL,
+//                        ]
+//                    ],
+//                    'sorters' => [
+//                        'columns' => [
+//                            'weight' => [
+//                                'data_name' => Query::TYPE_DECIMAL . '.weight',
+//                            ]
+//                        ]
+//                    ]
+//                ],
+//            ],
+//            'multi-enum attribute filterable and not sortable' => [
+//                'attribute' => $multiEnumAttribute,
+//                'attributeType' => $multiEnumSearchAttributeType,
+//                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
+//                'attributeConfig' => $this->getConfig(
+//                    ['filterable' => true, 'filter_by' => 'exact_value', 'sortable' => false]
+//                ),
+//                'hasAssociation' => true,
+//                'limitFiltersSorters' => false,
+//                'aggregatedData' => [],
+//                'filtersState' => [],
+//                'sortersState' => [],
+//                'expected' => [
+//                    'filters' => [
+//                        'columns' => [
+//                            'internalStatus' => [
+//                                'type' => SearchableType\SearchAttributeTypeInterface::FILTER_TYPE_MULTI_ENUM,
+//                                'data_name' => Query::TYPE_INTEGER . '.internalStatus_' . EnumIdPlaceholder::NAME,
+//                                'force_like' => true,
+//                                'label' => self::LABEL,
+//                                'class' => StubEnumValue::class
+//                            ]
+//                        ]
+//                    ],
+//                ],
+//            ],
+//            'multi-enum attribute filterable and not sortable (no association mapping)' => [
+//                'attribute' => $multiEnumAttribute,
+//                'attributeType' => $multiEnumSearchAttributeType,
+//                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
+//                'attributeConfig' => $this->getConfig(
+//                    ['filterable' => true, 'filter_by' => 'exact_value', 'sortable' => false]
+//                ),
+//                'hasAssociation' => false,
+//                'limitFiltersSorters' => false,
+//                'aggregatedData' => [],
+//                'filtersState' => [],
+//                'sortersState' => [],
+//                'expected' => [
+//                    'filters' => [
+//                        'columns' => [
+//                            'internalStatus' => [
+//                                'type' => SearchableType\SearchAttributeTypeInterface::FILTER_TYPE_MULTI_ENUM,
+//                                'data_name' => Query::TYPE_INTEGER . '.internalStatus_' . EnumIdPlaceholder::NAME,
+//                                'force_like' => true,
+//                                'label' => self::LABEL,
+//                                'class' => null
+//                            ]
+//                        ]
+//                    ],
+//                ],
+//            ],
+//            'attribute filterable and sortable (localized)' => [
+//                'attribute' => $manyToManyAttributeLocalizable,
+//                'attributeType' => $manyToManySearchAttributeType,
+//                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
+//                'attributeConfig' => $this->getConfig(['filterable' => true, 'sortable' => true]),
+//                'hasAssociation' => true,
+//                'limitFiltersSorters' => false,
+//                'aggregatedData' => [],
+//                'filtersState' => [],
+//                'sortersState' => [],
+//                'expected' => [
+//                    'filters' => [
+//                        'columns' => [
+//                            'names' => [
+//                                'type' => SearchableType\SearchAttributeTypeInterface::FILTER_TYPE_STRING,
+//                                'data_name' => Query::TYPE_TEXT . '.names_' . LocalizationIdPlaceholder::NAME,
+//                                'label' => self::LABEL,
+//                                'max_length' => 255
+//                            ]
+//                        ]
+//                    ],
+//                    'columns' => [
+//                        'names' => [
+//                            'label' => self::LABEL,
+//                        ]
+//                    ],
+//                    'sorters' => [
+//                        'columns' => [
+//                            'names' => [
+//                                'data_name' => Query::TYPE_TEXT . '.names_' . LocalizationIdPlaceholder::NAME,
+//                            ]
+//                        ]
+//                    ]
+//                ],
+//            ],
+//            'many-to-one attribute filterable and sortable' => [
+//                'attribute' => $manyToOneAttribute,
+//                'attributeType' => $manyToOneSearchAttributeType,
+//                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
+//                'attributeConfig' => $this->getConfig(['filterable' => true, 'sortable' => true]),
+//                'hasAssociation' => true,
+//                'limitFiltersSorters' => false,
+//                'aggregatedData' => [],
+//                'filtersState' => [],
+//                'sortersState' => [],
+//                'expected' => [
+//                    'filters' => [
+//                        'columns' => [
+//                            'manytoone' => [
+//                                'type' => SearchableType\SearchAttributeTypeInterface::FILTER_TYPE_ENTITY,
+//                                'data_name' => Query::TYPE_INTEGER . '.manytoone',
+//                                'label' => self::LABEL,
+//                                'class' => StubEnumValue::class,
+//                            ]
+//                        ]
+//                    ],
+//                    'columns' => [
+//                        'manytoone' => [
+//                            'label' => self::LABEL,
+//                        ]
+//                    ],
+//                    'sorters' => [
+//                        'columns' => [
+//                            'manytoone' => [
+//                                'data_name' => Query::TYPE_TEXT . '.manytoone_' . LocalizationIdPlaceholder::NAME,
+//                            ]
+//                        ]
+//                    ]
+//                ],
+//            ],
+//            'attribute not filterable and not sortable, but incorrect data' => [
+//                'attribute' => $fileAttribute,
+//                'attributeType' => $fileSearchAttributeType,
+//                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
+//                'attributeConfig' => $this->getConfig(['filterable' => true, 'sortable' => true]),
+//            ],
         ];
     }
 
