@@ -34,6 +34,13 @@ oro_behat_extension:
           Quantity: 'oro_product_frontend_line_item[quantity]'
           Unit: 'oro_product_frontend_line_item[unit]'
 
+    ShoppingListOwnerForm:
+      selector: '.shopping-list-owner'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Customer: 'oro_customer_frontend_owner_select'
+
     NewShoppingListNameField:
       selector: '[name="oro_shopping_list_type[label]"]'
 
