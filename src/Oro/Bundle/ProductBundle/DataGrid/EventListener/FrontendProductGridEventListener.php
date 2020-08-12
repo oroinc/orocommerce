@@ -358,7 +358,7 @@ class FrontendProductGridEventListener
                 $datagridManager = $this->datagridManagerLink->getService();
 
                 /** @var SearchDatasource $datasource */
-                $datasource = $datagridManager->getDatagrid($config->getName())
+                $datasource = $datagridManager->getDatagrid($gridName)
                     ->acceptDatasource()
                     ->getDatasource();
 
