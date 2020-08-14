@@ -610,7 +610,7 @@ oro:
                     hide_completely.label: 'Hide completely'
                 limit_filters_sorters_on_product_listing:
                     label: 'Hide Unrelated Product Filters And Sorting Options'
-                    tooltip: 'Limit filters and sorting options on the product catalog page to display only those attributes that are relevant to the selected product family in the current product collection.'
+                    tooltip: 'Limit filters on the product catalog page to display only those attributes that are relevant to the selected product family in the current product collection. If a multi-attribute product has only one attribute, the filter is not displayed for it in the storefront.'
                 disable_filters_on_product_listing:
                     label: "Don't Change Initial Filter State"
                     tooltip: 'If checked, all relevant filters that have been displayed on the initial page load and their options will remain visible on the page and will be disabled after they become non-relevant as the user refines the search results. Otherwise, any filters and options that become non-relevant, will be hidden.'

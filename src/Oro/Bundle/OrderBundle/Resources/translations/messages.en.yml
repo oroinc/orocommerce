@@ -463,6 +463,7 @@ oro:
         permission:
             view_payment_history.label: 'View Payment History'
             charge_authorized_payments.label: 'Charge Authorized Payments'
+            cancel_payments.label: 'Cancel Payments'
 
         payment_transaction:
             capture:
@@ -470,6 +471,11 @@ oro:
                 message: 'The customer will be charged {{ amount }}. Are you sure you want to continue?'
                 button.okText: 'Yes, Charge'
                 result.success: 'The payment of %amount% has been captured successfully.'
+            cancel:
+                title: 'Cancel Payment'
+                message: 'The {{ amount }} payment will be canceled. Are you sure you want to continue?'
+                button.okText: 'Yes, Cancel Payment'
+                result.success: 'The payment of %amount% has been canceled successfully.'
 
         action:
             order:
