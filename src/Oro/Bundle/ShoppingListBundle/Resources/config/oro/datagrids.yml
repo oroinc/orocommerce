@@ -539,7 +539,7 @@ datagrids:
                 frontend_options:
                     dialogOptions:
                         modal: true
-                        width: 600
+                        width: 800
             edit_notes:
                 type: add-notes
                 label: oro.shoppinglist.actions.edit_notes.label
@@ -551,7 +551,7 @@ datagrids:
                 frontend_options:
                     dialogOptions:
                         modal: true
-                        width: 600
+                        width: 800
             delete:
                 type: delete-product
                 label: oro.shoppinglist.actions.delete_line_item.label

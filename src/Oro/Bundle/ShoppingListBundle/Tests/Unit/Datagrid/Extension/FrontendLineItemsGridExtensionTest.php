@@ -9,7 +9,7 @@ use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\MetadataObject;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\ResultsObject;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
-use Oro\Bundle\ShoppingListBundle\Datagrid\Extension\ShoppingListGridExtension;
+use Oro\Bundle\ShoppingListBundle\Datagrid\Extension\FrontendLineItemsGridExtension;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
@@ -30,7 +30,7 @@ class ShoppingListGridExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var ParameterBag */
     private $parameters;
 
-    /** @var ShoppingListGridExtension */
+    /** @var FrontendLineItemsGridExtension */
     private $extension;
 
     protected function setUp(): void
@@ -57,7 +57,7 @@ class ShoppingListGridExtensionTest extends \PHPUnit\Framework\TestCase
 
         $this->parameters = new ParameterBag();
 
-        $this->extension = new ShoppingListGridExtension($registry, $this->configManager);
+        $this->extension = new FrontendLineItemsGridExtension($registry, $this->configManager);
         $this->extension->setParameters($this->parameters);
     }
 
