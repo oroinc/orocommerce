@@ -348,8 +348,9 @@ class FrontendProductGridEventListener
         array $attributes
     ): array {
         $gridName = $config->getName();
-        if (!array_key_exists($gridName, $this->attributesToHide)
-            || !$this->isDatagridExtensionSkipped($parameterBag)) {
+        if (!array_key_exists($gridName, $this->attributesToHide) ||
+            !$this->isDatagridExtensionSkipped($parameterBag)
+        ) {
             $this->attributesToHide[$gridName] = [];
 
             $configKey = Configuration::getConfigKeyByName(Configuration::LIMIT_FILTERS_SORTERS_ON_PRODUCT_LISTING);
@@ -372,8 +373,10 @@ class FrontendProductGridEventListener
                     $activeAttributeFamilyIds = array_keys($data['familyAttributesCount']);
                 }
 
-                $this->attributesToHide[$gridName] = $this
-                    ->getDisabledSortAndFilterAttributes($attributes, $activeAttributeFamilyIds);
+                $this->attributesToHide[$gridName] = $this->getDisabledSortAndFilterAttributes(
+                    $attributes,
+                    $activeAttributeFamilyIds
+                );
             }
         }
 

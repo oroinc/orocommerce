@@ -226,14 +226,13 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
             ->method('hasAssociation')
             ->willReturn($hasAssociation);
 
-        $this->configManager->expects($this->atMost(1))
+        $this->configManager->expects($this->once())
             ->method('get')
             ->with(self::LIMIT_FILTERS_SORTERS)
             ->willReturn($limitFiltersSorters);
 
         $this->productRepository->expects($this->atMost(1))
             ->method('getFamilyAttributeCountsQuery')
-//            ->with($this->searchQuery, 'familyAttributesCount')
             ->willReturnArgument(0);
 
         $result = $this->createMock(Result::class);
