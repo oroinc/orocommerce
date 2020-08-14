@@ -12,31 +12,24 @@ use Oro\Bundle\ProductBundle\Search\ProductRepository;
 use Oro\Bundle\SearchBundle\Datagrid\Datasource\SearchDatasource;
 use Oro\Bundle\SearchBundle\Query\Result;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
-use Oro\Component\DependencyInjection\ServiceLink;
 
 class FamilyAttributeCountsProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject */
-    private $productRepository;
-
     /** @var ManagerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $datagridManager;
+
+    /** @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject */
+    private $productRepository;
 
     /** @var FamilyAttributeCountsProvider */
     private $provider;
 
     protected function setUp(): void
     {
-        $this->productRepository = $this->createMock(ProductRepository::class);
         $this->datagridManager = $this->createMock(ManagerInterface::class);
+        $this->productRepository = $this->createMock(ProductRepository::class);
 
-        $datagridManagerLink = $this->createMock(ServiceLink::class);
-        $datagridManagerLink
-            ->expects($this->any())
-            ->method('getService')
-            ->willReturn($this->datagridManager);
-
-        $this->provider = new FamilyAttributeCountsProvider($datagridManagerLink, $this->productRepository);
+        $this->provider = new FamilyAttributeCountsProvider($this->datagridManager, $this->productRepository);
     }
 
     public function testGetFamilyAttributeCounts(): void
@@ -58,7 +51,7 @@ class FamilyAttributeCountsProviderTest extends \PHPUnit\Framework\TestCase
             ->with($datagridName)
             ->willReturn($datagrid);
 
-        $this->productRepository->expects($this->atMost(1))
+        $this->productRepository->expects($this->once())
             ->method('getFamilyAttributeCountsQuery')
             ->with($searchQuery, 'familyAttributesCount')
             ->willReturnArgument(0);

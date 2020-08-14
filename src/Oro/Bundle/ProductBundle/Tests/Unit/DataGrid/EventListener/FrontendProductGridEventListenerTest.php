@@ -216,7 +216,7 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
             ->method('hasAssociation')
             ->willReturn($hasAssociation);
 
-        $this->configManager->expects($this->atMost(1))
+        $this->configManager->expects($this->once())
             ->method('get')
             ->with(self::LIMIT_FILTERS_SORTERS)
             ->willReturn($limitFiltersSorters);

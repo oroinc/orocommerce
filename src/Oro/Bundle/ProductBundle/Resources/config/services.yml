@@ -1729,5 +1729,5 @@ services:
     oro_product.provider.family_attribute_counts:
         class: Oro\Bundle\ProductBundle\Provider\FamilyAttributeCountsProvider
         arguments:
-            - '@oro_datagrid.datagrid.manager.link'
+            - '@oro_datagrid.datagrid.manager'
             - '@oro_product.website_search.repository.product'

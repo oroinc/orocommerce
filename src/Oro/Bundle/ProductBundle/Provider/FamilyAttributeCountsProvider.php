@@ -2,29 +2,28 @@
 
 namespace Oro\Bundle\ProductBundle\Provider;
 
-use Oro\Bundle\DataGridBundle\Datagrid\Manager;
+use Oro\Bundle\DataGridBundle\Datagrid\ManagerInterface;
 use Oro\Bundle\ProductBundle\Search\ProductRepository;
 use Oro\Bundle\SearchBundle\Datagrid\Datasource\SearchDatasource;
-use Oro\Component\DependencyInjection\ServiceLink;
 
 /**
  * Provides family attribute counts for the datasource query of the specified datagrid.
  */
 class FamilyAttributeCountsProvider
 {
-    /** @var ServiceLink */
-    private $datagridManagerLink;
+    /** @var ManagerInterface */
+    private $datagridManager;
 
     /** @var ProductRepository */
     private $productRepository;
 
     /**
-     * @param ServiceLink $datagridManagerLink
+     * @param ManagerInterface $datagridManager
      * @param ProductRepository $productRepository
      */
-    public function __construct(ServiceLink $datagridManagerLink, ProductRepository $productRepository)
+    public function __construct(ManagerInterface $datagridManager, ProductRepository $productRepository)
     {
-        $this->datagridManagerLink = $datagridManagerLink;
+        $this->datagridManager = $datagridManager;
         $this->productRepository = $productRepository;
     }
 
@@ -35,11 +34,8 @@ class FamilyAttributeCountsProvider
      */
     public function getFamilyAttributeCounts(string $datagridName): array
     {
-        /** @var Manager $datagridManager */
-        $datagridManager = $this->datagridManagerLink->getService();
-
         /** @var SearchDatasource $datasource */
-        $datasource = $datagridManager->getDatagrid($datagridName)
+        $datasource = $this->datagridManager->getDatagrid($datagridName)
             ->acceptDatasource()
             ->getDatasource();
 
