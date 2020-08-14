@@ -370,6 +370,26 @@ class ShoppingListControllerTest extends WebTestCase
         $this->assertLineItemPriceEquals('Price for requested quantity is not available', $crawler);
     }
 
+    public function testAssign(): void
+    {
+        $this->initClient(
+            [],
+            $this->generateBasicAuthHeader(BaseLoadCustomerData::AUTH_USER, BaseLoadCustomerData::AUTH_PW)
+        );
+
+        /** @var ShoppingList $shoppingList */
+        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_8);
+
+        $parameters = ['id' => $shoppingList->getId(), '_widgetContainer' => 'dialog', '_wid' => uniqid('abc', true)];
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl('oro_shopping_list_frontend_assign', $parameters)
+        );
+
+        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        $this->assertContains('shopping-list-assign-grid', $crawler->html());
+    }
+
     public function testQuickAdd()
     {
         $this->markTestSkipped(

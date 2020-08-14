@@ -14,7 +14,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 /**
  * Adds additional configuration and metadata to the grid.
  */
-class ShoppingListGridExtension extends AbstractExtension
+class FrontendLineItemsGridExtension extends AbstractExtension
 {
     /** @var string[] */
     private const SUPPORTED_GRIDS = [
