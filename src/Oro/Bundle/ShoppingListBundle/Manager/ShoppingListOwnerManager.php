@@ -59,6 +59,8 @@ class ShoppingListOwnerManager
         }
         if ($this->isUserAssignable($ownerId)) {
             $shoppingList->setCustomerUser($user);
+            $this->assignLineItems($shoppingList, $user);
+
             $this->registry->getManagerForClass(ShoppingList::class)->flush();
         } else {
             throw new AccessDeniedException();
@@ -91,5 +93,16 @@ class ShoppingListOwnerManager
         $owner = $query->getOneOrNullResult();
 
         return null !== $owner;
+    }
+
+    /**
+     * @param ShoppingList $shoppingList
+     * @param CustomerUser $user
+     */
+    private function assignLineItems(ShoppingList $shoppingList, CustomerUser $user): void
+    {
+        foreach ($shoppingList->getLineItems() as $lineItem) {
+            $lineItem->setCustomerUser($user);
+        }
     }
 }

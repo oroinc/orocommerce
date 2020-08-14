@@ -12,7 +12,7 @@ const cssChildrenScopeRegexp = /#isolation-scope-[\w]*\s+/g;
 const FORBIDDEN_ATTR = ['draggable', 'data-gjs[-\\w]+'];
 
 export const escapeWrapper = html => {
-    if (componentHtmlIdRegexp.test(html)) {
+    if (html.match(componentHtmlIdRegexp)) {
         html = $(html).html();
         html = escapeWrapper(html);
     }
