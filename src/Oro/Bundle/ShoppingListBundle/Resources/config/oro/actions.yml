@@ -225,6 +225,7 @@ operations:
             - customer-shopping-lists-grid
             - customer-user-shopping-lists-grid
             - frontend-customer-user-shopping-list-grid
+            - frontend-customer-user-shopping-list-assign-grid
             - frontend-customer-user-shopping-list-edit-grid
             - frontend-customer-user-shopping-list-select-grid
 
@@ -236,6 +237,7 @@ operations:
             - customer-shopping-lists-grid
             - customer-user-shopping-lists-grid
             - frontend-customer-user-shopping-list-grid
+            - frontend-customer-user-shopping-list-assign-grid
             - frontend-customer-user-shopping-list-edit-grid
             - frontend-customer-user-shopping-list-select-grid
 

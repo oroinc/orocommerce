@@ -10,8 +10,13 @@ layout:
                     options:
                         vars:
                             shoppingList: '=data["entity"]'
-                __shopping_list_actions:
-                    blockType: shopping_list_actions
+                __shopping_list_action_assign:
+                    blockType: shopping_list_action
+                    options:
+                        visible: '=data["acl"].isGranted("oro_shopping_list_frontend_assign") && data["acl"].isGranted("oro_customer_frontend_customer_user_view")'
+                        shoppingList: '=data["entity"]'
+                __shopping_list_action_list:
+                    blockType: shopping_list_action_list
                     options:
                         visible: '=buttons'
                         shoppingList: '=data["entity"]'
@@ -19,4 +24,5 @@ layout:
             tree:
                 __root:
                     __shopping_list_actions_container:
-                        __shopping_list_actions: ~
+                        __shopping_list_action_assign: ~
+                        __shopping_list_action_list: ~

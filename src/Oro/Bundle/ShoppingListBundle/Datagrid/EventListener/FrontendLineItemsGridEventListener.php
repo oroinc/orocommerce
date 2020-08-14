@@ -29,7 +29,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 /**
  * Populates line item records by required data.
  */
-class ShoppingListGridEventListener
+class FrontendLineItemsGridEventListener
 {
     /** @var UrlGeneratorInterface */
     private $urlGenerator;
