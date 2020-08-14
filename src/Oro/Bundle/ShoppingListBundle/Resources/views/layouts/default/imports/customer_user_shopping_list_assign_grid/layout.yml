@@ -8,16 +8,21 @@ layout:
         - '@setOption':
             id: __datagrid
             optionName: grid_name
-            optionValue: frontend-customer-user-shopping-list-select-grid
+            optionValue: frontend-customer-user-shopping-list-assign-grid
 
         - '@appendOption':
             id: __datagrid
             optionName: grid_parameters
             optionValue:
                 shopping_list_id: '=data["entity"].getId()'
-                customer_user_id: '=data["entity"].getCustomerUser().getId()'
 
         - '@setOption':
             id: __datagrid
             optionName: grid_render_parameters.toolbarOptions.addDatagridSettingsManager
             optionValue: false
+
+        - '@appendOption':
+            id: __datagrid
+            optionName: grid_render_parameters.toolbarOptions.itemsCounter
+            optionValue:
+                transTemplate: 'oro_frontend.datagrid.pagination.totalRecords.users'

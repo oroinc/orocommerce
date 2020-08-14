@@ -517,7 +517,7 @@ services:
             - { name: oro_datagrid.extension }
 
     oro_shopping_list.datagrid.extension.frontend_customer_user_shopping_list_grid:
-        class: 'Oro\Bundle\ShoppingListBundle\Datagrid\Extension\ShoppingListGridExtension'
+        class: 'Oro\Bundle\ShoppingListBundle\Datagrid\Extension\FrontendLineItemsGridExtension'
         arguments:
             - '@doctrine'
             - '@oro_config.manager'
@@ -629,7 +629,7 @@ services:
             - { name: layout.context_configurator }
 
     oro_shopping_list.datagrid.event_listener.frontend_customer_user_shopping_list_grid:
-        class: Oro\Bundle\ShoppingListBundle\Datagrid\EventListener\ShoppingListGridEventListener
+        class: Oro\Bundle\ShoppingListBundle\Datagrid\EventListener\FrontendLineItemsGridEventListener
         arguments:
             - '@router'
             - '@event_dispatcher'

@@ -68,6 +68,7 @@ oro:
                 aria_label: 'And {{ count }} more variants of {{ name }} product'
             dialog:
                 cancel.label: Cancel
+                assign.label: Assign
                 duplicate_confirmation:
                     label: Duplicate Confirmation
                     message: Are you sure you want to duplicate this shopping list?

@@ -200,36 +200,27 @@ class ShoppingListController extends AbstractController
 
     /**
      * @Route(
-     *      "/{gridName}/massAction/{actionName}",
+     *      "/{id}/massAction/{gridName}/{actionName}",
      *      name="oro_shopping_list_frontend_move_mass_action",
-     *      requirements={"gridName"="[\w\:\-]+", "actionName"="[\w\-]+"}
+     *      requirements={"id"="\d+", "gridName"="[\w\:\-]+", "actionName"="[\w\-]+"}
      * )
      * @Layout
      * @AclAncestor("oro_shopping_list_frontend_update")
      *
+     * @param ShoppingList $shoppingList
      * @param Request $request
      * @param string $gridName
      * @param string $actionName
      *
      * @return array|Response
      */
-    public function moveMassActionAction(Request $request, string $gridName, string $actionName)
-    {
+    public function moveMassActionAction(
+        ShoppingList $shoppingList,
+        Request $request,
+        string $gridName,
+        string $actionName
+    ) {
         if ($request->getMethod() === Request::METHOD_GET) {
-            $params = $request->get($gridName, []);
-            if (!isset($params['shopping_list_id'])) {
-                throw $this->createNotFoundException();
-            }
-
-            $shoppingList = $this->get('doctrine')
-                ->getManagerForClass(ShoppingList::class)
-                ->getRepository(ShoppingList::class)
-                ->find($params['shopping_list_id']);
-
-            if (!$shoppingList) {
-                throw $this->createNotFoundException();
-            }
-
             return [
                 'data' => [
                     'entity' => $shoppingList,
@@ -239,10 +230,7 @@ class ShoppingListController extends AbstractController
 
         return $this->forward(
             'OroDataGridBundle:Grid:massAction',
-            [
-                'gridName' => $gridName,
-                'actionName' => $actionName,
-            ],
+            ['gridName' => $gridName, 'actionName' => $actionName],
             $request->query->all()
         );
     }
@@ -256,23 +244,6 @@ class ShoppingListController extends AbstractController
      * @return array
      */
     public function assignAction(ShoppingList $shoppingList): array
-    {
-        return [
-            'data' => [
-                'entity' => $shoppingList
-            ],
-        ];
-    }
-
-    /**
-     * @Route("/{id}/rename", name="oro_shopping_list_frontend_rename", requirements={"id"="\d+"})
-     * @Layout
-     * @AclAncestor("oro_shopping_list_frontend_update")
-     *
-     * @param ShoppingList $shoppingList
-     * @return array
-     */
-    public function renameAction(ShoppingList $shoppingList): array
     {
         return [
             'data' => [

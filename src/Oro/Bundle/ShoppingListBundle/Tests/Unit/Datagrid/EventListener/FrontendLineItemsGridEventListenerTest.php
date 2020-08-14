@@ -23,7 +23,7 @@ use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\ConfigurableProductProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
-use Oro\Bundle\ShoppingListBundle\Datagrid\EventListener\ShoppingListGridEventListener;
+use Oro\Bundle\ShoppingListBundle\Datagrid\EventListener\FrontendLineItemsGridEventListener;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -33,7 +33,7 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
-class ShoppingListGridEventListenerTest extends \PHPUnit\Framework\TestCase
+class FrontendLineItemsGridEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -73,7 +73,7 @@ class ShoppingListGridEventListenerTest extends \PHPUnit\Framework\TestCase
     /** @var LineItemViolationsProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $violationsProvider;
 
-    /** @var ShoppingListGridEventListener */
+    /** @var FrontendLineItemsGridEventListener */
     private $listener;
 
     protected function setUp(): void
@@ -102,7 +102,7 @@ class ShoppingListGridEventListenerTest extends \PHPUnit\Framework\TestCase
         $this->localizationHelper = $this->createMock(LocalizationHelper::class);
         $this->violationsProvider = $this->createMock(LineItemViolationsProvider::class);
 
-        $this->listener = new ShoppingListGridEventListener(
+        $this->listener = new FrontendLineItemsGridEventListener(
             $this->urlGenerator,
             $this->eventDispatcher,
             $this->numberFormatter,

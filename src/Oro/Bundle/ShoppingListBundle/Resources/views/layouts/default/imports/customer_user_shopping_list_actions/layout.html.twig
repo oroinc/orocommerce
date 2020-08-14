@@ -23,7 +23,7 @@
     {% endif %}
 {% endblock %}
 
-{%- block __customer_user_shopping_list_actions__shopping_list_actions_widget -%}
+{%- block __customer_user_shopping_list_actions__shopping_list_action_list_widget -%}
     {%- for button in buttons -%}
         {%- set options = oro_action_frontend_options(button) -%}
         {%- set buttonOptions = options.options -%}
@@ -39,3 +39,21 @@
         </button>
     {%- endfor -%}
 {%- endblock -%}
+
+{% block __customer_user_shopping_list_actions__shopping_list_action_assign_widget %}
+    <button
+        class="action mode-icon-text dropdown-item"
+        title="{{ 'oro.frontend.shoppinglist.btn.assign.label'|trans }}"
+        aria-label="{{ 'oro.frontend.shoppinglist.btn.assign.aria_label'|trans({'%name%': shoppingList.label}) }}"
+        data-page-component-view="oroshoppinglist/js/app/views/shopping-list-assign-link-view"
+        data-page-component-options="{{ {
+            dialogUrl: path('oro_shopping_list_frontend_assign', {id : shoppingList.id}),
+            dialogTitle: 'oro.frontend.shoppinglist.view.choose_assign_user.label'|trans({'%label%': shoppingList.label}),
+            shoppingListOwnerChangeUrl: path('oro_api_set_shopping_list_owner', {id : shoppingList.id})
+        }|json_encode }}">
+        {%- apply spaceless -%}
+            <span class="icon fa-user" aria-hidden="true"></span>
+            {{ 'oro.frontend.shoppinglist.btn.assign.label'|trans }}
+        {%- endapply -%}
+    </button>
+{% endblock %}
