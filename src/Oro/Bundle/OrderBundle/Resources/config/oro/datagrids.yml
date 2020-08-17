@@ -265,7 +265,7 @@ datagrids:
                 template:      OroOrderBundle:Order:Datagrid/sourceDocument.html.twig
                 renderable:    false
             totalDiscountsAmount:
-                label:         oro.order.discount.label
+                label:         oro.order.order_discount.columns.special_discount.label
                 type:          twig
                 frontend_type: html
                 template:      OroOrderBundle:Order:Datagrid/discount.html.twig
@@ -435,7 +435,7 @@ datagrids:
                 frontend_type: html
                 template:      'OroOrderBundle:Order:Datagrid/shippingMethodFull.html.twig'
             totalDiscountsAmount:
-                label:         oro.order.discount.label
+                label:         oro.order.order_discount.columns.special_discount.label
                 type:          twig
                 frontend_type: html
                 template:      OroOrderBundle:Order:Datagrid/discount.html.twig
