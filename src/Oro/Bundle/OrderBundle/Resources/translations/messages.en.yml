@@ -355,6 +355,7 @@ oro:
             columns:
                 title: Discount
                 description: Description
+                special_discount.label: Special Discounts
             actions:
                 remove: Remove
                 edit: Edit
