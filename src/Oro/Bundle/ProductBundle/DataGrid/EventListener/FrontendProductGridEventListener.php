@@ -5,8 +5,10 @@ namespace Oro\Bundle\ProductBundle\DataGrid\EventListener;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\Manager;
+use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Provider\State\DatagridStateProviderInterface;
+use Oro\Bundle\DataGridBundle\Tools\DatagridParametersHelper;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityConfigBundle\Attribute\AttributeConfigurationProviderInterface;
 use Oro\Bundle\EntityConfigBundle\Attribute\AttributeTypeRegistry;
@@ -58,8 +60,14 @@ class FrontendProductGridEventListener
     /** @var ConfigManager */
     private $configManager;
 
+    /** @var DatagridParametersHelper|null */
+    private $datagridParametersHelper;
+
     /** @var bool */
     private $inProgress = false;
+
+    /** @var array */
+    private $attributesToHide = [];
 
     /**
      * @param AttributeManager $attributeManager
@@ -92,6 +100,14 @@ class FrontendProductGridEventListener
         $this->filtersStateProvider = $filtersStateProvider;
         $this->sortersStateProvider = $sortersStateProvider;
         $this->configManager = $configManager;
+    }
+
+    /**
+     * @param DatagridParametersHelper|null $datagridParametersHelper
+     */
+    public function setDatagridParametersHelper(?DatagridParametersHelper $datagridParametersHelper): void
+    {
+        $this->datagridParametersHelper = $datagridParametersHelper;
     }
 
     /**
@@ -129,8 +145,10 @@ class FrontendProductGridEventListener
 
         $hideAttrs = $this->getAttributesToHide(
             $config,
+            $event->getParameters(),
             array_unique(array_merge(array_keys($addedFilterAttrs), array_keys($addedSorterAttrs)))
         );
+
         if ($hideAttrs) {
             $this->checkFilters($event, $addedFilterAttrs, $hideAttrs);
             $this->checkSorters($event, $addedSorterAttrs, $hideAttrs);
@@ -319,36 +337,64 @@ class FrontendProductGridEventListener
 
     /**
      * @param DatagridConfiguration $config
+     * @param ParameterBag $parameterBag
      * @param array $attributes
+     *
      * @return array
      */
-    private function getAttributesToHide(DatagridConfiguration $config, array $attributes): array
-    {
-        $hideAttributes = [];
+    private function getAttributesToHide(
+        DatagridConfiguration $config,
+        ParameterBag $parameterBag,
+        array $attributes
+    ): array {
+        $gridName = $config->getName();
+        if (!array_key_exists($gridName, $this->attributesToHide) ||
+            !$this->isDatagridExtensionSkipped($parameterBag)
+        ) {
+            $this->attributesToHide[$gridName] = [];
 
-        $configKey = Configuration::getConfigKeyByName(Configuration::LIMIT_FILTERS_SORTERS_ON_PRODUCT_LISTING);
-        if ($this->configManager->get($configKey)) {
-            /** @var Manager $datagridManager */
-            $datagridManager = $this->datagridManagerLink->getService();
+            $configKey = Configuration::getConfigKeyByName(Configuration::LIMIT_FILTERS_SORTERS_ON_PRODUCT_LISTING);
+            if ($this->configManager->get($configKey)) {
+                /** @var Manager $datagridManager */
+                $datagridManager = $this->datagridManagerLink->getService();
 
-            /** @var SearchDatasource $datasource */
-            $datasource = $datagridManager->getDatagrid($config->getName())
-                ->acceptDatasource()
-                ->getDatasource();
+                /** @var SearchDatasource $datasource */
+                $datasource = $datagridManager->getDatagrid($gridName)
+                    ->acceptDatasource()
+                    ->getDatasource();
 
-            $data = $this->productRepository
-                ->getFamilyAttributeCountsQuery($datasource->getSearchQuery(), 'familyAttributesCount')
-                ->getResult()
-                ->getAggregatedData();
+                $data = $this->productRepository
+                    ->getFamilyAttributeCountsQuery($datasource->getSearchQuery(), 'familyAttributesCount')
+                    ->getResult()
+                    ->getAggregatedData();
 
-            $activeAttributeFamilyIds = [];
-            if (!empty($data['familyAttributesCount'])) {
-                $activeAttributeFamilyIds = array_keys($data['familyAttributesCount']);
+                $activeAttributeFamilyIds = [];
+                if (!empty($data['familyAttributesCount'])) {
+                    $activeAttributeFamilyIds = array_keys($data['familyAttributesCount']);
+                }
+
+                $this->attributesToHide[$gridName] = $this->getDisabledSortAndFilterAttributes(
+                    $attributes,
+                    $activeAttributeFamilyIds
+                );
             }
-            $hideAttributes = $this->getDisabledSortAndFilterAttributes($attributes, $activeAttributeFamilyIds);
         }
 
-        return $hideAttributes;
+        return $this->attributesToHide[$gridName];
+    }
+
+    /**
+     * @param ParameterBag $parameterBag
+     *
+     * @return bool
+     */
+    private function isDatagridExtensionSkipped(ParameterBag $parameterBag): bool
+    {
+        if ($this->datagridParametersHelper) {
+            return $this->datagridParametersHelper->isDatagridExtensionSkipped($parameterBag);
+        }
+
+        return $parameterBag->get(DatagridParametersHelper::DATAGRID_SKIP_EXTENSION_PARAM, false);
     }
 
     /**
