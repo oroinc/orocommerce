@@ -311,7 +311,7 @@ oro_behat_extension:
 
     Create New Shopping List popup:
       selector:
-        locator: '//div[@class="ui-dialog ui-corner-all ui-widget ui-widget-content ui-front shopping-list-dialog ui-draggable ui-dialog-normal ui-dialog-buttons"]'
+        locator: '//div[contains(@class,"shopping-list-dialog")]'
         type: xpath
 
     ShoppingListLineItemForm:
