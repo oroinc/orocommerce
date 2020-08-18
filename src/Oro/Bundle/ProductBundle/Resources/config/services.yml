@@ -1254,12 +1254,12 @@ services:
             - '@oro_entity_config.manager.attribute_manager'
             - '@oro_entity_config.registry.attribute_type'
             - '@oro_entity_config.provider.attribute_configuration'
-            - '@oro_product.website_search.repository.product'
             - '@oro_entity.doctrine_helper'
-            - '@oro_datagrid.datagrid.manager.link'
             - '@oro_filter.provider.state.filters'
             - '@oro_datagrid.provider.state.sorters'
             - '@oro_config.manager'
+            - '@oro_datagrid.tools.parameters_helper'
+            - '@oro_product.provider.family_attribute_counts'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
 
@@ -1725,3 +1725,9 @@ services:
             - '@oro_config.manager'
         tags:
             - { name: oro_redirect.slug_source_entity_provider }
+
+    oro_product.provider.family_attribute_counts:
+        class: Oro\Bundle\ProductBundle\Provider\FamilyAttributeCountsProvider
+        arguments:
+            - '@oro_datagrid.datagrid.manager'
+            - '@oro_product.website_search.repository.product'
