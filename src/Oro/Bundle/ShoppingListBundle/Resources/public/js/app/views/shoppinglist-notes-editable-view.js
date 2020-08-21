@@ -71,7 +71,6 @@ const ShoppingListOwnerInlineEditableView = BaseView.extend({
                 this.model.set('notes', this.model.previous('notes'));
                 this.updateTexAreaValue(this.model.get('notes'));
                 this.updateNotesText(this.model.get('notes'));
-                this.switchActions();
                 this.showEditForm();
                 this.$el.removeClass(this.options.loadingClass);
             }

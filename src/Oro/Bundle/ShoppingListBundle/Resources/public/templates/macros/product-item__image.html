@@ -27,19 +27,11 @@
     ></button>
 </div>
 <% } else if (obj.placeholder) { %>
-<% var classes = 'grid-line-items__row grid-line-items__row--offset-y-end product-item__image-holder--tiny' %>
-
-<% if (obj.isConfigurable) {
-    classes += ' product-item__image-holder--configurable';
-} %>
-<div class="<%- classes %>"
-    <% if (obj.isConfigurable) { %>aria-hidden="true" <% } %>
->
-    <% if (!obj.isConfigurable) { %>
+<div class="grid-line-items__row grid-line-items__row--offset-y-end product-item__image-holder--tiny">
     <img src="<%- obj.placeholder %>"
          title="<%- title %>"
          alt="<%- alt %>"
-         class="product-item__preview-image">
-    <% } %>
+         class="product-item__preview-image"
+    >
 </div>
 <% } %>

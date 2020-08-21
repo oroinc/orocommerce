@@ -1,7 +1,10 @@
 import SelectRowCell from 'oro/datagrid/cell/select-row-cell';
 import SelectStateModel from 'orodatagrid/js/datagrid/select-state-model';
+import template from 'tpl-loader!oroshoppinglist/templates/datagrid/cell/select-row-cell.html';
 
 const ShoppingListSelectRowCell = SelectRowCell.extend({
+    template: template,
+
     constructor: function ShoppingListSelectRowCell(options) {
         return ShoppingListSelectRowCell.__super__.constructor.call(this, options);
     },

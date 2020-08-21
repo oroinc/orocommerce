@@ -11,6 +11,7 @@ const flattenData = data => {
         }
 
         if (!subData) {
+            itemClassName.push('single-row');
             item.row_class_name = itemClassName.join(' ');
             flatData.push(item);
             item._hasVariants = false;

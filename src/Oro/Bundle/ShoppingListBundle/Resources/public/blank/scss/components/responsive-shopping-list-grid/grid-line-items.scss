@@ -66,7 +66,7 @@
     }
 
     &__edit-notes {
-        margin-left: 8px;
+        margin-left: $offset-x-m;
         color: $launcher-item-icon-color;
 
         @include hover-focus {
@@ -120,16 +120,10 @@
         }
 
         &__row-item {
-            &-shift {
-                margin-left: -($product-item-image-holder-tiny-width + $grid-line-items-row-offset-x-mobile);
-            }
-
-            &-container {
-                display: flex;
-                align-items: center;
-                min-height: $product-item-image-holder-tiny-height;
-                margin-bottom: $grid-line-items-container-offset-x-mobile;
-            }
+            display: flex;
+            align-items: center;
+            min-height: $product-item-image-holder-tiny-height;
+            margin-bottom: $grid-line-items-container-offset-x-mobile;
         }
 
         &__title {
