@@ -61,7 +61,8 @@ layout:
                     blockType: layout_subtree_update
                     options:
                         reloadEvents: ['datagrid_create_before', 'shopping-list:refresh']
-                        showLoading: true
+                        showLoading: false
+                        onLoadingCssClass: 'blur'
                 __totals:
                     blockType: price_totals
                     options:
@@ -84,7 +85,8 @@ layout:
                     blockType: layout_subtree_update
                     options:
                         reloadEvents: ['datagrid_create_before', 'shopping-list:refresh']
-                        showLoading: true
+                        showLoading: false
+                        disableControls: true
                 __combined_button:
                     blockType: combined_buttons
                     options:
