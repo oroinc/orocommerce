@@ -1,0 +1,26 @@
+.totals-placeholder {
+    height: 110px;
+    text-align: right;
+
+    &:before {
+        content: '';
+        background: rgba(get-color('additional', 'darker'), .2);
+        height: 30px;
+        display: block;
+    }
+
+    &:after {
+        content: '';
+        background: rgba(get-color('additional', 'darker'), .2);
+        width: 50%;
+        height: 20px;
+        display: block;
+        margin-bottom: 30px;
+    }
+}
+
+.combined-buttons-placeholder {
+    height: 40px;
+    border-radius: 5px;
+    background: rgba(get-color('additional', 'darker'), .2);
+}
