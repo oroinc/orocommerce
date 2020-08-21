@@ -19,6 +19,8 @@ define(function(require) {
          */
         selectedElement: null,
 
+        reloadData: false,
+
         /**
          * @inheritDoc
          */
@@ -79,10 +81,28 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        _onAjaxSuccess: function(data, textStatus, jqXHR) {
-            MoveProductsMassAction.__super__._onAjaxSuccess.call(this, data, textStatus, jqXHR);
+        _onAjaxSuccess: function(data) {
+            this.datagrid.collection.fetch({
+                reset: true,
+                toggleLoading: false
+            });
+            this.datagrid.resetSelectionState();
 
+            this._showAjaxSuccessMessage(data);
             mediator.trigger('shopping-list:refresh');
+        },
+
+        /**
+         * @inheritDoc
+         * @private
+         */
+        _doAjaxRequest() {
+            const {values} = this.getActionParameters();
+            values.split(',').forEach(value => {
+                const model = this.datagrid.collection.get(value);
+                model.classList().add('grid-row--loading');
+            });
+            MoveProductsMassAction.__super__._doAjaxRequest.call(this);
         }
     });
 

@@ -48,9 +48,10 @@ define(function(require) {
         doDelete() {
             const success = __(this.messages.success, this.model.toJSON());
 
+            this.model.classList().add('grid-row--loading');
             this.model.destroy({
                 url: this.getLink(),
-                wait: false,
+                wait: true,
                 reset: false,
                 uniqueOnly: true,
                 toggleLoading: false,
