@@ -86,11 +86,12 @@ const BaseTypeBuilder = BaseClass.extend({
             throw new Error(`Component "${this.componentType}" contains unresolved tags`);
         }
 
-        this.editor.DomComponents.addType(this.componentType, {
+        const dom = this.editor.DomComponents;
+
+        dom.addType(this.componentType, {
             model: this.Model,
             view: this.View
         });
-
         this.createPanelButton();
         this.bindEditorEvents();
         this.registerEditorCommands();

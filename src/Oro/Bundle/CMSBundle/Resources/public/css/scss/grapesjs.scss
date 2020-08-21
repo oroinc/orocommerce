@@ -30,6 +30,10 @@
             margin-left: -2px;
             margin-top: -2px;
         }
+
+        ##{$app-prefix}tools {
+            z-index: 2;
+        }
     }
 
     &pn-commands {
@@ -259,7 +263,8 @@
                 margin-#{$end}: 0;
             }
 
-            &:hover {
+            &:hover,
+            &.#{$rte-prefix}active {
                 color: $primary-inverse;
             }
 
