@@ -11,7 +11,7 @@
     }) %>
     <div class="grid-line-items__row">
         <% if (!obj._isVariant) { %>
-            <div class="grid-line-items__row-item-container">
+            <div class="grid-line-items__row-item">
                 <% if (name.length <= clipLength) { %>
                     <%= oroshoppinglist.renderProductItemName({link: link, name: name}) %>
                 <% } else {%>
@@ -20,17 +20,16 @@
                 </div>
                 <% } %>
             </div>
-            <div class="grid-line-items__row-item-shift mobile-row show-in-tablet">
-                <span>
-                    <%- _.__('oro.frontend.shoppinglist.label') %>
+            <div class="shift-mobile-row mobile-row show-in-tablet">
+                <% if (obj.sku) { %>
                     <span class="highlighted-in-mobile"><%- sku %></span>
-                </span>
+                <% } %>
                 <% if (!isConfigurable) { %>
                     <%= oroshoppinglist.renderInventoryStatus(inventoryStatus) %>
                 <% } %>
             </div>
             <% if (productConfiguration) { %>
-            <div class="grid-line-items__row-item-shift grid-line-items__configuration">
+            <div class="grid-line-items__configuration shift-mobile-row">
                 <% _.each(productConfiguration, function(field) { %>
                 <div class="grid-line-items__field">
                     <span class="grid-line-items__field-val"><%- field.label %>:</span>
@@ -40,19 +39,16 @@
             </div>
             <% } %>
             <% if (notes) { %>
-            <div class="grid-line-items__row-item-shift">
+            <div class="shift-mobile-row">
                 <%= oroshoppinglist.renderNotes({notes: notes}) %>
             </div>
             <% } %>
         <% } else { %>
-            <div class="grid-line-items__row-item-container mobile-row show-in-tablet">
-                <span>
-                    <%- _.__('oro.frontend.shoppinglist.label') %>
-                    <span class="highlighted-in-mobile"><%- sku %></span>
-                </span>
+            <div class="grid-line-items__row-item mobile-column show-in-tablet">
+                <span class="highlighted-in-mobile"><%- sku %></span>
                 <%= oroshoppinglist.renderInventoryStatus(inventoryStatus) %>
             </div>
-            <div class="grid-line-items__row-item-shift grid-line-items__configuration">
+            <div class="grid-line-items__configuration shift-mobile-row">
                 <% _.each(productConfiguration, function(field) { %>
                 <div class="grid-line-items__field">
                     <span class="grid-line-items__field-val"><%- field.label %>:</span>
@@ -61,7 +57,7 @@
                 <% }) %>
             </div>
             <% if (notes) { %>
-            <div class="grid-line-items__row-item-shift">
+            <div class="shift-mobile-row">
                 <%= oroshoppinglist.renderNotes({notes: notes}) %>
             </div>
             <% } %>
