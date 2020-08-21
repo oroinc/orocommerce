@@ -52,6 +52,10 @@ export default `
         margin: 0 4px;
     }
     
+    .gjs-selected {
+        outline: 3px solid #0c809e !important;
+    }
+    
     .content-widget-inline span {
         font-weight: bold;
         color: #565656;

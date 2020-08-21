@@ -19,8 +19,7 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
                 content: __('oro.cms.wysiwyg.component.text.content'),
                 style: {
                     padding: '10px'
-                },
-                activeOnRender: 1
+                }
             }
         });
     }
