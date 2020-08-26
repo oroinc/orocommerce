@@ -1,6 +1,6 @@
 # OroWebsiteSearchBundle
 
-OroWebsiteSearchBundle extends [OroSearchBundle](https://github.com/oroinc/platform/tree/master/src/Oro/Bundle/SearchBundle) capabilities to provide search functionality for the OroCommerce storefront, and creates an additional search index for this purpose based on the [scopes](https://doc.oroinc.com/backend/bundles/platform/ScopeBundle/).
+OroWebsiteSearchBundle extends [OroSearchBundle](https://doc.oroinc.com/backend/bundles/platform/SearchBundle/) capabilities to provide search functionality for the OroCommerce storefront, and creates an additional search index for this purpose based on the [scopes](https://doc.oroinc.com/backend/bundles/platform/ScopeBundle/).
 
 It also enables developers to configure this search index in the YAML configuration files in the individual bundles.
 
