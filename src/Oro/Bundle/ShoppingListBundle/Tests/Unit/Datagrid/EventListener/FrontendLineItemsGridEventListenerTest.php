@@ -176,6 +176,44 @@ class FrontendLineItemsGridEventListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($product2->getId(), $record2->getValue('productId'));
     }
 
+    public function testOnResultAfterWhenNoLineItems(): void
+    {
+        $lineItems = new PersistentCollection(
+            $this->createMock(EntityManagerInterface::class),
+            $this->createMock(ClassMetadata::class),
+            new ArrayCollection([])
+        );
+        $lineItems->setInitialized(false);
+
+        $shoppingList = new ShoppingListStub();
+        $shoppingList->setId(42)
+            ->setLineItems($lineItems);
+
+        $this->repository->expects($this->once())
+            ->method('find')
+            ->with($shoppingList->getId())
+            ->willReturn($shoppingList);
+
+        $this->repository->expects($this->never())
+            ->method('preloadLineItemsByIdsForViewAction');
+
+        $this->productPricesDataProvider->expects($this->never())
+            ->method('getProductsMatchedPrice');
+
+        $this->violationsProvider->expects($this->never())
+            ->method('getLineItemViolationLists');
+
+        $this->listener->onResultAfter(new OrmResultAfter(
+            new Datagrid(
+                'test-grid',
+                DatagridConfiguration::create([]),
+                new ParameterBag(['shopping_list_id' => $shoppingList->getId()])
+            ),
+            [],
+            $this->query
+        ));
+    }
+
     /**
      * @param int $id
      * @param Product $product

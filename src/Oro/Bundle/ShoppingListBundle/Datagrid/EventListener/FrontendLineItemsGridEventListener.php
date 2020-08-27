@@ -5,7 +5,6 @@ namespace Oro\Bundle\ShoppingListBundle\Datagrid\EventListener;
 use Doctrine\Common\Collections\AbstractLazyCollection;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface as Record;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
@@ -18,6 +17,7 @@ use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\ConfigurableProductProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Event\LineItemDataEvent;
 use Oro\Bundle\ShoppingListBundle\Validator\LineItemViolationsProvider;
@@ -396,19 +396,25 @@ class FrontendLineItemsGridEventListener
 
         $lineItemsCollection = $shoppingList->getLineItems();
         if ($lineItemsCollection instanceof AbstractLazyCollection && !$lineItemsCollection->isInitialized()) {
-            $lineItemsIds = array_merge(
-                ...array_map(
-                    static function (ResultRecordInterface $record) {
-                        return explode(',', $record->getValue('id'));
-                    },
-                    $event->getRecords()
-                )
-            );
-
-            return $repository->preloadLineItemsByIdsForViewAction($lineItemsIds);
+            return $this->preloadLineItems($repository, $event->getRecords());
         }
 
         return $lineItemsCollection->toArray();
+    }
+
+    /**
+     * @param ShoppingListRepository $repository
+     * @param Record[] $records
+     *
+     * @return array
+     */
+    private function preloadLineItems(ShoppingListRepository $repository, array $records): array
+    {
+        $lineItemsIds = array_merge(
+            ...array_map(static fn(Record $record) => explode(',', $record->getValue('id')), $records)
+        );
+
+        return $lineItemsIds ? $repository->preloadLineItemsByIdsForViewAction($lineItemsIds) : [];
     }
 
     /**
