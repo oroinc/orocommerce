@@ -4,4 +4,5 @@ OroWebsiteSearchBundle extends [OroSearchBundle](https://doc.oroinc.com/backend/
 
 It also enables developers to configure this search index in the YAML configuration files in the individual bundles.
 
-For more information, see online documentation for [WebsiteSearchBundle](https://doc.oroinc.com/backend/bundles/commerce/WebsiteSearchBundle/).
+For more information, see online documentation for [WebsiteSearchBundle](https://doc.oroinc.com/backend/bundles/platform/WebsiteSearchBundle/).
+
