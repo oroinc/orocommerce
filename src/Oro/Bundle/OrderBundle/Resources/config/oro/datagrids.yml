@@ -199,6 +199,7 @@ datagrids:
                     - order1.sourceEntityId
                     - order1.sourceEntityIdentifier
                     - order1.totalDiscountsAmount
+                    - SUM(appliedDiscount.amount) as promotionalDiscountsAmount
                     - internalStatus.name as internalStatusName
                     - internalStatus.id as internalStatusId
                 join:
@@ -207,6 +208,9 @@ datagrids:
                         - { join: order1.customerUser, alias: customerUser }
                         - { join: order1.customer, alias: customer }
                         - { join: order1.internal_status, alias: internalStatus }
+                        - { join: order1.appliedPromotions, alias: appliedPromotion }
+                        - { join: appliedPromotion.appliedDiscounts, alias: appliedDiscount }
+                groupBy:  order1.id
             hints:
                 - HINT_TRANSLATABLE
         columns:
@@ -234,6 +238,12 @@ datagrids:
                 callable:      ['@oro_currency.converter.currency_to_string', 'convert']
                 multicurrency_config:
                     currency_field: currency
+            promotionalDiscountsAmount:
+                label:         oro.order.order_discount.columns.title
+                type:          twig
+                frontend_type: html
+                template:      OroOrderBundle:Order:Datagrid/promotionalDiscount.html.twig
+                renderable:    false
             customerName:
                 label:         oro.order.customer.label
             customerUserName:
@@ -268,7 +278,7 @@ datagrids:
                 label:         oro.order.order_discount.columns.special_discount.label
                 type:          twig
                 frontend_type: html
-                template:      OroOrderBundle:Order:Datagrid/discount.html.twig
+                template:      OroOrderBundle:Order:Datagrid/specialDiscount.html.twig
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
@@ -438,7 +448,7 @@ datagrids:
                 label:         oro.order.order_discount.columns.special_discount.label
                 type:          twig
                 frontend_type: html
-                template:      OroOrderBundle:Order:Datagrid/discount.html.twig
+                template:      OroOrderBundle:Order:Datagrid/specialDiscount.html.twig
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
