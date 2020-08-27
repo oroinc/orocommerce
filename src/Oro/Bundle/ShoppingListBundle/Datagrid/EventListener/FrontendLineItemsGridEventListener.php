@@ -5,7 +5,6 @@ namespace Oro\Bundle\ShoppingListBundle\Datagrid\EventListener;
 use Doctrine\Common\Collections\AbstractLazyCollection;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface as Record;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
@@ -405,7 +404,8 @@ class FrontendLineItemsGridEventListener
 
     /**
      * @param ShoppingListRepository $repository
-     * @param array $records
+     * @param Record[] $records
+     *
      * @return array
      */
     private function preloadLineItems(ShoppingListRepository $repository, array $records): array
@@ -417,7 +417,7 @@ class FrontendLineItemsGridEventListener
         return $repository->preloadLineItemsByIdsForViewAction(
             array_merge(
                 ...array_map(
-                    static function (ResultRecordInterface $record) {
+                    static function (Record $record) {
                         return explode(',', $record->getValue('id'));
                     },
                     $records

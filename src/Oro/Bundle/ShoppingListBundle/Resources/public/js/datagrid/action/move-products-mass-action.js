@@ -98,10 +98,17 @@ define(function(require) {
          */
         _doAjaxRequest() {
             const {values} = this.getActionParameters();
-            values.split(',').forEach(value => {
-                const model = this.datagrid.collection.get(value);
-                model.classList().add('grid-row--loading');
-            });
+            if (values.length) {
+                values.split(',').forEach((value => {
+                    const model = this.datagrid.collection.get(value);
+                    model.classList().add('grid-row--loading');
+                }).bind(this));
+            } else {
+                this.datagrid.collection.models.forEach(model => {
+                    model.classList().add('grid-row--loading');
+                });
+            }
+
             MoveProductsMassAction.__super__._doAjaxRequest.call(this);
         }
     });
