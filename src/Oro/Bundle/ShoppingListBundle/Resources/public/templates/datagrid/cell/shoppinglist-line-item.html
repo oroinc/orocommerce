@@ -1,0 +1,15 @@
+<% if (!obj.isConfigurable) { %>
+    <div class="line-item-container">
+        <div tabindex="0" class="input input-qty"><%- quantity %></div>
+        <div class="select2-container" tabindex="0">
+            <a class="select2-choice" href="#" tabindex="-1">
+                <span class="select2-chosen" role="textbox" aria-readonly="true"><%- unit %></span>
+                <span class="select2-arrow" aria-hidden="true"><b></b></span>
+            </a>
+        </div>
+    </div>
+<% } else { %>
+    <div class="mobile-row label-in-mobile-start label-bold-in-mobile line-item-configurable">
+        <span class="label-in-mobile-end" data-label="&nbsp;<%- unit %>"><%- quantity %> <%- unit %></span>
+    </div>
+<% } %>

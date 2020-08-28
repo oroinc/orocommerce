@@ -72,6 +72,15 @@
         height: $datagrid-body-cell-offset +  $responsive-shopping-list-edit-action-in-desktop-height / 2;
         bottom: auto;
     }
+
+    .grid-header-cell-quantity {
+        text-align: center;
+    }
+
+    .grid-header-cell-quantity,
+    .grid-body-cell-quantity {
+        padding-right: 0;
+    }
 }
 
 @include breakpoint('desktop') {

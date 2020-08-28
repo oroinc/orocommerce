@@ -34,7 +34,7 @@ define(function(require) {
         initialize: function(options) {
             MoveProductsMassAction.__super__.initialize.call(this, options);
 
-            this.route_parameters.id = this.route_parameters[this.datagrid.name]['shopping_list_id']
+            this.route_parameters.id = this.route_parameters[this.datagrid.name]['shopping_list_id'];
         },
 
         /**

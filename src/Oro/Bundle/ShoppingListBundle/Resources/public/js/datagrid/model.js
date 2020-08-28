@@ -1,4 +1,5 @@
 import Backbone from 'backbone';
+import _ from 'underscore';
 
 const ShoppingListItemModel = Backbone.Model.extend({
     constructor: function ShoppingListItemModel(attributes, options) {
@@ -21,16 +22,22 @@ const ShoppingListItemModel = Backbone.Model.extend({
 
         return {
             add(className) {
+                if (!className) {
+                    return new Error(`'className' should not be empty`);
+                }
                 classList.push(className);
-                model.set('row_class_name', classList.join(' '));
+                model.set('row_class_name', _.uniq(classList).join(' '));
             },
             remove(className) {
+                if (!className) {
+                    return new Error(`'className' should not be empty`);
+                }
                 const index = classList.indexOf(className);
                 if (index !== -1) {
                     classList.splice(index, 1);
                 }
 
-                model.set('row_class_name', classList.join(' '));
+                model.set('row_class_name', _.uniq(classList).join(' '));
             }
         };
     }
