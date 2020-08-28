@@ -139,7 +139,7 @@ class FrontendLineItemsGridEventListener
         $record->setValue('productId', $productId);
 
         $qty = $item->getQuantity();
-        $record->setValue('quantity', $this->numberFormatter->formatDecimal($qty));
+        $record->setValue('quantity', $qty);
 
         $unit = $item->getUnit();
         $record->setValue('unit', $this->formatUnitLabel($unit, $qty));
@@ -234,7 +234,7 @@ class FrontendLineItemsGridEventListener
                     'productId' => $product->getId(),
                     'sku' => $product->getSku(),
                     'name' => $name,
-                    'quantity' => $this->numberFormatter->formatDecimal($quantity),
+                    'quantity' => $quantity,
                     'unit' => $this->formatUnitLabel($unit, $quantity),
                     'unitCode' => null,
                     'units' => null,
@@ -306,7 +306,7 @@ class FrontendLineItemsGridEventListener
             $record->setValue('id', $parentProduct->getId() . '_' . $lineItem->getProductUnitCode());
             $record->setValue('sku', null);
             $record->setValue('subData', $data);
-            $record->setValue('quantity', $this->numberFormatter->formatDecimal($rowQuantity));
+            $record->setValue('quantity', $rowQuantity);
             if ($rowSubtotal) {
                 if ($rowDiscount) {
                     $record->setValue('discount', $this->numberFormatter->formatCurrency($rowDiscount, $currency));

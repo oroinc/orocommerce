@@ -1,0 +1,41 @@
+/* @theme: blank; */
+
+.responsive-shopping-list-grid {
+    .grid-row {
+        transition: background-color 250ms ease-in;
+
+        &--loading {
+            .grid-cell:last-child {
+                @extend .loading-bar-lines;
+
+                &:after {
+                    left: -9999px;
+                }
+            }
+        }
+
+        &--success {
+            background: get-color('ui', 'success');
+        }
+
+        &--error {
+            background: get-color('ui', 'error');
+        }
+    }
+}
+
+@include breakpoint('mobile') {
+    .grid-row {
+        &--loading {
+            position: relative;
+            .grid-cell:last-child {
+                position: static !important;
+
+                &:after {
+                    left: 0;
+                }
+            }
+        }
+    }
+}
+

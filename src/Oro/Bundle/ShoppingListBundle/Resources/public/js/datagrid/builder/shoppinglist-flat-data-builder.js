@@ -1,7 +1,7 @@
 import FilteredProductVariantsPlugin from 'oroshoppinglist/js/datagrid/plugins/filtered-product-variants-plugin';
 
 const isHighlight = item => item.isUpcoming || (item.errors && item.errors.length);
-const flattenData = data => {
+export const flattenData = data => {
     return data.reduce((flatData, rawData) => {
         const {subData, ...item} = rawData;
         const itemClassName = [];

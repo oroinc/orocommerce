@@ -1,4 +1,5 @@
 import {macros} from 'underscore';
+import numberFormatter from 'orolocale/js/formatter/number';
 
 macros('oroshoppinglist', {
     /**
@@ -62,5 +63,10 @@ macros('oroshoppinglist', {
      * @param {string} data.groupName
      * @param {string?} data.hideClass
      */
-    renderMoreVariantsButton: require('tpl-loader!oroshoppinglist/templates/macros/product-item__variants-btn.html')
+    renderMoreVariantsButton: require('tpl-loader!oroshoppinglist/templates/macros/product-item__variants-btn.html'),
+
+    /**
+     * Include number formatter to templates
+     */
+    numberFormatter
 });
