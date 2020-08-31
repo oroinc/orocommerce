@@ -123,7 +123,7 @@
     {% set productImage = product.imagesByType('listing').first.image|default(null) %}
 
     <picture {{ block('block_attributes') }}>
-        <img src="{{ Image.url(productImage, product_image_size) }}" {{ UI.attributes(attrImage) }} alt="{{ product.names|localized_value|e }}" itemprop="image">
+        <img src="{{ Image.url(productImage, product_image_size) }}" {{ UI.attributes(attrImage) }} alt="{{ product.names|localized_value|e }}" itemprop="image" loading="lazy">
     </picture>
 {% endblock %}
 
