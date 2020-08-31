@@ -23,6 +23,11 @@ layout:
             parentId: datagrid_toolbar_leftside_container
             blockType: block
 
+        - '@add':
+            id: datagrid_toggle_group
+            parentId: datagrid_toolbar_leftside_container
+            blockType: block
+
         - '@setOption':
             id: page_content
             optionName: attr.class

@@ -62,6 +62,12 @@ oro:
                 show_less:
                     aria_label: 'Show all added products with pagination'
                     label: 'Show Less'
+                group_similar:
+                    aria_label: 'Group similar products'
+                    label: 'Group similar'
+                ungroup_similar:
+                    aria_label: 'Show similar products separately'
+                    label: 'Ungroup similar'
                 duplicate.aria_label: Duplicate Current Shopping List
             btn_more:
                 label: 'And {{ count }} more'
