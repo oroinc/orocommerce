@@ -121,7 +121,7 @@
     {% set productImageUrl = product_filtered_image(productImage, product_image_size) %}
 
     <picture {{ block('block_attributes') }}>
-        <img src="{{ productImageUrl }}" {{ UI.attributes(attrImage) }} alt="{{ product.names|localized_value|e }}" itemprop="image">
+        <img src="{{ productImageUrl }}" {{ UI.attributes(attrImage) }} alt="{{ product.names|localized_value|e }}" itemprop="image" loading="lazy">
     </picture>
 {% endblock %}
 
