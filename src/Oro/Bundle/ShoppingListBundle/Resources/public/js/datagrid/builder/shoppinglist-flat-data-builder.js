@@ -46,6 +46,7 @@ export const flattenData = data => {
 
                 item.ids.push(subItem.id);
                 subItem._isVariant = true;
+                subItem._groupId = item.productId;
                 subItem.row_class_name = className.join(' ');
                 subItem.row_attributes = {
                     'data-product-group': item.productId
