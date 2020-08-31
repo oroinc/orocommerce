@@ -127,7 +127,7 @@ class ShoppingListControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_shopping_list_frontend_my_index'));
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains('frontend-customer-user-shopping-lists-grid', $crawler->html());
+        $this->assertStringContainsString('frontend-customer-user-shopping-lists-grid', $crawler->html());
 
         $response = $this->client->requestFrontendGrid(
             'frontend-customer-user-shopping-lists-grid',
@@ -176,7 +176,7 @@ class ShoppingListControllerTest extends WebTestCase
         );
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains('frontend-customer-user-shopping-list-grid', $crawler->html());
+        $this->assertStringContainsString('frontend-customer-user-shopping-list-grid', $crawler->html());
 
         $response = $this->client->requestFrontendGrid(
             'frontend-customer-user-shopping-list-grid',
@@ -387,7 +387,7 @@ class ShoppingListControllerTest extends WebTestCase
         );
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains('shopping-list-assign-grid', $crawler->html());
+        $this->assertStringContainsString('shopping-list-assign-grid', $crawler->html());
     }
 
     public function testQuickAdd()

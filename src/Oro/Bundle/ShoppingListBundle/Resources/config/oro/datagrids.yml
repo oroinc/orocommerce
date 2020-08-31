@@ -324,8 +324,8 @@ datagrids:
                         FROM Oro\Bundle\ShoppingListBundle\Entity\LineItem innerLineItem
                         WHERE (innerLineItem.parentProduct = lineItem.parentProduct OR innerLineItem.product = lineItem.product)
                         AND innerLineItem.shoppingList = lineItem.shoppingList
-                        AND innerLineItem.unit = lineItem.unit) as id
-                    - GROUP_CONCAT(lineItem.id) as lineItemIds
+                        AND innerLineItem.unit = lineItem.unit) as allLineItemsIds
+                    - GROUP_CONCAT(lineItem.id) as displayedLineItemsIds
                 from:
                     - { table: 'Oro\Bundle\ShoppingListBundle\Entity\LineItem', alias: lineItem }
                 join:

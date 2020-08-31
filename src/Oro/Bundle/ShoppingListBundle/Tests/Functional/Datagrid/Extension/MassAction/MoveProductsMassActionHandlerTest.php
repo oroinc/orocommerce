@@ -6,6 +6,9 @@ use Doctrine\ORM\Query;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datasource\Orm\IterableResult;
+use Oro\Bundle\DataGridBundle\Datasource\Orm\IterableResultInterface;
+use Oro\Bundle\DataGridBundle\Extension\Action\ActionConfiguration;
+use Oro\Bundle\DataGridBundle\Extension\MassAction\DTO\SelectedItems;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionResponse;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
@@ -20,6 +23,9 @@ use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingList
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @dbIsolationPerTest
+ */
 class MoveProductsMassActionHandlerTest extends WebTestCase
 {
     /** @var CustomerUser */
@@ -55,14 +61,14 @@ class MoveProductsMassActionHandlerTest extends WebTestCase
         $this->handler = $container->get('oro_shopping_list.mass_action.move_products_handler');
     }
 
-    public function testHandle(): void
+    public function testHandleWhenRootEntity(): void
     {
         $sourceShoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
         $targetShoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_2);
 
         $result = $this->handler->handle(
             new MassActionHandlerArgs(
-                new MoveProductsMassAction(),
+                $this->getMoveProductsMassAction(),
                 $this->getDatagrid($this->customerUser, $sourceShoppingList),
                 new IterableResult($this->getQuery($sourceShoppingList)),
                 ['shopping_list_id' => $targetShoppingList->getId()]
@@ -74,9 +80,60 @@ class MoveProductsMassActionHandlerTest extends WebTestCase
         $this->assertEquals('One entity has been moved successfully.', $result->getMessage());
         $this->assertEquals(['count' => 1], $result->getOptions());
 
-        $item = $this->getReference(LoadShoppingListLineItems::LINE_ITEM_1);
+        $lineItem = $this->getReference(LoadShoppingListLineItems::LINE_ITEM_1);
 
-        $this->assertEquals($targetShoppingList->getId(), $item->getShoppingList()->getId());
+        $this->assertEquals($targetShoppingList->getId(), $lineItem->getShoppingList()->getId());
+    }
+
+    public function testHandleWhenSingleItem(): void
+    {
+        /** @var ShoppingList $sourceShoppingList */
+        $sourceShoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_5);
+        $targetShoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_2);
+
+        $datagrid = $this->getDatagrid($this->customerUser, $sourceShoppingList);
+        $lineItem = $this->getReference(LoadShoppingListLineItems::LINE_ITEM_10);
+        $result = $this->handler->handle(
+            new MassActionHandlerArgs(
+                $this->getMoveProductsMassAction(),
+                $datagrid,
+                $this->getIterableResultFromDatagrid($datagrid, new SelectedItems([$lineItem->getId()], true)),
+                ['values' => $lineItem->getId(), 'shopping_list_id' => $targetShoppingList->getId()]
+            )
+        );
+
+        $this->assertInstanceOf(MassActionResponse::class, $result);
+        $this->assertTrue($result->isSuccessful());
+        $this->assertEquals('One entity has been moved successfully.', $result->getMessage());
+        $this->assertEquals(['count' => 1], $result->getOptions());
+
+        $this->assertEquals($targetShoppingList->getId(), $lineItem->getShoppingList()->getId());
+    }
+
+    public function testHandleWhenAllItems(): void
+    {
+        /** @var ShoppingList $sourceShoppingList */
+        $sourceShoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_5);
+        $targetShoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_2);
+
+        $datagrid = $this->getDatagrid($this->customerUser, $sourceShoppingList);
+        $result = $this->handler->handle(
+            new MassActionHandlerArgs(
+                $this->getMoveProductsMassAction(),
+                $datagrid,
+                $this->getIterableResultFromDatagrid($datagrid, new SelectedItems([], true)),
+                ['shopping_list_id' => $targetShoppingList->getId()]
+            )
+        );
+
+        $this->assertInstanceOf(MassActionResponse::class, $result);
+        $this->assertTrue($result->isSuccessful());
+        $this->assertEquals('4 items have been moved successfully.', $result->getMessage());
+        $this->assertEquals(['count' => 4], $result->getOptions());
+
+        $lineItem = $this->getReference(LoadShoppingListLineItems::LINE_ITEM_10);
+
+        $this->assertEquals($targetShoppingList->getId(), $lineItem->getShoppingList()->getId());
     }
 
     /**
@@ -140,5 +197,44 @@ class MoveProductsMassActionHandlerTest extends WebTestCase
         return $qb->where($qb->expr()->eq('li.shoppingList', ':shopping_list_id'))
             ->setParameter('shopping_list_id', $shoppingList->getId())
             ->getQuery();
+    }
+
+    /**
+     * @param DatagridInterface $datagrid
+     * @param SelectedItems $selectedItems
+     *
+     * @return IterableResultInterface
+     */
+    private function getIterableResultFromDatagrid(
+        DatagridInterface $datagrid,
+        SelectedItems $selectedItems
+    ): IterableResultInterface {
+        return $this->getContainer()
+            ->get('oro_datagrid.extension.mass_action.iterable_result_factory_registry')
+            ->createIterableResult(
+                $datagrid->getAcceptedDatasource(),
+                $this->getActionConfiguration(),
+                $datagrid->getConfig(),
+                $selectedItems
+            );
+    }
+
+    /**
+     * @return MoveProductsMassAction
+     */
+    private function getMoveProductsMassAction(): MoveProductsMassAction
+    {
+        $moveProductsMassAction = new MoveProductsMassAction();
+        $moveProductsMassAction->setOptions($this->getActionConfiguration());
+
+        return $moveProductsMassAction;
+    }
+
+    /**
+     * @return ActionConfiguration
+     */
+    private function getActionConfiguration(): ActionConfiguration
+    {
+        return ActionConfiguration::create(['data_identifier' => 'lineItem.id']);
     }
 }

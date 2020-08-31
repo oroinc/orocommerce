@@ -106,7 +106,7 @@ class MoveProductsMassActionHandlerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals([], $result->getOptions());
     }
 
-    public function testHandleWithutShoppingList(): void
+    public function testHandleWithoutShoppingList(): void
     {
         $this->request->setMethod(Request::METHOD_POST);
 
