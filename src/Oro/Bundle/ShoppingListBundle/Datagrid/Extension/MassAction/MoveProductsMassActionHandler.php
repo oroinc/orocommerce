@@ -2,10 +2,12 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Datagrid\Extension\MassAction;
 
+use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\BatchBundle\ORM\Query\ResultIterator\IdentifierWithoutOrderByIterationStrategy;
 use Oro\Bundle\DataGridBundle\Datasource\Orm\IterableResult;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
+use Oro\Bundle\DataGridBundle\Exception\LogicException;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\Actions\MassActionInterface;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerInterface;
@@ -93,6 +95,8 @@ class MoveProductsMassActionHandler implements MassActionHandlerInterface
         $results->setIterationStrategy(new IdentifierWithoutOrderByIterationStrategy());
         $results->setBufferSize(self::FLUSH_BATCH_SIZE);
 
+        $entityIdentifiedField = $this->getEntityIdentifierField($args);
+        /** @var EntityManager $manager */
         $manager = $this->registry->getManagerForClass(LineItem::class);
         $updated = 0;
 
@@ -100,8 +104,8 @@ class MoveProductsMassActionHandler implements MassActionHandlerInterface
         foreach ($results as $result) {
             $entity = $result->getRootEntity();
             if (!$entity) {
-                // no entity in result record, it should be extracted from DB
-                $entity = $manager->getReference(LineItem::class, $result->getValue('id'));
+                // No entity in result record, it should be extracted from DB.
+                $entity = $manager->getReference(LineItem::class, $result->getValue($entityIdentifiedField));
             }
 
             if (!$entity) {
@@ -185,5 +189,29 @@ class MoveProductsMassActionHandler implements MassActionHandlerInterface
             false,
             $this->translator->trans('oro.shoppinglist.mass_actions.move_line_items.no_edit_permission_message')
         );
+    }
+
+    /**
+     * @param MassActionHandlerArgs $args
+     *
+     * @throws LogicException
+     * @return string
+     */
+    private function getEntityIdentifierField(MassActionHandlerArgs $args): string
+    {
+        $massAction = $args->getMassAction();
+        $identifier = $massAction->getOptions()->offsetGet('data_identifier');
+        if (!$identifier) {
+            throw new LogicException(sprintf('Mass action "%s" must define identifier name', $massAction->getName()));
+        }
+
+        // if we ask identifier that's means that we have plain data in array
+        // so we will just use column name without entity alias
+        if (strpos('.', $identifier) !== -1) {
+            $parts      = explode('.', $identifier);
+            $identifier = end($parts);
+        }
+
+        return $identifier;
     }
 }

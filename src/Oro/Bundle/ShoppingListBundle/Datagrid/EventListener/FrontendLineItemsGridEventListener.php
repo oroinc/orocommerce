@@ -114,8 +114,9 @@ class FrontendLineItemsGridEventListener
             /** @var LineItem[] $recordLineItems */
             $recordLineItems = array_intersect_key(
                 $identifiedLineItems,
-                array_flip(explode(',', $record->getValue('id')))
+                array_flip(explode(',', $record->getValue('allLineItemsIds')))
             );
+            $record->setValue('id', $record->getValue('allLineItemsIds'));
 
             if ($record->getValue('isConfigurable')) {
                 $this->processConfigurableProduct($record, $recordLineItems, $matchedPrices, $errors);
@@ -213,7 +214,7 @@ class FrontendLineItemsGridEventListener
         $rowQuantity = $rowSubtotal = $rowDiscount = 0.0;
         $currency = null;
         $data = [];
-        $displayed = explode(',', $record->getValue('lineItemIds'));
+        $displayed = explode(',', $record->getValue('displayedLineItemsIds'));
 
         $event = new LineItemDataEvent($items);
         $this->eventDispatcher->dispatch($event, LineItemDataEvent::NAME);
@@ -310,7 +311,8 @@ class FrontendLineItemsGridEventListener
             if ($rowSubtotal) {
                 if ($rowDiscount) {
                     $record->setValue('discount', $this->numberFormatter->formatCurrency($rowDiscount, $currency));
-                    $record->setValue('initial_subtotal', $this->numberFormatter->formatCurrency($rowSubtotal, $currency));
+                    $record
+                        ->setValue('initial_subtotal', $this->numberFormatter->formatCurrency($rowSubtotal, $currency));
                     $rowSubtotal -= $rowDiscount;
                 }
 
@@ -418,7 +420,7 @@ class FrontendLineItemsGridEventListener
             array_merge(
                 ...array_map(
                     static function (Record $record) {
-                        return explode(',', $record->getValue('id'));
+                        return explode(',', $record->getValue('allLineItemsIds'));
                     },
                     $records
                 )

@@ -159,8 +159,8 @@ class FrontendLineItemsGridEventListenerTest extends \PHPUnit\Framework\TestCase
             ->with([$lineItem1, $lineItem2, $lineItem3])
             ->willReturn($errors);
 
-        $record1 = new ResultRecord(['id' => $lineItem1->getId()]);
-        $record2 = new ResultRecord(['id' => $lineItem2->getId() . ',' . $lineItem3->getId() . ',4']);
+        $record1 = new ResultRecord(['allLineItemsIds' => $lineItem1->getId()]);
+        $record2 = new ResultRecord(['allLineItemsIds' => $lineItem2->getId() . ',' . $lineItem3->getId() . ',4']);
 
         $this->listener->onResultAfter(new OrmResultAfter(
             new Datagrid(

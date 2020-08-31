@@ -76,8 +76,8 @@ class ShoppingListControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
         $this->assertContains($currentShoppingList->getLabel(), $crawler->html());
         // operations only for ShoppingList with LineItems
-        $this->assertNotContains('Request Quote', $crawler->html());
-        $this->assertNotContains('Create Order', $crawler->html());
+        $this->assertStringNotContainsString('Request Quote', $crawler->html());
+        $this->assertStringNotContainsString('Create Order', $crawler->html());
     }
 
     public function testIndexWhenDisabledAndEnabled(): void
@@ -127,7 +127,7 @@ class ShoppingListControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_shopping_list_frontend_my_index'));
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains('frontend-customer-user-shopping-lists-grid', $crawler->html());
+        $this->assertStringContainsString('frontend-customer-user-shopping-lists-grid', $crawler->html());
 
         $response = $this->client->requestFrontendGrid(
             'frontend-customer-user-shopping-lists-grid',
@@ -176,7 +176,7 @@ class ShoppingListControllerTest extends WebTestCase
         );
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains('frontend-customer-user-shopping-list-grid', $crawler->html());
+        $this->assertStringContainsString('frontend-customer-user-shopping-list-grid', $crawler->html());
 
         $response = $this->client->requestFrontendGrid(
             'frontend-customer-user-shopping-list-grid',
@@ -225,10 +225,10 @@ class ShoppingListControllerTest extends WebTestCase
             $this->getUrl('oro_shopping_list_frontend_view', ['id' => $currentShoppingList->getId()])
         );
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains($currentShoppingList->getLabel(), $crawler->html());
+        $this->assertStringContainsString($currentShoppingList->getLabel(), $crawler->html());
         // operations only for ShoppingList with LineItems
-        $this->assertNotContains('Request Quote', $crawler->html());
-        $this->assertNotContains('Create Order', $crawler->html());
+        $this->assertStringNotContainsString('Request Quote', $crawler->html());
+        $this->assertStringNotContainsString('Create Order', $crawler->html());
     }
 
     public function testAccessDeniedForShoppingListsFromAnotherWebsite()
@@ -294,12 +294,12 @@ class ShoppingListControllerTest extends WebTestCase
         $this->configManager->flush();
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains($shoppingList1->getLabel(), $crawler->html());
+        $this->assertStringContainsString($shoppingList1->getLabel(), $crawler->html());
 
-        $this->assertContains('Create Order', $crawler->html());
+        $this->assertStringContainsString('Create Order', $crawler->html());
         if ($atLeastOneAvailableProduct) {
-            $this->assertContains('Duplicate List', $crawler->html());
-            $this->assertContains('Request Quote', $crawler->html());
+            $this->assertStringContainsString('Duplicate List', $crawler->html());
+            $this->assertStringContainsString('Request Quote', $crawler->html());
         }
 
         $this->assertLineItemPriceEquals($expectedLineItemPrice, $crawler);
@@ -363,9 +363,9 @@ class ShoppingListControllerTest extends WebTestCase
         $this->configManager->flush();
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains($shoppingList->getLabel(), $crawler->html());
+        $this->assertStringContainsString($shoppingList->getLabel(), $crawler->html());
 
-        $this->assertContains('Create Order', $crawler->html());
+        $this->assertStringContainsString('Create Order', $crawler->html());
 
         $this->assertLineItemPriceEquals('Price for requested quantity is not available', $crawler);
     }
@@ -387,7 +387,7 @@ class ShoppingListControllerTest extends WebTestCase
         );
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains('shopping-list-assign-grid', $crawler->html());
+        $this->assertStringContainsString('shopping-list-assign-grid', $crawler->html());
     }
 
     public function testQuickAdd()
@@ -442,9 +442,9 @@ class ShoppingListControllerTest extends WebTestCase
 
         if (200 === $response->getStatusCode()) {
             if ($expectedCreateOrderButtonVisible) {
-                $this->assertContains('Create Order', $crawler->html());
+                $this->assertStringContainsString('Create Order', $crawler->html());
             } else {
-                $this->assertNotContains('Create Order', $crawler->html());
+                $this->assertStringNotContainsString('Create Order', $crawler->html());
             }
         }
     }
@@ -534,7 +534,7 @@ class ShoppingListControllerTest extends WebTestCase
         $response = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($response, 200);
-        $this->assertNotContains('Create Order', $crawler->html());
+        $this->assertStringNotContainsString('Create Order', $crawler->html());
     }
 
     /**
@@ -571,7 +571,7 @@ class ShoppingListControllerTest extends WebTestCase
             ->trans('oro.shoppinglist.actions.add_success_message', ['%count%' => count($products)]);
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains($expectedMessage, $crawler->html());
+        $this->assertStringContainsString($expectedMessage, $crawler->html());
 
         return $crawler;
     }
