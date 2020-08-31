@@ -1,0 +1,55 @@
+Oro\Bundle\WarehouseBundle\Entity\Warehouse:
+    warehouse:
+        organization: '@organization'
+        owner: '@business_unit'
+        name: 'Default Warehouse'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    productName1:
+        string: 'Product1'
+    productName2:
+        string: 'Product2'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision1:
+        unit: '@each'
+        precision: '1'
+    precision2:
+        unit: '@each'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        sku: 'SKU1'
+        type: 'simple'
+        organization: '@organization'
+        primaryUnitPrecision: '@precision1'
+        unitPrecisions: []
+        attributeFamily: '@defaultProductFamily'
+        __calls:
+            - addName: ['@productName1']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+    product2:
+        sku: 'SKU2'
+        type: 'simple'
+        organization: '@organization'
+        primaryUnitPrecision: '@precision2'
+        unitPrecisions: []
+        attributeFamily: '@defaultProductFamily'
+        __calls:
+            - addName: ['@productName2']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+
+Oro\Bundle\InventoryBundle\Entity\InventoryLevel:
+    inventoryLevel1:
+        product: '@product1'
+        productUnitPrecision: '@precision1'
+        organization: '@organization'
+        quantity: 100
+    inventoryLevel2:
+        product: '@product2'
+        productUnitPrecision: '@precision2'
+        organization: '@organization'
+        quantity: 100
