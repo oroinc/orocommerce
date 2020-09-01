@@ -29,30 +29,47 @@ class MatrixCollectionType extends AbstractType
     {
         /** @var MatrixCollection $matrixCollection */
         $matrixCollection = $form->getData();
-        $view->vars['columnsQty'] = $matrixCollection ? $this->getColumnsQty($matrixCollection) : [];
+        $this->addQtyData($view, $matrixCollection);
     }
 
     /**
-     * Return the summary qty amount by column
-     *
+     * @param FormView $view
      * @param MatrixCollection $matrixCollection
-     *
-     * @return array
      */
-    private function getColumnsQty(MatrixCollection $matrixCollection)
+    private function addQtyData(FormView $view, ?MatrixCollection $matrixCollection): void
     {
         $columnsQty = [];
-        foreach ($matrixCollection->rows as $row) {
-            foreach ($row->columns as $key => $column) {
-                if (isset($columnsQty[$key])) {
-                    $columnsQty[$key] += $column->quantity;
-                } else {
-                    $columnsQty[$key] = $column->quantity ? $column->quantity : 0;
+        $rowsQty = [];
+
+        if ($matrixCollection) {
+            foreach ($matrixCollection->rows as $rowKey => $row) {
+                foreach ($row->columns as $columnKey => $column) {
+                    $columnsQty = $this->getQtyByKey($columnsQty, $columnKey, (int) $column->quantity);
+                    $rowsQty = $this->getQtyByKey($rowsQty, $rowKey, (int) $column->quantity);
                 }
             }
         }
 
-        return $columnsQty;
+        $view->vars['columnsQty'] = $columnsQty;
+        $view->vars['rowsQty'] = $rowsQty;
+    }
+
+    /**
+     * @param array $data
+     * @param int $key
+     * @param int $quantity
+     *
+     * @return array
+     */
+    private function getQtyByKey(array $data, int $key, int $quantity): array
+    {
+        if (isset($data[$key])) {
+            $data[$key] += $quantity;
+        } else {
+            $data[$key] = $quantity ?: 0;
+        }
+
+        return $data;
     }
 
     /**

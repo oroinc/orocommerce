@@ -517,6 +517,10 @@ datagrids:
         options:
             jsmodules:
                 - oroshoppinglist/js/datagrid/builder/shoppinglist-editing-builder
+        source:
+            query:
+                select:
+                    - IDENTITY(lineItem.shoppingList) as shoppingListId
         columns:
             item:
                 frontend_type: shoppinglist-item
@@ -532,6 +536,12 @@ datagrids:
         properties:
             id: ~
             delete_link: ~
+            update_configurable_link:
+                type: url
+                route: oro_shopping_list_frontend_matrix_grid_update
+                params:
+                    shoppingListId: shoppingListId
+                    productId: mainProductId
             units:
                 frontend_type: row_array
         actions:
@@ -563,6 +573,11 @@ datagrids:
                     dialogOptions:
                         modal: true
                         width: 800
+            update_configurable:
+                type: update-configurable-product
+                link: update_configurable_link
+                icon: pencil-square-o
+                acl_resource: oro_shopping_list_frontend_update
             delete:
                 type: delete-product
                 label: oro.shoppinglist.actions.delete_line_item.label
@@ -575,7 +590,7 @@ datagrids:
                     confirm_title: oro.shoppinglist.actions.delete_line_item.confirm_title
                     confirm_content: oro.shoppinglist.actions.delete_line_item.confirm_content
                     success: oro.shoppinglist.actions.delete_line_item.success
-        action_configuration: ['@oro_shopping_list.datagrid.update_configurable_link_callback', checkActions]
+        action_configuration: ['@oro_shopping_list.datagrid.action_configuration_link_callback', checkActions]
         mass_actions:
             delete:
                 type: delete
