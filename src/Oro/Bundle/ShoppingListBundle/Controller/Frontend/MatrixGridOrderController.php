@@ -5,8 +5,10 @@ namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Form\Handler\MatrixGridOrderFormHandler;
 use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\MatrixGridOrderFormProvider;
 use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\MatrixGridOrderManager;
@@ -84,6 +86,40 @@ class MatrixGridOrderController extends AbstractLineItemController
     }
 
     /**
+     * @Route("/{shoppingListId}/{productId}", name="oro_shopping_list_frontend_matrix_grid_update")
+     * @ParamConverter("shoppingList", options={"id" = "shoppingListId"})
+     * @ParamConverter("product", options={"id" = "productId"})
+     * @Layout()
+     * @AclAncestor("oro_shopping_list_frontend_update")
+     *
+     * @param ShoppingList $shoppingList
+     * @param Product $product
+     * @param Request $request
+     * @return array|JsonResponse
+     */
+    public function updateAction(ShoppingList $shoppingList, Product $product, Request $request)
+    {
+        $form = $this->get(MatrixGridOrderFormProvider::class)
+            ->getMatrixOrderForm($product, $shoppingList);
+
+        $result = $this->get(MatrixGridOrderFormHandler::class)->process($form->getData(), $form, $request);
+
+        if ($result) {
+            return new JsonResponse(
+                $this->getSuccessResponse($shoppingList, $product, 'oro.shoppinglist.flash.update_success')
+            );
+        }
+
+        return [
+            'data' => [
+                'product' => $product,
+                'shoppingList' => $shoppingList,
+                'hasLineItems' => $form->getData()->hasLineItems(),
+            ]
+        ];
+    }
+
+    /**
      * @see \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxLineItemController::getSuccessResponse
      * @param ShoppingList $shoppingList
      * @param Product $product
@@ -120,6 +156,7 @@ class MatrixGridOrderController extends AbstractLineItemController
             ProductShoppingListsDataProvider::class,
             MatrixGridOrderManager::class,
             MatrixGridOrderFormProvider::class,
+            MatrixGridOrderFormHandler::class,
         ]);
     }
 }

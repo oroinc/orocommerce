@@ -663,9 +663,26 @@ services:
         tags:
             - { name: oro_datagrid.extension.action.type, type: add-notes }
 
-    oro_shopping_list.datagrid.update_configurable_link_callback:
-        class: Oro\Bundle\ShoppingListBundle\Datagrid\Callback\ShoppingListUpdateConfigurableLinkCallback
+    oro_shopping_list.datagrid.action_configuration_link_callback:
+        class: Oro\Bundle\ShoppingListBundle\Datagrid\Callback\ShoppingListActionConfigurationCallback
         public: true
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_product.provider.product_matrix_availability_provider'
+
+    oro_shopping_list.extension.action.type.update_configurable_product:
+        class: 'Oro\Bundle\ShoppingListBundle\Datagrid\Extension\Action\Actions\UpdateConfigurableProductAction'
+        shared: false
+        tags:
+            - { name: oro_datagrid.extension.action.type, type: update-configurable-product }
+
+    oro_shopping_list.form.handler.matrix_grid_order:
+        class: Oro\Bundle\ShoppingListBundle\Form\Handler\MatrixGridOrderFormHandler
+        arguments:
+            - '@oro_form.event.event_dispatcher'
+            - '@oro_entity.doctrine_helper'
+            - '@oro_shopping_list.provider.matrix_grid_order_manager'
+            - '@oro_shopping_list.manager.shopping_list'
+
+    Oro\Bundle\ShoppingListBundle\Form\Handler\MatrixGridOrderFormHandler:
+        alias: 'oro_shopping_list.form.handler.matrix_grid_order'

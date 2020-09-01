@@ -266,9 +266,17 @@ class ShoppingListGridExtensionTest extends \PHPUnit\Framework\TestCase
             ->with(42)
             ->willReturn(true);
 
+        $shoppingList = new ShoppingListStub();
+        $shoppingList->setLabel('Shopping List Label');
+        $this->shoppingListRepository->expects($this->once())
+            ->method('find')
+            ->with(42)
+            ->willReturn(($shoppingList)->setLineItemsCount(900));
+
         $this->extension->visitMetadata(DatagridConfiguration::create([]), $data);
 
         $this->assertTrue($data->offsetGetByPath('hasEmptyMatrix'));
+        $this->assertEquals('Shopping List Label', $data->offsetGetByPath('shoppingListLabel'));
     }
 
     public function testVisitMetadataWithoutId(): void

@@ -10,7 +10,7 @@ use Oro\Bundle\ProductBundle\Provider\ProductMatrixAvailabilityProvider;
 /**
  * Determines which of the actions in the grid row will be available
  */
-class ShoppingListUpdateConfigurableLinkCallback
+class ShoppingListActionConfigurationCallback
 {
     /** @var DoctrineHelper */
     private $doctrineHelper;

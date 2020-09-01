@@ -59,8 +59,10 @@ class FrontendLineItemsGridExtension extends AbstractExtension
             return;
         }
 
+        $shoppingList = $this->getShoppingList($shoppingListId);
+        $lineItemsCount = $shoppingList ? $shoppingList->getLineItemsCount() : 0;
         $item = $this->configManager->get('oro_shopping_list.my_shopping_lists_max_line_items_per_page');
-        if ($this->getLineItemsCount($shoppingListId) <= $item) {
+        if ($lineItemsCount <= $item) {
             $item = [
                 'label' => 'oro.shoppinglist.datagrid.toolbar.pageSize.all.label',
                 'size' => $item
@@ -87,6 +89,7 @@ class FrontendLineItemsGridExtension extends AbstractExtension
         }
 
         $data->offsetSetByPath('[hasEmptyMatrix]', $this->hasEmptyMatrix($shoppingListId));
+        $data->offsetSetByPath('[shoppingListLabel]', $this->getShoppingList($shoppingListId)->getLabel());
     }
 
     /**
@@ -126,17 +129,19 @@ class FrontendLineItemsGridExtension extends AbstractExtension
         return $this->cache['hasEmptyMatrix'][$shoppingListId];
     }
 
-    private function getLineItemsCount(int $shoppingListId): int
+    /**
+     * @param int $shoppingListId
+     * @return ShoppingList|null
+     */
+    private function getShoppingList(int $shoppingListId)
     {
-        if (!isset($this->cache['lineItemsCount'][$shoppingListId])) {
-            $shoppingList = $this->registry
+        if (!isset($this->cache['shoppingLists'][$shoppingListId])) {
+            $this->cache['shoppingLists'][$shoppingListId] = $this->registry
                 ->getManagerForClass(ShoppingList::class)
                 ->getRepository(ShoppingList::class)
                 ->find($shoppingListId);
-
-            $this->cache['lineItemsCount'][$shoppingListId] = $shoppingList ? $shoppingList->getLineItemsCount() : 0;
         }
 
-        return $this->cache['lineItemsCount'][$shoppingListId];
+        return $this->cache['shoppingLists'][$shoppingListId];
     }
 }
