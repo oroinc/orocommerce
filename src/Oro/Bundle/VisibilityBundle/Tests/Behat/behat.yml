@@ -36,31 +36,6 @@ oro_behat_extension:
           Visibility To Customer First Group:
             locator: '#product-visibility-customer-group tr:contains(first) .grid-body-cell-visibility select'
             type: css
-    Category Form:
-      selector: 'form[name="oro_catalog_category"]'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
-      options:
-        mapping:
-          Visibility To All: 'oro_catalog_category[visibility][all]'
-          Visibility To Customers First:
-            locator: '#CustomerCategoryVisibility tr:contains(first) .grid-body-cell-visibility select'
-            type: css
-          Visibility To Customers Second:
-            locator: '#CustomerCategoryVisibility tr:contains(second) .grid-body-cell-visibility select'
-            type: css
-          Visibility To Customer First Group:
-            locator: '#CustomerGroupCategoryVisibility tr:contains(first) .grid-body-cell-visibility select'
-            type: css
-          Title: 'oro_catalog_category[titles][values][default]'
-          URL Slug: 'oro_catalog_category[slugPrototypesWithRedirect][slugPrototypes][values][default]'
-          Inventory Threshold Use: 'oro_catalog_category[inventoryThreshold][useFallback]'
-          Inventory Threshold: 'oro_catalog_category[inventoryThreshold][scalarValue]'
-          Low Inventory Threshold: 'oro_catalog_category[lowInventoryThreshold][scalarValue]'
-          Managed Inventory Fallback: 'oro_catalog_category[manageInventory][fallback]'
-          Backorders Fallback: 'oro_catalog_category[backOrder][fallback]'
-          Short Description: 'oro_catalog_category[shortDescriptions][values][default]'
-          Short Description Localization 1: 'oro_catalog_category[shortDescriptions][values][localizations][1][value]'
-          Short Description Localization 1 fallback selector: 'oro_catalog_category[shortDescriptions][values][localizations][1][fallback]'
 
     Short Description Localization 1 fallback selector:
       selector: 'select[name="oro_catalog_category[shortDescriptions][values][localizations][1][fallback]"]'

@@ -39,6 +39,25 @@ class WYSIWYGValidatorTest extends \PHPUnit\Framework\TestCase
         $this->validator = new WYSIWYGValidator($htmlTagHelper, $this->purifierScopeProvider, $this->logger);
     }
 
+    public function testValidateWhenEmptyValue(): void
+    {
+        $value = '';
+
+        $this->htmlTagProvider
+            ->expects($this->never())
+            ->method('getAllowedElements');
+
+        /** @var ExecutionContext|\PHPUnit\Framework\MockObject\MockObject $context */
+        $context = $this->createMock(ExecutionContext::class);
+        $context->expects($this->never())
+            ->method('addViolation');
+
+        $constraint = new WYSIWYG();
+        $this->validator->initialize($context);
+
+        $this->validator->validate($value, $constraint);
+    }
+
     public function testValidateValidValue(): void
     {
         $value = '<div><h1>Hello World!</h1></div>';
