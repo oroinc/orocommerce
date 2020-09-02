@@ -12,5 +12,7 @@ oro.cms:
             not_dangerous_protocol.message: '"{{ protocol }}" pseudo-protocol is not allowed in slide URIs.'
     wysiwyg:
         field_name_exist: 'This field name cannot be used.'
-        not_permitted_content.message: "The entered content is not permitted in this field. Please remove the potentially unsecure elements, or contact the system administrators to lift the restrictions."
+        not_permitted_content.message: |
+            Please remove not permitted HTML-tags in the content field:
+            {{ errorsList }}.
         twig_content.message: "The entered content contains invalid twig constructions."

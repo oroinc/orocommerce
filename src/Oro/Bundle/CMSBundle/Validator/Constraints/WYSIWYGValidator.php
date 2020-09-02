@@ -3,10 +3,12 @@
 namespace Oro\Bundle\CMSBundle\Validator\Constraints;
 
 use Oro\Bundle\CMSBundle\Provider\HTMLPurifierScopeProvider;
+use Oro\Bundle\UIBundle\Tools\HTMLPurifier\Error;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * This validator checks that WYSIWYG field does not have errors after purify.
@@ -19,21 +21,27 @@ class WYSIWYGValidator extends ConstraintValidator
     /** @var HTMLPurifierScopeProvider */
     private $purifierScopeProvider;
 
+    /** @var TranslatorInterface */
+    private $translator;
+
     /** @var LoggerInterface */
     private $logger;
 
     /**
      * @param HtmlTagHelper $htmlTagHelper
      * @param HTMLPurifierScopeProvider $purifierScopeProvider
+     * @param TranslatorInterface $translator
      * @param LoggerInterface $logger
      */
     public function __construct(
         HtmlTagHelper $htmlTagHelper,
         HTMLPurifierScopeProvider $purifierScopeProvider,
+        TranslatorInterface $translator,
         LoggerInterface $logger
     ) {
         $this->htmlTagHelper = $htmlTagHelper;
         $this->purifierScopeProvider = $purifierScopeProvider;
+        $this->translator = $translator;
         $this->logger = $logger;
     }
 
@@ -49,7 +57,11 @@ class WYSIWYGValidator extends ConstraintValidator
         }
 
         // Remove spaces between HTML tags to prevent code reorganizing errors
-        $value = preg_replace('/(\>)\s*(\<)/m', '$1$2', $value);
+        $value = preg_replace(
+            ['/\r\n/', '/(\>)\s+(\<)/m'],
+            ['', '$1$2'],
+            $value
+        );
         $scope = null;
 
         $contextObject = $this->context->getObject();
@@ -79,8 +91,22 @@ class WYSIWYGValidator extends ConstraintValidator
                 ]);
             }
 
+            $errors = array_map(
+                function (Error $error) {
+                    return $this->translator->trans(
+                        'oro.htmlpurifier.formatted_error',
+                        [
+                            '{{ message }}' => $error->getMessage(),
+                            '{{ place }}' => $error->getPlace(),
+                        ]
+                    );
+                },
+                $errorCollector->getErrorsList($value)
+            );
+
             $this->context
                 ->buildViolation($constraint->message)
+                ->setParameter('{{ errorsList }}', implode(';' . PHP_EOL, $errors))
                 ->addViolation();
         }
     }
