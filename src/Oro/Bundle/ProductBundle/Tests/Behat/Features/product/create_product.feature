@@ -49,7 +49,7 @@ Feature: Create product
     And I click "Upload"
     And click on cat2.jpg in grid
     When I save form
-    Then I should see "The entered content is not permitted in this field. Please remove the potentially unsecure elements, or contact the system administrators to lift the restrictions."
+    Then I should see "Please remove not permitted HTML-tags in the content field: - src attribute on <iframe> should be removed (near <iframe src=" error message
     When fill "Create Product Form" with:
       | Description | Sample content |
     And I save form

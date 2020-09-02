@@ -50,11 +50,17 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
             $wysiwygElementName
         ));
 
-        $function = <<<JS
-(function(){
-    $("#{$wysiwygContentElement->getAttribute('id')}").val("{$text}");
-})()
-JS;
+        $function = sprintf(
+            '(function(){
+                $("#%s").val("%s")
+                    .trigger("change")
+                    .trigger("wysiwyg:disable")
+                    .trigger("wysiwyg:enable");
+            })()',
+            $wysiwygContentElement->getAttribute('id'),
+            $text
+        );
+
         $this->getSession()->executeScript($function);
     }
 }

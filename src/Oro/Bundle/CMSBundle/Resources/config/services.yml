@@ -387,6 +387,8 @@ services:
             - '@oro_ui.html_tag_helper'
             - '@oro_cms.provider.html_purifier_scope_provider'
             - '@logger'
+        calls:
+            - [setTranslator, ['@translator']]
         tags:
             - { name: validator.constraint_validator, alias: wysiwyg_validator }
 
