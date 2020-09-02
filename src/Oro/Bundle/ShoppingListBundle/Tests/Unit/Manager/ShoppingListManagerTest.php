@@ -72,15 +72,15 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $this->lineItemRepository = $this->createMock(LineItemRepository::class);
         $this->lineItemRepository
             ->expects($this->any())
-            ->method('findDuplicate')
-            ->willReturnCallback(function (LineItem $lineItem) {
+            ->method('findDuplicateInShoppingList')
+            ->willReturnCallback(function (LineItem $lineItem, ShoppingList $shoppingList) {
                 /** @var ArrayCollection $shoppingListLineItems */
-                $shoppingListLineItems = $lineItem->getShoppingList()->getLineItems();
-                if ($lineItem->getShoppingList()->getId() === 1
+                $shoppingListLineItems = $shoppingList->getLineItems();
+                if ($shoppingList->getId() === 1
                     && $shoppingListLineItems->count() > 0
                     && $shoppingListLineItems->current()->getUnit() === $lineItem->getUnit()
                 ) {
-                    return $lineItem->getShoppingList()->getLineItems()->current();
+                    return $shoppingList->getLineItems()->current();
                 }
 
                 return null;

@@ -19,13 +19,13 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 class LineItemRepository extends EntityRepository
 {
     /**
-     * Find line item with the same product and unit
+     * Find line item with the same product and unit in the specified shopping list
      *
      * @param LineItem $lineItem
-     *
-     * @return LineItem
+     * @param ShoppingList $shoppingList
+     * @return LineItem|null
      */
-    public function findDuplicate(LineItem $lineItem)
+    public function findDuplicateInShoppingList(LineItem $lineItem, ShoppingList $shoppingList): ?LineItem
     {
         $qb = $this->createQueryBuilder('li');
         $qb->where('li.product = :product')
@@ -33,8 +33,9 @@ class LineItemRepository extends EntityRepository
             ->andWhere('li.shoppingList = :shoppingList')
             ->setParameter('product', $lineItem->getProduct())
             ->setParameter('unit', $lineItem->getUnit())
-            ->setParameter('shoppingList', $lineItem->getShoppingList())
-            ->addOrderBy($qb->expr()->asc('li.id'));
+            ->setParameter('shoppingList', $shoppingList)
+            ->addOrderBy($qb->expr()->asc('li.id'))
+            ->setMaxResults(1);
 
         if ($lineItem->getId()) {
             $qb

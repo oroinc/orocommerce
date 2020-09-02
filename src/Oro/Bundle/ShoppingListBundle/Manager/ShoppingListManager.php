@@ -348,7 +348,6 @@ class ShoppingListManager
     {
         $this->ensureProductTypeAllowed($lineItem);
 
-        $lineItem->setShoppingList($shoppingList);
         if (null === $lineItem->getCustomerUser() && $shoppingList->getCustomerUser()) {
             $lineItem->setCustomerUser($shoppingList->getCustomerUser());
         }
@@ -369,8 +368,8 @@ class ShoppingListManager
     private function handleLineItem(LineItem $lineItem, ShoppingList $shoppingList, \Closure $func)
     {
         $em = $this->getEntityManager();
-        $duplicate = $this->getLineItemRepository($em)->findDuplicate($lineItem);
-        if ($duplicate instanceof LineItem && $shoppingList->getId()) {
+        $duplicate = $this->getLineItemRepository($em)->findDuplicateInShoppingList($lineItem, $shoppingList);
+        if ($duplicate) {
             $func($duplicate);
             $em->remove($lineItem);
         } elseif ($lineItem->getQuantity() > 0) {

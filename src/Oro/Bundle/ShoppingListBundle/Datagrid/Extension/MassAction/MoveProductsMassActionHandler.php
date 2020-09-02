@@ -121,11 +121,7 @@ class MoveProductsMassActionHandler implements MassActionHandlerInterface
 
             $this->shoppingListManager->addLineItem($entity, $shoppingList, false);
 
-            $shoppingList->setLineItemsCount($shoppingList->getLineItemsCount() + 1);
-            $originalShoppingList->setLineItemsCount($originalShoppingList->getLineItemsCount() - 1);
-
             $updated++;
-
             if ($updated % self::FLUSH_BATCH_SIZE === 0) {
                 $manager->flush();
             }
