@@ -18,12 +18,17 @@ Feature: Category localizable fields
     And I click "All Products"
     And I click "Create Subcategory"
     And I fill "Category Form" with:
-      | Title    | SubCategory  |
+      | Title            | SubCategory                                |
+      | Long Description | <iframe src='http://example.org'></iframe> |
     And click "Short Description"
     And press "English" in "Short Description" section
     When fill "Category Form" with:
       | Short Description Localization 1 fallback selector | Custom |
+    When I click "Save"
+    Then I should see "The entered content is not permitted in this field. Please remove the potentially unsecure elements, or contact the system administrators to lift the restrictions."
+    When fill "Category Form" with:
+      | Long Description | Sample content |
     And I click "Save"
-    And click "Short Description"
+    When I click "Short Description"
     And press "English" in "Short Description" section
     Then the "Custom" option from "Short Description Localization 1 fallback selector" is selected

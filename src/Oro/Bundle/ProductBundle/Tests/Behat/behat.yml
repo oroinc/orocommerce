@@ -215,7 +215,10 @@ oro_behat_extension:
           SKU: 'oro_product[sku]'
           Name: 'oro_product[names][values][default]'
           URL Slug: 'oro_product[slugPrototypesWithRedirect][slugPrototypes][values][default]'
-          Description: 'oro_product[descriptions][values][default][wysiwyg]'
+          Description:
+            type: 'css'
+            locator: '[name="oro_product[descriptions][values][default][wysiwyg]"]'
+            class: Oro\Bundle\CMSBundle\Tests\Behat\Element\WysiwygField
           Short Description: 'oro_product[shortDescriptions][values][default]'
           Description Localization 1: 'oro_product[descriptions][values][localizations][1][value][wysiwyg]'
           Description Localization 1 fallback selector: 'oro_product[descriptions][values][localizations][1][fallback]'
@@ -944,6 +947,10 @@ oro_behat_extension:
           Meta Title: 'oro_product_brand[metaTitles][values][default]'
           Meta Description: 'oro_product_brand[metaDescriptions][values][default]'
           Meta Keywords: 'oro_product_brand[metaKeywords][values][default]'
+          Description:
+            type: 'css'
+            locator: '[name="oro_product_brand[descriptions][values][default][wysiwyg]"]'
+            class: Oro\Bundle\CMSBundle\Tests\Behat\Element\WysiwygField
 
     Brand Filter:
       selector:

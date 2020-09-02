@@ -25,10 +25,11 @@ Feature: Create product
 
   Scenario: Finalizing product creation
     Given fill "Create Product Form" with:
-      | SKU              | Test123      |
-      | Name             | Test Product |
-      | Status           | Enable       |
-      | Unit Of Quantity | item         |
+      | SKU              | Test123                                    |
+      | Name             | Test Product                               |
+      | Status           | Enable                                     |
+      | Unit Of Quantity | item                                       |
+      | Description      | <iframe src='http://example.org'></iframe> |
     And I set Images with:
       | Main  | Listing | Additional |
       | 1     |         | 1          |
@@ -47,7 +48,11 @@ Feature: Create product
       | Title | cat2.jpg |
     And I click "Upload"
     And click on cat2.jpg in grid
-    When save form
+    When I save form
+    Then I should see "The entered content is not permitted in this field. Please remove the potentially unsecure elements, or contact the system administrators to lift the restrictions."
+    When fill "Create Product Form" with:
+      | Description | Sample content |
+    And I save form
     Then I should see "Product has been saved" flash message
     And I remember "listing" image filtered ID
     And I remember "main" image filtered ID

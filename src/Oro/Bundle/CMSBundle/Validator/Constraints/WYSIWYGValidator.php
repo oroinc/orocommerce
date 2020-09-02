@@ -44,6 +44,10 @@ class WYSIWYGValidator extends ConstraintValidator
      */
     public function validate($value, Constraint $constraint)
     {
+        if (!$value) {
+            return;
+        }
+
         // Remove spaces between HTML tags to prevent code reorganizing errors
         $value = preg_replace('/(\>)\s*(\<)/m', '$1$2', $value);
         $scope = null;

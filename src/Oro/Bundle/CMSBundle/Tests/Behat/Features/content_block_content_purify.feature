@@ -35,13 +35,13 @@ Feature: Content Block content purify
     And click "Create Content Block"
     And I click "Add Content"
     And fill "Content Block Form" with:
-      | Owner           | Main                                                                                    |
-      | Alias           | test_alias                                                                              |
-      | Titles          | Test Title                                                                              |
-      | Enabled         | True                                                                                    |
-      | Localization    | English                                                                                 |
-      | Website         | Default                                                                                 |
-      | Customer Group  | Non-Authenticated Visitors                                                              |
+      | Owner           | Main                                          |
+      | Alias           | test_alias                                    |
+      | Titles          | Test Title                                    |
+      | Enabled         | True                                          |
+      | Localization    | English                                       |
+      | Website         | Default                                       |
+      | Customer Group  | Non-Authenticated Visitors                    |
       | Content Variant | Secure content <button>sample button</button> |
     When I save and close form
     Then I should see "Please remove not permitted HTML-tags in the content field: BUTTON" error message
