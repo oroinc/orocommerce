@@ -25,18 +25,27 @@ class ShoppingListLineItemsCountListener
 
         $entities = array_merge(
             $unitOfWork->getScheduledEntityInsertions(),
+            $unitOfWork->getScheduledEntityUpdates(),
             $unitOfWork->getScheduledEntityDeletions()
         );
 
+        $shoppingLists = [[]];
         foreach ($entities as $entity) {
             if ($entity instanceof LineItem) {
-                $shoppingList = $entity->getShoppingList();
+                $changeSet = $unitOfWork->getEntityChangeSet($entity);
+                if (!empty($changeSet['shoppingList'])) {
+                    $shoppingLists[] = array_filter($changeSet['shoppingList']);
+                } else {
+                    $shoppingLists[] = [$entity->getShoppingList()];
+                }
             } elseif ($entity instanceof ShoppingList) {
-                $shoppingList = $entity;
+                $shoppingLists[] = [$entity];
             } else {
                 continue;
             }
+        }
 
+        foreach (array_merge(...$shoppingLists) as $shoppingList) {
             $this->shoppingLists[spl_object_hash($shoppingList)] = $shoppingList;
         }
     }

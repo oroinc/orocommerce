@@ -53,6 +53,26 @@ class LineItemRepositoryTest extends WebTestCase
         $this->assertInstanceOf(LineItem::class, $duplicate);
     }
 
+    public function testFindDuplicateInShoppingList(): void
+    {
+        /** @var LineItem $lineItem */
+        $lineItem3 = $this->getReference(LoadShoppingListLineItems::LINE_ITEM_3);
+
+        /** @var ShoppingList $shoppingList4 */
+        $shoppingList4 = $this->getReference(LoadShoppingLists::SHOPPING_LIST_4);
+
+        /** @var ShoppingList $shoppingList4 */
+        $shoppingList5 = $this->getReference(LoadShoppingLists::SHOPPING_LIST_5);
+
+        $repository = $this->getLineItemRepository();
+
+        $duplicate = $repository->findDuplicateInShoppingList($lineItem3, $shoppingList4);
+        $this->assertTrue(null === $duplicate);
+
+        $duplicate = $repository->findDuplicateInShoppingList($lineItem3, $shoppingList5);
+        $this->assertFalse(null === $duplicate);
+    }
+
     public function testGetItemsByProductAndShoppingList()
     {
         /** @var Product $product */
@@ -69,7 +89,6 @@ class LineItemRepositoryTest extends WebTestCase
         $this->assertCount(1, $lineItems);
         $this->assertContains($lineItem, $lineItems);
     }
-
 
     public function testGetOneProductLineItemsWithShoppingListNames()
     {
