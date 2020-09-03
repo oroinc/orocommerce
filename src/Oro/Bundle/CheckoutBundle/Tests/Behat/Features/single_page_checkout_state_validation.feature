@@ -43,7 +43,7 @@ Feature: Single Page Checkout State Validation
     And I go to Products/ Products
     And click edit "400-Watt Bulb Work Light" in grid
     When I click "Product Prices"
-    And I set Product Price collection element values in 1 row:
+    And I set Product Price collection element values in 2 row:
       | Price List     | pricelist_shipping |
       | Quantity value | 5                  |
       | Quantity Unit  | item               |

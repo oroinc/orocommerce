@@ -209,7 +209,28 @@ class CheckoutRepository extends EntityRepository implements ResettableCustomerU
         array $sourceCriteria,
         $workflowName
     ) {
-        $qb = $this->getCheckoutBySourceCriteriaQueryBuilder($sourceCriteria, $workflowName);
+        return $this->findCheckoutByCustomerUserAndSourceCriteriaWithCurrency(
+            $customerUser,
+            $sourceCriteria,
+            $workflowName
+        );
+    }
+
+    /**
+     * @param CustomerUser $customerUser
+     * @param array        $sourceCriteria [shoppingList => ShoppingList, deleted => false]
+     * @param string       $workflowName
+     * @param string|null  $currency
+     *
+     * @return Checkout|null
+     */
+    public function findCheckoutByCustomerUserAndSourceCriteriaWithCurrency(
+        CustomerUser $customerUser,
+        array $sourceCriteria,
+        $workflowName,
+        $currency = null
+    ) {
+        $qb = $this->getCheckoutBySourceCriteriaQueryBuilder($sourceCriteria, $workflowName, $currency);
         $qb
             ->andWhere(
                 $qb->expr()->eq('c.customerUser', ':customerUser')
@@ -270,11 +291,21 @@ class CheckoutRepository extends EntityRepository implements ResettableCustomerU
      *
      * @return Checkout|null
      */
-    public function findCheckoutBySourceCriteria(
-        array $sourceCriteria,
-        $workflowName
-    ) {
-        $qb = $this->getCheckoutBySourceCriteriaQueryBuilder($sourceCriteria, $workflowName);
+    public function findCheckoutBySourceCriteria(array $sourceCriteria, $workflowName)
+    {
+        return $this->findCheckoutBySourceCriteriaWithCurrency($sourceCriteria, $workflowName);
+    }
+
+    /**
+     * @param array  $sourceCriteria [shoppingList => ShoppingList, deleted => false]
+     * @param string $workflowName
+     * @param string|null $currency
+     *
+     * @return Checkout|null
+     */
+    public function findCheckoutBySourceCriteriaWithCurrency(array $sourceCriteria, $workflowName, $currency = null)
+    {
+        $qb = $this->getCheckoutBySourceCriteriaQueryBuilder($sourceCriteria, $workflowName, $currency);
 
         return $qb->getQuery()->getOneOrNullResult();
     }
@@ -296,12 +327,14 @@ class CheckoutRepository extends EntityRepository implements ResettableCustomerU
     /**
      * @param array  $sourceCriteria [shoppingList => ShoppingList, deleted => false]
      * @param string $workflowName
+     * @param string|null $currency
      *
      * @return QueryBuilder
      */
     private function getCheckoutBySourceCriteriaQueryBuilder(
         array $sourceCriteria,
-        $workflowName
+        $workflowName,
+        $currency = null
     ) {
         $qb = $this->createQueryBuilder('c');
         $this->joinWorkflowItem($qb)
@@ -315,6 +348,11 @@ class CheckoutRepository extends EntityRepository implements ResettableCustomerU
             ->setParameter('deleted', false, Types::BOOLEAN)
             ->setParameter('completed', false, Types::BOOLEAN)
             ->setParameter('workflowName', $workflowName);
+
+        if ($currency) {
+            $qb->andWhere($qb->expr()->eq('c.currency', ':currency'))
+                ->setParameter('currency', $currency, Types::STRING);
+        }
 
         foreach ($sourceCriteria as $field => $value) {
             QueryBuilderUtil::checkIdentifier($field);

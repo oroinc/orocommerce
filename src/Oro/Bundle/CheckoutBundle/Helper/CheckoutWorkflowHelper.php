@@ -107,6 +107,9 @@ class CheckoutWorkflowHelper
      */
     public function processWorkflowAndGetCurrentStep(Request $request, Checkout $checkout)
     {
+        $this->actionGroupRegistry->findByName('actualize_currency')
+            ->execute(new ActionData(['checkout' => $checkout]));
+
         $workflowItem = $this->getWorkflowItem($checkout);
         $stopPropagation = $this->stopPropagation($workflowItem);
         if ($stopPropagation) {
@@ -126,7 +129,6 @@ class CheckoutWorkflowHelper
         if ($this->isValidationNeeded($checkout, $workflowItem, $request)) {
             $this->validateOrderLineItems($checkout, $request);
         }
-
 
         return $currentStep;
     }
