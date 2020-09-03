@@ -1,107 +1,122 @@
-define(function(require) {
-    'use strict';
-
-    const __ = require('orotranslation/js/translator');
-    const routing = require('routing');
-    const mediator = require('oroui/js/mediator');
-    const ModelAction = require('oro/datagrid/action/model-action');
-    const Modal = require('oroui/js/modal');
+import __ from 'orotranslation/js/translator';
+import routing from 'routing';
+import mediator from 'oroui/js/mediator';
+import ModelAction from 'oro/datagrid/action/model-action';
+import Modal from 'oroui/js/modal';
+import template from 'tpl-loader!oroshoppinglist/templates/actions/add-notes-action.html';
+/**
+ * Add notes action, triggers REST PATCH request
+ *
+ * @export  oro/datagrid/action/add-notes-action
+ * @class   oro.datagrid.action.AddNotesAction
+ * @extends oro.datagrid.action.ModelAction
+ */
+const AddNotesAction = ModelAction.extend({
     /**
-     * Add notes action, triggers REST PATCH request
-     *
-     * @export  oro/datagrid/action/add-notes-action
-     * @class   oro.datagrid.action.AddNotesAction
-     * @extends oro.datagrid.action.ModelAction
+     * @property {Object}
      */
-    const AddNotesAction = ModelAction.extend({
-        /**
-         * @property {Object}
-         */
-        formWidget: null,
+    formWidget: null,
 
-        requestType: 'PATCH',
+    requestType: 'PATCH',
 
-        reloadData: false,
+    reloadData: false,
 
-        /**
-         * @inheritDoc
-         */
-        constructor: function AddNotesAction(options) {
-            AddNotesAction.__super__.constructor.call(this, options);
-        },
-
-        /**
-         * @inheritDoc
-         */
-        getLink() {
-            return routing.generate(this.route, {id: this.model.get('id'), ...this.route_parameters});
-        },
-
-        _onAjaxSuccess(data) {
-            this.model.set({notes: data.fields.notes});
-            this._showAjaxSuccessMessage(data);
-        },
-
-        /**
-         * @inheritDoc
-         */
-        _handleWidget() {
-            if (this.dispatched) {
-                return;
+    validationRules: {
+        notes: {
+            Length: {
+                max: 2048
             }
-
-            const notes = this.model.get('notes');
-            const action = notes ? 'edit' : 'add';
-
-            const modal = new Modal({
-                className: 'modal oro-modal-normal shopping-list-notes-modal',
-                title: __(`oro.frontend.shoppinglist.lineitem.dialog.${action}.title`, {
-                    productName: this.model.get('name')
-                }),
-                okText: __(`oro.frontend.shoppinglist.lineitem.dialog.${action}.label`),
-                cancelText: __('oro.frontend.shoppinglist.lineitem.dialog.cancel.label'),
-                content: '<textarea class="textarea full shopping-list-notes-modal__editor"' +
-                    ' data-autoresize data-role="notes"></textarea>'
-            });
-
-            modal.on('ok', () => {
-                this.updateNotes(modal.$('[data-role="notes"]').val());
-                this._handleAjax();
-            });
-
-            modal.open();
-
-            modal.$('[data-role="notes"]').focus().val(notes).click();
-        },
-
-        updateNotes(notes) {
-            this.model.set({
-                notes,
-                action_configuration: {
-                    ...(this.model.get('action_configuration') || {}),
-                    add_notes: !notes
-                }
-            });
-        },
-
-        /**
-         * @inheritDoc
-         */
-        getActionParameters() {
-            const params = AddNotesAction.__super__.getActionParameters.call(this);
-            params.notes = this.model.get('notes');
-
-            return JSON.stringify(params);
-        },
-
-        _showAjaxSuccessMessage() {
-            mediator.execute(
-                'showFlashMessage',
-                'success',
-                __('oro.frontend.shoppinglist.lineitem.dialog.notes.success')
-            );
         }
-    });
+    },
 
-    return AddNotesAction;
+    /**
+     * @inheritDoc
+     */
+    constructor: function AddNotesAction(options) {
+        AddNotesAction.__super__.constructor.call(this, options);
+    },
+
+    /**
+     * @inheritDoc
+     */
+    getLink() {
+        return routing.generate(this.route, {id: this.model.get('id'), ...this.route_parameters});
+    },
+
+    _onAjaxSuccess(data) {
+        this.model.set({notes: data.fields.notes});
+        this._showAjaxSuccessMessage(data);
+    },
+
+    /**
+     * @inheritDoc
+     */
+    _handleWidget() {
+        if (this.dispatched) {
+            return;
+        }
+
+        const notes = this.model.get('notes');
+        const action = notes ? 'edit' : 'add';
+
+        const modal = new Modal({
+            className: 'modal oro-modal-normal shopping-list-notes-modal',
+            title: __(`oro.frontend.shoppinglist.lineitem.dialog.${action}.title`, {
+                productName: this.model.get('name')
+            }),
+            okText: __(`oro.frontend.shoppinglist.lineitem.dialog.${action}.label`),
+            cancelText: __('oro.frontend.shoppinglist.lineitem.dialog.cancel.label'),
+            okCloses: false
+        }).on('shown', () => {
+            this.validator = modal.$('form').validate({
+                rules: this.validationRules
+            });
+        });
+
+        modal.setContent(template({
+            arialLabelBy: modal.cid
+        }));
+
+        modal.on('ok', () => {
+            if (this.validator.form()) {
+                this.updateNotes(modal.$('[name="notes"]').val());
+                this._handleAjax();
+                modal.close();
+            }
+        });
+
+        modal.open();
+
+        modal.$('[name="notes"]').focus().val(notes).click();
+    },
+
+    updateNotes(notes) {
+        this.model.set({
+            notes,
+            action_configuration: {
+                ...(this.model.get('action_configuration') || {}),
+                add_notes: !notes
+            }
+        });
+    },
+
+    /**
+     * @inheritDoc
+     */
+    getActionParameters() {
+        const params = AddNotesAction.__super__.getActionParameters.call(this);
+        params.notes = this.model.get('notes');
+
+        return JSON.stringify(params);
+    },
+
+    _showAjaxSuccessMessage() {
+        mediator.execute(
+            'showFlashMessage',
+            'success',
+            __('oro.frontend.shoppinglist.lineitem.dialog.notes.success')
+        );
+    }
 });
+
+export default AddNotesAction;
