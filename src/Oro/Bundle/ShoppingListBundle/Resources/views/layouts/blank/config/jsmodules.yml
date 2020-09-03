@@ -65,6 +65,7 @@ dynamic-imports:
         - tpl-loader!oroshoppinglist/templates/datagrid/cell/shoppinglist-line-item.html
         - tpl-loader!oroshoppinglist/templates/editor/shoppinglist-line-item-editor.html
         - tpl-loader!oroshoppinglist/templates/editor/shoppinglist-update-all-btn.html
+        - tpl-loader!oroshoppinglist/templates/actions/add-notes-action.html
 map:
     "*":
         orodatagrid/js/app/components/cell-popup-editor-component: oroshoppinglist/js/app/components/shopping-list-cell-popup-editor-component
