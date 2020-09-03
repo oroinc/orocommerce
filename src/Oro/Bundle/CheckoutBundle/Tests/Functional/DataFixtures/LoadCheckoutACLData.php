@@ -107,6 +107,7 @@ class LoadCheckoutACLData extends AbstractFixture implements
         $checkout
             ->setSource($source)
             ->setWebsite($website)
+            ->setCurrency('USD')
             ->setOrganization($customerUser->getOrganization())
             ->setCustomer($customerUser->getCustomer())
             ->setCustomerUser($customerUser);

@@ -13,8 +13,8 @@ use Oro\Component\Testing\Unit\EntityTrait;
 
 class ShoppingListListenerTest extends \PHPUnit\Framework\TestCase
 {
-    const CHECKOUT_CLASS_NAME = 'Oro\Bundle\CheckoutBundle\Entity\Checkout';
-    const CHECKOUT_SOURCE_CLASS_NAME = 'Oro\Bundle\CheckoutBundle\Entity\CheckoutSource';
+    private const CHECKOUT_CLASS_NAME = Checkout::class;
+    private const CHECKOUT_SOURCE_CLASS_NAME = CheckoutSource::class;
 
     use EntityTrait;
 
@@ -73,21 +73,26 @@ class ShoppingListListenerTest extends \PHPUnit\Framework\TestCase
     public function testPreRemoveWithCheckoutSourceAndCheckout()
     {
         $entity = $this->getEntity(ShoppingList::class);
-        $checkout = $this->getEntity(Checkout::class);
-        $checkoutSource = $this->getEntity(CheckoutSource::class);
+        $checkout1 = $this->getEntity(Checkout::class);
+        $checkout2 = $this->getEntity(Checkout::class);
+        $checkoutSource1 = $this->getEntity(CheckoutSource::class);
+        $checkoutSource2 = $this->getEntity(CheckoutSource::class);
 
         $this->checkoutSourceRepository->expects($this->once())
-            ->method('findOneBy')
+            ->method('findBy')
             ->with(['shoppingList' => $entity])
-            ->willReturn($checkoutSource);
+            ->willReturn([$checkoutSource1, $checkoutSource2]);
 
         $this->checkoutRepository->expects($this->once())
-            ->method('findOneBy')
-            ->with(['source' => $checkoutSource])
-            ->willReturn($checkout);
+            ->method('findBy')
+            ->with(['source' => [$checkoutSource1, $checkoutSource2]])
+            ->willReturn([$checkout1, $checkout2]);
 
-        $this->checkoutEntityManager->expects($this->once())->method('remove')->with($checkout);
-        $this->checkoutEntityManager->expects($this->once())->method('flush')->with($checkout);
+        $this->checkoutEntityManager->expects($this->exactly(2))
+            ->method('remove')->withConsecutive([$checkout1], [$checkout2]);
+
+        $this->checkoutEntityManager->expects($this->once())
+            ->method('flush');
 
         $this->listener->preRemove($entity);
     }
@@ -98,14 +103,14 @@ class ShoppingListListenerTest extends \PHPUnit\Framework\TestCase
         $checkoutSource = $this->getEntity(CheckoutSource::class);
 
         $this->checkoutSourceRepository->expects($this->once())
-            ->method('findOneBy')
+            ->method('findBy')
             ->with(['shoppingList' => $entity])
-            ->willReturn($checkoutSource);
+            ->willReturn([$checkoutSource]);
 
         $this->checkoutRepository->expects($this->once())
-            ->method('findOneBy')
-            ->with(['source' => $checkoutSource])
-            ->willReturn(null);
+            ->method('findBy')
+            ->with(['source' => [$checkoutSource]])
+            ->willReturn([]);
 
         $this->checkoutEntityManager->expects($this->never())->method('remove');
         $this->checkoutEntityManager->expects($this->never())->method('flush');
@@ -118,9 +123,9 @@ class ShoppingListListenerTest extends \PHPUnit\Framework\TestCase
         $entity = $this->getEntity(ShoppingList::class);
 
         $this->checkoutSourceRepository->expects($this->once())
-            ->method('findOneBy')
+            ->method('findBy')
             ->with(['shoppingList' => $entity])
-            ->willReturn(null);
+            ->willReturn([]);
 
         $this->checkoutRepository->expects($this->never())->method('findOneBy');
 
@@ -137,14 +142,14 @@ class ShoppingListListenerTest extends \PHPUnit\Framework\TestCase
         $checkoutSource = $this->getEntity(CheckoutSource::class);
 
         $this->checkoutSourceRepository->expects($this->once())
-            ->method('findOneBy')
+            ->method('findBy')
             ->with(['shoppingList' => $entity])
-            ->willReturn($checkoutSource);
+            ->willReturn([$checkoutSource]);
 
         $this->checkoutRepository->expects($this->once())
-            ->method('findOneBy')
-            ->with(['source' => $checkoutSource])
-            ->willReturn($checkout);
+            ->method('findBy')
+            ->with(['source' => [$checkoutSource]])
+            ->willReturn([$checkout]);
 
         $this->checkoutEntityManager->expects($this->never())->method('remove');
         $this->checkoutEntityManager->expects($this->never())->method('flush');

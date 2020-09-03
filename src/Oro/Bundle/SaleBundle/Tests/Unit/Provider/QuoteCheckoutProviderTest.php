@@ -68,7 +68,7 @@ class QuoteCheckoutProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->checkoutRepository
             ->expects($this->exactly($quoteDemand ? 1 : 0))
-            ->method('findCheckoutByCustomerUserAndSourceCriteria')
+            ->method('findCheckoutByCustomerUserAndSourceCriteriaWithCurrency')
             ->with($customerUser, ['quoteDemand' => $quoteDemand], $workflowName);
 
         $this->entityManager

@@ -10,6 +10,9 @@ use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\SaleBundle\Entity\Repository\QuoteDemandRepository;
 
+/**
+ * Provides a checkout started from the given quote.
+ */
 class QuoteCheckoutProvider
 {
     /**
@@ -39,7 +42,7 @@ class QuoteCheckoutProvider
             return null;
         }
 
-        return $this->getCheckoutRepository()->findCheckoutByCustomerUserAndSourceCriteria(
+        return $this->getCheckoutRepository()->findCheckoutByCustomerUserAndSourceCriteriaWithCurrency(
             $customerUser,
             ['quoteDemand' => $quoteDemand],
             $workflowName

@@ -7,6 +7,9 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 
+/**
+ * Deletes related incomplete checkouts before shopping list is deleted.
+ */
 class ShoppingListListener
 {
     /** @var ManagerRegistry */
@@ -33,22 +36,31 @@ class ShoppingListListener
     /**
      * @param object $entity
      */
-    public function preRemove($entity)
+    public function preRemove($entity): void
     {
-        $checkoutSource = $this->getRepository($this->checkoutSourceClassName)->findOneBy(['shoppingList' => $entity]);
-        if (!$checkoutSource) {
+        $checkoutSources = $this->getRepository($this->checkoutSourceClassName)->findBy(['shoppingList' => $entity]);
+        if (!$checkoutSources) {
             return;
         }
 
-        /** @var Checkout $checkout */
-        $checkout = $this->getRepository($this->checkoutClassName)->findOneBy(['source' => $checkoutSource]);
-        if (!$checkout || $checkout->isCompleted()) {
+        /** @var Checkout[] $checkout */
+        $checkouts = $this->getRepository($this->checkoutClassName)->findBy(['source' => $checkoutSources]);
+        if (!$checkouts) {
             return;
         }
 
         $em = $this->getEntityManager($this->checkoutClassName);
-        $em->remove($checkout);
-        $em->flush($checkout);
+        $flushNeeded = false;
+        foreach ($checkouts as $checkout) {
+            if (!$checkout->isCompleted()) {
+                $flushNeeded = true;
+                $em->remove($checkout);
+            }
+        }
+
+        if ($flushNeeded) {
+            $em->flush();
+        }
     }
 
     /**
