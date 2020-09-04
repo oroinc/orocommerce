@@ -5,13 +5,27 @@ namespace Oro\Bundle\VisibilityBundle\EventListener;
 use Oro\Bundle\CatalogBundle\Event\ProductsChangeRelationEvent;
 use Oro\Bundle\VisibilityBundle\Model\CategoryMessageHandler;
 use Oro\Bundle\VisibilityBundle\Model\ProductMessageHandler;
+use Oro\Bundle\VisibilityBundle\Model\VisibilityMessageHandler;
 
+/**
+ * Listens product category changes and sends MQ messages to recalculate products visibility.
+ */
 class CategoryListener
 {
     /**
      * @var CategoryMessageHandler
      */
     protected $categoryMessageHandler;
+
+    /**
+     * @var ProductMessageHandler
+     */
+    protected $productMessageHandler;
+
+    /**
+     * @var VisibilityMessageHandler
+     */
+    protected $visibilityMessageHandler;
 
     /**
      * @var string
@@ -24,6 +38,14 @@ class CategoryListener
     public function __construct(ProductMessageHandler $productMessageHandler)
     {
         $this->productMessageHandler = $productMessageHandler;
+    }
+
+    /**
+     * @param VisibilityMessageHandler|null $visibilityMessageHandler
+     */
+    public function setVisibilityMessageHandler(?VisibilityMessageHandler $visibilityMessageHandler): void
+    {
+        $this->visibilityMessageHandler = $visibilityMessageHandler;
     }
 
     /**
@@ -43,11 +65,14 @@ class CategoryListener
         foreach ($products as $product) {
             // Message should be send only for already existing products
             // New products has own queue message for visibility calculation
-            if ($product->getId()) {
-                $this->productMessageHandler->addProductMessageToSchedule(
-                    $this->topic,
-                    $product
-                );
+            if (!$product->getId()) {
+                continue;
+            }
+
+            if ($this->visibilityMessageHandler) {
+                $this->visibilityMessageHandler->addMessageToSchedule($this->topic, $product);
+            } else {
+                $this->productMessageHandler->addProductMessageToSchedule($this->topic, $product);
             }
         }
     }

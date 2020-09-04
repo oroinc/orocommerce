@@ -387,6 +387,13 @@ system_configuration:
                 constraints:
                     - Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe: ~
 
+        oro_product.product_collections_indexation_partial:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            options:
+                label: oro.product.system_configuration.fields.product_collections_indexation_partial.label
+                tooltip: oro.product.system_configuration.fields.product_collections_indexation_partial.tooltip
+
         oro_product.product_collections_indexation_cron_schedule:
             data_type: string
             type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
@@ -700,6 +707,7 @@ system_configuration:
                                         children:
                                             - oro_product.product_collections_indexation_cron_schedule
                                             - oro_product.product_collections_mass_action_limitation
+                                            - oro_product.product_collections_indexation_partial
                     product_inventory:
                         priority: 650
                         children:

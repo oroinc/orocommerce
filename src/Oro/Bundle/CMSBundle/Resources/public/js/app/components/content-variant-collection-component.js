@@ -10,7 +10,9 @@ define(function(require) {
         options: {
             buttonSelector: '[data-role="variant-button"]',
             variantRemoveSelector: '[data-action="remove"]',
-            collectionContainerSelector: '[data-role="collection-container"]'
+            collectionContainerSelector: '[data-role="collection-container"]',
+            firstCollectionItemSelector: '[data-role="content-variant-item"]:first .collapse',
+            autoShowFirstItem: false
         },
 
         /**
@@ -32,6 +34,7 @@ define(function(require) {
             this.$el.on('click', this.options.variantRemoveSelector, _.bind(this.onRemove, this));
             this.prototypeName = this.$el.data('prototype-name') || '__name__';
             this.$collectionContainer = this.$el.find(this.options.collectionContainerSelector);
+            this.showFirstItem(true);
         },
 
         onAdd: function(e) {
@@ -56,6 +59,7 @@ define(function(require) {
             }
 
             mediator.trigger('cms:content-variant-collection:add', this.$el);
+            this.showFirstItem(true);
         },
 
         onRemove: function(e) {
@@ -64,6 +68,17 @@ define(function(require) {
             item.remove();
 
             mediator.trigger('cms:content-variant-collection:remove', this.$el);
+            this.showFirstItem();
+        },
+
+        showFirstItem(force = false) {
+            if (!this.options.autoShowFirstItem) {
+                return;
+            }
+
+            if (force || !this.$collectionContainer.find('.show').length) {
+                this.$collectionContainer.find(this.options.firstCollectionItemSelector).collapse('show');
+            }
         },
 
         validateContainer: function() {

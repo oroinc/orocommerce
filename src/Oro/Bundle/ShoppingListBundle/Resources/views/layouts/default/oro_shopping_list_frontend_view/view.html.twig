@@ -155,7 +155,7 @@
                 <span class="custom-checkbox__icon"></span>
                 <span class="custom-checkbox__text">{{ 'oro.frontend.shoppinglist.view.add_note.label'|trans }}</span>
             </label>
-            <div data-role="editor">
+            <div class="shopping-list-view-options__editor" data-role="editor">
             <textarea placeholder="{{ 'oro.frontend.shoppinglist.view.add_note.placeholder'|trans }}"
                       aria-label="{{ 'oro.frontend.shoppinglist.view.add_note.aria_label'|trans({'%shoppingList%': shoppingList.label}) }}"
                       rows="3" cols="30" name="shopping_list_notes" disabled="disabled"
@@ -292,7 +292,10 @@
         'shopping-list-line-items__item--configurable'
     %}
     {% set productImageData = mainProduct.imagesByType('listing').first.image|default(null) %}
-    {% set productImage = Image.image(productImageData, 'product_small', {alt: mainProduct.names|localized_value|e}) %}
+    {% set productImage = Image.image(productImageData, 'product_small', {
+        alt: mainProduct.names|localized_value|e,
+        loading: 'lazy'
+    }) %}
     {% set productImageUrl = Image.url(productImageData, 'product_small') %}
     {% set modelAttr = mainProduct.jsonSerialize() %}
     {% set modelAttr = modelAttr|merge({

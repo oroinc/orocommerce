@@ -22,6 +22,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 
 class FrontendCustomerUserProfileExtensionTest extends FormIntegrationTestCase
 {
@@ -118,53 +119,57 @@ class FrontendCustomerUserProfileExtensionTest extends FormIntegrationTestCase
 
     public function testOnPostSubmitWithoutCustomerUser()
     {
-        /** @var FormEvent|\PHPUnit\Framework\MockObject\MockObject $event */
-        $event = $this->createMock(FormEvent::class);
-        $event->expects($this->once())
-            ->method('getData')
-            ->willReturn(new \stdClass());
+        $form = $this->createMock(FormInterface::class);
+        $form->expects($this->once())
+            ->method('isValid')
+            ->willReturn(true);
+
+        $data = new \stdClass();
 
         $this->eventDispatcher->expects($this->never())
             ->method('dispatch');
 
-        $this->extension->onPostSubmit($event);
+        $this->extension->onPostSubmit(new FormEvent($form, $data));
     }
 
     public function testOnPostSubmitWithoutAcceptedConsents()
     {
-        $customerUser = new CustomerUserStub();
+        $form = $this->createMock(FormInterface::class);
+        $form->expects($this->once())
+            ->method('isValid')
+            ->willReturn(true);
 
-        /** @var FormEvent|\PHPUnit\Framework\MockObject\MockObject $event */
-        $event = $this->createMock(FormEvent::class);
-        $event->expects($this->once())
-            ->method('getData')
-            ->willReturn($customerUser);
+        $customerUser = new CustomerUserStub();
 
         $this->eventDispatcher->expects($this->never())
             ->method('dispatch');
 
-        $this->extension->onPostSubmit($event);
+        $this->extension->onPostSubmit(new FormEvent($form, $customerUser));
     }
 
     public function testOnPostSubmitWithoutDeclinedConsents()
     {
+        $form = $this->createMock(FormInterface::class);
+        $form->expects($this->once())
+            ->method('isValid')
+            ->willReturn(true);
+
         $customerUser = new CustomerUserStub();
         $customerUser->setAcceptedConsents($this->getCollection());
-
-        /** @var FormEvent|\PHPUnit\Framework\MockObject\MockObject $event */
-        $event = $this->createMock(FormEvent::class);
-        $event->expects($this->once())
-            ->method('getData')
-            ->willReturn($customerUser);
 
         $this->eventDispatcher->expects($this->never())
             ->method('dispatch');
 
-        $this->extension->onPostSubmit($event);
+        $this->extension->onPostSubmit(new FormEvent($form, $customerUser));
     }
 
     public function testOnPostSubmitWithDeclinedConsents()
     {
+        $form = $this->createMock(FormInterface::class);
+        $form->expects($this->once())
+            ->method('isValid')
+            ->willReturn(true);
+
         $consentAcceptance = $this->getEntity(ConsentAcceptance::class, ['id' => 1]);
         $acceptedConsents = $this->getCollection([$consentAcceptance]);
 
@@ -172,21 +177,35 @@ class FrontendCustomerUserProfileExtensionTest extends FormIntegrationTestCase
         $acceptedConsents->removeElement($consentAcceptance);
 
         $customerUser = new CustomerUserStub();
-        $customerUser->setAcceptedConsents(
-            $acceptedConsents
-        );
-
-        /** @var FormEvent|\PHPUnit\Framework\MockObject\MockObject $event */
-        $event = $this->createMock(FormEvent::class);
-        $event->expects($this->once())
-            ->method('getData')
-            ->willReturn($customerUser);
+        $customerUser->setAcceptedConsents($acceptedConsents);
 
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
             ->with(DeclinedConsentsEvent::EVENT_NAME, new DeclinedConsentsEvent([$consentAcceptance], $customerUser));
 
-        $this->extension->onPostSubmit($event);
+        $this->extension->onPostSubmit(new FormEvent($form, $customerUser));
+    }
+
+    public function testOnPostSubmitWithValidationErrors()
+    {
+        $form = $this->createMock(FormInterface::class);
+        $form->expects($this->once())
+            ->method('isValid')
+            ->willReturn(false);
+
+        $consentAcceptance = $this->getEntity(ConsentAcceptance::class, ['id' => 1]);
+        $acceptedConsents = $this->getCollection([$consentAcceptance]);
+
+        // Decline accepted consent
+        $acceptedConsents->removeElement($consentAcceptance);
+
+        $customerUser = new CustomerUserStub();
+        $customerUser->setAcceptedConsents($acceptedConsents);
+
+        $this->eventDispatcher->expects($this->never())
+            ->method('dispatch');
+
+        $this->extension->onPostSubmit(new FormEvent($form, $customerUser));
     }
 
     /**

@@ -3,7 +3,7 @@ app-modules:
 configs:
     orovalidation/js/validator/greater-than-zero: {}
 dynamic-imports:
-    commons:
+    oroform-validate:
         - orovalidation/js/validator/alphanumeric
         - orovalidation/js/validator/alphanumeric-dash
         - orovalidation/js/validator/alphanumeric-dash-underscore

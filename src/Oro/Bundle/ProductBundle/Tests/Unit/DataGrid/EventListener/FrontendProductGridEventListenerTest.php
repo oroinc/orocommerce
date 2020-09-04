@@ -13,6 +13,7 @@ use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Extension\Acceptor;
 use Oro\Bundle\DataGridBundle\Provider\State\DatagridStateProviderInterface;
+use Oro\Bundle\DataGridBundle\Tools\DatagridParametersHelper;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\EntityConfigBundle\Attribute\AttributeConfigurationProvider;
@@ -225,21 +226,20 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
             ->method('hasAssociation')
             ->willReturn($hasAssociation);
 
-        $this->configManager->expects($this->any())
+        $this->configManager->expects($this->once())
             ->method('get')
             ->with(self::LIMIT_FILTERS_SORTERS)
             ->willReturn($limitFiltersSorters);
 
-        $this->productRepository->expects($this->any())
+        $this->productRepository->expects($this->atMost(1))
             ->method('getFamilyAttributeCountsQuery')
-            ->with($this->searchQuery, 'familyAttributesCount')
             ->willReturnArgument(0);
 
         $result = $this->createMock(Result::class);
-        $result->expects($this->any())
+        $result->expects($this->atMost(1))
             ->method('getAggregatedData')
             ->willReturn($aggregatedData);
-        $this->searchQuery->expects($this->any())
+        $this->searchQuery->expects($this->atMost(1))
             ->method('getResult')
             ->willReturn($result);
 
@@ -267,6 +267,37 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->onPreBuild($event);
 
         $this->assertEquals(array_merge(['name' => 'test_name'], $expected), $this->datagridConfig->toArray());
+
+        // Checks search query is executed only once.
+        $event = new PreBuild($this->datagridConfig, $this->datagrid->getParameters());
+
+        $this->listener->setDatagridParametersHelper($this->getDatagridParametersHelper());
+        $this->listener->onPreBuild($event);
+
+        $this->assertEquals(array_merge(['name' => 'test_name'], $expected), $this->datagridConfig->toArray());
+
+        // Checks search query is executed only once when DatagridParametersHelper is not set.
+        $this->datagrid->getParameters()->set(DatagridParametersHelper::DATAGRID_SKIP_EXTENSION_PARAM, true);
+        $event = new PreBuild($this->datagridConfig, $this->datagrid->getParameters());
+
+        $this->listener->setDatagridParametersHelper(null);
+        $this->listener->onPreBuild($event);
+
+        $this->assertEquals(array_merge(['name' => 'test_name'], $expected), $this->datagridConfig->toArray());
+    }
+
+    /**
+     * @return DatagridParametersHelper
+     */
+    private function getDatagridParametersHelper(): DatagridParametersHelper
+    {
+        $datagridParametersHelper = $this->createMock(DatagridParametersHelper::class);
+        $datagridParametersHelper
+            ->expects($this->once())
+            ->method('isDatagridExtensionSkipped')
+            ->willReturn(true);
+
+        return $datagridParametersHelper;
     }
 
     /**

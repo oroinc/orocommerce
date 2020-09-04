@@ -12,6 +12,7 @@ datagrids:
                 select:
                     - checkout.id
                     - checkout.createdAt
+                    - checkout.currency as currentCurrency
                     - checkout.updatedAt
                     - CONCAT(customer_user.firstName, ' ', customer_user.lastName) as customerUserName
                     - checkout.paymentMethod
@@ -49,6 +50,9 @@ datagrids:
             itemsCount:
                 label: oro.checkout.line_items_count.label
                 order: 20
+            currentCurrency:
+                label: oro.checkout.currency.label
+                order: 25
             subtotal:
                 label: oro.checkout.grid.subtotal.label
                 type: twig

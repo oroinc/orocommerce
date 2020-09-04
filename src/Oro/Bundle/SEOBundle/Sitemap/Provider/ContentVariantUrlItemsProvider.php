@@ -17,6 +17,9 @@ use Oro\Bundle\WebCatalogBundle\Provider\WebCatalogProvider;
 use Oro\Component\SEO\Provider\UrlItemsProviderInterface;
 use Oro\Component\Website\WebsiteInterface;
 
+/**
+ * Responsible for generating specific addresses(UrlItem) depending on the specified website.
+ */
 class ContentVariantUrlItemsProvider implements UrlItemsProviderInterface
 {
     use FeatureCheckerHolderTrait;
@@ -88,6 +91,10 @@ class ContentVariantUrlItemsProvider implements UrlItemsProviderInterface
 
         $scopeCriteria = $this->scopeCriteriaProvider->getWebCatalogScopeForAnonymousCustomerGroup($website);
         $scope = $this->getSlugRepository()->findMostSuitableUsedScope($scopeCriteria);
+
+        if (null === $scope) {
+            return;
+        }
 
         $resolvedNode = $this->contentNodeTreeResolver->getResolvedContentNode($rootNode, $scope);
         if (!$resolvedNode) {

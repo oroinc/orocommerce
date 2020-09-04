@@ -456,6 +456,15 @@ services:
         tags:
             - { name: oro_tax.resolver, event: oro_tax.resolve }
 
+    oro_tax.order_tax.resolver.skip_order_tax_recalculation:
+        class: 'Oro\Bundle\TaxBundle\OrderTax\Resolver\SkipOrderTaxRecalculationResolver'
+        public: false
+        arguments:
+            - '@doctrine'
+            - '@oro_tax.manager.tax_manager'
+        tags:
+            - { name: oro_tax.resolver, event: oro_tax.resolve_before }
+
     oro_tax.event_listener.tax_value:
         class: 'Oro\Bundle\TaxBundle\EventListener\TaxValueListener'
         public: false

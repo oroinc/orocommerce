@@ -6,6 +6,7 @@ define(function(require) {
     const $ = require('jquery');
     const mediator = require('oroui/js/mediator');
     const routing = require('routing');
+    require('jquery-ui/effects/effect-highlight');
 
     const SelectedProductGridSubComponent = BaseComponent.extend({
         /**

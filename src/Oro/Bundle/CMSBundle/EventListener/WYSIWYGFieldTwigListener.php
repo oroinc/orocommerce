@@ -13,6 +13,7 @@ use Oro\Bundle\CMSBundle\Parser\TwigParser;
 use Oro\Bundle\CMSBundle\WYSIWYG\WYSIWYGProcessedDTO;
 use Oro\Bundle\CMSBundle\WYSIWYG\WYSIWYGProcessedEntityDTO;
 use Oro\Bundle\CMSBundle\WYSIWYG\WYSIWYGTwigFunctionProcessorInterface;
+use Oro\Bundle\EntityBundle\ORM\Event\PreClearEventArgs;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager as EntityConfigManager;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
@@ -212,6 +213,14 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
         } finally {
             $this->scheduled = [];
         }
+    }
+
+    /**
+     * @param PreClearEventArgs $preClearEventArgs
+     */
+    public function preClear(PreClearEventArgs $preClearEventArgs): void
+    {
+        $this->onTerminate();
     }
 
     /**

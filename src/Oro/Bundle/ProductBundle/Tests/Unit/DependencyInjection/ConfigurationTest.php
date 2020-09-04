@@ -148,6 +148,10 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                     'value' => '0 * * * *',
                     'scope' => 'app'
                 ],
+                'product_collections_indexation_partial' => [
+                    'value' => false,
+                    'scope' => 'app'
+                ],
                 'product_promotion_show_on_product_view' => [
                     'value' => false,
                     'scope' => 'app'

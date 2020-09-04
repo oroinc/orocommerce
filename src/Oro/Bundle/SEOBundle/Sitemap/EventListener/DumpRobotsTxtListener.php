@@ -36,10 +36,10 @@ class DumpRobotsTxtListener
     private $sitemapDir;
 
     /**
-     * @param RobotsTxtSitemapManager $robotsTxtSitemapManager
-     * @param CanonicalUrlGenerator $canonicalUrlGenerator
+     * @param RobotsTxtSitemapManager  $robotsTxtSitemapManager
+     * @param CanonicalUrlGenerator    $canonicalUrlGenerator
      * @param SitemapFilesystemAdapter $sitemapFilesystemAdapter
-     * @param string $sitemapDir
+     * @param string                   $sitemapDir
      */
     public function __construct(
         RobotsTxtSitemapManager $robotsTxtSitemapManager,
@@ -58,37 +58,36 @@ class DumpRobotsTxtListener
      */
     public function onSitemapDumpStorage(OnSitemapDumpFinishEvent $event)
     {
-        if ($event->getWebsite()->isDefault()) {
-            $indexFiles = $this->sitemapFilesystemAdapter->getSitemapFiles(
-                $event->getWebsite(),
+        $website = $event->getWebsite();
+        $indexFiles = $this->sitemapFilesystemAdapter->getSitemapFiles(
+            $website,
+            SitemapFilesystemAdapter::ACTUAL_VERSION,
+            SitemapDumper::getFilenamePattern(SitemapStorageFactory::TYPE_SITEMAP_INDEX)
+        );
+
+        if (!$indexFiles->count()) {
+            throw new LogicException('Cannot find sitemap index file.');
+        }
+
+        /** @var \SplFileInfo $indexFile */
+        foreach ($indexFiles as $indexFile) {
+            $url = sprintf(
+                '%s/%s/%s/%s',
+                $this->sitemapDir,
+                $event->getWebsite()->getId(),
                 SitemapFilesystemAdapter::ACTUAL_VERSION,
-                SitemapDumper::getFilenamePattern(SitemapStorageFactory::TYPE_SITEMAP_INDEX)
+                $indexFile->getFilename()
             );
 
-            if (!$indexFiles->count()) {
-                throw new LogicException('Cannot find sitemap index file.');
-            }
+            $domainUrl = rtrim($this->canonicalUrlGenerator->getCanonicalDomainUrl($website), '/');
+            // Sitemaps are placed in root folder of domain, additional path should be removed
+            $baseDomainUrl = str_replace(parse_url($domainUrl, PHP_URL_PATH), '', $domainUrl);
 
-            /** @var \SplFileInfo $indexFile */
-            foreach ($indexFiles as $indexFile) {
-                $url = sprintf(
-                    '%s/%s/%s/%s',
-                    $this->sitemapDir,
-                    $event->getWebsite()->getId(),
-                    SitemapFilesystemAdapter::ACTUAL_VERSION,
-                    $indexFile->getFilename()
-                );
-
-                $domainUrl = rtrim($this->canonicalUrlGenerator->getCanonicalDomainUrl($event->getWebsite()), '/');
-                // Sitemaps are placed in root folder of domain, additional path should be removed
-                $baseDomainUrl = str_replace(parse_url($domainUrl, PHP_URL_PATH), '', $domainUrl);
-
-                $this->robotsTxtSitemapManager->addSitemap(
-                    $this->canonicalUrlGenerator->createUrl($baseDomainUrl, $url)
-                );
-            }
-
-            $this->robotsTxtSitemapManager->flush();
+            $this->robotsTxtSitemapManager->addSitemap(
+                $this->canonicalUrlGenerator->createUrl($baseDomainUrl, $url)
+            );
         }
+
+        $this->robotsTxtSitemapManager->flushWebsite($website);
     }
 }

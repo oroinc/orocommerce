@@ -25,7 +25,7 @@ dynamic-imports:
         - oroform/js/app/views/editor/related-id-relation-editor-view
         - oroui/js/tools/search-api-accessor
         - oroshoppinglist/js/app/views/editor/shoppinglist-line-item-editor-view
-    oroshoppinglist:
+    oroui:
         - oro/matrix-grid-order-widget
         - oro/product-shopping-lists-widget
         - oro/shopping-list-create-widget

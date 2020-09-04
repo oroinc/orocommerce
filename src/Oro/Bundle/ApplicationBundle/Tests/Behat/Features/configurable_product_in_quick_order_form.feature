@@ -15,29 +15,12 @@ Feature: Configurable product in quick order form
   Scenario: Create configurable product with correct data (Product Attribute, Product Family)
     Given I proceed as the Admin
     And I login as administrator
-    And go to Products/ Product Attributes
-    And click "Create Attribute"
-    And fill form with:
-      | Field Name | Color  |
-      | Type       | Select |
-    And click "Continue"
-    And set Options with:
-      | Label  |
-      | Black  |
-      | White  |
-    And save and close form
-    And I click "Create Attribute"
-    And fill form with:
-      | Field Name | Size   |
-      | Type       | Select |
-    And click "Continue"
-    And set Options with:
-      | Label  |
-      | L      |
-      | M      |
-    When I save and close form
-    And click update schema
-    Then should see Schema updated flash message
+    And I go to Products / Product Attributes
+    And I click "Import file"
+    And I upload "configurable_product_in_quick_order_form_attributes.csv" file to "ImportFileField"
+    And I click "Import file"
+    And I reload the page
+    And I confirm schema update
 
     And go to Products/ Product Families
     When I click "Create Product Family"
@@ -80,167 +63,18 @@ Feature: Configurable product in quick order form
       |Inventory Threshold|0     |
     And click "Save"
 
-    And go to Products/ Products
-    And click "Create Product"
-    And fill form with:
-      |Type          |Simple |
-      |Product Family|Tshirts|
-    And click "Shirts"
-    And click "Continue"
-    And fill "Create Product Form" with:
-      |SKU             |Black_Shirt_M_sku|
-      |Name            |Black Shirt      |
-      |Status          |Enable           |
-      |Unit Of Quantity|item             |
-    And I click "Add Image"
-    And fill "Create Product Form" with:
-      |Product Image   |black_shirt.jpg|
-      |Main Image      |true           |
-      |Listing Image   |true           |
-      |Additional Image|true           |
-      |Color           |Black          |
-      |Size            |M              |
-    And click "AddPrice"
-    And fill "Product Price Form" with:
-      | Price List     | Default Price List |
-      | Quantity       | 1                  |
-      | Value          | 10                 |
-      | Currency       | $                  |
-    And save and close form
-    And go to Products/ Products
-    And click "Create Product"
-    And fill form with:
-      |Type          |Simple|
-      |Product Family|Tshirts|
-    And click "Shirts"
-      |Category|Shirts|
-    And click "Continue"
-    And fill "Create Product Form" with:
-      |SKU             |Black_Shirt_L_sku|
-      |Name            |Black Shirt      |
-      |Status          |Enable           |
-      |Unit Of Quantity|item             |
-    And I click "Add Image"
-    And fill "Create Product Form" with:
-      |Product Image   |black_shirt.jpg|
-      |Main Image      |true           |
-      |Listing Image   |true           |
-      |Additional Image|true           |
-      |Color           |Black          |
-      |Size            |L              |
-    And click "AddPrice"
-    And fill "Product Price Form" with:
-      | Price List     | Default Price List |
-      | Quantity       | 1                  |
-      | Value          | 8                  |
-      | Currency       | $                  |
-    And save and close form
-    And go to Products/ Products
-    And click "Create Product"
-    And fill form with:
-      |Type          |Simple|
-      |Product Family|Tshirts|
-    And click "Shirts"
-    And click "Continue"
-    And fill "Create Product Form" with:
-      |SKU             |White_Shirt_M_sku|
-      |Name            |White Shirt      |
-      |Status          |Enable           |
-      |Unit Of Quantity|item             |
-    And I click "Add Image"
-    And fill "Create Product Form" with:
-      |Product Image   |white_shirt.jpg|
-      |Main Image      |true           |
-      |Listing Image   |true           |
-      |Additional Image|true           |
-      |Color           |White          |
-      |Size            |M              |
-    And click "AddPrice"
-    And fill "Product Price Form" with:
-      | Price List     | Default Price List |
-      | Quantity       | 1                  |
-      | Value          | 12                 |
-      | Currency       | $                  |
-    And save and close form
-    And go to Products/ Products
-    And click "Create Product"
-    And fill form with:
-      |Type          |Simple|
-      |Product Family|Tshirts|
-    And click "Shirts"
-    And click "Continue"
-    And fill "Create Product Form" with:
-      |SKU             |White_Shirt_L_sku|
-      |Name            |White Shirt      |
-      |Status          |Enable           |
-      |Unit Of Quantity|item             |
-    And I click "Add Image"
-    And fill "Create Product Form" with:
-      |Product Image   |white_shirt.jpg|
-      |Main Image      |true           |
-      |Listing Image   |true           |
-      |Additional Image|true           |
-      |Color           |White          |
-      |Size            |L              |
-    And click "AddPrice"
-    And fill "Product Price Form" with:
-      | Price List     | Default Price List |
-      | Quantity       | 1                  |
-      | Value          | 13                 |
-      | Currency       | $                  |
-    And save and close form
+  Scenario: Prepare products
+    And I go to Products / Products
+    And I click "Import file"
+    And I upload "configurable_product_in_quick_order_form_products.csv" file to "ImportFileField"
+    And I click "Import file"
 
-    When go to Products/ Products
-    And click "Create Product"
-    And fill form with:
-      |Type          |Configurable|
-      |Product Family|Tshirts     |
-    And click "Shirts"
-    And click "Continue"
-    And fill "Create Product Form" with:
-      |Name                         |ConfigurableShirt|
-      |SKU                          |Shirt_Sku        |
-      |Status                       |Enable           |
-      |Unit Of Quantity             |item             |
-      |Configurable Attributes Color|true             |
-      |Configurable Attributes Size |true             |
-    And I click "Add Image"
-    And fill "Create Product Form" with:
-      |Product Image   |uni_shirt.jpg|
-      |Main Image      |true         |
-      |Listing Image   |true         |
-      |Additional Image|true         |
-    And save and close form
-    And click "Edit Product"
-    And click on Black_Shirt_L_sku in grid
-    And click on Black_Shirt_M_sku in grid
-    And click on White_Shirt_L_sku in grid
-    And click on White_Shirt_M_sku in grid
-    And save and close form
-    Then should see "Product has been saved" flash message
-
-    When go to Products/ Products
-    And click "Create Product"
-    And fill form with:
-      |Type          |Configurable|
-      |Product Family|Tshirts     |
-    And click "Shirts"
-    And click "Continue"
-    And fill "Create Product Form" with:
-      |Name                         |EmptyConfigurableShirt|
-      |SKU                          |EmptyShirt_Sku        |
-      |Status                       |Enable           |
-      |Unit Of Quantity             |item             |
-      |Configurable Attributes Color|true             |
-      |Configurable Attributes Size |true             |
-    And I click "Add Image"
-    And fill "Create Product Form" with:
-      |Product Image   |uni_shirt.jpg|
-      |Main Image      |true         |
-      |Listing Image   |true         |
-      |Additional Image|true         |
-    And save and close form
-    Then should see "Product has been saved" flash message
+  Scenario: Prepare product prices
+    And I go to Sales/ Price Lists
+    And click view "Default Price List" in grid
+    And I click "Import file"
+    And I upload "configurable_product_in_quick_order_form_prices.csv" file to "ImportFileField"
+    And I click "Import file"
 
   Scenario: Check validation for configurable products and simple products from the configurable product
     Given I proceed as the User

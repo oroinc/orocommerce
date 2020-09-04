@@ -44,6 +44,7 @@ class Configuration implements ConfigurationInterface
     const DIRECT_URL_PREFIX = 'product_direct_url_prefix';
     const BRAND_DIRECT_URL_PREFIX = 'brand_direct_url_prefix';
     const PRODUCT_COLLECTIONS_INDEXATION_CRON_SCHEDULE = 'product_collections_indexation_cron_schedule';
+    const PRODUCT_COLLECTIONS_INDEXATION_PARTIAL = 'product_collections_indexation_partial';
     const DEFAULT_CRON_SCHEDULE = '0 * * * *';
     const PRODUCT_PROMOTION_SHOW_ON_VIEW = 'product_promotion_show_on_product_view';
     const PRODUCT_COLLECTION_MASS_ACTION_LIMITATION = 'product_collections_mass_action_limitation';
@@ -129,6 +130,7 @@ class Configuration implements ConfigurationInterface
                 static::ENABLE_QUICK_ORDER_FORM => ['type' => 'boolean', 'value' => true],
                 static::DIRECT_URL_PREFIX => ['value' => ''],
                 static::PRODUCT_COLLECTIONS_INDEXATION_CRON_SCHEDULE => ['value' => static::DEFAULT_CRON_SCHEDULE],
+                static::PRODUCT_COLLECTIONS_INDEXATION_PARTIAL => ['value' => false, 'type' => 'boolean'],
                 static::PRODUCT_PROMOTION_SHOW_ON_VIEW => ['value' => false, 'type' => 'boolean'],
                 static::BRAND_DIRECT_URL_PREFIX => ['value' => ''],
                 static::PRODUCT_COLLECTION_MASS_ACTION_LIMITATION => ['value' => 500],

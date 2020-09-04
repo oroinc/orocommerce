@@ -3,7 +3,11 @@
 namespace Oro\Bundle\SEOBundle\Sitemap\Manager;
 
 use Oro\Bundle\SEOBundle\Manager\RobotsTxtFileManager;
+use Oro\Component\Website\WebsiteInterface;
 
+/**
+ * Manage sitemap section of robots.txt file.
+ */
 class RobotsTxtSitemapManager
 {
     const KEYWORD_SITEMAP = 'Sitemap';
@@ -67,6 +71,33 @@ class RobotsTxtSitemapManager
         }
 
         $this->fileManager->dumpContent(implode(PHP_EOL, $this->content));
+        $this->clear();
+    }
+
+    /**
+     * @deprecated At the next versions the 'flush' method will have $website parameter.
+     * @param WebsiteInterface $website
+     */
+    public function flushWebsite(WebsiteInterface $website)
+    {
+        if (!$this->content) {
+            $this->parseContent($this->fileManager->getContentForWebsite($website));
+        }
+
+        // Add new sitemaps
+        foreach ($this->newSitemaps as $sitemap) {
+            if (in_array($sitemap, $this->existingSitemaps, true)) {
+                continue;
+            }
+            $this->content[] = sprintf(
+                '%s: %s %s',
+                self::KEYWORD_SITEMAP,
+                $sitemap,
+                RobotsTxtFileManager::AUTO_GENERATED_MARK
+            );
+        }
+
+        $this->fileManager->dumpContentForWebsite(implode(PHP_EOL, $this->content), $website);
         $this->clear();
     }
 

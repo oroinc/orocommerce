@@ -3,8 +3,10 @@
 namespace Oro\Bundle\CMSBundle\Validator\Constraints;
 
 use Oro\Bundle\CMSBundle\Provider\HTMLPurifierScopeProvider;
+use Oro\Bundle\UIBundle\Tools\HTMLPurifier\Error;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
@@ -22,6 +24,9 @@ class WYSIWYGValidator extends ConstraintValidator
     /** @var LoggerInterface */
     private $logger;
 
+    /** @var TranslatorInterface */
+    private $translator;
+
     /**
      * @param HtmlTagHelper $htmlTagHelper
      * @param HTMLPurifierScopeProvider $purifierScopeProvider
@@ -38,14 +43,30 @@ class WYSIWYGValidator extends ConstraintValidator
     }
 
     /**
+     * @param TranslatorInterface $translator
+     */
+    public function setTranslator(TranslatorInterface $translator): void
+    {
+        $this->translator = $translator;
+    }
+
+    /**
      * {@inheritdoc}
      *
      * @param WYSIWYG $constraint
      */
     public function validate($value, Constraint $constraint)
     {
+        if (!$value) {
+            return;
+        }
+
         // Remove spaces between HTML tags to prevent code reorganizing errors
-        $value = preg_replace('/(\>)\s*(\<)/m', '$1$2', $value);
+        $value = preg_replace(
+            ['/\r\n/', '/(\>)\s+(\<)/m'],
+            ['', '$1$2'],
+            $value
+        );
         $scope = null;
 
         $contextObject = $this->context->getObject();
@@ -75,8 +96,26 @@ class WYSIWYGValidator extends ConstraintValidator
                 ]);
             }
 
+            $errors = array_map(
+                function (Error $error) {
+                    if (!$this->translator) {
+                        return sprintf('- %s (near %s...)', $error->getMessage(), $error->getPlace());
+                    }
+
+                    return $this->translator->trans(
+                        'oro.htmlpurifier.formatted_error',
+                        [
+                            '{{ message }}' => $error->getMessage(),
+                            '{{ place }}' => $error->getPlace(),
+                        ]
+                    );
+                },
+                $errorCollector->getErrorsList($value)
+            );
+
             $this->context
                 ->buildViolation($constraint->message)
+                ->setParameter('{{ errorsList }}', implode(';' . PHP_EOL, $errors))
                 ->addViolation();
         }
     }

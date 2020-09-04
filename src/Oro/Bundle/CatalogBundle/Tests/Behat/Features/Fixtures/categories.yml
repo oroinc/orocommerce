@@ -3,16 +3,19 @@ Oro\Bundle\CatalogBundle\Entity\Category:
         __calls:
             - addTitle: ['@localValueLightingProducts']
             - setParentCategory: ['@root_category']
+        organization: '@organization'
 
     categoryRetailSupplies:
         __calls:
             - addTitle: ['@localValueRetailSupplies']
             - setParentCategory: ['@root_category']
+        organization: '@organization'
 
     categoryPrinters:
         __calls:
             - addTitle: ['@localValuePrinters']
             - setParentCategory: ['@categoryRetailSupplies']
+        organization: '@organization'
 
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     localValueRetailSupplies:

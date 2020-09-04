@@ -47,7 +47,11 @@ class CheckoutRepositoryTest extends WebTestCase
 
         $this->assertSame(
             $this->getReference($checkout),
-            $this->getRepository()->findCheckoutByCustomerUserAndSourceCriteria($customerUser, $criteria, $workflowName)
+            $this->getRepository()->findCheckoutByCustomerUserAndSourceCriteriaWithCurrency(
+                $customerUser,
+                $criteria,
+                $workflowName
+            )
         );
     }
 

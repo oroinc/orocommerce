@@ -15,6 +15,7 @@ dynamic-imports:
         - oropricing/js/app/views/line-item-product-prices-view
         - oropricing/js/app/views/price-list-currency-limitations-view
         - oropricing/js/app/views/quantity-switcher
+    oroform-validate:
         - oropricing/js/validator/unique-product-prices
 map:
     "*":

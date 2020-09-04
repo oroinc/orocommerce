@@ -42,9 +42,9 @@ Feature: Content Block content purify
       | Localization    | English                                                                                 |
       | Website         | Default                                                                                 |
       | Customer Group  | Non-Authenticated Visitors                                                              |
-      | Content Variant | Secure content <iframe src=\"https://www.youtube.com/embed/\" allowfullscreen></iframe> |
+      | Content Variant | Secure content <button>sample button</button> |
     When I save and close form
-    Then I should see "Please remove not permitted HTML-tags in the content field: IFRAME (src, allowfullscreen)" error message
+    Then I should see "Please remove not permitted HTML-tags in the content field: BUTTON" error message
 
     When I fill "Content Block Form" with:
       | Content Variant | xss text <script></script> |
@@ -70,7 +70,7 @@ Feature: Content Block content purify
     Then I should see "Please remove not permitted HTML-tags in the content field: SCRIPT" error message
 
     When I fill "Content Block Form" with:
-      | Content Variant | Selective content <iframe src=\"https://www.youtube.com/embed/\" allowfullscreen></iframe> |
+      | Content Variant | Selective content <button>sample button</button> |
     And I save and close form
     Then I should see "Content block has been saved" flash message
     And should see Content Block with:

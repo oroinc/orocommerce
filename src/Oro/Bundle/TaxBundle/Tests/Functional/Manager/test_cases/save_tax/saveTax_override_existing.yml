@@ -2,6 +2,25 @@ method: saveTax
 reference: simple_order
 configuration: { use_as_base_by_default: destination }
 databaseBefore:
+    'Oro\Bundle\TaxBundle\Model\ResultElement':
+        result_element_1:
+            __calls:
+                - offsetSet: [includingTax, 123]
+                - offsetSet: [excludingTax, 123]
+                - offsetSet: [taxAmount, 0]
+                - offsetSet: [adjustment, 0]
+        result_element_2:
+            __calls:
+                - offsetSet: [tax, TAX1]
+                - offsetSet: [rate, 0.1]
+                - offsetSet: [taxableAmount, 11.32']
+                - offsetSet: [taxAmount, 1.1325]
+    'Oro\Bundle\TaxBundle\Model\Result':
+        simple_result:
+            __calls:
+                - offsetSet: [total, '@result_element_1']
+                - offsetSet: [taxes, ['@result_element_2']]
+databaseBeforeSecondPart:
     'Oro\Bundle\OrderBundle\Entity\OrderAddress':
         us_al_billing_address:
             country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
@@ -13,6 +32,9 @@ databaseBefore:
             currency: USD
             billingAddress: '@us_al_billing_address'
             shippingAddress: '@us_al_billing_address'
+            __calls:
+                -   addLineItem: ['@order_line_item_1']
+                -   addLineItem: ['@order_line_item_2']
     'Oro\Bundle\CurrencyBundle\Entity\Price':
         usd_price_15.99:
             value: 15.99
@@ -33,31 +55,13 @@ databaseBefore:
             quantity: 6
             price: '@usd_price_5.55'
             product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-2' } }
-    'Oro\Bundle\TaxBundle\Model\ResultElement':
-        result_element_1:
-            __calls:
-                - offsetSet: [includingTax, 123]
-                - offsetSet: [excludingTax, 123]
-                - offsetSet: [taxAmount, 0]
-                - offsetSet: [adjustment, 0]
-        result_element_2:
-            __calls:
-                - offsetSet: [tax, TAX1]
-                - offsetSet: [rate, 0.1]
-                - offsetSet: [taxableAmount, 11.32']
-                - offsetSet: [taxAmount, 1.1325]
-    'Oro\Bundle\TaxBundle\Model\Result':
-        simple_result:
-            __calls:
-                - offsetSet: [total, '@result_element_1']
-                - offsetSet: [taxes, ['@result_element_2']]
-databaseBeforeSecondPart:
     'Oro\Bundle\TaxBundle\Entity\TaxValue':
         simple_order_tax_value:
             entityClass: 'Oro\\Bundle\\OrderBundle\\Entity\\Order'
             entityId: '@simple_order->id'
             address: address
             result: '@simple_result'
+disableTaxCalculation: false
 expectedResult:
     total:
         includingTax: '125.03' # 113.25 + 11.778 = 125.028

@@ -1,0 +1,15 @@
+include:
+    - '@OroCatalogBundle:categories.yml'
+    - '@OroCustomerBundle:CustomerUserAmandaRCole.yml'
+
+Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility:
+    lightingCategoryVisibility:
+        visibility: 'hidden'
+        category: '@categoryLightingProducts'
+        scope: '@default_scope'
+
+Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved:
+    lightingCategoryVisibilityResolved:
+        __construct: ['@categoryLightingProducts']
+        scope: '@default_scope'
+        visibility: -1 # VISIBILITY_HIDDEN

@@ -40,7 +40,12 @@ use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
  *      routeUpdate="oro_sale_quote_update",
  *      defaultValues={
  *          "entity"={
- *              "icon"="fa-list-alt"
+ *              "icon"="fa-list-alt",
+ *              "contact_information"={
+ *                  "email"={
+ *                      {"fieldName"="contactInformation"}
+ *                  }
+ *              }
  *          },
  *          "ownership"={
  *              "owner_type"="USER",

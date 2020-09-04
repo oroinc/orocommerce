@@ -61,6 +61,7 @@ class AppliedCouponEntityListenerTest extends WebTestCase
 
     public function testPostPersistWithoutCoupon()
     {
+        $this->markTestSkipped('will be fixed in BB-19538');
         /** @var Order $order */
         $order = $this->getReference(LoadOrders::ORDER_1);
 

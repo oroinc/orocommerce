@@ -236,7 +236,9 @@ services:
             - { name: doctrine.event_listener, event: preUpdate }
             - { name: doctrine.event_listener, event: preRemove }
             - { name: doctrine.event_listener, event: postFlush }
+            - { name: doctrine.event_listener, event: preClear }
             - { name: kernel.event_listener, event: kernel.terminate, method: onTerminate }
+            - { name: kernel.event_listener, event: console.terminate, method: onTerminate }
             - { name: container.service_subscriber }
             - { name: container.service_subscriber, id: oro_cms.parser.twig }
             - { name: container.service_subscriber, id: oro_cms.wysiwyg.chain_twig_function_processor }
@@ -246,7 +248,7 @@ services:
         arguments:
             - '@oro_cms.event_listener.wysiwyg_field_twig_listener'
         tags:
-           # Must be called before oro_message_queue.consumption.docrine_clear_identity_map_extension
+           # Must be called before oro_message_queue.consumption.doctrine_clear_identity_map_extension
            - { name: oro_message_queue.consumption.extension }
 
     oro_cms.entity_listener.image_slide:
@@ -385,6 +387,8 @@ services:
             - '@oro_ui.html_tag_helper'
             - '@oro_cms.provider.html_purifier_scope_provider'
             - '@logger'
+        calls:
+            - [setTranslator, ['@translator']]
         tags:
             - { name: validator.constraint_validator, alias: wysiwyg_validator }
 

@@ -34,6 +34,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
             - Choice: { callback: getTypes }
         names:
             - Oro\Bundle\PlatformBundle\Validator\Constraints\ValidLoadedItems: ~
+            - Oro\Bundle\LocaleBundle\Validator\Constraints\NotBlankDefaultLocalizedFallbackValue:
+                  errorMessage: 'oro.product.names.default.blank'
         shortDescriptions:
             - Oro\Bundle\PlatformBundle\Validator\Constraints\ValidLoadedItems: ~
         descriptions:
@@ -190,3 +192,14 @@ Oro\Bundle\ProductBundle\Model\QuickAddRow:
                 message: oro.product.frontend.quick_add.validation.quantity_min
         unit:
             - NotBlank: ~
+
+Oro\Bundle\ProductBundle\Entity\Brand:
+    properties:
+        names:
+            - Valid: ~
+        shortDescriptions:
+            - Valid: ~
+        descriptions:
+            - Valid: ~
+        slugPrototypes:
+            - Valid: ~
