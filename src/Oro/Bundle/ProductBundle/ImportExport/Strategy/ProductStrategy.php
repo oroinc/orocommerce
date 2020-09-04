@@ -109,15 +109,23 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
         $event = new ProductStrategyEvent($entity, $this->context->getValue('itemData'));
         $this->eventDispatcher->dispatch(ProductStrategyEvent::PROCESS_AFTER, $event);
 
+        $sku = $entity->getSku();
+
         /** @var Product $entity */
         $entity = parent::afterProcessEntity($entity);
-        //Clear unitPrecision collection items with unit null
-        foreach ($entity->getUnitPrecisions() as $unitPrecision) {
-            if (!$unitPrecision->getProductUnitCode()) {
-                $entity->getUnitPrecisions()->removeElement($unitPrecision);
+        if ($entity) {
+            // Clear unitPrecision collection items with unit null
+            $productUnitPrecisions = $entity->getUnitPrecisions();
+            foreach ($productUnitPrecisions as $unitPrecision) {
+                if (!$unitPrecision->getProductUnitCode()) {
+                    $productUnitPrecisions->removeElement($unitPrecision);
+                }
             }
         }
-        $this->processedProducts[$entity->getSku()] = $entity;
+
+        if ($sku !== null) {
+            $this->processedProducts[$sku] = $entity;
+        }
 
         return $entity;
     }
@@ -188,13 +196,18 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
      */
     protected function generateSearchContextForRelationsUpdate($entity, $entityName, $fieldName, $isPersistRelation)
     {
-        $invertedFieldName = $this->getInvertedFieldName($entityName, $fieldName);
+        $searchContext = parent::generateSearchContextForRelationsUpdate(
+            $entity,
+            $entityName,
+            $fieldName,
+            $isPersistRelation
+        );
 
-        if (null === $invertedFieldName) {
-            return [];
+        if (!$searchContext && in_array($fieldName, ['primaryUnitPrecision', 'unitPrecisions'], true)) {
+            $searchContext = ['product' => $entity];
         }
 
-        return [$invertedFieldName => $entity];
+        return $searchContext;
     }
 
     /**

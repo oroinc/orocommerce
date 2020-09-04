@@ -10,6 +10,9 @@ use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\SaleBundle\Entity\Repository\QuoteDemandRepository;
 
+/**
+ * Provides a checkout started from the given quote.
+ */
 class QuoteCheckoutProvider
 {
     /**

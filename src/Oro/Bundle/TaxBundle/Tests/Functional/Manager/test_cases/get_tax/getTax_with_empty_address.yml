@@ -7,6 +7,9 @@ databaseBefore:
             poNumber: simple_order
             customer: { class: 'Oro\Bundle\CustomerBundle\Entity\Customer', query: {} }
             currency: USD
+            __calls:
+                - addLineItem: ['@order_line_item_1']
+                - addLineItem: ['@order_line_item_2']
     'Oro\Bundle\CurrencyBundle\Entity\Price':
         usd_price_15.99:
             value: 15.99
@@ -26,6 +29,7 @@ databaseBefore:
             quantity: 6
             price: '@usd_price_5.55'
 databaseBeforeSecondPart: []
+disableTaxCalculation: false
 expectedResult:
     total:
         includingTax: '113.25'

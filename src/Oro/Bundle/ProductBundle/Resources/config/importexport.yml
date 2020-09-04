@@ -254,3 +254,9 @@ services:
         class: Oro\Bundle\ProductBundle\ImportExport\Writer\ProductAttributeWriter
         decorates: oro_entity_config.importexport.writer.attribute
         parent: oro_entity_config.importexport.writer.attribute
+
+    oro_product.importexport.normalizer.product_image_aware_file_normalizer_decorator:
+        class: Oro\Bundle\ProductBundle\ImportExport\Normalizer\ProductImageAwareFileNormalizerDecorator
+        decorates: oro_attachment.serializer.file_normalizer
+        arguments:
+            - '@oro_product.importexport.normalizer.product_image_aware_file_normalizer_decorator.inner'

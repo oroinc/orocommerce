@@ -2,37 +2,6 @@ method: getTax
 reference: simple_order
 configuration: { use_as_base_by_default: destination }
 databaseBefore:
-    'Oro\Bundle\OrderBundle\Entity\OrderAddress':
-        us_al_billing_address:
-            country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
-            region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
-    'Oro\Bundle\OrderBundle\Entity\Order':
-        simple_order:
-            poNumber: simple_order
-            customer: { class: 'Oro\Bundle\CustomerBundle\Entity\Customer', query: { name: 'customer.orphan' } }
-            currency: USD
-            billingAddress: '@us_al_billing_address'
-            shippingAddress: '@us_al_billing_address'
-    'Oro\Bundle\CurrencyBundle\Entity\Price':
-        usd_price_15.99:
-            value: 15.99
-            currency: USD
-        usd_price_5.55:
-            value: 5.55
-            currency: USD
-    'Oro\Bundle\OrderBundle\Entity\OrderLineItem':
-        order_line_item_1:
-            productSku: order_line_item_1
-            order: '@simple_order'
-            quantity: 5
-            price: '@usd_price_15.99'
-            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-1' } }
-        order_line_item_2:
-            productSku: order_line_item_2
-            order: '@simple_order'
-            quantity: 6
-            price: '@usd_price_5.55'
-            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-2' } }
     'Oro\Bundle\TaxBundle\Model\ResultElement':
         simple_result_element_1:
             __calls:
@@ -58,6 +27,41 @@ databaseBeforeSecondPart:
             entityId: '@simple_order->id'
             address: address
             result: '@simple_result'
+    'Oro\Bundle\OrderBundle\Entity\OrderAddress':
+        us_al_billing_address:
+            country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+            region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+    'Oro\Bundle\OrderBundle\Entity\Order':
+        simple_order:
+            poNumber: simple_order
+            customer: { class: 'Oro\Bundle\CustomerBundle\Entity\Customer', query: { name: 'customer.orphan' } }
+            currency: USD
+            billingAddress: '@us_al_billing_address'
+            shippingAddress: '@us_al_billing_address'
+            __calls:
+                -   addLineItem: ['@order_line_item_1']
+                -   addLineItem: ['@order_line_item_2']
+    'Oro\Bundle\CurrencyBundle\Entity\Price':
+        usd_price_15.99:
+            value: 15.99
+            currency: USD
+        usd_price_5.55:
+            value: 5.55
+            currency: USD
+    'Oro\Bundle\OrderBundle\Entity\OrderLineItem':
+        order_line_item_1:
+            productSku: order_line_item_1
+            order: '@simple_order'
+            quantity: 5
+            price: '@usd_price_15.99'
+            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-1' } }
+        order_line_item_2:
+            productSku: order_line_item_2
+            order: '@simple_order'
+            quantity: 6
+            price: '@usd_price_5.55'
+            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-2' } }
+disableTaxCalculation: false
 expectedResult:
     total:
         includingTax: '125.03'  # 88.2648 + 36.7632 = 125.028

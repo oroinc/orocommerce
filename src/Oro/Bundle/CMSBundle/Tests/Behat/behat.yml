@@ -169,6 +169,11 @@ oro_behat_extension:
             selector:
                 type: xpath
                 locator: '//img[@id="wysiwyg_img"][contains (@src,"/media/cache/attachment")]'
+
+        About Page Image:
+            selector:
+                type: xpath
+                locator: '//div[contains(@class, "cms-page")]//figcaption[contains(text(),"RV & Gear Seller")]/..//img'
     suites:
         OroCMSBundle:
             contexts:
@@ -192,5 +197,11 @@ oro_behat_extension:
                 - OroImportExportBundle::ImportExportContext:
                     - '@oro_entity.entity_alias_resolver'
                     - '@oro_importexport.processor.registry'
+                - OroAttachmentBundle::AttachmentImageContext:
+                    - '@doctrine'
+                    - '@oro_website.website.provider'
+                    - '@oro_website.manager'
+                    - '@oro_config.website'
+                    - '@oro_attachment.image_removal.service_locator'
             paths:
                 - '@OroCMSBundle/Tests/Behat/Features'

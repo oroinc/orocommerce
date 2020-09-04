@@ -1296,6 +1296,8 @@ services:
             - '@oro_filter.provider.state.filters'
             - '@oro_datagrid.provider.state.sorters'
             - '@oro_config.manager'
+        calls:
+            - [setDatagridParametersHelper, ['@oro_datagrid.tools.parameters_helper']]
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
 

@@ -32,7 +32,8 @@
 
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' featured-category__image',
-        alt: category.title
+        alt: category.title,
+        loading: 'lazy'
     }) %}
 
     {% if category.small_image %}

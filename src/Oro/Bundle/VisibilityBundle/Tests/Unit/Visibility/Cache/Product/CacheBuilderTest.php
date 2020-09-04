@@ -8,15 +8,10 @@ use Oro\Bundle\VisibilityBundle\Visibility\Cache\ProductCaseCacheBuilderInterfac
 
 class CacheBuilderTest extends AbstractCacheBuilderTest
 {
-    /**
-     * @var CacheBuilder
-     */
+    /** @var CacheBuilder */
     protected $cacheBuilder;
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -27,18 +22,49 @@ class CacheBuilderTest extends AbstractCacheBuilderTest
         }
     }
 
-    public function testProductCategoryChanged()
+    public function testProductCategoryChanged(): void
     {
         $product = new Product();
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|ProductCaseCacheBuilderInterface $customBuilder */
+        $customBuilder = $this->createMock(ProductCaseCacheBuilderInterface::class);
         $customBuilder
-            = $this->createMock('Oro\Bundle\VisibilityBundle\Visibility\Cache\ProductCaseCacheBuilderInterface');
-        $customBuilder->expects($this->once())
+            ->expects($this->once())
             ->method('productCategoryChanged')
             ->with($product);
 
         $this->cacheBuilder->addBuilder($customBuilder);
+
         $this->cacheBuilder->productCategoryChanged($product);
+    }
+
+    public function testProductsCategoryChangedWithDisabledReindex(): void
+    {
+        $product = new Product();
+
+        $customBuilder = $this->getMockBuilder(ProductCaseCacheBuilderInterface::class)
+            ->setMethods(
+                [
+                    'productCategoryChanged',
+                    'toggleReindex',
+                    'resolveVisibilitySettings',
+                    'isVisibilitySettingsSupported',
+                    'buildCache',
+                ]
+            )
+            ->getMock();
+
+        $customBuilder
+            ->expects($this->exactly(2))
+            ->method('toggleReindex')
+            ->withConsecutive([false], [true]);
+
+        $customBuilder
+            ->expects($this->once())
+            ->method('productCategoryChanged')
+            ->with($product);
+
+        $this->cacheBuilder->addBuilder($customBuilder);
+
+        $this->cacheBuilder->productsCategoryChangedWithDisabledReindex([$product]);
     }
 }

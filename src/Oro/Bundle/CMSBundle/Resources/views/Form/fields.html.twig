@@ -10,15 +10,20 @@
 {% block text_content_variant_collection_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% import _self as formfields %}
+    {% set variantCollectionId = 'content-variant-collection-'|uniqid %}
+    {% set variantCollectionItemParams = {variantCollectionId: variantCollectionId} %}
 
     {% spaceless %}
         {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-content-variant-collection' }) %}
         <div {{ block('widget_container_attributes') }}
                 data-role="content-variant-collection"
                 data-page-component-module="orocms/js/app/components/content-variant-collection-component"
+                data-page-component-options="{{ {
+                    'autoShowFirstItem': true
+                }|json_encode }}"
                 data-last-index="{{ form.children|length}}"
                 data-prototype-name="{{ prototype_name }}"
-                {{ formfields.oro_cms_content_variant_attributes(form) }}
+                {{ formfields.oro_cms_content_variant_attributes(form, variantCollectionItemParams) }}
         >
             <input type="hidden" name="validate_{{ full_name }}" data-collection-name="{{ full_name }}" data-name="collection-validation" disabled data-validate-element>
 
@@ -35,6 +40,7 @@
             </div>
 
             <div class="variant-collection" data-role="collection-container"
+                 id="{{ variantCollectionId }}"
                  data-page-component-module="oroui/js/app/components/view-component"
                  data-page-component-options="{{ {
                      view: 'orocms/js/app/views/default-variant-collection-view',
@@ -43,7 +49,7 @@
             >
                 {% if form.children|length %}
                     {% for child in form.children %}
-                        {{ formfields.oro_cms_content_variant_collection_item(child, child.vars.full_name, form.vars.disabled) }}
+                        {{ formfields.oro_cms_content_variant_collection_item(child, child.vars.full_name, form.vars.disabled, false, variantCollectionItemParams) }}
                     {% endfor %}
                 {% endif %}
             </div>
@@ -151,7 +157,8 @@
     </div>
 {% endmacro %}
 
-{% macro oro_cms_content_variant_collection_item(form, name, disabled, expanded) %}
+{% macro oro_cms_content_variant_collection_item(form, name, disabled, expanded, params = {}) %}
+    {% set parentID = params.variantCollectionId|default('') %}
     {% spaceless %}
         {% set expanded = expanded|default(false) %}
         {% set scopes %}
@@ -192,7 +199,7 @@
                 <span class="label content-variant-item-make-default-label">{{ "oro.cms.contentblock.content_variants.make_default.label"|trans }}</span>
             </label>
 
-            <div class="content-variant-item-content collapse{{ expanded ? ' show' : '' }}">
+            <div class="content-variant-item-content collapse{{ expanded ? ' show' : '' }}" data-parent="#{{ parentID }}">
                 <div class="content-variant-item-content__body">
                     {{ form_widget(form, {disabled: disabled}) }}
 
@@ -208,13 +215,14 @@
     {% endspaceless %}
 {% endmacro %}
 
-{% macro oro_cms_content_variant_attributes(form) %}
+{% macro oro_cms_content_variant_attributes(form, variantCollectionItemParams = {}) %}
     {% import _self as formfields %}
     {% set prototype = formfields.oro_cms_content_variant_collection_item(
         form.vars.prototype,
         form.vars.prototype.vars.name,
         form.vars.disabled,
-        true
+        false,
+        variantCollectionItemParams
     ) %}
     data-prototype="{{ prototype|escape }}"
 {% endmacro %}

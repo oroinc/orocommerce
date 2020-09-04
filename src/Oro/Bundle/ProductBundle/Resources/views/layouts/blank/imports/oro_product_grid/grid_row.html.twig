@@ -151,7 +151,7 @@
     {% set image = product.image is defined ? asset(product.image|trim('/')) : Image.url(null, 'product_large') %}
 
     <picture {{ block('block_attributes') }}>
-        <img src="{{ image }}" {{ UI.attributes(attrImage) }} alt="{{ product.name }}">
+        <img src="{{ image }}" {{ UI.attributes(attrImage) }} alt="{{ product.name }}" loading="lazy">
     </picture>
 {% endblock %}
 

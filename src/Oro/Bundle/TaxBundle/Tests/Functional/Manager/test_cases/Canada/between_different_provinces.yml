@@ -7,27 +7,6 @@ configuration:
     start_calculation_with: row_total
     product_prices_include_tax: false
 databaseBefore:
-    'Oro\Bundle\OrderBundle\Entity\OrderAddress':
-        ca_billing_address:
-            country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'CA' } }
-            region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'CA-ON' } }
-    'Oro\Bundle\OrderBundle\Entity\Order':
-        simple_order:
-            poNumber: simple_order
-            customer: { class: 'Oro\Bundle\CustomerBundle\Entity\Customer', query: { name: 'customer.orphan' } }
-            currency: USD
-            billingAddress: '@ca_billing_address'
-            shippingAddress: '@ca_billing_address'
-    'Oro\Bundle\CurrencyBundle\Entity\Price':
-        usd_price_15.99:
-            value: 15.99
-            currency: USD
-    'Oro\Bundle\OrderBundle\Entity\OrderLineItem':
-        order_line_item_1:
-            order: '@simple_order'
-            quantity: 5
-            price: '@usd_price_15.99'
-            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-1' } }
     'Oro\Bundle\TaxBundle\Entity\TaxJurisdiction':
         canada_ontario_jurisdiction:
             code: canada_on_jurisdiction_code
@@ -48,7 +27,31 @@ databaseBefore:
             taxJurisdiction: '@canada_nova_scotia_jurisdiction'
             productTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode', query: { code: 'TAX2' } }
             customerTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode', query: { code: 'TAX1' } }
-databaseBeforeSecondPart: []
+databaseBeforeSecondPart:
+    'Oro\Bundle\OrderBundle\Entity\OrderAddress':
+        ca_billing_address:
+            country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'CA' } }
+            region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'CA-ON' } }
+    'Oro\Bundle\OrderBundle\Entity\Order':
+        simple_order:
+            poNumber: simple_order
+            customer: { class: 'Oro\Bundle\CustomerBundle\Entity\Customer', query: { name: 'customer.orphan' } }
+            currency: USD
+            billingAddress: '@ca_billing_address'
+            shippingAddress: '@ca_billing_address'
+            __calls:
+                -   addLineItem: ['@order_line_item_1']
+    'Oro\Bundle\CurrencyBundle\Entity\Price':
+        usd_price_15.99:
+            value: 15.99
+            currency: USD
+    'Oro\Bundle\OrderBundle\Entity\OrderLineItem':
+        order_line_item_1:
+            order: '@simple_order'
+            quantity: 5
+            price: '@usd_price_15.99'
+            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-1' } }
+disableTaxCalculation: false
 expectedResult:
     total:
         includingTax: '88.26' # 79.95 + 8.3148 = 88.2648

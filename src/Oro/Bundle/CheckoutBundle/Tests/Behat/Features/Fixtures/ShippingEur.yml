@@ -1,0 +1,26 @@
+Oro\Bundle\RuleBundle\Entity\Rule:
+    shippingRuleEur:
+        name: 'Default'
+        enabled: true
+        sortOrder: 1
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig:
+    shippingMethodTypeConfigEur:
+        type: 'primary'
+        enabled: true
+        options:
+            price: 1.4
+            type: 'per_order'
+            handling_fee: 1.4
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig:
+    shippingMethodConfigEur:
+        method: '<("flat_rate_".@flatRateIntegration->getId())>'
+        typeConfigs: ['@shippingMethodTypeConfigEur']
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule:
+    shippingMethodsConfigsRuleEur:
+        rule: '@shippingRuleEur'
+        methodConfigs: ['@shippingMethodConfigEur']
+        currency: 'EUR'
+        organization: '@organization'

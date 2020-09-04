@@ -138,6 +138,29 @@ class CheckoutRepositoryTest extends FrontendWebTestCase
         );
     }
 
+    /**
+     * @dataProvider findCheckoutWithCurrencyDataProvider
+     *
+     * @param string $shoppingList
+     * @param string $currency
+     * @param string $expected
+     */
+    public function testFindCheckoutByCustomerUserAndSourceCriteriaWithCurrencyByShoppingList(
+        string $shoppingList,
+        string $currency,
+        string $expected
+    ): void {
+        $this->assertSame(
+            $this->getReference($expected),
+            $this->getRepository()->findCheckoutByCustomerUserAndSourceCriteriaWithCurrency(
+                $this->getReference(LoadCustomerUserData::LEVEL_1_EMAIL),
+                ['shoppingList' => $this->getReference($shoppingList)],
+                'b2b_flow_checkout',
+                $currency
+            )
+        );
+    }
+
     public function testFindCheckoutBySourceCriteriaByShoppingList()
     {
         $criteria = ['shoppingList' => $this->getReference(LoadShoppingLists::SHOPPING_LIST_7)];
@@ -149,6 +172,47 @@ class CheckoutRepositoryTest extends FrontendWebTestCase
                 'b2b_flow_checkout'
             )
         );
+    }
+
+    /**
+     * @dataProvider findCheckoutWithCurrencyDataProvider
+     *
+     * @param string $shoppingList
+     * @param string $currency
+     * @param string $expected
+     */
+    public function testFindCheckoutBySourceCriteriaWithCurrencyByShoppingList(
+        string $shoppingList,
+        string $currency,
+        string $expected
+    ): void {
+        $this->assertSame(
+            $this->getReference($expected),
+            $this->getRepository()->findCheckoutBySourceCriteriaWithCurrency(
+                ['shoppingList' => $this->getReference($shoppingList)],
+                'b2b_flow_checkout',
+                $currency
+            )
+        );
+    }
+
+    /**
+     * @return array|array[]
+     */
+    public function findCheckoutWithCurrencyDataProvider(): array
+    {
+        return [
+            [
+                'shoppingList' => LoadShoppingLists::SHOPPING_LIST_7,
+                'currency' => 'USD',
+                'expected' => LoadShoppingListsCheckoutsData::CHECKOUT_7,
+            ],
+            [
+                'shoppingList' => LoadShoppingLists::SHOPPING_LIST_8,
+                'currency' => 'EUR',
+                'expected' => LoadShoppingListsCheckoutsData::CHECKOUT_10,
+            ],
+        ];
     }
 
     public function testDeleteWithoutWorkflowItem()
@@ -188,7 +252,7 @@ class CheckoutRepositoryTest extends FrontendWebTestCase
     {
         $customerUser = $this->getReference(LoadCustomerUserData::LEVEL_1_EMAIL);
 
-        self::assertSame(2, $this->repository->getRelatedEntitiesCount($customerUser));
+        self::assertSame(3, $this->repository->getRelatedEntitiesCount($customerUser));
     }
 
     public function testGetRelatedEntitiesCountZero()
@@ -220,7 +284,7 @@ class CheckoutRepositoryTest extends FrontendWebTestCase
         $this->getRepository()->resetCustomerUser($customerUser);
 
         $checkouts = $this->getRepository()->findBy(['customerUser' => null]);
-        $this->assertCount(4, $checkouts);
+        $this->assertCount(5, $checkouts);
     }
 
     public function testFindForCheckoutAction(): void

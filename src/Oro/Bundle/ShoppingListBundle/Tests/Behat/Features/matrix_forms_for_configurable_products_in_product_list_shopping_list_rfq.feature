@@ -1,4 +1,4 @@
-@fixture-OroProductBundle:configurable_products.yml
+@fixture-OroShoppingListBundle:MatrixForms.yml
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroCheckoutBundle:Checkout.yml
@@ -19,59 +19,12 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     Given I proceed as the Admin
     Given I login as administrator
 
-    # Create attribute 1
+    # Import attributes
     And I go to Products / Product Attributes
-    And I click "Create Attribute"
-    And I fill form with:
-      | Field Name | Attribute_1 |
-      | Type       | Select      |
-    And I click "Continue"
-    And I fill form with:
-      | Label      | Attribute 1 |
-    And set Options with:
-      | Label    |
-      | Value 11 |
-      | Value 12 |
-      | Value 13 |
-      | Value 14 |
-    And I save form
-    Then I should see "Attribute was successfully saved" flash message
-
-    # Create attribute 2
-    And I go to Products / Product Attributes
-    And I click "Create Attribute"
-    And I fill form with:
-      | Field Name | Attribute_2 |
-      | Type       | Select      |
-    And I click "Continue"
-    And I fill form with:
-      | Label      | Attribute 2 |
-    And set Options with:
-      | Label    |
-      | Value 21 |
-      | Value 22 |
-      | Value 23 |
-    And I save form
-    Then I should see "Attribute was successfully saved" flash message
-
-    # Create attribute 3
-    And I go to Products / Product Attributes
-    And I click "Create Attribute"
-    And I fill form with:
-      | Field Name | Attribute_3 |
-      | Type       | Select      |
-    And I click "Continue"
-    And I fill form with:
-      | Label      | Attribute 3 |
-    And set Options with:
-      | Label    |
-      | Value 31 |
-      | Value 32 |
-    And I save form
-    Then I should see "Attribute was successfully saved" flash message
-
-    # Update schema
-    And I go to Products / Product Attributes
+    And I click "Import file"
+    And I upload "configurable_products_for_matrix_forms/products_attributes.csv" file to "ImportFileField"
+    And I click "Import file"
+    And I reload the page
     And I confirm schema update
 
     # Update attribute family
@@ -83,169 +36,18 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I save form
     Then I should see "Successfully updated" flash message
 
-  Scenario: Prepare configurable products
-
-    # Variants for CNFA
-    Given I go to Products / Products
-    And filter SKU as is equal to "PROD_A_1"
-    And I click Edit PROD_A_1 in grid
-    And I fill in product attribute "Attribute_1" with "Value 11"
-    And I save form
-    Then I should see "Product has been saved" flash message
-
+  Scenario: Prepare products
     And I go to Products / Products
-    And filter SKU as is equal to "PROD_A_2"
-    And I click Edit PROD_A_2 in grid
-    And I fill in product attribute "Attribute_1" with "Value 12"
-    And I save form
-    Then I should see "Product has been saved" flash message
+    And I click "Import file"
+    And I upload "configurable_products_for_matrix_forms/products.csv" file to "ImportFileField"
+    And I click "Import file"
 
-    And I go to Products / Products
-    And filter SKU as is equal to "PROD_A_4"
-    And I click Edit PROD_A_4 in grid
-    And I fill in product attribute "Attribute_1" with "Value 14"
-    And I save form
-    Then I should see "Product has been saved" flash message
-
-    # Variants for CNFB
-    And I go to Products / Products
-    And filter SKU as is equal to "PROD_B_11"
-    And I click Edit PROD_B_11 in grid
-    And I fill in product attribute "Attribute_1" with "Value 11"
-    And I fill in product attribute "Attribute_2" with "Value 21"
-    And I save form
-    Then I should see "Product has been saved" flash message
-
-    And I go to Products / Products
-    And filter SKU as is equal to "PROD_B_12"
-    And I click Edit PROD_B_12 in grid
-    And I fill in product attribute "Attribute_1" with "Value 11"
-    And I fill in product attribute "Attribute_2" with "Value 22"
-    And I save form
-    Then I should see "Product has been saved" flash message
-
-    And I go to Products / Products
-    And filter SKU as is equal to "PROD_B_21"
-    And I click Edit PROD_B_21 in grid
-    And I fill in product attribute "Attribute_1" with "Value 12"
-    And I fill in product attribute "Attribute_2" with "Value 21"
-    And I save form
-    Then I should see "Product has been saved" flash message
-
-    And I go to Products / Products
-    And filter SKU as is equal to "PROD_B_23"
-    And I click Edit PROD_B_23 in grid
-    And I fill in product attribute "Attribute_1" with "Value 12"
-    And I fill in product attribute "Attribute_2" with "Value 23"
-    And I save form
-    Then I should see "Product has been saved" flash message
-
-    And I go to Products / Products
-    And filter SKU as is equal to "PROD_B_31"
-    And I click Edit PROD_B_31 in grid
-    And I fill in product attribute "Attribute_1" with "Value 13"
-    And I fill in product attribute "Attribute_2" with "Value 21"
-    And I save form
-    Then I should see "Product has been saved" flash message
-
-    And I go to Products / Products
-    And filter SKU as is equal to "PROD_B_32"
-    And I click Edit PROD_B_32 in grid
-    And I fill in product attribute "Attribute_1" with "Value 13"
-    And I fill in product attribute "Attribute_2" with "Value 22"
-    And I save form
-    Then I should see "Product has been saved" flash message
-
-    And I go to Products / Products
-    And filter SKU as is equal to "PROD_B_43"
-    And I click Edit PROD_B_43 in grid
-    And I fill in product attribute "Attribute_1" with "Value 14"
-    And I fill in product attribute "Attribute_2" with "Value 23"
-    And I save form
-    Then I should see "Product has been saved" flash message
-
-    # Variants for CNFC
-    And I go to Products / Products
-    And filter SKU as is equal to "PROD_C_111"
-    And I click Edit PROD_C_111 in grid
-    And I fill in product attribute "Attribute_1" with "Value 11"
-    And I fill in product attribute "Attribute_2" with "Value 21"
-    And I fill in product attribute "Attribute_3" with "Value 31"
-    And I save form
-    Then I should see "Product has been saved" flash message
-
-    And I go to Products / Products
-    And filter SKU as is equal to "PROD_C_121"
-    And I click Edit PROD_C_121 in grid
-    And I fill in product attribute "Attribute_1" with "Value 11"
-    And I fill in product attribute "Attribute_2" with "Value 22"
-    And I fill in product attribute "Attribute_3" with "Value 31"
-    And I save form
-    Then I should see "Product has been saved" flash message
-
-    And I go to Products / Products
-    And filter SKU as is equal to "PROD_C_231"
-    And I click Edit PROD_C_231 in grid
-    And I fill in product attribute "Attribute_1" with "Value 12"
-    And I fill in product attribute "Attribute_2" with "Value 23"
-    And I fill in product attribute "Attribute_3" with "Value 31"
-    And I save form
-    Then I should see "Product has been saved" flash message
-
-    And I go to Products / Products
-    And filter SKU as is equal to "PROD_C_311"
-    And I click Edit PROD_C_311 in grid
-    And I fill in product attribute "Attribute_1" with "Value 13"
-    And I fill in product attribute "Attribute_2" with "Value 21"
-    And I fill in product attribute "Attribute_3" with "Value 31"
-    And I save form
-    Then I should see "Product has been saved" flash message
-
-    And I go to Products / Products
-    And filter SKU as is equal to "PROD_C_232"
-    And I click Edit PROD_C_232 in grid
-    And I fill in product attribute "Attribute_1" with "Value 12"
-    And I fill in product attribute "Attribute_2" with "Value 23"
-    And I fill in product attribute "Attribute_3" with "Value 32"
-    And I save form
-    Then I should see "Product has been saved" flash message
-
-  Scenario: Save configurable products with simple products selected
-    And I go to Products / Products
-    And filter SKU as is equal to "CNFA"
-    And I click Edit CNFA in grid
-    And I should see "There are no product variants"
-    And I fill "ProductForm" with:
-      | Configurable Attributes | [Attribute 1] |
-    And I check PROD_A_1 and PROD_A_2 in grid
-    And I check PROD_A_4 record in grid
-    And I save form
-    Then I should see "Product has been saved" flash message
-
-    And I go to Products / Products
-    And filter SKU as is equal to "CNFB"
-    And I click Edit CNFB in grid
-    And I should see "There are no product variants"
-    And I fill "ProductForm" with:
-      | Configurable Attributes | [Attribute 1, Attribute 2] |
-    And I check PROD_B_11 and PROD_B_12 in grid
-    And I check PROD_B_21 and PROD_B_23 in grid
-    And I check PROD_B_31 and PROD_B_32 in grid
-    And I check PROD_B_43 record in grid
-    And I save form
-    Then I should see "Product has been saved" flash message
-
-    And I go to Products / Products
-    And filter SKU as is equal to "CNFC"
-    And I click Edit CNFC in grid
-    And I should see "There are no product variants"
-    And I fill "ProductForm" with:
-      | Configurable Attributes | [Attribute 1, Attribute 2, Attribute 3] |
-    And I check PROD_C_111 and PROD_C_121 in grid
-    And I check PROD_C_231 and PROD_C_311 in grid
-    And I check PROD_C_232 record in grid
-    And I save form
-    Then I should see "Product has been saved" flash message
+  Scenario: Prepare product prices
+    And I go to Sales/ Price Lists
+    And click view "Default Price List" in grid
+    And I click "Import file"
+    And I upload "configurable_products_for_matrix_forms/products_prices.csv" file to "ImportFileField"
+    And I click "Import file"
 
   Scenario: Check prices container on configurable product view is visible only when there are prices
     Given I proceed as the User
@@ -389,6 +191,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And filter SKU as is equal to "CNFB"
     And I click Edit CNFB in grid
     And I click "Select related products"
+    And I sort "SelectRelatedProductsGrid" by NAME
     And I select following records in "SelectRelatedProductsGrid" grid:
       | SKU123 |
     And I click "Select products"

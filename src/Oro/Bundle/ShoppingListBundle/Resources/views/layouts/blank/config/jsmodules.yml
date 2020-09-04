@@ -8,7 +8,7 @@ app-modules:
 dynamic-imports:
     orodatagrid:
         - oro/datagrid/action/add-products-mass-action
-    oroshoppinglist:
+    oroui:
         - oro/matrix-grid-order-widget
         - oro/product-shopping-lists-widget
         - oro/shopping-list-create-widget

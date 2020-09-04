@@ -13,6 +13,9 @@ databaseBefore:
             currency: USD
             billingAddress: '@us_al_billing_address'
             shippingAddress: '@us_al_billing_address'
+            __calls:
+                -   addLineItem: ['@order_line_item_1']
+                -   addLineItem: ['@order_line_item_2']
     'Oro\Bundle\CurrencyBundle\Entity\Price':
         usd_price_15.99:
             value: 15.99
@@ -34,6 +37,7 @@ databaseBefore:
             price: '@usd_price_5.55'
             product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-2' } }
 databaseBeforeSecondPart: []
+disableTaxCalculation: false
 expectedResult:
     total:
         includingTax: '134.79'  # 15.99 * 6 + 5.55 * 7 = 134.79

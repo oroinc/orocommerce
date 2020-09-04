@@ -78,6 +78,10 @@ class FrontendCustomerUserProfileExtension extends AbstractTypeExtension impleme
      */
     public function onPostSubmit(FormEvent $event): void
     {
+        if (!$event->getForm()->isValid()) {
+            return;
+        }
+
         $customerUser = $event->getData();
         if (!$customerUser instanceof CustomerUser) {
             return;

@@ -396,11 +396,35 @@ class ProductTest extends RestJsonApiTestCase
         unset($data['included'][0]);
         $response = $this->post(['entity' => 'products'], $data, [], false);
 
-        $this->assertResponseValidationError(
+        $this->assertResponseContainsValidationErrors(
             [
-                'title' => 'count constraint',
-                'detail' => 'This collection should contain 1 element or more.',
-                'source' => ['pointer' => '/data/relationships/names/data']
+                [
+                    'title' => 'not blank default localized fallback value constraint',
+                    'detail' => 'Product default name is blank',
+                    'source' => ['pointer' => '/data/relationships/names/data']
+                ],
+                [
+                    'title' => 'count constraint',
+                    'detail' => 'This collection should contain 1 element or more.',
+                    'source' => ['pointer' => '/data/relationships/names/data']
+                ],
+            ],
+            $response
+        );
+    }
+
+    public function testCreateWithEmptyDefaultName()
+    {
+        $data = $this->getRequestData('create_product_with_empty_default_name.yml');
+        $response = $this->post(['entity' => 'products'], $data, [], false);
+
+        $this->assertResponseContainsValidationErrors(
+            [
+                [
+                    'title' => 'not blank default localized fallback value constraint',
+                    'detail' => 'Product default name is blank',
+                    'source' => ['pointer' => '/data/relationships/names/data']
+                ]
             ],
             $response
         );

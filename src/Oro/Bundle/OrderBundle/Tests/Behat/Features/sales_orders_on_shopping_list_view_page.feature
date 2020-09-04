@@ -22,6 +22,6 @@ Feature: Sales Orders on Shopping List view page
       | Customer User | Amanda Cole     |
       | Label         | Shopping List 1 |
     And I should see following "Shopping list Orders Grid" grid:
-      | Order Number | Payment Term | Currency | Total   | Total ($) | # Line Items | Internal Status | Payment Status | Payment Method | Shipping Method | Discount | Customer       | Customer User |
-      | FirstOrder   | net 10       | USD      | $51.00  | $51.00    | 1            | Open            | N/A            | N/A            | N/A             | $0.00    | first customer | Amanda Cole   |
-      | SecondOrder  | net 10       | USD      | $102.00 | $102.00   | 1            | Open            | N/A            | N/A            | N/A             | $0.00    | first customer | Amanda Cole   |
+      | Order Number | Payment Term | Currency | Total   | Total ($) | # Line Items | Internal Status | Payment Status | Payment Method | Shipping Method | Special Discounts | Customer       | Customer User |
+      | FirstOrder   | net 10       | USD      | $51.00  | $51.00    | 1            | Open            | N/A            | N/A            | N/A             | $0.00             | first customer | Amanda Cole   |
+      | SecondOrder  | net 10       | USD      | $102.00 | $102.00   | 1            | Open            | N/A            | N/A            | N/A             | $0.00             | first customer | Amanda Cole   |

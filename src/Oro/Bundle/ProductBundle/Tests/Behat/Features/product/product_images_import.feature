@@ -45,7 +45,7 @@ Feature: Product Images Import
       |default_family      |SKU1  |enabled |simple |in_stock            |set                            |3                             |Product1           |true     |true       |
       |default_family      |SKU2  |enabled |simple |in_stock            |item                           |1                             |Product2           |true     |true       |
     When import file
-    #And Email should contains the following "Errors: 0 processed: 2, read: 2, added: 2, updated: 0, replaced: 0" text
+    Then Email should contains the following "Errors: 0 processed: 2, read: 2, added: 2, updated: 0, replaced: 0" text
     And reload the page
     And should see following grid:
       |SKU   |NAME     |Inventory status|Status    |
@@ -105,11 +105,12 @@ Feature: Product Images Import
       | SKU1 | missing.jpg | 1    | 0       | 1          |
       | SKU1 | dog1.jpg    | 1    | 0       | 1          |
     And I import file
-    Then Email should contains the following "Errors: 2 processed: 1, read: 3, added: 1, updated: 0, replaced: 0" text
+    Then Email should contains the following "Errors: 4 processed: 1, read: 3, added: 1, updated: 0, replaced: 0" text
     When I follow "Error log" link from the email
-    Then I should see "Error in row #1. The file cannot be blank"
-    And I should see "Error in row #2. The file cannot be blank"
-
+    Then I should see "Failed to either upload or clone file from the existing one: file not found by specified UUID and nothing is specified for uploading. Please make sure image.URI and image.UUID columns are present in the import file and have the correct values."
+    And I should see "Error in row #1. File importing has failed, entity is skipped"
+    And I should see "Error in row #2. Failed to upload a file from"
+    And I should see "Error in row #2. File importing has failed, entity is skipped"
     When go to "/admin/product"
     And I open "Product Images" import tab
     And fill template with data:

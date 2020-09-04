@@ -22,7 +22,7 @@ const RadioTypeBuilder = BaseTypeBuilder.extend({
                     original.call(this);
 
                     // Generate unique IDs for repeated elements
-                    this.$el.find('[for]').each(el => {
+                    this.$el.find('[for]').each((i, el) => {
                         const $el = $(el);
                         const $rel = $el.prev();
                         let id = $el.attr('for');

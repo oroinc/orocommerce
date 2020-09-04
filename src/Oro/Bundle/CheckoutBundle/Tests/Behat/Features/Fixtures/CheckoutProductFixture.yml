@@ -35,7 +35,7 @@ Oro\Bundle\PricingBundle\Entity\PriceList:
         name: 'pricelist_shipping'
         default: true
         __calls:
-            - setCurrencies: [['USD']]
+            - setCurrencies: [['USD', 'EUR']]
         active: true
 
 Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
@@ -59,6 +59,14 @@ Oro\Bundle\PricingBundle\Entity\ProductPrice:
         unit: '@item'
         value: 2
         currency: 'USD'
+    productPriceEur:
+        pricelist: '@pricelistShipping'
+        product: '@product'
+        productSku: 'SKU123'
+        quantity: 5
+        unit: '@item'
+        value: 1.9
+        currency: 'EUR'
 
 Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
     combinedProductPrice:
@@ -69,6 +77,14 @@ Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
         unit: '@item'
         value: 2
         currency: 'USD'
+    combinedProductPriceEur:
+        pricelist: '@combinedPriceList'
+        product: '@product'
+        productSku: 'SKU123'
+        quantity: 5
+        unit: '@item'
+        value: 1.9
+        currency: 'EUR'
 
 Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList:
     cpl2pl:

@@ -10,6 +10,7 @@ use Oro\Bundle\ImportExportBundle\Field\DatabaseHelper;
 use Oro\Bundle\ImportExportBundle\Field\RelatedEntityStateHelper;
 use Oro\Bundle\ImportExportBundle\Strategy\Import\ImportStrategyHelper;
 use Oro\Bundle\ImportExportBundle\Strategy\Import\NewEntitiesHelper;
+use Oro\Bundle\OrganizationBundle\Ownership\EntityOwnershipAssociationsSetter;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\ImportExport\Strategy\PriceAttributeProductPriceImportStrategy;
 use PHPUnit\Framework\TestCase;
@@ -62,6 +63,7 @@ class PriceAttributeProductPriceImportStrategyTest extends TestCase
         );
         $this->strategy->setImportExportContext($this->createMock(ContextInterface::class));
         $this->strategy->setEntityName(PriceAttributeProductPrice::class);
+        $this->strategy->setOwnershipSetter($this->createMock(EntityOwnershipAssociationsSetter::class));
     }
 
     public function testStrategySetsPriceAndQuantity()

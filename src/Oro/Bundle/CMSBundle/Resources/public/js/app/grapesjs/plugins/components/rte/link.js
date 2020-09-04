@@ -10,7 +10,8 @@ export default {
     icon: '<span class="fa fa-link" aria-hidden="true"></span>',
 
     attributes: {
-        title: __('oro.cms.wysiwyg.component.link.label')
+        'title': __('oro.cms.wysiwyg.component.link.label'),
+        'class': 'gjs-rte-action link-format'
     },
 
     result(rte, action) {
@@ -18,37 +19,26 @@ export default {
         const selection = rte.selection();
 
         if (action.isSelectionALink(selection)) {
-            const selectedComponent = editor.getSelected();
+            const linkElement = action.getLinkElement(selection);
+            const textNode = document.createTextNode(linkElement.innerText);
 
-            if (selectedComponent.get('type') === 'link') {
-                const el = selectedComponent.view.el;
+            selection.removeAllRanges();
+            document.getSelection().removeAllRanges();
 
-                if (el.parentNode) {
-                    const textNode = document.createTextNode(selection.toString());
+            linkElement.replaceWith(textNode);
+        } else {
+            rte.exec('createLink', ' ');
 
-                    el.parentNode.insertBefore(textNode, el);
-                }
+            const link = action.getLinkElement(rte.selection());
 
-                selectedComponent.destroy();
-            } else {
-                const linkElement = action.getLinkElement(selection);
-
-                linkElement.classList.remove('link');
-                linkElement.setAttribute('href', '#');
-                rte.exec('unlink');
-            }
-        } else if (selection.toString() !== '') {
-            rte.exec('createLink', '#');
-
-            const linkElement = action.getLinkElement(rte.selection());
-
-            linkElement.setAttribute('href', '');
-            linkElement.classList.add('link');
+            editor.runCommand('open-create-link-dialog', {link: link});
         }
     },
 
     update(rte, action) {
         const selection = rte.selection();
+
+        action.btn.firstChild.classList.toggle('unlink', action.isSelectionALink(selection));
 
         if (action.isSelectionALink(selection)) {
             action.btn.classList.add(rte.classes.active);
@@ -62,13 +52,13 @@ export default {
 
         const parentNode = selection.anchorNode.parentNode;
 
-        return parentNode && parentNode.nodeName === 'A' && parentNode.innerHTML === selection.toString();
+        return parentNode && parentNode.nodeName === 'A';
     },
 
     getLinkElement(selection) {
         let linkElement = selection.anchorNode;
 
-        if (linkElement.parentElement.tagName === 'A') {
+        if (linkElement.parentElement && linkElement.parentElement.tagName === 'A') {
             linkElement = linkElement.parentElement;
         } else {
             linkElement = linkElement.nextSibling;

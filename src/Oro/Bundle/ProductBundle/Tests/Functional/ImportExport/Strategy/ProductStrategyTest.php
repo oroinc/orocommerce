@@ -15,6 +15,8 @@ use Oro\Bundle\ProductBundle\ImportExport\Strategy\ProductStrategy;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadBusinessUnit;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class ProductStrategyTest extends WebTestCase
@@ -29,7 +31,7 @@ class ProductStrategyTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
-        $this->loadFixtures([LoadProductData::class]);
+        $this->loadFixtures([LoadProductData::class, LoadOrganization::class, LoadBusinessUnit::class]);
         $container = $this->getContainer();
 
         $container->get('oro_importexport.field.database_helper')->onClear();
@@ -48,6 +50,7 @@ class ProductStrategyTest extends WebTestCase
         $this->strategy->setVariantLinkClass(ProductVariantLink::class);
         $this->strategy->setLocalizedFallbackValueClass(LocalizedFallbackValue::class);
         $this->strategy->setTokenAccessor($container->get('oro_security.token_accessor'));
+        $this->strategy->setOwnershipSetter($container->get('oro_organization.entity_ownership_associations_setter'));
     }
 
     /**
@@ -187,6 +190,10 @@ class ProductStrategyTest extends WebTestCase
         AbstractEnumValue $inventoryStatus
     ) {
         $newProduct = new Product();
+        $productName = new LocalizedFallbackValue();
+        $productName->setString($sku);
+        $newProduct->addName($productName);
+
         $newProduct->setSku($sku);
         $newProduct->setAttributeFamily($attributeFamily);
         $newProduct->setInventoryStatus($inventoryStatus);
@@ -194,6 +201,8 @@ class ProductStrategyTest extends WebTestCase
             (new ProductUnitPrecision())->setUnit($unit)
                 ->setPrecision(0)
         );
+        $newProduct->setOwner($this->getReference('business_unit'));
+        $newProduct->setOrganization($this->getReference('organization'));
 
         return $newProduct;
     }
