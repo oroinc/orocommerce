@@ -13,11 +13,6 @@ layout:
             optionName: grid_name
             optionValue: frontend-customer-user-shopping-list-grid
 
-        - '@add':
-            id: datagrid_toggle_paginaton_view
-            parentId: datagrid_toolbar_leftside_container
-            blockType: block
-
         - '@setOption':
             id: page_content
             optionName: attr.class

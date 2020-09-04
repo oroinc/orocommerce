@@ -7,6 +7,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\MetadataObject;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\ResultsObject;
+use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmQueryConfiguration;
 use Oro\Bundle\DataGridBundle\Extension\AbstractExtension;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -54,6 +55,16 @@ class FrontendLineItemsGridExtension extends AbstractExtension
      */
     public function processConfigs(DatagridConfiguration $config): void
     {
+        $queryPart = 'lineItem.id';
+        if ($this->isLineItemsGrouped()) {
+            $queryPart = '(SELECT GROUP_CONCAT(innerItem.id) ' .
+                'FROM Oro\Bundle\ShoppingListBundle\Entity\LineItem innerItem ' .
+                'WHERE (innerItem.parentProduct = lineItem.parentProduct OR innerItem.product = lineItem.product) ' .
+                'AND innerItem.shoppingList = lineItem.shoppingList ' .
+                'AND innerItem.unit = lineItem.unit) as allLineItemsIds';
+        }
+        $config->offsetAddToArrayByPath(OrmQueryConfiguration::SELECT_PATH, [$queryPart]);
+
         $shoppingListId = $this->getShoppingListId();
         if (!$shoppingListId) {
             return;
@@ -89,6 +100,7 @@ class FrontendLineItemsGridExtension extends AbstractExtension
         }
 
         $data->offsetSetByPath('[hasEmptyMatrix]', $this->hasEmptyMatrix($shoppingListId));
+        $data->offsetSetByPath('[canBeGrouped]', $this->canBeGrouped($shoppingListId));
         $data->offsetSetByPath('[shoppingListLabel]', $this->getShoppingList($shoppingListId)->getLabel());
     }
 
@@ -102,7 +114,13 @@ class FrontendLineItemsGridExtension extends AbstractExtension
             return;
         }
 
-        $result->offsetAddToArrayByPath('[metadata]', ['hasEmptyMatrix' => $this->hasEmptyMatrix($shoppingListId)]);
+        $result->offsetAddToArrayByPath(
+            '[metadata]',
+            [
+                'hasEmptyMatrix' => $this->hasEmptyMatrix($shoppingListId),
+                'canBeGrouped' => $this->canBeGrouped($shoppingListId),
+            ]
+        );
     }
 
     /**
@@ -111,6 +129,16 @@ class FrontendLineItemsGridExtension extends AbstractExtension
     private function getShoppingListId(): int
     {
         return (int) $this->parameters->get('shopping_list_id');
+    }
+
+    /**
+     * @return bool
+     */
+    private function isLineItemsGrouped(): bool
+    {
+        $parameters = $this->parameters->get('_parameters', []);
+
+        return $parameters['group'] ?? false;
     }
 
     /**
@@ -127,6 +155,22 @@ class FrontendLineItemsGridExtension extends AbstractExtension
         }
 
         return $this->cache['hasEmptyMatrix'][$shoppingListId];
+    }
+
+    /**
+     * @param int $shoppingListId
+     * @return bool
+     */
+    private function canBeGrouped(int $shoppingListId): bool
+    {
+        if (!isset($this->cache['canBeGrouped'][$shoppingListId])) {
+            $this->cache['canBeGrouped'][$shoppingListId] = $this->registry
+                ->getManagerForClass(LineItem::class)
+                ->getRepository(LineItem::class)
+                ->canBeGrouped($shoppingListId);
+        }
+
+        return $this->cache['canBeGrouped'][$shoppingListId];
     }
 
     /**

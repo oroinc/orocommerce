@@ -334,22 +334,18 @@ class ShoppingListRepository extends EntityRepository implements ResettableCusto
         $qb->resetDQLPart('select')
             ->select('sl.id AS id')
             ->addSelect('COUNT(li.id) AS count')
-            ->addSelect('IDENTITY(li.parentProduct) AS withParent')
             ->leftJoin('sl.lineItems', 'li')
             ->where($qb->expr()->in('sl.id', ':shopping_lists'))
             ->setParameter('shopping_lists', $shoppingLists)
-            ->groupBy('sl.id, li.parentProduct, li.unit');
+            ->groupBy('sl.id')
+            ->indexBy('sl', 'sl.id');
 
-        $result = [];
-        foreach ($qb->getQuery()->getArrayResult() as $row) {
-            if (!isset($result[$row['id']])) {
-                $result[$row['id']] = 0;
-            }
-
-            $result[$row['id']] += $row['withParent'] ? 1 : $row['count'];
-        }
-
-        return $result;
+        return array_map(
+            static function (array $item) {
+                return $item['count'];
+            },
+            $qb->getQuery()->getArrayResult()
+        );
     }
 
     /**

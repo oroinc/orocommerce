@@ -18,16 +18,6 @@ layout:
               optionName: grid_render_parameters.cssClass
               optionValue: 'responsive-shopping-list-grid-edit'
 
-        - '@add':
-            id: datagrid_toggle_paginaton_view
-            parentId: datagrid_toolbar_leftside_container
-            blockType: block
-
-        - '@add':
-            id: datagrid_toggle_group
-            parentId: datagrid_toolbar_leftside_container
-            blockType: block
-
         - '@setOption':
             id: page_content
             optionName: attr.class

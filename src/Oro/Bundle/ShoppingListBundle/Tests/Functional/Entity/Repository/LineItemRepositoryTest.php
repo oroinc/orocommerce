@@ -307,6 +307,20 @@ class LineItemRepositoryTest extends WebTestCase
         $this->assertFalse($this->getLineItemRepository()->hasEmptyMatrix($id));
     }
 
+    public function testCanBeGrouped(): void
+    {
+        $id = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1)->getId();
+
+        $this->assertTrue($this->getLineItemRepository()->canBeGrouped($id));
+    }
+
+    public function testCanBeGroupedWhenNoItemsToGroup(): void
+    {
+        $id = $this->getReference(LoadShoppingLists::SHOPPING_LIST_9)->getId();
+
+        $this->assertFalse($this->getLineItemRepository()->canBeGrouped($id));
+    }
+
     public function testDeleteItemsByShoppingListAndInventoryStatuses()
     {
         /** @var ShoppingList $shoppingList */
