@@ -8,7 +8,7 @@ app-modules:
 dynamic-imports:
     orodatagrid:
         - oro/datagrid/action/add-products-mass-action
-    oroshoppinglist:
+    oroui:
         - oro/matrix-grid-order-widget
         - oro/product-shopping-lists-widget
         - oro/shopping-list-create-widget
@@ -38,3 +38,5 @@ dynamic-imports:
         - tpl-loader!oroshoppinglist/templates/datagrid/cell/quantity.html
         - tpl-loader!oroshoppinglist/templates/datagrid/cell/sku.html
         - tpl-loader!oroshoppinglist/templates/datagrid/cell/subtotal.html
+    oroshoppinglistquicksearch:
+        - oroshoppinglist/js/app/views/shopping-list-quick-search

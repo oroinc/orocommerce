@@ -3,4 +3,5 @@ app-modules:
 dynamic-imports:
     oroshoppinglist:
         - oroshoppinglist/js/app/components/add-product-component
+    oroform-validate:
         - oroshoppinglist/js/validator/decimal-precision

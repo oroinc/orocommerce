@@ -11,6 +11,7 @@ use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Validator\Context\ExecutionContext;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class WYSIWYGValidatorTest extends \PHPUnit\Framework\TestCase
 {
@@ -23,6 +24,9 @@ class WYSIWYGValidatorTest extends \PHPUnit\Framework\TestCase
     /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $logger;
 
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $translator;
+
     /** @var WYSIWYGValidator */
     private $validator;
 
@@ -33,10 +37,42 @@ class WYSIWYGValidatorTest extends \PHPUnit\Framework\TestCase
     {
         $this->htmlTagProvider = $this->createMock(HtmlTagProvider::class);
         $htmlTagHelper = new HtmlTagHelper($this->htmlTagProvider);
+
+        /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject $translator */
+        $this->translator = $this->createMock(TranslatorInterface::class);
+        $htmlTagHelper->setTranslator($this->translator);
+
         $this->purifierScopeProvider = $this->createMock(HTMLPurifierScopeProvider::class);
+        $translator = $this->createMock(TranslatorInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
 
-        $this->validator = new WYSIWYGValidator($htmlTagHelper, $this->purifierScopeProvider, $this->logger);
+        $this->validator = new WYSIWYGValidator(
+            $htmlTagHelper,
+            $this->purifierScopeProvider,
+            $translator,
+            $this->logger
+        );
+    }
+
+    public function testValidateEmptyValue(): void
+    {
+        $value = '';
+
+        $this->purifierScopeProvider
+            ->expects($this->never())
+            ->method('getScope');
+
+        /** @var ExecutionContext|\PHPUnit\Framework\MockObject\MockObject $context */
+        $context = $this->createMock(ExecutionContext::class);
+        $context->expects($this->never())
+            ->method('getPropertyName');
+        $context->expects($this->never())
+            ->method('addViolation');
+
+        $constraint = new WYSIWYG();
+        $this->validator->initialize($context);
+
+        $this->validator->validate($value, $constraint);
     }
 
     public function testValidateValidValue(): void
@@ -94,6 +130,10 @@ class WYSIWYGValidatorTest extends \PHPUnit\Framework\TestCase
         $context = $this->createMock(ExecutionContext::class);
         $violationBuilder = $this->createMock(ConstraintViolationBuilderInterface::class);
         $violationBuilder->expects($this->once())
+            ->method('setParameter')
+            ->with('{{ errorsList }}')
+            ->willReturn($violationBuilder);
+        $violationBuilder->expects($this->once())
             ->method('addViolation');
 
         $context->expects($this->once())
@@ -114,6 +154,11 @@ class WYSIWYGValidatorTest extends \PHPUnit\Framework\TestCase
             ->method('getAllowedElements')
             ->with('default')
             ->willReturn([]);
+
+        $this->translator->expects($this->at(18))
+            ->method('trans')
+            ->with($this->stringContains('oro.htmlpurifier.messages'))
+            ->willReturn('Unrecognized $CurrentToken.Serialized tag removed');
 
         $this->assertValidationErrors();
 
@@ -140,6 +185,10 @@ class WYSIWYGValidatorTest extends \PHPUnit\Framework\TestCase
 
         $violationBuilder = $this->createMock(ConstraintViolationBuilderInterface::class);
         $violationBuilder->expects($this->once())
+            ->method('setParameter')
+            ->with('{{ errorsList }}')
+            ->willReturn($violationBuilder);
+        $violationBuilder->expects($this->once())
             ->method('addViolation');
 
         /** @var ExecutionContext|\PHPUnit\Framework\MockObject\MockObject $context */
@@ -163,6 +212,11 @@ class WYSIWYGValidatorTest extends \PHPUnit\Framework\TestCase
             ->method('getAllowedElements')
             ->with('default')
             ->willReturn([]);
+
+        $this->translator->expects($this->at(18))
+            ->method('trans')
+            ->with($this->stringContains('oro.htmlpurifier.messages'))
+            ->willReturn('Unrecognized $CurrentToken.Serialized tag removed');
 
         $this->assertValidationErrors();
 

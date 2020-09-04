@@ -7,6 +7,14 @@ configs:
 dynamic-imports:
     commons:
         - oro/quick-add-import-widget
+    orodatagrid:
+        - oroproduct/js/app/datagrid/backend-datagrid-component
+        - oroproduct/js/app/datagrid/backend-grid
+        - oroproduct/js/app/datagrid/backend-pageable-collection
+        - oroproduct/js/app/datagrid/cell/backend-select-row-cell
+        - oroproduct/js/app/datagrid/datagrid-product-lazy-init-view
+        - oroproduct/js/app/datagrid/frontend-product-display-options-builder
+        - oroproduct/js/app/datagrid/frontend-product-filters-events-dispatcher-builder
     oroproduct:
         - oroproduct/js/app/components/breadcrumbs-navigation-block
         - oroproduct/js/app/components/catalog-switch-component
@@ -20,13 +28,6 @@ dynamic-imports:
         - oroproduct/js/app/components/quick-add-form-button-component
         - oroproduct/js/app/components/quick-add-import-validation-component
         - oroproduct/js/app/components/redirect-component
-        - oroproduct/js/app/datagrid/backend-datagrid-component
-        - oroproduct/js/app/datagrid/backend-grid
-        - oroproduct/js/app/datagrid/backend-pageable-collection
-        - oroproduct/js/app/datagrid/cell/backend-select-row-cell
-        - oroproduct/js/app/datagrid/datagrid-product-lazy-init-view
-        - oroproduct/js/app/datagrid/frontend-product-display-options-builder
-        - oroproduct/js/app/datagrid/frontend-product-filters-events-dispatcher-builder
         - oroproduct/js/app/views/base-product-variants-view
         - oroproduct/js/app/views/base-product-view
         - oroproduct/js/app/views/product-quantity-editable-view

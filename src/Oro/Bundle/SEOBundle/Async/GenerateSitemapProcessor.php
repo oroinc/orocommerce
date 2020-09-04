@@ -6,8 +6,10 @@ use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
 use Oro\Bundle\SEOBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\SEOBundle\Model\SitemapIndexMessageFactory;
 use Oro\Bundle\SEOBundle\Model\SitemapMessageFactory;
+use Oro\Bundle\SEOBundle\Provider\WebsiteForSitemapProviderInterface;
+use Oro\Bundle\SEOBundle\Sitemap\Filesystem\GaufretteFilesystemAdapter;
 use Oro\Bundle\SEOBundle\Sitemap\Website\WebsiteUrlProvidersServiceInterface;
-use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
+use Oro\Component\MessageQueue\Client\MessagePriority;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
@@ -40,7 +42,7 @@ class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscr
     private $producer;
 
     /**
-     * @var WebsiteProviderInterface
+     * @var WebsiteForSitemapProviderInterface
      */
     private $websiteProvider;
 
@@ -70,6 +72,11 @@ class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscr
     private $websiteUrlProvidersService;
 
     /**
+     * @var GaufretteFilesystemAdapter
+     */
+    private $fileSystemAdapter;
+
+    /**
      * @var int
      */
     private $version;
@@ -79,7 +86,6 @@ class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscr
      * @param DependentJobService $dependentJobService
      * @param MessageProducerInterface $producer
      * @param WebsiteUrlProvidersServiceInterface $websiteUrlProvidersService
-     * @param WebsiteProviderInterface $websiteProvider
      * @param SitemapIndexMessageFactory $indexMessageFactory
      * @param SitemapMessageFactory $messageFactory
      * @param LoggerInterface $logger
@@ -90,7 +96,6 @@ class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscr
         DependentJobService $dependentJobService,
         MessageProducerInterface $producer,
         WebsiteUrlProvidersServiceInterface $websiteUrlProvidersService,
-        WebsiteProviderInterface $websiteProvider,
         SitemapIndexMessageFactory $indexMessageFactory,
         SitemapMessageFactory $messageFactory,
         LoggerInterface $logger,
@@ -100,11 +105,26 @@ class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscr
         $this->dependentJobService = $dependentJobService;
         $this->producer = $producer;
         $this->websiteUrlProvidersService = $websiteUrlProvidersService;
-        $this->websiteProvider = $websiteProvider;
         $this->indexMessageFactory = $indexMessageFactory;
         $this->messageFactory = $messageFactory;
         $this->logger = $logger;
         $this->canonicalUrlGenerator = $canonicalUrlGenerator;
+    }
+
+    /**
+     * @param WebsiteForSitemapProviderInterface $websiteProvider
+     */
+    public function setWebsiteProvider(WebsiteForSitemapProviderInterface $websiteProvider)
+    {
+        $this->websiteProvider = $websiteProvider;
+    }
+
+    /**
+     * @param GaufretteFilesystemAdapter $fileSystemAdapter
+     */
+    public function setFileSystemAdapter(GaufretteFilesystemAdapter $fileSystemAdapter)
+    {
+        $this->fileSystemAdapter = $fileSystemAdapter;
     }
 
     /**
@@ -115,7 +135,10 @@ class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscr
         $this->version = time();
 
         try {
-            $websites = $this->websiteProvider->getWebsites();
+            // make sure that temp directory is empty before the dump.
+            $this->fileSystemAdapter->clearTempStorage();
+
+            $websites = $this->websiteProvider->getAvailableWebsites();
 
             $result = $this->jobRunner->runUnique(
                 $message->getMessageId(),
@@ -163,12 +186,20 @@ class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscr
     private function createFinishJobs(Job $job, array $websites): void
     {
         $context = $this->dependentJobService->createDependentJobContext($job->getRootJob());
+        $websiteIds = [];
         foreach ($websites as $website) {
+            $websiteIds[] = $website->getId();
             $context->addDependentJob(
                 Topics::GENERATE_SITEMAP_INDEX_BY_WEBSITE,
                 $this->indexMessageFactory->createMessage($website, $this->version)
             );
         }
+
+        $context->addDependentJob(
+            Topics::GENERATE_SITEMAP_MOVE_GENERATED_FILES,
+            ['websiteIds' => $websiteIds],
+            MessagePriority::VERY_LOW
+        );
         $this->dependentJobService->saveDependentJob($context);
     }
 

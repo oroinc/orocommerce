@@ -71,9 +71,12 @@ class ProductProcessor implements MessageProcessorInterface, TopicSubscriberInte
         $em = $this->doctrine->getManagerForClass(ProductVisibilityResolved::class);
         $em->beginTransaction();
         try {
-            $product = $this->getProduct($body['id']);
             if ($this->cacheBuilder instanceof ProductCaseCacheBuilderInterface) {
-                $this->cacheBuilder->productCategoryChanged($product);
+                $productIds = array_unique((array) $body['id']);
+                $products = $this->getProducts($productIds);
+                foreach ($products as $product) {
+                    $this->cacheBuilder->productCategoryChanged($product, $body['scheduleReindex'] ?? false);
+                }
             }
             $em->commit();
         } catch (\Exception $e) {
@@ -94,21 +97,41 @@ class ProductProcessor implements MessageProcessorInterface, TopicSubscriberInte
     }
 
     /**
-     * @param int $productId
+     * @param int[] $productIds
      *
-     * @return Product
+     * @return Product[]
      *
-     * @throws EntityNotFoundException if a product does not exist
+     * @throws EntityNotFoundException If all products have not been found
      */
-    public function getProduct(int $productId): Product
+    private function getProducts(array $productIds): array
     {
-        /** @var Product|null $product */
-        $product = $this->doctrine->getManagerForClass(Product::class)
-            ->find(Product::class, $productId);
-        if (null === $product) {
-            throw new EntityNotFoundException('Product was not found.');
+        /** @var Product[] $products */
+        $products = $this->doctrine->getManagerForClass(Product::class)
+            ->getRepository(Product::class)
+            ->findBy(['id' => $productIds]);
+        if (count($productIds) !== count($products)) {
+            $foundIds = array_map(
+                static function (Product $product) {
+                    return $product->getId();
+                },
+                $products
+            );
+            $notFoundProductsIds = array_diff($productIds, $foundIds);
+            $this->logger->warning(
+                'The following products have not been not found when trying to resolve visibility',
+                $notFoundProductsIds
+            );
+
+            if (!$products) {
+                throw new EntityNotFoundException(
+                    sprintf(
+                        'Products have not been found when trying to resolve visibility: %s',
+                        implode(', ', $notFoundProductsIds)
+                    )
+                );
+            }
         }
 
-        return $product;
+        return $products;
     }
 }

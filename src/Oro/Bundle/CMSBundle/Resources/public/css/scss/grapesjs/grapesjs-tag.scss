@@ -8,7 +8,7 @@
         ##{$clm-prefix}add-tag {
             display: inline-block;
             width: 24px;
-            height: 22px;
+            height: 24px;
             margin: 3px 0;
 
             font-size: $base-font-size--s;
@@ -22,7 +22,6 @@
         }
 
         ##{$clm-prefix}tags-field {
-            display: inline-block;
             width: 100%;
             padding: 0 3px;
         }
@@ -56,18 +55,22 @@
             margin-bottom: 6px;
         }
 
-        ##{$clm-prefix}tags-c {
-            display: inline;
-        }
-
         ##{$clm-prefix}new[style*=block] { //Hank for correct alignment of multiselect with classes
             display: inline !important;
             width: auto;
         }
 
         .#{$clm-prefix}tag {
-            padding: 0 5px;
+            padding: 3px 5px;
             margin: 3px 0 3px 3px;
+
+            &:last-child {
+                margin-right: 3px;
+            }
+
+            ##{$clm-prefix}checkbox {
+                font-size: 0;
+            }
         }
     }
 

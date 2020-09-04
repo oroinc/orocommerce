@@ -36,21 +36,7 @@ oro_form:
     html_purifier_modes:
         lax:
             extends: default
-            allowed_iframe_domains:
-                - 'youtube.com/embed/'
-                - 'player.vimeo.com/video/'
             allowed_html_elements:
-                iframe:
-                    attributes:
-                        - allowfullscreen
-                        - frameborder
-                        - height
-                        - marginheight
-                        - marginwidth
-                        - name
-                        - scrolling
-                        - src
-                        - width
                 div:
                     attributes:
                         - role

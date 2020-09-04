@@ -61,7 +61,7 @@ services:
         parent: oro.cache.provider.memory_cache
 
     oro_payment.methods_provider.cache:
-        parent: doctrine_cache.abstract.array
+        class: Doctrine\Common\Cache\ArrayCache
         public: false
         calls:
             - [ setNamespace, [ 'payment_methods_provider_cache' ] ]
@@ -349,3 +349,16 @@ services:
     oro_payment.provider.payment_order_shipping_address_options:
         class: 'Oro\Bundle\PaymentBundle\Provider\PaymentOrderShippingAddressOptionsProvider'
         public: false
+
+    oro_payment.action.cancel_payment_transaction:
+        class: 'Oro\Bundle\PaymentBundle\Action\PaymentTransactionCancelAction'
+        parent: oro_payment.action.payment_method_action.abstract
+        tags:
+            - { name: oro_action.action, alias: payment_transaction_cancel }
+
+    oro_payment.condition.payment_transaction_was_canceled:
+        class: 'Oro\Bundle\PaymentBundle\Condition\PaymentTransactionWasCanceled'
+        arguments:
+            - '@oro_payment.repository.payment_transaction'
+        tags:
+            - { name: oro_action.condition, alias: 'payment_transaction_was_canceled' }

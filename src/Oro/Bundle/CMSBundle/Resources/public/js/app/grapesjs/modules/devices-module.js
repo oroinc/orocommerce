@@ -44,14 +44,12 @@ define(function(require) {
                 this.builder = options.builder;
             }
 
-            this.rte = this.builder.RichTextEditor;
             this.canvasEl = this.builder.Canvas.getElement();
             this.$builderIframe = $(this.builder.Canvas.getFrameEl());
 
             this.initButtons();
 
             this.listenTo(mediator, 'grapesjs:theme:change', this.initButtons.bind(this));
-            this.listenTo(this.builder, 'rteToolbarPosUpdate', this.updateRtePosition.bind(this));
             this.listenTo(this.builder, 'change:device', this.updateSelectedElement.bind(this));
         },
 
@@ -226,21 +224,6 @@ define(function(require) {
             return str;
         },
 
-        updateRtePosition(pos) {
-            if (pos.targetHeight !== 0) {
-                const rteActionBarWidth = $(this.rte.actionbar).innerWidth();
-                const builderIframeWidth = this.$builderIframe.innerWidth();
-                let positionLeft = pos.left;
-
-                if (builderIframeWidth <= (pos.left + pos.targetWidth)) {
-                    positionLeft = pos.elementLeft + pos.elementWidth - rteActionBarWidth;
-                }
-
-                pos.left = positionLeft;
-                pos.top = pos.elementTop + pos.elementHeight;
-            }
-        },
-
         updateSelectedElement(model, deviceName) {
             const selected = this.builder.getSelected();
             const iframe = this.$builderIframe[0];
@@ -294,7 +277,6 @@ define(function(require) {
 
             delete this.builder;
             delete this.breakpoints;
-            delete this.rte;
             delete this.canvasEl;
             delete this.$builderIframe;
 

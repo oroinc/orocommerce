@@ -10,8 +10,9 @@ use Oro\Bundle\SEOBundle\Async\Topics;
 use Oro\Bundle\SEOBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\SEOBundle\Model\SitemapIndexMessageFactory;
 use Oro\Bundle\SEOBundle\Model\SitemapMessageFactory;
+use Oro\Bundle\SEOBundle\Provider\WebsiteForSitemapProviderInterface;
+use Oro\Bundle\SEOBundle\Sitemap\Filesystem\GaufretteFilesystemAdapter;
 use Oro\Bundle\SEOBundle\Sitemap\Website\WebsiteUrlProvidersServiceInterface;
-use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Job\DependentJobContext;
 use Oro\Component\MessageQueue\Job\DependentJobService;
@@ -48,7 +49,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
     private $websiteUrlProvidersService;
 
     /**
-     * @var WebsiteProviderInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var WebsiteForSitemapProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $websiteProvider;
 
@@ -87,7 +88,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
             ->getMock();
         $this->producer = $this->createMock(MessageProducerInterface::class);
         $this->websiteUrlProvidersService = $this->createMock(WebsiteUrlProvidersServiceInterface::class);
-        $this->websiteProvider = $this->createMock(WebsiteProviderInterface::class);
+        $this->websiteProvider = $this->createMock(WebsiteForSitemapProviderInterface::class);
         $this->messageFactory = $this->getMockBuilder(SitemapMessageFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -98,18 +99,22 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
         $this->canonicalUrlGenerator = $this->getMockBuilder(CanonicalUrlGenerator::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $fileSystemAdapter = $this->createMock(GaufretteFilesystemAdapter::class);
+        $fileSystemAdapter->expects($this->any())
+            ->method('clearTempStorage');
 
         $this->processor = new GenerateSitemapProcessor(
             $this->jobRunner,
             $this->dependentJobService,
             $this->producer,
             $this->websiteUrlProvidersService,
-            $this->websiteProvider,
             $this->indexMessageFactory,
             $this->messageFactory,
             $this->logger,
-            $this->canonicalUrlGenerator
+            $this->canonicalUrlGenerator,
         );
+        $this->processor->setWebsiteProvider($this->websiteProvider);
+        $this->processor->setFileSystemAdapter($fileSystemAdapter);
     }
 
     public function testProcessWhenThrowsInvalidArgumentException(): void
@@ -253,7 +258,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
         $website = $this->createWebsiteMock(777);
 
         $this->websiteProvider->expects($this->once())
-            ->method('getWebsites')
+            ->method('getAvailableWebsites')
             ->willReturn([$website]);
 
         return $website;
@@ -269,7 +274,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
             $this->createWebsiteMock(888),
         ];
         $this->websiteProvider->expects($this->once())
-            ->method('getWebsites')
+            ->method('getAvailableWebsites')
             ->willReturn($websites);
 
         return $websites;

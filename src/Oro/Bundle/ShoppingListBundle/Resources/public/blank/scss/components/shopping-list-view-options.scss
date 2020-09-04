@@ -1,6 +1,10 @@
 /* @theme: blank; */
 
 .shopping-list-view-options {
-    margin-top: 5px;
-    margin-left: 18px;
+    margin-top: $shopping-list-view-options-offset-top;
+    margin-left: $shopping-list-view-options-offset-left;
+
+    &__editor {
+        margin-top: $shopping-list-view-options-editor-offset-top;
+    }
 }

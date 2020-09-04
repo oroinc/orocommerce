@@ -7,6 +7,9 @@ use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Symfony\Component\Config\FileLocator;
 
+/**
+ * Import/export normalizer for ProductImage entities.
+ */
 class ProductImageNormalizer extends ConfigurableEntityNormalizer
 {
     /**
@@ -58,7 +61,9 @@ class ProductImageNormalizer extends ConfigurableEntityNormalizer
      */
     public function setProductImageDir($productImageDir)
     {
-        $this->productImageDir = $productImageDir;
+        $this->productImageDir = DIRECTORY_SEPARATOR
+            . trim($productImageDir, DIRECTORY_SEPARATOR)
+            . DIRECTORY_SEPARATOR;
     }
 
     /**
@@ -98,27 +103,19 @@ class ProductImageNormalizer extends ConfigurableEntityNormalizer
      */
     public function denormalize($productImageData, $class, $format = null, array $context = [])
     {
-        try {
-            $imagePath = $this->fileLocator->locate(
-                sprintf(
-                    '%s%s',
-                    $this->productImageDir,
-                    $productImageData['image']['name']
-                )
-            );
-        } catch (\Exception $e) {
-            $imagePath = null;
-        }
-
-        $productImageData['image'] = is_array($imagePath) ? current($imagePath) : $imagePath;
         $imageTypes = $this->imageTypeProvider->getImageTypes();
-
         foreach ($productImageData['types'] as $type => $value) {
             if (!array_key_exists($type, $imageTypes) || !boolval($value)) {
                 unset($imageTypes[$type]);
             }
         }
 
+        $imagePath = '';
+        if (!empty($productImageData['image']['name'])) {
+            $imagePath = sprintf('%s/%s', $this->productImageDir, $productImageData['image']['name']);
+        }
+
+        $productImageData['image'] = $imagePath;
         $productImageData['types'] = array_keys($imageTypes);
 
         return parent::denormalize($productImageData, $class, $format, $context);

@@ -7,6 +7,7 @@ use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ImportExportBundle\Context\Context;
+use Oro\Bundle\LocaleBundle\Entity\AbstractLocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\ImportExport\Normalizer\LocalizationCodeFormatter;
@@ -45,7 +46,8 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
             $container->get('oro_entity.doctrine_helper'),
             $container->get('oro_importexport.field.related_entity_state_helper')
         );
-        $this->strategy->setLocalizedFallbackValueClass(LocalizedFallbackValue::class);
+        $this->strategy->setLocalizedFallbackValueClass(AbstractLocalizedFallbackValue::class);
+        $this->strategy->setOwnershipSetter($container->get('oro_organization.entity_ownership_associations_setter'));
     }
 
     /**
@@ -248,7 +250,7 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
     public function skippedDataProvider()
     {
         return [
-            'new product, no fallback from another entity' => [
+            'New product will not be imported if names is empty' => [
                 [
                     'sku' => 'new_sku',
                     'attributeFamily' => 'default_family',
@@ -264,11 +266,7 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                     ],
                 ],
                 function ($product) {
-                    $this->assertInstanceOf('Oro\Bundle\ProductBundle\Entity\Product', $product);
-
-                    /** @var Product $product */
-                    $this->assertNull($product->getId());
-                    $this->assertEmpty($product->getNames()->toArray());
+                    $this->assertNull($product);
                 },
             ],
             'existing product with, id not mapped for new fallback' => [

@@ -3,7 +3,6 @@
 @ticket-BB-16930
 @fixture-OroWebCatalogBundle:web_catalog.yml
 @fixture-OroCustomerBundle:BuyerCustomerFixture.yml
-@fixture-OroProductBundle:ConfigurableProductFixtures.yml
 Feature: Override product variations functionality
   In order to manage simple products in web catalog
   As administrator
@@ -19,23 +18,12 @@ Feature: Override product variations functionality
     Given I proceed as the Admin
     And I login as administrator
     And I set "Default Web Catalog" as default web catalog
-    And I go to Products/Product Attributes
-    And I click "Create Attribute"
-    When I fill form with:
-      | Field Name | Color  |
-      | Type       | Select |
-    And I click "Continue"
-    And I set Options with:
-      | Label |
-      | Black |
-      | White |
-    And I save form
-    Then I should see "Attribute was successfully saved" flash message
-
-  Scenario: Schema update
-    Given I go to Products/Product Attributes
-    When I click update schema
-    Then I should see "Schema updated" flash message
+    And I go to Products / Product Attributes
+    And I click "Import file"
+    And I upload "override_product_variations_functionality_attributes.csv" file to "ShoppingListImportFileField"
+    And I click "Import file"
+    And I reload the page
+    And I confirm schema update
 
   Scenario: Update product family
     Given I proceed as the Admin
@@ -46,37 +34,15 @@ Feature: Override product variations functionality
     And I save and close form
     Then I should see "Successfully updated" flash message
 
-  Scenario: Prepare first simple product
-    Given I proceed as the Admin
-    And I go to Products/Products
-    And I filter SKU as is equal to "1GB81"
-    And I click Edit 1GB81 in grid
-    And I fill in product attribute "Color" with "Black"
-    And I click "Clogs"
-    And I save form
-    Then I should see "Product has been saved" flash message
-
-  Scenario: Prepare second simple product
-    Given I proceed as the Admin
-    And I go to Products/Products
-    And I filter SKU as is equal to "1GB82"
-    And I click Edit 1GB82 in grid
-    And I fill in product attribute "Color" with "White"
-    And I click "Clogs"
-    And I save form
-    Then I should see "Product has been saved" flash message
-
-  Scenario: Prepare configurable product
-    Given I proceed as the Admin
-    And I go to Products/Products
-    And I filter SKU as is equal to "1GB83"
-    And I click Edit 1GB83 in grid
-    When I fill "ProductForm" with:
-      | Configurable Attributes | [Color] |
-    And I check 1GB81 and 1GB82 in grid
-    And I click "Clogs"
-    And I save form
-    Then I should see "Product has been saved" flash message
+  Scenario: Prepare products
+    And I go to Products / Master Catalog
+    And I click "Import file"
+    And I upload "override_product_variations_functionality_category.csv" file to "ShoppingListImportFileField"
+    And I click "Import file"
+    And I go to Products / Products
+    And I click "Import file"
+    And I upload "override_product_variations_functionality_products.csv" file to "ShoppingListImportFileField"
+    And I click "Import file"
 
   Scenario: Use override product variant configuration option to show simple products on storefront
     Given I proceed as the Admin

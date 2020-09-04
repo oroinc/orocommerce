@@ -82,7 +82,10 @@ action_groups:
                           - [[keep], [propertyName, [region]]]
                           - [[keep], [propertyName, [organization]]]
                           - [[shallowCopy], [propertyType, ['\DateTime']]]
-                    - '@flush_entity': $.checkout.shippingAddress
+                    - '@flush_entity':
+                        conditions:
+                            '@not_empty': $.checkout.shippingAddress
+                        parameters: [$.checkout.shippingAddress]
 
     b2b_flow_checkout_update_shipping_address:
         parameters:
@@ -109,7 +112,10 @@ action_groups:
                           - [[keep], [propertyName, [region]]]
                           - [[keep], [propertyName, [organization]]]
                           - [[shallowCopy], [propertyType, ['\DateTime']]]
-                    - '@flush_entity': $.checkout.shippingAddress
+                    - '@flush_entity':
+                        conditions:
+                            '@not_empty': $.checkout.shippingAddress
+                        parameters: [$.checkout.shippingAddress]
 
     b2b_flow_checkout_update_shipping_method:
         parameters:

@@ -19,6 +19,12 @@ oro_behat_extension:
       options:
         mapping:
           Label: 'oro_payment_term[label]'
+
+    Delete Payment Term Activity:
+      selector:
+        type: xpath
+        locator: '//div[@class="activity-context-activity-items"]//span[text()="Payment term"]/parent::a/following-sibling::span'
+
   suites:
     OroPaymentTermBundle:
       contexts:
@@ -30,5 +36,6 @@ oro_behat_extension:
         - OroFormBundle::FormContext
         - OroProductBundle::FeatureContext
         - OroShoppingListBundle::ShoppingListContext
+        - OroActivityListBundle::ActivityContext
       paths:
         - '@OroPaymentTermBundle/Tests/Behat/Features'

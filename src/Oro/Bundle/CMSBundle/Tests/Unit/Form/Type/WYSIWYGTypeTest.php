@@ -15,6 +15,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class WYSIWYGTypeTest extends FormIntegrationTestCase
 {
@@ -31,6 +32,7 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
     {
         $this->htmlTagProvider = $this->createMock(HtmlTagProvider::class);
         $this->purifierScopeProvider = $this->createMock(HTMLPurifierScopeProvider::class);
+
         parent::setUp();
     }
 
@@ -204,6 +206,12 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
     protected function getValidators()
     {
         $htmlTagHelper = new HtmlTagHelper($this->htmlTagProvider);
+        /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject $translator */
+        $translator = $this->createMock(TranslatorInterface::class);
+        $htmlTagHelper->setTranslator($translator);
+
+        $translator = $this->createMock(TranslatorInterface::class);
+
         /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject $logger */
         $logger = $this->createMock(LoggerInterface::class);
 
@@ -211,7 +219,7 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
 
         return [
             $wysiwygConstraint->validatedBy() =>
-                new WYSIWYGValidator($htmlTagHelper, $this->purifierScopeProvider, $logger)
+                new WYSIWYGValidator($htmlTagHelper, $this->purifierScopeProvider, $translator, $logger)
         ];
     }
 }

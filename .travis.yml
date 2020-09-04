@@ -8,7 +8,7 @@ branches:
     - /^\d+\.\d+$/
 
 php:
-    - 7.3.13
+    - 7.4
 
 env:
   - COMPOSER=travis.json
@@ -29,4 +29,4 @@ script:
   - ./vendor/bin/phpunit
   - ./vendor/bin/phpcs ./src -p --encoding=utf-8 --extensions=php --standard=PSR2
   - ./vendor/bin/php-cs-fixer fix --dry-run --config=./vendor/oro/platform/build/.php_cs --path-mode=intersection ./
-  - if [[ $DIFF ]]; then ./vendor/bin/phpmd ${DIFF//$'\n'/,} text ./build_config/phpmd.xml --suffixes php; fi
+  - if [[ $DIFF ]]; then ./vendor/bin/phpmd ${DIFF//$'\n'/,} text ./vendor/oro/platform/build/phpmd.xml --suffixes php; fi

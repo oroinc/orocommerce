@@ -5,6 +5,7 @@ styles:
         - 'bundles/oroshoppinglist/blank/scss/variables/shopping-lists-popup-config.scss'
         - 'bundles/oroshoppinglist/blank/scss/variables/shopping-list-dropdown-config.scss'
         - 'bundles/oroshoppinglist/blank/scss/variables/shopping-list-line-items-config.scss'
+        - 'bundles/oroshoppinglist/blank/scss/variables/shopping-list-view-options-config.scss'
         - 'bundles/oroshoppinglist/blank/scss/variables/grid-line-items-config.scss'
         - 'bundles/oroshoppinglist/blank/scss/variables/responsive-shopping-list-grid-config.scss'
 

@@ -15,3 +15,8 @@ layout:
                 vars:
                     matrixFormType: '=data.offsetExists("product") ? data["product_view_form_availability_provider"].getAvailableMatrixFormType(data["product"]) : "none"'
                     product: '=data.offsetExists("product") ? data["oro_product_variant"].getProductVariantOrProduct(data)'
+        - '@add':
+            id: __shopping_list_quick_search
+            parentId: __root
+            blockType: container
+            prepend: true

@@ -60,22 +60,6 @@ class DumpRobotsTxtListenerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testOnSitemapDumpStorageWithNotDefaultWebsite()
-    {
-        $website = $this->createWebsite(1, false);
-
-        $event = new OnSitemapDumpFinishEvent($website, self::SITEMAP_VERSION);
-        $this->sitemapFilesystemAdapter->expects($this->never())
-            ->method('getSitemapFiles');
-        $this->canonicalUrlGenerator->expects($this->never())
-            ->method('getAbsoluteUrl');
-        $this->robotsTxtSitemapManager->expects($this->never())
-            ->method('addSitemap');
-        $this->robotsTxtSitemapManager->expects($this->never())
-            ->method('flush');
-        $this->listener->onSitemapDumpStorage($event);
-    }
-
     public function testOnSitemapDumpStorageWhenThrowsException()
     {
         $website = $this->createWebsite(1, true);

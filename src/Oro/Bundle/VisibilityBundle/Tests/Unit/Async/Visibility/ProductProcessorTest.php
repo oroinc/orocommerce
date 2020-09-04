@@ -7,6 +7,7 @@ use Doctrine\DBAL\Exception\DeadlockException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityNotFoundException;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\VisibilityBundle\Async\Topics;
 use Oro\Bundle\VisibilityBundle\Async\Visibility\ProductProcessor;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
@@ -119,10 +120,19 @@ class ProductProcessorTest extends \PHPUnit\Framework\TestCase
             ]);
 
         $product = new Product();
+
+        $repository = $this->createMock(ProductRepository::class);
+        $repository
+            ->expects($this->once())
+            ->method('findBy')
+            ->with(['id' => [$body['id']]])
+            ->willReturn([$product]);
+
         $em->expects($this->once())
-            ->method('find')
-            ->with(Product::class, $body['id'])
-            ->willReturn($product);
+            ->method('getRepository')
+            ->with(Product::class)
+            ->willReturn($repository);
+
         $this->cacheBuilder->expects($this->once())
             ->method('productCategoryChanged')
             ->with($product);
@@ -155,10 +165,19 @@ class ProductProcessorTest extends \PHPUnit\Framework\TestCase
             ]);
 
         $product = new Product();
+
+        $repository = $this->createMock(ProductRepository::class);
+        $repository
+            ->expects($this->once())
+            ->method('findBy')
+            ->with(['id' => [$body['id']]])
+            ->willReturn([$product]);
+
         $em->expects($this->once())
-            ->method('find')
-            ->with(Product::class, $body['id'])
-            ->willReturn($product);
+            ->method('getRepository')
+            ->with(Product::class)
+            ->willReturn($repository);
+
         $this->cacheBuilder->expects($this->once())
             ->method('productCategoryChanged')
             ->with($product)
@@ -199,10 +218,19 @@ class ProductProcessorTest extends \PHPUnit\Framework\TestCase
             ]);
 
         $product = new Product();
+
+        $repository = $this->createMock(ProductRepository::class);
+        $repository
+            ->expects($this->once())
+            ->method('findBy')
+            ->with(['id' => [$body['id']]])
+            ->willReturn([$product]);
+
         $em->expects($this->once())
-            ->method('find')
-            ->with(Product::class, $body['id'])
-            ->willReturn($product);
+            ->method('getRepository')
+            ->with(Product::class)
+            ->willReturn($repository);
+
         $this->cacheBuilder->expects($this->once())
             ->method('productCategoryChanged')
             ->with($product)
@@ -240,18 +268,35 @@ class ProductProcessorTest extends \PHPUnit\Framework\TestCase
                 [Product::class, $em]
             ]);
 
+
+        $repository = $this->createMock(ProductRepository::class);
+        $repository
+            ->expects($this->once())
+            ->method('findBy')
+            ->with(['id' => [$body['id']]])
+            ->willReturn([]);
+
         $em->expects($this->once())
-            ->method('find')
-            ->with(Product::class, $body['id'])
-            ->willReturn(null);
+            ->method('getRepository')
+            ->with(Product::class)
+            ->willReturn($repository);
+
         $this->cacheBuilder->expects($this->never())
             ->method('productCategoryChanged');
+
+        $this->logger->expects($this->once())
+            ->method('warning')
+            ->with('The following products have not been not found when trying to resolve visibility');
 
         $this->logger->expects($this->once())
             ->method('error')
             ->with(
                 'Unexpected exception occurred during Product Visibility resolve by Product.',
-                ['exception' => new EntityNotFoundException('Product was not found.')]
+                [
+                    'exception' => new EntityNotFoundException(
+                        'Products have not been found when trying to resolve visibility: 42'
+                    ),
+                ]
             );
 
         $this->assertEquals(

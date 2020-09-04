@@ -15,6 +15,9 @@ use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\ProductVisibilityResol
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\ProductRepository;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
 
+/**
+ * Product visibility cache builder.
+ */
 class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implements ProductCaseCacheBuilderInterface
 {
     /**
@@ -73,7 +76,7 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
         }
 
         $this->executeDbQuery($er, $insert, $delete, $update, $where);
-        $this->triggerProductReindexation($product, $scope->getWebsite());
+        $this->triggerProductReindexation($product, $scope->getWebsite(), false);
     }
 
     /**
@@ -87,7 +90,7 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
     /**
      * {@inheritdoc}
      */
-    public function productCategoryChanged(Product $product)
+    public function productCategoryChanged(Product $product, bool $scheduleReindex)
     {
         $category = $this->registry
             ->getManagerForClass('OroCatalogBundle:Category')
@@ -119,7 +122,7 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
             );
         }
 
-        $this->triggerProductReindexation($product);
+        $this->triggerProductReindexation($product, null, $scheduleReindex);
     }
 
     /**

@@ -114,7 +114,7 @@
                     data-role="shopping-list-current-label">
                     <span class="sr-only">{{ 'oro.frontend.shoppinglist.radio.label'|trans({'%shoppinglist%': shoppingList.label}) }}</span>
                     <input type="radio" name="{{ id }}-radio" data-role="set-default" {{ shoppingList.isCurrent ? 'checked' }}
-                        value="{{ shoppingList.id }}" data-label="{{ shoppingList.label }}"
+                        value="{{ shoppingList.id }}" data-label="{{ shoppingList.label|oro_html_escape|escape('html_attr') }}"
                         class="custom-radio__control">
                     <span class="custom-radio__text" aria-hidden="true"></span>
                 </label>
@@ -129,7 +129,7 @@
                 <span class="shopping-list-dropdown__title">
                     <span class="shopping-list-dropdown__name">
                         <span class="shopping-list-dropdown__name-inner shopping-list-dropdown__name-inner--{{ shoppingList.id }}"
-                            title="{{ shoppingList.label }}"
+                            title="{{ shoppingList.label|escape('html_attr') }}"
                             data-shopping-list-id="{{ shoppingList.id }}"
                             data-role="shopping-list-title">{{ shoppingList.label }}</span>
                     </span>
@@ -175,7 +175,7 @@
                             <div class="shopping-list-dropdown__product-img">
                                 {% set productImageData = product.imagesByType('listing').first.image|default(null) %}
                                 {% set productTitle = productImageData ? oro_file_title(productImageData) : product.names|localized_value|oro_html_strip_tags %}
-                                <img src="{{ product_filtered_image(productImageData, 'product_small') }}" title="{{ productTitle }}"/>
+                                <img src="{{ product_filtered_image(productImageData, 'product_small') }}" title="{{ productTitle|escape('html_attr') }}"/>
                             </div>
                             <div class="shopping-list-dropdown__product-base">
                                 <div class="shopping-list-dropdown__product-total">

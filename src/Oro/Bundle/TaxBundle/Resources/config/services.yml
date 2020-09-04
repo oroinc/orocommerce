@@ -456,6 +456,15 @@ services:
         tags:
             - { name: oro_tax.resolver, event: oro_tax.resolve }
 
+    oro_tax.order_tax.resolver.skip_order_tax_recalculation:
+        class: 'Oro\Bundle\TaxBundle\OrderTax\Resolver\SkipOrderTaxRecalculationResolver'
+        public: false
+        arguments:
+            - '@doctrine'
+            - '@oro_tax.manager.tax_manager'
+        tags:
+            - { name: oro_tax.resolver, event: oro_tax.resolve_before }
+
     oro_tax.event_listener.tax_value:
         class: 'Oro\Bundle\TaxBundle\EventListener\TaxValueListener'
         public: false
@@ -558,7 +567,7 @@ services:
 
     oro_tax.tax_codes.cache:
         public: false
-        parent: doctrine_cache.abstract.array
+        class: Doctrine\Common\Cache\ArrayCache
         calls:
             - [ setNamespace, [ 'oro_tax_tax_codes' ] ]
 
@@ -578,7 +587,7 @@ services:
             - { name: kernel.event_subscriber }
 
     oro_tax.taxation_provider.cache:
-        parent: doctrine_cache.abstract.array
+        class: Doctrine\Common\Cache\ArrayCache
         public: false
         calls:
             - [ setNamespace, [ 'oro_taxation_settings_provider' ] ]

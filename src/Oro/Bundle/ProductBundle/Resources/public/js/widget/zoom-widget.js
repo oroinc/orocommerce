@@ -5,6 +5,7 @@ define(function(require) {
     const _ = require('underscore');
     const mediator = require('oroui/js/mediator');
     require('jquery-elevatezoom');
+    require('jquery-ui/widget');
 
     $.widget('oroproduct.zoomWidget', {
         options: {

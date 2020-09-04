@@ -39,6 +39,9 @@ oro:
                 delete_title: Delete Confirmation
             matrix_grid_order:
                 item_number: 'Item #'
+            dropdown:
+                quick_search:
+                    no_match: 'No matches found'
             label: 'Item #:'
             initial_subtotal:
                 label: 'Initial subtotal'

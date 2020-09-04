@@ -34,6 +34,13 @@ oro_behat_extension:
           Quantity: 'oro_product_frontend_line_item[quantity]'
           Unit: 'oro_product_frontend_line_item[unit]'
 
+    ShoppingListOwnerForm:
+      selector: '.shopping-list-owner'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Customer: 'oro_customer_frontend_owner_select'
+
     NewShoppingListNameField:
       selector: '[name="oro_shopping_list_type[label]"]'
 
@@ -129,6 +136,12 @@ oro_behat_extension:
 
     Remove From Shopping List:
       selector: 'a.add-to-shopping-list-button[title="Remove From Shopping list"]'
+
+    Shopping List Quick Search:
+      selector: '.dropdown-menu [data-role="quick-search"]'
+
+    Shopping List Quick Search Clear:
+      selector: '.dropdown-search .search-action'
 
     FrontendLineItemForm:
       selector: 'form[id^="oro_product_frontend_line_item"]'
@@ -233,7 +246,7 @@ oro_behat_extension:
       class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select2Entity
 
     Customer Field:
-      selector: 'div[id*="oro_customer_frontend_owner_select"]'
+      selector: '.shopping-list-owner .select2-container .select2-choice'
 
     Customer Select Field:
       selector: 'select[name="oro_customer_frontend_owner_select"]'
@@ -254,6 +267,11 @@ oro_behat_extension:
 
     Matrix Order Widget:
       selector: '.matrix-order-widget__totals'
+
+    # The FileField element must be defined in the same bundle with files to upload
+    ShoppingListImportFileField:
+      selector: ".import-widget-content .tab-pane.active input[id^='oro_importexport_import_file']"
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\FileField
 
     Add 1 More Variants:
       selector:
@@ -321,5 +339,7 @@ oro_behat_extension:
         - OroFrontendLocalizationBundle::LocalizationSwitcherContext
         - OroCustomerBundle::CustomerUserContext
         - OroCheckoutBundle::FeatureContext
+        - OroQueryDesignerBundle::QueryDesignerContext
+        - OroEmailBundle::EmailContext
       paths:
         - '@OroShoppingListBundle/Tests/Behat/Features'

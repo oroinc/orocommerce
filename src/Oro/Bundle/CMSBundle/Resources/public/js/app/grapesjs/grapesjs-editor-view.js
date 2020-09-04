@@ -117,6 +117,18 @@ const GrapesjsEditorView = BaseView.extend({
     },
 
     /**
+     * Configurations for Trait Manager
+     * @property {Object}
+     */
+    traitManager: {
+        optionsTarget: [{
+            value: '_self'
+        }, {
+            value: '_blank'
+        }]
+    },
+
+    /**
      * Canvas options
      * @property {Object}
      */
@@ -168,6 +180,11 @@ const GrapesjsEditorView = BaseView.extend({
      * @property {jQuery.Element}
      */
     $parent: null,
+
+    /**
+     * @property {Object}
+     */
+    rte: null,
 
     /**
      * List of grapesjs plugins
@@ -349,6 +366,7 @@ const GrapesjsEditorView = BaseView.extend({
 
         // Ensures all changes to sectors, properties and types are applied.
         this.builder.StyleManager.getSectors().reset(styleManagerModule);
+        this.rte = this.builder.RichTextEditor;
 
         const pureStyles = this.builder.getPureStyle(this.$stylesInputElement.val());
 
@@ -375,11 +393,16 @@ const GrapesjsEditorView = BaseView.extend({
                 })
             .on('submit', this.contentValidate.bind(this));
 
+        this.$el.closest('.scrollable-container').on(`scroll${this.eventNamespace()}`, () => {
+            this.builder.trigger('change:canvasOffset');
+        });
+
         this.builder.on('load', this._onLoadBuilder.bind(this));
         this.builder.on('update', this._onUpdatedBuilder.bind(this));
         this.builder.on('component:update', _.debounce(this._onComponentUpdatedBuilder.bind(this), 100));
         this.builder.on('changeTheme', this._updateTheme.bind(this));
         this.builder.on('component:selected', this.componentSelected.bind(this));
+        this.builder.on('rteToolbarPosUpdate', this.updateRtePosition.bind(this));
 
         this.builder.editor.view.$el.find('.gjs-toolbar')
             .off('mouseover')
@@ -419,7 +442,8 @@ const GrapesjsEditorView = BaseView.extend({
      * Remove builder event listeners
      */
     builderUndelegateEvents: function() {
-        this.$el.closest('form').off();
+        this.$el.closest('form').off(this.eventNamespace());
+        this.$el.closest('.scrollable-container').off(this.eventNamespace());
         mediator.off('dropdown-button:click');
 
         if (this.builder) {
@@ -477,6 +501,7 @@ const GrapesjsEditorView = BaseView.extend({
         if (!this.allow_tags) {
             return;
         }
+
         const _res = this.builder.ComponentRestriction.validate(
             this.builder.getIsolatedHtml(this.$el.val())
         );
@@ -681,6 +706,7 @@ const GrapesjsEditorView = BaseView.extend({
             , this._getStorageManagerConfig()
             , this._getCanvasConfig()
             , this._getStyleManagerConfig()
+            , this._getTaitManagerConfig()
             , this._getAssetConfig()
         );
 
@@ -708,6 +734,17 @@ const GrapesjsEditorView = BaseView.extend({
     _getStyleManagerConfig: function() {
         return {
             styleManager: this.styleManager
+        };
+    },
+
+    /**
+     * Get extended Tait Manager config
+     * @returns {{traitManager: *}}
+     * @private
+     */
+    _getTaitManagerConfig: function() {
+        return {
+            traitManager: this.traitManager
         };
     },
 
@@ -747,6 +784,27 @@ const GrapesjsEditorView = BaseView.extend({
             plugins: [i18nMessages, ContentParser, parserPostCSS, ...Object.keys(this.builderPlugins)],
             pluginsOpts: this.builderPlugins
         };
+    },
+
+    updateRtePosition(pos) {
+        const $builderIframe = $(this.builder.Canvas.getFrameEl());
+        const selected = this.builder.getSelected();
+        if (!selected) {
+            return;
+        }
+
+        const $el = selected.view.$el;
+        const targetHeight = $(this.rte.actionbar).outerHeight();
+        const targetWidth = $(this.rte.actionbar).outerWidth();
+
+        $(this.rte.actionbar).parent().css('margin-left', '');
+
+        if ($builderIframe.innerWidth() <= (pos.canvasOffsetLeft + targetWidth)) {
+            $(this.rte.actionbar).parent().css('margin-left', $el.outerWidth() - targetWidth);
+        }
+        if (pos.top < 0 && $builderIframe.innerHeight() > (pos.canvasOffsetTop + targetHeight)) {
+            pos.top += $el.outerHeight() + targetHeight;
+        }
     }
 });
 

@@ -238,6 +238,7 @@ define(function(require) {
 
             if (element.length) {
                 element.toggleClass('disabled', state);
+                element.attr('disabled', state);
             }
         }
     });

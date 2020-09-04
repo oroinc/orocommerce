@@ -20,3 +20,8 @@ oro:
                 title: Charge The Customer
                 message: The customer will be charged {{ amount }}. Are you sure you want to continue?
                 button.okText: Yes, Charge
+
+            cancel:
+                title: Cancel Payment
+                message: The {{ amount }} payment will be canceled. Are you sure you want to continue?
+                button.okText: Yes, Cancel Payment

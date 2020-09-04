@@ -8,11 +8,11 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\Datagrid;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
-use Oro\Bundle\DataGridBundle\Datagrid\ManagerInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Extension\Acceptor;
 use Oro\Bundle\DataGridBundle\Provider\State\DatagridStateProviderInterface;
+use Oro\Bundle\DataGridBundle\Tools\DatagridParametersHelper;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\EntityConfigBundle\Attribute\AttributeConfigurationProvider;
@@ -33,24 +33,26 @@ use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterTypeInterface;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\DataGrid\EventListener\FrontendProductGridEventListener;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Provider\FamilyAttributeCountsProvider;
 use Oro\Bundle\ProductBundle\Search\ProductRepository;
-use Oro\Bundle\SearchBundle\Datagrid\Datasource\SearchDatasource;
 use Oro\Bundle\SearchBundle\Query\Query;
-use Oro\Bundle\SearchBundle\Query\Result;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 use Oro\Bundle\WebsiteSearchBundle\Attribute\Type as SearchableType;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\EnumIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
-use Oro\Component\DependencyInjection\ServiceLink;
 use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Oro\Component\Testing\Unit\EntityTrait;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyFields)
+ */
 class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     private const LABEL = 'oro.test.label';
     private const LIMIT_FILTERS_SORTERS = 'oro_product.limit_filters_sorters_on_product_listing';
+    private const DATAGRID_NAME = 'test_name';
 
     /** @var AttributeManager|\PHPUnit\Framework\MockObject\MockObject */
     private $attributeManager;
@@ -90,6 +92,12 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
 
     /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
+
+    /** @var DatagridParametersHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $datagridParametersHelper;
+
+    /** @var FamilyAttributeCountsProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $familyAttributeCountsProvider;
 
     /** @var FrontendProductGridEventListener */
     private $listener;
@@ -140,44 +148,27 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
             ->with(AttributeFamily::class)
             ->willReturn($this->attributeFamilyRepository);
 
-        $this->datagridConfig = DatagridConfiguration::create(['name' => 'test_name']);
-        $this->searchQuery = $this->createMock(SearchQueryInterface::class);
-
-        /** @var SearchDatasource|\PHPUnit\Framework\MockObject\MockObject $gridDatasource */
-        $gridDatasource = $this->createMock(SearchDatasource::class);
-        $gridDatasource->expects($this->any())
-            ->method('getSearchQuery')
-            ->willReturn($this->searchQuery);
+        $this->datagridConfig = DatagridConfiguration::create(['name' => self::DATAGRID_NAME]);
 
         $this->datagrid = new Datagrid('datagrid', $this->datagridConfig, new ParameterBag([]));
-        $this->datagrid->setDatasource($gridDatasource);
         $this->datagrid->setAcceptor(new Acceptor());
-
-        $datagridManager = $this->createMock(ManagerInterface::class);
-        $datagridManager->expects($this->any())
-            ->method('getDatagrid')
-            ->willReturn($this->datagrid);
-
-        /** @var ServiceLink|\PHPUnit\Framework\MockObject\MockObject $datagridManagerLink */
-        $datagridManagerLink = $this->createMock(ServiceLink::class);
-        $datagridManagerLink->expects($this->any())
-            ->method('getService')
-            ->willReturn($datagridManager);
 
         $this->filtersStateProvider = $this->createMock(DatagridStateProviderInterface::class);
         $this->sortersStateProvider = $this->createMock(DatagridStateProviderInterface::class);
         $this->configManager = $this->createMock(ConfigManager::class);
+        $this->datagridParametersHelper = $this->createMock(DatagridParametersHelper::class);
+        $this->familyAttributeCountsProvider = $this->createMock(FamilyAttributeCountsProvider::class);
 
         $this->listener = new FrontendProductGridEventListener(
             $this->attributeManager,
             $this->attributeTypeRegistry,
             new AttributeConfigurationProvider($configManager),
-            $this->productRepository,
             $doctrineHelper,
-            $datagridManagerLink,
             $this->filtersStateProvider,
             $this->sortersStateProvider,
-            $this->configManager
+            $this->configManager,
+            $this->datagridParametersHelper,
+            $this->familyAttributeCountsProvider
         );
     }
 
@@ -225,23 +216,14 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
             ->method('hasAssociation')
             ->willReturn($hasAssociation);
 
-        $this->configManager->expects($this->any())
+        $this->configManager->expects($this->once())
             ->method('get')
             ->with(self::LIMIT_FILTERS_SORTERS)
             ->willReturn($limitFiltersSorters);
 
-        $this->productRepository->expects($this->any())
-            ->method('getFamilyAttributeCountsQuery')
-            ->with($this->searchQuery, 'familyAttributesCount')
-            ->willReturnArgument(0);
-
-        $result = $this->createMock(Result::class);
-        $result->expects($this->any())
-            ->method('getAggregatedData')
+        $this->familyAttributeCountsProvider->expects($this->atMost(1))
+            ->method('getFamilyAttributeCounts')
             ->willReturn($aggregatedData);
-        $this->searchQuery->expects($this->any())
-            ->method('getResult')
-            ->willReturn($result);
 
         $this->attributeFamilyRepository->expects($this->any())
             ->method('getFamilyIdsForAttributes')
@@ -266,7 +248,19 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->listener->onPreBuild($event);
 
-        $this->assertEquals(array_merge(['name' => 'test_name'], $expected), $this->datagridConfig->toArray());
+        $this->assertEquals(array_merge(['name' => self::DATAGRID_NAME], $expected), $this->datagridConfig->toArray());
+
+        // Checks search query is executed only once.
+        $this->datagridParametersHelper
+            ->expects($this->once())
+            ->method('isDatagridExtensionSkipped')
+            ->willReturn(true);
+
+        $event = new PreBuild($this->datagridConfig, $this->datagrid->getParameters());
+
+        $this->listener->onPreBuild($event);
+
+        $this->assertEquals(array_merge(['name' => self::DATAGRID_NAME], $expected), $this->datagridConfig->toArray());
     }
 
     /**

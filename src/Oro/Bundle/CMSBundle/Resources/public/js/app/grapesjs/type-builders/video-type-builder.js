@@ -54,6 +54,14 @@ const VideoTypeBuilder = BaseTypeBuilder.extend({
 
                     return attr;
                 }
+            },
+            view: {
+                onRender() {
+                    this.em.removeSelected();
+                    this.em.addSelected(this.el);
+
+                    return this;
+                }
             }
         });
     }

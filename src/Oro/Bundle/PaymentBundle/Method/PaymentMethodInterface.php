@@ -46,6 +46,11 @@ interface PaymentMethodInterface
     const PENDING = 'pending';
 
     /**
+     * Cancel authorized or captured amount, e.g void, reversal
+     */
+    const CANCEL = 'cancel';
+
+    /**
      * @param string $action
      * @param PaymentTransaction $paymentTransaction
      * @return array

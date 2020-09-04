@@ -44,6 +44,7 @@ oro:
 
         security.transaction: Work with payments
         capture: Capture
+        cancel: Cancel
 
         status:
             label: Payment Status
@@ -53,6 +54,7 @@ oro:
             declined: Payment declined
             partially: Paid partially
             invoiced: Invoiced
+            canceled: Payment canceled
 
         message:
             error: 'General error. We were unable to process action.'
@@ -132,6 +134,7 @@ oro:
                 purchase.label: Purchase
                 invoice.label: Invoice
                 pending.label: Pending
+                cancel.label: Cancel
 
         sections:
             general: 'General Information'

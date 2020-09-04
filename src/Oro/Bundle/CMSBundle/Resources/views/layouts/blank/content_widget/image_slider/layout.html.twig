@@ -1,4 +1,27 @@
 {% block _content_widget_image_slider_widget %}
+    {% set slideToShow = pageComponentOptions.slidesToShow %}
+    {% set slidesToScroll = pageComponentOptions.slidesToScroll %}
+    {% set pageComponentOptions = pageComponentOptions|merge({
+        responsive: [{
+            breakpoint: 991,
+            settings: {
+                slidesToShow: slideToShow > 3 ? 3 : slideToShow,
+                slidesToScroll: slidesToScroll > 3 ? 3 : slidesToScroll
+            }
+        }, {
+            breakpoint: 641,
+            settings: {
+                slidesToShow: slideToShow > 2 ? 2 : slideToShow,
+                slidesToScroll: slidesToScroll > 2 ? 2 : slidesToScroll
+            }
+        }, {
+            breakpoint: 415,
+            settings: {
+                slidesToShow: 1,
+                slidesToScroll: 1
+            }
+        }]
+    }) %}
     <div class="promo-slider{{ pageComponentOptions.arrows ? ' promo-slider--has-arrows' : '' }}"
          data-page-component-name="{{ pageComponentName }}"
          data-page-component-module="orofrontend/js/app/components/list-slider-component"
@@ -20,7 +43,8 @@
                                         media="(max-width: 992px)">
                                 <img src="{{ filtered_image_url(imageSlide.mainImage, 'original') }}"
                                      class="promo-slider__img"
-                                     alt="{{ imageSlide.title }}">
+                                     alt="{{ imageSlide.title }}"
+                                >
                             </picture>
                         </div>
                     </a>

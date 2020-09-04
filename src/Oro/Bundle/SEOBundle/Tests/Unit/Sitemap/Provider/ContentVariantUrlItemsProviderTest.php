@@ -208,6 +208,72 @@ class ContentVariantUrlItemsProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEmpty($items);
     }
 
+    public function testGetUrlItemsWhenScopeNotExistsForAnonymousCustomerGroup(): void
+    {
+        $version = 1;
+        $website = $this->createMock(WebsiteInterface::class);
+        $webCatalog = $this->createMock(WebCatalog::class);
+
+        $this->featureChecker
+            ->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('test_feature', $website)
+            ->willReturn(false);
+
+        $this->webCatalogProvider
+            ->expects($this->once())
+            ->method('getWebCatalog')
+            ->with($website)
+            ->willReturn($webCatalog);
+
+        $rootNode = $this->createMock(ContentNode::class);
+        $contentNodeRepo = $this->createMock(ContentNodeRepository::class);
+        $contentNodeRepo
+            ->expects($this->once())
+            ->method('getRootNodeByWebCatalog')
+            ->with($webCatalog)
+            ->willReturn($rootNode);
+
+        $contentNodeEm = $this->createMock(EntityManagerInterface::class);
+        $contentNodeEm
+            ->expects($this->once())
+            ->method('getRepository')
+            ->willReturn($contentNodeRepo);
+
+        $scopeCriteria = $this->createMock(ScopeCriteria::class);
+        $this->scopeCriteriaProvider
+            ->expects($this->once())
+            ->method('getWebCatalogScopeForAnonymousCustomerGroup')
+            ->with($website)
+            ->willReturn($scopeCriteria);
+
+        $slugRepo = $this->createMock(SlugRepository::class);
+        $slugRepo
+            ->expects($this->once())
+            ->method('findMostSuitableUsedScope')
+            ->with($scopeCriteria)
+            ->willReturn(null);
+
+        $slugEm = $this->createMock(EntityManagerInterface::class);
+        $slugEm
+            ->expects($this->once())
+            ->method('getRepository')
+            ->willReturn($slugRepo);
+
+        $this->registry
+            ->expects($this->exactly(2))
+            ->method('getManagerForClass')
+            ->withConsecutive([ContentNode::class], [Slug::class])
+            ->willReturn($contentNodeEm, $slugEm);
+
+        $this->contentNodeTreeResolver
+            ->expects($this->never())
+            ->method('getResolvedContentNode');
+
+        $items = iterator_to_array($this->provider->getUrlItems($website, $version));
+        $this->assertEmpty($items);
+    }
+
     public function testGetUrlItems()
     {
         /** @var WebsiteInterface $website */

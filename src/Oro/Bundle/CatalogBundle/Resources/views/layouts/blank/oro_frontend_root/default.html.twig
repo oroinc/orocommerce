@@ -31,7 +31,8 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' featured-category__image',
         src: category_filtered_image(category.small_image, 'category_medium'),
-        alt: category.title
+        alt: category.title,
+        loading: 'lazy'
     }) %}
 
     <img {{ block('block_attributes') }}>

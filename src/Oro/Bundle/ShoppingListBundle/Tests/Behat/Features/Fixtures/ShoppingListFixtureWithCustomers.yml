@@ -60,28 +60,32 @@ Oro\Bundle\ProductBundle\Entity\Product:
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
     shoppinglist1:
         label: 'Shopping List 1'
-        customer: '@customer1'
+        customer: '@amanda->customer'
         customerUser: '@amanda'
         organization: '@organization'
         website: '@website1'
     shoppinglist2:
         label: 'Shopping List 2'
+        customer: '@marlene->customer'
         customerUser: '@marlene'
         organization: '@organization'
         website: '@website1'
     shoppinglist3:
         label: 'Shopping List 3'
+        customer: '@ruth->customer'
         customerUser: '@ruth'
         organization: '@organization'
         website: '@website1'
         notes: 'Simple note'
     shoppinglist4:
         label: 'Shopping List 4'
+        customer: '@juana->customer'
         customerUser: '@juana'
         organization: '@organization'
         website: '@website1'
     shoppinglist5:
         label: 'Shopping List 5'
+        customer: '@nancy->customer'
         customerUser: '@nancy'
         organization: '@organization'
         website: '@website1'

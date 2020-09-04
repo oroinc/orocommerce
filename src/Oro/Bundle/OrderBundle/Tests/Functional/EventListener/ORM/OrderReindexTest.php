@@ -110,13 +110,16 @@ class OrderReindexTest extends FrontendWebTestCase
 
     public function testReindexProductLineItemWhenUpdate()
     {
+        $this->clearMessageCollector();
+
         /** @var OrderLineItem $lineItem */
         $lineItem = $this->getReference(LoadOrderLineItemData::ORDER_LINEITEM_6);
-        $product = $this->getReference(LoadProductData::PRODUCT_8);
+        $product6 = $this->getReference(LoadProductData::PRODUCT_6);
+        $product8 = $this->getReference(LoadProductData::PRODUCT_8);
 
-        $expectedMessage = $this->getExpectedMessageForLineItem($product);
+        $expectedMessage = $this->getExpectedMessageForLineItem($product6, $product8);
 
-        $lineItem->setProduct($product);
+        $lineItem->setProduct($product8);
 
         $em = $this->managerRegistry->getManagerForClass(OrderLineItem::class);
         $em->persist($lineItem);
@@ -144,17 +147,19 @@ class OrderReindexTest extends FrontendWebTestCase
     }
 
     /**
-     * @param Product|string $product
+     * @param Product[]|string[] $products
      * @return array
      */
-    protected function getExpectedMessageForLineItem($product)
+    protected function getExpectedMessageForLineItem(...$products): array
     {
-        $product = ($product instanceof Product) ? $product : $this->getReference($product);
+        $productsIds = array_map(function ($product) {
+            return ($product instanceof Product) ? $product->getId() : $this->getReference($product)->getId();
+        }, $products);
 
         return [
             'class'     => [Product::class],
             'context'   => [
-                'entityIds'  => [$product->getId()],
+                'entityIds'  => $productsIds,
                 'websiteIds' => [$this->getDefaultWebsiteId()]
             ],
             'granulize' => true,

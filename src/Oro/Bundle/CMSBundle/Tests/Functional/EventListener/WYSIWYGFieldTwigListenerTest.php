@@ -175,6 +175,7 @@ class WYSIWYGFieldTwigListenerTest extends WebTestCase
 
         $this->em->flush();
 
-        $this->getContainer()->get('oro_cms.event_listener.wysiwyg_field_twig_listener.test')->onTerminate();
+        // Ensures that scheduled operations are executed before the clear - checks that preClear() method works.
+        $this->em->clear();
     }
 }

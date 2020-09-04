@@ -33,6 +33,7 @@ class TextContentVariantType extends AbstractType
                 WYSIWYGType::class,
                 [
                     'label' => 'oro.cms.page.content.label',
+                    'auto_render' => false,
                     'required' => false,
                 ]
             )
