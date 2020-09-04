@@ -27,3 +27,5 @@ dynamic-imports:
         - oroshoppinglist/js/app/views/shoppinglist-widget-view
         - oroshoppinglist/js/shopping-list-item-errors-handler
         - oroshoppinglist/js/shoppinglist-request-quote-confirmation
+    oroshoppinglistquicksearch:
+        - oroshoppinglist/js/app/views/shopping-list-quick-search

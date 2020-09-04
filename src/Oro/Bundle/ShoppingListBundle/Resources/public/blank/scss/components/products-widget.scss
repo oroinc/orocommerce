@@ -23,11 +23,94 @@
         text-overflow: ellipsis;
     }
 
+    .btn-main {
+        .fa {
+            display: none;
+        }
+    }
+
     .product-add-to-shopping-list-container {
         display: block;
     }
 
     .line_item_form_fields {
         width: calc(50% - 5px);
+    }
+}
+
+.dropdown-menu {
+    .dropdown-search {
+        position: relative;
+
+        .quick-search-icon {
+            display: none;
+        }
+
+        .quick-search-icon,
+        .search-action {
+            position: absolute;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .search-action {
+            &:disabled {
+                display: none;
+
+                + .quick-search-icon {
+                    display: inline-block;
+                }
+            }
+        }
+
+        .input {
+            padding-right: 30px;
+        }
+
+        .no-matches {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            text-align: center;
+            padding: $offset-y-m $offset-x;
+        }
+    }
+
+    .item-container {
+        max-height: 300px;
+        overflow-y: auto;
+
+        .dropdown-item {
+            position: relative;
+            padding-left: 36px;
+
+            .fa {
+                position: absolute;
+                left: $dropdown-item-padding-x;
+            }
+        }
+    }
+
+    .items-group {
+        &:not(:first-of-type) {
+            margin-top: $offset-y-m;
+
+            &:before {
+                content: '';
+                display: block;
+                margin: 0 $offset-x $offset-y-m;
+                border-top: 1px solid get-color('additional', 'light');
+            }
+        }
+
+        &.hide {
+            + .items-group {
+                &:before {
+                    display: none;
+                }
+            }
+        }
     }
 }

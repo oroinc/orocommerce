@@ -137,6 +137,12 @@ oro_behat_extension:
     Remove From Shopping List:
       selector: 'a.add-to-shopping-list-button[title="Remove From Shopping list"]'
 
+    Shopping List Quick Search:
+      selector: '.dropdown-menu [data-role="quick-search"]'
+
+    Shopping List Quick Search Clear:
+      selector: '.dropdown-search .search-action'
+
     FrontendLineItemForm:
       selector: 'form[id^="oro_product_frontend_line_item"]'
       class: 'Oro\Bundle\TestFrameworkBundle\Behat\Element\Form'

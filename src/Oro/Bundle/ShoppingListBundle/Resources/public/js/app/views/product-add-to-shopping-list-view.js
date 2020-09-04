@@ -352,9 +352,16 @@ define(function(require) {
                 intention = 'add';
             }
 
-            $button.find('a')
+            const $link = $button.find('a');
+            const $icon = $button.find('.fa').clone();
+
+            $link
                 .text(label)
                 .attr('data-intention', intention);
+
+            if ($icon.length) {
+                $link.prepend($icon);
+            }
 
             return $button;
         },
