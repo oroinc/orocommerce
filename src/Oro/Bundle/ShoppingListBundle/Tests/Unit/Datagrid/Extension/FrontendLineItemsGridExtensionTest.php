@@ -16,7 +16,10 @@ use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Unit\Entity\Stub\ShoppingListStub;
 
-class ShoppingListGridExtensionTest extends \PHPUnit\Framework\TestCase
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
+class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ShoppingListRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $shoppingListRepository;
@@ -121,6 +124,13 @@ class ShoppingListGridExtensionTest extends \PHPUnit\Framework\TestCase
                         ],
                     ],
                 ],
+                'source' => [
+                    'query' => [
+                        'select' => [
+                            'lineItem.id',
+                        ],
+                    ],
+                ],
             ],
             $config->toArray()
         );
@@ -154,6 +164,13 @@ class ShoppingListGridExtensionTest extends \PHPUnit\Framework\TestCase
                     'toolbarOptions' => [
                         'pageSize' => [
                             'items' => [10, 25, 50, 100],
+                        ],
+                    ],
+                ],
+                'source' => [
+                    'query' => [
+                        'select' => [
+                            'lineItem.id',
                         ],
                     ],
                 ],
@@ -196,6 +213,13 @@ class ShoppingListGridExtensionTest extends \PHPUnit\Framework\TestCase
                     'toolbarOptions' => [
                         'pageSize' => [
                             'items' => [10, 25, 50, 100, 1000],
+                        ],
+                    ],
+                ],
+                'source' => [
+                    'query' => [
+                        'select' => [
+                            'lineItem.id',
                         ],
                     ],
                 ],
@@ -250,6 +274,57 @@ class ShoppingListGridExtensionTest extends \PHPUnit\Framework\TestCase
                         ],
                     ],
                 ],
+                'source' => [
+                    'query' => [
+                        'select' => [
+                            'lineItem.id',
+                        ],
+                    ],
+                ],
+            ],
+            $config->toArray()
+        );
+    }
+
+    public function testProcessConfigsWithGrouping(): void
+    {
+        $this->parameters->set('_parameters', ['group' => true]);
+
+        $config = DatagridConfiguration::create(
+            [
+                'options' => [
+                    'toolbarOptions' => [
+                        'pageSize' => [
+                            'items' => [10, 25, 50, 100],
+                        ],
+                    ],
+                ],
+            ]
+        );
+
+        $this->extension->processConfigs($config);
+
+        $this->assertEquals(
+            [
+                'options' => [
+                    'toolbarOptions' => [
+                        'pageSize' => [
+                            'items' => [10, 25, 50, 100],
+                        ],
+                    ],
+                ],
+                'source' => [
+                    'query' => [
+                        'select' => [
+                            '(SELECT GROUP_CONCAT(innerItem.id) ' .
+                            'FROM Oro\Bundle\ShoppingListBundle\Entity\LineItem innerItem ' .
+                            'WHERE (innerItem.parentProduct = lineItem.parentProduct ' .
+                            'OR innerItem.product = lineItem.product) ' .
+                            'AND innerItem.shoppingList = lineItem.shoppingList ' .
+                            'AND innerItem.unit = lineItem.unit) as allLineItemsIds',
+                        ],
+                    ],
+                ],
             ],
             $config->toArray()
         );
@@ -266,6 +341,11 @@ class ShoppingListGridExtensionTest extends \PHPUnit\Framework\TestCase
             ->with(42)
             ->willReturn(true);
 
+        $this->lineItemRepository->expects($this->once())
+            ->method('canBeGrouped')
+            ->with(42)
+            ->willReturn(true);
+
         $shoppingList = new ShoppingListStub();
         $shoppingList->setLabel('Shopping List Label');
         $this->shoppingListRepository->expects($this->once())
@@ -276,6 +356,7 @@ class ShoppingListGridExtensionTest extends \PHPUnit\Framework\TestCase
         $this->extension->visitMetadata(DatagridConfiguration::create([]), $data);
 
         $this->assertTrue($data->offsetGetByPath('hasEmptyMatrix'));
+        $this->assertTrue($data->offsetGetByPath('canBeGrouped'));
         $this->assertEquals('Shopping List Label', $data->offsetGetByPath('shoppingListLabel'));
     }
 
@@ -285,6 +366,9 @@ class ShoppingListGridExtensionTest extends \PHPUnit\Framework\TestCase
 
         $this->lineItemRepository->expects($this->never())
             ->method('hasEmptyMatrix');
+
+        $this->lineItemRepository->expects($this->never())
+            ->method('canBeGrouped');
 
         $this->extension->visitMetadata(DatagridConfiguration::create([]), $data);
 
@@ -302,9 +386,15 @@ class ShoppingListGridExtensionTest extends \PHPUnit\Framework\TestCase
             ->with(42)
             ->willReturn(true);
 
+        $this->lineItemRepository->expects($this->once())
+            ->method('canBeGrouped')
+            ->with(42)
+            ->willReturn(true);
+
         $this->extension->visitResult(DatagridConfiguration::create([]), $data);
 
         $this->assertTrue($data->offsetGetByPath('[metadata][hasEmptyMatrix]'));
+        $this->assertTrue($data->offsetGetByPath('[metadata][canBeGrouped]'));
     }
 
     public function testVisitResultWithoutId(): void
@@ -313,6 +403,9 @@ class ShoppingListGridExtensionTest extends \PHPUnit\Framework\TestCase
 
         $this->lineItemRepository->expects($this->never())
             ->method('hasEmptyMatrix');
+
+        $this->lineItemRepository->expects($this->never())
+            ->method('canBeGrouped');
 
         $this->extension->visitResult(DatagridConfiguration::create([]), $data);
 

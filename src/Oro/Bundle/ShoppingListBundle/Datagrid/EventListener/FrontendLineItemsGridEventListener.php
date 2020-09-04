@@ -114,9 +114,9 @@ class FrontendLineItemsGridEventListener
             /** @var LineItem[] $recordLineItems */
             $recordLineItems = array_intersect_key(
                 $identifiedLineItems,
-                array_flip(explode(',', $record->getValue('allLineItemsIds')))
+                array_flip(explode(',', $this->getRowId($record)))
             );
-            $record->setValue('id', $record->getValue('allLineItemsIds'));
+            $record->setValue('id', $this->getRowId($record));
 
             if ($record->getValue('isConfigurable')) {
                 $this->processConfigurableProduct($record, $recordLineItems, $matchedPrices, $errors);
@@ -124,6 +124,15 @@ class FrontendLineItemsGridEventListener
                 $this->processSimpleProduct($record, reset($recordLineItems), $matchedPrices, $errors);
             }
         }
+    }
+
+    /**
+     * @param Record $record
+     * @return string
+     */
+    private function getRowId(Record $record): string
+    {
+        return $record->getValue('allLineItemsIds') ?: $record->getValue('id');
     }
 
     /**
@@ -420,8 +429,8 @@ class FrontendLineItemsGridEventListener
         return $repository->preloadLineItemsByIdsForViewAction(
             array_merge(
                 ...array_map(
-                    static function (Record $record) {
-                        return explode(',', $record->getValue('allLineItemsIds'));
+                    function (Record $record) {
+                        return explode(',', $this->getRowId($record));
                     },
                     $records
                 )

@@ -327,11 +327,6 @@ datagrids:
                     - COALESCE(parentProduct.id, product.id) as mainProductId
                     - COALESCE(parentProduct.sku, product.sku) as sku
                     - COALESCE(parentProduct.skuUppercase, product.skuUppercase) as skuUppercase
-                    - (SELECT GROUP_CONCAT(innerLineItem.id)
-                        FROM Oro\Bundle\ShoppingListBundle\Entity\LineItem innerLineItem
-                        WHERE (innerLineItem.parentProduct = lineItem.parentProduct OR innerLineItem.product = lineItem.product)
-                        AND innerLineItem.shoppingList = lineItem.shoppingList
-                        AND innerLineItem.unit = lineItem.unit) as allLineItemsIds
                     - GROUP_CONCAT(lineItem.id) as displayedLineItemsIds
                 from:
                     - { table: 'Oro\Bundle\ShoppingListBundle\Entity\LineItem', alias: lineItem }

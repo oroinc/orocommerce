@@ -365,7 +365,7 @@ class ShoppingListRepositoryTest extends WebTestCase
         $this->assertEquals(
             [
                 $shoppingList1->getId() => 1,
-                $shoppingList2->getId() => 3,
+                $shoppingList2->getId() => 4,
             ],
             $this->getRepository()->getLineItemsCount([$shoppingList1, $shoppingList2])
         );

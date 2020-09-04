@@ -132,6 +132,27 @@ class LineItemRepository extends EntityRepository
     }
 
     /**
+     * @param int $shoppingListId
+     * @return bool
+     */
+    public function canBeGrouped(int $shoppingListId): bool
+    {
+        $qb = $this->createQueryBuilder('li');
+        $qb->resetDQLPart('select')
+            ->select($qb->expr()->count('li.id'))
+            ->where(
+                $qb->expr()->in('li.shoppingList', ':shopping_list'),
+                $qb->expr()->isNotNull('li.parentProduct')
+            )
+            ->setParameter('shopping_list', $shoppingListId)
+            ->groupBy('li.parentProduct')
+            ->having($qb->expr()->gt($qb->expr()->count('li.id'), 1))
+            ->setMaxResults(1);
+
+        return (bool) $qb->getQuery()->getOneOrNullResult();
+    }
+
+    /**
      * @param ShoppingList $shoppingList
      * @return array|LineItem[]
      */
