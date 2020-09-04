@@ -61,13 +61,24 @@
     {% set buttonOptions = {
         'role': 'button',
         'dataAttributes': dataAttributes,
-        'aCss': 'btn btn--block add-to-shopping-list-button ' ~ options.aCss,
+        'aCss': 'btn btn--block btn-main add-to-shopping-list-button ' ~ options.aCss,
         'moreButtonExtraClass': 'btn--action',
         'dataId': shoppingListId,
         'label' : options.actionLabel|replace({
             '{{ shoppingList }}': shoppingListLabel
         })
     } %}
+
+    {% if options.iCss is defined %}
+        {% set buttonOptions = buttonOptions|merge({
+            'iCss': options.iCss
+        }) %}
+    {% endif %}
+    {% if options.labelInIcon is defined %}
+        {% set buttonOptions = buttonOptions|merge({
+            'labelInIcon': options.labelInIcon
+        }) %}
+    {% endif %}
     {% if options.ariaLabel %}
         {% set buttonOptions = buttonOptions|merge({
             'ariaLabel': options.ariaLabel
@@ -84,7 +95,7 @@
         }) %}
     {% endif %}
 
-    <div class="btn-group btn-group--flex icons-holder btn-group--loading">
+    <div class="btn-group--flex icons-holder btn-group--loading">
         {{ UI.clientLink(buttonOptions) }}
     </div>
 {% endmacro %}
@@ -130,3 +141,26 @@
     </div>
 {% endmacro %}
 
+{% macro getQuickSearchHtml(options) %}
+    <div data-page-component-view="oroshoppinglist/js/app/views/shopping-list-quick-search"
+         data-page-component-options="{{ {
+             minimumResultsForSearch: options.minimumResultsForSearch|default(5)
+         }|json_encode }}"
+         class="{{ options.quickSearchRootClass|default('dropdown-search') }} hide"
+         data-intention="search"
+    >
+        <input type="text"
+               class="{{ options.quickSearchInputClass|default('input input--full input--size-s') }}"
+               placeholder="{{ options.quickSearchInputPlaceholder|default('oro.frontend.shoppinglist.dropdown.quick_search.placeholder')|trans }}"
+               aria-label="{{ options.quickSearchInputAriaLabel|default('oro.frontend.shoppinglist.dropdown.quick_search.aria_label')|trans }}"
+               data-role="quick-search"
+        >
+        <button class="btn btn--plain search-action"
+                aria-label="{{ options.quickSearchActionAriaLabel|default('oro.frontend.shoppinglist.dropdown.quick_search.clear')|trans }}"
+                disabled="disabled"
+        >
+            <span class="{{ options.quickSearchActionIcon|default('fa fa-remove fa--no-offset') }}" aria-hidden="true"></span>
+        </button>
+        <span class="quick-search-icon {{ options.quickSearchIcon|default('fa fa-search fa--no-offset') }}" aria-hidden="true"></span>
+    </div>
+{% endmacro %}

@@ -82,7 +82,7 @@ class CustomerGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuil
         }
 
         $this->executeDbQuery($er, $insert, $delete, $update, $where);
-        $this->triggerProductReindexation($product, $scope->getWebsite());
+        $this->triggerProductReindexation($product, $scope->getWebsite(), false);
     }
 
     /**
@@ -96,7 +96,7 @@ class CustomerGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuil
     /**
      * {@inheritdoc}
      */
-    public function productCategoryChanged(Product $product)
+    public function productCategoryChanged(Product $product, bool $scheduleReindex)
     {
         $category = $this->registry
             ->getManagerForClass('OroCatalogBundle:Category')
@@ -112,7 +112,7 @@ class CustomerGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuil
         $this->getRepository()->deleteByProduct($product);
         $this->getRepository()->insertByProduct($this->insertExecutor, $product, $category);
 
-        $this->triggerProductReindexation($product);
+        $this->triggerProductReindexation($product, null, $scheduleReindex);
     }
 
     /**

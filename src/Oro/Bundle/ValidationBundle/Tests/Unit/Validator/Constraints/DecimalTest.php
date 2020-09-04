@@ -29,7 +29,6 @@ class DecimalTest extends \PHPUnit\Framework\TestCase
         $this->validator->initialize($this->context);
 
         $this->locale = \Locale::getDefault();
-        \Locale::setDefault('en');
     }
 
     protected function tearDown(): void
@@ -42,7 +41,7 @@ class DecimalTest extends \PHPUnit\Framework\TestCase
     public function testConfiguration()
     {
         $this->assertEquals(
-            'Oro\Bundle\ValidationBundle\Validator\Constraints\DecimalValidator',
+            DecimalValidator::class,
             $this->constraint->validatedBy()
         );
         $this->assertEquals(Constraint::PROPERTY_CONSTRAINT, $this->constraint->getTargets());
@@ -57,9 +56,11 @@ class DecimalTest extends \PHPUnit\Framework\TestCase
      * @dataProvider validateDataProvider
      * @param mixed $data
      * @param boolean $correct
+     * @param string $locale
      */
-    public function testValidate($data, $correct)
+    public function testValidate($data, $correct, $locale = 'en')
     {
+        \Locale::setDefault($locale);
         if (!$correct) {
             $this->context->expects($this->once())
                 ->method('addViolation')
@@ -86,6 +87,26 @@ class DecimalTest extends \PHPUnit\Framework\TestCase
             'string float' => [
                 'data' => '10.4565',
                 'correct' => true
+            ],
+            'string float with trailing zeros fr' => [
+                'data' => '10.4560000000000000000000',
+                'correct' => true,
+                'locale' => 'fr'
+            ],
+            'string float with trailing zeros without fraction part fr' => [
+                'data' => '10.0000000000000000000',
+                'correct' => true,
+                'locale' => 'fr'
+            ],
+            'string float 100 fr' => [
+                'data' => '100',
+                'correct' => true,
+                'locale' => 'fr'
+            ],
+            'string float fr' => [
+                'data' => '10.456500000000000000000001',
+                'correct' => false,
+                'locale' => 'fr'
             ],
             'string float with grouping' => [
                 'data' => '12,210.4565',

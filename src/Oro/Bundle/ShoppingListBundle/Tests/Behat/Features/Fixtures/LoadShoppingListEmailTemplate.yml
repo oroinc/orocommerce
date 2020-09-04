@@ -1,0 +1,9 @@
+Oro\Bundle\EmailBundle\Entity\EmailTemplate:
+    account:
+        organization: '@organization'
+        is_system: 0
+        name: 'test_template'
+        entity_name: 'Oro\\Bundle\\ShoppingListBundle\\Entity\\ShoppingList'
+        type: 'html'
+        subject: 'Test Subject'
+        content: '\<h1\>Test Content\</h1\>'

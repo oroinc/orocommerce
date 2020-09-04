@@ -393,7 +393,7 @@ abstract class AbstractIndexer implements IndexerInterface
 
         //Tries to reset index for not existing website
         if (!$website) {
-            $context = $this->setContextCurrentWebsite([], $websiteId);
+            $context = $this->setContextWebsiteIds([], [$websiteId]);
             $this->resetIndex(null, $context);
 
             return false;

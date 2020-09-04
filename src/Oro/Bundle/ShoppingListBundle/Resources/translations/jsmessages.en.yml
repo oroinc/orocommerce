@@ -50,6 +50,9 @@ oro:
                 delete_title: Delete Confirmation
             matrix_grid_order:
                 item_number: 'Item #'
+            dropdown:
+                quick_search:
+                    no_match: 'No matches found'
             matrix_grid_update:
                 title: 'Edit "{{ product }}" in "{{ shoppinglist }}"'
             label: 'Item #:'
@@ -100,7 +103,7 @@ oro:
                     add.label: Add
                     edit.label: Save
                     notes.success: Line item note has been successfully updated
-                    
+
             inline_editing:
                 quantity:
                     aria_label: Quantity

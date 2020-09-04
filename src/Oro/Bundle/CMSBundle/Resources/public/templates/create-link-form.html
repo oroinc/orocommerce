@@ -1,0 +1,65 @@
+<form class="form-horizontal" action="#" data-page-component-view="oroform/js/app/views/form-validate-view">
+    <div class="control-group">
+        <div class="control-label">
+            <label for="<%- controlsNames.href %>-id"
+                   class="required"
+            ><%- _.__('oro.cms.wysiwyg.create_link_dialog.href') %><em>*</em>
+            </label>
+        </div>
+        <div class="controls">
+            <input id="<%- controlsNames.href %>-id"
+                   type="text" class="input full-width"
+                   required
+                   name="<%- controlsNames.href %>"
+                   value="<%- controlsValues.href %>"
+                   inputmode="url"
+                   autofocus
+            >
+        </div>
+    </div>
+    <div class="control-group">
+        <div class="control-label">
+            <label for="<%- controlsNames.text %>-id"
+                   class="required"
+            ><%-  _.__('oro.cms.wysiwyg.create_link_dialog.text') %><em>*</em>
+            </label>
+        </div>
+        <div class="controls">
+            <input id="<%- controlsNames.text %>-id"
+                   type="text" class="input full-width"
+                   required
+                   name="<%- controlsNames.text %>"
+                   value="<%- controlsValues.text %>"
+            >
+        </div>
+    </div>
+    <div class="control-group">
+        <div class="control-label">
+            <label for="<%- controlsNames.title %>-id"><%- _.__('oro.cms.wysiwyg.create_link_dialog.title') %></label>
+        </div>
+        <div class="controls">
+            <input id="<%- controlsNames.title %>-id"
+                   type="text" class="input full-width"
+                   name="<%- controlsNames.title %>"
+                   value="<%- controlsValues.title %>"
+            >
+        </div>
+    </div>
+    <div class="control-group">
+        <div class="control-label">
+            <label for="<%- controlsNames.target %>-id"><%- _.__('oro.cms.wysiwyg.create_link_dialog.target.label') %></label>
+        </div>
+        <div class="controls">
+            <select id="<%- controlsNames.target %>-id" name="<%- controlsNames.target %>"
+                    data-input-widget-options="<%- JSON.stringify({wrapperClass: 'full-width'}) %>"
+            >
+                <option value="_self"<% if (controlsValues.target !== '_blank') { %> selected<% } %>>
+                    <%- _.__('oro.cms.wysiwyg.create_link_dialog.target.this_window') %>
+                </option>
+                <option value="_blank"<% if (controlsValues.target === '_blank') { %> selected<% } %>>
+                    <%- _.__('oro.cms.wysiwyg.create_link_dialog.target.new_window') %>
+                </option>
+            </select>
+        </div>
+    </div>
+</form>

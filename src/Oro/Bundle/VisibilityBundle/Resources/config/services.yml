@@ -1,6 +1,6 @@
 services:
     oro_visibility.product_visibility_permission.cache:
-        parent: doctrine_cache.abstract.array
+        class: Doctrine\Common\Cache\ArrayCache
         calls:
             - [setNamespace, ['product_visibility_permission']]
 

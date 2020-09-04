@@ -267,7 +267,7 @@ class ProductImageListenerTest extends WebTestCase
         $productImageCopy2 = $productCopy2->getImages()->first();
 
         $this->assertMessagesCount($this->imageResizeTopic, 2);
-        $this->assertMessagesCount($this->productReindexTopic, 6);
+        $this->assertMessagesCount($this->productReindexTopic, 2);
         $this->assertMessagesCount(SearchTopics::INDEX_ENTITIES, 2);
         $this->assertMessagesCount(RedirectTopics::GENERATE_DIRECT_URL_FOR_ENTITIES, 2);
         $this->assertMessagesCount(DataAuditTopics::ENTITIES_CHANGED, 4);

@@ -33,12 +33,14 @@
                 border-width: 55px 20px 75px;
             }
 
-            #gjs-tools {
+            #gjs-tools,
+            .gjs-tools {
                 transform: translate(14px, -6px)
             }
 
             .#{$app-prefix}cv-canvas__tools {
                 margin-top: 55px;
+                height: 100%;
             }
         }
 
@@ -51,9 +53,11 @@
 
             .#{$app-prefix}cv-canvas__tools {
                 margin-top: 20px;
+                height: 100%;
             }
 
-            #gjs-tools {
+            #gjs-tools,
+            .gjs-tools {
                 transform: translate(49px, -6px);
             }
         }

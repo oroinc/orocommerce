@@ -8,6 +8,9 @@ use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
+/**
+ * Provides payment status of passed entity according to its transactions.
+ */
 class PaymentStatusProvider implements PaymentStatusProviderInterface
 {
     const FULL = 'full';
@@ -16,6 +19,7 @@ class PaymentStatusProvider implements PaymentStatusProviderInterface
     const AUTHORIZED = 'authorized';
     const DECLINED = 'declined';
     const PENDING = 'pending';
+    const CANCELED = 'canceled';
 
     /** @var PaymentTransactionProvider */
     protected $paymentTransactionProvider;
@@ -52,6 +56,10 @@ class PaymentStatusProvider implements PaymentStatusProviderInterface
      */
     private function getStatusByEntityAndTransactions($entity, ArrayCollection $paymentTransactions)
     {
+        if ($this->hasCanceledTransactions($paymentTransactions)) {
+            return self::CANCELED;
+        }
+
         $total = $this->totalProcessorProvider->getTotal($entity);
 
         if ($this->hasSuccessfulTransactions($paymentTransactions, $total)) {
@@ -190,6 +198,27 @@ class PaymentStatusProvider implements PaymentStatusProviderInterface
                         return $paymentTransaction->isActive()
                             && $paymentTransaction->isSuccessful()
                             && $paymentTransaction->getAction() === PaymentMethodInterface::INVOICE;
+                    }
+                )
+                ->isEmpty();
+    }
+
+    /**
+     * @param ArrayCollection $paymentTransactions
+     *
+     * @return bool
+     */
+    protected function hasCanceledTransactions(ArrayCollection $paymentTransactions)
+    {
+        return false === $paymentTransactions
+                ->filter(
+                    function (PaymentTransaction $paymentTransaction) {
+                        if ($paymentTransaction->isClone()) {
+                            return false;
+                        }
+
+                        return $paymentTransaction->isSuccessful()
+                            && $paymentTransaction->getAction() === PaymentMethodInterface::CANCEL;
                     }
                 )
                 ->isEmpty();

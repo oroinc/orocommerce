@@ -12,15 +12,21 @@
         {% set buttonOptions = {
             dataUrl: 'oro_shopping_list_frontend_add_product',
             dataAttributes: {},
-            'aCss': 'btn--info '
+            aCss: 'btn--info ',
+            iCss: 'fa fa-shopping-cart fa--fw fa--аs-line',
+            labelInIcon: false
         } %}
         {% set removeOptions = buttonOptions|merge({
             dataUrl: 'oro_shopping_list_frontend_remove_product',
-            actionLabel: 'oro.shoppinglist.actions.remove_from_shopping_list'|trans
+            actionLabel: 'oro.shoppinglist.actions.remove_from_shopping_list'|trans,
+            iCss: 'fa fa-remove fa--fw fa--аs-line',
+            labelInIcon: false
         }) %}
 
         {% set newOptions = buttonOptions|merge({
             ariaLabel: 'oro.shoppinglist.actions.add_to_new_shopping_list.aria_label'|trans,
+            iCss: 'fa fa-plus fa--fw fa--аs-line',
+            labelInIcon: false
         }) %}
 
         {% set options = layout_attr_defaults(attr, {
@@ -39,4 +45,10 @@
         } ) %}
         {{ buttons.getButtonsHtml(options) }}
     {% endif %}
+{% endblock %}
+
+{% block __shopping_list_buttons__shopping_list_quick_search_widget %}
+    {% import 'OroShoppingListBundle:ShoppingList/Frontend:buttons.html.twig' as buttons %}
+
+    {{ buttons.getQuickSearchHtml(quickSearchOptions|default({})) }}
 {% endblock %}

@@ -14,6 +14,7 @@ class OroSEOExtension extends Extension
      */
     public function load(array $configs, ContainerBuilder $container)
     {
+        $container->setParameter('oro_seo.tmp_directory', $this->getTempDirectory());
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
         $container->prependExtensionConfig($this->getAlias(), $config);
@@ -25,5 +26,25 @@ class OroSEOExtension extends Extension
         if (extension_loaded('zlib')) {
             $loader->load('sitemap_gzip.yml');
         }
+    }
+
+    /**
+     * Returns the temp directory that will be used to dump sitemap files.
+     *
+     * @return string
+     */
+    private function getTempDirectory(): string
+    {
+        $tmpDir = ini_get('upload_tmp_dir');
+        if (!$tmpDir || !is_dir($tmpDir) || !is_writable($tmpDir)) {
+            $tmpDir = sys_get_temp_dir();
+        }
+        $tmpDir = realpath($tmpDir);
+        if (DIRECTORY_SEPARATOR !== substr($tmpDir, -strlen(DIRECTORY_SEPARATOR))) {
+            $tmpDir .= DIRECTORY_SEPARATOR;
+        }
+        $tmpDir .= 'sitemap';
+
+        return $tmpDir;
     }
 }

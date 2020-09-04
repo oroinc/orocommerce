@@ -439,6 +439,18 @@ oro.cms:
             cancel_text: '⨯'
         settings:
             label: 'Settings'
+        create_link_dialog:
+            href: 'Href'
+            text: 'Text'
+            title: 'Title'
+            target:
+                label: 'Target'
+                this_window: 'This Window'
+                new_window: 'New Window'
+            apply: 'Apply'
+            insert: 'Insert'
+            add_new_link: 'Insert a Link'
+            add_edit_link: 'Edit a Link'
         mobile:
             flash_message: 'The screen size is too small to display an editor.'
     change_type:

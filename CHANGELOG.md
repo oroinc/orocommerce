@@ -16,6 +16,9 @@ The current file describes significant changes in the code that may affect the u
 
 ### Removed
 
+#### PricingBundle
+* The `unique_job_slug` option was removed during sending the import price list MQ message. 
+
 #### ShoppingListBundle
 * Method `Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository::findDuplicate()` is removed, use
   `Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository::findDuplicateInShoppingList()` instead.

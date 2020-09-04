@@ -3,7 +3,11 @@
 namespace Oro\Bundle\SEOBundle\Sitemap\Manager;
 
 use Oro\Bundle\SEOBundle\Manager\RobotsTxtFileManager;
+use Oro\Component\Website\WebsiteInterface;
 
+/**
+ * Manage sitemap section of robots.txt file.
+ */
 class RobotsTxtSitemapManager
 {
     const KEYWORD_SITEMAP = 'Sitemap';
@@ -36,22 +40,12 @@ class RobotsTxtSitemapManager
         $this->fileManager = $fileManager;
     }
 
-    public function flush()
+    /**
+     * @param WebsiteInterface $website
+     */
+    public function flush(WebsiteInterface $website)
     {
-        $this->ensureContentLoaded();
-
-        // Remove old sitemaps
-        foreach ($this->existingSitemaps as $sitemap) {
-            if (in_array($sitemap, $this->newSitemaps, true)) {
-                continue;
-            }
-            $needle = sprintf('%s: %s %s', self::KEYWORD_SITEMAP, $sitemap, RobotsTxtFileManager::AUTO_GENERATED_MARK);
-            foreach ($this->content as $key => $line) {
-                if (strpos($line, $needle) !== false) {
-                    unset($this->content[$key]);
-                }
-            }
-        }
+        $this->ensureContentLoaded($website);
 
         // Add new sitemaps
         foreach ($this->newSitemaps as $sitemap) {
@@ -66,7 +60,7 @@ class RobotsTxtSitemapManager
             );
         }
 
-        $this->fileManager->dumpContent(implode(PHP_EOL, $this->content));
+        $this->fileManager->dumpContent(implode(PHP_EOL, $this->content), $website);
         $this->clear();
     }
 
@@ -80,10 +74,13 @@ class RobotsTxtSitemapManager
         }
     }
 
-    private function ensureContentLoaded()
+    /**
+     * @param WebsiteInterface $website
+     */
+    private function ensureContentLoaded(WebsiteInterface $website)
     {
         if (!$this->content) {
-            $this->parseContent($this->fileManager->getContent());
+            $this->parseContent($this->fileManager->getContent($website));
         }
     }
 

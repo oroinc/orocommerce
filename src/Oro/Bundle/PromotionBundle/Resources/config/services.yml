@@ -350,13 +350,13 @@ services:
 
     oro_promotion.promotion_executor.cache:
         public: false
-        parent: doctrine_cache.abstract.array
+        class: Doctrine\Common\Cache\ArrayCache
         calls:
             - [ setNamespace, [ 'oro_promotion_executor' ] ]
 
     oro_promotion.matching_products.cache:
         public: false
-        parent: doctrine_cache.abstract.array
+        class: Doctrine\Common\Cache\ArrayCache
         calls:
             - [setNamespace, ['oro_promotion_matching_products']]
 

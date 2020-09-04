@@ -25,7 +25,7 @@ dynamic-imports:
         - oroform/js/app/views/editor/related-id-relation-editor-view
         - oroui/js/tools/search-api-accessor
         - oroshoppinglist/js/app/views/editor/shoppinglist-line-item-editor-view
-    oroshoppinglist:
+    oroui:
         - oro/matrix-grid-order-widget
         - oro/product-shopping-lists-widget
         - oro/shopping-list-create-widget
@@ -66,6 +66,9 @@ dynamic-imports:
         - tpl-loader!oroshoppinglist/templates/editor/shoppinglist-line-item-editor.html
         - tpl-loader!oroshoppinglist/templates/editor/shoppinglist-update-all-btn.html
         - tpl-loader!oroshoppinglist/templates/actions/add-notes-action.html
+    oroshoppinglistquicksearch:
+        - oroshoppinglist/js/app/views/shopping-list-quick-search
+
 map:
     "*":
         orodatagrid/js/app/components/cell-popup-editor-component: oroshoppinglist/js/app/components/shopping-list-cell-popup-editor-component

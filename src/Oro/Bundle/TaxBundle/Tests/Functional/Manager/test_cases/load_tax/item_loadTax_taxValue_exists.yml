@@ -68,6 +68,7 @@ databaseBeforeSecondPart:
             entityId: '@order_line_item_1->id'
             address: address
             result: '@simple_result'
+disableTaxCalculation: true
 expectedResult: # loaded from fixtures
     row:
         includingTax: '105.54'

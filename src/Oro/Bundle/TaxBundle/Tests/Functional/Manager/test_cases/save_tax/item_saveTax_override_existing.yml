@@ -67,6 +67,7 @@ databaseBeforeSecondPart:
             entityId: '@order_line_item_1->id'
             address: address
             result: '@simple_result'
+disableTaxCalculation: false
 expectedResult: # values from simple_order_item_1 used to check database override
     row:
         includingTax: '36.76' # 33.3 + 3.4632 = 36.7632

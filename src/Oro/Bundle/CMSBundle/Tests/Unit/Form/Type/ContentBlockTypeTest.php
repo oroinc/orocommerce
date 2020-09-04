@@ -29,6 +29,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntityValidator;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\CollectionValidator;
 use Symfony\Component\Validator\ConstraintValidatorFactoryInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
 class ContentBlockTypeTest extends FormIntegrationTestCase
@@ -69,6 +70,7 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
     {
         $htmlTagHelper = $this->createMock(HtmlTagHelper::class);
         $purifierScopeProvider = $this->createMock(HTMLPurifierScopeProvider::class);
+        $translator = $this->createMock(TranslatorInterface::class);
         $logger = $this->createMock(LoggerInterface::class);
         $twig = $this->createMock(Environment::class);
 
@@ -76,7 +78,12 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
         $twigContent = new TwigContent();
 
         return [
-            $wysiwygConstraint->validatedBy() => new WYSIWYGValidator($htmlTagHelper, $purifierScopeProvider, $logger),
+            $wysiwygConstraint->validatedBy() => new WYSIWYGValidator(
+                $htmlTagHelper,
+                $purifierScopeProvider,
+                $translator,
+                $logger
+            ),
             $twigContent->validatedBy() => new TwigContentValidator($twig)
         ];
     }

@@ -314,10 +314,10 @@ export default [{
         defaults: 'block',
         list: [{
             value: 'block',
-            name: __('oro.cms.wysiwyg.style_manager.enable')
+            name: __('oro.cms.wysiwyg.style_manager.disable')
         }, {
             value: 'flex',
-            name: __('oro.cms.wysiwyg.style_manager.disable')
+            name: __('oro.cms.wysiwyg.style_manager.enable')
         }]
     }, {
         property: 'label-parent-flex',

@@ -1,0 +1,9 @@
+knp_gaufrette:
+    adapters:
+        sitemaps:
+            local:
+                directory: '%kernel.project_dir%/public/media/sitemaps'
+    filesystems:
+        sitemaps:
+            adapter: sitemaps
+            alias: sitemaps_uploads_filesystem

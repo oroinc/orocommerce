@@ -139,8 +139,7 @@ class PriceListImportCommand extends Command
                 'processorAlias' => self::DEFAULT_PROCESSOR,
                 'process'        => $process,
                 'options'        => [
-                    'price_list_id' => $priceListId,
-                    'unique_job_slug' => $priceListId,
+                    'price_list_id' => $priceListId
                 ]
             ]
         );

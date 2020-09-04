@@ -1,4 +1,4 @@
 dynamic-imports:
-    oroconsent:
+    orouser:
         - oroconsent/js/app/views/base-consent-item-view
         - oroconsent/js/app/views/consents-group-view

@@ -52,6 +52,7 @@ class CategoryAddOrReplaceStrategyTest extends WebTestCase
             $container->get('oro_entity.doctrine_helper'),
             $container->get('oro_importexport.field.related_entity_state_helper')
         );
+        $this->strategy->setOwnershipSetter($container->get('oro_organization.entity_ownership_associations_setter'));
         $this->strategy->setLocalizedFallbackValueClass(LocalizedFallbackValue::class);
         $this->strategy->setCategoryImportExportHelper(
             $container->get('oro_catalog.importexport.helper.category_import_export')

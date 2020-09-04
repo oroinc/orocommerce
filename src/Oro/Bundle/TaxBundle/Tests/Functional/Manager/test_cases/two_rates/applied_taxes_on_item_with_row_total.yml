@@ -7,16 +7,6 @@ configuration:
     start_calculation_with: row_total
     product_prices_include_tax: false
 databaseBefore:
-    'Oro\Bundle\OrderBundle\Entity\OrderAddress':
-        us_ca_billing_address:
-            country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
-            region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-CA' } }
-    'Oro\Bundle\OrderBundle\Entity\Order':
-        simple_order:
-            poNumber: simple_order
-            customer: { class: 'Oro\Bundle\CustomerBundle\Entity\Customer', query: { name: 'customer.orphan' } }
-            currency: USD
-            shippingAddress: '@us_ca_billing_address'
     'Oro\Bundle\ProductBundle\Entity\Product':
         product_1:
             sku: product_1
@@ -38,6 +28,45 @@ databaseBefore:
             taxCode: '@product_tax_code'
             __calls:
                 - addName: ['@product_name_4']
+    'Oro\Bundle\TaxBundle\Entity\ProductTaxCode':
+        product_tax_code:
+            code: product_tax_code
+    'Oro\Bundle\ProductBundle\Entity\ProductName':
+        product_name_1:
+            string: 'product 1'
+        product_name_2:
+            string: 'product 2'
+        product_name_3:
+            string: 'product 3'
+        product_name_4:
+            string: 'product 4'
+    'Oro\Bundle\TaxBundle\Entity\TaxRule':
+        tax_rule_1:
+            tax: { class: 'Oro\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX1' } }
+            taxJurisdiction: { class: 'Oro\Bundle\TaxBundle\Entity\TaxJurisdiction', query: { code: 'TAX3' } }
+            productTaxCode: '@product_tax_code'
+            customerTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode', query: { code: 'TAX1' } }
+        tax_rule_2:
+            tax: { class: 'Oro\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX3' } }
+            taxJurisdiction: { class: 'Oro\Bundle\TaxBundle\Entity\TaxJurisdiction', query: { code: 'TAX3' } }
+            productTaxCode: '@product_tax_code'
+            customerTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode', query: { code: 'TAX1' } }
+databaseBeforeSecondPart:
+    'Oro\Bundle\OrderBundle\Entity\OrderAddress':
+        us_ca_billing_address:
+            country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+            region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-CA' } }
+    'Oro\Bundle\OrderBundle\Entity\Order':
+        simple_order:
+            poNumber: simple_order
+            customer: { class: 'Oro\Bundle\CustomerBundle\Entity\Customer', query: { name: 'customer.orphan' } }
+            currency: USD
+            shippingAddress: '@us_ca_billing_address'
+            __calls:
+                -   addLineItem: ['@order_line_item_1']
+                -   addLineItem: ['@order_line_item_2']
+                -   addLineItem: ['@order_line_item_3']
+                -   addLineItem: ['@order_line_item_4']
     'Oro\Bundle\CurrencyBundle\Entity\Price':
         usd_price_3.42:
             value: 3.42
@@ -76,30 +105,7 @@ databaseBefore:
             quantity: 35
             price: '@usd_price_24.80'
             product: '@product_4'
-    'Oro\Bundle\TaxBundle\Entity\ProductTaxCode':
-        product_tax_code:
-            code: product_tax_code
-    'Oro\Bundle\ProductBundle\Entity\ProductName':
-        product_name_1:
-            string: 'product 1'
-        product_name_2:
-            string: 'product 2'
-        product_name_3:
-            string: 'product 3'
-        product_name_4:
-            string: 'product 4'
-    'Oro\Bundle\TaxBundle\Entity\TaxRule':
-        tax_rule_1:
-            tax: { class: 'Oro\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX1' } }
-            taxJurisdiction: { class: 'Oro\Bundle\TaxBundle\Entity\TaxJurisdiction', query: { code: 'TAX3' } }
-            productTaxCode: '@product_tax_code'
-            customerTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode', query: { code: 'TAX1' } }
-        tax_rule_2:
-            tax: { class: 'Oro\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX3' } }
-            taxJurisdiction: { class: 'Oro\Bundle\TaxBundle\Entity\TaxJurisdiction', query: { code: 'TAX3' } }
-            productTaxCode: '@product_tax_code'
-            customerTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode', query: { code: 'TAX1' } }
-databaseBeforeSecondPart: []
+disableTaxCalculation: false
 expectedResult:
     total:
         includingTax: '1616.55' # 165.32 + 151.21 + 276.65 + 1023.37

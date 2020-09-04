@@ -34,6 +34,7 @@ databaseBeforeSecondPart:
             entityId: '@simple_order->id'
             address: address
             result: '@simple_result'
+disableTaxCalculation: true
 expectedResult:
     total:
         includingTax: '867.9' # 789 + 78.9

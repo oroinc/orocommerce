@@ -36,4 +36,13 @@ class OroSEOExtensionTest extends ExtensionTestCase
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
     }
+
+    public function testTempDirectoryPath()
+    {
+        $this->loadExtension(new OroSEOExtension());
+        self::assertEquals(
+            $this->actualParameters['oro_seo.tmp_directory'],
+            realpath(sys_get_temp_dir()) . '/sitemap'
+        );
+    }
 }

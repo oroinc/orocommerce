@@ -10,6 +10,7 @@ import DigitalAssetHelper from 'orocms/js/app/grapesjs/helpers/digital-asset-hel
 const modelAttrStart = 'data-gjs-';
 const textTags = ['ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'];
 const wrappedTags = ['ul', 'ol', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'];
+const editableTags = ['div', 'section', 'header', 'footer', 'main', 'address', 'aside', 'article'];
 
 /**
  *
@@ -26,7 +27,10 @@ export const htmlParser = (html, config, compTypes, parserCss) => {
     const el = document.createElement('div');
     el.innerHTML = html;
 
-    res.html = parseNodes(el, config, compTypes);
+    res.html = parseNodes(el, config, compTypes, {
+        tagName: 'div',
+        root: el.childNodes.length > 1
+    });
 
     // Detach style tags and parse them
     if (parserCss) {
@@ -210,6 +214,7 @@ function parseNodes(el, config, ct = '', parent = {}) {
                 !model.type && (model.type = 'text');
                 model.content = firstChild.nodeValue;
             } else {
+                model.root = false;
                 model.components = parseNodes(node, config, ct, model);
             }
         }
@@ -278,7 +283,10 @@ function parseNodes(el, config, ct = '', parent = {}) {
         }
 
         if (wrappedTags.includes(model.tagName)) {
-            if (parent.type !== 'text' && parent.type !== 'default') {
+            if (!parent.root && editableTags.includes(parent.tagName)) {
+                parent.type = 'text';
+                parent.layerable = 1;
+            } else if (parent.root || (parent.type !== 'text' && parent.type !== 'default')) {
                 model = {
                     tagName: 'div',
                     type: 'text',

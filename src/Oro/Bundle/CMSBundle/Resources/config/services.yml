@@ -236,7 +236,9 @@ services:
             - { name: doctrine.event_listener, event: preUpdate }
             - { name: doctrine.event_listener, event: preRemove }
             - { name: doctrine.event_listener, event: postFlush }
+            - { name: doctrine.event_listener, event: preClear }
             - { name: kernel.event_listener, event: kernel.terminate, method: onTerminate }
+            - { name: kernel.event_listener, event: console.terminate, method: onTerminate }
             - { name: container.service_subscriber }
             - { name: container.service_subscriber, id: oro_cms.parser.twig }
             - { name: container.service_subscriber, id: oro_cms.wysiwyg.chain_twig_function_processor }
@@ -370,6 +372,7 @@ services:
         arguments:
             - '@oro_ui.html_tag_helper'
             - '@oro_cms.provider.html_purifier_scope_provider'
+            - '@translator'
             - '@logger'
         tags:
             - { name: validator.constraint_validator, alias: wysiwyg_validator }

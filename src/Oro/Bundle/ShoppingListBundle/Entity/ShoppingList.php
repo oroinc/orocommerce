@@ -49,6 +49,11 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *                       "currency"="currency",
  *                       "subtotal"="subtotalValue"
  *                  }
+ *              },
+ *              "contact_information"={
+ *                  "email"={
+ *                      {"fieldName"="contactInformation"}
+ *                  }
  *              }
  *          },
  *          "ownership"={

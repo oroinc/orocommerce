@@ -314,6 +314,11 @@ oro:
                     added.label: 'Product has been added to "%shoppinglist%"'
                     removed.label: 'Product has been removed from "%shoppinglist%"'
                     cant_remove.label: 'No current ShoppingList or no Product in current ShoppingList'
+            dropdown:
+                quick_search:
+                    clear: Clear field
+                    placeholder: Quick Search
+                    aria_label: Search shopping lists
 
                 sku.label: 'SKU'
                 item.label: 'Item'

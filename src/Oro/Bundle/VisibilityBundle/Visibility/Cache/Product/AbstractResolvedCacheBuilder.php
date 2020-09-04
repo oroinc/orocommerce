@@ -20,6 +20,9 @@ use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\BasicOperat
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\CacheBuilderInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
+/**
+ * Base class for visibility cache builders.
+ */
 abstract class AbstractResolvedCacheBuilder implements CacheBuilderInterface
 {
     /**
@@ -36,11 +39,6 @@ abstract class AbstractResolvedCacheBuilder implements CacheBuilderInterface
      * @var string
      */
     protected $cacheClass;
-
-    /**
-     * @var int
-     */
-    protected $visibilityFromConfig;
 
     /**
      * @var EntityRepository
@@ -197,13 +195,17 @@ abstract class AbstractResolvedCacheBuilder implements CacheBuilderInterface
     /**
      * @param Product $product
      * @param Website $website
+     * @param bool $schedule
      */
-    protected function triggerProductReindexation(Product $product, Website $website = null)
-    {
+    protected function triggerProductReindexation(
+        Product $product,
+        Website $website = null,
+        bool $schedule = false
+    ): void {
         $this->productReindexManager->reindexProduct(
             $product,
             $website ? $website->getId() : null,
-            false
+            $schedule
         );
     }
 

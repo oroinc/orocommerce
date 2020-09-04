@@ -42,3 +42,5 @@ Oro\Bundle\CatalogBundle\Entity\CategoryLongDescription:
             - Length:
                   max: 64
             - Choice: { callback: getFallbacks }
+        wysiwyg:
+            - Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYG: ~

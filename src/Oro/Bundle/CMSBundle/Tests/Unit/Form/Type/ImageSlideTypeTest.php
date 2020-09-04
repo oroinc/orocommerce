@@ -25,6 +25,7 @@ use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Asset\Context\ContextInterface;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ImageSlideTypeTest extends FormIntegrationTestCase
 {
@@ -124,6 +125,10 @@ class ImageSlideTypeTest extends FormIntegrationTestCase
             ->willReturn(['br', 'a']);
 
         $htmlTagHelper = new HtmlTagHelper($htmlTagProvider);
+
+        /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject $translator */
+        $translator = $this->createMock(TranslatorInterface::class);
+        $htmlTagHelper->setTranslator($translator);
 
         /** @var ContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(ContextInterface::class);
