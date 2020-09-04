@@ -47,6 +47,7 @@ define(function(require) {
          */
         doDelete() {
             const success = __(this.messages.success, this.model.toJSON());
+            const isSubItem = this.model.get('_isVariant');
 
             this.model.classList().add('grid-row--loading');
             this.model.destroy({
@@ -55,6 +56,7 @@ define(function(require) {
                 reset: false,
                 uniqueOnly: true,
                 toggleLoading: false,
+                recountTotalRecords: !isSubItem,
                 success() {
                     messenger.notificationFlashMessage('success', success);
                     mediator.trigger('shopping-list:refresh');
