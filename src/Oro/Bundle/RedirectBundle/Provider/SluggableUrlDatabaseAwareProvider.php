@@ -57,6 +57,10 @@ class SluggableUrlDatabaseAwareProvider implements SluggableUrlProviderInterface
      */
     public function getUrl($routeName, $routeParameters, $localizationId)
     {
+        if (!$routeName) {
+            return null;
+        }
+
         // Skip routes that does not have slugs
         $sluggableRoutes = $this->getSluggableRoutes();
         $isKnownRoute = array_key_exists($routeName, $sluggableRoutes);
