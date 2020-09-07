@@ -94,6 +94,9 @@ const messages = {
                     loop: __('oro.cms.wysiwyg.trait_manager.traits.loop.label'),
                     controls: __('oro.cms.wysiwyg.trait_manager.traits.controls.label')
                 },
+                title: {
+                    autoplay: __('oro.cms.wysiwyg.trait_manager.traits.autoplay.title')
+                },
                 // In a simple trait, like text input, these are used on input attributes
                 attributes: {
                     id: {
