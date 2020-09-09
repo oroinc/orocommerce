@@ -3,7 +3,7 @@ import HtmlTemplateCell from 'oro/datagrid/cell/html-template-cell';
 const ShoppingListItemCell = HtmlTemplateCell.extend({
     constructor: function ShoppingListItemCell(options) {
         ShoppingListItemCell.__super__.constructor.call(this, options);
-        this.listenTo(this.model, 'change:notes', this.render);
+        this.listenTo(this.model, 'change', this.render);
     },
 
     render() {

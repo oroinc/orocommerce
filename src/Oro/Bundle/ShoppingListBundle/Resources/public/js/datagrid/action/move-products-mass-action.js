@@ -99,10 +99,10 @@ define(function(require) {
         _doAjaxRequest() {
             const {values} = this.getActionParameters();
             if (values.length) {
-                values.split(',').forEach((value => {
+                values.split(',').forEach(value => {
                     const model = this.datagrid.collection.get(value);
                     model.classList().add('grid-row--loading');
-                }).bind(this));
+                });
             } else {
                 this.datagrid.collection.models.forEach(model => {
                     model.classList().add('grid-row--loading');

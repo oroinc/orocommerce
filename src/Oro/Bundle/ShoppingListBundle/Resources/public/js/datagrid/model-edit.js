@@ -10,7 +10,7 @@ const ShoppingListEditItemModel = ShoppingListModel.extend({
     initialize(attributes, options) {
         ShoppingListEditItemModel.__super__.initialize.call(this, attributes, options);
         if (!this.get('isConfigurable')) {
-            this.set('unit', this.getCurrentModelUnit(), {silent: true});
+            this.set('unitCode', this.getCurrentModelUnit(), {silent: true});
         }
     },
 

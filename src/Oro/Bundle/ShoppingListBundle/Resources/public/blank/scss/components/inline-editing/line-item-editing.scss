@@ -42,7 +42,7 @@
 
 .line-item-container,
 .line-item-configurable {
-    padding-right: 63px;
+    padding-right: 64px;
 }
 
 .line-item-container {
@@ -98,15 +98,23 @@
         }
     }
 
-    .select2-container {
-        min-width: 65px;
+    .select2-container,
+    .select {
+        width: 70px;
         border-bottom-left-radius: 0;
         border-top-left-radius: 0;
         margin-left: -1px;
         text-align: left;
+    }
 
+    .select2-container {
         .select2-choice {
             padding-bottom: 12px;
         }
+    }
+
+    .select {
+        padding-top: 11px;
+        padding-left: 11px;
     }
 }

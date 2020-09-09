@@ -8,7 +8,7 @@
             aria-label="_.__('oro.frontend.shoppinglist.inline_editing.quantity.aria_label')"
             autocomplete="off"
         >
-        <select name="unit" class="select" tabindex="0" aria-label="_.__('oro.frontend.shoppinglist.inline_editing.unit.aria_label')" required>
+        <select name="unitCode" class="select input" tabindex="0" aria-label="_.__('oro.frontend.shoppinglist.inline_editing.unit.aria_label')" required>
             <% _.each(data.units, function(data, value) { %>
                 <option value="<%- value %>"<% if (data.selected) { %> selected<% } %><% if (data.disabled) { %> disabled<% } %>>
                     <%- data.label %>

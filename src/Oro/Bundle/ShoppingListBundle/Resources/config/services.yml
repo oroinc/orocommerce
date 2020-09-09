@@ -686,3 +686,12 @@ services:
 
     Oro\Bundle\ShoppingListBundle\Form\Handler\MatrixGridOrderFormHandler:
         alias: 'oro_shopping_list.form.handler.matrix_grid_order'
+
+    oro_shopping_list.handler.shopping_list_line_item_batch_update:
+        class: Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemBatchUpdateHandler
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_shopping_list.manager.shopping_list'
+
+    Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemBatchUpdateHandler:
+        alias: 'oro_shopping_list.handler.shopping_list_line_item_batch_update'
