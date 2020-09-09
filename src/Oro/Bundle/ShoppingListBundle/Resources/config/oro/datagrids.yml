@@ -89,6 +89,7 @@ datagrids:
                 icon:          eye
                 acl_resource:  oro_shopping_list_view
                 rowAction:     true
+
     shopping-list-grid:
         extends: base-shopping-list-grid
         source:
@@ -127,6 +128,7 @@ datagrids:
                 customer_user:
                     type:      string
                     data_name: customer_user
+
     customer-shopping-lists-grid:
         extends: base-shopping-list-grid
         source:
@@ -158,6 +160,7 @@ datagrids:
                 customer_user:
                     type:      string
                     data_name: customer_user
+
     customer-user-shopping-lists-grid:
         extends: base-shopping-list-grid
         source:
@@ -167,6 +170,7 @@ datagrids:
                         - shopping_list.customerUser = :customer_user_id
             bind_parameters:
                 - customer_user_id
+
     frontend-customer-user-shopping-lists-base-grid:
         acl_resource: oro_shopping_list_frontend_view
         options:
@@ -251,6 +255,7 @@ datagrids:
                 createdAt: DESC
         properties:
             id: ~
+
     frontend-customer-user-shopping-list-select-grid:
         extends: frontend-customer-user-shopping-lists-base-grid
         source:
@@ -267,6 +272,7 @@ datagrids:
                 template: OroShoppingListBundle:Datagrid:Column/shopping_list_select_radio.html.twig
                 manageable: false
                 order: 0
+
     frontend-customer-user-shopping-lists-grid:
         extends: frontend-customer-user-shopping-lists-base-grid
         properties:
@@ -292,6 +298,7 @@ datagrids:
                 link:          update_link
                 icon:          pencil-square-o
                 acl_resource:  oro_shopping_list_frontend_update
+
     frontend-customer-user-shopping-list-grid:
         acl_resource: oro_shopping_list_frontend_view
         extended_entity_name: 'Oro\Bundle\ShoppingListBundle\Entity\LineItem'
@@ -416,6 +423,7 @@ datagrids:
                 frontend_type: row_array
             errors:
                 frontend_type: row_array
+
     frontend-customer-user-shopping-list-assign-grid:
         acl_resource: oro_shopping_list_frontend_assign
         options:
@@ -496,9 +504,14 @@ datagrids:
                     data_name: customerUser.enabled
                 confirmed:
                     data_name: customerUser.confirmed
+
     frontend-customer-user-shopping-list-edit-grid:
         extends: frontend-customer-user-shopping-list-grid
         acl_resource: oro_shopping_list_frontend_update
+        source:
+            query:
+                select:
+                    - IDENTITY(lineItem.shoppingList) as shoppingListId
         inline_editing:
             enable: true
             mobile_enabled: true
@@ -507,15 +520,13 @@ datagrids:
             cell_editor:
                 component: 'oroshoppinglist/js/app/components/shopping-list-cell-popup-editor-component'
             save_api_accessor:
-                http_method: PATCH
-                route: oro_api_shopping_list_frontend_put_line_item
+                http_method: PUT
+                route: oro_shopping_list_frontend_line_item_batch_update
+                query_parameter_names:
+                    - _wid
         options:
             jsmodules:
                 - oroshoppinglist/js/datagrid/builder/shoppinglist-editing-builder
-        source:
-            query:
-                select:
-                    - IDENTITY(lineItem.shoppingList) as shoppingListId
         columns:
             item:
                 frontend_type: shoppinglist-item
@@ -616,6 +627,7 @@ datagrids:
                         resizable: true
                         autoResize: true
                         width: 800
+
     shopping-list-line-items-grid:
         acl_resource:      oro_shopping_list_view
         extended_entity_name: 'Oro\Bundle\ShoppingListBundle\Entity\LineItem'

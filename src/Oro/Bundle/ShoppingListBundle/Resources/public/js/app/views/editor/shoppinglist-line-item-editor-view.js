@@ -6,7 +6,7 @@ const NumberFormatter = require('orofilter/js/formatter/number-formatter');
 const ShoppinglistLineItemEditorView = TextEditorView.extend({
     events: {
         'input input[name="quantity"]': 'onValueChange',
-        'change select[name="unit"]': 'onValueChange'
+        'change select[name="unitCode"]': 'onValueChange'
     },
 
     template: require('tpl-loader!oroshoppinglist/templates/editor/shoppinglist-line-item-editor.html'),
@@ -38,7 +38,14 @@ const ShoppinglistLineItemEditorView = TextEditorView.extend({
         };
     },
 
-    focus() {
+    focus(event) {
+        const focused = event.target.getAttribute('data-focused');
+        if (focused) {
+            if (focused === '.select2-container') {
+                this.$el.find(focused).select2('open');
+            }
+            return;
+        }
         this.$('input[name="quantity"]').setCursorToEnd().focus();
     },
 
@@ -52,7 +59,17 @@ const ShoppinglistLineItemEditorView = TextEditorView.extend({
         return res;
     },
 
-    onFocusout() {},
+    onFocusout(event) {
+        const select2 = this.$('select[name="unitCode"]').data('select2');
+
+        if (
+            !this.isChanged() &&
+            !$.contains(this.el, event.relatedTarget) &&
+            !select2.opened()
+        ) {
+            this.trigger('cancelAction');
+        }
+    },
 
     onValueChange() {
         this.updateSubmitButtonState();
@@ -62,7 +79,7 @@ const ShoppinglistLineItemEditorView = TextEditorView.extend({
     getValue: function() {
         return {
             quantity: parseFloat(this.$('input[name="quantity"]').val()),
-            unit: this.$('select[name="unit"]').val()
+            unitCode: this.$('select[name="unitCode"]').val()
         };
     },
 

@@ -4,7 +4,7 @@ import HtmlTemplateCell from 'oro/datagrid/cell/html-template-cell';
 const ShoppinglistLineItemCell = HtmlTemplateCell.extend({
     events: {
         'mouseenter': _.noop,
-        'focusin': 'enterEditModeIfNeeded',
+        'focusin': 'onFocusin',
         'focusout': _.noop,
         'focus': 'onFocus',
         'blur': _.noop,
@@ -14,12 +14,14 @@ const ShoppinglistLineItemCell = HtmlTemplateCell.extend({
 
     constructor: function ShoppinglistLineItemCell(options) {
         ShoppinglistLineItemCell.__super__.constructor.call(this, options);
+
+        this.listenTo(this.model, 'change:unitCode', this.render);
     },
 
-    initialize(options) {
-        ShoppinglistLineItemCell.__super__.initialize.call(this, options);
-
-        this.listenTo(this.model, 'change:unit', this.render);
+    onFocusin(e) {
+        this.enterEditModeIfNeeded(e);
+        this.$el.find('.line-item-container .focus-visible')
+            .removeClass('focus-visible');
     }
 });
 

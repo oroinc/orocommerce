@@ -4,6 +4,26 @@ import mediator from 'oroui/js/mediator';
 import InlineEditingPlugin from 'orodatagrid/js/app/plugins/grid/inline-editing-plugin';
 import updateAllBtnTpl from 'tpl-loader!oroshoppinglist/templates/editor/shoppinglist-update-all-btn.html';
 import tools from 'oroui/js/tools';
+import BaseComponent from 'oroui/js/app/components/base/component';
+
+/**
+ * Recursive resolve query objects
+ * @param obj
+ * @returns {{}}
+ */
+function parseQueryObj(obj) {
+    return _.mapObject(obj, value => {
+        if (typeof value === 'object') {
+            value = parseQueryObj(value);
+        }
+
+        try {
+            value = JSON.parse(value);
+        } catch (e) {}
+
+        return value;
+    });
+}
 
 const ShoppingListInlineEditingPlugin = InlineEditingPlugin.extend({
     componentsToSend: [],
@@ -17,7 +37,7 @@ const ShoppingListInlineEditingPlugin = InlineEditingPlugin.extend({
     enable() {
         ShoppingListInlineEditingPlugin.__super__.enable.call(this);
 
-        this.$updateAllButton.on(`click${this.eventNamespace()}`, this.updateAll.bind(this));
+        this.$updateAllButton.on(`click${this.eventNamespace()}`, this.saveItems.bind(this));
 
         this.listenTo(this.main.collection, {
             'change:_state': this.onChangeCollection
@@ -36,9 +56,17 @@ const ShoppingListInlineEditingPlugin = InlineEditingPlugin.extend({
 
     patchCellConstructor(column) {
         ShoppingListInlineEditingPlugin.__super__.patchCellConstructor.call(this, column);
+        const inlineEditingPlugin = this;
 
         const cell = column.get('cell').extend({
-            delayedIconRender() {}
+            delayedIconRender() {},
+            enterEditModeIfNeeded(e) {
+                if (this.isEditable()) {
+                    inlineEditingPlugin.enterEditMode(this, e);
+                }
+                e.preventDefault();
+                e.stopPropagation();
+            }
         });
 
         column.set('cell', cell);
@@ -68,13 +96,22 @@ const ShoppingListInlineEditingPlugin = InlineEditingPlugin.extend({
         }
     },
 
-    updateAll() {
-        this.componentsToSend = this.activeEditorComponents.filter(component => component.isChanged());
-        const data = this.componentsToSend.map(component => component.view.getServerUpdateData());
-        _.invoke(this.componentsToSend, 'toggleLoadingOverlay', true);
+    saveItems(component) {
+        let componentsToSend = [];
+        if (component instanceof BaseComponent && component.isChanged()) {
+            componentsToSend = [component];
+        } else {
+            componentsToSend = this.activeEditorComponents.filter(component => component.isChanged());
+        }
+
+        componentsToSend = _.compact(_.invoke(componentsToSend, 'beforeSaveHook'));
+        const data = componentsToSend.map(component => component.getServerUpdateData());
 
         const sendData = {
-            data
+            data,
+            fetchData: _.extend(this.getGridFetchData(), {
+                appearanceType: this.main.collection.state.appearanceType
+            })
         };
 
         const savePromise = this.saveApiAccessor.send({
@@ -82,48 +119,51 @@ const ShoppingListInlineEditingPlugin = InlineEditingPlugin.extend({
             _wid: tools.createRandomUUID()
         }, sendData);
 
-        savePromise.done(_.bind(this.onSaveSuccess, this))
-            .fail(_.bind(this.onSaveError, this))
+        const sendModels = componentsToSend.map(component => component.getModel());
+
+        savePromise.done(_.bind(this.onSaveSuccess, this, sendModels.slice()))
+            .fail(_.bind(this.onSaveError, this, sendModels.slice()))
             .always(_.bind(this.onSaveComplete, this));
 
+        _.invoke(componentsToSend, 'exitEditMode', true);
         return savePromise;
     },
 
-    onSaveSuccess(response) {
-        const {totalRecords, hideToolbar} = this.main.collection.state;
-
-        this.main.collection.set({
-            data: response.data.items,
-            options: {
-                totalRecords,
-                hideToolbar,
-                ...response.options
-            }
-        }, {
+    onSaveSuccess(models, response) {
+        this.main.collection.set(response, {
             uniqueOnly: true,
-            remove: false,
-            parse: true
+            parse: true,
+            toggleLoading: false,
+            alreadySynced: true
         });
 
-        _.invoke(this.componentsToSend, 'flashRowHighlight', 'success');
+        models.forEach(model => {
+            model.flashRowHighlight(model.get('errors').length ? 'error' : 'success');
+        });
     },
 
-    onSaveError() {
-        _.invoke(this.componentsToSend, 'flashRowHighlight', 'error');
+    onSaveError(models) {
+        _.invoke(models, 'flashRowHighlight', 'error');
     },
 
     onSaveComplete() {
-        this.componentsToSend.forEach(component => {
-            component.toggleLoadingOverlay(false);
-            component.exitEditMode(true);
-        });
         mediator.trigger('shopping-list:refresh');
 
         this.toggleUpdateAll();
-        this.componentsToSend = [];
     },
 
-    enterEditMode(cell, fromPreviousCell) {
+    /**
+     * Get current grid GET data
+     * Unpack to query string and parse string
+     * @returns {Object}
+     */
+    getGridFetchData() {
+        return parseQueryObj(tools.unpackFromQueryString(
+            tools.packToQueryString(this.main.collection.getFetchData())
+        ));
+    },
+
+    enterEditMode(cell, event) {
         const existingEditorComponent = this.getOpenedEditor(cell);
         if (existingEditorComponent) {
             return;
@@ -150,6 +190,8 @@ const ShoppingListInlineEditingPlugin = InlineEditingPlugin.extend({
             plugin: this
         }));
 
+        editorComponent.view.component = editorComponent;
+
         this.activeEditorComponents.push(editorComponent);
         this.listenTo(editorComponent, 'dispose', this.onDisposeEditor.bind(this, editorComponent));
         this.listenTo(editorComponent, 'cancelAction', () => {
@@ -157,7 +199,7 @@ const ShoppingListInlineEditingPlugin = InlineEditingPlugin.extend({
         });
 
         editorComponent.view.scrollIntoView();
-        editorComponent.view.focus();
+        editorComponent.view.focus(event);
     },
 
     onDisposeEditor(instance) {
