@@ -46,7 +46,7 @@ const ComponentManager = BaseClass.extend({
         [...RichTextEditor.getAll(), ...rteActions]
             .sort((a, b) => a.order - b.order)
             .forEach(item => {
-                const {group, name, command, result} = item;
+                const {group, name, command, result, init} = item;
                 if (RichTextEditor.get(name)) {
                     RichTextEditor.remove(name);
                 }
@@ -68,6 +68,10 @@ const ComponentManager = BaseClass.extend({
                     }
 
                     $(item.btn).appendTo($actionBar.find(`[data-group-by="${group}"]`));
+                }
+
+                if (init && _.isFunction(init)) {
+                    init(RichTextEditor);
                 }
             });
     },
