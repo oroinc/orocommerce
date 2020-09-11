@@ -25,11 +25,30 @@ const VideoTypeBuilder = BaseTypeBuilder.extend({
                 getProviderTrait() {
                     const providerTrait = this.constructor.__super__.getProviderTrait.call(this);
                     const options = providerTrait.options
-                        .filter(prov => componentRestriction.isAllow(this.getTagNameByProvider(prov.value)));
+                        .filter(prov => componentRestriction.isAllow(this.getTagNameByProvider(prov.value)))
+                        .filter(prov => {
+                            // Skip source provider
+                            if (prov.value === 'so') {
+                                return true;
+                            }
+
+                            const providerUrl = this.getUrlByProvider(prov.value);
+
+                            if (providerUrl === null) {
+                                return false;
+                            }
+
+                            return componentRestriction.isAllowedDomain(providerUrl);
+                        });
+
                     return {
                         ...providerTrait,
                         options
                     };
+                },
+
+                getUrlByProvider(provider) {
+                    return this.get(`${provider}Url`) || null;
                 },
 
                 getTagNameByProvider(provider) {

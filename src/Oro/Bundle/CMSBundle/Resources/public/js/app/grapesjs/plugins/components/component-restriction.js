@@ -64,6 +64,12 @@ define(function(require) {
         editor.getAllowedConfig = () => {
             return this.allowTags;
         };
+
+        this.allowedIframeDomains = options.allowedIframeDomains || [];
+
+        editor.getAllowedIframeDomains = () => {
+            return this.allowedIframeDomains;
+        };
     };
 
     ComponentRestriction.prototype = {
@@ -113,6 +119,23 @@ define(function(require) {
          */
         getTags: function(element, mirror = false) {
             return _.uniq(getTags(element, mirror));
+        },
+
+        /**
+         * Check is domain allowed
+         * @param {string} domain
+         * @returns {boolean}
+         */
+        isAllowedDomain: function(domain) {
+            const allowedIframeDomains = this.editor.getAllowedIframeDomains();
+
+            try {
+                const {hostname, pathname} = new URL(domain);
+
+                return allowedIframeDomains.includes(`${hostname}${pathname}`);
+            } catch (e) {
+                return false;
+            }
         },
 
         /**

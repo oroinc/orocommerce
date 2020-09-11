@@ -124,6 +124,7 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
         $this->assertEquals('component/module', $view->vars['attr']['data-page-component-module']);
         $this->assertEquals(
             '{"view":"app\/view","allow_tags":["h1","h2","h3"]'
+            . ',"allowed_iframe_domains":[]'
             . ',"autoRender":true'
             . ',"stylesInputSelector":"[data-grapesjs-styles=\"wysiwyg_style\"]",'
             . '"propertiesInputSelector":"[data-grapesjs-properties=\"wysiwyg_properties\"]"}',
@@ -156,7 +157,9 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
 
         $this->assertEquals('component/module', $view->vars['attr']['data-page-component-module']);
         $this->assertEquals(
-            '{"view":"app\/view","allow_tags":false,"autoRender":true,'
+            '{"view":"app\/view","allow_tags":false,'
+            . '"allowed_iframe_domains":false,'
+            . '"autoRender":true,'
             . '"stylesInputSelector":"[data-grapesjs-styles=\"wysiwyg_style\"]",'
             . '"propertiesInputSelector":"[data-grapesjs-properties=\"wysiwyg_properties\"]"}',
             $view->vars['attr']['data-page-component-options']
