@@ -92,7 +92,18 @@ const ComponentManager = BaseClass.extend({
                 options = {...builderOptions, ...options};
             }
 
-            const instance = new componentType.Constructor(options);
+            const ComponentType = componentType.Constructor;
+            const isAllowedContentType = _.isFunction(ComponentType.isAllowed)
+                ? ComponentType.isAllowed(options)
+                : true;
+
+            if (!isAllowedContentType) {
+                this.editor.DomComponents.removeType(id);
+                this.editor.BlockManager.remove(id);
+                continue;
+            }
+
+            const instance = new ComponentType(options);
 
             instance.execute();
             this.typeBuilders.push(instance);

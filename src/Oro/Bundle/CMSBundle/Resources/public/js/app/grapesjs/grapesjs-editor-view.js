@@ -31,7 +31,7 @@ const GrapesjsEditorView = BaseView.extend({
      * @inheritDoc
      */
     optionNames: BaseView.prototype.optionNames.concat([
-        'autoRender', 'allow_tags', 'builderPlugins', 'currentTheme', 'canvasConfig',
+        'autoRender', 'allow_tags', 'allowed_iframe_domains', 'builderPlugins', 'currentTheme', 'canvasConfig',
         'contextClass', 'storageManager', 'stylesInputSelector', 'storagePrefix', 'themes'
     ]),
 
@@ -56,6 +56,12 @@ const GrapesjsEditorView = BaseView.extend({
      * @property {Object}
      */
     allow_tags: null,
+
+    /**
+     * Allow iframe domains
+     * @property {Array}
+     */
+    allowed_iframe_domains: [],
 
     /**
      * Page context class
@@ -256,14 +262,20 @@ const GrapesjsEditorView = BaseView.extend({
         this.setAlternativeFields();
         this.setActiveTheme(this.getCurrentTheme());
 
+        const extendOptions = {};
+
         if (this.allow_tags) {
-            this.builderPlugins['grapesjs-components'] = _.extend({},
-                this.builderPlugins['grapesjs-components'],
-                {
-                    allowTags: this.allow_tags
-                }
-            );
+            extendOptions.allowTags = this.allow_tags;
         }
+
+        if (this.allowed_iframe_domains) {
+            extendOptions.allowedIframeDomains = this.allowed_iframe_domains;
+        }
+
+        this.builderPlugins['grapesjs-components'] = _.extend({},
+            this.builderPlugins['grapesjs-components'],
+            extendOptions
+        );
 
         GrapesjsEditorView.__super__.initialize.call(this, options);
     },
