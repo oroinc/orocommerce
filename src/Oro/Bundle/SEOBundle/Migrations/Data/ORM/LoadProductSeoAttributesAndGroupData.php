@@ -41,7 +41,7 @@ class LoadProductSeoAttributesAndGroupData extends AbstractFixture implements
         if (!$this->skipIfAppliedPreviously()) {
             $this->makeProductAttributes(
                 $this->fields,
-                ExtendScope::ORIGIN_SYSTEM,
+                ExtendScope::OWNER_SYSTEM,
                 ['frontend' => ['is_displayable' => false]]
             );
             $this->addSeoGroup($manager);
