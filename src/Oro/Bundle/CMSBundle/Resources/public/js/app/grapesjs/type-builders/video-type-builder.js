@@ -14,16 +14,41 @@ const VideoTypeBuilder = BaseTypeBuilder.extend({
 
     execute() {
         const componentRestriction = this.editor.ComponentRestriction;
+        const {BlockManager} = this.editor;
+
         this.editor.DomComponents.addType(this.componentType, {
             model: {
+                defaults: {
+                    classes: ['video-container']
+                },
+
                 getProviderTrait() {
                     const providerTrait = this.constructor.__super__.getProviderTrait.call(this);
                     const options = providerTrait.options
-                        .filter(prov => componentRestriction.isAllow(this.getTagNameByProvider(prov.value)));
+                        .filter(prov => componentRestriction.isAllow(this.getTagNameByProvider(prov.value)))
+                        .filter(prov => {
+                            // Skip source provider
+                            if (prov.value === 'so') {
+                                return true;
+                            }
+
+                            const providerUrl = this.getUrlByProvider(prov.value);
+
+                            if (providerUrl === null) {
+                                return false;
+                            }
+
+                            return componentRestriction.isAllowedDomain(providerUrl);
+                        });
+
                     return {
                         ...providerTrait,
                         options
                     };
+                },
+
+                getUrlByProvider(provider) {
+                    return this.get(`${provider}Url`) || null;
                 },
 
                 getTagNameByProvider(provider) {
@@ -64,6 +89,11 @@ const VideoTypeBuilder = BaseTypeBuilder.extend({
                 }
             }
         });
+
+        const video = BlockManager.get('video');
+        const content = video.get('content');
+
+        delete content.style;
     }
 });
 

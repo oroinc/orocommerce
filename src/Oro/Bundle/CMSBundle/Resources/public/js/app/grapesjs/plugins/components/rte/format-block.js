@@ -1,5 +1,8 @@
 import __ from 'orotranslation/js/translator';
+import $ from 'jquery';
+import 'jquery.select2';
 import selectTemplate from 'tpl-loader!orocms/templates/grapesjs-select-action.html';
+import select2OptionTemplate from 'tpl-loader!orocms/templates/grapesjs-select2-option.html';
 
 export default {
     name: 'formatBlock',
@@ -29,6 +32,17 @@ export default {
 
     group: 'format-block',
 
+    init(rte) {
+        const $select = $(rte.actionbar.querySelector('[name="tag"]'));
+        $select.inputWidget('create', 'select2', {
+            initializeOptions: {
+                minimumResultsForSearch: -1,
+                dropdownCssClass: 'gjs-rte-select2-dropdown',
+                formatResult: state => select2OptionTemplate({state})
+            }
+        });
+    },
+
     result(rte) {
         const value = rte.actionbar.querySelector('[name="tag"]').value;
 
@@ -48,9 +62,9 @@ export default {
 
         if (value !== 'false') {
             if (['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'].indexOf(value) !== -1) {
-                select.value = value;
+                $(select).select2('val', value);
             } else {
-                select.value = 'normal';
+                $(select).select2('val', 'normal');
             }
         }
     }

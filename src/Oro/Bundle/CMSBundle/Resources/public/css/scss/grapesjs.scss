@@ -272,6 +272,15 @@
                 padding-#{$end}: 15px;
                 min-width: 95px;
             }
+
+            .select2-container {
+                width: 120px;
+                max-width: 120px;
+            }
+
+            .#{$rte-prefix}select2 {
+                text-align: left;
+            }
         }
 
         .unlink {
@@ -284,6 +293,42 @@
 
         .#{$app-prefix}am-close {
             top: -10px;
+        }
+    }
+}
+
+.#{$rte-prefix}select2 {
+    &-dropdown {
+        width: 200px !important; // Override inline styles
+    }
+
+    &-option {
+        &--h1,
+        &--h2,
+        &--h3,
+        &--h4,
+        &--h5,
+        &--h6 {
+            font-weight: $headings-font-weight;
+            line-height: $headings-line-height;
+        }
+        &--h1 {
+            @include font-size($h1-font-size);
+        }
+        &--h2 {
+            @include font-size($h2-font-size);
+        }
+        &--h3 {
+            @include font-size($h3-font-size);
+        }
+        &--h4 {
+            @include font-size($h4-font-size);
+        }
+        &--h5 {
+            @include font-size($h5-font-size);
+        }
+        &--h6 {
+            @include font-size($h6-font-size);
         }
     }
 }
