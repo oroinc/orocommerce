@@ -46,7 +46,7 @@ const ComponentManager = BaseClass.extend({
         [...RichTextEditor.getAll(), ...rteActions]
             .sort((a, b) => a.order - b.order)
             .forEach(item => {
-                const {group, name, command, result} = item;
+                const {group, name, command, result, init} = item;
                 if (RichTextEditor.get(name)) {
                     RichTextEditor.remove(name);
                 }
@@ -69,6 +69,10 @@ const ComponentManager = BaseClass.extend({
 
                     $(item.btn).appendTo($actionBar.find(`[data-group-by="${group}"]`));
                 }
+
+                if (init && _.isFunction(init)) {
+                    init(RichTextEditor);
+                }
             });
     },
 
@@ -88,7 +92,18 @@ const ComponentManager = BaseClass.extend({
                 options = {...builderOptions, ...options};
             }
 
-            const instance = new componentType.Constructor(options);
+            const ComponentType = componentType.Constructor;
+            const isAllowedContentType = _.isFunction(ComponentType.isAllowed)
+                ? ComponentType.isAllowed(options)
+                : true;
+
+            if (!isAllowedContentType) {
+                this.editor.DomComponents.removeType(id);
+                this.editor.BlockManager.remove(id);
+                continue;
+            }
+
+            const instance = new ComponentType(options);
 
             instance.execute();
             this.typeBuilders.push(instance);

@@ -154,8 +154,7 @@ class OroFrontendTestFrameworkBundleInstaller implements Installation, ExtendExt
                         'attribute' => ['is_attribute' => true],
                         'extend' => [
                             'is_extend' => true,
-                            'owner' => ExtendScope::OWNER_CUSTOM,
-                            'origin' => ExtendScope::ORIGIN_CUSTOM,
+                            'owner' => ExtendScope::OWNER_CUSTOM
                         ],
                         'dataaudit' => ['auditable' => false],
                         'importexport' => ['excluded' => false],
@@ -172,8 +171,7 @@ class OroFrontendTestFrameworkBundleInstaller implements Installation, ExtendExt
                         ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_HIDDEN,
                         'extend' => [
                             'is_extend' => true,
-                            'owner' => ExtendScope::OWNER_CUSTOM,
-                            'origin' => ExtendScope::ORIGIN_CUSTOM,
+                            'owner' => ExtendScope::OWNER_CUSTOM
                         ],
                         'datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_HIDDEN],
                         'dataaudit' => ['auditable' => false],
@@ -191,8 +189,7 @@ class OroFrontendTestFrameworkBundleInstaller implements Installation, ExtendExt
                         ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_HIDDEN,
                         'extend' => [
                             'is_extend' => true,
-                            'owner' => ExtendScope::OWNER_CUSTOM,
-                            'origin' => ExtendScope::ORIGIN_CUSTOM,
+                            'owner' => ExtendScope::OWNER_CUSTOM
                         ],
                         'datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_HIDDEN],
                         'dataaudit' => ['auditable' => false],

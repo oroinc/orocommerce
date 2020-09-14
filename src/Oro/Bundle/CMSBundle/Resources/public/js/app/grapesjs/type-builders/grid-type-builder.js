@@ -3,19 +3,23 @@ import BaseTypeBuilder from 'orocms/js/app/grapesjs/type-builders/base-type-buil
 const GRID_STYLES = `<style>
     .grid-row {
         display: table;
-        width: 100%;
         table-layout: fixed;
+        width: 100%;
         min-height: 75px;
     }
     .grid-cell {
-        width: 25%;
         display: table-cell;
+        width: 25%;
         vertical-align: top;
+        padding-right: 4px;
+        padding-left: 4px;
     }
     @media (max-width: 768px) {
         .grid-cell {
-            width: 100%;
             display: block;
+            width: 100%;
+            margin-left: 0;
+            margin-bottom: 8px;
         }
     }
 </style>`;

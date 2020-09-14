@@ -42,7 +42,7 @@ class LoadDefaultAttributesData extends AbstractFixture implements
     {
         $this->makeProductAttributes(
             $this->fields,
-            ExtendScope::ORIGIN_SYSTEM,
+            ExtendScope::OWNER_SYSTEM,
             ['frontend' => ['is_displayable' => false]]
         );
     }
