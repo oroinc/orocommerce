@@ -75,7 +75,6 @@ class LoadPricesAttributeData extends AbstractFixture implements
             ],
             'extend' => [
                 'is_extend' => false,
-                'origin' => ExtendScope::ORIGIN_SYSTEM,
                 'owner' => ExtendScope::OWNER_SYSTEM,
                 'state' => ExtendScope::STATE_ACTIVE,
                 'is_serialized' => false,

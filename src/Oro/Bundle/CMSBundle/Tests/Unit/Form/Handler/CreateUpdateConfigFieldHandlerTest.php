@@ -70,7 +70,6 @@ class CreateUpdateConfigFieldHandlerTest extends \PHPUnit\Framework\TestCase
         $fieldOptions = [
             'extend' => [
                 'is_extend' => true,
-                'origin' => ExtendScope::ORIGIN_CUSTOM,
                 'owner' => ExtendScope::OWNER_CUSTOM,
                 'state' => ExtendScope::STATE_NEW,
                 'is_serialized' => true

@@ -23,7 +23,7 @@ trait MakeProductAttributesTrait
      * @param string $owner
      * @param array $otherScopes
      */
-    private function makeProductAttributes(array $fields, $owner = ExtendScope::ORIGIN_SYSTEM, array $otherScopes = [])
+    private function makeProductAttributes(array $fields, $owner = ExtendScope::OWNER_SYSTEM, array $otherScopes = [])
     {
         $configManager = $this->getConfigManager();
         $configHelper = $this->container->get('oro_entity_config.config.config_helper');
