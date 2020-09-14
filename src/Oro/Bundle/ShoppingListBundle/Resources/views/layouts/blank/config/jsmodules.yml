@@ -49,6 +49,7 @@ dynamic-imports:
         - oroshoppinglist/js/app/views/product-shopping-lists-view
         - oroshoppinglist/js/app/views/shoppinglist-widget-view
         - oroshoppinglist/js/app/views/shopping-list-assign-link-view
+        - oroshoppinglist/js/app/views/summary-wrapper-view
         - oroshoppinglist/js/datagrid/builder/shoppinglist-flat-data-builder
         - oroshoppinglist/js/datagrid/builder/shoppinglist-grid-options-builder
         - oroshoppinglist/js/datagrid/builder/shoppinglist-editing-builder
