@@ -22,7 +22,7 @@
             </div>
             <div class="shift-mobile-row mobile-row show-in-tablet">
                 <% if (obj.sku) { %>
-                    <span class="highlighted-in-mobile"><%- sku %></span>
+                    <span class="highlighted-in-mobile break-all"><%- sku %></span>
                 <% } %>
                 <% if (!isConfigurable) { %>
                     <%= oroshoppinglist.renderInventoryStatus(inventoryStatus) %>
@@ -45,7 +45,7 @@
             <% } %>
         <% } else { %>
             <div class="grid-line-items__row-item mobile-column show-in-tablet">
-                <span class="highlighted-in-mobile"><%- sku %></span>
+                <span class="highlighted-in-mobile break-all"><%- sku %></span>
                 <%= oroshoppinglist.renderInventoryStatus(inventoryStatus) %>
             </div>
             <div class="grid-line-items__configuration shift-mobile-row">

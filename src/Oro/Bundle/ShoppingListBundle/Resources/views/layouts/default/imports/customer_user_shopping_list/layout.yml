@@ -18,6 +18,11 @@ layout:
             optionValue:
                 '%label%': '=data["entity"].getLabel()'
 
+        - '@setOption':
+            id: page_main_content
+            optionName: attr.class
+            optionValue: 'responsive-shopping-list-layout'
+
         - '@addTree':
             items:
                 __container:
@@ -62,7 +67,7 @@ layout:
                     options:
                         reloadEvents: ['datagrid_create_before', 'shopping-list:refresh']
                         showLoading: false
-                        onLoadingCssClass: 'blur'
+                        onLoadingCssClass: 'loading-blur'
                 __totals:
                     blockType: price_totals
                     options:
@@ -87,6 +92,7 @@ layout:
                         reloadEvents: ['datagrid_create_before', 'shopping-list:refresh']
                         showLoading: false
                         disableControls: true
+                        onLoadingCssClass: 'loading-blur'
                 __combined_button:
                     blockType: combined_buttons
                     options:

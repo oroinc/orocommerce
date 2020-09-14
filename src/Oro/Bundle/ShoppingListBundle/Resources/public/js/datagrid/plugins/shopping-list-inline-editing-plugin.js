@@ -39,6 +39,7 @@ const ShoppingListInlineEditingPlugin = InlineEditingPlugin.extend({
 
         this.$updateAllButton.on(`click${this.eventNamespace()}`, this.saveItems.bind(this));
 
+        this.listenToOnce(this.main, 'rendered', this.toggleUpdateAll);
         this.listenTo(this.main.collection, {
             'change:_state': this.onChangeCollection
         });
@@ -85,14 +86,24 @@ const ShoppingListInlineEditingPlugin = InlineEditingPlugin.extend({
     },
 
     toggleUpdateAll() {
-        if (this.hasChanges()) {
-            if (!this.main.$el.find('.grid-header-cell-quantity .btn').length) {
-                this.main.$el.find('.grid-header-cell-quantity').append(this.$updateAllButton);
-            }
+        if (!this.main.$el.find('.grid-header-cell-quantity [data-role="update-all"]').length) {
+            this.main.$el.find('.grid-header-cell-quantity').append(this.$updateAllButton);
+        }
 
-            this.$updateAllButton.toggle(true);
+        if (this.hasChanges()) {
+            this.$updateAllButton
+                .css('visibility', 'visible')
+                .attr({
+                    'disabled': null,
+                    'aria-hidden': null
+                });
         } else {
-            this.$updateAllButton.toggle(false);
+            this.$updateAllButton
+                .css('visibility', 'hidden')
+                .attr({
+                    'disabled': true,
+                    'aria-hidden': true
+                });
         }
     },
 

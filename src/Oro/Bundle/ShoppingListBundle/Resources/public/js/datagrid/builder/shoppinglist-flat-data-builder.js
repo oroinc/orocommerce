@@ -61,6 +61,8 @@ export const flattenData = data => {
                         id: item.productId
                     }
                 };
+
+                lastFiltered.row_class_name += ' filtered-out';
             }
 
             flatData.push(...subData);

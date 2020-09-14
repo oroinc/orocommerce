@@ -138,7 +138,7 @@
             autoWidth: false,
             moveToPanel: false,
             viewport: {
-                minScreenType: 'desktop'
+                minScreenType: 'responsive-shopping-list-grid-ovreflow'
             }
         }
     }) %}
@@ -172,7 +172,7 @@
 
 {% block __customer_user_shopping_list__totals_placeholder_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' totals-placeholder',
+        '~class': ' totals-placeholder loading-blur',
     }) %}
 
     <div {{ block('block_attributes') }}>&nbsp;</div>
@@ -180,7 +180,7 @@
 
 {% block __customer_user_shopping_list__combined_button_placeholder_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' combined-buttons-placeholder',
+        '~class': ' combined-buttons-placeholder loading-blur',
     }) %}
 
     <div {{ block('block_attributes') }}>&nbsp;</div>

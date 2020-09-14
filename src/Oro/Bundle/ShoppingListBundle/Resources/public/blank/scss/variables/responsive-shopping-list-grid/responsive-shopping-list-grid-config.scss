@@ -1,9 +1,12 @@
 /* @theme: blank; */
+$responsive-shopping-cell-desktop-offset: 23px !default;
 
 $responsive-shopping-list-sub-item-highlight-offset-mobile: 6px !default;
 $responsive-shopping-list-notification-container-offset: 8px !default;
 $responsive-shopping-sub-row-border-width: 12px !default;
 $responsive-shopping-sub-row-border-offset: $responsive-shopping-sub-row-border-width solid get-color('additional', 'ultra') !default;
+
+$responsive-shopping-sub-row-cell-inner-offset: $datagrid-body-cell-offset / 2 !default;
 
 // Mobile
 

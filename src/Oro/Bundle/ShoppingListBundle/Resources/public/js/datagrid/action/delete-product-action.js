@@ -49,7 +49,7 @@ define(function(require) {
             const success = __(this.messages.success, this.model.toJSON());
             const isSubItem = this.model.get('_isVariant');
 
-            this.model.classList().add('grid-row--loading');
+            this.model.classList().add('loading');
             this.model.destroy({
                 url: this.getLink(),
                 wait: true,

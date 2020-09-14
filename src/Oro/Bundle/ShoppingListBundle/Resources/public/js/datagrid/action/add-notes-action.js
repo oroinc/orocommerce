@@ -4,6 +4,9 @@ import mediator from 'oroui/js/mediator';
 import ModelAction from 'oro/datagrid/action/model-action';
 import Modal from 'oroui/js/modal';
 import template from 'tpl-loader!oroshoppinglist/templates/actions/add-notes-action.html';
+
+const ENTER_KEY_CODE = 13;
+
 /**
  * Add notes action, triggers REST PATCH request
  *
@@ -87,7 +90,14 @@ const AddNotesAction = ModelAction.extend({
 
         modal.open();
 
-        modal.$('[name="notes"]').focus().val(notes).click();
+        modal.$('[name="notes"]')
+            .focus()
+            .val(notes)
+            .on('keydown', e => {
+                if (e.keyCode === ENTER_KEY_CODE && e.ctrlKey) {
+                    modal.trigger('ok');
+                }
+            });
     },
 
     updateNotes(notes) {

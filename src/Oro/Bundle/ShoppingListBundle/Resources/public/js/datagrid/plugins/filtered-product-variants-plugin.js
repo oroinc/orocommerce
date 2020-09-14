@@ -6,6 +6,11 @@ const FilteredProductVariantsPlugin = BasePlugin.extend({
      */
     hideClass: 'hide',
 
+    /**
+     * @type {string}
+     */
+    filteredOutClass: 'filtered-out',
+
     constructor: function FilteredProductVariantsPlugin(grid, options) {
         FilteredProductVariantsPlugin.__super__.constructor.call(this, grid, options);
     },
@@ -28,8 +33,10 @@ const FilteredProductVariantsPlugin = BasePlugin.extend({
 
     onClick: function(event) {
         const $button = this.main.$(event.currentTarget);
-        const rowSelector = `tr.${this.hideClass}[data-product-group="${$button.data('groupId')}"]`;
-        this.main.$(rowSelector).removeClass(this.hideClass);
+        const rowSelector = `tr[data-product-group="${$button.data('groupId')}"]`;
+        const rowHiddenSelector = `${rowSelector}.${this.hideClass}`;
+        this.main.$(rowSelector).removeClass(this.filteredOutClass);
+        this.main.$(rowHiddenSelector).removeClass(this.hideClass);
         $button.hide();
     }
 });

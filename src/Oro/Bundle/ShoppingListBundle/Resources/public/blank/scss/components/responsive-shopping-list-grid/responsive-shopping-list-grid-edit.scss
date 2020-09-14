@@ -3,6 +3,8 @@
 .responsive-shopping-list-grid-edit {
     .select-row-cell {
         position: relative;
+
+        width: $responsive-shopping-list-edit-select-row-cell-width;
     }
 
     .cell-checkbox {
@@ -65,6 +67,12 @@
 
             background-color: $responsive-shopping-sub-row-border-mobile-color;
         }
+    }
+
+    .filtered-out .select-row-cell:after {
+        top: -1px;
+        height: $datagrid-body-cell-offset +  $responsive-shopping-list-edit-action-in-desktop-height / 2 - $responsive-shopping-sub-row-cell-inner-offset;
+        bottom: auto;
     }
 
     .sub-row-last .select-row-cell:after {
@@ -215,6 +223,11 @@
                  top: 50%;
                  right: 50%;
             }
+        }
+
+        .filtered-out .select-row-cell:after {
+            bottom: auto;
+            height: $responsive-shopping-grid-row-offset-mobile + $responsive-shopping-body-cell-offset-y-mobile + $responsive-shopping-list-edit-select-row-cell-height-mobile / 2 - $responsive-shopping-sub-row-cell-inner-offset;
         }
 
         .sub-row-last .select-row-cell:after {
