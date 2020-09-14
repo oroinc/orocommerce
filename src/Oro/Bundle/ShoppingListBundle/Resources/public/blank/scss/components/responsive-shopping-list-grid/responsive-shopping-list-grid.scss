@@ -1,11 +1,5 @@
 /* @theme: blank; */
 
-.responsive-order-layout {
-    .totals-container {
-        margin-bottom: 10px;
-    }
-}
-
 .responsive-shopping-list-grid {
     .show-in-tablet,
     .show-in-mobile {
@@ -16,34 +10,31 @@
         vertical-align: top;
     }
 
-    .highlight {
-        background: get-color('ui', 'warning');
-    }
-
     .group-row {
         .grid-cell {
-            padding-bottom: 0;
-
             border-bottom-color: transparent;
-        }
-
-        + .highlight {
-            border-top: $responsive-shopping-sub-row-border-offset;
         }
     }
 
     .sub-row:not(.sub-row-last) .grid-cell {
-        padding-bottom: 0;
+        padding-top: $responsive-shopping-sub-row-cell-inner-offset;
+        padding-bottom: $responsive-shopping-sub-row-cell-inner-offset;
         border-bottom-color: transparent;
     }
 
-    .grid-body-cell-quantity,
-    .grid-body-cell-price,
+    .grid-header-cell-quantity,
     .grid-header-cell-price,
     .grid-header-cell-subtotal,
+    .grid-body-cell-quantity,
+    .grid-body-cell-price,
     .grid-body-cell-subtotal,
     .grid-body-cell-inventoryStatus {
         text-align: right;
+    }
+
+    .grid-body-cell-sku {
+        width: 80px;
+        word-break: break-all;
     }
 
     .grid-header-cell-quantity,
@@ -86,27 +77,43 @@
         line-height: inherit;
         border-width: 0;
     }
+
+    .grid-scrollable-container {
+        overflow-x: visible;
+    }
 }
 
 @include breakpoint('desktop') {
     .responsive-shopping-list-grid {
         .grid-body-cell-sku,
         .grid-body-cell-inventoryStatus,
-        .grid-body-cell-quantity,
+        .grid-body-cell-quantity:not(.editable),
         .grid-body-cell-unit,
         .grid-body-cell-price,
         .grid-body-cell-subtotal {
-            padding-top: 23px;
+            padding-top: $responsive-shopping-cell-desktop-offset;
+        }
+
+        .sub-row:not(.sub-row-last) {
+            .grid-body-cell-sku,
+            .grid-body-cell-inventoryStatus,
+            .grid-body-cell-price,
+            .grid-body-cell-subtotal {
+                padding-top: $responsive-shopping-cell-desktop-offset - $responsive-shopping-sub-row-cell-inner-offset;
+            }
+        }
+
+        .grid-body-cell-inventoryStatus {
+            white-space: nowrap;
+        }
+
+        .group-row .grid-cell {
+            padding-bottom: $responsive-shopping-sub-row-cell-inner-offset;
         }
     }
 }
 
 @include breakpoint('tablet') {
-    .responsive-order-layout {
-        display: flex;
-        flex-direction: row-reverse;
-    }
-
     .responsive-shopping-list-grid {
         .grid-body-cell-item {
             width: 360px;
@@ -149,10 +156,6 @@
 }
 
 @include breakpoint('mobile-landscape') {
-    .responsive-order-layout {
-        flex-direction: column;
-    }
-
     .responsive-shopping-list-grid {
         .show-in-mobile {
             display: inline-flex;

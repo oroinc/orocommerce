@@ -111,6 +111,19 @@
     }
 }
 
+@include breakpoint('tablet') {
+    .grid-line-items {
+        &__title {
+            position: relative;
+
+            &-content {
+                white-space: normal;
+                text-overflow: inherit;
+            }
+        }
+    }
+}
+
 @include breakpoint('mobile-landscape') {
     .grid-line-items {
         &__row {
@@ -124,14 +137,6 @@
             align-items: center;
             min-height: $product-item-image-holder-tiny-height;
             margin-bottom: $grid-line-items-container-offset-x-mobile;
-        }
-
-        &__title {
-            position: relative;
-
-            &-content {
-                white-space: normal;
-            }
         }
 
         &__field {

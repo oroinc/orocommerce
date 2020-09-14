@@ -29,10 +29,6 @@
         background: get-color('additional', 'base');
 
         @include clearfix();
-
-        .blur {
-            filter: blur(3px);
-        }
     }
 
     &__container {

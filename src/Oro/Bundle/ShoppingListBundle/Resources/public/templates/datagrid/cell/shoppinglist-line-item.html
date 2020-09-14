@@ -6,6 +6,6 @@
     </div>
 <% } else { %>
     <div class="mobile-row label-in-mobile-start label-bold-in-mobile line-item-configurable">
-        <span class="label-in-mobile-end" data-label="&nbsp;<%- unit %>"><%- oroshoppinglist.numberFormatter.formatDecimal(quantity) %> <%- unit %></span>
+        <%- oroshoppinglist.numberFormatter.formatDecimal(quantity) %> <%- unit %>
     </div>
 <% } %>

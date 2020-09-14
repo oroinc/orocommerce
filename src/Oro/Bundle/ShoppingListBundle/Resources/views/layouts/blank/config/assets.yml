@@ -1,5 +1,7 @@
 styles:
     inputs:
+        - 'bundles/oroshoppinglist/blank/scss/settings/global-settings.scss'
+
         - 'bundles/oroshoppinglist/blank/scss/variables/matrix-order-widget-config.scss'
         - 'bundles/oroshoppinglist/blank/scss/variables/shopping-lists-config.scss'
         - 'bundles/oroshoppinglist/blank/scss/variables/shopping-lists-popup-config.scss'
@@ -24,6 +26,7 @@ styles:
         - 'bundles/oroshoppinglist/blank/scss/components/shopping-list-view.scss'
         - 'bundles/oroshoppinglist/blank/scss/components/shopping-list-view-options.scss'
         - 'bundles/oroshoppinglist/blank/scss/components/shopping-list-widget.scss'
+        - 'bundles/oroshoppinglist/blank/scss/components/responsive-shopping-list-grid/responsive-shopping-list-layout.scss'
         - 'bundles/oroshoppinglist/blank/scss/components/responsive-shopping-list-grid/grid-line-items.scss'
         - 'bundles/oroshoppinglist/blank/scss/components/responsive-shopping-list-grid/responsive-shopping-list-grid.scss'
         - 'bundles/oroshoppinglist/blank/scss/components/responsive-shopping-list-grid/responsive-shopping-list-grid-edit.scss'

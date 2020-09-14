@@ -1,0 +1,42 @@
+/* @theme: blank; */
+
+.responsive-order-layout {
+    .totals-container {
+        margin-bottom: 10px;
+    }
+}
+
+@include breakpoint('responsive-shopping-list-grid-ovreflow') {
+    .responsive-shopping-list-layout {
+        .page-content {
+            &--has-sidebar {
+                padding: $page-content-with-sidebar-tables-s-inner-offset;
+                width: $page-content-width;
+            }
+        }
+
+        .page-sidebar {
+            width: $page-sidebar-tablet-s-width;
+        }
+
+        .order-checkout-widget {
+            &__container-wrapper {
+                width: 40%;
+                margin-left: auto;
+            }
+        }
+    }
+}
+
+@include breakpoint('tablet') {
+    .responsive-order-layout {
+        display: flex;
+        flex-direction: row-reverse;
+    }
+}
+
+@include breakpoint('mobile-landscape') {
+    .responsive-order-layout {
+        flex-direction: column;
+    }
+}

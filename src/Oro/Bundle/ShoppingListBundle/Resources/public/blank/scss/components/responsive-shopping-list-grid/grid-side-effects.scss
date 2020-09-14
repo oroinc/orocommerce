@@ -2,9 +2,14 @@
 
 .responsive-shopping-list-grid {
     .grid-row {
-        transition: background-color 250ms ease-in;
+        background-color: rgba(255, 255, 255, 0);
+        transition: background-color 300ms ease-in-out;
 
-        &--loading {
+        &.highlight {
+            background-color: get-color('ui', 'warning');
+        }
+
+        &.loading {
             .grid-cell:last-child {
                 @extend .loading-bar-lines;
 
@@ -14,12 +19,12 @@
             }
         }
 
-        &--success {
-            background: get-color('ui', 'success');
+        &.success {
+            background-color: get-color('ui', 'success');
         }
 
-        &--error {
-            background: get-color('ui', 'error');
+        &.error {
+            background-color: get-color('ui', 'error');
         }
     }
 }

@@ -22,17 +22,14 @@ const ShoppingListEditItemModel = ShoppingListModel.extend({
     },
 
     highlightRow(type = 'success') {
-        const highlightClass = `grid-row--${type}`;
-        this.classList().add(highlightClass);
+        this.classList().add(type);
     },
 
     unhighlightRow(type = 'success', delay = 0) {
-        const highlightClass = `grid-row--${type}`;
-
         if (delay && delay > 0) {
-            setTimeout(() => this.classList().remove(highlightClass), delay);
+            setTimeout(() => this.classList().remove(type), delay);
         } else {
-            this.classList().remove(highlightClass);
+            this.classList().remove(type);
         }
     },
 
