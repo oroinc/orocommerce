@@ -1,4 +1,5 @@
 import FilteredProductVariantsPlugin from 'oroshoppinglist/js/datagrid/plugins/filtered-product-variants-plugin';
+import ShoppingListRefreshPlugin from 'oroshoppinglist/js/datagrid/plugins/shopping-list-refresh-plugin';
 
 const isHighlight = item => item.isUpcoming || (item.errors && item.errors.length);
 export const flattenData = data => {
@@ -91,7 +92,7 @@ const shoppingListFlatDataBuilder = {
         if (!options.metadata.plugins) {
             options.metadata.plugins = [];
         }
-        options.metadata.plugins.push(FilteredProductVariantsPlugin);
+        options.metadata.plugins.push(FilteredProductVariantsPlugin, ShoppingListRefreshPlugin);
 
         options.data.data = flattenData(options.data.data);
 

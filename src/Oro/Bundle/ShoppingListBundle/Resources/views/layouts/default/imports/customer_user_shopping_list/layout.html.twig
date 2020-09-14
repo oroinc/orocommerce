@@ -150,7 +150,12 @@
 
 {% block __customer_user_shopping_list__summary_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' order-checkout-widget__container-wrapper '
+        '~class': ' order-checkout-widget__container-wrapper ',
+        'data-page-component-view': 'oroshoppinglist/js/app/views/summary-wrapper-view',
+        'data-page-component-options': {
+            'showMaskEvents': ['shopping-list:request'],
+            'hideMaskEvents': ['shopping-list:refresh']
+        }|json_encode
     }) %}
 
     <div {{ block('block_attributes') }}>
