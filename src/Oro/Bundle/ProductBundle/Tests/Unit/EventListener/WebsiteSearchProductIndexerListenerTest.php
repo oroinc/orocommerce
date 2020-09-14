@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
@@ -12,6 +13,7 @@ use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
 use Oro\Bundle\InventoryBundle\Tests\Unit\Inventory\Stub\InventoryStatusStub;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
@@ -19,6 +21,7 @@ use Oro\Bundle\ProductBundle\EventListener\WebsiteSearchProductIndexerListener;
 use Oro\Bundle\ProductBundle\Search\ProductIndexDataModel;
 use Oro\Bundle\ProductBundle\Search\ProductIndexDataProviderInterface;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductWithInventoryStatus;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexDataProvider;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
@@ -98,6 +101,10 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
      */
     public function testOnWebsiteSearchIndexProductClass()
     {
+        $organization = new Organization();
+        $website = new Website();
+        $website->setOrganization($organization);
+
         /** @var Localization $firstLocale */
         $firstLocale = $this->getEntity(Localization::class, ['id' => 1]);
 
@@ -134,10 +141,6 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
             ->with([])
             ->willReturn(1);
 
-        $this->registry
-            ->method('getManagerForClass')
-            ->willReturnSelf();
-
         $productRepository = $this->createMock(ProductRepository::class);
         $unitRepository = $this->createMock(ProductUnitRepository::class);
         $attributeFamilyRepository = $this->createMock(AttributeFamilyRepository::class);
@@ -167,8 +170,8 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
         $attribute6 = $this->getEntity(FieldConfigModel::class, ['id' => 1006, 'fieldName' => 'system']);
 
         $attributeFamilyRepository->expects($this->once())
-            ->method('getFamilyIdsForAttributes')
-            ->with([$attribute1, $attribute2, $attribute3, $attribute4, $attribute5, $attribute6])
+            ->method('getFamilyIdsForAttributesByOrganization')
+            ->with([$attribute1, $attribute2, $attribute3, $attribute4, $attribute5, $attribute6], $organization)
             ->willReturn(
                 [
                     $attribute1->getId() => [$attributeFamilyId],
@@ -179,8 +182,12 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
                 ]
             );
 
-        $this->registry
-            ->expects($this->exactly(4))
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->once())
+            ->method('find')
+            ->with(Website::class, 1)
+            ->willReturn($website);
+        $em->expects($this->exactly(4))
             ->method('getRepository')
             ->withConsecutive(
                 ['OroProductBundle:Product'],
@@ -194,6 +201,9 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
                 $unitRepository,
                 $attributeFamilyRepository
             );
+        $this->registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($em);
 
         $this->attachmentManager->expects($this->exactly(2))
             ->method('getFilteredImageUrl')
@@ -205,8 +215,8 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
 
         $this->attributeManager
             ->expects($this->once())
-            ->method('getAttributesByClass')
-            ->with(Product::class)
+            ->method('getActiveAttributesByClassForOrganization')
+            ->with(Product::class, $organization)
             ->willReturn([$attribute1, $attribute2, $attribute3, $attribute4, $attribute5, $attribute6]);
         $this->attributeManager
             ->expects($this->any())
