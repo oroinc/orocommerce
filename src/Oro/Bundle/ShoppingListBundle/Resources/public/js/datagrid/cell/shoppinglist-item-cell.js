@@ -3,24 +3,18 @@ import HtmlTemplateCell from 'oro/datagrid/cell/html-template-cell';
 const ShoppingListItemCell = HtmlTemplateCell.extend({
     constructor: function ShoppingListItemCell(options) {
         ShoppingListItemCell.__super__.constructor.call(this, options);
-        this.listenTo(this.model, 'change', this.afterChange);
-    },
-
-    afterChange(model) {
-        const changed = Object.entries(model.changedAttributes());
-
-        if (changed.length === 1 && changed[0][0] === '_state') {
-            return;
-        }
-
-        this.render();
+        this.listenTo(this.model, 'change', this.render);
     },
 
     render() {
         const template = this.getTemplateFunction();
-        this.$el.html(template(this.getTemplateData()));
+        const html = template(this.getTemplateData());
 
-        this.appendEditNotesAction();
+        if (this._html !== html) { // prevents from unnecessary HTML update
+            this._html = html;
+            this.$el.html(html);
+            this.appendEditNotesAction();
+        }
 
         return this;
     },

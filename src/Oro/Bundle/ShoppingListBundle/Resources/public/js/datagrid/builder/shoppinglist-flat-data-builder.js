@@ -103,7 +103,17 @@ const shoppingListFlatDataBuilder = {
     /**
      * Init() function is required
      */
-    init: deferred => deferred.resolve()
+    init: (deferred, options) => {
+        options.gridPromise.done(grid => {
+            grid.collection.on('beforeRemove', (modelToRemove, collection, options) => {
+                if (modelToRemove.get('_isVariant')) {
+                    options.recountTotalRecords = false;
+                }
+            });
+        });
+
+        return deferred.resolve();
+    }
 };
 
 export default shoppingListFlatDataBuilder;
