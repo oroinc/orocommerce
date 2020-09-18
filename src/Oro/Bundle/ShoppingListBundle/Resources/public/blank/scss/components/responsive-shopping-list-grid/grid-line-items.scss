@@ -3,6 +3,7 @@
 .grid-line-items {
     display: flex;
     align-items: center;
+    width: 100%;
 
     &__row {
         display: flex;
@@ -66,6 +67,7 @@
     }
 
     &__edit-notes {
+        display: inline-flex;
         margin-left: $offset-x-m;
         color: $launcher-item-icon-color;
 
@@ -113,6 +115,10 @@
 
 @include breakpoint('tablet') {
     .grid-line-items {
+        &__row-entry {
+            padding-top: $grid-line-row-entry-offset-y-tablet;
+        }
+
         &__title {
             position: relative;
 
@@ -161,6 +167,10 @@
                     padding-left: $grid-line-items-field-val-offset-mobile;
                 }
             }
+        }
+
+        &__row-entry {
+            padding-top: $grid-line-row-entry-offset-y-mobile;
         }
     }
 }

@@ -4,6 +4,7 @@ import mediator from 'oroui/js/mediator';
 import InlineEditingPlugin from 'orodatagrid/js/app/plugins/grid/inline-editing-plugin';
 import updateAllBtnTpl from 'tpl-loader!oroshoppinglist/templates/editor/shoppinglist-update-all-btn.html';
 import tools from 'oroui/js/tools';
+import __ from 'orotranslation/js/translator';
 import BaseComponent from 'oroui/js/app/components/base/component';
 
 /**
@@ -29,6 +30,14 @@ const ShoppingListInlineEditingPlugin = InlineEditingPlugin.extend({
     componentsToSend: [],
 
     $updateAllButton: $(updateAllBtnTpl()),
+
+    /**
+     * @inheritDoc
+     */
+    modalOptions: {
+        ...InlineEditingPlugin.prototype.modalOptions,
+        okText: __('Yes')
+    },
 
     constructor: function ShoppingListInlineEditingPlugin(...args) {
         ShoppingListInlineEditingPlugin.__super__.constructor.apply(this, args);

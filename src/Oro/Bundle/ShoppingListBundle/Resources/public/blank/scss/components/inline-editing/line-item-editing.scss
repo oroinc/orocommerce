@@ -1,22 +1,24 @@
 /* @theme: blank; */
 
-.editable {
-    position: relative;
-}
-
-.edit-mode {
-    &.editable {
-        width: $edit-mode-cell-width;
-        min-width: $edit-mode-cell-width;
-        background: $edit-mode-cell-background-color;
+.responsive-shopping-list-grid {
+    .editable {
+        position: relative;
     }
-}
 
-.view-mode {
-    &.editable {
-        width: $view-mode-cell-width;
-        min-width: $view-mode-cell-width;
-        background: $view-mode-cell-background-color;
+    .edit-mode {
+        &.editable {
+            width: $edit-mode-cell-width;
+            min-width: $edit-mode-cell-width;
+            background: $edit-mode-cell-background-color;
+        }
+    }
+
+    .view-mode {
+        &.editable {
+            width: $view-mode-cell-width;
+            min-width: $view-mode-cell-width;
+            background: $view-mode-cell-background-color;
+        }
     }
 }
 
@@ -103,16 +105,45 @@
         border-top-left-radius: 0;
         margin-left: -1px;
         text-align: left;
+        @include ellipsis();
     }
 }
 
 @include breakpoint('mobile-landscape') {
-    .edit-mode,
-    .view-mode {
-        &.editable {
-            width: auto;
-            min-width: auto;
-            background: $edit-mode-cell-background-color;
+    .responsive-shopping-list-grid .grid-body {
+        .edit-mode,
+        .view-mode {
+            &.editable {
+                width: auto;
+                min-width: auto;
+                padding-top: $edit-mode-cell-top-offset-mobile;
+                padding-bottom: $edit-mode-cell-bottom-offset-mobile;
+
+                background: $edit-mode-cell-background-color;
+            }
+        }
+    }
+}
+
+@include breakpoint('mobile') {
+    .responsive-shopping-list-grid .grid-body {
+        .edit-mode,
+        .view-mode {
+            &.editable {
+                width: 100%;
+            }
+        }
+    }
+
+    .line-item-container,
+    .shoppinglist-line-item-frontend-type-editor {
+        .select2-container,
+        .select {
+            flex-grow: 1;
+        }
+
+        .select {
+            margin-right: 64px;
         }
     }
 }

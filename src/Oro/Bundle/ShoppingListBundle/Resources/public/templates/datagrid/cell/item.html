@@ -21,7 +21,8 @@
                 </div>
                 <% } %>
             </div>
-            <div class="shift-mobile-row mobile-row show-in-tablet">
+            <% if (obj.sku || obj.inventoryStatus) { %>
+            <div class="grid-line-items__row-entry shift-mobile-row mobile-row show-in-tablet">
                 <% if (obj.sku) { %>
                     <span class="highlighted-in-mobile break-all"><%- sku %></span>
                 <% } %>
@@ -29,6 +30,7 @@
                     <%= oroshoppinglist.renderInventoryStatus(inventoryStatus) %>
                 <% } %>
             </div>
+            <% } %>
             <% if (productConfiguration) { %>
             <div class="grid-line-items__configuration shift-mobile-row">
                 <% _.each(productConfiguration, function(field) { %>
