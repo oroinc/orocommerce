@@ -45,7 +45,9 @@
                 {% for productImage in productImages %}
                     <tr>
                         <td>
-                            {{ oro_file_view(productImage.image, {'galleryId' : 'images'} ) }}
+                            <span {% if productImage.image.uuid is not null %}data-ie-preview="{{ file_url(productImage.image) }}"{% endif %}>
+                                {{ oro_file_view(productImage.image, {'galleryId' : 'images'} ) }}
+                            </span>
                         </td>
 
                         {% for imageType in imageTypes %}
