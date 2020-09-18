@@ -1,5 +1,4 @@
 <% if (!obj.isConfigurable) { %>
-<% if (price) { %>
 <div class="line-item-price mobile-row label-in-mobile-start label-bold-in-mobile"
      data-name="prices-hint"
      data-label="<%- _metadata.label %>:"
@@ -16,7 +15,12 @@
     }) %>"
 >
     <span class="price-value-container" data-name="price-value">
+        <% if (price) { %>
         <%- price %>
+        <% } else { %>
+        <span data-name="price-not-found" data-label="<%- _metadata.label %>:"
+            ><%- _.__('oro.pricing.product_prices.price_not_found.short_label') %></span>
+        <% } %>
         <button type="button"
                 data-prices-hint-trigger
                 data-trigger="manual"
@@ -29,10 +33,4 @@
         </button>
     </span>
 </div>
-<% } else { %>
-<div data-name="price-not-found"
-     class="mobile-row label-in-mobile-start label-bold-in-mobile"
-     data-label="<%- _metadata.label %>:"
-     ><%- _.__('oro.pricing.product_prices.price_not_found.short_label') %></div>
-<% } %>
 <% } %>

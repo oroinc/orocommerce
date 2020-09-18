@@ -53,7 +53,7 @@ const ListItemProductPricesComponent = BaseComponent.extend({
 
         fetch(URL)
             .then(response => response.json())
-            .then(data => this.onPricesLoad(data[this.productId]))
+            .then(data => this.onPricesLoad(data[this.productId] || {}))
             .catch(() => errorHandler.showErrorInConsole(
                 new Error(`Unable to load prices for ${this.productId} product`)))
             .finally(() => this.viewOptions.el.removeClass('loader-in-process'));
