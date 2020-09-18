@@ -12,7 +12,7 @@ const ShoppingListItemModel = Backbone.Model.extend({
     },
 
     subModels() {
-        return this.get('ids').map(id => this.collection.get(id));
+        return (this.get('ids') || []).map(id => this.collection.get(id));
     },
 
     classList() {

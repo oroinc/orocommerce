@@ -13,6 +13,11 @@ layout:
             optionName: grid_name
             optionValue: frontend-customer-user-shopping-list-grid
 
+        - '@appendOption':
+              id: datagrid
+              optionName: grid_render_parameters.cssClass
+              optionValue: 'responsive-shopping-list-grid-view'
+
         - '@setOption':
             id: page_content
             optionName: attr.class

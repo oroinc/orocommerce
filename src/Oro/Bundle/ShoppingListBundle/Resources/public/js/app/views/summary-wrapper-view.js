@@ -26,6 +26,7 @@ const SummaryWrapperView = BaseView.extend({
         this.options = Object.assign({}, options || {}, this.options);
         const {showMaskEvents = [], hideMaskEvents = []} = this.options;
 
+        this._maskAdded = false;
         this.showMaskEvents = showMaskEvents;
         this.hideMaskEvents = hideMaskEvents;
 

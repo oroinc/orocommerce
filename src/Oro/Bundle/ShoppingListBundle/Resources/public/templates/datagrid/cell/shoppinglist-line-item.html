@@ -5,7 +5,7 @@
         <div class="select" tabindex="0" data-focused=".select2-container"><%- unitCode %></div>
     </div>
 <% } else { %>
-    <div class="mobile-row label-in-mobile-start label-bold-in-mobile line-item-configurable">
+    <div class="mobile-row label-in-mobile-start label-bold-in-mobile line-item-configurable" data-label="<%- _metadata.label %>:">
         <%- oroshoppinglist.numberFormatter.formatDecimal(quantity) %> <%- unit %>
     </div>
 <% } %>

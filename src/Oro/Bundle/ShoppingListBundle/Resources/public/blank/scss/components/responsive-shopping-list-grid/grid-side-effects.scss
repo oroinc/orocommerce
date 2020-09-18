@@ -3,41 +3,42 @@
 .responsive-shopping-list-grid {
     .grid-row {
         background-color: rgba(255, 255, 255, 0);
-        transition: background-color 300ms ease-in-out;
+        transition: $shopping-list-grid-effect-transition;
 
         &.highlight {
-            background-color: get-color('ui', 'warning');
+            background-color: $shopping-list-grid-effect-highlight;
         }
 
         &.loading {
-            .grid-cell:last-child {
-                @extend .loading-bar-lines;
+            overflow: hidden;
 
-                &:after {
-                    left: -9999px;
-                }
+            .grid-cell {
+                @include loading-bar-lines;
             }
         }
 
         &.success {
-            background-color: get-color('ui', 'success');
+            background-color: $shopping-list-grid-effect-success;
         }
 
         &.error {
-            background-color: get-color('ui', 'error');
+            background-color: $shopping-list-grid-effect-error;
         }
     }
 }
 
-@include breakpoint('mobile') {
-    .grid-row {
-        &--loading {
-            position: relative;
-            .grid-cell:last-child {
-                position: static !important;
+@include breakpoint('mobile-landscape') {
+    .responsive-shopping-list-grid {
+        .grid-row {
+            &.loading {
+                @include loading-bar-lines;
 
-                &:after {
-                    left: 0;
+                .grid-cell {
+                    position: static;
+
+                    &:before {
+                        content: none;
+                    }
                 }
             }
         }

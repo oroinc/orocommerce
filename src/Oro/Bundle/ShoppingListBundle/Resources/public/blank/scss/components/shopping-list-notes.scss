@@ -15,6 +15,8 @@
         font-style: $shopping-lists-notes-font-s;
 
         &--limited {
+            position: relative;
+
             max-height: ($shopping-lists-notes-font-size * $shopping-lists-notes-line-height) * 3;
 
             overflow: hidden;

@@ -47,7 +47,10 @@ define(function(require) {
          */
         doDelete() {
             const success = __(this.messages.success, this.model.toJSON());
-            const isSubItem = this.model.get('_isVariant');
+
+            for (const subModel of this.model.subModels()) {
+                subModel.classList().add('loading');
+            }
 
             this.model.classList().add('loading');
             this.model.destroy({
@@ -56,7 +59,6 @@ define(function(require) {
                 reset: false,
                 uniqueOnly: true,
                 toggleLoading: false,
-                recountTotalRecords: !isSubItem,
                 success() {
                     messenger.notificationFlashMessage('success', success);
                     mediator.trigger('shopping-list:refresh');

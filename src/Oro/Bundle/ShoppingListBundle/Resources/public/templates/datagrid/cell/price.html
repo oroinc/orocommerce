@@ -24,7 +24,7 @@
         <button type="button"
                 data-prices-hint-trigger
                 data-trigger="manual"
-                data-placement="bottom"
+                data-placement="<%- _.isMobile() ? 'right' : 'bottom' %>"
                 data-boundary="viewport"
                 class="btn btn--link btn--size-xs prices-hint-toggler"
                 title="<%- _.__('oro.pricing.view_all_prices') %>"
