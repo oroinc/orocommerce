@@ -21,6 +21,7 @@ use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationT
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListConfigurableLineItems;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -56,6 +57,7 @@ class ShoppingListRepositoryTest extends WebTestCase
                 LoadShoppingListLineItems::class,
                 LoadCategoryProductData::class,
                 LoadCategoryWithEntityFallbackValuesData::class,
+                LoadShoppingListConfigurableLineItems::class,
             ]
         );
 
@@ -262,5 +264,18 @@ class ShoppingListRepositoryTest extends WebTestCase
         } else {
             $this->assertInstanceOf($expectedClass, $value);
         }
+    }
+
+    public function testHasEmptyConfigurableLineItems(): void
+    {
+        $shoppingListRepository = $this->getRepository();
+
+        $this->assertTrue(
+            $shoppingListRepository->hasEmptyConfigurableLineItems($this->getReference(LoadShoppingLists::SHOPPING_LIST_5))
+        );
+
+        $this->assertFalse(
+            $shoppingListRepository->hasEmptyConfigurableLineItems($this->getReference(LoadShoppingLists::SHOPPING_LIST_1))
+        );
     }
 }

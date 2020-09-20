@@ -64,7 +64,7 @@ abstract class AbstractShoppingListLineItemsFixture extends AbstractFixture impl
      * @param ShoppingList $shoppingList
      * @param ProductUnit $unit
      * @param Product $product
-     * @param float $quantity
+     * @param float|null $quantity
      * @param string $referenceName
      * @param Product $parentProduct
      */
@@ -85,8 +85,11 @@ abstract class AbstractShoppingListLineItemsFixture extends AbstractFixture impl
             ->setOwner($owner)
             ->setShoppingList($shoppingList)
             ->setUnit($unit)
-            ->setProduct($product)
-            ->setQuantity($quantity);
+            ->setProduct($product);
+
+        if ($quantity !== null) {
+            $item->setQuantity($quantity);
+        }
 
         if ($parentProduct) {
             $item->setParentProduct($parentProduct);
