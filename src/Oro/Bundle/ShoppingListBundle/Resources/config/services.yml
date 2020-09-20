@@ -505,7 +505,6 @@ services:
 
     oro_shopping_list.datagrid.extension.frontend_product_grid:
         class: 'Oro\Bundle\ShoppingListBundle\Datagrid\Extension\FrontendMatrixProductGridExtension'
-        public: false
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_shopping_list.manager.current_shopping_list'

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\Validator;
 
 use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
+use Oro\Bundle\EntityBundle\Manager\PreloadingManager;
 use Oro\Bundle\InventoryBundle\Tests\Unit\EventListener\Stub\ProductStub;
 use Oro\Bundle\InventoryBundle\Validator\QuantityToOrderValidatorService;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -29,6 +30,16 @@ class QuantityToOrderValidatorServiceTest extends \PHPUnit\Framework\TestCase
      */
     protected $translator;
 
+    /**
+     * @var PreloadingManager|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $preloadingManager;
+
+    /**
+     * @var array
+     */
+    private $fieldsToPreload = ['product' => ['minimumQuantityToOrder' => [], 'maximumQuantityToOrder' => []]];
+
     protected function setUp(): void
     {
         $this->fallbackResolver = $this->getMockBuilder(EntityFallbackResolver::class)
@@ -42,15 +53,22 @@ class QuantityToOrderValidatorServiceTest extends \PHPUnit\Framework\TestCase
                     return $message;
                 }
             );
+        $this->preloadingManager = $this->createMock(PreloadingManager::class);
         $this->quantityToOrderValidatorService = new QuantityToOrderValidatorService(
             $this->fallbackResolver,
             $this->translator
         );
+        $this->quantityToOrderValidatorService->setPreloadingManager($this->preloadingManager);
     }
 
     public function testIsLineItemListValidReturnsTrueIfNoProduct()
     {
         $lineItems = [new LineItem()];
+
+        $this->preloadingManager->expects($this->once())
+            ->method('preloadInEntities')
+            ->with($lineItems, $this->fieldsToPreload);
+
         $this->assertTrue($this->quantityToOrderValidatorService->isLineItemListValid($lineItems));
     }
 
@@ -60,6 +78,10 @@ class QuantityToOrderValidatorServiceTest extends \PHPUnit\Framework\TestCase
         $lineItem->setProduct(new Product());
         $lineItem->setQuantity(1);
         $lineItems = [$lineItem];
+
+        $this->preloadingManager->expects($this->once())
+            ->method('preloadInEntities')
+            ->with($lineItems, $this->fieldsToPreload);
 
         $this->fallbackResolver->expects($this->exactly(2))
             ->method('getFallbackValue')
@@ -74,9 +96,28 @@ class QuantityToOrderValidatorServiceTest extends \PHPUnit\Framework\TestCase
         $lineItem->setQuantity(3);
         $lineItems = [$lineItem];
 
+        $this->preloadingManager->expects($this->once())
+            ->method('preloadInEntities')
+            ->with($lineItems, $this->fieldsToPreload);
+
         $this->fallbackResolver->expects($this->exactly(2))
             ->method('getFallbackValue')
             ->willReturn(3);
+        $this->assertTrue($this->quantityToOrderValidatorService->isLineItemListValid($lineItems));
+    }
+
+    public function testIsLineItemListValidReturnsTrueIfValidLimitsWhenNoPreloadingManager(): void
+    {
+        $lineItem = new LineItem();
+        $lineItem->setProduct(new Product());
+        $lineItem->setQuantity(3);
+        $lineItems = [$lineItem];
+
+        $this->fallbackResolver->expects($this->exactly(2))
+            ->method('getFallbackValue')
+            ->willReturn(3);
+
+        $this->quantityToOrderValidatorService->setPreloadingManager(null);
         $this->assertTrue($this->quantityToOrderValidatorService->isLineItemListValid($lineItems));
     }
 

@@ -4,11 +4,15 @@ namespace Oro\Bundle\InventoryBundle\Validator;
 
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
+use Oro\Bundle\EntityBundle\Manager\PreloadingManager;
 use Oro\Bundle\InventoryBundle\Model\Inventory;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Checks if shopping list line items follow minimum and maxiumum quantity restrictions.
+ */
 class QuantityToOrderValidatorService
 {
     /**
@@ -22,6 +26,11 @@ class QuantityToOrderValidatorService
     protected $translator;
 
     /**
+     * @var PreloadingManager|null
+     */
+    private $preloadingManager;
+
+    /**
      * @param EntityFallbackResolver $fallbackResolver
      * @param TranslatorInterface $translator
      */
@@ -32,11 +41,26 @@ class QuantityToOrderValidatorService
     }
 
     /**
+     * @param PreloadingManager|null $preloadingManager
+     */
+    public function setPreloadingManager(?PreloadingManager $preloadingManager): void
+    {
+        $this->preloadingManager = $preloadingManager;
+    }
+
+    /**
      * @param Collection|ProductLineItemInterface[] $lineItems
      * @return bool
      */
     public function isLineItemListValid($lineItems)
     {
+        if ($this->preloadingManager) {
+            $this->preloadingManager->preloadInEntities(
+                $lineItems instanceof Collection ? $lineItems->toArray() : $lineItems,
+                ['product' => ['minimumQuantityToOrder' => [], 'maximumQuantityToOrder' => []]]
+            );
+        }
+
         foreach ($lineItems as $item) {
             $product = $item->getProduct();
             $quantity = $item->getQuantity();
