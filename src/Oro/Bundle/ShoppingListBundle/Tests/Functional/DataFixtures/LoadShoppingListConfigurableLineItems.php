@@ -4,12 +4,9 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures;
 
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
-use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 
 class LoadShoppingListConfigurableLineItems extends AbstractShoppingListLineItemsFixture
 {
-    use UserUtilityTrait;
-
     public const LINE_ITEM_1 = 'shopping_list_configurable_line_item.1';
 
     /** @var array */

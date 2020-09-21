@@ -11,7 +11,7 @@ use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * Checks if shopping list line items follow minimum and maxiumum quantity restrictions.
+ * Checks if shopping list line items follow minimum and maximum quantity restrictions.
  */
 class QuantityToOrderValidatorService
 {
