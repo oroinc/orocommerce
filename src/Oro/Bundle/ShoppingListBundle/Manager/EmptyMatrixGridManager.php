@@ -29,7 +29,9 @@ class EmptyMatrixGridManager implements EmptyMatrixGridInterface
      */
     private $lineItemFactory;
 
-    /** @var ConfigManager */
+    /**
+     * @var ConfigManager
+     */
     private $configManager;
 
     /**
@@ -169,6 +171,10 @@ class EmptyMatrixGridManager implements EmptyMatrixGridInterface
     private function isTooManyUninitializedProducts(Collection $lineItemsCollection): bool
     {
         $result = false;
+        if ($lineItemsCollection->isEmpty()) {
+            return $result;
+        }
+
         if ($lineItemsCollection instanceof AbstractLazyCollection && !$lineItemsCollection->isInitialized()) {
             $result = true;
         } else {
