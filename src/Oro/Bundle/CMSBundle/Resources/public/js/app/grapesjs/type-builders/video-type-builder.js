@@ -16,12 +16,16 @@ const VideoTypeBuilder = BaseTypeBuilder.extend({
         const componentRestriction = this.editor.ComponentRestriction;
         const {BlockManager} = this.editor;
 
+        const video = BlockManager.get('video');
+        const content = video.get('content');
+
+        content.style = {
+            height: '400px',
+            width: '100%'
+        };
+
         this.editor.DomComponents.addType(this.componentType, {
             model: {
-                defaults: {
-                    classes: ['video-container']
-                },
-
                 getProviderTrait() {
                     const providerTrait = this.constructor.__super__.getProviderTrait.call(this);
                     const options = providerTrait.options
@@ -89,11 +93,6 @@ const VideoTypeBuilder = BaseTypeBuilder.extend({
                 }
             }
         });
-
-        const video = BlockManager.get('video');
-        const content = video.get('content');
-
-        delete content.style;
     }
 });
 

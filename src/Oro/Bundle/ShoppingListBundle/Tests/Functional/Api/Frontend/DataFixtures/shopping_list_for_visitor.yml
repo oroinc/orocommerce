@@ -12,6 +12,8 @@ dependencies:
 Oro\Bundle\WebsiteBundle\Entity\Website:
     website1:
         name: 'Another Website'
+        organization: '@organization'
+        owner: '@business_unit'
 
 Oro\Bundle\CustomerBundle\Entity\Customer:
     customer:

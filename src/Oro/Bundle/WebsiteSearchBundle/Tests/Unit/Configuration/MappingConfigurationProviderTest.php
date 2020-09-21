@@ -79,7 +79,8 @@ class MappingConfigurationProviderTest extends \PHPUnit\Framework\TestCase
                         'fields' => [
                             'some_attribute' => [
                                 'name' => 'some_attribute',
-                                'type' => 'text'
+                                'type' => 'text',
+                                'organization_id' => 3
                             ]
                         ]
                     ]
@@ -89,28 +90,51 @@ class MappingConfigurationProviderTest extends \PHPUnit\Framework\TestCase
         $config = $this->configurationProvider->getConfiguration();
 
         $expectedConfig = [
-            'Oro\Bundle\TestBundle2\Entity\Page'    => [
-                'alias'  => 'page_WEBSITE_ID',
+            'Oro\Bundle\TestBundle2\Entity\Page' => [
+                'alias' => 'page_WEBSITE_ID',
                 'fields' => [
-                    'title_LOCALIZATION_ID'
-                        => ['name' => 'title_LOCALIZATION_ID', 'type' => 'text', 'fulltext' => true],
-                    'test_first_repeating_field'
-                        => ['name' => 'test_first_repeating_field', 'type' => 'integer', 'fulltext' => false],
-                    'test_second_repeating_field'
-                        => ['name' => 'test_second_repeating_field', 'type' => 'integer', 'fulltext' => false],
-                    'custom_field'
-                        => ['name' => 'custom_field', 'type' => 'text', 'fulltext' => true]
+                    'title_LOCALIZATION_ID' => [
+                        'name' => 'title_LOCALIZATION_ID',
+                        'type' => 'text',
+                        'fulltext' => true,
+                        'organization_id' => null
+                    ],
+                    'test_first_repeating_field' => [
+                        'name' => 'test_first_repeating_field',
+                        'type' => 'integer',
+                        'fulltext' => false,
+                        'organization_id' => null
+                    ],
+                    'test_second_repeating_field' => [
+                        'name' => 'test_second_repeating_field',
+                        'type' => 'integer',
+                        'fulltext' => false,
+                        'organization_id' => null
+                    ],
+                    'custom_field' => [
+                        'name' => 'custom_field',
+                        'type' => 'text',
+                        'fulltext' => true,
+                        'organization_id' => null
+                    ]
                 ]
             ],
             'Oro\Bundle\TestBundle3\Entity\Product' => [
-                'alias'  => 'product_WEBSITE_ID',
+                'alias' => 'product_WEBSITE_ID',
                 'fields' => [
-                    'title_LOCALIZATION_ID'
-                        => ['name' => 'title_LOCALIZATION_ID', 'type' => 'text', 'fulltext' => true],
-                    'price'
-                        => ['name' => 'price', 'type' => 'decimal', 'fulltext' => false],
-                    'some_attribute'
-                        => ['name' => 'some_attribute', 'type' => 'text', 'fulltext' => true]
+                    'title_LOCALIZATION_ID' => [
+                        'name' => 'title_LOCALIZATION_ID',
+                        'type' => 'text',
+                        'fulltext' => true,
+                        'organization_id' => null
+                    ],
+                    'price' => ['name' => 'price', 'type' => 'decimal', 'fulltext' => false, 'organization_id' => null],
+                    'some_attribute' => [
+                        'name' => 'some_attribute',
+                        'type' => 'text',
+                        'fulltext' => true,
+                        'organization_id' => 3
+                    ]
                 ]
             ]
         ];
