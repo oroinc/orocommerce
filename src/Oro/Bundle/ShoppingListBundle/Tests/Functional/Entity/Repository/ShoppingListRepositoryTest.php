@@ -271,11 +271,15 @@ class ShoppingListRepositoryTest extends WebTestCase
         $shoppingListRepository = $this->getRepository();
 
         $this->assertTrue(
-            $shoppingListRepository->hasEmptyConfigurableLineItems($this->getReference(LoadShoppingLists::SHOPPING_LIST_5))
+            $shoppingListRepository->hasEmptyConfigurableLineItems(
+                $this->getReference(LoadShoppingLists::SHOPPING_LIST_5)
+            )
         );
 
         $this->assertFalse(
-            $shoppingListRepository->hasEmptyConfigurableLineItems($this->getReference(LoadShoppingLists::SHOPPING_LIST_1))
+            $shoppingListRepository->hasEmptyConfigurableLineItems(
+                $this->getReference(LoadShoppingLists::SHOPPING_LIST_1)
+            )
         );
     }
 }
