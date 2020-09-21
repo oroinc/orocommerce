@@ -322,7 +322,7 @@ class EmptyMatrixGridManagerTest extends TestCase
         self::assertFalse($this->manager->hasEmptyMatrix($shoppingList));
     }
 
-    public function testHasEmptyMatrixWhenCollectionUninitialized(): void
+    public function testHasEmptyMatrixWhenCollectionEmpty(): void
     {
         $shoppingList = new ShoppingListStub();
 
@@ -330,6 +330,33 @@ class EmptyMatrixGridManagerTest extends TestCase
             $this->createMock(EntityManagerInterface::class),
             $this->createMock(ClassMetadata::class),
             new ArrayCollection()
+        );
+        $lineItems->setInitialized(false);
+
+        $shoppingList->setLineItems($lineItems);
+
+        $entityRepository = $this->createMock(ShoppingListRepository::class);
+        $this->doctrineHelper
+            ->expects($this->never())
+            ->method('getEntityRepositoryForClass')
+            ->with(ShoppingList::class)
+            ->willReturn($entityRepository);
+
+        $this->assertFalse($this->manager->hasEmptyMatrix($shoppingList));
+    }
+
+    public function testHasEmptyMatrixWhenCollectionUninitialized(): void
+    {
+        $shoppingList = new ShoppingListStub();
+
+        $lineItems = new PersistentCollection(
+            $this->createMock(EntityManagerInterface::class),
+            $this->createMock(ClassMetadata::class),
+            new ArrayCollection(
+                [
+                    $this->getEntity(LineItem::class, ['id' => 1, 'product' => new ProductProxyStub()]),
+                ]
+            )
         );
         $lineItems->setInitialized(false);
 
@@ -348,7 +375,7 @@ class EmptyMatrixGridManagerTest extends TestCase
             ->with($shoppingList)
             ->willReturn(true);
 
-        self::assertTrue($this->manager->hasEmptyMatrix($shoppingList));
+        $this->assertTrue($this->manager->hasEmptyMatrix($shoppingList));
     }
 
     public function testHasEmptyMatrixWhenProductsUninitialized(): void
@@ -384,6 +411,6 @@ class EmptyMatrixGridManagerTest extends TestCase
             ->with($shoppingList)
             ->willReturn(false);
 
-        self::assertFalse($this->manager->hasEmptyMatrix($shoppingList));
+        $this->assertFalse($this->manager->hasEmptyMatrix($shoppingList));
     }
 }
