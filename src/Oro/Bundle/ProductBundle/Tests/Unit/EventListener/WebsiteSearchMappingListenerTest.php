@@ -200,21 +200,25 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
                             'name' => $attribute1->getFieldName() . '_' . EnumIdPlaceholder::NAME,
                             'type' => Query::TYPE_INTEGER,
                             'fulltext' => false,
+                            'organization_id' => null
                         ],
                         $attribute2->getFieldName() . '_priority' => [
                             'name' => $attribute2->getFieldName() . '_priority',
                             'type' => Query::TYPE_INTEGER,
                             'fulltext' => false,
+                            'organization_id' => null
                         ],
                         $attribute3->getFieldName() . '_' . EnumIdPlaceholder::NAME => [
                             'name' => $attribute3->getFieldName() . '_' . EnumIdPlaceholder::NAME,
                             'type' => Query::TYPE_INTEGER,
                             'fulltext' => false,
+                            'organization_id' => null
                         ],
                         $attribute3->getFieldName() . '_priority' => [
                             'name' => $attribute3->getFieldName() . '_priority',
                             'type' => Query::TYPE_INTEGER,
                             'fulltext' => false,
+                            'organization_id' => null
                         ],
                     ]
                 ],
