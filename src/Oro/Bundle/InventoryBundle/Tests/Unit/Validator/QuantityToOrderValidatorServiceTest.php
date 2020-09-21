@@ -56,9 +56,9 @@ class QuantityToOrderValidatorServiceTest extends \PHPUnit\Framework\TestCase
         $this->preloadingManager = $this->createMock(PreloadingManager::class);
         $this->quantityToOrderValidatorService = new QuantityToOrderValidatorService(
             $this->fallbackResolver,
-            $this->translator
+            $this->translator,
+            $this->preloadingManager
         );
-        $this->quantityToOrderValidatorService->setPreloadingManager($this->preloadingManager);
     }
 
     public function testIsLineItemListValidReturnsTrueIfNoProduct()
@@ -103,21 +103,6 @@ class QuantityToOrderValidatorServiceTest extends \PHPUnit\Framework\TestCase
         $this->fallbackResolver->expects($this->exactly(2))
             ->method('getFallbackValue')
             ->willReturn(3);
-        $this->assertTrue($this->quantityToOrderValidatorService->isLineItemListValid($lineItems));
-    }
-
-    public function testIsLineItemListValidReturnsTrueIfValidLimitsWhenNoPreloadingManager(): void
-    {
-        $lineItem = new LineItem();
-        $lineItem->setProduct(new Product());
-        $lineItem->setQuantity(3);
-        $lineItems = [$lineItem];
-
-        $this->fallbackResolver->expects($this->exactly(2))
-            ->method('getFallbackValue')
-            ->willReturn(3);
-
-        $this->quantityToOrderValidatorService->setPreloadingManager(null);
         $this->assertTrue($this->quantityToOrderValidatorService->isLineItemListValid($lineItems));
     }
 
