@@ -20,6 +20,7 @@ use Oro\Bundle\RedirectBundle\Tests\Functional\DataFixtures\LoadSlugsData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Psr\Container\ContainerInterface;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
 
 class SluggableUrlGeneratorTest extends WebTestCase
 {
@@ -34,6 +35,19 @@ class SluggableUrlGeneratorTest extends WebTestCase
                 LoadSlugsData::class
             ]
         );
+    }
+
+    public function testGenerateForNullRouteName()
+    {
+        /** @var UserLocalizationManager|\PHPUnit\Framework\MockObject\MockObject $localizationManager */
+        $localizationManager = $this->createMock(UserLocalizationManager::class);
+        $localizationManager->expects($this->any())
+            ->method('getCurrentLocalization')
+            ->willReturn(null);
+        $urlGenerator = $this->getUrlGenerator('database', 'local', $localizationManager);
+
+        $this->expectException(RouteNotFoundException::class);
+        $urlGenerator->generate(null);
     }
 
     /**

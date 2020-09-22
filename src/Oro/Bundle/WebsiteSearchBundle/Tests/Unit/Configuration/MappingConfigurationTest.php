@@ -63,7 +63,8 @@ class MappingConfigurationTest extends \PHPUnit\Framework\TestCase
                     'fields' => [
                         [
                             'name' => 'productFirstField',
-                            'type' => 'text'
+                            'type' => 'text',
+                            'organization_id' => 3
                         ]
                     ]
                 ]
@@ -103,11 +104,13 @@ class MappingConfigurationTest extends \PHPUnit\Framework\TestCase
                         'type' => 'text',
                         'default_search_field' => true,
                         'fulltext' => true,
+                        'organization_id' => null
                     ],
                     'pageSecondField' => [
                         'name' => 'pageSecondField',
                         'type' => 'integer',
                         'fulltext' => false,
+                        'organization_id' => null
                     ]
                 ]
             ],
@@ -118,17 +121,20 @@ class MappingConfigurationTest extends \PHPUnit\Framework\TestCase
                         'name' => 'productFirstField',
                         'type' => 'text',
                         'fulltext' => true,
+                        'organization_id' => 3
                     ],
                     'productSecondField' => [
                         'name' => 'productSecondField',
                         'type' => 'decimal',
                         'fulltext' => false,
+                        'organization_id' => null
                     ],
                     'productThirdField' => [
                         'name'  => 'productThirdField',
                         'type'  => 'text',
                         'store' => false,
                         'fulltext' => false,
+                        'organization_id' => null
                     ]
                 ]
             ]

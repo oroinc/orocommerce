@@ -56,6 +56,8 @@ class WebsiteSearchMappingListener
         $fields = [];
 
         foreach ($attributes as $attribute) {
+            $organizationId = $attribute->toArray('attribute')['organization_id'] ?? null;
+
             $attributeType = $this->getAttributeType($attribute);
             if (!$attributeType) {
                 continue;
@@ -68,7 +70,11 @@ class WebsiteSearchMappingListener
                 $types = $attributeType->getFilterStorageFieldTypes();
 
                 foreach ($names as $key => $scalarName) {
-                    $field = ['name' => $scalarName, 'type' => $types[$key]];
+                    $field = [
+                        'name' => $scalarName,
+                        'type' => $types[$key],
+                        'organization_id' => $organizationId
+                    ];
                     if ($attributeType instanceof FulltextAwareTypeInterface) {
                         $field['fulltext'] = $attributeType->isFulltextSearchSupported();
                     }
@@ -86,6 +92,7 @@ class WebsiteSearchMappingListener
                 $fields[$name] = [
                     'name' => $name,
                     'type' => $attributeType->getSorterStorageFieldType(),
+                    'organization_id' => $organizationId,
                     'fulltext' => false,
                 ];
             }

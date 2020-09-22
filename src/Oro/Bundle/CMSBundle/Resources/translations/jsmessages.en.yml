@@ -388,6 +388,7 @@ oro.cms:
                     placeholder: 'eg. FF0000'
                 autoplay:
                     label: 'Autoplay'
+                    title: 'Autoplay (needs to be allowed by a user in a browser settings)'
                 loop:
                     label: 'Loop'
                 controls:

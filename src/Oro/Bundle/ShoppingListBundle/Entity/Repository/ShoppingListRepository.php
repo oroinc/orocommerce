@@ -393,4 +393,24 @@ class ShoppingListRepository extends EntityRepository implements ResettableCusto
 
         $entityManager->refresh($shoppingList);
     }
+
+    /**
+     * @param ShoppingList $shoppingList
+     * @return bool
+     */
+    public function hasEmptyConfigurableLineItems(ShoppingList $shoppingList): bool
+    {
+        $qb = $this->createQueryBuilder('shopping_list');
+
+        return (bool) $qb
+            ->select('1')
+            ->innerJoin('shopping_list.lineItems', 'shopping_list_line_item')
+            ->innerJoin('shopping_list_line_item.product', 'line_item_product')
+            ->where($qb->expr()->eq('shopping_list', ':shopping_list'))
+            ->setParameter('shopping_list', $shoppingList->getId())
+            ->andWhere($qb->expr()->eq('line_item_product.type', $qb->expr()->literal(Product::TYPE_CONFIGURABLE)))
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getScalarResult();
+    }
 }

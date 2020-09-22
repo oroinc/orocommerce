@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import __ from 'orotranslation/js/translator';
 import BaseTypeBuilder from 'orocms/js/app/grapesjs/type-builders/base-type-builder';
 
@@ -12,12 +13,7 @@ const CodeTypeBuilder = BaseTypeBuilder.extend({
         }
     },
 
-    modelMixin: {
-        defaults: {
-            tagName: 'code',
-            content: __('oro.cms.wysiwyg.component.code.placeholder')
-        }
-    },
+    template: _.template(`<code>${__('oro.cms.wysiwyg.component.code.placeholder')}</code>`),
 
     constructor: function CodeTypeBuilder(options) {
         CodeTypeBuilder.__super__.constructor.call(this, options);

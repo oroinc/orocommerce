@@ -4,7 +4,7 @@
  *
  * Overwrite and reassing html parsing
  */
-import {wrap} from 'underscore';
+import _ from 'underscore';
 import DigitalAssetHelper from 'orocms/js/app/grapesjs/helpers/digital-asset-helper';
 
 const modelAttrStart = 'data-gjs-';
@@ -213,6 +213,10 @@ function parseNodes(el, config, ct = '', parent = {}) {
             if (nodeChild === 1 && firstChild.nodeType === 3) {
                 !model.type && (model.type = 'text');
                 model.content = firstChild.nodeValue;
+            } else if (nodeChild > 1 && _.some(node.childNodes, child => child.nodeType === 3)) {
+                !model.type && (model.type = 'text');
+                model.content = '';
+                model.components = parseNodes(node, config, ct, model);
             } else {
                 model.root = false;
                 model.components = parseNodes(node, config, ct, model);
@@ -248,7 +252,7 @@ function parseNodes(el, config, ct = '', parent = {}) {
 
                 if (
                     ['text', 'textnode'].indexOf(cType) < 0 &&
-                    ['br', 'b', 'i', 'u', 'a', 'ul', 'ol'].indexOf(comp.tagName) < 0
+                    ['br', 'b', 'i', 'u', 'ul', 'ol'].indexOf(comp.tagName) < 0
                 ) {
                     allTxt = 0;
                     break;
@@ -264,12 +268,11 @@ function parseNodes(el, config, ct = '', parent = {}) {
             }
         }
 
-        // If tagName is still empty and is not a textnode, do not push it
-        if (!model.tagName && model.type !== 'textnode') {
-            continue;
-        }
-
-        if (textTags.includes(model.tagName)) {
+        if (
+            parent.type &&
+            ['text', 'code'].includes(parent.type) &&
+            ['br', 'b', 'i', 'u', 'div', 'ul', 'ol'].includes(model.tagName)
+        ) {
             model = Object.assign(model, {
                 layerable: 0,
                 selectable: 0,
@@ -277,9 +280,13 @@ function parseNodes(el, config, ct = '', parent = {}) {
                 editable: 0,
                 draggable: 0,
                 droppable: 0,
-                highlightable: 0,
-                type: ''
+                highlightable: 0
             });
+        }
+
+        // If tagName is still empty and is not a textnode, do not push it
+        if (!model.tagName && model.type !== 'textnode') {
+            continue;
         }
 
         if (wrappedTags.includes(model.tagName)) {
@@ -349,7 +356,7 @@ function normalizeBgURLString(str = '') {
 export default function ContentParser(editor) {
     const cTypes = editor.DomComponents.componentTypes;
 
-    editor.CssComposer.render = wrap(editor.CssComposer.render, func => {
+    editor.CssComposer.render = _.wrap(editor.CssComposer.render, func => {
         const result = func();
 
         [].forEach.call(result.querySelectorAll('style'), style => {

@@ -225,6 +225,25 @@ class RequestDataStorageExtension extends AbstractProductDataStorageExtension
     }
 
     /**
+     * @param array $productsIds
+     *
+     * @return bool
+     */
+    public function isAllowedRFPByProductsIds(array $productsIds): bool
+    {
+        $repository = $this->getProductRepository();
+        foreach ($productsIds as $productId) {
+            $qb = $repository->getProductsQueryBuilder([$productId]);
+            $productId = $this->aclHelper->apply($qb)->getOneOrNullResult();
+            if (!empty($productId) && ($this->isAllowedProduct($productId) === true)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public static function getExtendedTypes(): iterable

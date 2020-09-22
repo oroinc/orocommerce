@@ -14,6 +14,7 @@ use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\Search\ProductIndexDataModel;
 use Oro\Bundle\ProductBundle\Search\ProductIndexDataProviderInterface;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteLocalizationProvider;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
@@ -72,8 +73,8 @@ class WebsiteSearchProductIndexerListener
      */
     public function onWebsiteSearchIndex(IndexEntityEvent $event)
     {
-        $websiteId = $this->websiteContextManager->getWebsiteId($event->getContext());
-        if (!$websiteId) {
+        $website = $this->getWebsite($event);
+        if (!$website) {
             $event->stopPropagation();
 
             return;
@@ -83,18 +84,20 @@ class WebsiteSearchProductIndexerListener
         $products = $event->getEntities();
 
         $productIds = array_map(
-            function (Product $product) {
+            static function (Product $product) {
                 return $product->getId();
             },
             $products
         );
 
-        $localizations = $this->websiteLocalizationProvider->getLocalizationsByWebsiteId($websiteId);
+        $localizations = $this->websiteLocalizationProvider->getLocalizationsByWebsiteId($website->getId());
         $productImages = $this->getProductRepository()->getListingImagesFilesByProductIds($productIds);
         $productUnits = $this->getProductUnitRepository()->getProductsUnits($productIds);
         $primaryUnits = $this->getProductUnitRepository()->getPrimaryProductsUnits($productIds);
-        $attributes = $this->attributeManager->getAttributesByClass(Product::class);
-        $attributeFamilies = $this->getAttributeFamilyRepository()->getFamilyIdsForAttributes($attributes);
+        $attributes = $this->attributeManager
+            ->getActiveAttributesByClassForOrganization($event->getEntityClass(), $website->getOrganization());
+        $attributeFamilies = $this->getAttributeFamilyRepository()
+            ->getFamilyIdsForAttributesByOrganization($attributes, $website->getOrganization());
 
         foreach ($products as $product) {
             $productId = $product->getId();
@@ -147,6 +150,20 @@ class WebsiteSearchProductIndexerListener
                 );
             }
         }
+    }
+
+    /**
+     * @param IndexEntityEvent $event
+     * @return Website|null
+     */
+    private function getWebsite(IndexEntityEvent $event): ?Website
+    {
+        $websiteId = $this->websiteContextManager->getWebsiteId($event->getContext());
+        if ($websiteId) {
+            return $this->registry->getManagerForClass(Website::class)->find(Website::class, $websiteId);
+        }
+
+        return null;
     }
 
     /**
