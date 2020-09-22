@@ -38,7 +38,7 @@ class RfpAllowedTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->requestDataStorageExtension->expects($this->any())
-            ->method('isAllowedRFP')
+            ->method('isAllowedRFPByProductsIds')
             ->willReturn(true);
 
         $this->propertyPath = $this->getMockBuilder(PropertyPathInterface::class)
