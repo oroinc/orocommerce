@@ -2,14 +2,21 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Manager;
 
+use Doctrine\Common\Collections\AbstractLazyCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Persistence\Proxy;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\LineItem\Factory\LineItemByShoppingListAndProductFactoryInterface;
 
+/**
+ * Adds empty line item (with empty matrix) of configurable product to shopping list
+ */
 class EmptyMatrixGridManager implements EmptyMatrixGridInterface
 {
     /**
@@ -22,7 +29,9 @@ class EmptyMatrixGridManager implements EmptyMatrixGridInterface
      */
     private $lineItemFactory;
 
-    /** @var ConfigManager */
+    /**
+     * @var ConfigManager
+     */
     private $configManager;
 
     /**
@@ -137,12 +146,52 @@ class EmptyMatrixGridManager implements EmptyMatrixGridInterface
      */
     public function hasEmptyMatrix(ShoppingList $shoppingList): bool
     {
-        foreach ($shoppingList->getLineItems() as $lineItem) {
-            if ($lineItem->getProduct()->isConfigurable()) {
-                return true;
+        $lineItemsCollection = $shoppingList->getLineItems();
+        $result = false;
+        if ($this->isTooManyUninitializedProducts($lineItemsCollection)) {
+            /** @var ShoppingListRepository $repository */
+            $repository = $this->doctrineHelper->getEntityRepositoryForClass(ShoppingList::class);
+            $result = $repository->hasEmptyConfigurableLineItems($shoppingList);
+        } else {
+            foreach ($lineItemsCollection as $lineItem) {
+                if ($lineItem->getProduct()->isConfigurable()) {
+                    $result = true;
+                    break;
+                }
             }
         }
 
-        return false;
+        return $result;
+    }
+
+    /**
+     * @param Collection $lineItemsCollection
+     * @return bool
+     */
+    private function isTooManyUninitializedProducts(Collection $lineItemsCollection): bool
+    {
+        $result = false;
+        if ($lineItemsCollection->isEmpty()) {
+            return $result;
+        }
+
+        if ($lineItemsCollection instanceof AbstractLazyCollection && !$lineItemsCollection->isInitialized()) {
+            $result = true;
+        } else {
+            $notInitializedCount = 0;
+            $lineItemsCollection->first();
+            do {
+                $product = $lineItemsCollection->current()->getProduct();
+                if ($product instanceof Proxy && !$product->__isInitialized()) {
+                    $notInitializedCount ++;
+                    if ($notInitializedCount > 2) {
+                        $result = true;
+                        break;
+                    }
+                }
+            } while ($lineItemsCollection->next());
+        }
+
+        return $result;
     }
 }

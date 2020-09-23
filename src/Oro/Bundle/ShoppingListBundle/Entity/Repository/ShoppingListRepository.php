@@ -5,15 +5,12 @@ namespace Oro\Bundle\ShoppingListBundle\Entity\Repository;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
-use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CustomerBundle\Entity\Repository\ResetCustomerUserTrait;
 use Oro\Bundle\CustomerBundle\Entity\Repository\ResettableCustomerUserRepositoryInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
-use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
@@ -142,186 +139,23 @@ class ShoppingListRepository extends EntityRepository implements ResettableCusto
     }
 
     /**
-     * Used in ShoppingListController::viewAction().
-     * Loads related entities to eliminate extra queries when displaying on view page.
-     *
-     * @param int $shoppingListId
-     *
-     * @return ShoppingList|null
+     * @param ShoppingList $shoppingList
+     * @return bool
      */
-    public function findForViewAction(int $shoppingListId): ?ShoppingList
+    public function hasEmptyConfigurableLineItems(ShoppingList $shoppingList): bool
     {
-        /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->find($shoppingListId);
+        $qb = $this->createQueryBuilder('shopping_list');
 
-        if ($shoppingList && $shoppingList->getLineItems()->count()) {
-            $this->preloadLineItemsForViewAction($shoppingList->getLineItems()->toArray());
-        }
-
-        return $shoppingList;
-    }
-
-    /**
-     * @param array $lineItemsIds
-     *
-     * @return array
-     */
-    public function preloadLineItemsByIdsForViewAction(array $lineItemsIds): array
-    {
-        $lineItems = $this->getEntityManager()->getRepository(LineItem::class)->findBy(['id' => $lineItemsIds]);
-
-        $this->preloadLineItemsForViewAction($lineItems);
-
-        return $lineItems;
-    }
-
-    /**
-     * Loads related entities to eliminate extra queries when displaying on view page in line items grid.
-     *
-     * @param LineItem[] $lineItems
-     */
-    public function preloadLineItemsForViewAction(array $lineItems): void
-    {
-        $productsIds = [];
-        $mainProductsIds = [];
-        foreach ($lineItems as $lineItem) {
-            $productId = $lineItem->getProduct()->getId();
-            $productsIds[$productId] = $productId;
-
-            $parentProduct = $lineItem->getParentProduct();
-            if ($parentProduct) {
-                $productId = $parentProduct->getId();
-                $productsIds[$productId] = $productId;
-                $mainProductsIds[$productId] = $productId;
-            } else {
-                $mainProductsIds[$productId] = $productId;
-            }
-        }
-
-        $products = $this->loadRelatedProducts($productsIds);
-        $categoriesIds = [];
-        foreach ($products as $product) {
-            $category = $product->getCategory();
-            if ($category) {
-                $categoriesIds[$category->getId()] = $category->getId();
-            }
-        }
-
-        $this->loadRelatedCategories($categoriesIds);
-        $this->loadRelatedEntityFallbackValuesForProducts($productsIds);
-        $this->loadRelatedEntityFallbackValuesForCategories($categoriesIds);
-        $this->loadRelatedProductNames($mainProductsIds);
-        $this->loadRelatedProductImages($productsIds);
-    }
-
-    /**
-     * @param array $productsIds
-     *
-     * @return array
-     */
-    private function loadRelatedProducts(array $productsIds): array
-    {
-        return $this->getEntityManager()->getRepository(Product::class)->findBy(['id' => $productsIds]);
-    }
-
-    /**
-     * @param array $productsIds
-     */
-    private function loadRelatedEntityFallbackValuesForProducts(array $productsIds): void
-    {
-        $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb
-            ->select(
-                'partial product.{id}',
-                'partial product_minimum_quantity.{id,fallback,scalarValue}',
-                'partial product_maximum_quantity.{id,fallback,scalarValue}',
-                'partial product_highlight_low_inventory.{id,fallback,scalarValue}',
-                'partial product_is_upcoming.{id,fallback,scalarValue}'
-            )
-            ->from(Product::class, 'product')
-            ->leftJoin('product.highlightLowInventory', 'product_highlight_low_inventory')
-            ->leftJoin('product.isUpcoming', 'product_is_upcoming')
-            ->leftJoin('product.minimumQuantityToOrder', 'product_minimum_quantity')
-            ->leftJoin('product.maximumQuantityToOrder', 'product_maximum_quantity')
-            ->where($qb->expr()->in('product', ':products'))
+        return (bool) $qb
+            ->select('1')
+            ->innerJoin('shopping_list.lineItems', 'shopping_list_line_item')
+            ->innerJoin('shopping_list_line_item.product', 'line_item_product')
+            ->where($qb->expr()->eq('shopping_list', ':shopping_list'))
+            ->setParameter('shopping_list', $shoppingList->getId())
+            ->andWhere($qb->expr()->eq('line_item_product.type', $qb->expr()->literal(Product::TYPE_CONFIGURABLE)))
+            ->setMaxResults(1)
             ->getQuery()
-            ->setHint(Query::HINT_FORCE_PARTIAL_LOAD, true)
-            ->execute(['products' => $productsIds]);
-    }
-
-    /**
-     * @param array $categoriesIds
-     */
-    private function loadRelatedCategories(array $categoriesIds): void
-    {
-        $this->getEntityManager()->getRepository(Category::class)->findBy(['id' => $categoriesIds]);
-    }
-
-    /**
-     * @param array $categoriesIds
-     *
-     * @return array
-     */
-    private function loadRelatedEntityFallbackValuesForCategories(array $categoriesIds): void
-    {
-        $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb
-            ->select(
-                'partial category.{id}',
-                'partial category_minimum_quantity.{id,fallback,scalarValue}',
-                'partial category_maximum_quantity.{id,fallback,scalarValue}',
-                'partial category_highlight_low_inventory.{id,fallback,scalarValue}',
-                'partial category_is_upcoming.{id,fallback,scalarValue}'
-            )
-            ->from(Category::class, 'category')
-            ->leftJoin('category.highlightLowInventory', 'category_highlight_low_inventory')
-            ->leftJoin('category.isUpcoming', 'category_is_upcoming')
-            ->leftJoin('category.minimumQuantityToOrder', 'category_minimum_quantity')
-            ->leftJoin('category.maximumQuantityToOrder', 'category_maximum_quantity')
-            ->where($qb->expr()->in('category', ':categories_ids'))
-            ->getQuery()
-            ->setHint(Query::HINT_FORCE_PARTIAL_LOAD, true)
-            ->execute(['categories_ids' => $categoriesIds]);
-    }
-
-    /**
-     * @param array $productsIds
-     */
-    private function loadRelatedProductNames(array $productsIds): void
-    {
-        $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb
-            ->select('partial product.{id}', 'partial product_name.{id,fallback,string}', 'localization')
-            ->from(Product::class, 'product')
-            ->innerJoin('product.names', 'product_name')
-            ->leftJoin('product_name.localization', 'localization')
-            ->where($qb->expr()->in('product', ':products'))
-            ->getQuery()
-            ->setHint(Query::HINT_FORCE_PARTIAL_LOAD, true)
-            ->execute(['products' => $productsIds]);
-    }
-
-    /**
-     * @param array $productsIds
-     */
-    private function loadRelatedProductImages(array $productsIds): void
-    {
-        $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb
-            ->select(
-                'partial product.{id}',
-                'partial product_image.{id}',
-                'product_image_image',
-                'partial product_image_type.{id,type}'
-            )
-            ->from(Product::class, 'product')
-            ->leftJoin('product.images', 'product_image')
-            ->leftJoin('product_image.image', 'product_image_image')
-            ->leftJoin('product_image.types', 'product_image_type')
-            ->where($qb->expr()->in('product', ':products'))
-            ->getQuery()
-            ->setHint(Query::HINT_FORCE_PARTIAL_LOAD, true)
-            ->execute(['products' => $productsIds]);
+            ->getScalarResult();
     }
 
     /**

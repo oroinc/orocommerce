@@ -6,7 +6,7 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadConfigurableProdu
 
 class LoadShoppingListConfigurableLineItems extends AbstractShoppingListLineItemsFixture
 {
-    private const LINE_ITEM_1 = 'shopping_list_configurable_line_item.1';
+    public const LINE_ITEM_1 = 'shopping_list_configurable_line_item.1';
     private const LINE_ITEM_2 = 'shopping_list_configurable_line_item.2';
     private const LINE_ITEM_3 = 'shopping_list_configurable_line_item.3';
 
