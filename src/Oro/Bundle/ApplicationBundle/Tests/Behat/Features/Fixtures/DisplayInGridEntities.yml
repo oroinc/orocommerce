@@ -65,6 +65,8 @@ Oro\Bundle\CustomerBundle\Entity\Customer:
 Oro\Bundle\WebsiteBundle\Entity\Website:
   website_entity:
     name: 'New Website'
+    organization: '@organization'
+    owner: '@business_unit'
 
 Oro\Bundle\CustomerBundle\Entity\CustomerUser:
   customer_user_entity:

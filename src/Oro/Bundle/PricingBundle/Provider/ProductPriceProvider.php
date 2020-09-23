@@ -177,11 +177,13 @@ class ProductPriceProvider implements ProductPriceProviderInterface
     private function sortPrices(array &$prices)
     {
         usort($prices, static function (ProductPriceDTO $a, ProductPriceDTO $b) {
-            if ($a->getUnit()->getCode() === $b->getUnit()->getCode()) {
+            $codeA = $a->getUnit()->getCode();
+            $codeB = $b->getUnit()->getCode();
+            if ($codeA === $codeB) {
                 return $a->getQuantity() <=> $b->getQuantity();
             }
 
-            return $a->getUnit()->getCode() <=> $b->getUnit()->getCode();
+            return $codeA <=> $codeB;
         });
     }
 

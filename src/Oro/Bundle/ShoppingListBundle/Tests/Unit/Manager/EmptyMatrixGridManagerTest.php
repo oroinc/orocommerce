@@ -2,8 +2,12 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Manager;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\PersistentCollection;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
@@ -11,10 +15,13 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
+use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductProxyStub;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\LineItem\Factory\LineItemByShoppingListAndProductFactoryInterface;
 use Oro\Bundle\ShoppingListBundle\Manager\EmptyMatrixGridManager;
+use Oro\Bundle\ShoppingListBundle\Tests\Unit\Entity\Stub\ShoppingListStub;
 use Oro\Component\Testing\Unit\EntityTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -313,5 +320,97 @@ class EmptyMatrixGridManagerTest extends TestCase
             );
 
         self::assertFalse($this->manager->hasEmptyMatrix($shoppingList));
+    }
+
+    public function testHasEmptyMatrixWhenCollectionEmpty(): void
+    {
+        $shoppingList = new ShoppingListStub();
+
+        $lineItems = new PersistentCollection(
+            $this->createMock(EntityManagerInterface::class),
+            $this->createMock(ClassMetadata::class),
+            new ArrayCollection()
+        );
+        $lineItems->setInitialized(false);
+
+        $shoppingList->setLineItems($lineItems);
+
+        $entityRepository = $this->createMock(ShoppingListRepository::class);
+        $this->doctrineHelper
+            ->expects($this->never())
+            ->method('getEntityRepositoryForClass')
+            ->with(ShoppingList::class)
+            ->willReturn($entityRepository);
+
+        $this->assertFalse($this->manager->hasEmptyMatrix($shoppingList));
+    }
+
+    public function testHasEmptyMatrixWhenCollectionUninitialized(): void
+    {
+        $shoppingList = new ShoppingListStub();
+
+        $lineItems = new PersistentCollection(
+            $this->createMock(EntityManagerInterface::class),
+            $this->createMock(ClassMetadata::class),
+            new ArrayCollection(
+                [
+                    $this->getEntity(LineItem::class, ['id' => 1, 'product' => new ProductProxyStub()]),
+                ]
+            )
+        );
+        $lineItems->setInitialized(false);
+
+        $shoppingList->setLineItems($lineItems);
+
+        $entityRepository = $this->createMock(ShoppingListRepository::class);
+        $this->doctrineHelper
+            ->expects($this->once())
+            ->method('getEntityRepositoryForClass')
+            ->with(ShoppingList::class)
+            ->willReturn($entityRepository);
+
+        $entityRepository
+            ->expects($this->once())
+            ->method('hasEmptyConfigurableLineItems')
+            ->with($shoppingList)
+            ->willReturn(true);
+
+        $this->assertTrue($this->manager->hasEmptyMatrix($shoppingList));
+    }
+
+    public function testHasEmptyMatrixWhenProductsUninitialized(): void
+    {
+        $product = new ProductProxyStub();
+        $shoppingList = new ShoppingListStub();
+
+        $lineItems = new PersistentCollection(
+            $this->createMock(EntityManagerInterface::class),
+            $this->createMock(ClassMetadata::class),
+            new ArrayCollection(
+                [
+                    $this->getEntity(LineItem::class, ['id' => 1, 'product' => $product]),
+                    $this->getEntity(LineItem::class, ['id' => 2, 'product' => $product]),
+                    $this->getEntity(LineItem::class, ['id' => 3, 'product' => $product]),
+                ]
+            )
+        );
+        $lineItems->setInitialized(true);
+
+        $shoppingList->setLineItems($lineItems);
+
+        $entityRepository = $this->createMock(ShoppingListRepository::class);
+        $this->doctrineHelper
+            ->expects($this->once())
+            ->method('getEntityRepositoryForClass')
+            ->with(ShoppingList::class)
+            ->willReturn($entityRepository);
+
+        $entityRepository
+            ->expects($this->once())
+            ->method('hasEmptyConfigurableLineItems')
+            ->with($shoppingList)
+            ->willReturn(false);
+
+        $this->assertFalse($this->manager->hasEmptyMatrix($shoppingList));
     }
 }
