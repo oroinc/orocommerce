@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\Functional\Command;
+namespace Oro\Bundle\ProductBundle\Tests\Functional\MessageProcessor;
 
 use Oro\Bundle\LayoutBundle\Layout\Extension\ThemeConfiguration;
 use Oro\Bundle\LayoutBundle\Model\ThemeImageTypeDimension;

@@ -102,9 +102,6 @@ class DiscountLineItem implements DiscountLineItemInterface
     public function setProduct(Product $product = null)
     {
         $this->product = $product;
-        if ($product) {
-            $this->setProductSku($product->getSku());
-        }
 
         return $this;
     }
@@ -147,9 +144,6 @@ class DiscountLineItem implements DiscountLineItemInterface
     public function setProductUnit(ProductUnit $productUnit = null)
     {
         $this->productUnit = $productUnit;
-        if ($productUnit) {
-            $this->setProductUnitCode($productUnit->getCode());
-        }
 
         return $this;
     }

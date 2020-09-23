@@ -54,6 +54,7 @@ class MappingConfiguration implements ConfigurationInterface
                             ->booleanNode('store')->end()
                             ->booleanNode('default_search_field')->end()
                             ->booleanNode('fulltext')->defaultTrue()->end()
+                            ->scalarNode('organization_id')->defaultNull()->end()
                         ->end()
                         ->validate()
                             ->always(
