@@ -2,11 +2,13 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Datagrid\EventListener;
 
-use Doctrine\Common\Collections\AbstractLazyCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface as Record;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
+use Oro\Bundle\EntityBundle\Manager\PreloadingManager;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
@@ -17,7 +19,6 @@ use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\ConfigurableProductProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
-use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Event\LineItemDataEvent;
 use Oro\Bundle\ShoppingListBundle\Validator\LineItemViolationsProvider;
@@ -60,6 +61,47 @@ class FrontendLineItemsGridEventListener
     /** @var LineItemViolationsProvider */
     private $violationsProvider;
 
+    /** @var PreloadingManager */
+    private $preloadingManager;
+
+    /** @var array */
+    private $fieldsToPreload = [
+        'parentProduct' => [
+            'names' => [],
+            'images' => [
+                'image' => [
+                    'digitalAsset' => [
+                        'titles' => [],
+                        'sourceFile' => [
+                            'digitalAsset' => [],
+                        ],
+                    ]
+                ],
+                'types' => [],
+            ],
+        ],
+        'product' => [
+            'isUpcoming' => [],
+            'highlightLowInventory' => [],
+            'minimumQuantityToOrder' => [],
+            'maximumQuantityToOrder' => [],
+            'names' => [],
+            'images' => [
+                'image' => [
+                    'digitalAsset' => [
+                        'titles' => [],
+                        'sourceFile' => [
+                            'digitalAsset' => [],
+                        ],
+                    ]
+                ],
+                'types' => [],
+            ],
+            'unitPrecisions' => [],
+            'category' => [],
+        ],
+    ];
+
     /**
      * @param UrlGeneratorInterface $urlGenerator
      * @param EventDispatcherInterface $eventDispatcher
@@ -71,6 +113,7 @@ class FrontendLineItemsGridEventListener
      * @param ConfigurableProductProvider $configurableProductProvider
      * @param LocalizationHelper $localizationHelper
      * @param LineItemViolationsProvider $violationsProvider
+     * @param PreloadingManager $preloadingManager
      */
     public function __construct(
         UrlGeneratorInterface $urlGenerator,
@@ -82,7 +125,8 @@ class FrontendLineItemsGridEventListener
         FrontendProductPricesDataProvider $productPricesDataProvider,
         ConfigurableProductProvider $configurableProductProvider,
         LocalizationHelper $localizationHelper,
-        LineItemViolationsProvider $violationsProvider
+        LineItemViolationsProvider $violationsProvider,
+        PreloadingManager $preloadingManager
     ) {
         $this->urlGenerator = $urlGenerator;
         $this->eventDispatcher = $eventDispatcher;
@@ -94,6 +138,7 @@ class FrontendLineItemsGridEventListener
         $this->configurableProductProvider = $configurableProductProvider;
         $this->localizationHelper = $localizationHelper;
         $this->violationsProvider = $violationsProvider;
+        $this->preloadingManager = $preloadingManager;
     }
 
     /**
@@ -403,27 +448,42 @@ class FrontendLineItemsGridEventListener
             return [];
         }
 
-        $lineItemsCollection = $shoppingList->getLineItems();
-        if ($lineItemsCollection instanceof AbstractLazyCollection && !$lineItemsCollection->isInitialized()) {
-            return $this->preloadLineItems($repository, $event->getRecords());
-        }
-
-        return $lineItemsCollection->toArray();
+        return $this->preloadLineItems($shoppingList->getLineItems(), $event->getRecords());
     }
 
     /**
-     * @param ShoppingListRepository $repository
+     * @param Collection $lineItems
      * @param Record[] $records
      *
      * @return array
      */
-    private function preloadLineItems(ShoppingListRepository $repository, array $records): array
+    private function preloadLineItems(Collection $lineItems, array $records): array
     {
+        if (!$records) {
+            return [];
+        }
+
         $lineItemsIds = array_merge(
-            ...array_map(fn(Record $record) => explode(',', $this->getRowId($record)), $records)
+            ...array_map(
+                function (Record $record) {
+                    return explode(',', $this->getRowId($record));
+                },
+                $records
+            )
         );
 
-        return $lineItemsIds ? $repository->preloadLineItemsByIdsForViewAction($lineItemsIds) : [];
+        if (count($lineItemsIds) < $lineItems->count()) {
+            $lineItemsIds = array_map('intval', $lineItemsIds);
+            $criteria = Criteria::create();
+            $criteria->andWhere(Criteria::expr()->in('id', $lineItemsIds));
+            $lineItemsToPreload = $lineItems->matching($criteria)->toArray();
+        } else {
+            $lineItemsToPreload = $lineItems->toArray();
+        }
+
+        $this->preloadingManager->preloadInEntities($lineItemsToPreload, $this->fieldsToPreload);
+
+        return $lineItemsToPreload;
     }
 
     /**

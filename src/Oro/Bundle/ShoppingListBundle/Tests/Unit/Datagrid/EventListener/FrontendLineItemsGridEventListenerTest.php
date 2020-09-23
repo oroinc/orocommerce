@@ -14,6 +14,7 @@ use Oro\Bundle\DataGridBundle\Datagrid\Datagrid;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
+use Oro\Bundle\EntityBundle\Manager\PreloadingManager;
 use Oro\Bundle\InventoryBundle\Tests\Unit\Inventory\Stub\InventoryStatusStub;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
@@ -73,6 +74,47 @@ class FrontendLineItemsGridEventListenerTest extends \PHPUnit\Framework\TestCase
     /** @var LineItemViolationsProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $violationsProvider;
 
+    /** @var PreloadingManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $preloadingManager;
+
+    /** @var array */
+    private $fieldsToPreload = [
+        'parentProduct' => [
+            'names' => [],
+            'images' => [
+                'image' => [
+                    'digitalAsset' => [
+                        'titles' => [],
+                        'sourceFile' => [
+                            'digitalAsset' => [],
+                        ],
+                    ]
+                ],
+                'types' => [],
+            ],
+        ],
+        'product' => [
+            'isUpcoming' => [],
+            'highlightLowInventory' => [],
+            'minimumQuantityToOrder' => [],
+            'maximumQuantityToOrder' => [],
+            'names' => [],
+            'images' => [
+                'image' => [
+                    'digitalAsset' => [
+                        'titles' => [],
+                        'sourceFile' => [
+                            'digitalAsset' => [],
+                        ],
+                    ]
+                ],
+                'types' => [],
+            ],
+            'unitPrecisions' => [],
+            'category' => [],
+        ],
+    ];
+
     /** @var FrontendLineItemsGridEventListener */
     private $listener;
 
@@ -101,6 +143,7 @@ class FrontendLineItemsGridEventListenerTest extends \PHPUnit\Framework\TestCase
         $this->configurableProductProvider = $this->createMock(ConfigurableProductProvider::class);
         $this->localizationHelper = $this->createMock(LocalizationHelper::class);
         $this->violationsProvider = $this->createMock(LineItemViolationsProvider::class);
+        $this->preloadingManager = $this->createMock(PreloadingManager::class);
 
         $this->listener = new FrontendLineItemsGridEventListener(
             $this->urlGenerator,
@@ -112,7 +155,8 @@ class FrontendLineItemsGridEventListenerTest extends \PHPUnit\Framework\TestCase
             $this->productPricesDataProvider,
             $this->configurableProductProvider,
             $this->localizationHelper,
-            $this->violationsProvider
+            $this->violationsProvider,
+            $this->preloadingManager
         );
     }
 
@@ -142,10 +186,9 @@ class FrontendLineItemsGridEventListenerTest extends \PHPUnit\Framework\TestCase
             ->with($shoppingList->getId())
             ->willReturn($shoppingList);
 
-        $this->repository->expects($this->once())
-            ->method('preloadLineItemsByIdsForViewAction')
-            ->with([$lineItem1->getId(), $lineItem2->getId(), $lineItem3->getId(), 4])
-            ->willReturn([$lineItem1, $lineItem2, $lineItem3]);
+        $this->preloadingManager->expects($this->once())
+            ->method('preloadInEntities')
+            ->with([$lineItem1, $lineItem2, $lineItem3], $this->fieldsToPreload);
 
         $matchedPrices = ['matchedPrices'];
         $this->productPricesDataProvider->expects($this->once())
@@ -162,15 +205,83 @@ class FrontendLineItemsGridEventListenerTest extends \PHPUnit\Framework\TestCase
         $record1 = new ResultRecord(['allLineItemsIds' => $lineItem1->getId()]);
         $record2 = new ResultRecord(['allLineItemsIds' => $lineItem2->getId() . ',' . $lineItem3->getId() . ',4']);
 
-        $this->listener->onResultAfter(new OrmResultAfter(
-            new Datagrid(
-                'test-grid',
-                DatagridConfiguration::create([]),
-                new ParameterBag(['shopping_list_id' => $shoppingList->getId()])
-            ),
-            [$record1, $record2],
-            $this->query
-        ));
+        $this->listener->onResultAfter(
+            new OrmResultAfter(
+                new Datagrid(
+                    'test-grid',
+                    DatagridConfiguration::create([]),
+                    new ParameterBag(['shopping_list_id' => $shoppingList->getId()])
+                ),
+                [$record1, $record2],
+                $this->query
+            )
+        );
+
+        $this->assertEquals($product1->getId(), $record1->getValue('productId'));
+        $this->assertEquals($product2->getId(), $record2->getValue('productId'));
+    }
+
+    public function testOnResultAfterWhenPreloadNotAllLineItems(): void
+    {
+        $product1 = $this->getProduct(101);
+        $product2 = $this->getProduct(202);
+        $product3 = $this->getProduct(303);
+
+        $lineItem1 = $this->getLineItem(1001, $product1, 'item');
+        $lineItem2 = $this->getLineItem(2002, $product2, 'item');
+        $lineItem3 = $this->getLineItem(3003, $product3, 'item');
+
+        $lineItems = new PersistentCollection(
+            $this->createMock(EntityManagerInterface::class),
+            $this->createMock(ClassMetadata::class),
+            new ArrayCollection([$lineItem1, $lineItem2, $lineItem3])
+        );
+
+        $shoppingList = new ShoppingListStub();
+        $lineItems->setOwner(
+            $shoppingList,
+            ['inversedBy' => '', 'mappedBy' => 'shoppingList', 'type' => ClassMetadata::ONE_TO_MANY]
+        );
+        $lineItems->setInitialized(true);
+
+        $shoppingList->setId(42)
+            ->setLineItems($lineItems);
+
+        $this->repository->expects($this->once())
+            ->method('find')
+            ->with($shoppingList->getId())
+            ->willReturn($shoppingList);
+
+        $this->preloadingManager->expects($this->once())
+            ->method('preloadInEntities')
+            ->with([$lineItem1, $lineItem2], $this->fieldsToPreload);
+
+        $matchedPrices = ['matchedPrices'];
+        $this->productPricesDataProvider->expects($this->once())
+            ->method('getProductsMatchedPrice')
+            ->with([$lineItem1, $lineItem2])
+            ->willReturn($matchedPrices);
+
+        $errors = ['error1'];
+        $this->violationsProvider->expects($this->once())
+            ->method('getLineItemViolationLists')
+            ->with([$lineItem1, $lineItem2])
+            ->willReturn($errors);
+
+        $record1 = new ResultRecord(['allLineItemsIds' => $lineItem1->getId()]);
+        $record2 = new ResultRecord(['allLineItemsIds' => $lineItem2->getId()]);
+
+        $this->listener->onResultAfter(
+            new OrmResultAfter(
+                new Datagrid(
+                    'test-grid',
+                    DatagridConfiguration::create([]),
+                    new ParameterBag(['shopping_list_id' => $shoppingList->getId()])
+                ),
+                [$record1, $record2],
+                $this->query
+            )
+        );
 
         $this->assertEquals($product1->getId(), $record1->getValue('productId'));
         $this->assertEquals($product2->getId(), $record2->getValue('productId'));
@@ -194,8 +305,8 @@ class FrontendLineItemsGridEventListenerTest extends \PHPUnit\Framework\TestCase
             ->with($shoppingList->getId())
             ->willReturn($shoppingList);
 
-        $this->repository->expects($this->never())
-            ->method('preloadLineItemsByIdsForViewAction');
+        $this->preloadingManager->expects($this->never())
+            ->method('preloadInEntities');
 
         $this->productPricesDataProvider->expects($this->never())
             ->method('getProductsMatchedPrice');
@@ -203,15 +314,17 @@ class FrontendLineItemsGridEventListenerTest extends \PHPUnit\Framework\TestCase
         $this->violationsProvider->expects($this->never())
             ->method('getLineItemViolationLists');
 
-        $this->listener->onResultAfter(new OrmResultAfter(
-            new Datagrid(
-                'test-grid',
-                DatagridConfiguration::create([]),
-                new ParameterBag(['shopping_list_id' => $shoppingList->getId()])
-            ),
-            [],
-            $this->query
-        ));
+        $this->listener->onResultAfter(
+            new OrmResultAfter(
+                new Datagrid(
+                    'test-grid',
+                    DatagridConfiguration::create([]),
+                    new ParameterBag(['shopping_list_id' => $shoppingList->getId()])
+                ),
+                [],
+                $this->query
+            )
+        );
     }
 
     /**
