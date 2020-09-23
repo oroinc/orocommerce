@@ -6,6 +6,7 @@ use Oro\Bundle\ActionBundle\Provider\ButtonProvider;
 use Oro\Bundle\ActionBundle\Provider\ButtonSearchContextProvider;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\EntityBundle\Manager\PreloadingManager;
 use Oro\Bundle\FormBundle\Model\UpdateHandler;
 use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
@@ -41,7 +42,7 @@ class ShoppingListController extends AbstractController
      *      group_name="commerce"
      * )
      *
-     * @param ShoppingList $shoppingList
+     * @param ShoppingList|null $shoppingList
      * @return array|Response
      */
     public function viewAction(ShoppingList $shoppingList = null)
@@ -53,13 +54,38 @@ class ShoppingListController extends AbstractController
         if ($shoppingList) {
             $this->get(ShoppingListManager::class)->actualizeLineItems($shoppingList);
 
-            // It is required to ensure that enabled localizations are loaded before calling ::findForViewAction()
-            // because of partial hydrations on product names.
-            $this->get(UserLocalizationManager::class)->getEnabledLocalizations();
-
-            $shoppingList = $this->getDoctrine()->getManagerForClass(ShoppingList::class)
-                ->getRepository(ShoppingList::class)
-                ->findForViewAction($shoppingList->getId());
+            $this->get(PreloadingManager::class)->preloadInEntities(
+                $shoppingList->getLineItems()->toArray(),
+                [
+                    'parentProduct' => [
+                        'names' => [],
+                        'images' => [
+                            'image' => [],
+                            'types' => [],
+                        ],
+                    ],
+                    'product' => [
+                        'isUpcoming' => [],
+                        'highlightLowInventory' => [],
+                        'minimumQuantityToOrder' => [],
+                        'maximumQuantityToOrder' => [],
+                        'names' => [],
+                        'images' => [
+                            'image' => [
+                                'digitalAsset' => [
+                                    'titles' => [],
+                                    'sourceFile' => [
+                                        'digitalAsset' => [],
+                                    ],
+                                ]
+                            ],
+                            'types' => [],
+                        ],
+                        'unitPrecisions' => [],
+                        'category' => [],
+                    ],
+                ]
+            );
 
             $title = $shoppingList->getLabel();
             $lineItems = $shoppingList->getLineItems()->toArray();
@@ -338,6 +364,7 @@ class ShoppingListController extends AbstractController
             ButtonSearchContextProvider::class,
             FrontendProductPricesDataProvider::class,
             ProductPriceFormatter::class,
+            PreloadingManager::class,
             ConfigManager::class,
             UserLocalizationManager::class,
         ]);
