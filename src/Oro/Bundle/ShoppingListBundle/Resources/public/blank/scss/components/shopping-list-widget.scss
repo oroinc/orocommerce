@@ -8,7 +8,7 @@
 
         &__wrapper {
             position: absolute;
-            z-index: z('dropdown') + 1;
+            z-index: z('dropdown') + 10;
             right: 2px;
 
             padding: 0;
@@ -45,7 +45,7 @@
         @include hover-focus() {
             outline: 0;
         }
-        
+
         @include hover {
             text-decoration: underline;
         }
