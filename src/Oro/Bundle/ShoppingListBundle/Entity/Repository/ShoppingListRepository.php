@@ -162,20 +162,6 @@ class ShoppingListRepository extends EntityRepository implements ResettableCusto
     }
 
     /**
-     * @param array $lineItemsIds
-     *
-     * @return array
-     */
-    public function preloadLineItemsByIdsForViewAction(array $lineItemsIds): array
-    {
-        $lineItems = $this->getEntityManager()->getRepository(LineItem::class)->findBy(['id' => $lineItemsIds]);
-
-        $this->preloadLineItemsForViewAction($lineItems);
-
-        return $lineItems;
-    }
-
-    /**
      * Loads related entities to eliminate extra queries when displaying on view page in line items grid.
      *
      * @param LineItem[] $lineItems

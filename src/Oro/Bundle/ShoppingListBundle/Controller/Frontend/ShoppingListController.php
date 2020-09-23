@@ -4,11 +4,10 @@ namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 
 use Oro\Bundle\ActionBundle\Provider\ButtonProvider;
 use Oro\Bundle\ActionBundle\Provider\ButtonSearchContextProvider;
-use Oro\Bundle\EntityBundle\Manager\PreloadingManager;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\EntityBundle\Manager\PreloadingManager;
 use Oro\Bundle\FormBundle\Model\UpdateHandler;
-use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
 use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
@@ -174,7 +173,7 @@ class ShoppingListController extends AbstractController
     {
         return [
             'data' => [
-                'entity' => $this->preloadShoppingListData($shoppingList, $request),
+                'entity' => $this->actualizeShoppingList($shoppingList),
             ],
         ];
     }
@@ -193,32 +192,20 @@ class ShoppingListController extends AbstractController
     {
         return [
             'data' => [
-                'entity' => $this->preloadShoppingListData($shoppingList, $request),
+                'entity' => $this->actualizeShoppingList($shoppingList),
             ],
         ];
     }
 
     /**
      * @param ShoppingList $shoppingList
-     * @param Request $request
      * @return ShoppingList
      */
-    private function preloadShoppingListData(ShoppingList $shoppingList, Request $request): ShoppingList
+    private function actualizeShoppingList(ShoppingList $shoppingList): ShoppingList
     {
         $this->get(ShoppingListManager::class)->actualizeLineItems($shoppingList);
 
-        // Skips preloading of shopping list related entities in case of partial rendering.
-        if (!$request->get('layout_block_ids')) {
-            // It is required to ensure that enabled localizations are loaded before calling ::findForViewAction()
-            // because of partial hydrations on product names.
-            $this->get(UserLocalizationManager::class)->getEnabledLocalizations();
-
-            $shoppingList = $this->getDoctrine()->getManagerForClass(ShoppingList::class)
-                ->getRepository(ShoppingList::class)
-                ->findForViewAction($shoppingList->getId());
-        }
-
-        // actualize current shopping list
+        // Actualize current shopping list.
         $this->get(CurrentShoppingListManager::class)->getCurrent();
 
         return $shoppingList;
@@ -366,7 +353,6 @@ class ShoppingListController extends AbstractController
             ProductPriceFormatter::class,
             PreloadingManager::class,
             ConfigManager::class,
-            UserLocalizationManager::class
         ]);
     }
 }

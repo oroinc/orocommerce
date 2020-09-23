@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures;
 
-use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadConfigurableProductWithVariants;
 
 class LoadShoppingListConfigurableLineItems extends AbstractShoppingListLineItemsFixture
 {
-    private const LINE_ITEM_1 = 'shopping_list_configurable_line_item.1';
+    public const LINE_ITEM_1 = 'shopping_list_configurable_line_item.1';
     private const LINE_ITEM_2 = 'shopping_list_configurable_line_item.2';
     private const LINE_ITEM_3 = 'shopping_list_configurable_line_item.3';
     private const LINE_ITEM_4 = 'shopping_list_configurable_line_item.4';
@@ -56,7 +55,6 @@ class LoadShoppingListConfigurableLineItems extends AbstractShoppingListLineItem
     public function getDependencies(): array
     {
         return [
-            LoadProductUnitPrecisions::class,
             LoadConfigurableProductWithVariants::class,
             LoadShoppingLists::class,
         ];

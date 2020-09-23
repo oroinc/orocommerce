@@ -641,6 +641,7 @@ services:
             - '@oro_product.layout.data_provider.configurable_products'
             - '@oro_locale.helper.localization'
             - '@oro_shopping_list.validator_service.line_item'
+            - '@oro_entity.manager.preloading_manager'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-customer-user-shopping-list-grid, method: onResultAfter }
 
