@@ -4,6 +4,7 @@ namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
+use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserMultiSelectType;
@@ -11,6 +12,8 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
+use Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision;
+use Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecisionValidator;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
@@ -115,9 +118,18 @@ abstract class AbstractTest extends FormIntegrationTestCase
         $UniqueEntity = $this->getMockBuilder('Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntityValidator')
         ->disableOriginalConstructor()->getMock();
 
+        $quantityUnitPrecision = new QuantityUnitPrecision();
+        $roundingService = $this->createMock(RoundingServiceInterface::class);
+        $roundingService->expects($this->any())
+            ->method('round')
+            ->willReturnCallback(function ($quantity) {
+                return (float)$quantity;
+            });
+
         return [
             $quoteProductConstraint->validatedBy() => new Constraints\QuoteProductValidator(),
-            'doctrine.orm.validator.unique' => $UniqueEntity
+            'doctrine.orm.validator.unique' => $UniqueEntity,
+            $quantityUnitPrecision->validatedBy() => new QuantityUnitPrecisionValidator($roundingService)
         ];
     }
 

@@ -5,12 +5,15 @@ define(function(require) {
     const _ = require('underscore');
     const $ = require('jquery');
     const routing = require('routing');
+    /** @var QuantityHelper QuantityHelper **/
+    const QuantityHelper = require('oroproduct/js/app/quantity-helper');
 
     const QuoteProductToOrderComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
         options: {
+            unitPrecisions: null,
             offerSelector: '.radiobox',
             quantitySelector: '.quantity',
             unitInputSelector: '.unitInput',
@@ -88,6 +91,7 @@ define(function(require) {
 
             this.$offerSelector.on('change', _.bind(this.onOfferChange, this));
             this.addQuantityEvents();
+            this.updateQuantityInputPrecision(this.$offerSelector.filter(':checked'));
         },
 
         /**
@@ -98,8 +102,9 @@ define(function(require) {
 
             this.quantityEventsEnabled = false;
 
+            this.updateQuantityInputPrecision(target);
             if (!this.blockQuantityUpdate) {
-                this.updateQuantityInputValue(Number(target.data(this.options.data_attributes.quantity)));
+                this.updateQuantityInputValue(target.data(this.options.data_attributes.quantity));
             }
             this.setValidAttribute(this.$quantity, true);
             this.updateUnitValue(
@@ -114,7 +119,7 @@ define(function(require) {
         onQuantityChange: function() {
             const self = this;
             const quantity = this.$quantity.val();
-            if (!this.isQuantityValueValid(quantity)) {
+            if (!QuantityHelper.isQuantityLocalizedValueValid(quantity)) {
                 return;
             }
 
@@ -148,15 +153,6 @@ define(function(require) {
         },
 
         /**
-         * @param {String} value
-         * @returns {Boolean}
-         */
-        isQuantityValueValid: function(value) {
-            const floatValue = parseFloat(value);
-            return !_.isNaN(floatValue) && floatValue > 0;
-        },
-
-        /**
          * @param {Object} field
          * @param {Boolean} value
          */
@@ -186,7 +182,7 @@ define(function(require) {
             }, this));
 
             this.$quantity.on('keyup', _.bind(function() {
-                if (this.isQuantityValueValid(this.$quantity.val())) {
+                if (QuantityHelper.isQuantityLocalizedValueValid(this.$quantity.val())) {
                     this.updateUnitPriceValue(this.options.calculatingMessage);
                 } else {
                     this.updateUnitPriceValue(this.options.notAvailableMessage);
@@ -206,7 +202,7 @@ define(function(require) {
          * @param {Number} quantity
          */
         updateQuantityInputValue: function(quantity) {
-            this.$quantity.val(quantity);
+            this.$quantity.val(QuantityHelper.formatQuantity(quantity));
             this.$quantity.data(this.options.data_attributes.quantity, quantity);
         },
 
@@ -224,6 +220,13 @@ define(function(require) {
          */
         updateUnitPriceValue: function(price) {
             this.$unitPrice.text(price);
+        },
+
+        updateQuantityInputPrecision: function(target) {
+            const unit = target.data(this.options.data_attributes.unit);
+            if (unit in this.options.unitPrecisions) {
+                this.$quantity.data('precision', this.options.unitPrecisions[unit]).inputWidget('refresh');
+            }
         },
 
         /**

@@ -232,6 +232,9 @@ Oro\Bundle\PricingBundle\Entity\ProductPrice:
         - Oro\Bundle\PricingBundle\Validator\Constraints\UniqueEntity:
             groups: [Default]
             fields: [ product, priceList, quantity, unit, currency ]
+        - Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
+            path: quantity
+            groups: [Default, ProductPriceCollection]
     properties:
         product:
             - NotBlank:

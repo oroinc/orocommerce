@@ -45,6 +45,9 @@ Oro\Bundle\RFPBundle\Entity\RequestProduct:
             - Valid: ~
 
 Oro\Bundle\RFPBundle\Entity\RequestProductItem:
+    constraints:
+        - Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
+            path: quantity
     properties:
         requestProduct:
             - NotBlank: ~

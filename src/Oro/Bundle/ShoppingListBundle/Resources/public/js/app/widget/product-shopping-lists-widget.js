@@ -11,6 +11,8 @@ define(function(require) {
     const _ = require('underscore');
     const $ = require('jquery');
     const ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
+    /** @var QuantityHelper QuantityHelper **/
+    const QuantityHelper = require('oroproduct/js/app/quantity-helper');
 
     const ProductShoppingListsWidget = DialogWidget.extend(_.extend({}, ElementsHelper, {
         options: $.extend(true, {}, DialogWidget.prototype.options, {
@@ -162,11 +164,13 @@ define(function(require) {
                 shoppingLists: shoppingLists,
                 shoppingListsCollection: this.shoppingListCollection,
                 productUnits: UnitsUtil.getUnitsLabel(this.model),
+                productUnitPrecisions: this.model.get('product_units'),
                 unit: this.model.get('unit'),
                 precision: this.model.get('product_units')[this.model.get('unit')],
                 singleUnitMode: this.options.singleUnitMode,
                 singleUnitModeCodeVisible: this.options.singleUnitModeCodeVisible,
-                isProductApplySingleUnitMode: _.bind(this.isProductApplySingleUnitMode, this)
+                isProductApplySingleUnitMode: _.bind(this.isProductApplySingleUnitMode, this),
+                QuantityHelper: QuantityHelper
             })));
 
             return ProductShoppingListsWidget.__super__.render.call(this);
@@ -233,7 +237,7 @@ define(function(require) {
                 this.setSelectedUnit(selectedShoppingList.line_items[0].unit);
             }
 
-            $addFormQty.val(quantity);
+            $addFormQty.val(QuantityHelper.formatQuantity(quantity));
         },
 
         onAddFormUnitChange: function(e) {
@@ -250,7 +254,10 @@ define(function(require) {
                 }
             }
 
-            $addFormQty.val(quantity);
+            const precision = this.model.get('product_units')[selectedUnit] || 0;
+
+            $addFormQty.data('precision', precision).inputWidget('refresh');
+            $addFormQty.val(QuantityHelper.formatQuantity(quantity));
         },
 
         onAddFormAccept: function() {
@@ -262,16 +269,17 @@ define(function(require) {
                 return false;
             }
 
+            const parsedValue = QuantityHelper.getQuantityNumberOrDefaultValue($addFormQty.val());
             if (selectedShoppingList.line_items) {
                 const selectedLineItem = _.findWhere(selectedShoppingList.line_items, {unit: selectedUnit});
 
                 if (selectedLineItem) {
-                    this.updateLineItem(selectedLineItem, selectedShoppingList.id, parseInt($addFormQty.val(), 10));
+                    this.updateLineItem(selectedLineItem, selectedShoppingList.id, parsedValue);
                 } else {
-                    this.saveLineItem(selectedShoppingList.id, this.getSelectedUnit(), parseInt($addFormQty.val(), 10));
+                    this.saveLineItem(selectedShoppingList.id, this.getSelectedUnit(), parsedValue);
                 }
             } else {
-                this.saveLineItem(selectedShoppingList.id, this.getSelectedUnit(), parseInt($addFormQty.val(), 10));
+                this.saveLineItem(selectedShoppingList.id, this.getSelectedUnit(), parsedValue);
             }
         },
 
@@ -360,10 +368,27 @@ define(function(require) {
                 unit: lineItem.unit
             };
 
-            const updatePromise = updateApiAccessor.send(modelData, {oro_product_frontend_line_item: modelData}, {}, {
-                processingMessage: this.messages.processingMessage,
-                preventWindowUnload: this.messages.preventWindowUnload
-            });
+            const modelDataInBackendFormat = _.clone(modelData);
+            /**
+             * We need to provide formatted quantity value to the backend
+             * @see \Oro\Bundle\ProductBundle\Form\Type\QuantityType
+             * @see \Oro\Bundle\ProductBundle\Form\DataTransformer\QuantityTransformer
+             */
+            modelDataInBackendFormat.quantity = QuantityHelper.formatQuantity(
+                modelDataInBackendFormat.quantity,
+                null,
+                true
+            );
+
+            const updatePromise = updateApiAccessor.send(
+                modelDataInBackendFormat,
+                {oro_product_frontend_line_item: modelDataInBackendFormat},
+                {},
+                {
+                    processingMessage: this.messages.processingMessage,
+                    preventWindowUnload: this.messages.preventWindowUnload
+                }
+            );
 
             updatePromise
                 .done(_.bind(this.onLineItemUpdate, this, {

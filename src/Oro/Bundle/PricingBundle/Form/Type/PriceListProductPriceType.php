@@ -13,6 +13,9 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for product price
+ */
 class PriceListProductPriceType extends AbstractType
 {
     const NAME = 'oro_pricing_price_list_product_price';
@@ -62,9 +65,7 @@ class PriceListProductPriceType extends AbstractType
                 QuantityType::class,
                 [
                     'required' => true,
-                    'label' => 'oro.pricing.productprice.quantity.label',
-                    'product_holder' => $data,
-                    'product_unit_field' => 'unit'
+                    'label' => 'oro.pricing.productprice.quantity.label'
                 ]
             )
             ->add(

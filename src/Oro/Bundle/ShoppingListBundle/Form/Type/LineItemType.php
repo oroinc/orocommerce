@@ -14,6 +14,9 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for ShoppingList line item
+ */
 class LineItemType extends AbstractType
 {
     const NAME = 'oro_shopping_list_line_item';
@@ -61,9 +64,7 @@ class LineItemType extends AbstractType
                 QuantityType::class,
                 [
                     'required' => true,
-                    'label' => 'oro.shoppinglist.lineitem.quantity.label',
-                    'product_holder' => $data,
-                    'product_unit_field' => 'unit',
+                    'label' => 'oro.shoppinglist.lineitem.quantity.label'
                 ]
             )
             ->add(

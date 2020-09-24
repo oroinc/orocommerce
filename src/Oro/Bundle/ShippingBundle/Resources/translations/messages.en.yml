@@ -151,12 +151,12 @@ oro:
             short: lb
             short_plural: lbs
         value:
-            full: '{0} none|{1} %count% pound|]1,Inf] %count% pounds'
-            full_fraction: '%count% pound'
-            full_fraction_gt_1: '%count% pounds'
-            short: '{0} none|{1} %count% lb|]1,Inf] %count% lbs'
-            short_fraction: '%count% lb'
-            short_fraction_gt_1: '%count% lbs'
+            full: '{0} none|{1} %formattedCount% pound|]1,Inf] %formattedCount% pounds'
+            full_fraction: '%formattedCount% pound'
+            full_fraction_gt_1: '%formattedCount% pounds'
+            short: '{0} none|{1} %formattedCount% lb|]1,Inf] %formattedCount% lbs'
+            short_fraction: '%formattedCount% lb'
+            short_fraction_gt_1: '%formattedCount% lbs'
 
     weight_unit.kg:
         label:
@@ -165,12 +165,12 @@ oro:
             short: kg
             short_plural: kgs
         value:
-            full: '{0} none|{1} %count% kilogram|]1,Inf] %count% kilograms'
-            full_fraction: '%count% kilogram'
-            full_fraction_gt_1: '%count% kilograms'
-            short: '{0} none|{1} %count% kg|]1,Inf] %count% kg'
-            short_fraction: '%count% kg'
-            short_fraction_gt_1: '%count% kg'
+            full: '{0} none|{1} %formattedCount% kilogram|]1,Inf] %formattedCount% kilograms'
+            full_fraction: '%formattedCount% kilogram'
+            full_fraction_gt_1: '%formattedCount% kilograms'
+            short: '{0} none|{1} %formattedCount% kg|]1,Inf] %formattedCount% kg'
+            short_fraction: '%formattedCount% kg'
+            short_fraction_gt_1: '%formattedCount% kg'
 
     length_unit.inch:
         label:

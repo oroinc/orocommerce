@@ -97,8 +97,6 @@ class FrontendLineItemTypeTest extends FormIntegrationTestCase
     {
         $form = $this->factory->create(FrontendLineItemType::class, $defaultData, []);
 
-        $this->addRoundingServiceExpect();
-
         $this->assertEquals($defaultData, $form->getData());
         $form->submit($submittedData);
 
@@ -126,7 +124,7 @@ class FrontendLineItemTypeTest extends FormIntegrationTestCase
             'New line item with existing shopping list' => [
                 'defaultData'   => $defaultLineItem,
                 'submittedData' => [
-                    'quantity' => 15.1119,
+                    'quantity' => 15.112,
                     'unit'     => 'kg'
                 ],
                 'expectedData'  => $expectedLineItem

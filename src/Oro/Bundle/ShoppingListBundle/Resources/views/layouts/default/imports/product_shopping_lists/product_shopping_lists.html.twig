@@ -30,6 +30,7 @@
                     <% _.each(ListLineItems, function(lineItem, i) { %>
                         <div class="shopping-lists-units"
                              data-role="line-item"
+                             data-unit-precisions="<%- JSON.stringify(productUnitPrecisions) %>"
                             {{ utils.underscoreRaw(UI.renderPageComponentAttributes({
                                 module: 'oroui/js/app/components/view-component',
                                 options: {
@@ -59,13 +60,13 @@
                             <form action="#">
                                 <div class="shopping-lists-units__static"
                                      data-role="line-item-view">
-                                    <span class="shopping-lists-units__number"><%= lineItem.quantity %></span>
+                                    <span class="shopping-lists-units__number"><%= QuantityHelper.formatQuantity(lineItem.quantity) %></span>
                                     <% if (!isProductApplySingleUnitMode([lineItem.unit]) || singleUnitModeCodeVisible) { %>
                                         <span class="shopping-lists-units__separate"></span>
                                         <span class="shopping-lists-units__measurements"><%= _.__(
                                             'oro.product.product_unit.' + lineItem.unit + '.value.label',
                                             {count: lineItem.quantity},
-                                            lineItem.quantity
+                                            QuantityHelper.getQuantityNumberOrDefaultValue(lineItem.quantity)
                                         ) %></span>
                                     <% } %>
                                     <div class="shopping-lists-units__actions">
@@ -109,6 +110,7 @@
                                                type="number"
                                                min="1"
                                                value="<%- lineItem.quantity %>"
+                                               data-precision="<%= productUnitPrecisions[lineItem.unit] %>"
                                                name="quantity"
                                                data-role="field__quantity"
                                                disabled="disabled"
@@ -197,6 +199,7 @@
                                        type="number"
                                        min="1"
                                        value="1"
+                                       data-precision="<%= productUnitPrecisions[unit] %>"
                                        name="oro_product_frontend_line_item[quantity]"
                                        data-role="add-form-qty"
                                        aria-label="{{ 'oro.product.lineitem.quantity.enter'|trans }}">

@@ -16,6 +16,9 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Abstract Form type for order line item
+ */
 abstract class AbstractOrderLineItemType extends AbstractType
 {
     /**
@@ -77,7 +80,6 @@ abstract class AbstractOrderLineItemType extends AbstractType
                     'required' => true,
                     'label' => 'oro.order.orderlineitem.quantity.label',
                     'default_data' => 1,
-                    'product_holder' => $builder->getData()
                 ]
             )
             ->add(

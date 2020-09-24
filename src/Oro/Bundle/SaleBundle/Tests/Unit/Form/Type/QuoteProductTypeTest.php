@@ -223,8 +223,8 @@ class QuoteProductTypeTest extends AbstractTest
                 'input'     => [
                     'vars' => [
                         'value' => (new QuoteProduct())
-                            ->setProduct($this->createProduct(1, ['unit1', 'unit2']))
-                            ->setProductReplacement($this->createProduct(2, ['unit2', 'unit3'])),
+                            ->setProduct($this->createProduct(1, ['unit1' => 0, 'unit2' => 2]))
+                            ->setProductReplacement($this->createProduct(2, ['unit2' => 2, 'unit3' => 0])),
                     ],
                     'allUnits' => [
                         'unit20',
@@ -237,17 +237,17 @@ class QuoteProductTypeTest extends AbstractTest
                 ],
                 'expected'  => [
                     'value' => (new QuoteProduct())
-                        ->setProduct($this->createProduct(1, ['unit1', 'unit2']))
-                        ->setProductReplacement($this->createProduct(2, ['unit2', 'unit3'])),
+                        ->setProduct($this->createProduct(1, ['unit1' => 0, 'unit2' => 2]))
+                        ->setProductReplacement($this->createProduct(2, ['unit2' => 2, 'unit3' => 0])),
                     'componentOptions' => [
                         'units' => [
                             1 => [
-                                'unit1' => 'unit1-formatted-full',
-                                'unit2' => 'unit2-formatted-full',
+                                'unit1' => 0,
+                                'unit2' => 2,
                             ],
                             2 => [
-                                'unit2' => 'unit2-formatted-full',
-                                'unit3' => 'unit3-formatted-full',
+                                'unit2' => 2,
+                                'unit3' => 0,
                             ],
                         ],
                         'allUnits' => [
@@ -266,8 +266,8 @@ class QuoteProductTypeTest extends AbstractTest
                 'input'     => [
                     'vars' => [
                         'value' => (new QuoteProduct())
-                            ->setProduct($this->createProduct(3, ['unit3', 'unit4']))
-                            ->setProductReplacement($this->createProduct(4, ['unit4', 'unit5'])),
+                            ->setProduct($this->createProduct(3, ['unit3' => 2, 'unit4' => 0]))
+                            ->setProductReplacement($this->createProduct(4, ['unit4' => 0, 'unit5' => 2])),
                     ],
                     'allUnits' => [
                         'unit3',
@@ -277,17 +277,17 @@ class QuoteProductTypeTest extends AbstractTest
                 ],
                 'expected'  => [
                     'value' => (new QuoteProduct())
-                        ->setProduct($this->createProduct(3, ['unit3', 'unit4']))
-                        ->setProductReplacement($this->createProduct(4, ['unit4', 'unit5'])),
+                        ->setProduct($this->createProduct(3, ['unit3' => 2, 'unit4' => 0]))
+                        ->setProductReplacement($this->createProduct(4, ['unit4' => 0, 'unit5' => 2])),
                     'componentOptions' => [
                         'units' => [
                             3 => [
-                                'unit3' => 'unit3-formatted-short',
-                                'unit4' => 'unit4-formatted-short',
+                                'unit3' => 2,
+                                'unit4' => 0,
                             ],
                             4 => [
-                                'unit4' => 'unit4-formatted-short',
-                                'unit5' => 'unit5-formatted-short',
+                                'unit4' => 0,
+                                'unit5' => 2,
                             ],
                         ],
                         'allUnits' => [
@@ -374,7 +374,8 @@ class QuoteProductTypeTest extends AbstractTest
             'Oro\Bundle\ProductBundle\Entity\Product',
             [
                 'getId' => $id,
-                'getAvailableUnitCodes' => $units,
+                'getAvailableUnitCodes' => array_keys($units),
+                'getSellUnitsPrecision' => $units
             ]
         );
 

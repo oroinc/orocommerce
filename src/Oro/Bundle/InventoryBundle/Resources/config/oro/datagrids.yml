@@ -123,12 +123,13 @@ datagrids:
                 inline_editing:
                     enable: true
                     editor:
-                        view: oroinventory/js/app/views/decimals-number-editor-view
+                        view: oroinventory/js/app/views/quantity-editor-view
                         view_options:
                             decimalsField: inventoryLevelPrecision
                     validation_rules:
                         DecimalsNumber:
                             decimalsField: inventoryLevelPrecision
+                    validation_groups: [Default]
             unit:
                 label:           oro.product.productunitprecision.unit.label
                 type:            twig
