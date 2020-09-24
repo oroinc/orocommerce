@@ -360,6 +360,8 @@ datagrids:
                 frontend_template: tpl-loader!oroshoppinglist/templates/datagrid/cell/quantity.html
             unit:
                 label:         oro.frontend.shoppinglist.lineitem.unit.label
+                frontend_type: html-template
+                frontend_template: tpl-loader!oroshoppinglist/templates/datagrid/cell/unit.html
             price:
                 label:         oro.frontend.shoppinglist.lineitem.price.label
                 frontend_type: html-template

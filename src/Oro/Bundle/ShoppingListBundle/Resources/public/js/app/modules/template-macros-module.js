@@ -68,5 +68,15 @@ macros('oroshoppinglist', {
     /**
      * Include number formatter to templates
      */
-    numberFormatter
+    numberFormatter,
+
+
+    /**
+     * Renders formatted unit
+     *
+     * @param {Object} data
+     * @param {string} unit
+     * @param {number} quantity
+     */
+    renderUnit: require('tpl-loader!oroshoppinglist/templates/macros/product-item__unit.html')
 });

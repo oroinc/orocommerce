@@ -6,6 +6,7 @@
     </div>
 <% } else { %>
     <div class="mobile-row label-in-mobile-start label-bold-in-mobile line-item-configurable" data-label="<%- _metadata.label %>:">
-        <%- oroshoppinglist.numberFormatter.formatDecimal(quantity) %> <%- unit %>
+        <% var formattedQuantity = oroshoppinglist.numberFormatter.formatDecimal(quantity) %>
+        <%- _.__('oro.product.product_unit.' + unit + '.value.full', {count: formattedQuantity}, quantity) %>
     </div>
 <% } %>

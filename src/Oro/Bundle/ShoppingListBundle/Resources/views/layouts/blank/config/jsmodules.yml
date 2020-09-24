@@ -64,6 +64,7 @@ dynamic-imports:
         - tpl-loader!oroshoppinglist/templates/datagrid/cell/quantity.html
         - tpl-loader!oroshoppinglist/templates/datagrid/cell/subtotal.html
         - tpl-loader!oroshoppinglist/templates/datagrid/cell/shoppinglist-line-item.html
+        - tpl-loader!oroshoppinglist/templates/datagrid/cell/unit.html
         - tpl-loader!oroshoppinglist/templates/editor/shoppinglist-line-item-editor.html
         - tpl-loader!oroshoppinglist/templates/editor/shoppinglist-update-all-btn.html
         - tpl-loader!oroshoppinglist/templates/actions/add-notes-action.html

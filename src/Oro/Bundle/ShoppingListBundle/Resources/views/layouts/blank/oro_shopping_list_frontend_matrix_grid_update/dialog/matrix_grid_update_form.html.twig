@@ -136,11 +136,11 @@
 
 {% block _matrix_collection_widget_body_row_qty_widget %}
     {% set rowsQty = form.vars.rowsQty %}
-    {{ rowsQty[rowKey] }}
+    <div data-rows-quantity="{{ rowIndex }}">{{ rowsQty[rowKey] }}</div>
 {% endblock %}
 
 {% block _matrix_collection_widget_body_row_subtotal_widget %}
-    *subtotal*
+    <div data-rows-price="{{ rowIndex }}">0</div>
 {% endblock %}
 
 {% block _matrix_collection_widget_footer %}
@@ -156,7 +156,7 @@
                     {% endfor %}
 
                     <div class="{{ class_prefix }}__form__col">
-                        <div class="{{ class_prefix }}__grid-footer-total">
+                        <div class="{{ class_prefix }}__grid-footer-total" data-role="total-quantity">
                             {% set totalQty = 0 %}
                             {% for rowQty in rowsQty %}
                                 {% set totalQty = totalQty + rowQty %}
@@ -166,9 +166,7 @@
                     </div>
 
                     <div class="{{ class_prefix }}__form__col">
-                        <div class="{{ class_prefix }}__grid-footer-total">
-                            *Subtotal*
-                        </div>
+                        <div class="{{ class_prefix }}__grid-footer-total" data-role="total-price"></div>
                     </div>
                 </div>
             </div>

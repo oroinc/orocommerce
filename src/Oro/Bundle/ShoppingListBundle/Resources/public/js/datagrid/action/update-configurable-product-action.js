@@ -4,7 +4,7 @@ define([
     'orotranslation/js/translator',
     'oroui/js/messenger',
     'oro/datagrid/action/dialog-action',
-    'oroui/js/app/components/widget-component',
+    'oroui/js/app/components/widget-component'
 ], function($, _, __, messenger, DialogAction, WidgetComponent) {
     'use strict';
 
@@ -52,6 +52,9 @@ define([
                 shoppinglist: this.datagrid.metadata.shoppingListLabel
             });
 
+            this.widgetOptions.options.initLayoutOptions = {
+                productModel: this.model
+            };
             if (!this.widgetComponent) {
                 this.widgetComponent = new WidgetComponent(this.widgetOptions);
             }
