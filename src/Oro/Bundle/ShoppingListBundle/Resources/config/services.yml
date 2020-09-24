@@ -645,6 +645,13 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-customer-user-shopping-list-grid, method: onResultAfter }
 
+    oro_shopping_list.datagrid.event_listener.frontend-customer-user-shopping-lists-base-grid:
+        class: Oro\Bundle\ShoppingListBundle\Datagrid\EventListener\FrontendShoppingListsGridEventListener
+        arguments:
+            - '@oro_shopping_list.manager.current_shopping_list'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-customer-user-shopping-lists-base-grid, method: onBuildBefore }
+
     oro_shopping_list.layout.data_provider.shopping_list_totals:
         class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\ShoppingListTotalsDataProvider'
         arguments:
