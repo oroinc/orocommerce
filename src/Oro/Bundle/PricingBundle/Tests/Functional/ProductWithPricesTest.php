@@ -25,7 +25,7 @@ class ProductWithPricesTest extends WebTestCase
     const SECOND_UNIT_PRECISION = 3;
 
     const FIRST_QUANTITY = 10;
-    const SECOND_QUANTITY = 5.555556;
+    const SECOND_QUANTITY = 5.556;
     const EXPECTED_SECOND_QUANTITY = 5.556;
 
     const FIRST_PRICE_VALUE = 10;

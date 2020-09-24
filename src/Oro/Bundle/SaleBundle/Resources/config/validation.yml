@@ -39,6 +39,9 @@ Oro\Bundle\SaleBundle\Entity\QuoteProduct:
             - Valid: ~
 
 Oro\Bundle\SaleBundle\Entity\QuoteProductRequest:
+    constraints:
+        - Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
+            path: quantity
     properties:
         quoteProduct:
             - NotBlank: ~
@@ -55,6 +58,9 @@ Oro\Bundle\SaleBundle\Entity\QuoteProductRequest:
             - Valid: ~
 
 Oro\Bundle\SaleBundle\Entity\QuoteProductOffer:
+    constraints:
+        - Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
+            path: quantity
     properties:
         quoteProduct:
             - NotBlank: ~
@@ -89,6 +95,8 @@ Oro\Bundle\SaleBundle\Entity\QuoteDemand:
 Oro\Bundle\SaleBundle\Entity\QuoteProductDemand:
     constraints:
         - Oro\Bundle\SaleBundle\Validator\Constraints\AllowedQuoteDemandQuantity: ~
+        - Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
+              path: quantity
     properties:
         quantity:
             - NotBlank: ~

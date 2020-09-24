@@ -31,8 +31,6 @@ class QuantityTypeTest extends FormIntegrationTestCase
         $this->formType = $this->getQuantityType();
         $this->parentType = new QuantityParentTypeStub();
 
-        $this->addRoundingServiceExpect();
-
         parent::setUp();
     }
 
@@ -108,128 +106,6 @@ class QuantityTypeTest extends FormIntegrationTestCase
                 EntityType::class => $entityType,
                 $this->getQuantityType()
             ], []),
-        ];
-    }
-
-    /**
-     * @param array $options
-     * @param array $submittedData
-     * @param array $expectedData
-     * @param array $expectedException
-     *
-     * @dataProvider quantityDataProvider
-     */
-    public function testRoundQuantity(
-        array $options = [],
-        array $submittedData = [],
-        array $expectedData = [],
-        array $expectedException = []
-    ) {
-        if ($expectedException) {
-            list($exception, $message) = $expectedException;
-            $this->expectException($exception);
-            $this->expectExceptionMessage($message);
-        }
-
-        $this->parentType->setQuantityOptions($options);
-        $form = $this->factory->create(QuantityParentTypeStub::class);
-        $form->submit($submittedData);
-        $this->assertTrue($form->isValid());
-        $this->assertTrue($form->isSynchronized());
-        $this->assertEquals($expectedData, $form->getData());
-    }
-
-    /**
-     * @return array
-     *
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     */
-    public function quantityDataProvider()
-    {
-        return [
-            'product passed from parent type, product field not exists' => [
-                [
-                    'product_holder' => $this->getProductHolder(
-                        $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => 2])
-                    ),
-                ],
-                [],
-                [],
-                ['\InvalidArgumentException', 'Missing "productUnit" on form'],
-            ],
-            'product not passed from parent type, product field not exists' => [
-                [],
-                [],
-                ['productField' => null, 'productUnitField' => null, 'quantityField' => null],
-            ],
-            'product from product field' => [
-                ['product_field' => 'productField'],
-                ['productField' => 1],
-                [],
-                ['\InvalidArgumentException', 'Missing "productUnit" on form'],
-            ],
-            'product from field overrides product from options' => [
-                [
-                    'product_field' => 'productField',
-                    'product_unit_field' => 'productUnitField',
-                    'product_holder' => $this->getProductHolder(
-                        $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => 2])
-                    ),
-                ],
-                ['productField' => 3],
-                [
-                    'productField' => $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => 3]),
-                    'productUnitField' => null,
-                    'quantityField' => null,
-                ],
-            ],
-            'invalid product unit field' => [
-                ['product_field' => 'productField', 'product_unit_field' => 'productUnitNotExists'],
-                ['productField' => 1],
-                [],
-                ['\InvalidArgumentException', 'Missing "productUnitNotExists" on form'],
-            ],
-            'get precision from unit precision' => [
-                ['product_field' => 'productField', 'product_unit_field' => 'productUnitField'],
-                ['productField' => 1, 'productUnitField' => 'kg', 'quantityField' => 0.555555555555],
-                [
-                    'productField' => $this->getEntity(
-                        'Oro\Bundle\ProductBundle\Entity\Product',
-                        [
-                            'id' => 1,
-                            'unitPrecisions' => [
-                                $this->getEntity(
-                                    'Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision',
-                                    [
-                                        'unit' => $this->getEntity(
-                                            'Oro\Bundle\ProductBundle\Entity\ProductUnit',
-                                            ['code' => 'kg']
-                                        ),
-                                        'precision' => 3,
-                                    ]
-                                ),
-                            ],
-                        ]
-                    ),
-                    'productUnitField' => $this->getEntity(
-                        'Oro\Bundle\ProductBundle\Entity\ProductUnit',
-                        ['code' => 'kg']
-                    ),
-                    'quantityField' => 0.556,
-                ],
-            ],
-            'get default precision from unit' => [
-                ['product_field' => 'productField', 'product_unit_field' => 'productUnitField'],
-                ['productField' => 2, 'productUnitField' => 'item', 'quantityField' => 0.555555555555],
-                [
-                    'productField' => $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => 2]),
-                    'productUnitField' => $this->getEntity(
-                        'Oro\Bundle\ProductBundle\Entity\ProductUnit',
-                        ['code' => 'item', 'defaultPrecision' => 5]
-                    ),
-                    'quantityField' => 0.55556,
-                ],
-            ],
         ];
     }
 

@@ -44,7 +44,7 @@ define(function(require) {
 
                 result.push({
                     sku: $fields.get(-1).textContent,
-                    quantity: $fields.get(1).textContent,
+                    quantity: $($fields.get(1)).data('raw-value'),
                     unit: $fields.get(2).textContent
                 });
             }).promise().done(function() {

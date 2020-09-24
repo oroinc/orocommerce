@@ -20,6 +20,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Validator\Constraints\Valid;
 
 /**
  * Adds field 'prices' on product edit form and process changes of product prices
@@ -124,6 +125,8 @@ class ProductFormExtension extends AbstractTypeExtension implements FeatureToggl
                 'mapped' => false,
                 'constraints' => [
                     new UniqueProductPrices(['groups' => [ProductPriceCollectionType::VALIDATION_GROUP]]),
+                    // Valid constraint added to allow cascade validation of the prices on the backend
+                    new Valid(['groups' => [ProductPriceCollectionType::VALIDATION_GROUP]])
                 ],
                 'entry_options' => [
                     'product' => $product,

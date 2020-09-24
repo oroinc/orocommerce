@@ -17,10 +17,12 @@ class OrderLineItemMapper extends AbstractOrderMapper
     public function map($lineItem)
     {
         $order = $lineItem->getOrder();
+
+        $quantity = $lineItem->getQuantity() === null ? 0 : $lineItem->getQuantity();
         $taxable = (new Taxable())
             ->setIdentifier($lineItem->getId())
             ->setClassName(OrderLineItem::class)
-            ->setQuantity($lineItem->getQuantity())
+            ->setQuantity($quantity)
             ->setOrigin($this->addressProvider->getOriginAddress())
             ->setDestination($this->getDestinationAddress($order))
             ->setTaxationAddress($this->getTaxationAddress($order))

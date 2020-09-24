@@ -126,7 +126,6 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
         $locale = 'en'
     ) {
         \Locale::setDefault($locale);
-        $this->addRoundingServiceExpect();
         $form = $this->factory->create(ProductPriceType::class, $defaultData, []);
 
         $this->assertEquals($defaultData, $form->getData());

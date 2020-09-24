@@ -162,7 +162,7 @@
                 {% for child in quoteProductRequests %}
                     <tr class="quote-lineitem-requested quote-lineitem-requested-item">
                         <td class="quote-lineitem-requested-quantity">
-                            {{ child.quantity }}
+                            {{ child.quantity|oro_format_decimal }}
                         </td>
 
                         <td class="quote-lineitem-requested-unit">
@@ -229,7 +229,15 @@
         {% set form = widget %}
         {% set name = widget.vars.full_name %}
     {% endif %}
+    {% set modelAttr = {} %}
     {% set productForm = form.parent.parent %}
+    {% set quoteProduct = productForm.vars.value %}
+    {% if quoteProduct is not empty %}
+        {% set product = quoteProduct.product %}
+        {% if product is not empty %}
+            {% set modelAttr = {'product_units': product.sellUnitsPrecision} %}
+        {% endif %}
+    {% endif %}
     <tr data-content="{{ name }}"
         data-validation-optional-group {{ attributes }}
         class="quote-lineitem-offers quote-lineitem-offers-item"
@@ -245,7 +253,8 @@
                 quantity: '#' ~ form.quantity.vars.id,
                 currency: '#' ~ form.price.currency.vars.id
             },
-            isNew: form.vars.value is empty
+            isNew: form.vars.value is empty,
+            modelAttr: modelAttr
         }|json_encode }}"
         data-layout="separate">
         {{ form_widget(form, { 'prototype' : prototype}) }}

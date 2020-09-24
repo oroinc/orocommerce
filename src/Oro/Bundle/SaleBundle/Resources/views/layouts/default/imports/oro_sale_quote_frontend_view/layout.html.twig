@@ -122,7 +122,7 @@
                             {% if oro_is_unit_code_visible(productOffer.productUnit.code) %}
                                 {{ productOffer.quantity|oro_format_short_product_unit_value(productOffer.productUnit) }}
                             {% else %}
-                                {{ productOffer.quantity }}
+                                {{ productOffer.quantity|oro_format_decimal }}
                             {% endif %}
                             {% if productOffer.allowIncrements %}
                                 {{ 'oro.frontend.sale.quoteproductoffer.allow_increments.label'|trans }}

@@ -182,7 +182,7 @@
                             {% if oro_is_unit_code_visible(requestProductItem.productUnit.code) %}
                                 {{ requestProductItem.quantity|oro_format_short_product_unit_value(requestProductItem.productUnit) }}
                             {% else %}
-                                {{ requestProductItem.quantity }}
+                                {{ requestProductItem.quantity|oro_format_decimal }}
                             {% endif %}
                         </td>
                         <td class="grid-cell">
