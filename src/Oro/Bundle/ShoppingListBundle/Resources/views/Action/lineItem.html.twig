@@ -3,12 +3,14 @@
 {% block form %}
     {% set frontendOptions = operation.definition.frontendOptions.options %}
     {% set pageComponentOptions = {} %}
+    {% set originalRequestUri = app.request.get('original_request_uri', app.request.uri) %}
+
     <div class="widget-content add-product-widget">
         {% set attr = {'id': form.vars.id, 'data-collect': 'true', 'class': 'form-dialog'} %}
         {% if frontendOptions.form_page_component_module is defined %}
             {% set attr = attr|merge({'data-page-component-module': frontendOptions.form_page_component_module}) %}
         {% endif %}
-        {{ form_start(form, {'action': app.request.uri, 'attr': attr}) }}
+        {{ form_start(form, {'action': originalRequestUri, 'attr': attr}) }}
             <fieldset class="form-horizontal">
                 {% if form.lineItem.product is defined %}
                     {{ form_row(form.lineItem.owner, { 'attr': {'class': 'product-owner'} }) }}
@@ -27,6 +29,13 @@
             </fieldset>
 
             <div class="hidden">
+                {#
+                    This field was added to allow us to pass original request URI by post request we could not
+                    add store those parameters in the URI after first load, because they will be removed by:
+                    Oro/Bundle/UIBundle/Resources/public/js/tools/form-to-ajax-options.js::formToAjaxOprions
+                 #}
+                <input type="hidden" name="original_request_uri" value="{{ originalRequestUri }}">
+
                 {{ form_rest(form) }}
             </div>
 

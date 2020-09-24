@@ -361,6 +361,8 @@ datagrids:
                 totalDiscountsAmount:
                     type:      number
                     data_name: order1.totalDiscountsAmount
+                    options:
+                        data_type: Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterType::DATA_DECIMAL
                 createdAt:
                     type:      datetime
                     data_name: order1.createdAt
@@ -662,6 +664,7 @@ datagrids:
                 template:      OroOrderBundle:Order:Datagrid/product.html.twig
             quantity:
                 label: oro.order.orderlineitem.quantity.label
+                frontend_type: decimal
             productUnitCode:
                 label: oro.order.orderlineitem.product_unit_code.label
             price:

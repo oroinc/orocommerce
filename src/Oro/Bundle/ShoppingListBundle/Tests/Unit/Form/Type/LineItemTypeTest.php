@@ -98,8 +98,6 @@ class LineItemTypeTest extends AbstractFormIntegrationTestCase
 
         $this->assertEquals($defaultData, $form->getData());
 
-        $this->addRoundingServiceExpect();
-
         $form->submit($submittedData);
 
         $this->assertEmpty($form->getErrors(true)->count());
@@ -164,7 +162,7 @@ class LineItemTypeTest extends AbstractFormIntegrationTestCase
                 'defaultData'   => $existingLineItem,
                 'submittedData' => [
                     'product'  => 2,
-                    'quantity' => 15.1119,
+                    'quantity' => 15.112,
                     'unit'     => 'kg',
                     'notes'    => 'note1',
                 ],
@@ -175,7 +173,7 @@ class LineItemTypeTest extends AbstractFormIntegrationTestCase
                 'defaultData'   => $existingLineItem,
                 'submittedData' => [
                     'unit'     => 'kg',
-                    'quantity' => 15.1119,
+                    'quantity' => 15.112,
                 ],
                 'expectedData'  => $expectedLineItem3,
                 'isExisting'    => true,

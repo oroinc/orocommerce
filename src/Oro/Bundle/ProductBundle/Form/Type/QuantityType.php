@@ -3,7 +3,9 @@
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Form\DataTransformer\QuantityTransformer;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -13,6 +15,9 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Range;
 
+/**
+ * Formats quantity value according to precision settings.
+ */
 class QuantityType extends AbstractProductAwareType
 {
     const NAME = 'oro_quantity';
@@ -20,26 +25,36 @@ class QuantityType extends AbstractProductAwareType
     /** @var RoundingServiceInterface */
     protected $roundingService;
 
+    /**
+     * @var NumberFormatter
+     */
+    protected $numberFormatter;
+
     /** @var string */
     protected $productClass;
 
     /**
      * @param RoundingServiceInterface $roundingService
-     * @param string $productClass
+     * @param string                   $productClass
      */
-    public function __construct(RoundingServiceInterface $roundingService, $productClass)
-    {
+    public function __construct(
+        RoundingServiceInterface $roundingService,
+        $productClass
+    ) {
         $this->roundingService = $roundingService;
         $this->productClass = $productClass;
     }
 
-    /** {@inheritdoc} */
+    /** {@inheritDoc} */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'roundQuantity'], -2048);
-        $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'roundQuantity'], -2048);
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'roundQuantity'], -2048);
-        $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'roundQuantity'], -2048);
+        // Remove default transformer to avoid problems with two times reverse transformation
+        $builder->resetViewTransformers();
+
+        // Prepend number type transformer with quantity transformer for rounding
+        $builder->addViewTransformer(
+            new QuantityTransformer($this->numberFormatter, $options['useInputTypeNumberValueFormat'])
+        );
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'setDefaultData'], -1024);
         $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'setDefaultData'], -1024);
@@ -126,7 +141,7 @@ class QuantityType extends AbstractProductAwareType
         }
     }
 
-    /** {@inheritdoc} */
+    /** {@inheritDoc} */
     public function configureOptions(OptionsResolver $resolver)
     {
         parent::configureOptions($resolver);
@@ -134,11 +149,12 @@ class QuantityType extends AbstractProductAwareType
         $resolver->setDefaults(
             [
                 'product_unit_field' => 'productUnit',
-                'default_data' => null,
-                'constraints' => [new Range(['min' => 0]), new Decimal()],
+                'default_data'                  => null,
+                'constraints'                   => [new Range(['min' => 0]), new Decimal()],
+                'useInputTypeNumberValueFormat' => false,
             ]
         );
-
+        $resolver->addAllowedTypes('useInputTypeNumberValueFormat', 'bool');
         $resolver->setAllowedTypes('product_unit_field', 'string');
     }
 
@@ -155,10 +171,18 @@ class QuantityType extends AbstractProductAwareType
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getBlockPrefix()
     {
         return self::NAME;
+    }
+
+    /**
+     * @param NumberFormatter $numberFormatter
+     */
+    public function setNumberFormatter(NumberFormatter $numberFormatter)
+    {
+        $this->numberFormatter = $numberFormatter;
     }
 }

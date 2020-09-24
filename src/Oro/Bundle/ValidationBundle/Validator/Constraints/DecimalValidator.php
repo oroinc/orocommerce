@@ -16,7 +16,7 @@ class DecimalValidator extends ConstraintValidator
      */
     public function validate($value, Constraint $constraint)
     {
-        if (null === $value || '' === $value) {
+        if ($this->validationShouldBeSkipped($value)) {
             return;
         }
 
@@ -39,5 +39,10 @@ class DecimalValidator extends ConstraintValidator
             /** @var Decimal $constraint */
             $this->context->addViolation($constraint->message, ['{{ value }}' => $this->formatValue($value)]);
         }
+    }
+
+    protected function validationShouldBeSkipped($value): bool
+    {
+        return null === $value || '' === $value || is_float($value);
     }
 }

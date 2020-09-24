@@ -4,6 +4,7 @@ namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
+use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\FormBundle\Tests\Unit\Stub\StripTagsExtensionStub;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -11,6 +12,8 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
+use Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision;
+use Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecisionValidator;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Form\Type\RequestProductItemType;
 use Oro\Bundle\RFPBundle\Form\Type\RequestProductType;
@@ -329,6 +332,25 @@ class RequestProductTypeTest extends AbstractTest
                 [FormType::class => [new StripTagsExtensionStub($this)]]
             ),
             $this->getValidatorExtension(true),
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function getValidators()
+    {
+        $quantityUnitPrecision = new QuantityUnitPrecision();
+        $roundingService = $this->createMock(RoundingServiceInterface::class);
+        $roundingService->expects($this->any())
+            ->method('round')
+            ->willReturnCallback(function ($quantity) {
+                return (float)$quantity;
+            });
+        $quantityUnitPrecisionValidator = new QuantityUnitPrecisionValidator($roundingService);
+
+        return [
+            $quantityUnitPrecision->validatedBy() => $quantityUnitPrecisionValidator,
         ];
     }
 }

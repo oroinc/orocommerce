@@ -6,17 +6,19 @@ use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 
 /**
- * Allows to format the measure unit value.
+ * Formats value representation adding unit description.
  */
 class UnitValueFormatter extends AbstractUnitFormatter implements UnitValueFormatterInterface
 {
-    /** @var NumberFormatter */
-    protected $numberFormatter;
+    /**
+     * @var NumberFormatter
+     */
+    private $numberFormatter;
 
     /**
      * @param NumberFormatter $numberFormatter
      */
-    public function setNumberFormatter(NumberFormatter $numberFormatter): void
+    public function setNumberFormatter(NumberFormatter $numberFormatter)
     {
         $this->numberFormatter = $numberFormatter;
     }
@@ -56,10 +58,12 @@ class UnitValueFormatter extends AbstractUnitFormatter implements UnitValueForma
             return $this->translator->trans('N/A');
         }
 
+        $formattedValue = $this->numberFormatter ? $this->numberFormatter->formatDecimal($value) : $value;
+
         return $this->translator->trans(
             sprintf('%s.%s.value.%s', $this->getTranslationPrefix(), $unitCode, $this->getSuffix($value, $isShort)),
             [
-                '%count%' => $this->numberFormatter ? $this->numberFormatter->formatDecimal($value) : $value
+                '%count%' => $formattedValue
             ]
         );
     }

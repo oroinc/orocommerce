@@ -137,6 +137,10 @@ Oro\Bundle\ProductBundle\Model\ProductRow:
             - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
 
 Oro\Bundle\ProductBundle\Model\ProductLineItem:
+    constraints:
+        - Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
+            path: quantity
+            groups: [create, update, add_product]
     properties:
         product:
             - NotBlank:

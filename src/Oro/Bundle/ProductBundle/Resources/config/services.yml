@@ -618,6 +618,8 @@ services:
             - '@doctrine'
             - '@oro_product.provider.product_units_provider'
             - '@oro_security.acl_helper'
+        calls:
+            - ['setNumberFormatter', ['@oro_locale.formatter.number']]
 
     oro_product.model.builder.quick_add_row_collection:
         class: 'Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder'

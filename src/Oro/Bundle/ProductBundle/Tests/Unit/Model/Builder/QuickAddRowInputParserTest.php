@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Model\Builder;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowInputParser;
@@ -28,12 +29,16 @@ class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
     /** @var QuickAddRowInputParser */
     private $quickAddRowInputParser;
 
-    public function setUp()
+    /** @var NumberFormatter|\PHPUnit\Framework\MockObject\MockObject */
+    private $numberFormatter;
+
+    protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->productRepository = $this->createMock(ProductRepository::class);
         $this->productUnitsProvider = $this->createMock(ProductUnitsProvider::class);
         $this->aclHelper = $this->createMock(AclHelper::class);
+        $this->numberFormatter = $this->createMock(NumberFormatter::class);
 
         $this->registry->method('getRepository')->willReturnMap([
             [Product::class, null, $this->productRepository],
@@ -52,16 +57,31 @@ class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
             $this->productUnitsProvider,
             $this->aclHelper
         );
+        $this->quickAddRowInputParser->setNumberFormatter($this->numberFormatter);
     }
 
     /**
      * @param array $input
      * @param array $expected
      *
-     * @dataProvider exampleRow
+     * @dataProvider exampleRowFile
      */
     public function testCreateFromFileLine($input, $expected)
     {
+        $this->numberFormatter->expects($this->once())
+            ->method('parseFormattedDecimal')
+            ->willReturnCallback(function ($value) {
+                if (strpos($value, ',') !== false) {
+                    return (float)str_replace(',', '.', $value);
+                }
+
+                if (strpos($value, '.') !== false) {
+                    return false;
+                }
+
+                return $value;
+            });
+
         $index = 0;
         $input = array_values($input);
         if (!array_key_exists(2, $input)) {
@@ -78,6 +98,74 @@ class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @return array
+     */
+    public function exampleRowFile()
+    {
+        return [
+            [
+                'input' => [
+                    'productSku' => ' SKU5  ',
+                    'productQuantity' => ' 4.5',
+                    'productUnit' => 'item '
+                ],
+                'expected' => [
+                    'SKU5',
+                    4.5,
+                    'item'
+                ]
+            ],
+            [
+                'input' => [
+                    'productSku' => 'ss2',
+                    'productQuantity' => '   6 ',
+                    'productUnit' => 'liter'
+                ],
+                'expected' => [
+                    'ss2',
+                    6,
+                    null
+                ]
+            ],
+            [
+                'input' => [
+                    'productSku' => 'ss2',
+                    'productQuantity' => '   6 ',
+                ],
+                'expected' => [
+                    'ss2',
+                    '6',
+                    'item'
+                ]
+            ],
+            [
+                'input' => [
+                    'productSku' => ' SKU5  ',
+                    'productQuantity' => ' 4,5',
+                    'productUnit' => 'Stunde '
+                ],
+                'expected' => [
+                    'SKU5',
+                    4.5,
+                    'hour'
+                ]
+            ],
+            [
+                'input' => [
+                    'productSku' => ' SKU5  ',
+                    'productQuantity' => ' 4.5',
+                    'productUnit' => 'ELEMENT '
+                ],
+                'expected' => [
+                    'SKU5',
+                    '4.5',
+                    'item'
+                ]
+            ],
+        ];
+    }
+
+    /**
      * @param $input
      * @param $expected
      *
@@ -85,6 +173,9 @@ class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
      */
     public function testCreateFromRequest($input, $expected)
     {
+        $this->numberFormatter->expects($this->never())
+            ->method('parseFormattedDecimal');
+
         $index = 0;
 
         if (!array_key_exists('productUnit', $input)) {
@@ -108,6 +199,9 @@ class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
      */
     public function testCreateFromPasteTextLine($input, $expected)
     {
+        $this->numberFormatter->expects($this->never())
+            ->method('parseFormattedDecimal');
+
         $index = 0;
         $input = array_values($input);
 
@@ -138,8 +232,8 @@ class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
                 ],
                 'expected' => [
                     'SKU5',
-                    '4.5',
-                    null
+                    4.5,
+                    'item'
                 ]
             ],
             [
@@ -150,7 +244,7 @@ class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
                 ],
                 'expected' => [
                     'ss2',
-                    '6',
+                    6,
                     null
                 ]
             ],

@@ -133,8 +133,6 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
         $repo->method('createQueryBuilder')
             ->will($this->returnValue($qb));
 
-        $this->addRoundingServiceExpect();
-
         $this->assertEquals($defaultData, $form->getData());
 
         $form->submit($submittedData);
@@ -163,7 +161,7 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
                 'defaultData'   => $defaultLineItem,
                 'submittedData' => [
                     'shoppingList'  => 1,
-                    'quantity' => 15.1119,
+                    'quantity' => 15.112,
                     'unit'     => 'kg',
                     'shoppingListLabel' => null
                 ],

@@ -2,6 +2,9 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
     constraints:
         - Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItem:
             groups: [update]
+        - Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
+            path: quantity
+            groups: [Default, create, update, add_product]
     properties:
         product:
             - NotBlank:
