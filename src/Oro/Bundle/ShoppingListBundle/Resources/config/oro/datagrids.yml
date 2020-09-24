@@ -187,6 +187,7 @@ datagrids:
                     - COALESCE(shopping_list.line_items_count, 0) AS lineItemsCount
                     - shopping_list.createdAt
                     - shopping_list.updatedAt
+                    - (CASE WHEN shopping_list.id = :default_shopping_list_id THEN true ELSE false END) AS isDefault
                 from:
                     - { table: 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList', alias: shopping_list }
                 join:
@@ -200,7 +201,12 @@ datagrids:
                     and:
                         - shopping_list.customerUser = :customer_user_id
             bind_parameters:
-                - customer_user_id
+                -
+                    name: customer_user_id
+                    default: 0
+                -
+                    name: default_shopping_list_id
+                    default: 0
         columns:
             label:
                 label:         oro.frontend.shoppinglist.name.label
@@ -214,14 +220,18 @@ datagrids:
             lineItemsCount:
                 label:         oro.frontend.shoppinglist.line_items_count.label
                 order:         30
+            isDefault:
+                label:         oro.frontend.shoppinglist.view.is_default.label
+                frontend_type: boolean
+                order:         40
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
-                order:         40
+                order:         50
             updatedAt:
                 label:         oro.ui.updated_at
                 frontend_type: datetime
-                order:         50
+                order:         60
         filters:
             columns:
                 label:
@@ -233,6 +243,9 @@ datagrids:
                 lineItemsCount:
                     type:      number
                     data_name: lineItemsCount
+                isDefault:
+                    type: boolean
+                    data_name: isDefault
                 createdAt:
                     type:      datetime
                     data_name: shopping_list.createdAt
@@ -247,6 +260,8 @@ datagrids:
                     data_name: subtotal
                 lineItemsCount:
                     data_name: lineItemsCount
+                isDefault:
+                    data_name: isDefault
                 createdAt:
                     data_name: shopping_list.createdAt
                 updatedAt:
