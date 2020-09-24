@@ -27,6 +27,7 @@ define(function(require) {
          * @inheritDoc
          */
         initialize: function(options) {
+            this.elementsEvents.unit = ['product-units:change', 'onProductUnitsChange'];
             this.elements.id = $(options.$.product);
             this.options = $.extend(true, {}, this.options, options || {});
             _.each(this.options.$, _.bind(function(selector, field) {
@@ -40,6 +41,12 @@ define(function(require) {
                 this.options.allUnits.push({code: elem.value, label: elem.text});
             }, this));
             this.model.on('product:unit:filter-values', _.bind(this.filterUnits, this));
+            this.initializeProductUnits();
+        },
+
+        onProductUnitsChange: function() {
+            this.model.set('product_units', this.getElement('unit').data('product-units'));
+            LineItemOfferView.__super__.onProductUnitsChange.call(this);
         },
 
         /**
@@ -69,6 +76,16 @@ define(function(require) {
             $select
                 .trigger('value:changed')
                 .trigger('change');
+        },
+
+        /**
+         * Set units value to model if it has been already initialized.
+         */
+        initializeProductUnits: function() {
+            const units = this.getElement('unit').data('product-units');
+            if (units !== undefined) {
+                this.model.set('product_units', units);
+            }
         }
     });
 

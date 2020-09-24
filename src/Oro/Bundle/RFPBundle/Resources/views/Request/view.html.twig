@@ -89,7 +89,7 @@
                                         {% if oro_is_unit_code_visible(subItem.productUnit.code) %}
                                             {{ quantity ? quantity|oro_format_short_product_unit_value(subItem.productUnit) : 'N/A'|trans }}
                                         {% else %}
-                                            {{ quantity ? quantity : 'N/A'|trans }}
+                                            {{ quantity ? quantity|oro_format_decimal : 'N/A'|trans }}
                                         {% endif %}
                                     {% else %}
                                         {{ quantity ? quantity ~ ' ' ~ 'oro.rfp.message.requestproductitem.unit.removed'|trans({'{title}': subItem.productUnitCode}) : 'N/A'|trans }}

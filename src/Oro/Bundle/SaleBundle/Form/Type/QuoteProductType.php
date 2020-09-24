@@ -129,14 +129,7 @@ class QuoteProductType extends AbstractType
         }
 
         foreach ($products as $product) {
-            $units[$product->getId()] = [];
-
-            foreach ($product->getAvailableUnitCodes() as $unitCode) {
-                $units[$product->getId()][$unitCode] = $this->labelFormatter->format(
-                    $unitCode,
-                    $options['compact_units']
-                );
-            }
+            $units[$product->getId()] = $product->getSellUnitsPrecision();
         }
 
         $view->vars['componentOptions'] = [

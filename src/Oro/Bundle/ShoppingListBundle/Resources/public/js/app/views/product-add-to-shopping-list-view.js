@@ -9,6 +9,8 @@ define(function(require) {
     const mediator = require('oroui/js/mediator');
     const $ = require('jquery');
     const _ = require('underscore');
+    /** @var QuantityHelper QuantityHelper **/
+    const QuantityHelper = require('oroproduct/js/app/quantity-helper');
     const ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
 
     const ProductAddToShoppingListView = BaseView.extend(_.extend({}, ElementsHelper, {
@@ -273,7 +275,7 @@ define(function(require) {
 
             if (e.keyCode === ENTER_KEY_CODE) {
                 this.model.set({
-                    quantity: parseInt($(e.target).val(), 10)
+                    quantity: QuantityHelper.getQuantityNumberOrDefaultValue($(e.target).val(), NaN)
                 });
 
                 let mainButton = this.findMainButton();
@@ -477,7 +479,7 @@ define(function(require) {
             const savePromise = this.saveApiAccessor.send({
                 id: lineItem.id
             }, {
-                quantity: this.model.get('quantity'),
+                quantity: QuantityHelper.formatQuantity(this.model.get('quantity')),
                 unit: this.model.get('unit')
             });
 

@@ -396,6 +396,8 @@ define(function(require) {
 
                 UnitsUtil.updateSelect(self.model, $select);
                 $select.addClass(self.options.syncClass);
+                $select.data('product-units', self.model.get('product_units'));
+                $select.trigger('product-units:change');
             });
 
             if (force) {
