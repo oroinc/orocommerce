@@ -197,7 +197,7 @@ class FrontendLineItemsGridEventListener
         $record->setValue('quantity', $qty);
 
         $unit = $item->getUnit();
-        $record->setValue('unit', $this->formatUnitLabel($unit, $qty));
+        $record->setValue('unit', $unit);
         $record->setValue('units', $this->getProductUnits($product, $unit));
 
         $status = $product->getInventoryStatus();
@@ -290,7 +290,7 @@ class FrontendLineItemsGridEventListener
                     'sku' => $product->getSku(),
                     'name' => $name,
                     'quantity' => $quantity,
-                    'unit' => $this->formatUnitLabel($unit, $quantity),
+                    'unit' => $item->getProductUnitCode(),
                     'units' => $this->getProductUnits($product, $unit),
                     'inventoryStatus' => ['name' => $productStatus->getId(), 'label' => $productStatus->getName()],
                     'notes' => $item->getNotes(),
@@ -375,7 +375,7 @@ class FrontendLineItemsGridEventListener
 
             $record->setValue('productId', $parentProduct->getId());
             $record->setValue('name', $this->localizationHelper->getLocalizedValue($parentProduct->getNames()));
-            $record->setValue('unit', $this->formatUnitLabel($lineItem->getUnit(), $rowQuantity));
+            $record->setValue('unit', $lineItem->getUnit());
             $record->setValue(
                 'link',
                 $this->urlGenerator->generate('oro_product_frontend_product_view', ['id' => $parentProduct->getId()])
@@ -499,18 +499,6 @@ class FrontendLineItemsGridEventListener
         }
 
         return $identifiedLineItems;
-    }
-
-    /**
-     * @param ProductUnit $unit
-     * @param int|float $quantity
-     * @return string
-     */
-    private function formatUnitLabel(ProductUnit $unit, $quantity): string
-    {
-        $formattedQuantity = $this->numberFormatter->formatDecimal($quantity);
-
-        return trim(str_replace($formattedQuantity, '', $this->unitValueFormatter->format($quantity, $unit)));
     }
 
     /**
