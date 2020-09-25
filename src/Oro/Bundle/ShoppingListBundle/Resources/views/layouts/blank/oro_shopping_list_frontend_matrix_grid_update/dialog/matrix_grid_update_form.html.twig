@@ -24,13 +24,13 @@
                     {{ block('_matrix_collection_widget_head_cell') }}
                 {% endfor %}
 
-                <div class="{{ class_prefix }}__form__col">
+                <div class="{{ class_prefix }}__form__col {{ class_prefix }}__form__col--size-m">
                     <div class="{{ class_prefix }}__form__col-wrapper">
                         {{ 'oro.frontend.shoppinglist.matrix_grid_order.qty'|trans }}
                     </div>
                 </div>
 
-                <div class="{{ class_prefix }}__form__col">
+                <div class="{{ class_prefix }}__form__col {{ class_prefix }}__form__col--size-m">
                     <div class="{{ class_prefix }}__form__col-wrapper">
                         {{ 'oro.frontend.shoppinglist.matrix_grid_order.subtotal'|trans }}
                     </div>
@@ -41,7 +41,7 @@
 {% endblock %}
 
 {% block _matrix_collection_widget_head_cell %}
-    <div class="{{ class_prefix }}__form__col">
+    <div class="{{ class_prefix }}__form__col {{ class_prefix }}__form__col--size-m">
         <div class="{{ class_prefix }}__form__col-wrapper">
             {{ block('_matrix_collection_widget_cell_label') }}
         </div>
@@ -98,11 +98,11 @@
             {% endif %}
         {% endfor %}
 
-        <div class="{{ class_prefix }}__form__col">
+        <div class="{{ class_prefix }}__form__col {{ class_prefix }}__form__col--size-m">
             {{ block('_matrix_collection_widget_body_row_qty_widget') }}
         </div>
 
-        <div class="{{ class_prefix }}__form__col">
+        <div class="{{ class_prefix }}__form__col {{ class_prefix }}__form__col--size-m">
             {{ block('_matrix_collection_widget_body_row_subtotal_widget') }}
         </div>
     </div>
@@ -111,7 +111,7 @@
 {% block _matrix_collection_widget_body_row_cell %}
     {% set row = columnsCount > 1 ? row : cell %}
     {% set cell = columnsCount > 1 ? cell : row.columns[0] %}
-    <div class="{{ class_prefix }}__form__col">
+    <div class="{{ class_prefix }}__form__col {{ class_prefix }}__form__col--size-m">
         {{ block('_matrix_collection_widget_body_row_cell_widget') }}
     </div>
 {% endblock %}
@@ -155,7 +155,7 @@
                         {{ block('_matrix_collection_widget_footer_cell') }}
                     {% endfor %}
 
-                    <div class="{{ class_prefix }}__form__col">
+                    <div class="{{ class_prefix }}__form__col {{ class_prefix }}__form__col--size-m">
                         <div class="{{ class_prefix }}__grid-footer-total" data-role="total-quantity">
                             {% set totalQty = 0 %}
                             {% for rowQty in rowsQty %}
@@ -165,7 +165,7 @@
                         </div>
                     </div>
 
-                    <div class="{{ class_prefix }}__form__col">
+                    <div class="{{ class_prefix }}__form__col {{ class_prefix }}__form__col--size-m">
                         <div class="{{ class_prefix }}__grid-footer-total" data-role="total-price"></div>
                     </div>
                 </div>
@@ -175,7 +175,7 @@
 {% endblock %}
 
 {% block _matrix_collection_widget_footer_cell %}
-    <div class="{{ class_prefix }}__form__col">
+    <div class="{{ class_prefix }}__form__col {{ class_prefix }}__form__col--size-m">
         <div class="{{ class_prefix }}__grid-footer-total {{ columnsQty[key] > 0 ? 'valid' : '' }}"
              data-columns-quantity="{{ cellIndex }}">
             {{ columnsQty[key] }}
