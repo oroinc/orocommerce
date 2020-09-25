@@ -8,6 +8,8 @@ define(function(require) {
     const $ = require('jquery');
     const _ = require('underscore');
     const __ = require('orotranslation/js/translator');
+    /** @var QuantityHelper QuantityHelper **/
+    const QuantityHelper = require('oroproduct/js/app/quantity-helper');
     const ENTER_KEY_CODE = 13;
 
     const ProductQuantityEditableView = BaseView.extend({
@@ -140,6 +142,7 @@ define(function(require) {
                     .find('[value="' + value + '"]')
                     .prop('disabled', true);
             }, this));
+            this._updateQuantityPrecision();
         },
 
         enableAccept: function() {
@@ -199,7 +202,9 @@ define(function(require) {
         },
 
         restoreSavedState: function() {
-            this.elements.quantity.val(this.oldModelState.quantity).change();
+            const oldQuantity = this.oldModelState.quantity;
+            const formattedQuantity = QuantityHelper.formatQuantity(oldQuantity);
+            this.elements.quantity.val(formattedQuantity).change();
             this.elements.unit.val(this.oldModelState.unit).change();
         },
 
@@ -216,8 +221,11 @@ define(function(require) {
         },
 
         getValue: function() {
+            const quantity = this.elements.quantity.val();
+            const quantityNumber = QuantityHelper.getQuantityNumberOrDefaultValue(quantity);
+
             return {
-                quantity: this.elements.quantity.val(),
+                quantity: quantityNumber,
                 unit: this.elements.unit.val()
             };
         },
@@ -249,12 +257,16 @@ define(function(require) {
             }
 
             this._isSaving = true;
+
             const modelData = this.getValue();
+            const localizedModelData = _.clone(modelData);
+            localizedModelData.quantity = QuantityHelper.formatQuantity(localizedModelData.quantity);
             let serverUpdateData = {};
+
             if (this.dataKey) {
-                serverUpdateData[this.dataKey] = modelData;
+                serverUpdateData[this.dataKey] = localizedModelData;
             } else {
-                serverUpdateData = modelData;
+                serverUpdateData = localizedModelData;
             }
 
             const savePromise = this.saveApiAccessor.send(modelData, serverUpdateData, {}, {
@@ -322,6 +334,16 @@ define(function(require) {
             this.elements.quantity.off(this.eventNamespace());
 
             ProductQuantityEditableView.__super__.dispose.call(this);
+        },
+
+        _updateQuantityPrecision: function() {
+            const precisions = this.$el.data('unit-precisions') || {};
+            const unit = this.elements.unit.val();
+
+            if (unit in precisions) {
+                const precision = precisions[unit];
+                this.elements.quantity.data('precision', precision).inputWidget('refresh');
+            }
         }
     });
 

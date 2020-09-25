@@ -5,6 +5,8 @@ define(function(require) {
     const mediator = require('oroui/js/mediator');
     const _ = require('underscore');
     const __ = require('orotranslation/js/translator');
+    /** @var QuantityHelper QuantityHelper **/
+    const QuantityHelper = require('oroproduct/js/app/quantity-helper');
 
     require('jquery.validate');
 
@@ -211,7 +213,7 @@ define(function(require) {
                 const product = {
                     raw: [parts[0]],
                     sku: parts[1].toUpperCase(),
-                    quantity: parseFloat(parts[2]),
+                    quantity: QuantityHelper.getQuantityNumberOrDefaultValue(parts[2], NaN),
                     unit: parts[3] || void 0
                 };
 

@@ -141,13 +141,13 @@
                             <form action="#">
                                 <div class="shopping-lists-units__static"
                                      data-role="line-item-view">
-                                    <span class="shopping-lists-units__number"><%= lineItem.quantity %></span>
+                                    <span class="shopping-lists-units__number"><%= QuantityHelper.formatQuantity(lineItem.quantity) %></span>
                                     <% if (!isProductApplySingleUnitMode([lineItem.unit]) || singleUnitModeCodeVisible) { %>
                                         <span class="shopping-lists-units__separate"></span>
                                         <span class="shopping-lists-units__measurements"><%= _.__(
                                             'oro.product.product_unit.' + lineItem.unit + '.value.label',
                                             {count: lineItem.quantity},
-                                            lineItem.quantity
+                                            QuantityHelper.getQuantityNumberOrDefaultValue(lineItem.quantity)
                                         ) %></span>
                                     <% } %>
                                     <div class="shopping-lists-units__actions">
@@ -181,7 +181,8 @@
                                         <input class="shopping-lists-modify__input input input--size-x-s"
                                                type="number"
                                                min="1"
-                                               value="<%- lineItem.quantity %>"
+                                               value="<%- QuantityHelper.formatQuantity(lineItem.quantity) %>"
+                                               data-precision="<%= productUnitPrecisions[lineItem.unit] %>"
                                                name="quantity"
                                                data-role="field__quantity"
                                                disabled="disabled"

@@ -847,12 +847,12 @@ oro:
             short: ea
             short_plural: ea
         value:
-            full: '{0} none|{1} %count% each|]1,Inf] %count% each'
-            full_fraction: '%count% each'
-            full_fraction_gt_1: '%count% each'
-            short: '{0} none|{1} %count% ea|]1,Inf] %count% ea'
-            short_fraction: '%count% ea'
-            short_fraction_gt_1: '%count% ea'
+            full: '{0} none|{1} %formattedCount% each|]1,Inf] %formattedCount% each'
+            full_fraction: '%formattedCount% each'
+            full_fraction_gt_1: '%formattedCount% each'
+            short: '{0} none|{1} %formattedCount% ea|]1,Inf] %formattedCount% ea'
+            short_fraction: '%formattedCount% ea'
+            short_fraction_gt_1: '%formattedCount% ea'
 
     product_unit.hour:
         label:
@@ -861,12 +861,12 @@ oro:
             short: hr
             short_plural: hrs
         value:
-            full: '{0} none|{1} %count% hour|]1,Inf] %count% hours'
-            full_fraction: '%count% hour'
-            full_fraction_gt_1: '%count% hours'
-            short: '{0} none|{1} %count% hr|]1,Inf] %count% hrs'
-            short_fraction: '%count% hr'
-            short_fraction_gt_1: '%count% hrs'
+            full: '{0} none|{1} %formattedCount% hour|]1,Inf] %formattedCount% hours'
+            full_fraction: '%formattedCount% hour'
+            full_fraction_gt_1: '%formattedCount% hours'
+            short: '{0} none|{1} %formattedCount% hr|]1,Inf] %formattedCount% hrs'
+            short_fraction: '%formattedCount% hr'
+            short_fraction_gt_1: '%formattedCount% hrs'
 
     product_unit.item:
         label:
@@ -875,12 +875,12 @@ oro:
             short: item
             short_plural: items
         value:
-            full: '{0} none|{1} %count% item|]1,Inf] %count% items'
-            full_fraction: '%count% item'
-            full_fraction_gt_1: '%count% items'
-            short: '{0} none|{1} %count% item|]1,Inf] %count% items'
-            short_fraction: '%count% item'
-            short_fraction_gt_1: '%count% items'
+            full: '{0} none|{1} %formattedCount% item|]1,Inf] %formattedCount% items'
+            full_fraction: '%formattedCount% item'
+            full_fraction_gt_1: '%formattedCount% items'
+            short: '{0} none|{1} %formattedCount% item|]1,Inf] %formattedCount% items'
+            short_fraction: '%formattedCount% item'
+            short_fraction_gt_1: '%formattedCount% items'
 
     product_unit.kg:
         label:
@@ -889,12 +889,12 @@ oro:
             short: kg
             short_plural: kgs
         value:
-            full: '{0} %count% kilogram|{1} %count% kilogram|]1,Inf] %count% kilograms'
-            full_fraction: '%count% kilogram'
-            full_fraction_gt_1: '%count% kilograms'
-            short: '{0}%count% kg|{1} %count% kg|]1,Inf] %count% kg'
-            short_fraction: '%count% kg'
-            short_fraction_gt_1: '%count% kg'
+            full: '{0} %formattedCount% kilogram|{1} %formattedCount% kilogram|]1,Inf] %formattedCount% kilograms'
+            full_fraction: '%formattedCount% kilogram'
+            full_fraction_gt_1: '%formattedCount% kilograms'
+            short: '{0}%formattedCount% kg|{1} %formattedCount% kg|]1,Inf] %formattedCount% kg'
+            short_fraction: '%formattedCount% kg'
+            short_fraction_gt_1: '%formattedCount% kg'
 
     product_unit.piece:
         label:
@@ -903,12 +903,12 @@ oro:
             short: pc
             short_plural: pcs
         value:
-            full: '{0} none|{1} %count% piece|]1,Inf] %count% pieces'
-            full_fraction: '%count% piece'
-            full_fraction_gt_1: '%count% pieces'
-            short: '{0} none|{1} %count% pc|]1,Inf] %count% pcs'
-            short_fraction: '%count% pc'
-            short_fraction_gt_1: '%count% pcs'
+            full: '{0} none|{1} %formattedCount% piece|]1,Inf] %formattedCount% pieces'
+            full_fraction: '%formattedCount% piece'
+            full_fraction_gt_1: '%formattedCount% pieces'
+            short: '{0} none|{1} %formattedCount% pc|]1,Inf] %formattedCount% pcs'
+            short_fraction: '%formattedCount% pc'
+            short_fraction_gt_1: '%formattedCount% pcs'
 
     product_unit.set:
         label:
@@ -917,12 +917,12 @@ oro:
             short: set
             short_plural: sets
         value:
-            full: '{0} none|{1} %count% set|]1,Inf] %count% sets'
-            full_fraction: '%count% set'
-            full_fraction_gt_1: '%count% sets'
-            short: '{0} none|{1} %count% set|]1,Inf] %count% sets'
-            short_fraction: '%count% set'
-            short_fraction_gt_1: '%count% sets'
+            full: '{0} none|{1} %formattedCount% set|]1,Inf] %formattedCount% sets'
+            full_fraction: '%formattedCount% set'
+            full_fraction_gt_1: '%formattedCount% sets'
+            short: '{0} none|{1} %formattedCount% set|]1,Inf] %formattedCount% sets'
+            short_fraction: '%formattedCount% set'
+            short_fraction_gt_1: '%formattedCount% sets'
 
     product_unit.liter:
         label:
@@ -931,12 +931,12 @@ oro:
             short: liter
             short_plural: liters
         value:
-            full: '{0} none|{1} %count% liter|]1,Inf] %count% liters'
-            full_fraction: '%count% liter'
-            full_fraction_gt_1: '%count% liters'
-            short: '{0} none|{1} %count% liter|]1,Inf] %count% liters'
-            short_fraction: '%count% liter'
-            short_fraction_gt_1: '%count% liters'
+            full: '{0} none|{1} %formattedCount% liter|]1,Inf] %formattedCount% liters'
+            full_fraction: '%formattedCount% liter'
+            full_fraction_gt_1: '%formattedCount% liters'
+            short: '{0} none|{1} %formattedCount% liter|]1,Inf] %formattedCount% liters'
+            short_fraction: '%formattedCount% liter'
+            short_fraction_gt_1: '%formattedCount% liters'
 
     product_unit.milliliter:
         label:
@@ -945,12 +945,12 @@ oro:
             short: milliliter
             short_plural: milliliters
         value:
-            full: '{0} none|{1} %count% milliliter|]1,Inf] %count% milliliters'
-            full_fraction: '%count% milliliter'
-            full_fraction_gt_1: '%count% milliliters'
-            short: '{0} none|{1} %count% milliliter|]1,Inf] %count% milliliters'
-            short_fraction: '%count% milliliter'
-            short_fraction_gt_1: '%count% milliliters'
+            full: '{0} none|{1} %formattedCount% milliliter|]1,Inf] %formattedCount% milliliters'
+            full_fraction: '%formattedCount% milliliter'
+            full_fraction_gt_1: '%formattedCount% milliliters'
+            short: '{0} none|{1} %formattedCount% milliliter|]1,Inf] %formattedCount% milliliters'
+            short_fraction: '%formattedCount% milliliter'
+            short_fraction_gt_1: '%formattedCount% milliliters'
 
     product_unit.box:
         label:
@@ -959,12 +959,12 @@ oro:
             short: box
             short_plural: boxes
         value:
-            full: '{0} none|{1} %count% box|]1,Inf] %count% boxes'
-            full_fraction: '%count% box'
-            full_fraction_gt_1: '%count% boxes'
-            short: '{0} none|{1} %count% box|]1,Inf] %count% boxes'
-            short_fraction: '%count% box'
-            short_fraction_gt_1: '%count% boxes'
+            full: '{0} none|{1} %formattedCount% box|]1,Inf] %formattedCount% boxes'
+            full_fraction: '%formattedCount% box'
+            full_fraction_gt_1: '%formattedCount% boxes'
+            short: '{0} none|{1} %formattedCount% box|]1,Inf] %formattedCount% boxes'
+            short_fraction: '%formattedCount% box'
+            short_fraction_gt_1: '%formattedCount% boxes'
 
     product_unit.bottle:
         label:
@@ -973,12 +973,12 @@ oro:
             short: bottle
             short_plural: bottles
         value:
-            full: '{0} none|{1} %count% bottle|]1,Inf] %count% bottles'
-            full_fraction: '%count% bottle'
-            full_fraction_gt_1: '%count% bottles'
-            short: '{0} none|{1} %count% bottle|]1,Inf] %count% bottles'
-            short_fraction: '%count% bottle'
-            short_fraction_gt_1: '%count% bottles'
+            full: '{0} none|{1} %formattedCount% bottle|]1,Inf] %formattedCount% bottles'
+            full_fraction: '%formattedCount% bottle'
+            full_fraction_gt_1: '%formattedCount% bottles'
+            short: '{0} none|{1} %formattedCount% bottle|]1,Inf] %formattedCount% bottles'
+            short_fraction: '%formattedCount% bottle'
+            short_fraction_gt_1: '%formattedCount% bottles'
 
     webcatalog:
         contentvariant:

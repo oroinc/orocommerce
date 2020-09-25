@@ -86,8 +86,10 @@ define(function(require) {
                     showSubtotalPlaceholder: data.item.unit !== data.item.unit_placeholder
                 });
             } else {
+                const quantity = this.model.get('quantity') || this.options.defaultQuantity;
+
                 this.model.set({
-                    quantity: this.model.get('quantity') || this.options.defaultQuantity,
+                    quantity: quantity,
                     quantity_changed_manually: this.model.get('quantity'),
                     units: data.item.units,
                     product_units: data.item.units,
@@ -102,17 +104,13 @@ define(function(require) {
             }
         },
 
-        onUnitChange: function() {
-            this.setFoundPrice(true);
-        },
-
         checkEl: function($el) {
             return $el !== undefined &&
                 this.$el.closest('.quick-order-add__row').attr('id') ===
                 $el.closest('.quick-order-add__row').attr('id');
         },
 
-        updateSubtotal: function() {
+        updateSubtotal: function(e) {
             this.model.set('subtotal', this.getSubtotal());
         },
 

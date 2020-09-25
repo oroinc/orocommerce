@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Model\Builder;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\AbstractQuery;
+use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;
@@ -26,18 +27,26 @@ class QuickAddRowInputParser
     private $aclHelper;
 
     /**
+     * @var NumberFormatter
+     */
+    private $numberFormatter;
+
+    /**
      * @param ManagerRegistry $registry
      * @param ProductUnitsProvider $productUnitsProvider
      * @param AclHelper $aclHelper
+     * @param NumberFormatter $numberFormatter
      */
     public function __construct(
         ManagerRegistry $registry,
         ProductUnitsProvider $productUnitsProvider,
-        AclHelper $aclHelper
+        AclHelper $aclHelper,
+        NumberFormatter $numberFormatter
     ) {
         $this->registry = $registry;
         $this->productUnitsProvider = $productUnitsProvider;
         $this->aclHelper = $aclHelper;
+        $this->numberFormatter = $numberFormatter;
     }
 
     /**
@@ -48,10 +57,20 @@ class QuickAddRowInputParser
     public function createFromFileLine(array $product, int $lineNumber): QuickAddRow
     {
         $sku = isset($product[0]) ? trim($product[0]) : null;
-        $quantity = isset($product[1]) ? (float)$product[1] : null;
+        $quantity = isset($product[1]) ? trim($product[1]) : null;
+
+        $parsedQty = $this->numberFormatter->parseFormattedDecimal($quantity);
+        if ($parsedQty === false) {
+            // Support nonformatted quantity
+            $parsedQty = (float)$quantity;
+            if ((string)$parsedQty !== $quantity) {
+                $parsedQty = 0;
+            }
+        }
+
         $unit = isset($product[2]) ? trim($product[2]) : null;
 
-        return new QuickAddRow($lineNumber, $sku, $quantity, $this->resolveUnit($sku, $unit));
+        return new QuickAddRow($lineNumber, $sku, $parsedQty, $this->resolveUnit($sku, $unit));
     }
 
     /**
@@ -85,7 +104,7 @@ class QuickAddRowInputParser
 
     /**
      * @param string $sku
-     * @param string $unitName |null
+     * @param string|null $unitName
      * @return null|string
      */
     private function resolveUnit(string $sku, ?string $unitName = null): ?string
@@ -100,7 +119,17 @@ class QuickAddRowInputParser
         $unit = \strtolower($unitName);
         $availableUnits = $this->getAvailableProductUnitCodes();
 
-        return \array_key_exists($unit, $availableUnits) ? $availableUnits[$unit] : null;
+        // Support translated unit codes
+        if (\array_key_exists($unit, $availableUnits)) {
+            return $availableUnits[$unit];
+        }
+
+        // Support untranslated unit codes
+        if (\in_array($unit, $availableUnits, true)) {
+            return $unit;
+        }
+
+        return null;
     }
 
     /**

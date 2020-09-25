@@ -8,6 +8,8 @@ define(function(require) {
     const routing = require('routing');
     const $ = require('jquery');
     const _ = require('underscore');
+    /** @var QuantityHelper QuantityHelper **/
+    const QuantityHelper = require('oroproduct/js/app/quantity-helper');
 
     const BaseProductView = BaseView.extend(_.extend({}, ElementsHelper, {
         optionNames: BaseView.prototype.optionNames.concat(['normalizeQuantityField']),
@@ -16,14 +18,14 @@ define(function(require) {
 
         elements: {
             productItem: '[data-role="product-item"]',
-            quantity: ['lineItem', '[data-name="field__quantity"]:first'],
+            quantity: ['lineItem', '[data-name="field__quantity"]'],
             unit: ['lineItem', '[data-name="field__unit"]:first'],
             lineItem: '[data-role="line-item-form-container"]:first',
             lineItemFields: ':input[data-name]'
         },
 
         elementsEvents: {
-            'quantity input': ['input', 'onQuantityChange']
+            quantity: ['change', 'onQuantityChange']
         },
 
         modelElements: {
@@ -43,7 +45,8 @@ define(function(require) {
             id: ['change', 'onProductChanged'],
             line_item_form_enable: ['change', 'onLineItemFormEnableChanged'],
             unit_label: ['change', 'changeUnitLabel'],
-            unit: ['change', 'onUnitChange']
+            unit: ['change', 'onUnitChange'],
+            product_units: ['change', 'onProductUnitsChange']
         },
 
         originalProductId: null,
@@ -64,7 +67,10 @@ define(function(require) {
             this.rowId = this.$el.parent().data('row-id');
             this.initModel(options);
             this.initializeElements(options);
+            this.getElement('quantity').inputWidget('create');
             this.setPrecision();
+            // Reinitialize quantity value in model after quantity field widget refreshed to set correct value.
+            this.onQuantityChange(null);
 
             this.originalProductId = this.model.get('parentProduct');
 
@@ -121,11 +127,39 @@ define(function(require) {
             });
         },
 
+        viewToModelElementValueTransform: function(elementViewValue, elementKey) {
+            switch (elementKey) {
+                case 'quantity':
+                    const $element = this.getElement(elementKey);
+                    if ($element.attr('type').toLowerCase() === 'number') {
+                        return parseFloat(elementViewValue);
+                    }
+
+                    return QuantityHelper.getQuantityNumberOrDefaultValue(elementViewValue, NaN);
+                default:
+                    return elementViewValue;
+            }
+        },
+
+        modelToViewElementValueTransform: function(modelData, elementKey) {
+            switch (elementKey) {
+                case 'quantity':
+                    const precision = this.getElement('quantity').data('precision');
+                    return QuantityHelper.formatQuantity(modelData, precision, true);
+                default:
+                    return modelData;
+            }
+        },
+
         onQuantityChange: function(e) {
             this.setModelValueFromElement(e, 'quantity', 'quantity');
         },
 
         onUnitChange: function() {
+            this.setPrecision();
+        },
+
+        onProductUnitsChange: function() {
             this.setPrecision();
         },
 

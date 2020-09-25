@@ -41,6 +41,20 @@ oro_behat_extension:
         mapping:
           Customer: 'oro_customer_frontend_owner_select'
 
+    ShoppingListFirstRowForm:
+      selector: '.shopping-lists-popup .shopping-lists-units form'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Quantity: 'quantity'
+          Unit: 'unit'
+
+    ShoppingListEditPopupRows:
+      selector: '.shopping-lists-popup'
+
+    FirstRowAcceptButton:
+      selector: '.shopping-lists-popup .btn'
+
     NewShoppingListNameField:
       selector: '[name="oro_shopping_list_type[label]"]'
 

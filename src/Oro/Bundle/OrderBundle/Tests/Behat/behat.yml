@@ -164,6 +164,9 @@ oro_behat_extension:
             type: 'css'
             locator: 'input[name^="oro_order_type_shipUntil"]'
 
+    Order Form Line Item 1 Offer 1:
+      selector: '[name="oro_order_type[lineItems][0][offers]"]'
+
     First Product Quantity Field In Order:
       selector:
         locator: '//input[@name="oro_order_type[lineItems][0][quantity]"]'

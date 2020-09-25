@@ -43,8 +43,8 @@ class FrontendLineItemType extends AbstractType
                     'attr' => [
                         'placeholder' => 'oro.product.lineitem.quantity.placeholder',
                     ],
-                    'product_holder' => $builder->getData(),
-                    'product_unit_field' => 'unit',
+                    'grouping' => true,
+                    'useInputTypeNumberValueFormat' => true
                 ]
             );
     }
