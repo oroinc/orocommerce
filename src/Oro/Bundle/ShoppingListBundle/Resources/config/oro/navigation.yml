@@ -25,7 +25,8 @@ navigation:
                          - 'oro_shopping_list_frontend_my_index'
                          - 'oro_shopping_list_frontend_my_view'
                          - 'oro_shopping_list_frontend_update'
-                    condition:   "config_value('oro_shopping_list.my_shopping_lists_page_enabled')"
+                    description: 'oro.shoppinglist.menu.shopping_list.description'
+                    condition:   "config_value('oro_shopping_list.my_shopping_lists_page_enabled') && config_value('oro_shopping_list.shopping_list_limit') != 1"
 
             frontend_shopping_list:
                 label:           'oro.shoppinglist.entity_plural_label'

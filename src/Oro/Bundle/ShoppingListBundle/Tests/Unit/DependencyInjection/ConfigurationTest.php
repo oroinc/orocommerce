@@ -56,6 +56,10 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                     'value' => false,
                     'scope' => 'app',
                 ],
+                'use_new_layout_for_view_and_edit_pages' => [
+                    'value' => false,
+                    'scope' => 'app',
+                ],
                 'my_shopping_lists_max_line_items_per_page' => [
                     'value' => 1000,
                     'scope' => 'app',

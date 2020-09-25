@@ -9,6 +9,8 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Model\LineItemModel;
+use Symfony\Component\Validator\ConstraintViolation;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * The handler for the line item batch update.
@@ -21,21 +23,30 @@ class ShoppingListLineItemBatchUpdateHandler
     /** @var ShoppingListManager */
     private $shoppingListManager;
 
+    /** @var ValidatorInterface */
+    private $validator;
+
     /**
      * @param DoctrineHelper $doctrineHelper
      * @param ShoppingListManager $shoppingListManager
+     * @param ValidatorInterface $validator
      */
-    public function __construct(DoctrineHelper $doctrineHelper, ShoppingListManager $shoppingListManager)
-    {
+    public function __construct(
+        DoctrineHelper $doctrineHelper,
+        ShoppingListManager $shoppingListManager,
+        ValidatorInterface $validator
+    ) {
         $this->shoppingListManager = $shoppingListManager;
         $this->doctrineHelper = $doctrineHelper;
+        $this->validator = $validator;
     }
 
     /**
      * @param LineItemModel[] $collection
      * @param ShoppingList $shoppingList
+     * @return array
      */
-    public function process(array $collection, ShoppingList $shoppingList): void
+    public function process(array $collection, ShoppingList $shoppingList): array
     {
         $lineItems = $this->getLineItems(
             array_map(
@@ -68,9 +79,17 @@ class ShoppingListLineItemBatchUpdateHandler
                 $lineItem->setQuantity($lineItemModel->getQuantity());
                 $lineItem->setUnit($productUnits[$lineItemModel->getUnitCode()]);
 
-                $this->shoppingListManager->updateLineItem($lineItem, $shoppingList);
+                $this->shoppingListManager->addLineItem($lineItem, $shoppingList, false, true);
             }
         }
+
+        $errors = $this->getShoppingListErrors($shoppingList);
+        if (!$errors) {
+            $manager = $this->doctrineHelper->getEntityManagerForClass(ShoppingList::class);
+            $manager->flush();
+        }
+
+        return $errors;
     }
 
     /**
@@ -87,5 +106,26 @@ class ShoppingListLineItemBatchUpdateHandler
         }
 
         return $data;
+    }
+
+    /**
+     * @param ShoppingList $shoppingList
+     *
+     * @return array
+     */
+    private function getShoppingListErrors(ShoppingList $shoppingList): array
+    {
+        $constraintViolationList = $this->validator->validate($shoppingList);
+
+        if ($constraintViolationList->count()) {
+            return array_map(
+                static function (ConstraintViolation $constraintViolation) {
+                    return $constraintViolation->getMessage();
+                },
+                iterator_to_array($constraintViolationList)
+            );
+        }
+
+        return [];
     }
 }

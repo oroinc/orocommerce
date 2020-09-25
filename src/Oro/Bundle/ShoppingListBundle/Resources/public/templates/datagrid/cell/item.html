@@ -27,7 +27,7 @@
                     <span class="highlighted-in-mobile break-all"><%- sku %></span>
                 <% } %>
                 <% if (!isConfigurable) { %>
-                    <%= oroshoppinglist.renderInventoryStatus(inventoryStatus) %>
+                    <%= oroshoppinglist.renderInventoryStatus({name: inventoryStatus.name, label: inventoryStatus.label, isLowInventory: isLowInventory}) %>
                 <% } %>
             </div>
             <% } %>
@@ -49,7 +49,7 @@
         <% } else { %>
             <div class="grid-line-items__row-item mobile-column show-in-tablet">
                 <span class="highlighted-in-mobile break-all"><%- sku %></span>
-                <%= oroshoppinglist.renderInventoryStatus(inventoryStatus) %>
+                <%= oroshoppinglist.renderInventoryStatus({name: inventoryStatus.name, label: inventoryStatus.label, isLowInventory: isLowInventory}) %>
             </div>
             <div class="grid-line-items__configuration shift-mobile-row">
                 <% _.each(productConfiguration, function(field) { %>

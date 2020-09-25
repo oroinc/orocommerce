@@ -250,6 +250,7 @@ operations:
             - entities
         routes:
             - oro_shopping_list_frontend_view
+            - oro_shopping_list_frontend_update
         entities:
             - Oro\Bundle\ShoppingListBundle\Entity\ShoppingList
         button_options:

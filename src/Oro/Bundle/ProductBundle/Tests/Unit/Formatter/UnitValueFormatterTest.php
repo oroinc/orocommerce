@@ -21,9 +21,9 @@ class UnitValueFormatterTest extends UnitValueFormatterTestCase
 
     protected function setUp()
     {
-        parent::setUp();
-
         $this->numberFormatter = $this->createMock(NumberFormatter::class);
+
+        parent::setUp();
     }
 
     public function testFormatCodeWithNumberFormatter(): void
@@ -86,19 +86,6 @@ class UnitValueFormatterTest extends UnitValueFormatterTestCase
         $formatter->format(self::VALUE, $this->createObject('item'));
     }
 
-    /** @var NumberFormatter */
-    private $numberFormatter;
-
-    protected function setUp(): void
-    {
-        $this->numberFormatter = $this->createMock(NumberFormatter::class);
-        $this->numberFormatter->expects($this->any())
-            ->method('formatDecimal')
-            ->willReturnArgument(0);
-
-        parent::setUp();
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -127,9 +114,8 @@ class UnitValueFormatterTest extends UnitValueFormatterTestCase
      */
     protected function createFormatter(): UnitValueFormatterInterface
     {
-        $formatter = new UnitValueFormatter($this->translator, $this->numberFormatter);
+        $formatter = new UnitValueFormatter($this->translator);
         $formatter->setTranslationPrefix($this->getTranslationPrefix());
-        $formatter->setNumberFormatter($this->numberFormatter);
 
         return $formatter;
     }

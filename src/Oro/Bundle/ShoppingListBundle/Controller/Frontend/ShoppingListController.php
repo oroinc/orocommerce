@@ -50,6 +50,18 @@ class ShoppingListController extends AbstractController
             $shoppingList = $this->get(CurrentShoppingListManager::class)->getCurrent();
         }
 
+        if ($this->get(ConfigManager::class)->get('oro_shopping_list.use_new_layout_for_view_and_edit_pages')) {
+            $params = ['id' => $shoppingList->getId()];
+
+            if ($this->isGranted('EDIT', $shoppingList)) {
+                return $this->redirect($this->generateUrl('oro_shopping_list_frontend_update', $params));
+            }
+
+            if ($this->isGranted('VIEW', $shoppingList)) {
+                return $this->redirect($this->generateUrl('oro_shopping_list_frontend_my_view', $params));
+            }
+        }
+
         if ($shoppingList) {
             $this->get(ShoppingListManager::class)->actualizeLineItems($shoppingList);
 
@@ -150,10 +162,6 @@ class ShoppingListController extends AbstractController
     {
         if (!$this->getUser() instanceof CustomerUser) {
             throw $this->createAccessDeniedException();
-        }
-
-        if (!$this->get(ConfigManager::class)->get('oro_shopping_list.my_shopping_lists_page_enabled')) {
-            throw $this->createNotFoundException();
         }
 
         return [];

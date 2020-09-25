@@ -9,6 +9,7 @@ use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\MetadataObject;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\ResultsObject;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\ShoppingListBundle\Datagrid\Extension\FrontendLineItemsGridExtension;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
@@ -29,6 +30,9 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
 
     /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
+
+    /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $tokenAccessor;
 
     /** @var ParameterBag */
     private $parameters;
@@ -57,10 +61,11 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
             ->willReturn($manager);
 
         $this->configManager = $this->createMock(ConfigManager::class);
+        $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
 
         $this->parameters = new ParameterBag();
 
-        $this->extension = new FrontendLineItemsGridExtension($registry, $this->configManager);
+        $this->extension = new FrontendLineItemsGridExtension($registry, $this->configManager, $this->tokenAccessor);
         $this->extension->setParameters($this->parameters);
     }
 
@@ -78,6 +83,42 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($this->extension->isApplicable($config));
     }
 
+    public function testSetParameters(): void
+    {
+        $this->extension->setParameters(
+            new ParameterBag(
+                [
+                    ParameterBag::MINIFIED_PARAMETERS => [
+                        'g' => [
+                            'group' => true,
+                        ],
+                    ],
+                ],
+            )
+        );
+
+        $this->assertEquals(
+            [
+                ParameterBag::MINIFIED_PARAMETERS => [
+                    'g' => [
+                        'group' => true,
+                    ],
+                ],
+                ParameterBag::ADDITIONAL_PARAMETERS => [
+                    'group' => true,
+                ],
+            ],
+            $this->extension->getParameters()->all()
+        );
+    }
+
+    public function testSetParametersWithoutGroup(): void
+    {
+        $this->extension->setParameters(new ParameterBag());
+
+        $this->assertEquals([], $this->extension->getParameters()->all());
+    }
+
     public function testProcessConfigs(): void
     {
         $this->parameters->set('shopping_list_id', 42);
@@ -91,13 +132,26 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
                         ],
                     ],
                 ],
+                'mass_actions' => [
+                    'move' => [
+                        'label' => 'move.label',
+                    ],
+                ],
             ]
         );
 
-        $this->configManager->expects($this->once())
+        $this->configManager->expects($this->any())
             ->method('get')
-            ->with('oro_shopping_list.my_shopping_lists_max_line_items_per_page')
-            ->willReturn(1000);
+            ->willReturnMap(
+                [
+                    ['oro_shopping_list.my_shopping_lists_max_line_items_per_page', false, false, null, 1000],
+                    ['oro_shopping_list.shopping_list_limit', false, false, null, 1],
+                ]
+            );
+
+        $this->tokenAccessor->expects($this->once())
+            ->method('hasUser')
+            ->willReturn(true);
 
         $this->shoppingListRepository->expects($this->once())
             ->method('find')
@@ -131,6 +185,7 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
                         ],
                     ],
                 ],
+                'mass_actions' => [],
             ],
             $config->toArray()
         );
@@ -147,11 +202,22 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
                         ],
                     ],
                 ],
+                'mass_actions' => [
+                    'move' => [
+                        'label' => 'move.label',
+                    ],
+                ],
             ]
         );
 
-        $this->configManager->expects($this->never())
-            ->method('get');
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_shopping_list.shopping_list_limit')
+            ->willReturn(1);
+
+        $this->tokenAccessor->expects($this->once())
+            ->method('hasUser')
+            ->willReturn(true);
 
         $this->shoppingListRepository->expects($this->never())
             ->method('find');
@@ -174,6 +240,7 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
                         ],
                     ],
                 ],
+                'mass_actions' => [],
             ],
             $config->toArray()
         );
@@ -192,13 +259,26 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
                         ],
                     ],
                 ],
+                'mass_actions' => [
+                    'move' => [
+                        'label' => 'move.label',
+                    ],
+                ],
             ]
         );
 
-        $this->configManager->expects($this->once())
+        $this->configManager->expects($this->any())
             ->method('get')
-            ->with('oro_shopping_list.my_shopping_lists_max_line_items_per_page')
-            ->willReturn(1000);
+            ->willReturnMap(
+                [
+                    ['oro_shopping_list.my_shopping_lists_max_line_items_per_page', false, false, null, 1000],
+                    ['oro_shopping_list.shopping_list_limit', false, false, null, 0],
+                ]
+            );
+
+        $this->tokenAccessor->expects($this->once())
+            ->method('hasUser')
+            ->willReturn(true);
 
         $this->shoppingListRepository->expects($this->once())
             ->method('find')
@@ -223,6 +303,11 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
                         ],
                     ],
                 ],
+                'mass_actions' => [
+                    'move' => [
+                        'label' => 'move.label',
+                    ],
+                ],
             ],
             $config->toArray()
         );
@@ -241,13 +326,26 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
                         ],
                     ],
                 ],
+                'mass_actions' => [
+                    'move' => [
+                        'label' => 'move.label',
+                    ],
+                ],
             ]
         );
 
-        $this->configManager->expects($this->once())
+        $this->configManager->expects($this->any())
             ->method('get')
-            ->with('oro_shopping_list.my_shopping_lists_max_line_items_per_page')
-            ->willReturn(1000);
+            ->willReturnMap(
+                [
+                    ['oro_shopping_list.my_shopping_lists_max_line_items_per_page', false, false, null, 1000],
+                    ['oro_shopping_list.shopping_list_limit', false, false, null, 0],
+                ]
+            );
+
+        $this->tokenAccessor->expects($this->once())
+            ->method('hasUser')
+            ->willReturn(false);
 
         $this->shoppingListRepository->expects($this->once())
             ->method('find')
@@ -281,6 +379,7 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
                         ],
                     ],
                 ],
+                'mass_actions' => [],
             ],
             $config->toArray()
         );
@@ -299,8 +398,20 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
                         ],
                     ],
                 ],
+                'mass_actions' => [
+                    'move' => [
+                        'label' => 'move.label',
+                    ],
+                ],
             ]
         );
+
+        $this->configManager->expects($this->never())
+            ->method('get');
+
+        $this->tokenAccessor->expects($this->once())
+            ->method('hasUser')
+            ->willReturn(false);
 
         $this->extension->processConfigs($config);
 
@@ -325,6 +436,7 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
                         ],
                     ],
                 ],
+                'mass_actions' => [],
             ],
             $config->toArray()
         );
@@ -355,9 +467,24 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
 
         $this->extension->visitMetadata(DatagridConfiguration::create([]), $data);
 
-        $this->assertTrue($data->offsetGetByPath('hasEmptyMatrix'));
-        $this->assertTrue($data->offsetGetByPath('canBeGrouped'));
-        $this->assertEquals('Shopping List Label', $data->offsetGetByPath('shoppingListLabel'));
+        $this->assertEquals(
+            [
+                'hasEmptyMatrix' => true,
+                'canBeGrouped' => true,
+                'shoppingListLabel' => 'Shopping List Label',
+                'initialState' => [
+                    'parameters' => [
+                        'group' => false,
+                    ],
+                ],
+                'state' => [
+                    'parameters' => [
+                        'group' => false,
+                    ],
+                ]
+            ],
+            $data->toArray()
+        );
     }
 
     public function testVisitMetadataWithoutId(): void

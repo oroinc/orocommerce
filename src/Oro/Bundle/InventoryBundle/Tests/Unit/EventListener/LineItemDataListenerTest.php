@@ -3,6 +3,7 @@
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\InventoryBundle\EventListener\LineItemDataListener;
+use Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider;
 use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatterInterface;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
@@ -19,7 +20,10 @@ class LineItemDataListenerTest extends \PHPUnit\Framework\TestCase
     private $availabilityDate;
 
     /** @var UpcomingProductProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $provider;
+    private $upcomingProductProvider;
+
+    /** @var LowInventoryProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $lowInventoryProvider;
 
     /** @var DateTimeFormatterInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $formatter;
@@ -34,7 +38,8 @@ class LineItemDataListenerTest extends \PHPUnit\Framework\TestCase
     {
         $this->availabilityDate = new \DateTime();
 
-        $this->provider = $this->createMock(UpcomingProductProvider::class);
+        $this->upcomingProductProvider = $this->createMock(UpcomingProductProvider::class);
+        $this->lowInventoryProvider = $this->createMock(LowInventoryProvider::class);
 
         $this->formatter = $this->createMock(DateTimeFormatterInterface::class);
         $this->formatter->expects($this->any())
@@ -47,29 +52,39 @@ class LineItemDataListenerTest extends \PHPUnit\Framework\TestCase
             ->method('getTimeZone')
             ->willReturn('Europe/London');
 
-        $this->listener = new LineItemDataListener($this->provider, $this->formatter, $this->localeSettings);
+        $this->listener = new LineItemDataListener(
+            $this->upcomingProductProvider,
+            $this->lowInventoryProvider,
+            $this->formatter,
+            $this->localeSettings
+        );
     }
 
     public function testOnLineItemData(): void
     {
         $product = $this->createMock(Product::class);
 
-        $this->provider->expects($this->once())
+        $this->upcomingProductProvider->expects($this->once())
             ->method('isUpcoming')
             ->with($product)
             ->willReturn(true);
 
-        $this->provider->expects($this->once())
+        $this->upcomingProductProvider->expects($this->once())
             ->method('getAvailabilityDate')
             ->with($product)
             ->willReturn($this->availabilityDate);
+
+        $this->lowInventoryProvider->expects($this->once())
+            ->method('isLowInventoryProduct')
+            ->with($product)
+            ->willReturn(false);
 
         $event = new LineItemDataEvent([$this->getEntity(LineItem::class, ['id' => 42, 'product' => $product])]);
 
         $this->listener->onLineItemData($event);
 
         $this->assertEquals(
-            ['isUpcoming' => true, 'availabilityDate' => 'Jun 10, 2020'],
+            ['isUpcoming' => true, 'availabilityDate' => 'Jun 10, 2020', 'isLowInventory' => false],
             $event->getDataForLineItem(42)
         );
     }
@@ -78,39 +93,49 @@ class LineItemDataListenerTest extends \PHPUnit\Framework\TestCase
     {
         $product = $this->createMock(Product::class);
 
-        $this->provider->expects($this->once())
+        $this->upcomingProductProvider->expects($this->once())
             ->method('isUpcoming')
             ->with($product)
             ->willReturn(true);
 
-        $this->provider->expects($this->once())
+        $this->upcomingProductProvider->expects($this->once())
             ->method('getAvailabilityDate')
             ->with($product)
             ->willReturn(null);
+
+        $this->lowInventoryProvider->expects($this->once())
+            ->method('isLowInventoryProduct')
+            ->with($product)
+            ->willReturn(true);
 
         $event = new LineItemDataEvent([$this->getEntity(LineItem::class, ['id' => 42, 'product' => $product])]);
 
         $this->listener->onLineItemData($event);
 
-        $this->assertEquals(['isUpcoming' => true], $event->getDataForLineItem(42));
+        $this->assertEquals(['isUpcoming' => true, 'isLowInventory' => true], $event->getDataForLineItem(42));
     }
 
     public function testOnLineItemDataNotUpcoming(): void
     {
         $product = $this->createMock(Product::class);
 
-        $this->provider->expects($this->once())
+        $this->upcomingProductProvider->expects($this->once())
             ->method('isUpcoming')
             ->with($product)
             ->willReturn(false);
 
-        $this->provider->expects($this->never())
+        $this->upcomingProductProvider->expects($this->never())
             ->method('getAvailabilityDate');
+
+        $this->lowInventoryProvider->expects($this->once())
+            ->method('isLowInventoryProduct')
+            ->with($product)
+            ->willReturn(true);
 
         $event = new LineItemDataEvent([$this->getEntity(LineItem::class, ['id' => 42, 'product' => $product])]);
 
         $this->listener->onLineItemData($event);
 
-        $this->assertEquals(['isUpcoming' => false], $event->getDataForLineItem(42));
+        $this->assertEquals(['isUpcoming' => false, 'isLowInventory' => true], $event->getDataForLineItem(42));
     }
 }

@@ -274,7 +274,7 @@ class FrontendLineItemsGridEventListener
         $this->eventDispatcher->dispatch($event, LineItemDataEvent::NAME);
 
         $lineItem = reset($items);
-        $parentProduct = $lineItem->getParentProduct();
+        $parentProduct = $lineItem->getParentProduct() ?: $lineItem->getProduct();
         $name = (string)$this->localizationHelper->getLocalizedValue($parentProduct->getNames());
 
         foreach ($items as $item) {
@@ -352,10 +352,16 @@ class FrontendLineItemsGridEventListener
             foreach (reset($data) as $name => $value) {
                 $record->setValue($name, $value);
             }
-            $record->setValue('isConfigurable', false);
+
+            if (!$lineItem->getProduct()->isConfigurable()) {
+                $record->setValue('isConfigurable', false);
+            }
             $record->setValue(
                 'link',
-                $this->urlGenerator->generate('oro_product_frontend_product_view', ['id' => $parentProduct->getId()])
+                $this->urlGenerator->generate(
+                    'oro_product_frontend_product_view',
+                    ['id' => $parentProduct->getId(), 'variantProductId' => $lineItem->getProduct()->getId()]
+                )
             );
         } else {
             $record->setValue('id', $parentProduct->getId() . '_' . $lineItem->getProductUnitCode());

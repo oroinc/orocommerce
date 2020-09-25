@@ -7,8 +7,10 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\MetadataObject;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\ResultsObject;
+use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmQueryConfiguration;
 use Oro\Bundle\DataGridBundle\Extension\AbstractExtension;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
@@ -29,17 +31,25 @@ class FrontendLineItemsGridExtension extends AbstractExtension
     /** @var ConfigManager */
     private $configManager;
 
+    /** @var TokenAccessorInterface */
+    private $tokenAccessor;
+
     /** @var array */
     private $cache = [];
 
     /**
      * @param ManagerRegistry $registry
      * @param ConfigManager $configManager
+     * @param TokenAccessorInterface $tokenAccessor
      */
-    public function __construct(ManagerRegistry $registry, ConfigManager $configManager)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        ConfigManager $configManager,
+        TokenAccessorInterface $tokenAccessor
+    ) {
         $this->registry = $registry;
         $this->configManager = $configManager;
+        $this->tokenAccessor = $tokenAccessor;
     }
 
     /**
@@ -48,6 +58,25 @@ class FrontendLineItemsGridExtension extends AbstractExtension
     public function isApplicable(DatagridConfiguration $config): bool
     {
         return \in_array($config->getName(), static::SUPPORTED_GRIDS, true) && parent::isApplicable($config);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setParameters(ParameterBag $parameters): void
+    {
+        if ($parameters->has(ParameterBag::MINIFIED_PARAMETERS)) {
+            $minifiedParameters = $parameters->get(ParameterBag::MINIFIED_PARAMETERS);
+            $additional = $parameters->get(ParameterBag::ADDITIONAL_PARAMETERS, []);
+
+            if (array_key_exists('g', $minifiedParameters)) {
+                $additional['group'] = $minifiedParameters['g']['group'] ?? false;
+            }
+
+            $parameters->set(ParameterBag::ADDITIONAL_PARAMETERS, $additional);
+        }
+
+        parent::setParameters($parameters);
     }
 
     /**
@@ -64,6 +93,12 @@ class FrontendLineItemsGridExtension extends AbstractExtension
                 'AND innerItem.unit = lineItem.unit) as allLineItemsIds';
         }
         $config->offsetAddToArrayByPath(OrmQueryConfiguration::SELECT_PATH, [$queryPart]);
+
+        if (!$this->tokenAccessor->hasUser() ||
+            $this->configManager->get('oro_shopping_list.shopping_list_limit') === 1
+        ) {
+            $config->offsetUnsetByPath('[mass_actions][move]');
+        }
 
         $shoppingListId = $this->getShoppingListId();
         if (!$shoppingListId) {
@@ -102,6 +137,8 @@ class FrontendLineItemsGridExtension extends AbstractExtension
         $data->offsetSetByPath('[hasEmptyMatrix]', $this->hasEmptyMatrix($shoppingListId));
         $data->offsetSetByPath('[canBeGrouped]', $this->canBeGrouped($shoppingListId));
         $data->offsetSetByPath('[shoppingListLabel]', $this->getShoppingList($shoppingListId)->getLabel());
+        $data->offsetAddToArrayByPath('[initialState][parameters]', ['group' => false]);
+        $data->offsetAddToArrayByPath('[state][parameters]', ['group' => $this->isLineItemsGrouped()]);
     }
 
     /**
@@ -138,7 +175,7 @@ class FrontendLineItemsGridExtension extends AbstractExtension
     {
         $parameters = $this->parameters->get('_parameters', []);
 
-        return $parameters['group'] ?? false;
+        return isset($parameters['group']) ? filter_var($parameters['group'], FILTER_VALIDATE_BOOLEAN) : false;
     }
 
     /**

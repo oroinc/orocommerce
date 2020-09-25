@@ -150,6 +150,7 @@ services:
         class: Oro\Bundle\InventoryBundle\EventListener\LineItemDataListener
         arguments:
             - '@oro_inventory.provider.upcoming_product_provider'
+            - '@oro_inventory.inventory.low_inventory_provider'
             - '@oro_locale.formatter.date_time'
             - '@oro_locale.settings'
         tags:

@@ -25,7 +25,7 @@ Feature: My Shopping List Actions
     Then Page title equals to "My Shopping Lists - My Account"
     And I should see following grid:
       | Name            | Subtotal  | Items |
-      | Shopping List 3 | $8,818.00 | 29    |
+      | Shopping List 3 | $8,818.00 | 32    |
       | Shopping List 1 | $1,581.00 | 3     |
     And I open shopping list widget
     And I should see "Shopping List 1" on shopping list widget

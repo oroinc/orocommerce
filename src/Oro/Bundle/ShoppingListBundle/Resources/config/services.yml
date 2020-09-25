@@ -334,7 +334,6 @@ services:
 
     oro_shopping_list.provider.shopping_list_entity_name:
         class: Oro\Bundle\ShoppingListBundle\Provider\ShoppingListEntityNameProvider
-        public: false
         tags:
             - { name: oro_entity.name_provider, priority: 100 }
 
@@ -461,7 +460,6 @@ services:
 
     oro_shopping_list.twig.shopping_list_limit_extension:
         class: 'Oro\Bundle\ShoppingListBundle\Twig\ShoppingListLimitExtension'
-        public: false
         arguments:
             - "@oro_platform.twig.service_locator"
         tags:
@@ -469,7 +467,6 @@ services:
 
     oro_shopping_list.twig.shopping_list_widget_extension:
         class: Oro\Bundle\ShoppingListBundle\Twig\ShoppingListWidgetExtension
-        public: false
         arguments:
             - "@oro_platform.twig.service_locator"
         tags:
@@ -521,6 +518,7 @@ services:
         arguments:
             - '@doctrine'
             - '@oro_config.manager'
+            - '@oro_security.token_accessor'
         tags:
             - { name: oro_datagrid.extension, priority: 10 }
 
@@ -652,6 +650,14 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-customer-user-shopping-lists-base-grid, method: onBuildBefore }
 
+    oro_shopping_list.datagrid.event_listener.frontend_customer_user_shopping_list_assign_grid:
+        class: Oro\Bundle\ShoppingListBundle\Datagrid\EventListener\FrontendShoppingListAssignGridEventListener
+        arguments:
+            - '@doctrine'
+            - '@oro_security.acl_helper'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-customer-user-shopping-list-assign-grid, method: onBuildBefore }
+
     oro_shopping_list.layout.data_provider.shopping_list_totals:
         class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\ShoppingListTotalsDataProvider'
         arguments:
@@ -700,6 +706,7 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_shopping_list.manager.shopping_list'
+            - '@validator'
 
     Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemBatchUpdateHandler:
         alias: 'oro_shopping_list.handler.shopping_list_line_item_batch_update'

@@ -162,6 +162,8 @@ class ShoppingListControllerTest extends WebTestCase
 
     public function testViewMy(): void
     {
+        $this->enableMyShoppingListsPage(true);
+
         $this->initClient(
             [],
             $this->generateBasicAuthHeader(BaseLoadCustomerData::AUTH_USER, BaseLoadCustomerData::AUTH_PW)
@@ -191,7 +193,7 @@ class ShoppingListControllerTest extends WebTestCase
         $this->assertEquals('product-1', $data[0]['sku']);
         $this->assertEquals(['name' => 'in_stock', 'label' => 'In Stock'], $data[0]['inventoryStatus']);
         $this->assertEquals(8, $data[0]['quantity']);
-        $this->assertEquals('bottles', $data[0]['unit']);
+        $this->assertEquals('bottle', $data[0]['unit']);
         $this->assertEquals('$13.10', $data[0]['price']);
         $this->assertEquals('$104.80', $data[0]['subtotal']);
         $this->assertEquals('product-1.names.default', $data[0]['name']);
@@ -201,6 +203,8 @@ class ShoppingListControllerTest extends WebTestCase
         $this->assertNull($data[0]['availabilityDate']);
         $this->assertNull($data[0]['subData']);
         $this->assertEquals([], $data[0]['errors']);
+
+        $this->enableMyShoppingListsPage(false);
     }
 
     public function testView(): void

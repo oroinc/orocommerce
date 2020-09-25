@@ -77,8 +77,15 @@ system_configuration:
         oro_shopping_list.my_shopping_lists_page_enabled:
             data_type: boolean
             type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            page_reload: true
             options:
                 label: oro.shoppinglist.system_configuration.fields.my_shopping_lists_page_enabled.label
+                required: false
+        oro_shopping_list.use_new_layout_for_view_and_edit_pages:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            options:
+                label: oro.shoppinglist.system_configuration.fields.use_new_layout_for_view_and_edit_pages.label
                 required: false
         oro_shopping_list.my_shopping_lists_max_line_items_per_page:
             data_type: integer
@@ -123,4 +130,5 @@ system_configuration:
                                         children:
                                             - oro_shopping_list.mass_adding_on_product_listing_enabled
                                             - oro_shopping_list.my_shopping_lists_page_enabled
+                                            - oro_shopping_list.use_new_layout_for_view_and_edit_pages
                                             - oro_shopping_list.my_shopping_lists_max_line_items_per_page

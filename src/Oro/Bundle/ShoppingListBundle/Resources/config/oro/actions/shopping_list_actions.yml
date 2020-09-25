@@ -1,4 +1,20 @@
 operations:
+    oro_shoppinglist_frontend_edit_action:
+        label: oro.shoppinglist.edit.action.label
+        datagrid_options:
+            aria_label: oro.frontend.shoppinglist.btn.edit.aria_label
+        acl_resource: ['oro_shopping_list_frontend_update', $.data]
+        groups:
+            - shopping_list_actions
+        routes:
+            - oro_shopping_list_frontend_my_view
+        button_options:
+            icon: fa-pencil-square-o
+        actions:
+            - '@redirect':
+                route: oro_shopping_list_frontend_update
+                route_parameters: {id: $id}
+
     oro_shoppinglist_frontend_duplicate_action:
         label: oro.shoppinglist.duplicate.action.label
         extends: oro_shoppinglist_frontend_duplicate
@@ -22,6 +38,14 @@ operations:
         routes:
             - oro_shopping_list_frontend_my_view
             - oro_shopping_list_frontend_update
+        preactions:
+            - '@call_service_method':
+                attribute: $.isOneShoppingList
+                service: oro_shopping_list.manager.shopping_list_limit
+                method: isOnlyOneEnabled
+        preconditions:
+            '@and':
+                - '@equal': [$.isOneShoppingList, false]
         actions:
             - '@redirect':
                 route: 'oro_shopping_list_frontend_my_view'
@@ -54,8 +78,6 @@ operations:
         actions:
             - '@redirect':
                 route: 'oro_shopping_list_frontend_my_index'
-                route_parameters:
-                    id: $.newShoppingList.id
 
     oro_shoppinglist_frontend_set_as_default_action:
         label: oro.shoppinglist.set_as_default.action.label
@@ -120,6 +142,16 @@ operations:
         routes:
             - oro_shopping_list_frontend_my_view
             - oro_shopping_list_frontend_update
+        preactions:
+            - '@get_active_user': $.currentUser
+            - '@call_service_method':
+                attribute: $.isOneShoppingList
+                service: oro_shopping_list.manager.shopping_list_limit
+                method: isOnlyOneEnabled
+        preconditions:
+            '@and':
+                - '@not_empty': $.currentUser
+                - '@equal': [$.isOneShoppingList, false]
         actions:
             - '@flush_entity': $.data
             - '@flash_message':

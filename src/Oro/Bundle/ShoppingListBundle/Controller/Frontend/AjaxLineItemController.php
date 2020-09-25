@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 
-use Oro\Bundle\ApiBundle\Request\Constraint;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionDispatcher;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionParametersParser;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionResponseInterface;
@@ -290,17 +289,15 @@ class AjaxLineItemController extends AbstractLineItemController
     {
         $data = \json_decode($request->getContent(), true);
         if (!isset($data['data']) || !is_array($data['data'])) {
-            return $this->json([
-                'errors' => [
-                    'status' => Response::HTTP_BAD_REQUEST,
-                    'title' => Constraint::REQUEST_DATA,
-                    'detail' => 'The request data should not be empty'
-                ]
-            ], Response::HTTP_BAD_REQUEST);
+            return $this->json(['message' => 'The request data should not be empty'], Response::HTTP_BAD_REQUEST);
         }
 
         $handler = $this->get(ShoppingListLineItemBatchUpdateHandler::class);
-        $handler->process($this->getLineItemModels($data['data']), $shoppingList);
+
+        $errors = $handler->process($this->getLineItemModels($data['data']), $shoppingList);
+        if ($errors) {
+            return $this->json(['message' => implode(', ', $errors)], Response::HTTP_BAD_REQUEST);
+        }
 
         foreach ($data['fetchData'] ?? [] as $key => $value) {
             $request->query->set($key, $value);
