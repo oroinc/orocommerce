@@ -452,6 +452,13 @@
         text-align: $matrix-order-widget-form-col-text-align;
         vertical-align: $matrix-order-widget-form-col-vertical-align;
 
+        &--size {
+            &-m {
+                min-width: $matrix-order-widget-form-col-width-m;
+                width: $matrix-order-widget-form-col-width-m;
+            }
+        }
+
         &-wrapper {
             display: $matrix-order-widget-form-col-wrapper-display;
             align-items: $matrix-order-widget-form-col-wrapper-align-items;
