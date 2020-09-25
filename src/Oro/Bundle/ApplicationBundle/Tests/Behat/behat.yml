@@ -327,6 +327,11 @@ oro_behat_extension:
         type: 'css'
         locator: "input[name='product_qty']"
 
+    ShoppingListLineItemForm > Unit:
+      selector:
+        type: 'css'
+        locator: "input[name='product_unit']"
+
     Shopping List Label:
       selector:
         locator: '//input[@type="text" and @name="value"]'

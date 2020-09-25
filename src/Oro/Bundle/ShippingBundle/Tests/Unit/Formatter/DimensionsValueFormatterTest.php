@@ -14,7 +14,7 @@ class DimensionsValueFormatterTest extends \PHPUnit\Framework\TestCase
     /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $translator;
 
-    /** @var NumberFormatter */
+    /** @var NumberFormatter|\PHPUnit\Framework\MockObject\MockObject */
     private $numberFormatter;
 
     /** @var DimensionsValueFormatter */
@@ -23,11 +23,7 @@ class DimensionsValueFormatterTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->translator = $this->createMock('Symfony\Contracts\Translation\TranslatorInterface');
-
         $this->numberFormatter = $this->createMock(NumberFormatter::class);
-        $this->numberFormatter->expects($this->any())
-            ->method('formatDecimal')
-            ->willReturnArgument(0);
 
         $this->formatter = new DimensionsValueFormatter($this->translator, $this->numberFormatter);
         $this->formatter->setTranslationPrefix(self::TRANSLATION_PREFIX);

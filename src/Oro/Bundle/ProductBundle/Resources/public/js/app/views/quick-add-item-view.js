@@ -9,6 +9,8 @@ define(function(require) {
     const _ = require('underscore');
     const __ = require('orotranslation/js/translator');
     const $ = require('jquery');
+    /** @var QuantityHelper QuantityHelper **/
+    const QuantityHelper = require('oroproduct/js/app/quantity-helper');
 
     const QuickAddItemView = BaseView.extend(_.extend({}, ElementsHelper, {
         /**
@@ -127,7 +129,7 @@ define(function(require) {
 
         onQuantityChange: _.debounce(function(e) {
             this.model.set({
-                quantity: $(e.currentTarget).val(),
+                quantity: QuantityHelper.getQuantityNumberOrDefaultValue($(e.currentTarget).val(), NaN),
                 quantity_changed_manually: true
             });
             this.publishModelChanges();
@@ -160,12 +162,21 @@ define(function(require) {
 
             const resolvedUnitCode = this._resolveUnitCode(item.unit);
 
+            let quantity = parseFloat(item.quantity);
+            if (_.isNaN(quantity)) {
+                quantity = 0;
+            } else if (canBeUpdated) {
+                const addedQuantity = parseFloat(this.model.get('quantity'));
+                if (!_.isNaN(addedQuantity)) {
+                    quantity += addedQuantity;
+                }
+            }
+
             this.model.set({
                 sku: item.sku,
                 skuHiddenField: item.sku,
                 quantity_changed_manually: true,
-                quantity: canBeUpdated
-                    ? parseFloat(this.model.get('quantity')) + parseFloat(item.quantity) : item.quantity,
+                quantity: quantity,
                 unit_deferred: resolvedUnitCode ? resolvedUnitCode : item.unit
             });
 
@@ -197,11 +208,99 @@ define(function(require) {
                 });
             }
 
+            const productUnits = data.item.units || {};
+            const productPrices = data.item.prices;
+            const productUnitsMinQty = this.getLowestQtyPerUnit(productPrices);
+            const currentUnit = this.getCurrentUnitFromUnits(productUnits);
+
+            let quantity = data.item.quantity || this.model.get('quantity');
+            if (!quantity) {
+                quantity = currentUnit && productUnitsMinQty[currentUnit]
+                    ? productUnitsMinQty[currentUnit]
+                    : this.options.defaultQuantity;
+            }
+
             this.model.set({
                 units_loaded: !_.isUndefined(data.item.units),
-                quantity: data.item.quantity || this.model.get('quantity') || this.options.defaultQuantity,
-                product_units: data.item.units || {}
+                quantity: quantity,
+                product_units: productUnits
             });
+        },
+
+        getCurrentUnitFromUnits: function(productUnits) {
+            if (_.isEmpty(productUnits)) {
+                return null;
+            }
+
+            const unit = this.model.get('unit') || this.model.get('unit_deferred');
+            return unit ? unit : Object.getOwnPropertyNames(productUnits)[0];
+        },
+
+        getLowestQtyPerUnit: function(productPrices) {
+            if (_.isEmpty(productPrices)) {
+                return {};
+            }
+
+            const lowestQtyPerUnit = {};
+            for (const unit in productPrices) {
+                if (!productPrices.hasOwnProperty(unit) || !_.isArray(productPrices[unit])) {
+                    continue;
+                }
+
+                let lowestQuantity = null;
+                for (let i=0; i < productPrices[unit].length; i++) {
+                    const price = productPrices[unit][i];
+                    if (!price.quantity || _.isNaN(parseFloat(price.quantity))) {
+                        continue;
+                    }
+
+                    const priceQuantity = parseFloat(price.quantity);
+
+                    if (lowestQuantity === null || (priceQuantity < lowestQuantity)) {
+                        lowestQuantity = priceQuantity;
+                    }
+                }
+                lowestQtyPerUnit[unit] = lowestQuantity === null ? this.options.defaultQuantity : lowestQuantity;
+            }
+            return lowestQtyPerUnit;
+        },
+
+        modelToViewElementValueTransform: function(modelData, elementKey) {
+            switch (elementKey) {
+                case 'quantity':
+                    /**
+                     * If model value not a number we should show an empty value in the field
+                     */
+                    if (_.isNaN(modelData)) {
+                        return '';
+                    }
+
+                    const $element = this.getElement(elementKey);
+                    /**
+                     * Number fields could work only with float in chrome
+                     */
+                    if ($element.attr('type').toLowerCase() === 'number') {
+                        return modelData;
+                    }
+
+                    return QuantityHelper.formatQuantity(modelData, null, true);
+                default:
+                    return modelData;
+            }
+        },
+
+        viewToModelElementValueTransform: function(elementViewValue, elementKey) {
+            switch (elementKey) {
+                case 'quantity':
+                    const $element = this.getElement(elementKey);
+                    if ($element.attr('type').toLowerCase() === 'number') {
+                        return parseFloat(elementViewValue);
+                    }
+
+                    return QuantityHelper.getQuantityNumberOrDefaultValue(elementViewValue, NaN);
+                default:
+                    return elementViewValue;
+            }
         },
 
         updateModelNotFound: function(data) {

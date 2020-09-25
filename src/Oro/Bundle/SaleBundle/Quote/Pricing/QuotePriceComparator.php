@@ -31,7 +31,7 @@ class QuotePriceComparator
     /**
      * @param string $productSku
      * @param string $productUnit
-     * @param int $quantity
+     * @param float|int $quantity
      * @param string $currency
      * @param float $price
      * @return bool

@@ -262,7 +262,7 @@ define(function(require) {
 
             let items = _.filter(this.items);
             if (_.isEmpty(items)) {
-                items = this.noDataTemplate();
+                items = [this.noDataTemplate()];
             }
 
             this.$totals.html(items.join(''));

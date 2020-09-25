@@ -12,6 +12,7 @@
     {% endif %}
 
     {% set componentOptions = {
+        unitPrecisions: unitPrecisions,
         offerSelector: '[name="%s"]'|format(form.quoteProductOffer.vars.full_name),
         quantitySelector: '[name="%s"]'|format(form.quantity.vars.full_name),
         unitInputSelector: '[name="%s"]'|format(form.unit.vars.full_name),

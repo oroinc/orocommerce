@@ -72,6 +72,10 @@ class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerIn
         /** @var ProductUnit $piece */
         $piece = $repository->findOneBy(['code' => 'piece']);
         $referenceRepository->set('piece', $piece);
+
+        /** @var ProductUnit $kgUnit */
+        $kgUnit = $repository->findOneBy(['code' => 'kg']);
+        $referenceRepository->set('kg_unit', $kgUnit);
     }
 
     /**

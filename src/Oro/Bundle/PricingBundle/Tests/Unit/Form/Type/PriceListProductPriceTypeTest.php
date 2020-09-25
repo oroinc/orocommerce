@@ -135,13 +135,8 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
     public function testSubmit(
         ProductPrice $defaultData,
         array $submittedData,
-        ProductPrice $expectedData,
-        $rounding = false
+        ProductPrice $expectedData
     ) {
-        if ($rounding) {
-            $this->addRoundingServiceExpect();
-        }
-
         $form = $this->factory->create(PriceListProductPriceType::class, $defaultData, []);
 
         // unit placeholder must not be available for specific entity
@@ -181,7 +176,7 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
 
         $expectedProductPrice2 = clone $expectedProductPrice;
         $expectedProductPrice2
-            ->setQuantity(123.556)
+            ->setQuantity(123.5555)
             ->setPrice($expectedPrice2);
 
         $defaultProductPrice = new ProductPrice();

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Formatter;
 
+use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
 use Symfony\Component\Translation\Translator;
@@ -11,12 +12,18 @@ abstract class UnitValueFormatterTestCase extends \PHPUnit\Framework\TestCase
     /** @var Translator|\PHPUnit\Framework\MockObject\MockObject */
     protected $translator;
 
+    /**
+     * @var NumberFormatter|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $numberFormatter;
+
     /** @var UnitValueFormatterInterface */
     protected $formatter;
 
     protected function setUp(): void
     {
         $this->translator = $this->createMock(Translator::class);
+        $this->numberFormatter = $this->createMock(NumberFormatter::class);
         $this->formatter = $this->createFormatter();
     }
 
@@ -29,7 +36,9 @@ abstract class UnitValueFormatterTestCase extends \PHPUnit\Framework\TestCase
     {
         $this->translator->expects($this->once())
             ->method('trans')
-            ->with($this->getTranslationPrefix() . '.kg.value.full', ['%count%' => 42]);
+            ->with($this->getTranslationPrefix() . '.kg.value.full', ['%count%' => 42, '%formattedCount%' => 42]);
+
+        $this->configureFormatter(42, 42);
 
         $this->formatter->format(42, $this->createObject('kg'));
     }
@@ -38,7 +47,9 @@ abstract class UnitValueFormatterTestCase extends \PHPUnit\Framework\TestCase
     {
         $this->translator->expects($this->once())
             ->method('trans')
-            ->with($this->getTranslationPrefix() . '.item.value.short', ['%count%' => 42]);
+            ->with($this->getTranslationPrefix() . '.item.value.short', ['%count%' => 42,  '%formattedCount%' => 42]);
+
+        $this->configureFormatter(42, 42);
 
         $this->formatter->formatShort(42, $this->createObject('item'));
     }
@@ -47,7 +58,9 @@ abstract class UnitValueFormatterTestCase extends \PHPUnit\Framework\TestCase
     {
         $this->translator->expects($this->once())
             ->method('trans')
-            ->with($this->getTranslationPrefix() . '.item.value.short', ['%count%' => 42]);
+            ->with($this->getTranslationPrefix() . '.item.value.short', ['%count%' => 42,  '%formattedCount%' => 42]);
+
+        $this->configureFormatter(42, 42);
 
         $this->formatter->formatCode(42, 'item', true);
     }
@@ -56,7 +69,9 @@ abstract class UnitValueFormatterTestCase extends \PHPUnit\Framework\TestCase
     {
         $this->translator->expects($this->once())
             ->method('trans')
-            ->with($this->getTranslationPrefix() . '.item.value.full', ['%count%' => 42]);
+            ->with($this->getTranslationPrefix() . '.item.value.full', ['%count%' => 42,  '%formattedCount%' => 42]);
+
+        $this->configureFormatter(42, 42);
 
         $this->formatter->formatCode(42, 'item');
     }
@@ -65,7 +80,12 @@ abstract class UnitValueFormatterTestCase extends \PHPUnit\Framework\TestCase
     {
         $this->translator->expects($this->once())
             ->method('trans')
-            ->with($this->getTranslationPrefix() . '.item.value.short_fraction', ['%count%' => 0.5]);
+            ->with(
+                $this->getTranslationPrefix() . '.item.value.short_fraction',
+                ['%count%' => 0.5, '%formattedCount%' => 0.5]
+            );
+
+        $this->configureFormatter(0.5, 0.5);
 
         $this->formatter->formatCode(0.5, 'item', true);
     }
@@ -74,7 +94,12 @@ abstract class UnitValueFormatterTestCase extends \PHPUnit\Framework\TestCase
     {
         $this->translator->expects($this->once())
             ->method('trans')
-            ->with($this->getTranslationPrefix() . '.item.value.short_fraction_gt_1', ['%count%' => 1.5]);
+            ->with(
+                $this->getTranslationPrefix() . '.item.value.short_fraction_gt_1',
+                ['%count%' => 1.5, '%formattedCount%' => 1.5]
+            );
+
+        $this->configureFormatter(1.5, 1.5);
 
         $this->formatter->formatCode(1.5, 'item', true);
     }
@@ -87,6 +112,19 @@ abstract class UnitValueFormatterTestCase extends \PHPUnit\Framework\TestCase
             ->willReturn('N/A');
 
         $this->assertEquals('N/A', $this->formatter->formatShort('test', $this->createObject('item')));
+    }
+
+    /**
+     * @param float $inputNumber
+     * @param string|float $outputNumber
+     */
+    protected function configureFormatter($inputNumber, $outputNumber): void
+    {
+        $this->numberFormatter
+            ->expects(self::once())
+            ->method('formatDecimal')
+            ->with($inputNumber)
+            ->willReturn($outputNumber);
     }
 
     /**

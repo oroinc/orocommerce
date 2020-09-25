@@ -26,6 +26,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Validator\Constraints\Valid;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -411,7 +412,8 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
                     'required' => false,
                     'mapped' => false,
                     'constraints' => [
-                        new UniqueProductPrices(['groups' => ProductPriceCollectionType::VALIDATION_GROUP])
+                        new UniqueProductPrices(['groups' => ProductPriceCollectionType::VALIDATION_GROUP]),
+                        new Valid(['groups' => ProductPriceCollectionType::VALIDATION_GROUP])
                     ],
                     'entry_options' => [
                         'product' => $product,
@@ -515,7 +517,8 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
                     'required' => false,
                     'mapped' => false,
                     'constraints' => [
-                        new UniqueProductPrices(['groups' => ProductPriceCollectionType::VALIDATION_GROUP])
+                        new UniqueProductPrices(['groups' => ProductPriceCollectionType::VALIDATION_GROUP]),
+                        new Valid(['groups' => ProductPriceCollectionType::VALIDATION_GROUP])
                     ],
                     'entry_options' => [
                         'product' => $product,

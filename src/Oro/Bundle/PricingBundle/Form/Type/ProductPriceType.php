@@ -54,9 +54,7 @@ class ProductPriceType extends AbstractType
                 'quantity',
                 QuantityType::class,
                 [
-                    'label' => 'oro.pricing.quantity.label',
-                    'product' => $options['product'],
-                    'product_unit_field' => 'unit',
+                    'label' => 'oro.pricing.quantity.label'
                 ]
             );
 

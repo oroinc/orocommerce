@@ -2,22 +2,23 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\EventListener;
 
+use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
-use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerRepository;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Model\DTO\ProductPriceDTO;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Form\EventListener\QuoteFormSubscriber;
 use Oro\Bundle\SaleBundle\Provider\QuoteProductPriceProvider;
-use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
@@ -25,11 +26,17 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class QuoteFormSubscriberTest extends \PHPUnit\Framework\TestCase
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
+class QuoteFormSubscriberTest extends FormIntegrationTestCase
 {
     use EntityTrait;
 
+    const WEBSITE_ID = 2;
+    const CUSTOMER_ID = 4;
     const PRODUCT_SKU = 'test-sku';
+    const PRODUCT_ID = 137;
     const PRICE1 = 100;
     const PRICE2 = 200;
     const CURRENCY = 'USD';
@@ -61,13 +68,7 @@ class QuoteFormSubscriberTest extends \PHPUnit\Framework\TestCase
         $translator = $this->createMock(TranslatorInterface::class);
         $translator->expects($this->any())->method('trans')->willReturnArgument(0);
 
-        $this->productRepository = $this->createMock(ProductRepository::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
-        $this->doctrineHelper
-            ->expects($this->any())
-            ->method('getEntityRepositoryForClass')
-            ->with(Product::class)
-            ->willReturn($this->productRepository);
 
         $this->subscriber = new QuoteFormSubscriber(
             $this->provider,
@@ -78,32 +79,151 @@ class QuoteFormSubscriberTest extends \PHPUnit\Framework\TestCase
 
     public function testGetSubscribedEvents()
     {
-        $this->assertEquals([FormEvents::PRE_SUBMIT => 'onPreSubmit'], QuoteFormSubscriber::getSubscribedEvents());
+        $this->assertEquals(
+            [
+                FormEvents::PRE_SUBMIT => 'onPreSubmit',
+                FormEvents::SUBMIT => 'onSubmit',
+            ],
+            QuoteFormSubscriber::getSubscribedEvents()
+        );
     }
 
     /**
-     * @dataProvider onPreSubmitProvider
+     * @dataProvider noWebsiteDataProvider
+     * @param array $data
+     */
+    public function testOnPreSubmitWithNoWebsite(?array $data): void
+    {
+        /** @var Quote $quote */
+        $quote = $this->getEntity(Quote::class);
+
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
+        $form = $this->createMock(FormInterface::class);
+        $form->expects($this->once())->method('getData')->willReturn($quote);
+
+        $this->subscriber->onPreSubmit(new FormEvent($form, $data));
+
+        $this->assertNull($quote->getWebsite());
+    }
+
+    /**
+     * @return array
+     */
+    public function noWebsiteDataProvider(): array
+    {
+        return [
+            'no data' => [
+                'data' => null
+            ],
+            'no website' => [
+                'data' => []
+            ],
+            'empty website' => [
+                'data' => ['website' => null]
+            ],
+        ];
+    }
+
+    public function testOnPreSubmitWithWebsite(): void
+    {
+        /** @var Quote $quote */
+        $quote = $this->getEntity(Quote::class);
+
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
+        $form = $this->createMock(FormInterface::class);
+        $form->expects($this->once())->method('getData')->willReturn($quote);
+
+        $website = new Website();
+        $entityRepository = $this->configureRepository(Website::class);
+        $entityRepository
+            ->expects($this->once())
+            ->method('find')
+            ->with(self::WEBSITE_ID)
+            ->willReturn($website);
+
+        $this->subscriber->onPreSubmit(new FormEvent($form, ['website' => self::WEBSITE_ID]));
+
+        $this->assertSame($website, $quote->getWebsite());
+    }
+
+    /**
+     * @dataProvider noCustomerDataProvider
+     * @param array $data
+     */
+    public function testOnPreSubmitWithNoCustomer(?array $data): void
+    {
+        /** @var Quote $quote */
+        $quote = $this->getEntity(Quote::class);
+
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
+        $form = $this->createMock(FormInterface::class);
+        $form->expects($this->once())->method('getData')->willReturn($quote);
+
+        $this->subscriber->onPreSubmit(new FormEvent($form, $data));
+
+        $this->assertNull($quote->getCustomer());
+    }
+
+    /**
+     * @return array
+     */
+    public function noCustomerDataProvider(): array
+    {
+        return [
+            'no data' => [
+                'data' => null
+            ],
+            'no customer' => [
+                'data' => []
+            ],
+            'empty customer' => [
+                'data' => ['customer' => null]
+            ],
+        ];
+    }
+
+    public function testOnPreSubmitWithCustomer(): void
+    {
+        /** @var Quote $quote */
+        $quote = $this->getEntity(Quote::class);
+
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
+        $form = $this->createMock(FormInterface::class);
+        $form->expects($this->once())->method('getData')->willReturn($quote);
+
+        $customer = new Customer();
+        $entityRepository = $this->configureRepository(Customer::class);
+        $entityRepository
+            ->expects($this->once())
+            ->method('find')
+            ->with(self::CUSTOMER_ID)
+            ->willReturn($customer);
+
+        $this->subscriber->onPreSubmit(new FormEvent($form, ['customer' => self::CUSTOMER_ID]));
+
+        $this->assertSame($customer, $quote->getCustomer());
+    }
+
+    /**
+     * @dataProvider onSubmitProvider
      *
      * @param array $data
      * @param array $options
      * @param bool $expectError
      * @param bool $expectPriceChange
      */
-    public function testOnPreSubmit(array $data, array $options = [], $expectError = false, $expectPriceChange = false)
+    public function testOnSubmit(array $data, array $options = [], $expectError = false, $expectPriceChange = false)
     {
-        $quote = $this->getQuote(42);
-        $quote->expects($this->exactly((int)$expectPriceChange))->method('setPricesChanged')->with(true);
+        /** @var Quote $quote */
+        $quote = $this->getEntity(Quote::class, $data);
 
         $config = $this->createMock(FormConfigInterface::class);
         $config->expects($this->any())->method('getOptions')->willReturn($options);
 
         /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
-        $form->expects($this->once())->method('getData')->willReturn($quote);
         $form->expects($this->once())->method('getConfig')->willReturn($config);
         $form->expects($this->exactly($expectError ? 1 : 0))->method('addError')->with(new FormError($expectError));
-
-        $this->productRepository->expects($this->never())->method('findBy');
 
         if (!$data['quoteProducts']) {
             $this->provider->expects($this->never())
@@ -119,13 +239,15 @@ class QuoteFormSubscriberTest extends \PHPUnit\Framework\TestCase
         $this->provider->expects($this->never())
             ->method('getTierPricesForProducts');
 
-        $this->subscriber->onPreSubmit(new FormEvent($form, $data));
+        $this->subscriber->onSubmit(new FormEvent($form, $quote));
+
+        $this->assertEquals($expectPriceChange, $quote->isPricesChanged());
     }
 
     /**
      * @return array
      */
-    public function onPreSubmitProvider()
+    public function onSubmitProvider()
     {
         return [
             'no products' => [
@@ -182,29 +304,29 @@ class QuoteFormSubscriberTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @dataProvider onPreSubmitWithCheckingTierPriceProvider
+     * @dataProvider onSubmitWithCheckingTierPriceProvider
      *
      * @param array $data
      * @param array $options
      * @param bool $expectError
      * @param bool $expectPriceChange
      */
-    public function testOnPreSubmitWithCheckingTierPrice(
+    public function testOnSubmitWithCheckingTierPrice(
         array $data,
         array $options = [],
         $expectError = false,
         $expectPriceChange = false
     ) {
         $tierPrices = [
-            1 => [
+            self::PRODUCT_ID => [
                 new ProductPriceDTO(
-                    $this->getEntity(Product::class, ['id' => 1]),
+                    $this->getEntity(Product::class, ['id' => self::PRODUCT_ID]),
                     Price::create(self::PRICE2, self::CURRENCY),
                     1,
                     $this->getEntity(ProductUnit::class, ['code' => self::UNIT2])
                 ),
                 new ProductPriceDTO(
-                    $this->getEntity(Product::class, ['id' => 1]),
+                    $this->getEntity(Product::class, ['id' => self::PRODUCT_ID]),
                     Price::create(self::PRICE2, self::CURRENCY),
                     20,
                     $this->getEntity(ProductUnit::class, ['code' => self::UNIT2])
@@ -212,40 +334,36 @@ class QuoteFormSubscriberTest extends \PHPUnit\Framework\TestCase
             ]
         ];
 
-        $quote = $this->getQuote(42);
-        $quote->expects($this->exactly((int) $expectPriceChange))->method('setPricesChanged')->with(true);
+        /** @var Quote $quote */
+        $quote = $this->getEntity(Quote::class, $data);
 
         $config = $this->createMock(FormConfigInterface::class);
         $config->expects($this->any())->method('getOptions')->willReturn($options);
 
         /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
-        $form->expects($this->once())->method('getData')->willReturn($quote);
         $form->expects($this->once())->method('getConfig')->willReturn($config);
         $form->expects($this->exactly($expectError ? 1 : 0))->method('addError')->with(new FormError($expectError));
 
-        $products = [$this->getEntity(Product::class, ['id' => 1])];
-        $this->productRepository
-            ->expects($this->once())
-            ->method('findBy')
-            ->with([
-                'id' => [1]
-            ])
-            ->willReturn($products);
+        $product = new ProductStub();
+        $product->setId(self::PRODUCT_ID);
+        $product->setSku(self::PRODUCT_SKU);
 
         $this->provider
             ->expects($this->once())
             ->method('getTierPricesForProducts')
-            ->with($quote, $products)
+            ->with($quote, [$product])
             ->willReturn($tierPrices);
 
-        $this->subscriber->onPreSubmit(new FormEvent($form, $data));
+        $this->subscriber->onSubmit(new FormEvent($form, $quote));
+
+        $this->assertEquals($expectPriceChange, $quote->isPricesChanged());
     }
 
     /**
      * @return array
      */
-    public function onPreSubmitWithCheckingTierPriceProvider()
+    public function onSubmitWithCheckingTierPriceProvider()
     {
         return [
             'price changed tier price' => [
@@ -263,75 +381,41 @@ class QuoteFormSubscriberTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @dataProvider onPreSubmitSkipProvider
-     *
-     * @param Quote|null $quote
-     * @param array $data
-     */
-    public function testOnPreSubmitSkip($quote, array $data)
+    public function testOnSubmitSkip()
     {
         $config = $this->createMock(FormConfigInterface::class);
         $config->expects($this->any())->method('getOptions')->willReturn([]);
 
         /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
-        $form->expects($this->once())->method('getData')->willReturn($quote);
         $form->expects($this->any())->method('getConfig')->willReturn($config);
         $form->expects($this->never())->method('addError');
 
         $this->provider->expects($this->never())->method('getTierPricesForProducts');
-        $this->productRepository->expects($this->never())->method('findBy');
 
-        $this->subscriber->onPreSubmit(new FormEvent($form, $data));
+        $this->subscriber->onSubmit(new FormEvent($form, null));
     }
 
-    /**
-     * @return array
-     */
-    public function onPreSubmitSkipProvider()
-    {
-        return [
-            'no quote' => [
-                'quote' => null,
-                'data' => $this->getData(self::PRICE2)
-            ],
-            'no data' => [
-                'quote' => $this->getQuote(42),
-                'data' => []
-            ],
-        ];
-    }
-
-    public function testOnPreSubmitNewQuoteWithoutWebsiteAndCustomerData()
+    public function testOnSubmitNewQuoteWithoutWebsiteAndCustomerData()
     {
         $config = $this->createMock(FormConfigInterface::class);
         $config->expects($this->any())->method('getOptions')->willReturn([]);
 
         /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
-        $quote = new Quote();
-        $form->expects($this->once())->method('getData')->willReturn($quote);
         $form->expects($this->any())->method('getConfig')->willReturn($config);
         $form->expects($this->never())->method('addError');
 
-        $this->doctrineHelper->expects($this->never())
-            ->method('getEntityRepository')
-            ->with(Website::class);
-        $this->doctrineHelper->expects($this->never())
-            ->method('getEntityRepository')
-            ->with(Customer::class);
-
         $tierPrices = [
-            1 => [
+            self::PRODUCT_ID => [
                 new ProductPriceDTO(
-                    $this->getEntity(Product::class, ['id' => 1]),
+                    $this->getEntity(Product::class, ['id' => self::PRODUCT_ID]),
                     Price::create(self::PRICE2, self::CURRENCY),
                     1,
                     $this->getEntity(ProductUnit::class, ['code' => self::UNIT2])
                 ),
                 new ProductPriceDTO(
-                    $this->getEntity(Product::class, ['id' => 1]),
+                    $this->getEntity(Product::class, ['id' => self::PRODUCT_ID]),
                     Price::create(self::PRICE2, self::CURRENCY),
                     20,
                     $this->getEntity(ProductUnit::class, ['code' => self::UNIT2])
@@ -339,118 +423,19 @@ class QuoteFormSubscriberTest extends \PHPUnit\Framework\TestCase
             ]
         ];
 
-        $products = [$this->getEntity(Product::class, ['id' => 1])];
+        $data = $this->getData(self::PRICE2, self::CURRENCY, 5, self::UNIT2);
+        $quote = $this->getEntity(Quote::class, $data);
+
+        $product = new ProductStub();
+        $product->setId(self::PRODUCT_ID);
+        $product->setSku(self::PRODUCT_SKU);
+
         $this->provider->expects($this->once())
             ->method('getTierPricesForProducts')
-            ->with($quote, $products)
+            ->with($quote, [$product])
             ->willReturn($tierPrices);
-        $this->productRepository->expects($this->once())
-            ->method('findBy')
-            ->with(['id' => [1]])
-            ->willReturn($products);
 
-        $data = $this->getData(self::PRICE2, self::CURRENCY, 5, self::UNIT2);
-
-        $this->subscriber->onPreSubmit(new FormEvent($form, $data));
-    }
-
-    public function testOnPreSubmitNewQuoteWithWebsiteAndCustomerData()
-    {
-        $config = $this->createMock(FormConfigInterface::class);
-        $config->expects($this->any())->method('getOptions')->willReturn([]);
-
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
-        $form = $this->createMock(FormInterface::class);
-        $quote = new Quote();
-        $form->expects($this->once())->method('getData')->willReturn($quote);
-        $form->expects($this->any())->method('getConfig')->willReturn($config);
-        $form->expects($this->never())->method('addError');
-
-        $website = $this->getEntity(Website::class, ['id' => 1]);
-        $websiteRepository = $this->createMock(WebsiteRepository::class);
-        $websiteRepository->expects($this->once())
-            ->method('find')
-            ->with(1)
-            ->willReturn($website);
-
-        $customer = $this->getEntity(Customer::class, ['id' => 2]);
-        $customerRepository = $this->createMock(CustomerRepository::class);
-        $customerRepository->expects($this->once())
-            ->method('find')
-            ->with(2)
-            ->willReturn($customer);
-
-        $this->doctrineHelper->expects($this->exactly(2))
-            ->method('getEntityRepository')
-            ->withConsecutive(
-                [Website::class],
-                [Customer::class]
-            )
-            ->willReturnOnConsecutiveCalls(
-                $websiteRepository,
-                $customerRepository
-            );
-
-        $tierPrices = [
-            1 => [
-                new ProductPriceDTO(
-                    $this->getEntity(Product::class, ['id' => 1]),
-                    Price::create(self::PRICE2, self::CURRENCY),
-                    1,
-                    $this->getEntity(ProductUnit::class, ['code' => self::UNIT2])
-                ),
-                new ProductPriceDTO(
-                    $this->getEntity(Product::class, ['id' => 1]),
-                    Price::create(self::PRICE2, self::CURRENCY),
-                    20,
-                    $this->getEntity(ProductUnit::class, ['code' => self::UNIT2])
-                )
-            ]
-        ];
-
-        $products = [$this->getEntity(Product::class, ['id' => 1])];
-        $this->provider->expects($this->once())
-            ->method('getTierPricesForProducts')
-            ->with($quote, $products)
-            ->willReturn($tierPrices);
-        $this->productRepository->expects($this->once())
-            ->method('findBy')
-            ->with(['id' => [1]])
-            ->willReturn($products);
-
-        $data = $this->getData(self::PRICE2, self::CURRENCY, 5, self::UNIT2);
-        $data['website'] = 1;
-        $data['customer'] = 2;
-
-        $this->subscriber->onPreSubmit(new FormEvent($form, $data));
-    }
-
-    /**
-     * @param int $id
-     *
-     * @return Quote|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function getQuote($id)
-    {
-        $quote = $this->createMock(Quote::class);
-        $quoteProduct = $this->createMock(QuoteProduct::class);
-        $quoteProductOffer = $this->createMock(QuoteProductOffer::class);
-
-        $price = $this->createMock(Price::class);
-        $price->expects($this->any())->method('getCurrency')->willReturn(self::CURRENCY);
-        $price->expects($this->any())->method('getValue')->willReturn(self::PRICE1);
-
-        $quoteProductOffer->expects($this->any())->method('getPrice')->willReturn($price);
-        $quoteProductOffer->expects($this->any())->method('getProductUnitCode')->willReturn(self::UNIT1);
-        $quoteProductOffer->expects($this->any())->method('getQuantity')->willReturn(self::QUANTITY);
-
-        $quote->expects($this->any())->method('getId')->willReturn($id);
-        $quote->expects($this->any())->method('getQuoteProducts')->willReturn([$quoteProduct]);
-
-        $quoteProduct->expects($this->any())->method('getQuoteProductOffers')->willReturn([$quoteProductOffer]);
-        $quoteProduct->expects($this->any())->method('getProductSku')->willReturn(self::PRODUCT_SKU);
-
-        return $quote;
+        $this->subscriber->onSubmit(new FormEvent($form, $quote));
     }
 
     /**
@@ -470,20 +455,50 @@ class QuoteFormSubscriberTest extends \PHPUnit\Framework\TestCase
         $sku = self::PRODUCT_SKU,
         $isFreeForm = false
     ) {
+        if ($isFreeForm) {
+            $product = null;
+        } else {
+            $product = new ProductStub();
+            $product->setId(self::PRODUCT_ID);
+            $product->setSku($sku);
+        }
+
         return [
             'quoteProducts' => [
-                [
+                $this->getEntity(QuoteProduct::class, [
                     'productSku' => $sku,
-                    'product' => $isFreeForm ? null : 1,
+                    'product' => $product,
                     'quoteProductOffers' => [
-                        [
+                        $this->getEntity(QuoteProductOffer::class, [
                             'quantity' => $quantity,
-                            'productUnit' => $unit,
-                            'price' => ['currency' => $currency, 'value' => $price],
-                        ]
+                            'quoteProduct' => $this->getEntity(QuoteProduct::class, [
+                                'product' => $product,
+                                'productSku' => $sku
+                            ]),
+                            'productUnit' => $this->getEntity(ProductUnit::class, ['code' => $unit]),
+                            'productUnitCode' => $unit,
+                            'price' => Price::create($price, $currency)
+                        ])
                     ]
-                ]
+                ])
             ]
         ];
+    }
+
+    /**
+     * @param string $entityClass
+     * @return  EntityRepository|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private function configureRepository(string $entityClass)
+    {
+        $entityRepository = $this->createMock(EntityRepository::class);
+
+        $this->doctrineHelper
+            ->expects($this->once())
+            ->method('getEntityRepository')
+            ->with($entityClass)
+            ->willReturn($entityRepository);
+
+        return $entityRepository;
     }
 }

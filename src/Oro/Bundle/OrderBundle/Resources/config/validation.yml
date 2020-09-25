@@ -38,6 +38,8 @@ Oro\Bundle\OrderBundle\Entity\Order:
 Oro\Bundle\OrderBundle\Entity\OrderLineItem:
     constraints:
         - Oro\Bundle\OrderBundle\Validator\Constraints\LineItemProduct: ~
+        - Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
+              path: quantity
     properties:
         order:
             - NotBlank: ~

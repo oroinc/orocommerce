@@ -2,7 +2,7 @@ app-modules:
     - oroinventory/js/app/modules/validator-constraints-module
 dynamic-imports:
     oroinventory:
-        - oroinventory/js/app/views/decimals-number-editor-view
+        - oroinventory/js/app/views/quantity-editor-view
         - oroinventory/js/datagrid/builder/inventory-status-builder
         - oroinventory/js/datagrid/builder/level-quantity-builder
     oroform-validate:

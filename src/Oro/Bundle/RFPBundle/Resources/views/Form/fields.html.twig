@@ -499,9 +499,13 @@
 
 {% block _oro_order_type_lineItems_entry_offers_entry_row %}
     <td class="order-line-item-offers-radio">
+        {% set quantity = offer.quantity %}
+        {% if quantity is not empty %}
+            {% set quantity = quantity|oro_format_decimal %}
+        {% endif %}
         {{ form_widget(form, {
             attr: {
-                'data-quantity': offer.quantity|default,
+                'data-quantity': quantity|default,
                 'data-unit': offer.unit|default,
                 'data-price': offer.price|default,
                 'data-currency': offer.currency|default

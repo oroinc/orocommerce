@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
-use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 
 /**
@@ -17,38 +17,40 @@ trait QuantityTypeTrait
     public static $name = QuantityType::NAME;
 
     /**
-     * @var RoundingServiceInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var NumberFormatter|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected $roundingService;
+    protected $formatterService;
 
     /**
-     * @return RoundingServiceInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @return NumberFormatter|\PHPUnit\Framework\MockObject\MockObject
      */
-    public function getRoundingService()
+    public function getFormatterService()
     {
-        if (!$this->roundingService) {
-            $this->roundingService = $this->createMock('Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface');
+        if (!$this->formatterService) {
+            $this->formatterService = $this->createMock(NumberFormatter::class);
+
+            $this->formatterService->expects($this->any())
+                ->method('parseFormattedDecimal')
+                ->willReturnCallback(function ($value) {
+                    return (float)$value;
+                });
+
+            $this->formatterService->expects($this->any())
+                ->method('formatDecimal')
+                ->willReturnArgument(0);
         }
 
-        return $this->roundingService;
+        return $this->formatterService;
     }
 
     /**
-     * @return RoundingServiceInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @return QuantityType|\PHPUnit\Framework\MockObject\MockObject
      */
     public function getQuantityType()
     {
-        return new QuantityType($this->getRoundingService(), 'Oro\Bundle\ProductBundle\Entity\Product');
-    }
-
-    public function addRoundingServiceExpect()
-    {
-        $this->roundingService->expects($this->any())
-            ->method('round')
-            ->willReturnCallback(
-                function ($value, $precision) {
-                    return round($value, $precision);
-                }
-            );
+        return new QuantityType(
+            $this->getFormatterService(),
+            'Oro\Bundle\ProductBundle\Entity\Product'
+        );
     }
 }
