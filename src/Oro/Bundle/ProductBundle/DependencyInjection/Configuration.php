@@ -70,6 +70,9 @@ class Configuration implements ConfigurationInterface
     const FILTERS_DISPLAY_SETTINGS_STATE_COLLAPSED = 'collapsed';
     const FILTERS_DISPLAY_SETTINGS_STATE_EXPANDED = 'expanded';
     const ORIGINAL_FILE_NAMES_ENABLED = 'original_file_names_enabled';
+    const FILTERS_POSITION = 'filters_position';
+    const FILTERS_POSITION_TOP = 'top';
+    const FILTERS_POSITION_SIDEBAR = 'sidebar';
 
     /**
      * {@inheritDoc}
@@ -175,6 +178,10 @@ class Configuration implements ConfigurationInterface
                 static::ORIGINAL_FILE_NAMES_ENABLED => [
                     'type' => 'boolean',
                     'value' => false
+                ],
+                static::FILTERS_POSITION => [
+                    'type' => 'string',
+                    'value' => static::FILTERS_POSITION_TOP
                 ]
             ]
         );

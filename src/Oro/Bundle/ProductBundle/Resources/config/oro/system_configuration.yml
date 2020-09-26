@@ -576,13 +576,24 @@ system_configuration:
         oro_product.filters_display_settings_state:
             data_type: string
             type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
-            priority: 10
+            priority: 20
             options:
                 label: oro.product.system_configuration.fields.filters_display_settings.label
                 tooltip: oro.product.system_configuration.fields.filters_display_settings.tooltip
                 choices:
                     oro.product.system_configuration.fields.filters_display_settings.options.collapsed: collapsed
                     oro.product.system_configuration.fields.filters_display_settings.options.expanded: expanded
+
+        oro_product.filters_position:
+            data_type: string
+            type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
+            priority: 10
+            options:
+                label: oro.product.system_configuration.fields.filters_position.label
+                tooltip: oro.product.system_configuration.fields.filters_position.tooltip
+                choices:
+                    oro.product.system_configuration.fields.filters_position.options.top: top
+                    oro.product.system_configuration.fields.filters_position.options.sidebar: sidebar
 
         oro_product.original_file_names_enabled:
             data_type: boolean
@@ -618,6 +629,7 @@ system_configuration:
                                     filters_display_settings:
                                         children:
                                             - oro_product.filters_display_settings_state
+                                            - oro_product.filters_position
                             related_items:
                                 priority: 100
                                 children:
