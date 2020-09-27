@@ -1,0 +1,19 @@
+- [CMSBundle](#cmsbundle)
+- [CheckoutBundle](#checkoutbundle)
+- [ProductBundle](#productbundle)
+
+CMSBundle
+---------
+* The `WYSIWYGValidator::__construct(HtmlTagHelper $htmlTagHelper, HTMLPurifierScopeProvider $purifierScopeProvider, LoggerInterface $logger)`<sup>[[?]](https://github.com/oroinc/orocommerce/tree/4.2.0-alpha.3/src/Oro/Bundle/CMSBundle/Validator/Constraints/WYSIWYGValidator.php#L30 "Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYGValidator")</sup> method was changed to `WYSIWYGValidator::__construct(HtmlTagHelper $htmlTagHelper, HTMLPurifierScopeProvider $purifierScopeProvider, TranslatorInterface $translator, LoggerInterface $logger)`<sup>[[?]](https://github.com/oroinc/orocommerce/tree/4.2.0-beta/src/Oro/Bundle/CMSBundle/Validator/Constraints/WYSIWYGValidator.php#L36 "Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYGValidator")</sup>
+
+CheckoutBundle
+--------------
+* The following methods in class `CheckoutRepository`<sup>[[?]](https://github.com/oroinc/orocommerce/tree/4.2.0-alpha.3/src/Oro/Bundle/CheckoutBundle/Entity/Repository/CheckoutRepository.php#L207 "Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository")</sup> were removed:
+   - `findCheckoutByCustomerUserAndSourceCriteria`<sup>[[?]](https://github.com/oroinc/orocommerce/tree/4.2.0-alpha.3/src/Oro/Bundle/CheckoutBundle/Entity/Repository/CheckoutRepository.php#L207 "Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository::findCheckoutByCustomerUserAndSourceCriteria")</sup>
+   - `findCheckoutBySourceCriteria`<sup>[[?]](https://github.com/oroinc/orocommerce/tree/4.2.0-alpha.3/src/Oro/Bundle/CheckoutBundle/Entity/Repository/CheckoutRepository.php#L273 "Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository::findCheckoutBySourceCriteria")</sup>
+
+ProductBundle
+-------------
+* The `FrontendProductGridEventListener::__construct(AttributeManager $attributeManager, AttributeTypeRegistry $attributeTypeRegistry, AttributeConfigurationProviderInterface $configurationProvider, ProductRepository $productRepository, DoctrineHelper $doctrineHelper, ServiceLink $datagridManagerLink, DatagridStateProviderInterface $filtersStateProvider, DatagridStateProviderInterface $sortersStateProvider, ConfigManager $configManager)`<sup>[[?]](https://github.com/oroinc/orocommerce/tree/4.2.0-alpha.3/src/Oro/Bundle/ProductBundle/DataGrid/EventListener/FrontendProductGridEventListener.php#L75 "Oro\Bundle\ProductBundle\DataGrid\EventListener\FrontendProductGridEventListener")</sup> method was changed to `FrontendProductGridEventListener::__construct(AttributeManager $attributeManager, AttributeTypeRegistry $attributeTypeRegistry, AttributeConfigurationProviderInterface $configurationProvider, DoctrineHelper $doctrineHelper, DatagridStateProviderInterface $filtersStateProvider, DatagridStateProviderInterface $sortersStateProvider, ConfigManager $configManager, DatagridParametersHelper $datagridParametersHelper, FamilyAttributeCountsProvider $familyAttributeCountsProvider)`<sup>[[?]](https://github.com/oroinc/orocommerce/tree/4.2.0-beta/src/Oro/Bundle/ProductBundle/DataGrid/EventListener/FrontendProductGridEventListener.php#L77 "Oro\Bundle\ProductBundle\DataGrid\EventListener\FrontendProductGridEventListener")</sup>
+* The `BrandController::viewAction(Request $request, Brand $brand)`<sup>[[?]](https://github.com/oroinc/orocommerce/tree/4.2.0-alpha.3/src/Oro/Bundle/ProductBundle/Controller/Frontend/BrandController.php#L36 "Oro\Bundle\ProductBundle\Controller\Frontend\BrandController")</sup> method was changed to `BrandController::viewAction(Request $request, Brand $brand)`<sup>[[?]](https://github.com/oroinc/orocommerce/tree/4.2.0-beta/src/Oro/Bundle/ProductBundle/Controller/Frontend/BrandController.php#L40 "Oro\Bundle\ProductBundle\Controller\Frontend\BrandController")</sup>
+
