@@ -90,6 +90,8 @@ oro:
             description: Specifies if the product is featured or not.
             yes: Yes
             no: No
+        filters_in_sidebar:
+            title: Filter By
         new_arrival:
             label: New Arrival
             description: Specifies if the product is a new arrival.

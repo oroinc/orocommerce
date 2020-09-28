@@ -1,0 +1,24 @@
+{% block __oro_product_grid_filters_in_sidebar__filters_in_sidebar_root_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-filters-sidebar'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_product_grid_filters_in_sidebar__filters_in_sidebar_title_widget %}
+    <h2 {{ block('block_attributes') }}>{{ 'oro.product.filters_in_sidebar.title'|trans }}</h2>
+{% endblock %}
+
+{% block __oro_product_grid_filters_in_sidebar__filters_in_sidebar_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'data-role': 'filter-container-in-sidebar'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+

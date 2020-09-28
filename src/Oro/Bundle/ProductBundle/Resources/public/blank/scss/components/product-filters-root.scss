@@ -1,0 +1,13 @@
+/* @theme: blank; */
+
+.product-filters-sidebar {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-content: flex-start;
+    min-height: 100%;
+
+    padding-right: $product-filters-sidebar-inner-offset;
+
+    border-right: $product-filters-sidebar-border;
+}

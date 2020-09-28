@@ -1,0 +1,21 @@
+layout:
+  actions:
+    - '@setBlockTheme':
+        themes: 'filters_in_sidebar.html.twig'
+
+    - '@addTree':
+        items:
+          __filters_in_sidebar_root:
+            blockType: container
+            options:
+              visible: '=data["system_config_provider"].getValue("oro_product.filters_position")=="sidebar"'
+          __filters_in_sidebar_title:
+            blockType: container
+          __filters_in_sidebar_container:
+            blockType: container
+
+        tree:
+          __root:
+            __filters_in_sidebar_root:
+              __filters_in_sidebar_title: ~
+              __filters_in_sidebar_container: ~
