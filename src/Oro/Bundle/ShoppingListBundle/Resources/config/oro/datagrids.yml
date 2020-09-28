@@ -565,6 +565,7 @@ datagrids:
                 params:
                     shoppingListId: shoppingListId
                     productId: mainProductId
+                    unitCode: unit
             units:
                 frontend_type: row_array
         actions:

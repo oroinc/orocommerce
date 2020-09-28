@@ -4,6 +4,7 @@ namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider;
@@ -86,23 +87,26 @@ class MatrixGridOrderController extends AbstractLineItemController
     }
 
     /**
-     * @Route("/{shoppingListId}/{productId}", name="oro_shopping_list_frontend_matrix_grid_update")
+     * @Route("/{shoppingListId}/{productId}/{unitCode}", name="oro_shopping_list_frontend_matrix_grid_update")
      * @ParamConverter("shoppingList", options={"id" = "shoppingListId"})
      * @ParamConverter("product", options={"id" = "productId"})
+     * @ParamConverter("unit", options={"id" = "unitCode"})
      * @Layout()
      * @AclAncestor("oro_shopping_list_frontend_update")
      *
      * @param ShoppingList $shoppingList
      * @param Product $product
+     * @param ProductUnit $unit
      * @param Request $request
      * @return array|JsonResponse
      */
-    public function updateAction(ShoppingList $shoppingList, Product $product, Request $request)
+    public function updateAction(ShoppingList $shoppingList, Product $product, ProductUnit $unit, Request $request)
     {
         $form = $this->get(MatrixGridOrderFormProvider::class)
-            ->getMatrixOrderForm($product, $shoppingList);
+            ->getMatrixOrderByUnitForm($product, $unit, $shoppingList);
 
-        $result = $this->get(MatrixGridOrderFormHandler::class)->process($form->getData(), $form, $request);
+        $result = $this->get(MatrixGridOrderFormHandler::class)
+            ->process($form->getData(), $form, $request);
 
         if ($result) {
             return new JsonResponse(
@@ -113,6 +117,7 @@ class MatrixGridOrderController extends AbstractLineItemController
         return [
             'data' => [
                 'product' => $product,
+                'productUnit' => $unit,
                 'shoppingList' => $shoppingList,
                 'hasLineItems' => $form->getData()->hasLineItems(),
             ]
