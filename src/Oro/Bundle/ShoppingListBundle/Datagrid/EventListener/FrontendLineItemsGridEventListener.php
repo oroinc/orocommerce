@@ -197,7 +197,7 @@ class FrontendLineItemsGridEventListener
         $record->setValue('quantity', $qty);
 
         $unit = $item->getUnit();
-        $record->setValue('unit', $unit);
+        $record->setValue('unit', $unit->getCode());
         $record->setValue('units', $this->getProductUnits($product, $unit));
 
         $status = $product->getInventoryStatus();
@@ -381,7 +381,7 @@ class FrontendLineItemsGridEventListener
 
             $record->setValue('productId', $parentProduct->getId());
             $record->setValue('name', $this->localizationHelper->getLocalizedValue($parentProduct->getNames()));
-            $record->setValue('unit', $lineItem->getUnit());
+            $record->setValue('unit', $lineItem->getProductUnitCode());
             $record->setValue(
                 'link',
                 $this->urlGenerator->generate('oro_product_frontend_product_view', ['id' => $parentProduct->getId()])

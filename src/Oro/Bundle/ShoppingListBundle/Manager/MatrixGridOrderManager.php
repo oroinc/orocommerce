@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ShoppingListBundle\Manager;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -12,6 +13,9 @@ use Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionColumn;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionRow;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
+/**
+ * Provides matrix product collection which will used to update configurable products.
+ */
 class MatrixGridOrderManager
 {
     /**
@@ -80,7 +84,11 @@ class MatrixGridOrderManager
                 $column = new MatrixCollectionColumn();
                 if (isset($availableVariants[$firstValue['value']]['_product'])) {
                     $column->product = $availableVariants[$firstValue['value']]['_product'];
-                    $column->quantity = $this->getQuantity($product, $column->product, $shoppingList);
+                    $column->quantity = $this->getQuantity(
+                        $product->getPrimaryUnitPrecision()->getUnit(),
+                        $column->product,
+                        $shoppingList
+                    );
                 }
 
                 $row->columns = [$column];
@@ -91,7 +99,11 @@ class MatrixGridOrderManager
 
                     if (isset($availableVariants[$firstValue['value']][$secondValue['value']]['_product'])) {
                         $column->product = $availableVariants[$firstValue['value']][$secondValue['value']]['_product'];
-                        $column->quantity = $this->getQuantity($product, $column->product, $shoppingList);
+                        $column->quantity = $this->getQuantity(
+                            $product->getPrimaryUnitPrecision()->getUnit(),
+                            $column->product,
+                            $shoppingList
+                        );
                     }
 
                     $row->columns[] = $column;
@@ -102,6 +114,63 @@ class MatrixGridOrderManager
         }
 
         return $this->collectionCache[$product->getId()][$shoppingListId] = $collection;
+    }
+
+    /**
+     * @param Product $product
+     * @param ProductUnit $unit
+     * @param ShoppingList $shoppingList
+     *
+     * @return MatrixCollection
+     */
+    public function getMatrixCollectionForUnit(Product $product, ProductUnit $unit, ShoppingList $shoppingList)
+    {
+        $shoppingListId = $shoppingList->getId();
+        $unitCode = $unit->getCode();
+        if (isset($this->collectionCache[$product->getId()][$unitCode][$shoppingListId])) {
+            return $this->collectionCache[$product->getId()][$unitCode][$shoppingListId];
+        }
+
+        $variantFields = $this->getVariantFields($product);
+        $availableVariants = $this->getAvailableVariants($product, $variantFields);
+
+        $collection = new MatrixCollection();
+        $collection->unit = $unit;
+
+        if (!isset($variantFields[0])) {
+            return $collection;
+        }
+
+        foreach ($variantFields[0]['values'] as $firstValue) {
+            $row = new MatrixCollectionRow();
+            $row->label = $firstValue['label'];
+
+            if (count($variantFields) == 1) {
+                $column = new MatrixCollectionColumn();
+                if (isset($availableVariants[$firstValue['value']]['_product'])) {
+                    $column->product = $availableVariants[$firstValue['value']]['_product'];
+                    $column->quantity = $this->getQuantity($unit, $column->product, $shoppingList);
+                }
+
+                $row->columns = [$column];
+            } else {
+                foreach ($variantFields[1]['values'] as $secondValue) {
+                    $column = new MatrixCollectionColumn();
+                    $column->label = $secondValue['label'];
+
+                    if (isset($availableVariants[$firstValue['value']][$secondValue['value']]['_product'])) {
+                        $column->product = $availableVariants[$firstValue['value']][$secondValue['value']]['_product'];
+                        $column->quantity = $this->getQuantity($unit, $column->product, $shoppingList);
+                    }
+
+                    $row->columns[] = $column;
+                }
+            }
+
+            $collection->rows[] = $row;
+        }
+
+        return $this->collectionCache[$product->getId()][$unitCode][$shoppingListId] = $collection;
     }
 
     /**
@@ -228,13 +297,13 @@ class MatrixGridOrderManager
     /**
      * Get MatrixCollectionColumn's quantity by shopping list line items
      *
-     * @param Product           $parentProduct
+     * @param ProductUnit       $productUnit
      * @param Product           $cellProduct
      * @param ShoppingList|null $shoppingList
      *
      * @return float|null
      */
-    private function getQuantity(Product $parentProduct, Product $cellProduct, ShoppingList $shoppingList = null)
+    private function getQuantity(ProductUnit $productUnit, Product $cellProduct, ShoppingList $shoppingList = null)
     {
         if (!$shoppingList) {
             return null;
@@ -247,7 +316,7 @@ class MatrixGridOrderManager
         /** @var LineItem $lineItem */
         foreach ($lineItems->getIterator() as $lineItem) {
             if ($cellProduct->getId() === $lineItem->getProduct()->getId()
-                && $lineItem->getProductUnitCode() === $parentProduct->getPrimaryUnitPrecision()->getProductUnitCode()
+                && $lineItem->getProductUnitCode() === $productUnit->getCode()
             ) {
                 return $lineItem->getQuantity();
             }

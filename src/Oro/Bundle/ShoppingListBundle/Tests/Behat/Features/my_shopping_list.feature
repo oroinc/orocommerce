@@ -6,7 +6,7 @@
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroCheckoutBundle:Payment.yml
 
-Feature: My Shopping List 1
+Feature: My Shopping List
   In order to allow customers to see products they want to purchase
   As a Buyer
   I need to be able to view a shopping list (without being able to modify it)
