@@ -22,6 +22,12 @@
         padding: $featured-category-desc-inner-offset;
     }
 
+    &__description {
+        text-align: $featured-category-description-text-align;
+
+        padding: $featured-category-description-inner-offset;
+    }
+
     &__name {
         font-size: $featured-category-name-font-size;
     }

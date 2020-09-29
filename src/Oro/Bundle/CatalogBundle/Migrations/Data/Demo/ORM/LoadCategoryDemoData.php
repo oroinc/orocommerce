@@ -2,8 +2,13 @@
 
 namespace Oro\Bundle\CatalogBundle\Migrations\Data\Demo\ORM;
 
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Migrations\Data\ORM\AbstractCategoryFixture;
+use Symfony\Component\Yaml\Yaml;
 
+/**
+ * Loads categories for the Master Catalog.
+ */
 class LoadCategoryDemoData extends AbstractCategoryFixture
 {
     /**
@@ -57,4 +62,18 @@ class LoadCategoryDemoData extends AbstractCategoryFixture
         'Printers'                    => ['small' => '8'],
         'Medical Apparel'             => ['large' => '9_large'],
     ];
+
+    /**
+     * {@inheritdoc}
+     */
+    public function load(ObjectManager $manager)
+    {
+        $this->categoryDescriptions = Yaml::parse(
+            file_get_contents(
+                implode(DIRECTORY_SEPARATOR, [__DIR__, 'data', 'category_descriptions.yml'])
+            )
+        );
+
+        parent::load($manager);
+    }
 }
