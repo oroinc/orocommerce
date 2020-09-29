@@ -75,11 +75,20 @@ class PriceListTreeHandler
      * @param Customer|null $customer
      * @param Website|null $website
      * @return CombinedPriceList|null
+     *
+     * @throws \LogicException
      */
     public function getPriceList(Customer $customer = null, Website $website = null)
     {
         if (!$website) {
             $website = $this->websiteManager->getCurrentWebsite();
+        }
+
+        if (null === $website) {
+            throw new \LogicException(\sprintf(
+                'When "%s" is called not in a storefront context, a website must be passed as a parameter',
+                __METHOD__
+            ));
         }
 
         $key = $this->getUniqueKey($customer, $website);
@@ -123,8 +132,8 @@ class PriceListTreeHandler
     }
 
     /**
-     * @param Customer|null $customer
-     * @param Website|null $website
+     * @param Customer $customer
+     * @param Website $website
      * @return null|CombinedPriceList
      */
     protected function getPriceListByCustomerGroup(Customer $customer, Website $website)
@@ -139,7 +148,7 @@ class PriceListTreeHandler
     }
 
     /**
-     * @param Website|null $website
+     * @param Website $website
      * @return null|CombinedPriceList
      */
     protected function getPriceListByAnonymousCustomerGroup(Website $website)
