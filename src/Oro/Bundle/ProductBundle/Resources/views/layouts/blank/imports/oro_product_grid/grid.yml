@@ -16,7 +16,7 @@ layout:
             namespace: product_datagrid_cell
 
         -
-            id: oro_product_grid_filters_in_sidebar
+            id: oro_product_grid_sidebar_filters
             root: page_sidebar
             namespace: product
 

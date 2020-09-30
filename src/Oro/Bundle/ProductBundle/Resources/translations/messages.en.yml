@@ -90,7 +90,7 @@ oro:
             description: Specifies if the product is featured or not.
             yes: Yes
             no: No
-        filters_in_sidebar:
+        sidebar_filters:
             title: Filter By
         new_arrival:
             label: New Arrival
@@ -623,7 +623,7 @@ oro:
                         collapsed: 'Collapsed'
                         expanded: 'Expanded'
                 filters_position:
-                    label: 'Position'
+                    label: 'Filter Panel Position'
                     tooltip: 'Position of filters on the storefront product listing pages.'
                     options:
                         top: 'Top'

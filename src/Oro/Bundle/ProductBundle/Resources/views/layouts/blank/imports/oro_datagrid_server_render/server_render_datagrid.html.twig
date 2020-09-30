@@ -29,6 +29,9 @@
         options: datagridMetaData.options|merge({
             multiSelectRowEnabled: renderParams.multiSelectRowEnabled is defined ? renderParams.multiSelectRowEnabled : false,
             defaultFiltersViewMode: renderParams.defaultFiltersViewMode|default(null),
+            enableToggleFilters: renderParams.enableToggleFilters|default(null),
+            renderMode: renderParams.renderMode|default(null),
+            hidePreviousOpenFilters: renderParams.hidePreviousOpenFilters is defined ?  renderParams.hidePreviousOpenFilters : true,
             filtersStateStorageKey: renderParams.filtersStateStorageKey|default(null),
             useFiltersStateAnimationOnInit: renderParams.useFiltersStateAnimationOnInit|default(false)
         })
