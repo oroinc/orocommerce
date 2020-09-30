@@ -18,7 +18,8 @@ const ShoppingListEditItemModel = ShoppingListModel.extend({
         if (!this.get('units')) {
             return null;
         }
-        return Object.values(this.get('units')).find(unit => unit.selected).label;
+
+        return Object.entries(this.get('units')).find(([_, unit]) => unit.selected)[0];
     },
 
     highlightRow(type = 'success') {
