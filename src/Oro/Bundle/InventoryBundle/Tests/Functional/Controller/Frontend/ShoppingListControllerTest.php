@@ -9,6 +9,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -69,15 +70,25 @@ class ShoppingListControllerTest extends WebTestCase
         $product = $lineItem->getProduct();
         $this->setProductLimits($product, $minLimit, $maxLimit);
 
-        $crawler = $this->client->request(
+        $this->client->request(
             'GET',
-            $this->getUrl('oro_shopping_list_frontend_view', ['id' => $shoppingList->getId()])
+            $this->getUrl(
+                'oro_shopping_list_frontend_view',
+                ['id' => $shoppingList->getId(), 'layout_block_ids' => ['combined_button_wrapper']]
+            ),
+            [],
+            [],
+            ['HTTP_X-Requested-With' => 'XMLHttpRequest']
         );
+
+        $response = $this->client->getResponse();
+        $this->assertJsonResponseStatusCodeEquals($response, 200);
+
+        $content = \json_decode($response->getContent(), true);
+        $crawler = new Crawler($content['combined_button_wrapper']);
 
         $createOrderLabel = $this->translator->trans('oro.shoppinglist.btn.create_order');
         static::assertStringContainsString($createOrderLabel, $crawler->html());
-        $this->client->followRedirects(true);
-        $crawler->selectLink($createOrderLabel)->link();
     }
 
     /**

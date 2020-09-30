@@ -11,11 +11,9 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\EntityBundle\Handler\EntityDeleteHandlerInterface;
 use Oro\Bundle\EntityBundle\Handler\EntityDeleteHandlerRegistry;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\ProductBundle\Provider\ProductMatrixAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
@@ -57,9 +55,6 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 
     /** @var LineItemRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $lineItemRepository;
-
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
-    private $productMatrixAvailabilityProvider;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
@@ -109,7 +104,6 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
                 return round($value);
             });
 
-        $this->productMatrixAvailabilityProvider = $this->createMock(ProductMatrixAvailabilityProvider::class);
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->deleteHandlerRegistry = $this->createMock(EntityDeleteHandlerRegistry::class);
 
@@ -121,7 +115,6 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             $this->websiteManager,
             $this->totalManager,
             $this->productVariantProvider,
-            $this->productMatrixAvailabilityProvider,
             $this->configManager,
             $this->deleteHandlerRegistry
         );
@@ -696,15 +689,6 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $shoppingList->addLineItem($lineItem1);
         $shoppingList->addLineItem($lineItem2);
 
-        $this->configManager->expects($this->once())
-            ->method('get')
-            ->with('oro_product.matrix_form_on_shopping_list')
-            ->willReturn(Configuration::MATRIX_FORM_INLINE);
-        $this->productMatrixAvailabilityProvider->expects($this->once())
-            ->method('isMatrixFormAvailable')
-            ->with($product)
-            ->willReturn(true);
-
         $lineItems = [$lineItem1, $lineItem2];
         $this->lineItemRepository->expects($this->once())
             ->method('getItemsByShoppingListAndProducts')
@@ -716,38 +700,6 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $countDeletedItems = $this->manager->removeLineItem($lineItem1);
 
         $this->assertEquals(2, $countDeletedItems);
-    }
-
-    public function testRemoveLineItemWithConfigurableProductsAndNoneMatrixType()
-    {
-        $productUnitPrecision = new ProductUnitPrecision();
-        $productUnitPrecision->setUnit($this->getProductUnit('test', 1));
-
-        $product = $this->getProduct(43, Product::TYPE_CONFIGURABLE);
-        $product->setPrimaryUnitPrecision($productUnitPrecision);
-
-        $lineItem = new LineItem();
-        $lineItem->setProduct($this->getProduct(44, Product::TYPE_SIMPLE));
-        $lineItem->setParentProduct($product);
-        $lineItem->setUnit($this->getProductUnit('test', 1));
-
-        $this->configManager->expects($this->once())
-            ->method('get')
-            ->with('oro_product.matrix_form_on_shopping_list')
-            ->willReturn(Configuration::MATRIX_FORM_NONE);
-
-        $deleteHandler = $this->createMock(EntityDeleteHandlerInterface::class);
-        $this->deleteHandlerRegistry->expects($this->once())
-            ->method('getHandler')
-            ->with(LineItem::class)
-            ->willReturn($deleteHandler);
-        $deleteHandler->expects($this->once())
-            ->method('delete')
-            ->with($this->identicalTo($lineItem));
-
-        $countDeletedItems = $this->manager->removeLineItem($lineItem);
-
-        $this->assertEquals(1, $countDeletedItems);
     }
 
     public function testRemoveLineItemWithConfigurableProductsAndWithFlagToDeleteOnlyCurrentItem()

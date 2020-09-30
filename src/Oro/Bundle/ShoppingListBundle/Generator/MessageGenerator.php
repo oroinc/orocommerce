@@ -2,29 +2,42 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Generator;
 
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Provider\ShoppingListUrlProvider;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Generates a message displayed when an item has been successfully added to the shopping list.
+ */
 class MessageGenerator
 {
     /** @var TranslatorInterface */
     protected $translator;
 
-    /** @var UrlGeneratorInterface */
-    protected $router;
+    /** @var ShoppingListUrlProvider */
+    protected $shoppingListUrlProvider;
+
+    /** @var DoctrineHelper */
+    protected $doctrineHelper;
 
     /**
      * @param TranslatorInterface $translator
-     * @param UrlGeneratorInterface $router
+     * @param ShoppingListUrlProvider $shoppingListUrlProvider
+     * @param DoctrineHelper $doctrineHelper
      */
-    public function __construct(TranslatorInterface $translator, UrlGeneratorInterface $router)
-    {
+    public function __construct(
+        TranslatorInterface $translator,
+        ShoppingListUrlProvider $shoppingListUrlProvider,
+        DoctrineHelper $doctrineHelper
+    ) {
         $this->translator = $translator;
-        $this->router = $router;
+        $this->shoppingListUrlProvider = $shoppingListUrlProvider;
+        $this->doctrineHelper = $doctrineHelper;
     }
 
     /**
-     * @param int $shoppingListId
+     * @param null|int $shoppingListId
      * @param int $entitiesCount
      * @param null|string $transChoiceKey
      * @return string
@@ -40,7 +53,9 @@ class MessageGenerator
             $message = sprintf(
                 '%s (<a href="%s">%s</a>).',
                 $message,
-                $this->router->generate('oro_shopping_list_frontend_view', ['id' => $shoppingListId]),
+                $this->shoppingListUrlProvider->getFrontendUrl(
+                    $this->doctrineHelper->getEntityReference(ShoppingList::class, $shoppingListId)
+                ),
                 $linkTitle = $this->translator->trans('oro.shoppinglist.actions.view')
             );
         }

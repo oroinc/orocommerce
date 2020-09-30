@@ -164,6 +164,10 @@ const ShoppingListInlineEditingPlugin = InlineEditingPlugin.extend({
 
     onSaveError(models) {
         _.invoke(models, 'flashRowHighlight', 'error');
+
+        models.forEach(model => {
+            model.toggleLoadingOverlay(false);
+        });
     },
 
     onSaveComplete() {

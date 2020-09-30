@@ -88,7 +88,7 @@ class ProductControllerTest extends WebTestCase
         $this->assertArrayHasKey('message', $result);
         $this->assertEquals(
             'Product has been added to "<a href="' .
-            $this->getUrl('oro_shopping_list_frontend_view', ['id' => $shoppingList->getId()]) .
+            $this->getUrl('oro_shopping_list_frontend_update', ['id' => $shoppingList->getId()]) .
             '">'.$shoppingList->getLabel().'</a>"',
             $result['message']
         );

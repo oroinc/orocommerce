@@ -293,12 +293,16 @@ datagrids:
         properties:
             view_link:
                 type:  url
-                route: oro_shopping_list_frontend_my_view
+                route: oro_shopping_list_frontend_view
                 params: [ id ]
             update_link:
                 type:  url
                 route: oro_shopping_list_frontend_update
                 params: [ id ]
+            delete_aria_label:
+                type:   translatable
+                key:    oro.frontend.shoppinglist.btn.delete_aria_label
+                params: { name: label }
         actions:
             view:
                 type:          navigate
@@ -338,10 +342,17 @@ datagrids:
             type: orm
             query:
                 select:
-                    - (CASE WHEN parentProduct.id IS NULL THEN false ELSE true END) as isConfigurable
+                    - >
+                        (
+                            CASE WHEN parentProduct.id IS NOT NULL
+                            THEN
+                                true
+                            ELSE
+                                CASE WHEN product.type = 'configurable' THEN true ELSE false END
+                            END
+                        ) as isConfigurable
                     - COALESCE(parentProduct.id, product.id) as mainProductId
                     - COALESCE(parentProduct.sku, product.sku) as sku
-                    - COALESCE(parentProduct.skuUppercase, product.skuUppercase) as skuUppercase
                     - GROUP_CONCAT(lineItem.id) as displayedLineItemsIds
                 from:
                     - { table: 'Oro\Bundle\ShoppingListBundle\Entity\LineItem', alias: lineItem }
@@ -388,14 +399,14 @@ datagrids:
         sorters:
             columns:
                 sku:
-                    data_name: skuUppercase
+                    data_name: sku
             default:
                 sku: ASC
         filters:
             columns:
                 sku:
                     type:             string
-                    data_name:        skuUppercase
+                    data_name:        product.skuUppercase
                     case_insensitive: false
                     value_conversion: mb_strtoupper
                 inventoryStatus:
@@ -430,6 +441,8 @@ datagrids:
                 frontend_type: boolean
             isUpcoming:
                 frontend_type: boolean
+            isLowInventory:
+                frontend_type: boolean
             availabilityDate:
                 frontend_type: datetime
             inventoryStatus:
@@ -448,6 +461,7 @@ datagrids:
             frontend: true
         source:
             type: orm
+            skip_acl_apply: true
             query:
                 select:
                     - customerUser.id
@@ -599,6 +613,7 @@ datagrids:
                         width: 800
             update_configurable:
                 type: update-configurable-product
+                label: oro.shoppinglist.actions.update_configurable_line_item.label
                 link: update_configurable_link
                 icon: pencil-square-o
                 acl_resource: oro_shopping_list_frontend_update
@@ -607,7 +622,7 @@ datagrids:
                 label: oro.shoppinglist.actions.delete_line_item.label
                 link: delete_link
                 icon: trash-o
-                acl_resource: oro_shopping_list_frontend_update
+                acl_resource: oro_shopping_list_line_item_frontend_delete
                 launcherOptions:
                     className: 'stretched'
                 defaultMessages:
@@ -622,7 +637,7 @@ datagrids:
                 label: oro.shoppinglist.mass_actions.delete_line_items.label
                 route: oro_datagrid_front_mass_action
                 entity_name: Oro\Bundle\ShoppingListBundle\Entity\LineItem
-                acl_resource:  oro_shopping_list_frontend_update
+                acl_resource:  oro_shopping_list_line_item_frontend_delete
                 data_identifier: lineItem.id
                 defaultMessages:
                     confirm_content: oro.shoppinglist.mass_actions.delete_line_items.confirm_content

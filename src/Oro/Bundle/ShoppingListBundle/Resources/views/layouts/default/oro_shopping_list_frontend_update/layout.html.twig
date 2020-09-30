@@ -1,3 +1,10 @@
+{% block _no_shopping_lists_widget %}
+    <div class="cart-list-empty">
+        <span class="cart-list-empty__icon"><i class="fa-shopping-cart"></i></span>
+        <span>{{ 'oro.frontend.shoppinglist.view.not_have_available'|trans }}</span>
+    </div>
+{% endblock %}
+
 {% block _shopping_list_notes_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' shopping-list-notes',

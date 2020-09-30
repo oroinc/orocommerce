@@ -1093,12 +1093,10 @@ oro_behat_extension:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGridFilters
 
     Product unit dropdown:
-      selector:
-        type: 'xpath'
-        locator: '//form[@class="product__qty-container cart-table__form"]//span[@class="select2-chosen"]'
+      selector: 'td.grid-body-cell-quantity div.select'
 
     Shopping list line item:
-      selector: 'div.shopping-list-line-items__item-wrapper'
+      selector: '.grid-row'
 
     Remove Additional Unit Precision 1:
         selector: 'tr[data-content="oro_product[additionalUnitPrecisions][0]"] .removeLineItem'

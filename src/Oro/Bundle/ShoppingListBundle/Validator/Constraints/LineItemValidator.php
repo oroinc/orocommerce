@@ -32,7 +32,9 @@ class LineItemValidator extends ConstraintValidator
     public function validate($value, Constraint $constraint): void
     {
         $lineItemRepository = $this->registry->getRepository(LineItem::class);
-        if ($lineItemRepository->findDuplicateInShoppingList($value, $value->getShoppingList())) {
+        $shoppingList = $value->getShoppingList();
+
+        if ($shoppingList && $lineItemRepository->findDuplicateInShoppingList($value, $shoppingList)) {
             $this->context->addViolation($constraint->message);
         }
     }

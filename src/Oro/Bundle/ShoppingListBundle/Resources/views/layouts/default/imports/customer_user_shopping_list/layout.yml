@@ -16,7 +16,7 @@ layout:
             id: title
             optionName: params
             optionValue:
-                '%label%': '=data["entity"].getLabel()'
+                '%label%': '=data["entity"]!=null ? data["entity"].getLabel()'
 
         - '@setOption':
             id: page_main_content

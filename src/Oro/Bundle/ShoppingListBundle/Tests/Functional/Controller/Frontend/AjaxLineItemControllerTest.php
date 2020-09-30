@@ -322,7 +322,7 @@ class AjaxLineItemControllerTest extends WebTestCase
             [
                 'productRef' => LoadProductData::PRODUCT_1,
                 'expectedResult' => true,
-                'expectedMessage' => 'Product has been removed from "<a href="/customer/shoppinglist/%s">'.
+                'expectedMessage' => 'Product has been removed from "<a href="/customer/shoppinglist/update/%s">'.
                     'shopping_list_2_label</a>"',
                 'expectedInitCount' => 2,
                 'removeCurrent' => false,
@@ -331,7 +331,7 @@ class AjaxLineItemControllerTest extends WebTestCase
             [
                 'productRef' => LoadProductData::PRODUCT_2,
                 'expectedResult' => true,
-                'expectedMessage' => 'Product has been removed from "<a href="/customer/shoppinglist/%s">'.
+                'expectedMessage' => 'Product has been removed from "<a href="/customer/shoppinglist/update/%s">'.
                     'shopping_list_2_label</a>"',
                 'expectedInitCount' => 1,
                 'removeCurrent' => false,

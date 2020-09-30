@@ -23,6 +23,16 @@ layout:
             optionName: attr.class
             optionValue: 'page-content--has-sidebar-right'
 
+        - '@setOption':
+            id: container
+            optionName: visible
+            optionValue: '=data["entity"]!=null'
+
+        - '@setOption':
+            id: page_sidebar
+            optionName: visible
+            optionValue: '=data["entity"]!=null'
+
         - '@move':
             id: page_content
             parentId: page_main_content
@@ -32,6 +42,13 @@ layout:
         - '@move':
             id: checkout_container
             parentId: page_sidebar
+
+        - '@add':
+            id: no_shopping_lists
+            parentId: page_content
+            blockType: block
+            options:
+                visible: '=data["entity"]==null'
 
         - '@move':
               id: shopping_list_notes

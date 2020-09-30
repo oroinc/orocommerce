@@ -14,8 +14,12 @@ Feature: Start checkout for a quote
   Scenario: FrontOffice scenario background
     Given I proceed as the Buyer
     And I login as AmandaRCole@example.org buyer
-    And I request a quote from shopping list "Shopping List 1" with data:
+    And I open page with shopping list Shopping List 1
+    And I click "More Actions"
+    And I click "Request Quote"
+    And I fill form with:
       | PO Number | PONUMBER1 |
+    And I click "Submit Request"
 
   Scenario: BackOffice scenario background
     Given I proceed as the Admin

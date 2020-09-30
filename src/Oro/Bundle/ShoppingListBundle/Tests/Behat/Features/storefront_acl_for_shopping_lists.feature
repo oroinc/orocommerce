@@ -96,8 +96,9 @@ Feature: Storefront acl for shopping lists
 
   Scenario: Check buyer assign without permission
     Given I open page with shopping list Shopping List 1
-    Then should not see "Customer Field"
-    And I should see "Customer: Amanda Cole"
+    When I click "Shopping List Actions"
+    Then I should not see "Reassign"
+    And I should see "Assigned To: Amanda Cole"
 
   Scenario: Set assign permission to User
     Given I proceed as the Admin
@@ -109,18 +110,11 @@ Feature: Storefront acl for shopping lists
   Scenario: Check buyer assign permission
     Given I proceed as the Buyer
     And I open page with shopping list Shopping List 1
-    And should see "Customer Select Field" with options:
-      | Value        |
-      | Amanda Cole  |
-
-  Scenario Outline: Check that buyer didn't see assign field
-    Given I open page with shopping list <name>
-    When I should not see "Customer Select Field"
-
-    Examples:
-      | name            |
-      | Shopping List 3 |
-      | Shopping List 5 |
+    When I click "Shopping List Actions"
+    And click "Reassign"
+    And should see following "Shopping List Action Reassign Grid" grid:
+      | First Name | Last Name |
+      | Amanda     | Cole      |
 
   Scenario: Set assign permission to Department
     Given I proceed as the Admin
@@ -132,19 +126,17 @@ Feature: Storefront acl for shopping lists
   Scenario Outline: Check buyer assign permission
     Given I proceed as the Buyer
     And I open page with shopping list <name>
-    And should see "Customer Select Field" with options:
-      | Value        |
-      | Amanda Cole  |
-      | Nancy Sallee |
+    When I click "Shopping List Actions"
+    And click "Reassign"
+    And should see following "Shopping List Action Reassign Grid" grid:
+      | First Name | Last Name |
+      | Amanda     | Cole      |
+      | Nancy      | Sallee    |
 
     Examples:
       | name            |
       | Shopping List 1 |
       | Shopping List 5 |
-
-  Scenario: Check that buyer didn't see assign field
-    Given I open page with shopping list Shopping List 3
-    When I should not see "Customer Select Field"
 
   Scenario: Set assign permission to Corporate
     Given I proceed as the Admin
@@ -156,11 +148,13 @@ Feature: Storefront acl for shopping lists
   Scenario Outline: Check buyer assign permission
     Given I proceed as the Buyer
     And I open page with shopping list <name>
-    And should see "Customer Select Field" with options:
-      | Value        |
-      | Amanda Cole  |
-      | Nancy Sallee |
-      | Ruth Maxwell |
+    When I click "Shopping List Actions"
+    And click "Reassign"
+    And should see following "Shopping List Action Reassign Grid" grid:
+      | First Name | Last Name |
+      | Amanda     | Cole      |
+      | Nancy      | Sallee    |
+      | Ruth       | Maxwell   |
 
     Examples:
       | name            |
@@ -179,16 +173,19 @@ Feature: Storefront acl for shopping lists
     Given I proceed as the Buyer
     And I reload the page
     And I open page with shopping list Shopping List 1
-    When click "Edit Shopping List Label"
-    And type "Shopping List User 1" in "Shopping List Label Input"
-    When click "Save"
-    Then I should see "Record has been successfully updated" flash message
+    And I click "Shopping List Actions"
+    When I click "Rename"
+    And I fill "Shopping List Rename Action Form" with:
+      | Label | Shopping List User 1 |
+    And I click "Shopping List Action Submit"
+    Then I should see "Shopping list has been successfully renamed" flash message
 
   Scenario Outline: Check that buyer cannot edit shopping list
     Given I open page with shopping list <name>
-    Then I should not see "Edit Shopping List Label"
-    Then I should not see "Add a Note to This Shopping List"
-    And I should see "Notes: Simple note"
+    Given I click "Shopping List Actions"
+    When I should not see "Rename"
+    Then I should not see "Add a note to entire Shopping List"
+    And I should see "Simple note"
 
     Examples:
       | name            |
@@ -198,17 +195,19 @@ Feature: Storefront acl for shopping lists
   Scenario: Set edit permission to Department
     Given I proceed as the Admin
     And select following permissions:
-      | Shopping List | Edit:Department |
+      | Shopping List | Edit:Department | Rename:Department |
     When I save form
     Then I should see "Customer User Role has been saved" flash message
 
   Scenario Outline: Check that buyer can edit own shopping list
     Given I proceed as the Buyer
     And I open page with shopping list <name>
-    When click "Edit Shopping List Label"
-    And type "<new name>" in "Shopping List Label Input"
-    When click "Save"
-    Then I should see "Record has been successfully updated" flash message
+    And I click "Shopping List Actions"
+    When I click "Rename"
+    And I fill "Shopping List Rename Action Form" with:
+      | Label | <new name> |
+    And I click "Shopping List Action Submit"
+    Then I should see "Shopping list has been successfully renamed" flash message
 
     Examples:
       | name                 | new name                   |
@@ -217,12 +216,13 @@ Feature: Storefront acl for shopping lists
 
   Scenario: Check that buyer cannot edit shopping list
     Given I open page with shopping list Shopping List 3
-    Then I should not see "Edit Shopping List Label"
+    When I click "Shopping List Actions"
+    Then I should not see "Rename"
 
   Scenario: Set edit permission to Corporate
     Given I proceed as the Admin
     And select following permissions:
-      | Shopping List | Edit:Сorporate |
+      | Shopping List | Edit:Сorporate | Rename:Сorporate |
     When I save form
     Then I should see "Customer User Role has been saved" flash message
 
@@ -230,10 +230,12 @@ Feature: Storefront acl for shopping lists
     Given I proceed as the Buyer
     And I reload the page
     And I open page with shopping list <name>
-    When click "Edit Shopping List Label"
-    And type "<new name>" in "Shopping List Label Input"
-    When click "Save"
-    Then I should see "Record has been successfully updated" flash message
+    Given I click "Shopping List Actions"
+    When I click "Rename"
+    And I fill "Shopping List Rename Action Form" with:
+      | Label | <new name> |
+    And I click "Shopping List Action Submit"
+    Then I should see "Shopping list has been successfully renamed" flash message
 
     Examples:
       | name                       | new name                  |
@@ -252,13 +254,14 @@ Feature: Storefront acl for shopping lists
     Given I proceed as the Buyer
     And I reload the page
     And I open page with shopping list Shopping List Corporate 1
-    Then I should see "Delete"
-    And I click "Delete"
-    When I confirm deletion
-    Then I should see "Shopping List deleted" flash message
+    And I click "Shopping List Actions"
+    When I click "Delete"
+    And I click "Yes, delete"
+    Then should see "Shopping List deleted" flash message
 
   Scenario Outline: Check that buyer cannot delete own shopping list
     Given I open page with shopping list <name>
+    When I click "Shopping List Actions"
     Then I should not see "Delete"
 
     Examples:
@@ -277,13 +280,14 @@ Feature: Storefront acl for shopping lists
     Given I proceed as the Buyer
     And I reload the page
     And I open page with shopping list Shopping List Corporate 5
-    Then I should see "Delete"
-    And I click "Delete"
-    When I confirm deletion
-    Then I should see "Shopping List deleted" flash message
+    And I click "Shopping List Actions"
+    When I click "Delete"
+    And I click "Yes, delete"
+    Then should see "Shopping List deleted" flash message
 
   Scenario: Check that buyer can delete shopping list
     Given I open page with shopping list Shopping List Corporate 3
+    When I click "Shopping List Actions"
     Then I should not see "Delete"
 
   Scenario: Set edit permission to Corporate
@@ -297,10 +301,10 @@ Feature: Storefront acl for shopping lists
     Given I proceed as the Buyer
     And I reload the page
     And I open page with shopping list Shopping List Corporate 3
-    Then I should see "Delete"
-    And I click "Delete"
-    When I confirm deletion
-    Then I should see "Shopping List deleted" flash message
+    And I click "Shopping List Actions"
+    When I click "Delete"
+    And I click "Yes, delete"
+    Then should see "Shopping List deleted" flash message
 
   Scenario: Set create permission to User
     Given I proceed as the Admin

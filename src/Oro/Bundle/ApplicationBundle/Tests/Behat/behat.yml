@@ -269,6 +269,12 @@ oro_behat_extension:
     Matrix Grid Form Totals:
       selector: '.product-totals'
 
+    Matrix Grid Total Price:
+      selector: 'div[data-role="total-price"]'
+
+    Matrix Grid Total Quantity:
+      selector: 'div[data-role="total-quantity"]'
+
     Clear All Button:
       selector:
         type: xpath

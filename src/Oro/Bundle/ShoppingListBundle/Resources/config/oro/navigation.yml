@@ -22,17 +22,18 @@ navigation:
                 position:        45
                 extras:
                     routes:
-                         - 'oro_shopping_list_frontend_my_index'
-                         - 'oro_shopping_list_frontend_my_view'
-                         - 'oro_shopping_list_frontend_update'
-                    condition:   "config_value('oro_shopping_list.my_shopping_lists_page_enabled')"
-
-            frontend_shopping_list:
-                label:           'oro.shoppinglist.entity_plural_label'
-                route:           'oro_shopping_list_frontend_view'
-                position:        200
-                extras:
+                        - 'oro_shopping_list_frontend_my_index'
+                        - 'oro_shopping_list_frontend_view'
+                        - 'oro_shopping_list_frontend_update'
                     description: 'oro.shoppinglist.menu.shopping_list.description'
+                    condition:   "config_value('oro_shopping_list.shopping_list_limit') != 1"
+
+#            frontend_shopping_list:
+#                label:           'oro.shoppinglist.entity_plural_label'
+#                route:           'oro_shopping_list_frontend_view'
+#                position:        200
+#                extras:
+#                    description: 'oro.shoppinglist.menu.shopping_list.description'
 
         tree:
             application_menu:
@@ -45,7 +46,7 @@ navigation:
                     shortcut_shopping_list: ~
             frontend_menu:
                 children:
-                    frontend_shopping_list: ~
+#                    frontend_shopping_list: ~
                     oro_customer_menu_customer_user_index:
                         children:
                             frontend_my_shopping_lists: ~
@@ -57,6 +58,5 @@ navigation:
         oro_shopping_list_index: ~
         oro_shopping_list_view: '%label%'
         oro_shopping_list_frontend_my_index: ~
-        oro_shopping_list_frontend_my_view: '%label%'
         oro_shopping_list_frontend_view: '%label%'
         oro_shopping_list_frontend_update: '%label%'

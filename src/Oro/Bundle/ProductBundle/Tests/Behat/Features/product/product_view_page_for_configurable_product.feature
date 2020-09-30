@@ -92,8 +92,6 @@ Feature: Product view page for configurable product
     And I fill in "Product Views" with "No Matrix Form"
     And uncheck "Use default" for "Product Listings" field
     And I fill in "Product Listings" with "No Matrix Form"
-    And uncheck "Use default" for "Shopping Lists" field
-    And I fill in "Shopping Lists" with "Group Single Products"
     And I save form
     Then I should see "Configuration saved" flash message
 
@@ -118,20 +116,16 @@ Feature: Product view page for configurable product
 
   Scenario: Check that product links from Shopping List navigates to product view page with preselected attributes
     Given I open page with shopping list "Shopping List"
-    And I should see following line items in "Shopping List Line Items Table":
-      | SKU | Quantity | Unit | Price     |
-      | tpc | 1        | item | $1,100.00 |
-      | tpc | 1        | item | $800.00   |
-    When I click on "tpc" configurable product in "Shopping List Line Items Table" with the following attributes:
-      | Color       | Black |
-      | Refurbished | Yes   |
+    And I should see following grid:
+      | SKU     | QtyUpdate All | Price     |
+      | tpc_w   | 1 item        | $1,100.00 |
+      | tpc_b_r | 1 item        | $800.00   |
+    When I click on "tpc_b_r" configurable product in "Shopping List Line Items Table"
     Then "Configurable Product Form" must contains values:
       | Color       | Black |
       | Refurbished | Yes   |
     When I open page with shopping list "Shopping List"
-    When I click on "tpc" configurable product in "Shopping List Line Items Table" with the following attributes:
-      | Color       | White |
-      | Refurbished | No    |
+    When I click on "tpc_w" configurable product in "Shopping List Line Items Table"
     Then "Configurable Product Form" must contains values:
       | Color       | White |
       | Refurbished | No    |
@@ -190,22 +184,20 @@ Feature: Product view page for configurable product
     Given I proceed as the Admin
     When check "Use default" for "Product Views" field
     And check "Use default" for "Product Listings" field
-    And check "Use default" for "Shopping Lists" field
     And I save form
     Then I should see "Configuration saved" flash message
 
   Scenario: Update configurable product variants when resuming product page from Shopping list
     Given I proceed as the Buyer
     When I open page with shopping list "Shopping List"
-    And I click on "tpc" product in "Shopping List Line Items Table"
+    And I click "Tablet PC"
     And I fill "Matrix Grid Form" with:
       |       | No | Yes |
       | Black | -  | 2   |
       | White | 1  | -   |
     And click "Update Shopping List"
     And I follow "Shopping List" link within flash message "Shopping list \"Shopping List\" was updated successfully"
-    Then I should see an "Matrix Grid Form" element
-    And I should see next rows in "Matrix Grid Form" table
-      | No  | Yes |
-      | N/A | 2   |
-      | 1   | N/A |
+    And I should see following grid:
+      | SKU     | Item                                    | QtyUpdate All | Price     |
+      | tpc_w   | Tablet PC Color: White Refurbished: No  | 1 item        | $1,100.00 |
+      | tpc_b_r | Tablet PC Color: Black Refurbished: Yes | 2 item        | $800.00   |

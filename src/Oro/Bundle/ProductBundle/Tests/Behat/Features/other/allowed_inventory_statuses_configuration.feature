@@ -171,7 +171,8 @@ Feature: Allowed inventory statuses configuration
     Given I proceed as the Manager
     And I signed in as AmandaRCole@example.org on the store frontend
     When I open page with shopping list List 1
-    Then I should see "Discontinued" for "SKU1" product
+    Then I should see "Discontinued" for "SKU1" product on shopping list
+    And I click "More Actions"
     And I click "Request Quote"
     And I fill form with:
       | PO Number | Test RFQ |
@@ -230,6 +231,7 @@ Feature: Allowed inventory statuses configuration
 
   Scenario: Check that it is impossible to create RFQ from the shopping list with Discontinued product
     Given I open page with shopping list List 2
+    And click "More Actions"
     And click "Request Quote"
     Then I should see "Some products are not available and cannot be added to RFQ: Product1 (Item # SKU1)"
 

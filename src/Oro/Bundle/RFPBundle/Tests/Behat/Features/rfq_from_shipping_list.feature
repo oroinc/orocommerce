@@ -15,15 +15,15 @@ Feature: RFQ from Shipping List
     Given I proceed as the User
     And I signed in as MarleneSBradley@example.com on the store frontend
     And I open page with shopping list "Shopping List 4"
-    And I click "View Options for this Shopping List"
-    And I click on "Add a Note to This Shopping List"
-    And I type "Parish so enable innate in formed missed. Hand two was eat busy fail." in "shopping_list_notes"
-    When I click on empty space
-    Then I should see "Record has been successfully updated" flash message
-    And I click "Add a Note to This Item"
+    And I click "Add a note to entire Shopping List"
+    And I type "Parish so enable innate in formed missed. Hand two was eat busy fail." in "Shopping List Notes"
+    And I click on "Save Shopping List Notes"
+    Then I should see "Parish so enable innate in formed missed. Hand two was eat busy fail."
+    And I click "Add Shopping List item Note" on row "AA1" in grid
     When I fill in "Shopping List Product Note" with "This item was missed in the previous request"
-    Then I should see "Record has been successfully updated" flash message
-    And I scroll to top
+    And I click "Add"
+    Then I should see "Line item note has been successfully updated" flash message
+    And I click "More Actions"
     When I click "Request Quote"
     Then the "Request Notes" field element should contain "Parish so enable innate in formed missed. Hand two was eat busy fail."
     And I should see "Note: This item was missed in the previous request"

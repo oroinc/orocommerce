@@ -131,8 +131,8 @@ Feature: Shopping list without permissions
     And I click "Shopping List Dropdown"
     And I should not see "Create New Shopping List"
     And I open page with shopping list Shopping List 1
-    And I click "Delete"
-    When I confirm deletion
-    Then I should see "Shopping List deleted" flash message
+    Given I click "Shopping List Actions"
+    When I click "Delete"
+    And I click "Yes, delete"
     When I open product with sku "PSKU1" on the store frontend
     Then I should not see "Add to Shopping List"

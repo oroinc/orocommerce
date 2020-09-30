@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\InventoryBundle\EventListener;
 
+use Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider;
 use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatterInterface;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
@@ -13,7 +14,10 @@ use Oro\Bundle\ShoppingListBundle\Event\LineItemDataEvent;
 class LineItemDataListener
 {
     /** @var UpcomingProductProvider */
-    private $provider;
+    private $upcomingProductProvider;
+
+    /** @var LowInventoryProvider */
+    private $lowInventoryProvider;
 
     /** @var DateTimeFormatterInterface */
     private $formatter;
@@ -22,16 +26,19 @@ class LineItemDataListener
     private $localeSettings;
 
     /**
-     * @param UpcomingProductProvider $provider
+     * @param UpcomingProductProvider $upcomingProductProvider
+     * @param LowInventoryProvider $lowInventoryProvider
      * @param DateTimeFormatterInterface $formatter
      * @param LocaleSettings $localeSettings
      */
     public function __construct(
-        UpcomingProductProvider $provider,
+        UpcomingProductProvider $upcomingProductProvider,
+        LowInventoryProvider $lowInventoryProvider,
         DateTimeFormatterInterface $formatter,
         LocaleSettings $localeSettings
     ) {
-        $this->provider = $provider;
+        $this->upcomingProductProvider = $upcomingProductProvider;
+        $this->lowInventoryProvider = $lowInventoryProvider;
         $this->formatter = $formatter;
         $this->localeSettings = $localeSettings;
     }
@@ -42,12 +49,12 @@ class LineItemDataListener
     public function onLineItemData(LineItemDataEvent $event): void
     {
         foreach ($event->getLineItems() as $lineItem) {
-            $isUpcoming = $this->provider->isUpcoming($lineItem->getProduct());
+            $isUpcoming = $this->upcomingProductProvider->isUpcoming($lineItem->getProduct());
 
             $event->addDataForLineItem($lineItem->getId(), 'isUpcoming', $isUpcoming);
 
             if ($isUpcoming) {
-                $availabilityDate = $this->provider->getAvailabilityDate($lineItem->getProduct());
+                $availabilityDate = $this->upcomingProductProvider->getAvailabilityDate($lineItem->getProduct());
 
                 if ($availabilityDate) {
                     $event->addDataForLineItem(
@@ -62,6 +69,10 @@ class LineItemDataListener
                     );
                 }
             }
+
+            $isLowInventory = $this->lowInventoryProvider->isLowInventoryProduct($lineItem->getProduct());
+
+            $event->addDataForLineItem($lineItem->getId(), 'isLowInventory', $isLowInventory);
         }
     }
 }

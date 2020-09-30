@@ -65,7 +65,6 @@ services:
             - "@oro_website.manager"
             - "@oro_shopping_list.manager.shopping_list_total"
             - "@oro_product.provider.product_variant_availability_provider"
-            - "@oro_product.provider.product_matrix_availability_provider"
             - "@oro_config.manager"
             - "@oro_entity.delete_handler_registry"
 
@@ -118,8 +117,9 @@ services:
         class: 'Oro\Bundle\ShoppingListBundle\Generator\MessageGenerator'
         public: true
         arguments:
-            - "@translator"
-            - "@router"
+            - '@translator'
+            - '@oro_shopping_list.provider.shopping_list_url'
+            - '@oro_entity.doctrine_helper'
 
     oro_shopping_list.processor.abstract_quick_add:
         class: 'Oro\Bundle\ShoppingListBundle\Processor\AbstractShoppingListQuickAddProcessor'
@@ -191,14 +191,6 @@ services:
     Oro\Bundle\ShoppingListBundle\Layout\DataProvider\MatrixGridOrderFormProvider:
         alias: 'oro_shopping_list.layout.data_provider.matrix_order_form'
 
-    oro_shopping_list.layout.data_provider.product_unit_code_visibility:
-        class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\ProductUnitCodeVisibilityProvider'
-        arguments:
-            - "@oro_product.visibility.product_unit_fields_settings"
-            - "@oro_product.visibility.unit"
-        tags:
-            - { name: layout.data_provider, alias: oro_shopping_list_product_unit_code_visibility }
-
     oro_shopping_list.layout.data_provider.customer_user_shopping_lists:
         class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\CustomerUserShoppingListsProvider'
         arguments:
@@ -227,28 +219,6 @@ services:
               - '@oro_shopping_list.manager.current_shopping_list'
           tags:
               - { name: layout.data_provider, alias: oro_shopping_list_matrix_grid_order }
-
-    oro_shopping_list.layout.data_provider.shopping_list_form_availability_provider:
-        parent: oro_product.layout.data_provider.product_form_availability_provider
-        calls:
-            - [setMatrixFormConfig, ['matrix_form_on_shopping_list']]
-        tags:
-            - { name: layout.data_provider, alias: shopping_list_form_availability_provider }
-
-    oro_shopping_list.layout.data_provider.matrix_grid_shopping_list:
-          class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\MatrixFormShoppingListProvider'
-          arguments:
-              - '@oro_shopping_list.layout.data_provider.matrix_order_form'
-              - '@oro_shopping_list.layout.data_provider.shopping_list_form_availability_provider'
-          tags:
-              - { name: layout.data_provider, alias: oro_shopping_list_matrix_grid_shopping_list }
-
-    oro_shopping_list.layout.data_provider.frontend_shopping_list_products_units:
-        class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductsUnitsProvider'
-        arguments:
-            - "@doctrine"
-        tags:
-            - { name: layout.data_provider, alias: oro_shopping_list_products_units }
 
     oro_shopping_list.action.datagrid.mass_action_provider:
         class: 'Oro\Bundle\ShoppingListBundle\Datagrid\Provider\MassAction\AddLineItemMassActionProvider'
@@ -334,9 +304,19 @@ services:
 
     oro_shopping_list.provider.shopping_list_entity_name:
         class: Oro\Bundle\ShoppingListBundle\Provider\ShoppingListEntityNameProvider
-        public: false
         tags:
             - { name: oro_entity.name_provider, priority: 100 }
+
+    oro_shopping_list.provider.shopping_list_url:
+        class: Oro\Bundle\ShoppingListBundle\Provider\ShoppingListUrlProvider
+        public: true
+        arguments:
+            - '@security.authorization_checker'
+            - '@router'
+            - '@oro_shopping_list.manager.shopping_list_limit'
+
+    Oro\Bundle\ShoppingListBundle\Provider\ShoppingListUrlProvider:
+        alias: oro_shopping_list.provider.shopping_list_url
 
     oro_shopping_list.provider.privilege_category_provider:
         class: 'Oro\Bundle\ShoppingListBundle\Provider\PrivilegeCategoryProvider'
@@ -461,7 +441,6 @@ services:
 
     oro_shopping_list.twig.shopping_list_limit_extension:
         class: 'Oro\Bundle\ShoppingListBundle\Twig\ShoppingListLimitExtension'
-        public: false
         arguments:
             - "@oro_platform.twig.service_locator"
         tags:
@@ -469,7 +448,13 @@ services:
 
     oro_shopping_list.twig.shopping_list_widget_extension:
         class: Oro\Bundle\ShoppingListBundle\Twig\ShoppingListWidgetExtension
-        public: false
+        arguments:
+            - "@oro_platform.twig.service_locator"
+        tags:
+            - { name: twig.extension }
+
+    oro_shopping_list.twig.shopping_list_url_extension:
+        class: Oro\Bundle\ShoppingListBundle\Twig\ShoppingListUrlExtension
         arguments:
             - "@oro_platform.twig.service_locator"
         tags:
@@ -521,6 +506,7 @@ services:
         arguments:
             - '@doctrine'
             - '@oro_config.manager'
+            - '@oro_security.token_accessor'
         tags:
             - { name: oro_datagrid.extension, priority: 10 }
 
@@ -652,6 +638,14 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-customer-user-shopping-lists-base-grid, method: onBuildBefore }
 
+    oro_shopping_list.datagrid.event_listener.frontend_customer_user_shopping_list_assign_grid:
+        class: Oro\Bundle\ShoppingListBundle\Datagrid\EventListener\FrontendShoppingListAssignGridEventListener
+        arguments:
+            - '@doctrine'
+            - '@oro_security.acl_helper'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-customer-user-shopping-list-assign-grid, method: onBuildBefore }
+
     oro_shopping_list.layout.data_provider.shopping_list_totals:
         class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\ShoppingListTotalsDataProvider'
         arguments:
@@ -700,6 +694,7 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_shopping_list.manager.shopping_list'
+            - '@validator'
 
     Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemBatchUpdateHandler:
         alias: 'oro_shopping_list.handler.shopping_list_line_item_batch_update'

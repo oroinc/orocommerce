@@ -8,9 +8,6 @@ oro:
         label:
             label: Label
             description: The name of the shopping list.
-            edit.tooltip: Edit Shopping List Label
-        inlineEditing:
-            input.aria_label: Shopping List Title
         notes:
             label: Notes
             description: Any additional notes made by the buyer.
@@ -28,11 +25,6 @@ oro:
         line_items_count.label: Line Items Count
         current.label: Current
         default.label: 'Shopping List'
-        items.label: 'Item|Items'
-        link.aria_label: '{0} You do not have any items in %shoppinglist%|{1} %shoppinglist% contains 1 item|]1,Inf[ %shoppinglist% contains %count% items'
-        remove_item:
-            title: 'Remove %productName% from %shoppinglist%'
-            aria_label: 'Action Remove %productName% from %shoppinglist%'
         subtotal.label: Subtotal
         total.label: Grand Total
         totals.label: Totals
@@ -72,6 +64,8 @@ oro:
             failed_mesage: "You can't add these products to shopping list"
             add_to_multiple: add item to multiple lists
             copied: " (copied %copyDate%)"
+            update_configurable_line_item:
+                label: Edit
             delete_line_item:
                 label: Delete
             add_notes:
@@ -163,7 +157,6 @@ oro:
                 shopping_list.title: 'Shopping List'
                 shopping_list_limit.title: 'Shopping List Limit'
                 shopping_list_options.title: 'Shopping List Options'
-                configurable_product_matrix_form_on_shopping_list.title: 'Configurable Products'
             fields:
                 backend_product_visibility.title: 'Can Be Added to Shopping Lists'
                 default_guest_shopping_list_owner.title: 'Default Guest Shopping List Owner'
@@ -178,7 +171,6 @@ oro:
                 create_shopping_list_for_new_guest:
                     label: 'Create Guest Shopping Lists Immediately'
                     tooltip: 'Enable this option to automatically create shopping lists for all guest users once they access the storefront. By default, this option is disabled and shopping lists are created only when guest users add at least one item to their shopping list.'
-                my_shopping_lists_page_enabled.label: 'Enable "My Shopping Lists" page'
                 my_shopping_lists_max_line_items_per_page:
                     label: 'Maximum Line Items Per Page'
                     tooltip: 'The provided value will be used as the implied maximum number of shopping list line items to display at once. If the number of shopping list line items exceeds this value, the "Show All Items" will no longer be available and this number will be shown as the maximum pager value.'
@@ -193,9 +185,7 @@ oro:
             success.message: 'The shopping list has been duplicated'
             error.customer_user_is_guest: 'Unable to duplicate as only one shopping list is allowed for unregistered users'
             restricted_products.message: 'Some products are not available and cannot be added to shopping list'
-            list:
-                label: Duplicate List
-                aria_label: Duplicate Current Shopping List
+            list.label: Duplicate List
             action.label: Duplicate
         delete:
             action.label: Delete
@@ -205,6 +195,8 @@ oro:
             action.label: Rename
         assign:
             action.label: Reassign
+        edit:
+            action.label: Edit
         visitors.label: 'Visitors'
 
     customer:
@@ -230,15 +222,7 @@ oro:
                 show_more.label: 'Show More'
             view:
                 is_default.label: 'Default'
-                owner.label: Customer
                 assigned_to.label: 'Assigned To'
-                view_options.label: View Options for this Shopping List
-                add_note:
-                    label: Add a Note to This Shopping List
-                    placeholder: Enter your note
-                    aria_label: 'Enter your note to %shoppingList%'
-                item.lable: Item
-                price.label: Price
 
                 entity.label: '{0} <span class="cart-widget-name">No Shopping Lists</span>|{1} <strong>%count%</strong> <span class="cart-widget-name">Shopping List</span>|]1,Inf[ <strong>%count%</strong> <span class="cart-widget-name">Shopping Lists</span>'
                 items.label: '{0} No Items|{1} %count% Item|]1,Inf[ %count% Items'
@@ -250,10 +234,7 @@ oro:
 
                 add_item_note:
                     label: 'Add a Note to This Item'
-                    placeholder: 'Enter your note'
-                    aria_label: 'Enter your note to %productName%'
                 not_have_available: 'You do not have available Shopping Lists'
-                not_products_available: 'The Shopping List is empty. Please add at least one product.'
                 empty: 'Your Shopping List Is Empty'
                 empty_single: 'Your Shopping List is empty'
 
@@ -271,7 +252,6 @@ oro:
                 line_item_deleted: 'Shopping list item has been deleted'
                 cannot_create_order_no_line_item_with_price: 'Cannot create order because Shopping List has no items with price'
                 cannot_create_order_no_line_item_with_quantity: 'Cannot create order because Shopping List has no items'
-                must_be_logged: 'Please <a href="%url%">log in</a> before you start the checkout.'
             open_modal_btn:
                 aria_label: 'Manage current product in the Shopping List'
             btn:
@@ -287,11 +267,12 @@ oro:
                     aria_label: 'Set as Default %name%'
                 duplicate:
                     aria_label: 'Duplicate %name%'
+                edit:
+                    aria_label: 'Edit %name%'
                 cancel.label: 'Cancel'
                 apply_aria_label: 'Apply changes in the Shopping List'
                 decline_aria_label: 'Decline changes in the Shopping List'
                 edit_aria_label: 'Change item quantity in the Shopping List'
-                update: 'Update'
                 request_quote_create_rfp: 'Request Quote'
                 create_order: 'Create Order'
                 delete: 'Delete'

@@ -14,7 +14,7 @@ class UnitValueFormatter extends AbstractUnitFormatter implements UnitValueForma
     /**
      * @var NumberFormatter
      */
-    private $numberFormatter;
+    protected $numberFormatter;
 
     /**
      * @param TranslatorInterface $translator

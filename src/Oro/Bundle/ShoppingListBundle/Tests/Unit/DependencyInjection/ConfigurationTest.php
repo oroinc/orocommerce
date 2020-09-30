@@ -52,10 +52,6 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                     'value' => false,
                     'scope' => 'app',
                 ],
-                'my_shopping_lists_page_enabled' => [
-                    'value' => true,
-                    'scope' => 'app',
-                ],
                 'my_shopping_lists_max_line_items_per_page' => [
                     'value' => 1000,
                     'scope' => 'app',

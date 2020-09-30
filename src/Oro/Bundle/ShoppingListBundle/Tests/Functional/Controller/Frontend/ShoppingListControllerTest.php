@@ -80,41 +80,8 @@ class ShoppingListControllerTest extends WebTestCase
         static::assertStringNotContainsString('Create Order', $crawler->html());
     }
 
-    public function testIndexWhenDisabledAndEnabled(): void
+    public function testIndex(): void
     {
-        $this->initClient(
-            [],
-            $this->generateBasicAuthHeader(
-                LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_BASIC,
-                LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_BASIC
-            )
-        );
-
-        $this->client->request('GET', $this->getUrl('oro_shopping_list_frontend_my_index'));
-        $this->assertResponseStatusCodeEquals($this->client->getResponse(), 200);
-
-        $this->enableMyShoppingListsPage(false);
-
-        $this->client->request('GET', $this->getUrl('oro_shopping_list_frontend_my_index'));
-        $this->assertResponseStatusCodeEquals($this->client->getResponse(), 404);
-
-        $this->enableMyShoppingListsPage(true);
-    }
-
-    /**
-     * @param bool $isEnabled
-     */
-    private function enableMyShoppingListsPage(bool $isEnabled): void
-    {
-        $configManager = $this->getContainer()->get(ConfigManager::class);
-        $configManager->set('oro_shopping_list.my_shopping_lists_page_enabled', $isEnabled);
-        $configManager->flush();
-    }
-
-    public function testIndexMy(): void
-    {
-        $this->enableMyShoppingListsPage(true);
-
         $user = $this->getContainer()
             ->get('oro_customer_user.manager')
             ->findUserByEmail(BaseLoadCustomerData::AUTH_USER);
@@ -156,8 +123,6 @@ class ShoppingListControllerTest extends WebTestCase
                 }
             )
         );
-
-        $this->enableMyShoppingListsPage(false);
     }
 
     public function testViewMy(): void
@@ -172,7 +137,7 @@ class ShoppingListControllerTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('oro_shopping_list_frontend_my_view', ['id' => $shoppingList->getId()])
+            $this->getUrl('oro_shopping_list_frontend_view', ['id' => $shoppingList->getId()])
         );
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
@@ -191,7 +156,7 @@ class ShoppingListControllerTest extends WebTestCase
         $this->assertEquals('product-1', $data[0]['sku']);
         $this->assertEquals(['name' => 'in_stock', 'label' => 'In Stock'], $data[0]['inventoryStatus']);
         $this->assertEquals(8, $data[0]['quantity']);
-        $this->assertEquals('bottles', $data[0]['unit']);
+        $this->assertEquals('bottle', $data[0]['unit']);
         $this->assertEquals('$13.10', $data[0]['price']);
         $this->assertEquals('$104.80', $data[0]['subtotal']);
         $this->assertEquals('product-1.names.default', $data[0]['name']);
@@ -220,15 +185,19 @@ class ShoppingListControllerTest extends WebTestCase
             ->setCurrent($user, $currentShoppingList);
 
         // assert current shopping list
-        $crawler = $this->client->request(
-            'GET',
-            $this->getUrl('oro_shopping_list_frontend_view', ['id' => $currentShoppingList->getId()])
-        );
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        static::assertStringContainsString($currentShoppingList->getLabel(), $crawler->html());
+        $this->requestShoppingListPage('oro_shopping_list_frontend_view', $currentShoppingList->getId());
+
+        $response = $this->client->getResponse();
+        $this->assertJsonResponseStatusCodeEquals($response, 200);
+
+        $content = \json_decode($response->getContent(), true);
+        $pageCrawler = new Crawler($content['page_content']);
+        $buttonsCrawler = new Crawler($content['combined_button_wrapper']);
+
+        static::assertStringContainsString($currentShoppingList->getLabel(), $pageCrawler->html());
+
         // operations only for ShoppingList with LineItems
-        static::assertStringNotContainsString('Request Quote', $crawler->html());
-        static::assertStringNotContainsString('Create Order', $crawler->html());
+        static::assertEquals(0, $buttonsCrawler->count());
     }
 
     public function testAccessDeniedForShoppingListsFromAnotherWebsite()
@@ -281,10 +250,7 @@ class ShoppingListControllerTest extends WebTestCase
             )
         );
 
-        $crawler = $this->client->request(
-            'GET',
-            $this->getUrl('oro_shopping_list_frontend_view', ['id' => $shoppingList1->getId()])
-        );
+        $this->requestShoppingListPage('oro_shopping_list_frontend_view', $shoppingList1->getId());
 
         $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
         $availableInventoryStatuses = [$this->getContainer()->get('doctrine')->getRepository($inventoryStatusClassName)
@@ -293,16 +259,31 @@ class ShoppingListControllerTest extends WebTestCase
         $this->configManager->set(self::RFP_PRODUCT_VISIBILITY_KEY, $availableInventoryStatuses);
         $this->configManager->flush();
 
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        static::assertStringContainsString($shoppingList1->getLabel(), $crawler->html());
+        $response = $this->client->getResponse();
+        $this->assertJsonResponseStatusCodeEquals($response, 200);
 
-        static::assertStringContainsString('Create Order', $crawler->html());
+        $content = \json_decode($response->getContent(), true);
+        $pageCrawler = new Crawler($content['page_content']);
+        $buttonsCrawler = new Crawler($content['combined_button_wrapper']);
+
+        static::assertStringContainsString($shoppingList1->getLabel(), $pageCrawler->html());
+
+        static::assertStringContainsString('Create Order', $buttonsCrawler->html());
         if ($atLeastOneAvailableProduct) {
-            static::assertStringContainsString('Duplicate List', $crawler->html());
-            static::assertStringContainsString('Request Quote', $crawler->html());
+            static::assertStringContainsString('Request Quote', $buttonsCrawler->html());
         }
 
-        $this->assertLineItemPriceEquals($expectedLineItemPrice, $crawler);
+        $response = $this->client->requestFrontendGrid(
+            'frontend-customer-user-shopping-list-grid',
+            ['frontend-customer-user-shopping-list-grid[shopping_list_id]' => $shoppingList1->getId()],
+            true
+        );
+
+        $this->assertJsonResponseStatusCodeEquals($response, 200);
+
+        $data = json_decode($response->getContent(), true)['data'];
+
+        $this->assertLineItemPriceEquals($expectedLineItemPrice, $data);
     }
 
     /**
@@ -325,7 +306,7 @@ class ShoppingListControllerTest extends WebTestCase
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_5,
                 'expectedLineItemPrice' => [
                     '$0.00',
-                    'Price for requested quantity is not available',
+                    null,
                 ],
                 'atLeastOneAvailableProduct' => true,
             ],
@@ -350,10 +331,7 @@ class ShoppingListControllerTest extends WebTestCase
         );
         $this->configManager->flush();
 
-        $crawler = $this->client->request(
-            'GET',
-            $this->getUrl('oro_shopping_list_frontend_view', ['id' => $shoppingList->getId()])
-        );
+        $this->requestShoppingListPage('oro_shopping_list_frontend_view', $shoppingList->getId());
 
         $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
         $availableInventoryStatuses = [$this->getContainer()->get('doctrine')->getRepository($inventoryStatusClassName)
@@ -362,12 +340,28 @@ class ShoppingListControllerTest extends WebTestCase
         $this->configManager->set(self::RFP_PRODUCT_VISIBILITY_KEY, $availableInventoryStatuses);
         $this->configManager->flush();
 
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        static::assertStringContainsString($shoppingList->getLabel(), $crawler->html());
+        $response = $this->client->getResponse();
+        $this->assertJsonResponseStatusCodeEquals($response, 200);
 
-        static::assertStringContainsString('Create Order', $crawler->html());
+        $content = \json_decode($response->getContent(), true);
+        $pageCrawler = new Crawler($content['page_content']);
+        $buttonsCrawler = new Crawler($content['combined_button_wrapper']);
 
-        $this->assertLineItemPriceEquals('Price for requested quantity is not available', $crawler);
+        static::assertStringContainsString($shoppingList->getLabel(), $pageCrawler->html());
+        static::assertStringContainsString('Create Order', $buttonsCrawler->html());
+
+        $response = $this->client->requestFrontendGrid(
+            'frontend-customer-user-shopping-list-grid',
+            ['frontend-customer-user-shopping-list-grid[shopping_list_id]' => $shoppingList->getId()],
+            true
+        );
+
+        $this->assertJsonResponseStatusCodeEquals($response, 200);
+
+        $data = json_decode($response->getContent(), true)['data'];
+
+        $this->assertCount(1, $data);
+        $this->assertNull($data[0]['price']);
     }
 
     public function testAssign(): void
@@ -434,17 +428,23 @@ class ShoppingListControllerTest extends WebTestCase
         /* @var $resource ShoppingList */
         $resource = $this->getReference($resource);
 
-        $url = $this->getUrl($route, ['id' => $resource->getId()]);
-        $crawler = $this->client->request('GET', $url);
+        $this->requestShoppingListPage($route, $resource->getId());
 
         $response = $this->client->getResponse();
-        static::assertHtmlResponseStatusCodeEquals($response, $status);
+        $this->assertResponseStatusCodeEquals($response, $status);
 
         if (200 === $response->getStatusCode()) {
+            $content = \json_decode($response->getContent(), true);
+            if (empty($content['combined_button_wrapper'])) {
+                return;
+            }
+
+            $buttonsCrawler = new Crawler($content['combined_button_wrapper']);
+
             if ($expectedCreateOrderButtonVisible) {
-                static::assertStringContainsString('Create Order', $crawler->html());
-            } else {
-                static::assertStringNotContainsString('Create Order', $crawler->html());
+                static::assertStringContainsString('Create Order', $buttonsCrawler->html());
+            } elseif ($buttonsCrawler->count()) {
+                static::assertStringNotContainsString('Create Order', $buttonsCrawler->html());
             }
         }
     }
@@ -597,15 +597,14 @@ class ShoppingListControllerTest extends WebTestCase
 
     /**
      * @param $expected
-     * @param Crawler $crawler
+     * @param array $data
      */
-    protected function assertLineItemPriceEquals($expected, Crawler $crawler)
+    protected function assertLineItemPriceEquals($expected, array $data)
     {
         $expected = (array)$expected;
-        $prices = $crawler->filter('[data-name="prices-hint"]');
-        $this->assertSameSize($expected, $prices);
-        foreach ($prices as $value) {
-            $this->assertContains(trim($value->textContent), $expected);
+        $this->assertSameSize($expected, $data);
+        foreach ($data as $value) {
+            $this->assertContains($value['price'], $expected);
         }
     }
 
@@ -614,5 +613,23 @@ class ShoppingListControllerTest extends WebTestCase
         $this->configManager->reset(self::RFP_PRODUCT_VISIBILITY_KEY);
         $this->configManager->reset(self::SHOPPING_LIST_AVAIL_FOR_GUEST_KEY);
         $this->configManager->flush();
+    }
+
+    /**
+     * @param string $route
+     * @param int $id
+     */
+    private function requestShoppingListPage(string $route, int $id): void
+    {
+        $this->client->request(
+            'GET',
+            $this->getUrl(
+                $route,
+                ['id' => $id, 'layout_block_ids' => ['page_content', 'combined_button_wrapper']]
+            ),
+            [],
+            [],
+            ['HTTP_X-Requested-With' => 'XMLHttpRequest']
+        );
     }
 }

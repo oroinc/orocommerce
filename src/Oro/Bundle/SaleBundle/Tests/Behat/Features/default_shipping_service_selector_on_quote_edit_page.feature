@@ -30,6 +30,7 @@ Feature: Default Shipping Service Selector on Quote Edit page
     And I click "Shopping List Widget"
     And I click "View Details"
     And I should see "SKU123"
+    And I click "More Actions"
     And I click "Request Quote"
     And I fill in "PO Number" with "PONUMBER1"
     And I click "Submit Request"

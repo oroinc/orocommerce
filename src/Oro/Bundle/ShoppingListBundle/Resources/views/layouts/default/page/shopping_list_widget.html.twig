@@ -119,7 +119,7 @@
                     <span class="custom-radio__text" aria-hidden="true"></span>
                 </label>
             </div>
-            <a class="shopping-list-dropdown__link" href="{{ path('oro_shopping_list_frontend_view', {id: shoppingList.id}) }}"
+            <a class="shopping-list-dropdown__link" href="{{ oro_shopping_list_frontend_url(shoppingList) }}"
                aria-label="{{ 'oro.frontend.shoppinglist.link.aria_label'|trans({
                    '%count%': shoppingList.lineItems|length,
                    '%shoppinglist%': shoppingList.label,
@@ -228,7 +228,7 @@
                     </div>
                 {% endif %}
                 <div class="shopping-list-dropdown__info-container">
-                    <a href="{{ path('oro_shopping_list_frontend_view') }}" class="shopping-list-dropdown__info">
+                    <a href="{{ oro_shopping_list_frontend_url() }}" class="shopping-list-dropdown__info">
                         <span class="fa-shopping-cart" aria-hidden="true"></span>
                         <span>{{ 'oro.frontend.shoppinglist.view.view_list.label'|trans }}</span>
                     </a>

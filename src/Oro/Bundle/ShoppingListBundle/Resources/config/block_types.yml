@@ -7,34 +7,6 @@ services:
         tags:
              - { name: layout.block_type, alias: shopping_list_awere_block }
 
-    oro_shopping_list.layout.type.shopping_list_owner_select_block:
-        parent: oro_layout.block_type.abstract_configurable
-        calls:
-            - [setOptionsConfig, [{shoppingList: {required: true}, form: {required: true}}]]
-            - [setName, ['shopping_list_owner_select_block']]
-        tags:
-             - { name: layout.block_type, alias: shopping_list_owner_select_block }
-
-    oro_shopping_list.layout.type.shopping_list_line_items_list:
-        parent: oro_layout.block_type.abstract_configurable_container
-        calls:
-            -
-                - setOptionsConfig
-                -
-                    -
-                        lineItems: {required: true}
-                        lineItemErrors: {required: true}
-                        shoppingList: {required: true}
-                        productsMatchedPrice: {required: true}
-                        productsAllPrices: {required: true}
-                        productsUnits: {required: true}
-                        productsUnitSelectionVisibilities: {required: true}
-                        configurableProducts: {required: true}
-                        lineItemsUnitVisibilities: {required: true}
-            - [setName, ['shopping_list_line_items_list']]
-        tags:
-             - { name: layout.block_type, alias: shopping_list_line_items_list }
-
     oro_shopping_list.layout.type.shopping_lists_awere_container:
         parent: oro_layout.block_type.abstract_configurable_container
         calls:
@@ -71,14 +43,6 @@ services:
             - [setName, ['product_shopping_lists']]
         tags:
              - { name: layout.block_type, alias: product_shopping_lists }
-
-    oro_shopping_list.layout.block.type.shopping_lists_menu:
-        parent: oro_layout.block_type.abstract_configurable_container
-        calls:
-            - [setOptionsConfig, [{shoppingLists: {required: true}, selectedShoppingList: {required: true}}]]
-            - [setName, ['shopping_lists_menu']]
-        tags:
-             - { name: layout.block_type, alias: shopping_lists_menu }
 
     oro_shopping_list.layout.type.shopping_list_dropdown_item:
         parent: oro_layout.block_type.abstract_configurable

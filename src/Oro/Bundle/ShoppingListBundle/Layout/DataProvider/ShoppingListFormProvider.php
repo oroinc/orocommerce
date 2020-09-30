@@ -14,7 +14,6 @@ use Symfony\Component\Form\FormView;
 class ShoppingListFormProvider extends AbstractFormProvider
 {
     const SHOPPING_LIST_CREATE_ROUTE_NAME   = 'oro_shopping_list_frontend_create';
-    const SHOPPING_LIST_VIEW_ROUTE_NAME     = 'oro_shopping_list_frontend_view';
 
     /**
      * @param ShoppingList $shoppingList
@@ -23,16 +22,9 @@ class ShoppingListFormProvider extends AbstractFormProvider
      */
     public function getShoppingListFormView(ShoppingList $shoppingList)
     {
-        if ($shoppingList->getId()) {
-            $options['action'] = $this->generateUrl(
-                self::SHOPPING_LIST_VIEW_ROUTE_NAME,
-                ['id' => $shoppingList->getId()]
-            );
-        } else {
-            $options['action'] = $this->generateUrl(
-                self::SHOPPING_LIST_CREATE_ROUTE_NAME
-            );
-        }
+        $options['action'] = $this->generateUrl(
+            self::SHOPPING_LIST_CREATE_ROUTE_NAME
+        );
 
         return $this->getFormView(ShoppingListType::class, $shoppingList, $options);
     }

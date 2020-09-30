@@ -58,6 +58,6 @@ Feature: Mass Product Actions for Guest user
     And I open shopping list widget
     And I should see "1 Item | $21.00" in the "Shopping List Widget" element
     And I click "View List"
-    Then I should see following line items in "Shopping List Line Items Table":
-      | SKU    | Quantity | Unit |
-      | rtsh_m | 3        | item |
+    Then I should see following grid:
+      | SKU    | QtyUpdate ALl |
+      | rtsh_m | 3 item        |

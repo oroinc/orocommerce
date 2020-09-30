@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Formatter;
 
-use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatter;
@@ -60,19 +59,6 @@ class UnitValueFormatterTest extends UnitValueFormatterTestCase
             );
 
         $formatter->format(self::VALUE, $this->createObject('item'));
-    }
-
-    /** @var NumberFormatter */
-    private $numberFormatter;
-
-    protected function setUp(): void
-    {
-        $this->numberFormatter = $this->createMock(NumberFormatter::class);
-        $this->numberFormatter->expects($this->any())
-            ->method('formatDecimal')
-            ->willReturnArgument(0);
-
-        parent::setUp();
     }
 
     /**

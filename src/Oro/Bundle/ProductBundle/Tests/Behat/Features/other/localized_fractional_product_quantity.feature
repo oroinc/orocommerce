@@ -79,7 +79,9 @@ Feature: Localized fractional product quantity
     Then I focus on "oro_product_frontend_line_item[quantity]" field and press Enter key
     Then I should see "Product has been added to" flash message
     Then I open page with shopping list Shopping List
-    And the "ShoppingListLineItemForm > Quantity" field element should contain "1005,73"
+    And I click on "Shopping List Line Item 1 Quantity"
+    And the "Shopping List Line Item 1 Quantity Input" field element should contain "1005,73"
+    And I click on "Shopping List Line Item 1 Save Changes Button"
     And I should see "Subtotal 50.286,50 $"
     And I should see "Total 50.286,50 $"
 
@@ -93,7 +95,9 @@ Feature: Localized fractional product quantity
     When I click "Update Shopping List" in "ShoppingListButtonGroup" element
     Then I should see "Record has been successfully updated" flash message
     Then I open page with shopping list Shopping List
-    And the "ShoppingListLineItemForm > Quantity" field element should contain "1000,83"
+    And I click on "Shopping List Line Item 1 Quantity"
+    And the "Shopping List Line Item 1 Quantity Input" field element should contain "1000,83"
+    And I click on "Shopping List Line Item 1 Save Changes Button"
     And I should see "Subtotal 50.041,50 $"
     And I should see "Total 50.041,50 $"
 
@@ -127,7 +131,9 @@ Feature: Localized fractional product quantity
     Then I should see "2,34kg" in the "Shopping List Edit Popup Rows" element
     And I click "Close" in modal window
     Then I open page with shopping list Shopping List
-    And the "ShoppingListLineItemForm > Quantity" field element should contain "2,34"
+    And I click on "Shopping List Line Item 1 Quantity"
+    And the "Shopping List Line Item 1 Quantity Input" field element should contain "2,34"
+    And I click on "Shopping List Line Item 1 Save Changes Button"
     And I should see "Subtotal 234,00 $"
     And I should see "Total 234,00 $"
     When I type "PKILO" in "search"
@@ -204,8 +210,10 @@ Feature: Localized fractional product quantity
     When I open page with shopping list "Shopping List"
     Then I should see "Subtotal 156,00 $"
     And I should see "Total 156,00 $"
-    Then the "ShoppingListLineItemForm > Quantity" field element should contain "1,56"
-    And the "ShoppingListLineItemForm > Unit" field element should contain "kg"
+    And I click on "Shopping List Line Item 1 Quantity"
+    And the "Shopping List Line Item 1 Quantity Input" field element should contain "1,56"
+    And the "Shopping List Line Item 1 Unit Select" field element should contain "kg"
+    And I click on "Shopping List Line Item 1 Save Changes Button"
     When I click "Create Order"
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
     Then Checkout "Order Summary Products Grid" should contain products:
@@ -241,6 +249,7 @@ Feature: Localized fractional product quantity
     When I open page with shopping list "Shopping List"
     Then I should see "Subtotal 156,00 $"
     And I should see "Total 156,00 $"
+    And I click "More Actions"
     When I click "Request Quote"
     And I fill form with:
       | First Name    | Amanda                  |

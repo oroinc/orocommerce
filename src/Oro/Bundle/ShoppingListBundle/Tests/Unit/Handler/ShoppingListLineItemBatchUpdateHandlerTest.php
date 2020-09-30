@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Handler;
 
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -12,6 +13,9 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Model\LineItemModel;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\Validator\ConstraintViolation;
+use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ShoppingListLineItemBatchUpdateHandlerTest extends \PHPUnit\Framework\TestCase
 {
@@ -23,11 +27,17 @@ class ShoppingListLineItemBatchUpdateHandlerTest extends \PHPUnit\Framework\Test
     /** @var ProductUnitRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $productUnitRepository;
 
+    /** @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $entityManager;
+
     /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
     /** @var ShoppingListManager|\PHPUnit\Framework\MockObject\MockObject */
     private $shoppingListManager;
+
+    /** @var ValidatorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $validator;
 
     /** @var ShoppingListLineItemBatchUpdateHandler */
     private $handler;
@@ -36,6 +46,7 @@ class ShoppingListLineItemBatchUpdateHandlerTest extends \PHPUnit\Framework\Test
     {
         $this->lineItemRepository = $this->createMock(LineItemRepository::class);
         $this->productUnitRepository = $this->createMock(ProductUnitRepository::class);
+        $this->entityManager = $this->createMock(ObjectManager::class);
 
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->doctrineHelper->expects($this->any())
@@ -48,8 +59,13 @@ class ShoppingListLineItemBatchUpdateHandlerTest extends \PHPUnit\Framework\Test
             );
 
         $this->shoppingListManager = $this->createMock(ShoppingListManager::class);
+        $this->validator = $this->createMock(ValidatorInterface::class);
 
-        $this->handler = new ShoppingListLineItemBatchUpdateHandler($this->doctrineHelper, $this->shoppingListManager);
+        $this->handler = new ShoppingListLineItemBatchUpdateHandler(
+            $this->doctrineHelper,
+            $this->shoppingListManager,
+            $this->validator
+        );
     }
 
     public function testProcess(): void
@@ -85,12 +101,78 @@ class ShoppingListLineItemBatchUpdateHandlerTest extends \PHPUnit\Framework\Test
             ->willReturn([$model1->getUnitCode() => $productUnit1, $model2->getUnitCode() => $productUnit2]);
 
         $this->shoppingListManager->expects($this->exactly(2))
-            ->method('updateLineItem')
+            ->method('addLineItem')
             ->withConsecutive(
-                [$item1, $shoppingList],
-                [$item2, $shoppingList]
+                [$item1, $shoppingList, false, true],
+                [$item2, $shoppingList, false, true]
             );
 
-        $this->handler->process([$model1, $model2], $shoppingList);
+        $this->validator->expects($this->once())
+            ->method('validate')
+            ->willReturn(new ConstraintViolationList());
+
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityManagerForClass')
+            ->willReturn($this->entityManager);
+
+        $this->entityManager->expects($this->once())
+            ->method('flush');
+
+        $result = $this->handler->process([$model1, $model2], $shoppingList);
+
+        $this->assertIsArray($result);
+        $this->assertEmpty($result);
+    }
+
+    public function testProcessErrors(): void
+    {
+        $model1 = new LineItemModel(1001, 5.55, 'item');
+
+        $shoppingList = new ShoppingList();
+
+        $product1 = new Product();
+        $product1->setSku('pr1');
+
+        $item1 = $this->getEntity(LineItem::class, ['id' => $model1->getId(), 'product' => $product1]);
+
+        $this->lineItemRepository->expects($this->once())
+            ->method('findBy')
+            ->with(['id' => [$model1->getId()]])
+            ->willReturn([$item1]);
+
+        $productUnit1 = new ProductUnit();
+        $productUnit1->setCode($model1->getUnitCode());
+
+        $this->productUnitRepository->expects($this->once())
+            ->method('getProductsUnitsByCodes')
+            ->with([$product1], [$model1->getUnitCode()])
+            ->willReturn([$model1->getUnitCode() => $productUnit1]);
+
+        $this->shoppingListManager->expects($this->once())
+            ->method('addLineItem')
+            ->withConsecutive(
+                [$item1, $shoppingList, false, true],
+            );
+
+        $this->validator->expects($this->once())
+            ->method('validate')
+            ->with($shoppingList)
+            ->willReturn(new ConstraintViolationList(
+                [
+                    new ConstraintViolation('Test message', 'Test template', [], 'root', 'name', 'data')
+                ]
+            ));
+
+        $this->doctrineHelper->expects($this->never())
+            ->method('getEntityManagerForClass')
+            ->willReturn($this->entityManager);
+
+        $this->entityManager->expects($this->never())
+            ->method('flush');
+
+        $result = $this->handler->process([$model1], $shoppingList);
+
+        $this->assertIsArray($result);
+        $this->assertEquals(['Test message'], $result);
     }
 }

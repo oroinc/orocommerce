@@ -30,8 +30,9 @@ Feature: Shopping list limit
   Scenario: Remove one shopping list
     Given I open shopping list widget
     When I click "View Details"
+    And I click "Shopping List Actions"
     And I click "Delete"
-    And I click "Yes, Delete"
+    And I click "Yes, delete" in modal window
     Then I should see "Shopping List deleted" flash message
     And I should see "1 Shopping List"
 
