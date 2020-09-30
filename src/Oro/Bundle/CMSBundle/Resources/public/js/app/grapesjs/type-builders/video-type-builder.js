@@ -1,6 +1,8 @@
 import _ from 'underscore';
 import BaseTypeBuilder from 'orocms/js/app/grapesjs/type-builders/base-type-builder';
 
+const undoAutoPlay = url => url.replace(/(autoplay=).*?(&)/, '$1' + 0 + '$2');
+
 const VideoTypeBuilder = BaseTypeBuilder.extend({
     componentType: 'video',
 
@@ -82,14 +84,56 @@ const VideoTypeBuilder = BaseTypeBuilder.extend({
                     }
 
                     return attr;
+                },
+
+                getYoutubeSrc() {
+                    let url = this.constructor.__super__.getYoutubeSrc.call(this);
+                    url += this.get('autoplay') ? '&mute=1' : '';
+                    return url;
+                },
+
+                getVimeoSrc() {
+                    let url = this.constructor.__super__.getVimeoSrc.call(this);
+                    url += this.get('autoplay') ? '&muted=1' : '';
+                    return url;
                 }
             },
             view: {
                 onRender() {
                     this.em.removeSelected();
                     this.em.addSelected(this.el);
-
                     return this;
+                },
+
+                updateVideo() {
+                    this.constructor.__super__.updateVideo.call(this);
+                    const prov = this.model.get('provider');
+
+                    if (prov === 'so') {
+                        this.videoEl.autoplay = false;
+                    }
+                },
+
+                updateSrc() {
+                    this.constructor.__super__.updateSrc.call(this);
+                    const {videoEl} = this;
+                    if (!videoEl) {
+                        return;
+                    }
+                    const prov = this.model.get('provider');
+
+                    // Disable autoplay for source
+                    if (prov !== 'so') {
+                        videoEl.src = undoAutoPlay(videoEl.src);
+                    }
+                },
+
+                renderByProvider(prov) {
+                    const videoEl = this.constructor.__super__.renderByProvider.call(this, prov);
+
+                    videoEl.src = undoAutoPlay(videoEl.src);
+                    this.videoEl = videoEl;
+                    return videoEl;
                 }
             }
         });
