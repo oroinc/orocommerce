@@ -35,6 +35,16 @@ oro_behat_extension:
                 type: xpath
                 locator: '//li[contains(@class, "jstree-node")]/a[contains(., "Additional Web Catalog")]'
 
+        Products node:
+            selector:
+                type: xpath
+                locator: '//li[contains(@class, "jstree-node")]/a[contains(., "Web Catalog Root")]/parent::li/ul//li[contains(@class, "jstree-node")]/a[contains(., "Products node")]'
+
+        Products duplicate:
+            selector:
+                type: xpath
+                locator: '//li[contains(@class, "jstree-node")]/a[contains(., "Web Catalog Root")]/parent::li/ul//li[contains(@class, "jstree-node")]/a[contains(., "Products node")]/parent::li/ul//li[contains(@class, "jstree-node")]/a[contains(., "Products duplicate")]'
+
         Content Node:
             selector: 'form[name="oro_web_catalog_content_node"]'
             class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
