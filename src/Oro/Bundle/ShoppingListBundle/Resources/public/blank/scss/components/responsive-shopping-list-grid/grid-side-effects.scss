@@ -13,7 +13,7 @@
             overflow: hidden;
 
             .grid-cell {
-                @include loading-bar-lines;
+                @include loading-blur-overlay;
             }
         }
 
@@ -31,7 +31,7 @@
     .responsive-shopping-list-grid {
         .grid-row {
             &.loading {
-                @include loading-bar-lines;
+                @include loading-blur-overlay;
 
                 .grid-cell {
                     position: static;

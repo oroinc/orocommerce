@@ -6,7 +6,7 @@ const ESCAPE_KEY_CODE = 27;
 
 const ShoppingListOwnerInlineEditableView = BaseView.extend({
     options: {
-        loadingClass: 'loading-bar-lines'
+        loadingClass: 'loading-blur-overlay'
     },
 
     events: {
