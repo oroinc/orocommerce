@@ -568,6 +568,7 @@ datagrids:
                     enable: true
                     editor:
                         view: oroshoppinglist/js/app/views/editor/shoppinglist-line-item-editor-view
+                    validation_groups: [update]
             unit:
                 renderable: false
         properties:

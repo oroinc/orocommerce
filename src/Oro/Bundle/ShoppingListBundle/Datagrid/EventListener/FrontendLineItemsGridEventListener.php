@@ -529,6 +529,7 @@ class FrontendLineItemsGridEventListener
             $data[$unitCode] = [
                 'label' => $this->unitLabelFormatter->format($unitCode),
                 'selected' => $unitCode === $selectedCode,
+                'precision' => $unitPrecision->getPrecision(),
                 'disabled' => false,
             ];
         }
