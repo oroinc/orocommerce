@@ -1,12 +1,13 @@
-<% var oroshoppinglist = _.macros('oroshoppinglist') %>
+<% let oroshoppinglist = _.macros('oroshoppinglist') %>
 
 <div class="inline-editor__inner">
     <div class="inline-editor__fields">
         <input
             name="quantity"
-            type="text"
+            type="number"
             inputmode="decimal"
             value="<%- data.quantity %>"
+            data-precision="<%- data.precision %>"
             class="input input-qty"
             aria-label="<%- _.__('oro.frontend.shoppinglist.inline_editing.quantity.aria_label') %>"
             autocomplete="off"

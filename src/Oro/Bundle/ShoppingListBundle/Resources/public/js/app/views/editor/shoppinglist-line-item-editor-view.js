@@ -2,11 +2,12 @@ import _ from 'underscore';
 import $ from 'jquery';
 import TextEditorView from 'oroform/js/app/views/editor/text-editor-view';
 const NumberFormatter = require('orofilter/js/formatter/number-formatter');
+import NumberFormat from 'orolocale/js/formatter/number';
 
 const ShoppinglistLineItemEditorView = TextEditorView.extend({
     events: {
         'input input[name="quantity"]': 'onValueChange',
-        'change select[name="unitCode"]': 'onValueChange'
+        'change select[name="unitCode"]': 'onUnitValueChange'
     },
 
     template: require('tpl-loader!oroshoppinglist/templates/editor/shoppinglist-line-item-editor.html'),
@@ -22,7 +23,7 @@ const ShoppinglistLineItemEditorView = TextEditorView.extend({
 
     render() {
         if (this.options.quantity) {
-            this.setFormState(this.formatter.toRaw(this.options.quantity));
+            this.setFormState(this.options.quantity);
         }
 
         ShoppinglistLineItemEditorView.__super__.render.call(this);
@@ -76,16 +77,29 @@ const ShoppinglistLineItemEditorView = TextEditorView.extend({
         this.trigger('change');
     },
 
+    onUnitValueChange(event) {
+        this.onValueChange(event);
+        this.updateUnitPrecision();
+    },
+
+    updateUnitPrecision() {
+        const units = this.updateUnitList(this.$('select[name="unitCode"]').val());
+        const precision = Object.values(units).find(unit => unit.selected).precision;
+        this.$el.find('input[name="quantity"]')
+            .data('precision', precision)
+            .inputWidget('refresh');
+    },
+
     getValue: function() {
         return {
-            quantity: parseFloat(this.$('input[name="quantity"]').val()),
+            quantity: parseFloat(NumberFormat.unformatStrict(this.$('input[name="quantity"]').val())),
             unitCode: this.$('select[name="unitCode"]').val()
         };
     },
 
     updateUnitList(currentUnit) {
-        return _.mapObject(this.model.get('units'), unit => {
-            unit.selected = unit.label === currentUnit;
+        return _.mapObject(this.model.get('units'), (unit, key) => {
+            unit.selected = key === currentUnit;
             return unit;
         });
     },

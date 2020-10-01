@@ -11,6 +11,7 @@ const ShoppingListEditItemModel = ShoppingListModel.extend({
         ShoppingListEditItemModel.__super__.initialize.call(this, attributes, options);
         if (!this.get('isConfigurable')) {
             this.set('unitCode', this.getCurrentModelUnit(), {silent: true});
+            this.set('precision', this.getCurrentModelPrecision(), {silent: true});
         }
     },
 
@@ -20,6 +21,10 @@ const ShoppingListEditItemModel = ShoppingListModel.extend({
         }
 
         return Object.entries(this.get('units')).find(([_, unit]) => unit.selected)[0];
+    },
+
+    getCurrentModelPrecision() {
+        return Object.entries(this.get('units')).find(([_, unit]) => unit.selected)[1].precision;
     },
 
     highlightRow(type = 'success') {

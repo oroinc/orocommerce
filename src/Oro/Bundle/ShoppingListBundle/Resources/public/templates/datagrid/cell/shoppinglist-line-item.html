@@ -1,7 +1,7 @@
 <% let oroshoppinglist = _.macros('oroshoppinglist') %>
 <% if (!obj.isConfigurable) { %>
     <div class="line-item-container">
-        <div tabindex="0" class="input input-qty"><%- quantity %></div>
+        <div tabindex="0" class="input input-qty"><%- oroshoppinglist.numberFormatter.formatDecimal(quantity, {grouping_used: false}) %></div>
         <div class="select" tabindex="0" data-focused=".select2-container">
             <%- oroshoppinglist.renderUnit({unit: unitCode, quantity: 1}) %>
         </div>
