@@ -29,9 +29,6 @@
         options: datagridMetaData.options|merge({
             multiSelectRowEnabled: renderParams.multiSelectRowEnabled is defined ? renderParams.multiSelectRowEnabled : false,
             defaultFiltersViewMode: renderParams.defaultFiltersViewMode|default(null),
-            enableToggleFilters: renderParams.enableToggleFilters|default(null),
-            renderMode: renderParams.renderMode|default(null),
-            hidePreviousOpenFilters: renderParams.hidePreviousOpenFilters is defined ?  renderParams.hidePreviousOpenFilters : true,
             filtersStateStorageKey: renderParams.filtersStateStorageKey|default(null),
             useFiltersStateAnimationOnInit: renderParams.useFiltersStateAnimationOnInit|default(false)
         })
@@ -47,7 +44,7 @@
     {% set options  = {
         el: '#' ~ gridId,
         gridName: oro_datagrid_build_fullname(datagrid.name, datagrid.scope),
-        builders: datagridMetaData.jsmodules,
+        builders: datagridMetaData.jsmodules|merge(renderParams.extra_jsmodules|default([])),
         metadata: datagridMetaData,
         data: datagridData,
         enableFilters: enableFilters,

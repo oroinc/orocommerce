@@ -25,24 +25,9 @@ layout:
             optionValue: '=data["system_config_provider"].getValue("oro_product.filters_display_settings_state")'
 
         - '@setOption':
-            id: __datagrid
-            optionName: grid_render_parameters.enableToggleFilters
-            optionValue: '=data["system_config_provider"].getValue("oro_product.filters_position") !== "sidebar"'
-
-        - '@setOption':
-            id: __datagrid
-            optionName: grid_render_parameters.renderMode
-            optionValue: '=data["system_config_provider"].getValue("oro_product.filters_position") === "sidebar" ? "toggle-mode" : ""'
-
-        - '@setOption':
-            id: __datagrid
-            optionName: grid_render_parameters.filterContainerSelector
-            optionValue: '=data["system_config_provider"].getValue("oro_product.filters_position") === "sidebar" ? "[data-role=\"sidebar-filter-container\"]" : "[data-grid-toolbar=\"top\"] [data-role=\"filter-container\"]"'
-
-        - '@setOption':
-            id: __datagrid
-            optionName: grid_render_parameters.hidePreviousOpenFilters
-            optionValue: '=data["system_config_provider"].getValue("oro_product.filters_position") !== "sidebar"'
+              id: __datagrid
+              optionName: grid_render_parameters.extra_jsmodules
+              optionValue: '=!context["is_mobile"] and data["system_config_provider"].getValue("oro_product.filters_position") === "sidebar" ? ["oroproduct/js/app/datagrid/grid-sidebar-filters-builder"] : []'
 
         - '@setOption':
             id: __datagrid
