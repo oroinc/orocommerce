@@ -106,6 +106,20 @@
         </div>
     {% endset %}
 
+    {% set shortDescriptions %}
+        {{ infoMessage }}
+        <div class="cms-content">
+            {{ UI.renderCollapsibleHtml(entity.defaultShortDescription|render_content|oro_html_sanitize, entity, 'defaultShortDescription', 'More', 'Less') }}
+        </div>
+    {% endset %}
+
+    {% set descriptions %}
+        {{ infoMessage }}
+        <div class="cms-content">
+            {{ UI.renderCollapsibleHtml(entity.defaultDescription|render_content|oro_html_sanitize, entity, 'defaultDescription', 'More', 'Less') }}
+        </div>
+    {% endset %}
+
     {% set dataBlocks = {
         'general': {
             'title': 'oro.product.sections.general'|trans,
@@ -128,7 +142,7 @@
             'subblocks': [
                 {
                     'data' : {
-                        'shortDescriptions': infoMessage ~ UI.renderCollapsibleHtml(entity.defaultShortDescription|render_content|oro_html_sanitize, entity, 'defaultShortDescription', 'More', 'Less'),
+                        'shortDescriptions': shortDescriptions,
                     }
                 }
             ]
@@ -138,7 +152,7 @@
             'subblocks': [
                 {
                     'data' : {
-                        'descriptions': infoMessage ~ UI.renderCollapsibleHtml(entity.defaultDescription|render_content|oro_html_sanitize, entity, 'defaultDescription', 'More', 'Less'),
+                        'descriptions': descriptions,
                     }
                 }
             ]
