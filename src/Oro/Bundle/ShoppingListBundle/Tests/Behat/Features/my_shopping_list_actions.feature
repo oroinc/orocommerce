@@ -27,11 +27,6 @@ Feature: My Shopping List Actions
       | Name            | Subtotal  | Items |
       | Shopping List 3 | $8,818.00 | 32    |
       | Shopping List 1 | $1,581.00 | 3     |
-    And I open shopping list widget
-    And I should see "Shopping List 1" on shopping list widget
-    And I should see "Shopping List 2" on shopping list widget
-    And I should see "Shopping List 3" on shopping list widget
-    And I reload the page
 
   Scenario: Duplicate Action
     Given I click View "Shopping List 3" in grid
