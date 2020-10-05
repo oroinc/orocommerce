@@ -6,6 +6,10 @@
 
     overflow-y: auto;
 
+    &--no-scroll {
+        overflow: visible;
+    }
+
     audio,
     canvas,
     img,
@@ -19,5 +23,10 @@
         display: block;
 
         text-align: center;
+    }
+
+    ul,
+    ol {
+        padding-#{$start}: 20px;
     }
 }
