@@ -25,9 +25,16 @@ layout:
                     blockType: text
                     options:
                         text: '=data["locale"].getLocalizedValue(data["category"].getCurrentCategory().getTitles())'
+                category_long_descriptions:
+                    blockType: block
+                    options:
+                        vars:
+                            long_descriptions: '=data["locale"].getLocalizedValue(data["category"].getCurrentCategory().getLongDescriptions())'
+                            visible: '=data["locale"].getLocalizedValue(data["category"].getCurrentCategory().getLongDescriptions()) != null'
             tree:
                 page_main_header:
                     category_picture: ~
                     breadcrumbs:
                         breadcrumbs_filters: ~
                     category_title: ~
+                    category_long_descriptions: ~

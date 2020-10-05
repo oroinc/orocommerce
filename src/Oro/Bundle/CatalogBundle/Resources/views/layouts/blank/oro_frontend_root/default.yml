@@ -51,6 +51,8 @@ layout:
                             itemprop: 'name'
                 featured_category_products:
                     blockType: block
+                featured_category_short_text:
+                    blockType: block
             tree:
                 page_content:
                     featured_categories_container:
@@ -61,3 +63,4 @@ layout:
                                     featured_category_desc:
                                         featured_category_label: ~
                                         featured_category_products: ~
+                                featured_category_short_text: ~

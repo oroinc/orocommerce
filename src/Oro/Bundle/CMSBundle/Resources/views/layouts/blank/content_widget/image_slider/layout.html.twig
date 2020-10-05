@@ -26,14 +26,14 @@
          data-page-component-name="{{ pageComponentName }}"
          data-page-component-module="orofrontend/js/app/components/list-slider-component"
          data-page-component-options="{{ pageComponentOptions|merge({
-             itemSelector: '[data-role="slide-item"]',
+             itemSelector: '.slick-slide',
              itemLinkSelector: '[data-role="slide-item-link"]',
              processClick: '[data-role="slide-content"]'
          })|json_encode }}">
         {% spaceless %}
             {% for imageSlide in imageSlides %}
                 {% set windowTarget = imageSlide.displayInSameWindow ? '_self' : '_blank' %}
-                <div class="promo-slider__item promo-slider__item--fraction-{{ pageComponentOptions.slidesToShow }}" data-role="slide-item">
+                <div class="promo-slider__item promo-slider__item--fraction-{{ pageComponentOptions.slidesToShow }}">
                     <a href="{{ imageSlide.url|strip_dangerous_protocols }}" target="{{ windowTarget }}" data-role="slide-item-link">
                         <div class="promo-slider__picture">
                             <picture>

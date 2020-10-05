@@ -13,6 +13,7 @@ use Oro\Bundle\WebCatalogBundle\Form\Handler\ContentNodeHandler;
 use Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeType;
 use Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator;
 use Oro\Bundle\WebCatalogBundle\JsTree\ContentNodeTreeHandler;
+use Oro\Component\Tree\Handler\AbstractTreeHandler;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -105,7 +106,13 @@ class ContentNodeController extends AbstractController
         $handler = $this->getTreeHandler();
         $handler->setCreateRedirect($createRedirect);
 
-        return new JsonResponse($handler->moveNode($nodeId, $parentId, $position));
+        $responseData = $handler->moveNode($nodeId, $parentId, $position);
+
+        if ($responseData['status'] === AbstractTreeHandler::SUCCESS_STATUS) {
+            $responseData['slugPrototypes'] = $this->getSlugPrototypeStrings($nodeId);
+        }
+
+        return new JsonResponse($responseData);
     }
 
     /**
@@ -205,5 +212,28 @@ class ContentNodeController extends AbstractController
             ContentNodeHandler::class,
             ContentNodeFormTemplateDataProvider::class,
         ]);
+    }
+
+    /**
+     * @param int $nodeId
+     * @return array
+     */
+    private function getSlugPrototypeStrings(int $nodeId): array
+    {
+        /** @var ContentNode $movedNode */
+        $movedNode = $this->getDoctrine()
+            ->getManagerForClass(ContentNode::class)
+            ->find(ContentNode::class, $nodeId);
+
+        $slugPrototypes = [];
+        foreach ($movedNode->getSlugPrototypes() as $slugPrototype) {
+            $localizationKey = 'default';
+            if ($slugPrototype->getLocalization()) {
+                $localizationKey = $slugPrototype->getLocalization()->getId();
+            }
+            $slugPrototypes[$localizationKey] = $slugPrototype->getString();
+        }
+
+        return $slugPrototypes;
     }
 }

@@ -14,6 +14,7 @@ use Oro\Bundle\RedirectBundle\Generator\SlugUrlDiffer;
 use Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
+use Oro\Bundle\WebCatalogBundle\Resolver\UniqueContentNodeSlugPrototypesResolver;
 use Oro\Component\Routing\RouteData;
 
 /**
@@ -44,21 +45,29 @@ class SlugGenerator
     protected $slugUrlDiffer;
 
     /**
+     * @var UniqueContentNodeSlugPrototypesResolver
+     */
+    private $uniqueSlugPrototypesResolver;
+
+    /**
      * @param ContentVariantTypeRegistry $contentVariantTypeRegistry
      * @param RedirectGenerator $redirectGenerator
      * @param LocalizationHelper $localizationHelper
      * @param SlugUrlDiffer $slugUrlDiffer
+     * @param UniqueContentNodeSlugPrototypesResolver $uniqueSlugPrototypesResolver
      */
     public function __construct(
         ContentVariantTypeRegistry $contentVariantTypeRegistry,
         RedirectGenerator $redirectGenerator,
         LocalizationHelper $localizationHelper,
-        SlugUrlDiffer $slugUrlDiffer
+        SlugUrlDiffer $slugUrlDiffer,
+        UniqueContentNodeSlugPrototypesResolver $uniqueSlugPrototypesResolver
     ) {
         $this->contentVariantTypeRegistry = $contentVariantTypeRegistry;
         $this->redirectGenerator = $redirectGenerator;
         $this->localizationHelper = $localizationHelper;
         $this->slugUrlDiffer = $slugUrlDiffer;
+        $this->uniqueSlugPrototypesResolver = $uniqueSlugPrototypesResolver;
     }
 
     /**
@@ -67,6 +76,8 @@ class SlugGenerator
      */
     public function generate(ContentNode $contentNode, $generateRedirects = false)
     {
+        $this->uniqueSlugPrototypesResolver
+            ->resolveSlugPrototypeUniqueness($contentNode->getParentNode(), $contentNode);
         if ($contentNode->getParentNode()) {
             $slugUrls = $this->prepareSlugUrls($contentNode);
         } else {
@@ -227,6 +238,8 @@ class SlugGenerator
         $urlsBeforeMove = $this->prepareSlugUrls($sourceContentNode);
 
         $sourceContentNode->setParentNode($targetContentNode);
+        $this->uniqueSlugPrototypesResolver
+            ->resolveSlugPrototypeUniqueness($targetContentNode, $sourceContentNode);
         $urlsAfterMove = $this->prepareSlugUrls($sourceContentNode);
 
         return $this->slugUrlDiffer->getSlugUrlsChanges($urlsBeforeMove, $urlsAfterMove);

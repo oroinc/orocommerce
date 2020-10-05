@@ -90,4 +90,30 @@ class ContentNodeRepositoryTest extends WebTestCase
 
         $this->assertEquals([$this->getReference(LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1_1)], $actual);
     }
+
+    public function testGetSlugPrototypesByParent()
+    {
+        $parentNode = $this->getReference(LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1);
+        $actual = $this->repository->getSlugPrototypesByParent($parentNode);
+        sort($actual);
+
+        $this->assertEquals(['web_catalog.node.1.1.1', 'web_catalog.node.1.1.2'], $actual);
+    }
+
+    public function testGetSlugPrototypesByParentRootLevel()
+    {
+        $actual = $this->repository->getSlugPrototypesByParent();
+        sort($actual);
+
+        $this->assertEquals(['web_catalog.node.1.root', 'web_catalog.node.2.root'], $actual);
+    }
+
+    public function testGetSlugPrototypesByParentWithoutNode()
+    {
+        $parentNode = $this->getReference(LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1);
+        $skipNode = $this->getReference(LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1_1);
+        $actual = $this->repository->getSlugPrototypesByParent($parentNode, $skipNode);
+
+        $this->assertEquals(['web_catalog.node.1.1.2'], $actual);
+    }
 }
