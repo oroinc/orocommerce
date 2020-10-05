@@ -60,3 +60,9 @@
     }) %}
     <dd {{ block('block_attributes') }}>{{ 'oro.catalog.featured_categories.view.items.label'|trans({'%count%': categoryProductsCount}) }}</dd>
 {% endblock %}
+
+{% block _featured_category_short_text_widget %}
+    {% if category.short|length %}
+        <div class="featured-category__description cms-typography">{{ category.short|raw|oro_html_sanitize }}</div>
+    {% endif %}
+{% endblock %}

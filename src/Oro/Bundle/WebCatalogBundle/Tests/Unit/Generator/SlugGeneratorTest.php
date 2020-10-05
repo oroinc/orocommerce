@@ -17,6 +17,7 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator;
+use Oro\Bundle\WebCatalogBundle\Resolver\UniqueContentNodeSlugPrototypesResolver;
 use Oro\Component\Routing\RouteData;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\WebCatalog\ContentVariantTypeInterface;
@@ -53,26 +54,25 @@ class SlugGeneratorTest extends \PHPUnit\Framework\TestCase
      */
     protected $slugUrlDiffer;
 
+    /**
+     * @var UniqueContentNodeSlugPrototypesResolver|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $uniqueSlugPrototypesResolver;
+
     protected function setUp(): void
     {
         $this->contentVariantTypeRegistry = $this->createMock(ContentVariantTypeRegistry::class);
-        $this->redirectGenerator = $this->getMockBuilder(RedirectGenerator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->localizationHelper = $this->getMockBuilder(LocalizationHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->slugUrlDiffer = $this->getMockBuilder(SlugUrlDiffer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->redirectGenerator = $this->createMock(RedirectGenerator::class);
+        $this->localizationHelper = $this->createMock(LocalizationHelper::class);
+        $this->slugUrlDiffer = $this->createMock(SlugUrlDiffer::class);
+        $this->uniqueSlugPrototypesResolver = $this->createMock(UniqueContentNodeSlugPrototypesResolver::class);
 
         $this->slugGenerator = new SlugGenerator(
             $this->contentVariantTypeRegistry,
             $this->redirectGenerator,
             $this->localizationHelper,
-            $this->slugUrlDiffer
+            $this->slugUrlDiffer,
+            $this->uniqueSlugPrototypesResolver
         );
     }
 
@@ -228,6 +228,10 @@ class SlugGeneratorTest extends \PHPUnit\Framework\TestCase
     {
         $targetContentNode = new ContentNode();
         $sourceContentNode = new ContentNode();
+
+        $this->uniqueSlugPrototypesResolver->expects($this->once())
+            ->method('resolveSlugPrototypeUniqueness')
+            ->with($targetContentNode, $sourceContentNode);
 
         $this->slugUrlDiffer->expects($this->once())
             ->method('getSlugUrlsChanges')
@@ -479,7 +483,7 @@ class SlugGeneratorTest extends \PHPUnit\Framework\TestCase
         $actualSlugs = $actualContentVariant->getSlugs();
 
         $this->assertCount(1, $actualSlugs);
-        $expectedSlug =(new Slug())
+        $expectedSlug = (new Slug())
             ->setUrl('/parent/node/test-url')
             ->setSlugPrototype('test-url')
             ->setRouteName($routeId)
@@ -531,6 +535,9 @@ class SlugGeneratorTest extends \PHPUnit\Framework\TestCase
         $this->contentVariantTypeRegistry->expects($this->once())
             ->method('getContentVariantType')
             ->willReturn($contentVariantType);
+        $this->uniqueSlugPrototypesResolver->expects($this->once())
+            ->method('resolveSlugPrototypeUniqueness')
+            ->with($parentContentNode, $contentNode);
 
         $this->slugGenerator->generate($contentNode);
 
@@ -601,7 +608,7 @@ class SlugGeneratorTest extends \PHPUnit\Framework\TestCase
         $expectedSlugUrls = new ArrayCollection([
             $defaultLocalizationId => new SlugUrl('/parent/default/defaultUrl', null, 'defaultUrl'),
             $englishLocalization->getId()
-                => new SlugUrl('/parent/english/englishUrl', $englishLocalization, 'englishUrl'),
+            => new SlugUrl('/parent/english/englishUrl', $englishLocalization, 'englishUrl'),
             $frenchLocalization->getId() => new SlugUrl('/parent/french/frenchUrl', $frenchLocalization, 'frenchUrl')
         ]);
 

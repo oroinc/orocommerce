@@ -89,6 +89,9 @@ oro_behat_extension:
     CategoryItem:
       selector: 'div.featured-categories div.embedded-list__item'
 
+    Category Long Description:
+      selector: '.category-long-description'
+
     SubcategoriesFilter:
       selector:
         type: xpath

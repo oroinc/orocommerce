@@ -52,6 +52,10 @@ define(function(require) {
         },
 
         handleToggleCollapse(event) {
+            if (event.namespace !== 'bs.collapse') {
+                return;
+            }
+
             const target = $(event.currentTarget);
             target.find(this.options.itemContent).trigger(
                 event.type === 'hide'

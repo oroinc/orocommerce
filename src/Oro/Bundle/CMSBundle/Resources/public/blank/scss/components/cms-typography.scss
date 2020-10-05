@@ -161,7 +161,9 @@
         color: $cms-typography-time-color;
     }
 
-    .dropdown-menu {
+    .dropdown-menu,
+    .dropdown-menu ul,
+    .dropdown-menu ol {
         list-style: none;
         padding: $dropdown-padding-y 0;
         margin: $dropdown-spacer 0 0;
