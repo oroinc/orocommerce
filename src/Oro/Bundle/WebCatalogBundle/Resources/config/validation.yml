@@ -8,6 +8,7 @@ Oro\Bundle\WebCatalogBundle\Entity\WebCatalog:
 Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
     constraints:
         - Oro\Bundle\WebCatalogBundle\Validator\Constraint\NodeNotEmptyScopes: ~
+        - Oro\Bundle\WebCatalogBundle\Validator\Constraint\UniqueSlugPrototype: ~
     properties:
         contentVariants:
             - Count:
