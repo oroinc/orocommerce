@@ -98,26 +98,6 @@ oro_behat_extension:
       class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\ShoppingListLineItem
       selector: '.grid-row'
 
-    Shopping List Line Item 1 Form:
-      class: 'Oro\Bundle\TestFrameworkBundle\Behat\Element\Form'
-      selector:
-        locator: '(//div[@class=" shopping-list-line-items__item"])[1]//form'
-        type: xpath
-      options:
-        mapping:
-          Quantity: 'product_qty'
-          Unit: 'product_unit'
-
-    Shopping List Line Item 2 Form:
-      class: 'Oro\Bundle\TestFrameworkBundle\Behat\Element\Form'
-      selector:
-        locator: '(//div[@class=" shopping-list-line-items__item"])[2]//form'
-        type: xpath
-      options:
-        mapping:
-          Quantity: 'product_qty'
-          Unit: 'product_unit'
-
     Shopping List Line Item Error:
       selector:
         type: css
