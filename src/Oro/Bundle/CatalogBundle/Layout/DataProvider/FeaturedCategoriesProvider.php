@@ -56,7 +56,7 @@ class FeaturedCategoriesProvider
     /**
      * @param array $categoryIds
      *
-     * @return array [['id' => id, 'title' => title, 'small_image' => image], ...]
+     * @return array [['id' => id, 'title' => title, 'short' => short, 'small_image' => image], ...]
      */
     public function getAll(array $categoryIds = [])
     {
@@ -75,6 +75,7 @@ class FeaturedCategoriesProvider
                 $result[] = [
                     'id' => $category->getId(),
                     'title' => (string) $this->localizationHelper->getLocalizedValue($category->getTitles()),
+                    'short' => (string) $this->localizationHelper->getLocalizedValue($category->getShortDescriptions()),
                     'small_image' => $category->getSmallImage(),
                 ];
             }

@@ -3,7 +3,10 @@ oro:
         scope:
             unique.message: 'Content Variants contains overlapping Restrictions rules'
             empty.message: 'Restriction rules must not be empty'
+
         contentnode:
+            slug_prototype:
+                unique.message: 'URL Slug must be unique within the same parent Content Node'
             scope:
                 empty.message: 'Content node must have at least one restriction'
             content_variants:

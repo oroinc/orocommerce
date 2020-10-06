@@ -35,8 +35,8 @@ class WebCatalogTypeTest extends FormIntegrationTestCase
         $htmlTagHelper->expects($this->any())
             ->method('sanitize')
             ->willReturnMap([
-                ['description', 'default', 'description'],
-                ['description UP', 'default', 'description UP'],
+                ['description', 'default', true, 'description'],
+                ['description UP', 'default', true, 'description UP'],
             ]);
 
         $richTextType = new OroRichTextType($configManager, $htmlTagProvider, $context, $htmlTagHelper);

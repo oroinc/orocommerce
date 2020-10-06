@@ -27,10 +27,30 @@ define(function(require) {
         confirmState: true,
 
         /**
+         * @property {String}
+         */
+        contentNodeUpdateRoute: '',
+
+        /**
+         * @property {String}
+         */
+        contentNodeFormSelector: '',
+
+        /**
          * @inheritDoc
          */
         constructor: function WebCatalogTreeView(options) {
             WebCatalogTreeView.__super__.constructor.call(this, options);
+        },
+
+        /**
+         * @inheritDoc
+         */
+        initialize: function(options) {
+            WebCatalogTreeView.__super__.initialize.call(this, options);
+
+            this.contentNodeUpdateRoute = options.contentNodeUpdateRoute;
+            this.contentNodeFormSelector = options.contentNodeFormSelector;
         },
 
         onConfirmModalOk: function() {
@@ -161,13 +181,40 @@ define(function(require) {
                             'error',
                             __('oro.ui.jstree.move_node_error', {nodeText: data.node.text})
                         );
-                    } else if (this.reloadWidget) {
-                        widgetManager.getWidgetInstanceByAlias(this.reloadWidget, function(widget) {
-                            widget.render();
-                        });
+                    } else {
+                        this._updateSlugPrototypes(data.node.id, result.slugPrototypes);
+                        if (this.reloadWidget) {
+                            widgetManager.getWidgetInstanceByAlias(this.reloadWidget, function(widget) {
+                                widget.render();
+                            });
+                        }
                     }
                 }, this)
             });
+        },
+
+        /**
+         * Update Content Node slug prototypes.
+         * If currently edited Content Node was moved and it`s slug prototypes were changed they should be updated.
+         *
+         * @param {Number} nodeId
+         * @param {Array} slugPrototypes
+         * @private
+         */
+        _updateSlugPrototypes: function(nodeId, slugPrototypes) {
+            const $form = $(this.contentNodeFormSelector);
+            const currentUrl = routing.generate(this.contentNodeUpdateRoute, {id: nodeId});
+
+            if ($form.attr('action') === currentUrl) {
+                _.each(slugPrototypes, function(slugString, localization) {
+                    const $slugStringEl = $form.find(
+                        '[name$="[slugPrototypesWithRedirect][slugPrototypes][values][' + localization + ']"]'
+                    );
+                    if (!$slugStringEl.is(':disabled')) {
+                        $slugStringEl.val(slugString);
+                    }
+                });
+            }
         },
 
         /**

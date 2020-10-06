@@ -158,7 +158,7 @@ class FeaturedCategoriesProviderTest extends \PHPUnit\Framework\TestCase
                 ],
                 'categoryIds' => [1, 2],
                 'result' => [
-                    ['id' => 1, 'title' => '', 'small_image' => null]
+                    ['id' => 1, 'title' => '', 'small_image' => null, 'short' => '']
                 ]
             ],
         ];

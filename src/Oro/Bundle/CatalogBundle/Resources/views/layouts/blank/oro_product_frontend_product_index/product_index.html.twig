@@ -38,3 +38,12 @@
         {{ block_widget(block) }}
     </h1>
 {% endblock %}
+
+{% block _category_long_descriptions_widget %}
+    {%- if long_descriptions.wysiwygStyle|length -%}
+        {%- spaceless -%}
+            <style type="text/css">{{ long_descriptions.wysiwygStyle|render_content }}</style>
+        {%- endspaceless -%}
+    {%- endif -%}
+    <div class="category-long-description cms-typography">{{ long_descriptions.wysiwyg|render_content }}</div>
+{% endblock %}

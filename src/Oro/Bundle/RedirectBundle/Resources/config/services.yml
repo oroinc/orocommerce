@@ -342,6 +342,10 @@ services:
             - { name: 'monolog.logger', channel: 'router' }
             - { name: 'container.hot_path' }
 
+    # This cache is optimised to work with file system and should not be reconfigured to use oro.cache.abstract
+    # cache as the parent. If redis config bundle installed and configured,
+    # the oro_redirect.slug_url.cache.persistent_key_value cache will be used instead of this one
+    # via oro_redirect.url_cache.factory service.
     oro_redirect.slug_url.cache.persistent:
         class: Oro\Bundle\CacheBundle\Provider\PhpFileCache
         public: false

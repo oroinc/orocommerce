@@ -6,18 +6,22 @@ use Doctrine\Common\Cache\FlushableCache;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\CategoryLongDescription;
+use Oro\Bundle\CatalogBundle\Entity\CategoryShortDescription;
 use Oro\Bundle\CatalogBundle\Entity\CategoryTitle;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\RedirectBundle\Generator\SlugEntityGenerator;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * Loads categories from predefined list
  */
 abstract class AbstractCategoryFixture extends AbstractFixture implements ContainerAwareInterface
 {
+    use ContainerAwareTrait;
+
     /**
      * Key is a category title, value is an array of categories
      *
@@ -33,17 +37,11 @@ abstract class AbstractCategoryFixture extends AbstractFixture implements Contai
     protected $categoryImages = [];
 
     /**
-     * @var ContainerInterface
+     * Keeping the assoc of category => array of descriptions.
+     *
+     * @var array
      */
-    protected $container;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
+    protected $categoryDescriptions = [];
 
     /**
      * {@inheritdoc}
@@ -51,7 +49,7 @@ abstract class AbstractCategoryFixture extends AbstractFixture implements Contai
     public function load(ObjectManager $manager)
     {
         $category = $this->getCategory($manager);
-        $this->addCategories($category, $this->categories, $this->categoryImages, $manager);
+        $this->addCategories($category, $this->categories, $manager);
 
         $manager->flush();
 
@@ -67,10 +65,9 @@ abstract class AbstractCategoryFixture extends AbstractFixture implements Contai
     /**
      * @param Category      $root
      * @param array         $categories
-     * @param array         $images
      * @param ObjectManager $manager
      */
-    protected function addCategories(Category $root, array $categories, array $images, ObjectManager $manager)
+    protected function addCategories(Category $root, array $categories, ObjectManager $manager): void
     {
         if (!$categories) {
             return;
@@ -92,14 +89,8 @@ abstract class AbstractCategoryFixture extends AbstractFixture implements Contai
             $slugPrototype->setString(str_replace(' ', '-', strtolower($slugString)));
             $category->addSlugPrototype($slugPrototype);
 
-            if (!empty($images[$title])) {
-                if (isset($images[$title]['small'])) {
-                    $category->setSmallImage($this->getCategoryImage($manager, $images[$title]['small']));
-                }
-                if (isset($images[$title]['large'])) {
-                    $category->setLargeImage($this->getCategoryImage($manager, $images[$title]['large']));
-                }
-            }
+            $this->fillCategoryDescriptions($manager, $category, $title);
+            $this->fillCategoryImages($manager, $category, $title);
 
             $manager->persist($category);
 
@@ -107,7 +98,7 @@ abstract class AbstractCategoryFixture extends AbstractFixture implements Contai
 
             $root->addChildCategory($category);
 
-            $this->addCategories($category, $nestedCategories, $images, $manager);
+            $this->addCategories($category, $nestedCategories, $manager);
         }
     }
 
@@ -124,6 +115,56 @@ abstract class AbstractCategoryFixture extends AbstractFixture implements Contai
             $slugEntityGenerator->generate($category, true);
 
             $this->generateSlugs($nestedCategories, $slugEntityGenerator);
+        }
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @param Category $category
+     * @param string $title
+     */
+    private function fillCategoryDescriptions(ObjectManager $manager, Category $category, string $title): void
+    {
+        if (!empty($this->categoryDescriptions[$title])) {
+            $descriptions = $this->categoryDescriptions[$title];
+
+            if (isset($descriptions['short'])) {
+                $shortDescription = new CategoryShortDescription();
+                $shortDescription->setText($descriptions['short']);
+
+                $manager->persist($shortDescription);
+
+                $category->addShortDescription($shortDescription);
+            }
+
+            if (isset($descriptions['long'])) {
+                $longDescription = new CategoryLongDescription();
+                $longDescription->setWysiwyg($descriptions['long']);
+
+                $manager->persist($longDescription);
+
+                $category->addLongDescription($longDescription);
+            }
+        }
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @param Category $category
+     * @param string $title
+     */
+    private function fillCategoryImages(ObjectManager $manager, Category $category, string $title): void
+    {
+        if (!empty($this->categoryImages[$title])) {
+            $images = $this->categoryImages[$title];
+
+            if (isset($images['small'])) {
+                $category->setSmallImage($this->getCategoryImage($manager, $images['small']));
+            }
+
+            if (isset($images['large'])) {
+                $category->setLargeImage($this->getCategoryImage($manager, $images['large']));
+            }
         }
     }
 
