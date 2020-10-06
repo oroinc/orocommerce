@@ -89,4 +89,30 @@ class ContentNodeRepository extends NestedTreeRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    /**
+     * @param ContentNode|null $parentNode Use null for root level nodes (no parent)
+     * @param ContentNode|null $skipNode Use null to get all slug prototypes on the same level
+     * @return array|string[]
+     */
+    public function getSlugPrototypesByParent(?ContentNode $parentNode = null, ?ContentNode $skipNode = null): array
+    {
+        $qb = $this->createQueryBuilder('node')
+            ->select('slugPrototype.string')
+            ->join('node.slugPrototypes', 'slugPrototype');
+
+        if ($parentNode) {
+            $qb->where('node.parentNode = :parentNode')
+                ->setParameter('parentNode', $parentNode);
+        } else {
+            $qb->where($qb->expr()->isNull('node.parentNode'));
+        }
+
+        if ($skipNode) {
+            $qb->andWhere('node != :skipNode')
+                ->setParameter('skipNode', $skipNode);
+        }
+
+        return array_column($qb->getQuery()->getArrayResult(), 'string');
+    }
 }
