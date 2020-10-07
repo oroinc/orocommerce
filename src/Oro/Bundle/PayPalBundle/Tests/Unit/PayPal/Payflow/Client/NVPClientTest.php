@@ -2,13 +2,14 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\Client;
 
-use Guzzle\Http\ClientInterface;
-use Guzzle\Http\Message\Response;
+use GuzzleHttp\ClientInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Client\NVPClient;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Host\HostAddressProvider;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\NVP\EncoderInterface;
+use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ResponseInterface;
 
-class NVPClientTest extends \PHPUnit\Framework\TestCase
+class NVPClientTest extends TestCase
 {
     /** @var ClientInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $httpClient;
@@ -21,8 +22,8 @@ class NVPClientTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->httpClient = $this->createMock('Guzzle\Http\ClientInterface');
-        $this->encoder = $this->createMock('Oro\Bundle\PayPalBundle\PayPal\Payflow\NVP\EncoderInterface');
+        $this->httpClient = $this->createMock(ClientInterface::class);
+        $this->encoder = $this->createMock(EncoderInterface::class);
         $this->client = new NVPClient($this->httpClient, $this->encoder);
     }
 
@@ -44,27 +45,27 @@ class NVPClientTest extends \PHPUnit\Framework\TestCase
             ->with($options)
             ->willReturn($encodedData);
 
-        $response = $this->getMockBuilder('Guzzle\Http\Message\Response')
+        $response = $this->getMockBuilder(ResponseInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $response
             ->expects($this->once())
             ->method('getBody')
-            ->with(true)
             ->willReturn($responseString);
-
-        $request = $this->createMock('Guzzle\Http\Message\RequestInterface');
-        $request
-            ->expects($this->once())
-            ->method('send')
-            ->willReturn($response);
 
         $this->httpClient
             ->expects($this->once())
-            ->method('post')
-            ->with(HostAddressProvider::PILOT_HOST_ADDRESS, [], $encodedData)
-            ->willReturn($request);
+            ->method('request')
+            ->with(
+                'POST',
+                HostAddressProvider::PILOT_HOST_ADDRESS,
+                [
+                    'body' => $encodedData,
+                    'verify' => true,
+                ]
+            )
+            ->willReturn($response);
 
         $this->encoder
             ->expects($this->once())
@@ -83,15 +84,15 @@ class NVPClientTest extends \PHPUnit\Framework\TestCase
         return [
             'default options' => [
                 [],
-                ['verify' => true],
+                ['verify' => true, 'body' => ''],
             ],
             'disable ssl verify' => [
                 ['SSL_VERIFY' => false],
-                ['verify' => false],
+                ['verify' => false, 'body' => ''],
             ],
             'enable ssl verify' => [
                 ['SSL_VERIFY' => true],
-                ['verify' => true],
+                ['verify' => true, 'body' => ''],
             ],
             'pass proxy host only' => [
                 [
@@ -99,6 +100,7 @@ class NVPClientTest extends \PHPUnit\Framework\TestCase
                 ],
                 [
                     'verify' => true,
+                    'body' => '',
                 ],
             ],
             'pass proxy port only' => [
@@ -107,6 +109,7 @@ class NVPClientTest extends \PHPUnit\Framework\TestCase
                 ],
                 [
                     'verify' => true,
+                    'body'=> ''
                 ],
             ],
             'pass proxy host and port both' => [
@@ -116,6 +119,7 @@ class NVPClientTest extends \PHPUnit\Framework\TestCase
                 ],
                 [
                     'verify' => true,
+                    'body'=> '',
                     'proxy' => '12.23.34.45:1234',
                 ],
             ],
@@ -127,6 +131,7 @@ class NVPClientTest extends \PHPUnit\Framework\TestCase
                 ],
                 [
                     'verify' => false,
+                    'body'=> '',
                     'proxy' => '12.23.34.45:1234',
                 ],
             ],
@@ -143,12 +148,7 @@ class NVPClientTest extends \PHPUnit\Framework\TestCase
     {
         $address = 'http://127.0.0.1';
         $options = [];
-
-        $request = $this->createMock('Guzzle\Http\Message\EntityEnclosingRequestInterface');
-        $request
-            ->expects($this->once())
-            ->method('send')
-            ->willReturn(new Response(200));
+        $response = $this->createMock(ResponseInterface::class);
 
         $this->encoder
             ->expects($this->once())
@@ -158,14 +158,13 @@ class NVPClientTest extends \PHPUnit\Framework\TestCase
 
         $this->httpClient
             ->expects($this->once())
-            ->method('post')
+            ->method('request')
             ->with(
+                'POST',
                 $address,
-                $this->isType('array'),
-                $this->isType('string'),
                 $expectedClientOptions
             )
-            ->willReturn($request);
+            ->willReturn($response);
 
         $this->client->send($address, $options, $connectionOptions);
     }
