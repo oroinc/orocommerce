@@ -303,7 +303,7 @@
 
             .validation-failed {
                 position: absolute;
-                z-index: 1;
+                z-index: z('base') + 1;
             }
         }
 
