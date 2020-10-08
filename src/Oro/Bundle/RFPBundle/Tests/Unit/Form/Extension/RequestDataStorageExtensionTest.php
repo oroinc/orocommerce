@@ -403,7 +403,7 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
                 'expectedResult' => false,
             ],
             [
-                'inventoryStatus' => new InventoryStatusStub(1, 'in_stock'),
+                'inventoryStatus' => new InventoryStatusStub('in_stock', 'In Stock'),
                 'status' => ProductStub::STATUS_ENABLED,
                 'expectedResult' => true,
             ],

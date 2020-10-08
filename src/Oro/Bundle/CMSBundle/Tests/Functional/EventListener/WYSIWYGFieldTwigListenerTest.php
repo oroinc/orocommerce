@@ -111,8 +111,8 @@ class WYSIWYGFieldTwigListenerTest extends WebTestCase
                         return false;
                     }
 
-                    $this->assertEquals(reset($expectedCalls), $twigFunctionCalls);
-                    unset($expectedCalls[key($expectedCalls)]);
+                    $this->assertContains($twigFunctionCalls, $expectedCalls);
+                    unset($expectedCalls[array_search($twigFunctionCalls, $expectedCalls, true)]);
 
                     return true;
                 }

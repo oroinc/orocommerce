@@ -378,4 +378,20 @@ class LineItemRepository extends EntityRepository
                 ->execute(['ids' => $ids]);
         }
     }
+
+    /**
+     * @param array $ids
+     * @return array
+     */
+    public function findIndexedByIds(array $ids): array
+    {
+        $expr = $this->getEntityManager()->getExpressionBuilder();
+
+        return $this
+            ->createQueryBuilder('line_item', 'line_item.id')
+            ->where($expr->in('line_item.id', ':ids'))
+            ->orderBy($expr->asc('line_item.id'))
+            ->getQuery()
+            ->execute(['ids' => $ids]);
+    }
 }

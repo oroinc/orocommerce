@@ -318,6 +318,72 @@ oro_behat_extension:
     Shopping List Action Reassign Radio:
       selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-assign-grid"] input[name="assigned"]'
 
+    Show All:
+      selector: 'button[data-role="pagination-toggler"]'
+
+    Show Less:
+      selector: 'button[data-role="pagination-toggler"]'
+
+    Add a note to entire Shopping List:
+      selector: 'button[data-role="add-notes"]'
+
+    Shopping List Notes Area:
+      selector: 'textarea[name="oro_shopping_list_notes_type[notes]"]'
+
+    Shopping List Notes:
+      selector: 'span[data-role="notes-text"]'
+
+    Edit Shopping List Notes:
+      selector: 'button[data-role="edit-notes"]'
+
+    Add Shopping List item Note:
+      selector: 'a[title="Add Shopping List item Note"]'
+
+    Line Item Notes Area:
+      selector:
+        type: xpath
+        locator: '//textarea[contains(@class, "shopping-list-notes")]'
+
+    Edit Shopping List Line Item Note:
+      selector:
+        type: xpath
+        locator: '//a[contains(@class, "grid-line-items__edit-notes")]'
+
+    Empty Line Item Product Image:
+      selector:
+        type: xpath
+        locator: '//div[contains (@class,"product-item")]/img[contains (@src,"no_image.png")]'
+
+    Shopping List Inline Line Item 1 Quantity:
+      selector: '.grid-body .grid-row:first-child div.input-qty'
+
+    Shopping List Inline Line Item 1 Quantity Input:
+      selector: '.grid-body .grid-row:first-child form input[name="quantity"]'
+
+    Shopping List Inline Line Item 1 Unit Select:
+      selector: '.grid-body .grid-row:first-child form select'
+
+    Shopping List Inline Line Item 4 Quantity:
+      selector: '.grid-body .grid-row:nth-child(4) div.input-qty'
+
+    Shopping List Inline Line Item 4 Quantity Input:
+      selector: '.grid-body .grid-row:nth-child(4) form input[name="quantity"]'
+
+    Shopping List Inline Line Item 4 Unit Select:
+      selector: '.grid-body .grid-row:nth-child(4) form select'
+
+    Shopping List Inline Line Item 4 Save Changes Button:
+      selector: '.grid-body .grid-row:nth-child(4) form button[type="submit"]'
+
+    Inline Line Item Edit Form:
+      selector: 'form[class*="shoppinglist-line-item-frontend-type-editor"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Unit:
+            locator: '//input[contains(@class, "select2-offscreen")]'
+            type: xpath
+
   suites:
     OroShoppingListBundle:
       contexts:

@@ -117,6 +117,6 @@ class LineItemViolationsProvider
             $lineItems = new ArrayCollection($lineItems);
         }
 
-        return count($this->validator->validate($lineItems, [new LineItemCollectionConstraint()])) == 0;
+        return count($this->validator->validate($lineItems, [new LineItemCollectionConstraint()])) === 0;
     }
 }

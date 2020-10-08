@@ -8,6 +8,8 @@ oro_behat_extension:
       selector: "select[name='oro_product[additionalUnitPrecisions][0][unit]']"
     ProductAdditionalPrecisionField:
       selector: "input[name='oro_product[additionalUnitPrecisions][0][precision]']"
+    ProductAdditionalSellField:
+      selector: "input[name='oro_product[additionalUnitPrecisions][0][sell]']"
     ProductUnitLabel:
       selector: "[data-role='unit-label']"
     ProductUnitSelect:

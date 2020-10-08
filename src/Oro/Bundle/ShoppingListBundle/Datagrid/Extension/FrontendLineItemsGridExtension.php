@@ -86,7 +86,7 @@ class FrontendLineItemsGridExtension extends AbstractExtension
     {
         $queryPart = 'lineItem.id';
         if ($this->isLineItemsGrouped()) {
-            $queryPart = '(SELECT GROUP_CONCAT(innerItem.id) ' .
+            $queryPart = '(SELECT GROUP_CONCAT(innerItem.id ORDER BY innerItem.id ASC) ' .
                 'FROM Oro\Bundle\ShoppingListBundle\Entity\LineItem innerItem ' .
                 'WHERE (innerItem.parentProduct = lineItem.parentProduct OR innerItem.product = lineItem.product) ' .
                 'AND innerItem.shoppingList = lineItem.shoppingList ' .
@@ -214,7 +214,7 @@ class FrontendLineItemsGridExtension extends AbstractExtension
      * @param int $shoppingListId
      * @return ShoppingList|null
      */
-    private function getShoppingList(int $shoppingListId)
+    private function getShoppingList(int $shoppingListId): ?ShoppingList
     {
         if (!isset($this->cache['shoppingLists'][$shoppingListId])) {
             $this->cache['shoppingLists'][$shoppingListId] = $this->registry

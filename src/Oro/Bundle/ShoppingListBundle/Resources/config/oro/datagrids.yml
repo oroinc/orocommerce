@@ -353,7 +353,7 @@ datagrids:
                         ) as isConfigurable
                     - COALESCE(parentProduct.id, product.id) as mainProductId
                     - COALESCE(parentProduct.sku, product.sku) as sku
-                    - GROUP_CONCAT(lineItem.id) as displayedLineItemsIds
+                    - GROUP_CONCAT(lineItem.id ORDER BY lineItem.id ASC) as displayedLineItemsIds
                 from:
                     - { table: 'Oro\Bundle\ShoppingListBundle\Entity\LineItem', alias: lineItem }
                 join:
@@ -435,7 +435,7 @@ datagrids:
             image: ~
             notes: ~
             link: ~
-            initial_subtotal: ~
+            initialSubtotal: ~
             discount: ~
             isConfigurable:
                 frontend_type: boolean
@@ -573,8 +573,8 @@ datagrids:
                 renderable: false
         properties:
             id: ~
-            delete_link: ~
-            update_configurable_link:
+            deleteLink: ~
+            updateConfigurableLink:
                 type: url
                 route: oro_shopping_list_frontend_matrix_grid_update
                 params:
@@ -615,13 +615,13 @@ datagrids:
             update_configurable:
                 type: update-configurable-product
                 label: oro.shoppinglist.actions.update_configurable_line_item.label
-                link: update_configurable_link
+                link: updateConfigurableLink
                 icon: pencil-square-o
                 acl_resource: oro_shopping_list_frontend_update
             delete:
                 type: delete-product
                 label: oro.shoppinglist.actions.delete_line_item.label
-                link: delete_link
+                link: deleteLink
                 icon: trash-o
                 acl_resource: oro_shopping_list_line_item_frontend_delete
                 launcherOptions:

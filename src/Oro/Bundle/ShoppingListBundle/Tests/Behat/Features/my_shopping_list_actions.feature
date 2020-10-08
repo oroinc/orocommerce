@@ -12,26 +12,28 @@ Feature: My Shopping List Actions
   I need to be able to manage shopping list using actions on shopping list view page
 
   Scenario: Feature Background
-    Given sessions active:
-      | Admin | first_session  |
-      | Buyer | second_session |
-    And I set configuration property "oro_shopping_list.my_shopping_lists_page_enabled" to "1"
+    Given I set configuration property "oro_shopping_list.my_shopping_lists_page_enabled" to "1"
 
   Scenario: Check index page
-    Given I operate as the Buyer
-    And I login as AmandaRCole@example.org buyer
-    And I follow "Account"
-    When I click "My Shopping Lists"
+    Given I login as AmandaRCole@example.org buyer
+    When I follow "Account"
+    And I click "My Shopping Lists"
     Then Page title equals to "My Shopping Lists - My Account"
     And I should see following grid:
-      | Name            | Subtotal  | Items |
-      | Shopping List 3 | $8,818.00 | 32    |
-      | Shopping List 1 | $1,581.00 | 3     |
+      | Name            | Subtotal  | Items | Default |
+      | Shopping List 3 | $8,818.00 | 32    | Yes     |
+      | Shopping List 1 | $1,581.00 | 3     | No      |
+    And records in grid should be 2
+    When I open shopping list widget
+    Then I should see "Shopping List 1" on shopping list widget
+    And I should see "Shopping List 2" on shopping list widget
+    And I should see "Shopping List 3" on shopping list widget
+    And I reload the page
 
   Scenario: Duplicate Action
     Given I click View "Shopping List 3" in grid
-    And I click "Shopping List Actions"
-    When I click "Duplicate"
+    When I click "Shopping List Actions"
+    And I click "Duplicate"
     And I click "Yes, duplicate"
     Then I should see "The shopping list has been duplicated" flash message
     When I open shopping list widget
@@ -56,9 +58,46 @@ Feature: My Shopping List Actions
     And I click "Yes, set as default"
     Then I should see "Shopping list has been successfully set as default" flash message
 
+  Scenario: Check Default Shopping List
+    When I follow "Account"
+    And I click "My Shopping Lists"
+    Then I should see following grid:
+      | Name            | Subtotal  | Items | Default |
+      | Shopping List 4 | $8,818.00 | 32    | Yes     |
+      | Shopping List 3 | $8,818.00 | 32    | No      |
+      | Shopping List 1 | $1,581.00 | 3     | No      |
+    And records in grid should be 3
+
+  Scenario: Add Shopping List notes
+    When I click Edit "Shopping List 4" in grid
+    And I click on "Add a note to entire Shopping List"
+    And I type "My shopping list notes" in "Shopping List Notes Area"
+    And I click "Apply"
+    Then I should see "My shopping list notes" in the "Shopping List Notes" element
+
+  Scenario: Edit Shopping List notes and Line item notes
+    When I click on "Edit Shopping List Notes"
+    And I type "My shopping list updated notes" in "Shopping List Notes Area"
+    And I click "Apply"
+    Then I should see "My shopping list updated notes" in the "Shopping List Notes" element
+    And I should see following grid:
+      | SKU | Item                               |
+      | BB4 | Configurable Product 1 Note 4 text |
+    When I click "Edit Shopping List Line Item Note"
+    Then I should see "UiWindow" with elements:
+      | Title        | Edit note for "Configurable Product 1" product |
+      | okButton     | Save                                           |
+      | cancelButton | Cancel                                         |
+    When I type "Note 4 text updated" in "Line Item Notes Area"
+    And click "Save" in modal window
+    Then should see "Line item note has been successfully updated" flash message
+    And I should see following grid:
+      | SKU | Item                                       |
+      | BB4 | Configurable Product 1 Note 4 text updated |
+
   Scenario: Delete Action
-    Given I click "Shopping List Actions"
-    When I click "Delete"
+    When I click "Shopping List Actions"
+    And I click "Delete"
     And I click "Yes, delete"
     Then Page title equals to "My Shopping Lists - My Account"
     When I open shopping list widget
@@ -67,8 +106,8 @@ Feature: My Shopping List Actions
 
   Scenario: Re-assign Action
     Given I click View "Shopping List 3" in grid
-    And I click "Shopping List Actions"
-    When I click "Reassign"
+    When I click "Shopping List Actions"
+    And I click "Reassign"
     And I filter First Name as is equal to "Nancy" in "Shopping List Action Reassign Grid"
     And I click "Shopping List Action Reassign Radio"
     And I click "Shopping List Action Submit"
@@ -78,11 +117,11 @@ Feature: My Shopping List Actions
 
   Scenario: Check shopping list view page without actions
     Given I follow "Account"
-    And click "Users"
+    When click "Users"
     And click "Roles"
     And click edit "Administrator" in grid
     And click "Shopping"
-    When select following permissions:
+    And select following permissions:
       | Shopping List | Edit:None |
       | Shopping List | Assign:None |
       | Shopping List | Duplicate:None |

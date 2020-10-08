@@ -202,7 +202,6 @@ class ShoppingListControllerTest extends WebTestCase
         $this->assertFalse($data[0]['isUpcoming']);
         $this->assertNull($data[0]['availabilityDate']);
         $this->assertNull($data[0]['subData']);
-        $this->assertEquals([], $data[0]['errors']);
 
         $this->enableMyShoppingListsPage(false);
     }

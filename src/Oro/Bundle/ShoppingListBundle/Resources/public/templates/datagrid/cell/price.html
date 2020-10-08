@@ -15,7 +15,7 @@
     }) %>"
 >
     <span class="price-value-container" data-name="price-value">
-        <% if (price) { %>
+        <% if (typeof price !== 'undefined' && price) { %>
         <%- price %>
         <% } else { %>
         <span data-name="price-not-found" data-label="<%- _metadata.label %>:"
