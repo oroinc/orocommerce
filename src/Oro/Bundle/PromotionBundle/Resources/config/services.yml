@@ -767,11 +767,13 @@ services:
         tags:
             - { name: twig.extension }
 
-    oro_promotion.event_listener.line_item_data:
-        class: Oro\Bundle\PromotionBundle\EventListener\LineItemDataListener
+    oro_promotion.event_listener.line_item_data_build:
+        class: Oro\Bundle\PromotionBundle\EventListener\LineItemDataBuildListener
+        decorates: oro_pricing.event_listener.line_item_data_build
         arguments:
+            - '@oro_promotion.event_listener.line_item_data_build.inner'
             - '@oro_promotion.promotion_executor'
             - '@oro_pricing.user_currency_manager'
             - '@oro_locale.formatter.number'
         tags:
-            - { name: kernel.event_listener, event: shopping_list.line_item.data, method: onLineItemData }
+            - { name: kernel.event_listener, event: oro_shopping_list.line_item.data_build, method: onLineItemData }

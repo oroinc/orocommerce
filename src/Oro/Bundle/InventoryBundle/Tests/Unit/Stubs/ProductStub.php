@@ -6,7 +6,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 
 class ProductStub extends Product
 {
-    /** @var string */
+    /** @var string|object|null */
     private $inventoryStatus;
 
     /**
@@ -19,19 +19,18 @@ class ProductStub extends Product
         parent::__construct();
     }
 
-
     /**
-     * @return string
+     * @return string|object|null
      */
-    public function getInventoryStatus(): string
+    public function getInventoryStatus()
     {
         return $this->inventoryStatus;
     }
 
     /**
-     * @param string $inventoryStatus
+     * @param string|object|null $inventoryStatus
      */
-    public function setInventoryStatus(string $inventoryStatus): void
+    public function setInventoryStatus($inventoryStatus): void
     {
         $this->inventoryStatus = $inventoryStatus;
     }

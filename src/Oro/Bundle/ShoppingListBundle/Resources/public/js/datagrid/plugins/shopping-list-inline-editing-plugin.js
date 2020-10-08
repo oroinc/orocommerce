@@ -158,7 +158,8 @@ const ShoppingListInlineEditingPlugin = InlineEditingPlugin.extend({
         });
 
         models.forEach(model => {
-            model.flashRowHighlight(model.get('errors').length ? 'error' : 'success');
+            const errors = model.get('errors') || [];
+            model.flashRowHighlight(errors.length ? 'error' : 'success');
         });
     },
 

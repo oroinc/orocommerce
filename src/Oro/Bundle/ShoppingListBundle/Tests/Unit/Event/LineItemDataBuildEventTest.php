@@ -3,9 +3,9 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Event;
 
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
-use Oro\Bundle\ShoppingListBundle\Event\LineItemDataEvent;
+use Oro\Bundle\ShoppingListBundle\Event\LineItemDataBuildEvent;
 
-class LineItemDataEventTest extends \PHPUnit\Framework\TestCase
+class LineItemDataBuildEventTest extends \PHPUnit\Framework\TestCase
 {
     /** @var LineItem */
     private $lineItem1;
@@ -16,7 +16,7 @@ class LineItemDataEventTest extends \PHPUnit\Framework\TestCase
     /** @var LineItem */
     private $lineItem3;
 
-    /** @var LineItemDataEvent */
+    /** @var LineItemDataBuildEvent */
     private $event;
 
     protected function setUp(): void
@@ -25,7 +25,12 @@ class LineItemDataEventTest extends \PHPUnit\Framework\TestCase
         $this->lineItem2 = $this->createMock(LineItem::class);
         $this->lineItem3 = $this->createMock(LineItem::class);
 
-        $this->event = new LineItemDataEvent([$this->lineItem1, $this->lineItem2, $this->lineItem3]);
+        $this->event = new LineItemDataBuildEvent([$this->lineItem1, $this->lineItem2, $this->lineItem3], ['context']);
+    }
+
+    public function testGetContext(): void
+    {
+        $this->assertSame(['context'], $this->event->getContext());
     }
 
     public function testGetLineItems(): void
@@ -42,5 +47,8 @@ class LineItemDataEventTest extends \PHPUnit\Framework\TestCase
 
         $this->event->addDataForLineItem(42, 'name', 'value2');
         $this->assertEquals(['name' => 'value2'], $this->event->getDataForLineItem(42));
+
+        $this->event->setDataForLineItem(42, ['name2' => 'value2', 'name3' => 'value3']);
+        $this->assertEquals(['name2' => 'value2', 'name3' => 'value3'], $this->event->getDataForLineItem(42));
     }
 }

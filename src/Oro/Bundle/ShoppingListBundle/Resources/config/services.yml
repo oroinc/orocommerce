@@ -620,14 +620,10 @@ services:
             - '@router'
             - '@event_dispatcher'
             - '@oro_locale.formatter.number'
-            - '@oro_product.formatter.product_unit_label'
-            - '@oro_product.formatter.product_unit_value'
             - '@oro_attachment.manager'
-            - '@oro_pricing.provider.frontend_product_prices'
             - '@oro_product.layout.data_provider.configurable_products'
             - '@oro_locale.helper.localization'
             - '@oro_shopping_list.validator_service.line_item'
-            - '@oro_entity.manager.preloading_manager'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-customer-user-shopping-list-grid, method: onResultAfter }
 
@@ -698,3 +694,8 @@ services:
 
     Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemBatchUpdateHandler:
         alias: 'oro_shopping_list.handler.shopping_list_line_item_batch_update'
+
+    oro_shopping_list.provider.product_units_list_provider:
+        class: Oro\Bundle\ShoppingListBundle\Datagrid\Provider\ProductUnitsListProvider
+        arguments:
+            - '@oro_product.formatter.product_unit_label'

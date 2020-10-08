@@ -427,7 +427,7 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
                 'source' => [
                     'query' => [
                         'select' => [
-                            '(SELECT GROUP_CONCAT(innerItem.id) ' .
+                            '(SELECT GROUP_CONCAT(innerItem.id ORDER BY innerItem.id ASC) ' .
                             'FROM Oro\Bundle\ShoppingListBundle\Entity\LineItem innerItem ' .
                             'WHERE (innerItem.parentProduct = lineItem.parentProduct ' .
                             'OR innerItem.product = lineItem.product) ' .

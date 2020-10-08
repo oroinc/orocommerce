@@ -24,3 +24,26 @@ services:
             - '@oro_shopping_list.manager.shopping_list_total'
         tags:
             - { name: kernel.event_listener, event: oro_migration.data_fixtures.post_load, method: onPostLoad }
+
+    oro_shopping_list.event_listener.line_item_data_build_preload:
+        class: Oro\Bundle\ShoppingListBundle\EventListener\LineItemDataBuildPreloadListener
+        arguments:
+            - '@oro_entity.manager.preloading_manager'
+        tags:
+            # This listener must be called first as it preloads line items data which might be needed by others.
+            - { name: kernel.event_listener, event: oro_shopping_list.line_item.data_build, method: onLineItemData, priority: 1024 }
+
+    oro_shopping_list.event_listener.line_item_data_build_edit:
+        class: Oro\Bundle\ShoppingListBundle\EventListener\LineItemDataBuildEditListener
+        arguments:
+            - '@router'
+            - '@oro_shopping_list.provider.product_units_list_provider'
+        tags:
+            - { name: kernel.event_listener, event: oro_shopping_list.line_item.data_build, method: onLineItemData }
+
+    oro_shopping_list.event_listener.line_item_data_build_violations:
+        class: Oro\Bundle\ShoppingListBundle\EventListener\LineItemDataBuildViolationsListener
+        arguments:
+            - '@oro_shopping_list.validator_service.line_item'
+        tags:
+            - { name: kernel.event_listener, event: oro_shopping_list.line_item.data_build, method: onLineItemData }

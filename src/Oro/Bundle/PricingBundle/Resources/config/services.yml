@@ -1371,3 +1371,11 @@ services:
         public: false
         tags:
             - { name: oro_entity.name_provider, priority: 100 }
+
+    oro_pricing.event_listener.line_item_data_build:
+        class: Oro\Bundle\PricingBundle\EventListener\LineItemDataBuildListener
+        arguments:
+            - '@oro_pricing.provider.frontend_product_prices'
+            - '@oro_locale.formatter.number'
+        tags:
+            - { name: kernel.event_listener, event: oro_shopping_list.line_item.data_build, method: onLineItemData }

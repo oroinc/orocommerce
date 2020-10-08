@@ -81,7 +81,7 @@ Feature: Localized fractional product quantity
     Then I open page with shopping list Shopping List
     And I click on "Shopping List Line Item 1 Quantity"
     And the "Shopping List Line Item 1 Quantity Input" field element should contain "1005,73"
-    And I click on "Shopping List Line Item 1 Save Changes Button"
+    And I click on "Shopping List Line Item 1 Cancel Button"
     And I should see "Subtotal 50.286,50 $"
     And I should see "Total 50.286,50 $"
 
@@ -97,7 +97,7 @@ Feature: Localized fractional product quantity
     Then I open page with shopping list Shopping List
     And I click on "Shopping List Line Item 1 Quantity"
     And the "Shopping List Line Item 1 Quantity Input" field element should contain "1000,83"
-    And I click on "Shopping List Line Item 1 Save Changes Button"
+    And I click on "Shopping List Line Item 1 Cancel Button"
     And I should see "Subtotal 50.041,50 $"
     And I should see "Total 50.041,50 $"
 
@@ -133,7 +133,7 @@ Feature: Localized fractional product quantity
     Then I open page with shopping list Shopping List
     And I click on "Shopping List Line Item 1 Quantity"
     And the "Shopping List Line Item 1 Quantity Input" field element should contain "2,34"
-    And I click on "Shopping List Line Item 1 Save Changes Button"
+    And I click on "Shopping List Line Item 1 Cancel Button"
     And I should see "Subtotal 234,00 $"
     And I should see "Total 234,00 $"
     When I type "PKILO" in "search"
@@ -213,7 +213,7 @@ Feature: Localized fractional product quantity
     And I click on "Shopping List Line Item 1 Quantity"
     And the "Shopping List Line Item 1 Quantity Input" field element should contain "1,56"
     And the "Shopping List Line Item 1 Unit Select" field element should contain "kg"
-    And I click on "Shopping List Line Item 1 Save Changes Button"
+    And I click on "Shopping List Line Item 1 Cancel Button"
     When I click "Create Order"
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
     Then Checkout "Order Summary Products Grid" should contain products:

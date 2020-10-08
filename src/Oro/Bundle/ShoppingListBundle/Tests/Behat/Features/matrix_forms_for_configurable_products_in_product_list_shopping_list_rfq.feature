@@ -219,6 +219,9 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     Then I should see an "Matrix Grid Form" element
     When I click "Add to Shopping List" for "CNFB" product
     And I follow "Shopping List" link within flash message "Shopping list \"Shopping List\" was updated successfully"
+    Then I should see following grid:
+      | SKU  | Item                 | QtyUpdate All                   | Price  | Subtotal |
+      | CNFB | ConfigurableProductB | Click "edit" to select variants |        | N/A      |
     And I click Edit CNFB in grid
     Then I should see an "Matrix Grid Form" element
     And I should see next rows in "Matrix Grid Form" table

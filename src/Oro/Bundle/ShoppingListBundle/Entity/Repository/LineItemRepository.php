@@ -22,10 +22,10 @@ class LineItemRepository extends EntityRepository
      * Find line item with the same product and unit in the specified shopping list
      *
      * @param LineItem $lineItem
-     * @param ShoppingList $shoppingList
+     * @param null|ShoppingList $shoppingList
      * @return LineItem|null
      */
-    public function findDuplicateInShoppingList(LineItem $lineItem, ShoppingList $shoppingList): ?LineItem
+    public function findDuplicateInShoppingList(LineItem $lineItem, ?ShoppingList $shoppingList): ?LineItem
     {
         $qb = $this->createQueryBuilder('li');
         $qb->where('li.product = :product')
@@ -350,5 +350,21 @@ class LineItemRepository extends EntityRepository
                 ->getQuery()
                 ->execute(['ids' => $ids]);
         }
+    }
+
+    /**
+     * @param array $ids
+     * @return array
+     */
+    public function findIndexedByIds(array $ids): array
+    {
+        $expr = $this->getEntityManager()->getExpressionBuilder();
+
+        return $this
+            ->createQueryBuilder('line_item', 'line_item.id')
+            ->where($expr->in('line_item.id', ':ids'))
+            ->orderBy($expr->asc('line_item.id'))
+            ->getQuery()
+            ->execute(['ids' => $ids]);
     }
 }

@@ -63,7 +63,7 @@ const UpdateConfigurableProductAction = DialogAction.extend({
             this.widgetComponent.listenTo(this.widgetComponent.view, 'adoptedFormSubmitClick', () => {
                 $.ajax({
                     method: 'POST',
-                    url: this.model.attributes.update_configurable_link,
+                    url: this.model.attributes.updateConfigurableLink,
                     data: $form.serialize(),
                     success: response => {
                         if (response.message) {
