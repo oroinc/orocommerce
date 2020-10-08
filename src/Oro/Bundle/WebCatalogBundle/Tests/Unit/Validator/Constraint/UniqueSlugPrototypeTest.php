@@ -156,7 +156,7 @@ class UniqueSlugPrototypeTest extends ConstraintValidatorTestCase
 
         /** @var ContentNode $value */
         $value = new ContentNode();
-        $slugPrototype2 = (new LocalizedFallbackValue())->setString('test1');
+        $slugPrototype2 = (new LocalizedFallbackValue())->setString('Test1');
         $value->addSlugPrototype($slugPrototype2);
         $value->setParentNode($parentNode);
 

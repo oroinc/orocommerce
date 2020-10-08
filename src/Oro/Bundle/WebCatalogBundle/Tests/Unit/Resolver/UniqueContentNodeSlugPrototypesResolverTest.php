@@ -39,7 +39,7 @@ class UniqueContentNodeSlugPrototypesResolverTest extends \PHPUnit\Framework\Tes
 
         /** @var LocalizedFallbackValue $slugPrototype1 */
         $slugPrototype1 = $this->getEntity(LocalizedFallbackValue::class, ['id' => 1]);
-        $slugPrototype1->setString('test');
+        $slugPrototype1->setString('Test');
 
         /** @var LocalizedFallbackValue $slugPrototype2 */
         $slugPrototype2 = $this->getEntity(LocalizedFallbackValue::class, ['id' => 2]);
