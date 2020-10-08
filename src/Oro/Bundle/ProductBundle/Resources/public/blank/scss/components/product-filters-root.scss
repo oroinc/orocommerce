@@ -11,9 +11,3 @@
 
     border-right: $product-filters-sidebar-border;
 }
-
-.sidebar-filter-container {
-    & > .filter-box.toggle-mode {
-        display: block;
-    }
-}

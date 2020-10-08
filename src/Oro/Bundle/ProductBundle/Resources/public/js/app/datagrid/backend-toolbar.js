@@ -53,6 +53,9 @@ define(function(require) {
             options.pagination = optionsPagination;
             options.pageSize = optionsPageSize;
 
+            if (options.className) {
+                this.$el.addClass(options.className);
+            }
             BackendToolbar.__super__.initialize.call(this, options);
         },
 
