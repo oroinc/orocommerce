@@ -5,6 +5,9 @@ namespace Oro\Bundle\ShippingBundle\Formatter;
 use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatter;
 use Oro\Bundle\ShippingBundle\Model\DimensionsValue;
 
+/**
+ * Formats dimensions and provide them in a human-readable format.
+ */
 class DimensionsValueFormatter extends UnitValueFormatter
 {
     /**
@@ -39,15 +42,16 @@ class DimensionsValueFormatter extends UnitValueFormatter
     /**
      * @param DimensionsValue $value
      * @param string $na
+     *
      * @return string
      */
     protected function formatValue(DimensionsValue $value, $na)
     {
         return sprintf(
             '%s x %s x %s',
-            $value->getLength() ?: $na,
-            $value->getWidth() ?: $na,
-            $value->getHeight() ?: $na
+            $this->formatScientificNotation($value->getLength()) ?: $na,
+            $this->formatScientificNotation($value->getWidth()) ?: $na,
+            $this->formatScientificNotation($value->getHeight()) ?: $na
         );
     }
 }
