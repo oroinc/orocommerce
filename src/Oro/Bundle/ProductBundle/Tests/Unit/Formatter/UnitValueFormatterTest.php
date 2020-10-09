@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Formatter;
 
-use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatter;
@@ -13,18 +12,6 @@ class UnitValueFormatterTest extends UnitValueFormatterTestCase
     private const TRANSLATION_PREFIX = 'oro.product_unit';
     private const VALUE = 42.65;
     private const FORMATTED_VALUE = '42,65'; // emulate german localization with comma
-
-    /**
-     * @var NumberFormatter|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $numberFormatter;
-
-    protected function setUp()
-    {
-        $this->numberFormatter = $this->createMock(NumberFormatter::class);
-
-        parent::setUp();
-    }
 
     public function testFormatCodeWithNumberFormatter(): void
     {
@@ -115,6 +102,7 @@ class UnitValueFormatterTest extends UnitValueFormatterTestCase
     protected function createFormatter(): UnitValueFormatterInterface
     {
         $formatter = new UnitValueFormatter($this->translator);
+        $formatter->setNumberFormatter($this->numberFormatter);
         $formatter->setTranslationPrefix($this->getTranslationPrefix());
 
         return $formatter;

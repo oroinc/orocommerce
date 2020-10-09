@@ -4,10 +4,12 @@ namespace Oro\Bundle\ShippingBundle\Form\Type;
 
 use Oro\Bundle\ShippingBundle\Form\DataTransformer\WeightTransformer;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Builds a group of two fields: weight and unit.
+ */
 class WeightType extends AbstractType
 {
     const NAME = 'oro_shipping_weight';
@@ -31,7 +33,7 @@ class WeightType extends AbstractType
         $builder
             ->add(
                 'value',
-                NumberType::class,
+                CommonUnitValueType::class,
                 [
                     'attr' => ['class' => 'value'],
                     'required' => false,
