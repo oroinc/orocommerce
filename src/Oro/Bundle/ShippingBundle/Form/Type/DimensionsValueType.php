@@ -3,10 +3,12 @@
 namespace Oro\Bundle\ShippingBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Builds a group of fields: length, width, height.
+ */
 class DimensionsValueType extends AbstractType
 {
     const NAME = 'oro_shipping_dimensions_value';
@@ -30,7 +32,7 @@ class DimensionsValueType extends AbstractType
         $builder
             ->add(
                 'length',
-                NumberType::class,
+                CommonUnitValueType::class,
                 [
                     'attr' => ['class' => 'length'],
                     'required' => false,
@@ -38,7 +40,7 @@ class DimensionsValueType extends AbstractType
             )
             ->add(
                 'width',
-                NumberType::class,
+                CommonUnitValueType::class,
                 [
                     'attr' => ['class' => 'width'],
                     'required' => false,
@@ -46,7 +48,7 @@ class DimensionsValueType extends AbstractType
             )
             ->add(
                 'height',
-                NumberType::class,
+                CommonUnitValueType::class,
                 [
                     'attr' => ['class' => 'height'],
                     'required' => false,

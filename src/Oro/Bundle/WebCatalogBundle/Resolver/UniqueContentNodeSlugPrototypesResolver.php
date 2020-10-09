@@ -46,7 +46,7 @@ class UniqueContentNodeSlugPrototypesResolver
         $persistedPrototypeStrings = $this->getPersistedSlugPrototypeStrings($parentNode, $contentNode);
 
         foreach ($contentNode->getSlugPrototypes() as $slugPrototype) {
-            $originalString = $slugPrototype->getString();
+            $originalString = mb_strtolower($slugPrototype->getString());
 
             $idx = 1;
             $uniqueSlugPrototypeString = $originalString;

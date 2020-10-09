@@ -51,7 +51,8 @@ class UniqueSlugPrototypeValidator extends ConstraintValidator
 
         if ($intersection) {
             foreach ($value->getSlugPrototypes() as $idx => $slugPrototype) {
-                if (in_array($slugPrototype->getString(), $intersection, true)) {
+                $slugPrototypeString = mb_strtolower($slugPrototype->getString());
+                if (in_array($slugPrototypeString, $intersection, true)) {
                     $this->context->buildViolation($constraint->message)
                         ->atPath(sprintf('slugPrototypes[%d]', $idx))
                         ->addViolation();
@@ -85,7 +86,7 @@ class UniqueSlugPrototypeValidator extends ConstraintValidator
     {
         return $slugPrototypes
             ->map(function (LocalizedFallbackValue $slugPrototype) {
-                return $slugPrototype->getString();
+                return mb_strtolower($slugPrototype->getString());
             })
             ->toArray();
     }
