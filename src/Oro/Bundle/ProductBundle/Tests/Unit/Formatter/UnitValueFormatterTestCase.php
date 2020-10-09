@@ -120,9 +120,10 @@ abstract class UnitValueFormatterTestCase extends \PHPUnit\Framework\TestCase
      */
     protected function configureFormatter($inputNumber, $outputNumber): void
     {
+        $method = is_int($inputNumber) ? 'format' : 'formatDecimal';
         $this->numberFormatter
             ->expects(self::once())
-            ->method('formatDecimal')
+            ->method($method)
             ->with($inputNumber)
             ->willReturn($outputNumber);
     }
