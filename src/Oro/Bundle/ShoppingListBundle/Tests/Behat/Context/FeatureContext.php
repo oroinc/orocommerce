@@ -145,6 +145,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
     /**
      * @Then I open shopping list widget
+     * @Then I close shopping list widget
      */
     public function iOpenShoppingListWidget()
     {
