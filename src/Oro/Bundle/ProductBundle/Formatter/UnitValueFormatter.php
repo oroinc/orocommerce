@@ -58,7 +58,7 @@ class UnitValueFormatter extends AbstractUnitFormatter implements UnitValueForma
             return $this->translator->trans('N/A');
         }
 
-        $formattedValue = $this->numberFormatter ? $this->numberFormatter->formatDecimal($value) : $value;
+        $formattedValue = $this->numberFormatter ? $this->formatScientificNotation($value) : $value;
 
         return $this->translator->trans(
             sprintf('%s.%s.value.%s', $this->getTranslationPrefix(), $unitCode, $this->getSuffix($value, $isShort)),
@@ -85,5 +85,24 @@ class UnitValueFormatter extends AbstractUnitFormatter implements UnitValueForma
         }
 
         return $suffix;
+    }
+
+    /**
+     * @param int|float|string $value
+     *
+     * @return string
+     */
+    protected function formatScientificNotation($value): string
+    {
+        // Need if $value has scientific notation format, as an example: 6.0E-10.
+        if ($value != (int)$value) {
+            $value = $this->numberFormatter->formatDecimal(
+                $value,
+                [\NumberFormatter::FRACTION_DIGITS => PHP_FLOAT_DIG]
+            );
+            return rtrim($value, '0');
+        }
+
+        return $this->numberFormatter->format($value, \NumberFormatter::TYPE_DEFAULT);
     }
 }

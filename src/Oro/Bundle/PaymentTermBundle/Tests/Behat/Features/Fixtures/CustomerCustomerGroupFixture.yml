@@ -1,0 +1,14 @@
+Oro\Bundle\CustomerBundle\Entity\CustomerGroup:
+    all_customers:
+        name: 'All Customers'
+        organization: '@organization'
+        owner: '@admin'
+        payment_term_7c4f1e8e: '@paymentTerm'
+
+Oro\Bundle\CustomerBundle\Entity\Customer:
+    customer_b:
+        name: 'Company B'
+        organization: '@organization'
+        owner: '@admin'
+        payment_term_7c4f1e8e: '@paymentTerm'
+        group: '@all_customers'
