@@ -20,15 +20,23 @@ Oro\Bundle\ShippingBundle\Model\DimensionsValue:
     properties:
         length:
             - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+            - Length:
+                  max: 14
         width:
             - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+            - Length:
+                  max: 14
         height:
             - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+            - Length:
+                  max: 14
 
 Oro\Bundle\ShippingBundle\Model\Weight:
     properties:
         value:
             - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+            - Length:
+                  max: 14
 
 Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule:
     constraints:
