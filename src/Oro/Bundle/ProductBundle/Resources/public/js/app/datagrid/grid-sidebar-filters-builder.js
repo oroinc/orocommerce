@@ -1,17 +1,26 @@
 import _ from 'underscore';
 import FilterItemsHintView from 'oroproduct/js/app/views/filter-items-hint-view';
-
-const filtersContainerTemplate = require('tpl-loader!oroproduct/templates/sidebar-filters/filters-container.html');
+import filtersContainerTemplate from 'tpl-loader!oroproduct/templates/sidebar-filters/filters-container.html';
 
 export default {
     processDatagridOptions(deferred, options) {
-        options.metadata.options.renderMode = 'toggle-mode';
-        options.metadata.options.outerHintContainer = `[data-hint-container="${options.gridName}"]`;
-        options.metadata.options.hidePreviousOpenFilters = false;
-        options.metadata.options.filtersContainerTemplate = filtersContainerTemplate;
-        options.metadata.options.enableMultiselectWidget = false;
-        options.enableToggleFilters = false;
         options.filterContainerSelector = '[data-role="sidebar-filter-container"]';
+        if (!options.metadata.options.filtersManager) {
+            options.metadata.options.filtersManager = {};
+        }
+        Object.assign(options.metadata.options.filtersManager, {
+            outerHintContainer: `[data-hint-container="${options.gridName}"]`,
+            renderMode: 'toggle-mode',
+            autoClose: false,
+            enableMultiselectWidget: false,
+            template: filtersContainerTemplate
+        });
+
+        options.metadata.filters.forEach(filter => {
+            filter.outerHintContainer = `[data-hint-container="${options.gridName}"]`;
+            filter.initiallyOpened = true;
+            filter.autoClose = false;
+        });
 
         const toolbarOptions = options.metadata.options.toolbarOptions;
         const toolbarClassNames = ['datagrid-toolbar--no-x-offset'];
@@ -30,7 +39,7 @@ export default {
 
                 if (topToolbar && !topToolbar.disposed) {
                     const filterItemsHintView = new FilterItemsHintView({
-                        renderMode: options.metadata.options.renderMode,
+                        renderMode: options.metadata.options.filtersManager.renderMode,
                         gridName: grid.name
                     });
 
