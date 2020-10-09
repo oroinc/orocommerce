@@ -1,0 +1,133 @@
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    name:
+        string: 'Product'
+
+Oro\Bundle\ProductBundle\Entity\ProductDescription:
+    description:
+        wysiwyg: 'Product Description'
+
+Oro\Bundle\ProductBundle\Entity\ProductShortDescription:
+    shortDescription:
+        text: 'Product1 Short Description'
+
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
+    categoryTitle:
+        string: 'Category'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    slug:
+        string: 'product'
+    brandName:
+        string: 'Brand'
+    productSlugPrototype:
+        string: 'product'
+
+Oro\Bundle\RedirectBundle\Entity\Slug:
+    productSlug:
+        url: '/product'
+        slugPrototype: 'product'
+        routeName: 'oro_product_frontend_product_view'
+        routeParameters: []
+        organization: '@organization'
+
+Oro\Bundle\ProductBundle\Entity\Brand:
+    brand:
+        owner: '@business_unit'
+        organization: '@organization'
+        __calls:
+            - addName: ['@brandName']
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    primaryPrecision:
+        unit: '@item'
+        precision: '1'
+    additionalPrecision:
+        unit: '@set'
+        precision: '5'
+    primaryRelatedProductPrecision:
+        unit: '@item'
+        precision: '1'
+    primaryUpsellProductPrecision:
+        unit: '@item'
+        precision: '1'
+
+Oro\Bundle\TaxBundle\Entity\ProductTaxCode:
+    taxCode:
+        code: 'TaxCode'
+        description: 'Tax Code'
+        organization: '@organization'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product:
+        sku: 'PSKU1'
+        organization: '@organization'
+        owner: '@business_unit'
+        primaryUnitPrecision: '@primaryPrecision'
+        attributeFamily: '@defaultProductFamily'
+        __calls:
+            - addName: ['@name']
+            - addAdditionalUnitPrecision: ['@additionalPrecision']
+            - addDescription: ['@description']
+            - addShortDescription: ['@shortDescription']
+        slugs: ['@productSlug']
+        slugPrototypes: ['@productSlugPrototype']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        featured: true
+        newArrival: true
+        brand: '@brand'
+        taxCode: '@taxCode'
+
+Oro\Bundle\CatalogBundle\Entity\Category:
+    category:
+        organization: '@organization'
+        __calls:
+            - addTitle: ['@categoryTitle']
+            - setParentCategory: ['@root_category']
+            - addProduct: ['@product']
+
+Oro\Bundle\PricingBundle\Entity\PriceList:
+    pricelist:
+        name: 'Price List'
+        default: true
+        __calls:
+            - setCurrencies: [['USD']]
+        active: true
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceListToProduct:
+        priceList: '@pricelist'
+        product: '@product'
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    productPrice:
+        pricelist: '@pricelist'
+        product: '@product'
+        productSku: 'PSKU1'
+        quantity: '1'
+        unit: '@item'
+        value: '10'
+        currency: 'USD'
+
+Oro\Bundle\ShippingBundle\Model\Weight:
+    weight:
+        unit: '@kg'
+        value: null
+
+Oro\Bundle\ShippingBundle\Model\DimensionsValue:
+    dimensionsValue:
+        length: null
+        width: null
+        height: null
+
+Oro\Bundle\ShippingBundle\Model\Dimensions:
+    dimensions:
+        value: '@dimensionsValue'
+        unit: '@centimeter'
+
+Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions:
+    productShippingOptions:
+        product: '@product'
+        productUnit: '@item'
+        weight: '@weight'
+        dimensions: '@dimensions'
