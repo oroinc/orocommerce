@@ -175,13 +175,25 @@ class CustomerDatagridListenerTest extends \PHPUnit\Framework\TestCase
                             'COALESCE(agpt_customerGroupPaymentTerm.label) as customer_group_payment_term',
                             'COALESCE(IDENTITY(rootAlias.customerPaymentTerm),'.
                                 'agpt_customerGroupPaymentTerm.id) as customerPaymentTerm_resolved_id',
-                            'COALESCE(auto_rel_1.label,agpt_customerGroupPaymentTerm.label)'.
+                            'COALESCE(agpt_customerGroupPaymentTerm.label)'.
                                 ' as customerPaymentTerm_resolved_value',
                         ],
                     ],
                 ],
                 'filters' => [
-                    'columns' => ['customerPaymentTerm' => ['data_name' => 'customerPaymentTerm_resolved_id']],
+                    'columns' => [
+                        'customerPaymentTerm' => [
+                            'data_name' => 'customerPaymentTerm_resolved_id',
+                            'type' => 'entity',
+                            'options' => [
+                                'field_options' => [
+                                    'multiple' => true,
+                                    'class' => 'Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm',
+                                    'choice_label' => 'label'
+                                ]
+                            ]
+                        ]
+                    ],
                 ],
                 'sorters' => [
                     'columns' => ['customerPaymentTerm' => ['data_name' => 'customerPaymentTerm_resolved_value']],
@@ -191,6 +203,7 @@ class CustomerDatagridListenerTest extends \PHPUnit\Framework\TestCase
                         'type' => 'twig',
                         'frontend_type' => 'html',
                         'template' => 'OroPaymentTermBundle:PaymentTerm:column.html.twig',
+                        'label' => 'oro.customer.payment_term_7c4f1e8e.label'
                     ],
                 ],
             ],
@@ -203,19 +216,14 @@ class CustomerDatagridListenerTest extends \PHPUnit\Framework\TestCase
         $datagridParameters = new ParameterBag();
         $datagrid = $this->configureDataGrid($datagridParameters);
 
-        $config = DatagridConfiguration::create(
-            [
-                'extended_entity_name' => Customer::class,
-                'source' => ['query' => ['from' => [['alias' => 'rootAlias']]]],
-            ]
-        );
+        $config = DatagridConfiguration::create([
+            'extended_entity_name' => Customer::class,
+            'source' => ['query' => ['from' => [['alias' => 'rootAlias']]]],
+        ]);
 
         $this->configureSelectedFields(['customerPaymentTerm', 'customerPaymentTerm2'], $config, $datagridParameters);
         $this->associationProvider->expects($this->exactly(2))->method('getAssociationNames')
-            ->withConsecutive(
-                [Customer::class],
-                [CustomerGroup::class]
-            )
+            ->withConsecutive([Customer::class], [CustomerGroup::class])
             ->willReturnOnConsecutiveCalls(
                 ['customerPaymentTerm', 'customerPaymentTerm2'],
                 ['customerGroupPaymentTerm', 'customerGroupPaymentTerm2']
@@ -226,65 +234,80 @@ class CustomerDatagridListenerTest extends \PHPUnit\Framework\TestCase
         $event = new BuildBefore($datagrid, $config);
         $this->listener->onBuildBefore($event);
 
-        $this->assertEquals(
-            [
-                'extended_entity_name' => Customer::class,
-                'source' => [
-                    'query' => [
-                        'from' => [['alias' => 'rootAlias']],
-                        'join' => [
-                            'left' => [
-                                [
-                                    'join' => 'customer_group.customerGroupPaymentTerm',
-                                    'alias' => 'agpt_customerGroupPaymentTerm',
-                                ],
-                                [
-                                    'join' => 'customer_group.customerGroupPaymentTerm2',
-                                    'alias' => 'agpt_customerGroupPaymentTerm2',
-                                ],
+        $this->assertEquals([
+            'extended_entity_name' => Customer::class,
+            'source' => [
+                'query' => [
+                    'from' => [['alias' => 'rootAlias']],
+                    'join' => [
+                        'left' => [
+                            [
+                                'join' => 'customer_group.customerGroupPaymentTerm',
+                                'alias' => 'agpt_customerGroupPaymentTerm',
+                            ],
+                            [
+                                'join' => 'customer_group.customerGroupPaymentTerm2',
+                                'alias' => 'agpt_customerGroupPaymentTerm2',
                             ],
                         ],
-                        'select' => [
-                            'COALESCE(agpt_customerGroupPaymentTerm.label,agpt_customerGroupPaymentTerm2.label)'.
-                                ' as customer_group_payment_term',
-                            'COALESCE(IDENTITY(rootAlias.customerPaymentTerm),agpt_customerGroupPaymentTerm.id,'.
-                                'agpt_customerGroupPaymentTerm2.id) as customerPaymentTerm_resolved_id',
-                            'COALESCE(auto_rel_1.label,agpt_customerGroupPaymentTerm.label,'.
-                                'agpt_customerGroupPaymentTerm2.label) as customerPaymentTerm_resolved_value',
-                            'COALESCE(IDENTITY(rootAlias.customerPaymentTerm2),agpt_customerGroupPaymentTerm.id,'.
-                                'agpt_customerGroupPaymentTerm2.id) as customerPaymentTerm2_resolved_id',
-                            'COALESCE(auto_rel_2.label,agpt_customerGroupPaymentTerm.label,'.
-                                'agpt_customerGroupPaymentTerm2.label) as customerPaymentTerm2_resolved_value',
-                        ],
                     ],
-                ],
-                'filters' => [
-                    'columns' => [
-                        'customerPaymentTerm' => ['data_name' => 'customerPaymentTerm_resolved_id'],
-                        'customerPaymentTerm2' => ['data_name' => 'customerPaymentTerm2_resolved_id'],
-                    ],
-                ],
-                'sorters' => [
-                    'columns' => [
-                        'customerPaymentTerm' => ['data_name' => 'customerPaymentTerm_resolved_value'],
-                        'customerPaymentTerm2' => ['data_name' => 'customerPaymentTerm2_resolved_value'],
-                    ],
-                ],
-                'columns' => [
-                    'customerPaymentTerm' => [
-                        'type' => 'twig',
-                        'frontend_type' => 'html',
-                        'template' => 'OroPaymentTermBundle:PaymentTerm:column.html.twig',
-                    ],
-                    'customerPaymentTerm2' => [
-                        'type' => 'twig',
-                        'frontend_type' => 'html',
-                        'template' => 'OroPaymentTermBundle:PaymentTerm:column.html.twig',
+                    'select' => [
+                        'COALESCE(agpt_customerGroupPaymentTerm.label,agpt_customerGroupPaymentTerm2.label)'.
+                            ' as customer_group_payment_term',
+                        'COALESCE(IDENTITY(rootAlias.customerPaymentTerm),agpt_customerGroupPaymentTerm.id,'.
+                            'agpt_customerGroupPaymentTerm2.id) as customerPaymentTerm_resolved_id',
+                        'COALESCE(agpt_customerGroupPaymentTerm.label,'.
+                            'agpt_customerGroupPaymentTerm2.label) as customerPaymentTerm_resolved_value',
+                        'COALESCE(IDENTITY(rootAlias.customerPaymentTerm2),agpt_customerGroupPaymentTerm.id,'.
+                            'agpt_customerGroupPaymentTerm2.id) as customerPaymentTerm2_resolved_id',
+                        'COALESCE(agpt_customerGroupPaymentTerm.label,'.
+                            'agpt_customerGroupPaymentTerm2.label) as customerPaymentTerm2_resolved_value',
                     ],
                 ],
             ],
-            $config->toArray()
-        );
+            'filters' => [ 'columns' => [
+                'customerPaymentTerm' => [
+                    'data_name' => 'customerPaymentTerm_resolved_id',
+                    'type' => 'entity',
+                    'options' => [
+                        'field_options' => [
+                            'multiple' => true,
+                            'class' => 'Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm',
+                            'choice_label' => 'label'
+                        ]
+                    ]
+                ],
+                'customerPaymentTerm2' => [
+                    'data_name' => 'customerPaymentTerm2_resolved_id',
+                    'type' => 'entity',
+                    'options' => [
+                        'field_options' => [
+                            'multiple' => true,
+                            'class' => 'Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm',
+                            'choice_label' => 'label'
+                        ]
+                    ]
+                ]
+            ]],
+            'sorters' => [ 'columns' => [
+                'customerPaymentTerm' => ['data_name' => 'customerPaymentTerm_resolved_value'],
+                'customerPaymentTerm2' => ['data_name' => 'customerPaymentTerm2_resolved_value'],
+            ]],
+            'columns' => [
+                'customerPaymentTerm' => [
+                    'type' => 'twig',
+                    'frontend_type' => 'html',
+                    'template' => 'OroPaymentTermBundle:PaymentTerm:column.html.twig',
+                    'label' => 'oro.customer.payment_term_7c4f1e8e.label',
+                ],
+                'customerPaymentTerm2' => [
+                    'type' => 'twig',
+                    'frontend_type' => 'html',
+                    'template' => 'OroPaymentTermBundle:PaymentTerm:column.html.twig',
+                    'label' => 'oro.customer.payment_term_7c4f1e8e.label',
+                ],
+            ],
+        ], $config->toArray());
     }
 
     /**

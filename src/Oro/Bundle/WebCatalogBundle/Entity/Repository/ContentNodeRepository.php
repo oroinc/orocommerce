@@ -98,7 +98,7 @@ class ContentNodeRepository extends NestedTreeRepository
     public function getSlugPrototypesByParent(?ContentNode $parentNode = null, ?ContentNode $skipNode = null): array
     {
         $qb = $this->createQueryBuilder('node')
-            ->select('slugPrototype.string')
+            ->select('LOWER(slugPrototype.string) as slug_prototype')
             ->join('node.slugPrototypes', 'slugPrototype');
 
         if ($parentNode) {
@@ -113,6 +113,6 @@ class ContentNodeRepository extends NestedTreeRepository
                 ->setParameter('skipNode', $skipNode);
         }
 
-        return array_column($qb->getQuery()->getArrayResult(), 'string');
+        return array_column($qb->getQuery()->getArrayResult(), 'slug_prototype');
     }
 }

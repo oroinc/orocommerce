@@ -34,8 +34,27 @@ class DimensionsValueFormatterTest extends \PHPUnit\Framework\TestCase
         unset($this->formatter, $this->translator);
     }
 
+    public function testFormatCodeWithScientificNotation(): void
+    {
+        $this->configureFormatter(6e-6, '0.000006', [\NumberFormatter::FRACTION_DIGITS => PHP_FLOAT_DIG]);
+        $this->translator->expects($this->exactly(2))
+            ->method('trans')
+            ->willReturnMap(
+                [
+                    ['N/A', [], null, null, 'N/A_trans'],
+                    [static::TRANSLATION_PREFIX . '.item.label.short', [], null, null, 'translated']
+                ]
+            );
+
+        $this->assertEquals(
+            '0.000006 x 0.000006 x 0.000006 translated',
+            $this->formatter->formatCode(DimensionsValue::create(6e-6, 6e-6, 6e-6), 'item', true)
+        );
+    }
+
     public function testFormatCodeShort()
     {
+        $this->configureFormatter(42, 42, \NumberFormatter::TYPE_DEFAULT);
         $this->translator->expects($this->exactly(2))
             ->method('trans')
             ->willReturnMap(
@@ -53,6 +72,8 @@ class DimensionsValueFormatterTest extends \PHPUnit\Framework\TestCase
 
     public function testFormatCodeFull()
     {
+        $this->configureFormatter(42, 42, \NumberFormatter::TYPE_DEFAULT);
+
         $this->translator->expects($this->exactly(2))
             ->method('trans')
             ->willReturnMap(
@@ -105,5 +126,21 @@ class DimensionsValueFormatterTest extends \PHPUnit\Framework\TestCase
             'N/A_trans',
             $this->formatter->formatCode(DimensionsValue::create(42, 42, 42), null)
         );
+    }
+
+    /**
+     * @param float $inputNumber
+     * @param string|float $outputNumber
+     * @param mixed $attributes
+     */
+    protected function configureFormatter($inputNumber, $outputNumber, $attributes): void
+    {
+        $method = is_int($inputNumber) ? 'format' : 'formatDecimal';
+        $this->numberFormatter
+            // length, width, height.
+            ->expects($this->exactly(3))
+            ->method($method)
+            ->with($inputNumber, $attributes)
+            ->willReturn($outputNumber);
     }
 }
