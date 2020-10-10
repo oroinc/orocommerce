@@ -6,6 +6,15 @@
     }
 }
 
+.responsive-shopping-list-layout {
+    .order-checkout-widget__container-wrapper {
+        padding: 20px;
+
+        border-radius: 4px;
+        background: get-color('additional', 'base');
+    }
+}
+
 @include breakpoint('responsive-shopping-list-grid-ovreflow') {
     .responsive-shopping-list-layout {
         .page-content {
@@ -33,10 +42,26 @@
         display: flex;
         flex-direction: row-reverse;
     }
+
+    .responsive-shopping-list-layout {
+        .order-checkout-widget {
+            &__container-wrapper {
+                width: 50%;
+            }
+        }
+    }
 }
 
 @include breakpoint('mobile-landscape') {
     .responsive-order-layout {
         flex-direction: column;
+    }
+
+    .responsive-shopping-list-layout {
+        .order-checkout-widget {
+            &__container-wrapper {
+                width: 100%;
+            }
+        }
     }
 }
