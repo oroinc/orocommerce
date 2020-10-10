@@ -90,9 +90,15 @@
 {%- endblock -%}
 
 {% block __customer_user_shopping_list__shopping_list_actions_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' my-shopping-list-owner-wrapper__actions'
+    }) %}
+
     {% if block.children %}
-        <span class="separator" aria-hidden="true"></span>
-        {{ block_widget(block) }}
+        <div{{ block('block_attributes') }}>
+            <span class="separator" aria-hidden="true"></span>
+            {{ block_widget(block) }}
+        </div>
     {% endif %}
 {% endblock %}
 
