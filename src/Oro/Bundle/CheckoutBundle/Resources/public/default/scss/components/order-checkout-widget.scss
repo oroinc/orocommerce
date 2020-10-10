@@ -23,11 +23,6 @@
     &__container-wrapper {
         margin-bottom: $offset-y-m;
 
-        padding: 20px;
-
-        border-radius: 4px;
-        background: get-color('additional', 'base');
-
         @include clearfix();
     }
 
@@ -118,14 +113,6 @@
     }
 }
 
-@include breakpoint('tablet') {
-    .order-checkout-widget {
-        &__container-wrapper {
-            width: 50%;
-        }
-    }
-}
-
 @include breakpoint('tablet-small') {
     .order-checkout-widget {
         &__container {
@@ -142,13 +129,6 @@
     }
 }
 
-@include breakpoint('mobile-landscape') {
-    .order-checkout-widget {
-        &__container-wrapper {
-            width: 100%;
-        }
-    }
-}
 @include breakpoint('mobile') {
     .order-checkout-widget {
         &__col,
