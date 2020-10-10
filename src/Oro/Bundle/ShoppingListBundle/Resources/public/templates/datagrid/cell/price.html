@@ -14,7 +14,7 @@
         }
     }) %>"
 >
-    <span class="price-value-container" data-name="price-value">
+    <div class="price-value-container" data-name="price-value">
         <% if (typeof price !== 'undefined' && price) { %>
         <%- price %>
         <% } else { %>
@@ -31,6 +31,6 @@
                 aria-label="<%- _.__('oro.pricing.view_all_prices_extended', { product_attrs: name }) %>">
             <span class="fa-info-circle fa--no-offset fa--loader-icon" aria-hidden="true"></span>
         </button>
-    </span>
+    </div>
 </div>
 <% } %>
