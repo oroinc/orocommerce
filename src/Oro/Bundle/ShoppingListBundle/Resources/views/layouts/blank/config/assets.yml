@@ -36,5 +36,6 @@ styles:
         - 'bundles/oroshoppinglist/blank/scss/components/responsive-shopping-list-grid/grid-side-effects.scss'
         - 'bundles/oroshoppinglist/blank/scss/components/shopping-list-notes.scss'
         - 'bundles/oroshoppinglist/blank/scss/components/inline-editing/line-item-editing.scss'
+        - 'bundles/oroshoppinglist/blank/scss/components/shopping-list-move-action.scss'
 
         - 'bundles/oroshoppinglist/blank/scss/styles.scss'
