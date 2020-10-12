@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\EntityBundle\Manager\PreloadingManager;
 use Oro\Bundle\FormBundle\Model\UpdateHandler;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
@@ -40,39 +39,6 @@ class ShoppingListController extends AbstractController
 
         if ($shoppingList) {
             $this->get(ShoppingListManager::class)->actualizeLineItems($shoppingList);
-
-            $this->get(PreloadingManager::class)->preloadInEntities(
-                $shoppingList->getLineItems()->toArray(),
-                [
-                    'parentProduct' => [
-                        'names' => [],
-                        'images' => [
-                            'image' => [],
-                            'types' => [],
-                        ],
-                    ],
-                    'product' => [
-                        'isUpcoming' => [],
-                        'highlightLowInventory' => [],
-                        'minimumQuantityToOrder' => [],
-                        'maximumQuantityToOrder' => [],
-                        'names' => [],
-                        'images' => [
-                            'image' => [
-                                'digitalAsset' => [
-                                    'titles' => [],
-                                    'sourceFile' => [
-                                        'digitalAsset' => [],
-                                    ],
-                                ]
-                            ],
-                            'types' => [],
-                        ],
-                        'unitPrecisions' => [],
-                        'category' => [],
-                    ],
-                ]
-            );
         }
 
         return [
@@ -119,7 +85,7 @@ class ShoppingListController extends AbstractController
         }
 
         if ($shoppingList) {
-            $shoppingList = $this->actualizeShoppingList($shoppingList);
+            $this->get(ShoppingListManager::class)->actualizeLineItems($shoppingList);
         }
 
         return [
@@ -127,20 +93,6 @@ class ShoppingListController extends AbstractController
                 'entity' => $shoppingList,
             ],
         ];
-    }
-
-    /**
-     * @param ShoppingList $shoppingList
-     * @return ShoppingList
-     */
-    private function actualizeShoppingList(ShoppingList $shoppingList): ShoppingList
-    {
-        $this->get(ShoppingListManager::class)->actualizeLineItems($shoppingList);
-
-        // Actualize current shopping list.
-        $this->get(CurrentShoppingListManager::class)->getCurrent();
-
-        return $shoppingList;
     }
 
     /**
@@ -277,8 +229,7 @@ class ShoppingListController extends AbstractController
             CurrentShoppingListManager::class,
             ShoppingListManager::class,
             UpdateHandler::class,
-            TranslatorInterface::class,
-            PreloadingManager::class,
+            TranslatorInterface::class
         ]);
     }
 }

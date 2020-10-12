@@ -25,7 +25,7 @@ operations:
                 ok: oro.frontend.shoppinglist.dialog.duplicate_ok.label
         datagrid_options:
             aria_label: oro.frontend.shoppinglist.btn.duplicate.aria_label
-        acl_resource: ['DUPLICATE_SHOPPING_LIST', $.data]
+        acl_resource: ['oro_shopping_list_frontend_duplicate', $.data]
         groups:
             - shopping_list_actions
         routes:
@@ -131,7 +131,7 @@ operations:
 
     oro_shoppinglist_frontend_set_as_default_action:
         label: oro.shoppinglist.set_as_default.action.label
-        acl_resource: ['SET_AS_DEFAULT_SHOPPING_LIST', $.data]
+        acl_resource: ['oro_shopping_list_frontend_set_as_default', $.data]
         button_options:
             icon: fa-check
         frontend_options:
@@ -161,7 +161,7 @@ operations:
 
     oro_shoppinglist_frontend_rename_action:
         label: oro.shoppinglist.rename.action.label
-        acl_resource: ['RENAME_SHOPPING_LIST', $.data]
+        acl_resource: ['oro_shopping_list_frontend_rename', $.data]
         button_options:
             icon: fa-pencil
         frontend_options:
