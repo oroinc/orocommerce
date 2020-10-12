@@ -657,6 +657,7 @@ datagrids:
                     contentElement: '.shopping-list-select-grid'
                     renderActionsFromTemplate: true
                     dialogOptions:
+                        dialogClass: 'move-to-shopping-list'
                         modal: true
                         resizable: true
                         autoResize: true
