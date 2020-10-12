@@ -18,7 +18,7 @@ Feature: Storefront acl for shopping lists
     And I go to Customers/ Customer User Roles
     And I click edit "Buyer" in grid
     And select following permissions:
-      | Shopping List | View:User | Create:None | Edit:None | Delete:None | Assign:None | Duplicate:None |
+      | Shopping List | View:User | Create:None | Edit:None | Delete:None | Assign:None | Duplicate:None | Rename:none | Set as Default:none |
     When I save form
     Then I should see "Customer User Role has been saved" flash message
 
@@ -95,9 +95,8 @@ Feature: Storefront acl for shopping lists
       | Shopping List 4 |
 
   Scenario: Check buyer assign without permission
-    Given I open page with shopping list Shopping List 1
-    When I click "Shopping List Actions"
-    Then I should not see "Reassign"
+    When I open page with shopping list Shopping List 1
+    Then I should not see a "Shopping List Actions" element
     And I should see "Assigned To: Amanda Cole"
 
   Scenario: Set assign permission to User
@@ -165,7 +164,7 @@ Feature: Storefront acl for shopping lists
   Scenario: Set edit permission to User
     Given I proceed as the Admin
     And select following permissions:
-      | Shopping List | Edit:User |
+      | Shopping List | Edit:User | Rename:User |
     When I save form
     Then I should see "Customer User Role has been saved" flash message
 
@@ -182,9 +181,9 @@ Feature: Storefront acl for shopping lists
 
   Scenario Outline: Check that buyer cannot edit shopping list
     Given I open page with shopping list <name>
-    Given I click "Shopping List Actions"
-    When I should not see "Rename"
-    Then I should not see "Add a note to entire Shopping List"
+    When I click "Shopping List Actions"
+    Then I should not see "Rename"
+    And I should not see "Add a note to entire Shopping List"
     And I should see "Simple note"
 
     Examples:
@@ -242,6 +241,77 @@ Feature: Storefront acl for shopping lists
       | Shopping List Department 1 | Shopping List Corporate 1 |
       | Shopping List 3            | Shopping List Corporate 3 |
       | Shopping List Department 5 | Shopping List Corporate 5 |
+
+  Scenario: Check buyer "Set as Default" without permission
+    Given I open page with shopping list Shopping List Corporate 1
+    When I open shopping list widget
+    Then I should not see a "Shopping List Widget Set Current Radio" element
+    And I close shopping list widget
+    When I click "Shopping List Actions"
+    Then I should not see "Set as Default"
+
+  Scenario: Set "Set as Default" permission to User
+    Given I proceed as the Admin
+    And select following permissions:
+      | Shopping List | Edit:User | Set as Default:User |
+    When I save form
+    Then I should see "Customer User Role has been saved" flash message
+
+  Scenario: Check buyer "Set as Default" permission
+    Given I proceed as the Buyer
+    And I open page with shopping list Shopping List Corporate 1
+    When I open shopping list widget
+    Then I should see a "Shopping List Widget Set Current Radio 1" element
+    And I should not see a "Shopping List Widget Set Current Radio 2" element
+    And I should not see a "Shopping List Widget Set Current Radio 3" element
+
+  Scenario: Set "Set as Default" permission to Department
+    Given I proceed as the Admin
+    And select following permissions:
+      | Shopping List | Edit:Department | Set as Default:Department |
+    When I save form
+    Then I should see "Customer User Role has been saved" flash message
+
+  Scenario Outline: Check buyer "Set as Default" permission
+    Given I proceed as the Buyer
+    And I open page with shopping list <name>
+    When I click "Shopping List Actions"
+    And click "Set as Default"
+    And I click "Yes, set as default"
+    Then should see "Shopping list has been successfully set as default" flash message
+    When I open shopping list widget
+    Then I should see a "<shownRadio1>" element
+    And I should see a "<shownRadio2>" element
+    And I should not see a "<hiddenRadio>" element
+
+    Examples:
+      | name                      | shownRadio1                              | shownRadio2                              | hiddenRadio                              |
+      | Shopping List Corporate 5 | Shopping List Widget Set Current Radio 1 | Shopping List Widget Set Current Radio 2 | Shopping List Widget Set Current Radio 3 |
+      | Shopping List Corporate 1 | Shopping List Widget Set Current Radio 1 | Shopping List Widget Set Current Radio 3 | Shopping List Widget Set Current Radio 2 |
+
+  Scenario: Set "Set as Default" permission to Corporate
+    Given I proceed as the Admin
+    And select following permissions:
+      | Shopping List | Edit:Сorporate | Set as Default:Сorporate |
+    When I save form
+    Then I should see "Customer User Role has been saved" flash message
+
+  Scenario Outline: Check buyer "Set as Default" permission
+    Given I proceed as the Buyer
+    And I open page with shopping list <name>
+    When I click "Shopping List Actions"
+    And click "Set as Default"
+    And I click "Yes, set as default"
+    Then should see "Shopping list has been successfully set as default" flash message
+    When I open shopping list widget
+    And I click on "<radio>"
+    Then should see "Shopping list has been successfully set as default" flash message
+
+    Examples:
+      | name                      | radio                                    |
+      | Shopping List Corporate 3 | Shopping List Widget Set Current Radio 3 |
+      | Shopping List Corporate 1 | Shopping List Widget Set Current Radio 1 |
+      | Shopping List Corporate 5 | Shopping List Widget Set Current Radio 2 |
 
   Scenario: Set delete permission to User
     Given I proceed as the Admin

@@ -359,6 +359,18 @@ oro_behat_extension:
     Shopping List Action Reassign Radio:
       selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-assign-grid"] input[name="assigned"]'
 
+    Shopping List Widget Set Current Radio:
+      selector: '.shopping-list-widget label[data-role="shopping-list-current-label"]'
+
+    Shopping List Widget Set Current Radio 1:
+      selector: '.shopping-list-widget .shopping-list-dropdown__item:nth-child(2) label[data-role="shopping-list-current-label"]'
+
+    Shopping List Widget Set Current Radio 2:
+      selector: '.shopping-list-widget .shopping-list-dropdown__item:nth-child(3) label[data-role="shopping-list-current-label"]'
+
+    Shopping List Widget Set Current Radio 3:
+      selector: '.shopping-list-widget .shopping-list-dropdown__item:nth-child(4) label[data-role="shopping-list-current-label"]'
+
   suites:
     OroShoppingListBundle:
       contexts:

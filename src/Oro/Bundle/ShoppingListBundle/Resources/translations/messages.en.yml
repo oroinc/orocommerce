@@ -178,7 +178,7 @@ oro:
         privilege:
             category.shopping.label: 'Shopping'
         permission:
-            duplicate_shopping_list.label: Duplicated
+            duplicate_shopping_list.label: Duplicate
             rename_shopping_list.label: Rename
             set_as_default_shopping_list.label: Set as Default
         duplicate:

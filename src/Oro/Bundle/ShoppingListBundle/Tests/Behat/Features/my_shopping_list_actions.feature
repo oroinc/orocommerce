@@ -54,15 +54,22 @@ Feature: My Shopping List Actions
     When I click "Set as Default"
     And I click "Yes, set as default"
     Then I should see "Shopping list has been successfully set as default" flash message
+    When I click "Shopping List Actions"
+    Then I should not see "Set as Default"
+    When I open shopping list widget
+    And I click on "Shopping List Widget Set Current Radio 2"
+    And I close shopping list widget
+    And I click "Shopping List Actions"
+    Then I should see "Set as Default"
 
   Scenario: Check Default Shopping List
     When I follow "Account"
     And I click "My Shopping Lists"
     Then I should see following grid:
       | Name            | Subtotal  | Items | Default |
-      | Shopping List 4 | $8,818.00 | 32    | Yes     |
+      | Shopping List 4 | $8,818.00 | 32    | No      |
       | Shopping List 3 | $8,818.00 | 32    | No      |
-      | Shopping List 1 | $1,581.00 | 3     | No      |
+      | Shopping List 1 | $1,581.00 | 3     | Yes     |
     And records in grid should be 3
 
   Scenario: Delete Action
