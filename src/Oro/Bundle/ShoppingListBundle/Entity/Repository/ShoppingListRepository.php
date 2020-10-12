@@ -370,7 +370,7 @@ class ShoppingListRepository extends EntityRepository implements ResettableCusto
 
         $qb = $entityManager->createQueryBuilder();
         $qb->update($this->getClassName(), 'sl')
-            ->set('sl.line_items_count', ':count')
+            ->set('sl.lineItemsCount', ':count')
             ->andWhere($qb->expr()->eq('sl.id', ':id'))
             ->setParameter('count', $count)
             ->setParameter('id', $shoppingList->getId())

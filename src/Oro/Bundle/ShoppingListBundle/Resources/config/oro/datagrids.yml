@@ -184,7 +184,7 @@ datagrids:
                     - shopping_list.label
                     - cachedTotal.subtotalValue AS subtotal
                     - cachedTotal.currency
-                    - COALESCE(shopping_list.line_items_count, 0) AS lineItemsCount
+                    - COALESCE(shopping_list.lineItemsCount, 0) AS lineItemsCount
                     - shopping_list.createdAt
                     - shopping_list.updatedAt
                     - (CASE WHEN shopping_list.id = :default_shopping_list_id THEN true ELSE false END) AS isDefault

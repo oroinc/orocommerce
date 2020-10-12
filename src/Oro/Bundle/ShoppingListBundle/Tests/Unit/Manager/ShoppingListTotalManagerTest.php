@@ -82,10 +82,10 @@ class ShoppingListTotalManagerTest extends \PHPUnit\Framework\TestCase
             ->setValid(true);
 
         $repository = $this->createMock(ObjectRepository::class);
-        $repository->expects($this->once())->method('findBy')->willReturn([$total]);
+        $repository->expects($this->exactly(2))->method('findBy')->willReturn([$total]);
 
         $em = $this->createMock(ObjectManager::class);
-        $em->expects($this->once())->method('getRepository')
+        $em->expects($this->exactly(2))->method('getRepository')
             ->with(ShoppingListTotal::class)
             ->willReturn($repository);
         $em->expects($this->exactly(2))->method('persist');
@@ -104,13 +104,16 @@ class ShoppingListTotalManagerTest extends \PHPUnit\Framework\TestCase
             ->with($shoppingList2, self::USD)
             ->willReturn((new Subtotal())->setCurrency(self::USD)->setAmount(200));
 
-        $this->totalManager->setSubtotals([$shoppingList1, $shoppingList2, $shoppingList3]);
+        $this->totalManager->setSubtotals([$shoppingList1, $shoppingList2, $shoppingList3], false);
         $this->assertEquals(self::USD, $shoppingList1->getSubtotal()->getCurrency());
         $this->assertEquals(100, $shoppingList1->getSubtotal()->getAmount());
         $this->assertEquals(self::USD, $shoppingList2->getSubtotal()->getCurrency());
         $this->assertEquals(200, $shoppingList2->getSubtotal()->getAmount());
         $this->assertEquals(self::USD, $shoppingList3->getSubtotal()->getCurrency());
         $this->assertEquals(300, $shoppingList3->getSubtotal()->getAmount());
+
+        // Ensures that duplicated subtotals will not be created.
+        $this->totalManager->setSubtotals([$shoppingList1, $shoppingList2, $shoppingList3], true);
     }
 
     public function testRecalculateTotals()

@@ -12,9 +12,6 @@ class ShoppingListStub extends ShoppingList
     /** @var ArrayCollection|CustomerVisitor[] */
     private $visitors;
 
-    /** @var int */
-    private $lineItemsCount;
-
     /**
      * ShoppingListStub constructor.
      */
@@ -65,25 +62,6 @@ class ShoppingListStub extends ShoppingList
     public function setLineItems(Collection $lineItems): self
     {
         $this->lineItems = $lineItems;
-
-        return $this;
-    }
-
-    /**
-     * @return null|int
-     */
-    public function getLineItemsCount(): ?int
-    {
-        return $this->lineItemsCount;
-    }
-
-    /**
-     * @param null|int $lineItemsCount
-     * @return $this
-     */
-    public function setLineItemsCount(?int $lineItemsCount): self
-    {
-        $this->lineItemsCount = $lineItemsCount;
 
         return $this;
     }

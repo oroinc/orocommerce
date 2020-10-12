@@ -643,6 +643,7 @@ services:
         class: Oro\Bundle\ShoppingListBundle\Datagrid\EventListener\FrontendShoppingListsGridEventListener
         arguments:
             - '@oro_shopping_list.manager.current_shopping_list'
+            - '@oro_shopping_list.manager.shopping_list_total'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-customer-user-shopping-lists-base-grid, method: onBuildBefore }
 
