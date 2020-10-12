@@ -170,7 +170,8 @@ class ShoppingList extends ExtendShoppingList implements
      *      targetEntity="Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal",
      *      mappedBy="shoppingList",
      *      cascade={"ALL"},
-     *      orphanRemoval=true
+     *      orphanRemoval=true,
+     *      indexBy="currency"
      * )
      **/
     protected $totals;
@@ -179,6 +180,13 @@ class ShoppingList extends ExtendShoppingList implements
      * @var Subtotal
      */
     protected $subtotal;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="line_items_count", type="smallint", options={"default"=0})
+     */
+    protected $lineItemsCount = 0;
 
     /**
      * {@inheritdoc}
@@ -301,9 +309,7 @@ class ShoppingList extends ExtendShoppingList implements
      */
     public function addTotal(ShoppingListTotal $item)
     {
-        if (!$this->totals->contains($item)) {
-            $this->totals->add($item);
-        }
+        $this->totals->set($item->getCurrency(), $item);
 
         return $this;
     }
@@ -429,6 +435,26 @@ class ShoppingList extends ExtendShoppingList implements
     public function setSubtotal(Subtotal $subtotal)
     {
         $this->subtotal = $subtotal;
+    }
+
+    /**
+     * @return null|int
+     */
+    public function getLineItemsCount(): ?int
+    {
+        return $this->lineItemsCount;
+    }
+
+    /**
+     * @param null|int $lineItemsCount
+     *
+     * @return $this
+     */
+    public function setLineItemsCount(?int $lineItemsCount): self
+    {
+        $this->lineItemsCount = $lineItemsCount;
+
+        return $this;
     }
 
     /**
