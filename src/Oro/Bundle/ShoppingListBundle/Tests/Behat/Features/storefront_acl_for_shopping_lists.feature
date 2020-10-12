@@ -168,6 +168,10 @@ Feature: Storefront acl for shopping lists
       | Shopping List 3 |
       | Shopping List 5 |
 
+  Scenario: Check "Set as Default" without permission
+    When I open shopping list widget
+    Then I should not see a "Shopping List Widget Set Current Radio" element
+
   Scenario: Set edit permission to User
     Given I proceed as the Admin
     And select following permissions:
@@ -183,6 +187,12 @@ Feature: Storefront acl for shopping lists
     And type "Shopping List User 1" in "Shopping List Label Input"
     When click "Save"
     Then I should see "Record has been successfully updated" flash message
+
+  Scenario: Check "Set as Default" for User
+    When I open shopping list widget
+    Then I should see a "Shopping List Widget Set Current Radio 1" element
+    And I should not see a "Shopping List Widget Set Current Radio 2" element
+    And I should not see a "Shopping List Widget Set Current Radio 3" element
 
   Scenario Outline: Check that buyer cannot edit shopping list
     Given I open page with shopping list <name>
@@ -201,6 +211,23 @@ Feature: Storefront acl for shopping lists
       | Shopping List | Edit:Department |
     When I save form
     Then I should see "Customer User Role has been saved" flash message
+
+  Scenario: Check "Set as Default" radios are displayed for Department
+    Given I proceed as the Buyer
+    And I reload the page
+    When I open shopping list widget
+    Then I should see a "Shopping List Widget Set Current Radio 1" element
+    And I should not see a "Shopping List Widget Set Current Radio 2" element
+    And I should see a "Shopping List Widget Set Current Radio 3" element
+
+  Scenario Outline: Check "Set as Default" for Department
+    When I click on "<clickOnRadio>"
+    Then should see "Shopping list <name> has been set as default." flash message
+
+    Examples:
+      | name                 | clickOnRadio                             |
+      | Shopping List 5      | Shopping List Widget Set Current Radio 3 |
+      | Shopping List User 1 | Shopping List Widget Set Current Radio 1 |
 
   Scenario Outline: Check that buyer can edit own shopping list
     Given I proceed as the Buyer
@@ -225,6 +252,24 @@ Feature: Storefront acl for shopping lists
       | Shopping List | Edit:Сorporate |
     When I save form
     Then I should see "Customer User Role has been saved" flash message
+
+  Scenario: Check "Set as Default" radios are displayed for Corporate
+    Given I proceed as the Buyer
+    And I reload the page
+    When I open shopping list widget
+    Then I should see a "Shopping List Widget Set Current Radio 1" element
+    And I should see a "Shopping List Widget Set Current Radio 2" element
+    And I should see a "Shopping List Widget Set Current Radio 3" element
+
+  Scenario Outline: Check "Set as Default" for Corporate
+    When I click on "<clickOnRadio>"
+    Then should see "Shopping list <name> has been set as default." flash message
+
+    Examples:
+      | name                       | clickOnRadio                             |
+      | Shopping List 3            | Shopping List Widget Set Current Radio 2 |
+      | Shopping List Department 5 | Shopping List Widget Set Current Radio 3 |
+      | Shopping List Department 1 | Shopping List Widget Set Current Radio 1 |
 
   Scenario Outline: Check that buyer can edit own shopping list
     Given I proceed as the Buyer
