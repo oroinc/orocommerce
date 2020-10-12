@@ -52,7 +52,7 @@ class ShoppingListTotalManager
     /**
      * Sets Shopping Lists Subtotal for user current currency
      *
-     * @param array $shoppingLists
+     * @param ShoppingList[] $shoppingLists
      * @param bool $doFlush
      */
     public function setSubtotals(array $shoppingLists, $doFlush = true)
@@ -72,11 +72,14 @@ class ShoppingListTotalManager
         );
 
         foreach ($shoppingLists as $shoppingList) {
-            if (!array_key_exists($shoppingList->getId(), $shoppingListTotals)) {
-                $shoppingListTotals[$shoppingList->getId()] = new ShoppingListTotal($shoppingList, $currency);
-                $this->getEntityManager()->persist($shoppingListTotals[$shoppingList->getId()]);
+            $shoppingListId = $shoppingList->getId();
+            $totals = $shoppingList->getTotals();
+            if (!array_key_exists($shoppingListId, $shoppingListTotals) && !$totals->containsKey($currency)) {
+                $shoppingListTotals[$shoppingListId] = new ShoppingListTotal($shoppingList, $currency);
+                $shoppingList->addTotal($shoppingListTotals[$shoppingListId]);
+                $this->getEntityManager()->persist($shoppingList);
             }
-            $shoppingListTotal = $shoppingListTotals[$shoppingList->getId()];
+            $shoppingListTotal = $shoppingListTotals[$shoppingListId] ?? $totals->get($currency);
             if (!$shoppingListTotal->isValid()) {
                 $subtotal = $this->lineItemNotPricedSubtotalProvider->getSubtotalByCurrency($shoppingList, $currency);
                 $shoppingListTotal->setSubtotal($subtotal)

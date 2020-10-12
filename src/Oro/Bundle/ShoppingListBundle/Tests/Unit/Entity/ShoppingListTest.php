@@ -9,6 +9,7 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal;
 use Oro\Bundle\ShoppingListBundle\Tests\Unit\Entity\Stub\ShoppingListStub;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
@@ -97,5 +98,18 @@ class ShoppingListTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->assertEquals('{"id":1,"label":"TEST","is_current":false}', json_encode($shoppingList));
+    }
+
+    public function testTotalsAccessors(): void
+    {
+        $shoppingList = new ShoppingList();
+        $currency = 'USD';
+        $total = new ShoppingListTotal($shoppingList, $currency);
+
+        $this->assertCount(0, $shoppingList->getTotals());
+        $shoppingList->addTotal($total);
+        $this->assertSame($total, $shoppingList->getTotals()->get($currency));
+        $shoppingList->removeTotal($total);
+        $this->assertCount(0, $shoppingList->getTotals());
     }
 }
