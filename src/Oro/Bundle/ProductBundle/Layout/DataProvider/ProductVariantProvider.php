@@ -28,9 +28,7 @@ class ProductVariantProvider
      */
     public function hasProductAnyAvailableVariant(Product $configurableProduct)
     {
-        $productVariants = $this->availabilityProvider->getSimpleProductsByVariantFields($configurableProduct);
-
-        return (bool)count($productVariants);
+        return $this->availabilityProvider->hasSimpleProductsByVariantFields($configurableProduct);
     }
 
     /**
