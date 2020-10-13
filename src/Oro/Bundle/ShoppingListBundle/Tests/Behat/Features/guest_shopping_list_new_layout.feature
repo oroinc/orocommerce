@@ -1,5 +1,5 @@
 @regression
-@ticket-BB-19469
+@ticket-BB-19455
 @fixture-OroShoppingListBundle:GuestShoppingListsFixture.yml
 Feature: Guest Shopping List with new layout
   In order to manage shopping lists on front store
@@ -154,7 +154,13 @@ Feature: Guest Shopping List with new layout
       | 1GB83  | Slip-On Clog                       |          | Click "edit" to select variants |       | N/A      |
       | PSKU1  | Product1 Updated note for Product1 | In Stock | 1 ea                            | $1.00 | $1.00    |
       | SKU003 | Product3                           | In Stock | 3 ea                            | $3.00 | $9.00    |
-    When I click on "Create Order"
+    And I should see following actions for 1GB83 in grid:
+      | Edit   |
+      | Delete |
+    When I click Delete 1GB83 in grid
+    Then I should see "Are you sure you want to delete this product?"
+    When click "Cancel" in modal window
+    And I click on "Create Order"
     Then I should see "UiWindow" with elements:
       | Content      | Confirmation This shopping list contains configurable products with no variations. Proceed to checkout without these products? |
       | okButton     | Proceed                                                                                                                        |
