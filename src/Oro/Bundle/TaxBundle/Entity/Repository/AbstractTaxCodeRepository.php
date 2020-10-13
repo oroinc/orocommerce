@@ -4,11 +4,15 @@ namespace Oro\Bundle\TaxBundle\Entity\Repository;
 
 use Doctrine\Common\Inflector\Inflector;
 use Doctrine\ORM\EntityRepository;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\TaxBundle\Entity\AbstractTaxCode;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
+/**
+ * Repository for Tax Code entities
+ */
 abstract class AbstractTaxCodeRepository extends EntityRepository
 {
     const ALIAS_SUFFIX = 'TaxCode';
@@ -25,15 +29,24 @@ abstract class AbstractTaxCodeRepository extends EntityRepository
 
     /**
      * @param array $codes
+     * @param Organization|null $organization
      * @return AbstractTaxCode[]
      */
-    public function findByCodes(array $codes = [])
+    public function findByCodes(array $codes = [], Organization $organization = null)
     {
         $qb = $this->createQueryBuilder('taxCode');
 
-        return $qb
+        $qb
             ->where($qb->expr()->in('taxCode.code', ':codes'))
-            ->setParameter('codes', $codes)
+            ->setParameter('codes', $codes);
+
+        if ($organization) {
+            $qb
+                ->andWhere($qb->expr()->eq('taxCode.organization', ':organization'))
+                ->setParameter('organization', $organization);
+        }
+
+        return $qb
             ->getQuery()
             ->getResult();
     }
