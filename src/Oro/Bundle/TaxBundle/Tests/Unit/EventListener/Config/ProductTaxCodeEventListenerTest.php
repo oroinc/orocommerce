@@ -5,6 +5,8 @@ namespace Oro\Bundle\TaxBundle\Tests\Unit\EventListener\Config;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
 use Oro\Bundle\TaxBundle\Entity\Repository\AbstractTaxCodeRepository;
 use Oro\Bundle\TaxBundle\EventListener\Config\ProductTaxCodeEventListener;
@@ -20,6 +22,9 @@ class ProductTaxCodeEventListenerTest extends \PHPUnit\Framework\TestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper */
     protected $doctrineHelper;
 
+    /** @var \PHPUnit\Framework\MockObject\MockObject|TokenAccessorInterface */
+    protected $tokenAccessor;
+
     /** @var ConfigManager */
     protected $configManager;
 
@@ -31,6 +36,7 @@ class ProductTaxCodeEventListenerTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
         $this->configManager = $this->createMock(ConfigManager::class);
 
         $this->listener = new ProductTaxCodeEventListener(
@@ -38,6 +44,7 @@ class ProductTaxCodeEventListenerTest extends \PHPUnit\Framework\TestCase
             ProductTaxCode::class,
             'digital_products_eu'
         );
+        $this->listener->setTokenAccessor($this->tokenAccessor);
 
         $this->data = ['CODE1', null, 1, new \stdClass(), '', 'CODE2', '2'];
     }
@@ -62,12 +69,18 @@ class ProductTaxCodeEventListenerTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $organization = $this->getEntity(Organization::class);
+        $this->tokenAccessor->expects($this->once())
+            ->method('getOrganization')
+            ->willReturn($organization);
+
         $taxCodes = [
             $this->getEntity(ProductTaxCode::class, ['code' => 'CODE1']),
             $this->getEntity(ProductTaxCode::class, ['code' => 'CODE2']),
             $this->getEntity(ProductTaxCode::class, ['code' => '2']),
         ];
-        $repository->expects($this->once())->method('findByCodes')->with(['CODE1', 'CODE2', '2'])
+        $repository->expects($this->once())->method('findByCodesAndOrganization')
+            ->with($organization, ['CODE1', 'CODE2', '2'])
             ->willReturn($taxCodes);
 
         $this->doctrineHelper

@@ -7,7 +7,7 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
 use Oro\Bundle\TaxBundle\Entity\Repository\ProductTaxCodeRepository;
 use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
-use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes as TaxFixture;
+use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodesWithAdditionalOrganization as TaxFixture;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class ProductTaxCodeRepositoryTest extends WebTestCase
@@ -17,15 +17,45 @@ class ProductTaxCodeRepositoryTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
 
-        $this->loadFixtures(['Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes']);
+        $this->loadFixtures([TaxFixture::class]);
     }
 
     public function testFindByCodes()
     {
         /** @var ProductTaxCode $taxCode1 */
-        $taxCode = $this->getReference(TaxFixture::REFERENCE_PREFIX . '.' . TaxFixture::TAX_1);
+        $taxCode1 = $this->getReference(TaxFixture::REFERENCE_PREFIX . '.' . TaxFixture::TAX_1);
 
-        $this->assertEquals([$taxCode], $this->getRepository()->findByCodes([TaxFixture::TAX_1]));
+        /** @var ProductTaxCode $taxCode2 */
+        $taxCode2 = $this->getReference(TaxFixture::REFERENCE_PREFIX . '.' . TaxFixture::TAX_2);
+
+        /** @var ProductTaxCode $taxCode3 */
+        $taxCode3 = $this->getReference(TaxFixture::REFERENCE_PREFIX . '.' . TaxFixture::TAX_3);
+
+        $this->assertEquals([
+            $taxCode1,
+            $taxCode2,
+            $taxCode3,
+        ], $this->getRepository()->findByCodes([
+            TaxFixture::TAX_1,
+            TaxFixture::TAX_2,
+            TaxFixture::TAX_3,
+        ]));
+    }
+
+    public function testFindByCodesAndOrganization()
+    {
+        /** @var ProductTaxCode $taxCode3 */
+        $taxCode3 = $this->getReference(TaxFixture::REFERENCE_PREFIX . '.' . TaxFixture::TAX_3);
+
+        $organizationAcme = $this->getReference('acme_organization');
+
+        $this->assertEquals([
+            $taxCode3
+        ], $this->getRepository()->findByCodesAndOrganization($organizationAcme, [
+            TaxFixture::TAX_1,
+            TaxFixture::TAX_2,
+            TaxFixture::TAX_3,
+        ]));
     }
 
     public function testFindManyByEntitiesWithEmptyProducts()
