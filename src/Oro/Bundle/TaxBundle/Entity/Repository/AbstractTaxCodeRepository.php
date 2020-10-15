@@ -4,11 +4,16 @@ namespace Oro\Bundle\TaxBundle\Entity\Repository;
 
 use Doctrine\Common\Inflector\Inflector;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\TaxBundle\Entity\AbstractTaxCode;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
+/**
+ * Repository for Tax Code entities
+ */
 abstract class AbstractTaxCodeRepository extends EntityRepository
 {
     const ALIAS_SUFFIX = 'TaxCode';
@@ -25,15 +30,44 @@ abstract class AbstractTaxCodeRepository extends EntityRepository
 
     /**
      * @param array $codes
-     * @return AbstractTaxCode[]
+     * @return QueryBuilder
      */
-    public function findByCodes(array $codes = [])
+    protected function getFindByCodesQueryBuilder(array $codes = [])
     {
         $qb = $this->createQueryBuilder('taxCode');
 
         return $qb
             ->where($qb->expr()->in('taxCode.code', ':codes'))
-            ->setParameter('codes', $codes)
+            ->setParameter('codes', $codes);
+    }
+
+    /**
+     * @param array $codes
+     * @return AbstractTaxCode[]
+     */
+    public function findByCodes(array $codes = [])
+    {
+        return $this->getFindByCodesQueryBuilder($codes)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @param Organization $organization
+     * @param array $codes
+     * @return AbstractTaxCode[]
+     */
+    public function findByCodesAndOrganization(Organization $organization, array $codes = [])
+    {
+        $qb = $this->getFindByCodesQueryBuilder($codes);
+
+        if ($organization) {
+            $qb
+                ->andWhere($qb->expr()->eq('taxCode.organization', ':organization'))
+                ->setParameter('organization', $organization);
+        }
+
+        return $qb
             ->getQuery()
             ->getResult();
     }

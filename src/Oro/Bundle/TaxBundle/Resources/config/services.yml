@@ -137,6 +137,8 @@ services:
             - "@oro_entity.doctrine_helper"
             - 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode'
             - 'digital_products_eu'
+        calls:
+            - [setTokenAccessor, ['@oro_security.token_accessor']]
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: formPreSet }
             - { name: kernel.event_listener, event: oro_config.settings_before_save.oro_tax.digital_products_eu, method: beforeSave }
@@ -147,6 +149,8 @@ services:
             - "@oro_entity.doctrine_helper"
             - 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode'
             - 'digital_products_us'
+        calls:
+            - [setTokenAccessor, ['@oro_security.token_accessor']]
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: formPreSet }
             - { name: kernel.event_listener, event: oro_config.settings_before_save.oro_tax.digital_products_us, method: beforeSave }
@@ -157,6 +161,8 @@ services:
             - "@oro_entity.doctrine_helper"
             - 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode'
             - 'shipping_tax_code'
+        calls:
+            - [setTokenAccessor, ['@oro_security.token_accessor']]
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: formPreSet }
             - { name: kernel.event_listener, event: oro_config.settings_before_save.oro_tax.shipping_tax_code, method: beforeSave }

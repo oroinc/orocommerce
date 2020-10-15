@@ -16,6 +16,9 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Reorganizes form fields on the product attribute configuration page
+ */
 class AttributeConfigExtension extends AbstractTypeExtension
 {
     use AttributeConfigExtensionApplicableTrait;
@@ -46,6 +49,10 @@ class AttributeConfigExtension extends AbstractTypeExtension
             $className = $configModel->getEntity()->getClassName();
             if ($className === Product::class) {
                 $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'onPreSetData']);
+
+                if ($builder->has('importexport') && $builder->get('importexport')->has('header')) {
+                    $builder->get('importexport')->remove('header');
+                }
             }
         }
     }

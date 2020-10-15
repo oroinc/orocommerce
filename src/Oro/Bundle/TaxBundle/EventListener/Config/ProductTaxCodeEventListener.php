@@ -5,16 +5,25 @@ namespace Oro\Bundle\TaxBundle\EventListener\Config;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\TaxBundle\DependencyInjection\OroTaxExtension;
 use Oro\Bundle\TaxBundle\Entity\AbstractTaxCode;
 use Oro\Bundle\TaxBundle\Entity\Repository\AbstractTaxCodeRepository;
 
+/**
+ * Manages Tax shipping form in system configuration
+ */
 class ProductTaxCodeEventListener
 {
     /**
      * @var DoctrineHelper
      */
     protected $doctrineHelper;
+
+    /**
+     * @var TokenAccessorInterface
+     */
+    protected $tokenAccessor;
 
     /**
      * @var string
@@ -31,11 +40,22 @@ class ProductTaxCodeEventListener
      * @param string $taxCodeClass
      * @param string $settingsKey
      */
-    public function __construct(DoctrineHelper $doctrineHelper, $taxCodeClass, $settingsKey)
-    {
+    public function __construct(
+        DoctrineHelper $doctrineHelper,
+        $taxCodeClass,
+        $settingsKey
+    ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->taxCodeClass = (string)$taxCodeClass;
         $this->settingsKey = (string)$settingsKey;
+    }
+
+    /**
+     * @param TokenAccessorInterface $tokenAccessor
+     */
+    public function setTokenAccessor(TokenAccessorInterface $tokenAccessor)
+    {
+        $this->tokenAccessor = $tokenAccessor;
     }
 
     /**
@@ -50,12 +70,17 @@ class ProductTaxCodeEventListener
             return;
         }
 
+        if (!$this->tokenAccessor) {
+            throw new \InvalidArgumentException('tokenAccessor must be set');
+        }
+        $organization = $this->tokenAccessor->getOrganization();
+
         $result = [];
         $codes = $settings[$key]['value'];
         if ($codes) {
             /** @var AbstractTaxCodeRepository $repository */
             $repository = $this->doctrineHelper->getEntityRepository($this->taxCodeClass);
-            $result = $repository->findByCodes($this->filterCodes($codes));
+            $result = $repository->findByCodesAndOrganization($organization, $this->filterCodes($codes));
         }
 
         $settings[$key]['value'] = $result;
