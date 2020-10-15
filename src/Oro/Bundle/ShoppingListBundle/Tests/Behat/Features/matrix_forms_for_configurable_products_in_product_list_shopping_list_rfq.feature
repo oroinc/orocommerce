@@ -49,6 +49,13 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I upload "configurable_products_for_matrix_forms/products_prices.csv" file to "ShoppingListImportFileField"
     And I click "Import file"
 
+  Scenario: Update translations
+    When I go to System / Localization / Translations
+    And I filter Key as equal to "oro.frontend.shoppinglist.lineitem.unit.label"
+    And I edit "oro.frontend.shoppinglist.lineitem.unit.label" Translated Value as "Unit"
+    And I click "Update Cache"
+    Then I should see "Translation Cache has been updated" flash message
+
   Scenario: Check prices container on configurable product view is visible only when there are prices
     Given I proceed as the User
     Given I signed in as AmandaRCole@example.org on the store frontend
@@ -273,8 +280,18 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     When I click "Proceed"
     Then I should see "Cannot create order because Shopping List has no items" flash message
 
+  Scenario: Check quantity and unit for empty configurable product
+    When I follow "Account"
+    And I click "My Shopping Lists"
+    And I click view Shopping List in grid
+    Then I should see following grid:
+      | SKU  | Item                 | Qty | Unit                            | Price  | Subtotal |
+      | CNFB | ConfigurableProductB |     | Click "edit" to select variants |        | N/A      |
+
   Scenario: Create request for quote with empty matrix form
-    When I click "More Actions"
+    When I click "Shopping List Actions"
+    And click "Edit"
+    And I click "More Actions"
     And I click "Request Quote"
     Then I should see "Confirmation This shopping list contains configurable products with no variations. Proceed to RFQ without these products?"
     When I click "Proceed"
