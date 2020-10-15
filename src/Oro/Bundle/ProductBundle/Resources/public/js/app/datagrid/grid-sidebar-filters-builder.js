@@ -1,5 +1,6 @@
 import _ from 'underscore';
-import FilterItemsHintView from 'oroproduct/js/app/views/filter-items-hint-view';
+import FilterItemsHintView from 'oroproduct/js/app/views/sidebar-filters/filter-items-hint-view';
+import FilterExtraHintView from 'oroproduct/js/app/views/sidebar-filters/filter-extra-hint';
 import filtersContainerTemplate from 'tpl-loader!oroproduct/templates/sidebar-filters/filters-container.html';
 
 export default {
@@ -29,6 +30,7 @@ export default {
             toolbarClassNames.push(toolbarOptions.className );
         }
         toolbarOptions.className = _.uniq(toolbarClassNames).join(' ');
+
         return deferred.resolve();
     },
 
@@ -45,6 +47,15 @@ export default {
 
                     topToolbar.el.after(filterItemsHintView.render().el);
                 }
+            });
+
+            grid.once('filterManager:connected', () => {
+                _.each(grid.filterManager.filters, filter => {
+                    filter.subview('sidebar-filters-extra-hint', new FilterExtraHintView({
+                        filter: filter,
+                        autoRender: true
+                    }));
+                });
             });
         });
         return deferred.resolve();

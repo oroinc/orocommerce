@@ -52,7 +52,7 @@ const FilterItemsHintView = BaseView.extend({
      * @inheritDoc
      */
     initialize(options) {
-        _.extend(this, _.pick(options, ['renderMode', 'gridName', 'className']));
+        _.extend(this, _.pick(options, ['renderMode', 'gridName']));
 
         FilterItemsHintView.__super__.initialize.call(this, options);
     },

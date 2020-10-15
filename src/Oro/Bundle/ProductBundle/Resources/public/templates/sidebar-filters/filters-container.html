@@ -3,6 +3,23 @@
         <div data-filters-items>
             <div class="filter-items"></div>
         </div>
+        <% if (obj.enableMultiselectWidget) { %>
+            <select data-action="add-filter-select"
+                data-skip-input-widgets
+                multiple
+            >
+            <% _.each(filters, function (filter, name) { %>
+                <% if (filter.visible) { %>
+                    <option
+                        class="<%- filter.visible ? '' : 'hidden' %>"
+                        title="<%- filter.label %>"
+                        value="<%- name %>"
+                        <% if (filter.enabled) { %>selected<% } %>
+                    ><%- filter.label %></option>
+                <% } %>
+            <% }); %>
+        </select>
+        <% } %>
     </div>
 </div>
 
