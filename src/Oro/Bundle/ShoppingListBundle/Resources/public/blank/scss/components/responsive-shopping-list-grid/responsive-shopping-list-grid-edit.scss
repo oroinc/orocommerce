@@ -176,12 +176,6 @@
             margin: 0 !important;
         }
 
-        .grid-body-cell-quantity,
-        .grid-body-cell-subtotal,
-        .grid-body-cell-price {
-            padding-left: 0;
-        }
-
         .action-cell {
             order: 2;
             display: inline-flex;
@@ -211,7 +205,7 @@
             }
 
             .grid-body-cell {
-                margin-left: $responsive-shopping-list-edit-select-row-cell-width-mobile;
+                margin-left: $responsive-shopping-list-edit-select-row-cell-width-mobile - $responsive-shopping-body-cell-offset-x-mobile;
             }
         }
 
@@ -229,7 +223,7 @@
             }
 
             .grid-body-cell {
-                margin-left: $responsive-shopping-list-edit-select-row-cell-width-mobile + $responsive-shopping-list-edit-sub-row-offset;
+                margin-left: $responsive-shopping-list-edit-select-row-cell-width-mobile + $responsive-shopping-list-edit-sub-row-offset - $responsive-shopping-body-cell-offset-x-mobile;
             }
 
             .grid-body-cell-item {
@@ -300,7 +294,7 @@
             }
 
             .grid-body-cell {
-                margin-left: $responsive-shopping-list-edit-select-row-cell-width-mobile-s;
+                margin-left: $responsive-shopping-list-edit-select-row-cell-width-mobile-s - $responsive-shopping-body-cell-offset-x-mobile;
             }
         }
 
