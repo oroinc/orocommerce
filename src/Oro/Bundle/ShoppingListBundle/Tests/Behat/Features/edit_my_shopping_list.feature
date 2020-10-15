@@ -125,7 +125,7 @@ Feature: My Shopping List
     And I fill "ProductForm" with:
       | Configurable Attributes | [Color] |
     And I check records in grid:
-      | BB4 |
+      | BB4  |
       | BB13 |
     And I save and close form
     Then I should see "Product has been saved" flash message
@@ -141,18 +141,43 @@ Feature: My Shopping List
       | Shopping List 3 | $8,818.00 | 32    |
       | Shopping List 1 | $1,581.00 | 3     |
 
-  Scenario: Order empty matrix form
+  Scenario: Move empty configurable product to another Shopping List
+    When I open shopping list widget
+    And I click "Create New List"
+    And type "Shopping List 4" in "Shopping List Name"
+    And I click "Create"
+    Then I should see "Shopping list \"Shopping List 4\" was created successfully"
     When type "AA1" in "search"
     And click "Search Button"
     Then I should see an "Matrix Grid Form" element
-    When I click "Clear All"
-    And I click on "Shopping List Dropdown"
+    When I click on "Shopping List Dropdown"
     And I click "Create New Shopping List" in "ShoppingListButtonGroupMenu" element
-    And I fill in "Shopping List Name" with "Shopping List 4"
+    And I fill in "Shopping List Name" with "Source Shopping List"
     And I click "Create and Add"
-    Then I should see "Shopping list \"Shopping List 4\" was updated successfully"
-    When I follow "Shopping List 4" link within flash message "Shopping list \"Shopping List 4\" was updated successfully"
-    And I click Edit AA1 in grid
+    Then I should see "Shopping list \"Source Shopping List\" was updated successfully"
+    When I follow "Source Shopping List" link within flash message "Shopping list \"Source Shopping List\" was updated successfully"
+    And I click on "First Line Item Row Checkbox"
+    And I click "Move to another Shopping List" link from mass action dropdown
+    And I click "Filter Toggle" in "UiDialog" element
+    And I filter Name as is equal to "Shopping List 4" in "Shopping List Action Move Grid"
+    And I click "Shopping List Action Move Radio"
+    And I click "Shopping List Action Submit"
+    Then I should see "One entity has been moved successfully" flash message
+    And I should see "There are no shopping list line items"
+    When I open page with shopping list Shopping List 4
+    Then I should see following grid:
+      | SKU  | Item                   | QtyUpdate All                   | Price  | Subtotal |
+      | AA1  | Configurable Product 1 | Click "edit" to select variants |        | N/A      |
+
+  Scenario: Set Default Action
+    When I click "Shopping List Actions"
+    Then I should see "Set as Default"
+    When I click "Set as Default"
+    And I click "Yes, set as default"
+    Then I should see "Shopping list has been successfully set as default" flash message
+
+  Scenario: Order empty matrix form
+    When I click Edit AA1 in grid
     Then I should see an "Matrix Grid Form" element
     And I should see next rows in "Matrix Grid Form" table
       | S   | M   | L   |

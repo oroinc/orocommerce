@@ -346,8 +346,6 @@ class ShoppingListManager
      */
     private function prepareLineItem(LineItem $lineItem, ShoppingList $shoppingList)
     {
-        $this->ensureProductTypeAllowed($lineItem);
-
         if (null === $lineItem->getCustomerUser() && $shoppingList->getCustomerUser()) {
             $lineItem->setCustomerUser($shoppingList->getCustomerUser());
         }
@@ -372,7 +370,7 @@ class ShoppingListManager
         if ($duplicate) {
             $func($duplicate);
             $em->remove($lineItem);
-        } elseif ($lineItem->getQuantity() > 0) {
+        } elseif ($lineItem->getQuantity() > 0 || !$lineItem->getProduct()->isSimple()) {
             $shoppingList->addLineItem($lineItem);
             $em->persist($lineItem);
         }
@@ -403,20 +401,6 @@ class ShoppingListManager
     }
 
     /**
-     * @param LineItem $lineItem
-     *
-     * @throws \InvalidArgumentException
-     */
-    private function ensureProductTypeAllowed(LineItem $lineItem)
-    {
-        $product = $lineItem->getProduct();
-
-        if ($product && !$product->isSimple()) {
-            throw new \InvalidArgumentException('Can not save not simple product');
-        }
-    }
-
-    /**
      * @return CustomerUser|null
      */
     private function getCustomerUser()
@@ -437,6 +421,8 @@ class ShoppingListManager
     }
 
     /**
+     * @param EntityManagerInterface $em
+     *
      * @return LineItemRepository
      */
     private function getLineItemRepository(EntityManagerInterface $em)

@@ -18,6 +18,7 @@ use Oro\Bundle\ShoppingListBundle\Datagrid\Extension\MassAction\MoveProductsMass
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListEmptyConfigurableLineItems;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -43,6 +44,7 @@ class MoveProductsMassActionHandlerTest extends WebTestCase
         $this->loadFixtures(
             [
                 LoadShoppingListLineItems::class,
+                LoadShoppingListEmptyConfigurableLineItems::class,
             ]
         );
 
@@ -85,14 +87,19 @@ class MoveProductsMassActionHandlerTest extends WebTestCase
         $this->assertEquals($targetShoppingList->getId(), $lineItem->getShoppingList()->getId());
     }
 
-    public function testHandleWhenSingleItem(): void
+    /**
+     * @param string $lineItemName
+     *
+     * @dataProvider handleWhenSingleItemDataProvider
+     */
+    public function testHandleWhenSingleItem(string $lineItemName): void
     {
         /** @var ShoppingList $sourceShoppingList */
         $sourceShoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_5);
         $targetShoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_2);
 
         $datagrid = $this->getDatagrid($this->customerUser, $sourceShoppingList);
-        $lineItem = $this->getReference(LoadShoppingListLineItems::LINE_ITEM_10);
+        $lineItem = $this->getReference($lineItemName);
         $result = $this->handler->handle(
             new MassActionHandlerArgs(
                 $this->getMoveProductsMassAction(),
@@ -108,6 +115,21 @@ class MoveProductsMassActionHandlerTest extends WebTestCase
         $this->assertEquals(['count' => 1], $result->getOptions());
 
         $this->assertEquals($targetShoppingList->getId(), $lineItem->getShoppingList()->getId());
+    }
+
+    /**
+     * @return array
+     */
+    public function handleWhenSingleItemDataProvider(): array
+    {
+        return [
+            'simple product' => [
+                'lineItemName' => LoadShoppingListLineItems::LINE_ITEM_10,
+            ],
+            'empty configurable product' => [
+                'lineItemName' => LoadShoppingListEmptyConfigurableLineItems::LINE_ITEM_1,
+            ],
+        ];
     }
 
     public function testHandleWhenAllItems(): void
@@ -128,8 +150,8 @@ class MoveProductsMassActionHandlerTest extends WebTestCase
 
         $this->assertInstanceOf(MassActionResponse::class, $result);
         $this->assertTrue($result->isSuccessful());
-        $this->assertEquals('4 items have been moved successfully.', $result->getMessage());
-        $this->assertEquals(['count' => 4], $result->getOptions());
+        $this->assertEquals('5 items have been moved successfully.', $result->getMessage());
+        $this->assertEquals(['count' => 5], $result->getOptions());
 
         $lineItem = $this->getReference(LoadShoppingListLineItems::LINE_ITEM_10);
 

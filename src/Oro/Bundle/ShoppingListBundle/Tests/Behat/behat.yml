@@ -318,6 +318,20 @@ oro_behat_extension:
     Shopping List Action Reassign Radio:
       selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-assign-grid"] input[name="assigned"]'
 
+    Shopping List Action Move Radio:
+      selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-select-grid"] input[name="selected"]'
+
+    Shopping List Action Move Grid:
+      selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-select-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    Shopping List Action Move GridFilters:
+      selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-select-grid"] div.filter-box'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
+
+    First Line Item Row Checkbox:
+      selector: '.grid-body .grid-row:first-child span.custom-checkbox__icon'
+
     Show All:
       selector: 'button[data-role="pagination-toggler"]'
 
