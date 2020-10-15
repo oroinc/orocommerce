@@ -135,6 +135,7 @@ services:
         class: 'Oro\Bundle\TaxBundle\EventListener\Config\ProductTaxCodeEventListener'
         arguments:
             - "@oro_entity.doctrine_helper"
+            - '@oro_security.token_accessor'
             - 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode'
             - 'digital_products_eu'
         tags:
@@ -145,6 +146,7 @@ services:
         class: 'Oro\Bundle\TaxBundle\EventListener\Config\ProductTaxCodeEventListener'
         arguments:
             - "@oro_entity.doctrine_helper"
+            - '@oro_security.token_accessor'
             - 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode'
             - 'digital_products_us'
         tags:
@@ -155,6 +157,7 @@ services:
         class: 'Oro\Bundle\TaxBundle\EventListener\Config\ProductTaxCodeEventListener'
         arguments:
             - "@oro_entity.doctrine_helper"
+            - '@oro_security.token_accessor'
             - 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode'
             - 'shipping_tax_code'
         tags:
