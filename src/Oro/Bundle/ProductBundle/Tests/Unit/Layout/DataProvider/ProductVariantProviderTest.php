@@ -32,9 +32,9 @@ class ProductVariantProviderTest extends \PHPUnit\Framework\TestCase
     {
         $product = new Product();
         $this->availabilityProvider->expects($this->once())
-            ->method('getSimpleProductsByVariantFields')
+            ->method('hasSimpleProductsByVariantFields')
             ->with($product)
-            ->willReturn([]);
+            ->willReturn(false);
 
         $result = $this->productVariantProvider->hasProductAnyAvailableVariant($product);
         $this->assertFalse($result);
@@ -44,9 +44,9 @@ class ProductVariantProviderTest extends \PHPUnit\Framework\TestCase
     {
         $product = new Product();
         $this->availabilityProvider->expects($this->once())
-            ->method('getSimpleProductsByVariantFields')
+            ->method('hasSimpleProductsByVariantFields')
             ->with($product)
-            ->willReturn([new Product()]);
+            ->willReturn(true);
 
         $result = $this->productVariantProvider->hasProductAnyAvailableVariant($product);
         $this->assertTrue($result);

@@ -49,6 +49,10 @@ class AttributeConfigExtension extends AbstractTypeExtension
             $className = $configModel->getEntity()->getClassName();
             if ($className === Product::class) {
                 $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'onPreSetData']);
+
+                if ($builder->has('importexport') && $builder->get('importexport')->has('header')) {
+                    $builder->get('importexport')->remove('header');
+                }
             }
         }
     }

@@ -393,6 +393,8 @@ const GrapesjsEditorView = BaseView.extend({
      * Add builder event listeners
      */
     builderDelegateEvents: function() {
+        const canvas = this.builder.Canvas;
+
         this.$el.closest('form')
             .on(
                 'keyup' + this.eventNamespace() + ' keypress' + this.eventNamespace()
@@ -407,6 +409,19 @@ const GrapesjsEditorView = BaseView.extend({
 
         this.$el.closest('.scrollable-container').on(`scroll${this.eventNamespace()}`, () => {
             this.builder.trigger('change:canvasOffset');
+        });
+
+        canvas.getCanvasView().$el.on(`scroll${this.eventNamespace()}`, e => {
+            const $cvTools = $(e.target).find('#gjs-cv-tools');
+
+            $cvTools.css({
+                top: e.target.scrollTop
+            });
+
+            // Force recalculate highlight boxes positions;
+            this.builder.trigger('frame:updated', {
+                frame: canvas.model.get('frame')
+            });
         });
 
         this.builder.on('load', this._onLoadBuilder.bind(this));
@@ -458,12 +473,16 @@ const GrapesjsEditorView = BaseView.extend({
         this.$el.closest('.scrollable-container').off(this.eventNamespace());
         mediator.off('dropdown-button:click');
 
+        const canvas = this.builder.Canvas;
+
+        if (canvas) {
+            canvas.getCanvasView().$el.off(this.eventNamespace());
+            $(canvas.getBody()).off();
+        }
         if (this.builder) {
             this.builder.off();
             this.builder.editor.view.$el.find('.gjs-toolbar').off('mouseover');
         }
-
-        $(this.builder.Canvas.getBody()).off();
     },
 
     /**
