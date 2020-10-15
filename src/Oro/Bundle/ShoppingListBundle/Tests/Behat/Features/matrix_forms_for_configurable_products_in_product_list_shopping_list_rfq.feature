@@ -213,16 +213,41 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     Then I click "400-Watt Bulb Work Light"
     And I should see "All Products / 400-Watt Bulb Work Light"
 
-  Scenario: Order empty matrix form
+  Scenario: Move empty configurable product to another Shopping List
+    When I open shopping list widget
+    And I click "Create New List"
+    And I click "Create"
+    Then I should see "Shopping list \"Shopping List\" was created successfully"
     When type "CNFB" in "search"
     And click "Search Button"
     Then I should see an "Matrix Grid Form" element
-    When I click "Add to Shopping List" for "CNFB" product
-    And I follow "Shopping List" link within flash message "Shopping list \"Shopping List\" was updated successfully"
+    When I click on "Shopping List Dropdown"
+    And I click "Create New Shopping List" in "ShoppingListButtonGroupMenu" element
+    And I fill in "Shopping List Name" with "Source Shopping List"
+    And I click "Create and Add"
+    Then I should see "Shopping list \"Source Shopping List\" was updated successfully"
+    When I follow "Source Shopping List" link within flash message "Shopping list \"Source Shopping List\" was updated successfully"
     Then I should see following grid:
       | SKU  | Item                 | QtyUpdate All                   | Price  | Subtotal |
       | CNFB | ConfigurableProductB | Click "edit" to select variants |        | N/A      |
-    And I click Edit CNFB in grid
+    And I click on "First Line Item Row Checkbox"
+    And I click "Move to another Shopping List" link from mass action dropdown
+    And I click "Filter Toggle" in "UiDialog" element
+    And I filter Name as is equal to "Shopping List" in "Shopping List Action Move Grid"
+    And I click "Shopping List Action Move Radio"
+    And I click "Shopping List Action Submit"
+    Then I should see "One entity has been moved successfully" flash message
+    And I should see "There are no shopping list line items"
+    When I click "Shopping List Actions"
+    And I click "Delete"
+    And I click "Yes, delete"
+    And I open page with shopping list "Shopping List"
+    Then I should see following grid:
+      | SKU  | Item                 | QtyUpdate All                   | Price  | Subtotal |
+      | CNFB | ConfigurableProductB | Click "edit" to select variants |        | N/A      |
+
+  Scenario: Order empty matrix form
+    When I click Edit CNFB in grid
     Then I should see an "Matrix Grid Form" element
     And I should see next rows in "Matrix Grid Form" table
       | Value 21 | Value 22 | Value 23 |

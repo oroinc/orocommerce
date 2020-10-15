@@ -371,6 +371,20 @@ oro_behat_extension:
     Shopping List Widget Set Current Radio 3:
       selector: '.shopping-list-widget .shopping-list-dropdown__item:nth-child(4) label[data-role="shopping-list-current-label"]'
 
+    Shopping List Action Move Radio:
+      selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-select-grid"] input[name="selected"]'
+
+    Shopping List Action Move Grid:
+      selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-select-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    Shopping List Action Move GridFilters:
+      selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-select-grid"] div.filter-box'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
+
+    First Line Item Row Checkbox:
+      selector: '.grid-body .grid-row:first-child span.custom-checkbox__icon'
+
   suites:
     OroShoppingListBundle:
       contexts:

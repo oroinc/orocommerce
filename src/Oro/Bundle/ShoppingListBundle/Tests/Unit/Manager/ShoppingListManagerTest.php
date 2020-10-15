@@ -308,15 +308,40 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $this->manager->create();
     }
 
-    public function testAddLineItem()
+    /**
+     * @param LineItem $lineItem
+     *
+     * @dataProvider addLineItemDataProvider
+     */
+    public function testAddLineItem(LineItem $lineItem)
     {
         $shoppingList = new ShoppingList();
-        $lineItem = new LineItem();
 
         $this->manager->addLineItem($lineItem, $shoppingList);
         $this->assertCount(1, $shoppingList->getLineItems());
         $this->assertNull($lineItem->getCustomerUser());
         $this->assertNull($lineItem->getOrganization());
+    }
+
+    /**
+     * @return array
+     */
+    public function addLineItemDataProvider(): array
+    {
+        $configurableLineItem = new LineItem();
+        $configurableProduct = new Product();
+        $configurableProduct->setType(Product::TYPE_CONFIGURABLE);
+        $configurableLineItem->setProduct($configurableProduct);
+        $configurableLineItem->setQuantity(0);
+
+        return [
+            'empty line item' => [
+                'lineItem' => new LineItem(),
+            ],
+            'empty configurable product' => [
+                'lineItem' => $configurableLineItem,
+            ],
+        ];
     }
 
     public function testAddLineItemWithShoppingListData()
@@ -390,20 +415,6 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         /** @var LineItem $resultingItem */
         $resultingItem = array_shift($persistedLineItems);
         $this->assertSame('Notes Duplicated Notes', $resultingItem->getNotes());
-    }
-
-    public function testAddLineItemNotAllowedProductType()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Can not save not simple product');
-
-        $shoppingList = new ShoppingList();
-        $lineItem = new LineItem();
-        $configurableProduct = new Product();
-        $configurableProduct->setType(Product::TYPE_CONFIGURABLE);
-        $lineItem->setProduct($configurableProduct);
-
-        $this->manager->addLineItem($lineItem, $shoppingList);
     }
 
     public function testGetLineItemExistingItem()
