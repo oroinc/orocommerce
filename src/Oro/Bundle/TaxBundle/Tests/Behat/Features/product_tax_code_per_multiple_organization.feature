@@ -1,4 +1,5 @@
 @ticket-BB-16837
+@ticket-BB-19814
 @fixture-OroTaxBundle:ProductTaxCodePerMultipleOrganization.yml
 
 Feature: Product tax code per multiple organization
@@ -18,7 +19,15 @@ Feature: Product tax code per multiple organization
     And save and close form
     Then should see "Product Tax Code has been saved" flash message
     When I go to Taxes/ Product Tax Codes
-    Then there are one record in grid
+    Then there is one record in grid
+    When click "Create Product Tax Code"
+    And fill form with:
+      | Code        | RepeatingTaxCode |
+      | Description | ORO organization |
+    And save and close form
+    Then should see "Product Tax Code has been saved" flash message
+    When I go to Taxes/ Product Tax Codes
+    Then there are two records in grid
 
   Scenario: Create Product tax code from ORO Pro organization
     Given I am logged in under ORO Pro organization
@@ -35,6 +44,18 @@ Feature: Product tax code per multiple organization
       | Description | Tax code from ORO_PRO organization |
     And save form
     Then should see "Product Tax Code has been saved" flash message
+    When I go to Taxes/ Product Tax Codes
+    Then there is one record in grid
+    When click "Create Product Tax Code"
+    And fill form with:
+      | Code        | RepeatingTaxCode     |
+      | Description | ORO_PRO organization |
+    And save and close form
+    Then should see "Product Tax Code has been saved" flash message
+    When I go to Taxes/ Product Tax Codes
+    Then there are two records in grid
+
+#    And I wait for action
 
   Scenario: Check tax rule
     Given I go to Taxes/ Tax Rules
@@ -88,3 +109,13 @@ Feature: Product tax code per multiple organization
       | Digital Products Tax Codes | TaxCodePerOrgOROPRO |
     And I save form
     Then I should see "Configuration saved" flash message
+
+    And I follow "Commerce/Taxation/Shipping" on configuration sidebar
+    And uncheck "Use default" for "Tax Code" field
+    When I fill "Tax Shipping Form" with:
+      | Tax Code | RepeatingTaxCode |
+    And I save form
+    Then I should see "Configuration saved" flash message
+    And I should see "RepeatingTaxCode"
+    And I should not see "RepeatingTaxCode RepeatingTaxCode"
+

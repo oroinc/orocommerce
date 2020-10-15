@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Provider;
 
+use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Persistence\Proxy;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -39,6 +40,9 @@ class ProductVariantAvailabilityProvider
     /** @var AclHelper */
     private $aclHelper;
 
+    /** @var ArrayCache */
+    private $productsByVariantFieldsCache;
+
     /**
      * @param DoctrineHelper $doctrineHelper
      * @param CustomFieldProvider $customFieldProvider
@@ -61,6 +65,8 @@ class ProductVariantAvailabilityProvider
         $this->eventDispatcher = $eventDispatcher;
         $this->fieldValueHandlerRegistry = $fieldValueHandlerRegistry;
         $this->aclHelper = $aclHelper;
+
+        $this->productsByVariantFieldsCache = new ArrayCache();
     }
 
     /**
@@ -142,20 +148,37 @@ class ProductVariantAvailabilityProvider
      */
     public function getSimpleProductsByVariantFields(Product $configurableProduct, array $variantParameters = [])
     {
-        $this->ensureProductTypeIsConfigurable($configurableProduct);
+        $cacheKey = $this->getProductsByVariantsCacheKey($configurableProduct, $variantParameters);
+        if (!$this->productsByVariantFieldsCache->contains($cacheKey)) {
+            $result = $this->getSimpleProductsByVariantFieldsQB($configurableProduct, $variantParameters)
+                ->getQuery()
+                ->getResult();
+            $this->productsByVariantFieldsCache->save($cacheKey, $result);
+        }
 
-        /** @var ProductRepository $repository */
-        $repository = $this->doctrineHelper->getEntityRepository(Product::class);
+        return $this->productsByVariantFieldsCache->fetch($cacheKey);
+    }
 
-        $qb = $repository->getSimpleProductsByVariantFieldsQueryBuilder($configurableProduct, $variantParameters);
-
-        $restrictProductVariantEvent = new RestrictProductVariantEvent($qb);
-        $this->eventDispatcher->dispatch(RestrictProductVariantEvent::NAME, $restrictProductVariantEvent);
-
-        return $restrictProductVariantEvent
-            ->getQueryBuilder()
+    /**
+     * @param Product $configurableProduct
+     * @param array $variantParameters
+     * $variantParameters = [
+     *     'size' => 'm',
+     *     'color' => 'red',
+     *     'slim_fit' => true
+     * ]
+     * Value is extended field id for select field and true or false for boolean field
+     * @return bool
+     */
+    public function hasSimpleProductsByVariantFields(Product $configurableProduct, array $variantParameters = [])
+    {
+        $count = (int)$this->getSimpleProductsByVariantFieldsQB($configurableProduct, $variantParameters)
+            ->resetDQLPart('select')
+            ->select('COUNT(p.id)')
             ->getQuery()
-            ->getResult();
+            ->getSingleScalarResult();
+
+        return $count > 0;
     }
 
     /**
@@ -317,6 +340,36 @@ class ProductVariantAvailabilityProvider
         }
 
         return $configurableProducts;
+    }
+
+    /**
+     * @param Product $configurableProduct
+     * @param array $variantParameters
+     * @return string
+     */
+    private function getProductsByVariantsCacheKey(Product $configurableProduct, array $variantParameters = []): string
+    {
+        return md5($configurableProduct->getId() . json_encode($variantParameters));
+    }
+
+    /**
+     * @param Product $configurableProduct
+     * @param array $variantParameters
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    private function getSimpleProductsByVariantFieldsQB(Product $configurableProduct, array $variantParameters = [])
+    {
+        $this->ensureProductTypeIsConfigurable($configurableProduct);
+
+        /** @var ProductRepository $repository */
+        $repository = $this->doctrineHelper->getEntityRepository(Product::class);
+
+        $qb = $repository->getSimpleProductsByVariantFieldsQueryBuilder($configurableProduct, $variantParameters);
+
+        $restrictProductVariantEvent = new RestrictProductVariantEvent($qb);
+        $this->eventDispatcher->dispatch(RestrictProductVariantEvent::NAME, $restrictProductVariantEvent);
+
+        return $restrictProductVariantEvent->getQueryBuilder();
     }
 
     /**

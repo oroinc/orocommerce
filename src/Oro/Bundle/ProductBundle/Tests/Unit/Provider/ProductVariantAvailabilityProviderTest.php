@@ -230,6 +230,12 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
             $expected,
             $this->availabilityProvider->getSimpleProductsByVariantFields($configurableProduct, $variantParameters)
         );
+
+        // Check that second call does not lead to second request and result is returned from the cache
+        $this->assertSame(
+            $expected,
+            $this->availabilityProvider->getSimpleProductsByVariantFields($configurableProduct, $variantParameters)
+        );
     }
 
     public function testGetSimpleProductByVariantFields()
