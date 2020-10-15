@@ -201,8 +201,19 @@ Feature: My Shopping List
     When I click "Proceed"
     Then I should see "Cannot create order because Shopping List has no items" flash message
 
+  Scenario: Check quantity and unit for empty configurable product
+    When I follow "Account"
+    And I click "My Shopping Lists"
+    And I filter Name as contains "Shopping List 4"
+    And I click view Shopping List 4 in grid
+    Then I should see following grid:
+      | SKU  | Item                   | Qty | Unit                            | Price  | Subtotal |
+      | AA1  | Configurable Product 1 |     | Click "edit" to select variants |        | N/A      |
+
   Scenario: Create request for quote with empty matrix form
-    When I click "More Actions"
+    When I click "Shopping List Actions"
+    And click "Edit"
+    And I click "More Actions"
     And I click "Request Quote"
     Then I should see "Confirmation This shopping list contains configurable products with no variations. Proceed to RFQ without these products?"
     When I click "Proceed"
