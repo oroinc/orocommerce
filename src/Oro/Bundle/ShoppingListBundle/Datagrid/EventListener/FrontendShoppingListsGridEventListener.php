@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ShoppingListBundle\Datagrid\EventListener;
 
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager;
@@ -19,16 +20,22 @@ class FrontendShoppingListsGridEventListener
     /** @var ShoppingListTotalManager */
     private $shoppingListTotalManager;
 
+    /** @var UserCurrencyManager */
+    private $userCurrencyManager;
+
     /**
      * @param CurrentShoppingListManager $currentShoppingListManager
      * @param ShoppingListTotalManager $shoppingListTotalManager
+     * @param UserCurrencyManager $userCurrencyManager
      */
     public function __construct(
         CurrentShoppingListManager $currentShoppingListManager,
-        ShoppingListTotalManager $shoppingListTotalManager
+        ShoppingListTotalManager $shoppingListTotalManager,
+        UserCurrencyManager $userCurrencyManager
     ) {
         $this->currentShoppingListManager = $currentShoppingListManager;
         $this->shoppingListTotalManager = $shoppingListTotalManager;
+        $this->userCurrencyManager = $userCurrencyManager;
     }
 
     /**
@@ -36,6 +43,9 @@ class FrontendShoppingListsGridEventListener
      */
     public function onBuildBefore(BuildBefore $event): void
     {
+        $params = $event->getDatagrid()->getParameters();
+        $params->set('current_currency', $this->userCurrencyManager->getUserCurrency());
+
         $shoppingLists = $this->currentShoppingListManager->getShoppingLists();
         if ($shoppingLists) {
             $this->shoppingListTotalManager->setSubtotals($shoppingLists, true);
@@ -46,8 +56,6 @@ class FrontendShoppingListsGridEventListener
             return;
         }
 
-        $event->getDatagrid()
-            ->getParameters()
-            ->set('default_shopping_list_id', $current->getId());
+        $params->set('default_shopping_list_id', $current->getId());
     }
 }

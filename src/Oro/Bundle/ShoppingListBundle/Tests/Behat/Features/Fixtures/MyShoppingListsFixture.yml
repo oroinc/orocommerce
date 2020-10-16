@@ -340,16 +340,28 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         notes: 'Note <current()> text'
 
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
-    shoppingListTotal1:
+    shoppingListTotalUsd1:
         __construct: ['@shoppinglist1','USD']
         subtotalValue: '1581'
         valid: true
-    shoppingListTotal2:
+    shoppingListTotalEur1:
+        __construct: ['@shoppinglist1','EUR']
+        subtotalValue: '1581'
+        valid: true
+    shoppingListTotalUsd2:
         __construct: ['@shoppinglist2','USD']
         subtotalValue: '1178'
         valid: true
-    shoppingListTotal3:
+    shoppingListTotalEur2:
+        __construct: ['@shoppinglist2','EUR']
+        subtotalValue: '1178'
+        valid: true
+    shoppingListTotalUsd3:
         __construct: ['@shoppinglist3','USD']
+        subtotalValue: '8818'
+        valid: true
+    shoppingListTotalEur3:
+        __construct: ['@shoppinglist3','EUR']
         subtotalValue: '8818'
         valid: true
 
