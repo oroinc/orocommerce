@@ -101,6 +101,10 @@ oro.cms:
             label: 'Paste here your HTML/CSS and click Import'
             title: 'Import'
             button: 'Import'
+        code:
+            label: 'Paste your code here'
+            title: 'Code editor'
+            button: 'Save'
         export:
             title: 'Code'
             btn_label: 'Export to ZIP'
