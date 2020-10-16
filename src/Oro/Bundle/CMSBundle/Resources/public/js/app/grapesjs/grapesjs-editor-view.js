@@ -14,6 +14,7 @@ import 'grapesjs-preset-webpage';
 import parserPostCSS from 'grapesjs-parser-postcss';
 import 'orocms/js/app/grapesjs/plugins/components/grapesjs-components';
 import 'orocms/js/app/grapesjs/plugins/import/import';
+import 'orocms/js/app/grapesjs/plugins/code/code';
 import 'orocms/js/app/grapesjs/plugins/panel-scrolling-hints';
 import {escapeWrapper, getWrapperAttrs} from 'orocms/js/app/grapesjs/plugins/grapesjs-style-isolation';
 import i18nMessages from 'orocms/js/app/grapesjs/plugins/i18n-messages';
@@ -228,6 +229,7 @@ const GrapesjsEditorView = BaseView.extend({
                 return editor.getHtml() + '<style>' + editor.getCss() + '</style>';
             },
             importViewerOptions: {},
+            codeViewerOptions: {},
             exportOpts: {
                 btnLabel: __('oro.cms.wysiwyg.export.btn_label')
             }
@@ -235,6 +237,7 @@ const GrapesjsEditorView = BaseView.extend({
         'grapesjs-components': {},
         'grapesjs-style-isolation': {},
         'grapesjs-import': {},
+        'grapesjs-code': {},
         'grapesjs-panel-scrolling-hints': {}
     },
 
