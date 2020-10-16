@@ -129,11 +129,11 @@ class MatrixGridOrderFormHandler implements FormHandlerInterface
             $request->request->get('matrix_collection', [])
         );
 
-        $this->matrixGridOrderManager->addEmptyMatrixIfAllowed($shoppingList, $product, $lineItems);
-
         foreach ($lineItems as $lineItem) {
             $this->shoppingListManager->updateLineItem($lineItem, $shoppingList);
         }
+
+        $this->matrixGridOrderManager->addEmptyMatrixIfAllowed($shoppingList, $product, $lineItems);
 
         $this->eventDispatcher->dispatch(Events::AFTER_FLUSH, new AfterFormProcessEvent($form, $data));
     }

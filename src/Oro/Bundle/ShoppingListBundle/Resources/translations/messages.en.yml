@@ -312,7 +312,7 @@ oro:
                 not_available: 'N/A'
                 close: 'Close'
                 clear:
-                    text: 'Clear All'
+                    text: 'Clear All Product Variants'
                     tooltip: 'Clear all entered values in the matrix'
             lineitem:
                 product:

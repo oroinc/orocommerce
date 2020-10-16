@@ -194,7 +194,7 @@ Feature: My Shopping List
     Then I should see "3" in the "Matrix Grid Total Quantity" element
     And I should see "$33.00" in the "Matrix Grid Total Price" element
     And I should see an "Clear All Button" element
-    When I click "Clear All"
+    When I click "Clear All Product Variants"
     And I click "Accept" in modal window
     And I click "Create Order"
     Then I should see "This shopping list contains configurable products with no variations. Proceed to checkout without these products?"

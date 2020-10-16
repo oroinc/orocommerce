@@ -61,12 +61,13 @@ class MatrixGridOrderController extends AbstractLineItemController
             );
 
             $shoppingList = $shoppingList ?? $currentShoppingListManager->getForCurrentUser($shoppingListId);
-            $matrixGridOrderManager->addEmptyMatrixIfAllowed($shoppingList, $product, $lineItems);
 
             $shoppingListManager = $this->get(ShoppingListManager::class);
             foreach ($lineItems as $lineItem) {
                 $shoppingListManager->updateLineItem($lineItem, $shoppingList);
             }
+
+            $matrixGridOrderManager->addEmptyMatrixIfAllowed($shoppingList, $product, $lineItems);
 
             if ($request->isXmlHttpRequest()) {
                 return new JsonResponse(
