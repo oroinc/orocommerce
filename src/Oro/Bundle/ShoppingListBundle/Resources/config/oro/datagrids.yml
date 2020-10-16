@@ -196,11 +196,13 @@ datagrids:
                             join: 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal'
                             alias: cachedTotal
                             conditionType: WITH
-                            condition: "cachedTotal.shoppingList = shopping_list AND cachedTotal.currency = @oro_shopping_list.datagrid.total_currency_helper->getCurrencyStatement()"
+                            condition: "cachedTotal.shoppingList = shopping_list AND cachedTotal.currency = :current_currency"
                 where:
                     and:
                         - shopping_list.customerUser = :customer_user_id
             bind_parameters:
+                -
+                    name: current_currency
                 -
                     name: customer_user_id
                     default: 0

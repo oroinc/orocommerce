@@ -6,6 +6,7 @@ use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\ShoppingListBundle\Datagrid\EventListener\FrontendShoppingListsGridEventListener;
 use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager;
@@ -19,6 +20,9 @@ class FrontendShoppingListsGridEventListenerTest extends \PHPUnit\Framework\Test
     /** @var ShoppingListTotalManager|\PHPUnit\Framework\MockObject\MockObject */
     private $shoppingListTotalManager;
 
+    /** @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $userCurrencyManager;
+
     /** @var FrontendShoppingListsGridEventListener */
     private $listener;
 
@@ -27,9 +31,15 @@ class FrontendShoppingListsGridEventListenerTest extends \PHPUnit\Framework\Test
         $this->currentShoppingListManager = $this->createMock(CurrentShoppingListManager::class);
         $this->shoppingListTotalManager = $this->createMock(ShoppingListTotalManager::class);
 
+        $this->userCurrencyManager = $this->createMock(UserCurrencyManager::class);
+        $this->userCurrencyManager->expects($this->once())
+            ->method('getUserCurrency')
+            ->willReturn('USD');
+
         $this->listener = new FrontendShoppingListsGridEventListener(
             $this->currentShoppingListManager,
-            $this->shoppingListTotalManager
+            $this->shoppingListTotalManager,
+            $this->userCurrencyManager
         );
     }
 
@@ -61,15 +71,21 @@ class FrontendShoppingListsGridEventListenerTest extends \PHPUnit\Framework\Test
 
         $this->listener->onBuildBefore(new BuildBefore($datagrid, $config));
 
-        $this->assertEquals(['default_shopping_list_id' => $shoppingList->getId()], $params->all());
+        $this->assertEquals(
+            ['current_currency' => 'USD', 'default_shopping_list_id' => $shoppingList->getId()],
+            $params->all()
+        );
         $this->assertEquals([], $config->toArray());
     }
 
     public function testOnBuildBeforeWithoutShoppingLists(): void
     {
+        $params = new ParameterBag();
+
         $datagrid = $this->createMock(DatagridInterface::class);
-        $datagrid->expects($this->never())
-            ->method('getParameters');
+        $datagrid->expects($this->once())
+            ->method('getParameters')
+            ->willReturn($params);
 
         $this->currentShoppingListManager->expects($this->once())
             ->method('getShoppingLists')
@@ -86,14 +102,18 @@ class FrontendShoppingListsGridEventListenerTest extends \PHPUnit\Framework\Test
 
         $this->listener->onBuildBefore(new BuildBefore($datagrid, $config));
 
+        $this->assertEquals(['current_currency' => 'USD'], $params->all());
         $this->assertEquals([], $config->toArray());
     }
 
     public function testOnBuildBeforeWithoutCurrent(): void
     {
+        $params = new ParameterBag();
+
         $datagrid = $this->createMock(DatagridInterface::class);
-        $datagrid->expects($this->never())
-            ->method('getParameters');
+        $datagrid->expects($this->once())
+            ->method('getParameters')
+            ->willReturn($params);
 
         $config = DatagridConfiguration::create([]);
 
@@ -103,6 +123,7 @@ class FrontendShoppingListsGridEventListenerTest extends \PHPUnit\Framework\Test
 
         $this->listener->onBuildBefore(new BuildBefore($datagrid, $config));
 
+        $this->assertEquals(['current_currency' => 'USD'], $params->all());
         $this->assertEquals([], $config->toArray());
     }
 }
