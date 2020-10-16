@@ -90,7 +90,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | N/A      | N/A      | 1        |
     And I should see "Clear All Button" element inside "Matrix Grid Form Totals" element
     And I should see "Total QTY 5 | Total $60.00" in the "Matrix Grid Form Totals" element
-    And I click "Clear All"
+    And I click "Clear All Product Variants"
     Then I should see next rows in "Matrix Grid Form" table
       | Value 21 | Value 22 | Value 23 |
       |          |          | N/A      |
@@ -119,7 +119,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I should see an "Clear All Button" element
     And I should see "5" in the "Matrix Grid Total Quantity" element
     And I should see "$60.00" in the "Matrix Grid Total Price" element
-    And I click "Clear All"
+    And I click "Clear All Product Variants"
     Then I should see next rows in "Matrix Grid Form" table
       | Value 21 | Value 22 | Value 23 |
       |          |          | N/A      |
@@ -128,7 +128,16 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | N/A      | N/A      |          |
     And I should see "0" in the "Matrix Grid Total Quantity" element
     And I should see "$0.00" in the "Matrix Grid Total Price" element
-    And I click "Cancel" in modal window
+    And I click "Accept" in modal window
+    And I should see "ConfigurableProductB" in grid
+    And I click Edit ConfigurableProductB in grid
+    Then I fill "Matrix Grid Form" with:
+      |          | Value 21 | Value 22 | Value 23 |
+      | Value 11 | 1        | 1        | -        |
+      | Value 12 | 1        | -        | 1        |
+      | Value 13 |          |          | -        |
+      | Value 14 | -        | -        | 1        |
+    And I click "Accept" in modal window
 
     Then type "CNFB" in "search"
     And click "Search Button"
@@ -141,7 +150,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | N/A      | N/A      | 1        |
     And I should see "Clear All Button" element inside "Matrix Grid Form Totals" element
     And I should see "Total QTY 5 | Total $60.00" in the "Matrix Grid Form Totals" element
-    And I click "Clear All"
+    And I click "Clear All Product Variants"
     Then I should see next rows in "Matrix Grid Form" table
       | Value 21 | Value 22 | Value 23 |
       |          |          | N/A      |
@@ -273,7 +282,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     Then I should see "5" in the "Matrix Grid Total Quantity" element
     And I should see "$60.00" in the "Matrix Grid Total Price" element
     And I should see an "Clear All Button" element
-    When I click "Clear All"
+    When I click "Clear All Product Variants"
     And I click "Accept" in modal window
     And I click "Create Order"
     Then I should see "This shopping list contains configurable products with no variations. Proceed to checkout without these products?"
@@ -727,7 +736,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     Then I should see "Shopping list \"Product B Shopping List\" was created successfully"
 
   Scenario: Update ConfigurableProductB variants
-    Given I click "Clear All"
+    Given I click "Clear All Product Variants"
     And I fill "Matrix Grid Form" with:
       |          | Value 21 | Value 22 | Value 23 |
       | Value 11 | 1        | -        | -        |
