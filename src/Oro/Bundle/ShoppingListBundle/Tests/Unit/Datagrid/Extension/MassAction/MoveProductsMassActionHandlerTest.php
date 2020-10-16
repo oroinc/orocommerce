@@ -15,6 +15,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -39,6 +40,9 @@ class MoveProductsMassActionHandlerTest extends \PHPUnit\Framework\TestCase
 
     /** @var ShoppingListManager|\PHPUnit\Framework\MockObject\MockObject */
     private $shoppingListManager;
+
+    /** @var ShoppingListTotalManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $shoppingListTotalManager;
 
     /** @var MoveProductsMassActionHandler */
     private $handler;
@@ -80,13 +84,15 @@ class MoveProductsMassActionHandlerTest extends \PHPUnit\Framework\TestCase
         $requestStack->push($this->request);
 
         $this->shoppingListManager = $this->createMock(ShoppingListManager::class);
+        $this->shoppingListTotalManager = $this->createMock(ShoppingListTotalManager::class);
 
         $this->handler = new MoveProductsMassActionHandler(
             $registry,
             $this->translator,
             $this->authorizationChecker,
             $requestStack,
-            $this->shoppingListManager
+            $this->shoppingListManager,
+            $this->shoppingListTotalManager
         );
     }
 

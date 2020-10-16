@@ -36,3 +36,4 @@ services:
             - '@security.authorization_checker'
             - '@request_stack'
             - '@oro_shopping_list.manager.shopping_list'
+            - '@oro_shopping_list.manager.shopping_list_total'

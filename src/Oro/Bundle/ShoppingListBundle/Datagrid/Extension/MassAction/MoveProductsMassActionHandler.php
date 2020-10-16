@@ -4,6 +4,7 @@ namespace Oro\Bundle\ShoppingListBundle\Datagrid\Extension\MassAction;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\BatchBundle\ORM\Query\ResultIterator\IdentifierWithoutOrderByIterationStrategy;
 use Oro\Bundle\DataGridBundle\Datasource\Orm\IterableResult;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
@@ -15,6 +16,7 @@ use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionResponse;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -41,6 +43,9 @@ class MoveProductsMassActionHandler implements MassActionHandlerInterface
     /** @var ShoppingListManager */
     private $shoppingListManager;
 
+    /** @var ShoppingListTotalManager */
+    private $shoppingListTotalManager;
+
     /**
      * @param ManagerRegistry $registry
      * @param TranslatorInterface $translator
@@ -53,13 +58,15 @@ class MoveProductsMassActionHandler implements MassActionHandlerInterface
         TranslatorInterface $translator,
         AuthorizationCheckerInterface $authorizationChecker,
         RequestStack $requestStack,
-        ShoppingListManager $shoppingListManager
+        ShoppingListManager $shoppingListManager,
+        ShoppingListTotalManager $shoppingListTotalManager
     ) {
         $this->registry = $registry;
         $this->translator = $translator;
         $this->authorizationChecker = $authorizationChecker;
         $this->requestStack = $requestStack;
         $this->shoppingListManager = $shoppingListManager;
+        $this->shoppingListTotalManager = $shoppingListTotalManager;
     }
 
     /**
@@ -99,6 +106,7 @@ class MoveProductsMassActionHandler implements MassActionHandlerInterface
         /** @var EntityManager $manager */
         $manager = $this->registry->getManagerForClass(LineItem::class);
         $updated = 0;
+        $affectedShoppingLists = [];
 
         /** @var ResultRecordInterface[] $results */
         foreach ($results as $result) {
@@ -112,13 +120,12 @@ class MoveProductsMassActionHandler implements MassActionHandlerInterface
                 continue;
             }
 
-            $originalShoppingList = $entity->getShoppingList();
-            if ($originalShoppingList->getId() === $shoppingList->getId() ||
-                !$this->isEditAllowed($originalShoppingList)
-            ) {
+            $origShoppingList = $entity->getShoppingList();
+            if ($origShoppingList->getId() === $shoppingList->getId() || !$this->isEditAllowed($origShoppingList)) {
                 continue;
             }
 
+            $affectedShoppingLists[$origShoppingList->getId()] = $origShoppingList;
             $this->shoppingListManager->addLineItem($entity, $shoppingList, false);
 
             $updated++;
@@ -131,7 +138,22 @@ class MoveProductsMassActionHandler implements MassActionHandlerInterface
             $manager->flush();
         }
 
+        $this->recalculateTotals($manager, $affectedShoppingLists);
+
         return $this->getResponse($args->getMassAction(), $updated);
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @param array $shoppingLists
+     */
+    private function recalculateTotals(ObjectManager $manager, array $shoppingLists): void
+    {
+        foreach ($shoppingLists as $shoppingList) {
+            $this->shoppingListTotalManager->recalculateTotals($shoppingList, false);
+        }
+
+        $manager->flush();
     }
 
     /**
