@@ -111,6 +111,30 @@ Feature: My Shopping List Actions
     Then I should not see "Shopping List 4" on shopping list widget
     And I reload the page
 
+  Scenario: Move line item to another shopping list
+    Given I follow "Account"
+    And I click "My Shopping Lists"
+    And Page title equals to "My Shopping Lists - My Account"
+    And I should see following grid:
+      | Name            | Subtotal  | Items | Default |
+      | Shopping List 3 | $8,818.00 | 32    | No      |
+      | Shopping List 1 | $1,581.00 | 3     | Yes     |
+    And I click Edit "Shopping List 3" in grid
+    When I click on "First Line Item Row Checkbox"
+    And I click "Move to another Shopping List" link from mass action dropdown
+    And I click "Filter Toggle" in "UiDialog" element
+    And I filter Name as is equal to "Shopping List 1" in "Shopping List Action Move Grid"
+    And I click "Shopping List Action Move Radio"
+    And I click "Shopping List Action Submit"
+    Then I should see "One entity has been moved successfully" flash message
+    And I follow "Account"
+    And I click "My Shopping Lists"
+    And Page title equals to "My Shopping Lists - My Account"
+    And I should see following grid:
+      | Name            | Subtotal  | Items | Default |
+      | Shopping List 3 | $8,785.00 | 31    | No      |
+      | Shopping List 1 | $1,614.00 | 4     | Yes     |
+
   Scenario: Re-assign Action
     Given I click View "Shopping List 3" in grid
     When I click "Shopping List Actions"
@@ -129,10 +153,10 @@ Feature: My Shopping List Actions
     And click edit "Administrator" in grid
     And click "Shopping"
     And select following permissions:
-      | Shopping List | Edit:None |
-      | Shopping List | Assign:None |
+      | Shopping List | Edit:None      |
+      | Shopping List | Assign:None    |
       | Shopping List | Duplicate:None |
-      | Shopping List | Delete:None |
+      | Shopping List | Delete:None    |
     And I scroll to top
     And click "Save"
     Then should see "Customer User Role has been saved" flash message
@@ -140,5 +164,5 @@ Feature: My Shopping List Actions
     And I login as AmandaRCole@example.org buyer
     And I follow "Account"
     And I click "My Shopping Lists"
-    And I click View "Shopping List 3" in grid
+    And I click View "Shopping List 1" in grid
     Then I should not see a "Shopping List Actions" element
