@@ -125,6 +125,7 @@ class MoveProductsMassActionHandler implements MassActionHandlerInterface
                 continue;
             }
 
+            $origShoppingList->removeLineItem($entity);
             $affectedShoppingLists[$origShoppingList->getId()] = $origShoppingList;
             $this->shoppingListManager->addLineItem($entity, $shoppingList, false);
 

@@ -91,7 +91,6 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
         $table->addColumn('notes', 'text', ['notnull' => false]);
         $table->addColumn('created_at', 'datetime');
         $table->addColumn('updated_at', 'datetime');
-        $table->addColumn('line_items_count', 'smallint', ['default' => 0]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['created_at'], 'oro_shop_lst_created_at_idx', []);
     }

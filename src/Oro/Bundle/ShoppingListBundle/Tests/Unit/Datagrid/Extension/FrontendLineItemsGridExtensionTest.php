@@ -15,7 +15,6 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\ShoppingListBundle\Tests\Unit\Entity\Stub\ShoppingListStub;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -156,7 +155,7 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
         $this->shoppingListRepository->expects($this->once())
             ->method('find')
             ->with(42)
-            ->willReturn((new ShoppingListStub())->setLineItemsCount(900));
+            ->willReturn($this->createShoppingList(900));
 
         $this->extension->processConfigs($config);
 
@@ -283,7 +282,7 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
         $this->shoppingListRepository->expects($this->once())
             ->method('find')
             ->with(42)
-            ->willReturn((new ShoppingListStub())->setLineItemsCount(2000));
+            ->willReturn($this->createShoppingList(2000));
 
         $this->extension->processConfigs($config);
 
@@ -350,7 +349,7 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
         $this->shoppingListRepository->expects($this->once())
             ->method('find')
             ->with(42)
-            ->willReturn((new ShoppingListStub())->setLineItemsCount(999));
+            ->willReturn($this->createShoppingList(999));
 
         $this->extension->processConfigs($config);
 
@@ -458,12 +457,12 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
             ->with(42)
             ->willReturn(true);
 
-        $shoppingList = new ShoppingListStub();
+        $shoppingList = $this->createShoppingList(900);
         $shoppingList->setLabel('Shopping List Label');
         $this->shoppingListRepository->expects($this->once())
             ->method('find')
             ->with(42)
-            ->willReturn(($shoppingList)->setLineItemsCount(900));
+            ->willReturn($shoppingList);
 
         $this->extension->visitMetadata(DatagridConfiguration::create([]), $data);
 
@@ -537,5 +536,20 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
         $this->extension->visitResult(DatagridConfiguration::create([]), $data);
 
         $this->assertNull($data->offsetGetByPath('[metadata][hasEmptyMatrix]'));
+    }
+
+    /**
+     * @param int $lineItemsCount
+     * @return ShoppingList
+     */
+    private function createShoppingList(int $lineItemsCount): ShoppingList
+    {
+        $shoppingList = new ShoppingList();
+
+        for ($i = 0; $i < $lineItemsCount; $i++) {
+            $shoppingList->addLineItem(new LineItem());
+        }
+
+        return $shoppingList;
     }
 }
