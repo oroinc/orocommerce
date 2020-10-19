@@ -91,16 +91,12 @@ class ShoppingListControllerTest extends WebTestCase
             $this->generateBasicAuthHeader(BaseLoadCustomerData::AUTH_USER, BaseLoadCustomerData::AUTH_PW)
         );
 
-        $crawler = $this->client->request('GET', $this->getUrl('oro_shopping_list_frontend_my_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_shopping_list_frontend_index'));
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
         $this->assertStringContainsString('frontend-customer-user-shopping-lists-grid', $crawler->html());
 
-        $response = $this->client->requestFrontendGrid(
-            'frontend-customer-user-shopping-lists-grid',
-            ['frontend-customer-user-shopping-lists-grid[customer_user_id]' => $user->getId()],
-            true
-        );
+        $response = $this->client->requestFrontendGrid('frontend-customer-user-shopping-lists-grid', [], true);
 
         $data = $this->getJsonResponseContent($response, 200)['data'];
 

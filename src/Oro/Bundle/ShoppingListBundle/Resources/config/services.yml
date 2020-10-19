@@ -197,6 +197,8 @@ services:
             - '@request_stack'
             - '@oro_shopping_list.manager.shopping_list_total'
             - '@oro_shopping_list.manager.current_shopping_list'
+            - '@oro_config.manager'
+            - '@oro_security.token_accessor'
         tags:
             - { name: layout.data_provider, alias: oro_shopping_list_customer_user_shopping_lists }
 
@@ -701,3 +703,12 @@ services:
         class: Oro\Bundle\ShoppingListBundle\Datagrid\Provider\ProductUnitsListProvider
         arguments:
             - '@oro_product.formatter.product_unit_label'
+
+    oro_shopping_list.datagrid.frontend_shopping_lists_views_list:
+        class: Oro\Bundle\ShoppingListBundle\Datagrid\GridView\FrontendShoppingListsViewsList
+        public: true
+        arguments:
+            - '@translator'
+            - '@security.authorization_checker'
+            - "@security.acl.voter.basic_permissions"
+            - '@oro_security.token_accessor'

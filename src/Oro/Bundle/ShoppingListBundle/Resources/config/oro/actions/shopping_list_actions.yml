@@ -127,7 +127,7 @@ operations:
             - oro_shopping_list_frontend_update
         actions:
             - '@redirect':
-                route: 'oro_shopping_list_frontend_my_index'
+                route: 'oro_shopping_list_frontend_index'
 
     oro_shoppinglist_frontend_set_as_default_action:
         label: oro.shoppinglist.set_as_default.action.label

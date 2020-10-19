@@ -268,7 +268,7 @@ operations:
         actions:
             - '@redirect':
                 parameters:
-                    route: oro_shopping_list_frontend_my_index
+                    route: oro_shopping_list_frontend_index
 
     oro_shoppinglist_delete_line_item:
         extends: DELETE

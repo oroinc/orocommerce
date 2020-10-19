@@ -49,13 +49,13 @@ class ShoppingListController extends AbstractController
     }
 
     /**
-     * @Route("/my", name="oro_shopping_list_frontend_my_index")
+     * @Route("/all", name="oro_shopping_list_frontend_index")
      * @Layout
      * @AclAncestor("oro_shopping_list_frontend_view")
      *
      * @return array
      */
-    public function indexMyAction(): array
+    public function indexAction(): array
     {
         if (!$this->getUser() instanceof CustomerUser) {
             throw $this->createAccessDeniedException();

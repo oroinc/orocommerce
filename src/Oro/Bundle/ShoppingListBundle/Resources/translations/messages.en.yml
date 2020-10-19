@@ -83,7 +83,7 @@ oro:
 
         menu:
             sales_tab.label: Sales
-            shopping_lists.label: My Shopping Lists
+            shopping_lists.label: Shopping Lists
             shopping_list.description: Shopping Lists
             shortcut_shopping_list.description: Shows content of shopping lists of the customer users
 
@@ -171,9 +171,12 @@ oro:
                 create_shopping_list_for_new_guest:
                     label: 'Create Guest Shopping Lists Immediately'
                     tooltip: 'Enable this option to automatically create shopping lists for all guest users once they access the storefront. By default, this option is disabled and shopping lists are created only when guest users add at least one item to their shopping list.'
-                my_shopping_lists_max_line_items_per_page:
+                shopping_lists_max_line_items_per_page:
                     label: 'Maximum Line Items Per Page'
                     tooltip: 'The provided value will be used as the implied maximum number of shopping list line items to display at once. If the number of shopping list line items exceeds this value, the "Show All Items" will no longer be available and this number will be shown as the maximum pager value.'
+                show_all_in_shopping_list_widget:
+                    label: 'Show All Lists in Shopping List Widget'
+                    tooltip: 'If this option is enabled, in addition to the shopping lists owned by the current user, the shopping list widget will also include all other shopping lists that the current user is allowed to access.'
 
         privilege:
             category.shopping.label: 'Shopping'
@@ -214,6 +217,8 @@ oro:
             link.aria_label: '{0} %shoppinglist% is empty. View Details|{1} %shoppinglist% contains %count% item. Total cost is %total%. View Details|]1,Inf[ %shoppinglist% contains %count% items. Total cost is %total%. View Details'
             radio.label: 'Set the %shoppinglist% as Default'
             radio.title: 'Set as Default'
+            grid_view:
+                my_shopping_lists: 'My Shopping Lists'
             quick_order:
                 default_label: Quick Order (%date%)
             selector:

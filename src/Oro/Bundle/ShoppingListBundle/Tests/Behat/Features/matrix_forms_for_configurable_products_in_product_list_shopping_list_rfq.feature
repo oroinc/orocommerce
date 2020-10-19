@@ -291,7 +291,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
 
   Scenario: Check quantity and unit for empty configurable product
     When I follow "Account"
-    And I click "My Shopping Lists"
+    And I click on "Shopping Lists Navigation Link"
     And I click view Shopping List in grid
     Then I should see following grid:
       | SKU  | Item                 | Qty | Unit                            | Price  | Subtotal |
@@ -534,7 +534,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     When I click "Shopping List Actions"
     And I click "Delete"
     And I click "Yes, delete"
-    Then Page title equals to "My Shopping Lists - My Account"
+    Then Page title equals to "Shopping Lists - My Account"
     And I should see "There are no shopping lists"
 
   Scenario: Disabled matrix form in Product List View
@@ -570,7 +570,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I save form
     Given I proceed as the User
     When I click "Account"
-    And I click "My Shopping Lists"
+    And I click on "Shopping Lists Navigation Link"
     Then I should see "There are no shopping lists"
     When type "CNFB" in "search"
     And click "Search Button"
@@ -682,7 +682,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     Then I should not see an "Matrix Grid Popup" element
     # Check opening popup matrix form doesn't create empty shopping list
     When I click "Account"
-    And I click "My Shopping Lists"
+    And I click on "Shopping Lists Navigation Link"
     Then I should see "There are no shopping lists"
     And I reload the page
 
@@ -776,7 +776,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     Then I should see "Shopping list \"Product C Shopping List\" was created successfully"
     And I should see "Product has been added to \"Product C Shopping List\""
     When I click "Account"
-    And I click "My Shopping Lists"
+    And I click on "Shopping Lists Navigation Link"
     Then should see following grid:
       | Name                    | Items |
       | Product C Shopping List | 1     |
@@ -793,7 +793,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I click "Remove From Shopping List" in "ShoppingListButtonGroupMenu" element
     Then I should see "Product has been removed from \"Shopping List\""
     When I click "Account"
-    And I click "My Shopping Lists"
+    And I click on "Shopping Lists Navigation Link"
     Then should see following grid:
       | Name                    | Items |
       | Product C Shopping List | 1     |

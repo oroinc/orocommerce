@@ -128,21 +128,29 @@ Feature: My Shopping List
     Given I operate as the Buyer
     And I login as AmandaRCole@example.org buyer
     And I follow "Account"
-    When I click "My Shopping Lists"
-    Then Page title equals to "My Shopping Lists - My Account"
+    When I click on "Shopping Lists Navigation Link"
+    Then Page title equals to "Shopping Lists - My Account"
     And should see following grid:
       | Name            | Subtotal  | Items |
       | Shopping List 3 | $8,818.00 | 32    |
       | Shopping List 1 | $1,581.00 | 3     |
+    And records in grid should be 2
+    When I switch to "All Shopping Lists" grid view in "Frontend Customer User Shopping Lists Grid" frontend grid
+    Then should see following grid:
+      | Name            | Subtotal  | Items |
+      | Shopping List 3 | $8,818.00 | 32    |
+      | Shopping List 2 | $1,178.00 | 2     |
+      | Shopping List 1 | $1,581.00 | 3     |
     And I open shopping list widget
     And I should see "Shopping List 1" in the "Shopping List Widget" element
-    And I should see "Shopping List 2" in the "Shopping List Widget" element
+    And I should not see "Shopping List 2" in the "Shopping List Widget" element
     And I should see "Shopping List 3" in the "Shopping List Widget" element
     And reload the page
 
   Scenario: Check Name filter
-    Given I reset grid
-    And records in grid should be 2
+    Given I operate as the Buyer
+    And I reset grid
+    And records in grid should be 3
     When I filter Name as contains "List 3"
     Then I should see following grid:
       | Name            | Subtotal  | Items |
@@ -154,21 +162,24 @@ Feature: My Shopping List
     And I should see following grid:
       | Name            | Subtotal  | Items |
       | Shopping List 3 | $8,818.00 | 32    |
+      | Shopping List 2 | $1,178.00 | 2     |
       | Shopping List 1 | $1,581.00 | 3     |
     When I sort grid by "Name"
     Then I should see following grid:
       | Name            | Subtotal  | Items |
       | Shopping List 1 | $1,581.00 | 3     |
+      | Shopping List 2 | $1,178.00 | 2     |
       | Shopping List 3 | $8,818.00 | 32    |
     When I sort grid by "Name" again
     Then I should see following grid:
       | Name            | Subtotal  | Items |
       | Shopping List 3 | $8,818.00 | 32    |
+      | Shopping List 2 | $1,178.00 | 2     |
       | Shopping List 1 | $1,581.00 | 3     |
 
   Scenario: Check Subtotal filter
     Given I reset grid
-    And records in grid should be 2
+    And records in grid should be 3
     When I filter Subtotal as equals "8818"
     Then I should see following grid:
       | Name            | Subtotal  | Items |
@@ -180,10 +191,12 @@ Feature: My Shopping List
     And I should see following grid:
       | Name            | Subtotal  | Items |
       | Shopping List 3 | $8,818.00 | 32    |
+      | Shopping List 2 | $1,178.00 | 2     |
       | Shopping List 1 | $1,581.00 | 3     |
     When I sort grid by "Subtotal"
     Then I should see following grid:
       | Name            | Subtotal  | Items |
+      | Shopping List 2 | $1,178.00 | 2     |
       | Shopping List 1 | $1,581.00 | 3     |
       | Shopping List 3 | $8,818.00 | 32    |
     When I sort grid by "Subtotal" again
@@ -191,10 +204,11 @@ Feature: My Shopping List
       | Name            | Subtotal  | Items |
       | Shopping List 3 | $8,818.00 | 32    |
       | Shopping List 1 | $1,581.00 | 3     |
+      | Shopping List 2 | $1,178.00 | 2     |
 
   Scenario: Check Items filter
     Given I reset grid
-    And records in grid should be 2
+    And records in grid should be 3
     When I filter Items as equals "32"
     Then I should see following grid:
       | Name            | Subtotal  | Items |
@@ -206,10 +220,12 @@ Feature: My Shopping List
     And I should see following grid:
       | Name            | Subtotal  | Items |
       | Shopping List 3 | $8,818.00 | 32    |
+      | Shopping List 2 | $1,178.00 | 2     |
       | Shopping List 1 | $1,581.00 | 3     |
     When I sort grid by "Items"
     Then I should see following grid:
       | Name            | Subtotal  | Items |
+      | Shopping List 2 | $1,178.00 | 2     |
       | Shopping List 1 | $1,581.00 | 3     |
       | Shopping List 3 | $8,818.00 | 32    |
     When I sort grid by "Items" again
@@ -217,12 +233,13 @@ Feature: My Shopping List
       | Name            | Subtotal  | Items |
       | Shopping List 3 | $8,818.00 | 32    |
       | Shopping List 1 | $1,581.00 | 3     |
+      | Shopping List 2 | $1,178.00 | 2     |
 
   Scenario: Check view page
     When I reset grid
     And I filter Name as contains "List 3"
     And I click View "Shopping List 3" in grid
-    Then Page title equals to "Shopping List 3 - My Shopping Lists - My Account"
+    Then Page title equals to "Shopping List 3 - Shopping Lists - My Account"
     And I should see "Shopping List 3"
     And I should see "Default"
     And I should see "Assigned To: Amanda Cole"
@@ -715,4 +732,4 @@ Feature: My Shopping List
   Scenario: Check resources
     Given I login as AmandaRCole@example.org buyer
     When I follow "Account"
-    Then I should not see "My Shopping Lists"
+    Then I should not see a "Shopping Lists Navigation Link" element

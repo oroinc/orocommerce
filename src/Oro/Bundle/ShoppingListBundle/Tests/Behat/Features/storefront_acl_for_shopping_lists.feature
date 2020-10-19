@@ -7,10 +7,11 @@ Feature: Storefront acl for shopping lists
   As a customer user
   I want to check user and guest permissions
 
-  Scenario: Create different window session
+  Scenario: Feature Background
     Given sessions active:
       | Admin | first_session  |
       | Buyer | second_session |
+    And I set configuration property "oro_shopping_list.show_all_in_shopping_list_widget" to "1"
 
   Scenario: Set view permission to User
     Given I proceed as the Admin

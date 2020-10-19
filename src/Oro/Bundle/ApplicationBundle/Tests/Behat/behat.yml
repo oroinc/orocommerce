@@ -436,6 +436,8 @@ oro_behat_extension:
         mapping:
           Enable Guest Shopping List Default: 'shopping_list[oro_shopping_list___availability_for_guests][use_parent_scope_value]'
           Shopping List Limit Default: 'shopping_list[oro_shopping_list___shopping_list_limit][use_parent_scope_value]'
+          Show All Lists in Shopping List Widget Use default: 'shopping_list[oro_shopping_list___show_all_in_shopping_list_widget][use_parent_scope_value]'
+          Show All Lists in Shopping List Widget: 'shopping_list[oro_shopping_list___show_all_in_shopping_list_widget][value]'
 
     Save on conf window:
       selector:

@@ -49,12 +49,27 @@ class ShoppingListRepository extends EntityRepository implements ResettableCusto
         array $sortCriteria = [],
         $excludeShoppingList = null
     ) {
+        $qb = $this->getFindByUserQueryBuilder($sortCriteria, $excludeShoppingList);
+
+        return $aclHelper->apply($qb, BasicPermission::VIEW, [AclHelper::CHECK_RELATIONS => false])->getResult();
+    }
+
+    /**
+     * @param array $sortCriteria
+     * @param ShoppingList|int|null $excludeShoppingList
+     * @return QueryBuilder
+     */
+    private function getFindByUserQueryBuilder(
+        array $sortCriteria = [],
+        $excludeShoppingList = null
+    ): QueryBuilder {
         $qb = $this->createQueryBuilder('list')
             ->select('list, items')
             ->leftJoin('list.lineItems', 'items');
 
         if ($excludeShoppingList) {
-            $qb->andWhere($qb->expr()->neq('list.id', ':excludeShoppingList'))
+            $qb
+                ->andWhere($qb->expr()->neq('list.id', ':excludeShoppingList'))
                 ->setParameter('excludeShoppingList', $excludeShoppingList);
         }
 
@@ -66,6 +81,28 @@ class ShoppingListRepository extends EntityRepository implements ResettableCusto
                 $qb->addOrderBy($qb->expr()->desc($field));
             }
         }
+
+        return $qb;
+    }
+
+    /**
+     * @param int $customerUserId
+     * @param AclHelper $aclHelper
+     * @param array $sortCriteria
+     * @param ShoppingList|int|null $excludeShoppingList
+     *
+     * @return array
+     */
+    public function findByCustomerUserId(
+        int $customerUserId,
+        AclHelper $aclHelper,
+        array $sortCriteria = [],
+        $excludeShoppingList = null
+    ): array {
+        $qb = $this->getFindByUserQueryBuilder($sortCriteria, $excludeShoppingList);
+        $qb
+            ->andWhere($qb->expr()->eq('list.customerUser', ':customerUserId'))
+            ->setParameter('customerUserId', $customerUserId);
 
         return $aclHelper->apply($qb, BasicPermission::VIEW, [AclHelper::CHECK_RELATIONS => false])->getResult();
     }

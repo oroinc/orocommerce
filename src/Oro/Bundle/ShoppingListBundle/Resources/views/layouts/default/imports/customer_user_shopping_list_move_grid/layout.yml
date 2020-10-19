@@ -15,7 +15,6 @@ layout:
             optionName: grid_parameters
             optionValue:
                 shopping_list_id: '=data["entity"].getId()'
-                customer_user_id: '=data["entity"].getCustomerUser().getId()'
 
         - '@setOption':
             id: __datagrid

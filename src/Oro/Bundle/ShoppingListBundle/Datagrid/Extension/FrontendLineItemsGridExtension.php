@@ -107,7 +107,7 @@ class FrontendLineItemsGridExtension extends AbstractExtension
 
         $shoppingList = $this->getShoppingList($shoppingListId);
         $lineItemsCount = $shoppingList ? $shoppingList->getLineItemsCount() : 0;
-        $item = $this->configManager->get('oro_shopping_list.my_shopping_lists_max_line_items_per_page');
+        $item = $this->configManager->get('oro_shopping_list.shopping_lists_max_line_items_per_page');
         if ($lineItemsCount <= $item) {
             $item = [
                 'label' => 'oro.shoppinglist.datagrid.toolbar.pageSize.all.label',

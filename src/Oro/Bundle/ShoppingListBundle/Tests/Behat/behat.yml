@@ -385,6 +385,15 @@ oro_behat_extension:
     First Line Item Row Checkbox:
       selector: '.grid-body .grid-row:first-child span.custom-checkbox__icon'
 
+    Shopping Lists Navigation Link:
+      selector:
+        type: xpath
+        locator: '//a[text()="Shopping Lists" and contains(@class,"primary-menu__link")]'
+
+    Frontend Customer User Shopping Lists Grid:
+      selector: 'div[data-page-component-name="frontend-customer-user-shopping-lists-grid"]'
+      class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\Grid
+
   suites:
     OroShoppingListBundle:
       contexts:
@@ -410,5 +419,6 @@ oro_behat_extension:
         - OroCheckoutBundle::FeatureContext
         - OroQueryDesignerBundle::QueryDesignerContext
         - OroEmailBundle::EmailContext
+        - OroCustomerBundle::FrontendGridContext
       paths:
         - '@OroShoppingListBundle/Tests/Behat/Features'

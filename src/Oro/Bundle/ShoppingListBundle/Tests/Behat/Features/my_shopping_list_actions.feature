@@ -14,8 +14,8 @@ Feature: My Shopping List Actions
   Scenario: Check index page
     Given I login as AmandaRCole@example.org buyer
     When I follow "Account"
-    And I click "My Shopping Lists"
-    Then Page title equals to "My Shopping Lists - My Account"
+    And I click on "Shopping Lists Navigation Link"
+    Then Page title equals to "Shopping Lists - My Account"
     And I should see following grid:
       | Name            | Subtotal  | Items | Default |
       | Shopping List 3 | $8,818.00 | 32    | Yes     |
@@ -23,7 +23,6 @@ Feature: My Shopping List Actions
     And records in grid should be 2
     When I open shopping list widget
     Then I should see "Shopping List 1" on shopping list widget
-    And I should see "Shopping List 2" on shopping list widget
     And I should see "Shopping List 3" on shopping list widget
     And I reload the page
 
@@ -64,7 +63,7 @@ Feature: My Shopping List Actions
 
   Scenario: Check Default Shopping List
     When I follow "Account"
-    And I click "My Shopping Lists"
+    And I click on "Shopping Lists Navigation Link"
     Then I should see following grid:
       | Name            | Subtotal  | Items | Default |
       | Shopping List 4 | $8,818.00 | 32    | No      |
@@ -77,15 +76,15 @@ Feature: My Shopping List Actions
     And I click "Shopping List Actions"
     And I click "Delete"
     And I click "Yes, delete"
-    Then Page title equals to "My Shopping Lists - My Account"
+    Then Page title equals to "Shopping Lists - My Account"
     When I open shopping list widget
     Then I should not see "Shopping List 4" on shopping list widget
     And I reload the page
 
   Scenario: Move line item to another shopping list
     Given I follow "Account"
-    And I click "My Shopping Lists"
-    And Page title equals to "My Shopping Lists - My Account"
+    And I click on "Shopping Lists Navigation Link"
+    And Page title equals to "Shopping Lists - My Account"
     And I should see following grid:
       | Name            | Subtotal  | Items | Default |
       | Shopping List 3 | $8,818.00 | 32    | No      |
@@ -99,8 +98,8 @@ Feature: My Shopping List Actions
     And I click "Shopping List Action Submit"
     Then I should see "One entity has been moved successfully" flash message
     And I follow "Account"
-    And I click "My Shopping Lists"
-    And Page title equals to "My Shopping Lists - My Account"
+    And I click on "Shopping Lists Navigation Link"
+    And Page title equals to "Shopping Lists - My Account"
     And I should see following grid:
       | Name            | Subtotal  | Items | Default |
       | Shopping List 3 | $8,785.00 | 31    | No      |
@@ -136,6 +135,6 @@ Feature: My Shopping List Actions
     When click "Sign Out"
     And I login as AmandaRCole@example.org buyer
     And I follow "Account"
-    And I click "My Shopping Lists"
+    And I click on "Shopping Lists Navigation Link"
     And I click View "Shopping List 1" in grid
     Then I should not see a "Shopping List Actions" element

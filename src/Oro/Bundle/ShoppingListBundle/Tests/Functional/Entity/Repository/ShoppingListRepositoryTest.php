@@ -91,6 +91,31 @@ class ShoppingListRepositoryTest extends WebTestCase
         }
     }
 
+    public function testFindByCustomerUserId(): void
+    {
+        $customerUser = $this->getCustomerUser();
+        /** @var ShoppingList[] $shoppingLists */
+        $shoppingLists = $this->getRepository()->findByCustomerUserId(
+            $customerUser->getId(),
+            $this->aclHelper,
+            ['list.updatedAt' => Criteria::ASC]
+        );
+        $this->assertCount(6, $shoppingLists);
+
+        $updatedAt = null;
+
+        foreach ($shoppingLists as $shoppingList) {
+            $this->assertInstanceOf(ShoppingList::class, $shoppingList);
+            $this->assertSame($this->customerUser, $shoppingList->getCustomerUser());
+
+            if ($updatedAt) {
+                $this->assertTrue($updatedAt <= $shoppingList->getUpdatedAt());
+            }
+
+            $updatedAt = $shoppingList->getUpdatedAt();
+        }
+    }
+
     public function testFindByUserAndId()
     {
         /** @var ShoppingList $shoppingListReference */
