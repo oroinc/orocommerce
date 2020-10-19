@@ -6,7 +6,7 @@
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroCheckoutBundle:Payment.yml
 
-Feature: My Shopping List
+Feature: Shopping List edit page
   In order to allow customers to manage products they want to purchase
   As a Buyer
   I need to be able to manage a shopping list line items
@@ -16,7 +16,7 @@ Feature: My Shopping List
       | Admin | first_session  |
       | Buyer | second_session |
     And I enable configuration options:
-      | oro_shopping_list.my_shopping_lists_page_enabled         |
+      | oro_shopping_list.shopping_lists_page_enabled            |
       | oro_shopping_list.use_new_layout_for_view_and_edit_pages |
     And I proceed as the Admin
     And I login as administrator
@@ -134,8 +134,8 @@ Feature: My Shopping List
     When I operate as the Buyer
     And I login as AmandaRCole@example.org buyer
     And I follow "Account"
-    And I click "My Shopping Lists"
-    Then Page title equals to "My Shopping Lists - My Account"
+    And I click on "Shopping Lists Navigation Link"
+    Then Page title equals to "Shopping Lists - My Account"
     And should see following grid:
       | Name            | Subtotal  | Items |
       | Shopping List 3 | $8,818.00 | 32    |
@@ -203,7 +203,7 @@ Feature: My Shopping List
 
   Scenario: Check quantity and unit for empty configurable product
     When I follow "Account"
-    And I click "My Shopping Lists"
+    And I click on "Shopping Lists Navigation Link"
     And I filter Name as contains "Shopping List 4"
     And I click view Shopping List 4 in grid
     Then I should see following grid:

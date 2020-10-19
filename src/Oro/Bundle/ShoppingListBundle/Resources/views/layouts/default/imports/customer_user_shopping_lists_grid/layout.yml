@@ -10,12 +10,6 @@ layout:
             optionName: grid_name
             optionValue: frontend-customer-user-shopping-lists-grid
 
-        - '@appendOption':
-            id: __datagrid
-            optionName: grid_parameters
-            optionValue:
-                customer_user_id: '=data["current_user"].getCurrentUser().getId()'
-
         - '@setOption':
             id: __datagrid
             optionName: grid_render_parameters.gridViewsOptions.hideTitle

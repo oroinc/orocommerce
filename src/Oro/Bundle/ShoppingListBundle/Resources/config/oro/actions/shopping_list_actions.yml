@@ -7,7 +7,7 @@ operations:
         groups:
             - shopping_list_actions
         routes:
-            - oro_shopping_list_frontend_my_view
+            - oro_shopping_list_frontend_view_grid
         button_options:
             icon: fa-pencil-square-o
         actions:
@@ -36,7 +36,7 @@ operations:
         groups:
             - shopping_list_actions
         routes:
-            - oro_shopping_list_frontend_my_view
+            - oro_shopping_list_frontend_view_grid
             - oro_shopping_list_frontend_update
         preactions:
             - '@call_service_method':
@@ -48,7 +48,7 @@ operations:
                 - '@equal': [$.isOneShoppingList, false]
         actions:
             - '@redirect':
-                route: 'oro_shopping_list_frontend_my_view'
+                route: 'oro_shopping_list_frontend_view_grid'
                 route_parameters:
                     id: $.newShoppingList.id
 
@@ -73,11 +73,11 @@ operations:
         groups:
             - shopping_list_actions
         routes:
-            - oro_shopping_list_frontend_my_view
+            - oro_shopping_list_frontend_view_grid
             - oro_shopping_list_frontend_update
         actions:
             - '@redirect':
-                route: 'oro_shopping_list_frontend_my_index'
+                route: 'oro_shopping_list_frontend_index'
 
     oro_shoppinglist_frontend_set_as_default_action:
         label: oro.shoppinglist.set_as_default.action.label
@@ -95,7 +95,7 @@ operations:
         groups:
             - shopping_list_actions
         routes:
-            - oro_shopping_list_frontend_my_view
+            - oro_shopping_list_frontend_view_grid
             - oro_shopping_list_frontend_update
         preconditions:
             '@equal': [false, $.data.current]
@@ -140,7 +140,7 @@ operations:
         groups:
             - shopping_list_actions
         routes:
-            - oro_shopping_list_frontend_my_view
+            - oro_shopping_list_frontend_view_grid
             - oro_shopping_list_frontend_update
         preactions:
             - '@get_active_user': $.currentUser

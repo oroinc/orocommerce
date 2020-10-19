@@ -196,7 +196,6 @@ class MoveProductsMassActionHandlerTest extends WebTestCase
             ->getDatagrid(
                 'frontend-customer-user-shopping-list-edit-grid',
                 [
-                    'customer_user_id' => $customerUser->getId(),
                     'shopping_list_id' => $shoppingList->getId(),
                 ]
             );

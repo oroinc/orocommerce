@@ -90,12 +90,12 @@ class ShoppingListControllerTest extends WebTestCase
             )
         );
 
-        $this->client->request('GET', $this->getUrl('oro_shopping_list_frontend_my_index'));
+        $this->client->request('GET', $this->getUrl('oro_shopping_list_frontend_index'));
         $this->assertResponseStatusCodeEquals($this->client->getResponse(), 404);
 
         $this->enableMyShoppingListsPage(true);
 
-        $this->client->request('GET', $this->getUrl('oro_shopping_list_frontend_my_index'));
+        $this->client->request('GET', $this->getUrl('oro_shopping_list_frontend_index'));
         $this->assertResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         $this->enableMyShoppingListsPage(false);
@@ -107,7 +107,7 @@ class ShoppingListControllerTest extends WebTestCase
     private function enableMyShoppingListsPage(bool $isEnabled): void
     {
         $configManager = $this->getContainer()->get(ConfigManager::class);
-        $configManager->set('oro_shopping_list.my_shopping_lists_page_enabled', $isEnabled);
+        $configManager->set('oro_shopping_list.shopping_lists_page_enabled', $isEnabled);
         $configManager->flush();
     }
 
@@ -124,16 +124,12 @@ class ShoppingListControllerTest extends WebTestCase
             $this->generateBasicAuthHeader(BaseLoadCustomerData::AUTH_USER, BaseLoadCustomerData::AUTH_PW)
         );
 
-        $crawler = $this->client->request('GET', $this->getUrl('oro_shopping_list_frontend_my_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_shopping_list_frontend_index'));
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
         $this->assertStringContainsString('frontend-customer-user-shopping-lists-grid', $crawler->html());
 
-        $response = $this->client->requestFrontendGrid(
-            'frontend-customer-user-shopping-lists-grid',
-            ['frontend-customer-user-shopping-lists-grid[customer_user_id]' => $user->getId()],
-            true
-        );
+        $response = $this->client->requestFrontendGrid('frontend-customer-user-shopping-lists-grid', [], true);
 
         $data = $this->getJsonResponseContent($response, 200)['data'];
 
@@ -174,7 +170,7 @@ class ShoppingListControllerTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('oro_shopping_list_frontend_my_view', ['id' => $shoppingList->getId()])
+            $this->getUrl('oro_shopping_list_frontend_view_grid', ['id' => $shoppingList->getId()])
         );
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);

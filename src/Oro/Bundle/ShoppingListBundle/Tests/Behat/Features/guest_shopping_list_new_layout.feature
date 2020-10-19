@@ -9,7 +9,7 @@ Feature: Guest Shopping List with new layout
   Scenario: Feature Background
     Given I enable configuration options:
       | oro_shopping_list.availability_for_guests                |
-      | oro_shopping_list.my_shopping_lists_page_enabled         |
+      | oro_shopping_list.shopping_lists_page_enabled         |
       | oro_shopping_list.use_new_layout_for_view_and_edit_pages |
       | oro_checkout.guest_checkout                              |
 

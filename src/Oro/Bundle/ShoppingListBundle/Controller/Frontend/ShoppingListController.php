@@ -50,7 +50,10 @@ class ShoppingListController extends AbstractController
             $shoppingList = $this->get(CurrentShoppingListManager::class)->getCurrent();
         }
 
-        if ($this->get(ConfigManager::class)->get('oro_shopping_list.use_new_layout_for_view_and_edit_pages')) {
+        $configManager = $this->get(ConfigManager::class);
+        if ($configManager->get('oro_shopping_list.shopping_lists_page_enabled') &&
+            $configManager->get('oro_shopping_list.use_new_layout_for_view_and_edit_pages')
+        ) {
             $params = ['id' => $shoppingList->getId()];
 
             if ($this->isGranted('EDIT', $shoppingList)) {
@@ -58,7 +61,7 @@ class ShoppingListController extends AbstractController
             }
 
             if ($this->isGranted('VIEW', $shoppingList)) {
-                return $this->redirect($this->generateUrl('oro_shopping_list_frontend_my_view', $params));
+                return $this->redirect($this->generateUrl('oro_shopping_list_frontend_view_grid', $params));
             }
         }
 
@@ -152,13 +155,13 @@ class ShoppingListController extends AbstractController
     }
 
     /**
-     * @Route("/my", name="oro_shopping_list_frontend_my_index")
+     * @Route("/all", name="oro_shopping_list_frontend_index")
      * @Layout
      * @AclAncestor("oro_shopping_list_frontend_view")
      *
      * @return array
      */
-    public function indexMyAction(): array
+    public function indexAction(): array
     {
         if (!$this->getUser() instanceof CustomerUser) {
             throw $this->createAccessDeniedException();
@@ -168,16 +171,15 @@ class ShoppingListController extends AbstractController
     }
 
     /**
-     * @Route("/my/{id}", name="oro_shopping_list_frontend_my_view", requirements={"id"="\d+"})
+     * @Route("/view/{id}", name="oro_shopping_list_frontend_view_grid", requirements={"id"="\d+"})
      * @Layout
      * @AclAncestor("oro_shopping_list_frontend_view")
      *
      * @param ShoppingList $shoppingList
-     * @param Request $request
      *
      * @return array
      */
-    public function viewMyAction(ShoppingList $shoppingList, Request $request): array
+    public function viewGridAction(ShoppingList $shoppingList): array
     {
         return [
             'data' => [
@@ -192,11 +194,10 @@ class ShoppingListController extends AbstractController
      * @AclAncestor("oro_shopping_list_frontend_update")
      *
      * @param ShoppingList $shoppingList
-     * @param Request $request
      *
      * @return array
      */
-    public function updateAction(ShoppingList $shoppingList, Request $request): array
+    public function updateAction(ShoppingList $shoppingList): array
     {
         return [
             'data' => [

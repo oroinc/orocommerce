@@ -8,7 +8,7 @@ layout:
                     blockType: shopping_lists_awere_container
                     options:
                         visible: '=data["acl"].isGranted("oro_shopping_list_frontend_view") && (context["is_logged_in"] || (!context["is_logged_in"] && data["feature"].isFeatureEnabled("guest_shopping_list")))'
-                        shoppingLists: '=data["oro_shopping_list_customer_user_shopping_lists"].getShoppingLists()'
+                        shoppingLists: '=data["oro_shopping_list_customer_user_shopping_lists"].getShoppingListsForWidget()'
                 header_row_shopping_toggle:
                     blockType: container
                 main_menu_shopping_lists_wrapper:
@@ -16,15 +16,15 @@ layout:
                 main_menu_shopping_lists_dropdown:
                     blockType: shopping_lists_awere_container
                     options:
-                        shoppingLists: '=data["oro_shopping_list_customer_user_shopping_lists"].getShoppingLists()'
+                        shoppingLists: '=data["oro_shopping_list_customer_user_shopping_lists"].getShoppingListsForWidget()'
                 main_menu_shopping_dropdown:
                     blockType: shopping_lists_awere_container
                     options:
-                        shoppingLists: '=data["oro_shopping_list_customer_user_shopping_lists"].getShoppingLists()'
+                        shoppingLists: '=data["oro_shopping_list_customer_user_shopping_lists"].getShoppingListsForWidget()'
                 main_menu_shopping_lists_dropdown_container:
                     blockType: shopping_lists_awere_container
                     options:
-                        shoppingLists: '=data["oro_shopping_list_customer_user_shopping_lists"].getShoppingLists()'
+                        shoppingLists: '=data["oro_shopping_list_customer_user_shopping_lists"].getShoppingListsForWidget()'
                         shoppingListProducts: '=data["oro_shopping_list_products"].getLastProductsGroupedByShoppingList(shoppingLists, 3, data["frontend_localization"].getCurrentLocalization())'
                         productsMatchedPrices: '=data["shopping_list_limit_provider"].isOnlyOneEnabled() ? data["oro_shopping_list_products"].getMatchedPrices(shoppingLists) : []'
                 main_menu_shopping_lists_dropdown_item:

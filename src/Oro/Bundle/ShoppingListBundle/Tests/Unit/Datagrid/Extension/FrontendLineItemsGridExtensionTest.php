@@ -144,7 +144,7 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
             ->method('get')
             ->willReturnMap(
                 [
-                    ['oro_shopping_list.my_shopping_lists_max_line_items_per_page', false, false, null, 1000],
+                    ['oro_shopping_list.shopping_lists_max_line_items_per_page', false, false, null, 1000],
                     ['oro_shopping_list.shopping_list_limit', false, false, null, 1],
                 ]
             );
@@ -271,7 +271,7 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
             ->method('get')
             ->willReturnMap(
                 [
-                    ['oro_shopping_list.my_shopping_lists_max_line_items_per_page', false, false, null, 1000],
+                    ['oro_shopping_list.shopping_lists_max_line_items_per_page', false, false, null, 1000],
                     ['oro_shopping_list.shopping_list_limit', false, false, null, 0],
                 ]
             );
@@ -338,7 +338,7 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
             ->method('get')
             ->willReturnMap(
                 [
-                    ['oro_shopping_list.my_shopping_lists_max_line_items_per_page', false, false, null, 1000],
+                    ['oro_shopping_list.shopping_lists_max_line_items_per_page', false, false, null, 1000],
                     ['oro_shopping_list.shopping_list_limit', false, false, null, 0],
                 ]
             );

@@ -410,6 +410,15 @@ oro_behat_extension:
     Shopping List Widget Set Current Radio 3:
       selector: '.shopping-list-widget .shopping-list-dropdown__item:nth-child(4) label[data-role="shopping-list-current-label"]'
 
+    Shopping Lists Navigation Link:
+      selector:
+        type: xpath
+        locator: '//a[text()="Shopping Lists" and contains(@class,"primary-menu__link")]'
+
+    Frontend Customer User Shopping Lists Grid:
+      selector: 'div[data-page-component-name="frontend-customer-user-shopping-lists-grid"]'
+      class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\Grid
+
   suites:
     OroShoppingListBundle:
       contexts:
@@ -435,5 +444,6 @@ oro_behat_extension:
         - OroCheckoutBundle::FeatureContext
         - OroQueryDesignerBundle::QueryDesignerContext
         - OroEmailBundle::EmailContext
+        - OroCustomerBundle::FrontendGridContext
       paths:
         - '@OroShoppingListBundle/Tests/Behat/Features'

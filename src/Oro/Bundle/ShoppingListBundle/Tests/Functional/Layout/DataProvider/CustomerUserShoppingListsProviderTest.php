@@ -117,4 +117,61 @@ class CustomerUserShoppingListsProviderTest extends WebTestCase
             ],
         ];
     }
+
+    /**
+     * @dataProvider getShoppingListsForWidgetWhenNotShowAllProvider
+     * @param array $shoppingLists
+     * @param string $user
+     */
+    public function testGetShoppingListsForWidgetWhenNotShowAll(array $shoppingLists, string $user): void
+    {
+        $configManager = $this->getContainer()->get('oro_config.manager');
+        $configManager->set('oro_shopping_list.show_all_in_shopping_list_widget', false);
+        $configManager->flush();
+
+        $this->loginUser($user);
+        $this->client->request('GET', $this->getUrl('oro_frontend_root'));
+
+        $actualShoppingLists = $this->getContainer()
+            ->get('oro_shopping_list.layout.data_provider.customer_user_shopping_lists')
+            ->getShoppingListsForWidget();
+
+        $actual = [];
+        foreach ($actualShoppingLists as $shoppingList) {
+            $actual[] = $shoppingList->getLabel();
+        }
+        sort($actual);
+        $this->assertEquals($shoppingLists, $actual);
+    }
+
+    /**
+     * @return array
+     */
+    public function getShoppingListsForWidgetWhenNotShowAllProvider(): array
+    {
+        return [
+            'VIEW (anonymous user)' => [
+                'shoppingLists' => [],
+                'user' => '',
+            ],
+            'VIEW (user from parent customer : DEEP_VIEW_ONLY)' => [
+                'shoppingLists' => [
+                    LoadShoppingListACLData::SHOPPING_LIST_ACC_2_USER_DEEP,
+                ],
+                'user' => LoadShoppingListUserACLData::USER_ACCOUNT_2_ROLE_DEEP,
+            ],
+            'VIEW (user from parent customer : LOCAL)' => [
+                'shoppingLists' => [
+                    LoadShoppingListACLData::SHOPPING_LIST_ACC_2_USER_LOCAL,
+                ],
+                'user' => LoadShoppingListUserACLData::USER_ACCOUNT_2_ROLE_LOCAL,
+            ],
+            'VIEW (user from same customer : BASIC)' => [
+                'shoppingLists' => [
+                    LoadShoppingListACLData::SHOPPING_LIST_ACC_2_USER_BASIC,
+                ],
+                'user' => LoadShoppingListUserACLData::USER_ACCOUNT_2_ROLE_BASIC,
+            ],
+        ];
+    }
 }

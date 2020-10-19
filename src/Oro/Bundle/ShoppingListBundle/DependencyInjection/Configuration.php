@@ -34,9 +34,10 @@ class Configuration implements ConfigurationInterface
                 'shopping_list_limit' => ['value' => 0, 'type' => 'integer'],
                 'mass_adding_on_product_listing_enabled' => ['value' => true, 'type' => 'boolean'],
                 'create_shopping_list_for_new_guest' => ['value' => false, 'type' => 'boolean'],
-                'my_shopping_lists_page_enabled' => ['value' => false, 'type' => 'boolean'],
+                'shopping_lists_page_enabled' => ['value' => false, 'type' => 'boolean'],
                 'use_new_layout_for_view_and_edit_pages' => ['value' => false, 'type' => 'boolean'],
-                'my_shopping_lists_max_line_items_per_page' => ['value' => 1000, 'type' => 'integer'],
+                'shopping_lists_max_line_items_per_page' => ['value' => 1000, 'type' => 'integer'],
+                'show_all_in_shopping_list_widget' => ['value' => true, 'type' => 'boolean'],
             ]
         );
 

@@ -20,7 +20,7 @@ Feature: My Shopping List Configuration
     Then the "Enable \"Shopping Lists\" page in \"My Account\"" checkbox should be unchecked
     And the "Use new layout for shopping list view and edit pages" checkbox should be unchecked
 
-  Scenario: Enable My Shopping Lists page
+  Scenario: Enable Shopping Lists page
     When I fill "Shopping List Configuration Form" with:
       | Enable "Shopping Lists" page in "My Account" Use default | false |
       | Enable "Shopping Lists" page in "My Account"             | true  |
@@ -44,11 +44,11 @@ Feature: My Shopping List Configuration
     And I should see "Shopping List 3"
     And I should see "Create Order"
 
-  Scenario: Check My Shopping Lists page
+  Scenario: Check Shopping Lists page
     When I follow "Account"
-    Then I should see "My Shopping Lists"
-    When I click "My Shopping Lists"
-    Then Page title equals to "My Shopping Lists - My Account"
+    Then I should see "Shopping Lists"
+    When I click on "Shopping Lists Navigation Link"
+    Then Page title equals to "Shopping Lists - My Account"
     And I should see following grid:
       | Name            | Subtotal  | Items | Default |
       | Shopping List 3 | $8,818.00 | 32    | Yes     |
@@ -59,18 +59,37 @@ Feature: My Shopping List Configuration
       | View |
       | Edit |
 
-  Scenario: Enable New Layout for shopping list view and edit pages
-    When I proceed as the Admin
-    And uncheck "Use default" for "Use new layout for shopping list view and edit pages" field
-    And I check "Use new layout for shopping list view and edit pages"
+  Scenario: Enable New Layout when Shopping Lists page is disabled
+    Given I proceed as the Admin
+    When I fill "Shopping List Configuration Form" with:
+      | Enable "Shopping Lists" page in "My Account"                     | false |
+      | Use new layout for shopping list view and edit pages Use default | false |
+      | Use new layout for shopping list view and edit pages             | true  |
     And click "Save settings"
     Then I should see "Configuration saved" flash message
     And the "Use new layout for shopping list view and edit pages" checkbox should be checked
+    And the "Enable \"Shopping Lists\" page in \"My Account\"" checkbox should be unchecked
+
+  Scenario: Check Shopping List page
+    Given I operate as the Buyer
+    When I open page with shopping list "Shopping List 3"
+    Then I should see "Shopping List 1"
+    And I should see "Shopping List 2"
+    And I should see "Shopping List 3"
+    And I should see "Create Order"
+
+  Scenario: Enable New Layout for shopping list view and edit pages
+    When I proceed as the Admin
+    And I check "Enable \"Shopping Lists\" page in \"My Account\""
+    And click "Save settings"
+    Then I should see "Configuration saved" flash message
+    And the "Use new layout for shopping list view and edit pages" checkbox should be checked
+    And the "Enable \"Shopping Lists\" page in \"My Account\"" checkbox should be checked
 
   Scenario: Check Shopping List edit page from shopping list widget
     When I proceed as the Buyer
     And I open page with shopping list "Shopping List 1"
-    Then Page title equals to "Shopping List 1 - My Shopping Lists - My Account"
+    Then Page title equals to "Shopping List 1 - Shopping Lists - My Account"
     And I should see "Shopping List 1"
     And I should see "Assigned To: Amanda Cole"
     And I should see "3 total records"
@@ -84,12 +103,12 @@ Feature: My Shopping List Configuration
     And I should see "Total $1,581.00"
     And I should see "Create Order"
 
-  Scenario: Check Shopping List edit from My Shopping lists page
+  Scenario: Check Shopping List edit from Shopping Lists page
     When I follow "Account"
-    And I click "My Shopping Lists"
+    And I click on "Shopping Lists Navigation Link"
     And I filter Name as contains "List 1"
     And I click Edit "Shopping List 1" in grid
-    Then Page title equals to "Shopping List 1 - My Shopping Lists - My Account"
+    Then Page title equals to "Shopping List 1 - Shopping Lists - My Account"
     And I should see "Shopping List 1"
     And I should see "Assigned To: Amanda Cole"
     And I should see "3 total records"
@@ -123,7 +142,7 @@ Feature: My Shopping List Configuration
   Scenario: Check shopping list view page from shopping list widget
     When I login as AmandaRCole@example.org buyer
     And I open page with shopping list "Shopping List 1"
-    Then Page title equals to "Shopping List 1 - My Shopping Lists - My Account"
+    Then Page title equals to "Shopping List 1 - Shopping Lists - My Account"
     And I should see "Shopping List 1"
     And I should see "Assigned To: Amanda Cole"
     And I should see "3 total records"
@@ -141,7 +160,7 @@ Feature: My Shopping List Configuration
     When I click "Shopping List Actions"
     Then I should not see "Edit"
 
-  Scenario: Disable My Shopping Lists page
+  Scenario: Disable Shopping Lists page
     When I proceed as the Admin
     And I fill "Shopping List Configuration Form" with:
       | Enable "Shopping Lists" page in "My Account"             | false |
@@ -153,9 +172,9 @@ Feature: My Shopping List Configuration
     And the "Enable \"Shopping Lists\" page in \"My Account\"" checkbox should be unchecked
     And the "Use new layout for shopping list view and edit pages" checkbox should be unchecked
 
-  Scenario: Check My Shopping Lists pages when configuration is disabled
+  Scenario: Check Shopping Lists pages when configuration is disabled
     When I proceed as the Buyer
     And I reload the page
     Then I should see "404 Not Found"
     When I follow "Account"
-    Then I should not see "My Shopping Lists"
+    Then I should not see a "Shopping Lists Navigation Link" element

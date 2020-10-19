@@ -155,6 +155,38 @@ class CurrentShoppingListManager
     }
 
     /**
+     * @param int $customerUserId
+     * @param array $sortCriteria
+     *
+     * @return ShoppingList[]
+     */
+    public function getShoppingListsForCustomerUserWithCurrentFirst(
+        int $customerUserId,
+        array $sortCriteria = []
+    ): array {
+        /** @var ShoppingList[] $shoppingLists */
+        $shoppingLists = [];
+        $currentShoppingList = $this->getCurrentShoppingList();
+        if (null !== $currentShoppingList) {
+            if ($currentShoppingList->getCustomerUser()->getId() !== $customerUserId) {
+                $currentShoppingList = null;
+            }
+
+            $shoppingLists = $this->getShoppingListRepository()
+                ->findByCustomerUserId($customerUserId, $this->aclHelper, $sortCriteria, $currentShoppingList);
+
+            if ($currentShoppingList) {
+                $shoppingLists = array_merge([$currentShoppingList], $shoppingLists);
+            } elseif ($shoppingLists) {
+                $currentShoppingList = reset($shoppingLists);
+                $this->setCurrent($currentShoppingList->getCustomerUser(), $currentShoppingList);
+            }
+        }
+
+        return $shoppingLists;
+    }
+
+    /**
      * @param array $sortCriteria
      *
      * @return ShoppingList[]
