@@ -4,7 +4,6 @@ namespace Oro\Bundle\ShoppingListBundle\Form\Type;
 
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionColumn;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -12,6 +11,9 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Allows to edit quantity of product variant from matrix form.
+ */
 class MatrixColumnType extends AbstractType
 {
     /**
@@ -42,8 +44,10 @@ class MatrixColumnType extends AbstractType
                         'precision' => $precision,
                     ]
                 ];
+                $quantityConfig['attr']['data-precision'] = $precision;
+                $quantityConfig['attr']['data-input-widget'] = 'number';
             }
-            $event->getForm()->add('quantity', NumberType::class, $quantityConfig);
+            $event->getForm()->add('quantity', MatrixColumnQuantityType::class, $quantityConfig);
         });
     }
 

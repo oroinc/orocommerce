@@ -146,7 +146,7 @@
     <div class="{{ class_prefix }}__form__col">
         <div class="{{ class_prefix }}__grid-footer-total {{ columnsQty[key] > 0 ? 'valid' : '' }}"
              data-columns-quantity="{{ cellIndex }}">
-            {{ columnsQty[key] }}
+            {{ columnsQty[key]|oro_format_decimal }}
         </div>
     </div>
 {% endblock %}

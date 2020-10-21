@@ -155,10 +155,9 @@ define(function(require) {
             this.changeTotal(row, cell, -1);
 
             // recalculate cell total
-            cell.quantity = this.getValidQuantity($element.val());
+            cell.quantity = NumberFormatter.unformatStrict($element.val());
             const quantity = cell.quantity > 0 ? cell.quantity.toString() : '';
             cell.price = PricesHelper.calcTotalPrice(this.prices[productId], this.model.get('unit'), quantity);
-            $element.val(quantity);
 
             // add new values
             this.changeTotal(this.total, cell);
@@ -216,7 +215,9 @@ define(function(require) {
          * Update totals
          */
         render: function() {
-            this.$('[data-role="total-quantity"]').text(this.total.quantity);
+            this.$('[data-role="total-quantity"]').text(
+                NumberFormatter.formatDecimal(this.total.quantity)
+            );
             this.$('[data-role="total-price"]').text(
                 NumberFormatter.formatCurrency(this.total.price, this.total.currency)
             );
@@ -237,7 +238,9 @@ define(function(require) {
 
                 const formattedCurrency = NumberFormatter.formatCurrency(total.price, total.currency);
 
-                $quantity.toggleClass('valid', total.quantity > 0).html(total.quantity);
+                $quantity.toggleClass('valid', total.quantity > 0).html(
+                    NumberFormatter.formatDecimal(total.quantity)
+                );
                 $price.toggleClass('valid', total.price > 0).html(formattedCurrency);
             }, this);
         },

@@ -10,6 +10,9 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Allows to edit quantity of all product variants combined to matrix form.
+ */
 class MatrixCollectionType extends AbstractType
 {
     /**
@@ -44,8 +47,8 @@ class MatrixCollectionType extends AbstractType
         if ($matrixCollection) {
             foreach ($matrixCollection->rows as $rowKey => $row) {
                 foreach ($row->columns as $columnKey => $column) {
-                    $columnsQty = $this->getQtyByKey($columnsQty, $columnKey, (int) $column->quantity);
-                    $rowsQty = $this->getQtyByKey($rowsQty, $rowKey, (int) $column->quantity);
+                    $columnsQty = $this->getQtyByKey($columnsQty, $columnKey, (float) $column->quantity);
+                    $rowsQty = $this->getQtyByKey($rowsQty, $rowKey, (float) $column->quantity);
                 }
             }
         }
@@ -57,11 +60,11 @@ class MatrixCollectionType extends AbstractType
     /**
      * @param array $data
      * @param int $key
-     * @param int $quantity
+     * @param float $quantity
      *
      * @return array
      */
-    private function getQtyByKey(array $data, int $key, int $quantity): array
+    private function getQtyByKey(array $data, int $key, float $quantity): array
     {
         if (isset($data[$key])) {
             $data[$key] += $quantity;
