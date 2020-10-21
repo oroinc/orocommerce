@@ -9,6 +9,13 @@ const ImageTypeBuilder = BaseTypeBuilder.extend({
     modelMixin: {
         defaults: {
             tagName: 'img'
+        },
+
+        getAttrToHTML() {
+            const attrs = this.constructor.__super__.getAttrToHTML.call(this);
+            attrs['src'] = attrs['data-src-exp'];
+            delete attrs['data-src-exp'];
+            return attrs;
         }
     },
 
@@ -28,11 +35,19 @@ const ImageTypeBuilder = BaseTypeBuilder.extend({
          */
         updateAttributes: function(...args) {
             this.constructor.__super__.updateAttributes.apply(this, args);
+            this.postRender();
+        },
 
-            const imageSrc = DigitalAssetHelper.getImageUrlFromTwigTag(this.model.get('src'));
+        postRender() {
+            const {$el, model} = this;
+
+            const attrs = model.get('attributes');
+            const imageSrc = DigitalAssetHelper.getImageUrlFromTwigTag(attrs['data-src-exp']);
 
             if (imageSrc) {
-                this.$el.attr('src', imageSrc);
+                $el.attr('src', imageSrc).removeClass(this.classEmpty);
+            } else {
+                $el.attr('src', '').addClass(this.classEmpty);
             }
         },
 
@@ -47,11 +62,10 @@ const ImageTypeBuilder = BaseTypeBuilder.extend({
                         const {digitalAssetId, uuid, title} = digitalAssetModel.get('previewMetadata');
 
                         digitalAssetImageComponentModel
-                            .setAttributes({alt: title || ''})
-                            .set(
-                                'src',
-                                `{{ wysiwyg_image('${digitalAssetId}','${uuid}') }}`
-                            );
+                            .setAttributes({
+                                'alt': title || '',
+                                'data-src-exp': `{{ wysiwyg_image('${digitalAssetId}','${uuid}') }}`
+                            });
                     }
                 }
             );
