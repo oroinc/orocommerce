@@ -205,6 +205,11 @@
     </div>
 {% endblock %}
 
+{% block _product_view_attribute_group_general_attribute_product_images_images_widget %}
+    {# Skip 'attribute_group_general_widget' in hierarchy of blocks #}
+    {{ block('attribute_product_images_widget') }}
+{% endblock %}
+
 {% block attribute_group_general_widget %}
     {% set fieldName = block.vars.fieldName|lower %}
     {% set attr = layout_attr_defaults(attr, {'~class': ' product-view__' ~ fieldName} ) %}

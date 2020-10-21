@@ -2,11 +2,15 @@
 
 .product-view-media-gallery {
     max-height: $product-view-media-gallery-max-height;
-
     border: $product-view-media-gallery-border;
+    z-index: $product-view-media-gallery-z-index;
 
     &.slick-initialized {
         overflow: visible;
+
+        .tab-content__wrapper & {
+            max-width: $product-view-media-gallery-tab-content-max-width;
+        }
 
         .product-view-media-gallery__image-item {
             //Should for reset slick display value
@@ -74,6 +78,10 @@
 
             opacity: 1;
             visibility: visible;
+
+            .tab-content__wrapper & {
+                max-width: $product-view-media-gallery-nav-tab-content-max-width;
+            }
         }
 
         &__item {
