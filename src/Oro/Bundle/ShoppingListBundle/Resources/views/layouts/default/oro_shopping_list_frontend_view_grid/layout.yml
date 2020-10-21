@@ -23,6 +23,11 @@ layout:
             optionName: attr.class
             optionValue: 'page-content--has-sidebar-right'
 
+        - '@setOption':
+              id: datagrid_toggle_paginaton_view
+              optionName: visible
+              optionValue: '=data["entity"]!=null && data["acl"].isGranted("oro_shopping_list_frontend_view")'
+
         - '@move':
             id: page_content
             parentId: page_main_content
