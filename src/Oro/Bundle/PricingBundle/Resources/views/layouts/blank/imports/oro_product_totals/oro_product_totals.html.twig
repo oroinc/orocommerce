@@ -52,7 +52,7 @@
     }) %}
 
     <div {{ block('block_attributes') }}>
-        {{ totals.quantity|default('') }}
+        {{ totals.quantity|default('')|oro_format_decimal }}
     </div>
 {% endblock %}
 

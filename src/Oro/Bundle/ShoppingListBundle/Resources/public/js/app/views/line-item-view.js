@@ -8,7 +8,7 @@ define(function(require) {
 
     const LineItemView = BaseProductView.extend({
         elements: _.extend({}, BaseProductView.prototype.elements, {
-            quantity: '[data-name="field__quantity"]',
+            quantity: '[data-name="field__quantity"]:not([data-matrix-qty])',
             unit: '[data-name="field__unit"]'
         }),
 
