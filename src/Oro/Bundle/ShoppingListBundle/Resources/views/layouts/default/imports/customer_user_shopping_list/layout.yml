@@ -32,8 +32,9 @@ layout:
                 __header_title_wrapper:
                     blockType: layout_subtree_update
                     options:
-                        reloadEvents: ['layout-subtree:update:shopping_list_rename', 'layout-subtree:update:shopping_list_set_default']
+                        reloadEvents: ['shopping-list:refresh', 'layout-subtree:update:shopping_list_rename', 'layout-subtree:update:shopping_list_set_default']
                         showLoading: false
+                        onLoadingCssClass: 'loading-blur'
                 __header_title_container:
                     blockType: container
                 __header_icon:
@@ -50,7 +51,9 @@ layout:
                 __header_owner_wrapper:
                     blockType: layout_subtree_update
                     options:
-                        reloadEvents: ['layout-subtree:update:shopping_list_owner']
+                        reloadEvents: ['shopping-list:refresh', 'layout-subtree:update:shopping_list_owner']
+                        showLoading: false
+                        onLoadingCssClass: 'loading-blur'
                 __header_owner:
                     blockType: shopping_list_awere_block
                     options:
