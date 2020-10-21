@@ -68,6 +68,8 @@ layout:
             id: __datagrid_toggle_paginaton_view
             parentId: __datagrid_toolbar_leftside_container
             blockType: block
+            options:
+                visible: false
 
         - '@add':
             id: __datagrid_toggle_group
