@@ -413,17 +413,8 @@ const GrapesjsEditorView = BaseView.extend({
         this.builder.on('component:update', _.debounce(this._onComponentUpdatedBuilder.bind(this), 100));
         this.builder.on('changeTheme', this._updateTheme.bind(this));
         this.builder.on('component:selected', this.componentSelected.bind(this));
+        this.builder.on('component:deselected', this.componentDeselected.bind(this));
         this.builder.on('rteToolbarPosUpdate', this.updateRtePosition.bind(this));
-
-        this.builder.editor.view.$el.find('.gjs-toolbar')
-            .off('mouseover')
-            .on('mouseover', '.gjs-toolbar-item', e => {
-                $(e.target).tooltip({
-                    title: $(e.target).attr('label') || ''
-                });
-
-                $(e.target).tooltip('show');
-            });
 
         // Fix reload form when click export to zip dialog
         this.builder.on('run:export-template', () => {
@@ -544,6 +535,21 @@ const GrapesjsEditorView = BaseView.extend({
         return this.builder.getIsolatedCss();
     },
 
+    getToolbarItems() {
+        return $(this.builder.editor.view.$el.find('.gjs-toolbar .gjs-toolbar-item'));
+    },
+
+    componentDeselected() {
+        this.builder.editor.view.$el.find('.gjs-toolbar').off('mouseover');
+        this.getToolbarItems().each(function() {
+            const tooltip = $(this).data('bs.tooltip');
+
+            if (tooltip) {
+                tooltip.dispose();
+            }
+        });
+    },
+
     componentSelected(model) {
         let toolbar = model.get('toolbar');
 
@@ -572,6 +578,16 @@ const GrapesjsEditorView = BaseView.extend({
 
             model.set('toolbar', toolbar);
         }
+
+        this.builder.editor.view.$el.find('.gjs-toolbar')
+            .off('mouseover')
+            .on('mouseover', '.gjs-toolbar-item', e => {
+                $(e.target).tooltip({
+                    title: $(e.target).attr('label') || ''
+                });
+
+                $(e.target).tooltip('show');
+            });
     },
 
     /**
