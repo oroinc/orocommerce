@@ -16,7 +16,11 @@ import 'orocms/js/app/grapesjs/plugins/components/grapesjs-components';
 import 'orocms/js/app/grapesjs/plugins/import/import';
 import 'orocms/js/app/grapesjs/plugins/code/code';
 import 'orocms/js/app/grapesjs/plugins/panel-scrolling-hints';
-import {escapeWrapper, getWrapperAttrs} from 'orocms/js/app/grapesjs/plugins/grapesjs-style-isolation';
+import {
+    escapeWrapper,
+    getWrapperAttrs,
+    removeImageExpression
+} from 'orocms/js/app/grapesjs/plugins/grapesjs-style-isolation';
 import i18nMessages from 'orocms/js/app/grapesjs/plugins/i18n-messages';
 import ContentParser from 'orocms/js/app/grapesjs/plugins/grapesjs-content-parser';
 
@@ -508,7 +512,7 @@ const GrapesjsEditorView = BaseView.extend({
         }
 
         const _res = this.builder.ComponentRestriction.validate(
-            this.builder.getIsolatedHtml(this.$el.val())
+            removeImageExpression(this.$el.val())
         );
         const validationMessage = __('oro.cms.wysiwyg.validation.import', {tags: _res.join(', ')});
 
