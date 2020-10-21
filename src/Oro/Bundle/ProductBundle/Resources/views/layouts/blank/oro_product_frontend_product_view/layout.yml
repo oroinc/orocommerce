@@ -91,7 +91,7 @@ layout:
             prepend: true
         - '@move':
             id: product_view_attribute_group_general_attribute_product_images_images
-            parentId: product_view_media_container
+            parentId: product_view_attribute_group_images
         - '@setOption':
             id: product_view_attribute_group_general_attribute_product_images_images
             optionName: popup_gallery
