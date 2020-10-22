@@ -34,7 +34,6 @@ class ShoppingListTest extends \PHPUnit\Framework\TestCase
             ['customerUser', new CustomerUser()],
             ['createdAt', $now, false],
             ['updatedAt', $now, false],
-            ['lineItemsCount', 42],
         ];
 
         $this->assertPropertyAccessors(new ShoppingList(), $properties);

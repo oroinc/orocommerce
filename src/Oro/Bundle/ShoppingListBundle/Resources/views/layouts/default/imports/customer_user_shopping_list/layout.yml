@@ -83,7 +83,7 @@ layout:
                         entityId: '=data["entity"]!=null ? data["entity"].getId() : null'
                         skipMaskView: true
                         vars:
-                            itemsCount: '=data["entity"].getLineItemsCount()'
+                            itemsCount: '=data["entity"].getLineItems().count()'
                             totalsConainerClassName: ''
                 __totals_placeholder:
                     blockType: block
