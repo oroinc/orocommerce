@@ -334,3 +334,8 @@ services:
             - '@oro_entity_config.slug.generator'
         tags:
             - { name: kernel.event_listener, event: Oro\Bundle\CatalogBundle\ImportExport\Event\CategoryStrategyAfterProcessEntityEvent, method: onProcessAfter }
+
+    oro_catalog.event_listener.category_preloading:
+        parent: oro_entity.event_listener.default_preloading
+        tags:
+            - { name: kernel.event_listener, event: oro_entity.preload_entity.category, method: onPreload }

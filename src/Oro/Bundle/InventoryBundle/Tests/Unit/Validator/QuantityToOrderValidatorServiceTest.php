@@ -38,7 +38,16 @@ class QuantityToOrderValidatorServiceTest extends \PHPUnit\Framework\TestCase
     /**
      * @var array
      */
-    private $fieldsToPreload = ['product' => ['minimumQuantityToOrder' => [], 'maximumQuantityToOrder' => []]];
+    private $fieldsToPreload = [
+        'product' => [
+            'minimumQuantityToOrder' => [],
+            'maximumQuantityToOrder' => [],
+            'category' => [
+                'minimumQuantityToOrder' => [],
+                'maximumQuantityToOrder' => [],
+            ],
+        ],
+    ];
 
     protected function setUp()
     {

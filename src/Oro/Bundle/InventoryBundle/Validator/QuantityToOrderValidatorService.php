@@ -57,7 +57,16 @@ class QuantityToOrderValidatorService
         if ($this->preloadingManager) {
             $this->preloadingManager->preloadInEntities(
                 $lineItems instanceof Collection ? $lineItems->toArray() : $lineItems,
-                ['product' => ['minimumQuantityToOrder' => [], 'maximumQuantityToOrder' => []]]
+                [
+                    'product' => [
+                        'minimumQuantityToOrder' => [],
+                        'maximumQuantityToOrder' => [],
+                        'category' => [
+                            'minimumQuantityToOrder' => [],
+                            'maximumQuantityToOrder' => [],
+                        ],
+                    ],
+                ]
             );
         }
 
