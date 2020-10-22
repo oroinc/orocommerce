@@ -184,23 +184,22 @@ datagrids:
                     - shopping_list.label
                     - cachedTotal.subtotalValue AS subtotal
                     - cachedTotal.currency
-                    - COALESCE(shopping_list.lineItemsCount, 0) AS lineItemsCount
                     - shopping_list.createdAt
                     - shopping_list.updatedAt
                     - (CASE WHEN shopping_list.id = :default_shopping_list_id THEN true ELSE false END) AS isDefault
                     - CONCAT(customerUser.firstName, ' ', customerUser.lastName) as customerUserName
+                    - COUNT(lineItems.id) as lineItemsCount
                 from:
                     - { table: 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList', alias: shopping_list }
                 join:
                     left:
+                        - { join: shopping_list.customerUser, alias: customerUser }
+                        - { join: shopping_list.lineItems, alias: lineItems }
                         -
                             join: 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal'
                             alias: cachedTotal
                             conditionType: WITH
                             condition: "cachedTotal.shoppingList = shopping_list AND cachedTotal.currency = :current_currency"
-                        -
-                            join: shopping_list.customerUser
-                            alias: customerUser
             bind_parameters:
                 -
                     name: current_currency
@@ -247,6 +246,7 @@ datagrids:
                 lineItemsCount:
                     type:      number
                     data_name: lineItemsCount
+                    filter_by_having: true
                 isDefault:
                     type: boolean
                     data_name: isDefault
