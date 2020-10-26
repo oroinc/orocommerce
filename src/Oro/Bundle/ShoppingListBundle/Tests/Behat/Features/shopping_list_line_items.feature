@@ -44,6 +44,7 @@ Feature: Shopping List Line Items
     And I click on "Shopping List Line Item 1 Quantity"
     Then I should not see an "Shopping List Line Item Form" element
 
+   # Because the "delete" action checks acl resource "oro_shopping_list_frontend_update" instead of "oro_shopping_list_line_item_frontend_delete"
   Scenario: Check delete permission for line item
     When I proceed as the Admin
     And select following permissions:
@@ -55,3 +56,4 @@ Feature: Shopping List Line Items
     And I reload the page
     Then I should see only following actions for row #1 on grid:
       | Add Shopping List item Note |
+      | Delete                      |

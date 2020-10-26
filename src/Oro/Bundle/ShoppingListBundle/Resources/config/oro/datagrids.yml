@@ -603,7 +603,6 @@ datagrids:
                 route_parameters:
                     className: 'Oro_Bundle_ShoppingListBundle_Entity_LineItem'
                 icon: file-text-o
-                acl_resource: oro_shopping_list_frontend_update
                 launcherOptions:
                     className: 'stretched'
                 frontend_options:
@@ -617,7 +616,6 @@ datagrids:
                 route_parameters:
                     className: 'Oro_Bundle_ShoppingListBundle_Entity_LineItem'
                 icon: pencil
-                acl_resource: oro_shopping_list_frontend_update
                 launcherOptions:
                     className: 'stretched'
                 frontend_options:
@@ -629,13 +627,11 @@ datagrids:
                 label: oro.shoppinglist.actions.update_configurable_line_item.label
                 link: updateConfigurableLink
                 icon: pencil-square-o
-                acl_resource: oro_shopping_list_frontend_update
             delete:
                 type: delete-product
                 label: oro.shoppinglist.actions.delete_line_item.label
                 link: deleteLink
                 icon: trash-o
-                acl_resource: oro_shopping_list_line_item_frontend_delete
                 launcherOptions:
                     className: 'stretched'
                 defaultMessages:
