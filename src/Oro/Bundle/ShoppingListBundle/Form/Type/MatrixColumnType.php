@@ -30,6 +30,7 @@ class MatrixColumnType extends AbstractType
                 'attr' => [
                     'placeholder' => 'oro.frontend.shoppinglist.view.qty.label'
                 ],
+                'precision' => 0,
             ];
             if ($column->product === null) {
                 $quantityConfig['disabled'] = true;
@@ -38,6 +39,7 @@ class MatrixColumnType extends AbstractType
                 $scale = $column->product->getUnitPrecision($productUnit->getCode());
                 $precision = $scale ? $scale->getPrecision() : 0;
 
+                $quantityConfig['precision'] = $precision;
                 $quantityConfig['attr']['data-validation'] = [
                     'decimal-precision' => [
                         'message' => 'oro.non_valid_precision',

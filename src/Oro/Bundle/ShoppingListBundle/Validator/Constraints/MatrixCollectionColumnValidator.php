@@ -3,9 +3,13 @@
 namespace Oro\Bundle\ShoppingListBundle\Validator\Constraints;
 
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Component\Math\BigDecimal;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
+/**
+ * Checks length of the fractional part of the quantity value.
+ */
 class MatrixCollectionColumnValidator extends ConstraintValidator
 {
     /**
@@ -32,13 +36,11 @@ class MatrixCollectionColumnValidator extends ConstraintValidator
 
             $scale = $value->product->getUnitPrecision($productUnit->getCode());
 
-            if ($scale) {
+            if ($scale && $value->quantity) {
                 $precision = $scale->getPrecision();
 
-                $intPart = (int)(floor(abs($value->quantity)));
-                $fractionPart = abs($value->quantity) - $intPart;
-
-                if ($fractionPart > 0 && strlen(substr(strrchr((string)$fractionPart, '.'), 1)) > $precision) {
+                $fractionPart = strlen(BigDecimal::of($value->quantity)->fraction());
+                if ($fractionPart > 0 && $fractionPart > $precision) {
                     $this->context->buildViolation($constraint->messageOnNonValidPrecision)
                         ->setParameter('{{ precision }}', $precision)
                         ->atPath('quantity')
