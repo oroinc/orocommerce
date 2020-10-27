@@ -24,9 +24,9 @@ Feature: Promotions on Order page
     And I click "edit" on first row in grid
     Then I should see next rows in "Promotions" table
       | Promotion                    | Discount |
-      | line Item Discount Promotion | -$5.00  |
-      | shipping Discount Promotion  | -$1.00  |
-      | order Discount Promotion     | -$7.50  |
+      | line Item Discount Promotion | -$5.00   |
+      | shipping Discount Promotion  | -$1.00   |
+      | order Discount Promotion     | -$7.50   |
     When I click "Line Items"
     Then I see next line item discounts for backoffice order:
       | SKU  | Row Total Incl Tax | Row Total Excl Tax | Discount |
@@ -39,13 +39,13 @@ Feature: Promotions on Order page
       | Discount          | -$12.50 |
       | Shipping          | $3.00   |
       | Shipping Discount | -$1.00  |
-      | Total            | $9.50   |
+      | Total             | $9.50   |
 
   Scenario: Check that applied discounts are shown on frontend order view page
     Given I operate as the Buyer
     And click "Orders"
     Then I should see following "Past Orders Grid" grid:
-      | Total  |
+      | Total |
       | $9.50 |
     And I click "view" on first row in "Past Orders Grid"
     And I show column "Row Total (Discount Amount)" in "Order Line Items Grid" frontend grid
@@ -104,36 +104,36 @@ Feature: Promotions on Order page
       | Shipping Discount | -$1.00 |
       | Total             | $8.50  |
 
-    Scenario: Deactivate automatic promotion
-      Given I click "Promotions and Discounts"
-      And I click "Deactivate" on row "order Discount Promotion Order Total" in "Promotions"
-      Then I should see next rows in "Promotions" table
-        | Promotion                    | Status   |
-        | line Item Discount Promotion | Active   |
-        | shipping Discount Promotion  | Active   |
-        | order Discount Promotion     | Inactive |
-      And see next subtotals for "Backend Order":
-        | Subtotal          | Amount |
-        | Subtotal          | $16.00 |
-        | Discount          | -$3.00 |
-        | Shipping          | $3.00  |
-        | Shipping Discount | -$1.00 |
-        | Total             | $15.00  |
-      When I save form
-      And agree that shipping cost may have changed
-      Then I should see "Order has been saved" flash message
-      And should see next rows in "Promotions" table
-        | Promotion                    | Status   |
-        | line Item Discount Promotion | Active   |
-        | shipping Discount Promotion  | Active   |
-        | order Discount Promotion     | Inactive |
-      And see next subtotals for "Backend Order":
-        | Subtotal          | Amount |
-        | Subtotal          | $16.00 |
-        | Discount          | -$3.00 |
-        | Shipping          | $3.00  |
-        | Shipping Discount | -$1.00 |
-        | Total             | $15.00  |
+  Scenario: Deactivate automatic promotion
+    Given I click "Promotions and Discounts"
+    And I click "Deactivate" on row "order Discount Promotion Order Total" in "Promotions"
+    Then I should see next rows in "Promotions" table
+      | Promotion                    | Status   |
+      | line Item Discount Promotion | Active   |
+      | shipping Discount Promotion  | Active   |
+      | order Discount Promotion     | Inactive |
+    And see next subtotals for "Backend Order":
+      | Subtotal          | Amount |
+      | Subtotal          | $16.00 |
+      | Discount          | -$3.00 |
+      | Shipping          | $3.00  |
+      | Shipping Discount | -$1.00 |
+      | Total             | $15.00 |
+    When I save form
+    And agree that shipping cost may have changed
+    Then I should see "Order has been saved" flash message
+    And should see next rows in "Promotions" table
+      | Promotion                    | Status   |
+      | line Item Discount Promotion | Active   |
+      | shipping Discount Promotion  | Active   |
+      | order Discount Promotion     | Inactive |
+    And see next subtotals for "Backend Order":
+      | Subtotal          | Amount |
+      | Subtotal          | $16.00 |
+      | Discount          | -$3.00 |
+      | Shipping          | $3.00  |
+      | Shipping Discount | -$1.00 |
+      | Total             | $15.00 |
 
   Scenario: Delete automatic promotion
     Given I click "Promotions and Discounts"
@@ -142,14 +142,13 @@ Feature: Promotions on Order page
       | Promotion                    | Status |
       | line Item Discount Promotion | Active |
       | shipping Discount Promotion  | Active |
-      | order Discount Promotion     | Active |
     And see next subtotals for "Backend Order":
       | Subtotal          | Amount |
       | Subtotal          | $16.00 |
-      | Discount          | -$9.50 |
+      | Discount          | -$3.00 |
       | Shipping          | $3.00  |
       | Shipping Discount | -$1.00 |
-      | Total             | $8.50  |
+      | Total             | $15.00 |
     When I save form
     And agree that shipping cost may have changed
     Then I should see "Order has been saved" flash message
@@ -157,11 +156,10 @@ Feature: Promotions on Order page
       | Promotion                    | Status |
       | line Item Discount Promotion | Active |
       | shipping Discount Promotion  | Active |
-      | order Discount Promotion     | Active |
     And see next subtotals for "Backend Order":
       | Subtotal          | Amount |
       | Subtotal          | $16.00 |
-      | Discount          | -$9.50 |
+      | Discount          | -$3.00 |
       | Shipping          | $3.00  |
       | Shipping Discount | -$1.00 |
-      | Total             | $8.50  |
+      | Total             | $15.00 |

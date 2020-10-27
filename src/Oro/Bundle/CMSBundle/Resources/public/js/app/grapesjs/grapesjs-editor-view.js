@@ -14,8 +14,13 @@ import 'grapesjs-preset-webpage';
 import parserPostCSS from 'grapesjs-parser-postcss';
 import 'orocms/js/app/grapesjs/plugins/components/grapesjs-components';
 import 'orocms/js/app/grapesjs/plugins/import/import';
+import 'orocms/js/app/grapesjs/plugins/code/code';
 import 'orocms/js/app/grapesjs/plugins/panel-scrolling-hints';
-import {escapeWrapper, getWrapperAttrs} from 'orocms/js/app/grapesjs/plugins/grapesjs-style-isolation';
+import {
+    escapeWrapper,
+    getWrapperAttrs,
+    removeImageExpression
+} from 'orocms/js/app/grapesjs/plugins/grapesjs-style-isolation';
 import i18nMessages from 'orocms/js/app/grapesjs/plugins/i18n-messages';
 import ContentParser from 'orocms/js/app/grapesjs/plugins/grapesjs-content-parser';
 
@@ -228,6 +233,7 @@ const GrapesjsEditorView = BaseView.extend({
                 return editor.getHtml() + '<style>' + editor.getCss() + '</style>';
             },
             importViewerOptions: {},
+            codeViewerOptions: {},
             exportOpts: {
                 btnLabel: __('oro.cms.wysiwyg.export.btn_label')
             }
@@ -235,6 +241,7 @@ const GrapesjsEditorView = BaseView.extend({
         'grapesjs-components': {},
         'grapesjs-style-isolation': {},
         'grapesjs-import': {},
+        'grapesjs-code': {},
         'grapesjs-panel-scrolling-hints': {}
     },
 
@@ -429,17 +436,8 @@ const GrapesjsEditorView = BaseView.extend({
         this.builder.on('component:update', _.debounce(this._onComponentUpdatedBuilder.bind(this), 100));
         this.builder.on('changeTheme', this._updateTheme.bind(this));
         this.builder.on('component:selected', this.componentSelected.bind(this));
+        this.builder.on('component:deselected', this.componentDeselected.bind(this));
         this.builder.on('rteToolbarPosUpdate', this.updateRtePosition.bind(this));
-
-        this.builder.editor.view.$el.find('.gjs-toolbar')
-            .off('mouseover')
-            .on('mouseover', '.gjs-toolbar-item', e => {
-                $(e.target).tooltip({
-                    title: $(e.target).attr('label') || ''
-                });
-
-                $(e.target).tooltip('show');
-            });
 
         // Fix reload form when click export to zip dialog
         this.builder.on('run:export-template', () => {
@@ -534,7 +532,7 @@ const GrapesjsEditorView = BaseView.extend({
         }
 
         const _res = this.builder.ComponentRestriction.validate(
-            this.builder.getIsolatedHtml(this.$el.val())
+            removeImageExpression(this.$el.val())
         );
         const validationMessage = __('oro.cms.wysiwyg.validation.import', {tags: _res.join(', ')});
 
@@ -562,6 +560,21 @@ const GrapesjsEditorView = BaseView.extend({
      */
     getEditorStyles: function() {
         return this.builder.getIsolatedCss();
+    },
+
+    getToolbarItems() {
+        return $(this.builder.editor.view.$el.find('.gjs-toolbar .gjs-toolbar-item'));
+    },
+
+    componentDeselected() {
+        this.builder.editor.view.$el.find('.gjs-toolbar').off('mouseover');
+        this.getToolbarItems().each(function() {
+            const tooltip = $(this).data('bs.tooltip');
+
+            if (tooltip) {
+                tooltip.dispose();
+            }
+        });
     },
 
     componentSelected(model) {
@@ -592,6 +605,16 @@ const GrapesjsEditorView = BaseView.extend({
 
             model.set('toolbar', toolbar);
         }
+
+        this.builder.editor.view.$el.find('.gjs-toolbar')
+            .off('mouseover')
+            .on('mouseover', '.gjs-toolbar-item', e => {
+                $(e.target).tooltip({
+                    title: $(e.target).attr('label') || ''
+                });
+
+                $(e.target).tooltip('show');
+            });
     },
 
     /**

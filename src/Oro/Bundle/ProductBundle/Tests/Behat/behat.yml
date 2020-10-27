@@ -342,6 +342,7 @@ oro_behat_extension:
           MultipleImages 1:
             locator: '//input[starts-with(@name, "oro_product[MultipleImages") and contains(@name, "[file][file]")]'
             type: xpath
+          MultiFileField9_Excluded: 'oro_product[MultiFileField9_Excluded][0][file][file]'
 
     RelatedProductsConfig:
       selector: 'form[name="related_items"]'

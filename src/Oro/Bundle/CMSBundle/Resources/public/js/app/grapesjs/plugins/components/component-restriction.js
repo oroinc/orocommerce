@@ -190,7 +190,7 @@ define(function(require) {
          * @param template
          */
         checkTemplate: function(template) {
-            return _.every(this.getTags($(stripRestrictedAttrs(template)).get(0)), function(tag) {
+            return _.every(this.getTags($('<div />').html(stripRestrictedAttrs(template)).get(0)), function(tag) {
                 const isAllowed = this.isAllowedTag(tag);
                 if (!isAllowed) {
                     error.showErrorInConsole('Tag "' + tag + '" is not allowed');
@@ -209,7 +209,9 @@ define(function(require) {
             const restricted = [];
 
             try {
-                _.each(this.getTags($(stripRestrictedAttrs(template)).get(0), nativeOut), function(tag) {
+                _.each(this.getTags(
+                    $('<div />').html(stripRestrictedAttrs(template)).get(0), nativeOut
+                ), function(tag) {
                     if (!this.isAllowedTag(tag)) {
                         restricted.push(_.isArray(tag)
                             ? this.normalize(!nativeOut ? tag : tag[2])
