@@ -11,6 +11,10 @@
             @include mosaic-grid($mosaic-grid-column-count: 2);
         }
 
+        &-wrapper & {
+            padding-left: $product-view-attributes-box-inner-offset-start;
+        }
+
         &-related-items {
             columns: $product-view-attributes-box-related-items-columns;
             display: $product-view-attributes-box-related-items-display;

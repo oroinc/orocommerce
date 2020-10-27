@@ -336,6 +336,7 @@ oro_behat_extension:
             locator: '//*[@name="oro_product[owner]"]'
             type: xpath
             element: Select2Entity
+          MultiFileField9_Excluded: 'oro_product[MultiFileField9_Excluded][0][file][file]'
 
     RelatedProductsConfig:
       selector: 'form[name="related_items"]'

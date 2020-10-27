@@ -4,7 +4,7 @@ define(function(require) {
     const BaseView = require('oroui/js/app/views/base/view');
     const template = require('tpl-loader!orocms/templates/grapesjs-import-dialog-template.html');
     const DialogWidget = require('oro/dialog-widget');
-    const {stripRestrictedAttrs} = require('orocms/js/app/grapesjs/plugins/grapesjs-style-isolation');
+    const {stripRestrictedAttrs, removeImageExpression} = require('orocms/js/app/grapesjs/plugins/grapesjs-style-isolation');
     const _ = require('underscore');
     const __ = require('orotranslation/js/translator');
     const $ = require('jquery');
@@ -221,7 +221,7 @@ define(function(require) {
          */
         checkContent: function(codeEditor) {
             this.content = codeEditor.getValue().trim();
-            this.isolatedContent = this.editor.getIsolatedHtml(this.content);
+            this.isolatedContent = this.editor.getIsolatedHtml(removeImageExpression(this.content));
             this.isolatedContentNode = $(this.isolatedContent);
             this.clearStyleTags();
 
