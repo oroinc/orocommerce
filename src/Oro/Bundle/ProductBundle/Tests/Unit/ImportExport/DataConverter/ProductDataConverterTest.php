@@ -46,7 +46,7 @@ class ProductDataConverterTest extends \PHPUnit\Framework\TestCase
 
     public function testConvertToExportFormat()
     {
-        $this->fieldHelper->expects($this->once())
+        $this->fieldHelper->expects($this->exactly(2))
             ->method('getFields')
             ->willReturn([['name' => 'sku', 'type' => 'string', 'label' => 'sku']]);
 
@@ -57,7 +57,7 @@ class ProductDataConverterTest extends \PHPUnit\Framework\TestCase
 
     public function testConvertToExportFormatWithEventDispatcher()
     {
-        $this->fieldHelper->expects($this->once())
+        $this->fieldHelper->expects($this->exactly(2))
             ->method('getFields')
             ->willReturn([['name' => 'sku', 'type' => 'string', 'label' => 'sku']]);
 

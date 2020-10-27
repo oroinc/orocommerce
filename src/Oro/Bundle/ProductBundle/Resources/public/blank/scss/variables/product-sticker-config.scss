@@ -14,5 +14,8 @@ $product-sticker-icon-bottom-right-pos-right: 0 !default;
 $product-sticker-icon-bottom-left-pos-bottom: 0 !default;
 $product-sticker-icon-bottom-left-pos-left: 0 !default;
 
+$product-sticker-icon-bottom-right-gallery-pos-bottom: $product-view-media-gallery-nav-offset-top + $product-view-media-gallery-nav-max-height + $product-sticker-icon-bottom-right-pos-bottom !default;
+$product-sticker-icon-bottom-left-gallery-pos-bottom: $product-view-media-gallery-nav-offset-top + $product-view-media-gallery-nav-max-height + $product-sticker-icon-bottom-left-pos-bottom !default;
+
 $product-sticker-text-font-weight: bold !default;
 $product-sticker-text-new-arrival-color: get-color('primary', 'dark') !default;

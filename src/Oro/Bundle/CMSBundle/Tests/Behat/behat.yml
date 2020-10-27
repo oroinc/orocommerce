@@ -17,8 +17,17 @@ oro_behat_extension:
             route: 'oro_cms_page_index'
 
     elements:
+        WysiwygCodeTypeBlockEditor:
+            selector: '.ui-dialog'
+            class: Oro\Bundle\CMSBundle\Tests\Behat\Element\WysiwygCodeTypeBlockEditor
+
         WysiwygField:
             class: Oro\Bundle\CMSBundle\Tests\Behat\Element\WysiwygField
+
+        WysiwygCodeTypeBlock:
+            selector:
+                type: 'xpath'
+                locator: '//pre[@data-gjs-type="code"]'
 
         LandingPageTitlesField:
             selector: "input[name='oro_cms_page[titles][values][default]']"

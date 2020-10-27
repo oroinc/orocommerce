@@ -344,11 +344,14 @@ define(function(require) {
                             response.message
                         );
                     }
-                    self.model.set('shopping_lists', response.product.shopping_lists, {silent: true});
-                    self.model.trigger('change:shopping_lists');
-                    self.shoppingListCollection.trigger('change', {
-                        refresh: true
-                    });
+
+                    if (response.product && response.product.shopping_lists) {
+                        self.model.set('shopping_lists', response.product.shopping_lists, {silent: true});
+                        self.model.trigger('change:shopping_lists');
+                        self.shoppingListCollection.trigger('change', {
+                            refresh: true
+                        });
+                    }
                 },
                 error: function(xhr) {
                     mediator.execute('hideLoading');

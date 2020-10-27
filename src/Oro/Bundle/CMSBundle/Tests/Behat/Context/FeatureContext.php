@@ -4,7 +4,9 @@ namespace Oro\Bundle\CMSBundle\Tests\Behat\Context;
 
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Symfony2Extension\Context\KernelDictionary;
+use Oro\Bundle\CMSBundle\Tests\Behat\Element\WysiwygCodeTypeBlockEditor;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
+use Oro\Bundle\TestFrameworkBundle\Behat\Element\Element;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 
@@ -62,5 +64,102 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         );
 
         $this->getSession()->executeScript($function);
+    }
+
+    /**
+     * Example: I open code editor of code type block containing the text "Same text 1"
+     *
+     * @When /^(?:|I )open code editor of code type block containing the text "(?P<value>(?:[^"]|\\")*)"$/
+     *
+     * @param string $value
+     */
+    public function openCodeEditorOfCodeTypeBlockContainingTheText(string $value): void
+    {
+        $codeTypeBlockElement = $this->findCodeTypeBlock($value);
+        $this->openCodeTypeBlockEditor($codeTypeBlockElement);
+    }
+
+    /**
+     * @Then /^(?:|I )should see text matching (?P<pattern>"(?:[^"]|\\")*") in WYSIWYG editor$/
+     *
+     * @param string $pattern
+     */
+    public function assertWysiwygEditorMatchesText(string $pattern): void
+    {
+        // Switch to WYSIWYG editor iframe.
+        $this->getDriver()->switchToIFrame(0);
+        $this->assertSession()->pageTextMatches($this->fixStepArgument($pattern));
+        $this->getDriver()->switchToIFrame(null);
+    }
+
+    /**
+     * Example: I fill the code type block containing the text "Same text 1" with the value "Same text 2"
+     *
+     * @codingStandardsIgnoreStart
+     *
+     * @When /^(?:|I )fill the code type block containing the text "(?P<existingValue>(?:[^"]|\\")*)" with the value "(?P<newValue>(?:[^"]|\\")*)"$/
+     *
+     * @codingStandardsIgnoreEnd
+     *
+     * @param string $existingValue
+     * @param string $newValue
+     */
+    public function fillTheCodeTypeBlockContainingTheTextWithTheValue(string $existingValue, string $newValue): void
+    {
+        $codeTypeBlockElement = $this->findCodeTypeBlock($existingValue);
+        $this->openCodeTypeBlockEditor($codeTypeBlockElement);
+
+        /** @var WysiwygCodeTypeBlockEditor $editor */
+        $editor = $this->createElement('WysiwygCodeTypeBlockEditor');
+        self::assertNotNull($editor, 'Wysiwyg `code` type block editor not found!');
+
+        $editor->setValue($newValue);
+        $editor->findButton('Save')->click();
+    }
+
+    /**
+     * @param string $containingValue
+     *
+     * @return Element
+     */
+    private function findCodeTypeBlock(string $containingValue): Element
+    {
+        // Switch to WYSIWYG editor iframe.
+        $this->getDriver()->switchToIFrame(0);
+
+        /**
+         * Wait for WYSIWYG editor is initialized.
+         *
+         * @var Element $element
+         */
+        $element = $this->spin(function () use ($containingValue) {
+            $element = $this->findElementContains('WysiwygCodeTypeBlock', $containingValue);
+
+            return $element->isIsset() ? $element : false;
+        }, 3);
+        self::assertNotNull($element, sprintf('Wysiwyg `code` type block with text "%s" not found!', $containingValue));
+
+        // Since the modal window is displayed outside the iframe, switch to the main DOM.
+        $this->getDriver()->switchToIFrame(null);
+
+        return $element;
+    }
+
+    /**
+     * @param Element $codeTypeBlockElement
+     */
+    private function openCodeTypeBlockEditor(Element $codeTypeBlockElement): void
+    {
+        // Switch to WYSIWYG editor iframe.
+        $this->getDriver()->switchToIFrame(0);
+
+        // Since we use the selected block to display the content in the Mirror editor, it is necessary to
+        // simulate the entire cycle of opening a modal window, namely its selection(one click)
+        // and open editor ('one click' and 'double click' events).
+        $codeTypeBlockElement->click();
+        $codeTypeBlockElement->doubleClick();
+
+        // Since the modal window is displayed outside the iframe, switch to the main DOM.
+        $this->getDriver()->switchToIFrame(null);
     }
 }

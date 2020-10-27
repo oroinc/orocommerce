@@ -8,7 +8,6 @@ services:
             - ['addPackage', ['OroCommerce', 'oro/commerce-authorizenet']]
             - ['addPackage', ['OroCommerce', 'oro/commerce-dpd']]
             - ['addPackage', ['OroCommerce', 'oro/commerce-infinitepay']]
-            - ['addPackage', ['OroCommerce', 'oro/commerce-wirecard']]
             - ['addPackage', ['OroCommerce', 'oro/commerce-enterprise', '/src']]
         tags:
             - { name: oro_translation.extension.packages_provider }
