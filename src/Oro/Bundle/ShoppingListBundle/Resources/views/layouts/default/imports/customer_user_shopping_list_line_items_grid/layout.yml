@@ -5,9 +5,6 @@ layout:
             root: __root
 
     actions:
-        - '@setBlockTheme':
-            themes: 'layout.html.twig'
-
         - '@appendOption':
             id: __datagrid
             optionName: grid_render_parameters.cssClass
@@ -63,15 +60,3 @@ layout:
             optionName: grid_render_parameters.toolbarOptions.itemsCounter
             optionValue:
                 className: 'datagrid-tool datagrid-tool--short'
-
-        - '@add':
-            id: __datagrid_toggle_paginaton_view
-            parentId: __datagrid_toolbar_leftside_container
-            blockType: block
-            options:
-                visible: false
-
-        - '@add':
-            id: __datagrid_toggle_group
-            parentId: __datagrid_toolbar_leftside_container
-            blockType: block
