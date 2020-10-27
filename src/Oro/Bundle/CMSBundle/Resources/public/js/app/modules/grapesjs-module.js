@@ -19,6 +19,7 @@ import RadioTypeBuilder from 'orocms/js/app/grapesjs/type-builders/radio-type-bu
 import GridTypeBuilder from 'orocms/js/app/grapesjs/type-builders/grid-type-builder';
 import ColumnTypeBuilder from 'orocms/js/app/grapesjs/type-builders/column-type-builder';
 import RowTypeBuilder from 'orocms/js/app/grapesjs/type-builders/row-type-builder';
+import SourceTypeBuilder from 'orocms/js/app/grapesjs/type-builders/source-type-builder';
 
 ComponentManager.registerComponentTypes({
     'default': {
@@ -82,5 +83,8 @@ ComponentManager.registerComponentTypes({
     },
     'grid': {
         Constructor: GridTypeBuilder
+    },
+    'source': {
+        Constructor: SourceTypeBuilder
     }
 });

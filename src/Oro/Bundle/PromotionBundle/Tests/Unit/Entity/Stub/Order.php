@@ -57,4 +57,14 @@ class Order extends BaseOrder implements AppliedPromotionsAwareInterface, Applie
     {
         $this->appliedPromotions->add($promotion);
     }
+
+    /**
+     * @param Collection $lineItems
+     *
+     * @return Order|void
+     */
+    public function setLineItems(Collection $lineItems)
+    {
+        $this->lineItems = $lineItems;
+    }
 }
