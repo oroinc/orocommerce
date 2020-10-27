@@ -341,6 +341,7 @@ datagrids:
                 - oroshoppinglist/js/datagrid/builder/shoppinglist-flat-data-builder
                 - oroshoppinglist/js/datagrid/builder/shoppinglist-grid-options-builder
                 - oroshoppinglist/js/datagrid/builder/shoppinglist-rfp-confirmation-builder
+                - oroshoppinglist/js/datagrid/builder/shoppinglist-grid-representation-builder
             toolbarOptions:
                 pageSize:
                     items:

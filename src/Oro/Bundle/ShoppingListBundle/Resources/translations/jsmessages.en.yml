@@ -60,18 +60,6 @@ oro:
             discount:
                 label: 'Discount'
             btn:
-                show_all:
-                    aria_label: 'Show all added products on one page'
-                    label: 'Show All'
-                show_less:
-                    aria_label: 'Show all added products with pagination'
-                    label: 'Show Less'
-                group_similar:
-                    aria_label: 'Group similar products'
-                    label: 'Group similar'
-                ungroup_similar:
-                    aria_label: 'Show similar products separately'
-                    label: 'Ungroup similar'
                 duplicate.aria_label: Duplicate Current Shopping List
             btn_more:
                 label: 'And {{ count }} more'
@@ -102,7 +90,7 @@ oro:
                     add.label: Add
                     edit.label: Save
                     notes.success: Line item note has been successfully updated
-                    
+
             inline_editing:
                 quantity:
                     aria_label: Quantity
