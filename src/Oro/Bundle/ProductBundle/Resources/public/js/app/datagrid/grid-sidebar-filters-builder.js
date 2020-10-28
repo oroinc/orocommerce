@@ -1,6 +1,7 @@
 import _ from 'underscore';
 import FilterItemsHintView from 'oroproduct/js/app/views/sidebar-filters/filter-items-hint-view';
-import FilterExtraHintView from 'oroproduct/js/app/views/sidebar-filters/filter-extra-hint';
+import FilterExtraHintView from 'oroproduct/js/app/views/sidebar-filters/filter-extra-hint-view';
+import ApplyFilterView from 'oroproduct/js/app/views/sidebar-filters/filter-applier-view';
 import filtersContainerTemplate from 'tpl-loader!oroproduct/templates/sidebar-filters/filters-container.html';
 
 export default {
@@ -21,6 +22,7 @@ export default {
             filter.outerHintContainer = `[data-hint-container="${options.gridName}"]`;
             filter.initiallyOpened = true;
             filter.autoClose = false;
+            filter.labelPrefix = '';
         });
 
         const toolbarOptions = options.metadata.options.toolbarOptions;
@@ -50,12 +52,24 @@ export default {
             });
 
             grid.once('filterManager:connected', () => {
-                _.each(grid.filterManager.filters, filter => {
-                    filter.subview('sidebar-filters-extra-hint', new FilterExtraHintView({
+                const filterManager = grid.filterManager;
+
+                if (!Object.keys(filterManager.filters).length) {
+                    return;
+                }
+
+                _.each(filterManager.filters, filter => {
+                    filter.subview('sidebar-filters:extra-hint', new FilterExtraHintView({
                         filter: filter,
                         autoRender: true
                     }));
                 });
+
+                const applyFilterView = new ApplyFilterView({
+                    filterManager: filterManager
+                });
+
+                filterManager.subview('sidebar-filters:apply-filter', applyFilterView);
             });
         });
         return deferred.resolve();

@@ -1,6 +1,7 @@
 import BaseView from 'oroui/js/app/views/base/view';
 import _ from 'underscore';
 import mediator from 'oroui/js/mediator';
+import template from 'tpl-loader!oroproduct/templates/sidebar-filters/filter-items-hint.html';
 
 const FilterItemsHintView = BaseView.extend({
     /**
@@ -18,7 +19,7 @@ const FilterItemsHintView = BaseView.extend({
     /**
      * @inheritDoc
      */
-    template: require('tpl-loader!oroproduct/templates/sidebar-filters/filter-items-hint.html'),
+    template: template,
 
     /**
      * @inheritDoc

@@ -71,7 +71,7 @@ const FilterExtraHintView = BaseView.extend({
      * Updates hint element with actual criteria value
      */
     updateHintContent() {
-        let hint = this.filter._getCriteriaHint();
+        let {hint} = this.filter.getState();
 
         if (hint === null) {
             hint = '';
