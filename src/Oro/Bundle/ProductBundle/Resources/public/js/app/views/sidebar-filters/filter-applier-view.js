@@ -37,6 +37,7 @@ const FilterApplierView = BaseView.extend({
      * @inheritDoc
      */
     constructor: function FilterApplierView(options) {
+        this.show = _.debounce(this.show.bind(this), 0);
         FilterApplierView.__super__.constructor.call(this, options);
     },
 
@@ -202,6 +203,10 @@ const FilterApplierView = BaseView.extend({
      * @param {HTMLElement} popperEl - The element used as the popper
      */
     initPopper(referenceEl, popperEl) {
+        if (!referenceEl || !popperEl) {
+            return;
+        }
+
         this.destroyPopper();
 
         this.popper = new Popper(referenceEl, popperEl, {
@@ -209,6 +214,9 @@ const FilterApplierView = BaseView.extend({
             positionFixed: false,
             removeOnDestroy: false,
             modifiers: {
+                offset: {
+                    offset: '0, 6'
+                },
                 flip: {
                     enabled: true,
                     fn(data, options) {
@@ -234,11 +242,38 @@ const FilterApplierView = BaseView.extend({
 
     /**
      * @param {oro.filter.AbstractFilter} filter
+     * {HTMLElement|null}
+     */
+    getReferenceElementForPopper(filter) {
+        const $criteriaEl = filter.$(filter.criteriaSelector);
+
+        if (!$criteriaEl.length) {
+            return null;
+        }
+
+        const $valueEndEl = $criteriaEl.find(filter.criteriaValueSelectors.value_end);
+        const $valueEl = $criteriaEl.find(filter.criteriaValueSelectors.value);
+
+        if ($valueEndEl.is(':visible')) {
+            return $valueEndEl[0];
+        } else if ($valueEl.is(':visible')) {
+            return $valueEl[0];
+        }
+
+        return $criteriaEl[0];
+    },
+
+    /**
+     * @param {oro.filter.AbstractFilter} filter
      */
     show(filter) {
-        const popperReference = filter.$(filter.criteriaSelector)[0];
+        if (filter.disposed || !filter.enabled) {
+            return;
+        }
 
-        if (filter.disposed || !filter.enabled || popperReference === void 0) {
+        const popperReference = this.getReferenceElementForPopper(filter);
+
+        if (!popperReference) {
             return;
         }
 
@@ -248,9 +283,9 @@ const FilterApplierView = BaseView.extend({
 
         if (!$.contains(filter.el, this.el)) {
             this.$el.appendTo(filter.$el);
-            this.initPopper(popperReference, this.el);
         }
 
+        this.initPopper(popperReference, this.el);
         this.$el.removeClass('hide');
     },
 

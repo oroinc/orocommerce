@@ -15,11 +15,6 @@ layout:
             root: product_datagrid_cell_matrixForm
             namespace: product_datagrid_cell
 
-        -
-            id: oro_product_grid_sidebar_filters
-            root: page_sidebar
-            namespace: product
-
     actions:
         - '@setBlockTheme':
             themes:
