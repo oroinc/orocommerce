@@ -72,20 +72,21 @@ class LineItemController extends RestController implements ClassResourceInterfac
      * )
      * @AclAncestor("oro_shopping_list_frontend_update")
      *
+     * @param int $shoppingListId
      * @param int $productId
      * @param string $unitCode
      *
      * @return Response
      */
-    public function deleteConfigurableAction(int $productId, string $unitCode): Response
+    public function deleteConfigurableAction(int $shoppingListId, int $productId, string $unitCode): Response
     {
         $success = false;
 
         /** @var LineItem[] $lineItems */
         $lineItems = $this->getDoctrine()
-            ->getManagerForClass('OroShoppingListBundle:LineItem')
-            ->getRepository('OroShoppingListBundle:LineItem')
-            ->findBy(['parentProduct' => $productId, 'unit' => $unitCode]);
+            ->getManagerForClass(LineItem::class)
+            ->getRepository(LineItem::class)
+            ->findLineItemsByParentProductAndUnit($shoppingListId, $productId, $unitCode);
 
         $view = $this->view(null, Response::HTTP_NO_CONTENT);
 

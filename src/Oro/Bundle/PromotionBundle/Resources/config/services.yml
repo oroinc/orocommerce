@@ -767,13 +767,16 @@ services:
         tags:
             - { name: twig.extension }
 
-    oro_promotion.event_listener.line_item_data_build:
-        class: Oro\Bundle\PromotionBundle\EventListener\LineItemDataBuildListener
-        decorates: oro_pricing.event_listener.line_item_data_build
+    oro_promotion.event_listener.datagrid_line_items_data.promotions:
+        class: Oro\Bundle\PromotionBundle\EventListener\DatagridLineItemsDataPromotionsListener
+        # Decorates listener from pricing bundle because it directly depends on it - alters the pricing data by
+        # applying discounts.
+        decorates: oro_pricing.event_listener.datagrid_line_items_data.pricing
         arguments:
-            - '@oro_promotion.event_listener.line_item_data_build.inner'
+            - '@oro_promotion.event_listener.datagrid_line_items_data.promotions.inner'
             - '@oro_promotion.promotion_executor'
             - '@oro_pricing.user_currency_manager'
             - '@oro_locale.formatter.number'
         tags:
-            - { name: kernel.event_listener, event: oro_shopping_list.line_item.data_build, method: onLineItemData }
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-grid, method: onLineItemData }
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-edit-grid, method: onLineItemData }

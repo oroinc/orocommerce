@@ -383,16 +383,21 @@ class LineItemRepositoryTest extends WebTestCase
         $this->assertEquals($expected, $actual);
     }
 
-    public function findIndexedByIds(): void
+    public function testFindLineItemsByParentProductAndUnit(): void
     {
         /** @var LineItem $lineItem */
-        $lineItem1 = $this->getReference(LoadShoppingListLineItems::LINE_ITEM_1);
-        /** @var LineItem $lineItem */
-        $lineItem2 = $this->getReference(LoadShoppingListLineItems::LINE_ITEM_2);
+        $lineItem4 = $this->getReference('shopping_list_configurable_line_item.4');
+        $lineItem5 = $this->getReference('shopping_list_configurable_line_item.5');
 
-        $lineItems = $this->getLineItemRepository()->findIndexedByIds([$lineItem2->getId, $lineItem1->getId()]);
+        $lineItems = $this->getLineItemRepository()->findLineItemsByParentProductAndUnit(
+            $lineItem4->getShoppingList()->getId(),
+            $lineItem4->getParentProduct()->getId(),
+            $lineItem4->getProductUnitCode()
+        );
 
-        $this->assertEquals([$lineItem1->getId() => $lineItem1, $lineItem2->getId() => $lineItem2], $lineItems);
+        $this->assertCount(2, $lineItems);
+        $this->assertContains($lineItem4, $lineItems);
+        $this->assertContains($lineItem5, $lineItems);
     }
 
     /**

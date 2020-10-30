@@ -480,7 +480,7 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
                     'parameters' => [
                         'group' => false,
                     ],
-                ]
+                ],
             ],
             $data->toArray()
         );

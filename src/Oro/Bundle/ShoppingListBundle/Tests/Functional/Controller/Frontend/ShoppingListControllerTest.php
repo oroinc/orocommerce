@@ -121,7 +121,7 @@ class ShoppingListControllerTest extends WebTestCase
         );
     }
 
-    public function testViewMy(): void
+    public function testViewGrid(): void
     {
         $this->initClient(
             [],
@@ -150,7 +150,7 @@ class ShoppingListControllerTest extends WebTestCase
         $this->assertCount(1, $data);
         $this->assertArrayHasKey('item', $data[0]);
         $this->assertEquals('product-1', $data[0]['sku']);
-        $this->assertEquals(['name' => 'in_stock', 'label' => 'In Stock'], $data[0]['inventoryStatus']);
+        $this->assertEquals('in_stock', $data[0]['inventoryStatus']);
         $this->assertEquals(8, $data[0]['quantity']);
         $this->assertEquals('bottle', $data[0]['unit']);
         $this->assertEquals('$13.10', $data[0]['price']);

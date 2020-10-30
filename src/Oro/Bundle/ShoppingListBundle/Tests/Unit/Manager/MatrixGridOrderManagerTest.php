@@ -171,8 +171,6 @@ class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
         $productUnitPrecision = new ProductUnitPrecision();
         $productUnitPrecision->setUnit($productUnit);
 
-        $product->setPrimaryUnitPrecision($productUnitPrecision);
-
         $this->variantAvailability->expects($this->at(0))
             ->method('getVariantFieldsAvailability')
             ->with($product)

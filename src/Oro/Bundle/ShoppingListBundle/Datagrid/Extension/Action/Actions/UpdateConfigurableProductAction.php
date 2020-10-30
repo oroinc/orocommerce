@@ -9,4 +9,6 @@ use Oro\Bundle\AttachmentBundle\DataGrid\Action\DialogAction;
  */
 class UpdateConfigurableProductAction extends DialogAction
 {
+    /** @var array */
+    protected $requiredOptions = [];
 }
