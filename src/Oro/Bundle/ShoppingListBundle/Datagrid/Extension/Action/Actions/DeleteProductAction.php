@@ -9,4 +9,6 @@ use Oro\Bundle\DataGridBundle\Extension\Action\Actions\DeleteAction;
  */
 class DeleteProductAction extends DeleteAction
 {
+    /** @var array */
+    protected $requiredOptions = [];
 }

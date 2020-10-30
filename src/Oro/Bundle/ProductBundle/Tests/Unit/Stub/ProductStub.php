@@ -42,10 +42,12 @@ class ProductStub extends Product
 
     /**
      * @param int $id
+     * @return ProductStub
      */
     public function setId($id)
     {
         $this->id = $id;
+        return $this;
     }
 
     /**

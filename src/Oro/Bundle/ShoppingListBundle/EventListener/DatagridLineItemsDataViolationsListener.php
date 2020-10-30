@@ -2,14 +2,14 @@
 
 namespace Oro\Bundle\ShoppingListBundle\EventListener;
 
-use Oro\Bundle\ShoppingListBundle\Event\LineItemDataBuildEvent;
+use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
 use Oro\Bundle\ShoppingListBundle\Validator\LineItemViolationsProvider;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 
 /**
- * Adds to LineItemDataBuildEvent the data needed for shopping list edit page.
+ * Adds line items errors data.
  */
-class LineItemDataBuildViolationsListener
+class DatagridLineItemsDataViolationsListener
 {
     /** @var LineItemViolationsProvider */
     private $violationsProvider;
@@ -23,9 +23,9 @@ class LineItemDataBuildViolationsListener
     }
 
     /**
-     * @param LineItemDataBuildEvent $event
+     * @param DatagridLineItemsDataEvent $event
      */
-    public function onLineItemData(LineItemDataBuildEvent $event): void
+    public function onLineItemData(DatagridLineItemsDataEvent $event): void
     {
         $lineItems = $event->getLineItems();
         $errors = $this->violationsProvider->getLineItemViolationLists($lineItems);
@@ -36,8 +36,7 @@ class LineItemDataBuildViolationsListener
         foreach ($lineItems as $lineItem) {
             $event->addDataForLineItem(
                 $lineItem->getId(),
-                'errors',
-                $this->getErrors($errors, $lineItem->getProductSku(), $lineItem->getProductUnitCode())
+                ['errors' => $this->getErrors($errors, $lineItem->getProductSku(), $lineItem->getProductUnitCode())]
             );
         }
     }

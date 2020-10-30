@@ -389,10 +389,12 @@ datagrids:
                 frontend_type: html-template
                 frontend_template: tpl-loader!oroshoppinglist/templates/datagrid/cell/item.html
                 image_placeholder: "@oro_product.provider.product_image_placeholder->getPath('product_small')"
+                inventory_statuses: "@oro_product.provider.product_inventory_status_provider->getAvailableProductInventoryStatuses()"
             inventoryStatus:
                 label:         oro.frontend.shoppinglist.lineitem.inventory_status.label
                 frontend_type: html-template
                 frontend_template: tpl-loader!oroshoppinglist/templates/datagrid/cell/inventory_status.html
+                inventory_statuses: "@oro_product.provider.product_inventory_status_provider->getAvailableProductInventoryStatuses()"
             quantity:
                 label:         oro.frontend.shoppinglist.lineitem.quantity.label
                 frontend_type: html-template
@@ -444,10 +446,10 @@ datagrids:
                         field_type:   Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType
         properties:
             productId: ~
+            variantId: ~
             name: ~
             image: ~
             notes: ~
-            link: ~
             initialSubtotal: ~
             discount: ~
             isConfigurable:
@@ -458,13 +460,14 @@ datagrids:
                 frontend_type: boolean
             availabilityDate:
                 frontend_type: datetime
-            inventoryStatus:
-                frontend_type: row_array
+            inventoryStatus: ~
             productConfiguration:
                 frontend_type: row_array
             subData:
                 frontend_type: row_array
             errors:
+                frontend_type: row_array
+            units:
                 frontend_type: row_array
 
     frontend-customer-user-shopping-list-assign-grid:
@@ -586,15 +589,7 @@ datagrids:
                 renderable: false
         properties:
             id: ~
-            deleteLink: ~
-            updateConfigurableLink:
-                type: url
-                route: oro_shopping_list_frontend_matrix_grid_update
-                params:
-                    shoppingListId: shoppingListId
-                    productId: mainProductId
-                    unitCode: unit
-            units:
+            action_configuration:
                 frontend_type: row_array
         actions:
             add_notes:
@@ -626,7 +621,6 @@ datagrids:
             update_configurable:
                 type: update-configurable-product
                 label: oro.shoppinglist.actions.update_configurable_line_item.label
-                link: updateConfigurableLink
                 icon: pencil-square-o
             delete:
                 type: delete-product
@@ -639,7 +633,6 @@ datagrids:
                     confirm_title: oro.shoppinglist.actions.delete_line_item.confirm_title
                     confirm_content: oro.shoppinglist.actions.delete_line_item.confirm_content
                     success: oro.shoppinglist.actions.delete_line_item.success
-        action_configuration: ['@oro_shopping_list.datagrid.action_configuration_link_callback', checkActions]
         mass_actions:
             delete:
                 type: delete

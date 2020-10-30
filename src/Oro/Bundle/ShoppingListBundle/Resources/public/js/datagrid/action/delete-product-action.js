@@ -4,6 +4,7 @@ define(function(require) {
     const __ = require( 'orotranslation/js/translator');
     const mediator = require('oroui/js/mediator');
     const messenger = require('oroui/js/messenger');
+    const routing = require('routing');
     const DeleteAction = require('oro/datagrid/action/delete-action');
 
     /**
@@ -64,6 +65,24 @@ define(function(require) {
                     mediator.trigger('shopping-list:refresh');
                 }
             });
+        },
+
+        /**
+         * @inheritDoc
+         */
+        getLink: function() {
+            if (this.model.attributes.isConfigurable) {
+                return routing.generate('oro_api_shopping_list_frontend_delete_line_item_configurable', {
+                    shoppingListId: this.datagrid.metadata.gridParams.shopping_list_id,
+                    productId: this.model.attributes.productId,
+                    unitCode: this.model.attributes.unit
+                });
+            } else {
+                return routing.generate('oro_api_shopping_list_frontend_delete_line_item', {
+                    id: this.model.attributes.id,
+                    only_current: this.model.attributes.variantId ? 1 : 0
+                });
+            }
         }
     });
 

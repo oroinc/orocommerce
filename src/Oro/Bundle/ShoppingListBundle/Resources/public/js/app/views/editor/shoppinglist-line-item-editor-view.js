@@ -18,6 +18,7 @@ const ShoppinglistLineItemEditorView = TextEditorView.extend({
 
     initialize(options) {
         this.formatter = new NumberFormatter(options);
+        this.updateUnitList(this.model.get('unit'));
         ShoppinglistLineItemEditorView.__super__.initialize.call(this, options);
     },
 

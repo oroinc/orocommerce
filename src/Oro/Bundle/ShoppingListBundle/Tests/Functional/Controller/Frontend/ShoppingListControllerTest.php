@@ -93,27 +93,27 @@ class ShoppingListControllerTest extends WebTestCase
         $this->client->request('GET', $this->getUrl('oro_shopping_list_frontend_index'));
         $this->assertResponseStatusCodeEquals($this->client->getResponse(), 404);
 
-        $this->enableMyShoppingListsPage(true);
+        $this->enableShoppingListsPage(true);
 
         $this->client->request('GET', $this->getUrl('oro_shopping_list_frontend_index'));
         $this->assertResponseStatusCodeEquals($this->client->getResponse(), 200);
 
-        $this->enableMyShoppingListsPage(false);
+        $this->enableShoppingListsPage(false);
     }
 
     /**
      * @param bool $isEnabled
      */
-    private function enableMyShoppingListsPage(bool $isEnabled): void
+    private function enableShoppingListsPage(bool $isEnabled): void
     {
         $configManager = $this->getContainer()->get(ConfigManager::class);
         $configManager->set('oro_shopping_list.shopping_lists_page_enabled', $isEnabled);
         $configManager->flush();
     }
 
-    public function testIndexMy(): void
+    public function testIndex(): void
     {
-        $this->enableMyShoppingListsPage(true);
+        $this->enableShoppingListsPage(true);
 
         $user = $this->getContainer()
             ->get('oro_customer_user.manager')
@@ -153,12 +153,12 @@ class ShoppingListControllerTest extends WebTestCase
             )
         );
 
-        $this->enableMyShoppingListsPage(false);
+        $this->enableShoppingListsPage(false);
     }
 
-    public function testViewMy(): void
+    public function testViewNewShoppingListPage(): void
     {
-        $this->enableMyShoppingListsPage(true);
+        $this->enableShoppingListsPage(true);
 
         $this->initClient(
             [],
@@ -187,7 +187,7 @@ class ShoppingListControllerTest extends WebTestCase
         $this->assertCount(1, $data);
         $this->assertArrayHasKey('item', $data[0]);
         $this->assertEquals('product-1', $data[0]['sku']);
-        $this->assertEquals(['name' => 'in_stock', 'label' => 'In Stock'], $data[0]['inventoryStatus']);
+        $this->assertEquals('in_stock', $data[0]['inventoryStatus']);
         $this->assertEquals(8, $data[0]['quantity']);
         $this->assertEquals('bottle', $data[0]['unit']);
         $this->assertEquals('$13.10', $data[0]['price']);
@@ -199,7 +199,7 @@ class ShoppingListControllerTest extends WebTestCase
         $this->assertNull($data[0]['availabilityDate']);
         $this->assertNull($data[0]['subData']);
 
-        $this->enableMyShoppingListsPage(false);
+        $this->enableShoppingListsPage(false);
     }
 
     public function testView(): void

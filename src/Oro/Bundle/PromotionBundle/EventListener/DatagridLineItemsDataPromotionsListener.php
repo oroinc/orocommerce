@@ -3,17 +3,16 @@
 namespace Oro\Bundle\PromotionBundle\EventListener;
 
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
-use Oro\Bundle\PricingBundle\EventListener\LineItemDataBuildListener as PricingLineItemDataListener;
+use Oro\Bundle\PricingBundle\EventListener\DatagridLineItemsDataPricingListener as PricingLineItemDataListener;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
 use Oro\Bundle\PromotionBundle\Executor\PromotionExecutor;
-use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
-use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\ShoppingListBundle\Event\LineItemDataBuildEvent;
 
 /**
- * Adds data to the LineItemDataBuildEvent.
+ * Adds line items promotions data.
  */
-class LineItemDataBuildListener
+class DatagridLineItemsDataPromotionsListener
 {
     /** @var PricingLineItemDataListener */
     private $pricingLineItemDataListener;
@@ -49,9 +48,9 @@ class LineItemDataBuildListener
     }
 
     /**
-     * @param LineItemDataBuildEvent $event
+     * @param DatagridLineItemsDataEvent $event
      */
-    public function onLineItemData(LineItemDataBuildEvent $event): void
+    public function onLineItemData(DatagridLineItemsDataEvent $event): void
     {
         $this->pricingLineItemDataListener->onLineItemData($event);
 
@@ -79,30 +78,28 @@ class LineItemDataBuildListener
             $lineItemData['discountValue'] = $discountTotal;
             $lineItemData['discount'] = $this->numberFormatter->formatCurrency($discountTotal, $currency);
 
+            // Applies changes to subtotal.
             $lineItemData['initialSubtotal'] = $lineItemData['subtotal'] ?? 0;
             $lineItemData['subtotalValue'] = ($lineItemData['subtotalValue'] ?? 0) - $discountTotal;
             $lineItemData['subtotal'] = $this->numberFormatter
                 ->formatCurrency($lineItemData['subtotalValue'], $currency);
 
-            $event->setDataForLineItem($lineItemId, $lineItemData);
+            $event->addDataForLineItem($lineItemId, $lineItemData);
         }
     }
 
     /**
-     * @param ShoppingList $shoppingList
+     * @param ProductLineItemsHolderInterface $lineItemsHolder
      * @return array
      */
-    private function getDiscountTotals(ShoppingList $shoppingList): array
+    private function getDiscountTotals(ProductLineItemsHolderInterface $lineItemsHolder): array
     {
-        $id = $shoppingList->getId();
-        if (!isset($this->cache[$id]) && $this->promotionExecutor->supports($shoppingList)) {
-            $discountContext = $this->promotionExecutor->execute($shoppingList);
+        $id = $lineItemsHolder->getId();
+        if (!isset($this->cache[$id]) && $this->promotionExecutor->supports($lineItemsHolder)) {
+            $discountContext = $this->promotionExecutor->execute($lineItemsHolder);
 
             foreach ($discountContext->getLineItems() as $item) {
-                $sourceLineItem = $item->getSourceLineItem();
-                if ($sourceLineItem instanceof LineItem) {
-                    $this->cache[$id][$sourceLineItem->getId()] = $item->getDiscountTotal();
-                }
+                $this->cache[$id][$item->getSourceLineItem()->getId()] = $item->getDiscountTotal();
             }
         }
 

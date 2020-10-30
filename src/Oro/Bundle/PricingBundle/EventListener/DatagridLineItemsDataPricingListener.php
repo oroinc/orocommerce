@@ -5,13 +5,12 @@ namespace Oro\Bundle\PricingBundle\EventListener;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
-use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
-use Oro\Bundle\ShoppingListBundle\Event\LineItemDataBuildEvent;
+use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
 
 /**
- * Adds pricing data to the LineItemDataBuildEvent.
+ * Adds line items pricing data.
  */
-class LineItemDataBuildListener
+class DatagridLineItemsDataPricingListener
 {
     /** @var FrontendProductPricesDataProvider */
     private $frontendProductPricesDataProvider;
@@ -32,9 +31,9 @@ class LineItemDataBuildListener
     }
 
     /**
-     * @param LineItemDataBuildEvent $event
+     * @param DatagridLineItemsDataEvent $event
      */
-    public function onLineItemData(LineItemDataBuildEvent $event): void
+    public function onLineItemData(DatagridLineItemsDataEvent $event): void
     {
         $lineItems = $event->getLineItems();
         $matchedPrices = $this->frontendProductPricesDataProvider->getProductsMatchedPrice($lineItems);
@@ -42,7 +41,6 @@ class LineItemDataBuildListener
             return;
         }
 
-        /** @var LineItem $lineItem */
         foreach ($lineItems as $lineItem) {
             /** @var Price $productPrice */
             $productPrice = $matchedPrices[$lineItem->getProduct()->getId()][$lineItem->getProductUnitCode()] ?? null;
@@ -50,18 +48,19 @@ class LineItemDataBuildListener
                 continue;
             }
 
-            $lineItemId = $lineItem->getId();
-            $lineItemData = $event->getDataForLineItem($lineItemId);
             $price = $productPrice->getValue();
             $currency = $productPrice->getCurrency();
             $subtotal = $price * $lineItem->getQuantity();
 
-            $lineItemData['price'] = $this->numberFormatter->formatCurrency($price, $currency);
-            $lineItemData['subtotal'] = $this->numberFormatter->formatCurrency($subtotal, $currency);
-            $lineItemData['currency'] = $currency;
-            $lineItemData['subtotalValue'] = $subtotal;
-
-            $event->setDataForLineItem($lineItemId, $lineItemData);
+            $event->addDataForLineItem(
+                $lineItem->getId(),
+                [
+                    'price' => $this->numberFormatter->formatCurrency($price, $currency),
+                    'subtotal' => $this->numberFormatter->formatCurrency($subtotal, $currency),
+                    'currency' => $currency,
+                    'subtotalValue' => $subtotal,
+                ]
+            );
         }
     }
 }

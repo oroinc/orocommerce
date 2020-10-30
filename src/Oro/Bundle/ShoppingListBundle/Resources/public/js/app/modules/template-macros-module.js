@@ -1,5 +1,6 @@
 import {macros} from 'underscore';
 import numberFormatter from 'orolocale/js/formatter/number';
+import routing from 'routing';
 
 macros('oroshoppinglist', {
     /**
@@ -70,6 +71,10 @@ macros('oroshoppinglist', {
      */
     numberFormatter,
 
+    /**
+     * Include routing to templates
+     */
+    routing,
 
     /**
      * Renders formatted unit

@@ -2,23 +2,24 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\EventListener;
 
+use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
-use Oro\Bundle\PricingBundle\EventListener\LineItemDataBuildListener as PricingLineItemDataListener;
+use Oro\Bundle\PricingBundle\EventListener\DatagridLineItemsDataPricingListener as PricingLineItemDataListener;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContextInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInformation;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
-use Oro\Bundle\PromotionBundle\EventListener\LineItemDataBuildListener;
+use Oro\Bundle\PromotionBundle\EventListener\DatagridLineItemsDataPromotionsListener;
 use Oro\Bundle\PromotionBundle\Executor\PromotionExecutor;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\ShoppingListBundle\Event\LineItemDataBuildEvent;
 use Oro\Bundle\ShoppingListBundle\Tests\Unit\Entity\Stub\ShoppingListStub;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class LineItemDataBuildListenerTest extends \PHPUnit\Framework\TestCase
+class DatagridLineItemsDataPromotionsListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -31,7 +32,7 @@ class LineItemDataBuildListenerTest extends \PHPUnit\Framework\TestCase
     /** @var UserCurrencyManager */
     private $currencyManager;
 
-    /** @var LineItemDataBuildListener */
+    /** @var DatagridLineItemsDataPromotionsListener */
     private $listener;
 
     protected function setUp(): void
@@ -50,7 +51,7 @@ class LineItemDataBuildListenerTest extends \PHPUnit\Framework\TestCase
                 }
             );
 
-        $this->listener = new LineItemDataBuildListener(
+        $this->listener = new DatagridLineItemsDataPromotionsListener(
             $this->pricingLineItemDataListener,
             $this->promotionExecutor,
             $this->currencyManager,
@@ -60,7 +61,7 @@ class LineItemDataBuildListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnLineItemDataWhenNoLineItems(): void
     {
-        $event = $this->createMock(LineItemDataBuildEvent::class);
+        $event = $this->createMock(DatagridLineItemsDataEvent::class);
 
         $this->pricingLineItemDataListener
             ->expects($this->once())
@@ -74,7 +75,7 @@ class LineItemDataBuildListenerTest extends \PHPUnit\Framework\TestCase
 
         $event
             ->expects($this->never())
-            ->method('setDataForLineItem');
+            ->method('addDataForLineItem');
 
         $event
             ->expects($this->never())
@@ -85,7 +86,7 @@ class LineItemDataBuildListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnLineItemDataWhenPromotionExecutorNotSupports(): void
     {
-        $event = $this->createMock(LineItemDataBuildEvent::class);
+        $event = $this->createMock(DatagridLineItemsDataEvent::class);
 
         $this->pricingLineItemDataListener
             ->expects($this->once())
@@ -109,7 +110,7 @@ class LineItemDataBuildListenerTest extends \PHPUnit\Framework\TestCase
 
         $event
             ->expects($this->never())
-            ->method('setDataForLineItem');
+            ->method('addDataForLineItem');
 
         $event
             ->expects($this->never())
@@ -120,7 +121,7 @@ class LineItemDataBuildListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnLineItemDataWhenNoDiscountLineItems(): void
     {
-        $event = $this->createMock(LineItemDataBuildEvent::class);
+        $event = $this->createMock(DatagridLineItemsDataEvent::class);
 
         $this->pricingLineItemDataListener
             ->expects($this->once())
@@ -156,7 +157,7 @@ class LineItemDataBuildListenerTest extends \PHPUnit\Framework\TestCase
 
         $event
             ->expects($this->never())
-            ->method('setDataForLineItem');
+            ->method('addDataForLineItem');
 
         $event
             ->expects($this->never())
@@ -167,7 +168,7 @@ class LineItemDataBuildListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnLineItemDataWhenNotSourceLineItemNotShoppingListLineItem(): void
     {
-        $event = $this->createMock(LineItemDataBuildEvent::class);
+        $event = $this->createMock(DatagridLineItemsDataEvent::class);
 
         $this->pricingLineItemDataListener
             ->expects($this->once())
@@ -190,11 +191,10 @@ class LineItemDataBuildListenerTest extends \PHPUnit\Framework\TestCase
             ->willReturn(true);
 
         $discountContext = $this->createMock(DiscountContextInterface::class);
-        $discountLineItem1 = (new DiscountLineItem())->setSourceLineItem(new \stdClass());
         $discountContext
             ->expects($this->once())
             ->method('getLineItems')
-            ->willReturn([$discountLineItem1]);
+            ->willReturn([]);
 
         $this->promotionExecutor
             ->expects($this->once())
@@ -204,7 +204,7 @@ class LineItemDataBuildListenerTest extends \PHPUnit\Framework\TestCase
 
         $event
             ->expects($this->never())
-            ->method('setDataForLineItem');
+            ->method('addDataForLineItem');
 
         $event
             ->expects($this->never())
@@ -263,16 +263,20 @@ class LineItemDataBuildListenerTest extends \PHPUnit\Framework\TestCase
             ->with($shoppingList)
             ->willReturn($discountContext);
 
-        $event = new LineItemDataBuildEvent([$lineItem1, $lineItem2, $lineItem3], []);
+        $event = new DatagridLineItemsDataEvent(
+            [$lineItem1, $lineItem2, $lineItem3],
+            $this->createMock(DatagridInterface::class),
+            []
+        );
 
         $this->pricingLineItemDataListener
             ->expects($this->once())
             ->method('onLineItemData')
             ->with($event);
 
-        $event->setDataForLineItem($lineItem1->getId(), ['subtotal' => 'USD100', 'subtotalValue' => 100]);
-        $event->setDataForLineItem($lineItem2->getId(), ['subtotal' => 'USD1000', 'subtotalValue' => 1000]);
-        $event->setDataForLineItem($lineItem3->getId(), ['subtotal' => 'USD500', 'subtotalValue' => 500]);
+        $event->addDataForLineItem($lineItem1->getId(), ['subtotal' => 'USD100', 'subtotalValue' => 100]);
+        $event->addDataForLineItem($lineItem2->getId(), ['subtotal' => 'USD1000', 'subtotalValue' => 1000]);
+        $event->addDataForLineItem($lineItem3->getId(), ['subtotal' => 'USD500', 'subtotalValue' => 500]);
 
         $this->listener->onLineItemData($event);
 

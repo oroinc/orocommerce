@@ -132,7 +132,7 @@ class MatrixGridOrderManager
         }
 
         $variantFields = $this->getVariantFields($product);
-        $availableVariants = $this->getAvailableVariants($product, $variantFields);
+        $availableVariants = $this->getAvailableVariants($product, $variantFields, $unit);
 
         $collection = new MatrixCollection();
         $collection->unit = $unit;
@@ -209,15 +209,21 @@ class MatrixGridOrderManager
      *
      * @param Product $product
      * @param array $variantFields
+     * @param ProductUnit|null $unit
      * @return array ex.: ['red' => ['xxl' => ['product' => object(Product)#1], ...], ...]
+     * @throws \InvalidArgumentException
      */
-    private function getAvailableVariants(Product $product, array $variantFields)
+    private function getAvailableVariants(Product $product, array $variantFields, ProductUnit $unit = null)
     {
+        if (!$unit) {
+            $unit = $product->getPrimaryUnitPrecision()->getUnit();
+        }
+
         $availableVariants = [];
 
         $variants = $this->variantAvailability->getSimpleProductsByVariantFields($product);
         foreach ($variants as $variant) {
-            if (!$this->doSimpleProductSupportsUnitPrecision($variant, $product->getPrimaryUnitPrecision())) {
+            if (!$this->doSimpleProductSupportsUnitPrecision($variant, $unit)) {
                 continue;
             }
 
@@ -239,10 +245,10 @@ class MatrixGridOrderManager
 
     /**
      * @param Product $product
-     * @param ProductUnitPrecision $unit
+     * @param ProductUnit $unit
      * @return bool
      */
-    private function doSimpleProductSupportsUnitPrecision(Product $product, ProductUnitPrecision $unit)
+    private function doSimpleProductSupportsUnitPrecision(Product $product, ProductUnit $unit)
     {
         $productUnits = $product->getUnitPrecisions()->map(
             function (ProductUnitPrecision $unitPrecision) {
@@ -250,7 +256,7 @@ class MatrixGridOrderManager
             }
         );
 
-        return $productUnits->contains($unit->getUnit());
+        return $productUnits->contains($unit);
     }
 
     /**

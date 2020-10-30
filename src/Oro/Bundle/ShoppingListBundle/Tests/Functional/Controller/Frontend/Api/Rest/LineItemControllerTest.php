@@ -78,7 +78,36 @@ class LineItemControllerTest extends WebTestCase
             ->getRepository(LineItem::class)
             ->findOneBy(['id' => $this->getReference('shopping_list_configurable_line_item.5')->getId()]);
 
-        $this->assertFalse($secondItem === null);
+        $this->assertNotNull($secondItem);
+    }
+
+    public function testDeleteConfigurable(): void
+    {
+        /** @var LineItem $lineItem */
+        $lineItem = $this->getReference('shopping_list_configurable_line_item.4');
+
+        $this->client->request(
+            'DELETE',
+            $this->getUrl(
+                'oro_api_shopping_list_frontend_delete_line_item_configurable',
+                [
+                    'shoppingListId' => $lineItem->getShoppingList()->getId(),
+                    'productId' => $lineItem->getParentProduct()->getId(),
+                    'unitCode' => $lineItem->getProductUnitCode(),
+                ]
+            )
+        );
+
+        $result = $this->client->getResponse();
+        $this->assertEmptyResponseStatusCodeEquals($result, 204);
+
+        $secondItem = $this->getContainer()
+            ->get('doctrine')
+            ->getManagerForClass(LineItem::class)
+            ->getRepository(LineItem::class)
+            ->findOneBy(['id' => $this->getReference('shopping_list_configurable_line_item.5')->getId()]);
+
+        $this->assertNull($secondItem);
     }
 
     public function testDeleteWhenNoLineItem(): void

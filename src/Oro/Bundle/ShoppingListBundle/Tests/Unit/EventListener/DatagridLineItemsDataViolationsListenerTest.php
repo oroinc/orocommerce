@@ -2,38 +2,39 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\EventListener;
 
+use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
-use Oro\Bundle\ShoppingListBundle\Event\LineItemDataBuildEvent;
-use Oro\Bundle\ShoppingListBundle\EventListener\LineItemDataBuildViolationsListener;
+use Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataViolationsListener;
 use Oro\Bundle\ShoppingListBundle\Validator\LineItemViolationsProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 
-class LineItemDataBuildViolationsListenerTest extends \PHPUnit\Framework\TestCase
+class DatagridLineItemsDataViolationsListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /** @var LineItemViolationsProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $violationsProvider;
 
-    /** @var LineItemDataBuildViolationsListener */
+    /** @var DatagridLineItemsDataViolationsListener */
     private $listener;
 
     protected function setUp(): void
     {
         $this->violationsProvider = $this->createMock(LineItemViolationsProvider::class);
-        $this->listener = new LineItemDataBuildViolationsListener($this->violationsProvider);
+        $this->listener = new DatagridLineItemsDataViolationsListener($this->violationsProvider);
     }
 
     public function testOnLineItemDataWhenNoLineItems(): void
     {
-        $event = $this->createMock(LineItemDataBuildEvent::class);
+        $event = $this->createMock(DatagridLineItemsDataEvent::class);
 
         $event
             ->expects($this->never())
-            ->method('setDataForLineItem');
+            ->method('addDataForLineItem');
 
         $event
             ->expects($this->never())
@@ -42,10 +43,9 @@ class LineItemDataBuildViolationsListenerTest extends \PHPUnit\Framework\TestCas
         $this->listener->onLineItemData($event);
     }
 
-
     public function testOnLineItemDataWhenNoViolations(): void
     {
-        $event = $this->createMock(LineItemDataBuildEvent::class);
+        $event = $this->createMock(DatagridLineItemsDataEvent::class);
         $lineItems = [new LineItem(), new LineItem()];
         $event
             ->expects($this->once())
@@ -59,7 +59,7 @@ class LineItemDataBuildViolationsListenerTest extends \PHPUnit\Framework\TestCas
 
         $event
             ->expects($this->never())
-            ->method('setDataForLineItem');
+            ->method('addDataForLineItem');
 
         $event
             ->expects($this->never())
@@ -70,18 +70,18 @@ class LineItemDataBuildViolationsListenerTest extends \PHPUnit\Framework\TestCas
 
     public function testOnLineItemDataWhenViolations(): void
     {
-        $event = $this->createMock(LineItemDataBuildEvent::class);
         $productUnit = (new ProductUnit())->setCode('item');
         $product1 = (new Product())->setSku('sku1');
         $product2 = (new Product())->setSku('sku2');
 
         $lineItem1 = $this->getEntity(LineItem::class, ['id' => 11, 'product' => $product1, 'unit' => $productUnit]);
         $lineItem2 = $this->getEntity(LineItem::class, ['id' => 22, 'product' => $product2, 'unit' => $productUnit]);
-        $lineItems = [$lineItem1, $lineItem2];
-        $event
-            ->expects($this->once())
-            ->method('getLineItems')
-            ->willReturn($lineItems);
+
+        $event = new DatagridLineItemsDataEvent(
+            [$lineItem1, $lineItem2],
+            $this->createMock(DatagridInterface::class),
+            []
+        );
 
         $violation1 = $this->createMock(ConstraintViolationInterface::class);
         $violation1
@@ -100,14 +100,9 @@ class LineItemDataBuildViolationsListenerTest extends \PHPUnit\Framework\TestCas
             ->method('getLineItemViolationLists')
             ->willReturn(['product.sku1.item' => [$violation1], 'product.sku2.item' => [$violation2]]);
 
-        $event
-            ->expects($this->exactly(2))
-            ->method('addDataForLineItem')
-            ->withConsecutive(
-                [11, 'errors', ['error_message1']],
-                [22, 'errors', ['error_message2']]
-            );
-
         $this->listener->onLineItemData($event);
+
+        $this->assertEquals(['errors' => ['error_message1']], $event->getDataForLineItem(11));
+        $this->assertEquals(['errors' => ['error_message2']], $event->getDataForLineItem(22));
     }
 }

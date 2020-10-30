@@ -623,18 +623,41 @@ services:
         tags:
             - { name: layout.context_configurator }
 
-    oro_shopping_list.datagrid.event_listener.frontend_customer_user_shopping_list_grid:
-        class: Oro\Bundle\ShoppingListBundle\Datagrid\EventListener\FrontendLineItemsGridEventListener
+    oro_shopping_list.datagrid.event_listener.frontend_line_items_grid.data:
+        class: Oro\Bundle\ProductBundle\DataGrid\EventListener\FrontendLineItemsGrid\LineItemsDataOnResultAfterListener
         arguments:
-            - '@router'
             - '@event_dispatcher'
-            - '@oro_locale.formatter.number'
-            - '@oro_attachment.manager'
-            - '@oro_product.layout.data_provider.configurable_products'
-            - '@oro_locale.helper.localization'
-            - '@oro_shopping_list.validator_service.line_item'
+            - '@oro_entity.orm.entity_class_resolver'
         tags:
-            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-customer-user-shopping-list-grid, method: onResultAfter }
+            # Should be executed earlier than others because it adds data required by other listeners.
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-customer-user-shopping-list-grid, method: onResultAfter, priority: 1024 }
+
+    oro_shopping_list.datagrid.event_listener.frontend_line_items_grid.simple:
+        class: Oro\Bundle\ProductBundle\DataGrid\EventListener\FrontendLineItemsGrid\LineItemsSimpleOnResultAfterListener
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-customer-user-shopping-list-grid, method: onResultAfter, priority: 768 }
+
+    oro_shopping_list.datagrid.event_listener.frontend_line_items_grid.grouped:
+        class: Oro\Bundle\ProductBundle\DataGrid\EventListener\FrontendLineItemsGrid\LineItemsGroupedOnResultAfterListener
+        arguments:
+            - '@oro_attachment.manager'
+            - '@oro_locale.formatter.number'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-customer-user-shopping-list-grid, method: onResultAfter, priority: 512 }
+
+    oro_shopping_list.datagrid.event_listener.frontend_line_items_grid.matrix_form:
+        class: Oro\Bundle\ProductBundle\DataGrid\EventListener\FrontendLineItemsGrid\LineItemsMatrixFormOnResultAfterListener
+        arguments:
+            - '@oro_product.provider.product_matrix_availability_provider'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-customer-user-shopping-list-edit-grid, method: onResultAfter, priority: 256 }
+
+    oro_shopping_list.datagrid.event_listener.frontend_line_items_grid.actions:
+        class: Oro\Bundle\ShoppingListBundle\Datagrid\EventListener\FrontendLineItemsGrid\LineItemsActionsOnResultAfterListener
+        arguments:
+            - '@security.authorization_checker'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-customer-user-shopping-list-edit-grid, method: onResultAfter, priority: 128 }
 
     oro_shopping_list.datagrid.event_listener.frontend-customer-user-shopping-lists-base-grid:
         class: Oro\Bundle\ShoppingListBundle\Datagrid\EventListener\FrontendShoppingListsGridEventListener
@@ -672,14 +695,6 @@ services:
         tags:
             - { name: oro_datagrid.extension.action.type, type: add-notes }
 
-    oro_shopping_list.datagrid.action_configuration_link_callback:
-        class: Oro\Bundle\ShoppingListBundle\Datagrid\Callback\ShoppingListActionConfigurationCallback
-        public: true
-        arguments:
-            - '@oro_entity.doctrine_helper'
-            - '@oro_product.provider.product_matrix_availability_provider'
-            - '@security.authorization_checker'
-
     oro_shopping_list.extension.action.type.update_configurable_product:
         class: 'Oro\Bundle\ShoppingListBundle\Datagrid\Extension\Action\Actions\UpdateConfigurableProductAction'
         shared: false
@@ -706,11 +721,6 @@ services:
 
     Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemBatchUpdateHandler:
         alias: 'oro_shopping_list.handler.shopping_list_line_item_batch_update'
-
-    oro_shopping_list.provider.product_units_list_provider:
-        class: Oro\Bundle\ShoppingListBundle\Datagrid\Provider\ProductUnitsListProvider
-        arguments:
-            - '@oro_product.formatter.product_unit_label'
 
     oro_shopping_list.datagrid.frontend_shopping_lists_views_list:
         class: Oro\Bundle\ShoppingListBundle\Datagrid\GridView\FrontendShoppingListsViewsList

@@ -39,5 +39,8 @@ class ProductInventoryStatusProviderTest extends \PHPUnit\Framework\TestCase
         $provider = new ProductInventoryStatusProvider($doctrine);
 
         $this->assertEquals($expected, $provider->getAvailableProductInventoryStatuses());
+
+        // Checks local caching.
+        $this->assertEquals($expected, $provider->getAvailableProductInventoryStatuses());
     }
 }

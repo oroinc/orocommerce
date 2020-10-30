@@ -2,18 +2,19 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener;
 
-use Oro\Bundle\InventoryBundle\EventListener\LineItemDataBuildListener;
+use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
+use Oro\Bundle\InventoryBundle\EventListener\DatagridLineItemsDataInventoryListener;
 use Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider;
 use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
 use Oro\Bundle\InventoryBundle\Tests\Unit\Inventory\Stub\InventoryStatusStub;
 use Oro\Bundle\InventoryBundle\Tests\Unit\Stubs\ProductStub;
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatterInterface;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
+use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
-use Oro\Bundle\ShoppingListBundle\Event\LineItemDataBuildEvent;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class LineItemDataBuildListenerTest extends \PHPUnit\Framework\TestCase
+class DatagridLineItemsDataInventoryListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -32,7 +33,7 @@ class LineItemDataBuildListenerTest extends \PHPUnit\Framework\TestCase
     /** @var LocaleSettings|\PHPUnit\Framework\MockObject\MockObject */
     private $localeSettings;
 
-    /** @var LineItemDataBuildListener */
+    /** @var DatagridLineItemsDataInventoryListener */
     private $listener;
 
     protected function setUp(): void
@@ -53,7 +54,7 @@ class LineItemDataBuildListenerTest extends \PHPUnit\Framework\TestCase
             ->method('getTimeZone')
             ->willReturn('Europe/London');
 
-        $this->listener = new LineItemDataBuildListener(
+        $this->listener = new DatagridLineItemsDataInventoryListener(
             $this->upcomingProductProvider,
             $this->lowInventoryProvider,
             $this->formatter,
@@ -64,7 +65,7 @@ class LineItemDataBuildListenerTest extends \PHPUnit\Framework\TestCase
     public function testOnLineItemData(): void
     {
         $product = new ProductStub(1);
-        $inventoryStatus = new InventoryStatusStub(10, 'in stock');
+        $inventoryStatus = new InventoryStatusStub('in_stock', 'In Stock');
         $product->setInventoryStatus($inventoryStatus);
 
         $this->upcomingProductProvider->expects($this->once())
@@ -82,8 +83,9 @@ class LineItemDataBuildListenerTest extends \PHPUnit\Framework\TestCase
             ->with($product)
             ->willReturn(false);
 
-        $event = new LineItemDataBuildEvent(
+        $event = new DatagridLineItemsDataEvent(
             [$this->getEntity(LineItem::class, ['id' => 42, 'product' => $product])],
+            $this->createMock(DatagridInterface::class),
             []
         );
 
@@ -94,7 +96,7 @@ class LineItemDataBuildListenerTest extends \PHPUnit\Framework\TestCase
                 'isUpcoming' => true,
                 'availabilityDate' => 'Jun 10, 2020',
                 'isLowInventory' => false,
-                'inventoryStatus' => ['name' => 10, 'label' => 'in stock'],
+                'inventoryStatus' => 'in_stock',
             ],
             $event->getDataForLineItem(42)
         );
@@ -103,7 +105,7 @@ class LineItemDataBuildListenerTest extends \PHPUnit\Framework\TestCase
     public function testOnLineItemDataWithoutAvailabilityDate(): void
     {
         $product = new ProductStub(1);
-        $inventoryStatus = new InventoryStatusStub(10, 'in stock');
+        $inventoryStatus = new InventoryStatusStub('in_stock', 'In Stock');
         $product->setInventoryStatus($inventoryStatus);
 
         $this->upcomingProductProvider->expects($this->once())
@@ -121,8 +123,9 @@ class LineItemDataBuildListenerTest extends \PHPUnit\Framework\TestCase
             ->with($product)
             ->willReturn(true);
 
-        $event = new LineItemDataBuildEvent(
+        $event = new DatagridLineItemsDataEvent(
             [$this->getEntity(LineItem::class, ['id' => 42, 'product' => $product])],
+            $this->createMock(DatagridInterface::class),
             []
         );
 
@@ -132,7 +135,7 @@ class LineItemDataBuildListenerTest extends \PHPUnit\Framework\TestCase
             [
                 'isUpcoming' => true,
                 'isLowInventory' => true,
-                'inventoryStatus' => ['name' => 10, 'label' => 'in stock'],
+                'inventoryStatus' => 'in_stock',
             ],
             $event->getDataForLineItem(42)
         );
@@ -141,7 +144,7 @@ class LineItemDataBuildListenerTest extends \PHPUnit\Framework\TestCase
     public function testOnLineItemDataNotUpcoming(): void
     {
         $product = new ProductStub(1);
-        $inventoryStatus = new InventoryStatusStub(10, 'in stock');
+        $inventoryStatus = new InventoryStatusStub('in_stock', 'In Stock');
         $product->setInventoryStatus($inventoryStatus);
 
         $this->upcomingProductProvider->expects($this->once())
@@ -157,8 +160,9 @@ class LineItemDataBuildListenerTest extends \PHPUnit\Framework\TestCase
             ->with($product)
             ->willReturn(true);
 
-        $event = new LineItemDataBuildEvent(
+        $event = new DatagridLineItemsDataEvent(
             [$this->getEntity(LineItem::class, ['id' => 42, 'product' => $product])],
+            $this->createMock(DatagridInterface::class),
             []
         );
 
@@ -168,7 +172,7 @@ class LineItemDataBuildListenerTest extends \PHPUnit\Framework\TestCase
             [
                 'isUpcoming' => false,
                 'isLowInventory' => true,
-                'inventoryStatus' => ['name' => 10, 'label' => 'in stock'],
+                'inventoryStatus' => 'in_stock',
             ],
             $event->getDataForLineItem(42)
         );

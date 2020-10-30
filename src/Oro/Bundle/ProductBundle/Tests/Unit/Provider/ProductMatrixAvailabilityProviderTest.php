@@ -1,18 +1,16 @@
 <?php
 
-namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Provider;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Provider\ProductMatrixAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 
 class ProductMatrixAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
     /** @var ProductVariantAvailabilityProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $productVariantAvailability;
 
@@ -26,15 +24,13 @@ class ProductMatrixAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
     {
         $this->productVariantAvailability = $this->createMock(ProductVariantAvailabilityProvider::class);
 
-        $this->provider = new ProductMatrixAvailabilityProvider(
-            $this->productVariantAvailability
-        );
+        $this->provider = new ProductMatrixAvailabilityProvider($this->productVariantAvailability);
     }
 
     public function testIsMatrixFormAvailableWithSimpleProduct()
     {
         /** @var Product $simpleProduct */
-        $simpleProduct = $this->getEntity(Product::class);
+        $simpleProduct = new ProductStub();
         $this->productVariantAvailability->expects($this->never())
             ->method('getVariantFieldsAvailability');
 
@@ -42,7 +38,7 @@ class ProductMatrixAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param array $attributes
+     * @param array $variantFields
      * @param ProductUnitPrecision $unitPrecision
      * @param Product[] $simpleProducts
      * @param bool $expected
@@ -50,25 +46,19 @@ class ProductMatrixAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
      * @dataProvider isMatrixFormAvailableProvider
      */
     public function testIsMatrixFormAvailableWithOneArgument(
-        array $attributes,
+        array $variantFields,
         ProductUnitPrecision $unitPrecision,
         array $simpleProducts,
         bool $expected
     ) {
-        /** @var Product $product */
-        $product = $this->getEntity(Product::class, [
-            'id' => 123,
-            'primaryUnitPrecision' => $unitPrecision,
-            'type' => Product::TYPE_CONFIGURABLE
-        ]);
-
-        $this->productVariantAvailability->expects($this->once())
-            ->method('getVariantFieldsAvailability')
-            ->with($product)
-            ->willReturn($attributes);
+        $product = (new ProductStub())
+            ->setId(123)
+            ->setPrimaryUnitPrecision($unitPrecision)
+            ->setType(Product::TYPE_CONFIGURABLE)
+            ->setVariantFields($variantFields);
 
         // Matrix form should be available only for 1 or 2 attributes
-        $this->productVariantAvailability->expects($this->exactly(count($attributes) <= 2 ? 1 : 0))
+        $this->productVariantAvailability->expects($this->exactly(count($variantFields) <= 2 ? 1 : 0))
             ->method('getSimpleProductsByVariantFields')
             ->with($product)
             ->willReturn($simpleProducts);
@@ -83,35 +73,93 @@ class ProductMatrixAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
      */
     public function isMatrixFormAvailableProvider()
     {
-        $unit = $this->getEntity(ProductUnit::class);
-        $unitPrecision = $this->getEntity(ProductUnitPrecision::class, ['unit' => $unit]);
-
-        $simpleProduct = $this->getEntity(Product::class, ['id' => 321, 'primaryUnitPrecision' => $unitPrecision]);
+        $unit = new ProductUnit();
+        $unitPrecision = (new ProductUnitPrecision())->setUnit($unit);
+        $simpleProduct = (new ProductStub())
+            ->setId(321)
+            ->setPrimaryUnitPrecision($unitPrecision);
 
         return [
             'one attribute' => [
-                'attributes' => [1],
+                'variantFields' => ['sampleField1'],
                 'unitPrecision' => $unitPrecision,
                 'simpleProducts' => [$simpleProduct],
                 'expected' => true,
             ],
             'two attributes' => [
-                'attributes' => [1, 2],
+                'variantFields' => ['sampleField1', 'sampleField2'],
                 'unitPrecision' => $unitPrecision,
                 'simpleProducts' => [$simpleProduct],
                 'expected' => true,
             ],
             'two attributes, no simple' => [
-                'attributes' => [1, 2],
+                'variantFields' => ['sampleField1', 'sampleField2'],
                 'unitPrecision' => $unitPrecision,
                 'simpleProducts' => [],
                 'expected' => false,
             ],
             'tree attributes' => [
-                'attributes' => [1, 2, 3],
+                'variantFields' => ['sampleField1', 'sampleField2', 'sampleField3'],
                 'unitPrecision' => $unitPrecision,
                 'simpleProducts' => [$simpleProduct],
                 'expected' => false,
+            ],
+        ];
+    }
+
+    public function testIsMatrixFormAvailableForProductsWhenNotConfigurable(): void
+    {
+        $simpleProduct = new ProductStub();
+
+        $this->productVariantAvailability
+            ->expects($this->never())
+            ->method('getSimpleProductsGroupedByConfigurable');
+
+        $this->assertEmpty($this->provider->isMatrixFormAvailableForProducts([$simpleProduct]));
+    }
+
+    /**
+     * @dataProvider isMatrixFormAvailableForProductsDataProvider
+     *
+     * @param Product $configurableProduct
+     * @param array $expectedResult
+     */
+    public function testIsMatrixFormAvailableForProducts(Product $configurableProduct, array $expectedResult): void
+    {
+        $this->assertSame($expectedResult, $this->provider->isMatrixFormAvailableForProducts([$configurableProduct]));
+    }
+
+    /**
+     * @return array
+     */
+    public function isMatrixFormAvailableForProductsDataProvider(): array
+    {
+        $productWith0VariantFields = (new ProductStub())
+            ->setId(123)
+            ->setType(Product::TYPE_CONFIGURABLE);
+
+        $productWith2VariantFields = (new ProductStub())
+            ->setId(456)
+            ->setType(Product::TYPE_CONFIGURABLE)
+            ->setVariantFields(['sampleField1', 'sampleField2']);
+
+        $productWith3VariantFields = (new ProductStub())
+            ->setId(789)
+            ->setType(Product::TYPE_CONFIGURABLE)
+            ->setVariantFields(['sampleField1', 'sampleField2', 'sampleField3']);
+
+        return [
+            '0 attributes' => [
+                'configurableProduct' => $productWith0VariantFields,
+                'expectedResult' => [],
+            ],
+            '2 attributes' => [
+                'configurableProduct' => $productWith2VariantFields,
+                'expectedResult' => [$productWith2VariantFields->getId() => $productWith2VariantFields],
+            ],
+            '3 attributes' => [
+                'configurableProduct' => $productWith3VariantFields,
+                'expectedResult' => [],
             ],
         ];
     }

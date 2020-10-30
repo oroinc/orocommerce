@@ -6,12 +6,12 @@ use Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider;
 use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatterInterface;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
-use Oro\Bundle\ShoppingListBundle\Event\LineItemDataBuildEvent;
+use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
 
 /**
- * Adds data to the LineItemDataBuildEvent.
+ * Adds inventory line items data.
  */
-class LineItemDataBuildListener
+class DatagridLineItemsDataInventoryListener
 {
     /** @var UpcomingProductProvider */
     private $upcomingProductProvider;
@@ -44,44 +44,27 @@ class LineItemDataBuildListener
     }
 
     /**
-     * @param LineItemDataBuildEvent $event
+     * @param DatagridLineItemsDataEvent $event
      */
-    public function onLineItemData(LineItemDataBuildEvent $event): void
+    public function onLineItemData(DatagridLineItemsDataEvent $event): void
     {
         foreach ($event->getLineItems() as $lineItem) {
             $product = $lineItem->getProduct();
-            $status = $product->getInventoryStatus();
-            $lineItemId = $lineItem->getId();
-            $event->addDataForLineItem(
-                $lineItemId,
-                'inventoryStatus',
-                ['name' => $status->getId(), 'label' => $status->getName()]
-            );
+            $lineItemData = [
+                'inventoryStatus' => $product->getInventoryStatus()->getId(),
+                'isLowInventory' => $this->lowInventoryProvider->isLowInventoryProduct($product),
+                'isUpcoming' => $this->upcomingProductProvider->isUpcoming($product),
+            ];
 
-            $isUpcoming = $this->upcomingProductProvider->isUpcoming($product);
-
-            $event->addDataForLineItem($lineItemId, 'isUpcoming', $isUpcoming);
-
-            if ($isUpcoming) {
+            if ($lineItemData['isUpcoming']) {
                 $availabilityDate = $this->upcomingProductProvider->getAvailabilityDate($product);
-
                 if ($availabilityDate) {
-                    $event->addDataForLineItem(
-                        $lineItemId,
-                        'availabilityDate',
-                        $this->formatter->formatDate(
-                            $availabilityDate,
-                            null,
-                            null,
-                            $this->localeSettings->getTimeZone()
-                        )
-                    );
+                    $lineItemData['availabilityDate'] = $this->formatter
+                        ->formatDate($availabilityDate, null, null, $this->localeSettings->getTimeZone());
                 }
             }
 
-            $isLowInventory = $this->lowInventoryProvider->isLowInventoryProduct($product);
-
-            $event->addDataForLineItem($lineItemId, 'isLowInventory', $isLowInventory);
+            $event->addDataForLineItem($lineItem->getId(), $lineItemData);
         }
     }
 }

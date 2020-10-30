@@ -380,18 +380,26 @@ class LineItemRepository extends EntityRepository
     }
 
     /**
-     * @param array $ids
+     * @param int $shoppingListId
+     * @param int $productId
+     * @param string $unitCode
      * @return array
      */
-    public function findIndexedByIds(array $ids): array
+    public function findLineItemsByParentProductAndUnit(int $shoppingListId, int $productId, string $unitCode): array
     {
         $expr = $this->getEntityManager()->getExpressionBuilder();
 
         return $this
-            ->createQueryBuilder('line_item', 'line_item.id')
-            ->where($expr->in('line_item.id', ':ids'))
-            ->orderBy($expr->asc('line_item.id'))
+            ->createQueryBuilder('line_item')
+            ->where($expr->eq('IDENTITY(line_item.shoppingList)', ':shopping_list_id'))
+            ->andWhere(
+                $expr->orX(
+                    $expr->eq('line_item.parentProduct', ':product_id'),
+                    $expr->eq('line_item.product', ':product_id')
+                )
+            )
+            ->andWhere($expr->eq('line_item.unit', ':unit_code'))
             ->getQuery()
-            ->execute(['ids' => $ids]);
+            ->execute(['shopping_list_id' => $shoppingListId, 'product_id' => $productId, 'unit_code' => $unitCode]);
     }
 }

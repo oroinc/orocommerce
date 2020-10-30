@@ -16,15 +16,13 @@ const ShoppingListEditItemModel = ShoppingListModel.extend({
     },
 
     getCurrentModelUnit() {
-        if (!this.get('units')) {
-            return null;
-        }
-
-        return Object.entries(this.get('units')).find(([_, unit]) => unit.selected)[0];
+        return this.get('unit');
     },
 
     getCurrentModelPrecision() {
-        return Object.entries(this.get('units')).find(([_, unit]) => unit.selected)[1].precision;
+        const currentUnit = this.get('units')[this.getCurrentModelUnit()];
+
+        return typeof currentUnit !== 'undefined' ? currentUnit.precision : undefined;
     },
 
     highlightRow(type = 'success') {

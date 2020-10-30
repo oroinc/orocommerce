@@ -2,6 +2,7 @@ import $ from 'jquery';
 import __ from 'orotranslation/js/translator';
 import mediator from 'oroui/js/mediator';
 import messenger from 'oroui/js/messenger';
+import routing from 'routing';
 import DialogAction from 'oro/datagrid/action/dialog-action';
 import WidgetComponent from 'oroui/js/app/components/widget-component';
 
@@ -42,6 +43,7 @@ const UpdateConfigurableProductAction = DialogAction.extend({
     constructor: function UpdateConfigurableProductAction(options) {
         UpdateConfigurableProductAction.__super__.constructor.call(this, options);
     },
+
     /**
      * @inheritDoc
      */
@@ -66,7 +68,7 @@ const UpdateConfigurableProductAction = DialogAction.extend({
             this.widgetComponent.listenTo(this.widgetComponent.view, 'adoptedFormSubmitClick', () => {
                 $.ajax({
                     method: 'POST',
-                    url: this.model.attributes.updateConfigurableLink,
+                    url: this.getLink(),
                     data: $form.serialize(),
                     success: response => {
                         if (response.message) {
@@ -76,6 +78,17 @@ const UpdateConfigurableProductAction = DialogAction.extend({
                     }
                 });
             });
+        });
+    },
+
+    /**
+     * @inheritDoc
+     */
+    getLink: function() {
+        return routing.generate('oro_shopping_list_frontend_matrix_grid_update', {
+            shoppingListId: this.datagrid.metadata.gridParams.shopping_list_id,
+            productId: this.model.attributes.productId,
+            unitCode: this.model.attributes.unit
         });
     }
 });

@@ -3,18 +3,19 @@
 namespace Oro\Bundle\PricingBundle\EventListener;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
-use Oro\Bundle\ShoppingListBundle\Event\LineItemDataBuildEvent;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 /**
- * Adds pricing data to the LineItemDataBuildEvent.
+ * Adds pricing data to the DatagridLineItemsDataEvent.
  */
-class LineItemDataBuildListenerTest extends \PHPUnit\Framework\TestCase
+class DatagridLineItemsDataPricingListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -24,14 +25,14 @@ class LineItemDataBuildListenerTest extends \PHPUnit\Framework\TestCase
     /** @var NumberFormatter|\PHPUnit\Framework\MockObject\MockObject */
     private $numberFormatter;
 
-    /** @var LineItemDataBuildListener */
+    /** @var DatagridLineItemsDataPricingListener */
     private $listener;
 
     protected function setUp(): void
     {
         $this->frontendProductPricesDataProvider = $this->createMock(FrontendProductPricesDataProvider::class);
         $this->numberFormatter = $this->createMock(NumberFormatter::class);
-        $this->listener = new LineItemDataBuildListener(
+        $this->listener = new DatagridLineItemsDataPricingListener(
             $this->frontendProductPricesDataProvider,
             $this->numberFormatter
         );
@@ -39,7 +40,7 @@ class LineItemDataBuildListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnLineItemDataWhenNoLineItems(): void
     {
-        $event = $this->createMock(LineItemDataBuildEvent::class);
+        $event = $this->createMock(DatagridLineItemsDataEvent::class);
 
         $event
             ->expects($this->once())
@@ -48,7 +49,7 @@ class LineItemDataBuildListenerTest extends \PHPUnit\Framework\TestCase
 
         $event
             ->expects($this->never())
-            ->method('setDataForLineItem');
+            ->method('addDataForLineItem');
 
         $event
             ->expects($this->never())
@@ -59,7 +60,7 @@ class LineItemDataBuildListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnLineItemDataWhenNoPrices(): void
     {
-        $event = $this->createMock(LineItemDataBuildEvent::class);
+        $event = $this->createMock(DatagridLineItemsDataEvent::class);
 
         $lineItems = [new LineItem(), new LineItem()];
         $event
@@ -75,7 +76,7 @@ class LineItemDataBuildListenerTest extends \PHPUnit\Framework\TestCase
 
         $event
             ->expects($this->never())
-            ->method('setDataForLineItem');
+            ->method('addDataForLineItem');
 
         $event
             ->expects($this->never())
@@ -91,7 +92,7 @@ class LineItemDataBuildListenerTest extends \PHPUnit\Framework\TestCase
         $lineItem3 = $this->getLineItem(3, 1, 'piece');
         $lineItems = [$lineItem1, $lineItem2, $lineItem3];
 
-        $event = new LineItemDataBuildEvent($lineItems, []);
+        $event = new DatagridLineItemsDataEvent($lineItems, $this->createMock(DatagridInterface::class), []);
 
         $this->frontendProductPricesDataProvider
             ->expects($this->once())
