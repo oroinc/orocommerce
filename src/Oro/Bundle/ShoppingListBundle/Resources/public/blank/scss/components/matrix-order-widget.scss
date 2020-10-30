@@ -43,7 +43,16 @@
         font-family: $matrix-order-widget-grid-font-family;
 
         .fields-row-error {
-            margin: $matrix-order-widget-form-col-offset-inner;
+            background: $matrix-order-widget-fields-row-error-background;
+            max-width: $matrix-order-widget-fields-row-error-max-width;
+            padding: $matrix-order-widget-fields-row-error-offset-inner;
+            display: $matrix-order-widget-fields-row-error-display;
+            position: $matrix-order-widget-fields-row-error-position;
+            z-index: $matrix-order-widget-fields-row-error-z-index;
+
+            &:empty {
+                display: none;
+            }
         }
 
         &.state-multiline {
@@ -696,6 +705,10 @@
             &-content {
                 flex-basis: $matrix-order-widget-dialog-item-content-tablet-small-flex-basis;
             }
+        }
+
+        .validation-failed {
+            margin: $matrix-order-widget-validation-failed-tablet-small-offset;
         }
     }
 }
