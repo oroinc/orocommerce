@@ -19,6 +19,7 @@ export const flattenData = data => {
             item._isVariant = false;
         } else {
             let filteredOutVariants = 0;
+            let maxSubItemPrecision = 0;
             let lastFiltered = item;
 
             itemClassName.push('group-row');
@@ -27,8 +28,14 @@ export const flattenData = data => {
             item._hasVariants = true;
             item._isVariant = false;
             flatData.push(item);
+
             subData.forEach((subItem, index) => {
+                const precision = subItem.units[item.unit].precision;
                 const className = ['sub-row'];
+
+                if (precision > maxSubItemPrecision) {
+                    maxSubItemPrecision = precision;
+                }
 
                 if (subData.length - 1 === index) {
                     className.push('sub-row-last');
@@ -53,6 +60,8 @@ export const flattenData = data => {
                     'data-product-group': item.productId
                 };
             });
+
+            item.precision = maxSubItemPrecision;
 
             if (filteredOutVariants) {
                 lastFiltered.filteredOutData = {

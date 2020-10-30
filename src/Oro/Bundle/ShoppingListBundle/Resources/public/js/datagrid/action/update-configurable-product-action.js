@@ -14,6 +14,15 @@ import WidgetComponent from 'oroui/js/app/components/widget-component';
  * @extends oro.datagrid.action.DialogAction
  */
 const UpdateConfigurableProductAction = DialogAction.extend({
+    withMap: [
+        [1, 620],
+        [2, 760],
+        [3, 900],
+        [4, 1040],
+        [5, 1180],
+        [6, 1260]
+    ],
+
     widgetDefaultOptions: {
         'type': 'frontend-dialog',
         'multiple': false,
@@ -45,6 +54,32 @@ const UpdateConfigurableProductAction = DialogAction.extend({
     },
 
     /**
+     * Get suitable width for dialog depending on matrix columns count
+     * @param {number} count
+     * @returns {number}
+     */
+    getFlexibleWidth(count= 1) {
+        if (count <= this.withMap[0][0]) {
+            return this.withMap[0][1];
+        } else if (count >= this.withMap[this.withMap.length -1][0]) {
+            return this.withMap[this.withMap.length -1][1];
+        }
+
+        let index;
+        for (let i = 1; i <= this.withMap.length -2; i++) {
+            if (count === this.withMap[i][0]) {
+                index = i;
+                break;
+            } else if (count < this.withMap[i + 1][0]) {
+                index = i;
+                break;
+            }
+        }
+
+        return this.withMap[index][1];
+    },
+
+    /**
      * @inheritDoc
      */
     run: function() {
@@ -64,6 +99,18 @@ const UpdateConfigurableProductAction = DialogAction.extend({
 
         this.widgetComponent.openWidget().done(() => {
             const $form = $(this.widgetComponent.view.el).find('form');
+            const columnsCount = $(this.widgetComponent.view.el).data('columns-count');
+
+            if (columnsCount !== void 0) {
+                this.widgetComponent.listenTo(this.widgetComponent.view, 'widgetReady', dialog => {
+                    const width = this.getFlexibleWidth(columnsCount);
+
+                    dialog.loadingElement.addClass('invisible');
+                    dialog.widget.dialog('option', 'width', width);
+                    dialog.options.dialogOptions.width = width;
+                    dialog.loadingElement.removeClass('invisible');
+                });
+            }
 
             this.widgetComponent.listenTo(this.widgetComponent.view, 'adoptedFormSubmitClick', () => {
                 $.ajax({

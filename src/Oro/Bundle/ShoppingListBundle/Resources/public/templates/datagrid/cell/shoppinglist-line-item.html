@@ -1,7 +1,7 @@
 <% let oroshoppinglist = _.macros('oroshoppinglist') %>
 <% if (!obj.isConfigurable) { %>
     <div class="line-item-container">
-        <div tabindex="0" class="input input-qty"><%- oroshoppinglist.numberFormatter.formatDecimal(quantity, {grouping_used: false}) %></div>
+        <div tabindex="0" class="input input-qty"><%- oroshoppinglist.quantityHelper.formatQuantity(quantity, precision) %></div>
         <div class="select" tabindex="0" data-focused=".select2-container">
             <%- oroshoppinglist.renderUnit({unit: unitCode, quantity: 1}) %>
         </div>
@@ -9,7 +9,7 @@
 <% } else { %>
     <div class="mobile-row label-in-mobile-start label-bold-in-mobile line-item-configurable" data-label="<%- _metadata.label %>:">
         <% if (quantity) { %>
-            <% var formattedQuantity = oroshoppinglist.numberFormatter.formatDecimal(quantity) %>
+            <% var formattedQuantity = oroshoppinglist.quantityHelper.formatQuantity(quantity, precision) %>
             <%- _.__('oro.product.product_unit.' + unit + '.value.short', {count: formattedQuantity}, quantity) %>
         <% } else { %>
             <%- _.__('oro.shoppinglist.lineitem.empty_configurable_product') %>

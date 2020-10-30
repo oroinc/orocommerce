@@ -1,5 +1,5 @@
 import {macros} from 'underscore';
-import numberFormatter from 'orolocale/js/formatter/number';
+import quantityHelper from 'oroproduct/js/app/quantity-helper';
 import routing from 'routing';
 
 macros('oroshoppinglist', {
@@ -67,9 +67,9 @@ macros('oroshoppinglist', {
     renderMoreVariantsButton: require('tpl-loader!oroshoppinglist/templates/macros/product-item__variants-btn.html'),
 
     /**
-     * Include number formatter to templates
+     * Include quantityHelper to templates
      */
-    numberFormatter,
+    quantityHelper,
 
     /**
      * Include routing to templates
