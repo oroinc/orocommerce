@@ -672,6 +672,7 @@ const GrapesjsEditorView = BaseView.extend({
      */
     _onUpdatedBuilder: function() {
         mediator.trigger('grapesjs:updated', this.builder);
+        this._updateInitialField();
     },
 
     /**
