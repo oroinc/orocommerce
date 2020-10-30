@@ -250,6 +250,9 @@ oro_behat_extension:
           Price Value 1: 'oro_product[prices][0][price][value]'
           Price Unit 1: 'oro_product[prices][0][unit]'
           Shipping Option Weight Value 1: 'oro_product[product_shipping_options][0][weight][value]'
+          Shipping Option Dimensions Length Value 1: 'oro_product[product_shipping_options][0][dimensions][value][length]'
+          Shipping Option Dimensions Width Value 1: 'oro_product[product_shipping_options][0][dimensions][value][width]'
+          Shipping Option Dimensions Height Value 1: 'oro_product[product_shipping_options][0][dimensions][value][height]'
           Shipping Option Freight Class Value 1: 'oro_product[product_shipping_options][0][freightClass]'
           Product WYSIWYG_video Attribute Content:
             type: 'css'
@@ -337,6 +340,7 @@ oro_behat_extension:
           MultipleImages 1:
             locator: '//input[starts-with(@name, "oro_product[MultipleImages") and contains(@name, "[file][file]")]'
             type: xpath
+          MultiFileField9_Excluded: 'oro_product[MultiFileField9_Excluded][0][file][file]'
 
     RelatedProductsConfig:
       selector: 'form[name="related_items"]'

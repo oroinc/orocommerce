@@ -14,8 +14,13 @@ import 'grapesjs-preset-webpage';
 import parserPostCSS from 'grapesjs-parser-postcss';
 import 'orocms/js/app/grapesjs/plugins/components/grapesjs-components';
 import 'orocms/js/app/grapesjs/plugins/import/import';
+import 'orocms/js/app/grapesjs/plugins/code/code';
 import 'orocms/js/app/grapesjs/plugins/panel-scrolling-hints';
-import {escapeWrapper, getWrapperAttrs} from 'orocms/js/app/grapesjs/plugins/grapesjs-style-isolation';
+import {
+    escapeWrapper,
+    getWrapperAttrs,
+    removeImageExpression
+} from 'orocms/js/app/grapesjs/plugins/grapesjs-style-isolation';
 import i18nMessages from 'orocms/js/app/grapesjs/plugins/i18n-messages';
 import ContentParser from 'orocms/js/app/grapesjs/plugins/grapesjs-content-parser';
 
@@ -228,6 +233,7 @@ const GrapesjsEditorView = BaseView.extend({
                 return editor.getHtml() + '<style>' + editor.getCss() + '</style>';
             },
             importViewerOptions: {},
+            codeViewerOptions: {},
             exportOpts: {
                 btnLabel: __('oro.cms.wysiwyg.export.btn_label')
             }
@@ -235,6 +241,7 @@ const GrapesjsEditorView = BaseView.extend({
         'grapesjs-components': {},
         'grapesjs-style-isolation': {},
         'grapesjs-import': {},
+        'grapesjs-code': {},
         'grapesjs-panel-scrolling-hints': {}
     },
 
@@ -393,6 +400,8 @@ const GrapesjsEditorView = BaseView.extend({
      * Add builder event listeners
      */
     builderDelegateEvents: function() {
+        const canvas = this.builder.Canvas;
+
         this.$el.closest('form')
             .on(
                 'keyup' + this.eventNamespace() + ' keypress' + this.eventNamespace()
@@ -409,22 +418,26 @@ const GrapesjsEditorView = BaseView.extend({
             this.builder.trigger('change:canvasOffset');
         });
 
+        canvas.getCanvasView().$el.on(`scroll${this.eventNamespace()}`, e => {
+            const $cvTools = $(e.target).find('#gjs-cv-tools');
+
+            $cvTools.css({
+                top: e.target.scrollTop
+            });
+
+            // Force recalculate highlight boxes positions;
+            this.builder.trigger('frame:updated', {
+                frame: canvas.model.get('frame')
+            });
+        });
+
         this.builder.on('load', this._onLoadBuilder.bind(this));
         this.builder.on('update', this._onUpdatedBuilder.bind(this));
         this.builder.on('component:update', _.debounce(this._onComponentUpdatedBuilder.bind(this), 100));
         this.builder.on('changeTheme', this._updateTheme.bind(this));
         this.builder.on('component:selected', this.componentSelected.bind(this));
+        this.builder.on('component:deselected', this.componentDeselected.bind(this));
         this.builder.on('rteToolbarPosUpdate', this.updateRtePosition.bind(this));
-
-        this.builder.editor.view.$el.find('.gjs-toolbar')
-            .off('mouseover')
-            .on('mouseover', '.gjs-toolbar-item', e => {
-                $(e.target).tooltip({
-                    title: $(e.target).attr('label') || ''
-                });
-
-                $(e.target).tooltip('show');
-            });
 
         // Fix reload form when click export to zip dialog
         this.builder.on('run:export-template', () => {
@@ -458,12 +471,16 @@ const GrapesjsEditorView = BaseView.extend({
         this.$el.closest('.scrollable-container').off(this.eventNamespace());
         mediator.off('dropdown-button:click');
 
+        const canvas = this.builder.Canvas;
+
+        if (canvas) {
+            canvas.getCanvasView().$el.off(this.eventNamespace());
+            $(canvas.getBody()).off();
+        }
         if (this.builder) {
             this.builder.off();
             this.builder.editor.view.$el.find('.gjs-toolbar').off('mouseover');
         }
-
-        $(this.builder.Canvas.getBody()).off();
     },
 
     /**
@@ -515,7 +532,7 @@ const GrapesjsEditorView = BaseView.extend({
         }
 
         const _res = this.builder.ComponentRestriction.validate(
-            this.builder.getIsolatedHtml(this.$el.val())
+            removeImageExpression(this.$el.val())
         );
         const validationMessage = __('oro.cms.wysiwyg.validation.import', {tags: _res.join(', ')});
 
@@ -543,6 +560,21 @@ const GrapesjsEditorView = BaseView.extend({
      */
     getEditorStyles: function() {
         return this.builder.getIsolatedCss();
+    },
+
+    getToolbarItems() {
+        return $(this.builder.editor.view.$el.find('.gjs-toolbar .gjs-toolbar-item'));
+    },
+
+    componentDeselected() {
+        this.builder.editor.view.$el.find('.gjs-toolbar').off('mouseover');
+        this.getToolbarItems().each(function() {
+            const tooltip = $(this).data('bs.tooltip');
+
+            if (tooltip) {
+                tooltip.dispose();
+            }
+        });
     },
 
     componentSelected(model) {
@@ -573,6 +605,16 @@ const GrapesjsEditorView = BaseView.extend({
 
             model.set('toolbar', toolbar);
         }
+
+        this.builder.editor.view.$el.find('.gjs-toolbar')
+            .off('mouseover')
+            .on('mouseover', '.gjs-toolbar-item', e => {
+                $(e.target).tooltip({
+                    title: $(e.target).attr('label') || ''
+                });
+
+                $(e.target).tooltip('show');
+            });
     },
 
     /**
@@ -630,6 +672,7 @@ const GrapesjsEditorView = BaseView.extend({
      */
     _onUpdatedBuilder: function() {
         mediator.trigger('grapesjs:updated', this.builder);
+        this._updateInitialField();
     },
 
     /**

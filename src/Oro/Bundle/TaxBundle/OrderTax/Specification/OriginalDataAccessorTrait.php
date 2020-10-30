@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\TaxBundle\OrderTax\Specification;
 
+use Doctrine\ORM\PersistentCollection;
 use Doctrine\ORM\UnitOfWork;
 
 /**
@@ -32,7 +33,11 @@ trait OriginalDataAccessorTrait
          */
         $changeSet = $this->unitOfWork->getEntityChangeSet($entity);
         foreach ($changeSet as $property => $values) {
-            $originalEntityData[$property] = $values[0];
+            if ($originalEntityData[$property] instanceof PersistentCollection) {
+                $originalEntityData[$property] = $values;
+            } else {
+                $originalEntityData[$property] = $values[0];
+            }
         }
 
         return $originalEntityData;

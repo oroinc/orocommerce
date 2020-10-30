@@ -13,7 +13,32 @@ const CodeTypeBuilder = BaseTypeBuilder.extend({
         }
     },
 
-    template: _.template(`<code>${__('oro.cms.wysiwyg.component.code.placeholder')}</code>`),
+    modelMixin: {
+        initialize(...args) {
+            this.constructor.__super__.initialize.call(this, ...args);
+            /**
+             * The model data changes along with the content editing, in which case it needs to be repeated
+             * 'unescape' and 'escape' content data.
+             *
+             * As an example, drag a component to any location, this will provoke the re-render component
+             * content from escaped model data.
+             */
+            this.attributes.content = _.escape(_.unescape(this.attributes.content));
+        }
+    },
+
+    viewMixin: {
+        events: {
+            dblclick: 'onDoubleClick'
+        },
+
+        onDoubleClick(e) {
+            this.em.get('Commands').run('gjs-open-code-page');
+            e.stopPropagation();
+        }
+    },
+
+    template: _.template(`<pre>${__('oro.cms.wysiwyg.component.code.placeholder')}</pre>`),
 
     constructor: function CodeTypeBuilder(options) {
         CodeTypeBuilder.__super__.constructor.call(this, options);
@@ -22,7 +47,7 @@ const CodeTypeBuilder = BaseTypeBuilder.extend({
     isComponent(el) {
         let result = null;
 
-        if (el.tagName === 'CODE') {
+        if (el.tagName === 'PRE') {
             result = {
                 type: this.componentType
             };

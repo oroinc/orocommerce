@@ -8,6 +8,7 @@ use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPr
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
+use Symfony\Component\HttpFoundation\Response;
 
 class ShoppingListFrontendActionsTest extends FrontendActionTestCase
 {
@@ -15,7 +16,7 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
+            self::generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
 
         $this->loadFixtures(
@@ -30,25 +31,46 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
     {
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
-        $this->assertFalse($shoppingList->getLineItems()->isEmpty());
+        self::assertFalse($shoppingList->getLineItems()->isEmpty());
 
         $this->executeOperation($shoppingList, 'oro_shoppinglist_frontend_request_quote');
 
-        $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
+        self::assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         $data = json_decode($this->client->getResponse()->getContent(), true);
 
-        $this->assertArrayHasKey('redirectUrl', $data);
-        $this->assertTrue($data['success']);
+        self::assertArrayHasKey('redirectUrl', $data);
+        self::assertTrue($data['success']);
 
         $crawler = $this->client->request('GET', $data['redirectUrl']);
 
         $lineItems = $crawler->filter('.request-form-editline__product');
-        $this->assertNotEmpty($lineItems);
+        self::assertNotEmpty($lineItems);
         $content = $lineItems->html();
         foreach ($shoppingList->getLineItems() as $lineItem) {
             static::assertStringContainsString($lineItem->getProduct()->getSku(), $content);
         }
+    }
+
+
+    public function testCreateRequestForCustomerUserThatHaveNoAccessToShoppingList()
+    {
+        /** @var ShoppingList $shoppingList */
+        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_7);
+        self::assertFalse($shoppingList->getLineItems()->isEmpty());
+
+        $this->assertExecuteOperation(
+            'oro_shoppinglist_frontend_request_quote',
+            $shoppingList->getId(),
+            ShoppingList::class,
+            ['route' => 'oro_shopping_list_frontend_view'],
+            ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest'],
+            Response::HTTP_FORBIDDEN
+        );
+
+        $data = json_decode($this->client->getResponse()->getContent(), true);
+
+        self::assertFalse($data['success']);
     }
 
     /**

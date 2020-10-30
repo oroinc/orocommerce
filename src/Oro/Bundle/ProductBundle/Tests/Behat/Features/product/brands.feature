@@ -22,7 +22,7 @@ Feature: Brands
       | Meta Title       | apple                                      |
       | Meta Description | Meta Description                           |
       | Meta Keywords    | MetaKeyword                                |
-      | Description      | <iframe src='http://example.org'></iframe> |
+      | Description      | <iframe src=\"http://example.org\"></iframe> |
     And I click on "Brand Form Name Fallbacks"
     And fill "Brand Form" with:
       | Name First Use Default  | false                 |
@@ -30,7 +30,7 @@ Feature: Brands
       | Name Second Use Default | false                 |
       | Name Second             | ACME (Zulu locale)    |
     When save and close form
-    Then I should see "Please remove not permitted HTML-tags in the content field: - src attribute on <iframe> should be removed (near <iframe src='http://examp...)." error message
+    Then I should see "Please remove not permitted HTML-tags in the content field: - src attribute on <iframe> should be removed (near <iframe src=\"http://examp...)." error message
     When fill "Brand Form" with:
       | Description | Sample content |
     And save and close form

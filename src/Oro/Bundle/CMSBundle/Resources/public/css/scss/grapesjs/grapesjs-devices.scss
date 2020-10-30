@@ -27,38 +27,34 @@
         &.mobile-small,
         &.mobile-big,
         &.mobile-landscape {
-            .gjs-frame {
+            overflow: auto;
+
+            .gjs-frame-wrapper {
+                background: $primary-800;
+                margin: 8px auto;
                 border: solid $primary-800;
                 border-radius: 55px;
-                border-width: 55px 20px 75px;
+                border-width: 47px 12px 67px;
+                box-sizing: content-box;
             }
 
             #gjs-tools,
             .gjs-tools {
-                transform: translate(14px, -6px)
+                transform: translate(-6px, -6px)
             }
 
             .#{$app-prefix}cv-canvas__tools {
-                margin-top: 55px;
                 height: 100%;
             }
         }
 
         &.mobile-landscape {
-            .gjs-frame {
-                border: solid #e9e9e9;
-                border-radius: 55px;
-                border-width: 20px 75px 20px 55px;
+            .gjs-frame-wrapper {
+                border-width: 12px 67px 12px 47px;
             }
 
             .#{$app-prefix}cv-canvas__tools {
-                margin-top: 20px;
                 height: 100%;
-            }
-
-            #gjs-tools,
-            .gjs-tools {
-                transform: translate(49px, -6px);
             }
         }
 

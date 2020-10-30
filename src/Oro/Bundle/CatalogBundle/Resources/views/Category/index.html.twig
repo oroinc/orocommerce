@@ -35,7 +35,7 @@
 
         <div class="scrollable-container sidebar-container">
             {% embed "OroUIBundle::content_sidebar.html.twig" with {options: {
-                scrollbar: '[data-role="jstree-container"]'
+                fixSidebarHeight: false
             }} %}
                 {% block sidebar %}
                     {% import 'OroUIBundle::macros.html.twig' as UI %}
