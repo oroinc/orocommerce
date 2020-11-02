@@ -9,6 +9,19 @@ const ShoppingListItemModel = Backbone.Model.extend({
     initialize(attributes, options) {
         ShoppingListItemModel.__super__.initialize.call(this, attributes, options);
         this.isGroup = String(this.get('id')).indexOf('_') !== -1;
+        if (!this.get('isConfigurable')) {
+            this.set('precision', this.getCurrentModelPrecision(), {silent: true});
+        }
+    },
+
+    getCurrentModelUnit() {
+        return this.get('unit');
+    },
+
+    getCurrentModelPrecision() {
+        const currentUnit = this.get('units')[this.getCurrentModelUnit()];
+
+        return typeof currentUnit !== 'undefined' ? currentUnit.precision : undefined;
     },
 
     subModels() {

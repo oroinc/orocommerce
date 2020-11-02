@@ -5,7 +5,8 @@
             view: 'oropricing/js/app/views/base-product-matrix-view',
             prices: prices,
             autoRender: true
-        }
+        },
+        'data-columns-count': form.rows[0].columns|length
     }) %}
 
     {% do block|merge_context({
