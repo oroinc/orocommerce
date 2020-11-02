@@ -10,6 +10,7 @@ layout:
                     blockType: container
                     options:
                         vars:
+                            form: '=data["oro_shopping_list_matrix_order_form"].getMatrixOrderByUnitFormView(data["product"], data["productUnit"], data["shoppingList"])'
                             prices: '=data.offsetExists("product") ? data["frontend_product_prices"].getVariantsPricesByProduct(data["product"])'
                 matrix_grid_update_form_start:
                     blockType: form_start

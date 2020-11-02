@@ -11,18 +11,7 @@ const ShoppingListEditItemModel = ShoppingListModel.extend({
         ShoppingListEditItemModel.__super__.initialize.call(this, attributes, options);
         if (!this.get('isConfigurable')) {
             this.set('unitCode', this.getCurrentModelUnit(), {silent: true});
-            this.set('precision', this.getCurrentModelPrecision(), {silent: true});
         }
-    },
-
-    getCurrentModelUnit() {
-        return this.get('unit');
-    },
-
-    getCurrentModelPrecision() {
-        const currentUnit = this.get('units')[this.getCurrentModelUnit()];
-
-        return typeof currentUnit !== 'undefined' ? currentUnit.precision : undefined;
     },
 
     highlightRow(type = 'success') {

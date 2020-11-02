@@ -85,27 +85,55 @@
 .line-item-container,
 .shoppinglist-line-item-frontend-type-editor {
     .input {
-        border-bottom-right-radius: 0;
-        border-top-right-radius: 0;
+        position: relative;
         width: 80px;
+
         text-align: right;
+
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+
+        overflow: hidden;
 
         &:hover,
         &:focus,
         &.error {
             z-index: z('base') + 1;
-            position: relative;
+        }
+
+        &:after {
+            position: absolute;
+            top: 1px;
+            bottom: 1px;
+            right: 1px;
+            width: $input-padding;
+
+            background-color: $input-background-color;
+
+            content: '';
         }
     }
 
     .select2-container,
     .select {
+        position: relative;
+
         width: 70px;
         border-bottom-left-radius: 0;
         border-top-left-radius: 0;
         margin-left: -1px;
         text-align: left;
         @include ellipsis();
+
+        &:hover,
+        &:focus,
+        &.error {
+            z-index: z('base');
+        }
+
+        &.select2-container-active {
+            z-index: z('base') + 2;
+        }
     }
 }
 
