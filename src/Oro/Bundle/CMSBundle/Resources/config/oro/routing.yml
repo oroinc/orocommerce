@@ -29,3 +29,8 @@ oro_cms_wysiwyg_digita_asset:
     resource:     "@OroCMSBundle/Controller/WysiwygDigitalAssetController.php"
     type:         annotation
     prefix:       /cms/wysiwyg/digital-asset
+
+oro_cms_wysiwyg_validation:
+    resource:     "@OroCMSBundle/Controller/WysiwygValidationController.php"
+    type:         annotation
+    prefix:       /cms/wysiwyg/validation
