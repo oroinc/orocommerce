@@ -39,11 +39,11 @@ const ShoppingListCellPopupEditorComponent = CellPopupEditorComponent.extend({
         return this.options.plugin.saveItems(this);
     },
 
-    beforeSaveHook() {
-        if (!this.view.isValid()) {
-            return false;
-        }
+    isDataValid() {
+        return this.view.isValid();
+    },
 
+    beforeSaveHook() {
         const modelUpdateData = this.view.getModelUpdateData();
         const cell = this.options.cell;
         this.formState = this.view.getFormState();
