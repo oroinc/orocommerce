@@ -124,16 +124,16 @@ const ShoppingListInlineEditingPlugin = InlineEditingPlugin.extend({
             componentsToSend = this.activeEditorComponents.filter(component => component.isChanged());
         }
 
-        componentsToSend = _.compact(_.invoke(componentsToSend, 'beforeSaveHook'));
-        const data = componentsToSend.map(component => component.getServerUpdateData());
+        componentsToSend = componentsToSend.filter(component => component.isDataValid());
 
         const sendData = {
-            data,
+            data: componentsToSend.map(component => component.getServerUpdateData()),
             fetchData: _.extend(this.getGridFetchData(), {
                 appearanceType: this.main.collection.state.appearanceType
             })
         };
 
+        componentsToSend.forEach(component => component.beforeSaveHook());
         const savePromise = this.saveApiAccessor.send({
             id: this.options.metadata.gridParams.shopping_list_id,
             _wid: tools.createRandomUUID()

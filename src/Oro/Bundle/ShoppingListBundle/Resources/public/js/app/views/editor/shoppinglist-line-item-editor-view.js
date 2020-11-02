@@ -117,7 +117,7 @@ const ShoppinglistLineItemEditorView = TextEditorView.extend({
 
         return {
             ...value,
-            units: this.updateUnitList(value.unit)
+            units: this.updateUnitList(value.unitCode)
         };
     }
 });
