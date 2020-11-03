@@ -152,6 +152,11 @@ oro_behat_extension:
             type: 'css'
             locator: '[name="oro_catalog_category[longDescriptions][values][default][wysiwyg]"]'
             class: Oro\Bundle\CMSBundle\Tests\Behat\Element\WysiwygField
+          Long Description Localization 2:
+            type: 'css'
+            locator: '[name="oro_catalog_category[longDescriptions][values][localizations][2][value][wysiwyg]"]'
+            class: Oro\Bundle\CMSBundle\Tests\Behat\Element\WysiwygField
+          Long Description Localization 2 fallback selector: 'oro_catalog_category[longDescriptions][values][localizations][2][fallback]'
 
   pages:
     Category Update:
@@ -177,5 +182,13 @@ oro_behat_extension:
             - '@oro_importexport.processor.registry'
         - OroEmailBundle::EmailContext
         - OroProductBundle::ProductImportExportContext
+        - OroLocaleBundle::LocalizationContext
+        - OroFrontendLocalizationBundle::LocalizationSwitcherContext
+        - OroAttachmentBundle::AttachmentImageContext:
+            - '@doctrine'
+            - '@oro_website.website.provider'
+            - '@oro_website.manager'
+            - '@oro_config.website'
+            - '@oro_attachment.image_removal.service_locator'
       paths:
         - '@OroCatalogBundle/Tests/Behat/Features'
