@@ -2,6 +2,20 @@ Please refer first to [UPGRADE.md](UPGRADE.md) for the most important items that
 
 The current file describes significant changes in the code that may affect the upgrade of your customizations.
 
+## 4.1.10
+### Added
+
+#### ShoppingListBundle
+* New design of shopping list page enabled by an option in the system configuration.
+
+### Changed
+
+#### ShoppingListBundle
+* The dynamic imports configuration of the js modules.
+
+### Removed
+* Removed long-unused the `oro_customer_menu` layout import from all bundles.
+
 ## 4.1.1 (2020-02-25)
 [Show detailed list of changes](incompatibilities-4-1-1.md)
 
