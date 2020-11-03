@@ -15,6 +15,9 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Component\Website\WebsiteInterface;
 
+/**
+ * Listener for restricting sitemap building for cms pages
+ */
 class RestrictSitemapCmsPageByWebCatalogListener
 {
     use FeatureCheckerHolderTrait;
@@ -125,6 +128,7 @@ class RestrictSitemapCmsPageByWebCatalogListener
      */
     private function isEnabled(WebsiteInterface $website = null)
     {
+        // Restriction is applicable when webcatalog feature is disabled
         return !$this->isFeaturesEnabled($website);
     }
 }
