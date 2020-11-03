@@ -40,9 +40,6 @@ class WYSIWYGFieldTwigListenerTest extends WebTestCase
                         ['en', 'wysiwyg'],
                     ],
                 ],
-            ],
-
-            [
                 'wysiwyg_style' => [
                     'test' => [
                         ['default', 'wysiwyg_styles'],
@@ -59,9 +56,6 @@ class WYSIWYGFieldTwigListenerTest extends WebTestCase
                         ['default', 'wysiwyg2'],
                     ],
                 ],
-            ],
-
-            [
                 'wysiwyg_style' => [
                     'test' => [
                         ['en', 'wysiwyg_styles'],
@@ -103,11 +97,12 @@ class WYSIWYGFieldTwigListenerTest extends WebTestCase
                 WYSIWYGTwigFunctionProcessorInterface::FIELD_STYLES_TYPE => ['test'],
             ]);
 
-        $processor->expects($this->atLeast(4))
+        $processor->expects($this->exactly(3))
             ->method('processTwigFunctions')
             ->willReturnCallback(
                 function (WYSIWYGProcessedDTO $processedDTO, array $twigFunctionCalls) use (&$expectedCalls) {
                     if (empty($twigFunctionCalls['wysiwyg']) && empty($twigFunctionCalls['wysiwyg_style'])) {
+                        $this->assertNotEquals('descriptions', $processedDTO->requireOwnerEntityFieldName());
                         return false;
                     }
 
