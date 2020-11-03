@@ -237,6 +237,9 @@ class Brand extends ExtendBrand implements
      *              "full"=true,
      *              "fallback_field"="wysiwyg"
      *          },
+     *          "attachment"={
+     *              "acl_protected"=false
+     *          },
      *          "attribute"={
      *              "is_attribute"=true
      *          }
