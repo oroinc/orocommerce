@@ -247,6 +247,9 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
      *              "order"=60,
      *              "full"=true,
      *              "fallback_field"="wysiwyg"
+     *          },
+     *          "attachment"={
+     *              "acl_protected"=false
      *          }
      *      }
      * )
