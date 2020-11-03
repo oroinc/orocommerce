@@ -19,13 +19,13 @@ Feature: Category localizable fields
     And I click "Create Subcategory"
     And I fill "Category Form" with:
       | Title            | SubCategory                                |
-      | Long Description | <iframe src='http://example.org'></iframe> |
+      | Long Description | <iframe src=\"http://example.org\"></iframe> |
     And click "Short Description"
     And press "English" in "Short Description" section
     When fill "Category Form" with:
       | Short Description Localization 1 fallback selector | Custom |
     When I click "Save"
-    Then I should see "Please remove not permitted HTML-tags in the content field: - src attribute on <iframe> should be removed (near <iframe src='http://examp...)." error message
+    Then I should see "Please remove not permitted HTML-tags in the content field: - src attribute on <iframe> should be removed (near <iframe src=\"http://examp...)." error message
     When fill "Category Form" with:
       | Long Description | Sample content |
     And I click "Save"
