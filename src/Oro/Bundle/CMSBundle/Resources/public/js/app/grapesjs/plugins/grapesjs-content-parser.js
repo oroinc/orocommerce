@@ -212,7 +212,7 @@ function parseNodes(el, config, ct = '', parent = {}) {
             // just make it content of the current node
             if (nodeChild === 1 && firstChild.nodeType === 3) {
                 !model.type && (model.type = 'text');
-                model.content = firstChild.nodeValue;
+                model.content = _.escape(firstChild.nodeValue);
             } else if (nodeChild > 1 && _.some(node.childNodes, child => child.nodeType === 3)) {
                 !model.type && (model.type = 'text');
                 model.content = '';

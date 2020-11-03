@@ -207,6 +207,7 @@ operations:
                 - '@service_exists': oro_rfp.form.type.extension.frontend_request_data_storage
                 - '@has_elements': $lineItems
                 - '@rfp_allowed': $lineItems
+                - '@acl_granted': [VIEW, $.data]
         actions:
             - '@call_service_method':
                 service: oro_shopping_list.service.product_data_storage
