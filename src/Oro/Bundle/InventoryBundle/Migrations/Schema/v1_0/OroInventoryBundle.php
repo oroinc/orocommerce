@@ -8,6 +8,7 @@ use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterfac
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Fallback\Provider\CategoryFallbackProvider;
 use Oro\Bundle\CatalogBundle\Fallback\Provider\ParentCategoryFallbackProvider;
+use Oro\Bundle\ConfigBundle\Migration\RenameConfigSectionQuery;
 use Oro\Bundle\EntityBundle\Fallback\Provider\SystemConfigFallbackProvider;
 use Oro\Bundle\EntityBundle\Migration\AddFallbackRelationTrait;
 use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigEntityValueQuery;
@@ -115,7 +116,7 @@ class OroInventoryBundle implements
         $this->addOroInventoryLevelForeignKeys($schema);
 
         $queries->addPostQuery(
-            new RenameInventoryConfigSectionQuery('oro_warehouse', 'oro_inventory', 'manage_inventory')
+            new RenameConfigSectionQuery('oro_warehouse', 'oro_inventory', 'manage_inventory')
         );
     }
 
