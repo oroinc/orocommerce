@@ -1,5 +1,7 @@
 import FilteredProductVariantsPlugin from 'oroshoppinglist/js/datagrid/plugins/filtered-product-variants-plugin';
 import ShoppingListRefreshPlugin from 'oroshoppinglist/js/datagrid/plugins/shopping-list-refresh-plugin';
+import quantityHelper from 'oroproduct/js/app/quantity-helper';
+import _ from 'underscore';
 
 const isHighlight = item => item.isUpcoming || (item.errors && item.errors.length);
 export const flattenData = data => {
@@ -19,7 +21,7 @@ export const flattenData = data => {
             item._isVariant = false;
         } else {
             let filteredOutVariants = 0;
-            let maxSubItemPrecision = 0;
+            const precisions = [];
             let lastFiltered = item;
 
             itemClassName.push('group-row');
@@ -33,8 +35,8 @@ export const flattenData = data => {
                 const precision = subItem.units[item.unit].precision;
                 const className = ['sub-row'];
 
-                if (precision > maxSubItemPrecision) {
-                    maxSubItemPrecision = precision;
+                if (_.isNumber(precision)) {
+                    precisions.push(precision);
                 }
 
                 if (subData.length - 1 === index) {
@@ -61,7 +63,9 @@ export const flattenData = data => {
                 };
             });
 
-            item.precision = maxSubItemPrecision;
+            item.precision = precisions.length
+                ? Math.max(null, precisions)
+                : quantityHelper.getDefaultMaxFractionDigits();
 
             if (filteredOutVariants) {
                 lastFiltered.filteredOutData = {
