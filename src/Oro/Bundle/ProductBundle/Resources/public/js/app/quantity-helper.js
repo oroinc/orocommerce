@@ -2,6 +2,7 @@ define(function(require) {
     'use strict';
 
     const NumberFormatter = require('orolocale/js/formatter/number');
+    const localeSettings = require('orolocale/js/locale-settings');
 
     /**
      * @export  oroproduct/js/app/quantity-helper
@@ -78,6 +79,13 @@ define(function(require) {
             }
 
             return quantityNumber;
+        },
+
+        /**
+         * @returns {number}
+         */
+        getDefaultMaxFractionDigits() {
+            return localeSettings.settings.format.number.decimal.max_fraction_digits;
         }
     };
 });
