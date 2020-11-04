@@ -300,6 +300,10 @@ oro_behat_extension:
     Shopping List Action Submit:
       selector: 'div.form-actions button[type="submit"]'
 
+    Frontend Shopping List Edit Grid:
+      selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]'
+      class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\Grid
+
     Shopping List Action Reassign Grid:
       selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-assign-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
