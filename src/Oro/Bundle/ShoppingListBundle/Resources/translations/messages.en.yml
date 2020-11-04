@@ -76,6 +76,7 @@ oro:
         mass_actions:
             delete_line_items:
                 label: Delete
+                success_message: "{0} Can't delete selected items(s)|[1,Inf[%count% item(s) have been deleted successfully"
             move_line_items:
                 label: Move to another Shopping List
                 success_message: '{0} No items were moved.|{1} One entity has been moved successfully.|]1,Inf[ %count% items have been moved successfully.'

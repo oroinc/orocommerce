@@ -642,12 +642,15 @@ datagrids:
                 entity_name: Oro\Bundle\ShoppingListBundle\Entity\LineItem
                 acl_resource:  oro_shopping_list_line_item_frontend_delete
                 data_identifier: lineItem.id
+                handler: oro_shopping_list.datagrid.mass_action.handler.delete
                 defaultMessages:
                     confirm_content: oro.shoppinglist.mass_actions.delete_line_items.confirm_content
                     confirm_ok: oro.shoppinglist.mass_actions.delete_line_items.confirm_ok
                     confirm_title: oro.shoppinglist.mass_actions.delete_line_items.confirm_title
                 confirmMessages:
                     selected_message: oro.shoppinglist.mass_actions.delete_line_items.selected_message
+                messages:
+                    success: oro.shoppinglist.mass_actions.delete_line_items.success_message
             move:
                 type: moveproducts
                 icon: level-up

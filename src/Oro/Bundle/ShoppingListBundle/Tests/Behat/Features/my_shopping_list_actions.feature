@@ -105,6 +105,28 @@ Feature: My Shopping List Actions
       | Shopping List 3 | $8,785.00 | 31    | No      |
       | Shopping List 1 | $1,614.00 | 4     | Yes     |
 
+  Scenario: Delete line items from shopping list mass action
+    Given I follow "Account"
+    And I click on "Shopping Lists Navigation Link"
+    And Page title equals to "Shopping Lists - My Account"
+    And I should see following grid:
+      | Name            | Subtotal  | Items | Default |
+      | Shopping List 3 | $8,785.00 | 31    | No      |
+      | Shopping List 1 | $1,614.00 | 4     | Yes     |
+    And I filter Name as is equal to "Shopping List 1"
+    And I click Edit "Shopping List 1" in grid
+    When I check first 4 records in "Frontend Shopping List Edit Grid"
+    And I click "Delete" link from mass action dropdown
+    And confirm deletion
+    Then I should see "4 item(s) have been deleted successfully" flash message
+    And I follow "Account"
+    And I click on "Shopping Lists Navigation Link"
+    And Page title equals to "Shopping Lists - My Account"
+    And I should see following grid:
+      | Name            | Subtotal  | Items | Default |
+      | Shopping List 3 | $8,785.00 | 31    | No      |
+      | Shopping List 1 | $0.00     | 0     | Yes     |
+
   Scenario: Re-assign Action
     Given I click View "Shopping List 3" in grid
     When I click "Shopping List Actions"
