@@ -693,6 +693,7 @@ Feature: My Shopping List
       | Quantity | 10 |
       | Unit     | ea |
     And I click on "Shopping List Line Item 2 Save Changes Button"
+    And I sort grid by "SKU"
     Then I should see following grid:
       | SKU  | Item                                                  |              | QtyUpdate All | Price  | Subtotal                 |
       | BB4  | Configurable Product 1 Color: Red Size: M Note 4 text | In Stock     | 10 ea         | N/A    | N/A                      |

@@ -2,6 +2,42 @@ Please refer first to [UPGRADE.md](UPGRADE.md) for the most important items that
 
 The current file describes significant changes in the code that may affect the upgrade of your customizations.
 
+## 4.2.0-rc
+
+### Added
+
+#### ShoppingListBundle
+* Added two additional permissions `RENAME_SHOPPING_LIST` and `SET_AS_DEFAULT_SHOPPING_LIST`
+related to the ShoppingList entity management functionality.
+* Added the `oro_shopping_list_frontend_url` twig function which will help to display a link to the shopping list
+in accordance with user permissions.
+
+### Changed
+
+#### ShoppingListBundle
+* The shopping list page has been completely redesigned. Removed all layout config, styles, javascript, translations,
+etc. related to the old design.
+
+### Removed
+* Removed long-unused `oro_customer_menu` layout import from all bundles.
+
+#### ProductBundle
+* Removed the `oro_product.matrix_form_on_shopping_list` option from the system configuration.
+
+#### ShoppingListBundle
+* Method `Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository::findDuplicate()` is removed, use
+`Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository::findDuplicateInShoppingList()` instead.
+* Removed the following layout block types:
+    - `shopping_list_owner_select_block`
+    - `shopping_list_line_items_list`
+    - `shopping_lists_menu`
+* Removed the following layout data providers:
+    - `oro_shopping_list_product_unit_code_visibility`
+    - `shopping_list_form_availability_provider`
+    - `oro_shopping_list_matrix_grid_shopping_list`
+    - `oro_shopping_list_products_units`
+* Removed the `oro_shoppinglist_frontend_duplicate` operation. The `oro_shoppinglist_frontend_duplicate_action` operation is now used.
+
 ## 4.2.0-alpha.3
 
 ### Changed
@@ -18,10 +54,6 @@ The current file describes significant changes in the code that may affect the u
 
 #### PricingBundle
 * The `unique_job_slug` option was removed during sending the import price list MQ message. 
-
-#### ShoppingListBundle
-* Method `Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository::findDuplicate()` is removed, use
-  `Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository::findDuplicateInShoppingList()` instead.
 
 ## 4.2.0-alpha.2 (2020-05-29)
 [Show detailed list of changes](incompatibilities-4-2-alpha-2.md)
