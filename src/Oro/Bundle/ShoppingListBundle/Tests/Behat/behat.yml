@@ -423,6 +423,14 @@ oro_behat_extension:
       selector: 'div[data-page-component-name="frontend-customer-user-shopping-lists-grid"]'
       class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\Grid
 
+    Frontend Customer User Shopping List Edit Grid:
+      selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]'
+      class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\Grid
+
+    Frontend Customer User Shopping List View Grid:
+      selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-grid"]'
+      class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\Grid
+
   suites:
     OroShoppingListBundle:
       contexts:
