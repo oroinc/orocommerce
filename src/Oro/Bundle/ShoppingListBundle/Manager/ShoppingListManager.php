@@ -287,7 +287,8 @@ class ShoppingListManager
     }
 
     /**
-     * Remove shopping list line items containing products with unavailable inventory statuses.
+     * Removes shopping list line items containing products with unavailable inventory statuses.
+     * Recalculates subtotals if line items were removed.
      *
      * @param ShoppingList $shoppingList
      */
@@ -299,7 +300,9 @@ class ShoppingListManager
             ->getRepository(LineItem::class);
 
         $allowedStatuses = $this->configManager->get('oro_product.general_frontend_product_visibility');
-        $repository->deleteNotAllowedLineItemsFromShoppingList($shoppingList, $allowedStatuses);
+        if ($repository->deleteNotAllowedLineItemsFromShoppingList($shoppingList, $allowedStatuses)) {
+            $this->totalManager->recalculateTotals($shoppingList, true);
+        }
     }
 
     /**

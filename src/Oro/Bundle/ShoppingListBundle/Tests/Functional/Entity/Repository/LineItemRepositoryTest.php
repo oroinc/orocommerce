@@ -380,7 +380,9 @@ class LineItemRepositoryTest extends WebTestCase
         $allowedStatuses = ['in_stock'];
 
         $repo = $this->getLineItemRepository();
-        $repo->deleteNotAllowedLineItemsFromShoppingList($shoppingList, $allowedStatuses);
+        $deletedNumber = $repo->deleteNotAllowedLineItemsFromShoppingList($shoppingList, $allowedStatuses);
+        $this->assertEquals(3, $deletedNumber);
+
         $actual = array_map(function (LineItem $item) {
             return $item->getId();
         }, $repo->findBy(['shoppingList' => $shoppingList]));

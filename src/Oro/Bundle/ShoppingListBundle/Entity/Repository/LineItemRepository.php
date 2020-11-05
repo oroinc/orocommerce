@@ -341,11 +341,12 @@ class LineItemRepository extends EntityRepository
     /**
      * @param ShoppingList $shoppingList
      * @param array $allowedInventoryStatuses
+     * @return int Number of deleted line items
      */
     public function deleteNotAllowedLineItemsFromShoppingList(
         ShoppingList $shoppingList,
         array $allowedInventoryStatuses
-    ): void {
+    ): int {
         $lineItemsQb = $this->createQueryBuilder('line_item');
         $lineItemsQuery = $lineItemsQb
             ->select('line_item.id')
@@ -369,14 +370,17 @@ class LineItemRepository extends EntityRepository
             ->addCustomHydrationMode($identifierHydrationMode, IdentifierHydrator::class);
 
         $ids = $lineItemsQuery->getResult($identifierHydrationMode);
+        $deletedCount = 0;
         if ($ids) {
             $deleteQb = $this->getEntityManager()->createQueryBuilder();
-            $deleteQb->delete()
+            $deletedCount = $deleteQb->delete()
                 ->from($this->getEntityName(), 'line_item')
                 ->where($deleteQb->expr()->in('line_item.id', ':ids'))
                 ->getQuery()
                 ->execute(['ids' => $ids]);
         }
+
+        return $deletedCount;
     }
 
     /**
