@@ -8,15 +8,6 @@ const ImageTypeBuilder = BaseTypeBuilder.extend({
     modelMixin: {
         defaults: {
             tagName: 'img'
-        },
-
-        getAttrToHTML() {
-            const attrs = this.constructor.__super__.getAttrToHTML.call(this);
-            if (attrs['data-src-exp']) {
-                attrs['src'] = attrs['data-src-exp'];
-                delete attrs['data-src-exp'];
-            }
-            return attrs;
         }
     },
 
@@ -31,26 +22,6 @@ const ImageTypeBuilder = BaseTypeBuilder.extend({
             }
         },
 
-        /**
-         * @inheritDoc
-         */
-        updateAttributes: function(...args) {
-            this.constructor.__super__.updateAttributes.apply(this, args);
-            this.postRender();
-        },
-
-        postRender() {
-            const {$el, model} = this;
-
-            const attrs = model.get('attributes');
-
-            if (attrs['data-src-exp']) {
-                $el.attr('src', attrs['data-src-exp']).removeClass(this.classEmpty);
-            } else {
-                $el.attr('src', '').addClass(this.classEmpty);
-            }
-        },
-
         _openDigitalAssetManager: function(digitalAssetImageComponentModel) {
             this.em.get('Commands').run(
                 'open-digital-assets',
@@ -61,11 +32,9 @@ const ImageTypeBuilder = BaseTypeBuilder.extend({
                     onSelect: function(digitalAssetModel) {
                         const {url, title} = digitalAssetModel.get('previewMetadata');
 
-                        digitalAssetImageComponentModel
-                            .addAttributes({
-                                'alt': title || '',
-                                'data-src-exp': url
-                            });
+                        digitalAssetImageComponentModel.set('src', url).addAttributes({
+                            alt: title || '',
+                        });
                     }
                 }
             );
