@@ -1,7 +1,6 @@
 @ticket-BB-12417
 @fixture-OroProductBundle:highlighting_new_products.yml
 Feature: Change counting the number of products in featured categories widget
-  ToDo: BAP-16103 Add missing descriptions to the Behat features
 
   Scenario: Create new subcategory through the widget and add product
     Given I login as administrator

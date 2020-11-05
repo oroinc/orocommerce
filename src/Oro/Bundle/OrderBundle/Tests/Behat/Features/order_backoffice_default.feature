@@ -2,7 +2,6 @@
 @fixture-OroOrderBundle:OrderBackofficeDefaultFixture.yml
 
 Feature: Order Backoffice Default
-  ToDo: BAP-16103 Add missing descriptions to the Behat features
 
   Scenario: See Order without Customer User by frontend administrator.
     Given I login as NancyJSallee@example.org the "Buyer" at "first_session" session
