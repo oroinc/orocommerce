@@ -27,6 +27,10 @@ etc. related to the old design.
 #### ShoppingListBundle
 * Method `Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository::findDuplicate()` is removed, use
 `Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository::findDuplicateInShoppingList()` instead.
+* Methods `Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository::deleteItemsByShoppingListAndInventoryStatuses()`,
+	`Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository::deleteDisabledItemsByShoppingList()` are
+	removed, use `Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository::deleteNotAllowedLineItemsFromShoppingList()`
+	instead.
 * Removed the following layout block types:
     - `shopping_list_owner_select_block`
     - `shopping_list_line_items_list`

@@ -321,48 +321,6 @@ class LineItemRepositoryTest extends WebTestCase
         $this->assertFalse($this->getLineItemRepository()->canBeGrouped($id));
     }
 
-    public function testDeleteItemsByShoppingListAndInventoryStatuses()
-    {
-        /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_5);
-        $allowedStatuses = ['in_stock'];
-
-        $repo = $this->getLineItemRepository();
-        $repo->deleteItemsByShoppingListAndInventoryStatuses($shoppingList, $allowedStatuses);
-        $actual = array_map(function (LineItem $item) {
-            return $item->getId();
-        }, $repo->findBy(['shoppingList' => $shoppingList]));
-        sort($actual);
-
-        $expected = [
-            $this->getReference(LoadShoppingListLineItems::LINE_ITEM_4)->getId(),
-            $this->getReference(LoadShoppingListLineItems::LINE_ITEM_5)->getId()
-        ];
-        sort($expected);
-        $this->assertEquals($expected, $actual);
-    }
-
-    public function testDeleteDisabledItemsByShoppingList()
-    {
-        /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_5);
-
-        $repo = $this->getLineItemRepository();
-        $repo->deleteDisabledItemsByShoppingList($shoppingList);
-        $actual = array_map(function (LineItem $item) {
-            return $item->getId();
-        }, $repo->findBy(['shoppingList' => $shoppingList]));
-        sort($actual);
-
-        $expected = [
-            $this->getReference(LoadShoppingListLineItems::LINE_ITEM_4)->getId(),
-            $this->getReference(LoadShoppingListLineItems::LINE_ITEM_10)->getId(),
-            $this->getReference(LoadShoppingListLineItems::LINE_ITEM_11)->getId(),
-        ];
-        sort($expected);
-        $this->assertEquals($expected, $actual);
-    }
-
     public function testDeleteNotAllowedLineItemsFromShoppingList(): void
     {
         /** @var ShoppingList $shoppingList */
@@ -370,10 +328,10 @@ class LineItemRepositoryTest extends WebTestCase
         $allowedStatuses = ['in_stock'];
 
         $repo = $this->getLineItemRepository();
-        $repo->deleteNotAllowedLineItemsFromShoppingList($shoppingList, $allowedStatuses);
-        $actual = array_map(function (LineItem $item) {
-            return $item->getId();
-        }, $repo->findBy(['shoppingList' => $shoppingList]));
+        $deletedNumber = $repo->deleteNotAllowedLineItemsFromShoppingList($shoppingList, $allowedStatuses);
+        $this->assertEquals(3, $deletedNumber);
+
+        $actual = array_map(fn (LineItem $item) => $item->getId(), $repo->findBy(['shoppingList' => $shoppingList]));
         sort($actual);
 
         $expected = [

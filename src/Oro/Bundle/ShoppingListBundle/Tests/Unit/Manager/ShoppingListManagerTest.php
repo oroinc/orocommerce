@@ -734,7 +734,7 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(1, $countDeletedItems);
     }
 
-    public function testActualizeLineItems()
+    public function testActualizeLineItemsWhenNoDeletedLineItems(): void
     {
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getEntity(ShoppingList::class, ['id' => 42]);
@@ -747,7 +747,36 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 
         $this->lineItemRepository->expects($this->once())
             ->method('deleteNotAllowedLineItemsFromShoppingList')
-            ->with($shoppingList, $allowedStatuses);
+            ->with($shoppingList, $allowedStatuses)
+            ->willReturn(0);
+
+        $this->totalManager
+            ->expects($this->never())
+            ->method('recalculateTotals');
+
+        $this->manager->actualizeLineItems($shoppingList);
+    }
+
+    public function testActualizeLineItemsWhenLineItemsDeleted(): void
+    {
+        /** @var ShoppingList $shoppingList */
+        $shoppingList = $this->getEntity(ShoppingList::class, ['id' => 42]);
+        $allowedStatuses = ['in_stock'];
+
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_product.general_frontend_product_visibility')
+            ->willReturn($allowedStatuses);
+
+        $this->lineItemRepository->expects($this->once())
+            ->method('deleteNotAllowedLineItemsFromShoppingList')
+            ->with($shoppingList, $allowedStatuses)
+            ->willReturn(2);
+
+        $this->totalManager
+            ->expects($this->once())
+            ->method('recalculateTotals')
+            ->with($shoppingList, true);
 
         $this->manager->actualizeLineItems($shoppingList);
     }
