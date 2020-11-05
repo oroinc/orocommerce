@@ -1,6 +1,5 @@
 @regression
 Feature: Preview of numeric coupon code in coupon generation form
-  ToDo: BAP-16103 Add missing descriptions to the Behat features
 
   Scenario: Preview of numeric code with custom length and without dashes
     Given I login as administrator

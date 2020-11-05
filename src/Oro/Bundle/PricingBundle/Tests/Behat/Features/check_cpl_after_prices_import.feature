@@ -1,6 +1,5 @@
 @fixture-OroPricingBundle:ProductPrices.yml
 Feature: Check CPL after Prices Import
-  ToDo: BAP-16103 Add missing descriptions to the Behat features
 
   Scenario: Create two session
     Given I login as AmandaRCole@example.org the "Buyer" at "first_session" session

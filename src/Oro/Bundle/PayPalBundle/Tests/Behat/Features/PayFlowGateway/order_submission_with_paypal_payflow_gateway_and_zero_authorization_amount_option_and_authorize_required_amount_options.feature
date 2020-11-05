@@ -3,7 +3,7 @@
 @fixture-OroCheckoutBundle:Shipping.yml
 @fixture-OroPaymentBundle:ProductsAndShoppingListsForPayments.yml
 Feature: Order submission with PayPal PayFlow Gateway and zero "authorization amount" option and "authorize required amount" options
-  ToDo: BAP-16103 Add missing descriptions to the Behat features
+
   Scenario: Create new PayPal PayFlow Gateway Integration
     Given I login as AmandaRCole@example.org the "Buyer" at "first_session" session
     And I login as administrator and use in "second_session" as "Admin"
