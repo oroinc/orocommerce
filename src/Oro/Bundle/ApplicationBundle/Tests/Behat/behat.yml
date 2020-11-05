@@ -275,6 +275,24 @@ oro_behat_extension:
     Matrix Grid Total Quantity:
       selector: 'div[data-role="total-quantity"]'
 
+    Matrix Grid Column 1 Total Quantity:
+      selector: 'div[data-columns-quantity="1"]'
+
+    Matrix Grid Column 2 Total Quantity:
+      selector: 'div[data-columns-quantity="2"]'
+
+    Matrix Grid Column 3 Total Quantity:
+      selector: 'div[data-columns-quantity="3"]'
+
+    Matrix Grid Row 1 Total Quantity:
+      selector: 'div[data-rows-quantity="1"]'
+
+    Matrix Grid Row 2 Total Quantity:
+      selector: 'div[data-rows-quantity="2"]'
+
+    Matrix Grid Row 3 Total Quantity:
+      selector: 'div[data-rows-quantity="3"]'
+
     Clear All Button:
       selector:
         type: xpath

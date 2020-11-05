@@ -64,7 +64,7 @@ export const flattenData = data => {
             });
 
             item.precision = precisions.length
-                ? Math.max(null, precisions)
+                ? Math.max.apply(null, precisions)
                 : quantityHelper.getDefaultMaxFractionDigits();
 
             if (filteredOutVariants) {

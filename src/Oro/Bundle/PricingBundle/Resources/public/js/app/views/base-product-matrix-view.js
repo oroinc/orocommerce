@@ -148,18 +148,13 @@ define(function(require) {
 
             const cell = cells[indexKey] = this.getTotal(cells, indexKey);
             const column = columns[index.column] = this.getTotal(columns, index.column);
+            column.precision = this.getLineMaxPrecision('column', index);
+
             const row = rows[index.row] = this.getTotal(rows, index.row);
+            row.precision = this.getLineMaxPrecision('row', index);
 
             if (this.total.precision === void 0) {
                 this.total.precision = this.getMatrixMaxPrecision();
-            }
-
-            if (columns.precision === void 0) {
-                columns.precision = this.getLineMaxPrecision('column', index);
-            }
-
-            if (rows.precision === void 0) {
-                rows.precision = this.getLineMaxPrecision('row', index);
             }
 
             // remove old values
@@ -298,7 +293,7 @@ define(function(require) {
 
                 $quantity
                     .toggleClass('valid', total.quantity > 0)
-                    .text(this.formatQuantity(total.quantity, totals.precision));
+                    .text(this.formatQuantity(total.quantity, total.precision));
                 $price
                     .toggleClass('valid', total.price > 0)
                     .text(NumberFormatter.formatCurrency(total.price, total.currency));
@@ -328,7 +323,7 @@ define(function(require) {
          * @private
          */
         _isSafeNumber: function(value) {
-            return _.isSafeInteger(parseFloat(value === '' ? 0 : value));
+            return NumberFormatter.unformatStrict(value === '' ? 0 : value) <= Number.MAX_SAFE_INTEGER;
         },
 
         /**
