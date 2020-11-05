@@ -2,7 +2,6 @@
 @ticket-BB-7962
 @regression
 Feature: Default RFQ Workflows
-  ToDo: BAP-16103 Add missing descriptions to the Behat features
 
   Scenario: Create RFQ from Quick Order Form and Check Internal status: Open and Customer status: Submitted
     Given I login as administrator and use in "first_session" as "Admin"

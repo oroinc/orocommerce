@@ -1,5 +1,4 @@
 Feature: Product attributes
-  ToDo: BAP-16103 Add missing descriptions to the Behat features
 
   Scenario: Create product attributes
     Given I login as administrator
