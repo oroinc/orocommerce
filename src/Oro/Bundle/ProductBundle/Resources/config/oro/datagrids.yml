@@ -319,6 +319,18 @@ datagrids:
                 route: oro_product_view
                 params:
                     - id
+            edit_link:
+                type: url
+                route: oro_product_update
+                params:
+                    - id
+            delete_link:
+                type: url
+                route: oro_rest_api_item
+                params:
+                    - id
+                direct_params:
+                    entity: 'products'
             attribute_family_localized:
                 type: localized_value
                 data_name: af.labels
@@ -331,6 +343,24 @@ datagrids:
                 icon:          eye
                 acl_resource:  oro_product_view
                 rowAction:     true
+            update:
+                type: navigate
+                label: oro.grid.action.update
+                link: edit_link
+                icon: pencil-square-o
+                acl_resource: oro_product_update
+            delete:
+                type: delete
+                acl_resource: oro_product_delete
+                label: oro.grid.action.delete
+                icon: trash-o
+                link: delete_link
+                defaultMessages:
+                    confirm_title: oro.product.grid.delete_entity_title
+                    confirm_content: oro.action.delete_confirm
+                    confirm_content_params:
+                        entityLabel: '@translator->trans(oro.product.entity_label)'
+                    success: oro.product.grid.delete_success
         inline_editing:
             enable: true
             behaviour: enable_selected

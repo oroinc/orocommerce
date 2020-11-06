@@ -1,6 +1,8 @@
 oro:
     product:
         grid:
+            delete_entity_title: Delete Product
+            delete_success: Product deleted
             navigation_bar:
                 sorting:
                     label: sorted by %column% %direction%
