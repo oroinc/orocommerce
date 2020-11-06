@@ -23,6 +23,7 @@ export default {
             filter.initiallyOpened = true;
             filter.autoClose = false;
             filter.labelPrefix = '';
+            filter.animationDuration = 300;
         });
 
         const toolbarOptions = options.metadata.options.toolbarOptions;
