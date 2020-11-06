@@ -3,7 +3,7 @@
 @ticket-BB-17506
 
 Feature: Product Images Import
-  ToDo: BAP-16103 Add missing descriptions to the Behat features
+
 #  Would be good to add possibility to import product images via CSV file - e.g. there might be full paths to required images.
 #  EDIT: Images will be uploaded though ftp or other method. Import process will parse the csv file with the image paths and link the images to the corresponding product.
 #  EDIT: Check if it is possible to use same image for multiple products

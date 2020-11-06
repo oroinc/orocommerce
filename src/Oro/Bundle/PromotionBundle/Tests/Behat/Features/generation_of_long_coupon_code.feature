@@ -2,7 +2,6 @@
 @ticket-BB-11463
 @regression
 Feature: Generation of long coupon code
-  ToDo: BAP-16103 Add missing descriptions to the Behat features
 
   Scenario: Trying to generate coupons exceeding max length
     Given I login as administrator

@@ -309,35 +309,23 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
         $twigParser = $this->getTwigParser();
         $twigFunctionProcessor = $this->getTwigFunctionProcessor();
         $applicableMapping = $twigFunctionProcessor->getApplicableMapping();
-        $isFlushNeeded = false;
+        $wysiwygFields = $this->getWysiwygFields($metadata);
+        $foundTwigFunctionCalls = [[]];
+        foreach ($collectionDTO->getEntity() as $entity) {
+            foreach ($wysiwygFields as $fieldName => $fieldType) {
+                if (!isset($applicableMapping[$fieldType])) {
+                    continue;
+                }
 
-        foreach ($this->getWysiwygFields($metadata) as $fieldName => $fieldType) {
-            if (!isset($applicableMapping[$fieldType])) {
-                continue;
-            }
-
-            $foundTwigFunctionCalls = [$fieldType => []];
-            foreach ($collectionDTO->getEntity() as $entity) {
-                $foundCalls = $twigParser->findFunctionCalls(
+                $foundTwigFunctionCalls[][$fieldType] = $twigParser->findFunctionCalls(
                     $metadata->getFieldValue($entity, $fieldName),
                     $applicableMapping[$fieldType]
                 );
-
-                if ($foundCalls) {
-                    $foundTwigFunctionCalls[$fieldType] = \array_merge_recursive(
-                        $foundTwigFunctionCalls[$fieldType],
-                        $foundCalls
-                    );
-                }
             }
-
-            $isFlushNeeded = $twigFunctionProcessor->processTwigFunctions(
-                $processedDTO->withProcessedEntityField($fieldName, $fieldType),
-                $foundTwigFunctionCalls
-            ) || $isFlushNeeded;
         }
 
-        return $isFlushNeeded;
+        return $twigFunctionProcessor
+            ->processTwigFunctions($processedDTO, array_merge_recursive(...$foundTwigFunctionCalls));
     }
 
     /**
