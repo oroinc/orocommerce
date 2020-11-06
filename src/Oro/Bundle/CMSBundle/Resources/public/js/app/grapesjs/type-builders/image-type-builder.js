@@ -64,7 +64,7 @@ const ImageTypeBuilder = BaseTypeBuilder.extend({
                         const {digitalAssetId, uuid, title} = digitalAssetModel.get('previewMetadata');
 
                         digitalAssetImageComponentModel
-                            .setAttributes({
+                            .addAttributes({
                                 'alt': title || '',
                                 'data-src-exp': `{{ wysiwyg_image('${digitalAssetId}','${uuid}') }}`
                             });

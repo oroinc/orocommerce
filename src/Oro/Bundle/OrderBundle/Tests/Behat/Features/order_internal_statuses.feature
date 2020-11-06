@@ -65,11 +65,6 @@ Feature: Order Internal Statuses
       | Order Number | Internal Status |
       | SecondOrder  | Open            |
       | SimpleOrder  | Archived        |
-#TODO: Should be uncommented and verified after BB-11343
-#    When I filter Internal Status as is any of "Shipped"
-#    Then number of records should be 1
-#    And I should see following records in grid:
-#      | SimpleOrder | Shipped |
 
   Scenario: Verify internal statuses flow Open => Cancelled => Closed => Archived
     Given I go to Sales/Orders
