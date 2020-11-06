@@ -49,14 +49,11 @@ operations:
         extends: UPDATE
         replace:
             - exclude_entities
-            - exclude_datagrids
             - for_all_datagrids
             - for_all_entities
             - preconditions
         entities:
             - Oro\Bundle\ProductBundle\Entity\Product
-        datagrids:
-            - products-grid
         preconditions:
             '@and':
                 - '@not_blank': $.data
@@ -92,8 +89,6 @@ operations:
         routes:
             - oro_product_view
             - oro_product_update
-        datagrids:
-            - products-grid
         preconditions:
             '@and':
                 - '@not_blank': $.data
@@ -108,13 +103,6 @@ operations:
                         - 'oro_datagrid_index'
                         - $.requestRoute
                     - '@not_blank': $.routes[name]
-        datagrid_options:
-            mass_action:
-                entity_name: Oro\Bundle\ProductBundle\Entity\Product
-                data_identifier: product.id
-                type: delete
-                label: oro.grid.action.delete
-                icon: trash-o
 
     oro_segment_edit_inside_content_node:
         label: oro.product.content_variant.product_collection.segment_edit_button.label
