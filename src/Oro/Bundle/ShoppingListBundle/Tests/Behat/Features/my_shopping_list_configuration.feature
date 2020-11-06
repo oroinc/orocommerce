@@ -95,9 +95,9 @@ Feature: My Shopping List Configuration
     And I should see "3 total records"
     And I should see following grid:
       | SKU  | Item                    |          | QtyUpdate All | Price  | Subtotal |
-      | CC36 | Product 36 Note 36 text | In Stock | 17 pc         | $31.00 | $527.00  |
-      | CC37 | Product 37 Note 37 text | In Stock | 17 pc         | $31.00 | $527.00  |
-      | CC38 | Product 38 Note 38 text | In Stock | 17 pc         | $31.00 | $527.00  |
+      | CC36 | Product 36 Note 36 text | In Stock | 17 piece      | $31.00 | $527.00  |
+      | CC37 | Product 37 Note 37 text | In Stock | 17 piece      | $31.00 | $527.00  |
+      | CC38 | Product 38 Note 38 text | In Stock | 17 piece      | $31.00 | $527.00  |
     And I should see "Summary 3 Items"
     And I should see "Subtotal $1,581.00"
     And I should see "Total $1,581.00"
@@ -114,9 +114,9 @@ Feature: My Shopping List Configuration
     And I should see "3 total records"
     And I should see following grid:
       | SKU  | Item                    |          | QtyUpdate All | Price  | Subtotal |
-      | CC36 | Product 36 Note 36 text | In Stock | 17 pc         | $31.00 | $527.00  |
-      | CC37 | Product 37 Note 37 text | In Stock | 17 pc         | $31.00 | $527.00  |
-      | CC38 | Product 38 Note 38 text | In Stock | 17 pc         | $31.00 | $527.00  |
+      | CC36 | Product 36 Note 36 text | In Stock | 17 piece      | $31.00 | $527.00  |
+      | CC37 | Product 37 Note 37 text | In Stock | 17 piece      | $31.00 | $527.00  |
+      | CC38 | Product 38 Note 38 text | In Stock | 17 piece      | $31.00 | $527.00  |
     And I should see "Summary 3 Items"
     And I should see "Subtotal $1,581.00"
     And I should see "Total $1,581.00"

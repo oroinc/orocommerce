@@ -249,7 +249,7 @@ Feature: Shopping List edit page
     And I should see following grid:
       | SKU  | Item                   |          | QtyUpdate All                   | Price  | Subtotal |
       | AA1  | Configurable Product 1 |          | Click "edit" to select variants |        | N/A      |
-      | CC30 | Product 30             | In Stock | 1 pc                            | $31.00 | $31.00   |
+      | CC30 | Product 30             | In Stock | 1 piece                         | $31.00 | $31.00   |
     When I click Edit AA1 in grid
     And I fill "Matrix Grid Form" with:
       |       | S | M | L |
@@ -263,7 +263,7 @@ Feature: Shopping List edit page
       | BB4  | Configurable Product 1 Color: Red Size: M   | In Stock     | 1 item        | $11.00 | $11.00 -$5.50 $5.50 |
       | BB5  | Configurable Product 1 Color: Green Size: L | Out of Stock | 1 item        | $11.00 | $11.00 -$5.50 $5.50 |
       | BB6  | Configurable Product 1 Color: Blue Size: S  | In Stock     | 1 item        | $11.00 | $11.00 -$5.50 $5.50 |
-      | CC30 | Product 30                                  | In Stock     | 1 pc          | $31.00 | $31.00              |
+      | CC30 | Product 30                                  | In Stock     | 1 piece       | $31.00 | $31.00              |
     And I should see "Summary 4 Items"
     And I should see "Subtotal $64.00"
     And I should see "Discount -$16.50"
@@ -327,7 +327,7 @@ Feature: Shopping List edit page
       | BB4  | Configurable Product 1 Color: Red Size: M   | In Stock     | 1 item        | $11.00 | $11.00 -$5.50 $5.50 |
       | BB5  | Configurable Product 1 Color: Green Size: L | Out of Stock | 1 item        | $11.00 | $11.00 -$5.50 $5.50 |
       | BB6  | Configurable Product 1 Color: Blue Size: S  | In Stock     | 1 item        | $11.00 | $11.00 -$5.50 $5.50 |
-      | CC30 | Product 30                                  | In Stock     | 1 pc          | $31.00 | $31.00              |
+      | CC30 | Product 30                                  | In Stock     | 1 piece       | $31.00 | $31.00              |
     When I click "Group similar"
     Then I should see following grid:
       | SKU  | Item                   |              | QtyUpdate All | Price  | Subtotal              |
@@ -335,21 +335,21 @@ Feature: Shopping List edit page
       | BB4  | Color: Red Size: M     | In Stock     | 1 item        | $11.00 | $11.00 -$5.50 $5.50   |
       | BB5  | Color: Green Size: L   | Out of Stock | 1 item        | $11.00 | $11.00 -$5.50 $5.50   |
       | BB6  | Color: Blue Size: S    | In Stock     | 1 item        | $11.00 | $11.00 -$5.50 $5.50   |
-      | CC30 | Product 30             | In Stock     | 1 pc          | $31.00 | $31.00                |
+      | CC30 | Product 30             | In Stock     | 1 piece       | $31.00 | $31.00                |
     When I click on "Shopping List Inline Line Item 4 Quantity"
     Then the "Shopping List Inline Line Item 4 Quantity Input" field element should contain "1"
     And the "Shopping List Inline Line Item 4 Unit Select" field element should contain "item"
     When I type "10" in "Shopping List Inline Line Item 4 Quantity Input"
     And I fill "Inline Line Item Edit Form" with:
-      | Unit | ea |
+      | Unit | each |
     And I click on "Shopping List Inline Line Item 4 Save Changes Button"
     Then I should see following grid:
       | SKU  | Item                                       |              | QtyUpdate All | Price  | Subtotal              |
-      | BB6  | Configurable Product 1 Color: Blue Size: S | In Stock     | 10 ea         | N/A    | N/A                   |
+      | BB6  | Configurable Product 1 Color: Blue Size: S | In Stock     | 10 each       | N/A    | N/A                   |
       |      | Configurable Product 1                     |              | 2 items       |        | $22.00 -$11.00 $11.00 |
       | BB4  | Color: Red Size: M                         | In Stock     | 1 item        | $11.00 | $11.00 -$5.50 $5.50   |
       | BB5  | Color: Green Size: L                       | Out of Stock | 1 item        | $11.00 | $11.00 -$5.50 $5.50   |
-      | CC30 | Product 30                                 | In Stock     | 1 pc          | $31.00 | $31.00                |
+      | CC30 | Product 30                                 | In Stock     | 1 piece       | $31.00 | $31.00                |
     And I should see "Summary 4 Items"
     And I should see "Subtotal $53.00"
     And I should see "Discount -$11.00"
@@ -371,7 +371,7 @@ Feature: Shopping List edit page
       | BB4  | Color: Red Size: M     | In Stock     | 1 item        | $11.00 | $11.00 -$5.50 $5.50    |
       | BB5  | Color: Green Size: L   | Out of Stock | 10 item       | $11.00 | $110.00 -$55.00 $55.00 |
       | BB6  | Color: Blue Size: S    | In Stock     | 1 item        | $11.00 | $11.00 -$5.50 $5.50    |
-      | CC30 | Product 30             | In Stock     | 1 pc          | $31.00 | $31.00                 |
+      | CC30 | Product 30             | In Stock     | 1 piece       | $31.00 | $31.00                 |
     And I should see "Summary 4 Items"
     And I should see "Subtotal $163.00"
     And I should see "Discount -$66.00"

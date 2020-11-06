@@ -102,8 +102,8 @@ Feature: Guest Shopping List with new layout
     And I click "View List"
     Then I should see following grid:
       | SKU    | Item     |          | QtyUpdate All | Price | Subtotal |
-      | PSKU1  | Product1 | In Stock | 1 ea          | $1.00 | $1.00    |
-      | SKU003 | Product3 | In Stock | 3 ea          | $3.00 | $9.00    |
+      | PSKU1  | Product1 | In Stock | 1 each        | $1.00 | $1.00    |
+      | SKU003 | Product3 | In Stock | 3 each        | $3.00 | $9.00    |
     And I should not see a "Shopping List Actions" element
 
   Scenario: Add Shopping List notes and Line item notes
@@ -121,8 +121,8 @@ Feature: Guest Shopping List with new layout
     Then should see "Line item note has been successfully updated" flash message
     And I should see following grid:
       | SKU    | Item                       |          | QtyUpdate All | Price | Subtotal |
-      | PSKU1  | Product1 Note for Product1 | In Stock | 1 ea          | $1.00 | $1.00    |
-      | SKU003 | Product3                   | In Stock | 3 ea          | $3.00 | $9.00    |
+      | PSKU1  | Product1 Note for Product1 | In Stock | 1 each        | $1.00 | $1.00    |
+      | SKU003 | Product3                   | In Stock | 3 each        | $3.00 | $9.00    |
 
   Scenario: Edit Shopping List notes and Line item notes
     When I click on "Edit Shopping List Notes"
@@ -139,8 +139,8 @@ Feature: Guest Shopping List with new layout
     Then should see "Line item note has been successfully updated" flash message
     And I should see following grid:
       | SKU    | Item                               |          | QtyUpdate All | Price | Subtotal |
-      | PSKU1  | Product1 Updated note for Product1 | In Stock | 1 ea          | $1.00 | $1.00    |
-      | SKU003 | Product3                           | In Stock | 3 ea          | $3.00 | $9.00    |
+      | PSKU1  | Product1 Updated note for Product1 | In Stock | 1 each        | $1.00 | $1.00    |
+      | SKU003 | Product3                           | In Stock | 3 each        | $3.00 | $9.00    |
 
   Scenario: Add empty matrices to the shopping Shopping List
     When I type "1GB83" in "search"
@@ -152,8 +152,8 @@ Feature: Guest Shopping List with new layout
     Then I should see following grid:
       | SKU    | Item                               |          | QtyUpdate All                   | Price | Subtotal |
       | 1GB83  | Slip-On Clog                       |          | Click "edit" to select variants |       | N/A      |
-      | PSKU1  | Product1 Updated note for Product1 | In Stock | 1 ea                            | $1.00 | $1.00    |
-      | SKU003 | Product3                           | In Stock | 3 ea                            | $3.00 | $9.00    |
+      | PSKU1  | Product1 Updated note for Product1 | In Stock | 1 each                          | $1.00 | $1.00    |
+      | SKU003 | Product3                           | In Stock | 3 each                          | $3.00 | $9.00    |
     And I should see following actions for 1GB83 in grid:
       | Edit   |
       | Delete |
@@ -183,8 +183,8 @@ Feature: Guest Shopping List with new layout
       | SKU    | Item                               |          | QtyUpdate All | Price  | Subtotal |
       | 1GB81  | Slip-On Clog Color: Black Size: L  | In Stock | 2 item        | $10.00 | $20.00   |
       | 1GB82  | Slip-On Clog Color: White Size: M  | In Stock | 3 item        | $7.00  | $21.00    |
-      | PSKU1  | Product1 Updated note for Product1 | In Stock | 1 ea          | $1.00  | $1.00    |
-      | SKU003 | Product3                           | In Stock | 3 ea          | $3.00  | $9.00    |
+      | PSKU1  | Product1 Updated note for Product1 | In Stock | 1 each        | $1.00  | $1.00    |
+      | SKU003 | Product3                           | In Stock | 3 each        | $3.00  | $9.00    |
 
   Scenario: Check Group similar
     When I click "Group similar"
@@ -194,16 +194,16 @@ Feature: Guest Shopping List with new layout
       |        | Slip-On Clog                       |          | 5 items       |        | $41.00   |
       | 1GB81  | Color: Black Size: L               | In Stock | 2 item        | $10.00 | $20.00   |
       | 1GB82  | Color: White Size: M               | In Stock | 3 item        | $7.00  | $21.00    |
-      | PSKU1  | Product1 Updated note for Product1 | In Stock | 1 ea          | $1.00  | $1.00    |
-      | SKU003 | Product3                           | In Stock | 3 ea          | $3.00  | $9.00    |
+      | PSKU1  | Product1 Updated note for Product1 | In Stock | 1 each        | $1.00  | $1.00    |
+      | SKU003 | Product3                           | In Stock | 3 each        | $3.00  | $9.00    |
     When I reload the page
     Then I should see following grid:
       | SKU    | Item                               |          | QtyUpdate All | Price  | Subtotal |
       |        | Slip-On Clog                       |          | 5 items       |        | $41.00   |
       | 1GB81  | Color: Black Size: L               | In Stock | 2 item        | $10.00 | $20.00   |
       | 1GB82  | Color: White Size: M               | In Stock | 3 item        | $7.00  | $21.00    |
-      | PSKU1  | Product1 Updated note for Product1 | In Stock | 1 ea          | $1.00  | $1.00    |
-      | SKU003 | Product3                           | In Stock | 3 ea          | $3.00  | $9.00    |
+      | PSKU1  | Product1 Updated note for Product1 | In Stock | 1 each        | $1.00  | $1.00    |
+      | SKU003 | Product3                           | In Stock | 3 each        | $3.00  | $9.00    |
 
   Scenario: Check filter by SKU
     When I filter SKU as contains "1GB81"
@@ -230,8 +230,8 @@ Feature: Guest Shopping List with new layout
       | SKU    | Item                               |          | QtyUpdate All | Price  | Subtotal |
       | 1GB81  | Slip-On Clog Color: Black Size: L  | In Stock | 2 item        | $10.00 | $20.00   |
       | 1GB82  | Slip-On Clog Color: White Size: M  | In Stock | 3 item        | $7.00  | $21.00   |
-      | PSKU1  | Product1 Updated note for Product1 | In Stock | 1 ea          | $1.00  | $1.00    |
-      | SKU003 | Product3                           | In Stock | 3 ea          | $3.00  | $9.00    |
+      | PSKU1  | Product1 Updated note for Product1 | In Stock | 1 each        | $1.00  | $1.00    |
+      | SKU003 | Product3                           | In Stock | 3 each        | $3.00  | $9.00    |
 
   Scenario: Check Quantity filter
     When I reset grid
@@ -243,15 +243,15 @@ Feature: Guest Shopping List with new layout
    Then I should see following grid:
       | SKU    | Item                               |          | QtyUpdate All | Price  | Subtotal |
       | 1GB81  | Slip-On Clog Color: Black Size: L  | In Stock | 2 item        | $10.00 | $20.00   |
-      | PSKU1  | Product1 Updated note for Product1 | In Stock | 1 ea          | $1.00  | $1.00    |
+      | PSKU1  | Product1 Updated note for Product1 | In Stock | 1 each        | $1.00  | $1.00    |
 
   Scenario: Check Unit filter
     When I reset grid
     And I check "each" in Unit filter
     Then I should see "2 total records"
       | SKU    | Item                               |          | QtyUpdate All | Price  | Subtotal |
-      | PSKU1  | Product1 Updated note for Product1 | In Stock | 1 ea          | $1.00  | $1.00    |
-      | SKU003 | Product3                           | In Stock | 3 ea          | $3.00  | $9.00    |
+      | PSKU1  | Product1 Updated note for Product1 | In Stock | 1 each        | $1.00  | $1.00    |
+      | SKU003 | Product3                           | In Stock | 3 each        | $3.00  | $9.00    |
 
   Scenario: Check Image preview
     When I reset grid

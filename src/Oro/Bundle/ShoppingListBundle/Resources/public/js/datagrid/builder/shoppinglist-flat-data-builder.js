@@ -1,7 +1,6 @@
 import FilteredProductVariantsPlugin from 'oroshoppinglist/js/datagrid/plugins/filtered-product-variants-plugin';
 import ShoppingListRefreshPlugin from 'oroshoppinglist/js/datagrid/plugins/shopping-list-refresh-plugin';
 import quantityHelper from 'oroproduct/js/app/quantity-helper';
-import _ from 'underscore';
 
 const isHighlight = item => item.isUpcoming || (item.errors && item.errors.length);
 export const flattenData = data => {
@@ -32,11 +31,10 @@ export const flattenData = data => {
             flatData.push(item);
 
             subData.forEach((subItem, index) => {
-                const precision = subItem.units[item.unit].precision;
                 const className = ['sub-row'];
 
-                if (_.isNumber(precision)) {
-                    precisions.push(precision);
+                if (subItem.units && subItem.units[item.unit]) {
+                    precisions.push(subItem.units[item.unit].precision);
                 }
 
                 if (subData.length - 1 === index) {
