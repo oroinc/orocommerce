@@ -5,7 +5,7 @@
 @ticket-BB-16591
 @ticket-BB-16921
 Feature: RFQ from Shipping List
-  ToDo: BAP-16103 Add missing descriptions to the Behat features
+
   Scenario: Create different window session
     Given sessions active:
       | User  |first_session |

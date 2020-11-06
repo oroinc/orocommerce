@@ -3,7 +3,6 @@
 @fixture-OroSaleBundle:Quote.yml
 @fixture-OroCustomerBundle:CustomerUserAddressAmericanSamoaFixture.yml
 Feature: Quote Address
-  ToDo: BAP-16103 Add missing descriptions to the Behat features
 
   Scenario: Check Quote Shipping Address Labels
     Given I login as administrator
