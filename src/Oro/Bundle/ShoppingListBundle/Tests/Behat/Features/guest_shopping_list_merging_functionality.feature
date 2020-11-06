@@ -74,5 +74,5 @@ Feature: Guest shopping list merging functionality
     And I click "View List"
     And I should see following grid:
       | SKU      | QtyUpdate All |
-      | CONTROL1 | 1 ea          |
-      | PSKU1    | 2 ea          |
+      | CONTROL1 | 1 each        |
+      | PSKU1    | 2 each        |
