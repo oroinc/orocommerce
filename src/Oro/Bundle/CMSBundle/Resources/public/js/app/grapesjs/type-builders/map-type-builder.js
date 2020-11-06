@@ -12,8 +12,8 @@ const MapTypeBuilder = BaseTypeBuilder.extend({
 
     execute() {
         const {BlockManager} = this.editor;
-        const video = BlockManager.get(this.componentType);
-        const content = video.get('content');
+        const component = BlockManager.get(this.componentType);
+        const content = component.get('content');
 
         content.style = {
             height: '350px',

@@ -8,7 +8,7 @@ define(function(require) {
     const BaseView = require('oroui/js/app/views/base/view');
     const LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
     const mediator = require('oroui/js/mediator');
-    const messenger = require('oroui/js/messenger');
+    const errorsTemplate = require('tpl-loader!oropromotion/templates/field-errors.html');
 
     const FrontendCouponAddView = BaseView.extend({
         /**
@@ -26,6 +26,7 @@ define(function(require) {
                 couponCodeSelector: null,
                 couponApplySelector: null,
                 couponRemoveSelector: null,
+                couponTriggerSelector: null,
                 messagesContainer: null
             }
         },
@@ -53,10 +54,24 @@ define(function(require) {
         events: function() {
             const events = {};
             events['click ' + this.options.selectors.couponApplySelector] = 'applyCoupon';
-            events['keydown ' + this.options.selectors.couponCodeSelector] = 'applyCouponByEnter';
+            events['keydown ' + this.options.selectors.couponCodeSelector] = 'updateCouponState';
+            events['change ' + this.options.selectors.couponCodeSelector] = 'updateCouponState';
             events['click ' + this.options.selectors.couponRemoveSelector] = 'removeCoupon';
+            events['click ' + this.options.selectors.couponTriggerSelector] = 'focusCouponField';
 
             return events;
+        },
+
+        /**
+         @param {jQuery.Event} e
+         */
+        updateCouponState: function(e) {
+            this.applyCouponByEnter(e);
+            this._clearMessages();
+        },
+
+        focusCouponField: function() {
+            this.$(this.options.selectors.couponCodeSelector).trigger('focus');
         },
 
         /**
@@ -136,6 +151,7 @@ define(function(require) {
          * @private
          */
         _showSuccess: function(message) {
+            this._clearMessages();
             const attr = {flash: true};
             if (this.options.refreshOnSuccess) {
                 attr.afterReload = true;
@@ -150,28 +166,16 @@ define(function(require) {
          */
         _showErrors: function(errors) {
             this._clearMessages();
-            const messageOptions = this._prepareMessageOptions();
-            _.each(errors, function(message) {
-                messageOptions.delay = false;
-                mediator.execute('showMessage', 'error', __(message), messageOptions);
-            }, messageOptions);
+
+            this.$(this.options.selectors.couponCodeSelector).addClass('input--error');
+            this.$(this.options.selectors.messagesContainer).html(errorsTemplate({
+                messages: errors.map(message => __(message))
+            }));
         },
 
         _clearMessages: function() {
-            messenger.clear(this.options.messageNamespace, {
-                container: this.options.selectors.messagesContainer
-            });
-        },
-
-        /**
-         * @returns {Object} messageOptions
-         * @private
-         */
-        _prepareMessageOptions: function() {
-            return {
-                container: this.options.selectors.messagesContainer,
-                namespace: this.options.messageNamespace
-            };
+            this.$(this.options.selectors.couponCodeSelector).removeClass('input--error');
+            this.$el.find(this.options.selectors.messagesContainer).html('');
         },
 
         _updatePageData: function() {
