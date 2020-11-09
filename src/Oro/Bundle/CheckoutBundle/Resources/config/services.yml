@@ -618,6 +618,7 @@ services:
             - '@oro_pricing.provider.frontend_product_prices'
             - '@security.authorization_checker'
             - '@oro_checkout.product_availability.cache'
+            - '@oro_visibility.provider.resolved_product_visibility_provider'
         tags:
             - { name: checkout.data_provider.line_item }
 
