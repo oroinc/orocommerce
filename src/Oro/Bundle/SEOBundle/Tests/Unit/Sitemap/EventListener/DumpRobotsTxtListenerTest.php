@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Unit\Sitemap\EventListener;
 
+use Gaufrette\File;
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
 use Oro\Bundle\SEOBundle\Sitemap\Dumper\SitemapDumper;
 use Oro\Bundle\SEOBundle\Sitemap\Event\OnSitemapDumpFinishEvent;
@@ -65,13 +66,12 @@ class DumpRobotsTxtListenerTest extends \PHPUnit\Framework\TestCase
         $website = $this->createWebsite(1, true);
         $event = new OnSitemapDumpFinishEvent($website, self::SITEMAP_VERSION);
         $this->sitemapFilesystemAdapter->expects($this->once())
-            ->method('getSitemapFiles')
+            ->method('getSitemapFilesForWebsite')
             ->with(
                 $website,
-                SitemapFilesystemAdapter::ACTUAL_VERSION,
                 SitemapDumper::getFilenamePattern(SitemapStorageFactory::TYPE_SITEMAP_INDEX)
             )
-            ->willReturn(new \ArrayIterator());
+            ->willReturn([]);
         $this->canonicalUrlGenerator->expects($this->never())
             ->method('getAbsoluteUrl');
         $this->robotsTxtSitemapManager->expects($this->never())
@@ -90,14 +90,17 @@ class DumpRobotsTxtListenerTest extends \PHPUnit\Framework\TestCase
         $website = $this->createWebsite($websiteId, true);
         $event = new OnSitemapDumpFinishEvent($website, self::SITEMAP_VERSION);
         $filename = 'some_file_name.txt';
+        $file = $this->createMock(File::class);
+        $file->expects($this->any())
+            ->method('getName')
+            ->willReturn($filename);
         $this->sitemapFilesystemAdapter->expects($this->once())
-            ->method('getSitemapFiles')
+            ->method('getSitemapFilesForWebsite')
             ->with(
                 $website,
-                SitemapFilesystemAdapter::ACTUAL_VERSION,
                 SitemapDumper::getFilenamePattern(SitemapStorageFactory::TYPE_SITEMAP_INDEX)
             )
-            ->willReturn(new \ArrayIterator([new \SplFileInfo($filename)]));
+            ->willReturn([$file]);
 
         $url = 'http://example.com/sitemap.xml';
 

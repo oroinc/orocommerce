@@ -2,21 +2,35 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Unit\Async;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
+use Oro\Bundle\MessageQueueBundle\Entity\Job;
 use Oro\Bundle\RedirectBundle\Async\UrlCacheProcessor;
 use Oro\Bundle\SEOBundle\Async\GenerateSitemapIndexProcessor;
 use Oro\Bundle\SEOBundle\Async\Topics;
-use Oro\Bundle\SEOBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\SEOBundle\Model\SitemapIndexMessageFactory;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Component\MessageQueue\Job\JobRunner;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
+use Oro\Component\MessageQueue\Transport\Null\NullMessage;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
 use Oro\Component\SEO\Tools\SitemapDumperInterface;
-use Oro\Component\Website\WebsiteInterface;
 use Psr\Log\LoggerInterface;
 
 class GenerateSitemapIndexProcessorTest extends \PHPUnit\Framework\TestCase
 {
     const INDEX_FILE_PROVIDER_NAME = 'index';
+
+    /**
+     * @var JobRunner|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $jobRunner;
+
+    /**
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $doctrine;
 
     /**
      * @var SitemapIndexMessageFactory|\PHPUnit\Framework\MockObject\MockObject
@@ -40,6 +54,8 @@ class GenerateSitemapIndexProcessorTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
+        $this->jobRunner = $this->createMock(JobRunner::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->messageFactory = $this->getMockBuilder(SitemapIndexMessageFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -51,37 +67,21 @@ class GenerateSitemapIndexProcessorTest extends \PHPUnit\Framework\TestCase
             $this->dumper,
             $this->logger
         );
+        $this->processor->setJobRunner($this->jobRunner);
+        $this->processor->setDoctrine($this->doctrine);
     }
 
-    public function testProcessWhenThrowsInvalidArgumentException()
+    /**
+     * @param array $body
+     *
+     * @return MessageInterface
+     */
+    private function getMessage(array $body): MessageInterface
     {
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
-        $session = $this->createMock(SessionInterface::class);
+        $message = new NullMessage();
+        $message->setBody(JSON::encode($body));
 
-        $data = ['key' => 'value'];
-        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
-        $message = $this->createMock(MessageInterface::class);
-
-        $message->expects($this->atLeastOnce())
-            ->method('getBody')
-            ->willReturn(JSON::encode($data));
-
-        $exception = new InvalidArgumentException();
-        $this->messageFactory->expects($this->once())
-            ->method('getWebsiteFromMessage')
-            ->with($data)
-            ->willThrowException($exception);
-
-        $this->logger->expects($this->once())
-            ->method('error')
-            ->with(
-                'Queue Message is invalid',
-                [
-                    'exception' => $exception,
-                ]
-            );
-
-        $this->assertEquals(UrlCacheProcessor::REJECT, $this->processor->process($message, $session));
+        return $message;
     }
 
     public function testProcessWhenThrowsException()
@@ -89,25 +89,32 @@ class GenerateSitemapIndexProcessorTest extends \PHPUnit\Framework\TestCase
         /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
         $session = $this->createMock(SessionInterface::class);
 
-        $data = ['key' => 'value'];
-        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
-        $message = $this->createMock(MessageInterface::class);
+        $jobId = 100;
+        $version = 1;
+        $websiteId = 123;
+        $message = $this->getMessage([
+            'jobId'     => $jobId,
+            'version'   => $version,
+            'websiteId' => $websiteId
+        ]);
 
-        $message->expects($this->atLeastOnce())
-            ->method('getBody')
-            ->willReturn(JSON::encode($data));
+        $this->jobRunner->expects(self::once())
+            ->method('runDelayed')
+            ->with($jobId)
+            ->willReturnCallback(function (int $jobId, \Closure $callback) {
+                return $callback($this->jobRunner, new Job());
+            });
 
-        $website = $this->createMock(WebsiteInterface::class);
-        $this->messageFactory->expects($this->once())
-            ->method('getWebsiteFromMessage')
-            ->with($data)
+        $website = $this->createMock(Website::class);
+        $em = $this->createMock(EntityManagerInterface::class);
+        $this->doctrine->expects(self::once())
+            ->method('getManagerForClass')
+            ->with(Website::class)
+            ->willReturn($em);
+        $em->expects(self::once())
+            ->method('find')
+            ->with(Website::class, $websiteId)
             ->willReturn($website);
-        
-        $version = time();
-        $this->messageFactory->expects($this->once())
-            ->method('getVersionFromMessage')
-            ->with($data)
-            ->willReturn($version);
 
         $exception = new \Exception();
         $this->dumper->expects($this->once())
@@ -117,10 +124,9 @@ class GenerateSitemapIndexProcessorTest extends \PHPUnit\Framework\TestCase
         $this->logger->expects($this->once())
             ->method('error')
             ->with(
-                'Unexpected exception occurred during queue message processing',
+                'Unexpected exception occurred during generating a sitemap index for a website.',
                 [
                     'exception' => $exception,
-                    'topic' => Topics::GENERATE_SITEMAP_INDEX_BY_WEBSITE,
                 ]
             );
 
@@ -132,25 +138,32 @@ class GenerateSitemapIndexProcessorTest extends \PHPUnit\Framework\TestCase
         /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
         $session = $this->createMock(SessionInterface::class);
 
-        $data = ['key' => 'value'];
-        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
-        $message = $this->createMock(MessageInterface::class);
+        $jobId = 100;
+        $version = 1;
+        $websiteId = 123;
+        $message = $this->getMessage([
+            'jobId'     => $jobId,
+            'version'   => $version,
+            'websiteId' => $websiteId
+        ]);
 
-        $message->expects($this->atLeastOnce())
-            ->method('getBody')
-            ->willReturn(JSON::encode($data));
+        $this->jobRunner->expects(self::once())
+            ->method('runDelayed')
+            ->with($jobId)
+            ->willReturnCallback(function (int $jobId, \Closure $callback) {
+                return $callback($this->jobRunner, new Job());
+            });
 
-        $website = $this->createMock(WebsiteInterface::class);
-        $this->messageFactory->expects($this->once())
-            ->method('getWebsiteFromMessage')
-            ->with($data)
+        $website = $this->createMock(Website::class);
+        $em = $this->createMock(EntityManagerInterface::class);
+        $this->doctrine->expects(self::once())
+            ->method('getManagerForClass')
+            ->with(Website::class)
+            ->willReturn($em);
+        $em->expects(self::once())
+            ->method('find')
+            ->with(Website::class, $websiteId)
             ->willReturn($website);
-
-        $version = time();
-        $this->messageFactory->expects($this->once())
-            ->method('getVersionFromMessage')
-            ->with($data)
-            ->willReturn($version);
 
         $this->dumper->expects($this->once())
             ->method('dump', self::INDEX_FILE_PROVIDER_NAME)

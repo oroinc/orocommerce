@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Unit\Sitemap\Filesystem;
 
+use Oro\Bundle\GaufretteBundle\FileManager;
 use Oro\Bundle\SEOBundle\Sitemap\Filesystem\SitemapFileWriter;
 use Oro\Component\SEO\Tools\Exception\SitemapFileWriterException;
 use Psr\Log\LoggerInterface;
@@ -24,6 +25,9 @@ class SitemapFileWriterTest extends \PHPUnit\Framework\TestCase
      */
     private $sitemapFileWriter;
 
+    /** @var FileManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $fileManager;
+
     protected function setUp()
     {
         $this->fileSystem = $this->getMockBuilder(Filesystem::class)
@@ -32,7 +36,10 @@ class SitemapFileWriterTest extends \PHPUnit\Framework\TestCase
 
         $this->logger = $this->createMock(LoggerInterface::class);
 
+        $this->fileManager = $this->createMock(FileManager::class);
+
         $this->sitemapFileWriter = new SitemapFileWriter($this->fileSystem, $this->logger);
+        $this->sitemapFileWriter->setFileManager($this->fileManager);
     }
 
     public function testSaveSitemap()
@@ -40,10 +47,10 @@ class SitemapFileWriterTest extends \PHPUnit\Framework\TestCase
         $stringData = 'some_string_data';
 
         $filePath = '/some/path/file-1.xml';
-        $this->fileSystem
+        $this->fileManager
             ->expects($this->once())
-            ->method('dumpFile')
-            ->with($filePath, $stringData);
+            ->method('writeToStorage')
+            ->with($stringData, $filePath);
 
         $this->logger
             ->expects($this->never())
@@ -59,9 +66,9 @@ class SitemapFileWriterTest extends \PHPUnit\Framework\TestCase
         $ioExceptionMessage = '';
         $exception = new IOException($ioExceptionMessage);
 
-        $this->fileSystem
+        $this->fileManager
             ->expects($this->once())
-            ->method('dumpFile')
+            ->method('writeToStorage')
             ->willThrowException($exception);
 
         $this->logger

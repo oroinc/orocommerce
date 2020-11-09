@@ -7,7 +7,6 @@ use Oro\Bundle\RedirectBundle\Async\UrlCacheProcessor;
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
 use Oro\Bundle\SEOBundle\Async\GenerateSitemapProcessor;
 use Oro\Bundle\SEOBundle\Async\Topics;
-use Oro\Bundle\SEOBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\SEOBundle\Model\SitemapIndexMessageFactory;
 use Oro\Bundle\SEOBundle\Model\SitemapMessageFactory;
 use Oro\Bundle\SEOBundle\Provider\WebsiteForSitemapProviderInterface;
@@ -119,49 +118,6 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
         $this->processor->setFileSystemAdapter($fileSystemAdapter);
     }
 
-    public function testProcessWhenThrowsInvalidArgumentException(): void
-    {
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
-        $session = $this->createMock(SessionInterface::class);
-
-        $messageId = 777;
-        $data = ['key' => 'value'];
-        $message = $this->getMessage($messageId, $data);
-        $website = $this->getWebsite();
-        $job = $this->getJobAndRunUnique($messageId);
-        $this->jobRunner
-            ->expects($this->never())
-            ->method('createDelayed');
-        $this->canonicalUrlGenerator
-            ->expects($this->never())
-            ->method('clearCache');
-
-        $dependentJobContext = new DependentJobContext($job);
-        $this->dependentJobService->expects($this->once())
-            ->method('createDependentJobContext')
-            ->with($job)
-            ->willReturn($dependentJobContext);
-
-        $exception = new InvalidArgumentException();
-        $this->indexMessageFactory->expects($this->once())
-            ->method('createMessage')
-            ->with($website, $this->isType(\PHPUnit\Framework\Constraint\IsType::TYPE_INT))
-            ->willThrowException($exception);
-        $this->dependentJobService->expects($this->never())
-            ->method('saveDependentJob');
-
-        $this->logger->expects($this->once())
-            ->method('error')
-            ->with(
-                'Queue Message is invalid',
-                [
-                    'exception' => $exception,
-                ]
-            );
-
-        $this->assertEquals(UrlCacheProcessor::REJECT, $this->processor->process($message, $session));
-    }
-
     public function testProcessWhenThrowsException(): void
     {
         /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
@@ -171,7 +127,6 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
         $messageId = 777;
         $data = ['key' => 'value'];
         $message = $this->getMessage($messageId, $data);
-        $website = $this->getWebsite();
         $job = $this->getJobAndRunUnique($messageId);
         $this->jobRunner
             ->expects($this->never())
@@ -185,11 +140,6 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('createDependentJobContext')
             ->with($job)
             ->willReturn($dependentJobContext);
-        $this->indexMessageFactory->expects($this->once())
-            ->method('createMessage')
-            ->with($website, $this->isType(\PHPUnit\Framework\Constraint\IsType::TYPE_INT))
-            ->willReturn(['some data']);
-
         $exception = new \Exception();
         $this->dependentJobService->expects($this->once())
             ->method('saveDependentJob')
@@ -227,16 +177,6 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('createDependentJobContext')
             ->with($job)
             ->willReturn($dependentJobContext);
-        $this->indexMessageFactory->expects($this->exactly(count($websites)))
-            ->method('createMessage');
-        $this->indexMessageFactory->expects($this->at(0))
-            ->method('createMessage')
-            ->with($websites[0], $this->isType(\PHPUnit\Framework\Constraint\IsType::TYPE_INT))
-            ->willReturn(['some data']);
-        $this->indexMessageFactory->expects($this->at(1))
-            ->method('createMessage')
-            ->with($websites[1], $this->isType(\PHPUnit\Framework\Constraint\IsType::TYPE_INT))
-            ->willReturn(['some data']);
         $this->dependentJobService->expects($this->once())
             ->method('saveDependentJob')
             ->with($dependentJobContext);

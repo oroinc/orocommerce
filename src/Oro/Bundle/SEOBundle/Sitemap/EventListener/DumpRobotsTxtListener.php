@@ -59,24 +59,22 @@ class DumpRobotsTxtListener
     public function onSitemapDumpStorage(OnSitemapDumpFinishEvent $event)
     {
         $website = $event->getWebsite();
-        $indexFiles = $this->sitemapFilesystemAdapter->getSitemapFiles(
+        $files = $this->sitemapFilesystemAdapter->getSitemapFilesForWebsite(
             $website,
-            SitemapFilesystemAdapter::ACTUAL_VERSION,
             SitemapDumper::getFilenamePattern(SitemapStorageFactory::TYPE_SITEMAP_INDEX)
         );
 
-        if (!$indexFiles->count()) {
+        if (empty($files)) {
             throw new LogicException('Cannot find sitemap index file.');
         }
 
-        /** @var \SplFileInfo $indexFile */
-        foreach ($indexFiles as $indexFile) {
+        foreach ($files as $file) {
             $url = sprintf(
                 '%s/%s/%s/%s',
                 $this->sitemapDir,
                 $event->getWebsite()->getId(),
                 SitemapFilesystemAdapter::ACTUAL_VERSION,
-                $indexFile->getFilename()
+                pathinfo($file->getName(), PATHINFO_BASENAME)
             );
 
             $domainUrl = rtrim($this->canonicalUrlGenerator->getCanonicalDomainUrl($website), '/');

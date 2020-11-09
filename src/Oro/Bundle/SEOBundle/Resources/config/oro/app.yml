@@ -3,7 +3,16 @@ knp_gaufrette:
         sitemaps:
             local:
                 directory: '%kernel.project_dir%/public/media/sitemaps'
+        sitemaps_tmp_data:
+            local:
+                directory: '%kernel.project_dir%/var/import_export/sitemaps'
     filesystems:
         sitemaps:
             adapter: sitemaps
             alias: sitemaps_uploads_filesystem
+        # a temporary private storage that is used during sitemap generation
+        # it is required to be able to replace sitemap related files only when all of them are successfully generated,
+        # to keep data consistent
+        sitemaps_tmp_data:
+            adapter: sitemaps_tmp_data
+            alias: sitemaps_tmp_data_filesystem
