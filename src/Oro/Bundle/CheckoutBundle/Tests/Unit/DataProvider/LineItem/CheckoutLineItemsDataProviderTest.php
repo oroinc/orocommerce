@@ -11,6 +11,7 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\VisibilityBundle\Provider\ResolvedProductVisibilityProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
@@ -30,6 +31,9 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
     /** @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $productAvailabilityCache;
 
+    /** @var ResolvedProductVisibilityProvider */
+    private $resolvedProductVisibilityProvider;
+
     /**
      * {@inheritDoc}
      */
@@ -38,11 +42,14 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
         $this->frontendProductPricesDataProvider = $this->createMock(FrontendProductPricesDataProvider::class);
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         $this->productAvailabilityCache = $this->createMock(CacheProvider::class);
+        $this->resolvedProductVisibilityProvider = $this->createMock(ResolvedProductVisibilityProvider::class);
+
         $this->provider = new CheckoutLineItemsDataProvider(
             $this->frontendProductPricesDataProvider,
             $this->authorizationChecker,
             $this->productAvailabilityCache
         );
+        $this->provider->setResolvedProductVisibilityProvider($this->resolvedProductVisibilityProvider);
     }
 
     /**
@@ -76,9 +83,13 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
     public function testGetData(Price $price = null, $isPriceFixed = false)
     {
         $freeFormProduct = 'freeFromProduct';
-        $product = $this->getEntity(
+        $product1 = $this->getEntity(
             Product::class,
-            ['id' => 2, 'sku' => 'PRODUCT_SKU', 'status' => Product::STATUS_ENABLED]
+            ['id' => 1001, 'sku' => 'PRODUCT_SKU1', 'status' => Product::STATUS_ENABLED]
+        );
+        $product2 = $this->getEntity(
+            Product::class,
+            ['id' => 2002, 'sku' => 'PRODUCT_SKU2', 'status' => Product::STATUS_ENABLED]
         );
         $parentProduct = $this->getEntity(Product::class, ['id' => 1, 'sku' => 'PARENT_SKU']);
         $productUnit = $this->getEntity(ProductUnit::class, ['code' => 'code']);
@@ -90,13 +101,17 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->frontendProductPricesDataProvider->expects($this->atMost(1))
             ->method('getProductsMatchedPrice')
-            ->willReturn([2 => ['code' => $expectedPrice]]);
+            ->willReturn([1001 => ['code' => $expectedPrice]]);
+
+        $this->resolvedProductVisibilityProvider->expects($this->once())
+            ->method('prefetch')
+            ->with([$product1->getId(), $product2->getId()]);
 
         /** @var CheckoutLineItem $lineItem */
-        $lineItem = $this->getEntity(
+        $lineItem1 = $this->getEntity(
             CheckoutLineItem::class,
             [
-                'product' => $product,
+                'product' => $product1,
                 'parentProduct' => $parentProduct,
                 'freeFormProduct' => $freeFormProduct,
                 'quantity' => 10,
@@ -106,31 +121,60 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
                 'comment' => 'line item comment',
             ]
         );
-        $lineItem->setPriceFixed($isPriceFixed)
+        $lineItem1->setPriceFixed($isPriceFixed)
             ->preSave();
 
-        $checkout = $this->getEntity(Checkout::class, ['lineItems' => new ArrayCollection([$lineItem])]);
-
-        $expected = [
+        $lineItem2 = $this->getEntity(
+            CheckoutLineItem::class,
             [
-                'product' => $product,
+                'product' => $product2,
                 'parentProduct' => $parentProduct,
-                'productSku' => 'PRODUCT_SKU',
-                'comment' => 'line item comment',
                 'freeFormProduct' => $freeFormProduct,
                 'quantity' => 10,
                 'productUnit' => $productUnit,
-                'productUnitCode' => 'code',
-                'price' => $expectedPrice,
+                'price' => $price,
                 'fromExternalSource' => true,
-            ],
-        ];
+                'comment' => 'line item comment',
+            ]
+        );
+        $lineItem2->setPriceFixed($isPriceFixed)
+            ->preSave();
 
-        $this->authorizationChecker->expects($this->once())
+        $checkout = $this->getEntity(Checkout::class, ['lineItems' => new ArrayCollection([$lineItem1, $lineItem2])]);
+
+        $this->authorizationChecker->expects($this->any())
             ->method('isGranted')
             ->willReturn(true);
 
-        $this->assertEquals($expected, $this->provider->getData($checkout));
+        $this->assertEquals(
+            [
+                [
+                    'product' => $product1,
+                    'parentProduct' => $parentProduct,
+                    'productSku' => 'PRODUCT_SKU1',
+                    'comment' => 'line item comment',
+                    'freeFormProduct' => $freeFormProduct,
+                    'quantity' => 10,
+                    'productUnit' => $productUnit,
+                    'productUnitCode' => 'code',
+                    'price' => $expectedPrice,
+                    'fromExternalSource' => true,
+                ],
+                [
+                    'product' => $product2,
+                    'parentProduct' => $parentProduct,
+                    'productSku' => 'PRODUCT_SKU2',
+                    'comment' => 'line item comment',
+                    'freeFormProduct' => $freeFormProduct,
+                    'quantity' => 10,
+                    'productUnit' => $productUnit,
+                    'productUnitCode' => 'code',
+                    'price' => $price,
+                    'fromExternalSource' => true,
+                ],
+            ],
+            $this->provider->getData($checkout)
+        );
     }
 
     public function testGetDataWithoutProduct()

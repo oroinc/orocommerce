@@ -9,6 +9,7 @@ use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
+use Oro\Bundle\VisibilityBundle\Provider\ResolvedProductVisibilityProvider;
 use Oro\Component\Checkout\DataProvider\AbstractCheckoutProvider;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
@@ -34,6 +35,11 @@ class CheckoutLineItemsDataProvider extends AbstractCheckoutProvider
     private $productAvailabilityCache;
 
     /**
+     * @var ResolvedProductVisibilityProvider
+     */
+    private $resolvedProductVisibilityProvider;
+
+    /**
      * @param FrontendProductPricesDataProvider $frontendProductPricesDataProvider
      * @param AuthorizationCheckerInterface $authorizationChecker
      * @param CacheProvider $productAvailabilityCache
@@ -49,6 +55,15 @@ class CheckoutLineItemsDataProvider extends AbstractCheckoutProvider
     }
 
     /**
+     * @param ResolvedProductVisibilityProvider $resolvedProductVisibilityProvider
+     */
+    public function setResolvedProductVisibilityProvider(
+        ResolvedProductVisibilityProvider $resolvedProductVisibilityProvider
+    ): void {
+        $this->resolvedProductVisibilityProvider = $resolvedProductVisibilityProvider;
+    }
+
+    /**
      * @param Checkout $entity
      *
      * {@inheritDoc}
@@ -57,6 +72,8 @@ class CheckoutLineItemsDataProvider extends AbstractCheckoutProvider
     {
         $lineItems = $entity->getLineItems();
         $lineItemsPrices = $this->findPrices($lineItems);
+
+        $this->prefetchProductsVisibility($lineItems);
 
         $data = [];
 
@@ -102,6 +119,23 @@ class CheckoutLineItemsDataProvider extends AbstractCheckoutProvider
 
         return $lineItemsWithoutPrice ? $this->frontendProductPricesDataProvider
             ->getProductsMatchedPrice($lineItemsWithoutPrice) : [];
+    }
+
+    /**
+     * @param Collection $lineItems
+     */
+    private function prefetchProductsVisibility(Collection $lineItems): void
+    {
+        if ($this->resolvedProductVisibilityProvider) {
+            $productIds = [];
+            foreach ($lineItems as $lineItem) {
+                if ($lineItem instanceof ProductHolderInterface && $lineItem->getProduct()) {
+                    $productIds[] = $lineItem->getProduct()->getId();
+                }
+            }
+
+            $this->resolvedProductVisibilityProvider->prefetch(array_unique($productIds));
+        }
     }
 
     /**
