@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Unit\Manager;
 
+use Oro\Bundle\GaufretteBundle\FileManager;
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
 use Oro\Bundle\SEOBundle\Exception\RobotsTxtFileManagerException;
 use Oro\Bundle\SEOBundle\Manager\RobotsTxtFileManager;
@@ -30,10 +31,13 @@ class RobotsTxtFileManagerTest extends \PHPUnit\Framework\TestCase
     /** @var string */
     private $defaultFilePath;
 
+    /** @var FileManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $fileManager;
+
     /**
      * @var RobotsTxtFileManager
      */
-    private $fileManager;
+    private $robotsTxtFileManager;
 
     protected function setUp()
     {
@@ -42,13 +46,15 @@ class RobotsTxtFileManagerTest extends \PHPUnit\Framework\TestCase
         $this->urlGenerator = $this->createMock(CanonicalUrlGenerator::class);
         $this->path = realpath(__DIR__ . '/fixtures');
         $this->defaultFilePath = $this->path . '/public';
-        $this->fileManager = new RobotsTxtFileManager(
+        $this->fileManager = $this->createMock(FileManager::class);
+        $this->robotsTxtFileManager = new RobotsTxtFileManager(
             $this->logger,
             $this->filesystem,
             $this->path
         );
-        $this->fileManager->setUrlGenerator($this->urlGenerator);
-        $this->fileManager->setDefaultRobotsPath($this->defaultFilePath);
+        $this->robotsTxtFileManager->setUrlGenerator($this->urlGenerator);
+        $this->robotsTxtFileManager->setDefaultRobotsPath($this->defaultFilePath);
+        $this->robotsTxtFileManager->setFileManager($this->fileManager);
     }
 
     public function testGetContentWhenThrowsException()
@@ -63,14 +69,15 @@ class RobotsTxtFileManagerTest extends \PHPUnit\Framework\TestCase
         $this->expectException(RobotsTxtFileManagerException::class);
         $this->expectExceptionMessage($message);
 
-        $this->fileManager = new RobotsTxtFileManager(
+        $this->robotsTxtFileManager = new RobotsTxtFileManager(
             $this->logger,
             $this->filesystem,
             $this->path
         );
-        $this->fileManager->setUrlGenerator($this->urlGenerator);
-        $this->fileManager->setDefaultRobotsPath($this->defaultFilePath);
-        $this->fileManager->getContent();
+        $this->robotsTxtFileManager->setUrlGenerator($this->urlGenerator);
+        $this->robotsTxtFileManager->setDefaultRobotsPath($this->defaultFilePath);
+        $this->robotsTxtFileManager->setFileManager($this->fileManager);
+        $this->robotsTxtFileManager->getContent();
     }
 
     public function testGetContent()
@@ -78,7 +85,7 @@ class RobotsTxtFileManagerTest extends \PHPUnit\Framework\TestCase
         $this->logger->expects($this->never())
             ->method('error');
 
-        $content = $this->fileManager->getContent();
+        $content = $this->robotsTxtFileManager->getContent();
 
         $this->assertStringEqualsFile(
             $this->getFullName(),
@@ -107,7 +114,7 @@ class RobotsTxtFileManagerTest extends \PHPUnit\Framework\TestCase
         $this->expectException(RobotsTxtFileManagerException::class);
         $this->expectExceptionMessage($message);
 
-        $this->fileManager->dumpContent($content);
+        $this->robotsTxtFileManager->dumpContent($content);
     }
 
     public function testDumpContent()
@@ -120,7 +127,7 @@ class RobotsTxtFileManagerTest extends \PHPUnit\Framework\TestCase
         $this->logger->expects($this->never())
             ->method('error');
 
-        $this->fileManager->dumpContent($content);
+        $this->robotsTxtFileManager->dumpContent($content);
     }
 
     public function testDumpContentForWebsiteWithDomainWithoutSubfolder()
@@ -128,9 +135,9 @@ class RobotsTxtFileManagerTest extends \PHPUnit\Framework\TestCase
         $website = $this->getEntity(Website::class, ['id' => '15']);
         $content = 'Some content';
 
-        $this->filesystem->expects($this->once())
-            ->method('dumpFile')
-            ->with($this->path . '/robots.test.com.txt', $content);
+        $this->fileManager->expects($this->once())
+            ->method('writeToStorage')
+            ->with($content, 'robots.test.com.txt');
         $this->logger->expects($this->never())
             ->method('error');
         $this->urlGenerator->expects(self::once())
@@ -138,7 +145,7 @@ class RobotsTxtFileManagerTest extends \PHPUnit\Framework\TestCase
             ->with($website)
             ->willReturn('https://test.com');
 
-        $this->fileManager->dumpContentForWebsite($content, $website);
+        $this->robotsTxtFileManager->dumpContentForWebsite($content, $website);
     }
 
     public function testDumpContentForWebsiteWithDomainWithSubfolder()
@@ -146,9 +153,9 @@ class RobotsTxtFileManagerTest extends \PHPUnit\Framework\TestCase
         $website = $this->getEntity(Website::class, ['id' => '15']);
         $content = 'Some content';
 
-        $this->filesystem->expects($this->once())
-            ->method('dumpFile')
-            ->with($this->path . '/robots.test.com.txt', $content);
+        $this->fileManager->expects($this->once())
+            ->method('writeToStorage')
+            ->with($content, 'robots.test.com.txt');
         $this->logger->expects($this->never())
             ->method('error');
         $this->urlGenerator->expects(self::once())
@@ -156,7 +163,7 @@ class RobotsTxtFileManagerTest extends \PHPUnit\Framework\TestCase
             ->with($website)
             ->willReturn('https://test.com/subfolder');
 
-        $this->fileManager->dumpContentForWebsite($content, $website);
+        $this->robotsTxtFileManager->dumpContentForWebsite($content, $website);
     }
 
     /**

@@ -2,13 +2,13 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Unit\Sitemap\Provider;
 
+use Gaufrette\File;
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
 use Oro\Bundle\SEOBundle\Model\DTO\UrlItem;
 use Oro\Bundle\SEOBundle\Sitemap\Filesystem\SitemapFilesystemAdapter;
 use Oro\Bundle\SEOBundle\Sitemap\Provider\SitemapFilesProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Website\WebsiteInterface;
-use Symfony\Component\Finder\Finder;
 
 class SitemapFilesProviderTest extends \PHPUnit\Framework\TestCase
 {
@@ -58,9 +58,9 @@ class SitemapFilesProviderTest extends \PHPUnit\Framework\TestCase
         $version = '1';
 
         $this->filesystemAdapter->expects($this->once())
-            ->method('getSitemapFiles')
-            ->with($website, $version)
-            ->willReturn(new \ArrayIterator());
+            ->method('getSitemapFilesForWebsite')
+            ->with($website)
+            ->willReturn([]);
 
         $this->canonicalUrlGenerator->expects($this->never())
             ->method($this->anything());
@@ -79,30 +79,18 @@ class SitemapFilesProviderTest extends \PHPUnit\Framework\TestCase
 
         $fileName = 'test.xml';
 
-        $file = $this->getMockBuilder(\SplFileInfo::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $file->expects($this->once())
-            ->method('getFilename')
+        $file = $this->createMock(File::class);
+        $file->expects($this->any())
+            ->method('getName')
             ->willReturn($fileName);
-        $file->expects($this->once())
+        $file->expects($this->any())
             ->method('getMTime')
             ->willReturn(time());
 
-        /** @var Finder|\PHPUnit\Framework\MockObject\MockObject $finder */
-        $finder = $this->getMockBuilder(Finder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $finder->expects($this->once())
-            ->method('notName')
-            ->with('sitemap-index-*.xml*')
-            ->willReturnSelf();
-        $this->configureIteratorMock($finder, [$file]);
-
         $this->filesystemAdapter->expects($this->once())
-            ->method('getSitemapFiles')
-            ->with($website, $version)
-            ->willReturn($finder);
+            ->method('getSitemapFilesForWebsite')
+            ->with($website, null, 'sitemap-index-*.xml*')
+            ->willReturn([$file]);
 
         $absoluteUrl = 'http://test.com/sitemaps/1/actual/test.xml';
         $this->canonicalUrlGenerator->expects($this->once())
@@ -124,21 +112,5 @@ class SitemapFilesProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($absoluteUrl, $urlItem->getLocation());
         $this->assertEmpty($urlItem->getPriority());
         $this->assertEmpty($urlItem->getChangeFrequency());
-    }
-
-    /**
-     * @param \PHPUnit\Framework\MockObject\MockObject $mock
-     * @param array $items
-     */
-    private function configureIteratorMock(\PHPUnit\Framework\MockObject\MockObject $mock, array $items)
-    {
-        $iterator = new \ArrayIterator($items);
-
-        $mock->expects($this->any())
-            ->method('getIterator')
-            ->willReturn($iterator);
-        $mock->expects($this->any())
-            ->method('count')
-            ->willReturn($iterator->count());
     }
 }

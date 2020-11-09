@@ -11,7 +11,7 @@ use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
 
 /**
- * MQ processor that moves generated sitemaps and robots txt files to the Gaufrette storage.
+ * Moves generated sitemap and robots.txt file for a website from a temporary storage to Gaufrette storage.
  */
 class MoveGeneratedSitemapsProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
