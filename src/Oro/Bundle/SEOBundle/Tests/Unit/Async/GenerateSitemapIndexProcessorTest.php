@@ -2,168 +2,291 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Unit\Async;
 
-use Oro\Bundle\RedirectBundle\Async\UrlCacheProcessor;
+use Oro\Bundle\MessageQueueBundle\Entity\Job;
 use Oro\Bundle\SEOBundle\Async\GenerateSitemapIndexProcessor;
 use Oro\Bundle\SEOBundle\Async\Topics;
-use Oro\Bundle\SEOBundle\Model\Exception\InvalidArgumentException;
-use Oro\Bundle\SEOBundle\Model\SitemapIndexMessageFactory;
+use Oro\Component\MessageQueue\Client\MessageProducerInterface;
+use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
+use Oro\Component\MessageQueue\Job\DependentJobContext;
+use Oro\Component\MessageQueue\Job\DependentJobService;
+use Oro\Component\MessageQueue\Job\JobRunner;
+use Oro\Component\MessageQueue\Transport\Message;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
-use Oro\Component\SEO\Tools\SitemapDumperInterface;
-use Oro\Component\Website\WebsiteInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
+use Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException;
 
 class GenerateSitemapIndexProcessorTest extends \PHPUnit\Framework\TestCase
 {
-    const INDEX_FILE_PROVIDER_NAME = 'index';
+    /** @var JobRunner|\PHPUnit\Framework\MockObject\MockObject */
+    private $jobRunner;
 
-    /**
-     * @var SitemapIndexMessageFactory|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $messageFactory;
+    /** @var DependentJobService|\PHPUnit\Framework\MockObject\MockObject */
+    private $dependentJob;
 
-    /**
-     * @var SitemapDumperInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $dumper;
+    /** @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $producer;
 
-    /**
-     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $logger;
 
-    /**
-     * @var GenerateSitemapIndexProcessor
-     */
+    /** @var GenerateSitemapIndexProcessor */
     private $processor;
 
     protected function setUp(): void
     {
-        $this->messageFactory = $this->getMockBuilder(SitemapIndexMessageFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->dumper = $this->createMock(SitemapDumperInterface::class);
+        $this->jobRunner = $this->createMock(JobRunner::class);
+        $this->dependentJob = $this->createMock(DependentJobService::class);
+        $this->producer = $this->createMock(MessageProducerInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->processor = new GenerateSitemapIndexProcessor(
-            $this->messageFactory,
-            $this->dumper,
+            $this->jobRunner,
+            $this->dependentJob,
+            $this->producer,
             $this->logger
         );
     }
 
-    public function testProcessWhenThrowsInvalidArgumentException()
+    /**
+     * @return SessionInterface
+     */
+    private function getSession(): SessionInterface
     {
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
-        $session = $this->createMock(SessionInterface::class);
-
-        $data = ['key' => 'value'];
-        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
-        $message = $this->createMock(MessageInterface::class);
-
-        $message->expects($this->atLeastOnce())
-            ->method('getBody')
-            ->willReturn(JSON::encode($data));
-
-        $exception = new InvalidArgumentException();
-        $this->messageFactory->expects($this->once())
-            ->method('getWebsiteFromMessage')
-            ->with($data)
-            ->willThrowException($exception);
-
-        $this->logger->expects($this->once())
-            ->method('error')
-            ->with(
-                'Queue Message is invalid',
-                [
-                    'exception' => $exception,
-                ]
-            );
-
-        $this->assertEquals(UrlCacheProcessor::REJECT, $this->processor->process($message, $session));
+        return $this->createMock(SessionInterface::class);
     }
 
-    public function testProcessWhenThrowsException()
+    /**
+     * @param string $messageId
+     * @param array  $body
+     *
+     * @return MessageInterface
+     */
+    private function getMessage(string $messageId, array $body): MessageInterface
     {
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
-        $session = $this->createMock(SessionInterface::class);
+        $message = new Message();
+        $message->setMessageId($messageId);
+        $message->setBody(JSON::encode($body));
 
-        $data = ['key' => 'value'];
-        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
-        $message = $this->createMock(MessageInterface::class);
-
-        $message->expects($this->atLeastOnce())
-            ->method('getBody')
-            ->willReturn(JSON::encode($data));
-
-        $website = $this->createMock(WebsiteInterface::class);
-        $this->messageFactory->expects($this->once())
-            ->method('getWebsiteFromMessage')
-            ->with($data)
-            ->willReturn($website);
-
-        $version = time();
-        $this->messageFactory->expects($this->once())
-            ->method('getVersionFromMessage')
-            ->with($data)
-            ->willReturn($version);
-
-        $exception = new \Exception();
-        $this->dumper->expects($this->once())
-            ->method('dump')
-            ->with($website, $version, self::INDEX_FILE_PROVIDER_NAME)
-            ->willThrowException($exception);
-        $this->logger->expects($this->once())
-            ->method('error')
-            ->with(
-                'Unexpected exception occurred during queue message processing',
-                [
-                    'exception' => $exception,
-                    'topic' => Topics::GENERATE_SITEMAP_INDEX_BY_WEBSITE,
-                ]
-            );
-
-        $this->assertEquals(UrlCacheProcessor::REJECT, $this->processor->process($message, $session));
+        return $message;
     }
 
-    public function testProcess()
+
+    /**
+     * @param string $messageId
+     *
+     * @return Job
+     */
+    private function getJobAndRunUnique(string $messageId): Job
     {
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
-        $session = $this->createMock(SessionInterface::class);
+        $rootJob = new Job();
+        $rootJob->setId(100);
+        $job = new Job();
+        $job->setId(200);
+        $job->setRootJob($rootJob);
 
-        $data = ['key' => 'value'];
-        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
-        $message = $this->createMock(MessageInterface::class);
+        $this->jobRunner->expects(self::once())
+            ->method('runUnique')
+            ->with($messageId, Topics::GENERATE_SITEMAP . ':index')
+            ->willReturnCallback(function ($jobId, $name, $callback) use ($job) {
+                return $callback($this->jobRunner, $job);
+            });
 
-        $message->expects($this->atLeastOnce())
-            ->method('getBody')
-            ->willReturn(JSON::encode($data));
-
-        $website = $this->createMock(WebsiteInterface::class);
-        $this->messageFactory->expects($this->once())
-            ->method('getWebsiteFromMessage')
-            ->with($data)
-            ->willReturn($website);
-
-        $version = time();
-        $this->messageFactory->expects($this->once())
-            ->method('getVersionFromMessage')
-            ->with($data)
-            ->willReturn($version);
-
-        $this->dumper->expects($this->once())
-            ->method('dump', self::INDEX_FILE_PROVIDER_NAME)
-            ->with($website, $version);
-
-        $this->assertEquals(UrlCacheProcessor::ACK, $this->processor->process($message, $session));
+        return $job;
     }
 
     public function testGetSubscribedTopics()
     {
-        $this->assertEquals(
-            [Topics::GENERATE_SITEMAP_INDEX_BY_WEBSITE],
+        self::assertEquals(
+            [Topics::GENERATE_SITEMAP_INDEX],
             GenerateSitemapIndexProcessor::getSubscribedTopics()
+        );
+    }
+
+    public function testProcessForWrongParameters()
+    {
+        $message = $this->getMessage('1000', ['key' => 'value']);
+
+        $exception = new UndefinedOptionsException(
+            'The option "key" does not exist. Defined options are: "jobId", "version", "websiteIds".'
+        );
+        $this->logger->expects(self::once())
+            ->method('critical')
+            ->with(
+                'Got invalid message.',
+                ['exception' => $exception]
+            );
+
+        self::assertEquals(
+            MessageProcessorInterface::REJECT,
+            $this->processor->process($message, $this->getSession())
+        );
+    }
+
+    public function testProcessForWrongJobIdParameter()
+    {
+        $message = $this->getMessage('1000', [
+            'jobId'      => 'wrong',
+            'version'    => 1,
+            'websiteIds' => [123]
+        ]);
+
+        $exception = new InvalidOptionsException(
+            'The option "jobId" with value "wrong" is expected to be of type "int", but is of type "string".'
+        );
+        $this->logger->expects(self::once())
+            ->method('critical')
+            ->with('Got invalid message.', ['exception' => $exception]);
+
+        self::assertEquals(
+            MessageProcessorInterface::REJECT,
+            $this->processor->process($message, $this->getSession())
+        );
+    }
+
+    public function testProcessForWrongVersionParameter()
+    {
+        $message = $this->getMessage('1000', [
+            'jobId'      => 100,
+            'version'    => 'wrong',
+            'websiteIds' => [123]
+        ]);
+
+        $exception = new InvalidOptionsException(
+            'The option "version" with value "wrong" is expected to be of type "int", but is of type "string".'
+        );
+        $this->logger->expects(self::once())
+            ->method('critical')
+            ->with('Got invalid message.', ['exception' => $exception]);
+
+        self::assertEquals(
+            MessageProcessorInterface::REJECT,
+            $this->processor->process($message, $this->getSession())
+        );
+    }
+
+    public function testProcessForWrongWebsiteIdsParameter()
+    {
+        $message = $this->getMessage('1000', [
+            'jobId'      => 100,
+            'version'    => 1,
+            'websiteIds' => 123
+        ]);
+
+        $exception = new InvalidOptionsException(
+            'The option "websiteIds" with value 123 is expected to be of type "array", but is of type "integer".'
+        );
+        $this->logger->expects(self::once())
+            ->method('critical')
+            ->with('Got invalid message.', ['exception' => $exception]);
+
+        self::assertEquals(
+            MessageProcessorInterface::REJECT,
+            $this->processor->process($message, $this->getSession())
+        );
+    }
+
+    public function testProcessWhenSendChildMessagesFailed()
+    {
+        $jobId = 100;
+        $messageId = '1000';
+        $message = $this->getMessage($messageId, [
+            'jobId'      => $jobId,
+            'version'    => 1,
+            'websiteIds' => [123]
+        ]);
+
+        $job = $this->getJobAndRunUnique($messageId);
+
+        $this->jobRunner->expects(self::once())
+            ->method('createDelayed')
+            ->willReturnCallback(function (string $name, \Closure $callback) use ($job) {
+                return $callback($this->jobRunner, $job);
+            });
+
+        $exception = new \Exception();
+        $this->producer->expects(self::once())
+            ->method('send')
+            ->willThrowException($exception);
+
+        $this->logger->expects(self::once())
+            ->method('error')
+            ->with(
+                'Unexpected exception occurred during generating sitemap indexes.',
+                ['exception' => $exception]
+            );
+
+        self::assertEquals(
+            MessageProcessorInterface::REJECT,
+            $this->processor->process($message, $this->getSession())
+        );
+    }
+
+    public function testProcess()
+    {
+        $jobId = 100;
+        $version = 1;
+        $websiteIds = [123, 234];
+        $messageId = '1000';
+        $message = $this->getMessage($messageId, [
+            'jobId'      => $jobId,
+            'version'    => $version,
+            'websiteIds' => $websiteIds
+        ]);
+
+        $job = $this->getJobAndRunUnique($messageId);
+
+        $dependentJobContext = new DependentJobContext($job->getRootJob());
+        $this->dependentJob->expects(self::once())
+            ->method('createDependentJobContext')
+            ->with(self::identicalTo($job->getRootJob()))
+            ->willReturn($dependentJobContext);
+        $this->dependentJob->expects(self::once())
+            ->method('saveDependentJob')
+            ->with(self::identicalTo($dependentJobContext))
+            ->willReturnCallback(function (DependentJobContext $context) use ($version, $websiteIds) {
+                self::assertEquals(
+                    [
+                        [
+                            'topic'    => Topics::GENERATE_SITEMAP_MOVE_GENERATED_FILES,
+                            'message'  => ['version' => $version, 'websiteIds' => $websiteIds],
+                            'priority' => null,
+                        ]
+                    ],
+                    $context->getDependentJobs()
+                );
+            });
+
+        $this->jobRunner->expects(self::exactly(2))
+            ->method('createDelayed')
+            ->withConsecutive(
+                [Topics::GENERATE_SITEMAP_INDEX_BY_WEBSITE . ':' . $websiteIds[0] . ':' . $version],
+                [Topics::GENERATE_SITEMAP_INDEX_BY_WEBSITE . ':' . $websiteIds[1] . ':' . $version]
+            )
+            ->willReturnCallback(function (string $name, \Closure $callback) use ($job) {
+                return $callback($this->jobRunner, $job);
+            });
+        $this->producer->expects(self::exactly(2))
+            ->method('send')
+            ->withConsecutive(
+                [
+                    Topics::GENERATE_SITEMAP_INDEX_BY_WEBSITE,
+                    ['jobId' => $job->getId(), 'version' => $version, 'websiteId' => $websiteIds[0]]
+                ],
+                [
+                    Topics::GENERATE_SITEMAP_INDEX_BY_WEBSITE,
+                    ['jobId' => $job->getId(), 'version' => $version, 'websiteId' => $websiteIds[1]]
+                ]
+            );
+
+        $this->logger->expects(self::never())
+            ->method(self::anything());
+
+        self::assertEquals(
+            MessageProcessorInterface::ACK,
+            $this->processor->process($message, $this->getSession())
         );
     }
 }

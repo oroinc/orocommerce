@@ -5,11 +5,12 @@ namespace Oro\Bundle\SEOBundle\Sitemap\EventListener;
 use Oro\Bundle\SEOBundle\Sitemap\Event\OnSitemapDumpFinishEvent;
 use Oro\Bundle\SEOBundle\Sitemap\Filesystem\SitemapFilesystemAdapter;
 
-class MakeVersionActualListener
+/**
+ * Dumps a file contains a generated sitemap version.
+ */
+class DumpVersionListener
 {
-    /**
-     * @var SitemapFilesystemAdapter
-     */
+    /** @var SitemapFilesystemAdapter */
     private $filesystemAdapter;
 
     /**
@@ -23,8 +24,8 @@ class MakeVersionActualListener
     /**
      * @param OnSitemapDumpFinishEvent $event
      */
-    public function onSitemapDumpStorage(OnSitemapDumpFinishEvent $event)
+    public function onSitemapDumpStorage(OnSitemapDumpFinishEvent $event): void
     {
-        $this->filesystemAdapter->makeNewerVersionActual($event->getWebsite(), $event->getVersion());
+        $this->filesystemAdapter->dumpVersion($event->getWebsite(), $event->getVersion());
     }
 }

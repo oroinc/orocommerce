@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\SEOBundle\Sitemap\Filesystem;
 
+/**
+ * Compresses sitemap related data using gzip before it is written to files.
+ */
 class GzipSitemapFileWriter implements SitemapFileWriterInterface
 {
-    const ARCHIVE_EXTENSION = 'gz';
-
-    /**
-     * @var SitemapFileWriterInterface
-     */
+    /** @var SitemapFileWriterInterface */
     private $sitemapFileWriter;
 
     /**
@@ -20,19 +19,15 @@ class GzipSitemapFileWriter implements SitemapFileWriterInterface
     }
 
     /**
-     * @param string $siteMapContents
-     * @param string $path
-     * @return string
+     * {@inheritDoc}
      */
-    public function saveSitemap($siteMapContents, $path)
+    public function saveSitemap(string $content, string $path): string
     {
-        $gzippedContents = gzencode($siteMapContents);
-        if (false === $gzippedContents) {
-            return $this->sitemapFileWriter->saveSitemap($siteMapContents, $path);
+        $gzippedContent = gzencode($content);
+        if (false === $gzippedContent) {
+            return $this->sitemapFileWriter->saveSitemap($content, $path);
         }
 
-        $path = sprintf('%s.%s', $path, self::ARCHIVE_EXTENSION);
-
-        return $this->sitemapFileWriter->saveSitemap($gzippedContents, $path);
+        return $this->sitemapFileWriter->saveSitemap($gzippedContent, $path . '.gz');
     }
 }

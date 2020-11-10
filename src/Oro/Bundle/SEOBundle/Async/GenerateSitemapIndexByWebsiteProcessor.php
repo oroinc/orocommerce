@@ -3,7 +3,6 @@
 namespace Oro\Bundle\SEOBundle\Async;
 
 use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProviderRegistryInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
@@ -16,23 +15,19 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Generates a sitemap of a specific type for a website and write it to a temporary storage.
+ * Generates a sitemap index for a website and write it to a temporary storage.
  */
-class GenerateSitemapByWebsiteAndTypeProcessor implements MessageProcessorInterface, TopicSubscriberInterface
+class GenerateSitemapIndexByWebsiteProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
     private const JOB_ID     = 'jobId';
     private const VERSION    = 'version';
     private const WEBSITE_ID = 'websiteId';
-    private const TYPE       = 'type';
 
     /** @var JobRunner */
     private $jobRunner;
 
     /** @var ManagerRegistry */
     private $doctrine;
-
-    /** @var UrlItemsProviderRegistryInterface */
-    private $urlItemsProviderRegistry;
 
     /** @var SitemapDumperInterface */
     private $sitemapDumper;
@@ -41,22 +36,19 @@ class GenerateSitemapByWebsiteAndTypeProcessor implements MessageProcessorInterf
     private $logger;
 
     /**
-     * @param JobRunner                         $jobRunner
-     * @param ManagerRegistry                   $doctrine
-     * @param UrlItemsProviderRegistryInterface $urlItemsProviderRegistry
-     * @param SitemapDumperInterface            $sitemapDumper
-     * @param LoggerInterface                   $logger
+     * @param JobRunner              $jobRunner
+     * @param ManagerRegistry        $doctrine
+     * @param SitemapDumperInterface $sitemapDumper
+     * @param LoggerInterface        $logger
      */
     public function __construct(
         JobRunner $jobRunner,
         ManagerRegistry $doctrine,
-        UrlItemsProviderRegistryInterface $urlItemsProviderRegistry,
         SitemapDumperInterface $sitemapDumper,
         LoggerInterface $logger
     ) {
         $this->jobRunner = $jobRunner;
         $this->doctrine = $doctrine;
-        $this->urlItemsProviderRegistry = $urlItemsProviderRegistry;
         $this->sitemapDumper = $sitemapDumper;
         $this->logger = $logger;
     }
@@ -66,7 +58,7 @@ class GenerateSitemapByWebsiteAndTypeProcessor implements MessageProcessorInterf
      */
     public static function getSubscribedTopics()
     {
-        return [Topics::GENERATE_SITEMAP_BY_WEBSITE_AND_TYPE];
+        return [Topics::GENERATE_SITEMAP_INDEX_BY_WEBSITE];
     }
 
     /**
@@ -85,13 +77,13 @@ class GenerateSitemapByWebsiteAndTypeProcessor implements MessageProcessorInterf
                 if (null === $website) {
                     throw new \RuntimeException('The website does not exist.');
                 }
-                $this->sitemapDumper->dump($website, $body[self::VERSION], $body[self::TYPE]);
+                $this->sitemapDumper->dump($website, $body[self::VERSION], 'index');
 
                 return true;
             });
         } catch (\Exception $e) {
             $this->logger->error(
-                'Unexpected exception occurred during generating a sitemap of a specific type for a website.',
+                'Unexpected exception occurred during generating a sitemap index for a website.',
                 ['exception' => $e]
             );
 
@@ -123,15 +115,10 @@ class GenerateSitemapByWebsiteAndTypeProcessor implements MessageProcessorInterf
     private function getMessageResolver(): OptionsResolver
     {
         $resolver = new OptionsResolver();
-        $resolver->setRequired([self::JOB_ID, self::VERSION, self::WEBSITE_ID, self::TYPE]);
+        $resolver->setRequired([self::JOB_ID, self::VERSION, self::WEBSITE_ID]);
         $resolver->setAllowedTypes(self::JOB_ID, ['int']);
         $resolver->setAllowedTypes(self::VERSION, ['int']);
         $resolver->setAllowedTypes(self::WEBSITE_ID, ['int']);
-        $resolver->setAllowedTypes(self::TYPE, ['string']);
-        $resolver->setAllowedValues(
-            self::TYPE,
-            array_keys($this->urlItemsProviderRegistry->getProvidersIndexedByNames())
-        );
 
         return $resolver;
     }
