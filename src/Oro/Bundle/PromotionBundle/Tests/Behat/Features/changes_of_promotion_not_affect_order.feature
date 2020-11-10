@@ -13,9 +13,10 @@ Feature: Changes of Promotion not affect Order
     And I disable inventory management
     And I proceed as the Buyer
     And I do the order through completion, and should be on order view page
-    When I show column "Row Total (Discount Amount)" in "Order Line Items Grid" frontend grid
-    And I show column "Row Total (After Discount Including Tax)" in "Order Line Items Grid" frontend grid
-    And I show column "Row Total (After Discount Excluding Tax)" in "Order Line Items Grid" frontend grid
+    When I show the following columns in "Order Line Items Grid" frontend grid:
+      | Row Total (Discount Amount)              |
+      | Row Total (After Discount Including Tax) |
+      | Row Total (After Discount Excluding Tax) |
     Then I should see following "Order Line Items Grid" grid:
       | Product                | RTDA  | RTADIT | RTADET |
       | Product 1 Item #: SKU1 | $0.00 | $10.00 | $10.00 |
