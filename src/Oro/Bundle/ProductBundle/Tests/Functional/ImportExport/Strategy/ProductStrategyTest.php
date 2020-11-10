@@ -161,6 +161,36 @@ class ProductStrategyTest extends WebTestCase
         $this->assertEquals(['Error in row #1. Each product unit code should be unique'], $context->getErrors());
     }
 
+    public function testProcessNotEmptyConfigurableAttributes(): void
+    {
+        $context = new Context(['incremented_read' => true]);
+        $context->setValue('read_offset', 1);
+        $context->setValue('itemData', []);
+
+        $this->strategy->setImportExportContext($context);
+
+        /** @var ProductUnit $unit */
+        $unit = $this->getReference(LoadProductUnits::BOX);
+
+        /** @var AttributeFamily $attributeFamily */
+        $attributeFamily = $this->getEntity(AttributeFamily::class, ['code' => 'default_family']);
+
+        // Prepare new product that is imported in same batch and will be used later as variant link
+        $newProduct = $this->createProduct('PR-V2', $attributeFamily, $unit, $this->getInventoryStatus());
+        $newProduct->setType(Product::TYPE_CONFIGURABLE);
+
+        /** @var Product $processedNewProduct */
+        $this->strategy->process($newProduct);
+        $this->assertEquals(
+            [
+                'Error in row #1. Configurable product requires at least one filterable attribute ' .
+                'of the Select or Boolean type to enable product variants. ' .
+                'The provided product family does not fit for configurable products.'
+            ],
+            $context->getErrors()
+        );
+    }
+
     /**
      * @return AbstractEnumValue
      */
