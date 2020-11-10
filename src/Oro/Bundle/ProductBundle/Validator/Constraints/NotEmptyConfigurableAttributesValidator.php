@@ -7,6 +7,9 @@ use Oro\Bundle\ProductBundle\Provider\VariantFieldProvider;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
+/**
+ * Checks for at least one configurable attribute in a Product family.
+ */
 class NotEmptyConfigurableAttributesValidator extends ConstraintValidator
 {
     const ALIAS = 'not_empty_configurable_attributes';
@@ -42,7 +45,7 @@ class NotEmptyConfigurableAttributesValidator extends ConstraintValidator
 
         if ($value->isConfigurable()) {
             $attributeFamily = $value->getAttributeFamily();
-            if (!$this->provider->getVariantFields($attributeFamily)) {
+            if ($attributeFamily && !$this->provider->getVariantFields($attributeFamily)) {
                 $this->context->addViolation($constraint->message, [
                     '%attributeFamily%' => $attributeFamily->getCode(),
                 ]);

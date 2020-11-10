@@ -11,10 +11,14 @@ oro:
             unique_variants_combination.message: "Can't save product variants. Configurable attribute combinations should be unique."
             variant_field_required.message: "Can't save product variants. Configurable attribute should be selected"
             has_no_filled_field.message: "Can't save product variants. Product \"%product_sku%\" has no filled field(s) \"%fields%\" "
+            belongs_another_family.message: "Can't save product variants. Configurable product and product variant(s) \"%products_sku%\" should belongs to the same product family."
 
         attribute_family:
             used_in_product_variant_field.message: "Attributes %names% used as configurable attributes in products: %products%"
             empty_configurable_attributes.message: "Configurable product requires at least one filterable attribute of the Select or Boolean type to enable product variants. The provided product family does not fit for configurable products."
+            ignored_attributes.message: >
+                {1} Row contains a non-empty value in "%attributes%" column. This product does not have "%attributes%" attribute and this value was ignored.|
+                ]1,Inf[ Row contains a non-empty values in "%attributes%" columns. This product does not have "%attributes%" attributes and this values were ignored.
 
         product_variant_field:
             unique_variants_combination_simple_product.message: "The values of additional fields provided cannot be saved because they will violate unique constraint of variant fields in these configurable products: %products%"
