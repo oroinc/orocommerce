@@ -1,7 +1,6 @@
 import __ from 'orotranslation/js/translator';
 import BaseTypeBuilder from 'orocms/js/app/grapesjs/type-builders/base-type-builder';
 import openDigitalAssetsCommand from 'orocms/js/app/grapesjs/modules/open-digital-assets-command';
-import DigitalAssetHelper from 'orocms/js/app/grapesjs/helpers/digital-asset-helper';
 
 const ImageTypeBuilder = BaseTypeBuilder.extend({
     parentType: 'image',
@@ -44,10 +43,9 @@ const ImageTypeBuilder = BaseTypeBuilder.extend({
             const {$el, model} = this;
 
             const attrs = model.get('attributes');
-            const imageSrc = DigitalAssetHelper.getImageUrlFromTwigTag(attrs['data-src-exp']);
 
-            if (imageSrc) {
-                $el.attr('src', imageSrc).removeClass(this.classEmpty);
+            if (attrs['data-src-exp']) {
+                $el.attr('src', attrs['data-src-exp']).removeClass(this.classEmpty);
             } else {
                 $el.attr('src', '').addClass(this.classEmpty);
             }
@@ -61,12 +59,12 @@ const ImageTypeBuilder = BaseTypeBuilder.extend({
                     title: __('oro.cms.wysiwyg.digital_asset.image.title'),
                     routeName: 'oro_digital_asset_widget_choose_image',
                     onSelect: function(digitalAssetModel) {
-                        const {digitalAssetId, uuid, title} = digitalAssetModel.get('previewMetadata');
+                        const {url, title} = digitalAssetModel.get('previewMetadata');
 
                         digitalAssetImageComponentModel
                             .addAttributes({
                                 'alt': title || '',
-                                'data-src-exp': `{{ wysiwyg_image('${digitalAssetId}','${uuid}') }}`
+                                'data-src-exp': url
                             });
                     }
                 }

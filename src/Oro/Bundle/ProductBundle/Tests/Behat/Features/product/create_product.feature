@@ -60,9 +60,11 @@ Feature: Create product
     When I save form
     Then I should see "Please remove not permitted HTML-tags in the content field: - src attribute on <iframe> should be removed (near <iframe src=" error message
     When fill "Create Product Form" with:
-      | Description | Sample content <img alt=\"cat1_wysiwyg_image\" src=\"{{ wysiwyg_image(13, 'f23ac0ff-2cc0-4d9e-8d00-78053a569a50') }}\"/> |
+      | Description | Sample content <img alt=\"cat1_wysiwyg_image\" src=\"{{ wysiwyg_image(13, 'f23ac0ff-2cc0-4d9e-8d00-78053a569a50') }}\"/><a title=\"cat1_wysiwyg_file\" href=\"{{ wysiwyg_file(13, '902dfb57-57c0-4a2f-88bf-adf365d74895') }}\">File of cat1</a> |
     And I save form
     Then I should see "Product has been saved" flash message
+    And I should not see text matching "\{\{ wysiwyg_image\(" in WYSIWYG editor
+    And I should not see text matching "\{\{ wysiwyg_file\(" in WYSIWYG editor
     And I remember "listing" image filtered ID
     And I remember "main" image filtered ID
 
@@ -78,13 +80,16 @@ Feature: Create product
 
   Scenario: Check created product on view page
     When I click view "Test123" in grid
-    And I should see product with:
+    Then I should see product with:
       | SKU            | Test123      |
       | Name           | Test Product |
       | Type           | Simple       |
       | Product Family | Default      |
     And image "cat1 wysiwyg image" is loaded
     And I remember filename of the image "cat1 wysiwyg image"
+    And I remember filename of the file "cat1 wysiwyg file"
+    And I click on "More Link"
+    And I should see "File of cat1"
 
   Scenario: Check image is displayed on store front
     Given I proceed as the Buyer
@@ -93,18 +98,25 @@ Feature: Create product
     And I click "Search Button"
     When I click "View Details" for "test123" product
     Then image "cat1 wysiwyg image" is loaded
-    And filename of the image "cat1 wysiwyg image" is as remembered 
+    And filename of the image "cat1 wysiwyg image" is as remembered
+    And filename of the file "cat1 wysiwyg file" is as remembered
+    And I should see "File of cat1"
 
   Scenario: Add another image to description
     Given I proceed as the Admin
     And I click "Edit"
     When fill "Product Form" with:
-      | Description | Sample content <img alt=\"cat1_wysiwyg_image\" src=\"{{ wysiwyg_image(13, 'f23ac0ff-2cc0-4d9e-8d00-78053a569a50') }}\"/> Another image: <img alt=\"cat2_wysiwyg_image\" src=\"{{ wysiwyg_image(14, 'c840eec3-4b10-4682-b5cd-4d51fe008b6f') }}\"/> |
-    And I save and close form
+      | Description | Sample content <img alt=\"cat1_wysiwyg_image\" src=\"{{ wysiwyg_image(13, 'f23ac0ff-2cc0-4d9e-8d00-78053a569a50') }}\"/><a title=\"cat1_wysiwyg_file\" href=\"{{ wysiwyg_file(13, '902dfb57-57c0-4a2f-88bf-adf365d74895') }}\">File of cat1</a> Another image: <img alt=\"cat2_wysiwyg_image\" src=\"{{ wysiwyg_image(14, 'c840eec3-4b10-4682-b5cd-4d51fe008b6f') }}\"/> |
+    And I save form
+    Then I should not see text matching "\{\{ wysiwyg_image\(" in WYSIWYG editor
+    And I should not see text matching "\{\{ wysiwyg_file\(" in WYSIWYG editor
+    When I save and close form
     Then I should see "Product has been saved" flash message
     And image "cat2 wysiwyg image" is loaded
     And I remember filename of the image "cat2 wysiwyg image"
     And filename of the image "cat1 wysiwyg image" is as remembered
+    And filename of the file "cat1 wysiwyg file" is as remembered
+    And I should see "File of cat1"
 
   Scenario: Check images are displayed on store front
     Given I proceed as the Buyer
@@ -113,6 +125,8 @@ Feature: Create product
     And image "cat2 wysiwyg image" is loaded
     And filename of the image "cat1 wysiwyg image" is as remembered
     And filename of the image "cat2 wysiwyg image" is as remembered
+    And filename of the file "cat1 wysiwyg file" is as remembered
+    And I should see "File of cat1"
 
   Scenario: Disable guest access and check product image is still visible on grid and form
     Given I proceed as the Admin
@@ -154,3 +168,5 @@ Feature: Create product
     And image "cat2 wysiwyg image" is loaded
     And filename of the image "cat1 wysiwyg image" is not as remembered
     And filename of the image "cat2 wysiwyg image" is as remembered
+    And filename of the file "cat1 wysiwyg file" is not as remembered
+    And I should see "File of cat1"

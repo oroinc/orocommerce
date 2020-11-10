@@ -13,9 +13,3 @@ services:
             - ['setContainer', ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: container.service_subscriber }
-
-    Oro\Bundle\CMSBundle\Controller\WysiwygDigitalAssetController:
-        calls:
-            - ['setContainer', ['@Psr\Container\ContainerInterface']]
-        tags:
-            - { name: container.service_subscriber }
