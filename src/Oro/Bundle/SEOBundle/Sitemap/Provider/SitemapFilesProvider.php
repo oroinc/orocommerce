@@ -9,37 +9,30 @@ use Oro\Bundle\SEOBundle\Sitemap\Filesystem\SitemapFilesystemAdapter;
 use Oro\Bundle\SEOBundle\Sitemap\Storage\SitemapStorageFactory;
 use Oro\Component\SEO\Provider\UrlItemsProviderInterface;
 use Oro\Component\Website\WebsiteInterface;
-use Symfony\Component\Finder\Finder;
 
 /**
  * Sitemap URL Items Provider for sitemap index entities.
  */
 class SitemapFilesProvider implements UrlItemsProviderInterface
 {
-    /**
-     * @var SitemapFilesystemAdapter
-     */
+    /** @var SitemapFilesystemAdapter */
     private $filesystemAdapter;
 
-    /**
-     * @var CanonicalUrlGenerator
-     */
+    /** @var CanonicalUrlGenerator */
     private $canonicalUrlGenerator;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $webPath;
 
     /**
      * @param SitemapFilesystemAdapter $filesystemAdapter
-     * @param CanonicalUrlGenerator $canonicalUrlGenerator
-     * @param string $webPath
+     * @param CanonicalUrlGenerator    $canonicalUrlGenerator
+     * @param string                   $webPath
      */
     public function __construct(
         SitemapFilesystemAdapter $filesystemAdapter,
         CanonicalUrlGenerator $canonicalUrlGenerator,
-        $webPath
+        string $webPath
     ) {
         $this->filesystemAdapter = $filesystemAdapter;
         $this->canonicalUrlGenerator = $canonicalUrlGenerator;
@@ -51,21 +44,21 @@ class SitemapFilesProvider implements UrlItemsProviderInterface
      */
     public function getUrlItems(WebsiteInterface $website, $version)
     {
-        $files = $this->filesystemAdapter->getSitemapFiles($website, $version);
-        if ($files instanceof Finder) {
-            $files->notName(SitemapDumper::getFilenamePattern(SitemapStorageFactory::TYPE_SITEMAP_INDEX));
-        }
+        $files = $this->filesystemAdapter->getSitemapFiles(
+            $website,
+            null,
+            SitemapDumper::getFilenamePattern(SitemapStorageFactory::TYPE_SITEMAP_INDEX)
+        );
 
         foreach ($files as $file) {
             $url = sprintf(
-                '%s/%d/%s/%s',
+                '%s/%d/%s',
                 $this->webPath,
                 $website->getId(),
-                SitemapFilesystemAdapter::ACTUAL_VERSION,
-                $file->getFilename()
+                pathinfo($file->getName(), PATHINFO_BASENAME)
             );
 
-            $mTime = \DateTime::createFromFormat('U', $file->getMTime(), new \DateTimeZone('UTC'));
+            $mTime = \DateTime::createFromFormat('U', $file->getMtime(), new \DateTimeZone('UTC'));
 
             yield new UrlItem($this->getSitemapFileUrl($website, $url), $mTime);
         }
@@ -73,7 +66,8 @@ class SitemapFilesProvider implements UrlItemsProviderInterface
 
     /**
      * @param WebsiteInterface $website
-     * @param string $url
+     * @param string           $url
+     *
      * @return string
      */
     protected function getSitemapFileUrl(WebsiteInterface $website, string $url): string
