@@ -128,7 +128,7 @@ define(function(require) {
         renderHint: function() {
             const $pricesHint = this.getElement('pricesHint');
             const prices = this.getPreparedPriceForHint();
-            if (0 === $pricesHint.length || 0 === _.keys(prices).length) {
+            if (0 === $pricesHint.length) {
                 return;
             }
 

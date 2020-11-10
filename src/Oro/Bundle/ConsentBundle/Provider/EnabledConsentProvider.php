@@ -146,9 +146,9 @@ class EnabledConsentProvider
             return [];
         }
 
-        $consentConfigValue = $this->configManager->get(
+        $consentConfigValue = (array) $this->configManager->get(
             Configuration::getConfigKey(Configuration::ENABLED_CONSENTS),
-            [],
+            false,
             false,
             $website
         );

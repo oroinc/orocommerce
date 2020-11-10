@@ -10,7 +10,6 @@ use Oro\Bundle\SEOBundle\Provider\WebsiteForSitemapProviderInterface;
 use Oro\Bundle\SEOBundle\Sitemap\Filesystem\GaufretteFilesystemAdapter;
 use Oro\Bundle\SEOBundle\Sitemap\Website\WebsiteUrlProvidersServiceInterface;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
-use Oro\Component\MessageQueue\Client\MessagePriority;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
@@ -23,7 +22,7 @@ use Oro\Component\Website\WebsiteInterface;
 use Psr\Log\LoggerInterface;
 
 /**
- * Async processor to generate sitemap files.
+ * Generates sitemaps for all websites.
  */
 class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
@@ -194,20 +193,17 @@ class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscr
      */
     private function createFinishJobs(Job $job, array $websites): void
     {
-        $context = $this->dependentJobService->createDependentJobContext($job->getRootJob());
-        $websiteIds = [];
-        foreach ($websites as $website) {
-            $websiteIds[] = $website->getId();
-            $context->addDependentJob(
-                Topics::GENERATE_SITEMAP_INDEX_BY_WEBSITE,
-                $this->indexMessageFactory->createMessage($website, $this->version)
-            );
-        }
+        $websiteIds = array_map(
+            function ($website) {
+                return $website->getId();
+            },
+            $websites
+        );
 
+        $context = $this->dependentJobService->createDependentJobContext($job->getRootJob());
         $context->addDependentJob(
-            Topics::GENERATE_SITEMAP_MOVE_GENERATED_FILES,
-            ['websiteIds' => $websiteIds],
-            MessagePriority::VERY_LOW
+            Topics::GENERATE_SITEMAP_INDEX,
+            ['jobId' => $job->getId(), 'version' => $this->version, 'websiteIds' => $websiteIds]
         );
         $this->dependentJobService->saveDependentJob($context);
     }

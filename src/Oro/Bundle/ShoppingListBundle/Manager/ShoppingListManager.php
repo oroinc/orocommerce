@@ -234,10 +234,7 @@ class ShoppingListManager
             return 1;
         }
 
-        return $this->removeProduct(
-            $lineItem->getShoppingList(),
-            $parentProduct ? $parentProduct : $lineItem->getProduct()
-        );
+        return $this->removeProduct($lineItem->getShoppingList(), $parentProduct ?: $lineItem->getProduct());
     }
 
     /**
@@ -290,7 +287,8 @@ class ShoppingListManager
     }
 
     /**
-     * Remove shopping list line items containing products with unavailable inventory statuses.
+     * Removes shopping list line items containing products with unavailable inventory statuses.
+     * Recalculates subtotals if line items were removed.
      *
      * @param ShoppingList $shoppingList
      */
@@ -302,8 +300,9 @@ class ShoppingListManager
             ->getRepository(LineItem::class);
 
         $allowedStatuses = $this->configManager->get('oro_product.general_frontend_product_visibility');
-        $repository->deleteItemsByShoppingListAndInventoryStatuses($shoppingList, $allowedStatuses);
-        $repository->deleteDisabledItemsByShoppingList($shoppingList);
+        if ($repository->deleteNotAllowedLineItemsFromShoppingList($shoppingList, $allowedStatuses)) {
+            $this->totalManager->recalculateTotals($shoppingList, true);
+        }
     }
 
     /**
@@ -350,9 +349,6 @@ class ShoppingListManager
      */
     private function prepareLineItem(LineItem $lineItem, ShoppingList $shoppingList)
     {
-        $this->ensureProductTypeAllowed($lineItem);
-
-        $lineItem->setShoppingList($shoppingList);
         if (null === $lineItem->getCustomerUser() && $shoppingList->getCustomerUser()) {
             $lineItem->setCustomerUser($shoppingList->getCustomerUser());
         }
@@ -373,11 +369,11 @@ class ShoppingListManager
     private function handleLineItem(LineItem $lineItem, ShoppingList $shoppingList, \Closure $func)
     {
         $em = $this->getEntityManager();
-        $duplicate = $this->getLineItemRepository($em)->findDuplicate($lineItem);
-        if ($duplicate instanceof LineItem && $shoppingList->getId()) {
+        $duplicate = $this->getLineItemRepository($em)->findDuplicateInShoppingList($lineItem, $shoppingList);
+        if ($duplicate) {
             $func($duplicate);
             $em->remove($lineItem);
-        } elseif ($lineItem->getQuantity() > 0) {
+        } elseif ($lineItem->getQuantity() > 0 || !$lineItem->getProduct()->isSimple()) {
             $shoppingList->addLineItem($lineItem);
             $em->persist($lineItem);
         }
@@ -408,20 +404,6 @@ class ShoppingListManager
     }
 
     /**
-     * @param LineItem $lineItem
-     *
-     * @throws \InvalidArgumentException
-     */
-    private function ensureProductTypeAllowed(LineItem $lineItem)
-    {
-        $product = $lineItem->getProduct();
-
-        if ($product && !$product->isSimple()) {
-            throw new \InvalidArgumentException('Can not save not simple product');
-        }
-    }
-
-    /**
      * @return CustomerUser|null
      */
     private function getCustomerUser()
@@ -442,6 +424,8 @@ class ShoppingListManager
     }
 
     /**
+     * @param EntityManagerInterface $em
+     *
      * @return LineItemRepository
      */
     private function getLineItemRepository(EntityManagerInterface $em)

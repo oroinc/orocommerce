@@ -34,7 +34,7 @@ class MakeVersionActualListenerTest extends \PHPUnit\Framework\TestCase
         $version = 'some_version';
 
         $this->filesystemAdapter->expects($this->once())
-            ->method('makeNewerVersionActual')
+            ->method('dumpVersion')
             ->with($website, $version);
         $event = new OnSitemapDumpFinishEvent($website, $version);
         $this->listener->onSitemapDumpStorage($event);

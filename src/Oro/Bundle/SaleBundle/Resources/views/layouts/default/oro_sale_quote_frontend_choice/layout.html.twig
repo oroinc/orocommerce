@@ -25,7 +25,7 @@
 
                 {{ form_widget(form.demandProducts) }}
                 {{ form_rest(form) }}
-                <div class="order-checkout-widget text-right">
+                <div class="order-checkout-widget">
                     {{ block_widget(block) }}
                 </div>
 
@@ -35,7 +35,7 @@
 {% endblock %}
 
 {% block _quote_choice_submit_button_widget %}
-    <div class=" order-checkout-widget text-right">
+    <div class=" order-checkout-widget">
         <div class=" text-right">
             <button class="btn" type="submit">{{ 'oro.frontend.sale.quote.submit_to_order.submit'|trans }}</button>
         </div>
@@ -44,8 +44,8 @@
 
 {% block _quote_choice_subtotals_widget %}
     <div id="quote-choice-subtotal" class="order-checkout-widget__container-wrapper">
-        <div class="order-checkout-widget__container order-checkout-widget__container--lg">
-            <table class="order-checkout-widget__table pull-right">
+        <div class="order-checkout-widget__container order-checkout-widget__container--fixed-width">
+            <table class="order-checkout-widget__table">
                 {% for subtotal in subtotals %}
                     {% if subtotal.visible %}
                         <tr>
@@ -55,7 +55,7 @@
                     {% endif %}
                 {% endfor %}
                 <tr>
-                    <td class="order-checkout-widget__total"><span class="text-uppercase">{{ total.label }}</span></td>
+                    <td class="order-checkout-widget__total">{{ total.label }}</td>
                     <td class="order-checkout-widget__total"><span class="order-checkout-widget__total-price">{{ total.amount|oro_format_currency({'currency': total.currency}) }}</span></td>
                 </tr>
             </table>

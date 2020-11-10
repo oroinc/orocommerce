@@ -30,7 +30,7 @@ Feature: Enter coupon code on Front Store
     And I click "I have a Coupon Code"
     When I type "CoupoN-1" in "CouponCodeInput"
     And I click "Apply"
-    Then I should see "Invalid coupon code, please try another one"
+    Then I should see "Invalid coupon code, please try another"
     When I type "coupon-1" in "CouponCodeInput"
     And I click "Apply"
     Then I should see "Coupon code has been applied successfully, please review discounts" flash message
@@ -43,7 +43,7 @@ Feature: Enter coupon code on Front Store
     Then I should see "This coupon has been already added"
     When I type "not-existing-coupon" in "CouponCodeInput"
     And I click "Apply"
-    Then I should see "Invalid coupon code, please try another one"
+    Then I should see "Invalid coupon code, please try another"
     And I should not see "not-existing-coupon" in the "Coupons List" element
 
   Scenario: Removed coupon should not give discount

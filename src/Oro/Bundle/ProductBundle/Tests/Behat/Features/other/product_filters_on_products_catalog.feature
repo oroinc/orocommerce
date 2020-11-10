@@ -1,7 +1,6 @@
 @ticket-BB-7225
 @fixture-OroProductBundle:product_frontend.yml
 Feature: Product Filters On Products Catalog
-  ToDo: BAP-16103 Add missing descriptions to the Behat features
 
   Scenario: Check Price filter
     Given I login as AmandaRCole@example.org buyer

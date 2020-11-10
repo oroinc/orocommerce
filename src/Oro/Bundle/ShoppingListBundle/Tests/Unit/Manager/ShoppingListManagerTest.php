@@ -72,15 +72,15 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $this->lineItemRepository = $this->createMock(LineItemRepository::class);
         $this->lineItemRepository
             ->expects($this->any())
-            ->method('findDuplicate')
-            ->willReturnCallback(function (LineItem $lineItem) {
+            ->method('findDuplicateInShoppingList')
+            ->willReturnCallback(function (LineItem $lineItem, ShoppingList $shoppingList) {
                 /** @var ArrayCollection $shoppingListLineItems */
-                $shoppingListLineItems = $lineItem->getShoppingList()->getLineItems();
-                if ($lineItem->getShoppingList()->getId() === 1
+                $shoppingListLineItems = $shoppingList->getLineItems();
+                if ($shoppingList->getId() === 1
                     && $shoppingListLineItems->count() > 0
                     && $shoppingListLineItems->current()->getUnit() === $lineItem->getUnit()
                 ) {
-                    return $lineItem->getShoppingList()->getLineItems()->current();
+                    return $shoppingList->getLineItems()->current();
                 }
 
                 return null;
@@ -303,28 +303,52 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($website, $shoppingList->getWebsite());
     }
 
-    /**
-     * @expectedException \LogicException
-     * @expectedExceptionMessage The customer user does not exist in the security context.
-     */
     public function testCreateWhenNoCustomerUser()
     {
         $this->tokenAccessor->expects($this->once())
             ->method('getUser')
             ->willReturn(null);
 
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('The customer user does not exist in the security context.');
+
         $this->manager->create();
     }
 
-    public function testAddLineItem()
+    /**
+     * @param LineItem $lineItem
+     *
+     * @dataProvider addLineItemDataProvider
+     */
+    public function testAddLineItem(LineItem $lineItem)
     {
         $shoppingList = new ShoppingList();
-        $lineItem = new LineItem();
 
         $this->manager->addLineItem($lineItem, $shoppingList);
         $this->assertCount(1, $shoppingList->getLineItems());
         $this->assertNull($lineItem->getCustomerUser());
         $this->assertNull($lineItem->getOrganization());
+    }
+
+    /**
+     * @return array
+     */
+    public function addLineItemDataProvider(): array
+    {
+        $configurableLineItem = new LineItem();
+        $configurableProduct = new Product();
+        $configurableProduct->setType(Product::TYPE_CONFIGURABLE);
+        $configurableLineItem->setProduct($configurableProduct);
+        $configurableLineItem->setQuantity(0);
+
+        return [
+            'empty line item' => [
+                'lineItem' => new LineItem(),
+            ],
+            'empty configurable product' => [
+                'lineItem' => $configurableLineItem,
+            ],
+        ];
     }
 
     public function testAddLineItemWithShoppingListData()
@@ -398,21 +422,6 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         /** @var LineItem $resultingItem */
         $resultingItem = array_shift($persistedLineItems);
         $this->assertSame('Notes Duplicated Notes', $resultingItem->getNotes());
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Can not save not simple product
-     */
-    public function testAddLineItemNotAllowedProductType()
-    {
-        $shoppingList = new ShoppingList();
-        $lineItem = new LineItem();
-        $configurableProduct = new Product();
-        $configurableProduct->setType(Product::TYPE_CONFIGURABLE);
-        $lineItem->setProduct($configurableProduct);
-
-        $this->manager->addLineItem($lineItem, $shoppingList);
     }
 
     public function testGetLineItemExistingItem()
@@ -773,7 +782,7 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(1, $countDeletedItems);
     }
 
-    public function testActualizeLineItems()
+    public function testActualizeLineItemsWhenNoDeletedLineItems(): void
     {
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getEntity(ShoppingList::class, ['id' => 42]);
@@ -785,11 +794,37 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             ->willReturn($allowedStatuses);
 
         $this->lineItemRepository->expects($this->once())
-            ->method('deleteItemsByShoppingListAndInventoryStatuses')
-            ->with($shoppingList, $allowedStatuses);
+            ->method('deleteNotAllowedLineItemsFromShoppingList')
+            ->with($shoppingList, $allowedStatuses)
+            ->willReturn(0);
+
+        $this->totalManager
+            ->expects($this->never())
+            ->method('recalculateTotals');
+
+        $this->manager->actualizeLineItems($shoppingList);
+    }
+
+    public function testActualizeLineItemsWhenLineItemsDeleted(): void
+    {
+        /** @var ShoppingList $shoppingList */
+        $shoppingList = $this->getEntity(ShoppingList::class, ['id' => 42]);
+        $allowedStatuses = ['in_stock'];
+
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_product.general_frontend_product_visibility')
+            ->willReturn($allowedStatuses);
+
         $this->lineItemRepository->expects($this->once())
-            ->method('deleteDisabledItemsByShoppingList')
-            ->with($shoppingList);
+            ->method('deleteNotAllowedLineItemsFromShoppingList')
+            ->with($shoppingList, $allowedStatuses)
+            ->willReturn(2);
+
+        $this->totalManager
+            ->expects($this->once())
+            ->method('recalculateTotals')
+            ->with($shoppingList, true);
 
         $this->manager->actualizeLineItems($shoppingList);
     }

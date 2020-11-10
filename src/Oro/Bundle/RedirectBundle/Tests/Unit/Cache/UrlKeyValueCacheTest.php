@@ -90,11 +90,6 @@ class UrlKeyValueCacheTest extends \PHPUnit\Framework\TestCase
         $keyLocalization = 'test_YToxOntzOjI6ImlkIjtpOjE7fQ==_1_u';
 
         $this->localCache->expects($this->once())
-            ->method('contains')
-            ->with($keyLocalization)
-            ->willReturn(true);
-
-        $this->localCache->expects($this->once())
             ->method('fetch')
             ->with($keyLocalization)
             ->willReturn($url);
@@ -116,18 +111,13 @@ class UrlKeyValueCacheTest extends \PHPUnit\Framework\TestCase
             ->willReturn(null);
 
         $this->localCache->expects($this->once())
-            ->method('contains')
-            ->with($keyLocalization)
-            ->willReturn(false);
-
-        $this->localCache->expects($this->once())
             ->method('save')
             ->with($keyLocalization, null);
 
         $this->localCache->expects($this->once())
             ->method('fetch')
             ->with($keyLocalization)
-            ->willReturn($url);
+            ->willReturn(false);
 
         $this->assertSame($url, $this->urlCache->getUrl($routeName, $routeParameters, $localization));
     }
@@ -144,16 +134,13 @@ class UrlKeyValueCacheTest extends \PHPUnit\Framework\TestCase
             ->with($keyLocalization)
             ->willReturn(false);
 
-        $this->localCache->expects($this->once())
-            ->method('contains')
-            ->with($keyLocalization)
-            ->willReturn(false);
-
         $this->localCache->expects($this->never())
             ->method('save');
 
-        $this->localCache->expects($this->never())
-            ->method('fetch');
+        $this->localCache->expects($this->once())
+            ->method('fetch')
+            ->with($keyLocalization)
+            ->willReturn(false);
 
         $this->assertFalse($this->urlCache->getUrl($routeName, $routeParameters, $localization));
     }
@@ -165,11 +152,6 @@ class UrlKeyValueCacheTest extends \PHPUnit\Framework\TestCase
         $localization = 1;
         $slug = 'test';
         $keyLocalization = 'test_YToxOntzOjI6ImlkIjtpOjE7fQ==_1_s';
-
-        $this->localCache->expects($this->once())
-            ->method('contains')
-            ->with($keyLocalization)
-            ->willReturn(true);
 
         $this->localCache->expects($this->once())
             ->method('fetch')

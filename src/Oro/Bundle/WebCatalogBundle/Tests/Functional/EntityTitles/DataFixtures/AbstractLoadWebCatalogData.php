@@ -29,8 +29,11 @@ abstract class AbstractLoadWebCatalogData extends AbstractFixture implements Dep
         /** @var WebCatalog $webCatalog */
         $webCatalog = $this->getReference(LoadWebCatalogData::CATALOG_1);
 
-        /** @var SluggableInterface $entity */
-        $entity = $this->getEntity();
+        /** @var SluggableInterface[] $entities */
+        $entities = $this->getEntity();
+        if (!is_array($entities)) {
+            $entities = [$entities];
+        }
 
         /** @var Scope $scope */
         $scope = $this->getReference(LoadScopeData::DEFAULT_SCOPE);
@@ -44,26 +47,30 @@ abstract class AbstractLoadWebCatalogData extends AbstractFixture implements Dep
         $node->setDefaultTitle($nodeTitle);
         $node->addScope($scope);
 
-        $slug = new Slug();
-        $slug->setUrl(self::CONTENT_NODE_SLUG);
-        $slug->setRouteName($this->getRoute());
-        $slug->setRouteParameters(['id' => $entity->getId()]);
-        $slug->addScope($scope);
-
-        $variant = new ContentVariant();
-        $variant->setType($this->getContentVariantType());
-        $variant->setNode($node);
-        $variant->addScope($scope);
-
         $entitySetterMethod = $this->getEntitySetterMethod();
-        if (method_exists($variant, $entitySetterMethod)) {
-            $variant->$entitySetterMethod($entity);
+
+        foreach ($entities as $entity) {
+            $variant = new ContentVariant();
+            $variant->setType($this->getContentVariantType());
+            $variant->setNode($node);
+            $variant->addScope($scope);
+
+            $slug = new Slug();
+            $slug->setUrl(self::CONTENT_NODE_SLUG);
+            $slug->setRouteName($this->getRoute());
+            $slug->setRouteParameters(['id' => $entity->getId()]);
+            $slug->addScope($scope);
+
+            if (method_exists($variant, $entitySetterMethod)) {
+                $variant->$entitySetterMethod($entity);
+            }
+
+            $variant->addSlug($slug);
+
+            $manager->persist($slug);
+            $manager->persist($variant);
         }
 
-        $variant->addSlug($slug);
-
-        $manager->persist($slug);
-        $manager->persist($variant);
         $manager->persist($node);
         $this->setReference(self::CONTENT_NODE, $node);
 
@@ -86,7 +93,7 @@ abstract class AbstractLoadWebCatalogData extends AbstractFixture implements Dep
     abstract protected function getEntitySetterMethod();
 
     /**
-     * @return SluggableInterface
+     * @return SluggableInterface|SluggableInterface[]
      */
     abstract protected function getEntity();
 }

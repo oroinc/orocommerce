@@ -13,6 +13,20 @@ acls:
         category: "shopping"
         group_name: "commerce"
 
+    oro_shopping_list_frontend_delete:
+        type: entity
+        class: OroShoppingListBundle:ShoppingList
+        permission: DELETE
+        category: "shopping"
+        group_name: "commerce"
+
+    oro_shopping_list_frontend_duplicate:
+        type: entity
+        class: OroShoppingListBundle:ShoppingList
+        permission: DUPLICATE_SHOPPING_LIST
+        category: "shopping"
+        group_name: "commerce"
+
     oro_shopping_list_frontend_assign:
         type: entity
         class: OroShoppingListBundle:ShoppingList

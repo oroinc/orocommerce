@@ -16,7 +16,6 @@ use Oro\Bundle\FrontendTestFrameworkBundle\Test\WebsiteManagerTrait;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
-use Oro\Bundle\ProductBundle\Validator\Constraints\PrimaryProductUnitPrecision;
 use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
@@ -83,6 +82,31 @@ class ShoppingListRepositoryTest extends WebTestCase
     {
         /** @var ShoppingList[] $shoppingLists */
         $shoppingLists = $this->getRepository()->findByUser($this->aclHelper, ['list.updatedAt' => Criteria::ASC]);
+        $this->assertCount(6, $shoppingLists);
+
+        $updatedAt = null;
+
+        foreach ($shoppingLists as $shoppingList) {
+            $this->assertInstanceOf(ShoppingList::class, $shoppingList);
+            $this->assertSame($this->customerUser, $shoppingList->getCustomerUser());
+
+            if ($updatedAt) {
+                $this->assertTrue($updatedAt <= $shoppingList->getUpdatedAt());
+            }
+
+            $updatedAt = $shoppingList->getUpdatedAt();
+        }
+    }
+
+    public function testFindByCustomerUserId(): void
+    {
+        $customerUser = $this->getCustomerUser();
+        /** @var ShoppingList[] $shoppingLists */
+        $shoppingLists = $this->getRepository()->findByCustomerUserId(
+            $customerUser->getId(),
+            $this->aclHelper,
+            ['list.updatedAt' => Criteria::ASC]
+        );
         $this->assertCount(6, $shoppingLists);
 
         $updatedAt = null;
@@ -217,35 +241,115 @@ class ShoppingListRepositoryTest extends WebTestCase
 
     public function testFindForViewAction(): void
     {
-        $localization = $this->getReference('en_CA');
         $shoppingListRef = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
         $shoppingList = $this->getRepository()->findForViewAction($shoppingListRef->getId());
 
         $this->assertNotNull($shoppingList);
         $this->assertTrue($shoppingList->getLineItems()->isInitialized());
 
-        $lineItem = $shoppingList->getLineItems()[0];
+        $lineItem = $shoppingList->getLineItems()->first();
 
         $product = $lineItem->getProduct();
+        $this->assertProductLoaded($product);
+        $this->assertProductNamesLoaded($product);
+        $this->assertProductImagesLoaded($product);
+        $this->assertCategoryLoaded($product->getCategory());
+    }
+
+    public function testFindForViewActionWhenConfigurableProduct(): void
+    {
+        $shoppingListRef = $this->getReference(LoadShoppingLists::SHOPPING_LIST_5);
+        $shoppingList = $this->getRepository()->findForViewAction($shoppingListRef->getId());
+
+        $this->assertNotNull($shoppingList);
+        $this->assertTrue($shoppingList->getLineItems()->isInitialized());
+
+        $lineItem = $shoppingList->getLineItems()->filter(
+            static function ($lineItem) {
+                return $lineItem->getParentProduct();
+            }
+        )->first();
+
+        $product = $lineItem->getProduct();
+        $this->assertProductLoaded($product);
+
+        $parentProduct = $lineItem->getParentProduct();
+        $this->assertProductLoaded($parentProduct);
+        $this->assertProductNamesLoaded($parentProduct);
+        $this->assertProductImagesLoaded($parentProduct);
+        $this->assertProductImagesLoaded($product);
+        $this->assertCategoryLoaded($parentProduct->getCategory());
+    }
+
+    public function testPreloadLineItemsForViewAction(): void
+    {
+        $this->getContainer()->get('oro_entity.doctrine_helper')
+            ->getEntityManagerForClass(ShoppingList::class)
+            ->clear();
+
+        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_5);
+        $lineItemRef = $this->getReference(LoadShoppingListLineItems::LINE_ITEM_4);
+
+        $this->getRepository()->preloadLineItemsForViewAction([$lineItemRef]);
+
+        $lineItem = $shoppingList->getLineItems()->get(0);
+
+        $product = $lineItem->getProduct();
+        $this->assertProductLoaded($product);
+        $this->assertProductNamesLoaded($product);
+        $this->assertProductImagesLoaded($product);
+        $this->assertCategoryLoaded($product->getCategory());
+
+        $lineItem = $shoppingList->getLineItems()->get(1);
+        $product = $lineItem->getProduct();
+
+        $this->assertInstanceOf(Product::class, $product);
+        if ($product instanceof Proxy) {
+            $this->assertFalse($product->__isInitialized());
+        }
+    }
+
+    /**
+     * @param Product $product
+     */
+    private function assertProductLoaded(Product $product): void
+    {
         $this->assertNotProxyOrInitialized($product, Product::class);
-        $this->assertTrue($product->getUnitPrecisions()->isInitialized());
-        $this->assertNotProxyOrInitialized($product->getPrimaryUnitPrecision(), PrimaryProductUnitPrecision::class);
         $this->assertNotProxyOrInitialized($product->getMinimumQuantityToOrder(), EntityFieldFallbackValue::class);
         $this->assertNotProxyOrInitialized($product->getMaximumQuantityToOrder(), EntityFieldFallbackValue::class);
         $this->assertNotProxyOrInitialized($product->getHighlightLowInventory(), EntityFieldFallbackValue::class);
         $this->assertNotProxyOrInitialized($product->getIsUpcoming(), EntityFieldFallbackValue::class);
+    }
+
+    /**
+     * @param Product $product
+     */
+    private function assertProductNamesLoaded(Product $product): void
+    {
+        $localization = $this->getReference('en_CA');
 
         $this->assertTrue($product->getNames()->isInitialized());
         $this->assertNotProxyOrInitialized($product->getDefaultName(), LocalizedFallbackValue::class);
         $this->assertNotProxyOrInitialized($product->getName($localization), LocalizedFallbackValue::class);
+    }
 
+    /**
+     * @param Product $product
+     */
+    private function assertProductImagesLoaded(Product $product): void
+    {
         $this->assertTrue($product->getImages()->isInitialized());
         $productImage = $product->getImages()[0];
         $this->assertNotProxyOrInitialized($productImage, ProductImage::class);
         $this->assertNotProxyOrInitialized($productImage->getImage(), File::class);
         $this->assertTrue($productImage->getTypes()->isInitialized());
+    }
 
-        $category = $product->getCategory();
+    /**
+     * @param Category $category
+     */
+    private function assertCategoryLoaded(Category $category): void
+    {
         $this->assertNotProxyOrInitialized($category, Category::class);
         $this->assertNotProxyOrInitialized($category->getMinimumQuantityToOrder(), EntityFieldFallbackValue::class);
         $this->assertNotProxyOrInitialized($category->getMaximumQuantityToOrder(), EntityFieldFallbackValue::class);
@@ -259,10 +363,12 @@ class ShoppingListRepositoryTest extends WebTestCase
      */
     private function assertNotProxyOrInitialized($value, string $expectedClass): void
     {
-        if ($value instanceof Proxy) {
-            $this->assertTrue($value->__isInitialized());
-        } else {
-            $this->assertInstanceOf($expectedClass, $value);
+        if ($value !== null) {
+            if ($value instanceof Proxy) {
+                $this->assertTrue($value->__isInitialized());
+            } else {
+                $this->assertInstanceOf($expectedClass, $value);
+            }
         }
     }
 
@@ -272,7 +378,7 @@ class ShoppingListRepositoryTest extends WebTestCase
 
         $this->assertTrue(
             $shoppingListRepository->hasEmptyConfigurableLineItems(
-                $this->getReference(LoadShoppingLists::SHOPPING_LIST_5)
+                $this->getReference(LoadShoppingLists::SHOPPING_LIST_2)
             )
         );
 

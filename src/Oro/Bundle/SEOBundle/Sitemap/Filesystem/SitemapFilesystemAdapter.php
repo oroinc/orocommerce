@@ -2,12 +2,18 @@
 
 namespace Oro\Bundle\SEOBundle\Sitemap\Filesystem;
 
+use Gaufrette\File;
+use Oro\Bundle\GaufretteBundle\FileManager;
 use Oro\Bundle\SEOBundle\Sitemap\Storage\SitemapStorageInterface;
 use Oro\Component\SEO\Tools\Exception\SitemapFileWriterException;
 use Oro\Component\Website\WebsiteInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 
+/**
+ * Provides functionality to work with sitemap related files in a temporary private storage
+ * that is used during sitemap generation.
+ */
 class SitemapFilesystemAdapter
 {
     const ACTUAL_VERSION = 'actual';
@@ -28,6 +34,9 @@ class SitemapFilesystemAdapter
      */
     private $path;
 
+    /** @var FileManager */
+    private $fileManager;
+
     /**
      * @param Filesystem $filesystem
      * @param SitemapFileWriterInterface $fileWriter
@@ -44,6 +53,14 @@ class SitemapFilesystemAdapter
     }
 
     /**
+     * @param FileManager $fileManager
+     */
+    public function setFileManager(FileManager $fileManager)
+    {
+        $this->fileManager = $fileManager;
+    }
+
+    /**
      * @param string $filename
      * @param WebsiteInterface $website
      * @param string $version
@@ -57,11 +74,23 @@ class SitemapFilesystemAdapter
         SitemapStorageInterface $sitemapUrlsStorage
     ) {
         if ($sitemapUrlsStorage->getUrlItemsCount() > 0) {
-            $path = $this->getVersionedPath($website, $version);
-            $this->filesystem->mkdir($path);
-
-            $this->fileWriter->saveSitemap($sitemapUrlsStorage->getContents(), $path . DIRECTORY_SEPARATOR . $filename);
+            $this->fileWriter->saveSitemap(
+                $sitemapUrlsStorage->getContents(),
+                $website->getId() . DIRECTORY_SEPARATOR . self::ACTUAL_VERSION . DIRECTORY_SEPARATOR . $filename
+            );
         }
+    }
+
+    /**
+     * @param WebsiteInterface $website
+     * @param string           $version
+     */
+    public function dumpVersion(WebsiteInterface $website, string $version)
+    {
+        $this->fileManager->writeToStorage(
+            $version,
+            $website->getId() . DIRECTORY_SEPARATOR . self::VERSION_FILE_NAME
+        );
     }
 
     /**
@@ -136,6 +165,36 @@ class SitemapFilesystemAdapter
         }
 
         return $files;
+    }
+
+    /**
+     * @deprecated At the next versions this method will replace 'getSitemapFiles' method.
+     * @param WebsiteInterface $website
+     * @param string|null      $pattern
+     * @param string|null      $notPattern
+     * @return File[]
+     */
+    public function getSitemapFilesForWebsite(
+        WebsiteInterface $website,
+        string $pattern = null,
+        string $notPattern = null
+    ) {
+        $iterator = new FilenameFilterIterator(
+            new \ArrayIterator(
+                $this->fileManager->findFiles(
+                    $website->getId() . DIRECTORY_SEPARATOR . self::ACTUAL_VERSION . DIRECTORY_SEPARATOR
+                )
+            ),
+            $pattern ? [$pattern] : [],
+            $notPattern ? [self::VERSION_FILE_NAME, $notPattern] : [self::VERSION_FILE_NAME]
+        );
+
+        return array_map(
+            function (string $fileName) {
+                return $this->fileManager->getFile($fileName);
+            },
+            iterator_to_array($iterator)
+        );
     }
 
     /**

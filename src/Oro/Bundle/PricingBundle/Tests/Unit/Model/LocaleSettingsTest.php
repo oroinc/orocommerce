@@ -42,7 +42,7 @@ class LocaleSettingsTest extends \PHPUnit\Framework\TestCase
 
     public function testGetCurrency()
     {
-        $this->frontendHelper->expects($this->atLeastOnce())
+        $this->frontendHelper->expects($this->once())
             ->method('isFrontendRequest')
             ->willReturn(false);
 
@@ -51,11 +51,14 @@ class LocaleSettingsTest extends \PHPUnit\Framework\TestCase
             ->willReturn('USD');
 
         $this->assertEquals('USD', $this->localeSettings->getCurrency());
+
+        // Checks local cache.
+        $this->assertEquals('USD', $this->localeSettings->getCurrency());
     }
 
     public function testGetCurrencyWithManager()
     {
-        $this->frontendHelper->expects($this->atLeastOnce())
+        $this->frontendHelper->expects($this->once())
             ->method('isFrontendRequest')
             ->willReturn(true);
 
@@ -67,11 +70,14 @@ class LocaleSettingsTest extends \PHPUnit\Framework\TestCase
             ->willReturn('EUR');
 
         $this->assertEquals('EUR', $this->localeSettings->getCurrency());
+
+        // Checks local cache.
+        $this->assertEquals('EUR', $this->localeSettings->getCurrency());
     }
 
     public function testGetCurrencyWithoutManager()
     {
-        $this->frontendHelper->expects($this->atLeastOnce())
+        $this->frontendHelper->expects($this->once())
             ->method('isFrontendRequest')
             ->willReturn(true);
 
@@ -83,6 +89,9 @@ class LocaleSettingsTest extends \PHPUnit\Framework\TestCase
             ->method('getUserCurrency')
             ->willReturn(null);
 
+        $this->assertEquals('PLN', $this->localeSettings->getCurrency());
+
+        // Checks local cache.
         $this->assertEquals('PLN', $this->localeSettings->getCurrency());
     }
 }

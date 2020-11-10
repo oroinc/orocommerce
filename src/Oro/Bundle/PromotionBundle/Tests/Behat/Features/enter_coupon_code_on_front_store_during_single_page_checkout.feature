@@ -35,7 +35,7 @@ Feature: Enter coupon code on front store during single page checkout
     Then I should see "This coupon has been already added"
     When I type "not-existing-coupon" in "CouponCodeInput"
     And I click "Apply"
-    Then I should see "Invalid coupon code, please try another one"
+    Then I should see "Invalid coupon code, please try another"
     And I should not see "not-existing-coupon" in the "Coupons List" element
 
   Scenario: Removed coupon should not give discount

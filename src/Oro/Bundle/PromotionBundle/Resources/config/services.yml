@@ -135,11 +135,12 @@ services:
 
     oro_promotion.discount.shopping_list_context_converter:
         class: Oro\Bundle\PromotionBundle\Discount\Converter\ShoppingListDiscountContextConverter
-        public: false
         arguments:
            - '@oro_promotion.discount.line_items_to_discount_line_items_converter'
            - '@oro_pricing.user_currency_manager'
            - '@oro_pricing.subtotal_processor.provider.subtotal_line_item_not_priced'
+        calls:
+            - [setShoppingListTotalManager, ['@oro_shopping_list.manager.shopping_list_total']]
         tags:
             - { name: 'oro_promotion.discount_context_converter' }
 
@@ -179,13 +180,14 @@ services:
 
     oro_promotion.promotion.shopping_list_context_data_converter:
         class: Oro\Bundle\PromotionBundle\Context\ShoppingListContextDataConverter
-        public: false
         arguments:
             - '@oro_promotion.context.criteria_data_provider'
             - '@oro_promotion.discount.line_items_to_discount_line_items_converter'
             - '@oro_pricing.user_currency_manager'
             - '@oro_scope.scope_manager'
             - '@oro_pricing.subtotal_processor.provider.subtotal_line_item_not_priced'
+        calls:
+            - [setShoppingListTotalManager, ['@oro_shopping_list.manager.shopping_list_total']]
         tags:
             - { name: 'oro_promotion.promotion_context_converter' }
 
@@ -768,3 +770,17 @@ services:
             - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
+
+    oro_promotion.event_listener.datagrid_line_items_data.promotions:
+        class: Oro\Bundle\PromotionBundle\EventListener\DatagridLineItemsDataPromotionsListener
+        # Decorates listener from pricing bundle because it directly depends on it - alters the pricing data by
+        # applying discounts.
+        decorates: oro_pricing.event_listener.datagrid_line_items_data.pricing
+        arguments:
+            - '@oro_promotion.event_listener.datagrid_line_items_data.promotions.inner'
+            - '@oro_promotion.promotion_executor'
+            - '@oro_pricing.user_currency_manager'
+            - '@oro_locale.formatter.number'
+        tags:
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-grid, method: onLineItemData }
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-edit-grid, method: onLineItemData }

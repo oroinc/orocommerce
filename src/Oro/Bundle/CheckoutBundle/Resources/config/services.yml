@@ -784,3 +784,29 @@ services:
             - '@oro_config.manager'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-checkouts-grid, method: onPreBuild }
+
+    oro_checkout.datagrid.extension.frontend_shopping_list_grid.abstract:
+        abstract: true
+        class: Oro\Bundle\CheckoutBundle\Datagrid\FrontendShoppingListGridExtension
+        arguments:
+            -
+                - 'frontend-customer-user-shopping-lists-grid'
+                - 'frontend-customer-user-shopping-list-select-grid'
+            -
+                - 'b2b_flow_checkout_start_from_shoppinglist'
+                - 'b2b_flow_checkout_single_page_start_from_shoppinglist'
+                - 'b2b_flow_alternative_checkout_start_from_shoppinglist'
+
+    oro_checkout.datagrid.extension.frontend_shopping_list_grid.before_actions:
+        parent: oro_checkout.datagrid.extension.frontend_shopping_list_grid.abstract
+        arguments:
+            - '-250'
+        tags:
+            - { name: oro_datagrid.extension }
+
+    oro_checkout.datagrid.extension.frontend_shopping_list_grid.after_actions:
+        parent: oro_checkout.datagrid.extension.frontend_shopping_list_grid.abstract
+        arguments:
+            - '250'
+        tags:
+            - { name: oro_datagrid.extension }

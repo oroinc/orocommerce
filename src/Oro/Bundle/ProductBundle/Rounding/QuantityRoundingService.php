@@ -7,12 +7,15 @@ use Oro\Bundle\CurrencyBundle\Rounding\AbstractRoundingService;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
+/**
+ * Service for quantity rounding.
+ */
 class QuantityRoundingService extends AbstractRoundingService
 {
     /** {@inheritdoc} */
     public function getRoundType()
     {
-        return $this->configManager->get('oro_product.unit_rounding_type', self::ROUND_HALF_UP);
+        return $this->configManager->get('oro_product.unit_rounding_type') ?? self::ROUND_HALF_UP;
     }
 
     /** {@inheritdoc} */

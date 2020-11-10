@@ -1,0 +1,22 @@
+layout:
+    imports:
+        -
+            id: datagrid
+            root: __root
+
+    actions:
+        - '@setOption':
+            id: __datagrid
+            optionName: grid_name
+            optionValue: frontend-customer-user-shopping-list-select-grid
+
+        - '@appendOption':
+            id: __datagrid
+            optionName: grid_parameters
+            optionValue:
+                shopping_list_id: '=data["entity"].getId()'
+
+        - '@setOption':
+            id: __datagrid
+            optionName: grid_render_parameters.toolbarOptions.addDatagridSettingsManager
+            optionValue: false

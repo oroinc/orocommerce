@@ -10,11 +10,13 @@
 
     &__title {
         font-size: $coupon-container-title-font-size;
-        font-weight: $coupon-container-title-font-weight;     
+        font-weight: $coupon-container-title-font-weight;
         line-height: $coupon-container-title-line-height;
     }
 
     &__form {
+        display: $coupon-container-form-display;
+        align-items: $coupon-container-form-align-items;
         margin: $coupon-container-form-offset;
     }
 
@@ -22,6 +24,12 @@
         display: inline-block;
         padding: $coupon-container-input-wrap-inner-offset;
         width: $coupon-container-input-wrap-width;
+    }
+
+    &__errors {
+        &:empty {
+            display: none;
+        }
     }
 }
 

@@ -48,7 +48,5 @@ operations:
         frontend_options:
             title: oro.action.delete_entity
             confirmation:
-                message: oro.paymentterm.delete.message.placeholder
-                message_parameters:
-                    confirmationMessage: $.confirmationMessage
+                message: $.confirmationMessage
                 component: oroui/js/delete-confirmation

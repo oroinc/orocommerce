@@ -6,6 +6,7 @@ define(function(require) {
     const PricesHelper = require('oropricing/js/app/prices-helper');
     const ScrollView = require('orofrontend/js/app/views/scroll-view');
     const FitMatrixView = require('orofrontend/js/app/views/fit-matrix-view');
+    const quantityHelper = require('oroproduct/js/app/quantity-helper');
     const $ = require('jquery');
     const _ = require('underscore');
 
@@ -147,7 +148,14 @@ define(function(require) {
 
             const cell = cells[indexKey] = this.getTotal(cells, indexKey);
             const column = columns[index.column] = this.getTotal(columns, index.column);
+            column.precision = this.getLineMaxPrecision('column', index);
+
             const row = rows[index.row] = this.getTotal(rows, index.row);
+            row.precision = this.getLineMaxPrecision('row', index);
+
+            if (this.total.precision === void 0) {
+                this.total.precision = this.getMatrixMaxPrecision();
+            }
 
             // remove old values
             this.changeTotal(this.total, cell, -1);
@@ -155,15 +163,61 @@ define(function(require) {
             this.changeTotal(row, cell, -1);
 
             // recalculate cell total
-            cell.quantity = this.getValidQuantity($element.val());
+            cell.quantity = NumberFormatter.unformatStrict($element.val());
             const quantity = cell.quantity > 0 ? cell.quantity.toString() : '';
             cell.price = PricesHelper.calcTotalPrice(this.prices[productId], this.model.get('unit'), quantity);
-            $element.val(quantity);
 
             // add new values
             this.changeTotal(this.total, cell);
             this.changeTotal(column, cell);
             this.changeTotal(row, cell);
+        },
+
+        /**
+         * @param {string} line
+         * @param {object} data
+         * @returns {number|null}
+         */
+        getLineMaxPrecision(line = '', data) {
+            const precisions = _.reduce(
+                this.$el.find('[data-name="field__quantity"]:enabled'),
+                (acc, el) => {
+                    const precision = $(el).data('precision');
+                    if (
+                        $(el).closest('[data-index]').data('index')[line] === data[line] &&
+                        precision !== void 0
+                    ) {
+                        acc.push(precision);
+                    }
+                    return acc;
+                }, []);
+
+            return this.getMaxValue(precisions);
+        },
+
+        /**
+         * @returns {number|null}
+         */
+        getMatrixMaxPrecision() {
+            const precisions = _.reduce(
+                this.$el.find('[data-name="field__quantity"]:enabled'),
+                (acc, el) => {
+                    const precision = $(el).data('precision');
+                    if (precision !== void 0) {
+                        acc.push(precision);
+                    }
+                    return acc;
+                }, []);
+
+            return this.getMaxValue(precisions);
+        },
+
+        /**
+         * @param {array} values
+         * @returns {number|null}
+         */
+        getMaxValue(values) {
+            return values.length ? Math.max.apply(null, values) : null;
         },
 
         /**
@@ -216,7 +270,9 @@ define(function(require) {
          * Update totals
          */
         render: function() {
-            this.$('[data-role="total-quantity"]').text(this.total.quantity);
+            this.$('[data-role="total-quantity"]').text(
+                this.formatQuantity(this.total.quantity, this.total.precision)
+            );
             this.$('[data-role="total-price"]').text(
                 NumberFormatter.formatCurrency(this.total.price, this.total.currency)
             );
@@ -235,11 +291,28 @@ define(function(require) {
                 const $quantity = this.$el.find('[data-' + key + '-quantity="' + index + '"]');
                 const $price = this.$el.find('[data-' + key + '-price="' + index + '"]');
 
-                const formattedCurrency = NumberFormatter.formatCurrency(total.price, total.currency);
-
-                $quantity.toggleClass('valid', total.quantity > 0).html(total.quantity);
-                $price.toggleClass('valid', total.price > 0).html(formattedCurrency);
+                $quantity
+                    .toggleClass('valid', total.quantity > 0)
+                    .text(this.formatQuantity(total.quantity, total.precision));
+                $price
+                    .toggleClass('valid', total.price > 0)
+                    .text(NumberFormatter.formatCurrency(total.price, total.currency));
             }, this);
+        },
+
+        /**
+         * @param quantity
+         * @param precision
+         * @returns {String}
+         */
+        formatQuantity(quantity, precision) {
+            const formatArgs = [quantity];
+
+            if (_.isNumber(precision)) {
+                formatArgs.push(precision);
+            }
+
+            return quantityHelper.formatQuantity.apply(null, formatArgs);
         },
 
         /**
@@ -250,7 +323,7 @@ define(function(require) {
          * @private
          */
         _isSafeNumber: function(value) {
-            return _.isSafeInteger(parseFloat(value === '' ? 0 : value));
+            return NumberFormatter.unformatStrict(value === '' ? 0 : value) <= Number.MAX_SAFE_INTEGER;
         },
 
         /**

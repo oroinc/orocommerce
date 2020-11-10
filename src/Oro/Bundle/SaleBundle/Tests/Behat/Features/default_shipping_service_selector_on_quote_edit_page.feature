@@ -9,7 +9,6 @@
 @fixture-OroSaleBundle:shipping_selector_quote.yml
 @fixture-OroCheckoutBundle:InventoryLevel.yml
 Feature: Default Shipping Service Selector on Quote Edit page
-  ToDo: BAP-16103 Add missing descriptions to the Behat features
 
   Scenario: Create sessions
     Given sessions active:
