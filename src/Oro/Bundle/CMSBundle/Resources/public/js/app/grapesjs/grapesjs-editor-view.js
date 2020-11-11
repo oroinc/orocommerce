@@ -37,7 +37,8 @@ const GrapesjsEditorView = BaseView.extend({
      */
     optionNames: BaseView.prototype.optionNames.concat([
         'autoRender', 'allow_tags', 'allowed_iframe_domains', 'builderPlugins', 'currentTheme', 'canvasConfig',
-        'contextClass', 'storageManager', 'stylesInputSelector', 'storagePrefix', 'themes'
+        'contextClass', 'storageManager', 'stylesInputSelector', 'storagePrefix', 'themes',
+        'entityClass'
     ]),
 
     /**
@@ -79,6 +80,8 @@ const GrapesjsEditorView = BaseView.extend({
      * @property {Boolean}
      */
     componentUpdated: false,
+
+    entityClass: null,
 
     /**
      * Main builder options
@@ -283,6 +286,12 @@ const GrapesjsEditorView = BaseView.extend({
             this.builderPlugins['grapesjs-components'],
             extendOptions
         );
+
+        this.builderPlugins['grapesjs-import'] = {
+            ...this.builderPlugins['grapesjs-import'],
+            entityClass: this.entityClass,
+            fieldName: this.$el.attr('name')
+        };
 
         GrapesjsEditorView.__super__.initialize.call(this, options);
     },
