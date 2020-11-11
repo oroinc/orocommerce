@@ -11,18 +11,23 @@ Feature: Delete line item from shopping list for configurable products
     Given sessions active:
       | User  | first_session  |
       | Admin | second_session |
+    And I proceed as the Admin
+    And I login as administrator
+    And I go to System / Localization / Translations
+    And I filter Key as equal to "oro.frontend.shoppinglist.lineitem.unit.label"
+    And I edit "oro.frontend.shoppinglist.lineitem.unit.label" Translated Value as "Unit"
+    And I click "Update Cache"
+    And I should see "Translation Cache has been updated" flash message
 
   Scenario: Prepare product attribute
-    Given I proceed as the Admin
-    Given I login as administrator
-    When I go to Products / Product Attributes
+    Given I go to Products / Product Attributes
     And I click "Create Attribute"
     And I fill form with:
       | Field Name | BooleanAttribute |
       | Type       | Boolean          |
     And I click "Continue"
     And I fill form with:
-      | Label      | BooleanAttribute |
+      | Label | BooleanAttribute |
     And I save form
     Then I should see "Attribute was successfully saved" flash message
     When I go to Products / Product Attributes
@@ -30,7 +35,7 @@ Feature: Delete line item from shopping list for configurable products
     Then I go to Products / Product Families
     When I click Edit Attribute Family in grid
     And set Attribute Groups with:
-      | Label           | Visible | Attributes |
+      | Label           | Visible | Attributes                                                                                                                                                                            |
       | Attribute group | true    | [SKU, Name, Is Featured, New Arrival, Brand, Description, Short Description, Images, Inventory Status, Meta title, Meta description, Meta keywords, Product prices, BooleanAttribute] |
     And I save form
     Then I should see "Successfully updated" flash message
@@ -60,39 +65,18 @@ Feature: Delete line item from shopping list for configurable products
 
   Scenario: Remove configurable product when it shown as matrix at shopping list
     Given I proceed as the User
-    Given I signed in as AmandaRCole@example.org on the store frontend
+    And I signed in as AmandaRCole@example.org on the store frontend
     When Buyer is on "Configurable products list 2" shopping list
-    Then I should see an "One Dimensional Matrix Grid Form" element
-    And I should see "ConfigurableProductA"
-    And I should see "Item #: CNFA"
-    And I delete line item 1 in "Shopping List Line Items Table"
+    And I click "Shopping List Actions"
+    And I click "Edit"
+    And I should see following grid:
+      | SKU      | Item                                       | QtyUpdate All |
+      | PROD_A_1 | ConfigurableProductA BooleanAttribute: Yes | 5 item        |
+      | PROD_A_2 | ConfigurableProductA BooleanAttribute: No  | 2 item        |
+    And I click Delete PROD_A_1 in grid
     And I click "Yes, Delete" in modal window
-    Then I should see "The Shopping List is empty. Please add at least one product."
-
-  Scenario: Reconfigure matrix line item form representation for configurable products
-    Given I proceed as the Admin
-    When I go to System/ Configuration
-    And I follow "Commerce/Product/Configurable Products" on configuration sidebar
-    And uncheck "Use default" for "Shopping Lists" field
-    And I fill in "Shopping Lists" with "Group Single Products"
-    And I save form
-    Then I should see "Configuration saved" flash message
-
-  Scenario: Remove configurable product when it shown as matrix at shopping list
-    Given I proceed as the User
-    When Buyer is on "Configurable products list 1" shopping list
-    Then I should not see an "One Dimensional Matrix Grid Form" element
-    And I should see following line items in "Shopping List Line Items Table":
-      | SKU  | Quantity | Unit |
-      | CNFA | 5        | item |
-      | CNFA | 2        | item |
-    And I should see "BooleanAttribute: Yes"
-    And I should see "BooleanAttribute: No"
-    When I delete line item 1 in "Shopping List Line Items Table"
-    And I click "Yes, Delete" in modal window
-    Then I should see "Shopping list item has been deleted" flash message
-    And I should see following line items in "Shopping List Line Items Table":
-      | SKU  | Quantity | Unit |
-      | CNFA | 2        | item |
+    Then I should see 'The "ConfigurableProductA" product was successfully deleted' flash message
+    And I should see following grid:
+      | SKU      | Item                                      | QtyUpdate All |
+      | PROD_A_2 | ConfigurableProductA BooleanAttribute: No | 2 item        |
     And I should not see "BooleanAttribute: Yes"
-    And I should see "BooleanAttribute: No"

@@ -22,7 +22,7 @@ use Symfony\Component\HttpFoundation\Response;
 class LineItemController extends RestController implements ClassResourceInterface
 {
     /**
-     * @Delete(requirements={"id"="\d+"})
+     * @Delete(requirements={"id"="\d+", "onlyCurrent"="[0|1]"}, defaults={"onlyCurrent"=0})
      *
      * @ApiDoc(
      *      description="Delete Line Item",
@@ -31,10 +31,11 @@ class LineItemController extends RestController implements ClassResourceInterfac
      * @AclAncestor("oro_shopping_list_frontend_update")
      *
      * @param int $id
+     * @param int $onlyCurrent
      *
      * @return Response
      */
-    public function deleteAction(int $id)
+    public function deleteAction(int $id, int $onlyCurrent = 0)
     {
         $success = false;
         /** @var LineItem $lineItem */
@@ -47,7 +48,10 @@ class LineItemController extends RestController implements ClassResourceInterfac
 
         if ($lineItem) {
             if ($this->isGranted('DELETE', $lineItem) && $this->isGranted('EDIT', $lineItem->getShoppingList())) {
-                $this->get('oro_shopping_list.manager.shopping_list')->removeLineItem($lineItem);
+                $this->get('oro_shopping_list.manager.shopping_list')->removeLineItem(
+                    $lineItem,
+                    (bool) $onlyCurrent
+                );
                 $success = true;
             } else {
                 $view = $this->view(null, Response::HTTP_FORBIDDEN);
@@ -57,6 +61,70 @@ class LineItemController extends RestController implements ClassResourceInterfac
         }
 
         return $this->buildResponse($view, self::ACTION_DELETE, ['id' => $id, 'success' => $success]);
+    }
+
+    /**
+     * @Delete(requirements={"productId"="\d+"})
+     *
+     * @ApiDoc(
+     *      description="Delete Line Item",
+     *      resource=true
+     * )
+     * @AclAncestor("oro_shopping_list_frontend_update")
+     *
+     * @param int $shoppingListId
+     * @param int $productId
+     * @param string $unitCode
+     *
+     * @return Response
+     */
+    public function deleteConfigurableAction(int $shoppingListId, int $productId, string $unitCode): Response
+    {
+        $success = false;
+
+        /** @var LineItem[] $lineItems */
+        $lineItems = $this->getDoctrine()
+            ->getManagerForClass(LineItem::class)
+            ->getRepository(LineItem::class)
+            ->findLineItemsByParentProductAndUnit($shoppingListId, $productId, $unitCode);
+
+        $view = $this->view(null, Response::HTTP_NO_CONTENT);
+
+        $allowed = false;
+        $ids = [];
+
+        if ($lineItems) {
+            foreach ($lineItems as $lineItem) {
+                if (!$this->isGranted('DELETE', $lineItem) || !$this->isGranted('EDIT', $lineItem->getShoppingList())) {
+                    break;
+                }
+
+                $allowed = true;
+            }
+
+            if ($allowed) {
+                $options = [];
+                $handler = $this->get('oro_entity.delete_handler_registry')
+                    ->getHandler(LineItem::class);
+
+                foreach ($lineItems as $lineItem) {
+                    $handler->delete($lineItem, false);
+
+                    $options[]['entity'] = $lineItem;
+                    $ids[] = $lineItem->getId();
+                }
+
+                $handler->flushAll($options);
+
+                $success = true;
+            } else {
+                $view = $this->view(null, Response::HTTP_FORBIDDEN);
+            }
+        } else {
+            $view = $this->view(null, Response::HTTP_NOT_FOUND);
+        }
+
+        return $this->buildResponse($view, self::ACTION_DELETE, ['ids' => $ids, 'success' => $success]);
     }
 
     /**

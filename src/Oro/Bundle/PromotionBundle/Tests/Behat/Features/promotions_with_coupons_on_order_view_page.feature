@@ -9,17 +9,21 @@ Feature: Promotions with coupons on Order view page
     Given I login as administrator
     When go to Sales / Orders
     And click edit SimpleOrder in grid
-    And I save form
+    # Triggered to re-calculate discounts
+    And click "Add Product"
+    And fill "Order Form" with:
+      | Product2 | Second Product |
+      | Price2   | 5              |
     Then I should see next rows in "Promotions" table
       | Promotion       | Type        | Status | Discount |
-      | Order Promotion | Order Total | Active |   -$7.00 |
-    And I click "Cancel"
+      | Order Promotion | Order Total | Active | -$7.00   |
+    And I save and close form
+    And click "Save" in modal window
 
   Scenario: Coupon applying on order view page with already applied promotion
-    When click view SimpleOrder in grid
-    Then I should see next rows in "Promotions" table
+    Given I should see next rows in "Promotions" table
       | Promotion       | Type        | Status | Discount |
-      | Order Promotion | Order Total | Active |   -$7.00 |
+      | Order Promotion | Order Total | Active | -$7.00   |
     When I click "Add Coupon Code"
     And type "test-1" in "Coupon Code"
     Then I should see a "Highlighted Suggestion" element
@@ -31,10 +35,10 @@ Feature: Promotions with coupons on Order view page
     When click "Apply" in modal window
     Then I should see next rows in "Promotions" table
       | Code   | Promotion                    | Type            | Status | Discount |
-      | N/A    | Order Promotion              | Order Total     | Active |   -$7.00 |
-      | test-1 | Line Item Discount Promotion | Order Line Item | Active |  -$10.00 |
+      | N/A    | Order Promotion              | Order Total     | Active | -$7.00   |
+      | test-1 | Line Item Discount Promotion | Order Line Item | Active | -$10.00  |
     And I see next subtotals for "Backend Order":
       | Subtotal | Amount  |
-      | Subtotal | $50.00  |
+      | Subtotal | $55.00  |
       | Discount | -$17.00 |
-      | Total    | $33.00  |
+      | Total    | $38.00  |

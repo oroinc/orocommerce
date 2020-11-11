@@ -41,23 +41,46 @@
         background: $view-product-gallery-hover-background;
     }
 
-    &__icon {
-        @include fa-icon($view-product-gallery-icon);
+    &.stretched {
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+
+        width: 100%;
+        height: 100%;
+        padding: 0;
+
+        font-size: $base-font-size--large;
+
+        border-radius: 0;
 
         &:before {
-            margin: $view-product-gallery-icon-offset;
+            margin: 0;
         }
+    }
+
+    @include fa-icon($view-product-gallery-icon, before, true) {
+        margin: $view-product-gallery-icon-offset;
     }
 }
 
 @include breakpoint('tablet') {
     .view-product-gallery {
         opacity: $view-product-gallery-tablet-opacity;
+
+        &.stretched {
+            opacity: $view-product-gallery-opacity;
+        }
     }
 }
 
 @include only-mobile {
     .view-product-gallery {
         opacity: $view-product-gallery-mobile-opacity;
+
+        &.stretched {
+            opacity: $view-product-gallery-opacity;
+        }
     }
 }

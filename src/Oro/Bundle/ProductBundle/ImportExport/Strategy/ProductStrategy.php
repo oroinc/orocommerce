@@ -332,6 +332,13 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
             $usedCodes[] = $code;
         }
 
+        $validationErrors = $this->strategyHelper->validateEntity($entity, null, ['Import']);
+        if ($validationErrors) {
+            $this->processValidationErrors($entity, $validationErrors);
+
+            return null;
+        }
+
         return parent::validateAndUpdateContext($entity);
     }
 

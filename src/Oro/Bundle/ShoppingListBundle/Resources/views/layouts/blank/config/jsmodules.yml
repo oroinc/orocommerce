@@ -1,31 +1,74 @@
 aliases:
+    oro/datagrid/action/add-notes-action$: oroshoppinglist/js/datagrid/action/add-notes-action
     oro/datagrid/action/add-products-mass-action$: oroshoppinglist/js/datagrid/action/add-products-mass-action
+    oro/datagrid/action/update-configurable-product-action$: oroshoppinglist/js/datagrid/action/update-configurable-product-action
+    oro/datagrid/action/delete-product-action$: oroshoppinglist/js/datagrid/action/delete-product-action
+    oro/datagrid/action/move-products-mass-action$: oroshoppinglist/js/datagrid/action/move-products-mass-action
+    oro/datagrid/cell/shoppinglist-item-cell$: oroshoppinglist/js/datagrid/cell/shoppinglist-item-cell
+    oro/datagrid/cell/shoppinglist-line-item-cell$: oroshoppinglist/js/datagrid/cell/shoppinglist-line-item-cell
     oro/matrix-grid-order-widget$: oroshoppinglist/js/app/widget/matrix-grid-order-widget
     oro/product-shopping-lists-widget$: oroshoppinglist/js/app/widget/product-shopping-lists-widget
     oro/shopping-list-create-widget$: oroshoppinglist/js/app/widget/shopping-list-create-widget
+app-modules:
+    - oroshoppinglist/js/app/modules/template-macros-module
 dynamic-imports:
     orodatagrid:
+        - oro/datagrid/action/add-notes-action
         - oro/datagrid/action/add-products-mass-action
-    oroui:
+        - oro/datagrid/action/update-configurable-product-action
+        - oro/datagrid/action/delete-product-action
+        - oro/datagrid/action/move-products-mass-action
+        - oro/datagrid/cell/shoppinglist-item-cell
+        - oro/datagrid/cell/shoppinglist-line-item-cell
+        - orodatagrid/js/app/components/cell-popup-editor-component
+        - oroform/js/app/views/editor/select-editor-view
+        - oroform/js/app/views/editor/related-id-relation-editor-view
+        - oroui/js/tools/search-api-accessor
+        - oroshoppinglist/js/app/views/editor/shoppinglist-line-item-editor-view
+    oroshoppinglist:
         - oro/matrix-grid-order-widget
         - oro/product-shopping-lists-widget
         - oro/shopping-list-create-widget
         - oroshoppinglist/js/app/components/shopping-list-create-component
         - oroshoppinglist/js/app/components/shoppinglist-collection-component
         - oroshoppinglist/js/app/components/shoppinglist-create-order-button-component
-        - oroshoppinglist/js/app/components/shoppinglist-owner-inline-editable-view-component
-        - oroshoppinglist/js/app/components/shoppinglist-title-inline-editable-view-component
+        - oroshoppinglist/js/app/components/shoppinglist-notes-editable-view-component
         - oroshoppinglist/js/app/components/shoppinglist-widget-view-component
-        - oroshoppinglist/js/app/views/line-item-form-submit-view
-        - oroshoppinglist/js/app/views/line-item-view
-        - oroshoppinglist/js/app/views/line-items-view
+        - oroshoppinglist/js/app/views/shoppinglist-notes-editable-view
+        - oroshoppinglist/js/app/components/shopping-list-cell-popup-editor-component
         - oroshoppinglist/js/app/views/matrix-grid-add-to-shopping-list-view
         - oroshoppinglist/js/app/views/matrix-grid-popup-button-view
+        - oroshoppinglist/js/app/views/preview-full-notes-view
         - oroshoppinglist/js/app/views/product-add-to-shopping-list-view
         - oroshoppinglist/js/app/views/product-quick-add-to-shopping-list-view
         - oroshoppinglist/js/app/views/product-shopping-lists-view
         - oroshoppinglist/js/app/views/shoppinglist-widget-view
+        - oroshoppinglist/js/app/views/shopping-list-assign-link-view
+        - oroshoppinglist/js/app/views/summary-wrapper-view
+        - oroshoppinglist/js/datagrid/builder/shoppinglist-flat-data-builder
+        - oroshoppinglist/js/datagrid/builder/shoppinglist-grid-options-builder
+        - oroshoppinglist/js/datagrid/builder/shoppinglist-editing-builder
+        - oroshoppinglist/js/datagrid/builder/shoppinglist-grid-representation-builder
+        - oroshoppinglist/js/datagrid/builder/shoppinglist-rfp-confirmation-builder
         - oroshoppinglist/js/shopping-list-item-errors-handler
         - oroshoppinglist/js/shoppinglist-request-quote-confirmation
+        - oroshoppinglist/js/inline-editing/shopping-list-editors
+        - oroshoppinglist/js/datagrid/plugins/shopping-list-inline-editing-plugin
+        - tpl-loader!oroshoppinglist/templates/datagrid/cell/inventory_status.html
+        - tpl-loader!oroshoppinglist/templates/datagrid/cell/item.html
+        - tpl-loader!oroshoppinglist/templates/datagrid/cell/price.html
+        - tpl-loader!oroshoppinglist/templates/datagrid/cell/quantity.html
+        - tpl-loader!oroshoppinglist/templates/datagrid/cell/subtotal.html
+        - tpl-loader!oroshoppinglist/templates/datagrid/cell/shoppinglist-line-item.html
+        - tpl-loader!oroshoppinglist/templates/datagrid/cell/unit.html
+        - tpl-loader!oroshoppinglist/templates/editor/shoppinglist-line-item-editor.html
+        - tpl-loader!oroshoppinglist/templates/editor/shoppinglist-update-all-btn.html
+        - tpl-loader!oroshoppinglist/templates/actions/add-notes-action.html
     oroshoppinglistquicksearch:
         - oroshoppinglist/js/app/views/shopping-list-quick-search
+
+map:
+    "*":
+        orodatagrid/js/app/components/cell-popup-editor-component: oroshoppinglist/js/app/components/shopping-list-cell-popup-editor-component
+    oroshoppinglist/js/app/components/shopping-list-cell-popup-editor-component:
+        orodatagrid/js/app/components/cell-popup-editor-component: orodatagrid/js/app/components/cell-popup-editor-component

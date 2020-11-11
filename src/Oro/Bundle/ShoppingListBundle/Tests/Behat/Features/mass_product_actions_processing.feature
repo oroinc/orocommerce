@@ -55,10 +55,10 @@ Feature: Mass Product Actions processing
     Then should see 'Shopping list "Shopping List of Amanda" was created successfully' flash message
     When I hover on "Shopping Cart"
     And I click "Shopping List of Amanda" on shopping list widget
-    Then I should see following line items in "Shopping List Line Items Table":
-      | SKU   | Quantity | Unit |
-      | PSKU1 | 10       | set  |
-      | PSKU2 | 15       | item |
+    Then I should see following grid:
+      | SKU   | QtyUpdate All |
+      | PSKU1 | 10 set        |
+      | PSKU2 | 15 item       |
 
   Scenario: "Add to Shopping List of Amanda" mass action on the category list view
     Given I proceed as the User
@@ -73,11 +73,11 @@ Feature: Mass Product Actions processing
     Then I should see "1 product was added" flash message
     When I hover on "Shopping Cart"
     And I click "Shopping List of Amanda" on shopping list widget
-    Then I should see following line items in "Shopping List Line Items Table":
-      | SKU   | Quantity | Unit |
-      | PSKU1 | 10       | set  |
-      | PSKU2 | 15       | item |
-      | PSKU3 | 7        | set  |
+    Then I should see following grid:
+      | SKU   | QtyUpdate All |
+      | PSKU1 | 10 set        |
+      | PSKU2 | 15 item       |
+      | PSKU3 | 7 set         |
 
   Scenario: Should be possible to check mass action checkbox on All products page
     Given I proceed as the User

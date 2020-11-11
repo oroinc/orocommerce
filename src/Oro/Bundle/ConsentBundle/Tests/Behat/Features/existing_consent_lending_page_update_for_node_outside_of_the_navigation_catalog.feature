@@ -85,6 +85,7 @@ Feature: Consent are stored correctly even if consent content node is not a part
     And I open page with shopping list ShoppingList1
     And I scroll to top
     And I wait line items are initialized
+    And I click "More Actions"
     And I click "Request Quote"
     And I click on "Consent Link" with title "Collecting and storing personal data"
     And I should see "Test landing page description"
@@ -119,6 +120,7 @@ Feature: Consent are stored correctly even if consent content node is not a part
     And I open page with shopping list ShoppingList2
     And I scroll to top
     And I wait line items are initialized
+    And I click "More Actions"
     And I click "Request Quote"
     And I click on "Consent Link" with title "Collecting and storing personal data"
     And I should see "Lorem ipsum dolor sit amet, consectetur adipiscing elit."

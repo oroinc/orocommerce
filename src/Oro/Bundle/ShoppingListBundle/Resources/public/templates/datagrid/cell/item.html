@@ -1,0 +1,94 @@
+<% let clipLength = 30 %>
+<% let oroshoppinglist = _.macros('oroshoppinglist') %>
+<div class="product-item grid-line-items">
+    <%= oroshoppinglist.renderProductItemImage({
+        src: obj.image,
+        placeholder: _metadata.image_placeholder,
+        productId: variantId ? variantId : productId,
+        title: sku,
+        alt: name,
+        isConfigurable: obj.isConfigurable,
+        _cid: _cid
+    }) %>
+    <div class="grid-line-items__row">
+        <% let inventoryStatusLabel = function (inventoryStatus) { %>
+            <% return _metadata.inventory_statuses[inventoryStatus] ? _metadata.inventory_statuses[inventoryStatus] : inventoryStatus %>
+        <% } %>
+
+        <% if (!obj._isVariant) { %>
+            <% let productUrl = function (productId, variantId) { %>
+                <% return oroshoppinglist.routing.generate('oro_product_frontend_product_view', variantId ? {id: productId, variantProductId: variantId} : {id: productId} ) %>
+            <% } %>
+            <div class="grid-line-items__row-item">
+                <% if (name.length <= clipLength) { %>
+                    <%= oroshoppinglist.renderProductItemName({link: productUrl(productId, variantId), name: name}) %>
+                <% } else { %>
+                <div class="grid-line-items__clip-container">
+                    <%= oroshoppinglist.renderProductItemName({clip: true, link: productUrl(productId, variantId), name: name}) %>
+                </div>
+                <% } %>
+            </div>
+            <% if (obj.sku || obj.inventoryStatus) { %>
+            <div class="grid-line-items__row-entry shift-mobile-row mobile-row show-in-tablet">
+                <% if (obj.sku) { %>
+                    <span class="highlighted-in-mobile break-all"><%- sku %></span>
+                <% } %>
+                <% if (!isConfigurable) { %>
+                    <%= oroshoppinglist.renderInventoryStatus({name: inventoryStatus, label: inventoryStatusLabel(inventoryStatus), isLowInventory: isLowInventory}) %>
+                <% } %>
+            </div>
+            <% } %>
+            <% if (productConfiguration) { %>
+            <div class="grid-line-items__configuration shift-mobile-row">
+                <% _.each(productConfiguration, function(field) { %>
+                <div class="grid-line-items__field">
+                    <span class="grid-line-items__field-val"><%- field.label %>:</span>
+                    <span class="grid-line-items__field-val bold"><%- field.value %></span>
+                </div>
+                <% }) %>
+            </div>
+            <% } %>
+            <% if (notes) { %>
+            <div class="shift-mobile-row">
+                <%= oroshoppinglist.renderNotes({notes: notes}) %>
+            </div>
+            <% } %>
+        <% } else { %>
+            <div class="grid-line-items__row-item mobile-column show-in-tablet">
+                <span class="highlighted-in-mobile break-all"><%- sku %></span>
+                <%= oroshoppinglist.renderInventoryStatus({name: inventoryStatus, label: inventoryStatusLabel(inventoryStatus), isLowInventory: isLowInventory}) %>
+            </div>
+            <div class="grid-line-items__configuration shift-mobile-row">
+                <% _.each(productConfiguration, function(field) { %>
+                <div class="grid-line-items__field">
+                    <span class="grid-line-items__field-val"><%- field.label %>:</span>
+                    <span class="grid-line-items__field-val bold"><%- field.value %></span>
+                </div>
+                <% }) %>
+            </div>
+            <% if (notes) { %>
+            <div class="shift-mobile-row">
+                <%= oroshoppinglist.renderNotes({notes: notes}) %>
+            </div>
+            <% } %>
+        <% } %>
+    </div>
+</div>
+
+<% if (isUpcoming || obj.errors && obj.errors.length || (obj.success && obj.message)) { %>
+<div class="notification-container">
+    <%= oroshoppinglist.renderUpcoming({isUpcoming: isUpcoming, availabilityDate: obj.availabilityDate}) %>
+    <%= oroshoppinglist.renderErrors({errors: obj.errors}) %>
+
+    <% if (obj.success && obj.message) { %>
+    <div class="notification--success" role="alert">
+        <span class="fa-check" aria-hidden="true"></span>
+        <span class="notification__text"><%- obj.message %></span>
+    </div>
+    <% } %>
+</div>
+<% } %>
+
+<% if (obj.filteredOutData) { %>
+    <%= oroshoppinglist.renderMoreVariantsButton(filteredOutData) %>
+<% } %>

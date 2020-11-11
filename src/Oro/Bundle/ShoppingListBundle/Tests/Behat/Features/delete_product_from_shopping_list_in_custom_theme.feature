@@ -19,11 +19,11 @@ Feature: Delete product from Shopping List in custom theme
     Given I login as AmandaRCole@example.org buyer
     And I open shopping list widget
     And I click "Shopping List 1"
-    When I click "Remove Line Item"
+    When I click "Delete" on row "AA1" in grid
     And I click "Yes, Delete"
-    And I click "Remove Line Item"
+    When I click "Delete" on row "BB2" in grid
     And I click "Yes, Delete"
-    Then I should see "The Shopping List is empty"
+    Then I should see "There are no shopping List line items"
     And I should not see "Create Order"
     And I should not see "Request Quote"
     And I should not see "Duplicate List"

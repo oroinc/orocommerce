@@ -586,6 +586,121 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    public function testGetShoppingListsForCustomerUserWithCurrentFirstWhenNoCurrentShoppingList(): void
+    {
+        $customerUserId = 234;
+        $customerUser = $this->getCustomerUser($customerUserId);
+        $this->tokenAccessor->expects($this->atLeastOnce())
+            ->method('getUser')
+            ->willReturn($customerUser);
+
+        $this->expectCacheFetchAndNoSave($customerUserId, false);
+
+        $this->shoppingListRepository->expects($this->never())
+            ->method('findByUserAndId');
+        $this->shoppingListRepository->expects($this->once())
+            ->method('findAvailableForCustomerUser')
+            ->with($this->aclHelper, false)
+            ->willReturn(null);
+
+        $this->shoppingListManager->expects($this->never())
+            ->method('create');
+
+        $this->assertSame(
+            [],
+            $this->currentShoppingListManager->getShoppingListsForCustomerUserWithCurrentFirst($customerUserId)
+        );
+    }
+
+    public function testGetShoppingListsForCustomerUserWithCurrentFirstWhenCurrentShoppingListExists(): void
+    {
+        $sortCriteria = ['label' => 'ASC'];
+
+        $customerUserId = 234;
+        $currentShoppingList = $this->getShoppingList(123);
+        /** @var CustomerUser $customerUser1 */
+        $customerUser1 = $this->getEntity(CustomerUser::class, ['id' => $customerUserId]);
+        $currentShoppingList->setCustomerUser($customerUser1);
+
+        $shoppingLists = [$this->getShoppingList(11)];
+        $expectedShoppingLists = [$currentShoppingList, $shoppingLists[0]];
+
+        $customerUser = $this->getCustomerUser($customerUserId);
+        $this->tokenAccessor->expects($this->atLeastOnce())
+            ->method('getUser')
+            ->willReturn($customerUser);
+
+        $this->expectCacheFetchAndNoSave($customerUserId, $currentShoppingList->getId());
+
+        $this->shoppingListRepository->expects($this->once())
+            ->method('findByUserAndId')
+            ->with($this->aclHelper, $currentShoppingList->getId())
+            ->willReturn($currentShoppingList);
+        $this->shoppingListRepository->expects($this->never())
+            ->method('findAvailableForCustomerUser');
+
+        $this->shoppingListManager->expects($this->never())
+            ->method('create');
+
+        $this->shoppingListRepository->expects($this->once())
+            ->method('findByCustomerUserId')
+            ->with($customerUserId, $this->aclHelper, $sortCriteria, $currentShoppingList)
+            ->willReturn($shoppingLists);
+
+        $this->assertEquals(
+            $expectedShoppingLists,
+            $this->currentShoppingListManager->getShoppingListsForCustomerUserWithCurrentFirst(
+                $customerUserId,
+                $sortCriteria
+            )
+        );
+    }
+
+    public function testGetShoppingListsForCustomerUserWithCurrentFirstWhenCurrentShoppingListNotOwn(): void
+    {
+        $sortCriteria = ['label' => 'ASC'];
+
+        $customerUserId = 234;
+        $currentShoppingList = $this->getShoppingList(123);
+        /** @var CustomerUser $customerUser1 */
+        $customerUser1 = $this->getEntity(CustomerUser::class, ['id' => 42]);
+        $currentShoppingList->setCustomerUser($customerUser1);
+
+        $shoppingLists = [$this->getShoppingList(11)];
+        $shoppingLists[0]->setCustomerUser($this->getEntity(CustomerUser::class, ['id' => $customerUserId]));
+        $expectedShoppingLists = [$shoppingLists[0]];
+
+        $customerUser = $this->getCustomerUser($customerUserId);
+        $this->tokenAccessor->expects($this->atLeastOnce())
+            ->method('getUser')
+            ->willReturn($customerUser);
+
+        $this->expectCacheFetchAndSave($customerUserId, $currentShoppingList->getId(), 11);
+
+        $this->shoppingListRepository->expects($this->once())
+            ->method('findByUserAndId')
+            ->with($this->aclHelper, $currentShoppingList->getId())
+            ->willReturn($currentShoppingList);
+        $this->shoppingListRepository->expects($this->never())
+            ->method('findAvailableForCustomerUser');
+
+        $this->shoppingListManager->expects($this->never())
+            ->method('create');
+
+        $this->shoppingListRepository->expects($this->once())
+            ->method('findByCustomerUserId')
+            ->with($customerUserId, $this->aclHelper, $sortCriteria, null)
+            ->willReturn($shoppingLists);
+
+        $this->assertEquals(
+            $expectedShoppingLists,
+            $this->currentShoppingListManager->getShoppingListsForCustomerUserWithCurrentFirst(
+                $customerUserId,
+                $sortCriteria
+            )
+        );
+    }
+
     public function testGetShoppingListsForGuestShoppingLists()
     {
         $shoppingLists = [$this->getShoppingList(123)];

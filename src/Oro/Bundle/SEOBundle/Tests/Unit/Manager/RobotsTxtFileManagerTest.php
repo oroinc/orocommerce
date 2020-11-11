@@ -2,194 +2,174 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Unit\Manager;
 
+use Oro\Bundle\GaufretteBundle\FileManager;
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
 use Oro\Bundle\SEOBundle\Exception\RobotsTxtFileManagerException;
 use Oro\Bundle\SEOBundle\Manager\RobotsTxtFileManager;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Website\WebsiteInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Filesystem\Exception\IOException;
-use Symfony\Component\Filesystem\Filesystem;
 
 class RobotsTxtFileManagerTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
-    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $logger;
-
-    /** @var Filesystem|\PHPUnit\Framework\MockObject\MockObject */
-    private $filesystem;
+    /** @var FileManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $fileManager;
 
     /** @var CanonicalUrlGenerator|\PHPUnit\Framework\MockObject\MockObject */
     private $urlGenerator;
 
-    /** @var string */
-    private $path;
+    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $logger;
 
-    /** @var string */
-    private $defaultFilePath;
-
-    /**
-     * @var RobotsTxtFileManager
-     */
-    private $fileManager;
+    /** @var RobotsTxtFileManager */
+    private $robotsTxtFileManager;
 
     protected function setUp(): void
     {
-        $this->logger = $this->createMock(LoggerInterface::class);
-        $this->filesystem = $this->createMock(Filesystem::class);
+        $this->fileManager = $this->createMock(FileManager::class);
         $this->urlGenerator = $this->createMock(CanonicalUrlGenerator::class);
-        $this->path = realpath(__DIR__ . '/fixtures');
-        $this->defaultFilePath = $this->path . '/public';
-        $this->fileManager = new RobotsTxtFileManager(
-            $this->logger,
-            $this->filesystem,
+        $this->logger = $this->createMock(LoggerInterface::class);
+
+        $this->robotsTxtFileManager = new RobotsTxtFileManager(
+            $this->fileManager,
             $this->urlGenerator,
-            $this->defaultFilePath,
-            $this->path
+            $this->logger
         );
     }
 
-    public function testGetContentWhenThrowsException()
+    /**
+     * @param int $id
+     *
+     * @return WebsiteInterface
+     */
+    private function getWebsite(int $id): WebsiteInterface
     {
-        $website = $this->getEntity(Website::class, ['id' => '15']);
-        $this->path = 'invalidpath';
-        $this->defaultFilePath = $this->path . '/public';
-        $message = sprintf(
-            'An error occurred while reading robots file from %s',
-            $this->getFullName('robots.domain.com.txt')
-        );
+        $website = $this->createMock(WebsiteInterface::class);
+        $website->expects($this->any())
+            ->method('getId')
+            ->willReturn($id);
+
+        return $website;
+    }
+
+    public function testGetContentWhenReadingOfFileFailed()
+    {
+        $website = $this->getWebsite(123);
+        $message = 'An error occurred while reading robots.txt file from robots.domain.com.txt';
+
+        $this->urlGenerator->expects($this->once())
+            ->method('getCanonicalDomainUrl')
+            ->with($website)
+            ->willReturn('http://domain.com/');
+        $this->fileManager->expects($this->once())
+            ->method('getFileContent')
+            ->with('robots.domain.com.txt', $this->isFalse())
+            ->willReturn(null);
         $this->logger->expects($this->once())
             ->method('error')
             ->with($message);
 
         $this->expectException(RobotsTxtFileManagerException::class);
         $this->expectExceptionMessage($message);
-        $this->urlGenerator->expects(self::once())
-            ->method('getCanonicalDomainUrl')
-            ->with($website)
-            ->willReturn('http://domain.com/');
 
-        $this->fileManager = new RobotsTxtFileManager(
-            $this->logger,
-            $this->filesystem,
-            $this->urlGenerator,
-            $this->defaultFilePath,
-            $this->path
-        );
-        $this->fileManager->getContent($website);
+        $this->robotsTxtFileManager->getContent($website);
     }
 
     public function testGetContent()
     {
-        $website = $this->getEntity(Website::class, ['id' => '145']);
+        $website = $this->getWebsite(123);
+        $fileContent = 'test content';
 
-        $this->logger->expects(self::never())
-            ->method('error');
-        $this->urlGenerator->expects(self::once())
+        $this->urlGenerator->expects($this->once())
             ->method('getCanonicalDomainUrl')
             ->with($website)
             ->willReturn('http://domain.com/');
+        $this->fileManager->expects($this->once())
+            ->method('getFileContent')
+            ->with('robots.domain.com.txt', $this->isFalse())
+            ->willReturn($fileContent);
+        $this->logger->expects($this->never())
+            ->method($this->anything());
 
-
-        $content = $this->fileManager->getContent($website);
-        $this->assertStringEqualsFile(
-            $this->getFullName('robots.domain.com.txt'),
-            $content
-        );
+        $this->assertEquals($fileContent, $this->robotsTxtFileManager->getContent($website));
     }
 
     public function testDumpContentWhenThrowsException()
     {
-        $website = $this->getEntity(Website::class, ['id' => '145']);
+        $website = $this->getWebsite(123);
         $content = 'Some content';
 
-        $exception = new IOException('Exception message');
-        $this->filesystem->expects($this->once())
-            ->method('dumpFile')
-            ->with($this->getFullName('robots.domain.com.txt'), $content)
-            ->willThrowException($exception);
+        $exception = new \Exception('Exception message');
+        $message = 'An error occurred while writing robots.txt file to robots.domain.com.txt';
 
-        $message = sprintf(
-            'An error occurred while writing robots file to %s',
-            $this->getFullName('robots.domain.com.txt')
-        );
+        $this->urlGenerator->expects($this->once())
+            ->method('getCanonicalDomainUrl')
+            ->with($website)
+            ->willReturn('http://domain.com/');
+        $this->fileManager->expects($this->once())
+            ->method('writeToStorage')
+            ->with($content, 'robots.domain.com.txt')
+            ->willThrowException($exception);
         $this->logger->expects($this->once())
             ->method('error')
             ->with($message);
 
         $this->expectException(RobotsTxtFileManagerException::class);
         $this->expectExceptionMessage($message);
-        $this->urlGenerator->expects(self::once())
-            ->method('getCanonicalDomainUrl')
-            ->with($website)
-            ->willReturn('http://domain.com/');
 
-        $this->fileManager->dumpContent($content, $website);
+        $this->robotsTxtFileManager->dumpContent($content, $website);
     }
 
     public function testDumpContent()
     {
-        $website = $this->getEntity(Website::class, ['id' => '159']);
+        $website = $this->getWebsite(123);
         $content = 'Some content';
 
-        $this->filesystem->expects($this->once())
-            ->method('dumpFile')
-            ->with($this->getFullName('robots.domain.com.txt'), $content);
-        $this->logger->expects($this->never())
-            ->method('error');
-        $this->urlGenerator->expects(self::once())
+        $this->urlGenerator->expects($this->once())
             ->method('getCanonicalDomainUrl')
             ->with($website)
             ->willReturn('http://domain.com/');
+        $this->fileManager->expects($this->once())
+            ->method('writeToStorage')
+            ->with($content, 'robots.domain.com.txt');
+        $this->logger->expects($this->never())
+            ->method($this->anything());
 
-        $this->fileManager->dumpContent($content, $website);
+        $this->robotsTxtFileManager->dumpContent($content, $website);
     }
 
     public function testDumpContentForWebsiteWithDomainWithoutSubfolder()
     {
-        $website = $this->getEntity(Website::class, ['id' => '4']);
+        $website = $this->getWebsite(123);
         $content = 'Some content';
 
-        $this->filesystem->expects($this->once())
-            ->method('dumpFile')
-            ->with($this->path . '/robots.test.com.txt', $content);
-        $this->logger->expects($this->never())
-            ->method('error');
-        $this->urlGenerator->expects(self::once())
+        $this->urlGenerator->expects($this->once())
             ->method('getCanonicalDomainUrl')
             ->with($website)
             ->willReturn('https://test.com');
+        $this->fileManager->expects($this->once())
+            ->method('writeToStorage')
+            ->with($content, 'robots.test.com.txt');
+        $this->logger->expects($this->never())
+            ->method($this->anything());
 
-        $this->fileManager->dumpContent($content, $website);
+        $this->robotsTxtFileManager->dumpContent($content, $website);
     }
 
     public function testDumpContentForWebsiteWithDomainWithSubfolder()
     {
-        $website = $this->getEntity(Website::class, ['id' => '35']);
+        $website = $this->getWebsite(123);
         $content = 'Some content';
 
-        $this->filesystem->expects($this->once())
-            ->method('dumpFile')
-            ->with($this->path . '/robots.test.com.txt', $content);
-        $this->logger->expects($this->never())
-            ->method('error');
-        $this->urlGenerator->expects(self::once())
+        $this->urlGenerator->expects($this->once())
             ->method('getCanonicalDomainUrl')
             ->with($website)
             ->willReturn('https://test.com/subfolder');
+        $this->fileManager->expects($this->once())
+            ->method('writeToStorage')
+            ->with($content, 'robots.test.com.txt');
+        $this->logger->expects($this->never())
+            ->method($this->anything());
 
-        $this->fileManager->dumpContent($content, $website);
-    }
-
-    /**
-     * @param string $fileName
-     *
-     * @return string
-     */
-    private function getFullName(string $fileName): string
-    {
-        return implode(DIRECTORY_SEPARATOR, [$this->path, $fileName]);
+        $this->robotsTxtFileManager->dumpContent($content, $website);
     }
 }

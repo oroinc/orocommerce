@@ -11,28 +11,20 @@ use Oro\Bundle\SEOBundle\Sitemap\Manager\RobotsTxtSitemapManager;
 use Oro\Bundle\SEOBundle\Sitemap\Storage\SitemapStorageFactory;
 
 /**
- * Add sitemap index to robots.txt when sitemaps are generated.
+ * Adds a link to the sitemap index file into the robots.txt file.
  */
 class DumpRobotsTxtListener
 {
-    /**
-     * @var RobotsTxtSitemapManager
-     */
+    /** @var RobotsTxtSitemapManager */
     private $robotsTxtSitemapManager;
 
-    /**
-     * @var CanonicalUrlGenerator
-     */
+    /** @var CanonicalUrlGenerator */
     private $canonicalUrlGenerator;
 
-    /**
-     * @var SitemapFilesystemAdapter
-     */
+    /** @var SitemapFilesystemAdapter */
     private $sitemapFilesystemAdapter;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $sitemapDir;
 
     /**
@@ -45,7 +37,7 @@ class DumpRobotsTxtListener
         RobotsTxtSitemapManager $robotsTxtSitemapManager,
         CanonicalUrlGenerator $canonicalUrlGenerator,
         SitemapFilesystemAdapter $sitemapFilesystemAdapter,
-        $sitemapDir
+        string $sitemapDir
     ) {
         $this->robotsTxtSitemapManager = $robotsTxtSitemapManager;
         $this->canonicalUrlGenerator = $canonicalUrlGenerator;
@@ -56,27 +48,24 @@ class DumpRobotsTxtListener
     /**
      * @param OnSitemapDumpFinishEvent $event
      */
-    public function onSitemapDumpStorage(OnSitemapDumpFinishEvent $event)
+    public function onSitemapDumpStorage(OnSitemapDumpFinishEvent $event): void
     {
         $website = $event->getWebsite();
-        $indexFiles = $this->sitemapFilesystemAdapter->getSitemapFiles(
+        $files = $this->sitemapFilesystemAdapter->getSitemapFiles(
             $website,
-            SitemapFilesystemAdapter::ACTUAL_VERSION,
             SitemapDumper::getFilenamePattern(SitemapStorageFactory::TYPE_SITEMAP_INDEX)
         );
 
-        if (!$indexFiles->count()) {
+        if (empty($files)) {
             throw new LogicException('Cannot find sitemap index file.');
         }
 
-        /** @var \SplFileInfo $indexFile */
-        foreach ($indexFiles as $indexFile) {
+        foreach ($files as $file) {
             $url = sprintf(
-                '%s/%s/%s/%s',
+                '%s/%s/%s',
                 $this->sitemapDir,
                 $event->getWebsite()->getId(),
-                SitemapFilesystemAdapter::ACTUAL_VERSION,
-                $indexFile->getFilename()
+                pathinfo($file->getName(), PATHINFO_BASENAME)
             );
 
             $domainUrl = rtrim($this->canonicalUrlGenerator->getCanonicalDomainUrl($website), '/');

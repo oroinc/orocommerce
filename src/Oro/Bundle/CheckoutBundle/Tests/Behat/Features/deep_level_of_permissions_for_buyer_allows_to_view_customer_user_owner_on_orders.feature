@@ -4,7 +4,6 @@
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroCheckoutBundle:Checkout.yml
 Feature: Deep level of permissions for buyer allows to view customer user owner on orders
-  ToDo: BAP-16103 Add missing descriptions to the Behat features
 
   Scenario: Feature Background
     Given sessions active:

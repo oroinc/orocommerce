@@ -1,3 +1,6 @@
+imports:
+    - { resource: 'actions/shopping_list_actions.yml' }
+
 operations:
     oro_shoppinglist_createorder:
         label: oro.shoppinglist.btn.create_order
@@ -179,6 +182,7 @@ operations:
         applications: [commerce]
         routes:
             - oro_shopping_list_frontend_view
+            - oro_shopping_list_frontend_update
         acl_resource: oro_rfp_frontend_request_create
         order: 220
         button_options:
@@ -202,6 +206,7 @@ operations:
                 - '@service_exists': oro_rfp.form.type.extension.frontend_request_data_storage
                 - '@has_elements': $lineItems
                 - '@rfp_allowed': $lineItems
+                - '@acl_granted': [VIEW, $.data]
         actions:
             - '@call_service_method':
                 service: oro_shopping_list.service.product_data_storage
@@ -219,6 +224,10 @@ operations:
             - shopping-list-grid
             - customer-shopping-lists-grid
             - customer-user-shopping-lists-grid
+            - frontend-customer-user-shopping-list-grid
+            - frontend-customer-user-shopping-list-assign-grid
+            - frontend-customer-user-shopping-list-edit-grid
+            - frontend-customer-user-shopping-list-select-grid
 
     DELETE:
         exclude_entities:
@@ -227,6 +236,10 @@ operations:
             - shopping-list-grid
             - customer-shopping-lists-grid
             - customer-user-shopping-lists-grid
+            - frontend-customer-user-shopping-list-grid
+            - frontend-customer-user-shopping-list-assign-grid
+            - frontend-customer-user-shopping-list-edit-grid
+            - frontend-customer-user-shopping-list-select-grid
 
     oro_shoppinglist_delete:
         extends: DELETE
@@ -237,6 +250,7 @@ operations:
             - entities
         routes:
             - oro_shopping_list_frontend_view
+            - oro_shopping_list_frontend_update
         entities:
             - Oro\Bundle\ShoppingListBundle\Entity\ShoppingList
         button_options:
@@ -255,7 +269,7 @@ operations:
         actions:
             - '@redirect':
                 parameters:
-                    route: oro_shopping_list_frontend_view
+                    route: oro_shopping_list_frontend_index
 
     oro_shoppinglist_delete_line_item:
         extends: DELETE
@@ -352,78 +366,6 @@ operations:
                         route_parameters:
                             id: $.newShoppingList.id
 
-    oro_shoppinglist_frontend_duplicate:
-        label: oro.shoppinglist.duplicate.list.label
-        frontend_options:
-            options:
-                ariaLabel: 'oro.shoppinglist.duplicate.list.aria_label'
-        acl_resource: ['DUPLICATE_SHOPPING_LIST', $.data]
-        groups:
-            - update_navButtons
-        routes:
-            - oro_shopping_list_frontend_view
-        button_options:
-            class: btn--action
-            icon: fa-clone
-        preconditions:
-            '@and':
-                - '@at_least_one_available_product': $.data.lineItems
-        actions:
-            - '@call_service_method':
-                service: oro_locale.formatter.date_time
-                method: format
-                attribute: $.copyDate
-                method_parameters:
-                    - 'now'
-            - '@translate':
-                id: 'oro.shoppinglist.actions.copied'
-                attribute: $.copiedLabel
-            - '@format_string':
-                attribute: $.labelSuffix
-                string: $.copiedLabel
-                arguments:
-                    copyDate: $.copyDate
-            - '@add_string_suffix':
-                attribute: $.newName
-                string: $.data.label
-                stringSuffix: $.labelSuffix
-                maxLength: 255
-            - '@get_active_user': $.currentUser
-            - '@duplicate':
-                attribute: $.newShoppingList
-                settings:
-                  - [[setNull], [propertyName, [id]]]
-                  - [[collection], [propertyName, [totals]]]
-                  - [[collection], [propertyName, [lineItems]]]
-                  - [[collection], [propertyName, [visitors]]]
-                  - [[replaceValue, $.currentUser], [propertyName, [customerUser]]]
-                  - [[replaceValue, $.currentUser.customer], [propertyName, [customer]]]
-                  - [[replaceValue, $.currentUser.owner], [propertyName, [owner]]]
-                  - [[replaceValue, $.currentUser.organization], [propertyName, [organization]]]
-                  - [[keep], [propertyName, [website]]]
-                  - [[shallowCopy], [propertyType, ['\DateTime']]]
-                  - [[keep], [propertyType, ['Oro\Bundle\ProductBundle\Entity\Product']]]
-                  - [[keep], [propertyType, ['Oro\Bundle\ProductBundle\Entity\ProductUnit']]]
-            - '@remove_restricted_products':
-                attribute: $.removedProducts
-                productHolderPath: $.newShoppingList.lineItems
-            - '@flash_message':
-                conditions:
-                    '@has_elements': $.removedProducts
-                message: oro.shoppinglist.duplicate.restricted_products.message
-                type: 'warning'
-            - '@assign_value': [$.newShoppingList.label, $.newName]
-            - '@assign_value': [$.newShoppingList.current, false]
-            - '@flush_entity': $.newShoppingList
-            - '@flash_message':
-                  message: oro.shoppinglist.duplicate.success.message
-                  type: 'success'
-                  message_parameters:
-                    'shoppinglist': $.data.label
-            - '@redirect':
-                route: 'oro_shopping_list_frontend_view'
-                route_parameters:
-                    id: $.newShoppingList.id
 action_groups:
     oro_shoppinglist_frontend_addlineitem:
         parameters:

@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\PersistentCollection;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
@@ -43,11 +45,13 @@ class ProductVariantLinksValidator extends ConstraintValidator
         }
 
         $this->validateLinksWithoutFields($product, $constraint);
-        if ($value instanceof ProductVariantLink) {
-            $this->validateVariantLinksCollectionHaveFilledFIelds([$value], $product->getVariantFields(), $constraint);
-        } else {
-            $this->validateLinksHaveFilledFields($product, $constraint);
-        }
+
+        $variantLinks = $value instanceof ProductVariantLink
+            ? new ArrayCollection([$value])
+            : $this->getLoadedVariantLinks($product);
+
+        $this->validateVariantLinksFamily($variantLinks, $constraint);
+        $this->validateVariantLinksCollectionHaveFilledFields($variantLinks, $product->getVariantFields(), $constraint);
     }
 
     /**
@@ -56,7 +60,7 @@ class ProductVariantLinksValidator extends ConstraintValidator
      * @param Product $value
      * @param ProductVariantLinks $constraint
      */
-    private function validateLinksWithoutFields(Product $value, ProductVariantLinks $constraint)
+    private function validateLinksWithoutFields(Product $value, ProductVariantLinks $constraint): void
     {
         if (count($value->getVariantFields()) === 0 && $value->getVariantLinks()->count() !== 0) {
             $this->context->buildViolation($constraint->variantFieldRequiredMessage)
@@ -66,20 +70,15 @@ class ProductVariantLinksValidator extends ConstraintValidator
     }
 
     /**
-     * @param Product $value
-     * @param ProductVariantLinks $constraint
+     * @param Product $product
+     * @return Collection|ProductVariantLink[]
      */
-    private function validateLinksHaveFilledFields(Product $value, ProductVariantLinks $constraint)
+    private function getLoadedVariantLinks(Product $product)
     {
-        $variantFields = $value->getVariantFields();
-
         // Validate only loaded collection items
-        $variantLinks = $value->getVariantLinks();
-        if ($variantLinks instanceof PersistentCollection) {
-            $variantLinks = $variantLinks->unwrap();
-        }
+        $variantLinks = $product->getVariantLinks();
 
-        $this->validateVariantLinksCollectionHaveFilledFIelds($variantLinks, $variantFields, $constraint);
+        return $variantLinks instanceof PersistentCollection ? $variantLinks->unwrap() : $variantLinks;
     }
 
     /**
@@ -87,8 +86,8 @@ class ProductVariantLinksValidator extends ConstraintValidator
      * @param array $variantFields
      * @param ProductVariantLinks $constraint
      */
-    private function validateVariantLinksCollectionHaveFilledFIelds(
-        $variantLinks,
+    private function validateVariantLinksCollectionHaveFilledFields(
+        iterable $variantLinks,
         array $variantFields,
         ProductVariantLinks $constraint
     ): void {
@@ -119,5 +118,55 @@ class ProductVariantLinksValidator extends ConstraintValidator
                 ]
             );
         }
+    }
+
+    /**
+     * Configurable product and product variant(s) should belongs to the same product family
+     *
+     * @param iterable|ProductVariantLink[] $variantLinks
+     * @param ProductVariantLinks $constraint
+     */
+    private function validateVariantLinksFamily(iterable $variantLinks, ProductVariantLinks $constraint): void
+    {
+        $variantLinksLabels = [];
+        $variantLinksFromAnotherFamily = $this->getVariantLinksFromAnotherFamily($variantLinks);
+        foreach ($variantLinksFromAnotherFamily as $variantLink) {
+            $variantLinks->removeElement($variantLink);
+            $variantLinksLabels[] = $variantLink->getProduct()->getSku();
+        }
+
+        if (!empty($variantLinksLabels)) {
+            $this->context->addViolation(
+                $constraint->variantLinkBelongsAnotherFamilyMessage,
+                ['%products_sku%' => implode(', ', $variantLinksLabels)]
+            );
+        }
+    }
+
+    /**
+     * @param iterable|ProductVariantLink[] $variantLinks
+     * @return array
+     */
+    private function getVariantLinksFromAnotherFamily(iterable $variantLinks): array
+    {
+        $variantLinksFromAnotherFamily = [];
+        foreach ($variantLinks as $variantLink) {
+            $product = $variantLink->getProduct();
+            $parentProduct = $variantLink->getParentProduct();
+            if (!$product || !$parentProduct) {
+                continue;
+            }
+
+            $productAttributeFamily = $product->getAttributeFamily();
+            $parentProductAttributeFamily = $parentProduct->getAttributeFamily();
+            if (!$productAttributeFamily ||
+                !$parentProductAttributeFamily ||
+                $productAttributeFamily->getCode() !== $parentProductAttributeFamily->getCode()
+            ) {
+                $variantLinksFromAnotherFamily[] = $variantLink;
+            }
+        }
+
+        return $variantLinksFromAnotherFamily;
     }
 }

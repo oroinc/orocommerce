@@ -4,10 +4,9 @@ namespace Oro\Bundle\SEOBundle\EventListener;
 
 use Oro\Bundle\SEOBundle\Manager\RobotsTxtFileManager;
 use Oro\Bundle\SEOBundle\Sitemap\Event\OnSitemapDumpFinishEvent;
-use Oro\Component\Website\WebsiteInterface;
 
 /**
- * Copies robots txt template file as the base for the robots txt file.
+ * Dumps the robots.txt file based on a template file if a robots.txt file was not dumped yet.
  */
 class CopyRobotsTxtTemplateListener
 {
@@ -49,7 +48,7 @@ class CopyRobotsTxtTemplateListener
     }
 
     /**
-     * @param WebsiteInterface $website
+     * @param string $domainFileName
      *
      * @return string
      */

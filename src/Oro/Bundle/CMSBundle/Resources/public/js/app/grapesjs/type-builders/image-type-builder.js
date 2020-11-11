@@ -13,8 +13,10 @@ const ImageTypeBuilder = BaseTypeBuilder.extend({
 
         getAttrToHTML() {
             const attrs = this.constructor.__super__.getAttrToHTML.call(this);
-            attrs['src'] = attrs['data-src-exp'];
-            delete attrs['data-src-exp'];
+            if (attrs['data-src-exp']) {
+                attrs['src'] = attrs['data-src-exp'];
+                delete attrs['data-src-exp'];
+            }
             return attrs;
         }
     },
@@ -62,7 +64,7 @@ const ImageTypeBuilder = BaseTypeBuilder.extend({
                         const {digitalAssetId, uuid, title} = digitalAssetModel.get('previewMetadata');
 
                         digitalAssetImageComponentModel
-                            .setAttributes({
+                            .addAttributes({
                                 'alt': title || '',
                                 'data-src-exp': `{{ wysiwyg_image('${digitalAssetId}','${uuid}') }}`
                             });

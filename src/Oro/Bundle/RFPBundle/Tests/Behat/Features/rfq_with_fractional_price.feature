@@ -19,6 +19,7 @@ Feature: RFQ with fractional price
     And I select "German Localization" localization
 
     When I open page with shopping list "Shopping List 1"
+    And I click "More Actions"
     And I click "Request Quote"
     And I fill form with:
       | First Name    | Amanda                  |

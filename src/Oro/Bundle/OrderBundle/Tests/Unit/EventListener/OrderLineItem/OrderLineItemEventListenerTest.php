@@ -58,7 +58,7 @@ class OrderLineItemEventListenerTest extends \PHPUnit\Framework\TestCase
     public function testMethods($returnResult, $expectation)
     {
         $this->configurableProductProvider->expects($this->any())
-            ->method('getLineItemProduct')
+            ->method('getVariantFieldsValuesForLineItem')
             ->willReturn($returnResult);
 
         /** @var OrderLineItem $lineItem */

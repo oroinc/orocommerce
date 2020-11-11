@@ -6,11 +6,12 @@ Feature: Shopping list notes
   Scenario: Add notes to shopping list
     Given I login as AmandaRCole@example.org buyer
     When Buyer is on "Another List" shopping list
-    And I click "View Options for this Shopping List"
-    And I click on "Add a Note to This Shopping List"
-    And I type "My shopping list <script>alert('malicious script')</script> notes" in "shopping_list_notes"
-    And I click on empty space
-    And I should see "Record has been successfully updated" flash message
+    And I click "Shopping List Actions"
+    And I click "Edit"
+    And I click "Add a note to entire Shopping List"
+    And I type "My shopping list <script>alert('malicious script')</script> notes" in "Shopping List Notes"
+    And I click on "Save Shopping List Notes"
+    Then I should see "My shopping list <script>alert('malicious script')</script> notes"
 
   Scenario: Open shopping list as admin
     Given I login as administrator

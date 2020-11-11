@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserACLData;
@@ -15,9 +14,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
-class LoadShoppingListACLData extends AbstractFixture implements
-    FixtureInterface,
-    DependentFixtureInterface
+class LoadShoppingListACLData extends AbstractFixture implements DependentFixtureInterface
 {
     const SHOPPING_LIST_ACC_1_USER_LOCAL = 'shopping_list_customer1_user_local';
     const SHOPPING_LIST_ACC_1_USER_BASIC = 'shopping_list_customer1_user_basic';

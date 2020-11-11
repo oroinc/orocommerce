@@ -42,7 +42,7 @@ class NotEmptyConfigurableAttributesValidatorTest extends \PHPUnit\Framework\Tes
         unset($this->validator, $this->context, $this->provider);
     }
 
-    public function testValidateUnsupportedClass()
+    public function testValidateUnsupportedClass(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage(
@@ -52,7 +52,7 @@ class NotEmptyConfigurableAttributesValidatorTest extends \PHPUnit\Framework\Tes
         $this->validator->validate(new \stdClass(), new NotEmptyConfigurableAttributes());
     }
 
-    public function testValidateNotConfigurable()
+    public function testValidateNotConfigurable(): void
     {
         $product = new Product();
         $product->setType(Product::TYPE_SIMPLE);
@@ -63,7 +63,7 @@ class NotEmptyConfigurableAttributesValidatorTest extends \PHPUnit\Framework\Tes
         $this->validator->validate($product, new NotEmptyConfigurableAttributes());
     }
 
-    public function testValidateConfigurableValid()
+    public function testValidateConfigurableValid(): void
     {
         $attributeFamily = new AttributeFamily();
 
@@ -82,7 +82,7 @@ class NotEmptyConfigurableAttributesValidatorTest extends \PHPUnit\Framework\Tes
         $this->validator->validate($product, new NotEmptyConfigurableAttributes());
     }
 
-    public function testValidateConfigurableNotValid()
+    public function testValidateConfigurableNotValid(): void
     {
         $attributeFamily = new AttributeFamily();
         $attributeFamily->setCode('default_family');
@@ -103,6 +103,20 @@ class NotEmptyConfigurableAttributesValidatorTest extends \PHPUnit\Framework\Tes
             ->expects($this->once())
             ->method('addViolation')
             ->with($constraint->message, ['%attributeFamily%' => 'default_family']);
+
+        $this->validator->validate($product, new NotEmptyConfigurableAttributes());
+    }
+
+    public function testValidateConfigurableWithoutAttributeFamily(): void
+    {
+        $product = new Product();
+        $product->setType(Product::TYPE_CONFIGURABLE);
+
+        $this->provider->expects($this->never())
+            ->method('getVariantFields');
+
+        $this->context->expects($this->never())
+            ->method('addViolation');
 
         $this->validator->validate($product, new NotEmptyConfigurableAttributes());
     }

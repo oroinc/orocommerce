@@ -72,7 +72,7 @@ Feature: Guest shopping list merging functionality
     And I should see "Shopping List"
     And I open shopping list widget
     And I click "View List"
-    And I should see following line items in "Shopping List Line Items Table":
-      | SKU      | Quantity | Unit |
-      | PSKU1    | 2        | each |
-      | CONTROL1 | 1        | each |
+    And I should see following grid:
+      | SKU      | QtyUpdate All |
+      | CONTROL1 | 1 each        |
+      | PSKU1    | 2 each        |

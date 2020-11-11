@@ -4,7 +4,6 @@
 @fixture-OroOrderBundle:OrderAddressesFixture.yml
 @fixture-OroCustomerBundle:CustomerUserAddressAmericanSamoaFixture.yml
 Feature: Order Addresses
-  ToDo: BAP-16103 Add missing descriptions to the Behat features
 
   Scenario: Check Order Billing and Shipping Address Labels
     Given I login as administrator

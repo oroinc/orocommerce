@@ -11,7 +11,10 @@ class PromotionShoppingListLineItem extends ShoppingListLineItem implements Disc
      */
     public function getDiscount()
     {
-        $discount = $this->find('css', 'span[data-name="discount-value"]');
+        $discount = $this->find(
+            'xpath',
+            '//td[contains(@class, "grid-body-cell-subtotal")]//div[contains(@data-label, "Discount")]'
+        );
 
         return $discount ? $discount->getText() : null;
     }

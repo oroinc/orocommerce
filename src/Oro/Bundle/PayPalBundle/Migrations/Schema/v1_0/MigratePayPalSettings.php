@@ -3,8 +3,8 @@
 namespace Oro\Bundle\PayPalBundle\Migrations\Schema\v1_0;
 
 use Doctrine\DBAL\Schema\Schema;
+use Oro\Bundle\ConfigBundle\Migration\RenameConfigSectionQuery;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
-use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class MigratePayPalSettings implements Migration
@@ -71,13 +71,6 @@ class MigratePayPalSettings implements Migration
      */
     protected function migrateSetting(QueryBag $queries, $name)
     {
-        $queries->addQuery(new ParametrizedSqlMigrationQuery(
-            'UPDATE oro_config_value SET section = :new_section WHERE name = :name AND section = :old_section',
-            [
-                'name' => $name,
-                'new_section' => 'oro_paypal',
-                'old_section' => 'orob2b_payment'
-            ]
-        ));
+        $queries->addQuery(new RenameConfigSectionQuery('orob2b_payment', 'oro_paypal', $name));
     }
 }

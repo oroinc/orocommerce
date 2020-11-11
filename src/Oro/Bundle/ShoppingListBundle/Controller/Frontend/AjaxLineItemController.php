@@ -5,6 +5,7 @@ namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionDispatcher;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionParametersParser;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionResponseInterface;
+use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
@@ -15,12 +16,15 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Form\Handler\LineItemHandler;
 use Oro\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
+use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemBatchUpdateHandler;
 use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
 use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use Oro\Bundle\ShoppingListBundle\Model\LineItemModel;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -266,6 +270,68 @@ class AjaxLineItemController extends AbstractLineItemController
     }
 
     /**
+     * Update shopping list line items in batch
+     *
+     * @Route(
+     *      "/batch-update/{id}",
+     *      name="oro_shopping_list_frontend_line_item_batch_update",
+     *      requirements={"id"="\d+"},
+     *      methods={"PUT"}
+     * )
+     * @AclAncestor("oro_shopping_list_frontend_update")
+     *
+     * @param Request $request
+     * @param ShoppingList $shoppingList
+     *
+     * @return JsonResponse
+     */
+    public function batchUpdateAction(Request $request, ShoppingList $shoppingList): Response
+    {
+        $data = \json_decode($request->getContent(), true);
+        if (!isset($data['data']) || !is_array($data['data'])) {
+            return $this->json(['message' => 'The request data should not be empty'], Response::HTTP_BAD_REQUEST);
+        }
+
+        $handler = $this->get(ShoppingListLineItemBatchUpdateHandler::class);
+
+        $errors = $handler->process($this->getLineItemModels($data['data']), $shoppingList);
+        if ($errors) {
+            return $this->json(['message' => implode(', ', $errors)], Response::HTTP_BAD_REQUEST);
+        }
+
+        foreach ($data['fetchData'] ?? [] as $key => $value) {
+            $request->query->set($key, $value);
+        }
+
+        return $this->forward(
+            'OroDataGridBundle:Grid:get',
+            ['gridName' => 'frontend-customer-user-shopping-list-edit-grid'],
+            $request->query->all()
+        );
+    }
+
+    /**
+     * @param array $rawLineItems
+     *
+     * @return array
+     */
+    private function getLineItemModels(array $rawLineItems): array
+    {
+        return array_filter(
+            array_map(
+                static function (array $item) {
+                    $quantity = (float)$item['quantity'];
+
+                    return $quantity > 0 ?
+                        new LineItemModel((int)$item['id'], $quantity, (string)$item['unitCode'])
+                        : null;
+                },
+                $rawLineItems
+            )
+        );
+    }
+
+    /**
      * @param ShoppingList $shoppingList
      * @param Product $product
      * @param string $message
@@ -319,6 +385,8 @@ class AjaxLineItemController extends AbstractLineItemController
                 MassActionParametersParser::class,
                 ValidatorInterface::class,
                 AuthorizationCheckerInterface::class,
+                UpdateHandlerFacade::class,
+                ShoppingListLineItemBatchUpdateHandler::class,
             ]
         );
     }

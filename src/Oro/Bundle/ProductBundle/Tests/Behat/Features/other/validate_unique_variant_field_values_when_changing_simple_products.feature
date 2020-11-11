@@ -3,8 +3,6 @@
 @fixture-OroProductBundle:Products_validate_unique_variant_field_values.yml
 @regression
 Feature: Validate unique variant field values when changing simple products
-  ToDo: BAP-16103 Add missing descriptions to the Behat features
-
   #Case 1:
   #Validate unique variant field values in configurable product in case of change product variant
   #Case 2:

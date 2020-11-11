@@ -10,13 +10,15 @@ Feature: Delete line item from Shopping List
   Scenario: Delete product from Shopping List
     Given I login as AmandaRCole@example.org buyer
     And Buyer is on "Shopping List 5" shopping list
-    And I should see following line items in "Shopping List Line Items Table":
-      | SKU | Quantity | Unit |
-      | AA1 | 1        | set  |
-      | AA1 | 2        | item |
-    When I delete line item 1 in "Shopping List Line Items Table"
+    And I click "Shopping List Actions"
+    And I click "Edit"
+    And I should see following grid:
+      | SKU | QtyUpdate All |
+      | AA1 | 1 set         |
+      | AA1 | 2 item        |
+    When I click Delete AA1 in grid
     And I click "Yes, Delete" in modal window
-    Then I should see "Shopping list item has been deleted" flash message
-    And I should see following line items in "Shopping List Line Items Table":
-      | SKU | Quantity | Unit |
-      | AA1 | 2        | item |
+    Then I should see 'The "Product1" product was successfully deleted' flash message
+    And I should see following grid:
+      | SKU | QtyUpdate All |
+      | AA1 | 2 item        |

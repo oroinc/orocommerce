@@ -323,9 +323,6 @@ oro:
                 applied_coupons_header.label: 'Applied Code'
                 list.aria_label: 'The list of applied coupon codes'
                 delete: 'Delete applied %counter% coupon: %coupon_name%'
-        shoppinglist:
-            view:
-                discount.label: 'Row Discount:'
         checkout:
             view:
                 discount.label: 'Row Discount:'

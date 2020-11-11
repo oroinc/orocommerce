@@ -1,0 +1,10 @@
+<label class="custom-checkbox cell-checkbox">
+    <input type="checkbox"
+           data-role="select-row-cell"
+           class="custom-checkbox__input"
+           aria-label=""
+    <% if (checked) { %> checked="checked"<% } %>
+    >
+    <span class="custom-checkbox__icon" aria-hidden="true"><span class="cell-line"></span></span>
+    <span class="sr-only"><%- _.__('oro.datagrid.action.select_row') %></span>
+</label>

@@ -269,10 +269,34 @@ oro_behat_extension:
     Matrix Grid Form Totals:
       selector: '.product-totals'
 
+    Matrix Grid Total Price:
+      selector: 'div[data-role="total-price"]'
+
+    Matrix Grid Total Quantity:
+      selector: 'div[data-role="total-quantity"]'
+
+    Matrix Grid Column 1 Total Quantity:
+      selector: 'div[data-columns-quantity="1"]'
+
+    Matrix Grid Column 2 Total Quantity:
+      selector: 'div[data-columns-quantity="2"]'
+
+    Matrix Grid Column 3 Total Quantity:
+      selector: 'div[data-columns-quantity="3"]'
+
+    Matrix Grid Row 1 Total Quantity:
+      selector: 'div[data-rows-quantity="1"]'
+
+    Matrix Grid Row 2 Total Quantity:
+      selector: 'div[data-rows-quantity="2"]'
+
+    Matrix Grid Row 3 Total Quantity:
+      selector: 'div[data-rows-quantity="3"]'
+
     Clear All Button:
       selector:
         type: xpath
-        locator: '//button[contains(text(), "Clear All")]'
+        locator: '//button[contains(text(), "Clear All Product Variants")]'
 
     One Dimensional Matrix Grid Form:
       selector:
@@ -430,6 +454,8 @@ oro_behat_extension:
         mapping:
           Enable Guest Shopping List Default: 'shopping_list[oro_shopping_list___availability_for_guests][use_parent_scope_value]'
           Shopping List Limit Default: 'shopping_list[oro_shopping_list___shopping_list_limit][use_parent_scope_value]'
+          Show All Lists in Shopping List Widget Use default: 'shopping_list[oro_shopping_list___show_all_in_shopping_list_widget][use_parent_scope_value]'
+          Show All Lists in Shopping List Widget: 'shopping_list[oro_shopping_list___show_all_in_shopping_list_widget][value]'
 
     Save on conf window:
       selector:

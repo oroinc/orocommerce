@@ -2,46 +2,31 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Unit\Sitemap\Provider;
 
+use Gaufrette\File;
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
 use Oro\Bundle\SEOBundle\Model\DTO\UrlItem;
 use Oro\Bundle\SEOBundle\Sitemap\Filesystem\SitemapFilesystemAdapter;
 use Oro\Bundle\SEOBundle\Sitemap\Provider\SitemapFilesProvider;
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Website\WebsiteInterface;
-use Symfony\Component\Finder\Finder;
 
 class SitemapFilesProviderTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
-    /**
-     * @var SitemapFilesystemAdapter|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var SitemapFilesystemAdapter|\PHPUnit\Framework\MockObject\MockObject */
     private $filesystemAdapter;
 
-    /**
-     * @var CanonicalUrlGenerator|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var CanonicalUrlGenerator|\PHPUnit\Framework\MockObject\MockObject */
     private $canonicalUrlGenerator;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $webPath;
 
-    /**
-     * @var SitemapFilesProvider
-     */
+    /** @var SitemapFilesProvider */
     private $provider;
 
     protected function setUp(): void
     {
-        $this->filesystemAdapter = $this->getMockBuilder(SitemapFilesystemAdapter::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->canonicalUrlGenerator = $this->getMockBuilder(CanonicalUrlGenerator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->filesystemAdapter = $this->createMock(SitemapFilesystemAdapter::class);
+        $this->canonicalUrlGenerator = $this->createMock(CanonicalUrlGenerator::class);
         $this->webPath = '/sitemaps';
 
         $this->provider = new SitemapFilesProvider(
@@ -51,60 +36,68 @@ class SitemapFilesProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    /**
+     * @param int $id
+     *
+     * @return WebsiteInterface
+     */
+    private function getWebsite(int $id): WebsiteInterface
+    {
+        $website = $this->createMock(WebsiteInterface::class);
+        $website->expects($this->any())
+            ->method('getId')
+            ->willReturn($id);
+
+        return $website;
+    }
+
+    /**
+     * @param string $fileName
+     *
+     * @return File
+     */
+    private function getFile(string $fileName): File
+    {
+        $file = $this->createMock(File::class);
+        $file->expects($this->any())
+            ->method('getName')
+            ->willReturn($fileName);
+        $file->expects($this->any())
+            ->method('getMtime')
+            ->willReturn(time());
+
+        return $file;
+    }
+
     public function testGetUrlItemsNoFiles()
     {
-        /** @var WebsiteInterface|\PHPUnit\Framework\MockObject\MockObject $website */
-        $website = $this->createMock(WebsiteInterface::class);
-        $version = '1';
+        $website = $this->getWebsite(123);
 
         $this->filesystemAdapter->expects($this->once())
             ->method('getSitemapFiles')
-            ->with($website, $version)
-            ->willReturn(new \ArrayIterator());
+            ->with($this->identicalTo($website), $this->isNull(), 'sitemap-index-*.xml*')
+            ->willReturn([]);
 
         $this->canonicalUrlGenerator->expects($this->never())
             ->method($this->anything());
 
-        $this->assertEquals([], iterator_to_array($this->provider->getUrlItems($website, $version)));
+        $this->assertEquals([], iterator_to_array($this->provider->getUrlItems($website, '1')));
     }
 
     public function testGetUrlItems()
     {
-        /** @var WebsiteInterface|\PHPUnit\Framework\MockObject\MockObject $website */
-        $website = $this->createMock(WebsiteInterface::class);
-        $website->expects($this->any())
-            ->method('getId')
-            ->willReturn(1);
-        $version = '42';
+        $website = $this->getWebsite(123);
 
         $fileName = 'test.xml';
 
-        $file = $this->getMockBuilder(\SplFileInfo::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $file->expects($this->once())
-            ->method('getFilename')
-            ->willReturn($fileName);
-        $file->expects($this->once())
-            ->method('getMTime')
-            ->willReturn(time());
-
-        /** @var Finder|\PHPUnit\Framework\MockObject\MockObject $finder */
-        $finder = $this->getMockBuilder(Finder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $finder->expects($this->once())
-            ->method('notName')
-            ->with('sitemap-index-*.xml*')
-            ->willReturnSelf();
-        $this->configureIteratorMock($finder, [$file]);
+        $file = $this->getFile($fileName);
 
         $this->filesystemAdapter->expects($this->once())
             ->method('getSitemapFiles')
-            ->with($website, $version)
-            ->willReturn($finder);
+            ->with($this->identicalTo($website), $this->isNull(), 'sitemap-index-*.xml*')
+            ->willReturn([$file]);
 
-        $absoluteUrl = 'http://test.com/sitemaps/1/actual/test.xml';
+        $absoluteUrl = 'http://test.com/sitemaps/123/test.xml';
         $this->canonicalUrlGenerator->expects($this->once())
             ->method('getCanonicalDomainUrl')
             ->with($website)
@@ -112,33 +105,18 @@ class SitemapFilesProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->canonicalUrlGenerator->expects($this->once())
             ->method('createUrl')
-            ->with('http://test.com', '/sitemaps/1/actual/test.xml')
+            ->with('http://test.com', '/sitemaps/123/test.xml')
             ->willReturn($absoluteUrl);
 
-        $actual = iterator_to_array($this->provider->getUrlItems($website, $version));
+        /** @var UrlItem[] $actual */
+        $actual = iterator_to_array($this->provider->getUrlItems($website, '1'));
         $this->assertCount(1, $actual);
-        /** @var UrlItem $urlItem */
+
         $urlItem = reset($actual);
         $this->assertInstanceOf(UrlItem::class, $urlItem);
         $this->assertNotEmpty($urlItem->getLastModification());
         $this->assertEquals($absoluteUrl, $urlItem->getLocation());
         $this->assertEmpty($urlItem->getPriority());
         $this->assertEmpty($urlItem->getChangeFrequency());
-    }
-
-    /**
-     * @param \PHPUnit\Framework\MockObject\MockObject $mock
-     * @param array $items
-     */
-    private function configureIteratorMock(\PHPUnit\Framework\MockObject\MockObject $mock, array $items)
-    {
-        $iterator = new \ArrayIterator($items);
-
-        $mock->expects($this->any())
-            ->method('getIterator')
-            ->willReturn($iterator);
-        $mock->expects($this->any())
-            ->method('count')
-            ->willReturn($iterator->count());
     }
 }
