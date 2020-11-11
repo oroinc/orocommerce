@@ -52,6 +52,22 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                     'value' => false,
                     'scope' => 'app',
                 ],
+                'shopping_lists_page_enabled' => [
+                    'value' => false,
+                    'scope' => 'app',
+                ],
+                'use_new_layout_for_view_and_edit_pages' => [
+                    'value' => false,
+                    'scope' => 'app',
+                ],
+                'shopping_lists_max_line_items_per_page' => [
+                    'value' => 1000,
+                    'scope' => 'app',
+                ],
+                'show_all_in_shopping_list_widget' => [
+                    'value' => true,
+                    'scope' => 'app',
+                ],
             ]
         ];
         $this->assertEquals($expected, $processor->processConfiguration($configuration, []));

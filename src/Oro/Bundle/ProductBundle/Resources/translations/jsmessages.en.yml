@@ -1,6 +1,8 @@
 oro:
     product:
         grid:
+            delete_entity_title: Delete Product
+            delete_success: Product deleted
             navigation_bar:
                 sorting:
                     label: sorted by %column% %direction%
@@ -59,8 +61,8 @@ oro:
                 short_plural: kgs
             value:
                 full: '{0} none|]0,1] {{ count }} kilogram|]1,Inf]{{ count }} kilograms'
-                short: '{0} none|]0,1] {{ count }} kg|]1,Inf]{{ count }} kg'
-                label: '{0} none|]0,1] kg|]1,Inf] kg'
+                short: '{0} none|]0,1] {{ count }} kg|]1,Inf]{{ count }} kgs'
+                label: '{0} none|]0,1] kg|]1,Inf] kgs'
 
         product_unit.piece:
             label:
@@ -169,3 +171,6 @@ oro:
         widgets:
             select_related_items:
                 limit_has_been_reached: Limit of related items has been reached
+        images:
+            zoom:
+                label: 'Enlarge Product Image'

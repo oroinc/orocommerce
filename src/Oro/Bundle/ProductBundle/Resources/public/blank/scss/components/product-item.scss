@@ -129,6 +129,15 @@
                 @include img-fluid();
             }
         }
+
+        &--tiny {
+            min-width: $product-item-image-holder-tiny-width;
+            width: $product-item-image-holder-tiny-width;
+            min-height: $product-item-image-holder-tiny-height;
+            height: $product-item-image-holder-tiny-height;
+
+            border: $product-item-image-holder-tiny-border;
+        }
     }
 
     &__preview {

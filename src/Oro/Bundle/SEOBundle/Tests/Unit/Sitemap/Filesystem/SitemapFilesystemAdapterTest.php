@@ -63,11 +63,8 @@ class SitemapFilesystemAdapterTest extends \PHPUnit\Framework\TestCase
             ->willReturn(1);
 
         $filename = 'sitemap-test-1.xml';
-        $version = 'actual';
-        $testPath = $this->getPath(1, $version);
-        $this->filesystem->expects($this->once())
-            ->method('mkdir')
-            ->with($testPath);
+        $version = 'test';
+        $testPath = $website->getId() . DIRECTORY_SEPARATOR . SitemapFilesystemAdapter::ACTUAL_VERSION;
         $this->fileWriter->expects($this->once())
             ->method('saveSitemap')
             ->with($content, $testPath . DIRECTORY_SEPARATOR . $filename);

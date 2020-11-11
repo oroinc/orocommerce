@@ -225,6 +225,7 @@ $matrix-order-widget-form-col-offset: 0 !default;
 $matrix-order-widget-form-col-offset-inner: 0 8px !default;
 $matrix-order-widget-form-col-width: calc(100% / 9) !default;
 $matrix-order-widget-form-col-min-width: 90px !default;
+$matrix-order-widget-form-col-width-m: 140px !default;
 $matrix-order-widget-form-col-color: get-color('additional', 'middle') !default;
 $matrix-order-widget-form-col-border: none !default;
 $matrix-order-widget-form-col-line-height: 1.5em !default;
@@ -291,6 +292,13 @@ $matrix-order-widget-item-content-wrapper-overflow: hidden !default;
 $matrix-order-widget-item-content-wrapper-offset-inner: 10px !default;
 $matrix-order-widget-item-content-wrapper-width: 100% !default;
 
+$matrix-order-widget-fields-row-error-background: get-color('additional', 'ultra') !default;
+$matrix-order-widget-fields-row-error-max-width: 100% !default;
+$matrix-order-widget-fields-row-error-offset-inner: $offset-y-m 0 !default;
+$matrix-order-widget-fields-row-error-display: inline-block !default;
+$matrix-order-widget-fields-row-error-position: relative !default;
+$matrix-order-widget-fields-row-error-z-index: z('base') !default;
+
 // Other variables
 $matrix-order-widget-pinned-dropdown-max-width: 210px !default;
 $matrix-order-widget-pinned-dropdown-mobile-landscape-max-width: 100% !default;
@@ -307,6 +315,8 @@ $matrix-order-widget-dialog-item-content-tablet-small-flex-basis: 25% !default;
 $matrix-order-widget-dialog-ui-widget-content-tablet-small-offset: 0 16px 8px 16px;
 $matrix-order-widget-dialog-tablet-small-offset-bottom: $offset-y-m !default;
 $matrix-order-widget-ui-dialog-buttonpane-tablet-small-offset:  0 15px 10px 15px !default;
+
+$matrix-order-widget-validation-failed-tablet-small-offset: 0 $offset-y-m !default;
 
 // Mobile-landscape variables
 $matrix-order-widget-dialog-item-content-mobile-landscape-flex-basis: 33% !default;

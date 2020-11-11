@@ -33,11 +33,6 @@ class SluggableUrlCacheAwareProviderTest extends \PHPUnit\Framework\TestCase
         $localizationId = 1;
 
         $this->cache->expects($this->once())
-            ->method('has')
-            ->with($name, $params, $localizationId)
-            ->willReturn(true);
-
-        $this->cache->expects($this->once())
             ->method('getUrl')
             ->with($name, $params, $localizationId)
             ->willReturn('slug-url');
@@ -53,11 +48,6 @@ class SluggableUrlCacheAwareProviderTest extends \PHPUnit\Framework\TestCase
         $params = ['id' => 10];
 
         $localizationId = 1;
-
-        $this->cache->expects($this->once())
-            ->method('has')
-            ->with($name, $params, $localizationId)
-            ->willReturn(true);
 
         $this->cache->expects($this->once())
             ->method('getSlug')
@@ -81,11 +71,30 @@ class SluggableUrlCacheAwareProviderTest extends \PHPUnit\Framework\TestCase
         $storage = $this->createMock(UrlDataStorage::class);
         $storage->expects($this->never())
             ->method('getSlug');
+
+        $this->cache->expects($this->once())
+            ->method('getUrl')
+            ->with($name, $params, $localizationId)
+            ->willReturn(false);
+
+        $this->assertEquals(null, $this->testable->getUrl($name, $params, $localizationId));
+    }
+
+    public function testGetUrlNoStorageWhenContextUrl(): void
+    {
+        $this->testable->setContextUrl('sample/url');
+
+        $name = 'oro_frontend_view';
+        $params = ['id' => 10];
+
+        $localizationId = 1;
+
+        $storage = $this->createMock(UrlDataStorage::class);
         $storage->expects($this->never())
             ->method('getUrl');
 
         $this->cache->expects($this->once())
-            ->method('has')
+            ->method('getSlug')
             ->with($name, $params, $localizationId)
             ->willReturn(false);
 

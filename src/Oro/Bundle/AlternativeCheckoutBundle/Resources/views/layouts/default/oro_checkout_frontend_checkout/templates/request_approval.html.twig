@@ -2,7 +2,7 @@
     <div class="checkout__approval-wrapper">
         <div class="notification notification--alert" role="alert">
             {% set frontendMessage = transitionData.transition.frontendOptions.message %}
-            <span class="notification__text">{{ frontendMessage.content|trans(frontendMessage.message_parameters|default({}), 'workflows')|raw }}</span>
+            <span class="notification__text">{{ frontendMessage.content|trans(frontendMessage.message_parameters|default({}), 'workflows')|nl2br }}</span>
         </div>
 
         <div class="grid__row grid__row--offset-none">

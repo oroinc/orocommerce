@@ -6,12 +6,16 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 
+/**
+ * Provides available inventory status codes and labels.
+ */
 class ProductInventoryStatusProvider
 {
-    /**
-     * @var  ManagerRegistry
-     */
+    /** @var ManagerRegistry */
     protected $doctrine;
+
+    /** @var array */
+    private $inventoryStatuses;
 
     /**
      * @param ManagerRegistry $doctrine
@@ -25,6 +29,18 @@ class ProductInventoryStatusProvider
      * @return array
      */
     public function getAvailableProductInventoryStatuses()
+    {
+        if ($this->inventoryStatuses === null) {
+            $this->inventoryStatuses = $this->getInventoryStatusesList();
+        }
+
+        return $this->inventoryStatuses;
+    }
+
+    /**
+     * @return array
+     */
+    private function getInventoryStatusesList(): array
     {
         $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
         /** @var AbstractEnumValue[] $inventoryStatuses */

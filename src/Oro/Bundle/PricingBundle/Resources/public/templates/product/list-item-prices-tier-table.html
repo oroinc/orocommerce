@@ -1,3 +1,4 @@
+<% if (_.keys(prices).length) { %>
 <table class="table">
     <thead>
     <tr>
@@ -23,3 +24,6 @@
     <% }) %>
     </tbody>
 </table>
+<% } else { %>
+    <%- _.__('oro.pricing.product_prices.price_not_found') %>
+<% } %>

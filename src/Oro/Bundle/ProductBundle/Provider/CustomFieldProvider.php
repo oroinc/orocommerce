@@ -2,10 +2,15 @@
 
 namespace Oro\Bundle\ProductBundle\Provider;
 
+use Doctrine\Common\Cache\ArrayCache;
+use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 
+/**
+ * Provides ability to get list of the custom extended fields of the entity.
+ */
 class CustomFieldProvider
 {
     /**
@@ -19,6 +24,16 @@ class CustomFieldProvider
     protected $entityConfigProvider;
 
     /**
+     * @var CacheProvider
+     */
+    private $cache;
+
+    /**
+     * @var int
+     */
+    private $cacheLifeTime = 0;
+
+    /**
      * @param ConfigProvider $extendConfigProvider
      * @param ConfigProvider $entityConfigProvider
      */
@@ -26,6 +41,17 @@ class CustomFieldProvider
     {
         $this->extendConfigProvider = $extendConfigProvider;
         $this->entityConfigProvider = $entityConfigProvider;
+        $this->cache = new ArrayCache();
+    }
+
+    /**
+     * @param CacheProvider $cache
+     * @param int $lifeTime
+     */
+    public function setCache(CacheProvider $cache, int $lifeTime = 0): void
+    {
+        $this->cache = $cache;
+        $this->cacheLifeTime = $lifeTime;
     }
 
     /**
@@ -33,6 +59,22 @@ class CustomFieldProvider
      * @return array
      */
     public function getEntityCustomFields($entityName)
+    {
+        $data = $this->cache->fetch($entityName);
+        if (!\is_array($data)) {
+            $data = $this->getActualEntityCustomFields($entityName);
+
+            $this->cache->save($entityName, $data, $this->cacheLifeTime);
+        }
+
+        return $data;
+    }
+
+    /**
+     * @param string $entityName
+     * @return array
+     */
+    private function getActualEntityCustomFields(string $entityName): array
     {
         $customFields = [];
         $extendConfigs = $this->extendConfigProvider->getConfigs($entityName);

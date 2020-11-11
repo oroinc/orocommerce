@@ -152,6 +152,8 @@ services:
             - '@filesystem'
             - '@oro_seo.sitemap.sitemap_file_writer'
             - '%oro_seo.tmp_directory%'
+        calls:
+            - [setFileManager, ['@oro_seo.file_manager.tmp_data']]
 
     oro_seo.sitemap.sitemap_url_dumper:
         class: Oro\Bundle\SEOBundle\Sitemap\Dumper\SitemapDumper
@@ -264,6 +266,8 @@ services:
         arguments:
             - '@filesystem'
             - '@logger'
+        calls:
+            - [setFileManager, ['@oro_seo.file_manager.tmp_data']]
 
     oro_seo.model.sitemap_message_factory.abstract:
         class: Oro\Bundle\SEOBundle\Model\AbstractSitemapMessageFactory
@@ -313,6 +317,19 @@ services:
             - '@oro_seo.sitemap.sitemap_index_dumper'
             - '@monolog.logger'
             - '@oro_seo.sitemap.filesystem_adapter'
+        calls:
+            - [setJobRunner, ['@oro_message_queue.job.runner']]
+            - [setDoctrine, ['@doctrine']]
+        tags:
+            - { name: oro_message_queue.client.message_processor }
+
+    oro_seo.async.generate_sitemap_indexes:
+        class: Oro\Bundle\SEOBundle\Async\GenerateSitemapIndexesProcessor
+        arguments:
+            - '@oro_message_queue.job.runner'
+            - '@oro_message_queue.job.dependent_job_service'
+            - '@oro_message_queue.client.message_producer'
+            - '@logger'
         tags:
             - { name: oro_message_queue.client.message_processor }
 
@@ -356,6 +373,7 @@ services:
         calls:
             - [setDefaultRobotsPath, ['%kernel.project_dir%/public']]
             - [setUrlGenerator, ['@oro_redirect.generator.canonical_url']]
+            - [setFileManager, ['@oro_seo.file_manager.tmp_data']]
 
     oro_seo.sitemap.event_listener.dump_robots_txt:
         class: Oro\Bundle\SEOBundle\Sitemap\EventListener\DumpRobotsTxtListener
@@ -492,6 +510,11 @@ services:
         arguments:
             - 'sitemaps'
 
+    oro_seo.file_manager.tmp_data:
+        parent: oro_gaufrette.file_manager
+        arguments:
+            - 'sitemaps_tmp_data'
+
     oro_seo.async.gaufrette_filesystem_adapter:
         class: Oro\Bundle\SEOBundle\Sitemap\Filesystem\GaufretteFilesystemAdapter
         arguments:
@@ -499,6 +522,8 @@ services:
             - '@oro_seo.manager.robots_txt_file_manager'
             - '@doctrine'
             - '%oro_seo.tmp_directory%'
+        calls:
+            - [setTmpDataFileManager, ['@oro_seo.file_manager.tmp_data']]
 
     oro_seo.async.move_generated_sitemaps:
         class: Oro\Bundle\SEOBundle\Async\MoveGeneratedSitemapsProcessor

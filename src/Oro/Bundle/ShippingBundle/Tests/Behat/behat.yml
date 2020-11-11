@@ -30,7 +30,7 @@ oro_behat_extension:
       selector: '.checkout-order-summary__header [data-collapse-trigger]'
 
     CheckoutTotalSum:
-      selector: 'td.order-checkout-widget__total span.blue'
+      selector: 'td.order-checkout-widget__total span.order-checkout-widget__total-price'
 
     CheckoutFormRow:
       selector: '.checkout-form span.custom-radio__text'

@@ -60,6 +60,8 @@ class LoadConfigurableProductWithVariants extends AbstractFixture implements Dep
     public function load(ObjectManager $manager)
     {
         $configurableProduct = $this->createProduct($manager, self::CONFIGURABLE_SKU, Product::TYPE_CONFIGURABLE);
+        $configurableProduct->setVariantFields([OroFrontendTestFrameworkBundleInstaller::VARIANT_FIELD_NAME]);
+
         $this->setReference(self::CONFIGURABLE_SKU, $configurableProduct);
 
         foreach ($this->variants as $data) {

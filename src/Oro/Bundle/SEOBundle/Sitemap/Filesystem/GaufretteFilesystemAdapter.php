@@ -7,11 +7,9 @@ use Oro\Bundle\GaufretteBundle\FileManager;
 use Oro\Bundle\SEOBundle\Manager\RobotsTxtFileManager;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Website\WebsiteInterface;
-use Symfony\Component\Finder\Finder;
 
 /**
- * Adapter that allows to move website sitemaps and robots txt file
- * from the temporary filesystem storage to the Gaufrette storage.
+ * Provides functionality to move sitemap related files from a temporary private storage to a public storage.
  */
 class GaufretteFilesystemAdapter
 {
@@ -26,6 +24,9 @@ class GaufretteFilesystemAdapter
 
     /** @var ManagerRegistry */
     private $doctrine;
+
+    /** @var FileManager */
+    private $tmpDataFileManager;
 
     /**
      * @param FileManager          $fileManager
@@ -46,6 +47,14 @@ class GaufretteFilesystemAdapter
     }
 
     /**
+     * @param FileManager $tmpDataFileManager
+     */
+    public function setTmpDataFileManager(FileManager $tmpDataFileManager)
+    {
+        $this->tmpDataFileManager = $tmpDataFileManager;
+    }
+
+    /**
      * Moves website sitemaps and robots txt file from the temporary filesystem storage to the Gaufrette storage.
      *
      * @param array $websiteIds [websiteId, ...]
@@ -53,7 +62,7 @@ class GaufretteFilesystemAdapter
     public function moveSitemaps(array $websiteIds): void
     {
         try {
-            $this->clearGaufretteStorage();
+            $this->fileManager->deleteAllFiles();
             foreach ($websiteIds as $websiteId) {
                 $this->moveSitemapFiles($websiteId);
                 $this->moveRobotsFile($this->doctrine->getRepository(Website::class)->find($websiteId));
@@ -68,6 +77,7 @@ class GaufretteFilesystemAdapter
      */
     public function clearTempStorage(): void
     {
+        $this->tmpDataFileManager->deleteAllFiles();
         if (is_dir($this->tempDirectory)) {
             $this->removeFilesystemDirectory($this->tempDirectory);
         }
@@ -79,10 +89,10 @@ class GaufretteFilesystemAdapter
     private function moveRobotsFile(WebsiteInterface $website): void
     {
         $fileName = $this->robotsTxtFileManager->getFileNameByWebsite($website);
-        $robotsPath = $this->tempDirectory . DIRECTORY_SEPARATOR . $fileName;
-        if (is_file($robotsPath)) {
-            $this->fileManager->writeFileToStorage($robotsPath, $fileName);
-            unlink($robotsPath);
+        $fileContent = $this->tmpDataFileManager->getFileContent($fileName, false);
+        if (null !== $fileContent) {
+            $this->fileManager->writeToStorage($fileContent, $fileName);
+            $this->tmpDataFileManager->deleteFile($fileName);
         }
     }
 
@@ -91,23 +101,10 @@ class GaufretteFilesystemAdapter
      */
     private function moveSitemapFiles(int $websiteId): void
     {
-        $tempDirectory = $this->tempDirectory . DIRECTORY_SEPARATOR . $websiteId;
-        $finder = Finder::create();
-        $files = $finder->files()
-            ->in($tempDirectory);
-
-        foreach ($files as $file) {
-            $filePath = $websiteId . DIRECTORY_SEPARATOR . $file->getRelativePathname();
-            $this->fileManager->writeFileToStorage($file->getPathname(), $filePath);
-            unlink($file->getPathname());
-        }
-    }
-
-    private function clearGaufretteStorage(): void
-    {
-        $files = $this->fileManager->findFiles();
-        foreach ($files as $file) {
-            $this->fileManager->deleteFile($file);
+        $fileNames = $this->tmpDataFileManager->findFiles($websiteId . DIRECTORY_SEPARATOR);
+        foreach ($fileNames as $fileName) {
+            $this->fileManager->writeToStorage($this->tmpDataFileManager->getFileContent($fileName), $fileName);
+            $this->tmpDataFileManager->deleteFile($fileName);
         }
     }
 

@@ -109,3 +109,32 @@ services:
             - [setName, ['matrix_grid_order']]
         tags:
              - { name: layout.block_type, alias: matrix_grid_order }
+
+    oro_shopping_list.layout.type.shopping_list_action_list:
+        parent: oro_layout.block_type.abstract_configurable
+        calls:
+            - [setOptionsConfig, [{shoppingList: {required: true}, buttons: {required: true}}]]
+            - [setName, ['shopping_list_action_list']]
+        tags:
+            - { name: layout.block_type, alias: shopping_list_action_list }
+
+    oro_shopping_list.layout.type.shopping_list_action:
+        parent: oro_layout.block_type.abstract_configurable
+        calls:
+            - [setOptionsConfig, [{shoppingList: {required: true}}]]
+            - [setName, ['shopping_list_action']]
+        tags:
+            - { name: layout.block_type, alias: shopping_list_action }
+
+    oro_shopping_list.layout.type.shopping_list_notes_block:
+        parent: oro_layout.block_type.abstract_configurable
+        calls:
+            -
+                - setOptionsConfig
+                -
+                    -
+                        shoppingList: {required: true}
+                        form: {required: true, default: '=data["oro_shopping_list_shopping_list_form"].getShoppingListNotesFormView(shoppingList)'}
+            - [setName, ['shopping_list_notes_block']]
+        tags:
+            - { name: layout.block_type, alias: shopping_list_notes_block }

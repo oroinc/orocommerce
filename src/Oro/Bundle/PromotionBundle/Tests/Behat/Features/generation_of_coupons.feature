@@ -1,6 +1,5 @@
 @fixture-OroPromotionBundle:promotions_for_coupons.yml
 Feature: Generation of coupons
-  ToDo: BAP-16103 Add missing descriptions to the Behat features
 
   Scenario: Generate coupons with suffix and prefix
     Given I login as administrator

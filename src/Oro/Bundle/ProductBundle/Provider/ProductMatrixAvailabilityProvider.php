@@ -6,6 +6,9 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
+/**
+ * Provides information whether matrix for is available for products.
+ */
 class ProductMatrixAvailabilityProvider
 {
     const MATRIX_AVAILABILITY_COUNT = 2;
@@ -19,9 +22,8 @@ class ProductMatrixAvailabilityProvider
     /**
      * @param ProductVariantAvailabilityProvider $variantAvailability
      */
-    public function __construct(
-        ProductVariantAvailabilityProvider $variantAvailability
-    ) {
+    public function __construct(ProductVariantAvailabilityProvider $variantAvailability)
+    {
         $this->variantAvailability = $variantAvailability;
     }
 
@@ -51,19 +53,57 @@ class ProductMatrixAvailabilityProvider
      */
     protected function getMatrixAvailability(Product $product)
     {
-        $variants = $this->variantAvailability->getVariantFieldsAvailability($product);
-
-        $variantsCount = count($variants);
-        if ($variantsCount === 0 || $variantsCount > self::MATRIX_AVAILABILITY_COUNT) {
+        if (!$this->isVariantsCountAcceptable($product)) {
             return false;
         }
 
         $simpleProducts = $this->variantAvailability->getSimpleProductsByVariantFields($product);
+
+        return $this->isUnitSupportedBySimpleProducts($product, $simpleProducts);
+    }
+
+    /**
+     * @param Product $configurableProduct
+     * @return bool
+     */
+    private function isVariantsCountAcceptable(Product $configurableProduct): bool
+    {
+        $variantsCount = count($configurableProduct->getVariantFields());
+
+        return $variantsCount && $variantsCount <= self::MATRIX_AVAILABILITY_COUNT;
+    }
+
+    /**
+     * @param Product[] $products
+     * @return array
+     */
+    public function isMatrixFormAvailableForProducts(array $products): array
+    {
+        $isMatrixFormAvailableProducts = [];
+        foreach ($products as $product) {
+            if ($product->isConfigurable()) {
+                $productId = $product->getId();
+                if ($this->isVariantsCountAcceptable($product)) {
+                    $isMatrixFormAvailableProducts[$productId] = $product;
+                }
+            }
+        }
+
+        return $isMatrixFormAvailableProducts;
+    }
+
+    /**
+     * @param Product $configurableProduct
+     * @param array $simpleProducts
+     * @return bool
+     */
+    private function isUnitSupportedBySimpleProducts(Product $configurableProduct, array $simpleProducts): bool
+    {
         if (!$simpleProducts) {
             return false;
         }
 
-        $configurableUnit = $product->getPrimaryUnitPrecision()->getUnit();
+        $configurableUnit = $configurableProduct->getPrimaryUnitPrecision()->getUnit();
 
         foreach ($simpleProducts as $simpleProduct) {
             if (!$this->isProductSupportsUnit($simpleProduct, $configurableUnit)) {

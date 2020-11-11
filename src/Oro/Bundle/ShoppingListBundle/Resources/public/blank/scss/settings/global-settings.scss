@@ -1,0 +1,7 @@
+/* @theme: blank; */
+
+$oro_shopping_list_breakpoints: (
+    'responsive-shopping-list-grid-ovreflow': '(max-width: 1300px) and (min-width: ' + $breakpoint-desktop + ')'
+);
+
+$breakpoints: update-default($breakpoints, merge-breakpoints($oro_breakpoints, $oro_shopping_list_breakpoints));

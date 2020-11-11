@@ -38,8 +38,7 @@ class ConfigurableProductLineItemFactoryTest extends TestCase
             ->setShoppingList($shoppingList)
             ->setCustomerUser($customerUser)
             ->setOrganization($organization)
-            ->setUnit($unit)
-            ->setOwner($owner);
+            ->setUnit($unit);
 
         static::assertEquals(
             $lineItem,

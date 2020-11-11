@@ -303,12 +303,25 @@ services:
         tags:
             - { name: oro_menu.builder, alias: frontend_menu }
 
+    oro_product.provider.custom_field_provider.cache:
+        parent: oro.cache.abstract
+        calls:
+            - [setNamespace, ['oro_product_custom_fields']]
+
+    oro_product.event_listener.entity_config:
+        class: 'Oro\Bundle\CacheBundle\EventListener\CacheClearListener'
+        arguments:
+            - '@oro_product.provider.custom_field_provider.cache'
+        tags:
+            - { name: kernel.event_listener, event: oro.entity_config.post_flush, method: clearCache }
+
     oro_product.provider.custom_field_provider:
         class: 'Oro\Bundle\ProductBundle\Provider\CustomFieldProvider'
-        public: false
         arguments:
             - "@oro_entity_config.provider.extend"
             - "@oro_entity_config.provider.entity"
+        calls:
+            - [setCache, ['@oro_product.product_variant_field.field_value_handler.enum_type_handler.cache']]
 
     oro_product.provider.product_status_provider:
         class: 'Oro\Bundle\ProductBundle\Provider\ProductStatusProvider'
@@ -316,6 +329,7 @@ services:
 
     oro_product.provider.product_inventory_status_provider:
         class: 'Oro\Bundle\ProductBundle\Provider\ProductInventoryStatusProvider'
+        public: true
         arguments:
             - '@doctrine'
 
@@ -969,14 +983,32 @@ services:
             - [addHandler, ['@oro_product.product_variant_field.field_value_handler.enum_type_handler']]
             - [addHandler, ['@oro_product.product_variant_field.field_value_handler.boolean_type_handler']]
 
+    oro_product.product_variant_field.field_value_handler.enum_type_handler.cache:
+        parent: oro.cache.abstract
+        calls:
+            - [setNamespace, ['oro_product_possible_field_values']]
+
+    oro_product.event_listener.cache.enum_value:
+        class: Oro\Bundle\CacheBundle\EventListener\CacheClearListener
+        arguments:
+            - '@oro_product.product_variant_field.field_value_handler.enum_type_handler.cache'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\EntityExtendBundle\Entity\EnumValueTranslation', event: postPersist, method: clearCache }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\EntityExtendBundle\Entity\EnumValueTranslation', event: postUpdate, method: clearCache }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\EntityExtendBundle\Entity\EnumValueTranslation', event: postRemove, method: clearCache }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue', event: postPersist, method: clearCache }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue', event: postUpdate, method: clearCache }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue', event: postRemove, method: clearCache }
+
     oro_product.product_variant_field.field_value_handler.enum_type_handler:
-        public: false
         class: 'Oro\Bundle\ProductBundle\ProductVariant\VariantFieldValueHandler\EnumVariantFieldValueHandler'
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_entity_extend.enum_value_provider'
             - '@logger'
             - '@oro_entity_config.config_manager'
+        calls:
+            - [setCache, ['@oro_product.product_variant_field.field_value_handler.enum_type_handler.cache']]
 
     oro_product.product_variant_field.field_value_handler.boolean_type_handler:
         public: false
@@ -1045,6 +1077,8 @@ services:
             - '@oro_product.provider.product_variant_availability_provider'
             - '@property_accessor'
             - '@oro_product.product_variant_field.registry.product_variant_field_value_handler_registry'
+        calls:
+            - [setTranslator, ['@translator']]
         tags:
             - { name: layout.data_provider, alias: oro_product_configurable_products }
 
@@ -1729,3 +1763,13 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_entity.preload_entity.product, method: onPreload }
             - { name: kernel.event_listener, event: oro_entity.preload_entity.productimage, method: onPreload }
+
+    oro_product.event_listener.product_data_converter:
+        class: 'Oro\Bundle\ProductBundle\EventListener\ProductDataConverterEventListener'
+        arguments:
+            - '@translator'
+            - '@oro_entity_config.manager.attribute_family_manager'
+            - '@oro_entity_config.manager.attribute_manager'
+            - '@oro_importexport.strategy.import.helper'
+        tags:
+            - { name: kernel.event_listener, event: oro_product.data_converter.convert_to_import, method: onConvertToImport }

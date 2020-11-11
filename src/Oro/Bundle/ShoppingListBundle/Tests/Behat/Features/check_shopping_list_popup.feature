@@ -1,6 +1,5 @@
 @fixture-OroShoppingListBundle:ShoppingListRule.yml
 Feature: Check shopping list popup
-  ToDo: BAP-16103 Add missing descriptions to the Behat features
 
   Scenario: Change shipping list units in popup
     Given I signed in as AmandaRCole@example.org on the store frontend

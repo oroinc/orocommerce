@@ -1,7 +1,7 @@
 @fixture-OroPricingBundle:PriceListFilter.yml
 
 Feature: Price list filter is resettable
-  ToDo: BAP-16103 Add missing descriptions to the Behat features
+
   Scenario: Check that Product Prices datagrid is filtered by default price list, but it can resetted to show all
     Given I login as administrator
     And I go to Products/ Products

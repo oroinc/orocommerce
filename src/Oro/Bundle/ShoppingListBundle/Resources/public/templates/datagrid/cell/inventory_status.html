@@ -1,0 +1,5 @@
+<% if (!obj.isConfigurable) { %>
+    <% let renderInventoryStatus = _.macros('oroshoppinglist::renderInventoryStatus') %>
+    <% let inventoryStatusLabel = _metadata.inventory_statuses[inventoryStatus] ? _metadata.inventory_statuses[inventoryStatus] : inventoryStatus %>
+    <%= renderInventoryStatus({name: inventoryStatus, label: inventoryStatusLabel, isLowInventory: isLowInventory}) %>
+<% } %>

@@ -105,4 +105,18 @@ class NotEmptyConfigurableAttributesValidatorTest extends \PHPUnit\Framework\Tes
 
         $this->validator->validate($product, new NotEmptyConfigurableAttributes());
     }
+
+    public function testValidateConfigurableWithoutAttributeFamily(): void
+    {
+        $product = new Product();
+        $product->setType(Product::TYPE_CONFIGURABLE);
+
+        $this->provider->expects($this->never())
+            ->method('getVariantFields');
+
+        $this->context->expects($this->never())
+            ->method('addViolation');
+
+        $this->validator->validate($product, new NotEmptyConfigurableAttributes());
+    }
 }

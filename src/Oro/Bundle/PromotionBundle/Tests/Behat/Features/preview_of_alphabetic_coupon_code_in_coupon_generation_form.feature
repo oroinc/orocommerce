@@ -2,7 +2,6 @@
 @ticket-BB-15402
 @fixture-OroLocaleBundle:ZuluLocalization.yml
 Feature: Preview of alphabetic coupon code in coupon generation form
-  ToDo: BAP-16103 Add missing descriptions to the Behat features
 
   Scenario: Preview of alphabetic code with custom length and without dashes
     Given I login as administrator
