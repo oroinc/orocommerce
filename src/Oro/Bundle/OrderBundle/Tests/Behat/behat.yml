@@ -19,7 +19,7 @@ oro_behat_extension:
       selector: 'tbody.grid-body tr.grid-row'
 
     Frontend Order Line Item Product View Link:
-      selector: 'h3.product-item__title a'
+      selector: 'h3.oro-grid-table__title a'
 
     Frontend Order Line Item Product Attribute:
       selector: 'td.grid-body-cell-product > div'

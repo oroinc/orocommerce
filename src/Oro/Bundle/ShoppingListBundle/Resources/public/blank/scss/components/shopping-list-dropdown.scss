@@ -25,7 +25,7 @@
     &__link {
         display: block;
         width: calc(100% - #{$shopping-list-dropdown-radio-width});
-        padding-left: 5px;
+        padding-#{$start}: $offset-x-s;
     }
 
     &__link,
@@ -38,25 +38,27 @@
     &__title {
         display: flex;
         justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: $offset-x-s;
     }
 
     &__name,
     &__details {
         display: inline-block;
-
         vertical-align: middle;
 
         word-break: break-all;
     }
 
     &__name {
+        padding-#{$end}: $offset-x-m;
+
         text-transform: uppercase;
     }
 
     &__name-inner {
         display: block;
         max-width: 140px;
-        padding-right: 15px;
 
         overflow: hidden;
 
@@ -65,12 +67,12 @@
     }
 
     &__details {
-        text-align: right;
+        text-align: $end;
+        padding-left: $offset-x-s;
     }
 
     &__products {
         display: block;
-        margin-top: 4px;
 
         color: darken(get-color('additional', 'middle'), 20%);
 
@@ -159,7 +161,7 @@
 
     &__product-base {
         width: calc(100% - 60px);
-        padding-left: 10px;
+        padding-#{$start}: 10px;
     }
 
     &__product-title {
@@ -174,8 +176,8 @@
     }
 
     &__product-total {
-        float: right;
-        padding-left: 10px;
+        float: $end;
+        padding-#{$start}: 10px;
     }
 
     &__product-sku {

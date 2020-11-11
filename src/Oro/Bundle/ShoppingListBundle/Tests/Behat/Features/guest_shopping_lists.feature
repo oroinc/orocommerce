@@ -117,6 +117,22 @@ Feature: Guest Shopping Lists
     Then I should see an "Matrix Grid Form" element
     And I should see "Add to Shopping List"
 
+  Scenario: Add empty matrices to the shopping Shopping List
+    When I click "Add to Shopping List"
+    Then should see 'Shopping list "Shopping List" was updated successfully' flash message
+    When I open shopping list widget
+    And I click "View List"
+    Then I should see following grid:
+      | SKU    | Item         | QtyUpdate All                   | Price | Subtotal |
+      | 1GB83  | Slip-On Clog | Click "edit" to select variants |       | N/A      |
+    And I should see following actions for 1GB83 in grid:
+      | Edit   |
+      | Delete |
+    When I click Delete 1GB83 in grid
+    Then I should see "Are you sure you want to delete this product?"
+    When click "Delete" in modal window
+    Then I should see 'The "Slip-On Clog" product was successfully deleted' flash message
+
   Scenario: Create Shopping List as unauthorized user from product view page
     Given I type "SKU003" in "search"
     And I click "Search Button"

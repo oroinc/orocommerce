@@ -52,7 +52,7 @@ class ShoppingListTotalManager
     /**
      * Sets Shopping Lists Subtotal for user current currency
      *
-     * @param array $shoppingLists
+     * @param ShoppingList[] $shoppingLists
      * @param bool $doFlush
      */
     public function setSubtotals(array $shoppingLists, $doFlush = true)
@@ -72,11 +72,14 @@ class ShoppingListTotalManager
         );
 
         foreach ($shoppingLists as $shoppingList) {
-            if (!array_key_exists($shoppingList->getId(), $shoppingListTotals)) {
-                $shoppingListTotals[$shoppingList->getId()] = new ShoppingListTotal($shoppingList, $currency);
-                $this->getEntityManager()->persist($shoppingListTotals[$shoppingList->getId()]);
+            $shoppingListId = $shoppingList->getId();
+            $totals = $shoppingList->getTotals();
+            if (!array_key_exists($shoppingListId, $shoppingListTotals) && !$totals->containsKey($currency)) {
+                $shoppingListTotals[$shoppingListId] = new ShoppingListTotal($shoppingList, $currency);
+                $shoppingList->addTotal($shoppingListTotals[$shoppingListId]);
+                $this->getEntityManager()->persist($shoppingList);
             }
-            $shoppingListTotal = $shoppingListTotals[$shoppingList->getId()];
+            $shoppingListTotal = $shoppingListTotals[$shoppingListId] ?? $totals->get($currency);
             if (!$shoppingListTotal->isValid()) {
                 $subtotal = $this->lineItemNotPricedSubtotalProvider->getSubtotalByCurrency($shoppingList, $currency);
                 $shoppingListTotal->setSubtotal($subtotal)
@@ -96,33 +99,84 @@ class ShoppingListTotalManager
      */
     public function recalculateTotals(ShoppingList $shoppingList, $doFlush)
     {
-        $totals = $shoppingList->getTotals();
         $enabledCurrencies = $this->currencyManager->getAvailableCurrencies();
+        $this->getTotalsForCurrencies($shoppingList, $enabledCurrencies, true, $doFlush);
+    }
 
-        foreach ($totals as $total) {
-            $subtotal = $this->lineItemNotPricedSubtotalProvider
-                ->getSubtotalByCurrency($shoppingList, $total->getCurrency());
-            if (($key = array_search($total->getCurrency(), $enabledCurrencies, true)) !== false) {
-                unset($enabledCurrencies[$key]);
+    /**
+     * @param ShoppingList $shoppingList
+     * @param string $currency
+     * @param bool $doFlush
+     *
+     * @return ShoppingListTotal
+     */
+    public function getShoppingListTotalForCurrency(
+        ShoppingList $shoppingList,
+        string $currency,
+        bool $doFlush = false
+    ): ShoppingListTotal {
+        return $this->getTotalsForCurrencies($shoppingList, [$currency], false, $doFlush)[$currency];
+    }
+
+    /**
+     * @param ShoppingList $shoppingList
+     * @param array $currencies
+     * @param bool $recalculate
+     * @param bool $doFlush
+     *
+     * @return array
+     */
+    private function getTotalsForCurrencies(
+        ShoppingList $shoppingList,
+        array $currencies,
+        bool $recalculate,
+        bool $doFlush
+    ): array {
+        $shoppingListTotals = [];
+        $currencies = array_flip($currencies);
+        foreach ($shoppingList->getTotals() as $eachShoppingListTotal) {
+            $eachCurrency = $eachShoppingListTotal->getCurrency();
+            if (!isset($currencies[$eachCurrency])) {
+                continue;
             }
-            $total->setSubtotal($subtotal)
+
+            if ($recalculate || !$eachShoppingListTotal->isValid()) {
+                $subtotal = $this->lineItemNotPricedSubtotalProvider
+                    ->getSubtotalByCurrency($shoppingList, $eachCurrency);
+
+                $eachShoppingListTotal
+                    ->setSubtotal($subtotal)
+                    ->setValid(true);
+            }
+
+            $shoppingListTotals[$eachCurrency] = $eachShoppingListTotal;
+            unset($currencies[$eachCurrency]);
+        }
+
+        $entityManager = $this->getEntityManager();
+        $isShoppingListManaged = $entityManager->contains($shoppingList);
+
+        foreach ($currencies as $eachCurrency => $i) {
+            $subtotal = $this->lineItemNotPricedSubtotalProvider->getSubtotalByCurrency($shoppingList, $eachCurrency);
+
+            $shoppingListTotals[$eachCurrency] = (new ShoppingListTotal($shoppingList, $eachCurrency))
+                ->setSubtotal($subtotal)
                 ->setValid(true);
+
+            $shoppingList->addTotal($shoppingListTotals[$eachCurrency]);
+
+            // It is possible that shopping list which came to this method is not managed dy doctrine, we should not
+            // persist corresponding total in this case.
+            if ($isShoppingListManaged) {
+                $entityManager->persist($shoppingListTotals[$eachCurrency]);
+            }
         }
 
-        foreach ($enabledCurrencies as $currency) {
-            $total = new ShoppingListTotal($shoppingList, $currency);
-            $shoppingList->addTotal($total);
-            $subtotal = $this->lineItemNotPricedSubtotalProvider
-                ->getSubtotalByCurrency($shoppingList, $total->getCurrency());
-
-            $total->setSubtotal($subtotal)
-                ->setValid(true);
-            $this->getEntityManager()->persist($total);
+        if ($doFlush && $isShoppingListManaged) {
+            $entityManager->flush();
         }
 
-        if ($doFlush) {
-            $this->getEntityManager()->flush();
-        }
+        return $shoppingListTotals;
     }
 
     /**
@@ -134,7 +188,7 @@ class ShoppingListTotalManager
     }
 
     /**
-     * @return \Doctrine\Common\Persistence\ObjectManager|null
+     * @return \Doctrine\Common\Persistence\ObjectManager
      */
     protected function getEntityManager()
     {

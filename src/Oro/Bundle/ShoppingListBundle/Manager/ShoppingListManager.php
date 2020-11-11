@@ -8,9 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\EntityBundle\Handler\EntityDeleteHandlerRegistry;
-use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Provider\ProductMatrixAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
@@ -48,9 +46,6 @@ class ShoppingListManager
     /** @var ProductVariantAvailabilityProvider */
     private $productVariantProvider;
 
-    /** @var ProductMatrixAvailabilityProvider */
-    private $productMatrixAvailabilityProvider;
-
     /** @var ConfigManager */
     private $configManager;
 
@@ -65,7 +60,6 @@ class ShoppingListManager
      * @param WebsiteManager                     $websiteManager
      * @param ShoppingListTotalManager           $totalManager
      * @param ProductVariantAvailabilityProvider $productVariantProvider
-     * @param ProductMatrixAvailabilityProvider  $productMatrixAvailabilityProvider
      * @param ConfigManager                      $configManager
      * @param EntityDeleteHandlerRegistry        $deleteHandlerRegistry
      *
@@ -79,7 +73,6 @@ class ShoppingListManager
         WebsiteManager $websiteManager,
         ShoppingListTotalManager $totalManager,
         ProductVariantAvailabilityProvider $productVariantProvider,
-        ProductMatrixAvailabilityProvider $productMatrixAvailabilityProvider,
         ConfigManager $configManager,
         EntityDeleteHandlerRegistry $deleteHandlerRegistry
     ) {
@@ -90,7 +83,6 @@ class ShoppingListManager
         $this->websiteManager = $websiteManager;
         $this->totalManager = $totalManager;
         $this->productVariantProvider = $productVariantProvider;
-        $this->productMatrixAvailabilityProvider = $productMatrixAvailabilityProvider;
         $this->configManager = $configManager;
         $this->deleteHandlerRegistry = $deleteHandlerRegistry;
     }
@@ -224,20 +216,14 @@ class ShoppingListManager
     public function removeLineItem(LineItem $lineItem, bool $removeOnlyCurrentItem = false): int
     {
         $parentProduct = $lineItem->getParentProduct();
-        if ($removeOnlyCurrentItem
-            || !$parentProduct
-            || $this->getAvailableMatrixFormType($parentProduct, $lineItem) === Configuration::MATRIX_FORM_NONE
-        ) {
+        if ($removeOnlyCurrentItem || !$parentProduct) {
             $this->deleteHandlerRegistry->getHandler(LineItem::class)->delete($lineItem);
 
             // return 1 because only the specified line item was deleted
             return 1;
         }
 
-        return $this->removeProduct(
-            $lineItem->getShoppingList(),
-            $parentProduct ? $parentProduct : $lineItem->getProduct()
-        );
+        return $this->removeProduct($lineItem->getShoppingList(), $parentProduct ?: $lineItem->getProduct());
     }
 
     /**
@@ -290,7 +276,8 @@ class ShoppingListManager
     }
 
     /**
-     * Remove shopping list line items containing products with unavailable inventory statuses.
+     * Removes shopping list line items containing products with unavailable inventory statuses.
+     * Recalculates subtotals if line items were removed.
      *
      * @param ShoppingList $shoppingList
      */
@@ -302,8 +289,9 @@ class ShoppingListManager
             ->getRepository(LineItem::class);
 
         $allowedStatuses = $this->configManager->get('oro_product.general_frontend_product_visibility');
-        $repository->deleteItemsByShoppingListAndInventoryStatuses($shoppingList, $allowedStatuses);
-        $repository->deleteDisabledItemsByShoppingList($shoppingList);
+        if ($repository->deleteNotAllowedLineItemsFromShoppingList($shoppingList, $allowedStatuses)) {
+            $this->totalManager->recalculateTotals($shoppingList, true);
+        }
     }
 
     /**
@@ -350,9 +338,6 @@ class ShoppingListManager
      */
     private function prepareLineItem(LineItem $lineItem, ShoppingList $shoppingList)
     {
-        $this->ensureProductTypeAllowed($lineItem);
-
-        $lineItem->setShoppingList($shoppingList);
         if (null === $lineItem->getCustomerUser() && $shoppingList->getCustomerUser()) {
             $lineItem->setCustomerUser($shoppingList->getCustomerUser());
         }
@@ -373,11 +358,11 @@ class ShoppingListManager
     private function handleLineItem(LineItem $lineItem, ShoppingList $shoppingList, \Closure $func)
     {
         $em = $this->getEntityManager();
-        $duplicate = $this->getLineItemRepository($em)->findDuplicate($lineItem);
-        if ($duplicate instanceof LineItem && $shoppingList->getId()) {
+        $duplicate = $this->getLineItemRepository($em)->findDuplicateInShoppingList($lineItem, $shoppingList);
+        if ($duplicate) {
             $func($duplicate);
             $em->remove($lineItem);
-        } elseif ($lineItem->getQuantity() > 0) {
+        } elseif ($lineItem->getQuantity() > 0 || !$lineItem->getProduct()->isSimple()) {
             $shoppingList->addLineItem($lineItem);
             $em->persist($lineItem);
         }
@@ -408,20 +393,6 @@ class ShoppingListManager
     }
 
     /**
-     * @param LineItem $lineItem
-     *
-     * @throws \InvalidArgumentException
-     */
-    private function ensureProductTypeAllowed(LineItem $lineItem)
-    {
-        $product = $lineItem->getProduct();
-
-        if ($product && !$product->isSimple()) {
-            throw new \InvalidArgumentException('Can not save not simple product');
-        }
-    }
-
-    /**
      * @return CustomerUser|null
      */
     private function getCustomerUser()
@@ -442,34 +413,12 @@ class ShoppingListManager
     }
 
     /**
+     * @param EntityManagerInterface $em
+     *
      * @return LineItemRepository
      */
     private function getLineItemRepository(EntityManagerInterface $em)
     {
         return $em->getRepository(LineItem::class);
-    }
-
-    /**
-     * @param Product $product
-     * @param LineItem $lineItem
-     * @return string
-     */
-    private function getAvailableMatrixFormType(Product $product, LineItem $lineItem)
-    {
-        if ($product->getPrimaryUnitPrecision()->getProductUnitCode() !== $lineItem->getProductUnitCode()) {
-            return Configuration::MATRIX_FORM_NONE;
-        }
-
-        $matrixConfiguration = $this->configManager->get(
-            sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::MATRIX_FORM_ON_SHOPPING_LIST)
-        );
-
-        if ($matrixConfiguration === Configuration::MATRIX_FORM_NONE
-            || !$this->productMatrixAvailabilityProvider->isMatrixFormAvailable($product)
-        ) {
-            return Configuration::MATRIX_FORM_NONE;
-        }
-
-        return $matrixConfiguration;
     }
 }

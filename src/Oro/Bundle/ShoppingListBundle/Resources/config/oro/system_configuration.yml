@@ -14,8 +14,6 @@ system_configuration:
             title: oro.shoppinglist.system_configuration.groups.shopping_list_limit.title
         shopping_list_options:
             title: oro.shoppinglist.system_configuration.groups.shopping_list_options.title
-        configurable_products_matrix_form:
-            title: oro.shoppinglist.system_configuration.groups.configurable_product_matrix_form_on_shopping_list.title
     fields:
         oro_shopping_list.backend_product_visibility:
             data_type: array
@@ -74,6 +72,25 @@ system_configuration:
                 label: oro.shoppinglist.system_configuration.fields.create_shopping_list_for_new_guest.label
                 tooltip: oro.shoppinglist.system_configuration.fields.create_shopping_list_for_new_guest.tooltip
                 required: false
+        oro_shopping_list.show_all_in_shopping_list_widget:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            options:
+                label: oro.shoppinglist.system_configuration.fields.show_all_in_shopping_list_widget.label
+                tooltip: oro.shoppinglist.system_configuration.fields.show_all_in_shopping_list_widget.tooltip
+        oro_shopping_list.shopping_lists_max_line_items_per_page:
+            data_type: integer
+            type: Symfony\Component\Form\Extension\Core\Type\IntegerType
+            search_type: text
+            options:
+                label: oro.shoppinglist.system_configuration.fields.shopping_lists_max_line_items_per_page.label
+                tooltip: oro.shoppinglist.system_configuration.fields.shopping_lists_max_line_items_per_page.tooltip
+                required: true
+                constraints:
+                    - NotBlank: ~
+                    - Range:
+                          min: 200
+                          max: 1000
 
     tree:
         system_configuration:
@@ -103,3 +120,5 @@ system_configuration:
                                     shopping_list_options:
                                         children:
                                             - oro_shopping_list.mass_adding_on_product_listing_enabled
+                                            - oro_shopping_list.shopping_lists_max_line_items_per_page
+                                            - oro_shopping_list.show_all_in_shopping_list_widget

@@ -36,24 +36,6 @@ class ShoppingListContext extends OroFeatureContext implements OroPageObjectAwar
     }
 
     /**
-     * @Given /^(?:|I )request a quote from shopping list "(?P<shoppingListLabel>[^"]+)" with data:$/
-     *
-     * @param string $shoppingListLabel
-     * @param TableNode $table
-     */
-    public function iRequestAQuoteFromShoppingListWithData($shoppingListLabel, TableNode $table)
-    {
-        $this->openShoppingList($shoppingListLabel);
-
-        $this->getPage()->findLink('Request Quote')->click();
-        $this->waitForAjax();
-
-        $form = $this->createElement('OroForm');
-        $form->fill($table);
-        $this->getPage()->pressButton('Submit Request');
-    }
-
-    /**
      * @Then /^(?:|I )see next subtotals for "(?P<elementName>[\w\s]+)":$/
      *
      * @param TableNode $expectedSubtotals

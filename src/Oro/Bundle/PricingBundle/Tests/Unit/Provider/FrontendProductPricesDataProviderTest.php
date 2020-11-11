@@ -136,7 +136,7 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit\Framework\TestCase
             'line item with product' => [
                 'criteriaArray' => [$criteria],
                 'matchedPrices' => [
-                    $criteria->getIdentifier() => $price
+                    '42-test-100-USD' => $price
                 ],
                 'lineItems' => [$lineItemWithProduct],
                 'expectedResult' => [42 => ['test' => $price]]

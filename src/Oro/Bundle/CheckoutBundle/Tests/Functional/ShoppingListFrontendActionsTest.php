@@ -11,6 +11,7 @@ use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodsC
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
+use Symfony\Component\DomCrawler\Crawler;
 
 class ShoppingListFrontendActionsTest extends FrontendActionTestCase
 {
@@ -82,19 +83,32 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
     {
         $this->assertFalse($shoppingList->getLineItems()->isEmpty());
 
-        $crawler = $this->client->request(
+        $this->client->request(
             'GET',
-            $this->getUrl('oro_shopping_list_frontend_view', ['id' => $shoppingList->getId()])
+            $this->getUrl(
+                'oro_shopping_list_frontend_view',
+                ['id' => $shoppingList->getId(), 'layout_block_ids' => ['combined_button_wrapper']]
+            ),
+            [],
+            [],
+            ['HTTP_X-Requested-With' => 'XMLHttpRequest']
         );
 
+        $response = $this->client->getResponse();
+        $this->assertJsonResponseStatusCodeEquals($response, 200);
+
+        $content = \json_decode($response->getContent(), true);
+        $crawler = new Crawler($content['combined_button_wrapper']);
+
         $link = $crawler->selectLink('Create Order');
-        $this->assertCount(2, $link);
+        $this->assertCount(1, $link);
         $this->assertNotEmpty($link->attr('data-transition-url'));
         $this->ajaxRequest('POST', $link->attr('data-transition-url'));
 
-        $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
+        $response = $this->client->getResponse();
+        $this->assertJsonResponseStatusCodeEquals($response, 200);
 
-        $data = json_decode($this->client->getResponse()->getContent(), true);
+        $data = \json_decode($response->getContent(), true);
 
         $this->assertArrayHasKey('workflowItem', $data);
         $this->assertArrayHasKey('result', $data['workflowItem']);

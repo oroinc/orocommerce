@@ -43,7 +43,16 @@
         font-family: $matrix-order-widget-grid-font-family;
 
         .fields-row-error {
-            margin: $matrix-order-widget-form-col-offset-inner;
+            background: $matrix-order-widget-fields-row-error-background;
+            max-width: $matrix-order-widget-fields-row-error-max-width;
+            padding: $matrix-order-widget-fields-row-error-offset-inner;
+            display: $matrix-order-widget-fields-row-error-display;
+            position: $matrix-order-widget-fields-row-error-position;
+            z-index: $matrix-order-widget-fields-row-error-z-index;
+
+            &:empty {
+                display: none;
+            }
         }
 
         &.state-multiline {
@@ -452,6 +461,13 @@
         text-align: $matrix-order-widget-form-col-text-align;
         vertical-align: $matrix-order-widget-form-col-vertical-align;
 
+        &--size {
+            &-m {
+                min-width: $matrix-order-widget-form-col-width-m;
+                width: $matrix-order-widget-form-col-width-m;
+            }
+        }
+
         &-wrapper {
             display: $matrix-order-widget-form-col-wrapper-display;
             align-items: $matrix-order-widget-form-col-wrapper-align-items;
@@ -692,6 +708,10 @@
             &-content {
                 flex-basis: $matrix-order-widget-dialog-item-content-tablet-small-flex-basis;
             }
+        }
+
+        .validation-failed {
+            margin: $matrix-order-widget-validation-failed-tablet-small-offset;
         }
     }
 }

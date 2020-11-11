@@ -40,6 +40,7 @@ Feature: Guest RFQ
     And I follow "Shopping List" link within flash message "Product has been added to \"Shopping list\""
     And I hover on "Shopping List Widget"
     And I should see "1 Item | $0.00" in the "Shopping List Widget" element
+    And I click on empty space
     And click "Request Quote"
     And I fill form with:
       | First Name    | Tester                |

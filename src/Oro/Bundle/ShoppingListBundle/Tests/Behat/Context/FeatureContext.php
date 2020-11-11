@@ -145,6 +145,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
     /**
      * @Then I open shopping list widget
+     * @Then I close shopping list widget
      */
     public function iOpenShoppingListWidget()
     {
@@ -189,19 +190,21 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
     //@codingStandardsIgnoreStart
     /**
-     * @When /^(?:|I )click on "(?P<sku>[^"]+)" configurable product in "(?P<tableName>[^"]+)" with the following attributes:$/
+     * @When /^(?:|I )click on "(?P<sku>[^"]+)" configurable product in "(?P<tableName>[^"]+)"(?:| with the following attributes:)$/
      *
      * @param string $sku
      * @param string $tableName
-     * @param TableNode $table
+     * @param null|TableNode $table
      */
     //@codingStandardsIgnoreEnd
-    public function iClickOnConfigurableProductWithAttributes(string $sku, string $tableName, TableNode $table)
+    public function iClickOnConfigurableProductWithAttributes(string $sku, string $tableName, TableNode $table = null)
     {
         $attributeLabels = [];
-        foreach ($table->getRows() as $row) {
-            [$attribute, $value] = $row;
-            $attributeLabels[] = sprintf('%s: %s', $attribute, $value);
+        if ($table) {
+            foreach ($table->getRows() as $row) {
+                [$attribute, $value] = $row;
+                $attributeLabels[] = sprintf('%s: %s', $attribute, $value);
+            }
         }
 
         /** @var ProductTable $shoppingListItemsTableElement */
@@ -224,7 +227,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         self::fail(sprintf(
             'Could not find product with the given "%s" sku and attributes "%s"',
             $sku,
-            implode(',', $attributeLabels)
+            implode(', ', $attributeLabels)
         ));
     }
 

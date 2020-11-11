@@ -54,16 +54,6 @@
         }
     }
 
-    //TODO: Should remove all --in-cart modifiers from the component
-    &--in-cart {
-        align-self: center;
-
-        margin-right: auto;
-        min-width: 50%;
-
-        @include clearfix();
-    }
-
     &__box {
         display: flex;
         flex-direction: column;
@@ -109,25 +99,13 @@
             display: none;
         }
 
-        &--in-cart {
-            float: left;
-            width: 84px;
-            height: 84px;
+        &--tiny {
+            min-width: $product-item-image-holder-tiny-width;
+            width: $product-item-image-holder-tiny-width;
+            min-height: $product-item-image-holder-tiny-height;
+            height: $product-item-image-holder-tiny-height;
 
-            a {
-                display: block;
-                width: 84px;
-                height: 84px;
-                overflow: hidden;
-                border: 1px solid get-color('additional', 'light');
-                border-radius: 5px;
-            }
-
-            img {
-                display: block;
-
-                @include img-fluid();
-            }
+            border: $product-item-image-holder-tiny-border;
         }
     }
 
@@ -263,21 +241,6 @@
 
             font-size: 16px;
             line-height: 1.3;
-        }
-
-        &--in-cart {
-            font-size: $base-font-size--large;
-            line-height: 1.2;
-        }
-
-        &__link-in-cart {
-            color: get-color('additional', 'dark');
-            text-decoration: underline;
-
-            @include hover-focus-active() {
-                color: get-color('additional', 'dark');
-                text-decoration: none;
-            }
         }
 
         .view-product {
@@ -508,18 +471,6 @@
             .select-row-cell {
                 padding-left: $offset-x-s;
                 padding-right: $offset-x-m;
-            }
-        }
-    }
-}
-
-@include breakpoint('print') {
-    .product-item {
-        &__title {
-            &--in-cart {
-                a {
-                    text-decoration: none;
-                }
             }
         }
     }

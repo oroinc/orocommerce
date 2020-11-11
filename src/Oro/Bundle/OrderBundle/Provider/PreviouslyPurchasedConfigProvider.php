@@ -7,6 +7,9 @@ use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\OrderBundle\DependencyInjection\Configuration as OrderConfiguration;
 use Oro\Bundle\SearchBundle\Formatter\DateTimeFormatter;
 
+/**
+ * Provides days period and start date for previously purchased products.
+ */
 class PreviouslyPurchasedConfigProvider
 {
     /** @var ConfigManager */
@@ -41,8 +44,7 @@ class PreviouslyPurchasedConfigProvider
     public function getDaysPeriod()
     {
         return (int) $this->configManager->get(
-            OrderConfiguration::getConfigKey(OrderConfiguration::CONFIG_KEY_PREVIOUSLY_PURCHASED_PERIOD),
-            0
+            OrderConfiguration::getConfigKey(OrderConfiguration::CONFIG_KEY_PREVIOUSLY_PURCHASED_PERIOD)
         );
     }
 

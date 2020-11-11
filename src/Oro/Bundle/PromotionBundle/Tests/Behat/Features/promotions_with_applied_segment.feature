@@ -58,5 +58,5 @@ Feature: Promotions with Applied Segment
     When I open page with shopping list List 1
     Then I see next line item discounts for shopping list "List 1":
       | SKU  | Discount |
-      | SKU1 | $1.00    |
+      | SKU1 | -$1.00   |
       | SKU2 |          |

@@ -23,6 +23,10 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         shoppingList:
             - NotBlank:
                 groups: [create, update]
+        notes:
+            - Length:
+                max: 2048
+                groups: [Default, create, update, add_product]
 
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
     properties:
@@ -32,6 +36,9 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
                 max: 255
         totals:
             - Valid: ~
+        notes:
+            - Length:
+                max: 2048
 
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
     properties:

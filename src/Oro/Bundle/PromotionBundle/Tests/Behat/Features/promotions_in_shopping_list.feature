@@ -15,7 +15,7 @@ Feature: Promotions in Shopping List
     Then I see next line item discounts for shopping list "List 1":
       | SKU              | Discount |
       | SKU1             |          |
-      | SKU2             | $5.00    |
+      | SKU2             | -$5.00   |
     And I see next subtotals for "Shopping List":
       | Subtotal | Amount  |
       | Discount | -$12.50 |
@@ -67,18 +67,12 @@ Feature: Promotions in Shopping List
     And I save form
     Then I should see "Product has been saved" flash message
 
-    And I go to System/ Configuration
-    And I follow "Commerce/Product/Configurable Products" on configuration sidebar
-    And uncheck "Use default" for "Shopping Lists" field
-    And I fill in "Shopping Lists" with "Group Single Products"
-    And I save form
-
   Scenario: Check line item and subtotal discount in Shopping List with configurable product
     Given I operate as the Buyer
     When I open page with shopping list List 2 with configurable product
     Then I see next line item discounts for shopping list "List 2 with configurable product":
-      | SKU              | Discount |
-      | SKU_CONFIGURABLE | $5.00    |
+      | SKU  | Discount |
+      | SKU2 | -$5.00   |
     And I see next subtotals for "Shopping List":
       | Subtotal | Amount |
       | Discount | -$7.50 |

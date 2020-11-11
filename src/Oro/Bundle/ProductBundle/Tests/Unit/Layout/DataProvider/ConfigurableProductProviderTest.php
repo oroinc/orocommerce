@@ -10,6 +10,7 @@ use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ConfigurableProductProviderTest extends \PHPUnit\Framework\TestCase
 {
@@ -29,6 +30,11 @@ class ConfigurableProductProviderTest extends \PHPUnit\Framework\TestCase
      * @var ProductVariantFieldValueHandlerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $productVariantFieldValueHandlerRegistry;
+
+    /**
+     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $translator;
 
     /**
      * @var array
@@ -66,11 +72,14 @@ class ConfigurableProductProviderTest extends \PHPUnit\Framework\TestCase
         $this->productVariantFieldValueHandlerRegistry =
             $this->createMock(ProductVariantFieldValueHandlerRegistry::class);
 
+        $this->translator = $this->createMock(TranslatorInterface::class);
+
         $this->configurableProductProvider = new ConfigurableProductProvider(
             $this->customFieldProvider,
             $this->productVariantAvailabilityProvider,
             $this->getPropertyAccessor(),
-            $this->productVariantFieldValueHandlerRegistry
+            $this->productVariantFieldValueHandlerRegistry,
+            $this->translator
         );
     }
 
@@ -82,19 +91,11 @@ class ConfigurableProductProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(null, $this->configurableProductProvider->getProducts($lineItems));
     }
 
-    public function testGetLineItemProduct()
+    /**
+     * @param LineItem $lineItem
+     */
+    private function mockGetVariantFieldsValuesForLineItem(LineItem $lineItem): void
     {
-        $expectedField = [
-            2 => [
-                'size' => [
-                    'value' => 'Yes',
-                    'label' => 'Size',
-                    'type' => 'boolean'
-                ]
-            ]
-        ];
-        /** @var $lineItem */
-        $lineItem = $this->getEntity(LineItem::class, ['id' => 1]);
         /** @var Product $parentProduct */
         $parentProduct = $this->getEntity(Product::class, ['id' => 1]);
         $parentProduct->setVariantFields(['size']);
@@ -120,7 +121,7 @@ class ConfigurableProductProviderTest extends \PHPUnit\Framework\TestCase
 
         $boolHandler = $this->createMock(ProductVariantFieldValueHandlerInterface::class);
 
-        $boolHandler->expects($this->once())
+        $boolHandler->expects($this->atLeastOnce())
             ->method('getHumanReadableValue')
             ->willReturnCallback(function ($value) {
                 return $value ? 'Yes' : 'No';
@@ -130,8 +131,6 @@ class ConfigurableProductProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getVariantFieldValueHandler')
             ->with('boolean')
             ->willReturn($boolHandler);
-
-        $this->assertEquals($expectedField, $this->configurableProductProvider->getLineItemProduct($lineItem));
     }
 
     public function testGetProductsWithoutParentProduct()
@@ -141,5 +140,68 @@ class ConfigurableProductProviderTest extends \PHPUnit\Framework\TestCase
             $this->getEntity(LineItem::class, ['id' => 1]),
         ];
         $this->assertEquals([], $this->configurableProductProvider->getProducts($lineItems));
+    }
+
+    public function testGetVariantFieldsValuesForLineItemWhenNotTranslateLabels(): void
+    {
+        $this->translator
+            ->expects($this->never())
+            ->method($this->anything());
+
+        $expectedField = [
+            2 => [
+                'size' => [
+                    'value' => 'Yes',
+                    'label' => 'Size',
+                    'type' => 'boolean'
+                ]
+            ]
+        ];
+
+        /** @var LineItem $lineItem */
+        $lineItem = $this->getEntity(LineItem::class, ['id' => 1]);
+        $this->mockGetVariantFieldsValuesForLineItem($lineItem);
+
+        $this->assertEquals(
+            $expectedField,
+            $this->configurableProductProvider->getVariantFieldsValuesForLineItem($lineItem, false)
+        );
+    }
+
+    public function testGetVariantFieldsValuesForLineItemWhenTranslateLabels(): void
+    {
+        $this->translator
+            ->expects($this->atLeastOnce())
+            ->method('trans')
+            ->willReturnCallback(
+                static function (string $key) {
+                    return $key . 'Translated';
+                }
+            );
+
+        $expectedField = [
+            2 => [
+                'size' => [
+                    'value' => 'Yes',
+                    'label' => 'SizeTranslated',
+                    'type' => 'boolean'
+                ]
+            ]
+        ];
+
+        /** @var LineItem $lineItem */
+        $lineItem = $this->getEntity(LineItem::class, ['id' => 1]);
+        $this->mockGetVariantFieldsValuesForLineItem($lineItem);
+
+        $this->assertEquals(
+            $expectedField,
+            $this->configurableProductProvider->getVariantFieldsValuesForLineItem($lineItem, true)
+        );
+
+        // Checks local cache.
+        $this->assertEquals(
+            $expectedField,
+            $this->configurableProductProvider->getVariantFieldsValuesForLineItem($lineItem, true)
+        );
     }
 }

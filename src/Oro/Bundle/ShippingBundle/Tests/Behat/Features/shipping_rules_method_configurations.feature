@@ -3,7 +3,7 @@
 @fixture-OroLocaleBundle:ZuluLocalization.yml
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 Feature: Shipping rules method configurations
-  ToDo: BAP-16103 Add missing descriptions to the Behat features
+
 
   Scenario: Create one more Flat Rate integration
     Given I login as administrator

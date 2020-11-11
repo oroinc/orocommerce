@@ -56,7 +56,7 @@ class UpdateOrderLineItem extends AbstractFixture implements ContainerAwareInter
 
                 $product = $lineItem->getProduct();
                 if ($product) {
-                    $fields = $provider->getLineItemProduct($lineItem);
+                    $fields = $provider->getVariantFieldsValuesForLineItem($lineItem, false);
                     if (!empty($fields[$product->getId()])) {
                         $lineItem->setProductVariantFields($fields[$product->getId()]);
                     }

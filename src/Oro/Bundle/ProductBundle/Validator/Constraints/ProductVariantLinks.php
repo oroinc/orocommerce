@@ -18,6 +18,9 @@ class ProductVariantLinks extends Constraint
     /** @var string */
     public $variantLinkHasNoFilledFieldMessage = 'oro.product.product_variant_links.has_no_filled_field.message';
 
+    /** @var string */
+    public $variantLinkBelongsAnotherFamilyMessage = 'oro.product.product_variant_links.belongs_another_family.message';
+
     /**
      * {@inheritdoc}
      */

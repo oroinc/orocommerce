@@ -2,7 +2,7 @@
 
 {% block _widget_content_widget %}
     {% set shoppingListLink %}
-        <a href="{{ path('oro_shopping_list_frontend_view', {id: shoppingList.id}) }}">{{ shoppingList.label }}</a>
+        <a href="{{ oro_shopping_list_frontend_url(shoppingList) }}">{{ shoppingList.label }}</a>
     {% endset %}
 
     {% set shoppinglistCreatedMessage =  'oro.shoppinglist.flash.success'|trans({'%shoppinglist%': shoppingListLink|trim|default(null)}) %}

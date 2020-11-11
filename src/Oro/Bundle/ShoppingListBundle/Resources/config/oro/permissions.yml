@@ -7,3 +7,19 @@ oro_permissions:
         group_names:
             - 'commerce'
             - 'default'
+
+    RENAME_SHOPPING_LIST:
+        label: oro.shoppinglist.permission.rename_shopping_list.label
+        apply_to_all: false
+        apply_to_entities:
+            - 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList'
+        group_names:
+            - 'commerce'
+
+    SET_AS_DEFAULT_SHOPPING_LIST:
+        label: oro.shoppinglist.permission.set_as_default_shopping_list.label
+        apply_to_all: false
+        apply_to_entities:
+            - 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList'
+        group_names:
+            - 'commerce'

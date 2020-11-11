@@ -131,11 +131,11 @@ oro_behat_extension:
 
     PromotionShoppingList:
       class: Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionShoppingList
-      selector: '#shopping_list_view_container_content'
+      selector: '.page-content'
 
     PromotionShoppingListLineItem:
       class: Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionShoppingListLineItem
-      selector: 'div.shopping-list-line-items__item-wrapper'
+      selector: '.grid-row'
 
     PromotionOrderForm:
       class: Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionOrderForm

@@ -1,0 +1,34 @@
+include:
+  - '@OroLocaleBundle:ZuluLocalization.yml'
+
+Oro\Bundle\CatalogBundle\Entity\Category:
+  categoryLightingProducts:
+    __calls:
+      - addTitle: ['@localValueLightingProducts', '@localZuluValueLightingProducts']
+      - setParentCategory: ['@root_category']
+    organization: '@organization'
+
+  categoryRetailSupplies:
+    __calls:
+      - addTitle: ['@localValueRetailSupplies']
+      - setParentCategory: ['@root_category']
+    organization: '@organization'
+
+  categoryPrinters:
+    __calls:
+      - addTitle: ['@localValuePrinters']
+      - setParentCategory: ['@categoryRetailSupplies']
+    organization: '@organization'
+
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
+  localValueRetailSupplies:
+    string: 'Retail Supplies'
+
+  localValuePrinters:
+    string: 'Printers'
+
+  localValueLightingProducts:
+    string: 'Lighting Products'
+
+  localZuluValueLightingProducts:
+    string: 'ZuluLighting Products'

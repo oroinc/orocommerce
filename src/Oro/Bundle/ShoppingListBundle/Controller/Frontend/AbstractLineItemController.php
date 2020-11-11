@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager;
+use Oro\Bundle\ShoppingListBundle\Provider\ShoppingListUrlProvider;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -20,12 +20,7 @@ abstract class AbstractLineItemController extends AbstractController
      */
     protected function getSuccessMessage(ShoppingList $shoppingList, $translationKey): string
     {
-        $link = $this->get(RouterInterface::class)->generate('oro_shopping_list_frontend_view', [
-            'id' => $this->get(ShoppingListLimitManager::class)->isOnlyOneEnabled()
-                ? null
-                : $shoppingList->getId(),
-        ]);
-
+        $link = $this->get(ShoppingListUrlProvider::class)->getFrontendUrl($shoppingList);
         $label = htmlspecialchars($shoppingList->getLabel());
 
         return $this->get(TranslatorInterface::class)->trans(
@@ -37,7 +32,7 @@ abstract class AbstractLineItemController extends AbstractController
     public static function getSubscribedServices()
     {
         return array_merge(parent::getSubscribedServices(), [
-            ShoppingListLimitManager::class,
+            ShoppingListUrlProvider::class,
             RouterInterface::class,
             TranslatorInterface::class,
         ]);

@@ -1,0 +1,5 @@
+<% var type = obj.type || 'full' %>
+<% var productUnit =  _.__('oro.product.product_unit.' + unit + '.value.' + type, {count: ''}, quantity) %>
+<% if (productUnit) { %>
+    <%- productUnit.trim() %>
+<% } %>

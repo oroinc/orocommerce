@@ -30,7 +30,7 @@ class ShoppingListController extends RestController implements ClassResourceInte
      *      description="Set current Shopping List",
      *      resource=true
      * )
-     * @AclAncestor("oro_shopping_list_frontend_update")
+     * @AclAncestor("oro_shopping_list_frontend_set_as_default")
      *
      * @param ShoppingList $shoppingList
      *
@@ -38,20 +38,13 @@ class ShoppingListController extends RestController implements ClassResourceInte
      */
     public function setCurrentAction(ShoppingList $shoppingList)
     {
-        $isGranted = $this->isGranted('EDIT', $shoppingList);
-        $isProcessed = false;
-        $view = $this->view([], Response::HTTP_NO_CONTENT);
-        if (!$isGranted) {
-            $view = $this->view(['reason' => 'Access denied'], Response::HTTP_FORBIDDEN);
-            $isProcessed = true;
-        }
         $this->get('oro_shopping_list.manager.current_shopping_list')
             ->setCurrent($this->getUser(), $shoppingList);
 
         return $this->buildResponse(
-            $view,
+            $this->view([], Response::HTTP_NO_CONTENT),
             self::ACTION_UPDATE,
-            ['id' => $shoppingList->getId(), 'success' => $isProcessed]
+            ['id' => $shoppingList->getId(), 'success' => $shoppingList->isCurrent()]
         );
     }
 

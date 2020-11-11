@@ -239,10 +239,11 @@ action_groups:
                 type: bool
                 default: false
         actions:
-            - '@assign_url':
+            - '@call_service_method':
                 attribute: $.editLink
-                route: oro_shopping_list_frontend_view
-                route_parameters: {id: $.shoppingList.id}
+                service: oro_shopping_list.provider.shopping_list_url
+                method: getFrontendUrl
+                method_parameters: [$.shoppingList]
             - '@assign_value': [$.sourceRemoveLabel, 'oro.frontend.shoppinglist.workflow.remove_source.label']
             - '@call_service_method':
                 attribute: $.isOneShoppingList

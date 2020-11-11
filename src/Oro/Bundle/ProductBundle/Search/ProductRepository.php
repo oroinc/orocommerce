@@ -147,7 +147,7 @@ class ProductRepository extends WebsiteSearchRepository
             ->getCriteria()
             ->andWhere(
                 Criteria::expr()->orX(
-                    Criteria::expr()->in('sku_uppercase', [mb_strtoupper($search)]),
+                    Criteria::expr()->contains('sku_uppercase', mb_strtoupper($search)),
                     Criteria::expr()->contains('names_LOCALIZATION_ID', $search)
                 )
             )

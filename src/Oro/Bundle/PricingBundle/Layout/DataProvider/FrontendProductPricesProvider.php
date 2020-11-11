@@ -102,26 +102,6 @@ class FrontendProductPricesProvider
      *
      * @return array
      */
-    public function getVariantsPricesByProducts($products)
-    {
-        $this->prepareAndSetProductsPrices($products);
-        $productPrices = [];
-
-        foreach ($products as $product) {
-            if ($product->getType() === Product::TYPE_CONFIGURABLE) {
-                $productId = $product->getId();
-                $productPrices[$productId] = $this->getVariantsPrices($productId);
-            }
-        }
-
-        return $productPrices;
-    }
-
-    /**
-     * @param Product[] $products
-     *
-     * @return array
-     */
     public function getByProducts($products)
     {
         $this->prepareAndSetProductsPrices($products);

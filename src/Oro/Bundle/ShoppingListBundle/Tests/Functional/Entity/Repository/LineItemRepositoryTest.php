@@ -8,17 +8,21 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData as OroLoadCustomerUserData;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadConfigurableProductWithVariants;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListConfigurableLineItems;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @dbIsolationPerTest
+ *
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class LineItemRepositoryTest extends WebTestCase
 {
@@ -30,22 +34,29 @@ class LineItemRepositoryTest extends WebTestCase
         $this->loadFixtures(
             [
                 LoadShoppingListLineItems::class,
+                LoadShoppingListConfigurableLineItems::class,
             ]
         );
     }
 
-    public function testFindDuplicate()
+    public function testFindDuplicateInShoppingList(): void
     {
         /** @var LineItem $lineItem */
-        $lineItem = $this->getReference('shopping_list_line_item.1');
+        $lineItem3 = $this->getReference(LoadShoppingListLineItems::LINE_ITEM_3);
+
+        /** @var ShoppingList $shoppingList4 */
+        $shoppingList4 = $this->getReference(LoadShoppingLists::SHOPPING_LIST_4);
+
+        /** @var ShoppingList $shoppingList4 */
+        $shoppingList5 = $this->getReference(LoadShoppingLists::SHOPPING_LIST_5);
+
         $repository = $this->getLineItemRepository();
 
-        $duplicate = $repository->findDuplicate($lineItem);
-        $this->assertNull($duplicate);
+        $duplicate = $repository->findDuplicateInShoppingList($lineItem3, $shoppingList4);
+        $this->assertTrue(null === $duplicate);
 
-        $this->setProperty($lineItem, 'id', ($lineItem->getId() + 1));
-        $duplicate = $repository->findDuplicate($lineItem);
-        $this->assertInstanceOf(LineItem::class, $duplicate);
+        $duplicate = $repository->findDuplicateInShoppingList($lineItem3, $shoppingList5);
+        $this->assertFalse(null === $duplicate);
     }
 
     public function testGetItemsByProductAndShoppingList()
@@ -64,7 +75,6 @@ class LineItemRepositoryTest extends WebTestCase
         $this->assertCount(1, $lineItems);
         $this->assertContains($lineItem, $lineItems);
     }
-
 
     public function testGetOneProductLineItemsWithShoppingListNames()
     {
@@ -239,6 +249,10 @@ class LineItemRepositoryTest extends WebTestCase
             $this->getReference(LoadShoppingLists::SHOPPING_LIST_5)
         ];
 
+        $parentProductName = $this->getReference(LoadConfigurableProductWithVariants::CONFIGURABLE_SKU)
+            ->getName()
+            ->getString();
+
         $productName1 = $this->getReference(LoadProductData::PRODUCT_1)->getName()->getString();
         $productName5 = $this->getReference(LoadProductData::PRODUCT_5)->getName()->getString();
         $productName8 = $this->getReference(LoadProductData::PRODUCT_8)->getName()->getString();
@@ -252,6 +266,9 @@ class LineItemRepositoryTest extends WebTestCase
         $this->assertEquals(
             [
                 $shoppingListId1 => [
+                    [
+                        'name' => $parentProductName
+                    ],
                     [
                         'name' => $productName1
                     ]
@@ -269,46 +286,76 @@ class LineItemRepositoryTest extends WebTestCase
         );
     }
 
-    public function testDeleteItemsByShoppingListAndInventoryStatuses()
+    public function testHasEmptyMatrixWhenOnlySimpleProducts(): void
+    {
+        $id = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1)->getId();
+
+        $this->assertFalse($this->getLineItemRepository()->hasEmptyMatrix($id));
+    }
+
+    public function testHasEmptyMatrixWithOnlyOneConfigurableProduct(): void
+    {
+        $id = $this->getReference(LoadShoppingLists::SHOPPING_LIST_2)->getId();
+
+        $this->assertTrue($this->getLineItemRepository()->hasEmptyMatrix($id));
+    }
+
+    public function testHasEmptyMatrixWithConfigurableProductAndVariant(): void
+    {
+        $id = $this->getReference(LoadShoppingLists::SHOPPING_LIST_9)->getId();
+
+        $this->assertFalse($this->getLineItemRepository()->hasEmptyMatrix($id));
+    }
+
+    public function testCanBeGrouped(): void
+    {
+        $id = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1)->getId();
+
+        $this->assertTrue($this->getLineItemRepository()->canBeGrouped($id));
+    }
+
+    public function testCanBeGroupedWhenNoItemsToGroup(): void
+    {
+        $id = $this->getReference(LoadShoppingLists::SHOPPING_LIST_9)->getId();
+
+        $this->assertFalse($this->getLineItemRepository()->canBeGrouped($id));
+    }
+
+    public function testDeleteNotAllowedLineItemsFromShoppingList(): void
     {
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_5);
         $allowedStatuses = ['in_stock'];
 
         $repo = $this->getLineItemRepository();
-        $repo->deleteItemsByShoppingListAndInventoryStatuses($shoppingList, $allowedStatuses);
-        $actual = array_map(function (LineItem $item) {
-            return $item->getId();
-        }, $repo->findBy(['shoppingList' => $shoppingList]));
+        $deletedNumber = $repo->deleteNotAllowedLineItemsFromShoppingList($shoppingList, $allowedStatuses);
+        $this->assertEquals(3, $deletedNumber);
+
+        $actual = array_map(fn (LineItem $item) => $item->getId(), $repo->findBy(['shoppingList' => $shoppingList]));
         sort($actual);
 
         $expected = [
             $this->getReference(LoadShoppingListLineItems::LINE_ITEM_4)->getId(),
-            $this->getReference(LoadShoppingListLineItems::LINE_ITEM_5)->getId()
         ];
         sort($expected);
         $this->assertEquals($expected, $actual);
     }
 
-    public function testDeleteDisabledItemsByShoppingList()
+    public function testFindLineItemsByParentProductAndUnit(): void
     {
-        /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_5);
+        /** @var LineItem $lineItem */
+        $lineItem4 = $this->getReference('shopping_list_configurable_line_item.4');
+        $lineItem5 = $this->getReference('shopping_list_configurable_line_item.5');
 
-        $repo = $this->getLineItemRepository();
-        $repo->deleteDisabledItemsByShoppingList($shoppingList);
-        $actual = array_map(function (LineItem $item) {
-            return $item->getId();
-        }, $repo->findBy(['shoppingList' => $shoppingList]));
-        sort($actual);
+        $lineItems = $this->getLineItemRepository()->findLineItemsByParentProductAndUnit(
+            $lineItem4->getShoppingList()->getId(),
+            $lineItem4->getParentProduct()->getId(),
+            $lineItem4->getProductUnitCode()
+        );
 
-        $expected = [
-            $this->getReference(LoadShoppingListLineItems::LINE_ITEM_4)->getId(),
-            $this->getReference(LoadShoppingListLineItems::LINE_ITEM_10)->getId(),
-            $this->getReference(LoadShoppingListLineItems::LINE_ITEM_11)->getId(),
-        ];
-        sort($expected);
-        $this->assertEquals($expected, $actual);
+        $this->assertCount(2, $lineItems);
+        $this->assertContains($lineItem4, $lineItems);
+        $this->assertContains($lineItem5, $lineItems);
     }
 
     /**
