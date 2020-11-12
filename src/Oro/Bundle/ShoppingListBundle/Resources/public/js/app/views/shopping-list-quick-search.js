@@ -14,7 +14,7 @@ const ShoppingListQuickSearch = BaseView.extend(extend({}, ElementsHelper, {
     events: {
         'input [data-role="quick-search"]': 'onSearch',
         'keydown [data-role="quick-search"]': 'preventClose',
-        'click .search-action': 'onClick'
+        'click .clear-search-button': 'onClick'
     },
 
     dropdownWidget: null,
@@ -140,7 +140,7 @@ const ShoppingListQuickSearch = BaseView.extend(extend({}, ElementsHelper, {
             minHeight
         });
 
-        this.$el.find('.search-action').attr('disabled', e.target.value.length === 0);
+        this.$el.find('.clear-search-button').attr('disabled', e.target.value.length === 0);
 
         this.subview('highlight').update(e.target.value);
 
