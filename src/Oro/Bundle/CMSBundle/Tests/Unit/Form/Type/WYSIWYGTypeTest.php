@@ -57,7 +57,7 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
                     ]
                 ],
                 'attr' => [
-                    'class' => 'hide'
+                    'class' => 'grapesjs-textarea hide'
                 ],
                 'auto_render' => true,
                 'error_bubbling' => true
