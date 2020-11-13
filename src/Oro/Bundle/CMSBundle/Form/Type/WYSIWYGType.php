@@ -75,7 +75,7 @@ class WYSIWYGType extends AbstractType
                 ]
             ],
             'attr' => [
-                'class' => 'hide'
+                'class' => 'grapesjs-textarea hide'
             ],
             'auto_render' => true,
             'error_bubbling' => true
