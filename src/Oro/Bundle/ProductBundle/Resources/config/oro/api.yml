@@ -42,11 +42,6 @@ api:
             actions:
                 delete_list: false
                 delete: false
-            fields:
-                wysiwygProperties:
-                    exclude: true
-                wysiwygStyle:
-                    exclude: true
 
         Oro\Bundle\ProductBundle\Entity\Product:
             documentation_resource: '@OroProductBundle/Resources/doc/api/product.md'

@@ -23,11 +23,6 @@ api:
                 update: false
                 delete: false
                 delete_list: false
-            fields:
-                wysiwygProperties:
-                    exclude: true
-                wysiwygStyle:
-                    exclude: true
 
         Oro\Bundle\CatalogBundle\Entity\Category:
             documentation_resource: '@OroCatalogBundle/Resources/doc/api/category.md'

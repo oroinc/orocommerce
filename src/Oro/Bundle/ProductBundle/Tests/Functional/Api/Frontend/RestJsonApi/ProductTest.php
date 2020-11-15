@@ -369,8 +369,8 @@ class ProductTest extends FrontendRestJsonApiTestCase
                                 ]
                             ],
                             'wysiwyg'            => [
-                                'value' => null,
-                                'style' => null
+                                'value' => 'Product 1 WYSIWYG Text',
+                                'style' => '<style></style>'
                             ]
                         ]
                     ]
@@ -413,10 +413,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
                             'testToOneId'        => null,
                             'testAttrManyToMany' => [],
                             'testToManyId'       => [],
-                            'wysiwyg'            => [
-                                'value' => null,
-                                'style' => null
-                            ]
+                            'wysiwyg'            => null
                         ]
                     ]
                 ]

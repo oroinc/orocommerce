@@ -335,6 +335,9 @@ Oro\Bundle\ProductBundle\Entity\Product:
         testAttrManyToMany: ['@customer_user1', '@customer_user2']
         testToManyId: ['@country.mexico', '@country.germany']
         slugs: ['@product1_slug_default', '@product1_slug_en_CA', '@product1_slug_es']
+        wysiwyg: 'Product 1 WYSIWYG Text'
+        wysiwyg_style: '\<style\>\</style\>'
+        wysiwyg_properties: { param: value }
     product2:
         sku: 'PSKU2'
         primaryUnitPrecision: '@product2_precision'

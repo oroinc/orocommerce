@@ -1,0 +1,8 @@
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    test_value_with_wysiwyg:
+        text: 'Test Value'
+        wysiwyg: 'Content'
+        wysiwyg_style: '\<style\>\</style\>'
+        wysiwyg_properties: { param: value }
+    test_value_without_wysiwyg:
+        text: 'Test Value'
