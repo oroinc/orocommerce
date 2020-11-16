@@ -55,7 +55,7 @@ services:
             - '@oro_api.entity_description_provider'
             - '@file_locator'
         tags:
-            - { name: oro.api.processor, action: get_config, requestType: '!frontend', extra: '!identifier_fields_only&descriptions', priority: -220 }
+            - { name: oro.api.processor, action: get_config, extra: '!identifier_fields_only&descriptions', priority: -220 }
 
     oro_cms.api.frontend.product.compute_wysiwyg_attributes:
         class: Oro\Bundle\CMSBundle\Api\Processor\ComputeWYSIWYGAttributes
