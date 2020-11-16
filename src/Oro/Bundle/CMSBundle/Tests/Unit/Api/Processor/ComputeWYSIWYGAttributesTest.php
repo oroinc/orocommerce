@@ -1,6 +1,6 @@
 <?php
 
-namespace commerce\src\Oro\Bundle\CMSBundle\Tests\Unit\Api\Processor;
+namespace Oro\Bundle\CMSBundle\Tests\Unit\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Config\EntityDefinitionConfig;
 use Oro\Bundle\ApiBundle\Tests\Unit\Processor\CustomizeLoadedData\CustomizeLoadedDataProcessorTestCase;
@@ -29,14 +29,46 @@ class ComputeWYSIWYGAttributesTest extends CustomizeLoadedDataProcessorTestCase
         );
     }
 
-    public function testProcessWithoutWysiwygFields()
+    public function testProcessWhenAttributesAreNotRequested()
     {
         $entityClass = 'Test\Entity';
+        $config = new EntityDefinitionConfig();
+        $config->addField(self::ATTRIBUTES_FIELD_NAME)->setExcluded();
 
         $data = [
             [
                 self::ATTRIBUTES_FIELD_NAME => [],
-                'field'                     => [
+                'wysiwygAttribute'          => [
+                    'value'      => '<div id="test">test</div>div>',
+                    'style'      => 'id {color: red;}',
+                    'properties' => [
+                        ['name' => 'Row', 'content' => '']
+                    ]
+                ]
+            ]
+        ];
+
+        $this->wysiwygFieldsProvider->expects(self::never())
+            ->method(self::anything());
+
+        $this->context->setClassName($entityClass);
+        $this->context->setConfig($config);
+        $this->context->setData($data);
+        $this->processor->process($this->context);
+
+        self::assertEquals($data, $this->context->getData());
+    }
+
+    public function testProcessWithoutWysiwygAttributes()
+    {
+        $entityClass = 'Test\Entity';
+        $config = new EntityDefinitionConfig();
+        $config->addField(self::ATTRIBUTES_FIELD_NAME);
+
+        $data = [
+            [
+                self::ATTRIBUTES_FIELD_NAME => [],
+                'wysiwygField'              => [
                     'value'      => '<div id="test">test</div>div>',
                     'style'      => 'id {color: red;}',
                     'properties' => [
@@ -47,11 +79,12 @@ class ComputeWYSIWYGAttributesTest extends CustomizeLoadedDataProcessorTestCase
         ];
 
         $this->wysiwygFieldsProvider->expects(self::once())
-            ->method('getWysiwygFields')
+            ->method('getWysiwygAttributes')
             ->with($entityClass)
             ->willReturn([]);
 
         $this->context->setClassName($entityClass);
+        $this->context->setConfig($config);
         $this->context->setData($data);
         $this->processor->process($this->context);
 
@@ -61,18 +94,16 @@ class ComputeWYSIWYGAttributesTest extends CustomizeLoadedDataProcessorTestCase
     public function testProcess()
     {
         $entityClass = 'Test\Entity';
+        $config = new EntityDefinitionConfig();
+        $config->addField(self::ATTRIBUTES_FIELD_NAME);
 
-        $this->wysiwygFieldsProvider->expects(self::once())
-            ->method('getWysiwygFields')
-            ->with($entityClass)
-            ->willReturn(['wysiwygAttribute']);
         $this->wysiwygFieldsProvider->expects(self::once())
             ->method('getWysiwygAttributes')
             ->with($entityClass)
             ->willReturn(['wysiwygAttribute']);
 
         $this->context->setClassName($entityClass);
-        $this->context->setConfig(new EntityDefinitionConfig());
+        $this->context->setConfig($config);
         $this->context->setData([
             [
                 self::ATTRIBUTES_FIELD_NAME => [],

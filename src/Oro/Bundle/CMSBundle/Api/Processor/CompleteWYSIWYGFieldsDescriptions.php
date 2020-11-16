@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\CMSBundle\Api\Processor;
 
+use Oro\Bundle\ApiBundle\ApiDoc\EntityDescriptionProvider;
 use Oro\Bundle\ApiBundle\Config\EntityDefinitionConfig;
 use Oro\Bundle\ApiBundle\Config\EntityDefinitionFieldConfig;
 use Oro\Bundle\ApiBundle\Processor\GetConfig\ConfigContext;
 use Oro\Bundle\ApiBundle\Request\DataType;
-use Oro\Bundle\CMSBundle\Provider\WYSIWYGFieldsProvider;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 use Symfony\Component\Config\FileLocatorInterface;
@@ -16,8 +16,8 @@ use Symfony\Component\Config\FileLocatorInterface;
  */
 class CompleteWYSIWYGFieldsDescriptions implements ProcessorInterface
 {
-    /** @var WYSIWYGFieldsProvider */
-    private $wysiwygFieldsProvider;
+    /** @var EntityDescriptionProvider */
+    private $entityDescriptionProvider;
 
     /** @var FileLocatorInterface */
     private $fileLocator;
@@ -26,12 +26,14 @@ class CompleteWYSIWYGFieldsDescriptions implements ProcessorInterface
     private $descriptions = [];
 
     /**
-     * @param WYSIWYGFieldsProvider $wysiwygFieldsProvider
-     * @param FileLocatorInterface  $fileLocator
+     * @param EntityDescriptionProvider $entityDescriptionProvider
+     * @param FileLocatorInterface      $fileLocator
      */
-    public function __construct(WYSIWYGFieldsProvider $wysiwygFieldsProvider, FileLocatorInterface $fileLocator)
-    {
-        $this->wysiwygFieldsProvider = $wysiwygFieldsProvider;
+    public function __construct(
+        EntityDescriptionProvider $entityDescriptionProvider,
+        FileLocatorInterface $fileLocator
+    ) {
+        $this->entityDescriptionProvider = $entityDescriptionProvider;
         $this->fileLocator = $fileLocator;
     }
 
@@ -42,11 +44,12 @@ class CompleteWYSIWYGFieldsDescriptions implements ProcessorInterface
     {
         /** @var ConfigContext $context */
 
-        $wysiwygFields = $this->wysiwygFieldsProvider->getWysiwygFields($context->getClassName());
+        $wysiwygFields = ConfigureWYSIWYGFields::getWysiwygFields($context);
         if (empty($wysiwygFields)) {
             return;
         }
 
+        $entityClass = $context->getClassName();
         $definition = $context->getResult();
         foreach ($wysiwygFields as $fieldName) {
             $field = $this->getWysiwygField($definition, $fieldName);
@@ -69,8 +72,13 @@ class CompleteWYSIWYGFieldsDescriptions implements ProcessorInterface
             if ($this->isFieldNotExistOrExcluded($targetDefinition, 'style')) {
                 continue;
             }
-            $hasPropertiesField = !$this->isFieldNotExistOrExcluded($targetDefinition, 'properties');
-            $field->setDescription($this->getWysiwygFieldDescription($hasPropertiesField));
+            $field->setDescription(
+                $this->getWysiwygFieldDescription(
+                    $entityClass,
+                    $fieldName,
+                    !$this->isFieldNotExistOrExcluded($targetDefinition, 'properties')
+                )
+            );
         }
     }
 
@@ -93,12 +101,17 @@ class CompleteWYSIWYGFieldsDescriptions implements ProcessorInterface
     }
 
     /**
-     * @param bool $hasPropertiesField
+     * @param string $entityClass
+     * @param string $fieldName
+     * @param bool   $hasPropertiesField
      *
      * @return string
      */
-    private function getWysiwygFieldDescription(bool $hasPropertiesField): string
-    {
+    private function getWysiwygFieldDescription(
+        string $entityClass,
+        string $fieldName,
+        bool $hasPropertiesField
+    ): string {
         $descriptionFile = $hasPropertiesField ? 'wysiwyg.md' : 'wysiwyg_without_properties.md';
         if (!isset($this->descriptions[$descriptionFile])) {
             $this->descriptions[$descriptionFile] = file_get_contents(
@@ -106,7 +119,14 @@ class CompleteWYSIWYGFieldsDescriptions implements ProcessorInterface
             );
         }
 
-        return $this->descriptions[$descriptionFile];
+        $result = $this->descriptions[$descriptionFile];
+
+        $fieldDescription = $this->entityDescriptionProvider->getFieldDocumentation($entityClass, $fieldName);
+        if ($fieldDescription) {
+            $result = $fieldDescription . "\n\n" . $result;
+        }
+
+        return $result;
     }
 
     /**

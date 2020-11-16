@@ -44,21 +44,24 @@ class ConfigureWYSIWYGAttributes implements ProcessorInterface
             return;
         }
 
-        $wysiwygAttributes = $this->wysiwygFieldsProvider->getWysiwygAttributes($context->getClassName());
-        if (empty($wysiwygAttributes)) {
+        $wysiwygFields = ConfigureWYSIWYGFields::getWysiwygFields($context);
+        if (empty($wysiwygFields)) {
             return;
         }
 
-        foreach ($wysiwygAttributes as $fieldName) {
+        $entityClass = $context->getClassName();
+        foreach ($wysiwygFields as $fieldName) {
+            if (!$this->wysiwygFieldsProvider->isWysiwygAttribute($entityClass, $fieldName)) {
+                continue;
+            }
             $field = $this->getWysiwygField($definition, $fieldName);
-            if (null !== $field) {
-                $field->setExcluded();
-                $fieldDependsOn = $field->getDependsOn();
-                if ($fieldDependsOn) {
-                    $attributesField->setDependsOn(
-                        array_merge($attributesField->getDependsOn() ?? [], $fieldDependsOn)
-                    );
-                }
+            if (null === $field) {
+                continue;
+            }
+            $field->setExcluded();
+            $fieldDependsOn = $field->getDependsOn() ?? [];
+            foreach ($fieldDependsOn as $dependsOnFieldName) {
+                $attributesField->addDependsOn($dependsOnFieldName);
             }
         }
     }

@@ -97,7 +97,7 @@ class WYSIWYGFieldTwigListenerTest extends WebTestCase
                 WYSIWYGTwigFunctionProcessorInterface::FIELD_STYLES_TYPE => ['test'],
             ]);
 
-        $processor->expects($this->exactly(5))
+        $processor->expects($this->exactly(7))
             ->method('processTwigFunctions')
             ->willReturnCallback(
                 function (WYSIWYGProcessedDTO $processedDTO, array $twigFunctionCalls) use (&$expectedCalls) {

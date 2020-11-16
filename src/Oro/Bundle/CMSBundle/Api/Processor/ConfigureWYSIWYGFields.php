@@ -17,6 +17,8 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class ConfigureWYSIWYGFields implements ProcessorInterface
 {
+    private const WYSIWYG_FIELDS = '_wysiwyg_fields';
+
     /** @var WYSIWYGFieldsProvider */
     private $wysiwygFieldsProvider;
 
@@ -31,6 +33,18 @@ class ConfigureWYSIWYGFields implements ProcessorInterface
     {
         $this->wysiwygFieldsProvider = $wysiwygFieldsProvider;
         $this->excludeWysiwygProperties = $excludeWysiwygProperties;
+    }
+
+    /**
+     * Gets the list of names of WYSIWYG fields added by this processor.
+     *
+     * @param ConfigContext $context
+     *
+     * @return string[]|null
+     */
+    public static function getWysiwygFields(ConfigContext $context): ?array
+    {
+        return $context->get(self::WYSIWYG_FIELDS);
     }
 
     /**
@@ -49,66 +63,96 @@ class ConfigureWYSIWYGFields implements ProcessorInterface
 
         $definition = $context->getResult();
         foreach ($wysiwygFields as $fieldName) {
-            $field = $definition->findField($fieldName, true);
-            if (null === $field) {
-                $field = $definition->addField($fieldName);
+            $field = $this->createWysiwygField($definition, $fieldName);
+
+            $valueField = $definition->getOrAddField('_' . $fieldName);
+            if (!$valueField->hasPropertyPath()) {
+                $valueField->setPropertyPath($fieldName);
             }
-            $field->setDataType(DataType::NESTED_OBJECT);
-            $field->setPropertyPath(ConfigUtil::IGNORE_PROPERTY_PATH);
-            $field->setFormOption('inherit_data', true);
 
             $styleFieldName = $this->wysiwygFieldsProvider->getWysiwygStyleField($entityClass, $fieldName);
             $propertiesFieldName = $this->wysiwygFieldsProvider->getWysiwygPropertiesField($entityClass, $fieldName);
 
-            $targetDefinition = $field->getOrCreateTargetEntity();
-            $this->addNestedField($targetDefinition, 'value', $fieldName, DataType::STRING);
-            $this->addNestedField($targetDefinition, 'style', $styleFieldName, DataType::STRING);
+            $this->excludeField($definition, $entityClass, $fieldName);
+            $this->excludeField($definition, $entityClass, $styleFieldName);
+            $this->excludeField($definition, $entityClass, $propertiesFieldName);
+
+            $this->addNestedField($field, 'value', $fieldName, DataType::STRING);
+            $this->addNestedField($field, 'style', $styleFieldName, DataType::STRING);
             if (!$this->excludeWysiwygProperties) {
-                $this->addNestedField($targetDefinition, 'properties', $propertiesFieldName, DataType::OBJECT);
+                $this->addNestedField($field, 'properties', $propertiesFieldName, DataType::OBJECT);
             }
 
-            $this->excludeField($definition, $fieldName, '_');
-            $this->excludeField($definition, $styleFieldName);
-            $this->excludeField($definition, $propertiesFieldName);
-
-            $field->setPropertyPath(null);
+            $this->addWysiwygFieldToContext($context, $fieldName);
         }
     }
 
     /**
      * @param EntityDefinitionConfig $definition
      * @param string                 $fieldName
-     * @param string                 $propertyPath
-     * @param string                 $dataType
+     *
+     * @return EntityDefinitionFieldConfig
+     */
+    private function createWysiwygField(
+        EntityDefinitionConfig $definition,
+        string $fieldName
+    ): EntityDefinitionFieldConfig {
+        $field = $definition->findField($fieldName, true);
+        if (null === $field) {
+            $field = $definition->addField($fieldName);
+        }
+        $field->setDataType(DataType::NESTED_OBJECT);
+        $field->setPropertyPath(ConfigUtil::IGNORE_PROPERTY_PATH);
+        $field->setFormOption('inherit_data', true);
+
+        return $field;
+    }
+
+    /**
+     * @param ConfigContext $context
+     * @param string        $fieldName
+     */
+    private function addWysiwygFieldToContext(ConfigContext $context, string $fieldName): void
+    {
+        $wysiwygFields = $context->get(self::WYSIWYG_FIELDS) ?? [];
+        $wysiwygFields[] = $fieldName;
+        $context->set(self::WYSIWYG_FIELDS, $wysiwygFields);
+    }
+
+    /**
+     * @param EntityDefinitionFieldConfig $wysiwygField
+     * @param string                      $fieldName
+     * @param string                      $propertyPath
+     * @param string                      $dataType
      */
     private function addNestedField(
-        EntityDefinitionConfig $definition,
+        EntityDefinitionFieldConfig $wysiwygField,
         string $fieldName,
         string $propertyPath,
         string $dataType
     ): void {
-        $valueNestedField = $definition->addField($fieldName);
+        $wysiwygField->addDependsOn($propertyPath);
+        $valueNestedField = $wysiwygField->getOrCreateTargetEntity()->addField($fieldName);
         $valueNestedField->setPropertyPath($propertyPath);
         $valueNestedField->setDataType($dataType);
     }
 
     /**
      * @param EntityDefinitionConfig $definition
+     * @param string                 $entityClass
      * @param string                 $propertyPath
-     * @param string|null            $fieldNamePrefix
-     *
-     * @return EntityDefinitionFieldConfig
      */
     private function excludeField(
         EntityDefinitionConfig $definition,
-        string $propertyPath,
-        string $fieldNamePrefix = null
-    ): EntityDefinitionFieldConfig {
+        string $entityClass,
+        string $propertyPath
+    ): void {
         $fieldName = $definition->findFieldNameByPropertyPath($propertyPath);
         if (!$fieldName) {
-            $fieldName = $fieldNamePrefix . $propertyPath;
+            $fieldName = $propertyPath;
             $definition->addField($fieldName);
         }
+        /** @var EntityDefinitionFieldConfig $field */
         $field = $definition->getField($fieldName);
         if (!$field->hasExcluded()) {
             $field->setExcluded();
@@ -116,7 +160,8 @@ class ConfigureWYSIWYGFields implements ProcessorInterface
         if (!$field->hasPropertyPath() && $fieldName !== $propertyPath) {
             $field->setPropertyPath($propertyPath);
         }
-
-        return $field;
+        if ($this->wysiwygFieldsProvider->isSerializedWysiwygField($entityClass, $propertyPath)) {
+            $field->addDependsOn('serialized_data');
+        }
     }
 }
