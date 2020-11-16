@@ -1,0 +1,198 @@
+{% block  __datagrid_toolbar__datagrid_toolbar_leftside_container_widget %}
+    <div class="datagrid-toolbar__side" data-section="left-side">
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __datagrid_toolbar__datagrid_toolbar_rightside_container_widget %}
+    <div class="datagrid-toolbar__rightside" data-section="right-side">
+        <% if (toolbarPosition !== 'bottom') { %>
+            {{ block_widget(block) }}
+        <% } %>
+    </div>
+{% endblock %}
+
+{% block __customer_user_shopping_list__container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' customer-profile customer-profile--no-offset'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __customer_user_shopping_list__header_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' customer-profile__header'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{%- block __customer_user_shopping_list__header_icon_widget -%}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' badge fa-clipboard',
+        'aria-hidden': 'true'
+    }) %}
+
+    <span {{ block('block_attributes') }}></span>
+{%- endblock -%}
+
+{%- block __customer_user_shopping_list__header_title_container_widget -%}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' page-title with-ellipsis'
+    }) %}
+
+    <h1 {{ block('block_attributes') }}>{{ block_widget(block) }}</h1>
+{%- endblock -%}
+
+{% block __customer_user_shopping_list__header_title_wrapper_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' customer-profile__title-wrapper'
+    }) %}
+
+    {{ parent_block_widget(block) }}
+{% endblock %}
+
+{%- block __customer_user_shopping_list__header_title_text_widget -%}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' page-title__text page-title__text--offset-x-end-s'
+    }) %}
+
+    <span {{ block('block_attributes') }}>{{ shoppingList.label }}</span>
+{%- endblock -%}
+
+{%- block __customer_user_shopping_list__header_status_widget -%}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' badge-rectangle'
+    }) %}
+
+    <span {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </span>
+{%- endblock -%}
+
+{% block __customer_user_shopping_list__header_owner_wrapper_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' my-shopping-list-owner-wrapper'
+    }) %}
+
+    {% if block.children|length >= 2 %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' show-separator'
+        }) %}
+    {% endif %}
+
+    {{ parent_block_widget(block) }}
+{%- endblock -%}
+
+{% block __customer_user_shopping_list__shopping_list_actions_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' my-shopping-list-owner-wrapper__actions'
+    }) %}
+
+    {% if block.children %}
+        <div{{ block('block_attributes') }}>
+            <span class="separator" aria-hidden="true"></span>
+            {{ block_widget(block) }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block __customer_user_shopping_list__header_owner_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' shopping-list-owner'
+    }) %}
+
+    {% set label = shoppingList.customerUser|oro_format_name|default('N/A'|trans)|e %}
+
+    <div{{ block('block_attributes') }}>
+        {{ 'oro.frontend.shoppinglist.view.assigned_to.label'|trans}}:
+        {% if is_granted('VIEW', shoppingList.customerUser) %}
+            {{ UI.link({
+                'path': path('oro_customer_frontend_customer_user_view', {id: shoppingList.customerUser.id}),
+                'label': label
+            }) }}
+        {% else %}
+            {{ label }}
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block __customer_user_shopping_list__line_items_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' my-shopping-list-datagrid-container'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __customer_user_shopping_list__checkout_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' responsive-order-layout order-checkout-widget order-checkout-widget--offset-none ',
+        'data-sticky-target': 'top-sticky-panel',
+        'data-sticky': {
+            isSticky: true,
+            affixed: true,
+            autoWidth: false,
+            moveToPanel: false,
+            viewport: {
+                minScreenType: 'responsive-shopping-list-grid-ovreflow'
+            }
+        }
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __customer_user_shopping_list__summary_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' order-checkout-widget__container-wrapper ',
+        'data-page-component-view': 'oroshoppinglist/js/app/views/summary-wrapper-view',
+        'data-page-component-options': {
+            'showMaskEvents': ['shopping-list:request'],
+            'hideMaskEvents': ['shopping-list:refresh']
+        }|json_encode
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __customer_user_shopping_list__combined_button_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'data-name': 'empty-items__hide'
+    }) %}
+
+    {% set actionButtonClass = actionButtonClass|default('btn btn--info btn--full direct-link') %}
+    {% set dropdownActionClass = dropdownActionClass|default('btn btn--block btn--info direct-link') %}
+    {% set dropdownToggleClass = dropdownToggleClass|default('btn btn--info  dropdown-toggle') %}
+
+    {{ block('combined_buttons_widget') }}
+{% endblock %}
+
+{% block __customer_user_shopping_list__totals_placeholder_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' totals-placeholder loading-blur',
+    }) %}
+
+    <div {{ block('block_attributes') }}>&nbsp;</div>
+{% endblock %}
+
+{% block __customer_user_shopping_list__combined_button_placeholder_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' combined-buttons-placeholder loading-blur',
+    }) %}
+
+    <div {{ block('block_attributes') }}>&nbsp;</div>
+{% endblock %}

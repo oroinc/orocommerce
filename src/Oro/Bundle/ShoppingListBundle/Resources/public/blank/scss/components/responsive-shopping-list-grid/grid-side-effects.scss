@@ -1,0 +1,47 @@
+/* @theme: blank; */
+
+.responsive-shopping-list-grid {
+    .grid-row {
+        background-color: rgba(255, 255, 255, 0);
+        transition: $shopping-list-grid-effect-transition;
+
+        &.highlight {
+            background-color: $shopping-list-grid-effect-highlight;
+        }
+
+        &.loading {
+            overflow: hidden;
+
+            .grid-cell {
+                @include loading-blur-overlay;
+            }
+        }
+
+        &.success {
+            background-color: $shopping-list-grid-effect-success;
+        }
+
+        &.error {
+            background-color: $shopping-list-grid-effect-error;
+        }
+    }
+}
+
+@include breakpoint('mobile-landscape') {
+    .responsive-shopping-list-grid {
+        .grid-row {
+            &.loading {
+                @include loading-blur-overlay;
+
+                .grid-cell {
+                    position: static;
+
+                    &:before {
+                        content: none;
+                    }
+                }
+            }
+        }
+    }
+}
+

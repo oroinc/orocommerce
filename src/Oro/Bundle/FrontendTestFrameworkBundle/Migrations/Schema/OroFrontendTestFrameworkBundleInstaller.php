@@ -114,6 +114,7 @@ class OroFrontendTestFrameworkBundleInstaller implements Installation, ExtendExt
                 false,
                 [
                     'extend' => ['owner' => ExtendScope::OWNER_CUSTOM],
+                    'entity' => ['label' => 'extend.entity.test.test_variant_field'],
                     'attribute' => ['is_attribute' => true, 'searchable' => true, 'filterable' => true],
                     'importexport' => ['excluded' => true]
                 ]
@@ -128,6 +129,7 @@ class OroFrontendTestFrameworkBundleInstaller implements Installation, ExtendExt
                 false,
                 [
                     'extend' => ['owner' => ExtendScope::OWNER_CUSTOM],
+                    'entity' => ['label' => 'extend.entity.test.multienum_field'],
                     'attribute' => ['is_attribute' => true, 'searchable' => true, 'filterable' => true],
                     'importexport' => ['excluded' => true]
                 ]
@@ -152,13 +154,11 @@ class OroFrontendTestFrameworkBundleInstaller implements Installation, ExtendExt
                     OroOptions::KEY => [
                         ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_DEFAULT,
                         'attribute' => ['is_attribute' => true],
-                        'extend' => [
-                            'is_extend' => true,
-                            'owner' => ExtendScope::OWNER_CUSTOM
-                        ],
+                        'extend' => ['is_extend' => true, 'owner' => ExtendScope::OWNER_CUSTOM],
+                        'entity' => ['label' => 'extend.entity.test.wysiwyg'],
                         'dataaudit' => ['auditable' => false],
-                        'importexport' => ['excluded' => false],
-                    ],
+                        'importexport' => ['excluded' => false]
+                    ]
                 ]
             );
 
@@ -169,14 +169,12 @@ class OroFrontendTestFrameworkBundleInstaller implements Installation, ExtendExt
                     'notnull' => false,
                     OroOptions::KEY => [
                         ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_HIDDEN,
-                        'extend' => [
-                            'is_extend' => true,
-                            'owner' => ExtendScope::OWNER_CUSTOM
-                        ],
+                        'extend' => ['is_extend' => true, 'owner' => ExtendScope::OWNER_CUSTOM],
+                        'entity' => ['label' => 'extend.entity.test.wysiwyg_style'],
                         'datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_HIDDEN],
                         'dataaudit' => ['auditable' => false],
-                        'importexport' => ['excluded' => false],
-                    ],
+                        'importexport' => ['excluded' => false]
+                    ]
                 ]
             );
 
@@ -187,14 +185,12 @@ class OroFrontendTestFrameworkBundleInstaller implements Installation, ExtendExt
                     'notnull' => false,
                     OroOptions::KEY => [
                         ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_HIDDEN,
-                        'extend' => [
-                            'is_extend' => true,
-                            'owner' => ExtendScope::OWNER_CUSTOM
-                        ],
+                        'extend' => ['is_extend' => true, 'owner' => ExtendScope::OWNER_CUSTOM],
+                        'entity' => ['label' => 'extend.entity.test.wysiwyg_properties'],
                         'datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_HIDDEN],
                         'dataaudit' => ['auditable' => false],
-                        'importexport' => ['excluded' => false],
-                    ],
+                        'importexport' => ['excluded' => false]
+                    ]
                 ]
             );
         }

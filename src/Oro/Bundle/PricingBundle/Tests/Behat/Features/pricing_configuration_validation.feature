@@ -2,7 +2,7 @@
 @ticket-BB-10412
 @automatically-ticket-tagged
 Feature: Pricing configuration validation
-  ToDo: BAP-16103 Add missing descriptions to the Behat features
+
 
   Scenario: Default Currency field validation should not affect other fields validation
     Given I login as administrator

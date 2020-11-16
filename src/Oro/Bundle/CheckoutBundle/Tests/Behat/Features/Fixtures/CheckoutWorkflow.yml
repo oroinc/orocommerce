@@ -147,6 +147,7 @@ Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition:
                         icon: fa-briefcase
                     init_routes:
                         - oro_shopping_list_frontend_view
+                        - oro_shopping_list_frontend_update
                     acl_resource:
                         - CHECKOUT_CREATE
                         - '\$.result.shoppingList'

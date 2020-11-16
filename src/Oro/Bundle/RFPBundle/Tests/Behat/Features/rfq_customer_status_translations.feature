@@ -37,6 +37,7 @@ Feature: RFQ customer status translations
     Given I proceed as the User
     And I signed in as MarleneSBradley@example.com on the store frontend
     When I open page with shopping list "Shopping List 4"
+    And I click "More Actions"
     And I click "Request Quote"
     And I fill form with:
       | First Name    | Marlene                     |

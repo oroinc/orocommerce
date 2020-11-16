@@ -2,58 +2,92 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Unit\Sitemap\Filesystem;
 
+use Gaufrette\File;
+use Oro\Bundle\GaufretteBundle\FileManager;
 use Oro\Bundle\SEOBundle\Sitemap\Filesystem\SitemapFilesystemAdapter;
 use Oro\Bundle\SEOBundle\Sitemap\Filesystem\SitemapFileWriterInterface;
 use Oro\Bundle\SEOBundle\Sitemap\Storage\SitemapStorageInterface;
 use Oro\Component\Website\WebsiteInterface;
-use Symfony\Component\Filesystem\Filesystem;
 
-/**
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
- */
 class SitemapFilesystemAdapterTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var Filesystem|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $filesystem;
+    /** @var FileManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $fileManager;
 
-    /**
-     * @var SitemapFileWriterInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var SitemapFileWriterInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $fileWriter;
 
-    /**
-     * @var string
-     */
-    private $path;
-
-    /**
-     * @var SitemapFilesystemAdapter
-     */
-    private $adapter;
+    /** @var SitemapFilesystemAdapter */
+    private $sitemapFilesystemAdapter;
 
     protected function setUp(): void
     {
-        $this->filesystem = $this->getMockBuilder(Filesystem::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->fileManager = $this->createMock(FileManager::class);
         $this->fileWriter = $this->createMock(SitemapFileWriterInterface::class);
-        $this->path = realpath(__DIR__ . '/fixtures');
 
-        $this->adapter = new SitemapFilesystemAdapter(
-            $this->filesystem,
-            $this->fileWriter,
-            $this->path
+        $this->sitemapFilesystemAdapter = new SitemapFilesystemAdapter(
+            $this->fileManager,
+            $this->fileWriter
         );
+    }
+
+    /**
+     * @param int $id
+     *
+     * @return WebsiteInterface
+     */
+    private function getWebsite(int $id): WebsiteInterface
+    {
+        $website = $this->createMock(WebsiteInterface::class);
+        $website->expects($this->any())
+            ->method('getId')
+            ->willReturn($id);
+
+        return $website;
+    }
+
+    /**
+     * @param string $fileName
+     *
+     * @return File
+     */
+    private function getFile(string $fileName): File
+    {
+        $file = $this->createMock(File::class);
+        $file->expects($this->any())
+            ->method('getName')
+            ->willReturn($fileName);
+        $file->expects($this->any())
+            ->method('getMtime')
+            ->willReturn(time());
+
+        return $file;
+    }
+
+    /**
+     * @param File[] $files
+     *
+     * @return array
+     */
+    private function getFileNames(array $files): array
+    {
+        $fileNames = array_map(
+            function (File $file) {
+                return $file->getName();
+            },
+            $files
+        );
+        sort($fileNames);
+
+        return $fileNames;
     }
 
     public function testDumpSitemapStorage()
     {
-        $website = $this->getConfiguredWebsite();
-
+        $website = $this->getWebsite(123);
+        $filename = 'sitemap-test-1.xml';
         $content = 'test';
-        /** @var SitemapStorageInterface|\PHPUnit\Framework\MockObject\MockObject $storage */
+
         $storage = $this->createMock(SitemapStorageInterface::class);
         $storage->expects($this->once())
             ->method('getContents')
@@ -62,22 +96,18 @@ class SitemapFilesystemAdapterTest extends \PHPUnit\Framework\TestCase
             ->method('getUrlItemsCount')
             ->willReturn(1);
 
-        $filename = 'sitemap-test-1.xml';
-        $version = 'actual';
-        $testPath = $this->getPath(1, $version);
-        $this->filesystem->expects($this->once())
-            ->method('mkdir')
-            ->with($testPath);
         $this->fileWriter->expects($this->once())
             ->method('saveSitemap')
-            ->with($content, $testPath . DIRECTORY_SEPARATOR . $filename);
+            ->with($content, $website->getId() . DIRECTORY_SEPARATOR . $filename);
 
-        $this->adapter->dumpSitemapStorage($filename, $website, $version, $storage);
+        $this->sitemapFilesystemAdapter->dumpSitemapStorage($filename, $website, $storage);
     }
 
     public function testDumpSitemapStorageWithoutItems()
     {
-        /** @var SitemapStorageInterface|\PHPUnit\Framework\MockObject\MockObject $storage */
+        $website = $this->getWebsite(123);
+        $filename = 'sitemap-test-1.xml';
+
         $storage = $this->createMock(SitemapStorageInterface::class);
         $storage->expects($this->once())
             ->method('getUrlItemsCount')
@@ -85,231 +115,87 @@ class SitemapFilesystemAdapterTest extends \PHPUnit\Framework\TestCase
 
         $storage->expects($this->never())
             ->method('getContents');
-        $this->filesystem->expects($this->never())
-            ->method('mkdir');
         $this->fileWriter->expects($this->never())
             ->method('saveSitemap');
 
-        $this->adapter->dumpSitemapStorage('sitemap-test-1.xml', $this->getConfiguredWebsite(), 'actual', $storage);
-    }
-
-    public function testMakeActualNonExistingVersion()
-    {
-        $website = $this->getConfiguredWebsite();
-        $version = '1';
-        $versionPath = $this->getPath(1, $version);
-
-        $this->filesystem->expects($this->once())
-            ->method('exists')
-            ->with($versionPath)
-            ->willReturn(false);
-        $this->filesystem->expects($this->never())
-            ->method('remove');
-        $this->filesystem->expects($this->never())
-            ->method('rename');
-
-        $this->assertFalse($this->adapter->makeActual($website, $version));
-    }
-
-    public function testMakeActualExistingVersion()
-    {
-        $website = $this->getConfiguredWebsite();
-        $version = '2';
-        $actualVersionPath = $this->getPath(1, SitemapFilesystemAdapter::ACTUAL_VERSION);
-        $versionPath = $this->getPath(1, $version);
-
-        $this->filesystem->expects($this->once())
-            ->method('exists')
-            ->with($versionPath)
-            ->willReturn(true);
-        $this->assertMakeActualCalled($actualVersionPath, $versionPath, $version);
-
-        $this->assertTrue($this->adapter->makeActual($website, $version));
-    }
-
-    public function testGetActualVersionNumberNoActualVersionExists()
-    {
-        $website = $this->getConfiguredWebsite();
-        $actualVersionPath = $this->getPath(1, SitemapFilesystemAdapter::ACTUAL_VERSION);
-        $versionFile = $actualVersionPath . DIRECTORY_SEPARATOR . SitemapFilesystemAdapter::VERSION_FILE_NAME;
-        $this->filesystem->expects($this->once())
-            ->method('exists')
-            ->with($versionFile)
-            ->willReturn(false);
-
-        $this->assertSame(0, $this->adapter->getActualVersionNumber($website));
-    }
-
-    public function testGetActualVersionNumberActualVersionExists()
-    {
-        $website = $this->getConfiguredWebsite();
-        $actualVersionPath = $this->getPath(1, SitemapFilesystemAdapter::ACTUAL_VERSION);
-        $versionFile = $actualVersionPath . DIRECTORY_SEPARATOR . SitemapFilesystemAdapter::VERSION_FILE_NAME;
-        $this->filesystem->expects($this->once())
-            ->method('exists')
-            ->with($versionFile)
-            ->willReturn(true);
-
-        $this->assertSame(2, $this->adapter->getActualVersionNumber($website));
-    }
-
-    public function testMakeNewerVersionActualHigherVersion()
-    {
-        $website = $this->getConfiguredWebsite();
-        $version = '3';
-        $actualVersionPath = $this->getPath(1, SitemapFilesystemAdapter::ACTUAL_VERSION);
-        $versionPath = $this->getPath(1, $version);
-
-        $versionFile = $actualVersionPath . DIRECTORY_SEPARATOR . SitemapFilesystemAdapter::VERSION_FILE_NAME;
-
-        $this->filesystem->expects($this->exactly(2))
-            ->method('exists')
-            ->withConsecutive(
-                [$versionFile],
-                [$versionPath]
-            )
-            ->willReturnOnConsecutiveCalls(
-                true,
-                true
-            );
-        $this->assertMakeActualCalled($actualVersionPath, $versionPath, $version);
-
-        $this->assertTrue($this->adapter->makeNewerVersionActual($website, $version));
-    }
-
-    public function testMakeNewerVersionActualVersionNotExists()
-    {
-        $website = $this->getConfiguredWebsite();
-        $version = '3';
-        $actualVersionPath = $this->getPath(1, SitemapFilesystemAdapter::ACTUAL_VERSION);
-        $versionPath = $this->getPath(1, $version);
-
-        $versionFile = $actualVersionPath . DIRECTORY_SEPARATOR . SitemapFilesystemAdapter::VERSION_FILE_NAME;
-
-        $this->filesystem->expects($this->exactly(2))
-            ->method('exists')
-            ->withConsecutive(
-                [$versionFile],
-                [$versionPath]
-            )
-            ->willReturnOnConsecutiveCalls(
-                true,
-                false
-            );
-        $this->filesystem->expects($this->never())
-            ->method('remove');
-        $this->filesystem->expects($this->never())
-            ->method('rename');
-
-        $this->assertFalse($this->adapter->makeNewerVersionActual($website, $version));
-    }
-
-    public function testMakeNewerVersionActualLowerVersion()
-    {
-        $website = $this->getConfiguredWebsite();
-        $version = '1';
-        $actualVersionPath = $this->getPath(1, SitemapFilesystemAdapter::ACTUAL_VERSION);
-
-        $versionFile = $actualVersionPath . DIRECTORY_SEPARATOR . SitemapFilesystemAdapter::VERSION_FILE_NAME;
-
-        $this->filesystem->expects($this->once())
-            ->method('exists')
-            ->with($versionFile)
-            ->willReturn(true);
-        $this->filesystem->expects($this->never())
-            ->method('remove');
-        $this->filesystem->expects($this->never())
-            ->method('rename');
-
-        $this->assertFalse($this->adapter->makeNewerVersionActual($website, $version));
+        $this->sitemapFilesystemAdapter->dumpSitemapStorage($filename, $website, $storage);
     }
 
     public function testGetSitemapFilesUnknownPath()
     {
-        $website = $this->getConfiguredWebsite();
-        $version = '100';
-        $this->assertEmpty($this->adapter->getSitemapFiles($website, $version));
+        $website = $this->getWebsite(123);
+        $this->assertEmpty($this->sitemapFilesystemAdapter->getSitemapFiles($website));
     }
 
     public function testGetSitemapFilesWithoutPattern()
     {
-        $website = $this->getConfiguredWebsite();
-        $version = 'actual';
-        $filesIterator = $this->adapter->getSitemapFiles($website, $version);
-        $this->assertInstanceOf(\Traversable::class, $filesIterator);
-        $this->assertCount(3, $filesIterator);
-        $actualFileNames = [];
-        foreach ($filesIterator as $fileInfo) {
-            $actualFileNames[] = $fileInfo->getFilename();
-        }
+        $website = $this->getWebsite(123);
+        $filePrefix = $website->getId() . DIRECTORY_SEPARATOR;
 
-        $expectedFiles = [
-            'sitemap-page-1.xml',
-            'sitemap-page-2.xml',
-            'sitemap-product-1.xml',
-        ];
-        sort($expectedFiles);
-        sort($actualFileNames);
-        $this->assertEquals($expectedFiles, $actualFileNames);
+        $this->fileManager->expects($this->once())
+            ->method('findFiles')
+            ->with($filePrefix)
+            ->willReturn([
+                $filePrefix . 'sitemap-page-1.xml',
+                $filePrefix . 'sitemap-product-1.xml'
+            ]);
+        $this->fileManager->expects($this->exactly(2))
+            ->method('getFile')
+            ->withConsecutive(
+                [$filePrefix . 'sitemap-page-1.xml'],
+                [$filePrefix . 'sitemap-product-1.xml'],
+            )
+            ->willReturnCallback(function ($fileName) {
+                return $this->getFile($fileName);
+            });
+
+        $files = $this->sitemapFilesystemAdapter->getSitemapFiles($website);
+
+        $this->assertEquals(
+            [
+                $filePrefix . 'sitemap-page-1.xml',
+                $filePrefix . 'sitemap-product-1.xml'
+            ],
+            $this->getFileNames($files)
+        );
     }
 
     public function testGetSitemapFilesWithPattern()
     {
-        $website = $this->getConfiguredWebsite();
-        $version = 'actual';
-        $filesIterator = $this->adapter->getSitemapFiles($website, $version, 'sitemap-product-*.xml*');
-        $this->assertInstanceOf(\Traversable::class, $filesIterator);
-        $this->assertCount(1, $filesIterator);
-        $actualFileNames = [];
-        foreach ($filesIterator as $fileInfo) {
-            $actualFileNames[] = $fileInfo->getFilename();
-        }
+        $website = $this->getWebsite(123);
+        $filePrefix = $website->getId() . DIRECTORY_SEPARATOR;
 
-        $expectedFiles = [
-            'sitemap-product-1.xml',
-        ];
-        $this->assertEquals($expectedFiles, $actualFileNames);
-    }
+        $this->fileManager->expects($this->once())
+            ->method('findFiles')
+            ->with($filePrefix)
+            ->willReturn([
+                $filePrefix . 'sitemap-page-1.xml',
+                $filePrefix . 'sitemap-product-1.xml',
+                $filePrefix . 'sitemap-product-2.xml',
+                $filePrefix . 'sitemap-product-3.xml'
+            ]);
+        $this->fileManager->expects($this->exactly(2))
+            ->method('getFile')
+            ->withConsecutive(
+                [$filePrefix . 'sitemap-product-1.xml'],
+                [$filePrefix . 'sitemap-product-3.xml']
+            )
+            ->willReturnCallback(function ($fileName) {
+                return $this->getFile($fileName);
+            });
 
-    /**
-     * @return WebsiteInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function getConfiguredWebsite()
-    {
-        /** @var WebsiteInterface|\PHPUnit\Framework\MockObject\MockObject $website */
-        $website = $this->createMock(WebsiteInterface::class);
-        $website->expects($this->any())
-            ->method('getId')
-            ->willReturn(1);
+        $files = $this->sitemapFilesystemAdapter->getSitemapFiles(
+            $website,
+            'sitemap-product-*.xml*',
+            'sitemap-product-2.xml'
+        );
 
-        return $website;
-    }
-
-    /**
-     * @param int $websiteId
-     * @param string $version
-     * @return string
-     */
-    private function getPath($websiteId, $version)
-    {
-        return implode(DIRECTORY_SEPARATOR, [$this->path, $websiteId, $version]);
-    }
-
-    /**
-     * @param string $actualVersionPath
-     * @param string $versionPath
-     * @param string $version
-     */
-    private function assertMakeActualCalled($actualVersionPath, $versionPath, $version)
-    {
-        $this->filesystem->expects($this->once())
-            ->method('remove')
-            ->with($actualVersionPath);
-        $this->filesystem->expects($this->once())
-            ->method('rename')
-            ->with($versionPath, $actualVersionPath);
-        $this->filesystem->expects($this->once())
-            ->method('dumpFile')
-            ->with($actualVersionPath . DIRECTORY_SEPARATOR . SitemapFilesystemAdapter::VERSION_FILE_NAME, $version);
+        $this->assertEquals(
+            [
+                $filePrefix . 'sitemap-product-1.xml',
+                $filePrefix . 'sitemap-product-3.xml'
+            ],
+            $this->getFileNames($files)
+        );
     }
 }

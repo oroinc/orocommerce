@@ -118,6 +118,8 @@ define(function(require) {
                     });
 
                     mediator.execute('showFlashMessage', 'success', message);
+                    mediator.trigger('layout-subtree:update:shopping_list_set_default');
+                    mediator.trigger('layout-subtree:update:shopping_list_owner');
                 }
             });
         },

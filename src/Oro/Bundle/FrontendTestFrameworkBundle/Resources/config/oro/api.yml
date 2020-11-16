@@ -7,6 +7,3 @@ api:
     entities:
         Extend\Entity\EV_Multienum_Code:
             exclude: true
-
-        Oro\Bundle\ProductBundle\Entity\Product:
-            documentation_resource: '@OroFrontendTestFrameworkBundle/Resources/doc/api/product.md'

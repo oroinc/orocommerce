@@ -2,15 +2,11 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 
-use Oro\Bundle\ActionBundle\Provider\ButtonProvider;
-use Oro\Bundle\ActionBundle\Provider\ButtonSearchContextProvider;
-use Oro\Bundle\EntityBundle\Manager\PreloadingManager;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\FormBundle\Model\UpdateHandler;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
-use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
-use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Form\Handler\ShoppingListHandler;
 use Oro\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
@@ -30,16 +26,10 @@ class ShoppingListController extends AbstractController
     /**
      * @Route("/{id}", name="oro_shopping_list_frontend_view", defaults={"id" = null}, requirements={"id"="\d+"})
      * @Layout
-     * @Acl(
-     *      id="oro_shopping_list_frontend_view",
-     *      type="entity",
-     *      class="OroShoppingListBundle:ShoppingList",
-     *      permission="VIEW",
-     *      group_name="commerce"
-     * )
+     * @AclAncestor("oro_shopping_list_frontend_view")
      *
-     * @param ShoppingList $shoppingList
-     * @return array|Response
+     * @param ShoppingList|null $shoppingList
+     * @return array
      */
     public function viewAction(ShoppingList $shoppingList = null)
     {
@@ -49,91 +39,114 @@ class ShoppingListController extends AbstractController
 
         if ($shoppingList) {
             $this->get(ShoppingListManager::class)->actualizeLineItems($shoppingList);
-
-            $this->get(PreloadingManager::class)->preloadInEntities(
-                $shoppingList->getLineItems()->toArray(),
-                [
-                    'parentProduct' => [
-                        'names' => [],
-                        'images' => [
-                            'image' => [],
-                            'types' => [],
-                        ],
-                    ],
-                    'product' => [
-                        'isUpcoming' => [],
-                        'highlightLowInventory' => [],
-                        'minimumQuantityToOrder' => [],
-                        'maximumQuantityToOrder' => [],
-                        'names' => [],
-                        'images' => [
-                            'image' => [
-                                'digitalAsset' => [
-                                    'titles' => [],
-                                    'sourceFile' => [
-                                        'digitalAsset' => [],
-                                    ],
-                                ]
-                            ],
-                            'types' => [],
-                        ],
-                        'unitPrecisions' => [],
-                        'category' => [],
-                    ],
-                ]
-            );
-
-            $title = $shoppingList->getLabel();
-            $lineItems = $shoppingList->getLineItems()->toArray();
-
-            $frontendProductPricesDataProvider = $this->get(FrontendProductPricesDataProvider::class);
-
-            // All prices must be fetched before matched prices to enable more efficient caching (i.e. all prices
-            // already contain matched prices, so they will be returned without new DB queries)
-            $productPrices = $frontendProductPricesDataProvider->getProductsAllPrices($lineItems);
-            $allPrices = $this->get(ProductPriceFormatter::class)->formatProducts($productPrices);
-
-            $matchedPrice = $frontendProductPricesDataProvider->getProductsMatchedPrice($lineItems);
-
-            $totalWithSubtotalsAsArray = $this->get(TotalProcessorProvider::class)
-                ->getTotalWithSubtotalsAsArray($shoppingList);
-
-            $buttons = $this->getButtons($shoppingList);
-        } else {
-            $title = null;
-            $totalWithSubtotalsAsArray = [];
-            $allPrices = [];
-            $matchedPrice = [];
-            $buttons = [];
         }
 
         return [
             'data' => [
-                'title' => $title,
                 'entity' => $shoppingList,
-                'totals' => [
-                    'identifier' => 'totals',
-                    'data' => $totalWithSubtotalsAsArray
-                ],
-                'shopping_list_buttons' => ['data' => $buttons],
-                'all_prices' => ['data' => $allPrices],
-                'matched_price' => ['data' => $matchedPrice],
             ],
         ];
     }
 
     /**
-     * @param ShoppingList $shoppingList
+     * @Route("/all", name="oro_shopping_list_frontend_index")
+     * @Layout
+     * @AclAncestor("oro_shopping_list_frontend_view")
      *
      * @return array
      */
-    private function getButtons(ShoppingList $shoppingList): array
+    public function indexAction(): array
     {
-        return $this->get(ButtonProvider::class)->findAvailable(
-            $this->get(ButtonSearchContextProvider::class)
-                ->getButtonSearchContext()
-                ->setEntity(ShoppingList::class, ['id' => $shoppingList->getId()])
+        if (!$this->getUser() instanceof CustomerUser) {
+            throw $this->createAccessDeniedException();
+        }
+
+        return [];
+    }
+
+    /**
+     * @Route(
+     *     "/update/{id}",
+     *     name="oro_shopping_list_frontend_update",
+     *     defaults={"id" = null},
+     *     requirements={"id"="\d+"}
+     * )
+     * @Layout
+     * @AclAncestor("oro_shopping_list_frontend_update")
+     *
+     * @param null|ShoppingList $shoppingList
+     *
+     * @return array
+     */
+    public function updateAction(ShoppingList $shoppingList = null): array
+    {
+        if (!$shoppingList) {
+            $shoppingList = $this->get(CurrentShoppingListManager::class)->getCurrent();
+        }
+
+        if ($shoppingList) {
+            $this->get(ShoppingListManager::class)->actualizeLineItems($shoppingList);
+        }
+
+        return [
+            'data' => [
+                'entity' => $shoppingList,
+            ],
+        ];
+    }
+
+    /**
+     * @Route(
+     *      "/{id}/massAction/{gridName}/{actionName}",
+     *      name="oro_shopping_list_frontend_move_mass_action",
+     *      requirements={"id"="\d+", "gridName"="[\w\:\-]+", "actionName"="[\w\-]+"}
+     * )
+     * @Layout
+     * @AclAncestor("oro_shopping_list_frontend_update")
+     *
+     * @param ShoppingList $shoppingList
+     * @param Request $request
+     * @param string $gridName
+     * @param string $actionName
+     *
+     * @return array|Response
+     */
+    public function moveMassActionAction(
+        ShoppingList $shoppingList,
+        Request $request,
+        string $gridName,
+        string $actionName
+    ) {
+        if ($request->getMethod() === Request::METHOD_GET) {
+            return [
+                'data' => [
+                    'entity' => $shoppingList,
+                ],
+            ];
+        }
+
+        return $this->forward(
+            'OroDataGridBundle:Grid:massAction',
+            ['gridName' => $gridName, 'actionName' => $actionName],
+            $request->query->all()
         );
+    }
+
+    /**
+     * @Route("/{id}/assign", name="oro_shopping_list_frontend_assign", requirements={"id"="\d+"})
+     * @Layout
+     * @AclAncestor("oro_shopping_list_frontend_assign")
+     *
+     * @param ShoppingList $shoppingList
+     * @return array
+     */
+    public function assignAction(ShoppingList $shoppingList): array
+    {
+        return [
+            'data' => [
+                'entity' => $shoppingList
+            ],
+        ];
     }
 
     /**
@@ -198,7 +211,7 @@ class ShoppingListController extends AbstractController
             },
             function (ShoppingList $shoppingList) {
                 return [
-                    'route' => 'oro_shopping_list_frontend_view',
+                    'route' => 'oro_shopping_list_frontend_update',
                     'parameters' => ['id' => $shoppingList->getId()]
                 ];
             },
@@ -215,14 +228,8 @@ class ShoppingListController extends AbstractController
         return array_merge(parent::getSubscribedServices(), [
             CurrentShoppingListManager::class,
             ShoppingListManager::class,
-            TotalProcessorProvider::class,
             UpdateHandler::class,
-            TranslatorInterface::class,
-            ButtonProvider::class,
-            ButtonSearchContextProvider::class,
-            FrontendProductPricesDataProvider::class,
-            ProductPriceFormatter::class,
-            PreloadingManager::class,
+            TranslatorInterface::class
         ]);
     }
 }

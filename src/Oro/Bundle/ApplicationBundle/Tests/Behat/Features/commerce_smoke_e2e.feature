@@ -651,15 +651,16 @@ Feature: Commerce smoke e2e
     And click "Add to New Front Shopping List" for "Lenovo_Vibe_sku" product
     When I hover on "Shopping Cart"
     And click "New Front Shopping List"
-    And I type "52" in "ShoppingListLineItemForm > Quantity"
-    And I click on empty space
-    And should see "Subtotal $4,680.00"
-    Then I should see "Record has been successfully updated" flash message
-    When I click on "Flash Message Close Button"
-    And I click "Edit Shopping List Label"
-    And type "Updated Shopping List" in "Shopping List Label"
-    And click "Save"
-    Then should see "Record has been successfully updated" flash message
+    And I click on "Shopping List Line Item 1 Quantity"
+    And I type "52" in "Shopping List Line Item 1 Quantity Input"
+    And I click on "Shopping List Line Item 1 Save Changes Button"
+    Then should see "Subtotal $4,680.00"
+    When I click "Shopping List Actions"
+    And I click "Rename"
+    And I fill "Shopping List Rename Action Form" with:
+      | Label | Updated Shopping List |
+    And I click "Shopping List Action Submit"
+    Then I should see "Shopping list has been successfully renamed" flash message
 
   Scenario: Checkout by customer created from admin througth the shopping list updated from admin panel
     Given I proceed as the Admin

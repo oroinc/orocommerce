@@ -452,7 +452,7 @@ oro:
                 new_arrivals.title: New Arrivals
                 image_gallery.title: 'Image Gallery Options'
                 configurable_products.title: 'Configurable Products'
-                configurable_products_matrix_form.title: 'Configurable Product Display Options'
+                configurable_products_matrix_form.title: 'Configurable Products'
                 configurable_products_variations.title: 'Variations'
                 filters_sorters.title: 'Filters and Sorters'
                 limit_filters_sorters.title: 'Limit Filters and Sorters'
@@ -585,12 +585,6 @@ oro:
                     tooltip: 'Controls the appearance of configurable products with up to 2 attributes as editable matrix forms at product view pages.'
                     label: 'Product Views'
                     none.label: 'No Matrix Form'
-                    inline.label: 'Inline Matrix Form'
-                    popup.label: 'Popup Matrix Form'
-                matrix_form_on_shopping_list:
-                    tooltip: 'Controls the appearance of configurable products with up to 2 attributes in shopping lists.'
-                    label: 'Shopping Lists'
-                    none.label: 'Group Single Products'
                     inline.label: 'Inline Matrix Form'
                     popup.label: 'Popup Matrix Form'
                 matrix_form_on_product_listing:

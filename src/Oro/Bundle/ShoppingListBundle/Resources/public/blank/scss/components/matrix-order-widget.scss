@@ -43,7 +43,16 @@
         font-family: $matrix-order-widget-grid-font-family;
 
         .fields-row-error {
-            margin: $matrix-order-widget-form-col-offset-inner;
+            background: $matrix-order-widget-fields-row-error-background;
+            max-width: $matrix-order-widget-fields-row-error-max-width;
+            padding: $matrix-order-widget-fields-row-error-offset-inner;
+            display: $matrix-order-widget-fields-row-error-display;
+            position: $matrix-order-widget-fields-row-error-position;
+            z-index: $matrix-order-widget-fields-row-error-z-index;
+
+            &:empty {
+                display: none;
+            }
         }
 
         &.state-multiline {
@@ -376,53 +385,6 @@
         &--inline {
             margin-bottom: $matrix-order-widget-form-inline-offset-bottom;
         }
-
-        &--colored {
-            border-radius: $matrix-order-widget-form-colored-border-radius;
-
-            margin: $matrix-order-widget-form-colored-offset;
-            padding-bottom: $matrix-order-widget-form-colored-offset-inner;
-        }
-    }
-
-    &__form--colored & {
-        &__grid {
-            padding-top: $matrix-order-widget-form-colored-grid-offset-inner;
-
-            &:before {
-                content: '';
-
-                background: $matrix-order-widget-form-colored-background;
-
-                position: $matrix-order-widget-form-colored-grid-before-position;
-                top: $matrix-order-widget-form-colored-grid-before-top;
-                bottom: $matrix-order-widget-form-colored-grid-before-bottom;
-                left: $matrix-order-widget-form-colored-grid-before-left;
-
-                width: $matrix-order-widget-grid-side-width;
-            }
-        }
-
-        &__grid-head {
-            border-top: $matrix-order-widget-form-colored-grid-border-top;
-        }
-
-        &__grid-side {
-            background: $matrix-order-widget-form-colored-background;
-
-            &:before,
-            &:after {
-                background: $matrix-order-widget-form-colored-grid-side-before-background;
-            }
-
-            &:after {
-                background: $matrix-order-widget-form-colored-grid-side-after-background;
-            }
-        }
-
-        &__form__col {
-            background: $matrix-order-widget-form-colored-background;
-        }
     }
 
     &__form__row {
@@ -451,6 +413,13 @@
         line-height: $matrix-order-widget-form-col-line-height;
         text-align: $matrix-order-widget-form-col-text-align;
         vertical-align: $matrix-order-widget-form-col-vertical-align;
+
+        &--size {
+            &-m {
+                min-width: $matrix-order-widget-form-col-width-m;
+                width: $matrix-order-widget-form-col-width-m;
+            }
+        }
 
         &-wrapper {
             display: $matrix-order-widget-form-col-wrapper-display;
@@ -692,6 +661,10 @@
             &-content {
                 flex-basis: $matrix-order-widget-dialog-item-content-tablet-small-flex-basis;
             }
+        }
+
+        .validation-failed {
+            margin: $matrix-order-widget-validation-failed-tablet-small-offset;
         }
     }
 }

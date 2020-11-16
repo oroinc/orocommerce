@@ -55,7 +55,6 @@ class Configuration implements ConfigurationInterface
     const IMAGE_PREVIEW_ON_PRODUCT_LISTING_ENABLED = 'image_preview_on_product_listing_enabled';
     const POPUP_GALLERY_ON_PRODUCT_VIEW = 'popup_gallery_on_product_view';
     const MATRIX_FORM_ON_PRODUCT_VIEW = 'matrix_form_on_product_view';
-    const MATRIX_FORM_ON_SHOPPING_LIST = 'matrix_form_on_shopping_list';
     const MATRIX_FORM_ON_PRODUCT_LISTING = 'matrix_form_on_product_listing';
     const MATRIX_FORM_NONE = 'none';
     const MATRIX_FORM_INLINE = 'inline';
@@ -147,10 +146,6 @@ class Configuration implements ConfigurationInterface
                 static::POPUP_GALLERY_ON_PRODUCT_VIEW => ['type' => 'boolean', 'value' => true],
                 static::GUEST_QUICK_ORDER_FORM => ['type' => 'boolean', 'value' => false],
                 static::MATRIX_FORM_ON_PRODUCT_VIEW => [
-                    'type' => 'string',
-                    'value' => static::MATRIX_FORM_INLINE
-                ],
-                self::MATRIX_FORM_ON_SHOPPING_LIST => [
                     'type' => 'string',
                     'value' => static::MATRIX_FORM_INLINE
                 ],

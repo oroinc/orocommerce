@@ -2,7 +2,6 @@ parameters:
     oro_seo.sitemap_directory: 'media/sitemaps'
 
 services:
-    #EventListeners
     oro_seo.event_listener.product_form_view:
         class: 'Oro\Bundle\SEOBundle\EventListener\ProductFormViewListener'
         arguments:
@@ -60,7 +59,6 @@ services:
         tags:
             - { name: layout.data_provider, alias: seo_localized_links }
 
-    #Forms
     oro_seo.form.extension.page_type:
         class: 'Oro\Bundle\SEOBundle\Form\Extension\PageFormExtension'
         tags:
@@ -141,9 +139,16 @@ services:
         class: Oro\Bundle\SEOBundle\Sitemap\Filesystem\SitemapFilesystemAdapter
         public: false
         arguments:
-            - '@filesystem'
+            - '@oro_seo.file_manager.tmp_data'
             - '@oro_seo.sitemap.sitemap_file_writer'
-            - '%oro_seo.tmp_directory%'
+
+    oro_seo.sitemap.public_filesystem_adapter:
+        class: Oro\Bundle\SEOBundle\Sitemap\Filesystem\PublicSitemapFilesystemAdapter
+        arguments:
+            - '@oro_seo.file_manager'
+            - '@oro_seo.file_manager.tmp_data'
+            - '@oro_seo.manager.robots_txt_file_manager'
+            - '@doctrine'
 
     oro_seo.sitemap.sitemap_url_dumper:
         class: Oro\Bundle\SEOBundle\Sitemap\Dumper\SitemapDumper
@@ -254,26 +259,13 @@ services:
     oro_seo.sitemap.sitemap_file_writer:
         class: Oro\Bundle\SEOBundle\Sitemap\Filesystem\SitemapFileWriter
         arguments:
-            - '@filesystem'
+            - '@oro_seo.file_manager.tmp_data'
             - '@logger'
 
-    oro_seo.model.sitemap_message_factory.abstract:
-        class: Oro\Bundle\SEOBundle\Model\AbstractSitemapMessageFactory
-        abstract: true
+    oro_seo.provider.website_provider:
+        class: Oro\Bundle\SEOBundle\Provider\WebsiteForSitemapProvider
         arguments:
-            - '@oro_website.repository.website'
-
-    oro_seo.model.sitemap_message_factory:
-        class: Oro\Bundle\SEOBundle\Model\SitemapMessageFactory
-        parent: oro_seo.model.sitemap_message_factory.abstract
-        public: false
-        calls:
-            - ['setProviderRegistry', ['@oro_seo.sitemap.provider.full_list_urls_provider_registry']]
-
-    oro_seo.model.sitemap_index_message_factory:
-        class: Oro\Bundle\SEOBundle\Model\SitemapIndexMessageFactory
-        parent: oro_seo.model.sitemap_message_factory.abstract
-        public: false
+            - '@oro_website.website.provider'
 
     oro_seo.async.generate_sitemap_processor:
         class: Oro\Bundle\SEOBundle\Async\GenerateSitemapProcessor
@@ -282,28 +274,30 @@ services:
             - '@oro_message_queue.job.dependent_job_service'
             - '@oro_message_queue.client.message_producer'
             - '@oro_seo.sitemap.website_url_provider_service'
-            - '@oro_seo.model.sitemap_index_message_factory'
-            - '@oro_seo.model.sitemap_message_factory'
-            - '@monolog.logger'
+            - '@oro_seo.provider.website_provider'
+            - '@oro_seo.sitemap.public_filesystem_adapter'
             - '@oro_redirect.generator.canonical_url'
-        calls:
-            - [setWebsiteProvider, ['@oro_seo.provider.website_provider']]
-            - [setFileSystemAdapter, ['@oro_seo.async.gaufrette_filesystem_adapter']]
+            - '@logger'
         tags:
             - { name: oro_message_queue.client.message_processor }
 
-    oro_seo.provider.website_provider:
-        class: Oro\Bundle\SEOBundle\Provider\WebsiteForSitemapProvider
-        arguments:
-            - '@oro_website.website.provider'
-
-    oro_seo.async.generate_sitemap_index_processor:
+    oro_seo.async.generate_sitemap_index:
         class: Oro\Bundle\SEOBundle\Async\GenerateSitemapIndexProcessor
         arguments:
-            - '@oro_seo.model.sitemap_index_message_factory'
+            - '@oro_message_queue.job.runner'
+            - '@oro_message_queue.job.dependent_job_service'
+            - '@oro_message_queue.client.message_producer'
+            - '@logger'
+        tags:
+            - { name: oro_message_queue.client.message_processor }
+
+    oro_seo.async.generate_sitemap_index_by_website:
+        class: Oro\Bundle\SEOBundle\Async\GenerateSitemapIndexByWebsiteProcessor
+        arguments:
+            - '@oro_message_queue.job.runner'
+            - '@doctrine'
             - '@oro_seo.sitemap.sitemap_index_dumper'
-            - '@monolog.logger'
-            - '@oro_seo.sitemap.filesystem_adapter'
+            - '@logger'
         tags:
             - { name: oro_message_queue.client.message_processor }
 
@@ -311,9 +305,18 @@ services:
         class: Oro\Bundle\SEOBundle\Async\GenerateSitemapByWebsiteAndTypeProcessor
         arguments:
             - '@oro_message_queue.job.runner'
-            - '@logger'
+            - '@doctrine'
+            - '@oro_seo.sitemap.provider.full_list_urls_provider_registry'
             - '@oro_seo.sitemap.sitemap_url_dumper'
-            - '@oro_seo.model.sitemap_message_factory'
+            - '@logger'
+        tags:
+            - { name: oro_message_queue.client.message_processor }
+
+    oro_seo.async.move_generated_sitemaps:
+        class: Oro\Bundle\SEOBundle\Async\MoveGeneratedSitemapsProcessor
+        arguments:
+            - '@oro_seo.sitemap.public_filesystem_adapter'
+            - '@logger'
         tags:
             - { name: oro_message_queue.client.message_processor }
 
@@ -341,11 +344,9 @@ services:
         class: Oro\Bundle\SEOBundle\Manager\RobotsTxtFileManager
         public: false
         arguments:
-            - '@logger'
-            - '@filesystem'
+            - '@oro_seo.file_manager.tmp_data'
             - '@oro_redirect.generator.canonical_url'
-            - '%kernel.project_dir%/public'
-            - '%oro_seo.tmp_directory%'
+            - '@logger'
 
     oro_seo.sitemap.event_listener.dump_robots_txt:
         class: Oro\Bundle\SEOBundle\Sitemap\EventListener\DumpRobotsTxtListener
@@ -357,8 +358,8 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_seo.sitemap.event.on_sitemap_dump_finish.index, method: onSitemapDumpStorage, priority: -255 }
 
-    oro_seo.sitemap.event_listener.make_version_actual_listener:
-        class: Oro\Bundle\SEOBundle\Sitemap\EventListener\MakeVersionActualListener
+    oro_seo.sitemap.event_listener.dump_version:
+        class: Oro\Bundle\SEOBundle\Sitemap\EventListener\DumpVersionListener
         arguments:
             - '@oro_seo.sitemap.filesystem_adapter'
         tags:
@@ -454,18 +455,7 @@ services:
         arguments:
             - 'sitemaps'
 
-    oro_seo.async.gaufrette_filesystem_adapter:
-        class: Oro\Bundle\SEOBundle\Sitemap\Filesystem\GaufretteFilesystemAdapter
+    oro_seo.file_manager.tmp_data:
+        parent: oro_gaufrette.file_manager
         arguments:
-            - '@oro_seo.file_manager'
-            - '@oro_seo.manager.robots_txt_file_manager'
-            - '@doctrine'
-            - '%oro_seo.tmp_directory%'
-
-    oro_seo.async.move_generated_sitemaps:
-        class: Oro\Bundle\SEOBundle\Async\MoveGeneratedSitemapsProcessor
-        arguments:
-            - '@oro_seo.async.gaufrette_filesystem_adapter'
-            - '@logger'
-        tags:
-            - { name: oro_message_queue.client.message_processor }
+            - 'sitemaps_tmp_data'

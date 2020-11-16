@@ -32,17 +32,17 @@
 {% block _matrix_collection_widget_head_cell %}
     <div class="{{ class_prefix }}__form__col">
         <div class="{{ class_prefix }}__form__col-wrapper">
-            {{ block('_matrix_collection_widget_head_cell_label') }}
+            {{- block('_matrix_collection_widget_head_cell_label') -}}
         </div>
     </div>
 {% endblock %}
 
 {% block _matrix_collection_widget_head_cell_label %}
-    {{ block('_matrix_collection_widget_cell_label') }}
+    {{- block('_matrix_collection_widget_cell_label') -}}
 {% endblock %}
 
 {% block _matrix_collection_widget_cell_label %}
-    {{ cell.vars.label }}
+    {{- cell.vars.label -}}
 {% endblock %}
 
 {% block _matrix_collection_widget_side %}
@@ -60,12 +60,12 @@
 
 {% block _matrix_collection_widget_side_cell %}
     <div class="{{ class_prefix }}__form__row">
-        {{ block('_matrix_collection_widget_side_cell_label') }}
+        {{- block('_matrix_collection_widget_side_cell_label') -}}
     </div>
 {% endblock %}
 
 {% block _matrix_collection_widget_side_cell_label %}
-    {{ block('_matrix_collection_widget_cell_label') }}
+    {{- block('_matrix_collection_widget_cell_label') -}}
 {% endblock %}
 
 {% block _matrix_collection_widget_body %}
@@ -128,7 +128,7 @@
     {% set cells = defaultColumns %}
     <div class="{{ class_prefix }}__grid-footer">
         <div class="{{ class_prefix }}__grid-footer-label">
-            {{ 'oro.frontend.shoppinglist.matrix_grid_order.qty'|trans }}
+            {{- 'oro.frontend.shoppinglist.matrix_grid_order.qty'|trans -}}
         </div>
         <div class="{{ class_prefix }}__grid-footer-wrapper">
             <div class="{{ class_prefix }}__grid-scrollable-area" data-scroll-view-follow="x">
@@ -146,7 +146,7 @@
     <div class="{{ class_prefix }}__form__col">
         <div class="{{ class_prefix }}__grid-footer-total {{ columnsQty[key] > 0 ? 'valid' : '' }}"
              data-columns-quantity="{{ cellIndex }}">
-            {{ columnsQty[key] }}
+            {{ columnsQty[key]|oro_format_decimal }}
         </div>
     </div>
 {% endblock %}

@@ -1,0 +1,209 @@
+operations:
+    oro_shoppinglist_frontend_edit_action:
+        label: oro.shoppinglist.edit.action.label
+        datagrid_options:
+            aria_label: oro.frontend.shoppinglist.btn.edit.aria_label
+        acl_resource: ['oro_shopping_list_frontend_update', $.data]
+        groups:
+            - shopping_list_actions
+        routes:
+            - oro_shopping_list_frontend_view
+        button_options:
+            icon: fa-pencil-square-o
+        actions:
+            - '@redirect':
+                route: oro_shopping_list_frontend_update
+                route_parameters: {id: $id}
+
+    oro_shoppinglist_frontend_duplicate_action:
+        label: oro.shoppinglist.duplicate.action.label
+        frontend_options:
+            show_dialog: true
+            confirmation:
+                title: oro.frontend.shoppinglist.dialog.duplicate_confirmation.label
+                message: oro.frontend.shoppinglist.dialog.duplicate_confirmation.message
+                ok: oro.frontend.shoppinglist.dialog.duplicate_ok.label
+        datagrid_options:
+            aria_label: oro.frontend.shoppinglist.btn.duplicate.aria_label
+        acl_resource: ['oro_shopping_list_frontend_duplicate', $.data]
+        groups:
+            - shopping_list_actions
+        routes:
+            - oro_shopping_list_frontend_view
+            - oro_shopping_list_frontend_update
+        button_options:
+            icon: fa-clone
+        preactions:
+            - '@call_service_method':
+                attribute: $.isOneShoppingList
+                service: oro_shopping_list.manager.shopping_list_limit
+                method: isOnlyOneEnabled
+        preconditions:
+            '@and':
+                - '@at_least_one_available_product': $.data.lineItems
+                - '@equal': [$.isOneShoppingList, false]
+        actions:
+            - '@call_service_method':
+                service: oro_locale.formatter.date_time
+                method: format
+                attribute: $.copyDate
+                method_parameters:
+                    - 'now'
+            - '@translate':
+                id: 'oro.shoppinglist.actions.copied'
+                attribute: $.copiedLabel
+            - '@format_string':
+                attribute: $.labelSuffix
+                string: $.copiedLabel
+                arguments:
+                    copyDate: $.copyDate
+            - '@add_string_suffix':
+                attribute: $.newName
+                string: $.data.label
+                stringSuffix: $.labelSuffix
+                maxLength: 255
+            - '@get_active_user': $.currentUser
+            - '@duplicate':
+                attribute: $.newShoppingList
+                settings:
+                    - [[setNull], [propertyName, [id]]]
+                    - [[collection], [propertyName, [totals]]]
+                    - [[collection], [propertyName, [lineItems]]]
+                    - [[collection], [propertyName, [visitors]]]
+                    - [[replaceValue, $.currentUser], [propertyName, [customerUser]]]
+                    - [[replaceValue, $.currentUser.customer], [propertyName, [customer]]]
+                    - [[replaceValue, $.currentUser.owner], [propertyName, [owner]]]
+                    - [[replaceValue, $.currentUser.organization], [propertyName, [organization]]]
+                    - [[keep], [propertyName, [website]]]
+                    - [[shallowCopy], [propertyType, ['\DateTime']]]
+                    - [[keep], [propertyType, ['Oro\Bundle\ProductBundle\Entity\Product']]]
+                    - [[keep], [propertyType, ['Oro\Bundle\ProductBundle\Entity\ProductUnit']]]
+            - '@remove_restricted_products':
+                attribute: $.removedProducts
+                productHolderPath: $.newShoppingList.lineItems
+            - '@flash_message':
+                conditions:
+                    '@has_elements': $.removedProducts
+                message: oro.shoppinglist.duplicate.restricted_products.message
+                type: 'warning'
+            - '@assign_value': [$.newShoppingList.label, $.newName]
+            - '@assign_value': [$.newShoppingList.current, false]
+            - '@flush_entity': $.newShoppingList
+            - '@flash_message':
+                message: oro.shoppinglist.duplicate.success.message
+                type: 'success'
+                message_parameters:
+                    'shoppinglist': $.data.label
+            - '@call_service_method':
+                attribute: $.redirectLink
+                service: oro_shopping_list.provider.shopping_list_url
+                method: getFrontendUrl
+                method_parameters: [$.newShoppingList]
+            - '@redirect':
+                url: $.redirectLink
+
+    oro_shoppinglist_frontend_delete_action:
+        label: oro.shoppinglist.delete.action.label
+        extends: oro_shoppinglist_delete
+        replace:
+            - button_options
+            - frontend_options
+            - datagrid_options
+            - groups
+        button_options:
+            icon: fa-trash
+        frontend_options:
+            show_dialog: true
+            confirmation:
+                title: oro.frontend.shoppinglist.dialog.delete_confirmation.label
+                message: oro.frontend.shoppinglist.dialog.delete_confirmation.message
+                ok: oro.frontend.shoppinglist.dialog.delete_ok.label
+        datagrid_options:
+            aria_label: oro.frontend.shoppinglist.btn.delete_aria_label
+        groups:
+            - shopping_list_actions
+        routes:
+            - oro_shopping_list_frontend_view
+            - oro_shopping_list_frontend_update
+        actions:
+            - '@redirect':
+                route: 'oro_shopping_list_frontend_index'
+
+    oro_shoppinglist_frontend_set_as_default_action:
+        label: oro.shoppinglist.set_as_default.action.label
+        acl_resource: ['oro_shopping_list_frontend_set_as_default', $.data]
+        button_options:
+            icon: fa-check
+        frontend_options:
+            show_dialog: true
+            confirmation:
+                title: oro.frontend.shoppinglist.dialog.set_as_default_confirmation.label
+                message: oro.frontend.shoppinglist.dialog.set_as_default_confirmation.message
+                ok: oro.frontend.shoppinglist.dialog.set_as_default_ok.label
+        datagrid_options:
+            aria_label: oro.frontend.shoppinglist.btn.set_as_default.aria_label
+        groups:
+            - shopping_list_actions
+        routes:
+            - oro_shopping_list_frontend_view
+            - oro_shopping_list_frontend_update
+        preconditions:
+            '@equal': [false, $.data.current]
+        actions:
+            - '@get_active_user': $.currentUser
+            - '@call_service_method':
+                service: oro_shopping_list.manager.current_shopping_list
+                method: setCurrent
+                method_parameters: [$.currentUser, $.data]
+            - '@flash_message':
+                message: oro.frontend.shoppinglist.messages.set_default_success
+                type: 'success'
+
+    oro_shoppinglist_frontend_rename_action:
+        label: oro.shoppinglist.rename.action.label
+        acl_resource: ['oro_shopping_list_frontend_rename', $.data]
+        button_options:
+            icon: fa-pencil
+        frontend_options:
+            template: OroShoppingListBundle:Action:shoppingListActionRename.html.twig
+            title: oro.frontend.shoppinglist.view.rename.label
+            show_dialog: true
+            options:
+                dialogClass: shopping-list-rename-dialog-widget shopping-list-rename-wrapper
+                okText: oro.frontend.shoppinglist.btn.rename.label
+        attributes:
+            label:
+                type: entity
+                property_path: data.label
+                options:
+                    class: 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList'
+        form_options:
+            attribute_fields:
+                label:
+                    form_type: Symfony\Component\Form\Extension\Core\Type\TextType
+                    options:
+                        required: true
+                        constraints:
+                            - NotBlank: ~
+        datagrid_options:
+            aria_label: oro.frontend.shoppinglist.btn.rename.aria_label
+        groups:
+            - shopping_list_actions
+        routes:
+            - oro_shopping_list_frontend_view
+            - oro_shopping_list_frontend_update
+        preactions:
+            - '@get_active_user': $.currentUser
+            - '@call_service_method':
+                attribute: $.isOneShoppingList
+                service: oro_shopping_list.manager.shopping_list_limit
+                method: isOnlyOneEnabled
+        preconditions:
+            '@and':
+                - '@not_empty': $.currentUser
+                - '@equal': [$.isOneShoppingList, false]
+        actions:
+            - '@flush_entity': $.data
+            - '@flash_message':
+                message: oro.frontend.shoppinglist.messages.rename_success
+                type: 'success'

@@ -3,10 +3,6 @@
         {% set attr = layout_attr_defaults(attr, {
             '~class': class_prefix ~ '__form--inline '
         }) %}
-    {% else %}
-        {% set attr = layout_attr_defaults(attr, {
-            '~class': class_prefix ~ '__form--colored '
-        }) %}
     {% endif %}
 
     {{ parent_block_widget(block) }}

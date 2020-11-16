@@ -3,27 +3,41 @@
 namespace Oro\Bundle\CMSBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
-use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * @dbIsolationPerTest
+ */
 class WysiwygFieldsTest extends RestJsonApiTestCase
 {
-    public function testCreateEntityWithInvalidWYSIWYGFields(): void
+    protected function setUp(): void
     {
-        $response = $this->post(
-            ['entity' => 'localizedfallbackvalues'],
-            $this->getLocalizationFallbackData('not valid data'),
-            [],
-            false
+        parent::setUp();
+
+        $this->loadFixtures([
+            '@OroCMSBundle/Tests/Functional/Api/DataFixtures/localized_fallback_values.yml'
+        ]);
+    }
+
+    public function testGet(): void
+    {
+        $response = $this->get(
+            ['entity' => 'localizedfallbackvalues', 'id' => '<toString(@test_value_with_wysiwyg->id)>']
         );
 
-        $this->assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
         $this->assertResponseContains(
             [
-                'errors' => [
-                    [
-                        'status' => (string) Response::HTTP_BAD_REQUEST,
-                        'title' => 'form constraint',
-                        'detail' => 'This value is not valid. Source: wysiwyg_properties.'
+                'data' => [
+                    'type'       => 'localizedfallbackvalues',
+                    'id'         => '<toString(@test_value_with_wysiwyg->id)>',
+                    'attributes' => [
+                        'wysiwyg'  => [
+                            'value'      => 'Content',
+                            'style'      => '<style></style>',
+                            'properties' => ['param' => 'value']
+                        ],
+                        'fallback' => null,
+                        'string'   => null,
+                        'text'     => 'Test Value'
                     ]
                 ]
             ],
@@ -31,40 +45,200 @@ class WysiwygFieldsTest extends RestJsonApiTestCase
         );
     }
 
-    public function testCreateEntityWithValidWYSIWYGFields(): void
+    public function testGetWithNullValueForWysiwygField(): void
     {
-        $response = $this->post(
-            ['entity' => 'localizedfallbackvalues'],
-            $this->getLocalizationFallbackData(['param' => 'value'])
+        $response = $this->get(
+            ['entity' => 'localizedfallbackvalues', 'id' => '<toString(@test_value_without_wysiwyg->id)>']
         );
 
-        $this->assertResponseContains($this->getLocalizationFallbackData(['param' => 'value']), $response);
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type'       => 'localizedfallbackvalues',
+                    'id'         => '<toString(@test_value_without_wysiwyg->id)>',
+                    'attributes' => [
+                        'wysiwyg'  => null,
+                        'fallback' => null,
+                        'string'   => null,
+                        'text'     => 'Test Value'
+                    ]
+                ]
+            ],
+            $response
+        );
     }
 
-    /**
-     * @param mixed $properties
-     *
-     * @return array
-     */
-    private function getLocalizationFallbackData($properties): array
+    public function testCreateWithWysiwygField(): void
     {
-        return [
+        $data = [
             'data' => [
-                'type' => 'localizedfallbackvalues',
+                'type'       => 'localizedfallbackvalues',
                 'attributes' => [
-                    'wysiwyg' => [
-                        'value' => 'Content',
-                        'style' => '<style></style>',
-                        'properties' => $properties,
+                    'wysiwyg'  => [
+                        'value'      => 'Content',
+                        'style'      => '<style></style>',
+                        'properties' => ['param' => 'value']
                     ],
                     'fallback' => null,
-                    'string' => null,
-                    'text' => 'text'
-                ],
-                'relationships' => [
-                    'localization' => ['data' => null]
+                    'string'   => null,
+                    'text'     => 'text'
                 ]
             ]
         ];
+        $response = $this->post(['entity' => 'localizedfallbackvalues'], $data);
+
+        $this->assertResponseContains($data, $response);
+    }
+
+    public function testCreateWithInvalidWysiwygField(): void
+    {
+        $data = [
+            'data' => [
+                'type'       => 'localizedfallbackvalues',
+                'attributes' => [
+                    'wysiwyg'  => [
+                        'value'      => 'Content',
+                        'style'      => '<style></style>',
+                        'properties' => 'not valid data'
+                    ],
+                    'fallback' => null,
+                    'string'   => null,
+                    'text'     => 'text'
+                ]
+            ]
+        ];
+        $response = $this->post(['entity' => 'localizedfallbackvalues'], $data, [], false);
+
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'form constraint',
+                'detail' => 'This value is not valid.',
+                'source' => ['pointer' => '/data/attributes/wysiwyg/properties']
+            ],
+            $response
+        );
+    }
+
+    public function testUpdateWysiwygField(): void
+    {
+        $data = [
+            'data' => [
+                'type'       => 'localizedfallbackvalues',
+                'id'         => '<toString(@test_value_with_wysiwyg->id)>',
+                'attributes' => [
+                    'wysiwyg' => [
+                        'value'      => 'New Content',
+                        'style'      => '<style>new style</style>',
+                        'properties' => ['new_param' => 'new_value']
+                    ]
+                ]
+            ]
+        ];
+        $response = $this->patch(
+            ['entity' => 'localizedfallbackvalues', 'id' => '<toString(@test_value_with_wysiwyg->id)>'],
+            $data
+        );
+
+        $this->assertResponseContains($data, $response);
+    }
+
+    public function testUpdateWysiwygFieldWithNullValue(): void
+    {
+        $data = [
+            'data' => [
+                'type'       => 'localizedfallbackvalues',
+                'id'         => '<toString(@test_value_with_wysiwyg->id)>',
+                'attributes' => [
+                    'wysiwyg' => null
+                ]
+            ]
+        ];
+        $response = $this->patch(
+            ['entity' => 'localizedfallbackvalues', 'id' => '<toString(@test_value_with_wysiwyg->id)>'],
+            $data
+        );
+
+        $this->assertResponseContains($data, $response);
+    }
+
+    public function testUpdateWysiwygFieldWithEmptyValue(): void
+    {
+        $data = [
+            'data' => [
+                'type'       => 'localizedfallbackvalues',
+                'id'         => '<toString(@test_value_with_wysiwyg->id)>',
+                'attributes' => [
+                    'wysiwyg' => []
+                ]
+            ]
+        ];
+        $response = $this->patch(
+            ['entity' => 'localizedfallbackvalues', 'id' => '<toString(@test_value_with_wysiwyg->id)>'],
+            $data
+        );
+
+        $expectedData = $data;
+        $expectedData['data']['attributes']['wysiwyg'] = [
+            'value'      => 'Content',
+            'style'      => '<style></style>',
+            'properties' => ['param' => 'value']
+        ];
+        $this->assertResponseContains($expectedData, $response);
+    }
+
+    public function testUpdateWysiwygFieldWithNotAllProperties(): void
+    {
+        $data = [
+            'data' => [
+                'type'       => 'localizedfallbackvalues',
+                'id'         => '<toString(@test_value_with_wysiwyg->id)>',
+                'attributes' => [
+                    'wysiwyg' => [
+                        'value' => 'New Content'
+                    ]
+                ]
+            ]
+        ];
+        $response = $this->patch(
+            ['entity' => 'localizedfallbackvalues', 'id' => '<toString(@test_value_with_wysiwyg->id)>'],
+            $data
+        );
+
+        $expectedData = $data;
+        $expectedData['data']['attributes']['wysiwyg']['style'] = '<style></style>';
+        $expectedData['data']['attributes']['wysiwyg']['properties'] = ['param' => 'value'];
+        $this->assertResponseContains($expectedData, $response);
+    }
+
+    public function testUpdateWysiwygFieldWithInvalidValue(): void
+    {
+        $data = [
+            'data' => [
+                'type'       => 'localizedfallbackvalues',
+                'id'         => '<toString(@test_value_with_wysiwyg->id)>',
+                'attributes' => [
+                    'wysiwyg' => [
+                        'value'      => 'New Content',
+                        'style'      => '<style>new style</style>',
+                        'properties' => 'not valid data'
+                    ]
+                ]
+            ]
+        ];
+        $response = $this->patch(
+            ['entity' => 'localizedfallbackvalues', 'id' => '<toString(@test_value_with_wysiwyg->id)>'],
+            $data,
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'form constraint',
+                'detail' => 'This value is not valid.',
+                'source' => ['pointer' => '/data/attributes/wysiwyg/properties']
+            ],
+            $response
+        );
     }
 }

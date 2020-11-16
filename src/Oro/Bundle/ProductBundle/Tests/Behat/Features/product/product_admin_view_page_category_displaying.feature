@@ -2,7 +2,6 @@
 @ticket-BB-9199
 @fixture-OroProductBundle:product_check_category.yml
 Feature: Product admin view page category displaying
-  ToDo: BAP-16103 Add missing descriptions to the Behat features
 
   Scenario: Displaying only one category
     Given I login as administrator

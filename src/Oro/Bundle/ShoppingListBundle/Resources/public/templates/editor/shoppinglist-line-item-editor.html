@@ -1,0 +1,33 @@
+<% let oroshoppinglist = _.macros('oroshoppinglist') %>
+
+<div class="inline-editor__inner">
+    <div class="inline-editor__fields">
+        <input
+            name="quantity"
+            type="number"
+            inputmode="text"
+            value="<%- data.quantity %>"
+            data-precision="<%- data.precision %>"
+            class="input input-qty"
+            aria-label="<%- _.__('oro.frontend.shoppinglist.inline_editing.quantity.aria_label') %>"
+            autocomplete="off"
+        >
+        <select name="unitCode" class="select input" aria-label="<%- _.__('oro.frontend.shoppinglist.inline_editing.unit.aria_label') %>" required>
+            <% _.each(data.units, function(data, value) { %>
+                <option value="<%- value %>"<% if (data.selected) { %> selected<% } %><% if (data.disabled) { %> disabled<% } %>>
+                    <%- oroshoppinglist.renderUnit({unit: value, quantity: 1}) %>
+                </option>
+            <% }) %>
+        </select>
+    </div>
+    <div class="inline-editor__actions">
+        <button class="btn btn-icon btn--info btn--size-xs inline-editor__action-item" type="submit"
+                title="<%- _.__('oro.form.inlineEditing.action.save') %>">
+            <span class="fa-check fa--no-offset" aria-hidden="true"></span>
+        </button>
+        <button class="btn btn-icon btn--size-xs inline-editor__action-item" data-action="cancel"
+                title="<%- _.__('oro.form.inlineEditing.action.cancel') %>">
+            <span class="fa-close fa--no-offset" aria-hidden="true"></span>
+        </button>
+    </div>
+</div>

@@ -3,6 +3,8 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\Common\Collections\Criteria;
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryWithEntityFallbackValuesData;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData as LoadAuthCustomerUserData;
@@ -12,6 +14,7 @@ use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListConfigurableLineItems;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -43,6 +46,9 @@ class ShoppingListRepositoryTest extends WebTestCase
 
         $this->loadFixtures(
             [
+                LoadShoppingListLineItems::class,
+                LoadCategoryProductData::class,
+                LoadCategoryWithEntityFallbackValuesData::class,
                 LoadShoppingListConfigurableLineItems::class,
             ]
         );
@@ -69,6 +75,31 @@ class ShoppingListRepositoryTest extends WebTestCase
     {
         /** @var ShoppingList[] $shoppingLists */
         $shoppingLists = $this->getRepository()->findByUser($this->aclHelper, ['list.updatedAt' => Criteria::ASC]);
+        $this->assertCount(6, $shoppingLists);
+
+        $updatedAt = null;
+
+        foreach ($shoppingLists as $shoppingList) {
+            $this->assertInstanceOf(ShoppingList::class, $shoppingList);
+            $this->assertSame($this->customerUser, $shoppingList->getCustomerUser());
+
+            if ($updatedAt) {
+                $this->assertTrue($updatedAt <= $shoppingList->getUpdatedAt());
+            }
+
+            $updatedAt = $shoppingList->getUpdatedAt();
+        }
+    }
+
+    public function testFindByCustomerUserId(): void
+    {
+        $customerUser = $this->getCustomerUser();
+        /** @var ShoppingList[] $shoppingLists */
+        $shoppingLists = $this->getRepository()->findByCustomerUserId(
+            $customerUser->getId(),
+            $this->aclHelper,
+            ['list.updatedAt' => Criteria::ASC]
+        );
         $this->assertCount(6, $shoppingLists);
 
         $updatedAt = null;
@@ -207,7 +238,7 @@ class ShoppingListRepositoryTest extends WebTestCase
 
         $this->assertTrue(
             $shoppingListRepository->hasEmptyConfigurableLineItems(
-                $this->getReference(LoadShoppingLists::SHOPPING_LIST_5)
+                $this->getReference(LoadShoppingLists::SHOPPING_LIST_2)
             )
         );
 

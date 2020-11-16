@@ -1,7 +1,6 @@
 @fixture-OroVisibilityBundle:configurable_product_visibility.yml
 @fixture-OroCustomerBundle:BuyerCustomerFixture.yml
 Feature: Visibility of product variants
-  ToDo: BAP-16103 Add missing descriptions to the Behat features
 
   Scenario: Create different window session
       Given sessions active:

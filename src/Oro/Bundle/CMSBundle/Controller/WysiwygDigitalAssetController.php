@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * Controller class with action for get/download digital asset source file in wysiwyg fields
+ * The controller with action for get/download digital asset source file in WYSIWYG fields.
  */
 class WysiwygDigitalAssetController extends AbstractController
 {
@@ -24,7 +24,7 @@ class WysiwygDigitalAssetController extends AbstractController
      *     requirements={"id"="\d+", "action"="(get|download)"},
      *     defaults={"action"="get"}
      * )
-     * @param int $id DigitalAsset id
+     * @param int    $id
      * @param string $action
      *
      * @return Response
@@ -47,19 +47,20 @@ class WysiwygDigitalAssetController extends AbstractController
         }
 
         $response->headers->set('Content-Length', $file->getFileSize());
-        $response->setContent($this->get(FileManager::class)->getContent($file));
+        $response->setContent($this->getFileManager()->getContent($file));
 
         return $response;
     }
 
     /**
      * @param int $digitalAssetId
+     *
      * @return File
      */
     private function getSourceFile(int $digitalAssetId): File
     {
         try {
-            $file = $this->get('doctrine')->getRepository(DigitalAsset::class)
+            $file = $this->getDoctrine()->getRepository(DigitalAsset::class)
                 ->findSourceFile($digitalAssetId);
         } catch (NonUniqueResultException | NoResultException $e) {
             throw $this->createNotFoundException('File not found');
@@ -72,13 +73,18 @@ class WysiwygDigitalAssetController extends AbstractController
         return $file;
     }
 
+    private function getFileManager(): FileManager
+    {
+        return $this->get('oro_attachment.file_manager');
+    }
+
     /**
      * {@inheritdoc}
      */
     public static function getSubscribedServices(): array
     {
         return array_merge(parent::getSubscribedServices(), [
-            FileManager::class
+            'oro_attachment.file_manager' => FileManager::class
         ]);
     }
 }

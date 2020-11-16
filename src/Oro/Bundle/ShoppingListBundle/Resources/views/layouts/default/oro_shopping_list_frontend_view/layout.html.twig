@@ -1,0 +1,35 @@
+{% block _no_shopping_lists_widget %}
+    <div class="cart-list-empty">
+        <span class="cart-list-empty__icon" aria-hidden="true"><span class="fa-shopping-cart"></span></span>
+        <span>{{ 'oro.frontend.shoppinglist.view.not_have_available'|trans }}</span>
+    </div>
+{% endblock %}
+
+{% block _shopping_list_notes_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': 'shopping-list-notes collapse-view init ',
+        '~data-page-component-viewport': {
+            widgetModule: 'oroui/js/widget/collapse-widget',
+            animationSpeed: 0,
+            closeClass: 'overflows',
+            checkOverflow: true,
+            open: false
+        }}) %}
+
+    <div {{ block('block_attributes') }}>
+        <p class="shopping-list-notes__title">{{ 'oro.shoppinglist.notes.label'|trans }}:</p>
+        <div class="shopping-list-notes__content shopping-list-notes__content--limited" data-collapse-container>
+            {{ block_widget(block) }}
+        </div>
+        <button class="btn btn--link btn--size-s btn--no-x-offset toggle-more" data-collapse-trigger>
+            {{ 'oro.ui.collapse.more'|trans }}<span class="fa-angle-down fa--offset-l" aria-hidden="true"></span>
+        </button>
+        <button class="btn btn--link btn--size-s btn--no-x-offset toggle-less" data-collapse-trigger>
+            {{ 'oro.ui.collapse.less'|trans }}<span class="fa-angle-up fa--offset-l" aria-hidden="true"></span>
+        </button>
+    </div>
+{% endblock %}
+
+{% block _shopping_list_notes_text_widget %}
+    {{ block_widget(block)|nl2br }}
+{% endblock %}

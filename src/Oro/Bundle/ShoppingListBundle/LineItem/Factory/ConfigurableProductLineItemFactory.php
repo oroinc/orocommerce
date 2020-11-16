@@ -6,6 +6,9 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
+/**
+ * Creates a Line Item for empty Configurable Product
+ */
 class ConfigurableProductLineItemFactory implements LineItemByShoppingListAndProductFactoryInterface
 {
     /**
@@ -20,8 +23,7 @@ class ConfigurableProductLineItemFactory implements LineItemByShoppingListAndPro
             ->setShoppingList($shoppingList)
             ->setCustomerUser($shoppingList->getCustomerUser())
             ->setOrganization($shoppingList->getOrganization())
-            ->setUnit($product->getPrimaryUnitPrecision()->getUnit())
-            ->setOwner($shoppingList->getOwner());
+            ->setUnit($product->getPrimaryUnitPrecision()->getUnit());
 
         return $lineItem;
     }

@@ -14,15 +14,14 @@ Feature: Notes from shopping list are transferred to the checkout
     Given I proceed as the User
     And I signed in as AmandaRCole@example.org on the store frontend
     When I open page with shopping list List 1
-    And I click "View Options for this Shopping List"
-    And I click on "Add a Note to This Shopping List"
-    And I type "My shopping list notes" in "shopping_list_notes"
-    And I click on empty space
-    And I should see "Record has been successfully updated" flash message
-    And I click "Add a Note to This Item"
+    And I click "Add a note to entire Shopping List"
+    And I type "My shopping list notes" in "Shopping List Notes"
+    And I click on "Save Shopping List Notes"
+    Then I should see "My shopping list notes"
+    When I click "Add Shopping List item Note" on row "SKU123" in grid
     And I fill in "Shopping List Product Note" with "SKU123 Product Note"
-    And I click on empty space
-    And I should see "Record has been successfully updated" flash message
+    And I click "Add"
+    Then I should see "Line item note has been successfully updated" flash message
     And I click "Create Order"
     Then I should see "400-Watt Bulb Work Light Note: SKU123 Product Note"
     And I should see "Notes: My shopping list notes"
@@ -52,15 +51,14 @@ Feature: Notes from shopping list are transferred to the checkout
     Then I should see "Workflow activated" flash message
     Given I proceed as the User
     When I open page with shopping list List 2
-    And I click "View Options for this Shopping List"
-    And I click on "Add a Note to This Shopping List"
-    And I type "My shopping list notes" in "shopping_list_notes"
-    And I click on empty space
-    And I should see "Record has been successfully updated" flash message
-    And I click "Add a Note to This Item"
+    And I click "Add a note to entire Shopping List"
+    And I type "My shopping list notes" in "Shopping List Notes"
+    And I click on "Save Shopping List Notes"
+    Then I should see "My shopping list notes"
+    When I click "Add Shopping List item Note" on row "SKU123" in grid
     And I fill in "Shopping List Product Note" with "SKU123 Product Note"
-    And I click on empty space
-    And I should see "Record has been successfully updated" flash message
+    And I click "Add"
+    Then I should see "Line item note has been successfully updated" flash message
     And I click "Create Order"
     Then I should see "400-Watt Bulb Work Light Note: SKU123 Product Note"
     And I should not see "Notes: My shopping list notes"

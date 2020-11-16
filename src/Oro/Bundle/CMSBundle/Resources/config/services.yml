@@ -335,6 +335,16 @@ services:
         tags:
             - { name: oro_entity_extend.entity_config_dumper_extension, priority: -257 }
 
+    oro_cms.tools.wysiwyg_content_checker:
+        class: Oro\Bundle\CMSBundle\Tools\WYSIWYGContentChecker
+        arguments:
+            - '@oro_cms.provider.html_purifier_scope_provider'
+            - '@oro_ui.html_tag_helper'
+            - '@translator'
+
+    Oro\Bundle\CMSBundle\Tools\WYSIWYGContentChecker:
+        alias: oro_cms.tools.wysiwyg_content_checker
+
     oro_cms.event_listener.content_widget_datagrid.inline:
         class: Oro\Bundle\CMSBundle\EventListener\ContentWidgetDatagridListener
         arguments:
@@ -441,8 +451,8 @@ services:
     oro_cms.provider.wysiwyg_fields_provider:
         class: Oro\Bundle\CMSBundle\Provider\WYSIWYGFieldsProvider
         arguments:
+            - '@doctrine'
             - '@oro_entity_config.config_manager'
-        public: false
 
     oro_cms.importexport.normalizer.localized_fallback_value_collection_normalizer.decorator:
         decorates: oro_locale.importexport.normalizer.localized_fallback_value_collection_normalizer

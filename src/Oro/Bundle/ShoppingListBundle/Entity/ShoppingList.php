@@ -170,7 +170,8 @@ class ShoppingList extends ExtendShoppingList implements
      *      targetEntity="Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal",
      *      mappedBy="shoppingList",
      *      cascade={"ALL"},
-     *      orphanRemoval=true
+     *      orphanRemoval=true,
+     *      indexBy="currency"
      * )
      **/
     protected $totals;
@@ -301,9 +302,7 @@ class ShoppingList extends ExtendShoppingList implements
      */
     public function addTotal(ShoppingListTotal $item)
     {
-        if (!$this->totals->contains($item)) {
-            $this->totals->add($item);
-        }
+        $this->totals->set($item->getCurrency(), $item);
 
         return $this;
     }

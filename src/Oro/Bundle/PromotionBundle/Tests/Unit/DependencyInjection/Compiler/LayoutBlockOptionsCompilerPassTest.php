@@ -23,12 +23,9 @@ class LayoutBlockOptionsCompilerPassTest extends \PHPUnit\Framework\TestCase
         /** @var ContainerBuilder|\PHPUnit\Framework\MockObject\MockObject $container */
         $container = $this->createMock(ContainerBuilder::class);
 
-        $container->expects($this->exactly(2))
+        $container->expects($this->once())
             ->method('hasDefinition')
-            ->withConsecutive(
-                [LayoutBlockOptionsCompilerPass::SHOPPING_LIST_LINE_ITEMS_BLOCK_SERVICE],
-                [LayoutBlockOptionsCompilerPass::CHECKOUT_LINE_ITEMS_BLOCK_SERVICE]
-            )
+            ->with(LayoutBlockOptionsCompilerPass::CHECKOUT_LINE_ITEMS_BLOCK_SERVICE)
             ->willReturn(false);
         $container->expects($this->never())
             ->method('getDefinition');
@@ -47,26 +44,16 @@ class LayoutBlockOptionsCompilerPassTest extends \PHPUnit\Framework\TestCase
         $methods = [
             ['setOptionsConfig', [$options]]
         ];
-        $shoppingListDefinition = $this->getDefinitionMock($methods, $options);
         $checkoutDefinition = $this->getDefinitionMock($methods, $options);
 
-        $container->expects($this->exactly(2))
+        $container->expects($this->once())
             ->method('hasDefinition')
-            ->withConsecutive(
-                [LayoutBlockOptionsCompilerPass::SHOPPING_LIST_LINE_ITEMS_BLOCK_SERVICE],
-                [LayoutBlockOptionsCompilerPass::CHECKOUT_LINE_ITEMS_BLOCK_SERVICE]
-            )
+            ->with(LayoutBlockOptionsCompilerPass::CHECKOUT_LINE_ITEMS_BLOCK_SERVICE)
             ->willReturn(true);
-        $container->expects($this->exactly(2))
+        $container->expects($this->once())
             ->method('getDefinition')
-            ->withConsecutive(
-                [LayoutBlockOptionsCompilerPass::SHOPPING_LIST_LINE_ITEMS_BLOCK_SERVICE],
-                [LayoutBlockOptionsCompilerPass::CHECKOUT_LINE_ITEMS_BLOCK_SERVICE]
-            )
-            ->willReturnOnConsecutiveCalls(
-                $shoppingListDefinition,
-                $checkoutDefinition
-            );
+            ->with(LayoutBlockOptionsCompilerPass::CHECKOUT_LINE_ITEMS_BLOCK_SERVICE)
+            ->willReturn($checkoutDefinition);
 
         $this->compilerPass->process($container);
     }

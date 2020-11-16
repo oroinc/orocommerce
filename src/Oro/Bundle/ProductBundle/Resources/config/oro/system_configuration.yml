@@ -525,18 +525,6 @@ system_configuration:
                     oro.product.system_configuration.fields.matrix_form_on_product_listing.inline.label: inline
                     oro.product.system_configuration.fields.matrix_form_on_product_listing.popup.label: popup
 
-        oro_product.matrix_form_on_shopping_list:
-            data_type: string
-            type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
-            priority: 10
-            options:
-                tooltip: oro.product.system_configuration.fields.matrix_form_on_shopping_list.tooltip
-                label: oro.product.system_configuration.fields.matrix_form_on_shopping_list.label
-                choices:
-                    oro.product.system_configuration.fields.matrix_form_on_shopping_list.none.label: none
-                    oro.product.system_configuration.fields.matrix_form_on_shopping_list.inline.label: inline
-                    oro.product.system_configuration.fields.matrix_form_on_shopping_list.popup.label: popup
-
         oro_product.matrix_form_allow_empty:
             data_type: boolean
             type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
@@ -707,7 +695,6 @@ system_configuration:
                                         children:
                                             - oro_product.matrix_form_on_product_view
                                             - oro_product.matrix_form_on_product_listing
-                                            - oro_product.matrix_form_on_shopping_list
                                             - oro_product.matrix_form_allow_empty
                                     configurable_products_variations:
                                         children:
@@ -787,7 +774,6 @@ system_configuration:
                                         children:
                                             - oro_product.matrix_form_on_product_view
                                             - oro_product.matrix_form_on_product_listing
-                                            - oro_product.matrix_form_on_shopping_list
                                             - oro_product.matrix_form_allow_empty
                                     configurable_products_variations:
                                         children:

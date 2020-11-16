@@ -1,7 +1,7 @@
 @ticket-BB-19079
 @fixture-OroShoppingListBundle:ShoppingListFixtureWithCustomers.yml
 
-Feature: Storefront acl for shopping lists
+Feature: Storefront acl for shopping list line items
   In order to check frontstore shopping list line items acl
   As a customer user
   I want to check user permissions
@@ -26,13 +26,21 @@ Feature: Storefront acl for shopping lists
     Given I proceed as the Buyer
     And I login as NancyJSallee@example.org buyer
     And I open page with shopping list Shopping List 5
-    When I fill "ShoppingListOwnerForm" with:
-      | Customer | Amanda Cole |
-    Then I should see 'Shopping list "Shopping List 5" was updated successfully' flash message
+    And I click "Shopping List Actions"
+    When I click "Reassign"
+    And I filter First Name as is equal to "Amanda" in "Shopping List Action Reassign Grid"
+    And I click "Shopping List Action Reassign Radio"
+    And I click "Shopping List Action Submit"
+    Then I should see "Amanda Cole"
 
   Scenario: Check that Shopping List 5 may be edited by Amanda Cole
     When I login as AmandaRCole@example.org buyer
     And I open page with shopping list Shopping List 5
-    When I fill "Shopping List Line Item 1 Form" with:
-      | Quantity | 22 |
-    Then I should see "Record has been successfully updated" flash message
+    And I click "Shopping List Actions"
+    When I click "Edit"
+    And I click on "Shopping List Line Item 1 Quantity"
+    And I type "10" in "Shopping List Line Item 1 Quantity Input"
+    And I click on "Shopping List Line Item 1 Save Changes Button"
+    Then I should see following grid:
+      | SKU | QtyUpdate All |
+      | AA1 | 10 item       |

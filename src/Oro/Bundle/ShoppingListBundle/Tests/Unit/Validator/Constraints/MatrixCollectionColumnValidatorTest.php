@@ -2,14 +2,15 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Validator\Constraints;
 
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollection;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionColumn as MatrixCollectionColumnModel;
-use Oro\Bundle\ShoppingListBundle\Tests\Unit\Manager\Stub\ProductWithSizeAndColor;
 use Oro\Bundle\ShoppingListBundle\Validator\Constraints\MatrixCollectionColumn;
 use Oro\Bundle\ShoppingListBundle\Validator\Constraints\MatrixCollectionColumnValidator;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
@@ -25,8 +26,8 @@ class MatrixCollectionColumnValidatorTest extends \PHPUnit\Framework\TestCase
      */
     protected $validator;
 
-    /** @var
-     * Constraint|\MatrixCollectionColumn $constraint
+    /**
+     * @var Constraint|MatrixCollectionColumn
      */
     protected $constraint;
 
@@ -42,17 +43,6 @@ class MatrixCollectionColumnValidatorTest extends \PHPUnit\Framework\TestCase
         $this->validator->initialize($this->context);
     }
 
-    /**
-     *
-     */
-    protected function tearDown(): void
-    {
-        unset($this->constraint, $this->context, $this->validator);
-    }
-
-    /**
-     *
-     */
     public function testValidateEmptyProduct()
     {
         $this->expectEmptyProductViolation();
@@ -63,9 +53,6 @@ class MatrixCollectionColumnValidatorTest extends \PHPUnit\Framework\TestCase
         $this->validator->validate($matrixCollectionColumn, $this->constraint);
     }
 
-    /**
-     *
-     */
     public function testValidateWrongPrecision()
     {
         $validPrecision = 0;
@@ -77,6 +64,7 @@ class MatrixCollectionColumnValidatorTest extends \PHPUnit\Framework\TestCase
         $collection->unit = $unit;
         $unitPrecision = new ProductUnitPrecision();
         $unitPrecision->setPrecision($validPrecision);
+        $unitPrecision->setUnit($unit);
 
         /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $parentForm */
         $rootForm = $this->createMock(FormInterface::class);
@@ -89,16 +77,71 @@ class MatrixCollectionColumnValidatorTest extends \PHPUnit\Framework\TestCase
             ->willReturn($collection);
 
         $matrixCollectionColumn = new MatrixCollectionColumnModel();
-        $matrixCollectionColumn->product = new ProductWithSizeAndColor();
-        $matrixCollectionColumn->product->setUnitPrecision($unitPrecision);
+        $matrixCollectionColumn->product = new Product();
+        $matrixCollectionColumn->product->addUnitPrecision($unitPrecision);
         $matrixCollectionColumn->quantity = 1.123;
 
         $this->validator->validate($matrixCollectionColumn, $this->constraint);
     }
 
     /**
+     * @dataProvider validateDataProvider
      *
+     * @param int $validPrecision
+     * @param float $quantity
      */
+    public function testValidateCorrectPrecision(int $validPrecision, float $quantity): void
+    {
+        $unit = new ProductUnit();
+        $unit->setCode('item');
+
+        $collection = new MatrixCollection();
+        $collection->unit = $unit;
+
+        $unitPrecision = new ProductUnitPrecision();
+        $unitPrecision->setPrecision($validPrecision);
+        $unitPrecision->setUnit($unit);
+
+        $product = new Product();
+        $product->addUnitPrecision($unitPrecision);
+
+        $rootForm = $this->createMock(FormInterface::class);
+        $rootForm->expects($this->once())
+            ->method('getData')
+            ->willReturn($collection);
+
+        $this->context->expects($this->once())
+            ->method('getRoot')
+            ->willReturn($rootForm);
+
+        $matrixCollectionColumn = new MatrixCollectionColumnModel();
+        $matrixCollectionColumn->product = $product;
+        $matrixCollectionColumn->quantity = $quantity;
+
+        $this->context->expects($this->never())
+            ->method('buildViolation');
+
+        $this->validator->validate($matrixCollectionColumn, $this->constraint);
+    }
+
+    public function validateDataProvider(): array
+    {
+        return [
+            [
+                'validPrecision' => 3,
+                'quantity' => 1.123,
+            ],
+            [
+                'validPrecision' => 2,
+                'quantity' => 999.99,
+            ],
+            [
+                'validPrecision' => 10,
+                'quantity' => 999.9999999999,
+            ],
+        ];
+    }
+
     public function expectEmptyProductViolation()
     {
         $violationBuilder = $this
@@ -118,8 +161,7 @@ class MatrixCollectionColumnValidatorTest extends \PHPUnit\Framework\TestCase
      */
     public function expectWrongPrecisionViolation($precision)
     {
-        $violationBuilder = $this
-            ->createMock(ConstraintViolationBuilderInterface::class);
+        $violationBuilder = $this->createMock(ConstraintViolationBuilderInterface::class);
         $violationBuilder->expects($this->once())
             ->method('atPath')
             ->with('quantity')

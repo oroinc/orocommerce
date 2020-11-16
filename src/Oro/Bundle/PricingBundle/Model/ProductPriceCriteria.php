@@ -5,6 +5,9 @@ namespace Oro\Bundle\PricingBundle\Model;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
+/**
+ * A model for storing product price data.
+ */
 class ProductPriceCriteria
 {
     /**
@@ -26,6 +29,11 @@ class ProductPriceCriteria
      * @var string
      */
     protected $currency;
+
+    /**
+     * @var string|null
+     */
+    private $identifier;
 
     /**
      * @param Product $product
@@ -50,7 +58,7 @@ class ProductPriceCriteria
         }
         $this->quantity = $quantity;
 
-        if (strlen($currency) === 0) {
+        if (!$currency) {
             throw new \InvalidArgumentException('Currency must be non-empty string.');
         }
         $this->currency = $currency;
@@ -93,12 +101,16 @@ class ProductPriceCriteria
      */
     public function getIdentifier()
     {
-        return sprintf(
-            '%s-%s-%s-%s',
-            $this->getProduct()->getId(),
-            $this->getProductUnit()->getCode(),
-            $this->getQuantity(),
-            $this->getCurrency()
-        );
+        if (!$this->identifier) {
+            $this->identifier = sprintf(
+                '%s-%s-%s-%s',
+                $this->getProduct()->getId(),
+                $this->getProductUnit()->getCode(),
+                $this->getQuantity(),
+                $this->getCurrency()
+            );
+        }
+
+        return $this->identifier;
     }
 }

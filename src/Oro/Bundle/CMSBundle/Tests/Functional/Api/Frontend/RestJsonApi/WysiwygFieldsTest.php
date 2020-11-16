@@ -18,18 +18,32 @@ class WysiwygFieldsTest extends FrontendRestJsonApiTestCase
 
     public function testGetEntityWithWYSIWYGFields(): void
     {
-        $response = $this->get(
-            ['entity' => 'products', 'id' => '<toString(@product1->id)>']
+        $response = $this->cget(
+            ['entity' => 'products'],
+            ['filter' => ['id' => ['<toString(@product1->id)>', '<toString(@product3->id)>']]]
         );
 
         $this->assertResponseContains(
             [
                 'data' => [
-                    'attributes' => [
-                        'productAttributes' => [
-                            'wysiwyg' => [
-                                'value' => null,
-                                'style' => null
+                    [
+                        'type'       => 'products',
+                        'id'         => '<toString(@product1->id)>',
+                        'attributes' => [
+                            'productAttributes' => [
+                                'wysiwyg' => [
+                                    'value' => 'Product 1 WYSIWYG Text',
+                                    'style' => '<style></style>'
+                                ]
+                            ]
+                        ]
+                    ],
+                    [
+                        'type'       => 'products',
+                        'id'         => '<toString(@product3->id)>',
+                        'attributes' => [
+                            'productAttributes' => [
+                                'wysiwyg' => null
                             ]
                         ]
                     ]

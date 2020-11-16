@@ -1,7 +1,9 @@
 @fixture-OroProductBundle:product_listing_images.yml
 @regression
 Feature: Display product listing image instead of main image on the home page
-  ToDo: BAP-16103 Add missing descriptions to the Behat features
+  In order to check type of the product image on the home page
+  As an User
+  I want to be sure that listing image is displayed instead of main image
 
   Scenario: Check that main image is displayed if there's no listing image
     Given I login as administrator

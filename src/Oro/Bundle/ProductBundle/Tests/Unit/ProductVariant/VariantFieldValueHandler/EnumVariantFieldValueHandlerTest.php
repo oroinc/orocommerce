@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\ProductVariant\VariantFieldValueHandler;
 
+use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
@@ -85,6 +86,31 @@ class EnumVariantFieldValueHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('getEnumChoices')
             ->with('\stdClass')
             ->willReturn($enumValues);
+
+        $this->assertEquals($enumValues, $this->handler->getPossibleValues($fieldName));
+
+        //check array cache
+        $this->assertEquals($enumValues, $this->handler->getPossibleValues($fieldName));
+    }
+
+    public function testGetValuesWithCache(): void
+    {
+        $fieldName = 'testField';
+        $enumValues = ['red', 'green'];
+
+        $cache = $this->createMock(CacheProvider::class);
+        $cache->expects($this->once())
+            ->method('fetch')
+            ->with($fieldName)
+            ->willReturn($enumValues);
+
+        $this->handler->setCache($cache);
+
+        $this->configManager->expects($this->never())
+            ->method('getConfigFieldModel');
+
+        $this->enumValueProvider->expects($this->never())
+            ->method('getEnumChoices');
 
         $this->assertEquals($enumValues, $this->handler->getPossibleValues($fieldName));
     }

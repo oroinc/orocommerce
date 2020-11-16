@@ -1,6 +1,3 @@
 styles:
     inputs:
-        - 'bundles/oroshoppinglist/default/scss/variables/matrix-order-widget-config.scss'
-        - 'bundles/oroshoppinglist/default/scss/variables/shopping-list-owner-config.scss'
-
-        - 'bundles/oroshoppinglist/default/scss/styles.scss'
+        - 'bundles/oroshoppinglist/default/scss/components/my-shopping-list-owner-wrapper.scss'

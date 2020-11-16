@@ -11,11 +11,9 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\EntityBundle\Handler\EntityDeleteHandlerInterface;
 use Oro\Bundle\EntityBundle\Handler\EntityDeleteHandlerRegistry;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\ProductBundle\Provider\ProductMatrixAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
@@ -59,9 +57,6 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
     private $lineItemRepository;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject */
-    private $productMatrixAvailabilityProvider;
-
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
     /** @var EntityDeleteHandlerRegistry|\PHPUnit\Framework\MockObject\MockObject */
@@ -72,15 +67,15 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $this->lineItemRepository = $this->createMock(LineItemRepository::class);
         $this->lineItemRepository
             ->expects($this->any())
-            ->method('findDuplicate')
-            ->willReturnCallback(function (LineItem $lineItem) {
+            ->method('findDuplicateInShoppingList')
+            ->willReturnCallback(function (LineItem $lineItem, ShoppingList $shoppingList) {
                 /** @var ArrayCollection $shoppingListLineItems */
-                $shoppingListLineItems = $lineItem->getShoppingList()->getLineItems();
-                if ($lineItem->getShoppingList()->getId() === 1
+                $shoppingListLineItems = $shoppingList->getLineItems();
+                if ($shoppingList->getId() === 1
                     && $shoppingListLineItems->count() > 0
                     && $shoppingListLineItems->current()->getUnit() === $lineItem->getUnit()
                 ) {
-                    return $lineItem->getShoppingList()->getLineItems()->current();
+                    return $shoppingList->getLineItems()->current();
                 }
 
                 return null;
@@ -109,7 +104,6 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
                 return round($value);
             });
 
-        $this->productMatrixAvailabilityProvider = $this->createMock(ProductMatrixAvailabilityProvider::class);
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->deleteHandlerRegistry = $this->createMock(EntityDeleteHandlerRegistry::class);
 
@@ -121,7 +115,6 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             $this->websiteManager,
             $this->totalManager,
             $this->productVariantProvider,
-            $this->productMatrixAvailabilityProvider,
             $this->configManager,
             $this->deleteHandlerRegistry
         );
@@ -315,15 +308,40 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $this->manager->create();
     }
 
-    public function testAddLineItem()
+    /**
+     * @param LineItem $lineItem
+     *
+     * @dataProvider addLineItemDataProvider
+     */
+    public function testAddLineItem(LineItem $lineItem)
     {
         $shoppingList = new ShoppingList();
-        $lineItem = new LineItem();
 
         $this->manager->addLineItem($lineItem, $shoppingList);
         $this->assertCount(1, $shoppingList->getLineItems());
         $this->assertNull($lineItem->getCustomerUser());
         $this->assertNull($lineItem->getOrganization());
+    }
+
+    /**
+     * @return array
+     */
+    public function addLineItemDataProvider(): array
+    {
+        $configurableLineItem = new LineItem();
+        $configurableProduct = new Product();
+        $configurableProduct->setType(Product::TYPE_CONFIGURABLE);
+        $configurableLineItem->setProduct($configurableProduct);
+        $configurableLineItem->setQuantity(0);
+
+        return [
+            'empty line item' => [
+                'lineItem' => new LineItem(),
+            ],
+            'empty configurable product' => [
+                'lineItem' => $configurableLineItem,
+            ],
+        ];
     }
 
     public function testAddLineItemWithShoppingListData()
@@ -397,20 +415,6 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         /** @var LineItem $resultingItem */
         $resultingItem = array_shift($persistedLineItems);
         $this->assertSame('Notes Duplicated Notes', $resultingItem->getNotes());
-    }
-
-    public function testAddLineItemNotAllowedProductType()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Can not save not simple product');
-
-        $shoppingList = new ShoppingList();
-        $lineItem = new LineItem();
-        $configurableProduct = new Product();
-        $configurableProduct->setType(Product::TYPE_CONFIGURABLE);
-        $lineItem->setProduct($configurableProduct);
-
-        $this->manager->addLineItem($lineItem, $shoppingList);
     }
 
     public function testGetLineItemExistingItem()
@@ -696,15 +700,6 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $shoppingList->addLineItem($lineItem1);
         $shoppingList->addLineItem($lineItem2);
 
-        $this->configManager->expects($this->once())
-            ->method('get')
-            ->with('oro_product.matrix_form_on_shopping_list')
-            ->willReturn(Configuration::MATRIX_FORM_INLINE);
-        $this->productMatrixAvailabilityProvider->expects($this->once())
-            ->method('isMatrixFormAvailable')
-            ->with($product)
-            ->willReturn(true);
-
         $lineItems = [$lineItem1, $lineItem2];
         $this->lineItemRepository->expects($this->once())
             ->method('getItemsByShoppingListAndProducts')
@@ -716,38 +711,6 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $countDeletedItems = $this->manager->removeLineItem($lineItem1);
 
         $this->assertEquals(2, $countDeletedItems);
-    }
-
-    public function testRemoveLineItemWithConfigurableProductsAndNoneMatrixType()
-    {
-        $productUnitPrecision = new ProductUnitPrecision();
-        $productUnitPrecision->setUnit($this->getProductUnit('test', 1));
-
-        $product = $this->getProduct(43, Product::TYPE_CONFIGURABLE);
-        $product->setPrimaryUnitPrecision($productUnitPrecision);
-
-        $lineItem = new LineItem();
-        $lineItem->setProduct($this->getProduct(44, Product::TYPE_SIMPLE));
-        $lineItem->setParentProduct($product);
-        $lineItem->setUnit($this->getProductUnit('test', 1));
-
-        $this->configManager->expects($this->once())
-            ->method('get')
-            ->with('oro_product.matrix_form_on_shopping_list')
-            ->willReturn(Configuration::MATRIX_FORM_NONE);
-
-        $deleteHandler = $this->createMock(EntityDeleteHandlerInterface::class);
-        $this->deleteHandlerRegistry->expects($this->once())
-            ->method('getHandler')
-            ->with(LineItem::class)
-            ->willReturn($deleteHandler);
-        $deleteHandler->expects($this->once())
-            ->method('delete')
-            ->with($this->identicalTo($lineItem));
-
-        $countDeletedItems = $this->manager->removeLineItem($lineItem);
-
-        $this->assertEquals(1, $countDeletedItems);
     }
 
     public function testRemoveLineItemWithConfigurableProductsAndWithFlagToDeleteOnlyCurrentItem()
@@ -771,7 +734,7 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(1, $countDeletedItems);
     }
 
-    public function testActualizeLineItems()
+    public function testActualizeLineItemsWhenNoDeletedLineItems(): void
     {
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getEntity(ShoppingList::class, ['id' => 42]);
@@ -783,11 +746,37 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             ->willReturn($allowedStatuses);
 
         $this->lineItemRepository->expects($this->once())
-            ->method('deleteItemsByShoppingListAndInventoryStatuses')
-            ->with($shoppingList, $allowedStatuses);
+            ->method('deleteNotAllowedLineItemsFromShoppingList')
+            ->with($shoppingList, $allowedStatuses)
+            ->willReturn(0);
+
+        $this->totalManager
+            ->expects($this->never())
+            ->method('recalculateTotals');
+
+        $this->manager->actualizeLineItems($shoppingList);
+    }
+
+    public function testActualizeLineItemsWhenLineItemsDeleted(): void
+    {
+        /** @var ShoppingList $shoppingList */
+        $shoppingList = $this->getEntity(ShoppingList::class, ['id' => 42]);
+        $allowedStatuses = ['in_stock'];
+
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_product.general_frontend_product_visibility')
+            ->willReturn($allowedStatuses);
+
         $this->lineItemRepository->expects($this->once())
-            ->method('deleteDisabledItemsByShoppingList')
-            ->with($shoppingList);
+            ->method('deleteNotAllowedLineItemsFromShoppingList')
+            ->with($shoppingList, $allowedStatuses)
+            ->willReturn(2);
+
+        $this->totalManager
+            ->expects($this->once())
+            ->method('recalculateTotals')
+            ->with($shoppingList, true);
 
         $this->manager->actualizeLineItems($shoppingList);
     }

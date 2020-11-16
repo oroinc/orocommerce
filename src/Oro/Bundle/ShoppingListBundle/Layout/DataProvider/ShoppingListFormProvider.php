@@ -4,13 +4,16 @@ namespace Oro\Bundle\ShoppingListBundle\Layout\DataProvider;
 
 use Oro\Bundle\LayoutBundle\Layout\DataProvider\AbstractFormProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Form\Type\ShoppingListNotesType;
 use Oro\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
 use Symfony\Component\Form\FormView;
 
+/**
+ * Provides form types to edit shopping list.
+ */
 class ShoppingListFormProvider extends AbstractFormProvider
 {
     const SHOPPING_LIST_CREATE_ROUTE_NAME   = 'oro_shopping_list_frontend_create';
-    const SHOPPING_LIST_VIEW_ROUTE_NAME     = 'oro_shopping_list_frontend_view';
 
     /**
      * @param ShoppingList $shoppingList
@@ -19,17 +22,20 @@ class ShoppingListFormProvider extends AbstractFormProvider
      */
     public function getShoppingListFormView(ShoppingList $shoppingList)
     {
-        if ($shoppingList->getId()) {
-            $options['action'] = $this->generateUrl(
-                self::SHOPPING_LIST_VIEW_ROUTE_NAME,
-                ['id' => $shoppingList->getId()]
-            );
-        } else {
-            $options['action'] = $this->generateUrl(
-                self::SHOPPING_LIST_CREATE_ROUTE_NAME
-            );
-        }
+        $options['action'] = $this->generateUrl(
+            self::SHOPPING_LIST_CREATE_ROUTE_NAME
+        );
 
         return $this->getFormView(ShoppingListType::class, $shoppingList, $options);
+    }
+
+    /**
+     * @param ShoppingList $shoppingList
+     *
+     * @return FormView
+     */
+    public function getShoppingListNotesFormView(ShoppingList $shoppingList): FormView
+    {
+        return $this->getFormView(ShoppingListNotesType::class, $shoppingList);
     }
 }
