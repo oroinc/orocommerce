@@ -1,6 +1,5 @@
 include:
     - '@OroShoppingListBundle:ShoppingListFixture.yml'
-    - '@OroCustomerBundle:BuyerCustomerFixture.yml'
 
 Oro\Bundle\SaleBundle\Entity\Quote:
     quote{1..29}:
@@ -29,7 +28,7 @@ Oro\Bundle\SaleBundle\Entity\QuoteProduct:
 
 Oro\Bundle\PricingBundle\Entity\ProductPrice:
     productPrice0:
-        pricelist: '@pricelist1'
+        pricelist: '@defaultPriceList'
         product: '@product1'
         productSku: 'AA1'
         quantity: 1
@@ -37,7 +36,7 @@ Oro\Bundle\PricingBundle\Entity\ProductPrice:
         value: 2
         currency: 'USD'
     productPrice1:
-        pricelist: '@pricelist1'
+        pricelist: '@defaultPriceList'
         product: '@product1'
         productSku: 'AA1'
         quantity: 5
@@ -45,7 +44,12 @@ Oro\Bundle\PricingBundle\Entity\ProductPrice:
         value: 5
         currency: 'USD'
 
-Oro\Bundle\CurrencyBundle\Entity\Price :
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceRelation:
+        product: '@product1'
+        priceList: '@defaultPriceList'
+
+Oro\Bundle\CurrencyBundle\Entity\Price:
     price0:
         value: 2
         currency: USD

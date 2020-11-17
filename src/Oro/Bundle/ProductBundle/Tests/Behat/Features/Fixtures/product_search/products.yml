@@ -77,9 +77,3 @@ Oro\Bundle\PricingBundle\Entity\PriceAttributeCurrency:
     priceAttributeCurrency:
         priceList: '@priceAttributePriceList'
         currency: 'USD'
-
-Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer:
-    combinedPriceListToCustomer:
-        pricelist: '@combinedPriceList'
-        customer: '@Customer_AmandaRCole'
-        website: '@website1'

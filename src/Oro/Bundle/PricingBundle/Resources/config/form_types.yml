@@ -97,6 +97,11 @@ services:
         calls:
             - [setDataClass, ['Oro\Bundle\PricingBundle\Entity\ProductPrice']]
 
+    oro_pricing.form.price_list_relation:
+        class: 'Oro\Bundle\PricingBundle\Form\Type\PriceListRelationType'
+        tags:
+            - { name: form.type }
+
     oro_pricing.form.price_list_collection:
         class: 'Oro\Bundle\PricingBundle\Form\Type\PriceListCollectionType'
         tags:
@@ -125,7 +130,23 @@ services:
             - "@oro_pricing.entity_listener.customer"
         tags:
             - { name: form.type_extension, alias: oro_customer_type, extended_type: Oro\Bundle\CustomerBundle\Form\Type\CustomerType }
-            - { name: oro_featuretogle.feature, feature: oro_price_lists }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists_combined }
+
+    oro_pricing.form.extension.customer_type.flat_pricing:
+        class: 'Oro\Bundle\PricingBundle\Form\Extension\CustomerFormFlatPricingExtension'
+        arguments:
+            - "@oro_pricing.entity_listener.customer.flat_pricing"
+        tags:
+            - { name: form.type_extension, alias: oro_customer_type, extended_type: Oro\Bundle\CustomerBundle\Form\Type\CustomerType }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists_flat }
+
+    oro_pricing.form.extension.customer_group_type.flat_pricing:
+        class: 'Oro\Bundle\PricingBundle\Form\Extension\CustomerGroupFormFlatPricingExtension'
+        arguments:
+            - "@oro_pricing.entity_listener.customer_group.flat_pricing"
+        tags:
+            - { name: form.type_extension, alias: oro_customer_group_type, extended_type: Oro\Bundle\CustomerBundle\Form\Type\CustomerGroupType }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists_flat }
 
     oro_pricing.form.extension.customer_group_type:
         class: 'Oro\Bundle\PricingBundle\Form\Extension\CustomerGroupFormExtension'
@@ -133,7 +154,7 @@ services:
             - "@oro_pricing.entity_listener.customer_group"
         tags:
             - { name: form.type_extension, alias: oro_customer_group_type, extended_type: Oro\Bundle\CustomerBundle\Form\Type\CustomerGroupType }
-            - { name: oro_featuretogle.feature, feature: oro_price_lists }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists_combined }
 
     oro_pricing.form.extension.product_type:
         class: 'Oro\Bundle\PricingBundle\Form\Extension\ProductFormExtension'

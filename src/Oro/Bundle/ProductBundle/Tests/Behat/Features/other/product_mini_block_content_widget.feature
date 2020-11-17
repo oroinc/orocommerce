@@ -1,4 +1,5 @@
 @ticket-BB-17550
+@pricing-storage-combined
 @fixture-OroProductBundle:product_with_price.yml
 
 Feature: Product mini-block content widget

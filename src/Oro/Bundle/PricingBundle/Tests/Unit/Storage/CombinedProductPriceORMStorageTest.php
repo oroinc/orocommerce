@@ -5,15 +5,14 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Storage;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
-use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
-use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
+use Oro\Bundle\PricingBundle\Model\CombinedPriceListTreeHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteria;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\PricingBundle\Storage\CombinedProductPriceORMStorage;
-use Oro\Bundle\PricingBundle\Tests\Unit\Entity\Repository\Stub\CombinedProductPriceRepository;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -35,14 +34,9 @@ class CombinedProductPriceORMStorageTest extends \PHPUnit\Framework\TestCase
     protected $registry;
 
     /**
-     * @var PriceListTreeHandler|\PHPUnit\Framework\MockObject\MockObject
+     * @var CombinedPriceListTreeHandler|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $priceListTreeHandler;
-
-    /**
-     * @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $featureChecker;
 
     /**
      * @var CombinedProductPriceORMStorage
@@ -56,16 +50,13 @@ class CombinedProductPriceORMStorageTest extends \PHPUnit\Framework\TestCase
     {
         $this->shardManager = $this->createMock(ShardManager::class);
         $this->registry = $this->createMock(ManagerRegistry::class);
-        $this->priceListTreeHandler = $this->createMock(PriceListTreeHandler::class);
-        $this->featureChecker = $this->createMock(FeatureChecker::class);
+        $this->priceListTreeHandler = $this->createMock(CombinedPriceListTreeHandler::class);
 
         $this->storage = new CombinedProductPriceORMStorage(
             $this->registry,
             $this->shardManager,
             $this->priceListTreeHandler
         );
-        $this->storage->setFeatureChecker($this->featureChecker);
-        $this->storage->addFeature(self::FEATURE);
     }
 
     public function testGetPrices()
@@ -98,30 +89,7 @@ class CombinedProductPriceORMStorageTest extends \PHPUnit\Framework\TestCase
             ->with($customer, $website)
             ->willReturn($priceList);
 
-        $this->featureChecker->expects($this->once())
-            ->method('isFeatureEnabled')
-            ->with(self::FEATURE)
-            ->willReturn(true);
-
         $this->assertSame([$product], $this->storage->getPrices($scopeCriteria, [$product]));
-    }
-
-    public function testGetPricesFeatureDisabled()
-    {
-        $product = $this->getEntity(Product::class, ['id' => 4]);
-
-        $this->priceListTreeHandler->expects($this->never())
-            ->method('getPriceList');
-
-        $this->featureChecker->expects($this->once())
-            ->method('isFeatureEnabled')
-            ->with(self::FEATURE)
-            ->willReturn(false);
-
-        /** @var ProductPriceScopeCriteriaInterface|\PHPUnit\Framework\MockObject\MockObject $scopeCriteria */
-        $scopeCriteria = $this->createMock(ProductPriceScopeCriteriaInterface::class);
-
-        $this->assertSame([], $this->storage->getPrices($scopeCriteria, [$product]));
     }
 
     public function testGetPricesEmptyPriceList()
@@ -133,11 +101,6 @@ class CombinedProductPriceORMStorageTest extends \PHPUnit\Framework\TestCase
 
         $this->registry->expects($this->never())
             ->method('getManagerForClass');
-
-        $this->featureChecker->expects($this->once())
-            ->method('isFeatureEnabled')
-            ->with(self::FEATURE)
-            ->willReturn(true);
 
         $this->priceListTreeHandler->expects($this->once())
             ->method('getPriceList')
@@ -154,11 +117,6 @@ class CombinedProductPriceORMStorageTest extends \PHPUnit\Framework\TestCase
         $priceList = $this->getEntity(CombinedPriceList::class, ['id' => 3, 'currencies' => ['USD']]);
         $scopeCriteria = $this->getScopeCriteria($website, $customer);
 
-        $this->featureChecker->expects($this->once())
-            ->method('isFeatureEnabled')
-            ->with(self::FEATURE)
-            ->willReturn(true);
-
         $this->priceListTreeHandler->expects($this->once())
             ->method('getPriceList')
             ->with($customer, $website)
@@ -167,39 +125,16 @@ class CombinedProductPriceORMStorageTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(['USD'], $this->storage->getSupportedCurrencies($scopeCriteria));
     }
 
-    public function testGetSupportedCurrenciesFeatureDisabled()
-    {
-        /** @var ProductPriceScopeCriteriaInterface|\PHPUnit\Framework\MockObject\MockObject $scopeCriteria */
-        $scopeCriteria = $this->createMock(ProductPriceScopeCriteriaInterface::class);
-
-        $this->featureChecker->expects($this->once())
-            ->method('isFeatureEnabled')
-            ->with(self::FEATURE)
-            ->willReturn(false);
-
-        $this->assertSame([], $this->storage->getSupportedCurrencies($scopeCriteria));
-    }
-
     public function testGetSupportedCurrenciesEmptyPriceList()
     {
         $customer = $this->getEntity(Customer::class, ['id' => 1]);
         $website = $this->getEntity(Website::class, ['id' => 2]);
         $scopeCriteria = $this->getScopeCriteria($website, $customer);
 
-        $this->featureChecker->expects($this->once())
-            ->method('isFeatureEnabled')
-            ->with(self::FEATURE)
-            ->willReturn(true);
-
         $this->priceListTreeHandler->expects($this->once())
             ->method('getPriceList')
             ->with($customer, $website)
             ->willReturn(null);
-
-        $this->featureChecker->expects($this->once())
-            ->method('isFeatureEnabled')
-            ->with(self::FEATURE)
-            ->willReturn(true);
 
         $this->assertSame([], $this->storage->getSupportedCurrencies($scopeCriteria));
     }

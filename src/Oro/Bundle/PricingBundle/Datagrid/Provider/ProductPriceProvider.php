@@ -51,7 +51,7 @@ class ProductPriceProvider
      * @param string|null $currency
      * @return array
      */
-    public function getCombinedPricesForProductsByPriceList(
+    public function getPricesForProductsByPriceList(
         array $productRecords,
         ProductPriceScopeCriteriaInterface $scopeCriteria,
         string $currency

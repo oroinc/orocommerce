@@ -3,112 +3,40 @@
 namespace Oro\Bundle\PricingBundle\Storage;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
-use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
-use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
-use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
-use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
+use Oro\Bundle\PricingBundle\Entity\Repository\BaseProductPriceRepository;
+use Oro\Bundle\PricingBundle\Model\CombinedPriceListTreeHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
-use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
  * Fetch prices from Combined Price Lists DB storage.
  */
-class CombinedProductPriceORMStorage implements ProductPriceStorageInterface, FeatureToggleableInterface
+class CombinedProductPriceORMStorage extends AbstractProductPriceORMStorage
 {
-    use FeatureCheckerHolderTrait;
-
     /**
-     * @var ShardManager
+     * @var CombinedPriceListTreeHandler
      */
-    protected $shardManager;
-
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
-
-    /**
-     * @var PriceListTreeHandler
-     */
-    protected $priceListTreeHandler;
+    private $priceListTreeHandler;
 
     /**
      * @param ManagerRegistry $registry
      * @param ShardManager $shardManager
-     * @param PriceListTreeHandler $priceListTreeHandler
+     * @param CombinedPriceListTreeHandler $priceListTreeHandler
      */
     public function __construct(
         ManagerRegistry $registry,
         ShardManager $shardManager,
-        PriceListTreeHandler $priceListTreeHandler
+        CombinedPriceListTreeHandler $priceListTreeHandler
     ) {
-        $this->registry = $registry;
-        $this->shardManager = $shardManager;
+        parent::__construct($registry, $shardManager);
         $this->priceListTreeHandler = $priceListTreeHandler;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getPrices(
-        ProductPriceScopeCriteriaInterface $scopeCriteria,
-        array $products,
-        array $productUnitCodes = null,
-        array $currencies = null
-    ) {
-        if (!$this->isFeaturesEnabled()) {
-            return [];
-        }
-
-        $priceList = $this->getPriceListByScopeCriteria($scopeCriteria);
-        if (!$priceList) {
-            return [];
-        }
-
-        $productIds = array_map(
-            function ($product) {
-                if ($product instanceof Product) {
-                    return $product->getId();
-                }
-
-                return $product;
-            },
-            $products
-        );
-
-        return $this->getRepository()->getPricesBatch(
-            $this->shardManager,
-            $priceList->getId(),
-            array_filter($productIds),
-            $productUnitCodes,
-            $currencies
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getSupportedCurrencies(ProductPriceScopeCriteriaInterface $scopeCriteria)
-    {
-        if (!$this->isFeaturesEnabled()) {
-            return [];
-        }
-
-        $priceList = $this->getPriceListByScopeCriteria($scopeCriteria);
-        if (!$priceList) {
-            return [];
-        }
-
-        return $priceList->getCurrencies();
-    }
-
-    /**
-     * @return CombinedProductPriceRepository
-     */
-    protected function getRepository()
+    protected function getRepository(): BaseProductPriceRepository
     {
         return $this->registry
             ->getManagerForClass(CombinedProductPrice::class)
@@ -116,8 +44,7 @@ class CombinedProductPriceORMStorage implements ProductPriceStorageInterface, Fe
     }
 
     /**
-     * @param ProductPriceScopeCriteriaInterface $scopeCriteria
-     * @return null|CombinedPriceList
+     * {@inheritDoc}
      */
     protected function getPriceListByScopeCriteria(ProductPriceScopeCriteriaInterface $scopeCriteria)
     {

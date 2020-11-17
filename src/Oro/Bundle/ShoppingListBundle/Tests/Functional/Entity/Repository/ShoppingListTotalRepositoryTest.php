@@ -70,6 +70,35 @@ class ShoppingListTotalRepositoryTest extends WebTestCase
         $this->assertFalse($shoppingListTotal->isValid());
     }
 
+    public function testInvalidateByCustomerGroups()
+    {
+        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_7);
+        $shoppingListTotal = $this->setTotalValid($shoppingList);
+        $this->preparePriceListRelationForCustomerGroupChecks($shoppingListTotal);
+
+        $this->repository->invalidateByCustomerGroupsForFlatPricing(
+            [$shoppingListTotal->getShoppingList()->getCustomer()->getGroup()->getId()],
+            $shoppingListTotal->getShoppingList()->getWebsite()->getId()
+        );
+
+        $this->manager->refresh($shoppingListTotal);
+        $this->assertFalse($shoppingListTotal->isValid());
+    }
+
+    public function testInvalidateByWebsites()
+    {
+        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_7);
+        $shoppingListTotal = $this->setTotalValid($shoppingList);
+        $this->preparePriceListRelationForWebsiteChecks();
+
+        $this->repository->invalidateByWebsitesForFlatPricing(
+            [$shoppingListTotal->getShoppingList()->getWebsite()->getId()]
+        );
+
+        $this->manager->refresh($shoppingListTotal);
+        $this->assertFalse($shoppingListTotal->isValid());
+    }
+
     public function testInvalidateGuestShoppingLists()
     {
         $shoppingList = $this->getReference(LoadGuestShoppingLists::GUEST_SHOPPING_LIST_1);
@@ -181,5 +210,33 @@ class ShoppingListTotalRepositoryTest extends WebTestCase
         $this->manager->flush();
 
         return $total;
+    }
+
+    /**
+     * @param ShoppingListTotal $shoppingListTotal
+     */
+    private function preparePriceListRelationForCustomerGroupChecks(ShoppingListTotal $shoppingListTotal)
+    {
+        $shoppingList = $shoppingListTotal->getShoppingList();
+        $customerGroupId = $shoppingList->getCustomer()->getGroup()->getId();
+        $websiteId = $shoppingList->getWebsite()->getId();
+        $priceListId = $this->getReference('price_list_1')->getId();
+
+        $connection = $this->manager->getConnection();
+        $connection->executeQuery('DELETE FROM oro_price_list_to_customer');
+        $connection->executeQuery(sprintf(
+            'INSERT INTO oro_price_list_to_cus_group(price_list_id, website_id, customer_group_id, sort_order) 
+            VALUES(%d, %d, %d, 0)',
+            $priceListId,
+            $websiteId,
+            $customerGroupId
+        ));
+    }
+
+    private function preparePriceListRelationForWebsiteChecks()
+    {
+        $connection = $this->manager->getConnection();
+        $connection->executeQuery('DELETE FROM oro_price_list_to_customer');
+        $connection->executeQuery('DELETE FROM oro_price_list_to_cus_group');
     }
 }

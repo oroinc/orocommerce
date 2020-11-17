@@ -5,3 +5,11 @@ services:
         public: true
         arguments:
             - '@oro_config.manager'
+
+    oro_pricing.behat.builder.combined_price_list_builder_facade:
+        alias: oro_pricing.builder.combined_price_list_builder_facade
+        public: true
+
+    oro_pricing.behat.pricing_storage_switch_handler:
+        alias: oro_pricing.pricing_storage_switch_handler
+        public: true

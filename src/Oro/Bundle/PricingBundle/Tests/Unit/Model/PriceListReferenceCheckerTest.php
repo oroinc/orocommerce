@@ -1,4 +1,5 @@
 <?php
+
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;

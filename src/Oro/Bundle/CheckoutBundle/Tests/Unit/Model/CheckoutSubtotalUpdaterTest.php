@@ -75,9 +75,9 @@ class CheckoutSubtotalUpdaterTest extends \PHPUnit\Framework\TestCase
             ->method('getSubtotalByCurrency')
             ->willReturnMap([
                 [$checkout, self::USD, (new Subtotal())
-                    ->setCurrency(self::USD)->setAmount(100)->setCombinedPriceList($combinedPriceList1)],
+                    ->setCurrency(self::USD)->setAmount(100)->setPriceList($combinedPriceList1)],
                 [$checkout, self::EUR, (new Subtotal())
-                    ->setCurrency(self::EUR)->setAmount(80)->setCombinedPriceList($combinedPriceList2)],
+                    ->setCurrency(self::EUR)->setAmount(80)->setPriceList($combinedPriceList2)],
                 [$checkout, self::CAD, (new Subtotal())->setCurrency(self::CAD)->setAmount(120)],
             ]);
 
@@ -85,8 +85,8 @@ class CheckoutSubtotalUpdaterTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(100.0, $totalUsd->getSubtotal()->getAmount());
         $this->assertSame(80.0, $totalEur->getSubtotal()->getAmount());
 
-        $this->assertSame('price list 1', $totalUsd->getSubtotal()->getCombinedPriceList()->getName());
-        $this->assertSame('price list 2', $totalEur->getSubtotal()->getCombinedPriceList()->getName());
+        $this->assertSame('price list 1', $totalUsd->getSubtotal()->getPriceList()->getName());
+        $this->assertSame('price list 2', $totalEur->getSubtotal()->getPriceList()->getName());
     }
 
     public function testRecalculateInvalidSubtotals()

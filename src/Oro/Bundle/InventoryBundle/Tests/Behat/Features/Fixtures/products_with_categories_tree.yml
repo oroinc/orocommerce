@@ -57,12 +57,23 @@ Oro\Bundle\PricingBundle\Entity\PriceList:
             - setCurrencies: [['USD']]
         active: true
 
+Oro\Bundle\PricingBundle\Entity\PriceListToWebsite:
+    priceListToWebsite:
+        pricelist: '@pricelistShipping'
+        website: '@website1'
+        sortOrder: 200
+
 Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
     priceListToCustomer:
         customer: '@customer'
         pricelist: '@pricelistShipping'
         website: '@website1'
         sortOrder: 200
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceRelation{1..3}:
+        product: '@product<current()>'
+        priceList: '@pricelistShipping'
 
 Oro\Bundle\PricingBundle\Entity\ProductPrice:
     productPrice1:
@@ -71,7 +82,7 @@ Oro\Bundle\PricingBundle\Entity\ProductPrice:
         productSku: 'SKU1'
         quantity: 5
         unit: '@item'
-        value: 5
+        value: 2
         currency: 'USD'
     productPrice2:
         pricelist: '@pricelistShipping'
@@ -79,7 +90,7 @@ Oro\Bundle\PricingBundle\Entity\ProductPrice:
         productSku: 'SKU2'
         quantity: 5
         unit: '@item'
-        value: 5
+        value: 2
         currency: 'USD'
     productPrice3:
         pricelist: '@pricelistShipping'
@@ -87,45 +98,8 @@ Oro\Bundle\PricingBundle\Entity\ProductPrice:
         productSku: 'SKU3'
         quantity: 5
         unit: '@item'
-        value: 5
-        currency: 'USD'
-
-Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
-   combinedProductPrice1:
-        pricelist: '@combinedPriceList'
-        product: '@product1'
-        productSku: 'SKU1'
-        quantity: 5
-        unit: '@item'
         value: 2
         currency: 'USD'
-   combinedProductPrice2:
-        pricelist: '@combinedPriceList'
-        product: '@product2'
-        productSku: 'SKU2'
-        quantity: 5
-        unit: '@item'
-        value: 2
-        currency: 'USD'
-   combinedProductPrice3:
-        pricelist: '@combinedPriceList'
-        product: '@product3'
-        productSku: 'SKU3'
-        quantity: 5
-        unit: '@item'
-        value: 2
-        currency: 'USD'
-
-Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer:
-    combinedPriceListToCustomer:
-        pricelist: '@combinedPriceList'
-        customer: '@customer'
-        website: '@website1'
-
-Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite:
-    combinedPriceListToWebsite:
-        pricelist: '@combinedPriceList'
-        website: '@website1'
 
 Oro\Bundle\CatalogBundle\Entity\Category:
     category1:

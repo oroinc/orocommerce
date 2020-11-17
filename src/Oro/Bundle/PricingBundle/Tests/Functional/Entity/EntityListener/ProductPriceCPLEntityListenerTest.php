@@ -107,6 +107,34 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
         static::assertMessageSent(Topics::RESOLVE_COMBINED_PRICES);
     }
 
+    public function testOnUpdateFeatureDisabled()
+    {
+        $configManager = $this->getContainer()->get('oro_config.global');
+        $savedStorage = $configManager->get('oro_pricing.price_storage');
+        $configManager->set('oro_pricing.price_storage', 'flat');
+        $this->getContainer()->get('oro_featuretoggle.checker.feature_checker')->resetCache();
+
+        $priceList = $this->getReference('price_list_2');
+        $productPrices = $this->getProductPriceRepository()->findByPriceList(
+            $this->getShardManager(),
+            $priceList,
+            [
+                'priceList' => $priceList,
+                'product'   => $this->getReference(LoadProductData::PRODUCT_2)
+            ]
+        );
+        $productPrice = $productPrices[0];
+        $productPrice->setPrice(Price::create(1000, 'EUR'));
+
+        $priceManager = $this->getPriceManager();
+        $priceManager->persist($productPrice);
+        $priceManager->flush();
+
+        $configManager->set('oro_pricing.price_storage', $savedStorage);
+
+        static::assertMessagesEmpty(Topics::RESOLVE_COMBINED_PRICES);
+    }
+
     public function testOnUpdateChangeTriggerCreatedWithDisabledListener()
     {
         $this->disableListener();

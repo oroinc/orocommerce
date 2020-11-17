@@ -22,7 +22,7 @@ use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @dbIsolationPerTest
  */
-class PriceListRelationTriggerHandlerTest extends WebTestCase
+class CombinedPriceListRelationTriggerHandlerTest extends WebTestCase
 {
     use MessageQueueExtension;
 
@@ -38,7 +38,7 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
         $this->loadFixtures([LoadPriceListRelationsForTriggers::class]);
         $this->enableMessageBuffering();
 
-        $this->handler = self::getContainer()->get('oro_pricing.price_list_relation_trigger_handler');
+        $this->handler = self::getContainer()->get('oro_pricing.price_list_relation_trigger_handler.combined');
     }
 
     public function testHandleWebsiteChange()

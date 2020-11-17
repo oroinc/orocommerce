@@ -173,7 +173,7 @@ oro_behat_extension:
         mapping:
           Price List:
             type: 'xpath'
-            locator: '//div[contains(@id,"s2id_oro_customer_type_priceListsByWebsites_1_priceListCollection_0_priceList-uid")]//input'
+            locator: '//div[contains(@id,"s2id_oro_customer_type_priceListsByWebsites_1_priceListCollection_0_priceList-uid") or contains(@id,"s2id_oro_customer_type_priceListsByWebsites_1_priceList-uid")]//input'
             element: Select2Entity
           Price List2:
             type: 'xpath'
@@ -193,7 +193,7 @@ oro_behat_extension:
           Price List Fallback: 'oro_customer_group_type[priceListsByWebsites][1][fallback]'
           Price List:
             type: 'xpath'
-            locator: '//div[contains(@id,"s2id_oro_customer_group_type_priceListsByWebsites_1_priceListCollection_0_priceList-uid")]//input'
+            locator: '//div[contains(@id,"s2id_oro_customer_group_type_priceListsByWebsites_1_priceListCollection_0_priceList-uid") or contains(@id,"s2id_oro_customer_group_type_priceListsByWebsites_1_priceList-uid")]//input'
             element: Select2Entity
           Name: 'oro_customer_group_type[name]'
 

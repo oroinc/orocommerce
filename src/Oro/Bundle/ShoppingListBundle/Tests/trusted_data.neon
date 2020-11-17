@@ -10,6 +10,10 @@ trusted_data:
         Oro\Bundle\ShoppingListBundle\Api\GuestShoppingListQueryModifier:
             getShoppingListJoin:
                 joinDqlPart: true
+        Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListTotalRepository:
+            invalidateByBasePriceList:
+                priceClass: true
+                subQuery: true
     safe_methods:
         Oro\Bundle\ShoppingListBundle\Api\GuestShoppingListQueryModifier:
             getCustomerVisitorSubquery: true
