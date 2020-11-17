@@ -1,14 +1,15 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Api\Processor\Create;
+namespace Oro\Bundle\ProductBundle\Api\Processor;
 
+use Oro\Bundle\ApiBundle\Processor\FormContext;
 use Oro\Bundle\FrontendBundle\Form\DataTransformer\PageTemplateEntityFieldFallbackValueTransformer;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
 /**
- * Get's the created formBuilder and adds necessary data transformers
+ * Adds a data transformer used to store page templates to "pageTemplate" form field.
  */
 class AddProductTypeDataTransformers implements ProcessorInterface
 {
@@ -17,6 +18,8 @@ class AddProductTypeDataTransformers implements ProcessorInterface
      */
     public function process(ContextInterface $context)
     {
+        /** @var FormContext $context */
+
         $formBuilder = $context->getFormBuilder();
 
         if ($formBuilder->has('pageTemplate')) {
@@ -25,7 +28,5 @@ class AddProductTypeDataTransformers implements ProcessorInterface
                     new PageTemplateEntityFieldFallbackValueTransformer(ProductType::PAGE_TEMPLATE_ROUTE_NAME)
                 );
         }
-
-        $context->setFormBuilder($formBuilder);
     }
 }

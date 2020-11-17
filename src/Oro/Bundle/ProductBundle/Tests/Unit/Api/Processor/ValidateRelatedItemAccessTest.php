@@ -4,10 +4,10 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Request\ApiActionGroup;
 use Oro\Bundle\ApiBundle\Tests\Unit\Processor\Get\GetProcessorTestCase;
-use Oro\Bundle\ProductBundle\Api\Processor\RelatedItemSecurityCheck;
+use Oro\Bundle\ProductBundle\Api\Processor\ValidateRelatedItemAccess;
 use Oro\Bundle\SecurityBundle\Tests\Unit\Authorization\FakeAuthorizationChecker;
 
-class RelatedItemSecurityCheckTest extends GetProcessorTestCase
+class ValidateRelatedItemAccessTest extends GetProcessorTestCase
 {
     public function testAccessIsDeniedWhenUserDoesNotHaveCapabilityToEditRelatedProducts()
     {
@@ -69,13 +69,13 @@ class RelatedItemSecurityCheckTest extends GetProcessorTestCase
      * @param array $permissions
      * @param array $isGrantedMapping
      *
-     * @return RelatedItemSecurityCheck
+     * @return ValidateRelatedItemAccess
      */
     private function getProcessor(array $permissions, array $isGrantedMapping)
     {
         $authChecker = new FakeAuthorizationChecker();
         $authChecker->isGrantedMapping = $isGrantedMapping;
 
-        return new RelatedItemSecurityCheck($authChecker, $permissions);
+        return new ValidateRelatedItemAccess($authChecker, $permissions);
     }
 }

@@ -16,10 +16,6 @@ use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
  * Modifies a category query builder to filter invisible categories,
  * because they should not be accessible via API for the storefront.
  * @see \Oro\Bundle\VisibilityBundle\EventListener\CategoryTreeHandlerListener
- * This class can be implemented as a rule for AclHelper after this component
- * will allow to add additional rules for it (BAP-10836). In this case we will modify AST of a query
- * instead of modifying QueryBuilder; this solution is more flexible and more error-free
- * because we will work with already parsed query, instead of trying to parse it manually.
  */
 class CategoryVisibilityQueryModifier implements QueryModifierInterface
 {

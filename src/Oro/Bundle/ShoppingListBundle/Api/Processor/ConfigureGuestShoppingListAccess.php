@@ -15,7 +15,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
  * * removes ACL resource for shopping list and line item entities;
  * * removes AccessGranted validators for shopping list and line item associations.
  */
-class GuestShoppingListAccessCheck implements ProcessorInterface
+class ConfigureGuestShoppingListAccess implements ProcessorInterface
 {
     /** @var TokenStorageInterface */
     private $tokenStorage;

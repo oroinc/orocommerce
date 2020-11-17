@@ -12,10 +12,6 @@ use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 /**
  * Modifies query builder for order address entity to filter data
  * that should not be accessible via API for the storefront.
- * This class can be implemented as a rule for AclHelper after this component
- * will allow to add rules for associated entities (BAP-17680). In this case we will modify AST of a query
- * instead of modifying QueryBuilder; this solution is more flexible and more error-free
- * because we will work with already parsed query, instead of trying to parse it manually.
  */
 class OrderAddressQueryModifier implements QueryModifierInterface
 {

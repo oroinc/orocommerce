@@ -14,7 +14,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 /**
  * Validates whether an access to the related product is granted.
  */
-class RelatedItemSecurityCheck implements ProcessorInterface
+class ValidateRelatedItemAccess implements ProcessorInterface
 {
     /** @var AuthorizationCheckerInterface */
     private $authorizationChecker;

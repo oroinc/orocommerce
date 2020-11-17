@@ -1,11 +1,11 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Api\Processor\Delete;
+namespace Oro\Bundle\ProductBundle\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Processor\Context;
-use Oro\Bundle\ProductBundle\Api\Processor\RelatedItemAclCheck as BaseRelatedItemAclCheck;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Component\ChainProcessor\ContextInterface;
+use Oro\Component\EntitySerializer\DoctrineHelper;
 
 /**
  * Modifies the query that is used to retrieve a related product to be deleted
@@ -13,16 +13,18 @@ use Oro\Component\ChainProcessor\ContextInterface;
  * and adds an additional ACL check for VIEW permission for the query.
  * It is required because of Delete action sets ACL before the query is modified.
  */
-class RelatedItemAclCheck extends BaseRelatedItemAclCheck
+class ProtectRelatedProductDeleteQueryByAcl extends ProtectRelatedProductQueryByAcl
 {
     /** @var AclHelper */
-    protected $aclHelper;
+    private $aclHelper;
 
     /**
-     * @param AclHelper $aclHelper
+     * @param DoctrineHelper $doctrineHelper
+     * @param AclHelper      $aclHelper
      */
-    public function setAclHelper(AclHelper $aclHelper)
+    public function __construct(DoctrineHelper $doctrineHelper, AclHelper $aclHelper)
     {
+        parent::__construct($doctrineHelper);
         $this->aclHelper = $aclHelper;
     }
 

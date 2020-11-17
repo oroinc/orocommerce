@@ -1,11 +1,11 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\Unit\Api\Processor\Create;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Model\Error;
 use Oro\Bundle\ApiBundle\Tests\Unit\Processor\Create\CreateProcessorTestCase;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
-use Oro\Bundle\ProductBundle\Api\Processor\Create\SaveRelatedProduct;
+use Oro\Bundle\ProductBundle\Api\Processor\SaveRelatedProduct;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
 use Oro\Bundle\ProductBundle\Entity\Repository\RelatedItem\RelatedProductRepository;

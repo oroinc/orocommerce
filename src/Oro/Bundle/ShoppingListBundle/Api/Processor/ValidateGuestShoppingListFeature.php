@@ -14,7 +14,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  * Denies access to shopping list API resources for customer visitors
  * if "Enable Guest Shopping List" feature is not enabled.
  */
-class GuestShoppingListFeatureCheck implements ProcessorInterface
+class ValidateGuestShoppingListFeature implements ProcessorInterface
 {
     /** @var TokenStorageInterface */
     private $tokenStorage;
