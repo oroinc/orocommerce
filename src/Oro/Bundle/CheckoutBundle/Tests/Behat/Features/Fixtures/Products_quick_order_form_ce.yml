@@ -124,7 +124,7 @@ Oro\Bundle\PricingBundle\Entity\ProductPrice:
         currency: 'USD'
         quantity: 1
         unit: '@item'
-        value: 95
+        value: 45
     price2:
         product: '@product2'
         priceList: '@defaultPriceList'
@@ -138,7 +138,7 @@ Oro\Bundle\PricingBundle\Entity\ProductPrice:
         currency: 'USD'
         quantity: 1
         unit: '@set'
-        value: 85
+        value: 35
     price4:
         product: '@product3'
         priceList: '@defaultPriceList'
@@ -167,32 +167,6 @@ Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
     priceRelation5:
         product: '@product5'
         priceList: '@defaultPriceList'
-
-Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
-   combinedProductPriceProduct1:
-        pricelist: '@combinedPriceList'
-        product: '@product1'
-        productSku: 'PSKU1'
-        quantity: 1
-        unit: '@item'
-        value: 45
-        currency: 'USD'
-   combinedProductPriceProduct2:
-        pricelist: '@combinedPriceList'
-        product: '@product2'
-        productSku: 'PSKU2'
-        quantity: 1
-        unit: '@set'
-        value: 35
-        currency: 'USD'
-   combinedProductPriceProduct3:
-        pricelist: '@combinedPriceList'
-        product: '@product3'
-        productSku: 'PSKU3'
-        quantity: 1
-        unit: '@item'
-        value: 5
-        currency: 'USD'
 
 Oro\Bundle\InventoryBundle\Entity\InventoryLevel:
     inventoryLevel1:

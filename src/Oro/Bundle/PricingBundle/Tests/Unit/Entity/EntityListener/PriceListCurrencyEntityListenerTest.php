@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Entity\EntityListener;
 
 use Doctrine\Common\Cache\Cache;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\EntityListener\PriceListCurrencyEntityListener;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -21,6 +22,11 @@ class PriceListCurrencyEntityListenerTest extends \PHPUnit\Framework\TestCase
     /** @var PriceListTriggerHandler|\PHPUnit\Framework\MockObject\MockObject */
     private $priceListTriggerHandler;
 
+    /**
+     * @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $featureChecker;
+
     /** @var PriceListCurrencyEntityListener */
     private $listener;
 
@@ -31,16 +37,23 @@ class PriceListCurrencyEntityListenerTest extends \PHPUnit\Framework\TestCase
     {
         $this->cache = $this->createMock(Cache::class);
         $this->priceListTriggerHandler = $this->createMock(PriceListTriggerHandler::class);
+        $this->featureChecker = $this->createMock(FeatureChecker::class);
 
         $this->listener = new PriceListCurrencyEntityListener(
             $this->cache,
             $this->priceListTriggerHandler
         );
+        $this->listener->setFeatureChecker($this->featureChecker);
+        $this->listener->addFeature('oro_price_lists_combined');
     }
 
     public function testPostPersistDisabled()
     {
         $this->listener->setEnabled(false);
+        $this->featureChecker->expects($this->any())
+            ->method('isFeatureEnabled')
+            ->with('oro_price_lists_combined')
+            ->willReturn(true);
         $this->priceListTriggerHandler->expects($this->never())
             ->method($this->anything());
 
@@ -58,12 +71,45 @@ class PriceListCurrencyEntityListenerTest extends \PHPUnit\Framework\TestCase
         $priceListCurrency = new PriceListCurrency();
         $priceListCurrency->setPriceList($priceList);
 
+        $this->featureChecker->expects($this->any())
+            ->method('isFeatureEnabled')
+            ->with('oro_price_lists_combined')
+            ->willReturn(true);
         $this->priceListTriggerHandler->expects($this->exactly(2))
             ->method('handlePriceListTopic')
             ->withConsecutive(
                 [Topics::RESOLVE_COMBINED_CURRENCIES, $priceList],
                 [Topics::RESOLVE_PRICE_RULES, $priceList]
             );
+
+        $this->cache->expects($this->once())
+            ->method('delete')
+            ->withConsecutive(
+                ['pr_4']
+            );
+
+        $this->listener->postPersist($priceListCurrency);
+        $this->assertFalse($priceList->isActual());
+    }
+
+    public function testPostPersistFeatureDisabled()
+    {
+        /** @var PriceList $priceList */
+        $priceList = $this->getEntity(PriceList::class, ['id' => 42]);
+        /** @var PriceRule $priceRule */
+        $priceRule = $this->getEntity(PriceRule::class, ['id' => 4]);
+        $priceList->addPriceRule($priceRule);
+
+        $priceListCurrency = new PriceListCurrency();
+        $priceListCurrency->setPriceList($priceList);
+
+        $this->featureChecker->expects($this->any())
+            ->method('isFeatureEnabled')
+            ->with('oro_price_lists_combined')
+            ->willReturn(false);
+        $this->priceListTriggerHandler->expects($this->once())
+            ->method('handlePriceListTopic')
+            ->with(Topics::RESOLVE_PRICE_RULES, $priceList);
 
         $this->cache->expects($this->once())
             ->method('delete')
@@ -82,6 +128,10 @@ class PriceListCurrencyEntityListenerTest extends \PHPUnit\Framework\TestCase
         $priceListCurrency = new PriceListCurrency();
         $priceListCurrency->setPriceList($priceList);
 
+        $this->featureChecker->expects($this->any())
+            ->method('isFeatureEnabled')
+            ->with('oro_price_lists_combined')
+            ->willReturn(true);
         $this->priceListTriggerHandler->expects($this->once())
             ->method('handlePriceListTopic')
             ->with(Topics::RESOLVE_COMBINED_CURRENCIES, $priceList);
@@ -93,6 +143,10 @@ class PriceListCurrencyEntityListenerTest extends \PHPUnit\Framework\TestCase
     public function testPreRemoveDisabled()
     {
         $this->listener->setEnabled(false);
+        $this->featureChecker->expects($this->any())
+            ->method('isFeatureEnabled')
+            ->with('oro_price_lists_combined')
+            ->willReturn(true);
         $this->priceListTriggerHandler->expects($this->never())
             ->method($this->anything());
 
@@ -110,12 +164,45 @@ class PriceListCurrencyEntityListenerTest extends \PHPUnit\Framework\TestCase
         $priceListCurrency = new PriceListCurrency();
         $priceListCurrency->setPriceList($priceList);
 
+        $this->featureChecker->expects($this->any())
+            ->method('isFeatureEnabled')
+            ->with('oro_price_lists_combined')
+            ->willReturn(true);
         $this->priceListTriggerHandler->expects($this->exactly(2))
             ->method('handlePriceListTopic')
             ->withConsecutive(
                 [Topics::RESOLVE_COMBINED_CURRENCIES, $priceList],
                 [Topics::RESOLVE_PRICE_RULES, $priceList]
             );
+
+        $this->cache->expects($this->once())
+            ->method('delete')
+            ->withConsecutive(
+                ['pr_4']
+            );
+
+        $this->listener->preRemove($priceListCurrency);
+        $this->assertFalse($priceList->isActual());
+    }
+
+    public function testPreRemoveFeatureDisabled()
+    {
+        /** @var PriceList $priceList */
+        $priceList = $this->getEntity(PriceList::class, ['id' => 42]);
+        /** @var PriceRule $priceRule */
+        $priceRule = $this->getEntity(PriceRule::class, ['id' => 4]);
+        $priceList->addPriceRule($priceRule);
+
+        $priceListCurrency = new PriceListCurrency();
+        $priceListCurrency->setPriceList($priceList);
+
+        $this->featureChecker->expects($this->any())
+            ->method('isFeatureEnabled')
+            ->with('oro_price_lists_combined')
+            ->willReturn(false);
+        $this->priceListTriggerHandler->expects($this->once())
+            ->method('handlePriceListTopic')
+            ->with(Topics::RESOLVE_PRICE_RULES, $priceList);
 
         $this->cache->expects($this->once())
             ->method('delete')

@@ -1,58 +1,19 @@
-Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
-    businessUnit:
-        name: 'Common Business Unit'
-        organization: '@organization'
+include:
+    - '@OroCheckoutBundle:CheckoutProductWithoutPricesFixture.yml'
 
 Oro\Bundle\CurrencyBundle\Entity\Price:
     price:
         value: '10'
         currency: 'USD'
 
-Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
-    precision:
-        unit: '@item'
-        precision: '1'
-
-Oro\Bundle\ProductBundle\Entity\ProductName:
-    locValue:
-        string: '400-Watt Bulb Work Light'
-
-Oro\Bundle\ProductBundle\Entity\Product:
-    product:
-        sku: 'SKU123'
-        type: 'simple'
-        primaryUnitPrecision: '@precision'
-        __calls:
-            - addName: ['@locValue']
-        attributeFamily: '@defaultProductFamily'
-        inventoryStatus: '@enumInventoryStatuses'
-        organization: '@organization'
-        owner: '@businessUnit'
-        status: 'enabled'
-
-Oro\Bundle\PricingBundle\Entity\PriceList:
-    pricelistShipping:
-        name: 'pricelist_shipping'
-        default: true
-        __calls:
-            - setCurrencies: [['USD', 'EUR']]
-        active: true
-
 Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
-    priceListToProduct:
-        priceList: '@pricelistShipping'
+    priceRelationSku123ToPriceListDefault:
         product: '@product'
-
-Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
-    priceListToCustomer:
-        customer: '@customer'
-        pricelist: '@pricelistShipping'
-        website: '@website1'
-        sortOrder: 200
+        priceList: '@defaultPriceList'
 
 Oro\Bundle\PricingBundle\Entity\ProductPrice:
     productPrice:
-        pricelist: '@pricelistShipping'
+        pricelist: '@defaultPriceList'
         product: '@product'
         productSku: 'SKU123'
         quantity: 5
@@ -60,46 +21,10 @@ Oro\Bundle\PricingBundle\Entity\ProductPrice:
         value: 2
         currency: 'USD'
     productPriceEur:
-        pricelist: '@pricelistShipping'
+        pricelist: '@defaultPriceList'
         product: '@product'
         productSku: 'SKU123'
         quantity: 5
         unit: '@item'
         value: 1.9
         currency: 'EUR'
-
-Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
-    combinedProductPrice:
-        pricelist: '@combinedPriceList'
-        product: '@product'
-        productSku: 'SKU123'
-        quantity: 5
-        unit: '@item'
-        value: 2
-        currency: 'USD'
-    combinedProductPriceEur:
-        pricelist: '@combinedPriceList'
-        product: '@product'
-        productSku: 'SKU123'
-        quantity: 5
-        unit: '@item'
-        value: 1.9
-        currency: 'EUR'
-
-Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList:
-    cpl2pl:
-        combinedPriceList: '@combinedPriceList'
-        priceList: '@pricelistShipping'
-        sortOrder: 200
-        mergeAllowed: true
-
-Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer:
-    combinedPriceListToCustomer:
-        pricelist: '@combinedPriceList'
-        customer: '@customer'
-        website: '@website1'
-
-Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite:
-    combinedPriceListToWebsite:
-        pricelist: '@combinedPriceList'
-        website: '@website1'

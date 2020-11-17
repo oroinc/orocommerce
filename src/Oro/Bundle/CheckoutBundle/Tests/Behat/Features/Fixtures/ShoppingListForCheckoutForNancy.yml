@@ -107,45 +107,17 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
        shoppingList: '@shoppinglist6'
        organization: '@organization'
 
-Oro\Bundle\CurrencyBundle\Entity\Price:
-    price:
-        value: '10'
-        currency: 'USD'
-
-Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
-    priceListToCustomer:
-        customer: '@customer1'
-        pricelist: '@pricelist1'
-        website: '@website1'
-        sortOrder: 200
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceToProductRelation:
+        product: '@product1'
+        priceList: '@defaultPriceList'
 
 Oro\Bundle\PricingBundle\Entity\ProductPrice:
     productPrice:
-        pricelist: '@pricelist1'
+        pricelist: '@defaultPriceList'
         product: '@product1'
         productSku: 'AA1'
         quantity: 1
         unit: '@item'
         value: 10
         currency: 'USD'
-
-Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
-   combinedProductPrice:
-        pricelist: '@combinedPriceList'
-        product: '@product1'
-        productSku: 'AA1'
-        quantity: 1
-        unit: '@item'
-        value: 10
-        currency: 'USD'
-
-Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer:
-    combinedPriceListToCustomer:
-        pricelist: '@combinedPriceList'
-        customer: '@customer1'
-        website: '@website1'
-
-Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite:
-    combinedPriceListToWebsite:
-        pricelist: '@combinedPriceList'
-        website: '@website1'

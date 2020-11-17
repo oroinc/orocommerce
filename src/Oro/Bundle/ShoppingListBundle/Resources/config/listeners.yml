@@ -1,7 +1,6 @@
 services:
     oro_shopping_list.event_listener.shopping_list_total_listener:
         class: 'Oro\Bundle\ShoppingListBundle\EventListener\ShoppingListTotalListener'
-        public: true
         arguments:
             - '@doctrine'
             - '@oro_config.global'
@@ -11,6 +10,16 @@ services:
             - { name: kernel.event_listener, event: oro_pricing.customer_group.combined_price_list.update, method: onCustomerGroupPriceListUpdate }
             - { name: kernel.event_listener, event: oro_pricing.website.combined_price_list.update, method: onWebsitePriceListUpdate }
             - { name: kernel.event_listener, event: oro_pricing.config.combined_price_list.update, method: onConfigPriceListUpdate }
+
+    oro_shopping_list.event_listener.pricing_storage.shopping_list_total_listener:
+        class: 'Oro\Bundle\ShoppingListBundle\EventListener\FlatPricingShoppingListTotalListener'
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: kernel.event_listener, event: oro_pricing.pricing_storage.mass_storage_update, method: onPriceListUpdate }
+            - { name: kernel.event_listener, event: oro_pricing.pricing_storage.customer_relation_update, method: onCustomerPriceListUpdate }
+            - { name: kernel.event_listener, event: oro_pricing.pricing_storage.customer_group_relation_update, method: onCustomerGroupPriceListUpdate }
+            - { name: kernel.event_listener, event: oro_pricing.pricing_storage.website_relation_update, method: onWebsitePriceListUpdate }
 
     oro_shopping_list.event_listener.line_item_preloading:
         parent: oro_entity.event_listener.default_preloading

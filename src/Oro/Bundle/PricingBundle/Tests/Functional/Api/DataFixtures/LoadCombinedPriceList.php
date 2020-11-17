@@ -17,12 +17,12 @@ class LoadCombinedPriceList extends AbstractFixture implements InitialFixtureInt
      */
     public function load(ObjectManager $manager)
     {
-        $organization = $manager->getRepository(CombinedPriceList::class)
+        $defaultCpl = $manager->getRepository(CombinedPriceList::class)
             ->createQueryBuilder('t')
             ->orderBy('t.id')
             ->getQuery()
             ->setMaxResults(1)
             ->getSingleResult();
-        $this->addReference('default_combined_price_list', $organization);
+        $this->addReference('default_combined_price_list', $defaultCpl);
     }
 }

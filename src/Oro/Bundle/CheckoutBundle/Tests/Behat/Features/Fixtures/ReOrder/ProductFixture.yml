@@ -100,6 +100,19 @@ Oro\Bundle\CatalogBundle\Entity\Category:
             - setParentCategory: ['@root_category']
             - setProducts: ['@products']
 
+Oro\Bundle\PricingBundle\Entity\PriceListToWebsite:
+    priceListToWebsite:
+        pricelist: '@defaultPriceList'
+        website: '@website1'
+        sortOrder: 200
+
+Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
+    priceListToCustomer:
+        customer: '@customer1'
+        pricelist: '@defaultPriceList'
+        website: '@website1'
+        sortOrder: 200
+
 Oro\Bundle\PricingBundle\Entity\ProductPrice:
     product1ItemPrice:
         product: '@product1'
@@ -145,79 +158,9 @@ Oro\Bundle\PricingBundle\Entity\ProductPrice:
         value: 10
 
 Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
-    priceRelationRpoduct1DefaultPriceList:
-        product: '@product1'
+    priceRelationDefaultPriceListToProduct{1..4}:
+        product: '@product<current()>'
         priceList: '@defaultPriceList'
-    priceRelationRpoduct2DefaultPriceList:
-        product: '@product2'
-        priceList: '@defaultPriceList'
-    priceRelationRpoduct3DefaultPriceList:
-        product: '@product3'
-        priceList: '@defaultPriceList'
-    priceRelationRpoduct4DefaultPriceList:
-        product: '@product4'
-        priceList: '@defaultPriceList'
-
-Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
-    product1ItemCombined:
-        unit: '@item'
-        product: '@product1'
-        priceList: '@combinedPriceList'
-        quantity: 1
-        value: 11
-        currency: 'USD'
-        productSku: 'AAA1'
-    product1PieceCombined:
-        unit: '@piece'
-        product: '@product1'
-        priceList: '@combinedPriceList'
-        quantity: 1
-        value: 201
-        currency: 'USD'
-        productSku: 'AAA1'
-    product2ItemCombined:
-        unit: '@item'
-        product: '@product2'
-        priceList: '@combinedPriceList'
-        quantity: 1
-        value: 22
-        currency: 'USD'
-        productSku: 'BBB2'
-    product2PieceCombined:
-        unit: '@piece'
-        product: '@product2'
-        priceList: '@combinedPriceList'
-        quantity: 1
-        value: 404
-        currency: 'USD'
-        productSku: 'BBB2'
-    product3ItemCombined:
-        unit: '@item'
-        product: '@product3'
-        priceList: '@combinedPriceList'
-        quantity: 1
-        value: 10
-        currency: 'USD'
-        productSku: 'CCC3'
-    product4ItemCombined:
-        unit: '@item'
-        product: '@product4'
-        priceList: '@combinedPriceList'
-        quantity: 1
-        value: 10
-        currency: 'USD'
-        productSku: 'DDD4'
-
-Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer:
-  combinedPriceListToCustomer:
-    pricelist: '@combinedPriceList'
-    customer: '@customer1'
-    website: '@website1'
-
-Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite:
-  combinedPriceListToWebsite:
-    pricelist: '@combinedPriceList'
-    website: '@website1'
 
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
     shoppinglist1:

@@ -9,6 +9,11 @@ Oro\Bundle\PricingBundle\Entity\PriceList:
             - setCurrencies: [['USD','EUR']]
         active: true
 
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceListProductRelation:
+        product: '@product'
+        priceList: '@pricelistShipping'
+
 Oro\Bundle\TaxBundle\Entity\ProductTaxCode:
     tax_code_taxable_items:
         code: 'taxable_items'
@@ -51,13 +56,3 @@ Oro\Bundle\PricingBundle\Entity\ProductPrice:
         quantity: 1
         unit: '@item'
         value: 40
-
-Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
-   combinedProductPriceProduct2:
-        pricelist: '@combinedPriceList'
-        product: '@product'
-        productSku: 'SKU123'
-        quantity: 1
-        unit: '@item'
-        value: 40
-        currency: 'EUR'

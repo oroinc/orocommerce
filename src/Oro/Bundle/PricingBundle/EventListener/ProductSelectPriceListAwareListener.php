@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\EventListener;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Model\FrontendProductListModifier;
 use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
 
@@ -75,12 +76,12 @@ class ProductSelectPriceListAwareListener
 
     /**
      * @param int $priceListId
-     * @return \Oro\Bundle\PricingBundle\Entity\PriceList
+     * @return PriceList
      */
     protected function getPriceListById($priceListId)
     {
-        return $this->registry->getManagerForClass('OroPricingBundle:PriceList')
-            ->getRepository('OroPricingBundle:PriceList')
+        return $this->registry->getManagerForClass(PriceList::class)
+            ->getRepository(PriceList::class)
             ->find($priceListId);
     }
 }

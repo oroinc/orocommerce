@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use Oro\Bundle\PricingBundle\Compiler\PriceListRuleCompiler;
@@ -36,6 +37,11 @@ class ProductPriceBuilderTest extends \PHPUnit\Framework\TestCase
     /** @var PriceListTriggerHandler|\PHPUnit\Framework\MockObject\MockObject */
     private $priceListTriggerHandler;
 
+    /**
+     * @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $featureChecker;
+
     /** @var ProductPriceBuilder */
     private $productPriceBuilder;
 
@@ -46,6 +52,7 @@ class ProductPriceBuilderTest extends \PHPUnit\Framework\TestCase
         $this->ruleCompiler = $this->createMock(PriceListRuleCompiler::class);
         $this->priceListTriggerHandler = $this->createMock(PriceListTriggerHandler::class);
         $this->shardManager = $this->createMock(ShardManager::class);
+        $this->featureChecker = $this->createMock(FeatureChecker::class);
 
         $this->productPriceBuilder = new ProductPriceBuilder(
             $this->registry,
@@ -54,11 +61,18 @@ class ProductPriceBuilderTest extends \PHPUnit\Framework\TestCase
             $this->priceListTriggerHandler,
             $this->shardManager
         );
+        $this->productPriceBuilder->setFeatureChecker($this->featureChecker);
+        $this->productPriceBuilder->addFeature('oro_price_lists_combined');
     }
 
     public function testBuildByPriceListNoRules()
     {
         $priceList = new PriceList();
+
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('oro_price_lists_combined')
+            ->willReturn(true);
 
         /** @var Product|\PHPUnit\Framework\MockObject\MockObject $product * */
         $productId = 1;
@@ -81,6 +95,11 @@ class ProductPriceBuilderTest extends \PHPUnit\Framework\TestCase
     public function testBuildByPriceListNoRulesWithoutProduct()
     {
         $priceList = new PriceList();
+
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('oro_price_lists_combined')
+            ->willReturn(true);
 
         $repo = $this->getRepositoryMock();
         $repo->expects($this->once())
@@ -113,6 +132,11 @@ class ProductPriceBuilderTest extends \PHPUnit\Framework\TestCase
 
         $fields = ['field1', 'field2'];
 
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('oro_price_lists_combined')
+            ->willReturn(true);
+
         $repo = $this->getRepositoryMock();
         $repo->expects($this->once())
             ->method('deleteGeneratedPrices')
@@ -134,6 +158,47 @@ class ProductPriceBuilderTest extends \PHPUnit\Framework\TestCase
         $this->productPriceBuilder->buildByPriceList($priceList, [$product]);
     }
 
+    public function testBuildByPriceListFeatureDisabled()
+    {
+        $priceList = new PriceList();
+
+        /** @var Product|\PHPUnit\Framework\MockObject\MockObject $product * */
+        $product = $this->createMock(Product::class);
+
+        $rule1 = new PriceRule();
+        $rule1->setPriority(10);
+        $rule2 = new PriceRule();
+        $rule2->setPriority(20);
+
+        $priceList->setPriceRules(new ArrayCollection([$rule2, $rule1]));
+
+        $fields = ['field1', 'field2'];
+
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('oro_price_lists_combined')
+            ->willReturn(false);
+
+        $repo = $this->getRepositoryMock();
+        $repo->expects($this->once())
+            ->method('deleteGeneratedPrices')
+            ->with($this->shardManager, $priceList, [$product]);
+
+        $qb = $this->assertInsertCall($fields, [$rule1, $rule2], [$product]);
+        $this->insertFromSelectQueryExecutor->expects($this->exactly(2))
+            ->method('execute')
+            ->with(
+                ProductPrice::class,
+                $fields,
+                $qb
+            );
+
+        $this->priceListTriggerHandler->expects($this->never())
+            ->method('handlePriceListTopic');
+
+        $this->productPriceBuilder->buildByPriceList($priceList, [$product]);
+    }
+
     public function testBuildByPriceListNoProductsProvided()
     {
         $priceList = new PriceList();
@@ -144,6 +209,11 @@ class ProductPriceBuilderTest extends \PHPUnit\Framework\TestCase
         $priceList->setPriceRules(new ArrayCollection([$rule]));
 
         $fields = ['field1', 'field2'];
+
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('oro_price_lists_combined')
+            ->willReturn(true);
 
         $repo = $this->getRepositoryMock();
         $repo->expects($this->once())
@@ -191,6 +261,9 @@ class ProductPriceBuilderTest extends \PHPUnit\Framework\TestCase
         $repository->expects($this->once())
             ->method('deleteGeneratedPrices')
             ->with($this->shardManager, $priceList, []);
+
+        $this->featureChecker->expects($this->never())
+            ->method('isFeatureEnabled');
 
         $fields = ['field1', 'field2'];
         $queryBuilder = $this->assertInsertCall($fields, [$rule]);

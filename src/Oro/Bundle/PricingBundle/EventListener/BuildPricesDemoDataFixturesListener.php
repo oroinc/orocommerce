@@ -3,6 +3,8 @@
 namespace Oro\Bundle\PricingBundle\EventListener;
 
 use Doctrine\Common\Persistence\ObjectManager;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\MigrationBundle\Event\MigrationDataFixturesEvent;
 use Oro\Bundle\PlatformBundle\EventListener\AbstractDemoDataFixturesListener;
 use Oro\Bundle\PlatformBundle\Manager\OptionalListenerManager;
@@ -15,8 +17,10 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
  * Building all combined price lists during loading of demo data
  * Disables search re-indexation for building combined price lists
  */
-class BuildPricesDemoDataFixturesListener extends AbstractDemoDataFixturesListener
+class BuildPricesDemoDataFixturesListener extends AbstractDemoDataFixturesListener implements FeatureToggleableInterface
 {
+    use FeatureCheckerHolderTrait;
+
     /** @var CombinedPriceListsBuilderFacade CombinedPriceListsBuilderFacade */
     protected $combinedPriceListsBuilderFacade;
 
@@ -50,6 +54,10 @@ class BuildPricesDemoDataFixturesListener extends AbstractDemoDataFixturesListen
      */
     protected function afterEnableListeners(MigrationDataFixturesEvent $event)
     {
+        if (!$this->isFeaturesEnabled()) {
+            return;
+        }
+
         $event->log('building all combined price lists');
 
         // website search index should not be re-indexed while cpl build

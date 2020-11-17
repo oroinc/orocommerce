@@ -54,6 +54,18 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                     'value' => MinimalPricesCombiningStrategy::NAME,
                     'scope' => 'app'
                 ],
+                'price_storage' => [
+                    'value' => 'combined',
+                    'scope' => 'app'
+                ],
+                'price_indexation_accuracy' => [
+                    'value' => 'customer',
+                    'scope' => 'app'
+                ],
+                'default_price_list' => [
+                    'value' => null,
+                    'scope' => 'app'
+                ],
                 'feature_enabled' => [
                     'value' => true,
                     'scope' => 'app'

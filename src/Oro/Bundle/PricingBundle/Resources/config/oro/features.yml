@@ -15,16 +15,33 @@ features:
             - 'oro_pricing_price_list_update'
             - 'oro_pricing_price_product_sidebar'
         commands:
-            - 'oro:cron:price-lists:schedule'
             - 'oro:import:price-list:file'
-            - 'oro:price-lists:recalculate'
             - 'oro:price-lists:pl-storage-reorganize'
+            - 'oro:price-lists:switch-pricing-storage'
         api_resources:
             - 'Oro\Bundle\PricingBundle\Entity\PriceList'
             - 'Oro\Bundle\PricingBundle\Entity\PriceListSchedule'
             - 'Oro\Bundle\PricingBundle\Entity\PriceRule'
             - 'Oro\Bundle\PricingBundle\Entity\ProductPrice'
+
+    oro_price_lists_flat:
+        label: 'Oro Pricing - Price Lists (Flat)'
+        dependencies:
+            - 'oro_price_lists'
         configuration:
-            - 'default_price_lists'
+            - 'oro_pricing.default_price_list'
+
+    oro_price_lists_combined:
+        label: 'Oro Pricing - Price Lists (Combined)'
+        dependencies:
+            - 'oro_price_lists'
+        commands:
+            - 'oro:cron:price-lists:schedule'
+            - 'oro:price-lists:recalculate'
+        configuration:
+            - 'oro_pricing.default_price_lists'
             - 'price_lists_update'
             - 'price_strategies'
+        mq_topics:
+            - 'oro_pricing.price_lists.cpl.resolve_prices'
+            - 'oro_pricing.price_lists.cpl.resolve_currencies'

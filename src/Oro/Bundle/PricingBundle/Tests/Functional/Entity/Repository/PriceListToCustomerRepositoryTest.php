@@ -428,4 +428,15 @@ class PriceListToCustomerRepositoryTest extends WebTestCase
         $this->assertArrayHasKey($expectedCustomer->getId(), $customers);
         $this->assertTrue($customers[$expectedCustomer->getId()]);
     }
+
+    public function testGetFirstRelation()
+    {
+        $customer = $this->getReference('customer.level_1_1');
+        $website = $this->getReference('US');
+        $expectedPriceList = $this->getReference('price_list_2');
+
+        $priceListRelation = $this->getRepository()->getFirstRelation($website, $customer);
+        $this->assertInstanceOf(PriceListToCustomer::class, $priceListRelation);
+        $this->assertEquals($expectedPriceList->getId(), $priceListRelation->getPriceList()->getId());
+    }
 }

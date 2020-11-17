@@ -1,4 +1,5 @@
 @regression
+@pricing-storage-combined
 @ticket-BB-8594
 @ticket-BB-17545
 @automatically-ticket-tagged

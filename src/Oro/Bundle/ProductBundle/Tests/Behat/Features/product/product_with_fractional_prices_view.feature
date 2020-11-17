@@ -5,8 +5,8 @@
 Feature: Product with fractional prices view
   In order to use correct decimal separator for fractional prices in different locales
   As an Buyer
-    I should see fractional prices formatted according locale settings on Product view page
-    I should see prices and price attributes formatted according to locale settings on Product view page in backoffice
+  I should see fractional prices formatted according locale settings on Product view page
+  I should see prices and price attributes formatted according to locale settings on Product view page in backoffice
 
   Scenario: Feature Background
     Given There is USD currency in the system configuration
@@ -45,10 +45,10 @@ Feature: Product with fractional prices view
     And I click View "PSKU1" in grid
     And I sort "ProductPricesGrid" by "Quantity"
     Then I should see following "ProductPricesGrid" grid:
-      | Price List          | Quantity | Unit | Value | Currency |
-      | priceListForWebsite | 0.5      | each | 15.99 | USD      |
-      | priceListForWebsite | 1        | each | 12.99 | USD      |
-      | priceListForWebsite | 100      | each | 10.99 | USD      |
+      | Price List         | Quantity | Unit | Value | Currency |
+      | Default Price List | 0.5      | each | 15.99 | USD      |
+      | Default Price List | 1        | each | 12.99 | USD      |
+      | Default Price List | 100      | each | 10.99 | USD      |
 
     And I go to System/Configuration
     And follow "System Configuration/General Setup/Localization" on configuration sidebar
@@ -62,10 +62,10 @@ Feature: Product with fractional prices view
     When I click View "PSKU1" in grid
     And I sort "ProductPricesGrid" by "Quantity"
     Then I should see following "ProductPricesGrid" grid:
-      | Price List          | Quantity | Unit | Value | Currency |
-      | priceListForWebsite | 0.5      | each | 15,99 | USD      |
-      | priceListForWebsite | 1        | each | 12,99 | USD      |
-      | priceListForWebsite | 100      | each | 10,99 | USD      |
+      | Price List         | Quantity | Unit | Value | Currency |
+      | Default Price List | 0.5      | each | 15,99 | USD      |
+      | Default Price List | 1        | each | 12,99 | USD      |
+      | Default Price List | 100      | each | 10,99 | USD      |
 
   Scenario: Table view of price attributes on product view page in backoffice is formatted according to locale settings
     Given I go to Products/ Price Attributes

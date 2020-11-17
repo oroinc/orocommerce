@@ -16,6 +16,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         owner: '@business_unit'
         sku: 'AA1'
+        attributeFamily: '@defaultProductFamily'
         primaryUnitPrecision: '@precision1'
         __calls:
             - addName: ['@locvalue1']

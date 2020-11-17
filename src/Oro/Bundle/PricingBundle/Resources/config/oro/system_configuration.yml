@@ -14,6 +14,11 @@ system_configuration:
         price_strategies:
             title: oro.pricing.system_configuration.groups.price_strategies.title
     fields:
+        oro_pricing.default_price_list:
+            data_type: integer
+            type: Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType
+            options:
+                label: oro.pricing.pricelist.entity_label
         oro_pricing.default_price_lists:
             data_type: array
             type: Oro\Bundle\PricingBundle\Form\Type\PriceListSystemConfigType
@@ -104,6 +109,7 @@ system_configuration:
                                     default_price_lists:
                                         priority: 100
                                         children:
+                                            - oro_pricing.default_price_list
                                             - oro_pricing.default_price_lists
                                     price_lists_update:
                                         priority: 50
