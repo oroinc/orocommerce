@@ -14,8 +14,11 @@ export default {
             outerHintContainer: `[data-hint-container="${options.gridName}"]`,
             renderMode: 'toggle-mode',
             autoClose: false,
-            enableMultiselectWidget: false,
-            template: filtersContainerTemplate
+            enableMultiselectWidget: true,
+            template: filtersContainerTemplate,
+            multiselectParameters: {
+                appendTo: '[data-role="filter-container-manager"]'
+            }
         });
 
         options.metadata.filters.forEach(filter => {

@@ -8,10 +8,6 @@
     </div>
 {% endblock %}
 
-{% block __oro_product_grid_sidebar_filters__sidebar_filters_title_widget %}
-    <h2 {{ block('block_attributes') }}>{{ 'oro.product.sidebar_filters.title'|trans }}</h2>
-{% endblock %}
-
 {% block __oro_product_grid_sidebar_filters__sidebar_filters_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' sidebar-filter-container',
