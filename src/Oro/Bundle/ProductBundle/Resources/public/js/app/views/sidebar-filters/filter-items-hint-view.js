@@ -25,7 +25,7 @@ const FilterItemsHintView = BaseView.extend({
      * @inheritDoc
      */
     events: {
-        click: 'onClick'
+        'click .reset-filter-button': 'resetAllFilters'
     },
 
     /**
@@ -62,7 +62,7 @@ const FilterItemsHintView = BaseView.extend({
      * Click handler
      * @param e
      */
-    onClick(e) {
+    resetAllFilters(e) {
         mediator.trigger('filters:reset', e);
     },
 

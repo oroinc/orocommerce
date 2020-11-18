@@ -1,7 +1,7 @@
 import _ from 'underscore';
 import FilterItemsHintView from 'oroproduct/js/app/views/sidebar-filters/filter-items-hint-view';
 import FilterExtraHintView from 'oroproduct/js/app/views/sidebar-filters/filter-extra-hint-view';
-import ApplyFilterView from 'oroproduct/js/app/views/sidebar-filters/filter-applier-view';
+import FilterApplierComponent from 'oroproduct/js/app/components/sidebar-filters/filter-applier-component';
 import filtersContainerTemplate from 'tpl-loader!oroproduct/templates/sidebar-filters/filters-container.html';
 
 export default {
@@ -69,11 +69,11 @@ export default {
                     }));
                 });
 
-                const applyFilterView = new ApplyFilterView({
+                const applyFilterComponent = new FilterApplierComponent({
                     filterManager: filterManager
                 });
 
-                filterManager.subview('sidebar-filters:apply-filter', applyFilterView);
+                filterManager.subview('sidebar-filters:apply-filter-component', applyFilterComponent);
             });
         });
         return deferred.resolve();
