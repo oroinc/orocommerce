@@ -9,21 +9,18 @@ use Oro\Bundle\QueryDesignerBundle\QueryDesigner\FunctionProviderInterface;
 use Oro\Bundle\QueryDesignerBundle\QueryDesigner\GroupingOrmQueryConverter;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
+/**
+ * Converts a virtual fields select query definition created by the query designer to an ORM query.
+ */
 class VirtualFieldsSelectQueryConverter extends GroupingOrmQueryConverter
 {
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $tableAliasByColumn = [];
 
-    /**
-     * @var QueryBuilder
-     */
+    /** @var QueryBuilder */
     protected $qb;
 
     /**
-     * Constructor
-     *
      * @param FunctionProviderInterface $functionProvider
      * @param VirtualFieldProviderInterface $virtualFieldProvider
      * @param ManagerRegistry $doctrine
@@ -38,7 +35,8 @@ class VirtualFieldsSelectQueryConverter extends GroupingOrmQueryConverter
 
     /**
      * @param AbstractQueryDesigner $source
-     * @return \Doctrine\ORM\QueryBuilder
+     *
+     * @return QueryBuilder
      */
     public function convert(AbstractQueryDesigner $source)
     {
