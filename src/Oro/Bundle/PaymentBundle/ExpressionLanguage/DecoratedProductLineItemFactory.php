@@ -4,8 +4,12 @@ namespace Oro\Bundle\PaymentBundle\ExpressionLanguage;
 
 use Oro\Bundle\PaymentBundle\Context\PaymentLineItem;
 use Oro\Bundle\PaymentBundle\Context\PaymentLineItemInterface;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecoratorFactory;
 
+/**
+ * Creates an instance of the PaymentLineItem model with decorated product.
+ */
 class DecoratedProductLineItemFactory
 {
     /**
@@ -22,17 +26,19 @@ class DecoratedProductLineItemFactory
     }
 
     /**
-     * @param PaymentLineItemInterface[] $lineItems
      * @param PaymentLineItemInterface $lineItem
+     * @param int[]|Product[] $products
      *
      * @return PaymentLineItem
      */
-    public function createLineItemWithDecoratedProductByLineItem(array $lineItems, PaymentLineItemInterface $lineItem)
-    {
+    public function createPaymentLineItemWithDecoratedProduct(
+        PaymentLineItemInterface $lineItem,
+        array $products
+    ): PaymentLineItem {
         $product = $lineItem->getProduct();
 
         $decoratedProduct = $product
-            ? $this->virtualFieldsProductDecoratorFactory->createDecoratedProductByProductHolders($lineItems, $product)
+            ? $this->virtualFieldsProductDecoratorFactory->createDecoratedProduct($products, $product)
             : null;
 
         return new PaymentLineItem(
