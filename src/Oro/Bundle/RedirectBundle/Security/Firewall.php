@@ -15,36 +15,39 @@ use Symfony\Component\Security\Http\Firewall as FrameworkFirewall;
  */
 class Firewall
 {
-    /**
-     * @var FrameworkFirewall
-     */
+    /** @var MatchedUrlDecisionMaker */
+    private $matchedUrlDecisionMaker;
+
+    /** @var RequestContext */
+    private $context;
+
+    /** @var SlugRequestFactoryInterface */
+    private $slugRequestFactory;
+
+    /** @var FrameworkFirewall */
     private $baseFirewall;
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     private $slugApplied = false;
 
     /**
-     * @var RequestContext
-     */
-    private $context;
-
-    /**
-     * @var MatchedUrlDecisionMaker
-     */
-    private $matchedUrlDecisionMaker;
-
-    /**
      * @param MatchedUrlDecisionMaker $matchedUrlDecisionMaker
-     * @param RequestContext|null $context
+     * @param RequestContext|null     $context
      */
     public function __construct(
         MatchedUrlDecisionMaker $matchedUrlDecisionMaker,
         RequestContext $context = null
     ) {
-        $this->context = $context;
         $this->matchedUrlDecisionMaker = $matchedUrlDecisionMaker;
+        $this->context = $context;
+    }
+
+    /**
+     * @param SlugRequestFactoryInterface $slugRequestFactory
+     */
+    public function setSlugRequestFactory(SlugRequestFactoryInterface $slugRequestFactory)
+    {
+        $this->slugRequestFactory = $slugRequestFactory;
     }
 
     /**
@@ -60,7 +63,7 @@ class Firewall
     /**
      * Initialize request context by current request, call default firewall behaviour.
      *
-     * @param RequestEvent $event An ResponseEvent instance
+     * @param RequestEvent $event
      */
     public function onKernelRequestBeforeRouting(RequestEvent $event)
     {
@@ -68,7 +71,7 @@ class Firewall
             return;
         }
 
-        if ($this->context) {
+        if (null !== $this->context) {
             $this->context->fromRequest($event->getRequest());
         }
 
@@ -81,7 +84,7 @@ class Firewall
     /**
      * For Slugs perform additional authentication checks for detected route.
      *
-     * @param RequestEvent $event An ResponseEvent instance
+     * @param RequestEvent $event
      */
     public function onKernelRequestAfterRouting(RequestEvent $event)
     {
@@ -91,22 +94,18 @@ class Firewall
                 && !$event->hasResponse()
                 && $request->attributes->has('_resolved_slug_url')
             ) {
-                $finishRequestEvent = new FinishRequestEvent(
+                $this->baseFirewall->onKernelFinishRequest(new FinishRequestEvent(
                     $event->getKernel(),
                     $event->getRequest(),
                     $event->getRequestType()
-                );
-                $this->baseFirewall->onKernelFinishRequest($finishRequestEvent);
+                ));
 
-                $newRequest = $this->createSlugRequest($request);
-                $newEvent = new RequestEvent(
-                    $event->getKernel(),
-                    $newRequest,
-                    $event->getRequestType()
-                );
-                $this->baseFirewall->onKernelRequest($newEvent);
-                if ($newEvent->hasResponse()) {
-                    $event->setResponse($newEvent->getResponse());
+                $slugRequest = $this->createSlugRequest($request);
+                $slugEvent = new RequestEvent($event->getKernel(), $slugRequest, $event->getRequestType());
+                $this->baseFirewall->onKernelRequest($slugEvent);
+                $this->slugRequestFactory->updateMainRequest($event->getRequest(), $slugEvent->getRequest());
+                if ($slugEvent->hasResponse()) {
+                    $event->setResponse($slugEvent->getResponse());
                 }
 
                 $this->slugApplied = true;
@@ -124,12 +123,11 @@ class Firewall
     public function onKernelFinishRequest(FinishRequestEvent $event)
     {
         if ($this->slugApplied) {
-            $finishRequestEvent = new FinishRequestEvent(
+            $this->baseFirewall->onKernelFinishRequest(new FinishRequestEvent(
                 $event->getKernel(),
                 $this->createSlugRequest($event->getRequest()),
                 $event->getRequestType()
-            );
-            $this->baseFirewall->onKernelFinishRequest($finishRequestEvent);
+            ));
         } else {
             $this->baseFirewall->onKernelFinishRequest($event);
         }
@@ -137,25 +135,11 @@ class Firewall
 
     /**
      * @param Request $request
+     *
      * @return Request
      */
     protected function createSlugRequest(Request $request)
     {
-        $newRequest = Request::create(
-            $request->attributes->get('_resolved_slug_url'),
-            $request->getMethod(),
-            $request->query->all(),
-            $request->cookies->all(),
-            $request->files->all(),
-            $request->server->all(),
-            $request->getContent()
-        );
-        if ($request->hasSession()) {
-            $newRequest->setSession($request->getSession());
-        }
-        $newRequest->setLocale($request->getLocale());
-        $newRequest->setDefaultLocale($request->getDefaultLocale());
-
-        return $newRequest;
+        return $this->slugRequestFactory->createSlugRequest($request);
     }
 }
