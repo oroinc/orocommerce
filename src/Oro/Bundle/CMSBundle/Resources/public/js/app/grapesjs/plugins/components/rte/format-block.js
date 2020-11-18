@@ -4,6 +4,8 @@ import 'jquery.select2';
 import selectTemplate from 'tpl-loader!orocms/templates/grapesjs-select-action.html';
 import select2OptionTemplate from 'tpl-loader!orocms/templates/grapesjs-select2-option.html';
 
+const tags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'];
+
 export default {
     name: 'formatBlock',
 
@@ -60,8 +62,13 @@ export default {
         const value = rte.doc.queryCommandValue(action.name);
         const select = rte.actionbar.querySelector('[name="tag"]');
 
+        if (value === '' && tags.includes(rte.el.tagName.toLowerCase())) {
+            $(select).select2('val', rte.el.tagName.toLowerCase());
+            return;
+        }
+
         if (value !== 'false') {
-            if (['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'].indexOf(value) !== -1) {
+            if (tags.includes(value)) {
                 $(select).select2('val', value);
             } else {
                 $(select).select2('val', 'normal');
