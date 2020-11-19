@@ -52,23 +52,8 @@ class ShoppingListRepository extends EntityRepository implements ResettableCusto
         array $sortCriteria = [],
         $excludeShoppingList = null
     ) {
-        $qb = $this->getFindByUserQueryBuilder($sortCriteria, $excludeShoppingList);
-
-        return $aclHelper->apply($qb, BasicPermission::VIEW, [AclHelper::CHECK_RELATIONS => false])->getResult();
-    }
-
-    /**
-     * @param array $sortCriteria
-     * @param ShoppingList|int|null $excludeShoppingList
-     * @return QueryBuilder
-     */
-    private function getFindByUserQueryBuilder(
-        array $sortCriteria = [],
-        $excludeShoppingList = null
-    ): QueryBuilder {
         $qb = $this->createQueryBuilder('list')
-            ->select('list, items')
-            ->leftJoin('list.lineItems', 'items');
+            ->select('list');
 
         if ($excludeShoppingList) {
             $qb
@@ -85,7 +70,7 @@ class ShoppingListRepository extends EntityRepository implements ResettableCusto
             }
         }
 
-        return $qb;
+        return $aclHelper->apply($qb, BasicPermission::VIEW, [AclHelper::CHECK_RELATIONS => false])->getResult();
     }
 
     /**
@@ -102,10 +87,26 @@ class ShoppingListRepository extends EntityRepository implements ResettableCusto
         array $sortCriteria = [],
         $excludeShoppingList = null
     ): array {
-        $qb = $this->getFindByUserQueryBuilder($sortCriteria, $excludeShoppingList);
-        $qb
-            ->andWhere($qb->expr()->eq('list.customerUser', ':customerUserId'))
+        $qb = $this->createQueryBuilder('list');
+        $qb->select('list, items')
+            ->leftJoin('list.lineItems', 'items')
+            ->where($qb->expr()->eq('list.customerUser', ':customerUserId'))
             ->setParameter('customerUserId', $customerUserId);
+
+        if ($excludeShoppingList) {
+            $qb
+                ->andWhere($qb->expr()->neq('list.id', ':excludeShoppingList'))
+                ->setParameter('excludeShoppingList', $excludeShoppingList);
+        }
+
+        foreach ($sortCriteria as $field => $sortOrder) {
+            QueryBuilderUtil::checkField($field);
+            if ($sortOrder === Criteria::ASC) {
+                $qb->addOrderBy($qb->expr()->asc($field));
+            } elseif ($sortOrder === Criteria::DESC) {
+                $qb->addOrderBy($qb->expr()->desc($field));
+            }
+        }
 
         return $aclHelper->apply($qb, BasicPermission::VIEW, [AclHelper::CHECK_RELATIONS => false])->getResult();
     }
