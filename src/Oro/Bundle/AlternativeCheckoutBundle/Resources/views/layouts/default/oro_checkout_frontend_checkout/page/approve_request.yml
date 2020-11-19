@@ -34,9 +34,6 @@ layout:
                     checkout_button_back_right: ~
 
         - '@move':
-            id: checkout_order_summary_subtitle
-            parentId: checkout_information_title
-        - '@move':
             id: checkout_order_summary_edit_link
             parentId: checkout_information_head
             siblingId: checkout_information_title

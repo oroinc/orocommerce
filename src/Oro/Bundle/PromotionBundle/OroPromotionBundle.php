@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PromotionBundle;
 
 use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\DefaultFallbackExtensionPass;
-use Oro\Bundle\PromotionBundle\DependencyInjection\Compiler\LayoutBlockOptionsCompilerPass;
 use Oro\Bundle\PromotionBundle\DependencyInjection\Compiler\PromotionProductsGridCompilerPass;
 use Oro\Bundle\PromotionBundle\DependencyInjection\Compiler\TwigSandboxConfigurationPass;
 use Oro\Bundle\PromotionBundle\DependencyInjection\OroPromotionExtension;
@@ -45,7 +44,6 @@ class OroPromotionBundle extends Bundle
             'alias'
         ));
         $container->addCompilerPass(new PromotionProductsGridCompilerPass());
-        $container->addCompilerPass(new LayoutBlockOptionsCompilerPass());
         $container->addCompilerPass(new TwigSandboxConfigurationPass());
     }
 }

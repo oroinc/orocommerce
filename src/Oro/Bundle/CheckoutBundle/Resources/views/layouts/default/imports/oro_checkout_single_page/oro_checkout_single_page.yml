@@ -210,6 +210,11 @@ layout:
                 form: '=data["oro_checkout_single_page_transition_form"].getTransitionFormView(data["workflowItem"])'
                 workflowItem: '=data["workflowItem"]'
 
+        - '@move':
+            id: checkout_order_summary_line_items_grid_container
+            parentId: checkout_order_summary_content
+            prepend: true
+
         - '@add':
             id: checkout_summary_badge
             blockType: container
@@ -278,18 +283,6 @@ layout:
            parentId: checkout_coupon_form_container_wrapper
 
         - '@add':
-           id: checkout_order_summary_line_item_wrapper
-           blockType: layout_subtree_update
-           parentId: checkout_order_summary_line_items_container
-           prepend: true
-           options:
-               reloadEvents: []
-
-        - '@move':
-           id: checkout_order_summary_line_items
-           parentId: checkout_order_summary_line_item_wrapper
-
-        - '@add':
            id: checkout_form_errors_wrapper
            blockType: layout_subtree_update
            parentId: checkout_form
@@ -301,3 +294,8 @@ layout:
         - '@move':
            id: checkout_form_errors
            parentId: checkout_form_errors_wrapper
+
+        - '@move':
+            id: coupon_form_container
+            parentId: checkout_order_summary_totals_container
+            prepend: false

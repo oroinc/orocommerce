@@ -1,11 +1,11 @@
 <?php
 
-namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\CheckoutBundle\Tests\Unit\EventListener;
 
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
+use Oro\Bundle\CheckoutBundle\EventListener\DatagridLineItemsDataListener;
+use Oro\Bundle\CheckoutBundle\Tests\Unit\Stub\CheckoutLineItemStub;
 use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
-use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
-use Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataListener;
-use Oro\Bundle\ShoppingListBundle\Tests\Unit\Stub\LineItemStub;
 
 class DatagridLineItemsDataListenerTest extends \PHPUnit\Framework\TestCase
 {
@@ -20,9 +20,7 @@ class DatagridLineItemsDataListenerTest extends \PHPUnit\Framework\TestCase
     public function testOnLineItemDataWhenNoLineItems(): void
     {
         $event = $this->createMock(DatagridLineItemsDataEvent::class);
-
-        $event
-            ->expects($this->never())
+        $event->expects($this->never())
             ->method('addDataForLineItem');
 
         $this->listener->onLineItemData($event);
@@ -31,18 +29,14 @@ class DatagridLineItemsDataListenerTest extends \PHPUnit\Framework\TestCase
     public function testOnLineItemDataWhenNotLineItem(): void
     {
         $event = $this->createMock(DatagridLineItemsDataEvent::class);
-
-        $event
-            ->expects($this->once())
+        $event->expects($this->once())
             ->method('getLineItems')
             ->willReturn([new \stdClass()]);
-
-        $event
-            ->expects($this->never())
+        $event->expects($this->never())
             ->method('addDataForLineItem');
 
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage(sprintf('%s entity was expected, got stdClass', LineItem::class));
+        $this->expectExceptionMessage(sprintf('%s entity was expected, got stdClass', CheckoutLineItem::class));
 
         $this->listener->onLineItemData($event);
     }
@@ -50,19 +44,16 @@ class DatagridLineItemsDataListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider onLineItemDataDataProvider
      *
-     * @param LineItem $lineItem
+     * @param CheckoutLineItem $lineItem
      * @param array $expectedArgs
      */
-    public function testOnLineItemData(LineItem $lineItem, array $expectedArgs): void
+    public function testOnLineItemData(CheckoutLineItem $lineItem, array $expectedArgs): void
     {
         $event = $this->createMock(DatagridLineItemsDataEvent::class);
-        $event
-            ->expects($this->once())
+        $event->expects($this->once())
             ->method('getLineItems')
             ->willReturn([$lineItem]);
-
-        $event
-            ->expects($this->once())
+        $event->expects($this->once())
             ->method('addDataForLineItem')
             ->with(...$expectedArgs);
 
@@ -75,15 +66,15 @@ class DatagridLineItemsDataListenerTest extends \PHPUnit\Framework\TestCase
     public function onLineItemDataDataProvider(): array
     {
         $lineItemId = 10;
-        $notes = 'sample notes';
+        $comment = 'sample notes';
 
         return [
             [
-                'lineItem' => (new LineItemStub())->setId($lineItemId)->setNotes($notes),
-                'expectedArgs' => [$lineItemId, ['notes' => $notes]],
+                'lineItem' => (new CheckoutLineItemStub())->setId($lineItemId)->setComment($comment),
+                'expectedArgs' => [$lineItemId, ['notes' => $comment]],
             ],
             [
-                'lineItem' => (new LineItemStub())->setId($lineItemId),
+                'lineItem' => (new CheckoutLineItemStub())->setId($lineItemId),
                 'expectedArgs' => [$lineItemId, ['notes' => '']],
             ],
         ];

@@ -18,26 +18,22 @@ layout:
                     views: '=data["oro_payment_method_views_provider"].getViews(data["checkout_payment_context"].getContext(data["checkout"]))'
                     payment_method: '=data["checkout"].getPaymentMethod()'
 
-        - '@addTree':
-            items:
-                checkout_button_continue_right:
-                    blockType: checkout_transition_continue
-                    options:
-                        transitionData: '=data["oro_checkout_transition"].getContinueTransition(data["workflowItem"])'
-                        checkout: '=data["checkout"]'
-                checkout_button_back_right:
-                    blockType: checkout_transition_back
-                    options:
-                        transitionData: '=data["oro_checkout_transition"].getBackTransition(data["workflowItem"])'
-                        checkout: '=data["checkout"]'
-            tree:
-                checkout_form_buttons:
-                    checkout_button_continue_right: ~
-                    checkout_button_back_right: ~
+        - '@add':
+            id: checkout_button_back_right
+            blockType: checkout_transition_back
+            parentId: checkout_form_buttons
+            options:
+                transitionData: '=data["oro_checkout_transition"].getBackTransition(data["workflowItem"])'
+                checkout: '=data["checkout"]'
+        - '@add':
+            id: checkout_button_continue_right
+            blockType: checkout_transition_continue
+            parentId: checkout_order_summary_totals_container
+            prepend: false
+            options:
+                transitionData: '=data["oro_checkout_transition"].getContinueTransition(data["workflowItem"])'
+                checkout: '=data["checkout"]'
 
-        - '@move':
-            id: checkout_order_summary_subtitle
-            parentId: checkout_information_title
         - '@move':
             id: checkout_order_summary_edit_link
             parentId: checkout_information_head
@@ -48,8 +44,7 @@ layout:
             prepend: true
         - '@move':
             id: checkout_order_summary_totals_container
-            parentId: checkout_form_fields
-            siblingId: checkout_additional_options
+            parentId: checkout_form_buttons
 
         - '@remove':
             id: checkout_order_summary_container

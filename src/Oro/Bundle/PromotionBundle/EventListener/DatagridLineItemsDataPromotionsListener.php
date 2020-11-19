@@ -2,12 +2,14 @@
 
 namespace Oro\Bundle\PromotionBundle\EventListener;
 
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\PricingBundle\EventListener\DatagridLineItemsDataPricingListener as PricingLineItemDataListener;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
 use Oro\Bundle\PromotionBundle\Executor\PromotionExecutor;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 
 /**
  * Adds line items promotions data.
@@ -59,7 +61,12 @@ class DatagridLineItemsDataPromotionsListener
             return;
         }
 
-        $discountTotals = $this->getDiscountTotals(reset($lineItems)->getShoppingList());
+        $entity = $this->getMainEntity($lineItems);
+        if (!$entity instanceof ProductLineItemsHolderInterface) {
+            return;
+        }
+
+        $discountTotals = $this->getDiscountTotals($entity);
         if (!$discountTotals) {
             return;
         }
@@ -104,5 +111,28 @@ class DatagridLineItemsDataPromotionsListener
         }
 
         return $this->cache[$id] ?? [];
+    }
+
+    /**
+     * @param array $lineItems
+     * @return object|null
+     */
+    private function getMainEntity(array $lineItems): ?object
+    {
+        $entity = null;
+
+        $lineItem = reset($lineItems);
+        switch (true) {
+            case $lineItem instanceof LineItem:
+                $entity = $lineItem->getShoppingList();
+                break;
+            case $lineItem instanceof CheckoutLineItem:
+                $entity = $lineItem->getCheckout();
+                break;
+            default:
+                break;
+        }
+
+        return $entity;
     }
 }
