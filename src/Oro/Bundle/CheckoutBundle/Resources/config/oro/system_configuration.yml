@@ -19,6 +19,8 @@ system_configuration:
         allow_checkout_without_email_confirmation_section:
             title: oro.checkout.system_configuration.groups.allow_checkout_without_email_confirmation.title
             icon: 'fa-user-plus'
+        checkout_options:
+            title: oro.checkout.system_configuration.groups.checkout_options.title
 
     fields:
         oro_checkout.frontend_show_open_orders:
@@ -73,6 +75,27 @@ system_configuration:
                 label: oro.checkout.system_configuration.fields.allow_checkout_without_email_confirmation.title
                 tooltip: oro.checkout.system_configuration.fields.allow_checkout_without_email_confirmation.tooltip
 
+        oro_checkout.use_new_layout_for_checkout_page:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            options:
+                label: oro.checkout.system_configuration.fields.use_new_layout_for_checkout_page.label
+                required: false
+
+        oro_checkout.checkout_max_line_items_per_page:
+            data_type: integer
+            type: Symfony\Component\Form\Extension\Core\Type\IntegerType
+            search_type: text
+            options:
+                label: oro.checkout.system_configuration.fields.checkout_max_line_items_per_page.label
+                tooltip: oro.checkout.system_configuration.fields.checkout_max_line_items_per_page.tooltip
+                required: true
+                constraints:
+                    - NotBlank: ~
+                    - Range:
+                        min: 200
+                        max: 1000
+
     tree:
         system_configuration:
             commerce:
@@ -91,6 +114,10 @@ system_configuration:
                                     guest_checkout_owner_section:
                                         children:
                                             - oro_checkout.default_guest_checkout_owner
+                                    checkout_options:
+                                        children:
+                                            - oro_checkout.use_new_layout_for_checkout_page
+                                            - oro_checkout.checkout_max_line_items_per_page
                             orders_history:
                                 children:
                                     orders_history_open_orders:

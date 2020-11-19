@@ -1,0 +1,116 @@
+layout:
+    imports:
+        -
+            id: datagrid
+            root: __checkout_order_summary_line_items_grid_container
+
+    actions:
+        - '@setBlockTheme':
+            themes: 'OroCheckoutBundle:layouts:default/imports/oro_checkout_content/grid.html.twig'
+
+        - '@remove':
+            id: __checkout_order_summary_subtitle
+
+        - '@remove':
+            id: __checkout_order_summary_line_items_container
+
+        - '@add':
+            id: __checkout_order_summary_line_items_grid_container
+            parentId: __checkout_order_summary_content
+            siblingId: __checkout_order_summary_notes_container
+            prepend: true
+            blockType: container
+
+        - '@setOption':
+            id: __page_content
+            optionName: attr.class
+            optionValue: 'page-content--has-sidebar-right'
+
+        - '@setOption':
+            id: page_main_content
+            optionName: attr.class
+            optionValue: 'responsive-checkout-layout'
+
+        - '@setOption':
+            id: __datagrid
+            optionName: grid_name
+            optionValue: frontend-checkout-line-items-grid
+
+        - '@appendOption':
+            id: __datagrid
+            optionName: grid_parameters
+            optionValue:
+                checkout_id: '=data["checkout"].getId()'
+
+        - '@setOption':
+            id: __datagrid
+            optionName: split_to_cells
+            optionValue: false
+
+        - '@appendOption':
+            id: __datagrid
+            optionName: grid_render_parameters.cssClass
+            optionValue: 'responsive-checkout-grid'
+
+        - '@setOption':
+            id: __datagrid
+            optionName: grid_render_parameters.toolbarOptions.addDatagridSettingsManager
+            optionValue: false
+
+        - '@appendOption':
+            id: __datagrid
+            optionName: grid_render_parameters.themeOptions.disableStickedScrollbar
+            optionValue: true
+
+        - '@setOption':
+            id: __datagrid
+            optionName: grid_render_parameters.responsiveGrids.enable
+            optionValue: false
+
+        - '@appendOption':
+            id: __datagrid
+            optionName: grid_render_parameters.themeOptions
+            optionValue:
+                cellActionsHideCount: 4
+                cellLauncherOptions:
+                    launcherMode: 'icon-only'
+
+        - '@setOption':
+            id: __datagrid
+            optionName: grid_render_parameters.enableViews
+            optionValue: false
+
+        - '@appendOption':
+            id: __datagrid
+            optionName: grid_render_parameters.toolbarOptions.itemsCounter
+            optionValue:
+                transTemplate: 'oro_frontend.datagrid.pagination.totalRecords.shopping_list_line_items'
+
+        - '@setOption':
+            id: __datagrid
+            optionName: grid_render_parameters.toolbarOptions.itemsCounter
+            optionValue:
+                className: 'datagrid-tool datagrid-tool--short'
+
+        - '@add':
+            id: __checkout_order_summary_totals_content_wrapper
+            parentId: __checkout_order_summary_content
+            blockType: layout_subtree_update
+            options:
+                reloadEvents: ['datagrid_create_before', 'shopping-list:refresh']
+                showLoading: false
+                onLoadingCssClass: 'loading-blur'
+
+        - '@move':
+            id: __checkout_order_summary_totals
+            parentId: __checkout_order_summary_totals_content_wrapper
+
+        - '@remove':
+            id: __checkout_order_summary_totals_container
+
+        - '@setOption':
+            id: __checkout_order_summary_totals
+            optionName: vars.itemsCount
+            optionValue: '=data["checkout"].getLineItems().count()'
+
+    conditions: 'context["newCheckoutPageLayout"] == true'

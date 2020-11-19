@@ -7,6 +7,7 @@ use Brick\Math\Exception\MathException;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -16,8 +17,11 @@ use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
  * Represents checkout item.
  *
  * @ORM\Table(name="oro_checkout_line_item")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutLineItemRepository")
  * @ORM\HasLifecycleCallbacks()
+ * @Config(
+ *      mode="hidden"
+ * )
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */

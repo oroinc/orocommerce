@@ -4,3 +4,8 @@ oro:
             plural_label: Open Orders
         billing_address.label: Billing Address
         shipping_address.label: Shipping Address
+
+        grid:
+            toolbar:
+                pageSize:
+                    all.label: All

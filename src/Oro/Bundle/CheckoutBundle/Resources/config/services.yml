@@ -797,6 +797,14 @@ services:
                 - 'b2b_flow_checkout_single_page_start_from_shoppinglist'
                 - 'b2b_flow_alternative_checkout_start_from_shoppinglist'
 
+    oro_checkout.datagrid.extension.frontend_checkout_line_items_grid:
+        class: 'Oro\Bundle\CheckoutBundle\Datagrid\FrontendLineItemsGridExtension'
+        arguments:
+            - '@doctrine'
+            - '@oro_config.manager'
+        tags:
+            - { name: oro_datagrid.extension, priority: 10 }
+
     oro_checkout.datagrid.extension.frontend_shopping_list_grid.before_actions:
         parent: oro_checkout.datagrid.extension.frontend_shopping_list_grid.abstract
         arguments:
@@ -810,3 +818,22 @@ services:
             - '250'
         tags:
             - { name: oro_datagrid.extension }
+
+    oro_checkout.layout.extension.checkout_aware_context_configurator:
+        class: Oro\Bundle\CheckoutBundle\Layout\Extension\CheckoutAwareContextConfigurator
+        arguments:
+            - '@oro_config.manager'
+        tags:
+            - { name: layout.context_configurator }
+
+    oro_checkout.event_listener.datagrid_line_items_data.shopping_list_line_item_basic:
+        class: Oro\Bundle\CheckoutBundle\EventListener\DatagridLineItemsDataListener
+        tags:
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-checkout-line-items-grid, method: onLineItemData }
+
+    oro_checkout.event_listener.datagrid_line_items_data.violations:
+        class: Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataViolationsListener
+        arguments:
+            - '@oro_shopping_list.validator_service.line_item'
+        tags:
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-checkout-line-items-grid, method: onLineItemData }

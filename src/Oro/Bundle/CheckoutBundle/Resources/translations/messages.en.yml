@@ -58,6 +58,7 @@ oro:
             entity_label: 'Checkout Line Item'
             entity_plural_label: 'Checkout Line Items'
             entity_grid_all_view_label: 'All %entity_plural_label%'
+            entity_frontend_grid_all_view_label: 'All %entity_plural_label%'
             id.label: 'ID'
             product.label: 'Product'
             product_sku.label: 'Product SKU'
@@ -143,8 +144,10 @@ oro:
                 aria_label: Action Edit Order
             item: Item
             sku: SKU
+            inventory_status: ''
             quantity: Quantity
             quantity_short: Qty
+            unit: ''
             price: Price
             total_qty: Total QTY
             note: Note
@@ -275,12 +278,18 @@ oro:
                 default_guest_checkout_owner:
                     title: 'Default guest checkout owner'
                     tooltip: 'Allows guests to create order'
+                use_new_layout_for_checkout_page:
+                    label: 'Use new layout for checkout page'
+                checkout_max_line_items_per_page:
+                    label: 'Maximum Line Items Per Page'
+                    tooltip: 'The provided value will be used as the implied maximum number of checkout line items to display at once. If the number of checkout line items exceeds this value, the "Show All Items" will no longer be available and this number will be shown as the maximum pager value.'
             groups:
                 open_orders.title: 'Open Orders'
                 checkout.title: 'Checkout'
                 guest_checkout.title: 'Guest Checkout'
                 guest_checkout_owner.title: 'Guest Checkout Owner Settings'
                 customer_users_registration.title: 'Customer Users Registration'
+                checkout_options.title: 'Checkout Options'
 
         privilege:
             category.checkout.label: 'Checkout'
@@ -300,6 +309,11 @@ oro:
                 action:
                     view.aria_label: "Continue checkout started from %startedFromLabel%"
                     delete.aria_label: "Delete checkout started from %startedFromLabel%"
+                lineitem:
+                    filter:
+                        inventory_status.label: 'Availability'
+                        quantity.label: 'Quantity'
+                        unit.label: 'Unit'
             start_from_order: 'Re-Order'
 
         errors:

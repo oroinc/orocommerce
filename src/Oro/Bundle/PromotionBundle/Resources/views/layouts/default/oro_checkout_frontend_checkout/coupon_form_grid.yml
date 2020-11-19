@@ -1,0 +1,8 @@
+layout:
+    actions:
+        - '@move':
+            id: coupon_form_container
+            parentId: checkout_order_summary_totals_content_wrapper
+            siblingId: checkout_order_summary_totals
+
+    conditions: 'context["isAppliedCouponsAware"] == true && context["newCheckoutPageLayout"] == true'

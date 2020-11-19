@@ -631,11 +631,13 @@ services:
         tags:
             # Should be executed earlier than others because it adds data required by other listeners.
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-customer-user-shopping-list-grid, method: onResultAfter, priority: 1024 }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-checkout-line-items-grid, method: onResultAfter, priority: 1024 }
 
     oro_shopping_list.datagrid.event_listener.frontend_line_items_grid.simple:
         class: Oro\Bundle\ProductBundle\DataGrid\EventListener\FrontendLineItemsGrid\LineItemsSimpleOnResultAfterListener
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-customer-user-shopping-list-grid, method: onResultAfter, priority: 768 }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-checkout-line-items-grid, method: onResultAfter, priority: 768 }
 
     oro_shopping_list.datagrid.event_listener.frontend_line_items_grid.grouped:
         class: Oro\Bundle\ProductBundle\DataGrid\EventListener\FrontendLineItemsGrid\LineItemsGroupedOnResultAfterListener
@@ -644,6 +646,7 @@ services:
             - '@oro_locale.formatter.number'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-customer-user-shopping-list-grid, method: onResultAfter, priority: 512 }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-checkout-line-items-grid, method: onResultAfter, priority: 512 }
 
     oro_shopping_list.datagrid.event_listener.frontend_line_items_grid.matrix_form:
         class: Oro\Bundle\ProductBundle\DataGrid\EventListener\FrontendLineItemsGrid\LineItemsMatrixFormOnResultAfterListener

@@ -52,7 +52,15 @@ class Configuration implements ConfigurationInterface
                 'allow_checkout_without_email_confirmation' => [
                     'type' => 'boolean',
                     'value' => false,
-                ]
+                ],
+                'use_new_layout_for_checkout_page' => [
+                    'type' => 'boolean',
+                    'value' => false,
+                ],
+                'checkout_max_line_items_per_page' => [
+                    'type' => 'integer',
+                    'value' => 1000,
+                ],
             ]
         );
 

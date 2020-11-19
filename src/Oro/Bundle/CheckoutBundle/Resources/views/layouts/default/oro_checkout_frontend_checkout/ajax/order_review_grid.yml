@@ -1,0 +1,16 @@
+layout:
+    actions:
+        - '@move':
+            id: checkout_button_back_right
+            parentId: checkout_form_buttons
+
+        - '@move':
+            id: checkout_order_summary_totals_content_wrapper
+            parentId: checkout_form_buttons
+
+        - '@move':
+            id: checkout_button_continue_right
+            parentId: checkout_order_summary_totals_content_wrapper
+            prepend: false
+
+    conditions: 'context["workflowStepName"]=="order_review" && context["newCheckoutPageLayout"] == true'

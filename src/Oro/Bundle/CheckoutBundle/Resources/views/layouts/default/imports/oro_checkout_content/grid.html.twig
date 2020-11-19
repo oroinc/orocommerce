@@ -1,0 +1,37 @@
+{% block  __datagrid_toolbar__datagrid_toolbar_leftside_container_widget %}
+    <div class="datagrid-toolbar__side" data-section="left-side">
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __datagrid_toolbar__datagrid_toolbar_rightside_container_widget %}
+    <div class="datagrid-toolbar__rightside" data-section="right-side">
+        <% if (toolbarPosition !== 'bottom') { %>
+        {{ block_widget(block) }}
+        <% } %>
+    </div>
+{% endblock %}
+
+{% block __oro_checkout_content__checkout_order_summary_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ''
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_checkout_content__checkout_order_summary_totals_content_wrapper_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' order-checkout-widget__container-wrapper ',
+        'data-page-component-view': 'oroshoppinglist/js/app/views/summary-wrapper-view',
+        'data-page-component-options': {
+            'showMaskEvents': ['shopping-list:request'],
+            'hideMaskEvents': ['shopping-list:refresh']
+        }|json_encode
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}

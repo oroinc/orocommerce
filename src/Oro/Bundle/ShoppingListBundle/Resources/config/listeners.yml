@@ -33,6 +33,7 @@ services:
             # This listener must be called first as it preloads line items data which might be needed by others.
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-grid, method: onLineItemData, priority: 1024 }
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-edit-grid, method: onLineItemData, priority: 1024 }
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-checkout-line-items-grid, method: onLineItemData, priority: 1024 }
 
     oro_shopping_list.event_listener.datagrid_line_items_data.basic:
         class: Oro\Bundle\ProductBundle\EventListener\DatagridLineItemsDataListener
@@ -43,6 +44,7 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-grid, method: onLineItemData }
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-edit-grid, method: onLineItemData }
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-checkout-line-items-grid, method: onLineItemData }
 
     oro_shopping_list.event_listener.datagrid_line_items_data.shopping_list_line_item_basic:
         class: Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataListener

@@ -1,0 +1,18 @@
+layout:
+    actions:
+        - '@move':
+            id: checkout_order_summary_line_items_grid_container
+            parentId: checkout_order_summary_content
+            prepend: true
+
+        - '@move':
+            id: checkout_order_summary_totals_sticky_container
+            parentId: checkout_order_summary_totals_content_wrapper
+
+        - '@move':
+            id: checkout_consent_container
+            parentId: checkout_order_summary_totals_content_wrapper
+            siblingId: checkout_order_summary_totals_sticky_container
+            prepend: true
+
+    conditions: 'context["newCheckoutPageLayout"] == true'
