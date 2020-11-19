@@ -1,4 +1,5 @@
 import _ from 'underscore';
+import $ from 'jquery';
 import FilterItemsHintView from 'oroproduct/js/app/views/sidebar-filters/filter-items-hint-view';
 import FilterExtraHintView from 'oroproduct/js/app/views/sidebar-filters/filter-extra-hint-view';
 import FilterApplierComponent from 'oroproduct/js/app/components/sidebar-filters/filter-applier-component';
@@ -15,10 +16,7 @@ export default {
             renderMode: 'toggle-mode',
             autoClose: false,
             enableMultiselectWidget: true,
-            template: filtersContainerTemplate,
-            multiselectParameters: {
-                appendTo: '[data-role="filter-container-manager"]'
-            }
+            template: filtersContainerTemplate
         });
 
         options.metadata.filters.forEach(filter => {
@@ -51,7 +49,7 @@ export default {
                         gridName: grid.name
                     });
 
-                    topToolbar.el.after(filterItemsHintView.render().el);
+                    $(topToolbar.el).after(filterItemsHintView.render().el);
                 }
             });
 
