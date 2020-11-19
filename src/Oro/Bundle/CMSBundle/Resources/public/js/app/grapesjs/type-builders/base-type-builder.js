@@ -110,7 +110,10 @@ const BaseTypeBuilder = BaseClass.extend({
         if (this.button) {
             const content = this.template ? this.template(this.getButtonTemplateData()) : {type: this.componentType};
 
-            this.editor.BlockManager.add(this.componentType, {...this.button, content});
+            const panelBtn = this.editor.BlockManager.get(this.componentType);
+            panelBtn
+                ? panelBtn.set({content, ...this.button})
+                : this.editor.BlockManager.add(this.componentType, {...this.button, content});
         }
     },
 
@@ -129,7 +132,8 @@ const BaseTypeBuilder = BaseClass.extend({
     createModelConstructor(BaseModel) {
         return BaseModel.extend({// eslint-disable-line oro/named-constructor
             defaults: {...BaseModel.prototype.defaults, ...this.modelMixin.defaults},
-            ..._.omit(this.modelMixin, 'defaults')
+            ..._.omit(this.modelMixin, 'defaults'),
+            editor: this.editor
         }, _.pick(this, 'componentType', 'isComponent'));
     },
 
@@ -138,7 +142,10 @@ const BaseTypeBuilder = BaseClass.extend({
      * @returns {Backbone.View}
      */
     createViewConstructor(BaseView) {
-        return BaseView.extend(this.viewMixin);
+        return BaseView.extend({// eslint-disable-line oro/named-constructor
+            ...this.viewMixin,
+            editor: this.editor
+        });
     },
 
     /**

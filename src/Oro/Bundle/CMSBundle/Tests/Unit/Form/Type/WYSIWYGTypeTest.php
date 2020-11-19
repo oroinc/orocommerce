@@ -55,7 +55,7 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
                     ]
                 ],
                 'attr' => [
-                    'class' => 'hide'
+                    'class' => 'grapesjs-textarea hide'
                 ],
                 'auto_render' => true,
                 'error_bubbling' => true
@@ -126,6 +126,7 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
             '{"view":"app\/view","allow_tags":["h1","h2","h3"]'
             . ',"allowed_iframe_domains":[]'
             . ',"autoRender":true'
+            . ',"entityClass":"Oro\\\\Bundle\\\\CMSBundle\\\\Entity\\\\Page"'
             . ',"stylesInputSelector":"[data-grapesjs-styles=\"wysiwyg_style\"]",'
             . '"propertiesInputSelector":"[data-grapesjs-properties=\"wysiwyg_properties\"]"}',
             $view->vars['attr']['data-page-component-options']
@@ -160,6 +161,7 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
             '{"view":"app\/view","allow_tags":false,'
             . '"allowed_iframe_domains":false,'
             . '"autoRender":true,'
+            . '"entityClass":"Oro\\\\Bundle\\\\CMSBundle\\\\Entity\\\\Page",'
             . '"stylesInputSelector":"[data-grapesjs-styles=\"wysiwyg_style\"]",'
             . '"propertiesInputSelector":"[data-grapesjs-properties=\"wysiwyg_properties\"]"}',
             $view->vars['attr']['data-page-component-options']

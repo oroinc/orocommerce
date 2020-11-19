@@ -59,11 +59,23 @@ services:
         arguments:
             - "@oro_redirect.routing.matched_url_decision_maker"
             - "@router.request_context"
+        calls:
+            - [setSlugRequestFactory, [ '@oro_redirect.security.slug_request_factory' ]]
         tags:
             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequestBeforeRouting, priority: 50 }
             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequestAfterRouting, priority: 8 }
             - { name: kernel.event_listener, event: kernel.finish_request, method: onKernelFinishRequest }
             - { name: container.hot_path }
+
+    oro_redirect.security.slug_request_factory:
+        class: Oro\Bundle\RedirectBundle\Security\SlugRequestFactory
+
+    oro_redirect.security.slug_request_factory.rememberme:
+        class: Oro\Bundle\RedirectBundle\Security\RememberMeSlugRequestFactory
+        decorates: oro_redirect.security.slug_request_factory
+        arguments:
+            - '@oro_redirect.security.slug_request_factory.rememberme.inner'
+
 
     oro_redirect.access_rule.frontend_organization_for_slug:
         class: Oro\Bundle\OrganizationBundle\Acl\AccessRule\OrganizationAwareAccessRule

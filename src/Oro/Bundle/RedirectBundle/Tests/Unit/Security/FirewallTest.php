@@ -4,10 +4,9 @@ namespace Oro\Bundle\RedirectBundle\Tests\Unit\Security;
 
 use Oro\Bundle\RedirectBundle\Routing\MatchedUrlDecisionMaker;
 use Oro\Bundle\RedirectBundle\Security\Firewall;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Oro\Bundle\RedirectBundle\Security\SlugRequestFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Event\FinishRequestEvent;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -16,242 +15,268 @@ use Symfony\Component\Security\Http\Firewall as FrameworkFirewall;
 
 class FirewallTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var RequestContext|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $context;
-
-    /**
-     * @var FrameworkFirewall|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $baseFirewall;
-
-    /**
-     * @var MatchedUrlDecisionMaker|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var MatchedUrlDecisionMaker|\PHPUnit\Framework\MockObject\MockObject */
     private $matchedUrlDecisionMaker;
 
-    /**
-     * @var Firewall
-     */
-    protected $firewall;
+    /** @var SlugRequestFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $slugRequestFactory;
+
+    /** @var RequestContext|\PHPUnit\Framework\MockObject\MockObject */
+    private $context;
+
+    /** @var FrameworkFirewall|\PHPUnit\Framework\MockObject\MockObject */
+    private $baseFirewall;
+
+    /** @var Firewall */
+    private $firewall;
 
     protected function setUp()
     {
-        $this->baseFirewall = $this->getMockBuilder(FrameworkFirewall::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->matchedUrlDecisionMaker = $this->getMockBuilder(MatchedUrlDecisionMaker::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->context = $this->getMockBuilder(RequestContext::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->matchedUrlDecisionMaker = $this->createMock(MatchedUrlDecisionMaker::class);
+        $this->slugRequestFactory = $this->createMock(SlugRequestFactoryInterface::class);
+        $this->context = $this->createMock(RequestContext::class);
+        $this->baseFirewall = $this->createMock(FrameworkFirewall::class);
 
         $this->firewall = new Firewall(
             $this->matchedUrlDecisionMaker,
             $this->context
         );
+        $this->firewall->setSlugRequestFactory($this->slugRequestFactory);
         $this->firewall->setFirewall($this->baseFirewall);
     }
 
     public function testOnKernelRequestBeforeRouting()
     {
-        $request = $this->getMockBuilder(Request::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $request = Request::create('/slug');
 
-        $url = '/test';
-        $request->expects($this->any())
-            ->method('getPathInfo')
-            ->willReturn($url);
+        $event = new RequestEvent(
+            $this->createMock(KernelInterface::class),
+            $request,
+            KernelInterface::MASTER_REQUEST
+        );
 
-        $this->matchedUrlDecisionMaker->expects($this->any())
+        $this->matchedUrlDecisionMaker->expects(self::once())
             ->method('matches')
-            ->with($url)
+            ->with($request->getPathInfo())
             ->willReturn(true);
 
-        /** @var RequestEvent|\PHPUnit\Framework\MockObject\MockObject $event */
-        $event = $this->getMockBuilder(RequestEvent::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $event->expects($this->any())
-            ->method('getRequest')
-            ->willReturn($request);
-        $event->expects($this->once())
-            ->method('isMasterRequest')
-            ->willReturn(true);
-
-        $this->context->expects($this->once())
+        $this->context->expects(self::once())
             ->method('fromRequest')
-            ->with($request);
+            ->with(self::identicalTo($request));
 
-        $this->baseFirewall->expects($this->once())
+        $this->baseFirewall->expects(self::once())
             ->method('onKernelRequest')
-            ->with($event);
+            ->with(self::identicalTo($event));
 
         $this->firewall->onKernelRequestBeforeRouting($event);
     }
 
     public function testOnKernelRequestBeforeRoutingNotMatchedUrl()
     {
-        $request = $this->getMockBuilder(Request::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $request = Request::create('/slug');
 
-        $url = '/test';
-        $request->expects($this->any())
-            ->method('getPathInfo')
-            ->willReturn($url);
+        $event = new RequestEvent(
+            $this->createMock(KernelInterface::class),
+            $request,
+            KernelInterface::MASTER_REQUEST
+        );
 
-        $this->matchedUrlDecisionMaker->expects($this->any())
+        $this->matchedUrlDecisionMaker->expects(self::once())
             ->method('matches')
-            ->with($url)
+            ->with($request->getPathInfo())
             ->willReturn(false);
 
-        /** @var RequestEvent|\PHPUnit\Framework\MockObject\MockObject $event */
-        $event = $this->getMockBuilder(RequestEvent::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $event->expects($this->any())
-            ->method('getRequest')
-            ->willReturn($request);
-
-        $this->baseFirewall->expects($this->never())
-            ->method($this->anything());
+        $this->baseFirewall->expects(self::never())
+            ->method(self::anything());
 
         $this->firewall->onKernelRequestBeforeRouting($event);
     }
 
-    /**
-     * @dataProvider afterRoutingNotProcessedDataProvider
-     * @param bool $isMasterRequest
-     * @param bool $hasResponse
-     * @param array $attributes
-     */
-    public function testOnKernelRequestAfterRoutingSkip($isMasterRequest, $hasResponse, array $attributes)
+    public function testOnKernelRequestAfterRoutingShouldBeSkippedForSubRequest()
     {
-        $url = '/test';
-        $request = Request::create($url);
+        $request = Request::create('/slug');
+        $request->attributes->set('_resolved_slug_url', '/resolved/slug');
 
-        $this->matchedUrlDecisionMaker->expects($this->any())
+        $event = new RequestEvent(
+            $this->createMock(KernelInterface::class),
+            $request,
+            KernelInterface::SUB_REQUEST
+        );
+
+        $this->matchedUrlDecisionMaker->expects(self::once())
             ->method('matches')
-            ->with($url)
+            ->with($request->getPathInfo())
             ->willReturn(true);
-        $request->attributes->add($attributes);
 
-        /** @var RequestEvent|\PHPUnit\Framework\MockObject\MockObject $event */
-        $event = $this->getMockBuilder(RequestEvent::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $event->expects($this->any())
-            ->method('getRequest')
-            ->willReturn($request);
-        $event->expects($this->any())
-            ->method('isMasterRequest')
-            ->willReturn($isMasterRequest);
-        $event->expects($this->any())
-            ->method('hasResponse')
-            ->willReturn($hasResponse);
+        $this->slugRequestFactory->expects(self::never())
+            ->method('createSlugRequest');
+        $this->slugRequestFactory->expects(self::never())
+            ->method('updateMainRequest');
 
-        $this->baseFirewall->expects($this->never())
-            ->method($this->anything());
+        $this->baseFirewall->expects(self::never())
+            ->method('onKernelFinishRequest');
+        $this->baseFirewall->expects(self::never())
+            ->method('onKernelRequest');
 
         $this->firewall->onKernelRequestAfterRouting($event);
     }
 
-    /**
-     * @return array
-     */
-    public function afterRoutingNotProcessedDataProvider()
+    public function testOnKernelRequestAfterRoutingShouldBeSkippedWhenResponseAlreadySet()
     {
-        return [
-            'subrequest' => [
-                false,
-                false,
-                ['_resolved_slug_url' => '/resolved/slug']
-            ],
-            'has response' => [
-                true,
-                true,
-                ['_resolved_slug_url' => '/resolved/slug']
-            ],
-            'routed system url' => [
-                true,
-                false,
-                []
-            ]
-        ];
+        $request = Request::create('/slug');
+        $request->attributes->set('_resolved_slug_url', '/resolved/slug');
+
+        $event = new RequestEvent(
+            $this->createMock(KernelInterface::class),
+            $request,
+            KernelInterface::MASTER_REQUEST
+        );
+        $event->setResponse($this->createMock(Response::class));
+
+        $this->matchedUrlDecisionMaker->expects(self::once())
+            ->method('matches')
+            ->with($request->getPathInfo())
+            ->willReturn(true);
+
+        $this->slugRequestFactory->expects(self::never())
+            ->method('createSlugRequest');
+        $this->slugRequestFactory->expects(self::never())
+            ->method('updateMainRequest');
+
+        $this->baseFirewall->expects(self::never())
+            ->method('onKernelFinishRequest');
+        $this->baseFirewall->expects(self::never())
+            ->method('onKernelRequest');
+
+        $this->firewall->onKernelRequestAfterRouting($event);
     }
 
-    public function testOnKernelRequestAfterRouting()
+    public function testOnKernelRequestAfterRoutingShouldBeSkippedWhenSlugUrlIsNotResolved()
     {
-        $event = $this->prepareEvent();
+        $request = Request::create('/slug');
 
-        $kernel = $event->getKernel();
-        $request = $event->getRequest();
-        $requestType = $event->getRequestType();
-
-        $newRequest = Request::create(
-            $request->attributes->get('_resolved_slug_url'),
-            $request->getMethod(),
-            $request->query->all(),
-            $request->cookies->all(),
-            $request->files->all(),
-            $request->server->all(),
-            $request->getContent()
+        $event = new RequestEvent(
+            $this->createMock(KernelInterface::class),
+            $request,
+            KernelInterface::MASTER_REQUEST
         );
-        $newRequest->setSession($request->getSession());
-        $newRequest->setLocale($request->getLocale());
-        $newRequest->setDefaultLocale($request->getDefaultLocale());
 
-        $newEvent = new RequestEvent($kernel, $newRequest, $requestType);
-        $this->baseFirewall->expects($this->once())
-            ->method('onKernelRequest')
-            ->with($newEvent);
+        $this->matchedUrlDecisionMaker->expects(self::once())
+            ->method('matches')
+            ->with($request->getPathInfo())
+            ->willReturn(true);
+
+        $this->slugRequestFactory->expects(self::never())
+            ->method('createSlugRequest');
+        $this->slugRequestFactory->expects(self::never())
+            ->method('updateMainRequest');
+
+        $this->baseFirewall->expects(self::never())
+            ->method('onKernelFinishRequest');
+        $this->baseFirewall->expects(self::never())
+            ->method('onKernelRequest');
 
         $this->firewall->onKernelRequestAfterRouting($event);
     }
 
     public function testOnKernelRequestAfterRoutingNotMatchedUrl()
     {
-        $requestedUrl = '/test';
-        $request = Request::create($requestedUrl);
+        $request = Request::create('/slug');
+        $request->attributes->set('_resolved_slug_url', '/resolved/slug');
 
-        $this->matchedUrlDecisionMaker->expects($this->any())
+        $event = new RequestEvent(
+            $this->createMock(KernelInterface::class),
+            $request,
+            KernelInterface::MASTER_REQUEST
+        );
+
+        $this->matchedUrlDecisionMaker->expects(self::once())
             ->method('matches')
-            ->with($requestedUrl)
+            ->with($request->getPathInfo())
             ->willReturn(false);
 
-        /** @var RequestEvent|\PHPUnit\Framework\MockObject\MockObject $event */
-        $event = $this->getMockBuilder(RequestEvent::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $event->expects($this->atLeastOnce())
-            ->method('getRequest')
-            ->willReturn($request);
+        $this->slugRequestFactory->expects(self::never())
+            ->method('createSlugRequest');
+        $this->slugRequestFactory->expects(self::never())
+            ->method('updateMainRequest');
+        $this->baseFirewall->expects(self::never())
+            ->method('onKernelFinishRequest');
 
-        $this->baseFirewall->expects($this->once())
+        $this->baseFirewall->expects(self::once())
             ->method('onKernelRequest')
-            ->with($event);
+            ->with(self::identicalTo($event));
 
         $this->firewall->onKernelRequestAfterRouting($event);
     }
 
+    public function testOnKernelRequestAfterRouting()
+    {
+        $request = Request::create('/slug');
+        $request->attributes->set('_resolved_slug_url', '/resolved/slug');
+        $slugRequest = Request::create('/resolved/slug');
+
+        $event = new RequestEvent(
+            $this->createMock(KernelInterface::class),
+            $request,
+            KernelInterface::MASTER_REQUEST
+        );
+
+        $this->matchedUrlDecisionMaker->expects(self::once())
+            ->method('matches')
+            ->with($request->getPathInfo())
+            ->willReturn(true);
+
+        $this->slugRequestFactory->expects(self::once())
+            ->method('createSlugRequest')
+            ->with(self::identicalTo($request))
+            ->willReturn($slugRequest);
+        $this->slugRequestFactory->expects(self::once())
+            ->method('updateMainRequest')
+            ->with(self::identicalTo($request), self::identicalTo($slugRequest));
+
+        $this->baseFirewall->expects(self::once())
+            ->method('onKernelFinishRequest')
+            ->with(new FinishRequestEvent($event->getKernel(), $event->getRequest(), $event->getRequestType()));
+        $this->baseFirewall->expects(self::once())
+            ->method('onKernelRequest')
+            ->with(new RequestEvent($event->getKernel(), $slugRequest, $event->getRequestType()));
+
+        $this->firewall->onKernelRequestAfterRouting($event);
+        self::assertNull($event->getResponse());
+    }
+
     public function testOnKernelRequestAfterRoutingWithResponse()
     {
-        $event = $this->prepareEvent();
+        $request = Request::create('/slug');
+        $request->attributes->set('_resolved_slug_url', '/resolved/slug');
+        $slugRequest = Request::create('/resolved/slug');
+        $response = $this->createMock(Response::class);
 
-        /** @var Response|\PHPUnit\Framework\MockObject\MockObject $response */
-        $response = $this->getMockBuilder(Response::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $event = new RequestEvent(
+            $this->createMock(KernelInterface::class),
+            $request,
+            KernelInterface::MASTER_REQUEST
+        );
 
-        $event->expects($this->once())
-            ->method('setResponse')
-            ->with($response);
-        $this->baseFirewall->expects($this->once())
+        $this->matchedUrlDecisionMaker->expects(self::once())
+            ->method('matches')
+            ->with($request->getPathInfo())
+            ->willReturn(true);
+
+        $this->slugRequestFactory->expects(self::once())
+            ->method('createSlugRequest')
+            ->with(self::identicalTo($request))
+            ->willReturn($slugRequest);
+        $this->slugRequestFactory->expects(self::once())
+            ->method('updateMainRequest')
+            ->with(self::identicalTo($request), self::identicalTo($slugRequest));
+
+        $this->baseFirewall->expects(self::once())
+            ->method('onKernelFinishRequest')
+            ->with(new FinishRequestEvent($event->getKernel(), $event->getRequest(), $event->getRequestType()));
+        $this->baseFirewall->expects(self::once())
             ->method('onKernelRequest')
+            ->with(new RequestEvent($event->getKernel(), $slugRequest, $event->getRequestType()))
             ->willReturnCallback(
                 function (RequestEvent $event) use ($response) {
                     $event->setResponse($response);
@@ -259,134 +284,59 @@ class FirewallTest extends \PHPUnit\Framework\TestCase
             );
 
         $this->firewall->onKernelRequestAfterRouting($event);
+        self::assertSame($response, $event->getResponse());
     }
 
     public function testOnKernelFinishRequestNoSlugApplied()
     {
-        /** @var KernelInterface|\PHPUnit\Framework\MockObject\MockObject $kernel */
-        $kernel = $this->createMock(KernelInterface::class);
-
-        $requestType = KernelInterface::MASTER_REQUEST;
         $request = Request::create('/slug');
-        $event = new FinishRequestEvent($kernel, $request, $requestType);
-        $this->baseFirewall->expects($this->once())
+
+        $event = new FinishRequestEvent(
+            $this->createMock(KernelInterface::class),
+            $request,
+            KernelInterface::MASTER_REQUEST
+        );
+
+        $this->baseFirewall->expects(self::once())
             ->method('onKernelFinishRequest')
-            ->with($event);
+            ->with(self::identicalTo($event));
+
         $this->firewall->onKernelFinishRequest($event);
     }
 
     public function testOnKernelFinishRequestSlugApplied()
     {
-        /** @var KernelInterface|\PHPUnit\Framework\MockObject\MockObject $kernel */
-        $kernel = $this->createMock(KernelInterface::class);
-        $requestType = KernelInterface::MASTER_REQUEST;
-
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
-        $session = $this->createMock(SessionInterface::class);
-
         $request = Request::create('/slug');
-        $request->attributes->set('_resolved_slug_url', '/test');
-        $request->setSession($session);
+        $request->attributes->set('_resolved_slug_url', '/resolved/slug');
+        $slugRequest1 = Request::create('/resolved/slug');
+        $slugRequest2 = Request::create('/resolved/slug');
 
-        $this->matchedUrlDecisionMaker->expects($this->any())
+        $event = new FinishRequestEvent(
+            $this->createMock(KernelInterface::class),
+            $request,
+            KernelInterface::MASTER_REQUEST
+        );
+
+        $this->matchedUrlDecisionMaker->expects(self::once())
             ->method('matches')
-            ->with('/slug')
+            ->with($request->getPathInfo())
             ->willReturn(true);
+        $this->slugRequestFactory->expects(self::exactly(2))
+            ->method('createSlugRequest')
+            ->with(self::identicalTo($request))
+            ->willReturnOnConsecutiveCalls($slugRequest1, $slugRequest2);
+        $this->slugRequestFactory->expects(self::once())
+            ->method('updateMainRequest')
+            ->with(self::identicalTo($request), self::identicalTo($slugRequest1));
 
-        $getResponseEvent = new RequestEvent($kernel, $request, $requestType);
-        $this->firewall->onKernelRequestAfterRouting($getResponseEvent);
-
-        $event = new FinishRequestEvent($kernel, $request, $requestType);
-
-        $newRequest = Request::create(
-            $request->attributes->get('_resolved_slug_url'),
-            $request->getMethod(),
-            $request->query->all(),
-            $request->cookies->all(),
-            $request->files->all(),
-            $request->server->all(),
-            $request->getContent()
-        );
-        $newRequest->setSession($request->getSession());
-        $newRequest->setLocale($request->getLocale());
-        $newRequest->setDefaultLocale($request->getDefaultLocale());
-        $finishRequestEvent = new FinishRequestEvent(
-            $event->getKernel(),
-            $newRequest,
-            $event->getRequestType()
+        $this->firewall->onKernelRequestAfterRouting(
+            new RequestEvent($event->getKernel(), $event->getRequest(), $event->getRequestType())
         );
 
-        $this->baseFirewall->expects($this->once())
+        $this->baseFirewall->expects(self::once())
             ->method('onKernelFinishRequest')
-            ->with($finishRequestEvent);
+            ->with(new FinishRequestEvent($event->getKernel(), $slugRequest2, $event->getRequestType()));
+
         $this->firewall->onKernelFinishRequest($event);
-    }
-
-    /**
-     * @return RequestEvent|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function prepareEvent()
-    {
-        $slugResolvedUrl = '/resolved/slug';
-        $attributes = ['_resolved_slug_url' => $slugResolvedUrl];
-        $query = ['query' => true];
-        $cookies = ['cookie' => true];
-        $file = $this->getMockBuilder(UploadedFile::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $files = [$file];
-        $server = ['server' => true];
-
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
-        $session = $this->createMock(SessionInterface::class);
-        $locale = 'en_GB';
-        $defaultLocale = 'en';
-        $requestedUrl = '/test';
-
-        $request = Request::create($requestedUrl);
-        $request->attributes->add($attributes);
-        $request->query->add($query);
-        $request->cookies->add($cookies);
-        $request->files->add($files);
-        $request->server->add($server);
-        $request->setSession($session);
-        $request->setLocale($locale);
-        $request->setDefaultLocale($defaultLocale);
-
-        $this->matchedUrlDecisionMaker->expects($this->any())
-            ->method('matches')
-            ->with($requestedUrl)
-            ->willReturn(true);
-
-        /** @var KernelInterface|\PHPUnit\Framework\MockObject\MockObject $kernel */
-        $kernel = $this->createMock(KernelInterface::class);
-        $requestType = KernelInterface::MASTER_REQUEST;
-
-        /** @var RequestEvent|\PHPUnit\Framework\MockObject\MockObject $event */
-        $event = $this->getMockBuilder(RequestEvent::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $event->expects($this->atLeastOnce())
-            ->method('getRequest')
-            ->willReturn($request);
-        $event->expects($this->any())
-            ->method('isMasterRequest')
-            ->willReturn(true);
-        $event->expects($this->any())
-            ->method('hasResponse')
-            ->willReturn(false);
-        $event->expects($this->atLeastOnce())
-            ->method('getKernel')
-            ->willReturn($kernel);
-        $event->expects($this->atLeastOnce())
-            ->method('getRequestType')
-            ->willReturn($requestType);
-
-        $finishRequestEvent = new FinishRequestEvent($kernel, $request, $requestType);
-        $this->baseFirewall->expects($this->once())
-            ->method('onKernelFinishRequest')
-            ->with($finishRequestEvent);
-
-        return $event;
     }
 }

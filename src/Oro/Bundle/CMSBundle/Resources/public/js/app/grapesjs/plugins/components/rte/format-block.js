@@ -1,6 +1,8 @@
 import __ from 'orotranslation/js/translator';
 import selectTemplate from 'tpl-loader!orocms/templates/grapesjs-select-action.html';
 
+const tags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'];
+
 export default {
     name: 'formatBlock',
 
@@ -46,8 +48,13 @@ export default {
         const value = rte.doc.queryCommandValue(action.name);
         const select = rte.actionbar.querySelector('[name="tag"]');
 
+        if (value === '' && tags.includes(rte.el.tagName.toLowerCase())) {
+            select.value = rte.el.tagName.toLowerCase();
+            return;
+        }
+
         if (value !== 'false') {
-            if (['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'].indexOf(value) !== -1) {
+            if (tags.includes(value)) {
                 select.value = value;
             } else {
                 select.value = 'normal';
