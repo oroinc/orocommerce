@@ -155,7 +155,7 @@ class ShoppingListTotalRepository extends EntityRepository
         $expr = $this->getEntityManager()->getExpressionBuilder();
 
         $updateQB
-            ->innerJoin('c', 'oro_customer', 'cus', $expr->eq('sl.customer_id', 'cus.id'))
+            ->innerJoin('sl', 'oro_customer', 'cus', $expr->eq('sl.customer_id', 'cus.id'))
             ->leftJoin(
                 'cus',
                 'oro_price_list_to_cus_group',
