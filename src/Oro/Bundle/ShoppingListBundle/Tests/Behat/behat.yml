@@ -116,6 +116,9 @@ oro_behat_extension:
             type: css
             element: Select
 
+    Shopping List Line Item Quantity:
+      selector: 'div.input-qty'
+
     Shopping List Line Item 1 Quantity:
       selector: '.grid-body .grid-row:first-child div.input-qty'
 

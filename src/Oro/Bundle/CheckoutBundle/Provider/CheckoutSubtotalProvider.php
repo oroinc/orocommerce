@@ -7,7 +7,9 @@ use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
-use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
+use Oro\Bundle\PricingBundle\Model\CombinedPriceListTreeHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
@@ -21,8 +23,12 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * Subtotal provider for the Checkout entity.
  */
-class CheckoutSubtotalProvider extends AbstractSubtotalProvider implements SubtotalProviderInterface
+class CheckoutSubtotalProvider extends AbstractSubtotalProvider implements
+    SubtotalProviderInterface,
+    FeatureToggleableInterface
 {
+    use FeatureCheckerHolderTrait;
+
     const TYPE = 'subtotal';
     const LABEL = 'oro.checkout.subtotals.checkout_subtotal.label';
 
@@ -35,11 +41,8 @@ class CheckoutSubtotalProvider extends AbstractSubtotalProvider implements Subto
     /** @var ProductPriceProviderInterface */
     protected $productPriceProvider;
 
-    /** @var PriceListTreeHandler */
+    /** @var CombinedPriceListTreeHandler */
     protected $priceListTreeHandler;
-
-    /** @var FeatureChecker */
-    protected $featureChecker;
 
     /** @var ProductPriceScopeCriteriaFactoryInterface */
     protected $priceScopeCriteriaFactory;
@@ -48,7 +51,7 @@ class CheckoutSubtotalProvider extends AbstractSubtotalProvider implements Subto
      * @param TranslatorInterface $translator
      * @param RoundingServiceInterface $rounding
      * @param ProductPriceProviderInterface $productPriceProvider
-     * @param PriceListTreeHandler $priceListTreeHandler ,
+     * @param CombinedPriceListTreeHandler $priceListTreeHandler ,
      * @param SubtotalProviderConstructorArguments $arguments
      * @param FeatureChecker $featureChecker
      * @param ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory
@@ -57,9 +60,8 @@ class CheckoutSubtotalProvider extends AbstractSubtotalProvider implements Subto
         TranslatorInterface $translator,
         RoundingServiceInterface $rounding,
         ProductPriceProviderInterface $productPriceProvider,
-        PriceListTreeHandler $priceListTreeHandler,
+        CombinedPriceListTreeHandler $priceListTreeHandler,
         SubtotalProviderConstructorArguments $arguments,
-        FeatureChecker $featureChecker,
         ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory
     ) {
         parent::__construct($arguments);
@@ -68,7 +70,6 @@ class CheckoutSubtotalProvider extends AbstractSubtotalProvider implements Subto
         $this->rounding = $rounding;
         $this->productPriceProvider = $productPriceProvider;
         $this->priceListTreeHandler = $priceListTreeHandler;
-        $this->featureChecker = $featureChecker;
         $this->priceScopeCriteriaFactory = $priceScopeCriteriaFactory;
     }
 
@@ -215,10 +216,10 @@ class CheckoutSubtotalProvider extends AbstractSubtotalProvider implements Subto
      */
     protected function setPriceListRelation(ProductPriceScopeCriteriaInterface $criteria, Subtotal $subtotal)
     {
-        if ($this->featureChecker->isFeatureEnabled('oro_price_lists')) {
+        if ($this->isFeaturesEnabled()) {
             $priceList = $this->priceListTreeHandler
                 ->getPriceList($criteria->getCustomer(), $criteria->getWebsite());
-            $subtotal->setCombinedPriceList($priceList);
+            $subtotal->setPriceList($priceList);
         }
     }
 }

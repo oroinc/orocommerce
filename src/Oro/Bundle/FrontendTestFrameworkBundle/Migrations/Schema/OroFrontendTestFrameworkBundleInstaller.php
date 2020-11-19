@@ -10,10 +10,15 @@ use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
+use Oro\Bundle\EntitySerializedFieldsBundle\Migration\Extension\SerializedFieldsExtension;
+use Oro\Bundle\EntitySerializedFieldsBundle\Migration\Extension\SerializedFieldsExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroFrontendTestFrameworkBundleInstaller implements Installation, ExtendExtensionAwareInterface
+class OroFrontendTestFrameworkBundleInstaller implements
+    Installation,
+    ExtendExtensionAwareInterface,
+    SerializedFieldsExtensionAwareInterface
 {
     const VARIANT_FIELD_NAME = 'test_variant_field';
     const VARIANT_FIELD_CODE = 'variant_field_code';
@@ -22,7 +27,10 @@ class OroFrontendTestFrameworkBundleInstaller implements Installation, ExtendExt
     const MULTIENUM_FIELD_CODE = 'multienum_code';
 
     /** @var ExtendExtension */
-    protected $extendExtension;
+    private $extendExtension;
+
+    /** @var SerializedFieldsExtension */
+    private $serializedFieldsExtension;
 
     /**
      * {@inheritdoc}
@@ -35,6 +43,14 @@ class OroFrontendTestFrameworkBundleInstaller implements Installation, ExtendExt
     /**
      * {@inheritdoc}
      */
+    public function setSerializedFieldsExtension(SerializedFieldsExtension $serializedFieldsExtension)
+    {
+        $this->serializedFieldsExtension = $serializedFieldsExtension;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->createTestWebCatalog($schema);
@@ -42,6 +58,7 @@ class OroFrontendTestFrameworkBundleInstaller implements Installation, ExtendExt
         $this->createTestContentVariant($schema);
         $this->addVariantFieldToProduct($schema);
         $this->addWYSIWYGFieldToProduct($schema);
+        $this->addWYSIWYGSerializedAttributeToProduct($schema);
     }
 
     /**
@@ -114,6 +131,7 @@ class OroFrontendTestFrameworkBundleInstaller implements Installation, ExtendExt
                 false,
                 [
                     'extend' => ['owner' => ExtendScope::OWNER_CUSTOM],
+                    'entity' => ['label' => 'extend.entity.test.test_variant_field'],
                     'attribute' => ['is_attribute' => true, 'searchable' => true, 'filterable' => true],
                     'importexport' => ['excluded' => true]
                 ]
@@ -128,6 +146,7 @@ class OroFrontendTestFrameworkBundleInstaller implements Installation, ExtendExt
                 false,
                 [
                     'extend' => ['owner' => ExtendScope::OWNER_CUSTOM],
+                    'entity' => ['label' => 'extend.entity.test.multienum_field'],
                     'attribute' => ['is_attribute' => true, 'searchable' => true, 'filterable' => true],
                     'importexport' => ['excluded' => true]
                 ]
@@ -152,13 +171,11 @@ class OroFrontendTestFrameworkBundleInstaller implements Installation, ExtendExt
                     OroOptions::KEY => [
                         ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_DEFAULT,
                         'attribute' => ['is_attribute' => true],
-                        'extend' => [
-                            'is_extend' => true,
-                            'owner' => ExtendScope::OWNER_CUSTOM
-                        ],
+                        'extend' => ['is_extend' => true, 'owner' => ExtendScope::OWNER_CUSTOM],
+                        'entity' => ['label' => 'extend.entity.test.wysiwyg'],
                         'dataaudit' => ['auditable' => false],
-                        'importexport' => ['excluded' => false],
-                    ],
+                        'importexport' => ['excluded' => false]
+                    ]
                 ]
             );
 
@@ -169,14 +186,12 @@ class OroFrontendTestFrameworkBundleInstaller implements Installation, ExtendExt
                     'notnull' => false,
                     OroOptions::KEY => [
                         ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_HIDDEN,
-                        'extend' => [
-                            'is_extend' => true,
-                            'owner' => ExtendScope::OWNER_CUSTOM
-                        ],
+                        'extend' => ['is_extend' => true, 'owner' => ExtendScope::OWNER_CUSTOM],
+                        'entity' => ['label' => 'extend.entity.test.wysiwyg_style'],
                         'datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_HIDDEN],
                         'dataaudit' => ['auditable' => false],
-                        'importexport' => ['excluded' => false],
-                    ],
+                        'importexport' => ['excluded' => false]
+                    ]
                 ]
             );
 
@@ -187,16 +202,59 @@ class OroFrontendTestFrameworkBundleInstaller implements Installation, ExtendExt
                     'notnull' => false,
                     OroOptions::KEY => [
                         ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_HIDDEN,
-                        'extend' => [
-                            'is_extend' => true,
-                            'owner' => ExtendScope::OWNER_CUSTOM
-                        ],
+                        'extend' => ['is_extend' => true, 'owner' => ExtendScope::OWNER_CUSTOM],
+                        'entity' => ['label' => 'extend.entity.test.wysiwyg_properties'],
                         'datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_HIDDEN],
                         'dataaudit' => ['auditable' => false],
-                        'importexport' => ['excluded' => false],
-                    ],
+                        'importexport' => ['excluded' => false]
+                    ]
                 ]
             );
         }
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    private function addWYSIWYGSerializedAttributeToProduct(Schema $schema)
+    {
+        if (!$schema->hasTable('oro_product')) {
+            return;
+        }
+
+        $table = $schema->getTable('oro_product');
+        $this->serializedFieldsExtension->addSerializedField(
+            $table,
+            'wysiwygAttr',
+            'wysiwyg',
+            [
+                ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_DEFAULT,
+                'extend' => ['owner' => ExtendScope::OWNER_CUSTOM],
+                'entity' => ['label' => 'extend.entity.test.wysiwyg_attr'],
+                'attribute' => ['is_attribute' => true, 'field_name' => 'wysiwygAttr']
+            ]
+        );
+        $this->serializedFieldsExtension->addSerializedField(
+            $table,
+            'wysiwygAttr_style',
+            'wysiwyg_style',
+            [
+                ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_HIDDEN,
+                'extend' => ['owner' => ExtendScope::OWNER_CUSTOM],
+                'entity' => ['label' => 'extend.entity.test.wysiwyg_attr_style'],
+                'attribute' => ['is_attribute' => true, 'field_name' => 'wysiwygAttr_style']
+            ]
+        );
+        $this->serializedFieldsExtension->addSerializedField(
+            $table,
+            'wysiwygAttr_properties',
+            'wysiwyg_properties',
+            [
+                ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_HIDDEN,
+                'extend' => ['owner' => ExtendScope::OWNER_CUSTOM],
+                'entity' => ['label' => 'extend.entity.test.wysiwyg_attr_properties'],
+                'attribute' => ['is_attribute' => true, 'field_name' => 'wysiwygAttr_properties']
+            ]
+        );
     }
 }

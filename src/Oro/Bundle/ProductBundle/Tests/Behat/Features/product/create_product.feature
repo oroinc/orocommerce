@@ -58,7 +58,7 @@ Feature: Create product
     And I click "Upload"
     And click on cat2.jpg in grid
     When I save form
-    Then I should see "Please remove not permitted HTML-tags in the content field: - src attribute on <iframe> should be removed (near <iframe src=" error message
+    Then I should see "Please remove not permitted HTML-tags in the content field: - \"src\" attribute on \"<iframe>\" should be removed (near <iframe src=" error message
     When fill "Create Product Form" with:
       | Description | Sample content <img alt=\"cat1_wysiwyg_image\" src=\"{{ wysiwyg_image(13, 'f23ac0ff-2cc0-4d9e-8d00-78053a569a50') }}\"/> |
     And I save form

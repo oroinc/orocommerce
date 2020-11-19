@@ -1,5 +1,6 @@
 @fixture-OroPricingBundle:PriceListTimeScheduleConfiguration.yml
 @ticket-BB-16591
+@pricing-storage-combined
 
 Feature: Price List time schedule configuration
   Scenario: Feature Background

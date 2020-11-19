@@ -1,4 +1,5 @@
 @regression
+@pricing-storage-combined
 @ticket-BB-18216
 @fixture-OroPricingBundle:ProductPrices.yml
 

@@ -3,6 +3,8 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\EventListener\ProductSelectPriceListAwareListener;
@@ -44,20 +46,10 @@ class ProductSelectPriceListAwareListenerTest extends \PHPUnit\Framework\TestCas
      */
     protected function setUp(): void
     {
-        $this->modifier = $this->getMockBuilder('Oro\Bundle\PricingBundle\Model\FrontendProductListModifier')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->event = $this->getMockBuilder('Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->queryBuilder = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')->disableOriginalConstructor()
-            ->getMock();
-
-        $this->registry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->modifier = $this->createMock(FrontendProductListModifier::class);
+        $this->event = $this->createMock(ProductDBQueryRestrictionEvent::class);
+        $this->queryBuilder = $this->createMock(QueryBuilder::class);
+        $this->registry = $this->createMock(Registry::class);
 
         $this->listener = new ProductSelectPriceListAwareListener($this->modifier, $this->registry);
     }
@@ -80,26 +72,21 @@ class ProductSelectPriceListAwareListenerTest extends \PHPUnit\Framework\TestCas
 
         if ($applicable) {
             if ($withPriceList) {
-                $repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
-                    ->disableOriginalConstructor()
-                    ->getMock();
+                $repository = $this->createMock(EntityRepository::class);
 
                 $repository->expects($this->once())
                     ->method('find')
                     ->with(self::PRICE_LIST_ID)
                     ->willReturn(new PriceList());
 
-                $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
-                    ->disableOriginalConstructor()
-                    ->getMock();
-
+                $em = $this->createMock(EntityManager::class);
                 $em->expects($this->once())
                     ->method('getRepository')
                     ->willReturn($repository);
 
                 $this->registry->expects($this->once())
                     ->method('getManagerForClass')
-                    ->with('OroPricingBundle:PriceList')
+                    ->with(PriceList::class)
                     ->willReturn($em);
             } else {
                 $this->modifier->expects($this->once())

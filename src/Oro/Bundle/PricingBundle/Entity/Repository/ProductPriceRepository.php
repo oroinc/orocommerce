@@ -3,19 +3,25 @@
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Id\UuidGenerator;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\BaseProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
+use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\ORM\ShardQueryExecutorInterface;
 use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardOutputResultModifier;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Component\DoctrineUtils\ORM\UnionQueryBuilder;
 
 /**
  * Entity repository for ProductPrice entity
@@ -395,5 +401,143 @@ class ProductPriceRepository extends BaseProductPriceRepository
             ->getScalarResult();
 
         return array_map('current', $result);
+    }
+
+    /**
+     * @param Website $website
+     * @param Product[] $products
+     * @param PriceList|null $basePriceList
+     * @param string $accuracy
+     * @return array
+     */
+    public function findMinByWebsiteForFilter(
+        Website $website,
+        array $products,
+        ?PriceList $basePriceList,
+        string $accuracy
+    ) {
+        $qb = $this->getQbForMinimalPrices($website, $products, $basePriceList, $accuracy);
+        $qb->select(
+            'IDENTITY(mp.product) as product_id',
+            'MIN(mp.value) as value',
+            'mp.currency',
+            'IDENTITY(mp.priceList) as price_list_id',
+            'IDENTITY(mp.unit) as unit'
+        );
+        $qb->groupBy('mp.priceList, mp.product, mp.currency, mp.unit');
+
+        return $qb->getQuery()->getArrayResult();
+    }
+
+    /**
+     * @param Website $website
+     * @param Product[] $products
+     * @param PriceList|null $basePriceList
+     * @param string $accuracy
+     * @return array
+     */
+    public function findMinByWebsiteForSort(
+        Website $website,
+        array $products,
+        ?PriceList $basePriceList,
+        string $accuracy
+    ) {
+        $qb = $this->getQbForMinimalPrices($website, $products, $basePriceList, $accuracy);
+        $qb->select(
+            'IDENTITY(mp.product) as product_id',
+            'MIN(mp.value) as value',
+            'mp.currency',
+            'IDENTITY(mp.priceList) as price_list_id'
+        );
+        $qb->groupBy('mp.priceList, mp.product, mp.currency');
+
+        return $qb->getQuery()->getArrayResult();
+    }
+
+    /**
+     * @param Website $website
+     * @param array $products
+     * @param PriceList|null $basePriceList
+     * @param string $accuracy
+     * @return QueryBuilder
+     * @throws \Doctrine\DBAL\Query\QueryException
+     */
+    protected function getQbForMinimalPrices(
+        Website $website,
+        array $products,
+        ?PriceList $basePriceList,
+        string $accuracy
+    ) {
+        $qb = $this->createQueryBuilder('mp');
+
+        return $qb
+            ->where(
+                $qb->expr()->andX(
+                    $qb->expr()->in('mp.priceList', ':priceListIds'),
+                    $qb->expr()->in('mp.product', ':products')
+                )
+            )
+            ->setParameter('priceListIds', $this->getPriceListIdsForWebsite($website, $basePriceList, $accuracy))
+            ->setParameter(
+                'products',
+                array_map(
+                    static function ($product) {
+                        return (int)($product instanceof Product ? $product->getId() : $product);
+                    },
+                    $products
+                )
+            );
+    }
+
+    /**
+     * @param Website $website
+     * @param PriceList|null $basePriceList
+     * @param string $accuracy
+     * @return array|int[]
+     * @throws \Doctrine\DBAL\Query\QueryException
+     */
+    private function getPriceListIdsForWebsite(Website $website, ?PriceList $basePriceList, string $accuracy)
+    {
+        if ($accuracy === 'website' && $basePriceList) {
+            return [$basePriceList->getId()];
+        }
+
+        $em = $this->getEntityManager();
+
+        $qb = new UnionQueryBuilder($em, false);
+        $qb->addSelect('priceListId', 'id', Types::INTEGER)
+            ->addOrderBy('id');
+
+        if ($basePriceList) {
+            $subQb = $em->getRepository(PriceList::class)->createQueryBuilder('pl');
+            $subQb->select('pl.id AS priceListId')
+                ->where(
+                    $subQb->expr()->eq('pl.id', ':basePriceList')
+                )
+                ->setParameter('basePriceList', $basePriceList)
+                ->setMaxResults(1);
+
+            $qb->addSubQuery($subQb->getQuery());
+        }
+
+        $relations = [
+            PriceListToCustomerGroup::class
+        ];
+        if ($accuracy === 'customer') {
+            $relations[] = PriceListToCustomer::class;
+        }
+
+        foreach ($relations as $entityClass) {
+            $subQb = $em->getRepository($entityClass)->createQueryBuilder('relation');
+            $subQb->select('IDENTITY(relation.priceList) AS priceListId')
+                ->where(
+                    $subQb->expr()->eq('relation.website', ':website')
+                )
+                ->setParameter('website', $website);
+
+            $qb->addSubQuery($subQb->getQuery());
+        }
+
+        return array_column($qb->getQuery()->getArrayResult(), 'id');
     }
 }

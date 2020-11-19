@@ -4,8 +4,8 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Model;
 
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
+use Oro\Bundle\PricingBundle\Model\CombinedPriceListTreeHandler;
 use Oro\Bundle\PricingBundle\Model\FrontendProductListModifier;
-use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class FrontendProductListModifierTest extends \PHPUnit\Framework\TestCase
@@ -16,7 +16,7 @@ class FrontendProductListModifierTest extends \PHPUnit\Framework\TestCase
     protected $tokenStorage;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|PriceListTreeHandler
+     * @var \PHPUnit\Framework\MockObject\MockObject|CombinedPriceListTreeHandler
      */
     protected $priceListTreeHandler;
 
@@ -33,7 +33,7 @@ class FrontendProductListModifierTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
-        $this->priceListTreeHandler = $this->createMock(PriceListTreeHandler::class);
+        $this->priceListTreeHandler = $this->createMock(CombinedPriceListTreeHandler::class);
         $this->featureChecker = $this->createMock(FeatureChecker::class);
 
         $this->modifier = new FrontendProductListModifier($this->tokenStorage, $this->priceListTreeHandler);

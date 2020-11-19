@@ -1458,7 +1458,6 @@ services:
     oro_product.provider.product_image_file_name_provider:
         class: Oro\Bundle\ProductBundle\Provider\ProductImageFileNameProvider
         decorates: oro_attachment.provider.attachment_file_name_provider
-        public: true
         arguments:
             - '@oro_config.manager'
             - '@oro_product.provider.product_image_file_name_provider.inner'

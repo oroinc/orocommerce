@@ -1,29 +1,46 @@
-<div>
-    <p>{{ 'oro.pricing.fallback.label'|trans }}: <strong>{{ fallback|trans }}</strong></p>
-</div>
-<div class="clearfix">
-    {% if entities %}
-        <table class="grid table-hover table table-bordered">
-            <thead>
-            <tr>
-                <th>#</th>
-                <th>{{ 'oro.pricing.pricelist.name.label'|trans }}</th>
-                <th>{{ 'oro.pricing.pricelist.merge_allowed.label'|trans }}</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for entity in entities %}
-                <tr class="price_list{{ entity.priceList.id }}">
-                    <td>{{ loop.index }}</td>
-                    <td><a href="{{ path('oro_pricing_price_list_view', {'id': entity.priceList.id}) }}" class="price_list_link">{{ entity.priceList.name }}</a></td>
-                    <td class="price_list_merge_allowed">{{ entity.mergeAllowed ? 'oro.pricing.pricelist.merge_allowed.yes.label'|trans : 'oro.pricing.pricelist.merge_allowed.no.label'|trans }}</td>
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+
+{% if feature_enabled('oro_price_lists_combined') %}
+    <div>
+        <p>{{ 'oro.pricing.fallback.label'|trans }}: <strong>{{ fallback|trans }}</strong></p>
+    </div>
+    <div class="clearfix">
+        {% if entities %}
+            <table class="grid table-hover table table-bordered">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>{{ 'oro.pricing.pricelist.name.label'|trans }}</th>
+                    <th>{{ 'oro.pricing.pricelist.merge_allowed.label'|trans }}</th>
                 </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                {% for entity in entities %}
+                    <tr class="price_list{{ entity.priceList.id }}">
+                        <td>{{ loop.index }}</td>
+                        <td>{{ UI.entityViewLink(entity.priceList, entity.priceList.name, 'oro_pricing_price_list_view') }}</td>
+                        <td class="price_list_merge_allowed">{{ entity.mergeAllowed ? 'oro.pricing.pricelist.merge_allowed.yes.label'|trans : 'oro.pricing.pricelist.merge_allowed.no.label'|trans }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="no-data">
+                {{ "oro.pricing.no_price_lists"|trans }}
+            </div>
+        {% endif %}
+    </div>
+{% else %}
+    {% if entities %}
+        {% set priceListToCustomer = entities|first %}
+        <div class="row-fluid form-horizontal">
+            <div class="responsive-block">
+                {{ UI.renderHtmlProperty('oro.pricing.pricelist.entity_label'|trans, UI.entityViewLink(priceListToCustomer.priceList, priceListToCustomer.priceList.name, 'oro_pricing_price_list_view')) }}
+            </div>
+        </div>
     {% else %}
         <div class="no-data">
             {{ "oro.pricing.no_price_lists"|trans }}
         </div>
     {% endif %}
-</div>
+{% endif %}

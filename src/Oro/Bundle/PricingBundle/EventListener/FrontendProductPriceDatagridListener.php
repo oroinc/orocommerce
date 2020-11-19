@@ -5,6 +5,8 @@ namespace Oro\Bundle\PricingBundle\EventListener;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PricingBundle\Datagrid\Provider\ProductPriceProvider;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
@@ -15,8 +17,10 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  * Adds price info to records
  * Modifies data grid settings by adding minimal price column, filter and sorter and prices property
  */
-class FrontendProductPriceDatagridListener
+class FrontendProductPriceDatagridListener implements FeatureToggleableInterface
 {
+    use FeatureCheckerHolderTrait;
+
     const COLUMN_PRICES = 'prices';
     const COLUMN_MINIMAL_PRICE = 'minimal_price';
     const COLUMN_MINIMAL_PRICE_SORT = 'minimal_price_sort';
@@ -34,7 +38,7 @@ class FrontendProductPriceDatagridListener
     /**
      * @var ProductPriceProvider
      */
-    private $combinedProductPriceProvider;
+    private $productPriceProvider;
 
     /**
      * @var TranslatorInterface
@@ -44,28 +48,28 @@ class FrontendProductPriceDatagridListener
     /**
      * @var string
      */
-    private $priceColumnNameFilter = WebsiteSearchProductPriceIndexerListener::MP_ALIAS;
+    private $priceColumnNameFilter;
 
     /**
      * @var string
      */
-    private $priceColumnNameSorter = 'minimal_price_CPL_ID_CURRENCY';
+    private $priceColumnNameSorter;
 
     /**
      * @param ProductPriceScopeCriteriaRequestHandler $scopeCriteriaRequestHandler
      * @param UserCurrencyManager $currencyManager
-     * @param ProductPriceProvider $combinedProductPriceProvider
+     * @param ProductPriceProvider $productPriceProvider
      * @param TranslatorInterface $translator
      */
     public function __construct(
         ProductPriceScopeCriteriaRequestHandler $scopeCriteriaRequestHandler,
         UserCurrencyManager $currencyManager,
-        ProductPriceProvider $combinedProductPriceProvider,
+        ProductPriceProvider $productPriceProvider,
         TranslatorInterface $translator
     ) {
         $this->scopeCriteriaRequestHandler = $scopeCriteriaRequestHandler;
         $this->currencyManager = $currencyManager;
-        $this->combinedProductPriceProvider = $combinedProductPriceProvider;
+        $this->productPriceProvider = $productPriceProvider;
         $this->translator = $translator;
     }
 
@@ -90,13 +94,17 @@ class FrontendProductPriceDatagridListener
      */
     public function onResultAfter(SearchResultAfter $event)
     {
+        if (!$this->isFeaturesEnabled()) {
+            return;
+        }
+
         /** @var ResultRecord[] $records */
         $records = $event->getRecords();
         if (\count($records) === 0) {
             return;
         }
 
-        $resultProductPrices = $this->combinedProductPriceProvider->getCombinedPricesForProductsByPriceList(
+        $resultProductPrices = $this->productPriceProvider->getPricesForProductsByPriceList(
             $records,
             $this->scopeCriteriaRequestHandler->getPriceScopeCriteria(),
             $this->currencyManager->getUserCurrency()
@@ -117,6 +125,22 @@ class FrontendProductPriceDatagridListener
      */
     public function onBuildBefore(BuildBefore $event)
     {
+        if (!$this->isFeaturesEnabled()) {
+            return;
+        }
+
+        $sortColumn = $this->priceColumnNameSorter;
+        $filterColumn = $this->priceColumnNameFilter;
+        $isFlatPricing = $this->featureChecker->isFeatureEnabled('oro_price_lists_flat');
+        if (!$sortColumn) {
+            $sortColumn = $isFlatPricing ? 'minimal_price_PRICE_LIST_ID_CURRENCY' : 'minimal_price_CPL_ID_CURRENCY';
+        }
+        if (!$filterColumn) {
+            $filterColumn = $isFlatPricing
+                ? WebsiteSearchProductPriceFlatIndexerListener::MP_ALIAS
+                : WebsiteSearchProductPriceIndexerListener::MP_ALIAS;
+        }
+
         $config = $event->getConfig();
         $currency = $this->currencyManager->getUserCurrency();
         if (!$currency) {
@@ -147,7 +171,7 @@ class FrontendProductPriceDatagridListener
             [
                 self::COLUMN_MINIMAL_PRICE => [
                     'type' => 'frontend-product-price',
-                    'data_name' => $this->priceColumnNameFilter
+                    'data_name' => $filterColumn
                 ],
             ]
         );
@@ -163,7 +187,7 @@ class FrontendProductPriceDatagridListener
 
         $config->addSorter(
             self::COLUMN_MINIMAL_PRICE_SORT,
-            ['data_name' => $this->priceColumnNameSorter, 'type' => 'decimal']
+            ['data_name' => $sortColumn, 'type' => 'decimal']
         );
     }
 }

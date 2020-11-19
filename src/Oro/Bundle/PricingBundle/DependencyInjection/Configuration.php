@@ -17,6 +17,19 @@ class Configuration implements ConfigurationInterface
 {
     const ROOT_NODE = 'oro_pricing';
     const DEFAULT_PRICE_LISTS = 'default_price_lists';
+    const DEFAULT_PRICE_LIST = 'default_price_list';
+    const PRICE_STORAGE = 'price_storage';
+
+    /**
+     * price_indexation_accuracy config option regulates the accuracy of search indexation. Supported values:
+     * customer, customer_group, website
+     * Most accurate results will be for customer level, prices will be indexed per each
+     * price list to customer association. Requires maximum amount of search index storage.
+     * customer_group accuracy provides moderate level of search accuracy and requires less amount of storage
+     * Less accurate but most storage efficient accuracy is website - when only price lists associated with website
+     * are taken into account during prices indexation
+     */
+    const PRICE_INDEXATION_ACCURACY = 'price_indexation_accuracy';
     const ROUNDING_TYPE = 'rounding_type';
     const PRECISION = 'precision';
     const COMBINED_PRICE_LIST = 'combined_price_list';
@@ -47,6 +60,9 @@ class Configuration implements ConfigurationInterface
             $rootNode,
             [
                 self::DEFAULT_PRICE_LISTS => ['type' => 'array', 'value' => []],
+                self::DEFAULT_PRICE_LIST => ['type' => 'integer', 'value' => null],
+                self::PRICE_STORAGE => ['type' => 'string', 'value' => 'combined'],
+                self::PRICE_INDEXATION_ACCURACY => ['type' => 'string', 'value' => 'customer'],
                 self::ROUNDING_TYPE => ['value' => PriceRoundingService::ROUND_HALF_UP],
                 self::PRECISION => ['value' => PriceRoundingService::DEFAULT_PRECISION],
                 self::COMBINED_PRICE_LIST => ['value' => null],

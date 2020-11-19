@@ -682,7 +682,7 @@ Feature: My Shopping List
   Scenario: Inline edit quantity and unit with Group similar
     When I open page with shopping list Shopping List 3
     And I click "Group similar"
-    Then I should see following grid:
+    Then I should see following grid containing rows:
       | SKU  | Item                                                     |              | QtyUpdate All | Price  | Subtotal                 |
       |      | Configurable Product 1                                   |              | 13 items      |        | $227.00 -$113.50 $113.50 |
       | BB4  | Color: Red Size: M Note 4 text                           | In Stock     | 3 item        | $11.00 | $33.00 -$16.50 $16.50    |
@@ -695,8 +695,7 @@ Feature: My Shopping List
       | Quantity | 10   |
       | Unit     | each |
     And I click on "Shopping List Line Item 2 Save Changes Button"
-    And I sort grid by "SKU"
-    Then I should see following grid:
+    Then I should see following grid containing rows:
       | SKU  | Item                                                  |              | QtyUpdate All | Price  | Subtotal                 |
       | BB4  | Configurable Product 1 Color: Red Size: M Note 4 text | In Stock     | 10 each       | N/A    | N/A                      |
       |      | Configurable Product 1                                |              | 10 items      |        | $194.00 -$97.00 $97.00   |
@@ -704,14 +703,11 @@ Feature: My Shopping List
       | BB12 | Color: Blue Size: S Note 12 text                      | In Stock     | 7 item        | $23.00 | $161.00 -$80.50 $80.50   |
 
   Scenario: Update all with Group similar
-    When I click on "Shopping List Line Item 1 Quantity"
-    And I fill "Shopping List Line Item Form" with:
-      | Quantity | 3    |
-      | Unit     | item |
-    And I click on "Shopping List Line Item 3 Quantity"
-    And I type "5" in "Shopping List Line Item 3 Quantity Input"
+    When I set quantity for shopping list line item with sku "BB4" to "3"
+    When I set unit for shopping list line item with sku "BB4" to "item"
+    When I set quantity for shopping list line item with sku "BB5" to "5"
     And I click "Update All"
-    Then I should see following grid:
+    Then I should see following grid containing rows:
       | SKU  | Item                                                     |              | QtyUpdate All | Price  | Subtotal                 |
       |      | Configurable Product 1                                   |              | 15 items      |        | $249.00 -$124.50 $124.50 |
       | BB4  | Color: Red Size: M Note 4 text                           | In Stock     | 3 item        | $11.00 | $33.00 -$16.50 $16.50    |

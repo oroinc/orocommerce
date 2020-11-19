@@ -49,12 +49,3 @@ Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
     priceRelationRpoduct1DefaultPriceList:
         product: '@product1'
         priceList: '@defaultPriceList'
-
-Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
-    product1ItemCombined:
-        unit: '@item'
-        product: '@product1'
-        priceList: '@combinedPriceList'
-        quantity: 1
-        value: 10
-        currency: 'USD'

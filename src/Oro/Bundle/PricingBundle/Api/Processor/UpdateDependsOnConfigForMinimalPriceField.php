@@ -35,12 +35,10 @@ class UpdateDependsOnConfigForMinimalPriceField implements ProcessorInterface
         $config = $context->getConfig();
         $minimalPricesField = $config->getField(ComputeProductSearchMinimalPrices::MINIMAL_PRICES_FIELD);
         if (null !== $minimalPricesField && !$minimalPricesField->isExcluded()) {
-            $dependsOn = $minimalPricesField->getDependsOn();
             $productUnits = $this->getProductUnits();
             foreach ($productUnits as $productUnit) {
-                $dependsOn[] = 'decimal.minimal_price_CPL_ID_CURRENCY_' . $productUnit;
+                $minimalPricesField->addDependsOn('decimal.minimal_price_CPL_ID_CURRENCY_' . $productUnit);
             }
-            $minimalPricesField->setDependsOn($dependsOn);
         }
     }
 

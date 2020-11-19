@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\EventListener;
 
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\FormBundle\Event\FormHandler\FormProcessEvent;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder;
@@ -10,8 +12,15 @@ use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
 use Oro\Bundle\PricingBundle\Handler\PriceRuleLexemeHandler;
 use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandler;
 
-class PriceListListener
+/**
+ * Update price rule lexemes on price list change
+ * Build CPL activation plan on schedule collection changes
+ * Trigger CPL rebuild on price list status change
+ */
+class PriceListListener implements FeatureToggleableInterface
 {
+    use FeatureCheckerHolderTrait;
+
     const IS_ACTIVE_FIELD = 'isActive';
 
     /**
@@ -61,11 +70,12 @@ class PriceListListener
     {
         /** @var PriceList $priceList */
         $priceList = $event->getData();
-
         $this->plDataBeforeUpdate[$priceList->getId()][self::IS_ACTIVE_FIELD] = $priceList->isActive();
 
-        foreach ($priceList->getSchedules() as $schedule) {
-            $this->priceListSchedules[] = $schedule->getHash();
+        if ($this->isFeaturesEnabled()) {
+            foreach ($priceList->getSchedules() as $schedule) {
+                $this->priceListSchedules[] = $schedule->getHash();
+            }
         }
     }
 
@@ -87,7 +97,7 @@ class PriceListListener
         /** @var PriceList $priceList */
         $priceList = $event->getData();
 
-        if ($priceList->getId() && $this->isCollectionChanged($priceList)) {
+        if ($this->isFeaturesEnabled() && $priceList->getId() && $this->isCollectionChanged($priceList)) {
             $this->activationPlanBuilder->buildByPriceList($priceList);
         }
 
@@ -110,7 +120,7 @@ class PriceListListener
         }
 
         $submitted = array_map(
-            function (PriceListSchedule $item) {
+            static function (PriceListSchedule $item) {
                 return $item->getHash();
             },
             $priceList->getSchedules()->toArray()

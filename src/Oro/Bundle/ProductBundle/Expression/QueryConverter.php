@@ -6,21 +6,18 @@ use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\QueryDesignerBundle\Model\AbstractQueryDesigner;
 use Oro\Bundle\QueryDesignerBundle\QueryDesigner\GroupingOrmQueryConverter;
 
+/**
+ * Converts a price list query definition created by the query designer to an ORM query.
+ */
 class QueryConverter extends GroupingOrmQueryConverter
 {
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $tableAliasByColumn = [];
 
-    /**
-     * @var QueryBuilder
-     */
+    /** @var QueryBuilder */
     protected $qb;
 
-    /**
-     * @var QueryConverterExtensionInterface[]
-     */
+    /** @var QueryConverterExtensionInterface[] */
     protected $converterExtensions = [];
 
     /**
@@ -33,7 +30,8 @@ class QueryConverter extends GroupingOrmQueryConverter
 
     /**
      * @param AbstractQueryDesigner $source
-     * @return \Doctrine\ORM\QueryBuilder
+     *
+     * @return QueryBuilder
      */
     public function convert(AbstractQueryDesigner $source)
     {

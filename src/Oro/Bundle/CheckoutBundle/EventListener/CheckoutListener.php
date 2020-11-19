@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CheckoutBundle\EventListener;
 
-use Doctrine\ORM\Event\LifecycleEventArgs;
 use Oro\Bundle\CheckoutBundle\DependencyInjection\Configuration;
 use Oro\Bundle\CheckoutBundle\DependencyInjection\OroCheckoutExtension;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
@@ -32,22 +31,6 @@ class CheckoutListener
     ) {
         $this->defaultUserProvider = $defaultUserProvider;
         $this->tokenAccessor = $tokenAccessor;
-    }
-
-    /**
-     * @param Checkout $checkout
-     * @param LifecycleEventArgs $event
-     */
-    public function postUpdate(Checkout $checkout, LifecycleEventArgs $event)
-    {
-        $unitOfWork = $event->getEntityManager()->getUnitOfWork();
-
-        $unitOfWork->scheduleExtraUpdate(
-            $checkout,
-            [
-                'completedData' => [null, $checkout->getCompletedData()]
-            ]
-        );
     }
 
     /**

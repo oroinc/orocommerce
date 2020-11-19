@@ -115,16 +115,6 @@ Oro\Bundle\PricingBundle\Entity\ProductPrice:
     productSku: 'SKU124'
     quantity: 5
     unit: '@item'
-    value: 5
-    currency: 'USD'
-
-Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
-  combinedProductPrice2:
-    pricelist: '@combinedPriceList'
-    product: '@digital_product'
-    productSku: 'SKU124'
-    quantity: 5
-    unit: '@item'
     value: 2
     currency: 'USD'
 

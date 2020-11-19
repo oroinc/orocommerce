@@ -166,55 +166,53 @@ Oro\Bundle\PricingBundle\Entity\ProductPrice:
         quantity: 1
         unit: '@piece'
         value: 31
+    price{4..6}_EUR:
+        product: '@product<current()>'
+        priceList: '@defaultPriceList'
+        currency: 'EUR'
+        quantity: 1
+        unit: '@item'
+        value: 11
+    price{7..9}_EUR:
+        product: '@product<current()>'
+        priceList: '@defaultPriceList'
+        currency: 'EUR'
+        quantity: 1
+        unit: '@piece'
+        value: 17
+    price{10..11}_EUR:
+        product: '@product<current()>'
+        priceList: '@defaultPriceList'
+        currency: 'EUR'
+        quantity: 1
+        unit: '@set'
+        value: 19
+    price{12..17}_EUR:
+        product: '@product<current()>'
+        priceList: '@defaultPriceList'
+        currency: 'EUR'
+        quantity: 1
+        unit: '@item'
+        value: 23
+    price{18..20}_EUR:
+        product: '@product<current()>'
+        priceList: '@defaultPriceList'
+        currency: 'EUR'
+        quantity: 1
+        unit: '@set'
+        value: 29
+    price{21..40}_EUR:
+        product: '@product<current()>'
+        priceList: '@defaultPriceList'
+        currency: 'EUR'
+        quantity: 1
+        unit: '@piece'
+        value: 31
 
 Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
     priceRelation{4..40}:
         product: '@product<current()>'
         priceList: '@defaultPriceList'
-
-Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
-    combinedPrice{4..6}:
-        product: '@product<current()>'
-        priceList: '@combinedPriceList'
-        currency: 'USD'
-        quantity: 1
-        unit: '@item'
-        value: 11
-    combinedPrice{7..9}:
-        product: '@product<current()>'
-        priceList: '@combinedPriceList'
-        currency: 'USD'
-        quantity: 1
-        unit: '@piece'
-        value: 17
-    combinedPrice{10..11}:
-        product: '@product<current()>'
-        priceList: '@combinedPriceList'
-        currency: 'USD'
-        quantity: 1
-        unit: '@set'
-        value: 19
-    combinedPrice{12..17}:
-        product: '@product<current()>'
-        priceList: '@combinedPriceList'
-        currency: 'USD'
-        quantity: 1
-        unit: '@item'
-        value: 23
-    combinedPrice{18..20}:
-        product: '@product<current()>'
-        priceList: '@combinedPriceList'
-        currency: 'USD'
-        quantity: 1
-        unit: '@set'
-        value: 29
-    combinedPrice{21..40}:
-        product: '@product<current()>'
-        priceList: '@combinedPriceList'
-        currency: 'USD'
-        quantity: 1
-        unit: '@piece'
-        value: 31
 
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
     shoppinglist1:

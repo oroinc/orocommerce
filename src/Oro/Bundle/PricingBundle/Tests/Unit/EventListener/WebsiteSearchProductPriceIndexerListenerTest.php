@@ -43,7 +43,7 @@ class WebsiteSearchProductPriceIndexerListenerTest extends \PHPUnit\Framework\Te
     /**
      * @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected $featureChecker;
+    private $featureChecker;
 
     protected function setUp(): void
     {

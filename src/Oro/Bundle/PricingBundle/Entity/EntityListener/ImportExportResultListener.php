@@ -3,6 +3,8 @@
 namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\ImportExportBundle\Entity\ImportExportResult;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -15,8 +17,10 @@ use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 /**
  * Resolve combined prices on ImportExportResult post persist
  */
-class ImportExportResultListener
+class ImportExportResultListener implements FeatureToggleableInterface
 {
+    use FeatureCheckerHolderTrait;
+
     /** @var ManagerRegistry */
     private $doctrine;
 
@@ -59,7 +63,7 @@ class ImportExportResultListener
                 ->getManagerForClass(PriceList::class)
                 ->find(PriceList::class, $options['price_list_id']);
             if ($priceList !== null) {
-                $this->resolveCombinedPrices($priceList, $version);
+                $this->handlePriceListPricesMassUpdate($priceList, $version);
             }
         }
     }
@@ -68,20 +72,17 @@ class ImportExportResultListener
      * @param PriceList $priceList
      * @param int|null  $version
      */
-    private function resolveCombinedPrices(PriceList $priceList, ?int $version = null)
+    private function handlePriceListPricesMassUpdate(PriceList $priceList, ?int $version = null)
     {
         $lexemes = $this->lexemeTriggerHandler->findEntityLexemes(
             PriceList::class,
             ['prices'],
             $priceList->getId()
         );
+
         foreach ($this->getProductBatches($priceList, $version) as $products) {
             $this->lexemeTriggerHandler->processLexemes($lexemes, $products);
-            $this->priceListTriggerHandler->handlePriceListTopic(
-                Topics::RESOLVE_COMBINED_PRICES,
-                $priceList,
-                $products
-            );
+            $this->emitCplTriggers($priceList, $products);
         }
     }
 
@@ -110,5 +111,22 @@ class ImportExportResultListener
     private function getProductPriceRepository(): ProductPriceRepository
     {
         return $this->doctrine->getRepository(ProductPrice::class);
+    }
+
+    /**
+     * @param PriceList $priceList
+     * @param array $products
+     */
+    private function emitCplTriggers(PriceList $priceList, array $products): void
+    {
+        if (!$this->isFeaturesEnabled()) {
+            return;
+        }
+
+        $this->priceListTriggerHandler->handlePriceListTopic(
+            Topics::RESOLVE_COMBINED_PRICES,
+            $priceList,
+            $products
+        );
     }
 }

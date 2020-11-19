@@ -369,8 +369,12 @@ class ProductTest extends FrontendRestJsonApiTestCase
                                 ]
                             ],
                             'wysiwyg'            => [
-                                'value' => null,
-                                'style' => null
+                                'value' => 'Product 1 WYSIWYG Text',
+                                'style' => '<style></style>'
+                            ],
+                            'wysiwygAttr'        => [
+                                'value' => 'Product 1 WYSIWYG Attr Text',
+                                'style' => '<style></style>'
                             ]
                         ]
                     ]
@@ -379,7 +383,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
             $response
         );
         $responseData = self::jsonToArray($response->getContent());
-        self::assertCount(11, $responseData['data']['attributes']['productAttributes']);
+        self::assertCount(12, $responseData['data']['attributes']['productAttributes']);
     }
 
     public function testGetAttributesWithEmptyValues()
@@ -413,10 +417,8 @@ class ProductTest extends FrontendRestJsonApiTestCase
                             'testToOneId'        => null,
                             'testAttrManyToMany' => [],
                             'testToManyId'       => [],
-                            'wysiwyg'            => [
-                                'value' => null,
-                                'style' => null
-                            ]
+                            'wysiwyg'            => null,
+                            'wysiwygAttr'        => null
                         ]
                     ]
                 ]
@@ -424,7 +426,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
             $response
         );
         $responseData = self::jsonToArray($response->getContent());
-        self::assertCount(11, $responseData['data']['attributes']['productAttributes']);
+        self::assertCount(12, $responseData['data']['attributes']['productAttributes']);
     }
 
     public function testGetConfigurableProduct()

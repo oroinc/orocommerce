@@ -2,216 +2,109 @@
 
 namespace Oro\Bundle\PricingBundle\Model;
 
-use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
-use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
-use Oro\Bundle\PricingBundle\Entity\PriceListToWebsite;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Component\MessageQueue\Client\CallbackMessageBuilder;
-use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
 /**
  * Provides a set of methods to handle price list collection changes.
  *
  * @see \Oro\Bundle\PricingBundle\Async\PriceListRelationMessageFilter
  */
-class PriceListRelationTriggerHandler
+class PriceListRelationTriggerHandler implements PriceListRelationTriggerHandlerInterface, FeatureToggleableInterface
 {
-    private const WEBSITE        = 'website';
-    private const CUSTOMER_GROUP = 'customerGroup';
-    private const CUSTOMER       = 'customer';
-    private const ENTITIES       = ['website', 'customerGroup', 'customer'];
-
-    /** @var MessageProducerInterface */
-    private $messageProducer;
-
-    /** @var ManagerRegistry */
-    private $doctrine;
-
-    /** @var ConfigManager */
-    private $configManager;
+    use FeatureCheckerHolderTrait;
 
     /**
-     * @param MessageProducerInterface $messageProducer
-     * @param ManagerRegistry          $doctrine
-     * @param ConfigManager            $configManager
+     * @var PriceListRelationTriggerHandlerInterface
+     */
+    private $cplHandler;
+
+    /**
+     * @var PriceListRelationTriggerHandlerInterface
+     */
+    private $flatHandler;
+
+    /**
+     * @param PriceListRelationTriggerHandlerInterface $cplHandler
+     * @param PriceListRelationTriggerHandlerInterface $flatHandler
      */
     public function __construct(
-        MessageProducerInterface $messageProducer,
-        ManagerRegistry $doctrine,
-        ConfigManager $configManager
+        PriceListRelationTriggerHandlerInterface $cplHandler,
+        PriceListRelationTriggerHandlerInterface $flatHandler
     ) {
-        $this->messageProducer = $messageProducer;
-        $this->doctrine = $doctrine;
-        $this->configManager = $configManager;
-    }
-
-    public function handleConfigChange(): void
-    {
-        $this->sendMessage([]);
-    }
-
-    public function handleFullRebuild(): void
-    {
-        $this->sendMessage(['force' => true]);
+        $this->cplHandler = $cplHandler;
+        $this->flatHandler = $flatHandler;
     }
 
     /**
-     * @param Website $website
+     * {@inheritDoc}
+     */
+    public function handleConfigChange(): void
+    {
+        $this->getHandler()->handleConfigChange();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function handleFullRebuild(): void
+    {
+        $this->getHandler()->handleFullRebuild();
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function handleWebsiteChange(Website $website): void
     {
-        if (null === $website->getId()) {
-            $this->sendMessageWithCallback(function () use ($website) {
-                return $this->normalizeMessage([self::WEBSITE => $website->getId()]);
-            });
-        } else {
-            $this->sendMessage([self::WEBSITE => $website->getId()]);
-        }
+        $this->getHandler()->handleWebsiteChange($website);
     }
 
     /**
-     * @param CustomerGroup $customerGroup
-     * @param Website       $website
+     * {@inheritDoc}
      */
     public function handleCustomerGroupChange(CustomerGroup $customerGroup, Website $website): void
     {
-        if (null === $customerGroup->getId()) {
-            $this->sendMessageWithCallback(function () use ($customerGroup, $website) {
-                return $this->normalizeMessage([
-                    self::CUSTOMER_GROUP => $customerGroup->getId(),
-                    self::WEBSITE        => $website->getId()
-                ]);
-            });
-        } else {
-            $this->sendMessage([
-                self::CUSTOMER_GROUP => $customerGroup->getId(),
-                self::WEBSITE        => $website->getId()
-            ]);
-        }
+        $this->getHandler()->handleCustomerGroupChange($customerGroup, $website);
     }
 
     /**
-     * @param CustomerGroup $customerGroup
+     * {@inheritDoc}
      */
     public function handleCustomerGroupRemove(CustomerGroup $customerGroup): void
     {
-        $customerGroupId = $customerGroup->getId();
-        $iterator = $this->doctrine->getRepository(PriceListToCustomer::class)
-            ->getCustomerWebsitePairsByCustomerGroupIterator($customerGroup);
-        foreach ($iterator as $item) {
-            $item[self::CUSTOMER_GROUP] = $customerGroupId;
-            $this->sendMessage($item);
-        }
+        $this->getHandler()->handleCustomerGroupRemove($customerGroup);
     }
 
     /**
-     * @param Customer $customer
-     * @param Website  $website
+     * {@inheritDoc}
      */
     public function handleCustomerChange(Customer $customer, Website $website): void
     {
-        if (null === $customer->getId()) {
-            $this->sendMessageWithCallback(function () use ($customer, $website) {
-                $message = [self::CUSTOMER => $customer->getId(), self::WEBSITE => $website->getId()];
-                $customerGroup = $customer->getGroup();
-                if (null !== $customerGroup) {
-                    $message[self::CUSTOMER_GROUP] = $customerGroup->getId();
-                }
-
-                return $this->normalizeMessage($message);
-            });
-        } else {
-            $message = [self::CUSTOMER => $customer->getId(), self::WEBSITE => $website->getId()];
-            $customerGroup = $customer->getGroup();
-            if (null !== $customerGroup) {
-                $message[self::CUSTOMER_GROUP] = $customerGroup->getId();
-            }
-            $this->sendMessage($message);
-        }
+        $this->getHandler()->handleCustomerChange($customer, $website);
     }
 
     /**
-     * @param PriceList $priceList
+     * {@inheritDoc}
      */
     public function handlePriceListStatusChange(PriceList $priceList): void
     {
-        if ($this->isDefaultPriceList($priceList->getId())) {
-            $this->handleFullRebuild();
-        } else {
-            $priceListToCustomerRepository = $this->doctrine->getRepository(PriceListToCustomer::class);
-            foreach ($priceListToCustomerRepository->getIteratorByPriceList($priceList) as $item) {
-                $this->sendMessage($item);
-            }
-            $priceListToCustomerGroupRepository = $this->doctrine->getRepository(PriceListToCustomerGroup::class);
-            foreach ($priceListToCustomerGroupRepository->getIteratorByPriceList($priceList) as $item) {
-                $this->sendMessage($item);
-            }
-            $priceListToWebsiteRepository = $this->doctrine->getRepository(PriceListToWebsite::class);
-            foreach ($priceListToWebsiteRepository->getIteratorByPriceList($priceList) as $item) {
-                $this->sendMessage($item);
-            }
-        }
+        $this->getHandler()->handlePriceListStatusChange($priceList);
     }
 
     /**
-     * @param array $message
+     * @return PriceListRelationTriggerHandlerInterface
      */
-    private function sendMessage(array $message): void
+    private function getHandler(): PriceListRelationTriggerHandlerInterface
     {
-        $this->messageProducer->send(
-            Topics::REBUILD_COMBINED_PRICE_LISTS,
-            $this->normalizeMessage($message)
-        );
-    }
-
-    /**
-     * @param callable $callback
-     */
-    private function sendMessageWithCallback(callable $callback): void
-    {
-        $this->messageProducer->send(Topics::REBUILD_COMBINED_PRICE_LISTS, new CallbackMessageBuilder($callback));
-    }
-
-    /**
-     * @param array $message
-     *
-     * @return array
-     */
-    private function normalizeMessage(array $message): array
-    {
-        foreach (self::ENTITIES as $propertyName) {
-            if (\array_key_exists($propertyName, $message)) {
-                if (null === $message[$propertyName]) {
-                    unset($message[$propertyName]);
-                } else {
-                    $message[$propertyName] = (int)$message[$propertyName];
-                }
-            }
+        if ($this->isFeaturesEnabled()) {
+            return $this->flatHandler;
         }
 
-        return $message;
-    }
-
-    /**
-     * @param int $priceListId
-     *
-     * @return bool
-     */
-    private function isDefaultPriceList(int $priceListId): bool
-    {
-        $defaultPriceListsConfig = $this->configManager->get('oro_pricing.default_price_lists');
-        foreach ($defaultPriceListsConfig as $item) {
-            if (((int)$item['priceList']) === $priceListId) {
-                return true;
-            }
-        }
-
-        return false;
+        return $this->cplHandler;
     }
 }

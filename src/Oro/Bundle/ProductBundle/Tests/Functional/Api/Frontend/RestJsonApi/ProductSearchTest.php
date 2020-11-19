@@ -244,9 +244,13 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
                                         'targetValue' => '<toString(@country.germany->iso2Code)>'
                                     ]
                                 ],
-                                'wysiwyg' => [
-                                    'value' => null,
-                                    'style' => null
+                                'wysiwyg'            => [
+                                    'value' => 'Product 1 WYSIWYG Text',
+                                    'style' => '<style></style>'
+                                ],
+                                'wysiwygAttr'        => [
+                                    'value' => 'Product 1 WYSIWYG Attr Text',
+                                    'style' => '<style></style>'
                                 ]
                             ]
                         ]
@@ -256,7 +260,7 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
             $response
         );
         $responseData = self::jsonToArray($response->getContent());
-        self::assertCount(11, $responseData['included'][0]['attributes']['productAttributes']);
+        self::assertCount(12, $responseData['included'][0]['attributes']['productAttributes']);
     }
 
     public function testOnlyMinimalPricesAttribute()
