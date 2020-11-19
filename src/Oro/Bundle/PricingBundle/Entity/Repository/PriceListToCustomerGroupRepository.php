@@ -246,4 +246,22 @@ class PriceListToCustomerGroupRepository extends EntityRepository implements Pri
 
         return $qb->getQuery()->getOneOrNullResult() !== null;
     }
+
+    /**
+     * @param Website $website
+     * @param CustomerGroup $customerGroup
+     * @return PriceListToCustomerGroup|null
+     */
+    public function getFirstRelation(Website $website, CustomerGroup $customerGroup): ?PriceListToCustomerGroup
+    {
+        $qb = $this->createQueryBuilder('rel');
+        $qb->where($qb->expr()->eq('rel.customerGroup', ':customerGroup'))
+            ->andWhere($qb->expr()->eq('rel.website', ':website'))
+            ->setParameter('customerGroup', $customerGroup)
+            ->setParameter('website', $website)
+            ->orderBy('rel.sortOrder')
+            ->setMaxResults(1);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
 }

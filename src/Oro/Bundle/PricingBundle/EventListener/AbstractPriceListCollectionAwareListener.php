@@ -19,6 +19,7 @@ use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandler;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
 use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormInterface;
 
 /**
  * Adds existing price lists and fallback if exists on post set data
@@ -89,8 +90,9 @@ abstract class AbstractPriceListCollectionAwareListener implements FeatureToggle
         foreach ($event->getForm()->get(self::PRICE_LISTS_COLLECTION_FORM_FIELD_NAME)->all() as $form) {
             $website = $form->getConfig()->getOption(WebsiteScopedDataType::WEBSITE_OPTION);
             $existing = $this->getExistingRelations($targetEntity, $website);
-            $fallback = $this->getFallback($website, $targetEntity);
             $form->get(PriceListsSettingsType::PRICE_LIST_COLLECTION_FIELD)->setData($existing);
+
+            $fallback = $this->getFallback($website, $targetEntity);
             if ($fallback) {
                 $form->get(PriceListsSettingsType::FALLBACK_FIELD)->setData($fallback->getFallback());
             }
@@ -116,17 +118,7 @@ abstract class AbstractPriceListCollectionAwareListener implements FeatureToggle
             $hasChanges = $this->collectionHandler
                 ->handleChanges($submitted, $existingRelations, $targetEntity, $website);
 
-            $fallback = $this->getFallback($website, $targetEntity);
-            $fallbackData = $form->get(PriceListsSettingsType::FALLBACK_FIELD)->getData();
-
-            if (!$fallback && $fallbackData !== $this->getDefaultFallback()) {
-                $fallback = $this->createFallback($targetEntity, $website);
-                $this->doctrineHelper->getEntityManager($fallback)
-                    ->persist($fallback);
-            }
-
-            if ($fallback && $fallbackData !== $fallback->getFallback()) {
-                $fallback->setFallback($fallbackData);
+            if ($this->processFallbackSubmit($targetEntity, $website, $form)) {
                 $hasChanges = true;
             }
 
@@ -166,8 +158,7 @@ abstract class AbstractPriceListCollectionAwareListener implements FeatureToggle
      */
     protected function getKey($targetEntity, Website $website)
     {
-        $key = spl_object_hash($targetEntity) . '_' . spl_object_hash($website);
-        return $key;
+        return spl_object_hash($targetEntity) . '_' . spl_object_hash($website);
     }
 
     /**
@@ -223,4 +214,31 @@ abstract class AbstractPriceListCollectionAwareListener implements FeatureToggle
      * @param Website $website
      */
     abstract protected function handleCollectionChanges($targetEntity, Website $website);
+
+    /**
+     * @param CustomerGroup|Customer $targetEntity
+     * @param Website $website
+     * @param FormInterface $form
+     * @return bool
+     * @throws \Doctrine\ORM\ORMException
+     */
+    protected function processFallbackSubmit($targetEntity, Website $website, FormInterface $form): bool
+    {
+        $fallback = $this->getFallback($website, $targetEntity);
+        $fallbackData = $form->get(PriceListsSettingsType::FALLBACK_FIELD)->getData();
+
+        if (!$fallback && $fallbackData !== $this->getDefaultFallback()) {
+            $fallback = $this->createFallback($targetEntity, $website);
+            $this->doctrineHelper->getEntityManager($fallback)
+                ->persist($fallback);
+        }
+
+        if ($fallback && $fallbackData !== $fallback->getFallback()) {
+            $fallback->setFallback($fallbackData);
+
+            return true;
+        }
+
+        return false;
+    }
 }

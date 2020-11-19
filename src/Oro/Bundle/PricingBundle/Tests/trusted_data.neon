@@ -59,6 +59,10 @@ trusted_data:
             restoreQueryBuilder:
                 part: true
                 elements: true
+        Oro\Bundle\PricingBundle\Model\PricingStorageSwitchHandler:
+            deleteNonFirstPriceListAssociations:
+                table: true
+                associationColumn: true
     properties:
         Oro\Bundle\PricingBundle\Filter\ProductPriceFilter:
             qbPrepare:

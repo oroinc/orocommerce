@@ -3,6 +3,8 @@
 namespace Oro\Bundle\PricingBundle\Builder;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Compiler\PriceListRuleCompiler;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -17,8 +19,10 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 /**
  * Builder for product prices
  */
-class ProductPriceBuilder
+class ProductPriceBuilder implements FeatureToggleableInterface
 {
+    use FeatureCheckerHolderTrait;
+
     /**
      * @var ShardManager
      */
@@ -94,22 +98,8 @@ class ProductPriceBuilder
         }
         $this->buildByPriceListWithoutTriggers($priceList, $products);
 
-        if ($products || count($priceList->getPriceRules()) === 0) {
-            $productsBatches = [$products];
-        } else {
-            $productsBatches = $this->getProductPriceRepository()->getProductsByPriceListAndVersion(
-                $this->shardManager,
-                $priceList,
-                $this->version
-            );
-        }
-
-        foreach ($productsBatches as $batch) {
-            $this->priceListTriggerHandler->handlePriceListTopic(
-                Topics::RESOLVE_COMBINED_PRICES,
-                $priceList,
-                $batch
-            );
+        if ($this->isFeaturesEnabled()) {
+            $this->emitCplTriggers($priceList, $products);
         }
 
         $this->version = null;
@@ -178,6 +168,31 @@ class ProductPriceBuilder
             foreach ($rules as $rule) {
                 $this->applyRule($rule, $products);
             }
+        }
+    }
+
+    /**
+     * @param PriceList $priceList
+     * @param array $products
+     */
+    private function emitCplTriggers(PriceList $priceList, array $products): void
+    {
+        if ($products || count($priceList->getPriceRules()) === 0) {
+            $productsBatches = [$products];
+        } else {
+            $productsBatches = $this->getProductPriceRepository()->getProductsByPriceListAndVersion(
+                $this->shardManager,
+                $priceList,
+                $this->version
+            );
+        }
+
+        foreach ($productsBatches as $batch) {
+            $this->priceListTriggerHandler->handlePriceListTopic(
+                Topics::RESOLVE_COMBINED_PRICES,
+                $priceList,
+                $batch
+            );
         }
     }
 }

@@ -31,7 +31,7 @@ services:
         arguments:
             - '@oro_cms.provider.wysiwyg_fields_provider'
         tags:
-            - { name: oro.api.processor, action: get_config, requestType: '!frontend', extra: '!identifier_fields_only', priority: -10 }
+            - { name: oro.api.processor, action: get_config, requestType: '!frontend', extra: '!identifier_fields_only', priority: -40 }
 
     oro_cms.api.frontend.configure_wysiwyg_fields:
         class: Oro\Bundle\CMSBundle\Api\Processor\ConfigureWYSIWYGFields
@@ -39,7 +39,7 @@ services:
             - '@oro_cms.provider.wysiwyg_fields_provider'
             - true
         tags:
-            - { name: oro.api.processor, action: get_config, requestType: frontend, extra: '!identifier_fields_only', priority: -10 }
+            - { name: oro.api.processor, action: get_config, requestType: frontend, extra: '!identifier_fields_only', priority: -40 }
 
     oro_cms.api.frontend.product.configure_wysiwyg_attributes:
         class: Oro\Bundle\CMSBundle\Api\Processor\ConfigureWYSIWYGAttributes
@@ -52,10 +52,10 @@ services:
     oro_cms.api.complete_wysiwyg_fields_descriptions:
         class: Oro\Bundle\CMSBundle\Api\Processor\CompleteWYSIWYGFieldsDescriptions
         arguments:
-            - '@oro_cms.provider.wysiwyg_fields_provider'
+            - '@oro_api.entity_description_provider'
             - '@file_locator'
         tags:
-            - { name: oro.api.processor, action: get_config, requestType: '!frontend', extra: '!identifier_fields_only&descriptions', priority: -220 }
+            - { name: oro.api.processor, action: get_config, extra: '!identifier_fields_only&descriptions', priority: -220 }
 
     oro_cms.api.frontend.product.compute_wysiwyg_attributes:
         class: Oro\Bundle\CMSBundle\Api\Processor\ComputeWYSIWYGAttributes

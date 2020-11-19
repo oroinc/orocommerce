@@ -25,8 +25,8 @@ class SubtotalTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(987, $subtotal->setSortOrder(987)->getSortOrder());
         $this->assertEquals(
             'test',
-            $subtotal->setCombinedPriceList((new CombinedPriceList())->setName('test'))
-                ->getCombinedPriceList()->getName()
+            $subtotal->setPriceList((new CombinedPriceList())->setName('test'))
+                ->getPriceList()->getName()
         );
     }
 

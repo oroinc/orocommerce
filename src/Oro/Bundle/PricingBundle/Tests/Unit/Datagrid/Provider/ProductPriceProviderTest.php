@@ -59,7 +59,7 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetCombinedPricesForProductsByPriceListWithoutPrices()
+    public function testGetPricesForProductsByPriceListWithoutPrices()
     {
         $productScopeCriteria = new ProductPriceScopeCriteria();
         $this->productPriceProvider->expects($this->once())
@@ -74,7 +74,7 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getEntityReference');
 
         $result = $this->gridProductPriceProvider
-            ->getCombinedPricesForProductsByPriceList(
+            ->getPricesForProductsByPriceList(
                 [],
                 $productScopeCriteria,
                 self::USER_CURRENCY
@@ -89,7 +89,7 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
      * @param array $productPrices
      * @param array $expected
      */
-    public function testGetCombinedPricesForProductsByPriceList(array $productPrices, array $expected)
+    public function testGetPricesForProductsByPriceList(array $productPrices, array $expected)
     {
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
@@ -127,7 +127,7 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
             });
 
         $combinedPricesForProductsByPriceList = $this->gridProductPriceProvider
-            ->getCombinedPricesForProductsByPriceList(
+            ->getPricesForProductsByPriceList(
                 [new ResultRecord(['id' => 1])],
                 $productScopeCriteria,
                 self::USER_CURRENCY

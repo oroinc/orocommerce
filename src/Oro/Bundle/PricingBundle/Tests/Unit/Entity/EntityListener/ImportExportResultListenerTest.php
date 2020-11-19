@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Entity\EntityListener;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\ImportExportBundle\Entity\ImportExportResult;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\EntityListener\ImportExportResultListener;
@@ -36,6 +37,11 @@ class ImportExportResultListenerTest extends \PHPUnit\Framework\TestCase
     private $listener;
 
     /**
+     * @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $featureChecker;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp(): void
@@ -44,6 +50,7 @@ class ImportExportResultListenerTest extends \PHPUnit\Framework\TestCase
         $this->lexemeTriggerHandler = $this->createMock(PriceRuleLexemeTriggerHandler::class);
         $this->priceListTriggerHandler = $this->createMock(PriceListTriggerHandler::class);
         $this->shardManager = $this->createMock(ShardManager::class);
+        $this->featureChecker = $this->createMock(FeatureChecker::class);
 
         $this->listener = new ImportExportResultListener(
             $this->doctrine,
@@ -51,6 +58,47 @@ class ImportExportResultListenerTest extends \PHPUnit\Framework\TestCase
             $this->priceListTriggerHandler,
             $this->shardManager
         );
+        $this->listener->setFeatureChecker($this->featureChecker);
+        $this->listener->addFeature('oro_price_lists_combined');
+    }
+
+    public function testPostPersistFeatureDisabled()
+    {
+        $importExportResult = new ImportExportResult();
+        $importExportResult->setOptions(['price_list_id' => 2]);
+
+        $priceList = $this->getEntity(PriceList::class, ['id' => 2]);
+
+        $this->featureChecker->expects($this->any())
+            ->method('isFeatureEnabled')
+            ->with('oro_price_lists_combined')
+            ->willReturn(false);
+
+        $manager = $this->createMock(EntityManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('find')
+            ->with(PriceList::class, 2)
+            ->willReturn($priceList);
+        $this->doctrine->expects($this->any())
+            ->method('getManagerForClass')
+            ->with(PriceList::class)
+            ->willReturn($manager);
+
+        $lexemes = [new PriceRuleLexeme()];
+        $this->lexemeTriggerHandler->expects($this->once())
+            ->method('findEntityLexemes')
+            ->with(PriceList::class, ['prices'], $priceList->getId())
+            ->willReturn($lexemes);
+
+        $this->lexemeTriggerHandler->expects($this->once())
+            ->method('processLexemes')
+            ->with($lexemes);
+
+        $this->priceListTriggerHandler->expects($this->never())
+            ->method('handlePriceListTopic')
+            ->with(Topics::RESOLVE_COMBINED_PRICES, $priceList);
+
+        $this->listener->postPersist($importExportResult);
     }
 
     public function testPostPersist()
@@ -59,6 +107,11 @@ class ImportExportResultListenerTest extends \PHPUnit\Framework\TestCase
         $importExportResult->setOptions(['price_list_id' => 2]);
 
         $priceList = $this->getEntity(PriceList::class, ['id' => 2]);
+
+        $this->featureChecker->expects($this->any())
+            ->method('isFeatureEnabled')
+            ->with('oro_price_lists_combined')
+            ->willReturn(true);
 
         $manager = $this->createMock(EntityManagerInterface::class);
         $manager->expects($this->once())
@@ -91,6 +144,11 @@ class ImportExportResultListenerTest extends \PHPUnit\Framework\TestCase
     {
         $importExportResult = new ImportExportResult();
 
+        $this->featureChecker->expects($this->any())
+            ->method('isFeatureEnabled')
+            ->with('oro_price_lists_combined')
+            ->willReturn(true);
+
         $manager = $this->createMock(EntityManagerInterface::class);
         $manager->expects($this->never())
             ->method('find');
@@ -115,6 +173,11 @@ class ImportExportResultListenerTest extends \PHPUnit\Framework\TestCase
     {
         $importExportResult = new ImportExportResult();
         $importExportResult->setOptions(['price_list_id' => 2]);
+
+        $this->featureChecker->expects($this->any())
+            ->method('isFeatureEnabled')
+            ->with('oro_price_lists_combined')
+            ->willReturn(true);
 
         $manager = $this->createMock(EntityManagerInterface::class);
         $manager->expects($this->once())
@@ -146,6 +209,11 @@ class ImportExportResultListenerTest extends \PHPUnit\Framework\TestCase
         $priceList = $this->getEntity(PriceList::class, ['id' => 2]);
         $products1 = [1, 3, 5];
         $products2 = [7];
+
+        $this->featureChecker->expects($this->any())
+            ->method('isFeatureEnabled')
+            ->with('oro_price_lists_combined')
+            ->willReturn(true);
 
         $lexemes = [new PriceRuleLexeme()];
         $this->lexemeTriggerHandler->expects($this->once())

@@ -328,13 +328,6 @@ services:
         tags:
             - { name: monolog.logger, channel: oro_cms }
 
-    oro_cms.entity_config_dumper.extension.wysiwyg:
-        class: Oro\Bundle\CMSBundle\Tools\DumperExtensions\WYSIWYGEntityConfigDumperExtension
-        arguments:
-            - '@oro_entity_config.config_manager'
-        tags:
-            - { name: oro_entity_extend.entity_config_dumper_extension, priority: -257 }
-
     oro_cms.tools.wysiwyg_content_checker:
         class: Oro\Bundle\CMSBundle\Tools\WYSIWYGContentChecker
         arguments:

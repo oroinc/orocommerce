@@ -338,6 +338,9 @@ Oro\Bundle\ProductBundle\Entity\Product:
         wysiwyg: 'Product 1 WYSIWYG Text'
         wysiwyg_style: '\<style\>\</style\>'
         wysiwyg_properties: { param: value }
+        wysiwygAttr: 'Product 1 WYSIWYG Attr Text'
+        wysiwygAttr_style: '\<style\>\</style\>'
+        wysiwygAttr_properties: { param: value }
     product2:
         sku: 'PSKU2'
         primaryUnitPrecision: '@product2_precision'

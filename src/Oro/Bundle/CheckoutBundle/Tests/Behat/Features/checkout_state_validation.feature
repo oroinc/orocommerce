@@ -38,7 +38,7 @@ Feature: Checkout State Validation
     And click edit "400-Watt Bulb Work Light" in grid
     When I click "Product Prices"
     And I set Product Price collection element values in 2 row:
-      | Price List     | pricelist_shipping |
+      | Price List     | Default price list |
       | Quantity value | 5                  |
       | Quantity Unit  | item               |
       | Value          | 15                 |

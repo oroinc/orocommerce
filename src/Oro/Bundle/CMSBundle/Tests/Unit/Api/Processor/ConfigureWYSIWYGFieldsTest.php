@@ -1,6 +1,6 @@
 <?php
 
-namespace Unit\Api\Processor;
+namespace Oro\Bundle\CMSBundle\Tests\Unit\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Tests\Unit\Processor\GetConfig\ConfigProcessorTestCase;
 use Oro\Bundle\CMSBundle\Api\Processor\ConfigureWYSIWYGFields;
@@ -44,6 +44,7 @@ class ConfigureWYSIWYGFieldsTest extends ConfigProcessorTestCase
         $this->getProcessor()->process($this->context);
 
         $this->assertConfig($config, $this->context->getResult());
+        self::assertFalse($this->context->has('_wysiwyg_fields'));
     }
 
     public function testProcess()
@@ -60,6 +61,13 @@ class ConfigureWYSIWYGFieldsTest extends ConfigProcessorTestCase
             ->method('getWysiwygPropertiesField')
             ->with(self::TEST_CLASS_NAME, 'wysiwygField')
             ->willReturn('wysiwygField_properties');
+        $this->wysiwygFieldsProvider->expects(self::exactly(3))
+            ->method('isSerializedWysiwygField')
+            ->willReturnMap([
+                [self::TEST_CLASS_NAME, 'wysiwygField', false],
+                [self::TEST_CLASS_NAME, 'wysiwygField_style', false],
+                [self::TEST_CLASS_NAME, 'wysiwygField_properties', false]
+            ]);
 
         $this->context->setResult($this->createConfigObject([
             'fields' => [
@@ -73,11 +81,13 @@ class ConfigureWYSIWYGFieldsTest extends ConfigProcessorTestCase
                 'fields' => [
                     'someField'               => null,
                     'wysiwygField'            => [
-                        'data_type'    => 'nestedObject',
-                        'form_options' => [
+                        'data_type'     => 'nestedObject',
+                        'form_options'  => [
                             'inherit_data' => true
                         ],
-                        'fields'       => [
+                        'property_path' => '_',
+                        'depends_on'    => ['wysiwygField', 'wysiwygField_style', 'wysiwygField_properties'],
+                        'fields'        => [
                             'value'      => [
                                 'data_type'     => 'string',
                                 'property_path' => 'wysiwygField'
@@ -106,6 +116,7 @@ class ConfigureWYSIWYGFieldsTest extends ConfigProcessorTestCase
             ],
             $this->context->getResult()
         );
+        self::assertEquals(['wysiwygField'], $this->context->get('_wysiwyg_fields'));
     }
 
     public function testProcessWithExcludeWysiwygProperties()
@@ -122,6 +133,13 @@ class ConfigureWYSIWYGFieldsTest extends ConfigProcessorTestCase
             ->method('getWysiwygPropertiesField')
             ->with(self::TEST_CLASS_NAME, 'wysiwygField')
             ->willReturn('wysiwygField_properties');
+        $this->wysiwygFieldsProvider->expects(self::exactly(3))
+            ->method('isSerializedWysiwygField')
+            ->willReturnMap([
+                [self::TEST_CLASS_NAME, 'wysiwygField', false],
+                [self::TEST_CLASS_NAME, 'wysiwygField_style', false],
+                [self::TEST_CLASS_NAME, 'wysiwygField_properties', false]
+            ]);
 
         $this->context->setResult($this->createConfigObject([
             'fields' => [
@@ -135,11 +153,13 @@ class ConfigureWYSIWYGFieldsTest extends ConfigProcessorTestCase
                 'fields' => [
                     'someField'               => null,
                     'wysiwygField'            => [
-                        'data_type'    => 'nestedObject',
-                        'form_options' => [
+                        'data_type'     => 'nestedObject',
+                        'form_options'  => [
                             'inherit_data' => true
                         ],
-                        'fields'       => [
+                        'property_path' => '_',
+                        'depends_on'    => ['wysiwygField', 'wysiwygField_style'],
+                        'fields'        => [
                             'value' => [
                                 'data_type'     => 'string',
                                 'property_path' => 'wysiwygField'
@@ -164,6 +184,7 @@ class ConfigureWYSIWYGFieldsTest extends ConfigProcessorTestCase
             ],
             $this->context->getResult()
         );
+        self::assertEquals(['wysiwygField'], $this->context->get('_wysiwyg_fields'));
     }
 
     public function testProcessForRenamedWysiwygField()
@@ -180,6 +201,13 @@ class ConfigureWYSIWYGFieldsTest extends ConfigProcessorTestCase
             ->method('getWysiwygPropertiesField')
             ->with(self::TEST_CLASS_NAME, 'wysiwygField')
             ->willReturn('wysiwygField_properties');
+        $this->wysiwygFieldsProvider->expects(self::exactly(3))
+            ->method('isSerializedWysiwygField')
+            ->willReturnMap([
+                [self::TEST_CLASS_NAME, 'wysiwygField', false],
+                [self::TEST_CLASS_NAME, 'wysiwygField_style', false],
+                [self::TEST_CLASS_NAME, 'wysiwygField_properties', false]
+            ]);
 
         $this->context->setResult($this->createConfigObject([
             'fields' => [
@@ -196,11 +224,13 @@ class ConfigureWYSIWYGFieldsTest extends ConfigProcessorTestCase
                 'fields' => [
                     'someField'               => null,
                     'renamedWysiwygField'     => [
-                        'data_type'    => 'nestedObject',
-                        'form_options' => [
+                        'data_type'     => 'nestedObject',
+                        'form_options'  => [
                             'inherit_data' => true
                         ],
-                        'fields'       => [
+                        'property_path' => '_',
+                        'depends_on'    => ['wysiwygField', 'wysiwygField_style', 'wysiwygField_properties'],
+                        'fields'        => [
                             'value'      => [
                                 'data_type'     => 'string',
                                 'property_path' => 'wysiwygField'
@@ -229,6 +259,7 @@ class ConfigureWYSIWYGFieldsTest extends ConfigProcessorTestCase
             ],
             $this->context->getResult()
         );
+        self::assertEquals(['wysiwygField'], $this->context->get('_wysiwyg_fields'));
     }
 
     public function testProcessForWysiwygFieldWithConfiguredFormOptions()
@@ -245,6 +276,13 @@ class ConfigureWYSIWYGFieldsTest extends ConfigProcessorTestCase
             ->method('getWysiwygPropertiesField')
             ->with(self::TEST_CLASS_NAME, 'wysiwygField')
             ->willReturn('wysiwygField_properties');
+        $this->wysiwygFieldsProvider->expects(self::exactly(3))
+            ->method('isSerializedWysiwygField')
+            ->willReturnMap([
+                [self::TEST_CLASS_NAME, 'wysiwygField', false],
+                [self::TEST_CLASS_NAME, 'wysiwygField_style', false],
+                [self::TEST_CLASS_NAME, 'wysiwygField_properties', false]
+            ]);
 
         $this->context->setResult($this->createConfigObject([
             'fields' => [
@@ -263,12 +301,14 @@ class ConfigureWYSIWYGFieldsTest extends ConfigProcessorTestCase
                 'fields' => [
                     'someField'               => null,
                     'wysiwygField'            => [
-                        'data_type'    => 'nestedObject',
-                        'form_options' => [
+                        'data_type'     => 'nestedObject',
+                        'form_options'  => [
                             'mapped'       => false,
                             'inherit_data' => true
                         ],
-                        'fields'       => [
+                        'property_path' => '_',
+                        'depends_on'    => ['wysiwygField', 'wysiwygField_style', 'wysiwygField_properties'],
+                        'fields'        => [
                             'value'      => [
                                 'data_type'     => 'string',
                                 'property_path' => 'wysiwygField'
@@ -297,6 +337,7 @@ class ConfigureWYSIWYGFieldsTest extends ConfigProcessorTestCase
             ],
             $this->context->getResult()
         );
+        self::assertEquals(['wysiwygField'], $this->context->get('_wysiwyg_fields'));
     }
 
     public function testProcessForWysiwygFieldWithRenamedAdditionalFieldsAndOneOfThemIsMarkedAsNotExcluded()
@@ -313,6 +354,13 @@ class ConfigureWYSIWYGFieldsTest extends ConfigProcessorTestCase
             ->method('getWysiwygPropertiesField')
             ->with(self::TEST_CLASS_NAME, 'wysiwygField')
             ->willReturn('wysiwygField_properties');
+        $this->wysiwygFieldsProvider->expects(self::exactly(3))
+            ->method('isSerializedWysiwygField')
+            ->willReturnMap([
+                [self::TEST_CLASS_NAME, 'wysiwygField', false],
+                [self::TEST_CLASS_NAME, 'wysiwygField_style', false],
+                [self::TEST_CLASS_NAME, 'wysiwygField_properties', false]
+            ]);
 
         $this->context->setResult($this->createConfigObject([
             'fields' => [
@@ -333,11 +381,13 @@ class ConfigureWYSIWYGFieldsTest extends ConfigProcessorTestCase
                 'fields' => [
                     'someField'                     => null,
                     'wysiwygField'                  => [
-                        'data_type'    => 'nestedObject',
-                        'form_options' => [
+                        'data_type'     => 'nestedObject',
+                        'form_options'  => [
                             'inherit_data' => true
                         ],
-                        'fields'       => [
+                        'property_path' => '_',
+                        'depends_on'    => ['wysiwygField', 'wysiwygField_style', 'wysiwygField_properties'],
+                        'fields'        => [
                             'value'      => [
                                 'data_type'     => 'string',
                                 'property_path' => 'wysiwygField'
@@ -367,5 +417,81 @@ class ConfigureWYSIWYGFieldsTest extends ConfigProcessorTestCase
             ],
             $this->context->getResult()
         );
+        self::assertEquals(['wysiwygField'], $this->context->get('_wysiwyg_fields'));
+    }
+
+    public function testProcessForSerializedWysiwygFields()
+    {
+        $this->wysiwygFieldsProvider->expects(self::once())
+            ->method('getWysiwygFields')
+            ->with(self::TEST_CLASS_NAME)
+            ->willReturn(['wysiwygField']);
+        $this->wysiwygFieldsProvider->expects(self::once())
+            ->method('getWysiwygStyleField')
+            ->with(self::TEST_CLASS_NAME, 'wysiwygField')
+            ->willReturn('wysiwygField_style');
+        $this->wysiwygFieldsProvider->expects(self::once())
+            ->method('getWysiwygPropertiesField')
+            ->with(self::TEST_CLASS_NAME, 'wysiwygField')
+            ->willReturn('wysiwygField_properties');
+        $this->wysiwygFieldsProvider->expects(self::exactly(3))
+            ->method('isSerializedWysiwygField')
+            ->willReturnMap([
+                [self::TEST_CLASS_NAME, 'wysiwygField', true],
+                [self::TEST_CLASS_NAME, 'wysiwygField_style', true],
+                [self::TEST_CLASS_NAME, 'wysiwygField_properties', true]
+            ]);
+
+        $this->context->setResult($this->createConfigObject([
+            'fields' => [
+                'someField' => null
+            ]
+        ]));
+        $this->getProcessor()->process($this->context);
+
+        $this->assertConfig(
+            [
+                'fields' => [
+                    'someField'               => null,
+                    'wysiwygField'            => [
+                        'data_type'     => 'nestedObject',
+                        'form_options'  => [
+                            'inherit_data' => true
+                        ],
+                        'property_path' => '_',
+                        'depends_on'    => ['wysiwygField', 'wysiwygField_style', 'wysiwygField_properties'],
+                        'fields'        => [
+                            'value'      => [
+                                'data_type'     => 'string',
+                                'property_path' => 'wysiwygField'
+                            ],
+                            'style'      => [
+                                'data_type'     => 'string',
+                                'property_path' => 'wysiwygField_style'
+                            ],
+                            'properties' => [
+                                'data_type'     => 'object',
+                                'property_path' => 'wysiwygField_properties'
+                            ]
+                        ]
+                    ],
+                    '_wysiwygField'           => [
+                        'exclude'       => true,
+                        'property_path' => 'wysiwygField',
+                        'depends_on'    => ['serialized_data']
+                    ],
+                    'wysiwygField_style'      => [
+                        'exclude'    => true,
+                        'depends_on' => ['serialized_data']
+                    ],
+                    'wysiwygField_properties' => [
+                        'exclude'    => true,
+                        'depends_on' => ['serialized_data']
+                    ]
+                ]
+            ],
+            $this->context->getResult()
+        );
+        self::assertEquals(['wysiwygField'], $this->context->get('_wysiwyg_fields'));
     }
 }

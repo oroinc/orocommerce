@@ -96,6 +96,11 @@ Oro\Bundle\ProductBundle\Entity\Product:
         attributeFamily: '@defaultProductFamily'
         type: 'simple'
 
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceListProductRelation:
+        product: '@product'
+        priceList: '@defaultPriceList'
+
 Oro\Bundle\PricingBundle\Entity\ProductPrice:
     price1:
         product: '@product'
@@ -104,13 +109,3 @@ Oro\Bundle\PricingBundle\Entity\ProductPrice:
         quantity: 1
         unit: '@item'
         value: 95
-
-Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
-   combinedProductPriceProduct1:
-        pricelist: '@combinedPriceList'
-        product: '@product'
-        productSku: 'SKU123'
-        quantity: 1
-        unit: '@item'
-        value: 95
-        currency: 'USD'

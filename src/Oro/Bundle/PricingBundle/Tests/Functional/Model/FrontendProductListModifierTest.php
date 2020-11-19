@@ -5,12 +5,14 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Model;
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Model\CombinedPriceListTreeHandler;
 use Oro\Bundle\PricingBundle\Model\FrontendProductListModifier;
-use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class FrontendProductListModifierTest extends WebTestCase
 {
@@ -20,7 +22,7 @@ class FrontendProductListModifierTest extends WebTestCase
     protected $tokenStorage;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|PriceListTreeHandler
+     * @var \PHPUnit\Framework\MockObject\MockObject|CombinedPriceListTreeHandler
      */
     protected $priceListTreeHandler;
 
@@ -36,7 +38,7 @@ class FrontendProductListModifierTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices'
+                LoadCombinedProductPrices::class
             ]
         );
 
@@ -48,23 +50,20 @@ class FrontendProductListModifierTest extends WebTestCase
 
     protected function setupTokenStorage()
     {
-        $token = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = $this->createMock(TokenInterface::class);
         $token->expects($this->any())
             ->method('getUser')
-            ->will($this->returnValue(new CustomerUser()));
+            ->willReturn(new CustomerUser());
 
-        $this->tokenStorage = $this
-            ->createMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface');
+        $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
         $this->tokenStorage->expects($this->any())
             ->method('getToken')
-            ->will($this->returnValue($token));
+            ->willReturn($token);
     }
 
     protected function setupPriceListTreeHandler()
     {
-        $this->priceListTreeHandler = $this->getMockBuilder('Oro\Bundle\PricingBundle\Model\PriceListTreeHandler')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->priceListTreeHandler = $this->createMock(CombinedPriceListTreeHandler::class);
     }
 
     /**
@@ -84,7 +83,7 @@ class FrontendProductListModifierTest extends WebTestCase
             $this->priceListTreeHandler->expects($this->once())
                 ->method('getPriceList')
                 ->with($this->tokenStorage->getToken()->getUser()->getCustomer())
-                ->will($this->returnValue($this->getReference('2f')));
+                ->willReturn($this->getReference('2f'));
         }
 
         $qb = $this->getManager()->createQueryBuilder()
@@ -166,7 +165,7 @@ class FrontendProductListModifierTest extends WebTestCase
         $this->priceListTreeHandler->expects($this->exactly(3))
             ->method('getPriceList')
             ->with($this->tokenStorage->getToken()->getUser()->getCustomer())
-            ->will($this->returnValue($this->getReference('2f')));
+            ->willReturn($this->getReference('2f'));
 
         $qb = $this->getManager()->createQueryBuilder()
             ->select('p')

@@ -35,22 +35,21 @@ class ComputeWYSIWYGAttributes implements ProcessorInterface
     {
         /** @var CustomizeLoadedDataContext $context */
 
-        $wysiwygFields = $this->wysiwygFieldsProvider->getWysiwygFields($context->getClassName());
-        if (empty($wysiwygFields)) {
+        if (!$context->isFieldRequested($this->attributesFieldName)) {
+            return;
+        }
+
+        $wysiwygAttributes = $this->wysiwygFieldsProvider->getWysiwygAttributes($context->getClassName());
+        if (empty($wysiwygAttributes)) {
             return;
         }
 
         $data = $context->getData();
-        $wysiwygAttributes = $this->wysiwygFieldsProvider->getWysiwygAttributes($context->getClassName());
-        foreach ($wysiwygFields as $fieldName) {
-            foreach ($data as $key => $item) {
-                if (\array_key_exists($this->attributesFieldName, $item)
-                    && \in_array($fieldName, $wysiwygAttributes, true)
-                ) {
-                    $wysiwygFieldName = $this->getWysiwygFieldName($context, $fieldName);
-                    $data[$key][$this->attributesFieldName][$fieldName] = $item[$wysiwygFieldName];
-                    unset($data[$key][$wysiwygFieldName]);
-                }
+        foreach ($data as $key => $item) {
+            foreach ($wysiwygAttributes as $fieldName) {
+                $wysiwygFieldName = $this->getWysiwygFieldName($context, $fieldName);
+                $data[$key][$this->attributesFieldName][$fieldName] = $item[$wysiwygFieldName];
+                unset($data[$key][$wysiwygFieldName]);
             }
         }
         $context->setData($data);

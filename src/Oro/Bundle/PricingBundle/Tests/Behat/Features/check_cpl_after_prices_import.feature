@@ -9,7 +9,8 @@ Feature: Check CPL after Prices Import
     Given I operate as the Admin
     When I go to Customers/Customers
     And click Edit first customer in grid
-    And I choose Price List "Default Price List" in 1 row
+    And fill "Customer Form" with:
+      | Price List | Default Price List |
     And I submit form
     Then I should see "Customer has been saved" flash message
 

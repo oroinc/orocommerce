@@ -383,4 +383,22 @@ class PriceListToCustomerRepository extends EntityRepository implements PriceLis
 
         return $qb->getQuery()->getOneOrNullResult() !== null;
     }
+
+    /**
+     * @param Website $website
+     * @param Customer $customer
+     * @return PriceListToCustomer|null
+     */
+    public function getFirstRelation(Website $website, Customer $customer): ?PriceListToCustomer
+    {
+        $qb = $this->createQueryBuilder('rel');
+        $qb->where($qb->expr()->eq('rel.customer', ':customer'))
+            ->andWhere($qb->expr()->eq('rel.website', ':website'))
+            ->setParameter('customer', $customer)
+            ->setParameter('website', $website)
+            ->orderBy('rel.sortOrder')
+            ->setMaxResults(1);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
 }

@@ -53,19 +53,16 @@ class RelatedItemsHandler
     {
         $hasErrors = true;
 
-        $appendRelated = $appendField->getData();
-        $removeRelated = $removeField->getData();
+        $appendRelated = (array) $appendField->getData();
+        $removeRelated = (array) $removeField->getData();
 
-        $this->getAssigner($assignerName)->removeRelations($product, $removeRelated);
+        $assigner = $this->getAssigner($assignerName);
+        $assigner->removeRelations($product, $removeRelated);
 
         try {
-            $this->getAssigner($assignerName)->addRelations($product, $appendRelated);
+            $assigner->addRelations($product, $appendRelated);
             $hasErrors = false;
-        } catch (\InvalidArgumentException $e) {
-            $this->addFormError($appendField, $e->getMessage());
-        } catch (\LogicException $e) {
-            $this->addFormError($appendField, $e->getMessage());
-        } catch (\OverflowException $e) {
+        } catch (\InvalidArgumentException|\LogicException|\OverflowException $e) {
             $this->addFormError($appendField, $e->getMessage());
         }
 

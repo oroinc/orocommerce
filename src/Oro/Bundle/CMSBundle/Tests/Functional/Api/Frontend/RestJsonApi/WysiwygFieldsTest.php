@@ -31,8 +31,12 @@ class WysiwygFieldsTest extends FrontendRestJsonApiTestCase
                         'id'         => '<toString(@product1->id)>',
                         'attributes' => [
                             'productAttributes' => [
-                                'wysiwyg' => [
+                                'wysiwyg'     => [
                                     'value' => 'Product 1 WYSIWYG Text',
+                                    'style' => '<style></style>'
+                                ],
+                                'wysiwygAttr' => [
+                                    'value' => 'Product 1 WYSIWYG Attr Text',
                                     'style' => '<style></style>'
                                 ]
                             ]
@@ -43,7 +47,8 @@ class WysiwygFieldsTest extends FrontendRestJsonApiTestCase
                         'id'         => '<toString(@product3->id)>',
                         'attributes' => [
                             'productAttributes' => [
-                                'wysiwyg' => null
+                                'wysiwyg'     => null,
+                                'wysiwygAttr' => null
                             ]
                         ]
                     ]

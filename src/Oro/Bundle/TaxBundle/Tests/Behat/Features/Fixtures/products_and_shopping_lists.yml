@@ -146,6 +146,17 @@ Oro\Bundle\PricingBundle\Entity\PriceList:
             - setCurrencies: [['USD']]
         active: true
 
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceListProductRelation:
+        product: '@product'
+        priceList: '@pricelistShipping'
+
+Oro\Bundle\PricingBundle\Entity\PriceListToWebsite:
+    priceListToWebsite:
+        pricelist: '@pricelistShipping'
+        website: '@website1'
+        sortOrder: 200
+
 Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
     priceListToCustomer:
         customer: '@customer'
@@ -160,44 +171,8 @@ Oro\Bundle\PricingBundle\Entity\ProductPrice:
         productSku: 'SKU123'
         quantity: 5
         unit: '@item'
-        value: 5
-        currency: 'USD'
-
-Oro\Bundle\PricingBundle\Entity\CombinedPriceList:
-    combinedPriceList:
-        name: 'combinedPriceList'
-        enabled: true
-
-Oro\Bundle\PricingBundle\Entity\CombinedPriceListCurrency:
-    combinedPriceListCurrency:
-        pricelist: '@combinedPriceList'
-        currency: 'USD'
-
-Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
-   combinedProductPrice:
-        pricelist: '@combinedPriceList'
-        product: '@product'
-        productSku: 'SKU123'
-        quantity: 5
-        unit: '@item'
         value: 2
         currency: 'USD'
-
-Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer:
-    combinedPriceListToCustomer:
-        pricelist: '@combinedPriceList'
-        customer: '@customer'
-        website: '@website1'
-
-Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite:
-    combinedPriceListToWebsite:
-        pricelist: '@combinedPriceList'
-        website: '@website1'
-
-Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
-    priceListToProduct:
-        product: '@product'
-        pricelist: '@pricelistShipping'
 
 Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings:
     customerUserSetting:

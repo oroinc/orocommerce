@@ -1,9 +1,14 @@
+@regression
+@ticket-BB-10500
 @fixture-OroShoppingListBundle:MatrixForms.yml
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
-@fixture-OroCheckoutBundle:Checkout.yml
-@regression
-@ticket-BB-10500
+@fixture-OroCheckoutBundle:Payment.yml
+@fixture-OroCheckoutBundle:Shipping.yml
+@fixture-OroCheckoutBundle:CheckoutCustomerFixture.yml
+@fixture-OroCheckoutBundle:CheckoutProductWithoutPricesFixture.yml
+@fixture-OroCheckoutBundle:CheckoutShoppingListFixture.yml
+@fixture-OroCheckoutBundle:CheckoutQuoteFixture.yml
 
 Feature: Matrix forms for configurable products in product list, shopping list, RFQ
   In order to quickly add and update specific configurations of a complex product to the shopping list and RFQ

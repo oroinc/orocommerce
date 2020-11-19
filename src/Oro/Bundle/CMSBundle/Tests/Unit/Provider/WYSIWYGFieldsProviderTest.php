@@ -14,6 +14,7 @@ use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 
 /**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class WYSIWYGFieldsProviderTest extends \PHPUnit\Framework\TestCase
@@ -41,18 +42,36 @@ class WYSIWYGFieldsProviderTest extends \PHPUnit\Framework\TestCase
      * @param string $fieldName
      * @param string $fieldType
      * @param array  $properties
+     * @param string $scope
      *
      * @return Config
      */
-    private function getFieldConfig(string $fieldName, string $fieldType, array $properties): Config
-    {
+    private function getFieldConfig(
+        string $fieldName,
+        string $fieldType,
+        array $properties,
+        string $scope = 'extend'
+    ): Config {
         return new Config(
-            new FieldConfigId('extend', self::ENTITY_CLASS, $fieldName, $fieldType),
+            new FieldConfigId($scope, self::ENTITY_CLASS, $fieldName, $fieldType),
             $properties
         );
     }
 
-    public function testGetWysiwygFields()
+    public function testGetWysiwygFieldsForNonManageableEntity()
+    {
+        $this->doctrine->expects(self::once())
+            ->method('getManagerForClass')
+            ->with(self::ENTITY_CLASS)
+            ->willReturn(null);
+
+        self::assertSame(
+            [],
+            $this->wysiwygFieldsProvider->getWysiwygFields(self::ENTITY_CLASS)
+        );
+    }
+
+    public function testGetWysiwygFieldsForNonConfigurableEntity()
     {
         $em = $this->createMock(EntityManagerInterface::class);
         $metadata = $this->createMock(ClassMetadata::class);
@@ -74,74 +93,113 @@ class WYSIWYGFieldsProviderTest extends \PHPUnit\Framework\TestCase
                 ['stringField', 'string']
             ]);
 
+        $this->configManager->expects(self::once())
+            ->method('hasConfig')
+            ->with(self::ENTITY_CLASS, self::isNull())
+            ->willReturn(false);
+
+        self::assertSame(
+            ['wysiwygField'],
+            $this->wysiwygFieldsProvider->getWysiwygFields(self::ENTITY_CLASS)
+        );
+    }
+
+    public function testGetWysiwygFieldsForConfigurableEntity()
+    {
+        $em = $this->createMock(EntityManagerInterface::class);
+        $this->doctrine->expects(self::once())
+            ->method('getManagerForClass')
+            ->with(self::ENTITY_CLASS)
+            ->willReturn($em);
+        $em->expects(self::never())
+            ->method('getClassMetadata');
+
+        $this->configManager->expects(self::once())
+            ->method('hasConfig')
+            ->with(self::ENTITY_CLASS, self::isNull())
+            ->willReturn(true);
+        $this->configManager->expects(self::once())
+            ->method('getIds')
+            ->with('extend', self::ENTITY_CLASS, self::isTrue())
+            ->willReturn([
+                new FieldConfigId('extend', self::ENTITY_CLASS, 'wysiwygField', WYSIWYGType::TYPE),
+                new FieldConfigId('extend', self::ENTITY_CLASS, 'stringField', 'string')
+            ]);
+
         self::assertEquals(
             ['wysiwygField'],
             $this->wysiwygFieldsProvider->getWysiwygFields(self::ENTITY_CLASS)
         );
     }
 
-    public function testGetWysiwygFieldsForNonManageableEntity()
+    public function testIsSerializedWysiwygFieldForNonManageableEntity()
     {
         $this->doctrine->expects(self::once())
             ->method('getManagerForClass')
             ->with(self::ENTITY_CLASS)
             ->willReturn(null);
 
-        self::assertSame(
-            [],
-            $this->wysiwygFieldsProvider->getWysiwygFields(self::ENTITY_CLASS)
+        self::assertFalse(
+            $this->wysiwygFieldsProvider->isSerializedWysiwygField(self::ENTITY_CLASS, 'field')
         );
     }
 
-    public function testGetWysiwygAttributes()
+    public function testIsSerializedWysiwygFieldForNonConfigurableEntity()
     {
         $em = $this->createMock(EntityManagerInterface::class);
-        $metadata = $this->createMock(ClassMetadata::class);
         $this->doctrine->expects(self::once())
             ->method('getManagerForClass')
             ->with(self::ENTITY_CLASS)
             ->willReturn($em);
-        $em->expects(self::once())
-            ->method('getClassMetadata')
-            ->with(self::ENTITY_CLASS)
-            ->willReturn($metadata);
-        $metadata->expects(self::once())
-            ->method('getFieldNames')
-            ->willReturn(['wysiwygField', 'wysiwygAttribute', 'stringField']);
-        $metadata->expects(self::exactly(3))
-            ->method('getTypeOfField')
-            ->willReturnMap([
-                ['wysiwygField', WYSIWYGType::TYPE],
-                ['wysiwygAttribute', WYSIWYGType::TYPE],
-                ['stringField', 'string']
-            ]);
-
-        $this->configManager->expects(self::exactly(2))
+        $this->configManager->expects(self::once())
             ->method('hasConfig')
-            ->willReturnMap([
-                [self::ENTITY_CLASS, 'wysiwygField', true],
-                [self::ENTITY_CLASS, 'wysiwygAttribute', true]
-            ]);
-        $this->configManager->expects(self::exactly(2))
-            ->method('getFieldConfig')
-            ->willReturnMap([
-                [
-                    'attribute',
-                    self::ENTITY_CLASS,
-                    'wysiwygField',
-                    $this->getFieldConfig('wysiwygField', WYSIWYGType::TYPE, ['is_attribute' => false])
-                ],
-                [
-                    'attribute',
-                    self::ENTITY_CLASS,
-                    'wysiwygAttribute',
-                    $this->getFieldConfig('wysiwygField', WYSIWYGType::TYPE, ['is_attribute' => true])
-                ]
-            ]);
+            ->with(self::ENTITY_CLASS, 'field')
+            ->willReturn(false);
 
-        self::assertEquals(
-            ['wysiwygAttribute'],
-            $this->wysiwygFieldsProvider->getWysiwygAttributes(self::ENTITY_CLASS)
+        self::assertFalse(
+            $this->wysiwygFieldsProvider->isSerializedWysiwygField(self::ENTITY_CLASS, 'field')
+        );
+    }
+
+    public function testIsSerializedWysiwygFieldForNotSerialisedField()
+    {
+        $em = $this->createMock(EntityManagerInterface::class);
+        $this->doctrine->expects(self::once())
+            ->method('getManagerForClass')
+            ->with(self::ENTITY_CLASS)
+            ->willReturn($em);
+        $this->configManager->expects(self::once())
+            ->method('hasConfig')
+            ->with(self::ENTITY_CLASS, 'field')
+            ->willReturn(true);
+        $this->configManager->expects(self::once())
+            ->method('getFieldConfig')
+            ->with('extend', self::ENTITY_CLASS, 'field')
+            ->willReturn($this->getFieldConfig(self::ENTITY_CLASS, 'field', []));
+
+        self::assertFalse(
+            $this->wysiwygFieldsProvider->isSerializedWysiwygField(self::ENTITY_CLASS, 'field')
+        );
+    }
+
+    public function testIsSerializedWysiwygFieldForSerialisedField()
+    {
+        $em = $this->createMock(EntityManagerInterface::class);
+        $this->doctrine->expects(self::once())
+            ->method('getManagerForClass')
+            ->with(self::ENTITY_CLASS)
+            ->willReturn($em);
+        $this->configManager->expects(self::once())
+            ->method('hasConfig')
+            ->with(self::ENTITY_CLASS, 'field')
+            ->willReturn(true);
+        $this->configManager->expects(self::once())
+            ->method('getFieldConfig')
+            ->with('extend', self::ENTITY_CLASS, 'field')
+            ->willReturn($this->getFieldConfig(self::ENTITY_CLASS, 'field', ['is_serialized' => true]));
+
+        self::assertTrue(
+            $this->wysiwygFieldsProvider->isSerializedWysiwygField(self::ENTITY_CLASS, 'field')
         );
     }
 
@@ -181,9 +239,10 @@ class WYSIWYGFieldsProviderTest extends \PHPUnit\Framework\TestCase
                 ['stringField', 'string']
             ]);
 
-        $this->configManager->expects(self::exactly(2))
+        $this->configManager->expects(self::exactly(3))
             ->method('hasConfig')
             ->willReturnMap([
+                [self::ENTITY_CLASS, null, false],
                 [self::ENTITY_CLASS, 'wysiwygField', false],
                 [self::ENTITY_CLASS, 'wysiwygAttribute', false]
             ]);
@@ -193,6 +252,86 @@ class WYSIWYGFieldsProviderTest extends \PHPUnit\Framework\TestCase
         self::assertSame(
             [],
             $this->wysiwygFieldsProvider->getWysiwygAttributes(self::ENTITY_CLASS)
+        );
+    }
+
+    public function testGetWysiwygAttributesForConfigurableEntity()
+    {
+        $em = $this->createMock(EntityManagerInterface::class);
+        $this->doctrine->expects(self::once())
+            ->method('getManagerForClass')
+            ->with(self::ENTITY_CLASS)
+            ->willReturn($em);
+        $em->expects(self::never())
+            ->method('getClassMetadata');
+
+        $this->configManager->expects(self::exactly(3))
+            ->method('hasConfig')
+            ->willReturnMap([
+                [self::ENTITY_CLASS, null, true],
+                [self::ENTITY_CLASS, 'wysiwygField', true],
+                [self::ENTITY_CLASS, 'wysiwygAttribute', true]
+            ]);
+        $this->configManager->expects(self::once())
+            ->method('getIds')
+            ->with('extend', self::ENTITY_CLASS, self::isTrue())
+            ->willReturn([
+                new FieldConfigId('extend', self::ENTITY_CLASS, 'wysiwygField', WYSIWYGType::TYPE),
+                new FieldConfigId('extend', self::ENTITY_CLASS, 'wysiwygAttribute', WYSIWYGType::TYPE),
+                new FieldConfigId('extend', self::ENTITY_CLASS, 'stringField', 'string')
+            ]);
+        $this->configManager->expects(self::exactly(2))
+            ->method('getFieldConfig')
+            ->willReturnMap([
+                [
+                    'attribute',
+                    self::ENTITY_CLASS,
+                    'wysiwygField',
+                    $this->getFieldConfig('wysiwygField', WYSIWYGType::TYPE, ['is_attribute' => false], 'attribute')
+                ],
+                [
+                    'attribute',
+                    self::ENTITY_CLASS,
+                    'wysiwygAttribute',
+                    $this->getFieldConfig('wysiwygField', WYSIWYGType::TYPE, ['is_attribute' => true], 'attribute')
+                ]
+            ]);
+
+        self::assertEquals(
+            ['wysiwygAttribute'],
+            $this->wysiwygFieldsProvider->getWysiwygAttributes(self::ENTITY_CLASS)
+        );
+    }
+
+    public function testIsWysiwygAttributeForNotAttribute()
+    {
+        $this->configManager->expects(self::once())
+            ->method('hasConfig')
+            ->with(self::ENTITY_CLASS, 'field')
+            ->willReturn(true);
+        $this->configManager->expects(self::once())
+            ->method('getFieldConfig')
+            ->with('attribute', self::ENTITY_CLASS, 'field')
+            ->willReturn($this->getFieldConfig(self::ENTITY_CLASS, 'field', [], 'attribute'));
+
+        self::assertFalse(
+            $this->wysiwygFieldsProvider->isWysiwygAttribute(self::ENTITY_CLASS, 'field')
+        );
+    }
+
+    public function testIsWysiwygAttributeForAttribute()
+    {
+        $this->configManager->expects(self::once())
+            ->method('hasConfig')
+            ->with(self::ENTITY_CLASS, 'field')
+            ->willReturn(true);
+        $this->configManager->expects(self::once())
+            ->method('getFieldConfig')
+            ->with('attribute', self::ENTITY_CLASS, 'field')
+            ->willReturn($this->getFieldConfig(self::ENTITY_CLASS, 'field', ['is_attribute' => true], 'attribute'));
+
+        self::assertTrue(
+            $this->wysiwygFieldsProvider->isWysiwygAttribute(self::ENTITY_CLASS, 'field')
         );
     }
 
@@ -208,10 +347,15 @@ class WYSIWYGFieldsProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getClassMetadata')
             ->with(self::ENTITY_CLASS)
             ->willReturn($metadata);
-        $metadata->expects(self::once())
+        $metadata->expects(self::any())
+            ->method('getName')
+            ->willReturn(self::ENTITY_CLASS);
+        $metadata->expects(self::exactly(2))
             ->method('hasField')
-            ->with('wysiwygField_style')
-            ->willReturn(true);
+            ->willReturnMap([
+                ['wysiwygField', true],
+                ['wysiwygField_style', true]
+            ]);
         $metadata->expects(self::exactly(2))
             ->method('getTypeOfField')
             ->willReturnMap([
@@ -237,9 +381,13 @@ class WYSIWYGFieldsProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getClassMetadata')
             ->with(self::ENTITY_CLASS)
             ->willReturn($metadata);
-        $metadata->expects(self::exactly(2))
+        $metadata->expects(self::any())
+            ->method('getName')
+            ->willReturn(self::ENTITY_CLASS);
+        $metadata->expects(self::exactly(3))
             ->method('hasField')
             ->willReturnMap([
+                ['wysiwygField', true],
                 ['wysiwygField_style', false],
                 ['wysiwygFieldStyle', true]
             ]);
@@ -268,9 +416,13 @@ class WYSIWYGFieldsProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getClassMetadata')
             ->with(self::ENTITY_CLASS)
             ->willReturn($metadata);
-        $metadata->expects(self::exactly(2))
+        $metadata->expects(self::any())
+            ->method('getName')
+            ->willReturn(self::ENTITY_CLASS);
+        $metadata->expects(self::exactly(3))
             ->method('hasField')
             ->willReturnMap([
+                ['wysiwygField', true],
                 ['wysiwygField_style', false],
                 ['wysiwygFieldStyle', false]
             ]);
@@ -299,9 +451,13 @@ class WYSIWYGFieldsProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getClassMetadata')
             ->with(self::ENTITY_CLASS)
             ->willReturn($metadata);
-        $metadata->expects(self::exactly(2))
+        $metadata->expects(self::any())
+            ->method('getName')
+            ->willReturn(self::ENTITY_CLASS);
+        $metadata->expects(self::exactly(3))
             ->method('hasField')
             ->willReturnMap([
+                ['wysiwygField', true],
                 ['wysiwygField_style', true],
                 ['wysiwygFieldStyle', false]
             ]);
@@ -332,8 +488,13 @@ class WYSIWYGFieldsProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getClassMetadata')
             ->with(self::ENTITY_CLASS)
             ->willReturn($metadata);
-        $metadata->expects(self::never())
-            ->method('hasField');
+        $metadata->expects(self::any())
+            ->method('getName')
+            ->willReturn(self::ENTITY_CLASS);
+        $metadata->expects(self::once())
+            ->method('hasField')
+            ->with('wysiwygField')
+            ->willReturn(true);
         $metadata->expects(self::once())
             ->method('getTypeOfField')
             ->with('wysiwygField')
@@ -358,6 +519,59 @@ class WYSIWYGFieldsProviderTest extends \PHPUnit\Framework\TestCase
         $this->wysiwygFieldsProvider->getWysiwygStyleField(self::ENTITY_CLASS, 'wysiwygField');
     }
 
+    public function testGetWysiwygStyleFieldForSerializedField()
+    {
+        $em = $this->createMock(EntityManagerInterface::class);
+        $metadata = $this->createMock(ClassMetadata::class);
+        $this->doctrine->expects(self::once())
+            ->method('getManagerForClass')
+            ->with(self::ENTITY_CLASS)
+            ->willReturn($em);
+        $em->expects(self::once())
+            ->method('getClassMetadata')
+            ->with(self::ENTITY_CLASS)
+            ->willReturn($metadata);
+        $metadata->expects(self::any())
+            ->method('getName')
+            ->willReturn(self::ENTITY_CLASS);
+        $metadata->expects(self::exactly(2))
+            ->method('hasField')
+            ->willReturnMap([
+                ['wysiwygField', false],
+                ['wysiwygField_style', false]
+            ]);
+        $metadata->expects(self::never())
+            ->method('getTypeOfField');
+
+        $this->configManager->expects(self::exactly(2))
+            ->method('hasConfig')
+            ->willReturnMap([
+                [self::ENTITY_CLASS, 'wysiwygField', true],
+                [self::ENTITY_CLASS, 'wysiwygField_style', true]
+            ]);
+        $this->configManager->expects(self::exactly(2))
+            ->method('getId')
+            ->willReturnMap([
+                [
+                    'extend',
+                    self::ENTITY_CLASS,
+                    'wysiwygField',
+                    new FieldConfigId('extend', self::ENTITY_CLASS, 'wysiwygField', WYSIWYGType::TYPE)
+                ],
+                [
+                    'extend',
+                    self::ENTITY_CLASS,
+                    'wysiwygField_style',
+                    new FieldConfigId('extend', self::ENTITY_CLASS, 'wysiwygField_style', WYSIWYGStyleType::TYPE)
+                ]
+            ]);
+
+        self::assertSame(
+            'wysiwygField_style',
+            $this->wysiwygFieldsProvider->getWysiwygStyleField(self::ENTITY_CLASS, 'wysiwygField')
+        );
+    }
+
     public function testGetWysiwygPropertiesField()
     {
         $em = $this->createMock(EntityManagerInterface::class);
@@ -370,10 +584,15 @@ class WYSIWYGFieldsProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getClassMetadata')
             ->with(self::ENTITY_CLASS)
             ->willReturn($metadata);
-        $metadata->expects(self::once())
+        $metadata->expects(self::any())
+            ->method('getName')
+            ->willReturn(self::ENTITY_CLASS);
+        $metadata->expects(self::exactly(2))
             ->method('hasField')
-            ->with('wysiwygField_properties')
-            ->willReturn(true);
+            ->willReturnMap([
+                ['wysiwygField', true],
+                ['wysiwygField_properties', true]
+            ]);
         $metadata->expects(self::exactly(2))
             ->method('getTypeOfField')
             ->willReturnMap([
@@ -399,9 +618,13 @@ class WYSIWYGFieldsProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getClassMetadata')
             ->with(self::ENTITY_CLASS)
             ->willReturn($metadata);
-        $metadata->expects(self::exactly(2))
+        $metadata->expects(self::any())
+            ->method('getName')
+            ->willReturn(self::ENTITY_CLASS);
+        $metadata->expects(self::exactly(3))
             ->method('hasField')
             ->willReturnMap([
+                ['wysiwygField', true],
                 ['wysiwygField_properties', false],
                 ['wysiwygFieldProperties', true]
             ]);
@@ -430,9 +653,13 @@ class WYSIWYGFieldsProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getClassMetadata')
             ->with(self::ENTITY_CLASS)
             ->willReturn($metadata);
-        $metadata->expects(self::exactly(2))
+        $metadata->expects(self::any())
+            ->method('getName')
+            ->willReturn(self::ENTITY_CLASS);
+        $metadata->expects(self::exactly(3))
             ->method('hasField')
             ->willReturnMap([
+                ['wysiwygField', true],
                 ['wysiwygField_properties', false],
                 ['wysiwygFieldProperties', false]
             ]);
@@ -461,9 +688,13 @@ class WYSIWYGFieldsProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getClassMetadata')
             ->with(self::ENTITY_CLASS)
             ->willReturn($metadata);
-        $metadata->expects(self::exactly(2))
+        $metadata->expects(self::any())
+            ->method('getName')
+            ->willReturn(self::ENTITY_CLASS);
+        $metadata->expects(self::exactly(3))
             ->method('hasField')
             ->willReturnMap([
+                ['wysiwygField', true],
                 ['wysiwygField_properties', true],
                 ['wysiwygFieldProperties', false]
             ]);
@@ -494,8 +725,13 @@ class WYSIWYGFieldsProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getClassMetadata')
             ->with(self::ENTITY_CLASS)
             ->willReturn($metadata);
-        $metadata->expects(self::never())
-            ->method('hasField');
+        $metadata->expects(self::any())
+            ->method('getName')
+            ->willReturn(self::ENTITY_CLASS);
+        $metadata->expects(self::once())
+            ->method('hasField')
+            ->with('wysiwygField')
+            ->willReturn(true);
         $metadata->expects(self::once())
             ->method('getTypeOfField')
             ->with('wysiwygField')
@@ -518,5 +754,63 @@ class WYSIWYGFieldsProviderTest extends \PHPUnit\Framework\TestCase
         $this->expectExceptionMessage('The class "Test\Entity" is non manageable entity.');
 
         $this->wysiwygFieldsProvider->getWysiwygPropertiesField(self::ENTITY_CLASS, 'wysiwygField');
+    }
+
+    public function testGetWysiwygPropertiesFieldForSerializedField()
+    {
+        $em = $this->createMock(EntityManagerInterface::class);
+        $metadata = $this->createMock(ClassMetadata::class);
+        $this->doctrine->expects(self::once())
+            ->method('getManagerForClass')
+            ->with(self::ENTITY_CLASS)
+            ->willReturn($em);
+        $em->expects(self::once())
+            ->method('getClassMetadata')
+            ->with(self::ENTITY_CLASS)
+            ->willReturn($metadata);
+        $metadata->expects(self::any())
+            ->method('getName')
+            ->willReturn(self::ENTITY_CLASS);
+        $metadata->expects(self::exactly(2))
+            ->method('hasField')
+            ->willReturnMap([
+                ['wysiwygField', false],
+                ['wysiwygField_properties', false]
+            ]);
+        $metadata->expects(self::never())
+            ->method('getTypeOfField');
+
+        $this->configManager->expects(self::exactly(2))
+            ->method('hasConfig')
+            ->willReturnMap([
+                [self::ENTITY_CLASS, 'wysiwygField', true],
+                [self::ENTITY_CLASS, 'wysiwygField_properties', true]
+            ]);
+        $this->configManager->expects(self::exactly(2))
+            ->method('getId')
+            ->willReturnMap([
+                [
+                    'extend',
+                    self::ENTITY_CLASS,
+                    'wysiwygField',
+                    new FieldConfigId('extend', self::ENTITY_CLASS, 'wysiwygField', WYSIWYGType::TYPE)
+                ],
+                [
+                    'extend',
+                    self::ENTITY_CLASS,
+                    'wysiwygField_properties',
+                    new FieldConfigId(
+                        'extend',
+                        self::ENTITY_CLASS,
+                        'wysiwygField_properties',
+                        WYSIWYGPropertiesType::TYPE
+                    )
+                ]
+            ]);
+
+        self::assertSame(
+            'wysiwygField_properties',
+            $this->wysiwygFieldsProvider->getWysiwygPropertiesField(self::ENTITY_CLASS, 'wysiwygField')
+        );
     }
 }

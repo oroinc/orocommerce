@@ -14,7 +14,7 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     unit: '@item'
     precision: '1'
 Oro\Bundle\ProductBundle\Entity\Product:
-  product:
+  productLenovoVibe:
     type: 'simple'
     sku: 'Lenovo_Vibe1_sku'
     organization: '@organization'
@@ -27,20 +27,13 @@ Oro\Bundle\ProductBundle\Entity\Product:
     inventoryStatus: '@enumInventoryStatuses'
 Oro\Bundle\PricingBundle\Entity\ProductPrice:
   productPrice:
-    product: '@product'
+    product: '@productLenovoVibe'
     pricelist: '@defaultPriceList'
     currency: 'USD'
     quantity: 1
     unit: '@item'
     value: 10
-#  priceRelation:
-#    product: '@product'
-#    priceList: '@defaultPriceList'
-Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
-  1combinedProductPrice:
-    product: '@product'
-    pricelist: '@combinedPriceList'
-    currency: 'USD'
-    quantity: 1
-    unit: '@item'
-    value: 10
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+  priceRelation:
+    product: '@productLenovoVibe'
+    priceList: '@defaultPriceList'

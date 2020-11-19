@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributeProductPriceRepository;
 use Oro\Bundle\PricingBundle\EventListener\ProductUnitPrecisionPostRemoveListener;
@@ -23,6 +24,11 @@ class ProductUnitPrecisionPostRemoveListenerTest extends \PHPUnit\Framework\Test
     private $shardManager;
 
     /**
+     * @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $featureChecker;
+
+    /**
      * @var ProductUnitPrecisionPostRemoveListener
      * */
     private $listener;
@@ -31,16 +37,18 @@ class ProductUnitPrecisionPostRemoveListenerTest extends \PHPUnit\Framework\Test
     protected function setUp(): void
     {
         $this->shardManager = $this->createMock(ShardManager::class);
+        $this->featureChecker = $this->createMock(FeatureChecker::class);
+
         $this->listener = new ProductUnitPrecisionPostRemoveListener($this->shardManager);
         $this->listener->setPriceAttributeClass(PriceAttributeProductPrice::class);
+        $this->listener->setFeatureChecker($this->featureChecker);
+        $this->listener->addFeature('oro_price_lists_combined');
     }
 
-    public function testPostRemoveForOtherEntity()
+    public function testPostRemoveFeatureDisabled()
     {
-        $entity = new \stdClass();
-        $event = $this->getMockBuilder(LifecycleEventArgs::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $entity = new ProductUnitPrecision();
+        $event = $this->createMock(LifecycleEventArgs::class);
 
         $event->expects($this->once())
             ->method('getEntity')
@@ -48,6 +56,31 @@ class ProductUnitPrecisionPostRemoveListenerTest extends \PHPUnit\Framework\Test
 
         $event->expects($this->never())
             ->method('getEntityManager');
+
+        $this->featureChecker->expects($this->any())
+            ->method('isFeatureEnabled')
+            ->with('oro_price_lists_combined')
+            ->willReturn(false);
+
+        $this->listener->postRemove($event);
+    }
+
+    public function testPostRemoveForOtherEntity()
+    {
+        $entity = new \stdClass();
+        $event = $this->createMock(LifecycleEventArgs::class);
+
+        $event->expects($this->once())
+            ->method('getEntity')
+            ->willReturn($entity);
+
+        $event->expects($this->never())
+            ->method('getEntityManager');
+
+        $this->featureChecker->expects($this->any())
+            ->method('isFeatureEnabled')
+            ->with('oro_price_lists_combined')
+            ->willReturn(true);
 
         $this->listener->postRemove($event);
     }
@@ -61,9 +94,7 @@ class ProductUnitPrecisionPostRemoveListenerTest extends \PHPUnit\Framework\Test
         $entity->setProduct($product)
             ->setUnit($unit);
 
-        $event = $this->getMockBuilder(LifecycleEventArgs::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $event = $this->createMock(LifecycleEventArgs::class);
 
         $event->expects($this->once())
             ->method('getEntity')
@@ -71,6 +102,11 @@ class ProductUnitPrecisionPostRemoveListenerTest extends \PHPUnit\Framework\Test
 
         $event->expects($this->never())
             ->method('getEntityManager');
+
+        $this->featureChecker->expects($this->any())
+            ->method('isFeatureEnabled')
+            ->with('oro_price_lists_combined')
+            ->willReturn(true);
 
         $this->listener->postRemove($event);
     }
@@ -84,25 +120,19 @@ class ProductUnitPrecisionPostRemoveListenerTest extends \PHPUnit\Framework\Test
         $entity->setProduct($product)
             ->setUnit($unit);
 
-        $event = $this->getMockBuilder(LifecycleEventArgs::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $event = $this->createMock(LifecycleEventArgs::class);
 
         $event->expects($this->once())
             ->method('getEntity')
             ->willReturn($entity);
 
-        $repository = $this->getMockBuilder(PriceAttributeProductPriceRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $repository = $this->createMock(PriceAttributeProductPriceRepository::class);
 
         $repository->expects($this->once())
             ->method('deleteByProductUnit')
             ->with($this->shardManager, $product, $unit);
 
-        $em = $this->getMockBuilder(EntityManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $em = $this->createMock(EntityManager::class);
 
         $em->expects($this->once())
             ->method('getRepository')
@@ -112,6 +142,11 @@ class ProductUnitPrecisionPostRemoveListenerTest extends \PHPUnit\Framework\Test
         $event->expects($this->once())
             ->method('getEntityManager')
             ->will($this->returnValue($em));
+
+        $this->featureChecker->expects($this->any())
+            ->method('isFeatureEnabled')
+            ->with('oro_price_lists_combined')
+            ->willReturn(true);
 
         $this->listener->postRemove($event);
     }
