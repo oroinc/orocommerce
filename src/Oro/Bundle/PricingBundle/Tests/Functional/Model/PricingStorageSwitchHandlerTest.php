@@ -81,9 +81,9 @@ class PricingStorageSwitchHandlerTest extends WebTestCase
         $this->assertPriceListRelation($customerGroupPlRelations, 'price_list_5');
 
         $configManager = $this->getContainer()->get('oro_config.global');
-        $this->assertSame([], $configManager->get('oro_pricing.default_price_lists'));
+        $this->assertEquals([], $configManager->get('oro_pricing.default_price_lists'));
         $defaultPl = $em->getRepository(PriceList::class)->getDefault();
-        $this->assertSame($defaultPl->getId(), $configManager->get('oro_pricing.default_price_list'));
+        $this->assertEquals($defaultPl->getId(), $configManager->get('oro_pricing.default_price_list'));
     }
 
     public function testMoveAssociationsForCombinedPricingStorage()
@@ -96,7 +96,7 @@ class PricingStorageSwitchHandlerTest extends WebTestCase
 
         $configManager = $this->getContainer()->get('oro_config.global');
         $this->assertNull($configManager->get('oro_pricing.default_price_list'));
-        $this->assertSame(
+        $this->assertEquals(
             [
                 [
                     'priceList' => $defaultPl->getId(),
@@ -116,7 +116,7 @@ class PricingStorageSwitchHandlerTest extends WebTestCase
     {
         $this->assertCount(1, $relations);
         $relation = reset($relations);
-        $this->assertSame(
+        $this->assertEquals(
             $this->getReference($priceListReference)->getId(),
             $relation->getPriceList()->getId()
         );
