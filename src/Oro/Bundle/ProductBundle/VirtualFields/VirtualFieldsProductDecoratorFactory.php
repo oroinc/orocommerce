@@ -79,7 +79,7 @@ class VirtualFieldsProductDecoratorFactory
     public function createDecoratedProductByProductHolders(array $productHolders, Product $product)
     {
         $productHoldersProducts = array_map(
-            function (ProductHolderInterface $productHolder) {
+            static function (ProductHolderInterface $productHolder) {
                 return $productHolder->getProduct();
             },
             $productHolders

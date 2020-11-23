@@ -2,10 +2,15 @@
 
 namespace Oro\Bundle\ShippingBundle\ExpressionLanguage;
 
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecorator;
 use Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecoratorFactory;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 
+/**
+ * Creates an instance of the ShippingLineItem model with decorated product.
+ */
 class DecoratedProductLineItemFactory
 {
     /**
@@ -35,6 +40,38 @@ class DecoratedProductLineItemFactory
             ? $this->virtualFieldsProductDecoratorFactory->createDecoratedProductByProductHolders($lineItems, $product)
             : null;
 
+        return $this->createShippingLineItem($lineItem, $decoratedProduct);
+    }
+
+    /**
+     * @param ShippingLineItemInterface $lineItem
+     * @param int[]|Product[] $products
+     *
+     * @return ShippingLineItem
+     */
+    public function createShippingLineItemWithDecoratedProduct(
+        ShippingLineItemInterface $lineItem,
+        array $products
+    ): ShippingLineItem {
+        $product = $lineItem->getProduct();
+
+        $decoratedProduct = $product
+            ? $this->virtualFieldsProductDecoratorFactory->createDecoratedProduct($products, $product)
+            : null;
+
+        return $this->createShippingLineItem($lineItem, $decoratedProduct);
+    }
+
+    /**
+     * @param ShippingLineItemInterface $lineItem
+     * @param null|VirtualFieldsProductDecorator $decoratedProduct
+     *
+     * @return ShippingLineItem
+     */
+    private function createShippingLineItem(
+        ShippingLineItemInterface $lineItem,
+        ?VirtualFieldsProductDecorator $decoratedProduct
+    ): ShippingLineItem {
         return new ShippingLineItem(
             [
                 ShippingLineItem::FIELD_PRICE => $lineItem->getPrice(),
