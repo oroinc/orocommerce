@@ -340,4 +340,15 @@ class PriceListToCustomerGroupRepositoryTest extends WebTestCase
             ['CA', 'customer_group.group1', false]
         ];
     }
+
+    public function testGetFirstRelation()
+    {
+        $customerGroup = $this->getReference('customer_group.group1');
+        $website = $this->getReference('US');
+        $expectedPriceList = $this->getReference('price_list_5');
+
+        $priceListRelation = $this->getRepository()->getFirstRelation($website, $customerGroup);
+        $this->assertInstanceOf(PriceListToCustomerGroup::class, $priceListRelation);
+        $this->assertEquals($expectedPriceList->getId(), $priceListRelation->getPriceList()->getId());
+    }
 }

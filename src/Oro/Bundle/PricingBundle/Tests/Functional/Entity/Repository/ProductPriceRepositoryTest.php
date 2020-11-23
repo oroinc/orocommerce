@@ -11,6 +11,7 @@ use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Model\DTO\ProductPriceDTO;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Bundle\PricingBundle\Tests\Functional\ProductPriceReference;
@@ -18,6 +19,8 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -37,7 +40,6 @@ class ProductPriceRepositoryTest extends WebTestCase
      */
     protected $shardManager;
 
-
     /**
      * @inheritdoc
      */
@@ -48,6 +50,7 @@ class ProductPriceRepositoryTest extends WebTestCase
         $this->loadFixtures(
             [
                 LoadProductPrices::class,
+                LoadPriceListRelations::class
             ]
         );
 
@@ -55,6 +58,83 @@ class ProductPriceRepositoryTest extends WebTestCase
             ->getRepository(ProductPrice::class);
 
         $this->shardManager = $this->getContainer()->get('oro_pricing.shard_manager');
+    }
+
+    public function testFindMinByWebsiteForFilter()
+    {
+        /** @var Website $website */
+        $website = $this->getReference(LoadWebsiteData::WEBSITE1);
+        $product1 = $this->getReference(LoadProductData::PRODUCT_1);
+        $actual = $this->repository->findMinByWebsiteForFilter(
+            $website,
+            [$product1],
+            $this->getReference('price_list_1'),
+            'customer'
+        );
+        $expected = [
+            [
+                'product_id' => (string)$product1->getId(),
+                'value' => '10.0000',
+                'currency' => 'USD',
+                'unit' => 'liter',
+                'price_list_id' => $this->getReference('price_list_1')->getId(),
+            ],
+            [
+                'product_id' => (string)$product1->getId(),
+                'value' => '12.2000',
+                'currency' => 'EUR',
+                'unit' => 'bottle',
+                'price_list_id' => $this->getReference('price_list_1')->getId(),
+            ],
+            [
+                'product_id' => (string)$product1->getId(),
+                'value' => '12.2000',
+                'currency' => 'USD',
+                'unit' => 'liter',
+                'price_list_id' => $this->getReference('price_list_2')->getId(),
+            ],
+        ];
+        usort($expected, [$this, 'sort']);
+        usort($actual, [$this, 'sort']);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testFindMinByWebsiteForSort()
+    {
+        /** @var Website $website */
+        $website = $this->getReference(LoadWebsiteData::WEBSITE1);
+        $product1 = $this->getReference(LoadProductData::PRODUCT_1);
+        $actual = $this->repository->findMinByWebsiteForSort(
+            $website,
+            [$product1],
+            $this->getReference('price_list_1'),
+            'customer'
+        );
+        $expected = [
+            [
+                'product_id' => (string)$product1->getId(),
+                'value' => '10.0000',
+                'currency' => 'USD',
+                'price_list_id' => $this->getReference('price_list_1')->getId(),
+            ],
+            [
+                'product_id' => (string)$product1->getId(),
+                'value' => '12.2000',
+                'currency' => 'EUR',
+                'price_list_id' => $this->getReference('price_list_1')->getId(),
+            ],
+            [
+                'product_id' => (string)$product1->getId(),
+                'value' => '12.2000',
+                'currency' => 'USD',
+                'price_list_id' => $this->getReference('price_list_2')->getId(),
+            ],
+        ];
+        usort($expected, [$this, 'sort']);
+        usort($actual, [$this, 'sort']);
+
+        $this->assertEquals($expected, $actual);
     }
 
     public function testGetProductsByPriceListAndVersion()
@@ -314,6 +394,7 @@ class ProductPriceRepositoryTest extends WebTestCase
             if ($a->getProduct()->getId() === $b->getProduct()->getId()) {
                 return 0;
             }
+
             return ($a->getProduct()->getId() < $b->getProduct()->getId()) ? -1 : 1;
         };
 
@@ -623,6 +704,22 @@ class ProductPriceRepositoryTest extends WebTestCase
     }
 
     /**
+     * @param array $a
+     * @param array $b
+     * @return bool
+     */
+    protected function sort(array $a, array $b)
+    {
+        if (!empty($a['unit']) && $a['price_list_id'] === $b['price_list_id'] && $a['currency'] === $b['currency']) {
+            return $a['unit'] > $b['unit'] ? 1 : 0;
+        } elseif ($a['price_list_id'] === $b['price_list_id']) {
+            return $a['currency'] > $b['currency'] ? 1 : 0;
+        }
+
+        return $a['price_list_id'] > $b['price_list_id'] ? 1 : 0;
+    }
+
+    /**
      * @param ProductPrice[] $prices
      * @return array
      */
@@ -643,7 +740,8 @@ class ProductPriceRepositoryTest extends WebTestCase
     {
         $repository = $this->getContainer()
             ->get('doctrine')
-            ->getRepository('OroPricingBundle:ProductPrice');
+            ->getRepository(ProductPrice::class);
+
         return (int)$repository->createQueryBuilder('pp')
             ->select('COUNT(pp.id)')
             ->getQuery()

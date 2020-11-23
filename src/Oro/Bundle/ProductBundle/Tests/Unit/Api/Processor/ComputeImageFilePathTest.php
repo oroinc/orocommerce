@@ -4,38 +4,38 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Api\Processor;
 
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\ApiBundle\Config\EntityDefinitionConfig;
-use Oro\Bundle\ApiBundle\Processor\CustomizeLoadedData\CustomizeLoadedDataContext;
+use Oro\Bundle\ApiBundle\Tests\Unit\Processor\CustomizeLoadedData\CustomizeLoadedDataProcessorTestCase;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\LayoutBundle\Model\ThemeImageType;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
 use Oro\Bundle\ProductBundle\Api\Processor\ComputeImageFilePath;
+use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Api\Processor\Stub\ProductImageStub;
 
-class ComputeImageFilePathTest extends \PHPUnit\Framework\TestCase
+class ComputeImageFilePathTest extends CustomizeLoadedDataProcessorTestCase
 {
     /** @var AttachmentManager|\PHPUnit\Framework\MockObject\MockObject */
-    protected $attachmentManager;
+    private $attachmentManager;
 
     /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
-    protected $doctrineHelper;
+    private $doctrineHelper;
 
     /** @var ImageTypeProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $typeProvider;
+    private $typeProvider;
 
     /** @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject */
-    protected $repo;
-
-    /** @var CustomizeLoadedDataContext */
-    protected $context;
+    private $repo;
 
     /** @var ComputeImageFilePath */
-    protected $processor;
+    private $processor;
 
     protected function setUp(): void
     {
+        parent::setUp();
+
         $this->attachmentManager = $this->createMock(AttachmentManager::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->typeProvider = $this->createMock(ImageTypeProvider::class);
@@ -45,7 +45,6 @@ class ComputeImageFilePathTest extends \PHPUnit\Framework\TestCase
             ->method('getEntityRepository')
             ->willReturn($this->repo);
 
-        $this->context = new CustomizeLoadedDataContext();
         $this->processor = new ComputeImageFilePath(
             $this->attachmentManager,
             $this->doctrineHelper,
@@ -57,16 +56,15 @@ class ComputeImageFilePathTest extends \PHPUnit\Framework\TestCase
      * @dataProvider getTestProcessShouldHandlePathsCorrectlyProvider
      */
     public function testProcessShouldHandlePathsCorrectly(
-        $initialResults,
-        $isImageType,
-        $productImage,
-        $expectedResults
+        array $initialResults,
+        bool $isImageType,
+        ?ProductImage $productImage,
+        array $expectedResults
     ) {
         $type1 = $this->createMock(ThemeImageType::class);
         $type1->expects($this->any())
             ->method('getDimensions')
             ->willReturn(['testDimension' => [1, 2, 3]]);
-
 
         $allTypes = ['type1' => $type1];
         $this->typeProvider->expects($this->any())
@@ -76,8 +74,6 @@ class ComputeImageFilePathTest extends \PHPUnit\Framework\TestCase
         $this->attachmentManager->expects($this->any())
             ->method('getFilteredImageUrl')
             ->willReturn('testUrl');
-
-
         $this->attachmentManager->expects($this->any())
             ->method('isImageType')
             ->willReturn($isImageType);
@@ -87,7 +83,7 @@ class ComputeImageFilePathTest extends \PHPUnit\Framework\TestCase
             ->with(['image' => $initialResults['id']])
             ->willReturn($productImage);
 
-        $entityConfig  = new EntityDefinitionConfig();
+        $entityConfig = new EntityDefinitionConfig();
         $entityConfig->addField('filePath');
         $entityConfig->addField('mimeType');
         $entityConfig->addField('id');
@@ -117,15 +113,15 @@ class ComputeImageFilePathTest extends \PHPUnit\Framework\TestCase
 
         return [
             [
-                'initialResults' => $basicInitialResults,
-                'isImageType' => false,
-                'productImage' => null,
+                'initialResults'  => $basicInitialResults,
+                'isImageType'     => false,
+                'productImage'    => null,
                 'expectedResults' => $basicInitialResults,
             ],
             [
-                'initialResults' => $basicInitialResults,
-                'isImageType' => true,
-                'productImage' => $productImage,
+                'initialResults'  => $basicInitialResults,
+                'isImageType'     => true,
+                'productImage'    => $productImage,
                 'expectedResults' => array_merge($basicInitialResults, ['filePath' => ['testDimension' => 'testUrl']]),
             ],
         ];

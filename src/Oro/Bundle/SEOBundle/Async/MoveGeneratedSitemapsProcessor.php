@@ -2,31 +2,35 @@
 
 namespace Oro\Bundle\SEOBundle\Async;
 
-use Oro\Bundle\SEOBundle\Sitemap\Filesystem\GaufretteFilesystemAdapter;
+use Oro\Bundle\SEOBundle\Sitemap\Filesystem\PublicSitemapFilesystemAdapter;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * MQ processor that moves generated sitemaps and robots txt files to the Gaufrette storage.
+ * Moves generated sitemap and robots.txt file for a website from a temporary storage to Gaufrette storage.
  */
 class MoveGeneratedSitemapsProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
-    /** @var GaufretteFilesystemAdapter */
+    private const WEBSITE_IDS = 'websiteIds';
+    private const VERSION     = 'version';
+
+    /** @var PublicSitemapFilesystemAdapter */
     private $fileSystemAdapter;
 
     /** @var LoggerInterface */
     private $logger;
 
     /**
-     * @param GaufretteFilesystemAdapter $fileSystemAdapter
-     * @param LoggerInterface            $logger
+     * @param PublicSitemapFilesystemAdapter $fileSystemAdapter
+     * @param LoggerInterface                $logger
      */
     public function __construct(
-        GaufretteFilesystemAdapter $fileSystemAdapter,
+        PublicSitemapFilesystemAdapter $fileSystemAdapter,
         LoggerInterface $logger
     ) {
         $this->fileSystemAdapter = $fileSystemAdapter;
@@ -36,24 +40,27 @@ class MoveGeneratedSitemapsProcessor implements MessageProcessorInterface, Topic
     /**
      * {@inheritDoc}
      */
+    public static function getSubscribedTopics()
+    {
+        return [Topics::GENERATE_SITEMAP_MOVE_GENERATED_FILES];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function process(MessageInterface $message, SessionInterface $session)
     {
-        $messageBody = JSON::decode($message->getBody());
-        if (!isset($messageBody['websiteIds']) || !\is_array($messageBody['websiteIds'])) {
-            $this->logger->critical('Got invalid message.');
-
+        $body = $this->resolveMessage($message);
+        if (null === $body) {
             return self::REJECT;
         }
 
         try {
-            $this->fileSystemAdapter->moveSitemaps($messageBody['websiteIds']);
+            $this->fileSystemAdapter->moveSitemaps($body[self::WEBSITE_IDS]);
         } catch (\Exception $e) {
-            $this->logger->critical(
-                'Unexpected exception occurred during moving of the generated sitemaps.',
-                [
-                    'exception' => $e,
-                    'topic'     => Topics::GENERATE_SITEMAP_MOVE_GENERATED_FILES,
-                ]
+            $this->logger->error(
+                'Unexpected exception occurred during moving the generated sitemaps.',
+                ['exception' => $e]
             );
 
             return self::REJECT;
@@ -63,10 +70,31 @@ class MoveGeneratedSitemapsProcessor implements MessageProcessorInterface, Topic
     }
 
     /**
-     * {@inheritDoc}
+     * @param MessageInterface $message
+     *
+     * @return array|null
      */
-    public static function getSubscribedTopics()
+    private function resolveMessage(MessageInterface $message): ?array
     {
-        return [Topics::GENERATE_SITEMAP_MOVE_GENERATED_FILES];
+        try {
+            return $this->getMessageResolver()->resolve(JSON::decode($message->getBody()));
+        } catch (\Throwable $e) {
+            $this->logger->critical('Got invalid message.', ['exception' => $e]);
+        }
+
+        return null;
+    }
+
+    /**
+     * @return OptionsResolver
+     */
+    private function getMessageResolver(): OptionsResolver
+    {
+        $resolver = new OptionsResolver();
+        $resolver->setRequired([self::VERSION, self::WEBSITE_IDS]);
+        $resolver->setAllowedTypes(self::VERSION, ['int']);
+        $resolver->setAllowedTypes(self::WEBSITE_IDS, ['array']);
+
+        return $resolver;
     }
 }

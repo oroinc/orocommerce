@@ -11,23 +11,19 @@ use Oro\Component\Website\WebsiteInterface;
  */
 class RobotsTxtIndexingRulesBySitemapManager
 {
-    const ALLOW      = 'Allow';
-    const DISALLOW   = 'Disallow';
-    const USER_AGENT = 'User-Agent';
+    private const ALLOW      = 'Allow';
+    private const DISALLOW   = 'Disallow';
+    private const USER_AGENT = 'User-Agent';
 
-    /**
-     * @var RobotsTxtFileManager
-     */
+    private const AUTO_GENERATED_MARK = '# auto-generated';
+
+    /** @var RobotsTxtFileManager */
     private $robotsTxtFileManager;
 
-    /**
-     * @var ConfigManager
-     */
+    /** @var ConfigManager */
     private $configManager;
 
-    /**
-     * @var UrlItemsProviderRegistryInterface
-     */
+    /** @var UrlItemsProviderRegistryInterface */
     private $urlItemsProviderRegistry;
 
     /**
@@ -59,7 +55,7 @@ class RobotsTxtIndexingRulesBySitemapManager
             self::ALLOW,
             self::DISALLOW,
             self::USER_AGENT,
-            RobotsTxtFileManager::AUTO_GENERATED_MARK
+            self::AUTO_GENERATED_MARK
         );
         foreach ($content as $key => $line) {
             if (preg_match($lineRegex, $line)) {
@@ -70,7 +66,7 @@ class RobotsTxtIndexingRulesBySitemapManager
             $content[] = sprintf(
                 '%s: * %s',
                 self::USER_AGENT,
-                RobotsTxtFileManager::AUTO_GENERATED_MARK
+                self::AUTO_GENERATED_MARK
             );
             $providers = $this->urlItemsProviderRegistry->getProvidersIndexedByNames();
             foreach ($providers as $providerType => $provider) {
@@ -80,14 +76,14 @@ class RobotsTxtIndexingRulesBySitemapManager
                         '%s: %s %s',
                         self::ALLOW,
                         $allowUrl,
-                        RobotsTxtFileManager::AUTO_GENERATED_MARK
+                        self::AUTO_GENERATED_MARK
                     );
                 }
             }
             $content[] = sprintf(
                 '%s: / %s',
                 self::DISALLOW,
-                RobotsTxtFileManager::AUTO_GENERATED_MARK
+                self::AUTO_GENERATED_MARK
             );
         }
 

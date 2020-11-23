@@ -8,6 +8,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSubtotal;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 
 class LoadCheckoutSubtotals extends AbstractFixture implements DependentFixtureInterface
@@ -53,12 +54,14 @@ class LoadCheckoutSubtotals extends AbstractFixture implements DependentFixtureI
             'checkout' => LoadShoppingListsCheckoutsData::CHECKOUT_7,
             'currency' => 'USD',
             'amount' => 200,
+            'priceList' => 'price_list_1',
             'valid' => true,
         ],
         self::CHECKOUT_SUBTOTAL_8 => [
             'checkout' => LoadShoppingListsCheckoutsData::CHECKOUT_8,
             'currency' => 'USD',
             'amount' => 200,
+            'priceList' => 'price_list_1',
             'valid' => true,
         ],
         self::CHECKOUT_SUBTOTAL_9 => [
@@ -87,7 +90,12 @@ class LoadCheckoutSubtotals extends AbstractFixture implements DependentFixtureI
             if (isset($item['combinedPriceList'])) {
                 /** @var CombinedPriceList $combinedPriceList */
                 $combinedPriceList = $this->getReference($item['combinedPriceList']);
-                $subtotal->setCombinedPriceList($combinedPriceList);
+                $subtotal->setPriceList($combinedPriceList);
+            }
+            if (isset($item['priceList'])) {
+                /** @var PriceList $priceList */
+                $priceList = $this->getReference($item['priceList']);
+                $subtotal->setPriceList($priceList);
             }
 
             $checkoutSubtotal

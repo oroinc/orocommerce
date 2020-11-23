@@ -88,6 +88,10 @@ oro_behat_extension:
         CMS Page:
             selector: 'div.cms-page'
 
+        WysiwygEntity:
+            selector: 'textarea.grapesjs-textarea'
+            class: Oro\Bundle\CMSBundle\Tests\Behat\Element\WysiwygEntity
+
         Content Widget Form:
             selector: 'form[name="oro_cms_content_widget"]'
             class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form

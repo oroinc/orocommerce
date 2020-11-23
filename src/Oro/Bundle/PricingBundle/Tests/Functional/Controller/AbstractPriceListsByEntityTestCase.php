@@ -194,7 +194,7 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
                 /** @var PriceList $priceList */
                 $priceList = $this->getReference($priceListRelation['priceList']);
                 $row = $priceListSection->filter(sprintf('.price_list%s', $priceList->getId()));
-                static::assertStringContainsString($priceList->getName(), $row->filter('.price_list_link')->text());
+                static::assertStringContainsString($priceList->getName(), $row->filter('a')->text());
             }
         }
     }

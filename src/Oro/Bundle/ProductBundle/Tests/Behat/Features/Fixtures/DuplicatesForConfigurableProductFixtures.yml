@@ -44,12 +44,3 @@ Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
     priceRelation3:
         product: '@simpleProduct3'
         priceList: '@defaultPriceList'
-
-Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
-    productItemCombined3:
-        unit: '@item'
-        product: '@simpleProduct3'
-        priceList: '@combinedPriceList'
-        quantity: 1
-        value: 10
-        currency: 'USD'

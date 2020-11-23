@@ -3,13 +3,10 @@
 namespace Oro\Bundle\SEOBundle\Async;
 
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
-use Oro\Bundle\SEOBundle\Model\Exception\InvalidArgumentException;
-use Oro\Bundle\SEOBundle\Model\SitemapIndexMessageFactory;
-use Oro\Bundle\SEOBundle\Model\SitemapMessageFactory;
 use Oro\Bundle\SEOBundle\Provider\WebsiteForSitemapProviderInterface;
-use Oro\Bundle\SEOBundle\Sitemap\Filesystem\GaufretteFilesystemAdapter;
+use Oro\Bundle\SEOBundle\Sitemap\Filesystem\PublicSitemapFilesystemAdapter;
 use Oro\Bundle\SEOBundle\Sitemap\Website\WebsiteUrlProvidersServiceInterface;
-use Oro\Component\MessageQueue\Client\MessagePriority;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
@@ -18,113 +15,73 @@ use Oro\Component\MessageQueue\Job\Job;
 use Oro\Component\MessageQueue\Job\JobRunner;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\Website\WebsiteInterface;
 use Psr\Log\LoggerInterface;
 
 /**
- * Async processor to generate sitemap files.
+ * Generates sitemaps for all websites.
  */
 class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
-    /**
-     * @var JobRunner
-     */
+    /** @var JobRunner */
     private $jobRunner;
 
-    /**
-     * @var DependentJobService
-     */
-    private $dependentJobService;
+    /** @var DependentJobService */
+    private $dependentJob;
 
-    /**
-     * @var MessageProducerInterface
-     */
+    /** @var MessageProducerInterface */
     private $producer;
 
-    /**
-     * @var WebsiteForSitemapProviderInterface
-     */
+    /** @var WebsiteForSitemapProviderInterface */
     private $websiteProvider;
 
-    /**
-     * @var SitemapIndexMessageFactory
-     */
-    private $indexMessageFactory;
+    /** @var WebsiteUrlProvidersServiceInterface */
+    private $websiteUrlProvidersService;
 
-    /**
-     * @var SitemapMessageFactory
-     */
-    private $messageFactory;
+    /** @var PublicSitemapFilesystemAdapter */
+    private $fileSystemAdapter;
 
-    /**
-     * @var LoggerInterface
-     */
+    /** @var CanonicalUrlGenerator */
+    private $canonicalUrlGenerator;
+
+    /** @var LoggerInterface */
     private $logger;
 
     /**
-     * @var CanonicalUrlGenerator
-     */
-    private $canonicalUrlGenerator;
-
-    /**
-     * @var WebsiteUrlProvidersServiceInterface
-     */
-    private $websiteUrlProvidersService;
-
-    /**
-     * @var GaufretteFilesystemAdapter
-     */
-    private $fileSystemAdapter;
-
-    /**
-     * @var int
-     */
-    private $version;
-
-    /**
-     * @param JobRunner $jobRunner
-     * @param DependentJobService $dependentJobService
-     * @param MessageProducerInterface $producer
+     * @param JobRunner                           $jobRunner
+     * @param DependentJobService                 $dependentJob
+     * @param MessageProducerInterface            $producer
      * @param WebsiteUrlProvidersServiceInterface $websiteUrlProvidersService
-     * @param SitemapIndexMessageFactory $indexMessageFactory
-     * @param SitemapMessageFactory $messageFactory
-     * @param LoggerInterface $logger
-     * @param CanonicalUrlGenerator $canonicalUrlGenerator
+     * @param WebsiteForSitemapProviderInterface  $websiteProvider
+     * @param PublicSitemapFilesystemAdapter      $fileSystemAdapter
+     * @param CanonicalUrlGenerator               $canonicalUrlGenerator
+     * @param LoggerInterface                     $logger
      */
     public function __construct(
         JobRunner $jobRunner,
-        DependentJobService $dependentJobService,
+        DependentJobService $dependentJob,
         MessageProducerInterface $producer,
         WebsiteUrlProvidersServiceInterface $websiteUrlProvidersService,
-        SitemapIndexMessageFactory $indexMessageFactory,
-        SitemapMessageFactory $messageFactory,
-        LoggerInterface $logger,
-        CanonicalUrlGenerator $canonicalUrlGenerator
+        WebsiteForSitemapProviderInterface $websiteProvider,
+        PublicSitemapFilesystemAdapter $fileSystemAdapter,
+        CanonicalUrlGenerator $canonicalUrlGenerator,
+        LoggerInterface $logger
     ) {
         $this->jobRunner = $jobRunner;
-        $this->dependentJobService = $dependentJobService;
+        $this->dependentJob = $dependentJob;
         $this->producer = $producer;
         $this->websiteUrlProvidersService = $websiteUrlProvidersService;
-        $this->indexMessageFactory = $indexMessageFactory;
-        $this->messageFactory = $messageFactory;
-        $this->logger = $logger;
-        $this->canonicalUrlGenerator = $canonicalUrlGenerator;
-    }
-
-    /**
-     * @param WebsiteForSitemapProviderInterface $websiteProvider
-     */
-    public function setWebsiteProvider(WebsiteForSitemapProviderInterface $websiteProvider)
-    {
         $this->websiteProvider = $websiteProvider;
+        $this->fileSystemAdapter = $fileSystemAdapter;
+        $this->canonicalUrlGenerator = $canonicalUrlGenerator;
+        $this->logger = $logger;
     }
 
     /**
-     * @param GaufretteFilesystemAdapter $fileSystemAdapter
+     * {@inheritdoc}
      */
-    public function setFileSystemAdapter(GaufretteFilesystemAdapter $fileSystemAdapter)
+    public static function getSubscribedTopics()
     {
-        $this->fileSystemAdapter = $fileSystemAdapter;
+        return [Topics::GENERATE_SITEMAP];
     }
 
     /**
@@ -132,45 +89,26 @@ class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscr
      */
     public function process(MessageInterface $message, SessionInterface $session)
     {
-        $this->version = time();
-
+        $version = time();
         try {
-            // make sure that temp directory is empty before the dump.
+            // make sure that the temporary storage is empty before the sitemap dumping to it
             $this->fileSystemAdapter->clearTempStorage();
 
             $websites = $this->websiteProvider->getAvailableWebsites();
-
             $result = $this->jobRunner->runUnique(
                 $message->getMessageId(),
                 Topics::GENERATE_SITEMAP,
-                function (JobRunner $jobRunner, Job $job) use ($websites) {
-                    $this->createFinishJobs($job, $websites);
-
-                    foreach ($websites as $website) {
-                        $providerNames = $this->getProvidersNamesByWebsite($website);
-                        $this->canonicalUrlGenerator->clearCache($website);
-                        foreach ($providerNames as $type) {
-                            $this->scheduleGeneratingSitemapForWebsiteAndType($jobRunner, $website, $type);
-                        }
-                    }
+                function (JobRunner $jobRunner, Job $job) use ($version, $websites) {
+                    $this->createFinishJob($job, $version, $websites);
+                    $this->scheduleGeneratingSitemap($jobRunner, $version, $websites);
 
                     return true;
                 }
             );
-        } catch (InvalidArgumentException $e) {
-            $this->logger->error(
-                'Queue Message is invalid',
-                ['exception' => $e]
-            );
-
-            return self::REJECT;
         } catch (\Exception $e) {
             $this->logger->error(
-                'Unexpected exception occurred during queue message processing',
-                [
-                    'exception' => $e,
-                    'topic' => Topics::GENERATE_SITEMAP,
-                ]
+                'Unexpected exception occurred during generating a sitemap.',
+                ['exception' => $e]
             );
 
             return self::REJECT;
@@ -180,72 +118,78 @@ class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscr
     }
 
     /**
-     * @param Job $job
-     * @param array $websites
+     * @param Job       $job
+     * @param int       $version
+     * @param Website[] $websites
      */
-    private function createFinishJobs(Job $job, array $websites): void
+    private function createFinishJob(Job $job, int $version, array $websites): void
     {
-        $context = $this->dependentJobService->createDependentJobContext($job->getRootJob());
-        $websiteIds = [];
-        foreach ($websites as $website) {
-            $websiteIds[] = $website->getId();
-            $context->addDependentJob(
-                Topics::GENERATE_SITEMAP_INDEX_BY_WEBSITE,
-                $this->indexMessageFactory->createMessage($website, $this->version)
-            );
-        }
-
-        $context->addDependentJob(
-            Topics::GENERATE_SITEMAP_MOVE_GENERATED_FILES,
-            ['websiteIds' => $websiteIds],
-            MessagePriority::VERY_LOW
+        $websiteIds = array_map(
+            function (Website $website) {
+                return $website->getId();
+            },
+            $websites
         );
-        $this->dependentJobService->saveDependentJob($context);
+
+        $context = $this->dependentJob->createDependentJobContext($job->getRootJob());
+        $context->addDependentJob(
+            Topics::GENERATE_SITEMAP_INDEX,
+            ['jobId' => $job->getId(), 'version' => $version, 'websiteIds' => $websiteIds]
+        );
+        $this->dependentJob->saveDependentJob($context);
     }
 
     /**
-     * @param WebsiteInterface $website
+     * @param Website $website
      *
-     * @return array
+     * @return string[]
      */
-    protected function getProvidersNamesByWebsite(WebsiteInterface $website)
+    private function getProvidersNamesByWebsite(Website $website): array
     {
-        $providersByNames = $this->websiteUrlProvidersService->getWebsiteProvidersIndexedByNames($website);
-
-        return array_keys($providersByNames);
+        return array_keys($this->websiteUrlProvidersService->getWebsiteProvidersIndexedByNames($website));
     }
 
     /**
      * @param JobRunner $jobRunner
-     * @param WebsiteInterface $website
-     * @param string $type
+     * @param int       $version
+     * @param Website[] $websites
      */
-    protected function scheduleGeneratingSitemapForWebsiteAndType(
-        JobRunner $jobRunner,
-        WebsiteInterface $website,
-        $type
-    ) {
-        $jobRunner->createDelayed(
-            sprintf(
-                '%s:%s:%s',
-                Topics::GENERATE_SITEMAP_BY_WEBSITE_AND_TYPE,
-                $website->getId(),
-                $type
-            ),
-            function (JobRunner $jobRunner, Job $child) use ($website, $type) {
-                $this->producer->send(
-                    Topics::GENERATE_SITEMAP_BY_WEBSITE_AND_TYPE,
-                    $this->messageFactory->createMessage($website, $type, $this->version, $child)
-                );
+    private function scheduleGeneratingSitemap(JobRunner $jobRunner, int $version, array $websites): void
+    {
+        foreach ($websites as $website) {
+            $this->canonicalUrlGenerator->clearCache($website);
+            $providerNames = $this->getProvidersNamesByWebsite($website);
+            foreach ($providerNames as $providerName) {
+                $this->scheduleGeneratingSitemapForWebsiteAndType($jobRunner, $version, $website, $providerName);
             }
-        );
+        }
     }
 
     /**
-     * {@inheritdoc}
+     * @param JobRunner $jobRunner
+     * @param int       $version
+     * @param Website   $website
+     * @param string    $type
      */
-    public static function getSubscribedTopics()
-    {
-        return [Topics::GENERATE_SITEMAP];
+    private function scheduleGeneratingSitemapForWebsiteAndType(
+        JobRunner $jobRunner,
+        int $version,
+        Website $website,
+        string $type
+    ): void {
+        $jobRunner->createDelayed(
+            sprintf('%s:%s:%s', Topics::GENERATE_SITEMAP_BY_WEBSITE_AND_TYPE, $website->getId(), $type),
+            function (JobRunner $jobRunner, Job $child) use ($version, $website, $type) {
+                $this->producer->send(
+                    Topics::GENERATE_SITEMAP_BY_WEBSITE_AND_TYPE,
+                    [
+                        'jobId'     => $child->getId(),
+                        'version'   => $version,
+                        'websiteId' => $website->getId(),
+                        'type'      => $type,
+                    ]
+                );
+            }
+        );
     }
 }

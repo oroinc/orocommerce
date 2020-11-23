@@ -1458,7 +1458,6 @@ services:
     oro_product.provider.product_image_file_name_provider:
         class: Oro\Bundle\ProductBundle\Provider\ProductImageFileNameProvider
         decorates: oro_attachment.provider.attachment_file_name_provider
-        public: true
         arguments:
             - '@oro_config.manager'
             - '@oro_product.provider.product_image_file_name_provider.inner'
@@ -1772,3 +1771,13 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_entity.preload_entity.product, method: onPreload }
             - { name: kernel.event_listener, event: oro_entity.preload_entity.productimage, method: onPreload }
+
+    oro_product.event_listener.product_data_converter:
+        class: 'Oro\Bundle\ProductBundle\EventListener\ProductDataConverterEventListener'
+        arguments:
+            - '@translator'
+            - '@oro_entity_config.manager.attribute_family_manager'
+            - '@oro_entity_config.manager.attribute_manager'
+            - '@oro_importexport.strategy.import.helper'
+        tags:
+            - { name: kernel.event_listener, event: oro_product.data_converter.convert_to_import, method: onConvertToImport }

@@ -14,26 +14,3 @@ Oro\Bundle\UserBundle\Entity\User:
     email: john@example.com
     password: cnyz4CP6XePO745+/Y5yrMbn0aNTDXZhZs8nIRpwC7kHsuB96L8Jtkte3rOluqI5sFvDUrtuDjBSZLcVlXOpFw==
     salt: r4LYCE9OZsyWs/B+smmSVt2r+uHn+ITlKlqLsCGD
-
-Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
-   combinedProductPrice0:
-        pricelist: '@combinedPriceList'
-        product: '@product1'
-        productSku: 'AA1'
-        quantity: 1
-        unit: '@item'
-        value: 2
-        currency: 'USD'
-   combinedProductPrice1:
-        pricelist: '@combinedPriceList'
-        product: '@product1'
-        productSku: 'AA1'
-        quantity: 5
-        unit: '@item'
-        value: 5
-        currency: 'USD'
-
-Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite:
-    combinedPriceListToWebsite:
-        pricelist: '@combinedPriceList'
-        website: '@website1'

@@ -10,7 +10,7 @@ use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
-use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
+use Oro\Bundle\PricingBundle\Model\CombinedPriceListTreeHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactory;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
@@ -35,7 +35,7 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
     /** @var ProductPriceProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $productPriceProvider;
 
-    /** @var PriceListTreeHandler|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var CombinedPriceListTreeHandler|\PHPUnit\Framework\MockObject\MockObject */
     protected $priceListTreeHandler;
 
     /** @var CheckoutSubtotalProvider|\PHPUnit\Framework\MockObject\MockObject */
@@ -62,7 +62,7 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
             );
 
         $this->productPriceProvider = $this->createMock(ProductPriceProviderInterface::class);
-        $this->priceListTreeHandler = $this->createMock(PriceListTreeHandler::class);
+        $this->priceListTreeHandler = $this->createMock(CombinedPriceListTreeHandler::class);
         $this->featureChecker = $this->createMock(FeatureChecker::class);
         $this->priceScopeCriteriaFactory = new ProductPriceScopeCriteriaFactory();
 
@@ -72,9 +72,10 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
             $this->productPriceProvider,
             $this->priceListTreeHandler,
             new SubtotalProviderConstructorArguments($this->currencyManager, $this->websiteCurrencyProvider),
-            $this->featureChecker,
             $this->priceScopeCriteriaFactory
         );
+        $this->provider->setFeatureChecker($this->featureChecker);
+        $this->provider->addFeature('oro_price_lists_combined');
     }
 
     public function testGetSubtotalWithoutLineItems()
@@ -131,7 +132,7 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
         $this->featureChecker
             ->expects($this->any())
             ->method('isFeatureEnabled')
-            ->with('oro_price_lists')
+            ->with('oro_price_lists_combined')
             ->willReturn(true);
 
         $this->translator
@@ -172,7 +173,7 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
         $this->assertEquals(CheckoutSubtotalProvider::TYPE, $subtotal->getType());
         $this->assertEquals('test', $subtotal->getLabel());
         $this->assertEquals($expectedSubtotalCurrency, $subtotal->getCurrency());
-        $this->assertSame(1, $subtotal->getCombinedPriceList()->getId());
+        $this->assertSame(1, $subtotal->getPriceList()->getId());
         $this->assertIsFloat($subtotal->getAmount());
         $this->assertEquals($expectedValue, $subtotal->getAmount());
         $this->assertTrue($subtotal->isVisible());
@@ -210,7 +211,7 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
         $this->featureChecker
             ->expects($this->any())
             ->method('isFeatureEnabled')
-            ->with('oro_price_lists')
+            ->with('oro_price_lists_combined')
             ->willReturn(false);
 
         $this->translator->expects($this->once())
@@ -241,7 +242,7 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
         $this->assertEquals(CheckoutSubtotalProvider::TYPE, $subtotal->getType());
         $this->assertEquals('test', $subtotal->getLabel());
         $this->assertEquals($expectedSubtotalCurrency, $subtotal->getCurrency());
-        $this->assertNull($subtotal->getCombinedPriceList());
+        $this->assertNull($subtotal->getPriceList());
         $this->assertIsFloat($subtotal->getAmount());
         $this->assertEquals($expectedValue, $subtotal->getAmount());
         $this->assertTrue($subtotal->isVisible());
@@ -281,7 +282,7 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
         $this->featureChecker
             ->expects($this->any())
             ->method('isFeatureEnabled')
-            ->with('oro_price_lists')
+            ->with('oro_price_lists_combined')
             ->willReturn(true);
 
         $this->translator->expects($this->once())
@@ -314,7 +315,7 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
         $this->assertEquals(CheckoutSubtotalProvider::TYPE, $subtotal->getType());
         $this->assertEquals('test', $subtotal->getLabel());
         $this->assertEquals($expectedSubtotalCurrency, $subtotal->getCurrency());
-        $this->assertNull($subtotal->getCombinedPriceList());
+        $this->assertNull($subtotal->getPriceList());
         $this->assertIsFloat($subtotal->getAmount());
         $this->assertEquals($expectedValue, $subtotal->getAmount());
         $this->assertFalse($subtotal->isVisible());

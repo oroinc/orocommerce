@@ -23,30 +23,24 @@ Oro\Bundle\ProductBundle\Entity\Product:
             - addName: ['@locvalue1']
         inventoryStatus: '@enumInventoryStatuses'
 
-Oro\Bundle\PricingBundle\Entity\PriceList:
-    priceListForWebsite:
-        name: 'priceListForWebsite'
-        __calls:
-            - addCurrencyByCode: ['USD']
-
 Oro\Bundle\PricingBundle\Entity\ProductPrice:
     price0_5:
         product: '@product1'
-        priceList: '@priceListForWebsite'
+        priceList: '@defaultPriceList'
         currency: 'USD'
         quantity: 0.5
         unit: '@each'
         value: 15.99
     price1:
         product: '@product1'
-        priceList: '@priceListForWebsite'
+        priceList: '@defaultPriceList'
         currency: 'USD'
         quantity: 1
         unit: '@each'
         value: 12.99
     price2:
         product: '@product1'
-        priceList: '@priceListForWebsite'
+        priceList: '@defaultPriceList'
         currency: 'USD'
         quantity: 100
         unit: '@each'
@@ -55,36 +49,4 @@ Oro\Bundle\PricingBundle\Entity\ProductPrice:
 Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
     priceRelation1:
         product: '@product1'
-        priceList: '@priceListForWebsite'
-
-Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer:
-    combinedPriceListToCustomer:
-        pricelist: '@combinedPriceList'
-        customer: '@customer1'
-        website: '@website1'
-
-Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
-    combinedProduct0_5Price:
-        pricelist: '@combinedPriceList'
-        product: '@product1'
-        productSku: 'PSKU1'
-        quantity: 0.5
-        unit: '@each'
-        value: 15.99
-        currency: 'USD'
-    combinedProduct1Price:
-        pricelist: '@combinedPriceList'
-        product: '@product1'
-        productSku: 'PSKU1'
-        quantity: 1
-        unit: '@each'
-        value: 12.99
-        currency: 'USD'
-    combinedProduct100Price:
-        pricelist: '@combinedPriceList'
-        product: '@product1'
-        productSku: 'PSKU1'
-        quantity: 100
-        unit: '@each'
-        value: 10.99
-        currency: 'USD'
+        priceList: '@defaultPriceList'

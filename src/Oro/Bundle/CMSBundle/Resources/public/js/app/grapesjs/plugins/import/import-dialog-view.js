@@ -4,10 +4,11 @@ define(function(require) {
     const BaseView = require('oroui/js/app/views/base/view');
     const template = require('tpl-loader!orocms/templates/grapesjs-import-dialog-template.html');
     const DialogWidget = require('oro/dialog-widget');
-    const {stripRestrictedAttrs} = require('orocms/js/app/grapesjs/plugins/grapesjs-style-isolation');
+    const {stripRestrictedAttrs, escapeWrapper} = require('orocms/js/app/grapesjs/plugins/grapesjs-style-isolation');
     const _ = require('underscore');
     const __ = require('orotranslation/js/translator');
     const $ = require('jquery');
+    const ApiAccessor = require('oroui/js/tools/api-accessor');
 
     const ImportDialogView = BaseView.extend({
         /**
@@ -15,7 +16,8 @@ define(function(require) {
          */
         optionNames: BaseView.prototype.optionNames.concat([
             'editor', 'importViewerOptions',
-            'modalImportLabel', 'modalImportTitle', 'modalImportButton'
+            'modalImportLabel', 'modalImportTitle', 'modalImportButton',
+            'validateApiProps', 'entityClass', 'fieldName'
         ]),
 
         /**
@@ -70,9 +72,7 @@ define(function(require) {
         /**
          * @property {Object}
          */
-        dialogOptions: {
-
-        },
+        dialogOptions: {},
 
         /**
          * @property {String}
@@ -94,11 +94,23 @@ define(function(require) {
          */
         template: template,
 
+        validateApiProps: {
+            http_method: 'POST',
+            route: 'oro_cms_wysiwyg_validation_validate'
+        },
+
+        entityClass: null,
+
+        fieldName: '',
+
+        markers: [],
+
         /**
          * @constructor
          * @param options
          */
         constructor: function ImportDialogView(options) {
+            this.checkContent = _.throttle(_.bind(this.checkContent, this), 2000);
             ImportDialogView.__super__.constructor.call(this, options);
         },
 
@@ -112,6 +124,7 @@ define(function(require) {
             this.codeViewer.set(this.importViewerOptions);
 
             this.content = this.getImportContent();
+            this.validateApiAccessor = new ApiAccessor(this.validateApiProps);
 
             ImportDialogView.__super__.initialize.call(this, options);
         },
@@ -175,7 +188,10 @@ define(function(require) {
          */
         bindEvents: function() {
             if (this.editor.ComponentRestriction.allowTags) {
-                this.viewerEditor.on('change', _.throttle(_.bind(this.checkContent, this), 500));
+                this.viewerEditor.on('change', codeEditor => {
+                    this.importButton.attr('disabled', true);
+                    this.checkContent(codeEditor);
+                });
                 this.viewerEditor.on('blur', _.bind(this.checkContent, this));
             }
 
@@ -219,24 +235,48 @@ define(function(require) {
          * @param {Editor.Instance} codeEditor
          * @returns {number}
          */
-        checkContent: function(codeEditor) {
-            this.content = codeEditor.getValue().trim();
-            this.isolatedContent = this.editor.getIsolatedHtml(this.content);
-            this.isolatedContentNode = $(this.isolatedContent);
-            this.clearStyleTags();
+        async checkContent(codeEditor) {
+            const messages = [];
+            const {success, errors} = await this.validateContent();
+            this.importButton.attr('disabled', !success);
 
-            const _res = this.content === ''
-                ? []
-                : this.editor.ComponentRestriction.validate(this.isolatedContent, true);
-            const validationMessage = __('oro.cms.wysiwyg.validation.import', {tags: _res.join(', ')});
+            this.markers.forEach(marker => marker.clear());
+            errors.forEach(({line, message}) => {
+                this.markers.push(
+                    this.viewerEditor.markText(
+                        {
+                            line: line - 1,
+                            ch: 0
+                        },
+                        {
+                            line: line - 1,
+                            ch: 1000
+                        },
+                        {
+                            className: 'cm-error'
+                        }
+                    )
+                );
+                messages.push(message);
+            });
 
-            this.validationMessage(_res.length ? validationMessage : false);
+            this.validationMessage(messages.join('\n'));
 
-            this.disabled = !!_res.length;
+            return success;
+        },
 
-            this.importButton.attr('disabled', !!_res.length);
-
-            return _res.length;
+        /**
+         * Async validate content
+         * @returns {Promise<{readonly errors?: *, readonly success?: *}>}
+         */
+        validateContent() {
+            return this.validateApiAccessor.send({}, {
+                content: this.viewerEditor.getValue().replace(/<style>(.|\n)*?<\/style>/g, ''),
+                className: this.entityClass,
+                fieldName: this.fieldName
+            }).then(({success, errors}) => {
+                return {success, errors: _.sortBy(errors, 'line')};
+            });
         },
 
         /**
@@ -277,7 +317,7 @@ define(function(require) {
         onImportCode: function() {
             if (!this.disabled) {
                 this.editor.CssComposer.clear();
-                this.editor.setComponents(this.viewerEditor.getValue().trim());
+                this.editor.setComponents(escapeWrapper(this.viewerEditor.getValue().trim()));
                 this.dialog.remove();
             }
         }

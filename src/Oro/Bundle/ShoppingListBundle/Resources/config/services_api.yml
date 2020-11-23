@@ -159,8 +159,8 @@ services:
             - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: frontend, class: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList, priority: -100 }
             - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: frontend, class: Oro\Bundle\ShoppingListBundle\Entity\LineItem, priority: -100 }
 
-    oro_shopping_list.api.guest_shopping_list_feature_check:
-        class: Oro\Bundle\ShoppingListBundle\Api\Processor\GuestShoppingListFeatureCheck
+    oro_shopping_list.api.validate_guest_shopping_list_feature:
+        class: Oro\Bundle\ShoppingListBundle\Api\Processor\ValidateGuestShoppingListFeature
         arguments:
             - '@security.token_storage'
             - '@oro_shopping_list.manager.guest_shopping_list'
@@ -194,16 +194,16 @@ services:
             - { name: oro.api.processor, action: update_relationship, group: resource_check, requestType: frontend, parentClass: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList }
             - { name: oro.api.processor, action: update_relationship, group: resource_check, requestType: frontend, parentClass: Oro\Bundle\ShoppingListBundle\Entity\LineItem }
 
-    oro_shopping_list.api.guest_shopping_list_access_check.shopping_list:
-        class: Oro\Bundle\ShoppingListBundle\Api\Processor\GuestShoppingListAccessCheck
+    oro_shopping_list.api.configure_guest_shopping_list_access.shopping_list:
+        class: Oro\Bundle\ShoppingListBundle\Api\Processor\ConfigureGuestShoppingListAccess
         arguments:
             - '@security.token_storage'
             - 'lineItem'
         tags:
             - { name: oro.api.processor, action: get_config, requestType: frontend, class: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList, priority: -250 }
 
-    oro_shopping_list.api.guest_shopping_list_access_check.line_item:
-        class: Oro\Bundle\ShoppingListBundle\Api\Processor\GuestShoppingListAccessCheck
+    oro_shopping_list.api.configure_guest_shopping_list_access.line_item:
+        class: Oro\Bundle\ShoppingListBundle\Api\Processor\ConfigureGuestShoppingListAccess
         arguments:
             - '@security.token_storage'
             - 'shoppingList'

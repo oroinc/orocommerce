@@ -5,6 +5,8 @@ namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Oro\Bundle\CommerceEntityBundle\Storage\ExtraActionEntityStorageInterface;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerTrait;
 use Oro\Bundle\PricingBundle\Async\Topics;
@@ -24,9 +26,10 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 /**
  * Handles product price changes.
  */
-class ProductPriceCPLEntityListener implements OptionalListenerInterface
+class ProductPriceCPLEntityListener implements OptionalListenerInterface, FeatureToggleableInterface
 {
     use OptionalListenerTrait;
+    use FeatureCheckerHolderTrait;
 
     /** @var ExtraActionEntityStorageInterface */
     protected $extraActionsStorage;
@@ -91,6 +94,9 @@ class ProductPriceCPLEntityListener implements OptionalListenerInterface
     protected function handleChanges(ProductPrice $productPrice)
     {
         if (!$this->enabled || !$this->isProductPriceValid($productPrice)) {
+            return;
+        }
+        if (!$this->isFeaturesEnabled()) {
             return;
         }
 

@@ -1,4 +1,5 @@
 @regression
+@pricing-storage-combined
 @ticket-BB-7811
 @ticket-BB-8098
 @fixture-OroPricingBundle:Pricelists.yml

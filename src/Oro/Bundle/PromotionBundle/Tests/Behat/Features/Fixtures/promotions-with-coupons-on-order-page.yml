@@ -60,6 +60,7 @@ Oro\Bundle\ProductBundle\Entity\ProductName:
 Oro\Bundle\ProductBundle\Entity\Product:
     secondProduct:
         sku: 'XX1'
+        attributeFamily: '@defaultProductFamily'
         organization: '@organization'
         owner: '@business_unit'
         primaryUnitPrecision: '@secondProductPrecision'

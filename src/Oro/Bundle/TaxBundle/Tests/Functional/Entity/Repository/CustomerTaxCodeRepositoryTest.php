@@ -36,15 +36,12 @@ class CustomerTaxCodeRepositoryTest extends WebTestCase
         /** @var CustomerTaxCode $taxCode3 */
         $taxCode3 = $this->getReference(TaxFixture::REFERENCE_PREFIX . '.' . TaxFixture::TAX_3);
 
-        $this->assertEquals([
-            $taxCode1,
-            $taxCode3,
-            $taxCode2,
-        ], $this->getRepository()->findByCodes([
-            TaxFixture::TAX_1,
-            TaxFixture::TAX_2,
-            TaxFixture::TAX_3,
-        ]));
+        $result = $this->getRepository()->findByCodes([TaxFixture::TAX_1, TaxFixture::TAX_2, TaxFixture::TAX_3]);
+
+        $this->assertCount(3, $result);
+        $this->assertContains($taxCode1, $result);
+        $this->assertContains($taxCode2, $result);
+        $this->assertContains($taxCode3, $result);
     }
 
     public function testFindByCodesAndOrganization()

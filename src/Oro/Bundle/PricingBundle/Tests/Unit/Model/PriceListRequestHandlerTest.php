@@ -8,8 +8,8 @@ use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CustomerBundle\Provider\CustomerUserRelationsProvider;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
+use Oro\Bundle\PricingBundle\Model\CombinedPriceListTreeHandler;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
-use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -35,7 +35,7 @@ class PriceListRequestHandlerTest extends \PHPUnit\Framework\TestCase
     protected $tokenAccessor;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|PriceListTreeHandler
+     * @var \PHPUnit\Framework\MockObject\MockObject|CombinedPriceListTreeHandler
      */
     protected $priceListTreeHandler;
 
@@ -81,7 +81,7 @@ class PriceListRequestHandlerTest extends \PHPUnit\Framework\TestCase
     {
         $this->session = $this->createMock(SessionInterface::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
-        $this->priceListTreeHandler = $this->createMock(PriceListTreeHandler::class);
+        $this->priceListTreeHandler = $this->createMock(CombinedPriceListTreeHandler::class);
 
         $this->request = $this->createMock(Request::class);
         $this->request->expects($this->any())->method('getSession')->willReturn($this->session);

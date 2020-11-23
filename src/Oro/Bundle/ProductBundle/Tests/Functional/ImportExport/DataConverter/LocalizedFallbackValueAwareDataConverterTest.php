@@ -94,6 +94,7 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
         'isUpcoming.value' => '',
         'category.id' => '',
         'wysiwyg' => '',
+        'wysiwygAttr' => ''
     ];
 
     /**

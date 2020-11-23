@@ -2,54 +2,39 @@
 
 namespace Oro\Bundle\SEOBundle\Manager;
 
+use Oro\Bundle\GaufretteBundle\FileManager;
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
 use Oro\Bundle\SEOBundle\Exception\RobotsTxtFileManagerException;
 use Oro\Component\Website\WebsiteInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
-use Symfony\Component\Filesystem\Filesystem;
 
 /**
- * The manager that simplifies work with robots txt files.
+ * The manager that simplifies work with robots.txt files.
  */
 class RobotsTxtFileManager
 {
-    const AUTO_GENERATED_MARK = '# auto-generated';
-
-    /** @var LoggerInterface */
-    private $logger;
-
-    /** @var Filesystem */
-    private $filesystem;
+    /** @var FileManager */
+    private $fileManager;
 
     /** @var CanonicalUrlGenerator */
     private $urlGenerator;
 
-    /** @var string */
-    private $defaultFilePath;
-
-    /** @var string */
-    private $path;
+    /** @var LoggerInterface */
+    private $logger;
 
     /**
-     * @param LoggerInterface       $logger
-     * @param Filesystem            $filesystem
+     * @param FileManager           $fileManager
      * @param CanonicalUrlGenerator $urlGenerator
-     * @param string                $defaultFilePath
-     * @param string                $path
+     * @param LoggerInterface       $logger
      */
     public function __construct(
-        LoggerInterface $logger,
-        Filesystem $filesystem,
+        FileManager $fileManager,
         CanonicalUrlGenerator $urlGenerator,
-        string $defaultFilePath,
-        string $path
+        LoggerInterface $logger
     ) {
-        $this->logger = $logger;
-        $this->filesystem = $filesystem;
+        $this->fileManager = $fileManager;
         $this->urlGenerator = $urlGenerator;
-        $this->defaultFilePath = $defaultFilePath;
-        $this->path = $path;
+        $this->logger = $logger;
     }
 
     /**
@@ -59,25 +44,22 @@ class RobotsTxtFileManager
      */
     public function isContentFileExist(WebsiteInterface $website): bool
     {
-        $fileName = $this->getFileNameByWebsite($website);
-        $filePath = $this->getFullName($fileName);
-
-        return file_exists($filePath);
+        return $this->fileManager->hasFile($this->getFileNameByWebsite($website));
     }
 
     /**
      * @param WebsiteInterface $website
      *
-     * @return false
+     * @return string|null
+     *
      * @throws RobotsTxtFileManagerException
      */
-    public function getContent(WebsiteInterface $website)
+    public function getContent(WebsiteInterface $website): ?string
     {
-        $fileName = $this->getFileNameByWebsite($website);
-        $filePath = $this->getFullName($fileName);
-        $content = @file_get_contents($filePath);
-        if ($content === false) {
-            $message = sprintf('An error occurred while reading robots file from %s', $filePath);
+        $filePath = $this->getFileNameByWebsite($website);
+        $content = $this->fileManager->getFileContent($filePath, false);
+        if (null === $content) {
+            $message = sprintf('An error occurred while reading robots.txt file from %s', $filePath);
             $this->logger->error($message);
 
             throw new RobotsTxtFileManagerException($message);
@@ -87,16 +69,16 @@ class RobotsTxtFileManager
     }
 
     /**
-     * Dumps content of robots txt file to $path/appropriate_website_domain.txt file
+     * Dumps content of robots.txt file to robots.{website_host}.txt file.
      *
-     * @param                  $content
+     * @param string           $content
      * @param WebsiteInterface $website
      *
      * @throws RobotsTxtFileManagerException
      */
-    public function dumpContent($content, WebsiteInterface $website)
+    public function dumpContent(string $content, WebsiteInterface $website): void
     {
-        $this->dumpToFile($this->getFullName($this->getFileNameByWebsite($website)), $content);
+        $this->dumpToFile($this->getFileNameByWebsite($website), $content);
     }
 
     /**
@@ -106,37 +88,41 @@ class RobotsTxtFileManager
      */
     public function getFileNameByWebsite(WebsiteInterface $website): string
     {
-        $websiteUlr = $this->urlGenerator->getCanonicalDomainUrl($website);
-        $urlParts = parse_url($websiteUlr);
+        return 'robots.' . $this->getWebsiteHost($website) . '.txt';
+    }
 
-        return 'robots.' . $urlParts['host'].'.txt';
+    /**
+     * @param WebsiteInterface $website
+     *
+     * @return string
+     */
+    private function getWebsiteHost(WebsiteInterface $website): string
+    {
+        $websiteUrl = $this->urlGenerator->getCanonicalDomainUrl($website);
+        $urlParts = parse_url($websiteUrl);
+
+        return $urlParts['host'];
     }
 
     /**
      * @param string $filePath
-     * @param        $content
+     * @param string $content
      *
      * @throws RobotsTxtFileManagerException
      */
-    private function dumpToFile(string $filePath, $content): void
+    private function dumpToFile(string $filePath, string $content): void
     {
         try {
-            $this->filesystem->dumpFile($filePath, $content);
-        } catch (IOExceptionInterface $e) {
-            $message = sprintf('An error occurred while writing robots file to %s', $filePath);
+            $this->fileManager->writeToStorage($content, $filePath);
+        } catch (\Exception $e) {
+            $message = sprintf('An error occurred while writing robots.txt file to %s', $filePath);
             $this->logger->error($message);
 
-            throw new RobotsTxtFileManagerException($message);
+            throw new RobotsTxtFileManagerException(
+                $message,
+                $e->getCode(),
+                $e
+            );
         }
-    }
-
-    /**
-     * @param string $fileName
-     *
-     * @return string
-     */
-    private function getFullName($fileName)
-    {
-        return implode(DIRECTORY_SEPARATOR, [$this->path, $fileName]);
     }
 }

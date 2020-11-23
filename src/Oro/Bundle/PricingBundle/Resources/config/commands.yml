@@ -42,3 +42,10 @@ services:
             - '@oro_pricing.shard_manager'
         tags:
             - { name: console.command }
+
+    Oro\Bundle\PricingBundle\Command\SwitchPricingStorageCommand:
+        arguments:
+            - '@oro_config.global'
+            - '@oro_pricing.pricing_storage_switch_handler'
+        tags:
+            - { name: console.command }

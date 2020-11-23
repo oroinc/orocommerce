@@ -6,30 +6,24 @@ use Oro\Bundle\SEOBundle\Manager\RobotsTxtFileManager;
 use Oro\Component\Website\WebsiteInterface;
 
 /**
- * Manage sitemap section of robots.txt file.
+ * Manages sitemap section of robots.txt file.
  */
 class RobotsTxtSitemapManager
 {
-    const KEYWORD_SITEMAP = 'Sitemap';
+    private const KEYWORD_SITEMAP = 'Sitemap';
 
-    /**
-     * @var RobotsTxtFileManager
-     */
+    private const AUTO_GENERATED_MARK = '# auto-generated';
+
+    /** @var RobotsTxtFileManager */
     private $fileManager;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     private $existingSitemaps = [];
 
-    /**
-     * @var array
-     */
+    /** @var array */
     private $newSitemaps = [];
 
-    /**
-     * @var array
-     */
+    /** @var array */
     private $content = [];
 
     /**
@@ -56,7 +50,7 @@ class RobotsTxtSitemapManager
                 '%s: %s %s',
                 self::KEYWORD_SITEMAP,
                 $sitemap,
-                RobotsTxtFileManager::AUTO_GENERATED_MARK
+                self::AUTO_GENERATED_MARK
             );
         }
 
@@ -94,7 +88,7 @@ class RobotsTxtSitemapManager
             '/^\s*%s\s*:\s*(%s)\s+%s\s*$/i',
             self::KEYWORD_SITEMAP,
             $urlRegex,
-            RobotsTxtFileManager::AUTO_GENERATED_MARK
+            self::AUTO_GENERATED_MARK
         );
 
         $this->content = explode(PHP_EOL, $content);

@@ -7,9 +7,6 @@
 import _ from 'underscore';
 
 const modelAttrStart = 'data-gjs-';
-const textTags = ['ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'];
-const wrappedTags = ['ul', 'ol', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'];
-const editableTags = ['div', 'section', 'header', 'footer', 'main', 'address', 'aside', 'article'];
 
 /**
  *
@@ -175,8 +172,6 @@ function parseNodes(el, config, ct = '', parent = {}) {
                 continue;
             } else if (nodeName === 'data-highlightable') {
                 continue;
-            } else if (textTags.includes(model.tagName) && nodeName === 'id') {
-                continue;
             } else if (nodeName.indexOf(modelAttrStart) === 0) {
                 const modelAttr = nodeName.replace(modelAttrStart, '');
                 const valueLen = nodeValue.length;
@@ -212,14 +207,42 @@ function parseNodes(el, config, ct = '', parent = {}) {
             if (nodeChild === 1 && firstChild.nodeType === 3) {
                 !model.type && (model.type = 'text');
                 model.content = _.escape(firstChild.nodeValue);
-            } else if (nodeChild > 1 && _.some(node.childNodes, child => child.nodeType === 3)) {
-                !model.type && (model.type = 'text');
-                model.content = '';
-                model.components = parseNodes(node, config, ct, model);
             } else {
                 model.root = false;
                 model.components = parseNodes(node, config, ct, model);
             }
+        }
+
+        if (!model.type && _.some(model.components, ({type}) => type === 'text')) {
+            model.type = 'text';
+            model.components = model.components.map(comp => {
+                if (comp.type !== 'text') {
+                    return comp;
+                }
+                return {
+                    ...comp,
+                    layerable: 0,
+                    selectable: 0,
+                    hoverable: 0,
+                    editable: 0,
+                    draggable: 0,
+                    droppable: 0,
+                    highlightable: 0
+                };
+            });
+        }
+
+        if (model.type === 'text' && parent.type === 'text') {
+            model = {
+                ...model,
+                layerable: 0,
+                selectable: 0,
+                hoverable: 0,
+                editable: 0,
+                draggable: 0,
+                droppable: 0,
+                highlightable: 0
+            };
         }
 
         // Check if it's a text node and if could be moved to the prevous model
@@ -267,63 +290,9 @@ function parseNodes(el, config, ct = '', parent = {}) {
             }
         }
 
-        if (
-            parent.type &&
-            ['text', 'code'].includes(parent.type) &&
-            ['br', 'b', 'i', 'u', 'div', 'ul', 'ol'].includes(model.tagName)
-        ) {
-            model = Object.assign(model, {
-                layerable: 0,
-                selectable: 0,
-                hoverable: 0,
-                editable: 0,
-                draggable: 0,
-                droppable: 0,
-                highlightable: 0
-            });
-        }
-
         // If tagName is still empty and is not a textnode, do not push it
         if (!model.tagName && model.type !== 'textnode') {
             continue;
-        }
-
-        if (wrappedTags.includes(model.tagName)) {
-            if (!parent.root && editableTags.includes(parent.tagName)) {
-                parent.type = 'text';
-                parent.layerable = 1;
-            } else if (parent.root || (parent.type !== 'text' && parent.type !== 'default')) {
-                model = {
-                    tagName: 'div',
-                    type: 'text',
-                    layerable: 1,
-                    components: [{...model}]
-                };
-            }
-        }
-
-        if (model.type === 'cell') {
-            if (model.components && model.components[0].type !== 'text') {
-                model.components = [
-                    {
-                        tagName: 'div',
-                        type: 'text',
-                        components: model.components
-                    }
-                ];
-            }
-
-            if (model.content) {
-                model.components = [
-                    {
-                        tagName: 'div',
-                        type: 'text',
-                        content: model.content
-                    }
-                ];
-            }
-
-            delete model.content;
         }
 
         result.push(model);
