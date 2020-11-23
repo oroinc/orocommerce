@@ -5,7 +5,6 @@ namespace Oro\Bundle\ProductBundle\VirtualFields;
 use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner\VirtualFieldsSelectQueryConverter;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
@@ -68,23 +67,5 @@ class VirtualFieldsProductDecoratorFactory
             $products,
             $product
         );
-    }
-
-    /**
-     * @param ProductHolderInterface[] $productHolders
-     * @param Product $product
-     *
-     * @return VirtualFieldsProductDecorator
-     */
-    public function createDecoratedProductByProductHolders(array $productHolders, Product $product)
-    {
-        $productHoldersProducts = array_map(
-            function (ProductHolderInterface $productHolder) {
-                return $productHolder->getProduct();
-            },
-            $productHolders
-        );
-
-        return $this->createDecoratedProduct($productHoldersProducts, $product);
     }
 }

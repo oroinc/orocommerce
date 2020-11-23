@@ -8,6 +8,7 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecoratorFactory;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
@@ -49,12 +50,18 @@ class ShippingContextToRuleValuesConverterTest extends \PHPUnit\Framework\TestCa
      * @dataProvider convertDataProvider
      * @param ShippingContext $context
      */
-    public function testConvert(ShippingContext $context)
+    public function testConvert(ShippingContext $context): void
     {
+        $products = array_map(
+            static function (ProductHolderInterface $lineItem) {
+                return $lineItem->getProduct();
+            },
+            $context->getLineItems()->toArray()
+        );
+
         $expectedValues = [
-            'lineItems' => array_map(function (ShippingLineItem $lineItem) use ($context) {
-                return $this->factory
-                    ->createLineItemWithDecoratedProductByLineItem($context->getLineItems()->toArray(), $lineItem);
+            'lineItems' => array_map(function (ShippingLineItem $lineItem) use ($products) {
+                return $this->factory->createShippingLineItemWithDecoratedProduct($lineItem, $products);
             }, $context->getLineItems()->toArray()),
             'shippingOrigin' => $context->getShippingOrigin(),
             'billingAddress' => $context->getBillingAddress(),
