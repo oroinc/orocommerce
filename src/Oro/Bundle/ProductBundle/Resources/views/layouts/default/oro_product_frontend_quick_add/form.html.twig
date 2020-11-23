@@ -50,7 +50,6 @@
             {% if allow_delete %}
                 <button class="btn btn--plain quick-order-add__remove-row removeRow" data-role="row-remove"
                       aria-label="{{ 'oro.product.remove_row.aria_label'|trans }}">
-                    <span class="fa-close" aria-hidden="true"></span>
                 </button>
             {% endif %}
         </div>
@@ -106,6 +105,9 @@
                 <span>{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</span>
             </button>
         {% endif %}
+        {% placeholder oro_product_quick_add_collection_after with {
+            _collection_unique_prefix: form.vars.unique_block_prefix
+        } %}
     {% endspaceless %}
 {% endblock %}
 

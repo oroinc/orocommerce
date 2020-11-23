@@ -1,5 +1,4 @@
 {% block _quick_add_subtotal_widget %}
-    {% use "OroPricingBundle:layouts/default:layout.html.twig" %}
     <div class="quick-order-add__col quick-order-add__subtotal"
          data-page-component-module="oroproduct/js/app/components/quick-add-row-extension-view-component"
          data-page-component-options="{{ {
@@ -7,20 +6,11 @@
              relatedSiblingComponents: {
                  quickAddRowComponent: row_component_name
              },
-             elements: {
-                 pricesHint: '[data-name="prices-hint"]',
-                 pricesHintContent: '[data-name="prices-hint-content"]',
-             }
+             pricesHintTemplateSelector: '[data-name="prices_hint' ~ _collection_unique_prefix ~ '"]',
+             pricesHintTemplateContentSelector: '[data-name="prices_hint_content' ~ _collection_unique_prefix ~ '"]',
          }|json_encode }}"
+         data-label="{{ 'oro.pricing.price.label'|trans }}"
     >
-        <span class="quick-order-add__label">{{ 'oro.pricing.price.label'|trans }}</span>
-        <script type="text/template" data-name="prices-hint-content">
-            {{ block('product_price_hint_content_js_widget') }}
-        </script>
-        <script type="text/template" data-name="prices-hint">
-            {{ block('product_price_hint_trigger_info_js_widget') }}
-        </script>
-
         <input type="text" class="input input--full quick-order-add__subtotal-input"
                data-name="field__product-subtotal" disabled aria-label="{{ 'oro.pricing.productprice.price_input.aria_label'|trans }}">
     </div>

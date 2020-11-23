@@ -1,0 +1,9 @@
+{% block _price_templates_widget %}
+    {% use "OroPricingBundle:layouts/default:layout.html.twig" %}
+    <script type="text/template" data-name="prices_hint_content{{ _collection_unique_prefix }}">
+        {{ block('product_price_hint_content_js_widget') }}
+    </script>
+    <script type="text/template" data-name="prices_hint{{ _collection_unique_prefix }}">
+        {{ block('product_price_hint_trigger_info_js_widget') }}
+    </script>
+{% endblock %}
