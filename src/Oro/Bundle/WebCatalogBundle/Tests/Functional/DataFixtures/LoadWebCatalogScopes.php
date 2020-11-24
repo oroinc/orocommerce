@@ -8,6 +8,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 
 class LoadWebCatalogScopes extends AbstractFixture implements DependentFixtureInterface
@@ -21,7 +22,7 @@ class LoadWebCatalogScopes extends AbstractFixture implements DependentFixtureIn
     public function getDependencies()
     {
         return [
-            LoadWebCatalogData::class,
+            LoadContentVariantsData::class,
             LoadCustomers::class
         ];
     }
@@ -33,11 +34,14 @@ class LoadWebCatalogScopes extends AbstractFixture implements DependentFixtureIn
     {
         /** @var WebCatalog $webCatalog */
         $webCatalog = $this->getReference(LoadWebCatalogData::CATALOG_1);
+        /** @var ContentVariant $contentVariant */
+        $contentVariant = $this->getReference(LoadContentVariantsData::ROOT_VARIANT);
         /** @var Customer $customer */
         $customer = $this->getReference(LoadCustomers::DEFAULT_ACCOUNT_NAME);
 
         $scope1 = new Scope();
         $scope1->setWebCatalog($webCatalog);
+        $contentVariant->addScope($scope1);
         $manager->persist($scope1);
         $this->addReference(self::SCOPE1, $scope1);
 
