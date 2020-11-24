@@ -2,22 +2,18 @@ services:
     # Data Providers
     oro_checkout.data_provider.converter.checkout_line_items:
         class: 'Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter'
-        public: false
 
     oro_checkout.data_provider.converter.checkout_to_order:
         class: Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutToOrderConverter
-        public: false
         arguments:
             - '@oro_checkout.data_provider.manager.checkout_line_items'
             - '@oro_checkout.mapper.order_mapper'
-            - '@oro_checkout.checkout_to_order_converter.cache'
             - '@oro_checkout.payment_methods_provider'
-
-    oro_checkout.checkout_to_order_converter.cache:
-        class: Doctrine\Common\Cache\ArrayCache
-        public: false
         calls:
-            - [ setNamespace, [ 'checkout_to_order_converter' ] ]
+            - [setMemoryCacheProvider, ['@oro_checkout.data_provider.converter.checkout_to_order.memory_cache']]
+
+    oro_checkout.data_provider.converter.checkout_to_order.memory_cache:
+        parent: oro.cache.provider.memory_cache
 
     oro_checkout.product_availability.cache:
         class: Doctrine\Common\Cache\ArrayCache
@@ -145,7 +141,6 @@ services:
 
     oro_checkout.twig.line_items:
         class: 'Oro\Bundle\CheckoutBundle\Twig\LineItemsExtension'
-        public: false
         arguments:
             - '@oro_platform.twig.service_locator'
         tags:
@@ -162,7 +157,6 @@ services:
 
     oro_checkout.event_listener.shopping_list:
         class: 'Oro\Bundle\CheckoutBundle\EventListener\ShoppingListListener'
-        public: false
         arguments:
             - '@doctrine'
             - 'Oro\Bundle\CheckoutBundle\Entity\Checkout'
@@ -224,7 +218,6 @@ services:
 
     oro_checkout.workflow_state.storage.checkout_state_diff_storage:
         class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Storage\CheckoutDiffStorage'
-        public: false
         arguments:
             - '@oro_entity.doctrine_helper'
             - 'Oro\Bundle\CheckoutBundle\Entity\CheckoutWorkflowState'
@@ -236,7 +229,6 @@ services:
 
     oro_checkout.workflow_state.mapper.registry.checkout_state_diff:
         class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\CheckoutStateDiffMapperRegistry'
-        public: false
         arguments:
             - [] # mappers
 
@@ -244,31 +236,26 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\WorkflowStepMapper'
         arguments:
             - '@oro_checkout.workflow.manager.b2b_flow_checkout'
-        public: false
         tags:
             - { name: checkout.workflow_state.mapper }
 
     oro_checkout.workflow_state.mapper.ship_to_billing_diff:
         class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\ShipToBillingDiffMapper'
-        public: false
         tags:
             - { name: checkout.workflow_state.mapper }
 
     oro_checkout.workflow_state.mapper.billing_address_diff:
         class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\BillingAddressDiffMapper'
-        public: false
         tags:
             - { name: checkout.workflow_state.mapper }
 
     oro_checkout.workflow_state.mapper.shipping_address_diff:
         class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\ShippingAddressDiffMapper'
-        public: false
         tags:
             - { name: checkout.workflow_state.mapper }
 
     oro_checkout.workflow_state.mapper.payment_method_diff:
         class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\PaymentMethodDiffMapper'
-        public: false
         tags:
             - { name: checkout.workflow_state.mapper }
 
@@ -276,25 +263,21 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\TotalAmountDiffMapper'
         arguments:
             - '@oro_pricing.subtotal_processor.total_processor_provider'
-        public: false
         tags:
             - { name: checkout.workflow_state.mapper }
 
     oro_checkout.workflow_state.mapper.ship_until_diff:
         class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\ShipUntilDiffMapper'
-        public: false
         tags:
             - { name: checkout.workflow_state.mapper }
 
     oro_checkout.workflow_state.mapper.po_number_diff:
         class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\PoNumberDiffMapper'
-        public: false
         tags:
             - { name: checkout.workflow_state.mapper }
 
     oro_checkout.workflow_state.mapper.customer_notes_diff:
         class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\CustomerNotesDiffMapper'
-        public: false
         tags:
             - { name: checkout.workflow_state.mapper }
 
@@ -302,7 +285,6 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\ShippingMethodDiffMapper'
         arguments:
             - '@oro_checkout.shipping_method.provider_main'
-        public: false
         tags:
             - { name: checkout.workflow_state.mapper }
 
@@ -367,7 +349,6 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
             - 'Oro\Bundle\CheckoutBundle\Entity\CheckoutWorkflowState'
-        public: false
         tags:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\CheckoutBundle\Entity\Checkout', event: preRemove }
 
@@ -388,7 +369,6 @@ services:
     oro_checkout.action.default_shipping_method_setter_decorator:
         class: 'Oro\Bundle\CheckoutBundle\Action\DefaultShippingMethodSetterDecorator'
         decorates: oro_checkout.action.default_shipping_method_setter
-        public: false
         arguments:
             - '@oro_checkout.action.default_shipping_method_setter_decorator.inner'
 
@@ -418,7 +398,6 @@ services:
 
     oro_checkout.mapper.order_mapper:
         class: 'Oro\Bundle\CheckoutBundle\Mapper\OrderMapper'
-        public: false
         arguments:
             - '@oro_entity.helper.field_helper'
             - '@property_accessor'
@@ -550,7 +529,6 @@ services:
     oro_checkout.provider.result_messages:
         class: Oro\Bundle\CheckoutBundle\Provider\PaymentResultMessageProvider
         decorates: oro_payment.provider.result_messages
-        public: false
         arguments: ['@oro_checkout.provider.payment_method_provider']
 
     oro_checkout.event_listener.system_config:
@@ -606,7 +584,6 @@ services:
 
     oro_checkout.line_item.converter.shopping_list:
         class: 'Oro\Bundle\CheckoutBundle\Converter\ShoppingListLineItemConverter'
-        public: false
         tags:
             - { name: oro.checkout.line_item.converter, alias: shopping_list }
 
@@ -623,7 +600,6 @@ services:
 
     oro_checkout.data_provider.checkout_line_items:
         class: 'Oro\Bundle\CheckoutBundle\DataProvider\LineItem\CheckoutLineItemsDataProvider'
-        public: false
         arguments:
             - '@oro_pricing.provider.frontend_product_prices'
             - '@security.authorization_checker'
@@ -748,7 +724,6 @@ services:
             - [ setEntityClass, [ 'Oro\Bundle\CheckoutBundle\Entity\Checkout' ] ]
         tags:
             - { name: oro_customer.updater.customer_user_reassign }
-        public: false
 
     oro_checkout.action.send_order_confirmation_email:
         class: 'Oro\Bundle\CheckoutBundle\Action\SendOrderConfirmationEmail'
