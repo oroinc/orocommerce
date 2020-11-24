@@ -3,10 +3,12 @@
 namespace Oro\Bundle\WebCatalogBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\BatchBundle\ORM\Query\ResultIterator\IdentifierHydrator;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
+use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 
 /**
@@ -37,6 +39,12 @@ class WebCatalogRepository extends EntityRepository
     public function getUsedScopes(WebCatalog $webCatalog)
     {
         $qb = $this->getUsedScopesQueryBuilder($webCatalog);
+        $qb->innerJoin(
+            ContentVariant::class,
+            'variant',
+            Join::WITH,
+            $qb->expr()->isMemberOf('scope', 'variant.scopes')
+        );
 
         return $qb->getQuery()->getResult();
     }
