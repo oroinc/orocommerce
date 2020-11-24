@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\DataProvider\Converter;
 
 use Doctrine\Common\Cache\CacheProvider;
+use Oro\Bundle\CacheBundle\Provider\MemoryCacheProviderAwareTrait;
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Mapper\MapperInterface;
@@ -14,6 +15,8 @@ use Oro\Bundle\OrderBundle\Entity\Order;
  */
 class CheckoutToOrderConverter
 {
+    use MemoryCacheProviderAwareTrait;
+
     /**
      * @var CacheProvider
      */
@@ -58,15 +61,40 @@ class CheckoutToOrderConverter
      */
     public function getOrder(Checkout $checkout)
     {
-        $hash = md5(serialize($checkout));
-        $order = $this->orderCache->fetch($hash);
-        if ($order === false) {
-            $data = ['lineItems' => $this->checkoutLineItemsManager->getData($checkout)];
-            $order = $this->mapper->map($checkout, $data);
-            $this->orderCache->save($hash, $order);
-        }
+        $order = $this->getOrderUsingCache($checkout);
 
         $this->paymentMethodsProvider->storePaymentMethodsToEntity($order, [$checkout->getPaymentMethod()]);
+
+        return $order;
+    }
+
+    /**
+     * @param Checkout $checkout
+     * @return Order
+     */
+    private function getOrderUsingCache(Checkout $checkout): Order
+    {
+        if ($this->memoryCacheProvider) {
+            $order = $this->getMemoryCacheProvider()->get(
+                ['checkout' => $checkout],
+                function () use ($checkout) {
+                    return $this->mapper->map(
+                        $checkout,
+                        [
+                            'lineItems' => $this->checkoutLineItemsManager->getData($checkout),
+                        ]
+                    );
+                }
+            );
+        } else {
+            $hash = md5(serialize($checkout));
+            $order = $this->orderCache->fetch($hash);
+            if ($order === false) {
+                $data = ['lineItems' => $this->checkoutLineItemsManager->getData($checkout)];
+                $order = $this->mapper->map($checkout, $data);
+                $this->orderCache->save($hash, $order);
+            }
+        }
 
         return $order;
     }
