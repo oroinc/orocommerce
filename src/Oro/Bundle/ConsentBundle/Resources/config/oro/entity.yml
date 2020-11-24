@@ -8,4 +8,4 @@ oro_entity:
                         return_type: dictionary
                     join:
                         left:
-                            - { join: 'OroConsentBundle:ConsentAcceptance', alias: 'accepted_consent', conditionType: 'WITH', condition: 'accepted_consent.customerUser = entity' }
+                            - { join: Oro\Bundle\ConsentBundle\Entity\ConsentAcceptance, alias: accepted_consent, conditionType: WITH, condition: 'accepted_consent.customerUser = entity' }

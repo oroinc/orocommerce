@@ -4,8 +4,8 @@ oro_entity:
             contactInformation:
                 query:
                     select:
-                        expr:         user.email
-                        return_type:  string
+                        expr: user.email
+                        return_type: string
                     join:
                         left:
                             - { join: entity.customerUser, alias: user }
@@ -19,4 +19,4 @@ oro_entity:
                 query:
                     join:
                         left:
-                            - { join: 'Oro\Bundle\SaleBundle\Entity\Quote', alias: quote, conditionType: 'WITH', condition: "entity.sourceEntityClass = 'Oro\\Bundle\\SaleBundle\\Entity\\Quote' AND entity.sourceEntityId = quote.id" }
+                            - { join: Oro\Bundle\SaleBundle\Entity\Quote, alias: quote, conditionType: WITH, condition: "entity.sourceEntityClass = 'Oro\\Bundle\\SaleBundle\\Entity\\Quote' AND entity.sourceEntityId = quote.id" }
