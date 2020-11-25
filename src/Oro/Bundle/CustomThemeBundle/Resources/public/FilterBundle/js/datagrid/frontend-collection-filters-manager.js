@@ -11,7 +11,7 @@ define(function(require, exports, module) {
 
     const FrontendCollectionFiltersManager = CollectionFiltersManager.extend({
         /**
-         * @property {Boolean}
+         * @inheritDoc
          */
         enableMultiselectWidget: config.enableMultiselectWidget,
 
@@ -29,35 +29,6 @@ define(function(require, exports, module) {
                 screenType: 'mobile-landscape'
             })) {
                 this.renderMode = 'toggle-mode';
-            }
-        },
-
-        /**
-         * @inheritDoc
-         */
-        _initializeSelectWidget: function() {
-            if (!this.enableMultiselectWidget) {
-                this.$(this.filterSelector).hide();
-                return;
-            }
-            FrontendCollectionFiltersManager.__super__._initializeSelectWidget.call(this);
-        },
-
-        /**
-         * @inheritDoc
-         */
-        _refreshSelectWidget: function() {
-            if (this.enableMultiselectWidget) {
-                FrontendCollectionFiltersManager.__super__._refreshSelectWidget.call(this);
-            }
-        },
-
-        /**
-         * @inheritDoc
-         */
-        _onChangeFilterSelect: function(filters) {
-            if (this.enableMultiselectWidget) {
-                FrontendCollectionFiltersManager.__super__._onChangeFilterSelect.call(this, filters);
             }
         },
 

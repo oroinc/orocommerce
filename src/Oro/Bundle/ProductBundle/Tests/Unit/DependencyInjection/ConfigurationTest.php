@@ -223,7 +223,11 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                 'original_file_names_enabled' => [
                     'value' => false,
                     'scope' => 'app'
-                ]
+                ],
+                'filters_position' => [
+                    'value' => 'top',
+                    'scope' => 'app'
+                ],
             ]
         ];
 

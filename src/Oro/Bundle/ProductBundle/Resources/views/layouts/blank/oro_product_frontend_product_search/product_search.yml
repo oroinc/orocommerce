@@ -1,6 +1,7 @@
 layout:
     imports:
         - oro_product_grid
+
     actions:
         - '@setBlockTheme':
             themes: 'OroProductBundle:layouts:blank/oro_product_frontend_product_search/product_search.html.twig'

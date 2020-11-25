@@ -19,8 +19,10 @@ styles:
         - 'bundles/oroproduct/blank/scss/variables/product-list-config.scss'
         - 'bundles/oroproduct/blank/scss/variables/embedded-products-config.scss'
         - 'bundles/oroproduct/blank/scss/variables/product-popup-header.scss'
+        - 'bundles/oroproduct/blank/scss/variables/product-filters-root-config.scss'
 
         - 'bundles/oroproduct/blank/scss/components/product.scss'
         - 'bundles/oroproduct/blank/scss/components/product-item.scss'
         - 'bundles/oroproduct/blank/scss/components/product-list.scss'
+        - 'bundles/oroproduct/blank/scss/components/product-filters-root.scss'
         - 'bundles/oroproduct/blank/scss/styles.scss'
