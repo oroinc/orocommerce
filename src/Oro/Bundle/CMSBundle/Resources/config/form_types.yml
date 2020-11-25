@@ -77,3 +77,10 @@ services:
         class: Oro\Bundle\CMSBundle\Form\Extension\WYSIWYGFieldExtension
         tags:
             - { name: form.type_extension }
+
+    oro_cms.form.extension.digital_asset_twig_tags:
+        class: Oro\Bundle\CMSBundle\Form\Extension\DigitalAssetTwigTagsWysiwygExtension
+        arguments:
+            - '@oro_cms.tools.digital_asset_twig_tags_converter'
+        tags:
+            - { name: form.type_extension }
