@@ -129,10 +129,6 @@ define([
             }
 
             valueFrame.css('margin-right', 0);
-
-            const type = this.$(this.criteriaValueSelectors.type).val();
-
-            this.$('.product-price-unit-filter-separator').toggle(!this.isEmptyType(type));
         },
 
         /**

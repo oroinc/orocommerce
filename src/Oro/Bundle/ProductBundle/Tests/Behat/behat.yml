@@ -961,12 +961,12 @@ oro_behat_extension:
     Brand Filter:
       selector:
         type: xpath
-        locator: '//div[contains(@class,"filter-item")]/div[contains(@class,"filter-select") and contains(text(),"Filter By Brand")]/..'
+        locator: '//div[contains(@class,"filter-item")]/div[contains(@class,"filter-select")]/span[contains(text(),"Filter By Brand")]/..'
 
     Brand Filter Toggle Icon:
       selector:
         type: xpath
-        locator: '//div[contains(@class,"filter-item")]/div[contains(@class,"filter-select") and contains(text(),"Filter By Brand")]/div[contains(@class,"filter-criteria-selector-icon-wrap")]'
+        locator: '//div[contains(@class,"filter-item")]/div[contains(@class,"filter-select")]/span[contains(text(),"Filter By Brand")]/../div[contains(@class,"filter-criteria-selector-icon-wrap")]'
 
     Product Item Preview:
       selector: '.product-item .product-item__preview'
@@ -1233,6 +1233,16 @@ oro_behat_extension:
     More Link:
       selector: 'a.toggle-more'
 
+    Filters In Sidebar:
+      selector: '.page-sidebar .product-filters-sidebar .filter-box'
+
+    Apply Filters Button:
+      selector: '.product-filters-sidebar .filter-box [data-role="apply"]'
+
+    Catalog Sidebar:
+      selector: '[data-hint-container="frontend-product-search-grid"]'
+      class: Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGridFilters
+
   pages:
     Product View:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Page\ProductView
@@ -1335,5 +1345,6 @@ oro_behat_extension:
             - '@oro_importexport.processor.registry'
         - OroNavigationBundle::FeatureContext
         - OroCMSBundle::FeatureContext
+        - OroProductBundle::FrontendProductGridContext
       paths:
         - '@OroProductBundle/Tests/Behat/Features/other'

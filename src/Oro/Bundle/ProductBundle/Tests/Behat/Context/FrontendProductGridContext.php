@@ -44,15 +44,20 @@ class FrontendProductGridContext extends OroFeatureContext implements OroPageObj
     /**
      * Resets frontend product grid filter.
      * Example: I reset "ManyToOneField" filter in frontend product grid
+     * Example: I reset "ManyToOneField" filter in "product" sidebar
      *
      * @When /^(?:|I )reset "(?P<filterName>[\w\s\:\(\)]+)" filter in frontend product grid$/
+     * @When /^(?:|I )reset "(?P<filterName>[\w\s\:\(\)]+)" filter in "(?P<filterPosition>[\w\s]+)" sidebar$/
      *
      * @param string $filterName
+     * @param string $filterPosition
      */
-    public function resetFilterOfGrid(string $filterName): void
-    {
+    public function resetFilterOfGrid(
+        string $filterName,
+        $filterPosition = 'FrontendProductGridFilters'
+    ) {
         /** @var FrontendProductGridFilters $gridFilters */
-        $gridFilters = $this->createElement('FrontendProductGridFilters');
+        $gridFilters = $this->createElement($filterPosition);
 
         $gridFilters->resetFilter($filterName);
     }
@@ -60,20 +65,26 @@ class FrontendProductGridContext extends OroFeatureContext implements OroPageObj
     /**
      * Asserts frontend product grid filter hint value.
      * Example: I should see "One, Two" hint for "CountField" filter in frontend product grid
+     * Example: I should see "One, Two" hint for "CountField" filter in "product" sidebar
      *
      * @codingStandardsIgnoreStart
      *
      * @When /^(?:|I )should see "(?P<filterHint>[\w\s\,\"\:\(\)]+)" hint for "(?P<filterName>[\w\s\:\(\)]+)" filter in frontend product grid$/
+     * @When /^(?:|I )should see "(?P<filterHint>[\w\s\,\"\:\(\)]+)" hint for "(?P<filterName>[\w\s\:\(\)]+)" filter in "(?P<filterPosition>[\w\s]+)" sidebar$/
      *
      * @codingStandardsIgnoreEnd
      *
      * @param string $filterName
      * @param string $filterHint
+     * @param string $filterPosition
      */
-    public function assertsFilterHintValue(string $filterName, string $filterHint): void
-    {
+    public function assertsFilterHintValue(
+        string $filterName,
+        string $filterHint,
+        $filterPosition = 'FrontendProductGridFilters'
+    ) {
         /** @var FrontendProductGridFilters $gridFilters */
-        $gridFilters = $this->createElement('FrontendProductGridFilters');
+        $gridFilters = $this->createElement($filterPosition);
 
         self::assertEquals(
             $filterHint,
@@ -82,18 +93,24 @@ class FrontendProductGridContext extends OroFeatureContext implements OroPageObj
         );
     }
 
+    //@codingStandardsIgnoreStart
     /**
      * Asserts that there's no hint shown for a filter in frontend product grid.
      * Example: I should not see hint for "TagField" filter in frontend product grid
+     * Example: I should not see hint for "TagField" filter in "product" sidebar
      *
      * @When /^(?:|I )should not see hint for "(?P<filterName>[\w\s\:\(\)]+)" filter in frontend product grid$/
-     *
+     * @When /^(?:|I )should not see hint for "(?P<filterName>[\w\s\:\(\)]+)" filter in "(?P<filterPosition>[\w\s]+)" sidebar$/
      * @param string $filterName
+     * @param string $filterPosition
      */
-    public function assertsFilterHasNoHint(string $filterName)
-    {
+    //@codingStandardsIgnoreEnd
+    public function assertsFilterHasNoHint(
+        string $filterName,
+        $filterPosition = 'FrontendProductGridFilters'
+    ) {
         /** @var FrontendProductGridFilters $gridFilters */
-        $gridFilters = $this->createElement('FrontendProductGridFilters');
+        $gridFilters = $this->createElement($filterPosition);
 
         self::assertFalse(
             $gridFilters->hasFilterHint($filterName),
