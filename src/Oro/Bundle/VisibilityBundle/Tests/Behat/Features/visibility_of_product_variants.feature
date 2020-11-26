@@ -1,6 +1,9 @@
 @fixture-OroVisibilityBundle:configurable_product_visibility.yml
 @fixture-OroCustomerBundle:BuyerCustomerFixture.yml
 Feature: Visibility of product variants
+  In order to ...
+  As an ...
+  I should be able to ...
 
   Scenario: Create different window session
       Given sessions active:

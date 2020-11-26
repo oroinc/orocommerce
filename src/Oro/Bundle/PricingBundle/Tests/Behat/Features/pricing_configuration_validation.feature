@@ -2,6 +2,9 @@
 @ticket-BB-10412
 @automatically-ticket-tagged
 Feature: Pricing configuration validation
+  In order to ...
+  As an ...
+  I should be able to ...
 
 
   Scenario: Default Currency field validation should not affect other fields validation

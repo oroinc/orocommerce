@@ -2,7 +2,7 @@
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroPromotionBundle:promotion_with_payment_term_expression.yml
 @fixture-OroPromotionBundle:shopping_list.yml
-Feature: Promotions at Checkout
+Feature: Promotions with payment method expression at Checkout
   In order to find out applied discounts at checkout
   As an site user
   I need to have ability to see applied discounts at checkout stage on front-end

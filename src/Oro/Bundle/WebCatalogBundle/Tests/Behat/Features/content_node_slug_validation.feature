@@ -3,6 +3,9 @@
 @fixture-OroWebCatalogBundle:customer.yml
 @fixture-OroWebCatalogBundle:web_catalog_for_breadcrumbs.yml
 Feature: Content Node slug validation
+  In order to ...
+  As an ...
+  I should be able to ...
 
   Scenario: Create content nodes tree
     Given I login as administrator

@@ -35,6 +35,10 @@ class PricingStorageIsolator implements IsolatorInterface
      */
     public function isApplicable(ContainerInterface $container)
     {
+        if (!$container->getParameter('installed')) {
+            return false;
+        }
+
         $storage = $container->get('oro_config.global')->get('oro_pricing.price_storage');
 
         return $storage === 'flat' || $storage === 'combined';

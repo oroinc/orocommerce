@@ -5,6 +5,9 @@
 @ticket-BB-16591
 @ticket-BB-16921
 Feature: RFQ from Shipping List
+  In order to ...
+  As an ...
+  I should be able to ...
 
   Scenario: Create different window session
     Given sessions active:

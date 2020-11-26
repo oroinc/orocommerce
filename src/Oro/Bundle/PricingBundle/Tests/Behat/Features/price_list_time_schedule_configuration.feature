@@ -3,6 +3,9 @@
 @pricing-storage-combined
 
 Feature: Price List time schedule configuration
+  In order to ...
+  As an ...
+  I should be able to ...
   Scenario: Feature Background
     Given sessions active:
       | Admin | first_session  |

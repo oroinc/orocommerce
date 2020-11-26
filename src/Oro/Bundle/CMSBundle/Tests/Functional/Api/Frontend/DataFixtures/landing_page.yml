@@ -1,4 +1,5 @@
 dependencies:
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization
     - Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData
 
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
@@ -56,19 +57,23 @@ Oro\Bundle\CMSBundle\Entity\Page:
         metaDescriptions: ['@page1_meta_description', '@page1_es_meta_description']
         metaKeywords: ['@page1_meta_keywords', '@page1_es_meta_keywords']
         slugs: ['@page1_slug_default', '@page1_slug_en_CA', '@page1_slug_es']
+        organization: '@organization'
         __calls:
             - addTitle: ['@page1_title']
             - addTitle: ['@page1_es_title']
     page2:
         content: 'Page 2 content'
         slugs: ['@page2_slug_default']
+        organization: '@organization'
         __calls:
             - addTitle: ['@page2_title']
     page3:
         content: 'Page 3 content'
+        organization: '@organization'
         __calls:
             - addTitle: ['@page3_title']
     page4:
         content: 'Page 4 content'
+        organization: '@organization'
         __calls:
             - addTitle: ['@page4_title']

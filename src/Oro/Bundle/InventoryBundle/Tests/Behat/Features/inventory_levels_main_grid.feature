@@ -3,6 +3,9 @@
 @fixture-OroInventoryBundle:product_inventory_levels.yml
 @community-edition-only
 Feature: Inventory Levels Main Grid
+  In order to ...
+  As an ...
+  I should be able to ...
 
     Scenario: Inventory -> Inventory Levels page opens
         Given I login as administrator
