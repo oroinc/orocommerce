@@ -4,6 +4,9 @@
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroCheckoutBundle:Checkout.yml
 Feature: Deep level of permissions for buyer allows to view customer user owner on orders
+  In order to ...
+  As an ...
+  I should be able to ...
 
   Scenario: Feature Background
     Given sessions active:

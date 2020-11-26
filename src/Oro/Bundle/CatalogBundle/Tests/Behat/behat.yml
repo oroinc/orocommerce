@@ -174,5 +174,10 @@ oro_behat_extension:
             - '@oro_importexport.processor.registry'
         - OroEmailBundle::EmailContext
         - OroProductBundle::ProductImportExportContext
+        - OroLocaleBundle::LocalizationContext
+        - OroFrontendLocalizationBundle::LocalizationSwitcherContext
+        - OroAttachmentBundle::AttachmentImageContext
+        - OroCustomerBundle::ACLContext
+        - OroSearchBundle::SearchContext
       paths:
         - '@OroCatalogBundle/Tests/Behat/Features'

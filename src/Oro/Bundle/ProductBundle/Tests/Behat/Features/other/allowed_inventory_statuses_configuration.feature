@@ -5,6 +5,9 @@
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroInventoryBundle:checkout.yml
 Feature: Allowed inventory statuses configuration
+  In order to ...
+  As an ...
+  I should be able to ...
 
   Scenario: Create window sessions
     Given sessions active:

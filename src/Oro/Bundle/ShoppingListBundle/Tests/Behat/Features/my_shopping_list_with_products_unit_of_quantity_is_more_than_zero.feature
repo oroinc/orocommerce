@@ -7,6 +7,9 @@
 @fixture-OroCheckoutBundle:Payment.yml
 
 Feature: My Shopping List with products unit of quantity is more than zero
+  In order to ...
+  As an ...
+  I should be able to ...
   Scenario: Feature Background
     Given sessions active:
       | Admin | first_session  |

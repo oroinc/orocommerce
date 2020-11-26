@@ -9,6 +9,9 @@
 @fixture-OroSaleBundle:shipping_selector_quote.yml
 @fixture-OroCheckoutBundle:InventoryLevel.yml
 Feature: Default Shipping Service Selector on Quote Edit page
+  In order to ...
+  As an ...
+  I should be able to ...
 
   Scenario: Create sessions
     Given sessions active:

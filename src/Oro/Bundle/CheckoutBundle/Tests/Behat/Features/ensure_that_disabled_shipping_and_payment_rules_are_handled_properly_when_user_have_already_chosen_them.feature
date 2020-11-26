@@ -8,6 +8,9 @@
 @community-edition-only
 
 Feature: Ensure that disabled shipping and payment rules are handled properly when user have already chosen them
+  In order to ...
+  As an ...
+  I should be able to ...
 
   Scenario: Create two session
     Given sessions active:
