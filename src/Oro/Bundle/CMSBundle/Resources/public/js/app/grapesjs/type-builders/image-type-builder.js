@@ -33,7 +33,7 @@ const ImageTypeBuilder = BaseTypeBuilder.extend({
                         const {url, title} = digitalAssetModel.get('previewMetadata');
 
                         digitalAssetImageComponentModel.set('src', url).addAttributes({
-                            alt: title || '',
+                            alt: title || ''
                         });
                     }
                 }
