@@ -53,12 +53,27 @@ class CheckoutController extends AbstractController
             $checkout->getLineItems()->toArray(),
             [
                 'product' => [
-                    'manageInventory' => [],
+                    'backOrder' => [],
+                    'category' => [
+                        'backOrder' => [],
+                        'decrementQuantity' => [],
+                        'highlightLowInventory' => [],
+                        'inventoryThreshold' => [],
+                        'isUpcoming' => [],
+                        'lowInventoryThreshold' => [],
+                        'manageInventory' => [],
+                        'maximumQuantityToOrder' => [],
+                        'minimumQuantityToOrder' => [],
+                    ],
+                    'decrementQuantity' => [],
                     'highlightLowInventory' => [],
+                    'inventoryThreshold' => [],
                     'isUpcoming' => [],
-                    'minimumQuantityToOrder' => [],
+                    'lowInventoryThreshold' => [],
+                    'manageInventory' => [],
                     'maximumQuantityToOrder' => [],
-                ]
+                    'minimumQuantityToOrder' => [],
+                ],
             ]
         );
 
