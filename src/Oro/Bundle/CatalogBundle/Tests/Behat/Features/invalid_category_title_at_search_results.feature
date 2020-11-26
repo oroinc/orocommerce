@@ -1,6 +1,9 @@
 @regression
 @fixture-OroCatalogBundle:category-title-check-at-search.yml
 Feature: Invalid category title at search results
+  In order to ...
+  As an ...
+  I should be able to ...
 
   Scenario: Search
     Given I login as administrator

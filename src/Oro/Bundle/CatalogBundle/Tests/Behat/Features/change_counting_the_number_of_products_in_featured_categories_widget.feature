@@ -2,6 +2,9 @@
 @ticket-BB-18109
 @fixture-OroProductBundle:highlighting_new_products.yml
 Feature: Change counting the number of products in featured categories widget
+  In order to ...
+  As an ...
+  I should be able to ...
 
   Scenario: Create new subcategory through the widget and add product
     Given I login as administrator

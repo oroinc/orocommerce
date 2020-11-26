@@ -1,6 +1,9 @@
 @ticket-BAP-18983
 @regression
 Feature: Direct URLs functionality
+  In order to ...
+  As an ...
+  I should be able to ...
 
   Scenario: Create different window session
     Given sessions active:

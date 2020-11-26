@@ -184,11 +184,8 @@ oro_behat_extension:
         - OroProductBundle::ProductImportExportContext
         - OroLocaleBundle::LocalizationContext
         - OroFrontendLocalizationBundle::LocalizationSwitcherContext
-        - OroAttachmentBundle::AttachmentImageContext:
-            - '@doctrine'
-            - '@oro_website.website.provider'
-            - '@oro_website.manager'
-            - '@oro_config.website'
-            - '@oro_attachment.image_removal.service_locator'
+        - OroAttachmentBundle::AttachmentImageContext
+        - OroCustomerBundle::ACLContext
+        - OroSearchBundle::SearchContext
       paths:
         - '@OroCatalogBundle/Tests/Behat/Features'
