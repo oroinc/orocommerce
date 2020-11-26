@@ -46,15 +46,16 @@
             display: none;
         }
 
-        .quick-search-icon,
-        .search-action {
+        .quick-search-icon {
             position: absolute;
-            right: 30px;
+            right: 24px;
             top: 50%;
             transform: translateY(-50%);
         }
 
-        .search-action {
+        .clear-search-button {
+            right: 19px;
+
             &:disabled {
                 display: none;
 

@@ -1,0 +1,17 @@
+layout:
+    imports:
+        -
+            id: oro_product_grid_sidebar_filters
+            root: page_sidebar
+            namespace: product
+
+    actions:
+        - '@setOption':
+            id: product_datagrid
+            optionName: grid_render_parameters.extra_jsmodules
+            optionValue: '=!context["is_mobile"] and data["system_config_provider"].getValue("oro_product.filters_position") === "sidebar" ? ["oroproduct/js/app/datagrid/grid-sidebar-filters-builder"] : []'
+
+        - '@setOption':
+            id: product_datagrid
+            optionName: grid_render_parameters.enableToggleFilters
+            optionValue: '=context["is_mobile"] or data["system_config_provider"].getValue("oro_product.filters_position") !== "sidebar"'

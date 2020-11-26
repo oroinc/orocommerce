@@ -8,4 +8,4 @@ oro_entity:
                 query:
                     join:
                         left:
-                            - { join: 'Oro\Bundle\RFPBundle\Entity\Request', alias: requestForQuote, conditionType: 'WITH', condition: "entity.sourceEntityClass = 'Oro\\Bundle\\RFPBundle\\Entity\\Request' AND entity.sourceEntityId = requestForQuote.id" }
+                            - { join: Oro\Bundle\RFPBundle\Entity\Request, alias: requestForQuote, conditionType: WITH, condition: "entity.sourceEntityClass = 'Oro\\Bundle\\RFPBundle\\Entity\\Request' AND entity.sourceEntityId = requestForQuote.id" }

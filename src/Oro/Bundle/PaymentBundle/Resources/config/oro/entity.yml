@@ -18,4 +18,4 @@ oro_entity:
                 query:
                     join:
                         left:
-                            - { join: 'Oro\Bundle\PaymentBundle\Entity\PaymentTransaction', alias: paymentTrans, conditionType: 'WITH', condition: "paymentTrans.entityClass = 'Oro\\Bundle\\OrderBundle\\Entity\\Order' AND paymentTrans.entityIdentifier = entity.id" }
+                            - { join: Oro\Bundle\PaymentBundle\Entity\PaymentTransaction, alias: paymentTrans, conditionType: WITH, condition: "paymentTrans.entityClass = 'Oro\\Bundle\\OrderBundle\\Entity\\Order' AND paymentTrans.entityIdentifier = entity.id" }

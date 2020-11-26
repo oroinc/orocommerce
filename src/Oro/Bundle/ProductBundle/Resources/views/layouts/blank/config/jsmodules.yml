@@ -8,6 +8,7 @@ dynamic-imports:
     commons:
         - oro/quick-add-import-widget
     orodatagrid:
+        - oroproduct/js/app/datagrid/grid-sidebar-filters-builder
         - oroproduct/js/app/datagrid/backend-datagrid-component
         - oroproduct/js/app/datagrid/backend-grid
         - oroproduct/js/app/datagrid/backend-pageable-collection
