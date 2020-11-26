@@ -3,6 +3,9 @@
 @fixture-OroSaleBundle:Quote.yml
 @fixture-OroCustomerBundle:CustomerUserAddressAmericanSamoaFixture.yml
 Feature: Quote Address
+  In order to ...
+  As an ...
+  I should be able to ...
 
   Scenario: Check Quote Shipping Address Labels
     Given I login as administrator

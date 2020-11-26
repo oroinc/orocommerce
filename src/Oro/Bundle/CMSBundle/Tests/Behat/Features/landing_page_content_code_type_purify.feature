@@ -2,6 +2,9 @@
 @fixture-OroCMSBundle:CMSPageWithCodeType.yml
 
 Feature: Landing page content code type purify
+  In order to ...
+  As an ...
+  I should be able to ...
 
   Scenario: Check that the code type component text is stored correctly with invalid multiline html
     Given I login as administrator
