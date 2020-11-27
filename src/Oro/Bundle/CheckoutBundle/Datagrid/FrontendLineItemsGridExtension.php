@@ -18,6 +18,12 @@ use Oro\Bundle\DataGridBundle\Extension\AbstractExtension;
  */
 class FrontendLineItemsGridExtension extends AbstractExtension
 {
+    /** @var string[] */
+    private const SUPPORTED_GRIDS = [
+        'frontend-checkout-line-items-grid',
+        'frontend-single-page-checkout-line-items-grid',
+    ];
+
     /** @var ManagerRegistry */
     private $registry;
 
@@ -42,7 +48,7 @@ class FrontendLineItemsGridExtension extends AbstractExtension
      */
     public function isApplicable(DatagridConfiguration $config): bool
     {
-        return $config->getName() === 'frontend-checkout-line-items-grid' && parent::isApplicable($config);
+        return \in_array($config->getName(), static::SUPPORTED_GRIDS, true) && parent::isApplicable($config);
     }
 
     /**

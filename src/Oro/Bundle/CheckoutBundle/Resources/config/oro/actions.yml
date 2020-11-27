@@ -7,10 +7,12 @@ operations:
         exclude_datagrids:
             - frontend-checkouts-grid
             - frontend-checkout-line-items-grid
+            - frontend-single-page-checkout-line-items-grid
 
     DELETE:
         exclude_datagrids:
             - frontend-checkout-line-items-grid
+            - frontend-single-page-checkout-line-items-grid
 
     oro_checkout_delete_order:
         extends: DELETE

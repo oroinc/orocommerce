@@ -210,6 +210,11 @@ layout:
                 form: '=data["oro_checkout_single_page_transition_form"].getTransitionFormView(data["workflowItem"])'
                 workflowItem: '=data["workflowItem"]'
 
+        - '@setOption':
+            id: checkout_order_summary_line_items_datagrid
+            optionName: grid_name
+            optionValue: frontend-single-page-checkout-line-items-grid
+
         - '@move':
             id: checkout_order_summary_line_items_grid_container
             parentId: checkout_order_summary_content

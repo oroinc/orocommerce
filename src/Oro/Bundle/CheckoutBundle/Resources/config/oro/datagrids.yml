@@ -317,3 +317,11 @@ datagrids:
                 frontend_type: row_array
             units:
                 frontend_type: row_array
+
+    frontend-single-page-checkout-line-items-grid:
+        extends: frontend-checkout-line-items-grid
+        columns:
+            sku:
+                renderable: false
+            inventoryStatus:
+                renderable: false

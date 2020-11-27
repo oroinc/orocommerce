@@ -65,9 +65,16 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
 
     public function testIsApplicable(): void
     {
-        $config = DatagridConfiguration::create(['name' => 'frontend-checkout-line-items-grid']);
-
-        $this->assertTrue($this->extension->isApplicable($config));
+        $this->assertTrue(
+            $this->extension->isApplicable(
+                DatagridConfiguration::create(['name' => 'frontend-checkout-line-items-grid'])
+            )
+        );
+        $this->assertTrue(
+            $this->extension->isApplicable(
+                DatagridConfiguration::create(['name' => 'frontend-single-page-checkout-line-items-grid'])
+            )
+        );
     }
 
     public function testIsNotApplicable(): void
