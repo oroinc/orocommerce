@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShoppingListBundle\EventListener;
 
 use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
 use Oro\Bundle\ShoppingListBundle\Validator\LineItemViolationsProvider;
-use Symfony\Component\Validator\ConstraintViolationInterface;
+use Symfony\Component\Validator\ConstraintViolation;
 
 /**
  * Adds line items errors data.
@@ -28,30 +28,42 @@ class DatagridLineItemsDataViolationsListener
     public function onLineItemData(DatagridLineItemsDataEvent $event): void
     {
         $lineItems = $event->getLineItems();
-        $errors = $this->violationsProvider->getLineItemViolationLists($lineItems);
-        if (!$errors) {
+        $violations = $this->violationsProvider->getLineItemViolationLists($lineItems);
+        if (!$violations) {
             return;
         }
 
         foreach ($lineItems as $lineItem) {
-            $event->addDataForLineItem(
-                $lineItem->getId(),
-                ['errors' => $this->getErrors($errors, $lineItem->getProductSku(), $lineItem->getProductUnitCode())]
+            [$warnings, $errors] = $this->getMessages(
+                $violations,
+                $lineItem->getProductSku(),
+                $lineItem->getProductUnitCode()
             );
+
+            $event->addDataForLineItem($lineItem->getId(), ['warnings' => $warnings, 'errors' => $errors]);
         }
     }
 
     /**
-     * @param array $errors
+     * @param array $violations
      * @param string $sku
      * @param string $unit
      * @return array
      */
-    private function getErrors(array $errors, string $sku, string $unit): array
+    private function getMessages(array $violations, string $sku, string $unit): array
     {
-        return array_map(
-            static fn (ConstraintViolationInterface $error) => $error->getMessage(),
-            $errors[sprintf('product.%s.%s', $sku, $unit)] ?? []
-        );
+        $warnings = [];
+        $errors = [];
+
+        /** @var ConstraintViolation $violation */
+        foreach ($violations[sprintf('product.%s.%s', $sku, $unit)] ?? [] as $violation) {
+            if ($violation->getCause() === 'warning') {
+                $warnings[] = $violation->getMessage();
+            } else {
+                $errors[] = $violation->getMessage();
+            }
+        }
+
+        return [$warnings, $errors];
     }
 }

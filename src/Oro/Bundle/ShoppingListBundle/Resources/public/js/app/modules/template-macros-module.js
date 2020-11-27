@@ -57,6 +57,13 @@ macros('oroshoppinglist', {
     renderErrors: require('tpl-loader!oroshoppinglist/templates/macros/product-item__errors.html'),
 
     /**
+     * Renders warnings for product item
+     *
+     * @param {array} errors
+     */
+    renderWarnings: require('tpl-loader!oroshoppinglist/templates/macros/product-item__warnings.html'),
+
+    /**
      * Renders button to show more hidden product variants
      *
      * @param {Object} data

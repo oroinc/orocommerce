@@ -315,6 +315,8 @@ datagrids:
                 frontend_type: row_array
             errors:
                 frontend_type: row_array
+            warnings:
+                frontend_type: row_array
             units:
                 frontend_type: row_array
 
