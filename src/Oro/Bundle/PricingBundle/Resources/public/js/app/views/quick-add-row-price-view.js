@@ -1,6 +1,7 @@
 import BaseView from 'oroui/js/app/views/base/view';
 import NumberFormatter from 'orolocale/js/formatter/number';
 import __ from 'orotranslation/js/translator';
+import $ from 'jquery';
 import _ from 'underscore';
 import PricesHelper from 'oropricing/js/app/prices-helper';
 import layout from 'oroui/js/layout';
@@ -25,6 +26,11 @@ const QuickAddRowPricesView = BaseView.extend({
         'change:subtotal model': 'updateUI'
     },
 
+    events: {
+        'click [data-role="price-hint-trigger"]': 'updateHintContent',
+        'focus [data-role="price-hint-trigger"]': 'updateHintContent'
+    },
+
     constructor: function QuickAddRowPricesView(options) {
         QuickAddRowPricesView.__super__.constructor.call(this, options);
         if (this.model.get('prices')) {
@@ -35,6 +41,7 @@ const QuickAddRowPricesView = BaseView.extend({
     initialize(options) {
         this.options = Object.assign({}, this.defaults, _.pick(options, Object.keys(this.defaults)));
         this.elem = Object.assign({}, this.elem, options.elements || {});
+        Object.assign(this, _.pick(options, ['pricesHintTemplateSelector', 'pricesHintTemplateContentSelector']));
         QuickAddRowPricesView.__super__.initialize.call(this, options);
     },
 
@@ -62,7 +69,6 @@ const QuickAddRowPricesView = BaseView.extend({
         this.model.set('price', price);
         this.checkMinQtyForUnit();
         this.model.set('subtotal', this.calcSubtotal());
-        this.renderHint();
     },
 
     checkMinQtyForUnit() {
@@ -107,42 +113,41 @@ const QuickAddRowPricesView = BaseView.extend({
     },
 
     renderHint() {
-        if (!this.pricesHintContentTemplate) {
-            this.pricesHintContentTemplate = _.template(this.$(this.elem.pricesHintContent).text());
-            const pricesHint = _.template(this.$(this.elem.pricesHint).text())();
+        if (this.$pricesHint === void 0) {
+            const pricesHint = this.getTemplateFunction('pricesHintTemplate');
             this.$pricesHint = this.$(this.elem.subtotal).after(pricesHint).next();
         }
+    },
 
-        const $pricesHint = this.$pricesHint;
-        if (!$pricesHint.length || _.isEmpty(this.prices)) {
+    updateHintContent(event) {
+        if (!this.$pricesHint.length || _.isEmpty(this.prices)) {
             return;
         }
 
         const {prices_index: prices, ...attrs} = this.model.getAttributes();
+
         attrs.prices = prices;
-        const content = this.pricesHintContentTemplate({
-            model: attrs,
-            prices: this.prices,
-            matchedPrice: this.model.get('price'),
-            clickable: false,
-            formatter: NumberFormatter
-        });
 
-        $pricesHint
-            .toggleClass('disabled', content.length === 0)
-            .attr('disabled', content.length === 0);
-        if (!content.length) {
-            return;
-        }
-
-        if (!$pricesHint.data(Popover.DATA_KEY)) {
-            layout.initPopoverForElements($pricesHint, {
+        if (!this.$pricesHint.data(Popover.DATA_KEY)) {
+            layout.initPopoverForElements(this.$pricesHint, {
                 container: 'body',
                 forceToShowTitle: true
             }, true);
+
+            $(event.target).trigger(event);
         }
 
-        $pricesHint.data(Popover.DATA_KEY).updateContent(content);
+        const pricesHintContentTemplate = this.getTemplateFunction('pricesHintTemplateContent');
+
+        this.$pricesHint.data(Popover.DATA_KEY).updateContent(
+            pricesHintContentTemplate({
+                model: attrs,
+                prices: this.prices,
+                matchedPrice: this.model.get('price'),
+                clickable: false,
+                formatter: NumberFormatter
+            })
+        );
     }
 });
 

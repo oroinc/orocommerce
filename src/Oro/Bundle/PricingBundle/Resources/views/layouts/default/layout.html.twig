@@ -130,6 +130,7 @@
     {% set productAriaLabel = productAriaLabel|default('oro.pricing.view_all_prices'|trans) %}
 
     <button class="{{ productTierClass }}"
+          data-role="price-hint-trigger"
           data-toggle="popover"
           data-placement="bottom"
           data-close="false"

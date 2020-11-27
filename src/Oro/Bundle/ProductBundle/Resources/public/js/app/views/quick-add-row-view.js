@@ -11,7 +11,6 @@ const QuickAddRowView = BaseView.extend({
 
     defaultQuantity: 1,
 
-
     elem: {
         remove: '[data-role="row-remove"]'
     },

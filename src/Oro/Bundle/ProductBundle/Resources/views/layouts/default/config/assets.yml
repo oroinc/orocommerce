@@ -18,5 +18,6 @@ styles:
 
         - 'bundles/oroproduct/default/scss/components/filter-controls.scss'
         - 'bundles/oroproduct/default/scss/components/oro-more-info-toggler.scss'
+        - 'bundles/oroproduct/default/scss/components/quick-order-add/quick-order-add.scss'
 
         - 'bundles/oroproduct/default/scss/styles.scss'

@@ -12,9 +12,9 @@
   }
 
   &__row {
-    &:not(:first-child) {
-      .quick-order-add__label {
-        display: none;
+    &:first-child {
+      .quick-order-add__col:before {
+        display: block;
       }
     }
   }
@@ -30,6 +30,13 @@
   &__col {
     float: $quick-order-add-col-float;
     padding: $quick-order-add-col-padding;
+
+    &:before {
+      display: none;
+      margin: $quick-order-add-label-margin;
+
+      content: attr(data-label);
+    }
   }
 
   &__product {
@@ -53,13 +60,6 @@
     }
   }
 
-  &__label {
-    display: block;
-    margin: $quick-order-add-label-margin;
-
-    font-weight: 400;
-  }
-
   &__remove-row {
     display: none;
 
@@ -67,9 +67,7 @@
     bottom: 11px;
     right: -20px;
 
-    color: get-color('additional', 'middle');
-
-    i {
+    @include fa-icon($fa-var-close, before, true) {
       font-size: $base-font-size--m;
 
       cursor: pointer;
@@ -113,13 +111,12 @@
     }
   }
 
-  &__error,
-  &__error-autocomplete {
-    .validation-failed, .notification--error { //override platform styles
-      margin: $quick-order-add-error-margins;
 
-      background: none;
-    }
+  .validation-failed,
+  .notification--error { //override platform styles
+    margin: $quick-order-add-error-margins;
+
+    background: none;
   }
 
   .mobile-version & {
@@ -133,10 +130,8 @@
         border-bottom: $quick-order-add-mobile-row-border;
         margin: $quick-order-add-mobile-bottom-margin;
 
-        &:not(:first-child) {
-          .quick-order-add__label {
-            display: block;
-          }
+        .quick-order-add__col:before {
+          display: block;
         }
       }
 
@@ -163,7 +158,7 @@
 
       &__row-content,
       &__col,
-      &__label {
+      &__col:before {
           margin: $quick-order-add-mobile-bottom-margin;
       }
 
@@ -173,11 +168,9 @@
         right: 0;
       }
 
-      &__error,
-      &__error-autocomplete {
-        .validation-failed, .notification--error { //override platform styles
-          margin: $quick-order-add-mobile-error-margins;
-        }
+      .validation-failed,
+      .notification--error { //override platform styles
+        margin: $quick-order-add-mobile-error-margins;
       }
 
       .product-tier-prices {
