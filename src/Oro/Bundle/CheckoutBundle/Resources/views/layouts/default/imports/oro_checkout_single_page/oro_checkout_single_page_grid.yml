@@ -1,5 +1,10 @@
 layout:
     actions:
+        - '@setOption':
+            id: datagrid
+            optionName: grid_name
+            optionValue: frontend-single-page-checkout-line-items-grid
+
         - '@move':
             id: checkout_order_summary_line_items_grid_container
             parentId: checkout_order_summary_content
