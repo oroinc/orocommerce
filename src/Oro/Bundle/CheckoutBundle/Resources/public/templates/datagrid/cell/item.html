@@ -75,9 +75,9 @@
     </div>
 </div>
 
-<% if (isUpcoming || obj.errors && obj.errors.length || (obj.success && obj.message)) { %>
+<% if (obj.warnings && obj.warnings.length || obj.errors && obj.errors.length || (obj.success && obj.message)) { %>
 <div class="notification-container">
-    <%= oroshoppinglist.renderUpcoming({isUpcoming: isUpcoming, availabilityDate: obj.availabilityDate}) %>
+    <%= oroshoppinglist.renderWarnings({warnings: obj.warnings}) %>
     <%= oroshoppinglist.renderErrors({errors: obj.errors}) %>
 
     <% if (obj.success && obj.message) { %>
