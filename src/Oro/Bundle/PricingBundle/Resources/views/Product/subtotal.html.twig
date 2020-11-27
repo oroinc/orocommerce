@@ -1,9 +1,12 @@
 {% block _quick_add_subtotal_widget %}
     {% use "OroPricingBundle:layouts/default:layout.html.twig" %}
     <div class="quick-order-add__col quick-order-add__subtotal"
-         data-page-component-module="oroui/js/app/components/view-component"
+         data-page-component-module="oroproduct/js/app/components/quick-add-row-extension-view-component"
          data-page-component-options="{{ {
-             view: 'oropricing/js/app/views/quick-add-item-price-view',
+             view: 'oropricing/js/app/views/quick-add-row-price-view',
+             relatedSiblingComponents: {
+                 quickAddRowComponent: row_component_name
+             },
              elements: {
                  pricesHint: '[data-name="prices-hint"]',
                  pricesHintContent: '[data-name="prices-hint-content"]',

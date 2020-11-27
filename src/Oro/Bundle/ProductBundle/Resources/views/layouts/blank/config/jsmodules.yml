@@ -24,16 +24,17 @@ dynamic-imports:
         - oroproduct/js/app/components/product-unit-select-component
         - oroproduct/js/app/components/product-variant-field-component
         - oroproduct/js/app/components/quick-add-component
-        - oroproduct/js/app/components/quick-add-copy-paste-form-component
         - oroproduct/js/app/components/quick-add-form-button-component
         - oroproduct/js/app/components/quick-add-import-validation-component
+        - oroproduct/js/app/components/quick-add-row-extension-view-component
         - oroproduct/js/app/components/redirect-component
         - oroproduct/js/app/views/base-product-variants-view
         - oroproduct/js/app/views/base-product-view
         - oroproduct/js/app/views/product-quantity-editable-view
+        - oroproduct/js/app/views/quick-add-copy-paste-form-view
         - oroproduct/js/app/views/quick-add-import-form-view
-        - oroproduct/js/app/views/quick-add-item-view
-        - oroproduct/js/app/views/quick-add-view
+        - oroproduct/js/app/views/quick-add-row-view
+        - oroproduct/js/app/views/quick-order-form-view
         - oroproduct/js/app/widget/product-popup-gallery-widget
         - oroproduct/js/content-processor/product-add-to-dropdown-button
         - oroproduct/js/widget/zoom-widget

@@ -49,9 +49,9 @@ define(function(require) {
             this.$error = this.$row.find(this.options.selectors.error);
 
             this.product = $.extend(true, {
-                sku: null,
+                sku: this.$sku.val() || null,
                 name: null,
-                displayName: null
+                displayName: this.$el.val() || null
             }, this.options.product);
 
             this.updateProduct();
@@ -94,7 +94,6 @@ define(function(require) {
         },
 
         validateProduct: function(val) {
-            const self = this;
             val = val.split(' ')[0];
 
             $.ajax({
@@ -106,20 +105,23 @@ define(function(require) {
                     sku: [val],
                     query: val
                 },
-                success: function(response) {
-                    self.validateResponse(response);
+                success: response => {
+                    if (this.disposed) {
+                        return;
+                    }
+                    this.validateResponse(response);
                 },
-                error: function() {
-                    mediator.trigger('autocomplete:productNotFound', {
-                        item: {sku: val},
-                        $el: self.$el
-                    });
-                    self.resetProduct();
+                error: () => {
+                    if (this.disposed) {
+                        return;
+                    }
+                    this.$el.trigger({type: 'productNotFound.autocomplete', item: {sku: val}});
+                    this.resetProduct();
                 }
             });
         },
 
-        validateResponse: function(response, requestId) {
+        validateResponse: function(response) {
             const val = this.$el.val();
 
             // proceed check only for non-empty value that was changed
@@ -135,19 +137,10 @@ define(function(require) {
                     this.product.sku = item.sku;
                     this.product.name = item['defaultName.string'];
                     this.product.displayName = [this.product.sku, this.product.name].join(' - ');
-
-                    mediator.trigger('autocomplete:productFound', {
-                        item: item,
-                        $el: this.$el,
-                        requestId: requestId
-                    });
+                    this.$el.trigger({type: 'productFound.autocomplete', item});
                     this.previousValue = this.product.displayName;
                 } else {
-                    mediator.trigger('autocomplete:productNotFound', {
-                        item: {sku: val},
-                        $el: this.$el,
-                        requestId: requestId
-                    });
+                    this.$el.trigger({type: 'productNotFound.autocomplete', item: {sku: val}});
                 }
                 this.updateProduct();
             }
