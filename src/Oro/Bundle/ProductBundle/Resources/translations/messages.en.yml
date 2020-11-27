@@ -424,6 +424,11 @@ oro:
                     label: 'Use Slider On Mobile'
                     tooltip: 'When the option is enabled, one up-sell product is displayed below the main product information. Other up-sell products are accessible using the horizontal slider. Click < and > to slide through the up-sell products.'
                 enable_quick_order_form.title: Enable Quick Order Form
+                new_quick_order_form.title: Enable New Layout
+                new_quick_order_form.tooltip: >
+                    The new layout of Quick Order Form allows users to add a large number of line items without affecting the page performance.
+                    This updated layout includes changes to the HTML structure that may not work in your custom storefront theme.
+                    Please verify that Quick Order Page works well with this new layout in staging before enabling it in production environments.
                 guest_quick_order_form.title: Enable Guest Quick Order Form
                 guest_quick_order_form.tooltip: >
                   Allows guests to use the quick order form. By default, this option is disabled.

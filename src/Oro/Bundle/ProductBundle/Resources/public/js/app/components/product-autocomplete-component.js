@@ -49,7 +49,7 @@ define(function(require) {
             this.$error = this.$row.find(this.options.selectors.error);
 
             this.product = $.extend(true, {
-                sku: null,
+                sku: this.$sku.val() || null,
                 name: null,
                 displayName: null
             }, this.options.product);
@@ -94,7 +94,6 @@ define(function(require) {
         },
 
         validateProduct: function(val) {
-            const self = this;
             val = val.split(' ')[0];
 
             $.ajax({
@@ -106,15 +105,22 @@ define(function(require) {
                     sku: [val],
                     query: val
                 },
-                success: function(response) {
-                    self.validateResponse(response);
+                success: response => {
+                    if (this.disposed) {
+                        return;
+                    }
+                    this.validateResponse(response);
                 },
-                error: function() {
+                error: () => {
+                    if (this.disposed) {
+                        return;
+                    }
+                    this.$el.trigger({type: 'productNotFound.autocomplete', item: {sku: val}});
                     mediator.trigger('autocomplete:productNotFound', {
                         item: {sku: val},
-                        $el: self.$el
+                        $el: this.$el
                     });
-                    self.resetProduct();
+                    this.resetProduct();
                 }
             });
         },
@@ -136,6 +142,7 @@ define(function(require) {
                     this.product.name = item['defaultName.string'];
                     this.product.displayName = [this.product.sku, this.product.name].join(' - ');
 
+                    this.$el.trigger({type: 'productFound.autocomplete', item});
                     mediator.trigger('autocomplete:productFound', {
                         item: item,
                         $el: this.$el,
@@ -143,6 +150,7 @@ define(function(require) {
                     });
                     this.previousValue = this.product.displayName;
                 } else {
+                    this.$el.trigger({type: 'productNotFound.autocomplete', item: {sku: val}});
                     mediator.trigger('autocomplete:productNotFound', {
                         item: {sku: val},
                         $el: this.$el,

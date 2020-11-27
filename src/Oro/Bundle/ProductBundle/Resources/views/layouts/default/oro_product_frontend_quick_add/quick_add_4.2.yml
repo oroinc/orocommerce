@@ -1,0 +1,13 @@
+layout:
+    actions:
+        - '@setOption':
+            id: quick_add_container
+            optionName: attr.data-page-component-view
+            optionValue: 'oroproduct/js/app/views/quick-order-form-view'
+
+        - '@setOption':
+            id: quick_add_container
+            optionName: attr.data-layout
+            optionValue: 'separate'
+
+    conditions: 'context["newQuickAddPageLayout"] == true'
