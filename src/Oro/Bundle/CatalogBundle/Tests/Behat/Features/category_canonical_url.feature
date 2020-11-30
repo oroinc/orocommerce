@@ -4,6 +4,9 @@
 @fixture-OroCatalogBundle:categories.yml
 
 Feature: Category canonical url
+  In order to ...
+  As an ...
+  I should be able to ...
   Scenario: Create two sessions
     Given sessions active:
       | Admin | first_session  |

@@ -1,4 +1,4 @@
-@fixture-OroShoppingListBundle:ShoppingListFixture.yml
+@fixture-OroShoppingListBundle:ShoppingListWithProductPriceFixture.yml
 @fixture-OroLocaleBundle:LocalizationFixture.yml
 @ticket-BB-15482
 Feature: RFQ customer status translations
@@ -35,8 +35,8 @@ Feature: RFQ customer status translations
 
   Scenario: Create RFQ and check status field translations
     Given I proceed as the User
-    And I signed in as MarleneSBradley@example.com on the store frontend
-    When I open page with shopping list "Shopping List 4"
+    And I signed in as AmandaRCole@example.org on the store frontend
+    When I open page with shopping list "Shopping List 1"
     And I click "Request Quote"
     And I fill form with:
       | First Name    | Marlene                     |

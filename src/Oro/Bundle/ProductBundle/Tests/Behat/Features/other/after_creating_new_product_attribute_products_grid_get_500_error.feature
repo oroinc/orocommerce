@@ -1,6 +1,9 @@
 @regression
 @fixture-OroProductBundle:quick_order_product.yml
 Feature: After creating new product attribute products grid get 500 error
+  In order to ...
+  As an ...
+  I should be able to ...
 
   Scenario: Create product attribute
     Given I login as administrator

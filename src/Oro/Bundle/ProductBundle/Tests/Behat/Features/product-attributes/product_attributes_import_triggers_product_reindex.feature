@@ -3,6 +3,9 @@
 @fixture-OroProductBundle:ProductAttributesFixture.yml
 
 Feature: Product attributes import triggers product reindex
+  In order to ...
+  As an ...
+  I should be able to ...
 
   Scenario: Create different window session
     Given sessions active:
