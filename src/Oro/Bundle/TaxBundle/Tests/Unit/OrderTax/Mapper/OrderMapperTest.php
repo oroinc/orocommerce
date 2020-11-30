@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\OrderTax\Mapper;
 
+use Oro\Bundle\EntityBundle\Manager\PreloadingManager;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
@@ -16,33 +17,28 @@ class OrderMapperTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    const ORDER_ID = 123;
-    const ORDER_SUBTOTAL = 234.34;
+    private const ORDER_ID = 123;
+    private const ORDER_SUBTOTAL = 234.34;
 
-    const CONTEXT_KEY = 'context_key';
-    const CONTEXT_VALUE = 'context_value';
+    private const CONTEXT_KEY = 'context_key';
+    private const CONTEXT_VALUE = 'context_value';
 
-    /**
-     * @var OrderMapper
-     */
-    protected $mapper;
+    /** @var OrderMapper */
+    private $mapper;
 
-    /**
-     * @var OrderLineItemMapper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $orderLineItemMapper;
+    /** @var OrderLineItemMapper|\PHPUnit\Framework\MockObject\MockObject */
+    private $orderLineItemMapper;
 
-    /**
-     * @var TaxationAddressProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $addressProvider;
+    /** @var TaxationAddressProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $addressProvider;
 
-    /**
-     * @var ContextEventDispatcher
-     */
-    protected $eventDispatcher;
+    /** @var ContextEventDispatcher */
+    private $eventDispatcher;
 
-    protected function setUp()
+    /** @var PreloadingManager */
+    private $preloadingManager;
+
+    protected function setUp(): void
     {
         $this->orderLineItemMapper = $this
             ->getMockBuilder('Oro\Bundle\TaxBundle\OrderTax\Mapper\OrderLineItemMapper')
@@ -72,21 +68,55 @@ class OrderMapperTest extends \PHPUnit\Framework\TestCase
             $this->addressProvider,
             $this->orderLineItemMapper
         );
+
+        $this->preloadingManager = $this->createMock(PreloadingManager::class);
     }
 
-    protected function tearDown()
+    public function testMap(): void
     {
-        unset($this->mapper, $this->orderLineItemMapper);
-    }
-
-    public function testMap()
-    {
-        $this->orderLineItemMapper
-            ->expects($this->once())
+        $this->orderLineItemMapper->expects($this->once())
             ->method('map')
             ->willReturn(new Taxable());
 
         $order = $this->createOrder(self::ORDER_ID, self::ORDER_SUBTOTAL);
+
+        $taxable = $this->mapper->map($order);
+
+        $this->assertInstanceOf('Oro\Bundle\TaxBundle\Model\Taxable', $taxable);
+        $this->assertEquals(self::ORDER_ID, $taxable->getIdentifier());
+        $this->assertEquals('1', $taxable->getQuantity());
+        $this->assertEquals('0', $taxable->getPrice());
+        $this->assertEquals('234.34', $taxable->getAmount());
+        $this->assertEquals($order->getShippingAddress(), $taxable->getTaxationAddress());
+        $this->assertEquals($order->getBillingAddress(), $taxable->getDestination());
+        $this->assertNull($taxable->getOrigin());
+        $this->assertEquals(self::CONTEXT_VALUE, $taxable->getContextValue(self::CONTEXT_KEY));
+        $this->assertNotEmpty($taxable->getItems());
+        $this->assertCount(1, $taxable->getItems());
+        $this->assertInstanceOf('Oro\Bundle\TaxBundle\Model\Taxable', $taxable->getItems()->current());
+        $this->assertEquals('20', $taxable->getShippingCost());
+    }
+
+    public function testMapWhenPreloadingManager(): void
+    {
+        $this->mapper->setPreloadingManager($this->preloadingManager);
+
+        $this->orderLineItemMapper->expects($this->once())
+            ->method('map')
+            ->willReturn(new Taxable());
+
+        $order = $this->createOrder(self::ORDER_ID, self::ORDER_SUBTOTAL);
+
+        $this->preloadingManager->expects($this->once())
+            ->method('preloadInEntities')
+            ->with(
+                $order->getLineItems()->toArray(),
+                [
+                    'product' => [
+                        'taxCode' => [],
+                    ],
+                ]
+            );
 
         $taxable = $this->mapper->map($order);
 

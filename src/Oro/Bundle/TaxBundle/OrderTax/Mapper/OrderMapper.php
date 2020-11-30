@@ -4,6 +4,7 @@ namespace Oro\Bundle\TaxBundle\OrderTax\Mapper;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Selectable;
+use Oro\Bundle\EntityBundle\Manager\PreloadingManager;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\TaxBundle\Event\ContextEventDispatcher;
@@ -19,6 +20,9 @@ class OrderMapper extends AbstractOrderMapper
     /** @var TaxMapperInterface */
     protected $orderLineItemMapper;
 
+    /** @var PreloadingManager */
+    private $preloadingManager;
+
     /**
      * @param ContextEventDispatcher $contextEventDispatcher
      * @param TaxationAddressProvider $addressProvider
@@ -31,6 +35,14 @@ class OrderMapper extends AbstractOrderMapper
     ) {
         parent::__construct($contextEventDispatcher, $addressProvider);
         $this->orderLineItemMapper = $orderLineItemMapper;
+    }
+
+    /**
+     * @param PreloadingManager $preloadingManager
+     */
+    public function setPreloadingManager(PreloadingManager $preloadingManager): void
+    {
+        $this->preloadingManager = $preloadingManager;
     }
 
     /**
@@ -66,14 +78,26 @@ class OrderMapper extends AbstractOrderMapper
      */
     protected function mapLineItems($lineItems)
     {
+        $lineItems = $lineItems->toArray();
+        if ($this->preloadingManager) {
+            $this->preloadingManager->preloadInEntities(
+                $lineItems,
+                [
+                    'product' => [
+                        'taxCode' => [],
+                    ],
+                ]
+            );
+        }
+
         $storage = new \SplObjectStorage();
 
-        $lineItems
-            ->map(
-                function (OrderLineItem $item) use ($storage) {
-                    $storage->attach($this->orderLineItemMapper->map($item));
-                }
-            );
+        array_walk(
+            $lineItems,
+            function (OrderLineItem $item) use ($storage) {
+                $storage->attach($this->orderLineItemMapper->map($item));
+            }
+        );
 
         return $storage;
     }
