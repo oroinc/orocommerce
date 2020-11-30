@@ -257,11 +257,11 @@ services:
 
     oro_tax.order_tax.mapper.order_mapper:
         class: 'Oro\Bundle\TaxBundle\OrderTax\Mapper\OrderMapper'
-        public: false
         arguments:
             - '@oro_tax.event.context_event_dispatcher'
             - '@oro_tax.provider.taxation_address_provider'
             - '@oro_tax.order_tax.mapper.order_line_item_mapper'
+            - '@oro_entity.manager.preloading_manager'
         tags:
             - { name: oro_tax.tax_mapper, class: 'Oro\Bundle\OrderBundle\Entity\Order' }
 
