@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\OrderTax\Mapper;
 
+use Oro\Bundle\EntityBundle\Manager\PreloadingManager;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
@@ -16,31 +17,26 @@ class OrderMapperTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    const ORDER_ID = 123;
-    const ORDER_SUBTOTAL = 234.34;
+    private const ORDER_ID = 123;
+    private const ORDER_SUBTOTAL = 234.34;
 
-    const CONTEXT_KEY = 'context_key';
-    const CONTEXT_VALUE = 'context_value';
+    private const CONTEXT_KEY = 'context_key';
+    private const CONTEXT_VALUE = 'context_value';
 
-    /**
-     * @var OrderMapper
-     */
-    protected $mapper;
+    /** @var OrderMapper */
+    private $mapper;
 
-    /**
-     * @var OrderLineItemMapper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $orderLineItemMapper;
+    /** @var OrderLineItemMapper|\PHPUnit\Framework\MockObject\MockObject */
+    private $orderLineItemMapper;
 
-    /**
-     * @var TaxationAddressProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $addressProvider;
+    /** @var TaxationAddressProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $addressProvider;
 
-    /**
-     * @var ContextEventDispatcher
-     */
-    protected $eventDispatcher;
+    /** @var ContextEventDispatcher */
+    private $eventDispatcher;
+
+    /** @var PreloadingManager */
+    private $preloadingManager;
 
     protected function setUp(): void
     {
@@ -67,26 +63,34 @@ class OrderMapperTest extends \PHPUnit\Framework\TestCase
             ->method('dispatch')
             ->willReturn(new \ArrayObject([self::CONTEXT_KEY => self::CONTEXT_VALUE]));
 
+        $this->preloadingManager = $this->createMock(PreloadingManager::class);
+
         $this->mapper = new OrderMapper(
             $this->eventDispatcher,
             $this->addressProvider,
-            $this->orderLineItemMapper
+            $this->orderLineItemMapper,
+            $this->preloadingManager
         );
     }
 
-    protected function tearDown(): void
+    public function testMap(): void
     {
-        unset($this->mapper, $this->orderLineItemMapper);
-    }
-
-    public function testMap()
-    {
-        $this->orderLineItemMapper
-            ->expects($this->once())
+        $this->orderLineItemMapper->expects($this->once())
             ->method('map')
             ->willReturn(new Taxable());
 
         $order = $this->createOrder(self::ORDER_ID, self::ORDER_SUBTOTAL);
+
+        $this->preloadingManager->expects($this->once())
+            ->method('preloadInEntities')
+            ->with(
+                $order->getLineItems()->toArray(),
+                [
+                    'product' => [
+                        'taxCode' => [],
+                    ],
+                ]
+            );
 
         $taxable = $this->mapper->map($order);
 
