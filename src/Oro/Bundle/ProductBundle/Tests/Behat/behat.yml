@@ -1275,12 +1275,7 @@ oro_behat_extension:
         - OroOrderBundle::OrderContext
         - OroProductBundle::FrontendProductGridContext
         - OroCMSBundle::FeatureContext
-        - OroAttachmentBundle::AttachmentImageContext:
-            - '@doctrine'
-            - '@oro_website.website.provider'
-            - '@oro_website.manager'
-            - '@oro_config.website'
-            - '@oro_attachment.image_removal.service_locator'
+        - OroAttachmentBundle::AttachmentImageContext
       paths:
         - '@OroProductBundle/Tests/Behat/Features/product-collection'
         - '@OroProductBundle/Tests/Behat/Features/product'

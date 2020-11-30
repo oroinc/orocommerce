@@ -21,7 +21,9 @@ class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerIn
         $repository = $doctrine->getManager()->getRepository(PriceListCurrency::class);
         /** @var PriceListCurrency $eur */
         $eur = $repository->findOneBy(['currency' => 'EUR']);
-        $referenceRepository->set('eur', $eur);
+        if ($eur) {
+            $referenceRepository->set('eur', $eur);
+        }
 
         /** @var PriceListRepository $repository */
         $repository = $doctrine->getManager()->getRepository(PriceList::class);

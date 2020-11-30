@@ -3,6 +3,9 @@
 @fixture-OroLocaleBundle:ZuluLocalization.yml
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 Feature: Shipping rules method configurations
+  In order to ...
+  As an ...
+  I should be able to ...
 
 
   Scenario: Create one more Flat Rate integration
