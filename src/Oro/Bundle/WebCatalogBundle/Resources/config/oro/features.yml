@@ -1,7 +1,21 @@
 features:
+    web_catalog:
+        label: oro.webcatalog.system_configuration.fields.web_catalog.label
+        description: oro.webcatalog.system_configuration.fields.web_catalog.tooltip
+        toggle: oro_web_catalog.web_catalog
+        configuration:
+            - oro_web_catalog.enable_web_catalog_canonical_url
+            - oro_web_catalog.navigation_root
+
     navigation_root_system_configuration:
         label: oro.webcatalog.system_configuration.fields.navigation_root.label
         description: oro.webcatalog.system_configuration.fields.navigation_root.tooltip
-        toggle: oro_web_catalog.web_catalog
-        configuration:
-            - oro_web_catalog.navigation_root
+        dependencies:
+            - web_catalog
+
+    web_catalog_based_canonical_urls:
+        label: oro.webcatalog.system_configuration.fields.enable_web_catalog_canonical_url.label
+        description: oro.webcatalog.system_configuration.fields.enable_web_catalog_canonical_url.tooltip
+        dependencies:
+            - web_catalog
+        toggle: oro_web_catalog.enable_web_catalog_canonical_url

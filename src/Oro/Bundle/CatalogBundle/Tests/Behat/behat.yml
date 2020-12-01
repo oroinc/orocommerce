@@ -117,9 +117,6 @@ oro_behat_extension:
         mapping:
           Image: 'theme[oro_catalog___category_image_placeholder][value][file]'
 
-    Canonical URL:
-      selector: "link[rel='canonical']"
-
     Category Form:
       selector: 'form[name="oro_catalog_category"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
@@ -169,6 +166,7 @@ oro_behat_extension:
         - OroCatalogBundle::FeatureContext
         - OroProductBundle::FeatureContext
         - OroWebCatalogBundle::FeatureContext
+        - OroRedirectBundle::FeatureContext
         - OroImportExportBundle::ImportExportContext:
             - '@oro_entity.entity_alias_resolver'
             - '@oro_importexport.processor.registry'

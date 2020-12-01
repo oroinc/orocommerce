@@ -20,6 +20,13 @@ system_configuration:
                 tooltip: oro.webcatalog.system_configuration.fields.navigation_root.tooltip
                 required: false
                 data_transformer: oro_web_catalog.form.data_transformer.navigation_root_option
+        oro_web_catalog.enable_web_catalog_canonical_url:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            priority: 250
+            options:
+                label: oro.webcatalog.system_configuration.fields.enable_web_catalog_canonical_url.label
+                tooltip: oro.webcatalog.system_configuration.fields.enable_web_catalog_canonical_url.tooltip
 
     tree:
         system_configuration:
@@ -31,5 +38,6 @@ system_configuration:
                                 children:
                                     websites_routing_general:
                                         children:
+                                            - oro_web_catalog.enable_web_catalog_canonical_url
                                             - oro_web_catalog.web_catalog
                                             - oro_web_catalog.navigation_root

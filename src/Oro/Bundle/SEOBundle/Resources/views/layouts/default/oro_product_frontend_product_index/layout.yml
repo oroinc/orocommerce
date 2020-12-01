@@ -32,6 +32,7 @@ layout:
             options:
                 rel: 'canonical'
                 href: '=data["category"].getCurrentCategory()!=null ? data["category_canonical_url"].getUrl(data["category"].getCurrentCategory(), data["category"].getIncludeSubcategoriesChoice(0)) : null'
+                visible: '=data["web_catalog_content_variant"].getContentVariantType()!="product_collection"'
         - '@add':
             id: entity_localized_urls
             parentId: head

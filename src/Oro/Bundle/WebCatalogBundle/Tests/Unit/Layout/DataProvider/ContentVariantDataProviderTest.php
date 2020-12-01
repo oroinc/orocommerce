@@ -35,6 +35,15 @@ class ContentVariantDataProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($this->dataProvider->getFromRequest());
     }
 
+    public function testGetContentVariantTypeWhenContentVariantIsNull()
+    {
+        $this->requestWebContentVariantProvider->expects($this->once())
+            ->method('getContentVariant')
+            ->willReturn(null);
+
+        $this->assertNull($this->dataProvider->getContentVariantType());
+    }
+
     public function testGetFromRequestWhenContentVariantExists()
     {
         $contentVariant = $this->createMock(ContentVariant::class);
@@ -44,5 +53,19 @@ class ContentVariantDataProviderTest extends \PHPUnit\Framework\TestCase
             ->willReturn($contentVariant);
 
         $this->assertSame($contentVariant, $this->dataProvider->getFromRequest());
+    }
+
+    public function testGetContentVariantTypeWhenContentVariantExists()
+    {
+        $contentVariant = $this->createMock(ContentVariant::class);
+        $contentVariant->expects($this->once())
+            ->method('getType')
+            ->willReturn('content_variant_type');
+
+        $this->requestWebContentVariantProvider->expects($this->once())
+            ->method('getContentVariant')
+            ->willReturn($contentVariant);
+
+        $this->assertSame('content_variant_type', $this->dataProvider->getContentVariantType());
     }
 }
