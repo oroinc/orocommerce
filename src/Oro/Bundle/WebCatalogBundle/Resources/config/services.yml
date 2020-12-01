@@ -183,6 +183,15 @@ services:
         tags:
             - { name: form.type, alias: oro_web_catalog_content_variant_collection }
 
+    oro_web_catalog.generator.canonical_url_generator:
+        class: Oro\Bundle\WebCatalogBundle\Generator\CanonicalUrlGenerator
+        decorates: oro_redirect.generator.canonical_url
+        parent: oro_redirect.generator.canonical_url
+        calls:
+            - ['setContentNodeProvider', ['@oro_web_catalog.content_node_provider']]
+        tags:
+            - { name: oro_featuretogle.feature, feature: web_catalog_based_canonical_urls }
+
     oro_web_catalog.generator.slug_generator:
         class: Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator
         arguments:
@@ -219,6 +228,9 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_scope.scope_manager'
+            - '@event_dispatcher'
+            - '@oro_web_catalog.web_catalog_provider'
+            - '@stof_doctrine_extensions.listener.tree'
 
     oro_web_catalog.unique_content_node_slug_prototype_resolver:
         class: Oro\Bundle\WebCatalogBundle\Resolver\UniqueContentNodeSlugPrototypesResolver

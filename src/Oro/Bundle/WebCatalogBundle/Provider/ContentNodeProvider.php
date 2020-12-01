@@ -2,14 +2,19 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Provider;
 
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
+use Gedmo\Tree\TreeListener;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
+use Oro\Bundle\WebCatalogBundle\Event\RestrictContentVariantByEntityEvent;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
+use Oro\Component\Website\WebsiteInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
@@ -21,26 +26,56 @@ class ContentNodeProvider
 
     private const SCOPE_TYPE = 'web_content';
 
-    /** @var DoctrineHelper */
+    /**
+     * @var DoctrineHelper
+     */
     private $doctrineHelper;
 
-    /** @var ScopeManager */
+    /**
+     * @var ScopeManager
+     */
     private $scopeManager;
 
     /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param ScopeManager   $scopeManager
+     * @var EventDispatcherInterface
      */
-    public function __construct(DoctrineHelper $doctrineHelper, ScopeManager $scopeManager)
-    {
+    private $eventDispatcher;
+
+    /**
+     * @var WebCatalogProvider
+     */
+    private $webCatalogProvider;
+
+    /**
+     * @var TreeListener
+     */
+    private $treeListener;
+
+    /**
+     * @param DoctrineHelper $doctrineHelper
+     * @param ScopeManager $scopeManager
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param WebCatalogProvider $webCatalogProvider
+     * @param TreeListener $treeListener
+     */
+    public function __construct(
+        DoctrineHelper $doctrineHelper,
+        ScopeManager $scopeManager,
+        EventDispatcherInterface $eventDispatcher,
+        WebCatalogProvider $webCatalogProvider,
+        TreeListener $treeListener
+    ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->scopeManager = $scopeManager;
+        $this->eventDispatcher = $eventDispatcher;
+        $this->webCatalogProvider = $webCatalogProvider;
+        $this->treeListener = $treeListener;
     }
 
     /**
      * Gets IDs of all nodes available for the storefront.
      *
-     * @param QueryBuilder|null  $qb
+     * @param QueryBuilder|null $qb
      * @param ScopeCriteria|null $criteria
      *
      * @return int[]
@@ -83,7 +118,7 @@ class ContentNodeProvider
     /**
      * Gets a node by its ID if it is available for the storefront.
      *
-     * @param int                $id
+     * @param int $id
      * @param ScopeCriteria|null $criteria
      *
      * @return ContentNode|null The requested node or NULL if the node does not exist
@@ -115,7 +150,7 @@ class ContentNodeProvider
     /**
      * Gets IDs of content variants available for the storefront for given nodes.
      *
-     * @param int[]              $nodeIds
+     * @param int[] $nodeIds
      * @param ScopeCriteria|null $criteria
      *
      * @return array [node id => content variant id, ...]
@@ -152,8 +187,8 @@ class ContentNodeProvider
     /**
      * Gets details of content variants available for the storefront for given nodes.
      *
-     * @param int[]              $nodeIds
-     * @param string[]           $contentVariantFields [DQL expression => result field name, ...]
+     * @param int[] $nodeIds
+     * @param string[] $contentVariantFields [DQL expression => result field name, ...]
      *                                                 use a value ENTITY_ALIAS_PLACEHOLDER constant as an alias
      *                                                 of ContentVariant entity in DQL expressions
      * @param ScopeCriteria|null $criteria
@@ -205,7 +240,42 @@ class ContentNodeProvider
     }
 
     /**
-     * @param array                         $nodeHierarchy [['id' => node id, 'right' => right, 'right' => left], ...]
+     * @param object $entity
+     * @param WebsiteInterface|null $website
+     * @return ContentVariant|null
+     */
+    public function getFirstMatchingVariantForEntity(
+        object $entity,
+        WebsiteInterface $website = null
+    ): ?ContentVariant {
+        $webCatalog = $this->webCatalogProvider->getWebCatalog($website);
+        if (!$webCatalog) {
+            return null;
+        }
+
+        /** @var QueryBuilder $relationQueryBuilder */
+        $em = $this->doctrineHelper->getEntityManager(ContentNode::class);
+        $relationQueryBuilder = $em->getRepository(ContentNode::class)->getContentVariantQueryBuilder($webCatalog);
+
+        $event = new RestrictContentVariantByEntityEvent($relationQueryBuilder, $entity, 'variant');
+        $this->eventDispatcher->dispatch($event, RestrictContentVariantByEntityEvent::NAME);
+        $relationQueryBuilder
+            ->select('variant')
+            ->leftJoin('variant.scopes', 'scopes', Join::WITH);
+
+        $scopeCriteria = $this->scopeManager->getCriteria('web_content');
+        $scopeCriteria->applyToJoinWithPriority($relationQueryBuilder, 'scopes');
+
+        $config = $this->treeListener->getConfiguration($em, ContentNode::class);
+        $relationQueryBuilder
+            ->addOrderBy(QueryBuilderUtil::getField('node', $config['level']), 'ASC')
+            ->setMaxResults(1);
+
+        return $relationQueryBuilder->getQuery()->getOneOrNullResult();
+    }
+
+    /**
+     * @param array $nodeHierarchy [['id' => node id, 'right' => right, 'right' => left], ...]
      * @param MatcherForContentNodeProvider $matcher
      *
      * @return array
@@ -243,7 +313,7 @@ class ContentNodeProvider
     }
 
     /**
-     * @param ContentNode   $node
+     * @param ContentNode $node
      * @param ScopeCriteria $criteria
      *
      * @return bool
@@ -296,7 +366,7 @@ class ContentNodeProvider
     }
 
     /**
-     * @param array         $scopesToMatch [node id => [scope id, ...], ...]
+     * @param array $scopesToMatch [node id => [scope id, ...], ...]
      * @param ScopeCriteria $criteria
      *
      * @return MatcherForContentNodeProvider
