@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\CMSBundle\ContentBlock;
 
-use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\CMSBundle\ContentBlock\Model\ContentBlockView;
 use Oro\Bundle\CMSBundle\Entity\ContentBlock;
 use Oro\Bundle\CMSBundle\Entity\TextContentVariant;
-use Oro\Bundle\ScopeBundle\Entity\Scope;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 
 /**
  * Provide `Oro\Bundle\CMSBundle\ContentBlock\Model\ContentBlockView\ContentBlockView`
@@ -15,32 +14,36 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
  */
 class ContentBlockResolver
 {
-    /** @var PropertyAccessor */
-    protected $propertyAccessor;
+    /**
+     * @var ManagerRegistry
+     */
+    private $registry;
 
     /**
-     * @param PropertyAccessor $propertyAccessor
+     * @param ManagerRegistry $registry
      */
-    public function __construct(PropertyAccessor $propertyAccessor)
+    public function __construct(ManagerRegistry $registry)
     {
-        $this->propertyAccessor = $propertyAccessor;
+        $this->registry = $registry;
     }
 
     /**
      * @param ContentBlock $contentBlock
-     * @param array $context
+     * @param ScopeCriteria $criteria
      * @return null|ContentBlockView
      */
-    public function getContentBlockView(ContentBlock $contentBlock, array $context)
+    public function getContentBlockView(ContentBlock $contentBlock, ScopeCriteria $criteria)
     {
-        if (!$this->isContentBlockVisible($contentBlock, $context)) {
+        if (!$this->isContentBlockVisible($contentBlock, $criteria)) {
             return null;
         }
 
-        $contentVariants = $contentBlock->getContentVariants();
-        $mostSuitableContentVariant = $this->getMostSuitableContentVariant($contentVariants, $context);
+        $repo = $this->registry->getManagerForClass(TextContentVariant::class)
+            ->getRepository(TextContentVariant::class);
+
+        $mostSuitableContentVariant = $repo->getMatchingVariantForBlockByCriteria($contentBlock, $criteria);
         if (!$mostSuitableContentVariant) {
-            $mostSuitableContentVariant = $contentBlock->getDefaultVariant();
+            $mostSuitableContentVariant = $repo->getDefaultContentVariantForContentBlock($contentBlock);
             if (null === $mostSuitableContentVariant) {
                 throw new \RuntimeException('Default content variant should be defined.');
             }
@@ -50,110 +53,29 @@ class ContentBlockResolver
             $contentBlock->getAlias(),
             $contentBlock->getTitles(),
             $contentBlock->isEnabled(),
-            (string) $mostSuitableContentVariant->getContent(),
-            (string) $mostSuitableContentVariant->getContentStyle()
+            (string)$mostSuitableContentVariant->getContent(),
+            (string)$mostSuitableContentVariant->getContentStyle()
         );
     }
 
     /**
      * @param ContentBlock $contentBlock
-     * @param array        $context
-     *
+     * @param ScopeCriteria $criteria
      * @return bool true if ContentBlock enabled and has at least one supported scope
      */
-    private function isContentBlockVisible(ContentBlock $contentBlock, array $context)
+    private function isContentBlockVisible(ContentBlock $contentBlock, ScopeCriteria $criteria)
     {
         if (!$contentBlock->isEnabled()) {
             return false;
         }
 
-        $scopes = $contentBlock->getScopes();
-        if ($scopes->isEmpty()) {
+        if ($contentBlock->getScopes()->isEmpty()) {
             return true;
         }
 
-        foreach ($scopes as $scope) {
-            if ($this->isScopeSuitable($scope, $context)) {
-                return true; // at least one scope matched by context
-            }
-        }
+        $repo = $this->registry->getManagerForClass(ContentBlock::class)
+            ->getRepository(ContentBlock::class);
 
-        return false;
-    }
-
-    /**
-     * @param Scope $scope
-     * @param array $context
-     *
-     * @return bool
-     */
-    private function isScopeSuitable(Scope $scope, array $context)
-    {
-        foreach ($context as $criteriaPath => $criteriaValue) {
-            $value = $this->propertyAccessor->getValue($scope, $criteriaPath);
-            if ($value === null) {
-                continue;
-            }
-            if ($value !== $criteriaValue) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * @param Collection|TextContentVariant[] $variants
-     * @param array                           $context
-     *
-     * @return TextContentVariant|null Variant with most suitable scope (scope that contains more matched criteria),
-     * if there is no variants with matched scope returns default variant
-     */
-    private function getMostSuitableContentVariant(Collection $variants, array $context)
-    {
-        $variantsByPriority = [];
-        foreach ($variants as $variant) {
-            $maxScopePriority = 0;
-            foreach ($variant->getScopes() as $scope) {
-                $scopePriority = $this->getScopePriority($scope, $context);
-                if ($maxScopePriority < $scopePriority) {
-                    $maxScopePriority = $scopePriority;
-                }
-            }
-            if ($maxScopePriority > 0) { // add only suitable variants to array
-                $variantsByPriority[$maxScopePriority] = $variant;
-            }
-        }
-        if (empty($variantsByPriority)) {
-            return null;
-        }
-        krsort($variantsByPriority);
-
-        return reset($variantsByPriority);
-    }
-
-    /**
-     * @param Scope $scope
-     * @param array $context
-     * @return int Scope priority, 0 if scope not suitable for context
-     */
-    private function getScopePriority(Scope $scope, array $context)
-    {
-        $priority = 0;
-
-        $criteriaWeight = count($context); // first field weight equal to context items count
-        foreach ($context as $criteriaPath => $criteriaValue) {
-            $value = $this->propertyAccessor->getValue($scope, $criteriaPath);
-            if ($value === null) {
-                continue; // fields without value doesn't affect priority
-            }
-            if ($value !== $criteriaValue) {
-                return 0; // scope not suitable for context
-            }
-            $priority += pow(10, $criteriaWeight); // prevent affect of fields with lower weight
-            $criteriaWeight--; // define next field weight
-        }
-
-        return $priority;
+        return $repo->getMostSuitableScope($contentBlock, $criteria) !== null;
     }
 }
