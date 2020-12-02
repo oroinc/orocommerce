@@ -106,6 +106,10 @@
 
     &__back {
         padding: $checkout-form-back-padding;
+
+        &--float {
+            float: $checkout-form-back-float;
+        }
     }
 
     .form-field-cvv,

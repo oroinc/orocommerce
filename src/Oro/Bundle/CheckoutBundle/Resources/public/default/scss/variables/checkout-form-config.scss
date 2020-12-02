@@ -33,6 +33,7 @@ $checkout-form-asterix-offset: 0 $offset-x-s !default;
 $checkout-form-asterix-color: $checkout-form-req-text-color !default;
 
 $checkout-form-back-padding: 0 $offset-x-m !default;
+$checkout-form-back-float: left !default;
 
 // Tablet
 $checkout-form-submit-tablet-min-width: inherit !default;
@@ -42,4 +43,3 @@ $checkout-form-req-text-tablet-position: static !default;
 $checkout-form-req-text-tablet-margin: 0 0 $offset-y $offset-x-s !default;
 
 //Mobile
-

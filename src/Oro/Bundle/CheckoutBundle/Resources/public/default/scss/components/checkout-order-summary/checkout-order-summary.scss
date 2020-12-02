@@ -205,16 +205,7 @@
     }
 
     &__totals {
-        float: $checkout-order-summary-totals-float;
-
         @include clearfix();
-
-        .order-checkout-widget__container {
-            min-width: $checkout-order-summary-totals-order-checkout-widget-min-width;
-            padding: 0 $offset-x 0 0;
-
-            background: none;
-        }
     }
 
     &__totals-container {
@@ -339,12 +330,6 @@
                 order: 5;
 
                 color: $checkout-order-summary-grid-subtotal-color-mobile;
-            }
-        }
-
-        &__totals {
-            .order-checkout-widget__container {
-                padding: 0 $offset-x;
             }
         }
     }

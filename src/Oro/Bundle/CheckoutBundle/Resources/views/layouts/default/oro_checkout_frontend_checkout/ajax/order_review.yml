@@ -33,7 +33,7 @@ layout:
         - '@add':
             id: checkout_button_continue_right
             blockType: checkout_transition_continue
-            parentId: checkout_order_summary_totals_container
+            parentId: checkout_order_summary_totals
             prepend: false
             options:
                 transitionData: '=data["oro_checkout_transition"].getContinueTransition(data["workflowItem"])'

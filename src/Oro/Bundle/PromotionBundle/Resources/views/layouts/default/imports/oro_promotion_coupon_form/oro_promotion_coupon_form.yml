@@ -12,8 +12,6 @@ layout:
                     blockType: container
                 __widget_container:
                     blockType: promotion_coupons_expandable
-                __widget_header:
-                    blockType: block
                 __form_container:
                     blockType: container
                 __coupon_input_container:
@@ -46,7 +44,6 @@ layout:
                         __widget_container:
                             __expand_link: ~
                             __expandable_container:
-                                __widget_header: ~
                                 __form_container:
                                     __coupon_input_container:
                                         __coupon_input: ~
