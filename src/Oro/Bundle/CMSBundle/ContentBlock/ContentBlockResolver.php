@@ -2,11 +2,13 @@
 
 namespace Oro\Bundle\CMSBundle\ContentBlock;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CMSBundle\ContentBlock\Model\ContentBlockView;
 use Oro\Bundle\CMSBundle\Entity\ContentBlock;
 use Oro\Bundle\CMSBundle\Entity\TextContentVariant;
+use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 /**
  * Provide `Oro\Bundle\CMSBundle\ContentBlock\Model\ContentBlockView\ContentBlockView`
@@ -15,16 +17,55 @@ use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 class ContentBlockResolver
 {
     /**
+     * @var PropertyAccessor
+     */
+    protected $propertyAccessor;
+
+    /**
      * @var ManagerRegistry
      */
     private $registry;
 
     /**
+     * @var ScopeManager
+     */
+    private $scopeManager;
+
+    /**
+     * @param PropertyAccessor $propertyAccessor
+     */
+    public function __construct(PropertyAccessor $propertyAccessor)
+    {
+        $this->propertyAccessor = $propertyAccessor;
+    }
+
+    /**
      * @param ManagerRegistry $registry
      */
-    public function __construct(ManagerRegistry $registry)
+    public function setManagerRegistry(ManagerRegistry $registry)
     {
         $this->registry = $registry;
+    }
+
+    /**
+     * @param ScopeManager $scopeManager
+     */
+    public function setScopeManager(ScopeManager $scopeManager)
+    {
+        $this->scopeManager = $scopeManager;
+    }
+
+    /**
+     * @param ContentBlock $contentBlock
+     * @param array $context
+     * @return null|ContentBlockView
+     * @deprecated use getContentBlockViewByCriteria instead
+     */
+    public function getContentBlockView(ContentBlock $contentBlock, array $context)
+    {
+        $criteria = $this->scopeManager->getCriteria('web_content', $context);
+
+        return $this->getContentBlockViewByCriteria($contentBlock, $criteria);
     }
 
     /**

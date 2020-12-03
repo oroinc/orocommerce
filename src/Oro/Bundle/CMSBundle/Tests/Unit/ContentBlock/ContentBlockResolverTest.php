@@ -2,15 +2,17 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\ContentBlock;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CMSBundle\ContentBlock\ContentBlockResolver;
 use Oro\Bundle\CMSBundle\ContentBlock\Model\ContentBlockView;
 use Oro\Bundle\CMSBundle\Entity\ContentBlock;
 use Oro\Bundle\CMSBundle\Entity\Repository\ContentBlockRepository;
 use Oro\Bundle\CMSBundle\Entity\Repository\TextContentVariantRepository;
 use Oro\Bundle\CMSBundle\Entity\TextContentVariant;
+use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class ContentBlockResolverTest extends \PHPUnit\Framework\TestCase
 {
@@ -20,6 +22,11 @@ class ContentBlockResolverTest extends \PHPUnit\Framework\TestCase
     private $registry;
 
     /**
+     * @var ScopeManager|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $scopeManager;
+
+    /**
      * @var ContentBlockResolver
      */
     protected $resolver;
@@ -27,7 +34,13 @@ class ContentBlockResolverTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
-        $this->resolver = new ContentBlockResolver($this->registry);
+        $this->scopeManager = $this->createMock(ScopeManager::class);
+
+        $propertyAccessor = new PropertyAccessor;
+        $this->resolver = new ContentBlockResolver($propertyAccessor);
+
+        $this->resolver->setManagerRegistry($this->registry);
+        $this->resolver->setScopeManager($this->scopeManager);
     }
 
     public function testGetContentBlockView()
@@ -100,6 +113,46 @@ class ContentBlockResolverTest extends \PHPUnit\Framework\TestCase
         /** @var ScopeCriteria $criteria */
         $criteria = $this->createMock(ScopeCriteria::class);
         $this->assertNull($this->resolver->getContentBlockViewByCriteria($block, $criteria));
+    }
+
+    public function testGetContentBlockViewCheckCompatibility()
+    {
+        $block = new ContentBlock();
+        $block->setAlias('block_alias');
+        $block->setEnabled(true);
+        $variant = new TextContentVariant();
+        $variant->setDefault(true);
+        $variant->setContent('variant_content');
+        $block->addContentVariant($variant);
+        /** @var ScopeCriteria $criteria */
+        $criteria = $this->createMock(ScopeCriteria::class);
+
+        $variantRepo = $this->createMock(TextContentVariantRepository::class);
+        $variantRepo->expects($this->once())
+            ->method('getMatchingVariantForBlockByCriteria')
+            ->with($block, $criteria)
+            ->willReturn($variant);
+        $variantEm = $this->createMock(EntityManagerInterface::class);
+        $variantEm->expects($this->once())
+            ->method('getRepository')
+            ->with(TextContentVariant::class)
+            ->willReturn($variantRepo);
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(TextContentVariant::class)
+            ->willReturn($variantEm);
+
+        $context = [];
+
+        $this->scopeManager->expects($this->once())
+            ->method('getCriteria')
+            ->with('web_content', $context)
+            ->willReturn($criteria);
+
+        $view = $this->resolver->getContentBlockView($block, $context);
+
+        $this->assertInstanceOf(ContentBlockView::class, $view);
+        $this->assertSame('variant_content', $view->getContent());
     }
 
     public function testGetContentBlockViewWithoutScopes()
