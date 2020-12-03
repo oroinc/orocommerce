@@ -18,6 +18,13 @@ in accordance with user permissions.
 * The shopping list page has been completely redesigned. Removed all layout config, styles, javascript, translations,
 etc. related to the old design.
 
+#### WebsiteSearchBundle
+* `oro_website_search.event.website_search_mapping.configuration` event dispatches
+with `Oro\Bundle\SearchBundle\Event\SearchMappingCollectEvent` event class
+that have configuration loaded from config files. So event have full access to configuration. 
+* The merge of website search mapping config after the `oro_website_search.event.website_search_mapping.configuration` event
+was dispatched has been removed. At listeners please add full configuration that do not need additional processing with config processor. 
+
 ### Removed
 * Removed long-unused `oro_customer_menu` layout import from all bundles.
 
@@ -41,6 +48,13 @@ etc. related to the old design.
     - `oro_shopping_list_matrix_grid_shopping_list`
     - `oro_shopping_list_products_units`
 * Removed the `oro_shoppinglist_frontend_duplicate` operation. The `oro_shoppinglist_frontend_duplicate_action` operation is now used.
+
+#### WebsiteSearchBundle
+
+* Removed `Oro\Bundle\WebsiteSearchBundle\Event\WebsiteSearchMappingEvent` event class and used 
+`Oro\Bundle\SearchBundle\Event\SearchMappingCollectEvent` class instead of.
+* Removed `Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider` and used
+`\Oro\Bundle\SearchBundle\Provider\SearchMappingProvider` class instead of.
 
 ## 4.2.0-alpha.3
 

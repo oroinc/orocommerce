@@ -2,14 +2,14 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Resolver;
 
+use Oro\Bundle\SearchBundle\Provider\SearchMappingProvider;
 use Oro\Bundle\WebsiteSearchBundle\Event\CollectDependentClassesEvent;
-use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
 use Oro\Bundle\WebsiteSearchBundle\Resolver\EntityDependenciesResolver;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class EntityDependenciesResolverTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var WebsiteSearchMappingProvider|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var SearchMappingProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $mappingProvider;
 
     /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
@@ -20,7 +20,7 @@ class EntityDependenciesResolverTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->mappingProvider = $this->getMockBuilder(WebsiteSearchMappingProvider::class)
+        $this->mappingProvider = $this->getMockBuilder(SearchMappingProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
