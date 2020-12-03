@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\EventListener;
 
-use Oro\Bundle\WebsiteSearchBundle\Configuration\MappingConfigurationProvider;
+use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
 
 /**
  * Clears website search mapping cache on changes in entity config
@@ -10,20 +10,20 @@ use Oro\Bundle\WebsiteSearchBundle\Configuration\MappingConfigurationProvider;
 class EntityConfigListener
 {
     /**
-     * @var MappingConfigurationProvider
+     * @var WebsiteSearchMappingProvider
      */
-    private $configurationProvider;
+    private $searchMappingProvider;
 
     /**
-     * @param MappingConfigurationProvider $configurationProvider
+     * @param WebsiteSearchMappingProvider $searchMappingProvider
      */
-    public function __construct(MappingConfigurationProvider $configurationProvider)
+    public function __construct(WebsiteSearchMappingProvider $searchMappingProvider)
     {
-        $this->configurationProvider = $configurationProvider;
+        $this->searchMappingProvider = $searchMappingProvider;
     }
 
     public function clearMappingCache()
     {
-        $this->configurationProvider->clearCache();
+        $this->searchMappingProvider->clearCache();
     }
 }
