@@ -32,7 +32,7 @@ class ContentBlockResolver
      * @param ScopeCriteria $criteria
      * @return null|ContentBlockView
      */
-    public function getContentBlockView(ContentBlock $contentBlock, ScopeCriteria $criteria)
+    public function getContentBlockViewByCriteria(ContentBlock $contentBlock, ScopeCriteria $criteria)
     {
         if (!$this->isContentBlockVisible($contentBlock, $criteria)) {
             return null;

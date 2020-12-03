@@ -74,7 +74,7 @@ class ContentBlockDataProvider
             return null;
         }
 
-        return $this->contentBlockResolver->getContentBlockView($contentBlock, $criteria);
+        return $this->contentBlockResolver->getContentBlockViewByCriteria($contentBlock, $criteria);
     }
 
     /**
