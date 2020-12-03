@@ -13,14 +13,18 @@ use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollec
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingOptions;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
+use Oro\Bundle\ShippingBundle\Entity\LengthUnit;
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use Oro\Bundle\ShippingBundle\Entity\Repository\ProductShippingOptionsRepository;
+use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
 use Oro\Bundle\ShippingBundle\Model\Dimensions;
 use Oro\Bundle\ShippingBundle\Model\Weight;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Context\AbstractShippingLineItemTest;
 
 class ShippingOptionsLineItemCollectionFactoryDecoratorTest extends AbstractShippingLineItemTest
 {
+    const TEST_PRODUCT_ID = 2002;
+
     /**
      * @var ShippingLineItemCollectionFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
@@ -64,6 +68,17 @@ class ShippingOptionsLineItemCollectionFactoryDecoratorTest extends AbstractShip
             ->with(ProductShippingOptions::class)
             ->willReturn($this->repository);
 
+        $this->doctrineHelper
+            ->method('getEntityReference')
+            ->willReturnCallback(
+                static function (string $className, string $unitCode) {
+                    $unit = new $className();
+                    $unit->setCode($unitCode);
+
+                    return $unit;
+                }
+            );
+
         $this->builderByLineItemFactory = $this->createMock(LineItemBuilderByLineItemFactoryInterface::class);
 
         $this->decorator = new ShippingOptions\Factory\ShippingOptionsLineItemCollectionFactoryDecorator(
@@ -75,8 +90,10 @@ class ShippingOptionsLineItemCollectionFactoryDecoratorTest extends AbstractShip
 
     public function testCreateShippingLineItemCollection()
     {
-        $lineItem1 = $this->createLineItemWithoutShippingOptions();
-        $lineItem2 = $this->createLineItemWithoutShippingOptions();
+        $product2 = $this->createMock(Product::class);
+
+        $lineItem1 = $this->createLineItemWithoutShippingOptions($this->productMock);
+        $lineItem2 = $this->createLineItemWithoutShippingOptions($product2);
 
         $shippingLineItems = [
             $lineItem1,
@@ -97,22 +114,42 @@ class ShippingOptionsLineItemCollectionFactoryDecoratorTest extends AbstractShip
             ->willReturn($builder2);
 
         $this->repository
-            ->method('findByProductsAndUnits')
-            ->willReturn([
-                $this->createShippingOptionsMock($this->productMock, $this->weightMock, $this->dimensionsMock),
-                $this->createShippingOptionsMock($this->productMock, $this->weightMock, $this->dimensionsMock),
-            ]);
+            ->method('findIndexedByProductsAndUnits')
+            ->willReturn(
+                [
+                    1001 => [
+                        'dimensionsHeight' => 3.0,
+                        'dimensionsLength' => 1.0,
+                        'dimensionsWidth' => 2.0,
+                        'dimensionsUnit' => 'in',
+                        'weightUnit' => 'kilo',
+                        'weightValue' => 42.0,
+                    ],
+                    2002 => [
+                        'dimensionsHeight' => 13.0,
+                        'dimensionsLength' => 11.0,
+                        'dimensionsWidth' => 12.0,
+                        'dimensionsUnit' => 'meter',
+                        'weightUnit' => 'lbs',
+                        'weightValue' => 142.0,
+                    ]
+                ]
+            );
 
         $lineItemCollection = $this->createShippingLineItemCollectionMock();
 
-        $newShippingLineItems = [
-            $this->createLineItem(),
-            $this->createLineItem(),
-        ];
-
         $this->decoratedFactory
             ->method('createShippingLineItemCollection')
-            ->with($newShippingLineItems)
+            ->with(
+                [
+                    $this->createLineItem(
+                        $this->productMock,
+                        Dimensions::create(11, 12, 13, (new LengthUnit())->setCode('meter')),
+                        Weight::create(142, (new WeightUnit())->setCode('lbs'))
+                    ),
+                    $this->createLineItemWithoutShippingOptions($product2),
+                ]
+            )
             ->willReturn($lineItemCollection);
 
         static::assertSame($lineItemCollection, $this->decorator->createShippingLineItemCollection($shippingLineItems));
@@ -124,7 +161,7 @@ class ShippingOptionsLineItemCollectionFactoryDecoratorTest extends AbstractShip
         $collection = $this->createShippingLineItemCollectionMock();
 
         $this->repository
-            ->method('findByProductsAndUnits')
+            ->method('findIndexedByProductsAndUnits')
             ->willReturn($array);
 
         $this->builderByLineItemFactory
@@ -162,41 +199,46 @@ class ShippingOptionsLineItemCollectionFactoryDecoratorTest extends AbstractShip
     }
 
     /**
-     * @return ShippingLineItemInterface
-     */
-    private function createLineItem(): ShippingLineItemInterface
-    {
-        $parameters = $this->getShippingLineItemParams();
-
-        return new ShippingLineItem($parameters);
-    }
-
-    /**
-     * @return ShippingLineItemInterface
-     */
-    private function createLineItemWithoutShippingOptions(): ShippingLineItemInterface
-    {
-        $parameters = $this->getShippingLineItemParams();
-
-        unset($parameters[ShippingLineItem::FIELD_DIMENSIONS], $parameters[ShippingLineItem::FIELD_WEIGHT]);
-
-        return new ShippingLineItem($parameters);
-    }
-
-    /**
-     * @param Product    $product
-     * @param Weight     $weight
+     * @param Product $product
      * @param Dimensions $dimensions
-     *
-     * @return ProductShippingOptions|\PHPUnit\Framework\MockObject\MockObject
+     * @param Weight $weight
+     * @return ShippingLineItemInterface
      */
-    private function createShippingOptionsMock(Product $product, Weight $weight, Dimensions $dimensions)
+    private function createLineItem(Product $product, Dimensions $dimensions, Weight $weight): ShippingLineItemInterface
     {
-        $options = $this->createMock(ProductShippingOptions::class);
-        $options->method('getProduct')->willReturn($product);
-        $options->method('getWeight')->willReturn($weight);
-        $options->method('getDimensions')->willReturn($dimensions);
+        return new ShippingLineItem(
+            [
+                ShippingLineItem::FIELD_PRICE => $this->priceMock,
+                ShippingLineItem::FIELD_PRODUCT_UNIT => $this->productUnitMock,
+                ShippingLineItem::FIELD_PRODUCT_UNIT_CODE => self::TEST_UNIT_CODE,
+                ShippingLineItem::FIELD_QUANTITY => self::TEST_QUANTITY,
+                ShippingLineItem::FIELD_PRODUCT_HOLDER => $this->productHolderMock,
+                ShippingLineItem::FIELD_PRODUCT => $product,
+                ShippingLineItem::FIELD_PRODUCT_SKU => self::TEST_PRODUCT_SKU,
+                ShippingLineItem::FIELD_DIMENSIONS => $dimensions,
+                ShippingLineItem::FIELD_WEIGHT => $weight,
+                ShippingLineItem::FIELD_ENTITY_IDENTIFIER => self::TEST_ENTITY_ID,
+            ]
+        );
+    }
 
-        return $options;
+    /**
+     * @param Product $product
+     * @return ShippingLineItemInterface
+     */
+    private function createLineItemWithoutShippingOptions(Product $product): ShippingLineItemInterface
+    {
+        return new ShippingLineItem(
+            [
+                ShippingLineItem::FIELD_PRICE => $this->priceMock,
+                ShippingLineItem::FIELD_PRODUCT_UNIT => $this->productUnitMock,
+                ShippingLineItem::FIELD_PRODUCT_UNIT_CODE => self::TEST_UNIT_CODE,
+                ShippingLineItem::FIELD_QUANTITY => self::TEST_QUANTITY,
+                ShippingLineItem::FIELD_PRODUCT_HOLDER => $this->productHolderMock,
+                ShippingLineItem::FIELD_PRODUCT => $product,
+                ShippingLineItem::FIELD_PRODUCT_SKU => self::TEST_PRODUCT_SKU,
+                ShippingLineItem::FIELD_ENTITY_IDENTIFIER => self::TEST_ENTITY_ID,
+            ]
+        );
     }
 }
