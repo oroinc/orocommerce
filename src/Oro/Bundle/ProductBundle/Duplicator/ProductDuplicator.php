@@ -174,6 +174,9 @@ class ProductDuplicator
             $productImageCopy->setProduct($productCopy);
 
             $imageFileCopy = $this->fileManager->cloneFileEntity($productImageCopy->getImage());
+            if (!$imageFileCopy) {
+                continue;
+            }
             $productImageCopy->setImage($imageFileCopy);
 
             $this->doctrineHelper->getEntityManager($productImageCopy)->persist($productImageCopy);
@@ -190,6 +193,9 @@ class ProductDuplicator
         foreach ($attachments as $attachment) {
             $attachmentCopy = clone $attachment;
             $attachmentFileCopy = $this->fileManager->cloneFileEntity($attachment->getFile());
+            if (!$attachmentFileCopy) {
+                continue;
+            }
             $attachmentCopy->setFile($attachmentFileCopy);
 
             $attachmentCopy->setTarget($productCopy);
