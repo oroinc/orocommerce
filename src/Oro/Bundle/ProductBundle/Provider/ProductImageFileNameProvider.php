@@ -43,6 +43,7 @@ class ProductImageFileNameProvider implements FileNameProviderInterface
     public function getFileName(File $file): string
     {
         if ($file->getParentEntityClass() === ProductImage::class
+            && $file->getOriginalFilename()
             && $this->configManager->get('oro_product.original_file_names_enabled')
         ) {
             $hash = str_replace('.' . $file->getExtension(), '', $file->getFilename());
