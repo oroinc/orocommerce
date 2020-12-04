@@ -792,6 +792,7 @@ services:
         abstract: true
         arguments:
             - '@oro_segment.segment_manager'
+            - '@oro_website.manager'
             - '@oro_product.provider.segment'
             - '@oro_product.product.manager'
             - '@oro_config.manager'
