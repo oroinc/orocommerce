@@ -19,12 +19,12 @@ class FeaturedProductsProvider extends AbstractSegmentProductsProvider
     protected function getCacheParts(Segment $segment)
     {
         $user = $this->getTokenStorage()->getToken()->getUser();
-        $userId = 0;
-        if ($user instanceof AbstractUser) {
-            $userId = $user->getId();
-        }
+        $website = $this->getWebsiteManager()->getCurrentWebsite();
 
-        return ['featured_products', $userId, $segment->getId(), $segment->getRecordsLimit()];
+        $userId = $user instanceof AbstractUser ? $user->getId() : 0;
+        $websiteId = $website ? $website->getId() : 0;
+
+        return ['featured_products', $userId, $websiteId, $segment->getId(), $segment->getRecordsLimit()];
     }
 
     /**

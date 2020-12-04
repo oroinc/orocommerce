@@ -14,6 +14,7 @@ use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SegmentBundle\Entity\Manager\SegmentManager;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
@@ -30,6 +31,9 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
 
     /** @var SegmentManager */
     private $segmentManager;
+
+    /** @var WebsiteManager */
+    private $websiteManager;
 
     /** @var ProductSegmentProviderInterface */
     private $productSegmentProvider;
@@ -96,6 +100,14 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
     {
         $this->cache = $cache;
         $this->cacheLifeTime = $lifeTime;
+    }
+
+    /**
+     * @param WebsiteManager $websiteManager
+     */
+    public function setWebsiteManager(WebsiteManager $websiteManager): void
+    {
+        $this->websiteManager = $websiteManager;
     }
 
     /**
@@ -172,6 +184,18 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
     protected function getSegmentManager()
     {
         return $this->segmentManager;
+    }
+
+    /**
+     * @return WebsiteManager
+     */
+    protected function getWebsiteManager(): WebsiteManager
+    {
+        if (null === $this->websiteManager) {
+            throw new \LogicException('WebsiteManager cannot be null.');
+        }
+
+        return $this->websiteManager;
     }
 
     /**

@@ -804,6 +804,7 @@ services:
             - '@oro_security.acl_helper'
         calls:
             - [setCache, ['@oro_product.layout.data_provider.cache', 3600]]
+            - [setWebsiteManager, ['@oro_website.manager']]
 
     oro_product.layout.data_provider.featured_products:
         class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\FeaturedProductsProvider'
