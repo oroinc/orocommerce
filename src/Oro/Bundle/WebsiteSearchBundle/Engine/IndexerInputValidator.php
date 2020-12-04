@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 
+use Oro\Bundle\SearchBundle\Provider\SearchMappingProvider;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
-use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
 
 /**
  * Validates Elasticsearch parameters, parses them and returns list of affected entities and websites
@@ -16,16 +16,16 @@ class IndexerInputValidator
     /** @var WebsiteProviderInterface */
     protected $websiteProvider;
 
-    /** @var WebsiteSearchMappingProvider */
+    /** @var SearchMappingProvider */
     protected $mappingProvider;
 
     /**
      * @param WebsiteProviderInterface $websiteProvider
-     * @param WebsiteSearchMappingProvider $mappingProvider
+     * @param SearchMappingProvider    $mappingProvider
      */
     public function __construct(
         WebsiteProviderInterface $websiteProvider,
-        WebsiteSearchMappingProvider $mappingProvider
+        SearchMappingProvider $mappingProvider
     ) {
         $this->websiteProvider = $websiteProvider;
         $this->mappingProvider = $mappingProvider;

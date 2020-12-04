@@ -28,4 +28,17 @@ class ContentVariantDataProvider
     {
         return $this->requestWebContentVariantProvider->getContentVariant();
     }
+
+    /**
+     * @return string|null
+     */
+    public function getContentVariantType(): ?string
+    {
+        $contentVariant = $this->getFromRequest();
+        if ($contentVariant) {
+            return $contentVariant->getType();
+        }
+
+        return null;
+    }
 }

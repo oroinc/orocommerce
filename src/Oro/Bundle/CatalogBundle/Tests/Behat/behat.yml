@@ -95,13 +95,13 @@ oro_behat_extension:
     SubcategoriesFilter:
       selector:
         type: xpath
-        locator: '//div[contains(@class,"filter-item")]/div[contains(@class,"filter-select") and contains(text(),"Filter By Sub-Categories")]/..'
+        locator: '//div[contains(@class,"filter-item")]/div[contains(@class,"filter-select")]/span[contains(text(),"Filter By Sub-Categories")]/..'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\MultipleChoice
 
     SubcategoriesFilterSelect:
       selector:
         type: xpath
-        locator: '//div[contains(@class,"filter-item")]/div[contains(@class,"filter-select") and contains(text(),"Filter By Sub-Categories")]/select'
+        locator: '//div[contains(@class,"filter-item")]/div[contains(@class,"filter-select")]/span[ contains(text(),"Filter By Sub-Categories")]/../select'
 
     Uploaded Featured Category Image:
       selector:
@@ -119,9 +119,6 @@ oro_behat_extension:
       options:
         mapping:
           Image: 'theme[oro_catalog___category_image_placeholder][value][file]'
-
-    Canonical URL:
-      selector: "link[rel='canonical']"
 
     Category Form:
       selector: 'form[name="oro_catalog_category"]'
@@ -177,6 +174,7 @@ oro_behat_extension:
         - OroCatalogBundle::FeatureContext
         - OroProductBundle::FeatureContext
         - OroWebCatalogBundle::FeatureContext
+        - OroRedirectBundle::FeatureContext
         - OroImportExportBundle::ImportExportContext:
             - '@oro_entity.entity_alias_resolver'
             - '@oro_importexport.processor.registry'
@@ -184,11 +182,8 @@ oro_behat_extension:
         - OroProductBundle::ProductImportExportContext
         - OroLocaleBundle::LocalizationContext
         - OroFrontendLocalizationBundle::LocalizationSwitcherContext
-        - OroAttachmentBundle::AttachmentImageContext:
-            - '@doctrine'
-            - '@oro_website.website.provider'
-            - '@oro_website.manager'
-            - '@oro_config.website'
-            - '@oro_attachment.image_removal.service_locator'
+        - OroAttachmentBundle::AttachmentImageContext
+        - OroCustomerBundle::ACLContext
+        - OroSearchBundle::SearchContext
       paths:
         - '@OroCatalogBundle/Tests/Behat/Features'

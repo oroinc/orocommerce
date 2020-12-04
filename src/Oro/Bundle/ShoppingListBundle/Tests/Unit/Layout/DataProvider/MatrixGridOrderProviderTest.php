@@ -249,6 +249,7 @@ class MatrixGridOrderProviderTest extends \PHPUnit\Framework\TestCase
 
         $simpleProduct00 = $this->getEntity(Product::class);
         $simpleProduct10 = $this->getEntity(Product::class);
+        $simpleProduct11 = $this->getEntity(Product::class);
 
         $productUnit = $this->getEntity(ProductUnit::class);
 
@@ -256,7 +257,11 @@ class MatrixGridOrderProviderTest extends \PHPUnit\Framework\TestCase
         $collection->unit = $productUnit;
 
         $collection->rows[0]->columns[0]->product = $simpleProduct00;
+        $collection->rows[0]->columns[0]->quantity = 2;
         $collection->rows[1]->columns[0]->product = $simpleProduct10;
+        $collection->rows[1]->columns[0]->quantity = 1;
+        $collection->rows[1]->columns[1]->product = $simpleProduct11;
+        $collection->rows[1]->columns[1]->quantity = 0;
 
         $this->matrixGridManager->expects($this->once())
             ->method('getMatrixCollection')
@@ -266,12 +271,12 @@ class MatrixGridOrderProviderTest extends \PHPUnit\Framework\TestCase
         $lineItem00 = $this->getEntity(LineItem::class, [
             'product' => $simpleProduct00,
             'unit' => $productUnit,
-            'quantity' => 0
+            'quantity' => 2
         ]);
         $lineItem10 = $this->getEntity(LineItem::class, [
             'product' => $simpleProduct10,
             'unit' => $productUnit,
-            'quantity' => 0
+            'quantity' => 1
         ]);
 
         $tempShoppingList = $this->getEntity(ShoppingList::class, [

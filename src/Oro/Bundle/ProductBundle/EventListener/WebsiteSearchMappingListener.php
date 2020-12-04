@@ -8,9 +8,11 @@ use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Search\ProductIndexFieldsProvider;
+use Oro\Bundle\SearchBundle\Event\SearchMappingCollectEvent;
 use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\FulltextAwareTypeInterface;
 use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchAttributeTypeInterface;
-use Oro\Bundle\WebsiteSearchBundle\Event\WebsiteSearchMappingEvent;
+use Oro\Bundle\WebsiteSearchBundle\Configuration\MappingConfiguration;
+use Symfony\Component\Config\Definition\Processor;
 
 /**
  * Adds dynamical information about product attributes to website search index mapping
@@ -48,9 +50,9 @@ class WebsiteSearchMappingListener
     }
 
     /**
-     * @param WebsiteSearchMappingEvent $event
+     * @param SearchMappingCollectEvent $event
      */
-    public function onWebsiteSearchMapping(WebsiteSearchMappingEvent $event)
+    public function onWebsiteSearchMapping(SearchMappingCollectEvent $event)
     {
         $attributes = $this->attributeManager->getAttributesByClass(Product::class);
         $fields = [];
@@ -123,20 +125,21 @@ class WebsiteSearchMappingListener
     }
 
     /**
-     * @param WebsiteSearchMappingEvent $event
+     * Merge the config with the existing one.
+     *
+     * @param SearchMappingCollectEvent $event
      * @param array $fields
      */
-    private function setConfiguration(WebsiteSearchMappingEvent $event, array $fields)
+    private function setConfiguration(SearchMappingCollectEvent $event, array $fields)
     {
-        $config = $event->getConfiguration();
-
-        if (isset($config[Product::class]['fields'])) {
-            $config[Product::class]['fields'] = array_merge($config[Product::class]['fields'], $fields);
-        } else {
-            $config[Product::class]['fields'] = $fields;
-        }
-
-        $event->setConfiguration($config);
+        $config[Product::class]['fields'] = $fields;
+        $processor = new Processor();
+        $event->setMappingConfig(
+            $processor->processConfiguration(
+                new MappingConfiguration(),
+                [$event->getMappingConfig(), $config]
+            )
+        );
     }
 
     /**

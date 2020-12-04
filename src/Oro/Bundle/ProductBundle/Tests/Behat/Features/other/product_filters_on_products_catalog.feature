@@ -1,6 +1,9 @@
 @ticket-BB-7225
 @fixture-OroProductBundle:product_frontend.yml
 Feature: Product Filters On Products Catalog
+  In order to ...
+  As an ...
+  I should be able to ...
 
   Scenario: Check Price filter
     Given I login as AmandaRCole@example.org buyer

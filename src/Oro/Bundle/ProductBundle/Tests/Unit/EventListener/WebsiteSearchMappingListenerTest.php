@@ -11,9 +11,9 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\EventListener\WebsiteSearchMappingListener;
 use Oro\Bundle\ProductBundle\Search\ProductIndexFieldsProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\EnumSearchableAttributeTypeStub;
+use Oro\Bundle\SearchBundle\Event\SearchMappingCollectEvent;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\EnumSearchableAttributeType;
-use Oro\Bundle\WebsiteSearchBundle\Event\WebsiteSearchMappingEvent;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\EnumIdPlaceholder;
 
 class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
@@ -50,7 +50,7 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnWebsiteSearchMappingWithoutAttributes()
     {
-        $event = new WebsiteSearchMappingEvent();
+        $event = new SearchMappingCollectEvent([]);
 
         $this->attributeManager->expects($this->once())
             ->method('getAttributesByClass')
@@ -59,12 +59,12 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->listener->onWebsiteSearchMapping($event);
 
-        $this->assertEquals([], $event->getConfiguration());
+        $this->assertEquals([], $event->getMappingConfig());
     }
 
     public function testOnWebsiteSearchMappingWithoutAttributeType()
     {
-        $event = new WebsiteSearchMappingEvent();
+        $event = new SearchMappingCollectEvent([]);
 
         $attribute = new FieldConfigModel('attribute');
 
@@ -83,12 +83,12 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->listener->onWebsiteSearchMapping($event);
 
-        $this->assertEquals([], $event->getConfiguration());
+        $this->assertEquals([], $event->getMappingConfig());
     }
 
     public function testOnWebsiteSearchMappingNotActiveAttribute()
     {
-        $event = new WebsiteSearchMappingEvent();
+        $event = new SearchMappingCollectEvent([]);
 
         $attribute = new FieldConfigModel('attribute');
 
@@ -113,7 +113,7 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->listener->onWebsiteSearchMapping($event);
 
-        $this->assertEquals([], $event->getConfiguration());
+        $this->assertEquals([], $event->getMappingConfig());
     }
 
     /**
@@ -180,88 +180,107 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals(
             [
-                Product::class => [
+                Product::class   => [
+                    'alias'  => 'products',
                     'fields' => [
                         'firstname' => [
-                            'name' => 'firstname',
-                            'type' => 'text',
-                            'store' => true
+                            'name'            => 'firstname',
+                            'type'            => 'text',
+                            'store'           => true,
+                            'fulltext'        => true,
+                            'organization_id' => null
                         ],
                         'lasttname' => [
-                            'name' => 'lasttname',
-                            'type' => 'text',
-                            'store' => true
+                            'name'            => 'lasttname',
+                            'type'            => 'text',
+                            'store'           => true,
+                            'fulltext'        => true,
+                            'organization_id' => null
                         ],
                         'attribute1' => [
-                            'name' => 'test',
-                            'type' => 'test'
-                        ],
-                        $attribute1->getFieldName() . '_' . EnumIdPlaceholder::NAME => [
-                            'name' => $attribute1->getFieldName() . '_' . EnumIdPlaceholder::NAME,
-                            'type' => Query::TYPE_INTEGER,
-                            'fulltext' => false,
+                            'name'            => 'attribute1',
+                            'type'            => 'integer',
+                            'fulltext'        => false,
                             'organization_id' => null
                         ],
-                        $attribute2->getFieldName() . '_priority' => [
-                            'name' => $attribute2->getFieldName() . '_priority',
-                            'type' => Query::TYPE_INTEGER,
-                            'fulltext' => false,
+                        $attribute1->getFieldName().'_'.EnumIdPlaceholder::NAME => [
+                            'name'            => $attribute1->getFieldName().'_'.EnumIdPlaceholder::NAME,
+                            'type'            => Query::TYPE_INTEGER,
+                            'fulltext'        => false,
                             'organization_id' => null
                         ],
-                        $attribute3->getFieldName() . '_' . EnumIdPlaceholder::NAME => [
-                            'name' => $attribute3->getFieldName() . '_' . EnumIdPlaceholder::NAME,
-                            'type' => Query::TYPE_INTEGER,
-                            'fulltext' => false,
+                        $attribute2->getFieldName().'_priority'                 => [
+                            'name'            => $attribute2->getFieldName().'_priority',
+                            'type'            => Query::TYPE_INTEGER,
+                            'fulltext'        => false,
                             'organization_id' => null
                         ],
-                        $attribute3->getFieldName() . '_priority' => [
-                            'name' => $attribute3->getFieldName() . '_priority',
-                            'type' => Query::TYPE_INTEGER,
-                            'fulltext' => false,
+                        $attribute3->getFieldName().'_'.EnumIdPlaceholder::NAME => [
+                            'name'            => $attribute3->getFieldName().'_'.EnumIdPlaceholder::NAME,
+                            'type'            => Query::TYPE_INTEGER,
+                            'fulltext'        => false,
                             'organization_id' => null
                         ],
+                        $attribute3->getFieldName().'_priority'                 => [
+                            'name'            => $attribute3->getFieldName().'_priority',
+                            'type'            => Query::TYPE_INTEGER,
+                            'fulltext'        => false,
+                            'organization_id' => null
+                        ]
                     ]
                 ],
                 \stdClass::class => [
-                    'fields' => []
+                    'alias'  => 'std',
+                    'fields' => [
+                        'first' => [
+                            'name'            => 'first',
+                            'type'            => 'text',
+                            'fulltext'        => true,
+                            'organization_id' => null
+                        ]
+                    ]
                 ]
             ],
-            $event->getConfiguration()
+            $event->getMappingConfig()
         );
     }
 
     /**
-     * @return WebsiteSearchMappingEvent
+     * @return SearchMappingCollectEvent
      */
-    protected function createEventWithBasicConfiguration()
+    protected function createEventWithBasicConfiguration(): SearchMappingCollectEvent
     {
-        $event = new WebsiteSearchMappingEvent();
-        $event->setConfiguration(
+        return new SearchMappingCollectEvent(
             [
-                Product::class => [
+                Product::class   => [
+                    'alias'  => 'products',
                     'fields' => [
-                        'firstname' => [
-                            'name' => 'firstname',
-                            'type' => 'text',
+                        'firstname'  => [
+                            'name'  => 'firstname',
+                            'type'  => 'text',
                             'store' => true
                         ],
-                        'lasttname' => [
-                            'name' => 'lasttname',
-                            'type' => 'text',
+                        'lasttname'  => [
+                            'name'  => 'lasttname',
+                            'type'  => 'text',
                             'store' => true
                         ],
                         'attribute1' => [
-                            'name' => 'test',
-                            'type' => 'test'
-                        ],
+                            'name' => 'attribute1',
+                            'type' => 'integer'
+                        ]
                     ]
                 ],
                 \stdClass::class => [
-                    'fields' => []
+                    'alias'  => 'std',
+                    'fields' => [
+                        'first' => [
+                            'name' => 'first',
+                            'type' => 'text'
+                        ]
+                    ]
                 ]
             ]
         );
-
-        return $event;
     }
 }

@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Engine;
 
+use Oro\Bundle\SearchBundle\Provider\SearchMappingProvider;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexerInputValidator;
-use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
 
 class IndexerInputValidatorTest extends \PHPUnit\Framework\TestCase
 {
@@ -14,7 +14,7 @@ class IndexerInputValidatorTest extends \PHPUnit\Framework\TestCase
     const WEBSITE_ID = 1;
 
     /**
-     * @var WebsiteSearchMappingProvider|\PHPUnit\Framework\MockObject\MockObject
+     * @var SearchMappingProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $mappingProvider;
 
@@ -30,7 +30,7 @@ class IndexerInputValidatorTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->mappingProvider = $this->createMock(WebsiteSearchMappingProvider::class);
+        $this->mappingProvider = $this->createMock(SearchMappingProvider::class);
 
         $this->mappingProvider->method('isClassSupported')
             ->willReturn(true);

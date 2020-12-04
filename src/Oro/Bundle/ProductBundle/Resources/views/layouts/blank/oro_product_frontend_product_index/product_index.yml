@@ -1,6 +1,7 @@
 layout:
     imports:
         - oro_product_grid
+
     actions:
         - '@setOption':
             id: product_datagrid

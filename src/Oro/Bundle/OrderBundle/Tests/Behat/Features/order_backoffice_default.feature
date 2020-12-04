@@ -2,6 +2,9 @@
 @fixture-OroOrderBundle:OrderBackofficeDefaultFixture.yml
 
 Feature: Order Backoffice Default
+  In order to ...
+  As an ...
+  I should be able to ...
 
   Scenario: See Order without Customer User by frontend administrator.
     Given I login as NancyJSallee@example.org the "Buyer" at "first_session" session

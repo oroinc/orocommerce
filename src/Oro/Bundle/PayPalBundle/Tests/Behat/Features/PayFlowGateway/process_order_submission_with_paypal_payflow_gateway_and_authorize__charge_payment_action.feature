@@ -4,6 +4,9 @@
 @fixture-OroCheckoutBundle:Shipping.yml
 @fixture-OroPaymentBundle:ProductsAndShoppingListsForPayments.yml
 Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Charge payment action
+  In order to ...
+  As an ...
+  I should be able to ...
 
   Scenario: Create new PayPal PayFlow Gateway Integration
     Given I login as AmandaRCole@example.org the "Buyer" at "first_session" session

@@ -59,7 +59,6 @@ services:
         arguments:
             - '%kernel.cache_dir%/oro/website_search_mapping.php'
             - '%kernel.debug%'
-            - '@event_dispatcher'
 
     oro_website_search.event_listener.orm.fulltext_index_listener:
         class: 'Oro\Bundle\SearchBundle\EventListener\ORM\FulltextIndexListener'
@@ -74,11 +73,27 @@ services:
         class: 'Oro\Bundle\WebsiteSearchBundle\Engine\Mapper'
         public: false
 
+    oro_website_search.cache.mapping_configuration:
+        parent: oro.cache.abstract
+        calls:
+            - [ setNamespace, [ 'oro_website_search_mapping_configuration' ] ]
+
     oro_website_search.provider.search_mapping:
-        class: 'Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider'
+        class: Oro\Bundle\SearchBundle\Provider\SearchMappingProvider
         public: false
         arguments:
+            - '@event_dispatcher'
             - '@oro_website_search.mapping_configuration.provider'
+            - '@oro_website_search.cache.mapping_configuration'
+            - 'oro_website_search.mapping_config'
+            - 'oro_website_search.event.website_search_mapping.configuration'
+
+    oro_website_search.cache.website_search_mapping.warmer:
+        class: Oro\Component\Config\Cache\ConfigCacheWarmer
+        arguments:
+            - '@oro_website_search.provider.search_mapping'
+        tags:
+            - { name: kernel.cache_warmer }
 
     oro_website_search.query_factory:
         class: 'Oro\Bundle\WebsiteSearchBundle\Query\Factory\WebsiteQueryFactory'
@@ -292,7 +307,7 @@ services:
     oro_website_search.event_listener.entity_config:
         class: Oro\Bundle\WebsiteSearchBundle\EventListener\EntityConfigListener
         arguments:
-            - '@oro_website_search.mapping_configuration.provider'
+            - '@oro_website_search.provider.search_mapping'
         tags:
             - { name: kernel.event_listener, event: oro.entity_config.post_flush, method: clearMappingCache, priority: -255 }
 

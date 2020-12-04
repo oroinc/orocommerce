@@ -615,6 +615,12 @@ oro:
                     options:
                         collapsed: 'Collapsed'
                         expanded: 'Expanded'
+                filters_position:
+                    label: 'Filter Panel Position'
+                    tooltip: 'Position of filters on the storefront product listing pages.'
+                    options:
+                        top: 'Top'
+                        sidebar: 'Sidebar'
             notice:
                 product_image_watermark: >
                    The updated product image watermark settings will be used for the newly uploaded images only.

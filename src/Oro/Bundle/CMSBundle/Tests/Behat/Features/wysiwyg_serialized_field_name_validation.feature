@@ -1,4 +1,4 @@
-Feature: WYSIWYG field name validation
+Feature: WYSIWYG serialized field name validation
   In order to be able to create WYSIWYG fields for the extend entity
   As an administrator
   I create WYSIWYG fields and check validation

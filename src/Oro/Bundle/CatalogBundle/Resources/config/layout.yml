@@ -93,5 +93,9 @@ services:
         arguments:
             - '@oro_config.manager'
             - '@oro_website.resolver.website_system_url_resolver'
+            - '@oro_web_catalog.content_node_provider'
+            - '@oro_redirect.generator.canonical_url'
+            - '@oro_catalog.provider.routing_information_provider'
         tags:
             - { name: layout.data_provider, alias: category_canonical_url }
+            - { name: oro_featuretogle.feature, feature: web_catalog_based_canonical_urls }

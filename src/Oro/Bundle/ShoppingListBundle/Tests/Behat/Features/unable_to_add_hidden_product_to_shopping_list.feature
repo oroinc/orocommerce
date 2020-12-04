@@ -1,6 +1,9 @@
 @regression
 @fixture-OroShoppingListBundle:ProductFixture.yml
 Feature: Unable to add hidden product to shopping list
+  In order to ...
+  As an ...
+  I should be able to ...
 
   Scenario: Create different window session
     Given sessions active:

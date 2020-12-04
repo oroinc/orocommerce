@@ -210,6 +210,13 @@ services:
         tags:
             - { name: oro_web_catalog.content_variant_provider }
 
+    oro_catalog.event_listener.restrict_content_variant_by_category:
+        class: Oro\Bundle\CatalogBundle\EventListener\RestrictContentVariantByCategoryEventListener
+        arguments:
+            - '@request_stack'
+        tags:
+            - { name: kernel.event_listener, event: oro_web_catalog.restrict_content_variant_by_entity, method: applyRestriction }
+
     oro_catalog.event_listener.category_content_variant_index:
         class: 'Oro\Bundle\CatalogBundle\EventListener\CategoryContentVariantIndexListener'
         arguments:

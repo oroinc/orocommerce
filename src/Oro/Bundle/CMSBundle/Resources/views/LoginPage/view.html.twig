@@ -47,9 +47,18 @@
     {%- set loginPageInformation -%}
         <div class="row-fluid form-horizontal">
             <div class="responsive-block">
-                {{ UI.renderProperty('oro.cms.loginpage.top_content.label'|trans, entity.topContent|truncate(100)) }}
-                {{ UI.renderProperty('oro.cms.loginpage.bottom_content.label'|trans, entity.bottomContent|truncate(100)) }}
-                {{ entity.css or loginPageCssField ? UI.renderProperty('oro.cms.loginpage.css.label'|trans, entity.css|truncate(100)) : '' }}
+                {{ UI.renderProperty(
+                    'oro.cms.loginpage.top_content.label'|trans,
+                    entity.topContent|length <= 100 ? entity.topContent : entity.topContent|slice(0, 100)|trim(side='right') ~ '...'
+                ) }}
+                {{ UI.renderProperty(
+                    'oro.cms.loginpage.bottom_content.label'|trans,
+                    entity.bottomContent|length <= 100 ? entity.bottomContent : entity.bottomContent|slice(0, 100)|trim(side='right') ~ '...'
+                ) }}
+                {{ entity.css or loginPageCssField ? UI.renderProperty(
+                    'oro.cms.loginpage.css.label'|trans,
+                    entity.css|length <= 100 ? entity.css : entity.css|slice(0, 100)|trim(side='right') ~ '...'
+                ) : '' }}
                 {{ imageLogoData }}
                 {{ backgroundImageData }}
             </div>
