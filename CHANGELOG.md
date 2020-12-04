@@ -14,6 +14,16 @@ in accordance with user permissions.
 
 ### Changed
 
+#### PricingBundle
+* `oropricing/js/app/views/quick-add-item-price-view` js module is re-developed and renamed to `oropricing/js/app/views/quick-add-row-price-view`
+
+#### ProductBundle
+* Functionality of Quick Order Form is re-developed
+* `oroproduct/js/app/components/quick-add-copy-paste-form-component` js module is re-developed and renamed to `oroproduct/js/app/views/quick-add-copy-paste-form-view`
+* `oroproduct/js/app/views/quick-add-item-view` js module is re-developed and renamed to `oroproduct/js/app/views/quick-add-row-view`
+* `oroproduct/js/app/views/quick-add-view` js module is re-developed and renamed to `oroproduct/js/app/views/quick-order-form-view`
+* js mediator events `autocomplete:productFound` `autocomplete:productNotFound` are replaced with custom DOM events
+
 #### ShoppingListBundle
 * The shopping list page has been completely redesigned. Removed all layout config, styles, javascript, translations,
 etc. related to the old design.
