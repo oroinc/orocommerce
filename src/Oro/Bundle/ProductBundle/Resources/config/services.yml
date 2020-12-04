@@ -804,6 +804,7 @@ services:
             - '@oro_security.acl_helper'
         calls:
             - [setCache, ['@oro_product.layout.data_provider.cache', 3600]]
+            - [setWebsiteManager, ['@oro_website.manager']]
 
     oro_product.layout.data_provider.featured_products:
         class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\FeaturedProductsProvider'
@@ -1717,6 +1718,11 @@ services:
             - "@oro_config.manager"
         tags:
             - { name: oro_cms.content_widget.type }
+
+    oro_product.event_listener.restrict_content_variant_by_product:
+        class: Oro\Bundle\ProductBundle\EventListener\RestrictContentVariantByProductEventListener
+        tags:
+            - { name: kernel.event_listener, event: oro_web_catalog.restrict_content_variant_by_entity, method: applyRestriction }
 
     oro_product.content_widget_type.product_segment:
         class: Oro\Bundle\ProductBundle\ContentWidget\ProductSegmentContentWidgetType
