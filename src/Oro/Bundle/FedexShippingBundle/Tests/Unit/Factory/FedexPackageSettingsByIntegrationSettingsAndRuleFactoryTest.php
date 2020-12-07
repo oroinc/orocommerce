@@ -14,16 +14,20 @@ class FedexPackageSettingsByIntegrationSettingsAndRuleFactoryTest extends TestCa
     {
         $settings = new FedexIntegrationSettings();
         $settings->setUnitOfWeight(FedexIntegrationSettings::UNIT_OF_WEIGHT_KG);
+        $settings->setIgnorePackageDimensions(true);
 
         $rule = new ShippingServiceRule();
         $rule->setLimitationExpressionKg('weight < 10');
 
+        $packageSettings = new FedexPackageSettings(
+            FedexIntegrationSettings::UNIT_OF_WEIGHT_KG,
+            FedexIntegrationSettings::DIMENSION_CM,
+            'weight < 10'
+        );
+        $packageSettings->setIgnorePackageDimensions(true);
+
         static::assertEquals(
-            new FedexPackageSettings(
-                FedexIntegrationSettings::UNIT_OF_WEIGHT_KG,
-                FedexIntegrationSettings::DIMENSION_CM,
-                'weight < 10'
-            ),
+            $packageSettings,
             (new FedexPackageSettingsByIntegrationSettingsAndRuleFactory())->create($settings, $rule)
         );
     }

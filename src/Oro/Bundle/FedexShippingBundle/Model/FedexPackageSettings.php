@@ -2,7 +2,10 @@
 
 namespace Oro\Bundle\FedexShippingBundle\Model;
 
-class FedexPackageSettings implements FedexPackageSettingsInterface
+/**
+ * DTO that represents fedex package settings
+ */
+class FedexPackageSettings implements FedexPackageSettingsInterface, FedexPackageDimensionalSettingsInterface
 {
     /**
      * @var string
@@ -20,6 +23,11 @@ class FedexPackageSettings implements FedexPackageSettingsInterface
     private $limitationExpression;
 
     /**
+     * @var bool
+     */
+    private $ignorePackageDimensions;
+
+    /**
      * @param string $unitOfWeight
      * @param string $dimensionsUnit
      * @param string $limitationExpression
@@ -32,6 +40,15 @@ class FedexPackageSettings implements FedexPackageSettingsInterface
         $this->unitOfWeight = $unitOfWeight;
         $this->dimensionsUnit = $dimensionsUnit;
         $this->limitationExpression = $limitationExpression;
+        $this->ignorePackageDimensions = false;
+    }
+
+    /**
+     * @param bool $ignore
+     */
+    public function setIgnorePackageDimensions(bool $ignore)
+    {
+        $this->ignorePackageDimensions = $ignore;
     }
 
     /**
@@ -56,5 +73,13 @@ class FedexPackageSettings implements FedexPackageSettingsInterface
     public function getLimitationExpression(): string
     {
         return $this->limitationExpression;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isDimensionsIgnored(): bool
+    {
+        return $this->ignorePackageDimensions;
     }
 }

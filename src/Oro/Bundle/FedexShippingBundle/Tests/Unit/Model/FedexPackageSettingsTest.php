@@ -18,9 +18,11 @@ class FedexPackageSettingsTest extends TestCase
             self::DIMENSIONS_UNIT,
             self::EXPRESSION
         );
+        $settings->setIgnorePackageDimensions(true);
 
         static::assertSame(self::WEIGHT_UNIT, $settings->getUnitOfWeight());
         static::assertSame(self::DIMENSIONS_UNIT, $settings->getDimensionsUnit());
         static::assertSame(self::EXPRESSION, $settings->getLimitationExpression());
+        static::assertTrue($settings->isDimensionsIgnored());
     }
 }

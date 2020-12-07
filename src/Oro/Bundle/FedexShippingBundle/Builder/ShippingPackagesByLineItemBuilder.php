@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\FedexShippingBundle\Builder;
 
+use Oro\Bundle\FedexShippingBundle\Model\FedexPackageDimensionalSettingsInterface;
 use Oro\Bundle\FedexShippingBundle\Model\FedexPackageSettingsInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 use Oro\Bundle\ShippingBundle\Entity\LengthUnit;
@@ -12,6 +13,9 @@ use Oro\Bundle\ShippingBundle\Model\ShippingPackageOptionsInterface;
 use Oro\Bundle\ShippingBundle\Model\Weight;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
+/**
+ * Build shipping packages based on Line Items
+ */
 class ShippingPackagesByLineItemBuilder implements ShippingPackagesByLineItemBuilderInterface
 {
     /**
@@ -23,7 +27,7 @@ class ShippingPackagesByLineItemBuilder implements ShippingPackagesByLineItemBui
      * @var ExpressionLanguage
      */
     private $expressionLanguage;
-    
+
     /**
      * @var FedexPackageSettingsInterface
      */
@@ -41,7 +45,7 @@ class ShippingPackagesByLineItemBuilder implements ShippingPackagesByLineItemBui
 
     /**
      * @param ShippingPackageOptionsFactoryInterface $packageOptionsFactory
-     * @param ExpressionLanguage                     $expressionLanguage
+     * @param ExpressionLanguage $expressionLanguage
      */
     public function __construct(
         ShippingPackageOptionsFactoryInterface $packageOptionsFactory,
@@ -58,7 +62,7 @@ class ShippingPackagesByLineItemBuilder implements ShippingPackagesByLineItemBui
     {
         $this->settings = $settings;
         $this->packages = [];
-        
+
         $this->resetCurrentPackage();
     }
 
@@ -90,7 +94,7 @@ class ShippingPackagesByLineItemBuilder implements ShippingPackagesByLineItemBui
     public function getResult(): array
     {
         $this->packCurrentPackage();
-        
+
         return $this->packages;
     }
 
@@ -100,11 +104,16 @@ class ShippingPackagesByLineItemBuilder implements ShippingPackagesByLineItemBui
     private function addItemToCurrentPackage(ShippingPackageOptionsInterface $itemOptions)
     {
         $weight = $this->currentPackage->getWeight() + $itemOptions->getWeight();
-        $length = $this->currentPackage->getLength() + $itemOptions->getLength();
-        $width = $this->currentPackage->getWidth() + $itemOptions->getWidth();
-        $height = $this->currentPackage->getHeight() + $itemOptions->getHeight();
 
-        $this->currentPackage = $this->createPackageOptions($weight, $length, $width, $height);
+        if ($this->settings instanceof FedexPackageDimensionalSettingsInterface
+            && $this->settings->isDimensionsIgnored()
+        ) {
+            $dimensions = Dimensions::create(0, 0, 0, null);
+        } else {
+            $dimensions = $this->getNewPackageDimensions($itemOptions);
+        }
+
+        $this->currentPackage = $this->createPackageOptions($weight, $dimensions);
     }
 
     /**
@@ -152,34 +161,40 @@ class ShippingPackagesByLineItemBuilder implements ShippingPackagesByLineItemBui
 
     private function resetCurrentPackage()
     {
-        $this->currentPackage = $this->createPackageOptions(0, 0, 0, 0);
+        $this->currentPackage = $this->createPackageOptions(0, Dimensions::create(0, 0, 0, null));
     }
 
     /**
      * @param float $weight
-     * @param float $length
-     * @param float $width
-     * @param float $height
-     *
+     * @param Dimensions $dimensions
      * @return ShippingPackageOptionsInterface
      */
     private function createPackageOptions(
         float $weight,
-        float $length,
-        float $width,
-        float $height
+        Dimensions $dimensions
     ): ShippingPackageOptionsInterface {
+        $unit = null;
+
         return $this->packageOptionsFactory->create(
-            Dimensions::create(
-                $length,
-                $width,
-                $height,
-                (new LengthUnit())->setCode($this->settings->getDimensionsUnit())
-            ),
+            $dimensions,
             Weight::create(
                 $weight,
                 (new WeightUnit())->setCode($this->settings->getUnitOfWeight())
             )
         );
+    }
+
+    /**
+     * @param ShippingPackageOptionsInterface $itemOptions
+     * @return Dimensions
+     */
+    private function getNewPackageDimensions(ShippingPackageOptionsInterface $itemOptions): Dimensions
+    {
+        $length = $this->currentPackage->getLength() + $itemOptions->getLength();
+        $width = $this->currentPackage->getWidth() + $itemOptions->getWidth();
+        $height = $this->currentPackage->getHeight() + $itemOptions->getHeight();
+        $unit = (new LengthUnit())->setCode($this->settings->getDimensionsUnit());
+
+        return Dimensions::create($length, $width, $height, $unit);
     }
 }
