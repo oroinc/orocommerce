@@ -470,6 +470,8 @@ services:
         arguments:
             - '@doctrine'
             - '@oro_tax.manager.tax_manager'
+        calls:
+            - [setFrontendHelper, ['@oro_frontend.request.frontend_helper']]
         tags:
             - { name: oro_tax.resolver, event: oro_tax.resolve_before }
 

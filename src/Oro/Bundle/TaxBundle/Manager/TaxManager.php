@@ -207,7 +207,7 @@ class TaxManager
     {
         $this->throwExceptionIfTaxationDisabled();
 
-        $taxable = $this->getTaxable($object);
+        $taxable = $this->getCachedTaxable($object);
 
         return $this->taxValueManager->getTaxValue($taxable->getClassName(), $taxable->getIdentifier());
     }
