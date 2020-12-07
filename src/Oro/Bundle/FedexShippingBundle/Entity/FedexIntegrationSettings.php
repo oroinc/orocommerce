@@ -10,6 +10,8 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
+ * FedexIntegrationSettings ORM entity.
+ *
  * @ORM\Entity
  */
 class FedexIntegrationSettings extends Transport
@@ -120,6 +122,13 @@ class FedexIntegrationSettings extends Transport
      * @ORM\Column(name="fedex_invalidate_cache_at", type="datetime")
      */
     private $invalidateCacheAt;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="fedex_ignore_package_dimension", type="boolean", options={"default"=false})
+     */
+    private $ignorePackageDimensions = false;
 
     public function __construct()
     {
@@ -377,5 +386,24 @@ class FedexIntegrationSettings extends Transport
     public function getInvalidateCacheAt()
     {
         return $this->invalidateCacheAt;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isIgnorePackageDimensions(): bool
+    {
+        return $this->ignorePackageDimensions;
+    }
+
+    /**
+     * @param bool $ignorePackageDimensions
+     * @return self
+     */
+    public function setIgnorePackageDimensions(bool $ignorePackageDimensions): self
+    {
+        $this->ignorePackageDimensions = $ignorePackageDimensions;
+
+        return $this;
     }
 }

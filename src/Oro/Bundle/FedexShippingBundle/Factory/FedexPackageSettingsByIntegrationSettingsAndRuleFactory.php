@@ -7,6 +7,9 @@ use Oro\Bundle\FedexShippingBundle\Entity\ShippingServiceRule;
 use Oro\Bundle\FedexShippingBundle\Model\FedexPackageSettings;
 use Oro\Bundle\FedexShippingBundle\Model\FedexPackageSettingsInterface;
 
+/**
+ * Create FedexPackageSettings DTO based on the FedexIntegrationSettings entity.
+ */
 class FedexPackageSettingsByIntegrationSettingsAndRuleFactory implements
     FedexPackageSettingsByIntegrationSettingsAndRuleFactoryInterface
 {
@@ -18,7 +21,8 @@ class FedexPackageSettingsByIntegrationSettingsAndRuleFactory implements
         return new FedexPackageSettings(
             $settings->getUnitOfWeight(),
             $settings->getDimensionsUnit(),
-            $this->getLimitationExpression($settings, $rule)
+            $this->getLimitationExpression($settings, $rule),
+            $settings->isIgnorePackageDimensions()
         );
     }
 
