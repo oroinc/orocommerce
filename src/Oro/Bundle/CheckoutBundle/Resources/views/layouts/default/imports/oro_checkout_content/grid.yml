@@ -74,6 +74,7 @@ layout:
                 cellActionsHideCount: 4
                 cellLauncherOptions:
                     launcherMode: 'icon-only'
+                tableClassName: 'table-sm'
 
         - '@setOption':
             id: __datagrid
