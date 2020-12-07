@@ -50,10 +50,6 @@ class OrderLineItemRequiredTaxRecalculationSpecification implements Specificatio
             return true;
         }
 
-        if ($this->isCurrencyChanged($orderLineItem, $originalData)) {
-            return true;
-        }
-
         if ($this->isPriceChanged($orderLineItem, $originalData)) {
             return true;
         }
@@ -95,22 +91,6 @@ class OrderLineItemRequiredTaxRecalculationSpecification implements Specificatio
             : null;
 
         return $newProductUnitCode != $oldProductUnitCode;
-    }
-
-    /**
-     * @param OrderLineItem $orderLineItem
-     * @param array $originalData
-     *
-     * @return bool
-     */
-    private function isCurrencyChanged(OrderLineItem $orderLineItem, array $originalData): bool
-    {
-        $newCurrency = $orderLineItem->getPrice()
-            ? $orderLineItem->getPrice()->getCurrency()
-            : $orderLineItem->getCurrency();
-        $oldCurrency = $originalData['currency'] ?? null;
-
-        return $newCurrency != $oldCurrency;
     }
 
     private function isPriceChanged(OrderLineItem $orderLineItem, array $originalData): bool

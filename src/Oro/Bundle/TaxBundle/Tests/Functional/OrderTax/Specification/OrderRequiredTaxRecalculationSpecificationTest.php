@@ -76,69 +76,6 @@ class OrderRequiredTaxRecalculationSpecificationTest extends WebTestCase
         self::assertTrue($this->specification->isSatisfiedBy($order));
     }
 
-    public function testOrderWithChangedLineItemQuantityWillRequireTaxRecalculation()
-    {
-        /**
-         * @var Order $order
-         */
-        $order = $this->getReference(LoadOrders::ORDER_1);
-        $firstLineItem = $order->getLineItems()[0];
-        $firstLineItem->setQuantity(123456);
-
-        self::assertTrue($this->specification->isSatisfiedBy($order));
-    }
-
-    public function testOrderWithChangedLineItemCurrencyWillRequireTaxRecalculation()
-    {
-        /**
-         * @var Order $order
-         */
-        $order = $this->getReference(LoadOrders::ORDER_1);
-        $firstLineItem = $order->getLineItems()[0];
-        $firstLineItem->setCurrency('Test');
-
-        self::assertTrue($this->specification->isSatisfiedBy($order));
-    }
-
-    public function testOrderWithChangedLineItemProductWillRequireTaxRecalculation()
-    {
-        /**
-         * @var Order $order
-         */
-        $order = $this->getReference(LoadOrders::ORDER_1);
-        $firstLineItem = $order->getLineItems()[0];
-        $firstLineItem->setProduct($this->getReference(LoadProductData::PRODUCT_2));
-
-        self::assertTrue($this->specification->isSatisfiedBy($order));
-    }
-
-    public function testOrderWithChangedLineItemProductUnitWillRequireTaxRecalculation()
-    {
-        /**
-         * @var Order $order
-         */
-        $order = $this->getReference(LoadOrders::ORDER_1);
-        $firstLineItem = $order->getLineItems()[0];
-        $firstLineItem->setProductUnit($this->getReference(LoadProductUnits::BOTTLE));
-
-        self::assertTrue($this->specification->isSatisfiedBy($order));
-    }
-
-    public function testOrderWithChangedLineItemPriceWillRequireTaxRecalculation()
-    {
-        /**
-         * @var Order $order
-         */
-        $order = $this->getReference(LoadOrders::ORDER_1);
-        $firstLineItem = $order->getLineItems()[0];
-        $price = new Price();
-        $price->setValue(123456);
-        $price->setCurrency('USD');
-        $firstLineItem->setPrice($price);
-
-        self::assertTrue($this->specification->isSatisfiedBy($order));
-    }
-
     public function testOrderWithChangedBillingAddressZipWillRequireTaxRecalculation()
     {
         /**
