@@ -101,6 +101,8 @@ oro.cms:
             label: 'Paste here your HTML/CSS and click Import'
             title: 'Import'
             button: 'Import'
+            message:
+                twig_exp: 'An unexpected error occurred while converting wysiwyg content'
         code:
             label: 'Paste your code here'
             title: 'Code editor'
