@@ -24,8 +24,8 @@ oro_cms_content_widget:
     resource:     "@OroCMSBundle/Controller/ContentWidgetController.php"
     type:         annotation
     prefix:       /cms/content-widget
-
-oro_cms_wysiwyg_validation:
-    resource:     "@OroCMSBundle/Controller/WysiwygValidationController.php"
+    
+oro_cms_wysiwyg_content:
+    resource:     "@OroCMSBundle/Controller/WysiwygContentController.php"
     type:         annotation
-    prefix:       /cms/wysiwyg/validation
+    prefix:       /cms/wysiwyg/content

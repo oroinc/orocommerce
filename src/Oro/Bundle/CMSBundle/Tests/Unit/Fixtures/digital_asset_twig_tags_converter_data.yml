@@ -85,6 +85,27 @@ convertToUrls:
       {{ wysiwyg_file('1','new-uuid') }}
       <a title="nonexisting file" src="{{ wysiwyg_file('2','new-uuid') }}"/>
 
+convertToUrlsWithException:
+  wysiwyg image with uuid:
+    contentWithTwigTags: |
+      <h3>Sample content</h3>
+      {{ wysiwyg_image('1001','uuid-2010') }}
+      <img alt="existing image" src="{{ wysiwyg_image('1002','uuid-2020') }}"/>
+    expected: |
+      <h3>Sample content</h3>
+      /media/cache/attachment/resize/wysiwyg_original/filterMd5/10010/file10010.jpg
+      <img alt="existing image" src="/media/cache/attachment/resize/wysiwyg_original/filterMd5/10020/file10020.jpg"/>
+
+  wysiwyg file with uuid:
+    contentWithTwigTags: |
+      <h3>Sample content</h3>
+      {{ wysiwyg_file('1001','uuid-2010') }}
+      <a title="existing file" src="{{ wysiwyg_file('1002','uuid-2020') }}"/>
+    expected: |
+      <h3>Sample content</h3>
+      /attachment/download/10010/file10010.jpg
+      <a title="existing file" src="/attachment/download/10020/file10020.jpg"/>
+
 convertToTwigTags:
   empty data:
     contentWithUrls: ''

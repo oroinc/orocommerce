@@ -100,10 +100,7 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
             ->method('getManagerForClass')
             ->willReturn($entityManager);
 
-        $fileRepository = $this->getMockBuilder(FileRepository::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['findByUuid'])
-            ->getMock();
+        $fileRepository = $this->createMock(FileRepository::class);
 
         $digitalAssetRepository = $this->createMock(DigitalAssetRepository::class);
         $entityManager
@@ -118,15 +115,17 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
 
         $fileRepository
             ->expects($this->any())
-            ->method('findByUuid')
+            ->method('findOneBy')
             ->willReturnCallback(
-                static function (string $uuid) {
+                static function (array $criteria) {
+                    $uuid = $criteria['uuid'];
+
                     if ($uuid === 'new-uuid') {
                         // File with such uuid does not exist.
-                        return [];
+                        return null;
                     }
 
-                    return [(new TestFile())->setId(explode('-', $uuid)[1])];
+                    return (new TestFile())->setId(explode('-', $uuid)[1]);
                 }
             );
 
@@ -153,6 +152,88 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
     public function convertToUrlsDataProvider(): array
     {
         return self::getFixturesData('convertToUrls');
+    }
+
+    /**
+     * @dataProvider convertToUrlsWithExceptionDataProvider
+     *
+     * @param string $contentWithTwigTags
+     * @param string $expected
+     */
+    public function testConvertToUrlsWhenDatabaseException(string $contentWithTwigTags, string $expected): void
+    {
+        $this->fileUrlProvider
+            ->expects($this->any())
+            ->method('getFilteredImageUrl')
+            ->willReturnCallback(
+                function (File $file, string $filterName) {
+                    $this->assertEquals('wysiwyg_original', $filterName);
+
+                    return sprintf(
+                        '/media/cache/attachment/resize/wysiwyg_original/filterMd5/%1$d/file%1$d.jpg',
+                        $file->getId()
+                    );
+                }
+            );
+
+        $this->fileUrlProvider
+            ->expects($this->any())
+            ->method('getFileUrl')
+            ->willReturnCallback(
+                function (File $file, string $actionName) {
+                    $this->assertEquals(FileUrlProviderInterface::FILE_ACTION_DOWNLOAD, $actionName);
+
+                    return sprintf('/attachment/download/%1$d/file%1$d.jpg', $file->getId());
+                }
+            );
+
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $this->managerRegistry
+            ->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($entityManager);
+
+        $fileRepository = $this->createMock(FileRepository::class);
+
+        $digitalAssetRepository = $this->createMock(DigitalAssetRepository::class);
+        $entityManager
+            ->expects($this->any())
+            ->method('getRepository')
+            ->willReturnMap(
+                [
+                    [File::class, $fileRepository],
+                    [DigitalAsset::class, $digitalAssetRepository],
+                ]
+            );
+
+        $fileRepository
+            ->expects($this->any())
+            ->method('findOneBy')
+            ->willThrowException(new \Exception());
+
+        $digitalAssetRepository
+            ->expects($this->any())
+            ->method('findSourceFile')
+            ->willReturnCallback(
+                static function (int $digitalAssetId) {
+                    if ($digitalAssetId < 1000) {
+                        // Digital asset with such id does not exist.
+                        throw new NoResultException();
+                    }
+
+                    return (new TestFile())->setId($digitalAssetId * 10);
+                }
+            );
+
+        $this->assertEquals($expected, $this->converter->convertToUrls($contentWithTwigTags));
+    }
+
+    /**
+     * @return array
+     */
+    public function convertToUrlsWithExceptionDataProvider(): array
+    {
+        return self::getFixturesData('convertToUrlsWithException');
     }
 
     /**

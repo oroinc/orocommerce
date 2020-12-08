@@ -75,13 +75,7 @@ class DigitalAssetTwigTagsConverter
         $digitalAssetId = $matches['digitalAssetId'] ?? '';
         $uuid = $matches['uuid'] ?? '';
         if ($function && $digitalAssetId && $uuid) {
-            $file = current(
-                $this->managerRegistry
-                    ->getManagerForClass(File::class)
-                    ->getRepository(File::class)
-                    ->findByUuid($uuid)
-            );
-
+            $file = $this->getFileByUuid($uuid);
             if (!$file) {
                 /** @var EntityManager $digitalAssetEntityManager */
                 $digitalAssetEntityManager = $this->managerRegistry->getManagerForClass(DigitalAsset::class);
@@ -102,6 +96,23 @@ class DigitalAssetTwigTagsConverter
         }
 
         return $matches[0];
+    }
+
+    /**
+     * @param string $uuid
+     * @return null|File
+     */
+    private function getFileByUuid(string $uuid): ?File
+    {
+        try {
+            $file = $this->managerRegistry->getManagerForClass(File::class)
+                ->getRepository(File::class)
+                ->findOneBy(['uuid' => $uuid]);
+        } catch (\Exception $e) {
+            $file = null;
+        }
+
+        return $file;
     }
 
     /**

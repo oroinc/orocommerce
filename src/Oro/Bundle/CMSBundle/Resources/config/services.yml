@@ -473,3 +473,6 @@ services:
         arguments:
             - '@doctrine'
             - '@oro_attachment.provider.file_url'
+
+    Oro\Bundle\CMSBundle\Tools\DigitalAssetTwigTagsConverter:
+        alias: oro_cms.tools.digital_asset_twig_tags_converter
