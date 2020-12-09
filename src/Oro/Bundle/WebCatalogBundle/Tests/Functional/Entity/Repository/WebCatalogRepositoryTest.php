@@ -38,13 +38,10 @@ class WebCatalogRepositoryTest extends WebTestCase
         $webCatalog = $this->getReference(LoadWebCatalogData::CATALOG_1);
         /** @var Scope $scope1 */
         $scope1 = $this->getReference(LoadWebCatalogScopes::SCOPE1);
-        /** @var Scope $scope2 */
-        $scope2 = $this->getReference(LoadWebCatalogScopes::SCOPE2);
 
         $usedScopes = $this->repository->getUsedScopes($webCatalog);
-        $this->assertCount(2, $usedScopes);
+        $this->assertCount(1, $usedScopes);
         $this->assertContains($scope1, $usedScopes);
-        $this->assertContains($scope2, $usedScopes);
     }
 
     public function testGetMatchingScopes()

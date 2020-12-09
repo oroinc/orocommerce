@@ -2,13 +2,11 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Configuration;
 
-use Oro\Bundle\WebsiteSearchBundle\Event\WebsiteSearchMappingEvent;
 use Oro\Component\Config\Cache\PhpArrayConfigProvider;
 use Oro\Component\Config\Loader\CumulativeConfigLoader;
 use Oro\Component\Config\Loader\CumulativeConfigProcessorUtil;
 use Oro\Component\Config\Loader\YamlCumulativeFileLoader;
 use Oro\Component\Config\ResourcesContainerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * The provider for website search mapping configuration
@@ -17,23 +15,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class MappingConfigurationProvider extends PhpArrayConfigProvider
 {
     private const CONFIG_FILE = 'Resources/config/oro/website_search.yml';
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
-
-    /**
-     * @param string $cacheFile
-     * @param bool $debug
-     * @param EventDispatcherInterface $eventDispatcher
-     */
-    public function __construct(string $cacheFile, bool $debug, EventDispatcherInterface $eventDispatcher)
-    {
-        parent::__construct($cacheFile, $debug);
-
-        $this->eventDispatcher = $eventDispatcher;
-    }
 
     /**
      * Gets website search mapping configuration.
@@ -59,10 +40,6 @@ class MappingConfigurationProvider extends PhpArrayConfigProvider
         foreach ($resources as $resource) {
             $configs[] = $resource->data;
         }
-
-        $event = new WebsiteSearchMappingEvent();
-        $this->eventDispatcher->dispatch(WebsiteSearchMappingEvent::NAME, $event);
-        $configs[] = $event->getConfiguration();
 
         return CumulativeConfigProcessorUtil::processConfiguration(
             self::CONFIG_FILE,

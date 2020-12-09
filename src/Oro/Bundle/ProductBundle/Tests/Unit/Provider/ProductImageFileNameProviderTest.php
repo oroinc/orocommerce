@@ -95,4 +95,23 @@ class ProductImageFileNameProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals('filename-original-filename_-123-картинка.jpeg', $this->provider->getFileName($file));
     }
+
+    public function testGetFileNameOriginalFileNamesEnabledNoOriginalFileName()
+    {
+        $file = new File();
+        $file->setFilename('filename.jpeg');
+        $file->setExtension('jpeg');
+        $file->setParentEntityClass(ProductImage::class);
+
+        $this->configManager->expects($this->never())
+            ->method('get')
+            ->with('oro_product.original_file_names_enabled');
+
+        $this->innerProvider->expects($this->once())
+            ->method('getFileName')
+            ->with($file)
+            ->willReturn('filename.jpeg');
+
+        $this->assertEquals('filename.jpeg', $this->provider->getFileName($file));
+    }
 }

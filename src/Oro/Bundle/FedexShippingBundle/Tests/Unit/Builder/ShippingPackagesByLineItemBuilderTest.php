@@ -94,6 +94,37 @@ class ShippingPackagesByLineItemBuilderTest extends TestCase
         static::assertFalse($this->builder->addLineItem($lineItem));
     }
 
+    public function testAddLineItemDividedByWeightOnlyWhenDimensionsIgnored()
+    {
+        $packageSettings = new FedexPackageSettings(
+            'kg',
+            'cm',
+            'weight < 10 and length < 20 and (length + 2*width + 2*height < 20)'
+        );
+        $packageSettings->setIgnorePackageDimensions(true);
+        $lineItem = new ShippingLineItem([
+            ShippingLineItem::FIELD_DIMENSIONS => Dimensions::create(1, 1, 1),
+            ShippingLineItem::FIELD_WEIGHT => Weight::create(4),
+            ShippingLineItem::FIELD_QUANTITY => 3,
+        ]);
+
+        $this->builder->init($packageSettings);
+        static::assertTrue($this->builder->addLineItem($lineItem));
+        static::assertEquals(
+            [
+                new ShippingPackageOptions(
+                    Dimensions::create(0, 0, 0, null),
+                    Weight::create(8, (new WeightUnit())->setCode('kg'))
+                ),
+                new ShippingPackageOptions(
+                    Dimensions::create(0, 0, 0, null),
+                    Weight::create(4, (new WeightUnit())->setCode('kg'))
+                )
+            ],
+            $this->builder->getResult()
+        );
+    }
+
     public function testAddLineItemDividedByWeight()
     {
         $packageSettings = new FedexPackageSettings(

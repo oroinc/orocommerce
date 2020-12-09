@@ -9,6 +9,11 @@ doctrine:
             wysiwyg: Oro\Bundle\CMSBundle\DBAL\Types\WYSIWYGType
             wysiwyg_style: Oro\Bundle\CMSBundle\DBAL\Types\WYSIWYGStyleType
             wysiwyg_properties: Oro\Bundle\CMSBundle\DBAL\Types\WYSIWYGPropertiesType
+    orm:
+        entity_managers:
+            default:
+                hydrators:
+                    oro.cms.entity.hydrator.matching_variant: Oro\Bundle\CMSBundle\Entity\Hydrator\MatchingVariantHydrator
 
 oro_api:
     form_type_guesses:
