@@ -137,7 +137,7 @@ HTML;
         $expected = sprintf(
             self::CONTENT,
             sprintf(
-                "/media/cache/attachment/resize/wysiwyg_original/11c00c6d0bd6b875afe655d3c9d4f942/%s/source.file",
+                "/media/cache/attachment/filter/wysiwyg_original/11c00c6d0bd6b875afe655d3c9d4f942/%s/source.file",
                 $file->getId()
             )
         );
