@@ -47,6 +47,44 @@ class SyncSlugRedirectsProcessorTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    public function testProcessRejectWhenSlugNotFound()
+    {
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
+        $message = $this->createMock(MessageInterface::class);
+        $message->expects($this->once())
+            ->method('getBody')
+            ->willReturn(json_encode(['slugId' => 1]));
+
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
+        $session = $this->createMock(SessionInterface::class);
+
+        $slugRepository = $this->createMock(SlugRepository::class);
+        $slugRepository->expects($this->once())
+            ->method('find')
+            ->with(1)
+            ->willReturn(null);
+
+        $slugManager = $this->createMock(EntityManagerInterface::class);
+        $slugManager->expects($this->once())
+            ->method('getRepository')
+            ->willReturn($slugRepository);
+
+        $redirectManager = $this->createMock(EntityManagerInterface::class);
+        $redirectManager->expects($this->once())
+            ->method('beginTransaction');
+
+        $this->registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturnMap([
+                [Slug::class, $slugManager],
+                [Redirect::class, $redirectManager]
+            ]);
+        $this->assertEquals(
+            MessageProcessorInterface::REJECT,
+            $this->processor->process($message, $session)
+        );
+    }
+
     public function testProcessRejectInvalidMessage()
     {
         /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
