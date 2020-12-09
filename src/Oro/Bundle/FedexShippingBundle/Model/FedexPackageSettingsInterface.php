@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\FedexShippingBundle\Model;
 
+/**
+ * Represents fedex package settings
+ */
 interface FedexPackageSettingsInterface
 {
     /**
@@ -18,4 +21,9 @@ interface FedexPackageSettingsInterface
      * @return string
      */
     public function getLimitationExpression(): string;
+
+    /**
+     * @return bool
+     */
+    public function isDimensionsIgnored(): bool;
 }

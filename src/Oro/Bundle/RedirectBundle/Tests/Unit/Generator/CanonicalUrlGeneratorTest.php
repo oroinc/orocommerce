@@ -2,74 +2,28 @@
 
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Generator;
 
-use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Collections\ArrayCollection;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
 use Oro\Bundle\RedirectBundle\DependencyInjection\OroRedirectExtension;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
-use Oro\Bundle\RedirectBundle\Provider\RoutingInformationProvider;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Bundle\WebsiteBundle\Resolver\WebsiteUrlResolver;
 use Oro\Component\Routing\RouteData;
-use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Component\Website\WebsiteInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class CanonicalUrlGeneratorTest extends \PHPUnit\Framework\TestCase
+class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
 {
-    use EntityTrait;
-
-    const WEBSITE_ID = 777;
-
     /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
+     * @return CanonicalUrlGenerator
      */
-    protected $configManager;
-
-    /**
-     * @var Cache|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $cache;
-
-    /**
-     * @var RequestStack|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $requestStack;
-
-    /**
-     * @var RoutingInformationProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $routingInformationProvider;
-
-    /**
-     * @var WebsiteUrlResolver|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $websiteUrlResolver;
-
-    /**
-     * @var CanonicalUrlGenerator
-     */
-    protected $canonicalUrlGenerator;
-
-    protected function setUp(): void
+    protected function createGenerator(): CanonicalUrlGenerator
     {
-        $this->configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->cache = $this->createMock(Cache::class);
-        $this->requestStack = $this->createMock(RequestStack::class);
-        $this->routingInformationProvider = $this->createMock(RoutingInformationProvider::class);
-
-        $this->websiteUrlResolver = $this->createMock(WebsiteUrlResolver::class);
-        $this->canonicalUrlGenerator = new CanonicalUrlGenerator(
+        return new CanonicalUrlGenerator(
             $this->configManager,
             $this->cache,
             $this->requestStack,
@@ -135,7 +89,7 @@ class CanonicalUrlGeneratorTest extends \PHPUnit\Framework\TestCase
         $expectedUrl = 'http://example.com/index_dev.php/canonical';
         $expectedBaseUrl = '/index_dev.php';
         $urlSecurityType = Configuration::INSECURE;
-        $website = $this->getWebsite();
+        $website = $this->getEntity(Website::class, ['id' => 777]);
 
         $this->websiteUrlResolver->expects($this->any())
             ->method('getWebsiteUrl')
@@ -147,7 +101,15 @@ class CanonicalUrlGeneratorTest extends \PHPUnit\Framework\TestCase
         $slug->setRouteName('route_name');
         $slug->setRouteParameters([]);
 
-        $this->doTestDirectUrlWithWebsite($slug, $website, $expectedUrl, $expectedBaseUrl, $urlSecurityType);
+        $this->assertUrlTypeCalls($urlSecurityType, $website);
+
+        $this->cache->expects($this->any())
+            ->method('contains')
+            ->willReturn(false);
+
+        $entity = $this->getSluggableEntityMock($slug);
+        $this->assertRequestCalls($entity, $expectedBaseUrl);
+        $this->assertEquals($expectedUrl, $this->canonicalUrlGenerator->getUrl($entity, null, $website));
     }
 
     public function testGetDirectUrlForInsecureCanonicalWithInstallationInSubfolder()
@@ -157,7 +119,7 @@ class CanonicalUrlGeneratorTest extends \PHPUnit\Framework\TestCase
         $expectedUrl = 'http://example.com/subfolder/index_dev.php/canonical';
         $expectedBaseUrl = '/subfolder/index_dev.php';
         $urlSecurityType = Configuration::INSECURE;
-        $website = $this->getWebsite();
+        $website = $this->getEntity(Website::class, ['id' => 777]);
 
         $this->websiteUrlResolver->expects($this->any())
             ->method('getWebsiteUrl')
@@ -169,7 +131,10 @@ class CanonicalUrlGeneratorTest extends \PHPUnit\Framework\TestCase
         $slug->setRouteName('route_name');
         $slug->setRouteParameters([]);
 
-        $this->doTestDirectUrlWithWebsite($slug, $website, $expectedUrl, $expectedBaseUrl, $urlSecurityType);
+        $this->assertUrlTypeCalls($urlSecurityType, $website);
+        $entity = $this->getSluggableEntityMock($slug);
+        $this->assertRequestCalls($entity, $expectedBaseUrl);
+        $this->assertEquals($expectedUrl, $this->canonicalUrlGenerator->getUrl($entity, null, $website));
     }
 
     public function testGetDirectUrlForSecureCanonical()
@@ -179,7 +144,7 @@ class CanonicalUrlGeneratorTest extends \PHPUnit\Framework\TestCase
         $expectedUrl = 'https://example.com/index_dev.php/canonical';
         $expectedBaseUrl = '/index_dev.php';
         $urlSecurityType = Configuration::SECURE;
-        $website = $this->getWebsite();
+        $website = $this->getEntity(Website::class, ['id' => 777]);
 
         $this->websiteUrlResolver->expects($this->any())
             ->method('getWebsiteSecureUrl')
@@ -191,7 +156,10 @@ class CanonicalUrlGeneratorTest extends \PHPUnit\Framework\TestCase
         $slug->setRouteName('route_name');
         $slug->setRouteParameters([]);
 
-        $this->doTestDirectUrlWithWebsite($slug, $website, $expectedUrl, $expectedBaseUrl, $urlSecurityType);
+        $this->assertUrlTypeCalls($urlSecurityType, $website);
+        $entity = $this->getSluggableEntityMock($slug);
+        $this->assertRequestCalls($entity, $expectedBaseUrl);
+        $this->assertEquals($expectedUrl, $this->canonicalUrlGenerator->getUrl($entity, null, $website));
     }
 
     public function testGetDirectUrlWithLocalePassed()
@@ -213,13 +181,16 @@ class CanonicalUrlGeneratorTest extends \PHPUnit\Framework\TestCase
         $slug->setRouteParameters([]);
         $slug->setLocalization($localization);
 
-        $this->doTestDirectUrlWithoutWebsite($slug, $expectedUrl, null, Configuration::INSECURE, $localization);
+        $this->assertUrlTypeCalls(Configuration::INSECURE);
+        $entity = $this->getSluggableEntityMock($slug);
+        $this->assertRequestCalls($entity);
+        $this->assertEquals($expectedUrl, $this->canonicalUrlGenerator->getUrl($entity, $localization));
     }
 
     public function testGetSystemUrlForInsecureCanonical()
     {
         $expectedUrl = 'http://example.com/canonical';
-        $website = $this->getWebsite();
+        $website = $this->getEntity(Website::class, ['id' => 1]);
 
         /** @var SluggableInterface|\PHPUnit\Framework\MockObject\MockObject $data * */
         $data = $this->createMock(SluggableInterface::class);
@@ -232,21 +203,7 @@ class CanonicalUrlGeneratorTest extends \PHPUnit\Framework\TestCase
             ->method('contains')
             ->willReturn(false);
 
-        $urlTypeKey = 'oro_redirect.canonical_url_type.' . self::WEBSITE_ID;
-        $urlSecurityTypeKey = 'oro_redirect.canonical_url_security_type.' . self::WEBSITE_ID;
-        $this->cache->expects($this->any())
-            ->method('fetch')
-            ->willReturnMap([
-                [$urlTypeKey, Configuration::SYSTEM_URL],
-                [$urlSecurityTypeKey, Configuration::INSECURE]
-            ]);
-
-        $this->configManager->expects($this->any())
-            ->method('get')
-            ->willReturnMap([
-                [$urlTypeKey, false, false, null, Configuration::SYSTEM_URL],
-                [$urlSecurityTypeKey, false, false, null, Configuration::INSECURE]
-            ]);
+        $this->assertUrlTypeCalls(Configuration::INSECURE, $website);
 
         $this->routingInformationProvider->expects($this->once())
             ->method('getRouteData')
@@ -264,7 +221,7 @@ class CanonicalUrlGeneratorTest extends \PHPUnit\Framework\TestCase
     public function testGetSystemUrlForSecureCanonical()
     {
         $expectedUrl = 'https://example.com/canonical';
-        $website = $this->getWebsite();
+        $website = $this->getEntity(Website::class, ['id' => 777]);
 
         /** @var SluggableInterface|\PHPUnit\Framework\MockObject\MockObject $data * */
         $data = $this->createMock(SluggableInterface::class);
@@ -277,21 +234,7 @@ class CanonicalUrlGeneratorTest extends \PHPUnit\Framework\TestCase
             ->method('contains')
             ->willReturn(false);
 
-        $urlTypeKey = 'oro_redirect.canonical_url_type.' . self::WEBSITE_ID;
-        $urlSecurityTypeKey = 'oro_redirect.canonical_url_security_type.' . self::WEBSITE_ID;
-        $this->cache->expects($this->any())
-            ->method('fetch')
-            ->willReturnMap([
-                [$urlTypeKey, Configuration::DIRECT_URL],
-                [$urlSecurityTypeKey, Configuration::SECURE]
-            ]);
-
-        $this->configManager->expects($this->any())
-            ->method('get')
-            ->willReturnMap([
-                [$urlTypeKey, false, false, null, Configuration::SYSTEM_URL],
-                [$urlSecurityTypeKey, false, false, null, Configuration::SECURE]
-            ]);
+        $this->assertUrlTypeCalls(Configuration::SECURE, $website);
 
         $this->routingInformationProvider->expects($this->once())
             ->method('getRouteData')
@@ -349,122 +292,6 @@ class CanonicalUrlGeneratorTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedUrl, $this->canonicalUrlGenerator->getUrl($data));
     }
 
-    /**
-     * @param Slug $slug
-     * @param WebsiteInterface $website
-     * @param string $expectedUrl
-     * @param string|null $expectedBaseUrl
-     * @param string $urlSecurityType
-     * @param Localization|null $urlLocale
-     */
-    private function doTestDirectUrlWithWebsite(
-        Slug $slug,
-        WebsiteInterface $website,
-        $expectedUrl,
-        $expectedBaseUrl = null,
-        $urlSecurityType = Configuration::INSECURE,
-        Localization $urlLocale = null
-    ) {
-        $urlTypeKey = 'oro_redirect.canonical_url_type.' . self::WEBSITE_ID;
-        $urlSecurityTypeKey = 'oro_redirect.canonical_url_security_type.' . self::WEBSITE_ID;
-        $this->cache->expects($this->any())
-            ->method('fetch')
-            ->willReturnMap([
-                [$urlTypeKey, Configuration::DIRECT_URL],
-                [$urlSecurityTypeKey, $urlSecurityType]
-            ]);
-
-        $this->configManager->expects($this->any())
-            ->method('get')
-            ->willReturnMap([
-                [$urlTypeKey, false, false, $website, Configuration::DIRECT_URL],
-                [$urlSecurityTypeKey, false, false, $website, $urlSecurityType]
-            ]);
-
-        $this->doTestDirectUrl($slug, $expectedUrl, $expectedBaseUrl, $urlLocale, $website);
-    }
-
-    /**
-     * @param Slug $slug
-     * @param string $expectedUrl
-     * @param string|null $expectedBaseUrl
-     * @param string $urlSecurityType
-     * @param Localization|null $urlLocale
-     */
-    private function doTestDirectUrlWithoutWebsite(
-        Slug $slug,
-        $expectedUrl,
-        $expectedBaseUrl = null,
-        $urlSecurityType = Configuration::INSECURE,
-        Localization $urlLocale = null
-    ) {
-        $this->cache->expects($this->any())
-            ->method('fetch')
-            ->willReturnMap([
-                ['oro_redirect.canonical_url_type', Configuration::DIRECT_URL],
-                ['oro_redirect.canonical_url_security_type', $urlSecurityType]
-            ]);
-
-        $this->configManager->expects($this->any())
-            ->method('get')
-            ->willReturnMap([
-                ['oro_redirect.canonical_url_type', false, false, null, Configuration::DIRECT_URL],
-                ['oro_redirect.canonical_url_security_type', false, false, null, $urlSecurityType]
-            ]);
-
-        $this->doTestDirectUrl($slug, $expectedUrl, $expectedBaseUrl, $urlLocale);
-    }
-
-    /**
-     * @param Slug $slug
-     * @param string $expectedUrl
-     * @param string|null $expectedBaseUrl
-     * @param Localization|null $urlLocale
-     * @param WebsiteInterface|null $website
-     */
-    protected function doTestDirectUrl(
-        Slug $slug,
-        $expectedUrl,
-        $expectedBaseUrl = null,
-        Localization $urlLocale = null,
-        WebsiteInterface $website = null
-    ) {
-        $slugs = new ArrayCollection([$slug]);
-
-        /** @var SluggableInterface|\PHPUnit\Framework\MockObject\MockObject $data * */
-        $data = $this->createMock(SluggableInterface::class);
-        $data->expects($this->any())
-            ->method('getSlugs')
-            ->willReturn($slugs);
-
-        $data->expects($this->any())
-            ->method('getBaseSlug')
-            ->willReturn($slug);
-
-        $data->expects($this->any())
-            ->method('getSlugByLocalization')
-            ->willReturn($slug);
-
-        $this->cache->expects($this->any())
-            ->method('contains')
-            ->willReturn(false);
-
-        /** @var Request|\PHPUnit\Framework\MockObject\MockObject $request */
-        $request = $this->createMock(Request::class);
-        $request->expects($this->any())
-            ->method('getBaseUrl')
-            ->willReturn($expectedBaseUrl);
-        $this->requestStack->expects($this->atMost(1))
-            ->method('getMasterRequest')
-            ->willReturn($request);
-
-        $this->routingInformationProvider->expects($this->never())
-            ->method('getRouteData')
-            ->with($data);
-
-        $this->assertEquals($expectedUrl, $this->canonicalUrlGenerator->getUrl($data, $urlLocale, $website));
-    }
-
     public function testClearCacheWithoutWebsite()
     {
         $this->cache->expects($this->exactly(2))
@@ -478,7 +305,7 @@ class CanonicalUrlGeneratorTest extends \PHPUnit\Framework\TestCase
 
     public function testClearCacheWithWebsite()
     {
-        $website = $this->getWebsite();
+        $website = $this->getEntity(Website::class, ['id' => 777]);
         $this->cache->expects($this->exactly(2))
             ->method('delete')
             ->withConsecutive(
@@ -487,7 +314,7 @@ class CanonicalUrlGeneratorTest extends \PHPUnit\Framework\TestCase
                         '%s.%s.%s',
                         OroRedirectExtension::ALIAS,
                         Configuration::CANONICAL_URL_TYPE,
-                        self::WEBSITE_ID
+                        777
                     )
                 ],
                 [
@@ -495,7 +322,7 @@ class CanonicalUrlGeneratorTest extends \PHPUnit\Framework\TestCase
                         '%s.%s.%s',
                         OroRedirectExtension::ALIAS,
                         Configuration::CANONICAL_URL_SECURITY_TYPE,
-                        self::WEBSITE_ID
+                        777
                     )
                 ]
             );
@@ -506,7 +333,7 @@ class CanonicalUrlGeneratorTest extends \PHPUnit\Framework\TestCase
     public function testGetCanonicalDomainUrlSecure()
     {
         $host = 'https://host.domain';
-        $website = $this->getWebsite();
+        $website = $this->getEntity(Website::class, ['id' => 777]);
 
         $this->configManager->expects($this->once())
             ->method('get')
@@ -529,7 +356,7 @@ class CanonicalUrlGeneratorTest extends \PHPUnit\Framework\TestCase
     public function testGetCanonicalDomainUrlNotSecure()
     {
         $host = 'http://host.domain';
-        $website = $this->getWebsite();
+        $website = $this->getEntity(Website::class, ['id' => 777]);
 
         $this->configManager->expects($this->once())
             ->method('get')
@@ -553,7 +380,7 @@ class CanonicalUrlGeneratorTest extends \PHPUnit\Framework\TestCase
     {
         $host = 'https://host.domain/hello/';
         $url = '/test/my/url';
-        $website = $this->getWebsite();
+        $website = $this->getEntity(Website::class, ['id' => 777]);
 
         $this->configManager->expects($this->once())
             ->method('get')
@@ -609,18 +436,5 @@ class CanonicalUrlGeneratorTest extends \PHPUnit\Framework\TestCase
             'https://host.domain/test/my/url',
             $this->canonicalUrlGenerator->createUrl($host, $url)
         );
-    }
-
-    /**
-     * @return WebsiteInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function getWebsite()
-    {
-        $website = $this->createMock(WebsiteInterface::class);
-        $website->expects($this->any())
-            ->method('getId')
-            ->willReturn(self::WEBSITE_ID);
-
-        return $website;
     }
 }

@@ -5,13 +5,13 @@ namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
+use Oro\Bundle\SearchBundle\Provider\SearchMappingProvider;
 use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Event\BeforeReindexEvent;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderInterface;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder;
-use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
 use Oro\Bundle\WebsiteSearchBundle\Resolver\EntityDependenciesResolverInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -41,7 +41,7 @@ abstract class AbstractIndexer implements IndexerInterface
     /** @var DoctrineHelper */
     protected $doctrineHelper;
 
-    /** @var WebsiteSearchMappingProvider */
+    /** @var SearchMappingProvider */
     protected $mappingProvider;
 
     /** @var IndexerInputValidator */
@@ -54,17 +54,17 @@ abstract class AbstractIndexer implements IndexerInterface
     private $batchSize = 100;
 
     /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param WebsiteSearchMappingProvider $mappingProvider
+     * @param DoctrineHelper                      $doctrineHelper
+     * @param SearchMappingProvider               $mappingProvider
      * @param EntityDependenciesResolverInterface $entityDependenciesResolver
-     * @param IndexDataProvider $indexDataProvider
-     * @param PlaceholderInterface $placeholder
-     * @param IndexerInputValidator $indexerInputValidator
-     * @param EventDispatcherInterface $eventDispatcher
+     * @param IndexDataProvider                   $indexDataProvider
+     * @param PlaceholderInterface                $placeholder
+     * @param IndexerInputValidator               $indexerInputValidator
+     * @param EventDispatcherInterface            $eventDispatcher
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
-        WebsiteSearchMappingProvider $mappingProvider,
+        SearchMappingProvider $mappingProvider,
         EntityDependenciesResolverInterface $entityDependenciesResolver,
         IndexDataProvider $indexDataProvider,
         PlaceholderInterface $placeholder,
@@ -115,7 +115,7 @@ abstract class AbstractIndexer implements IndexerInterface
      */
     public function reindex($classOrClasses = null, array $context = [])
     {
-        list($entityClassesToIndex, $websiteIdsToIndex) =
+        [$entityClassesToIndex, $websiteIdsToIndex] =
             $this->inputValidator->validateRequestParameters(
                 $classOrClasses,
                 $context

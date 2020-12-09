@@ -138,7 +138,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @Then /^I assert canonical URL for "(?P<categoryName>.+)" category including subcategories$/
+     * @Then /^I assert canonical URL for "(?P<categoryName>.+)" category is a System URL including subcategories$/
      *
      * @param string $categoryName
      */
@@ -148,7 +148,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @Then /^I assert canonical URL for "(?P<categoryName>.+)" category not including subcategories$/
+     * @Then /^I assert canonical URL for "(?P<categoryName>.+)" category is a System URL not including subcategories$/
      *
      * @param string $categoryName
      */

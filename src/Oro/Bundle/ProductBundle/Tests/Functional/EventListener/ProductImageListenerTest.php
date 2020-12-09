@@ -252,19 +252,19 @@ class ProductImageListenerTest extends WebTestCase
 
     public function testDuplicateProductImage()
     {
-        /** @var Product $product1 */
-        $product1 = $this->getReference(LoadProductData::PRODUCT_1);
-        $productCopy1 = $this->getContainer()->get('oro_product.service.duplicator')->duplicate($product1);
-        $this->em->refresh($productCopy1);
+        /** @var Product $product3 */
+        $product3 = $this->getReference(LoadProductData::PRODUCT_3);
+        $productCopy3 = $this->getContainer()->get('oro_product.service.duplicator')->duplicate($product3);
+        $this->em->refresh($productCopy3);
         /** @var ProductImage $productImageCopy1 */
-        $productImageCopy1 = $productCopy1->getImages()->first();
+        $productImageCopy1 = $productCopy3->getImages()->first();
 
-        /** @var Product $product2 */
-        $product2 = $this->getReference(LoadProductData::PRODUCT_2);
-        $productCopy2 = $this->getContainer()->get('oro_product.service.duplicator')->duplicate($product2);
-        $this->em->refresh($productCopy2);
+        /** @var Product $product8 */
+        $product8 = $this->getReference(LoadProductData::PRODUCT_8);
+        $productCopy8 = $this->getContainer()->get('oro_product.service.duplicator')->duplicate($product8);
+        $this->em->refresh($productCopy8);
         /** @var ProductImage $productImageCopy2 */
-        $productImageCopy2 = $productCopy2->getImages()->first();
+        $productImageCopy2 = $productCopy8->getImages()->first();
 
         $this->assertMessagesCount($this->imageResizeTopic, 2);
         $this->assertMessagesCount($this->productReindexTopic, 2);
@@ -284,13 +284,13 @@ class ProductImageListenerTest extends WebTestCase
         // There are 3 of the same message after duplicate
         $this->assertMessageSent(
             $this->productReindexTopic,
-            $this->prepareProductsReindexMessage([$productCopy1])
+            $this->prepareProductsReindexMessage([$productCopy3])
         );
 
         // There are 3 of the same message after duplicate
         $this->assertMessageSent(
             $this->productReindexTopic,
-            $this->prepareProductsReindexMessage([$productCopy2])
+            $this->prepareProductsReindexMessage([$productCopy8])
         );
     }
 

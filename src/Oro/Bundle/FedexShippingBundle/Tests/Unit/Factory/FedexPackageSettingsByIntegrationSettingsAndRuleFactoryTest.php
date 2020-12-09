@@ -14,6 +14,7 @@ class FedexPackageSettingsByIntegrationSettingsAndRuleFactoryTest extends TestCa
     {
         $settings = new FedexIntegrationSettings();
         $settings->setUnitOfWeight(FedexIntegrationSettings::UNIT_OF_WEIGHT_KG);
+        $settings->setIgnorePackageDimensions(true);
 
         $rule = new ShippingServiceRule();
         $rule->setLimitationExpressionKg('weight < 10');
@@ -22,7 +23,8 @@ class FedexPackageSettingsByIntegrationSettingsAndRuleFactoryTest extends TestCa
             new FedexPackageSettings(
                 FedexIntegrationSettings::UNIT_OF_WEIGHT_KG,
                 FedexIntegrationSettings::DIMENSION_CM,
-                'weight < 10'
+                'weight < 10',
+                true
             ),
             (new FedexPackageSettingsByIntegrationSettingsAndRuleFactory())->create($settings, $rule)
         );

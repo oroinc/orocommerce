@@ -21,6 +21,7 @@ class Configuration implements ConfigurationInterface
             [
                 'web_catalog' => ['type' => 'integer', 'value' => null],
                 'navigation_root' => ['type' => 'integer', 'value' => null],
+                'enable_web_catalog_canonical_url' => ['type' => 'boolean', 'value' => true],
             ]
         );
 

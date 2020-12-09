@@ -20,7 +20,7 @@ services:
     oro_cms.content_block.resolver:
         class: 'Oro\Bundle\CMSBundle\ContentBlock\ContentBlockResolver'
         arguments:
-            - "@property_accessor"
+            - "@doctrine"
 
     oro_cms.content_block.default_content_variant_scopes_resolver:
         class: 'Oro\Bundle\CMSBundle\ContentBlock\DefaultContentVariantScopesResolver'
@@ -386,6 +386,11 @@ services:
             - '@oro_cms.twig.renderer'
         tags:
             - { name: validator.constraint_validator }
+
+    oro_cms.event_listener.restrict_content_variant_by_page:
+        class: Oro\Bundle\CMSBundle\EventListener\RestrictContentVariantByPageEventListener
+        tags:
+            - { name: kernel.event_listener, event: oro_web_catalog.restrict_content_variant_by_entity, method: applyRestriction }
 
     oro_cms.provider.html_purifier_scope_provider:
         class: Oro\Bundle\CMSBundle\Provider\HTMLPurifierScopeProvider

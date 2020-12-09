@@ -3,13 +3,11 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Configuration;
 
 use Oro\Bundle\WebsiteSearchBundle\Configuration\MappingConfigurationProvider;
-use Oro\Bundle\WebsiteSearchBundle\Event\WebsiteSearchMappingEvent;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Provider\Fixture\Bundle\TestBundle1\TestBundle1;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Provider\Fixture\Bundle\TestBundle2\TestBundle2;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Provider\Fixture\Bundle\TestBundle3\TestBundle3;
 use Oro\Component\Config\CumulativeResourceManager;
 use Oro\Component\Testing\TempDirExtension;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class MappingConfigurationProviderTest extends \PHPUnit\Framework\TestCase
 {
@@ -17,9 +15,6 @@ class MappingConfigurationProviderTest extends \PHPUnit\Framework\TestCase
 
     /** @var string */
     private $cacheFile;
-
-    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $eventDispatcher;
 
     /** @var MappingConfigurationProvider */
     private $configurationProvider;
@@ -38,12 +33,10 @@ class MappingConfigurationProviderTest extends \PHPUnit\Framework\TestCase
             ]);
 
         $this->cacheFile = $this->getTempFile('ConfigurationProvider');
-        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
         $this->configurationProvider = new MappingConfigurationProvider(
             $this->cacheFile,
-            false,
-            $this->eventDispatcher
+            false
         );
     }
 
@@ -58,34 +51,12 @@ class MappingConfigurationProviderTest extends \PHPUnit\Framework\TestCase
         ];
         file_put_contents($this->cacheFile, \sprintf('<?php return %s;', \var_export($cachedConfig, true)));
 
-        $this->eventDispatcher
-            ->expects(self::never())
-            ->method('dispatch');
-
         $this->assertEquals($cachedConfig, $this->configurationProvider->getConfiguration());
     }
 
     public function testGetConfigurationWithoutCache()
     {
         $this->configurationProvider->clearCache();
-
-        $this->eventDispatcher
-            ->expects(self::once())
-            ->method('dispatch')
-            ->willReturnCallback(function (string $eventName, WebsiteSearchMappingEvent $event) {
-                $this->assertEquals(WebsiteSearchMappingEvent::NAME, $eventName);
-                $event->setConfiguration([
-                    'Oro\Bundle\TestBundle3\Entity\Product' => [
-                        'fields' => [
-                            'some_attribute' => [
-                                'name' => 'some_attribute',
-                                'type' => 'text',
-                                'organization_id' => 3
-                            ]
-                        ]
-                    ]
-                ]);
-            });
 
         $config = $this->configurationProvider->getConfiguration();
 
@@ -128,13 +99,7 @@ class MappingConfigurationProviderTest extends \PHPUnit\Framework\TestCase
                         'fulltext' => true,
                         'organization_id' => null
                     ],
-                    'price' => ['name' => 'price', 'type' => 'decimal', 'fulltext' => false, 'organization_id' => null],
-                    'some_attribute' => [
-                        'name' => 'some_attribute',
-                        'type' => 'text',
-                        'fulltext' => true,
-                        'organization_id' => 3
-                    ]
+                    'price' => ['name' => 'price', 'type' => 'decimal', 'fulltext' => false, 'organization_id' => null]
                 ]
             ]
         ];

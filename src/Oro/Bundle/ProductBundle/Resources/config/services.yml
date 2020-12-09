@@ -792,6 +792,7 @@ services:
         abstract: true
         arguments:
             - '@oro_segment.segment_manager'
+            - '@oro_website.manager'
             - '@oro_product.provider.segment'
             - '@oro_product.product.manager'
             - '@oro_config.manager'
@@ -1719,6 +1720,11 @@ services:
             - "@oro_config.manager"
         tags:
             - { name: oro_cms.content_widget.type }
+
+    oro_product.event_listener.restrict_content_variant_by_product:
+        class: Oro\Bundle\ProductBundle\EventListener\RestrictContentVariantByProductEventListener
+        tags:
+            - { name: kernel.event_listener, event: oro_web_catalog.restrict_content_variant_by_entity, method: applyRestriction }
 
     oro_product.event_listener.image_remove:
         class: Oro\Bundle\ProductBundle\EventListener\RemoveProductImageListener
