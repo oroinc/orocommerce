@@ -20,7 +20,7 @@ services:
     oro_cms.content_block.resolver:
         class: 'Oro\Bundle\CMSBundle\ContentBlock\ContentBlockResolver'
         arguments:
-            - "@property_accessor"
+            - "@doctrine"
 
     oro_cms.content_block.default_content_variant_scopes_resolver:
         class: 'Oro\Bundle\CMSBundle\ContentBlock\DefaultContentVariantScopesResolver'

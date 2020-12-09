@@ -66,8 +66,6 @@ class ContentBlockDataProvider
     public function getContentBlockView(string $alias): ?ContentBlockView
     {
         $criteria = $this->scopeManager->getCriteria($this->scopeType);
-        $context = $criteria->toArray();
-
         $contentBlock = $this->getContentBlock($alias);
 
         if (null === $contentBlock) {
@@ -76,7 +74,7 @@ class ContentBlockDataProvider
             return null;
         }
 
-        return $this->contentBlockResolver->getContentBlockView($contentBlock, $context);
+        return $this->contentBlockResolver->getContentBlockViewByCriteria($contentBlock, $criteria);
     }
 
     /**
