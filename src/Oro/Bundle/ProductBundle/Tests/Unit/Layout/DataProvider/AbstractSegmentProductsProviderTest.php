@@ -20,12 +20,19 @@ use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SegmentBundle\Entity\Manager\SegmentManager;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 abstract class AbstractSegmentProductsProviderTest extends \PHPUnit\Framework\TestCase
 {
+    use EntityTrait;
+
     /** @var SegmentManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $segmentManager;
+
+    /** @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject */
+    protected $websiteManager;
 
     /** @var ProductSegmentProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $productSegmentProvider;
@@ -60,6 +67,7 @@ abstract class AbstractSegmentProductsProviderTest extends \PHPUnit\Framework\Te
     protected function setUp()
     {
         $this->segmentManager = $this->createMock(SegmentManager::class);
+        $this->websiteManager = $this->createMock(WebsiteManager::class);
         $this->productSegmentProvider = $this->createMock(ProductSegmentProviderInterface::class);
         $this->productManager = $this->createMock(ProductManager::class);
         $this->configManager = $this->createMock(ConfigManager::class);

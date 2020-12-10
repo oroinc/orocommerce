@@ -96,14 +96,14 @@ class MatrixGridOrderProvider
 
         foreach ($collection->rows as $row) {
             foreach ($row->columns as $column) {
-                if ($column->product === null) {
+                if ($column->product === null || !$column->quantity) {
                     continue;
                 }
 
                 $lineItem = new LineItem();
                 $lineItem->setProduct($column->product);
                 $lineItem->setUnit($collection->unit);
-                $lineItem->setQuantity($column->quantity ?: 0);
+                $lineItem->setQuantity($column->quantity);
 
                 $tempShoppingList->addLineItem($lineItem);
             }

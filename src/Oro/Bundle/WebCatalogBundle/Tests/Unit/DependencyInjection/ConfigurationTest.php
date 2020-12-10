@@ -31,7 +31,11 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                 'navigation_root' => [
                     'value' => null,
                     'scope' => 'app'
-                ]
+                ],
+                'enable_web_catalog_canonical_url' => [
+                    'value' => false,
+                    'scope' => 'app'
+                ],
             ]
         ];
 

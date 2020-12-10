@@ -34,3 +34,8 @@ oro_cms_wysiwyg_validation:
     resource:     "@OroCMSBundle/Controller/WysiwygValidationController.php"
     type:         annotation
     prefix:       /cms/wysiwyg/validation
+    
+oro_cms_wysiwyg_content:
+    resource:     "@OroCMSBundle/Controller/WysiwygContentController.php"
+    type:         annotation
+    prefix:       /cms/wysiwyg/content

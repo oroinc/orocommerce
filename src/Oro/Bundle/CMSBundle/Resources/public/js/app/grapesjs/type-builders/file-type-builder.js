@@ -2,7 +2,6 @@ import _ from 'underscore';
 import __ from 'orotranslation/js/translator';
 import BaseTypeBuilder from 'orocms/js/app/grapesjs/type-builders/base-type-builder';
 import openDigitalAssetsCommand from 'orocms/js/app/grapesjs/modules/open-digital-assets-command';
-import DigitalAssetHelper from 'orocms/js/app/grapesjs/helpers/digital-asset-helper';
 
 function openDigitalAssetsManager(model) {
     model.em.get('Commands').run(
@@ -13,8 +12,7 @@ function openDigitalAssetsManager(model) {
             routeName: 'oro_digital_asset_widget_choose_file',
             onSelect: function(digitalAssetModel) {
                 const {
-                    digitalAssetId,
-                    uuid,
+                    url,
                     title = '',
                     filename = '',
                     target = '_self'
@@ -22,7 +20,7 @@ function openDigitalAssetsManager(model) {
                 const traitText = model.getTrait('text');
 
                 model.setAttributes({
-                    href: `{{ wysiwyg_file('${digitalAssetId}','${uuid}') }}`,
+                    href: url,
                     title: title,
                     target: target
                 }).set('content', filename);
@@ -171,19 +169,13 @@ const FileTypeBuilder = BaseTypeBuilder.extend({
                      * @private
                      */
                     _onSelect: function(digitalAssetModel) {
-                        const {digitalAssetId, uuid} = digitalAssetModel.get('previewMetadata');
-
-                        this.spreadUrl(
-                            `"{{ wysiwyg_image('${digitalAssetId}','${uuid}') }}"`
-                        );
+                        this.spreadUrl(digitalAssetModel.get('previewMetadata').url);
                     },
 
                     /**
                      * @inheritDoc
                      */
                     setValue: function(value, f) {
-                        value = DigitalAssetHelper.getImageUrlFromTwigTag(value);
-
                         DefaultView.prototype.setValue.apply(this, [value, f]);
                     }
                 })

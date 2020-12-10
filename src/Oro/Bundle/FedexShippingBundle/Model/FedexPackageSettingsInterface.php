@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\FedexShippingBundle\Model;
 
+/**
+ * Represents fedex package settings
+ */
 interface FedexPackageSettingsInterface
 {
     /**

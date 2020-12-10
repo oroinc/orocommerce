@@ -2,3 +2,5 @@ oro_behat_extension:
     elements:
         SlugPrototypesField:
             selector: "input[name$='[slugPrototypes][values][default]']"
+        Canonical URL:
+            selector: "link[rel='canonical']"
