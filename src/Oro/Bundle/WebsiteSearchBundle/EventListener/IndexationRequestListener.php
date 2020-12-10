@@ -8,9 +8,9 @@ use Doctrine\ORM\Event\OnFlushEventArgs;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
+use Oro\Bundle\SearchBundle\Provider\SearchMappingProvider;
 use Oro\Bundle\SearchBundle\Utils\IndexationEntitiesContainer;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
-use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -29,7 +29,7 @@ class IndexationRequestListener implements OptionalListenerInterface
     protected $doctrineHelper;
 
     /**
-     * @var WebsiteSearchMappingProvider
+     * @var SearchMappingProvider
      */
     protected $mappingProvider;
 
@@ -44,14 +44,14 @@ class IndexationRequestListener implements OptionalListenerInterface
     protected $changedEntities;
 
     /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param WebsiteSearchMappingProvider $mappingProvider
-     * @param EventDispatcherInterface $dispatcher
+     * @param DoctrineHelper              $doctrineHelper
+     * @param SearchMappingProvider       $mappingProvider
+     * @param EventDispatcherInterface    $dispatcher
      * @param IndexationEntitiesContainer $changedEntities
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
-        WebsiteSearchMappingProvider $mappingProvider,
+        SearchMappingProvider $mappingProvider,
         EventDispatcherInterface $dispatcher,
         IndexationEntitiesContainer $changedEntities
     ) {

@@ -3,24 +3,38 @@
 namespace Oro\Bundle\CMSBundle\Provider;
 
 use Oro\Bundle\AttachmentBundle\Entity\File;
-use Oro\Bundle\DigitalAssetBundle\Entity\DigitalAsset;
-use Oro\Bundle\DigitalAssetBundle\Provider\PreviewMetadataProvider as BasePreviewMetadataProvider;
-use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
+use Oro\Bundle\AttachmentBundle\Provider\FileUrlProviderInterface;
+use Oro\Bundle\AttachmentBundle\Tools\MimeTypeChecker;
+use Oro\Bundle\DigitalAssetBundle\Provider\PreviewMetadataProvider as InnerPreviewMetadataProvider;
+use Oro\Bundle\DigitalAssetBundle\Provider\PreviewMetadataProviderInterface;
 
 /**
- * Decorates preview metadata provider by adding digitalAssetId and future file UUID elements to metadata.
+ * Decorates preview metadata provider by adding image/file url for wysiwyg.
  */
-class PreviewMetadataProvider extends BasePreviewMetadataProvider
+class PreviewMetadataProvider implements PreviewMetadataProviderInterface
 {
-    /** @var BasePreviewMetadataProvider */
+    /** @var InnerPreviewMetadataProvider */
     private $innerPreviewMetadataProvider;
 
+    /** @var FileUrlProviderInterface */
+    private $fileUrlProvider;
+
+    /** @var MimeTypeChecker */
+    private $mimeTypeChecker;
+
     /**
-     * @param BasePreviewMetadataProvider $innerPreviewMetadataProvider
+     * @param InnerPreviewMetadataProvider $innerPreviewMetadataProvider
+     * @param FileUrlProviderInterface $fileUrlProvider
+     * @param MimeTypeChecker $mimeTypeChecker
      */
-    public function __construct(BasePreviewMetadataProvider $innerPreviewMetadataProvider)
-    {
+    public function __construct(
+        InnerPreviewMetadataProvider $innerPreviewMetadataProvider,
+        FileUrlProviderInterface $fileUrlProvider,
+        MimeTypeChecker $mimeTypeChecker
+    ) {
         $this->innerPreviewMetadataProvider = $innerPreviewMetadataProvider;
+        $this->fileUrlProvider = $fileUrlProvider;
+        $this->mimeTypeChecker = $mimeTypeChecker;
     }
 
     /**
@@ -32,12 +46,12 @@ class PreviewMetadataProvider extends BasePreviewMetadataProvider
     {
         $metadata = $this->innerPreviewMetadataProvider->getMetadata($file);
 
-        if ($file->getParentEntityClass() === DigitalAsset::class) {
-            $metadata['digitalAssetId'] = $file->getParentEntityId();
+        if ($this->mimeTypeChecker->isImageMimeType((string)$file->getMimeType())) {
+            $metadata['url'] = $this->fileUrlProvider->getFilteredImageUrl($file, 'wysiwyg_original');
+        } else {
+            $metadata['url'] = $this->fileUrlProvider
+                ->getFileUrl($file, FileUrlProviderInterface::FILE_ACTION_DOWNLOAD);
         }
-
-        // This identifier will be used as UUID for the future file.
-        $metadata['uuid'] = UUIDGenerator::v4();
 
         return $metadata;
     }

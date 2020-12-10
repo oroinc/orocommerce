@@ -253,6 +253,7 @@ services:
 
     oro_pricing.builder.combined_price_list_builder_facade:
         class: Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilderFacade
+        public: true
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_pricing.builder.customer_combined_price_list_builder'

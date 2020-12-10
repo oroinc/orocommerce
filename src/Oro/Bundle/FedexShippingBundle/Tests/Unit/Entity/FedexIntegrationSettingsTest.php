@@ -24,6 +24,8 @@ class FedexIntegrationSettingsTest extends TestCase
             ['pickupType', 'pickupType'],
             ['unitOfWeight', 'unitOfWeight'],
             ['invalidateCacheAt', new \DateTime()],
+            ['invalidateCacheAt', new \DateTime()],
+            ['ignorePackageDimensions', true],
         ]);
 
         static::assertPropertyCollections(new FedexIntegrationSettings(), [

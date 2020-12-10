@@ -2,54 +2,35 @@
 
 namespace Oro\Bundle\RedirectBundle\Entity\Hydrator;
 
-use Doctrine\ORM\Internal\Hydration\AbstractHydrator;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
+use Oro\Bundle\ScopeBundle\Entity\Hydrator\AbstractMatchingEntityHydrator;
 
 /**
  * Custom hydrator that increases performance when getting the matching slug.
+ * Requires matchedScopeId to be selected
  */
-class MatchingSlugHydrator extends AbstractHydrator
+class MatchingSlugHydrator extends AbstractMatchingEntityHydrator
 {
     public const NAME = 'oro.redirect.entity.hydrator.matching_slug';
 
     /**
-     * @return Slug[]|array
+     * {@inheritDoc}
      */
-    protected function hydrateAllData()
+    protected function getRootEntityAlias(): string
     {
-        $rows = $this->_stmt->fetchAll(\PDO::FETCH_ASSOC);
-        foreach ($rows as $key => $row) {
-            $id = [key($this->_rsm->aliasMap) => ''];
-            $nonemptyComponents = [];
-            $rows[$key] = $this->gatherRowData($row, $id, $nonemptyComponents);
-        }
-
-        usort($rows, function ($a, $b) {
-            if ($a['scalars']['matchedScopeId'] === null && $b['scalars']['matchedScopeId'] === null) {
-                return 0;
-            }
-            if ($a['scalars']['matchedScopeId'] === null) {
-                return 1;
-            }
-            if ($b['scalars']['matchedScopeId'] === null) {
-                return -1;
-            }
-
-            return 0;
-        });
-
-        foreach ($rows as $row) {
-            if ($row['scalars']['matchedScopeId'] || !$this->hasScopes($row['data']['slug']['id'])) {
-                return [$this->_uow->createEntity(Slug::class, $row['data']['slug'], $this->_hints)];
-            }
-        }
-
-        return [];
+        return 'slug';
     }
 
     /**
-     * @param int $slugId
-     * @return bool
+     * {@inheritDoc}
+     */
+    protected function getEntityClass(): string
+    {
+        return Slug::class;
+    }
+
+    /**
+     * {@inheritDoc}
      */
     protected function hasScopes($slugId): bool
     {

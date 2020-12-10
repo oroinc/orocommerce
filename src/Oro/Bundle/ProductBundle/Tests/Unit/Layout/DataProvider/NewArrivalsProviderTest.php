@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Layout\DataProvider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\NewArrivalsProvider;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class NewArrivalsProviderTest extends AbstractSegmentProductsProviderTest
@@ -58,6 +59,7 @@ class NewArrivalsProviderTest extends AbstractSegmentProductsProviderTest
     {
         $this->segmentProductsProvider = new NewArrivalsProvider(
             $this->segmentManager,
+            $this->websiteManager,
             $this->productSegmentProvider,
             $this->productManager,
             $this->configManager,
@@ -73,7 +75,7 @@ class NewArrivalsProviderTest extends AbstractSegmentProductsProviderTest
      */
     protected function getCacheKey()
     {
-        return 'new_arrivals_products_0__1';
+        return 'new_arrivals_products_0_1__1';
     }
 
     private function prepare()
@@ -92,6 +94,10 @@ class NewArrivalsProviderTest extends AbstractSegmentProductsProviderTest
         $token->expects($this->once())
             ->method('getUser')
             ->willReturn(null);
+        $this->websiteManager
+            ->expects($this->once())
+            ->method('getCurrentWebsite')
+            ->willReturn($this->getEntity(Website::class, ['id' => 1]));
         $this->tokenStorage->expects($this->once())
             ->method('getToken')
             ->willReturn($token);

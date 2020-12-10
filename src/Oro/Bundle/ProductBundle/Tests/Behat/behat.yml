@@ -1215,6 +1215,11 @@ oro_behat_extension:
         locator: '//div[contains(@data-page-component-name,"attachment-files-grid:DamMultiFileField3")]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
+    cat1 wysiwyg file:
+      selector:
+        type: 'xpath'
+        locator: '//a[contains(@title,"cat1_wysiwyg_file")]'
+
     cat1 wysiwyg image:
       selector:
         type: 'xpath'
@@ -1224,6 +1229,9 @@ oro_behat_extension:
       selector:
         type: 'xpath'
         locator: '//img[contains(@alt,"cat2_wysiwyg_image")]'
+
+    More Link:
+      selector: 'a.toggle-more'
 
     Filters In Sidebar:
       selector: '.page-sidebar .product-filters-sidebar .filter-box'

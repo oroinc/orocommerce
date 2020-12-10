@@ -68,8 +68,19 @@ class PricingStorageIsolator implements IsolatorInterface
         $storage = $container->get('oro_config.global')->get('oro_pricing.price_storage');
 
         if ($storage === 'flat') {
-            $container->get('oro_pricing.behat.pricing_storage_switch_handler')
-                ->moveAssociationsForFlatPricingStorage();
+            if (!$container->has('oro_pricing.behat.pricing_storage_switch_handler')) {
+                $event->writeln(
+                    '<error>
+                        Service `oro_pricing.behat.pricing_storage_switch_handler` not found.
+                        Pricing storage related tests may behave incorrectly as associations will be not moved.
+                        Please check that all Tests/Behat/parameters.yml files were merged into parameters.yml
+                        and caches were warmed for prod environment.
+                    </error>'
+                );
+            } else {
+                $container->get('oro_pricing.behat.pricing_storage_switch_handler')
+                    ->moveAssociationsForFlatPricingStorage();
+            }
 
             $event->writeln('<info>Removing Combined Price Lists as flat Pricing Storage enabled</info>');
             /** @var Connection $connection */
@@ -78,7 +89,7 @@ class PricingStorageIsolator implements IsolatorInterface
         }
         if ($storage === 'combined') {
             $event->writeln('<info>Rebuilding Combined Price Lists</info>');
-            $container->get('oro_pricing.behat.builder.combined_price_list_builder_facade')->rebuildAll(time());
+            $container->get('oro_pricing.builder.combined_price_list_builder_facade')->rebuildAll(time());
         }
     }
 

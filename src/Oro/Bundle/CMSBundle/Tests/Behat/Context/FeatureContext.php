@@ -93,6 +93,19 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * @Then /^(?:|I )should not see text matching (?P<pattern>"(?:[^"]|\\")*") in WYSIWYG editor$/
+     *
+     * @param string $pattern
+     */
+    public function assertWysiwygEditorNotMatchesText(string $pattern): void
+    {
+        // Switch to WYSIWYG editor iframe.
+        $this->getDriver()->switchToIFrame(0);
+        $this->assertSession()->pageTextNotMatches($this->fixStepArgument($pattern));
+        $this->getDriver()->switchToIFrame(null);
+    }
+
+    /**
      * Example: I fill the code type block containing the text "Same text 1" with the value "Same text 2"
      *
      * @codingStandardsIgnoreStart

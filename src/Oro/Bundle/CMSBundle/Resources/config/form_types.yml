@@ -78,6 +78,13 @@ services:
         tags:
             - { name: form.type_extension }
 
+    oro_cms.form.extension.digital_asset_twig_tags:
+        class: Oro\Bundle\CMSBundle\Form\Extension\DigitalAssetTwigTagsWysiwygExtension
+        arguments:
+            - '@oro_cms.tools.digital_asset_twig_tags_converter'
+        tags:
+            - { name: form.type_extension }
+
     oro_cms.form.handler.create_update_config_field_handler:
         class: Oro\Bundle\CMSBundle\Form\Handler\CreateUpdateConfigFieldHandler
         decorates: oro_entity_config.form.handler.create_update_config_field_handler
