@@ -119,17 +119,17 @@ class RedirectListener
             return null;
         }
 
-        $filteredCollection = $sourceEntity->getSlugs()->filter(function (Slug $element) use ($localization) {
-            return $element->getLocalization() === $localization;
-        });
-
-        if ($filteredCollection->count()) {
-            return $filteredCollection->first();
+        $defaultSlug = null;
+        foreach ($sourceEntity->getSlugs() as $slug) {
+            if ($slug->getLocalization() === $localization) {
+                return $slug;
+            }
+            if (!$slug->getLocalization()) {
+                $defaultSlug = $slug;
+            }
         }
 
-        return $sourceEntity->getSlugs()->filter(function (Slug $element) {
-            return !$element->getLocalization();
-        })->first();
+        return $defaultSlug;
     }
 
     /**
