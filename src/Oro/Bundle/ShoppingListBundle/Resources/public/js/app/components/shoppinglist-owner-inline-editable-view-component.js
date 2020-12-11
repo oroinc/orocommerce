@@ -42,6 +42,7 @@ define(function(require) {
                 },
                 success: function(response) {
                     mediator.execute('showFlashMessage', 'success', _.escape(response));
+                    mediator.trigger('shopping-list:refresh');
                 }
             });
         },
