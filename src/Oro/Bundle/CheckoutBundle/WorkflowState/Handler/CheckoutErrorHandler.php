@@ -2,9 +2,15 @@
 
 namespace Oro\Bundle\CheckoutBundle\WorkflowState\Handler;
 
+use Oro\Bundle\WorkflowBundle\Validator\Constraints\TransitionIsAllowed;
 use Symfony\Component\Form\FormErrorIterator;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
+use Symfony\Component\Validator\ConstraintViolation;
 
+/**
+ * Adds checkout errors as flash messages.
+ * Filters out workflow state error.
+ */
 class CheckoutErrorHandler
 {
     const WORKFLOW_STATE_MESSAGE = 'oro.checkout.workflow.condition.content_of_order_was_changed.message';
@@ -68,13 +74,39 @@ class CheckoutErrorHandler
     }
 
     /**
+     * Returns workflow-related errors from FromErrorIterator.
+     *
+     * @param FormErrorIterator $errorIterator
+     * @return array
+     */
+    public function getWorkflowErrors(FormErrorIterator $errorIterator): array
+    {
+        $errors = [[]];
+        foreach ($errorIterator as $error) {
+            if ($error instanceof FormErrorIterator) {
+                $errors[] = $this->getWorkflowErrors($error);
+                continue;
+            }
+
+            if ($error->getCause() instanceof ConstraintViolation) {
+                $constraint = $error->getCause()->getConstraint();
+                if ($constraint instanceof TransitionIsAllowed) {
+                    $errors[] = [$error->getMessage()];
+                }
+            }
+        }
+
+        return array_values(array_unique(array_merge(...$errors)));
+    }
+
+    /**
      * @param string $message
      */
     protected function addUniqueWarningMessage($message)
     {
         $messages = $this->flashBag->peek('warning');
 
-        $filteredMessages = array_filter($messages, function ($value) use ($message) {
+        $filteredMessages = array_filter($messages, static function ($value) use ($message) {
             return $value === $message;
         });
 

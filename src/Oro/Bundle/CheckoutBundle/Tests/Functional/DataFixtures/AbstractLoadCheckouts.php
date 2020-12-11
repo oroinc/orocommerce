@@ -129,10 +129,13 @@ abstract class AbstractLoadCheckouts extends AbstractFixture implements
 
             $manager->persist($checkout);
             $this->setReference($name, $checkout);
-
-            $workflowManager->startWorkflow($this->getWorkflowName(), $checkout);
         }
         $manager->flush();
+
+        foreach ($this->getData() as $name => $checkoutData) {
+            $checkout = $this->getReference($name);
+            $workflowManager->startWorkflow($this->getWorkflowName(), $checkout);
+        }
     }
 
     protected function clearPreconditions()

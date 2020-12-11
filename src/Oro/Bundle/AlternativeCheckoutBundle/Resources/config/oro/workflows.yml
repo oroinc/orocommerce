@@ -90,8 +90,6 @@ workflows:
                 type: string
             state_token:
                 type: string
-            internal_state_token:
-                type: string
             order:
                 type: entity
                 options:
@@ -243,10 +241,15 @@ workflows:
                     is_checkout_show_errors: true
                 form_options:
                     form_init:
-                        - '@generate_checkout_state_snapshot':
-                            entity: $checkout
-                            attribute: $.result.initCheckoutState
                         - '@assign_value': [$customerConsents, null]
+                        - '@run_action_group':
+                            action_group: update_checkout_state
+                            parameters_mapping:
+                                checkout: $checkout
+                                state_token: $state_token
+                                update_checkout_state: $.result.updateCheckoutState
+                            results:
+                                result.updateCheckoutState: $.update_checkout_state
                     attribute_fields:
                         customerConsents:
                             form_type: Oro\Bundle\ConsentBundle\Form\Type\ConsentAcceptanceType
@@ -258,8 +261,6 @@ workflows:
                                     - Oro\Bundle\ConsentBundle\Validator\Constraints\RemovedLandingPages: ~
                         state_token:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
-                            options:
-                                data: $internal_state_token
 
             continue_to_shipping_address:
                 step_to: enter_shipping_address
@@ -270,9 +271,14 @@ workflows:
                     is_checkout_show_errors: true
                 form_options:
                     form_init:
-                        - '@generate_checkout_state_snapshot':
-                            entity: $checkout
-                            attribute: $.result.initCheckoutState
+                        - '@run_action_group':
+                            action_group: update_checkout_state
+                            parameters_mapping:
+                                checkout: $checkout
+                                state_token: $state_token
+                                update_checkout_state: $.result.updateCheckoutState
+                            results:
+                                result.updateCheckoutState: $.update_checkout_state
                     attribute_fields:
                         billing_address:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType
@@ -293,8 +299,6 @@ workflows:
                             options:
                         state_token:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
-                            options:
-                                data: $internal_state_token
                         email:
                             form_type: Oro\Bundle\CustomerBundle\Form\Type\CustomerVisitorEmailAddressType
             continue_to_shipping_method:
@@ -306,9 +310,14 @@ workflows:
                     is_checkout_show_errors: true
                 form_options:
                     form_init:
-                        - '@generate_checkout_state_snapshot':
-                            entity: $checkout
-                            attribute: $.result.initCheckoutState
+                        - '@run_action_group':
+                            action_group: update_checkout_state
+                            parameters_mapping:
+                                checkout: $checkout
+                                state_token: $state_token
+                                update_checkout_state: $.result.updateCheckoutState
+                            results:
+                                result.updateCheckoutState: $.update_checkout_state
                     attribute_fields:
                         shipping_address:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType
@@ -329,8 +338,6 @@ workflows:
                             options:
                         state_token:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
-                            options:
-                                data: $internal_state_token
 
             continue_to_payment:
                 step_to: enter_payment
@@ -341,9 +348,14 @@ workflows:
                     page_component_module: 'orocheckout/js/app/components/shipping-transition-button-component'
                 form_options:
                     form_init:
-                        - '@generate_checkout_state_snapshot':
-                            entity: $checkout
-                            attribute: $.result.initCheckoutState
+                        - '@run_action_group':
+                            action_group: update_checkout_state
+                            parameters_mapping:
+                                checkout: $checkout
+                                state_token: $state_token
+                                update_checkout_state: $.result.updateCheckoutState
+                            results:
+                                result.updateCheckoutState: $.update_checkout_state
                     attribute_fields:
                         shipping_method:
                             options:
@@ -355,8 +367,6 @@ workflows:
                                     - NotBlank: ~
                         state_token:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
-                            options:
-                                data: $internal_state_token
 
             continue_to_order_review:
                 step_to: order_review
@@ -367,19 +377,40 @@ workflows:
                     page_component_module: 'orocheckout/js/app/components/payment-transition-button-component'
                 form_options:
                     form_init:
-                        - '@assign_value': [$payment_validate, true]
-                        - '@call_service_method':
-                            service: oro_payment.provider.payment_transaction
-                            method: getActiveValidatePaymentTransaction
-                            method_parameters: [$payment_method]
-                            attribute: $.result.validatePaymentTransaction
-                        - '@assign_value':
+                        - '@tree':
                             conditions:
-                                '@not_empty': [$.result.validatePaymentTransaction]
-                            parameters: [$payment_validate, false]
-                        - '@generate_checkout_state_snapshot':
-                            entity: $checkout
-                            attribute: $.result.initCheckoutState
+                                '@blank': $.result.shippingPriceUpdated
+                            actions:
+                                - '@assign_value': [$.result.shippingPriceUpdated, true]
+                                - '@run_action_group':
+                                    action_group: oro_update_shipping_price
+                                    parameters_mapping:
+                                        checkout: $checkout
+                        - '@tree':
+                            conditions:
+                                '@blank': $payment_validate
+                            actions:
+                                - '@assign_value': [$payment_validate, true]
+                                - '@call_service_method':
+                                    conditions:
+                                        '@blank': $.result.validatePaymentTransaction
+                                    parameters:
+                                        service: oro_payment.provider.payment_transaction
+                                        method: getActiveValidatePaymentTransaction
+                                        method_parameters: [$payment_method]
+                                        attribute: $.result.validatePaymentTransaction
+                                - '@assign_value':
+                                    conditions:
+                                        '@not_empty': [$.result.validatePaymentTransaction]
+                                    parameters: [$payment_validate, false]
+                        - '@run_action_group':
+                            action_group: update_checkout_state
+                            parameters_mapping:
+                                checkout: $checkout
+                                state_token: $state_token
+                                update_checkout_state: $.result.updateCheckoutState
+                            results:
+                                result.updateCheckoutState: $.update_checkout_state
                     attribute_fields:
                         payment_method: ~
                         payment_validate:
@@ -388,8 +419,6 @@ workflows:
                             form_type: Symfony\Component\Form\Extension\Core\Type\CheckboxType
                         state_token:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
-                            options:
-                                data: $internal_state_token
                         additional_data:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
 
@@ -401,9 +430,23 @@ workflows:
                     is_checkout_continue: true
                 form_options:
                     form_init:
-                        - '@generate_checkout_state_snapshot':
-                            entity: $checkout
-                            attribute: $.result.initCheckoutState
+                        - '@tree':
+                            conditions:
+                                '@blank': $.result.shippingPriceUpdated
+                            actions:
+                                - '@assign_value': [$.result.shippingPriceUpdated, true]
+                                - '@run_action_group':
+                                    action_group: oro_update_shipping_price
+                                    parameters_mapping:
+                                        checkout: $checkout
+                        - '@run_action_group':
+                            action_group: update_checkout_state
+                            parameters_mapping:
+                                checkout: $checkout
+                                state_token: $state_token
+                                update_checkout_state: $.result.updateCheckoutState
+                            results:
+                                result.updateCheckoutState: $.update_checkout_state
                     attribute_fields:
                         remove_source: ~
                         po_number: ~
@@ -417,8 +460,6 @@ workflows:
                                 data: $checkout.customerNotes
                         state_token:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
-                            options:
-                                data: $internal_state_token
 
             continue_to_approve_request:
                 step_to: approve_request
@@ -427,9 +468,23 @@ workflows:
                     is_checkout_continue: true
                 form_options:
                     form_init:
-                        - '@generate_checkout_state_snapshot':
-                            entity: $checkout
-                            attribute: $.result.initCheckoutState
+                        - '@tree':
+                            conditions:
+                                '@blank': $.result.shippingPriceUpdated
+                            actions:
+                                - '@assign_value': [$.result.shippingPriceUpdated, true]
+                                - '@run_action_group':
+                                    action_group: oro_update_shipping_price
+                                    parameters_mapping:
+                                        checkout: $checkout
+                        - '@run_action_group':
+                            action_group: update_checkout_state
+                            parameters_mapping:
+                                checkout: $checkout
+                                state_token: $state_token
+                                update_checkout_state: $.result.updateCheckoutState
+                            results:
+                                result.updateCheckoutState: $.update_checkout_state
                     attribute_fields:
                         request_approval_notes:
                             form_type: Symfony\Component\Form\Extension\Core\Type\TextareaType
@@ -437,8 +492,6 @@ workflows:
                                 data: $request_approval_notes
                         state_token:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
-                            options:
-                                data: $internal_state_token
                 message_parameters:
                     '{{ value }}': $.data.order_approval_threshold
 
@@ -452,21 +505,18 @@ workflows:
             back_to_customer_consents:
                 step_to: customer_consents
                 transition_definition: clear_payment_method_and_recalculate_state_definition
-                is_unavailable_hidden: true
                 frontend_options:
                     is_checkout_back: true
 
             back_to_billing_address:
                 step_to: enter_billing_address
                 transition_definition: clear_payment_method_and_recalculate_state_definition
-                is_unavailable_hidden: true
                 frontend_options:
                     is_checkout_back: true
 
             back_to_shipping_address:
                 step_to: enter_shipping_address
                 transition_definition: clear_payment_method_and_recalculate_state_definition
-                is_unavailable_hidden: true
                 frontend_options:
                     is_checkout_back: true
 
@@ -477,15 +527,13 @@ workflows:
 
             back_to_shipping_method:
                 step_to: enter_shipping_method
-                transition_definition: clear_payment_method_and_recalculate_state_definition
-                is_unavailable_hidden: true
+                transition_definition: back_to_shipping_method_definition
                 frontend_options:
                     is_checkout_back: true
 
             back_to_payment:
                 step_to: enter_payment
                 transition_definition: recalculate_state_definition
-                is_unavailable_hidden: true
                 frontend_options:
                     is_checkout_back: true
 
@@ -499,14 +547,12 @@ workflows:
             back_to_order_review:
                 step_to: order_review
                 transition_definition: go_back_definition
-                is_unavailable_hidden: true
                 frontend_options:
                     is_checkout_back: true
 
             back_to_request_approval:
                 step_to: request_approval
                 transition_definition: go_back_definition
-                is_unavailable_hidden: true
                 frontend_options:
                     is_checkout_back: true
 
@@ -514,15 +560,28 @@ workflows:
                 step_to: order_review
                 transition_definition: place_order_definition
                 display_type: page
-                is_unavailable_hidden: true
                 frontend_options:
                     is_checkout_continue: true
                     is_checkout_show_errors: true
                 form_options:
                     form_init:
-                        - '@generate_checkout_state_snapshot':
-                            entity: $checkout
-                            attribute: $.result.initCheckoutState
+                        - '@tree':
+                            conditions:
+                                '@blank': $.result.shippingPriceUpdated
+                            actions:
+                                - '@assign_value': [$.result.shippingPriceUpdated, true]
+                                - '@run_action_group':
+                                    action_group: oro_update_shipping_price
+                                    parameters_mapping:
+                                        checkout: $checkout
+                        - '@run_action_group':
+                            action_group: update_checkout_state
+                            parameters_mapping:
+                                checkout: $checkout
+                                state_token: $state_token
+                                update_checkout_state: $.result.updateCheckoutState
+                            results:
+                                result.updateCheckoutState: $.update_checkout_state
                     attribute_fields:
                         remove_source: ~
                         po_number: ~
@@ -534,28 +593,38 @@ workflows:
                             form_type: Symfony\Component\Form\Extension\Core\Type\TextareaType
                         state_token:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
-                            options:
-                                data: $internal_state_token
 
             place_order_with_inactive_possibility:
                 step_to: approve_request
                 transition_definition: place_order_definition
                 display_type: page
-                is_unavailable_hidden: false
                 frontend_options:
                     is_checkout_continue: true
                     is_checkout_show_errors: true
                 form_options:
                     form_init:
-                        - '@generate_checkout_state_snapshot':
-                            entity: $checkout
-                            attribute: $.result.initCheckoutState
+                        - '@tree':
+                            conditions:
+                                '@blank': $.result.shippingPriceUpdated
+                            actions:
+                                - '@assign_value': [$.result.shippingPriceUpdated, true]
+                                - '@run_action_group':
+                                    action_group: oro_update_shipping_price
+                                    parameters_mapping:
+                                        checkout: $checkout
+                        - '@run_action_group':
+                            action_group: update_checkout_state
+                            parameters_mapping:
+                                checkout: $checkout
+                                state_token: $state_token
+                                update_checkout_state: $.result.updateCheckoutState
+                            results:
+                                result.updateCheckoutState: $.update_checkout_state
                     attribute_fields:
                         remove_source: ~
                         state_token:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
-                            options:
-                                data: $internal_state_token
+
             approve_order:
                 step_to: approve_request
                 transition_definition: approve_order_definition
@@ -565,14 +634,26 @@ workflows:
                     is_checkout_show_errors: true
                 form_options:
                     form_init:
-                        - '@generate_checkout_state_snapshot':
-                            entity: $checkout
-                            attribute: $.result.initCheckoutState
+                        - '@tree':
+                            conditions:
+                                '@blank': $.result.shippingPriceUpdated
+                            actions:
+                                - '@assign_value': [$.result.shippingPriceUpdated, true]
+                                - '@run_action_group':
+                                    action_group: oro_update_shipping_price
+                                    parameters_mapping:
+                                        checkout: $checkout
+                        - '@run_action_group':
+                            action_group: update_checkout_state
+                            parameters_mapping:
+                                checkout: $checkout
+                                state_token: $state_token
+                                update_checkout_state: $.result.updateCheckoutState
+                            results:
+                                result.updateCheckoutState: $.update_checkout_state
                     attribute_fields:
                         state_token:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
-                            options:
-                                data: $internal_state_token
 
             finish_checkout:
                 step_to: order_created
@@ -581,28 +662,40 @@ workflows:
 
             payment_error:
                 step_to: enter_payment
-                transition_definition: unblock_and_recalculate_definition
+                transition_definition: payment_error_definition
                 is_hidden: true
 
         transition_definitions:
             start_from_quickorderform_definition:
                 preactions:
                     - '@call_service_method':
-                        attribute: $.result.isAllowed
-                        service: oro_shopping_list.processor.quick_add_to_checkout
-                        method: isAllowed
+                       conditions:
+                           '@blank': $.result.isAllowed
+                       parameters:
+                            attribute: $.result.isAllowed
+                            service: oro_shopping_list.processor.quick_add_to_checkout
+                            method: isAllowed
                     - '@call_service_method':
-                       attribute: $.result.isReachedLimit
-                       service: oro_shopping_list.manager.shopping_list_limit
-                       method: isReachedLimit
+                       conditions:
+                           '@blank': $.result.isReachedLimit
+                       parameters:
+                           attribute: $.result.isReachedLimit
+                           service: oro_shopping_list.manager.shopping_list_limit
+                           method: isReachedLimit
                     - '@call_service_method':
-                       attribute: $.result.shoppingListLimit
-                       service: oro_shopping_list.manager.shopping_list_limit
-                       method: getShoppingListLimitForUser
+                       conditions:
+                           '@blank': $.result.shoppingListLimit
+                       parameters:
+                           attribute: $.result.shoppingListLimit
+                           service: oro_shopping_list.manager.shopping_list_limit
+                           method: getShoppingListLimitForUser
                     - '@call_service_method':
-                       service: oro_shopping_list.manager.current_shopping_list
-                       method: isCurrentShoppingListEmpty
-                       attribute: $.result.isCurrentShoppingListEmpty
+                       conditions:
+                           '@blank': $.result.isCurrentShoppingListEmpty
+                       parameters:
+                           service: oro_shopping_list.manager.current_shopping_list
+                           method: isCurrentShoppingListEmpty
+                           attribute: $.result.isCurrentShoppingListEmpty
                     - '@assign_value': [$.result.doShowConfirmation, false]
                     - '@assign_value':
                         conditions:
@@ -610,30 +703,56 @@ workflows:
                             - '@equal': [$.result.isReachedLimit, true]
                             - '@equal': [$.result.isCurrentShoppingListEmpty, false]
                         parameters: [$.result.doShowConfirmation, true]
+                    - '@delete_checkout_state':
+                        conditions:
+                            '@not_blank': $state_token
+                        parameters:
+                            entity: $checkout
+                            token: $state_token
+
                 preconditions:
-                    '@and':
-                        - '@not_empty': $init_context
-                        - '@equal': [true, $.result.isAllowed]
+                    '@equal': [true, $.result.isAllowed]
 
             start_from_shoppinglist_definition:
                 preactions:
                     - '@find_entity':
                         conditions:
-                            '@not_empty': $init_context
+                            '@and':
+                                - '@not_blank': $init_context
+                                - '@blank': $.result.shoppingList
                         parameters:
                             class: $init_context.entityClass
                             identifier: $init_context.entityId
                             attribute: $.result.shoppingList
+                    - '@tree':
+                        conditions:
+                            '@and':
+                                - '@not_blank': $.result.shoppingList
+                                - '@blank': $.result.extendableConditionShoppingListStart
+                        actions:
+                            - '@assign_value': [$.result.extendableConditionShoppingListStart, false]
+                            - '@assign_value':
+                                conditions:
+                                    '@extendable':
+                                        events: [extendable_condition.shopping_list_start]
+                                parameters: [$.result.extendableConditionShoppingListStart, true]
                     - '@call_service_method':
-                        service: oro_shopping_list.manager.empty_matrix_grid
-                        method: hasEmptyMatrix
-                        method_parameters: [$.result.shoppingList]
-                        attribute: $.result.shoppingListHasEmptyMatrix
+                        conditions:
+                            '@and':
+                                - '@not_blank': $.result.shoppingList
+                                - '@blank': $.result.shoppingListHasEmptyMatrix
+                        parameters:
+                            service: oro_shopping_list.manager.empty_matrix_grid
+                            method: hasEmptyMatrix
+                            method_parameters: [$.result.shoppingList]
+                            attribute: $.result.shoppingListHasEmptyMatrix
+
                 preconditions:
                    '@and':
+                       - '@not_empty': $.result.shoppingList
                        - '@has_elements': $.result.shoppingList.lineItems
-                       - '@extendable':
-                            events: [extendable_condition.shopping_list_start]
+                       - '@equal': [$.result.extendableConditionShoppingListStart, true]
+
                 actions:
                     - '@run_action_group':
                         action_group: start_shoppinglist_checkout
@@ -643,19 +762,22 @@ workflows:
                         results:
                             data.checkout: $.checkout
                             result.redirectUrl: $.redirectUrl
+                    - '@delete_checkout_state':
+                        conditions:
+                            '@not_blank': $state_token
+                        parameters:
+                            entity: $checkout
+                            token: $state_token
 
             __start___definition:
                 actions:
                     - '@assign_value': [$shipping_method, null]
                     - '@assign_value': [$payment_save_for_later, true]
-                    - '@generate_checkout_state_snapshot':
-                        entity: $checkout
-                        attribute: $.result.startCheckoutState
-                    - '@save_checkout_state':
-                        entity: $checkout
-                        state: $.result.startCheckoutState
-                        attribute: $state_token
-                    - '@assign_value': [$internal_state_token, $state_token]
+                    - '@generate_uuid':
+                        conditions:
+                            '@blank': $state_token
+                        parameters:
+                          attribute: $state_token
 
             go_back_definition:
                 actions:
@@ -663,185 +785,99 @@ workflows:
                         action_group: oro_update_shipping_price
                         parameters_mapping:
                             checkout: $checkout
-                    - '@assign_value':
-                        conditions:
-                            '@equal': [$allowed, true]
-                        parameters: [$allowed, false]
-                    - '@generate_checkout_state_snapshot':
-                        entity: $checkout
-                        attribute: $.result.actualCheckoutState
-                    - '@save_checkout_state':
-                        entity: $checkout
-                        state: $.result.actualCheckoutState
-                        attribute: $state_token
-                    - '@assign_value': [$internal_state_token, $state_token]
+                    - '@assign_value': [$allowed, false]
+                    - '@generate_uuid': $state_token
 
             verify_customer_consents_definition:
-                preconditions:
-                    '@not':
-                        - '@is_consents_accepted': ~
                 preactions:
+                    - '@tree':
+                        conditions:
+                            '@blank': $.result.isConsentsAccepted
+                        actions:
+                            - '@assign_value': [$.result.isConsentsAccepted, false]
+                            - '@assign_value':
+                                conditions:
+                                    '@is_consents_accepted':
+                                        acceptedConsents: $customerConsents
+                                parameters: [$.result.isConsentsAccepted, true]
                     - '@flash_message':
                         conditions:
                             '@and':
-                                - '@not':
-                                    - '@is_consents_accepted':
-                                        acceptedConsents: $customerConsents
+                                - '@equal': [$.result.isConsentsAccepted, false]
                                 - '@equal': [$consents_available, true]
                         message: oro.checkout.workflow.condition.required_consents_should_be_checked.message
                         type: 'warning'
 
+                preconditions:
+                    '@equal': [$.result.isConsentsAccepted, false]
+
             continue_to_billing_address_definition:
                 preactions:
                     - '@assign_value': [$consents_available, true]
-                    - '@generate_checkout_state_snapshot':
-                        entity: $checkout
-                        attribute: $.result.currentCheckoutState
-                    - '@get_checkout_state':
-                        entity: $checkout
-                        token: $state_token
-                        attribute: $.result.tokenCheckoutState
-                    - '@tree':
-                        conditions:
-                            '@not':
-                                - '@check_checkout_states':
-                                    entity: $checkout
-                                    state1: $.result.currentCheckoutState
-                                    state2: $.result.tokenCheckoutState
-                        actions:
-                            - '@assign_value': [$.result.savedCheckoutState, $.result.tokenCheckoutState]
-                            - '@delete_checkout_state':
-                                entity: $checkout
-                                token: $state_token
-                            - '@save_checkout_state':
-                                entity: $checkout
-                                state: $.result.currentCheckoutState
-                                token: $state_token
+
                 actions:
-                    - '@generate_checkout_state_snapshot':
-                        entity: $checkout
-                        attribute: $.result.actualCheckoutState
-                    - '@save_checkout_state':
-                        entity: $checkout
-                        state: $.result.actualCheckoutState
-                        attribute: $state_token
-                    - '@assign_value': [$internal_state_token, $state_token]
                     - '@save_accepted_consents':
                         acceptedConsents: $customerConsents
+                    - '@generate_uuid': $state_token
 
             continue_to_shipping_address_definition:
                 preactions:
-                    - '@generate_checkout_state_snapshot':
-                        entity: $checkout
-                        attribute: $.result.currentCheckoutState
-                    - '@get_checkout_state':
-                        entity: $checkout
-                        token: $state_token
-                        attribute: $.result.tokenCheckoutState
+                    - '@run_action_group':
+                        action_group: order_line_items_not_empty
+                        parameters_mapping:
+                            checkout: $checkout
+                        results:
+                            result.orderLineItemsNotEmpty: $.orderLineItemsNotEmpty
+                            result.orderLineItemsNotEmptyForRfp: $.orderLineItemsNotEmptyForRfp
                     - '@tree':
                         conditions:
-                            '@not':
-                                - '@check_checkout_states':
-                                    entity: $checkout
-                                    state1: $.result.currentCheckoutState
-                                    state2: $.result.tokenCheckoutState
+                            '@blank': $.result.extendableConditionCheckout
                         actions:
-                            - '@assign_value': [$.result.savedCheckoutState, $.result.tokenCheckoutState]
-                            - '@delete_checkout_state':
-                                entity: $checkout
-                                token: $state_token
-                            - '@save_checkout_state':
-                                entity: $checkout
-                                state: $.result.currentCheckoutState
-                                token: $state_token
+                            - '@assign_value': [$.result.extendableConditionCheckout, false]
+                            - '@assign_value':
+                                conditions:
+                                    '@extendable':
+                                        events: [extendable_condition.checkout]
+                                parameters: [$.result.extendableConditionCheckout, true]
+
                 preconditions:
                     '@and':
-                        - '@quote_acceptable': [$checkout.sourceEntity, true]
-                        - '@extendable':
-                            events: [extendable_condition.checkout]
                         - '@equal': [$checkout.completed, false]
-                        - '@order_line_item_has_count': $checkout
+                        - '@equal':
+                            parameters: [$.result.orderLineItemsNotEmptyForRfp, true]
+                            message: oro.checkout.workflow.condition.order_line_item_has_count_not_allow_rfp.message
+                        - '@equal':
+                            parameters: [$.result.orderLineItemsNotEmpty, true]
+                            message: oro.checkout.workflow.condition.order_line_item_has_count_allow_rfp.message
+                        - '@quote_acceptable': [$checkout.sourceEntity, true]
+                        - '@equal': [$.result.extendableConditionCheckout, true]
+
                 conditions:
                     '@and':
+                        - '@is_checkout_state_valid':
+                            message: oro.checkout.workflow.condition.content_of_order_was_changed.message
+                            parameters:
+                                entity: $checkout
+                                token: $state_token
+                                current_state: $.result.currentCheckoutState
                         - '@not_empty': $checkout.billingAddress
-                        - '@not_empty': $.result.initCheckoutState
-                        - '@or':
-                            - '@empty': $.result.savedCheckoutState
-                            - '@check_checkout_states':
-                                message: oro.checkout.workflow.condition.content_of_order_was_changed.message
-                                parameters:
-                                    entity: $checkout
-                                    state1: $.result.initCheckoutState
-                                    state2: $.result.savedCheckoutState
+
                 actions:
-                    - '@assign_constant_value': [$.result.typeShippingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_SHIPPING]
-                    - '@call_method':
-                        conditions:
-                            '@not_empty': $checkout.billingAddress.customerAddress
-                        parameters:
-                            attribute: $billing_address_has_shipping
-                            object: $checkout.billingAddress.customerAddress
-                            method: hasTypeWithName
-                            method_parameters:
-                                - $.result.typeShippingName
-                    - '@call_method':
-                        conditions:
-                            '@not_empty': $checkout.billingAddress.customerUserAddress
-                        parameters:
-                            attribute: $billing_address_has_shipping
-                            object: $checkout.billingAddress.customerUserAddress
-                            method: hasTypeWithName
-                            method_parameters:
-                                - $.result.typeShippingName
-                    - '@assign_value':
-                        conditions:
-                            '@and':
-                                - '@empty': $checkout.billingAddress.customerAddress
-                                - '@empty': $checkout.billingAddress.customerUserAddress
-                        parameters: [$billing_address_has_shipping, true]
-                    - '@tree':
-                        conditions:
-                            '@and':
-                                - '@equal': [$disallow_shipping_address_edit, false]
-                                - '@equal': [$checkout.shipToBillingAddress, true]
-                                - '@equal': [$billing_address_has_shipping, true]
-                        actions:
-                            - '@remove_entity':
-                                conditions:
-                                    '@not_empty': $checkout.shippingAddress
-                                parameters: [$checkout.shippingAddress]
-                            - '@duplicate':
-                                target: $checkout.billingAddress
-                                attribute: $checkout.shippingAddress
-                                settings:
-                                  - [[setNull], [propertyName, [id]]]
-                                  - [[keep], [propertyName, [customerAddress]]]
-                                  - [[keep], [propertyName, [customerUserAddress]]]
-                                  - [[keep], [propertyName, [city]]]
-                                  - [[keep], [propertyName, [country]]]
-                                  - [[keep], [propertyName, [region]]]
-                                  - [[keep], [propertyName, [organization]]]
-                                  - [[shallowCopy], [propertyType, ['\DateTime']]]
-                            - '@flush_entity': $checkout.shippingAddress
-
-                    - '@generate_checkout_state_snapshot':
-                        entity: $checkout
-                        attribute: $.result.actualCheckoutState
-                    - '@save_checkout_state':
-                        entity: $checkout
-                        state: $.result.actualCheckoutState
-                        attribute: $state_token
-                    - '@assign_value': [$internal_state_token, $state_token]
-
+                    - '@run_action_group':
+                        action_group: b2b_flow_checkout_update_billing_address
+                        parameters_mapping:
+                          checkout: $checkout
+                          disallow_shipping_address_edit: $disallow_shipping_address_edit
+                        results:
+                          data.billing_address_has_shipping: $.billing_address_has_shipping
+                    - '@save_accepted_consents':
+                        acceptedConsents: $customerConsents
+                    # Disables state checking in inner transition to continue_to_shipping_method.
+                    - '@generate_uuid': $state_token
                     - '@tree':
                         conditions:
                             '@equal': [true, $ship_to_billing_address]
                         actions:
-                            - '@generate_checkout_state_snapshot':
-                                entity: $checkout
-                                attribute: $.result.initCheckoutState
-                            - '@assign_value': [$.result.savedCheckoutState, $.result.initCheckoutState]
-
                             - '@transit_workflow':
                                 entity: $checkout
                                 transition: continue_to_shipping_method
@@ -849,203 +885,161 @@ workflows:
 
             continue_to_shipping_method_definition:
                 preactions:
-                     - '@call_service_method':
-                         service: oro_checkout.action.default_shipping_method_setter
-                         method: setDefaultShippingMethod
-                         method_parameters: [$checkout]
-                     - '@generate_checkout_state_snapshot':
-                         entity: $checkout
-                         attribute: $.result.currentCheckoutState
-                     - '@get_checkout_state':
-                         entity: $checkout
-                         token: $state_token
-                         attribute: $.result.tokenCheckoutState
-                     - '@tree':
-                         conditions:
-                             '@not':
-                                 - '@check_checkout_states':
-                                     entity: $checkout
-                                     state1: $.result.currentCheckoutState
-                                     state2: $.result.tokenCheckoutState
-                         actions:
-                             - '@assign_value': [$.result.savedCheckoutState, $.result.tokenCheckoutState]
-                             - '@delete_checkout_state':
-                                 entity: $checkout
-                                 token: $state_token
-                             - '@save_checkout_state':
-                                 entity: $checkout
-                                 state: $.result.currentCheckoutState
-                                 token: $state_token
+                    - '@run_action_group':
+                        action_group: order_line_items_not_empty
+                        parameters_mapping:
+                            checkout: $checkout
+                        results:
+                            result.orderLineItemsNotEmpty: $.orderLineItemsNotEmpty
+                            result.orderLineItemsNotEmptyForRfp: $.orderLineItemsNotEmptyForRfp
+
                 preconditions:
                     '@and':
-                        - '@quote_acceptable': [$checkout.sourceEntity, true]
                         - '@equal': [$checkout.completed, false]
-                        - '@order_line_item_has_count': $checkout
+                        - '@equal':
+                            parameters: [$.result.orderLineItemsNotEmptyForRfp, true]
+                            message: oro.checkout.workflow.condition.order_line_item_has_count_not_allow_rfp.message
+                        - '@equal':
+                            parameters: [$.result.orderLineItemsNotEmpty, true]
+                            message: oro.checkout.workflow.condition.order_line_item_has_count_allow_rfp.message
+                        - '@quote_acceptable': [$checkout.sourceEntity, true]
+
                 conditions:
                     '@and':
+                        - '@is_checkout_state_valid':
+                            message: oro.checkout.workflow.condition.content_of_order_was_changed.message
+                            parameters:
+                                entity: $checkout
+                                token: $state_token
+                                current_state: $.result.currentCheckoutState
                         - '@or':
-                            - '@empty': $.result.savedCheckoutState
-                            - '@check_checkout_states':
-                                message: oro.checkout.workflow.condition.content_of_order_was_changed.message
-                                parameters:
-                                    entity: $checkout
-                                    state1: $.result.initCheckoutState
-                                    state2: $.result.savedCheckoutState
-                        - '@or':
-                            - '@and':
-                                - '@equal': [$billing_address_has_shipping, true]
-                                - '@equal': [$checkout.shipToBillingAddress, true]
+                            - '@equal': [$checkout.shipToBillingAddress, true]
                             - '@and':
                                 - '@equal': [$checkout.shipToBillingAddress, false]
                                 - '@not_empty': $checkout.shippingAddress
+
                 actions:
-                    - '@tree':
-                        conditions:
-                            '@and':
-                                - '@equal': [$checkout.shipToBillingAddress, true]
-                                - '@equal': [$billing_address_has_shipping, true]
-                        actions:
-                            - '@remove_entity':
-                                conditions:
-                                    '@not_empty': $checkout.shippingAddress
-                                parameters: [$checkout.shippingAddress]
-                            - '@duplicate':
-                                target: $checkout.billingAddress
-                                attribute: $checkout.shippingAddress
-                                settings:
-                                  - [[setNull], [propertyName, [id]]]
-                                  - [[keep], [propertyName, [customerAddress]]]
-                                  - [[keep], [propertyName, [customerUserAddress]]]
-                                  - [[keep], [propertyName, [city]]]
-                                  - [[keep], [propertyName, [country]]]
-                                  - [[keep], [propertyName, [region]]]
-                                  - [[keep], [propertyName, [organization]]]
-                                  - [[shallowCopy], [propertyType, ['\DateTime']]]
-                            - '@flush_entity': $checkout.shippingAddress
-                    - '@generate_checkout_state_snapshot':
-                        entity: $checkout
-                        attribute: $.result.actualCheckoutState
-                    - '@save_checkout_state':
-                        entity: $checkout
-                        state: $.result.actualCheckoutState
-                        attribute: $state_token
-                    - '@assign_value': [$internal_state_token, $state_token]
+                    - '@run_action_group':
+                        action_group: b2b_flow_checkout_update_shipping_address
+                        parameters_mapping:
+                            checkout: $checkout
+                    - '@call_service_method':
+                        service: oro_checkout.action.default_shipping_method_setter
+                        method: setDefaultShippingMethod
+                        method_parameters: [$checkout]
+                    - '@generate_uuid': $state_token
 
             continue_to_payment_definition:
                 preactions:
-                    - '@generate_checkout_state_snapshot':
-                        entity: $checkout
-                        attribute: $.result.currentCheckoutState
-                    - '@get_checkout_state':
-                        entity: $checkout
-                        token: $state_token
-                        attribute: $.result.tokenCheckoutState
+                    - '@run_action_group':
+                        action_group: order_line_items_not_empty
+                        parameters_mapping:
+                            checkout: $checkout
+                        results:
+                            result.orderLineItemsNotEmpty: $.orderLineItemsNotEmpty
+                            result.orderLineItemsNotEmptyForRfp: $.orderLineItemsNotEmptyForRfp
+                    - '@call_service_method':
+                          service: oro_checkout.action.default_shipping_method_setter
+                          method: setDefaultShippingMethod
+                          method_parameters: [$checkout]
                     - '@tree':
                         conditions:
-                            '@not':
-                                - '@check_checkout_states':
-                                    entity: $checkout
-                                    state1: $.result.currentCheckoutState
-                                    state2: $.result.tokenCheckoutState
+                            '@blank': $.result.checkoutHasApplicableShippingMethods
                         actions:
-                            - '@assign_value': [$.result.savedCheckoutState, $.result.tokenCheckoutState]
-                            - '@delete_checkout_state':
-                                entity: $checkout
-                                token: $state_token
-                            - '@save_checkout_state':
-                                entity: $checkout
-                                state: $.result.currentCheckoutState
-                                token: $state_token
+                            - '@assign_value': [$.result.checkoutHasApplicableShippingMethods, false]
+                            - '@assign_value':
+                                conditions:
+                                    '@checkout_has_applicable_shipping_methods': $checkout
+                                parameters: [$.result.checkoutHasApplicableShippingMethods, true]
 
                 preconditions:
                     '@and':
+                        - '@equal':
+                            parameters: [$.result.orderLineItemsNotEmptyForRfp, true]
+                            message: oro.checkout.workflow.condition.order_line_item_has_count_not_allow_rfp.message
+                        - '@equal':
+                            parameters: [$.result.orderLineItemsNotEmpty, true]
+                            message: oro.checkout.workflow.condition.order_line_item_has_count_allow_rfp.message
+                        - '@equal':
+                            parameters: [$.result.checkoutHasApplicableShippingMethods, true]
+                            message: oro.checkout.workflow.condition.shipping_method_is_not_available.message
                         - '@quote_acceptable': [$checkout.sourceEntity, true]
-                        - '@order_line_item_has_count': $checkout
-                        - '@checkout_has_applicable_shipping_methods':
-                            message: oro.checkout.workflow.condition.shipping_method_is_not_available.message
-                            checkout: $checkout
-                conditions:
-                    '@and':
-                        - '@shipping_method_has_enabled_shipping_rules':
-                            message: oro.checkout.workflow.condition.shipping_method_is_not_available.message
-                            method_identifier: $checkout.shippingMethod
-                        - '@or':
-                            - '@empty': $.result.savedCheckoutState
-                            - '@check_checkout_states':
-                                message: oro.checkout.workflow.condition.content_of_order_was_changed.message
-                                parameters:
-                                    entity: $checkout
-                                    state1: $.result.initCheckoutState
-                                    state2: $.result.savedCheckoutState
+
                 actions:
                     - '@run_action_group':
                         action_group: oro_update_shipping_price
                         parameters_mapping:
                             checkout: $checkout
-                    - '@generate_checkout_state_snapshot':
-                        entity: $checkout
-                        attribute: $.result.actualCheckoutState
-                    - '@save_checkout_state':
-                        entity: $checkout
-                        state: $.result.actualCheckoutState
-                        attribute: $state_token
-                    - '@assign_value': [$internal_state_token, $state_token]
+                    - '@assign_value': [$.result.shippingPriceUpdated, true]
+                    - '@generate_uuid': $state_token
 
             continue_to_order_review_definition:
                 preactions:
-                    - '@generate_checkout_state_snapshot':
-                        entity: $checkout
-                        attribute: $.result.currentCheckoutState
-                    - '@get_checkout_state':
-                        entity: $checkout
-                        token: $state_token
-                        attribute: $.result.tokenCheckoutState
                     - '@run_action_group':
-                        action_group: oro_update_shipping_price
+                        action_group: order_line_items_not_empty
                         parameters_mapping:
                             checkout: $checkout
+                        results:
+                            result.orderLineItemsNotEmpty: $.orderLineItemsNotEmpty
+                            result.orderLineItemsNotEmptyForRfp: $.orderLineItemsNotEmptyForRfp
                     - '@tree':
                         conditions:
-                            '@not':
-                                - '@check_checkout_states':
-                                    entity: $checkout
-                                    state1: $.result.currentCheckoutState
-                                    state2: $.result.tokenCheckoutState
+                            '@blank': $.result.shippingMethodHasEnabledShippingRules
                         actions:
-                            - '@assign_value': [$.result.savedCheckoutState, $.result.tokenCheckoutState]
-                            - '@delete_checkout_state':
-                                entity: $checkout
-                                token: $state_token
-                            - '@save_checkout_state':
-                                entity: $checkout
-                                state: $.result.currentCheckoutState
-                                token: $state_token
+                            - '@assign_value': [$.result.shippingMethodHasEnabledShippingRules, false]
+                            - '@assign_value':
+                                conditions:
+                                    '@shipping_method_has_enabled_shipping_rules': $checkout.shippingMethod
+                                parameters: [$.result.shippingMethodHasEnabledShippingRules, true]
                     - '@call_service_method':
-                        service: oro_checkout.provider.payment_context
-                        method: getContext
-                        method_parameters: [$checkout]
-                        attribute: $.result.paymentContext
+                        conditions:
+                            '@blank': $.result.paymentContext
+                        parameters:
+                            service: oro_checkout.provider.payment_context
+                            method: getContext
+                            method_parameters: [$checkout]
+                            attribute: $.result.paymentContext
+                    - '@tree':
+                        conditions:
+                            '@blank': $.result.hasApplicablePaymentMethods
+                        actions:
+                            - '@assign_value': [$.result.hasApplicablePaymentMethods, false]
+                            - '@assign_value':
+                                conditions:
+                                    '@has_applicable_payment_methods': $.result.paymentContext
+                                parameters: [$.result.hasApplicablePaymentMethods, true]
+
                 preconditions:
                     '@and':
                         - '@equal': [$checkout.completed, false]
-                        - '@quote_acceptable': [$checkout.sourceEntity, true]
-                        - '@order_line_item_has_count': $checkout
-                        - '@shipping_method_has_enabled_shipping_rules':
+                        - '@equal':
+                            parameters: [$.result.orderLineItemsNotEmptyForRfp, true]
+                            message: oro.checkout.workflow.condition.order_line_item_has_count_not_allow_rfp.message
+                        - '@equal':
+                            parameters: [$.result.orderLineItemsNotEmpty, true]
+                            message: oro.checkout.workflow.condition.order_line_item_has_count_allow_rfp.message
+                        - '@equal':
+                            parameters: [$.result.shippingMethodHasEnabledShippingRules, true]
                             message: oro.checkout.workflow.condition.shipping_method_is_not_available.message
-                            method_identifier: $checkout.shippingMethod
-                        - '@has_applicable_payment_methods':
+                        - '@equal':
+                            parameters: [$.result.hasApplicablePaymentMethods, true]
                             message: oro.checkout.workflow.condition.payment_method_is_not_applicable.message
-                            context: $.result.paymentContext
+                        - '@quote_acceptable': [$checkout.sourceEntity, true]
+
                 conditions:
                     '@and':
-                        - '@or':
-                            - '@empty': $.result.savedCheckoutState
-                            - '@check_checkout_states':
-                                message: oro.checkout.workflow.condition.content_of_order_was_changed.message
-                                parameters:
-                                    entity: $checkout
-                                    state1: $.result.initCheckoutState
-                                    state2: $.result.savedCheckoutState
+                        - '@check_request':
+                            message: oro.checkout.workflow.condition.invalid_request.message
+                            parameters:
+                                is_ajax: true
+                                expected_key: _wid
+                                expected_value: ajax_checkout
+                        - '@is_checkout_state_valid':
+                            message: oro.checkout.workflow.condition.content_of_order_was_changed.message
+                            parameters:
+                                entity: $checkout
+                                token: $state_token
+                                current_state: $.result.currentCheckoutState
                         - '@not_empty':
                             message: oro.checkout.workflow.condition.payment_method_was_not_selected.message
                             parameters: $checkout.paymentMethod
@@ -1053,12 +1047,7 @@ workflows:
                             message: oro.checkout.workflow.condition.payment_method_is_not_applicable.message
                             payment_method: $checkout.paymentMethod
                             context: $.result.paymentContext
-                        - '@check_request':
-                            message: Invalid request
-                            parameters:
-                                is_ajax: true
-                                expected_key: _wid
-                                expected_value: ajax_checkout
+
                 actions:
                     - '@tree':
                         conditions:
@@ -1090,23 +1079,30 @@ workflows:
                                     failureUrl: $.result.failureUrl
                                     additionalData: $additional_data
                                     checkoutId: $checkout.id
-                    - '@generate_checkout_state_snapshot':
-                        entity: $checkout
-                        attribute: $.result.actualCheckoutState
-                    - '@save_checkout_state':
-                        entity: $checkout
-                        state: $.result.actualCheckoutState
-                        attribute: $state_token
-                    - '@assign_value': [$internal_state_token, $state_token]
+                    - '@generate_uuid': $state_token
 
             verify_payment_definition:
+                preactions:
+                    - '@run_action_group':
+                        action_group: order_line_items_not_empty
+                        parameters_mapping:
+                            checkout: $checkout
+                        results:
+                            result.orderLineItemsNotEmpty: $.orderLineItemsNotEmpty
+                            result.orderLineItemsNotEmptyForRfp: $.orderLineItemsNotEmptyForRfp
+                    - '@tree':
+                        conditions:
+                            '@blank': $.result.requirePaymentRedirect
+                        actions:
+                            - '@assign_value': [$.result.requirePaymentRedirect, false]
+                            - '@assign_value':
+                                conditions:
+                                    '@require_payment_redirect':
+                                        payment_method: $payment_method
+                                parameters: [$.result.requirePaymentRedirect, true]
+
                 preconditions:
                     '@and':
-                        - '@equal': [$payment_in_progress, false]
-                        - '@equal': [$checkout.completed, false]
-                        - '@order_line_item_has_count': $checkout
-                        - '@require_payment_redirect':
-                            payment_method: $payment_method
                         - '@or':
                             - '@not':
                                 - '@check_request':
@@ -1118,15 +1114,18 @@ workflows:
                                     is_ajax: true
                                     expected_key: transition
                                     expected_value: continue_to_order_review
+                        - '@equal': [$checkout.completed, false]
+                        - '@equal': [$payment_in_progress, false]
+                        - '@equal': [$.result.requirePaymentRedirect, true]
+                        - '@equal':
+                            parameters: [$.result.orderLineItemsNotEmptyForRfp, true]
+                            message: oro.checkout.workflow.condition.order_line_item_has_count_not_allow_rfp.message
+                        - '@equal':
+                            parameters: [$.result.orderLineItemsNotEmpty, true]
+                            message: oro.checkout.workflow.condition.order_line_item_has_count_allow_rfp.message
+
                 actions:
-                    - '@generate_checkout_state_snapshot':
-                        entity: $checkout
-                        attribute: $.result.actualCheckoutState
-                    - '@save_checkout_state':
-                        entity: $checkout
-                        state: $.result.actualCheckoutState
-                        attribute: $state_token
-                    - '@assign_value': [$internal_state_token, $state_token]
+                    - '@generate_uuid': $state_token
 
             place_order_definition:
                 preactions:
@@ -1141,587 +1140,306 @@ workflows:
                         conditions:
                             '@not_empty': [$.id]
                         actions:
-                            - '@generate_checkout_state_snapshot':
-                                entity: $checkout
-                                attribute: $.result.currentCheckoutState
-                            - '@get_checkout_state':
-                                entity: $checkout
-                                token: $state_token
-                                attribute: $.result.tokenCheckoutState
-                            - '@run_action_group':
-                                action_group: oro_update_shipping_price
-                                parameters_mapping:
-                                    checkout: $checkout
-                            - '@tree':
-                                conditions:
-                                    '@not':
-                                        - '@check_checkout_states':
-                                            entity: $checkout
-                                            state1: $.result.currentCheckoutState
-                                            state2: $.result.tokenCheckoutState
-                                actions:
-                                    - '@assign_value': [$.result.savedCheckoutState, $.result.tokenCheckoutState]
-                                    - '@delete_checkout_state':
-                                        entity: $checkout
-                                        token: $state_token
-                                    - '@save_checkout_state':
-                                        entity: $checkout
-                                        state: $.result.currentCheckoutState
-                                        token: $state_token
                             - '@call_service_method':
-                                service: oro_checkout.provider.payment_context
-                                method: getContext
-                                method_parameters: [$checkout]
-                                attribute: $.result.paymentContext
+                                conditions:
+                                    '@empty': $.result.paymentContext
+                                parameters:
+                                    service: oro_checkout.provider.payment_context
+                                    method: getContext
+                                    method_parameters: [$checkout]
+                                    attribute: $.result.paymentContext
+                    - '@tree':
+                        conditions:
+                            '@blank': $.result.shippingMethodHasEnabledShippingRules
+                        actions:
+                            - '@assign_value': [$.result.shippingMethodHasEnabledShippingRules, false]
+                            - '@assign_value':
+                                conditions:
+                                    '@shipping_method_has_enabled_shipping_rules': $checkout.shippingMethod
+                                parameters: [$.result.shippingMethodHasEnabledShippingRules, true]
+                    - '@tree':
+                        conditions:
+                            '@blank': $.result.paymentMethodApplicable
+                        actions:
+                            - '@assign_value': [$.result.paymentMethodApplicable, false]
+                            - '@assign_value':
+                                conditions:
+                                    '@payment_method_applicable':
+                                        payment_method: $checkout.paymentMethod
+                                        context: $.result.paymentContext
+                                parameters: [$.result.paymentMethodApplicable, true]
+                    - '@tree':
+                        conditions:
+                            '@blank': $.result.extendableConditionCheckout
+                        actions:
+                            - '@assign_value': [$.result.extendableConditionCheckout, false]
+                            - '@assign_value':
+                                conditions:
+                                    '@extendable':
+                                        events: ['extendable_condition.checkout']
+                                parameters: [$.result.extendableConditionCheckout, true]
+                    - '@tree':
+                        conditions:
+                            '@blank': $.result.extendableConditionPreOrderCreate
+                        actions:
+                            - '@assign_value': [$.result.extendableConditionPreOrderCreate, false]
+                            - '@assign_value':
+                                conditions:
+                                    '@extendable':
+                                        events: ['extendable_condition.pre_order_create']
+                                parameters: [$.result.extendableConditionPreOrderCreate, true]
+                    - '@tree':
+                        conditions:
+                            '@blank': $.result.lessOrderTotalLimit
+                        actions:
+                            - '@assign_value': [$.result.lessOrderTotalLimit, false]
+                            - '@assign_value':
+                                conditions:
+                                    '@less_order_total_limit': [$checkout, $.data.order_approval_threshold]
+                                parameters: [$.result.lessOrderTotalLimit, true]
+
                 preconditions:
                     '@and':
                         - '@not_empty': $.result.paymentContext
-                        - '@quote_acceptable': [$checkout.sourceEntity, true]
-                        - '@shipping_method_has_enabled_shipping_rules':
+                        - '@equal':
+                            parameters: [$.result.shippingMethodHasEnabledShippingRules, true]
                             message: oro.checkout.workflow.condition.shipping_method_is_not_available.message
-                            method_identifier: $checkout.shippingMethod
-                        - '@payment_method_applicable':
+                        - '@equal':
+                            parameters: [$.result.paymentMethodApplicable, true]
                             message: oro.checkout.workflow.condition.payment_method_is_not_applicable.message
-                            payment_method: $checkout.paymentMethod
-                            context: $.result.paymentContext
+                        - '@quote_acceptable': [$checkout.sourceEntity, true]
                         - '@or':
                             message: "Pending approval"
                             parameters:
-                                - '@less_order_total_limit': [$checkout, $.data.order_approval_threshold]
+                                - '@equal': [$.result.lessOrderTotalLimit, true]
                                 - '@equal': [$allowed, true]
                                 - '@acl_granted': 'oro_alternativecheckout_checkout_approve'
-                        - '@extendable':
-                            events:
-                                - 'extendable_condition.checkout'
-                                - 'extendable_condition.pre_order_create'
+                        - '@equal': [$.result.extendableConditionCheckout, true]
+                        - '@equal': [$.result.extendableConditionPreOrderCreate, true]
+
                 conditions:
                     '@and':
+                        - '@is_checkout_state_valid':
+                            message: oro.checkout.workflow.condition.content_of_order_was_changed.message
+                            parameters:
+                                entity: $checkout
+                                token: $state_token
+                                current_state: $.result.currentCheckoutState
                         - '@extendable':
                             message: 'oro.checkout.workflow.b2b_flow_checkout.transition.place_order.condition.extendable.message'
                             events:
                                 - 'extendable_condition.before_order_create'
-                        - '@or':
-                            - '@empty': $.result.savedCheckoutState
-                            - '@check_checkout_states':
-                                message: oro.checkout.workflow.condition.content_of_order_was_changed.message
-                                parameters:
-                                    entity: $checkout
-                                    state1: $.result.initCheckoutState
-                                    state2: $.result.savedCheckoutState
+
                 actions:
-                    - '@assign_value':
-                        conditions:
-                            '@equal': [$checkout.shipToBillingAddress, false]
-                        parameters: [$.result.shippingAddress, $checkout.shippingAddress]
-                    - '@assign_value':
-                        conditions:
-                            '@equal': [$checkout.shipToBillingAddress, true]
-                        parameters: [$.result.shippingAddress, $checkout.billingAddress]
+                    - '@assign_constant_value': [$.result.validateAction, Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface::VALIDATE]
 
-                    # Place order
-                    - '@get_class_name':
-                        object: $checkout.sourceEntity.sourceDocument
-                        attribute: $.result.sourceDocumentEntityClassName
-                    - '@duplicate':
-                        target: $checkout.billingAddress
-                        attribute: $.result.billingAddress
-                        settings:
-                          - [[setNull], [propertyName, [id]]]
-                          - [[keep], [propertyName, [customerAddress]]]
-                          - [[keep], [propertyName, [customerUserAddress]]]
-                          - [[keep], [propertyName, [city]]]
-                          - [[keep], [propertyName, [country]]]
-                          - [[keep], [propertyName, [region]]]
-                          - [[keep], [propertyName, [organization]]]
-                          - [[shallowCopy], [propertyType, ['\DateTime']]]
-                    - '@flush_entity': $.result.billingAddress
-                    - '@duplicate':
-                        target: $.result.shippingAddress
-                        attribute: $.result.shippingAddress
-                        settings:
-                          - [[setNull], [propertyName, [id]]]
-                          - [[keep], [propertyName, [customerAddress]]]
-                          - [[keep], [propertyName, [customerUserAddress]]]
-                          - [[keep], [propertyName, [city]]]
-                          - [[keep], [propertyName, [country]]]
-                          - [[keep], [propertyName, [region]]]
-                          - [[keep], [propertyName, [organization]]]
-                          - [[shallowCopy], [propertyType, ['\DateTime']]]
-                    - '@flush_entity': $.result.shippingAddress
-                    - '@call_service_method':
-                        service: oro_payment_term.provider.payment_term
-                        method: getCurrentPaymentTerm
-                        attribute: $.result.paymentTerm
-                    - '@get_order_line_items':
-                        attribute: $.result.lineItems
-                        checkout: $checkout
-                    - '@create_order':
-                        attribute: $order
-                        checkout: $checkout
-                        data:
-                            billingAddress: $.result.billingAddress
-                            shippingAddress: $.result.shippingAddress
-                            sourceEntityClass: $.result.sourceDocumentEntityClassName
-                            paymentTerm: $.result.paymentTerm
-                            lineItems: $.result.lineItems
-                    - '@call_service_method':
-                        service: oro_order.handler.order_totals_handler
-                        method: fillSubtotals
-                        method_parameters:
-                            - $order
-                    - '@flush_entity': $order
+                    - '@assign_url':
+                        attribute: $.result.failedShippingAddressUrl
+                        route: oro_checkout_frontend_checkout
+                        route_parameters:
+                            id: $checkout.id
+                            transition: 'back_to_shipping_address_on_fail_address'
 
-                    - '@tree':
-                        actions:
-                            - '@assign_url':
-                                attribute: $.result.successUrl
-                                route: oro_checkout_frontend_checkout
-                                route_parameters:
-                                    id: $checkout.id
-                                    transition: 'finish_checkout'
-                            - '@assign_url':
-                                attribute: $.result.failureUrl
-                                route: oro_checkout_frontend_checkout
-                                route_parameters:
-                                    id: $checkout.id
-                                    transition: 'payment_error'
-                            - '@assign_url':
-                                attribute: $.result.failedShippingAddressUrl
-                                route: oro_checkout_frontend_checkout
-                                route_parameters:
-                                    id: $checkout.id
-                                    transition: 'back_to_shipping_address_on_fail_address'
-                            - '@payment_purchase':
-                                attribute: $.result.responseData
-                                object: $order
-                                amount: $order.total
-                                currency: $order.currency
-                                paymentMethod: $payment_method
-                                transactionOptions:
-                                    successUrl: $.result.successUrl
-                                    failureUrl: $.result.failureUrl
-                                    failedShippingAddressUrl: $.result.failedShippingAddressUrl
-                                    additionalData: $additional_data
-                                    checkoutId: $checkout.id
-                            - '@assign_value': [$payment_in_progress, true]
+                    - '@run_action_group':
+                        action_group: b2b_flow_checkout_place_order
+                        parameters_mapping:
+                            checkout: $checkout
+                        results:
+                            data.order: $.order
+
+                    - '@assign_value': [$payment_in_progress, true]
+
+                    - '@run_action_group':
+                        action_group: b2b_flow_checkout_purchase
+                        parameters_mapping:
+                            checkout: $checkout
+                            order: $order
+                            transactionOptions:
+                                failedShippingAddressUrl: $.result.failedShippingAddressUrl
+                                additionalData: $additional_data
+                        results:
+                            result.responseData: $.responseData
+
                     - '@extendable':
                         events: [extendable_action.finish_checkout]
+
                     - '@redirect':
                         conditions:
                             '@and':
-                                - '@equal': ["$.result.responseData[purchaseSuccessful]", true]
+                                - '@equal':
+                                    - $.result.responseData[purchaseSuccessful]
+                                    - true
                                 - '@payment_method_supports':
-                                    payment_method: $payment_method
-                                    action: 'validate'
+                                    payment_method: $checkout.paymentMethod
+                                    action: $.result.validateAction
                         route: oro_checkout_frontend_checkout
                         route_parameters:
                             id: $checkout.id
                             transition: finish_checkout
+
                     - '@redirect':
                         conditions:
                             '@and':
-                                - '@equal': ["$.result.responseData[purchaseSuccessful]", false]
+                                - '@equal':
+                                    - $.result.responseData[purchaseSuccessful]
+                                    - false
                                 - '@payment_method_supports':
-                                    payment_method: $payment_method
-                                    action: 'validate'
+                                    payment_method: $checkout.paymentMethod
+                                    action: $.result.validateAction
                         route: oro_checkout_frontend_checkout
                         route_parameters:
                             id: $checkout.id
                             transition: payment_error
-                    - '@generate_checkout_state_snapshot':
-                        entity: $checkout
-                        attribute: $.result.actualCheckoutState
-                    - '@save_checkout_state':
-                        entity: $checkout
-                        state: $.result.actualCheckoutState
-                        attribute: $state_token
+                    - '@generate_uuid': $state_token
 
             continue_to_request_approval_definition:
                 preactions:
-                    - '@generate_checkout_state_snapshot':
-                        entity: $checkout
-                        attribute: $.result.currentCheckoutState
-                    - '@get_checkout_state':
-                        entity: $checkout
-                        token: $state_token
-                        attribute: $.result.tokenCheckoutState
-                    - '@run_action_group':
-                        action_group: oro_update_shipping_price
-                        parameters_mapping:
-                            checkout: $checkout
                     - '@tree':
                         conditions:
-                            '@not':
-                                - '@check_checkout_states':
-                                    entity: $checkout
-                                    state1: $.result.currentCheckoutState
-                                    state2: $.result.tokenCheckoutState
+                            '@blank': $.result.lessOrderTotalLimit
                         actions:
-                            - '@assign_value': [$.result.savedCheckoutState, $.result.tokenCheckoutState]
-                            - '@delete_checkout_state':
-                                entity: $checkout
-                                token: $state_token
-                            - '@save_checkout_state':
-                                entity: $checkout
-                                state: $.result.currentCheckoutState
-                                token: $state_token
+                            - '@assign_value': [$.result.lessOrderTotalLimit, false]
+                            - '@assign_value':
+                                conditions:
+                                    '@less_order_total_limit': [$checkout, $.data.order_approval_threshold]
+                                parameters: [$.result.lessOrderTotalLimit, true]
+
                 preconditions:
                     '@and':
+                        - '@equal': [$.result.lessOrderTotalLimit, false]
+                        - '@equal': [$allowed, false]
                         - '@not':
                             - '@acl_granted': 'oro_alternativecheckout_checkout_approve'
-                        - '@not':
-                            - '@less_order_total_limit': [$checkout, $.data.order_approval_threshold]
-                        - '@equal': [$allowed, false]
                         - '@quote_acceptable': [$checkout.sourceEntity, true]
+
                 conditions:
-                    '@or':
-                        - '@empty': $.result.savedCheckoutState
-                        - '@check_checkout_states':
+                    '@is_checkout_state_valid':
+                        message: oro.checkout.workflow.condition.content_of_order_was_changed.message
+                        parameters:
+                            entity: $checkout
+                            token: $state_token
+                            current_state: $.result.currentCheckoutState
+
+                actions:
+                    - '@generate_uuid': $state_token
+
+            request_for_approve_order_definition:
+                conditions:
+                    '@and':
+                        - '@is_checkout_state_valid':
                             message: oro.checkout.workflow.condition.content_of_order_was_changed.message
                             parameters:
                                 entity: $checkout
-                                state1: $.result.initCheckoutState
-                                state2: $.result.savedCheckoutState
-                actions:
-                    - '@generate_checkout_state_snapshot':
-                        entity: $checkout
-                        attribute: $.result.actualCheckoutState
-                    - '@save_checkout_state':
-                        entity: $checkout
-                        state: $.result.actualCheckoutState
-                        attribute: $state_token
-                    - '@assign_value': [$internal_state_token, $state_token]
-
-            request_for_approve_order_definition:
-                preactions:
-                    - '@generate_checkout_state_snapshot':
-                        entity: $checkout
-                        attribute: $.result.currentCheckoutState
-                    - '@get_checkout_state':
-                        entity: $checkout
-                        token: $state_token
-                        attribute: $.result.tokenCheckoutState
-                    - '@run_action_group':
-                        action_group: oro_update_shipping_price
-                        parameters_mapping:
-                            checkout: $checkout
-                    - '@tree':
-                        conditions:
-                            '@not':
-                                - '@check_checkout_states':
-                                    entity: $checkout
-                                    state1: $.result.currentCheckoutState
-                                    state2: $.result.tokenCheckoutState
-                        actions:
-                            - '@assign_value': [$.result.savedCheckoutState, $.result.tokenCheckoutState]
-                            - '@delete_checkout_state':
-                                entity: $checkout
                                 token: $state_token
-                            - '@save_checkout_state':
-                                entity: $checkout
-                                state: $.result.currentCheckoutState
-                                token: $state_token
-                conditions:
-                    '@and':
+                                current_state: $.result.currentCheckoutState
                         - '@quote_acceptable': [$checkout.sourceEntity, true]
-                        - '@or':
-                            - '@empty': $.result.savedCheckoutState
-                            - '@check_checkout_states':
-                                message: oro.checkout.workflow.condition.content_of_order_was_changed.message
-                                parameters:
-                                    entity: $checkout
-                                    state1: $.result.initCheckoutState
-                                    state2: $.result.savedCheckoutState
+
                 actions:
                     - '@assign_value':
                         conditions:
                             '@equal': [$requested_for_approve, false]
                         parameters: [$requested_for_approve, true]
-                    - '@generate_checkout_state_snapshot':
-                        entity: $checkout
-                        attribute: $.result.actualCheckoutState
-                    - '@save_checkout_state':
-                        entity: $checkout
-                        state: $.result.actualCheckoutState
-                        attribute: $state_token
-                    - '@assign_value': [$internal_state_token, $state_token]
+                    - '@generate_uuid': $state_token
 
             approve_order_definition:
-                preactions:
-                    - '@generate_checkout_state_snapshot':
-                        entity: $checkout
-                        attribute: $.result.currentCheckoutState
-                    - '@get_checkout_state':
-                        entity: $checkout
-                        token: $state_token
-                        attribute: $.result.tokenCheckoutState
-                    - '@run_action_group':
-                        action_group: oro_update_shipping_price
-                        parameters_mapping:
-                            checkout: $checkout
-                    - '@tree':
-                        conditions:
-                            '@not':
-                                - '@check_checkout_states':
-                                    entity: $checkout
-                                    state1: $.result.currentCheckoutState
-                                    state2: $.result.tokenCheckoutState
-                        actions:
-                            - '@assign_value': [$.result.savedCheckoutState, $.result.tokenCheckoutState]
-                            - '@delete_checkout_state':
-                                entity: $checkout
-                                token: $state_token
-                            - '@save_checkout_state':
-                                entity: $checkout
-                                state: $.result.currentCheckoutState
-                                token: $state_token
                 preconditions:
                     '@and':
-                        - '@acl_granted': 'oro_alternativecheckout_checkout_approve'
                         - '@equal': [$allowed, false]
+                        - '@acl_granted': 'oro_alternativecheckout_checkout_approve'
                         - '@quote_acceptable': [$checkout.sourceEntity, true]
+
                 conditions:
-                    '@or':
-                        - '@empty': $.result.savedCheckoutState
-                        - '@check_checkout_states':
-                            message: oro.checkout.workflow.condition.content_of_order_was_changed.message
-                            parameters:
-                                entity: $checkout
-                                state1: $.result.initCheckoutState
-                                state2: $.result.savedCheckoutState
+                    '@is_checkout_state_valid':
+                        message: oro.checkout.workflow.condition.content_of_order_was_changed.message
+                        parameters:
+                            entity: $checkout
+                            token: $state_token
+                            current_state: $.result.currentCheckoutState
+
                 actions:
-                    - '@assign_value':
-                        conditions:
-                            '@equal': [$allowed, false]
-                        parameters: [$allowed, true]
+                    - '@assign_value': [$allowed, true]
                     - '@create_datetime':
                         attribute: $allow_request_date
-                    - '@generate_checkout_state_snapshot':
-                        entity: $checkout
-                        attribute: $.result.actualCheckoutState
-                    - '@save_checkout_state':
-                        entity: $checkout
-                        state: $.result.actualCheckoutState
-                        attribute: $state_token
-                    - '@assign_value': [$internal_state_token, $state_token]
+                    - '@generate_uuid': $state_token
 
             finish_checkout_definition:
                 conditions:
                     '@and':
                         - '@not_empty': [$order]
                         - '@equal': [$payment_in_progress, true]
+
                 actions:
-                    # Save billing address if required
-                    - '@assign_constant_value': [$.result.typeBillingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_BILLING]
-                    - '@tree':
-                        conditions:
-                            '@and':
-                                - '@equal': [$checkout.saveBillingAddress, true]
-                                - '@empty': $order.billingAddress.customerAddress
-                                - '@empty': $order.billingAddress.customerUserAddress
-                                - '@acl_granted': 'oro_order_address_billing_allow_manual'
-                        actions:
-                            - '@find_entity':
-                                class: Oro\Bundle\AddressBundle\Entity\AddressType
-                                attribute: $.result.typeBilling
-                                identifier: $.result.typeBillingName
-                            - '@create_entity':
-                                attribute: $.result.customerBillingAddress
-                                class: Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress
-                                data:
-                                    frontendOwner: $checkout.customerUser
-                                    owner: $checkout.owner
-                                    systemOrganization: $checkout.organization
-                                    label: $order.billingAddress.label
-                                    organization: $order.billingAddress.organization
-                                    street: $order.billingAddress.street
-                                    street2: $order.billingAddress.street2
-                                    city: $order.billingAddress.city
-                                    postalCode: $order.billingAddress.postalCode
-                                    country: $order.billingAddress.country
-                                    region: $order.billingAddress.region
-                                    regionText: $order.billingAddress.regionText
-                                    namePrefix: $order.billingAddress.namePrefix
-                                    firstName: $order.billingAddress.firstName
-                                    middleName: $order.billingAddress.middleName
-                                    lastName: $order.billingAddress.lastName
-                                    nameSuffix: $order.billingAddress.nameSuffix
-                                    phone: $order.billingAddress.phone
-                            - '@call_method':
-                                object: $.result.customerBillingAddress
-                                method: addType
-                                method_parameters:
-                                    - $.result.typeBilling
-                            - '@flush_entity':
-                                conditions:
-                                    '@not_empty': $.result.customerBillingAddress
-                                parameters: [$.result.customerBillingAddress]
-
-                    # Save shipping address if required
-                    - '@assign_constant_value': [$.result.typeShippingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_SHIPPING]
-                    - '@tree':
-                        conditions:
-                            '@and':
-                                - '@equal': [$checkout.saveShippingAddress, true]
-                                - '@empty': $order.shippingAddress.customerAddress
-                                - '@empty': $order.shippingAddress.customerUserAddress
-                                - '@acl_granted': 'oro_order_address_shipping_allow_manual'
-                        actions:
-                            - '@find_entity':
-                                class: Oro\Bundle\AddressBundle\Entity\AddressType
-                                attribute: $.result.typeShipping
-                                identifier: $.result.typeShippingName
-                            - '@tree':
-                                conditions:
-                                    '@equal': [$checkout.shipToBillingAddress, false]
-                                actions:
-                                    - '@create_entity':
-                                        attribute: $.result.customerShippingAddress
-                                        class: Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress
-                                        data:
-                                            frontendOwner: $checkout.customerUser
-                                            owner: $checkout.owner
-                                            systemOrganization: $checkout.organization
-                                            label: $checkout.shippingAddress.label
-                                            organization: $checkout.shippingAddress.organization
-                                            street: $order.shippingAddress.street
-                                            street2: $order.shippingAddress.street2
-                                            city: $order.shippingAddress.city
-                                            postalCode: $order.shippingAddress.postalCode
-                                            country: $order.shippingAddress.country
-                                            region: $order.shippingAddress.region
-                                            regionText: $order.shippingAddress.regionText
-                                            namePrefix: $order.shippingAddress.namePrefix
-                                            firstName: $order.shippingAddress.firstName
-                                            middleName: $order.shippingAddress.middleName
-                                            lastName: $order.shippingAddress.lastName
-                                            nameSuffix: $order.shippingAddress.nameSuffix
-                                            phone: $order.shippingAddress.phone
-                                    - '@call_method':
-                                        object: $.result.customerShippingAddress
-                                        method: addType
-                                        method_parameters:
-                                            - $.result.typeShipping
-                            - '@call_method':
-                                conditions:
-                                    '@equal': [$checkout.shipToBillingAddress, true]
-                                parameters:
-                                    object: $.result.customerBillingAddress
-                                    method: addType
-                                    method_parameters:
-                                        - $.result.typeShipping
-                            - '@flush_entity':
-                                conditions:
-                                    '@not_empty': $.result.customerShippingAddress
-                                parameters: [$.result.customerShippingAddress]
                     - '@run_action_group':
-                          action_group: b2b_flow_checkout_send_order_confirmation_email
-                          parameters_mapping:
-                              checkout: $checkout
-                              order: $order
-                              workflow: 'b2b_flow_alternative_checkout'
+                        action_group: b2b_flow_checkout_finish_checkout
+                        parameters_mapping:
+                            checkout: $checkout
+                            order: $order
+                            auto_remove_source: $auto_remove_source
+                            allow_manual_source_remove: $allow_manual_source_remove
+                            remove_source: $remove_source
+                            clear_source: $clear_source
 
-                    - '@assign_value': [$checkout.completed, true]
-
-                    - '@tree':
-                        conditions:
-                            '@not_empty': $order
-                        actions:
-                            - '@count':
-                                value: $order.lineItems
-                                attribute: $checkout.completedData.itemsCount
-                            - '@assign_value': [$.result.orders, []]
-                            - '@get_class_name':
-                                object: $order
-                                attribute: $.result.orderClassName
-                            - '@call_service_method':
-                                service: oro_entity.entity_alias_resolver
-                                method: getAlias
-                                method_parameters: [$.result.orderClassName]
-                                attribute: $.result.orders[0].entityAlias
-                            - '@call_service_method':
-                                service: oro_entity.doctrine_helper
-                                method: getEntityIdentifier
-                                method_parameters: [$order]
-                                attribute: $.result.orders[0].entityId
-                            - '@assign_value': [$checkout.completedData.orders, $.result.orders]
-                    - '@assign_value': [$.result.sourceEntity, $checkout.sourceEntity]
-                    - '@tree':
-                        conditions:
-                            '@not_empty': $.result.sourceEntity
-                        actions:
-                            - '@call_service_method':
-                                service: oro_entity.entity_name_resolver
-                                method: getName
-                                method_parameters: [$.result.sourceEntity.sourceDocument]
-                                attribute: $checkout.completedData.startedFrom
-                            - '@assign_value':
-                                - [$checkout.completedData.currency, $order.currency]
-                                - [$checkout.completedData.subtotal, $order.subtotalObject.value]
-                                - [$checkout.completedData.total, $order.totalObject.value]
-
-                    - '@clear_checkout_source_entity':
-                        conditions:
-                            '@and':
-                              - '@equal': [$auto_remove_source, false]
-                              - '@equal': [$allow_manual_source_remove, false]
-                              - '@equal': [$remove_source, false]
-                              - '@equal': [$clear_source, true]
-                        parameters: [$.checkout]
-
-                    - '@remove_checkout_source_entity':
-                        conditions:
-                            '@or':
-                                - '@equal': [$auto_remove_source, true]
-                                - '@and':
-                                    - '@equal': [$allow_manual_source_remove, true]
-                                    - '@equal': [$remove_source, true]
-                        parameters: [$checkout]
+                    - '@delete_checkout_state':
+                          entity: $checkout
 
             recalculate_state_definition:
                 preconditions:
                     '@equal': [$checkout.completed, false]
+
                 actions:
-                    - '@assign_value': [$payment_in_progress, false]
                     - '@run_action_group':
-                        action_group: oro_update_shipping_price
-                        parameters_mapping:
-                            checkout: $checkout
-                    - '@generate_checkout_state_snapshot':
-                        entity: $checkout
-                        attribute: $.result.actualCheckoutState
-                    - '@save_checkout_state':
-                        entity: $checkout
-                        state: $.result.actualCheckoutState
-                        attribute: $state_token
-                    - '@assign_value': [$internal_state_token, $state_token]
+                          action_group: oro_update_shipping_price
+                          parameters_mapping:
+                              checkout: $checkout
+                    - '@assign_value':
+                        - [$.result.shippingPriceUpdated, true]
+                        - [$payment_in_progress, false]
+                    - '@generate_uuid': $state_token
+
+            back_to_shipping_method_definition:
+                preconditions:
+                    '@equal': [$checkout.completed, false]
+
+                actions:
+                    - '@assign_value':
+                        - [$payment_method, null]
+                        - [$payment_in_progress, false]
+                        - [$shipping_method, null]
+                        - [$checkout.shippingCost, null]
+                    - '@call_service_method':
+                        service: oro_checkout.action.default_shipping_method_setter
+                        method: setDefaultShippingMethod
+                        method_parameters: [$checkout]
+                    - '@generate_uuid': $state_token
 
             clear_payment_method_and_recalculate_state_definition:
                 preconditions:
                     '@equal': [$checkout.completed, false]
+
                 actions:
-                    - '@assign_value': [$payment_method, null]
-                    - '@assign_value': [$payment_in_progress, false]
-                    - '@assign_value': [$shipping_method, null]
-                    - '@assign_value': [$checkout.shippingCost, null]
-                    - '@generate_checkout_state_snapshot':
-                        entity: $checkout
-                        attribute: $.result.actualCheckoutState
-                    - '@save_checkout_state':
-                        entity: $checkout
-                        state: $.result.actualCheckoutState
-                        attribute: $state_token
-                    - '@assign_value': [$internal_state_token, $state_token]
+                    - '@assign_value':
+                        - [$payment_method, null]
+                        - [$payment_in_progress, false]
+                        - [$shipping_method, null]
+                        - [$checkout.shippingCost, null]
+                    - '@generate_uuid': $state_token
 
             unblock_and_recalculate_definition:
                 actions:
-                    - '@assign_value': [$payment_method, null]
-                    - '@assign_value': [$payment_in_progress, false]
-                    - '@generate_checkout_state_snapshot':
-                        entity: $checkout
-                        attribute: $.result.actualCheckoutState
-                    - '@save_checkout_state':
-                        entity: $checkout
-                        state: $.result.actualCheckoutState
-                        attribute: $state_token
-                    - '@assign_value': [$internal_state_token, $state_token]
+                    - '@assign_value':
+                        - [$payment_method, null]
+                        - [$payment_in_progress, false]
+                    - '@generate_uuid': $state_token
+
+
+            payment_error_definition:
+                actions:
+                    - '@assign_value':
+                          - [$payment_method, null]
+                          - [$payment_in_progress, false]
+                    - '@remove_entity':
+                        conditions:
+                            '@not_empty': $order
+                        parameters: [$order]
+                    - '@unset_value': [$.data.order]
+                    - '@generate_uuid': $state_token

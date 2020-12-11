@@ -58,8 +58,6 @@ oro:
                     label: 'Is requested for approve'
                 state_token:
                     label: 'Token to track checkout state'
-                internal_state_token:
-                    label: 'Internal checkout state token'
                 save_billing_address:
                     label: 'Save Billing Address'
                 save_shipping_address:

@@ -2,15 +2,6 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
   attributes:
     id:
       groups: ['checkout']
-    totals:
-      groups: ['checkout']
-    lineItems:
-      groups: ['checkout']
-
-Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
-  attributes:
-    subtotal:
-      groups: ['checkout']
 
 Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal:
   attributes:
@@ -69,8 +60,6 @@ Oro\Bundle\CheckoutBundle\Entity\Checkout:
 
 Oro\Bundle\OrderBundle\Entity\OrderAddress:
   attributes:
-    id:
-      groups: ['checkout']
     street:
       groups: ['checkout']
     street2:
@@ -114,76 +103,8 @@ Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem:
   attributes:
     id:
       groups: ['checkout']
-    product:
-      groups: ['checkout']
-    productSku:
-      groups: ['checkout']
-    freeFormProduct:
-      groups: ['checkout']
-    quantity:
-      groups: ['checkout']
-    productUnit:
-      groups: ['checkout']
-    productUnitCode:
-      groups: ['checkout']
-    value:
-      groups: ['checkout']
-    currency:
-      groups: ['checkout']
 
 Oro\Bundle\CheckoutBundle\Entity\CheckoutSubtotal:
   attributes:
     subtotal:
-      groups: ['checkout']
-
-Oro\Bundle\OrderBundle\Entity\Order:
-  attributes:
-    id:
-      groups: ['checkout']
-    billingAddress:
-      groups: ['checkout']
-    shippingAddress:
-      groups: ['checkout']
-    poNumber:
-      groups: ['checkout']
-    currency:
-      groups: ['checkout']
-    subtotal:
-      groups: ['checkout']
-    baseSubtotalValue:
-      groups: ['checkout']
-    baseTotalValue:
-      groups: ['checkout']
-    lineItems:
-      groups: ['checkout']
-    shippingMethod:
-      groups: ['checkout']
-    shippingMethodType:
-      groups: ['checkout']
-    estimatedShippingCostAmount:
-      groups: ['checkout']
-    overriddenShippingCostAmount:
-      groups: ['checkout']
-
-Oro\Bundle\OrderBundle\Entity\OrderLineItem:
-  attributes:
-    id:
-      groups: ['checkout']
-    product:
-      groups: ['checkout']
-    productSku:
-      groups: ['checkout']
-    productName:
-      groups: ['checkout']
-    freeFormProduct:
-      groups: ['checkout']
-    quantity:
-      groups: ['checkout']
-    productUnit:
-      groups: ['checkout']
-    productUnitCode:
-      groups: ['checkout']
-    value:
-      groups: ['checkout']
-    currency:
       groups: ['checkout']

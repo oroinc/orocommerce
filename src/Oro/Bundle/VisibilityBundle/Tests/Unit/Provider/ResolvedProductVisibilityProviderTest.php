@@ -82,6 +82,8 @@ class ResolvedProductVisibilityProviderTest extends \PHPUnit\Framework\TestCase
             ->willReturn([['id' => 1], ['id' => 2]]);
 
         $this->resolvedProductVisibilityProvider->prefetch($productIds);
+        // Checks caching.
+        $this->resolvedProductVisibilityProvider->prefetch($productIds);
 
         $this->assertTrue($this->resolvedProductVisibilityProvider->isVisible(1));
         $this->assertTrue($this->resolvedProductVisibilityProvider->isVisible(2));

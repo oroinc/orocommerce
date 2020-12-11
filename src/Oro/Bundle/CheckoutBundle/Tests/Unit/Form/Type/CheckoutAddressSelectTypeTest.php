@@ -227,6 +227,11 @@ class CheckoutAddressSelectTypeTest extends FormIntegrationTestCase
      */
     public function testEnterManuallySelectedByDefault($address, $expected)
     {
+        $this->orderAddressSecurityProvider
+            ->expects($this->any())
+            ->method('isManualEditGranted')
+            ->willReturn(true);
+
         $checkout = new Checkout();
         $checkout->setBillingAddress($address);
 
@@ -236,39 +241,44 @@ class CheckoutAddressSelectTypeTest extends FormIntegrationTestCase
 
         $this->propertyAccessor->expects($this->any())
             ->method('getValue')
-            ->will($this->returnValueMap(
+            ->willReturnMap(
                 [
                     [$address, 'street', $address->getStreet()],
                     [$address, 'city', $address->getCity()],
                     [$address, 'country', $address->getCountry()],
                     [$address, 'region', $address->getRegion()],
-                    [$address, 'postalCode', $address->getPostalCode()]
+                    [$address, 'postalCode', $address->getPostalCode()],
                 ]
-            ));
+            );
 
-        $form = $this->factory->create(CheckoutAddressSelectType::class, null, [
-            'object'       => $checkout,
-            'address_type' => 'billing'
-        ]);
+        $form = $this->factory->create(
+            CheckoutAddressSelectType::class,
+            null,
+            [
+                'object' => $checkout,
+                'address_type' => 'billing',
+            ]
+        );
 
-        $this->assertSame($expected, $form->getData());
+        $this->assertSame($address, $form->getData());
+        $this->assertSame($expected, $form->getViewData());
     }
 
     public function enterManuallySelectedByDefaultDataProvider()
     {
         return [
-            'If address is empty default value should be null' => [
-                'address'  => new OrderAddress(),
-                'expected' => null
+            'If address is empty default value should be empty string' => [
+                'address' => new OrderAddress(),
+                'expected' => '',
             ],
-            'If address has fulfilled fields which are not required default value should be null' => [
-                'addresss' => (new OrderAddress())->setCreated(new \DateTime()),
-                'expected' => null
+            'If address has fulfilled fields which are not required default value should be empty string' => [
+                'address' => (new OrderAddress())->setCreated(new \DateTime()),
+                'expected' => '',
             ],
             'If address has fulfilled one of the required fields default value should be 0' => [
-                'address'  => (new OrderAddress())->setCity('Los Angeles')->setCreated(new \DateTime()),
-                'expected' => 0
-            ]
+                'address' => (new OrderAddress())->setCity('Los Angeles')->setCreated(new \DateTime()),
+                'expected' => (string)OrderAddressSelectType::ENTER_MANUALLY,
+            ],
         ];
     }
 

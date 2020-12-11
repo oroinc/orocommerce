@@ -51,6 +51,19 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        initialize: function(options) {
+            FrontendCouponAddView.__super__.initialize.call(this, options);
+
+            // Removes update_checkout_state GET parameters to avoid accidental state updates when page is refreshed.
+            const url = location.href.replace(/\&?update_checkout_state=1\&?/i, '');
+            if (url !== location.href) {
+                history.replaceState({}, document.title, url);
+            }
+        },
+
+        /**
+         * @inheritDoc
+         */
         events: function() {
             const events = {};
             events['click ' + this.options.selectors.couponApplySelector] = 'applyCoupon';
@@ -181,7 +194,11 @@ define(function(require) {
         _updatePageData: function() {
             if (this.options.refreshOnSuccess) {
                 mediator.execute('showLoading');
-                mediator.execute('refreshPage');
+
+                // Adds update_checkout_state GET parameter to force update checkout state after coupon is added.
+                const parts = location.href.split('?');
+                const query = (typeof parts[1] === 'undefined' ? '?' : parts[1] + '&') + 'update_checkout_state=1';
+                mediator.execute('redirectTo', {url: parts[0] + '?' + query}, {replace: true, fullRedirect: true});
             } else {
                 mediator.trigger('frontend:coupons:changed');
             }

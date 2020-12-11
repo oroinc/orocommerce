@@ -11,37 +11,32 @@ use Oro\Bundle\WorkflowBundle\Model\Transition;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowData;
 use Oro\Bundle\WorkflowBundle\Resolver\TransitionOptionsResolver;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class TransitionFormProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|\stdClass|TransitionProvider
-     */
-    protected $transitionProvider;
+    /** @var TransitionProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $transitionProvider;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|FormFactoryInterface
-     */
-    protected $formFactory;
+    /** @var \PHPUnit\Framework\MockObject\MockObject|FormFactoryInterface */
+    private $formFactory;
 
-    /**
-     * @var TransitionFormProvider
-     */
-    protected $provider;
+    /** @var TransitionFormProvider */
+    private $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->transitionProvider = $this->createMock(TransitionProvider::class);
         $this->formFactory = $this->createMock(FormFactoryInterface::class);
-        /** @var UrlGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject $router */
         $router = $this->createMock(UrlGeneratorInterface::class);
 
         $this->provider = new TransitionFormProvider($this->formFactory, $router);
         $this->provider->setTransitionProvider($this->transitionProvider);
     }
 
-    public function testGetTransitionForm()
+    public function testGetTransitionFormView(): void
     {
         $workflowData = new WorkflowData();
         $workflowItem = new WorkflowItem();
@@ -57,13 +52,13 @@ class TransitionFormProviderTest extends \PHPUnit\Framework\TestCase
         $this->transitionProvider->expects($this->once())
             ->method('getContinueTransition')
             ->with($workflowItem)
-            ->will($this->returnValue($transitionData));
+            ->willReturn($transitionData);
 
-        $formView = $this->createMock('Symfony\Component\Form\FormView');
-        $form = $this->createMock('Symfony\Component\Form\FormInterface');
+        $formView = $this->createMock(FormView::class);
+        $form = $this->createMock(FormInterface::class);
         $form->expects($this->once())
             ->method('createView')
-            ->will($this->returnValue($formView));
+            ->willReturn($formView);
         $this->formFactory->expects($this->once())
             ->method('create')
             ->with(
@@ -76,8 +71,51 @@ class TransitionFormProviderTest extends \PHPUnit\Framework\TestCase
                     'allow_extra_fields' => true,
                 ]
             )
-            ->will($this->returnValue($form));
+            ->willReturn($form);
 
         $this->assertSame($formView, $this->provider->getTransitionFormView($workflowItem));
+    }
+
+    public function testGetTransitionFormByTransition(): void
+    {
+        $workflowData = new WorkflowData();
+        $workflowItem = new WorkflowItem();
+        $workflowItem->setData($workflowData);
+        $optionsResolver = $this->createMock(TransitionOptionsResolver::class);
+
+        $transition = new Transition($optionsResolver);
+        $transition->setName('transition3');
+        $transition->setFormOptions(['attribute_fields' => ['test' => null]]);
+        $transition->setFormType('transition_type');
+
+        $form = $this->createMock(FormInterface::class);
+        $this->formFactory
+            ->expects($this->once())
+            ->method('create')
+            ->with(
+                'transition_type',
+                $workflowData,
+                [
+                    'workflow_item' => $workflowItem,
+                    'transition_name' => 'transition3',
+                    'attribute_fields' => ['test' => null],
+                    'allow_extra_fields' => true,
+                ]
+            )
+            ->willReturn($form);
+
+        $this->assertSame($form, $this->provider->getTransitionFormByTransition($workflowItem, $transition));
+    }
+
+    public function testGetTransitionFormByTransitionWhenNoForm(): void
+    {
+        $transition = new Transition($this->createMock(TransitionOptionsResolver::class));
+        $transition->setName('transition3');
+
+        $this->formFactory
+            ->expects($this->never())
+            ->method('create');
+
+        $this->assertNull($this->provider->getTransitionFormByTransition(new WorkflowItem(), $transition));
     }
 }

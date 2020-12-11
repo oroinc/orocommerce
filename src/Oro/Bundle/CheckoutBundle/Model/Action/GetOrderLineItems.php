@@ -8,6 +8,9 @@ use Oro\Component\Action\Action\AbstractAction;
 use Oro\Component\Action\Exception\InvalidParameterException;
 use Oro\Component\ConfigExpression\ContextAccessor;
 
+/**
+ * Gets OrderLineItem entities from Checkout and sets to the specified attribute.
+ */
 class GetOrderLineItems extends AbstractAction
 {
     const OPTION_KEY_CHECKOUT = 'checkout';
@@ -51,6 +54,13 @@ class GetOrderLineItems extends AbstractAction
             throw new InvalidParameterException('Attribute name parameter is required');
         }
 
+        if (!array_key_exists('disable_price_filter', $options)
+            && array_key_exists('config_visibility_path', $options)) {
+            throw new InvalidParameterException(
+                'Attribute disable_price_filter is required if config_visibility_path is specified'
+            );
+        }
+
         $this->options = $options;
 
         return $this;
@@ -62,8 +72,20 @@ class GetOrderLineItems extends AbstractAction
     protected function executeAction($context)
     {
         /** @var Checkout $checkout */
-        $checkout = $this->contextAccessor->getValue($context, $this->options['checkout']);
-        $lineItems = $this->checkoutLineItemsManager->getData($checkout);
+        $checkout = $this->contextAccessor->getValue($context, $this->options[self::OPTION_KEY_CHECKOUT]);
+        $arguments = [$checkout];
+
+        $disablePriceFilter = $this->getOption($this->options, 'disable_price_filter', null);
+        if ($disablePriceFilter !== null) {
+            $arguments[] = $disablePriceFilter;
+        }
+
+        $configVisibilityPath = $this->getOption($this->options, 'config_visibility_path', null);
+        if ($configVisibilityPath !== null) {
+            $arguments[] = $configVisibilityPath;
+        }
+
+        $lineItems = call_user_func_array([$this->checkoutLineItemsManager, 'getData'], $arguments);
 
         $this->contextAccessor->setValue($context, $this->options[self::OPTION_KEY_ATTRIBUTE], $lineItems);
     }

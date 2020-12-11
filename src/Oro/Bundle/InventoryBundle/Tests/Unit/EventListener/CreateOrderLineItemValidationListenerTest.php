@@ -114,6 +114,12 @@ class CreateOrderLineItemValidationListenerTest extends \PHPUnit\Framework\TestC
             [
                 'step' => 'checkout',
             ],
+            [
+                'step' => 'request_approval',
+            ],
+            [
+                'step' => 'approve_request',
+            ],
         ];
     }
 

@@ -53,8 +53,6 @@ workflows:
                 type: string
             state_token:
                 type: string
-            internal_state_token:
-                type: string
             order:
                 type: entity
                 options:
