@@ -38,9 +38,6 @@ workflows:
                     is_checkout_show_errors: true
                 form_options:
                     form_init:
-                        - '@generate_checkout_state_snapshot':
-                            entity: $checkout
-                            attribute: $.result.initCheckoutState
                         - '@tree':
                             conditions:
                                 '@and':  #For logged customer user only
@@ -48,6 +45,14 @@ workflows:
                                     - '@equal': [$checkout.customerUser.isGuest, false]
                             actions:
                                 - '@assign_value': [$customerConsents, null]
+                        - '@run_action_group':
+                            action_group: update_checkout_state
+                            parameters_mapping:
+                                checkout: $checkout
+                                state_token: $state_token
+                                update_checkout_state: $.result.updateCheckoutState
+                            results:
+                                result.updateCheckoutState: $.update_checkout_state
                     attribute_fields:
                         customerConsents:
                             form_type: Oro\Bundle\ConsentBundle\Form\Type\ConsentAcceptanceType
@@ -59,8 +64,6 @@ workflows:
                                     - Oro\Bundle\ConsentBundle\Validator\Constraints\RemovedLandingPages: ~
                         state_token:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
-                            options:
-                                data: $internal_state_token
 
             continue_to_shipping_address:
                 step_to: enter_shipping_address
@@ -71,9 +74,14 @@ workflows:
                     is_checkout_show_errors: true
                 form_options:
                     form_init:
-                        - '@generate_checkout_state_snapshot':
-                            entity: $checkout
-                            attribute: $.result.initCheckoutState
+                        - '@run_action_group':
+                            action_group: update_checkout_state
+                            parameters_mapping:
+                                checkout: $checkout
+                                state_token: $state_token
+                                update_checkout_state: $.result.updateCheckoutState
+                            results:
+                                result.updateCheckoutState: $.update_checkout_state
                     attribute_fields:
                         billing_address:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType
@@ -95,8 +103,6 @@ workflows:
                             options:
                         state_token:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
-                            options:
-                                data: $internal_state_token
                         email:
                             form_type: Oro\Bundle\CustomerBundle\Form\Type\CustomerVisitorEmailAddressType
 
@@ -109,9 +115,14 @@ workflows:
                     is_checkout_show_errors: true
                 form_options:
                     form_init:
-                        - '@generate_checkout_state_snapshot':
-                            entity: $checkout
-                            attribute: $.result.initCheckoutState
+                        - '@run_action_group':
+                            action_group: update_checkout_state
+                            parameters_mapping:
+                                checkout: $checkout
+                                state_token: $state_token
+                                update_checkout_state: $.result.updateCheckoutState
+                            results:
+                                result.updateCheckoutState: $.update_checkout_state
                     attribute_fields:
                         shipping_address:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType
@@ -131,8 +142,6 @@ workflows:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\ShipToBillingAddressType
                         state_token:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
-                            options:
-                                data: $internal_state_token
 
             continue_to_payment:
                 step_to: enter_payment
@@ -143,13 +152,14 @@ workflows:
                     page_component_module: 'orocheckout/js/app/components/shipping-transition-button-component'
                 form_options:
                     form_init:
-                        - '@generate_checkout_state_snapshot':
-                            entity: $checkout
-                            attribute: $.result.initCheckoutState
-                        - '@call_service_method':
-                            service: oro_checkout.action.default_shipping_method_setter
-                            method: setDefaultShippingMethod
-                            method_parameters: [$checkout]
+                        - '@run_action_group':
+                            action_group: update_checkout_state
+                            parameters_mapping:
+                                checkout: $checkout
+                                state_token: $state_token
+                                update_checkout_state: $.result.updateCheckoutState
+                            results:
+                                result.updateCheckoutState: $.update_checkout_state
                     attribute_fields:
                         shipping_method:
                             options:
@@ -161,8 +171,6 @@ workflows:
                                     - NotBlank: ~
                         state_token:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
-                            options:
-                                data: $internal_state_token
 
             continue_to_order_review:
                 step_to: order_review
@@ -173,19 +181,40 @@ workflows:
                     page_component_module: 'orocheckout/js/app/components/payment-transition-button-component'
                 form_options:
                     form_init:
-                        - '@assign_value': [$payment_validate, true]
-                        - '@call_service_method':
-                            service: oro_payment.provider.payment_transaction
-                            method: getActiveValidatePaymentTransaction
-                            method_parameters: [$payment_method]
-                            attribute: $.result.validatePaymentTransaction
-                        - '@assign_value':
+                        - '@tree':
                             conditions:
-                                '@not_empty': [$.result.validatePaymentTransaction]
-                            parameters: [$payment_validate, false]
-                        - '@generate_checkout_state_snapshot':
-                            entity: $checkout
-                            attribute: $.result.initCheckoutState
+                                '@blank': $.result.shippingPriceUpdated
+                            actions:
+                                - '@assign_value': [$.result.shippingPriceUpdated, true]
+                                - '@run_action_group':
+                                    action_group: oro_update_shipping_price
+                                    parameters_mapping:
+                                        checkout: $checkout
+                        - '@tree':
+                            conditions:
+                                '@blank': $payment_validate
+                            actions:
+                                - '@assign_value': [$payment_validate, true]
+                                - '@call_service_method':
+                                    conditions:
+                                        '@blank': $.result.validatePaymentTransaction
+                                    parameters:
+                                        service: oro_payment.provider.payment_transaction
+                                        method: getActiveValidatePaymentTransaction
+                                        method_parameters: [$payment_method]
+                                        attribute: $.result.validatePaymentTransaction
+                                - '@assign_value':
+                                    conditions:
+                                        '@not_empty': [$.result.validatePaymentTransaction]
+                                    parameters: [$payment_validate, false]
+                        - '@run_action_group':
+                            action_group: update_checkout_state
+                            parameters_mapping:
+                                checkout: $checkout
+                                state_token: $state_token
+                                update_checkout_state: $.result.updateCheckoutState
+                            results:
+                                result.updateCheckoutState: $.update_checkout_state
                     attribute_fields:
                         payment_method: ~
                         payment_validate:
@@ -194,34 +223,28 @@ workflows:
                             form_type: Symfony\Component\Form\Extension\Core\Type\CheckboxType
                         state_token:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
-                            options:
-                                data: $internal_state_token
                         additional_data:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
 
             back_to_enter_credentials:
                 step_to: enter_credentials_step
                 transition_definition: clear_payment_method_and_recalculate_state_definition
-                is_unavailable_hidden: true
 
             back_to_customer_consents:
                 step_to: customer_consents
                 transition_definition: clear_payment_method_and_recalculate_state_definition
-                is_unavailable_hidden: true
                 frontend_options:
                     is_checkout_back: true
 
             back_to_billing_address:
                 step_to: enter_billing_address
                 transition_definition: clear_payment_method_and_recalculate_state_definition
-                is_unavailable_hidden: true
                 frontend_options:
                     is_checkout_back: true
 
             back_to_shipping_address:
                 step_to: enter_shipping_address
                 transition_definition: clear_payment_method_and_recalculate_state_definition
-                is_unavailable_hidden: true
                 frontend_options:
                     is_checkout_back: true
 
@@ -232,15 +255,13 @@ workflows:
 
             back_to_shipping_method:
                 step_to: enter_shipping_method
-                transition_definition: clear_payment_method_and_recalculate_state_definition
-                is_unavailable_hidden: true
+                transition_definition: back_to_shipping_method_definition
                 frontend_options:
                     is_checkout_back: true
 
             back_to_payment:
                 step_to: enter_payment
                 transition_definition: recalculate_state_definition
-                is_unavailable_hidden: true
                 frontend_options:
                     is_checkout_back: true
 
@@ -267,11 +288,24 @@ workflows:
                     is_checkout_show_errors: true
                 form_options:
                     form_init:
-                        - '@generate_checkout_state_snapshot':
-                            entity: $checkout
-                            attribute: $.result.initCheckoutState
+                        - '@tree':
+                            conditions:
+                                '@blank': $.result.shippingPriceUpdated
+                            actions:
+                                - '@assign_value': [$.result.shippingPriceUpdated, true]
+                                - '@run_action_group':
+                                    action_group: oro_update_shipping_price
+                                    parameters_mapping:
+                                        checkout: $checkout
                         - '@assign_value': [$late_registration.email, $email]
-
+                        - '@run_action_group':
+                            action_group: update_checkout_state
+                            parameters_mapping:
+                                checkout: $checkout
+                                state_token: $state_token
+                                update_checkout_state: $.result.updateCheckoutState
+                            results:
+                                result.updateCheckoutState: $.update_checkout_state
                     attribute_fields:
                         remove_source: ~
                         po_number: ~
@@ -287,5 +321,3 @@ workflows:
                             form_type: Symfony\Component\Form\Extension\Core\Type\TextareaType
                         state_token:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
-                            options:
-                                data: $internal_state_token

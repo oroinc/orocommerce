@@ -28,7 +28,10 @@ class DatagridLineItemsDataViolationsListener
     public function onLineItemData(DatagridLineItemsDataEvent $event): void
     {
         $lineItems = $event->getLineItems();
-        $violations = $this->violationsProvider->getLineItemViolationLists($lineItems);
+        $violations = $this->violationsProvider->getLineItemViolationLists(
+            $lineItems,
+            $this->getAdditionalContext($event)
+        );
         if (!$violations) {
             return;
         }
@@ -42,6 +45,14 @@ class DatagridLineItemsDataViolationsListener
 
             $event->addDataForLineItem($lineItem->getId(), ['warnings' => $warnings, 'errors' => $errors]);
         }
+    }
+
+    /**
+     * @return object|null
+     */
+    protected function getAdditionalContext(DatagridLineItemsDataEvent $event): ?object
+    {
+        return null;
     }
 
     /**

@@ -11,30 +11,25 @@ use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Component\Action\Action\ActionInterface;
 use Oro\Component\Action\Exception\InvalidParameterException;
 use Oro\Component\ConfigExpression\ContextAccessor;
-use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\PropertyPath;
 
 class GetOrderLineItemsTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ContextAccessor */
-    protected $contextAccessor;
+    private ContextAccessor $contextAccessor;
 
-    /** @var CheckoutLineItemsManager|MockObject */
-    protected $checkoutLineItemsManager;
+    /** @var CheckoutLineItemsManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $checkoutLineItemsManager;
 
     /** @var GetOrderLineItems */
-    protected $action;
+    private $action;
 
     protected function setUp(): void
     {
         $this->contextAccessor = new ContextAccessor();
-        $this->checkoutLineItemsManager = $this
-            ->getMockBuilder(CheckoutLineItemsManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->checkoutLineItemsManager = $this->createMock(CheckoutLineItemsManager::class);
 
-        /** @var EventDispatcherInterface|MockObject $eventDispatcher $eventDispatcher */
         $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
         $this->action = new class($this->contextAccessor, $this->checkoutLineItemsManager) extends GetOrderLineItems {
@@ -46,20 +41,15 @@ class GetOrderLineItemsTest extends \PHPUnit\Framework\TestCase
         $this->action->setDispatcher($eventDispatcher);
     }
 
-    protected function tearDown(): void
-    {
-        unset($this->action);
-    }
-
-    public function testInitialize()
+    public function testInitialize(): void
     {
         $options = [
-            GetOrderLineItems::OPTION_KEY_CHECKOUT => new PropertyPath('checkout'),
-            GetOrderLineItems::OPTION_KEY_ATTRIBUTE => 'lineItems'
+            'checkout' => new PropertyPath('checkout'),
+            'attribute' => 'lineItems',
         ];
 
-        static::assertInstanceOf(ActionInterface::class, $this->action->initialize($options));
-        static::assertEquals($options, $this->action->xgetOptions());
+        $this->assertInstanceOf(ActionInterface::class, $this->action->initialize($options));
+        $this->assertEquals($options, $this->action->xgetOptions());
     }
 
     /**
@@ -69,7 +59,7 @@ class GetOrderLineItemsTest extends \PHPUnit\Framework\TestCase
      * @param string $exception
      * @param string $exceptionMessage
      */
-    public function testInitializeException(array $options, $exception, $exceptionMessage)
+    public function testInitializeException(array $options, $exception, $exceptionMessage): void
     {
         $this->expectException($exception);
         $this->expectExceptionMessage($exceptionMessage);
@@ -79,19 +69,27 @@ class GetOrderLineItemsTest extends \PHPUnit\Framework\TestCase
     /**
      * @return array
      */
-    public function initializeExceptionDataProvider()
+    public function initializeExceptionDataProvider(): array
     {
         return [
             [
                 'options' => [
-                    GetOrderLineItems::OPTION_KEY_CHECKOUT => new PropertyPath('checkout')
+                    'checkout' => new PropertyPath('checkout'),
                 ],
                 'expectedException' => InvalidParameterException::class,
                 'expectedExceptionMessage' => 'Attribute name parameter is required',
             ],
             [
                 'options' => [
-                    GetOrderLineItems::OPTION_KEY_ATTRIBUTE => 'lineItems'
+                    'attribute' => 'lineItems',
+                ],
+                'expectedException' => InvalidParameterException::class,
+                'expectedExceptionMessage' => 'Checkout name parameter is required',
+            ],
+            [
+                'options' => [
+                    'attribute' => 'lineItems',
+                    'config_visibility_path' => 'sample_path',
                 ],
                 'expectedException' => InvalidParameterException::class,
                 'expectedExceptionMessage' => 'Checkout name parameter is required',
@@ -101,39 +99,62 @@ class GetOrderLineItemsTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider executeDataProvider
-     * @param ArrayCollection $expected
+     * @param array $contextData
+     * @param array $options
+     * @param array $expectedArguments
      */
-    public function testExecute(ArrayCollection $expected)
+    public function testExecute(array $contextData, array $options, array $expectedArguments): void
     {
-        $checkout = new Checkout();
-        $context = new ActionData(['checkout' => $checkout]);
+        $context = new ActionData($contextData);
+        $this->action->initialize($options);
 
-        $this->action->initialize([
-            GetOrderLineItems::OPTION_KEY_CHECKOUT => new PropertyPath('checkout'),
-            GetOrderLineItems::OPTION_KEY_ATTRIBUTE => 'lineItems'
-        ]);
-
-        $this->checkoutLineItemsManager->expects(static::once())
+        $orderLineItems = new ArrayCollection([new OrderLineItem()]);
+        $this->checkoutLineItemsManager->expects($this->once())
             ->method('getData')
-            ->with($checkout)
-            ->willReturn($expected);
+            ->with(...$expectedArguments)
+            ->willReturn($orderLineItems);
 
         $this->action->execute($context);
 
-        static::assertEquals($expected, $context['lineItems']);
+        $this->assertEquals($orderLineItems, $context['lineItems']);
     }
 
     /**
      * @return array
      */
-    public function executeDataProvider()
+    public function executeDataProvider(): array
     {
+        $checkout = new Checkout();
+        $configVisibilityPath = 'sample_path';
+
         return [
             [
-                'expected' => new ArrayCollection([
-                    new OrderLineItem()
-                ])
-            ]
+                'contextData' => ['checkout' => $checkout],
+                'options' => [
+                    'checkout' => new PropertyPath('checkout'),
+                    'attribute' => 'lineItems',
+                ],
+                'arguments' => [$checkout],
+            ],
+            [
+                'contextData' => ['checkout' => $checkout],
+                'options' => [
+                    'checkout' => new PropertyPath('checkout'),
+                    'attribute' => 'lineItems',
+                    'disable_price_filter' => false,
+                ],
+                'arguments' => [$checkout, false],
+            ],
+            [
+                'contextData' => ['checkout' => $checkout],
+                'options' => [
+                    'checkout' => new PropertyPath('checkout'),
+                    'attribute' => 'lineItems',
+                    'disable_price_filter' => true,
+                    'config_visibility_path' => $configVisibilityPath,
+                ],
+                'arguments' => [$checkout, true, $configVisibilityPath],
+            ],
         ];
     }
 }

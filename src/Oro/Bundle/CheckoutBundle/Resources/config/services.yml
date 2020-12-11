@@ -197,13 +197,6 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-checkouts-grid, method: onBuildBefore }
 
-    oro_checkout.workflow.condition.order_line_item_has_count:
-        class: 'Oro\Bundle\CheckoutBundle\Model\Condition\OrderLineItemsHasCount'
-        arguments:
-            - '@oro_checkout.data_provider.manager.checkout_line_items'
-        tags:
-            - { name: oro_action.condition, alias: order_line_item_has_count }
-
     oro_checkout.layout.provider.open_orders_separate_page_config:
         class: 'Oro\Bundle\CheckoutBundle\Layout\DataProvider\OpenOrdersSeparatePageConfigProvider'
         arguments:
@@ -333,6 +326,14 @@ services:
             - '@oro_checkout.workflow_state.manager.checkout_state_diff'
         tags:
             - { name: oro_action.condition, alias: check_checkout_states }
+
+    oro_checkout.workflow_state.condition.is_checkout_state_valid:
+        class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Condition\IsCheckoutStateValid'
+        arguments:
+            - '@oro_checkout.workflow_state.manager.checkout_state_diff'
+            - '@oro_checkout.workflow_state.storage.checkout_state_diff_storage'
+        tags:
+            - { name: oro_action.condition, alias: is_checkout_state_valid }
 
     oro_checkout.workflow_state.handler.checkout_error:
         class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Handler\CheckoutErrorHandler'
@@ -792,9 +793,26 @@ services:
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-single-page-checkout-line-items-grid, method: onLineItemData }
 
     oro_checkout.event_listener.datagrid_line_items_data.violations:
-        class: Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataViolationsListener
+        class: Oro\Bundle\CheckoutBundle\EventListener\DatagridLineItemsDataViolationsListener
         arguments:
             - '@oro_shopping_list.validator_service.line_item'
+            - '@oro_checkout.helper.checkout_workflow_helper'
         tags:
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-checkout-line-items-grid, method: onLineItemData }
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-single-page-checkout-line-items-grid, method: onLineItemData }
+
+    oro_checkout.listener.checkout_transition:
+        class: 'Oro\Bundle\CheckoutBundle\EventListener\CheckoutTransitionEventSubscriber'
+        arguments:
+            - '@oro_checkout.workflow_state.manager.checkout_state_diff'
+            - '@oro_checkout.workflow_state.storage.checkout_state_diff_storage'
+        tags:
+            - { name: kernel.event_subscriber }
+
+    oro_checkout.form.data_transformer.order_address_to_address_identifier:
+        class: 'Oro\Bundle\CheckoutBundle\Form\DataTransformer\OrderAddressToAddressIdentifierViewTransformer'
+        shared: false
+        arguments:
+            - '@oro_order.manager.order_address'
+            - '@property_accessor'
+            - ['street', 'city', 'country', 'region', 'postalCode']

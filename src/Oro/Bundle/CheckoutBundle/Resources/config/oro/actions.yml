@@ -541,6 +541,17 @@ action_groups:
                             currentWebsite: $.currentWebsite
                             checkoutData: $.checkoutData
                             sourceCriteria: $.sourceCriteria
+                    - '@call_service_method':
+                        attribute: $.workflowItem
+                        service: oro_workflow.manager
+                        method: getWorkflowItem
+                        method_parameters: [$.checkout, $.currentWorkflow.name]
+                    - '@delete_checkout_state':
+                        conditions:
+                            '@not_blank': $.workflowItem.data.state_token
+                        parameters:
+                            entity: $.checkout
+                            token: $.workflowItem.data.state_token
                     - '@flush_entity': $.checkout
 
     actualize_checkout:
@@ -593,35 +604,20 @@ action_groups:
                 method: create
                 method_parameters: [$.checkout.source.entity]
 
+            # actualize shipping price
+            - '@run_action_group':
+                conditions:
+                    '@not_blank': $.checkout.shippingMethod
+                parameters:
+                    action_group: oro_update_shipping_price
+                    parameters_mapping:
+                        checkout: $.checkout
+
             # calculate subtotal
             - '@call_service_method':
                 service: oro_checkout.model.checkout_subtotal_updater
                 method: recalculateCheckoutSubtotals
                 method_parameters: [$.checkout]
-
-    #Forces checkout_state updating(resaving) should be used if explicitly needed
-    actualize_workflow_state:
-        parameters:
-            checkout:
-                type: Oro\Bundle\CheckoutBundle\Entity\Checkout
-            state_token:
-                type: string
-        actions:
-            - '@generate_checkout_state_snapshot':
-                entity: $.checkout
-                attribute: $.currentCheckoutState
-            - '@get_checkout_state':
-                entity: $.checkout
-                token: $.state_token
-                attribute: $.tokenCheckoutState
-            - '@assign_value': [$.checkoutStateChanged, true]
-            - '@delete_checkout_state':
-                  entity: $.checkout
-                  token: $.state_token
-            - '@save_checkout_state':
-                  entity: $.checkout
-                  state: $.currentCheckoutState
-                  token: $.state_token
 
     update_workflow_item:
         parameters:
@@ -680,3 +676,87 @@ action_groups:
                         message_parameters:
                             currency: $.currencyName
                         type: 'warning'
+
+    update_checkout_state:
+        parameters:
+            checkout:
+                type: Oro\Bundle\CheckoutBundle\Entity\Checkout
+            state_token:
+                type: string
+            update_checkout_state:
+                type: ~
+        actions:
+            - '@assign_value':
+                conditions:
+                    '@check_request':
+                        expected_key: update_checkout_state
+                        expected_value: 1
+                parameters: [$.updateCheckoutState, true]
+            - '@get_checkout_state':
+                conditions:
+                    '@not_equal': [$.updateCheckoutState, true]
+                parameters:
+                    entity: $.checkout
+                    token: $.state_token
+                    attribute: $.savedCheckoutState
+            - '@tree':
+                conditions:
+                    '@or':
+                        - '@equal': [$.updateCheckoutState, true]
+                        - '@no_elements': $.savedCheckoutState
+                actions:
+                    - '@delete_checkout_state':
+                        entity: $.checkout
+                        token: $.state_token
+                    - '@generate_checkout_state_snapshot':
+                        entity: $.checkout
+                        attribute: $.currentCheckoutState
+                    - '@save_checkout_state':
+                        entity: $.checkout
+                        state: $.currentCheckoutState
+                        token: $.state_token
+                    - '@assign_value': [$.updateCheckoutState, false]
+
+    # Expects checkout as input. Checks order line items created from checkout for 2 cases:
+    # 1) if order line items (at least one) can be added to checkout and sets $.orderLineItemsNotEmpty variable;
+    # 2) if there are no order line items can be added to order, then checks if order line items (at least one) can be added to RFP and sets $.orderLineItemsNotEmptyForRfp variable.
+    order_line_items_not_empty:
+        parameters:
+            checkout:
+                type: Oro\Bundle\CheckoutBundle\Entity\Checkout
+        actions:
+            - '@tree':
+                conditions:
+                    '@blank': $.orderLineItemsNotEmpty
+                actions:
+                    - '@assign_value': [$.orderLineItemsNotEmpty, false]
+                    - '@get_order_line_items':
+                        checkout: $.checkout
+                        disable_price_filter: false
+                        config_visibility_path: 'oro_order.frontend_product_visibility'
+                        attribute: $.orderLineItems
+                    - '@assign_value':
+                        conditions:
+                            '@has_elements': $.orderLineItems
+                        parameters:
+                            - [$.orderLineItemsNotEmpty, true]
+                            - [$.orderLineItemsNotEmptyForRfp, true]
+                    - '@tree':
+                        conditions:
+                            '@blank': $.orderLineItemsNotEmptyForRfp
+                        actions:
+                            - '@assign_value': [$.orderLineItemsNotEmptyForRfp, false]
+                            # Checks if any line items could be added to RFP if there are no line items which can be added to order.
+                            - '@tree':
+                                conditions:
+                                    '@equal': [$.orderLineItemsNotEmpty, false]
+                                actions:
+                                    - '@get_order_line_items':
+                                        checkout: $.checkout
+                                        disable_price_filter: false
+                                        config_visibility_path: 'oro_rfp.frontend_product_visibility'
+                                        attribute: $.orderLineItemsForRfp
+                                    - '@assign_value':
+                                        conditions:
+                                            '@has_elements': $.orderLineItemsForRfp
+                                        parameters: [$.orderLineItemsNotEmptyForRfp, true]

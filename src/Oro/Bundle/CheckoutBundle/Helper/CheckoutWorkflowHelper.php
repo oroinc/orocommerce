@@ -2,12 +2,15 @@
 
 namespace Oro\Bundle\CheckoutBundle\Helper;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\ActionBundle\Exception\ForbiddenActionGroupException;
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\ActionGroupRegistry;
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
+use Oro\Bundle\CheckoutBundle\Event\CheckoutTransitionAfterEvent;
+use Oro\Bundle\CheckoutBundle\Event\CheckoutTransitionBeforeEvent;
 use Oro\Bundle\CheckoutBundle\Event\CheckoutValidateEvent;
 use Oro\Bundle\CheckoutBundle\Layout\DataProvider\TransitionFormProvider;
 use Oro\Bundle\CheckoutBundle\Layout\DataProvider\TransitionProvider;
@@ -18,6 +21,7 @@ use Oro\Bundle\CustomerBundle\Handler\ForgotPasswordHandler;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowStep;
 use Oro\Bundle\WorkflowBundle\Exception\WorkflowException;
+use Oro\Bundle\WorkflowBundle\Model\Transition;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Exception\AlreadySubmittedException;
@@ -29,6 +33,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * Use it to process checkout workflow
  * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class CheckoutWorkflowHelper
 {
@@ -223,35 +228,80 @@ class CheckoutWorkflowHelper
      */
     protected function handlePostTransition(WorkflowItem $workflowItem, Request $request)
     {
-        $continueTransition = $this->transitionProvider
-            ->getContinueTransition($workflowItem, $request->get('transition'));
-        if (!$continueTransition) {
+        $transition = $this->getContinueTransition($workflowItem, (string) $request->get('transition'));
+        if (!$transition) {
             return;
         }
 
-        $this->addTransitionErrors($continueTransition, $request);
+        $this->eventDispatcher->dispatch(new CheckoutTransitionBeforeEvent($workflowItem, $transition));
 
-        $transitionForm = $this->transitionFormProvider->getTransitionForm($workflowItem, $continueTransition);
+        $errors = new ArrayCollection();
+
+        $transitionForm = $this->transitionFormProvider->getTransitionFormByTransition($workflowItem, $transition);
         if (!$transitionForm) {
-            $this->workflowManager->transitIfAllowed(
+            $isAllowed = false;
+            if ($this->workflowManager->isTransitionAvailable($workflowItem, $transition, $errors)) {
+                $this->workflowManager->transitUnconditionally($workflowItem, $transition);
+                $isAllowed = true;
+            }
+        } else {
+            $transitionForm->handleRequest($request);
+            if ($transitionForm->isSubmitted() && $transitionForm->isValid()) {
+                $this->workflowManager->transitUnconditionally($workflowItem, $transition);
+                $isAllowed = true;
+            } else {
+                $this->errorHandler->addFlashWorkflowStateWarning($transitionForm->getErrors());
+                $isAllowed = false;
+            }
+
+            $errors = new ArrayCollection($this->errorHandler->getWorkflowErrors($transitionForm->getErrors()));
+        }
+
+        $this->eventDispatcher->dispatch(
+            new CheckoutTransitionAfterEvent(
                 $workflowItem,
-                $continueTransition->getTransition()
-            );
-            return;
-        }
-
-        $transitionForm->handleRequest($request);
-        if ($transitionForm->isSubmitted() && !$transitionForm->isValid()) {
-            $this->errorHandler->addFlashWorkflowStateWarning($transitionForm->getErrors());
-            return;
-        }
-
-        $this->workflowManager->transitIfAllowed(
-            $workflowItem,
-            $continueTransition->getTransition()
+                $transition,
+                $isAllowed,
+                $errors
+            )
         );
 
         $this->transitionProvider->clearCache();
+    }
+
+    /**
+     * @param WorkflowItem $workflowItem
+     * @param string $transitionName
+     * @return Transition|null
+     * @throws WorkflowException
+     */
+    private function getTransition(WorkflowItem $workflowItem, string $transitionName): ?Transition
+    {
+        $workflow = $this->workflowManager->getWorkflow($workflowItem);
+        $transition = $workflow->getTransitionManager()->getTransition($transitionName);
+        if (!$transition || !$workflow->checkTransitionValid($transition, $workflowItem, false)) {
+            return null;
+        }
+
+        return $transition;
+    }
+
+    /**
+     * @param WorkflowItem $workflowItem
+     * @param string $transitionName
+     * @return Transition|null
+     * @throws WorkflowException
+     */
+    private function getContinueTransition(WorkflowItem $workflowItem, string $transitionName): ?Transition
+    {
+        if ($transitionName) {
+            $transition = $this->getTransition($workflowItem, $transitionName);
+            if (!$transition || empty($transition->getFrontendOptions()['is_checkout_continue'])) {
+                $transition = null;
+            }
+        }
+
+        return $transition ?? null;
     }
 
     /**

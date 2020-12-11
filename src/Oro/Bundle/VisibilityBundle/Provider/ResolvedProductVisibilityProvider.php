@@ -56,6 +56,7 @@ class ResolvedProductVisibilityProvider
      */
     public function prefetch(array $productIds): void
     {
+        $productIds = array_diff($productIds, array_keys($this->cache));
         if (!$productIds) {
             return;
         }
