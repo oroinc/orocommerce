@@ -2,24 +2,22 @@
 
 namespace Oro\Bundle\OrderBundle\Formatter;
 
-use Oro\Bundle\EntityBundle\Provider\ChainEntityClassNameProvider;
+use Oro\Bundle\EntityBundle\Provider\EntityClassNameProviderInterface;
 
 /**
  * This formatter is responsible for order`s source entity displayed name formatting
  */
 class SourceDocumentFormatter
 {
-    /**
-     * @var ChainEntityClassNameProvider
-     */
-    protected $chainEntityClassNameProvider;
+    /** @var EntityClassNameProviderInterface */
+    private $entityClassNameProvider;
 
     /**
-     * @param ChainEntityClassNameProvider $chainEntityClassNameProvider
+     * @param EntityClassNameProviderInterface $entityClassNameProvider
      */
-    public function __construct(ChainEntityClassNameProvider $chainEntityClassNameProvider)
+    public function __construct(EntityClassNameProviderInterface $entityClassNameProvider)
     {
-        $this->chainEntityClassNameProvider = $chainEntityClassNameProvider;
+        $this->entityClassNameProvider = $entityClassNameProvider;
     }
 
     /**
@@ -35,11 +33,12 @@ class SourceDocumentFormatter
             return '';
         }
 
-        $class = $this->chainEntityClassNameProvider->getEntityClassName($sourceEntityClass);
+        $class = $this->entityClassNameProvider->getEntityClassName($sourceEntityClass);
 
         if ($sourceEntityIdentifier) {
             return trim(sprintf('%s "%s"', $class, $sourceEntityIdentifier));
         }
+
         return trim(sprintf('%s %s', $class, $sourceEntityId));
     }
 }
