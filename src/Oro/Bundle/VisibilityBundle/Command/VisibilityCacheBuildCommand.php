@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Oro\Bundle\VisibilityBundle\Command;
 
@@ -8,19 +9,15 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Used to calculate product visibility cache.
+ * Rebuilds the product visibility cache.
  */
 class VisibilityCacheBuildCommand extends Command
 {
     /** @var string */
     protected static $defaultName = 'product:visibility:cache:build';
 
-    /** @var CacheBuilderInterface */
-    private $cacheBuilder;
+    private CacheBuilderInterface $cacheBuilder;
 
-    /**
-     * @param CacheBuilderInterface $cacheBuilder
-     */
     public function __construct(CacheBuilderInterface $cacheBuilder)
     {
         $this->cacheBuilder = $cacheBuilder;
@@ -28,16 +25,15 @@ class VisibilityCacheBuildCommand extends Command
         parent::__construct();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    /** @noinspection PhpMissingParentCallCommonInspection */
     protected function configure()
     {
-        $this->setDescription('Calculate product visibility cache.');
+        $this->setDescription('Rebuilds the product visibility cache.');
     }
 
     /**
-     * {@inheritdoc}
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @noinspection PhpMissingParentCallCommonInspection
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {

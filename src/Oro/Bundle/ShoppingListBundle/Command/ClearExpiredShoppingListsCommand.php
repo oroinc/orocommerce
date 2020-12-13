@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Oro\Bundle\ShoppingListBundle\Command;
 
@@ -16,7 +17,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Cron command to clear all expired shopping lists of customer visitors
+ * Clears old data in shopping list database table.
  */
 class ClearExpiredShoppingListsCommand extends Command implements CronCommandInterface
 {
@@ -25,20 +26,10 @@ class ClearExpiredShoppingListsCommand extends Command implements CronCommandInt
     /** @var string */
     protected static $defaultName = 'oro:cron:shopping-list:clear-expired';
 
-    /** @var ManagerRegistry */
-    private $doctrine;
+    private ManagerRegistry $doctrine;
+    private ExtendDbIdentifierNameGenerator $dbIdentifierNameGenerator;
+    private ConfigManager $configManager;
 
-    /** @var ExtendDbIdentifierNameGenerator */
-    private $dbIdentifierNameGenerator;
-
-    /** @var ConfigManager */
-    private $configManager;
-
-    /**
-     * @param ManagerRegistry $doctrine
-     * @param ExtendDbIdentifierNameGenerator $dbIdentifierNameGenerator
-     * @param ConfigManager $configManager
-     */
     public function __construct(
         ManagerRegistry $doctrine,
         ExtendDbIdentifierNameGenerator $dbIdentifierNameGenerator,
@@ -51,16 +42,22 @@ class ClearExpiredShoppingListsCommand extends Command implements CronCommandInt
         parent::__construct();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    /** @noinspection PhpMissingParentCallCommonInspection */
     protected function configure()
     {
-        $this->setDescription('Clear expired guest shopping lists.');
+        $this->setDescription('Clears old data in shopping list database tables.')
+            ->setHelp(
+                <<<'HELP'
+The <info>%command.name%</info> command clears old data in shopping list database tables for customer visitors with
+the last visit past the timeframe defined by "Customer visitor cookie lifetime (days)" system configuration setting.
+
+HELP
+            );
     }
 
     /**
-     * {@inheritdoc}
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @noinspection PhpMissingParentCallCommonInspection
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -96,10 +93,7 @@ class ClearExpiredShoppingListsCommand extends Command implements CronCommandInt
         $output->writeln('<info>Clear expired guest shopping lists completed</info>');
     }
 
-    /**
-     * @return \DateTime
-     */
-    protected function getExpiredLastVisitDate()
+    protected function getExpiredLastVisitDate(): \DateTime
     {
         $expiredLastVisitDate = new \DateTime('now', new \DateTimeZone('UTC'));
         $cookieLifetime = $this->configManager->get('oro_customer.customer_visitor_cookie_lifetime_days');
@@ -114,17 +108,11 @@ class ClearExpiredShoppingListsCommand extends Command implements CronCommandInt
         return $expiredLastVisitDate;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDefaultDefinition()
     {
         return '0 0 * * *';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isActive()
     {
         return true;
