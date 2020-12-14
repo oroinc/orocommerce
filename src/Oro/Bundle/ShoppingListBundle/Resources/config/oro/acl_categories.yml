@@ -1,0 +1,5 @@
+acl_categories:
+    shopping:
+        label: oro.shoppinglist.privilege.category.shopping.label
+        tab: true
+        priority: 1

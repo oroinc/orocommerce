@@ -468,11 +468,6 @@ services:
         tags:
             - { name: oro_redirect.slug_source_entity_provider }
 
-    oro_cms.provider.privilege_category_provider:
-        class: Oro\Bundle\CMSBundle\Provider\PrivilegeCategoryProvider
-        tags:
-            - { name: oro_user.privilege_category }
-
     oro_cms.tools.digital_asset_twig_tags_converter:
         class: Oro\Bundle\CMSBundle\Tools\DigitalAssetTwigTagsConverter
         arguments:
