@@ -112,6 +112,10 @@ const ImportDialogView = BaseView.extend({
 
     prevContent: '',
 
+    listen: {
+        'layout:reposition mediator': 'adjustHeight'
+    },
+
     /**
      * @constructor
      * @param options
@@ -166,14 +170,13 @@ const ImportDialogView = BaseView.extend({
             title: this.modalImportTitle,
             loadingElement: this.editor.getEl(),
             dialogOptions: {
+                allowMaximize: true,
                 autoResize: false,
                 resizable: false,
                 modal: true,
                 height: 400,
                 minHeight: 435,
-                maxHeight: 435,
                 minWidth: 856,
-                maxWidth: 856,
                 appendTo: this.editor.getEl(),
                 dialogClass: 'ui-dialog--import-template',
                 close: _.bind(function() {
@@ -183,6 +186,12 @@ const ImportDialogView = BaseView.extend({
         });
 
         this.viewerEditor.refresh();
+        this.dialog.widget.on('resize', () => {
+            this.adjustHeight();
+        });
+
+        this.viewerEditor.refresh();
+        this.adjustHeight();
 
         if (this.editor.ComponentRestriction.allowTags) {
             this.checkContent(this.viewerEditor);
@@ -364,6 +373,8 @@ const ImportDialogView = BaseView.extend({
             vMessage.remove();
             this.$el.removeClass('has-message');
         }
+
+        this.adjustHeight();
     },
 
     /**
@@ -382,6 +393,15 @@ const ImportDialogView = BaseView.extend({
             this.editor.setComponents(escapeWrapper(content));
             this.dialog.remove();
         }
+    },
+
+    /**
+     * Adjust height code editor
+     */
+    adjustHeight() {
+        const height = this.$el.find('.validation-failed').height() || 0;
+        this.viewerEditor.setSize(null, this.dialog.widget.height() - height);
+        this.dialog.resetDialogPosition();
     }
 });
 
