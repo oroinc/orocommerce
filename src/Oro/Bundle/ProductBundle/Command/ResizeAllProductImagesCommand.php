@@ -100,10 +100,8 @@ DESC
     {
         $queryBuilder = $this->doctrineHelper
             ->getEntityRepositoryForClass(ProductImage::class)
-            ->createQueryBuilder('productImage');
-
-        $identifierName = $this->doctrineHelper->getSingleEntityIdentifierFieldName(ProductImage::class);
-        $queryBuilder->select("productImage.$identifierName as id");
+            ->createQueryBuilder('productImage')
+            ->select('productImage.id');
 
         $iterator = new BufferedIdentityQueryResultIterator($queryBuilder);
         $iterator->setBufferSize(self::BATCH_SIZE);
