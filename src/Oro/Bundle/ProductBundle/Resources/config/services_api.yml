@@ -260,6 +260,8 @@ services:
         class: Oro\Bundle\ApiBundle\Processor\Shared\SetDefaultPaging
         arguments:
             - '@oro_api.filter_names_registry'
+        calls:
+            - [setDefaultPageSize, ['%oro_api.default_page_size%']]
         tags:
             - { name: oro.api.processor, action: get, group: initialize, requestType: frontend, class: Oro\Bundle\ProductBundle\Api\Model\ProductCollection, priority: -100 }
 
