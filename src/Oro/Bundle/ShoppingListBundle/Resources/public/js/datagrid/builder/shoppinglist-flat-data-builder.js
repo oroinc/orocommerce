@@ -24,6 +24,11 @@ export const flattenData = data => {
             let lastFiltered = item;
 
             itemClassName.push('group-row');
+
+            if (subData.length) {
+                itemClassName.push('group-row-has-children');
+            }
+
             item.row_class_name = itemClassName.join(' ');
             item.ids = [];
             item._hasVariants = true;
