@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Configuration;
 
+use Oro\Bundle\WebsiteSearchBundle\Configuration\MappingConfiguration;
 use Oro\Bundle\WebsiteSearchBundle\Configuration\MappingConfigurationProvider;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Provider\Fixture\Bundle\TestBundle1\TestBundle1;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Provider\Fixture\Bundle\TestBundle2\TestBundle2;
@@ -14,10 +15,10 @@ class MappingConfigurationProviderTest extends \PHPUnit\Framework\TestCase
     use TempDirExtension;
 
     /** @var string */
-    private $cacheFile;
+    private string $cacheFile;
 
     /** @var MappingConfigurationProvider */
-    private $configurationProvider;
+    private MappingConfigurationProvider $configurationProvider;
 
     protected function setUp(): void
     {
@@ -35,6 +36,7 @@ class MappingConfigurationProviderTest extends \PHPUnit\Framework\TestCase
         $this->cacheFile = $this->getTempFile('ConfigurationProvider');
 
         $this->configurationProvider = new MappingConfigurationProvider(
+            new MappingConfiguration(),
             $this->cacheFile,
             false
         );

@@ -11,14 +11,12 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
  */
 class MappingConfiguration implements ConfigurationInterface
 {
-    /**
-     * @var array
-     */
-    protected $fieldTypes = [
+    /** @var array */
+    protected array $fieldTypes = [
         Query::TYPE_TEXT,
         Query::TYPE_DECIMAL,
         Query::TYPE_INTEGER,
-        Query::TYPE_DATETIME
+        Query::TYPE_DATETIME,
     ];
 
     /**
@@ -57,19 +55,25 @@ class MappingConfiguration implements ConfigurationInterface
                             ->scalarNode('organization_id')->defaultNull()->end()
                         ->end()
                         ->validate()
-                            ->always(
-                                function ($value) {
-                                    if ($value['type'] !== Query::TYPE_TEXT) {
-                                        $value['fulltext'] = false;
-                                    }
-                                    return $value;
-                                }
-                            )
+                            ->always(\Closure::fromCallable([$this, 'validateFieldMapping']))
                         ->end()
                     ->end()
                 ->end()
             ->end();
 
         return $treeBuilder;
+    }
+
+    /**
+     * @param array $fieldMapping
+     * @return array
+     */
+    protected function validateFieldMapping(array $fieldMapping): array
+    {
+        if ($fieldMapping['type'] !== Query::TYPE_TEXT) {
+            $fieldMapping['fulltext'] = false;
+        }
+
+        return $fieldMapping;
     }
 }
