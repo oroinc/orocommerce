@@ -11,8 +11,8 @@
         {% endif %}
         {% if workflowItem.data.get('request_approval_notes') %}
             <div class="checkout__approval-note">
-                <span>{{ 'oro.alternativecheckout.requestApprovalNotes.label'|trans }}:</span>
-                <span>{{ workflowItem.data.get('request_approval_notes')|nl2br|raw }}</span>
+                <h5>{{ 'oro.alternativecheckout.requestApprovalNotes.label'|trans }}</h5>
+                <div>{{ workflowItem.data.get('request_approval_notes')|nl2br|raw }}</div>
             </div>
         {% endif %}
 
@@ -24,9 +24,9 @@
     </div>
 {%- endblock %}
 
-{% block _checkout_information_body_widget %}
+{% block _checkout_information_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " checkout__body--offset-none"
+        '~class': " checkout--no-background"
     }) %}
     {{ parent_block_widget(block) }}
 {% endblock %}

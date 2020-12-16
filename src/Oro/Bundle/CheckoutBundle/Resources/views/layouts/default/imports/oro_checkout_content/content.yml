@@ -53,6 +53,7 @@ layout:
                         checkout: '=data["checkout"]'
                         form: '=data["oro_checkout_transition_form"].getTransitionFormView(data["workflowItem"])'
                         workflowItem: '=data["workflowItem"]'
+                        visible: '=data["oro_checkout_transition_form"].getTransitionFormView(data["workflowItem"])'
                 __checkout_order_summary_container:
                     blockType: container
                 __checkout_order_summary:
@@ -64,8 +65,6 @@ layout:
                     blockType: container
                 __checkout_order_summary_title:
                     blockType: container
-                __checkout_order_summary_title_text:
-                    blockType: block
                 __checkout_order_summary_edit_link:
                     blockType: checkout_order_summary_edit_link
                     options:
@@ -77,11 +76,33 @@ layout:
 
                 __checkout_order_summary_notes_container:
                     blockType: container
+                    options:
+                        visible: '=context["workflowStepName"]!="order_review" && context["workflowName"]!="b2b_flow_checkout_single_page"'
+                        vars:
+                            notes: '=data["checkout"].getCustomerNotes()'
+                __checkout_order_summary_notes_title:
+                    blockType: block
+                    options:
+                        visible: '=context["workflowStepName"]!="order_review" && context["workflowName"]!="b2b_flow_checkout_single_page"'
+                        vars:
+                            notes: '=data["checkout"].getCustomerNotes()'
                 __checkout_order_summary_notes:
                     blockType: order_summary_notes
                     options:
                         visible: '=context["workflowStepName"]!="order_review" && context["workflowName"]!="b2b_flow_checkout_single_page"'
                         notes: '=data["checkout"].getCustomerNotes()'
+
+                __checkout_order_footer:
+                    blockType: container
+
+                __checkout_order_footer_col_first:
+                    blockType: container
+
+                __checkout_order_footer_col_second:
+                    blockType: container
+
+                __checkout_order_summary_totals_main:
+                    blockType: container
 
                 __checkout_order_summary_totals_container:
                     blockType: layout_subtree_update
@@ -103,6 +124,8 @@ layout:
                         route: 'oro_checkout_frontend_totals'
                         vars:
                             itemsCount: '=data["checkout"].getLineItems().count()'
+                            totalsConainerClassName: ''
+
                 __checkout_form_buttons:
                     blockType: container
                 __checkout_button_continue:
@@ -110,6 +133,8 @@ layout:
                     options:
                         transitionData: '=data["oro_checkout_transition"].getContinueTransition(data["workflowItem"])'
                         checkout: '=data["checkout"]'
+                        vars:
+                            showRequiredLabel: true
                 __checkout_button_back:
                     blockType: checkout_transition_back
                     options:
@@ -133,11 +158,15 @@ layout:
                             __checkout_order_summary:
                                 __checkout_order_summary_header:
                                     __checkout_order_summary_title:
-                                        __checkout_order_summary_title_text: ~
                                     __checkout_order_summary_edit_link: ~
                                 __checkout_order_summary_content:
                                     __checkout_order_summary_line_items_container: ~
-                                    __checkout_order_summary_notes_container:
-                                        __checkout_order_summary_notes: ~
+                        __checkout_order_footer:
+                            __checkout_order_footer_col_first:
+                                __checkout_order_summary_notes_container:
+                                    __checkout_order_summary_notes_title: ~
+                                    __checkout_order_summary_notes: ~
+                            __checkout_order_footer_col_second:
+                                __checkout_order_summary_totals_main:
                                     __checkout_order_summary_totals_container:
                                         __checkout_order_summary_totals: ~

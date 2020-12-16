@@ -8,5 +8,10 @@ layout:
             optionName: transitionData
             optionValue: '=data["oro_checkout_transition"].getContinueTransition(data["workflowItem"])'
 
+        - '@setOption':
+            id: checkout_button_continue
+            optionName: vars.showRequiredLabel
+            optionValue: false
+
     conditions: 'context["workflowStepName"]=="request_approval" && context["workflowName"]=="b2b_flow_alternative_checkout" && !context["widget_container"]'
 

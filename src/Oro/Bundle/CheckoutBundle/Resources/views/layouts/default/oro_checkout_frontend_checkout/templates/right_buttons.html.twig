@@ -17,7 +17,10 @@
 {% block _checkout_button_back_right_widget %}
     {% if transitionData is defined and transitionData %}
         {% import 'OroCheckoutBundle:layouts/default:layout.html.twig' as _layout %}
-        <div class="checkout-form__back checkout-form__back--float">
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': " checkout-form__back"
+        }) %}
+        <div {{ block('block_attributes') }}>
             {{ block_widget(block) }}
         </div>
     {% endif %}

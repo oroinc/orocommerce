@@ -37,7 +37,7 @@ layout:
         - '@appendOption':
             id: __datagrid
             optionName: grid_render_parameters.cssClass
-            optionValue: 'responsive-checkout-grid'
+            optionValue: 'responsive-shopping-list-grid responsive-shopping-list-grid-view responsive-checkout-grid'
 
         - '@setOption':
             id: __datagrid

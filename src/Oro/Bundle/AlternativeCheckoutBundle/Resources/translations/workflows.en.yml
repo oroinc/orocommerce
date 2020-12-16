@@ -179,7 +179,7 @@ oro:
                         To proceed please request manager approval.
                     attribute:
                         request_approval_notes:
-                            label: ''
+                            label: 'Notes for approval'
                         state_token:
                             label: ''
                 back_to_customer_consents:

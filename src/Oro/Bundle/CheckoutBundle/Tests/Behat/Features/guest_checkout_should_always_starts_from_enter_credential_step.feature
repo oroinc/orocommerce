@@ -41,7 +41,7 @@ Feature: Guest Checkout should always starts from enter credential step
     And I should see "Create An Account"
     And I should see "Continue as a Guest" button
     When I click "Continue as a Guest"
-    Then I should see "ENTER BILLING ADDRESS"
+    Then I should see "Enter Billing Address"
 
   Scenario: Re-create order from guest shopping list after Billing Information step
     Given I open shopping list widget
@@ -52,7 +52,7 @@ Feature: Guest Checkout should always starts from enter credential step
     And I should see "Continue as a Guest" button
     When I click "Continue as a Guest"
     And I scroll to top
-    Then I should see "ENTER BILLING ADDRESS"
+    Then I should see "Enter Billing Address"
     When I fill form with:
       | First Name      | Tester1         |
       | Last Name       | Testerson       |
@@ -64,7 +64,7 @@ Feature: Guest Checkout should always starts from enter credential step
       | Zip/Postal Code | 10115           |
     And click "Continue"
     And I scroll to top
-    Then I should see "ENTER SHIPPING ADDRESS"
+    Then I should see "Enter Shiiping Address"
 
   Scenario: Re-create order from guest shopping list after Shipping Information step
     Given I open shopping list widget
@@ -75,7 +75,7 @@ Feature: Guest Checkout should always starts from enter credential step
     And I should see "Continue as a Guest" button
     When I click "Continue as a Guest"
     And I scroll to top
-    Then I should see "ENTER BILLING ADDRESS"
+    Then I should see "Enter Billing Address"
     When I fill form with:
       | First Name      | Tester1         |
       | Last Name       | Testerson       |
@@ -87,7 +87,7 @@ Feature: Guest Checkout should always starts from enter credential step
       | Zip/Postal Code | 10115           |
     And I click "Continue"
     And I scroll to top
-    Then I should see "ENTER SHIPPING ADDRESS"
+    Then I should see "Enter Shiiping Address"
     When I fill form with:
       | First Name      | Tester1         |
       | Last Name       | Testerson       |
@@ -109,7 +109,7 @@ Feature: Guest Checkout should always starts from enter credential step
     And I should see "Continue as a Guest" button
     When I click "Continue as a Guest"
     And I scroll to top
-    Then I should see "ENTER BILLING ADDRESS"
+    Then I should see "Enter Billing Address"
     When I fill form with:
       | First Name      | Tester1         |
       | Last Name       | Testerson       |
@@ -121,7 +121,7 @@ Feature: Guest Checkout should always starts from enter credential step
       | Zip/Postal Code | 10115           |
     And I click "Continue"
     And I scroll to top
-    Then I should see "ENTER SHIPPING ADDRESS"
+    Then I should see "Enter Shiiping Address"
     When I fill form with:
       | First Name      | Tester1         |
       | Last Name       | Testerson       |
@@ -135,7 +135,7 @@ Feature: Guest Checkout should always starts from enter credential step
     Then I should see "SELECT A SHIPPING METHOD"
     When I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I scroll to top
-    Then I should see "SELECT A PAYMENT METHOD"
+    Then I should see "Select a Payment Method"
 
   Scenario: Re-create order from guest shopping list after Payment Method step
     Given I open shopping list widget
@@ -146,7 +146,7 @@ Feature: Guest Checkout should always starts from enter credential step
     And I should see "Continue as a Guest" button
     When I click "Continue as a Guest"
     And I scroll to top
-    Then I should see "ENTER BILLING ADDRESS"
+    Then I should see "Enter Billing Address"
     When I fill form with:
       | First Name      | Tester1         |
       | Last Name       | Testerson       |
@@ -158,7 +158,7 @@ Feature: Guest Checkout should always starts from enter credential step
       | Zip/Postal Code | 10115           |
     And I click "Continue"
     And I scroll to top
-    Then I should see "ENTER SHIPPING ADDRESS"
+    Then I should see "Enter Shiiping Address"
     When I fill form with:
       | First Name      | Tester1         |
       | Last Name       | Testerson       |
@@ -172,7 +172,7 @@ Feature: Guest Checkout should always starts from enter credential step
     Then I should see "SELECT A SHIPPING METHOD"
     When I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I scroll to top
-    Then I should see "SELECT A PAYMENT METHOD"
+    Then I should see "Select a Payment Method"
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
 
   Scenario: Finish order from guest shopping list

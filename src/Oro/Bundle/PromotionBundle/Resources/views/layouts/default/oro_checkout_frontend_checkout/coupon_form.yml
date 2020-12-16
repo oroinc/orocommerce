@@ -3,12 +3,13 @@ layout:
         -
             id: oro_promotion_coupon_form
             namespace: coupon_form
-            root: checkout_order_summary_totals_container
+            root: checkout_order_footer_col_second
     actions:
         - '@move':
             id: coupon_form_container
-            parentId: checkout_order_summary_totals_container
-            siblingId: checkout_order_summary_totals
+            parentId: checkout_order_footer_col_second
+            siblingId: checkout_order_summary_totals_main
+            prepend: false
 
         - '@setOption':
             id: coupon_form_applied_coupons_list_rows_container

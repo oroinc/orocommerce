@@ -150,7 +150,7 @@ define(function(require) {
         },
 
         getPreparedPriceForHint: function() {
-            return this.model.get('pricesByUnit');
+            return PricesHelper.sortUnitPricesByLowQuantity(this.model.get('pricesByUnit'));
         },
 
         renderPriceBlock: function(showErrors) {

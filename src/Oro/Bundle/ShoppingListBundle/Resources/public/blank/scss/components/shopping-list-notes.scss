@@ -5,6 +5,10 @@
 
     margin: $shopping-lists-notes-offset;
 
+    &--no-offset {
+        margin: 0;
+    }
+
     &__title {
         font-weight: $shopping-lists-notes-title-font-w;
         margin-bottom: $shopping-lists-notes-title-offset;

@@ -12,6 +12,7 @@
 .coupon-container {
     width: $coupon-container-width;
     float: $coupon-container-float;
+    clear: $coupon-container-clear;
     padding: $coupon-container-padding;
 
     &__content {

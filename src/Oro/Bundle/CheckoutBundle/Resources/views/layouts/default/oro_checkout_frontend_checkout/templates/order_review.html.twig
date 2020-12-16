@@ -1,36 +1,25 @@
 {% block _checkout_additional_options_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'data-page-component-collapse': { storageKey: id }|json_encode,
-        '~class': " collapse-view order-review-options__wrapper"
+        '~class': " order-review-options__wrapper"
     }) %}
     <div {{ block('block_attributes') }}>
-        <span class="collapse-view__trigger collapse-view__trigger--icon" data-collapse-trigger aria-hidden="true">
-            <span class="collapse-view__trigger-icon fa-caret-right"></span>
-        </span>
-        <button type="button" class="collapse-view__trigger" data-collapse-trigger>
-            <span class="collapse-view__trigger-text">
-                {{ 'oro.checkout.workflow.order_options.label'|trans }}
-            </span>
-        </button>
-        <div class="order-review-options collapse-view__container" data-collapse-container>
-            <div class="grid__row">
+        <div class="order-review-options">
+            <div class="grid__row grid__row--offset-none">
                 {% set shippingDateId= 'shipping-date-uid-'|uniqid %}
-                <div class="grid__column grid__column--6" role="group">
-                    <label class="label label--full" for="{{ shippingDateId }}">{{ "oro.checkout.order_review.shipping_date"|trans }}</label>
-                    <div class="checkout-form__datepicker datepicker-box">
+                <div class="grid__column grid__column--6 grid__column--offset-y" role="group">
+                    <div class="datepicker-box datepicker-box--form-mode">
                         <span class="datepicker-box__icon" aria-hidden="true"><span class="fa-calendar"></span></span>
+                        <label class="label label--full" for="{{ shippingDateId }}">{{ "oro.checkout.order_review.shipping_date"|trans }}</label>
                         {{ form_widget(form.ship_until, {id: shippingDateId}) }}
                     </div>
                 </div>
-                <div class="grid__column grid__column--6">
+                <div class="grid__column grid__column--6 grid__column--offset-y">
                     {% set poNumberId = 'oro_workflow_transition_po_number-uid-'|uniqid %}
                     <label class=" label label--full" for="{{ poNumberId }}">{{ "oro.checkout.order_review.po_number"|trans }}</label>
-                    <div class="checkout-form__optional-ref-number">
-                        {{ form_widget(form.po_number, { 'id': poNumberId, 'attr': {
-                            'placeholder': 'oro.checkout.order_review.po_number_placeholder'|trans,
-                            'data-validation': { Length: {max: 255} }|json_encode
-                        }}) }}
-                    </div>
+                    {{ form_widget(form.po_number, { 'id': poNumberId, 'attr': {
+                        'placeholder': 'oro.checkout.order_review.po_number_placeholder'|trans,
+                        'data-validation': { Length: {max: 255} }|json_encode
+                    }}) }}
                 </div>
             </div>
             <div class="grid__row grid__row--offset-none">
@@ -96,9 +85,9 @@
     {{ block_widget(block) }}
 {%- endblock %}
 
-{% block _checkout_information_body_widget %}
+{% block _checkout_information_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " checkout__body--offset-none"
+        '~class': " checkout--no-background"
     }) %}
     {{ parent_block_widget(block) }}
 {% endblock %}

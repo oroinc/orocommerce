@@ -51,7 +51,7 @@ $cms-typography-figcaption-offset-left: 20px !default;
 $cms-typography-figcaption-offset-right: 18px !default;
 
 // Heading
-$cms-typography-heading-offset: 8px !default;
+$cms-typography-heading-offset: $headline-bottom-offset !default;
 
 // Divider
 $cms-typography-hr-offset: 0 0 20px !default;

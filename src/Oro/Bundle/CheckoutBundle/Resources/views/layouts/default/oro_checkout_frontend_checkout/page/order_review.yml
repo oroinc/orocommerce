@@ -21,14 +21,16 @@ layout:
         - '@add':
             id: checkout_button_back_right
             blockType: checkout_transition_back
-            parentId: checkout_form_buttons
+            parentId: checkout_order_footer_col_first
             options:
                 transitionData: '=data["oro_checkout_transition"].getBackTransition(data["workflowItem"])'
                 checkout: '=data["checkout"]'
+                attr:
+                    class: 'checkout-form__back--no-offset'
         - '@add':
             id: checkout_button_continue_right
             blockType: checkout_transition_continue
-            parentId: checkout_order_summary_totals
+            parentId: checkout_order_summary_totals_main
             prepend: false
             options:
                 transitionData: '=data["oro_checkout_transition"].getContinueTransition(data["workflowItem"])'
@@ -38,13 +40,16 @@ layout:
             id: checkout_order_summary_edit_link
             parentId: checkout_information_head
             siblingId: checkout_information_title
+
         - '@move':
             id: checkout_order_summary_content
             parentId: checkout_form_fields
             prepend: true
+
         - '@move':
-            id: checkout_order_summary_totals_container
-            parentId: checkout_form_buttons
+            id: checkout_order_footer
+            parentId: checkout_form
+            prepend: false
 
         - '@remove':
             id: checkout_order_summary_container

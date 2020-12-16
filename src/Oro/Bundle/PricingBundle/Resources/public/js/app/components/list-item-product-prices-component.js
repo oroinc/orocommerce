@@ -61,7 +61,7 @@ const ListItemProductPricesComponent = BaseComponent.extend({
                 this.viewOptions.el.removeClass('loader-in-process');
 
                 if (tools.isIE11()) {
-                    // Force icon repain
+                    // Force icon repaint
                     this.viewOptions.el.find('.fa--loader-icon').css('display');
                 }
             });
