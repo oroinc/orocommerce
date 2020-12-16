@@ -52,11 +52,15 @@ services:
         tags:
             - { name: website_search.placeholder }
 
+    oro_website_search.mapping_configuration:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Configuration\MappingConfiguration'
+        shared: false
+
     oro_website_search.mapping_configuration.provider:
         class: 'Oro\Bundle\WebsiteSearchBundle\Configuration\MappingConfigurationProvider'
-        public: false
         parent: oro.static_config_provider.abstract
         arguments:
+            - '@oro_website_search.mapping_configuration'
             - '%kernel.cache_dir%/oro/website_search_mapping.php'
             - '%kernel.debug%'
 

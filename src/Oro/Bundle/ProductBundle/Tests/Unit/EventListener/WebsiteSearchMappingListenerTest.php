@@ -14,6 +14,7 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Stub\EnumSearchableAttributeTypeStub;
 use Oro\Bundle\SearchBundle\Event\SearchMappingCollectEvent;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\EnumSearchableAttributeType;
+use Oro\Bundle\WebsiteSearchBundle\Configuration\MappingConfiguration;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\EnumIdPlaceholder;
 
 class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
@@ -44,7 +45,8 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
             $this->attributeManager,
             $this->attributeTypeRegistry,
             $this->configurationProvider,
-            $this->fieldsProvider
+            $this->fieldsProvider,
+            new MappingConfiguration()
         );
     }
 

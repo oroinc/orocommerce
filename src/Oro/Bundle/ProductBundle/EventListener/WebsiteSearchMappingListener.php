@@ -31,22 +31,28 @@ class WebsiteSearchMappingListener
     /** @var ProductIndexFieldsProvider */
     protected $fieldsProvider;
 
+    /** @var MappingConfiguration */
+    private MappingConfiguration $mappingConfiguration;
+
     /**
      * @param AttributeManager $attributeManager
      * @param AttributeTypeRegistry $attributeTypeRegistry
      * @param AttributeConfigurationProviderInterface $configurationProvider
      * @param ProductIndexFieldsProvider $fieldsProvider
+     * @param MappingConfiguration $mappingConfiguration
      */
     public function __construct(
         AttributeManager $attributeManager,
         AttributeTypeRegistry $attributeTypeRegistry,
         AttributeConfigurationProviderInterface $configurationProvider,
-        ProductIndexFieldsProvider $fieldsProvider
+        ProductIndexFieldsProvider $fieldsProvider,
+        MappingConfiguration $mappingConfiguration
     ) {
         $this->attributeManager = $attributeManager;
         $this->attributeTypeRegistry = $attributeTypeRegistry;
         $this->configurationProvider = $configurationProvider;
         $this->fieldsProvider = $fieldsProvider;
+        $this->mappingConfiguration = $mappingConfiguration;
     }
 
     /**
@@ -136,7 +142,7 @@ class WebsiteSearchMappingListener
         $processor = new Processor();
         $event->setMappingConfig(
             $processor->processConfiguration(
-                new MappingConfiguration(),
+                $this->mappingConfiguration,
                 [$event->getMappingConfig(), $config]
             )
         );
