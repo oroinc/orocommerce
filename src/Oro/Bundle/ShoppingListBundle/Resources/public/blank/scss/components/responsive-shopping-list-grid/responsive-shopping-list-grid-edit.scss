@@ -20,7 +20,9 @@
         .grid-body-cell-quantity {
             text-align: left;
         }
+    }
 
+    .group-row-has-children {
         .select-row-cell:after {
             position: absolute;
             top: $responsive-shopping-list-edit-action-in-desktop-height - 1px;
@@ -197,7 +199,7 @@
             }
         }
 
-        .group-row {;
+        .group-row-has-children {;
             .select-row-cell {
                 &:after {
                     left: $responsive-shopping-list-edit-select-row-cell-width-mobile / 2;
@@ -286,7 +288,7 @@
             }
         }
 
-        .group-row {;
+        .group-row-has-children {
             .select-row-cell {
                 &:after {
                     left: $responsive-shopping-list-edit-sub-row-offset-mobile-s;
