@@ -65,6 +65,10 @@ class SyncSlugRedirectsProcessor implements MessageProcessorInterface, TopicSubs
                 ->getRepository(Slug::class)
                 ->find($messageData['slugId']);
 
+            if (!$slug) {
+                return self::REJECT;
+            }
+
             $slugScopes = $slug->getScopes();
 
             /** @var Redirect[] $redirects */
