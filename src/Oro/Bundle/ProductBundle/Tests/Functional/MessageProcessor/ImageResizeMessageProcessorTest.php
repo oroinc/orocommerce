@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Command;
 
+use Oro\Bundle\GaufretteBundle\FileManager;
 use Oro\Bundle\LayoutBundle\Layout\Extension\ThemeConfiguration;
 use Oro\Bundle\LayoutBundle\Model\ThemeImageTypeDimension;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
@@ -89,10 +90,11 @@ class ImageResizeMessageProcessorTest extends WebTestCase
     {
         $dimensions = $this->getAllDimensions();
         $filteredPath = $this->getFilteredImagePath($productImage, $filterName);
+        /** @var FileManager $mediacacheManager */
+        $mediacacheManager = self::getContainer()->get('oro_attachment.manager.public_mediacache');
+        self::assertTrue($mediacacheManager->hasFile($filteredPath));
 
-        $this->assertFileExists($filteredPath);
-
-        $image = self::getContainer()->get('liip_imagine')->open($filteredPath);
+        $image = self::getContainer()->get('liip_imagine')->load($mediacacheManager->getFileContent($filteredPath));
         $originalImage = self::getContainer()->get('liip_imagine')->open(
             $productImage->getImage()->getFile()->getPathname()
         );
@@ -161,6 +163,10 @@ class ImageResizeMessageProcessorTest extends WebTestCase
 
         $websiteManager->onClear();
 
-        return self::getContainer()->getParameter('kernel.project_dir') . '/public' . $filteredUrl;
+        return str_replace(
+            '/' . self::getContainer()->getParameter('oro_attachment.filesystem_dir.mediacache') . '/',
+            '',
+            $filteredUrl
+        );
     }
 }

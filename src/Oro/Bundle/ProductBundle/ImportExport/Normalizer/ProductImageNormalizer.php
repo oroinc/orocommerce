@@ -57,7 +57,8 @@ class ProductImageNormalizer extends ConfigurableEntityNormalizer
     }
 
     /**
-     * @param string $productImageDir
+     * @param string $productImageDir The directory where the product images source files
+     *                                should be places to import from.
      */
     public function setProductImageDir($productImageDir)
     {
