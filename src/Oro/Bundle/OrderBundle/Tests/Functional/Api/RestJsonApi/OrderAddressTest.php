@@ -6,8 +6,11 @@ use Oro\Bundle\AddressBundle\Tests\Functional\Api\RestJsonApi\AddressCountryAndR
 use Oro\Bundle\AddressBundle\Tests\Functional\DataFixtures\LoadCountryData;
 use Oro\Bundle\AddressBundle\Tests\Functional\DataFixtures\LoadRegionData;
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderAddressData;
+use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderLineItemData;
+use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 
 /**
  * @dbIsolationPerTest
@@ -31,9 +34,20 @@ class OrderAddressTest extends RestJsonApiTestCase
 
         $this->loadFixtures([
             LoadOrderAddressData::class,
+            LoadOrderLineItemData::class,
             LoadCountryData::class,
             LoadRegionData::class
         ]);
+    }
+
+    /**
+     * @param int $orderId
+     *
+     * @return Order
+     */
+    private function getOrder(int $orderId): Order
+    {
+        return $this->getEntityManager()->find(Order::class, $orderId);
     }
 
     public function testGetList()
@@ -322,5 +336,53 @@ class OrderAddressTest extends RestJsonApiTestCase
             ],
             $response
         );
+    }
+
+    public function testUpdateOrderShippingAddressShouldRecalculateOrderTotals()
+    {
+        $orderId = $this->getReference(LoadOrders::ORDER_2)->getId();
+        $shippingAddressId = $this->getReference(LoadOrderAddressData::ORDER_ADDRESS_4)->getId();
+
+        // guard
+        self::assertSame('1234.0000', $this->getOrder($orderId)->getTotal());
+
+        $this->patch(
+            ['entity' => self::ENTITY_TYPE, 'id' => (string)$shippingAddressId],
+            [
+                'data' => [
+                    'type'          => self::ENTITY_TYPE,
+                    'id'            => (string)$shippingAddressId,
+                    'relationships' => [
+                        'region' => ['data' => ['type' => 'regions', 'id' => 'US-CA']]
+                    ]
+                ]
+            ]
+        );
+
+        self::assertSame('1000.0000', $this->getOrder($orderId)->getTotal());
+    }
+
+    public function testUpdateOrderBillingAddressShouldNotRecalculateOrderTotals()
+    {
+        $orderId = $this->getReference(LoadOrders::ORDER_2)->getId();
+        $billingAddressId = $this->getReference(LoadOrderAddressData::ORDER_ADDRESS_3)->getId();
+
+        // guard
+        self::assertSame('1234.0000', $this->getOrder($orderId)->getTotal());
+
+        $this->patch(
+            ['entity' => self::ENTITY_TYPE, 'id' => (string)$billingAddressId],
+            [
+                'data' => [
+                    'type'          => self::ENTITY_TYPE,
+                    'id'            => (string)$billingAddressId,
+                    'relationships' => [
+                        'region' => ['data' => ['type' => 'regions', 'id' => 'US-CA']]
+                    ]
+                ]
+            ]
+        );
+
+        self::assertSame('1234.0000', $this->getOrder($orderId)->getTotal());
     }
 }
