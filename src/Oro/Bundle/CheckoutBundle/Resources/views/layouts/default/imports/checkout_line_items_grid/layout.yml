@@ -44,6 +44,16 @@ layout:
             optionName: grid_render_parameters.toolbarOptions.addDatagridSettingsManager
             optionValue: false
 
+        - '@setOption':
+            id: __datagrid
+            optionName: grid_render_parameters.toolbarOptions.addRefreshAction
+            optionValue: false
+
+        - '@setOption':
+            id: __datagrid
+            optionName: grid_render_parameters.toolbarOptions.addResetAction
+            optionValue: false
+
         - '@appendOption':
             id: __datagrid
             optionName: grid_render_parameters.themeOptions.disableStickedScrollbar
