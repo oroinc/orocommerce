@@ -4,6 +4,7 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\EventListener\ORM;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
+use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\EventListener\ORM\ReindexProductLineItemListener;
@@ -13,7 +14,6 @@ use Oro\Bundle\OrderBundle\Tests\Unit\EventListener\ORM\Stub\OrderStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class ReindexProductLineItemListenerTest extends \PHPUnit\Framework\TestCase
@@ -56,7 +56,7 @@ class ReindexProductLineItemListenerTest extends \PHPUnit\Framework\TestCase
         $this->website = $this->getEntity(Website::class, [ 'id' => self:: WEBSITE_ID ]);
 
         $this->order = $this->getEntity(OrderStub::class);
-        $this->order->setInternalStatus(new StubEnumValue(
+        $this->order->setInternalStatus(new TestEnumValue(
             OrderStatusesProviderInterface::INTERNAL_STATUS_CLOSED,
             OrderStatusesProviderInterface::INTERNAL_STATUS_CLOSED
         ));
@@ -215,7 +215,7 @@ class ReindexProductLineItemListenerTest extends \PHPUnit\Framework\TestCase
             ->willReturn(true);
 
         $this->order->setInternalStatus(
-            new StubEnumValue(
+            new TestEnumValue(
                 OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED,
                 OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED
             )

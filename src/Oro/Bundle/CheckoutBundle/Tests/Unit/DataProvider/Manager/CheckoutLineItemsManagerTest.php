@@ -10,12 +10,12 @@ use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Component\Checkout\DataProvider\CheckoutDataProviderInterface;
-use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class CheckoutLineItemsManagerTest extends \PHPUnit\Framework\TestCase
@@ -274,7 +274,7 @@ class CheckoutLineItemsManagerTest extends \PHPUnit\Framework\TestCase
             );
 
             if ($inventoryStatus) {
-                $inventoryStatus = new StubEnumValue($inventoryStatus, $inventoryStatus);
+                $inventoryStatus = new TestEnumValue($inventoryStatus, $inventoryStatus);
                 $product->setInventoryStatus($inventoryStatus);
             }
         }

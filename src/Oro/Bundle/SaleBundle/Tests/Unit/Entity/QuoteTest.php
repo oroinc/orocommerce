@@ -5,6 +5,7 @@ namespace Oro\Bundle\SaleBundle\Tests\Unit\Entity;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\SaleBundle\Entity\QuoteAddress;
@@ -14,7 +15,6 @@ use Oro\Bundle\SaleBundle\Tests\Unit\Stub\QuoteStub as Quote;
 use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -169,7 +169,7 @@ class QuoteTest extends AbstractTest
         $expected,
         $internalStatus = Quote::INTERNAL_STATUS_SENT_TO_CUSTOMER
     ): void {
-        $status = $internalStatus ? new StubEnumValue($internalStatus, 'test') : null;
+        $status = $internalStatus ? new TestEnumValue($internalStatus, 'test') : null;
 
         $quote = new Quote();
         $quote->setExpired($expired)
@@ -243,7 +243,7 @@ class QuoteTest extends AbstractTest
     public function testIsAvailableOnFrontend(string $internalStatus, bool $expected): void
     {
         $quote = new Quote();
-        $quote->setInternalStatus(new StubEnumValue($internalStatus, 'test'));
+        $quote->setInternalStatus(new TestEnumValue($internalStatus, 'test'));
 
         $this->assertEquals($expected, $quote->isAvailableOnFrontend());
     }
