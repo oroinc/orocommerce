@@ -7,6 +7,7 @@ use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\PricingBundle\EventListener\DatagridLineItemsDataPricingListener as PricingLineItemDataListener;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
 use Oro\Bundle\PromotionBundle\Executor\PromotionExecutor;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -105,8 +106,19 @@ class DatagridLineItemsDataPromotionsListener
         if (!isset($this->cache[$id]) && $this->promotionExecutor->supports($lineItemsHolder)) {
             $discountContext = $this->promotionExecutor->execute($lineItemsHolder);
 
+            $discounts = [];
             foreach ($discountContext->getLineItems() as $item) {
-                $this->cache[$id][$item->getSourceLineItem()->getId()] = $item->getDiscountTotal();
+                $identifier = $this->getDataKey($item->getSourceLineItem());
+
+                $discounts[$identifier] = $item->getDiscountTotal();
+            }
+
+            foreach ($lineItemsHolder->getLineItems() as $item) {
+                $identifier = $this->getDataKey($item);
+
+                if (isset($discounts[$identifier])) {
+                    $this->cache[$id][$item->getId()] = $discounts[$identifier];
+                }
             }
         }
 
@@ -134,5 +146,14 @@ class DatagridLineItemsDataPromotionsListener
         }
 
         return $entity;
+    }
+
+    /**
+     * @param ProductLineItemInterface $item
+     * @return string
+     */
+    private function getDataKey(ProductLineItemInterface $item): string
+    {
+        return implode(':', [$item->getProductSku(), $item->getProductUnitCode(), $item->getQuantity()]);
     }
 }

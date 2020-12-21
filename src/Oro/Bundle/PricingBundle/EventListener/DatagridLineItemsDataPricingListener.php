@@ -3,9 +3,11 @@
 namespace Oro\Bundle\PricingBundle\EventListener;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
 use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
 /**
  * Adds line items pricing data.
@@ -37,13 +39,9 @@ class DatagridLineItemsDataPricingListener
     {
         $lineItems = $event->getLineItems();
         $matchedPrices = $this->frontendProductPricesDataProvider->getProductsMatchedPrice($lineItems);
-        if (!$matchedPrices) {
-            return;
-        }
 
         foreach ($lineItems as $lineItem) {
-            /** @var Price $productPrice */
-            $productPrice = $matchedPrices[$lineItem->getProduct()->getId()][$lineItem->getProductUnitCode()] ?? null;
+            $productPrice = $this->getPrice($lineItem, $matchedPrices);
             if (!$productPrice) {
                 continue;
             }
@@ -62,5 +60,24 @@ class DatagridLineItemsDataPricingListener
                 ]
             );
         }
+    }
+
+    /**
+     * @param ProductLineItemInterface $lineItem
+     * @param array $matchedPrices
+     * @return Price|null
+     */
+    private function getPrice(ProductLineItemInterface $lineItem, array $matchedPrices): ?Price
+    {
+        $productPrice = null;
+        if ($lineItem instanceof PriceAwareInterface) {
+            $productPrice = $lineItem->getPrice();
+        }
+
+        if (!$productPrice && $lineItem->getProduct()) {
+            $productPrice = $matchedPrices[$lineItem->getProduct()->getId()][$lineItem->getProductUnitCode()] ?? null;
+        }
+
+        return $productPrice;
     }
 }
