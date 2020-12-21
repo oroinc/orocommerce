@@ -330,7 +330,7 @@
     &--import-template {
         .CodeMirror {
             width: 820px;
-            height: 346px;
+            max-height: 350px;
 
             &-lines {
                 font-size: 12px;
@@ -342,19 +342,6 @@
             overflow: hidden;
         }
 
-        .ui-widget-content {
-            > div {
-                &.has-message {
-                    height: calc(100% - 40px);
-                    overflow: visible !important;
-
-                    .CodeMirror {
-                        height: 300px;
-                    }
-                }
-            }
-        }
-
         .action-wrapper {
             display: inline-block;
         }
@@ -364,8 +351,51 @@
         }
 
         .validation-failed {
-            margin-top: 18px;
+            margin: 18px 0 0;
             white-space: pre-line;
+            max-height: 152px;
+            overflow-y: auto;
+            line-height: 1.1;
+        }
+
+        &.ui-dialog-maximized {
+            .CodeMirror {
+                width: 100%;
+                height: 100%;
+                max-height: 100%;
+            }
         }
     }
 }
+
+.grapesjs {
+    // Custom scrollbars for Chrome
+    &.#{$app-prefix}editor-cont ::-webkit-scrollbar-track {
+        background: $grapesjs-scrollbar-track-background;
+    }
+
+    &.#{$app-prefix}editor-cont ::-webkit-scrollbar-thumb {
+        background-color: $grapesjs-scrollbar-thumb-background;
+    }
+
+    &.#{$app-prefix}editor-cont .CodeMirror ::-webkit-scrollbar-track {
+        background: $codemirror-scrollbar-track-background;
+    }
+
+    &.#{$app-prefix}editor-cont .CodeMirror ::-webkit-scrollbar-thumb {
+        background: $codemirror-scrollbar-thumb-background;
+    }
+
+    div.CodeMirror {
+        &-measure {
+            + div {
+                z-index: 3 !important;
+            }
+        }
+
+        &-selected {
+            background-color: $codemirror-selected-background !important;
+        }
+    }
+}
+
