@@ -3,8 +3,11 @@
         href="<%- link %>"
         title="<%- name %>"
         <% if (obj.popover_image_src) { %>
-        data-popover-image="<%- obj.popover_image_src %>"
         data-page-component-init-on="mouseover"
         data-page-component-view="oroshoppinglist/js/app/views/shoppinglist-image-popover-view"
+        data-page-component-options="<%- JSON.stringify({
+            src: obj.popover_image_src,
+            title: name
+        }) %>"
         <% }%>><%- name %></a>
 </h3>

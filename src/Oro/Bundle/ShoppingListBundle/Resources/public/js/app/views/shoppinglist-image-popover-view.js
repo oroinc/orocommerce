@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import _ from 'underscore';
 import BaseView from 'oroui/js/app/views/base/view';
 import layout from 'oroui/js/layout';
 import Popover from 'bootstrap-popover';
@@ -15,45 +16,54 @@ const ShoppingListImagePopoverView = BaseView.extend({
     /**
      * @inheritDoc
      */
-    initialize: function(options) {
-        ShoppingListImagePopoverView.__super__.initialize.call(this, options);
-
-        this.render();
+    events: {
+        mouseover: 'renderHint'
     },
+
+    /**
+     * url for image
+     */
+    src: null,
+
+    /**
+     * title for image
+     */
+    title: null,
 
     /**
      * @inheritDoc
      */
-    render() {
-        this.renderHint();
-
-        return this;
+    initialize: function(options) {
+        Object.assign(this, _.pick(options, 'src', 'title'));
+        ShoppingListImagePopoverView.__super__.initialize.call(this, options);
     },
 
-    renderHint() {
+    renderHint(event) {
         if (!this.$el.data(Popover.DATA_KEY)) {
             layout.initPopoverForElements(this.$el, {
                 'container': 'body',
                 'placement': 'top',
-                'trigger': 'manual',
                 'close': false,
                 'class': 'popover--no-title',
-                'forceToShowTitle': true
+                'forceToShowTitle': true,
+                'delay': {
+                    show: 300,
+                    hide: 0
+                },
+                'trigger': 'hover',
+                'offset': '0, 1',
+                'boundary': 'viewport'
             }, true);
+
+            $(event.target).trigger(event);
 
             // Disable popover opening by click
             this.$el.off('click' + Popover.EVENT_KEY);
-            this.$el.on('mouseover' + Popover.EVENT_KEY, function() {
-                $(this).popover('show');
-            });
-            this.$el.on('mouseout' + Popover.EVENT_KEY, function() {
-                $(this).popover('hide');
-            });
         }
 
         this.$el.data(Popover.DATA_KEY).updateContent(template({
-            src: this.$el.data('popover-image'),
-            title: this.$el.prop('title')
+            src: this.src,
+            title: this.title
         }));
     }
 });
