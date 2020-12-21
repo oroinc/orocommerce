@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
+use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ProductVariant\Form\Type\FrontendVariantFiledType;
 use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantTypeHandlerInterface;
@@ -11,7 +12,6 @@ use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Provider\VariantField;
 use Oro\Bundle\ProductBundle\Provider\VariantFieldProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
-use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
@@ -100,7 +100,7 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
         ]);
 
         $defaultVariant = new ProductStub();
-        $defaultVariant->{self::FIELD_COLOR} = new StubEnumValue('id', 'name');
+        $defaultVariant->{self::FIELD_COLOR} = new TestEnumValue('id', 'name');
         $defaultVariant->{self::FIELD_NEW} = true;
 
         $options = [
@@ -178,7 +178,7 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->has(self::FIELD_NEW));
 
         $variantProduct = new ProductStub();
-        $variantProduct->{self::FIELD_COLOR} = new StubEnumValue('id2', 'name2');
+        $variantProduct->{self::FIELD_COLOR} = new TestEnumValue('id2', 'name2');
         $variantProduct->{self::FIELD_NEW} = false;
 
         $submittedData = [
@@ -202,7 +202,7 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
             ->willReturn($variantProduct);
 
         $form->submit($submittedData);
-        $this->assertEquals(new StubEnumValue('id', 'name'), $defaultVariant->{self::FIELD_COLOR});
+        $this->assertEquals(new TestEnumValue('id', 'name'), $defaultVariant->{self::FIELD_COLOR});
         $this->assertEquals(true, $defaultVariant->{self::FIELD_NEW});
 
         $this->assertEquals($variantProduct, $form->getData());

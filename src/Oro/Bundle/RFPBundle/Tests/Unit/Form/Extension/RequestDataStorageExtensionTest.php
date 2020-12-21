@@ -5,6 +5,7 @@ namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Extension;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
 use Oro\Bundle\InventoryBundle\Tests\Unit\Inventory\Stub\InventoryStatusStub;
 use Oro\Bundle\InventoryBundle\Tests\Unit\Stubs\ProductStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -18,7 +19,6 @@ use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 use Oro\Bundle\RFPBundle\Form\Extension\RequestDataStorageExtension;
 use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
 use Oro\Bundle\RFPBundle\Provider\ProductAvailabilityProviderInterface;
-use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Symfony\Bundle\TwigBundle\TwigEngine;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -148,7 +148,7 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
 
         $product = $this->getProductEntity($sku, $productUnit);
         $product->setStatus(Product::STATUS_ENABLED);
-        $inventoryStatus = new StubEnumValue('in_stock', 'In stock');
+        $inventoryStatus = new TestEnumValue('in_stock', 'In stock');
         $product->setInventoryStatus($inventoryStatus);
 
         $this->productAvailabilityProvider->expects($this->once())
@@ -202,7 +202,7 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
         $productUnit->setCode('item');
 
         $product = $this->getProductEntity($sku, $productUnit);
-        $inventoryStatus = new StubEnumValue('out_of_stock', 'Out of stock');
+        $inventoryStatus = new TestEnumValue('out_of_stock', 'Out of stock');
         $product->setInventoryStatus($inventoryStatus);
 
         $this->productAvailabilityProvider->expects($this->once())
@@ -243,7 +243,7 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
 
         $product = $this->getProductEntity($sku, $productUnit);
         $product->setStatus(Product::STATUS_DISABLED);
-        $inventoryStatus = new StubEnumValue('in_stock', 'In stock');
+        $inventoryStatus = new TestEnumValue('in_stock', 'In stock');
         $product->setInventoryStatus($inventoryStatus);
 
         $this->productAvailabilityProvider->expects($this->once())
@@ -284,7 +284,7 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
         $productUnit->setCode('item');
 
         $product = $this->getProductEntity($sku, $productUnit);
-        $inventoryStatus = new StubEnumValue('in_stock', 'In stock');
+        $inventoryStatus = new TestEnumValue('in_stock', 'In stock');
         $product->setInventoryStatus($inventoryStatus);
 
         $this->productAvailabilityProvider->expects($this->once())

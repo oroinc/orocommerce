@@ -8,12 +8,12 @@ use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
+use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
 use Oro\Bundle\InventoryBundle\Provider\InventoryQuantityProviderInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
-use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
@@ -308,7 +308,7 @@ class OrderLineItemConverterTest extends \PHPUnit\Framework\TestCase
             [
                 'id' => $id,
                 'status' => $status,
-                'inventoryStatus' => new StubEnumValue($inventoryStatus, $inventoryStatus)
+                'inventoryStatus' => new TestEnumValue($inventoryStatus, $inventoryStatus)
             ]
         );
     }

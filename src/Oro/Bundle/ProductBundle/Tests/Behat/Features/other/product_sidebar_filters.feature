@@ -6,6 +6,7 @@ Feature: Sidebar filters on product listing page
 
   Scenario: Feature background
     Given I set configuration property "oro_product.filters_position" to "sidebar"
+    And I set configuration property "oro_catalog.all_products_page_enabled" to "1"
 
   Scenario: Check if sidebar filters present at catalog page
     Then I signed in as AmandaRCole@example.org on the store frontend
@@ -158,3 +159,8 @@ Feature: Sidebar filters on product listing page
     Then should not see hint for "Any Text" filter in "Catalog Sidebar" sidebar
     And I should not see "Clear All Filters"
     And I should not see "Apply Filters Button"
+
+  Scenario: Check if sidebar filters present at all products page
+    Then I click "All Products"
+    Then I should see an "Filters In Sidebar" element
+    And I should see an "FrontendProductGridFilters" element

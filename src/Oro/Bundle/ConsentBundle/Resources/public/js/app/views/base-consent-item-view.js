@@ -85,6 +85,7 @@ define(function(require) {
          * Render custom consent dialog widget
          */
         renderDialogWidget: function() {
+            this._toggleSubmitButtonOnce = true;
             this.subview('popup', new FrontendDialogWidget({
                 autoRender: true,
                 url: this.cmsPageData.url,
@@ -207,11 +208,11 @@ define(function(require) {
         },
 
         /**
-         * Disable submit button when text height is bigger than widget height
+         * Disable submit button when consent content height include margins is bigger than widget height
          */
         disableSubmitElement: function() {
             const popup = this.subview('popup');
-            const disable = $(popup.el).height() > popup.widget.height();
+            const disable = $(popup.el).outerHeight(true) > popup.widget.outerHeight();
 
             this.updateSubmitElementState(disable);
         },
@@ -220,11 +221,17 @@ define(function(require) {
          * Submit element should be active when text was scrolled to the down
          */
         onScroll: function() {
-            const consentTextHeight = Math.floor($(this.subview('popup').el).height());
+            const consentIncludeMargin = Math.floor($(this.subview('popup').el).outerHeight(true));
             const widget = this.subview('popup').widget;
-            const disable = consentTextHeight > Math.floor(widget.height() + widget.scrollTop());
+            const isEndOfConsent = consentIncludeMargin < Math.floor(widget.outerHeight() + widget.scrollTop());
 
-            this.updateSubmitElementState(disable);
+            if (this._toggleSubmitButtonOnce) {
+                this.updateSubmitElementState(!isEndOfConsent);
+            }
+
+            if (isEndOfConsent) {
+                this._toggleSubmitButtonOnce = false;
+            }
         },
 
         /**

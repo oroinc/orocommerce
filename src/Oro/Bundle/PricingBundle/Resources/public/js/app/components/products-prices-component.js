@@ -49,10 +49,10 @@ define(function(require) {
 
         initFieldsListeners: function() {
             mediator.on('update:currency', this.setCurrency, this);
-            mediator.on('update:customer', this.setCustomer, this);
+            mediator.on('customer-customer-user:change', this.setCustomer, this);
         },
 
-        /**
+        /*
          * @param {Function} callback
          */
         getProductsTierPrices: function(callback) {
@@ -145,8 +145,12 @@ define(function(require) {
             return this.options.customer;
         },
 
-        setCustomer: function(val) {
-            this.options.customer = val;
+        setCustomer: function({customerId}) {
+            if (customerId === this.options.customer) {
+                return;
+            }
+
+            this.options.customer = customerId;
             this.reloadPrices();
         },
 

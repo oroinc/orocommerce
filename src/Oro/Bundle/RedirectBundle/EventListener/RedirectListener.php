@@ -4,11 +4,15 @@ namespace Oro\Bundle\RedirectBundle\EventListener;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManagerInterface;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
 use Oro\Bundle\RedirectBundle\Provider\SlugSourceEntityProviderInterface;
+use Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Oro\Component\Routing\UrlUtil;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 
 /**
@@ -78,37 +82,108 @@ class RedirectListener
         }
 
         $usedSlug = $request->attributes->get('_used_slug');
+        $localizedSlug = $this->getLocalizedSlug($usedSlug, $localization);
+
+        $usedUrlParts = $this->getUsedContextParts($request);
+        $usedUrlParts[] = $usedSlug->getUrl();
+        $currentUrl = UrlUtil::join(...$usedUrlParts);
+
+        $urlParts = $this->getContextParts($request, $localization);
+        $urlParts[] = $localizedSlug ? $localizedSlug->getUrl(): $usedSlug->getUrl();
+        $newUrl = UrlUtil::join(...$urlParts);
+
+        // We can't compare entities because in some cases they can be different objects.
+        if ($currentUrl !== $newUrl) {
+            $url = $this->canonicalUrlGenerator->getAbsoluteUrl(
+                $newUrl,
+                $this->websiteManager->getCurrentWebsite()
+            );
+            $event->setResponse(new RedirectResponse($url));
+        }
+    }
+
+    /**
+     * @param Slug $usedSlug
+     * @param Localization|null $localization
+     * @return Slug|null
+     */
+    private function getLocalizedSlug(Slug $usedSlug, ?Localization $localization): ?Slug
+    {
         $this->registry->getManagerForClass(Slug::class)->refresh($usedSlug);
         if ($usedSlug->getLocalization() === $localization) {
-            return;
+            return null;
         }
 
         $sourceEntity = $this->slugSourceEntityProvider->getSourceEntityBySlug($usedSlug);
         if (!$sourceEntity) {
-            return;
+            return null;
         }
 
-        $filteredCollection = $sourceEntity->getSlugs()->filter(function (Slug $element) use ($localization) {
-            return $element->getLocalization() === $localization;
-        });
-
-        if ($filteredCollection->count()) {
-            $localizedSlug = $filteredCollection->first();
-        } else {
-            $localizedSlug = $sourceEntity->getSlugs()->filter(function (Slug $element) {
-                return !$element->getLocalization();
-            })->first();
+        $defaultSlug = null;
+        foreach ($sourceEntity->getSlugs() as $slug) {
+            if ($slug->getLocalization() === $localization) {
+                return $slug;
+            }
+            if (!$slug->getLocalization()) {
+                $defaultSlug = $slug;
+            }
         }
 
-        // We can't compare entities because in some cases they can be different objects.
-        if ($localizedSlug && $localizedSlug->getUrl() !== $usedSlug->getUrl()) {
-            $url = $this->canonicalUrlGenerator->getAbsoluteUrl(
-                $localizedSlug->getUrl(),
-                $this->websiteManager->getCurrentWebsite()
-            );
-            $event->setResponse(new RedirectResponse($url));
+        return $defaultSlug;
+    }
 
-            return;
+    /**
+     * @param Request $request
+     * @param Localization|null $localization
+     * @return array|string[]
+     */
+    private function getContextParts(
+        Request $request,
+        ?Localization $localization
+    ): array {
+        $parts = [];
+        if ($request->attributes->has('_context_url_attributes')) {
+            $contextAttributes = $request->attributes->get('_context_url_attributes');
+            foreach ($contextAttributes as $contextAttribute) {
+                if (empty($contextAttribute['_used_slug'])) {
+                    continue;
+                }
+                $contextUsedSlug = $contextAttribute['_used_slug'];
+                $localizedContextSlug = $this->getLocalizedSlug($contextUsedSlug, $localization);
+                if (!$localizedContextSlug) {
+                    $localizedContextSlug = $contextUsedSlug;
+                }
+
+                $parts[] = $localizedContextSlug->getUrl();
+                $parts[] = SluggableUrlGenerator::CONTEXT_DELIMITER;
+            }
         }
+
+        return $parts;
+    }
+
+    /**
+     * @param Request $request
+     * @return array|string[]
+     */
+    private function getUsedContextParts(
+        Request $request
+    ): array {
+        $parts = [];
+        if ($request->attributes->has('_context_url_attributes')) {
+            $contextAttributes = $request->attributes->get('_context_url_attributes');
+            foreach ($contextAttributes as $contextAttribute) {
+                if (empty($contextAttribute['_used_slug'])) {
+                    continue;
+                }
+                $contextUsedSlug = $contextAttribute['_used_slug'];
+                $this->registry->getManagerForClass(Slug::class)->refresh($contextUsedSlug);
+
+                $parts[] = $contextUsedSlug->getUrl();
+                $parts[] = SluggableUrlGenerator::CONTEXT_DELIMITER;
+            }
+        }
+
+        return $parts;
     }
 }

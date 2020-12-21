@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Provider;
 
+use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\SaleBundle\Provider\GuestQuoteAccessProvider;
 use Oro\Bundle\SaleBundle\Tests\Unit\Stub\QuoteStub as Quote;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
-use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class GuestQuoteAccessProviderTest extends \PHPUnit\Framework\TestCase
@@ -187,7 +187,7 @@ class GuestQuoteAccessProviderTest extends \PHPUnit\Framework\TestCase
     private function getQuote(string $status, ?int $websiteId = null) : Quote
     {
         $quote = new Quote();
-        $quote->setInternalStatus(new StubEnumValue($status, $status));
+        $quote->setInternalStatus(new TestEnumValue($status, $status));
 
         if ($websiteId) {
             $quote->setWebsite($this->getWebsite($websiteId));

@@ -3,6 +3,8 @@
 namespace Oro\Bundle\ProductBundle\ImportExport\TemplateFixture;
 
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
+use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ImportExportBundle\TemplateFixture\AbstractTemplateRepository;
 use Oro\Bundle\ImportExportBundle\TemplateFixture\TemplateFixtureInterface;
 use Oro\Bundle\LocaleBundle\Manager\LocalizationManager;
@@ -11,10 +13,10 @@ use Oro\Bundle\ProductBundle\Entity\ProductDescription;
 use Oro\Bundle\ProductBundle\Entity\ProductName;
 use Oro\Bundle\ProductBundle\Entity\ProductShortDescription;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
 /**
- * Provides products sample export template data
+ * Provides products sample export template data.
  */
 class ProductFixture extends AbstractTemplateRepository implements TemplateFixtureInterface
 {
@@ -34,7 +36,7 @@ class ProductFixture extends AbstractTemplateRepository implements TemplateFixtu
      */
     public function getEntityClass()
     {
-        return 'Oro\Bundle\ProductBundle\Entity\Product';
+        return Product::class;
     }
 
     /**
@@ -59,8 +61,6 @@ class ProductFixture extends AbstractTemplateRepository implements TemplateFixtu
      */
     public function fillEntityData($key, $entity)
     {
-        $inventoryStatus = new StubEnumValue(Product::INVENTORY_STATUS_IN_STOCK, 'In Stock');
-
         $localization = $this->localizationManager->getDefaultLocalization();
 
         $name = new ProductName();
@@ -95,16 +95,16 @@ class ProductFixture extends AbstractTemplateRepository implements TemplateFixtu
             ->setCode('item')
             ->setDefaultPrecision(0);
 
-        $primaryProductUnitPrecision = $this
-            ->createEntityWithId('Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision', 1);
+        $primaryProductUnitPrecision = new ProductUnitPrecision();
+        $this->setEntityId($primaryProductUnitPrecision, 1);
         $primaryProductUnitPrecision
             ->setUnit($primaryProductUnit)
             ->setPrecision($primaryProductUnit->getDefaultPrecision())
             ->setConversionRate(1)
             ->setSell(true);
 
-        $additionalProductUnitPrecision = $this
-            ->createEntityWithId('Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision', 2);
+        $additionalProductUnitPrecision = new ProductUnitPrecision();
+        $this->setEntityId($additionalProductUnitPrecision, 2);
         $additionalProductUnitPrecision
             ->setUnit($additionalProductUnit)
             ->setPrecision($additionalProductUnit->getDefaultPrecision())
@@ -118,7 +118,7 @@ class ProductFixture extends AbstractTemplateRepository implements TemplateFixtu
             ->setAttributeFamily($attributeFamily)
             ->setStatus('enabled')
             ->setType(Product::TYPE_SIMPLE)
-            ->setInventoryStatus($inventoryStatus)
+            ->setInventoryStatus($this->createInventoryStatus(Product::INVENTORY_STATUS_IN_STOCK, 'In Stock'))
             ->addName($name)
             ->addName($localizedName)
             ->setPrimaryUnitPrecision($primaryProductUnitPrecision)
@@ -130,20 +130,27 @@ class ProductFixture extends AbstractTemplateRepository implements TemplateFixtu
     }
 
     /**
-     * @param string $className
-     * @param int $id
-     *
-     * @return object
+     * @param object $entity
+     * @param int    $id
      */
-    protected function createEntityWithId($className, $id)
+    private function setEntityId(object $entity, int $id): void
     {
-        $entity = new $className;
-
-        $reflectionClass = new \ReflectionClass($className);
+        $reflectionClass = new \ReflectionClass($entity);
         $method = $reflectionClass->getProperty('id');
         $method->setAccessible(true);
         $method->setValue($entity, $id);
+    }
 
-        return $entity;
+    /**
+     * @param string $id
+     * @param string $name
+     *
+     * @return AbstractEnumValue
+     */
+    private function createInventoryStatus(string $id, string $name): AbstractEnumValue
+    {
+        $enumValueClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
+
+        return new $enumValueClassName($id, $name);
     }
 }

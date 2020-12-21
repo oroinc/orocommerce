@@ -1063,11 +1063,6 @@ services:
             - {isShortUnitCode: true}
             - '@oro_product.service.single_unit_mode'
 
-    oro_product.provider.privilege_category_provider:
-        class: 'Oro\Bundle\ProductBundle\Provider\PrivilegeCategoryProvider'
-        tags:
-            - { name: oro_user.privilege_category }
-
     oro_product.layout.data_provider.configurable_products:
         class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\ConfigurableProductProvider'
         arguments:

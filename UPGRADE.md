@@ -2,6 +2,13 @@ This file includes only the most important items that should be addressed before
 
 Please refer to [CHANGELOG.md](CHANGELOG.md) for a list of significant changes in the code that may affect the upgrade of some customizations.
 
+## FROM 4.1.0 to 4.2.0
+
+The File storage component was implemented. Directory `var/import-export` is no longer used as storage
+and has been removed from the git source code.
+ 
+Files for product images import should be placed into `var/data/importexport/product_images` instead of `var/import_export/product_images`.
+
 ## FROM 1.5.0 to 1.6.0
 * Changed minimum required php version to 7.1
 * Relation between Category and Product has been changed in database. Join table has been removed. Please, make sure that you have fresh database backup before updating application.

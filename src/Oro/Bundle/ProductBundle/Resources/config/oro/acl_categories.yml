@@ -1,0 +1,5 @@
+acl_categories:
+    catalog:
+        label: oro.product.privilege.category.catalog.label
+        tab: true
+        priority: 1

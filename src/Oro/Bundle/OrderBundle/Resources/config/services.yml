@@ -311,11 +311,6 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-orders-grid, method: onResultAfter }
 
-    oro_order.provider.privilege_category_provider:
-        class: 'Oro\Bundle\OrderBundle\Provider\PrivilegeCategoryProvider'
-        tags:
-            - { name: oro_user.privilege_category}
-
     oro_order.layout.provider.top_selling_items:
         class: 'Oro\Bundle\OrderBundle\Layout\DataProvider\TopSellingItemsProvider'
         arguments:
