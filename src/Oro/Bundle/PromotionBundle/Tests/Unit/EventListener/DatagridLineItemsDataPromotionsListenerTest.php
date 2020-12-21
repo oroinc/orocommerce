@@ -6,6 +6,8 @@ use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\PricingBundle\EventListener\DatagridLineItemsDataPricingListener as PricingLineItemDataListener;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContextInterface;
@@ -216,22 +218,23 @@ class DatagridLineItemsDataPromotionsListenerTest extends \PHPUnit\Framework\Tes
         $discountInformation1 = new DiscountInformation($discount, 30);
         $discountInformation2 = new DiscountInformation($discount, 80.3);
 
-        /** @var LineItem $lineItem1 */
-        $lineItem1 = $this->getEntity(LineItem::class, ['id' => 42]);
-        /** @var LineItem $lineItem2 */
-        $lineItem2 = $this->getEntity(LineItem::class, ['id' => 50]);
-        /** @var LineItem $lineItem3 */
-        $lineItem3 = $this->getEntity(LineItem::class, ['id' => 60]);
+        $lineItem1 = $this->getLineItem(42, 'sku1', 'item', 10);
+        $lineItem2 = $this->getLineItem(50, 'sku2', 'item', 20);
+        $lineItem3 = $this->getLineItem(60, 'sku3', 'item', 30);
 
         $discountLineItem1 = new DiscountLineItem();
-        $discountLineItem1
-            ->addDiscountInformation($discountInformation1)
-            ->setSourceLineItem($lineItem1);
+        $discountLineItem1->addDiscountInformation($discountInformation1)
+            ->setSourceLineItem($lineItem1)
+            ->setProduct($lineItem1->getProduct())
+            ->setProductUnit($lineItem1->getProductUnit())
+            ->setQuantity($lineItem1->getQuantity());
 
         $discountLineItem2 = new DiscountLineItem();
-        $discountLineItem2
-            ->addDiscountInformation($discountInformation2)
-            ->setSourceLineItem($lineItem2);
+        $discountLineItem2->addDiscountInformation($discountInformation2)
+            ->setSourceLineItem($lineItem2)
+            ->setProduct($lineItem2->getProduct())
+            ->setProductUnit($lineItem2->getProductUnit())
+            ->setQuantity($lineItem2->getQuantity());
 
         $discountContext = new DiscountContext();
         $discountContext->addLineItem($discountLineItem1);
@@ -304,6 +307,27 @@ class DatagridLineItemsDataPromotionsListenerTest extends \PHPUnit\Framework\Tes
                 'subtotalValue' => 500,
             ],
             $event->getDataForLineItem($lineItem3->getId())
+        );
+    }
+
+    /**
+     * @param int $id
+     * @param string $sku
+     * @param string $unitCode
+     * @param float $quantity
+     * @return LineItem
+     */
+    private function getLineItem(int $id, string $sku, string $unitCode, float $quantity): LineItem
+    {
+        $product = new Product();
+        $product->setSku($sku);
+
+        $productUnit = new ProductUnit();
+        $productUnit->setCode($unitCode);
+
+        return $this->getEntity(
+            LineItem::class,
+            ['id' => $id, 'product' => $product, 'unit' => $productUnit, 'quantity' => $quantity]
         );
     }
 }
