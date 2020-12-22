@@ -27,8 +27,18 @@ class DatagridLineItemsDataListener
             );
         }
 
+        /** @var CheckoutLineItem[] $lineItems */
         foreach ($lineItems as $lineItem) {
-            $event->addDataForLineItem($lineItem->getEntityIdentifier(), ['notes' => (string)$lineItem->getComment()]);
+            $lineItemData = [
+                'notes' => (string) $lineItem->getComment(),
+            ];
+
+            $currentLineItemData = $event->getDataForLineItem($lineItem->getEntityIdentifier());
+            if (empty($currentLineItemData['name'])) {
+                $lineItemData['name'] = $lineItem->getFreeFormProduct();
+            }
+
+            $event->addDataForLineItem($lineItem->getEntityIdentifier(), $lineItemData);
         }
     }
 }

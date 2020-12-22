@@ -131,6 +131,39 @@ class LineItemsSimpleOnResultAfterListenerTest extends \PHPUnit\Framework\TestCa
         $this->listener->onResultAfter($event);
     }
 
+    public function testOnResultAfterWithoutProduct(): void
+    {
+        $lineItem = $this->createMock(ProductLineItemInterface::class);
+        $lineItem->expects($this->once())
+            ->method('getProduct')
+            ->willReturn(null);
+
+        $resultRecord = $this->createMock(ResultRecordInterface::class);
+        $resultRecord->expects($this->exactly(2))
+            ->method('getValue')
+            ->willReturnMap(
+                [
+                    ['lineItemsByIds', [10 => $lineItem]],
+                    ['lineItemsDataByIds', [10 => ['sample_key' => 'sample_value']]],
+                ]
+            );
+
+        $event = new OrmResultAfter(
+            $this->getDatagrid(),
+            [$resultRecord],
+            $this->createMock(AbstractQuery::class)
+        );
+
+        $resultRecord->expects($this->exactly(2))
+            ->method('setValue')
+            ->withConsecutive(
+                ['isConfigurable', false],
+                ['sample_key', 'sample_value']
+            );
+
+        $this->listener->onResultAfter($event);
+    }
+
     /**
      * @dataProvider onResultDataProvider
      *

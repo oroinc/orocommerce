@@ -71,11 +71,11 @@ class DatagridLineItemsDataListenerTest extends \PHPUnit\Framework\TestCase
         return [
             [
                 'lineItem' => (new CheckoutLineItemStub())->setId($lineItemId)->setComment($comment),
-                'expectedArgs' => [$lineItemId, ['notes' => $comment]],
+                'expectedArgs' => [$lineItemId, ['notes' => $comment, 'name' => null]],
             ],
             [
-                'lineItem' => (new CheckoutLineItemStub())->setId($lineItemId),
-                'expectedArgs' => [$lineItemId, ['notes' => '']],
+                'lineItem' => (new CheckoutLineItemStub())->setId($lineItemId)->setFreeFormProduct('Product 123'),
+                'expectedArgs' => [$lineItemId, ['notes' => '', 'name' => 'Product 123']],
             ],
         ];
     }
