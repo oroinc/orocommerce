@@ -248,6 +248,19 @@ class DatagridLineItemsDataListenerTest extends \PHPUnit\Framework\TestCase
                     'unit' => $productUnit5->getCode(),
                 ],
             ],
+            'without product' => [
+                'lineItem' => (new ProductLineItemStub(10))
+                    ->setQuantity(123)
+                    ->setUnit($productUnit1),
+                'productConfiguration' => [],
+                'expectedData' => [
+                    'id' => 10,
+                    'sku' => null,
+                    'name' => '',
+                    'quantity' => 123,
+                    'unit' => $productUnit1->getCode(),
+                ],
+            ],
         ];
     }
 }

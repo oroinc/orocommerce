@@ -784,8 +784,8 @@ services:
     oro_checkout.event_listener.datagrid_line_items_data.shopping_list_line_item_basic:
         class: Oro\Bundle\CheckoutBundle\EventListener\DatagridLineItemsDataListener
         tags:
-            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-checkout-line-items-grid, method: onLineItemData }
-            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-single-page-checkout-line-items-grid, method: onLineItemData }
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-checkout-line-items-grid, method: onLineItemData, priority: -10 }
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-single-page-checkout-line-items-grid, method: onLineItemData, priority: -10 }
 
     oro_checkout.event_listener.datagrid_line_items_data.violations:
         class: Oro\Bundle\CheckoutBundle\EventListener\DatagridLineItemsDataViolationsListener

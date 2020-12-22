@@ -43,39 +43,57 @@ class DatagridLineItemsDataListener
      */
     public function onLineItemData(DatagridLineItemsDataEvent $event): void
     {
+        /** @var ProductLineItemInterface $lineItem */
         foreach ($event->getLineItems() as $lineItem) {
             $lineItemId = $lineItem->getEntityIdentifier();
             $product = $lineItem->getProduct();
-            $parentProduct = $lineItem->getParentProduct();
-            $productId = $product->getId();
             $unitCode = $lineItem->getProductUnitCode();
+
             $lineItemData = [
                 'id' => $lineItemId,
-                'productId' => $productId,
-                'sku' => $product->getSku(),
-                'image' => $this->getImageUrl($product),
+                'sku' => $lineItem->getProductSku(),
                 'quantity' => $lineItem->getQuantity(),
                 'unit' => $unitCode,
+                'name' => $this->getProductName($lineItem),
             ];
 
-            $unitPrecision = $this->getProductUnitPrecision($product, $unitCode);
-            if ($unitPrecision !== null) {
-                $lineItemData['units'][$unitCode] = ['precision' => $unitPrecision];
-            }
+            if ($product) {
+                $lineItemData['productId'] = $product->getId();
+                $lineItemData['image'] = $this->getImageUrl($product);
 
-            if ($parentProduct) {
-                $namesCollection = $parentProduct->getNames();
-                $lineItemData['productId'] = $parentProduct->getId();
-                $lineItemData['variantId'] = $productId;
-                $lineItemData['productConfiguration'] = $this->getVariantFieldsValuesForLineItem($lineItem);
-            } else {
-                $namesCollection = $product->getNames();
-            }
+                $unitPrecision = $this->getProductUnitPrecision($product, $unitCode);
+                if ($unitPrecision !== null) {
+                    $lineItemData['units'][$unitCode] = ['precision' => $unitPrecision];
+                }
 
-            $lineItemData['name'] = (string)$this->localizationHelper->getLocalizedValue($namesCollection);
+                $parentProduct = $lineItem->getParentProduct();
+                if ($parentProduct) {
+                    $lineItemData['productId'] = $parentProduct->getId();
+                    $lineItemData['variantId'] = $lineItemData['productId'];
+                    $lineItemData['productConfiguration'] = $this->getVariantFieldsValuesForLineItem($lineItem);
+                }
+            }
 
             $event->addDataForLineItem($lineItemId, $lineItemData);
         }
+    }
+
+    /**
+     * @param ProductLineItemInterface $lineItem
+     * @return string
+     */
+    protected function getProductName(ProductLineItemInterface $lineItem): string
+    {
+        $product = $lineItem->getProduct();
+        if (!$product) {
+            return '';
+        }
+
+        $parentProduct = $lineItem->getParentProduct();
+
+        return (string) $this->localizationHelper->getLocalizedValue(
+            $parentProduct ? $parentProduct->getNames() : $product->getNames()
+        );
     }
 
     /**

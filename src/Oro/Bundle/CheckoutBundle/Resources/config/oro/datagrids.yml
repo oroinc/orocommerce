@@ -218,9 +218,8 @@ datagrids:
                 from:
                     - { table: 'Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem', alias: lineItem }
                 join:
-                    inner:
-                        - { join: lineItem.product, alias: product }
                     left:
+                        - { join: lineItem.product, alias: product }
                         - { join: lineItem.parentProduct, alias: parentProduct }
                         - { join: lineItem.productUnit, alias: unit}
                 where:
@@ -269,7 +268,7 @@ datagrids:
             columns:
                 sku:
                     type:             string
-                    data_name:        product.skuUppercase
+                    data_name:        COALESCE(product.skuUppercase, UPPER(lineItem.productSku))
                     case_insensitive: false
                     value_conversion: mb_strtoupper
                 inventoryStatus:

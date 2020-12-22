@@ -62,6 +62,25 @@ class DatagridLineItemsDataInventoryListenerTest extends \PHPUnit\Framework\Test
         );
     }
 
+    public function testOnLineItemDataWithoutProduct(): void
+    {
+        $this->upcomingProductProvider->expects($this->never())
+            ->method($this->anything());
+
+        $this->lowInventoryProvider->expects($this->never())
+            ->method($this->anything());
+
+        $event = new DatagridLineItemsDataEvent(
+            [$this->getEntity(LineItem::class, ['id' => 42])],
+            $this->createMock(DatagridInterface::class),
+            []
+        );
+
+        $this->listener->onLineItemData($event);
+
+        $this->assertEquals([], $event->getDataForLineItem(42));
+    }
+
     public function testOnLineItemData(): void
     {
         $product = new ProductStub(1);

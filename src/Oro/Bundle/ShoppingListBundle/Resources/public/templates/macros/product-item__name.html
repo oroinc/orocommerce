@@ -1,5 +1,6 @@
 <h3 class="grid-line-items__title<%- obj.clip ? ' grid-line-items__clip-placeholder' : '' %>">
-    <a<% if (obj.clip) { %> class="<%- 'grid-line-items__title-content grid-line-items__ellipsis' %>"<% }%>
+    <% if (link) { %>
+    <a<% if (obj.clip) { %> class="<%- 'grid-line-items__title-content grid-line-items__ellipsis' %>"<% } %>
         href="<%- link %>"
         title="<%- name %>"
         <% if (obj.popover_image_src) { %>
@@ -9,5 +10,8 @@
             src: obj.popover_image_src,
             title: name
         }) %>"
-        <% }%>><%- name %></a>
+        <% } %>><%- name %></a>
+    <% } else { %>
+    <p<% if (obj.clip) { %> class="<%- 'grid-line-items__title-content grid-line-items__ellipsis' %>"<% } %>><%- name %></p>
+    <% } %>
 </h3>

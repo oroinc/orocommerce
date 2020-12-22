@@ -12,10 +12,10 @@
             <% } %>
             <div class="grid-line-items__row-item">
                 <% if (name.length <= clipLength) { %>
-                    <%= oroshoppinglist.renderProductItemName({link: productUrl(productId, variantId), name: name, popover_image_src: obj.image}) %>
+                    <%= oroshoppinglist.renderProductItemName({link: productId ? productUrl(productId, variantId) : null, name: name, popover_image_src: obj.image}) %>
                 <% } else { %>
                 <div class="grid-line-items__clip-container">
-                    <%= oroshoppinglist.renderProductItemName({clip: true, link: productUrl(productId, variantId), name: name, popover_image_src: obj.image}) %>
+                    <%= oroshoppinglist.renderProductItemName({clip: true, link: productId ? productUrl(productId, variantId) : null, name: name, popover_image_src: obj.image}) %>
                 </div>
                 <% } %>
             </div>
