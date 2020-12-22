@@ -16,11 +16,13 @@ class FedexPackageSettingsTest extends TestCase
         $settings = new FedexPackageSettings(
             self::WEIGHT_UNIT,
             self::DIMENSIONS_UNIT,
-            self::EXPRESSION
+            self::EXPRESSION,
+            true
         );
 
         static::assertSame(self::WEIGHT_UNIT, $settings->getUnitOfWeight());
         static::assertSame(self::DIMENSIONS_UNIT, $settings->getDimensionsUnit());
         static::assertSame(self::EXPRESSION, $settings->getLimitationExpression());
+        static::assertTrue($settings->isDimensionsIgnored());
     }
 }

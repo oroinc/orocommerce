@@ -179,11 +179,6 @@ services:
           tags:
             - { name: oro_entity.name_provider, priority: 100 }
 
-    oro_sale.provider.privilege_category_provider:
-        class: 'Oro\Bundle\SaleBundle\Provider\PrivilegeCategoryProvider'
-        tags:
-            - { name: oro_user.privilege_category}
-
     oro_sale.provider.quote_checkout:
         class: Oro\Bundle\SaleBundle\Provider\QuoteCheckoutProvider
         public: true

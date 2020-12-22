@@ -411,11 +411,6 @@ services:
             - '@oro_shipping.shipping_origin.provider'
             - '@?oro_payment.context.builder_factory_basic'
 
-    oro_checkout.provider.privilege_category_provider:
-        class: 'Oro\Bundle\CheckoutBundle\Provider\PrivilegeCategoryProvider'
-        tags:
-            - { name: oro_user.privilege_category}
-
     oro_checkout.mapper.order_mapper:
         class: 'Oro\Bundle\CheckoutBundle\Mapper\OrderMapper'
         public: false

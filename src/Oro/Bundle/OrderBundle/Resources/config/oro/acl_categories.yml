@@ -1,0 +1,5 @@
+acl_categories:
+    orders:
+        label: oro.order.privilege.category.orders.label
+        tab: true
+        priority: 6

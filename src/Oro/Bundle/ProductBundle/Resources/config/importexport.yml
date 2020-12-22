@@ -58,7 +58,9 @@ services:
             - [setProductImageClass, ['Oro\Bundle\ProductBundle\Entity\ProductImage']]
             - [setImageTypeProvider, ['@oro_layout.provider.image_type']]
             - [setFileLocator, ['@file_locator']]
-            - [setProductImageDir, ['%kernel.project_dir%/var/import_export/product_images/']]
+            # var/data/importexport/product_images is the directory where the product images source files
+            # should be places to import from.
+            - [setProductImageDir, ['%kernel.project_dir%/var/data/importexport/product_images/']]
         tags:
             - { name: oro_importexport.normalizer }
 

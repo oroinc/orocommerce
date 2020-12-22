@@ -29,6 +29,7 @@ use Oro\Bundle\EntityConfigBundle\Entity\Repository\AttributeFamilyRepository;
 use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
+use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterTypeInterface;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\DataGrid\EventListener\FrontendProductGridEventListener;
@@ -40,7 +41,6 @@ use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 use Oro\Bundle\WebsiteSearchBundle\Attribute\Type as SearchableType;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\EnumIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
-use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 /**
@@ -134,7 +134,7 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
         $this->metadata = $this->createMock(ClassMetadata::class);
         $this->metadata->expects($this->any())
             ->method('getAssociationMapping')
-            ->willReturn(['targetEntity' => StubEnumValue::class]);
+            ->willReturn(['targetEntity' => TestEnumValue::class]);
 
         $this->attributeFamilyRepository = $this->createMock(AttributeFamilyRepository::class);
 
@@ -276,7 +276,7 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
 
         $enumAttribute = $this->getEntity(FieldConfigModel::class, ['id' => 202, 'fieldName' => 'internalStatus']);
         $enumAttribute->setEntity(new EntityConfigModel(Product::class))
-            ->fromArray('extend', ['target_entity' => StubEnumValue::class]);
+            ->fromArray('extend', ['target_entity' => TestEnumValue::class]);
         $enumSearchAttributeType = new SearchableType\EnumSearchableAttributeType(new Type\EnumAttributeType());
 
         $decimalAttribute = $this->getEntity(FieldConfigModel::class, ['id' => 303, 'fieldName' => 'weight']);
@@ -416,7 +416,7 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
                                 'data_name' => Query::TYPE_INTEGER . '.internalStatus_' . EnumIdPlaceholder::NAME,
                                 'force_like' => true,
                                 'label' => self::LABEL,
-                                'class' => StubEnumValue::class
+                                'class' => TestEnumValue::class
                             ]
                         ]
                     ],
@@ -484,7 +484,7 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
                                 'data_name' => Query::TYPE_INTEGER . '.internalStatus_' . EnumIdPlaceholder::NAME,
                                 'force_like' => true,
                                 'label' => self::LABEL,
-                                'class' => StubEnumValue::class
+                                'class' => TestEnumValue::class
                             ]
                         ]
                     ],
@@ -552,7 +552,7 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
                                 'data_name' => Query::TYPE_INTEGER . '.internalStatus_' . EnumIdPlaceholder::NAME,
                                 'force_like' => true,
                                 'label' => self::LABEL,
-                                'class' => StubEnumValue::class
+                                'class' => TestEnumValue::class
                             ]
                         ]
                     ],
@@ -660,7 +660,7 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
                                 'data_name' => Query::TYPE_INTEGER . '.internalStatus_' . EnumIdPlaceholder::NAME,
                                 'force_like' => true,
                                 'label' => self::LABEL,
-                                'class' => StubEnumValue::class
+                                'class' => TestEnumValue::class
                             ]
                         ]
                     ],
@@ -744,7 +744,7 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
                                 'type' => SearchableType\SearchAttributeTypeInterface::FILTER_TYPE_ENTITY,
                                 'data_name' => Query::TYPE_INTEGER . '.manytoone',
                                 'label' => self::LABEL,
-                                'class' => StubEnumValue::class,
+                                'class' => TestEnumValue::class,
                             ]
                         ]
                     ],

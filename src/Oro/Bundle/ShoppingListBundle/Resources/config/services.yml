@@ -320,11 +320,6 @@ services:
     Oro\Bundle\ShoppingListBundle\Provider\ShoppingListUrlProvider:
         alias: oro_shopping_list.provider.shopping_list_url
 
-    oro_shopping_list.provider.privilege_category_provider:
-        class: 'Oro\Bundle\ShoppingListBundle\Provider\PrivilegeCategoryProvider'
-        tags:
-            - { name: oro_user.privilege_category}
-
     oro_shopping_list.provider.matrix_grid_order_manager:
         class: 'Oro\Bundle\ShoppingListBundle\Manager\MatrixGridOrderManager'
         arguments:

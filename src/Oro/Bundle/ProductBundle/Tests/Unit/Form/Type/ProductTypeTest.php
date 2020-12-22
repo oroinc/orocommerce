@@ -11,6 +11,7 @@ use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\EntityExtendBundle\Form\Type\EnumSelectType;
+use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
 use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\FrontendBundle\Form\Type\PageTemplateType;
@@ -49,7 +50,6 @@ use Oro\Bundle\RedirectBundle\Helper\ConfirmSlugChangeFormHelper;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type\Stub\LocalizedSlugTypeStub;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Layout\Extension\Theme\Manager\PageTemplatesManager;
-use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EnumSelectType as EnumSelectTypeStub;
@@ -155,7 +155,7 @@ class ProductTypeTest extends FormIntegrationTestCase
         $productUnitPrecision->setDataClass(ProductUnitPrecision::class);
 
         $stubEnumSelectType = new EnumSelectTypeStub([
-            new StubEnumValue(Product::INVENTORY_STATUS_IN_STOCK, 'In Stock')
+            new TestEnumValue(Product::INVENTORY_STATUS_IN_STOCK, 'In Stock')
         ]);
 
         /** @var \PHPUnit\Framework\MockObject\MockObject|ConfigProvider $configProvider */
@@ -409,7 +409,7 @@ class ProductTypeTest extends FormIntegrationTestCase
 
         $expectedProduct
             ->setType(Product::TYPE_SIMPLE)
-            ->setInventoryStatus(new StubEnumValue('in_stock', 'In Stock'));
+            ->setInventoryStatus(new TestEnumValue('in_stock', 'In Stock'));
 
         if ($hasVariants) {
             $expectedProduct->setType(Product::TYPE_CONFIGURABLE);
@@ -479,7 +479,7 @@ class ProductTypeTest extends FormIntegrationTestCase
         $expectedProduct->setPageTemplate(new EntityFieldFallbackValue());
         $expectedProduct->setAttributeFamily($this->getAttributeFamily());
 
-        $expectedProduct->setInventoryStatus(new StubEnumValue(Product::INVENTORY_STATUS_IN_STOCK, 'In Stock'));
+        $expectedProduct->setInventoryStatus(new TestEnumValue(Product::INVENTORY_STATUS_IN_STOCK, 'In Stock'));
 
         return $expectedProduct->setSku('test sku');
     }

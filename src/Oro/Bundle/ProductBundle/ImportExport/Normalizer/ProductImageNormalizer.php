@@ -57,7 +57,8 @@ class ProductImageNormalizer extends ConfigurableEntityNormalizer
     }
 
     /**
-     * @param string $productImageDir
+     * @param string $productImageDir The directory where the product images source files
+     *                                should be places to import from.
      */
     public function setProductImageDir($productImageDir)
     {
@@ -75,8 +76,13 @@ class ProductImageNormalizer extends ConfigurableEntityNormalizer
     {
         $data = parent::normalize($productImage, $format, $context);
 
+        $name = $productImage->getImage()->getOriginalFileName();
+        if (!$name) {
+            $name = $productImage->getImage()->getFilename();
+        }
+
         if (array_key_exists('image', $data)) {
-            $data['image']['name'] = $productImage->getImage()->getOriginalFileName();
+            $data['image']['name'] = $name;
         }
 
         if (!array_key_exists('types', $data)) {
@@ -93,7 +99,7 @@ class ProductImageNormalizer extends ConfigurableEntityNormalizer
         }
 
         $data['types'] = $availableTypesArray;
-        $data['image']['name'] = $productImage->getImage()->getOriginalFileName();
+        $data['image']['name'] = $name;
 
         return $data;
     }

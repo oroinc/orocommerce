@@ -64,10 +64,11 @@ class ProductImportExportContext extends OroFeatureContext implements KernelAwar
             '/../Features/Fixtures/product_images_import'
         );
 
+        // The directory where the product images source files should be places to import from.
         $importImageDir = sprintf(
             '%s%s',
             $this->getContainer()->getParameter('kernel.project_dir'),
-            '/var/import_export/product_images'
+            '/var/data/importexport/product_images'
         );
 
         $this->copyFiles($imagePath, $importImageDir);
@@ -82,9 +83,10 @@ class ProductImportExportContext extends OroFeatureContext implements KernelAwar
     {
         $sourcePath = sprintf('%s%s', __DIR__, '/../Features/Fixtures/files_import');
         $projectDir = $this->getContainer()->getParameter('kernel.project_dir');
+        // The destinations of fixture files that can be used as the source files for import.
         $destinationDirs = [
-            'relative' => sprintf('%s%s', $projectDir, '/var/import_export/files'),
-            'absolute' => sprintf('%s%s', $projectDir, '/var/import_export'),
+            'relative' => sprintf('%s%s', $projectDir, '/var/data/importexport/files'),
+            'absolute' => sprintf('%s%s', $projectDir, '/var/data/importexport/'),
             'public' => sprintf('%s%s', $projectDir, '/public/media/cache/import_export'),
         ];
 
@@ -108,10 +110,11 @@ class ProductImportExportContext extends OroFeatureContext implements KernelAwar
         $filename = $this->fixStepArgument($filename);
         $imagePath = sprintf('%s/../Features/Fixtures/files_import/%s', __DIR__, $filename);
 
+        // The directory where the files should be places to import from.
         $importExportDir = sprintf(
             '%s/%s/%s',
             $this->getContainer()->getParameter('kernel.project_dir'),
-            'var/import_export/files',
+            'var/data/importexport/files',
             $newFilename
         );
 

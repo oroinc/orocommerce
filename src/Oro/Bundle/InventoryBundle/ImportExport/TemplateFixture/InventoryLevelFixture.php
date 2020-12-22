@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\InventoryBundle\ImportExport\TemplateFixture;
 
+use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ImportExportBundle\TemplateFixture\AbstractTemplateRepository;
 use Oro\Bundle\ImportExportBundle\TemplateFixture\TemplateFixtureInterface;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
@@ -10,10 +12,9 @@ use Oro\Bundle\LocaleBundle\Manager\LocalizationManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 
 /**
- *  Provides Inventory Level sample export template data
+ * Provides Inventory Level sample export template data.
  */
 class InventoryLevelFixture extends AbstractTemplateRepository implements TemplateFixtureInterface
 {
@@ -59,7 +60,6 @@ class InventoryLevelFixture extends AbstractTemplateRepository implements Templa
     public function fillEntityData($key, $entity)
     {
         $product = new Product();
-        $inventoryStatus = new StubEnumValue(Product::INVENTORY_STATUS_IN_STOCK, 'In Stock');
 
         $localization = $this->localizationManager->getDefaultLocalization();
 
@@ -72,7 +72,7 @@ class InventoryLevelFixture extends AbstractTemplateRepository implements Templa
             ->setFallback('system');
 
         $product->setSku('product-1')
-            ->setInventoryStatus($inventoryStatus)
+            ->setInventoryStatus($this->createInventoryStatus(Product::INVENTORY_STATUS_IN_STOCK, 'In Stock'))
             ->addName($name)
             ->addName($localizedName);
 
@@ -85,5 +85,18 @@ class InventoryLevelFixture extends AbstractTemplateRepository implements Templa
         $unitPrecision->setUnit($unit);
         $unitPrecision->setProduct($product);
         $entity->setProductUnitPrecision($unitPrecision);
+    }
+
+    /**
+     * @param string $id
+     * @param string $name
+     *
+     * @return AbstractEnumValue
+     */
+    private function createInventoryStatus(string $id, string $name): AbstractEnumValue
+    {
+        $enumValueClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
+
+        return new $enumValueClassName($id, $name);
     }
 }
