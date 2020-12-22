@@ -11,9 +11,6 @@ const cssChildrenScopeRegexp = /#isolation-scope-[\w]*\s+/g;
 
 const FORBIDDEN_ATTR = ['draggable', 'data-gjs[-\\w]+'];
 
-const IMAGE_EXP_REGEXP = /(src|srcset)="(\{\{([\w\s\'\_\-\,\(\)]+)\}\})"/g;
-const DATA_IMAGE_EXP_REGEXP = /(data-src-exp|data-srcset-exp)="(\{\{([\w\s\'\_\-\,\(\)]+)\}\})"/g;
-
 /**
  * Test regexp
  * Prevent shift regexp index
@@ -25,24 +22,7 @@ const hasIsolation = html => {
     return componentHtmlIdRegexp.test(html);
 };
 
-export const escapeImageExpression = html => {
-    return html.replace(IMAGE_EXP_REGEXP, (input, src) => {
-        return input.replace(src, `data-${src}-exp`);
-    });
-};
-
-export const normalizeImageExpression = html => {
-    return html.replace(DATA_IMAGE_EXP_REGEXP, (input, exp) => {
-        return input.replace(exp, exp.replace(/data-|-exp/g, ''));
-    });
-};
-
-export const removeImageExpression = html => {
-    return html.replace(IMAGE_EXP_REGEXP, '');
-};
-
 export const escapeWrapper = html => {
-    html = escapeImageExpression(html);
     if (hasIsolation(html)) {
         html = $(html).html();
         html = escapeWrapper(html);
@@ -54,7 +34,7 @@ export const escapeWrapper = html => {
 export const getWrapperAttrs = html => {
     const attrs = {};
     if (hasIsolation(html)) {
-        const $wrapper = $(escapeImageExpression(html));
+        const $wrapper = $(html);
         each($wrapper[0].attributes, attr => attrs[attr.name] = $wrapper.attr(attr.name));
     }
     delete attrs.id;
@@ -100,7 +80,7 @@ export default GrapesJS.plugins.add('grapesjs-style-isolation', (editor, options
             html = root.outerHTML;
         }
 
-        return normalizeImageExpression(html);
+        return html;
     };
 
     editor.getIsolatedCss = () => {

@@ -21,6 +21,9 @@ services:
         class: 'Oro\Bundle\CMSBundle\ContentBlock\ContentBlockResolver'
         arguments:
             - "@property_accessor"
+        calls:
+            - ['setManagerRegistry', ['@doctrine']]
+            - ['setScopeManager', ['@oro_scope.scope_manager']]
 
     oro_cms.content_block.default_content_variant_scopes_resolver:
         class: 'Oro\Bundle\CMSBundle\ContentBlock\DefaultContentVariantScopesResolver'
@@ -453,6 +456,9 @@ services:
         class: Oro\Bundle\CMSBundle\Provider\PreviewMetadataProvider
         arguments:
             - '@oro_cms.provider.preview_metadata.inner'
+        calls:
+            - [setFileUrlProvider, ['@oro_attachment.provider.file_url']]
+            - [setMimeTypeChecker, ['@oro_attachment.tools.mime_type_checker']]
 
     oro_cms.provider.attachment_entity_config:
         decorates: oro_attachment.provider.attachment_entity_config
@@ -480,3 +486,12 @@ services:
             - '@oro_config.manager'
         tags:
             - { name: oro_redirect.slug_source_entity_provider }
+
+    oro_cms.tools.digital_asset_twig_tags_converter:
+        class: Oro\Bundle\CMSBundle\Tools\DigitalAssetTwigTagsConverter
+        arguments:
+            - '@doctrine'
+            - '@oro_attachment.provider.file_url'
+
+    Oro\Bundle\CMSBundle\Tools\DigitalAssetTwigTagsConverter:
+        alias: oro_cms.tools.digital_asset_twig_tags_converter

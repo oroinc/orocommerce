@@ -1,6 +1,5 @@
 
 import BaseTypeBuilder from 'orocms/js/app/grapesjs/type-builders/base-type-builder';
-import DigitalAssetHelper from 'orocms/js/app/grapesjs/helpers/digital-asset-helper';
 
 const SourceTypeBuilder = BaseTypeBuilder.extend({
     modelMixin: {
@@ -21,10 +20,9 @@ const SourceTypeBuilder = BaseTypeBuilder.extend({
             const {$el, model} = this;
 
             const attrs = model.get('attributes');
-            const imageSrc = DigitalAssetHelper.getImageUrlFromTwigTag(attrs['data-srcset-exp']);
 
-            if (imageSrc) {
-                $el.attr('srcset', imageSrc);
+            if (attrs['data-srcset-exp']) {
+                $el.attr('srcset', attrs['data-srcset-exp']);
             } else {
                 $el.attr('srcset', '');
             }

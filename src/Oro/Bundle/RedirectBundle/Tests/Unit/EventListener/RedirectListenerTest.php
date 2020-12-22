@@ -4,6 +4,7 @@ namespace Oro\Bundle\RedirectBundle\Tests\Unit\EventListener;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
@@ -19,6 +20,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.ExcessiveClassLength)
+ */
 class RedirectListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
@@ -118,6 +124,7 @@ class RedirectListenerTest extends \PHPUnit\Framework\TestCase
     {
         $localization = new Localization();
         $usedSlug = new Slug();
+        $usedSlug->setUrl('/slug1');
         $usedSlug->setLocalization($localization);
         $this->userLocalizationManager->expects($this->once())
             ->method('getCurrentLocalization')
@@ -148,10 +155,61 @@ class RedirectListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($event->getResponse());
     }
 
+    public function testOnRequestWhenSlugAlreadyInRightLocalizationWithContextLocalizedNotFound()
+    {
+        $localization = new Localization();
+        $usedSlug = new Slug();
+        $usedSlug->setUrl('/slug1');
+        $usedSlug->setLocalization($localization);
+
+        $contextUsedSlug = new Slug();
+        $contextUsedSlug->setUrl('/context1');
+        $contextUsedSlug->setLocalization($localization);
+
+        $this->userLocalizationManager->expects($this->once())
+            ->method('getCurrentLocalization')
+            ->willReturn($localization);
+        $manager = $this->createMock(ObjectManager::class);
+        $this->registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->with(Slug::class)
+            ->willReturn($manager);
+
+        $this->slugSourceEntityProvider->expects($this->never())
+            ->method('getSourceEntityBySlug');
+
+        $this->canonicalUrlGenerator->expects($this->never())
+            ->method('getAbsoluteUrl');
+        $this->websiteManager->expects($this->never())
+            ->method('getCurrentWebsite');
+
+        /** @var HttpKernelInterface $kernel */
+        $kernel = $this->createMock(HttpKernelInterface::class);
+        $event = new RequestEvent(
+            $kernel,
+            new Request(
+                [],
+                [],
+                [
+                    '_used_slug' => $usedSlug,
+                    '_context_url_attributes' => [
+                        [
+                            '_used_slug' => $contextUsedSlug
+                        ]
+                    ]
+                ]
+            ),
+            HttpKernelInterface::MASTER_REQUEST
+        );
+        $this->listener->onRequest($event);
+        $this->assertNull($event->getResponse());
+    }
+
     public function testOnRequestWhenNoSourceEntity()
     {
         $localization = new Localization();
         $usedSlug = new Slug();
+        $usedSlug->setUrl('/slug1');
         $this->userLocalizationManager->expects($this->once())
             ->method('getCurrentLocalization')
             ->willReturn($localization);
@@ -186,6 +244,7 @@ class RedirectListenerTest extends \PHPUnit\Framework\TestCase
     public function testOnRequestWhenNoLocalizedSlug()
     {
         $usedSlug = new Slug();
+        $usedSlug->setUrl('/slug1');
         $sourceEntity = new Page();
         $localization = new Localization();
         $this->userLocalizationManager->expects($this->once())
@@ -222,6 +281,7 @@ class RedirectListenerTest extends \PHPUnit\Framework\TestCase
     public function testOnRequestWhenSameUrl()
     {
         $usedSlug = new Slug();
+        $usedSlug->setUrl('/slug1');
         $sourceEntity = new Page();
         $sourceEntity->addSlug($usedSlug);
         $localization = new Localization();
@@ -302,5 +362,202 @@ class RedirectListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertNotNull($event->getResponse());
         $this->assertInstanceOf(RedirectResponse::class, $event->getResponse());
         $this->assertEquals('http://website.loc/new-url', $event->getResponse()->getTargetUrl());
+    }
+
+    public function testOnRequestWithContext()
+    {
+        $localization = new Localization();
+        $usedSlug = $this->getEntity(Slug::class, ['id' => 333, 'url' => '/old-url']);
+        $localizedSlug = $this->getEntity(
+            Slug::class,
+            ['id' => 777, 'url' => '/new-url', 'localization' => $localization]
+        );
+        $contextUsedSlug = $this->getEntity(Slug::class, ['id' => 33, 'url' => '/context-old']);
+        $localizedContextSlug = $this->getEntity(
+            Slug::class,
+            ['id' => 77, 'url' => '/context-new', 'localization' => $localization]
+        );
+        $sourceEntity = new Page();
+        $sourceEntity->addSlug($usedSlug);
+        $sourceEntity->addSlug($localizedSlug);
+        $sourceEntityContext = new Category();
+        $sourceEntityContext->addSlug($contextUsedSlug);
+        $sourceEntityContext->addSlug($localizedContextSlug);
+
+        $this->userLocalizationManager->expects($this->once())
+            ->method('getCurrentLocalization')
+            ->willReturn($localization);
+        $this->slugSourceEntityProvider->expects($this->exactly(2))
+            ->method('getSourceEntityBySlug')
+            ->willReturnMap([
+                [$usedSlug, $sourceEntity],
+                [$contextUsedSlug, $sourceEntityContext]
+            ]);
+
+        $manager = $this->createMock(ObjectManager::class);
+        $this->registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->with(Slug::class)
+            ->willReturn($manager);
+
+        $website = new Website();
+        $this->canonicalUrlGenerator->expects($this->once())
+            ->method('getAbsoluteUrl')
+            ->with('/context-new/_item/new-url', $website)
+            ->willReturn('http://website.loc/context-new/_item/new-url');
+        $this->websiteManager->expects($this->once())
+            ->method('getCurrentWebsite')
+            ->willReturn($website);
+
+        /** @var HttpKernelInterface $kernel */
+        $kernel = $this->createMock(HttpKernelInterface::class);
+        $event = new RequestEvent(
+            $kernel,
+            new Request(
+                [],
+                [],
+                [
+                    '_used_slug' => $usedSlug,
+                    '_context_url_attributes' => [
+                        [
+                            '_used_slug' => $contextUsedSlug
+                        ]
+                    ]
+                ]
+            ),
+            HttpKernelInterface::MASTER_REQUEST
+        );
+        $this->listener->onRequest($event);
+        $this->assertNotNull($event->getResponse());
+        $this->assertInstanceOf(RedirectResponse::class, $event->getResponse());
+        $this->assertEquals('http://website.loc/context-new/_item/new-url', $event->getResponse()->getTargetUrl());
+    }
+
+    public function testOnRequestWithOnlyContextChange()
+    {
+        $localization = new Localization();
+        $usedSlug = $this->getEntity(Slug::class, ['id' => 333, 'url' => '/old-url']);
+        $contextUsedSlug = $this->getEntity(Slug::class, ['id' => 33, 'url' => '/context-old']);
+        $localizedContextSlug = $this->getEntity(
+            Slug::class,
+            ['id' => 77, 'url' => '/context-new', 'localization' => $localization]
+        );
+        $sourceEntity = new Page();
+        $sourceEntity->addSlug($usedSlug);
+        $sourceEntityContext = new Category();
+        $sourceEntityContext->addSlug($contextUsedSlug);
+        $sourceEntityContext->addSlug($localizedContextSlug);
+
+        $this->userLocalizationManager->expects($this->once())
+            ->method('getCurrentLocalization')
+            ->willReturn($localization);
+        $this->slugSourceEntityProvider->expects($this->exactly(2))
+            ->method('getSourceEntityBySlug')
+            ->willReturnMap([
+                [$usedSlug, $sourceEntity],
+                [$contextUsedSlug, $sourceEntityContext]
+            ]);
+
+        $manager = $this->createMock(ObjectManager::class);
+        $this->registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->with(Slug::class)
+            ->willReturn($manager);
+
+        $website = new Website();
+        $this->canonicalUrlGenerator->expects($this->once())
+            ->method('getAbsoluteUrl')
+            ->with('/context-new/_item/old-url', $website)
+            ->willReturn('http://website.loc/context-new/_item/old-url');
+        $this->websiteManager->expects($this->once())
+            ->method('getCurrentWebsite')
+            ->willReturn($website);
+
+        /** @var HttpKernelInterface $kernel */
+        $kernel = $this->createMock(HttpKernelInterface::class);
+        $event = new RequestEvent(
+            $kernel,
+            new Request(
+                [],
+                [],
+                [
+                    '_used_slug' => $usedSlug,
+                    '_context_url_attributes' => [
+                        [
+                            '_used_slug' => $contextUsedSlug
+                        ]
+                    ]
+                ]
+            ),
+            HttpKernelInterface::MASTER_REQUEST
+        );
+        $this->listener->onRequest($event);
+        $this->assertNotNull($event->getResponse());
+        $this->assertInstanceOf(RedirectResponse::class, $event->getResponse());
+        $this->assertEquals('http://website.loc/context-new/_item/old-url', $event->getResponse()->getTargetUrl());
+    }
+
+    public function testOnRequestWithContextOnlySlugChanged()
+    {
+        $localization = new Localization();
+        $usedSlug = $this->getEntity(Slug::class, ['id' => 333, 'url' => '/old-url']);
+        $localizedSlug = $this->getEntity(
+            Slug::class,
+            ['id' => 777, 'url' => '/new-url', 'localization' => $localization]
+        );
+        $contextUsedSlug = $this->getEntity(Slug::class, ['id' => 33, 'url' => '/context-old']);
+        $sourceEntity = new Page();
+        $sourceEntity->addSlug($usedSlug);
+        $sourceEntity->addSlug($localizedSlug);
+        $sourceEntityContext = new Category();
+        $sourceEntityContext->addSlug($contextUsedSlug);
+
+        $this->userLocalizationManager->expects($this->once())
+            ->method('getCurrentLocalization')
+            ->willReturn($localization);
+        $this->slugSourceEntityProvider->expects($this->exactly(2))
+            ->method('getSourceEntityBySlug')
+            ->willReturnMap([
+                [$usedSlug, $sourceEntity],
+                [$contextUsedSlug, $sourceEntityContext]
+            ]);
+
+        $manager = $this->createMock(ObjectManager::class);
+        $this->registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->with(Slug::class)
+            ->willReturn($manager);
+
+        $website = new Website();
+        $this->canonicalUrlGenerator->expects($this->once())
+            ->method('getAbsoluteUrl')
+            ->with('/context-old/_item/new-url', $website)
+            ->willReturn('http://website.loc/context-old/_item/new-url');
+        $this->websiteManager->expects($this->once())
+            ->method('getCurrentWebsite')
+            ->willReturn($website);
+
+        /** @var HttpKernelInterface $kernel */
+        $kernel = $this->createMock(HttpKernelInterface::class);
+        $event = new RequestEvent(
+            $kernel,
+            new Request(
+                [],
+                [],
+                [
+                    '_used_slug' => $usedSlug,
+                    '_context_url_attributes' => [
+                        [
+                            '_used_slug' => $contextUsedSlug
+                        ]
+                    ]
+                ]
+            ),
+            HttpKernelInterface::MASTER_REQUEST
+        );
+        $this->listener->onRequest($event);
+        $this->assertNotNull($event->getResponse());
+        $this->assertInstanceOf(RedirectResponse::class, $event->getResponse());
+        $this->assertEquals('http://website.loc/context-old/_item/new-url', $event->getResponse()->getTargetUrl());
     }
 }
