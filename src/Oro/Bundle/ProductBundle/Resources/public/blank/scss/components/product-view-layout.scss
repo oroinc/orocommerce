@@ -68,6 +68,10 @@
         width: $product-view-related-items-width;
 
         .embedded-list {
+            &__slider {
+                margin: $product-view-related-list-offset;
+            }
+
             .product-price {
                 max-width: $product-view-related-items-product-price-width;
             }
