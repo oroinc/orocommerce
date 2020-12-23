@@ -230,6 +230,7 @@ services:
             - "@translator"
             - "@security.token_storage"
             - "@security.authorization_checker"
+            - '@oro_config.manager'
         tags:
             - { name: oro_action.datagrid.mass_action_provider, alias: oro_shopping_list_add_products }
             - { name: oro_featuretogle.feature, feature: 'shopping_list_create' }
@@ -259,6 +260,8 @@ services:
             - '@oro_shopping_list.manager.current_shopping_list'
             - '@oro_shopping_list.repository.line_item'
             - '@oro_security.acl_helper'
+            - '@oro_security.token_accessor'
+            - '@oro_config.manager'
 
     Oro\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider:
         alias: 'oro_shopping_list.data_provider.product_shopping_lists'

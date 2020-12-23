@@ -57,6 +57,21 @@ Oro\Bundle\ProductBundle\Entity\Product:
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
 
+Doctrine\Common\Collections\ArrayCollection:
+    products:
+        __construct: [['@product1']]
+
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
+    localNewCategory:
+        string: 'New Category'
+
+Oro\Bundle\CatalogBundle\Entity\Category:
+    categoryLightingProducts:
+        __calls:
+            - addTitle: ['@localNewCategory']
+            - setParentCategory: ['@root_category']
+            - setProducts: ['@products']
+
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
     shoppinglist1:
         label: 'Shopping List 1'

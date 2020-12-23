@@ -202,6 +202,22 @@ class CurrentShoppingListManager
     }
 
     /**
+     * @param CustomerUser $customerUser
+     * @param array $sortCriteria
+     *
+     * @return ShoppingList[]
+     */
+    public function getShoppingListsByCustomerUser(CustomerUser $customerUser, array $sortCriteria = []): array
+    {
+        if ($this->guestShoppingListManager->isGuestShoppingListAvailable()) {
+            return $this->guestShoppingListManager->getShoppingListsForCustomerVisitor();
+        }
+
+        return $this->getShoppingListRepository()
+            ->findByCustomerUserId($customerUser->getId(), $this->aclHelper, $sortCriteria);
+    }
+
+    /**
      * @return bool
      */
     public function isCurrentShoppingListEmpty()
