@@ -16,8 +16,10 @@ const QuickAddCollection = BaseCollection.extend({
 
     model: QuickAddModel,
 
+    ajaxOptions: {},
+
     constructor: function QuickAddCollection(data, options) {
-        Object.assign(this, _.pick(options, 'productBySkuRoute', 'loadProductsBatchSize'));
+        Object.assign(this, _.pick(options, 'productBySkuRoute', 'loadProductsBatchSize', 'ajaxOptions'));
 
         this._index = {_: []};
 
@@ -122,7 +124,20 @@ const QuickAddCollection = BaseCollection.extend({
      * @param {Array<{sku:string, quantity: string, unit_label?: string}>} items
      * @return {Promise<{invalid: Object}>}
      */
-    async addQuickAddRows(items) {
+    addQuickAddRows(items) {
+        const promise = this._addQuickAddRows(items);
+        this.trigger('quick-add-rows', promise);
+        return promise;
+    },
+
+    /**
+     * Updates the collection with supplied items and loads product information
+     *
+     * @param {Array<{sku:string, quantity: string, unit_label?: string}>} items
+     * @return {Promise<{invalid: Object}>}
+     * @protected
+     */
+    async _addQuickAddRows(items) {
         const itemsToLoad = {};
 
         await window.sleep(0); // give time to repaint UI
@@ -152,7 +167,7 @@ const QuickAddCollection = BaseCollection.extend({
             }
         });
 
-        this.trigger('quick-add:before-load');
+        this.trigger('quick-add-rows:before-load');
 
         let result;
         try {
@@ -171,7 +186,7 @@ const QuickAddCollection = BaseCollection.extend({
 
             this.remove(invalidModels);
         }
-        this.trigger('quick-add:after-load');
+        this.trigger('quick-add-rows:after-load');
 
         return result;
     },
@@ -191,13 +206,13 @@ const QuickAddCollection = BaseCollection.extend({
                         per_page: batch.length,
                         query: ''
                     };
-                    $.ajax({
+                    $.ajax(Object.assign({
                         url: routing.generate(this.productBySkuRoute, routeParams),
                         method: 'post',
                         data: {
                             sku: batch
                         }
-                    }).done((data, status) => {
+                    }, this.ajaxOptions)).done((data, status) => {
                         if (status === 'success') {
                             remainingItems = this._updateModels(data.results, remainingItems);
                             resolve();

@@ -112,11 +112,13 @@
   }
 
 
-  .validation-failed,
-  .notification--error { //override platform styles
-    margin: $quick-order-add-error-margins;
+  &__error,
+  &__error-autocomplete {
+    .validation-failed, .notification--error { //override platform styles
+      margin: $quick-order-add-error-margins;
 
-    background: none;
+      background: none;
+    }
   }
 
   .mobile-version & {
@@ -168,9 +170,11 @@
         right: 0;
       }
 
-      .validation-failed,
-      .notification--error { //override platform styles
-        margin: $quick-order-add-mobile-error-margins;
+      &__error,
+      &__error-autocomplete {
+        .validation-failed, .notification--error { //override platform styles
+          margin: $quick-order-add-mobile-error-margins;
+        }
       }
 
       .product-tier-prices {

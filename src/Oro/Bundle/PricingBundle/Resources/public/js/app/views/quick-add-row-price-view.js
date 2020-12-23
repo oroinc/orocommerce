@@ -13,6 +13,8 @@ const QuickAddRowPricesView = BaseView.extend({
         subtotalNotAvailable: __('oro.pricing.price.not_available')
     },
 
+    priceNotFoundTemplate: '<div class="text-center"><%- _.__("oro.pricing.product_prices.price_not_found") %></div>',
+
     elem: {
         subtotal: '[data-name="field__product-subtotal"]',
         pricesHintContentRendered: '[data-class="prices-hint-content"]'
@@ -120,7 +122,7 @@ const QuickAddRowPricesView = BaseView.extend({
     },
 
     updateHintContent(event) {
-        if (!this.$pricesHint.length || _.isEmpty(this.prices)) {
+        if (!this.$pricesHint.length) {
             return;
         }
 
@@ -137,7 +139,8 @@ const QuickAddRowPricesView = BaseView.extend({
             $(event.target).trigger(event);
         }
 
-        const pricesHintContentTemplate = this.getTemplateFunction('pricesHintTemplateContent');
+        const templateName = !_.isEmpty(attrs.prices) ? 'pricesHintTemplateContent' : 'priceNotFoundTemplate';
+        const pricesHintContentTemplate = this.getTemplateFunction(templateName);
 
         this.$pricesHint.data(Popover.DATA_KEY).updateContent(
             pricesHintContentTemplate({

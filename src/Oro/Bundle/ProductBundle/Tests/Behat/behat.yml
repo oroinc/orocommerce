@@ -429,11 +429,11 @@ oro_behat_extension:
           UNIT1:
             type: 'css'
             locator: 'select[name="oro_product_quick_add[products][0][productUnit]"]'
-            element: Select2Entity
+            element: Select
           UNIT2:
             type: 'css'
             locator: 'select[name="oro_product_quick_add[products][1][productUnit]"]'
-            element: Select2Entity
+            element: Select
 
     Quick Order Form > QTY1:
       selector:
