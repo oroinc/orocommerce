@@ -458,8 +458,8 @@ oro_behat_extension:
           Enable "Shopping Lists" page in "My Account": 'shopping_list[oro_shopping_list___shopping_lists_page_enabled][value]'
           Use new layout for shopping list view and edit pages: 'shopping_list[oro_shopping_list___use_new_layout_for_view_and_edit_pages][value]'
           Use new layout for shopping list view and edit pages Use default: 'shopping_list[oro_shopping_list___use_new_layout_for_view_and_edit_pages][use_parent_scope_value]'
-          Show All Lists in Shopping List Widget Use default: 'shopping_list[oro_shopping_list___show_all_in_shopping_list_widget][use_parent_scope_value]'
-          Show All Lists in Shopping List Widget: 'shopping_list[oro_shopping_list___show_all_in_shopping_list_widget][value]'
+          Show All Lists in Shopping List Widgets Use default: 'shopping_list[oro_shopping_list___show_all_in_shopping_list_widget][use_parent_scope_value]'
+          Show All Lists in Shopping List Widgets: 'shopping_list[oro_shopping_list___show_all_in_shopping_list_widget][value]'
 
     Save on conf window:
       selector:

@@ -431,6 +431,10 @@ oro_behat_extension:
       selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-grid"]'
       class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\Grid
 
+    In Shopping Lists:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
+      selector: 'table.shopping-lists-popup'
+
   suites:
     OroShoppingListBundle:
       contexts:

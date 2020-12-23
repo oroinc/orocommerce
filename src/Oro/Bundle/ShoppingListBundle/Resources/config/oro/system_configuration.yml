@@ -79,6 +79,7 @@ system_configuration:
             type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
             options:
                 label: oro.shoppinglist.system_configuration.fields.shopping_lists_page_enabled.label
+                tooltip: oro.shoppinglist.system_configuration.fields.shopping_lists_page_enabled.tooltip
                 required: false
         oro_shopping_list.use_new_layout_for_view_and_edit_pages:
             data_type: boolean

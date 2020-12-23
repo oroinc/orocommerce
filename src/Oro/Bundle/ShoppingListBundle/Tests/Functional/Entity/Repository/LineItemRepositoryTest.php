@@ -252,6 +252,37 @@ class LineItemRepositoryTest extends WebTestCase
         ];
     }
 
+    public function testGetProductItemsWithShoppingListNamesByCustomerUser(): void
+    {
+        /** @var Product $product */
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
+
+        /** @var ShoppingList $shoppingList */
+        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
+
+        $lineItems = $this->getLineItemRepository()->getProductItemsWithShoppingListNamesByCustomerUser(
+            $this->getContainer()->get('oro_security.acl_helper'),
+            $product,
+            $shoppingList->getCustomerUser()
+        );
+
+        $this->assertTrue(count($lineItems) > 1);
+
+        $shoppingListLabelList = [];
+        $productSkuList = [];
+        /** @var LineItem $lineItem */
+        foreach ($lineItems as $lineItem) {
+            $productSkuList[] = $lineItem->getProduct()->getSku();
+            $shoppingListLabelList[] = $lineItem->getShoppingList()->getLabel();
+        }
+
+        $this->assertTrue(count($productSkuList) > 1);
+        $this->assertTrue(in_array($product->getSku(), $productSkuList));
+
+        $this->assertTrue(count($shoppingListLabelList) > 1);
+        $this->assertTrue(in_array($shoppingList->getLabel(), $shoppingListLabelList));
+    }
+
     public function testGetLastProductsGroupedByShoppingList()
     {
         $shoppingLists = [

@@ -27,6 +27,7 @@ features:
 
     shopping_lists_pages:
         label: oro.shoppinglist.system_configuration.fields.shopping_lists_page_enabled.label
+        description: oro.shoppinglist.system_configuration.fields.shopping_lists_page_enabled.tooltip
         toggle: oro_shopping_list.shopping_lists_page_enabled
         strategy: affirmative
         routes:

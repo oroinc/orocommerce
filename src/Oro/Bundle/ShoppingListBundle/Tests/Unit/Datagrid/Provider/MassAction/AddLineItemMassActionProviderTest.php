@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Datagrid\Provider\MassAction;
 
+use Doctrine\Common\Collections\Criteria;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
@@ -12,7 +14,6 @@ use Oro\Bundle\ShoppingListBundle\Datagrid\Provider\MassAction\AddLineItemMassAc
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Component\Security\Core\Authentication\Token\AbstractToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -51,6 +52,11 @@ class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected $authorizationChecker;
 
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|ConfigManager
+     */
+    private $configManager;
+
     protected function setUp()
     {
         $this->currentShoppingListManager = $this->createMock(CurrentShoppingListManager::class);
@@ -58,6 +64,7 @@ class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
         $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
         $this->featureChecker = $this->createMock(FeatureChecker::class);
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
+        $this->configManager = $this->createMock(ConfigManager::class);
 
         $this->translator->expects($this->any())
             ->method('trans')
@@ -97,12 +104,14 @@ class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
             ->method('isFeatureEnabled')
             ->willReturn($isShoppingListCreateFeatureEnabled);
 
-        /** @var AbstractToken $token */
-        $token = $this->createMock(
-            $isGuest ?
-                AnonymousCustomerUserToken::class :
-                UsernamePasswordOrganizationToken::class
-        );
+        if ($isGuest) {
+            $token = $this->createMock(AnonymousCustomerUserToken::class);
+        } else {
+            $token = $this->createMock(UsernamePasswordOrganizationToken::class);
+            $token->expects($this->any())
+                ->method('getUser')
+                ->willReturn(new CustomerUser());
+        }
 
         $this->tokenStorage
             ->method('getToken')
@@ -122,10 +131,17 @@ class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
         if ($isGuest || !$editAllowed) {
             $this->currentShoppingListManager->expects($this->never())
                 ->method('getShoppingLists');
-        } else {
+        } elseif ($token->getUser()) {
             $this->currentShoppingListManager->expects($this->once())
-                ->method('getShoppingLists')
+                ->method('getShoppingListsByCustomerUser')
+                ->with($this->isInstanceOf(CustomerUser::class), ['list.id' => Criteria::ASC])
                 ->willReturn($shoppingLists);
+
+            $this->provider->setConfigManager($this->configManager);
+            $this->configManager->expects($this->any())
+                ->method('get')
+                ->with('oro_shopping_list.show_all_in_shopping_list_widget')
+                ->willReturn(false);
         }
 
         $this->assertEquals($expected, $this->provider->getActions());

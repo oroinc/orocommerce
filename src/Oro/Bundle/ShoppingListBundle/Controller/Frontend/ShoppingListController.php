@@ -41,7 +41,7 @@ class ShoppingListController extends AbstractController
      *      group_name="commerce"
      * )
      *
-     * @param ShoppingList $shoppingList
+     * @param ShoppingList|null $shoppingList
      * @return array|Response
      */
     public function viewAction(ShoppingList $shoppingList = null)
@@ -51,7 +51,8 @@ class ShoppingListController extends AbstractController
         }
 
         $configManager = $this->get(ConfigManager::class);
-        if ($configManager->get('oro_shopping_list.shopping_lists_page_enabled') &&
+        if ($shoppingList &&
+            $configManager->get('oro_shopping_list.shopping_lists_page_enabled') &&
             $configManager->get('oro_shopping_list.use_new_layout_for_view_and_edit_pages')
         ) {
             $params = ['id' => $shoppingList->getId()];

@@ -181,16 +181,18 @@ oro:
                 create_shopping_list_for_new_guest:
                     label: 'Create Guest Shopping Lists Immediately'
                     tooltip: 'Enable this option to automatically create shopping lists for all guest users once they access the storefront. By default, this option is disabled and shopping lists are created only when guest users add at least one item to their shopping list.'
-                shopping_lists_page_enabled.label: 'Enable "Shopping Lists" page in "My Account"'
+                shopping_lists_page_enabled:
+                    label: 'Enable "Shopping Lists" Page In "My Account"'
+                    tooltip: 'Adds the "Shopping Lists" section under "My Account" menu in the storefront. This section contains the grid with all shopping lists available to the user, and allows to utilize the new shopping list view and edit experiences to manage the shopping lists. Disabling the "Show All Lists in Shopping List Widgets" option will have no impact on this section.'
                 use_new_layout_for_view_and_edit_pages:
-                    label: 'Use new layout for shopping list view and edit pages'
-                    tooltip: 'This option will not work when "Shopping Lists" page in "My Account" option is disabled.'
+                    label: 'Apply New Layout To All Shopping List View And Edit Pages'
+                    tooltip: 'When this option is enabled, the new layout of view and edit pages is applied to all shopping list pages regardless of how they are accessed (from shopping list mini widget, product page, etc.) and the old layout is no longer used. This option will not work when "Shopping Lists" page in "My Account" option is disabled.'
                 shopping_lists_max_line_items_per_page:
                     label: 'Maximum Line Items Per Page'
                     tooltip: 'The provided value will be used as the implied maximum number of shopping list line items to display at once. If the number of shopping list line items exceeds this value, the "Show All Items" will no longer be available and this number will be shown as the maximum pager value.'
                 show_all_in_shopping_list_widget:
-                    label: 'Show All Lists in Shopping List Widget'
-                    tooltip: 'If this option is enabled, in addition to the shopping lists owned by the current user, the shopping list widget will also include all other shopping lists that the current user is allowed to access.'
+                    label: 'Show All Lists in Shopping List Widgets'
+                    tooltip: 'If this option is enabled, in addition to the shopping lists owned by the current user, the shopping list widgets, popups and drop-down buttons will also include all other shopping lists that the current user is allowed to access.'
 
         privilege:
             category.shopping.label: 'Shopping'
