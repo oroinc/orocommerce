@@ -41,10 +41,9 @@
             <div class="quick-order-add__col quick-order-add__unit">
                 <span class="quick-order-add__label">{{ 'oro.product.productunitprecision.unit.label'|trans }}</span>
                 {{ form_widget(form.productUnit, {attr: {
-                        disabled: 'disabled',
-                        'aria-label': "oro.product.productunitprecision.unit.label"
-                    }})
-                }}
+                    'class': 'disabled',
+                    'aria-label': 'oro.product.productunitprecision.unit.label'
+                }|merge(form.productUnit.vars.value is empty ? {'disabled': 'disabled'} : {})}) }}
             </div>
             {% placeholder oro_product_quick_add_additional_fields %}
             {% if allow_delete %}

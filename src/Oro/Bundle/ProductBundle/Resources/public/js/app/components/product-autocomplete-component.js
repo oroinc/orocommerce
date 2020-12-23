@@ -55,10 +55,11 @@ define(function(require) {
             this.$error = this.$row.find(this.options.selectors.error);
 
             this.product = $.extend(true, {
-                sku: this.$sku.val() || null,
+                sku: null,
                 name: null,
-                displayName: null
+                displayName: this.$el.data('displayName') || null
             }, this.options.product);
+            this.previousValue = this.product.displayName;
 
             this.updateProduct();
 

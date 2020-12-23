@@ -59,11 +59,11 @@ Feature: Quick order form 4.2
       | SKU4 | PSKU3 |
     And I wait for products to load
     And I fill "QuickAddForm" with:
-      | QTY1  | 2   |
-      | QTY2  | 4   |
-      | UNIT2 | set |
-      | QTY3  | 1   |
-      | QTY4  | 1   |
+      | QTY1      | 2   |
+      | QTY2      | 4   |
+      | UNIT2_4.2 | set |
+      | QTY3      | 1   |
+      | QTY4      | 1   |
     When I click "Get Quote"
     Then Page title equals to "Request A Quote - Requests For Quote - My Account"
     And I should see that "Phone Number" contains "Phone Number" placeholder
@@ -88,11 +88,11 @@ Feature: Quick order form 4.2
       | SKU4 | PSKU3 |
     And I wait for products to load
     And I fill "QuickAddForm" with:
-      | QTY1  | 2   |
-      | QTY2  | 4   |
-      | UNIT2 | set |
-      | QTY3  | 1   |
-      | QTY4  | 1   |
+      | QTY1      | 2   |
+      | QTY2      | 4   |
+      | UNIT2_4.2 | set |
+      | QTY3      | 1   |
+      | QTY4      | 1   |
     When I click "Create Order"
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
@@ -114,11 +114,11 @@ Feature: Quick order form 4.2
       | SKU4 | PSKU3 |
     And I wait for products to load
     And I fill "QuickAddForm" with:
-      | QTY1  | 2   |
-      | QTY2  | 4   |
-      | UNIT2 | set |
-      | QTY3  | 1   |
-      | QTY4  | 1   |
+      | QTY1      | 2   |
+      | QTY2      | 4   |
+      | UNIT2_4.2 | set |
+      | QTY3      | 1   |
+      | QTY4      | 1   |
     When I click "Add to List 2"
     Then I should see "3 products were added (view shopping list)." flash message
     When I open page with shopping list List 2
@@ -249,20 +249,20 @@ Feature: Quick order form 4.2
     And I click "Verify Order"
     And I wait for products to load
     And "QuickAddForm" must contains values:
-      | SKU1  | psku1 - Product1`"'&йёщ®&reg;> |
-      | QTY1  | 2                              |
-      | UNIT1 | item                           |
+      | SKU1      | psku1 - Product1`"'&йёщ®&reg;> |
+      | QTY1      | 2                              |
+      | UNIT1_4.2 | item                           |
     When I fill "Quick Add Copy Paste Form" with:
       | Paste your order | PSKU2;2;item |
     And I click "Verify Order"
     And I wait for products to load
     And "QuickAddForm" must contains values:
-      | SKU1  | psku1 - Product1`"'&йёщ®&reg;> |
-      | QTY1  | 2                              |
-      | UNIT1 | item                           |
-      | SKU2  | PSKU2 - Product2               |
-      | QTY2  | 2                              |
-      | UNIT2 | item                           |
+      | SKU1      | psku1 - Product1`"'&йёщ®&reg;> |
+      | QTY1      | 2                              |
+      | UNIT1_4.2 | item                           |
+      | SKU2      | PSKU2 - Product2               |
+      | QTY2      | 2                              |
+      | UNIT2_4.2 | item                           |
 
   Scenario: Check upload import validation with empty file
     Given I click "Quick Order Form"
@@ -334,12 +334,12 @@ Feature: Quick order form 4.2
       | PSKU2 - Product2                 | 3   | item (lang1) | N/A      |
     And I click "Add to Form"
     And "QuickAddForm" must contains values:
-      | SKU1  | psku1 - Product1 (Localization1) |
-      | QTY1  | 1                                |
-      | UNIT1 | item (lang1)                     |
-      | SKU2  | PSKU2 - Product2                 |
-      | QTY2  | 3                                |
-      | UNIT2 | item (lang1)                     |
+      | SKU1      | psku1 - Product1 (Localization1) |
+      | QTY1      | 1                                |
+      | UNIT1_4.2 | item (lang1)                     |
+      | SKU2      | PSKU2 - Product2                 |
+      | QTY2      | 3                                |
+      | UNIT2_4.2 | item (lang1)                     |
 
   Scenario: Check unit names are localized in copy paste form
     Given I click "Localization Switcher"
@@ -350,25 +350,25 @@ Feature: Quick order form 4.2
     And I click "Verify Order"
     And I wait for products to load
     Then "QuickAddForm" must contains values:
-      | SKU1  | PSKU2 - Product2 |
-      | QTY1  | 1                |
-      | UNIT1 | Element          |
+      | SKU1      | PSKU2 - Product2 |
+      | QTY1      | 1                |
+      | UNIT1_4.2 | Element          |
     When I fill "Quick Add Copy Paste Form" with:
       | Paste your order | PSKU2;3;Element |
     And I click "Verify Order"
     And I wait for products to load
     Then "QuickAddForm" must contains values:
-      | SKU1  | PSKU2 - Product2 |
-      | QTY1  | 4                |
-      | UNIT1 | Element          |
+      | SKU1      | PSKU2 - Product2 |
+      | QTY1      | 4                |
+      | UNIT1_4.2 | Element          |
     When I fill "Quick Add Copy Paste Form" with:
       | Paste your order | PSKU2;2;element |
     And I click "Verify Order"
     And I wait for products to load
     Then "QuickAddForm" must contains values:
-      | SKU1  | PSKU2 - Product2 |
-      | QTY1  | 6                |
-      | UNIT1 | Element          |
+      | SKU1      | PSKU2 - Product2 |
+      | QTY1      | 6                |
+      | UNIT1_4.2 | Element          |
 
   #@todo check with Serhii Polishchuk how can we manipulate xlsx files
 # Scenario: Verify user is able to upload .xlsx file

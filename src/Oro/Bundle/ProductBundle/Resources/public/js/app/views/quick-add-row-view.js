@@ -1,4 +1,3 @@
-import _ from 'underscore';
 import BaseView from 'oroui/js/app/views/base/view';
 import UnitsUtil from 'oroproduct/js/app/units-util';
 import QuantityHelper from 'oroproduct/js/app/quantity-helper';
@@ -55,6 +54,7 @@ const QuickAddRowView = BaseView.extend({
         }
 
         this.initModel(productsCollection, options);
+        this.$(this.attrElem.unit).removeClass('disabled');
         QuickAddRowView.__super__.initialize.call(this, options);
     },
 
@@ -143,12 +143,12 @@ const QuickAddRowView = BaseView.extend({
         attrs.forEach(attr => this._writeDOMValue(attr, this.model.get(attr)));
     },
 
-    onQuantityChange: _.debounce(function() {
+    onQuantityChange() {
         const quantity = this._readDOMValue('quantity');
         this.model.set({
             quantity
         });
-    }, 500),
+    },
 
     onUnitChange() {
         const unit = this._readDOMValue('unit');

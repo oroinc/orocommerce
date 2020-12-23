@@ -83,6 +83,7 @@ define(function(require) {
             this.initModel(options);
             this.initializeElements(options);
             this.initializeRow();
+            this.$elements.unit.removeClass('disabled');
         },
 
         initializeRow: function() {
@@ -174,7 +175,7 @@ define(function(require) {
 
             this.model.set({
                 sku: item.sku,
-                skuHiddenField: item.sku,
+                skuHiddenField: item.skuHiddenField || item.sku,
                 quantity_changed_manually: true,
                 quantity: quantity,
                 unit_deferred: resolvedUnitCode ? resolvedUnitCode : item.unit
@@ -341,7 +342,7 @@ define(function(require) {
         canBeUpdated: function(item) {
             const resolvedUnitCode = this._resolveUnitCode(item.unit);
 
-            return this.model.get('sku') === item.sku &&
+            return (this.model.get('sku') === item.sku || this.model.get('skuHiddenField') === item.sku) &&
                 (this.model.get('unit') === resolvedUnitCode || this.model.get('unit_deferred') === resolvedUnitCode);
         },
 

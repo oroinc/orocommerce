@@ -25,6 +25,7 @@
                     placeholder: "oro.product.sku.placeholder",
                     'aria-label': "oro.product.sku.aria_label",
                     'data-value': form.productDisplayName.vars.value,
+                    'data-display-name': form.productDisplayName.vars.value,
                     'data-dropdown-classes':{
                         holder: 'select2-drop oro-select2__dropdown',
                         menu: 'select2-results',
@@ -47,9 +48,10 @@
                  data-label="{{ 'oro.product.productunitprecision.unit.label'|trans }}"
             >
                 {{ form_widget(form.productUnit, {attr: {
-                    disabled: 'disabled',
-                    'aria-label': "oro.product.productunitprecision.unit.label"
-                }}) }}
+                    'class': 'disabled',
+                    'aria-label': 'oro.product.productunitprecision.unit.label',
+                    'data-skip-input-widgets': ''
+                }|merge(form.productUnit.vars.value is empty ? {'disabled': 'disabled'} : {})}) }}
             </div>
             {% placeholder oro_product_quick_add_additional_fields with {
                 row_component_name: row_component_name,

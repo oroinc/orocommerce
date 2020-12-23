@@ -101,11 +101,11 @@ Feature: Guest quick order form 4.2
       | SKU4 | PSKU3 |
     And I wait for products to load
     And I fill "QuickAddForm" with:
-      | QTY1  | 2   |
-      | QTY2  | 4   |
-      | UNIT2 | set |
-      | QTY3  | 1   |
-      | QTY4  | 1   |
+      | QTY1      | 2   |
+      | QTY2      | 4   |
+      | UNIT2_4.2 | set |
+      | QTY3      | 1   |
+      | QTY4      | 1   |
     When I click "Create Order"
     Then I should see "You can have only 1 shopping list(s)."
     When I click "Create Order"
@@ -168,11 +168,11 @@ Feature: Guest quick order form 4.2
       | SKU4 | PSKU3 |
     And I wait for products to load
     And I fill "QuickAddForm" with:
-      | QTY1  | 2   |
-      | QTY2  | 4   |
-      | UNIT2 | set |
-      | QTY3  | 1   |
-      | QTY4  | 1   |
+      | QTY1      | 2   |
+      | QTY2      | 4   |
+      | UNIT2_4.2 | set |
+      | QTY3      | 1   |
+      | QTY4      | 1   |
     When I click "Add to Shopping List"
     Then I should see "3 products were added (view shopping list)." flash message
 
@@ -203,11 +203,11 @@ Feature: Guest quick order form 4.2
       | SKU4 | PSKU3 |
     And I wait for products to load
     And I fill "QuickAddForm" with:
-      | QTY1  | 2   |
-      | QTY2  | 4   |
-      | UNIT2 | set |
-      | QTY3  | 1   |
-      | QTY4  | 1   |
+      | QTY1      | 2   |
+      | QTY2      | 4   |
+      | UNIT2_4.2 | set |
+      | QTY3      | 1   |
+      | QTY4      | 1   |
     When I fill "Quick Add Copy Paste Form" with:
       | Paste your order | PSKU1 5 |
     And I click "Verify Order"
