@@ -172,6 +172,15 @@ define(function(require) {
         onSubmit: function(event) {
             event.preventDefault();
 
+            // Prevent submit form by unexpected controls like button without attribute "type"
+            if (
+                $(document.activeElement).is('button') &&
+                $.contains(this.el, document.activeElement) &&
+                $(document.activeElement).attr('type') !== 'submit'
+            ) {
+                return;
+            }
+
             const validate = this.$el.validate();
             if (!validate.form()) {
                 return;
