@@ -210,6 +210,11 @@ layout:
                 form: '=data["oro_checkout_single_page_transition_form"].getTransitionFormView(data["workflowItem"])'
                 workflowItem: '=data["workflowItem"]'
 
+        - '@setOption':
+            id: checkout_order_summary_title_text
+            optionName: vars.text
+            optionValue: 'oro.checkout.order_summary.label'
+
         - '@add':
             id: checkout_summary_badge
             blockType: container
