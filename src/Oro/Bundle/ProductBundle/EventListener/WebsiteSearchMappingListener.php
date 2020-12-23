@@ -11,7 +11,7 @@ use Oro\Bundle\ProductBundle\Search\ProductIndexFieldsProvider;
 use Oro\Bundle\SearchBundle\Event\SearchMappingCollectEvent;
 use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\FulltextAwareTypeInterface;
 use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchAttributeTypeInterface;
-use Oro\Bundle\WebsiteSearchBundle\Configuration\MappingConfiguration;
+use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Processor;
 
 /**
@@ -31,28 +31,28 @@ class WebsiteSearchMappingListener
     /** @var ProductIndexFieldsProvider */
     protected $fieldsProvider;
 
-    /** @var MappingConfiguration */
-    private MappingConfiguration $mappingConfiguration;
+    /** @var ConfigurationInterface */
+    private ConfigurationInterface $mappingConfigurationTree;
 
     /**
      * @param AttributeManager $attributeManager
      * @param AttributeTypeRegistry $attributeTypeRegistry
      * @param AttributeConfigurationProviderInterface $configurationProvider
      * @param ProductIndexFieldsProvider $fieldsProvider
-     * @param MappingConfiguration $mappingConfiguration
+     * @param ConfigurationInterface $mappingConfigurationTree
      */
     public function __construct(
         AttributeManager $attributeManager,
         AttributeTypeRegistry $attributeTypeRegistry,
         AttributeConfigurationProviderInterface $configurationProvider,
         ProductIndexFieldsProvider $fieldsProvider,
-        MappingConfiguration $mappingConfiguration
+        ConfigurationInterface $mappingConfigurationTree
     ) {
         $this->attributeManager = $attributeManager;
         $this->attributeTypeRegistry = $attributeTypeRegistry;
         $this->configurationProvider = $configurationProvider;
         $this->fieldsProvider = $fieldsProvider;
-        $this->mappingConfiguration = $mappingConfiguration;
+        $this->mappingConfigurationTree = $mappingConfigurationTree;
     }
 
     /**
@@ -142,7 +142,7 @@ class WebsiteSearchMappingListener
         $processor = new Processor();
         $event->setMappingConfig(
             $processor->processConfiguration(
-                $this->mappingConfiguration,
+                $this->mappingConfigurationTree,
                 [$event->getMappingConfig(), $config]
             )
         );
