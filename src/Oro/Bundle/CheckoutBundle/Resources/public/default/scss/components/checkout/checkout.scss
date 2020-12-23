@@ -7,6 +7,11 @@
 
     background: $checkout-background-color;
 
+    &--no-background {
+        background: none;
+        padding: $checkout-no-background-padding;
+    }
+
     &__head {
         position: $checkout-head-position;
 
@@ -62,6 +67,11 @@
     .checkout {
         padding: $checkout-tablet-padding;
         border-radius: $checkout-tablet-border-radius;
+
+        &--no-background {
+            background: none;
+            padding: $checkout-tablet-no-background-padding;
+        }
 
         &__approval-wrapper {
             margin: $checkout-approval-wrapper-tablet-margin;

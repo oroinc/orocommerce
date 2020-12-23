@@ -1,6 +1,7 @@
 /* @theme: default; */
 
 $checkout-padding: 30px 35px !default;
+$checkout-no-background-padding: 12px 0 !default;
 $checkout-border-radius: 5px !default;
 $checkout-background-color: get-color('additional', 'base') !default;
 
@@ -26,6 +27,7 @@ $checkout-summary-grid-container-shadow-background: linear-gradient(to bottom, r
 
 // Tablet
 $checkout-tablet-padding: $offset-y !default;
+$checkout-tablet-no-background-padding: $offset-y 0 !default;
 $checkout-tablet-border-radius: 0 !default;
 
 $checkout-approval-wrapper-tablet-margin: $offset-y-m !default;

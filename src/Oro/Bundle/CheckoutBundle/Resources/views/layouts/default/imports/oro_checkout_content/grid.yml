@@ -5,6 +5,13 @@ layout:
             root: __checkout_order_summary_line_items_grid_container
 
     actions:
+        - '@add':
+              id: __checkout_4_2_styles
+              parentId: head
+              blockType: style
+              options:
+                  src: '=data["asset"].getUrl(data["theme"].getStylesOutput(context["theme"], "checkout_4_2_styles"))'
+
         - '@setBlockTheme':
             themes: 'OroCheckoutBundle:layouts:default/imports/oro_checkout_content/grid.html.twig'
 
@@ -20,11 +27,6 @@ layout:
             siblingId: __checkout_order_summary_notes_container
             prepend: true
             blockType: container
-
-        - '@setOption':
-            id: __page_content
-            optionName: attr.class
-            optionValue: 'page-content--has-sidebar-right'
 
         - '@setOption':
             id: page_main_content
@@ -50,7 +52,7 @@ layout:
         - '@appendOption':
             id: __datagrid
             optionName: grid_render_parameters.cssClass
-            optionValue: 'responsive-checkout-grid'
+            optionValue: 'responsive-shopping-list-grid responsive-shopping-list-grid-view responsive-checkout-grid'
 
         - '@setOption':
             id: __datagrid

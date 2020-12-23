@@ -1,15 +1,6 @@
 <% let clipLength = 30 %>
 <% let oroshoppinglist = _.macros('oroshoppinglist') %>
 <div class="product-item grid-line-items">
-    <%= oroshoppinglist.renderProductItemImage({
-        src: obj.image,
-        placeholder: _metadata.image_placeholder,
-        productId: variantId ? variantId : productId,
-        title: sku,
-        alt: name,
-        isConfigurable: obj.isConfigurable,
-        _cid: _cid
-    }) %>
     <div class="grid-line-items__row">
         <% let inventoryStatusLabel = function (inventoryStatus) { %>
             <% return _metadata.inventory_statuses[inventoryStatus] ? _metadata.inventory_statuses[inventoryStatus] : inventoryStatus %>
@@ -29,7 +20,7 @@
                 <% } %>
             </div>
             <% if (obj.sku || obj.inventoryStatus) { %>
-            <div class="grid-line-items__row-entry shift-mobile-row mobile-row show-in-tablet">
+            <div class="grid-line-items__row-entry mobile-row show-in-tablet">
                 <% if (obj.sku) { %>
                     <span class="highlighted-in-mobile break-all"><%- sku %></span>
                 <% } %>
@@ -39,7 +30,7 @@
             </div>
             <% } %>
             <% if (productConfiguration) { %>
-            <div class="grid-line-items__configuration shift-mobile-row">
+            <div class="grid-line-items__configuration">
                 <% _.each(productConfiguration, function(field) { %>
                 <div class="grid-line-items__field">
                     <span class="grid-line-items__field-val"><%- field.label %>:</span>
@@ -49,16 +40,14 @@
             </div>
             <% } %>
             <% if (notes) { %>
-            <div class="shift-mobile-row">
                 <%= oroshoppinglist.renderNotes({notes: notes}) %>
-            </div>
             <% } %>
         <% } else { %>
             <div class="grid-line-items__row-item mobile-column show-in-tablet">
                 <span class="highlighted-in-mobile break-all"><%- sku %></span>
                 <%= oroshoppinglist.renderInventoryStatus({name: inventoryStatus, label: inventoryStatusLabel(inventoryStatus), isLowInventory: isLowInventory}) %>
             </div>
-            <div class="grid-line-items__configuration shift-mobile-row">
+            <div class="grid-line-items__configuration">
                 <% _.each(productConfiguration, function(field) { %>
                 <div class="grid-line-items__field">
                     <span class="grid-line-items__field-val"><%- field.label %>:</span>
@@ -67,9 +56,7 @@
                 <% }) %>
             </div>
             <% if (notes) { %>
-            <div class="shift-mobile-row">
                 <%= oroshoppinglist.renderNotes({notes: notes}) %>
-            </div>
             <% } %>
         <% } %>
     </div>

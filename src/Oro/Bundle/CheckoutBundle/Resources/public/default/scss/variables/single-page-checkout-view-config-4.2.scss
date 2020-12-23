@@ -1,0 +1,10 @@
+/* @theme: default; */
+
+$checkout-view-column-gap-4-2: 20px !default;
+$checkout-view-column-width-4-2: 25% !default;
+$checkout-view-column-extra-width-4-2: 50% !default;
+$checkout-view-column-offset-4-2: 0 $checkout-view-column-gap-4-2 !default;
+$checkout-view-column-first-width-4-2: calc(#{$checkout-view-column-width-4-2} - #{$checkout-view-column-gap-4-2}) !default;
+$checkout-view-column-extended-width-4-2: calc(#{$checkout-view-column-extra-width-4-2} + #{$checkout-view-column-gap-4-2}) !default;
+$checkout-view-sticky-column-offset-4-2: 8px $checkout-view-column-gap-4-2 !default;
+

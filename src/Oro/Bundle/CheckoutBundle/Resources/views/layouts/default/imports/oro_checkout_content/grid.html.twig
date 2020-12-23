@@ -12,15 +12,6 @@
     </div>
 {% endblock %}
 
-{% block __oro_checkout_content__checkout_order_summary_container_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': ''
-    }) %}
-    <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
 {% block __oro_checkout_content__checkout_order_summary_totals_content_wrapper_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' order-checkout-widget__container-wrapper ',

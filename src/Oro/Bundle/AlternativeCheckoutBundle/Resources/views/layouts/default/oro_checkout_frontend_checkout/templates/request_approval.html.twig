@@ -18,3 +18,10 @@
         {{ block_widget(block) }}
     </div>
 {%- endblock %}
+
+{% block _checkout_information_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " checkout--no-background"
+    }) %}
+    {{ parent_block_widget(block) }}
+{% endblock %}

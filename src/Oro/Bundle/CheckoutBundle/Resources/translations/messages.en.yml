@@ -140,8 +140,7 @@ oro:
             items: Items
             subtotal: Subtotal
             edit_order:
-                title: Edit Order
-                aria_label: Action Edit Order
+                text: Edit items
             item: Item
             sku: SKU
             inventory_status: ''

@@ -137,13 +137,12 @@
     {% set editLink = workflowItem.data.get('edit_order_link') %}
     {% set attr = layout_attr_defaults(attr, {
         'href': editLink,
-        '~class': " checkout-order-summary__edit-link",
-        'aria-label': 'oro.checkout.order_summary.edit_order.aria_label'|trans,
-        'title': 'oro.checkout.order_summary.edit_order.title'|trans
+        '~class': " checkout-order-summary__edit-link"
     }) %}
     {% if editLink %}
         <a {{ block('block_attributes') }}>
-            <span class="checkout-order-summary__edit-icon fa-pencil" aria-hidden="true"></span>
+            <span class="checkout-order-summary__edit-icon fa-pencil" aria-hidden="true"
+            ></span>{{ 'oro.checkout.order_summary.edit_order.text'|trans }}
         </a>
     {% endif %}
 {% endblock %}

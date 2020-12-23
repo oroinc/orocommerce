@@ -19,7 +19,7 @@
             <% let productUrl = function (productId, variantId) { %>
                 <% return oroshoppinglist.routing.generate('oro_product_frontend_product_view', variantId ? {id: productId, variantProductId: variantId} : {id: productId} ) %>
             <% } %>
-            <div class="grid-line-items__row-item">
+            <div class="grid-line-items__row-item height-as-image-mobile">
                 <% if (name.length <= clipLength) { %>
                     <%= oroshoppinglist.renderProductItemName({link: productUrl(productId, variantId), name: name}) %>
                 <% } else { %>

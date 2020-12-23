@@ -17,10 +17,6 @@
             }
         }
     }
-
-    .checkout-order-summary__grid-th {
-        background-color: get-color('additional', 'middle');
-    }
 }
 
 @include breakpoint('tablet') {
