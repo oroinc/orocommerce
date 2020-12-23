@@ -153,6 +153,7 @@ services:
         class: 'Oro\Bundle\WebsiteSearchBundle\Helper\PlaceholderHelper'
         arguments:
             - '@oro_website_search.placeholder.registry'
+            - '@oro_website_search.provider.search_mapping'
 
     oro_website_search.placeholder_decorator:
         class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderDecorator'
