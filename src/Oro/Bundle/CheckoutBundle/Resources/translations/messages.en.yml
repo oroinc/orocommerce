@@ -137,6 +137,7 @@ oro:
 
         order_summary:
             label: Order Summary
+            label_items: Order Items
             items: Items
             subtotal: Subtotal
             edit_order:

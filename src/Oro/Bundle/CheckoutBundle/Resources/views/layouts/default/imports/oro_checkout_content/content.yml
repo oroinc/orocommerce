@@ -60,6 +60,9 @@ layout:
                     blockType: container
                 __checkout_order_summary_title_text:
                     blockType: container
+                    options:
+                        vars:
+                            text: 'oro.checkout.order_summary.label_items'
                 __checkout_order_summary_subtitle:
                     blockType: checkout_order_summary_total_line_items
                     options:

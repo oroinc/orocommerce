@@ -121,7 +121,7 @@
         '~class': " checkout-order-summary__title-text"
     }) %}
     <span {{ block('block_attributes') }}>
-        {{ 'oro.checkout.order_summary.label'|trans }}
+        {{ text|trans }}
         {{ block_widget(block) }}
     </span>
 {% endblock %}
