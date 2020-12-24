@@ -55,13 +55,11 @@ class PromotionExecutorTest extends \PHPUnit\Framework\TestCase
         $this->executor = new PromotionExecutor(
             $this->discountContextConverter,
             $this->discountStrategyProvider,
-            $this->promotionDiscountsProvider,
-            $this->cache,
-            $this->objectCacheKeyGenerator
+            $this->promotionDiscountsProvider
         );
     }
 
-    public function testExecuteNoDiscounts()
+    public function testExecuteNoDiscounts(): void
     {
         $sourceEntity = new \stdClass();
         $discountContext = new DiscountContext();
@@ -82,7 +80,7 @@ class PromotionExecutorTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($discountContext, $this->executor->execute($sourceEntity));
     }
 
-    public function testExecute()
+    public function testExecute(): void
     {
         $sourceEntity = new \stdClass();
         $discountContext = new DiscountContext();
@@ -102,6 +100,8 @@ class PromotionExecutorTest extends \PHPUnit\Framework\TestCase
         $this->cache->expects($this->once())
             ->method('save')
             ->with($cacheKey, $this->isInstanceOf(DiscountContext::class));
+
+        $this->injectCache();
 
         $this->discountContextConverter->expects($this->once())
             ->method('convert')
@@ -129,7 +129,7 @@ class PromotionExecutorTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($modifiedContext, $this->executor->execute($sourceEntity));
     }
 
-    public function testExecuteWithCache()
+    public function testExecuteWithCache(): void
     {
         $sourceEntity = new \stdClass();
         $discountContext = new DiscountContext();
@@ -151,6 +151,8 @@ class PromotionExecutorTest extends \PHPUnit\Framework\TestCase
             ->method('save')
             ->with($cacheKey, $this->isInstanceOf(DiscountContext::class));
 
+        $this->injectCache();
+
         $this->discountContextConverter->expects($this->never())
             ->method('convert');
         $this->promotionDiscountsProvider->expects($this->never())
@@ -161,11 +163,51 @@ class PromotionExecutorTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($discountContext, $this->executor->execute($sourceEntity));
     }
 
+    public function testExecuteWithoutCache(): void
+    {
+        $sourceEntity = new \stdClass();
+        $discountContext = new DiscountContext();
+
+        $this->objectCacheKeyGenerator->expects($this->never())
+            ->method('generate');
+        $this->cache->expects($this->never())
+            ->method('contains');
+        $this->cache->expects($this->never())
+            ->method('fetch');
+        $this->cache->expects($this->never())
+            ->method('save');
+
+        $this->discountContextConverter->expects($this->once())
+            ->method('convert')
+            ->with($sourceEntity)
+            ->willReturn($discountContext);
+
+        $discounts = [$this->createMock(DiscountInterface::class), $this->createMock(DiscountInterface::class)];
+
+        $this->promotionDiscountsProvider->expects($this->once())
+            ->method('getDiscounts')
+            ->with($sourceEntity, $discountContext)
+            ->willReturn($discounts);
+
+        $strategy = $this->createMock(StrategyInterface::class);
+        $this->discountStrategyProvider->expects($this->once())
+            ->method('getActiveStrategy')
+            ->willReturn($strategy);
+
+        $modifiedContext = new DiscountContext();
+        $strategy->expects($this->once())
+            ->method('process')
+            ->with($discountContext, $discounts)
+            ->willReturn($modifiedContext);
+
+        $this->assertSame($modifiedContext, $this->executor->execute($sourceEntity));
+    }
+
     /**
      * @dataProvider trueFalseDataProvider
      * @param bool $result
      */
-    public function testSupports($result)
+    public function testSupports(bool $result): void
     {
         $entity = new \stdClass();
         $this->discountContextConverter->expects($this->once())
@@ -178,11 +220,17 @@ class PromotionExecutorTest extends \PHPUnit\Framework\TestCase
     /**
      * @return array
      */
-    public function trueFalseDataProvider()
+    public function trueFalseDataProvider(): array
     {
         return [
             [true],
             [false]
         ];
+    }
+
+    private function injectCache(): void
+    {
+        $this->executor->setCache($this->cache);
+        $this->executor->setObjectCacheKeyGenerator($this->objectCacheKeyGenerator);
     }
 }
