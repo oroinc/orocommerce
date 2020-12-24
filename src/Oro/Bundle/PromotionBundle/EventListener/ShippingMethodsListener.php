@@ -60,8 +60,12 @@ class ShippingMethodsListener
      * @param Price $shippingCost `
      * @return Price
      */
-    private function calculateDiscountedPrice($checkoutSource, $shippingMethod, $methodTypeId, Price $shippingCost)
-    {
+    private function calculateDiscountedPrice(
+        Checkout $checkoutSource,
+        string $shippingMethod,
+        string $methodTypeId,
+        Price $shippingCost
+    ): Price {
         $checkout = clone $checkoutSource;
 
         $checkout->setShippingMethod($shippingMethod);
@@ -69,6 +73,10 @@ class ShippingMethodsListener
         $checkout->setShippingCost($shippingCost);
 
         $discountContext = $this->promotionExecutor->execute($checkout);
+
+        if ($discountContext->getShippingDiscountTotal() === 0.0) {
+            return $shippingCost;
+        }
 
         return Price::create(
             $shippingCost->getValue() - $discountContext->getShippingDiscountTotal(),
