@@ -116,6 +116,14 @@ services:
             - '@oro_promotion.promotion.context_data_converter_registry'
             - '@oro_promotion.mapper.applied_promotion'
 
+    oro_promotion.shipping_promotion_provider:
+        class: Oro\Bundle\PromotionBundle\Provider\PromotionProvider
+        arguments:
+            - '@doctrine'
+            - '@oro_promotion.rule_filtration.service'
+            - '@oro_promotion.shipping_promotion.context_data_converter_registry'
+            - '@oro_promotion.mapper.applied_promotion'
+
     oro_promotion.discount_factory:
         class: Oro\Bundle\PromotionBundle\Discount\DiscountFactory
         public: false
@@ -129,9 +137,13 @@ services:
 
     oro_promotion.discount.context_converter.registry:
         class: Oro\Bundle\PromotionBundle\Discount\Converter\DiscountContextConverterRegistry
-        public: false
         arguments:
             - !tagged_iterator oro_promotion.discount_context_converter
+
+    oro_promotion.shipping_discount.context_converter.registry:
+        class: Oro\Bundle\PromotionBundle\Discount\Converter\DiscountContextConverterRegistry
+        arguments:
+            - !tagged_iterator oro_promotion.shipping_discount_context_converter
 
     oro_promotion.discount.shopping_list_context_converter:
         class: Oro\Bundle\PromotionBundle\Discount\Converter\ShoppingListDiscountContextConverter
@@ -144,7 +156,6 @@ services:
 
     oro_promotion.discount.order_context_converter:
         class: Oro\Bundle\PromotionBundle\Discount\Converter\OrderDiscountContextConverter
-        public: false
         arguments:
             - '@oro_promotion.discount.order_line_items_to_discount_line_items_converter'
             - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'
@@ -153,12 +164,16 @@ services:
 
     oro_promotion.discount.checkout_context_converter:
         class: Oro\Bundle\PromotionBundle\Discount\Converter\CheckoutDiscountContextConverter
-        public: false
         arguments:
             - '@oro_checkout.data_provider.converter.checkout_to_order'
             - '@oro_promotion.discount.order_context_converter'
         tags:
             - { name: 'oro_promotion.discount_context_converter' }
+
+    oro_promotion.shipping_discount.checkout_context_converter:
+        class: Oro\Bundle\PromotionBundle\Discount\Converter\CheckoutShippingDiscountContextConverter
+        tags:
+            - { name: 'oro_promotion.shipping_discount_context_converter' }
 
     oro_promotion.discount.line_items_to_discount_line_items_converter:
         class: Oro\Bundle\PromotionBundle\Discount\Converter\LineItemsToDiscountLineItemsConverter
@@ -172,9 +187,13 @@ services:
 
     oro_promotion.promotion.context_data_converter_registry:
         class: Oro\Bundle\PromotionBundle\Context\ContextDataConverterRegistry
-        public: false
         arguments:
             - !tagged_iterator oro_promotion.promotion_context_converter
+
+    oro_promotion.shipping_promotion.context_data_converter_registry:
+        class: Oro\Bundle\PromotionBundle\Context\ContextDataConverterRegistry
+        arguments:
+            - !tagged_iterator oro_promotion.shipping_promotion_context_converter
 
     oro_promotion.promotion.shopping_list_context_data_converter:
         class: Oro\Bundle\PromotionBundle\Context\ShoppingListContextDataConverter
@@ -217,16 +236,21 @@ services:
         tags:
             - { name: 'oro_promotion.promotion_context_converter' }
 
+    oro_promotion.promotion.checkout_shipping_context_data_converter:
+        class: Oro\Bundle\PromotionBundle\Context\CheckoutShippingContextDataConverter
+        arguments:
+            - '@oro_promotion.promotion.checkout_context_data_converter'
+        tags:
+            - { name: 'oro_promotion.shipping_promotion_context_converter' }
+
     oro_promotion.discount.strategy_registry:
         class: Oro\Bundle\PromotionBundle\Discount\Strategy\StrategyRegistry
-        public: false
         arguments:
             - [] # strategy aliases
             - ~ # service locator for strategies
 
     oro_promotion.discount.strategy_provider:
         class: Oro\Bundle\PromotionBundle\Discount\Strategy\StrategyProvider
-        public: false
         arguments:
             - '@oro_promotion.discount.strategy_registry'
             - '@oro_config.manager'
@@ -345,11 +369,18 @@ services:
             - '@oro_promotion.discount.context_converter.registry'
             - '@oro_promotion.discount.strategy_provider'
             - '@oro_promotion.provider.promotion_discounts_provider'
-            - '@oro_promotion.promotion_executor.cache'
-            - '@oro.cache.generator.object_cache_key'
+        calls:
+            - [setCache, ['@oro_promotion.promotion_executor.cache']]
+            - [setObjectCacheKeyGenerator, ['@oro.cache.generator.object_cache_key']]
+
+    oro_promotion.shipping_promotion_executor:
+        class: Oro\Bundle\PromotionBundle\Executor\PromotionExecutor
+        arguments:
+            - '@oro_promotion.shipping_discount.context_converter.registry'
+            - '@oro_promotion.discount.strategy_provider'
+            - '@oro_promotion.provider.shipping_promotion_discounts_provider'
 
     oro_promotion.promotion_executor.cache:
-        public: false
         class: Doctrine\Common\Cache\ArrayCache
         calls:
             - [ setNamespace, [ 'oro_promotion_executor' ] ]
@@ -492,7 +523,7 @@ services:
     oro_promotion.event_listener.shipping_methods_listener:
         class: Oro\Bundle\PromotionBundle\EventListener\ShippingMethodsListener
         arguments:
-            - '@oro_promotion.promotion_executor'
+            - '@oro_promotion.shipping_promotion_executor'
         tags:
             - { name: kernel.event_listener, event: oro_shipping.applicable_methods, method: modifyPrices }
 
@@ -715,6 +746,13 @@ services:
         public: false
         arguments:
             - '@oro_promotion.promotion_provider'
+            - '@oro_promotion.discount_factory'
+            - '@oro_promotion.provider.matching_products_provider'
+
+    oro_promotion.provider.shipping_promotion_discounts_provider:
+        class: Oro\Bundle\PromotionBundle\Provider\PromotionDiscountsProvider
+        arguments:
+            - '@oro_promotion.shipping_promotion_provider'
             - '@oro_promotion.discount_factory'
             - '@oro_promotion.provider.matching_products_provider'
 
