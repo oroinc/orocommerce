@@ -70,8 +70,6 @@ class SyncSlugRedirectsProcessorTest extends \PHPUnit\Framework\TestCase
             ->willReturn($slugRepository);
 
         $redirectManager = $this->createMock(EntityManagerInterface::class);
-        $redirectManager->expects($this->once())
-            ->method('beginTransaction');
 
         $this->registry->expects($this->any())
             ->method('getManagerForClass')
@@ -97,8 +95,8 @@ class SyncSlugRedirectsProcessorTest extends \PHPUnit\Framework\TestCase
         $session = $this->createMock(SessionInterface::class);
 
         $this->logger->expects($this->once())
-            ->method('critical')
-            ->with('Message is invalid. Key "slugId" is missing from message data.');
+            ->method('error')
+            ->with('Queue Message is invalid');
 
         $this->assertEquals(
             MessageProcessorInterface::REJECT,
@@ -106,7 +104,7 @@ class SyncSlugRedirectsProcessorTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testProcessExceptionInTransaction()
+    public function testProcessSlugNotFound()
     {
         $slugId = 42;
 
@@ -119,20 +117,40 @@ class SyncSlugRedirectsProcessorTest extends \PHPUnit\Framework\TestCase
         /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
-        $slugRepository = $this->createMock(SlugRepository::class);
-        $slugRepository->expects($this->once())
-            ->method('find')
-            ->with($slugId)
-            ->willThrowException(new \Exception('Some exception'));
+        $slugManager = $this->assertSlugRepositoryCalls($slugId, null);
 
-        $slugManager = $this->createMock(EntityManagerInterface::class);
-        $slugManager->expects($this->once())
-            ->method('getRepository')
-            ->willReturn($slugRepository);
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(Slug::class)
+            ->willReturn($slugManager);
 
-        $redirectManager = $this->createMock(EntityManagerInterface::class);
-        $redirectManager->expects($this->once())
-            ->method('beginTransaction');
+        $this->assertEquals(
+            MessageProcessorInterface::REJECT,
+            $this->processor->process($message, $session)
+        );
+    }
+
+    public function testProcessNoRedirects()
+    {
+        $slugId = '42';
+        /** @var Scope $slugScope */
+        $slugScope = $this->getEntity(Scope::class, ['id' => 456]);
+
+        /** @var Slug $slug */
+        $slug = $this->getEntity(Slug::class, ['id' => $slugId]);
+        $slug->addScope($slugScope);
+
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
+        $message = $this->createMock(MessageInterface::class);
+        $message->expects($this->once())
+            ->method('getBody')
+            ->willReturn(json_encode(['slugId' => $slugId]));
+
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
+        $session = $this->createMock(SessionInterface::class);
+
+        $slugManager = $this->assertSlugRepositoryCalls($slugId, $slug);
+        $redirectManager = $this->assertRedirectRepositoryCalls($slug, []);
 
         $this->registry->expects($this->any())
             ->method('getManagerForClass')
@@ -144,18 +162,24 @@ class SyncSlugRedirectsProcessorTest extends \PHPUnit\Framework\TestCase
         $redirectManager->expects($this->never())
             ->method('flush');
 
-        $redirectManager->expects($this->never())
-            ->method('commit');
-
         $this->assertEquals(
             MessageProcessorInterface::REJECT,
             $this->processor->process($message, $session)
         );
     }
 
-    public function testProcessExceptionDeadlockInTransaction()
+    public function testProcessDeadlockException()
     {
         $slugId = 42;
+        /** @var Scope $slugScope */
+        $slugScope = $this->getEntity(Scope::class, ['id' => 456]);
+
+        /** @var Slug $slug */
+        $slug = $this->getEntity(Slug::class, ['id' => $slugId]);
+        $slug->addScope($slugScope);
+
+        /** @var Redirect $redirect */
+        $redirect = $this->getEntity(Redirect::class, ['id' => 123]);
 
         /** @var DeadlockException|\PHPUnit\Framework\MockObject\MockObject $exception */
         $exception = $this->createMock(DeadlockException::class);
@@ -169,20 +193,8 @@ class SyncSlugRedirectsProcessorTest extends \PHPUnit\Framework\TestCase
         /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
-        $slugRepository = $this->createMock(SlugRepository::class);
-        $slugRepository->expects($this->once())
-            ->method('find')
-            ->with($slugId)
-            ->willThrowException($exception);
-
-        $slugManager = $this->createMock(EntityManagerInterface::class);
-        $slugManager->expects($this->once())
-            ->method('getRepository')
-            ->willReturn($slugRepository);
-
-        $redirectManager = $this->createMock(EntityManagerInterface::class);
-        $redirectManager->expects($this->once())
-            ->method('beginTransaction');
+        $slugManager = $this->assertSlugRepositoryCalls($slugId, $slug);
+        $redirectManager = $this->assertRedirectRepositoryCalls($slug, [$redirect]);
 
         $this->registry->expects($this->any())
             ->method('getManagerForClass')
@@ -191,11 +203,9 @@ class SyncSlugRedirectsProcessorTest extends \PHPUnit\Framework\TestCase
                 [Redirect::class, $redirectManager]
             ]);
 
-        $redirectManager->expects($this->never())
-            ->method('flush');
-
-        $redirectManager->expects($this->never())
-            ->method('commit');
+        $redirectManager->expects($this->once())
+            ->method('flush')
+            ->willThrowException($exception);
 
         $this->assertEquals(
             MessageProcessorInterface::REQUEUE,
@@ -214,6 +224,7 @@ class SyncSlugRedirectsProcessorTest extends \PHPUnit\Framework\TestCase
         $slug = $this->getEntity(Slug::class, ['id' => $slugId]);
         $slug->addScope($slugScope);
 
+        /** @var Redirect $redirect */
         $redirect = $this->getEntity(Redirect::class, ['id' => 123]);
 
         /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
@@ -225,30 +236,8 @@ class SyncSlugRedirectsProcessorTest extends \PHPUnit\Framework\TestCase
         /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
-        $slugRepository = $this->createMock(SlugRepository::class);
-        $slugRepository->expects($this->once())
-            ->method('find')
-            ->with($slugId)
-            ->willReturn($slug);
-
-        $redirectRepository = $this->createMock(RedirectRepository::class);
-        $redirectRepository->expects($this->once())
-            ->method('findBy')
-            ->with(['slug' => $slug])
-            ->willReturn([$redirect]);
-
-        $slugManager = $this->createMock(EntityManagerInterface::class);
-        $slugManager->expects($this->once())
-            ->method('getRepository')
-            ->willReturn($slugRepository);
-
-        $redirectManager = $this->createMock(EntityManagerInterface::class);
-        $redirectManager->expects($this->once())
-            ->method('beginTransaction');
-        $redirectManager->expects($this->once())
-            ->method('getRepository')
-            ->willReturn($redirectRepository);
-
+        $slugManager = $this->assertSlugRepositoryCalls($slugId, $slug);
+        $redirectManager = $this->assertRedirectRepositoryCalls($slug, [$redirect]);
         $this->registry->expects($this->any())
             ->method('getManagerForClass')
             ->willReturnMap([
@@ -267,5 +256,50 @@ class SyncSlugRedirectsProcessorTest extends \PHPUnit\Framework\TestCase
     public function testGetSubscribedTopics()
     {
         $this->assertEquals([Topics::SYNC_SLUG_REDIRECTS], $this->processor->getSubscribedTopics());
+    }
+
+    /**
+     * @param int $slugId
+     * @param Slug|null $slug
+     * @return EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private function assertSlugRepositoryCalls(
+        int $slugId,
+        ?Slug $slug
+    ) {
+        $slugRepository = $this->createMock(SlugRepository::class);
+        $slugRepository->expects($this->once())
+            ->method('find')
+            ->with($slugId)
+            ->willReturn($slug);
+
+        $slugManager = $this->createMock(EntityManagerInterface::class);
+        $slugManager->expects($this->once())
+            ->method('getRepository')
+            ->willReturn($slugRepository);
+
+        return $slugManager;
+    }
+
+    /**
+     * @param Slug $slug
+     * @param Redirect[] $redirects
+     * @return EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private function assertRedirectRepositoryCalls(
+        Slug $slug,
+        array $redirects
+    ) {
+        $redirectRepository = $this->createMock(RedirectRepository::class);
+        $redirectRepository->expects($this->once())
+            ->method('findBy')
+            ->with(['slug' => $slug])
+            ->willReturn($redirects);
+        $redirectManager = $this->createMock(EntityManagerInterface::class);
+        $redirectManager->expects($this->once())
+            ->method('getRepository')
+            ->willReturn($redirectRepository);
+
+        return $redirectManager;
     }
 }
