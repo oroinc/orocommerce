@@ -1,12 +1,11 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\MessageProcessor;
+namespace Oro\Bundle\ProductBundle\Async;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\AttachmentBundle\Manager\ImageResizeManagerInterface;
 use Oro\Bundle\LayoutBundle\Model\ThemeImageTypeDimension;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
-use Oro\Bundle\ProductBundle\EventListener\ProductImageResizeListener;
 use Oro\Bundle\ProductBundle\Provider\ProductImagesDimensionsProvider;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
@@ -21,34 +20,28 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * Generates images of all available dimensions for specified product image.
  */
-class ImageResizeMessageProcessor implements MessageProcessorInterface, TopicSubscriberInterface
+class ResizeProductImageMessageProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
-    /**
-     * @var EntityRepository
-     */
-    protected $imageRepository;
+    /** @var ManagerRegistry */
+    private $doctrine;
 
-    /**
-     * @var ProductImagesDimensionsProvider
-     */
-    protected $imageDimensionsProvider;
+    /** @var ProductImagesDimensionsProvider */
+    private $imageDimensionsProvider;
 
-    /**
-     * @var ImageResizeManagerInterface
-     */
+    /** @var ImageResizeManagerInterface */
     private $imageResizeManager;
 
     /**
-     * @param EntityRepository $imageRepository
+     * @param ManagerRegistry                 $doctrine
      * @param ProductImagesDimensionsProvider $imageDimensionsProvider
-     * @param ImageResizeManagerInterface $imageResizeManager
+     * @param ImageResizeManagerInterface     $imageResizeManager
      */
     public function __construct(
-        EntityRepository $imageRepository,
+        ManagerRegistry $doctrine,
         ProductImagesDimensionsProvider $imageDimensionsProvider,
         ImageResizeManagerInterface $imageResizeManager
     ) {
-        $this->imageRepository = $imageRepository;
+        $this->doctrine = $doctrine;
         $this->imageDimensionsProvider = $imageDimensionsProvider;
         $this->imageResizeManager = $imageResizeManager;
     }
@@ -82,7 +75,7 @@ class ImageResizeMessageProcessor implements MessageProcessorInterface, TopicSub
      */
     public static function getSubscribedTopics()
     {
-        return [ProductImageResizeListener::IMAGE_RESIZE_TOPIC];
+        return [Topics::PRODUCT_IMAGE_RESIZE];
     }
 
     /**
@@ -122,17 +115,19 @@ class ImageResizeMessageProcessor implements MessageProcessorInterface, TopicSub
 
     /**
      * @param int $id
+     *
      * @return ProductImage|null
      */
-    private function getProductImage($id): ?ProductImage
+    private function getProductImage(int $id): ?ProductImage
     {
-        return $this->imageRepository->find($id);
+        return $this->doctrine->getManagerForClass(ProductImage::class)->find(ProductImage::class, $id);
     }
 
     /**
-     * @param ProductImage $productImage
-     * @param array|null $dimensions
-     * @return array|string[]
+     * @param ProductImage  $productImage
+     * @param string[]|null $dimensions
+     *
+     * @return string[]
      */
     private function getApplicableFilters(ProductImage $productImage, ?array $dimensions): array
     {
