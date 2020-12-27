@@ -1451,12 +1451,12 @@ services:
         arguments:
             - '@oro_layout.provider.image_type'
 
-    oro_product.provider.product_image_file_name_provider:
+    oro_product.provider.product_image_file_name:
         class: Oro\Bundle\ProductBundle\Provider\ProductImageFileNameProvider
-        decorates: oro_attachment.provider.attachment_file_name_provider
+        decorates: oro_attachment.provider.file_name
         arguments:
+            - '@oro_product.provider.product_image_file_name.inner'
             - '@oro_config.manager'
-            - '@oro_product.provider.product_image_file_name_provider.inner'
 
     oro_product.event_listener.attribute_changes:
         class: 'Oro\Bundle\ProductBundle\EventListener\AttributeChangesListener'

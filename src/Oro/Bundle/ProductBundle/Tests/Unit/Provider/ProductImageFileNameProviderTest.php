@@ -11,29 +11,23 @@ use Oro\Bundle\ProductBundle\Provider\ProductImageFileNameProvider;
 
 class ProductImageFileNameProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $configManager;
-
-    /**
-     * @var FileNameProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var FileNameProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $innerProvider;
 
-    /**
-     * @var ProductImageFileNameProvider
-     */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
+
+    /** @var ProductImageFileNameProvider */
     private $provider;
 
     protected function setUp(): void
     {
-        $this->configManager = $this->createMock(ConfigManager::class);
         $this->innerProvider = $this->createMock(FileNameProviderInterface::class);
+        $this->configManager = $this->createMock(ConfigManager::class);
 
         $this->provider = new ProductImageFileNameProvider(
-            $this->configManager,
-            $this->innerProvider
+            $this->innerProvider,
+            $this->configManager
         );
     }
 
