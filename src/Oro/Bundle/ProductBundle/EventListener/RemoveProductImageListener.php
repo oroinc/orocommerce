@@ -3,44 +3,37 @@
 namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Doctrine\ORM\Event\OnClearEventArgs;
+use Oro\Bundle\AttachmentBundle\Async\Topics;
 use Oro\Bundle\AttachmentBundle\Entity\File;
-use Oro\Bundle\AttachmentBundle\MessageProcessor\ImageRemoveMessageProcessor;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
 /**
- * Removes product image files and directories when removing product images
+ * Sends MQ messages to remove image files related to removed ProductImage entity.
  */
 class RemoveProductImageListener
 {
-    /**
-     * @var int
-     */
+    /** @var int */
     private $batchSize = 100;
 
-    /**
-     * @var MessageProducerInterface
-     */
+    /** @var MessageProducerInterface */
     private $messageProducer;
 
-    /**
-     * @var array|File[]
-     */
+    /** @var File[] */
     private $imagesToRemove = [];
 
     /**
      * @param MessageProducerInterface $messageProducer
      */
-    public function __construct(
-        MessageProducerInterface $messageProducer
-    ) {
+    public function __construct(MessageProducerInterface $messageProducer)
+    {
         $this->messageProducer = $messageProducer;
     }
 
     /**
      * @param int $batchSize
      */
-    public function setBatchSize(int $batchSize)
+    public function setBatchSize(int $batchSize): void
     {
         if ($batchSize > 0) {
             $this->batchSize = $batchSize;
@@ -50,7 +43,7 @@ class RemoveProductImageListener
     /**
      * @param ProductImage $productImage
      */
-    public function preRemove(ProductImage $productImage)
+    public function preRemove(ProductImage $productImage): void
     {
         $file = $productImage->getImage();
         if ($file) {
@@ -58,7 +51,7 @@ class RemoveProductImageListener
         }
     }
 
-    public function postFlush()
+    public function postFlush(): void
     {
         if (!$this->imagesToRemove) {
             return;
@@ -76,21 +69,21 @@ class RemoveProductImageListener
             $count++;
 
             if ($count === $this->batchSize) {
-                $this->messageProducer->send(ImageRemoveMessageProcessor::IMAGE_REMOVE_TOPIC, $imagesBatch);
+                $this->messageProducer->send(Topics::ATTACHMENT_REMOVE_IMAGE, $imagesBatch);
                 $imagesBatch = [];
                 $count = 0;
             }
         }
 
         if ($imagesBatch) {
-            $this->messageProducer->send(ImageRemoveMessageProcessor::IMAGE_REMOVE_TOPIC, $imagesBatch);
+            $this->messageProducer->send(Topics::ATTACHMENT_REMOVE_IMAGE, $imagesBatch);
         }
     }
 
     /**
      * @param OnClearEventArgs $event
      */
-    public function onClear(OnClearEventArgs $event)
+    public function onClear(OnClearEventArgs $event): void
     {
         if (!$event->getEntityClass() || $event->getEntityClass() === ProductImage::class) {
             $this->imagesToRemove = [];

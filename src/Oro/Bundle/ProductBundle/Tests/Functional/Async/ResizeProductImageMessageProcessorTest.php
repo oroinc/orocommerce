@@ -1,61 +1,60 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\Functional\Command;
+namespace Oro\Bundle\ProductBundle\Tests\Functional\Async;
 
 use Oro\Bundle\GaufretteBundle\FileManager;
 use Oro\Bundle\LayoutBundle\Layout\Extension\ThemeConfiguration;
 use Oro\Bundle\LayoutBundle\Model\ThemeImageTypeDimension;
+use Oro\Bundle\ProductBundle\Async\ResizeProductImageMessageProcessor;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
-use Oro\Bundle\ProductBundle\MessageProcessor\ImageResizeMessageProcessor;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
-use Oro\Component\MessageQueue\Transport\ConnectionInterface;
-use Oro\Component\MessageQueue\Transport\Dbal\DbalMessage;
+use Oro\Component\MessageQueue\Transport\Message;
+use Oro\Component\MessageQueue\Transport\MessageInterface;
+use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
 
-class ImageResizeMessageProcessorTest extends WebTestCase
+class ResizeProductImageMessageProcessorTest extends WebTestCase
 {
-    const EXAMPLE_IMAGE_PATH = '/../DataFixtures/files/example.gif';
-    const PRODUCT_LARGE_FILTER = 'product_large';
-    const PRODUCT_SMALL_FILTER = 'product_small';
-    const PRODUCT_ORIGINAL_FILTER = 'product_original';
-    const PRODUCT_GALLERY_MAIN = 'product_gallery_main';
+    private const EXAMPLE_IMAGE_PATH = '/../DataFixtures/files/example.gif';
+    private const PRODUCT_LARGE_FILTER = 'product_large';
+    private const PRODUCT_SMALL_FILTER = 'product_small';
+    private const PRODUCT_ORIGINAL_FILTER = 'product_original';
+    private const PRODUCT_GALLERY_MAIN = 'product_gallery_main';
 
-    /** @var ConnectionInterface */
-    private $connection;
-
-    /** @var ImageResizeMessageProcessor */
-    protected $processor;
+    /** @var ResizeProductImageMessageProcessor */
+    private $processor;
 
     protected function setUp(): void
     {
         $this->initClient();
         $this->loadFixtures([LoadProductData::class]);
 
-        $this->connection = self::getContainer()->get('oro_message_queue.transport.connection');
-        $this->processor = self::getContainer()->get('oro.product.message_processor.image_resize');
+        $this->processor = self::getContainer()->get('oro_product.async.resize_product_image_processor');
     }
 
-    public function testResizeProductImage(): void
+    /**
+     * @return SessionInterface
+     */
+    private function getSession(): SessionInterface
     {
-        $productImage = $this->createProductImage();
+        return $this->createMock(SessionInterface::class);
+    }
 
-        $message = new DbalMessage();
-        $message->setBody(JSON::encode([
-            'productImageId' => $productImage->getId(),
-            'force' => $force = true
-        ]));
+    /**
+     * @param array $body
+     *
+     * @return MessageInterface
+     */
+    private function getMessage(array $body): MessageInterface
+    {
+        $message = new Message();
+        $message->setBody(JSON::encode($body));
 
-        $session = $this->connection->createSession();
-        $this->assertEquals(MessageProcessorInterface::ACK, $this->processor->process($message, $session));
-
-        $this->assertValidImage($productImage, self::PRODUCT_LARGE_FILTER);
-        $this->assertValidImage($productImage, self::PRODUCT_SMALL_FILTER);
-        $this->assertValidImage($productImage, self::PRODUCT_ORIGINAL_FILTER);
-        $this->assertValidImage($productImage, self::PRODUCT_GALLERY_MAIN);
+        return $message;
     }
 
     /**
@@ -120,7 +119,7 @@ class ImageResizeMessageProcessorTest extends WebTestCase
             );
         }
 
-        $this->assertEquals(
+        self::assertEquals(
             [$expectedWidth, $expectedHeight],
             [$imageSize->getWidth(), $imageSize->getHeight()]
         );
@@ -168,5 +167,25 @@ class ImageResizeMessageProcessorTest extends WebTestCase
             '',
             $filteredUrl
         );
+    }
+
+    public function testResizeProductImage(): void
+    {
+        $productImage = $this->createProductImage();
+
+        $message = $this->getMessage([
+            'productImageId' => $productImage->getId(),
+            'force' => $force = true
+        ]);
+
+        self::assertEquals(
+            MessageProcessorInterface::ACK,
+            $this->processor->process($message, $this->getSession())
+        );
+
+        $this->assertValidImage($productImage, self::PRODUCT_LARGE_FILTER);
+        $this->assertValidImage($productImage, self::PRODUCT_SMALL_FILTER);
+        $this->assertValidImage($productImage, self::PRODUCT_ORIGINAL_FILTER);
+        $this->assertValidImage($productImage, self::PRODUCT_GALLERY_MAIN);
     }
 }

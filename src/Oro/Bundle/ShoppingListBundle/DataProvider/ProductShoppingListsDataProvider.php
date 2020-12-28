@@ -2,7 +2,9 @@
 
 namespace Oro\Bundle\ShoppingListBundle\DataProvider;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
@@ -23,21 +25,36 @@ class ProductShoppingListsDataProvider
     /** @var AclHelper */
     protected $aclHelper;
 
+    /** @var TokenAccessorInterface */
+    protected $tokenAccessor;
+
+    /** @var ConfigManager */
+    protected $configManager;
+
+    /** @var boolean|null */
+    private $isShowAllShoppingLists;
+
     /**
      * @param CurrentShoppingListManager $currentShoppingListManager
      * @param LineItemRepository $lineItemRepository
      * @param AclHelper $aclHelper
+     * @param TokenAccessorInterface $tokenAccessor
+     * @param ConfigManager $configManager
      */
     public function __construct(
         CurrentShoppingListManager $currentShoppingListManager,
         LineItemRepository $lineItemRepository,
-        AclHelper $aclHelper
+        AclHelper $aclHelper,
+        TokenAccessorInterface $tokenAccessor,
+        ConfigManager $configManager
     ) {
         $this->currentShoppingListManager = $currentShoppingListManager;
         $this->lineItemRepository = $lineItemRepository;
         $this->aclHelper = $aclHelper;
+        $this->tokenAccessor = $tokenAccessor;
+        $this->configManager = $configManager;
     }
-    
+
     /**
      * @param Product $product
      *
@@ -93,10 +110,26 @@ class ProductShoppingListsDataProvider
      */
     private function prepareShoppingLists(array $products)
     {
-        $lineItems = $this->lineItemRepository
-            ->getProductItemsWithShoppingListNames($this->aclHelper, $products);
+        $lineItems = $this->lineItemRepository->getProductItemsWithShoppingListNames(
+            $this->aclHelper,
+            $products,
+            $this->isShowAllInShoppingListWidget() ? null : $this->tokenAccessor->getUser()
+        );
 
         return $this->prepareShoppingListsData($lineItems);
+    }
+
+    /**
+     * @return bool
+     */
+    private function isShowAllInShoppingListWidget(): bool
+    {
+        if ($this->isShowAllShoppingLists === null) {
+            $this->isShowAllShoppingLists = $this->configManager
+                ->get('oro_shopping_list.show_all_in_shopping_list_widget');
+        }
+
+        return $this->isShowAllShoppingLists;
     }
 
     /**

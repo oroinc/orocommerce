@@ -177,8 +177,8 @@ oro:
                     label: 'Maximum Line Items Per Page'
                     tooltip: 'The provided value will be used as the implied maximum number of shopping list line items to display at once. If the number of shopping list line items exceeds this value, the "Show All Items" will no longer be available and this number will be shown as the maximum pager value.'
                 show_all_in_shopping_list_widget:
-                    label: 'Show All Lists in Shopping List Widget'
-                    tooltip: 'If this option is enabled, in addition to the shopping lists owned by the current user, the shopping list widget will also include all other shopping lists that the current user is allowed to access.'
+                    label: 'Show All Lists in Shopping List Widgets'
+                    tooltip: 'If this option is enabled, in addition to the shopping lists owned by the current user, the shopping list widgets, popups and drop-down buttons will also include all other shopping lists that the current user is allowed to access.'
 
         privilege:
             category.shopping.label: 'Shopping'

@@ -847,7 +847,7 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_product.product_image.resize, method: resizeProductImage }
 
-    oro.product.event_listener.product_images_configuration_listener:
+    oro_product.event_listener.product_images_configuration_listener:
         class: 'Oro\Bundle\ProductBundle\EventListener\ProductImagesConfigurationListener'
         arguments:
             - '@session'
@@ -855,7 +855,7 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_config.update_after, method: afterUpdate }
 
-    oro.product.provider.watermark_image_filter:
+    oro_product.provider.watermark_image_filter:
         class: 'Oro\Bundle\ProductBundle\Provider\WatermarkImageFilterProvider'
         arguments:
             - '@oro_config.global'
@@ -864,14 +864,14 @@ services:
         tags:
             - { name: layout.image_filter.provider }
 
-    oro.product.message_processor.image_resize:
-        class: 'Oro\Bundle\ProductBundle\MessageProcessor\ImageResizeMessageProcessor'
+    oro_product.async.resize_product_image_processor:
+        class: 'Oro\Bundle\ProductBundle\Async\ResizeProductImageMessageProcessor'
         arguments:
-            - '@oro_product.repository.product_image'
+            - '@doctrine'
             - '@oro_product.provider.product_images_dimensions'
             - '@oro_attachment.manager.image_resize'
         tags:
-            - { name: 'oro_message_queue.client.message_processor' }
+            - { name: oro_message_queue.client.message_processor }
 
     oro_product.product_visibility_restriction_listener:
         class: 'Oro\Bundle\ProductBundle\EventListener\ProductVisibilityRestrictionListener'
@@ -1451,12 +1451,12 @@ services:
         arguments:
             - '@oro_layout.provider.image_type'
 
-    oro_product.provider.product_image_file_name_provider:
+    oro_product.provider.product_image_file_name:
         class: Oro\Bundle\ProductBundle\Provider\ProductImageFileNameProvider
-        decorates: oro_attachment.provider.attachment_file_name_provider
+        decorates: oro_attachment.provider.file_name
         arguments:
+            - '@oro_product.provider.product_image_file_name.inner'
             - '@oro_config.manager'
-            - '@oro_product.provider.product_image_file_name_provider.inner'
 
     oro_product.event_listener.attribute_changes:
         class: 'Oro\Bundle\ProductBundle\EventListener\AttributeChangesListener'
@@ -1721,7 +1721,7 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_web_catalog.restrict_content_variant_by_entity, method: applyRestriction }
 
-    oro_product.event_listener.image_remove:
+    oro_product.event_listener.remove_product_image:
         class: Oro\Bundle\ProductBundle\EventListener\RemoveProductImageListener
         arguments:
             - '@oro_message_queue.client.message_producer'

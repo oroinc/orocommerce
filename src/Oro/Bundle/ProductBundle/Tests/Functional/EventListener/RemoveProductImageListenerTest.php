@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\EventListener;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Oro\Bundle\AttachmentBundle\Async\Topics;
 use Oro\Bundle\AttachmentBundle\Entity\File;
-use Oro\Bundle\AttachmentBundle\MessageProcessor\ImageRemoveMessageProcessor;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
@@ -16,22 +16,15 @@ class RemoveProductImageListenerTest extends WebTestCase
 {
     use MessageQueueExtension;
 
-    /** @var EntityManager */
+    /** @var EntityManagerInterface */
     private $em;
 
-    /** @var string */
-    private $imageRemoveTopic;
-
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
 
         $this->em = $this->getContainer()->get('doctrine')->getManagerForClass(ProductImage::class);
-        $this->imageRemoveTopic = ImageRemoveMessageProcessor::IMAGE_REMOVE_TOPIC;
 
         $this->loadFixtures([LoadProductData::class]);
     }
@@ -59,31 +52,20 @@ class RemoveProductImageListenerTest extends WebTestCase
         $files = $fileRepository->findAll();
         $this->assertContains($imageFile, $files);
 
-        $message = $this->prepareExpectedMessage($imageFile);
-
         $this->em->remove($productImage);
         $this->em->flush();
 
-        $this->assertMessagesCount($this->imageRemoveTopic, 1);
+        $this->assertMessagesCount(Topics::ATTACHMENT_REMOVE_IMAGE, 1);
         $this->assertMessageSent(
-            $this->imageRemoveTopic,
-            $message
-        );
-    }
-
-    /**
-     * @param File $imageFile
-     * @return array
-     */
-    private function prepareExpectedMessage(File $imageFile)
-    {
-        return [
+            Topics::ATTACHMENT_REMOVE_IMAGE,
             [
-                'id' => $imageFile->getId(),
-                'fileName' => $imageFile->getFilename(),
-                'originalFileName' => $imageFile->getOriginalFilename(),
-                'parentEntityClass' => $imageFile->getParentEntityClass()
+                [
+                    'id' => $imageFile->getId(),
+                    'fileName' => $imageFile->getFilename(),
+                    'originalFileName' => $imageFile->getOriginalFilename(),
+                    'parentEntityClass' => $imageFile->getParentEntityClass()
+                ]
             ]
-        ];
+        );
     }
 }

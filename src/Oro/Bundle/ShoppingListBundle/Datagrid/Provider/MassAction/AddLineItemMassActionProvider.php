@@ -4,6 +4,8 @@ namespace Oro\Bundle\ShoppingListBundle\Datagrid\Provider\MassAction;
 
 use Doctrine\Common\Collections\Criteria;
 use Oro\Bundle\ActionBundle\Datagrid\Provider\MassActionProviderInterface;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -42,21 +44,34 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
     private $authorizationChecker;
 
     /**
+     * @var ConfigManager|null
+     */
+    private $configManager;
+
+    /**
+     * @var boolean|null
+     */
+    private $isShowAllShoppingLists;
+
+    /**
      * @param CurrentShoppingListManager $currentShoppingListManager
      * @param TranslatorInterface $translator
      * @param TokenStorageInterface $tokenStorage
      * @param AuthorizationCheckerInterface $authorizationChecker
+     * @param ConfigManager $configManager
      */
     public function __construct(
         CurrentShoppingListManager $currentShoppingListManager,
         TranslatorInterface $translator,
         TokenStorageInterface $tokenStorage,
-        AuthorizationCheckerInterface $authorizationChecker
+        AuthorizationCheckerInterface $authorizationChecker,
+        ConfigManager $configManager
     ) {
         $this->currentShoppingListManager = $currentShoppingListManager;
         $this->translator = $translator;
         $this->tokenStorage = $tokenStorage;
         $this->authorizationChecker = $authorizationChecker;
+        $this->configManager = $configManager;
     }
 
     /**
@@ -73,7 +88,15 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
                     'is_current' => true
                 ]);
             } else {
-                $shoppingLists = $this->currentShoppingListManager->getShoppingLists(['list.id' => Criteria::ASC]);
+                $user = $this->getCustomerUser();
+                if ($user && !$this->isShowAllInShoppingListWidget()) {
+                    $shoppingLists = $this->currentShoppingListManager->getShoppingListsByCustomerUser(
+                        $user,
+                        ['list.id' => Criteria::ASC]
+                    );
+                } else {
+                    $shoppingLists = $this->currentShoppingListManager->getShoppingLists(['list.id' => Criteria::ASC]);
+                }
 
                 /** @var ShoppingList $shoppingList */
                 foreach ($shoppingLists as $shoppingList) {
@@ -168,6 +191,21 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
     }
 
     /**
+     * @return CustomerUser|null
+     */
+    private function getCustomerUser(): ?CustomerUser
+    {
+        $token = $this->tokenStorage->getToken();
+        if (!$token) {
+            return null;
+        }
+
+        $user = $token->getUser();
+
+        return $user instanceof CustomerUser ? $user : null;
+    }
+
+    /**
      * @return bool
      */
     private function isCreateAllowed(): bool
@@ -181,5 +219,18 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
     private function isEditAllowed(): bool
     {
         return $this->authorizationChecker->isGranted('oro_shopping_list_frontend_update');
+    }
+
+    /**
+     * @return bool
+     */
+    private function isShowAllInShoppingListWidget(): bool
+    {
+        if ($this->isShowAllShoppingLists === null) {
+            $this->isShowAllShoppingLists = $this->configManager
+                ->get('oro_shopping_list.show_all_in_shopping_list_widget');
+        }
+
+        return $this->isShowAllShoppingLists;
     }
 }

@@ -115,7 +115,8 @@ class LineItemRepositoryTest extends WebTestCase
 
         $lineItems = $this->getLineItemRepository()->getProductItemsWithShoppingListNames(
             $this->getContainer()->get('oro_security.acl_helper'),
-            $product
+            $product,
+            $shoppingList->getCustomerUser()
         );
 
         $this->assertTrue(count($lineItems) > 1);
