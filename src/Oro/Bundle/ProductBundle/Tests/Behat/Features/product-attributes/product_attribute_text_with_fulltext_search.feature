@@ -2,7 +2,7 @@
 @ticket-BB-9989
 @ticket-BB-13403
 @fixture-OroProductBundle:ProductAttributesFixture.yml
-Feature: Product attribute text with fuzzy search
+Feature: Product attribute text with fulltext search
   In order to have custom attributes for Product entity
   As an Administrator
   I need to be able to add product attribute and have attribute data in search and filter
@@ -20,9 +20,9 @@ Feature: Product attribute text with fuzzy search
     And I should see that "Product Attribute Frontend Options" does not contain "Sortable"
 
     When I fill form with:
-      | Searchable | Yes          |
-      | Filterable | Yes          |
-      | Filter by  | Fuzzy search |
+      | Searchable | Yes             |
+      | Filterable | Yes             |
+      | Filter by  | Fulltext search |
     And I save and close form
     Then I should see "Attribute was successfully saved" flash message
     And I should not see "Update schema"

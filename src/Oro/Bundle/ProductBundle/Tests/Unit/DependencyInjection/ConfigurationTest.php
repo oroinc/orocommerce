@@ -228,6 +228,10 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                     'value' => 'top',
                     'scope' => 'app'
                 ],
+                'allow_partial_product_search' => [
+                    'value' => false,
+                    'scope' => 'app'
+                ],
             ]
         ];
 

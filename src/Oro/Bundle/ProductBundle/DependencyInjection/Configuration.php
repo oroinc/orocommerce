@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Oro\Bundle\ProductBundle\DependencyInjection;
 
@@ -72,12 +73,13 @@ class Configuration implements ConfigurationInterface
     const FILTERS_POSITION = 'filters_position';
     const FILTERS_POSITION_TOP = 'top';
     const FILTERS_POSITION_SIDEBAR = 'sidebar';
+    const ALLOW_PARTIAL_PRODUCT_SEARCH = 'allow_partial_product_search';
 
     /**
      * {@inheritDoc}
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder(static::ROOT_NODE);
 
@@ -177,7 +179,8 @@ class Configuration implements ConfigurationInterface
                 static::FILTERS_POSITION => [
                     'type' => 'string',
                     'value' => static::FILTERS_POSITION_TOP
-                ]
+                ],
+                static::ALLOW_PARTIAL_PRODUCT_SEARCH => ['value' => false, 'type' => 'boolean'],
             ]
         );
 
@@ -189,7 +192,7 @@ class Configuration implements ConfigurationInterface
      * @param string $key
      * @return string
      */
-    public static function getConfigKeyByName($key)
+    public static function getConfigKeyByName(string $key): string
     {
         return implode(ConfigManager::SECTION_MODEL_SEPARATOR, [static::ROOT_NODE, $key]);
     }
