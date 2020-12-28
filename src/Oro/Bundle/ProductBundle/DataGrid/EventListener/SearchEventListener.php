@@ -2,28 +2,34 @@
 
 namespace Oro\Bundle\ProductBundle\DataGrid\EventListener;
 
-use Doctrine\Common\Collections\Criteria;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\ProductBundle\Handler\SearchProductHandler;
+use Oro\Bundle\ProductBundle\Search\ProductRepository;
 use Oro\Bundle\SearchBundle\Datagrid\Datasource\SearchDatasource;
+use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 
 /**
  * Managed for product search and provides the opportunity to work with a subset of products in the product grid
  */
 class SearchEventListener
 {
-    /**
-     * @var SearchProductHandler
-     */
+    /** @var SearchProductHandler */
     private $searchProductHandler;
+
+    /** @var ProductRepository */
+    private $searchRepository;
 
     /**
      * @param SearchProductHandler $searchProductHandler
+     * @param ProductRepository $searchRepository
      */
-    public function __construct(SearchProductHandler $searchProductHandler)
-    {
+    public function __construct(
+        SearchProductHandler $searchProductHandler,
+        ProductRepository $searchRepository
+    ) {
         $this->searchProductHandler = $searchProductHandler;
+        $this->searchRepository = $searchRepository;
     }
 
     /**
@@ -56,8 +62,10 @@ class SearchEventListener
             return;
         }
 
+        $operator = $this->searchRepository->getProductSearchOperator();
+
         $query = $dataSource->getSearchQuery();
-        $query->addWhere(Criteria::expr()->contains('all_text_LOCALIZATION_ID', $searchString));
+        $query->addWhere(Criteria::expr()->$operator('all_text_LOCALIZATION_ID', $searchString));
     }
 
     /**

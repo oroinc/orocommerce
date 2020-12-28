@@ -243,6 +243,8 @@ services:
         parent: oro_website_search.repository.abstract
         public: true
         class: 'Oro\Bundle\ProductBundle\Search\ProductRepository'
+        arguments:
+            - '@oro_config.manager'
         calls:
             - [setEntityName, ['Oro\Bundle\ProductBundle\Entity\Product']]
 
@@ -1274,6 +1276,7 @@ services:
         class: Oro\Bundle\ProductBundle\DataGrid\EventListener\SearchEventListener
         arguments:
             - '@oro_product.handler.search_product_handler'
+            - '@oro_product.website_search.repository.product'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.frontend-product-search-grid, method: onBuildAfter }

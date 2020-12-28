@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\DataGrid\EventListener;
 
-use Doctrine\Common\Collections\Criteria;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\Datagrid;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
@@ -10,7 +9,9 @@ use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\ProductBundle\DataGrid\EventListener\SearchEventListener;
 use Oro\Bundle\ProductBundle\Handler\SearchProductHandler;
+use Oro\Bundle\ProductBundle\Search\ProductRepository;
 use Oro\Bundle\SearchBundle\Datagrid\Datasource\SearchDatasource;
+use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 
 class SearchEventListenerTest extends \PHPUnit\Framework\TestCase
@@ -20,13 +21,18 @@ class SearchEventListenerTest extends \PHPUnit\Framework\TestCase
     /**  @var SearchProductHandler|\PHPUnit\Framework\MockObject\MockObject */
     private $searchProductHandler;
 
+    /** @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject */
+    private $searchRepository;
+
     /** @var SearchEventListener|\PHPUnit\Framework\MockObject\MockObject */
     private $listener;
 
     protected function setUp(): void
     {
-        $this->searchProductHandler = self::createMock(SearchProductHandler::class);
-        $this->listener = new SearchEventListener($this->searchProductHandler);
+        $this->searchProductHandler = $this->createMock(SearchProductHandler::class);
+        $this->searchRepository = $this->createMock(ProductRepository::class);
+
+        $this->listener = new SearchEventListener($this->searchProductHandler, $this->searchRepository);
     }
 
     /**
@@ -118,26 +124,31 @@ class SearchEventListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * @param array $searchText
      * @param array $searchCriteria
+     * @param string $searchOperator
      *
      * @dataProvider onBuildAfterProvider
      */
-    public function testOnBuildAfter($searchText, $searchCriteria): void
+    public function testOnBuildAfter(array $searchText, array $searchCriteria, string $searchOperator): void
     {
+        $this->searchRepository->expects($this->any())
+            ->method('getProductSearchOperator')
+            ->willReturn($searchOperator);
+
         /** @var DatagridConfiguration|\PHPUnit\Framework\MockObject\MockObject $configuration */
-        $configuration = self::createMock(DatagridConfiguration::class);
+        $configuration = $this->createMock(DatagridConfiguration::class);
         $configuration
             ->expects(self::once())
             ->method('offsetGetByPath')
             ->willReturn($searchText['value']);
 
-        $searchQuery = self::createMock(SearchQueryInterface::class);
+        $searchQuery = $this->createMock(SearchQueryInterface::class);
         $searchQuery
             ->expects($searchCriteria['expects'])
             ->method('addWhere')
-            ->with(Criteria::expr()->contains('all_text_LOCALIZATION_ID', self::KEY));
+            ->with(Criteria::expr()->$searchOperator('all_text_LOCALIZATION_ID', self::KEY));
 
         /** @var SearchDatasource|\PHPUnit\Framework\MockObject\MockObject $dataSource */
-        $dataSource = self::createMock(SearchDatasource::class);
+        $dataSource = $this->createMock(SearchDatasource::class);
         $dataSource
             ->method('getSearchQuery')
             ->willReturn($searchQuery);
@@ -161,7 +172,17 @@ class SearchEventListenerTest extends \PHPUnit\Framework\TestCase
                 ],
                 'search_query' => [
                     'expects' => self::never(),
-                ]
+                ],
+                'searchOperator' => 'contains',
+            ],
+            'with search string null and like operator' => [
+                'search_text' => [
+                    'value' => null,
+                ],
+                'search_query' => [
+                    'expects' => self::never(),
+                ],
+                'searchOperator' => 'like',
             ],
             'with search string empty' => [
                 'search_text' => [
@@ -169,7 +190,17 @@ class SearchEventListenerTest extends \PHPUnit\Framework\TestCase
                 ],
                 'search_query' => [
                     'expects' => self::never(),
-                ]
+                ],
+                'searchOperator' => 'contains',
+            ],
+            'with search string empty and like operator' => [
+                'search_text' => [
+                    'value' => '',
+                ],
+                'search_query' => [
+                    'expects' => self::never(),
+                ],
+                'searchOperator' => 'like',
             ],
             'with search string' => [
                 'search_text' => [
@@ -177,7 +208,17 @@ class SearchEventListenerTest extends \PHPUnit\Framework\TestCase
                 ],
                 'search_criteria' => [
                     'expects' => self::once(),
-                ]
+                ],
+                'searchOperator' => 'contains',
+            ],
+            'with search string and like operator' => [
+                'search_text' => [
+                    'value' => self::KEY,
+                ],
+                'search_criteria' => [
+                    'expects' => self::once(),
+                ],
+                'searchOperator' => 'like',
             ]
         ];
     }

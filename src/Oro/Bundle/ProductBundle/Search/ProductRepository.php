@@ -1,8 +1,13 @@
 <?php
+declare(strict_types=1);
 
 namespace Oro\Bundle\ProductBundle\Search;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
+use Oro\Bundle\SearchBundle\Provider\AbstractSearchMappingProvider;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
+use Oro\Bundle\SearchBundle\Query\Factory\QueryFactoryInterface;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result\Item;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
@@ -14,6 +19,23 @@ use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchRepository;
  */
 class ProductRepository extends WebsiteSearchRepository
 {
+    protected ConfigManager $configManager;
+
+    /**
+     * @param QueryFactoryInterface $queryFactory
+     * @param AbstractSearchMappingProvider $mappingProvider
+     * @param ConfigManager $configManager
+     */
+    public function __construct(
+        QueryFactoryInterface $queryFactory,
+        AbstractSearchMappingProvider $mappingProvider,
+        ConfigManager $configManager
+    ) {
+        parent::__construct($queryFactory, $mappingProvider);
+
+        $this->configManager = $configManager;
+    }
+
     /**
      * @param SearchQueryInterface|null $query
      * @param string                    $aggregateAlias
@@ -22,7 +44,7 @@ class ProductRepository extends WebsiteSearchRepository
     public function getFamilyAttributeCountsQuery(
         SearchQueryInterface $query = null,
         $aggregateAlias = 'familyAttributesCount'
-    ) {
+    ): SearchQueryInterface {
         if (!$query) {
             $query = $this->createQuery();
         } else {
@@ -47,9 +69,9 @@ class ProductRepository extends WebsiteSearchRepository
 
     /**
      * @param int $id
-     * @return \Oro\Bundle\SearchBundle\Query\Result\Item|null
+     * @return Item|null
      */
-    public function findOne($id)
+    public function findOne($id): ?Item
     {
         $searchQuery = $this->createQuery()->addWhere(
             Criteria::expr()->eq('integer.product_id', $id)
@@ -68,7 +90,7 @@ class ProductRepository extends WebsiteSearchRepository
      * @param array $skus
      * @return SearchQueryInterface
      */
-    public function getFilterSkuQuery($skus)
+    public function getFilterSkuQuery($skus): SearchQueryInterface
     {
         $searchQuery = $this->createQuery();
 
@@ -88,7 +110,7 @@ class ProductRepository extends WebsiteSearchRepository
      * @param array $skus
      * @return Item[]
      */
-    public function searchFilteredBySkus(array $skus)
+    public function searchFilteredBySkus(array $skus): array
     {
         $searchQuery = $this->getFilterSkuQuery($skus);
 
@@ -101,7 +123,7 @@ class ProductRepository extends WebsiteSearchRepository
      * @param int $maxResults
      * @return SearchQueryInterface
      */
-    public function getSearchQuery($search, $firstResult, $maxResults)
+    public function getSearchQuery($search, $firstResult, $maxResults): SearchQueryInterface
     {
         $searchQuery = $this->createQuery();
 
@@ -120,9 +142,9 @@ class ProductRepository extends WebsiteSearchRepository
      * @param string $search
      * @param int $firstResult
      * @param int $maxResults
-     * @return \Oro\Bundle\SearchBundle\Query\Result\Item[]
+     * @return Item[]
      */
-    public function findBySkuOrName($search, $firstResult = 0, $maxResults = null)
+    public function findBySkuOrName($search, $firstResult = 0, $maxResults = null): array
     {
         $query = $this->getSearchQueryBySkuOrName($search, $firstResult, $maxResults);
 
@@ -135,20 +157,21 @@ class ProductRepository extends WebsiteSearchRepository
      * @param int $maxResults
      * @return SearchQueryInterface
      */
-    public function getSearchQueryBySkuOrName($search, $firstResult = 0, $maxResults = null)
+    public function getSearchQueryBySkuOrName($search, $firstResult = 0, $maxResults = null): SearchQueryInterface
     {
+        $operator = $this->getProductSearchOperator();
+
         $query = $this->createQuery();
-
-        $query->addSelect('integer.product_id');
-
-        $query->setFrom('oro_product_WEBSITE_ID')
+        $query
+            ->setFrom('oro_product_WEBSITE_ID')
             ->addSelect('sku')
+            ->addSelect('integer.product_id')
             ->addSelect('names_LOCALIZATION_ID as name')
             ->getCriteria()
             ->andWhere(
                 Criteria::expr()->orX(
-                    Criteria::expr()->contains('sku_uppercase', mb_strtoupper($search)),
-                    Criteria::expr()->contains('names_LOCALIZATION_ID', $search)
+                    Criteria::expr()->$operator('sku_uppercase', mb_strtoupper($search)),
+                    Criteria::expr()->$operator('names_LOCALIZATION_ID', $search)
                 )
             )
             ->setFirstResult($firstResult);
@@ -158,5 +181,15 @@ class ProductRepository extends WebsiteSearchRepository
         }
 
         return $query;
+    }
+
+    /**
+     * @return string "contains" or "like"
+     */
+    public function getProductSearchOperator(): string
+    {
+        $key = Configuration::getConfigKeyByName(Configuration::ALLOW_PARTIAL_PRODUCT_SEARCH);
+
+        return $this->configManager->get($key) ? 'like' : 'contains';
     }
 }
