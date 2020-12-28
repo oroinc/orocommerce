@@ -2,9 +2,12 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\DataProvider;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Tests\Unit\Stub\CustomerUserStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -18,32 +21,30 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit\Framework\TestCase
     use EntityTrait;
 
     /** @var CurrentShoppingListManager|\PHPUnit\Framework\MockObject\MockObject */
-    protected $currentShoppingListManager;
+    private $currentShoppingListManager;
 
     /** @var LineItemRepository|\PHPUnit\Framework\MockObject\MockObject */
-    protected $lineItemRepository;
+    private $lineItemRepository;
 
     /** @var AclHelper */
-    protected $aclHelper;
+    private $aclHelper;
+
+    /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $tokenAccessor;
+
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
 
     /** @var ProductShoppingListsDataProvider */
-    protected $provider;
+    private $provider;
 
     protected function setUp()
     {
-        $this->currentShoppingListManager = $this
-            ->getMockBuilder(CurrentShoppingListManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->lineItemRepository = $this
-            ->getMockBuilder(LineItemRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->aclHelper = $this->getMockBuilder(AclHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->currentShoppingListManager = $this->createMock(CurrentShoppingListManager::class);
+        $this->lineItemRepository = $this->createMock(LineItemRepository::class);
+        $this->aclHelper = $this->createMock(AclHelper::class);
+        $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
+        $this->configManager = $this->createMock(ConfigManager::class);
 
         $this->provider = new ProductShoppingListsDataProvider(
             $this->currentShoppingListManager,
@@ -65,7 +66,87 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit\Framework\TestCase
         $shoppingList,
         array $lineItems = [],
         array $expected = null
-    ) {
+    ): void {
+        $this->currentShoppingListManager
+            ->expects($this->any())
+            ->method('getCurrent')
+            ->willReturn($shoppingList);
+
+        $this->lineItemRepository->expects($product && $shoppingList ? $this->once() : $this->never())
+            ->method('getProductItemsWithShoppingListNames')
+            ->with($this->aclHelper, [$product])
+            ->willReturn($lineItems);
+
+        $this->assertEquals($expected, $this->provider->getProductUnitsQuantity($product));
+    }
+
+    /**
+     * @dataProvider getProductUnitsQuantityDataProvider
+     *
+     * @param Product|null $product
+     * @param ShoppingList|null $shoppingList
+     * @param array $lineItems
+     * @param array|null $expected
+     */
+    public function testGetProductUnitsQuantityByCustomerUser(
+        $product,
+        $shoppingList,
+        array $lineItems = [],
+        array $expected = null
+    ): void {
+        $customerUser = new CustomerUserStub();
+
+        $this->provider->setTokenAccessor($this->tokenAccessor);
+        $this->tokenAccessor->expects($this->any())
+            ->method('getUser')
+            ->willReturn($customerUser);
+
+        $this->provider->setConfigManager($this->configManager);
+        $this->configManager->expects($this->any())
+            ->method('get')
+            ->with('oro_shopping_list.show_all_in_shopping_list_widget')
+            ->willReturn(false);
+
+        $this->currentShoppingListManager
+            ->expects($this->any())
+            ->method('getCurrent')
+            ->willReturn($shoppingList);
+
+        $this->lineItemRepository->expects($product && $shoppingList ? $this->once() : $this->never())
+            ->method('getProductItemsWithShoppingListNamesByCustomerUser')
+            ->with($this->aclHelper, [$product], $customerUser)
+            ->willReturn($lineItems);
+
+        $this->assertEquals($expected, $this->provider->getProductUnitsQuantity($product));
+    }
+
+    /**
+     * @dataProvider getProductUnitsQuantityDataProvider
+     *
+     * @param Product|null $product
+     * @param ShoppingList|null $shoppingList
+     * @param array $lineItems
+     * @param array|null $expected
+     */
+    public function testGetProductUnitsQuantityWithCustomerUserButAllShoppingLists(
+        $product,
+        $shoppingList,
+        array $lineItems = [],
+        array $expected = null
+    ): void {
+        $customerUser = new CustomerUserStub();
+
+        $this->provider->setTokenAccessor($this->tokenAccessor);
+        $this->tokenAccessor->expects($this->any())
+            ->method('getUser')
+            ->willReturn($customerUser);
+
+        $this->provider->setConfigManager($this->configManager);
+        $this->configManager->expects($this->any())
+            ->method('get')
+            ->with('oro_shopping_list.show_all_in_shopping_list_widget')
+            ->willReturn(true);
+
         $this->currentShoppingListManager
             ->expects($this->any())
             ->method('getCurrent')

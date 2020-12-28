@@ -6,6 +6,7 @@ use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Tests\Unit\Stub\CustomerUserStub;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -740,6 +741,52 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(
             $shoppingLists,
             $this->currentShoppingListManager->getShoppingLists($sortCriteria)
+        );
+    }
+
+    public function testGetShoppingListsByCustomerUserWhenGuestShoppingLists(): void
+    {
+        $shoppingLists = [$this->getShoppingList(123)];
+
+        $customerUser = new CustomerUserStub();
+        $customerUser->setId(42);
+
+        $this->tokenAccessor->expects($this->never())
+            ->method('getUser');
+
+        $this->expectCacheNoFetchAndNoSave();
+
+        $this->guestShoppingListManager->expects($this->once())
+            ->method('isGuestShoppingListAvailable')
+            ->willReturn(true);
+        $this->guestShoppingListManager->expects($this->once())
+            ->method('getShoppingListsForCustomerVisitor')
+            ->willReturn($shoppingLists);
+
+        $this->assertEquals(
+            $shoppingLists,
+            $this->currentShoppingListManager->getShoppingListsByCustomerUser($customerUser)
+        );
+    }
+
+    public function testGetShoppingListsByCustomerUser(): void
+    {
+        $sortCriteria = ['label' => 'ASC'];
+        $shoppingLists = [$this->getShoppingList(123)];
+
+        $customerUser = new CustomerUserStub();
+        $customerUser->setId(42);
+
+        $this->expectNoGuestShoppingLists();
+
+        $this->shoppingListRepository->expects($this->once())
+            ->method('findByCustomerUserId')
+            ->with($customerUser->getId(), $this->aclHelper, $sortCriteria, null)
+            ->willReturn($shoppingLists);
+
+        $this->assertEquals(
+            $shoppingLists,
+            $this->currentShoppingListManager->getShoppingListsByCustomerUser($customerUser, $sortCriteria)
         );
     }
 

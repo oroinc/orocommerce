@@ -17,8 +17,8 @@ Feature: My Shopping List Configuration
     And I login as administrator
     And I go to System/ Configuration
     And I follow "Commerce/Sales/Shopping List" on configuration sidebar
-    Then the "Enable \"Shopping Lists\" page in \"My Account\"" checkbox should be unchecked
-    And the "Use new layout for shopping list view and edit pages" checkbox should be unchecked
+    Then the "Enable \"Shopping Lists\" Page In \"My Account\"" checkbox should be unchecked
+    And the "Apply New Layout To All Shopping List View And Edit Pages" checkbox should be unchecked
 
   Scenario: Enable Shopping Lists page
     When I fill "Shopping List Configuration Form" with:
@@ -26,8 +26,8 @@ Feature: My Shopping List Configuration
       | Enable "Shopping Lists" page in "My Account"             | true  |
     And click "Save settings"
     Then I should see "Configuration saved" flash message
-    And the "Enable \"Shopping Lists\" page in \"My Account\"" checkbox should be checked
-    And the "Use new layout for shopping list view and edit pages" checkbox should be unchecked
+    And the "Enable \"Shopping Lists\" Page In \"My Account\"" checkbox should be checked
+    And the "Apply New Layout To All Shopping List View And Edit Pages" checkbox should be unchecked
 
   Scenario: Check Shopping Lists widget
     Given I operate as the Buyer
@@ -67,8 +67,8 @@ Feature: My Shopping List Configuration
       | Use new layout for shopping list view and edit pages             | true  |
     And click "Save settings"
     Then I should see "Configuration saved" flash message
-    And the "Use new layout for shopping list view and edit pages" checkbox should be checked
-    And the "Enable \"Shopping Lists\" page in \"My Account\"" checkbox should be unchecked
+    And the "Apply New Layout To All Shopping List View And Edit Pages" checkbox should be checked
+    And the "Enable \"Shopping Lists\" Page In \"My Account\"" checkbox should be unchecked
 
   Scenario: Check Shopping List page
     Given I operate as the Buyer
@@ -80,11 +80,11 @@ Feature: My Shopping List Configuration
 
   Scenario: Enable New Layout for shopping list view and edit pages
     When I proceed as the Admin
-    And I check "Enable \"Shopping Lists\" page in \"My Account\""
+    And I check "Enable \"Shopping Lists\" Page In \"My Account\""
     And click "Save settings"
     Then I should see "Configuration saved" flash message
-    And the "Use new layout for shopping list view and edit pages" checkbox should be checked
-    And the "Enable \"Shopping Lists\" page in \"My Account\"" checkbox should be checked
+    And the "Apply New Layout To All Shopping List View And Edit Pages" checkbox should be checked
+    And the "Enable \"Shopping Lists\" Page In \"My Account\"" checkbox should be checked
 
   Scenario: Check Shopping List edit page from shopping list widget
     When I proceed as the Buyer
@@ -165,12 +165,12 @@ Feature: My Shopping List Configuration
     And I fill "Shopping List Configuration Form" with:
       | Enable "Shopping Lists" page in "My Account"             | false |
       | Enable "Shopping Lists" page in "My Account" Use default | true  |
-    And I uncheck "Use new layout for shopping list view and edit pages"
-    And check "Use default" for "Use new layout for shopping list view and edit pages" field
+    And I uncheck "Apply New Layout To All Shopping List View And Edit Pages"
+    And check "Use default" for "Apply New Layout To All Shopping List View And Edit Pages" field
     And click "Save settings"
     Then I should see "Configuration saved" flash message
-    And the "Enable \"Shopping Lists\" page in \"My Account\"" checkbox should be unchecked
-    And the "Use new layout for shopping list view and edit pages" checkbox should be unchecked
+    And the "Enable \"Shopping Lists\" Page In \"My Account\"" checkbox should be unchecked
+    And the "Apply New Layout To All Shopping List View And Edit Pages" checkbox should be unchecked
 
   Scenario: Check Shopping Lists pages when configuration is disabled
     When I proceed as the Buyer

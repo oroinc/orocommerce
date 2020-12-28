@@ -95,6 +95,33 @@ class LineItemRepository extends EntityRepository
     }
 
     /**
+     * @param AclHelper $aclHelper
+     * @param array|Product $products
+     * @param CustomerUser $customerUser
+     * @return LineItem[]
+     */
+    public function getProductItemsWithShoppingListNamesByCustomerUser(
+        AclHelper $aclHelper,
+        $products,
+        CustomerUser $customerUser
+    ): array {
+        $qb = $this->createQueryBuilder('li');
+        $qb->select('li, shoppingList')
+            ->join('li.shoppingList', 'shoppingList')
+            ->join('li.product', 'product')
+            ->leftJoin('product.parentVariantLinks', 'parentVariantLinks')
+            ->where($qb->expr()->eq('shoppingList.customerUser', ':customerUser'))
+            ->andWhere('product IN (:products)')
+            ->orWhere('li.parentProduct IN (:products)')
+            ->orWhere('parentVariantLinks.parentProduct IN (:products)')
+            ->setParameter('customerUser', $customerUser)
+            ->setParameter('products', $products)
+            ->addOrderBy($qb->expr()->asc('li.id'));
+
+        return $aclHelper->apply($qb, BasicPermission::EDIT)->getResult();
+    }
+
+    /**
      * @param int $shoppingListId
      * @return bool
      */
