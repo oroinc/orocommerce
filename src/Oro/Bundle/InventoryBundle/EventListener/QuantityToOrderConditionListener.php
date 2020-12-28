@@ -28,9 +28,8 @@ class QuantityToOrderConditionListener
     const QUANTITY_CHECK_ERROR = 'quantity_check_error';
 
     /** @var array */
-    private const ALLOWED_WORKFLOWS = [
+    protected const ALLOWED_WORKFLOWS = [
         'b2b_flow_checkout',
-        'b2b_flow_alternative_checkout',
         'b2b_flow_checkout_single_page',
     ];
 
@@ -98,7 +97,7 @@ class QuantityToOrderConditionListener
     {
         $context = $event->getContext();
         if (!$context instanceof WorkflowItem
-            || !in_array($context->getWorkflowName(), self::ALLOWED_WORKFLOWS, true)
+            || !in_array($context->getWorkflowName(), static::ALLOWED_WORKFLOWS, true)
             || !$context->getResult()->get('shoppingList') instanceof ShoppingList
         ) {
             return;
@@ -163,7 +162,7 @@ class QuantityToOrderConditionListener
     protected function isNotCorrectConditionContext($context)
     {
         return (!$context instanceof WorkflowItem
-            || !in_array($context->getWorkflowName(), self::ALLOWED_WORKFLOWS, true)
+            || !in_array($context->getWorkflowName(), static::ALLOWED_WORKFLOWS, true)
             || !$context->getEntity() instanceof Checkout
             // make sure that checkout not done from quote demand
             || $context->getEntity()->getSourceEntity() instanceof QuoteDemand

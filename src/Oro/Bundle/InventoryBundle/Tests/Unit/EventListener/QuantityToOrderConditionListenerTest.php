@@ -32,24 +32,29 @@ class QuantityToOrderConditionListenerTest extends \PHPUnit\Framework\TestCase
     use EntityTrait;
 
     /**
+     * @var string
+     */
+    protected const WORKFLOW_NAME = 'b2b_flow_checkout';
+
+    /**
      * @var QuantityToOrderValidatorService|\PHPUnit\Framework\MockObject\MockObject
      */
-    private $validatorService;
+    protected $validatorService;
 
     /**
      * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
-    private $doctrineHelper;
+    protected $doctrineHelper;
 
     /**
      * @var QuantityToOrderConditionListener
      */
-    private $quantityToOrderConditionListener;
+    protected $quantityToOrderConditionListener;
 
     /**
      * @var CheckoutValidateEvent
      */
-    private $event;
+    protected $event;
 
     protected function setUp(): void
     {
@@ -77,7 +82,7 @@ class QuantityToOrderConditionListenerTest extends \PHPUnit\Framework\TestCase
         $workflowItem->setWorkflowName('noname');
         $this->assertCheckoutValidateIgnored();
 
-        $workflowItem->setWorkflowName('b2b_flow_checkout');
+        $workflowItem->setWorkflowName(static::WORKFLOW_NAME);
         $this->assertCheckoutValidateIgnored();
 
         $workflowItem->setEntity(new Checkout());
@@ -87,7 +92,7 @@ class QuantityToOrderConditionListenerTest extends \PHPUnit\Framework\TestCase
     public function testOnCheckoutValidateIgnored2()
     {
         $workflowItem = new WorkflowItem();
-        $workflowItem->setWorkflowName('b2b_flow_checkout');
+        $workflowItem->setWorkflowName(static::WORKFLOW_NAME);
 
         $source = new CheckoutSourceStub();
         $source->setQuoteDemand(new QuoteDemand());
@@ -103,7 +108,7 @@ class QuantityToOrderConditionListenerTest extends \PHPUnit\Framework\TestCase
     public function testOnCheckoutValidateNotIgnoredWoSource()
     {
         $workflowItem = new WorkflowItem();
-        $workflowItem->setWorkflowName('b2b_flow_checkout');
+        $workflowItem->setWorkflowName(static::WORKFLOW_NAME);
 
         $checkout = new Checkout();
         $checkout->setSource(new CheckoutSource());
@@ -124,7 +129,7 @@ class QuantityToOrderConditionListenerTest extends \PHPUnit\Framework\TestCase
     public function testOnCheckoutValidateSetsRestartRequired()
     {
         $workflowItem = new WorkflowItem();
-        $workflowItem->setWorkflowName('b2b_flow_checkout');
+        $workflowItem->setWorkflowName(static::WORKFLOW_NAME);
 
         $source = new CheckoutSourceStub();
         $source->setShoppingList(new ShoppingList());
@@ -238,7 +243,7 @@ class QuantityToOrderConditionListenerTest extends \PHPUnit\Framework\TestCase
     public function testOnCheckoutConditionCheckAddsError()
     {
         $workflowItem = new WorkflowItem();
-        $workflowItem->setWorkflowName('b2b_flow_checkout');
+        $workflowItem->setWorkflowName(static::WORKFLOW_NAME);
         $checkout = new Checkout();
         $source = new CheckoutSourceStub();
         $checkout->setSource($source);
@@ -291,7 +296,7 @@ class QuantityToOrderConditionListenerTest extends \PHPUnit\Framework\TestCase
     {
         $event = $this->createMock(ExtendableConditionEvent::class);
         $workflowItem = $this->createMock(WorkflowItem::class);
-        $workflowItem->method('getWorkflowName')->willReturn('b2b_flow_checkout');
+        $workflowItem->method('getWorkflowName')->willReturn(static::WORKFLOW_NAME);
         $workflowResult = $this->createMock(WorkflowResult::class);
         $workflowResult->method('has')->willReturn(true);
         $workflowItem->method('getResult')->willReturn($workflowResult);

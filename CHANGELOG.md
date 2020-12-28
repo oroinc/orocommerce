@@ -6,6 +6,9 @@ The current file describes significant changes in the code that may affect the u
 
 ### Changed
 
+#### AlternativeCheckoutBundle
+* OroAlternativeCheckoutBundle has been moved from oro/commerce package to oro/commerce-demo-checkouts package.
+
 #### ProductBundle
 * The message queue topic `imageResize` was renamed to `oro_product.image_resize`.
 

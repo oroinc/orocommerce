@@ -757,7 +757,6 @@ services:
             -
                 - 'b2b_flow_checkout_start_from_shoppinglist'
                 - 'b2b_flow_checkout_single_page_start_from_shoppinglist'
-                - 'b2b_flow_alternative_checkout_start_from_shoppinglist'
 
     oro_checkout.datagrid.extension.frontend_checkout_line_items_grid:
         class: 'Oro\Bundle\CheckoutBundle\Datagrid\FrontendLineItemsGridExtension'
