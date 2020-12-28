@@ -74,7 +74,18 @@
 
             {% if toolbarOptions.placement.top %}
                 <div class="toolbar">
-                    {{ block_widget(block[id ~ '_toolbar'],{attr: {'data-grid-toolbar': 'top'}}) }}
+                    {{ block_widget(block[id ~ '_toolbar'], {
+                        attr: {
+                            'data-grid-toolbar': 'top',
+                            'data-sticky-target': 'top-sticky-panel',
+                            'data-proxy-data': 'true',
+                            'data-sticky': {
+                                'isSticky': true,
+                                'autoWidth': true,
+                                'toggleClass': 'datagrid-toolbar-sticky-container',
+                                'placeholderId': 'sticky_element_toolbar'
+                            }
+                    }}) }}
                 </div>
             {% endif %}
 
