@@ -80,6 +80,11 @@ system_configuration:
             title: oro.product.system_configuration.groups.filters_display_settings.title
         images_general:
             title: oro.product.system_configuration.groups.images_general.title
+        product_search:
+            title: oro.product.system_configuration.groups.product_search.title
+            icon: 'fa-search'
+        product_fulltext_search:
+            title: oro.product.system_configuration.groups.product_fulltext_search.title
 
     fields:
         oro_product.related_products_enabled:
@@ -591,6 +596,14 @@ system_configuration:
                 label: oro.product.system_configuration.fields.original_file_names_enabled.label
                 tooltip: oro.product.system_configuration.fields.original_file_names_enabled.tooltip
 
+        oro_product.allow_partial_product_search:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            priority: 10
+            options:
+                label: oro.product.system_configuration.fields.allow_partial_product_search.label
+                tooltip: oro.product.system_configuration.fields.allow_partial_product_search.tooltip
+
     tree:
         system_configuration:
             platform:
@@ -670,6 +683,12 @@ system_configuration:
                                         children:
                                             - oro_product.image_preview_on_product_listing_enabled
                                             - oro_product.popup_gallery_on_product_view
+                            product_search:
+                                priority: 150
+                                children:
+                                    product_fulltext_search:
+                                        children:
+                                            - oro_product.allow_partial_product_search
                             featured_products:
                                 priority: 100
                                 children:

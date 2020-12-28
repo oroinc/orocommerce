@@ -351,7 +351,7 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
                 'attributeType' => $stringSearchAttributeType,
                 'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
                 'attributeConfig' => $this->getConfig(
-                    ['filterable' => true, 'filter_by' => 'fuzzy_search', 'sortable' => false]
+                    ['filterable' => true, 'filter_by' => 'fulltext_search', 'sortable' => false]
                 ),
                 'hasAssociation' => true,
                 'limitFiltersSorters' => false,
