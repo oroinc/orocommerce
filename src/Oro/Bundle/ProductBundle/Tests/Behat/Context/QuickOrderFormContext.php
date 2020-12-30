@@ -124,7 +124,7 @@ class QuickOrderFormContext extends OroFeatureContext implements KernelAwareCont
 
         foreach ($productRows as $skuField) {
             if ($skuField->getValue() === $sku) {
-                return $skuField->getParent()->getParent();
+                return $skuField->find('xpath', 'ancestor::*[contains(@class, "quick-order-add__row-content")]');
             }
         }
 

@@ -4,6 +4,7 @@ define(function(require) {
     const _ = require('underscore');
     const QuickAddImportWidget = require('oro/quick-add-import-widget');
     const BaseView = require('oroui/js/app/views/base/view');
+    const mediator = require('oroui/js/mediator');
 
     const QuickAddImportFormView = BaseView.extend({
         /**
@@ -31,7 +32,11 @@ define(function(require) {
          * @inheritDoc
          */
         initialize: function(options) {
-            _.extend(this, _.pick(options, 'droppableContainer'));
+            _.extend(this, _.pick(options, 'droppableContainer', 'productsCollection'));
+
+            this.listenTo(mediator, {
+                'quick-add-import-form:submit': this.onImportFormSubmit
+            });
             QuickAddImportFormView.__super__.initialize.call(this, options);
         },
 
@@ -136,6 +141,12 @@ define(function(require) {
 
         unhighlight: function() {
             this.$el.removeClass('highlight');
+        },
+
+        async onImportFormSubmit(items) {
+            if (this.productsCollection) {
+                await this.productsCollection.addQuickAddRows(items);
+            }
         }
     });
 

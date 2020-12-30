@@ -28,7 +28,8 @@ oro:
             label: Qty
             placeholder: "Qty #"
             aria_label: Product Quantity
-        remove_row.aria_label: "Remove the current row"
+        remove_row:
+            aria_label: "Remove the current row"
         variant_fields:
             label: Configurable Attributes
             description: The names of attributes that are used to choose variants of a configurable product.

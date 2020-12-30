@@ -134,6 +134,8 @@ oro:
                 label: '{0} none|]0,1] bottle|]1,Inf] bottles'
 
         validation:
+            sku:
+                not_found: 'Item Number Cannot Be Found'
             unit:
                 required: Unit is required
                 invalid: 'Unit {{ unit }} is invalid for this product'
