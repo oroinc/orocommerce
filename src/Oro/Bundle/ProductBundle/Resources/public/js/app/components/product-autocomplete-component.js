@@ -6,6 +6,7 @@ define(function(require) {
     const routing = require('routing');
     const mediator = require('oroui/js/mediator');
     const ProductHelper = require('oroproduct/js/app/product-helper');
+    const autocompleteErrorTemplate = require('tpl-loader!oroproduct/templates/product-autocomplete-error.html');
     const AutocompleteComponent = require('oro/autocomplete-component');
 
     const ProductAutocompleteComponent = AutocompleteComponent.extend({
@@ -18,6 +19,11 @@ define(function(require) {
          * @property {String}
          */
         previousValue: '',
+
+        /**
+         * @property
+         */
+        autocompleteErrorTemplate: autocompleteErrorTemplate,
 
         /**
          * @inheritDoc
@@ -51,8 +57,9 @@ define(function(require) {
             this.product = $.extend(true, {
                 sku: null,
                 name: null,
-                displayName: null
+                displayName: this.$el.data('displayName') || null
             }, this.options.product);
+            this.previousValue = this.product.displayName;
 
             this.updateProduct();
 
@@ -94,7 +101,6 @@ define(function(require) {
         },
 
         validateProduct: function(val) {
-            const self = this;
             val = val.split(' ')[0];
 
             $.ajax({
@@ -106,15 +112,22 @@ define(function(require) {
                     sku: [val],
                     query: val
                 },
-                success: function(response) {
-                    self.validateResponse(response);
+                success: response => {
+                    if (this.disposed) {
+                        return;
+                    }
+                    this.validateResponse(response);
                 },
-                error: function() {
+                error: () => {
+                    if (this.disposed) {
+                        return;
+                    }
+                    this.$el.trigger({type: 'productNotFound.autocomplete', item: {sku: val}});
                     mediator.trigger('autocomplete:productNotFound', {
                         item: {sku: val},
-                        $el: self.$el
+                        $el: this.$el
                     });
-                    self.resetProduct();
+                    this.resetProduct();
                 }
             });
         },
@@ -135,7 +148,7 @@ define(function(require) {
                     this.product.sku = item.sku;
                     this.product.name = item['defaultName.string'];
                     this.product.displayName = [this.product.sku, this.product.name].join(' - ');
-
+                    this.$el.trigger({type: 'productFound.autocomplete', item});
                     mediator.trigger('autocomplete:productFound', {
                         item: item,
                         $el: this.$el,
@@ -143,6 +156,7 @@ define(function(require) {
                     });
                     this.previousValue = this.product.displayName;
                 } else {
+                    this.$el.trigger({type: 'productNotFound.autocomplete', item: {sku: val}});
                     mediator.trigger('autocomplete:productNotFound', {
                         item: {sku: val},
                         $el: this.$el,
@@ -156,7 +170,7 @@ define(function(require) {
         resetProduct: function() {
             this.product.sku = this.product.name = this.product.displayName = null;
 
-            this.$error.hide();
+            this.hideError();
             this.$el.removeClass(this.options.errorClass);
         },
 
@@ -164,12 +178,27 @@ define(function(require) {
             if (this.product.sku) {
                 this.$el.val(this.product.displayName);
             } else if (this.$el && this.$el.val().length > 0) {
-                this.$error.show();
+                this.showError();
 
                 // move setting class to next processor tick so it's correctly set after submitting the form
                 _.defer(_.bind(function() {
                     this.$el.addClass(this.options.errorClass);
                 }, this));
+            }
+        },
+
+        showError: function() {
+            if (this.$error.length) {
+                this.$error.show();
+            } else {
+                this.$row.find('.fields-row-error').append(this.autocompleteErrorTemplate());
+                this.$error = this.$row.find(this.options.selectors.error);
+            }
+        },
+
+        hideError: function() {
+            if (this.$error.length) {
+                this.$error.hide();
             }
         },
 

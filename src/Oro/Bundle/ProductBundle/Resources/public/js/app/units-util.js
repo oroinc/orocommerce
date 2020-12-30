@@ -2,13 +2,19 @@ define(function(require) {
     'use strict';
 
     const _ = require('underscore');
+    const __ = require('orotranslation/js/translator');
+    const InputWidgetManager = require('oroui/js/input-widget-manager');
 
     const UnitsUtil = {
+        getUnitLabel: function(model, unitCode) {
+            const translationKey = model.get('unit_label_template') || 'oro.product.product_unit.%s.label.full';
+            return __(translationKey.replace('%s', unitCode));
+        },
+
         getUnitsLabel: function(model) {
             const units = {};
-            const unitLabel = model.get('unit_label_template') || 'oro.product.product_unit.%s.label.full';
-            _.each(model.get('product_units'), function(precision, value) {
-                units[value] = _.__(unitLabel.replace('%s', value));
+            _.each(model.get('product_units'), function(precision, unitCode) {
+                units[unitCode] = UnitsUtil.getUnitLabel(model, unitCode);
             });
             return units;
         },
@@ -35,7 +41,7 @@ define(function(require) {
 
             $el.html(options.join(''));
 
-            let value = model.get('unit_deferred') || oldValue;
+            let value = model.get('unit_deferred') || model.get('unit') || oldValue;
             if (!value || !$el.find('option[value="' + _.escape(value) + '"]').length) {
                 value = $el.val();
             }
@@ -44,7 +50,10 @@ define(function(require) {
             if (value !== oldValue || value !== $el.val()) {
                 $el.val(value).change();
             }
-            $el.inputWidget('refresh');
+
+            if (InputWidgetManager.hasWidget($el)) {
+                $el.inputWidget('refresh');
+            }
         },
 
         generateSelectOption: function(value, label) {

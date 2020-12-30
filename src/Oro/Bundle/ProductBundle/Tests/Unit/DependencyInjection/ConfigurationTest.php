@@ -227,6 +227,10 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                 'original_file_names_enabled' => [
                     'value' => false,
                     'scope' => 'app'
+                ],
+                'new_quick_order_form' => [
+                    'value' => false,
+                    'scope' => 'app'
                 ]
             ]
         ];

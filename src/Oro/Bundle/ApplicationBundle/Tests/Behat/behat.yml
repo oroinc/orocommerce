@@ -471,6 +471,7 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
+          Enable New Layout Default: 'quick_order[oro_product___new_quick_order_form][use_parent_scope_value]'
           Enable Guest Quick Order Form Default: 'quick_order[oro_product___guest_quick_order_form][use_parent_scope_value]'
 
     Request For Quote Configuration Form:
