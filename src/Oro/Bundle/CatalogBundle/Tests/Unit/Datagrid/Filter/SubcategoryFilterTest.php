@@ -11,6 +11,7 @@ use Oro\Bundle\FilterBundle\Filter\FilterUtility;
 use Oro\Bundle\SearchBundle\Datagrid\Filter\Adapter\SearchFilterDatasourceAdapter;
 use Oro\Bundle\SearchBundle\Datagrid\Form\Type\SearchEntityFilterType;
 use Oro\Bundle\SearchBundle\Query\Criteria\Comparison;
+use Oro\Component\Exception\UnexpectedTypeException;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -22,24 +23,27 @@ class SubcategoryFilterTest extends \PHPUnit\Framework\TestCase
     use EntityTrait;
 
     /** @var FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $formFactory;
-
-    /** @var FilterUtility|\PHPUnit\Framework\MockObject\MockObject */
-    protected $filterUtility;
+    private $formFactory;
 
     /** @var SubcategoryFilter */
-    protected $filter;
+    private $filter;
 
     protected function setUp(): void
     {
         $this->formFactory = $this->createMock(FormFactoryInterface::class);
 
-        $this->filterUtility = $this->createMock(FilterUtility::class);
-        $this->filterUtility->expects($this->any())
-            ->method('getExcludeParams')
-            ->willReturn([]);
+        $this->filter = new SubcategoryFilter($this->formFactory, new FilterUtility());
+    }
 
-        $this->filter = new SubcategoryFilter($this->formFactory, $this->filterUtility);
+    /**
+     * @param int    $id
+     * @param string $path
+     *
+     * @return Category
+     */
+    private function getCategory(int $id, string $path): Category
+    {
+        return $this->getEntity(Category::class, ['id' => $id, 'materializedPath' => $path]);
     }
 
     public function testInit()
@@ -50,7 +54,7 @@ class SubcategoryFilterTest extends \PHPUnit\Framework\TestCase
                 SearchEntityFilterType::class,
                 [],
                 [
-                    'class' => Category::class,
+                    'class'           => Category::class,
                     'csrf_protection' => false,
                 ]
             );
@@ -61,13 +65,9 @@ class SubcategoryFilterTest extends \PHPUnit\Framework\TestCase
 
     public function testApplyExceptionForWrongFilterDatasourceAdapter()
     {
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Invalid filter datasource adapter provided');
+        $this->expectException(UnexpectedTypeException::class);
 
-        /** @var FilterDatasourceAdapterInterface $datasource */
-        $datasource = $this->createMock(FilterDatasourceAdapterInterface::class);
-
-        $this->filter->apply($datasource, []);
+        $this->filter->apply($this->createMock(FilterDatasourceAdapterInterface::class), []);
     }
 
     public function testGetMetadata()
@@ -78,7 +78,7 @@ class SubcategoryFilterTest extends \PHPUnit\Framework\TestCase
             'test',
             [
                 FilterUtility::DATA_NAME_KEY => 'field',
-                'options' => [
+                'options'                    => [
                     'choices' => [$category]
                 ]
             ]
@@ -96,7 +96,6 @@ class SubcategoryFilterTest extends \PHPUnit\Framework\TestCase
         $formView->children['type'] = $typeFormView;
         $formView->children['value'] = $valueFormView;
 
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $form->expects($this->any())
             ->method('createView')
@@ -113,17 +112,12 @@ class SubcategoryFilterTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals(
             [
-                'name' => 'test',
-                'label' => 'Test',
+                'name'    => 'test',
+                'label'   => 'Test',
                 'choices' => [
                     $category->getId() => new ChoiceView($category, $category->getId(), 'label'),
                 ],
-                'data_name' => 'field',
-                'options' => [
-                    'choices' => [$category],
-                    'class' => Category::class,
-                ],
-                'lazy' => false,
+                'lazy'    => false,
             ],
             $this->filter->getMetadata()
         );
@@ -135,12 +129,10 @@ class SubcategoryFilterTest extends \PHPUnit\Framework\TestCase
         $category1 = $this->getCategory(100, '1_42_100');
         $category2 = $this->getCategory(200, '1_42_200');
 
-        $fieldName = 'field';
         $value = new ArrayCollection([$category1, $category2]);
 
-        /** @var SearchFilterDatasourceAdapter|\PHPUnit\Framework\MockObject\MockObject $ds */
         $ds = $this->createMock(SearchFilterDatasourceAdapter::class);
-        $ds->expects($this->once())
+        $ds->expects(self::once())
             ->method('addRestriction')
             ->with(
                 new CompositeExpression(
@@ -152,26 +144,17 @@ class SubcategoryFilterTest extends \PHPUnit\Framework\TestCase
                 )
             );
 
-        $this->filter->init('test', [FilterUtility::DATA_NAME_KEY => $fieldName, 'rootCategory' => $rootCategory]);
+        $this->filter->init('test', [
+            FilterUtility::DATA_NAME_KEY => 'field',
+            'rootCategory'               => $rootCategory
+        ]);
 
-        $this->assertTrue(
-            $this->filter->apply(
-                $ds,
-                [
-                    'type' => null,
-                    'value' => $value,
-                ]
-            )
-        );
+        self::assertTrue($this->filter->apply($ds, ['type' => null, 'value' => $value]));
     }
 
-    /**
-     * @param int $id
-     * @param string $path
-     * @return Category
-     */
-    protected function getCategory($id, $path)
+    public function testPrepareData()
     {
-        return $this->getEntity(Category::class, ['id' => $id, 'materializedPath' => $path]);
+        $this->expectException(\BadMethodCallException::class);
+        $this->filter->prepareData([]);
     }
 }

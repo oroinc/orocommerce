@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\OrderBundle\Tests\Unit\Provider;
+namespace Oro\Bundle\PromotionBundle\Tests\Unit\Provider;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -8,17 +8,17 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\PersistentCollection;
 use Doctrine\ORM\UnitOfWork;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
-use Oro\Bundle\OrderBundle\Provider\OrderPromotionDiscountsProviderDecorator;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
+use Oro\Bundle\PromotionBundle\Provider\OrderPromotionDiscountsProviderDecorator;
 use Oro\Bundle\PromotionBundle\Provider\PromotionDiscountsProviderInterface;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Discount\Stub\DiscountStub;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Order;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class OrderPromotionDiscountsDecoratorTest extends \PHPUnit\Framework\TestCase
+class OrderPromotionDiscountsProviderDecoratorTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 

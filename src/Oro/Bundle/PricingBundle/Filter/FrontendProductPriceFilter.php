@@ -7,16 +7,30 @@ use Oro\Bundle\PricingBundle\Form\Type\Filter\ProductPriceFilterType;
 use Oro\Bundle\PricingBundle\Placeholder\UnitPlaceholder;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\SearchBundle\Datagrid\Filter\SearchNumberRangeFilter;
+use Symfony\Component\Form\FormFactoryInterface;
 
 /**
- * A filter that can be used on frontend`s product grid to get products by prices range.
+ * The filter by a product price on the storefront.
  */
 class FrontendProductPriceFilter extends SearchNumberRangeFilter
 {
+    /** @var UnitLabelFormatterInterface */
+    private $formatter;
+
     /**
-     * @var UnitLabelFormatterInterface
+     * @param FormFactoryInterface        $factory
+     * @param FilterUtility               $util
+     * @param UnitLabelFormatterInterface $formatter
      */
-    protected $formatter;
+    public function __construct(
+        FormFactoryInterface $factory,
+        FilterUtility $util,
+        UnitLabelFormatterInterface $formatter
+    ) {
+        parent::__construct($factory, $util);
+        $this->formatter = $formatter;
+    }
+
 
     /**
      * {@inheritdoc}
@@ -25,14 +39,6 @@ class FrontendProductPriceFilter extends SearchNumberRangeFilter
     {
         $unit = $data['unit'];
         return 'decimal.' . str_replace(UnitPlaceholder::NAME, $unit, $this->get(FilterUtility::DATA_NAME_KEY));
-    }
-
-    /**
-     * @param UnitLabelFormatterInterface $formatter
-     */
-    public function setFormatter($formatter)
-    {
-        $this->formatter = $formatter;
     }
 
     /**

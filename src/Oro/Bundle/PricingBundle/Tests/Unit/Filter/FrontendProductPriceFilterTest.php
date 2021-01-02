@@ -1,9 +1,8 @@
 <?php
 
-namespace Oro\Bundle\PricingBundle\Tests\Unit\Datagrid\Filter;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Filter;
 
-use Doctrine\Common\Collections\Expr\Comparison as BaseComparison;
-use Doctrine\Common\Collections\Expr\Comparison as CommonComparision;
+use Doctrine\Common\Collections\Expr\Comparison as CommonComparison;
 use Doctrine\Common\Collections\Expr\CompositeExpression;
 use Doctrine\Common\Collections\Expr\Value;
 use Oro\Bundle\FilterBundle\Datasource\FilterDatasourceAdapterInterface;
@@ -15,6 +14,7 @@ use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
 use Oro\Bundle\SearchBundle\Datagrid\Filter\Adapter\SearchFilterDatasourceAdapter;
 use Oro\Bundle\SearchBundle\Datagrid\Filter\SearchNumberRangeFilter;
 use Oro\Bundle\SearchBundle\Query\Criteria\Comparison;
+use Oro\Component\Exception\UnexpectedTypeException;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormView;
@@ -22,39 +22,16 @@ use Symfony\Component\Form\Test\FormInterface;
 
 class FrontendProductPriceFilterTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var string
-     */
-    private $filterName = 'filter-name';
-
-    /**
-     * @var string
-     */
-    private $dataName = 'field-name';
-
-    /**
-     * @var FormInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $form;
 
-    /**
-     * @var FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $formFactory;
 
-    /**
-     * @var FilterUtility|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $filterUtility;
-
-    /**
-     * @var UnitLabelFormatter|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var UnitLabelFormatter|\PHPUnit\Framework\MockObject\MockObject */
     private $formatter;
 
-    /**
-     * @var SearchNumberRangeFilter
-     */
+    /** @var SearchNumberRangeFilter */
     private $filter;
 
     /**
@@ -66,34 +43,26 @@ class FrontendProductPriceFilterTest extends \PHPUnit\Framework\TestCase
         $this->formFactory = $this->createMock(FormFactoryInterface::class);
         $this->formFactory->expects($this->any())
             ->method('create')
-            ->will($this->returnValue($this->form));
-
-        $this->filterUtility = $this->createMock(FilterUtility::class);
-        $this->filterUtility->expects($this->any())
-            ->method('getExcludeParams')
-            ->willReturn([]);
+            ->willReturn($this->form);
 
         $this->formatter = $this->createMock(UnitLabelFormatter::class);
 
-        $this->filter = new FrontendProductPriceFilter($this->formFactory, $this->filterUtility);
-        $this->filter->setFormatter($this->formatter);
-        $this->filter->init($this->filterName, [
-            FilterUtility::DATA_NAME_KEY => $this->dataName,
+        $this->filter = new FrontendProductPriceFilter($this->formFactory, new FilterUtility(), $this->formatter);
+        $this->filter->init('test-filter', [
+            FilterUtility::DATA_NAME_KEY => 'field_name',
         ]);
     }
 
     public function testThrowsExceptionForWrongFilterDatasourceAdapter()
     {
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Invalid filter datasource adapter provided');
+        $this->expectException(UnexpectedTypeException::class);
 
-        $ds = $this->createMock(FilterDatasourceAdapterInterface::class);
         $this->filter->apply(
-            $ds,
+            $this->createMock(FilterDatasourceAdapterInterface::class),
             [
                 'type' => NumberRangeFilterType::TYPE_BETWEEN,
                 'value' => 123,
-                'value_end' => 155,
+                'value_end' => 155
             ]
         );
     }
@@ -108,12 +77,12 @@ class FrontendProductPriceFilterTest extends \PHPUnit\Framework\TestCase
             ->method('addRestriction')
             ->withConsecutive(
                 [
-                    new BaseComparison("decimal.minimal_price_CPL_ID_CURRENCY_kg", Comparison::GTE, 100),
+                    new CommonComparison('decimal.minimal_price_CPL_ID_CURRENCY_kg', Comparison::GTE, 100),
                     FilterUtility::CONDITION_AND,
                     false,
                 ],
                 [
-                    new BaseComparison("decimal.minimal_price_CPL_ID_CURRENCY_kg", Comparison::LTE, 150),
+                    new CommonComparison('decimal.minimal_price_CPL_ID_CURRENCY_kg', Comparison::LTE, 150),
                     FilterUtility::CONDITION_AND,
                     false,
                 ]
@@ -145,12 +114,12 @@ class FrontendProductPriceFilterTest extends \PHPUnit\Framework\TestCase
                 new CompositeExpression(
                     FilterUtility::CONDITION_OR,
                     [
-                        new CommonComparision(
+                        new CommonComparison(
                             'decimal.minimal_price_CPL_ID_CURRENCY_kg',
                             Comparison::LTE,
                             new Value(100)
                         ),
-                        new CommonComparision(
+                        new CommonComparison(
                             'decimal.minimal_price_CPL_ID_CURRENCY_kg',
                             Comparison::GTE,
                             new Value(150)
@@ -187,8 +156,8 @@ class FrontendProductPriceFilterTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $restriction = new BaseComparison(
-            "decimal.minimal_price_CPL_ID_CURRENCY_".$unit,
+        $restriction = new CommonComparison(
+            'decimal.minimal_price_CPL_ID_CURRENCY_' . $unit,
             $comparisonOperator,
             $fieldValue
         );
@@ -275,11 +244,9 @@ class FrontendProductPriceFilterTest extends \PHPUnit\Framework\TestCase
             ->willReturn($formView);
 
         $expected = [
-            'name' => 'filter-name',
-            'label' => 'Filter-name',
+            'name' => 'test-filter',
+            'label' => 'Test-filter',
             'choices' => [],
-            'data_name' => 'field-name',
-            'options' => [],
             'lazy' => false,
             'formatterOptions' => [
                 'decimals' => 0,

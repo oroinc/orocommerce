@@ -2,24 +2,30 @@
 
 namespace Oro\Bundle\VisibilityBundle\Filter;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\FilterBundle\Datasource\FilterDatasourceAdapterInterface;
 use Oro\Bundle\FilterBundle\Datasource\Orm\OrmFilterDatasourceAdapter;
 use Oro\Bundle\FilterBundle\Filter\ChoiceFilter;
+use Oro\Bundle\FilterBundle\Filter\FilterUtility;
+use Symfony\Component\Form\FormFactoryInterface;
 
+/**
+ * The filter by product visibility.
+ */
 class VisibilityChoiceFilter extends ChoiceFilter
 {
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
+    /** @var ManagerRegistry */
+    protected $doctrine;
 
     /**
-     * @param ManagerRegistry $registry
+     * @param FormFactoryInterface $factory
+     * @param FilterUtility        $util
+     * @param ManagerRegistry      $doctrine
      */
-    public function setRegistry($registry)
+    public function __construct(FormFactoryInterface $factory, FilterUtility $util, ManagerRegistry $doctrine)
     {
-        $this->registry = $registry;
+        parent::__construct($factory, $util);
+        $this->doctrine = $doctrine;
     }
 
     /**
@@ -40,7 +46,7 @@ class VisibilityChoiceFilter extends ChoiceFilter
             $targetEntityId = $qb->getParameter('target_entity_id')->getValue();
 
             if (!$visibilityClass || !$targetEntityClass || !$targetEntityId) {
-                throw new \InvalidArgumentException("Required filter parameters missing");
+                throw new \InvalidArgumentException('Required filter parameters missing');
             }
 
             $targetEntity = $this->getEntity($targetEntityId, $targetEntityClass);
@@ -66,17 +72,16 @@ class VisibilityChoiceFilter extends ChoiceFilter
     }
 
     /**
-     * @param integer|null $entityId
-     * @param string $entityClassName
-     * @return null|object
+     * @param int|null $entityId
+     * @param string   $entityClassName
+     *
+     * @return object|null
      */
     protected function getEntity($entityId, $entityClassName)
     {
         $entity = null;
         if ($entityId) {
-            $entity = $this->registry
-                ->getRepository($entityClassName)
-                ->find($entityId);
+            $entity = $this->doctrine->getRepository($entityClassName)->find($entityId);
         }
 
         return $entity;
@@ -86,6 +91,7 @@ class VisibilityChoiceFilter extends ChoiceFilter
      * @param string $value
      * @param object $targetEntity
      * @param string $visibilityClass
+     *
      * @return bool
      */
     protected function isDefaultValue($targetEntity, $value, $visibilityClass)
