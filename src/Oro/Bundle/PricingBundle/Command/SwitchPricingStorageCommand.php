@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Oro\Bundle\PricingBundle\Command;
 
@@ -11,7 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
- * The CLI command to switch pricing storage. Possible storage options: flat, combined.
+ * Switches pricing storage type.
  */
 class SwitchPricingStorageCommand extends Command
 {
@@ -19,25 +20,12 @@ class SwitchPricingStorageCommand extends Command
     private const STORAGE_COMBINED = 'combined';
     private const SUPPORTED_STORAGES = [self::STORAGE_FLAT, self::STORAGE_COMBINED];
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected static $defaultName = 'oro:price-lists:switch-pricing-storage';
 
-    /**
-     * @var ConfigManager
-     */
-    private $configManager;
+    private ConfigManager $configManager;
+    private PricingStorageSwitchHandlerInterface $pricingStorageSwitchHandler;
 
-    /**
-     * @var PricingStorageSwitchHandlerInterface
-     */
-    private $pricingStorageSwitchHandler;
-
-    /**
-     * @param ConfigManager $configManager
-     * @param PricingStorageSwitchHandlerInterface $pricingStorageSwitchHandler
-     */
     public function __construct(
         ConfigManager $configManager,
         PricingStorageSwitchHandlerInterface $pricingStorageSwitchHandler
@@ -47,25 +35,36 @@ class SwitchPricingStorageCommand extends Command
         $this->pricingStorageSwitchHandler = $pricingStorageSwitchHandler;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    /** @noinspection PhpMissingParentCallCommonInspection */
     protected function configure()
     {
         $this
-            ->setDescription('Switches pricing storage.')
             ->addArgument(
                 'storage',
                 InputArgument::REQUIRED,
-                'Pricing storage type. Supported storages: ' . implode(', ', self::SUPPORTED_STORAGES)
-            );
+                'Storage type (' . \implode(', ', self::SUPPORTED_STORAGES) . ')'
+            )
+            ->setDescription('Switches pricing storage type.')
+            ->setHelp(
+                <<<'HELP'
+The <info>%command.name%</info> command switches pricing store type.
+Supported values: <comment>flat</comment>, <comment>combined</comment>.
 
-        parent::configure();
+  <info>php %command.full_name% <storage></info>
+
+The flat price list storage allows no more than one price list association per record
+(website, customer group, customer) but it consumes less space and computational resources
+when you do not need the full power of price hierarchies and calculation formulas
+provided by the calculated price lists.
+
+HELP
+            )
+            ->addUsage('flat')
+            ->addUsage('combined')
+        ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    /** @noinspection PhpMissingParentCallCommonInspection */
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $storage = $input->getArgument('storage');
@@ -139,9 +138,6 @@ class SwitchPricingStorageCommand extends Command
         }
     }
 
-    /**
-     * @param string $storage
-     */
     protected function switchStorage(string $storage): void
     {
         $this->configManager->set('oro_pricing.price_storage', $storage);
