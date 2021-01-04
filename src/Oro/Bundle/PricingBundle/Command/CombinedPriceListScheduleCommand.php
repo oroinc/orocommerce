@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Oro\Bundle\PricingBundle\Command;
 
@@ -14,35 +15,19 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Prepares and activates combined price list by schedule
+ * Prepares and activates combined price lists based on their schedules.
  */
 class CombinedPriceListScheduleCommand extends Command implements CronCommandInterface
 {
     /** @var string */
     protected static $defaultName = 'oro:cron:price-lists:schedule';
 
-    /** @var ManagerRegistry */
-    private $registry;
+    private ManagerRegistry $registry;
+    private ConfigManager $configManager;
+    private CombinedPriceListScheduleResolver $priceListResolver;
+    private CombinedPriceListTriggerHandler $triggerHandler;
+    private CombinedPriceListsBuilderFacade $builder;
 
-    /** @var ConfigManager */
-    private $configManager;
-
-    /** @var CombinedPriceListScheduleResolver */
-    private $priceListResolver;
-
-    /** @var CombinedPriceListTriggerHandler */
-    private $triggerHandler;
-
-    /** @var CombinedPriceListsBuilderFacade */
-    private $builder;
-
-    /**
-     * @param ManagerRegistry $registry
-     * @param ConfigManager $configManager
-     * @param CombinedPriceListScheduleResolver $priceListResolver
-     * @param CombinedPriceListTriggerHandler $triggerHandler
-     * @param CombinedPriceListsBuilderFacade $builder
-     */
     public function __construct(
         ManagerRegistry $registry,
         ConfigManager $configManager,
@@ -59,18 +44,22 @@ class CombinedPriceListScheduleCommand extends Command implements CronCommandInt
         parent::__construct();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    /** @noinspection PhpMissingParentCallCommonInspection */
     protected function configure()
     {
-        $this
-            ->setDescription('Prepare and activate combined price list by schedule');
+        $this->setDescription('Prepares and activates combined price lists based on their schedules.')
+            ->setHelp(
+                <<<'HELP'
+The <info>%command.name%</info> command prepares and activates combined price lists
+based on their schedules.
+
+  <info>php %command.full_name%</info>
+
+HELP
+            )
+        ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isActive()
     {
         $offsetHours = $this->configManager->get('oro_pricing.offset_of_processing_cpl_prices');
@@ -84,7 +73,8 @@ class CombinedPriceListScheduleCommand extends Command implements CronCommandInt
     }
 
     /**
-     * {@inheritdoc}
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @noinspection PhpMissingParentCallCommonInspection
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -111,9 +101,6 @@ class CombinedPriceListScheduleCommand extends Command implements CronCommandInt
         $this->builder->dispatchEvents();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getDefaultDefinition()
     {
         return '*/5 * * * *';

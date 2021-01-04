@@ -1,6 +1,6 @@
 services:
-    oro_product.importexport.normalizer.product_image.test:
-        alias: oro_product.importexport.normalizer.product_image
+    oro_product.tests.importexport.file_manager.product_images:
+        alias: oro_product.importexport.file_manager.product_images
         public: true
 
     oro_product.tests.migration_listener:
@@ -9,17 +9,17 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_migration.post_up, method: onPostUp }
 
-    oro_product.helper.product_collection_segment.test:
+    oro_product.tests.helper.product_collection_segment:
         class: Oro\Bundle\ProductBundle\Tests\Functional\Stub\ProductCollectionSegmentHelperStub
-        decorates: 'oro_product.helper.product_collection_segment'
-        parent: 'oro_product.helper.product_collection_segment'
+        decorates: oro_product.helper.product_collection_segment
+        parent: oro_product.helper.product_collection_segment
         public: true
         arguments:
-            index_1: '@oro_product.helper.product_collection_segment.test.inner'
+            index_1: '@oro_product.tests.helper.product_collection_segment.inner'
 
     oro_product.tests.api.skipped_entity_provider:
         class: Oro\Bundle\ApiBundle\Tests\Functional\Environment\SkippedEntityProvider
-        decorates: 'oro_api.tests.skipped_entity_provider'
+        decorates: oro_api.tests.skipped_entity_provider
         arguments:
             - '@oro_product.tests.api.skipped_entity_provider.inner'
         calls:

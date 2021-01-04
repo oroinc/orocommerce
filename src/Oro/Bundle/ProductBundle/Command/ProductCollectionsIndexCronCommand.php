@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Oro\Bundle\ProductBundle\Command;
 
@@ -15,37 +16,19 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * This command class schedules cron based product collection indexation.
+ * Schedules indexation of product collections.
  */
 class ProductCollectionsIndexCronCommand extends Command implements CronCommandInterface
 {
-    private const OPTION_PARTIAL_REINDEX = 'partial-reindex';
-
     /** @var string */
     protected static $defaultName = 'oro:cron:product-collections:index';
 
-    /** @var MessageProducerInterface */
-    private $messageProducer;
+    private MessageProducerInterface $messageProducer;
+    private SegmentMessageFactory $messageFactory;
+    private CronSegmentsProvider $segmentProvider;
+    private ProductCollectionSegmentHelper $productCollectionHelper;
+    private ConfigManager $configManager;
 
-    /** @var SegmentMessageFactory */
-    private $messageFactory;
-
-    /** @var CronSegmentsProvider */
-    private $segmentProvider;
-
-    /** @var ProductCollectionSegmentHelper */
-    private $productCollectionHelper;
-
-    /** @var ConfigManager */
-    private $configManager;
-
-    /**
-     * @param MessageProducerInterface $messageProducer
-     * @param SegmentMessageFactory $segmentMessageFactory
-     * @param CronSegmentsProvider $cronSegmentsProvider
-     * @param ProductCollectionSegmentHelper $productCollectionSegmentHelper
-     * @param ConfigManager $configManager
-     */
     public function __construct(
         MessageProducerInterface $messageProducer,
         SegmentMessageFactory $segmentMessageFactory,
@@ -62,32 +45,32 @@ class ProductCollectionsIndexCronCommand extends Command implements CronCommandI
         parent::__construct();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    /** @noinspection PhpMissingParentCallCommonInspection */
     protected function configure()
     {
-        $description = <<<DESC
-Add message to queue to index product collections for which filter contains dependencies on other entities.
-DESC;
+        $this->addOption('partial-reindex', null, null, 'Perform indexation only for added or removed products')
+            ->setDescription('Schedules indexation of product collections.')
+            ->setHelp(
+                <<<'HELP'
+The <info>%command.name%</info> command schedules indexation of product collections.
 
-        $this
-            ->addOption(
-                self::OPTION_PARTIAL_REINDEX,
-                null,
-                null,
-                'Perform collection partial indexation for added/removed products only'
-            )
-            ->setDescription($description);
+Such indexation is necessary for the product collections that have filters with dependencies
+on other entities.
+
+This command only schedules the job by adding a message to the message queue, so ensure
+that the message consumer processes (<info>oro:message-queue:consume</info>) are running.
+
+  <info>php %command.full_name%</info>
+
+HELP
+            );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    /** @noinspection PhpMissingParentCallCommonInspection */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $hasSchedules = false;
-        if ($input->getOption(self::OPTION_PARTIAL_REINDEX)) {
+        if ($input->getOption('partial-reindex')) {
             $isFull = false;
         } else {
             $isFull = !(bool)$this->configManager->get('oro_product.product_collections_indexation_partial');
@@ -121,17 +104,11 @@ DESC;
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDefaultDefinition()
     {
         return $this->configManager->get(ProductCollectionsScheduleConfigurationListener::CONFIG_FIELD);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isActive()
     {
         return true;

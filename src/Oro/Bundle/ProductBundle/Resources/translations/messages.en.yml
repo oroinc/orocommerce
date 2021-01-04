@@ -28,7 +28,8 @@ oro:
             label: Qty
             placeholder: "Qty #"
             aria_label: Product Quantity
-        remove_row.aria_label: "Remove the current row"
+        remove_row:
+            aria_label: "Remove the current row"
         variant_fields:
             label: Configurable Attributes
             description: The names of attributes that are used to choose variants of a configurable product.
@@ -317,8 +318,7 @@ oro:
                 listing.label: Listing
             import:
                 label: Import images
-                # var/data/importexport/product_images is the directory where the product images source files should be places to import from.
-                notice: "Please make sure that the image files are uploaded at path:\n \"{PROJECT}/var/data/importexport/product_images\""
+                notice: Please make sure that the image files are uploaded at the %adapter_description%.
         productimagetype:
             entity_label: Product Image Type
             entity_plural_label: Product Image Types

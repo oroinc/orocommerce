@@ -14,3 +14,9 @@ oro_api:
 oro_frontend:
     frontend_api:
         api_doc_views: [frontend_sku_rest_json_api]
+
+knp_gaufrette:
+    filesystems:
+        import_product_images:
+            adapter: import_files
+            alias: import_product_images_filesystem

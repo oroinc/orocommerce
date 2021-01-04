@@ -43,9 +43,16 @@ define(function(require) {
             return pricesByUnit;
         },
 
+        indexPrices: function(prices) {
+            return Object.entries(prices).reduce((pricesIndex, [unit, unitPrices], ) => {
+                unitPrices.forEach(price => pricesIndex[`${unit}_${price.quantity}`] = price);
+                return pricesIndex;
+            }, {});
+        },
+
         /**
          * Get price object
-
+         *
          * @param prices {Object}
          * @param unit {String}
          * @param quantity {Number|String}

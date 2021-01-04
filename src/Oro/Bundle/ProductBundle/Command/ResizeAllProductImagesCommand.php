@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Oro\Bundle\ProductBundle\Command;
 
@@ -13,28 +14,18 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Adds to message queue the jobs for resizing all product images (ensure the oro:message-queue:consume command
- * is running to get images resized)
+ * Schedules the (re)build of resized versions of all product images.
  */
 class ResizeAllProductImagesCommand extends Command
 {
-    private const OPTION_FORCE = 'force';
-    private const DIMENSION = 'dimension';
     private const BATCH_SIZE = 1000;
 
     /** @var string */
     protected static $defaultName = 'product:image:resize-all';
 
-    /** @var DoctrineHelper */
-    private $doctrineHelper;
+    private DoctrineHelper $doctrineHelper;
+    private EventDispatcherInterface $eventDispatcher;
 
-    /** @var EventDispatcherInterface */
-    private $eventDispatcher;
-
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param EventDispatcherInterface $eventDispatcher
-     */
     public function __construct(DoctrineHelper $doctrineHelper, EventDispatcherInterface $eventDispatcher)
     {
         $this->doctrineHelper = $doctrineHelper;
@@ -43,31 +34,45 @@ class ResizeAllProductImagesCommand extends Command
         parent::__construct();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    /** @noinspection PhpMissingParentCallCommonInspection */
     protected function configure()
     {
         $this
-            ->addOption(self::OPTION_FORCE, null, null, 'Overwrite existing images')
+            ->addOption('force', null, null, 'Overwrite existing images')
             ->addOption(
-                self::DIMENSION,
+                'dimension',
                 null,
                 InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
-                'perform resize of given dimension(s)',
+                'Resize to given dimension(s)',
                 []
             )
-            ->setDescription(
-                <<<DESC
-Resize All Product Images (the command only adds jobs to a queue, ensure the oro:message-queue:consume command 
-is running to get images resized)
-DESC
-            );
+            ->setDescription('Schedules the (re)build of resized versions of all product images.')
+            ->setHelp(
+                <<<'HELP'
+The <info>%command.name%</info> command schedules the (re)build of resized versions of all product images.
+
+This command only schedules the job by adding a message to the message queue, so ensure
+that the message consumer processes (<info>oro:message-queue:consume</info>) are running
+to get the images actually resized.
+
+  <info>php %command.full_name%</info>
+
+The <info>--force</info> option can be used to overwrite existing images:
+
+  <info>php %command.full_name% --force</info>
+  
+The list of target dimensions can be provided using the <info>--dimension</info> option:
+
+  <info>php %command.full_name% --dimension=<dimension1> --dimension=<dimension2> --dimension=<dimensionN></info>
+
+HELP
+            )
+            ->addUsage('--force')
+            ->addUsage('--dimension=<dimension1> --dimension=<dimension2> --dimension=<dimensionN>')
+        ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    /** @noinspection PhpMissingParentCallCommonInspection */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $iterator = $this->getProductImagesIterator();
@@ -85,17 +90,11 @@ DESC
         $output->writeln(sprintf('%d product image(s) queued for resize.', $entitiesProcessed));
     }
 
-    /**
-     * @return EventDispatcherInterface
-     */
     protected function getEventDispatcher(): EventDispatcherInterface
     {
         return $this->eventDispatcher;
     }
 
-    /**
-     * @return BufferedIdentityQueryResultIterator
-     */
     protected function getProductImagesIterator(): BufferedIdentityQueryResultIterator
     {
         $queryBuilder = $this->doctrineHelper
@@ -109,21 +108,16 @@ DESC
         return $iterator;
     }
 
-    /**
-     * @param InputInterface $input
-     * @return bool
-     */
     protected function getForceOption(InputInterface $input): bool
     {
-        return (bool)$input->getOption(self::OPTION_FORCE);
+        return (bool)$input->getOption('force');
     }
 
     /**
-     * @param InputInterface $input
      * @return string[]|null
      */
-    protected function getDimensionsOption(InputInterface $input)
+    protected function getDimensionsOption(InputInterface $input): ?array
     {
-        return $input->getOption(self::DIMENSION);
+        return $input->getOption('dimension');
     }
 }

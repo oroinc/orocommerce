@@ -6,9 +6,14 @@ use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Symfony2Extension\Context\KernelDictionary;
+use Oro\Bundle\GaufretteBundle\FileManager;
 use Oro\Bundle\ImportExportBundle\Tests\Behat\Context\ImportExportContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
+use Symfony\Component\Finder\Finder;
 
+/**
+ * Behat context for product import/export functionality.
+ */
 class ProductImportExportContext extends OroFeatureContext implements KernelAwareContext
 {
     use KernelDictionary;
@@ -17,9 +22,7 @@ class ProductImportExportContext extends OroFeatureContext implements KernelAwar
     const PRODUCT_PROCESSOR = 'oro_product_product';
     const PRODUCT_ATTRIBUTES_PROCESSOR = 'oro_entity_config_attribute.export_template';
 
-    /**
-     * @var ImportExportContext
-     */
+    /** @var ImportExportContext */
     private $importExportContext;
 
     /**
@@ -58,20 +61,10 @@ class ProductImportExportContext extends OroFeatureContext implements KernelAwar
      */
     public function copyImageFromFixturesToImageImportExportDir()
     {
-        $imagePath = sprintf(
-            '%s%s',
-            __DIR__,
-            '/../Features/Fixtures/product_images_import'
+        $this->copyFilesToStorage(
+            __DIR__ . '/../Features/Fixtures/product_images_import',
+            $this->getProductImportImagesFileManager()
         );
-
-        // The directory where the product images source files should be places to import from.
-        $importImageDir = sprintf(
-            '%s%s',
-            $this->getContainer()->getParameter('kernel.project_dir'),
-            '/var/data/importexport/product_images'
-        );
-
-        $this->copyFiles($imagePath, $importImageDir);
     }
 
     /**
@@ -82,43 +75,33 @@ class ProductImportExportContext extends OroFeatureContext implements KernelAwar
     public function copyProductFixtureFilesToUploadDirs(): void
     {
         $sourcePath = sprintf('%s%s', __DIR__, '/../Features/Fixtures/files_import');
-        $projectDir = $this->getContainer()->getParameter('kernel.project_dir');
-        // The destinations of fixture files that can be used as the source files for import.
-        $destinationDirs = [
-            'relative' => sprintf('%s%s', $projectDir, '/var/data/importexport/files'),
-            'absolute' => sprintf('%s%s', $projectDir, '/var/data/importexport/'),
-            'public' => sprintf('%s%s', $projectDir, '/public/media/cache/import_export'),
-        ];
-
-        foreach ($destinationDirs as $destinationPath) {
-            $this->copyFiles($sourcePath, $destinationPath);
-        }
+        // used for test a relative path
+        $this->copyFilesToStorage($sourcePath, $this->getProductImportImagesFileManager());
+        // used for test an URL
+        $this->copyFilesToStorage($sourcePath, $this->getPublicMediaCacheFileManager(), 'test_import');
+        // used for test an absolute path
+        $this->copyFiles(
+            $sourcePath,
+            $this->getContainer()->getParameter('kernel.project_dir') . '/var/data/test_import/'
+        );
     }
 
     //@codingStandardsIgnoreStart
     /**
-     * Example: Given I copy product fixture "000.png" to import export upload dir as "091.png"
+     * Example: Given I copy product fixture "000.png" to import upload dir as "091.png"
      *
-     * @Given /^I copy product fixture "(?P<filename>(?:[^"]|\\")*)" to import export upload dir as "(?P<newFilename>(?:[^"]|\\")*)"$/
+     * @Given /^I copy product fixture "(?P<filename>(?:[^"]|\\")*)" to import upload dir as "(?P<newFilename>(?:[^"]|\\")*)"$/
      *
      * @param string $filename
      * @param string $newFilename
      */
     //@codingStandardsIgnoreEnd
-    public function copyProductFixtureFileToImportExportDir(string $filename, string $newFilename): void
+    public function copyProductFixtureFileToImportFilesDir(string $filename, string $newFilename): void
     {
-        $filename = $this->fixStepArgument($filename);
-        $imagePath = sprintf('%s/../Features/Fixtures/files_import/%s', __DIR__, $filename);
-
-        // The directory where the files should be places to import from.
-        $importExportDir = sprintf(
-            '%s/%s/%s',
-            $this->getContainer()->getParameter('kernel.project_dir'),
-            'var/data/importexport/files',
+        $this->getProductImportImagesFileManager()->writeFileToStorage(
+            __DIR__ . '/../Features/Fixtures/files_import/' . $this->fixStepArgument($filename),
             $newFilename
         );
-
-        $this->copyFiles($imagePath, $importExportDir);
     }
 
     /**
@@ -147,5 +130,40 @@ class ProductImportExportContext extends OroFeatureContext implements KernelAwar
         $this->importExportContext->setAbsoluteUrl($websiteUrl);
         $this->importExportContext->iFillImportFileWithData($table);
         $this->importExportContext->setAbsoluteUrl(null);
+    }
+
+    /**
+     * @param string      $filesPath
+     * @param FileManager $fileManager
+     * @param string|null $directory
+     */
+    private function copyFilesToStorage(string $filesPath, FileManager $fileManager, string $directory = null): void
+    {
+        $finder = new Finder();
+        /** @var \SplFileInfo[] $files */
+        $files = $finder->files()->in($filesPath);
+        foreach ($files as $file) {
+            $fileName = $file->getFilename();
+            if ($directory) {
+                $fileName = $directory . '/' . $fileName;
+            }
+            $fileManager->writeFileToStorage($file->getPathname(), $fileName);
+        }
+    }
+
+    /**
+     * @return FileManager
+     */
+    private function getProductImportImagesFileManager(): FileManager
+    {
+        return $this->getContainer()->get('oro_product.importexport.file_manager.product_images');
+    }
+
+    /**
+     * @return FileManager
+     */
+    private function getPublicMediaCacheFileManager(): FileManager
+    {
+        return $this->getContainer()->get('oro_attachment.manager.public_mediacache');
     }
 }

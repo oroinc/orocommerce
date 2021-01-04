@@ -1194,6 +1194,20 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * Example: I should see images in "Product Images" element
+     *
+     * @Then /^I should see images in "(?P<elementName>[^"]*)" element$/
+     * @param string $elementName
+     */
+    public function iShouldSeeImagesInElement($elementName)
+    {
+        $element = $this->createElement($elementName);
+        $images = $element->findAll('xpath', '//img');
+
+        self::assertNotEmpty($images, sprintf('Images not found in the "%s" element', $elementName));
+    }
+
+    /**
      * Example: I should see images in "Product Images" element in remembered order
      *
      * @Then /^I should see images in "(?P<elementName>[^"]*)" element in remembered order$/

@@ -91,7 +91,10 @@ class ResizeProductImageMessageProcessorTest extends WebTestCase
         $filteredPath = $this->getFilteredImagePath($productImage, $filterName);
         /** @var FileManager $mediacacheManager */
         $mediacacheManager = self::getContainer()->get('oro_attachment.manager.public_mediacache');
-        self::assertTrue($mediacacheManager->hasFile($filteredPath));
+        self::assertTrue(
+            $mediacacheManager->hasFile($filteredPath),
+            sprintf('Failed assert that "%s" file exists.', $filteredPath)
+        );
 
         $image = self::getContainer()->get('liip_imagine')->load($mediacacheManager->getFileContent($filteredPath));
         $originalImage = self::getContainer()->get('liip_imagine')->open(
@@ -162,11 +165,7 @@ class ResizeProductImageMessageProcessorTest extends WebTestCase
 
         $websiteManager->onClear();
 
-        return str_replace(
-            '/' . self::getContainer()->getParameter('oro_attachment.filesystem_dir.mediacache') . '/',
-            '',
-            $filteredUrl
-        );
+        return str_replace('/media/cache/', '', $filteredUrl);
     }
 
     public function testResizeProductImage(): void

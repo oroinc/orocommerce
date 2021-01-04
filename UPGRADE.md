@@ -4,10 +4,18 @@ Please refer to [CHANGELOG.md](CHANGELOG.md) for a list of significant changes i
 
 ## FROM 4.1.0 to 4.2.0
 
-The File storage component was implemented. Directory `var/import-export` is no longer used as storage
+The File storage component was implemented. Directory `var/import_export` is no longer used as storage
 and has been removed from the git source code.
- 
-Files for product images import should be placed into `var/data/importexport/product_images` instead of `var/import_export/product_images`.
+
+Files from these directories must be moved to new locations:
+
+- files from `var/attachment` to `var/data/attachments`;
+- files from `var/attachment/protected_mediacache` to `var/data/protected_mediacache`;
+- files from `var/import_export` to `var/data/importexport`.
+
+Files for import should be placed into `var/data/import_files` instead of `var/import_export/files`.
+
+Files for product images import should be placed into `var/data/import_files` instead of `var/import_export/product_images`.
 
 ## FROM 1.5.0 to 1.6.0
 * Changed minimum required php version to 7.1

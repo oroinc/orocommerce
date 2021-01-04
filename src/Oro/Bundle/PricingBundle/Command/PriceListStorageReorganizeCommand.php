@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Oro\Bundle\PricingBundle\Command;
 
@@ -9,22 +10,15 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Change storage strategy for class
+ * Reorganizes price list database tables to use or forgo sharding.
  */
 class PriceListStorageReorganizeCommand extends Command
 {
-    private const STRATEGY = 'strategy';
-    private const ENTITY_ALIAS = 'entity-alias';
-
     /** @var string */
     protected static $defaultName = 'oro:price-lists:pl-storage-reorganize';
 
-    /** @var ShardManager */
-    private $shardManager;
+    private ShardManager $shardManager;
 
-    /**
-     * @param ShardManager $shardManager
-     */
     public function __construct(ShardManager $shardManager)
     {
         $this->shardManager = $shardManager;
@@ -32,30 +26,46 @@ class PriceListStorageReorganizeCommand extends Command
         parent::__construct();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    /** @noinspection PhpMissingParentCallCommonInspection */
     protected function configure()
     {
         $this
-            ->addArgument(
-                self::ENTITY_ALIAS
+            ->addArgument('entity-alias')
+            ->addOption('strategy', null, InputOption::VALUE_REQUIRED, 'Can be "base" or "sharding"')
+            ->setDescription('Reorganizes price list database tables to use or forgo sharding.')
+            ->setHelp(
+// @codingStandardsIgnoreStart
+                <<<'HELP'
+The <info>%command.name%</info> command reorganizes price list database tables
+to use or forgo sharding. After running this command make sure to modify
+the <comment>enable_price_sharding</comment> option in <comment>config/parameters.yml</comment> to a matching value.
+
+Use <info>--strategy=sharding</info> to reorganize database tables using sharding for prices:
+
+  <info>php %command.full_name% --strategy=sharding prices</info>
+
+Use <info>--strategy=base</info> to reorganize database tables without sharding for prices:
+
+  <info>php %command.full_name% --strategy=base prices</info>
+
+Run the command without arguments to see the list of all supported entities:
+
+  <info>php %command.full_name%</info>
+
+HELP
+// @codingStandardsIgnoreEnd
             )
-            ->addOption(
-                self::STRATEGY,
-                null,
-                InputOption::VALUE_REQUIRED,
-                'Strategy can be "base" or "sharding"'
-            )
-            ->setDescription('Change storage strategy for class');
+            ->addUsage('--strategy=sharding prices')
+            ->addUsage('--strategy=base prices')
+            ->addUsage('--strategy=sharding <entity-alias>')
+            ->addUsage('--strategy=base <entity-alias>')
+        ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    /** @noinspection PhpMissingParentCallCommonInspection */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $alias = $input->getArgument(self::ENTITY_ALIAS);
+        $alias = $input->getArgument('entity-alias');
 
         $shardList = $this->shardManager->getShardList();
 
@@ -67,7 +77,7 @@ class PriceListStorageReorganizeCommand extends Command
             return 1;
         }
 
-        $strategy = $input->getOption(self::STRATEGY);
+        $strategy = $input->getOption('strategy');
 
         $className = $shardList[$alias];
         if ($strategy === "base") {

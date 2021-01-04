@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Oro\Bundle\ShoppingListBundle\Command;
 
@@ -16,7 +17,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Cron command to clear all expired customer visitors
+ * Clears old data in customer visitor database table.
  */
 class ClearExpiredCustomerVisitorsCommand extends Command implements CronCommandInterface
 {
@@ -25,20 +26,10 @@ class ClearExpiredCustomerVisitorsCommand extends Command implements CronCommand
     /** @var string */
     protected static $defaultName = 'oro:cron:customer-visitors:clear-expired';
 
-    /** @var ManagerRegistry */
-    private $doctrine;
+    private ManagerRegistry $doctrine;
+    private ExtendDbIdentifierNameGenerator $dbIdentifierNameGenerator;
+    private ConfigManager $configManager;
 
-    /** @var ExtendDbIdentifierNameGenerator */
-    private $dbIdentifierNameGenerator;
-
-    /** @var ConfigManager */
-    private $configManager;
-
-    /**
-     * @param ManagerRegistry $doctrine
-     * @param ExtendDbIdentifierNameGenerator $dbIdentifierNameGenerator
-     * @param ConfigManager $configManager
-     */
     public function __construct(
         ManagerRegistry $doctrine,
         ExtendDbIdentifierNameGenerator $dbIdentifierNameGenerator,
@@ -51,16 +42,21 @@ class ClearExpiredCustomerVisitorsCommand extends Command implements CronCommand
         parent::__construct();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configure()
     {
-        $this->setDescription('Clear expired customer visitors.');
+        $this->setDescription('Clears old data in customer visitor database table.')
+            ->setHelp(
+                <<<'HELP'
+The <info>%command.name%</info> command clears old data in customer visitor database table for customer visitors with
+the last visit past the timeframe defined by "Customer visitor cookie lifetime (days)" system configuration setting.
+
+HELP
+            );
     }
 
     /**
-     * {@inheritdoc}
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @noinspection PhpMissingParentCallCommonInspection
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -100,10 +96,7 @@ class ClearExpiredCustomerVisitorsCommand extends Command implements CronCommand
         $output->writeln('<info>Clear expired customer visitors completed</info>');
     }
 
-    /**
-     * @return \DateTime
-     */
-    protected function getExpiredLastVisitDate()
+    protected function getExpiredLastVisitDate(): \DateTime
     {
         $expiredLastVisitDate = new \DateTime('now', new \DateTimeZone('UTC'));
         $cookieLifetime = $this->configManager->get('oro_customer.customer_visitor_cookie_lifetime_days');
@@ -118,17 +111,11 @@ class ClearExpiredCustomerVisitorsCommand extends Command implements CronCommand
         return $expiredLastVisitDate;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDefaultDefinition()
     {
         return '0 1 * * *';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isActive()
     {
         return true;
