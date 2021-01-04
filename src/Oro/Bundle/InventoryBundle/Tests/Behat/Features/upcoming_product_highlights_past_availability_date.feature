@@ -71,7 +71,7 @@ Feature: Upcoming product highlights past availability date
     And fill "Products Product Option Form" with:
       | Is Upcoming Use   | false                |
       | Is Upcoming       | 1                    |
-      | Availability date | <DateTime:Feb 1, 2010 12:00 PM> |
+      | Availability date | <DateTime:Feb 1, 2020 12:00 PM> |
     And I save and close form
     Then I should see "Product has been saved" flash message
     And I should see "Upcoming No"
@@ -88,7 +88,7 @@ Feature: Upcoming product highlights past availability date
     Then I should see "This product will be available on 12/1/2040"
     And click on "NewCategory2 breadcrumb item"
     When I click "View Details" for "SKU3" product
-    Then I should not see "This product will be available on 2/1/2010"
+    Then I should not see "This product will be available on 2/1/2020"
 
   Scenario: Check that product`s availability date correctly handled during checkout process
     Given I open page with shopping list List 1

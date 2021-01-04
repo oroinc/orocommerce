@@ -74,7 +74,7 @@ Feature: Upcoming product highlights
     And fill "Products Product Option Form" with:
       | Is Upcoming Use   | false                |
       | Is Upcoming       | 1                    |
-      | Availability date | <DateTime:Feb 1, 2010 12:00 PM> |
+      | Availability date | <DateTime:Feb 1, 2020 12:00 PM> |
     And I save and close form
     Then I should see "Product has been saved" flash message
     And I should see "Upcoming Yes"
