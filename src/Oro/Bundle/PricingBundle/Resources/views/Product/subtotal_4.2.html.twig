@@ -1,0 +1,17 @@
+{% block _quick_add_subtotal_widget %}
+    <div class="quick-order-add__col quick-order-add__subtotal"
+         data-page-component-module="oroproduct/js/app/components/quick-add-row-extension-view-component"
+         data-page-component-options="{{ {
+             view: 'oropricing/js/app/views/quick-add-row-price-view',
+             relatedSiblingComponents: {
+                 quickAddRowComponent: row_component_name
+             },
+             pricesHintTemplateSelector: '[data-name="prices_hint' ~ _collection_unique_prefix ~ '"]',
+             pricesHintTemplateContentSelector: '[data-name="prices_hint_content' ~ _collection_unique_prefix ~ '"]',
+         }|json_encode }}"
+         data-label="{{ 'oro.pricing.price.label'|trans }}"
+    >
+        <input type="text" class="input input--full quick-order-add__subtotal-input"
+               data-name="field__product-subtotal" disabled aria-label="{{ 'oro.pricing.productprice.price_input.aria_label'|trans }}">
+    </div>
+{% endblock %}

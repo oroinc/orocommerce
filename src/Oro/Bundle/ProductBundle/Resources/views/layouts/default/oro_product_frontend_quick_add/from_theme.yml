@@ -1,0 +1,7 @@
+layout:
+    actions:
+        - '@setFormTheme':
+            themes:
+              - 'OroProductBundle:layouts:default/oro_product_frontend_quick_add/form.html.twig'
+
+    conditions: 'context["newQuickAddPageLayout"] != true'

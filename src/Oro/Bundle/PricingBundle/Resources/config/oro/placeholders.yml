@@ -6,8 +6,20 @@ placeholders:
         oro_product_quick_add_additional_fields:
             items:
                 quick_add_subtotal: ~
+                'quick_add_subtotal_4.2': ~
+        oro_product_quick_add_collection_after:
+            items:
+                'price_templates_4.2': ~
+
     items:
         product_sidebar_prices_config_selector:
             action: OroPricingBundle:Product:sidebar
         quick_add_subtotal:
             template: OroPricingBundle:Product:subtotal.html.twig
+            applicable: "@oro_config.placeholder.filter->isDisabled(oro_product.new_quick_order_form)"
+        'quick_add_subtotal_4.2':
+            template: OroPricingBundle:Product:subtotal_4.2.html.twig
+            applicable: "@oro_config.placeholder.filter->isEnabled(oro_product.new_quick_order_form)"
+        'price_templates_4.2':
+            template: OroPricingBundle:Product:price_templates_4.2.html.twig
+            applicable: "@oro_config.placeholder.filter->isEnabled(oro_product.new_quick_order_form)"

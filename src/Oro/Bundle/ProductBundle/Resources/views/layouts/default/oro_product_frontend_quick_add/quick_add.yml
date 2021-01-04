@@ -8,8 +8,6 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: 'OroProductBundle:layouts:default/oro_product_frontend_quick_add/quick_add.html.twig'
-        - '@setFormTheme':
-            themes: 'OroProductBundle:layouts:default/oro_product_frontend_quick_add/form.html.twig'
         - '@setOption':
             id: page_title
             optionName: defaultValue

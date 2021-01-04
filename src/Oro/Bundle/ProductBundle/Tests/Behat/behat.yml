@@ -336,6 +336,9 @@ oro_behat_extension:
             locator: '//*[@name="oro_product[owner]"]'
             type: xpath
             element: Select2Entity
+          MultipleImages 1:
+            locator: '//input[starts-with(@name, "oro_product[MultipleImages") and contains(@name, "[file][file]")]'
+            type: xpath
           MultiFileField9_Excluded: 'oro_product[MultiFileField9_Excluded][0][file][file]'
 
     RelatedProductsConfig:
@@ -395,15 +398,19 @@ oro_behat_extension:
           SKU1:
             type: 'css'
             locator: 'input[name="oro_product_quick_add[products][0][productDisplayName]"]'
+            element: ProductAutocomplete
           SKU2:
             type: 'css'
             locator: "input[name='oro_product_quick_add[products][1][productDisplayName]']"
+            element: ProductAutocomplete
           SKU3:
             type: 'css'
             locator: "input[name='oro_product_quick_add[products][2][productDisplayName]']"
+            element: ProductAutocomplete
           SKU4:
             type: 'css'
             locator: "input[name='oro_product_quick_add[products][3][productDisplayName]']"
+            element: ProductAutocomplete
           QTY1:
             type: 'css'
             locator: "input[name='oro_product_quick_add[products][0][productQuantity]']"
@@ -420,10 +427,18 @@ oro_behat_extension:
             type: 'css'
             locator: 'select[name="oro_product_quick_add[products][0][productUnit]"]'
             element: Select2Entity
+          'UNIT1_4.2':
+            type: 'css'
+            locator: 'select[name="oro_product_quick_add[products][0][productUnit]"]'
+            element: Select
           UNIT2:
             type: 'css'
             locator: 'select[name="oro_product_quick_add[products][1][productUnit]"]'
             element: Select2Entity
+          'UNIT2_4.2':
+            type: 'css'
+            locator: 'select[name="oro_product_quick_add[products][1][productUnit]"]'
+            element: Select
 
     Quick Order Form > QTY1:
       selector:
@@ -728,6 +743,9 @@ oro_behat_extension:
 
     ProductItem:
       selector: 'div.product-item'
+
+    ProductAutocomplete:
+      class: Oro\Bundle\ProductBundle\Tests\Behat\Element\ProductAutocomplete
 
     ProductLineItem:
       selector: 'tbody.line_item'
@@ -1188,6 +1206,12 @@ oro_behat_extension:
 
     More Link:
       selector: 'a.toggle-more'
+
+    Drawing Gallery Trigger:
+      selector: 'div[class*="product-view__drawing"] [data-trigger-gallery-open]'
+
+    Multi Images Gallery Trigger:
+      selector: 'div[class*="product-view__multipleimages"] [data-trigger-gallery-open]'
 
   pages:
     Product View:

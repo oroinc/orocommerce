@@ -117,7 +117,8 @@ define(function(require) {
             this.rowsCountBeforeQuickAdd = this.getRowsCount();
             this.getElement('collection').on('content:remove' + this.eventNamespace(),
                 this.onCollectionItemRemove.bind(this));
-
+            // mapped unit for compatibility with new quick order
+            data = data.map(({unit_label: unitLabel, unit, ...rest}) => ({unit: unitLabel || unit, ...rest}));
             this.rowsPromise = $.Deferred();
             _.each(data, function(rowData) {
                 if (this.findRow(rowData)) {
@@ -242,12 +243,7 @@ define(function(require) {
         },
 
         addRows: function(count) {
-            const $collectionElement = this.getElement('collection');
-            const oldCount = $collectionElement.data('row-count-add');
-
-            $collectionElement.data('row-count-add', count);
-            this.getElement('add').click();
-            $collectionElement.data('row-count-add', oldCount);
+            this.getElement('add').trigger({type: 'add-rows', count});
         },
 
         dispose: function() {

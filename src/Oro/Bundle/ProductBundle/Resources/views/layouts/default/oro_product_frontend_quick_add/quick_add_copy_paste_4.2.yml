@@ -1,0 +1,11 @@
+layout:
+    actions:
+        - '@removeOption':
+            id: quick_add_copy_paste_form_start
+            optionName: attr.data-page-component-module
+        - '@setOption':
+            id: quick_add_copy_paste_form_start
+            optionName: attr.data-page-component-view
+            optionValue: 'oroproduct/js/app/views/quick-add-copy-paste-form-view'
+
+    conditions: 'context["newQuickAddPageLayout"] == true'
