@@ -280,8 +280,8 @@
     {% endfor %}
 
     {% set popupGalleryAttr = {
-        'data-page-component-module': 'oroproduct/js/app/widget/product-popup-gallery-widget',
-        'data-page-component-options': {
+        'data-page-component-view': {
+            view: 'oroproduct/js/app/widget/product-popup-gallery-widget',
             bindWithSlider: false,
             galleryImages: galleryImages
         }|json_encode
@@ -312,8 +312,8 @@
     {% import 'OroProductBundle::image_macros.html.twig' as Image %}
 
     {% set popupGalleryAttr = {
-        'data-page-component-module': 'oroproduct/js/app/widget/product-popup-gallery-widget',
-        'data-page-component-options': {
+        'data-page-component-view': {
+            view: 'oroproduct/js/app/widget/product-popup-gallery-widget',
             bindWithSlider: false,
             galleryImages: [{
                 src: Image.url(value, 'product_gallery_popup'),
