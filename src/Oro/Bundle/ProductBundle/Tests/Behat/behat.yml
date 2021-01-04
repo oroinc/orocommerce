@@ -1243,6 +1243,12 @@ oro_behat_extension:
       selector: '[data-hint-container="frontend-product-search-grid"]'
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGridFilters
 
+    Drawing Gallery Trigger:
+      selector: 'div[class*="product-view__drawing"] [data-trigger-gallery-open]'
+
+    Multi Images Gallery Trigger:
+      selector: 'div[class*="product-view__multipleimages"] [data-trigger-gallery-open]'
+
   pages:
     Product View:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Page\ProductView
