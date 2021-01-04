@@ -80,6 +80,15 @@ define(function(require) {
         },
 
         onSubmit: function(e) {
+            // Prevent submit form by unexpected controls like button without attribute "type"
+            if (
+                $(document.activeElement).is('button') &&
+                $.contains(this.$form[0], document.activeElement) &&
+                $(document.activeElement).attr('type') !== 'submit'
+            ) {
+                return false;
+            }
+
             if (this.options.flashMessageOnSubmit) {
                 e.preventDefault();
                 mediator.execute('showFlashMessage', 'error', this.options.flashMessageOnSubmit);
