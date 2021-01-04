@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\ImportExport\Normalizer;
 
 use Oro\Bundle\AttachmentBundle\ImportExport\FileNormalizer;
+use Oro\Bundle\GaufretteBundle\FileManager;
 use Oro\Bundle\ImportExportBundle\Serializer\Normalizer\DenormalizerInterface;
 use Oro\Bundle\ImportExportBundle\Serializer\Normalizer\NormalizerInterface;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
@@ -15,20 +16,25 @@ class ProductImageAwareFileNormalizerDecorator implements DenormalizerInterface,
     /** @var FileNormalizer */
     private $fileNormalizer;
 
+    /** @var FileManager */
+    private $fileManager;
+
     /**
      * @param FileNormalizer $fileNormalizer
+     * @param FileManager    $fileManager
      */
-    public function __construct(FileNormalizer $fileNormalizer)
+    public function __construct(FileNormalizer $fileNormalizer, FileManager $fileManager)
     {
         $this->fileNormalizer = $fileNormalizer;
+        $this->fileManager = $fileManager;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function supportsDenormalization($data, $class, $format = null, array $context = []): bool
+    public function supportsDenormalization($data, $type, $format = null, array $context = []): bool
     {
-        return $this->fileNormalizer->supportsDenormalization(...func_get_args());
+        return $this->fileNormalizer->supportsDenormalization($data, $type, $format, $context);
     }
 
     /**
@@ -36,19 +42,23 @@ class ProductImageAwareFileNormalizerDecorator implements DenormalizerInterface,
      */
     public function supportsNormalization($data, $format = null, array $context = []): bool
     {
-        return $this->fileNormalizer->supportsNormalization(...func_get_args());
+        return $this->fileNormalizer->supportsNormalization($data, $format, $context);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function denormalize($data, $class, $format = null, array $context = [])
+    public function denormalize($data, $type, $format = null, array $context = [])
     {
         if (isset($context['entityName']) && $context['entityName'] === ProductImage::class) {
-            $data = ['uri' => $data, 'uuid' => ''];
+            $path = $data;
+            if ($path && $this->isRelativePath($path)) {
+                $path = $this->fileManager->getFilePath($path);
+            }
+            $data = ['uri' => $path, 'uuid' => ''];
         }
 
-        return $this->fileNormalizer->denormalize($data, $class, $format, $context);
+        return $this->fileNormalizer->denormalize($data, $type, $format, $context);
     }
 
     /**
@@ -56,12 +66,24 @@ class ProductImageAwareFileNormalizerDecorator implements DenormalizerInterface,
      */
     public function normalize($object, $format = null, array $context = [])
     {
-        $result = $this->fileNormalizer->normalize(...func_get_args());
+        $result = $this->fileNormalizer->normalize($object, $format, $context);
 
         if (isset($context['entityName']) && $context['entityName'] === ProductImage::class) {
             $result = $result['uri'];
         }
 
         return $result;
+    }
+
+    /**
+     * @param string $path
+     *
+     * @return bool
+     */
+    private function isRelativePath(string $path): bool
+    {
+        return
+            false === strpos($path, '://')
+            && !is_file($path);
     }
 }

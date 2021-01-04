@@ -28,11 +28,6 @@ class ProductImageNormalizer extends ConfigurableEntityNormalizer
     protected $fileLocator;
 
     /**
-     * @var  string $productImageDir
-     */
-    protected $productImageDir;
-
-    /**
      * @param ImageTypeProvider $imageTypeProvider
      */
     public function setImageTypeProvider(ImageTypeProvider $imageTypeProvider)
@@ -54,17 +49,6 @@ class ProductImageNormalizer extends ConfigurableEntityNormalizer
     public function setFileLocator(FileLocator $fileLocator)
     {
         $this->fileLocator = $fileLocator;
-    }
-
-    /**
-     * @param string $productImageDir The directory where the product images source files
-     *                                should be places to import from.
-     */
-    public function setProductImageDir($productImageDir)
-    {
-        $this->productImageDir = DIRECTORY_SEPARATOR
-            . trim($productImageDir, DIRECTORY_SEPARATOR)
-            . DIRECTORY_SEPARATOR;
     }
 
     /**
@@ -118,7 +102,7 @@ class ProductImageNormalizer extends ConfigurableEntityNormalizer
 
         $imagePath = '';
         if (!empty($productImageData['image']['name'])) {
-            $imagePath = sprintf('%s/%s', $this->productImageDir, $productImageData['image']['name']);
+            $imagePath = $productImageData['image']['name'];
         }
 
         $productImageData['image'] = $imagePath;

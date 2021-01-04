@@ -145,7 +145,7 @@ class WYSIWYGFieldTwigListenerTest extends WebTestCase
         $this->em->persist($product);
         $this->em->flush();
 
-        $this->getContainer()->get('oro_cms.event_listener.wysiwyg_field_twig_listener.test')->onTerminate();
+        $this->getContainer()->get('oro_cms.tests.event_listener.wysiwyg_field_twig_listener')->onTerminate();
     }
 
     private function updateProduct(Product $product): void
