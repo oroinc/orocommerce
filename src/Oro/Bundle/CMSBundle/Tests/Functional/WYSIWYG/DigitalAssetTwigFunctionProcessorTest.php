@@ -153,7 +153,7 @@ class DigitalAssetTwigFunctionProcessorTest extends WebTestCase
     private function assertDigitalAssets(Page $page, array $contentDigitalAssets, array $styleDigitalAssets): void
     {
         $this->em->flush();
-        $this->getContainer()->get('oro_cms.event_listener.wysiwyg_field_twig_listener.test')->onTerminate();
+        $this->getContainer()->get('oro_cms.tests.event_listener.wysiwyg_field_twig_listener')->onTerminate();
 
         /** @var File[] $files */
         $files = $this->fileRepository->findBy([
