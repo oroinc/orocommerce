@@ -151,7 +151,7 @@ function parseNodes(el, config, ct = '', parent = {}) {
         }
 
         if (model.tagName === 'style') {
-            break;
+            continue;
         }
 
         if (attrsLen) {
