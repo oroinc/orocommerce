@@ -39,6 +39,7 @@ class VirtualFieldsSelectQueryConverterTest extends OrmQueryConverterTest
         $converter = new VirtualFieldsSelectQueryConverter(
             $this->getFunctionProvider(),
             $this->getVirtualFieldProvider(),
+            $this->getVirtualRelationProvider(),
             $doctrine
         );
 

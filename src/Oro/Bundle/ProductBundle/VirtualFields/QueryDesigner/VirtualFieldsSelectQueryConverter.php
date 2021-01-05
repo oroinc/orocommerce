@@ -3,47 +3,39 @@
 namespace Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner;
 
 use Doctrine\ORM\QueryBuilder;
-use Oro\Bundle\EntityBundle\Provider\VirtualFieldProviderInterface;
 use Oro\Bundle\QueryDesignerBundle\Model\AbstractQueryDesigner;
-use Oro\Bundle\QueryDesignerBundle\QueryDesigner\FunctionProviderInterface;
 use Oro\Bundle\QueryDesignerBundle\QueryDesigner\GroupingOrmQueryConverter;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 /**
  * Converts a virtual fields select query definition created by the query designer to an ORM query.
  */
 class VirtualFieldsSelectQueryConverter extends GroupingOrmQueryConverter
 {
-    /** @var array */
-    protected $tableAliasByColumn = [];
-
     /** @var QueryBuilder */
     protected $qb;
-
-    /**
-     * @param FunctionProviderInterface $functionProvider
-     * @param VirtualFieldProviderInterface $virtualFieldProvider
-     * @param ManagerRegistry $doctrine
-     */
-    public function __construct(
-        FunctionProviderInterface $functionProvider,
-        VirtualFieldProviderInterface $virtualFieldProvider,
-        ManagerRegistry $doctrine
-    ) {
-        parent::__construct($functionProvider, $virtualFieldProvider, $doctrine);
-    }
 
     /**
      * @param AbstractQueryDesigner $source
      *
      * @return QueryBuilder
      */
-    public function convert(AbstractQueryDesigner $source)
+    public function convert(AbstractQueryDesigner $source): QueryBuilder
     {
-        $this->qb = $this->doctrine->getManagerForClass($source->getEntity())->createQueryBuilder();
+        $qb = $this->doctrine->getManagerForClass($source->getEntity())->createQueryBuilder();
+
+        $this->qb = $qb;
         $this->doConvert($source);
 
-        return $this->qb;
+        return $qb;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function resetConvertState(): void
+    {
+        parent::resetConvertState();
+        $this->qb = null;
     }
 
     /**
