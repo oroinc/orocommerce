@@ -1,9 +1,0 @@
-layout:
-    actions:
-        - '@move':
-            id: checkout_additional_options
-            parentId: checkout_order_summary_content
-            siblingId: checkout_order_summary_line_items_grid_container
-            prepend: false
-
-    conditions: 'context["workflowStepName"]=="order_review" && !context["widget_container"] && context["newCheckoutPageLayout"] == true'
