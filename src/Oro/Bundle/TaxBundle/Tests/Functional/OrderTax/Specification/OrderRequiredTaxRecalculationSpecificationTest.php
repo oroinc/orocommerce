@@ -2,13 +2,10 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Functional\OrderTax\Specification;
 
-use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
-use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
 use Oro\Bundle\TaxBundle\OrderTax\Specification\OrderRequiredTaxRecalculationSpecification;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadOrderItems;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;

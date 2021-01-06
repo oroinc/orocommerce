@@ -66,10 +66,10 @@ oro_behat_extension:
 
     CheckoutProductTableRow:
       class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\ProductTableRow
-      selector: 'tbody.checkout-order-summary__grid-body tr.checkout-order-summary__grid-tr'
+      selector: 'tr.grid-row'
 
     CheckoutProductViewLink:
-      selector: 'a.checkout-order-summary__lineitem-name'
+      selector: 'h3.grid-line-items__title a'
 
     Single Page Checkout Step:
       class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep
@@ -141,17 +141,17 @@ oro_behat_extension:
 
     Checkout Line Items Table:
       class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\ProductTable
-      selector: 'table.checkout-order-summary__grid'
+      selector: 'div.checkout-order-summary__content table'
 
     CheckoutStepLineItem:
       class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStepLineItem
       selector: 'table[data-scrollable-inner-content] tr'
 
     CheckoutStepLineItemProductSku:
-      selector: 'td.checkout-order-summary__grid-td--sku div'
+      selector: 'td.grid-body-cell-item div.grid-line-items__row span, td.grid-body-cell-sku'
 
     Checkout Line Item Product Attribute:
-      selector: 'td.checkout-order-summary__grid-td--info > div'
+      selector: 'td.grid-body-cell-item div.grid-line-items__configuration div.grid-line-items__field'
 
     Ship to This Address:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Checkbox
@@ -163,22 +163,25 @@ oro_behat_extension:
       selector: '.checkout-order-summary__content'
 
     Order Summary Products GridProductLine:
-      selector: 'table.checkout-order-summary__grid tr.checkout-order-summary__grid-tr'
+      selector: 'table tr.grid-row'
 
     Order Summary Products GridProductLineName:
-      selector: '.checkout-order-summary__grid-td--info'
+      selector: '.grid-body-cell-item'
 
     Order Summary Products GridProductLineQuantity:
-      selector: '.checkout-order-summary__grid-td--qty'
+      selector: '.grid-body-cell-quantity'
 
     Order Summary Products GridProductLineUnit:
-      selector: '.checkout-order-summary__grid-td--qty'
+      selector: '.grid-body-cell-unit'
 
     Order Summary Products GridProductLinePrice:
-      selector: '.checkout-order-summary__grid-td--price'
+      selector: '.grid-body-cell-price'
 
     Order Summary Products GridProductLineSubtotal:
-      selector: '.checkout-order-summary__grid-td--subtotal'
+      selector: '.grid-body-cell-subtotal'
+
+    Checkout Order Summary Notes:
+      selector: 'div.shopping-list-notes'
 
     CheckoutGoBackButton:
         selector: 'div.checkout-sidebar ol.checkout-navigation > li > h3.checkout-navigation__title > a'
@@ -366,6 +369,9 @@ oro_behat_extension:
 
     Checkout Address Fields:
       selector: '#checkout-address-fields-container'
+
+    Checkout Line Item Product Link:
+      selector: 'h3.grid-line-items__title a[title]'
 
   pages:
     Checkout:

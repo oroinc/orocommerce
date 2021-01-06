@@ -299,6 +299,11 @@ class CheckoutWorkflowHelper
             if (!$transition || empty($transition->getFrontendOptions()['is_checkout_continue'])) {
                 $transition = null;
             }
+        } else {
+            $continueTransitionData = $this->transitionProvider->getContinueTransition($workflowItem);
+            if (!empty($continueTransitionData)) {
+                $transition = $continueTransitionData->getTransition();
+            }
         }
 
         return $transition ?? null;

@@ -140,7 +140,7 @@ Feature: Product view page for configurable product
     And "Order Review" checkout step "Order Summary Products Grid" contains products
       | Tablet PC | 1 | item | $1,100.00 |
       | Tablet PC | 1 | item | $800.00   |
-    And I click on "tpc" configurable product in "Checkout Line Items Table" with the following attributes:
+    And I click on "tpc_b_r" configurable product in "Checkout Line Items Table" with the following attributes:
       | Color       | Black |
       | Refurbished | Yes   |
     Then "Configurable Product Form" must contains values:
@@ -148,7 +148,7 @@ Feature: Product view page for configurable product
       | Refurbished | Yes   |
     When I open page with shopping list "Shopping List"
     And I click "Create Order"
-    And I click on "tpc" configurable product in "Checkout Line Items Table" with the following attributes:
+    And I click on "tpc_w" configurable product in "Checkout Line Items Table" with the following attributes:
       | Color       | White |
       | Refurbished | No    |
     Then "Configurable Product Form" must contains values:

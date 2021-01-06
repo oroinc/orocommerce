@@ -123,7 +123,7 @@ layout:
                         skipMaskView: true
                         route: 'oro_checkout_frontend_totals'
                         vars:
-                            itemsCount: '=data["checkout"].getLineItems().count()'
+                            itemsCount: '=data["oro_checkout_line_items_totals"].getData(data["checkout"]).count()'
                             totalsConainerClassName: ''
 
                 __checkout_form_buttons:

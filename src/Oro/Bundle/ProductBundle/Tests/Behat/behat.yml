@@ -743,7 +743,7 @@ oro_behat_extension:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\ProductAutocomplete
 
     ProductLineItem:
-      selector: 'tbody.line_item'
+      selector: 'table tr.grid-row'
 
     Product Shopping List Form:
       class: 'Oro\Bundle\TestFrameworkBundle\Behat\Element\Form'

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\Datagrid;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
@@ -12,6 +13,7 @@ use Oro\Bundle\DataGridBundle\Datagrid\Common\ResultsObject;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmQueryConfiguration;
 use Oro\Bundle\DataGridBundle\Extension\AbstractExtension;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
 /**
  * Adds additional configuration and metadata to the grid.
@@ -30,17 +32,25 @@ class FrontendLineItemsGridExtension extends AbstractExtension
     /** @var ConfigManager */
     private $configManager;
 
+    /** @var CheckoutLineItemsManager */
+    private $checkoutLineItemsManager;
+
     /** @var array */
     private $cache = [];
 
     /**
      * @param ManagerRegistry $registry
      * @param ConfigManager $configManager
+     * @param CheckoutLineItemsManager $checkoutLineItemsManager
      */
-    public function __construct(ManagerRegistry $registry, ConfigManager $configManager)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        ConfigManager $configManager,
+        CheckoutLineItemsManager $checkoutLineItemsManager
+    ) {
         $this->registry = $registry;
         $this->configManager = $configManager;
+        $this->checkoutLineItemsManager = $checkoutLineItemsManager;
     }
 
     /**
@@ -91,9 +101,9 @@ class FrontendLineItemsGridExtension extends AbstractExtension
         }
 
         $checkout = $this->getCheckout($checkoutId);
-        $lineItemsCount = $checkout ? count($checkout->getLineItems()) : 0;
+        $lineItems = $checkout ? $this->checkoutLineItemsManager->getData($checkout) : [];
         $item = $this->configManager->get('oro_checkout.checkout_max_line_items_per_page');
-        if ($lineItemsCount <= $item) {
+        if (count($lineItems) <= $item) {
             $item = [
                 'label' => 'oro.checkout.grid.toolbar.pageSize.all.label',
                 'size' => $item
@@ -107,6 +117,29 @@ class FrontendLineItemsGridExtension extends AbstractExtension
                 [$item]
             )
         );
+
+        $orderLineItems = [];
+        foreach ($lineItems as $lineItem) {
+            $orderLineItems[$this->getDataKey($lineItem)] = $lineItem;
+        }
+
+        $ids = [];
+        foreach ($checkout->getLineItems() as $lineItem) {
+            if (!isset($orderLineItems[$this->getDataKey($lineItem)])) {
+                $ids[] = $lineItem->getId();
+            }
+        }
+
+        $this->parameters->set('unacceptable_ids', $ids);
+    }
+
+    /**
+     * @param ProductLineItemInterface $item
+     * @return string
+     */
+    private function getDataKey(ProductLineItemInterface $item): string
+    {
+        return implode(':', [$item->getProductSku(), $item->getProductUnitCode(), $item->getQuantity()]);
     }
 
     /**

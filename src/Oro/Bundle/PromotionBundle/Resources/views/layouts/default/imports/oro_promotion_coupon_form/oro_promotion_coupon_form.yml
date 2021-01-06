@@ -44,11 +44,6 @@ layout:
                         __widget_container:
                             __expand_link: ~
                             __expandable_container:
-                                __form_container:
-                                    __coupon_input_container:
-                                        __coupon_input: ~
-                                        __errors_container: ~
-                                    __apply_button: ~
                                 __applied_coupons_list_container:
                                     __applied_coupons_list_header: ~
                                     __applied_coupons_list_rows_container:
@@ -57,3 +52,8 @@ layout:
                                                 __applied_coupons_list_row_coupon_code: ~
                                                 __applied_coupons_list_row_promotion_name: ~
                                             __applied_coupons_list_row_delete_button: ~
+                                __form_container:
+                                    __coupon_input_container:
+                                        __coupon_input: ~
+                                        __errors_container: ~
+                                    __apply_button: ~

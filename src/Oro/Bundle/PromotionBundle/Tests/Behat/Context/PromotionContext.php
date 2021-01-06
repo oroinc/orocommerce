@@ -270,7 +270,9 @@ class PromotionContext extends OroFeatureContext implements OroPageObjectAware
         /** @var PromotionShoppingListLineItem $lineItem */
         foreach ($element->getLineItems() as $lineItem) {
             $sku = $lineItem->getProductSKU();
-            $expectedDiscounts[$sku] = ['sku' => $sku, 'discount' => $lineItem->getDiscount()];
+            if ($sku) {
+                $expectedDiscounts[$sku] = ['sku' => $sku, 'discount' => $lineItem->getDiscount()];
+            }
         }
 
         $rows = $table->getRows();

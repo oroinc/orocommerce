@@ -27,6 +27,7 @@ layout:
                 checkout: '=data["checkout"]'
                 attr:
                     class: 'checkout-form__back--no-offset'
+
         - '@add':
             id: checkout_button_continue_right
             blockType: checkout_transition_continue
@@ -43,7 +44,12 @@ layout:
 
         - '@move':
             id: checkout_order_summary_content
-            parentId: checkout_form_fields
+            parentId: checkout_information_body
+            prepend: true
+
+        - '@move':
+            id: checkout_form_errors
+            parentId: checkout_information_body
             prepend: true
 
         - '@move':

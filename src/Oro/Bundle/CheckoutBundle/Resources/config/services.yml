@@ -763,6 +763,7 @@ services:
         arguments:
             - '@doctrine'
             - '@oro_config.manager'
+            - '@oro_checkout.data_provider.manager.checkout_line_items'
         tags:
             - { name: oro_datagrid.extension, priority: 10 }
 

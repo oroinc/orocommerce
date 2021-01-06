@@ -16,7 +16,9 @@
     padding: $coupon-container-padding;
 
     &__content {
-        padding: $coupon-container-content-inner-offset;
+        .coupon-trigger ~ .collapse-view__container & {
+            padding: $coupon-container-content-inner-offset;
+        }
     }
 
     &__input-wrap {

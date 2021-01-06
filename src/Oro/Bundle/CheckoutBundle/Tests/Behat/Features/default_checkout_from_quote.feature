@@ -42,7 +42,7 @@ Feature: Default Checkout From Quote
       | Billing Information | Quote #1     | 1     | $25.00   |
     And I click "Check Out" on row "Quote #1" in grid "OpenOrdersGrid"
 
-    When I click "Edit Order"
+    When I click "Edit items"
     And I type "10" in "First Product Quantity on Quote"
     And I click "Submit"
     Then Checkout "Order Summary Products Grid" should contain products:

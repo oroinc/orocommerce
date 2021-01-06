@@ -44,13 +44,18 @@ layout:
 
         - '@move':
             id: checkout_order_summary_content
-            parentId: checkout_form_fields
+            parentId: checkout_information_body
             prepend: true
 
         - '@move':
-              id: checkout_order_footer
-              parentId: checkout_form
-              prepend: false
+            id: checkout_form_errors
+            parentId: checkout_information_body
+            prepend: true
+
+        - '@move':
+            id: checkout_order_footer
+            parentId: checkout_form
+            prepend: false
 
         - '@remove':
             id: checkout_order_summary_container

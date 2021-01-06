@@ -26,20 +26,30 @@ Feature: Notes from shopping list are transferred to the checkout
     And I click "Add"
     Then I should see "Line item note has been successfully updated" flash message
     And I click "Create Order"
-    Then I should see "400-Watt Bulb Work Light Note: SKU123 Product Note"
-    And I should see "Notes: My shopping list notes"
+    Then I should see following grid:
+      | SKU    | Item                                         |
+      | SKU123 | 400-Watt Bulb Work Light SKU123 Product Note |
+    And I should see "My shopping list notes" in the "Checkout Order Summary Notes" element
     And I click "Continue"
-    Then I should see "400-Watt Bulb Work Light Note: SKU123 Product Note"
-    And I should see "Notes: My shopping list notes"
+    Then I should see following grid:
+      | SKU    | Item                                         |
+      | SKU123 | 400-Watt Bulb Work Light SKU123 Product Note |
+    And I should see "My shopping list notes" in the "Checkout Order Summary Notes" element
     And I click "Continue"
-    Then I should see "400-Watt Bulb Work Light Note: SKU123 Product Note"
-    And I should see "Notes: My shopping list notes"
+    Then I should see following grid:
+      | SKU    | Item                                         |
+      | SKU123 | 400-Watt Bulb Work Light SKU123 Product Note |
+    And I should see "My shopping list notes" in the "Checkout Order Summary Notes" element
     And I click "Continue"
-    Then I should see "400-Watt Bulb Work Light Note: SKU123 Product Note"
-    And I should see "Notes: My shopping list notes"
+    Then I should see following grid:
+      | SKU    | Item                                         |
+      | SKU123 | 400-Watt Bulb Work Light SKU123 Product Note |
+    And I should see "My shopping list notes" in the "Checkout Order Summary Notes" element
     And I click "Continue"
-    Then I should see "400-Watt Bulb Work Light Note: SKU123 Product Note"
-    And I should not see "Notes: My shopping list notes"
+    Then I should see following grid:
+      | SKU    | Item                                         |
+      | SKU123 | 400-Watt Bulb Work Light SKU123 Product Note |
+    And I should not see a "Checkout Order Summary Notes" element
     And "Checkout Order Review Form" must contains values:
       | Notes | My shopping list notes |
     And I click "Submit Order"
@@ -63,8 +73,10 @@ Feature: Notes from shopping list are transferred to the checkout
     And I click "Add"
     Then I should see "Line item note has been successfully updated" flash message
     And I click "Create Order"
-    Then I should see "400-Watt Bulb Work Light Note: SKU123 Product Note"
-    And I should not see "Notes: My shopping list notes"
+    Then I should see following grid:
+      | Item                                                         |
+      | 400-Watt Bulb Work Light SKU123 In Stock SKU123 Product Note |
+    And I should not see a "Checkout Order Summary Notes" element
     And "Checkout Order Review Form" must contains values:
       | Notes | My shopping list notes |
     And I click "Submit Order"
