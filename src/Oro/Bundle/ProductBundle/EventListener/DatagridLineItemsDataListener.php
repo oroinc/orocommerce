@@ -68,8 +68,8 @@ class DatagridLineItemsDataListener
 
                 $parentProduct = $lineItem->getParentProduct();
                 if ($parentProduct) {
-                    $lineItemData['productId'] = $parentProduct->getId();
                     $lineItemData['variantId'] = $lineItemData['productId'];
+                    $lineItemData['productId'] = $parentProduct->getId();
                     $lineItemData['productConfiguration'] = $this->getVariantFieldsValuesForLineItem($lineItem);
                 }
             }

@@ -124,6 +124,6 @@ layout:
         - '@setOption':
             id: __checkout_order_summary_totals
             optionName: vars.itemsCount
-            optionValue: '=data["checkout"].getLineItems().count()'
+            optionValue: '=data["oro_checkout_line_items_totals"].getData(data["checkout"]).count()'
 
     conditions: 'context["newCheckoutPageLayout"] == true'

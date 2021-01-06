@@ -299,7 +299,6 @@ class CheckoutWorkflowHelper
                 $transition = null;
             }
         } else {
-            // BC layer.
             $continueTransitionData = $this->transitionProvider->getContinueTransition($workflowItem);
             if (!empty($continueTransitionData)) {
                 $transition = $continueTransitionData->getTransition();

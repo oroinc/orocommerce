@@ -5,6 +5,8 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Datagrid;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CheckoutBundle\Datagrid\FrontendLineItemsGridExtension;
+use Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter;
+use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutLineItemRepository;
@@ -28,6 +30,9 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
 
     /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
+
+    /** @var CheckoutLineItemsManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $checkoutLineItemsManager;
 
     /** @var ParameterBag */
     private $parameters;
@@ -56,10 +61,15 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
             ->willReturn($manager);
 
         $this->configManager = $this->createMock(ConfigManager::class);
+        $this->checkoutLineItemsManager = $this->createMock(CheckoutLineItemsManager::class);
 
         $this->parameters = new ParameterBag();
 
-        $this->extension = new FrontendLineItemsGridExtension($registry, $this->configManager);
+        $this->extension = new FrontendLineItemsGridExtension(
+            $registry,
+            $this->configManager,
+            $this->checkoutLineItemsManager
+        );
         $this->extension->setParameters($this->parameters);
     }
 
@@ -141,10 +151,19 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
             ->with('oro_checkout.checkout_max_line_items_per_page', false, false, null)
             ->willReturn(1000);
 
+        $checkout = $this->createCheckout(900);
+
         $this->checkoutRepository->expects($this->once())
             ->method('find')
             ->with(42)
-            ->willReturn($this->createCheckout(900));
+            ->willReturn($checkout);
+
+        $converter = new CheckoutLineItemsConverter();
+
+        $this->checkoutLineItemsManager->expects($this->once())
+            ->method('getData')
+            ->with($checkout)
+            ->willReturn($converter->convert($checkout->getLineItems()->toArray()));
 
         $this->extension->processConfigs($config);
 
@@ -239,10 +258,19 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
             ->with('oro_checkout.checkout_max_line_items_per_page', false, false, null)
             ->willReturn(1000);
 
+        $checkout = $this->createCheckout(2000);
+
         $this->checkoutRepository->expects($this->once())
             ->method('find')
             ->with(42)
-            ->willReturn($this->createCheckout(2000));
+            ->willReturn($checkout);
+
+        $converter = new CheckoutLineItemsConverter();
+
+        $this->checkoutLineItemsManager->expects($this->once())
+            ->method('getData')
+            ->with($checkout)
+            ->willReturn($converter->convert($checkout->getLineItems()->toArray()));
 
         $this->extension->processConfigs($config);
 
@@ -288,10 +316,19 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
             ->with('oro_checkout.checkout_max_line_items_per_page', false, false, null)
             ->willReturn(1000);
 
+        $checkout = $this->createCheckout(999);
+
         $this->checkoutRepository->expects($this->once())
             ->method('find')
             ->with(42)
-            ->willReturn($this->createCheckout(999));
+            ->willReturn($checkout);
+
+        $converter = new CheckoutLineItemsConverter();
+
+        $this->checkoutLineItemsManager->expects($this->once())
+            ->method('getData')
+            ->with($checkout)
+            ->willReturn($converter->convert($checkout->getLineItems()->toArray()));
 
         $this->extension->processConfigs($config);
 

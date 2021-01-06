@@ -367,6 +367,9 @@ oro_behat_extension:
     Checkout Address Fields:
       selector: '#checkout-address-fields-container'
 
+    Checkout Line Item Product Link:
+      selector: 'h3.grid-line-items__title a[title]'
+
   pages:
     Checkout:
       class: Oro\Bundle\CheckoutBundle\Tests\Behat\Page\CheckoutPage

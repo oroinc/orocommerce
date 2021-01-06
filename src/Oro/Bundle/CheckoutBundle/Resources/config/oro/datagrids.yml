@@ -225,9 +225,13 @@ datagrids:
                 where:
                     and:
                         - IDENTITY(lineItem.checkout) = :checkout_id
+                        - lineItem.id NOT IN (:unacceptable_ids)
                 groupBy: mainProductId, unit.code
             bind_parameters:
                 - checkout_id
+                -
+                    name: unacceptable_ids
+                    default: [0]
         columns:
             sku:
                 label:         oro.checkout.order_summary.sku

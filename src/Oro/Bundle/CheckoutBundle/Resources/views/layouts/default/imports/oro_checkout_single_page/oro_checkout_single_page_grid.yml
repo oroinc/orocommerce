@@ -6,24 +6,31 @@ layout:
             optionValue: frontend-single-page-checkout-line-items-grid
 
         - '@appendOption':
-              id: datagrid
-              optionName: grid_render_parameters.cssClass
-              optionValue: 'responsive-shopping-list-grid-tablet'
+            id: datagrid
+            optionName: grid_render_parameters.cssClass
+            optionValue: 'responsive-shopping-list-grid-tablet'
 
         - '@setOption':
-              id: checkout_content
-              optionName: attr.class
-              optionValue: ' single-page-checkout-view-4-2 '
+            id: checkout_content
+            optionName: attr.class
+            optionValue: ' single-page-checkout-view-4-2 '
 
         - '@setOption':
-              id: single_page_checkout_sticky_panel
-              optionName: attr.class
-              optionValue: ' single-page-checkout-view-4-2 '
+            id: single_page_checkout_sticky_panel
+            optionName: attr.class
+            optionValue: ' single-page-checkout-view-4-2 '
+
+        - '@add':
+            id: checkout_order_summary_line_item_wrapper
+            blockType: layout_subtree_update
+            parentId: checkout_order_summary_content
+            prepend: true
+            options:
+                reloadEvents: []
 
         - '@move':
             id: checkout_order_summary_line_items_grid_container
-            parentId: checkout_order_summary_content
-            prepend: true
+            parentId: checkout_order_summary_line_item_wrapper
 
         - '@move':
             id: checkout_order_summary_totals_sticky_container
