@@ -43,6 +43,7 @@ define(function(require) {
 
             if (this.options.hasForm) {
                 this.$form = this.$el.closest('form');
+                this.$form.bindFirst('submit.' + this.cid, this.preventSubmit.bind(this));
                 this.$form.on('submit.' + this.cid, this.onSubmit.bind(this));
             } else {
                 this.$el.on('click.' + this.cid, this.transit.bind(this));
@@ -79,16 +80,22 @@ define(function(require) {
             this.$transitionTriggers.on('click.' + this.cid, this.transit.bind(this));
         },
 
-        onSubmit: function(e) {
-            // Prevent submit form by unexpected controls like button without attribute "type"
+        /**
+         * Prevent submit form by unexpected controls like button without attribute "type"
+         * @param e
+         */
+        preventSubmit: function(e) {
             if (
                 $(document.activeElement).is('button') &&
                 $.contains(this.$form[0], document.activeElement) &&
                 $(document.activeElement).attr('type') !== 'submit'
             ) {
+                e.stopImmediatePropagation();
                 return false;
             }
+        },
 
+        onSubmit: function(e) {
             if (this.options.flashMessageOnSubmit) {
                 e.preventDefault();
                 mediator.execute('showFlashMessage', 'error', this.options.flashMessageOnSubmit);
