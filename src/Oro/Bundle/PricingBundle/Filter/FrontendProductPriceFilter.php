@@ -9,13 +9,11 @@ use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\SearchBundle\Datagrid\Filter\SearchNumberRangeFilter;
 
 /**
- * A filter that can be used on frontend`s product grid to get products by prices range.
+ * The filter by a product price on the storefront.
  */
 class FrontendProductPriceFilter extends SearchNumberRangeFilter
 {
-    /**
-     * @var UnitLabelFormatterInterface
-     */
+    /** @var UnitLabelFormatterInterface */
     protected $formatter;
 
     /**

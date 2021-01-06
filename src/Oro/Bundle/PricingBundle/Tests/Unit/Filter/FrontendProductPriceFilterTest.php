@@ -22,39 +22,16 @@ use Symfony\Component\Form\Test\FormInterface;
 
 class FrontendProductPriceFilterTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var string
-     */
-    private $filterName = 'filter-name';
-
-    /**
-     * @var string
-     */
-    private $dataName = 'field-name';
-
-    /**
-     * @var FormInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $form;
 
-    /**
-     * @var FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $formFactory;
 
-    /**
-     * @var FilterUtility|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $filterUtility;
-
-    /**
-     * @var UnitLabelFormatter|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var UnitLabelFormatter|\PHPUnit\Framework\MockObject\MockObject */
     private $formatter;
 
-    /**
-     * @var SearchNumberRangeFilter
-     */
+    /** @var SearchNumberRangeFilter */
     private $filter;
 
     /**
@@ -68,17 +45,12 @@ class FrontendProductPriceFilterTest extends \PHPUnit\Framework\TestCase
             ->method('create')
             ->will($this->returnValue($this->form));
 
-        $this->filterUtility = $this->createMock(FilterUtility::class);
-        $this->filterUtility->expects($this->any())
-            ->method('getExcludeParams')
-            ->willReturn([]);
-
         $this->formatter = $this->createMock(UnitLabelFormatter::class);
 
-        $this->filter = new FrontendProductPriceFilter($this->formFactory, $this->filterUtility);
+        $this->filter = new FrontendProductPriceFilter($this->formFactory, new FilterUtility());
         $this->filter->setFormatter($this->formatter);
-        $this->filter->init($this->filterName, [
-            FilterUtility::DATA_NAME_KEY => $this->dataName,
+        $this->filter->init('test-filter', [
+            FilterUtility::DATA_NAME_KEY => 'field_name',
         ]);
     }
 
@@ -276,11 +248,9 @@ class FrontendProductPriceFilterTest extends \PHPUnit\Framework\TestCase
             ->willReturn($formView);
 
         $expected = [
-            'name' => 'filter-name',
-            'label' => 'Filter-name',
+            'name' => 'test-filter',
+            'label' => 'Test-filter',
             'choices' => [],
-            'data_name' => 'field-name',
-            'options' => [],
             'lazy' => false,
             'formatterOptions' => [
                 'decimals' => 0,

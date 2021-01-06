@@ -6,13 +6,17 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Placeholder\CategoryPathPlaceholder;
 use Oro\Bundle\FilterBundle\Datasource\FilterDatasourceAdapterInterface;
 use Oro\Bundle\FilterBundle\Filter\AbstractFilter;
+use Oro\Bundle\FilterBundle\Filter\FilterPrepareDataInterface;
 use Oro\Bundle\FilterBundle\Filter\FilterUtility;
 use Oro\Bundle\SearchBundle\Datagrid\Filter\Adapter\SearchFilterDatasourceAdapter;
 use Oro\Bundle\SearchBundle\Datagrid\Form\Type\SearchEntityFilterType;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
 
-class SubcategoryFilter extends AbstractFilter
+/**
+ * The filter by a subcategory value for a datasource based on a search index.
+ */
+class SubcategoryFilter extends AbstractFilter implements FilterPrepareDataInterface
 {
     const FILTER_TYPE_NAME = 'subcategory';
     const DEFAULT_VALUE = [];
@@ -53,6 +57,14 @@ class SubcategoryFilter extends AbstractFilter
     /**
      * {@inheritDoc}
      */
+    public function prepareData(array $data): array
+    {
+        throw new \BadMethodCallException('Not implemented');
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function apply(FilterDatasourceAdapterInterface $ds, $data)
     {
         if (!$ds instanceof SearchFilterDatasourceAdapter) {
@@ -75,7 +87,6 @@ class SubcategoryFilter extends AbstractFilter
 
         /** @var Category[] $categories */
         $categories = $data['value']->toArray();
-
         if (!$categories) {
             $categories = [$rootCategory];
         }

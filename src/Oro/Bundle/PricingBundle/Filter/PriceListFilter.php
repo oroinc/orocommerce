@@ -2,12 +2,33 @@
 
 namespace Oro\Bundle\PricingBundle\Filter;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Oro\Bundle\FilterBundle\Filter\FilterPrepareDataInterface;
 use Oro\Bundle\FilterBundle\Filter\FilterUtility;
 use Oro\Bundle\FilterBundle\Filter\SingleChoiceFilter;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Form\Type\Filter\DefaultPriceListFilterType;
+use Symfony\Component\Form\FormFactoryInterface;
 
-class PriceListFilter extends SingleChoiceFilter
+/**
+ * The filter by a price list.
+ */
+class PriceListFilter extends SingleChoiceFilter implements FilterPrepareDataInterface
 {
+    /** @var ManagerRegistry */
+    private $doctrine;
+
+    /**
+     * @param FormFactoryInterface $factory
+     * @param FilterUtility        $util
+     * @param ManagerRegistry      $doctrine
+     */
+    public function __construct(FormFactoryInterface $factory, FilterUtility $util, ManagerRegistry $doctrine)
+    {
+        parent::__construct($factory, $util);
+        $this->doctrine = $doctrine;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -16,6 +37,21 @@ class PriceListFilter extends SingleChoiceFilter
         $params[FilterUtility::FRONTEND_TYPE_KEY] = 'choice';
 
         parent::init($name, $params);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function prepareData(array $data): array
+    {
+        $data = parent::prepareData($data);
+        if (isset($data['value'])) {
+            $data['value'] = $this->doctrine
+                ->getManagerForClass(PriceList::class)
+                ->getReference(PriceList::class, (int)$data['value']);
+        }
+
+        return $data;
     }
 
     /**
