@@ -2,36 +2,33 @@
 
 namespace Oro\Bundle\ConsentBundle\Filter;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConsentBundle\Entity\Consent;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FilterBundle\Datasource\FilterDatasourceAdapterInterface;
 use Oro\Bundle\FilterBundle\Filter\DictionaryFilter;
 use Oro\Bundle\FilterBundle\Filter\FilterUtility;
 use Symfony\Component\Form\FormFactoryInterface;
 
 /**
- * Adds consents filter choices depending on consents feature enabled status
+ * The filter by accepted consents.
  */
 class AcceptedConsentsFilter extends DictionaryFilter
 {
-    /**
-     * @var DoctrineHelper $doctrineHelper
-     */
-    private $doctrineHelper;
+    /** @var ManagerRegistry */
+    private $doctrine;
 
     /**
      * @param FormFactoryInterface $factory
-     * @param FilterUtility $util
-     * @param DoctrineHelper $doctrineHelper
+     * @param FilterUtility        $util
+     * @param ManagerRegistry      $doctrine
      */
     public function __construct(
         FormFactoryInterface $factory,
         FilterUtility $util,
-        DoctrineHelper $doctrineHelper
+        ManagerRegistry $doctrine
     ) {
-        $this->doctrineHelper = $doctrineHelper;
-
         parent::__construct($factory, $util);
+        $this->doctrine = $doctrine;
     }
 
     /**
@@ -42,7 +39,7 @@ class AcceptedConsentsFilter extends DictionaryFilter
         $metadata = parent::getMetadata();
 
         /** @var Consent[] $consents */
-        $consents = $this->doctrineHelper->getEntityRepository(Consent::class)->findAll();
+        $consents = $this->doctrine->getRepository(Consent::class)->findAll();
 
         $dictionaryChoiceCollection = [];
         foreach ($consents as $consent) {
@@ -60,8 +57,7 @@ class AcceptedConsentsFilter extends DictionaryFilter
     }
 
     /**
-     * @param FilterDatasourceAdapterInterface $ds
-     * @return mixed
+     * {@inheritdoc}
      */
     protected function getFilteredFieldName(FilterDatasourceAdapterInterface $ds)
     {

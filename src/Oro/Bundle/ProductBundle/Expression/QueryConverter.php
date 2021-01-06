@@ -36,24 +36,26 @@ class QueryConverter extends GroupingOrmQueryConverter
     public function convert(AbstractQueryDesigner $source)
     {
         $this->tableAliasByColumn = [];
-        /** @var array $definition */
+
         $definition = json_decode($source->getDefinition(), JSON_OBJECT_AS_ARRAY);
         if (empty($definition['columns'])) {
             $definition['columns'] = [['name' => 'id']];
             $source->setDefinition(json_encode($definition));
         }
 
-        $this->qb = $this->doctrine->getManagerForClass($source->getEntity())->createQueryBuilder();
+        $qb = $this->doctrine->getManagerForClass($source->getEntity())->createQueryBuilder();
+
+        $this->qb = $qb;
         $this->doConvert($source);
 
         foreach ($this->converterExtensions as $extension) {
             $this->tableAliasByColumn = array_merge(
                 $this->tableAliasByColumn,
-                $extension->convert($source, $this->qb)
+                $extension->convert($source, $qb)
             );
         }
 
-        return $this->qb;
+        return $qb;
     }
 
     /**

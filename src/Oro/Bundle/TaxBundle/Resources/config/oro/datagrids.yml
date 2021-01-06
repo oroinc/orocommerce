@@ -164,7 +164,7 @@ datagrids:
                     type:      string
                     data_name: tax.description
                 rate:
-                    type:      string
+                    type:      percent
                     data_name: tax.rate
                 createdAt:
                     type:      datetime
@@ -269,10 +269,10 @@ datagrids:
                     data_name: tax_jurisdiction_code
                 createdAt:
                     type:      datetime
-                    data_name: tax_code.createdAt
+                    data_name: tax_rule.createdAt
                 updatedAt:
                     type:      datetime
-                    data_name: tax_code.updatedAt
+                    data_name: tax_rule.updatedAt
         properties:
             id: ~
             view_link:
@@ -319,9 +319,9 @@ datagrids:
                 description:
                     data_name: jurisdiction.description
                 createdAt:
-                    data_name: tax_code.createdAt
+                    data_name: jurisdiction.createdAt
                 updatedAt:
-                    data_name: tax_code.updatedAt
+                    data_name: jurisdiction.updatedAt
             disable_default_sorting: true
         filters:
             columns:
@@ -333,10 +333,10 @@ datagrids:
                     data_name: jurisdiction.description
                 createdAt:
                     type:      datetime
-                    data_name: tax_code.createdAt
+                    data_name: jurisdiction.createdAt
                 updatedAt:
                     type:      datetime
-                    data_name: tax_code.updatedAt
+                    data_name: jurisdiction.updatedAt
         properties:
             id: ~
             view_link:

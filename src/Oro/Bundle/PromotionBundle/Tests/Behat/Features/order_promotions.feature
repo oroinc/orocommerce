@@ -1,6 +1,6 @@
 @regression
 @ticket-BB-19895
-@fixture-OroOrderBundle:OrderPromotions.yml
+@fixture-OroPromotionBundle:order_promotions.yml
 
 Feature: Order promotions
   Verify that all discounted actions work correctly if line items in order have been changed.

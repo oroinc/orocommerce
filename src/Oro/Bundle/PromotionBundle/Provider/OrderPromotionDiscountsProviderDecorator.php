@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\OrderBundle\Provider;
+namespace Oro\Bundle\PromotionBundle\Provider;
 
 use Doctrine\ORM\PersistentCollection;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -9,7 +9,6 @@ use Oro\Bundle\PromotionBundle\Discount\DiscountContextInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotionsAwareInterface;
-use Oro\Bundle\PromotionBundle\Provider\PromotionDiscountsProviderInterface;
 
 /**
  * Blocks the automatic addition of discounts to the order if at least one item in the order has not been changed.

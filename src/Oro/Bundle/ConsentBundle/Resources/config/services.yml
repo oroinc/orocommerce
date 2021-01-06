@@ -270,7 +270,7 @@ services:
         arguments:
             - '@form.factory'
             - '@oro_filter.filter_utility'
-            - '@oro_entity.doctrine_helper'
+            - '@doctrine'
         tags:
             - { name: oro_filter.extension.orm_filter.filter, type: accepted_consents }
 
