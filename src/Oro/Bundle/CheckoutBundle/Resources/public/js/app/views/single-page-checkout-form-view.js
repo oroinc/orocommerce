@@ -95,6 +95,14 @@ define(function(require) {
             SinglePageCheckoutFormView.__super__.initialize.call(this, options);
         },
 
+        /**
+         * @inheritDoc
+         */
+        delegateEvents: function(events) {
+            SinglePageCheckoutFormView.__super__.delegateEvents.call(this, events);
+            this.$el.bindFirst('submit' + this.eventNamespace(), this.preventSubmit.bind(this));
+        },
+
         afterCheck: function($el, force) {
             if (!$el) {
                 $el = this.$el;
@@ -167,19 +175,25 @@ define(function(require) {
         },
 
         /**
-         * @param {jQuery.Event} event
+         * Prevent submit form by unexpected controls like button without attribute "type"
+         * @param e
          */
-        onSubmit: function(event) {
-            event.preventDefault();
-
-            // Prevent submit form by unexpected controls like button without attribute "type"
+        preventSubmit: function(e) {
             if (
                 $(document.activeElement).is('button') &&
                 $.contains(this.el, document.activeElement) &&
                 $(document.activeElement).attr('type') !== 'submit'
             ) {
-                return;
+                e.stopImmediatePropagation();
+                return false;
             }
+        },
+
+        /**
+         * @param {jQuery.Event} event
+         */
+        onSubmit: function(event) {
+            event.preventDefault();
 
             const validate = this.$el.validate();
             if (!validate.form()) {
