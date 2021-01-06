@@ -3,9 +3,10 @@
 namespace Oro\Bundle\ConsentBundle\Tests\Unit\Filter;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\ConsentBundle\Entity\Consent;
 use Oro\Bundle\ConsentBundle\Filter\AcceptedConsentsFilter;
-use Oro\Bundle\ConsentBundle\Tests\Unit\Entity\Stub\Consent;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\ConsentBundle\Tests\Unit\Entity\Stub\Consent as ConsentStub;
 use Oro\Bundle\FilterBundle\Filter\FilterUtility;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormView;
@@ -13,41 +14,24 @@ use Symfony\Component\Form\Test\FormInterface;
 
 class AcceptedConsentsFilterTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var AcceptedConsentsFilter
-     */
+    /** @var FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $formFactory;
+
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrine;
+
+    /** @var AcceptedConsentsFilter */
     private $filter;
 
-    /**
-     * @var FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $factoryMock;
-
-    /**
-     * @var FilterUtility
-     */
-    private $filterUtility;
-
-    /**
-     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $doctrineHelper;
-
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
-        $this->factoryMock = $this->createMock(FormFactoryInterface::class);
-        $this->filterUtility = new FilterUtility();
-        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->formFactory = $this->createMock(FormFactoryInterface::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
 
         $this->filter = new AcceptedConsentsFilter(
-            $this->factoryMock,
-            $this->filterUtility,
-            $this->doctrineHelper
+            $this->formFactory,
+            new FilterUtility(),
+            $this->doctrine
         );
     }
 
@@ -55,7 +39,7 @@ class AcceptedConsentsFilterTest extends \PHPUnit\Framework\TestCase
     {
         $formView = new FormView();
         $formMock = $this->createMock(FormInterface::class);
-        $this->factoryMock->expects($this->once())
+        $this->formFactory->expects($this->once())
             ->method('create')
             ->willReturn($formMock);
 
@@ -72,12 +56,12 @@ class AcceptedConsentsFilterTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityRepository')
-            ->with('Oro\Bundle\ConsentBundle\Entity\Consent')
+        $this->doctrine->expects($this->once())
+            ->method('getRepository')
+            ->with(Consent::class)
             ->willReturn($repository);
 
-        $consent = (new Consent())->setDefaultName('Default name');
+        $consent = (new ConsentStub())->setDefaultName('Default name');
 
         $repository->expects($this->once())
             ->method('findAll')
@@ -90,7 +74,7 @@ class AcceptedConsentsFilterTest extends \PHPUnit\Framework\TestCase
             0 => 'params',
            'type' => 'dictionary',
            'lazy' => false,
-           'class' => "",
+           'class' => '',
            'select2ConfigData' => [[
                'id' => null,
                'value' => null,

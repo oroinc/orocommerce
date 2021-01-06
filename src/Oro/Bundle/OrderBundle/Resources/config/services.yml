@@ -461,13 +461,6 @@ services:
     oro_order.provider.previously_purchased_order_statuses:
         class: Oro\Bundle\OrderBundle\Provider\PreviouslyPurchasedOrderStatusesProvider
 
-    oro_order.provider.order_promotion_discounts_provider_decorator:
-        class: Oro\Bundle\OrderBundle\Provider\OrderPromotionDiscountsProviderDecorator
-        public: false
-        decorates: oro_promotion.provider.disabled_promotion_discounts_provider_decorator
-        arguments:
-            - '@oro_order.provider.order_promotion_discounts_provider_decorator.inner'
-
     oro_order.event_listener.change_config_option:
         class: Oro\Bundle\OrderBundle\EventListener\PreviouslyPurchasedFeatureToggleListener
         arguments:
