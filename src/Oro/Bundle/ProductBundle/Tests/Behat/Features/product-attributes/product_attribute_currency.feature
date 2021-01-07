@@ -12,7 +12,7 @@ Feature: Product attribute currency
     When I click "Create Attribute"
     And I fill form with:
       | Field Name | CurrencyField |
-      | Type       | Currency      |
+      | Type       | Money         |
     And I click "Continue"
     Then I should see that "Product Attribute Frontend Options" does not contain "Searchable"
     And I should see that "Product Attribute Frontend Options" contains "Filterable"
@@ -25,7 +25,7 @@ Feature: Product attribute currency
     Then I should see "Attribute was successfully saved" flash message
     And I should not see "Update schema"
 
-    When I check "Currency" in "Data Type" filter
+    When I check "Money" in "Data Type" filter
     Then I should see following grid:
       | Name          | Storage type     |
       | CurrencyField | Serialized field |
