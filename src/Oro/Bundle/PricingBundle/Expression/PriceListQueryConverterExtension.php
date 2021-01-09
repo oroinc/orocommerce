@@ -9,7 +9,12 @@ use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\ProductBundle\Expression\QueryConverterExtensionInterface;
 use Oro\Bundle\QueryDesignerBundle\Model\AbstractQueryDesigner;
+use Oro\Bundle\QueryDesignerBundle\QueryDesigner\QueryDefinitionUtil;
 
+/**
+ * Adds joins for price lists and price list prices if they are requested to an ORM query
+ * created by {@see \Oro\Bundle\ProductBundle\Expression\QueryConverter}.
+ */
 class PriceListQueryConverterExtension implements QueryConverterExtensionInterface
 {
     const TABLE_ALIAS_PREFIX = '_plt';
@@ -30,7 +35,7 @@ class PriceListQueryConverterExtension implements QueryConverterExtensionInterfa
     public function convert(AbstractQueryDesigner $source, QueryBuilder $queryBuilder)
     {
         $this->tableAliasByColumn = [];
-        $definition = json_decode($source->getDefinition(), JSON_OBJECT_AS_ARRAY);
+        $definition = QueryDefinitionUtil::decodeDefinition($source->getDefinition());
         if (!empty($definition['price_lists'])) {
             $this->joinPriceLists($definition['price_lists'], $queryBuilder);
         }
