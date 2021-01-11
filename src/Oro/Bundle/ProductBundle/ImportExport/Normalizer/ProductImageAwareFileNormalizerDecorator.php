@@ -53,7 +53,7 @@ class ProductImageAwareFileNormalizerDecorator implements DenormalizerInterface,
         if (isset($context['entityName']) && $context['entityName'] === ProductImage::class) {
             $path = $data;
             if ($path && $this->isRelativePath($path)) {
-                $path = $this->fileManager->getFilePath($path);
+                $path = $this->fileManager->getReadonlyFilePath($path);
             }
             $data = ['uri' => $path, 'uuid' => ''];
         }

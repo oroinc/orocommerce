@@ -100,9 +100,9 @@ class ProductImageAwareFileNormalizerDecoratorTest extends \PHPUnit\Framework\Te
         $format = 'sampleFormat';
         $context = ['entityName' => ProductImage::class];
 
-        $expectedPath = 'gaufrette://import_product_images/sampleData.jpg';
+        $expectedPath = 'gaufrette-readonly://import_product_images/sampleData.jpg';
         $this->fileManager->expects(self::once())
-            ->method('getFilePath')
+            ->method('getReadonlyFilePath')
             ->with('sampleData.jpg')
             ->willReturn($expectedPath);
 
