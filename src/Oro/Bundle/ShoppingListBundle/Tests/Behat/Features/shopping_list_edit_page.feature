@@ -95,8 +95,8 @@ Feature: Shopping List edit page
     And I filter SKU as is equal to "BB6"
     And I click Edit BB6 in grid
     And set Additional Unit with:
-      | Unit  | Precision | Rate |
-      | each  | 1         | 2    |
+      | Unit | Precision | Rate |
+      | each | 1         | 2    |
     And I check "ProductAdditionalSellField" element
     And I save and close form
     Then I should see "Product has been saved" flash message
@@ -166,8 +166,8 @@ Feature: Shopping List edit page
     And I should see "There are no shopping list line items"
     When I open page with shopping list Shopping List 4
     Then I should see following grid:
-      | SKU  | Item                   | QtyUpdate All                   | Price  | Subtotal |
-      | AA1  | Configurable Product 1 | Click "edit" to select variants |        | N/A      |
+      | SKU | Item                   | QtyUpdate All                   | Price | Subtotal |
+      | AA1 | Configurable Product 1 | Click "edit" to select variants |       | N/A      |
 
   Scenario: Set Default Action
     When I click "Shopping List Actions"
@@ -207,8 +207,8 @@ Feature: Shopping List edit page
     And I filter Name as contains "Shopping List 4"
     And I click view Shopping List 4 in grid
     Then I should see following grid:
-      | SKU  | Item                   | Qty | Unit                            | Price  | Subtotal |
-      | AA1  | Configurable Product 1 |     | Click "edit" to select variants |        | N/A      |
+      | SKU | Item                   | Qty | Unit                            | Price | Subtotal |
+      | AA1 | Configurable Product 1 |     | Click "edit" to select variants |       | N/A      |
 
   Scenario: Create request for quote with empty matrix form
     When I click "Shopping List Actions"
@@ -260,10 +260,10 @@ Feature: Shopping List edit page
     Then I should see "4 total records"
     And I should see following grid:
       | SKU  | Item                                        |              | QtyUpdate All | Price  | Subtotal            |
+      | CC30 | Product 30                                  | In Stock     | 1 piece       | $31.00 | $31.00              |
       | BB4  | Configurable Product 1 Color: Red Size: M   | In Stock     | 1 item        | $11.00 | $11.00 -$5.50 $5.50 |
       | BB5  | Configurable Product 1 Color: Green Size: L | Out of Stock | 1 item        | $11.00 | $11.00 -$5.50 $5.50 |
       | BB6  | Configurable Product 1 Color: Blue Size: S  | In Stock     | 1 item        | $11.00 | $11.00 -$5.50 $5.50 |
-      | CC30 | Product 30                                  | In Stock     | 1 piece       | $31.00 | $31.00              |
     And I should see "Summary 4 Items"
     And I should see "Subtotal $64.00"
     And I should see "Discount -$16.50"
@@ -304,7 +304,7 @@ Feature: Shopping List edit page
       | SKU  | Item                                |              | QtyUpdate All | Price  | Subtotal              |
       | BB4  | Configurable Product 2 Color: Red   | In Stock     | 1 item        | $11.00 | $11.00 -$5.50 $5.50   |
       | BB13 | Configurable Product 2 Color: Green | Out of Stock | 1 item        | $23.00 | $23.00 -$11.50 $11.50 |
-    When I click "Group similar"
+    When I click "Group Similar"
     And I click Edit Configurable Product 2 in grid
     Then I should see an "One Dimensional Matrix Grid Form" element
     And I should see next rows in "One Dimensional Matrix Grid Form" table
@@ -324,11 +324,12 @@ Feature: Shopping List edit page
     When I open page with shopping list Shopping List 4
     Then I should see following grid:
       | SKU  | Item                                        |              | QtyUpdate All | Price  | Subtotal            |
+      | CC30 | Product 30                                  | In Stock     | 1 piece       | $31.00 | $31.00              |
       | BB4  | Configurable Product 1 Color: Red Size: M   | In Stock     | 1 item        | $11.00 | $11.00 -$5.50 $5.50 |
       | BB5  | Configurable Product 1 Color: Green Size: L | Out of Stock | 1 item        | $11.00 | $11.00 -$5.50 $5.50 |
       | BB6  | Configurable Product 1 Color: Blue Size: S  | In Stock     | 1 item        | $11.00 | $11.00 -$5.50 $5.50 |
-      | CC30 | Product 30                                  | In Stock     | 1 piece       | $31.00 | $31.00              |
-    When I click "Group similar"
+    When I click "Group Similar"
+    And I sort grid by "SKU"
     Then I should see following grid:
       | SKU  | Item                   |              | QtyUpdate All | Price  | Subtotal              |
       |      | Configurable Product 1 |              | 3 items       |        | $33.00 -$16.50 $16.50 |

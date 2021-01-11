@@ -87,6 +87,7 @@ Feature: My Shopping List Actions
     And I type "My shopping list updated notes" in "Shopping List Notes Area"
     And I click "Apply"
     Then I should see "My shopping list updated notes" in the "Shopping List Notes" element
+    And I sort grid by "SKU"
     And I should see following grid:
       | SKU | Item                               |
       | BB4 | Configurable Product 1 Note 4 text |
@@ -120,6 +121,7 @@ Feature: My Shopping List Actions
       | Shopping List 3 | $8,818.00 | 32    | No      |
       | Shopping List 1 | $1,581.00 | 3     | Yes     |
     And I click Edit "Shopping List 3" in grid
+    And I sort grid by "SKU"
     When I click on "First Line Item Row Checkbox"
     And I click "Move to another Shopping List" link from mass action dropdown
     And I click "Filter Toggle" in "UiDialog" element
