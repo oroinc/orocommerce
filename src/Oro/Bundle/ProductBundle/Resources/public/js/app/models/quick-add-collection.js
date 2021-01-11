@@ -12,7 +12,7 @@ const QuickAddCollection = BaseCollection.extend({
 
     productBySkuRoute: 'oro_frontend_autocomplete_search',
 
-    loadProductsBatchSize: 100,
+    loadProductsBatchSize: 500,
 
     model: QuickAddModel,
 
