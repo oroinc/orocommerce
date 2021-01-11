@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import __ from 'orotranslation/js/translator';
 import BaseTypeBuilder from 'orocms/js/app/grapesjs/type-builders/base-type-builder';
 
@@ -79,7 +80,12 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
             if (!rteEnabled && !opts.force) return;
             let content = this.getContent();
             const comps = model.components();
-            const contentOpt = {fromDisable: false, ...opts};
+            const contentOpt = {
+                fromDisable: false,
+                previousModels: _.clone(comps),
+                idUpdate: true,
+                ...opts
+            };
             let tagName = null;
             comps.length && comps.reset(null, opts);
             model.set('content', '', contentOpt);
@@ -95,7 +101,7 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
                         !['text', 'default', ''].some(type => model.is(type)) || textable;
 
                     model.set({
-                        _innertext: !selectable,
+                        _innertext: false,
                         editable: selectable && model.get('editable'),
                         selectable: selectable,
                         hoverable: selectable,
@@ -122,7 +128,7 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
                 }
 
                 // Clear empty tags
-                comps.add(content.replace(REGEXP_TAG_EMPTY, ''), opts);
+                comps.add(content.replace(REGEXP_TAG_EMPTY, ''), contentOpt);
 
                 if (tagName) {
                     this.editor.selectRemove(model);
