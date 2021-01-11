@@ -107,7 +107,7 @@ layout:
 
         - '@add':
             id: __checkout_order_summary_totals_content_wrapper
-            parentId: __checkout_order_summary_content
+            parentId: __checkout_order_summary_totals_container
             blockType: layout_subtree_update
             options:
                 reloadEvents: ['datagrid_create_before', 'shopping-list:refresh']
@@ -117,9 +117,6 @@ layout:
         - '@move':
             id: __checkout_order_summary_totals
             parentId: __checkout_order_summary_totals_content_wrapper
-
-        - '@remove':
-            id: __checkout_order_summary_totals_container
 
         - '@setOption':
             id: __checkout_order_summary_totals
