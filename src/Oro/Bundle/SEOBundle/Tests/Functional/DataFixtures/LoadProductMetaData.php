@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Oro\Bundle\SEOBundle\Tests\Functional\DataFixtures;
 
@@ -12,14 +13,11 @@ class LoadProductMetaData extends AbstractFixture implements DependentFixtureInt
 {
     use SEOMetaDataFieldsTrait;
 
-    const META_TITLES = 'metaTitles';
-    const META_DESCRIPTIONS = 'metaDescriptions';
-    const META_KEYWORDS = 'metaKeywords';
+    public const META_TITLES = 'metaTitles';
+    public const META_DESCRIPTIONS = 'metaDescriptions';
+    public const META_KEYWORDS = 'metaKeywords';
 
-    /**
-     * @var array
-     */
-    public static $metadata = [
+    public static array $metadata = [
         LoadProductData::PRODUCT_1 => [
             OroSEOBundleInstaller::METAINFORMATION_TITLES => self::META_TITLES,
             OroSEOBundleInstaller::METAINFORMATION_DESCRIPTIONS => self::META_DESCRIPTIONS,
@@ -27,10 +25,7 @@ class LoadProductMetaData extends AbstractFixture implements DependentFixtureInt
         ]
     ];
 
-    /**
-     * {@inheritdoc}
-     */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         foreach (self::$metadata as $entityReference => $metadataFields) {
             $entity = $this->getReference($entityReference);
@@ -40,10 +35,7 @@ class LoadProductMetaData extends AbstractFixture implements DependentFixtureInt
         $manager->flush();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             LoadProductData::class,

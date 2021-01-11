@@ -69,7 +69,7 @@ class ProductCollectionContentVariantProviderTest extends WebTestCase
             static::assertContainsEquals(
                 $expectedRow,
                 $result,
-                "Expected row title - '{$expectedRowTitle}', got: " . \var_export($result)
+                "Expected row title - '{$expectedRowTitle}', got: " . \var_export($result, true)
             );
         }
     }

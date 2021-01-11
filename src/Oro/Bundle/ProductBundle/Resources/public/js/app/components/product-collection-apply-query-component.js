@@ -133,7 +133,7 @@ define(function(require) {
             this.options._sourceElement
                 .on('click', this.options.selectors.apply, _.bind(this.onApplyQuery, this))
                 .on('click', this.options.selectors.reset, _.bind(this.onReset, this))
-                .on('query-designer:validate:not-blank-filters', _.bind(this.onFiltersValidate, this));
+                .on('query-designer:validate:not-empty-filters', _.bind(this.onFiltersValidate, this));
 
             this.initialDefinitionState = this._getSegmentDefinition();
             this.initialIncluded = this.$included.val();

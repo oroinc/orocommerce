@@ -6,8 +6,9 @@ use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner\VirtualFieldsProductQueryDesigner;
 use Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner\VirtualFieldsSelectQueryConverter;
+use Oro\Bundle\QueryDesignerBundle\Model\QueryDesigner;
+use Oro\Bundle\QueryDesignerBundle\QueryDesigner\QueryDefinitionUtil;
 use Oro\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
@@ -167,32 +168,31 @@ class VirtualFieldsProductDecorator
      */
     protected function getRelatedEntityIdsByProduct(array $field)
     {
-        $relatedEntityIdentifier = $this->getEntityIdentifier($field['related_entity_name']);
-
-        $queryDesigner = new VirtualFieldsProductQueryDesigner();
-        $queryDesigner->setEntity(Product::class);
-        $queryDesigner->setDefinition(json_encode([
-            'columns' => [
-                [
-                    'name' => 'id',
-                    'label' => static::PRODUCT_ID_LABEL,
-                ],
-                [
-                    'name' => sprintf(
-                        '%s+%s::%s',
-                        $field['name'],
-                        $field['related_entity_name'],
-                        $relatedEntityIdentifier
-                    ),
-                    'table_identifier' => sprintf(
-                        '%s::%s',
-                        Product::class,
-                        $field['name']
-                    ),
-                    'label' => static::RELATED_ID_LABEL,
+        $queryDesigner = new QueryDesigner(
+            Product::class,
+            QueryDefinitionUtil::encodeDefinition([
+                'columns' => [
+                    [
+                        'name' => 'id',
+                        'label' => static::PRODUCT_ID_LABEL
+                    ],
+                    [
+                        'name' => sprintf(
+                            '%s+%s::%s',
+                            $field['name'],
+                            $field['related_entity_name'],
+                            $this->getEntityIdentifier($field['related_entity_name'])
+                        ),
+                        'table_identifier' => sprintf(
+                            '%s::%s',
+                            Product::class,
+                            $field['name']
+                        ),
+                        'label' => static::RELATED_ID_LABEL
+                    ]
                 ]
-            ]
-        ]));
+            ])
+        );
 
         $qb = $this->converter->convert($queryDesigner);
         $rootAliases = $qb->getRootAliases();

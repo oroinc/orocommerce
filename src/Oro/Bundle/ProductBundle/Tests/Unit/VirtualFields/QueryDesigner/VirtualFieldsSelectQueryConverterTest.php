@@ -9,15 +9,16 @@ use Doctrine\ORM\Query\Expr\Select;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner\VirtualFieldsProductQueryDesigner;
 use Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner\VirtualFieldsSelectQueryConverter;
-use Oro\Bundle\QueryDesignerBundle\Tests\Unit\OrmQueryConverterTest;
+use Oro\Bundle\QueryDesignerBundle\Model\QueryDesigner;
+use Oro\Bundle\QueryDesignerBundle\QueryDesigner\QueryDefinitionUtil;
+use Oro\Bundle\QueryDesignerBundle\Tests\Unit\OrmQueryConverterTestCase;
 
-class VirtualFieldsSelectQueryConverterTest extends OrmQueryConverterTest
+class VirtualFieldsSelectQueryConverterTest extends OrmQueryConverterTestCase
 {
     public function testConvert()
     {
-        $doctrine = $this->getDoctrine(
+        $doctrineHelper = $this->getDoctrineHelper(
             [
                 BusinessUnit::class => [],
                 Product::class => [
@@ -31,7 +32,7 @@ class VirtualFieldsSelectQueryConverterTest extends OrmQueryConverterTest
         );
 
         /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject $em */
-        $em = $doctrine->getManagerForClass(Product::class);
+        $em = $doctrineHelper->getEntityManagerForClass(Product::class);
         $em->expects($this->once())
             ->method('createQueryBuilder')
             ->willReturn(new QueryBuilder($em));
@@ -40,30 +41,25 @@ class VirtualFieldsSelectQueryConverterTest extends OrmQueryConverterTest
             $this->getFunctionProvider(),
             $this->getVirtualFieldProvider(),
             $this->getVirtualRelationProvider(),
-            $doctrine
+            $doctrineHelper
         );
 
-        $queryDesigner = new VirtualFieldsProductQueryDesigner();
-        $queryDesigner->setEntity(Product::class);
-        $queryDesigner->setDefinition(json_encode([
-            'columns' => [
-                [
-                    'name' => 'id',
-                    'label' => 'product_id',
-                ],
-                [
-                    'name' => sprintf(
-                        'owner+%s::id',
-                        BusinessUnit::class
-                    ),
-                    'table_identifier' => sprintf(
-                        '%s::owner',
-                        Product::class
-                    ),
-                    'label' => 'relation_id',
+        $queryDesigner = new QueryDesigner(
+            Product::class,
+            QueryDefinitionUtil::encodeDefinition([
+                'columns' => [
+                    [
+                        'name' => 'id',
+                        'label' => 'product_id'
+                    ],
+                    [
+                        'name' => sprintf('owner+%s::id', BusinessUnit::class),
+                        'table_identifier' => sprintf('%s::owner', Product::class),
+                        'label' => 'relation_id'
+                    ]
                 ]
-            ]
-        ]));
+            ])
+        );
 
         $qb = $converter->convert($queryDesigner);
 

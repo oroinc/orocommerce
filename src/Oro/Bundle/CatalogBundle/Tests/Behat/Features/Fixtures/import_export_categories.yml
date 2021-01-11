@@ -13,8 +13,10 @@ Oro\Bundle\CatalogBundle\Entity\Category:
             - addShortDescription: ['@localizedFallbackValueShortDesc21']
             - addLongDescription: ['@localizedFallbackValueLongDesc21']
             - addMetaDescription: ['@localizedFallbackValueMetaDesc21']
-            - addMetaKeywords: ['@localizedFallbackValueMetaKeywords21']
-            - addMetaTitles: ['@localizedFallbackValueMetaTitles21']
+            # 'addMetaKeyword' is not a typo, see EX_OroCatalogBundle_Category
+            - addMetaKeyword: ['@localizedFallbackValueMetaKeywords21']
+            # 'addMetaTitl' is not a typo, see EX_OroCatalogBundle_Category
+            - addMetaTitl: ['@localizedFallbackValueMetaTitles21']
             - addSlugPrototype: ['@localizedFallbackValueSlugPrototype21']
 
     categoryWithTreeLevel1:

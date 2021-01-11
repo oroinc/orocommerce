@@ -5,7 +5,7 @@ namespace Oro\Bundle\ProductBundle\Form\Type;
 use Oro\Bundle\FormBundle\Utils\FormUtils;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Service\ProductCollectionDefinitionConverter;
-use Oro\Bundle\QueryDesignerBundle\Validator\NotBlankFilters;
+use Oro\Bundle\QueryDesignerBundle\Validator\Constraints\NotEmptyFilters;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\SegmentBundle\Form\Type\SegmentFilterBuilderType;
 use Symfony\Component\Form\AbstractType;
@@ -23,6 +23,9 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Valid;
 
+/**
+ * This form type is responsible for product collection management functionality.
+ */
 class ProductCollectionSegmentType extends AbstractType implements DataMapperInterface
 {
     const NAME = 'oro_product_collection_segment_type';
@@ -127,7 +130,7 @@ class ProductCollectionSegmentType extends AbstractType implements DataMapperInt
             'constraints' => [
                 new NotBlank(),
                 new Valid(),
-                new NotBlankFilters(['message' => 'oro.product.product_collection.blank_filters_or_included']),
+                new NotEmptyFilters(['message' => 'oro.product.product_collection.blank_filters_or_included']),
             ],
             'error_bubbling' => false,
             'scope_value' => self::DEFAULT_SCOPE_VALUE,

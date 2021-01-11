@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Oro\Bundle\SEOBundle\Tests\Functional\DataFixtures;
 
@@ -17,36 +18,33 @@ class LoadWebCatalogWithContentNodes extends AbstractFixture implements Dependen
 {
     use SEOMetaDataFieldsTrait;
     
-    const WEB_CATALOG_NAME = 'web_catalog_name';
-    const CONTENT_NODE_1 = 'content_node_1';
-    const CONTENT_NODE_2 = 'content_node_2';
-    const CONTENT_VARIANT_1 = 'content_variant_1';
-    const CONTENT_VARIANT_2 = 'content_variant_2';
+    public const WEB_CATALOG_NAME = 'web_catalog_name';
+    public const CONTENT_NODE_1 = 'content_node_1';
+    public const CONTENT_NODE_2 = 'content_node_2';
+    public const CONTENT_VARIANT_1 = 'content_variant_1';
+    public const CONTENT_VARIANT_2 = 'content_variant_2';
 
-    const META_DESCRTIPTION = 'web_catalog_meta_description';
-    const META_KEYWORDS = 'web_catalog_meta_keywords';
+    public const META_DESCRIPTION = 'web_catalog_meta_description';
+    public const META_KEYWORDS = 'web_catalog_meta_keywords';
     
-    private static $contentVariants = [
+    private static array $contentVariants = [
         self::CONTENT_NODE_1 => self::CONTENT_VARIANT_1,
         self::CONTENT_NODE_2 => self::CONTENT_VARIANT_2,
     ];
     
-    private static $productsForVariant = [
+    private static array $productsForVariant = [
         self::CONTENT_VARIANT_1 => LoadProductData::PRODUCT_1,
         self::CONTENT_VARIANT_2 => LoadProductData::PRODUCT_2,
     ];
     
-    private static $contentNodeMeta = [
+    private static array $contentNodeMeta = [
         self::CONTENT_NODE_1 => [
-            OroSEOBundleInstaller::METAINFORMATION_DESCRIPTIONS => self::META_DESCRTIPTION,
+            OroSEOBundleInstaller::METAINFORMATION_DESCRIPTIONS => self::META_DESCRIPTION,
             OroSEOBundleInstaller::METAINFORMATION_KEYWORDS => self::META_KEYWORDS,
         ]
     ];
     
-    /**
-     * {@inheritdoc}
-     */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             LoadFrontendProductData::class,
@@ -54,10 +52,7 @@ class LoadWebCatalogWithContentNodes extends AbstractFixture implements Dependen
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $webCatalog = new WebCatalog();
         $webCatalog->setName(self::WEB_CATALOG_NAME);

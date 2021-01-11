@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Provider;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\QueryDesignerBundle\QueryDesigner\JoinIdentifierHelper;
+use Oro\Bundle\QueryDesignerBundle\QueryDesigner\QueryDefinitionUtil;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 
 /**
@@ -33,7 +34,7 @@ class CronSegmentsProvider
         $joinIdentifierHelper = new JoinIdentifierHelper(Product::class);
         $segmentIterator = $this->contentVariantSegmentProvider->getContentVariantSegments();
         foreach ($segmentIterator as $segment) {
-            $definition = json_decode($segment->getDefinition(), JSON_OBJECT_AS_ARRAY);
+            $definition = QueryDefinitionUtil::decodeDefinition($segment->getDefinition());
             if (isset($definition['filters'])
                 && is_array($definition['filters'])
                 && $this->hasRelationOrCriteriaInFilters($definition['filters'], $joinIdentifierHelper)
