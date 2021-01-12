@@ -89,7 +89,8 @@ class FrontendLineItemsGridExtension extends AbstractExtension
         if ($this->isLineItemsGrouped()) {
             $queryPart = '(SELECT GROUP_CONCAT(innerItem.id ORDER BY innerItem.id ASC) ' .
                 'FROM Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem innerItem ' .
-                'WHERE (innerItem.parentProduct = lineItem.parentProduct OR innerItem.product = lineItem.product) ' .
+                'WHERE innerItem.id NOT IN (:unacceptable_ids) ' .
+                'AND (innerItem.parentProduct = lineItem.parentProduct OR innerItem.product = lineItem.product) ' .
                 'AND innerItem.checkout = lineItem.checkout ' .
                 'AND innerItem.productUnit = lineItem.productUnit) as allLineItemsIds';
         }
