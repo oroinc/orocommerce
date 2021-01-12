@@ -2,7 +2,10 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Filter;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\FilterBundle\Filter\FilterUtility;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Filter\PriceListFilter;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
@@ -10,52 +13,29 @@ use Symfony\Component\Form\FormView;
 
 class PriceListFilterTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|FormFactoryInterface
-     */
-    protected $formFactory;
+    /** @var FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $formFactory;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|FormInterface
-     */
-    protected $form;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject  */
+    private $doctrine;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|FilterUtility
-     */
-    protected $filterUtility;
+    /** @var PriceListFilter */
+    private $priceListFilter;
 
-    /**
-     * @var PriceListFilter
-     */
-    protected $priceListFilter;
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setUp()
+    protected function setUp(): void
     {
-        $this->form = $this->createMock(FormInterface::class);
         $this->formFactory = $this->createMock(FormFactoryInterface::class);
-        $this->formFactory
-            ->expects(static::any())
-            ->method('create')
-            ->willReturn($this->form);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
 
-        $this->filterUtility = $this->createMock(FilterUtility::class);
-        $this->filterUtility
-            ->expects(static::any())
-            ->method('getExcludeParams')
-            ->willReturn([]);
-
-        $this->priceListFilter = new PriceListFilter($this->formFactory, $this->filterUtility);
+        $this->priceListFilter = new PriceListFilter(
+            $this->formFactory,
+            new FilterUtility(),
+            $this->doctrine
+        );
     }
 
     /**
      * @dataProvider getMetadataDataProvider
-     *
-     * @param array $formViewVars
-     * @param array $expectedMetadata
      */
     public function testGetMetadata(array $formViewVars, array $expectedMetadata)
     {
@@ -70,19 +50,19 @@ class PriceListFilterTest extends \PHPUnit\Framework\TestCase
             'choices' => [],
         ];
 
-        $this->form
-            ->expects(static::exactly(3))
+        $form = $this->createMock(FormInterface::class);
+        $this->formFactory->expects(self::once())
+            ->method('create')
+            ->willReturn($form);
+        $form->expects(self::exactly(3))
             ->method('createView')
             ->willReturn($formView);
 
         $metadata = $this->priceListFilter->getMetadata();
 
-        static::assertSame($expectedMetadata, $metadata);
+        self::assertSame($expectedMetadata, $metadata);
     }
 
-    /**
-     * @return array
-     */
     public function getMetadataDataProvider()
     {
         return [
@@ -134,5 +114,51 @@ class PriceListFilterTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
         ];
+    }
+
+    public function testPrepareDataWithNullValue()
+    {
+        $data = ['value' => null];
+
+        $this->doctrine->expects(self::never())
+            ->method('getManagerForClass');
+
+        self::assertSame($data, $this->priceListFilter->prepareData($data));
+    }
+
+    public function testPrepareDataWithNumericValueAsString()
+    {
+        $priceList = new PriceList();
+        $data = ['value' => '23'];
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $this->doctrine->expects(self::once())
+            ->method('getManagerForClass')
+            ->with(PriceList::class)
+            ->willReturn($em);
+        $em->expects(self::once())
+            ->method('getReference')
+            ->with(PriceList::class, self::identicalTo(23))
+            ->willReturn($priceList);
+
+        self::assertSame(['value' => $priceList], $this->priceListFilter->prepareData($data));
+    }
+
+    public function testPrepareDataWithNumericValueAsInteger()
+    {
+        $priceList = new PriceList();
+        $data = ['value' => 45];
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $this->doctrine->expects(self::once())
+            ->method('getManagerForClass')
+            ->with(PriceList::class)
+            ->willReturn($em);
+        $em->expects(self::once())
+            ->method('getReference')
+            ->with(PriceList::class, self::identicalTo(45))
+            ->willReturn($priceList);
+
+        self::assertSame(['value' => $priceList], $this->priceListFilter->prepareData($data));
     }
 }

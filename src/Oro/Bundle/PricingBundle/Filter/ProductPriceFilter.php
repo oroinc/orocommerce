@@ -14,8 +14,7 @@ use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 use Symfony\Component\Form\FormFactoryInterface;
 
 /**
- * Applies a filter restrictions to a data source (use public method apply())
- * More details: Modifies dbSource query by applying restriction constraints (WHERE type = $data['type'])
+ * The filter by a product price.
  */
 class ProductPriceFilter extends NumberRangeFilter
 {
@@ -157,7 +156,8 @@ class ProductPriceFilter extends NumberRangeFilter
      */
     public function parseData($data)
     {
-        if (false === ($data = parent::parseData($data))) {
+        $data = parent::parseData($data);
+        if (false === $data) {
             return false;
         }
 

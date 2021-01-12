@@ -476,16 +476,26 @@ services:
             - '@oro_pricing.model.price_list_request_handler'
 
     oro_pricing.filter.price_attribute_product_price:
+        class: 'Oro\Bundle\PricingBundle\Filter\ProductPriceFilter'
         public: false
-        parent: oro_pricing.filter.abstract_product_price
+        arguments:
+            - '@form.factory'
+            - '@oro_filter.filter_utility'
+            - '@oro_product.formatter.product_unit_label'
+            - '@oro_pricing.model.price_list_request_handler'
         calls:
             - [setProductPriceClass, ['Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice']]
         tags:
             - { name: oro_filter.extension.orm_filter.filter, type: price-attribute-product-price }
 
     oro_pricing.filter.product_price:
+        class: 'Oro\Bundle\PricingBundle\Filter\ProductPriceFilter'
         public: false
-        parent: oro_pricing.filter.abstract_product_price
+        arguments:
+            - '@form.factory'
+            - '@oro_filter.filter_utility'
+            - '@oro_product.formatter.product_unit_label'
+            - '@oro_pricing.model.price_list_request_handler'
         calls:
             - [setProductPriceClass, ['Oro\Bundle\PricingBundle\Entity\ProductPrice']]
         tags:
@@ -498,6 +508,7 @@ services:
             - '@form.factory'
             - '@oro_filter.filter_utility'
         calls:
+            - [ setDoctrine, [ '@doctrine' ] ]
             - [setRegistry, ['@doctrine']]
         tags:
             - { name: oro_filter.extension.orm_filter.filter, type: price-lists }
@@ -1258,6 +1269,7 @@ services:
         arguments:
             - '@form.factory'
             - '@oro_filter.filter_utility'
+            - '@doctrine'
         tags:
             - { name: oro_filter.extension.orm_filter.filter, type: price_list }
 

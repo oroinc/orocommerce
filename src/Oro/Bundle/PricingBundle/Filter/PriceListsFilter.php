@@ -10,6 +10,9 @@ use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerGroupRepositor
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerRepository;
 use Oro\Component\ConfigExpression\Exception\InvalidArgumentException;
 
+/**
+ * The filter by a price list.
+ */
 class PriceListsFilter extends EntityFilter
 {
     const RELATION_CLASS_NAME_PARAMETER = 'relation_class_name';
@@ -49,8 +52,7 @@ class PriceListsFilter extends EntityFilter
         $relationClass = $this->params[self::RELATION_CLASS_NAME_PARAMETER];
 
         /** @var PriceListToCustomerRepository|PriceListToCustomerGroupRepository $repository */
-        $repository = $this->registry->getManagerForClass($relationClass)
-            ->getRepository($relationClass);
+        $repository = $this->doctrine->getRepository($relationClass);
         $repository->restrictByPriceList($queryBuilder, $priceList, $parameterName);
 
         return true;

@@ -10,7 +10,7 @@ use Oro\Bundle\FilterBundle\Filter\FilterUtility;
 use Symfony\Component\Form\FormFactoryInterface;
 
 /**
- * Adds consents filter choices depending on consents feature enabled status
+ * The filter by accepted consents.
  */
 class AcceptedConsentsFilter extends DictionaryFilter
 {

@@ -3,63 +3,46 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Filter;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-use Oro\Bundle\FilterBundle\Datasource\FilterDatasourceAdapterInterface;
+use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\FilterBundle\Datasource\Orm\OrmFilterDatasourceAdapter;
 use Oro\Bundle\FilterBundle\Filter\FilterUtility;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerRepository;
 use Oro\Bundle\PricingBundle\Filter\PriceListsFilter;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 
 class PriceListsFilterTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|FormFactoryInterface
-     */
-    protected $formFactory;
+    /** @var \PHPUnit\Framework\MockObject\MockObject|FormInterface */
+    private $form;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|FormInterface
-     */
-    protected $form;
+    /** @var \PHPUnit\Framework\MockObject\MockObject|FormFactoryInterface */
+    private $formFactory;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|FilterUtility
-     */
-    protected $filterUtility;
-
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|Registry
-     */
-    protected $registry;
+    /** @var Registry|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrine;
 
     /** @var PriceListsFilter */
-    protected $priceListsFilter;
+    private $priceListsFilter;
 
     public function setUp()
     {
-        $this->form = $this->createMock('Symfony\Component\Form\Test\FormInterface');
-        $this->formFactory = $this->createMock('Symfony\Component\Form\FormFactoryInterface');
+        $this->formFactory = $this->createMock(FormFactoryInterface::class);
+        $this->doctrine = $this->createMock(Registry::class);
+
+        $this->form = $this->createMock(FormInterface::class);
         $this->formFactory->expects($this->any())
             ->method('create')
-            ->will($this->returnValue($this->form));
-
-        $this->filterUtility = $this->getMockBuilder('Oro\Bundle\FilterBundle\Filter\FilterUtility')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->filterUtility->expects($this->any())
-            ->method('getExcludeParams')
-            ->willReturn([]);
-
-        $this->registry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
-            ->disableOriginalConstructor()
-            ->getMock();
+            ->willReturn($this->form);
 
         $this->priceListsFilter = new PriceListsFilter(
             $this->formFactory,
-            $this->filterUtility
+            new FilterUtility()
         );
-
-        $this->priceListsFilter->setRegistry($this->registry);
+        $this->priceListsFilter->setDoctrine($this->doctrine);
+        $this->priceListsFilter->setRegistry($this->doctrine);
     }
 
     /**
@@ -73,21 +56,16 @@ class PriceListsFilterTest extends \PHPUnit\Framework\TestCase
 
     public function testApplyNoData()
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|FilterDatasourceAdapterInterface $ds */
-        $ds = $this->getMockBuilder('Oro\Bundle\FilterBundle\Datasource\Orm\OrmFilterDatasourceAdapter')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $ds = $this->createMock(OrmFilterDatasourceAdapter::class);
 
         $this->priceListsFilter->init(
             'price_list',
             [
-                PriceListsFilter::RELATION_CLASS_NAME_PARAMETER => 'OroPricingBundle:PriceListToCustomer'
+                PriceListsFilter::RELATION_CLASS_NAME_PARAMETER => PriceListToCustomer::class
             ]
         );
 
-        $result = $this->priceListsFilter->apply($ds, null);
-
-        $this->assertFalse($result);
+        $this->assertFalse($this->priceListsFilter->apply($ds, null));
     }
 
     public function testApply()
@@ -97,50 +75,27 @@ class PriceListsFilterTest extends \PHPUnit\Framework\TestCase
             'value' => [new PriceList()]
         ];
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|FilterDatasourceAdapterInterface $ds */
-        $ds = $this->getMockBuilder('Oro\Bundle\FilterBundle\Datasource\Orm\OrmFilterDatasourceAdapter')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $queryBuilder = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $ds = $this->createMock(OrmFilterDatasourceAdapter::class);
+        $queryBuilder = $this->createMock(QueryBuilder::class);
         $ds->expects($this->once())
             ->method('getQueryBuilder')
             ->willReturn($queryBuilder);
 
-        $repository = $this
-            ->getMockBuilder('Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $repository = $this->createMock(PriceListToCustomerRepository::class);
+        $this->doctrine->expects($this->once())
+            ->method('getRepository')
+            ->with(PriceListToCustomer::class)
+            ->willReturn($repository);
         $repository->expects($this->once())
             ->method('restrictByPriceList');
-
-        $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $em->expects($this->once())
-            ->method('getRepository')
-            ->with('OroPricingBundle:PriceListToCustomer')
-            ->willReturn($repository);
-
-        $this->registry->expects($this->once())
-            ->method('getManagerForClass')
-            ->with('OroPricingBundle:PriceListToCustomer')
-            ->willReturn($em);
 
         $this->priceListsFilter->init(
             'price_list',
             [
-                PriceListsFilter::RELATION_CLASS_NAME_PARAMETER => 'OroPricingBundle:PriceListToCustomer'
+                PriceListsFilter::RELATION_CLASS_NAME_PARAMETER => PriceListToCustomer::class
             ]
         );
 
-        $result = $this->priceListsFilter->apply($ds, $data);
-
-        $this->assertTrue($result);
+        $this->assertTrue($this->priceListsFilter->apply($ds, $data));
     }
 }

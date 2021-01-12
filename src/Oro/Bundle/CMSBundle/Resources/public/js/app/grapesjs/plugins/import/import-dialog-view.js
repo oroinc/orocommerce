@@ -7,6 +7,7 @@ import __ from 'orotranslation/js/translator';
 import $ from 'jquery';
 import ApiAccessor from 'oroui/js/tools/api-accessor';
 import LoadingMaskView from 'oroui/js/app/views/loading-mask-view';
+import HTMLValidator from 'orocms/js/app/grapesjs/validation';
 
 const REGEXP_TWIG_TAGS = /\{\{([\w\s\'\_\-\,\(\)]+)\}\}/gi;
 
@@ -116,6 +117,8 @@ const ImportDialogView = BaseView.extend({
         'layout:reposition mediator': 'adjustHeight'
     },
 
+    validator: null,
+
     /**
      * @constructor
      * @param options
@@ -137,6 +140,8 @@ const ImportDialogView = BaseView.extend({
         this.content = this.getImportContent();
         this.validateApiAccessor = new ApiAccessor(this.validateApiProps);
         this.twigResolverAccessor = new ApiAccessor(this.twigApiResolverProps);
+
+        this.validator = new HTMLValidator();
 
         ImportDialogView.__super__.initialize.call(this, options);
     },
@@ -192,10 +197,7 @@ const ImportDialogView = BaseView.extend({
 
         this.viewerEditor.refresh();
         this.adjustHeight();
-
-        if (this.editor.ComponentRestriction.allowTags) {
-            this.checkContent(this.viewerEditor);
-        }
+        this.checkContent(this.viewerEditor);
 
         this.subview('loadingMask', new LoadingMaskView({
             container: this.dialog.loadingElement
@@ -208,14 +210,11 @@ const ImportDialogView = BaseView.extend({
      * Binding event listeners
      */
     bindEvents() {
-        if (this.editor.ComponentRestriction.allowTags) {
-            this.viewerEditor.on('change', codeEditor => {
-                this.importButton.attr('disabled', true);
-                this.checkContent(codeEditor);
-            });
-            this.viewerEditor.on('blur', _.bind(this.checkContent, this));
-        }
-
+        this.viewerEditor.on('change', codeEditor => {
+            this.importButton.attr('disabled', true);
+            this.checkContent(codeEditor);
+        });
+        this.viewerEditor.on('blur', _.bind(this.checkContent, this));
         this.importButton.on('click', _.bind(this.onImportCode, this));
     },
 
@@ -333,6 +332,21 @@ const ImportDialogView = BaseView.extend({
 
         this.disabled = true;
         this.prevContent = content;
+        const errors = this.validator.validate(content);
+
+        if (errors.length) {
+            return {
+                success: false,
+                errors
+            };
+        }
+
+        if (!this.editor.ComponentRestriction.allowTags.length) {
+            return {
+                success: true,
+                errors: []
+            };
+        }
 
         return this.validateApiAccessor.send({}, {
             content: content.replace(/<style>(.|\n)*?<\/style>/g, ''),
@@ -400,7 +414,7 @@ const ImportDialogView = BaseView.extend({
      */
     adjustHeight() {
         const height = this.$el.find('.validation-failed').height() || 0;
-        this.viewerEditor.setSize(null, this.dialog.widget.height() - height);
+        this.viewerEditor.setSize(this.dialog.widget.width(), this.dialog.widget.height() - height);
         this.dialog.resetDialogPosition();
     }
 });
