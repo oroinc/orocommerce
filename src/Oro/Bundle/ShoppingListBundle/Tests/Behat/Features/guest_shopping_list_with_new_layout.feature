@@ -187,7 +187,7 @@ Feature: Guest Shopping List with new layout
       | SKU003 | Product3                           | In Stock | 3 each        | $3.00  | $9.00    |
 
   Scenario: Check Group similar
-    When I click "Group similar"
+    When I click "Group Similar"
     Then I should see "3 total records"
     And I should see following grid:
       | SKU    | Item                               |          | QtyUpdate All | Price  | Subtotal |

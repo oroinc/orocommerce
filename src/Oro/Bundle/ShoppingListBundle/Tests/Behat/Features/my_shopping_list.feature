@@ -398,7 +398,7 @@ Feature: My Shopping List
   Scenario: Check Show All and Group similar
     When I reset grid
     And I click "Show All"
-    And I click "Group similar"
+    And I click "Group Similar"
     Then I should see "27 total records"
     And I should see following grid:
       | SKU  | Item                                                     |              | Qty | Unit   | Price  | Subtotal                 |
@@ -435,7 +435,7 @@ Feature: My Shopping List
       | CC34 | Product 34 Note 34 text                                  | In Stock     | 13  | pieces | $31.00 | $403.00                  |
       | CC35 | Product 35 Note 35 text                                  | In Stock     | 13  | pieces | $31.00 | $403.00                  |
     When I reload the page
-    Then I should see "Ungroup similar"
+    Then I should see "Ungroup Similar"
     And I should see "27 total records"
     And I should see following grid:
       | SKU  | Item                                                     |              | Qty | Unit   | Price  | Subtotal                 |
@@ -514,7 +514,7 @@ Feature: My Shopping List
       | CC35 | Product 35 Note 35 text | In Stock | 13  | pieces | $31.00 | $403.00  |
 
   Scenario: Check Ungroup similar
-    When I click "Ungroup similar"
+    When I click "Ungroup Similar"
     Then I should see "30 total records"
     And I should see following grid:
       | SKU  | Item                    |          | Qty | Unit   | Price  | Subtotal |
@@ -552,7 +552,7 @@ Feature: My Shopping List
 
   Scenario: Check Availability filter
     Given I reset grid
-    When I click "Group similar"
+    When I click "Group Similar"
     And I check "Out of Stock" in Availability filter
     Then I should see "8 total records"
     And I should see following grid:

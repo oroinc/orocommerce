@@ -215,6 +215,7 @@ datagrids:
                     - COALESCE(parentProduct.id, product.id) as mainProductId
                     - COALESCE(parentProduct.sku, product.sku) as sku
                     - GROUP_CONCAT(lineItem.id ORDER BY lineItem.id ASC) as displayedLineItemsIds
+                    - MAX(lineItem.id) as sortId
                 from:
                     - { table: 'Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem', alias: lineItem }
                 join:
@@ -233,6 +234,8 @@ datagrids:
                     name: unacceptable_ids
                     default: [0]
         columns:
+            id:
+                renderable: false
             sku:
                 label:         oro.checkout.order_summary.sku
             item:
@@ -264,10 +267,12 @@ datagrids:
                 frontend_template: tpl-loader!orocheckout/templates/datagrid/cell/subtotal.html
         sorters:
             columns:
+                id:
+                    data_name: sortId
                 sku:
                     data_name: sku
             default:
-                sku: ASC
+                id: ASC
         filters:
             columns:
                 sku:
