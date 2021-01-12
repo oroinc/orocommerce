@@ -7,7 +7,7 @@ use Oro\Bundle\ShoppingListBundle\Validator\LineItemViolationsProvider;
 use Symfony\Component\Validator\ConstraintViolation;
 
 /**
- * Adds line items errors data.
+ * Adds line items violations data.
  */
 class DatagridLineItemsDataViolationsListener
 {

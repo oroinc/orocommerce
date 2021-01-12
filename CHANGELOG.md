@@ -2,6 +2,38 @@ Please refer first to [UPGRADE.md](UPGRADE.md) for the most important items that
 
 The current file describes significant changes in the code that may affect the upgrade of your customizations.
 
+## 4.1.12
+### Added
+
+#### CheckoutBundle
+* New design of checkout line items grid enabled by an option `oro_checkout.use_new_layout_for_checkout_page` in the system configuration.
+* Added the `oro_checkout.checkout_max_line_items_per_page` (Maximum Line Items Per Page) option to the system configuration.
+* Added the following events:
+    - `Oro\Bundle\CheckoutBundle\Event\CheckoutTransitionBeforeEvent` - dispatched before a checkout transition is started, contains workflow item and the transition.
+    - `Oro\Bundle\CheckoutBundle\Event\CheckoutTransitionAfterEvent` - dispatched after a checkout transition is finished, contains workflow item, the transition, `isAllowed` flag and collected errors if any.
+* Added `is_checkout_state_valid` condition. This condition compares a saved checkout state (retrieved by the provided token) to the current checkout state.
+* Added method `Oro\Bundle\CheckoutBundle\WorkflowState\Handler\CheckoutErrorHandler::getWorkflowErrors()`. The method returns workflow-related errors from FromErrorIterator.
+
+#### ShippingBundle
+* Added `Oro\Bundle\ShippingBundle\Entity\Repository\ProductShippingOptionsRepository::findIndexedByProductsAndUnits()` method that is equal to `Oro\Bundle\ShippingBundle\Entity\Repository\ProductShippingOptionsRepository::findByProductsAndUnits()` but uses a plain DQL query without entity hydration.
+
+### Changed
+
+#### CheckoutBundle
+* Added the following datagrids:
+    - `frontend-checkout-line-items-grid`
+    - `frontend-single-page-checkout-line-items-grid`.
+  For more details on datagrid customizations please see the [datagrid documentation](https://doc.oroinc.com/backend/entities/customize-datagrids/)
+
+#### TaxBundle
+* Order tax recalculation check is not used on storefront.
+
+### Removed
+
+#### CheckoutBundle
+* Removed duplicated workflow preconditions/conditions checks.
+* Removed duplicated checkout state generations and checks.
+
 ## 4.1.10
 ### Added
 
