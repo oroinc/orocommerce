@@ -4,13 +4,54 @@ The current file describes significant changes in the code that may affect the u
 
 ## 4.2.0
 
+### Added
+
+#### CheckoutBundle
+* Added the `oro_checkout.checkout_max_line_items_per_page` option to the system configuration.
+* Added the following events:
+    - `Oro\Bundle\CheckoutBundle\Event\CheckoutTransitionBeforeEvent` - dispatched before a checkout transition is started, contains workflow item and the transition.
+    - `Oro\Bundle\CheckoutBundle\Event\CheckoutTransitionAfterEvent` - dispatched after a checkout transition is finished, contains workflow item, the transition, `isAllowed` flag and collected errors if any.
+* Added `is_checkout_state_valid` condition. This condition compares a saved checkout state (retrieved by the provided token) to the current checkout state.
+* Added method `Oro\Bundle\CheckoutBundle\WorkflowState\Handler\CheckoutErrorHandler::getWorkflowErrors()`. The method returns workflow-related errors from FromErrorIterator.
+
 ### Changed
 
 #### AlternativeCheckoutBundle
 * OroAlternativeCheckoutBundle has been moved from oro/commerce package to oro/commerce-demo-checkouts package.
 
+#### CheckoutBundle
+* Added the following datagrids:
+    - `frontend-checkout-line-items-grid`
+    - `frontend-single-page-checkout-line-items-grid`.
+  For more details on datagrid customizations please see the [datagrid documentation](https://doc.oroinc.com/backend/entities/customize-datagrids/)
+
 #### ProductBundle
 * The message queue topic `imageResize` was renamed to `oro_product.image_resize`.
+
+#### PromotionBundle
+* The service `Oro\Bundle\PromotionBundle\Executor\PromotionExecutor` can be used without caching processed DiscountContext. Please refer to `oro_promotion.promotion_executor` and `oro_promotion.shipping_promotion_executor` examples.
+
+#### ShippingBundle
+* The method `Oro\Bundle\ShippingBundle\Entity\Repository\ProductShippingOptionsRepository::findByProductsAndUnits()` was renamed to  `Oro\Bundle\ShippingBundle\Entity\Repository\ProductShippingOptionsRepository::findIndexedByProductsAndUnits()` and now uses a plain DQL query without entity hydration.
+
+#### TaxBundle
+* Order tax recalculation check is not used on storefront.
+* Changing the Order currency will no longer cause taxes to be recalculated, because changing the Order currency is not supported.
+
+### Removed
+
+#### CheckoutBundle
+* Removed duplicated workflow preconditions/conditions checks.
+* Removed duplicated checkout state generations and checks.
+* Removed `order_line_item_has_count` condition.
+* Removed the following layout block types:
+    - `checkout_order_summary_line_items`
+
+#### PaymentBundle
+* Method `Oro\Bundle\PaymentBundle\ExpressionLanguage\DecoratedProductLineItemFactory::createLineItemWithDecoratedProductByLineItem()` is removed, use `Oro\Bundle\PaymentBundle\ExpressionLanguage\DecoratedProductLineItemFactory::createPaymentLineItemWithDecoratedProduct()` instead.
+
+#### ProductBundle
+* Method `Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecoratorFactory::createDecoratedProductByProductHolders()` is removed, use `Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecoratorFactory::createDecoratedProduct()` instead.
 
 ## 4.2.0-rc
 
