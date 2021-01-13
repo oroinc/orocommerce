@@ -1,7 +1,12 @@
 /* @theme: default; */
 
 .coupon-trigger {
-    @include fa-icon($fa-var-plus-square-o);
+    @include fa-icon($fa-var-plus-square-o, before, true) {
+        margin-#{$end}: $coupon-trigger-inner-icon-offset;
+
+        vertical-align: middle;
+    };
+
     padding: $coupon-trigger-inner-offset;
 
     .expanded & {
