@@ -16,7 +16,11 @@ class WYSIWYGValueType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add($options['field'], WYSIWYGType::class, ['auto_render' => false]);
+        $builder->add(
+            $options['field'],
+            WYSIWYGType::class,
+            ['auto_render' => false, 'entity_class' => $options['entity_class']]
+        );
     }
 
     /**
@@ -24,6 +28,9 @@ class WYSIWYGValueType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(['field' => 'wysiwyg']);
+        $resolver->setDefaults([
+            'field' => 'wysiwyg',
+            'entity_class' => null,
+        ]);
     }
 }

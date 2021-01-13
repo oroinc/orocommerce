@@ -285,7 +285,7 @@ const GrapesjsEditorView = BaseView.extend({
         this.builderPlugins['grapesjs-import'] = {
             ...this.builderPlugins['grapesjs-import'],
             entityClass: this.entityClass,
-            fieldName: this.$el.attr('name')
+            fieldName: this.$el.attr('data-grapesjs-field')
         };
 
         GrapesjsEditorView.__super__.initialize.call(this, options);
