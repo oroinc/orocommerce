@@ -12,6 +12,8 @@ styles:
 
 checkout_4_2_styles:
     inputs:
+        - 'bundles/orocheckout/default/scss/settings/global-settings-4-2.scss'
+
         - 'bundles/orocheckout/default/scss/variables/single-page-checkout-view-config-4.2.scss'
 
         - 'bundles/orocheckout/default/scss/components/single-page-checkout-view/single-page-checkout-view-4.2.scss'

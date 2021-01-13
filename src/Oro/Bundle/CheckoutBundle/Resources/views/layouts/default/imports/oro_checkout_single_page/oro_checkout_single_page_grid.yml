@@ -42,4 +42,13 @@ layout:
             siblingId: checkout_order_summary_totals_sticky_container
             prepend: true
 
+        - '@move':
+              id: datagrid_toolbar_pagination
+              parentId: datagrid_toolbar_rightside_container
+              siblingId: datagrid_toolbar_page_size
+              prepend: true
+
+        - '@remove':
+              id: datagrid_toolbar_base_container
+
     conditions: 'context["newCheckoutPageLayout"] == true'
