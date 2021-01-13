@@ -2,10 +2,10 @@
 
 .product-price-hint {
     display: $product-price-hint-display;
-    align-items: flex-start;
+    align-items: $product-price-hint-align-items;
 
     &__prices {
-        padding-top: $offset-y-s;
-        padding-right: $offset-y-s;
+        padding-top: $product-price-hint-prices-inner-offset-top;
+        padding-right: $product-price-hint-prices-inner-offset-top;
     }
 }
