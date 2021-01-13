@@ -19,4 +19,19 @@ trait WebsiteSearchExtensionTrait
             ReindexationRequestEvent::EVENT_NAME
         );
     }
+
+    /**
+     * @param string $className
+     * @param array $placeholders
+     * @return string
+     */
+    private function getIndexAlias(string $className, array $placeholders): string
+    {
+        $indexAliasTemplate = $this->getContainer()
+            ->get('oro_website_search.provider.search_mapping')
+            ->getEntityAlias($className);
+
+        return $this->getContainer()->get('oro_website_search.placeholder_decorator')
+            ->replace($indexAliasTemplate, $placeholders);
+    }
 }
