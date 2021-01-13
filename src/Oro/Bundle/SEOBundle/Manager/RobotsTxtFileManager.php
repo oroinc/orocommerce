@@ -149,7 +149,11 @@ class RobotsTxtFileManager
     {
         $this->dumpToFileForWebsite($this->getFileNameByWebsite($website), $content);
         if ($this->isDefaultRobotsFileShouldBeDumped($website)) {
-            $this->dumpToFile($this->getDefaultRobotsFileFullName(), $content);
+            try {
+                file_put_contents($this->getDefaultRobotsFileFullName(), $content);
+            } catch (\Throwable $e) {
+                $this->logger->error('Failed to write default robots.txt file.', ['exception' => $e->getMessage()]);
+            }
         }
     }
 
