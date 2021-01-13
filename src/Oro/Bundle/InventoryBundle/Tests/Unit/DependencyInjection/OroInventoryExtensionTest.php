@@ -1,15 +1,14 @@
 <?php
+declare(strict_types=1);
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\DependencyInjection;
 
 use Oro\Bundle\InventoryBundle\DependencyInjection\OroInventoryExtension;
 use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class OroInventoryExtensionTest extends ExtensionTestCase
 {
-    public function testLoad()
+    public function testLoad(): void
     {
         $this->loadExtension(new OroInventoryExtension());
 
@@ -22,34 +21,8 @@ class OroInventoryExtensionTest extends ExtensionTestCase
         $this->assertDefinitionsLoaded($expectedDefinitions);
     }
 
-    public function testGetAlias()
+    public function testGetAlias(): void
     {
-        $extension = new OroInventoryExtension();
-        $this->assertEquals('oro_inventory', $extension->getAlias());
-    }
-
-    /**
-     * @param Extension $extension
-     * @param array $config
-     * @return $this
-     */
-    protected function loadExtension(Extension $extension, $config = [])
-    {
-        $container = $this->getContainerMock();
-
-        $extension->load($config, $container);
-
-        return $this;
-    }
-
-    /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|ContainerBuilder
-     */
-    protected function buildContainerMock()
-    {
-        return $this
-            ->getMockBuilder(ContainerBuilder::class)
-            ->setMethods(['setDefinition', 'setParameter', 'prependExtensionConfig', 'getParameter', 'setAlias'])
-            ->getMock();
+        static::assertEquals('oro_inventory', (new OroInventoryExtension())->getAlias());
     }
 }
