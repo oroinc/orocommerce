@@ -30,13 +30,10 @@
         &--half {
             width: $product-view-quantity-value-half-width;
         }
-    }
 
-    &__value .input {
-        margin: $product-view-quantity-value-input-offset;
-        padding: $product-view-quantity-value-input-inner-offset;
-
-        text-align: $product-view-quantity-value-input-text-align;
+        .input {
+            text-align: $product-view-quantity-value-input-text-align;
+        }
     }
 
     .fields-row-error {
