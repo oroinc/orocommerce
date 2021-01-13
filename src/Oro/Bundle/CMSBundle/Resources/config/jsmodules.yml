@@ -1,11 +1,10 @@
 aliases:
-    grapesjs$: npmassets/grapesjs/dist/grapes
-    grapesjs-preset-webpage$: npmassets/grapesjs-preset-webpage/dist/grapesjs-preset-webpage.min
-    grapesjs-parser-postcss$: npmassets/grapesjs-parser-postcss/dist/grapesjs-parser-postcss.min
-    spectrum-colorpicker/spectrum$: npmassets/spectrum-colorpicker/spectrum.css
-    font-awesome/scss/font-awesome$: npmassets/font-awesome/scss/font-awesome.scss
-    codemirror/lib/codemirror$: npmassets/codemirror/lib/codemirror.css
-    codemirror/theme/hopscotch$: npmassets/codemirror/theme/hopscotch.css
+    grapesjs$: grapesjs/dist/grapes
+    grapesjs-preset-webpage$: grapesjs-preset-webpage/dist/grapesjs-preset-webpage.min
+    grapesjs-parser-postcss$: grapesjs-parser-postcss/dist/grapesjs-parser-postcss.min
+    spectrum-colorpicker/spectrum$: spectrum-colorpicker/spectrum.css
+    codemirror/lib/codemirror$: codemirror/lib/codemirror.css
+    codemirror/theme/hopscotch$: codemirror/theme/hopscotch.css
 app-modules:
   - orocms/js/app/modules/grapesjs-module
 dynamic-imports:

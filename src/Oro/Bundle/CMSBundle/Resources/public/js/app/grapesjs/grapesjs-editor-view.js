@@ -93,6 +93,7 @@ const GrapesjsEditorView = BaseView.extend({
         pasteStyles: false,
         requestParams: {},
         noticeOnUnload: false,
+        cssIcons: false,
 
         /**
          * Color picker options
