@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace Oro\Bundle\ShoppingListBundle\Command;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Types;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CronBundle\Command\CronCommandInterface;
 use Oro\Bundle\CustomerBundle\DependencyInjection\Configuration;
@@ -62,7 +62,7 @@ HELP
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         /** @var Connection $connection */
-        $connection = $this->doctrine->getEntityManager()->getConnection();
+        $connection = $this->doctrine->getManagerForClass(ShoppingList::class)->getConnection();
         $customerVisitorToShoppingListRelationTableName = $this->dbIdentifierNameGenerator
             ->generateManyToManyJoinTableName(CustomerVisitor::class, 'shoppingLists', ShoppingList::class);
 

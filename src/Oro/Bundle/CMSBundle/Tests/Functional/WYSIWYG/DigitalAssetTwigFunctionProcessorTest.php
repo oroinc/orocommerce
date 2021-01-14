@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CMSBundle\Tests\Functional\WYSIWYG;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Entity\Repository\FileRepository;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
@@ -14,7 +15,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class DigitalAssetTwigFunctionProcessorTest extends WebTestCase
 {
-    /** @var \Doctrine\Common\Persistence\ObjectManager */
+    /** @var ObjectManager */
     private $em;
 
     /** @var FileRepository */

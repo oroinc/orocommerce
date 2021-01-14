@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\DataTransformer;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\RFPBundle\Form\DataTransformer\UserIdToEmailTransformer;
 use Oro\Bundle\UserBundle\Entity\User;
 
@@ -36,7 +36,7 @@ class UserIdToEmailTransformerTest extends \PHPUnit\Framework\TestCase
      */
     protected function createRegistryMock(array $findMap = [], array $findOneByMap = [])
     {
-        $repository = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectRepository')
+        $repository = $this->getMockBuilder('Doctrine\Persistence\ObjectRepository')
             ->disableOriginalConstructor()
             ->getMock();
         $repository->expects($this->any())
@@ -46,7 +46,7 @@ class UserIdToEmailTransformerTest extends \PHPUnit\Framework\TestCase
             ->method('findOneBy')
             ->willReturnMap($findOneByMap);
 
-        $manager = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')
+        $manager = $this->getMockBuilder('Doctrine\Persistence\ObjectManager')
             ->disableOriginalConstructor()
             ->getMock();
         $manager->expects($this->any())
@@ -54,7 +54,7 @@ class UserIdToEmailTransformerTest extends \PHPUnit\Framework\TestCase
             ->with('OroUserBundle:User')
             ->willReturn($repository);
 
-        $registry = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
+        $registry = $this->getMockBuilder('Doctrine\Persistence\ManagerRegistry')
             ->disableOriginalConstructor()
             ->getMock();
         $registry->expects($this->any())

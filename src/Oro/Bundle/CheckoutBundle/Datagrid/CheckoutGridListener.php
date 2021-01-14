@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CheckoutBundle\Datagrid;
 
+use Doctrine\Common\Inflector\Inflector;
 use Doctrine\Common\Util\ClassUtils;
-use Doctrine\Common\Util\Inflector;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
 use Oro\Bundle\CheckoutBundle\Model\CompletedCheckoutData;

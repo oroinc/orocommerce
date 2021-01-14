@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\RedirectBundle\Routing;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PlatformBundle\Maintenance\Mode as MaintenanceMode;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
@@ -256,7 +256,7 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
     {
         $delimiter = '/' . SluggableUrlGenerator::CONTEXT_DELIMITER . '/';
         if (strpos($url, $delimiter) !== false) {
-            list($contextUrl, $url) = explode($delimiter, $url, 2);
+            [$contextUrl, $url] = explode($delimiter, $url, 2);
 
             $contextAttributes = $this->match($contextUrl);
             $urlAttributes = $this->matchContextAwareUrl($url);

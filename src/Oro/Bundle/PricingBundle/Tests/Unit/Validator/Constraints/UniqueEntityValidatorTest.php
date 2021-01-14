@@ -3,11 +3,9 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Validator\Constraints;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\Common\Persistence\Mapping\ClassMetadata;
-use Doctrine\Common\Reflection\StaticReflectionParser;
-use Doctrine\Common\Reflection\StaticReflectionProperty;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\Persistence\Mapping\ClassMetadata;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
@@ -123,13 +121,7 @@ class UniqueEntityValidatorTest extends \PHPUnit\Framework\TestCase
             ->expects(self::any())
             ->method('hasAssociation');
 
-        $reflParser = $this->getMockBuilder(StaticReflectionParser::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $refl = $this->getMockBuilder(StaticReflectionProperty::class)
-            ->setConstructorArgs([$reflParser, $priceList])
-            ->setMethods(['getValue'])
-            ->getMock();
+        $refl = $this->createMock(\ReflectionProperty::class);
         $refl->expects(self::any())
             ->method('getValue')
             ->will($this->returnValue($priceList));

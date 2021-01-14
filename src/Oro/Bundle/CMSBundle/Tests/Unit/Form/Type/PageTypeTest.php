@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\CMSBundle\Form\Type\PageType;
 use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType;
@@ -18,6 +19,7 @@ use Oro\Bundle\RedirectBundle\Helper\ConfirmSlugChangeFormHelper;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type\Stub\LocalizedSlugTypeStub;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\PreloadedExtension;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Validator\Type\FormTypeValidatorExtension;
 use Symfony\Component\Form\Form;
@@ -40,7 +42,7 @@ class PageTypeTest extends FormIntegrationTestCase
     const PAGE_ID = 7;
 
     /**
-     * @var UrlGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var UrlGeneratorInterface|MockObject
      */
     private $urlGenerator;
 
@@ -52,7 +54,7 @@ class PageTypeTest extends FormIntegrationTestCase
     protected function setUp(): void
     {
         /**
-         * @var ValidatorInterface|\PHPUnit\Framework\MockObject\MockObject $validator
+         * @var ValidatorInterface|MockObject $validator
          */
         $validator = $this->createMock(ValidatorInterface::class);
         $validator->expects($this->any())
@@ -87,9 +89,9 @@ class PageTypeTest extends FormIntegrationTestCase
             ->getMock();
 
         /**
-         * @var \Doctrine\Common\Persistence\ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $registry
+         * @var ManagerRegistry|MockObject $registry
          */
-        $registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $registry = $this->createMock('Doctrine\Persistence\ManagerRegistry');
 
         $registry->expects($this->any())
             ->method('getManagerForClass')

@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Migrations\Data\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 
 class UpdateAttributesConfig extends AbstractFixture implements ContainerAwareInterface

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\VisibilityBundle\EventListener;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Oro\Bundle\CustomerBundle\Provider\CustomerUserRelationsProvider;

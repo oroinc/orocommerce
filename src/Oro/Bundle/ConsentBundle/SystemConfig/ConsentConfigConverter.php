@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ConsentBundle\SystemConfig;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConsentBundle\Entity\Consent;
 
 /**

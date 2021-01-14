@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PaymentBundle\Tests\Functional\Entity\DataFixtures;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;

@@ -2,8 +2,10 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\SystemConfig;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\SystemConfig\PriceListConfig;
 use Oro\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class PriceListConfigConverterTest extends \PHPUnit\Framework\TestCase
 {
@@ -58,15 +60,15 @@ class PriceListConfigConverterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|\Doctrine\Common\Persistence\ManagerRegistry
+     * @return MockObject|ManagerRegistry
      */
     protected function getRegistryMock()
     {
-        return $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
+        return $this->createMock('Doctrine\Persistence\ManagerRegistry');
     }
 
     /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|\Doctrine\Common\Persistence\ManagerRegistry
+     * @return MockObject|ManagerRegistry
      */
     protected function getRegistryMockWithRepository()
     {
@@ -76,8 +78,7 @@ class PriceListConfigConverterTest extends \PHPUnit\Framework\TestCase
             return $item->getPriceList();
         }, $priceListConfigs);
 
-
-        $repository = $this->getMockBuilder('\Doctrine\Common\Persistence\ObjectRepository')
+        $repository = $this->getMockBuilder('\Doctrine\Persistence\ObjectRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -85,7 +86,7 @@ class PriceListConfigConverterTest extends \PHPUnit\Framework\TestCase
             ->method('findBy')
             ->willReturn($priceLists);
 
-        $manager = $this->getMockBuilder('\Doctrine\Common\Persistence\ObjectManager')
+        $manager = $this->getMockBuilder('\Doctrine\Persistence\ObjectManager')
             ->disableOriginalConstructor()
             ->getMock();
 

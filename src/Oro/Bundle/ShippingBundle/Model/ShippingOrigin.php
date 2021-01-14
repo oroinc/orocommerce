@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Model;
 
-use Doctrine\Common\Util\Inflector;
+use Doctrine\Common\Inflector\Inflector;
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 
 class ShippingOrigin extends AbstractAddress

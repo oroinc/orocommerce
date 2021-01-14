@@ -4,8 +4,8 @@ namespace Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\Cache\FlushableCache;
 use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\Brand;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;

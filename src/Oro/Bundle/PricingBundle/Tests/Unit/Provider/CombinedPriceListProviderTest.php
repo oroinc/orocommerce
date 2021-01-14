@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Provider;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
@@ -15,6 +15,7 @@ use Oro\Bundle\PricingBundle\PricingStrategy\PriceCombiningStrategyInterface;
 use Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister;
 use Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class CombinedPriceListProviderTest extends \PHPUnit\Framework\TestCase
@@ -27,17 +28,17 @@ class CombinedPriceListProviderTest extends \PHPUnit\Framework\TestCase
     protected $provider;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|EventDispatcherInterface
+     * @var MockObject|EventDispatcherInterface
      */
     protected $eventDispatcher;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry
+     * @var MockObject|ManagerRegistry
      */
     protected $registry;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|StrategyRegister
+     * @var MockObject|StrategyRegister
      */
     protected $strategyRegister;
 
@@ -359,7 +360,7 @@ class CombinedPriceListProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|\Doctrine\Common\Persistence\ManagerRegistry
+     * @return MockObject|ManagerRegistry
      */
     protected function getRepositoryMock()
     {

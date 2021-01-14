@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\Provider;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CurrencyBundle\Provider\RepositoryCurrencyCheckerProviderInterface;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 

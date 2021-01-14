@@ -3,7 +3,7 @@
 namespace Oro\Bundle\RedirectBundle\Cache\Dumper;
 
 use Doctrine\Common\Cache\FlushableCache;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 

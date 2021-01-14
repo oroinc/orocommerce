@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\OrderBundle\Provider;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\OrderBundle\Entity\Repository\OrderRepository;
 
 /**

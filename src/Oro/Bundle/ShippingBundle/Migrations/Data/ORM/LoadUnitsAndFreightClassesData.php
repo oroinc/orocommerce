@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Migrations\Data\ORM;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\MigrationBundle\Fixture\VersionedFixtureInterface;
 
 class LoadUnitsAndFreightClassesData extends AbstractUnitsAndFreightClassesFixture implements VersionedFixtureInterface

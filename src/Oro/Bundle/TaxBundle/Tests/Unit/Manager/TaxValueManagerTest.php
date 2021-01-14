@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Manager;
 
-use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\UnitOfWork;
+use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\EntityBundle\EventListener\DoctrineFlushProgressListener;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\TaxBundle\Entity\Tax;

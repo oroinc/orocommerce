@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\EventListener;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\FrontendTestFrameworkBundle\Entity\TestContentNode;
 use Oro\Bundle\FrontendTestFrameworkBundle\Entity\TestContentVariant;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
@@ -60,7 +61,7 @@ class ProductCollectionVariantReindexMessageSendListenerTest extends WebTestCase
          * @var Segment $segment
          * @var ContentVariantInterface $contentVariant
          */
-        list($segment, $contentVariant) = $this->createNewContentVariantWithSegment();
+        [$segment, $contentVariant] = $this->createNewContentVariantWithSegment();
         $messageCollector = self::getMessageCollector();
         $messageCollector->clear();
 
@@ -231,7 +232,7 @@ class ProductCollectionVariantReindexMessageSendListenerTest extends WebTestCase
     }
 
     /**
-     * @return \Doctrine\Common\Persistence\ObjectManager|null|object
+     * @return ObjectManager|null|object
      */
     private function getEntityManager()
     {

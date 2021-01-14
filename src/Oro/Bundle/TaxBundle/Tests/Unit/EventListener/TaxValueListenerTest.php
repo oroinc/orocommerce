@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\EventListener;
 
-use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\TaxBundle\Entity\TaxValue;
 use Oro\Bundle\TaxBundle\EventListener\TaxValueListener;
 use Oro\Bundle\TaxBundle\Manager\TaxValueManager;
@@ -38,7 +38,7 @@ class TaxValueListenerTest extends \PHPUnit\Framework\TestCase
         $taxValue = new TaxValue();
 
         /** @var ObjectManager $objectManager */
-        $objectManager = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')
+        $objectManager = $this->getMockBuilder('Doctrine\Persistence\ObjectManager')
             ->disableOriginalConstructor()
             ->getMock();
 

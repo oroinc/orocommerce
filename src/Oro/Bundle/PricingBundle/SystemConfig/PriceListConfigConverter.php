@@ -2,7 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\SystemConfig;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 
 class PriceListConfigConverter
@@ -110,7 +111,7 @@ class PriceListConfigConverter
     }
 
     /**
-     * @return \Doctrine\Common\Persistence\ObjectManager
+     * @return ObjectManager
      */
     protected function getManagerForPriceList()
     {

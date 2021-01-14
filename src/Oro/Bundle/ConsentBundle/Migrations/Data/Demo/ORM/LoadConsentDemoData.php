@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ConsentBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ConsentBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ConsentBundle\DependencyInjection\OroConsentExtension;
 use Oro\Bundle\ConsentBundle\Entity\Consent;

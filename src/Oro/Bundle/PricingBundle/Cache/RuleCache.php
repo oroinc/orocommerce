@@ -3,9 +3,9 @@
 namespace Oro\Bundle\PricingBundle\Cache;
 
 use Doctrine\Common\Cache\Cache;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 
 /**
@@ -125,7 +125,7 @@ class RuleCache implements Cache
         }
 
         $qb->setParameters($data[self::PARAMETERS_KEY]);
-        
+
         return $qb;
     }
 

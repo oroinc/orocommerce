@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CatalogBundle\Tests\Functional\Api\Frontend\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;

@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\RequestHandler;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 use Oro\Bundle\OrderBundle\RequestHandler\OrderRequestHandler;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -46,9 +46,9 @@ class OrderRequestHandlerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->objectManager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
+        $this->objectManager = $this->createMock('Doctrine\Persistence\ObjectManager');
 
-        $this->registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->registry = $this->createMock('Doctrine\Persistence\ManagerRegistry');
         $this->registry->expects($this->any())->method('getManagerForClass')->willReturn($this->objectManager);
 
         $this->request = $this->createMock('Symfony\Component\HttpFoundation\Request');

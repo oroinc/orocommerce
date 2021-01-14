@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\ImportExport\Writer;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ImportExportBundle\Context\ContextRegistry;
 use Oro\Bundle\IntegrationBundle\ImportExport\Writer\PersistentBatchWriter;
 use Oro\Bundle\PlatformBundle\Manager\OptionalListenerManager;

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Functional\Controller;
 
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\IntegrationBundle\Generator\Prefixed\PrefixedIntegrationIdentifierGenerator;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
 use Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadUserData;
@@ -468,7 +469,7 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
     }
 
     /**
-     * @return \Doctrine\Common\Persistence\ObjectManager|mixed|null|object
+     * @return ObjectManager|mixed|null|object
      */
     protected function getEntityManager()
     {

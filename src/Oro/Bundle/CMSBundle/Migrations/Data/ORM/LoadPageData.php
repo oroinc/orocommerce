@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\Migrations\Data\ORM;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CMSBundle\Migrations\Data\AbstractLoadPageData;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;

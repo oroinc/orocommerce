@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\EventListener\Datagrid;
 
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
@@ -87,7 +87,7 @@ class ProductShippingOptionsDatagridListenerTest extends \PHPUnit\Framework\Test
     public function testOnResultAfter(array $sourceResults = [], array $expectedResults = [])
     {
         /** @var \PHPUnit\Framework\MockObject\MockObject|ObjectRepository $repository */
-        $repository = $this->createMock('Doctrine\Common\Persistence\ObjectRepository');
+        $repository = $this->createMock('Doctrine\Persistence\ObjectRepository');
         $repository->expects($this->once())
             ->method('findBy')
             ->with(['product' => [42, 100]], ['productUnit' => 'ASC'])
@@ -97,7 +97,7 @@ class ProductShippingOptionsDatagridListenerTest extends \PHPUnit\Framework\Test
                     $this->createShippingOptions(11, 42),
                     $this->createShippingOptions(12, 42),
                     $this->createShippingOptions(13, 42),
-                    $this->createShippingOptions(14, 42)
+                    $this->createShippingOptions(14, 42),
                 ]
             );
 

@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Oro\Bundle\SEOBundle\Tests\Functional\DataFixtures;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Symfony\Component\Inflector\Inflector as SymfonyInflector;
 

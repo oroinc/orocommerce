@@ -2,8 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\ImportExport;
 
-use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\ImportExportBundle\Job\JobExecutor;
 use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -266,7 +267,7 @@ abstract class AbstractImportExportTestCase extends WebTestCase
 
     /**
      * @param string $class
-     * @return \Doctrine\Common\Persistence\ObjectManager|null|object
+     * @return ObjectManager|null|object
      */
     protected function getManager($class)
     {

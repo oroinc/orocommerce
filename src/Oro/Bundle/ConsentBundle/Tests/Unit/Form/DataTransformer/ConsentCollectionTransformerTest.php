@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\ConsentBundle\Tests\Unit\Form\DataTransformer;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ConsentBundle\Entity\Consent;
 use Oro\Bundle\ConsentBundle\Form\DataTransformer\ConsentCollectionTransformer;
 use Oro\Bundle\ConsentBundle\SystemConfig\ConsentConfig;

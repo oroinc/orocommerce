@@ -3,7 +3,7 @@
 namespace Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 
 class LoadWebCatalogData extends AbstractFixture

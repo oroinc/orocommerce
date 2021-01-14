@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Form\Extension;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryDefaultProductOptionsType;
@@ -63,7 +63,7 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
     protected function getExtensions()
     {
         /** @var ManagerRegistry $registry */
-        $registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $registry = $this->createMock('Doctrine\Persistence\ManagerRegistry');
 
         /** @var VisibilityPostSetDataListener|\PHPUnit\Framework\MockObject\MockObject $postSetDataListener */
         $postSetDataListener = $this->getMockBuilder(

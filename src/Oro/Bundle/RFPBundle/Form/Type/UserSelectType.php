@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\RFPBundle\Form\Type;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\RFPBundle\Form\DataTransformer\UserIdToEmailTransformer;
 use Oro\Bundle\UserBundle\Form\Type\UserSelectType as BaseUserSelectType;
 use Symfony\Component\Form\AbstractType;

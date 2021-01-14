@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Expression\Preprocessor;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Component\Expression\Preprocessor\ExpressionPreprocessorInterface;
 

@@ -194,7 +194,7 @@ class RequestHandlerTest extends \PHPUnit\Framework\TestCase
      */
     protected function initRepository($returnEntity)
     {
-        $repository = $this->getMockBuilder('\Doctrine\Common\Persistence\ObjectRepository')
+        $repository = $this->getMockBuilder('\Doctrine\Persistence\ObjectRepository')
             ->disableOriginalConstructor()->getMock();
         $repository->expects($this->once())->method('find')->willReturn($returnEntity);
 
@@ -208,7 +208,7 @@ class RequestHandlerTest extends \PHPUnit\Framework\TestCase
      */
     protected function initManager($repository)
     {
-        $manager = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')
+        $manager = $this->getMockBuilder('Doctrine\Persistence\ObjectManager')
             ->disableOriginalConstructor()->getMock();
         $manager->expects($this->once())->method('getRepository')->willReturn($repository);
 

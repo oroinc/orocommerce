@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\Migrations\Data\ORM;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Migrations\Data\ORM\LoadCustomerUserRoles;
 use Oro\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
@@ -24,7 +24,7 @@ class LoadCustomerBuyerRoles extends LoadCustomerUserRoles
         if (!$this->container->hasParameter('installed') || !$this->container->getParameter('installed')) {
             return;
         }
-        
+
         $aclManager = $this->getAclManager();
         if (!$aclManager->isAclEnabled()) {
             return;

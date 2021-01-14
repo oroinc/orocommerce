@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\Provider;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\AttachmentBundle\Provider\AttachmentEntityConfigProviderInterface;
 use Oro\Bundle\CMSBundle\DBAL\Types\WYSIWYGPropertiesType;
 use Oro\Bundle\CMSBundle\DBAL\Types\WYSIWYGStyleType;

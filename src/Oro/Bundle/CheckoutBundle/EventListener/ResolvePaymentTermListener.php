@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\EventListener;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\PaymentTermBundle\Event\ResolvePaymentTermEvent;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProviderInterface;

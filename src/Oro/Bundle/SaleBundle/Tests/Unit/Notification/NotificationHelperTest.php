@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Notification;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\EmailBundle\Builder\EmailModelBuilder;
 use Oro\Bundle\EmailBundle\Entity\EmailTemplate;
@@ -185,7 +185,7 @@ class NotificationHelperTest extends \PHPUnit\Framework\TestCase
     protected function assertManagerCalled($className): ObjectManager
     {
         /** @var \PHPUnit\Framework\MockObject\MockObject|ObjectManager $manager */
-        $manager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
+        $manager = $this->createMock('Doctrine\Persistence\ObjectManager');
 
         $this->registry->expects($this->once())
             ->method('getManagerForClass')
@@ -207,7 +207,7 @@ class NotificationHelperTest extends \PHPUnit\Framework\TestCase
         $guestTemplate->setName('quote_email_link_guest');
 
         /** @var \PHPUnit\Framework\MockObject\MockObject|ObjectRepository $repository */
-        $repository = $this->createMock('Doctrine\Common\Persistence\ObjectRepository');
+        $repository = $this->createMock('Doctrine\Persistence\ObjectRepository');
         $repository->expects($this->any())
             ->method('findOneBy')
             ->willReturnMap(

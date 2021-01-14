@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\UPSBundle\Tests\Unit\Handler;
 
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\CacheBundle\Action\DataStorage\InvalidateCacheDataStorage;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ShippingBundle\Provider\Cache\ShippingPriceCache;
