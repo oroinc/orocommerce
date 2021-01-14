@@ -201,6 +201,10 @@ oro.cms:
         category:
             cms.label: CMS
 
+    wysiwyg:
+        formatted_twig_error_line: 'Line #{{ line }}: Invalid Twig syntax. Replace with a valid Twig code or use {{ twig escaping link }}.'
+        twig_escaping_link_text: 'escaping for "{{", "{%" and "{#"'
+
 oro.entity_extend.form.data_type:
     wysiwyg: WYSIWYG
     wysiwyg_style: WYSIWYG Style

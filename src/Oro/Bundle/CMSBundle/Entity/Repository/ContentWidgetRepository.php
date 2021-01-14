@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\Entity\Repository;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -22,7 +23,7 @@ class ContentWidgetRepository extends EntityRepository
         $qb = $this->createQueryBuilder('content_widget');
 
         $qb->where($qb->expr()->in('content_widget.name', ':names'))
-            ->setParameter(':names', $names);
+            ->setParameter(':names', $names, Connection::PARAM_STR_ARRAY);
 
         return $aclHelper->apply($qb)->getResult();
     }

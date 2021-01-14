@@ -8,6 +8,10 @@ use Oro\Bundle\CMSBundle\Tools\WYSIWYGContentChecker;
 use Oro\Bundle\UIBundle\Tools\HTMLPurifier\ErrorCollector;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Twig\Environment;
+use Twig\Error\Error;
+use Twig\Template;
+use Twig\TemplateWrapper;
 
 class WYSIWYGContentCheckerTest extends \PHPUnit\Framework\TestCase
 {
@@ -16,6 +20,9 @@ class WYSIWYGContentCheckerTest extends \PHPUnit\Framework\TestCase
 
     /** @var HtmlTagHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $htmlTagHelper;
+
+    /** @var Environment|\PHPUnit\Framework\MockObject\MockObject */
+    private $twig;
 
     /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $translator;
@@ -27,6 +34,8 @@ class WYSIWYGContentCheckerTest extends \PHPUnit\Framework\TestCase
     {
         $this->htmlPurifierScopeProvider = $this->createMock(HTMLPurifierScopeProvider::class);
         $this->htmlTagHelper = $this->createMock(HtmlTagHelper::class);
+
+        $this->twig = $this->createMock(Environment::class);
 
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->translator->expects($this->any())
@@ -53,6 +62,7 @@ class WYSIWYGContentCheckerTest extends \PHPUnit\Framework\TestCase
         $this->checker = new WYSIWYGContentChecker(
             $this->htmlPurifierScopeProvider,
             $this->htmlTagHelper,
+            $this->twig,
             $this->translator
         );
     }
@@ -63,6 +73,11 @@ class WYSIWYGContentCheckerTest extends \PHPUnit\Framework\TestCase
         $className = Page::class;
         $fieldName = 'content';
         $scope = 'default';
+
+        $this->twig->expects($this->once())
+            ->method('createTemplate')
+            ->with($content)
+            ->willThrowException(new Error('test message', 42));
 
         $this->htmlPurifierScopeProvider->expects($this->once())
             ->method('getScope')
@@ -97,6 +112,12 @@ class WYSIWYGContentCheckerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(
             [
                 [
+                    'message' => 'oro.cms.wysiwyg.formatted_twig_error_line {{ line }} => 42, {{ twig escaping link ' .
+                        '}} => <a href="https://twig.symfony.com/doc/2.x/templates.html#escaping" target="_blank">' .
+                        'oro.cms.wysiwyg.twig_escaping_link_text </a>',
+                    'line' => 42,
+                ],
+                [
                     'message' => 'oro.htmlpurifier.formatted_error_line {{ line }} => 1001, {{ message }} => message 1',
                     'line' => 1001,
                 ],
@@ -115,6 +136,11 @@ class WYSIWYGContentCheckerTest extends \PHPUnit\Framework\TestCase
         $className = Page::class;
         $fieldName = 'content';
 
+        $this->twig->expects($this->once())
+            ->method('createTemplate')
+            ->with($content)
+            ->willThrowException(new Error('test message', 42));
+
         $this->htmlPurifierScopeProvider->expects($this->once())
             ->method('getScope')
             ->with($className, $fieldName)
@@ -123,7 +149,17 @@ class WYSIWYGContentCheckerTest extends \PHPUnit\Framework\TestCase
         $this->htmlTagHelper->expects($this->never())
             ->method($this->anything());
 
-        $this->assertEquals([], $this->checker->check($content, $className, $fieldName));
+        $this->assertEquals(
+            [
+                [
+                    'message' => 'oro.cms.wysiwyg.formatted_twig_error_line {{ line }} => 42, {{ twig escaping link ' .
+                        '}} => <a href="https://twig.symfony.com/doc/2.x/templates.html#escaping" target="_blank">' .
+                        'oro.cms.wysiwyg.twig_escaping_link_text </a>',
+                    'line' => 42,
+                ],
+            ],
+            $this->checker->check($content, $className, $fieldName)
+        );
     }
 
     public function testCheckWithoutErrorCollector(): void
@@ -132,6 +168,11 @@ class WYSIWYGContentCheckerTest extends \PHPUnit\Framework\TestCase
         $className = Page::class;
         $fieldName = 'content';
         $scope = 'default';
+
+        $this->twig->expects($this->once())
+            ->method('createTemplate')
+            ->with($content)
+            ->willThrowException(new Error('test message', 42));
 
         $this->htmlPurifierScopeProvider->expects($this->once())
             ->method('getScope')
@@ -147,7 +188,17 @@ class WYSIWYGContentCheckerTest extends \PHPUnit\Framework\TestCase
             ->method('getLastErrorCollector')
             ->willReturn(null);
 
-        $this->assertEquals([], $this->checker->check($content, $className, $fieldName));
+        $this->assertEquals(
+            [
+                [
+                    'message' => 'oro.cms.wysiwyg.formatted_twig_error_line {{ line }} => 42, {{ twig escaping link ' .
+                        '}} => <a href="https://twig.symfony.com/doc/2.x/templates.html#escaping" target="_blank">' .
+                        'oro.cms.wysiwyg.twig_escaping_link_text </a>',
+                    'line' => 42,
+                ],
+            ],
+            $this->checker->check($content, $className, $fieldName)
+        );
     }
 
     public function testCheckWithoutErrors(): void
@@ -156,6 +207,16 @@ class WYSIWYGContentCheckerTest extends \PHPUnit\Framework\TestCase
         $className = Page::class;
         $fieldName = 'content';
         $scope = 'default';
+
+        $template = $this->createMock(Template::class);
+        $template->expects($this->once())
+            ->method('render')
+            ->willReturn($content);
+
+        $this->twig->expects($this->once())
+            ->method('createTemplate')
+            ->with($content)
+            ->willReturn(new TemplateWrapper($this->twig, $template));
 
         $this->htmlPurifierScopeProvider->expects($this->once())
             ->method('getScope')
