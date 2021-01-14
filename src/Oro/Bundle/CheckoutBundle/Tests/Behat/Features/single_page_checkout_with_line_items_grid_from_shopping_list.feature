@@ -1,4 +1,5 @@
 @ticket-BB-19696
+@regression
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroCheckoutBundle:Payment.yml
@@ -129,13 +130,13 @@ Feature: Single Page Checkout With Line Items Grid From Shopping List
       | Item                                                                       | Qty | Unit   | Price  | Subtotal                 |
       | Configurable Product 1 BB4 In Stock Color: Red Size: M Note 4 text         | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
       | Configurable Product 1 BB5 Out of Stock Color: Green Size: L Note 5 text   | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
-      | Configurable Product 1 BB12 In Stock Color: Blue Size: S Note 12 text      | 7   | items  | $23.00 | $161.00 -$80.50 $80.50   |
       | Configurable Product 2 BB6 In Stock Color: Blue Size: S Note 6 text        | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
       | Configurable Product 2 BB7 Out of Stock Color: Red Size: M Note 7 text     | 5   | pieces | $17.00 | $85.00                   |
-      | Configurable Product 2 BB11 Out of Stock Color: Green Size: L Note 11 text | 7   | sets   | $19.00 | $133.00                  |
       | Configurable Product 3 BB8 In Stock Color: Green Size: L Note 8 text       | 5   | pieces | $17.00 | $85.00                   |
       | Configurable Product 3 BB9 Out of Stock Color: Blue Size: S Note 9 text    | 5   | pieces | $17.00 | $85.00                   |
       | Configurable Product 3 BB10 In Stock Color: Red Size: M Note 10 text       | 7   | sets   | $19.00 | $133.00                  |
+      | Configurable Product 2 BB11 Out of Stock Color: Green Size: L Note 11 text | 7   | sets   | $19.00 | $133.00                  |
+      | Configurable Product 1 BB12 In Stock Color: Blue Size: S Note 12 text      | 7   | items  | $23.00 | $161.00 -$80.50 $80.50   |
       | Product 13 BB13 Out of Stock Note 13 text                                  | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
     And I should see "Summary 32 Items"
     And I should see "Subtotal $8,818.00"
@@ -193,13 +194,13 @@ Feature: Single Page Checkout With Line Items Grid From Shopping List
       | Item                                                                       | Qty | Unit   | Price  | Subtotal                 |
       | Configurable Product 1 BB4 In Stock Color: Red Size: M Note 4 text         | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
       | Configurable Product 1 BB5 Out of Stock Color: Green Size: L Note 5 text   | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
-      | Configurable Product 1 BB12 In Stock Color: Blue Size: S Note 12 text      | 7   | items  | $23.00 | $161.00 -$80.50 $80.50   |
       | Configurable Product 2 BB6 In Stock Color: Blue Size: S Note 6 text        | 10  | items  | $11.00 | $110.00 -$55.00 $55.00   |
       | Configurable Product 2 BB7 Out of Stock Color: Red Size: M Note 7 text     | 5   | pieces | $17.00 | $85.00                   |
-      | Configurable Product 2 BB11 Out of Stock Color: Green Size: L Note 11 text | 7   | sets   | $19.00 | $133.00                  |
       | Configurable Product 3 BB8 In Stock Color: Green Size: L Note 8 text       | 5   | pieces | $17.00 | $85.00                   |
       | Configurable Product 3 BB9 Out of Stock Color: Blue Size: S Note 9 text    | 5   | pieces | $17.00 | $85.00                   |
       | Configurable Product 3 BB10 In Stock Color: Red Size: M Note 10 text       | 7   | sets   | $19.00 | $133.00                  |
+      | Configurable Product 2 BB11 Out of Stock Color: Green Size: L Note 11 text | 7   | sets   | $19.00 | $133.00                  |
+      | Configurable Product 1 BB12 In Stock Color: Blue Size: S Note 12 text      | 7   | items  | $23.00 | $161.00 -$80.50 $80.50   |
       | Product 13 BB13 Out of Stock Note 13 text                                  | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
     And I should see "Summary 32 Items"
     And I should see "Subtotal $8,895.00"
@@ -225,13 +226,13 @@ Feature: Single Page Checkout With Line Items Grid From Shopping List
       | Item                                                                       | Qty | Unit   | Price  | Subtotal                 |
       | Configurable Product 1 BB4 In Stock Color: Red Size: M Note 4 text         | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
       | Configurable Product 1 BB5 Out of Stock Color: Green Size: L Note 5 text   | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
-      | Configurable Product 1 BB12 In Stock Color: Blue Size: S Note 12 text      | 7   | items  | $23.00 | $161.00 -$80.50 $80.50   |
       | Configurable Product 2 BB6 In Stock Color: Blue Size: S Note 6 text        | 10  | items  | $11.00 | $110.00 -$55.00 $55.00   |
       | Configurable Product 2 BB7 Out of Stock Color: Red Size: M Note 7 text     | 5   | pieces | $17.00 | $85.00                   |
-      | Configurable Product 2 BB11 Out of Stock Color: Green Size: L Note 11 text | 7   | sets   | $19.00 | $133.00                  |
       | Configurable Product 3 BB8 In Stock Color: Green Size: L Note 8 text       | 5   | pieces | $17.00 | $85.00                   |
       | Configurable Product 3 BB9 Out of Stock Color: Blue Size: S Note 9 text    | 5   | pieces | $17.00 | $85.00                   |
       | Configurable Product 3 BB10 In Stock Color: Red Size: M Note 10 text       | 7   | sets   | $19.00 | $133.00                  |
+      | Configurable Product 2 BB11 Out of Stock Color: Green Size: L Note 11 text | 7   | sets   | $19.00 | $133.00                  |
+      | Configurable Product 1 BB12 In Stock Color: Blue Size: S Note 12 text      | 7   | items  | $23.00 | $161.00 -$80.50 $80.50   |
       | Product 13 BB13 Out of Stock Note 13 text                                  | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
     And I should see "Summary 30 Items"
     And I should see "Subtotal $8,089.00"
@@ -298,21 +299,21 @@ Feature: Single Page Checkout With Line Items Grid From Shopping List
     When I click "Check Out" on row "Shopping List 3" in grid "OpenOrdersGrid"
     And I should see "30 total records"
     And I click "Show All"
-    And I click "Group similar"
+    And I click "Group Similar"
     Then I should see "27 total records"
     And I should see following grid:
       | Item                                                                       | Qty | Unit   | Price  | Subtotal                 |
-      | Configurable Product 1                                                     | 13  | items  |        | $227.00 -$113.50 $113.50 |
-      | BB4 In Stock Color: Red Size: M Note 4 text                                | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
-      | BB5 Out of Stock Color: Green Size: L Note 5 text                          | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
-      | BB12 In Stock Color: Blue Size: S Note 12 text                             | 7   | items  | $23.00 | $161.00 -$80.50 $80.50   |
       | Configurable Product 2 BB6 In Stock Color: Blue Size: S Note 6 text        | 10  | items  | $11.00 | $110.00 -$55.00 $55.00   |
       | Configurable Product 2 BB7 Out of Stock Color: Red Size: M Note 7 text     | 5   | pieces | $17.00 | $85.00                   |
-      | Configurable Product 2 BB11 Out of Stock Color: Green Size: L Note 11 text | 7   | sets   | $19.00 | $133.00                  |
       | Configurable Product 3                                                     | 10  | pieces |        | $170.00                  |
       | BB8 In Stock Color: Green Size: L Note 8 text                              | 5   | pieces | $17.00 | $85.00                   |
       | BB9 Out of Stock Color: Blue Size: S Note 9 text                           | 5   | pieces | $17.00 | $85.00                   |
       | Configurable Product 3 BB10 In Stock Color: Red Size: M Note 10 text       | 7   | sets   | $19.00 | $133.00                  |
+      | Configurable Product 2 BB11 Out of Stock Color: Green Size: L Note 11 text | 7   | sets   | $19.00 | $133.00                  |
+      | Configurable Product 1                                                     | 13  | items  |        | $227.00 -$113.50 $113.50 |
+      | BB4 In Stock Color: Red Size: M Note 4 text                                | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
+      | BB5 Out of Stock Color: Green Size: L Note 5 text                          | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
+      | BB12 In Stock Color: Blue Size: S Note 12 text                             | 7   | items  | $23.00 | $161.00 -$80.50 $80.50   |
       | Product 13 BB13 Out of Stock Note 13 text                                  | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
       | Product 14 BB14 In Stock Note 14 text                                      | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
       | Product 15 BB15 Out of Stock Note 15 text                                  | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
@@ -335,21 +336,21 @@ Feature: Single Page Checkout With Line Items Grid From Shopping List
       | Product 34 CC34 In Stock Note 34 text                                      | 13  | pieces | $31.00 | $403.00                  |
       | Product 35 CC35 In Stock Note 35 text                                      | 13  | pieces | $31.00 | $403.00                  |
     When I reload the page
-    Then I should see "Ungroup similar"
+    Then I should see "Ungroup Similar"
     And I should see "27 total records"
     And I should see following grid:
       | Item                                                                       | Qty | Unit   | Price  | Subtotal                 |
-      | Configurable Product 1                                                     | 13  | items  |        | $227.00 -$113.50 $113.50 |
-      | BB4 In Stock Color: Red Size: M Note 4 text                                | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
-      | BB5 Out of Stock Color: Green Size: L Note 5 text                          | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
-      | BB12 In Stock Color: Blue Size: S Note 12 text                             | 7   | items  | $23.00 | $161.00 -$80.50 $80.50   |
       | Configurable Product 2 BB6 In Stock Color: Blue Size: S Note 6 text        | 10  | items  | $11.00 | $110.00 -$55.00 $55.00   |
       | Configurable Product 2 BB7 Out of Stock Color: Red Size: M Note 7 text     | 5   | pieces | $17.00 | $85.00                   |
-      | Configurable Product 2 BB11 Out of Stock Color: Green Size: L Note 11 text | 7   | sets   | $19.00 | $133.00                  |
       | Configurable Product 3                                                     | 10  | pieces |        | $170.00                  |
       | BB8 In Stock Color: Green Size: L Note 8 text                              | 5   | pieces | $17.00 | $85.00                   |
       | BB9 Out of Stock Color: Blue Size: S Note 9 text                           | 5   | pieces | $17.00 | $85.00                   |
       | Configurable Product 3 BB10 In Stock Color: Red Size: M Note 10 text       | 7   | sets   | $19.00 | $133.00                  |
+      | Configurable Product 2 BB11 Out of Stock Color: Green Size: L Note 11 text | 7   | sets   | $19.00 | $133.00                  |
+      | Configurable Product 1                                                     | 13  | items  |        | $227.00 -$113.50 $113.50 |
+      | BB4 In Stock Color: Red Size: M Note 4 text                                | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
+      | BB5 Out of Stock Color: Green Size: L Note 5 text                          | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
+      | BB12 In Stock Color: Blue Size: S Note 12 text                             | 7   | items  | $23.00 | $161.00 -$80.50 $80.50   |
       | Product 13 BB13 Out of Stock Note 13 text                                  | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
       | Product 14 BB14 In Stock Note 14 text                                      | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
       | Product 15 BB15 Out of Stock Note 15 text                                  | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
@@ -377,17 +378,17 @@ Feature: Single Page Checkout With Line Items Grid From Shopping List
     Then I should see "27 total records"
     And I should see following grid:
       | Item                                                                       | Qty | Unit   | Price  | Subtotal                 |
-      | Configurable Product 1                                                     | 13  | items  |        | $227.00 -$113.50 $113.50 |
-      | BB4 In Stock Color: Red Size: M Note 4 text                                | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
-      | BB5 Out of Stock Color: Green Size: L Note 5 text                          | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
-      | BB12 In Stock Color: Blue Size: S Note 12 text                             | 7   | items  | $23.00 | $161.00 -$80.50 $80.50   |
       | Configurable Product 2 BB6 In Stock Color: Blue Size: S Note 6 text        | 10  | items  | $11.00 | $110.00 -$55.00 $55.00   |
       | Configurable Product 2 BB7 Out of Stock Color: Red Size: M Note 7 text     | 5   | pieces | $17.00 | $85.00                   |
-      | Configurable Product 2 BB11 Out of Stock Color: Green Size: L Note 11 text | 7   | sets   | $19.00 | $133.00                  |
       | Configurable Product 3                                                     | 10  | pieces |        | $170.00                  |
       | BB8 In Stock Color: Green Size: L Note 8 text                              | 5   | pieces | $17.00 | $85.00                   |
       | BB9 Out of Stock Color: Blue Size: S Note 9 text                           | 5   | pieces | $17.00 | $85.00                   |
       | Configurable Product 3 BB10 In Stock Color: Red Size: M Note 10 text       | 7   | sets   | $19.00 | $133.00                  |
+      | Configurable Product 2 BB11 Out of Stock Color: Green Size: L Note 11 text | 7   | sets   | $19.00 | $133.00                  |
+      | Configurable Product 1                                                     | 13  | items  |        | $227.00 -$113.50 $113.50 |
+      | BB4 In Stock Color: Red Size: M Note 4 text                                | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
+      | BB5 Out of Stock Color: Green Size: L Note 5 text                          | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
+      | BB12 In Stock Color: Blue Size: S Note 12 text                             | 7   | items  | $23.00 | $161.00 -$80.50 $80.50   |
       | Product 13 BB13 Out of Stock Note 13 text                                  | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
       | Product 14 BB14 In Stock Note 14 text                                      | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
       | Product 15 BB15 Out of Stock Note 15 text                                  | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
@@ -417,7 +418,7 @@ Feature: Single Page Checkout With Line Items Grid From Shopping List
       | Product 35 CC35 In Stock Note 35 text | 13  | pieces | $31.00 | $403.00  |
 
   Scenario: Check Ungroup similar
-    When I click "Ungroup similar"
+    When I click "Ungroup Similar"
     Then I should see "30 total records"
     And I should see following grid:
       | Item                                  | Qty | Unit   | Price  | Subtotal |
@@ -449,20 +450,20 @@ Feature: Single Page Checkout With Line Items Grid From Shopping List
       | Item                                                                       | Qty | Unit   | Price  | Subtotal                 |
       | Configurable Product 1 BB4 In Stock Color: Red Size: M Note 4 text         | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
       | Configurable Product 1 BB5 Out of Stock Color: Green Size: L Note 5 text   | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
-      | Configurable Product 1 BB12 In Stock Color: Blue Size: S Note 12 text      | 7   | items  | $23.00 | $161.00 -$80.50 $80.50   |
       | Configurable Product 2 BB6 In Stock Color: Blue Size: S Note 6 text        | 10  | items  | $11.00 | $110.00 -$55.00 $55.00   |
       | Configurable Product 2 BB7 Out of Stock Color: Red Size: M Note 7 text     | 5   | pieces | $17.00 | $85.00                   |
-      | Configurable Product 2 BB11 Out of Stock Color: Green Size: L Note 11 text | 7   | sets   | $19.00 | $133.00                  |
       | Configurable Product 3 BB8 In Stock Color: Green Size: L Note 8 text       | 5   | pieces | $17.00 | $85.00                   |
       | Configurable Product 3 BB9 Out of Stock Color: Blue Size: S Note 9 text    | 5   | pieces | $17.00 | $85.00                   |
       | Configurable Product 3 BB10 In Stock Color: Red Size: M Note 10 text       | 7   | sets   | $19.00 | $133.00                  |
+      | Configurable Product 2 BB11 Out of Stock Color: Green Size: L Note 11 text | 7   | sets   | $19.00 | $133.00                  |
+      | Configurable Product 1 BB12 In Stock Color: Blue Size: S Note 12 text      | 7   | items  | $23.00 | $161.00 -$80.50 $80.50   |
       | Product 13 BB13 Out of Stock Note 13 text                                  | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
 
   Scenario: Check Availability filter
     Given I open Order History page on the store frontend
     When I click "Check Out" on row "Shopping List 3" in grid "OpenOrdersGrid"
     Then I should see "30 total records"
-    When I click "Group similar"
+    When I click "Group Similar"
     And I check "Out of Stock" in Availability filter
     Then I should see "8 total records"
     And I should see following grid:
@@ -470,9 +471,9 @@ Feature: Single Page Checkout With Line Items Grid From Shopping List
       | Configurable Product 1                                                     | 13  | items  |        | $227.00 -$113.50 $113.50 |
       | BB5 Out of Stock Color: Green Size: L Note 5 text                          | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
       | Configurable Product 2 BB7 Out of Stock Color: Red Size: M Note 7 text     | 5   | pieces | $17.00 | $85.00                   |
-      | Configurable Product 2 BB11 Out of Stock Color: Green Size: L Note 11 text | 7   | sets   | $19.00 | $133.00                  |
       | Configurable Product 3                                                     | 10  | pieces |        | $170.00                  |
       | BB9 Out of Stock Color: Blue Size: S Note 9 text                           | 5   | pieces | $17.00 | $85.00                   |
+      | Configurable Product 2 BB11 Out of Stock Color: Green Size: L Note 11 text | 7   | sets   | $19.00 | $133.00                  |
       | Product 13 BB13 Out of Stock Note 13 text                                  | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
       | Product 15 BB15 Out of Stock Note 15 text                                  | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
       | Product 17 BB17 Out of Stock Note 17 text                                  | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
@@ -486,9 +487,9 @@ Feature: Single Page Checkout With Line Items Grid From Shopping List
       | BB5 Out of Stock Color: Green Size: L Note 5 text                          | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
       | BB12 In Stock Color: Blue Size: S Note 12 text                             | 7   | items  | $23.00 | $161.00 -$80.50 $80.50   |
       | Configurable Product 2 BB7 Out of Stock Color: Red Size: M Note 7 text     | 5   | pieces | $17.00 | $85.00                   |
-      | Configurable Product 2 BB11 Out of Stock Color: Green Size: L Note 11 text | 7   | sets   | $19.00 | $133.00                  |
       | Configurable Product 3                                                     | 10  | pieces |        | $170.00                  |
       | BB9 Out of Stock Color: Blue Size: S Note 9 text                           | 5   | pieces | $17.00 | $85.00                   |
+      | Configurable Product 2 BB11 Out of Stock Color: Green Size: L Note 11 text | 7   | sets   | $19.00 | $133.00                  |
       | Product 13 BB13 Out of Stock Note 13 text                                  | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
       | Product 15 BB15 Out of Stock Note 15 text                                  | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
       | Product 17 BB17 Out of Stock Note 17 text                                  | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
@@ -502,10 +503,10 @@ Feature: Single Page Checkout With Line Items Grid From Shopping List
       | BB5 Out of Stock Color: Green Size: L Note 5 text                          | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
       | BB12 In Stock Color: Blue Size: S Note 12 text                             | 7   | items  | $23.00 | $161.00 -$80.50 $80.50   |
       | Configurable Product 2 BB7 Out of Stock Color: Red Size: M Note 7 text     | 5   | pieces | $17.00 | $85.00                   |
-      | Configurable Product 2 BB11 Out of Stock Color: Green Size: L Note 11 text | 7   | sets   | $19.00 | $133.00                  |
       | Configurable Product 3                                                     | 10  | pieces |        | $170.00                  |
       | BB8 In Stock Color: Green Size: L Note 8 text                              | 5   | pieces | $17.00 | $85.00                   |
       | BB9 Out of Stock Color: Blue Size: S Note 9 text                           | 5   | pieces | $17.00 | $85.00                   |
+      | Configurable Product 2 BB11 Out of Stock Color: Green Size: L Note 11 text | 7   | sets   | $19.00 | $133.00                  |
       | Product 13 BB13 Out of Stock Note 13 text                                  | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
       | Product 15 BB15 Out of Stock Note 15 text                                  | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
       | Product 17 BB17 Out of Stock Note 17 text                                  | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
@@ -521,12 +522,12 @@ Feature: Single Page Checkout With Line Items Grid From Shopping List
       | Item                                                                       | Qty | Unit   | Price  | Subtotal                 |
       | Configurable Product 1 BB4 In Stock Color: Red Size: M Note 4 text         | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
       | Configurable Product 1 BB5 Out of Stock Color: Green Size: L Note 5 text   | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
-      | Configurable Product 1 BB12 In Stock Color: Blue Size: S Note 12 text      | 7   | items  | $23.00 | $161.00 -$80.50 $80.50   |
       | Configurable Product 2 BB7 Out of Stock Color: Red Size: M Note 7 text     | 5   | pieces | $17.00 | $85.00                   |
-      | Configurable Product 2 BB11 Out of Stock Color: Green Size: L Note 11 text | 7   | sets   | $19.00 | $133.00                  |
       | Configurable Product 3 BB8 In Stock Color: Green Size: L Note 8 text       | 5   | pieces | $17.00 | $85.00                   |
       | Configurable Product 3 BB9 Out of Stock Color: Blue Size: S Note 9 text    | 5   | pieces | $17.00 | $85.00                   |
       | Configurable Product 3 BB10 In Stock Color: Red Size: M Note 10 text       | 7   | sets   | $19.00 | $133.00                  |
+      | Configurable Product 2 BB11 Out of Stock Color: Green Size: L Note 11 text | 7   | sets   | $19.00 | $133.00                  |
+      | Configurable Product 1 BB12 In Stock Color: Blue Size: S Note 12 text      | 7   | items  | $23.00 | $161.00 -$80.50 $80.50   |
       | Product 13 BB13 Out of Stock Note 13 text                                  | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
       | Product 14 BB14 In Stock Note 14 text                                      | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
 
@@ -538,8 +539,8 @@ Feature: Single Page Checkout With Line Items Grid From Shopping List
     Then I should see "5 total records"
     And I should see following grid:
       | Item                                                                       | Qty | Unit | Price  | Subtotal |
-      | Configurable Product 2 BB11 Out of Stock Color: Green Size: L Note 11 text | 7   | sets | $19.00 | $133.00  |
       | Configurable Product 3 BB10 In Stock Color: Red Size: M Note 10 text       | 7   | sets | $19.00 | $133.00  |
+      | Configurable Product 2 BB11 Out of Stock Color: Green Size: L Note 11 text | 7   | sets | $19.00 | $133.00  |
       | Product 18 BB18 In Stock Note 18 text                                      | 11  | sets | $29.00 | $319.00  |
       | Product 19 BB19 Out of Stock Note 19 text                                  | 11  | sets | $29.00 | $319.00  |
       | Product 20 BB20 In Stock Note 20 text                                      | 11  | sets | $29.00 | $319.00  |
