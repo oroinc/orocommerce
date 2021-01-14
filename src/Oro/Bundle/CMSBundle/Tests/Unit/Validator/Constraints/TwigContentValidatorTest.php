@@ -7,9 +7,9 @@ use Oro\Bundle\CMSBundle\Validator\Constraints\TwigContentValidator;
 use Symfony\Component\Validator\Context\ExecutionContext;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 use Twig\Environment;
-use Twig\Error\SyntaxError;
-use Twig\Source;
-use Twig\TokenStream;
+use Twig\Error\Error;
+use Twig\Template;
+use Twig\TemplateWrapper;
 
 class TwigContentValidatorTest extends \PHPUnit\Framework\TestCase
 {
@@ -33,10 +33,15 @@ class TwigContentValidatorTest extends \PHPUnit\Framework\TestCase
     {
         $value = '<div><h1>Hello World!</h1></div>';
 
+        $template = $this->createMock(Template::class);
+        $template->expects($this->once())
+            ->method('render')
+            ->willReturn($value);
+
         $this->twig->expects($this->once())
-            ->method('tokenize')
-            ->with(new Source($value, 'content'))
-            ->willReturn(new TokenStream([]));
+            ->method('createTemplate')
+            ->with($value)
+            ->willReturn(new TemplateWrapper($this->twig, $template));
 
         /** @var ExecutionContext|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(ExecutionContext::class);
@@ -54,9 +59,9 @@ class TwigContentValidatorTest extends \PHPUnit\Framework\TestCase
         $value = '<div><h1>Hello World!</h1></div>';
 
         $this->twig->expects($this->once())
-            ->method('tokenize')
-            ->with(new Source($value, 'content'))
-            ->willThrowException(new SyntaxError(''));
+            ->method('createTemplate')
+            ->with($value)
+            ->willThrowException(new Error(''));
 
         /** @var ExecutionContext|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(ExecutionContext::class);

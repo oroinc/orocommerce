@@ -6,10 +6,8 @@ use Oro\Bundle\CMSBundle\Form\Extension\DigitalAssetTwigTagsWysiwygExtension;
 use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGStylesType;
 use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType;
 use Oro\Bundle\CMSBundle\Tools\DigitalAssetTwigTagsConverter;
+use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\FormInterface;
 
 class DigitalAssetTwigTagsWysiwygExtensionTest extends \PHPUnit\Framework\TestCase
 {
@@ -38,67 +36,10 @@ class DigitalAssetTwigTagsWysiwygExtensionTest extends \PHPUnit\Framework\TestCa
     {
         $builder = $this->createMock(FormBuilderInterface::class);
         $builder
-            ->expects($this->exactly(2))
-            ->method('addEventListener')
-            ->withConsecutive(
-                [FormEvents::PRE_SET_DATA, [$this->extension, 'onPreSetData'], 512],
-                [FormEvents::SUBMIT, [$this->extension, 'onSubmit'], -512]
-            );
+            ->expects($this->once())
+            ->method('addViewTransformer')
+            ->with($this->isInstanceOf(CallbackTransformer::class));
 
         $this->extension->buildForm($builder, []);
-    }
-
-    public function testOnPreSetDataWhenNoData(): void
-    {
-        $event = $this->createMock(FormEvent::class);
-        $event
-            ->expects($this->never())
-            ->method('setData');
-
-        $this->extension->onPreSetData($event);
-    }
-
-    public function testOnPreSetData(): void
-    {
-        $data = 'sample data';
-        $convertedData = 'sample converted data';
-        $event = new FormEvent($this->createMock(FormInterface::class), $data);
-
-        $this->digitalAssetTwigTagsConverter
-            ->expects($this->once())
-            ->method('convertToUrls')
-            ->with($data)
-            ->willReturn($convertedData);
-
-        $this->extension->onPreSetData($event);
-
-        $this->assertEquals($convertedData, $event->getData());
-    }
-
-    public function testOnSubmitWhenNoData(): void
-    {
-        $event = $this->createMock(FormEvent::class);
-        $event
-            ->expects($this->never())
-            ->method('setData');
-
-        $this->extension->onSubmit($event);
-    }
-
-    public function testOnSubmit(): void
-    {
-        $data = 'sample data';
-        $convertedData = 'sample converted data';
-        $event = new FormEvent($this->createMock(FormInterface::class), $data);
-
-        $this->digitalAssetTwigTagsConverter
-            ->expects($this->once())
-            ->method('convertToTwigTags')
-            ->with($data)
-            ->willReturn($convertedData);
-
-        $this->extension->onSubmit($event);
-
-        $this->assertEquals($convertedData, $event->getData());
     }
 }
