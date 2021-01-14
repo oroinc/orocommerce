@@ -9,7 +9,30 @@ import ApiAccessor from 'oroui/js/tools/api-accessor';
 import LoadingMaskView from 'oroui/js/app/views/loading-mask-view';
 import HTMLValidator from 'orocms/js/app/grapesjs/validation';
 
-const REGEXP_TWIG_TAGS = /\{\{([\w\s\'\_\-\,\(\)]+)\}\}/gi;
+const REGEXP_TWIG_TAGS = /\{\{([\w\s\"\'\_\-\,\&\#\;\(\)]+)\}\}/gi;
+const REGEXP_TWIG_TAGS_ESC = /([\{|\%|\#]{2})([\w\W]+)([\%|\}|\#]{2})/gi;
+
+function messageCheck(str) {
+    const REGEXP_LINK_DOC = /<a\b[^>]* href=\"[\w\d\/\:\#\.]+\" target=\"_blank+\">(.*?)<\/a>/gi;
+    const REGEXP_LINK_ALL = /<a((?!<)(.))*?\>(.*?)<((?!<)(.|\n))*?\>/gi;
+
+    const linkMatch = str.match(REGEXP_LINK_DOC) || [];
+    const linkAllMatch = str.match(REGEXP_LINK_ALL) || [];
+
+    return {
+        done: linkMatch.length > 0 && linkMatch.length === linkAllMatch.length,
+        string: str.split('\n').map(subStr => {
+            REGEXP_LINK_DOC.lastIndex = 0;
+            if (REGEXP_LINK_DOC.test(subStr)) {
+                return subStr.replace(REGEXP_LINK_DOC, (match, content) => {
+                    return match.replace(content, _.escape(content));
+                });
+            }
+
+            return _.escape(subStr);
+        }).join('\n')
+    };
+}
 
 const ImportDialogView = BaseView.extend({
     /**
@@ -119,12 +142,14 @@ const ImportDialogView = BaseView.extend({
 
     validator: null,
 
+    VALIDATE_TIMEOUT: 1000,
+
     /**
      * @constructor
      * @param options
      */
     constructor: function ImportDialogView(options) {
-        this.checkContent = _.throttle(_.bind(this.checkContent, this), 2000);
+        this.checkContentWithDelay = _.debounce(this.checkContent.bind(this), this.VALIDATE_TIMEOUT);
         ImportDialogView.__super__.constructor.call(this, options);
     },
 
@@ -137,7 +162,11 @@ const ImportDialogView = BaseView.extend({
 
         this.codeViewer.set(this.importViewerOptions);
 
-        this.content = this.getImportContent();
+        this.content = this.getImportContent()
+            .replace(REGEXP_TWIG_TAGS_ESC, match => {
+                return _.unescape(match).replace(/&#039;/gi, `'`);
+            });
+
         this.validateApiAccessor = new ApiAccessor(this.validateApiProps);
         this.twigResolverAccessor = new ApiAccessor(this.twigApiResolverProps);
 
@@ -210,12 +239,10 @@ const ImportDialogView = BaseView.extend({
      * Binding event listeners
      */
     bindEvents() {
-        this.viewerEditor.on('change', codeEditor => {
-            this.importButton.attr('disabled', true);
-            this.checkContent(codeEditor);
-        });
-        this.viewerEditor.on('blur', _.bind(this.checkContent, this));
-        this.importButton.on('click', _.bind(this.onImportCode, this));
+        this.viewerEditor.on('changes', this.checkContentWithDelay);
+        this.viewerEditor.on('blur', this.checkContentWithDelay);
+        this.importButton.on('mouseover', this.checkContent.bind(this, this.viewerEditor));
+        this.importButton.on('click', this.onImportCode.bind(this));
     },
 
     /**
@@ -332,6 +359,7 @@ const ImportDialogView = BaseView.extend({
 
         this.disabled = true;
         this.prevContent = content;
+        this.importButton.attr('disabled', true);
         const errors = this.validator.validate(content);
 
         if (errors.length) {
@@ -372,17 +400,19 @@ const ImportDialogView = BaseView.extend({
      * @param message
      */
     validationMessage(message) {
-        const vMessage = this.$el.find('.validation-failed');
+        let vMessage = this.$el.find('.validation-failed');
 
         if (message) {
-            if (vMessage.length) {
-                vMessage.text(message);
-            } else {
-                this.$el.append($('<span />', {
+            if (!vMessage.length) {
+                vMessage = $('<span />', {
                     'class': 'validation-failed'
-                }).text(message));
+                });
+                vMessage.appendTo(this.$el);
                 this.$el.addClass('has-message');
             }
+
+            const {done, string} = messageCheck(message);
+            done ? vMessage.html(string) : vMessage.text(message);
         } else {
             vMessage.remove();
             this.$el.removeClass('has-message');

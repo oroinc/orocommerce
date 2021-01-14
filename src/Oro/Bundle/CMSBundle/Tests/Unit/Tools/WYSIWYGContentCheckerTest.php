@@ -8,6 +8,8 @@ use Oro\Bundle\CMSBundle\Tools\WYSIWYGContentChecker;
 use Oro\Bundle\UIBundle\Tools\HTMLPurifier\ErrorCollector;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Twig\Environment;
+use Twig\Error\Error;
 
 class WYSIWYGContentCheckerTest extends \PHPUnit\Framework\TestCase
 {
@@ -103,6 +105,53 @@ class WYSIWYGContentCheckerTest extends \PHPUnit\Framework\TestCase
                 [
                     'message' => 'oro.htmlpurifier.formatted_error_line {{ line }} => 2002, {{ message }} => message 2',
                     'line' => 2002,
+                ],
+            ],
+            $this->checker->check($content, $className, $fieldName)
+        );
+    }
+
+    public function testCheckWhenIncorrectTwig(): void
+    {
+        $content = 'test';
+        $className = Page::class;
+        $fieldName = 'content';
+        $scope = 'default';
+
+        $this->htmlPurifierScopeProvider->expects($this->once())
+            ->method('getScope')
+            ->with($className, $fieldName)
+            ->willReturn($scope);
+
+        $this->htmlTagHelper->expects($this->once())
+            ->method('sanitize')
+            ->with($content, $scope)
+            ->willReturnArgument(0);
+
+        $errorCollector = $this->createMock(ErrorCollector::class);
+        $errorCollector->expects($this->atLeastOnce())
+            ->method('getRaw')
+            ->willReturn([]);
+
+        $this->htmlTagHelper->expects($this->once())
+            ->method('getLastErrorCollector')
+            ->willReturn($errorCollector);
+
+        $twig = $this->createMock(Environment::class);
+        $twig->expects($this->once())
+            ->method('createTemplate')
+            ->with($content)
+            ->willThrowException(new Error('test message', 42));
+
+        $this->checker->setTwig($twig);
+
+        $this->assertEquals(
+            [
+                [
+                    'message' => 'oro.cms.wysiwyg.formatted_twig_error_line {{ line }} => 42, {{ twig escaping link ' .
+                        '}} => <a href="https://twig.symfony.com/doc/2.x/templates.html#escaping" target="_blank">' .
+                        'oro.cms.wysiwyg.twig_escaping_link_text </a>',
+                    'line' => 42,
                 ],
             ],
             $this->checker->check($content, $className, $fieldName)
