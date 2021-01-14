@@ -112,7 +112,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I focus on "matrix_collection[rows][0][columns][0][quantity]" field and press Enter key
     And I follow "List 2" link within flash message "Shopping list \"List 2\" was updated successfully"
     Given I open page with shopping list List 2
-    And I click "Group similar"
+    And I click "Group Similar"
     And I click Edit ConfigurableProductB in grid
     Then I should see an "Matrix Grid Form" element
     And I should see next rows in "Matrix Grid Form" table
@@ -376,7 +376,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I should not see "ConfigurableProductB" in the "RequestAQuoteProducts" element
     When I open shopping list widget
     And I click "View Details"
-    And I click "Group similar"
+    And I click "Group Similar"
     And I click "Remove Line Item"
     And I click "Yes, Delete"
     And I click "Remove Line Item"
@@ -410,7 +410,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | Value 14 | -        | -        | 1        |
     And I click "Add to Shopping List" for "CNFB" product
     And I follow "Shopping List" link within flash message "Shopping list \"Shopping List\" was updated successfully"
-    And I click "Group similar"
+    And I click "Group Similar"
     And I click Edit ConfigurableProductB in grid
     Then I should see an "Matrix Grid Form" element
     And I should see next rows in "Matrix Grid Form" table
@@ -426,7 +426,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I should see "ConfigurableProductB"
     When I open shopping list widget
     And I click "View Details"
-    And I click "Group similar"
+    And I click "Group Similar"
     And I click "Remove Line Item"
     And I click "Yes, Delete"
     Then I should see "There are no shopping list line items"
@@ -451,7 +451,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | 1        | -        | -        | 1        |
     And I click "Add to Shopping List" in "ShoppingListButtonGroup" element
     And I follow "Shopping List" link within flash message "Shopping list \"Shopping List\" was updated successfully"
-    And I click "Group similar"
+    And I click "Group Similar"
     And I click Edit ConfigurableProductA in grid
     Then I should see an "One Dimensional Matrix Grid Form" element
     And I should see next rows in "One Dimensional Matrix Grid Form" table
@@ -501,7 +501,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I click on "Shopping List Dropdown"
     And I click "Add to Shopping List" in "ShoppingListButtonGroupMenu" element
     And I follow "Shopping List" link within flash message "Shopping list \"Shopping List\" was updated successfully"
-    And I click "Group similar"
+    And I click "Group Similar"
     And I click Edit ConfigurableProductB in grid
     Then I should see an "Matrix Grid Form" element
     And I should see next rows in "Matrix Grid Form" table
@@ -606,7 +606,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I click "Add to Shopping List" in modal window
     And I follow "Shopping List" link within flash message "Shopping list \"Shopping List\" was updated successfully"
     Then I should not see an "Matrix Grid Form" element
-    When I click "Group similar"
+    When I click "Group Similar"
     And I click Edit ConfigurableProductB in grid
     # Check popup close button and product name in popup title
     Then I should see "Edit \"ConfigurableProductB\" in \"Shopping List\"" in the "UiDialog Title" element
@@ -645,7 +645,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | Value 14 | -        | -        | -        |
     And I click "Update Shopping List" in modal window
     And I follow "Shopping List" link within flash message "Shopping list \"Shopping List\" was updated successfully"
-    And I click "Group similar"
+    And I click "Group Similar"
     And I click Edit ConfigurableProductB in grid
     Then I should see next rows in "Matrix Grid Form" table
       | Value 21 | Value 22 | Value 23 |
