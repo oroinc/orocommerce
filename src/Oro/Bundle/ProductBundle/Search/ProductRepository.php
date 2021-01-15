@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Search;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
+use Oro\Bundle\ProductBundle\Event\CollectAutocompleteFieldsEvent;
 use Oro\Bundle\SearchBundle\Provider\AbstractSearchMappingProvider;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Factory\QueryFactoryInterface;
@@ -12,6 +13,7 @@ use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result\Item;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchRepository;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Website search engine repository for OroProductBundle:Product entity
@@ -19,20 +21,18 @@ use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchRepository;
  */
 class ProductRepository extends WebsiteSearchRepository
 {
+    protected EventDispatcherInterface $eventDispatcher;
     protected ConfigManager $configManager;
 
-    /**
-     * @param QueryFactoryInterface $queryFactory
-     * @param AbstractSearchMappingProvider $mappingProvider
-     * @param ConfigManager $configManager
-     */
     public function __construct(
         QueryFactoryInterface $queryFactory,
         AbstractSearchMappingProvider $mappingProvider,
+        EventDispatcherInterface $eventDispatcher,
         ConfigManager $configManager
     ) {
         parent::__construct($queryFactory, $mappingProvider);
 
+        $this->eventDispatcher = $eventDispatcher;
         $this->configManager = $configManager;
     }
 
@@ -181,6 +181,27 @@ class ProductRepository extends WebsiteSearchRepository
         }
 
         return $query;
+    }
+
+    public function getAutocompleteSearchQuery(string $queryString, int $numberOfProducts): SearchQueryInterface
+    {
+        $fields = [
+            'text.sku',
+            'text.names_LOCALIZATION_ID as name',
+            'text.image_product_small as image',
+            'text.inventory_status',
+        ];
+
+        $event = new CollectAutocompleteFieldsEvent($fields);
+        $this->eventDispatcher->dispatch($event);
+
+        $operator = $this->getProductSearchOperator();
+
+        return $this->createQuery()
+            ->addSelect($event->getFields())
+            ->setFrom('oro_product_WEBSITE_ID')
+            ->addWhere(Criteria::expr()->$operator('text.all_text_LOCALIZATION_ID', $queryString))
+            ->setMaxResults($numberOfProducts);
     }
 
     /**

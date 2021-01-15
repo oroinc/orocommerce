@@ -43,6 +43,10 @@ Oro\Bundle\ProductBundle\Entity\Product:
             type: text
             fulltext: false
         -
+            name: image_product_small
+            type: text
+            fulltext: false
+        -
             name: product_units
             type: text
             fulltext: false

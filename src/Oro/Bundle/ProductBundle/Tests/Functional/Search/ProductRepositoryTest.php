@@ -234,6 +234,51 @@ class ProductRepositoryTest extends WebTestCase
      * @dataProvider productSearchOperatorDataProvider
      *
      * @param bool $isConfigEnabled
+     */
+    public function testGetAutocompleteSearchQuery(bool $isConfigEnabled): void
+    {
+        $this->configManager->set($this->configKey, $isConfigEnabled);
+        $this->configManager->flush();
+
+        /** @var ProductRepository $ormRepository */
+        $ormRepository = $this->client->getContainer()
+            ->get('doctrine')
+            ->getRepository(Product::class);
+
+        /** @var ProductSearchRepository $searchRepository */
+        $searchRepository = $this->client->getContainer()
+            ->get('oro_product.website_search.repository.product');
+
+        $productsFromOrm = $ormRepository->createQueryBuilder('p')
+            ->where('p.sku IN (:sku)')
+            ->setParameter('sku', [LoadProductData::PRODUCT_7, LoadProductData::PRODUCT_9])
+            ->getQuery()
+            ->getResult(Query::HYDRATE_ARRAY);
+
+        $productsFromSearch = $searchRepository
+            ->getAutocompleteSearchQuery('продукт', 2)
+            ->getResult()
+            ->getElements();
+
+        $this->assertTrue(count($productsFromSearch) > 0);
+
+        foreach ($productsFromOrm as $productFromOrm) {
+            $found = false;
+
+            foreach ($productsFromSearch as $productFromSearch) {
+                if ($productFromSearch->getSelectedData()['sku'] === $productFromOrm['sku']) {
+                    $found = true;
+                }
+            }
+
+            $this->assertTrue($found, 'Product with sku `' . $productFromOrm['sku'] . '` not found.');
+        }
+    }
+
+    /**
+     * @dataProvider productSearchOperatorDataProvider
+     *
+     * @param bool $isConfigEnabled
      * @param string $expected
      */
     public function testGetProductSearchOperator(bool $isConfigEnabled, string $expected): void

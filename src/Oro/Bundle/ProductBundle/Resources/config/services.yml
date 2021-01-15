@@ -244,6 +244,7 @@ services:
         public: true
         class: 'Oro\Bundle\ProductBundle\Search\ProductRepository'
         arguments:
+            - '@event_dispatcher'
             - '@oro_config.manager'
         calls:
             - [setEntityName, ['Oro\Bundle\ProductBundle\Entity\Product']]
@@ -1791,3 +1792,17 @@ services:
             - '@oro_importexport.strategy.import.helper'
         tags:
             - { name: kernel.event_listener, event: oro_product.data_converter.convert_to_import, method: onConvertToImport }
+
+    oro_product.provider.product_autocomplete:
+        class: Oro\Bundle\ProductBundle\Provider\ProductAutocompleteProvider
+        arguments:
+            - '@router'
+            - '@oro_product.website_search.repository.product'
+            - '@oro_ui.twig.html_tag'
+            - '@oro_product.provider.product_image_placeholder'
+            - '@oro_config.manager'
+            - '@oro_entity_extend.enum_value_provider'
+            - '@event_dispatcher'
+
+    Oro\Bundle\ProductBundle\Provider\ProductAutocompleteProvider:
+        alias: oro_product.provider.product_autocomplete

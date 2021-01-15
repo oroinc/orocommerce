@@ -36,6 +36,7 @@ dynamic-imports:
         - oroproduct/js/app/views/quick-add-import-form-view
         - oroproduct/js/app/views/quick-add-row-view
         - oroproduct/js/app/views/quick-order-form-view
+        - oroproduct/js/app/views/search-autocomplete-view
         - oroproduct/js/app/widget/product-popup-gallery-widget
         - oroproduct/js/content-processor/product-add-to-dropdown-button
         - oroproduct/js/widget/zoom-widget

@@ -232,6 +232,10 @@ class WebsiteSearchProductIndexerListener
                 $entity,
                 FrontendProductDatagridListener::PRODUCT_IMAGE_FILTER_MEDIUM
             );
+            $smallImageUrl = $this->attachmentManager->getFilteredImageUrl(
+                $entity,
+                FrontendProductDatagridListener::PRODUCT_IMAGE_FILTER_SMALL
+            );
             $event->addField(
                 $productId,
                 'image_' . FrontendProductDatagridListener::PRODUCT_IMAGE_FILTER_LARGE,
@@ -241,6 +245,11 @@ class WebsiteSearchProductIndexerListener
                 $productId,
                 'image_' . FrontendProductDatagridListener::PRODUCT_IMAGE_FILTER_MEDIUM,
                 $mediumImageUrl
+            );
+            $event->addField(
+                $productId,
+                'image_' . FrontendProductDatagridListener::PRODUCT_IMAGE_FILTER_SMALL,
+                $smallImageUrl
             );
         }
     }

@@ -205,12 +205,13 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
             ->method('getManagerForClass')
             ->willReturn($em);
 
-        $this->attachmentManager->expects($this->exactly(2))
+        $this->attachmentManager->expects($this->exactly(3))
             ->method('getFilteredImageUrl')
             ->withConsecutive([$entity], [$entity])
             ->willReturnOnConsecutiveCalls(
                 '/large/image',
-                '/medium/image'
+                '/medium/image',
+                '/small/image'
             );
 
         $this->attributeManager
@@ -286,6 +287,12 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
                     ),
                     'all_text' => true,
                 ],
+            ],
+            'image_product_small' => [
+                [
+                    'value'    => '/small/image',
+                    'all_text' => false
+                ]
             ],
             'image_product_medium' => [
                 [

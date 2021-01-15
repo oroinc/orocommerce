@@ -9,10 +9,12 @@ use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Provider\PageTemplateProvider;
+use Oro\Bundle\ProductBundle\Provider\ProductAutocompleteProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -63,6 +65,26 @@ class ProductController extends AbstractController
                 'frontend-product-search-grid'
             ],
         ];
+    }
+
+    /**
+     * Get data for website search autocomplete
+     *
+     * @Route("/search/autocomplete", name="oro_product_frontend_product_search_autocomplete")
+     * @AclAncestor("oro_product_frontend_view")
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function autocompleteAction(Request $request): JsonResponse
+    {
+        $searchString = trim($request->get('search'));
+
+        $autocompleteData = $this->get(ProductAutocompleteProvider::class)
+            ->getAutocompleteData($request, $searchString);
+
+        return new JsonResponse($autocompleteData);
     }
 
     /**
@@ -143,6 +165,7 @@ class ProductController extends AbstractController
             ProductVariantAvailabilityProvider::class,
             PageTemplateProvider::class,
             AttributeRenderRegistry::class,
+            ProductAutocompleteProvider::class,
             'oro_product.layout.data_provider.product_view_form_availability_provider'
                 => ProductFormAvailabilityProvider::class,
         ]);

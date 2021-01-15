@@ -1,0 +1,47 @@
+<%
+function highlightWords(inputString, value) {
+    if (!!inputString && _.isString(inputString)) {
+        const highlightPattern = '<span class="search-autocomplete__highlight">$&</span>';
+        const inputWords = _.escape(inputString).split(' ');
+        const reg = new RegExp(inputWords.join('|'), 'gi');
+        return _.escape(value).replace(reg, highlightPattern);
+    } else {
+        return _.escape(value);
+    }
+}
+%>
+
+<div class="search-autocomplete">
+    <div class="search-autocomplete__content dropdown-menu">
+        <% if (total_count > 0) { %>
+            <ul class="search-autocomplete__list">
+                <%_.each(products, function(product) { %>
+                    <li class="search-autocomplete__item">
+                        <a href="<%- product.url %>" class="search-autocomplete-product" title="<%- product.name %>">
+                            <div class="search-autocomplete-product__image">
+                                <img src="<%- product.image %>" alt="<%- product.name %>">
+                            </div>
+                            <div class="search-autocomplete-product__info">
+                                <div class="search-autocomplete-product__head">
+                                    <div class="search-autocomplete-product__title"><%= highlightWords(inputString, product.name) %></div>
+                                    <% if (product.formatted_price) { %>
+                                        <div class="search-autocomplete-product__price"><%- product.formatted_price %></div>
+                                    <% } %>
+                                </div>
+                                <div class="search-autocomplete-product__body">
+                                    <div class="search-autocomplete-product__sku"><%= highlightWords(inputString, product.sku) %></div>
+                                    <div class="search-autocomplete-product__status <%- product.inventory_status %>"><%- product.inventory_status_label %></div>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                <% }) %>
+            </ul>
+            <div class="search-autocomplete__footer">
+                <button class="btn btn--link btn--no-offset search-autocomplete__submit" type="submit"><%- _.__('oro.product.autocomplete.popup.button.all.label', { productCount: total_count }, total_count)  %> <span class="fa-angle-right" aria-hidden="true"></span></button>
+            </div>
+        <% } else { %>
+            <div class="search-autocomplete__no-found"><%- _.__('oro.product.autocomplete.no_found') %></div>
+        <% } %>
+    </div>
+</div>

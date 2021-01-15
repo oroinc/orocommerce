@@ -85,6 +85,8 @@ system_configuration:
             icon: 'fa-search'
         product_fulltext_search:
             title: oro.product.system_configuration.groups.product_fulltext_search.title
+        product_search_autocomplete:
+            title: oro.product.system_configuration.groups.product_search_autocomplete.title
 
     fields:
         oro_product.related_products_enabled:
@@ -604,6 +606,20 @@ system_configuration:
                 label: oro.product.system_configuration.fields.allow_partial_product_search.label
                 tooltip: oro.product.system_configuration.fields.allow_partial_product_search.tooltip
 
+        oro_product.search_autocomplete_max_products:
+            data_type: integer
+            type: Symfony\Component\Form\Extension\Core\Type\IntegerType
+            search_type: text
+            priority: 20
+            options:
+                label: oro.product.system_configuration.fields.search_autocomplete_max_products.label
+                tooltip: oro.product.system_configuration.fields.search_autocomplete_max_products.tooltip
+                required: true
+                constraints:
+                    - NotBlank: ~
+                    - Range:
+                        min: 1
+
     tree:
         system_configuration:
             platform:
@@ -689,6 +705,7 @@ system_configuration:
                                     product_fulltext_search:
                                         children:
                                             - oro_product.allow_partial_product_search
+                                            - oro_product.search_autocomplete_max_products
                             featured_products:
                                 priority: 100
                                 children:
