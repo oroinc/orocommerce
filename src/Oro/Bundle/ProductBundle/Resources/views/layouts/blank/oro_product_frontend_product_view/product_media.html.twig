@@ -93,6 +93,7 @@
         } %}
 
         {% set popupGalleryAttr = {
+            'class': 'product-view-media-gallery-container',
             'data-page-component-view': options|json_encode,
             'itemprop': 'productID',
             'content': product.id
@@ -116,6 +117,7 @@
                     </div>
                 {% endfor %}
             </div>
+            <div id="zoom-container"></div>
         </div>
     {% else %}
         <div class="product-view-media-gallery" itemprop="productID" content="{{ product.id}}">
@@ -131,7 +133,6 @@
         </div>
     {% endif %}
 
-    <div id="zoom-container"></div>
     {% if productImages|length > 1 %}
         <div class="product-view-media-gallery__nav loading slides-to-show-{{ navListOptions.slidesToShow }}" {{ UI.attributes(slideNavAttr) }}>
             {% for productImage in productImages %}
