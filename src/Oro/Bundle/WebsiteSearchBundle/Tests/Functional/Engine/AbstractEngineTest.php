@@ -124,27 +124,6 @@ abstract class AbstractEngineTest extends WebTestCase
         $this->assertStringStartsWith('item9@mail.com', $items[8]->getRecordTitle());
     }
 
-    public function testSearchAll()
-    {
-        $query = new Query();
-        $query->from('*');
-        $query->getCriteria()->andWhere(new Comparison('text.stringValue', 'STARTS WITH', 'item'));
-        $items = $this->getSearchItems($query);
-
-        $this->assertCount(LoadSearchItemData::COUNT, $items);
-
-        // reverse order is a consequence of custom search relevance weight
-        $this->assertEquals($this->getReference('item_9')->getId(), $items[0]->getRecordId());
-        $this->assertEquals($this->getReference('item_8')->getId(), $items[1]->getRecordId());
-        $this->assertEquals($this->getReference('item_7')->getId(), $items[2]->getRecordId());
-        $this->assertEquals($this->getReference('item_6')->getId(), $items[3]->getRecordId());
-        $this->assertEquals($this->getReference('item_5')->getId(), $items[4]->getRecordId());
-        $this->assertEquals($this->getReference('item_4')->getId(), $items[5]->getRecordId());
-        $this->assertEquals($this->getReference('item_3')->getId(), $items[6]->getRecordId());
-        $this->assertEquals($this->getReference('item_2')->getId(), $items[7]->getRecordId());
-        $this->assertEquals($this->getReference('item_1')->getId(), $items[8]->getRecordId());
-    }
-
     public function testSearchByAliasWithSelect()
     {
         $searchField = 'stringValue';
