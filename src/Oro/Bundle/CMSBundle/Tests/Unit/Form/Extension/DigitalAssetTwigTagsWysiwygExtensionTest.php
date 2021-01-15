@@ -6,9 +6,9 @@ use Oro\Bundle\CMSBundle\Form\Extension\DigitalAssetTwigTagsWysiwygExtension;
 use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGStylesType;
 use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType;
 use Oro\Bundle\CMSBundle\Tools\DigitalAssetTwigTagsConverter;
+use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 
 class DigitalAssetTwigTagsWysiwygExtensionTest extends \PHPUnit\Framework\TestCase
@@ -38,12 +38,9 @@ class DigitalAssetTwigTagsWysiwygExtensionTest extends \PHPUnit\Framework\TestCa
     {
         $builder = $this->createMock(FormBuilderInterface::class);
         $builder
-            ->expects($this->exactly(2))
-            ->method('addEventListener')
-            ->withConsecutive(
-                [FormEvents::PRE_SET_DATA, [$this->extension, 'onPreSetData'], 512],
-                [FormEvents::SUBMIT, [$this->extension, 'onSubmit'], -512]
-            );
+            ->expects($this->once())
+            ->method('addViewTransformer')
+            ->with($this->isInstanceOf(CallbackTransformer::class));
 
         $this->extension->buildForm($builder, []);
     }

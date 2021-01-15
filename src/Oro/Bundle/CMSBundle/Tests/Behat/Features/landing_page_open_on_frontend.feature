@@ -66,11 +66,18 @@ Feature: Landing page open on frontend
     And filename of the file "cat1 wysiwyg file" is as remembered
     And I should see "File of cat1"
 
-  Scenario: Add another image
+  Scenario: Add incorrect twig function
     Given I proceed as the Admin
     When I go to Marketing/Landing Pages
     And I click Edit "Other page" in grid
-    And I fill in WYSIWYG "CMS Page Content" with "GrapesJS content: <img alt=\"cat1_wysiwyg_image\" src=\"{{ wysiwyg_image(13, 'f23ac0ff-2cc0-4d9e-8d00-78053a569a50') }}\"/><a title=\"cat1_wysiwyg_file\" href=\"{{ wysiwyg_file(13, '902dfb57-57c0-4a2f-88bf-adf365d74895') }}\">File of cat1</a><img alt=\"cat2_wysiwyg_image\" src=\"{{ wysiwyg_image(14, 'c840eec3-4b10-4682-b5cd-4d51fe008b6f') }}\"/>"
+    And I fill in WYSIWYG "CMS Page Content" with "GrapesJS content: {{ test(123) }} <img alt=\"cat1_wysiwyg_image\" src=\"{{ wysiwyg_image(13, 'f23ac0ff-2cc0-4d9e-8d00-78053a569a50') }}\"/><a title=\"cat1_wysiwyg_file\" href=\"{{ wysiwyg_file(13, '902dfb57-57c0-4a2f-88bf-adf365d74895') }}\">File of cat1</a><img alt=\"cat2_wysiwyg_image\" src=\"{{ wysiwyg_image(14, 'c840eec3-4b10-4682-b5cd-4d51fe008b6f') }}\"/>"
+    And I save form
+    Then I should see "The entered content contains invalid twig constructions."
+    And I should not see text matching "\{\{ wysiwyg_image\(" in WYSIWYG editor
+    And I should not see text matching "\{\{ wysiwyg_file\(" in WYSIWYG editor
+
+  Scenario: Add another image
+    When I fill in WYSIWYG "CMS Page Content" with "GrapesJS content: <img alt=\"cat1_wysiwyg_image\" src=\"{{ wysiwyg_image(13, 'f23ac0ff-2cc0-4d9e-8d00-78053a569a50') }}\"/><a title=\"cat1_wysiwyg_file\" href=\"{{ wysiwyg_file(13, '902dfb57-57c0-4a2f-88bf-adf365d74895') }}\">File of cat1</a><img alt=\"cat2_wysiwyg_image\" src=\"{{ wysiwyg_image(14, 'c840eec3-4b10-4682-b5cd-4d51fe008b6f') }}\"/>"
     When I save form
     Then I should not see text matching "\{\{ wysiwyg_image\(" in WYSIWYG editor
     And I should not see text matching "\{\{ wysiwyg_file\(" in WYSIWYG editor

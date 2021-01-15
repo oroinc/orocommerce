@@ -6,9 +6,9 @@ use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGStylesType;
 use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType;
 use Oro\Bundle\CMSBundle\Tools\DigitalAssetTwigTagsConverter;
 use Symfony\Component\Form\AbstractTypeExtension;
+use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 
 /**
  * Adds event subscriber for WYSIWYGType and WYSIWYGStyleType.
@@ -39,8 +39,24 @@ class DigitalAssetTwigTagsWysiwygExtension extends AbstractTypeExtension
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'onPreSetData'], 512);
-        $builder->addEventListener(FormEvents::SUBMIT, [$this, 'onSubmit'], -512);
+        $builder->addViewTransformer(
+            new CallbackTransformer(
+                function ($value) {
+                    if (!$value) {
+                        return $value;
+                    }
+
+                    return $this->digitalAssetTwigTagsConverter->convertToUrls($value);
+                },
+                function ($value) {
+                    if (!$value) {
+                        return $value;
+                    }
+
+                    return $this->digitalAssetTwigTagsConverter->convertToTwigTags($value);
+                }
+            )
+        );
     }
 
     /**
