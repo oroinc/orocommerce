@@ -1015,6 +1015,9 @@ oro_behat_extension:
       selector: '.product-view-media-container [data-trigger-gallery-open]'
 
     Product Main Image:
+      selector: '.product-view-media-wrapper .product-view-media-gallery__image'
+
+    Product Main Image In Tab:
       selector: '.tab-content__wrapper .product-view-media-gallery__image'
 
     Zoom Container:
