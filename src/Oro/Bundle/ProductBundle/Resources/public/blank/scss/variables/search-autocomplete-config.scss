@@ -1,0 +1,72 @@
+/* @theme: blank; */
+
+$search-autocomplete-position: absolute !default;
+$search-autocomplete-display: block !default;
+$search-autocomplete-width: 100% !default;
+$search-autocomplete-z-index: z('dropdown') + 1 !default;
+
+$search-autocomplete-content-min-width: 385px !default;
+$search-autocomplete-content-display: block !default;
+$search-autocomplete-content-inner-offset: $offset-y-s $offset-x !default;
+$search-autocomplete-content-float: none !default;
+$search-autocomplete-content-position: static !default;
+
+$search-autocomplete-item-border-bottom: 1px solid get-color('additional', 'light') !default;
+
+$search-autocomplete-highlight-background: get-color('ui', 'warning') !default;
+$search-autocomplete-highlight-text-decoration: underline !default;
+
+$search-autocomplete-footer-inner-offset: #{$offset-y-m + $offset-y-s} 0 !default;
+
+$search-autocomplete-submit-line-height: $base-line-height !default;
+$search-autocomplete-submit-border: none !default;
+
+$search-autocomplete-no-found-inner-offset: #{$offset-y-m + $offset-y-s} 0 !default;
+
+$search-autocomplete-product-text-decoration: none !default;
+$search-autocomplete-product-display: flex !default;
+$search-autocomplete-product-offset: 0 -#{$offset-y-m + $offset-y-s} !default;
+$search-autocomplete-product-inner-offset: #{$offset-y-m + $offset-y-s} #{$offset-y-m + $offset-y-s} !default;
+$search-autocomplete-product-hover-text-decoration: none !default;
+
+$search-autocomplete-product-image-width: 40px !default;
+$search-autocomplete-product-image-height: 40px !default;
+$search-autocomplete-product-image-display: block !default;
+$search-autocomplete-product-image-border: 1px solid get-color('additional', 'light') !default;
+$search-autocomplete-product-image-offset-right: $offset-x !default;
+$search-autocomplete-product-image-flex-grow: 0 !default;
+$search-autocomplete-product-image-flex-shrink: 0 !default;
+
+$search-autocomplete-product-image-img-max-width: 100% !default;
+
+$search-autocomplete-product-info-width: calc(100% - #{$search-autocomplete-product-image-width + $search-autocomplete-product-image-offset-right}) !default;
+$search-autocomplete-product-info-flex-grow: 1 !default;
+$search-autocomplete-product-info-flex-shrink: 1 !default;
+
+$search-autocomplete-product-head-display: flex !default;
+$search-autocomplete-product-head-justify-content: space-between !default;
+$search-autocomplete-product-head-offset-bottom: 6px !default;
+
+$search-autocomplete-product-title-min-width: 50% !default;
+$search-autocomplete-product-title-word-break-ie11: break-all !default;
+$search-autocomplete-product-title-word-break: break-word !default;
+
+$search-autocomplete-product-body-display: flex !default;
+$search-autocomplete-product-body-justify-content: space-between !default;
+
+$search-autocomplete-product-sku-color: get-color('primary', 'dark') !default;
+
+$search-autocomplete-product-price-font-weight: font-weight('bold') !default;
+$search-autocomplete-product-price-color: get-color('additional', 'dark') !default;
+$search-autocomplete-product-price-inner-offset-left: $offset-x-m !default;
+
+$search-autocomplete-product-status-inner-offset-left: $offset-x-m !default;
+
+// Tablet
+$search-autocomplete-tablet-offset-bottom: -$offset-y !default;
+$search-autocomplete-tablet-position: relative !default;
+
+$search-autocomplete-content-tablet-min-width: initial !default;
+$search-autocomplete-content-tablet-border: none !default;
+$search-autocomplete-content-tablet-inner-offset: $offset-y-s 0 !default;
+$search-autocomplete-content-tablet-box-shadow: none !default;

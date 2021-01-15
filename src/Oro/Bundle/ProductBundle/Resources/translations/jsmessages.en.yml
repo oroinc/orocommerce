@@ -179,3 +179,9 @@ oro:
         images:
             zoom:
                 label: 'Enlarge Product Image'
+
+        autocomplete:
+            popup:
+                button:
+                    all.label: '{1} See Result|]1,Inf] See All {{ productCount }} Results'
+            no_found: 'No products were found to match your search'

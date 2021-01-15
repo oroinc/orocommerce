@@ -459,6 +459,7 @@ oro:
                 images_general.title: 'General'
                 product_search.title: 'Product Search'
                 product_fulltext_search.title: 'Product Fulltext Search'
+                product_search_autocomplete.title: 'Global Search Autocomplete'
             fields:
                 original_file_names_enabled:
                     label: 'Enable Original File Names'
@@ -620,6 +621,10 @@ oro:
                     options:
                         collapsed: 'Collapsed'
                         expanded: 'Expanded'
+                search_autocomplete_max_products:
+                    label: 'Number Of Products In Search Autocomplete'
+                    tooltip: 'Maximum number of products shown in the storefront autocomplete dropdown.'
+
                 filters_position:
                     label: 'Filter Panel Position'
                     tooltip: 'Position of filters on the storefront product listing pages.'

@@ -1485,3 +1485,12 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-grid, method: onLineItemData }
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-edit-grid, method: onLineItemData }
+
+    oro_pricing.event_listener.product_autocomplete:
+        class: Oro\Bundle\PricingBundle\EventListener\ProductAutocompleteListener
+        arguments:
+            - '@oro_pricing.user_currency_manager'
+            - '@oro_locale.formatter.number'
+        tags:
+            - { name: kernel.event_listener, event: Oro\Bundle\ProductBundle\Event\CollectAutocompleteFieldsEvent, method: onCollectAutocompleteFields }
+            - { name: kernel.event_listener, event: Oro\Bundle\ProductBundle\Event\ProcessAutocompleteDataEvent, method: onProcessAutocompleteData }
