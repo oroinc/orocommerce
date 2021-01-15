@@ -75,7 +75,7 @@ Feature: Product attribute image
     When I click "View Details" for "SKU123" product
     Then I should see "ImageField"
     When I click "Copyright"
-    And I hover on "Product Main Image"
+    And I hover on "Product Main Image In Tab"
     Then I check element "Zoom Container" has width "564"
 
   Scenario: Remove commerce from product attribute file applications
