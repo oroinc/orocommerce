@@ -3,6 +3,9 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Engine\ORM;
 
 use Oro\Bundle\SearchBundle\Engine\Orm\PdoMysql\MysqlVersionCheckTrait;
+use Oro\Bundle\SearchBundle\Query\Criteria\Comparison;
+use Oro\Bundle\SearchBundle\Query\Query;
+use Oro\Bundle\SearchBundle\Tests\Functional\Controller\DataFixtures\LoadSearchItemData;
 use Oro\Bundle\TestFrameworkBundle\Entity\Item as TestEntity;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractEngine;
 use Oro\Bundle\WebsiteSearchBundle\Engine\ORM\Driver\DriverInterface;
@@ -40,7 +43,22 @@ class OrmEngineTest extends AbstractEngineTest
             );
         }
 
-        parent::testSearchAll();
+        $query = new Query();
+        $query->from('*');
+        $query->getCriteria()->andWhere(new Comparison('text.stringValue', 'STARTS WITH', 'item'));
+        $items = $this->getSearchItems($query);
+
+        $this->assertCount(LoadSearchItemData::COUNT, $items);
+
+        $this->assertEquals($this->getReference('item_1')->getId(), $items[8]->getRecordId());
+        $this->assertEquals($this->getReference('item_2')->getId(), $items[7]->getRecordId());
+        $this->assertEquals($this->getReference('item_3')->getId(), $items[6]->getRecordId());
+        $this->assertEquals($this->getReference('item_4')->getId(), $items[5]->getRecordId());
+        $this->assertEquals($this->getReference('item_5')->getId(), $items[4]->getRecordId());
+        $this->assertEquals($this->getReference('item_6')->getId(), $items[3]->getRecordId());
+        $this->assertEquals($this->getReference('item_7')->getId(), $items[2]->getRecordId());
+        $this->assertEquals($this->getReference('item_8')->getId(), $items[1]->getRecordId());
+        $this->assertEquals($this->getReference('item_9')->getId(), $items[0]->getRecordId());
     }
 
     /**
