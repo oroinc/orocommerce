@@ -381,6 +381,30 @@ oro_behat_extension:
     Shopping List Inline Line Item 1 Unit Select:
       selector: '.grid-body .grid-row:first-child form select'
 
+    Shopping List Inline Line Item 2 Quantity:
+      selector: '.grid-body .grid-row:nth-child(2) div.input-qty'
+
+    Shopping List Inline Line Item 2 Quantity Input:
+      selector: '.grid-body .grid-row:nth-child(2) form input[name="quantity"]'
+
+    Shopping List Inline Line Item 2 Unit Select:
+      selector: '.grid-body .grid-row:nth-child(2) form select'
+
+    Shopping List Inline Line Item 2 Save Changes Button:
+      selector: '.grid-body .grid-row:nth-child(2) form button[type="submit"]'
+
+    Shopping List Inline Line Item 3 Quantity:
+      selector: '.grid-body .grid-row:nth-child(3) div.input-qty'
+
+    Shopping List Inline Line Item 3 Quantity Input:
+      selector: '.grid-body .grid-row:nth-child(3) form input[name="quantity"]'
+
+    Shopping List Inline Line Item 3 Unit Select:
+      selector: '.grid-body .grid-row:nth-child(3) form select'
+
+    Shopping List Inline Line Item 3 Save Changes Button:
+      selector: '.grid-body .grid-row:nth-child(3) form button[type="submit"]'
+
     Shopping List Inline Line Item 4 Quantity:
       selector: '.grid-body .grid-row:nth-child(4) div.input-qty'
 
