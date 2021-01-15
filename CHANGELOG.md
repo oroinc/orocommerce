@@ -53,7 +53,8 @@ The current file describes significant changes in the code that may affect the u
 #### ProductBundle
 * Method `Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecoratorFactory::createDecoratedProductByProductHolders()` is removed, use `Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecoratorFactory::createDecoratedProduct()` instead.
 
-## 4.2.0-rc
+## 4.2.0-rc (2020-11-30)
+[Show detailed list of changes](incompatibilities-4-2-rc.md)
 
 ### Added
 
