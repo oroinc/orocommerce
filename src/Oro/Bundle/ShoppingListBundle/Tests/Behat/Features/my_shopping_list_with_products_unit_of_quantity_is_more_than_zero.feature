@@ -10,6 +10,7 @@ Feature: My Shopping List with products unit of quantity is more than zero
   In order to ...
   As an ...
   I should be able to ...
+
   Scenario: Feature Background
     Given sessions active:
       | Admin | first_session  |
@@ -151,6 +152,7 @@ Feature: My Shopping List with products unit of quantity is more than zero
     And I click Edit "Shopping List 3" in grid
     And I click "Group Similar"
     When I select 10 from per page list dropdown in "Frontend Customer User Shopping List Edit Grid"
+    And I sort grid by "SKU"
     When I click "Edit" on row "Configurable Product 1" in grid
     Then I should see an "Matrix Grid Form" element
     Then I should see next rows in "Matrix Grid Form" table
@@ -206,6 +208,7 @@ Feature: My Shopping List with products unit of quantity is more than zero
     When I click on "Shopping Lists Navigation Link"
     And I click View "Shopping List 3" in grid
     And I click "Group Similar"
+    And I sort grid by "SKU"
     When I select 10 from per page list dropdown in "Frontend Customer User Shopping List View Grid"
     And I should see following "Frontend Customer User Shopping List View Grid" grid:
       | SKU  | Item                                                     |              | Qty           | Unit   | Price  | Subtotal                 |

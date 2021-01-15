@@ -146,11 +146,38 @@ oro_behat_extension:
     Shopping List Line Item 2 Save Changes Button:
       selector: '.grid-body .grid-row:nth-child(2) form button[type="submit"]'
 
+    Shopping List Line Item 2 Cancel Button:
+      selector: '.grid-body .grid-row:nth-child(2) form button[data-action="cancel"]'
+
     Shopping List Line Item 3 Quantity:
       selector: '.grid-body .grid-row:nth-child(3) div.input-qty'
 
     Shopping List Line Item 3 Quantity Input:
       selector: '.grid-body .grid-row:nth-child(3) form input[name="quantity"]'
+
+    Shopping List Line Item 3 Unit Select:
+      selector: '.grid-body .grid-row:nth-child(3) form select'
+
+    Shopping List Line Item 3 Save Changes Button:
+      selector: '.grid-body .grid-row:nth-child(3) form button[type="submit"]'
+
+    Shopping List Line Item 3 Cancel Button:
+      selector: '.grid-body .grid-row:nth-child(3) form button[data-action="cancel"]'
+
+    Shopping List Line Item 4 Quantity:
+      selector: '.grid-body .grid-row:nth-child(4) div.input-qty'
+
+    Shopping List Line Item 4 Quantity Input:
+      selector: '.grid-body .grid-row:nth-child(4) form input[name="quantity"]'
+
+    Shopping List Line Item 4 Unit Select:
+      selector: '.grid-body .grid-row:nth-child(4) form select'
+
+    Shopping List Line Item 4 Save Changes Button:
+      selector: '.grid-body .grid-row:nth-child(4) form button[type="submit"]'
+
+    Shopping List Line Item 4 Cancel Button:
+      selector: '.grid-body .grid-row:nth-child(4) form button[data-action="cancel"]'
 
     ShoppingListLineItemProductSku:
       selector:

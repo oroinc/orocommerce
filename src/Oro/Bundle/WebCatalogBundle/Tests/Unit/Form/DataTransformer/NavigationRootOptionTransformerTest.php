@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\DataTransformer;
 
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Form\DataTransformer\NavigationRootOptionTransformer;

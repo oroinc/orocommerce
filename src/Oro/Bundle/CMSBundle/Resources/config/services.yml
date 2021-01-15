@@ -119,26 +119,24 @@ services:
             - { name: oro_scope.provider, scopeType: cms_content_block, priority: 1 }
 
     oro_cms.twig.content_security_policy:
-        class: 'Twig_Sandbox_SecurityPolicy'
-        public: false
+        class: Twig\Sandbox\SecurityPolicy
         arguments:
             # tags
-            - []
+            - [ 'app', 'for', 'if', 'spaceless' ]
             # filters
-            - ['escape']
+            - [ 'default', 'date', 'escape', 'format', 'length', 'lower', 'nl2br', 'number_format', 'title', 'trim', 'upper' ]
             # methods
             - []
             # properties
             - []
             # functions
-            - ['widget', 'content_block', 'wysiwyg_image', 'wysiwyg_file']
+            - [ 'date', 'widget', 'content_block', 'wysiwyg_image', 'wysiwyg_file' ]
 
     oro_cms.twig.sandbox_extension:
-        class: 'Twig_Extension_Sandbox'
+        class: Twig\Extension\SandboxExtension
         arguments:
             - '@oro_cms.twig.content_security_policy'
             - true # use sandbox globally in instance
-        public: false
 
     oro_cms.twig.widget_extension:
         class: 'Oro\Bundle\CMSBundle\Twig\WidgetExtension'
@@ -333,6 +331,7 @@ services:
         arguments:
             - '@oro_cms.provider.html_purifier_scope_provider'
             - '@oro_ui.html_tag_helper'
+            - '@oro_cms.twig.renderer'
             - '@translator'
 
     Oro\Bundle\CMSBundle\Tools\WYSIWYGContentChecker:

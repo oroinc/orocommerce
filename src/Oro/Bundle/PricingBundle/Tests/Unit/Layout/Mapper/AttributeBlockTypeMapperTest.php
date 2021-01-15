@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Layout\Mapper;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\PricingBundle\Layout\Mapper\AttributeBlockTypeMapper;
 

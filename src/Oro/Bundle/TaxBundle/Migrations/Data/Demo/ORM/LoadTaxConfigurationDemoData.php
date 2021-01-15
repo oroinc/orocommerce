@@ -4,7 +4,7 @@ namespace Oro\Bundle\TaxBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\TaxBundle\DependencyInjection\OroTaxExtension;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;

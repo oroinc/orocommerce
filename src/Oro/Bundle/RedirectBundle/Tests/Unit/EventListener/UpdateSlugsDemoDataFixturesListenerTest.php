@@ -3,10 +3,10 @@
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\EventListener;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping\ClassMetadataFactory;
+use Doctrine\Persistence\Mapping\ClassMetadata;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\PlatformBundle\Tests\Unit\EventListener\DemoDataFixturesListenerTestCase;
 use Oro\Bundle\RedirectBundle\Cache\UrlStorageCache;

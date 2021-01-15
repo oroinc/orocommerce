@@ -16,10 +16,12 @@ class CustomerGroupDataGridListenerTest extends AbstractPriceListRelationDataGri
         $className = 'Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerGroupRepository';
         $this->repository = $this->getMockBuilder($className)->disableOriginalConstructor()->getMock();
 
-        $this->manager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
-        $this->manager->method('getRepository')->willReturnMap([
-            ['OroPricingBundle:PriceListToCustomerGroup', $this->repository]
-        ]);
+        $this->manager = $this->createMock('Doctrine\Persistence\ObjectManager');
+        $this->manager->method('getRepository')->willReturnMap(
+            [
+                ['OroPricingBundle:PriceListToCustomerGroup', $this->repository],
+            ]
+        );
         parent::setUp();
         $this->listener = new CustomerGroupDataGridListener($this->registry);
     }

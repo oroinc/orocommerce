@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Workflow;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;

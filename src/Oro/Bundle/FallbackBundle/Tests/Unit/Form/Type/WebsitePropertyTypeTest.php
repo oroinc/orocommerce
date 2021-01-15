@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\FallbackBundle\Tests\Unit\Form\Type;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\FallbackBundle\Form\Type\WebsiteCollectionType;
 use Oro\Bundle\FallbackBundle\Form\Type\WebsitePropertyType;
@@ -29,7 +29,7 @@ class WebsitePropertyTypeTest extends FormIntegrationTestCase
 
     protected function setUp(): void
     {
-        $this->registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->registry = $this->createMock('Doctrine\Persistence\ManagerRegistry');
 
         parent::setUp();
     }

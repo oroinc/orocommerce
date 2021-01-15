@@ -3,10 +3,12 @@
 namespace Oro\Bundle\PricingBundle\Manager;
 
 use Doctrine\Common\Util\ClassUtils;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\UnitOfWork;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\MessageQueueBundle\Client\MessageBufferManager;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
@@ -183,7 +185,7 @@ class PriceManager
     }
 
     /**
-     * @return \Doctrine\Common\Persistence\ObjectManager|\Doctrine\ORM\EntityManager
+     * @return ObjectManager|EntityManager
      */
     public function getEntityManager()
     {

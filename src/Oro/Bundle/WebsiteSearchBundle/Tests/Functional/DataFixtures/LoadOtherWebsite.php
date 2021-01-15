@@ -3,9 +3,9 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\DBAL\Event\ConnectionEventArgs;
 use Doctrine\ORM\EntityManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadWebsiteData;
 use Oro\Bundle\WebsiteBundle\Provider\CacheableWebsiteProvider;

@@ -20,6 +20,7 @@ styles:
         - 'bundles/oroproduct/blank/scss/variables/embedded-products-config.scss'
         - 'bundles/oroproduct/blank/scss/variables/product-popup-header.scss'
         - 'bundles/oroproduct/blank/scss/variables/product-filters-root-config.scss'
+        - 'bundles/oroproduct/blank/scss/variables/search-autocomplete-config.scss'
 
         - 'bundles/oroproduct/blank/scss/components/product.scss'
         - 'bundles/oroproduct/blank/scss/components/product-item.scss'

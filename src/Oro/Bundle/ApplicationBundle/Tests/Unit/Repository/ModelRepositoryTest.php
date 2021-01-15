@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ApplicationBundle\Tests\Unit\Model;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityNotFoundException;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ApplicationBundle\Event\ModelEvent;
 use Oro\Bundle\ApplicationBundle\Event\ModelIdentifierEvent;
 use Oro\Bundle\ApplicationBundle\Factory\ModelFactoryInterface;
@@ -41,7 +41,7 @@ class ModelRepositoryTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->managerRegistry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->managerRegistry = $this->createMock('Doctrine\Persistence\ManagerRegistry');
         $this->eventDispatcher = $this->createMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
         $this->modelFactory = $this->createMock('Oro\Bundle\ApplicationBundle\Factory\ModelFactoryInterface');
 
@@ -79,7 +79,7 @@ class ModelRepositoryTest extends \PHPUnit\Framework\TestCase
                 }
             );
 
-        $objectManager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
+        $objectManager = $this->createMock('Doctrine\Persistence\ObjectManager');
         $objectManager->expects($this->once())
             ->method('find')
             ->with(self::ENTITY_CLASS, $alteredIdentifier)
@@ -135,7 +135,7 @@ class ModelRepositoryTest extends \PHPUnit\Framework\TestCase
             ->method('dispatch')
             ->with('model.find.before.test_model', new ModelIdentifierEvent($identifier));
 
-        $objectManager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
+        $objectManager = $this->createMock('Doctrine\Persistence\ObjectManager');
 
         if ($isProxy) {
             $proxy = new \DateTime();
@@ -205,7 +205,7 @@ class ModelRepositoryTest extends \PHPUnit\Framework\TestCase
                 }
             );
 
-        $objectManager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
+        $objectManager = $this->createMock('Doctrine\Persistence\ObjectManager');
         $objectManager->expects($this->at(0))
             ->method($processMethod)
             ->with($firstEntity);
@@ -293,7 +293,7 @@ class ModelRepositoryTest extends \PHPUnit\Framework\TestCase
         $identifier = 1;
         $entity = new \DateTime();
 
-        $objectManager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
+        $objectManager = $this->createMock('Doctrine\Persistence\ObjectManager');
         $objectManager->expects($this->once())
             ->method('find')
             ->with(self::ENTITY_CLASS, $identifier)

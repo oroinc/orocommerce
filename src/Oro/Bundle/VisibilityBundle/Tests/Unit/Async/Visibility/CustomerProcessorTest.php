@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Async\Visibility;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityNotFoundException;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\VisibilityBundle\Async\Visibility\CustomerProcessor;
 use Oro\Bundle\VisibilityBundle\Driver\CustomerPartialUpdateDriverInterface;

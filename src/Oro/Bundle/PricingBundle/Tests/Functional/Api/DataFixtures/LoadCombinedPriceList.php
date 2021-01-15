@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Api\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\TestFrameworkBundle\Test\DataFixtures\InitialFixtureInterface;
 

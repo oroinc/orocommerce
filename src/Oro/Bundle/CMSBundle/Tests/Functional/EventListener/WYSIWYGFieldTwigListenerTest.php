@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Functional\EventListener;
 
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CMSBundle\WYSIWYG\WYSIWYGProcessedDTO;
 use Oro\Bundle\CMSBundle\WYSIWYG\WYSIWYGTwigFunctionProcessorInterface;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
@@ -14,7 +15,7 @@ use Twig\TwigFunction;
 
 class WYSIWYGFieldTwigListenerTest extends WebTestCase
 {
-    /** @var \Doctrine\Common\Persistence\ObjectManager */
+    /** @var ObjectManager */
     private $em;
 
     /** @var Localization */

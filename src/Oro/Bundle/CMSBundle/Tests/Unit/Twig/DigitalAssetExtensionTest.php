@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Twig;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\AttachmentBundle\Provider\FileUrlByUuidProvider;
 use Oro\Bundle\CMSBundle\Twig\DigitalAssetExtension;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;

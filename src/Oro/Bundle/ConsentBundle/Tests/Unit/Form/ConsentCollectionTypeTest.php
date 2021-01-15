@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\ConsentBundle\Tests\Unit\Form;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConsentBundle\Entity\Consent;
 use Oro\Bundle\ConsentBundle\Form\DataTransformer\ConsentCollectionTransformer;
 use Oro\Bundle\ConsentBundle\Form\Type\ConsentCollectionType;

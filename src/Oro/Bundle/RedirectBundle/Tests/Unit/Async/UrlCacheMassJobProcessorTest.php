@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Async;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\RedirectBundle\Async\SluggableEntitiesProcessor;
 use Oro\Bundle\RedirectBundle\Async\Topics;
 use Oro\Bundle\RedirectBundle\Async\UrlCacheMassJobProcessor;

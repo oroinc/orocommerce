@@ -5,7 +5,7 @@ namespace Oro\Bundle\SEOBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadPageData;
 
 class LoadPageMetaData extends AbstractFixture implements DependentFixtureInterface

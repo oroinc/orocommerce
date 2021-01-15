@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Provider;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\OrderBundle\Entity\Repository\OrderRepository;
 use Oro\Bundle\OrderBundle\Provider\LatestOrderedProductsInfoProvider;
 use Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface;

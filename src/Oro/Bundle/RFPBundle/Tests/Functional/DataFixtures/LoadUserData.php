@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\AbstractLoadCustomerUserFixture;
 use Oro\Bundle\RFPBundle\Entity\Request;

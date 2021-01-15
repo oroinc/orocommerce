@@ -93,6 +93,7 @@ const GrapesjsEditorView = BaseView.extend({
         pasteStyles: false,
         requestParams: {},
         noticeOnUnload: false,
+        cssIcons: false,
 
         /**
          * Color picker options
@@ -228,9 +229,6 @@ const GrapesjsEditorView = BaseView.extend({
             },
             navbarOpts: false,
             countdownOpts: false,
-            modalImportContent: function(editor) {
-                return editor.getHtml() + '<style>' + editor.getCss() + '</style>';
-            },
             importViewerOptions: {},
             codeViewerOptions: {},
             exportOpts: {

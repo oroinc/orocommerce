@@ -4,6 +4,7 @@ namespace Oro\Bundle\PromotionBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Entity\Repository\CouponRepository;
 use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadCouponData;
@@ -123,7 +124,7 @@ class CouponRepositoryTest extends WebTestCase
     }
 
     /**
-     * @return \Doctrine\Common\Persistence\ObjectRepository|CouponRepository
+     * @return ObjectRepository|CouponRepository
      */
     private function getCouponRepository()
     {

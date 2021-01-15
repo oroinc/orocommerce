@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Cache;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeCache;
 use Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeCacheDumper;

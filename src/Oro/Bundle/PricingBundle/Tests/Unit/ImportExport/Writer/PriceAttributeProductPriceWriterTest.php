@@ -3,8 +3,8 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\ImportExport\Strategy;
 
 use Akeneo\Bundle\BatchBundle\Entity\StepExecution;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ImportExportBundle\Context\ContextInterface;
 use Oro\Bundle\ImportExportBundle\Context\ContextRegistry;

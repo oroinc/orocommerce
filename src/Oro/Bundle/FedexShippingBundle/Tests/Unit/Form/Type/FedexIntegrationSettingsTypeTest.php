@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\FedexShippingBundle\Tests\Unit\Form\Type;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\FedexShippingBundle\Cache\FedexResponseCacheInterface;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;

@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Handler;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityBundle\Handler\EntityDeleteAccessDeniedExceptionFactory;
 use Oro\Bundle\EntityBundle\Handler\EntityDeleteHandlerExtension;
 use Oro\Bundle\EntityBundle\Handler\EntityDeleteHandlerExtensionRegistry;

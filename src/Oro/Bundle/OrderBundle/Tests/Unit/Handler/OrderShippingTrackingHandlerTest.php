@@ -3,8 +3,8 @@
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Handler;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderShippingTracking;
 use Oro\Bundle\OrderBundle\Handler\OrderShippingTrackingHandler;
@@ -43,7 +43,7 @@ class OrderShippingTrackingHandlerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->manager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
+        $this->manager = $this->createMock('Doctrine\Persistence\ObjectManager');
         /** @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry $managerRegistry */
         $managerRegistry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
             ->disableOriginalConstructor()

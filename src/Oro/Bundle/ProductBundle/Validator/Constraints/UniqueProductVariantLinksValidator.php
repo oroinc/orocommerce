@@ -3,8 +3,8 @@
 namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
 use Doctrine\Common\Collections\AbstractLazyCollection;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\PersistentCollection;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
 use Symfony\Component\PropertyAccess\PropertyAccessor;

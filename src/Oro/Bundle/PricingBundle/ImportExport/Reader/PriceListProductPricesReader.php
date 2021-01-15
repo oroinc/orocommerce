@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\PricingBundle\ImportExport\Reader;
 
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ImportExportBundle\Context\ContextInterface;
 use Oro\Bundle\ImportExportBundle\Reader\EntityReader;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;

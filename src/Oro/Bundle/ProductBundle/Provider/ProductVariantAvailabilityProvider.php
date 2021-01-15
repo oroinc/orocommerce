@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Provider;
 
 use Doctrine\Common\Cache\ArrayCache;
-use Doctrine\Common\Persistence\Proxy;
+use Doctrine\Persistence\Proxy;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;

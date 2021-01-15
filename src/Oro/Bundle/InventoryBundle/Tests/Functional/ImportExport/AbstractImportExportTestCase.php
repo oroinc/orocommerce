@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Functional\ImportExport;
 
-use Doctrine\Common\Util\Inflector;
+use Doctrine\Common\Inflector\Inflector;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\ImportExportBundle\Job\JobExecutor;
 use Oro\Bundle\ImportExportBundle\Job\JobResult;
@@ -139,7 +139,7 @@ abstract class AbstractImportExportTestCase extends WebTestCase
             ]
         );
     }
-    
+
     /**
      * Retrieves the value for a field of the object, field which is specified in the $fieldMap
      * in the form 'objectField:someField'

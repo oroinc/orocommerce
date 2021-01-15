@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Builder;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityBundle\ORM\InsertQueryExecutorInterface;
 use Oro\Bundle\PricingBundle\Compiler\ProductAssignmentRuleCompiler;
 use Oro\Bundle\PricingBundle\Entity\PriceList;

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Functional\Entity\Repository;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CMSBundle\Entity\ContentBlock;
 use Oro\Bundle\CMSBundle\Entity\Repository\ContentBlockRepository;
 use Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadContentBlockScopesData;

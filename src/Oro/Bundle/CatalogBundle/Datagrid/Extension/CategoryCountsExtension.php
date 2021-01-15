@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\Datagrid\Extension;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Datagrid\Cache\CategoryCountsCache;
 use Oro\Bundle\CatalogBundle\Datagrid\Filter\SubcategoryFilter;
 use Oro\Bundle\CatalogBundle\Entity\Category;

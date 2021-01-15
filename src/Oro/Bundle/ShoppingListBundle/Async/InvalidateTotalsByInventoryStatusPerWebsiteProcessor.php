@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Async;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Exception\RetryableException;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListTotalRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal;

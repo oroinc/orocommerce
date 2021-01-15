@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Duplicator;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\ORM\ShardQueryExecutorInterface;

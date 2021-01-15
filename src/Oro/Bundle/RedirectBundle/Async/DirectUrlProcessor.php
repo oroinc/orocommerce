@@ -3,10 +3,10 @@
 namespace Oro\Bundle\RedirectBundle\Async;
 
 use Doctrine\Common\Cache\FlushableCache;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Generator\SlugEntityGenerator;
 use Oro\Bundle\RedirectBundle\Model\Exception\InvalidArgumentException;

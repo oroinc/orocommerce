@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Functional\Entity\Repository;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\CMSBundle\Entity\Repository\PageRepository;
 use Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadPageData;

@@ -645,6 +645,30 @@ oro_behat_extension:
     Search Button:
       selector: 'button[name="oro_website_search_search_button"]'
 
+    Search Autocomplete:
+      selector: '.search-autocomplete'
+
+    Search Autocomplete Item:
+      selector: '.search-autocomplete .search-autocomplete__item'
+
+    Search Autocomplete Product:
+      selector: '.search-autocomplete .search-autocomplete-product'
+
+    Search Autocomplete Product Image:
+      selector: '.search-autocomplete .search-autocomplete-product__image img'
+
+    Search Autocomplete Inventory Status:
+      selector: '.search-autocomplete .search-autocomplete-product__status'
+
+    Search Autocomplete Highlight:
+      selector: '.search-autocomplete .search-autocomplete__highlight'
+
+    Search Autocomplete Submit:
+      selector: '.search-autocomplete .search-autocomplete__submit'
+
+    Search Autocomplete No Found:
+      selector: '.search-autocomplete .search-autocomplete__no-found'
+
     # front products grid
     ProductFrontendGrid:
       selector: 'div[data-page-component-name="frontend-catalog-allproducts-grid"], div[data-page-component-name="frontend-product-search-grid"], div[data-page-component-name="order-products-previously-purchased-grid"]'

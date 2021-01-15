@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\EventListener;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\MigrationBundle\Event\MigrationDataFixturesEvent;

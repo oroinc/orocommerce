@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\DependencyInjection;
 
@@ -222,6 +223,10 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                 ],
                 'original_file_names_enabled' => [
                     'value' => false,
+                    'scope' => 'app'
+                ],
+                'search_autocomplete_max_products' => [
+                    'value' => 4,
                     'scope' => 'app'
                 ],
                 'filters_position' => [

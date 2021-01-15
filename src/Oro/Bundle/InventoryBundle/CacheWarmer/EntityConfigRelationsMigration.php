@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\InventoryBundle\CacheWarmer;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Connection;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ActivityListBundle\Entity\ActivityList;
 use Oro\Bundle\EntityBundle\ORM\DatabasePlatformInterface;
 use Oro\Bundle\EntityBundle\Tools\SafeDatabaseChecker;

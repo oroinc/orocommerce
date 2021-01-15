@@ -31,6 +31,8 @@ use Symfony\Component\Validator\Constraints\CollectionValidator;
 use Symfony\Component\Validator\ConstraintValidatorFactoryInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
+use Twig\Template;
+use Twig\TemplateWrapper;
 
 class ContentBlockTypeTest extends FormIntegrationTestCase
 {
@@ -72,7 +74,16 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
         $purifierScopeProvider = $this->createMock(HTMLPurifierScopeProvider::class);
         $translator = $this->createMock(TranslatorInterface::class);
         $logger = $this->createMock(LoggerInterface::class);
+
+        $template = $this->createMock(Template::class);
+        $template->expects($this->any())
+            ->method('render')
+            ->willReturn('template');
+
         $twig = $this->createMock(Environment::class);
+        $twig->expects($this->any())
+            ->method('createTemplate')
+            ->willReturn(new TemplateWrapper($twig, $template));
 
         $wysiwygConstraint = new WYSIWYG();
         $twigContent = new TwigContent();

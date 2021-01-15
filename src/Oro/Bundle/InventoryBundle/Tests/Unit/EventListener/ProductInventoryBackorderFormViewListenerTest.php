@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\InventoryBundle\EventListener\ProductBackOrderFormViewListener;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;

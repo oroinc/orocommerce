@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Model;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 
 class ContentNodeMaterializedPathModifier
@@ -32,12 +32,12 @@ class ContentNodeMaterializedPathModifier
             ->getRepository(ContentNode::class);
 
         $children = $repository->children($contentNode);
-        
+
         $childNodes = [];
         foreach ($children as $child) {
             $childNodes[] = $this->calculateMaterializedPath($child);
         }
-        
+
         return $childNodes;
     }
 
@@ -54,7 +54,7 @@ class ContentNodeMaterializedPathModifier
         }
 
         $contentNode->setMaterializedPath($path);
-        
+
         return $contentNode;
     }
 }

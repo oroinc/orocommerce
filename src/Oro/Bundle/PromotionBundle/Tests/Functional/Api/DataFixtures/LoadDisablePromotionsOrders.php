@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Functional\Api\DataFixtures;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderUsers;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;

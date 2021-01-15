@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\Layout\DataProvider;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CMSBundle\ContentBlock\ContentBlockResolver;
 use Oro\Bundle\CMSBundle\ContentBlock\Model\ContentBlockView;
 use Oro\Bundle\CMSBundle\Entity\ContentBlock;

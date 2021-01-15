@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Model;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\SegmentBundle\Entity\Repository\SegmentRepository;

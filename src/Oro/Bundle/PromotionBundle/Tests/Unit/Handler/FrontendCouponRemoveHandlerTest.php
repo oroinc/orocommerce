@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Handler;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
 use Oro\Bundle\PromotionBundle\Handler\FrontendCouponRemoveHandler;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Checkout;

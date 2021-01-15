@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Unit\Sitemap\Provider;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;

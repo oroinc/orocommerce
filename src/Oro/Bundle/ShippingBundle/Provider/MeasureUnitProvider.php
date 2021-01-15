@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Provider;
 
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 

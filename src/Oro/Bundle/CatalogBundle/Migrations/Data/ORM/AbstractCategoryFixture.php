@@ -4,7 +4,7 @@ namespace Oro\Bundle\CatalogBundle\Migrations\Data\ORM;
 
 use Doctrine\Common\Cache\FlushableCache;
 use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\CategoryLongDescription;
 use Oro\Bundle\CatalogBundle\Entity\CategoryShortDescription;

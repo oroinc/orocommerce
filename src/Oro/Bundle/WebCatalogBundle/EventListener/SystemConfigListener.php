@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\WebCatalogBundle\EventListener;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
 use Oro\Bundle\WebCatalogBundle\DependencyInjection\OroWebCatalogExtension;

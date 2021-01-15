@@ -3,7 +3,7 @@
 namespace Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
 class LoadOrganizations extends AbstractFixture

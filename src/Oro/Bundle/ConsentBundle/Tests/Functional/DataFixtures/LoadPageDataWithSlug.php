@@ -4,7 +4,7 @@ namespace Oro\Bundle\ConsentBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\Cache\FlushableCache;
 use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;

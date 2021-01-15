@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\EventListener;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
 use Oro\Bundle\WorkflowBundle\Event\WorkflowChangesEvent;
 

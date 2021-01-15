@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Migrations\Data\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use Oro\Bundle\PricingBundle\SystemConfig\PriceListConfig;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;

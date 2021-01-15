@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Form\Handler;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\CMSBundle\Form\Handler\ContentWidgetHandler;
 use Oro\Bundle\FormBundle\Event\FormHandler\Events;

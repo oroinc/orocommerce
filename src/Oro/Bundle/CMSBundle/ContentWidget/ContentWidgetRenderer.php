@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\ContentWidget;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\LayoutBundle\Layout\LayoutManager;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;

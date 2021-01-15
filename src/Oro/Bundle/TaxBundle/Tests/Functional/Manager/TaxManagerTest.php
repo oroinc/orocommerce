@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Functional\Manager;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Fidry\AliceDataFixtures\LoaderInterface;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;

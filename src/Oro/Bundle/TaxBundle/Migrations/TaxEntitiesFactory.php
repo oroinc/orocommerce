@@ -3,7 +3,7 @@
 namespace Oro\Bundle\TaxBundle\Migrations;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;

@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Datagrid;
 
-use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\Mapping\ClassMetadata;
 use Oro\Bundle\CheckoutBundle\Datagrid\CheckoutGridListener;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;

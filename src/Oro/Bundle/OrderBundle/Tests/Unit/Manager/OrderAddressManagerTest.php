@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Manager;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\AddressBundle\Entity\Country;
@@ -34,7 +34,7 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->registry = $this->createMock('Doctrine\Persistence\ManagerRegistry');
 
         $this->manager = new OrderAddressManager(
             $this->provider,
@@ -64,12 +64,12 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
         AbstractAddress $expectedCustomerUserAddress = null,
         OrderAddress $orderAddress = null
     ) {
-        $classMetadata = $this->createMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
+        $classMetadata = $this->createMock('Doctrine\Persistence\Mapping\ClassMetadata');
         $classMetadata->expects($this->once())->method('getFieldNames')->willReturn(['street', 'city', 'label']);
         $classMetadata->expects($this->once())->method('getAssociationNames')
             ->willReturn(['country', 'region']);
 
-        $em = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
+        $em = $this->createMock('Doctrine\Persistence\ObjectManager');
         $em->expects($this->once())->method('getClassMetadata')->willReturn($classMetadata);
 
         $this->registry->expects($this->any())->method('getManagerForClass')->with($this->isType('string'))
@@ -318,8 +318,8 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
      */
     protected function getManager(array $addresses, $types)
     {
-        $repo = $this->createMock('\Doctrine\Common\Persistence\ObjectRepository');
-        $manager = $this->createMock('\Doctrine\Common\Persistence\ObjectManager');
+        $repo = $this->createMock('\Doctrine\Persistence\ObjectRepository');
+        $manager = $this->createMock('\Doctrine\Persistence\ObjectManager');
         $manager->expects($this->any())
             ->method('getRepository')
             ->willReturn($repo);

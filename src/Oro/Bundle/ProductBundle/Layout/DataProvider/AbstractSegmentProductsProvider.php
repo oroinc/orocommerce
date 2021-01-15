@@ -3,9 +3,9 @@
 namespace Oro\Bundle\ProductBundle\Layout\DataProvider;
 
 use Doctrine\Common\Cache\CacheProvider;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Provider\ProductsProviderInterface;

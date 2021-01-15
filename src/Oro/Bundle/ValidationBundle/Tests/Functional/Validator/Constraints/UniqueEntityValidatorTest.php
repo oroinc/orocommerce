@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ValidationBundle\Tests\Functional\Validator\Constraints;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\TestFrameworkBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\UniqueEntity;

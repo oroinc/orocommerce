@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CMSBundle\Migrations\Data\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;

@@ -2,8 +2,8 @@
 
 namespace Oro\Component\Tree\Tests\Unit\Handler;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\UIBundle\Model\TreeItem;
 use Oro\Component\Tree\Entity\Repository\NestedTreeRepository;
 use Oro\Component\Tree\Tests\Unit\Stubs\EntityStub;

@@ -11,6 +11,8 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Client extends BaseClient
 {
+    private const BACKOFFICE_THEME_PATH = 'build/admin';
+
     /**
      * {@inheritdoc}
      */
@@ -60,7 +62,14 @@ class Client extends BaseClient
     {
         if ($this->isFrontendUri($uri)) {
             $backendPrefix = $this->getBackendPrefix();
-            if (count($crawler) && strpos($crawler->html(), $backendPrefix) !== false) {
+            if (!count($crawler)) {
+                return;
+            }
+            $html = $crawler->html();
+
+            $backofficeThemePathOccurrences = substr_count($html, self::BACKOFFICE_THEME_PATH);
+
+            if (substr_count($html, $backendPrefix) > $backofficeThemePathOccurrences) {
                 throw new \PHPUnit\Framework\AssertionFailedError(
                     sprintf('Page "%s" contains backend prefix "%s".', $uri, $backendPrefix)
                 );

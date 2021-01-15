@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Stub;
 
-use Doctrine\Common\Persistence\Proxy;
+use Doctrine\Persistence\Proxy;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
 class ProductProxyStub extends Product implements Proxy

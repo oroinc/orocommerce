@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Provider;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentVariantRepository;
 use Symfony\Component\HttpFoundation\RequestStack;

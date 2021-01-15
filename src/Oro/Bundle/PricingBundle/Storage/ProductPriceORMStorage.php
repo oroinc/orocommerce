@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Storage;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\BaseProductPriceRepository;
 use Oro\Bundle\PricingBundle\Model\FlatPriceListTreeHandler;

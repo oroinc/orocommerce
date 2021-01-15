@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\EventListener;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Event\PricingStorage\CustomerGroupRelationUpdateEvent;
 use Oro\Bundle\PricingBundle\Event\PricingStorage\CustomerRelationUpdateEvent;
 use Oro\Bundle\PricingBundle\Event\PricingStorage\MassStorageUpdateEvent;

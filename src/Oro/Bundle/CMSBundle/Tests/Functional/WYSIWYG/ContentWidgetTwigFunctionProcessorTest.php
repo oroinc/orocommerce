@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CMSBundle\Tests\Functional\WYSIWYG;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\CMSBundle\Entity\ContentWidgetUsage;
 use Oro\Bundle\CMSBundle\Entity\Page;
@@ -15,7 +16,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class ContentWidgetTwigFunctionProcessorTest extends WebTestCase
 {
-    /** @var \Doctrine\Common\Persistence\ObjectManager */
+    /** @var ObjectManager */
     private $em;
 
     /** @var ContentWidgetUsageRepository */

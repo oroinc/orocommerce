@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\ContentWidget;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\FormBundle\Form\Extension\DataBlockExtension;

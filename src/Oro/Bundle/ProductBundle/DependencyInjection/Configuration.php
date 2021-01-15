@@ -70,6 +70,7 @@ class Configuration implements ConfigurationInterface
     const FILTERS_DISPLAY_SETTINGS_STATE_COLLAPSED = 'collapsed';
     const FILTERS_DISPLAY_SETTINGS_STATE_EXPANDED = 'expanded';
     const ORIGINAL_FILE_NAMES_ENABLED = 'original_file_names_enabled';
+    const SEARCH_AUTOCOMPLETE_MAX_PRODUCTS = 'search_autocomplete_max_products';
     const FILTERS_POSITION = 'filters_position';
     const FILTERS_POSITION_TOP = 'top';
     const FILTERS_POSITION_SIDEBAR = 'sidebar';
@@ -175,6 +176,10 @@ class Configuration implements ConfigurationInterface
                 static::ORIGINAL_FILE_NAMES_ENABLED => [
                     'type' => 'boolean',
                     'value' => false
+                ],
+                static::SEARCH_AUTOCOMPLETE_MAX_PRODUCTS => [
+                    'type' => 'integer',
+                    'value' => 4
                 ],
                 static::FILTERS_POSITION => [
                     'type' => 'string',

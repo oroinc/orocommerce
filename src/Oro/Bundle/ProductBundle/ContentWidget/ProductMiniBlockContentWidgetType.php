@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\ContentWidget;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeInterface;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;

@@ -4,11 +4,11 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Cache;
 
 use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Cache\RuleCache;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 

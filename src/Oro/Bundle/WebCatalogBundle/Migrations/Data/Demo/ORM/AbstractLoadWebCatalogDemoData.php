@@ -3,7 +3,7 @@
 namespace Oro\Bundle\WebCatalogBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\ContentVariantType\CategoryPageContentVariantType;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CMSBundle\ContentVariantType\CmsPageContentVariantType;
@@ -163,7 +163,7 @@ abstract class AbstractLoadWebCatalogDemoData extends AbstractFixture implements
                 ->findOneByName($params['title']);
             $variant->setProductCollectionSegment($segment);
         }
-        
+
         return $variant;
     }
 

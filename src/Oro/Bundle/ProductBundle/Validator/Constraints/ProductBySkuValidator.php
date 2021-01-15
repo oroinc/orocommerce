@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Component\PropertyAccess\PropertyAccessor;

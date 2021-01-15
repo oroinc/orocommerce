@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Oro\Bundle\PricingBundle\Command;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CronBundle\Command\CronCommandInterface;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilderFacade;

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\VisibilityBundle\Form\EventListener;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\ScopeBundle\Form\FormScopeCriteriaResolver;

@@ -47,6 +47,8 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $values = $this->explodeArrayPaths($form->getValues());
         $data = $this->setFormData($values, self::BILLING_ADDRESS);
 
+        $this->client->getKernel()->shutdown();
+        $this->client->getKernel()->boot();
         $this->client->disableReboot();
 
         /* @var $dispatcher EventDispatcherInterface */
