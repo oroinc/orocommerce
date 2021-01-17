@@ -109,8 +109,8 @@ class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
             ->with(
-                ProductImageResizeEvent::NAME,
-                new ProductImageResizeEvent($productImage->getId(), true)
+                new ProductImageResizeEvent($productImage->getId(), true),
+                ProductImageResizeEvent::NAME
             );
 
         $this->listener->postPersist($productImage, $this->lifecycleArgs);
@@ -216,8 +216,8 @@ class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
             ->with(
-                ProductImageResizeEvent::NAME,
-                new ProductImageResizeEvent($productImage->getId(), true)
+                new ProductImageResizeEvent($productImage->getId(), true),
+                ProductImageResizeEvent::NAME
             )
             ->willReturn(true);
 
@@ -239,8 +239,8 @@ class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
             ->with(
-                ProductImageResizeEvent::NAME,
-                new ProductImageResizeEvent($productImage->getId(), true)
+                new ProductImageResizeEvent($productImage->getId(), true),
+                ProductImageResizeEvent::NAME
             )
             ->willReturn(true);
 
@@ -258,7 +258,6 @@ class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
             ->with(
-                ReindexationRequestEvent::EVENT_NAME,
                 new ReindexationRequestEvent(
                     [Product::class],
                     [],
@@ -267,7 +266,8 @@ class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
                         102 => 102,
                         103 => 103,
                     ]
-                )
+                ),
+                ReindexationRequestEvent::EVENT_NAME
             );
 
         $this->listener->postFlush(new PostFlushEventArgs($this->productImageEntityManager));

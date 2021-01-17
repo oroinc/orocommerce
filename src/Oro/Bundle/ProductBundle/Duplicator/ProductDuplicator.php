@@ -74,8 +74,8 @@ class ProductDuplicator
             $objectManager->flush();
 
             $this->eventDispatcher->dispatch(
-                ProductDuplicateAfterEvent::NAME,
-                new ProductDuplicateAfterEvent($productCopy, $product)
+                new ProductDuplicateAfterEvent($productCopy, $product),
+                ProductDuplicateAfterEvent::NAME
             );
 
             $objectManager->getConnection()->commit();

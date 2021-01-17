@@ -227,7 +227,7 @@ class PaymentTransactionProvider
             );
 
             $event = new TransactionCompleteEvent($paymentTransaction);
-            $this->dispatcher->dispatch(TransactionCompleteEvent::NAME, $event);
+            $this->dispatcher->dispatch($event, TransactionCompleteEvent::NAME);
         } catch (\Throwable $e) {
             if ($this->logger) {
                 $this->logger->critical('Can not save payment transaction', ['exception' => $e]);

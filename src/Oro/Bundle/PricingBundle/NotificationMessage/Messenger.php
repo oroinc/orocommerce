@@ -67,9 +67,9 @@ class Messenger
         $message = new Message($channel, $topic, $messageText, $status, $receiverEntityFQCN, $receiverEntityId);
 
         $messageEvent = new MessageEvent($message);
-        $this->eventDispatcher->dispatch(MessageEvents::BEFORE_SEND, $messageEvent);
+        $this->eventDispatcher->dispatch($messageEvent, MessageEvents::BEFORE_SEND);
         $this->sender->send($messageEvent->getMessage());
-        $this->eventDispatcher->dispatch(MessageEvents::AFTER_SEND, $messageEvent);
+        $this->eventDispatcher->dispatch($messageEvent, MessageEvents::AFTER_SEND);
     }
 
     /**
@@ -89,7 +89,7 @@ class Messenger
             }
         }
         $event = new MassMessagesEvent($channel, $receiverEntityFQCN, $receiverEntityId, $topic, $messages);
-        $this->eventDispatcher->dispatch(MessageEvents::ON_RECEIVE, $event);
+        $this->eventDispatcher->dispatch($event, MessageEvents::ON_RECEIVE);
 
         return $event->getMessages();
     }
@@ -106,6 +106,6 @@ class Messenger
             $transport->remove($channel, $topic, $receiverEntityFQCN, $receiverEntityId);
         }
         $event = new MassMessagesEvent($channel, $receiverEntityFQCN, $receiverEntityId, $topic);
-        $this->eventDispatcher->dispatch(MessageEvents::ON_REMOVE, $event);
+        $this->eventDispatcher->dispatch($event, MessageEvents::ON_REMOVE);
     }
 }

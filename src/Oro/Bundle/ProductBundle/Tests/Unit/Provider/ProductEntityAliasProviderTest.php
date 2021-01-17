@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Provider;
 
+use Doctrine\Inflector\Rules\English\InflectorFactory;
 use Oro\Bundle\EntityBundle\Model\EntityAlias;
 use Oro\Bundle\EntityBundle\Provider\DuplicateEntityAliasResolver;
 use Oro\Bundle\EntityConfigBundle\Config\Config;
@@ -29,7 +30,8 @@ class ProductEntityAliasProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->entityAliasProvider = new ProductEntityAliasProvider(
             $this->configManager,
-            $this->duplicateResolver
+            $this->duplicateResolver,
+            (new InflectorFactory())->build()
         );
     }
 

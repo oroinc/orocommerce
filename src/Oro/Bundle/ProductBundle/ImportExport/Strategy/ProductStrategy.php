@@ -93,7 +93,7 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
 
         $this->context->setValue('itemData', $data);
         $event = new ProductStrategyEvent($entity, $this->context->getValue('itemData'));
-        $this->eventDispatcher->dispatch(ProductStrategyEvent::PROCESS_BEFORE, $event);
+        $this->eventDispatcher->dispatch($event, ProductStrategyEvent::PROCESS_BEFORE);
 
         return parent::beforeProcessEntity($entity);
     }
@@ -107,7 +107,7 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
         $this->populateOwner($entity);
 
         $event = new ProductStrategyEvent($entity, $this->context->getValue('itemData'));
-        $this->eventDispatcher->dispatch(ProductStrategyEvent::PROCESS_AFTER, $event);
+        $this->eventDispatcher->dispatch($event, ProductStrategyEvent::PROCESS_AFTER);
 
         $sku = $entity->getSku();
 

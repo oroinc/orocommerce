@@ -8,12 +8,12 @@ use Oro\Bundle\PromotionBundle\Form\Type\PromotionType;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class PromotionController extends Controller
+class PromotionController extends AbstractController
 {
     /**
      * @Route("/view/{id}", name="oro_promotion_view", requirements={"id"="\d+"})

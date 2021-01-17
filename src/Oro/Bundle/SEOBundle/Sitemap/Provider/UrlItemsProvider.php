@@ -299,10 +299,10 @@ class UrlItemsProvider implements UrlItemsProviderInterface
     private function dispatchIterationEvent($eventName, WebsiteInterface $website, $version)
     {
         $this->eventDispatcher->dispatch(
-            sprintf('%s.%s', $eventName, $this->type),
-            new UrlItemsProviderEvent($version, $website)
+            new UrlItemsProviderEvent($version, $website),
+            sprintf('%s.%s', $eventName, $this->type)
         );
-        $this->eventDispatcher->dispatch($eventName, new UrlItemsProviderEvent($version, $website));
+        $this->eventDispatcher->dispatch(new UrlItemsProviderEvent($version, $website), $eventName);
     }
 
     /**
@@ -316,12 +316,12 @@ class UrlItemsProvider implements UrlItemsProviderInterface
         $version
     ) {
         $this->eventDispatcher->dispatch(
-            sprintf('%s.%s', RestrictSitemapEntitiesEvent::NAME, $this->type),
-            new RestrictSitemapEntitiesEvent($queryBuilder, $version, $website)
+            new RestrictSitemapEntitiesEvent($queryBuilder, $version, $website),
+            sprintf('%s.%s', RestrictSitemapEntitiesEvent::NAME, $this->type)
         );
         $this->eventDispatcher->dispatch(
-            RestrictSitemapEntitiesEvent::NAME,
-            new RestrictSitemapEntitiesEvent($queryBuilder, $version, $website)
+            new RestrictSitemapEntitiesEvent($queryBuilder, $version, $website),
+            RestrictSitemapEntitiesEvent::NAME
         );
     }
 

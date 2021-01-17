@@ -121,8 +121,8 @@ class AttributeFamilyChangesListenerTest extends \PHPUnit\Framework\TestCase
         $this->dispatcher->expects($this->exactly((int)$expected))
             ->method('dispatch')
             ->with(
-                ReindexationRequestEvent::EVENT_NAME,
-                new ReindexationRequestEvent([Product::class], [], $productIds)
+                new ReindexationRequestEvent([Product::class], [], $productIds),
+                ReindexationRequestEvent::EVENT_NAME
             );
 
         $event = new OnFlushEventArgs($this->entityManager);

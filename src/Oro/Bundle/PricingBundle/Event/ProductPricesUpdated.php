@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Event;
 
 use Doctrine\ORM\EntityManager;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * It published immediately after the flush.

@@ -62,7 +62,7 @@ class CategoryTreeProvider
 
         $event = new CategoryTreeCreateAfterEvent($categories);
         $event->setUser($user);
-        $this->eventDispatcher->dispatch(CategoryTreeCreateAfterEvent::NAME, $event);
+        $this->eventDispatcher->dispatch($event, CategoryTreeCreateAfterEvent::NAME);
 
         return $event->getCategories();
     }

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ApplicationBundle\Event;
 
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class ModelIdentifierEvent extends Event
 {

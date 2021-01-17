@@ -31,7 +31,7 @@ class BasicMethodTypeRemovalEventDispatcherTest extends \PHPUnit\Framework\TestC
         $typeId = 'type';
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
-            ->with(MethodTypeRemovalEvent::NAME, new MethodTypeRemovalEvent($methodId, $typeId));
+            ->with(new MethodTypeRemovalEvent($methodId, $typeId), MethodTypeRemovalEvent::NAME);
 
         $this->dispatcher->dispatch($methodId, $typeId);
     }

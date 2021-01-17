@@ -30,8 +30,8 @@ class LoadFrontendCategoryProductData implements FixtureInterface, DependentFixt
     public function load(ObjectManager $manager)
     {
         $this->container->get('event_dispatcher')->dispatch(
-            ReindexationRequestEvent::EVENT_NAME,
-            new ReindexationRequestEvent([Product::class], [], [], false)
+            new ReindexationRequestEvent([Product::class], [], [], false),
+            ReindexationRequestEvent::EVENT_NAME
         );
     }
 }

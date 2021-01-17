@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Functional\ImportExport;
 
-use Doctrine\Common\Inflector\Inflector;
+use Doctrine\Inflector\Rules\English\InflectorFactory;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\ImportExportBundle\Job\JobExecutor;
 use Oro\Bundle\ImportExportBundle\Job\JobResult;
@@ -183,7 +183,7 @@ abstract class AbstractImportExportTestCase extends WebTestCase
 
             $value = $data[$name];
             if (isset($options['singularize']) && array_search($name, $options['singularize']) !== false) {
-                $value = Inflector::singularize($value);
+                $value = (new InflectorFactory())->build()->singularize($value);
             }
 
             $this->assertEquals($value, $this->getValue($entity, $fieldMap));

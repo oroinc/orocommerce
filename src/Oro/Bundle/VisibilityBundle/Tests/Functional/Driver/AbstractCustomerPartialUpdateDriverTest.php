@@ -94,8 +94,8 @@ abstract class AbstractCustomerPartialUpdateDriverTest extends WebTestCase
     private function reindexProducts()
     {
         $this->getContainer()->get('event_dispatcher')->dispatch(
-            ReindexationRequestEvent::EVENT_NAME,
-            new ReindexationRequestEvent([Product::class], [], [], false)
+            new ReindexationRequestEvent([Product::class], [], [], false),
+            ReindexationRequestEvent::EVENT_NAME
         );
     }
 

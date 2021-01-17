@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\Event;
 
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * Fires within checkout workflow and notify about automatic removing checkout source entity

@@ -121,7 +121,7 @@ class ShippingPriceProvider implements ShippingPriceProviderInterface
         }
 
         $event = new ApplicableMethodsEvent($methodCollection, $context->getSourceEntity());
-        $this->eventDispatcher->dispatch(ApplicableMethodsEvent::NAME, $event);
+        $this->eventDispatcher->dispatch($event, ApplicableMethodsEvent::NAME);
 
         return $event->getMethodCollection();
     }

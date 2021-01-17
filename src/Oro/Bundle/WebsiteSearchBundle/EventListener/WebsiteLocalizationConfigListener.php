@@ -35,7 +35,7 @@ class WebsiteLocalizationConfigListener
             $event->isChanged(static::CONFIG_LOCALIZATION_ENABLED)
         ) {
             $reindexationEvent = $this->getReindexationRequestEvent($event);
-            $this->eventDispatcher->dispatch(ReindexationRequestEvent::EVENT_NAME, $reindexationEvent);
+            $this->eventDispatcher->dispatch($reindexationEvent, ReindexationRequestEvent::EVENT_NAME);
         }
     }
 

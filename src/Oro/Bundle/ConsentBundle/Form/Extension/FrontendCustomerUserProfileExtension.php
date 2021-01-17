@@ -98,8 +98,8 @@ class FrontendCustomerUserProfileExtension extends AbstractTypeExtension impleme
         }
 
         $this->eventDispatcher->dispatch(
-            DeclinedConsentsEvent::EVENT_NAME,
-            new DeclinedConsentsEvent($declinedConsents, $customerUser)
+            new DeclinedConsentsEvent($declinedConsents, $customerUser),
+            DeclinedConsentsEvent::EVENT_NAME
         );
     }
 }

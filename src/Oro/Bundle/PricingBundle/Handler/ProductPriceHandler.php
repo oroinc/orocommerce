@@ -39,8 +39,8 @@ class ProductPriceHandler extends FormHandler
     protected function saveData($data, FormInterface $form)
     {
         $this->priceManager->persist($data);
-        $this->eventDispatcher->dispatch(Events::BEFORE_FLUSH, new AfterFormProcessEvent($form, $data));
+        $this->eventDispatcher->dispatch(new AfterFormProcessEvent($form, $data), Events::BEFORE_FLUSH);
         $this->priceManager->flush();
-        $this->eventDispatcher->dispatch(Events::AFTER_FLUSH, new AfterFormProcessEvent($form, $data));
+        $this->eventDispatcher->dispatch(new AfterFormProcessEvent($form, $data), Events::AFTER_FLUSH);
     }
 }

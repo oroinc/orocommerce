@@ -31,8 +31,8 @@ class LoadFrontendProductData implements FixtureInterface, DependentFixtureInter
     {
         $this->container->get('oro_visibility.visibility.cache.product.cache_builder')->buildCache();
         $this->container->get('event_dispatcher')->dispatch(
-            ReindexationRequestEvent::EVENT_NAME,
-            new ReindexationRequestEvent([Product::class], [], [], false)
+            new ReindexationRequestEvent([Product::class], [], [], false),
+            ReindexationRequestEvent::EVENT_NAME
         );
     }
 }

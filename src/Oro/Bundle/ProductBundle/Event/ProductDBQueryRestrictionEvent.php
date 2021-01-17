@@ -3,8 +3,8 @@
 namespace Oro\Bundle\ProductBundle\Event;
 
 use Doctrine\ORM\QueryBuilder;
-use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class ProductDBQueryRestrictionEvent extends Event
 {

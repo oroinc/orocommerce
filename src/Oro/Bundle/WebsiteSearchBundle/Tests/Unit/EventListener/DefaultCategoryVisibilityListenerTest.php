@@ -45,7 +45,7 @@ class DefaultCategoryVisibilityListenerTest extends \PHPUnit\Framework\TestCase
         $reindexationEvent = new ReindexationRequestEvent();
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
-            ->with(ReindexationRequestEvent::EVENT_NAME, $reindexationEvent);
+            ->with($reindexationEvent, ReindexationRequestEvent::EVENT_NAME);
 
         $this->listener->onUpdateAfter($this->event);
     }
@@ -60,7 +60,7 @@ class DefaultCategoryVisibilityListenerTest extends \PHPUnit\Framework\TestCase
         $reindexationEvent = new ReindexationRequestEvent();
         $this->eventDispatcher->expects($this->never())
             ->method('dispatch')
-            ->with(ReindexationRequestEvent::EVENT_NAME, $reindexationEvent);
+            ->with($reindexationEvent, ReindexationRequestEvent::EVENT_NAME);
 
         $this->listener->onUpdateAfter($this->event);
     }

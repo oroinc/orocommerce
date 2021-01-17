@@ -221,7 +221,7 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->dispatcher->expects($this->once())
             ->method('dispatch')
-            ->with(RestrictProductVariantEvent::NAME, $this->isInstanceOf(RestrictProductVariantEvent::class));
+            ->with($this->isInstanceOf(RestrictProductVariantEvent::class), RestrictProductVariantEvent::NAME);
 
         $this->setUpRepositoryResult($configurableProduct, $variantParameters, $expected);
 
@@ -796,7 +796,7 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
         $event = new RestrictProductVariantEvent($qb);
         $this->dispatcher->expects($this->once())
             ->method('dispatch')
-            ->with(RestrictProductVariantEvent::NAME, $event);
+            ->with($event, RestrictProductVariantEvent::NAME);
 
         $em = $this->createMock(EntityManager::class);
         $em->expects($this->any())

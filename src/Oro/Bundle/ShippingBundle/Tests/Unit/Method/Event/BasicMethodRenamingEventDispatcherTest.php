@@ -31,7 +31,7 @@ class BasicMethodRenamingEventDispatcherTest extends \PHPUnit\Framework\TestCase
         $newId = 'new_id';
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
-            ->with(MethodRenamingEvent::NAME, new MethodRenamingEvent($oldId, $newId));
+            ->with(new MethodRenamingEvent($oldId, $newId), MethodRenamingEvent::NAME);
 
         $this->dispatcher->dispatch($oldId, $newId);
     }

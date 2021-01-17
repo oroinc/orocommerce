@@ -60,8 +60,8 @@ class WebCatalogEntityIndexerListenerTest extends FrontendWebTestCase
         $localizedFallbackValueManager->flush();
 
         $container->get('event_dispatcher')->dispatch(
-            ReindexationRequestEvent::EVENT_NAME,
-            new ReindexationRequestEvent([Product::class], [], [$product->getId()], false)
+            new ReindexationRequestEvent([Product::class], [], [$product->getId()], false),
+            ReindexationRequestEvent::EVENT_NAME
         );
 
         $query = $container->get('oro_product.website_search.repository.product')

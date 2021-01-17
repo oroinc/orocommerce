@@ -40,7 +40,7 @@ class RestrictSitemapCmsPageByWebCatalogListenerTest extends WebTestCase
 
         $event = new RestrictSitemapEntitiesEvent($qb, $version);
         $this->getContainer()->get('event_dispatcher')
-            ->dispatch('oro_seo.event.restrict_sitemap_entity.cms_page', $event);
+            ->dispatch($event, 'oro_seo.event.restrict_sitemap_entity.cms_page');
 
         $actual = array_map(function (Page $page) {
             return $page->getId();
@@ -72,7 +72,7 @@ class RestrictSitemapCmsPageByWebCatalogListenerTest extends WebTestCase
 
         $event = new RestrictSitemapEntitiesEvent($qb, $version);
         $this->getContainer()->get('event_dispatcher')
-            ->dispatch('oro_seo.event.restrict_sitemap_entity.cms_page', $event);
+            ->dispatch($event, 'oro_seo.event.restrict_sitemap_entity.cms_page');
 
         $actual = $qb->getQuery()->getResult();
         $expected = [$this->getReference(LoadPageData::PAGE_1)];

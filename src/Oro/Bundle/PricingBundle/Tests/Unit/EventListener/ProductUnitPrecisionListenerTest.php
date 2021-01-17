@@ -117,14 +117,14 @@ class ProductUnitPrecisionListenerTest extends \PHPUnit\Framework\TestCase
         $this->eventDispatcher->expects($this->at(0))
             ->method('dispatch')
             ->with(
-                ProductPricesRemoveBefore::NAME,
-                $this->isInstanceOf('Oro\Bundle\PricingBundle\Event\ProductPricesRemoveBefore')
+                $this->isInstanceOf('Oro\Bundle\PricingBundle\Event\ProductPricesRemoveBefore'),
+                ProductPricesRemoveBefore::NAME
             );
         $this->eventDispatcher->expects($this->at(1))
             ->method('dispatch')
             ->with(
-                ProductPricesRemoveAfter::NAME,
-                $this->isInstanceOf('Oro\Bundle\PricingBundle\Event\ProductPricesRemoveAfter')
+                $this->isInstanceOf('Oro\Bundle\PricingBundle\Event\ProductPricesRemoveAfter'),
+                ProductPricesRemoveAfter::NAME
             );
 
         $this->featureChecker->expects($this->once())

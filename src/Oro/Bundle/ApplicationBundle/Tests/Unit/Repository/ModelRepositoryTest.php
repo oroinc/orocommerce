@@ -71,9 +71,9 @@ class ModelRepositoryTest extends \PHPUnit\Framework\TestCase
         // alter identifier in event
         $this->eventDispatcher->expects($this->at(0))
             ->method('dispatch')
-            ->with('model.find.before.test_model')
+            ->with(static::isInstanceOf(ModelIdentifierEvent::class), 'model.find.before.test_model')
             ->willReturnCallback(
-                function ($name, ModelIdentifierEvent $event) use ($sourceIdentifier, $alteredIdentifier) {
+                function (ModelIdentifierEvent $event, $name) use ($sourceIdentifier, $alteredIdentifier) {
                     self::assertEquals($sourceIdentifier, $event->getIdentifier());
                     $event->setIdentifier($alteredIdentifier);
                 }
@@ -101,9 +101,9 @@ class ModelRepositoryTest extends \PHPUnit\Framework\TestCase
         // alter model in event
         $this->eventDispatcher->expects($this->at(1))
             ->method('dispatch')
-            ->with('model.find.after.test_model')
+            ->with(static::isInstanceOf(ModelEvent::class), 'model.find.after.test_model')
             ->willReturnCallback(
-                function ($name, ModelEvent $event) use ($sourceModel, $alteredModel) {
+                function (ModelEvent $event, $name) use ($sourceModel, $alteredModel) {
                     self::assertEquals($sourceModel, $event->getModel());
                     $event->setModel($alteredModel);
                 }
@@ -133,7 +133,7 @@ class ModelRepositoryTest extends \PHPUnit\Framework\TestCase
 
         $this->eventDispatcher->expects($this->at(0))
             ->method('dispatch')
-            ->with('model.find.before.test_model', new ModelIdentifierEvent($identifier));
+            ->with(new ModelIdentifierEvent($identifier), 'model.find.before.test_model');
 
         $objectManager = $this->createMock('Doctrine\Persistence\ObjectManager');
 
@@ -164,7 +164,7 @@ class ModelRepositoryTest extends \PHPUnit\Framework\TestCase
 
         $this->eventDispatcher->expects($this->at(1))
             ->method('dispatch')
-            ->with('model.find.after.not_found.test_model', new ModelIdentifierEvent($identifier));
+            ->with(new ModelIdentifierEvent($identifier), 'model.find.after.not_found.test_model');
 
         $this->assertNull($this->repository->find($identifier));
     }
@@ -197,9 +197,9 @@ class ModelRepositoryTest extends \PHPUnit\Framework\TestCase
         // alter model in event
         $this->eventDispatcher->expects($this->at(0))
             ->method('dispatch')
-            ->with('model.' . $eventSuffix . '.before.test_multi_entity_model')
+            ->with(static::isInstanceOf(ModelEvent::class), 'model.' . $eventSuffix . '.before.test_multi_entity_model')
             ->willReturnCallback(
-                function ($name, ModelEvent $event) use ($sourceModel, $alteredModel) {
+                function (ModelEvent $event, $name) use ($sourceModel, $alteredModel) {
                     self::assertEquals($sourceModel, $event->getModel());
                     $event->setModel($alteredModel);
                 }
@@ -222,7 +222,7 @@ class ModelRepositoryTest extends \PHPUnit\Framework\TestCase
 
         $this->eventDispatcher->expects($this->at(1))
             ->method('dispatch')
-            ->with('model.' . $eventSuffix . '.after.test_multi_entity_model', new ModelEvent($alteredModel));
+            ->with(new ModelEvent($alteredModel), 'model.' . $eventSuffix . '.after.test_multi_entity_model');
 
         $this->repository = new ModelRepository(
             $this->managerRegistry,

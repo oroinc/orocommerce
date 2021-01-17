@@ -3,7 +3,7 @@
 namespace Oro\Bundle\FrontendLocalizationBundle\Controller\Frontend;
 
 use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -11,7 +11,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * Ajax Localization Controller
  */
-class AjaxLocalizationController extends Controller
+class AjaxLocalizationController extends AbstractController
 {
     /**
      * @Route(

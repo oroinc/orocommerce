@@ -80,7 +80,7 @@ class PaymentTermProvider implements PaymentTermProviderInterface
             }
         }
 
-        $this->eventDispatcher->dispatch(ResolvePaymentTermEvent::NAME, $paymentTermEvent);
+        $this->eventDispatcher->dispatch($paymentTermEvent, ResolvePaymentTermEvent::NAME);
 
         return $paymentTermEvent->getPaymentTerm();
     }

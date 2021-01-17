@@ -179,6 +179,7 @@ services:
             - '@oro_pricing.subtotal_processor.total_processor_provider'
             - '@oro_entity.entity_name_resolver'
             - '@oro_entity.doctrine_helper'
+            - '@Doctrine\Inflector\Inflector'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-checkouts-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-checkouts-grid, method: onResultAfter }

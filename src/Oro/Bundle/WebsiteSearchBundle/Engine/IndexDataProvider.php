@@ -73,7 +73,7 @@ class IndexDataProvider
     {
         $context = $this->setContextCurrentWebsite($context, $websiteId);
         $collectContextEvent = new Event\CollectContextEvent($context);
-        $this->eventDispatcher->dispatch(Event\CollectContextEvent::NAME, $collectContextEvent);
+        $this->eventDispatcher->dispatch($collectContextEvent, Event\CollectContextEvent::NAME);
 
         return $collectContextEvent->getContext();
     }
@@ -94,10 +94,10 @@ class IndexDataProvider
         $entityAlias = $this->entityAliasResolver->getAlias($entityClass);
 
         $indexEntityEvent = new Event\IndexEntityEvent($entityClass, $restrictedEntities, $context);
-        $this->eventDispatcher->dispatch(Event\IndexEntityEvent::NAME, $indexEntityEvent);
+        $this->eventDispatcher->dispatch($indexEntityEvent, Event\IndexEntityEvent::NAME);
         $this->eventDispatcher->dispatch(
-            sprintf('%s.%s', Event\IndexEntityEvent::NAME, $entityAlias),
-            $indexEntityEvent
+            $indexEntityEvent,
+            sprintf('%s.%s', Event\IndexEntityEvent::NAME, $entityAlias)
         );
 
         return $this->prepareIndexData($indexEntityEvent->getEntitiesData(), $entityConfig);
@@ -366,10 +366,10 @@ class IndexDataProvider
         $entityAlias = $this->entityAliasResolver->getAlias($entityClass);
 
         $restrictEntitiesEvent = new Event\RestrictIndexEntityEvent($queryBuilder, $context);
-        $this->eventDispatcher->dispatch(Event\RestrictIndexEntityEvent::NAME, $restrictEntitiesEvent);
+        $this->eventDispatcher->dispatch($restrictEntitiesEvent, Event\RestrictIndexEntityEvent::NAME);
         $this->eventDispatcher->dispatch(
-            sprintf('%s.%s', Event\RestrictIndexEntityEvent::NAME, $entityAlias),
-            $restrictEntitiesEvent
+            $restrictEntitiesEvent,
+            sprintf('%s.%s', Event\RestrictIndexEntityEvent::NAME, $entityAlias)
         );
 
         return $restrictEntitiesEvent->getQueryBuilder();

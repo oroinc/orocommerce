@@ -8,7 +8,7 @@ use Oro\Bundle\ProductBundle\RelatedItem\FinderStrategyInterface;
 use Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\FinderDatabaseStrategy as RelatedProductFinderDatabaseStrategy;
 use Oro\Bundle\ProductBundle\RelatedItem\UpsellProduct\FinderDatabaseStrategy as UpsellProductFinderDatabaseStrategy;
 use Psr\Container\ContainerInterface;
-use Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
+use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 

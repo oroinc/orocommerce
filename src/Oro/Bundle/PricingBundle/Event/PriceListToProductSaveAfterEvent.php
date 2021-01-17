@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Event;
 
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class PriceListToProductSaveAfterEvent extends Event
 {

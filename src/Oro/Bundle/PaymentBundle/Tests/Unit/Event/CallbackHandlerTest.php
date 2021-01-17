@@ -64,9 +64,9 @@ class CallbackHandlerTest extends \PHPUnit\Framework\TestCase
         $this->paymentTransactionProvider->expects($this->never())->method('savePaymentTransaction');
 
         $this->eventDispatcher->expects($this->once())->method('dispatch')
-            ->with(CallbackReturnEvent::NAME, $event)
+            ->with($event, CallbackReturnEvent::NAME)
             ->willReturnCallback(
-                function ($name, CallbackReturnEvent $event) {
+                function (CallbackReturnEvent $event, $name) {
                     $event->markFailed();
                 }
             );

@@ -98,6 +98,6 @@ class LoginOnCheckoutListener
         $event = new LoginOnCheckoutEvent();
         $event->setSource($checkout->getSource());
 
-        $this->eventDispatcher->dispatch(LoginOnCheckoutEvent::NAME, $event);
+        $this->eventDispatcher->dispatch($event, LoginOnCheckoutEvent::NAME);
     }
 }

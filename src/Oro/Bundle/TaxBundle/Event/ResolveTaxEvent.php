@@ -3,7 +3,7 @@
 namespace Oro\Bundle\TaxBundle\Event;
 
 use Oro\Bundle\TaxBundle\Model\Taxable;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class ResolveTaxEvent extends Event
 {

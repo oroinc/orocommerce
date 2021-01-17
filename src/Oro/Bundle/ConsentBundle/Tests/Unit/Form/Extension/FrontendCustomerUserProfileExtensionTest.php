@@ -181,7 +181,7 @@ class FrontendCustomerUserProfileExtensionTest extends FormIntegrationTestCase
 
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
-            ->with(DeclinedConsentsEvent::EVENT_NAME, new DeclinedConsentsEvent([$consentAcceptance], $customerUser));
+            ->with(new DeclinedConsentsEvent([$consentAcceptance], $customerUser), DeclinedConsentsEvent::EVENT_NAME);
 
         $this->extension->onPostSubmit(new FormEvent($form, $customerUser));
     }

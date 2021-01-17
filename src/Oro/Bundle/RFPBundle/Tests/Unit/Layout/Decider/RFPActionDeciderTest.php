@@ -60,7 +60,7 @@ class RFPActionDeciderTest extends \PHPUnit\Framework\TestCase
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
             ->willReturnCallback(
-                function ($eventName, FormSubmitCheckEvent $event) {
+                function (FormSubmitCheckEvent $event, string $eventName) {
                     $this->assertEquals('rfp.form_submit_check.testName', $eventName);
                     $event->setShouldSubmitOnError(true);
                 }

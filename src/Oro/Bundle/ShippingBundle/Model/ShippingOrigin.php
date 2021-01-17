@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Model;
 
-use Doctrine\Common\Inflector\Inflector;
+use Doctrine\Inflector\Rules\English\InflectorFactory;
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 
 class ShippingOrigin extends AbstractAddress
@@ -21,7 +21,7 @@ class ShippingOrigin extends AbstractAddress
         $this->data = new \ArrayObject();
 
         foreach ($data as $name => $value) {
-            $method = Inflector::camelize('set' . ucfirst($name));
+            $method = (new InflectorFactory())->build()->camelize('set' . ucfirst($name));
 
             if (method_exists($this, $method)) {
                 $this->$method($value);

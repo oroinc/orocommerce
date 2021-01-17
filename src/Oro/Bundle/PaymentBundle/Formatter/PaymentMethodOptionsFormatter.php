@@ -43,7 +43,7 @@ class PaymentMethodOptionsFormatter
             $paymentMethodView = $this->paymentMethodViewProvider->getPaymentMethodView($paymentMethod);
 
             $event = new CollectFormattedPaymentOptionsEvent($paymentMethodView);
-            $this->eventDispatcher->dispatch(CollectFormattedPaymentOptionsEvent::EVENT_NAME, $event);
+            $this->eventDispatcher->dispatch($event, CollectFormattedPaymentOptionsEvent::EVENT_NAME);
 
             return $event->getOptions();
         } catch (\InvalidArgumentException $e) {

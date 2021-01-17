@@ -7,14 +7,14 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
 use Oro\Bundle\TaxBundle\Form\Type\ProductTaxCodeType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * CRUD for product tax codes.
  */
-class ProductTaxCodeController extends Controller
+class ProductTaxCodeController extends AbstractController
 {
     /**
      * @Route("/", name="oro_tax_product_tax_code_index")

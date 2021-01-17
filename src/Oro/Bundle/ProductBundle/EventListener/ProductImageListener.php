@@ -162,8 +162,8 @@ class ProductImageListener
         }
 
         $this->eventDispatcher->dispatch(
-            ProductImageResizeEvent::NAME,
-            new ProductImageResizeEvent($productImage->getId(), true)
+            new ProductImageResizeEvent($productImage->getId(), true),
+            ProductImageResizeEvent::NAME
         );
     }
 
@@ -174,12 +174,12 @@ class ProductImageListener
     {
         if ($this->productIdsToReindex) {
             $this->eventDispatcher->dispatch(
-                ReindexationRequestEvent::EVENT_NAME,
                 new ReindexationRequestEvent(
                     [Product::class],
                     [],
                     $this->productIdsToReindex
-                )
+                ),
+                ReindexationRequestEvent::EVENT_NAME
             );
         }
 

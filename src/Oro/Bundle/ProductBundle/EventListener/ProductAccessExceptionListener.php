@@ -30,7 +30,7 @@ class ProductAccessExceptionListener
      */
     public function onAccessException(GetResponseForExceptionEvent $event)
     {
-        $exception = $event->getException();
+        $exception = $event->getThrowable();
 
         if (!($exception instanceof AccessDeniedHttpException ||
               $exception instanceof InsufficientAuthenticationException)) {
@@ -47,6 +47,6 @@ class ProductAccessExceptionListener
         // replace the 403 with 404 here
         $newException = new NotFoundHttpException($exception->getMessage(), $exception);
 
-        $event->setException($newException);
+        $event->setThrowable($newException);
     }
 }

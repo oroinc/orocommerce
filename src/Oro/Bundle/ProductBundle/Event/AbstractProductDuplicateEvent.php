@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Event;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 abstract class AbstractProductDuplicateEvent extends Event
 {

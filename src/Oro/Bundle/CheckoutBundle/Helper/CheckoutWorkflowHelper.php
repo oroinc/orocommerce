@@ -167,7 +167,7 @@ class CheckoutWorkflowHelper
             return false;
         }
 
-        $this->eventDispatcher->dispatch(CheckoutValidateEvent::NAME, $event);
+        $this->eventDispatcher->dispatch($event, CheckoutValidateEvent::NAME);
 
         return $event->isCheckoutRestartRequired();
     }

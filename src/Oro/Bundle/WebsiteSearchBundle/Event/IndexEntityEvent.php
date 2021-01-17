@@ -3,7 +3,7 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Event;
 
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderValue;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * Event used to collect website search index data per entity

@@ -225,7 +225,7 @@ class UniqueSlugResolver
         SluggableInterface $entity
     ): QueryBuilder {
         $restrictSlugIncrementEvent = new RestrictSlugIncrementEvent($qb, $entity);
-        $this->eventDispatcher->dispatch(RestrictSlugIncrementEvent::NAME, $restrictSlugIncrementEvent);
+        $this->eventDispatcher->dispatch($restrictSlugIncrementEvent, RestrictSlugIncrementEvent::NAME);
 
         return $restrictSlugIncrementEvent->getQueryBuilder();
     }

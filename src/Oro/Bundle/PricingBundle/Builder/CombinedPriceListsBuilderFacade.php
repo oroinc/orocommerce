@@ -210,7 +210,7 @@ class CombinedPriceListsBuilderFacade
                 $data[] = ['websiteId' => $websiteId, 'customers' => array_filter(array_keys($customers))];
             }
 
-            $this->dispatcher->dispatch(CustomerCPLUpdateEvent::NAME, new CustomerCPLUpdateEvent($data));
+            $this->dispatcher->dispatch(new CustomerCPLUpdateEvent($data), CustomerCPLUpdateEvent::NAME);
         }
     }
 
@@ -223,7 +223,7 @@ class CombinedPriceListsBuilderFacade
                 $data[] = ['websiteId' => $websiteId, 'customerGroups' => array_filter(array_keys($customerGroups))];
             }
 
-            $this->dispatcher->dispatch(CustomerGroupCPLUpdateEvent::NAME, new CustomerGroupCPLUpdateEvent($data));
+            $this->dispatcher->dispatch(new CustomerGroupCPLUpdateEvent($data), CustomerGroupCPLUpdateEvent::NAME);
         }
     }
 
@@ -232,8 +232,8 @@ class CombinedPriceListsBuilderFacade
         $websiteBuildList = $this->websiteCombinedPriceListBuilder->getBuiltList();
         if ($websiteBuildList) {
             $this->dispatcher->dispatch(
-                WebsiteCPLUpdateEvent::NAME,
-                new WebsiteCPLUpdateEvent(array_filter(array_keys($websiteBuildList)))
+                new WebsiteCPLUpdateEvent(array_filter(array_keys($websiteBuildList))),
+                WebsiteCPLUpdateEvent::NAME
             );
         }
     }
@@ -241,7 +241,7 @@ class CombinedPriceListsBuilderFacade
     private function dispatchConfigScopeEvent()
     {
         if ($this->combinedPriceListBuilder->isBuilt()) {
-            $this->dispatcher->dispatch(ConfigCPLUpdateEvent::NAME, new ConfigCPLUpdateEvent());
+            $this->dispatcher->dispatch(new ConfigCPLUpdateEvent(), ConfigCPLUpdateEvent::NAME);
         }
     }
 
@@ -249,8 +249,8 @@ class CombinedPriceListsBuilderFacade
     {
         if ($this->rebuiltCombinedPriceListsIds) {
             $this->dispatcher->dispatch(
-                CombinedPriceListsUpdateEvent::NAME,
-                new CombinedPriceListsUpdateEvent($this->rebuiltCombinedPriceListsIds)
+                new CombinedPriceListsUpdateEvent($this->rebuiltCombinedPriceListsIds),
+                CombinedPriceListsUpdateEvent::NAME
             );
         }
     }

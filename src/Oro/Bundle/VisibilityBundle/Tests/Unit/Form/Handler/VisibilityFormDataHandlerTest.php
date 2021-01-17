@@ -97,7 +97,7 @@ class VisibilityFormDataHandlerTest extends FormHandlerTestCase
 
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
-            ->with('oro_product.product.edit', new AfterFormProcessEvent($this->form, $this->entity));
+            ->with(new AfterFormProcessEvent($this->form, $this->entity), 'oro_product.product.edit');
 
         $this->assertTrue($this->handler->process($this->entity));
     }

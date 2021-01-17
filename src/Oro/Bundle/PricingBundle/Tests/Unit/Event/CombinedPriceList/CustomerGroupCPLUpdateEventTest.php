@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Event\CombinedPriceList;
 
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CustomerGroupCPLUpdateEvent;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class CustomerGroupCPLUpdateEventTest extends \PHPUnit\Framework\TestCase
 {
@@ -13,7 +14,7 @@ class CustomerGroupCPLUpdateEventTest extends \PHPUnit\Framework\TestCase
             'customerGroupsIds' => [1, 2, 3]
         ];
         $event = new CustomerGroupCPLUpdateEvent($data);
-        $this->assertInstanceOf('Symfony\Component\EventDispatcher\Event', $event);
+        $this->assertInstanceOf(Event::class, $event);
         $this->assertSame($data, $event->getCustomerGroupsData());
     }
 }

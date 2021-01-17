@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PaymentBundle\Event;
 
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * Event to collect payment method options based on payment method view

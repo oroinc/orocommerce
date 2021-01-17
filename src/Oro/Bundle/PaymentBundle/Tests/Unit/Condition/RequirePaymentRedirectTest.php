@@ -71,7 +71,7 @@ class RequirePaymentRedirectTest extends \PHPUnit\Framework\TestCase
 
         $this->dispatcher->expects($this->once())
             ->method('dispatch')
-            ->with('oro_payment.require_payment_redirect', $event);
+            ->with($event, 'oro_payment.require_payment_redirect');
 
         $this->condition->initialize([self::PAYMENT_METHOD_KEY => 'payment_method']);
         $this->assertFalse($this->condition->evaluate($context, $errors));

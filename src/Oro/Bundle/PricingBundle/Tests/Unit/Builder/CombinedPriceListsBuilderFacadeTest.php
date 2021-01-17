@@ -128,7 +128,7 @@ class CombinedPriceListsBuilderFacadeTest extends \PHPUnit\Framework\TestCase
 
         $this->dispatcher->expects($this->once())
             ->method('dispatch')
-            ->with(CombinedPriceListsUpdateEvent::NAME, new CombinedPriceListsUpdateEvent([11, 22, 33]));
+            ->with(new CombinedPriceListsUpdateEvent([11, 22, 33]), CombinedPriceListsUpdateEvent::NAME);
 
         $this->facade->rebuild($combinedPriceLists, $products, $startTimestamp);
         $this->facade->dispatchEvents();

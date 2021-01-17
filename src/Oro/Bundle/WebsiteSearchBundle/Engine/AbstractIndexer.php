@@ -124,8 +124,8 @@ abstract class AbstractIndexer implements IndexerInterface
         $entityClassesToIndex = $this->getClassesForReindex($entityClassesToIndex);
         if (empty($context['skip_pre_processing'])) {
             $this->eventDispatcher->dispatch(
-                BeforeReindexEvent::EVENT_NAME,
-                new BeforeReindexEvent($classOrClasses, $context)
+                new BeforeReindexEvent($classOrClasses, $context),
+                BeforeReindexEvent::EVENT_NAME
             );
         }
 

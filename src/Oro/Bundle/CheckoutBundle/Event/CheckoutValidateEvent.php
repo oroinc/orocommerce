@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\Event;
 
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class CheckoutValidateEvent extends Event
 {

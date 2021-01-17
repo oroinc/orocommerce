@@ -98,7 +98,7 @@ abstract class AbstractCouponHandler
         }
 
         $event = new TotalCalculateBeforeEvent($entity, $request);
-        $this->eventDispatcher->dispatch(TotalCalculateBeforeEvent::NAME, $event);
+        $this->eventDispatcher->dispatch($event, TotalCalculateBeforeEvent::NAME);
 
         return $entity;
     }

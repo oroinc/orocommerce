@@ -4,14 +4,14 @@ namespace Oro\Bundle\CheckoutBundle\Controller\Frontend;
 
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Frontend controller for open orders page.
  */
-class OpenOrdersController extends Controller
+class OpenOrdersController extends AbstractController
 {
     /**
      * @Route("/", name="oro_checkout_frontend_open_orders")

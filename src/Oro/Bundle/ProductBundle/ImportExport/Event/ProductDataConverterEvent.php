@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ProductBundle\ImportExport\Event;
 
 use Oro\Bundle\ImportExportBundle\Context\ContextInterface;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * Triggered by import/export product data converter.

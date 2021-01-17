@@ -85,7 +85,7 @@ class CategoryTreeProviderTest extends \PHPUnit\Framework\TestCase
         $event->setUser($user);
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
-            ->with(CategoryTreeCreateAfterEvent::NAME, $event)
+            ->with($event, CategoryTreeCreateAfterEvent::NAME)
             ->willReturn($visibleCategories);
 
         $this->masterCatalogRootProvider
@@ -123,7 +123,7 @@ class CategoryTreeProviderTest extends \PHPUnit\Framework\TestCase
         $event->setUser($user);
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
-            ->with(CategoryTreeCreateAfterEvent::NAME, $event)
+            ->with($event, CategoryTreeCreateAfterEvent::NAME)
             ->willReturn($visibleCategories);
 
         $this->masterCatalogRootProvider

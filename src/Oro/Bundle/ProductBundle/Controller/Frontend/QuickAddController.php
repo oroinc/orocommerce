@@ -5,7 +5,7 @@ namespace Oro\Bundle\ProductBundle\Controller\Frontend;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @AclAncestor("oro_quick_add_form")
  */
-class QuickAddController extends Controller
+class QuickAddController extends AbstractController
 {
     /**
      * @Route("/", name="oro_product_frontend_quick_add")

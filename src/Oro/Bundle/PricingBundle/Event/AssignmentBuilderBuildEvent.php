@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Event;
 
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class AssignmentBuilderBuildEvent extends Event
 {

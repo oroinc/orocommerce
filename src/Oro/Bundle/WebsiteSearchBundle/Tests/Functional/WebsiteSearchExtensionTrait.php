@@ -15,8 +15,8 @@ trait WebsiteSearchExtensionTrait
     {
         $this->getContainer()->get('oro_visibility.visibility.cache.product.cache_builder')->buildCache();
         $this->getContainer()->get('event_dispatcher')->dispatch(
-            ReindexationRequestEvent::EVENT_NAME,
-            new ReindexationRequestEvent([Product::class], [], [], false)
+            new ReindexationRequestEvent([Product::class], [], [], false),
+            ReindexationRequestEvent::EVENT_NAME
         );
     }
 }

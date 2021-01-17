@@ -146,10 +146,10 @@ class ContentWidgetHandlerTest extends \PHPUnit\Framework\TestCase
         $this->eventDispatcher->expects($this->exactly(4))
             ->method('dispatch')
             ->withConsecutive(
-                [Events::BEFORE_FORM_DATA_SET],
-                [Events::BEFORE_FORM_SUBMIT],
-                [Events::BEFORE_FLUSH],
-                [Events::AFTER_FLUSH]
+                [static::anything(), Events::BEFORE_FORM_DATA_SET],
+                [static::anything(), Events::BEFORE_FORM_SUBMIT],
+                [static::anything(), Events::BEFORE_FLUSH],
+                [static::anything(), Events::AFTER_FLUSH]
             );
 
         $this->assertTrue($this->handler->process($this->data, $this->form, $this->request));

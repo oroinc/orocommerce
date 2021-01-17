@@ -11,7 +11,6 @@ use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandler;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
@@ -100,7 +99,7 @@ abstract class AbstractFlatPricingRelationFormListenerTest extends \PHPUnit\Fram
     protected function assertPriceListFormCalls(
         Website $website,
         object $targetEntity,
-        Event $formEvent
+        $formEvent
     ) {
         $formConfig = $this->createMock(FormConfigInterface::class);
         $formConfig->expects($this->once())

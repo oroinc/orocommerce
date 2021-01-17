@@ -70,7 +70,7 @@ class ProductDataConverter extends LocalizedFallbackValueAwareDataConverter impl
             $event = new ProductDataConverterEvent($backendHeader);
             $event->setContext($this->context);
 
-            $this->eventDispatcher->dispatch(ProductDataConverterEvent::BACKEND_HEADER, $event);
+            $this->eventDispatcher->dispatch($event, ProductDataConverterEvent::BACKEND_HEADER);
             $backendHeader = $event->getData();
         }
 
@@ -88,7 +88,7 @@ class ProductDataConverter extends LocalizedFallbackValueAwareDataConverter impl
             $event = new ProductDataConverterEvent($data);
             $event->setContext($this->context);
 
-            $this->eventDispatcher->dispatch(ProductDataConverterEvent::CONVERT_TO_EXPORT, $event);
+            $this->eventDispatcher->dispatch($event, ProductDataConverterEvent::CONVERT_TO_EXPORT);
             $data = $event->getData();
         }
 
@@ -106,7 +106,7 @@ class ProductDataConverter extends LocalizedFallbackValueAwareDataConverter impl
             $event = new ProductDataConverterEvent($data);
             $event->setContext($this->context);
 
-            $this->eventDispatcher->dispatch(ProductDataConverterEvent::CONVERT_TO_IMPORT, $event);
+            $this->eventDispatcher->dispatch($event, ProductDataConverterEvent::CONVERT_TO_IMPORT);
             $data = $event->getData();
         }
 

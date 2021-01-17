@@ -6,13 +6,13 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class AjaxOrderController extends Controller
+class AjaxOrderController extends AbstractController
 {
     /**
      * @Route("/entry-point/{id}", name="oro_order_entry_point", defaults={"id" = 0})
@@ -36,7 +36,7 @@ class AjaxOrderController extends Controller
         $form->submit($submittedData);
 
         $event = new OrderEvent($form, $form->getData(), $submittedData);
-        $this->get('event_dispatcher')->dispatch(OrderEvent::NAME, $event);
+        $this->get('event_dispatcher')->dispatch($event, OrderEvent::NAME);
 
         return new JsonResponse($event->getData());
     }

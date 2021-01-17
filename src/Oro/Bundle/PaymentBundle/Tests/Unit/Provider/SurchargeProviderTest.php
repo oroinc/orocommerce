@@ -25,7 +25,7 @@ class SurchargeProviderTest extends \PHPUnit\Framework\TestCase
     {
         $this->dispatcher->expects($this->once())
             ->method('dispatch')
-            ->with(CollectSurchargeEvent::NAME, $this->isInstanceOf(CollectSurchargeEvent::class));
+            ->with($this->isInstanceOf(CollectSurchargeEvent::class), CollectSurchargeEvent::NAME);
 
         $entity = new \stdClass();
         $surcharge = $this->provider->getSurcharges($entity);
