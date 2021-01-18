@@ -92,8 +92,8 @@ class PriceListToProductEntityListenerTest extends WebTestCase
 
         $dispatcher = $this->getContainer()->get('event_dispatcher');
         $dispatcher->dispatch(
-            PriceListToProductSaveAfterEvent::NAME,
-            new PriceListToProductSaveAfterEvent($priceListToProduct)
+            new PriceListToProductSaveAfterEvent($priceListToProduct),
+            PriceListToProductSaveAfterEvent::NAME
         );
 
         $this->flushMessagesBuffer();

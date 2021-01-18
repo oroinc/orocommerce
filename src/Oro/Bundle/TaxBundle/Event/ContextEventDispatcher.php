@@ -25,7 +25,7 @@ class ContextEventDispatcher
     {
         $event = new ContextEvent($object);
 
-        $this->eventDispatcher->dispatch(ContextEvent::NAME, $event);
+        $this->eventDispatcher->dispatch($event, ContextEvent::NAME);
 
         return $event->getContext();
     }

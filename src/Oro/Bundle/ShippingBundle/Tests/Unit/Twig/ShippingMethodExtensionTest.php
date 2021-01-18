@@ -90,8 +90,8 @@ class ShippingMethodExtensionTest extends \PHPUnit\Framework\TestCase
         $this->dispatcher
             ->expects(static::once())
             ->method('dispatch')
-            ->with(ShippingMethodConfigDataEvent::NAME)
-            ->will(static::returnCallback(function ($name, ShippingMethodConfigDataEvent $event) use ($methodName) {
+            ->with(static::isInstanceOf(ShippingMethodConfigDataEvent::class), ShippingMethodConfigDataEvent::NAME)
+            ->will(static::returnCallback(function (ShippingMethodConfigDataEvent $event, $name) use ($methodName) {
                 static::assertEquals($methodName, $event->getMethodIdentifier());
                 $event->setTemplate(ShippingMethodExtension::DEFAULT_METHOD_CONFIG_TEMPLATE);
             }));
@@ -116,9 +116,9 @@ class ShippingMethodExtensionTest extends \PHPUnit\Framework\TestCase
         $this->dispatcher
             ->expects(static::once())
             ->method('dispatch')
-            ->with(ShippingMethodConfigDataEvent::NAME)
+            ->with(static::isInstanceOf(ShippingMethodConfigDataEvent::class), ShippingMethodConfigDataEvent::NAME)
             ->will(static::returnCallback(
-                function ($name, ShippingMethodConfigDataEvent $event) use ($methodName, $template) {
+                function (ShippingMethodConfigDataEvent $event, $name) use ($methodName, $template) {
                     static::assertEquals($methodName, $event->getMethodIdentifier());
                     $event->setTemplate($template);
                 }

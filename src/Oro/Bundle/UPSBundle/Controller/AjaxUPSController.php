@@ -11,7 +11,7 @@ use Oro\Bundle\UPSBundle\Connection\Validator\Result\UpsConnectionValidatorResul
 use Oro\Bundle\UPSBundle\Entity\Repository\ShippingServiceRepository;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -19,7 +19,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * Ajax UPS Controller
  */
-class AjaxUPSController extends Controller
+class AjaxUPSController extends AbstractController
 {
     /**
      * @Route("/get-shipping-services-by-country/{code}",

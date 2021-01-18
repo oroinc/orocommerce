@@ -119,9 +119,9 @@ class PriceManagerTest extends \PHPUnit\Framework\TestCase
         $this->eventDispatcher->expects($this->exactly(3))
             ->method('dispatch')
             ->withConsecutive(
-                [ProductPriceRemove::NAME, $this->isInstanceOf(ProductPriceRemove::class)],
-                [ProductPriceSaveAfterEvent::NAME, $this->isInstanceOf(ProductPriceSaveAfterEvent::class)],
-                [ProductPricesUpdated::NAME, $this->isInstanceOf(ProductPricesUpdated::class)]
+                [$this->isInstanceOf(ProductPriceRemove::class), ProductPriceRemove::NAME],
+                [$this->isInstanceOf(ProductPriceSaveAfterEvent::class), ProductPriceSaveAfterEvent::NAME],
+                [$this->isInstanceOf(ProductPricesUpdated::class), ProductPricesUpdated::NAME]
             );
 
         $this->messageBufferManager->expects($this->once())

@@ -84,7 +84,7 @@ class UniqueSlugResolverTest extends \PHPUnit\Framework\TestCase
 
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
-            ->with(RestrictSlugIncrementEvent::NAME, $this->isInstanceOf(RestrictSlugIncrementEvent::class));
+            ->with($this->isInstanceOf(RestrictSlugIncrementEvent::class), RestrictSlugIncrementEvent::NAME);
 
         $this->aclHelper
             ->expects($this->once())
@@ -123,7 +123,7 @@ class UniqueSlugResolverTest extends \PHPUnit\Framework\TestCase
         $restrictSlugIncrementEvent = new RestrictSlugIncrementEvent($queryBuilder, $entity);
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
-            ->with(RestrictSlugIncrementEvent::NAME, $restrictSlugIncrementEvent);
+            ->with($restrictSlugIncrementEvent, RestrictSlugIncrementEvent::NAME);
 
         $updatedQueryBuilder = $restrictSlugIncrementEvent->getQueryBuilder();
         $updatedQueryBuilder->select('something');
@@ -175,7 +175,7 @@ class UniqueSlugResolverTest extends \PHPUnit\Framework\TestCase
 
         $this->eventDispatcher->expects($this->exactly(2))
             ->method('dispatch')
-            ->with(RestrictSlugIncrementEvent::NAME, $this->isInstanceOf(RestrictSlugIncrementEvent::class));
+            ->with($this->isInstanceOf(RestrictSlugIncrementEvent::class), RestrictSlugIncrementEvent::NAME);
 
         $this->aclHelper
             ->expects($this->any())
@@ -223,7 +223,7 @@ class UniqueSlugResolverTest extends \PHPUnit\Framework\TestCase
 
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
-            ->with(RestrictSlugIncrementEvent::NAME, $this->isInstanceOf(RestrictSlugIncrementEvent::class));
+            ->with($this->isInstanceOf(RestrictSlugIncrementEvent::class), RestrictSlugIncrementEvent::NAME);
 
         $this->aclHelper
             ->expects($this->exactly(2))

@@ -81,8 +81,8 @@ HELP
 
         foreach ($iterator as $productImage) {
             $this->getEventDispatcher()->dispatch(
-                ProductImageResizeEvent::NAME,
-                new ProductImageResizeEvent($productImage['id'], $forceOption, $this->getDimensionsOption($input))
+                new ProductImageResizeEvent($productImage['id'], $forceOption, $this->getDimensionsOption($input)),
+                ProductImageResizeEvent::NAME
             );
             $entitiesProcessed++;
         }

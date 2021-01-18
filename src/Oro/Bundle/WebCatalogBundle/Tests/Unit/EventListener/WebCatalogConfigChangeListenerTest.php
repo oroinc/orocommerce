@@ -39,7 +39,7 @@ class WebCatalogConfigChangeListenerTest extends \PHPUnit\Framework\TestCase
         $this->dispatcher
             ->expects($this->once())
             ->method('dispatch')
-            ->with(ReindexationRequestEvent::EVENT_NAME, new ReindexationRequestEvent());
+            ->with(new ReindexationRequestEvent(), ReindexationRequestEvent::EVENT_NAME);
         
         $this->webCatalogConfigChangeListener->onConfigurationUpdate($event);
     }

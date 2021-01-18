@@ -6,13 +6,13 @@ use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Controller actions to create Order entity using RFQ entity as source.
  */
-class OrderController extends Controller
+class OrderController extends AbstractController
 {
     /**
      * @Route("/create/{id}", name="oro_rfp_request_create_order", requirements={"id"="\d+"})

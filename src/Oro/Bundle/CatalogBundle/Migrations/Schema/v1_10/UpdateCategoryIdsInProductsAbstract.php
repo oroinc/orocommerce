@@ -70,7 +70,7 @@ abstract class UpdateCategoryIdsInProductsAbstract extends ParametrizedMigration
     {
         $this->logQuery($logger, $query, $params);
         if (!$dryRun) {
-            $this->connection->executeUpdate($query, $params);
+            $this->connection->executeStatement($query, $params);
         }
     }
 

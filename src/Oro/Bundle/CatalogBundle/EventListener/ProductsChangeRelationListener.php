@@ -38,7 +38,7 @@ class ProductsChangeRelationListener
 
         if ($productsChangedRelation) {
             $event = new ProductsChangeRelationEvent($productsChangedRelation);
-            $this->eventDispatcher->dispatch(ProductsChangeRelationEvent::NAME, $event);
+            $this->eventDispatcher->dispatch($event, ProductsChangeRelationEvent::NAME);
         }
     }
 

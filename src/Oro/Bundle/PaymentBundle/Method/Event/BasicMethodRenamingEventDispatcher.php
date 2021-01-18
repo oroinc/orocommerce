@@ -24,6 +24,6 @@ class BasicMethodRenamingEventDispatcher implements MethodRenamingEventDispatche
      */
     public function dispatch($oldId, $newId)
     {
-        $this->eventDispatcher->dispatch(MethodRenamingEvent::NAME, new MethodRenamingEvent($oldId, $newId));
+        $this->eventDispatcher->dispatch(new MethodRenamingEvent($oldId, $newId), MethodRenamingEvent::NAME);
     }
 }

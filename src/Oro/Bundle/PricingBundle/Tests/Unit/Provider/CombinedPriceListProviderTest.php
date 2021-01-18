@@ -129,7 +129,7 @@ class CombinedPriceListProviderTest extends \PHPUnit\Framework\TestCase
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
             ->willReturnCallback(
-                function (string $eventName, CombinedPriceListCreateEvent $event) {
+                function (CombinedPriceListCreateEvent $event, string $eventName) {
                     $this->assertEquals(CombinedPriceListCreateEvent::NAME, $eventName);
                     $this->assertInstanceOf(CombinedPriceList::class, $event->getCombinedPriceList());
                 }
@@ -206,7 +206,7 @@ class CombinedPriceListProviderTest extends \PHPUnit\Framework\TestCase
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
             ->willReturnCallback(
-                function (string $eventName, CombinedPriceListCreateEvent $event) use ($options) {
+                function (CombinedPriceListCreateEvent $event, string $eventName) use ($options) {
                     $this->assertEquals(CombinedPriceListCreateEvent::NAME, $eventName);
                     $this->assertInstanceOf(CombinedPriceList::class, $event->getCombinedPriceList());
                     $this->assertEquals($options, $event->getOptions());

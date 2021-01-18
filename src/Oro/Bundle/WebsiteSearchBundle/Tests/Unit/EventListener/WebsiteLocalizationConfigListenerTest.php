@@ -20,11 +20,11 @@ class WebsiteLocalizationConfigListenerTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('dispatch')
             ->with(
-                ReindexationRequestEvent::EVENT_NAME,
                 $this->callback(function ($reindexationEvent) {
                     /** @var ReindexationRequestEvent $reindexationEvent */
                     return count($reindexationEvent->getWebsitesIds()) === 0;
-                })
+                }),
+                ReindexationRequestEvent::EVENT_NAME
             );
 
         $listener = new WebsiteLocalizationConfigListener($eventDispatcher);

@@ -61,7 +61,7 @@ class CombinedPriceListTriggerHandlerTest extends \PHPUnit\Framework\TestCase
 
         $this->eventDispatcher = $this->createMock(EventDispatcher::class);
         $this->eventDispatcher->method('dispatch')->willReturnCallback(
-            function ($eventName, $event) {
+            function ($event, $eventName) {
                 $this->events[$eventName][] = $event;
             }
         );

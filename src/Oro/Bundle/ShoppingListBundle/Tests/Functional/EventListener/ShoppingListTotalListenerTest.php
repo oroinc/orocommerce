@@ -49,7 +49,7 @@ class ShoppingListTotalListenerTest extends WebTestCase
 
         $this->getContainer()
             ->get('event_dispatcher')
-            ->dispatch('oro_pricing.customer_group.combined_price_list.update', $event);
+            ->dispatch($event, 'oro_pricing.customer_group.combined_price_list.update');
 
         $this->manager->refresh($shoppingListTotal);
         $this->assertFalse($shoppingListTotal->isValid());

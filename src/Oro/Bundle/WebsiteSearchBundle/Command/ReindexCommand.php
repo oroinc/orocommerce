@@ -217,7 +217,7 @@ HELP
     private function fireReindexationEvents(array $classes, array $websiteIds, array $entityId, bool $isScheduled): void
     {
         $event = new ReindexationRequestEvent($classes, $websiteIds, $entityId, $isScheduled);
-        $this->eventDispatcher->dispatch(ReindexationRequestEvent::EVENT_NAME, $event);
+        $this->eventDispatcher->dispatch($event, ReindexationRequestEvent::EVENT_NAME);
     }
 
     private function fireReindexationEventsForChunks(

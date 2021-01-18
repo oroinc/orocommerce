@@ -147,7 +147,7 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
-            ->with(ApplicableMethodsEvent::NAME);
+            ->with(static::isInstanceOf(ApplicableMethodsEvent::class), ApplicableMethodsEvent::NAME);
 
         $this->assertEquals(
             $expectedData,

@@ -82,7 +82,7 @@ class PriceListProductAssignmentBuilder
         $this->buildByPriceListWithoutEventDispatch($priceList, $products);
 
         $event = new AssignmentBuilderBuildEvent($priceList, $products);
-        $this->eventDispatcher->dispatch(AssignmentBuilderBuildEvent::NAME, $event);
+        $this->eventDispatcher->dispatch($event, AssignmentBuilderBuildEvent::NAME);
     }
 
     /**

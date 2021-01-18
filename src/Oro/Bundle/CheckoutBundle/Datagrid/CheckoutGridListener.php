@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CheckoutBundle\Datagrid;
 
-use Doctrine\Common\Inflector\Inflector;
 use Doctrine\Common\Util\ClassUtils;
+use Doctrine\Inflector\Inflector;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
 use Oro\Bundle\CheckoutBundle\Model\CompletedCheckoutData;
@@ -49,26 +49,22 @@ class CheckoutGridListener
      * @var DoctrineHelper
      */
     private $doctrineHelper;
+    private Inflector $inflector;
 
-    /**
-     * @param UserCurrencyManager $currencyManager
-     * @param CheckoutRepository $checkoutRepository
-     * @param TotalProcessorProvider $totalProcessor
-     * @param EntityNameResolver $entityNameResolver
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(
         UserCurrencyManager $currencyManager,
         CheckoutRepository $checkoutRepository,
         TotalProcessorProvider $totalProcessor,
         EntityNameResolver $entityNameResolver,
-        DoctrineHelper $doctrineHelper
+        DoctrineHelper $doctrineHelper,
+        Inflector $inflector
     ) {
         $this->currencyManager = $currencyManager;
         $this->checkoutRepository = $checkoutRepository;
         $this->totalProcessor = $totalProcessor;
         $this->entityNameResolver = $entityNameResolver;
         $this->doctrineHelper = $doctrineHelper;
+        $this->inflector = $inflector;
     }
 
     /**
@@ -214,6 +210,6 @@ class CheckoutGridListener
      */
     protected function getShortClassName($object)
     {
-        return Inflector::tableize(ExtendHelper::getShortClassName(ClassUtils::getClass($object)));
+        return $this->inflector->tableize(ExtendHelper::getShortClassName(ClassUtils::getClass($object)));
     }
 }

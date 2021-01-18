@@ -91,8 +91,8 @@ SQL;
         $this->logQuery($logger, $updateWithScope);
         $this->logQuery($logger, $updateWithoutScope);
         if (!$dryRun) {
-            $this->connection->executeUpdate($updateWithScope);
-            $this->connection->executeUpdate($updateWithoutScope);
+            $this->connection->executeStatement($updateWithScope);
+            $this->connection->executeStatement($updateWithoutScope);
         }
     }
 
@@ -126,7 +126,7 @@ DSQL;
 
         $this->logQuery($logger, $deleteSql);
         if (!$dryRun) {
-            $this->connection->executeUpdate($deleteSql);
+            $this->connection->executeStatement($deleteSql);
         }
     }
 }

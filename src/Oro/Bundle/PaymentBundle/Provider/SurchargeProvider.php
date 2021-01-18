@@ -26,7 +26,7 @@ class SurchargeProvider
     public function getSurcharges($entity)
     {
         $event = new CollectSurchargeEvent($entity);
-        $this->eventDispatcher->dispatch(CollectSurchargeEvent::NAME, $event);
+        $this->eventDispatcher->dispatch($event, CollectSurchargeEvent::NAME);
 
         return $event->getSurchargeModel();
     }

@@ -5,7 +5,7 @@ namespace Oro\Bundle\OrderBundle\Twig;
 use Oro\Bundle\ShippingBundle\Translator\ShippingMethodLabelTranslator;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
-use Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
+use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 

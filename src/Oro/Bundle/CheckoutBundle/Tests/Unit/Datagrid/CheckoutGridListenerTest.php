@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Datagrid;
 
+use Doctrine\Inflector\Rules\English\InflectorFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\Mapping\ClassMetadata;
 use Oro\Bundle\CheckoutBundle\Datagrid\CheckoutGridListener;
@@ -105,7 +106,8 @@ class CheckoutGridListenerTest extends \PHPUnit\Framework\TestCase
             $this->checkoutRepository,
             $this->totalProcessor,
             $this->entityNameResolver,
-            $this->doctrineHelper
+            $this->doctrineHelper,
+            (new InflectorFactory())->build()
         );
     }
 

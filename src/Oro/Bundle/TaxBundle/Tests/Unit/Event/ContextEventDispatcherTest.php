@@ -17,8 +17,8 @@ class ContextEventDispatcherTest extends \PHPUnit\Framework\TestCase
 
         $eventDispatcher->expects($this->once())->method('dispatch')
             ->with(
-                ContextEvent::NAME,
-                $this->isInstanceOf('Oro\Bundle\TaxBundle\Event\ContextEvent')
+                $this->isInstanceOf('Oro\Bundle\TaxBundle\Event\ContextEvent'),
+                ContextEvent::NAME
             );
 
         $taxDispatcher->dispatch(new \stdClass());

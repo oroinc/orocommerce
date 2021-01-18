@@ -63,7 +63,7 @@ class EntityDependenciesResolver implements EntityDependenciesResolverInterface
         }
 
         $collectDependentClassesEvent = new CollectDependentClassesEvent();
-        $this->eventDispatcher->dispatch(CollectDependentClassesEvent::NAME, $collectDependentClassesEvent);
+        $this->eventDispatcher->dispatch($collectDependentClassesEvent, CollectDependentClassesEvent::NAME);
 
         $this->classesDependencies = $collectDependentClassesEvent->getDependencies();
     }

@@ -112,7 +112,7 @@ class ShardManager implements \Serializable
             $column = $connection->getDatabasePlatform()->quoteIdentifier($this->getDiscriminationColumn($className));
             $columnsStr = $this->getColumnsPlaceholder($className);
             $sql = "INSERT INTO $shardName ($columnsStr) SELECT $columnsStr FROM $baseTableName WHERE $column = :value";
-            $connection->executeUpdate($sql, ["value" => $discriminationValue]);
+            $connection->executeStatement($sql, ["value" => $discriminationValue]);
         }
         $connection->exec("DELETE FROM $baseTableName");
     }
@@ -132,7 +132,7 @@ class ShardManager implements \Serializable
             }
             $columnsStr = $this->getColumnsPlaceholder($class);
             $sql = "INSERT INTO $baseTableName ($columnsStr) SELECT $columnsStr FROM $shardName";
-            $connection->executeUpdate($sql);
+            $connection->executeStatement($sql);
             $this->delete($shardName);
         }
     }

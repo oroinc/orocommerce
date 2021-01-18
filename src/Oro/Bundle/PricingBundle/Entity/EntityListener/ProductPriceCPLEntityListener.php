@@ -129,8 +129,8 @@ class ProductPriceCPLEntityListener implements OptionalListenerInterface, Featur
         $relation = $this->findRelation($product, $priceList);
         if ($isCreated && $relation) {
             $this->eventDispatcher->dispatch(
-                PriceListToProductSaveAfterEvent::NAME,
-                new PriceListToProductSaveAfterEvent($relation)
+                new PriceListToProductSaveAfterEvent($relation),
+                PriceListToProductSaveAfterEvent::NAME
             );
         }
     }

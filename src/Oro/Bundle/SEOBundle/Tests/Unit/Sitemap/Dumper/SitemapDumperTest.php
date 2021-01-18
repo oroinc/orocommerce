@@ -74,8 +74,8 @@ class SitemapDumperTest extends \PHPUnit\Framework\TestCase
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
             ->with(
-                sprintf('%s.%s', OnSitemapDumpFinishEvent::EVENT_NAME, self::STORAGE_TYPE),
-                $event
+                $event,
+                sprintf('%s.%s', OnSitemapDumpFinishEvent::EVENT_NAME, self::STORAGE_TYPE)
             );
     }
 

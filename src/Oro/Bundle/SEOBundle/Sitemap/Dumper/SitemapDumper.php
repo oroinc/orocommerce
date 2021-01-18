@@ -111,8 +111,8 @@ class SitemapDumper implements SitemapDumperInterface
 
         $event = new OnSitemapDumpFinishEvent($website, $version);
         $this->eventDispatcher->dispatch(
-            sprintf('%s.%s', OnSitemapDumpFinishEvent::EVENT_NAME, $this->storageType),
-            $event
+            $event,
+            sprintf('%s.%s', OnSitemapDumpFinishEvent::EVENT_NAME, $this->storageType)
         );
     }
 

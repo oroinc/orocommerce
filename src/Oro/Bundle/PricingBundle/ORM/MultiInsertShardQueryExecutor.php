@@ -86,7 +86,7 @@ class MultiInsertShardQueryExecutor extends AbstractShardQueryExecutor
         }
 
         foreach ($batches as $batch) {
-            $connection->executeUpdate(...$batch);
+            $connection->executeStatement(...$batch);
         }
 
         return $total;

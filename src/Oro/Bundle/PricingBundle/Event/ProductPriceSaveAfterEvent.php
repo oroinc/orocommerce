@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Event;
 
 use Doctrine\ORM\Event\PreUpdateEventArgs;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class ProductPriceSaveAfterEvent extends Event
 {

@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PaymentBundle\Event;
 
 use Oro\Bundle\PaymentBundle\Model\Surcharge;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class CollectSurchargeEvent extends Event
 {

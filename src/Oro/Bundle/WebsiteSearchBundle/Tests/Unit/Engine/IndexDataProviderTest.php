@@ -73,7 +73,6 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
         ];
 
         $this->eventDispatcher->expects($this->once())->method('dispatch')->with(
-            CollectContextEvent::NAME,
             $this->logicalAnd(
                 $this->isInstanceOf(CollectContextEvent::class),
                 $this->callback(
@@ -83,7 +82,8 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
                         return true;
                     }
                 )
-            )
+            ),
+            CollectContextEvent::NAME
         );
 
         $this->assertEquals($expectedContext, $this->indexDataProvider->collectContextForWebsite($websiteId, $context));
@@ -101,12 +101,12 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
         $this->eventDispatcher->expects($this->exactly(2))->method('dispatch')
             ->withConsecutive(
                 [
-                    RestrictIndexEntityEvent::NAME,
                     $this->isInstanceOf(RestrictIndexEntityEvent::class),
+                    RestrictIndexEntityEvent::NAME,
                 ],
                 [
-                    RestrictIndexEntityEvent::NAME.'.std',
                     $this->isInstanceOf(RestrictIndexEntityEvent::class),
+                    RestrictIndexEntityEvent::NAME.'.std',
                 ]
             )
             ->willReturnCallback(
@@ -156,9 +156,9 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->eventDispatcher->expects($this->at(0))->method('dispatch')
-            ->with(IndexEntityEvent::NAME, $this->isInstanceOf(IndexEntityEvent::class))
+            ->with($this->isInstanceOf(IndexEntityEvent::class), IndexEntityEvent::NAME)
             ->willReturnCallback(
-                function ($name, IndexEntityEvent $event) use ($indexData) {
+                function (IndexEntityEvent $event, $name) use ($indexData) {
                     foreach ($indexData as $data) {
                         $method = count($data) === 4 ? 'addField' : 'addPlaceholderField';
                         call_user_func_array([$event, $method], $data);
@@ -167,7 +167,7 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
             );
 
         $this->eventDispatcher->expects($this->at(1))->method('dispatch')
-            ->with(IndexEntityEvent::NAME.'.std', $this->isInstanceOf(IndexEntityEvent::class));
+            ->with($this->isInstanceOf(IndexEntityEvent::class), IndexEntityEvent::NAME.'.std');
 
         $this->assertEquals(
             $expected,
@@ -503,7 +503,7 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->eventDispatcher->expects($this->atLeastOnce())->method('dispatch')
             ->willReturnCallback(
-                function ($name, IndexEntityEvent $event) {
+                function (IndexEntityEvent $event, $name) {
                     $event->addField(1, 'sku', 'SKU-01');
                 }
             );

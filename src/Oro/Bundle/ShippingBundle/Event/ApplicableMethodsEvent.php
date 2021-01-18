@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ShippingBundle\Event;
 
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * This event is fired by the ShippingPriceProvider after getting all applicable shipping methods.

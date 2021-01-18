@@ -4,7 +4,7 @@ namespace Oro\Bundle\SEOBundle\Event;
 
 use Doctrine\ORM\QueryBuilder;
 use Oro\Component\Website\WebsiteInterface;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class RestrictSitemapEntitiesEvent extends Event
 {

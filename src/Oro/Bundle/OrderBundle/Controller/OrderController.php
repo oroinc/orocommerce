@@ -170,7 +170,7 @@ class OrderController extends AbstractController
             function (Order $order, FormInterface $form, Request $request) {
                 $submittedData = $request->get($form->getName());
                 $event = new OrderEvent($form, $form->getData(), $submittedData);
-                $this->get(EventDispatcherInterface::class)->dispatch(OrderEvent::NAME, $event);
+                $this->get(EventDispatcherInterface::class)->dispatch($event, OrderEvent::NAME);
                 $orderData = $event->getData()->getArrayCopy();
 
                 $orderAddressSecurityProvider = $this->get(OrderAddressSecurityProvider::class);

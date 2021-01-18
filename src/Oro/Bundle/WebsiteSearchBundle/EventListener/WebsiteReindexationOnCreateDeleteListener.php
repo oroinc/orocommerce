@@ -49,6 +49,6 @@ class WebsiteReindexationOnCreateDeleteListener
     {
         $event = new ReindexationRequestEvent([], [$website->getId()]);
 
-        $this->dispatcher->dispatch(ReindexationRequestEvent::EVENT_NAME, $event);
+        $this->dispatcher->dispatch($event, ReindexationRequestEvent::EVENT_NAME);
     }
 }

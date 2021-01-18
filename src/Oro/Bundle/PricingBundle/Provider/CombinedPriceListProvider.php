@@ -86,8 +86,8 @@ class CombinedPriceListProvider
             $this->updateCombinedPriceList($combinedPriceList, $normalizedCollection);
 
             $this->eventDispatcher->dispatch(
-                CombinedPriceListCreateEvent::NAME,
-                new CombinedPriceListCreateEvent($combinedPriceList, $eventOptions)
+                new CombinedPriceListCreateEvent($combinedPriceList, $eventOptions),
+                CombinedPriceListCreateEvent::NAME
             );
         }
         $this->cpls[$identifier] = $combinedPriceList;

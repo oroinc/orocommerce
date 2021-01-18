@@ -47,8 +47,8 @@ class QuickAddCollectionPriceProviderTest extends WebTestCase
         $event = new QuickAddRowsCollectionReadyEvent($collection);
 
         $this->getClientInstance()->getContainer()->get('event_dispatcher')->dispatch(
-            QuickAddRowsCollectionReadyEvent::NAME,
-            $event
+            $event,
+            QuickAddRowsCollectionReadyEvent::NAME
         );
 
         $expectedResults = [
@@ -67,8 +67,8 @@ class QuickAddCollectionPriceProviderTest extends WebTestCase
         $event = new QuickAddRowsCollectionReadyEvent($collection);
 
         $this->getClientInstance()->getContainer()->get('event_dispatcher')->dispatch(
-            QuickAddRowsCollectionReadyEvent::NAME,
-            $event
+            $event,
+            QuickAddRowsCollectionReadyEvent::NAME
         );
 
         $this->assertEquals('33.1', $collection->getAdditionalField('price')->getValue()['value']);
@@ -88,8 +88,8 @@ class QuickAddCollectionPriceProviderTest extends WebTestCase
         $event = new QuickAddRowsCollectionReadyEvent($collection);
 
         $this->getClientInstance()->getContainer()->get('event_dispatcher')->dispatch(
-            QuickAddRowsCollectionReadyEvent::NAME,
-            $event
+            $event,
+            QuickAddRowsCollectionReadyEvent::NAME
         );
 
         $this->assertEquals('184.7', $collection->getAdditionalField('price')->getValue()['value']);
@@ -103,8 +103,8 @@ class QuickAddCollectionPriceProviderTest extends WebTestCase
         $event = new QuickAddRowsCollectionReadyEvent($collection);
 
         $this->getClientInstance()->getContainer()->get('event_dispatcher')->dispatch(
-            QuickAddRowsCollectionReadyEvent::NAME,
-            $event
+            $event,
+            QuickAddRowsCollectionReadyEvent::NAME
         );
 
         $expectedResults = [
@@ -141,8 +141,8 @@ class QuickAddCollectionPriceProviderTest extends WebTestCase
         $event = new QuickAddRowsCollectionReadyEvent($collection);
 
         $this->getClientInstance()->getContainer()->get('event_dispatcher')->dispatch(
-            QuickAddRowsCollectionReadyEvent::NAME,
-            $event
+            $event,
+            QuickAddRowsCollectionReadyEvent::NAME
         );
 
         $this->assertNull($collection->getAdditionalField('price')->getValue()['value']);
@@ -156,8 +156,8 @@ class QuickAddCollectionPriceProviderTest extends WebTestCase
         $event = new QuickAddRowsCollectionReadyEvent($collection);
 
         $this->getClientInstance()->getContainer()->get('event_dispatcher')->dispatch(
-            QuickAddRowsCollectionReadyEvent::NAME,
-            $event
+            $event,
+            QuickAddRowsCollectionReadyEvent::NAME
         );
 
         $this->assertEquals(null, $collection->getAdditionalField('price'));

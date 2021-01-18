@@ -174,8 +174,8 @@ class QuickAddHandler
                     ->createProductsGrouper(ProductsGrouperFactory::QUICK_ADD_ROW)
                     ->process($collection);
                 $this->eventDispatcher->dispatch(
-                    QuickAddRowsCollectionReadyEvent::NAME,
-                    new QuickAddRowsCollectionReadyEvent($collection)
+                    new QuickAddRowsCollectionReadyEvent($collection),
+                    QuickAddRowsCollectionReadyEvent::NAME
                 );
                 $data = $collection->getFormData();
                 $this->productFormProvider->getQuickAddForm($data);

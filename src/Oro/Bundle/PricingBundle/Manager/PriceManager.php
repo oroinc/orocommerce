@@ -104,8 +104,8 @@ class PriceManager
             $changeSet = $this->getChangeSet($uow, $classMetadata, $price);
 
             $this->eventDispatcher->dispatch(
-                ProductPriceSaveAfterEvent::NAME,
-                new ProductPriceSaveAfterEvent(new PreUpdateEventArgs($price, $em, $changeSet))
+                new ProductPriceSaveAfterEvent(new PreUpdateEventArgs($price, $em, $changeSet)),
+                ProductPriceSaveAfterEvent::NAME
             );
         }
     }
@@ -125,7 +125,7 @@ class PriceManager
 
         $event = new ProductPriceRemove($price);
         $event->setEntityManager($em);
-        $this->eventDispatcher->dispatch(ProductPriceRemove::NAME, $event);
+        $this->eventDispatcher->dispatch($event, ProductPriceRemove::NAME);
 
         $em->detach($price);
     }
@@ -145,7 +145,7 @@ class PriceManager
         if ($pricesToRemove || $pricesToSave) {
             $event = new ProductPricesUpdated();
             $event->setEntityManager($this->shardManager->getEntityManager());
-            $this->eventDispatcher->dispatch(ProductPricesUpdated::NAME, $event);
+            $this->eventDispatcher->dispatch($event, ProductPricesUpdated::NAME);
 
             // do flushing the message buffer here because the flush() does not use a database transaction
             // and can be executed without an outer database transaction

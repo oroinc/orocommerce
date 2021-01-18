@@ -98,6 +98,6 @@ class UpdateCategoryProductRelationFetchModeQuery extends ParametrizedMigrationQ
         $parameters = [$this->connection->convertToDatabaseValue($entityData, Types::ARRAY), $id];
 
         $this->logQuery($logger, $query, $parameters);
-        $this->connection->executeUpdate($query, $parameters);
+        $this->connection->executeStatement($query, $parameters);
     }
 }

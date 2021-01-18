@@ -110,6 +110,7 @@ services:
         class: 'Oro\Bundle\InventoryBundle\Model\Data\ProductUnitTransformer'
         arguments:
             - "@oro_product.provider.product_units_provider"
+            - '@Doctrine\Inflector\Inflector'
 
     #Listeners
     oro_inventory.event_listener.inventory_level_import:

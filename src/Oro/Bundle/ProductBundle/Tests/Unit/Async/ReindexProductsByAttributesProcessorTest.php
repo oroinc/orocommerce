@@ -131,8 +131,8 @@ class ReindexProductsByAttributesProcessorTest extends \PHPUnit\Framework\TestCa
         $this->dispatcher->expects($dispatchExpected)
             ->method('dispatch')
             ->with(
-                ReindexationRequestEvent::EVENT_NAME,
-                new ReindexationRequestEvent([Product::class], [], $productIds)
+                new ReindexationRequestEvent([Product::class], [], $productIds),
+                ReindexationRequestEvent::EVENT_NAME
             );
 
         $result = $this->processor->process($message, $this->session);

@@ -40,7 +40,7 @@ class RFPActionDecider
         }
 
         $event = new FormSubmitCheckEvent();
-        $this->eventDispatcher->dispatch($eventName, $event);
+        $this->eventDispatcher->dispatch($event, $eventName);
 
         return $event->isSubmitOnError();
     }

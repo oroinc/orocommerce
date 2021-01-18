@@ -61,7 +61,7 @@ class RedirectExceptionListener
         return
             $event->isMasterRequest()
             && !$event->hasResponse()
-            && $event->getException() instanceof NotFoundHttpException
+            && $event->getThrowable() instanceof NotFoundHttpException
             && $this->matchedUrlDecisionMaker->matches($event->getRequest()->getPathInfo());
     }
 }

@@ -63,8 +63,8 @@ class RestrictIndexProductsEventListenerTest extends WebTestCase
         $indexer->resetIndex(Product::class, $context);
 
         $this->getContainer()->get('event_dispatcher')->dispatch(
-            ReindexationRequestEvent::EVENT_NAME,
-            new ReindexationRequestEvent([Product::class], [$this->getDefaultWebsiteId()], [], false)
+            new ReindexationRequestEvent([Product::class], [$this->getDefaultWebsiteId()], [], false),
+            ReindexationRequestEvent::EVENT_NAME
         );
 
         $alias = 'oro_product_' . $this->getDefaultWebsiteId();

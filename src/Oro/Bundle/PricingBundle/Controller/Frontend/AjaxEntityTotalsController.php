@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Controller\Frontend;
 
 use Oro\Bundle\EntityBundle\Exception\EntityNotFoundException;
 use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * Ajax Entity Totals Controller
  */
-class AjaxEntityTotalsController extends Controller
+class AjaxEntityTotalsController extends AbstractController
 {
     /**
      * @Route(

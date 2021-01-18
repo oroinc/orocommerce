@@ -60,8 +60,8 @@ class EntityDependenciesResolverTest extends \PHPUnit\Framework\TestCase
         $this->eventDispatcher
             ->expects($this->once())
             ->method('dispatch')
-            ->with(CollectDependentClassesEvent::NAME, $this->isInstanceOf(CollectDependentClassesEvent::class))
-            ->willReturnCallback(function ($eventName, CollectDependentClassesEvent $event) {
+            ->with($this->isInstanceOf(CollectDependentClassesEvent::class), CollectDependentClassesEvent::NAME)
+            ->willReturnCallback(function (CollectDependentClassesEvent $event, $eventName) {
                 $event->addClassDependencies('Product', ['Category', 'User']);
             });
 
@@ -73,8 +73,8 @@ class EntityDependenciesResolverTest extends \PHPUnit\Framework\TestCase
         $this->eventDispatcher
             ->expects($this->once())
             ->method('dispatch')
-            ->with(CollectDependentClassesEvent::NAME, $this->isInstanceOf(CollectDependentClassesEvent::class))
-            ->willReturnCallback(function ($eventName, CollectDependentClassesEvent $event) {
+            ->with($this->isInstanceOf(CollectDependentClassesEvent::class), CollectDependentClassesEvent::NAME)
+            ->willReturnCallback(function (CollectDependentClassesEvent $event, $eventName) {
                 $event->addClassDependencies('User', ['Category']);
                 $event->addClassDependencies('Category', ['Product']);
                 $event->addClassDependencies('Product', ['User']);

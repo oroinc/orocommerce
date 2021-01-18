@@ -24,6 +24,6 @@ class BasicMethodRemovalEventDispatcher implements MethodRemovalEventDispatcherI
      */
     public function dispatch($id)
     {
-        $this->eventDispatcher->dispatch(MethodRemovalEvent::NAME, new MethodRemovalEvent($id));
+        $this->eventDispatcher->dispatch(new MethodRemovalEvent($id), MethodRemovalEvent::NAME);
     }
 }

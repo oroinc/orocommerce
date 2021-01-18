@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PaymentBundle\Event;
 
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class TransactionCompleteEvent extends Event
 {

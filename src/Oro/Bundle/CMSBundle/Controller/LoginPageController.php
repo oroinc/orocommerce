@@ -7,14 +7,14 @@ use Oro\Bundle\CMSBundle\Form\Type\LoginPageType;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * CRUD controller for the LoginPage entity.
  */
-class LoginPageController extends Controller
+class LoginPageController extends AbstractController
 {
     /**
      * @Route("/", name="oro_cms_loginpage_index")
@@ -47,7 +47,7 @@ class LoginPageController extends Controller
     {
         return [
             'entity' => $loginPage,
-            'loginPageCssField' => $this->getParameter('oro_cms.direct_editing.login_page_css_field')
+            'loginPageCssField' => $this->container->getParameter('oro_cms.direct_editing.login_page_css_field')
         ];
     }
 

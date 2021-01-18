@@ -108,7 +108,7 @@ class MatrixGridOrderFormHandlerTest extends \PHPUnit\Framework\TestCase
         $this->eventDispatcher
             ->expects($this->once())
             ->method('dispatch')
-            ->with(Events::BEFORE_FORM_DATA_SET, $event)
+            ->with($event, Events::BEFORE_FORM_DATA_SET)
             ->willReturn(true);
 
         $result = $this->matrixGridOrderFormHandler->process($data, $form, $request);
@@ -133,8 +133,8 @@ class MatrixGridOrderFormHandlerTest extends \PHPUnit\Framework\TestCase
             ->expects($this->exactly(2))
             ->method('dispatch')
             ->withConsecutive(
-                [Events::BEFORE_FORM_DATA_SET, $event1],
-                [Events::BEFORE_FORM_SUBMIT, $event2]
+                [$event1, Events::BEFORE_FORM_DATA_SET],
+                [$event2, Events::BEFORE_FORM_SUBMIT]
             )
             ->willReturnOnConsecutiveCalls(
                 true,

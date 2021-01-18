@@ -58,7 +58,7 @@ class QuoteFormTemplateDataProvider implements FormTemplateDataProviderInterface
 
         $submittedData = $request->get($form->getName());
         $event = new QuoteEvent($form, $form->getData(), $submittedData);
-        $this->eventDispatcher->dispatch(QuoteEvent::NAME, $event);
+        $this->eventDispatcher->dispatch($event, QuoteEvent::NAME);
         $quoteData = $event->getData()->getArrayCopy();
 
         return [

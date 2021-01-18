@@ -118,7 +118,7 @@ class PriceListProductAssignmentBuilderTest extends \PHPUnit\Framework\TestCase
         $event = new AssignmentBuilderBuildEvent($priceList);
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
-            ->with(AssignmentBuilderBuildEvent::NAME, $event);
+            ->with($event, AssignmentBuilderBuildEvent::NAME);
 
         $this->priceListProductAssignmentBuilder->buildByPriceList($priceList);
     }
@@ -160,7 +160,7 @@ class PriceListProductAssignmentBuilderTest extends \PHPUnit\Framework\TestCase
         $event = new AssignmentBuilderBuildEvent($priceList, [$productId]);
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
-            ->with(AssignmentBuilderBuildEvent::NAME, $event);
+            ->with($event, AssignmentBuilderBuildEvent::NAME);
 
         $this->priceListProductAssignmentBuilder->buildByPriceList($priceList, [$productId]);
     }

@@ -205,7 +205,7 @@ class IndexationRequestListener implements OptionalListenerInterface
                 $ids
             );
 
-            $this->dispatcher->dispatch(ReindexationRequestEvent::EVENT_NAME, $reindexationRequestEvent);
+            $this->dispatcher->dispatch($reindexationRequestEvent, ReindexationRequestEvent::EVENT_NAME);
         }
 
         $this->changedEntities->clear();

@@ -46,7 +46,7 @@ class ProductReindexManagerTest extends \PHPUnit\Framework\TestCase
         $product = $this->getEntity(Product::class, [ 'id' => self::PRODUCT_ID ]);
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
-            ->with(ReindexationRequestEvent::EVENT_NAME, $event);
+            ->with($event, ReindexationRequestEvent::EVENT_NAME);
         $this->reindexManager->reindexProduct($product, self::WEBSITE_ID);
     }
 
@@ -55,7 +55,7 @@ class ProductReindexManagerTest extends \PHPUnit\Framework\TestCase
         $event = $this->getReindexationEvents(self::PRODUCT_ID, self::WEBSITE_ID);
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
-            ->with(ReindexationRequestEvent::EVENT_NAME, $event);
+            ->with($event, ReindexationRequestEvent::EVENT_NAME);
         $this->reindexManager->reindexProducts([self::PRODUCT_ID], self::WEBSITE_ID);
     }
 
@@ -70,7 +70,7 @@ class ProductReindexManagerTest extends \PHPUnit\Framework\TestCase
         $event = $this->getReindexationEvents([], self::WEBSITE_ID);
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
-            ->with(ReindexationRequestEvent::EVENT_NAME, $event);
+            ->with($event, ReindexationRequestEvent::EVENT_NAME);
         $this->reindexManager->reindexAllProducts(self::WEBSITE_ID);
     }
 

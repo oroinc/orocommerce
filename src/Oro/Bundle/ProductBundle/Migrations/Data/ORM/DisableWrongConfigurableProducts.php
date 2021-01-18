@@ -110,7 +110,7 @@ class DisableWrongConfigurableProducts extends AbstractFixture implements Contai
         $connection = $manager->getConnection();
         try {
             $connection->beginTransaction();
-            $connection->executeUpdate($query);
+            $connection->executeStatement($query);
             $connection->commit();
         } catch (\Exception $e) {
             $connection->rollBack();
@@ -196,7 +196,7 @@ class DisableWrongConfigurableProducts extends AbstractFixture implements Contai
         $connection = $manager->getConnection();
         try {
             $connection->beginTransaction();
-            $connection->executeUpdate($query);
+            $connection->executeStatement($query);
             $connection->commit();
         } catch (\Exception $e) {
             $connection->rollBack();

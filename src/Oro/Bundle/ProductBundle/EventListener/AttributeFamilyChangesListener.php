@@ -79,8 +79,8 @@ class AttributeFamilyChangesListener
         $this->changedAttributeFamilies = [];
 
         $this->dispatcher->dispatch(
-            ReindexationRequestEvent::EVENT_NAME,
-            new ReindexationRequestEvent([Product::class], [], $productIds)
+            new ReindexationRequestEvent([Product::class], [], $productIds),
+            ReindexationRequestEvent::EVENT_NAME
         );
     }
 

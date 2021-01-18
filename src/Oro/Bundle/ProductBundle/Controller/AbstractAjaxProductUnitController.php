@@ -6,13 +6,13 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * Abstract class used for getting product units on frontend
  */
-abstract class AbstractAjaxProductUnitController extends Controller
+abstract class AbstractAjaxProductUnitController extends AbstractController
 {
     /**
      * @return JsonResponse

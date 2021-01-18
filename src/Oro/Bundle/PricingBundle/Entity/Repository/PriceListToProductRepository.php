@@ -185,6 +185,6 @@ class PriceListToProductRepository extends EntityRepository
 
         return $this->getEntityManager()
             ->getConnection()
-            ->executeUpdate($sql, $params, $types);
+            ->executeStatement($sql, $params, $types);
     }
 }

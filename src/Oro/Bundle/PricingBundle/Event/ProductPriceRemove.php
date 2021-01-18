@@ -5,7 +5,7 @@ namespace Oro\Bundle\PricingBundle\Event;
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\PricingBundle\Entity\BaseProductPrice;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * It published immediately after the removal of prices.

@@ -31,7 +31,7 @@ class DefaultCategoryVisibilityListener
     {
         if ($event->isChanged(CategoryVisibilityResolver::OPTION_CATEGORY_VISIBILITY)) {
             $reindexationEvent = new ReindexationRequestEvent();
-            $this->eventDispatcher->dispatch(ReindexationRequestEvent::EVENT_NAME, $reindexationEvent);
+            $this->eventDispatcher->dispatch($reindexationEvent, ReindexationRequestEvent::EVENT_NAME);
         }
     }
 }

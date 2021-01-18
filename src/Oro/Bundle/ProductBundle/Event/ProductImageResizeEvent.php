@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Event;
 
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * Event holding data for image resizing

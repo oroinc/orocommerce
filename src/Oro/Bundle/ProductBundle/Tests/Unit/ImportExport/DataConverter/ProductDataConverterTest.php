@@ -72,8 +72,8 @@ class ProductDataConverterTest extends \PHPUnit\Framework\TestCase
         $this->eventDispatcher->expects($this->exactly(2))
             ->method('dispatch')
             ->withConsecutive(
-                ['oro_product.data_converter.backend_header', $eventBackendHeader],
-                ['oro_product.data_converter.convert_to_export', $eventExport]
+                [$eventBackendHeader, 'oro_product.data_converter.backend_header'],
+                [$eventExport, 'oro_product.data_converter.convert_to_export']
             );
 
         $result = $this->dataConverter->convertToExportFormat(['sku' => 'test']);
@@ -105,7 +105,7 @@ class ProductDataConverterTest extends \PHPUnit\Framework\TestCase
 
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
-            ->with('oro_product.data_converter.convert_to_import', $event);
+            ->with($event, 'oro_product.data_converter.convert_to_import');
 
         $result = $this->dataConverter->convertToImportFormat(['sku' => 'test']);
         $this->assertArrayHasKey('sku', $result);

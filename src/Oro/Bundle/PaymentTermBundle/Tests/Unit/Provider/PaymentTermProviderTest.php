@@ -101,10 +101,10 @@ class PaymentTermProviderTest extends \PHPUnit\Framework\TestCase
         $this->eventDispatcher
             ->expects($this->once())
             ->method('dispatch')
-            ->with($this->equalTo(ResolvePaymentTermEvent::NAME), $this->isInstanceOf(ResolvePaymentTermEvent::class))
+            ->with($this->isInstanceOf(ResolvePaymentTermEvent::class), $this->equalTo(ResolvePaymentTermEvent::NAME))
             ->will(
                 $this->returnCallback(
-                    function ($eventName, ResolvePaymentTermEvent $event) use ($paymentTerm) {
+                    function (ResolvePaymentTermEvent $event, $name) use ($paymentTerm) {
                         $event->setPaymentTerm($paymentTerm);
                     }
                 )
@@ -117,7 +117,7 @@ class PaymentTermProviderTest extends \PHPUnit\Framework\TestCase
         $this->eventDispatcher
             ->expects($this->once())
             ->method('dispatch')
-            ->with($this->equalTo(ResolvePaymentTermEvent::NAME), $this->isInstanceOf(ResolvePaymentTermEvent::class));
+            ->with($this->isInstanceOf(ResolvePaymentTermEvent::class), $this->equalTo(ResolvePaymentTermEvent::NAME));
         $this->tokenStorage->expects($this->once())->method('getToken')->willReturn(null);
         $this->assertNull($this->provider->getCurrentPaymentTerm());
     }
@@ -127,7 +127,7 @@ class PaymentTermProviderTest extends \PHPUnit\Framework\TestCase
         $this->eventDispatcher
             ->expects($this->once())
             ->method('dispatch')
-            ->with($this->equalTo(ResolvePaymentTermEvent::NAME), $this->isInstanceOf(ResolvePaymentTermEvent::class));
+            ->with($this->isInstanceOf(ResolvePaymentTermEvent::class), $this->equalTo(ResolvePaymentTermEvent::NAME));
         $token = $this->createMock(TokenInterface::class);
         $token->expects($this->once())->method('getUser')->willReturn(null);
         $this->tokenStorage->expects($this->once())->method('getToken')->willReturn($token);
@@ -139,7 +139,7 @@ class PaymentTermProviderTest extends \PHPUnit\Framework\TestCase
         $this->eventDispatcher
             ->expects($this->once())
             ->method('dispatch')
-            ->with($this->equalTo(ResolvePaymentTermEvent::NAME), $this->isInstanceOf(ResolvePaymentTermEvent::class));
+            ->with($this->isInstanceOf(ResolvePaymentTermEvent::class), $this->equalTo(ResolvePaymentTermEvent::NAME));
         $paymentTerm = new PaymentTerm();
         $this->paymentTermAssociationProvider->expects($this->once())->method('getPaymentTerm')
             ->willReturn($paymentTerm);
@@ -156,7 +156,7 @@ class PaymentTermProviderTest extends \PHPUnit\Framework\TestCase
         $this->eventDispatcher
             ->expects($this->once())
             ->method('dispatch')
-            ->with($this->equalTo(ResolvePaymentTermEvent::NAME), $this->isInstanceOf(ResolvePaymentTermEvent::class));
+            ->with($this->isInstanceOf(ResolvePaymentTermEvent::class), $this->equalTo(ResolvePaymentTermEvent::NAME));
         $this->paymentTermAssociationProvider->expects($this->never())->method('getPaymentTerm');
         $token = $this->createMock(AnonymousCustomerUserToken::class);
         $visitor = new CustomerVisitor();
@@ -172,7 +172,7 @@ class PaymentTermProviderTest extends \PHPUnit\Framework\TestCase
         $this->eventDispatcher
             ->expects($this->once())
             ->method('dispatch')
-            ->with($this->equalTo(ResolvePaymentTermEvent::NAME), $this->isInstanceOf(ResolvePaymentTermEvent::class));
+            ->with($this->isInstanceOf(ResolvePaymentTermEvent::class), $this->equalTo(ResolvePaymentTermEvent::NAME));
         $this->paymentTermAssociationProvider->expects($this->never())->method('getPaymentTerm');
         $token = $this->createMock(AnonymousCustomerUserToken::class);
         $visitor = new CustomerVisitor();
@@ -190,7 +190,7 @@ class PaymentTermProviderTest extends \PHPUnit\Framework\TestCase
         $this->eventDispatcher
             ->expects($this->once())
             ->method('dispatch')
-            ->with($this->equalTo(ResolvePaymentTermEvent::NAME), $this->isInstanceOf(ResolvePaymentTermEvent::class));
+            ->with($this->isInstanceOf(ResolvePaymentTermEvent::class), $this->equalTo(ResolvePaymentTermEvent::NAME));
         $paymentTerm = new PaymentTerm();
         $this->paymentTermAssociationProvider->expects($this->once())->method('getPaymentTerm')
             ->willReturn($paymentTerm);

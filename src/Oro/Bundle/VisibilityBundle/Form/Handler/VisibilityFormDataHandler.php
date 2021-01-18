@@ -51,8 +51,8 @@ class VisibilityFormDataHandler
 
             if ($this->form->isSubmitted() && $this->form->isValid()) {
                 $this->eventDispatcher->dispatch(
-                    'oro_product.product.edit',
-                    new AfterFormProcessEvent($this->form, $entity)
+                    new AfterFormProcessEvent($this->form, $entity),
+                    'oro_product.product.edit'
                 );
 
                 return true;

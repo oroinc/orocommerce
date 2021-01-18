@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Event\CombinedPriceList;
 
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * Provides event arguments for the create event of CombinedPriceList.

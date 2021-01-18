@@ -53,7 +53,7 @@ class UpdateCheckoutWorkflowDataQuery extends ParametrizedMigrationQuery
         foreach ($queries as $val) {
             $this->logQuery($logger, $val[0], $val[1], $val[2]);
             if (!$dryRun) {
-                $this->connection->executeUpdate($val[0], $val[1], $val[2]);
+                $this->connection->executeStatement($val[0], $val[1], $val[2]);
             }
         }
     }
