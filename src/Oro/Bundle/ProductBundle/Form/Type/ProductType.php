@@ -11,6 +11,7 @@ use Oro\Bundle\FormBundle\Form\Extension\StripTagsExtension;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\FrontendBundle\Form\DataTransformer\PageTemplateEntityFieldFallbackValueTransformer;
 use Oro\Bundle\FrontendBundle\Form\Type\PageTemplateType;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -120,6 +121,9 @@ class ProductType extends AbstractType
                     'required' => false,
                     'field' => ['wysiwyg', 'wysiwyg_style', 'wysiwyg_properties'],
                     'entry_type' => WYSIWYGValueType::class,
+                    'entry_options' => [
+                        'entity_class' => LocalizedFallbackValue::class
+                    ],
                     'use_tabs' => true,
                 ]
             )

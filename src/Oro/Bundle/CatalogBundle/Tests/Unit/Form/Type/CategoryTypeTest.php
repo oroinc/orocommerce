@@ -98,6 +98,9 @@ class CategoryTypeTest extends FormIntegrationTestCase
                     'required' => false,
                     'field' => ['wysiwyg', 'wysiwyg_style', 'wysiwyg_properties'],
                     'entry_type' => WYSIWYGValueType::class,
+                    'entry_options' => [
+                        'entity_class' => LocalizedFallbackValue::class,
+                    ],
                     'use_tabs' => true
                 ]
             )
