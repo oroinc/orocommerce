@@ -106,6 +106,9 @@ class CategoryTypeTest extends FormIntegrationTestCase
                     'value_class' => CategoryLongDescription::class,
                     'field' => ['wysiwyg', 'wysiwyg_style', 'wysiwyg_properties'],
                     'entry_type' => WYSIWYGValueType::class,
+                    'entry_options' => [
+                        'entity_class' => CategoryLongDescription::class,
+                    ],
                     'use_tabs' => true
                 ]
             )

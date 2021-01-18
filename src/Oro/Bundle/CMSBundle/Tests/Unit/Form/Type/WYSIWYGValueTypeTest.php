@@ -39,7 +39,8 @@ class WYSIWYGValueTypeTest extends FormIntegrationTestCase
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with([
-                'field' => 'wysiwyg'
+                'field' => 'wysiwyg',
+                'entity_class' => null,
             ])
             ->willReturnSelf();
 
