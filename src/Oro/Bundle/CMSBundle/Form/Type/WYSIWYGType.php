@@ -36,8 +36,9 @@ class WYSIWYGType extends AbstractType
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        $dataClass = $form->getRoot()->getConfig()->getDataClass();
-        $scope = $this->purifierScopeProvider->getScope($dataClass, $form->getName());
+        $dataClass = $form->getConfig()->getOption('entity_class') ?: $form->getRoot()->getConfig()->getDataClass();
+        $fieldName = $form->getName();
+        $scope = $dataClass ? $this->purifierScopeProvider->getScope($dataClass, $fieldName) : null;
         if ($scope) {
             $allowedElements = $this->htmlTagProvider->getAllowedElements($scope);
             $allowedIframeDomains = $this->htmlTagProvider->getAllowedIframeDomains($scope);
@@ -58,6 +59,7 @@ class WYSIWYGType extends AbstractType
             '[data-grapesjs-properties="%s"]',
             $form->getName() . WYSIWYGPropertiesType::TYPE_SUFFIX
         );
+        $view->vars['attr']['data-grapesjs-field'] = $fieldName;
         $view->vars['attr']['data-page-component-module'] = $options['page-component']['module'];
         $view->vars['attr']['data-page-component-options'] = json_encode($options['page-component']['options']);
     }
@@ -79,7 +81,8 @@ class WYSIWYGType extends AbstractType
                 'class' => 'grapesjs-textarea hide'
             ],
             'auto_render' => true,
-            'error_bubbling' => true
+            'error_bubbling' => true,
+            'entity_class' => null,
         ]);
     }
 
