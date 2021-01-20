@@ -460,8 +460,8 @@ oro:
                 product_search.title: 'Product Search'
                 product_fulltext_search.title: 'Product Fulltext Search'
                 product_search_autocomplete.title: 'Global Search Autocomplete'
-                frontend_product_listing.title: 'Frontend Product Listing'
-                frontend_product_listing_export.title: 'Product Listing Export'
+                product_listing.title: 'Product Listing'
+                product_listing_export.title: 'Product Listing Export'
             fields:
                 original_file_names_enabled:
                     label: 'Enable Original File Names'
@@ -633,9 +633,9 @@ oro:
                     options:
                         top: 'Top'
                         sidebar: 'Sidebar'
-                frontend_product_grid_export_enabled:
+                product_listing_export_enabled:
                     label: 'Enable Product Grid Export'
-                    tooltip: 'Enable/Disable Frontend Product Listing'
+                    tooltip: 'If enabled, the customers will be able to export data from the product listing grid.'
             notice:
                 product_image_watermark: >
                    The updated product image watermark settings will be used for the newly uploaded images only.
