@@ -87,7 +87,11 @@ system_configuration:
             title: oro.product.system_configuration.groups.product_fulltext_search.title
         product_search_autocomplete:
             title: oro.product.system_configuration.groups.product_search_autocomplete.title
-
+        frontend_product_listing:
+            title: oro.product.system_configuration.groups.frontend_product_listing.title
+            icon: 'fa-list-alt'
+        frontend_product_listing_export:
+            title: oro.product.system_configuration.groups.frontend_product_listing_export.title
     fields:
         oro_product.related_products_enabled:
             data_type: boolean
@@ -619,6 +623,13 @@ system_configuration:
                     - NotBlank: ~
                     - Range:
                         min: 1
+        oro_product.frontend_product_grid_export_enabled:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            priority: 40
+            options:
+                label: oro.product.system_configuration.fields.frontend_product_grid_export_enabled.label
+                tooltip: oro.product.system_configuration.fields.frontend_product_grid_export_enabled.tooltip
 
     tree:
         system_configuration:
@@ -743,6 +754,12 @@ system_configuration:
                                             - oro_product.product_collections_indexation_cron_schedule
                                             - oro_product.product_collections_mass_action_limitation
                                             - oro_product.product_collections_indexation_partial
+                            frontend_product_listing:
+                                priority: 0
+                                children:
+                                    frontend_product_listing_export:
+                                        children:
+                                            - oro_product.frontend_product_grid_export_enabled
                     product_inventory:
                         priority: 650
                         children:
@@ -814,3 +831,21 @@ system_configuration:
                                     configurable_products_variations:
                                         children:
                                             - oro_product.display_simple_variations
+                            frontend_product_listing:
+                                priority: 0
+                                children:
+                                    frontend_product_listing_export:
+                                        children:
+                                            - oro_product.frontend_product_grid_export_enabled
+
+        website_configuration:
+            commerce:
+                children:
+                    product:
+                        children:
+                            frontend_product_listing:
+                                priority: 0
+                                children:
+                                    frontend_product_listing_export:
+                                        children:
+                                            - oro_product.frontend_product_grid_export_enabled
