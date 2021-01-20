@@ -75,7 +75,7 @@ class Configuration implements ConfigurationInterface
     const FILTERS_POSITION_TOP = 'top';
     const FILTERS_POSITION_SIDEBAR = 'sidebar';
     const ALLOW_PARTIAL_PRODUCT_SEARCH = 'allow_partial_product_search';
-    const FRONTEND_PRODUCT_GRID_EXPORT_ENABLED = 'frontend_product_grid_export_enabled';
+    const PRODUCT_LISTING_EXPORT_ENABLED = 'product_listing_export_enabled';
 
     /**
      * {@inheritDoc}
@@ -187,7 +187,7 @@ class Configuration implements ConfigurationInterface
                     'value' => static::FILTERS_POSITION_TOP
                 ],
                 static::ALLOW_PARTIAL_PRODUCT_SEARCH => ['value' => false, 'type' => 'boolean'],
-                static::FRONTEND_PRODUCT_GRID_EXPORT_ENABLED => [
+                static::PRODUCT_LISTING_EXPORT_ENABLED => [
                     'type' => 'boolean',
                     'value' => false
                 ]
