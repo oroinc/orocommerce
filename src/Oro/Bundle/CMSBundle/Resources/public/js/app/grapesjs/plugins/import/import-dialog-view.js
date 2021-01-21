@@ -237,6 +237,7 @@ const ImportDialogView = BaseView.extend({
             this.editor.stopCommand(this.commandId);
         }
 
+        delete this.validator;
         this.unbindEvents();
 
         ImportDialogView.__super__.dispose.call(this);
