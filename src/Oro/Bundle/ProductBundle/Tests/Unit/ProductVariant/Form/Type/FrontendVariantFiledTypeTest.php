@@ -3,6 +3,9 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
+use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ProductVariant\Form\Type\FrontendVariantFiledType;
 use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantTypeHandlerInterface;
@@ -11,6 +14,7 @@ use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Provider\VariantField;
 use Oro\Bundle\ProductBundle\Provider\VariantFieldProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
+use Oro\Bundle\TranslationBundle\Entity\Language;
 use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
@@ -40,6 +44,9 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
     /** @var VariantFieldProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $variantFieldProvider;
 
+    /** @var UserLocalizationManager|\PHPUnit\Framework\MockObject\MockObject */
+    protected $userLocalizationManager;
+
     /**
      * {@inheritdoc}
      */
@@ -52,6 +59,7 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
         $this->productVariantTypeHandlerRegistry = $this->createMock(ProductVariantTypeHandlerRegistry::class);
 
         $this->variantFieldProvider = $this->createMock(VariantFieldProvider::class);
+        $this->userLocalizationManager = $this->createMock(UserLocalizationManager::class);
 
         $this->type = new FrontendVariantFiledType(
             $this->productVariantAvailabilityProvider,
@@ -60,25 +68,19 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
             $this->getPropertyAccessor(),
             self::PRODUCT_CLASS
         );
+        $this->type->setUserLocalizationManager($this->userLocalizationManager);
+
         parent::setUp();
     }
 
     /**
-     * {@inheritdoc}
+     * @return array
      */
     protected function getExtensions()
     {
         return [
             new PreloadedExtension([$this->type], [])
         ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown()
-    {
-        unset($this->productVariantAvailabilityProvider, $this->variantFieldProvider, $this->type);
     }
 
     public function testGetBlockPrefix()
@@ -260,16 +262,32 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
         return $handler;
     }
 
-    public function testFinishView()
-    {
+    /**
+     * @param LocalizedFallbackValue[] $productVariantNames
+     * @param string $expectedSimpleProductName
+     * @param Localization|null $localization
+     * @dataProvider getFinishViewDataProvider
+     */
+    public function testFinishView(
+        array $productVariantNames,
+        string $expectedSimpleProductName,
+        Localization $localization = null
+    ) {
         /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
 
         $formView = new FormView();
 
         $product = new Product();
-        $product->setVariantFields([ 'field_first', 'field_second']);
-        $productVariant = new Product();
+        $product->setVariantFields(['field_first', 'field_second']);
+
+        $productVariantId = 1;
+        $productVariantSku = 'SKU';
+
+        $productVariant = new ProductStub();
+        $productVariant->setId($productVariantId);
+        $productVariant->setSku($productVariantSku);
+        $productVariant->setNames($productVariantNames);
 
         $this->productVariantAvailabilityProvider->expects($this->once())
             ->method('getSimpleProductsByVariantFields')
@@ -284,6 +302,64 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
             )
             ->willReturnOnConsecutiveCalls('value1', 'value2');
 
+        $this->userLocalizationManager->expects($this->any())
+            ->method('getCurrentLocalization')
+            ->willReturn($localization);
+
         $this->type->finishView($formView, $form, ['parentProduct' => $product]);
+
+        $this->assertArrayHasKey('attr', $formView->vars);
+
+        $attr = $formView->vars['attr'];
+        $this->assertArrayHasKey('data-page-component-options', $attr);
+
+        $expectedComponentOptions = [
+            'simpleProductVariants' => [
+                $productVariantId => [
+                    'field_first' => 'value1',
+                    'field_second' => 'value2',
+                ],
+            ],
+            'simpleProductAttrs' => [
+                $productVariantId => [
+                    'sku' => $productVariantSku,
+                    'name' => $expectedSimpleProductName,
+                ]
+            ],
+            'view' => 'oroproduct/js/app/views/base-product-variants-view'
+        ];
+        $this->assertEquals(json_encode($expectedComponentOptions), $attr['data-page-component-options']);
+    }
+
+    /**
+     * @return array
+     */
+    public function getFinishViewDataProvider(): array
+    {
+        $productVariantDefaultName = 'simpleProductName';
+        $productVariantDefaultNameLocalized = 'simpleProductNameLocalized';
+
+        $localization = new Localization();
+        $localization->setLanguage((new Language())->setCode('en_US'));
+
+        return [
+            'no default name' => [
+                'productVariantNames' => [],
+                'expectedSimpleProductName' => '',
+            ],
+            'default name' => [
+                'productVariantNames' => [(new LocalizedFallbackValue())->setString($productVariantDefaultName)],
+                'expectedSimpleProductName' => $productVariantDefaultName,
+            ],
+            'localized name' => [
+                'productVariantNames' => [
+                    (new LocalizedFallbackValue())->setString($productVariantDefaultName),
+                    (new LocalizedFallbackValue())->setString($productVariantDefaultNameLocalized)
+                        ->setLocalization($localization),
+                ],
+                'expectedSimpleProductName' => $productVariantDefaultNameLocalized,
+                'localization' => $localization,
+            ],
+        ];
     }
 }

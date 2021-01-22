@@ -43,6 +43,23 @@ define(function(require) {
             }
         },
 
+        /**
+         * Update model of product
+         * @param {Object} data
+         */
+        updateProductModel: function(data = {id: 0}) {
+            if (_.isObject(data)) {
+                data.id = data.id ? parseInt(data.id, 10) : 0;
+
+                this.model.set(data);
+            }
+        },
+
+        /**
+         * Update id for product Model
+         * @deprecated
+         * @param {Number} id
+         */
         updateProductInfo: function(id) {
             this.model.set('id', id ? parseInt(id, 10) : 0);
         },

@@ -207,6 +207,8 @@ services:
             - '@oro_product.provider.variant_field_provider'
             - '@property_accessor'
             - 'Oro\Bundle\ProductBundle\Entity\Product'
+        calls:
+            - [ setUserLocalizationManager, [ '@oro_frontend_localization.manager.user_localization' ] ]
         tags:
             - { name: form.type, alias: oro_product_product_variant_frontend_variant_field }
 
