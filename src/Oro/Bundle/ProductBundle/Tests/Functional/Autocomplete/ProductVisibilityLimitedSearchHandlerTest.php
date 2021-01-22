@@ -50,16 +50,17 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
 
     /**
      * @dataProvider frontendVisibilityDataProvider
+     * @param string $query
      * @param string $searchHandlerName
      * @param array $expectedProducts
      */
-    public function testFrontendVisibility(string $searchHandlerName, array $expectedProducts): void
+    public function testFrontendVisibility(string $query, string $searchHandlerName, array $expectedProducts): void
     {
         $url = $this->getUrl(
             'oro_frontend_autocomplete_search',
             [
                 'per_page' => 10,
-                'query'    => 'pro',
+                'query'    => $query,
                 'name'     => $searchHandlerName
             ]
         );
@@ -101,6 +102,7 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
     {
         return [
             'handler for simple products only' => [
+                'query' => 'pro',
                 'searchHandlerName' => 'oro_product_visibility_limited',
                 'expectedProductsResult' => [
                     'PRODUCT_6',
@@ -110,6 +112,7 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
                 ]
             ],
             'handler for simple and configurable products' => [
+                'query' => 'pro  ',
                 'searchHandlerName' => 'oro_all_product_visibility_limited',
                 'expectedProductsResult' => [
                     'PRODUCT_8',
