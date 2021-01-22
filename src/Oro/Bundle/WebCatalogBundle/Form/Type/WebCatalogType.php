@@ -9,6 +9,9 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for the Web Catalog
+ */
 class WebCatalogType extends AbstractType
 {
     const NAME = 'oro_web_catalog';
@@ -35,7 +38,7 @@ class WebCatalogType extends AbstractType
                     'label' => 'oro.webcatalog.description.label',
                     'required' => false,
                     'wysiwyg_options' => [
-                        'statusbar' => true,
+                        'elementpath' => true,
                         'resize' => true,
                     ]
                 ]
