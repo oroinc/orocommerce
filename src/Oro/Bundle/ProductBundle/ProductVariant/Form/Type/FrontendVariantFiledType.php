@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\ProductVariant\Form\Type;
 
+use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManagerInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ProductVariant\Form\Type\DataTransformer\ProductVariantFieldsToProductVariantTransformer;
 use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantTypeHandlerRegistry;
@@ -17,6 +18,9 @@ use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
+/**
+ * Adds child form for each variant field
+ */
 class FrontendVariantFiledType extends AbstractType
 {
     const NAME = 'oro_product_product_variant_frontend_variant_field';
@@ -35,6 +39,9 @@ class FrontendVariantFiledType extends AbstractType
 
     /** @var string */
     protected $productClass;
+
+    /** @var UserLocalizationManagerInterface */
+    protected $userLocalizationManager;
 
     /**
      * @param ProductVariantAvailabilityProvider $productVariantAvailabilityProvider
@@ -55,6 +62,14 @@ class FrontendVariantFiledType extends AbstractType
         $this->variantFieldProvider = $variantFieldProvider;
         $this->propertyAccessor = $propertyAccessor;
         $this->productClass = (string)$productClass;
+    }
+
+    /**
+     * @param UserLocalizationManagerInterface $userLocalizationManager
+     */
+    public function setUserLocalizationManager(UserLocalizationManagerInterface $userLocalizationManager): void
+    {
+        $this->userLocalizationManager = $userLocalizationManager;
     }
 
     /**
@@ -191,19 +206,26 @@ class FrontendVariantFiledType extends AbstractType
     private function getSimpleProductVariants(Product $product)
     {
         $simpleProducts = $this->productVariantAvailabilityProvider->getSimpleProductsByVariantFields($product);
-
         $variantFields = $product->getVariantFields();
+        $localization = $this->userLocalizationManager
+            ? $this->userLocalizationManager->getCurrentLocalization()
+            : null;
 
         $simpleProductVariants = [];
 
-        foreach ($variantFields as $key => $fieldName) {
-            foreach ($simpleProducts as $simpleProduct) {
-                $value = $this->productVariantAvailabilityProvider->getVariantFieldScalarValue(
-                    $simpleProduct,
-                    $fieldName
-                );
-                $simpleProductVariants[$simpleProduct->getId()][$fieldName] = $value;
+        foreach ($simpleProducts as $simpleProduct) {
+            $data = [
+                'sku' => $simpleProduct->getSku(),
+                'name' => (string) $simpleProduct->getName($localization),
+                'attributes' => [],
+            ];
+
+            foreach ($variantFields as $key => $fieldName) {
+                $data['attributes'][$fieldName] = $this->productVariantAvailabilityProvider
+                    ->getVariantFieldScalarValue($simpleProduct, $fieldName);
             }
+
+            $simpleProductVariants[$simpleProduct->getId()] = $data;
         }
 
         return $simpleProductVariants;
