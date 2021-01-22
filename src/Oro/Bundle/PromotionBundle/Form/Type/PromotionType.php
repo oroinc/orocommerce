@@ -97,7 +97,7 @@ class PromotionType extends AbstractType
                     'entry_type' => OroRichTextType::class,
                     'entry_options' => [
                         'wysiwyg_options' => [
-                            'statusbar' => true,
+                            'elementpath' => true,
                             'resize' => true,
                         ],
                     ],
