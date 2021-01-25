@@ -65,7 +65,10 @@ const FileTypeBuilder = BaseTypeBuilder.extend({
             const toolbar = this.get('toolbar');
 
             toolbar.unshift({
-                attributes: {'class': 'fa fa-gear'},
+                attributes: {
+                    'class': 'fa fa-gear',
+                    'label': __('oro.cms.wysiwyg.toolbar.fileSetting')
+                },
                 command: openDigitalAssetsManager.bind(null, this)
             });
 

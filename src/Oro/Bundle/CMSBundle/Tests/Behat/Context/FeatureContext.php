@@ -131,6 +131,29 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * Example: When I click on "WysiwygFileTypeBlock" with title "File name" in WYSIWYG editor
+     *
+     * @When /^(?:|I )click on "(?P<selector>[^"]+)" with title "(?P<title>[^"]+)" in WYSIWYG editor$/
+     *
+     * @param string $selector
+     * @param string $title
+     */
+    public function iClickOnElementWithTitleInWysiwygEditor(string $selector, string $title)
+    {
+        // Switch to WYSIWYG editor iframe.
+        $this->getDriver()->switchToIFrame(0);
+
+        $element = $this->findElementContains($selector, $title);
+        self::assertTrue(
+            $element->isValid(),
+            sprintf('Element "%s" with title "%s" not found in WYSIWYG editor', $selector, $title)
+        );
+        $element->click();
+
+        $this->getDriver()->switchToWindow();
+    }
+
+    /**
      * @param string $containingValue
      *
      * @return Element
