@@ -562,7 +562,7 @@ const GrapesjsEditorView = BaseView.extend({
 
         if (_.isArray(toolbar)) {
             toolbar = toolbar.map(tool => {
-                if (_.isFunction(tool.command)) {
+                if (_.isFunction(tool.command) && !tool.attributes.label) {
                     tool.attributes.label = __('oro.cms.wysiwyg.toolbar.selectParent');
 
                     return tool;
