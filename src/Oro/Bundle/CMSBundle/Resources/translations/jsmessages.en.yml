@@ -117,6 +117,7 @@ oro.cms:
             delete: 'Delete'
             widgetSetting: 'Widget Settings'
             blockSetting: 'Block Settings'
+            fileSetting: 'File Settings'
         asset_manager:
             add_button: 'Add image'
             input_plh: 'http://path/to/the/image.jpg'
