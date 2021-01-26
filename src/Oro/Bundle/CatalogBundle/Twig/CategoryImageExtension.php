@@ -17,6 +17,9 @@ use Twig\TwigFunction;
  */
 class CategoryImageExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
+    /** @const ORO_CATALOG_CATEGORY_IMAGE_EXTENSION */
+    public const ORO_CATALOG_CATEGORY_IMAGE_EXTENSION = 'oro_catalog_category_image_extension';
+    
     /** @var ContainerInterface */
     private $container;
 
@@ -71,7 +74,7 @@ class CategoryImageExtension extends AbstractExtension implements ServiceSubscri
      */
     public function getName()
     {
-        return 'oro_catalog_category_image_extension';
+        return self::ORO_CATALOG_CATEGORY_IMAGE_EXTENSION;
     }
 
     /**
