@@ -58,6 +58,11 @@ layout:
 
         - '@setOption':
             id: product_datagrid
+            optionName: grid_render_parameters.filtersMetadata.minimal_price.showChoices
+            optionValue: false
+
+        - '@setOption':
+            id: product_datagrid
             optionName: grid_render_parameters.toolbarOptions.addRefreshAction
             optionValue: false
 

@@ -1,0 +1,18 @@
+<div class="product-price-filter">
+    <span class="product-price-unit-filter-separator"><%- _.__("oro.pricing.filter.product_price.per") %></span>
+    <div class="btn-group btn-block filter-trigger-wrapper product-price-unit-filter">
+        <% _.each(choices, function (option) { %>
+        <div class="product-price-filter__unit">
+            <label class="custom-radio <%- selectedChoice === option.value ? 'checked' : '' %>" title="<%- option.label %>">
+                <span class="sr-only" aria-hidden="true"><%- option.label %></span>
+                <input type="radio" name="unit" data-role="set-default"
+                       value="<%= option.value %>" data-label="<%- option.label %>"
+                       class="custom-radio__control"
+                <%- (selectedChoice === option.value ? 'checked' : '') %>
+                >
+                <span class="custom-radio__text"><%- option.label %></span>
+            </label>
+        </div>
+        <% }); %>
+    </div>
+</div>
