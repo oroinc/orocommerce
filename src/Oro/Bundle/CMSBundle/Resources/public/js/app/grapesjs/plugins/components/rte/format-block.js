@@ -36,7 +36,7 @@ export default {
 
         if (value === 'normal') {
             const parentNode = rte.selection().getRangeAt(0).startContainer.parentNode;
-            const text = parentNode.innerText;
+            const text = parentNode.innerHTML;
             parentNode.remove();
 
             return rte.insertHTML(text);
