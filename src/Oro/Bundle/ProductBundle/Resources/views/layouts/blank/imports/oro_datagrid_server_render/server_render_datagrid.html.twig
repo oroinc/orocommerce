@@ -41,6 +41,20 @@
 
     {% set enableFilters = renderParams.enableFilters is defined ? renderParams.enableFilters : true %}
 
+    {% set gridFilters = datagridMetaData.filters|default([]) %}
+    {% set gridGiltersMetadata = renderParams.filtersMetadata|default([]) %}
+
+    {% for gridFilterIndex, gridFilter in gridFilters -%}
+        {% set gridFilterName = gridFilter.name|default(null) %}
+
+        {% if gridFilterName is not empty and gridGiltersMetadata[gridFilterName] is defined %}
+            {% set gridFilter = gridFilter|merge(gridGiltersMetadata[gridFilterName]) %}
+            {% set gridFilters = gridFilters|merge({(gridFilterIndex): gridFilter}) %}
+        {% endif %}
+    {% endfor %}
+
+    {% set datagridMetaData = datagridMetaData|merge({filters: gridFilters}) %}
+
     {% set options  = {
         el: '#' ~ gridId,
         gridName: oro_datagrid_build_fullname(datagrid.name, datagrid.scope),
