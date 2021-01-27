@@ -1,5 +1,70 @@
 /* @theme: blank; */
 
+@keyframes green-pulse {
+    0% {
+        background: rgba($shopping-list-grid-effect-success, 0);
+        box-shadow: inset 0 0 0 0 $shopping-list-grid-effect-success;
+    }
+
+    45% {
+        transform: scale(1.05);
+    }
+
+    50% {
+        transform: scale(1);
+        background: rgba($shopping-list-grid-effect-success, 0.8);
+        box-shadow: inset 80em 0 0 0 $shopping-list-grid-effect-success;
+    }
+    50% {
+        transform: scale(1);
+        background: rgba($shopping-list-grid-effect-success, 1);
+        box-shadow: 0 0 0 0 $shopping-list-grid-effect-success;
+    }
+
+    100% {
+        transform: scale(1);
+        background: rgba($shopping-list-grid-effect-success, 1);
+        box-shadow: 0 0 0 30px rgba(#fff, 0);
+    }
+}
+
+@keyframes red-pulse {
+    0% {
+        background: rgba($shopping-list-grid-effect-error, 0);
+        box-shadow: inset 0 0 0 0 $shopping-list-grid-effect-error;
+    }
+
+    45% {
+        transform: scale(1.05);
+    }
+
+    50% {
+        transform: scale(1);
+        background: rgba($shopping-list-grid-effect-error, 0.8);
+        box-shadow: inset 80em 0 0 0 $shopping-list-grid-effect-error;
+    }
+    50% {
+        transform: scale(1);
+        background: rgba($shopping-list-grid-effect-error, 1);
+        box-shadow: 0 0 0 0 $shopping-list-grid-effect-error;
+    }
+
+    100% {
+        transform: scale(1);
+        background: rgba($shopping-list-grid-effect-error, 1);
+        box-shadow: 0 0 0 30px rgba(#fff, 0);
+    }
+}
+
+@keyframes loading-overlay {
+    0% {
+        box-shadow: inset 0 0 0 0 $shopping-list-grid-effect-success;
+    }
+    100% {
+        box-shadow: inset 80em 0 0 0 $shopping-list-grid-effect-success;
+    }
+}
+
 .responsive-shopping-list-grid {
     .grid-row {
         background-color: rgba(255, 255, 255, 0);
@@ -9,8 +74,13 @@
             background-color: $shopping-list-grid-effect-highlight;
         }
 
+        &.highlight-error {
+            background-color: $shopping-list-grid-effect-error;
+        }
+
         &.loading {
             overflow: hidden;
+            //animation: loading-overlay 1s;
 
             .grid-cell {
                 @include loading-blur-overlay;
@@ -18,10 +88,12 @@
         }
 
         &.success {
+            animation: green-pulse 1s cubic-bezier(.92,1.07,.93,.42);
             background-color: $shopping-list-grid-effect-success;
         }
 
         &.error {
+            animation: red-pulse 1s cubic-bezier(.92,1.07,.93,.42);
             background-color: $shopping-list-grid-effect-error;
         }
     }
