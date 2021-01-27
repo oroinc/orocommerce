@@ -2,11 +2,16 @@ import FilteredProductVariantsPlugin from 'oroshoppinglist/js/datagrid/plugins/f
 import ShoppingListRefreshPlugin from 'oroshoppinglist/js/datagrid/plugins/shopping-list-refresh-plugin';
 import quantityHelper from 'oroproduct/js/app/quantity-helper';
 
-const isHighlight = item => item.isUpcoming || (item.errors && item.errors.length);
+const isHighlight = item => item.isUpcoming;
+const isError = item => item.errors && item.errors.length;
 export const flattenData = data => {
     return data.reduce((flatData, rawData) => {
         const {subData, ...item} = rawData;
         const itemClassName = [];
+
+        if (isError(item)) {
+            itemClassName.push('highlight-error');
+        }
 
         if (isHighlight(item)) {
             itemClassName.push('highlight');
@@ -44,6 +49,10 @@ export const flattenData = data => {
 
                 if (subData.length - 1 === index) {
                     className.push('sub-row-last');
+                }
+
+                if (isError(subItem)) {
+                    itemClassName.push('highlight-error');
                 }
 
                 if (isHighlight(subItem)) {

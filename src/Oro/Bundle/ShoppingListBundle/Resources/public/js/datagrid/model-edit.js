@@ -5,7 +5,7 @@ const ShoppingListEditItemModel = ShoppingListModel.extend({
         return ShoppingListEditItemModel.__super__.constructor.call(this, attributes, options);
     },
 
-    highlightDelay: 5000,
+    highlightDelay: 3000,
 
     initialize(attributes, options) {
         ShoppingListEditItemModel.__super__.initialize.call(this, attributes, options);
