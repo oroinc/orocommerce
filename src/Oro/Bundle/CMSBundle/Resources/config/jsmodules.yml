@@ -7,6 +7,8 @@ aliases:
     codemirror/theme/hopscotch$: codemirror/theme/hopscotch.css
 app-modules:
   - orocms/js/app/modules/grapesjs-module
+configs:
+    orocms/js/app/grapesjs/grapesjs-editor-view: {}
 dynamic-imports:
     orocms:
         - orocms/js/app/components/content-variant-collection-component
@@ -14,3 +16,4 @@ dynamic-imports:
         - orocms/js/app/views/content-widget-view
         - orocms/js/app/views/default-variant-collection-view
         - orocms/js/app/views/variants-collection-view
+
