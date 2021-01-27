@@ -19,9 +19,16 @@ import 'orocms/js/app/grapesjs/plugins/panel-scrolling-hints';
 import {escapeWrapper, getWrapperAttrs} from 'orocms/js/app/grapesjs/plugins/grapesjs-style-isolation';
 import i18nMessages from 'orocms/js/app/grapesjs/plugins/i18n-messages';
 import ContentParser from 'orocms/js/app/grapesjs/plugins/grapesjs-content-parser';
+import moduleConfig from 'module-config';
 
 const MIN_EDITOR_WIDTH = 1100;
 const LOCK_PASTE_ATTR = 'data-lock-paste';
+
+const config = {
+    allowBreakpoints: [],
+    disableDeviceManager: false,
+    ...moduleConfig(module.id)
+};
 
 /**
  * Create grapesJS content builder
@@ -34,7 +41,7 @@ const GrapesjsEditorView = BaseView.extend({
     optionNames: BaseView.prototype.optionNames.concat([
         'autoRender', 'allow_tags', 'allowed_iframe_domains', 'builderPlugins', 'currentTheme', 'canvasConfig',
         'contextClass', 'storageManager', 'stylesInputSelector', 'storagePrefix', 'themes',
-        'entityClass'
+        'entityClass', 'disableDeviceManager'
     ]),
 
     /**
@@ -179,7 +186,6 @@ const GrapesjsEditorView = BaseView.extend({
      */
     $stylesInputElement: null,
 
-
     /**
      * @property {String}
      */
@@ -194,6 +200,18 @@ const GrapesjsEditorView = BaseView.extend({
      * @property {Object}
      */
     rte: null,
+
+    /**
+     * Disable responsive design manager
+     * @property {Boolean}
+     */
+    disableDeviceManager: config.disableDeviceManager,
+
+    /**
+     * Allow breakpoints list
+     * @property {Array}
+     */
+    allowBreakpoints: config.allowBreakpoints,
 
     /**
      * List of grapesjs plugins
@@ -634,7 +652,12 @@ const GrapesjsEditorView = BaseView.extend({
             themes: this.themes
         });
 
-        this._devicesModule = new DevicesModule({builder: this.builder});
+        if (!this.disableDeviceManager) {
+            this._devicesModule = new DevicesModule({
+                builder: this.builder,
+                allowBreakpoints: this.allowBreakpoints
+            });
+        }
 
         this.setActiveButton('options', 'sw-visibility');
         this.setActiveButton('views', 'open-blocks');

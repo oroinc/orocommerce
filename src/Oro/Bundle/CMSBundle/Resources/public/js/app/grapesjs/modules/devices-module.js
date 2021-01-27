@@ -22,6 +22,16 @@ define(function(require) {
          */
         breakpoints: {},
 
+        allowBreakpoints: [
+            'desktop',
+            'tablet',
+            'tablet-small',
+            'mobile-big',
+            'mobile-landscape',
+            'mobile',
+            'mobile-small'
+        ],
+
         /**
          * @property {DOM.Element}
          */
@@ -42,6 +52,10 @@ define(function(require) {
                 throw new Error('Required option builder not found.');
             } else {
                 this.builder = options.builder;
+            }
+
+            if (options.allowBreakpoints.length) {
+                this.allowBreakpoints = options.allowBreakpoints;
             }
 
             this.canvasEl = this.builder.Canvas.getElement();
@@ -77,7 +91,7 @@ define(function(require) {
             const breakpoints = mediator.execute('fetch:head:computedVars', contentDocument.head);
 
             this.breakpoints = viewportManager._collectCSSBreakpoints(breakpoints)
-                .filter(breakpoint => breakpoint.name.indexOf('strict') === -1)
+                .filter(({name}) => this.allowBreakpoints.includes(name))
                 .map(breakpoint => {
                     breakpoint = {...breakpoint};
 
@@ -101,7 +115,7 @@ define(function(require) {
             this._intervalId = setInterval(() => {
                 this._getCSSBreakpoint();
 
-                if (this.breakpoints.length) {
+                if (this.breakpoints.length || !this.allowBreakpoints.length) {
                     clearInterval(this._intervalId);
                     defer.resolve();
                 }
@@ -168,6 +182,7 @@ define(function(require) {
                 $(devicePanel.view.$el.find('[data-toggle="tooltip"]')).tooltip();
             }, this);
 
+            devicePanel.view.$el.addClass('init');
             this.builder.CssComposer.render();
         },
 
