@@ -33,7 +33,7 @@ class WebCatalogConfigChangeListener
         }
         
         $reindexationEvent = $this->getReindexationRequestEvent($event);
-        $this->dispatcher->dispatch(ReindexationRequestEvent::EVENT_NAME, $reindexationEvent);
+        $this->dispatcher->dispatch($reindexationEvent, ReindexationRequestEvent::EVENT_NAME);
     }
 
     /**

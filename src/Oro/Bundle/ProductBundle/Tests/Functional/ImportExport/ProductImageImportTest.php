@@ -10,7 +10,6 @@ use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
-use Oro\Bundle\ProductBundle\ImportExport\Normalizer\ProductImageNormalizer;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -18,6 +17,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\Message;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
+use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
@@ -27,26 +27,24 @@ class ProductImageImportTest extends WebTestCase
 {
     use MessageQueueExtension;
 
-    const IMPORT_PROCESSOR_ALIAS = 'oro_product_image.add_or_replace';
-    const EXPORT_TEMPLATE_PROCESSOR_ALIAS = 'oro_product_image_export_template';
+    private const IMPORT_PROCESSOR_ALIAS = 'oro_product_image.add_or_replace';
+    private const EXPORT_TEMPLATE_PROCESSOR_ALIAS = 'oro_product_image_export_template';
 
     protected function setUp(): void
     {
-        $this->initClient([], static::generateBasicAuthHeader());
+        $this->initClient([], self::generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
 
-        /** @var ProductImageNormalizer $normalizer */
-        $normalizer = $this->getClientInstance()
-            ->getContainer()
-            ->get('oro_product.importexport.normalizer.product_image.test');
+        // copy fixture files to the storage
+        $fileManager = self::getContainer()->get('oro_product.tests.importexport.file_manager.product_images');
+        $finder = new Finder();
+        $files = $finder->files()->in(__DIR__ . '/data/product_image/images/');
+        /** @var \SplFileInfo[] $files */
+        foreach ($files as $file) {
+            $fileManager->writeFileToStorage($file->getPathname(), $file->getFilename());
+        }
 
-        $normalizer->setProductImageDir(__DIR__ . '/data/product_image/images/');
-
-        $this->loadFixtures(
-            [
-                LoadProductData::class,
-            ]
-        );
+        $this->loadFixtures([LoadProductData::class]);
     }
 
     public function testExportTemplate()
@@ -72,7 +70,7 @@ class ProductImageImportTest extends WebTestCase
         );
 
         /** @var  EntityRepository $productRepo */
-        $productRepo = static::getContainer()
+        $productRepo = self::getContainer()
             ->get('doctrine')
             ->getManagerForClass(Product::class)
             ->getRepository(Product::class);
@@ -118,7 +116,7 @@ class ProductImageImportTest extends WebTestCase
     /**
      * @param string $expectedCsvFilePath
      */
-    protected function assertExportTemplateWorks(string $expectedCsvFilePath)
+    private function assertExportTemplateWorks(string $expectedCsvFilePath)
     {
         $this->client->request(
             'GET',
@@ -131,9 +129,13 @@ class ProductImageImportTest extends WebTestCase
         $contentDisposition = $this->client->getResponse()->headers->get('Content-Disposition');
         preg_match('/^.*"?(export_template_[a-z0-9_]+.csv)"?$/', $contentDisposition, $matches);
 
-        static::assertStringContainsString(
+        ob_start();
+        $this->client->getResponse()->sendContent();
+        $actualExportContent = ob_get_clean();
+
+        self::assertStringContainsString(
             $this->getFileContent($expectedCsvFilePath),
-            $this->client->getResponse()->getContent()
+            $actualExportContent
         );
 
         $this->deleteImportExportFile($matches[1]);
@@ -142,9 +144,9 @@ class ProductImageImportTest extends WebTestCase
     /**
      * @param string $filename
      */
-    protected function deleteImportExportFile(string $filename)
+    private function deleteImportExportFile(string $filename)
     {
-        static::getContainer()
+        self::getContainer()
             ->get('oro_importexport.file.file_manager')
             ->deleteFile($filename);
     }
@@ -154,7 +156,7 @@ class ProductImageImportTest extends WebTestCase
      *
      * @return string
      */
-    protected function getFileContent(string $filePath)
+    private function getFileContent(string $filePath)
     {
         return file_get_contents($filePath);
     }
@@ -162,7 +164,7 @@ class ProductImageImportTest extends WebTestCase
     /**
      * @param string $importFilePath
      */
-    protected function assertImportWorks(string $importFilePath)
+    private function assertImportWorks(string $importFilePath)
     {
         $this->assertPreImportActionExecuted($importFilePath);
 
@@ -174,7 +176,7 @@ class ProductImageImportTest extends WebTestCase
             $preImportMessageData
         );
 
-        static::assertMessageSent(Topics::IMPORT);
+        self::assertMessageSent(Topics::IMPORT);
 
         $importMessageData = $this->getOneSentMessageWithTopic(Topics::IMPORT);
         $this->clearMessageCollector();
@@ -191,7 +193,7 @@ class ProductImageImportTest extends WebTestCase
     /**
      * @param string $filename
      */
-    protected function deleteTmpFile(string $filename)
+    private function deleteTmpFile(string $filename)
     {
         unlink(FileManager::generateTmpFilePath($filename));
     }
@@ -200,22 +202,22 @@ class ProductImageImportTest extends WebTestCase
      * @param string $processorServiceName
      * @param array $messageData
      */
-    protected function assertMessageProcessorExecuted(string $processorServiceName, array $messageData)
+    private function assertMessageProcessorExecuted(string $processorServiceName, array $messageData)
     {
-        $processorResult = static::getContainer()
+        $processorResult = self::getContainer()
             ->get($processorServiceName)
             ->process(
                 $this->createMessage($messageData),
                 $this->createSessionInterfaceMock()
             );
 
-        static::assertEquals(MessageProcessorInterface::ACK, $processorResult);
+        self::assertEquals(MessageProcessorInterface::ACK, $processorResult);
     }
 
     /**
      * @return SessionInterface|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected function createSessionInterfaceMock()
+    private function createSessionInterfaceMock()
     {
         return $this->getMockBuilder(SessionInterface::class)->getMock();
     }
@@ -225,7 +227,7 @@ class ProductImageImportTest extends WebTestCase
      *
      * @return Message
      */
-    protected function createMessage(array $messageData)
+    private function createMessage(array $messageData)
     {
         $message = new Message();
 
@@ -240,9 +242,9 @@ class ProductImageImportTest extends WebTestCase
      *
      * @return array
      */
-    protected function getOneSentMessageWithTopic(string $topic)
+    private function getOneSentMessageWithTopic(string $topic)
     {
-        $sentMessages = static::getSentMessages();
+        $sentMessages = self::getSentMessages();
 
         foreach ($sentMessages as $messageData) {
             if ($messageData['topic'] === $topic) {
@@ -256,10 +258,10 @@ class ProductImageImportTest extends WebTestCase
     /**
      * @param string $importCsvFilePath
      */
-    protected function assertPreImportActionExecuted(string $importCsvFilePath)
+    private function assertPreImportActionExecuted(string $importCsvFilePath)
     {
         $file = new UploadedFile($importCsvFilePath, basename($importCsvFilePath));
-        $fileName = static::getContainer()
+        $fileName = self::getContainer()
             ->get('oro_importexport.file.file_manager')
             ->saveImportingFile($file);
 
@@ -275,10 +277,10 @@ class ProductImageImportTest extends WebTestCase
             )
         );
 
-        $response = static::getJsonResponseContent($this->client->getResponse(), 200);
-        static::assertTrue($response['success']);
+        $response = self::getJsonResponseContent($this->client->getResponse(), 200);
+        self::assertTrue($response['success']);
 
-        static::assertMessageSent(
+        self::assertMessageSent(
             Topics::PRE_IMPORT,
             [
                 'fileName' => $fileName,
@@ -293,19 +295,9 @@ class ProductImageImportTest extends WebTestCase
     }
 
     /**
-     * @return string|null
-     */
-    protected function getSerializedSecurityToken()
-    {
-        return static::getContainer()
-            ->get('oro_security.token_serializer')
-            ->serialize($this->getSecurityToken());
-    }
-
-    /**
      * @return User
      */
-    protected function getCurrentUser()
+    private function getCurrentUser()
     {
         return $this->getSecurityToken()->getUser();
     }
@@ -313,17 +305,17 @@ class ProductImageImportTest extends WebTestCase
     /**
      * @return UsernamePasswordOrganizationToken
      */
-    protected function getSecurityToken()
+    private function getSecurityToken()
     {
-        return static::getContainer()
+        return self::getContainer()
             ->get('security.token_storage')
             ->getToken();
     }
 
-    protected function assertImportedDataValid()
+    private function assertImportedDataValid()
     {
-        /** @var  EntityRepository $productRepo */
-        $productRepo = static::getContainer()
+        /** @var EntityRepository $productRepo */
+        $productRepo = self::getContainer()
             ->get('doctrine')
             ->getManagerForClass(Product::class)
             ->getRepository(Product::class);

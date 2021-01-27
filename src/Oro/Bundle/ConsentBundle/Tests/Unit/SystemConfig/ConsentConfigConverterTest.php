@@ -2,13 +2,14 @@
 
 namespace Oro\Bundle\ConsentBundle\Tests\Unit\SystemConfig;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\ConsentBundle\Entity\Consent;
 use Oro\Bundle\ConsentBundle\SystemConfig\ConsentConfig;
 use Oro\Bundle\ConsentBundle\SystemConfig\ConsentConfigConverter;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class ConsentConfigConverterTest extends \PHPUnit\Framework\TestCase
 {
@@ -82,7 +83,7 @@ class ConsentConfigConverterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|\Doctrine\Common\Persistence\ManagerRegistry
+     * @return MockObject|ManagerRegistry
      */
     protected function getRegistryMockWithRepository()
     {

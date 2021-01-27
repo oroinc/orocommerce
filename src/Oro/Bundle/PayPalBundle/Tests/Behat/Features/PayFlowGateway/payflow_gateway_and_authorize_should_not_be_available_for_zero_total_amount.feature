@@ -15,8 +15,8 @@ Feature: Payflow Gateway and Authorize should not be available for zero total am
     And I click "Create Integration"
     And I select "PayPal Payflow Gateway" from "Type"
     And I fill PayPal integration fields with next data:
-      | Name                         | PayPalFlow            |
-      | Label                        | PayPalFlow            |
+      | Name                         | PayPalFlow           |
+      | Label                        | PayPalFlow           |
       | Short Label                  | PPlPro               |
       | Allowed Credit Card Types    | Mastercard           |
       | Partner                      | PayPal               |
@@ -65,7 +65,7 @@ Feature: Payflow Gateway and Authorize should not be available for zero total am
     And I click "Apply"
     And I type "coupon-100-shipping" in "Coupon Code Input"
     And I click "Apply"
-    Then I should see "The selected payment method is not available. Please return to the payment method selection step and select a different one." flash message
+    Then I should see "The selected payment method is not available. Please return to the payment method selection step and select a different one."
     And I should see "coupon-100-order Promotion Order 100 Label" in the "Coupons List" element
     And I should see "coupon-100-shipping Promotion Shipping 100 Label" in the "Coupons List" element
     And I should see "Total $0.00"

@@ -19,7 +19,7 @@
             <% let productUrl = function (productId, variantId) { %>
                 <% return oroshoppinglist.routing.generate('oro_product_frontend_product_view', variantId ? {id: productId, variantProductId: variantId} : {id: productId} ) %>
             <% } %>
-            <div class="grid-line-items__row-item">
+            <div class="grid-line-items__row-item height-as-image-mobile">
                 <% if (name.length <= clipLength) { %>
                     <%= oroshoppinglist.renderProductItemName({link: productUrl(productId, variantId), name: name}) %>
                 <% } else { %>
@@ -75,9 +75,10 @@
     </div>
 </div>
 
-<% if (isUpcoming || obj.errors && obj.errors.length || (obj.success && obj.message)) { %>
+<% if (obj.isUpcoming || obj.errors && obj.errors.length || obj.warnings && obj.warnings.length || (obj.success && obj.message)) { %>
 <div class="notification-container">
     <%= oroshoppinglist.renderUpcoming({isUpcoming: isUpcoming, availabilityDate: obj.availabilityDate}) %>
+    <%= oroshoppinglist.renderWarnings({warnings: obj.warnings}) %>
     <%= oroshoppinglist.renderErrors({errors: obj.errors}) %>
 
     <% if (obj.success && obj.message) { %>

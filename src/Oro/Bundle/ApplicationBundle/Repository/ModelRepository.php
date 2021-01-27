@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\ApplicationBundle\Repository;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityNotFoundException;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ApplicationBundle\Event\ModelEvent;
 use Oro\Bundle\ApplicationBundle\Event\ModelIdentifierEvent;
 use Oro\Bundle\ApplicationBundle\Factory\ModelFactoryInterface;
@@ -71,7 +71,7 @@ class ModelRepository implements ModelRepositoryInterface
         $modelName = $this->getModelName();
 
         $identifierEvent = new ModelIdentifierEvent($modelIdentifier);
-        $this->eventDispatcher->dispatch('model.find.before.' . $modelName, $identifierEvent);
+        $this->eventDispatcher->dispatch($identifierEvent, 'model.find.before.' . $modelName);
 
         $objectManager = $this->getObjectManager();
         $entity = $objectManager->find($this->entityClassName, $identifierEvent->getIdentifier());
@@ -89,12 +89,12 @@ class ModelRepository implements ModelRepositoryInterface
             $model = $this->modelFactory->create([$entity]);
 
             $modelEvent = new ModelEvent($model);
-            $this->eventDispatcher->dispatch('model.find.after.' . $modelName, $modelEvent);
+            $this->eventDispatcher->dispatch($modelEvent, 'model.find.after.' . $modelName);
 
             return $modelEvent->getModel();
         } else {
             $identifierEvent = new ModelIdentifierEvent($modelIdentifier);
-            $this->eventDispatcher->dispatch('model.find.after.not_found.' . $modelName, $identifierEvent);
+            $this->eventDispatcher->dispatch($identifierEvent, 'model.find.after.not_found.' . $modelName);
 
             return null;
         }
@@ -108,7 +108,7 @@ class ModelRepository implements ModelRepositoryInterface
         $modelName = $this->getModelName();
 
         $modelEvent = new ModelEvent($model);
-        $this->eventDispatcher->dispatch('model.save.before.' . $modelName, $modelEvent);
+        $this->eventDispatcher->dispatch($modelEvent, 'model.save.before.' . $modelName);
 
         $model = $modelEvent->getModel();
 
@@ -119,7 +119,7 @@ class ModelRepository implements ModelRepositoryInterface
         $objectManager->flush();
 
         $modelEvent = new ModelEvent($model);
-        $this->eventDispatcher->dispatch('model.save.after.' . $modelName, $modelEvent);
+        $this->eventDispatcher->dispatch($modelEvent, 'model.save.after.' . $modelName);
     }
 
     /**
@@ -130,7 +130,7 @@ class ModelRepository implements ModelRepositoryInterface
         $modelName = $this->getModelName();
 
         $modelEvent = new ModelEvent($model);
-        $this->eventDispatcher->dispatch('model.delete.before.' . $modelName, $modelEvent);
+        $this->eventDispatcher->dispatch($modelEvent, 'model.delete.before.' . $modelName);
 
         $model = $modelEvent->getModel();
 
@@ -141,7 +141,7 @@ class ModelRepository implements ModelRepositoryInterface
         $objectManager->flush();
 
         $modelEvent = new ModelEvent($model);
-        $this->eventDispatcher->dispatch('model.delete.after.' . $modelName, $modelEvent);
+        $this->eventDispatcher->dispatch($modelEvent, 'model.delete.after.' . $modelName);
     }
 
     /**

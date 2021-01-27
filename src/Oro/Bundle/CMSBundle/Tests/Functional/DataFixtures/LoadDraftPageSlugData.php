@@ -4,8 +4,8 @@ namespace Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\Query\FilterCollection;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\DraftBundle\Doctrine\DraftableFilter;
 use Oro\Bundle\RedirectBundle\Entity\Slug;

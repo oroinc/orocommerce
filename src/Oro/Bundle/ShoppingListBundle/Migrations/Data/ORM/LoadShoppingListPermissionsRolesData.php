@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Migrations\Data\ORM;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\SecurityBundle\Migrations\Data\ORM\AbstractUpdatePermissions;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;

@@ -3,8 +3,8 @@
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Async;
 
 use Doctrine\Common\Cache\CacheProvider;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\WebCatalogBundle\Async\ContentNodeTreeCacheProcessor;
 use Oro\Bundle\WebCatalogBundle\Async\Topics;
@@ -187,7 +187,7 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit\Framework\TestCase
                 return $callback($this->jobRunner);
             });
 
-        list($scope, $node) = $this->configureEntityManager($scopeId, $nodeId);
+        [$scope, $node] = $this->configureEntityManager($scopeId, $nodeId);
 
         $this->dumper->expects($this->once())
             ->method('dump')

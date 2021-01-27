@@ -16,7 +16,7 @@ class SearchMultiEnumFilterTest extends AbstractSearchEnumFilterTest
     {
         parent::setUp();
 
-        $this->filter = new SearchMultiEnumFilter($this->formFactory, $this->filterUtility, $this->dictionaryManager);
+        $this->filter = new SearchMultiEnumFilter($this->formFactory, new FilterUtility(), $this->dictionaryManager);
     }
 
     public function testApply()
@@ -27,7 +27,6 @@ class SearchMultiEnumFilterTest extends AbstractSearchEnumFilterTest
             'value2'
         ];
 
-        /** @var SearchFilterDatasourceAdapter|\PHPUnit\Framework\MockObject\MockObject $ds */
         $ds = $this->createMock(SearchFilterDatasourceAdapter::class);
         $ds->expects($this->once())
             ->method('addRestriction')
@@ -52,5 +51,11 @@ class SearchMultiEnumFilterTest extends AbstractSearchEnumFilterTest
                 ]
             )
         );
+    }
+
+    public function testPrepareData()
+    {
+        $this->expectException(\BadMethodCallException::class);
+        $this->filter->prepareData([]);
     }
 }

@@ -1,0 +1,5 @@
+acl_categories:
+    checkout:
+        label: oro.checkout.privilege.category.checkout.label
+        tab: true
+        priority: 4

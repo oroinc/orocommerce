@@ -14,7 +14,7 @@ class OroFedexShippingBundleInstaller implements Installation
      */
     public function getMigrationVersion()
     {
-        return 'v1_0';
+        return 'v1_1';
     }
 
     /**
@@ -111,6 +111,7 @@ class OroFedexShippingBundleInstaller implements Installation
         $table = $schema->getTable('oro_integration_transport');
 
         $table->addColumn('fedex_test_mode', 'boolean', ['notnull' => false, 'default' => false]);
+        $table->addColumn('fedex_ignore_package_dimension', 'boolean', ['notnull' => false, 'default' => false]);
         $table->addColumn('fedex_key', 'string', ['notnull' => false, 'length' => 100]);
         $table->addColumn('fedex_password', 'string', ['notnull' => false, 'length' => 100]);
         $table->addColumn('fedex_account_number', 'string', ['notnull' => false, 'length' => 100]);

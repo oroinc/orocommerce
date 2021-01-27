@@ -9,7 +9,7 @@ use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\MinkExtension\Context\MinkAwareContext;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Symfony2Extension\Context\KernelDictionary;
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext as ConfigContext;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid;
@@ -1191,6 +1191,20 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     public function iRememberImagesOrderInElement($elementName)
     {
         $this->rememberedData[self::IMAGES_ORDER_REMEMBER_KEY] = $this->getImagesOrderInElement($elementName);
+    }
+
+    /**
+     * Example: I should see images in "Product Images" element
+     *
+     * @Then /^I should see images in "(?P<elementName>[^"]*)" element$/
+     * @param string $elementName
+     */
+    public function iShouldSeeImagesInElement($elementName)
+    {
+        $element = $this->createElement($elementName);
+        $images = $element->findAll('xpath', '//img');
+
+        self::assertNotEmpty($images, sprintf('Images not found in the "%s" element', $elementName));
     }
 
     /**

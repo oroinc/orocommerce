@@ -67,7 +67,7 @@ class CategoryHandlerTest extends FormHandlerTestCase
         $this->eventDispatcher
             ->expects($this->once())
             ->method('dispatch')
-            ->with('oro_catalog.category.edit', $event);
+            ->with($event, 'oro_catalog.category.edit');
 
         $this->form->expects($this->once())
             ->method('setData')
@@ -101,8 +101,8 @@ class CategoryHandlerTest extends FormHandlerTestCase
     protected function assertAppendRemoveProducts()
     {
         $this->eventDispatcher->expects($this->once())->method('dispatch')->with(
-            'oro_catalog.category.edit',
-            new AfterFormProcessEvent($this->form, $this->entity)
+            new AfterFormProcessEvent($this->form, $this->entity),
+            'oro_catalog.category.edit'
         );
         $appendProducts = $this->getMockBuilder('Symfony\Component\Form\Form')
             ->disableOriginalConstructor()

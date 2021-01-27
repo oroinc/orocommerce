@@ -2,68 +2,48 @@
 
 namespace Oro\Bundle\ProductBundle\Expression;
 
-use Oro\Bundle\ProductBundle\Model\NodeExpressionQueryDesigner;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\QueryDesignerBundle\Model\AbstractQueryDesigner;
+use Oro\Bundle\QueryDesignerBundle\Model\QueryDesigner;
+use Oro\Bundle\QueryDesignerBundle\QueryDesigner\QueryDefinitionUtil;
 use Oro\Component\Expression\ColumnInformationProviderInterface;
 use Oro\Component\Expression\Node\NodeInterface;
 
+/**
+ * Converts configured query expressions for Product entity to a query designer object.
+ */
 class NodeToQueryDesignerConverter
 {
-    /**
-     * @var string
-     */
-    protected $entityClass;
-
-    /**
-     * @var ColumnInformationProviderInterface[]
-     */
-    protected $columnInformationProviders = [];
-
-    /**
-     * @param string $entityClass
-     */
-    public function __construct($entityClass)
-    {
-        $this->entityClass = $entityClass;
-    }
+    /** @var ColumnInformationProviderInterface[] */
+    private $columnInformationProviders = [];
 
     /**
      * @param ColumnInformationProviderInterface $provider
      */
-    public function addColumnInformationProvider(ColumnInformationProviderInterface $provider)
+    public function addColumnInformationProvider(ColumnInformationProviderInterface $provider): void
     {
         array_unshift($this->columnInformationProviders, $provider);
     }
 
     /**
      * @param NodeInterface $node
+     *
      * @return AbstractQueryDesigner
      */
-    public function convert(NodeInterface $node)
+    public function convert(NodeInterface $node): AbstractQueryDesigner
     {
-        $source = $this->createQueryDesigner();
-        $definition = $this->getDefinitionByNode($node);
-        $source->setDefinition(json_encode($definition));
-
-        return $source;
-    }
-
-    /**
-     * @return NodeExpressionQueryDesigner
-     */
-    protected function createQueryDesigner()
-    {
-        $source = new NodeExpressionQueryDesigner();
-        $source->setEntity($this->entityClass);
-
-        return $source;
+        return new QueryDesigner(
+            Product::class,
+            QueryDefinitionUtil::encodeDefinition($this->getDefinitionByNode($node))
+        );
     }
 
     /**
      * @param NodeInterface $node
+     *
      * @return array
      */
-    protected function getDefinitionByNode(NodeInterface $node)
+    private function getDefinitionByNode(NodeInterface $node): array
     {
         $definition = [
             'columns' => [],

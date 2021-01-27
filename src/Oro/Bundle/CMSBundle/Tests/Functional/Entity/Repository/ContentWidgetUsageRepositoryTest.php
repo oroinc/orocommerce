@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Functional\Entity\Repository;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CMSBundle\Entity\ContentWidgetUsage;
 use Oro\Bundle\CMSBundle\Entity\Repository\ContentWidgetUsageRepository;
 use Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadContentWidgetUsageData;

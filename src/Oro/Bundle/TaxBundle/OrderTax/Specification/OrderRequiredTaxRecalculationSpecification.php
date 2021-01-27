@@ -24,20 +24,12 @@ class OrderRequiredTaxRecalculationSpecification implements SpecificationInterfa
     protected $orderLineItemsCollectionChangedSpecification;
 
     /**
-     * @var OrderWithChangedLineItemsCollectionSpecification
-     */
-    protected $lineItemRequiredTaxRecalculationSpecification;
-
-    /**
      * @param UnitOfWork $unitOfWork
      */
     public function __construct(UnitOfWork $unitOfWork)
     {
         $this->unitOfWork = $unitOfWork;
         $this->orderLineItemsCollectionChangedSpecification = new OrderWithChangedLineItemsCollectionSpecification(
-            $unitOfWork
-        );
-        $this->lineItemRequiredTaxRecalculationSpecification = new OrderLineItemRequiredTaxRecalculationSpecification(
             $unitOfWork
         );
     }
@@ -74,12 +66,6 @@ class OrderRequiredTaxRecalculationSpecification implements SpecificationInterfa
 
         if ($this->orderLineItemsCollectionChangedSpecification->isSatisfiedBy($order)) {
             return true;
-        }
-
-        foreach ($order->getLineItems() as $lineItem) {
-            if ($this->lineItemRequiredTaxRecalculationSpecification->isSatisfiedBy($lineItem)) {
-                return true;
-            }
         }
 
         $newCustomerId = $order->getCustomer() ? $order->getCustomer()->getId() : null;

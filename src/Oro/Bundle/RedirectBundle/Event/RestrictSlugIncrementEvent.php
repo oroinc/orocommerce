@@ -4,7 +4,7 @@ namespace Oro\Bundle\RedirectBundle\Event;
 
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * This event is used to restrict the list of slugs which should be unique per entity (by adding suffix on duplicates).

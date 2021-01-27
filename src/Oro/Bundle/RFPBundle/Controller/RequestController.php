@@ -8,14 +8,14 @@ use Oro\Bundle\RFPBundle\Form\Type\RequestType;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Back-office CRUD for RFQs.
  */
-class RequestController extends Controller
+class RequestController extends AbstractController
 {
     /**
      * @Route("/view/{id}", name="oro_rfp_request_view", requirements={"id"="\d+"})

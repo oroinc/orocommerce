@@ -43,7 +43,7 @@ SQL;
         foreach ($taxCodes as $taxCode) {
             $this->logQuery($logger, $sql);
             if (!$dryRun) {
-                $this->connection->executeUpdate($sql, ['code' => $taxCode['id']]);
+                $this->connection->executeStatement($sql, ['code' => $taxCode['id']]);
             }
         }
         $sql = <<<SQL
@@ -54,7 +54,7 @@ SQL;
         foreach ($taxCodes as $taxCode) {
             $this->logQuery($logger, $sql);
             if (!$dryRun) {
-                $this->connection->executeUpdate($sql, ['code' => $taxCode['id']]);
+                $this->connection->executeStatement($sql, ['code' => $taxCode['id']]);
             }
         }
     }

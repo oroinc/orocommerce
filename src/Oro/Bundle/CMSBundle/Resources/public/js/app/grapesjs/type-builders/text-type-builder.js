@@ -1,7 +1,8 @@
+import _ from 'underscore';
 import __ from 'orotranslation/js/translator';
 import BaseTypeBuilder from 'orocms/js/app/grapesjs/type-builders/base-type-builder';
 
-const REGEXP_TAG_EMPTY = /<[^>]*>\s*<\/[^>]*>/g;
+const TAGS = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'ul', 'li', 'ol'];
 
 const TextTypeBuilder = BaseTypeBuilder.extend({
     parentType: 'text',
@@ -22,12 +23,11 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
     },
 
     isComponent(el) {
-        const tags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'ul', 'li', 'ol'];
         let _res = {
             tagName: el.tagName.toLowerCase()
         };
 
-        if (tags.includes(_res.tagName)) {
+        if (TAGS.includes(_res.tagName)) {
             _res = {
                 ..._res,
                 type: 'text'
@@ -38,11 +38,67 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
     },
 
     viewMixin: {
+        onPressEnter(event) {
+            if (event.keyCode !== 13) {
+                return true;
+            }
+
+            const {activeRte} = this;
+            const sel = activeRte.doc.getSelection();
+            let newEle = activeRte.doc.createTextNode('\n');
+            let range = activeRte.doc.getSelection().getRangeAt(0);
+
+            if (
+                range.startContainer.nodeType === 3 &&
+                range.endOffset <= range.commonAncestorContainer.length &&
+                TAGS.includes(range.startContainer.parentNode.tagName.toLowerCase())
+            ) {
+                activeRte.doc.execCommand('defaultParagraphSeparator', true, 'p');
+                return true;
+            }
+
+            if (activeRte.doc.queryCommandSupported('insertBrOnReturn')) {
+                activeRte.doc.execCommand('defaultParagraphSeparator', false, 'br');
+            }
+
+            if (activeRte.doc.queryCommandSupported('insertLineBreak')) {
+                activeRte.doc.execCommand('insertLineBreak', false, null);
+                return false;
+            }
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            const docFragment = activeRte.doc.createDocumentFragment();
+            docFragment.appendChild(newEle);
+            newEle = activeRte.doc.createElement('br');
+            docFragment.appendChild(newEle);
+            range.deleteContents();
+            range.insertNode(docFragment);
+            range = activeRte.doc.createRange();
+            range.setStartAfter(newEle);
+            range.collapse(true);
+
+            sel.removeAllRanges();
+            sel.addRange(range);
+
+            return false;
+        },
+
+        onActive(e) {
+            this.constructor.__super__.onActive.call(this, e);
+            const {activeRte, $el, cid} = this;
+
+            if (activeRte) {
+                $el.on(`keypress.${cid}`, this.onPressEnter.bind(this));
+            }
+        },
+
         /**
          * Disable element content editing
          */
         disableEditing() {
-            const {model, rte, activeRte, em} = this;
+            const {model, rte, activeRte, em, $el, cid} = this;
             if (!model) {
                 return;
             }
@@ -50,6 +106,8 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
             const editable = model.get('editable');
 
             if (rte && editable) {
+                $el.off(`keypress.${cid}`);
+
                 try {
                     rte.disable(this, activeRte);
                 } catch (err) {
@@ -79,7 +137,12 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
             if (!rteEnabled && !opts.force) return;
             let content = this.getContent();
             const comps = model.components();
-            const contentOpt = {fromDisable: false, ...opts};
+            const contentOpt = {
+                fromDisable: false,
+                previousModels: _.clone(comps),
+                idUpdate: true,
+                ...opts
+            };
             let tagName = null;
             comps.length && comps.reset(null, opts);
             model.set('content', '', contentOpt);
@@ -95,7 +158,7 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
                         !['text', 'default', ''].some(type => model.is(type)) || textable;
 
                     model.set({
-                        _innertext: !selectable,
+                        _innertext: false,
                         editable: selectable && model.get('editable'),
                         selectable: selectable,
                         hoverable: selectable,
@@ -121,8 +184,7 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
                     content = el.children[0].innerHTML;
                 }
 
-                // Clear empty tags
-                comps.add(content.replace(REGEXP_TAG_EMPTY, ''), opts);
+                comps.add(content, opts);
 
                 if (tagName) {
                     this.editor.selectRemove(model);

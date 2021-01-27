@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Duplicator;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\PricingBundle\Duplicator\ProductPriceDuplicator;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
@@ -41,7 +41,7 @@ class ProductPriceDuplicatorTest extends \PHPUnit\Framework\TestCase
         $this->registry = $this->getMockWithoutConstructor('Symfony\Bridge\Doctrine\ManagerRegistry');
         $this->insertExecutor = $this
             ->getMockWithoutConstructor(InsertFromSelectShardQueryExecutor::class);
-        $this->manager = $this->getMockWithoutConstructor('Doctrine\Common\Persistence\ObjectManager');
+        $this->manager = $this->getMockWithoutConstructor('Doctrine\Persistence\ObjectManager');
 
         $this->priceDuplicator = new ProductPriceDuplicator(
             $this->registry,

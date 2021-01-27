@@ -20,6 +20,7 @@ class FrontendProductDatagridListener
 
     const PRODUCT_IMAGE_FILTER_LARGE = 'product_large';
     const PRODUCT_IMAGE_FILTER_MEDIUM = 'product_medium';
+    const PRODUCT_IMAGE_FILTER_SMALL = 'product_small';
 
     /**
      * @var DataGridThemeHelper

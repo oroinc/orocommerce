@@ -25,6 +25,6 @@ class InsertFromSelectShardQueryExecutor extends AbstractShardQueryExecutor
         $sql = sprintf('insert into %s (%s) %s', $insertToTableName, implode(', ', $columns), $selectQuery->getSQL());
         $sql = $this->applyOnDuplicateKeyUpdate($className, $sql);
 
-        return $this->shardManager->getEntityManager()->getConnection()->executeUpdate($sql, $params, $types);
+        return $this->shardManager->getEntityManager()->getConnection()->executeStatement($sql, $params, $types);
     }
 }

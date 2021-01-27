@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Async;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ProductBundle\Async\ReindexProductsByAttributesProcessor;
 use Oro\Bundle\ProductBundle\Async\Topics;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -131,8 +131,8 @@ class ReindexProductsByAttributesProcessorTest extends \PHPUnit\Framework\TestCa
         $this->dispatcher->expects($dispatchExpected)
             ->method('dispatch')
             ->with(
-                ReindexationRequestEvent::EVENT_NAME,
-                new ReindexationRequestEvent([Product::class], [], $productIds)
+                new ReindexationRequestEvent([Product::class], [], $productIds),
+                ReindexationRequestEvent::EVENT_NAME
             );
 
         $result = $this->processor->process($message, $this->session);

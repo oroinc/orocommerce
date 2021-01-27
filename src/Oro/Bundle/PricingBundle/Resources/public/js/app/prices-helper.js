@@ -4,6 +4,33 @@ define(function(require) {
     const _ = require('underscore');
 
     const PricesHelper = {
+        sortByLowQuantity: function(prices = []) {
+            if (!_.isArray(prices) || prices.length < 2) {
+                return prices;
+            }
+
+            return [...prices].sort((a, b) => {
+                if (a['quantity'] < b['quantity']) {
+                    return -1;
+                }
+
+                return 1;
+            });
+        },
+
+        /**
+         * @param pricesByUnit {Object<{unit: Array<Object>}>}
+         * @returns {Object<{unit: Array<Object>}>}
+         */
+        sortUnitPricesByLowQuantity: function(pricesByUnit = {}) {
+            const unit = Object.keys(pricesByUnit)[0];
+            const prices = Object.values(pricesByUnit)[0];
+
+            return {
+                [unit]: PricesHelper.sortByLowQuantity(prices)
+            };
+        },
+
         preparePrices: function(prices) {
             prices = _.sortBy(prices, 'quantity');
             prices = prices.reverse();
@@ -16,9 +43,16 @@ define(function(require) {
             return pricesByUnit;
         },
 
+        indexPrices: function(prices) {
+            return Object.entries(prices).reduce((pricesIndex, [unit, unitPrices], ) => {
+                unitPrices.forEach(price => pricesIndex[`${unit}_${price.quantity}`] = price);
+                return pricesIndex;
+            }, {});
+        },
+
         /**
          * Get price object
-
+         *
          * @param prices {Object}
          * @param unit {String}
          * @param quantity {Number|String}

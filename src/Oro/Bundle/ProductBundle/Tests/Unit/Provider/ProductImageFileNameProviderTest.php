@@ -11,29 +11,23 @@ use Oro\Bundle\ProductBundle\Provider\ProductImageFileNameProvider;
 
 class ProductImageFileNameProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $configManager;
-
-    /**
-     * @var FileNameProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var FileNameProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $innerProvider;
 
-    /**
-     * @var ProductImageFileNameProvider
-     */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
+
+    /** @var ProductImageFileNameProvider */
     private $provider;
 
     protected function setUp(): void
     {
-        $this->configManager = $this->createMock(ConfigManager::class);
         $this->innerProvider = $this->createMock(FileNameProviderInterface::class);
+        $this->configManager = $this->createMock(ConfigManager::class);
 
         $this->provider = new ProductImageFileNameProvider(
-            $this->configManager,
-            $this->innerProvider
+            $this->innerProvider,
+            $this->configManager
         );
     }
 
@@ -94,5 +88,24 @@ class ProductImageFileNameProviderTest extends \PHPUnit\Framework\TestCase
             ->method($this->anything());
 
         $this->assertEquals('filename-original-filename_-123-картинка.jpeg', $this->provider->getFileName($file));
+    }
+
+    public function testGetFileNameOriginalFileNamesEnabledNoOriginalFileName()
+    {
+        $file = new File();
+        $file->setFilename('filename.jpeg');
+        $file->setExtension('jpeg');
+        $file->setParentEntityClass(ProductImage::class);
+
+        $this->configManager->expects($this->never())
+            ->method('get')
+            ->with('oro_product.original_file_names_enabled');
+
+        $this->innerProvider->expects($this->once())
+            ->method('getFileName')
+            ->with($file)
+            ->willReturn('filename.jpeg');
+
+        $this->assertEquals('filename.jpeg', $this->provider->getFileName($file));
     }
 }

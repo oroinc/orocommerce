@@ -128,11 +128,11 @@ class ProductPriceHandlerTest extends \PHPUnit\Framework\TestCase
     {
         $this->eventDispatcher->expects($this->at(0))
             ->method('dispatch')
-            ->with(Events::BEFORE_FORM_DATA_SET, new FormProcessEvent($form, $entity));
+            ->with(new FormProcessEvent($form, $entity), Events::BEFORE_FORM_DATA_SET);
 
         $this->eventDispatcher->expects($this->at(1))
             ->method('dispatch')
-            ->with(Events::BEFORE_FORM_SUBMIT, new FormProcessEvent($form, $entity));
+            ->with(new FormProcessEvent($form, $entity), Events::BEFORE_FORM_SUBMIT);
     }
 
     /**
@@ -143,10 +143,10 @@ class ProductPriceHandlerTest extends \PHPUnit\Framework\TestCase
     {
         $this->eventDispatcher->expects($this->at(2))
             ->method('dispatch')
-            ->with(Events::BEFORE_FLUSH, new AfterFormProcessEvent($form, $entity));
+            ->with(new AfterFormProcessEvent($form, $entity), Events::BEFORE_FLUSH);
 
         $this->eventDispatcher->expects($this->at(3))
             ->method('dispatch')
-            ->with(Events::AFTER_FLUSH, new AfterFormProcessEvent($form, $entity));
+            ->with(new AfterFormProcessEvent($form, $entity), Events::AFTER_FLUSH);
     }
 }

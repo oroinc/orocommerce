@@ -34,7 +34,7 @@ Feature: Single Page Checkout From Shopping List
       | Checkout | List 1       | 1     | $10.00   |
     And I click "Check Out" on row "List 1" in grid "OpenOrdersGrid"
 
-    When I click "Edit Order"
+    When I click "Edit items"
     And I wait line items are initialized
     And I type "10" in "Shopping List Line Item 1 Quantity"
     And I should see "Record has been successfully updated" flash message

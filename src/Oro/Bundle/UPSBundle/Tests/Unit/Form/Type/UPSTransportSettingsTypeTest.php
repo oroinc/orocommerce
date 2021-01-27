@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\UPSBundle\Tests\Unit\Form\Type;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType;
@@ -107,7 +107,7 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
         );
 
         /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $registry */
-        $registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $registry = $this->createMock('Doctrine\Persistence\ManagerRegistry');
         $localizedFallbackValue = new LocalizedFallbackValueCollectionType($registry);
 
         return [

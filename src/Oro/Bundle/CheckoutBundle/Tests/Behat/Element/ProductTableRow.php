@@ -36,6 +36,13 @@ class ProductTableRow extends TableRow implements ConfigurableProductTableRowAwa
      */
     public function getProductSku(): string
     {
-        return $this->getElement('CheckoutStepLineItemProductSku')->getText();
+        foreach ($this->getElements('CheckoutStepLineItemProductSku') as $element) {
+            $sku = $element->getText();
+            if ($sku) {
+                return $sku;
+            }
+        }
+
+        return '';
     }
 }

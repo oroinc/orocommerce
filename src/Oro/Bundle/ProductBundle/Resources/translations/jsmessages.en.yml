@@ -134,6 +134,8 @@ oro:
                 label: '{0} none|]0,1] bottle|]1,Inf] bottles'
 
         validation:
+            sku:
+                not_found: 'Item Number Cannot Be Found'
             unit:
                 required: Unit is required
                 invalid: 'Unit {{ unit }} is invalid for this product'
@@ -177,3 +179,9 @@ oro:
         images:
             zoom:
                 label: 'Enlarge Product Image'
+
+        autocomplete:
+            popup:
+                button:
+                    all.label: '{1} See Result|]1,Inf] See All {{ productCount }} Results'
+            no_found: 'No products were found to match your search'

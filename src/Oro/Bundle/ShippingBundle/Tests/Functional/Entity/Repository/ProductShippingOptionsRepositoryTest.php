@@ -19,38 +19,47 @@ class ProductShippingOptionsRepositoryTest extends WebTestCase
 
     protected function setUp(): void
     {
-        $this->initClient([], static::generateBasicAuthHeader());
+        $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures([
             LoadProductShippingOptions::class,
         ]);
 
-        $this->repository = static::getContainer()->get('doctrine')->getRepository(ProductShippingOptions::class);
+        $this->repository = $this->getContainer()->get('doctrine')->getRepository(ProductShippingOptions::class);
     }
 
-    public function testFindByProductsAndUnits()
+    public function testFindIndexedByProductsAndUnits(): void
     {
         $product = $this->getReference('product-1');
         $unit = $this->getReference('product_unit.liter');
 
         $unitsByProductIds = [$product->getId() => $unit];
 
-        $shippingOptionsArray = $this->repository->findByProductsAndUnits($unitsByProductIds);
+        $shippingOptionsArray = $this->repository->findIndexedByProductsAndUnits($unitsByProductIds);
 
-        $expectedShippingOptionsArray = [$this->getReference(LoadProductShippingOptions::PRODUCT_SHIPPING_OPTIONS_1)];
+        $expectedShippingOptions = $this->getReference(LoadProductShippingOptions::PRODUCT_SHIPPING_OPTIONS_1);
 
-        static::assertEquals($expectedShippingOptionsArray, $shippingOptionsArray);
+        $this->assertEquals(
+            [
+                $expectedShippingOptions->getProduct()->getId() => [
+                    'dimensionsHeight' => 3,
+                    'dimensionsLength' => 1,
+                    'dimensionsWidth' => 2,
+                    'dimensionsUnit' => 'in',
+                    'weightUnit' => 'kilo',
+                    'weightValue' => 42,
+                    'productId' => $expectedShippingOptions->getProduct()->getId(),
+                ]
+            ],
+            $shippingOptionsArray
+        );
     }
 
-    public function testFindByProductsAndUnitsEmpty()
+    public function testFindIndexedByProductsAndUnitsEmpty(): void
     {
-        $unitsByProductIds = [];
-
-        $shippingOptionsArray = $this->repository->findByProductsAndUnits($unitsByProductIds);
-
-        static::assertEquals([], $shippingOptionsArray);
+        $this->assertEquals([], $this->repository->findIndexedByProductsAndUnits([]));
     }
 
-    public function testFindByProductsAndUnitsDifferentUnits()
+    public function testFindIndexedByProductsAndUnitsDifferentUnits(): void
     {
         $product1 = $this->getReference('product-1');
         $unit1 = $this->getReference('product_unit.box');
@@ -62,8 +71,8 @@ class ProductShippingOptionsRepositoryTest extends WebTestCase
             $product2->getId() => $unit2,
         ];
 
-        $shippingOptionsArray = $this->repository->findByProductsAndUnits($unitsByProductIds);
+        $shippingOptionsArray = $this->repository->findIndexedByProductsAndUnits($unitsByProductIds);
 
-        static::assertEquals([], $shippingOptionsArray);
+        $this->assertEquals([], $shippingOptionsArray);
     }
 }

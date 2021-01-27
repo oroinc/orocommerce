@@ -56,6 +56,7 @@ class ResolvedProductVisibilityProvider
      */
     public function prefetch(array $productIds): void
     {
+        $productIds = array_diff($productIds, array_keys($this->cache));
         if (!$productIds) {
             return;
         }
@@ -66,14 +67,13 @@ class ResolvedProductVisibilityProvider
         $qb = $repository->getProductsQueryBuilder($productIds);
         $this->queryBuilderModifier->modify($qb);
         $qb->resetDQLPart('select')->select('p.id');
-        $visibleProducts = array_column($qb->getQuery()->getResult(AbstractQuery::HYDRATE_ARRAY), 'id', 'id');
+        $visibleProducts = array_column($qb->getQuery()->getResult(AbstractQuery::HYDRATE_ARRAY), 'id');
 
-        $result = [];
-        foreach ($productIds as $productId) {
-            $result[$productId] = isset($visibleProducts[$productId]);
-        }
-
-        $this->cache = array_replace($this->cache, $result);
+        $this->cache = array_replace(
+            $this->cache,
+            array_fill_keys($productIds, false),
+            array_fill_keys($visibleProducts, true)
+        );
     }
 
     /**

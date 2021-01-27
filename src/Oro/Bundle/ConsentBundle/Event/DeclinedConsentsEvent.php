@@ -4,7 +4,7 @@ namespace Oro\Bundle\ConsentBundle\Event;
 
 use Oro\Bundle\ConsentBundle\Entity\ConsentAcceptance;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * This event dispatched each time when customer user declined consents

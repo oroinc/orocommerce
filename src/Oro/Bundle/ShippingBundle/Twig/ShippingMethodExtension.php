@@ -6,8 +6,8 @@ use Oro\Bundle\ShippingBundle\Checker\ShippingMethodEnabledByIdentifierCheckerIn
 use Oro\Bundle\ShippingBundle\Event\ShippingMethodConfigDataEvent;
 use Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter;
 use Psr\Container\ContainerInterface;
-use Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -56,7 +56,7 @@ class ShippingMethodExtension extends AbstractExtension implements ServiceSubscr
     {
         $event = new ShippingMethodConfigDataEvent($shippingMethodName);
         if (!array_key_exists($shippingMethodName, $this->configCache)) {
-            $this->container->get('event_dispatcher')->dispatch(ShippingMethodConfigDataEvent::NAME, $event);
+            $this->container->get('event_dispatcher')->dispatch($event, ShippingMethodConfigDataEvent::NAME);
             $template = $event->getTemplate();
             if (!$template) {
                 $template = static::DEFAULT_METHOD_CONFIG_TEMPLATE;

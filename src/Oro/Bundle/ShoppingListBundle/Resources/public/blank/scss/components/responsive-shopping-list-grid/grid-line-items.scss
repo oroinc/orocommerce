@@ -11,7 +11,7 @@
 
         line-height: $grid-line-line-height;
 
-        &:first-child {
+        &:not(:only-child):first-child {
             margin-right: $grid-line-items-row-offset-x;
             align-self: flex-start;
         }
@@ -78,7 +78,8 @@
     }
 
     &__ellipsis {
-        display: block;
+        display: inline-block;
+        max-width: 100%;
 
         @include ellipsis();
     }
@@ -113,7 +114,7 @@
     }
 }
 
-@include breakpoint('tablet') {
+@mixin grid-line-items-tablet {
     .grid-line-items {
         &__row-entry {
             padding-top: $grid-line-row-entry-offset-y-tablet;
@@ -130,10 +131,18 @@
     }
 }
 
+@include breakpoint('tablet') {
+    @include grid-line-items-tablet;
+}
+
 @include breakpoint('mobile-landscape') {
     .grid-line-items {
+        .height-as-image-mobile {
+            min-height: $product-item-image-holder-tiny-height;
+        }
+
         &__row {
-            &:first-child {
+            &:not(:only-child):first-child {
                 margin-right: $grid-line-items-row-offset-x-mobile;
             }
         }
@@ -141,7 +150,6 @@
         &__row-item {
             display: flex;
             align-items: center;
-            min-height: $product-item-image-holder-tiny-height;
             margin-bottom: $grid-line-items-container-offset-x-mobile;
         }
 

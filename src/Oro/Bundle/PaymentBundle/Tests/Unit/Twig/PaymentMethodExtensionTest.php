@@ -88,8 +88,8 @@ class PaymentMethodExtensionTest extends \PHPUnit\Framework\TestCase
 
         $this->dispatcher->expects(static::once())
             ->method('dispatch')
-            ->with(PaymentMethodConfigDataEvent::NAME)
-            ->willReturnCallback(function ($name, PaymentMethodConfigDataEvent $event) use ($methodName) {
+            ->with(static::isInstanceOf(PaymentMethodConfigDataEvent::class), PaymentMethodConfigDataEvent::NAME)
+            ->willReturnCallback(function (PaymentMethodConfigDataEvent $event, $name) use ($methodName) {
                 static::assertEquals($methodName, $event->getMethodIdentifier());
                 $event->setTemplate(PaymentMethodExtension::DEFAULT_METHOD_CONFIG_TEMPLATE);
             });
@@ -113,9 +113,9 @@ class PaymentMethodExtensionTest extends \PHPUnit\Framework\TestCase
 
         $this->dispatcher->expects(static::once())
             ->method('dispatch')
-            ->with(PaymentMethodConfigDataEvent::NAME)
+            ->with(static::isInstanceOf(PaymentMethodConfigDataEvent::class), PaymentMethodConfigDataEvent::NAME)
             ->willReturnCallback(
-                function ($name, PaymentMethodConfigDataEvent $event) use ($methodName, $template) {
+                function (PaymentMethodConfigDataEvent $event, $name) use ($methodName, $template) {
                     static::assertEquals($methodName, $event->getMethodIdentifier());
                     $event->setTemplate($template);
                 }

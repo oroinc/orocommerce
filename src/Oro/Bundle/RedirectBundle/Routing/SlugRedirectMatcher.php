@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\RedirectBundle\Routing;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\RedirectBundle\Entity\Redirect;
 use Oro\Bundle\RedirectBundle\Entity\Repository\RedirectRepository;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;

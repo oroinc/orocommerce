@@ -8,6 +8,10 @@
 
   @include clearfix();
 
+  &__progress {
+    position: relative;
+  }
+
   .mobile-version & {
     @include breakpoint('mobile-big') {
       padding: $quick-order-mobile-padding;

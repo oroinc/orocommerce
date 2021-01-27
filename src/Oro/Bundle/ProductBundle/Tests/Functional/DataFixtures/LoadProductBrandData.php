@@ -4,7 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ProductBundle\Entity\Brand;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
@@ -61,8 +61,8 @@ class LoadProductBrandData extends AbstractFixture implements ContainerAwareInte
     private function reindexProductData()
     {
         $this->container->get('event_dispatcher')->dispatch(
-            ReindexationRequestEvent::EVENT_NAME,
-            new ReindexationRequestEvent([Product::class], [], [], false)
+            new ReindexationRequestEvent([Product::class], [], [], false),
+            ReindexationRequestEvent::EVENT_NAME
         );
     }
 }

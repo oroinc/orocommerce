@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ConsentBundle\Tests\Unit\EventListener;
 
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\ConsentBundle\Entity\Consent;
 use Oro\Bundle\ConsentBundle\EventListener\RemoveFromConfigurationConsentEntityListener;
 use Oro\Bundle\ConsentBundle\SystemConfig\ConsentConfigManager;

@@ -3,8 +3,8 @@
 namespace Oro\Bundle\ConsentBundle\Tests\Unit\Provider;
 
 use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\ConsentBundle\Provider\LandingPageProvider;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;

@@ -32,7 +32,15 @@
     }
 
     &__radio {
-        margin: 0 0 $offset-y-m;
+        margin-bottom: $offset-y-m;
+
+        &:last-child {
+            margin-bottom: 0;
+
+            .checkout-form__payment-container {
+                margin-bottom: 0;
+            }
+        }
 
         .custom-radio {
             &.checked {
@@ -92,12 +100,6 @@
         margin: $checkout-form-payment-methods-form-margin;
     }
 
-    &__req-text {
-        margin: $checkout-form-req-text-margin;
-
-        color: $checkout-form-req-text-color;
-    }
-
     &__asterix {
         margin: $checkout-form-asterix-offset;
 
@@ -105,7 +107,15 @@
     }
 
     &__back {
-        padding: $checkout-form-back-padding;
+        margin: $checkout-form-back-offset;
+
+        &--no-offset {
+            margin: 0;
+        }
+
+        &--offset-bottom {
+            margin: $checkout-form-back-bottom-offset;
+        }
     }
 
     .form-field-cvv,
@@ -119,12 +129,6 @@
         &__submit {
             min-width: $checkout-form-submit-tablet-min-width;
             width: $checkout-form-submit-tablet-width;
-        }
-
-        &__req-text {
-            position: $checkout-form-req-text-tablet-position;
-
-            margin: $checkout-form-req-text-tablet-margin;
         }
     }
 }

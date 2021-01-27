@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Manager;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
@@ -199,6 +199,22 @@ class CurrentShoppingListManager
 
         return $this->getShoppingListRepository()
             ->findByUser($this->aclHelper, $sortCriteria);
+    }
+
+    /**
+     * @param CustomerUser $customerUser
+     * @param array $sortCriteria
+     *
+     * @return ShoppingList[]
+     */
+    public function getShoppingListsByCustomerUser(CustomerUser $customerUser, array $sortCriteria = []): array
+    {
+        if ($this->guestShoppingListManager->isGuestShoppingListAvailable()) {
+            return $this->guestShoppingListManager->getShoppingListsForCustomerVisitor();
+        }
+
+        return $this->getShoppingListRepository()
+            ->findByCustomerUserId($customerUser->getId(), $this->aclHelper, $sortCriteria);
     }
 
     /**

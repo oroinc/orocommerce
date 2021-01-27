@@ -9,6 +9,7 @@ use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
+use Oro\Bundle\VisibilityBundle\Provider\ResolvedProductVisibilityProvider;
 use Oro\Component\Checkout\DataProvider\AbstractCheckoutProvider;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
@@ -34,18 +35,26 @@ class CheckoutLineItemsDataProvider extends AbstractCheckoutProvider
     private $productAvailabilityCache;
 
     /**
+     * @var ResolvedProductVisibilityProvider
+     */
+    private $resolvedProductVisibilityProvider;
+
+    /**
      * @param FrontendProductPricesDataProvider $frontendProductPricesDataProvider
      * @param AuthorizationCheckerInterface $authorizationChecker
      * @param CacheProvider $productAvailabilityCache
+     * @param ResolvedProductVisibilityProvider $resolvedProductVisibilityProvider
      */
     public function __construct(
         FrontendProductPricesDataProvider $frontendProductPricesDataProvider,
         AuthorizationCheckerInterface $authorizationChecker,
-        CacheProvider $productAvailabilityCache
+        CacheProvider $productAvailabilityCache,
+        ResolvedProductVisibilityProvider $resolvedProductVisibilityProvider
     ) {
         $this->frontendProductPricesDataProvider = $frontendProductPricesDataProvider;
         $this->authorizationChecker = $authorizationChecker;
         $this->productAvailabilityCache = $productAvailabilityCache;
+        $this->resolvedProductVisibilityProvider = $resolvedProductVisibilityProvider;
     }
 
     /**
@@ -57,6 +66,9 @@ class CheckoutLineItemsDataProvider extends AbstractCheckoutProvider
     {
         $lineItems = $entity->getLineItems();
         $lineItemsPrices = $this->getLineItemsPrices($lineItems);
+
+        $this->prefetchProductsVisibility($lineItems);
+
         $data = [];
 
         /** @var CheckoutLineItem $lineItem */
@@ -102,6 +114,21 @@ class CheckoutLineItemsDataProvider extends AbstractCheckoutProvider
 
         return $lineItemsWithoutPrice ? $this->frontendProductPricesDataProvider
             ->getProductsMatchedPrice($lineItemsWithoutPrice) : [];
+    }
+
+    /**
+     * @param Collection $lineItems
+     */
+    private function prefetchProductsVisibility(Collection $lineItems): void
+    {
+        $productIds = [];
+        foreach ($lineItems as $lineItem) {
+            if ($lineItem instanceof ProductHolderInterface && $lineItem->getProduct()) {
+                $productIds[] = $lineItem->getProduct()->getId();
+            }
+        }
+
+        $this->resolvedProductVisibilityProvider->prefetch(array_unique($productIds));
     }
 
     /**

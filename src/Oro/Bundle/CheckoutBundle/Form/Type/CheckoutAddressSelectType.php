@@ -4,6 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\Form\Type;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Form\DataTransformer\OrderAddressToAddressIdentifierViewTransformer;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Form\Type\OrderAddressSelectType;
 use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
@@ -15,45 +16,34 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 /**
  * Represents checkout address select form type with list of grouped available addresses for customer user
  */
 class CheckoutAddressSelectType extends AbstractType
 {
-    const NAME = 'oro_checkout_address_select';
-    const DEFAULT_GROUP_LABEL_PREFIX = 'oro.checkout.';
-
     /** @var OrderAddressManager */
-    private $addressManager;
+    private OrderAddressManager $addressManager;
 
-    /** @var PropertyAccessor */
-    private $propertyAccessor;
-
-    /** @var array  */
-    private $requiredFields = [];
+    /** @var OrderAddressToAddressIdentifierViewTransformer */
+    private OrderAddressToAddressIdentifierViewTransformer $orderAddressToAddressIdentifierViewTransforLmer;
 
     /**
      * @param OrderAddressManager $addressManager
-     * @param PropertyAccessor $propertyAccessor
-     * @param array $requiredFields
+     * @param OrderAddressToAddressIdentifierViewTransformer $orderAddressToAddressIdentifierViewTransforLmer
      */
     public function __construct(
         OrderAddressManager $addressManager,
-        PropertyAccessor $propertyAccessor,
-        array $requiredFields
+        OrderAddressToAddressIdentifierViewTransformer $orderAddressToAddressIdentifierViewTransforLmer
     ) {
         $this->addressManager = $addressManager;
-        $this->propertyAccessor = $propertyAccessor;
-        $this->requiredFields = $requiredFields;
+        $this->orderAddressToAddressIdentifierViewTransforLmer = $orderAddressToAddressIdentifierViewTransforLmer;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         /** @var Checkout $object */
         $object = $options['object'];
@@ -61,36 +51,49 @@ class CheckoutAddressSelectType extends AbstractType
         /** @var TypedOrderAddressCollection $collection */
         $collection = $options['address_collection'];
 
-        $selectedKey = $this->getSelectedAddress($object, $addressType);
-        if ($selectedKey === null) {
-            $selectedKey = $collection->getDefaultAddressKey();
+        $address = $this->getSelectedAddress($object, $addressType);
+        if ($address === null) {
+            $address = $collection->getDefaultAddressKey();
         }
 
-        if ($selectedKey !== null) {
-            $builder->setData($selectedKey);
+        if ($address !== null) {
+            $builder->setData($address);
         }
 
-        $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) use ($object, $addressType) {
-            $address = $event->getData();
-            if ($address === OrderAddressSelectType::ENTER_MANUALLY) {
-                if ($addressType === AddressType::TYPE_BILLING) {
-                    $orderAddress = $object->getBillingAddress();
-                } elseif ($addressType === AddressType::TYPE_SHIPPING) {
-                    $orderAddress = $object->getShippingAddress();
-                }
+        // Transformer must be executed before ChoiceToValueTransformer so it can transform OrderAddress to a key.
+        $builder->addViewTransformer($this->orderAddressToAddressIdentifierViewTransforLmer, true);
 
-                if (isset($orderAddress) && !$orderAddress->getCustomerAddress()
-                    && !$orderAddress->getCustomerUserAddress()) {
-                    $event->setData($orderAddress);
-                }
+        $builder->addEventListener(FormEvents::SUBMIT, [$this, 'onSubmit']);
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function onSubmit(FormEvent $event): void
+    {
+        $options = $event->getForm()->getConfig()->getOptions();
+        /** @var Checkout $object */
+        $object = $options['object'];
+        $addressType = $options['address_type'];
+        $address = $event->getData();
+        if ($address === null || $address === OrderAddressSelectType::ENTER_MANUALLY) {
+            if ($addressType === AddressType::TYPE_BILLING) {
+                $orderAddress = $object->getBillingAddress();
+            } elseif ($addressType === AddressType::TYPE_SHIPPING) {
+                $orderAddress = $object->getShippingAddress();
             }
-        });
+
+            if (isset($orderAddress) && !$orderAddress->getCustomerAddress()
+                && !$orderAddress->getCustomerUserAddress()) {
+                $event->setData($orderAddress);
+            }
+        }
     }
 
     /**
      * {@inheritdoc}
      */
-    public function finishView(FormView $view, FormInterface $form, array $options)
+    public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         $labelPrefix = $options['group_label_prefix'];
         /** @var TypedOrderAddressCollection $collection */
@@ -110,13 +113,13 @@ class CheckoutAddressSelectType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver
             ->setDefaults([
                 'data' => null,
                 'data_class' => null,
-                'group_label_prefix' => self::DEFAULT_GROUP_LABEL_PREFIX,
+                'group_label_prefix' => 'oro.checkout.',
             ])
             ->setAllowedTypes('object', Checkout::class);
     }
@@ -124,23 +127,15 @@ class CheckoutAddressSelectType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getBlockPrefix(): string
     {
-        return $this->getBlockPrefix();
+        return 'oro_checkout_address_select';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
-    {
-        return self::NAME;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getParent()
+    public function getParent(): string
     {
         return OrderAddressSelectType::class;
     }
@@ -149,63 +144,17 @@ class CheckoutAddressSelectType extends AbstractType
      * @param Checkout $entity
      * @param string $type
      *
-     * @return null|string
+     * @return null|OrderAddress
      */
-    private function getSelectedAddress(Checkout $entity, $type)
+    private function getSelectedAddress(Checkout $entity, $type): ?OrderAddress
     {
-        $selectedKey = null;
+        $address = null;
         if ($type === AddressType::TYPE_BILLING) {
-            $selectedKey = $this->getSelectedAddressKey($entity->getBillingAddress());
+            $address = $entity->getBillingAddress();
         } elseif ($type === AddressType::TYPE_SHIPPING) {
-            $selectedKey = $this->getSelectedAddressKey($entity->getShippingAddress());
+            $address = $entity->getShippingAddress();
         }
 
-        return $selectedKey;
-    }
-
-    /**
-     * @param OrderAddress|null $checkoutAddress
-     *
-     * @return int|string
-     */
-    private function getSelectedAddressKey(OrderAddress $checkoutAddress = null)
-    {
-        $selectedKey = null;
-        if ($checkoutAddress) {
-            if ($checkoutAddress->getCustomerAddress()) {
-                $selectedKey = $this->addressManager->getIdentifier($checkoutAddress->getCustomerAddress());
-            } elseif ($checkoutAddress->getCustomerUserAddress()) {
-                $selectedKey = $this->addressManager->getIdentifier($checkoutAddress->getCustomerUserAddress());
-            } elseif (!$this->addressIsEmpty($checkoutAddress)) {
-                // Select new address if it was already created by customer.
-                $selectedKey = OrderAddressSelectType::ENTER_MANUALLY;
-            }
-        }
-
-        return $selectedKey;
-    }
-
-    /**
-     * Check if new address is fulfilled with some data. Assume address is not empty if one of the required fields
-     * is not empty.
-     *
-     * @param OrderAddress $address
-     * @return bool
-     */
-    private function addressIsEmpty(OrderAddress $address): bool
-    {
-        foreach ($this->requiredFields as $field) {
-            try {
-                $value = $this->propertyAccessor->getValue($address, $field);
-            } catch (NoSuchPropertyException $e) {
-                $value = null;
-            }
-
-            if (null !== $value) {
-                return false;
-            }
-        }
-
-        return true;
+        return $address;
     }
 }

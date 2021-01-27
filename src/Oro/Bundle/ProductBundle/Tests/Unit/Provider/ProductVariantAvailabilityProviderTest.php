@@ -9,6 +9,7 @@ use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
+use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Event\RestrictProductVariantEvent;
@@ -20,7 +21,6 @@ use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductProxyStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
-use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -221,7 +221,7 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->dispatcher->expects($this->once())
             ->method('dispatch')
-            ->with(RestrictProductVariantEvent::NAME, $this->isInstanceOf(RestrictProductVariantEvent::class));
+            ->with($this->isInstanceOf(RestrictProductVariantEvent::class), RestrictProductVariantEvent::NAME);
 
         $this->setUpRepositoryResult($configurableProduct, $variantParameters, $expected);
 
@@ -757,7 +757,7 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
             foreach ($data as $field => $value) {
                 switch ($variantsData[$field]['type']) {
                     case 'enum':
-                        $fieldValue = $value ? new StubEnumValue($value, $value) : null;
+                        $fieldValue = $value ? new TestEnumValue($value, $value) : null;
                         break;
                     case 'boolean':
                         $fieldValue = $value;
@@ -796,7 +796,7 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
         $event = new RestrictProductVariantEvent($qb);
         $this->dispatcher->expects($this->once())
             ->method('dispatch')
-            ->with(RestrictProductVariantEvent::NAME, $event);
+            ->with($event, RestrictProductVariantEvent::NAME);
 
         $em = $this->createMock(EntityManager::class);
         $em->expects($this->any())

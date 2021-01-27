@@ -1,6 +1,7 @@
 @regression
 @ticket-BB-9989
 @fixture-OroProductBundle:ProductAttributesFixture.yml
+@skip
 Feature: Product attribute image
   In order to have custom attributes for Product entity
   As an Administrator
@@ -75,7 +76,7 @@ Feature: Product attribute image
     When I click "View Details" for "SKU123" product
     Then I should see "ImageField"
     When I click "Copyright"
-    And I hover on "Product Main Image"
+    And I hover on "Product Main Image In Tab"
     Then I check element "Zoom Container" has width "564"
 
   Scenario: Remove commerce from product attribute file applications

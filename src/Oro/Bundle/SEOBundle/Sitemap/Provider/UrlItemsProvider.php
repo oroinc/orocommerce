@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\SEOBundle\Sitemap\Provider;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryWithDoctrineIterableResultIterator;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\EntityProperty\UpdatedAtAwareInterface;
@@ -299,10 +299,10 @@ class UrlItemsProvider implements UrlItemsProviderInterface
     private function dispatchIterationEvent($eventName, WebsiteInterface $website, $version)
     {
         $this->eventDispatcher->dispatch(
-            sprintf('%s.%s', $eventName, $this->type),
-            new UrlItemsProviderEvent($version, $website)
+            new UrlItemsProviderEvent($version, $website),
+            sprintf('%s.%s', $eventName, $this->type)
         );
-        $this->eventDispatcher->dispatch($eventName, new UrlItemsProviderEvent($version, $website));
+        $this->eventDispatcher->dispatch(new UrlItemsProviderEvent($version, $website), $eventName);
     }
 
     /**
@@ -316,12 +316,12 @@ class UrlItemsProvider implements UrlItemsProviderInterface
         $version
     ) {
         $this->eventDispatcher->dispatch(
-            sprintf('%s.%s', RestrictSitemapEntitiesEvent::NAME, $this->type),
-            new RestrictSitemapEntitiesEvent($queryBuilder, $version, $website)
+            new RestrictSitemapEntitiesEvent($queryBuilder, $version, $website),
+            sprintf('%s.%s', RestrictSitemapEntitiesEvent::NAME, $this->type)
         );
         $this->eventDispatcher->dispatch(
-            RestrictSitemapEntitiesEvent::NAME,
-            new RestrictSitemapEntitiesEvent($queryBuilder, $version, $website)
+            new RestrictSitemapEntitiesEvent($queryBuilder, $version, $website),
+            RestrictSitemapEntitiesEvent::NAME
         );
     }
 

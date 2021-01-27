@@ -1,0 +1,442 @@
+Oro\Bundle\CustomerBundle\Entity\Customer:
+    customer:
+        name: 'first customer'
+        organization: '@organization'
+        owner: '@admin'
+        payment_term_7c4f1e8e: '@paymentTerm'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUser:
+    amanda:
+        email: 'AmandaRCole@example.org'
+        username: 'AmandaRCole@example.org'
+        password: 'gxP1L8r86hrdUMg9wKdfnsS/EZC4a7jOIdn6BMzegqL2S6e+KBIuHCrDVciMdiR/64osNnabmFonwK8l09vQxA=='
+        salt: 'fgswya1kzw0sck8ck48kosowckwo0ws'
+        firstName: 'Amanda'
+        lastName: 'Cole'
+        enabled: '1'
+        confirmed: '1'
+        customer: '@customer'
+        organization: '@organization'
+        roles: ['@front_admin']
+        owner: '@admin'
+        website: '@website1'
+    nancy:
+        email: 'NancyJSallee@example.org'
+        username: 'NancyJSallee@example.org'
+        password: 'RQ0+FN3TZyBpB4W6FenR4kTugMt0LW6Gcq9hsMkC5hwkA+C9UQBvt2th0RXEbVMG3DcV7LXi+26CjK8L2EkLVQ=='
+        salt: '687ji8ylggkck4wg8gggkooo44gks8g'
+        firstName: 'Nancy'
+        lastName: 'Sallee'
+        enabled: '1'
+        confirmed: '1'
+        customer: '@customer'
+        organization: '@organization'
+        roles: ['@front_admin']
+        owner: '@admin'
+        website: '@website1'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerAddress:
+    customerAddress:
+        country: '@germany'
+        region: '@berlin'
+        label: 'Primary address'
+        street: 'Fifth avenue'
+        city: 'Berlin'
+        postalCode: '10115'
+        frontendOwner: '@customer'
+        owner: '@admin'
+        __calls:
+            - setDefaults: ['@shippingType', '@billingType']
+        systemOrganization: '@organization'
+        primary: true
+        organization: '@organization'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerAddressToAddressType:
+    customerAddressShippingDefault:
+        address: '@customerAddress'
+        type: '@shippingType'
+        default: true
+    customerAddressBillingDefault:
+        address: '@customerAddress'
+        type: '@billingType'
+        default: true
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
+    address:
+        country: '@germany'
+        region: '@berlin'
+        label: 'Primary address'
+        street: 'Fifth avenue'
+        city: 'Berlin'
+        postalCode: '10115'
+        frontendOwner: '@amanda'
+        owner: '@admin'
+        __calls:
+            - setDefaults: ['@shippingType', '@billingType']
+        systemOrganization: '@organization'
+        primary: true
+        organization: '@organization'
+    address2:
+        country: '@germany'
+        region: '@berlin'
+        label: 'label'
+        street: 'Fourth avenue'
+        city: 'Berlin'
+        postalCode: '10111'
+        organization: '@organization'
+        frontendOwner: '@amanda'
+        owner: '@admin'
+        systemOrganization: '@organization'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings:
+    customerUserSetting:
+        customerUser: '@amanda'
+        __construct: ['@website1']
+        currency: 'USD'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddressToAddressType:
+    billing:
+        address: '@address'
+        type: '@billingType'
+        default: true
+    billing2:
+        address: '@address2'
+        type: '@billingType'
+    shipping:
+        address: '@address'
+        type: '@shippingType'
+        default: true
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision{1..3}:
+        unit: '@item'
+        precision: '0'
+    precision{4..6}:
+        unit: '@item'
+        precision: '0'
+    precision{7..9}:
+        unit: '@piece'
+        precision: '0'
+    precision{10..11}:
+        unit: '@set'
+        precision: '0'
+    precision{12..17}:
+        unit: '@item'
+        precision: '0'
+    precision{18..20}:
+        unit: '@set'
+        precision: '0'
+    precision{21..40}:
+        unit: '@piece'
+        precision: '0'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    productName{1..3}:
+        string: 'Configurable Product <current()>'
+    productName{4..40}:
+        string: 'Product <current()>'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    attributeFamilyLabel:
+        string: 'Attribute Family'
+    lineItemDiscountPromotionLabel:
+        string: 'Line Item Discount Promotion'
+
+Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
+    attribute_family:
+        entityClass: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
+        code: 'family'
+        owner: '@organization'
+        __calls:
+            - addLabel: ['@attributeFamilyLabel']
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product{1..3}:
+        type: 'configurable'
+        organization: '@organization'
+        owner: '@business_unit'
+        sku: 'AA<current()>'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@precision<current()>'
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        __calls:
+            - addName: ['@productName<current()>']
+    product{4..20, 2}:
+        type: 'simple'
+        organization: '@organization'
+        owner: '@business_unit'
+        sku: 'BB<current()>'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@precision<current()>'
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        __calls:
+            - addName: ['@productName<current()>']
+    product{5..19, 2}:
+        type: 'simple'
+        organization: '@organization'
+        owner: '@business_unit'
+        sku: 'BB<current()>'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@precision<current()>'
+        inventoryStatus: '@enumInventoryStatusOutOfStock'
+        status: 'enabled'
+        __calls:
+            - addName: ['@productName<current()>']
+    product{21..40}:
+        type: 'simple'
+        organization: '@organization'
+        owner: '@business_unit'
+        sku: 'CC<current()>'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@precision<current()>'
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        __calls:
+            - addName: ['@productName<current()>']
+
+Oro\Bundle\InventoryBundle\Entity\InventoryLevel:
+    inventoryLevel{4..40}:
+        product: '@product<current()>'
+        productUnitPrecision: '@precision<current()>'
+        quantity: 100
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    price{4..6}:
+        product: '@product<current()>'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 11
+    price{7..9}:
+        product: '@product<current()>'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@piece'
+        value: 17
+    price{10..11}:
+        product: '@product<current()>'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@set'
+        value: 19
+    price{12..17}:
+        product: '@product<current()>'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 23
+    price{18..20}:
+        product: '@product<current()>'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@set'
+        value: 29
+    price{21..40}:
+        product: '@product<current()>'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@piece'
+        value: 31
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceRelation{4..40}:
+        product: '@product<current()>'
+        priceList: '@defaultPriceList'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+    shoppinglist1:
+        label: 'Shopping List 1'
+        customer: '@customer'
+        customerUser: '@amanda'
+        organization: '@organization'
+        website: '@website1'
+        notes: 'Shopping List 1 Notes'
+    shoppinglist2:
+        label: 'Shopping List 2'
+        customer: '@customer'
+        customerUser: '@nancy'
+        organization: '@organization'
+        website: '@website1'
+        notes: 'Shopping List 2 Notes'
+    shoppinglist3:
+        label: 'Shopping List 3'
+        customer: '@customer'
+        customerUser: '@amanda'
+        organization: '@organization'
+        website: '@website1'
+        notes: 'Shopping List 3 Notes'
+
+Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+    lineitem{4..5}:
+        product: '@product<current()>'
+        parentProduct: '@product1'
+        quantity: '3'
+        unit: '@item'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist3'
+        organization: '@organization'
+        notes: 'Note <current()> text'
+    lineitem6:
+        product: '@product6'
+        parentProduct: '@product2'
+        quantity: '3'
+        unit: '@item'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist3'
+        organization: '@organization'
+        notes: 'Note 6 text'
+    lineitem7:
+        product: '@product7'
+        parentProduct: '@product2'
+        quantity: '5'
+        unit: '@piece'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist3'
+        organization: '@organization'
+        notes: 'Note 7 text'
+    lineitem{8..9}:
+        product: '@product<current()>'
+        parentProduct: '@product3'
+        quantity: '5'
+        unit: '@piece'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist3'
+        organization: '@organization'
+        notes: 'Note <current()> text'
+    lineitem10:
+        product: '@product10'
+        parentProduct: '@product3'
+        quantity: '7'
+        unit: '@set'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist3'
+        organization: '@organization'
+        notes: 'Note 10 text'
+    lineitem11:
+        product: '@product11'
+        parentProduct: '@product2'
+        quantity: '7'
+        unit: '@set'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist3'
+        organization: '@organization'
+        notes: 'Note 11 text'
+    lineitem12:
+        product: '@product12'
+        parentProduct: '@product1'
+        quantity: '7'
+        unit: '@item'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist3'
+        organization: '@organization'
+        notes: 'Note 12 text'
+    lineitem{13..17}:
+        product: '@product<current()>'
+        quantity: '9'
+        unit: '@item'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist3'
+        organization: '@organization'
+        notes: 'Note <current()> text'
+    lineitem{18..20}:
+        product: '@product<current()>'
+        quantity: '11'
+        unit: '@set'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist3'
+        organization: '@organization'
+        notes: 'Note <current()> text'
+    lineitem{21..35}:
+        product: '@product<current()>'
+        quantity: '13'
+        unit: '@piece'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist3'
+        organization: '@organization'
+        notes: 'Note <current()> text'
+    lineitem{36..38}:
+        product: '@product<current()>'
+        quantity: '17'
+        unit: '@piece'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist1'
+        organization: '@organization'
+        notes: 'Note <current()> text'
+    lineitem{39..40}:
+        product: '@product<current()>'
+        quantity: '19'
+        unit: '@piece'
+        customerUser: '@nancy'
+        shoppingList: '@shoppinglist2'
+        organization: '@organization'
+        notes: 'Note <current()> text'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
+    shoppingListTotalUsd1:
+        __construct: ['@shoppinglist1','USD']
+        subtotalValue: '1581'
+        valid: true
+    shoppingListTotalEur1:
+        __construct: ['@shoppinglist1','EUR']
+        subtotalValue: '1581'
+        valid: true
+    shoppingListTotalUsd2:
+        __construct: ['@shoppinglist2','USD']
+        subtotalValue: '1178'
+        valid: true
+    shoppingListTotalEur2:
+        __construct: ['@shoppinglist2','EUR']
+        subtotalValue: '1178'
+        valid: true
+    shoppingListTotalUsd3:
+        __construct: ['@shoppinglist3','USD']
+        subtotalValue: '8818'
+        valid: true
+    shoppingListTotalEur3:
+        __construct: ['@shoppinglist3','EUR']
+        subtotalValue: '8818'
+        valid: true
+
+Oro\Bundle\SegmentBundle\Entity\Segment:
+    lineItemDiscountPromotionSegment:
+        name: 'Promotion Matching Products'
+        type: '@segment_dynamic_type'
+        entity: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
+        definition: <('{"filters":[[{"columnName":"id","criterion":{"filter":"number","data":{"value":0,"type":"2"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}')>
+        organization: '@organization'
+        owner: '@business_unit'
+
+Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration:
+    lineItemDiscountPromotionDiscountConfiguration:
+        type: 'line_item'
+        options:
+            discount_type: 'percent'
+            discount_product_unit_code: 'item'
+            discount_value: 0.5
+            apply_to: 'line_items_total'
+
+Oro\Bundle\RuleBundle\Entity\Rule:
+    lineItemDiscountPromotionRule:
+        enabled: true
+        sortOrder: 1
+        name: 'line Item Discount Promotion'
+
+Oro\Bundle\PromotionBundle\Entity\Promotion:
+    lineItemDiscountPromotion:
+        productsSegment: '@lineItemDiscountPromotionSegment'
+        rule: '@lineItemDiscountPromotionRule'
+        discountConfiguration: '@lineItemDiscountPromotionDiscountConfiguration'
+        organization: '@organization'
+        owner: '@admin'
+        useCoupons: false
+        __calls:
+            - addLabel: ['@lineItemDiscountPromotionLabel']
+            - addScope: ['@default_scope']

@@ -11,10 +11,7 @@ services:
             - '@oro_product.expression.fields_provider'
 
     oro_product.expression.node_to_query_designer_converter:
-        class: 'Oro\Bundle\ProductBundle\Expression\NodeToQueryDesignerConverter'
-        public: false
-        arguments:
-            - 'Oro\Bundle\ProductBundle\Entity\Product'
+        class: Oro\Bundle\ProductBundle\Expression\NodeToQueryDesignerConverter
         calls:
             - ['addColumnInformationProvider', ['@oro_product.expression.column_information.default_provider']]
 
@@ -23,10 +20,9 @@ services:
         public: false
         arguments:
             - '@oro_query_designer.query_designer.manager'
-            - '@oro_entity.virtual_field_provider.chain'
-            - '@doctrine'
-        calls:
-            - [setVirtualRelationProvider, ['@oro_entity.virtual_relation_provider.chain']]
+            - '@oro_entity.virtual_field_provider'
+            - '@oro_entity.virtual_relation_provider'
+            - '@oro_entity.doctrine_helper'
 
     oro_product.expression.expression_language_converter:
         class: 'Oro\Component\Expression\ExpressionLanguageConverter'

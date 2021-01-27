@@ -3,41 +3,39 @@
 namespace Oro\Bundle\ProductBundle\Provider;
 
 use Oro\Bundle\AttachmentBundle\Entity\File;
+use Oro\Bundle\AttachmentBundle\Manager\FileManager;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\LayoutBundle\Model\ThemeImageTypeDimension;
 use Oro\Bundle\LayoutBundle\Provider\CustomImageFilterProviderInterface;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 
+/**
+ * Generates image filer configuration that use watermark image.
+ */
 class WatermarkImageFilterProvider implements CustomImageFilterProviderInterface
 {
     const APPLY_PRODUCT_IMAGE_WATERMARK_OPTION_NAME = 'applyProductImageWatermark';
 
-    /**
-     * @var ConfigManager
-     */
-    protected $configManager;
+    /** @var ConfigManager */
+    private $configManager;
 
-    /**
-     * @var DoctrineHelper
-     */
-    protected $doctrineHelper;
+    /** @var DoctrineHelper */
+    private $doctrineHelper;
 
-    /**
-     * @var string
-     */
-    protected $attachmentDir;
+    /** @var FileManager */
+    private $fileManager;
 
     /**
      * @param ConfigManager $configManager
      * @param DoctrineHelper $doctrineHelper
-     * @param string $attachmentDir
+     * @param FileManager $fileManager
      */
-    public function __construct(ConfigManager $configManager, DoctrineHelper $doctrineHelper, $attachmentDir)
+    public function __construct(ConfigManager $configManager, DoctrineHelper $doctrineHelper, FileManager $fileManager)
     {
         $this->configManager = $configManager;
         $this->doctrineHelper = $doctrineHelper;
-        $this->attachmentDir = $attachmentDir;
+        $this->fileManager = $fileManager;
     }
 
     /**
@@ -56,7 +54,7 @@ class WatermarkImageFilterProvider implements CustomImageFilterProviderInterface
 
         if ($imageId && $image = $this->doctrineHelper->getEntityRepositoryForClass(File::class)->find($imageId)) {
             /** @var File $image */
-            $filePath = $this->attachmentDir . '/' . $image->getFilename();
+            $filePath = $this->fileManager->getFilePathWithoutProtocol($image->getFilename());
 
             $config = [
                 'filters' => [

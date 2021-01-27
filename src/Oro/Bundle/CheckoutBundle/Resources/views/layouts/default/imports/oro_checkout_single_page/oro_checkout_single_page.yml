@@ -140,9 +140,6 @@ layout:
 
         - '@addTree':
             items:
-                checkout_order_summary_totals_sticky_container:
-                    blockType: container
-
                 checkout_order_summary_totals_wrapper:
                     blockType: layout_subtree_update
                     options:
@@ -165,11 +162,10 @@ layout:
                         checkout: '=data["checkout"]'
             tree:
                 checkout_order_summary_totals_container:
-                    checkout_order_summary_totals_sticky_container:
-                        checkout_order_summary_totals_wrapper: ~
-                        checkout_button_continue_right_wrapper:
-                            checkout_button_continue_right_container:
-                                checkout_button_continue_right: ~
+                    checkout_order_summary_totals_wrapper: ~
+                    checkout_button_continue_right_wrapper:
+                        checkout_button_continue_right_container:
+                            checkout_button_continue_right: ~
 
         - '@addTree':
             items:
@@ -210,6 +206,42 @@ layout:
                 form: '=data["oro_checkout_single_page_transition_form"].getTransitionFormView(data["workflowItem"])'
                 workflowItem: '=data["workflowItem"]'
 
+        - '@setOption':
+            id: checkout_order_summary_line_items_datagrid
+            optionName: grid_name
+            optionValue: frontend-single-page-checkout-line-items-grid
+
+        - '@appendOption':
+            id: checkout_order_summary_line_items_datagrid
+            optionName: grid_render_parameters.cssClass
+            optionValue: 'responsive-shopping-list-grid-tablet'
+
+        - '@move':
+            id: checkout_order_summary_line_items_datagrid_toolbar_pagination
+            parentId: checkout_order_summary_line_items_datagrid_toolbar_rightside_container
+            siblingId: checkout_order_summary_line_items_datagrid_toolbar_page_size
+            prepend: true
+
+        - '@remove':
+            id: checkout_order_summary_line_items_datagrid_toolbar_base_container
+
+        - '@add':
+              id: checkout_order_summary_line_item_wrapper
+              blockType: layout_subtree_update
+              parentId: checkout_order_summary_content
+              prepend: true
+              options:
+                  reloadEvents: []
+
+        - '@move':
+              id: checkout_order_summary_line_items_container
+              parentId: checkout_order_summary_line_item_wrapper
+
+        - '@move':
+            id: checkout_order_footer
+            parentId: checkout_order_summary_content
+            prepend: false
+
         - '@add':
             id: checkout_summary_badge
             blockType: container
@@ -240,64 +272,51 @@ layout:
             id: checkout_button_back
 
         - '@setOption':
-           id: checkout_consent_wrapper
-           optionName: appliedConsents
-           optionValue: '=data["workflowItem"].getData().get("customerConsents") ? data["workflowItem"].getData().get("customerConsents").toArray() : []'
+            id: checkout_consent_wrapper
+            optionName: appliedConsents
+            optionValue: '=data["workflowItem"].getData().get("customerConsents") ? data["workflowItem"].getData().get("customerConsents").toArray() : []'
 
         - '@add':
-           id: checkout_consent_container
-           blockType: container
-           parentId: checkout_order_summary_totals_container
-           siblingId: checkout_order_summary_totals_sticky_container
-           prepend: true
-           options:
-              visible: '="customer_consents" not in data["oro_frontend_consent_provider"].getExcludedSteps([], !data["workflowItem"].getData().get("consents_available"))'
+            id: checkout_consent_container
+            blockType: container
+            parentId: checkout_order_footer_col_first
+            prepend: true
+            options:
+                visible: '="customer_consents" not in data["oro_frontend_consent_provider"].getExcludedSteps([], !data["workflowItem"].getData().get("consents_available"))'
 
         - '@add':
-           id: checkout_consent_message
-           blockType: consent_acceptance_choice
-           parentId: checkout_consent_container
-           options:
-               appliedConsents: '=data["workflowItem"].getData().get("customerConsents") ? data["workflowItem"].getData().get("customerConsents").toArray() : []'
+            id: checkout_consent_message
+            blockType: consent_acceptance_choice
+            parentId: checkout_consent_container
+            options:
+                appliedConsents: '=data["workflowItem"].getData().get("customerConsents") ? data["workflowItem"].getData().get("customerConsents").toArray() : []'
 
         - '@setOption':
-           id: coupon_form_container
-           optionName: refreshOnSuccess
-           optionValue: false
+            id: coupon_form_container
+            optionName: refreshOnSuccess
+            optionValue: false
 
         - '@add':
-           id: checkout_coupon_form_container_wrapper
-           blockType: layout_subtree_update
-           parentId: coupon_form_container
-           prepend: true
-           options:
-               reloadEvents: []
+            id: checkout_coupon_form_container_wrapper
+            blockType: layout_subtree_update
+            parentId: coupon_form_container
+            prepend: true
+            options:
+                reloadEvents: []
 
         - '@move':
-           id: coupon_form_widget_container
-           parentId: checkout_coupon_form_container_wrapper
+            id: coupon_form_widget_container
+            parentId: checkout_coupon_form_container_wrapper
 
         - '@add':
-           id: checkout_order_summary_line_item_wrapper
-           blockType: layout_subtree_update
-           parentId: checkout_order_summary_line_items_container
-           prepend: true
-           options:
-               reloadEvents: []
+            id: checkout_form_errors_wrapper
+            blockType: layout_subtree_update
+            parentId: checkout_form
+            prepend: true
+            options:
+                reloadEvents: []
+                showLoading: false
 
         - '@move':
-           id: checkout_order_summary_line_items
-           parentId: checkout_order_summary_line_item_wrapper
-
-        - '@add':
-           id: checkout_form_errors_wrapper
-           blockType: layout_subtree_update
-           parentId: checkout_form
-           prepend: true
-           options:
-               reloadEvents: []
-               showLoading: false
-
-        - '@move':
-           id: checkout_form_errors
-           parentId: checkout_form_errors_wrapper
+            id: checkout_form_errors
+            parentId: checkout_form_errors_wrapper

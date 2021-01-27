@@ -7,6 +7,8 @@ $product-view-media-gallery-image-max-height: $product-view-media-gallery-max-he
 $product-view-media-gallery-z-index: z('base') !default;
 
 $product-view-media-gallery-tab-content-max-width: 380px !default;
+$product-view-media-gallery-container-tab-content-max-width: $product-view-media-gallery-tab-content-max-width !default;
+$product-view-media-gallery-container-position: relative !default;
 
 $product-view-media-gallery-nav-arrow-width: 20px !default;
 $product-view-media-gallery-nav-max-height: 77px !default;

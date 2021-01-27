@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\Provider;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Event\CategoryTreeCreateAfterEvent;
 use Oro\Bundle\UserBundle\Entity\UserInterface;
@@ -62,7 +62,7 @@ class CategoryTreeProvider
 
         $event = new CategoryTreeCreateAfterEvent($categories);
         $event->setUser($user);
-        $this->eventDispatcher->dispatch(CategoryTreeCreateAfterEvent::NAME, $event);
+        $this->eventDispatcher->dispatch($event, CategoryTreeCreateAfterEvent::NAME);
 
         return $event->getCategories();
     }

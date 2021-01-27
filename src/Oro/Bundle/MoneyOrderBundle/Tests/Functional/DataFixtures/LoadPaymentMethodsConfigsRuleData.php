@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\MoneyOrderBundle\Tests\Functional\DataFixtures;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
-use Oro\Bundle\PaymentBundle\Tests\Functional\Entity\DataFixtures\LoadPaymentMethodsConfigsRuleData as
-    BasicLoadPaymentMethodsConfigsRuleData;
+use Oro\Bundle\PaymentBundle\Tests\Functional\Entity\DataFixtures\LoadPaymentMethodsConfigsRuleData
+    as BasicLoadPaymentMethodsConfigsRuleData;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -55,7 +55,7 @@ class LoadPaymentMethodsConfigsRuleData extends BasicLoadPaymentMethodsConfigsRu
 
         $manager->flush();
     }
-    
+
     /**
      * {@inheritDoc}
      */

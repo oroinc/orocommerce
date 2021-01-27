@@ -109,6 +109,72 @@ class FedexRateServiceRequestFactoryTest extends TestCase
         static::assertNull($this->factory->create($settings));
     }
 
+    /**
+     * @dataProvider brokenContextDataProvider
+     * @param ShippingContext $context
+     */
+    public function testCreateNotAllDataFilled(ShippingContext $context)
+    {
+        $packages = $this->createPackages();
+        $integrationSettings = $this->createIntegrationSettings();
+
+        $rule = new ShippingServiceRule();
+        $rule
+            ->setServiceType('service')
+            ->setResidentialAddress(true);
+
+        $settings = new FedexRateServiceRequestSettings(
+            $integrationSettings,
+            $context,
+            $rule
+        );
+
+        $this->packageSettingsFactory
+            ->expects(static::once())
+            ->method('create')
+            ->with($integrationSettings)
+            ->willReturn($this->createMock(FedexPackageSettingsInterface::class));
+
+        $this->convertToFedexUnitsModifier
+            ->expects(static::once())
+            ->method('modify')
+            ->willReturn($this->createMock(ShippingLineItemCollectionInterface::class));
+
+        $this->packagesFactory
+            ->expects(static::once())
+            ->method('create')
+            ->willReturn($packages);
+
+        $this->crypter
+            ->expects(static::never())
+            ->method('decryptData');
+
+        static::assertNull($this->factory->create($settings));
+    }
+
+    /**
+     * @retrun array
+     */
+    public function brokenContextDataProvider(): array
+    {
+        return [
+            'empty shipping origin' => [
+                new ShippingContext([
+                    ShippingContext::FIELD_SHIPPING_ORIGIN => null,
+                    ShippingContext::FIELD_SHIPPING_ADDRESS => $this->createRecipientAddress(),
+                    ShippingContext::FIELD_LINE_ITEMS => new DoctrineShippingLineItemCollection([]),
+                ])
+            ],
+            'empty shipping address' => [
+                new ShippingContext([
+                    ShippingContext::FIELD_SHIPPING_ORIGIN => $this->createShipperAddress(),
+                    ShippingContext::FIELD_SHIPPING_ADDRESS => null,
+                    ShippingContext::FIELD_LINE_ITEMS => new DoctrineShippingLineItemCollection([]),
+                ])
+            ]
+        ];
+    }
+
     public function testCreate()
     {
         $packages = $this->createPackages();

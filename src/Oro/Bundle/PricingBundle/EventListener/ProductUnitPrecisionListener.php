@@ -76,12 +76,12 @@ class ProductUnitPrecisionListener implements FeatureToggleableInterface
         }
         $args = ['unit' => $product, 'product' => $unit];
         $this->eventDispatcher
-            ->dispatch(ProductPricesRemoveBefore::NAME, new ProductPricesRemoveBefore($args));
+            ->dispatch(new ProductPricesRemoveBefore($args), ProductPricesRemoveBefore::NAME);
 
         /** @var ProductPriceRepository $repository */
         $repository = $this->doctrineHelper->getEntityRepository($this->productPriceClass);
         $repository->deleteByProductUnit($this->shardManager, $product, $unit);
         $this->eventDispatcher
-            ->dispatch(ProductPricesRemoveAfter::NAME, new ProductPricesRemoveAfter($args));
+            ->dispatch(new ProductPricesRemoveAfter($args), ProductPricesRemoveAfter::NAME);
     }
 }

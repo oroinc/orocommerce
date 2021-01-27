@@ -6,7 +6,7 @@ use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
 use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Annotation\Route;
  * Ajax Coupon Controller
  * @CsrfProtection()
  */
-class AjaxCouponController extends Controller
+class AjaxCouponController extends AbstractController
 {
     /**
      * @Route("/add-coupon", name="oro_promotion_frontend_add_coupon", methods={"POST"})

@@ -5,7 +5,6 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\VirtualFields;
 use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner\VirtualFieldsSelectQueryConverter;
 use Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecorator;
 use Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecoratorFactory;
@@ -54,22 +53,6 @@ class VirtualFieldsProductDecoratorFactoryTest extends \PHPUnit\Framework\TestCa
     }
 
     /**
-     * @return Product|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function createProductMock()
-    {
-        return $this->createMock(Product::class);
-    }
-
-    /**
-     * @return ProductHolderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function createProductHolderMock()
-    {
-        return $this->createMock(ProductHolderInterface::class);
-    }
-
-    /**
      * @param Product[] $products
      * @param Product $product
      *
@@ -89,41 +72,18 @@ class VirtualFieldsProductDecoratorFactoryTest extends \PHPUnit\Framework\TestCa
 
     public function testCreateDecoratedProduct()
     {
-        $productMock = $this->createProductMock();
+        $productMock = $this->createMock(Product::class);
 
         $productsMocks = [
-            $this->createProductMock(),
-            $this->createProductMock(),
-            $this->createProductMock(),
+            $this->createMock(Product::class),
+            $this->createMock(Product::class),
+            $this->createMock(Product::class),
         ];
 
         $expectedProduct = $this->createExpectedProductDecorator($productsMocks, $productMock);
 
         $actualProduct = $this->testedVirtualFieldsProductDecoratorFactory
             ->createDecoratedProduct($productsMocks, $productMock);
-
-        $this->assertEquals($expectedProduct, $actualProduct);
-    }
-
-    public function testCreateDecoratedProductByProductHolders()
-    {
-        $productMock = $this->createProductMock();
-        $productMockForHolder = $this->createProductMock();
-        $productHolderMock = $this->createProductHolderMock();
-        $productHoldersMocks = [$productHolderMock];
-        $productMocks = [$productMockForHolder];
-
-        $productHolderMock
-            ->expects($this->once())
-            ->method('getProduct')
-            ->willReturn($productMockForHolder);
-
-        $expectedProduct = $this->createExpectedProductDecorator($productMocks, $productMock);
-
-        $actualProduct = $this->testedVirtualFieldsProductDecoratorFactory->createDecoratedProductByProductHolders(
-            $productHoldersMocks,
-            $productMock
-        );
 
         $this->assertEquals($expectedProduct, $actualProduct);
     }

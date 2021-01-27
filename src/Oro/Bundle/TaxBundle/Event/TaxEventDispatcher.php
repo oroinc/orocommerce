@@ -27,9 +27,9 @@ class TaxEventDispatcher
     {
         $event = new ResolveTaxEvent($taxable);
 
-        $this->eventDispatcher->dispatch(ResolveTaxEvent::RESOLVE_BEFORE, $event);
-        $this->eventDispatcher->dispatch(ResolveTaxEvent::RESOLVE, $event);
-        $this->eventDispatcher->dispatch(ResolveTaxEvent::RESOLVE_AFTER, $event);
+        $this->eventDispatcher->dispatch($event, ResolveTaxEvent::RESOLVE_BEFORE);
+        $this->eventDispatcher->dispatch($event, ResolveTaxEvent::RESOLVE);
+        $this->eventDispatcher->dispatch($event, ResolveTaxEvent::RESOLVE_AFTER);
 
         return $taxable->getResult();
     }

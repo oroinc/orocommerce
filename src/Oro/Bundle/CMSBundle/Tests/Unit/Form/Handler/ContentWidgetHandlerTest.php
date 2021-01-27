@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Form\Handler;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\CMSBundle\Form\Handler\ContentWidgetHandler;
 use Oro\Bundle\FormBundle\Event\FormHandler\Events;
@@ -146,10 +146,10 @@ class ContentWidgetHandlerTest extends \PHPUnit\Framework\TestCase
         $this->eventDispatcher->expects($this->exactly(4))
             ->method('dispatch')
             ->withConsecutive(
-                [Events::BEFORE_FORM_DATA_SET],
-                [Events::BEFORE_FORM_SUBMIT],
-                [Events::BEFORE_FLUSH],
-                [Events::AFTER_FLUSH]
+                [static::anything(), Events::BEFORE_FORM_DATA_SET],
+                [static::anything(), Events::BEFORE_FORM_SUBMIT],
+                [static::anything(), Events::BEFORE_FLUSH],
+                [static::anything(), Events::AFTER_FLUSH]
             );
 
         $this->assertTrue($this->handler->process($this->data, $this->form, $this->request));

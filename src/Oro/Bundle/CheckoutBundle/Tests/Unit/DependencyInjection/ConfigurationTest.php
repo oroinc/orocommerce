@@ -68,6 +68,10 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                         'frontend_show_open_orders' => [
                             'value' => true,
                             'scope' => 'app'
+                        ],
+                        'checkout_max_line_items_per_page' => [
+                            'value' => 1000,
+                            'scope' => 'app'
                         ]
                     ]
                 ]

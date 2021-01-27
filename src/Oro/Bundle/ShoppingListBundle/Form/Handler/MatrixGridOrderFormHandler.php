@@ -67,7 +67,7 @@ class MatrixGridOrderFormHandler implements FormHandlerInterface
         }
 
         $event = new FormProcessEvent($form, $data);
-        $this->eventDispatcher->dispatch(Events::BEFORE_FORM_DATA_SET, $event);
+        $this->eventDispatcher->dispatch($event, Events::BEFORE_FORM_DATA_SET);
 
         if ($event->isFormProcessInterrupted()) {
             return false;
@@ -77,7 +77,7 @@ class MatrixGridOrderFormHandler implements FormHandlerInterface
 
         if ($request->getMethod() === Request::METHOD_POST) {
             $event = new FormProcessEvent($form, $data);
-            $this->eventDispatcher->dispatch(Events::BEFORE_FORM_SUBMIT, $event);
+            $this->eventDispatcher->dispatch($event, Events::BEFORE_FORM_SUBMIT);
 
             if ($event->isFormProcessInterrupted()) {
                 return false;
@@ -121,7 +121,7 @@ class MatrixGridOrderFormHandler implements FormHandlerInterface
             throw new \InvalidArgumentException('The "product" request argument should be present');
         }
 
-        $this->eventDispatcher->dispatch(Events::BEFORE_FLUSH, new AfterFormProcessEvent($form, $data));
+        $this->eventDispatcher->dispatch(new AfterFormProcessEvent($form, $data), Events::BEFORE_FLUSH);
 
         $lineItems = $this->matrixGridOrderManager->convertMatrixIntoLineItems(
             $form->getData(),
@@ -135,6 +135,6 @@ class MatrixGridOrderFormHandler implements FormHandlerInterface
 
         $this->matrixGridOrderManager->addEmptyMatrixIfAllowed($shoppingList, $product, $lineItems);
 
-        $this->eventDispatcher->dispatch(Events::AFTER_FLUSH, new AfterFormProcessEvent($form, $data));
+        $this->eventDispatcher->dispatch(new AfterFormProcessEvent($form, $data), Events::AFTER_FLUSH);
     }
 }

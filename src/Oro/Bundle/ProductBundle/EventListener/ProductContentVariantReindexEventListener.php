@@ -261,7 +261,7 @@ class ProductContentVariantReindexEventListener implements ContentNodeFieldsChan
         }
 
         $event = new ReindexationRequestEvent([Product::class], $websiteIds, $productIds);
-        $this->eventDispatcher->dispatch(ReindexationRequestEvent::EVENT_NAME, $event);
+        $this->eventDispatcher->dispatch($event, ReindexationRequestEvent::EVENT_NAME);
     }
 
     /**

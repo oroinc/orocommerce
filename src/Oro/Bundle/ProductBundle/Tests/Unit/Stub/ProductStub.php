@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Stub;
 
 use Oro\Bundle\LocaleBundle\Entity\FallbackTrait;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductName;
@@ -57,6 +58,15 @@ class ProductStub extends Product
     public function getDefaultName(): ?ProductName
     {
         return $this->getFallbackValue($this->names);
+    }
+
+    /**
+     * @param Localization|null $localization
+     * @return ProductName|null
+     */
+    public function getName(Localization $localization = null): ?ProductName
+    {
+        return $this->getFallbackValue($this->names, $localization);
     }
 
     /**

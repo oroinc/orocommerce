@@ -3,10 +3,12 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\WorkflowState\Handler;
 
 use Oro\Bundle\CheckoutBundle\WorkflowState\Handler\CheckoutErrorHandler;
+use Oro\Bundle\WorkflowBundle\Validator\Constraints\TransitionIsAllowed;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormErrorIterator;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
+use Symfony\Component\Validator\ConstraintViolation;
 
 class CheckoutErrorHandlerTest extends \PHPUnit\Framework\TestCase
 {
@@ -159,5 +161,86 @@ class CheckoutErrorHandlerTest extends \PHPUnit\Framework\TestCase
             ->willReturn($name);
 
         return $form;
+    }
+
+    /**
+     * @dataProvider getWorkflowErrorsDataTransformer
+     *
+     * @param FormErrorIterator $errorIterator
+     * @param array $expectedErrors
+     */
+    public function testGetWorkflowErrors(FormErrorIterator $errorIterator, array $expectedErrors): void
+    {
+        $this->assertEquals($expectedErrors, $this->handler->getWorkflowErrors($errorIterator));
+    }
+
+    /**
+     * @return array
+     */
+    public function getWorkflowErrorsDataTransformer(): array
+    {
+        $transitionIsAllowedConstraintViolation = $this->createMock(ConstraintViolation::class);
+        $transitionIsAllowedConstraintViolation
+            ->expects($this->any())
+            ->method('getConstraint')
+            ->willReturn($this->createMock(TransitionIsAllowed::class));
+
+        return [
+            'no errors' => [
+                'errorIterator' => new FormErrorIterator($this->createMock(FormInterface::class), []),
+                'expectedErrors' => [],
+            ],
+            'no ConstraintViolation errors' => [
+                'errorIterator' => new FormErrorIterator(
+                    $this->createMock(FormInterface::class),
+                    [new FormError('sample_error')]
+                ),
+                'expectedErrors' => [],
+            ],
+            'no TransitionIsAllowed errors' => [
+                'errorIterator' => new FormErrorIterator(
+                    $this->createMock(FormInterface::class),
+                    [new FormError('sample_error', null, [], null, $this->createMock(ConstraintViolation::class))]
+                ),
+                'expectedErrors' => [],
+            ],
+            'nested FormErrorIterator errors' => [
+                'errorIterator' => new FormErrorIterator(
+                    $this->createMock(FormInterface::class),
+                    [
+                        new FormErrorIterator(
+                            $this->createMock(FormInterface::class),
+                            [
+                                new FormError(
+                                    'sample_error',
+                                    null,
+                                    [],
+                                    null,
+                                    $this->createMock(ConstraintViolation::class)
+                                ),
+                            ]
+                        ),
+                    ]
+                ),
+                'expectedErrors' => [],
+            ],
+            'TransitionIsAllowed errors' => [
+                'errorIterator' => new FormErrorIterator(
+                    $this->createMock(FormInterface::class),
+                    [new FormError('sample_error', null, [], null, $transitionIsAllowedConstraintViolation)]
+                ),
+                'expectedErrors' => ['sample_error'],
+            ],
+            'double TransitionIsAllowed errors' => [
+                'errorIterator' => new FormErrorIterator(
+                    $this->createMock(FormInterface::class),
+                    [
+                        new FormError('sample_error', null, [], null, $transitionIsAllowedConstraintViolation),
+                        new FormError('sample_error', null, [], null, $transitionIsAllowedConstraintViolation),
+                    ]
+                ),
+                'expectedErrors' => ['sample_error'],
+            ],
+        ];
     }
 }

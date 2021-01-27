@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\EventListener;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeRegistry;
 use Oro\Bundle\CMSBundle\ContentWidget\ImageSliderContentWidgetType;
 use Oro\Bundle\CMSBundle\EventListener\ContentWidgetDatagridListener;

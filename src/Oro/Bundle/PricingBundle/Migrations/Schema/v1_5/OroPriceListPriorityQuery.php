@@ -94,7 +94,7 @@ class OroPriceListPriorityQuery extends ParametrizedMigrationQuery
 
             $this->logQuery($logger, $updateQuery, $updateQueryParameters, $updateQueryTypes);
             if (!$dryRun) {
-                $this->connection->executeUpdate($updateQuery, $updateQueryParameters, $updateQueryTypes);
+                $this->connection->executeStatement($updateQuery, $updateQueryParameters, $updateQueryTypes);
             }
         }
     }

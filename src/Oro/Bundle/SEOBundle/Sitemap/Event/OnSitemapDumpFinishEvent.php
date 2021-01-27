@@ -3,7 +3,7 @@
 namespace Oro\Bundle\SEOBundle\Sitemap\Event;
 
 use Oro\Component\Website\WebsiteInterface;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class OnSitemapDumpFinishEvent extends Event
 {

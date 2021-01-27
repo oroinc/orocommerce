@@ -16,11 +16,13 @@ class DatagridLineItemsDataPreloadListener
     /** @var array */
     private const FIELDS_FOR_SIMPLE = [
         'product' => [
-            'names' => [],
-            'isUpcoming' => [],
+            'category' => [
+                'highlightLowInventory' => [],
+                'isUpcoming' => [],
+                'maximumQuantityToOrder' => [],
+                'minimumQuantityToOrder' => [],
+            ],
             'highlightLowInventory' => [],
-            'minimumQuantityToOrder' => [],
-            'maximumQuantityToOrder' => [],
             'images' => [
                 'image' => [
                     'digitalAsset' => [
@@ -32,8 +34,11 @@ class DatagridLineItemsDataPreloadListener
                 ],
                 'types' => [],
             ],
+            'isUpcoming' => [],
+            'maximumQuantityToOrder' => [],
+            'minimumQuantityToOrder' => [],
+            'names' => [],
             'unitPrecisions' => [],
-            'category' => [],
         ],
     ];
 

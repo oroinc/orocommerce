@@ -7,19 +7,7 @@ use Oro\Bundle\WebsiteBundle\Tests\Functional\Stub\WebsiteManagerStub;
 /**
  * Provides methods to change the website in functional tests.
  * It is expected that this trait will be used in classes
- * derived from Oro\Bundle\TestFrameworkBundle\Test\WebTestCase.
- * IMPORTANT: you must add the following method in the class that include this trait:
- * <code>
- *    /**
- *     * @after
- *     *\/
- *    public function afterFrontendTest()
- *    {
- *        if (null !== $this->client) {
- *           $this->getWebsiteManagerStub()->disableStub();
- *       }
- *    }
- * </code>
+ * derived from {@see \Oro\Bundle\TestFrameworkBundle\Test\WebTestCase}.
  */
 trait WebsiteManagerTrait
 {

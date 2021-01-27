@@ -125,6 +125,9 @@ class ProductType extends AbstractType
                     'value_class' => ProductDescription::class,
                     'field' => ['wysiwyg', 'wysiwyg_style', 'wysiwyg_properties'],
                     'entry_type' => WYSIWYGValueType::class,
+                    'entry_options' => [
+                        'entity_class' => ProductDescription::class
+                    ],
                     'use_tabs' => true,
                 ]
             )
@@ -140,9 +143,8 @@ class ProductType extends AbstractType
                     'entry_options' => [
                         'wysiwyg_options' => [
                             'autoRender' => false,
-                            'statusbar' => true,
+                            'elementpath' => true,
                             'resize' => true,
-                            'width' => 500,
                             'height' => 300,
                         ]
                     ],

@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Async;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Driver\DriverException;
 use Doctrine\DBAL\Exception\DeadlockException;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ShoppingListBundle\Async\InvalidateTotalsByInventoryStatusPerWebsiteProcessor;
 use Oro\Bundle\ShoppingListBundle\Async\MessageFactory;

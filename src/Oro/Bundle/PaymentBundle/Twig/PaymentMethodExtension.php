@@ -8,8 +8,8 @@ use Oro\Bundle\PaymentBundle\Formatter\PaymentMethodOptionsFormatter;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Oro\Bundle\PaymentBundle\Twig\DTO\PaymentMethodObject;
 use Psr\Container\ContainerInterface;
-use Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -141,7 +141,7 @@ class PaymentMethodExtension extends AbstractExtension implements ServiceSubscri
     {
         $event = new PaymentMethodConfigDataEvent($paymentMethodName);
         if (!array_key_exists($paymentMethodName, $this->configCache)) {
-            $this->getDispatcher()->dispatch(PaymentMethodConfigDataEvent::NAME, $event);
+            $this->getDispatcher()->dispatch($event, PaymentMethodConfigDataEvent::NAME);
             $template = $event->getTemplate();
             $this->configCache[$paymentMethodName] = $template ?: static::DEFAULT_METHOD_CONFIG_TEMPLATE;
         }

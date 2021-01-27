@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\EventListener;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\Event\OnFlushEventArgs;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroupRelation;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -79,8 +79,8 @@ class AttributeFamilyChangesListener
         $this->changedAttributeFamilies = [];
 
         $this->dispatcher->dispatch(
-            ReindexationRequestEvent::EVENT_NAME,
-            new ReindexationRequestEvent([Product::class], [], $productIds)
+            new ReindexationRequestEvent([Product::class], [], $productIds),
+            ReindexationRequestEvent::EVENT_NAME
         );
     }
 

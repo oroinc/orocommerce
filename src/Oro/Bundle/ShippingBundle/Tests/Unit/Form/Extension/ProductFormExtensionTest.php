@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\Extension;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Oro\Bundle\ShippingBundle\Form\Extension\ProductFormExtension;
@@ -37,17 +37,17 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->repo = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectRepository')
+        $this->repo = $this->getMockBuilder('Doctrine\Persistence\ObjectRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->manager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
+        $this->manager = $this->createMock('Doctrine\Persistence\ObjectManager');
         $this->manager->expects($this->any())
             ->method('getRepository')
             ->with('OroShippingBundle:ProductShippingOptions')
             ->willReturn($this->repo);
 
-        $this->registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->registry = $this->createMock('Doctrine\Persistence\ManagerRegistry');
         $this->registry->expects($this->any())
             ->method('getManagerForClass')
             ->with('OroShippingBundle:ProductShippingOptions')

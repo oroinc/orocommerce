@@ -91,7 +91,7 @@ class RequestHandler
     protected function dispatchPreCalculateTotalEvent($entity, $request)
     {
         $event = new TotalCalculateBeforeEvent($entity, $request);
-        $event = $this->eventDispatcher->dispatch(TotalCalculateBeforeEvent::NAME, $event);
+        $event = $this->eventDispatcher->dispatch($event, TotalCalculateBeforeEvent::NAME);
 
         return $event;
     }

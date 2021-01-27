@@ -125,7 +125,8 @@ class LocalizedLinksDataProvider
 
         $localizations = [];
         foreach ($enabledLocalizations as $localization) {
-            if (!$this->validator->validate($localization->getLanguageCode(), new Locale())->count()) {
+            $locale = new Locale(['canonicalize' => true]);
+            if (!$this->validator->validate($localization->getLanguageCode(), $locale)->count()) {
                 $localizations[$localization->getId()] = true;
             }
         }

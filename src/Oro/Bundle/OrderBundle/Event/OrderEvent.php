@@ -4,8 +4,8 @@ namespace Oro\Bundle\OrderBundle\Event;
 
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\ShippingBundle\EventListener\EntityDataAwareEventInterface;
-use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class OrderEvent extends Event implements EntityDataAwareEventInterface
 {

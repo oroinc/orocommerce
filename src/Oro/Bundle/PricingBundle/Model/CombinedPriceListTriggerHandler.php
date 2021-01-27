@@ -129,7 +129,7 @@ class CombinedPriceListTriggerHandler
         foreach ($this->productsSchedule as $websiteId => $productIds) {
             $websiteIds = $websiteId ? [$websiteId] : [];
             $event = new ReindexationRequestEvent([Product::class], $websiteIds, array_values($productIds));
-            $this->eventDispatcher->dispatch(ReindexationRequestEvent::EVENT_NAME, $event);
+            $this->eventDispatcher->dispatch($event, ReindexationRequestEvent::EVENT_NAME);
         }
 
         $this->clearSchedules();

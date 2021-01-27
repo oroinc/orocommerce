@@ -16,16 +16,19 @@ import 'orocms/js/app/grapesjs/plugins/components/grapesjs-components';
 import 'orocms/js/app/grapesjs/plugins/import/import';
 import 'orocms/js/app/grapesjs/plugins/code/code';
 import 'orocms/js/app/grapesjs/plugins/panel-scrolling-hints';
-import {
-    escapeWrapper,
-    getWrapperAttrs,
-    removeImageExpression
-} from 'orocms/js/app/grapesjs/plugins/grapesjs-style-isolation';
+import {escapeWrapper, getWrapperAttrs} from 'orocms/js/app/grapesjs/plugins/grapesjs-style-isolation';
 import i18nMessages from 'orocms/js/app/grapesjs/plugins/i18n-messages';
 import ContentParser from 'orocms/js/app/grapesjs/plugins/grapesjs-content-parser';
+import moduleConfig from 'module-config';
 
 const MIN_EDITOR_WIDTH = 1100;
 const LOCK_PASTE_ATTR = 'data-lock-paste';
+
+const config = {
+    allowBreakpoints: [],
+    disableDeviceManager: false,
+    ...moduleConfig(module.id)
+};
 
 /**
  * Create grapesJS content builder
@@ -38,7 +41,7 @@ const GrapesjsEditorView = BaseView.extend({
     optionNames: BaseView.prototype.optionNames.concat([
         'autoRender', 'allow_tags', 'allowed_iframe_domains', 'builderPlugins', 'currentTheme', 'canvasConfig',
         'contextClass', 'storageManager', 'stylesInputSelector', 'storagePrefix', 'themes',
-        'entityClass'
+        'entityClass', 'disableDeviceManager'
     ]),
 
     /**
@@ -97,6 +100,7 @@ const GrapesjsEditorView = BaseView.extend({
         pasteStyles: false,
         requestParams: {},
         noticeOnUnload: false,
+        cssIcons: false,
 
         /**
          * Color picker options
@@ -184,7 +188,6 @@ const GrapesjsEditorView = BaseView.extend({
      */
     $stylesInputElement: null,
 
-
     /**
      * @property {String}
      */
@@ -199,6 +202,18 @@ const GrapesjsEditorView = BaseView.extend({
      * @property {Object}
      */
     rte: null,
+
+    /**
+     * Disable responsive design manager
+     * @property {Boolean}
+     */
+    disableDeviceManager: config.disableDeviceManager,
+
+    /**
+     * Allow breakpoints list
+     * @property {Array}
+     */
+    allowBreakpoints: config.allowBreakpoints,
 
     /**
      * List of grapesjs plugins
@@ -232,9 +247,6 @@ const GrapesjsEditorView = BaseView.extend({
             },
             navbarOpts: false,
             countdownOpts: false,
-            modalImportContent: function(editor) {
-                return editor.getHtml() + '<style>' + editor.getCss() + '</style>';
-            },
             importViewerOptions: {},
             codeViewerOptions: {},
             exportOpts: {
@@ -290,7 +302,7 @@ const GrapesjsEditorView = BaseView.extend({
         this.builderPlugins['grapesjs-import'] = {
             ...this.builderPlugins['grapesjs-import'],
             entityClass: this.entityClass,
-            fieldName: this.$el.attr('name')
+            fieldName: this.$el.attr('data-grapesjs-field')
         };
 
         GrapesjsEditorView.__super__.initialize.call(this, options);
@@ -540,9 +552,7 @@ const GrapesjsEditorView = BaseView.extend({
             return;
         }
 
-        const _res = this.builder.ComponentRestriction.validate(
-            removeImageExpression(this.$el.val())
-        );
+        const _res = this.builder.ComponentRestriction.validate(this.$el.val());
         const validationMessage = __('oro.cms.wysiwyg.validation.import', {tags: _res.join(', ')});
 
         if (_res.length) {
@@ -591,7 +601,7 @@ const GrapesjsEditorView = BaseView.extend({
 
         if (_.isArray(toolbar)) {
             toolbar = toolbar.map(tool => {
-                if (_.isFunction(tool.command)) {
+                if (_.isFunction(tool.command) && !tool.attributes.label) {
                     tool.attributes.label = __('oro.cms.wysiwyg.toolbar.selectParent');
 
                     return tool;
@@ -663,7 +673,12 @@ const GrapesjsEditorView = BaseView.extend({
             themes: this.themes
         });
 
-        this._devicesModule = new DevicesModule({builder: this.builder});
+        if (!this.disableDeviceManager) {
+            this._devicesModule = new DevicesModule({
+                builder: this.builder,
+                allowBreakpoints: this.allowBreakpoints
+            });
+        }
 
         this.setActiveButton('options', 'sw-visibility');
         this.setActiveButton('views', 'open-blocks');

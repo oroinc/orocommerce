@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\ImportExport\Strategy;
 
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\EntityBundle\Provider\ChainEntityClassNameProvider;
+use Oro\Bundle\EntityBundle\Provider\EntityClassNameProviderInterface;
 use Oro\Bundle\ImportExportBundle\Context\ContextInterface;
 use Oro\Bundle\ImportExportBundle\Field\DatabaseHelper;
 use Oro\Bundle\ImportExportBundle\Field\RelatedEntityStateHelper;
@@ -55,7 +55,7 @@ class PriceAttributeProductPriceImportStrategyTest extends TestCase
             $strategyHelper,
             $this->fieldHelper,
             $this->createMock(DatabaseHelper::class),
-            $this->createMock(ChainEntityClassNameProvider::class),
+            $this->createMock(EntityClassNameProviderInterface::class),
             $this->createMock(TranslatorInterface::class),
             $this->createMock(NewEntitiesHelper::class),
             $this->createMock(DoctrineHelper::class),

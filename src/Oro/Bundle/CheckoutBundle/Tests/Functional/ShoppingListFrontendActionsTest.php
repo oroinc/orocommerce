@@ -41,10 +41,8 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
 
         $crawler = $this->client->request('GET', $data['workflowItem']['result']['redirectUrl']);
 
-        $content = $crawler->filter('.checkout-order-summary')->html();
-        foreach ($shoppingList->getLineItems() as $lineItem) {
-            static::assertStringContainsString($lineItem->getProduct()->getSku(), $content);
-        }
+        $content = $crawler->filter('.totals-container table tr td')->html();
+        static::assertStringContainsString(sprintf('%s Item', count($shoppingList->getLineItems())), $content);
     }
 
     public function testCreateOrdersFromSingleShoppingList()

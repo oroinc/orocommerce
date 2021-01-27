@@ -2,20 +2,26 @@
 
 namespace Oro\Bundle\FedexShippingBundle\Tests\Unit\Form\Type;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
+use Oro\Bundle\FedexShippingBundle\Cache\FedexResponseCacheInterface;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexShippingService;
 use Oro\Bundle\FedexShippingBundle\Form\Type\FedexIntegrationSettingsType;
+use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
 use Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizationCollectionType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizationCollectionTypeStub;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
+use Oro\Bundle\ShippingBundle\Provider\Cache\ShippingPriceCache;
+use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -29,11 +35,29 @@ class FedexIntegrationSettingsTypeTest extends FormIntegrationTestCase
     use EntityTrait;
 
     /**
+     * @var FedexResponseCacheInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $fedexResponseCache;
+
+    /**
+     * @var ShippingPriceCache|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $shippingPriceCache;
+
+    /**
      * {@inheritDoc}
      */
     protected function getExtensions()
     {
         $crypter = $this->createMock(SymmetricCrypterInterface::class);
+        /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject $configProvider */
+        $configProvider = $this->createMock(ConfigProvider::class);
+        /** @var Translator|\PHPUnit\Framework\MockObject\MockObject $translator */
+        $translator = $this->createMock(Translator::class);
+
+        $this->fedexResponseCache = $this->createMock(FedexResponseCacheInterface::class);
+        $this->shippingPriceCache = $this->createMock(ShippingPriceCache::class);
+
         $crypter
             ->expects(static::any())
             ->method('encryptData')
@@ -58,6 +82,11 @@ class FedexIntegrationSettingsTypeTest extends FormIntegrationTestCase
             ),
         ]);
 
+        $formType = new FedexIntegrationSettingsType(
+            $this->fedexResponseCache,
+            $this->shippingPriceCache
+        );
+
         return [
             new PreloadedExtension(
                 [
@@ -65,8 +94,13 @@ class FedexIntegrationSettingsTypeTest extends FormIntegrationTestCase
                     new LocalizedFallbackValueCollectionType($this->createMock(ManagerRegistry::class)),
                     EntityType::class => $entityType,
                     new OroEncodedPlaceholderPasswordType($crypter),
+                    FedexIntegrationSettingsType::class => $formType
                 ],
-                []
+                [
+                    FormType::class => [
+                        new TooltipFormExtension($configProvider, $translator),
+                    ]
+                ]
             ),
             new ValidatorExtension(Validation::createValidator())
         ];
@@ -79,7 +113,7 @@ class FedexIntegrationSettingsTypeTest extends FormIntegrationTestCase
             'key' => 'key2',
             'password' => 'pass2',
             'accountNumber' => 'num2',
-            'meterNumber'=> 'meter2',
+            'meterNumber' => 'meter2',
             'pickupType' => FedexIntegrationSettings::PICKUP_TYPE_BUSINESS_SERVICE_CENTER,
             'unitOfWeight' => FedexIntegrationSettings::UNIT_OF_WEIGHT_KG,
             'labels' => [
@@ -97,12 +131,19 @@ class FedexIntegrationSettingsTypeTest extends FormIntegrationTestCase
             ->setMeterNumber('meter')
             ->setPickupType('pickup')
             ->setUnitOfWeight('unit')
+            ->setIgnorePackageDimensions(true)
             ->addLabel((new LocalizedFallbackValue())->setString('label'))
             ->addShippingService(new FedexShippingService());
 
         $form = $this->factory->create(FedexIntegrationSettingsType::class, $settings);
 
         static::assertSame($settings, $form->getData());
+
+        $this->fedexResponseCache->expects($this->once())
+            ->method('deleteAll')
+            ->with($settings);
+        $this->shippingPriceCache->expects($this->once())
+            ->method('deleteAllPrices');
 
         $form->submit($submitData);
 
@@ -113,7 +154,10 @@ class FedexIntegrationSettingsTypeTest extends FormIntegrationTestCase
 
     public function testGetBlockPrefix()
     {
-        $formType = new FedexIntegrationSettingsType();
+        $formType = new FedexIntegrationSettingsType(
+            $this->fedexResponseCache,
+            $this->shippingPriceCache
+        );
         static::assertSame('oro_fedex_settings', $formType->getBlockPrefix());
     }
 
@@ -127,7 +171,10 @@ class FedexIntegrationSettingsTypeTest extends FormIntegrationTestCase
                 'data_class' => FedexIntegrationSettings::class
             ]);
 
-        $formType = new FedexIntegrationSettingsType();
+        $formType = new FedexIntegrationSettingsType(
+            $this->fedexResponseCache,
+            $this->shippingPriceCache
+        );
         $formType->configureOptions($resolver);
     }
 }

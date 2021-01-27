@@ -44,7 +44,7 @@ class CreateOrderLineItemValidationListener
     /**
      * @var array
      */
-    protected static $allowedValidationSteps = ['order_review', 'checkout'];
+    protected static $allowedValidationSteps = ['order_review', 'checkout', 'request_approval', 'approve_request'];
 
     /**
      * @param InventoryQuantityManager $inventoryQuantityManager

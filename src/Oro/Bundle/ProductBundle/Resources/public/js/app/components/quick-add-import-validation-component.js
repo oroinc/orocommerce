@@ -31,7 +31,9 @@ define(function(require) {
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
 
-            mediator.on('widget:contentLoad', this.onWidgetRender, this);
+            this.listenTo(mediator, {
+                'widget:contentLoad': this.onWidgetRender
+            });
         },
 
         submitAction: function(widget) {
@@ -39,18 +41,11 @@ define(function(require) {
             const result = [];
             const that = this;
 
-            itemRows.each(function(index, element) {
-                const $fields = $('td', element);
-
-                result.push({
-                    sku: $fields.get(-1).textContent,
-                    quantity: $($fields.get(1)).data('raw-value'),
-                    unit: $fields.get(2).textContent
-                });
-            }).promise().done(function() {
-                mediator.trigger('quick-add-import-form:submit', result);
-                widgetManager.getWidgetInstance(that.options._wid, that.closeWidget);
+            itemRows.each((index, element) => {
+                result.push($(element).data('rowItem'));
             });
+            mediator.trigger('quick-add-import-form:submit', result);
+            widgetManager.getWidgetInstance(that.options._wid, that.closeWidget);
         },
 
         closeWidget: function(widget) {

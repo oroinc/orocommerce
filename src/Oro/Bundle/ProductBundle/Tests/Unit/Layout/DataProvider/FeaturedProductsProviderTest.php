@@ -2,8 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Layout\DataProvider;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\FeaturedProductsProvider;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class FeaturedProductsProviderTest extends AbstractSegmentProductsProviderTest
@@ -54,6 +55,7 @@ class FeaturedProductsProviderTest extends AbstractSegmentProductsProviderTest
     {
         $this->segmentProductsProvider = new FeaturedProductsProvider(
             $this->segmentManager,
+            $this->websiteManager,
             $this->productSegmentProvider,
             $this->productManager,
             $this->configManager,
@@ -69,7 +71,7 @@ class FeaturedProductsProviderTest extends AbstractSegmentProductsProviderTest
      */
     protected function getCacheKey()
     {
-        return 'featured_products_0__1';
+        return 'featured_products_0_1__1';
     }
 
     private function prepare()
@@ -85,6 +87,10 @@ class FeaturedProductsProviderTest extends AbstractSegmentProductsProviderTest
         $token->expects($this->once())
             ->method('getUser')
             ->willReturn(null);
+        $this->websiteManager
+            ->expects($this->once())
+            ->method('getCurrentWebsite')
+            ->willReturn($this->getEntity(Website::class, ['id' => 1]));
         $this->tokenStorage
             ->expects($this->once())
             ->method('getToken')

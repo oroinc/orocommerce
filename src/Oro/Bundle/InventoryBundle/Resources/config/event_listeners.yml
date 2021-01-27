@@ -115,6 +115,7 @@ services:
         class: Oro\Bundle\InventoryBundle\EventListener\QuantityToOrderConditionListener
         arguments:
             - '@oro_inventory.validator.quantity_to_order_validator'
+            - '@oro_entity.doctrine_helper'
         tags:
             - { name: kernel.event_listener, event: checkout.checkout_validate, method: onCheckoutValidate }
             - { name: kernel.event_listener, event: extendable_condition.start_checkout, method: onStartCheckoutConditionCheck }
@@ -156,6 +157,8 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-grid, method: onLineItemData }
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-edit-grid, method: onLineItemData }
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-checkout-line-items-grid, method: onLineItemData }
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-single-page-checkout-line-items-grid, method: onLineItemData }
 
     oro_inventory.event_listener.on_rfp_form_error_submit_check_listener:
         class: 'Oro\Bundle\InventoryBundle\EventListener\RFPOperationListener'

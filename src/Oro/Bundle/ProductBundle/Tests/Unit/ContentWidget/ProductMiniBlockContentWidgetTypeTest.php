@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\ContentWidget;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManager;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager as Configuration;
 use Oro\Bundle\EntityConfigBundle\Config\Config;

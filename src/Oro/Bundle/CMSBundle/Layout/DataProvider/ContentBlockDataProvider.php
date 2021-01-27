@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\Layout\DataProvider;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CMSBundle\ContentBlock\ContentBlockResolver;
 use Oro\Bundle\CMSBundle\ContentBlock\Model\ContentBlockView;
 use Oro\Bundle\CMSBundle\Entity\ContentBlock;
@@ -66,8 +66,6 @@ class ContentBlockDataProvider
     public function getContentBlockView(string $alias): ?ContentBlockView
     {
         $criteria = $this->scopeManager->getCriteria($this->scopeType);
-        $context = $criteria->toArray();
-
         $contentBlock = $this->getContentBlock($alias);
 
         if (null === $contentBlock) {
@@ -76,7 +74,7 @@ class ContentBlockDataProvider
             return null;
         }
 
-        return $this->contentBlockResolver->getContentBlockView($contentBlock, $context);
+        return $this->contentBlockResolver->getContentBlockViewByCriteria($contentBlock, $criteria);
     }
 
     /**

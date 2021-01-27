@@ -102,8 +102,8 @@ class ProductController extends AbstractController
 
         /** @var ProductGridWidgetRenderEvent $event */
         $event = $this->get(EventDispatcherInterface::class)->dispatch(
-            ProductGridWidgetRenderEvent::NAME,
-            new ProductGridWidgetRenderEvent($widgetRouteParameters)
+            new ProductGridWidgetRenderEvent($widgetRouteParameters),
+            ProductGridWidgetRenderEvent::NAME
         );
 
         return [

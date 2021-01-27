@@ -4,8 +4,8 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
@@ -26,15 +26,20 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Oro\Bundle\UserBundle\Entity\User;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\Yaml\Yaml;
 
 /**
  * Abstract class for load Products fixtures
  * @SuppressWarnings(PHPMD.NPathComplexity)
  */
-abstract class AbstractLoadProductData extends AbstractFixture implements DependentFixtureInterface
+abstract class AbstractLoadProductData extends AbstractFixture implements
+    DependentFixtureInterface,
+    ContainerAwareInterface
 {
     use UserUtilityTrait;
+    use ContainerAwareTrait;
 
     /**
      * {@inheritdoc}
@@ -223,13 +228,21 @@ abstract class AbstractLoadProductData extends AbstractFixture implements Depend
             return;
         }
 
+        $fileManager = $this->container->get('oro_attachment.file_manager');
         foreach ($item['images'] as $image) {
-            $imageFile = new File();
-            $imageFile->setFilename($item['productCode'] . '.jpg');
+            $fileName = $item['productCode'] . '.jpg';
+            if (is_file(__DIR__. '/files/' . $fileName)) {
+                $imageFile = $fileManager->createFileEntity(__DIR__ . '/files/' . $fileName);
+            } else {
+                $imageFile = new File();
+                $imageFile->setFilename($fileName);
+            }
+
             $imageFile->setOriginalFilename($item['productCode'] . '-original.jpg');
             $imageFile->setExtension('jpg');
             $imageFile->setParentEntityClass(ProductImage::class);
             $imageFile->setMimeType('image/jpeg');
+            $imageFile->setOwner($product->getOwner());
             $this->setReference($image['reference'] . '.' . $item['productCode'], $imageFile);
 
             $productImage = new ProductImage();

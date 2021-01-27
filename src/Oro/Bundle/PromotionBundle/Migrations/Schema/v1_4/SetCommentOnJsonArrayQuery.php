@@ -48,7 +48,7 @@ class SetCommentOnJsonArrayQuery extends ParametrizedMigrationQuery
                 $this->logQuery($logger, $commentSql);
 
                 if (!$dryRun) {
-                    $this->connection->executeUpdate($commentSql);
+                    $this->connection->executeStatement($commentSql);
                 }
             }
         }

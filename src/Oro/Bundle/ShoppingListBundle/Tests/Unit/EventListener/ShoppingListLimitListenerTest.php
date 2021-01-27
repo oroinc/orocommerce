@@ -11,7 +11,7 @@ use Oro\Bundle\ShoppingListBundle\EventListener\ShoppingListLimitListener;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class ShoppingListLimitListenerTest extends \PHPUnit\Framework\TestCase
 {

@@ -2,13 +2,6 @@
     {{ block_widget(block) }}
 {% endblock %}
 
-{% block _checkout_information_body_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': " checkout__body--offset-none"
-    }) %}
-    {{ parent_block_widget(block) }}
-{% endblock %}
-
 {% block _checkout_form_fields_widget %}
     {{ block_widget(block) }}
     {% if form.state_token is defined %}
@@ -106,7 +99,7 @@
         class: attr.class|default('') ~ " single-page-checkout-view__column single-page-checkout-view__column--first"
     }) %}
     <fieldset {{ block('block_attributes') }}>
-        <legend class="single-page-checkout-view__title"
+        <legend class="single-page-checkout-view__column-header has-offset"
             data-sticky-target="top-sticky-panel"
             data-sticky="{{ {
                 isSticky: true,
@@ -118,8 +111,10 @@
                 }
             }|json_encode }}"
         >
-            <span class="single-page-checkout-view__badge" aria-hidden="true">1</span>
-            <span class="single-page-checkout-view__title-text">{{ 'oro.checkout.billing_information'|trans }}</span>
+            <span class="single-page-checkout-view__title">
+                <span class="single-page-checkout-view__badge" aria-hidden="true">1</span>
+                <span class="single-page-checkout-view__title-text">{{ 'oro.checkout.billing_information'|trans }}</span>
+            </span>
         </legend>
         <div class="single-page-checkout-view__column-inner">
             {{ block_widget(block) }}
@@ -144,7 +139,7 @@
 {% block _checkout_shipping_information_widget %}
     {% set attr = attr|merge({class: attr.class|default('') ~ " single-page-checkout-view__column"}) %}
     <fieldset {{ block('block_attributes') }}>
-        <legend class="single-page-checkout-view__title"
+        <legend class="single-page-checkout-view__column-header has-offset"
             data-sticky-target="top-sticky-panel"
             data-sticky="{{ {
                 isSticky: true,
@@ -156,8 +151,10 @@
                 }
             }|json_encode }}"
         >
-            <span class="single-page-checkout-view__badge" aria-hidden="true">2</span>
-            <span class="single-page-checkout-view__title-text">{{ 'oro.checkout.shipping_information'|trans }}</span>
+            <span class="single-page-checkout-view__title">
+                <span class="single-page-checkout-view__badge" aria-hidden="true">2</span>
+                <span class="single-page-checkout-view__title-text">{{ 'oro.checkout.shipping_information'|trans }}</span>
+            </span>
         </legend>
         <div class="single-page-checkout-view__column-inner">
             {{ block_widget(block) }}
@@ -190,11 +187,23 @@
 
 {% block __oro_checkout_content__checkout_order_summary_header_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': "single-page-checkout-view__title"
+        '~class': " single-page-checkout-view__column-header"
     }) %}
+
     <legend {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </legend>
+{% endblock %}
+
+{% block __oro_checkout_content__checkout_order_summary_title_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': "single-page-checkout-view__title"
+    }) %}
+    <span {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+         <span class="single-page-checkout-view__title-text">{{ 'oro.checkout.order_summary.label'|trans }}</span>
+    </span>
+
 {% endblock %}
 
 {% block _checkout_summary_widget %}
@@ -277,7 +286,7 @@
 
 {% block _shipping_date_widget %}
     {% set shippingDate= 'shipping-date-uid-'|uniqid %}
-    <div class="grid__row grid__row--offset-none" role="group">
+    <div class="grid__row grid__row--offset-none grid__row--offset-top" role="group">
         <label class="label label--full" for="{{ shippingDate }}">{{ "oro.checkout.order_review.shipping_date"|trans }}</label>
         <div class="datepicker-box">
             <span class="datepicker-box__icon" aria-hidden="true"><span class="fa-calendar"></span></span>
@@ -287,38 +296,28 @@
 {% endblock %}
 
 {% block _checkout_summary_additional_options_widget -%}
-    <div class="collapse-view" data-page-component-collapse="{{ { storageKey: id }|json_encode() }}">
-        <span class="collapse-view__trigger collapse-view__trigger--icon" aria-hidden="true" data-collapse-trigger>
-            <span class="collapse-view__trigger-icon fa-caret-right"></span>
-        </span>
-        <button type="button" class="collapse-view__trigger" data-collapse-trigger>
-             <span class="collapse-view__trigger-text">
-                {{ 'oro.checkout.workflow.order_options.label'|trans }}
-             </span>
-        </button>
-        <div class="order-review-options collapse-view__container" data-collapse-container>
-            <div class="grid__row grid__row--offset-none">
-                <div class="grid__column grid__column--6 grid__column--offset-y">
+    <div class="order-review-options__wrapper">
+        <div class="order-review-options">
+            <div class="grid__row">
+                <div class="grid__column grid__column--6">
                     {% set poNumberId = 'oro_workflow_transition_po_number-uid-'|uniqid %}
                     <label class=" label label--full" for="{{ poNumberId }}">{{ "oro.checkout.order_review.po_number"|trans }}</label>
-                    <div class="checkout-form__optional-ref-number">
-                        {{ form_widget(form.po_number, { 'id': poNumberId, 'attr': {
-                            'placeholder': 'oro.checkout.order_review.po_number_placeholder'|trans,
-                            'data-validation': { Length: {max: 255} }|json_encode
-                        }}) }}
-                    </div>
+                    {{ form_widget(form.po_number, { 'id': poNumberId, 'attr': {
+                        'placeholder': 'oro.checkout.order_review.po_number_placeholder'|trans,
+                        'data-validation': { Length: {max: 255} }|json_encode
+                    }}) }}
                 </div>
             </div>
             <div class="grid__row grid__row--offset-none">
-                <div class="grid__column grid__column--12 grid__column--offset-y">
+                <div class="grid__column grid__column--12">
                     {% set noteId = 'oro_workflow_transition_customer_notes-uid-'|uniqid %}
                     <label class=" label label--full" for="{{ noteId }}">{{ "oro.checkout.order_review.note"|trans }}</label>
                     <div class="checkout-form__order-notes">
-                    {{ form_widget(form.customer_notes, { 'id': noteId, 'attr': {
-                            'placeholder': 'oro.checkout.order_review.note_placeholder'|trans,
-                            'data-page-component-elastic-area': ''
-                        }
-                    }) }}
+                        {{ form_widget(form.customer_notes, { 'id': noteId, 'attr': {
+                                'placeholder': 'oro.checkout.order_review.note_placeholder'|trans,
+                                'data-page-component-elastic-area': ''
+                            }
+                        }) }}
                     </div>
                 </div>
             </div>
@@ -330,7 +329,7 @@
                     {% set removeElementOptions = removeElementOptions|merge({label: removeLabel}) %}
                 {% endif %}
                 <div class="grid__row grid__row--offset-none">
-                    <div class="grid__column grid__column--12 grid__column--offset-y">
+                    <div class="grid__column grid__column--12">
                         {{ form_row(form.remove_source, removeElementOptions) }}
                     </div>
                 </div>
@@ -366,26 +365,6 @@
     </div>
 {%- endblock %}
 
-{% block _checkout_order_summary_totals_sticky_container_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        'data-sticky-target': 'top-sticky-panel',
-        'data-sticky': {
-            isSticky: true,
-            affixed: true,
-            autoWidth: false,
-            placeholderId: 'single-page-checkout-sticky-totals',
-            toggleClass: 'checkout-order-summary-totals-sticky',
-            moveToPanel: false,
-            viewport: {
-                minScreenType: 'desktop'
-            }
-        }
-    }) %}
-    <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
 {% block single_page_transition_container_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% import 'OroCheckoutBundle:layouts/default:layout.html.twig' as _layout %}
@@ -409,12 +388,12 @@
         {% import 'OroCheckoutBundle:layouts/default:layout.html.twig' as _layout %}
         <div class="order-checkout-widget">
             {% if transitionData.isAllowed %}
-                <button type="submit" class="btn btn--size-m btn--info checkout__submit-btn">
+                <button type="submit" class="btn btn--size-m btn--info btn--block checkout__submit-btn">
                     {{- transitionData.transition.label|trans({},'workflows') -}}
                 </button>
             {% else %}
                 <div {{- _layout.conditionMessages(transitionData) -}}>
-                    <button class="btn btn--size-m btn--info btn--disabled checkout__submit-btn" disabled="disabled">
+                    <button class="btn btn--size-m btn--info btn--block btn--disabled checkout__submit-btn" disabled="disabled">
                         {{- transitionData.transition.label|trans({},'workflows') -}}
                     </button>
                 </div>
@@ -425,20 +404,19 @@
 
 {% block _checkout_consent_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'class': 'grid__row'
+        'class': 'consent-container'
     }) %}
 
     <div {{ block('block_attributes') }}>
-        <span class="label label--full text-uppercase">
-            {{- 'oro.consent.frontend.checkout.form.sections.data_protection.label'|trans -}}
-        </span>
+        <h4 class="heading-bottom-offset">{{- 'oro.consent.frontend.checkout.form.sections.data_protection.label'|trans -}}</h4>
         {{ parent_block_widget(block) }}
     </div>
 {% endblock %}
 
 {% block _checkout_consent_message_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'class': 'notification notification--success'
+        'class': 'notification notification--success',
+        'role': 'alert'
     }) %}
 
     {% if consents is empty %}

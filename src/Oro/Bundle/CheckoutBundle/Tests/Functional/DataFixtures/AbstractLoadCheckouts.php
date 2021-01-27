@@ -4,7 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
@@ -129,10 +129,13 @@ abstract class AbstractLoadCheckouts extends AbstractFixture implements
 
             $manager->persist($checkout);
             $this->setReference($name, $checkout);
-
-            $workflowManager->startWorkflow($this->getWorkflowName(), $checkout);
         }
         $manager->flush();
+
+        foreach ($this->getData() as $name => $checkoutData) {
+            $checkout = $this->getReference($name);
+            $workflowManager->startWorkflow($this->getWorkflowName(), $checkout);
+        }
     }
 
     protected function clearPreconditions()

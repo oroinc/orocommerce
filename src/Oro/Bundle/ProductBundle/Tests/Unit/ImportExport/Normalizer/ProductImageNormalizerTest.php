@@ -76,7 +76,6 @@ class ProductImageNormalizerTest extends \PHPUnit\Framework\TestCase
 
         $this->productImageNormalizer = new ProductImageNormalizer($this->fieldHelper);
         $this->productImageNormalizer->setProductImageClass(ProductImage::class);
-        $this->productImageNormalizer->setProductImageDir('');
         $this->productImageNormalizer->setImageTypeProvider($this->imageTypeProvider);
         $this->productImageNormalizer->setFileLocator($this->fileLocator);
     }

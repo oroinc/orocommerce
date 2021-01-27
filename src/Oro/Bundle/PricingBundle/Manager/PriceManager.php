@@ -3,10 +3,12 @@
 namespace Oro\Bundle\PricingBundle\Manager;
 
 use Doctrine\Common\Util\ClassUtils;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\UnitOfWork;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\MessageQueueBundle\Client\MessageBufferManager;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
@@ -102,8 +104,8 @@ class PriceManager
             $changeSet = $this->getChangeSet($uow, $classMetadata, $price);
 
             $this->eventDispatcher->dispatch(
-                ProductPriceSaveAfterEvent::NAME,
-                new ProductPriceSaveAfterEvent(new PreUpdateEventArgs($price, $em, $changeSet))
+                new ProductPriceSaveAfterEvent(new PreUpdateEventArgs($price, $em, $changeSet)),
+                ProductPriceSaveAfterEvent::NAME
             );
         }
     }
@@ -123,7 +125,7 @@ class PriceManager
 
         $event = new ProductPriceRemove($price);
         $event->setEntityManager($em);
-        $this->eventDispatcher->dispatch(ProductPriceRemove::NAME, $event);
+        $this->eventDispatcher->dispatch($event, ProductPriceRemove::NAME);
 
         $em->detach($price);
     }
@@ -143,7 +145,7 @@ class PriceManager
         if ($pricesToRemove || $pricesToSave) {
             $event = new ProductPricesUpdated();
             $event->setEntityManager($this->shardManager->getEntityManager());
-            $this->eventDispatcher->dispatch(ProductPricesUpdated::NAME, $event);
+            $this->eventDispatcher->dispatch($event, ProductPricesUpdated::NAME);
 
             // do flushing the message buffer here because the flush() does not use a database transaction
             // and can be executed without an outer database transaction
@@ -183,7 +185,7 @@ class PriceManager
     }
 
     /**
-     * @return \Doctrine\Common\Persistence\ObjectManager|\Doctrine\ORM\EntityManager
+     * @return ObjectManager|EntityManager
      */
     public function getEntityManager()
     {

@@ -87,8 +87,8 @@ Feature: Single Page Checkout With Popup for Buyer
       | 400-Watt Bulb Work Light | 5 | items |
     And I should see Checkout Totals with data:
       | Subtotal | $10.00 |
-    When I select "Fifth avenue, 10115 Berlin, Germany" from "Select Billing Address"
-    And I select "Fifth avenue, 10115 Berlin, Germany" from "Select Shipping Address"
+    When I select "ORO, Fifth avenue, 10115 Berlin, Germany" from "Select Billing Address"
+    And I select "ORO, Fifth avenue, 10115 Berlin, Germany" from "Select Shipping Address"
     And I click "Delete this shopping list after submitting order"
     And I wait "Submit Order" button
     And I click "Submit Order"
@@ -100,7 +100,7 @@ Feature: Single Page Checkout With Popup for Buyer
     And I wait line items are initialized
     And I click "Create Order"
     And I should not see flash messages
-    And I select "Fifth avenue, 10115 Berlin, Germany" from "Select Billing Address"
+    And I select "ORO, Fifth avenue, 10115 Berlin, Germany" from "Select Billing Address"
     And I check "Use billing address" on the checkout page
     And I click "Delete this shopping list after submitting order"
     And I wait "Submit Order" button
@@ -225,7 +225,7 @@ Feature: Single Page Checkout With Popup for Buyer
       | State        | Has            |
       | Postal Code  | 12345          |
     When I close ui dialog
-    When I select "Fifth avenue, 10115 Berlin, Germany" from "Select Shipping Address"
+    When I select "ORO, Fifth avenue, 10115 Berlin, Germany" from "Select Shipping Address"
     And I click "Delete this shopping list after submitting order"
     And I wait "Submit Order" button
     And I click "Submit Order"
@@ -302,7 +302,7 @@ Feature: Single Page Checkout With Popup for Buyer
       | State        | Guria          |
       | Postal Code  | 67890          |
     When I close ui dialog
-    And I select "Fifth avenue, 10115 Berlin, Germany" from "Select Billing Address"
+    And I select "ORO, Fifth avenue, 10115 Berlin, Germany" from "Select Billing Address"
     And I click "Delete this shopping list after submitting order"
     And I wait "Submit Order" button
     And I click "Submit Order"

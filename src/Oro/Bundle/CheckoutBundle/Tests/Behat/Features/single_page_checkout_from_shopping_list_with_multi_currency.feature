@@ -82,8 +82,8 @@ Feature: Single Page Checkout From Shopping List With Multi Currency
   Scenario: Process checkout
     Given I open page with shopping list List 1
     And I click "Create Order"
-    And I select "Fifth avenue, 10115 Berlin, Germany" from "Select Billing Address"
-    And I select "Fifth avenue, 10115 Berlin, Germany" from "Select Shipping Address"
+    And I select "ORO, Fifth avenue, 10115 Berlin, Germany" from "Select Billing Address"
+    And I select "ORO, Fifth avenue, 10115 Berlin, Germany" from "Select Shipping Address"
     And I check "Flat Rate" on the checkout page
     And I check "Payment Terms" on the checkout page
     When I click "Submit Order"

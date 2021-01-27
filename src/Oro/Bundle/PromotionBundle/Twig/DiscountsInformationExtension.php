@@ -5,7 +5,7 @@ namespace Oro\Bundle\PromotionBundle\Twig;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PromotionBundle\Layout\DataProvider\DiscountsInformationDataProvider;
 use Psr\Container\ContainerInterface;
-use Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
+use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 

@@ -143,8 +143,8 @@ class SearchMessageProcessor implements MessageProcessorInterface
                 return true;
             case AsyncIndexer::TOPIC_REINDEX:
                 $this->eventDispatcher->dispatch(
-                    BeforeReindexEvent::EVENT_NAME,
-                    new BeforeReindexEvent($data['class'], $data['context'])
+                    new BeforeReindexEvent($data['class'], $data['context']),
+                    BeforeReindexEvent::EVENT_NAME
                 );
                 $this->processReindex($data);
 

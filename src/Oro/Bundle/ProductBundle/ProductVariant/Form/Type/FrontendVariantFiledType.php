@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\ProductVariant\Form\Type;
 
+use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManagerInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ProductVariant\Form\Type\DataTransformer\ProductVariantFieldsToProductVariantTransformer;
 use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantTypeHandlerRegistry;
@@ -17,6 +18,9 @@ use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
+/**
+ * Adds child form for each variant field
+ */
 class FrontendVariantFiledType extends AbstractType
 {
     const NAME = 'oro_product_product_variant_frontend_variant_field';
@@ -30,6 +34,9 @@ class FrontendVariantFiledType extends AbstractType
     /** @var VariantFieldProvider */
     protected $variantFieldProvider;
 
+    /** @var UserLocalizationManagerInterface */
+    protected $userLocalizationManager;
+
     /** @var PropertyAccessor */
     protected $propertyAccessor;
 
@@ -40,6 +47,7 @@ class FrontendVariantFiledType extends AbstractType
      * @param ProductVariantAvailabilityProvider $productVariantAvailabilityProvider
      * @param ProductVariantTypeHandlerRegistry $productVariantTypeHandlerRegistry
      * @param VariantFieldProvider $variantFieldProvider
+     * @param UserLocalizationManagerInterface $userLocalizationManager
      * @param PropertyAccessor $propertyAccessor
      * @param string $productClass
      */
@@ -47,12 +55,14 @@ class FrontendVariantFiledType extends AbstractType
         ProductVariantAvailabilityProvider $productVariantAvailabilityProvider,
         ProductVariantTypeHandlerRegistry $productVariantTypeHandlerRegistry,
         VariantFieldProvider $variantFieldProvider,
+        UserLocalizationManagerInterface $userLocalizationManager,
         PropertyAccessor $propertyAccessor,
         $productClass
     ) {
         $this->productVariantAvailabilityProvider = $productVariantAvailabilityProvider;
         $this->productVariantTypeHandlerRegistry = $productVariantTypeHandlerRegistry;
         $this->variantFieldProvider = $variantFieldProvider;
+        $this->userLocalizationManager = $userLocalizationManager;
         $this->propertyAccessor = $propertyAccessor;
         $this->productClass = (string)$productClass;
     }
@@ -191,19 +201,24 @@ class FrontendVariantFiledType extends AbstractType
     private function getSimpleProductVariants(Product $product)
     {
         $simpleProducts = $this->productVariantAvailabilityProvider->getSimpleProductsByVariantFields($product);
-
         $variantFields = $product->getVariantFields();
+        $localization = $this->userLocalizationManager->getCurrentLocalization();
 
         $simpleProductVariants = [];
 
-        foreach ($variantFields as $key => $fieldName) {
-            foreach ($simpleProducts as $simpleProduct) {
-                $value = $this->productVariantAvailabilityProvider->getVariantFieldScalarValue(
-                    $simpleProduct,
-                    $fieldName
-                );
-                $simpleProductVariants[$simpleProduct->getId()][$fieldName] = $value;
+        foreach ($simpleProducts as $simpleProduct) {
+            $data = [
+                'sku' => $simpleProduct->getSku(),
+                'name' => (string) $simpleProduct->getName($localization),
+                'attributes' => [],
+            ];
+
+            foreach ($variantFields as $key => $fieldName) {
+                $data['attributes'][$fieldName] = $this->productVariantAvailabilityProvider
+                    ->getVariantFieldScalarValue($simpleProduct, $fieldName);
             }
+
+            $simpleProductVariants[$simpleProduct->getId()] = $data;
         }
 
         return $simpleProductVariants;

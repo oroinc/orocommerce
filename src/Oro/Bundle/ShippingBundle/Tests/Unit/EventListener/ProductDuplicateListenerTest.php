@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\EventListener;
 
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
@@ -41,8 +41,8 @@ class ProductDuplicateListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener = new ProductDuplicateListener($this->doctrineHelper);
         $this->listener->setProductShippingOptionsClass(self::CLASS_NAME);
 
-        $this->repository = $this->createMock('Doctrine\Common\Persistence\ObjectRepository');
-        $this->objectManager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
+        $this->repository = $this->createMock('Doctrine\Persistence\ObjectRepository');
+        $this->objectManager = $this->createMock('Doctrine\Persistence\ObjectManager');
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')

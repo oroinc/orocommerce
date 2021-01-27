@@ -3,13 +3,13 @@
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Twig;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product as StubProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
 use Oro\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
 use Oro\Bundle\SaleBundle\Twig\QuoteExtension;
-use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 
 /**
@@ -114,7 +114,7 @@ class QuoteExtensionTest extends \PHPUnit\Framework\TestCase
         $product = new StubProduct();
 
         if (!empty($productInventoryStatus)) {
-            $productInventoryStatus = new StubEnumValue($productInventoryStatus, $productInventoryStatus);
+            $productInventoryStatus = new TestEnumValue($productInventoryStatus, $productInventoryStatus);
             $product->setInventoryStatus($productInventoryStatus);
         }
 

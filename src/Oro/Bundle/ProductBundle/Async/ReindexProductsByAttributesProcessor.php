@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Async;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Exception\InvalidArgumentException;
@@ -107,8 +107,8 @@ class ReindexProductsByAttributesProcessor implements MessageProcessorInterface,
             $productIds = $repository->getProductIdsByAttributesId($attributeIds);
             if ($productIds) {
                 $this->dispatcher->dispatch(
-                    ReindexationRequestEvent::EVENT_NAME,
-                    new ReindexationRequestEvent([Product::class], [], $productIds)
+                    new ReindexationRequestEvent([Product::class], [], $productIds),
+                    ReindexationRequestEvent::EVENT_NAME
                 );
             }
 

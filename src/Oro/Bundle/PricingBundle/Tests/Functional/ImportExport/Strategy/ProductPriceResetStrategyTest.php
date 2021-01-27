@@ -109,8 +109,8 @@ class ProductPriceResetStrategyTest extends WebTestCase
         $body['options']['price_list_id'] = $priceList->getId();
 
         $this->getContainer()->get('event_dispatcher')->dispatch(
-            Events::BEFORE_CREATING_IMPORT_CHUNK_JOBS,
-            new BeforeImportChunksEvent($body)
+            new BeforeImportChunksEvent($body),
+            Events::BEFORE_CREATING_IMPORT_CHUNK_JOBS
         );
 
         // ProductPriceResetStrategy works in conjunction with PreChunksMessageProcessor

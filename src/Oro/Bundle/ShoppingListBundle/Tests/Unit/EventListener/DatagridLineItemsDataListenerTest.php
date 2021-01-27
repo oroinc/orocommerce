@@ -25,10 +25,6 @@ class DatagridLineItemsDataListenerTest extends \PHPUnit\Framework\TestCase
             ->expects($this->never())
             ->method('addDataForLineItem');
 
-        $event
-            ->expects($this->never())
-            ->method('addDataForLineItem');
-
         $this->listener->onLineItemData($event);
     }
 
@@ -40,10 +36,6 @@ class DatagridLineItemsDataListenerTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('getLineItems')
             ->willReturn([new \stdClass()]);
-
-        $event
-            ->expects($this->never())
-            ->method('addDataForLineItem');
 
         $event
             ->expects($this->never())

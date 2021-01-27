@@ -65,7 +65,7 @@ class ExportDataQuery extends ParametrizedSqlMigrationQuery
                 $this->logQuery($logger, $query, $params, $types);
 
                 if (!$dryRun) {
-                    $this->connection->executeUpdate($query, $params, $types);
+                    $this->connection->executeStatement($query, $params, $types);
                 }
             }
         }
@@ -113,7 +113,7 @@ class ExportDataQuery extends ParametrizedSqlMigrationQuery
 
             $ruleId = 0;
             if (!$dryRun) {
-                $this->connection->executeUpdate($query, $params, $types);
+                $this->connection->executeStatement($query, $params, $types);
                 $ruleId = $this->connection->lastInsertId(
                     $this->connection->getDatabasePlatform() instanceof PostgreSqlPlatform
                         ? 'oro_rule_id_seq'
@@ -136,7 +136,7 @@ class ExportDataQuery extends ParametrizedSqlMigrationQuery
             $this->logQuery($logger, $query, $params, $types);
 
             if (!$dryRun) {
-                $this->connection->executeUpdate($query, $params, $types);
+                $this->connection->executeStatement($query, $params, $types);
             }
         }
     }

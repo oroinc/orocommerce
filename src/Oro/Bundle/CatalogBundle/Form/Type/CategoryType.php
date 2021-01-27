@@ -96,9 +96,8 @@ class CategoryType extends AbstractType
                     'entry_options' => [
                         'wysiwyg_options' => [
                             'autoRender' => false,
-                            'statusbar' => true,
+                            'elementpath' => true,
                             'resize' => true,
-                            'width' => 500,
                             'height' => 200,
                         ],
                     ],
@@ -114,6 +113,9 @@ class CategoryType extends AbstractType
                     'value_class' => CategoryLongDescription::class,
                     'field' => ['wysiwyg', 'wysiwyg_style', 'wysiwyg_properties'],
                     'entry_type' => WYSIWYGValueType::class,
+                    'entry_options' => [
+                        'entity_class' => CategoryLongDescription::class
+                    ],
                     'use_tabs' => true,
                 ]
             )

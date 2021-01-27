@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Form\Extension;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Form\Extension\ProductFormExtension;
@@ -36,7 +36,7 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->registry = $this->createMock('Doctrine\Persistence\ManagerRegistry');
         $this->extension = new ProductFormExtension($this->registry);
     }
 
@@ -50,7 +50,7 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
                 ->disableOriginalConstructor()
                 ->getMock();
 
-        $entityManager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
+        $entityManager = $this->createMock('Doctrine\Persistence\ObjectManager');
         $entityManager->expects($expects ? $this->once() : $this->never())
             ->method('getRepository')
             ->with('OroCatalogBundle:Category')

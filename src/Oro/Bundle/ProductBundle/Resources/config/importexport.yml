@@ -51,6 +51,12 @@ services:
         tags:
             - { name: oro_importexport.normalizer, priority: -5 }
 
+    oro_product.importexport.file_manager.product_images:
+        parent: oro_gaufrette.file_manager
+        public: true
+        arguments:
+            - 'import_product_images'
+
     oro_product.importexport.normalizer.product_image:
         class: 'Oro\Bundle\ProductBundle\ImportExport\Normalizer\ProductImageNormalizer'
         parent: oro_importexport.serializer.configurable_entity_normalizer
@@ -58,7 +64,6 @@ services:
             - [setProductImageClass, ['Oro\Bundle\ProductBundle\Entity\ProductImage']]
             - [setImageTypeProvider, ['@oro_layout.provider.image_type']]
             - [setFileLocator, ['@file_locator']]
-            - [setProductImageDir, ['%kernel.project_dir%/var/import_export/product_images/']]
         tags:
             - { name: oro_importexport.normalizer }
 
@@ -224,6 +229,7 @@ services:
         class: 'Oro\Bundle\ProductBundle\ImportExport\Configuration\ProductImageImportExportConfigurationProvider'
         arguments:
             - '@translator'
+            - '@oro_product.importexport.file_manager.product_images'
         tags:
             - { name: oro_importexport.configuration, alias: oro_product_index }
 
@@ -260,3 +266,4 @@ services:
         decorates: oro_attachment.serializer.file_normalizer
         arguments:
             - '@oro_product.importexport.normalizer.product_image_aware_file_normalizer_decorator.inner'
+            - '@oro_product.importexport.file_manager.product_images'

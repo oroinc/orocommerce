@@ -122,8 +122,7 @@ abstract class AbstractSubtreeCacheBuilder
     protected function getChildCategoriesWithFallbackStatic(Category $category, $target)
     {
         $qb = $this->registry
-            ->getManagerForClass('OroCatalogBundle:Category')
-            ->getRepository('OroCatalogBundle:Category')
+            ->getRepository(Category::class)
             ->getChildrenQueryBuilderPartial($category);
 
         $qb = $this->joinCategoryVisibility($qb, $target);
@@ -144,8 +143,7 @@ abstract class AbstractSubtreeCacheBuilder
         $target
     ) {
         $qb = $this->registry
-            ->getManagerForClass('OroCatalogBundle:Category')
-            ->getRepository('OroCatalogBundle:Category')
+            ->getRepository(Category::class)
             ->getChildrenQueryBuilder($category)
             ->select('partial node.{id}');
 

@@ -5,11 +5,14 @@ namespace Oro\Bundle\TaxBundle\OrderTax\Resolver;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\UnitOfWork;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\TaxBundle\Exception\TaxationDisabledException;
 use Oro\Bundle\TaxBundle\Manager\TaxManager;
 use Oro\Bundle\TaxBundle\Model\Result;
 use Oro\Bundle\TaxBundle\Model\Taxable;
+use Oro\Bundle\TaxBundle\OrderTax\Specification\OrderLineItemRequiredTaxRecalculationSpecification;
 use Oro\Bundle\TaxBundle\OrderTax\Specification\OrderRequiredTaxRecalculationSpecification;
 use Oro\Bundle\TaxBundle\Resolver\ResolverInterface;
 use Oro\Bundle\TaxBundle\Resolver\StopPropagationException;
@@ -21,24 +24,28 @@ use Oro\Bundle\TaxBundle\Resolver\StopPropagationException;
  */
 class SkipOrderTaxRecalculationResolver implements ResolverInterface
 {
-    /**
-     * @var ManagerRegistry
-     */
-    protected $doctrine;
+    /** @var ManagerRegistry */
+    private ManagerRegistry $doctrine;
 
-    /**
-     * @var TaxManager
-     */
-    protected $taxManager;
+    /** @var TaxManager */
+    private TaxManager $taxManager;
+
+    /** @var FrontendHelper */
+    private FrontendHelper $frontendHelper;
+
+    /** @var array */
+    private array $orderRequiresTaxRecalculation = [];
 
     /**
      * @param ManagerRegistry $doctrine
-     * @param TaxManager      $taxManager
+     * @param TaxManager $taxManager
+     * @param FrontendHelper $frontendHelper
      */
-    public function __construct(ManagerRegistry $doctrine, TaxManager $taxManager)
+    public function __construct(ManagerRegistry $doctrine, TaxManager $taxManager, FrontendHelper $frontendHelper)
     {
         $this->doctrine = $doctrine;
         $this->taxManager = $taxManager;
+        $this->frontendHelper = $frontendHelper;
     }
 
     /**
@@ -47,6 +54,11 @@ class SkipOrderTaxRecalculationResolver implements ResolverInterface
     public function resolve(Taxable $taxable)
     {
         if (!$taxable->getIdentifier() || !$taxable->getClassName()) {
+            return;
+        }
+
+        if ($this->frontendHelper->isFrontendRequest()) {
+            // Order tax recalculation check is not needed on store front.
             return;
         }
 
@@ -71,13 +83,21 @@ class SkipOrderTaxRecalculationResolver implements ResolverInterface
      * @param Taxable    $taxable
      *
      * @throws StopPropagationException
-     * @throws \Oro\Bundle\TaxBundle\Exception\TaxationDisabledException
+     * @throws TaxationDisabledException
      */
     private function resolveOrderTaxable(UnitOfWork $uow, Order $order, Taxable $taxable)
     {
-        $specification = new OrderRequiredTaxRecalculationSpecification($uow);
-        if ($specification->isSatisfiedBy($order)) {
+        if ($this->isOrderTaxRecalculationRequired($order, $uow)) {
+            // Recalculation is required.
             return;
+        }
+
+        $lineItemRequiredTaxRecalculationSpecification = new OrderLineItemRequiredTaxRecalculationSpecification($uow);
+        foreach ($order->getLineItems() as $orderLineItem) {
+            if ($lineItemRequiredTaxRecalculationSpecification->isSatisfiedBy($orderLineItem)) {
+                // Recalculation is required.
+                return;
+            }
         }
 
         $taxResult = $taxable->getResult();
@@ -95,6 +115,7 @@ class SkipOrderTaxRecalculationResolver implements ResolverInterface
             }
         }
 
+        // Recalculation is not required.
         throw new StopPropagationException();
     }
 
@@ -105,11 +126,57 @@ class SkipOrderTaxRecalculationResolver implements ResolverInterface
      */
     private function resolveOrderLineItemTaxable(UnitOfWork $uow, OrderLineItem $orderLineItem)
     {
-        $specification = new OrderRequiredTaxRecalculationSpecification($uow);
-        if ($specification->isSatisfiedBy($orderLineItem->getOrder())) {
+        if ($this->isOrderTaxRecalculationRequiredCached($orderLineItem->getOrder(), $uow)) {
+            // Recalculation is required.
             return;
         }
 
+        $lineItemRequiredTaxRecalculationSpecification = new OrderLineItemRequiredTaxRecalculationSpecification($uow);
+        if ($lineItemRequiredTaxRecalculationSpecification->isSatisfiedBy($orderLineItem)) {
+            // Recalculation is required.
+            return;
+        }
+
+        // Recalculation is not required.
         throw new StopPropagationException();
+    }
+
+    /**
+     * @param Order $order
+     * @param UnitOfWork $uow
+     * @return bool
+     */
+    private function isOrderTaxRecalculationRequiredCached(Order $order, UnitOfWork $uow): bool
+    {
+        $orderId = $order->getId();
+        if (!$orderId) {
+            return true;
+        }
+
+        if (!isset($this->orderRequiresTaxRecalculation[$orderId])) {
+            $this->orderRequiresTaxRecalculation[$orderId] = $this->isOrderTaxRecalculationRequired($order, $uow);
+        }
+
+        return $this->orderRequiresTaxRecalculation[$orderId];
+    }
+
+    /**
+     * @param Order $order
+     * @param UnitOfWork $uow
+     * @return bool
+     */
+    private function isOrderTaxRecalculationRequired(Order $order, UnitOfWork $uow): bool
+    {
+        $specification = new OrderRequiredTaxRecalculationSpecification($uow);
+
+        return $specification->isSatisfiedBy($order);
+    }
+
+    /**
+     * Clears local variable which is used for checking if order requires tax recalculation.
+     */
+    public function clearOrderRequiresTaxRecalculationCache(): void
+    {
+        $this->orderRequiresTaxRecalculation = [];
     }
 }

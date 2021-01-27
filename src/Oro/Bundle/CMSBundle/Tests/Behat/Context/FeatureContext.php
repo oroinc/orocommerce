@@ -93,6 +93,19 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * @Then /^(?:|I )should not see text matching (?P<pattern>"(?:[^"]|\\")*") in WYSIWYG editor$/
+     *
+     * @param string $pattern
+     */
+    public function assertWysiwygEditorNotMatchesText(string $pattern): void
+    {
+        // Switch to WYSIWYG editor iframe.
+        $this->getDriver()->switchToIFrame(0);
+        $this->assertSession()->pageTextNotMatches($this->fixStepArgument($pattern));
+        $this->getDriver()->switchToIFrame(null);
+    }
+
+    /**
      * Example: I fill the code type block containing the text "Same text 1" with the value "Same text 2"
      *
      * @codingStandardsIgnoreStart
@@ -115,6 +128,29 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
         $editor->setValue($newValue);
         $editor->findButton('Save')->click();
+    }
+
+    /**
+     * Example: When I click on "WysiwygFileTypeBlock" with title "File name" in WYSIWYG editor
+     *
+     * @When /^(?:|I )click on "(?P<selector>[^"]+)" with title "(?P<title>[^"]+)" in WYSIWYG editor$/
+     *
+     * @param string $selector
+     * @param string $title
+     */
+    public function iClickOnElementWithTitleInWysiwygEditor(string $selector, string $title)
+    {
+        // Switch to WYSIWYG editor iframe.
+        $this->getDriver()->switchToIFrame(0);
+
+        $element = $this->findElementContains($selector, $title);
+        self::assertTrue(
+            $element->isValid(),
+            sprintf('Element "%s" with title "%s" not found in WYSIWYG editor', $selector, $title)
+        );
+        $element->click();
+
+        $this->getDriver()->switchToWindow();
     }
 
     /**

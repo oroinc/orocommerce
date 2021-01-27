@@ -27,7 +27,7 @@ Feature: Checkout with payment rule based on subtotal
       | Subtotal | $10.00 |
       | Shipping | $3.00  |
     And I should see "Total $13.00"
-    And I should see "SELECT A PAYMENT METHOD"
+    And I should see "Select a Payment Method"
     And I should see "Payment Term"
 
     When I proceed as the Admin
@@ -51,5 +51,5 @@ Feature: Checkout with payment rule based on subtotal
     And I reload the page
     Then I should not see "The selected payment method is not available. Please return to the payment method selection step and select a different one." flash message
     And I should not see "No payment methods are available, please contact us to complete the order submission."
-    And I should see "SELECT A PAYMENT METHOD"
+    And I should see "Select a Payment Method"
     And I should see "Payment Term"

@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Migrations\Data\ORM\AbstractCategoryFixture;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;

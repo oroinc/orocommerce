@@ -243,6 +243,9 @@ services:
         parent: oro_website_search.repository.abstract
         public: true
         class: 'Oro\Bundle\ProductBundle\Search\ProductRepository'
+        arguments:
+            - '@event_dispatcher'
+            - '@oro_config.manager'
         calls:
             - [setEntityName, ['Oro\Bundle\ProductBundle\Entity\Product']]
 
@@ -792,6 +795,7 @@ services:
         abstract: true
         arguments:
             - '@oro_segment.segment_manager'
+            - '@oro_website.manager'
             - '@oro_product.provider.segment'
             - '@oro_product.product.manager'
             - '@oro_config.manager'
@@ -846,7 +850,7 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_product.product_image.resize, method: resizeProductImage }
 
-    oro.product.event_listener.product_images_configuration_listener:
+    oro_product.event_listener.product_images_configuration_listener:
         class: 'Oro\Bundle\ProductBundle\EventListener\ProductImagesConfigurationListener'
         arguments:
             - '@session'
@@ -854,23 +858,23 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_config.update_after, method: afterUpdate }
 
-    oro.product.provider.watermark_image_filter:
+    oro_product.provider.watermark_image_filter:
         class: 'Oro\Bundle\ProductBundle\Provider\WatermarkImageFilterProvider'
         arguments:
             - '@oro_config.global'
             - '@oro_entity.doctrine_helper'
-            - '%oro_attachment.filesystem_name.attachments%'
+            - '@oro_attachment.file_manager'
         tags:
             - { name: layout.image_filter.provider }
 
-    oro.product.message_processor.image_resize:
-        class: 'Oro\Bundle\ProductBundle\MessageProcessor\ImageResizeMessageProcessor'
+    oro_product.async.resize_product_image_processor:
+        class: 'Oro\Bundle\ProductBundle\Async\ResizeProductImageMessageProcessor'
         arguments:
-            - '@oro_product.repository.product_image'
+            - '@doctrine'
             - '@oro_product.provider.product_images_dimensions'
             - '@oro_attachment.manager.image_resize'
         tags:
-            - { name: 'oro_message_queue.client.message_processor' }
+            - { name: oro_message_queue.client.message_processor }
 
     oro_product.product_visibility_restriction_listener:
         class: 'Oro\Bundle\ProductBundle\EventListener\ProductVisibilityRestrictionListener'
@@ -1062,11 +1066,6 @@ services:
             - {isShortUnitCode: true}
             - '@oro_product.service.single_unit_mode'
 
-    oro_product.provider.privilege_category_provider:
-        class: 'Oro\Bundle\ProductBundle\Provider\PrivilegeCategoryProvider'
-        tags:
-            - { name: oro_user.privilege_category }
-
     oro_product.layout.data_provider.configurable_products:
         class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\ConfigurableProductProvider'
         arguments:
@@ -1105,10 +1104,9 @@ services:
             class: 'Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner\VirtualFieldsSelectQueryConverter'
             arguments:
                 - '@oro_query_designer.query_designer.manager'
-                - '@oro_entity.virtual_field_provider.chain'
-                - '@doctrine'
-            calls:
-                - [setVirtualRelationProvider, ['@oro_entity.virtual_relation_provider.chain']]
+                - '@oro_entity.virtual_field_provider'
+                - '@oro_entity.virtual_relation_provider'
+                - '@oro_entity.doctrine_helper'
 
     oro_product.event_listener.before_remove_field_listener:
         class: 'Oro\Bundle\ProductBundle\EventListener\ValidateBeforeRemoveFieldListener'
@@ -1278,6 +1276,7 @@ services:
         class: Oro\Bundle\ProductBundle\DataGrid\EventListener\SearchEventListener
         arguments:
             - '@oro_product.handler.search_product_handler'
+            - '@oro_product.website_search.repository.product'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.frontend-product-search-grid, method: onBuildAfter }
@@ -1455,12 +1454,19 @@ services:
         arguments:
             - '@oro_layout.provider.image_type'
 
-    oro_product.provider.product_image_file_name_provider:
+    oro_product.provider.product_image_file_name:
         class: Oro\Bundle\ProductBundle\Provider\ProductImageFileNameProvider
-        decorates: oro_attachment.provider.attachment_file_name_provider
+        decorates: oro_attachment.provider.file_name
         arguments:
+            - '@oro_product.provider.product_image_file_name.inner'
             - '@oro_config.manager'
-            - '@oro_product.provider.product_image_file_name_provider.inner'
+
+    oro_product.provider.product_image_file_names:
+        class: Oro\Bundle\ProductBundle\Provider\ProductImageFileNamesProvider
+        decorates: oro_attachment.provider.image_file_names
+        arguments:
+            - '@oro_product.provider.product_image_file_names.inner'
+            - '@oro_config.manager'
 
     oro_product.event_listener.attribute_changes:
         class: 'Oro\Bundle\ProductBundle\EventListener\AttributeChangesListener'
@@ -1559,6 +1565,7 @@ services:
         arguments:
             - '@oro_entity_config.config_manager'
             - '@oro_entity.entity_alias_duplicate_resolver'
+            - '@Doctrine\Inflector\Inflector'
         tags:
             - { name: oro_entity.alias_provider }
 
@@ -1726,7 +1733,7 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_web_catalog.restrict_content_variant_by_entity, method: applyRestriction }
 
-    oro_product.event_listener.image_remove:
+    oro_product.event_listener.remove_product_image:
         class: Oro\Bundle\ProductBundle\EventListener\RemoveProductImageListener
         arguments:
             - '@oro_message_queue.client.message_producer'
@@ -1787,3 +1794,17 @@ services:
             - '@oro_importexport.strategy.import.helper'
         tags:
             - { name: kernel.event_listener, event: oro_product.data_converter.convert_to_import, method: onConvertToImport }
+
+    oro_product.provider.product_autocomplete:
+        class: Oro\Bundle\ProductBundle\Provider\ProductAutocompleteProvider
+        arguments:
+            - '@router'
+            - '@oro_product.website_search.repository.product'
+            - '@oro_ui.twig.html_tag'
+            - '@oro_product.provider.product_image_placeholder'
+            - '@oro_config.manager'
+            - '@oro_entity_extend.enum_value_provider'
+            - '@event_dispatcher'
+
+    Oro\Bundle\ProductBundle\Provider\ProductAutocompleteProvider:
+        alias: oro_product.provider.product_autocomplete

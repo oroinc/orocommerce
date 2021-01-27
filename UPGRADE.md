@@ -2,6 +2,19 @@ This file includes only the most important items that should be addressed before
 
 Please refer to [CHANGELOG.md](CHANGELOG.md) for a list of significant changes in the code that may affect the upgrade of some customizations.
 
+## FROM 4.1.0 to 4.2.0
+
+The `var/attachment` and `var/import_export` directories are no longer used for storing files and have been removed from the default directory structure.
+
+All files from these directories must be moved to the new locations:
+- from `var/attachment/protected_mediacache` to `var/data/protected_mediacache`;
+- from `var/attachment` to `var/data/attachments`;
+- from `var/import_export` to `var/data/importexport`.
+
+Files for the standard import should be placed into `var/data/import_files` instead of `var/import_export/files`.
+
+Files for the product images import should be placed into `var/data/import_files` instead of `var/import_export/product_images`.
+
 ## FROM 1.5.0 to 1.6.0
 * Changed minimum required php version to 7.1
 * Relation between Category and Product has been changed in database. Join table has been removed. Please, make sure that you have fresh database backup before updating application.

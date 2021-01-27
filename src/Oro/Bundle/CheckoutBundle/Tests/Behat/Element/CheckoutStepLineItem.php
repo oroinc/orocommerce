@@ -12,6 +12,13 @@ class CheckoutStepLineItem extends Element implements LineItemInterface
      */
     public function getProductSKU(): string
     {
-        return $this->getElement('CheckoutStepLineItemProductSku')->getText();
+        foreach ($this->getElements('CheckoutStepLineItemProductSku') as $element) {
+            $sku = $element->getText();
+            if ($sku) {
+                return $sku;
+            }
+        }
+
+        return '';
     }
 }

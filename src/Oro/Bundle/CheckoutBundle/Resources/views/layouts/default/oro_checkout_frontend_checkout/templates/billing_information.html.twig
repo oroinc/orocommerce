@@ -27,7 +27,7 @@
 
             <div class="grid">
                 <div class="grid__row grid__row--offset-none">
-                    <div class="grid__column grid__column--6">
+                    <div class="grid__column grid__column--6 grid__column--gutter-l-none">
                         {{ form_row(form.billing_address.customerAddress) }}
                     </div>
                 </div>
@@ -47,7 +47,7 @@
 
             {% if not workflowItem.data.get('disallow_shipping_address_edit') %}
                 <div class="grid__row grid__row--offset-none {% if hideShipping %}hidden{% endif %}" data-ship-to-billing-container>
-                    <div class="grid__column grid__column--offset-y">
+                    <div class="grid__column grid__column--offset-y grid__column--gutter-l-none">
                         {{ form_row(form.ship_to_billing_address) }}
                     </div>
                 </div>

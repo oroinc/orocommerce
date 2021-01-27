@@ -39,7 +39,7 @@ class PriceListRecalculateCommandTest extends WebTestCase
 
         $this->databaseTriggerManager = $this->createMock(EntityTriggerManager::class);
         $this->getContainer()->set(
-            'oro_pricing.database_triggers.manager.combined_prices.test',
+            'oro_pricing.tests.database_triggers.manager.combined_prices',
             $this->databaseTriggerManager
         );
 

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\DependencyInjection;
 
@@ -7,12 +8,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
 
 class OroShoppingListExtensionTest extends ExtensionTestCase
 {
-    /**
-     * @var array
-     */
-    protected $extensionConfigs = [];
-
-    public function testLoad()
+    public function testLoad(): void
     {
         $this->loadExtension(new OroShoppingListExtension());
 
@@ -39,12 +35,8 @@ class OroShoppingListExtensionTest extends ExtensionTestCase
         $this->assertExtensionConfigsLoaded([OroShoppingListExtension::ALIAS]);
     }
 
-    /**
-     * Test Get Alias
-     */
-    public function testGetAlias()
+    public function testGetAlias(): void
     {
-        $extension = new OroShoppingListExtension();
-        $this->assertEquals(OroShoppingListExtension::ALIAS, $extension->getAlias());
+        static::assertEquals(OroShoppingListExtension::ALIAS, (new OroShoppingListExtension())->getAlias());
     }
 }

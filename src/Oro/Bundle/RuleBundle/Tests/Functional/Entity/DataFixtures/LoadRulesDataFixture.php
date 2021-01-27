@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\RuleBundle\Tests\Functional\Entity\DataFixtures;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\TestFrameworkBundle\Test\DataFixtures\AbstractFixture;
 use Symfony\Component\Yaml\Yaml;

@@ -38,9 +38,10 @@ class LineItemsSimpleOnResultAfterListener
                 throw new \LogicException('Element lineItemsDataByIds was expected to contain one item');
             }
 
+            $product = $firstLineItem->getProduct();
             // 1. If configurable line item is only one, then it should be marked as simple.
             // 2. If line item is an empty matrix configurable then it should remain marked as configurable.
-            $record->setValue('isConfigurable', $firstLineItem->getProduct()->isConfigurable());
+            $record->setValue('isConfigurable', $product ? $product->isConfigurable() : false);
 
             foreach (reset($lineItemsData) as $name => $value) {
                 $record->setValue($name, $value);

@@ -50,6 +50,10 @@ class DatagridLineItemsDataInventoryListener
     {
         foreach ($event->getLineItems() as $lineItem) {
             $product = $lineItem->getProduct();
+            if (!$product) {
+                continue;
+            }
+
             $lineItemData = [
                 'inventoryStatus' => $product->getInventoryStatus()->getId(),
                 'isLowInventory' => $this->lowInventoryProvider->isLowInventoryProduct($product),

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\Datagrid;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;

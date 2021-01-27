@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Functional\EventListener;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\TaxBundle\Tests\Functional\Traits\OrderTaxHelperTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 

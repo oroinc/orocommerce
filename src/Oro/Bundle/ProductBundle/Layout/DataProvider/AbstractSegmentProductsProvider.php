@@ -3,9 +3,9 @@
 namespace Oro\Bundle\ProductBundle\Layout\DataProvider;
 
 use Doctrine\Common\Cache\CacheProvider;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Provider\ProductsProviderInterface;
@@ -14,6 +14,7 @@ use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SegmentBundle\Entity\Manager\SegmentManager;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
@@ -30,6 +31,9 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
 
     /** @var SegmentManager */
     private $segmentManager;
+
+    /** @var WebsiteManager */
+    private $websiteManager;
 
     /** @var ProductSegmentProviderInterface */
     private $productSegmentProvider;
@@ -60,6 +64,7 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
 
     /**
      * @param SegmentManager $segmentManager
+     * @param WebsiteManager $websiteManager
      * @param ProductSegmentProviderInterface $productSegmentProvider
      * @param ProductManager $productManager
      * @param ConfigManager $configManager
@@ -70,6 +75,7 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
      */
     public function __construct(
         SegmentManager $segmentManager,
+        WebsiteManager $websiteManager,
         ProductSegmentProviderInterface $productSegmentProvider,
         ProductManager $productManager,
         ConfigManager $configManager,
@@ -79,6 +85,7 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
         AclHelper $aclHelper
     ) {
         $this->segmentManager = $segmentManager;
+        $this->websiteManager = $websiteManager;
         $this->productSegmentProvider = $productSegmentProvider;
         $this->productManager = $productManager;
         $this->configManager = $configManager;
@@ -172,6 +179,14 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
     protected function getSegmentManager()
     {
         return $this->segmentManager;
+    }
+
+    /**
+     * @return WebsiteManager
+     */
+    protected function getWebsiteManager(): WebsiteManager
+    {
+        return $this->websiteManager;
     }
 
     /**

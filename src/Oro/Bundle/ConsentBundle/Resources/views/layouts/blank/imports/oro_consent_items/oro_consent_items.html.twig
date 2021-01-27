@@ -3,7 +3,7 @@
         'class': 'consent-items form-row'
     }) %}
 
-    {% if consents is defined %}
+    {% if consents is defined and consents|length > 0  %}
         {% do block|merge_context({
             class_prefix: class_prefix,
             consents: consents

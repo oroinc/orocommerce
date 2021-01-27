@@ -100,8 +100,8 @@ class RestrictProductsIndexEventListenerTest extends WebTestCase
         $this->ensureItemsLoaded($alias, 0, 'oro_website_search.engine');
 
         $this->getContainer()->get('event_dispatcher')->dispatch(
-            ReindexationRequestEvent::EVENT_NAME,
-            new ReindexationRequestEvent([Product::class], [$this->getDefaultWebsiteId()], [], false)
+            new ReindexationRequestEvent([Product::class], [$this->getDefaultWebsiteId()], [], false),
+            ReindexationRequestEvent::EVENT_NAME
         );
 
         $this->ensureItemsLoaded($alias, $expectedItems, 'oro_website_search.engine');

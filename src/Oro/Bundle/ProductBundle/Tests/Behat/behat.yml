@@ -401,15 +401,19 @@ oro_behat_extension:
           SKU1:
             type: 'css'
             locator: 'input[name="oro_product_quick_add[products][0][productDisplayName]"]'
+            element: ProductAutocomplete
           SKU2:
             type: 'css'
             locator: "input[name='oro_product_quick_add[products][1][productDisplayName]']"
+            element: ProductAutocomplete
           SKU3:
             type: 'css'
             locator: "input[name='oro_product_quick_add[products][2][productDisplayName]']"
+            element: ProductAutocomplete
           SKU4:
             type: 'css'
             locator: "input[name='oro_product_quick_add[products][3][productDisplayName]']"
+            element: ProductAutocomplete
           QTY1:
             type: 'css'
             locator: "input[name='oro_product_quick_add[products][0][productQuantity]']"
@@ -425,11 +429,11 @@ oro_behat_extension:
           UNIT1:
             type: 'css'
             locator: 'select[name="oro_product_quick_add[products][0][productUnit]"]'
-            element: Select2Entity
+            element: Select
           UNIT2:
             type: 'css'
             locator: 'select[name="oro_product_quick_add[products][1][productUnit]"]'
-            element: Select2Entity
+            element: Select
 
     Quick Order Form > QTY1:
       selector:
@@ -641,6 +645,30 @@ oro_behat_extension:
     Search Button:
       selector: 'button[name="oro_website_search_search_button"]'
 
+    Search Autocomplete:
+      selector: '.search-autocomplete'
+
+    Search Autocomplete Item:
+      selector: '.search-autocomplete .search-autocomplete__item'
+
+    Search Autocomplete Product:
+      selector: '.search-autocomplete .search-autocomplete-product'
+
+    Search Autocomplete Product Image:
+      selector: '.search-autocomplete .search-autocomplete-product__image img'
+
+    Search Autocomplete Inventory Status:
+      selector: '.search-autocomplete .search-autocomplete-product__status'
+
+    Search Autocomplete Highlight:
+      selector: '.search-autocomplete .search-autocomplete__highlight'
+
+    Search Autocomplete Submit:
+      selector: '.search-autocomplete .search-autocomplete__submit'
+
+    Search Autocomplete No Found:
+      selector: '.search-autocomplete .search-autocomplete__no-found'
+
     # front products grid
     ProductFrontendGrid:
       selector: 'div[data-page-component-name="frontend-catalog-allproducts-grid"], div[data-page-component-name="frontend-product-search-grid"], div[data-page-component-name="order-products-previously-purchased-grid"]'
@@ -735,8 +763,11 @@ oro_behat_extension:
     ProductItem:
       selector: 'div.product-item'
 
+    ProductAutocomplete:
+      class: Oro\Bundle\ProductBundle\Tests\Behat\Element\ProductAutocomplete
+
     ProductLineItem:
-      selector: 'tbody.line_item'
+      selector: 'table tr.grid-row'
 
     Product Shopping List Form:
       class: 'Oro\Bundle\TestFrameworkBundle\Behat\Element\Form'
@@ -1003,6 +1034,9 @@ oro_behat_extension:
       selector: '.product-view-media-container [data-trigger-gallery-open]'
 
     Product Main Image:
+      selector: '.product-view-media-wrapper .product-view-media-gallery__image'
+
+    Product Main Image In Tab:
       selector: '.tab-content__wrapper .product-view-media-gallery__image'
 
     Zoom Container:
@@ -1215,6 +1249,11 @@ oro_behat_extension:
         locator: '//div[contains(@data-page-component-name,"attachment-files-grid:DamMultiFileField3")]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
+    cat1 wysiwyg file:
+      selector:
+        type: 'xpath'
+        locator: '//a[contains(@title,"cat1_wysiwyg_file")]'
+
     cat1 wysiwyg image:
       selector:
         type: 'xpath'
@@ -1225,6 +1264,9 @@ oro_behat_extension:
         type: 'xpath'
         locator: '//img[contains(@alt,"cat2_wysiwyg_image")]'
 
+    More Link:
+      selector: 'a.toggle-more'
+
     Filters In Sidebar:
       selector: '.page-sidebar .product-filters-sidebar .filter-box'
 
@@ -1234,6 +1276,12 @@ oro_behat_extension:
     Catalog Sidebar:
       selector: '[data-hint-container="frontend-product-search-grid"]'
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGridFilters
+
+    Drawing Gallery Trigger:
+      selector: 'div[class*="product-view__drawing"] [data-trigger-gallery-open]'
+
+    Multi Images Gallery Trigger:
+      selector: 'div[class*="product-view__multipleimages"] [data-trigger-gallery-open]'
 
   pages:
     Product View:

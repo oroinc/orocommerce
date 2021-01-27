@@ -12,7 +12,7 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
 /**
  * Represents Content Variant entity
  *
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Oro\Bundle\CMSBundle\Entity\Repository\TextContentVariantRepository")
  * @ORM\Table(name="oro_cms_text_content_variant")
  * @Config
  */

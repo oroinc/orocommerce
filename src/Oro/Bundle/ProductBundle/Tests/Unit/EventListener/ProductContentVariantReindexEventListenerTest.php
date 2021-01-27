@@ -404,8 +404,8 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit\Framework\T
             ->expects($this->once())
             ->method('dispatch')
             ->with(
-                ReindexationRequestEvent::EVENT_NAME,
-                new ReindexationRequestEvent([Product::class], $websiteIds, $productIds)
+                new ReindexationRequestEvent([Product::class], $websiteIds, $productIds),
+                ReindexationRequestEvent::EVENT_NAME
             );
     }
 }

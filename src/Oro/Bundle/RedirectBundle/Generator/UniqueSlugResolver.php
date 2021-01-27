@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\RedirectBundle\Generator;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
@@ -225,7 +225,7 @@ class UniqueSlugResolver
         SluggableInterface $entity
     ): QueryBuilder {
         $restrictSlugIncrementEvent = new RestrictSlugIncrementEvent($qb, $entity);
-        $this->eventDispatcher->dispatch(RestrictSlugIncrementEvent::NAME, $restrictSlugIncrementEvent);
+        $this->eventDispatcher->dispatch($restrictSlugIncrementEvent, RestrictSlugIncrementEvent::NAME);
 
         return $restrictSlugIncrementEvent->getQueryBuilder();
     }

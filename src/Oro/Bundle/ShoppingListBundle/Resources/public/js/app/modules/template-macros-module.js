@@ -22,6 +22,7 @@ macros('oroshoppinglist', {
      * @param {boolean?} data.clip
      * @param {string} data.name
      * @param {string} data.link
+     * @param {string?} data.popover_image_src
      */
     renderProductItemName: require('tpl-loader!oroshoppinglist/templates/macros/product-item__name.html'),
 
@@ -55,6 +56,13 @@ macros('oroshoppinglist', {
      * @param {array} errors
      */
     renderErrors: require('tpl-loader!oroshoppinglist/templates/macros/product-item__errors.html'),
+
+    /**
+     * Renders warnings for product item
+     *
+     * @param {array} errors
+     */
+    renderWarnings: require('tpl-loader!oroshoppinglist/templates/macros/product-item__warnings.html'),
 
     /**
      * Renders button to show more hidden product variants

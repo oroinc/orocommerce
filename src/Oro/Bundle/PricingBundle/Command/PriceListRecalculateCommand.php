@@ -1,9 +1,10 @@
 <?php
+declare(strict_types=1);
 
 namespace Oro\Bundle\PricingBundle\Command;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerGroupRepository;
@@ -28,69 +29,26 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Recalculate combined price list and combined product prices
+ * Recalculates combined price lists and product prices.
  */
 class PriceListRecalculateCommand extends Command
 {
-    const ALL = 'all';
-    const ACCOUNT = 'customer';
-    const ACCOUNT_GROUP = 'customer-group';
-    const WEBSITE = 'website';
-    const PRICE_LIST = 'price-list';
-    const DISABLE_TRIGGERS = 'disable-triggers';
-    const VERBOSE = 'verbose';
-    const USE_INSERT_SELECT = 'use-insert-select';
-    const INCLUDE_DEPENDENT = 'include-dependent';
-
     /** @var string */
     protected static $defaultName = 'oro:price-lists:recalculate';
 
-    /** @var ManagerRegistry */
-    private $registry;
+    private ManagerRegistry $registry;
+    private ProductPriceBuilder $priceBuilder;
+    private InsertQueryExecutorInterface $insertQueryExecutorInsertSelectMode;
+    private ShardQueryExecutorInterface $shardInsertQueryExecutorInsertSelectMode;
+    private InsertQueryExecutorInterface $insertQueryExecutorMultiInsertMode;
+    private ShardQueryExecutorInterface $shardInsertQueryExecutorMultiInsertMode;
+    private DependentPriceListProvider $dependentPriceListProvider;
+    private CombinedPriceListTriggerHandler $triggerHandler;
+    private StrategyRegister $strategyRegister;
+    private CombinedPriceListsBuilderFacade $builder;
+    private EntityTriggerManager $databaseTriggerManager;
+    private PriceListProductAssignmentBuilder $assignmentBuilder;
 
-    /** @var ProductPriceBuilder */
-    private $priceBuilder;
-
-    /** @var InsertQueryExecutorInterface */
-    private $insertQueryExecutorInsertSelectMode;
-
-    /** @var ShardQueryExecutorInterface */
-    private $shardInsertQueryExecutorInsertSelectMode;
-
-    /** @var InsertQueryExecutorInterface */
-    private $insertQueryExecutorMultiInsertMode;
-
-    /** @var ShardQueryExecutorInterface */
-    private $shardInsertQueryExecutorMultiInsertMode;
-
-    /** @var DependentPriceListProvider */
-    private $dependentPriceListProvider;
-
-    /** @var CombinedPriceListTriggerHandler */
-    private $triggerHandler;
-
-    /** @var StrategyRegister */
-    private $strategyRegister;
-
-    /** @var CombinedPriceListsBuilderFacade */
-    private $builder;
-
-    /** @var EntityTriggerManager */
-    private $databaseTriggerManager;
-
-    /** @var PriceListProductAssignmentBuilder */
-    private $assignmentBuilder;
-
-    /**
-     * @param ManagerRegistry $registry
-     * @param ProductPriceBuilder $priceBuilder
-     * @param DependentPriceListProvider $dependentPriceListProvider
-     * @param CombinedPriceListTriggerHandler $triggerHandler
-     * @param StrategyRegister $strategyRegister
-     * @param CombinedPriceListsBuilderFacade $builder
-     * @param EntityTriggerManager $databaseTriggerManager
-     * @param PriceListProductAssignmentBuilder $assignmentBuilder
-     */
     public function __construct(
         ManagerRegistry $registry,
         ProductPriceBuilder $priceBuilder,
@@ -113,11 +71,6 @@ class PriceListRecalculateCommand extends Command
         parent::__construct();
     }
 
-    /**
-     * @param InsertQueryExecutorInterface $insertQueryExecutor
-     * @param ShardQueryExecutorInterface  $shardInsertQueryExecutor
-     * @param bool                         $applyOnInsertSelectMode
-     */
     public function setInsertQueryExecutors(
         InsertQueryExecutorInterface $insertQueryExecutor,
         ShardQueryExecutorInterface $shardInsertQueryExecutor,
@@ -132,66 +85,105 @@ class PriceListRecalculateCommand extends Command
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    /** @noinspection PhpMissingParentCallCommonInspection */
     protected function configure()
     {
         $this
-            ->addOption(self::ALL)
+            ->addOption('all')
             ->addOption(
-                self::ACCOUNT,
+                'customer',
                 null,
                 InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
-                'customer ids for prices recalculate',
+                'Customer IDs',
                 []
             )
             ->addOption(
-                self::ACCOUNT_GROUP,
+                'customer-group',
                 null,
                 InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
-                'customer group ids for prices recalculate',
+                'Customer group IDs',
                 []
             )
             ->addOption(
-                self::WEBSITE,
+                'website',
                 null,
                 InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
-                'website ids for prices recalculate',
+                'Website IDs',
                 []
             )
             ->addOption(
-                self::PRICE_LIST,
+                'price-list',
                 null,
                 InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
-                'price list ids for prices recalculate',
+                'Price list IDs',
                 []
             )
             ->addOption(
-                self::INCLUDE_DEPENDENT,
+                'include-dependent',
                 null,
                 InputOption::VALUE_NONE,
-                sprintf('recalculate prices for dependent price lists included in the %s option', self::PRICE_LIST)
+                'Recalculate prices for dependent price lists included in the price-list option'
             )
             ->addOption(
-                self::DISABLE_TRIGGERS,
+                'disable-triggers',
                 null,
                 InputOption::VALUE_NONE,
-                'disables ALL triggers before the operation, allowing faster reindexation of bigger data.
-                Not available for MySQL or MySQL-based database platforms'
+                'Disable ALL triggers to allow for faster calculations (not available for MySQL-based databases)'
             )
             ->addOption(
-                self::USE_INSERT_SELECT,
+                'use-insert-select',
                 null,
                 InputOption::VALUE_NONE,
-                'Use INSERT SELECT queries instead multi INSERTS'
+                'Use INSERT SELECT queries instead of multi INSERTS'
             )
-            ->setDescription('Recalculate combined price list and combined product prices');
+            ->setDescription('Recalculates combined price lists and product prices.')
+            ->setHelp(
+                // @codingStandardsIgnoreStart
+                <<<'HELP'
+The <info>%command.name%</info> command recalculates combined price lists and product prices.
+
+  <info>php %command.full_name%</info>
+
+Use the <info>--customer</info>, <info>--customer-group</info> or <info>--website</info> options to recalculate only the prices
+related to the specified customers, customer groups or websites:
+
+  <info>php %command.full_name% --customer=<ID1> --customer=<ID2> --customer=<IDN></info>
+  <info>php %command.full_name% --customer-group=<ID1> --customer-group=<ID2> --customer-group=<IDN></info>
+  <info>php %command.full_name% --website=<ID1> --website=<ID2> --website=<IDN></info>
+
+The <info>--price-list</info> option can limit the scope of the recalculations to the combined price lists
+that are derived from the specified price lists:
+
+  <info>php %command.full_name% --price-list=<ID1> --price-list=<ID2> --price-list=<IDN></info>
+  
+If the price calculation rules refer to other price lists, the <info>--include-dependent</info> option can be used
+to propagate the changes to all affected price lists:
+
+  <info>php %command.full_name% --include-dependent --price-list=<ID1> --price-list=<ID2> --price-list=<IDN></info>
+
+This command can also be used with the <info>--all</info> option to recalculate all combined price lists in the system:
+
+  <info>php %command.full_name% --all</info>
+
+The two additional options <info>--disable-triggers</info> (not available in MySQL-based databases) and
+<info>--use-insert-select</info> may help to speed up the calculations on large data sets.
+
+  <info>php %command.full_name% --all --disable-triggers --use-insert-select</info>
+
+HELP
+                // @codingStandardsIgnoreEnd
+            )
+            ->addUsage('--customer=<ID1> --customer=<ID2> --customer=<IDN>')
+            ->addUsage('--customer-group=<ID1> --customer-group=<ID2> --customer-group=<IDN>')
+            ->addUsage('--website=<ID1> --website=<ID2> --website=<IDN>')
+            ->addUsage('--price-list=<ID1> --price-list=<ID2> --price-list=<IDN>')
+            ->addUsage('--include-dependent --price-list=<ID1> --price-list=<ID2> --price-list=<IDN>')
+            ->addUsage('--all')
+            ->addUsage('--all --disable-triggers --use-insert-select')
+        ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    /** @noinspection PhpMissingParentCallCommonInspection */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         /** @var CombinedPriceListTriggerHandler $triggerHandler */
@@ -201,14 +193,14 @@ class PriceListRecalculateCommand extends Command
             ->getCurrentStrategy()
             ->setOutput($output);
 
-        $disableTriggers = (bool)$input->getOption(self::DISABLE_TRIGGERS);
+        $disableTriggers = (bool)$input->getOption('disable-triggers');
 
         if (true === $disableTriggers) {
             $databasePlatform = $this->registry->getConnection()->getDatabasePlatform();
             if ($databasePlatform instanceof MySqlPlatform) {
                 throw new \InvalidArgumentException(sprintf(
                     'The option `%s` is not available for `%s` database platform.',
-                    self::DISABLE_TRIGGERS,
+                    'disable-triggers',
                     $databasePlatform->getName()
                 ));
             }
@@ -217,14 +209,14 @@ class PriceListRecalculateCommand extends Command
         }
 
         $this->prepareBuilders($input);
-        $optionAll = (bool)$input->getOption(self::ALL);
+        $optionAll = (bool)$input->getOption('all');
         if ($optionAll) {
             $this->processAllPriceLists($output);
-        } elseif ($input->getOption(self::PRICE_LIST)) {
+        } elseif ($input->getOption('price-list')) {
             $this->processPriceLists($input, $output);
-        } elseif ($input->getOption(self::WEBSITE)
-            || $input->getOption(self::ACCOUNT)
-            || $input->getOption(self::ACCOUNT_GROUP)
+        } elseif ($input->getOption('website')
+            || $input->getOption('customer')
+            || $input->getOption('customer-group')
         ) {
             $this->processCombinedPriceLists($input, $output);
         } else {
@@ -240,10 +232,7 @@ class PriceListRecalculateCommand extends Command
         $this->triggerHandler->commit();
     }
 
-    /**
-     * @param OutputInterface $output
-     */
-    protected function processAllPriceLists(OutputInterface $output)
+    protected function processAllPriceLists(OutputInterface $output): void
     {
         $output->writeln('<info>Start processing of all Price rules</info>');
         $this->buildPriceRulesForAllPriceLists();
@@ -254,11 +243,7 @@ class PriceListRecalculateCommand extends Command
         $output->writeln('<info>The cache is updated successfully</info>');
     }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     */
-    protected function processPriceLists(InputInterface $input, OutputInterface $output)
+    protected function processPriceLists(InputInterface $input, OutputInterface $output): void
     {
         $priceLists = $this->getPriceLists($input);
 
@@ -270,11 +255,7 @@ class PriceListRecalculateCommand extends Command
         $output->writeln('<info>The cache is updated successfully</info>');
     }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     */
-    protected function processCombinedPriceLists(InputInterface $input, OutputInterface $output)
+    protected function processCombinedPriceLists(InputInterface $input, OutputInterface $output): void
     {
         // Price list chains for given parameters may contain any set of price lists with duplication
         // To get actual prices all price rules should be actualized
@@ -307,12 +288,11 @@ class PriceListRecalculateCommand extends Command
     }
 
     /**
-     * @param InputInterface $input
      * @return PriceList[]
      */
-    protected function getPriceLists(InputInterface $input)
+    protected function getPriceLists(InputInterface $input): array
     {
-        $priceListIds = $input->getOption(self::PRICE_LIST);
+        $priceListIds = $input->getOption('price-list');
         /** @var PriceListRepository $priceListRepository */
         $priceListRepository = $this->registry
             ->getManagerForClass(PriceList::class)
@@ -321,7 +301,7 @@ class PriceListRecalculateCommand extends Command
         /** @var PriceList[] $priceLists */
         $priceLists = $priceListRepository->findBy(['id' => $priceListIds]);
 
-        if (!$input->getOption(self::INCLUDE_DEPENDENT)) {
+        if (!$input->getOption('include-dependent')) {
             return $priceLists;
         }
 
@@ -331,7 +311,7 @@ class PriceListRecalculateCommand extends Command
     /**
      * @param PriceList[]|int[] $priceLists
      */
-    protected function buildPriceRulesByPriceLists($priceLists)
+    protected function buildPriceRulesByPriceLists(iterable $priceLists): void
     {
         foreach ($priceLists as $priceList) {
             $this->assignmentBuilder->buildByPriceListWithoutEventDispatch($priceList);
@@ -342,13 +322,13 @@ class PriceListRecalculateCommand extends Command
     /**
      * @param PriceList[]|int[] $priceLists
      */
-    protected function buildCombinedPriceListsByPriceLists($priceLists)
+    protected function buildCombinedPriceListsByPriceLists(iterable $priceLists): void
     {
         $this->builder->rebuildForPriceLists($priceLists, time());
         $this->builder->dispatchEvents();
     }
 
-    protected function buildPriceRulesForAllPriceLists()
+    protected function buildPriceRulesForAllPriceLists(): void
     {
         /** @var PriceListRepository $priceListRepository */
         $priceListRepository = $this->registry
@@ -359,12 +339,11 @@ class PriceListRecalculateCommand extends Command
     }
 
     /**
-     * @param InputInterface $input
      * @return array|Website[]
      */
-    protected function getWebsites(InputInterface $input)
+    protected function getWebsites(InputInterface $input): array
     {
-        $websiteIds = $input->getOption(self::WEBSITE);
+        $websiteIds = $input->getOption('website');
         /** @var WebsiteRepository $repository */
         $repository = $this->registry
             ->getManagerForClass(Website::class)
@@ -379,12 +358,11 @@ class PriceListRecalculateCommand extends Command
     }
 
     /**
-     * @param InputInterface $input
      * @return array|CustomerGroup[]
      */
-    protected function getCustomerGroups(InputInterface $input)
+    protected function getCustomerGroups(InputInterface $input): array
     {
-        $customerGroupIds = $input->getOption(self::ACCOUNT_GROUP);
+        $customerGroupIds = $input->getOption('customer-group');
         /** @var CustomerGroupRepository $repository */
         $repository = $this->registry
             ->getManagerForClass(CustomerGroup::class)
@@ -398,12 +376,11 @@ class PriceListRecalculateCommand extends Command
     }
 
     /**
-     * @param InputInterface $input
      * @return array|Customer[]
      */
-    protected function getCustomers(InputInterface $input)
+    protected function getCustomers(InputInterface $input): array
     {
-        $customerIds = $input->getOption(self::ACCOUNT);
+        $customerIds = $input->getOption('customer');
         /** @var CustomerRepository $repository */
         $repository = $this->registry
             ->getManagerForClass(Customer::class)
@@ -416,37 +393,28 @@ class PriceListRecalculateCommand extends Command
         return $customers;
     }
 
-    /**
-     * @param OutputInterface $output
-     */
-    protected function disableAllTriggers(OutputInterface $output)
+    protected function disableAllTriggers(OutputInterface $output): void
     {
         $output->writeln('<info>Disabling ALL triggers for the CPL table</info>');
         $this->databaseTriggerManager->disable();
     }
 
-    /**
-     * @param OutputInterface $output
-     */
-    protected function enableAllTriggers(OutputInterface $output)
+    protected function enableAllTriggers(OutputInterface $output): void
     {
         $output->writeln('<info>Enabling ALL triggers for the CPL table</info>');
         $this->databaseTriggerManager->enable();
     }
 
-    /**
-     * @param InputInterface $input
-     */
-    private function prepareBuilders(InputInterface $input)
+    private function prepareBuilders(InputInterface $input): void
     {
         $currentStrategy = $this->strategyRegister->getCurrentStrategy();
-        if ($input->getOption(self::USE_INSERT_SELECT)
+        if ($input->getOption('use-insert-select')
             && $currentStrategy instanceof InsertFromSelectExecutorAwareInterface
         ) {
             $currentStrategy->setInsertSelectExecutor($this->shardInsertQueryExecutorInsertSelectMode);
         }
 
-        if ($input->getOption(self::USE_INSERT_SELECT)) {
+        if ($input->getOption('use-insert-select')) {
             $this->assignmentBuilder->setInsertQueryExecutor($this->insertQueryExecutorInsertSelectMode);
             $this->priceBuilder->setShardInsertQueryExecutor($this->shardInsertQueryExecutorInsertSelectMode);
         } else {

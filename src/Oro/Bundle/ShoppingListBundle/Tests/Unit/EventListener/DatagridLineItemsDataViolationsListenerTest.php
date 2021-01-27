@@ -10,7 +10,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataViolationsListener;
 use Oro\Bundle\ShoppingListBundle\Validator\LineItemViolationsProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Component\Validator\ConstraintViolationInterface;
+use Symfony\Component\Validator\ConstraintViolation;
 
 class DatagridLineItemsDataViolationsListenerTest extends \PHPUnit\Framework\TestCase
 {
@@ -83,26 +83,41 @@ class DatagridLineItemsDataViolationsListenerTest extends \PHPUnit\Framework\Tes
             []
         );
 
-        $violation1 = $this->createMock(ConstraintViolationInterface::class);
-        $violation1
-            ->expects($this->once())
+        $violation1 = $this->createMock(ConstraintViolation::class);
+        $violation1->expects($this->once())
+            ->method('getCause')
+            ->willReturn('warning');
+        $violation1->expects($this->once())
             ->method('getMessage')
-            ->willReturn('error_message1');
+            ->willReturn('warning_message1');
 
-        $violation2 = $this->createMock(ConstraintViolationInterface::class);
-        $violation2
-            ->expects($this->once())
+        $violation2 = $this->createMock(ConstraintViolation::class);
+        $violation2->expects($this->once())
+            ->method('getCause')
+            ->willReturn('warning');
+        $violation2->expects($this->once())
             ->method('getMessage')
-            ->willReturn('error_message2');
+            ->willReturn('warning_message2');
+
+        $violation3 = $this->createMock(ConstraintViolation::class);
+        $violation3->expects($this->once())
+            ->method('getCause')
+            ->willReturn('error');
+        $violation3->expects($this->once())
+            ->method('getMessage')
+            ->willReturn('error_message3');
 
         $this->violationsProvider
             ->expects($this->once())
             ->method('getLineItemViolationLists')
-            ->willReturn(['product.sku1.item' => [$violation1], 'product.sku2.item' => [$violation2]]);
+            ->willReturn(['product.sku1.item' => [$violation1], 'product.sku2.item' => [$violation2, $violation3]]);
 
         $this->listener->onLineItemData($event);
 
-        $this->assertEquals(['errors' => ['error_message1']], $event->getDataForLineItem(11));
-        $this->assertEquals(['errors' => ['error_message2']], $event->getDataForLineItem(22));
+        $this->assertEquals(['warnings' => ['warning_message1'], 'errors' => []], $event->getDataForLineItem(11));
+        $this->assertEquals(
+            ['warnings' => ['warning_message2'], 'errors' => ['error_message3']],
+            $event->getDataForLineItem(22)
+        );
     }
 }

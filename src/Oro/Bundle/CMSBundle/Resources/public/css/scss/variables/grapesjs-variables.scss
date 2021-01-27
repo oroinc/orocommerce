@@ -15,6 +15,7 @@ $quaternaryColor: $primary-400;
 
 $colorWarn: $secondary;
 $fontColor: $primary-400;
+$fontPath: "~grapesjs/src/styles/fonts";
 $mainLhlColor: $primary-400;
 $colorBlue: $secondary;
 
@@ -39,3 +40,10 @@ $paddElClm: 3px 5px;
 $colorYell: $extra;
 
 $grapesjs-content-editor-offset: 24px !default;
+
+$grapesjs-scrollbar-track-background: rgba($primary, 0.1) !default;
+$grapesjs-scrollbar-thumb-background: rgba($primary, 0.4) !default;
+
+$codemirror-scrollbar-track-background: rgba($primary-inverse, 0.1) !default;
+$codemirror-scrollbar-thumb-background: rgba($primary-inverse, 0.4) !default;
+$codemirror-selected-background: rgba($primary-inverse, .5) !default;

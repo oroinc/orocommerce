@@ -3,8 +3,8 @@
 namespace Oro\Bundle\SEOBundle\Tests\Unit\Sitemap\Provider;
 
 use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
@@ -73,28 +73,28 @@ class UrlItemsProviderTest extends OrmTestCase
             ->method('dispatch')
             ->withConsecutive(
                 [
-                    UrlItemsProviderEvent::ON_START . '.test',
-                    $this->isInstanceOf(UrlItemsProviderEvent::class)
+                    $this->isInstanceOf(UrlItemsProviderEvent::class),
+                    UrlItemsProviderEvent::ON_START . '.test'
                 ],
                 [
-                    UrlItemsProviderEvent::ON_START,
-                    $this->isInstanceOf(UrlItemsProviderEvent::class)
+                    $this->isInstanceOf(UrlItemsProviderEvent::class),
+                    UrlItemsProviderEvent::ON_START
                 ],
                 [
-                    RestrictSitemapEntitiesEvent::NAME . '.test',
-                    $this->isInstanceOf(RestrictSitemapEntitiesEvent::class)
+                    $this->isInstanceOf(RestrictSitemapEntitiesEvent::class),
+                    RestrictSitemapEntitiesEvent::NAME . '.test'
                 ],
                 [
-                    RestrictSitemapEntitiesEvent::NAME,
-                    $this->isInstanceOf(RestrictSitemapEntitiesEvent::class)
+                    $this->isInstanceOf(RestrictSitemapEntitiesEvent::class),
+                    RestrictSitemapEntitiesEvent::NAME
                 ],
                 [
-                    UrlItemsProviderEvent::ON_END . '.test',
-                    $this->isInstanceOf(UrlItemsProviderEvent::class)
+                    $this->isInstanceOf(UrlItemsProviderEvent::class),
+                    UrlItemsProviderEvent::ON_END . '.test'
                 ],
                 [
-                    UrlItemsProviderEvent::ON_END,
-                    $this->isInstanceOf(UrlItemsProviderEvent::class)
+                    $this->isInstanceOf(UrlItemsProviderEvent::class),
+                    UrlItemsProviderEvent::ON_END
                 ]
             );
 

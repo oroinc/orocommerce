@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Functional\EventListener;
 
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CMSBundle\WYSIWYG\WYSIWYGProcessedDTO;
 use Oro\Bundle\CMSBundle\WYSIWYG\WYSIWYGTwigFunctionProcessorInterface;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
@@ -14,7 +15,7 @@ use Twig\TwigFunction;
 
 class WYSIWYGFieldTwigListenerTest extends WebTestCase
 {
-    /** @var \Doctrine\Common\Persistence\ObjectManager */
+    /** @var ObjectManager */
     private $em;
 
     /** @var Localization */
@@ -106,6 +107,8 @@ class WYSIWYGFieldTwigListenerTest extends WebTestCase
                         return false;
                     }
 
+                    ksort($twigFunctionCalls);
+
                     $this->assertContains($twigFunctionCalls, $expectedCalls);
                     unset($expectedCalls[array_search($twigFunctionCalls, $expectedCalls, true)]);
 
@@ -145,7 +148,7 @@ class WYSIWYGFieldTwigListenerTest extends WebTestCase
         $this->em->persist($product);
         $this->em->flush();
 
-        $this->getContainer()->get('oro_cms.event_listener.wysiwyg_field_twig_listener.test')->onTerminate();
+        $this->getContainer()->get('oro_cms.tests.event_listener.wysiwyg_field_twig_listener')->onTerminate();
     }
 
     private function updateProduct(Product $product): void

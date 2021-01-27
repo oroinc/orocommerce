@@ -3,14 +3,14 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Validator\Constraints;
 
 use Doctrine\Common\Collections\AbstractLazyCollection;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinks;
 use Oro\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinksValidator;
-use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
@@ -254,12 +254,12 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 [
-                    self::VARIANT_FIELD_KEY_SIZE => new StubEnumValue('l', 'L'),
-                    self::VARIANT_FIELD_KEY_COLOR => new StubEnumValue('blue', 'Blue'),
+                    self::VARIANT_FIELD_KEY_SIZE => new TestEnumValue('l', 'L'),
+                    self::VARIANT_FIELD_KEY_COLOR => new TestEnumValue('blue', 'Blue'),
                 ],
                 [
-                    self::VARIANT_FIELD_KEY_SIZE => new StubEnumValue('m', 'M'),
-                    self::VARIANT_FIELD_KEY_COLOR => new StubEnumValue('blue', 'Blue'),
+                    self::VARIANT_FIELD_KEY_SIZE => new TestEnumValue('m', 'M'),
+                    self::VARIANT_FIELD_KEY_COLOR => new TestEnumValue('blue', 'Blue'),
                 ],
             ]
         );
@@ -278,12 +278,12 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 [
-                    self::VARIANT_FIELD_KEY_SIZE => new StubEnumValue('l', 'L'),
-                    self::VARIANT_FIELD_KEY_COLOR => new StubEnumValue('blue', 'Blue'),
+                    self::VARIANT_FIELD_KEY_SIZE => new TestEnumValue('l', 'L'),
+                    self::VARIANT_FIELD_KEY_COLOR => new TestEnumValue('blue', 'Blue'),
                 ],
                 [
-                    self::VARIANT_FIELD_KEY_SIZE => new StubEnumValue('l', 'L'),
-                    self::VARIANT_FIELD_KEY_COLOR => new StubEnumValue('blue', 'Blue'),
+                    self::VARIANT_FIELD_KEY_SIZE => new TestEnumValue('l', 'L'),
+                    self::VARIANT_FIELD_KEY_COLOR => new TestEnumValue('blue', 'Blue'),
                 ],
             ]
         );
@@ -304,12 +304,12 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 [
-                    self::VARIANT_FIELD_KEY_SIZE => new StubEnumValue('l', 'L'),
-                    self::VARIANT_FIELD_KEY_COLOR => new StubEnumValue('blue', 'Blue'),
+                    self::VARIANT_FIELD_KEY_SIZE => new TestEnumValue('l', 'L'),
+                    self::VARIANT_FIELD_KEY_COLOR => new TestEnumValue('blue', 'Blue'),
                 ],
                 [
-                    self::VARIANT_FIELD_KEY_SIZE => new StubEnumValue('l', 'L'),
-                    self::VARIANT_FIELD_KEY_COLOR => new StubEnumValue('blue', 'Blue'),
+                    self::VARIANT_FIELD_KEY_SIZE => new TestEnumValue('l', 'L'),
+                    self::VARIANT_FIELD_KEY_COLOR => new TestEnumValue('blue', 'Blue'),
                 ],
             ]
         );
@@ -334,13 +334,13 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 [
-                    self::VARIANT_FIELD_KEY_SIZE => new StubEnumValue('l', 'L'),
-                    self::VARIANT_FIELD_KEY_COLOR => new StubEnumValue('blue', 'Blue'),
+                    self::VARIANT_FIELD_KEY_SIZE => new TestEnumValue('l', 'L'),
+                    self::VARIANT_FIELD_KEY_COLOR => new TestEnumValue('blue', 'Blue'),
                     self::VARIANT_FIELD_KEY_SLIM_FIT => true,
                 ],
                 [
-                    self::VARIANT_FIELD_KEY_SIZE => new StubEnumValue('l', 'L'),
-                    self::VARIANT_FIELD_KEY_COLOR => new StubEnumValue('blue', 'Blue'),
+                    self::VARIANT_FIELD_KEY_SIZE => new TestEnumValue('l', 'L'),
+                    self::VARIANT_FIELD_KEY_COLOR => new TestEnumValue('blue', 'Blue'),
                     self::VARIANT_FIELD_KEY_SLIM_FIT => false,
                 ],
             ]
@@ -361,13 +361,13 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 [
-                    self::VARIANT_FIELD_KEY_SIZE => new StubEnumValue('l', 'L'),
-                    self::VARIANT_FIELD_KEY_COLOR => new StubEnumValue('blue', 'Blue'),
+                    self::VARIANT_FIELD_KEY_SIZE => new TestEnumValue('l', 'L'),
+                    self::VARIANT_FIELD_KEY_COLOR => new TestEnumValue('blue', 'Blue'),
                     self::VARIANT_FIELD_KEY_SLIM_FIT => false,
                 ],
                 [
-                    self::VARIANT_FIELD_KEY_SIZE => new StubEnumValue('l', 'L'),
-                    self::VARIANT_FIELD_KEY_COLOR => new StubEnumValue('blue', 'Blue'),
+                    self::VARIANT_FIELD_KEY_SIZE => new TestEnumValue('l', 'L'),
+                    self::VARIANT_FIELD_KEY_COLOR => new TestEnumValue('blue', 'Blue'),
                     self::VARIANT_FIELD_KEY_SLIM_FIT => false,
                 ],
             ]

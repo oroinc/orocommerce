@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\PromotionBundle\Handler;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\EntityBundle\Exception\EntityNotFoundException;
 use Oro\Bundle\EntityBundle\Tools\EntityRoutingHelper;
 use Oro\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
@@ -98,7 +98,7 @@ abstract class AbstractCouponHandler
         }
 
         $event = new TotalCalculateBeforeEvent($entity, $request);
-        $this->eventDispatcher->dispatch(TotalCalculateBeforeEvent::NAME, $event);
+        $this->eventDispatcher->dispatch($event, TotalCalculateBeforeEvent::NAME);
 
         return $entity;
     }

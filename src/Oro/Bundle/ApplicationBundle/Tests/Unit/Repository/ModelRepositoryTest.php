@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ApplicationBundle\Tests\Unit\Model;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityNotFoundException;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ApplicationBundle\Event\ModelEvent;
 use Oro\Bundle\ApplicationBundle\Event\ModelIdentifierEvent;
 use Oro\Bundle\ApplicationBundle\Factory\ModelFactoryInterface;
@@ -41,7 +41,7 @@ class ModelRepositoryTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->managerRegistry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->managerRegistry = $this->createMock('Doctrine\Persistence\ManagerRegistry');
         $this->eventDispatcher = $this->createMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
         $this->modelFactory = $this->createMock('Oro\Bundle\ApplicationBundle\Factory\ModelFactoryInterface');
 
@@ -71,15 +71,15 @@ class ModelRepositoryTest extends \PHPUnit\Framework\TestCase
         // alter identifier in event
         $this->eventDispatcher->expects($this->at(0))
             ->method('dispatch')
-            ->with('model.find.before.test_model')
+            ->with(static::isInstanceOf(ModelIdentifierEvent::class), 'model.find.before.test_model')
             ->willReturnCallback(
-                function ($name, ModelIdentifierEvent $event) use ($sourceIdentifier, $alteredIdentifier) {
+                function (ModelIdentifierEvent $event, $name) use ($sourceIdentifier, $alteredIdentifier) {
                     self::assertEquals($sourceIdentifier, $event->getIdentifier());
                     $event->setIdentifier($alteredIdentifier);
                 }
             );
 
-        $objectManager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
+        $objectManager = $this->createMock('Doctrine\Persistence\ObjectManager');
         $objectManager->expects($this->once())
             ->method('find')
             ->with(self::ENTITY_CLASS, $alteredIdentifier)
@@ -101,9 +101,9 @@ class ModelRepositoryTest extends \PHPUnit\Framework\TestCase
         // alter model in event
         $this->eventDispatcher->expects($this->at(1))
             ->method('dispatch')
-            ->with('model.find.after.test_model')
+            ->with(static::isInstanceOf(ModelEvent::class), 'model.find.after.test_model')
             ->willReturnCallback(
-                function ($name, ModelEvent $event) use ($sourceModel, $alteredModel) {
+                function (ModelEvent $event, $name) use ($sourceModel, $alteredModel) {
                     self::assertEquals($sourceModel, $event->getModel());
                     $event->setModel($alteredModel);
                 }
@@ -133,9 +133,9 @@ class ModelRepositoryTest extends \PHPUnit\Framework\TestCase
 
         $this->eventDispatcher->expects($this->at(0))
             ->method('dispatch')
-            ->with('model.find.before.test_model', new ModelIdentifierEvent($identifier));
+            ->with(new ModelIdentifierEvent($identifier), 'model.find.before.test_model');
 
-        $objectManager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
+        $objectManager = $this->createMock('Doctrine\Persistence\ObjectManager');
 
         if ($isProxy) {
             $proxy = new \DateTime();
@@ -164,7 +164,7 @@ class ModelRepositoryTest extends \PHPUnit\Framework\TestCase
 
         $this->eventDispatcher->expects($this->at(1))
             ->method('dispatch')
-            ->with('model.find.after.not_found.test_model', new ModelIdentifierEvent($identifier));
+            ->with(new ModelIdentifierEvent($identifier), 'model.find.after.not_found.test_model');
 
         $this->assertNull($this->repository->find($identifier));
     }
@@ -197,15 +197,15 @@ class ModelRepositoryTest extends \PHPUnit\Framework\TestCase
         // alter model in event
         $this->eventDispatcher->expects($this->at(0))
             ->method('dispatch')
-            ->with('model.' . $eventSuffix . '.before.test_multi_entity_model')
+            ->with(static::isInstanceOf(ModelEvent::class), 'model.' . $eventSuffix . '.before.test_multi_entity_model')
             ->willReturnCallback(
-                function ($name, ModelEvent $event) use ($sourceModel, $alteredModel) {
+                function (ModelEvent $event, $name) use ($sourceModel, $alteredModel) {
                     self::assertEquals($sourceModel, $event->getModel());
                     $event->setModel($alteredModel);
                 }
             );
 
-        $objectManager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
+        $objectManager = $this->createMock('Doctrine\Persistence\ObjectManager');
         $objectManager->expects($this->at(0))
             ->method($processMethod)
             ->with($firstEntity);
@@ -222,7 +222,7 @@ class ModelRepositoryTest extends \PHPUnit\Framework\TestCase
 
         $this->eventDispatcher->expects($this->at(1))
             ->method('dispatch')
-            ->with('model.' . $eventSuffix . '.after.test_multi_entity_model', new ModelEvent($alteredModel));
+            ->with(new ModelEvent($alteredModel), 'model.' . $eventSuffix . '.after.test_multi_entity_model');
 
         $this->repository = new ModelRepository(
             $this->managerRegistry,
@@ -293,7 +293,7 @@ class ModelRepositoryTest extends \PHPUnit\Framework\TestCase
         $identifier = 1;
         $entity = new \DateTime();
 
-        $objectManager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
+        $objectManager = $this->createMock('Doctrine\Persistence\ObjectManager');
         $objectManager->expects($this->once())
             ->method('find')
             ->with(self::ENTITY_CLASS, $identifier)

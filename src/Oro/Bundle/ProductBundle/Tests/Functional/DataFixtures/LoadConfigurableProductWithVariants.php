@@ -3,8 +3,8 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
@@ -78,8 +78,8 @@ class LoadConfigurableProductWithVariants extends AbstractFixture implements Dep
         $manager->flush();
 
         $this->container->get('event_dispatcher')->dispatch(
-            ReindexationRequestEvent::EVENT_NAME,
-            new ReindexationRequestEvent([Product::class], [], [], false)
+            new ReindexationRequestEvent([Product::class], [], [], false),
+            ReindexationRequestEvent::EVENT_NAME
         );
     }
 

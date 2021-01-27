@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\RFPBundle\Form\Type\UserSelectType;
 use Oro\Bundle\UserBundle\Form\Type\UserSelectType as BaseUserSelectType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -20,7 +20,7 @@ class UserSelectTypeTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         /** @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry $registry */
-        $registry = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
+        $registry = $this->getMockBuilder('Doctrine\Persistence\ManagerRegistry')
             ->disableOriginalConstructor()
             ->getMock();
 

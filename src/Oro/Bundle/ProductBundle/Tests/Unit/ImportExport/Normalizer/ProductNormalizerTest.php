@@ -74,11 +74,11 @@ class ProductNormalizerTest extends \PHPUnit\Framework\TestCase
         $this->eventDispatcher->expects($this->once())->method('dispatch')
             ->withConsecutive(
                 [
+                    $this->isInstanceOf('Oro\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent'),
                     $this->logicalAnd(
                         $this->isType('string'),
                         $this->equalTo('oro_product.normalizer.normalizer')
                     ),
-                    $this->isInstanceOf('Oro\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent'),
                 ]
             );
 
@@ -116,11 +116,11 @@ class ProductNormalizerTest extends \PHPUnit\Framework\TestCase
         $this->eventDispatcher->expects($this->once())->method('dispatch')
             ->withConsecutive(
                 [
+                    $this->isInstanceOf('Oro\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent'),
                     $this->logicalAnd(
                         $this->isType('string'),
                         $this->equalTo('oro_product.normalizer.denormalizer')
                     ),
-                    $this->isInstanceOf('Oro\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent'),
                 ]
             );
 

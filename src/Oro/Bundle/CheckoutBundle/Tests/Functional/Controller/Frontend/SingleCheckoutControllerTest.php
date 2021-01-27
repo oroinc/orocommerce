@@ -29,12 +29,14 @@ class SingleCheckoutControllerTest extends CheckoutControllerTestCase
         $form = $this->getTransitionForm(
             $this->client->request('GET', self::$checkoutUrl)
         );
-        $form->get('oro_workflow_transition[po_number]')->setValue(12345);
+
+        $values = $form->getPhpValues();
+        $values['oro_workflow_transition']['po_number'] = 12345;
 
         $this->client->request(
             'POST',
             $this->getTransitionUrl('save_state'),
-            $form->getPhpValues(),
+            $values,
             $form->getPhpFiles(),
             ['HTTP_X-Requested-With' => 'XMLHttpRequest']
         );

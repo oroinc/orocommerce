@@ -65,18 +65,20 @@ class BasicPaymentContextToRulesValueConverterTest extends \PHPUnit\Framework\Te
             ->getMock();
     }
 
-    public function testConvert()
+    public function testConvert(): void
     {
         $factory = new DecoratedProductLineItemFactory(
             $this->createMock(VirtualFieldsProductDecoratorFactory::class)
         );
 
         $totalAmount = 10.0;
+        $product1 = $this->getEntity(Product::class, ['id' => 1]);
+        $product2 = $this->getEntity(Product::class, ['id' => 2]);
 
         $paymentContext = new PaymentContext([
             PaymentContext::FIELD_LINE_ITEMS => new DoctrinePaymentLineItemCollection([
-                new PaymentLineItem([PaymentLineItem::FIELD_PRODUCT => $this->getEntity(Product::class, ['id' => 1])]),
-                new PaymentLineItem([PaymentLineItem::FIELD_PRODUCT => $this->getEntity(Product::class, ['id' => 2])])
+                new PaymentLineItem([PaymentLineItem::FIELD_PRODUCT => $product1]),
+                new PaymentLineItem([PaymentLineItem::FIELD_PRODUCT => $product2])
             ]),
             PaymentContext::FIELD_BILLING_ADDRESS => $this->billingAddressMock,
             PaymentContext::FIELD_SHIPPING_ADDRESS => $this->shippingAddressMock,
@@ -93,12 +95,9 @@ class BasicPaymentContextToRulesValueConverterTest extends \PHPUnit\Framework\Te
         $converter = new BasicPaymentContextToRulesValueConverter($factory);
 
         $this->assertEquals([
-            'lineItems' => array_map(function (PaymentLineItem $lineItem) use ($paymentContext, $factory) {
+            'lineItems' => array_map(static function (PaymentLineItem $lineItem) use ($factory, $product1, $product2) {
                 return $factory
-                    ->createLineItemWithDecoratedProductByLineItem(
-                        $paymentContext->getLineItems()->toArray(),
-                        $lineItem
-                    );
+                    ->createPaymentLineItemWithDecoratedProduct($lineItem, [$product1, $product2]);
             }, $paymentContext->getLineItems()->toArray()),
             'billingAddress' =>  $this->billingAddressMock,
             'shippingAddress' => $this->shippingAddressMock,

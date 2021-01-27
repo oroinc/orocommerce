@@ -39,7 +39,7 @@ class LineItemCollectionValidator extends ConstraintValidator
         }
 
         $event = new LineItemValidateEvent($value, $constraint->getAdditionalContext());
-        $this->eventDispatcher->dispatch(LineItemValidateEvent::NAME, $event);
+        $this->eventDispatcher->dispatch($event, LineItemValidateEvent::NAME);
 
         if ($event->hasErrors()) {
             foreach ($event->getErrors() as $error) {

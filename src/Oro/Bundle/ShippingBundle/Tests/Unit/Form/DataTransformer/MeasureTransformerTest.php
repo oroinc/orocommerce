@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\DataTransformer;
 
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 use Oro\Bundle\ShippingBundle\Form\DataTransformer\MeasureTransformer;
 
@@ -16,7 +16,7 @@ class MeasureTransformerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->repository = $this->createMock('Doctrine\Common\Persistence\ObjectRepository');
+        $this->repository = $this->createMock('Doctrine\Persistence\ObjectRepository');
 
         $this->transformer = new MeasureTransformer($this->repository);
     }

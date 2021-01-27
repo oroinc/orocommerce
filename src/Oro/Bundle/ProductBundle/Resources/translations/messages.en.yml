@@ -28,7 +28,8 @@ oro:
             label: Qty
             placeholder: "Qty #"
             aria_label: Product Quantity
-        remove_row.aria_label: "Remove the current row"
+        remove_row:
+            aria_label: "Remove the current row"
         variant_fields:
             label: Configurable Attributes
             description: The names of attributes that are used to choose variants of a configurable product.
@@ -317,7 +318,7 @@ oro:
                 listing.label: Listing
             import:
                 label: Import images
-                notice: "Please make sure that the image files are uploaded at path:\n \"{PROJECT}/var/import_export/product_images\""
+                notice: Please make sure that the image files are uploaded at the %adapter_description%.
         productimagetype:
             entity_label: Product Image Type
             entity_plural_label: Product Image Types
@@ -456,10 +457,16 @@ oro:
                 limit_filters_sorters.title: 'Limit Filters and Sorters'
                 filters_display_settings.title: 'Display Settings'
                 images_general.title: 'General'
+                product_search.title: 'Product Search'
+                product_fulltext_search.title: 'Product Fulltext Search'
+                product_search_autocomplete.title: 'Global Search Autocomplete'
             fields:
                 original_file_names_enabled:
                     label: 'Enable Original File Names'
                     tooltip: 'When enabled, the original image file name will be appended to the system-generated hash value.'
+                allow_partial_product_search:
+                    label: 'Allow Partial Product Search'
+                    tooltip: 'When enabled, the customer can find a product in the global search and on quick order form using a substring inside a word. Enabling this option may have a performance impart on search behaviour.'
                 brand_direct_url_prefix.label: 'Brand URL Prefix'
                 enable_related_products.label: 'Enable Related Products'
                 related_products_bidirectional:
@@ -614,6 +621,10 @@ oro:
                     options:
                         collapsed: 'Collapsed'
                         expanded: 'Expanded'
+                search_autocomplete_max_products:
+                    label: 'Number Of Products In Search Autocomplete'
+                    tooltip: 'Maximum number of products shown in the storefront autocomplete dropdown.'
+
                 filters_position:
                     label: 'Filter Panel Position'
                     tooltip: 'Position of filters on the storefront product listing pages.'

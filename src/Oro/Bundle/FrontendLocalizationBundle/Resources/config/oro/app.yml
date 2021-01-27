@@ -3,3 +3,7 @@ oro_api:
         frontend_rest_json_api:
             headers:
                 X-Localization-ID: ~
+
+oro_translation:
+    package_names:
+        - OroCommerce

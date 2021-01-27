@@ -2,12 +2,15 @@
 
 namespace Oro\Bundle\PromotionBundle\EventListener;
 
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\PricingBundle\EventListener\DatagridLineItemsDataPricingListener as PricingLineItemDataListener;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
 use Oro\Bundle\PromotionBundle\Executor\PromotionExecutor;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 
 /**
  * Adds line items promotions data.
@@ -59,7 +62,12 @@ class DatagridLineItemsDataPromotionsListener
             return;
         }
 
-        $discountTotals = $this->getDiscountTotals(reset($lineItems)->getShoppingList());
+        $entity = $this->getMainEntity($lineItems);
+        if (!$entity instanceof ProductLineItemsHolderInterface) {
+            return;
+        }
+
+        $discountTotals = $this->getDiscountTotals($entity);
         if (!$discountTotals) {
             return;
         }
@@ -98,11 +106,54 @@ class DatagridLineItemsDataPromotionsListener
         if (!isset($this->cache[$id]) && $this->promotionExecutor->supports($lineItemsHolder)) {
             $discountContext = $this->promotionExecutor->execute($lineItemsHolder);
 
+            $discounts = [];
             foreach ($discountContext->getLineItems() as $item) {
-                $this->cache[$id][$item->getSourceLineItem()->getId()] = $item->getDiscountTotal();
+                $identifier = $this->getDataKey($item->getSourceLineItem());
+
+                $discounts[$identifier] = $item->getDiscountTotal();
+            }
+
+            foreach ($lineItemsHolder->getLineItems() as $item) {
+                $identifier = $this->getDataKey($item);
+
+                if (isset($discounts[$identifier])) {
+                    $this->cache[$id][$item->getId()] = $discounts[$identifier];
+                }
             }
         }
 
         return $this->cache[$id] ?? [];
+    }
+
+    /**
+     * @param array $lineItems
+     * @return object|null
+     */
+    private function getMainEntity(array $lineItems): ?object
+    {
+        $entity = null;
+
+        $lineItem = reset($lineItems);
+        switch (true) {
+            case $lineItem instanceof LineItem:
+                $entity = $lineItem->getShoppingList();
+                break;
+            case $lineItem instanceof CheckoutLineItem:
+                $entity = $lineItem->getCheckout();
+                break;
+            default:
+                break;
+        }
+
+        return $entity;
+    }
+
+    /**
+     * @param ProductLineItemInterface $item
+     * @return string
+     */
+    private function getDataKey(ProductLineItemInterface $item): string
+    {
+        return implode(':', [$item->getProductSku(), $item->getProductUnitCode(), $item->getQuantity()]);
     }
 }

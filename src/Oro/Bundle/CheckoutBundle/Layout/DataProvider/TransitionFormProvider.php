@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\CheckoutBundle\Layout\DataProvider;
 
-use Oro\Bundle\CheckoutBundle\Model\TransitionData;
 use Oro\Bundle\LayoutBundle\Layout\DataProvider\AbstractFormProvider;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Exception\WorkflowException;
+use Oro\Bundle\WorkflowBundle\Model\Transition;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
@@ -28,15 +28,14 @@ class TransitionFormProvider extends AbstractFormProvider
     }
 
     /**
-     * @param WorkflowItem   $workflowItem
-     * @param TransitionData $transitionData
+     * @param WorkflowItem $workflowItem
+     * @param Transition $transition
      *
      * @return FormInterface|null
      * @throws WorkflowException
      */
-    public function getTransitionForm(WorkflowItem $workflowItem, TransitionData $transitionData)
+    public function getTransitionFormByTransition(WorkflowItem $workflowItem, Transition $transition): ?FormInterface
     {
-        $transition = $transitionData->getTransition();
         if (!$transition->hasForm()) {
             return null;
         }
@@ -52,7 +51,7 @@ class TransitionFormProvider extends AbstractFormProvider
         return $this->getForm(
             $transition->getFormType(),
             $workflowItem->getData(),
-            $this->getFormOptions($workflowItem, $transitionData),
+            $this->getFormOptions($workflowItem, $transition),
             $cacheKeyOptions
         );
     }
@@ -85,21 +84,19 @@ class TransitionFormProvider extends AbstractFormProvider
         return $this->getFormView(
             $transition->getFormType(),
             $workflowItem->getData(),
-            $this->getFormOptions($workflowItem, $transitionData),
+            $this->getFormOptions($workflowItem, $transition),
             $cacheKeyOptions
         );
     }
 
     /**
-     * @param WorkflowItem   $workflowItem
-     * @param TransitionData $transitionData
+     * @param WorkflowItem $workflowItem
+     * @param Transition $transition
      *
      * @return array
      */
-    private function getFormOptions(WorkflowItem $workflowItem, TransitionData $transitionData)
+    private function getFormOptions(WorkflowItem $workflowItem, Transition $transition): array
     {
-        $transition = $transitionData->getTransition();
-
         return array_merge(
             $transition->getFormOptions(),
             [

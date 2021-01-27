@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Model\Data;
 
+use Doctrine\Inflector\Rules\English\InflectorFactory;
 use Oro\Bundle\InventoryBundle\Model\Data\ProductUnitTransformer;
 use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 
@@ -26,7 +27,7 @@ class ProductUnitTransformerTest extends \PHPUnit\Framework\TestCase
                 'each' => 'each'
             ]));
 
-        $transformer = new ProductUnitTransformer($productUnitProvider);
+        $transformer = new ProductUnitTransformer($productUnitProvider, (new InflectorFactory())->build());
 
         $code = $transformer->transformToProductUnit($unit);
 

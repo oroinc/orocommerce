@@ -32,7 +32,7 @@ Feature: Saved addresses with different types on "Default" Checkout workflow
     And I should not see "Ship to this address" element inside "Billing Information Form" element
 
   Scenario: Check that "Ship to this address" checkbox is visible when address changed to New Address
-    Given I select "New address" from "SELECT BILLING ADDRESS"
+    Given I select "New address" from "Select Billing Address"
     Then I should see "Ship to this address" element inside "Billing Information Form" element
 
   Scenario: I check that "Ship to this address" checkbox is visible when address changed to Shipping address type
@@ -43,14 +43,14 @@ Feature: Saved addresses with different types on "Default" Checkout workflow
   Scenario: I can proceed with "Ship to this address" when address changed to New Address
     Given I select "Fourth avenue, 10111 Berlin, Germany" on the "Billing Information" checkout step and press Continue
     And on the "Shipping Information" checkout step I go back to "Edit Billing Information"
-    And I select "New address" from "SELECT BILLING ADDRESS"
+    And I select "New address" from "Select Billing Address"
     When I press "Continue"
     Then I should see "First Name and Last Name or Organization should not be blank"
 
   Scenario: Enter Shipping Address form should not be open and "Use billing address" should be checked
     Given I select "Fourth avenue, 10111 Berlin, Germany" on the "Billing Information" checkout step and press Continue
     And on the "Shipping Information" checkout step I go back to "Edit Billing Information"
-    And I select "New address" from "SELECT BILLING ADDRESS"
+    And I select "New address" from "Select Billing Address"
     And I fill "Billing Information" with:
       | Label       | Billing address 2 |
       | First Name  | Amanda            |
@@ -78,7 +78,7 @@ Feature: Saved addresses with different types on "Default" Checkout workflow
     And I fill "Billing Information Form" with:
       | Billing Address | ORO, Fifth avenue, 10115 Berlin, Germany |
     And I click "Continue"
-    And I select "New address" from "SELECT SHIPPING ADDRESS"
+    And I select "New address" from "Select Shipping Address"
     And I fill "Shipping Information" with:
       | Label        | Shipping address 2 |
       | First Name   | Amanda             |
@@ -90,7 +90,7 @@ Feature: Saved addresses with different types on "Default" Checkout workflow
       | Postal Code  | 10115              |
     And I click "Continue"
     When on the "Shipping Method" checkout step I go back to "Edit Billing Information"
-    And I select "New address" from "SELECT BILLING ADDRESS"
+    And I select "New address" from "Select Billing Address"
     And I fill "Billing Information" with:
       | Label       | Billing address 3 |
       | First Name  | Amanda            |
@@ -105,7 +105,7 @@ Feature: Saved addresses with different types on "Default" Checkout workflow
     And the "Use billing address" checkbox should be checked
     And I should not see "Checkout Address Fields" element inside "Shipping Information Form" element
     And I uncheck "Use billing address" on the checkout page
-    And I select "New address" from "SELECT SHIPPING ADDRESS"
+    And I select "New address" from "Select Shipping Address"
     And I should see "Checkout Address Fields" element inside "Shipping Information Form" element
     And I check "Use billing address" on the "Shipping Information" checkout step and press Continue
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue

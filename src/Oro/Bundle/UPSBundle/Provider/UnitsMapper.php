@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\UPSBundle\Provider;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport as UPSTransportEntity;
 

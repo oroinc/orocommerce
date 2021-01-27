@@ -31,9 +31,6 @@ workflows:
                     is_checkout_show_errors: true
                 form_options:
                     form_init:
-                        - '@generate_checkout_state_snapshot':
-                            entity: $checkout
-                            attribute: $.result.initCheckoutState
                         - '@tree':
                             conditions:
                                 '@and':  #For logged customer user only
@@ -78,6 +75,9 @@ workflows:
                         remove_source: ~
                         late_registration:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\LateRegistrationType
+                            options:
+                                # No need in late registration validation for save_state transition.
+                                validation_groups: false
                         customerConsents:
                             form_type: Oro\Bundle\ConsentBundle\Form\Type\ConsentAcceptanceType
                             options:
@@ -88,8 +88,6 @@ workflows:
                                     - Oro\Bundle\ConsentBundle\Validator\Constraints\RemovedLandingPages: ~
                         state_token:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
-                            options:
-                                data: $internal_state_token
 
             create_order:
                 step_to: checkout
@@ -134,16 +132,24 @@ workflows:
                                 - 'checkout_form_errors_wrapper'
                 form_options:
                     form_init:
-                        - '@assign_value': [$payment_validate, true]
-                        - '@call_service_method':
-                            service: oro_payment.provider.payment_transaction
-                            method: getActiveValidatePaymentTransaction
-                            method_parameters: [$payment_method]
-                            attribute: $.result.validatePaymentTransaction
-                        - '@assign_value':
+                        - '@tree':
                             conditions:
-                                '@not_empty': [$.result.validatePaymentTransaction]
-                            parameters: [$payment_validate, false]
+                                '@blank': $payment_validate
+                            actions:
+                                - '@assign_value': [$payment_validate, true]
+                                - '@tree':
+                                    conditions:
+                                        '@blank': $.result.validatePaymentTransaction
+                                    actions:
+                                        - '@call_service_method':
+                                            service: oro_payment.provider.payment_transaction
+                                            method: getActiveValidatePaymentTransaction
+                                            method_parameters: [$payment_method]
+                                            attribute: $.result.validatePaymentTransaction
+                                - '@assign_value':
+                                    conditions:
+                                        '@not_empty': [$.result.validatePaymentTransaction]
+                                    parameters: [$payment_validate, false]
                         - '@tree':
                             conditions:
                                 '@and':  #For logged customer user only
@@ -151,6 +157,53 @@ workflows:
                                     - '@equal': [$checkout.customerUser.isGuest, false]
                             actions:
                                 - '@assign_value': [$customerConsents, null]
+                        - '@assign_value': [$billing_address_has_shipping, $ship_to_billing_address]
+                        - '@tree':
+                            conditions:
+                                '@empty': $billing_address
+                            actions:
+                                - '@call_service_method':
+                                    attribute: $.result.customerUserAddresses
+                                    service: 'oro_order.manager.order_address'
+                                    method: getGroupedAddresses
+                                    method_parameters: [$checkout, 'billing']
+                                - '@call_service_method':
+                                    attribute: $billing_address
+                                    service: 'oro_order.manager.order_address'
+                                    method: updateFromAbstract
+                                    method_parameters: [$.result.customerUserAddresses.defaultAddress]
+                        - '@tree':
+                            conditions:
+                                '@empty': $shipping_address
+                            actions:
+                                - '@call_service_method':
+                                    attribute: $.result.customerUserAddresses
+                                    service: 'oro_order.manager.order_address'
+                                    method: getGroupedAddresses
+                                    method_parameters: [$checkout, 'shipping']
+                                - '@call_service_method':
+                                    attribute: $shipping_address
+                                    service: 'oro_order.manager.order_address'
+                                    method: updateFromAbstract
+                                    method_parameters: [$.result.customerUserAddresses.defaultAddress]
+                        - '@tree':
+                            conditions:
+                                '@blank': $.result.shippingPriceUpdated
+                            actions:
+                                - '@assign_value': [$.result.shippingPriceUpdated, true]
+                                - '@run_action_group':
+                                    action_group: oro_update_shipping_price
+                                    parameters_mapping:
+                                        checkout: $checkout
+                                - '@assign_value': [$.result.updateCheckoutState, true]
+                        - '@run_action_group':
+                            action_group: update_checkout_state
+                            parameters_mapping:
+                                checkout: $checkout
+                                state_token: $state_token
+                                update_checkout_state: $.result.updateCheckoutState
+                            results:
+                                result.updateCheckoutState: $.update_checkout_state
                     attribute_fields:
                         billing_address:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressSelectType
@@ -206,8 +259,6 @@ workflows:
                                     - Oro\Bundle\ConsentBundle\Validator\Constraints\RemovedLandingPages: ~
                         state_token:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
-                            options:
-                                data: $internal_state_token
 
             purchase:
                 step_to: checkout

@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Controller\Frontend;
 
 use Oro\Bundle\ProductBundle\Entity\Brand;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
@@ -11,7 +11,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * Frontend product brand controller.
  */
-class BrandController extends Controller
+class BrandController extends AbstractController
 {
     const GRID_NAME = 'frontend-brand-search-grid';
 

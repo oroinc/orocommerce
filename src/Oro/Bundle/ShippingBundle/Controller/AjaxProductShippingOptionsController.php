@@ -10,7 +10,7 @@ use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use Oro\Bundle\ShippingBundle\Form\Extension\ProductFormExtension;
 use Oro\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsType;
 use Oro\Bundle\ShippingBundle\Provider\FreightClassesProvider;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -19,7 +19,7 @@ use Symfony\Component\Routing\Annotation\Route;
  * Handles /freight-classes request
  * returns formatted units choices
  */
-class AjaxProductShippingOptionsController extends Controller
+class AjaxProductShippingOptionsController extends AbstractController
 {
     /**
      * Get available FreightClasses codes

@@ -3,7 +3,7 @@
 namespace Oro\Bundle\RedirectBundle\Async;
 
 use Doctrine\Common\Cache\ClearableCache;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;

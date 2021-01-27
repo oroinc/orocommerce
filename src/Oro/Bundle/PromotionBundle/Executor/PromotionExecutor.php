@@ -31,12 +31,12 @@ class PromotionExecutor
     private $promotionDiscountsProvider;
 
     /**
-     * @var Cache
+     * @var Cache|null
      */
     private $cache;
 
     /**
-     * @var ObjectCacheKeyGenerator
+     * @var ObjectCacheKeyGenerator|null
      */
     private $objectCacheKeyGenerator;
 
@@ -44,20 +44,30 @@ class PromotionExecutor
      * @param DiscountContextConverterInterface $discountContextConverter
      * @param StrategyProvider $discountStrategyProvider
      * @param PromotionDiscountsProviderInterface $promotionDiscountsProvider
-     * @param Cache $cache
-     * @param ObjectCacheKeyGenerator $objectCacheKeyGenerator
      */
     public function __construct(
         DiscountContextConverterInterface $discountContextConverter,
         StrategyProvider $discountStrategyProvider,
-        PromotionDiscountsProviderInterface $promotionDiscountsProvider,
-        Cache $cache,
-        ObjectCacheKeyGenerator $objectCacheKeyGenerator
+        PromotionDiscountsProviderInterface $promotionDiscountsProvider
     ) {
         $this->discountContextConverter = $discountContextConverter;
         $this->discountStrategyProvider = $discountStrategyProvider;
         $this->promotionDiscountsProvider = $promotionDiscountsProvider;
+    }
+
+    /**
+     * @param Cache $cache
+     */
+    public function setCache(Cache $cache): void
+    {
         $this->cache = $cache;
+    }
+
+    /**
+     * @param ObjectCacheKeyGenerator $objectCacheKeyGenerator
+     */
+    public function setObjectCacheKeyGenerator(ObjectCacheKeyGenerator $objectCacheKeyGenerator): void
+    {
         $this->objectCacheKeyGenerator = $objectCacheKeyGenerator;
     }
 
@@ -67,9 +77,11 @@ class PromotionExecutor
      */
     public function execute($sourceEntity): DiscountContextInterface
     {
-        $cacheKey = $this->objectCacheKeyGenerator->generate($sourceEntity, 'promotion');
-        if ($this->cache->contains($cacheKey)) {
-            return $this->cache->fetch($cacheKey);
+        if ($this->cache && $this->objectCacheKeyGenerator) {
+            $cacheKey = $this->objectCacheKeyGenerator->generate($sourceEntity, 'promotion');
+            if ($this->cache->contains($cacheKey)) {
+                return $this->cache->fetch($cacheKey);
+            }
         }
 
         $discountContext = $this->discountContextConverter->convert($sourceEntity);
@@ -80,7 +92,9 @@ class PromotionExecutor
             $discountContext = $strategy->process($discountContext, $discounts);
         }
 
-        $this->cache->save($cacheKey, $discountContext);
+        if ($this->cache && $this->objectCacheKeyGenerator) {
+            $this->cache->save($cacheKey, $discountContext);
+        }
 
         return $discountContext;
     }

@@ -1,27 +1,32 @@
 /* @theme: default; */
 
+.coupon-trigger {
+    @include fa-icon($fa-var-plus-square-o, before, true) {
+        margin-#{$end}: $coupon-trigger-inner-icon-offset;
+
+        vertical-align: middle;
+    };
+
+    padding: $coupon-trigger-inner-offset;
+
+    .expanded & {
+        @include fa-icon($fa-var-minus-square-o);
+    }
+}
+
 .coupon-container {
-    display: inline-block;
-    margin: $coupon-container-container-offset;
+    width: $coupon-container-width;
+    float: $coupon-container-float;
+    clear: $coupon-container-clear;
+    padding: $coupon-container-padding;
 
     &__content {
-        padding: $coupon-container-content-inner-offset;
-    }
-
-    &__title {
-        font-size: $coupon-container-title-font-size;
-        font-weight: $coupon-container-title-font-weight;
-        line-height: $coupon-container-title-line-height;
-    }
-
-    &__form {
-        display: $coupon-container-form-display;
-        align-items: $coupon-container-form-align-items;
-        margin: $coupon-container-form-offset;
+        .coupon-trigger ~ .collapse-view__container & {
+            padding: $coupon-container-content-inner-offset;
+        }
     }
 
     &__input-wrap {
-        display: inline-block;
         padding: $coupon-container-input-wrap-inner-offset;
         width: $coupon-container-input-wrap-width;
     }
@@ -36,6 +41,9 @@
 
 @include breakpoint('mobile') {
     .coupon-container {
+        width: $coupon-container-mobile-width;
+        float: $coupon-container-mobile-float;
+
         &__input-wrap {
             width: $coupon-container-input-wrap-mobile-width;
         }

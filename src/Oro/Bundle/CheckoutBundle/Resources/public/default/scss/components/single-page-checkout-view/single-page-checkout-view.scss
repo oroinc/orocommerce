@@ -53,14 +53,23 @@
 
             background: $checkout-view-column-pseudo-background;
         }
+
+        &-header {
+            position: relative;
+            display: flex;
+            width: 100%;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+
+            &.has-offset {
+                margin: $checkout-head-margin;
+            }
+        }
     }
 
     &__title {
-        position: $checkout-view-title-position;
-
-        width: 100%;
-        min-height: $checkout-view-title-min-height;
-        margin: $checkout-view-title-margin;
+        display: block;
 
         color: $checkout-view-title-color;
 
@@ -75,12 +84,10 @@
 
     &__title-text {
         vertical-align: middle;
-
-        font-weight: 700;
     }
 
     &__badge {
-        @include badge($checkout-view-badge-size, $checkout-view-badge-font-size, get-color('primary', 'base'), 50%);
+        @include badge($checkout-view-badge-size, $checkout-view-badge-font-size);
 
         margin: $checkout-view-badge-margin;
     }
@@ -88,10 +95,6 @@
     &__shipping-methods,
     &__payment-methods {
         margin: $checkout-view-shipping-methods-margin;
-
-        > .label {
-            text-transform: uppercase;
-        }
     }
 
     &__sticky-titles {
@@ -165,25 +168,20 @@
         max-width: $checkout-view-payment-methods-image-max-width;
     }
 
-    .checkout-order-summary__content {
-        padding: 0;
-    }
-
-    .checkout-order-summary__subtitle {
-        color: get-color('additional', 'middle');
-    }
-
-    .checkout-order-summary__collapse-container {
-        &::after {
-            background: $checkout-view-summary-grid-container-shadow-background;
-        }
+    .checkout-order-summary__edit-link {
+        align-self: flex-end;
     }
 
     .datepicker-input {
         max-width: $checkout-view-shipping-methods-datepicker-box-max-width;
     }
 
-    @include update-checkout-blocks;
+    .datagrid-toolbar {
+        .datagrid-toolbar__side,
+        .datagrid-toolbar__rightside {
+            flex-basis: auto;
+        }
+    }
 }
 
 @include breakpoint('tablet') {

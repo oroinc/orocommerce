@@ -75,6 +75,58 @@ class ProductControllerTest extends WebTestCase
         static::assertStringContainsString(LoadProductData::PRODUCT_3, $content);
     }
 
+    public function testAutocompleteAction(): void
+    {
+        $this->client->request(
+            'GET',
+            $this->getUrl('oro_product_frontend_product_search_autocomplete'),
+            ['search' => 'продукт']
+        );
+
+        $response = $this->client->getResponse();
+        $this->assertJsonResponseStatusCodeEquals($response, 200);
+
+        $data = \json_decode($response->getContent(), true);
+
+        static::assertArrayHasKey('total_count', $data);
+        static::assertEquals(2, $data['total_count']);
+
+        $product7 = $this->getReference(LoadProductData::PRODUCT_7);
+        $product9 = $this->getReference(LoadProductData::PRODUCT_9);
+
+        static::assertArrayHasKey('products', $data);
+        static::assertArrayHasKey(LoadProductData::PRODUCT_7, $data['products']);
+        static::assertEquals(
+            [
+                'sku' => LoadProductData::PRODUCT_7,
+                'name' => 'продукт-7.names.default',
+                'image' => 'http://localhost/media/cache/resolve/product_small/bundles/oroproduct/images/no_image.png',
+                'inventory_status' => 'in_stock',
+                'id' => $product7->getId(),
+                'url' => '/product/view/' . $product7->getId(),
+                'default_image' =>
+                    'http://localhost/media/cache/resolve/product_small/bundles/oroproduct/images/no_image.png',
+                'inventory_status_label' => 'In Stock',
+            ],
+            $data['products'][LoadProductData::PRODUCT_7]
+        );
+        static::assertArrayHasKey(LoadProductData::PRODUCT_9, $data['products']);
+        static::assertEquals(
+            [
+                'sku' => LoadProductData::PRODUCT_9,
+                'name' => 'продукт-9.names.default',
+                'image' => 'http://localhost/media/cache/resolve/product_small/bundles/oroproduct/images/no_image.png',
+                'inventory_status' => 'in_stock',
+                'id' => $product9->getId(),
+                'url' => '/product/view/' . $product9->getId(),
+                'default_image' =>
+                    'http://localhost/media/cache/resolve/product_small/bundles/oroproduct/images/no_image.png',
+                'inventory_status_label' => 'In Stock',
+            ],
+            $data['products'][LoadProductData::PRODUCT_9]
+        );
+    }
+
     public function testIndexActionInSubfolder()
     {
         //Emulate subfolder request

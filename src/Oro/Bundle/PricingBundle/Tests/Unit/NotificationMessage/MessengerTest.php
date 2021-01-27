@@ -66,8 +66,8 @@ class MessengerTest extends \PHPUnit\Framework\TestCase
         $this->eventDispatcher->expects($this->exactly(2))
             ->method('dispatch')
             ->withConsecutive(
-                [MessageEvents::BEFORE_SEND, $messageEvent],
-                [MessageEvents::AFTER_SEND, $messageEvent]
+                [$messageEvent, MessageEvents::BEFORE_SEND],
+                [$messageEvent, MessageEvents::AFTER_SEND]
             );
 
         $this->sender->expects($this->once())
@@ -95,7 +95,7 @@ class MessengerTest extends \PHPUnit\Framework\TestCase
         $event = new MassMessagesEvent($channel, $receiverEntityFQCN, $receiverEntityId, $topic, $messages);
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
-            ->with(MessageEvents::ON_RECEIVE, $event);
+            ->with($event, MessageEvents::ON_RECEIVE);
 
         $this->assertEquals(
             $messages,
@@ -131,7 +131,7 @@ class MessengerTest extends \PHPUnit\Framework\TestCase
         $event = new MassMessagesEvent($channel, $receiverEntityFQCN, $receiverEntityId, $topic, $messages);
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
-            ->with(MessageEvents::ON_RECEIVE, $event);
+            ->with($event, MessageEvents::ON_RECEIVE);
 
         $this->assertEquals(
             $messages,
@@ -153,7 +153,7 @@ class MessengerTest extends \PHPUnit\Framework\TestCase
         $event = new MassMessagesEvent($channel, $receiverEntityFQCN, $receiverEntityId, $topic);
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
-            ->with(MessageEvents::ON_REMOVE, $event);
+            ->with($event, MessageEvents::ON_REMOVE);
 
         $this->messenger->remove($channel, $topic, $receiverEntityFQCN, $receiverEntityId);
     }
@@ -180,7 +180,7 @@ class MessengerTest extends \PHPUnit\Framework\TestCase
         $event = new MassMessagesEvent($channel, $receiverEntityFQCN, $receiverEntityId, $topic);
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
-            ->with(MessageEvents::ON_REMOVE, $event);
+            ->with($event, MessageEvents::ON_REMOVE);
 
         $this->messenger->remove($channel, $topic, $receiverEntityFQCN, $receiverEntityId);
     }

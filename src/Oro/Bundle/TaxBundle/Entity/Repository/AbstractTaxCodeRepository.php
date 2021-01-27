@@ -2,7 +2,8 @@
 
 namespace Oro\Bundle\TaxBundle\Entity\Repository;
 
-use Doctrine\Common\Inflector\Inflector;
+use Doctrine\Inflector\Inflector;
+use Doctrine\Inflector\Rules\English\InflectorFactory;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\TaxBundle\Entity\AbstractTaxCode;
@@ -70,7 +71,7 @@ abstract class AbstractTaxCodeRepository extends EntityRepository
     protected function getInflector()
     {
         if (!$this->inflector) {
-            $this->inflector = new Inflector();
+            $this->inflector = (new InflectorFactory())->build();
         }
 
         return $this->inflector;

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Performance\DataFixtures;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\AbstractFixture;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 

@@ -13,7 +13,7 @@ use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
 use Oro\Bundle\SaleBundle\Model\QuoteRequestHandler;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,7 +23,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * Provides supportive actions for ajax calls during quote creation and editing.
  */
-class AjaxQuoteController extends Controller
+class AjaxQuoteController extends AbstractController
 {
     /**
      * Get order related data
@@ -92,7 +92,7 @@ class AjaxQuoteController extends Controller
         $form->submit($submittedData);
 
         $event = new QuoteEvent($form, $form->getData(), $submittedData);
-        $this->get('event_dispatcher')->dispatch(QuoteEvent::NAME, $event);
+        $this->get('event_dispatcher')->dispatch($event, QuoteEvent::NAME);
 
         return new JsonResponse($event->getData());
     }

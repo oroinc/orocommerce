@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Api\Processor;
 
-use Oro\Bundle\ApiBundle\Config\EntityDefinitionConfig;
 use Oro\Bundle\ApiBundle\Processor\GetConfig\ConfigContext;
 use Oro\Bundle\ApiBundle\Validator\Constraints\AccessGranted;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
@@ -21,16 +20,16 @@ class ConfigureGuestShoppingListAccess implements ProcessorInterface
     private $tokenStorage;
 
     /** @var string */
-    private $associationPath;
+    private $associationName;
 
     /**
      * @param TokenStorageInterface $tokenStorage
-     * @param string                $associationPath
+     * @param string                $associationName
      */
-    public function __construct(TokenStorageInterface $tokenStorage, string $associationPath)
+    public function __construct(TokenStorageInterface $tokenStorage, string $associationName)
     {
         $this->tokenStorage = $tokenStorage;
-        $this->associationPath = $associationPath;
+        $this->associationName = $associationName;
     }
 
     /**
@@ -44,13 +43,12 @@ class ConfigureGuestShoppingListAccess implements ProcessorInterface
             return;
         }
 
-        /** @var EntityDefinitionConfig $definition */
         $definition = $context->getResult();
         $definition->setAclResource();
 
-        $fieldDefinition = $definition->findFieldByPath($this->associationPath);
-        if (null !== $fieldDefinition) {
-            $fieldDefinition->removeFormConstraint(AccessGranted::class);
+        $field = $definition->findField($this->associationName, true);
+        if (null !== $field) {
+            $field->removeFormConstraint(AccessGranted::class);
         }
     }
 }

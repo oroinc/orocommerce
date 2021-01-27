@@ -5,6 +5,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\AddressBundle\Form\Type\AddressType as AddressFormType;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Form\DataTransformer\OrderAddressToAddressIdentifierViewTransformer;
 use Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressSelectType;
 use Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
@@ -25,10 +26,12 @@ use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class CheckoutAddressTypeTest extends FormIntegrationTestCase
 {
+    /** @var OrderAddressToAddressIdentifierViewTransformer|\PHPUnit\Framework\MockObject\MockObject */
+    private $orderAddressToAddressIdentifierViewTransformer;
+
     public function testGetBlockPrefix()
     {
         $type = new CheckoutAddressType();
@@ -205,30 +208,32 @@ class CheckoutAddressTypeTest extends FormIntegrationTestCase
             ],
             TranslatableEntityType::NAME
         );
-
-        $propertyAccessor = $this->createMock(PropertyAccessor::class);
-
+        $this->orderAddressToAddressIdentifierViewTransformer = $this->createMock(
+            OrderAddressToAddressIdentifierViewTransformer::class
+        );
 
         return [
-            new PreloadedExtension([
-                CheckoutAddressType::class => new CheckoutAddressType(),
-                OrderAddressType::class => $orderAddressType,
-                AddressFormType::class => $addressTypeStub,
-                CheckoutAddressSelectType::class => new CheckoutAddressSelectType(
-                    $addressManager,
-                    $propertyAccessor,
-                    ['street', 'city', 'country', 'region', 'postalCode']
-                ),
-                OrderAddressSelectType::class => new OrderAddressSelectType(
-                    $addressManager,
-                    $addressFormatter,
-                    $orderAddressSecurityProvider,
-                    $serializer
-                ),
-                TranslatableEntityType::class => $addressType,
-            ], [
-                FormType::class => [new StripTagsExtensionStub($this)]
-            ])
+            new PreloadedExtension(
+                [
+                    CheckoutAddressType::class => new CheckoutAddressType(),
+                    OrderAddressType::class => $orderAddressType,
+                    AddressFormType::class => $addressTypeStub,
+                    CheckoutAddressSelectType::class => new CheckoutAddressSelectType(
+                        $addressManager,
+                        $this->orderAddressToAddressIdentifierViewTransformer
+                    ),
+                    OrderAddressSelectType::class => new OrderAddressSelectType(
+                        $addressManager,
+                        $addressFormatter,
+                        $orderAddressSecurityProvider,
+                        $serializer
+                    ),
+                    TranslatableEntityType::class => $addressType,
+                ],
+                [
+                    FormType::class => [new StripTagsExtensionStub($this)],
+                ]
+            ),
         ];
     }
 

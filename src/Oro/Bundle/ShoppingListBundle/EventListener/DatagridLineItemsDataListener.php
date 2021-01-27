@@ -23,7 +23,7 @@ class DatagridLineItemsDataListener
         $firstLineItem = reset($lineItems);
         if (!($firstLineItem instanceof LineItem)) {
             throw new \LogicException(
-                sprintf('%s entity was expected, got stdClass', LineItem::class, \get_class($firstLineItem))
+                sprintf('%s entity was expected, got %s', LineItem::class, \get_class($firstLineItem))
             );
         }
 

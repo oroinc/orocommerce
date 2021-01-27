@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\CommerceEntityBundle\Storage\ExtraActionEntityStorageInterface;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
@@ -129,8 +129,8 @@ class ProductPriceCPLEntityListener implements OptionalListenerInterface, Featur
         $relation = $this->findRelation($product, $priceList);
         if ($isCreated && $relation) {
             $this->eventDispatcher->dispatch(
-                PriceListToProductSaveAfterEvent::NAME,
-                new PriceListToProductSaveAfterEvent($relation)
+                new PriceListToProductSaveAfterEvent($relation),
+                PriceListToProductSaveAfterEvent::NAME
             );
         }
     }

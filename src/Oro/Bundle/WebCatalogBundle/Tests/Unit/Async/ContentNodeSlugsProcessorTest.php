@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Async;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\WebCatalogBundle\Async\ContentNodeSlugsProcessor;
 use Oro\Bundle\WebCatalogBundle\Async\Topics;
 use Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeCache;

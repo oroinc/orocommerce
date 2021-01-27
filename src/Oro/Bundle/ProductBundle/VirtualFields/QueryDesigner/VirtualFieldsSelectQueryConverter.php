@@ -3,61 +3,32 @@
 namespace Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner;
 
 use Doctrine\ORM\QueryBuilder;
-use Oro\Bundle\EntityBundle\Provider\VirtualFieldProviderInterface;
 use Oro\Bundle\QueryDesignerBundle\Model\AbstractQueryDesigner;
-use Oro\Bundle\QueryDesignerBundle\QueryDesigner\FunctionProviderInterface;
-use Oro\Bundle\QueryDesignerBundle\QueryDesigner\GroupingOrmQueryConverter;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
+use Oro\Bundle\QueryDesignerBundle\QueryDesigner\QueryBuilderGroupingOrmQueryConverter;
 
 /**
  * Converts a virtual fields select query definition created by the query designer to an ORM query.
  */
-class VirtualFieldsSelectQueryConverter extends GroupingOrmQueryConverter
+class VirtualFieldsSelectQueryConverter extends QueryBuilderGroupingOrmQueryConverter
 {
-    /** @var array */
-    protected $tableAliasByColumn = [];
-
-    /** @var QueryBuilder */
-    protected $qb;
-
-    /**
-     * @param FunctionProviderInterface $functionProvider
-     * @param VirtualFieldProviderInterface $virtualFieldProvider
-     * @param ManagerRegistry $doctrine
-     */
-    public function __construct(
-        FunctionProviderInterface $functionProvider,
-        VirtualFieldProviderInterface $virtualFieldProvider,
-        ManagerRegistry $doctrine
-    ) {
-        parent::__construct($functionProvider, $virtualFieldProvider, $doctrine);
-    }
-
     /**
      * @param AbstractQueryDesigner $source
      *
      * @return QueryBuilder
      */
-    public function convert(AbstractQueryDesigner $source)
+    public function convert(AbstractQueryDesigner $source): QueryBuilder
     {
-        $this->qb = $this->doctrine->getManagerForClass($source->getEntity())->createQueryBuilder();
+        $qb = $this->doctrineHelper->getEntityManagerForClass($source->getEntity())->createQueryBuilder();
+        $this->context()->setQueryBuilder($qb);
         $this->doConvert($source);
 
-        return $this->qb;
+        return $qb;
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function addFromStatement($entityClassName, $tableAlias)
-    {
-        $this->qb->from($entityClassName, $tableAlias);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function addOrderByColumn($columnAlias, $columnSorting)
+    protected function addOrderByColumn(string $columnAlias, string $columnSorting): void
     {
         // nothing to do
     }
@@ -65,7 +36,7 @@ class VirtualFieldsSelectQueryConverter extends GroupingOrmQueryConverter
     /**
      * {@inheritdoc}
      */
-    protected function addGroupByColumn($columnAlias)
+    protected function addGroupByColumn(string $columnAlias): void
     {
         // nothing to do
     }
@@ -73,7 +44,7 @@ class VirtualFieldsSelectQueryConverter extends GroupingOrmQueryConverter
     /**
      * {@inheritdoc}
      */
-    protected function saveColumnAliases($columnAliases)
+    protected function saveTableAliases(array $tableAliases): void
     {
         // nothing to do
     }
@@ -81,36 +52,25 @@ class VirtualFieldsSelectQueryConverter extends GroupingOrmQueryConverter
     /**
      * {@inheritdoc}
      */
-    protected function saveTableAliases($tableAliases)
+    protected function saveColumnAliases(array $columnAliases): void
     {
+        // nothing to do
     }
 
     /**
      * {@inheritdoc}
      */
     protected function addSelectColumn(
-        $entityClassName,
-        $tableAlias,
-        $fieldName,
-        $columnExpr,
-        $columnAlias,
-        $columnLabel,
+        string $entityClass,
+        string $tableAlias,
+        string $fieldName,
+        string $columnExpr,
+        string $columnAlias,
+        string $columnLabel,
         $functionExpr,
-        $functionReturnType,
-        $isDistinct = false
-    ) {
-        $this->qb->addSelect(sprintf('%s as %s', $columnExpr, $columnLabel));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function addJoinStatement($joinType, $join, $joinAlias, $joinConditionType, $joinCondition)
-    {
-        if (self::LEFT_JOIN === $joinType) {
-            $this->qb->leftJoin($join, $joinAlias, $joinConditionType, $joinCondition);
-        } else {
-            $this->qb->innerJoin($join, $joinAlias, $joinConditionType, $joinCondition);
-        }
+        ?string $functionReturnType,
+        bool $isDistinct
+    ): void {
+        $this->context()->getQueryBuilder()->addSelect(sprintf('%s as %s', $columnExpr, $columnLabel));
     }
 }

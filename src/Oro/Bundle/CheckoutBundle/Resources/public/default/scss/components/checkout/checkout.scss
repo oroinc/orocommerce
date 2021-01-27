@@ -7,35 +7,30 @@
 
     background: $checkout-background-color;
 
+    &--no-background {
+        background: none;
+        padding: 0;
+    }
+
     &__head {
         position: $checkout-head-position;
-
-        padding: $checkout-head-padding;
+        display: flex;
+        width: 100%;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
         margin: $checkout-head-margin;
     }
 
-    &__body {
-        margin: $checkout-body-margin;
-
-        &--offset-none {
-            margin: 0;
-        }
-    }
-
     &__title {
-        display: block;
-
         &-icon {
-            position: $checkout-title-badge-position;
-            left: 0;
-            top: 0;
+            margin-right: $checkout-title-badge-offset;
 
             @include badge($checkout-title-badge-size, $checkout-title-badge-font-size);
         }
 
         &-text {
-            font-size: $checkout-title-text-font-size;
-            line-height: $checkout-title-text-line-height;
+            vertical-align: middle;
 
             + * {
                 margin: 0 0 0 $offset-x-m;
@@ -43,18 +38,29 @@
         }
     }
 
-    &__approval-wrapper {
-        margin: $checkout-approval-wrapper-margin;
-    }
-
     &__approval-note {
         margin: $checkout-approval-note-margin;
     }
 
-    &.form-row {
-        padding: 0;
+    &__footer {
+        display: flex;
+        flex-direction: row;
 
-        background: transparent;
+        &-col {
+            &:first-child {
+                flex-grow: 1;
+                padding-right: $offset-x-m;
+            }
+
+            &:last-child {
+                padding-left: $offset-x-m;
+                margin-left: auto;
+            }
+
+            &:empty {
+                display: none;
+            }
+        }
     }
 }
 
@@ -63,8 +69,9 @@
         padding: $checkout-tablet-padding;
         border-radius: $checkout-tablet-border-radius;
 
-        &__approval-wrapper {
-            margin: $checkout-approval-wrapper-tablet-margin;
+        &--no-background {
+            background: none;
+            padding: 0;
         }
 
         &__submit-btn {
@@ -72,6 +79,23 @@
             > .tooltip.tooltip-bottom .tooltip-inner:before {
                 left: $checkout-submit-tooltip-left;
                 right: $checkout-submit-tooltip-right;
+            }
+        }
+
+        &__footer {
+            flex-direction: column;
+
+            &-col {
+                &:first-child {
+                    margin-bottom: $offset-x;
+                    flex-grow: 0;
+                    padding-right: 0;
+                }
+
+                &:last-child {
+                    padding-left: 0;
+                    margin: 0;
+                }
             }
         }
     }

@@ -8,25 +8,32 @@ use Oro\Bundle\ShippingBundle\Context\LineItem\Builder\Factory\ShippingLineItemB
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Factory\ShippingLineItemCollectionFactoryInterface;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
+use Oro\Bundle\ShippingBundle\Entity\LengthUnit;
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use Oro\Bundle\ShippingBundle\Entity\Repository\ProductShippingOptionsRepository;
+use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
+use Oro\Bundle\ShippingBundle\Model\Dimensions;
+use Oro\Bundle\ShippingBundle\Model\Weight;
 
+/**
+ * Sets shipping options for the shipping line items when options value is null.
+ */
 class ShippingOptionsLineItemCollectionFactoryDecorator implements ShippingLineItemCollectionFactoryInterface
 {
-    /**
-     * @var ShippingLineItemCollectionFactoryInterface
-     */
+    /** @var ShippingLineItemCollectionFactoryInterface */
     private $decoratedFactory;
 
-    /**
-     * @var DoctrineHelper
-     */
+    /** @var DoctrineHelper */
     private $doctrineHelper;
 
-    /**
-     * @var ShippingLineItemBuilderFactoryInterface
-     */
+    /** @var ShippingLineItemBuilderFactoryInterface */
     private $builderByLineItemFactory;
+
+    /** @var LengthUnit */
+    private $dimensionsUnits = [];
+
+    /** @var WeightUnit[] */
+    private $weightUnits = [];
 
     /**
      * @param ShippingLineItemCollectionFactoryInterface $decoratedFactory
@@ -65,16 +72,31 @@ class ShippingOptionsLineItemCollectionFactoryDecorator implements ShippingLineI
                 $shippingOptions = $shippingOptionsByProductId[$product->getId()];
 
                 if ($lineItem->getWeight() === null) {
-                    $builder->setWeight($shippingOptions->getWeight());
+                    $builder->setWeight(
+                        Weight::create(
+                            $shippingOptions['weightValue'],
+                            $this->getWeightUnit($shippingOptions)
+                        )
+                    );
                 }
 
                 if ($lineItem->getDimensions() === null) {
-                    $builder->setDimensions($shippingOptions->getDimensions());
+                    $builder->setDimensions(
+                        Dimensions::create(
+                            $shippingOptions['dimensionsLength'],
+                            $shippingOptions['dimensionsWidth'],
+                            $shippingOptions['dimensionsHeight'],
+                            $this->getDimensionsUnit($shippingOptions)
+                        )
+                    );
                 }
             }
 
             $newShippingLineItems[] = $builder->getResult();
         }
+
+        $this->dimensionsUnits = [];
+        $this->weightUnits = [];
 
         return $this->decoratedFactory->createShippingLineItemCollection($newShippingLineItems);
     }
@@ -82,22 +104,14 @@ class ShippingOptionsLineItemCollectionFactoryDecorator implements ShippingLineI
     /**
      * @param ShippingLineItemInterface[] $shippingLineItems
      *
-     * @return ProductShippingOptions[]
+     * @return array
      */
     private function getShippingOptionsIndexedByProductId(array $shippingLineItems): array
     {
         $unitsByProductIds = $this->getUnitsIndexedByProductId($shippingLineItems);
-        $repository = $this->getShippingOptionsRepository();
 
-        $shippingOptions = $repository->findByProductsAndUnits($unitsByProductIds);
-
-        $result = [];
-
-        foreach ($shippingOptions as $shippingOption) {
-            $result[$shippingOption->getProduct()->getId()] = $shippingOption;
-        }
-
-        return $result;
+        return $this->getShippingOptionsRepository()
+            ->findIndexedByProductsAndUnits($unitsByProductIds);
     }
 
     /**
@@ -126,5 +140,39 @@ class ShippingOptionsLineItemCollectionFactoryDecorator implements ShippingLineI
     private function getShippingOptionsRepository()
     {
         return $this->doctrineHelper->getEntityRepository(ProductShippingOptions::class);
+    }
+
+    /**
+     * @param array $shippingOptions
+     * @return LengthUnit
+     */
+    private function getDimensionsUnit(array $shippingOptions): LengthUnit
+    {
+        $lengthUnitCode = $shippingOptions['dimensionsUnit'];
+        if (!isset($this->dimensionsUnits[$lengthUnitCode])) {
+            $this->dimensionsUnits[$lengthUnitCode] = $this->doctrineHelper->getEntityReference(
+                LengthUnit::class,
+                $lengthUnitCode
+            );
+        }
+
+        return $this->dimensionsUnits[$lengthUnitCode];
+    }
+
+    /**
+     * @param array $shippingOptions
+     * @return WeightUnit
+     */
+    private function getWeightUnit(array $shippingOptions): WeightUnit
+    {
+        $weightUnitCode = $shippingOptions['weightUnit'];
+        if (!isset($this->weightUnits[$weightUnitCode])) {
+            $this->weightUnits[$weightUnitCode] = $this->doctrineHelper->getEntityReference(
+                WeightUnit::class,
+                $weightUnitCode
+            );
+        }
+
+        return $this->weightUnits[$weightUnitCode];
     }
 }

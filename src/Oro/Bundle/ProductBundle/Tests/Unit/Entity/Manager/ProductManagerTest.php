@@ -33,8 +33,8 @@ class ProductManagerTest extends \PHPUnit\Framework\TestCase
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
             ->with(
-                ProductDBQueryRestrictionEvent::NAME,
-                new ProductDBQueryRestrictionEvent($qb, new ParameterBag($params))
+                new ProductDBQueryRestrictionEvent($qb, new ParameterBag($params)),
+                ProductDBQueryRestrictionEvent::NAME
             );
 
         $this->productManager->restrictQueryBuilder($qb, $params);
@@ -47,8 +47,8 @@ class ProductManagerTest extends \PHPUnit\Framework\TestCase
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
             ->with(
-                ProductSearchQueryRestrictionEvent::NAME,
-                new ProductSearchQueryRestrictionEvent($query)
+                new ProductSearchQueryRestrictionEvent($query),
+                ProductSearchQueryRestrictionEvent::NAME
             );
 
         $this->productManager->restrictSearchQuery($query);

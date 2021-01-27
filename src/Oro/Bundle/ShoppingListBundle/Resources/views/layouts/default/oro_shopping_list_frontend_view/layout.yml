@@ -16,7 +16,7 @@ layout:
         - '@appendOption':
             id: datagrid
             optionName: grid_render_parameters.cssClass
-            optionValue: 'responsive-shopping-list-grid-view'
+            optionValue: 'responsive-shopping-list-grid-desktop-alignment responsive-shopping-list-grid-tablet-alignment responsive-shopping-list-grid-view'
 
         - '@setOption':
             id: page_content

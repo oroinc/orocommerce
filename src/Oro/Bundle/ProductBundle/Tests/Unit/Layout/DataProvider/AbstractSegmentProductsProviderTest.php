@@ -4,13 +4,13 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Layout\DataProvider;
 
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -20,12 +20,19 @@ use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SegmentBundle\Entity\Manager\SegmentManager;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 abstract class AbstractSegmentProductsProviderTest extends \PHPUnit\Framework\TestCase
 {
+    use EntityTrait;
+
     /** @var SegmentManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $segmentManager;
+
+    /** @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject */
+    protected $websiteManager;
 
     /** @var ProductSegmentProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $productSegmentProvider;
@@ -60,6 +67,7 @@ abstract class AbstractSegmentProductsProviderTest extends \PHPUnit\Framework\Te
     protected function setUp(): void
     {
         $this->segmentManager = $this->createMock(SegmentManager::class);
+        $this->websiteManager = $this->createMock(WebsiteManager::class);
         $this->productSegmentProvider = $this->createMock(ProductSegmentProviderInterface::class);
         $this->productManager = $this->createMock(ProductManager::class);
         $this->configManager = $this->createMock(ConfigManager::class);

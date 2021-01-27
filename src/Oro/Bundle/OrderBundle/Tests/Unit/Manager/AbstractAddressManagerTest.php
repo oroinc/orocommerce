@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Manager;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
 
@@ -41,12 +41,12 @@ abstract class AbstractAddressManagerTest extends \PHPUnit\Framework\TestCase
     public function testGetEntityByIdentifierFailed($identifier, $expectedId, array $exception = [])
     {
         if ($exception) {
-            list($exception, $message) = $exception;
+            [$exception, $message] = $exception;
             $this->expectException($exception);
             $this->expectExceptionMessage($message);
         }
 
-        $em = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
+        $em = $this->createMock('Doctrine\Persistence\ObjectManager');
         $em->expects($expectedId ? $this->atLeastOnce() : $this->never())->method('find')
             ->with($this->isType('string'), $this->equalTo($expectedId));
 
@@ -74,7 +74,7 @@ abstract class AbstractAddressManagerTest extends \PHPUnit\Framework\TestCase
     {
         $entity = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress', 1);
 
-        $em = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
+        $em = $this->createMock('Doctrine\Persistence\ObjectManager');
         $em->expects($this->exactly(2))->method('find')
             ->with($this->isType('string'), $this->isType('integer'))
             ->will($this->onConsecutiveCalls($entity, null));

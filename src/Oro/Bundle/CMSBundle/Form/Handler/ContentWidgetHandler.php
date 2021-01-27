@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\Form\Handler;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\FormBundle\Event\FormHandler\Events;
@@ -49,7 +49,7 @@ class ContentWidgetHandler implements FormHandlerInterface
         }
 
         $event = new FormProcessEvent($form, $data);
-        $this->eventDispatcher->dispatch(Events::BEFORE_FORM_DATA_SET, $event);
+        $this->eventDispatcher->dispatch($event, Events::BEFORE_FORM_DATA_SET);
 
         if ($event->isFormProcessInterrupted()) {
             return false;
@@ -61,7 +61,7 @@ class ContentWidgetHandler implements FormHandlerInterface
             $updateMarker = $request->get(self::UPDATE_MARKER, false);
 
             $event = new FormProcessEvent($form, $data);
-            $this->eventDispatcher->dispatch(Events::BEFORE_FORM_SUBMIT, $event);
+            $this->eventDispatcher->dispatch($event, Events::BEFORE_FORM_SUBMIT);
 
             if ($event->isFormProcessInterrupted()) {
                 return false;
@@ -87,8 +87,8 @@ class ContentWidgetHandler implements FormHandlerInterface
         $manager = $this->registry->getManagerForClass(ContentWidget::class);
         $manager->persist($contentWidget);
 
-        $this->eventDispatcher->dispatch(Events::BEFORE_FLUSH, new AfterFormProcessEvent($form, $contentWidget));
+        $this->eventDispatcher->dispatch(new AfterFormProcessEvent($form, $contentWidget), Events::BEFORE_FLUSH);
         $manager->flush();
-        $this->eventDispatcher->dispatch(Events::AFTER_FLUSH, new AfterFormProcessEvent($form, $contentWidget));
+        $this->eventDispatcher->dispatch(new AfterFormProcessEvent($form, $contentWidget), Events::AFTER_FLUSH);
     }
 }

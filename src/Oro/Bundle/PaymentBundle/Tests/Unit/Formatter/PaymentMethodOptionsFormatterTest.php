@@ -58,11 +58,11 @@ class PaymentMethodOptionsFormatterTest extends \PHPUnit\Framework\TestCase
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
             ->with(
-                CollectFormattedPaymentOptionsEvent::EVENT_NAME,
-                $this->isInstanceOf(CollectFormattedPaymentOptionsEvent::class)
+                $this->isInstanceOf(CollectFormattedPaymentOptionsEvent::class),
+                CollectFormattedPaymentOptionsEvent::EVENT_NAME
             )
             ->willReturnCallback(
-                function (string $eventName, CollectFormattedPaymentOptionsEvent $event) use ($option) {
+                function (CollectFormattedPaymentOptionsEvent $event, string $name) use ($option) {
                     $event->addOption($option);
                 }
             );

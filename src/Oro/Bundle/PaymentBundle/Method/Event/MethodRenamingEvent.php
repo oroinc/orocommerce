@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PaymentBundle\Method\Event;
 
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class MethodRenamingEvent extends Event
 {

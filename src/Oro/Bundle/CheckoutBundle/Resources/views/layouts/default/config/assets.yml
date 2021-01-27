@@ -7,6 +7,7 @@ styles:
         - 'bundles/orocheckout/default/scss/variables/checkout-navigation-config.scss'
         - 'bundles/orocheckout/default/scss/variables/single-page-checkout-view-config.scss'
         - 'bundles/orocheckout/default/scss/variables/checkout-credentials-config.scss'
+        - 'bundles/orocheckout/default/scss/variables/order-review-options/order-review-options-config.scss'
         - 'bundles/orocheckout/default/scss/components/order-checkout-widget.scss'
         - 'bundles/orocheckout/default/scss/components/order-loading-placeholder.scss'
         - 'bundles/orocheckout/default/scss/styles.scss'

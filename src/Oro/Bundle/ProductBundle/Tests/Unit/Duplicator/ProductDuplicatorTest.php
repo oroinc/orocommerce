@@ -86,36 +86,22 @@ class ProductDuplicatorTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp(): void
     {
-        $this->objectManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->eventDispatcher = $this->getMockBuilder('Symfony\Component\EventDispatcher\EventDispatcherInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->skuIncrementor = $this->getMockBuilder('Oro\Bundle\ProductBundle\Duplicator\SkuIncrementorInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->fileManager = $this->getMockBuilder('Oro\Bundle\AttachmentBundle\Manager\FileManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->attachmentProvider = $this->getMockBuilder('Oro\Bundle\AttachmentBundle\Provider\AttachmentProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->connection = $this->getMockBuilder('Doctrine\DBAL\Connection')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->objectManager = $this->createMock(EntityManager::class);
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+        $this->skuIncrementor = $this->createMock(SkuIncrementorInterface::class);
+        $this->fileManager = $this->createMock(FileManager::class);
+        $this->attachmentProvider = $this->createMock(AttachmentProvider::class);
+        $this->connection = $this->createMock(Connection::class);
 
         $this->doctrineHelper->expects($this->any())
             ->method('getEntityManager')
             ->with($this->anything())
-            ->will($this->returnValue($this->objectManager));
+            ->willReturn($this->objectManager);
 
         $this->objectManager->expects($this->any())
             ->method('getConnection')
-            ->will($this->returnValue($this->connection));
+            ->willReturn($this->connection);
 
         $this->duplicator = new ProductDuplicator(
             $this->doctrineHelper,
@@ -132,22 +118,32 @@ class ProductDuplicatorTest extends \PHPUnit\Framework\TestCase
      */
     public function testDuplicate()
     {
-        $image = new File();
-        $imageCopy = new File();
+        /** @var File $image1 */
+        $image1 = $this->getEntity(File::class, ['id' => 1]);
+        /** @var File $image2 */
+        $image2 = $this->getEntity(File::class, ['id' => 2]);
+        /** @var File $image1Copy */
+        $image1Copy = $this->getEntity(File::class, ['id' => 3]);
 
-        $productImage = new StubProductImage();
-        $productImage->setImage($image);
-        $productImageCopy = new StubProductImage();
-        $productImageCopy->setImage($imageCopy);
+        $productImage1 = new StubProductImage();
+        $productImage1->setId(11);
+        $productImage1->setImage($image1);
+        $productImage2 = new StubProductImage();
+        $productImage2->setId(12);
+        $productImage2->setImage($image2);
+        $productImage1Copy = new StubProductImage();
+        $productImage1Copy->setImage($image1Copy);
 
         $productSlug = new Slug();
         $productSlug->setUrl('/url');
         $productSlug->setRouteName('route_name');
 
-        $attachmentFile1 = new File();
-        $attachmentFileCopy1 = new File();
-        $attachmentFile2 = new File();
-        $attachmentFileCopy2 = new File();
+        /** @var File $attachmentFile1 */
+        $attachmentFile1 = $this->getEntity(File::class, ['id' => 4]);
+        /** @var File $attachmentFile2 */
+        $attachmentFile2 = $this->getEntity(File::class, ['id' => 5]);
+        /** @var File $attachmentFileCopy2 */
+        $attachmentFileCopy2 = $this->getEntity(File::class, ['id' => 6]);
 
         $attachment1 = (new Attachment())
             ->setFile($attachmentFile1);
@@ -191,22 +187,28 @@ class ProductDuplicatorTest extends \PHPUnit\Framework\TestCase
                     ProductShortDescription::class
                 )
             )
-            ->addImage($productImage);
+            ->addImage($productImage1)
+            ->addImage($productImage2);
 
         $this->skuIncrementor->expects($this->once())
             ->method('increment')
             ->with(self::PRODUCT_SKU)
-            ->will($this->returnValue(self::PRODUCT_COPY_SKU));
+            ->willReturn(self::PRODUCT_COPY_SKU);
 
         $this->attachmentProvider->expects($this->once())
             ->method('getEntityAttachments')
             ->with($product)
-            ->will($this->returnValue([$attachment1, $attachment2]));
+            ->willReturn([$attachment1, $attachment2]);
 
-        $this->fileManager->expects($this->exactly(3))
+        $this->fileManager->expects($this->exactly(4))
             ->method('cloneFileEntity')
-            ->withConsecutive([$image], [$attachmentFile1], [$attachmentFile2])
-            ->willReturnOnConsecutiveCalls($imageCopy, $attachmentFileCopy1, $attachmentFileCopy2);
+            ->withConsecutive(
+                [$image1],
+                [$image2],
+                [$attachmentFile1],
+                [$attachmentFile2]
+            )
+            ->willReturnOnConsecutiveCalls($image1Copy, $attachmentFileCopy2);
 
         $this->connection->expects($this->once())
             ->method('beginTransaction');
@@ -245,7 +247,7 @@ class ProductDuplicatorTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(self::SHORT_DESCRIPTION_DEFAULT_LOCALE, $productCopyShortDescriptions[0]->getText());
         $this->assertEquals(self::SHORT_DESCRIPTION_CUSTOM_LOCALE, $productCopyShortDescriptions[1]->getText());
 
-        $this->assertEquals($imageCopy, $productImageCopy->getImage());
+        $this->assertEquals($image1Copy, $productImage1Copy->getImage());
     }
 
     public function testDuplicateFailed()
@@ -261,12 +263,12 @@ class ProductDuplicatorTest extends \PHPUnit\Framework\TestCase
         $this->skuIncrementor->expects($this->once())
             ->method('increment')
             ->with(self::PRODUCT_SKU)
-            ->will($this->returnValue(self::PRODUCT_COPY_SKU));
+            ->willReturn(self::PRODUCT_COPY_SKU);
 
         $this->attachmentProvider->expects($this->once())
             ->method('getEntityAttachments')
             ->with($product)
-            ->will($this->returnValue([]));
+            ->willReturn([]);
 
         $this->connection->expects($this->once())
             ->method('beginTransaction');

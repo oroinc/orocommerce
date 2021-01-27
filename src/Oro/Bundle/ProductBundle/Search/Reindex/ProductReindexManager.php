@@ -77,6 +77,6 @@ class ProductReindexManager
     protected function doReindexProducts(array $productIds, $websiteId, $isScheduled)
     {
         $event = $this->getReindexationRequestEvent($productIds, $websiteId, $isScheduled);
-        $this->dispatcher->dispatch(ReindexationRequestEvent::EVENT_NAME, $event);
+        $this->dispatcher->dispatch($event, ReindexationRequestEvent::EVENT_NAME);
     }
 }

@@ -454,6 +454,8 @@ services:
         parent: oro_gaufrette.file_manager
         arguments:
             - 'sitemaps'
+        tags:
+            - { name: oro_gaufrette.public_filesystem_manager }
 
     oro_seo.file_manager.tmp_data:
         parent: oro_gaufrette.file_manager

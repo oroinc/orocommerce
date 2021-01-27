@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\RedirectBundle\Async;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\ORM\EntityManager;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\RedirectBundle\Entity\Redirect;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
@@ -13,6 +13,8 @@ use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\OptionsResolver\Exception\InvalidArgumentException;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Updates scopes of Redirects by Slug id
@@ -46,42 +48,45 @@ class SyncSlugRedirectsProcessor implements MessageProcessorInterface, TopicSubs
      */
     public function process(MessageInterface $message, SessionInterface $session)
     {
-        $messageData = JSON::decode($message->getBody());
-
-        if (!array_key_exists('slugId', $messageData)) {
-            $this->logger->critical(
-                'Message is invalid. Key "slugId" is missing from message data.'
+        try {
+            $messageData = $this->getResolvedMessageData(JSON::decode($message->getBody()));
+        } catch (InvalidArgumentException $e) {
+            $this->logger->error(
+                'Queue Message is invalid',
+                ['exception' => $e]
             );
 
             return self::REJECT;
         }
 
+        /** @var Slug $slug */
+        $slug = $this->registry->getManagerForClass(Slug::class)
+            ->getRepository(Slug::class)
+            ->find($messageData['slugId']);
+
+        // Slug not found, do nothing
+        if (!$slug) {
+            return self::REJECT;
+        }
+
         /** @var EntityManager $manager */
         $manager = $this->registry->getManagerForClass(Redirect::class);
-        $manager->beginTransaction();
+        /** @var Redirect[] $redirects */
+        $redirects = $manager->getRepository(Redirect::class)->findBy(['slug' => $slug]);
+        // No redirects found, nothing to do.
+        if (!$redirects) {
+            return self::REJECT;
+        }
+
+        foreach ($redirects as $redirect) {
+            $redirect->setScopes($slug->getScopes());
+        }
+
         try {
-            /** @var Slug $slug */
-            $slug = $this->registry->getManagerForClass(Slug::class)
-                ->getRepository(Slug::class)
-                ->find($messageData['slugId']);
-
-            $slugScopes = $slug->getScopes();
-
-            /** @var Redirect[] $redirects */
-            $redirects = $manager->getRepository(Redirect::class)
-                ->findBy(['slug' => $slug]);
-
-            foreach ($redirects as $redirect) {
-                $redirect->setScopes($slugScopes);
-            }
-
             $manager->flush();
-            $manager->commit();
         } catch (\Exception $e) {
-            $manager->rollback();
-
             $this->logger->error(
-                'Unexpected exception occurred during Deleting attribute relation',
+                'Unexpected exception occurred during scopes update of Redirects by Slug',
                 ['exception' => $e]
             );
 
@@ -101,5 +106,18 @@ class SyncSlugRedirectsProcessor implements MessageProcessorInterface, TopicSubs
     public static function getSubscribedTopics()
     {
         return [Topics::SYNC_SLUG_REDIRECTS];
+    }
+
+    /**
+     * @param array $message
+     * @return array
+     */
+    private function getResolvedMessageData(array $message): array
+    {
+        $optionsResolver = new OptionsResolver();
+        $optionsResolver->setRequired(['slugId']);
+        $optionsResolver->setAllowedTypes('slugId', ['integer', 'string']);
+
+        return $optionsResolver->resolve($message);
     }
 }

@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Provider;
 
 use Doctrine\Common\Cache\ArrayCache;
-use Doctrine\Common\Persistence\Proxy;
+use Doctrine\Persistence\Proxy;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
@@ -287,7 +287,7 @@ class ProductVariantAvailabilityProvider
         $qb = $productRepository->getSimpleProductIdsByParentProductsQueryBuilder($configurableProducts);
 
         $restrictProductVariantEvent = new RestrictProductVariantEvent($qb);
-        $this->eventDispatcher->dispatch(RestrictProductVariantEvent::NAME, $restrictProductVariantEvent);
+        $this->eventDispatcher->dispatch($restrictProductVariantEvent, RestrictProductVariantEvent::NAME);
 
         $em = $this->doctrineHelper->getEntityManager(Product::class);
 
@@ -367,7 +367,7 @@ class ProductVariantAvailabilityProvider
         $qb = $repository->getSimpleProductsByVariantFieldsQueryBuilder($configurableProduct, $variantParameters);
 
         $restrictProductVariantEvent = new RestrictProductVariantEvent($qb);
-        $this->eventDispatcher->dispatch(RestrictProductVariantEvent::NAME, $restrictProductVariantEvent);
+        $this->eventDispatcher->dispatch($restrictProductVariantEvent, RestrictProductVariantEvent::NAME);
 
         return $restrictProductVariantEvent->getQueryBuilder();
     }

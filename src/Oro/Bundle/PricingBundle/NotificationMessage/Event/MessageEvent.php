@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PricingBundle\NotificationMessage\Event;
 
 use Oro\Bundle\PricingBundle\NotificationMessage\Message;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class MessageEvent extends Event
 {

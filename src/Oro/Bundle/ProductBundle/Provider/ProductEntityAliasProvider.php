@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Provider;
 
-use Doctrine\Common\Inflector\Inflector;
+use Doctrine\Inflector\Inflector;
 use Oro\Bundle\EntityBundle\Model\EntityAlias;
 use Oro\Bundle\EntityBundle\Provider\DuplicateEntityAliasResolver;
 use Oro\Bundle\EntityBundle\Provider\EntityAliasProviderInterface;
@@ -26,16 +26,21 @@ class ProductEntityAliasProvider implements EntityAliasProviderInterface
 
     /** @var array [class name => TRUE, ...] */
     private $classes;
+    private Inflector $inflector;
 
     /**
      * @param ConfigManager                $configManager
      * @param DuplicateEntityAliasResolver $duplicateResolver
      */
-    public function __construct(ConfigManager $configManager, DuplicateEntityAliasResolver $duplicateResolver)
-    {
+    public function __construct(
+        ConfigManager $configManager,
+        DuplicateEntityAliasResolver $duplicateResolver,
+        Inflector $inflector
+    ) {
         $this->configManager = $configManager;
         $this->duplicateResolver = $duplicateResolver;
         $this->extendedProductPrefix = ExtendHelper::ENTITY_NAMESPACE . 'EV_Product_';
+        $this->inflector = $inflector;
     }
 
     /**
@@ -77,7 +82,7 @@ class ProductEntityAliasProvider implements EntityAliasProviderInterface
         $cleanEntityClass = substr($shortEntityClass, 0, strrpos($shortEntityClass, '_'));
 
         $alias = $this->buildAlias($cleanEntityClass);
-        $pluralAlias = Inflector::pluralize($alias);
+        $pluralAlias = $this->inflector->pluralize($alias);
         if ($this->duplicateResolver->hasAlias($alias, $pluralAlias)) {
             $alias = $this->duplicateResolver->getUniqueAlias($alias, $pluralAlias);
             $pluralAlias = $alias;

@@ -7,14 +7,14 @@ use Oro\Bundle\CMSBundle\Form\Type\ContentBlockType;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * CMS Content Block Controller
  */
-class ContentBlockController extends Controller
+class ContentBlockController extends AbstractController
 {
     /**
      * @Route("/", name="oro_cms_content_block_index")

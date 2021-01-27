@@ -42,11 +42,11 @@ class ProductAccessExceptionListenerTest extends \PHPUnit\Framework\TestCase
         $exampleException = new NotFoundHttpException();
 
         $this->event->expects($this->at(0))
-            ->method('getException')
+            ->method('getThrowable')
             ->willReturn($exampleException);
 
         $this->event->expects($this->never())
-            ->method('setException');
+            ->method('setThrowable');
 
         $this->testable->onAccessException($this->event);
 
@@ -60,7 +60,7 @@ class ProductAccessExceptionListenerTest extends \PHPUnit\Framework\TestCase
         $exampleException = new AccessDeniedHttpException();
 
         $this->event->expects($this->at(0))
-            ->method('getException')
+            ->method('getThrowable')
             ->willReturn($exampleException);
 
         $this->testable->onAccessException($this->event);
@@ -73,13 +73,12 @@ class ProductAccessExceptionListenerTest extends \PHPUnit\Framework\TestCase
         $exampleException = new AccessDeniedHttpException($message);
 
         $this->event->expects($this->once())
-            ->method('getException')
+            ->method('getThrowable')
             ->willReturn($exampleException);
 
         $this->event->expects($this->once())
-            ->method('setException')
-            ->with(new NotFoundHttpException($message, $exampleException))
-            ->willReturn($exampleException);
+            ->method('setThrowable')
+            ->with(new NotFoundHttpException($message, $exampleException));
 
         $request = new Request();
         $request->attributes->set('_route', ProductAccessExceptionListener::PRODUCT_VIEW_ROUTE);
@@ -98,13 +97,12 @@ class ProductAccessExceptionListenerTest extends \PHPUnit\Framework\TestCase
         $exampleException = new InsufficientAuthenticationException($message);
 
         $this->event->expects($this->once())
-            ->method('getException')
+            ->method('getThrowable')
             ->willReturn($exampleException);
 
         $this->event->expects($this->once())
-            ->method('setException')
-            ->with(new NotFoundHttpException($message, $exampleException))
-            ->willReturn($exampleException);
+            ->method('setThrowable')
+            ->with(new NotFoundHttpException($message, $exampleException));
 
         $request = new Request();
         $request->attributes->set('_route', ProductAccessExceptionListener::PRODUCT_VIEW_ROUTE);

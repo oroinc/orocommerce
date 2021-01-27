@@ -85,6 +85,12 @@
 
 @include breakpoint('desktop') {
     .responsive-shopping-list-grid {
+        .grid-body-cell-inventoryStatus {
+            white-space: nowrap;
+        }
+    }
+
+    .responsive-shopping-list-grid-desktop-alignment {
         .grid-body-cell-sku,
         .grid-body-cell-inventoryStatus,
         .grid-body-cell-quantity:not(.editable),
@@ -92,6 +98,10 @@
         .grid-body-cell-price,
         .grid-body-cell-subtotal {
             padding-top: $responsive-shopping-cell-desktop-offset;
+        }
+
+        .group-row .grid-cell {
+            padding-bottom: $responsive-shopping-sub-row-cell-desktop-inner-offset;
         }
 
         .sub-row {
@@ -104,56 +114,67 @@
                 padding-top: $responsive-shopping-sub-cell-desktop-offset;
             }
         }
+    }
+}
 
-        .grid-body-cell-inventoryStatus {
-            white-space: nowrap;
-        }
+@mixin responsive-shopping-list-grid-tablet {
+    .grid-body-cell-item {
+        width: 360px;
+    }
 
-        .group-row .grid-cell {
-            padding-bottom: $responsive-shopping-sub-row-cell-desktop-inner-offset;
+    .show-in-tablet {
+        display: block;
+    }
+
+    .highlighted-in-mobile {
+        color: $product-item-sku-value-color;
+    }
+
+    .label-in-tablet-start:before,
+    .label-in-tablet-end:after {
+        content: attr(data-label);
+    }
+
+    .sub-row {
+        .grid-body-cell-item {
+            position: relative;
         }
+    }
+
+    .grid-header-cell-inventoryStatus,
+    .grid-header-cell-sku,
+    .grid-body-cell-sku,
+    .grid-body-cell-inventoryStatus {
+        display: none;
+    }
+}
+
+@mixin responsive-shopping-list-grid-tablet-alignment {
+    .group-row {
+        .grid-body-cell-quantity,
+        .grid-body-cell-subtotal,
+        .grid-body-cell-unit {
+            padding-top: $responsive-shopping-group-cell-offset-tablet;
+        }
+    }
+}
+
+.responsive-shopping-list-grid-tablet {
+    @include responsive-shopping-list-grid-tablet;
+    @include grid-line-items-tablet;
+
+    &.responsive-shopping-list-grid-tablet-alignment {
+        @include responsive-shopping-list-grid-tablet-alignment;
     }
 }
 
 @include breakpoint('tablet') {
     .responsive-shopping-list-grid {
-        .grid-body-cell-item {
-            width: 360px;
-        }
+        @include responsive-shopping-list-grid-tablet;
+    }
 
-        .show-in-tablet {
-            display: block;
-        }
-
-        .highlighted-in-mobile {
-            color: $product-item-sku-value-color;
-        }
-
-        .label-in-tablet-start:before,
-        .label-in-tablet-end:after {
-            content: attr(data-label);
-        }
-
-        .sub-row {
-            .grid-body-cell-item {
-                position: relative;
-            }
-        }
-
-        .grid-header-cell-inventoryStatus,
-        .grid-header-cell-sku,
-        .grid-body-cell-sku,
-        .grid-body-cell-inventoryStatus {
-            display: none;
-        }
-
-        .group-row {
-            .grid-body-cell-quantity,
-            .grid-body-cell-subtotal,
-            .grid-body-cell-unit {
-                padding-top: $responsive-shopping-group-cell-offset-tablet;
-            }
-        }
+    .responsive-shopping-list-grid-tablet-alignment {
+        @include responsive-shopping-list-grid-tablet-alignment;
     }
 }
 

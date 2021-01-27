@@ -9,32 +9,29 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 
 /**
- * Use sanitized original filename for product images if enabled.
+ * Uses a sanitized original filename for product images if this configuration option is enabled.
  */
 class ProductImageFileNameProvider implements FileNameProviderInterface
 {
-    private const SEPARATOR = '-';
+    private const PRODUCT_ORIGINAL_FILE_NAMES_ENABLED = 'oro_product.original_file_names_enabled';
+    private const ORIGINAL_FILE_NAME_SEPARATOR        = '-';
 
-    /**
-     * @var ConfigManager
-     */
+    /** @var FileNameProviderInterface */
+    private $innerProvider;
+
+    /** @var ConfigManager */
     private $configManager;
 
     /**
-     * @var FileNameProviderInterface
-     */
-    private $innerProvider;
-
-    /**
-     * @param ConfigManager $configManager
      * @param FileNameProviderInterface $innerProvider
+     * @param ConfigManager             $configManager
      */
     public function __construct(
-        ConfigManager $configManager,
-        FileNameProviderInterface $innerProvider
+        FileNameProviderInterface $innerProvider,
+        ConfigManager $configManager
     ) {
-        $this->configManager = $configManager;
         $this->innerProvider = $innerProvider;
+        $this->configManager = $configManager;
     }
 
     /**
@@ -42,14 +39,27 @@ class ProductImageFileNameProvider implements FileNameProviderInterface
      */
     public function getFileName(File $file): string
     {
-        if ($file->getParentEntityClass() === ProductImage::class
-            && $this->configManager->get('oro_product.original_file_names_enabled')
-        ) {
-            $hash = str_replace('.' . $file->getExtension(), '', $file->getFilename());
-
-            return FilenameSanitizer::sanitizeFilename($hash . self::SEPARATOR . $file->getOriginalFilename());
+        if (!$this->isApplicable($file)) {
+            return $this->innerProvider->getFileName($file);
         }
 
-        return $this->innerProvider->getFileName($file);
+        $hash = str_replace('.' . $file->getExtension(), '', $file->getFilename());
+
+        return FilenameSanitizer::sanitizeFilename(
+            $hash . self::ORIGINAL_FILE_NAME_SEPARATOR . $file->getOriginalFilename()
+        );
+    }
+
+    /**
+     * @param File $file
+     *
+     * @return bool
+     */
+    private function isApplicable(File $file): bool
+    {
+        return
+            $file->getParentEntityClass() === ProductImage::class
+            && $file->getOriginalFilename()
+            && $this->configManager->get(self::PRODUCT_ORIGINAL_FILE_NAMES_ENABLED);
     }
 }

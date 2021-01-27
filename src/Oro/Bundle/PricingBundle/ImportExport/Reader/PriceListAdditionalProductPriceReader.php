@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\ImportExport\Reader;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ImportExportBundle\Context\ContextInterface;
 use Oro\Bundle\ImportExportBundle\Context\ContextRegistry;
 use Oro\Bundle\ImportExportBundle\Reader\IteratorBasedReader;
@@ -71,7 +71,7 @@ class PriceListAdditionalProductPriceReader extends IteratorBasedReader
 
             /** @var PriceListToProductRepository $repository */
             $repository = $em->getRepository('OroPricingBundle:PriceListToProduct');
-            
+
             /** @var PriceList $priceList */
             $priceList = $em->getReference('OroPricingBundle:PriceList', $this->priceListId);
 

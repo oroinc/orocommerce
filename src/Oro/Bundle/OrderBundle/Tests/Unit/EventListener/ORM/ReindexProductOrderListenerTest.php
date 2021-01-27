@@ -4,6 +4,7 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\EventListener\ORM;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
+use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\EventListener\ORM\ReindexProductOrderListener;
@@ -13,7 +14,6 @@ use Oro\Bundle\OrderBundle\Tests\Unit\EventListener\ORM\Stub\OrderStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 /**
@@ -55,7 +55,7 @@ class ReindexProductOrderListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->order = $this->getEntity(OrderStub::class);
         $this->order->setInternalStatus(
-            new StubEnumValue(
+            new TestEnumValue(
                 OrderStatusesProviderInterface::INTERNAL_STATUS_CLOSED,
                 OrderStatusesProviderInterface::INTERNAL_STATUS_CLOSED
             )
@@ -99,7 +99,7 @@ class ReindexProductOrderListenerTest extends \PHPUnit\Framework\TestCase
         $this->reindexManager->expects($this->never())
             ->method('reindexProducts');
 
-        $this->order->setInternalStatus(new StubEnumValue(2, ''));
+        $this->order->setInternalStatus(new TestEnumValue(2, ''));
         $this->listener->processOrderUpdate($this->order, $this->event);
     }
 
@@ -396,7 +396,7 @@ class ReindexProductOrderListenerTest extends \PHPUnit\Framework\TestCase
             $this->featureChecker->expects($this->never())->method('isFeatureEnabled');
         }
 
-        $this->order->setInternalStatus(new StubEnumValue($orderStatus, $orderStatus));
+        $this->order->setInternalStatus(new TestEnumValue($orderStatus, $orderStatus));
 
         if ($expectedReindexProductsCalled) {
             $productIds = [1,2,3];
@@ -485,7 +485,7 @@ class ReindexProductOrderListenerTest extends \PHPUnit\Framework\TestCase
         $this->event->expects($this->once())
             ->method('getOldValue')
             ->with(ReindexProductOrderListener::ORDER_INTERNAL_STATUS_FIELD)
-            ->willReturn(new StubEnumValue(
+            ->willReturn(new TestEnumValue(
                 $oldStatusId,
                 $oldStatusId
             ));
@@ -493,10 +493,7 @@ class ReindexProductOrderListenerTest extends \PHPUnit\Framework\TestCase
         $this->event->expects($this->once())
             ->method('getNewValue')
             ->with(ReindexProductOrderListener::ORDER_INTERNAL_STATUS_FIELD)
-            ->willReturn(new StubEnumValue(
-                $newStatusId,
-                $newStatusId
-            ));
+            ->willReturn(new TestEnumValue($newStatusId, $newStatusId));
     }
 
     /**

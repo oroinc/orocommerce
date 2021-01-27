@@ -5,13 +5,13 @@ namespace Oro\Bundle\CMSBundle\Controller\Frontend;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Landing page frontend controller.
  */
-class PageController extends Controller
+class PageController extends AbstractController
 {
     /**
      * @Route("/view/{id}", name="oro_cms_frontend_page_view", requirements={"id"="\d+"})

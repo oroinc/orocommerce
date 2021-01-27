@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroup;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroupRelation;
@@ -121,8 +121,8 @@ class AttributeFamilyChangesListenerTest extends \PHPUnit\Framework\TestCase
         $this->dispatcher->expects($this->exactly((int)$expected))
             ->method('dispatch')
             ->with(
-                ReindexationRequestEvent::EVENT_NAME,
-                new ReindexationRequestEvent([Product::class], [], $productIds)
+                new ReindexationRequestEvent([Product::class], [], $productIds),
+                ReindexationRequestEvent::EVENT_NAME
             );
 
         $event = new OnFlushEventArgs($this->entityManager);

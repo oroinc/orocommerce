@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\ImportExport\Normalizer;
 
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\ImportExport\FileNormalizer;
+use Oro\Bundle\GaufretteBundle\FileManager;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\ImportExport\Normalizer\ProductImageAwareFileNormalizerDecorator;
 
@@ -12,13 +13,17 @@ class ProductImageAwareFileNormalizerDecoratorTest extends \PHPUnit\Framework\Te
     /** @var FileNormalizer|\PHPUnit\Framework\MockObject\MockObject */
     private $fileNormalizer;
 
+    /** @var FileManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $fileManager;
+
     /** @var ProductImageAwareFileNormalizerDecorator */
     private $decorator;
 
     protected function setUp(): void
     {
         $this->fileNormalizer = $this->createMock(FileNormalizer::class);
-        $this->decorator = new ProductImageAwareFileNormalizerDecorator($this->fileNormalizer);
+        $this->fileManager = $this->createMock(FileManager::class);
+        $this->decorator = new ProductImageAwareFileNormalizerDecorator($this->fileNormalizer, $this->fileManager);
     }
 
     public function testSupportsDenormalization(): void
@@ -28,13 +33,12 @@ class ProductImageAwareFileNormalizerDecoratorTest extends \PHPUnit\Framework\Te
         $format = 'sampleFormat';
         $context = ['sampleContext'];
 
-        $this->fileNormalizer
-            ->expects($this->once())
+        $this->fileNormalizer->expects(self::once())
             ->method('supportsDenormalization')
             ->with($data, $class, $format, $context)
             ->willReturn(true);
 
-        $this->assertTrue($this->decorator->supportsDenormalization($data, $class, $format, $context));
+        self::assertTrue($this->decorator->supportsDenormalization($data, $class, $format, $context));
     }
 
     public function testSupportsNormalization(): void
@@ -43,33 +47,75 @@ class ProductImageAwareFileNormalizerDecoratorTest extends \PHPUnit\Framework\Te
         $format = 'sampleFormat';
         $context = ['sampleContext'];
 
-        $this->fileNormalizer
-            ->expects($this->once())
+        $this->fileNormalizer->expects(self::once())
             ->method('supportsNormalization')
             ->with($data, $format, $context)
             ->willReturn(true);
 
-        $this->assertTrue($this->decorator->supportsNormalization($data, $format, $context));
+        self::assertTrue($this->decorator->supportsNormalization($data, $format, $context));
     }
 
-    public function testDenormalizeWhenProductImage(): void
+    public function testDenormalizeWhenProductImagePathIsFullUrl(): void
     {
-        $data = 'sampleData';
+        $data = 'http://domain.com/sampleData.jpg';
         $class = 'SampleClass';
         $format = 'sampleFormat';
         $context = ['entityName' => ProductImage::class];
         $file = new File();
 
-        $this->fileNormalizer
-            ->expects($this->once())
+        $this->fileManager->expects(self::never())
+            ->method('getFilePath');
+
+        $this->fileNormalizer->expects(self::once())
             ->method('denormalize')
             ->with(['uri' => $data, 'uuid' => null], $class, $format, $context)
             ->willReturn($file);
 
-        $this->assertSame($file, $this->decorator->denormalize($data, $class, $format, $context));
+        self::assertSame($file, $this->decorator->denormalize($data, $class, $format, $context));
     }
 
-    public function testDenormalize(): void
+    public function testDenormalizeWhenProductImagePathIsFullLocalPath(): void
+    {
+        $data = __FILE__;
+        $class = 'SampleClass';
+        $format = 'sampleFormat';
+        $context = ['entityName' => ProductImage::class];
+
+        $this->fileManager->expects(self::never())
+            ->method('getFilePath');
+
+        $file = new File();
+        $this->fileNormalizer->expects(self::once())
+            ->method('denormalize')
+            ->with(['uri' => $data, 'uuid' => null], $class, $format, $context)
+            ->willReturn($file);
+
+        self::assertSame($file, $this->decorator->denormalize($data, $class, $format, $context));
+    }
+
+    public function testDenormalizeWhenProductImagePathIsRelativePath(): void
+    {
+        $data = 'sampleData.jpg';
+        $class = 'SampleClass';
+        $format = 'sampleFormat';
+        $context = ['entityName' => ProductImage::class];
+
+        $expectedPath = 'gaufrette-readonly://import_product_images/sampleData.jpg';
+        $this->fileManager->expects(self::once())
+            ->method('getReadonlyFilePath')
+            ->with('sampleData.jpg')
+            ->willReturn($expectedPath);
+
+        $file = new File();
+        $this->fileNormalizer->expects(self::once())
+            ->method('denormalize')
+            ->with(['uri' => $expectedPath, 'uuid' => null], $class, $format, $context)
+            ->willReturn($file);
+
+        self::assertSame($file, $this->decorator->denormalize($data, $class, $format, $context));
+    }
+
+    public function testDenormalizeWithNonProductImageData(): void
     {
         $data = ['sampleData'];
         $class = 'SampleClass';
@@ -77,13 +123,34 @@ class ProductImageAwareFileNormalizerDecoratorTest extends \PHPUnit\Framework\Te
         $context = [];
         $file = new File();
 
-        $this->fileNormalizer
-            ->expects($this->once())
+        $this->fileManager->expects(self::never())
+            ->method('getFilePath');
+
+        $this->fileNormalizer->expects(self::once())
             ->method('denormalize')
             ->with($data, $class, $format, $context)
             ->willReturn($file);
 
-        $this->assertSame($file, $this->decorator->denormalize($data, $class, $format, $context));
+        self::assertSame($file, $this->decorator->denormalize($data, $class, $format, $context));
+    }
+
+    public function testDenormalizeWithNonProductImageDataWhenProductImagePathIsRelativePath(): void
+    {
+        $data = 'sampleData.jpg';
+        $class = 'SampleClass';
+        $format = 'sampleFormat';
+        $context = [];
+
+        $this->fileManager->expects(self::never())
+            ->method('getFilePath');
+
+        $file = new File();
+        $this->fileNormalizer->expects(self::once())
+            ->method('denormalize')
+            ->with($data, $class, $format, $context)
+            ->willReturn($file);
+
+        self::assertSame($file, $this->decorator->denormalize($data, $class, $format, $context));
     }
 
     public function testNormalizeWhenProductImage(): void
@@ -93,13 +160,12 @@ class ProductImageAwareFileNormalizerDecoratorTest extends \PHPUnit\Framework\Te
         $context = ['entityName' => ProductImage::class];
         $sampleUrl = '/sample/url';
 
-        $this->fileNormalizer
-            ->expects($this->once())
+        $this->fileNormalizer->expects(self::once())
             ->method('normalize')
             ->with($data, $format, $context)
             ->willReturn(['uri' => $sampleUrl, 'uuid' => '']);
 
-        $this->assertSame($sampleUrl, $this->decorator->normalize($data, $format, $context));
+        self::assertSame($sampleUrl, $this->decorator->normalize($data, $format, $context));
     }
 
     public function testNormalize(): void
@@ -109,12 +175,11 @@ class ProductImageAwareFileNormalizerDecoratorTest extends \PHPUnit\Framework\Te
         $context = [];
         $result = ['uri' => '/sample/url', 'uuid' => 'sample-uuid'];
 
-        $this->fileNormalizer
-            ->expects($this->once())
+        $this->fileNormalizer->expects(self::once())
             ->method('normalize')
             ->with($data, $format, $context)
             ->willReturn($result);
 
-        $this->assertSame($result, $this->decorator->normalize($data, $format, $context));
+        self::assertSame($result, $this->decorator->normalize($data, $format, $context));
     }
 }

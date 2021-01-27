@@ -1,8 +1,9 @@
 <?php
+declare(strict_types=1);
 
 namespace Oro\Bundle\WebsiteSearchBundle\Command;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -11,23 +12,16 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Reindex command for front store search
+ * Rebuilds the storefront search index.
  */
 class ReindexCommand extends Command
 {
     /** @var string */
     protected static $defaultName = 'oro:website-search:reindex';
 
-    /** @var ManagerRegistry */
-    private $doctrine;
+    private ManagerRegistry $doctrine;
+    private EventDispatcherInterface $eventDispatcher;
 
-    /** @var EventDispatcherInterface */
-    private $eventDispatcher;
-
-    /**
-     * @param ManagerRegistry $doctrine
-     * @param EventDispatcherInterface $eventDispatcher
-     */
     public function __construct(ManagerRegistry $doctrine, EventDispatcherInterface $eventDispatcher)
     {
         $this->doctrine = $doctrine;
@@ -36,45 +30,55 @@ class ReindexCommand extends Command
         parent::__construct();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    /** @noinspection PhpMissingParentCallCommonInspection */
     protected function configure()
     {
         $this
-            ->addOption(
-                'class',
-                null,
-                InputOption::VALUE_OPTIONAL,
-                'Full or compact class name of entity which should be reindexed' .
-                '(e.g. Oro\Bundle\UserBundle\Entity\User or OroUserBundle:User)'
+            ->addOption('class', null, InputOption::VALUE_OPTIONAL, 'Entity to reindex (FQCN or short name)')
+            ->addOption('website-id', null, InputOption::VALUE_OPTIONAL, 'ID (integer) of the website to reindex')
+            ->addOption('scheduled', null, InputOption::VALUE_NONE, 'Schedule the reindexation in the background')
+            ->addOption('ids', null, InputOption::VALUE_OPTIONAL, 'IDs of the entities to reindex', '')
+            ->setDescription('Rebuilds the storefront search index.')
+            ->setHelp(
+            // @codingStandardsIgnoreStart
+            <<<'HELP'
+The <info>%command.name%</info> command rebuilds the storefront search index.
+
+The scope of the reindexation can be limited to search indexes of a specific website
+with the <info>--website-id</info> option:
+
+  <info>php %command.full_name% --website-id=<ID></info>
+
+You can limit the reindexation to a specific entity with the <info>--class</info> option.
+Both the FQCN (Oro\Bundle\UserBundle\Entity\User) and short (OroUserBundle:User)
+class names are accepted:
+
+  <info>php %command.full_name% --class=<entity></info>
+
+The reindexation can be further limited to specific entities by providing entity IDs
+with the <info>--ids</info> option (accepts expressions, e.g. range "1-50" or "*/100").
+It works in conjunction with <info>--class</info> option and only in the scheduled background
+execution mode (<info>--scheduled</info>):
+
+  <info>php %command.full_name% --scheduled --class=<entity> --ids=<expression></info>
+
+When using the <info>--scheduled</info> option this command only schedules the job
+by adding a message to the message queue, so ensure that the message consumer processes
+(<info>oro:message-queue:consume</info>) are running for the actual reindexation to happen.
+
+HELP
+            // @codingStandardsIgnoreEnd
             )
-            ->addOption(
-                'website-id',
-                null,
-                InputOption::VALUE_OPTIONAL,
-                'INTEGER. Website ID needs to reindex'
-            )
-            ->addOption(
-                'scheduled',
-                null,
-                InputOption::VALUE_NONE,
-                'Enforces a scheduled (background) reindexation'
-            )
-            ->addOption(
-                'ids',
-                null,
-                InputOption::VALUE_OPTIONAL,
-                'Entity IDs to index. Expression e.g. range "1-50" or "*/100". '
-                .'Available only with \'class\' parameter. Requires scheduled mode',
-                ''
-            )
-            ->setDescription('Rebuild search index for certain website/entity type or all mapped entities');
+            ->addUsage('--scheduled')
+            ->addUsage('--website-id=<ID>')
+            ->addUsage('--scheduled --website-id=<ID>')
+            ->addUsage('--class=<entity>')
+            ->addUsage('--scheduled --class=<entity>')
+            ->addUsage('--scheduled --class=<entity> --ids=<expression>')
+        ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    /** @noinspection PhpMissingParentCallCommonInspection */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $class = $input->getOption('class');
@@ -83,7 +87,7 @@ class ReindexCommand extends Command
         $entityId = $input->getOption('ids');
 
         $class = $class ? $this->getFQCN($class) : null;
-        
+
         $classes = $class ? [$class] : [];
         $websiteIds = $websiteId ? [(int)$websiteId] : [];
 
@@ -91,7 +95,7 @@ class ReindexCommand extends Command
 
         $entityIds = $this->parseEntityIdOption($output, $class, $entityId, $isScheduled);
 
-        if (!is_array($element = reset($entityIds))) {
+        if (!is_array(reset($entityIds))) {
             $this->fireReindexationEvents($classes, $websiteIds, $entityIds, $isScheduled);
         } else {
             $this->fireReindexationEventsForChunks($classes, $websiteIds, $entityIds, $isScheduled);
@@ -100,12 +104,7 @@ class ReindexCommand extends Command
         $output->writeln('Reindex finished successfully.');
     }
 
-    /**
-     * @param string|null $class
-     * @param int $websiteId
-     * @return string
-     */
-    private function getStartingMessage($class, $websiteId)
+    private function getStartingMessage(?string $class, $websiteId): string
     {
         $websitePlaceholder = $websiteId ? sprintf(' and website ID %d', $websiteId) : '';
 
@@ -116,23 +115,15 @@ class ReindexCommand extends Command
         );
     }
 
-    /**
-     * @param string $class
-     * @return string
-     */
-    private function getFQCN($class)
+    private function getFQCN(string $class): string
     {
-        return $this->doctrine
-            ->getManagerForClass($class)
-            ->getClassMetadata($class)
-            ->getName();
+        return $this->doctrine->getManagerForClass($class)->getClassMetadata($class)->getName();
     }
 
     /**
-     * @param string $className
      * @return mixed
      */
-    private function getLastEntityId($className)
+    private function getLastEntityId(string $className)
     {
         return $this->doctrine
             ->getManagerForClass($className)
@@ -143,47 +134,35 @@ class ReindexCommand extends Command
             ->getSingleScalarResult();
     }
 
-    /**
-     * @param string $entityId
-     * @return bool
-     */
-    private function getChunkSizeFromEntityIdOption($entityId)
+    private function getChunkSizeFromEntityIdOption(string $entityId): ?int
     {
         // anything that ends with "/{number}"
         if (!preg_match('/\/([\d]+)$/', $entityId, $matches)) {
-            return false;
+            return null;
         }
 
-        return $matches[1];
+        return \intval($matches[1]);
     }
 
-    /**
-     * @param string $entityId
-     * @return array|bool
-     */
-    private function getRangeFromEntityIdOption($entityId)
+    /** @return null|array<int, int> */
+    private function getRangeFromEntityIdOption(string $entityId): ?array
     {
         // anything that begins with "{number}-{number}"
         if (!preg_match('/^([\d]+)\-([\d]+)/', $entityId, $matches)) {
-            return false;
+            return null;
         }
 
-        return [$matches[1], $matches[2]];
+        return [\intval($matches[1]), \intval($matches[2])];
     }
 
-    /**
-     * @param int $chunkSize
-     * @param array $range
-     * @return string
-     */
-    private function createEntityIdMessage($chunkSize, $range)
+    private function createEntityIdMessage(?int $chunkSize, ?array $range): string
     {
         $message = 'Generating indexation requests';
 
-        if (false !== $chunkSize) {
+        if (null !== $chunkSize) {
             $message .= ' ' . $chunkSize . ' entities each';
         }
-        if (false !== $range) {
+        if (null !== $range) {
             $message .= ' for an ID range of ' . $range[0] . '-' . $range[1];
         }
         $message .= '...';
@@ -191,15 +170,12 @@ class ReindexCommand extends Command
         return $message;
     }
 
-    /**
-     * @param OutputInterface $output
-     * @param string $className
-     * @param bool $isScheduled
-     * @param string $entityId
-     * @return array
-     */
-    private function parseEntityIdOption($output, $className, $entityId, $isScheduled)
-    {
+    private function parseEntityIdOption(
+        OutputInterface $output,
+        ?string $className,
+        ?string $entityId,
+        bool $isScheduled
+    ): array {
         if (empty($entityId)) {
             return [];
         }
@@ -211,25 +187,25 @@ class ReindexCommand extends Command
         $chunkSize = $this->getChunkSizeFromEntityIdOption($entityId);
         $range     = $this->getRangeFromEntityIdOption($entityId);
 
-        if (false === $chunkSize && false === $range) {
+        if (null === $chunkSize && null === $range) {
             throw new \RuntimeException('Cannot understand value: ' . $entityId);
         }
 
-        if (false === $isScheduled && false !== $chunkSize) {
+        if (false === $isScheduled && null !== $chunkSize) {
             throw new \RuntimeException('Splitting entities makes only sense with --scheduled');
         }
 
         $message = $this->createEntityIdMessage($chunkSize, $range);
         $output->writeln($message);
 
-        if (false !== $range) {
+        if (null !== $range) {
             $result  = range($range[0], $range[1]);
         } else {
             $result = $this->getLastEntityId($className);
             $result = range(1, $result);
         }
 
-        if (false !== $chunkSize) {
+        if (null !== $chunkSize) {
             $result = array_chunk($result, $chunkSize);
         } else {
             $result = [$result];
@@ -238,26 +214,18 @@ class ReindexCommand extends Command
         return $result;
     }
 
-    /**
-     * @param array $classes
-     * @param array $websiteIds
-     * @param array $entityId
-     * @param bool $isScheduled
-     */
-    private function fireReindexationEvents($classes, $websiteIds, array $entityId, $isScheduled)
+    private function fireReindexationEvents(array $classes, array $websiteIds, array $entityId, bool $isScheduled): void
     {
         $event = new ReindexationRequestEvent($classes, $websiteIds, $entityId, $isScheduled);
-        $this->eventDispatcher->dispatch(ReindexationRequestEvent::EVENT_NAME, $event);
+        $this->eventDispatcher->dispatch($event, ReindexationRequestEvent::EVENT_NAME);
     }
 
-    /**
-     * @param array $classes
-     * @param array $websiteIds
-     * @param array $chunks
-     * @param bool $isScheduled
-     */
-    private function fireReindexationEventsForChunks($classes, $websiteIds, array $chunks, $isScheduled)
-    {
+    private function fireReindexationEventsForChunks(
+        array $classes,
+        array $websiteIds,
+        array $chunks,
+        bool $isScheduled
+    ): void {
         foreach ($chunks as $chunk) {
             $this->fireReindexationEvents($classes, $websiteIds, $chunk, $isScheduled);
         }

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Event;
 
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 abstract class AbstractProductPricesRemoveEvent extends Event
 {

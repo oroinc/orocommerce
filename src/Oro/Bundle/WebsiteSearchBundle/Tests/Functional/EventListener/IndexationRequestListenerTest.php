@@ -104,10 +104,10 @@ class IndexationRequestListenerTest extends WebTestCase
         $product->setName($product->getName() . '-changed');
 
         // trigger beforeEntityFlush with same entity to ensure that entity will be indexed only once
-        $eventDispatcher->dispatch(Events::BEFORE_FLUSH, new AfterFormProcessEvent(
+        $eventDispatcher->dispatch(new AfterFormProcessEvent(
             $this->getMockBuilder(FormInterface::class)->getMock(),
             $product
-        ));
+        ), Events::BEFORE_FLUSH);
         $em->persist($product);
         $em->flush();
 

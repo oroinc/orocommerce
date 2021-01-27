@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Builder;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityBundle\ORM\InsertQueryExecutorInterface;
 use Oro\Bundle\PricingBundle\Compiler\ProductAssignmentRuleCompiler;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -82,7 +82,7 @@ class PriceListProductAssignmentBuilder
         $this->buildByPriceListWithoutEventDispatch($priceList, $products);
 
         $event = new AssignmentBuilderBuildEvent($priceList, $products);
-        $this->eventDispatcher->dispatch(AssignmentBuilderBuildEvent::NAME, $event);
+        $this->eventDispatcher->dispatch($event, AssignmentBuilderBuildEvent::NAME);
     }
 
     /**

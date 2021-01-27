@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Layout\DataProvider;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\Mapping\ClassMetadataFactory;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\CMSBundle\ContentBlock\ContentBlockResolver;
 use Oro\Bundle\CMSBundle\ContentBlock\Model\ContentBlockView;
 use Oro\Bundle\CMSBundle\Entity\ContentBlock;
@@ -56,16 +56,17 @@ class ContentBlockDataProviderTest extends \PHPUnit\Framework\TestCase
 
         $contentBlock = new ContentBlock();
         $view = $this->createMock(ContentBlockView::class);
-
-        $this->resolver->expects($this->once())
-            ->method('getContentBlockView')
-            ->with($contentBlock)
-            ->willReturn($view);
+        $criteria = new ScopeCriteria($context, $this->createMock(ClassMetadataFactory::class));
 
         $this->scopeManager->expects($this->once())
             ->method('getCriteria')
             ->with(self::SCOPE_TYPE)
-            ->willReturn(new ScopeCriteria($context, $this->createMock(ClassMetadataFactory::class)));
+            ->willReturn($criteria);
+
+        $this->resolver->expects($this->once())
+            ->method('getContentBlockViewByCriteria')
+            ->with($contentBlock, $criteria)
+            ->willReturn($view);
 
         $repo = $this->createMock(ObjectRepository::class);
         $repo->expects($this->once())

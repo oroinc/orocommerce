@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Oro\Bundle\SEOBundle\Command;
 
@@ -11,23 +12,16 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Command that adds message to queue for generating sitemap files
+ * Schedules generation of sitemap files.
  */
 class GenerateSitemapCommand extends Command implements CronCommandInterface
 {
     /** @var string */
     protected static $defaultName = 'oro:cron:sitemap:generate';
 
-    /** @var SitemapGenerationScheduler */
-    private $sitemapGenerationScheduler;
+    private SitemapGenerationScheduler $sitemapGenerationScheduler;
+    private ConfigManager $configManager;
 
-    /** @var ConfigManager */
-    private $configManager;
-
-    /**
-     * @param SitemapGenerationScheduler $sitemapGenerationScheduler
-     * @param ConfigManager $configManager
-     */
     public function __construct(SitemapGenerationScheduler $sitemapGenerationScheduler, ConfigManager $configManager)
     {
         $this->sitemapGenerationScheduler = $sitemapGenerationScheduler;
@@ -35,16 +29,26 @@ class GenerateSitemapCommand extends Command implements CronCommandInterface
         parent::__construct();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    /** @noinspection PhpMissingParentCallCommonInspection */
     protected function configure()
     {
-        $this->setDescription('Add message to queue for generating sitemap files.');
+        $this->setDescription('Schedules generation of sitemap files.')
+            ->setHelp(
+                <<<'HELP'
+The <info>%command.name%</info> command schedules generation of sitemap files.
+
+This command only schedules the job by adding a message to the message queue, so ensure
+that the message consumer processes (<info>oro:message-queue:consume</info>) are running.
+
+  <info>php %command.full_name%</info>
+
+HELP
+            );
     }
 
     /**
-     * {@inheritdoc}
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @noinspection PhpMissingParentCallCommonInspection
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -52,17 +56,11 @@ class GenerateSitemapCommand extends Command implements CronCommandInterface
         $output->writeln('<info>Sitemap generation scheduled</info>');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDefaultDefinition()
     {
         return $this->configManager->get(UpdateCronDefinitionConfigListener::CONFIG_FIELD);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isActive()
     {
         return true;

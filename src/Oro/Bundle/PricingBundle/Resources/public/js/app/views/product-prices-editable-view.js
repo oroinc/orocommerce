@@ -10,6 +10,7 @@ define(function(require) {
     const layout = require('oroui/js/layout');
     const $ = require('jquery');
     const _ = require('underscore');
+    const pricesHelper = require('oropricing/js/app/prices-helper');
 
     const ProductPricesEditableView = BaseProductPricesView.extend({
         elements: _.extend({}, BaseProductPricesView.prototype.elements, {
@@ -186,7 +187,7 @@ define(function(require) {
 
             return this.templates.pricesHintContent({
                 model: this.model.toJSON(),
-                prices: this.prices,
+                prices: pricesHelper.sortUnitPricesByLowQuantity(this.prices),
                 matchedPrice: this.findPrice(),
                 clickable: this.options.editable,
                 formatter: NumberFormatter,

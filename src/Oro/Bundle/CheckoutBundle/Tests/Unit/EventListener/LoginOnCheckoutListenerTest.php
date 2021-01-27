@@ -209,7 +209,7 @@ class LoginOnCheckoutListenerTest extends \PHPUnit\Framework\TestCase
             ->willReturn(true);
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
-            ->with(LoginOnCheckoutEvent::NAME, $event);
+            ->with($event, LoginOnCheckoutEvent::NAME);
 
         $this->listener->onInteractiveLogin($this->event);
     }

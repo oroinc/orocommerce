@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CatalogBundle\Form\Handler;
 
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\FormBundle\Form\Handler\RequestHandlerTrait;
@@ -66,8 +66,8 @@ class CategoryHandler
                 $this->onSuccess($category, $appendProducts, $removeProducts);
 
                 $this->eventDispatcher->dispatch(
-                    'oro_catalog.category.edit',
-                    new AfterFormProcessEvent($this->form, $category)
+                    new AfterFormProcessEvent($this->form, $category),
+                    'oro_catalog.category.edit'
                 );
 
                 return true;

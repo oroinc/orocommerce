@@ -55,7 +55,7 @@ class ProductNormalizer extends ConfigurableEntityNormalizer
 
         if ($this->eventDispatcher) {
             $event = new ProductNormalizerEvent($object, $data, $context);
-            $this->eventDispatcher->dispatch(ProductNormalizerEvent::NORMALIZE, $event);
+            $this->eventDispatcher->dispatch($event, ProductNormalizerEvent::NORMALIZE);
             $data = $event->getPlainData();
         }
 
@@ -83,7 +83,7 @@ class ProductNormalizer extends ConfigurableEntityNormalizer
 
         if ($this->eventDispatcher) {
             $event = new ProductNormalizerEvent($object, $data, $context);
-            $this->eventDispatcher->dispatch(ProductNormalizerEvent::DENORMALIZE, $event);
+            $this->eventDispatcher->dispatch($event, ProductNormalizerEvent::DENORMALIZE);
             $object = $event->getProduct();
         }
 

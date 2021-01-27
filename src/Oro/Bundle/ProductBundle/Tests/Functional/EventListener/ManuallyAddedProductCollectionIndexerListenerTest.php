@@ -37,8 +37,8 @@ class ManuallyAddedProductCollectionIndexerListenerTest extends FrontendWebTestC
         $configManager->flush();
 
         self::getContainer()->get('event_dispatcher')->dispatch(
-            ReindexationRequestEvent::EVENT_NAME,
-            new ReindexationRequestEvent([Product::class], [], [$product1->getId(), $product2->getId()], false)
+            new ReindexationRequestEvent([Product::class], [], [$product1->getId(), $product2->getId()], false),
+            ReindexationRequestEvent::EVENT_NAME
         );
 
         $contentVariantWithFiltersId = $this

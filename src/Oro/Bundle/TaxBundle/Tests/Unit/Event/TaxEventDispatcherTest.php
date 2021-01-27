@@ -19,9 +19,9 @@ class TaxEventDispatcherTest extends \PHPUnit\Framework\TestCase
 
         $eventDispatcher->expects($this->exactly(3))->method('dispatch')
             ->withConsecutive(
-                [ResolveTaxEvent::RESOLVE_BEFORE, $this->isInstanceOf('Oro\Bundle\TaxBundle\Event\ResolveTaxEvent')],
-                [ResolveTaxEvent::RESOLVE, $this->isInstanceOf('Oro\Bundle\TaxBundle\Event\ResolveTaxEvent')],
-                [ResolveTaxEvent::RESOLVE_AFTER, $this->isInstanceOf('Oro\Bundle\TaxBundle\Event\ResolveTaxEvent')]
+                [$this->isInstanceOf('Oro\Bundle\TaxBundle\Event\ResolveTaxEvent'), ResolveTaxEvent::RESOLVE_BEFORE],
+                [$this->isInstanceOf('Oro\Bundle\TaxBundle\Event\ResolveTaxEvent'), ResolveTaxEvent::RESOLVE],
+                [$this->isInstanceOf('Oro\Bundle\TaxBundle\Event\ResolveTaxEvent'), ResolveTaxEvent::RESOLVE_AFTER]
             );
 
         $taxDispatcher->dispatch($taxable);

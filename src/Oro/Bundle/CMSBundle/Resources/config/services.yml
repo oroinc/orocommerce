@@ -20,7 +20,7 @@ services:
     oro_cms.content_block.resolver:
         class: 'Oro\Bundle\CMSBundle\ContentBlock\ContentBlockResolver'
         arguments:
-            - "@property_accessor"
+            - "@doctrine"
 
     oro_cms.content_block.default_content_variant_scopes_resolver:
         class: 'Oro\Bundle\CMSBundle\ContentBlock\DefaultContentVariantScopesResolver'
@@ -119,26 +119,24 @@ services:
             - { name: oro_scope.provider, scopeType: cms_content_block, priority: 1 }
 
     oro_cms.twig.content_security_policy:
-        class: 'Twig_Sandbox_SecurityPolicy'
-        public: false
+        class: Twig\Sandbox\SecurityPolicy
         arguments:
             # tags
-            - []
+            - [ 'app', 'for', 'if', 'spaceless' ]
             # filters
-            - ['escape']
+            - [ 'default', 'date', 'escape', 'format', 'length', 'lower', 'nl2br', 'number_format', 'title', 'trim', 'upper' ]
             # methods
             - []
             # properties
             - []
             # functions
-            - ['widget', 'content_block', 'wysiwyg_image', 'wysiwyg_file']
+            - [ 'date', 'widget', 'content_block', 'wysiwyg_image', 'wysiwyg_file' ]
 
     oro_cms.twig.sandbox_extension:
-        class: 'Twig_Extension_Sandbox'
+        class: Twig\Extension\SandboxExtension
         arguments:
             - '@oro_cms.twig.content_security_policy'
             - true # use sandbox globally in instance
-        public: false
 
     oro_cms.twig.widget_extension:
         class: 'Oro\Bundle\CMSBundle\Twig\WidgetExtension'
@@ -333,6 +331,7 @@ services:
         arguments:
             - '@oro_cms.provider.html_purifier_scope_provider'
             - '@oro_ui.html_tag_helper'
+            - '@oro_cms.twig.renderer'
             - '@translator'
 
     Oro\Bundle\CMSBundle\Tools\WYSIWYGContentChecker:
@@ -432,6 +431,8 @@ services:
         class: Oro\Bundle\CMSBundle\Provider\PreviewMetadataProvider
         arguments:
             - '@oro_cms.provider.preview_metadata.inner'
+            - '@oro_attachment.provider.file_url'
+            - '@oro_attachment.tools.mime_type_checker'
 
     oro_cms.provider.attachment_entity_config:
         decorates: oro_attachment.provider.attachment_entity_config
@@ -466,7 +467,11 @@ services:
         tags:
             - { name: oro_redirect.slug_source_entity_provider }
 
-    oro_cms.provider.privilege_category_provider:
-        class: Oro\Bundle\CMSBundle\Provider\PrivilegeCategoryProvider
-        tags:
-            - { name: oro_user.privilege_category }
+    oro_cms.tools.digital_asset_twig_tags_converter:
+        class: Oro\Bundle\CMSBundle\Tools\DigitalAssetTwigTagsConverter
+        arguments:
+            - '@doctrine'
+            - '@oro_attachment.provider.file_url'
+
+    Oro\Bundle\CMSBundle\Tools\DigitalAssetTwigTagsConverter:
+        alias: oro_cms.tools.digital_asset_twig_tags_converter

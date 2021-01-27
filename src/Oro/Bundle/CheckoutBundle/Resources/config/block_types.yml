@@ -133,23 +133,6 @@ services:
         tags:
             - { name: layout.block_type, alias: checkout_summary_totals }
 
-    oro_checkout.layout.block_type.checkout_order_summary_line_items:
-        parent: oro_layout.block_type.abstract_configurable_container
-        calls:
-            -
-                - setOptionsConfig
-                -
-                    -
-                        checkout: {required: true}
-                        lineItemsWithTotals: {required: true}
-                        workflowItem: {required: true}
-                        lineItemErrors: {required: true}
-                        lineItemWarnings: {required: true}
-                        configurableProducts: {required: true}
-            - [setName, ['checkout_order_summary_line_items']]
-        tags:
-            - { name: layout.block_type, alias: checkout_order_summary_line_items }
-
     oro_checkout.layout.block_type.order_summary_notes:
         parent: oro_layout.block_type.abstract_configurable_container
         calls:

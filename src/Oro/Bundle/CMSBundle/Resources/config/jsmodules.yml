@@ -1,9 +1,14 @@
 aliases:
-    grapesjs$: npmassets/grapesjs/dist/grapes
-    grapesjs-preset-webpage$: npmassets/grapesjs-preset-webpage/dist/grapesjs-preset-webpage.min
-    grapesjs-parser-postcss$: npmassets/grapesjs-parser-postcss/dist/grapesjs-parser-postcss.min
+    grapesjs$: grapesjs/dist/grapes
+    grapesjs-preset-webpage$: grapesjs-preset-webpage/dist/grapesjs-preset-webpage.min
+    grapesjs-parser-postcss$: grapesjs-parser-postcss/dist/grapesjs-parser-postcss.min
+    spectrum-colorpicker/spectrum$: spectrum-colorpicker/spectrum.css
+    codemirror/lib/codemirror$: codemirror/lib/codemirror.css
+    codemirror/theme/hopscotch$: codemirror/theme/hopscotch.css
 app-modules:
   - orocms/js/app/modules/grapesjs-module
+configs:
+    orocms/js/app/grapesjs/grapesjs-editor-view: {}
 dynamic-imports:
     orocms:
         - orocms/js/app/components/content-variant-collection-component
@@ -11,3 +16,4 @@ dynamic-imports:
         - orocms/js/app/views/content-widget-view
         - orocms/js/app/views/default-variant-collection-view
         - orocms/js/app/views/variants-collection-view
+

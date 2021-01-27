@@ -1,8 +1,0 @@
-datagrids:
-    frontend-customer-user-shopping-lists-grid:
-        action_configuration:
-            b2b_flow_alternative_checkout_start_from_shoppinglist: false
-
-    frontend-customer-user-shopping-list-select-grid:
-        action_configuration:
-            b2b_flow_alternative_checkout_start_from_shoppinglist: false
