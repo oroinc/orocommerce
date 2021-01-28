@@ -109,4 +109,21 @@ class IndexEntityEventTest extends \PHPUnit\Framework\TestCase
             $event->getEntitiesData()
         );
     }
+
+    public function testRemoveEntityDataWhenNoEntity(): void
+    {
+        $event = new IndexEntityEvent(\stdClass::class, [], []);
+        $event->removeEntityData(1);
+
+        $this->assertEmpty($event->getEntitiesData());
+    }
+
+    public function testRemoveEntityData(): void
+    {
+        $event = new IndexEntityEvent(\stdClass::class, [], []);
+        $event->addField(1, 'sample_field', 'sample_value');
+        $event->removeEntityData(1);
+
+        $this->assertEmpty($event->getEntitiesData());
+    }
 }
