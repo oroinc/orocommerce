@@ -69,7 +69,7 @@ class IndexEntityEvent extends Event
     }
 
     /**
-     * @param int $entityId
+     * @param int|string $entityId
      * @param string $fieldName
      * @param string|int|float|\DateTime|array $value
      * @param bool $addToAllText
@@ -137,5 +137,16 @@ class IndexEntityEvent extends Event
     public function getEntitiesData()
     {
         return $this->entitiesData;
+    }
+
+    /**
+     * @param int|string $entityId
+     * @return $this
+     */
+    public function removeEntityData($entityId): self
+    {
+        unset($this->entitiesData[$entityId]);
+
+        return $this;
     }
 }

@@ -227,7 +227,7 @@ abstract class AbstractIndexer implements IndexerInterface
 
         if ($contextEntityIds) {
             $queryBuilder->where($queryBuilder->expr()->in("entity.$identifierName", ':contextEntityIds'))
-                ->setParameter('contextEntityIds', $contextEntityIds);
+                ->setParameter('contextEntityIds', array_values($contextEntityIds));
         }
 
         $iterator = new BufferedIdentityQueryResultIterator($queryBuilder);
