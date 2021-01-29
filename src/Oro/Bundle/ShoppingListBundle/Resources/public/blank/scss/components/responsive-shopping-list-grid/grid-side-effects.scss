@@ -1,13 +1,13 @@
 /* @theme: blank; */
 
-@keyframes green-pulse {
+@include keyframe('green-pulse') {
     0% {
         background: rgba($shopping-list-grid-effect-success, 0);
         box-shadow: inset 0 0 0 0 $shopping-list-grid-effect-success;
     }
 
     45% {
-        transform: scale(1.05);
+        transform: scale(1.005);
     }
 
     50% {
@@ -28,14 +28,14 @@
     }
 }
 
-@keyframes red-pulse {
+@include keyframe('red-pulse') {
     0% {
         background: rgba($shopping-list-grid-effect-error, 0);
         box-shadow: inset 0 0 0 0 $shopping-list-grid-effect-error;
     }
 
     45% {
-        transform: scale(1.05);
+        transform: scale(1.005);
     }
 
     50% {
@@ -80,7 +80,6 @@
 
         &.loading {
             overflow: hidden;
-            //animation: loading-overlay 1s;
 
             .grid-cell {
                 @include loading-blur-overlay;
