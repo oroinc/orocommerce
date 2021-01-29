@@ -2,9 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\Model\Builder;
 
+use Box\Spout\Common\Entity\Row;
 use Box\Spout\Common\Exception\UnsupportedTypeException;
 use Box\Spout\Common\Type;
-use Box\Spout\Reader\ReaderFactory;
+use Box\Spout\Reader\Common\Creator\ReaderFactory;
 use Box\Spout\Reader\ReaderInterface;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
@@ -115,7 +116,9 @@ class QuickAddRowCollectionBuilder
         $reader->open($file->getRealPath());
 
         foreach ($reader->getSheetIterator() as $sheet) {
+            /** @var Row $row */
             foreach ($sheet->getRowIterator() as $row) {
+                $row = $row->toArray();
                 if (0 === $lineNumber || empty($row[0])) {
                     $lineNumber++;
                     continue;
@@ -193,11 +196,11 @@ class QuickAddRowCollectionBuilder
     {
         switch ($file->getClientOriginalExtension()) {
             case 'csv':
-                return ReaderFactory::create(Type::CSV);
+                return ReaderFactory::createFromType(Type::CSV);
             case 'ods':
-                return ReaderFactory::create(Type::ODS);
+                return ReaderFactory::createFromType(Type::ODS);
             case 'xlsx':
-                return ReaderFactory::create(Type::XLSX);
+                return ReaderFactory::createFromType(Type::XLSX);
         }
 
         throw new UnsupportedTypeException();

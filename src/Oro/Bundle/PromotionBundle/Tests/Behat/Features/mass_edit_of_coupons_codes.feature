@@ -16,6 +16,7 @@ Feature: Mass edit of Coupons codes
       | Promotion         | order Discount Promotion |
       | Uses per Coupon   | 77                       |
       | Uses per Person   | 88                       |
+    And I focus on "Valid From" field
     And I click "Today"
     And I click "Apply"
     Then I should see "2 entities were edited" flash message
@@ -35,6 +36,7 @@ Feature: Mass edit of Coupons codes
     When I fill form with:
       | Uses per Coupon  | 88        |
       | Uses per Person  | 99        |
+    And I focus on "Valid From" field
     And I click "Today"
     And I click "Apply"
     Then I should see "10 entities were edited" flash message
