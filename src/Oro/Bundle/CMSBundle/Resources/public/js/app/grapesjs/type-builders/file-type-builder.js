@@ -113,15 +113,6 @@ const FileTypeBuilder = BaseTypeBuilder.extend({
          */
         openModal: function() {
             openDigitalAssetsManager(this.model);
-        },
-
-        /**
-         * @inheritDoc
-         */
-        updateAttributes: function(...args) {
-            this.constructor.__super__.updateAttributes.apply(this, args);
-
-            this.$el.attr('href', '#');
         }
     },
 
