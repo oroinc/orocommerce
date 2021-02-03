@@ -70,12 +70,13 @@
         background-color: rgba(255, 255, 255, 0);
         transition: $shopping-list-grid-effect-transition;
 
+        &.highlight-error,
         &.highlight {
-            background-color: $shopping-list-grid-effect-highlight;
-        }
+            border-bottom: none;
 
-        &.highlight-error {
-            background-color: $shopping-list-grid-effect-error;
+            > .grid-body-cell {
+                border-bottom: none;
+            }
         }
 
         &.loading {

@@ -55,6 +55,7 @@ dynamic-imports:
         - oroshoppinglist/js/shoppinglist-request-quote-confirmation
         - oroshoppinglist/js/inline-editing/shopping-list-editors
         - oroshoppinglist/js/datagrid/plugins/shopping-list-inline-editing-plugin
+        - oroshoppinglist/js/datagrid/row/shopping-list-row
         - tpl-loader!oroshoppinglist/templates/datagrid/cell/inventory_status.html
         - tpl-loader!oroshoppinglist/templates/datagrid/cell/item.html
         - tpl-loader!oroshoppinglist/templates/datagrid/cell/price.html

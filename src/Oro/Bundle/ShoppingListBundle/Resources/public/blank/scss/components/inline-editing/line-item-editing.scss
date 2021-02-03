@@ -56,6 +56,12 @@
 
     .input {
         min-width: 80px;
+
+        .highlight-error & {
+            border: 1px solid $input-border-color-error-state;
+            box-shadow: $input-box-shadow-error-state;
+            z-index: z('base') + 1;
+        }
     }
 
     .edit-mode & {

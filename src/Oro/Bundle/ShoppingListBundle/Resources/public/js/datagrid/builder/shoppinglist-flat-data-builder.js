@@ -1,12 +1,14 @@
+import _ from 'underscore';
 import FilteredProductVariantsPlugin from 'oroshoppinglist/js/datagrid/plugins/filtered-product-variants-plugin';
 import ShoppingListRefreshPlugin from 'oroshoppinglist/js/datagrid/plugins/shopping-list-refresh-plugin';
 import quantityHelper from 'oroproduct/js/app/quantity-helper';
+import ShoppingListRow from "oroshoppinglist/js/datagrid/row/shopping-list-row";
 
 const isHighlight = item => item.isUpcoming;
 const isError = item => item.errors && item.errors.length;
 export const flattenData = data => {
-    return data.reduce((flatData, rawData) => {
-        const {subData, ...item} = rawData;
+    return data.reduce((flatData, rawData, memo, collection) => {
+        let {subData, ...item} = rawData;
         const itemClassName = [];
 
         if (isError(item)) {
@@ -40,7 +42,7 @@ export const flattenData = data => {
             item._isVariant = false;
             flatData.push(item);
 
-            subData.forEach((subItem, index) => {
+            subData = subData.reduce((memo, subItem, index) => {
                 const className = ['sub-row'];
 
                 if (subItem.units && subItem.units[item.unit]) {
@@ -52,7 +54,7 @@ export const flattenData = data => {
                 }
 
                 if (isError(subItem)) {
-                    itemClassName.push('highlight-error');
+                    className.push('highlight-error');
                 }
 
                 if (isHighlight(subItem)) {
@@ -73,7 +75,19 @@ export const flattenData = data => {
                 subItem.row_attributes = {
                     'data-product-group': item.productId
                 };
-            });
+
+                memo.push(subItem);
+
+                if (isError(subItem) || isHighlight(subItem)) {
+                    memo.push({
+                        ...subItem,
+                        id: subItem.id + '-notification',
+                        notificationCell: 'item'
+                    });
+                }
+
+                return memo;
+            }, []);
 
             item.precision = precisions.length
                 ? Math.max.apply(null, precisions)
@@ -93,6 +107,16 @@ export const flattenData = data => {
 
             flatData.push(...subData);
         }
+
+        if (isError(item) || isHighlight(item)) {
+            flatData.push({
+                ...item,
+                id: item.id + '-notification',
+                notificationCell: 'item',
+                row_class_name: 'notification-row'
+            });
+        }
+
         return flatData;
     }, []);
 };
@@ -120,6 +144,11 @@ const shoppingListFlatDataBuilder = {
         options.metadata.plugins.push(FilteredProductVariantsPlugin, ShoppingListRefreshPlugin);
 
         options.data.data = flattenData(options.data.data);
+
+        options.themeOptions = {
+            ...options.themeOptions,
+            rowView: ShoppingListRow
+        }
 
         deferred.resolve();
         return deferred;

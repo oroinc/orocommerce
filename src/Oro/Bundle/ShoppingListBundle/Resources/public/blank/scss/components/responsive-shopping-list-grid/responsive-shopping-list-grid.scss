@@ -64,6 +64,24 @@
 
     .notification-container {
         margin-top: $responsive-shopping-list-notification-container-offset;
+
+        .validation-error,
+        .notification {
+            background: transparent;
+        }
+    }
+
+    .highlight-error {
+        .grid-cell {
+            padding-bottom: $responsive-shopping-list-notification-row-bottom-offset;
+        }
+    }
+
+    .notification-row {
+        .grid-cell {
+            padding-top: $responsive-shopping-list-notification-row-top-offset;
+            padding-bottom: $responsive-shopping-list-notification-row-bottom-offset;
+        }
     }
 
     .price-value-container {
@@ -247,6 +265,18 @@
             .grid-cell {
                 padding-top: $responsive-shopping-body-cell-offset-y-mobile;
                 padding-bottom: $responsive-shopping-body-cell-offset-y-mobile;
+            }
+
+            &.highlight-error {
+                padding-bottom: $responsive-shopping-notification-row-offset-mobile;
+            }
+        }
+
+        .notification-row {
+            padding-top: $responsive-shopping-notification-row-offset-mobile;
+
+            .select-row-cell {
+                display: none;
             }
         }
 
