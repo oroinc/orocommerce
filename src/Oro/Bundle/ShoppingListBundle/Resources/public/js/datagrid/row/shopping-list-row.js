@@ -1,8 +1,9 @@
 import $ from 'jquery';
-import _ from 'underscore';
 import Row from 'orodatagrid/js/datagrid/row';
 
 const ShoppingListRow = Row.extend({
+    useCssAnimation: true,
+
     constructor: function ShoppingListRow(options) {
         ShoppingListRow.__super__.constructor.call(this, options);
     },
@@ -18,14 +19,18 @@ const ShoppingListRow = Row.extend({
     filterCallback(view, included) {
         const $el = ShoppingListRow.__super__.filterCallback.call(this, view, included);
 
-        if (included && view.model.get('notificationCell')) {
-            const column = this.columns.find(
-                column => column.get('name') === view.model.get('notificationCell')
-            );
-            const start = column.get('order');
+        if (view.model.get('notificationCell')) {
+            if (included) {
+                const visibleColumns = this.columns.filter(column => column.get('renderable'));
+                const start = visibleColumns.findIndex(
+                    column => column.get('name') === view.model.get('notificationCell')
+                );
 
-            $el.attr('colspan', this.columns.length - start);
-            $el.attr('data-offset', start);
+                $el.attr('colspan', visibleColumns.length - start);
+                $el.attr('data-offset', start);
+            } else {
+                $el.addClass('hide');
+            }
         }
 
         return $el;
@@ -38,10 +43,18 @@ const ShoppingListRow = Row.extend({
             view.$el.before($('<td />', {
                 'colspan': view.$el.data('offset'),
                 'class': 'select-row-cell grid-cell grid-body-cell'
-            }))
+            }));
         }
 
         return view
+    },
+
+    render() {
+        ShoppingListRow.__super__.render.call(this);
+
+        if (this.model.get('notificationCell')) {
+            this.$('.hide').remove();
+        }
     }
 });
 

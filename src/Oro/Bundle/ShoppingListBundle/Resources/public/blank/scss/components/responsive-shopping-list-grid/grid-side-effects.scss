@@ -13,7 +13,7 @@
     50% {
         transform: scale(1);
         background: rgba($shopping-list-grid-effect-success, 0.8);
-        box-shadow: inset 80em 0 0 0 $shopping-list-grid-effect-success;
+        box-shadow: inset 0 0 0 0 $shopping-list-grid-effect-success;
     }
     50% {
         transform: scale(1);
@@ -41,7 +41,7 @@
     50% {
         transform: scale(1);
         background: rgba($shopping-list-grid-effect-error, 0.8);
-        box-shadow: inset 80em 0 0 0 $shopping-list-grid-effect-error;
+        box-shadow: inset 0 0 0 0 $shopping-list-grid-effect-error;
     }
     50% {
         transform: scale(1);
@@ -73,9 +73,18 @@
         &.highlight-error,
         &.highlight {
             border-bottom: none;
+            position: relative;
+            z-index: 20;
 
             > .grid-body-cell {
                 border-bottom: none;
+            }
+
+            + .notification-row {
+                .notification-container {
+                    z-index: 21;
+                    position: relative;
+                }
             }
         }
 

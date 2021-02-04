@@ -17,15 +17,7 @@ const shoppingListEditingBuilder = {
     /**
      * Init() function is required
      */
-    init: (deferred, options) => {
-        options.gridPromise.done(grid => {
-            grid.collection.on('change:errors', (model, collection, options) => {
-                console.log(model)
-            });
-        });
-
-        return deferred.resolve();
-    }
+    init: deferred => deferred.resolve()
 };
 
 export default shoppingListEditingBuilder;

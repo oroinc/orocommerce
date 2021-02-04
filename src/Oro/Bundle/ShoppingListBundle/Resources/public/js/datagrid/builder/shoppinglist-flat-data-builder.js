@@ -6,6 +6,21 @@ import ShoppingListRow from "oroshoppinglist/js/datagrid/row/shopping-list-row";
 
 const isHighlight = item => item.isUpcoming;
 const isError = item => item.errors && item.errors.length;
+
+const bindModel = (item, data = {}) => {
+    data = {
+        ...item,
+        ...data,
+        id: item.id + _.uniqueId('-bind-'),
+        notificationCell: 'item',
+        row_class_name: item.row_class_name + ' notification-row',
+        bound: true
+    };
+
+    item.bindModelId = data.id;
+    return data;
+}
+
 export const flattenData = data => {
     return data.reduce((flatData, rawData, memo, collection) => {
         let {subData, ...item} = rawData;
@@ -25,6 +40,11 @@ export const flattenData = data => {
             flatData.push(item);
             item._hasVariants = false;
             item._isVariant = false;
+
+            if (isError(item) || isHighlight(item)) {
+                flatData.push(bindModel(item));
+            }
+
         } else {
             let filteredOutVariants = 0;
             const precisions = [];
@@ -40,6 +60,11 @@ export const flattenData = data => {
             item.ids = [];
             item._hasVariants = true;
             item._isVariant = false;
+
+            if (isError(item) || isHighlight(item)) {
+                flatData.push(bindModel(item));
+            }
+
             flatData.push(item);
 
             subData = subData.reduce((memo, subItem, index) => {
@@ -79,11 +104,7 @@ export const flattenData = data => {
                 memo.push(subItem);
 
                 if (isError(subItem) || isHighlight(subItem)) {
-                    memo.push({
-                        ...subItem,
-                        id: subItem.id + '-notification',
-                        notificationCell: 'item'
-                    });
+                    memo.push(bindModel(subItem));
                 }
 
                 return memo;
@@ -106,15 +127,6 @@ export const flattenData = data => {
             }
 
             flatData.push(...subData);
-        }
-
-        if (isError(item) || isHighlight(item)) {
-            flatData.push({
-                ...item,
-                id: item.id + '-notification',
-                notificationCell: 'item',
-                row_class_name: 'notification-row'
-            });
         }
 
         return flatData;

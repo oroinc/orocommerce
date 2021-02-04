@@ -106,6 +106,13 @@
         .grid-body-cell-inventoryStatus {
             white-space: nowrap;
         }
+
+        .notification-container {
+            .validation-error,
+            .notification {
+                padding-left: 0;
+            }
+        }
     }
 
     .responsive-shopping-list-grid-desktop-alignment {
