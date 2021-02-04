@@ -72,12 +72,15 @@
 
         &.highlight-error,
         &.highlight {
-            border-bottom: none;
             position: relative;
             z-index: 20;
 
-            > .grid-body-cell {
+            &:not(.notification-row) {
                 border-bottom: none;
+
+                > .grid-body-cell {
+                    border-bottom: none;
+                }
             }
 
             + .notification-row {
