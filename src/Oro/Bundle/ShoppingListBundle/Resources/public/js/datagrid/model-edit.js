@@ -20,7 +20,7 @@ const ShoppingListEditItemModel = ShoppingListModel.extend({
             if (!bindModel) {
                 return false;
             }
-            bindModel[method].apply(bindModel, args);
+            bindModel[method](...args);
         }
 
         return false;

@@ -44,7 +44,7 @@ const ShoppingListRow = Row.extend({
             });
         }
 
-        return view
+        return view;
     },
 
     render() {
