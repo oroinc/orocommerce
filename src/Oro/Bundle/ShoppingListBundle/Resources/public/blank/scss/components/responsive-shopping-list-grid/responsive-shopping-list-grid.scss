@@ -275,15 +275,19 @@
             }
 
             &.highlight-error {
-                padding-bottom: $responsive-shopping-notification-row-offset-mobile;
+                padding-bottom: $responsive-shopping-notification-row-error-offset-mobile;
             }
         }
 
         .notification-row {
-            padding-top: $responsive-shopping-notification-row-offset-mobile;
+            padding-top: $responsive-shopping-notification-row-offset-top-mobile;
 
             .select-row-cell {
                 display: none;
+            }
+
+            .grid-body-cell:last-child {
+                padding-bottom: $responsive-shopping-notification-row-offset-bottom-mobile;
             }
         }
 
