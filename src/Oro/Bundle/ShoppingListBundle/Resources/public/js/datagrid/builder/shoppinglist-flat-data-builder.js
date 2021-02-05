@@ -2,7 +2,7 @@ import _ from 'underscore';
 import FilteredProductVariantsPlugin from 'oroshoppinglist/js/datagrid/plugins/filtered-product-variants-plugin';
 import ShoppingListRefreshPlugin from 'oroshoppinglist/js/datagrid/plugins/shopping-list-refresh-plugin';
 import quantityHelper from 'oroproduct/js/app/quantity-helper';
-import ShoppingListRow from "oroshoppinglist/js/datagrid/row/shopping-list-row";
+import ShoppingListRow from 'oroshoppinglist/js/datagrid/row/shopping-list-row';
 
 const isHighlight = item => item.isUpcoming;
 const isError = item => item.errors && item.errors.length;
@@ -19,7 +19,7 @@ const bindModel = (item, data = {}) => {
 
     item.bindModelId = data.id;
     return data;
-}
+};
 
 export const flattenData = data => {
     return data.reduce((flatData, rawData, memo, collection) => {
@@ -44,7 +44,6 @@ export const flattenData = data => {
             if (isError(item) || isHighlight(item)) {
                 flatData.push(bindModel(item));
             }
-
         } else {
             let filteredOutVariants = 0;
             const precisions = [];
@@ -160,7 +159,7 @@ const shoppingListFlatDataBuilder = {
         options.themeOptions = {
             ...options.themeOptions,
             rowView: ShoppingListRow
-        }
+        };
 
         deferred.resolve();
         return deferred;
