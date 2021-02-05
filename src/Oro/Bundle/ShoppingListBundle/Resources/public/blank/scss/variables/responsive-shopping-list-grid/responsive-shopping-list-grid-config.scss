@@ -24,7 +24,9 @@ $responsive-shopping-sub-row-border-mobile: 1px solid $responsive-shopping-sub-r
 $responsive-shopping-grid-row-border-mobile: 2px dashed get-color('additional', 'middle');
 $responsive-shopping-header-row-border-mobile: 1px solid $responsive-shopping-sub-row-border-mobile-color !default;
 
-$responsive-shopping-notification-row-offset-mobile: 0 !default;
+$responsive-shopping-notification-row-error-offset-mobile: 0 !default;
+$responsive-shopping-notification-row-offset-top-mobile: 0 !default;
+$responsive-shopping-notification-row-offset-bottom-mobile: 7px !default;
 
 $responsive-shopping-body-cell-offset-y-mobile: 2px !default;
 $responsive-shopping-body-cell-offset-x-mobile: 10px !default;

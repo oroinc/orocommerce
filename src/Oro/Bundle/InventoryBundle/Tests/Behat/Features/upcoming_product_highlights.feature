@@ -92,15 +92,15 @@ Feature: Upcoming product highlights
 
   Scenario: Check that product`s availability date correctly handled during checkout process
     Given I open page with shopping list List 1
-    Then I should see "This product will be available on 1/1/2030" for "SKU1" line item "ShoppingListLineItem"
-    And I should see "This product will be available on 12/1/2040" for "SKU2" line item "ShoppingListLineItem"
+    Then I should see "This product will be available on 1/1/2030" for "SKU1" line item "ShoppingListLineMessageItem"
+    And I should see "This product will be available on 12/1/2040" for "SKU2" line item "ShoppingListLineMessageItem"
     When I click "Create Order"
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
-    Then I should see "This product will be available on 1/1/2030" for "SKU1" line item "ProductLineItem"
-    And I should see "This product will be available on 12/1/2040" for "SKU2" line item "ProductLineItem"
+    Then I should see "This product will be available on 1/1/2030" for "SKU1" line item "ProductLineMessageItem"
+    And I should see "This product will be available on 12/1/2040" for "SKU2" line item "ProductLineMessageItem"
     When I click on "Do not ship later than Datepicker"
     Then I should see "12/1/2040"
     When I fill "Checkout Order Review Form" with:
@@ -119,8 +119,8 @@ Feature: Upcoming product highlights
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
-    Then I should see "This product will be available on 1/1/2030" for "SKU1" line item "ProductLineItem"
-    And I should see "This product will be available later" for "SKU3" line item "ProductLineItem"
+    Then I should see "This product will be available on 1/1/2030" for "SKU1" line item "ProductLineMessageItem"
+    And I should see "This product will be available later" for "SKU3" line item "ProductLineMessageItem"
     And I should see "This order contains upcoming products without availability date"
     When I click "Submit Order"
     Then I should see "Thank You For Your Purchase"

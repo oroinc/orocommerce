@@ -17,3 +17,10 @@ oro_behat_extension:
             - '@oro_importexport.processor.registry'
       paths:
         - '@OroInventoryBundle/Tests/Behat/Features'
+  elements:
+    ShoppingListLineMessageItem:
+      class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\ShoppingListLineItem
+      selector: '.grid-row + .grid-row'
+      
+    ProductLineMessageItem:
+      selector: 'table tr.grid-row + tr.grid-row'
