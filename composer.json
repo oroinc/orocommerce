@@ -12,11 +12,11 @@
     "require": {
         "ext-xmlwriter": "*",
         "ext-zlib": "*",
-        "oro/platform": "4.2.*",
-        "oro/platform-serialised-fields": "4.2.*",
-        "oro/calendar-bundle": "4.2.*",
-        "oro/marketing": "4.2.*",
-        "oro/customer-portal": "4.2.*",
+        "oro/platform": "5.0.*",
+        "oro/platform-serialised-fields": "5.0.*",
+        "oro/calendar-bundle": "5.0.*",
+        "oro/marketing": "5.0.*",
+        "oro/customer-portal": "5.0.*",
         "box/spout": "~3.1.0",
         "besimple/soap-client": "^0.2.6"
     },
@@ -67,7 +67,7 @@
             "require": "4.4.*"
         },
         "branch-alias": {
-            "dev-master": "4.2-dev"
+            "dev-master": "5.0-dev"
         }
     },
     "autoload": {

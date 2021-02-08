@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "18ad878deddf4f1f77e5f137a49f3ce3",
+    "content-hash": "73ac458617dd3ebb904e7a75293c7d33",
     "packages": [
         {
             "name": "akeneo/batch-bundle",
@@ -5836,10 +5836,10 @@
             "dist": {
                 "type": "path",
                 "url": "../calendar",
-                "reference": "e8c1b0881d4bf85bd58f4d1834b9ac9208475664"
+                "reference": "abb81fb0e0fb08ab775b15f2181f78f917451dfc"
             },
             "require": {
-                "oro/platform": "4.2.*"
+                "oro/platform": "5.0.*"
             },
             "type": "symfony-bundle",
             "extra": {
@@ -5847,7 +5847,7 @@
                     "fullcalendar": "3.4.0"
                 },
                 "branch-alias": {
-                    "dev-master": "4.2-dev"
+                    "dev-master": "5.0-dev"
                 }
             },
             "autoload": {
@@ -5885,14 +5885,14 @@
             "dist": {
                 "type": "path",
                 "url": "../customer-portal",
-                "reference": "451e4463f5898a9f953cb9e57b55b96592e97082"
+                "reference": "a43d824e1f2a75244ed8a3474736160635f5ee1d"
             },
             "require": {
-                "oro/calendar-bundle": "4.2.*",
-                "oro/commerce": "4.2.*",
-                "oro/marketing": "4.2.*",
-                "oro/platform": "4.2.*",
-                "oro/platform-serialised-fields": "4.2.*"
+                "oro/calendar-bundle": "5.0.*",
+                "oro/commerce": "5.0.*",
+                "oro/marketing": "5.0.*",
+                "oro/platform": "5.0.*",
+                "oro/platform-serialised-fields": "5.0.*"
             },
             "type": "library",
             "extra": {
@@ -5900,7 +5900,7 @@
                     "prismjs": "1.21.0"
                 },
                 "branch-alias": {
-                    "dev-master": "4.2-dev"
+                    "dev-master": "5.0-dev"
                 }
             },
             "autoload": {
@@ -5995,16 +5995,16 @@
             "dist": {
                 "type": "path",
                 "url": "../marketing",
-                "reference": "b6a2b9721fa9aeb6174e0bf9730b036d60d6571d"
+                "reference": "c9c7773db3f37a0e6ac81861984e8703623aa1fc"
             },
             "require": {
                 "ext-curl": "*",
-                "oro/platform": "4.2.*"
+                "oro/platform": "5.0.*"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "4.2-dev"
+                    "dev-master": "5.0-dev"
                 }
             },
             "autoload": {
@@ -6045,7 +6045,7 @@
             "dist": {
                 "type": "path",
                 "url": "../platform",
-                "reference": "9f35dadb5ea3ebd4a33fc443e7d18b1a7e0a1f6a"
+                "reference": "f42d168d1e91d16d8ab8f8345b162128f50259c2"
             },
             "require": {
                 "akeneo/batch-bundle": "0.4.14",
@@ -6096,7 +6096,7 @@
                 "nette/php-generator": "3.5.*",
                 "ocramius/proxy-manager": "~2.11.1",
                 "oro/doctrine-extensions": "2.0.0",
-                "oro/redis-config": "4.2.*",
+                "oro/redis-config": "5.0.*",
                 "php": "~7.4.14",
                 "php-http/httplug-bundle": "~1.20.0",
                 "phpdocumentor/reflection-docblock": "5.2.*",
@@ -6247,7 +6247,7 @@
                     "require": "4.4.*"
                 },
                 "branch-alias": {
-                    "dev-master": "4.2-dev"
+                    "dev-master": "5.0-dev"
                 }
             },
             "autoload": {
@@ -6368,15 +6368,15 @@
             "dist": {
                 "type": "path",
                 "url": "../serialized-fields",
-                "reference": "b952b1ed48b7e5b2ba355a6335b1e55ffb681257"
+                "reference": "2c8d473dc5c4b425f0e8536be66432642639172d"
             },
             "require": {
-                "oro/platform": "4.2.*"
+                "oro/platform": "5.0.*"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "4.2-dev"
+                    "dev-master": "5.0-dev"
                 }
             },
             "autoload": {
@@ -6414,7 +6414,7 @@
             "dist": {
                 "type": "path",
                 "url": "../redis-config",
-                "reference": "a713bd1b4c5d88738ef43b757d6c0719b90816ec"
+                "reference": "ea901dbef9ac383a009fce6d919a57980b0056ca"
             },
             "require": {
                 "predis/predis": "~1.1.6",
@@ -6426,7 +6426,7 @@
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "4.2-dev"
+                    "dev-master": "5.0-dev"
                 }
             },
             "autoload": {
@@ -6876,16 +6876,16 @@
         },
         {
             "name": "php-http/message",
-            "version": "1.10.0",
+            "version": "1.11.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-http/message.git",
-                "reference": "39db36d5972e9e6d00ea852b650953f928d8f10d"
+                "reference": "fb0dbce7355cad4f4f6a225f537c34d013571f29"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-http/message/zipball/39db36d5972e9e6d00ea852b650953f928d8f10d",
-                "reference": "39db36d5972e9e6d00ea852b650953f928d8f10d",
+                "url": "https://api.github.com/repos/php-http/message/zipball/fb0dbce7355cad4f4f6a225f537c34d013571f29",
+                "reference": "fb0dbce7355cad4f4f6a225f537c34d013571f29",
                 "shasum": ""
             },
             "require": {
@@ -6901,15 +6901,15 @@
                 "ergebnis/composer-normalize": "^2.6",
                 "ext-zlib": "*",
                 "guzzlehttp/psr7": "^1.0",
+                "laminas/laminas-diactoros": "^2.0",
                 "phpspec/phpspec": "^5.1 || ^6.3",
-                "slim/slim": "^3.0",
-                "zendframework/zend-diactoros": "^1.0"
+                "slim/slim": "^3.0"
             },
             "suggest": {
                 "ext-zlib": "Used with compressor/decompressor streams",
                 "guzzlehttp/psr7": "Used with Guzzle PSR-7 Factories",
-                "slim/slim": "Used with Slim Framework PSR-7 implementation",
-                "zendframework/zend-diactoros": "Used with Diactoros Factories"
+                "laminas/laminas-diactoros": "Used with Diactoros Factories",
+                "slim/slim": "Used with Slim Framework PSR-7 implementation"
             },
             "type": "library",
             "extra": {
@@ -6944,9 +6944,9 @@
             ],
             "support": {
                 "issues": "https://github.com/php-http/message/issues",
-                "source": "https://github.com/php-http/message/tree/1.10.0"
+                "source": "https://github.com/php-http/message/tree/1.11.0"
             },
-            "time": "2020-11-11T10:19:56+00:00"
+            "time": "2021-02-01T08:54:58+00:00"
         },
         {
             "name": "php-http/message-factory",
@@ -7921,16 +7921,16 @@
         },
         {
             "name": "react/cache",
-            "version": "v1.1.0",
+            "version": "v1.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/reactphp/cache.git",
-                "reference": "44a568925556b0bd8cacc7b49fb0f1cf0d706a0c"
+                "reference": "4bf736a2cccec7298bdf745db77585966fc2ca7e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/reactphp/cache/zipball/44a568925556b0bd8cacc7b49fb0f1cf0d706a0c",
-                "reference": "44a568925556b0bd8cacc7b49fb0f1cf0d706a0c",
+                "url": "https://api.github.com/repos/reactphp/cache/zipball/4bf736a2cccec7298bdf745db77585966fc2ca7e",
+                "reference": "4bf736a2cccec7298bdf745db77585966fc2ca7e",
                 "shasum": ""
             },
             "require": {
@@ -7981,7 +7981,7 @@
             ],
             "support": {
                 "issues": "https://github.com/reactphp/cache/issues",
-                "source": "https://github.com/reactphp/cache/tree/v1.1.0"
+                "source": "https://github.com/reactphp/cache/tree/v1.1.1"
             },
             "funding": [
                 {
@@ -7993,7 +7993,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-09-18T12:12:35+00:00"
+            "time": "2021-02-02T06:47:52+00:00"
         },
         {
             "name": "react/dns",
@@ -14050,23 +14050,24 @@
         },
         {
             "name": "behat/gherkin",
-            "version": "v4.7.1",
+            "version": "v4.7.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Behat/Gherkin.git",
-                "reference": "987bcdc3d29ba433e6bd4b1db4ae59737ba3dacd"
+                "reference": "d5ae4616aeaa91daadbfb8446d9d17aae8d43cf7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Behat/Gherkin/zipball/987bcdc3d29ba433e6bd4b1db4ae59737ba3dacd",
-                "reference": "987bcdc3d29ba433e6bd4b1db4ae59737ba3dacd",
+                "url": "https://api.github.com/repos/Behat/Gherkin/zipball/d5ae4616aeaa91daadbfb8446d9d17aae8d43cf7",
+                "reference": "d5ae4616aeaa91daadbfb8446d9d17aae8d43cf7",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.6"
             },
             "require-dev": {
-                "phpunit/phpunit": "~5.7|~6|~7",
+                "cucumber/cucumber": "dev-gherkin-16.0.0",
+                "phpunit/phpunit": "^5.7.1|~6|~7",
                 "symfony/phpunit-bridge": "~2.7|~3|~4",
                 "symfony/yaml": "~2.3|~3|~4"
             },
@@ -14107,9 +14108,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Behat/Gherkin/issues",
-                "source": "https://github.com/Behat/Gherkin/tree/v4.7.1"
+                "source": "https://github.com/Behat/Gherkin/tree/v4.7.3"
             },
-            "time": "2021-01-26T16:24:32+00:00"
+            "time": "2021-02-04T12:26:47+00:00"
         },
         {
             "name": "behat/mink",
@@ -15522,16 +15523,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "9.5.1",
+            "version": "9.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "e7bdf4085de85a825f4424eae52c99a1cec2f360"
+                "reference": "f661659747f2f87f9e72095bb207bceb0f151cb4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/e7bdf4085de85a825f4424eae52c99a1cec2f360",
-                "reference": "e7bdf4085de85a825f4424eae52c99a1cec2f360",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/f661659747f2f87f9e72095bb207bceb0f151cb4",
+                "reference": "f661659747f2f87f9e72095bb207bceb0f151cb4",
                 "shasum": ""
             },
             "require": {
@@ -15609,7 +15610,7 @@
             ],
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/9.5.1"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/9.5.2"
             },
             "funding": [
                 {
@@ -15621,7 +15622,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-01-17T07:42:25+00:00"
+            "time": "2021-02-02T14:45:58+00:00"
         },
         {
             "name": "sebastian/cli-parser",
