@@ -63,22 +63,15 @@ class CreateUpdateConfigFieldHandlerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testCreateFieldModel()
-    {
+    /**
+     * @dataProvider fieldOptionsDataProvider
+     */
+    public function testCreateFieldModel(
+        array $fieldOptions,
+        array $styleFieldOptions,
+        array $propertiesFieldOptions
+    ): void {
         $extendEntityConfig = new Config(new EntityConfigId('extend', \stdClass::class));
-
-        $fieldOptions = [
-            'extend' => [
-                'is_extend' => true,
-                'owner' => ExtendScope::OWNER_CUSTOM,
-                'state' => ExtendScope::STATE_NEW,
-                'is_serialized' => true
-            ],
-            'attribute' => [
-                'is_attribute' => true,
-                'field_name' => self::FIELD_NAME
-            ]
-        ];
 
         $this->configHelper->expects($this->once())
             ->method('createFieldOptions')
@@ -98,19 +91,18 @@ class CreateUpdateConfigFieldHandlerTest extends \PHPUnit\Framework\TestCase
             )
             ->willReturnOnConsecutiveCalls($newFieldModel, $newFieldStyleModel, $newFieldPropertiesModel);
 
-        $styleFieldOptions = $fieldOptions;
-        $propertiesFieldOptions = $fieldOptions;
+//        $styleFieldOptions = $fieldOptions;
+//        $propertiesFieldOptions = $fieldOptions;
 
-        $styleFieldOptions['attribute']['is_attribute'] = false;
-        $styleFieldOptions['extend']['is_serialized'] = true;
-        $styleFieldOptions['attribute']['field_name'] = self::FIELD_NAME . WYSIWYGStyleType::TYPE_SUFFIX;
+//        $styleFieldOptions['attribute']['is_attribute'] = false;
+//        $styleFieldOptions['extend']['is_serialized'] = true;
+//        $styleFieldOptions['attribute']['field_name'] = self::FIELD_NAME . WYSIWYGStyleType::TYPE_SUFFIX;
+//
+//        $propertiesFieldOptions['attribute']['is_attribute'] = false;
+//        $propertiesFieldOptions['extend']['is_serialized'] = true;
+//        $propertiesFieldOptions['attribute']['field_name'] = self::FIELD_NAME . WYSIWYGPropertiesType::TYPE_SUFFIX;
 
-        $propertiesFieldOptions['attribute']['is_attribute'] = false;
-        $propertiesFieldOptions['extend']['is_serialized'] = true;
-        $propertiesFieldOptions['attribute']['field_name'] = self::FIELD_NAME . WYSIWYGPropertiesType::TYPE_SUFFIX;
-
-
-        $this->configHelper->expects($this->any())
+        $this->configHelper->expects($this->exactly(3))
             ->method('updateFieldConfigs')
             ->withConsecutive(
                 [$newFieldModel, $fieldOptions],
@@ -119,5 +111,74 @@ class CreateUpdateConfigFieldHandlerTest extends \PHPUnit\Framework\TestCase
             );
 
         $this->handler->createFieldModel(self::FIELD_NAME, self::FIELD_TYPE, $extendEntityConfig);
+    }
+
+    public function fieldOptionsDataProvider(): array
+    {
+        return [
+            [
+                'fieldOptions' => [
+                    'attribute' => [
+                        'is_attribute' => true,
+                    ]
+                ],
+                'styleFieldOptions' => [
+                    'extend' => [
+                        'is_serialized' => true
+                    ],
+                    'attribute' => [
+                        'is_attribute' => false,
+                        'field_name' => self::FIELD_NAME . WYSIWYGStyleType::TYPE_SUFFIX,
+                    ]
+                ],
+                'propertiesFieldOptions' => [
+                    'extend' => [
+                        'is_serialized' => true
+                    ],
+                    'attribute' => [
+                        'is_attribute' => false,
+                        'field_name' => self::FIELD_NAME . WYSIWYGPropertiesType::TYPE_SUFFIX,
+                    ]
+                ],
+            ],
+            [
+                'fieldOptions' => [
+                    'extend' => [
+                        'is_extend' => true,
+                        'owner' => ExtendScope::OWNER_CUSTOM,
+                        'state' => ExtendScope::STATE_NEW,
+                        'is_serialized' => true
+                    ],
+                    'attribute' => [
+                        'is_attribute' => true,
+                        'field_name' => self::FIELD_NAME
+                    ]
+                ],
+                'styleFieldOptions' => [
+                    'extend' => [
+                        'is_extend' => true,
+                        'owner' => ExtendScope::OWNER_CUSTOM,
+                        'state' => ExtendScope::STATE_NEW,
+                        'is_serialized' => true
+                    ],
+                    'attribute' => [
+                        'is_attribute' => false,
+                        'field_name' => self::FIELD_NAME . WYSIWYGStyleType::TYPE_SUFFIX,
+                    ]
+                ],
+                'propertiesFieldOptions' => [
+                    'extend' => [
+                        'is_extend' => true,
+                        'owner' => ExtendScope::OWNER_CUSTOM,
+                        'state' => ExtendScope::STATE_NEW,
+                        'is_serialized' => true
+                    ],
+                    'attribute' => [
+                        'is_attribute' => false,
+                        'field_name' => self::FIELD_NAME . WYSIWYGPropertiesType::TYPE_SUFFIX,
+                    ]
+                ]
+            ]
+        ];
     }
 }
