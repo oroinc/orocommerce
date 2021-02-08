@@ -134,5 +134,5 @@ trait OrderTaxHelperTrait
     /**
      * @return ContainerInterface
      */
-    abstract protected function getContainer();
+    abstract protected static function getContainer();
 }
