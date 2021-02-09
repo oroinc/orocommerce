@@ -9,11 +9,12 @@ use Oro\Bundle\SearchBundle\Provider\SearchMappingProvider;
 use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
+use Oro\Bundle\WebsiteSearchBundle\Event\AfterReindexEvent;
 use Oro\Bundle\WebsiteSearchBundle\Event\BeforeReindexEvent;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderInterface;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Resolver\EntityDependenciesResolverInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Abstract indexer for website search engine
@@ -269,6 +270,14 @@ abstract class AbstractIndexer implements IndexerInterface
         } else {
             $this->renameIndex($temporaryAlias, $currentAlias);
         }
+
+        $afterReindexEvent = new AfterReindexEvent(
+            $entityClass,
+            $context,
+            $indexedContextEntityIds ?? $indexedEntityIds ?? [],
+            $removedContextEntityIds ?? []
+        );
+        $this->eventDispatcher->dispatch($afterReindexEvent, AfterReindexEvent::EVENT_NAME);
 
         return $indexedItemsNum;
     }

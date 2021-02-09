@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Configuration;
 
-use Oro\Bundle\WebsiteSearchBundle\Configuration\MappingConfiguration;
 use Oro\Bundle\WebsiteSearchBundle\Configuration\MappingConfigurationProvider;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Provider\Fixture\Bundle\TestBundle1\TestBundle1;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Provider\Fixture\Bundle\TestBundle2\TestBundle2;
@@ -15,10 +14,10 @@ class MappingConfigurationProviderTest extends \PHPUnit\Framework\TestCase
     use TempDirExtension;
 
     /** @var string */
-    private string $cacheFile;
+    private $cacheFile;
 
     /** @var MappingConfigurationProvider */
-    private MappingConfigurationProvider $configurationProvider;
+    private $configurationProvider;
 
     protected function setUp(): void
     {
@@ -36,7 +35,6 @@ class MappingConfigurationProviderTest extends \PHPUnit\Framework\TestCase
         $this->cacheFile = $this->getTempFile('ConfigurationProvider');
 
         $this->configurationProvider = new MappingConfigurationProvider(
-            new MappingConfiguration(),
             $this->cacheFile,
             false
         );
@@ -70,25 +68,29 @@ class MappingConfigurationProviderTest extends \PHPUnit\Framework\TestCase
                         'name' => 'title_LOCALIZATION_ID',
                         'type' => 'text',
                         'fulltext' => true,
-                        'organization_id' => null
+                        'organization_id' => null,
+                        'store' => true,
                     ],
                     'test_first_repeating_field' => [
                         'name' => 'test_first_repeating_field',
                         'type' => 'integer',
                         'fulltext' => false,
-                        'organization_id' => null
+                        'organization_id' => null,
+                        'store' => true,
                     ],
                     'test_second_repeating_field' => [
                         'name' => 'test_second_repeating_field',
                         'type' => 'integer',
                         'fulltext' => false,
-                        'organization_id' => null
+                        'organization_id' => null,
+                        'store' => true,
                     ],
                     'custom_field' => [
                         'name' => 'custom_field',
                         'type' => 'text',
                         'fulltext' => true,
-                        'organization_id' => null
+                        'organization_id' => null,
+                        'store' => true,
                     ]
                 ]
             ],
@@ -99,9 +101,16 @@ class MappingConfigurationProviderTest extends \PHPUnit\Framework\TestCase
                         'name' => 'title_LOCALIZATION_ID',
                         'type' => 'text',
                         'fulltext' => true,
-                        'organization_id' => null
+                        'organization_id' => null,
+                        'store' => true,
                     ],
-                    'price' => ['name' => 'price', 'type' => 'decimal', 'fulltext' => false, 'organization_id' => null]
+                    'price' => [
+                        'name' => 'price',
+                        'type' => 'decimal',
+                        'fulltext' => false,
+                        'organization_id' => null,
+                        'store' => true,
+                    ],
                 ]
             ]
         ];

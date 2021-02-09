@@ -185,4 +185,30 @@ class ReindexMessageFilterTest extends \PHPUnit\Framework\TestCase
             $buffer->getMessages()
         );
     }
+
+    public function testApplyWhenJobId(): void
+    {
+        $buffer = new MessageBuffer();
+        $jobId1 = 1;
+        $jobId2 = 2;
+
+        $buffer->addMessage(self::TOPIC, ['jobId' => $jobId1, 'context' => ['entityIds' => [1]]]);
+        $buffer->addMessage(self::TOPIC, ['jobId' => $jobId2, 'context' => ['entityIds' => [2]]]);
+        $buffer->addMessage(self::TOPIC, ['context' => ['entityIds' => [1]]]);
+        $buffer->addMessage(self::TOPIC, ['jobId' => $jobId2, 'context' => ['entityIds' => [4]]]);
+        $buffer->addMessage(self::TOPIC, ['context' => ['entityIds' => [2]]]);
+        $buffer->addMessage(self::TOPIC, ['context' => ['entityIds' => [3]]]);
+        $buffer->addMessage(self::TOPIC, ['context' => ['entityIds' => [3]]]);
+
+        $this->filter->apply($buffer);
+
+        $this->assertEquals(
+            [
+                [self::TOPIC, ['jobId' => $jobId1, 'context' => ['entityIds' => [1]]]],
+                [self::TOPIC, ['jobId' => $jobId2, 'context' => ['entityIds' => [2, 4]]]],
+                [self::TOPIC, ['context' => ['entityIds' => [1, 2, 3]]]],
+            ],
+            $buffer->getMessages()
+        );
+    }
 }
