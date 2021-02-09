@@ -14,7 +14,6 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Stub\EnumSearchableAttributeTypeStub;
 use Oro\Bundle\SearchBundle\Event\SearchMappingCollectEvent;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\EnumSearchableAttributeType;
-use Oro\Bundle\WebsiteSearchBundle\Configuration\MappingConfiguration;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\EnumIdPlaceholder;
 
 class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
@@ -45,8 +44,7 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
             $this->attributeManager,
             $this->attributeTypeRegistry,
             $this->configurationProvider,
-            $this->fieldsProvider,
-            new MappingConfiguration()
+            $this->fieldsProvider
         );
     }
 
@@ -190,44 +188,49 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
                             'type'            => 'text',
                             'store'           => true,
                             'fulltext'        => true,
-                            'organization_id' => null
+                            'organization_id' => null,
                         ],
                         'lasttname' => [
                             'name'            => 'lasttname',
                             'type'            => 'text',
                             'store'           => true,
                             'fulltext'        => true,
-                            'organization_id' => null
+                            'organization_id' => null,
                         ],
                         'attribute1' => [
                             'name'            => 'attribute1',
                             'type'            => 'integer',
                             'fulltext'        => false,
-                            'organization_id' => null
+                            'organization_id' => null,
+                            'store' => true,
                         ],
                         $attribute1->getFieldName().'_'.EnumIdPlaceholder::NAME => [
                             'name'            => $attribute1->getFieldName().'_'.EnumIdPlaceholder::NAME,
                             'type'            => Query::TYPE_INTEGER,
                             'fulltext'        => false,
-                            'organization_id' => null
+                            'organization_id' => null,
+                            'store' => true,
                         ],
                         $attribute2->getFieldName().'_priority'                 => [
                             'name'            => $attribute2->getFieldName().'_priority',
                             'type'            => Query::TYPE_INTEGER,
                             'fulltext'        => false,
-                            'organization_id' => null
+                            'organization_id' => null,
+                            'store' => true,
                         ],
                         $attribute3->getFieldName().'_'.EnumIdPlaceholder::NAME => [
                             'name'            => $attribute3->getFieldName().'_'.EnumIdPlaceholder::NAME,
                             'type'            => Query::TYPE_INTEGER,
                             'fulltext'        => false,
-                            'organization_id' => null
+                            'organization_id' => null,
+                            'store' => true,
                         ],
                         $attribute3->getFieldName().'_priority'                 => [
                             'name'            => $attribute3->getFieldName().'_priority',
                             'type'            => Query::TYPE_INTEGER,
                             'fulltext'        => false,
-                            'organization_id' => null
+                            'organization_id' => null,
+                            'store' => true,
                         ]
                     ]
                 ],
@@ -238,7 +241,8 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
                             'name'            => 'first',
                             'type'            => 'text',
                             'fulltext'        => true,
-                            'organization_id' => null
+                            'organization_id' => null,
+                            'store' => true,
                         ]
                     ]
                 ]

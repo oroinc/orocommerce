@@ -7,7 +7,6 @@ use Oro\Component\Config\Loader\CumulativeConfigLoader;
 use Oro\Component\Config\Loader\CumulativeConfigProcessorUtil;
 use Oro\Component\Config\Loader\YamlCumulativeFileLoader;
 use Oro\Component\Config\ResourcesContainerInterface;
-use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 /**
  * The provider for website search mapping configuration
@@ -16,21 +15,6 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 class MappingConfigurationProvider extends MappingConfigurationProviderAbstract
 {
     private const CONFIG_FILE = 'Resources/config/oro/website_search.yml';
-
-    /** @var ConfigurationInterface */
-    private ConfigurationInterface $configurationTree;
-
-    /**
-     * @param ConfigurationInterface $configurationTree
-     * @param string $cacheFile
-     * @param bool $debug
-     */
-    public function __construct(ConfigurationInterface $configurationTree, string $cacheFile, bool $debug)
-    {
-        parent::__construct($cacheFile, $debug);
-
-        $this->configurationTree = $configurationTree;
-    }
 
     /**
      * Gets website search mapping configuration.
@@ -59,7 +43,7 @@ class MappingConfigurationProvider extends MappingConfigurationProviderAbstract
 
         return CumulativeConfigProcessorUtil::processConfiguration(
             self::CONFIG_FILE,
-            $this->configurationTree,
+            new MappingConfiguration(),
             $configs
         );
     }
