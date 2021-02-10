@@ -98,6 +98,16 @@ class SearchContentVariantFilteringEventListenerTest extends \PHPUnit\Framework\
                 SearchContentVariantFilteringEventListener::OVERRIDE_VARIANT_CONFIGURATION_CONFIG_PATH
             )
         );
+
+        $this->assertEquals(
+            $contentVariantId,
+            $parameterBag->get(ProductCollectionContentVariantType::CONTENT_VARIANT_ID_KEY)
+        );
+
+        $this->assertEquals(
+            1,
+            $parameterBag->get(ProductCollectionContentVariantType::OVERRIDE_VARIANT_CONFIGURATION_KEY)
+        );
     }
 
     public function testOnPreBuildWhenNoContentVariantId()
@@ -166,12 +176,12 @@ class SearchContentVariantFilteringEventListenerTest extends \PHPUnit\Framework\
         $parameterBag = new ParameterBag([]);
         $grid = new Datagrid('name', $configuration, $parameterBag);
         $searchQuery = $this->createMock(SearchQueryInterface::class);
-        $searchQuery->expects($this->at(0))
+        $searchQuery->expects($this->exactly(2))
             ->method('addWhere')
-            ->with(Criteria::expr()->eq(sprintf('integer.assigned_to_variant_%s', $contentVariantId), 1));
-        $searchQuery->expects($this->at(1))
-            ->method('addWhere')
-            ->with(Criteria::expr()->gte('integer.is_variant', 0));
+            ->withConsecutive(
+                [Criteria::expr()->eq(sprintf('integer.assigned_to_variant_%s', $contentVariantId), 1)],
+                [Criteria::expr()->gte('integer.is_variant', 0)]
+            );
         /** @var SearchDatasource|\PHPUnit\Framework\MockObject\MockObject $datasource */
         $datasource = $this->createMock(SearchDatasource::class);
         $datasource->expects($this->atLeastOnce())
@@ -210,15 +220,15 @@ class SearchContentVariantFilteringEventListenerTest extends \PHPUnit\Framework\
         $parameterBag = new ParameterBag([]);
         $grid = new Datagrid('name', $configuration, $parameterBag);
         $searchQuery = $this->createMock(SearchQueryInterface::class);
-        $searchQuery->expects($this->at(0))
+        $searchQuery->expects($this->exactly(2))
             ->method('addWhere')
-            ->with(Criteria::expr()->eq(sprintf('integer.assigned_to_variant_%s', $contentVariantId), 1));
-        $searchQuery->expects($this->at(1))
-            ->method('addWhere')
-            ->with(Criteria::expr()->orX(
-                Criteria::expr()->eq(sprintf('integer.manually_added_to_variant_%s', $contentVariantId), 1),
-                Criteria::expr()->eq('integer.is_variant', 0)
-            ));
+            ->withConsecutive(
+                [Criteria::expr()->eq(sprintf('integer.assigned_to_variant_%s', $contentVariantId), 1)],
+                [Criteria::expr()->orX(
+                    Criteria::expr()->eq(sprintf('integer.manually_added_to_variant_%s', $contentVariantId), 1),
+                    Criteria::expr()->eq('integer.is_variant', 0)
+                )]
+            );
         /** @var SearchDatasource|\PHPUnit\Framework\MockObject\MockObject $datasource */
         $datasource = $this->createMock(SearchDatasource::class);
         $datasource->expects($this->atLeastOnce())

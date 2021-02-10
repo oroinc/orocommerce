@@ -46,23 +46,31 @@ class SearchContentVariantFilteringEventListener
      */
     public function onPreBuild(PreBuild $event)
     {
-        $parameters = $event->getParameters();
-        $contentVariantId = $parameters->has(ProductCollectionContentVariantType::CONTENT_VARIANT_ID_KEY)
-            ? $parameters->get(ProductCollectionContentVariantType::CONTENT_VARIANT_ID_KEY)
-            : $this->requestHandler->getContentVariantId();
+        $parameterBag = $event->getParameters();
 
-        $overrideVariantConfiguration = $parameters->has('overrideVariantConfiguration')
-            ? $parameters->get('overrideVariantConfiguration')
-            : $this->requestHandler->getOverrideVariantConfiguration();
+        $contentVariantId = $parameterBag->has(ProductCollectionContentVariantType::CONTENT_VARIANT_ID_KEY)
+            ? $parameterBag->get(ProductCollectionContentVariantType::CONTENT_VARIANT_ID_KEY)
+            : $this->requestHandler->getContentVariantId();
 
         if (!$contentVariantId) {
             return;
         }
 
-        $event->getConfig()->offsetSetByPath(self::CONTENT_VARIANT_ID_CONFIG_PATH, $contentVariantId);
-        $event->getConfig()->offsetSetByPath(
+        $overrideVariantConfiguration = $parameterBag->has('overrideVariantConfiguration')
+            ? $parameterBag->get('overrideVariantConfiguration')
+            : $this->requestHandler->getOverrideVariantConfiguration();
+
+        $parameterBag->set(ProductCollectionContentVariantType::CONTENT_VARIANT_ID_KEY, $contentVariantId);
+        $parameterBag->set(
+            ProductCollectionContentVariantType::OVERRIDE_VARIANT_CONFIGURATION_KEY,
+            (int)$overrideVariantConfiguration
+        );
+
+        $gridConfig = $event->getConfig();
+        $gridConfig->offsetSetByPath(self::CONTENT_VARIANT_ID_CONFIG_PATH, $contentVariantId);
+        $gridConfig->offsetSetByPath(
             self::OVERRIDE_VARIANT_CONFIGURATION_CONFIG_PATH,
-            (int) $overrideVariantConfiguration
+            (int)$overrideVariantConfiguration
         );
     }
 
