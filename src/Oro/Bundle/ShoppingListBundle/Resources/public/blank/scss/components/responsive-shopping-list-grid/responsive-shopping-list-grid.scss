@@ -68,19 +68,34 @@
         .validation-error,
         .notification {
             background: transparent;
+            padding-left: 0;
+            padding-right: 0;
         }
     }
 
-    .highlight-error {
+    .highlight-error,
+    .highlight {
         .grid-cell {
             padding-bottom: $responsive-shopping-list-notification-row-bottom-offset;
+        }
+
+        .grid-body-cell-item {
+            padding-bottom: 0;
         }
     }
 
     .notification-row {
-        .grid-cell {
-            padding-top: $responsive-shopping-list-notification-row-top-offset;
-            padding-bottom: $responsive-shopping-list-notification-row-bottom-offset;
+        &:not(.sub-row) {
+            .grid-cell {
+                padding-top: $responsive-shopping-list-notification-row-top-offset;
+                padding-bottom: $responsive-shopping-list-notification-row-bottom-offset;
+            }
+        }
+
+        &.sub-row {
+            .grid-cell {
+                padding-top: $responsive-shopping-list-notification-row-top-offset;
+            }
         }
     }
 
@@ -105,13 +120,6 @@
     .responsive-shopping-list-grid {
         .grid-body-cell-inventoryStatus {
             white-space: nowrap;
-        }
-
-        .notification-container {
-            .validation-error,
-            .notification {
-                padding-left: 0;
-            }
         }
     }
 
@@ -274,16 +282,31 @@
                 padding-bottom: $responsive-shopping-body-cell-offset-y-mobile;
             }
 
-            &.highlight-error {
+            &.highlight-error,
+            &.highlight {
                 padding-bottom: $responsive-shopping-notification-row-error-offset-mobile;
+            }
+
+            &:not(.sub-row) .notification-container {
+                .validation-error,
+                .notification {
+                    padding-left: 10px;
+                    padding-right: 10px;
+                }
+            }
+
+            &.sub-row.notification-row {
+                padding-top: 7px;
             }
         }
 
         .notification-row {
             padding-top: $responsive-shopping-notification-row-offset-top-mobile;
 
-            .select-row-cell {
-                display: none;
+            &:not(.sub-row) {
+                .select-row-cell {
+                    display: none;
+                }
             }
 
             .grid-body-cell:last-child {
@@ -363,6 +386,20 @@
         .label-in-mobile-start:before,
         .label-in-mobile-end:after {
             content: attr(data-label);
+        }
+    }
+}
+
+@include breakpoint('mobile') {
+    .responsive-shopping-list-grid {
+        .grid-row {
+            &.sub-row.notification-row {
+                padding-top: 0;
+
+                .grid-body-cell:last-child {
+                    padding-bottom: 4px;
+                }
+            }
         }
     }
 }
