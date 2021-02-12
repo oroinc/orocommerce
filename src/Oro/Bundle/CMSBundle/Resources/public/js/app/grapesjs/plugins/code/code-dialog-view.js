@@ -105,8 +105,7 @@ define(function(require) {
         initialize: function(options) {
             this.codeViewer = this.editor.CodeManager.getViewer('CodeMirror').clone();
             this.codeViewer.set(this.codeViewerOptions);
-            this.content = _.unescape(this.editor.getSelected().get('content'));
-
+            this.content = _.unescape(this.editor.getSelected().toHTML());
             CodeDialogView.__super__.initialize.call(this, options);
         },
 

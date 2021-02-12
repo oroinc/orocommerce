@@ -101,7 +101,7 @@ operations:
         label: oro.order.widgets.shipping_tracking
         routes:
             - oro_order_view
-        acl_resource: [UPDATE, entity:Oro\Bundle\OrderBundle\Entity\Order]
+        acl_resource: oro_order_update
         button_options:
             icon: fa-list-alt
         frontend_options:
@@ -149,6 +149,7 @@ operations:
         applications: [default]
         routes:
             - oro_order_view
+        acl_resource: oro_order_update
         button_options:
             icon: fa-close
         preconditions:
@@ -171,6 +172,7 @@ operations:
         applications: [default]
         routes:
             - oro_order_view
+        acl_resource: oro_order_update
         button_options:
             icon: fa-window-close-o
         preconditions:
@@ -196,6 +198,7 @@ operations:
         applications: [default]
         routes:
             - oro_order_view
+        acl_resource: oro_order_update
         button_options:
             icon: fa-archive
         preconditions:
@@ -218,6 +221,7 @@ operations:
         applications: [default]
         routes:
             - oro_order_view
+        acl_resource: oro_order_update
         button_options:
             icon: fa-check
         preconditions:
@@ -291,7 +295,7 @@ operations:
         label: oro.order.widgets.add_order_discount
         routes:
             - oro_order_view
-        acl_resource: [UPDATE, entity:Oro\Bundle\OrderBundle\Entity\Order]
+        acl_resource: oro_order_update
         button_options:
             icon: fa-dollar
         frontend_options:

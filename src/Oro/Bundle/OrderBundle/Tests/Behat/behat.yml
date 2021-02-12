@@ -61,6 +61,11 @@ oro_behat_extension:
           type: xpath
           locator: '//div[@data-totals-container]'
 
+    Backend View Order Edit Action Button: # Unique element of the edit button (action button) on Order view page.
+      selector:
+        type: xpath
+        locator: './/a[contains(@class, "action-button") and contains(normalize-space(string(.)), "Edit")]'
+
     Order:
       class: Oro\Bundle\OrderBundle\Tests\Behat\Element\Order
       selector: '.page-content'

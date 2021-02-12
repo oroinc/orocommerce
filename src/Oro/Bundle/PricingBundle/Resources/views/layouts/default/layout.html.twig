@@ -1,11 +1,6 @@
 {% block currency_switcher_widget %}
     {% if currencies|length > 1 %}
-    <div class="oro-toolbar"
-         data-page-component-module="oropricing/js/app/components/currency-switcher-component"
-         data-page-component-options="{{ {
-             'selectedCurrency': selected_currency,
-             'currencySwitcherRoute': 'oro_pricing_frontend_set_current_currency'
-         }|json_encode }}">
+    <div class="oro-toolbar">
         {% set togglerId = 'dropdown-'|uniqid %}
         <div class="oro-toolbar__content" data-toggle="dropdown" data-popper="false" role="button" id="{{ togglerId }}"
              aria-haspopup="true" aria-expanded="false"
@@ -17,15 +12,37 @@
         </div>
 
         <div class="oro-toolbar__dropdown" role="menu" aria-labelledby="{{ togglerId }}">
-            <ul class="oro-toolbar__list">
-                {% for currency in currencies %}
-                <li class="oro-toolbar__list-item">
-                    <a class="oro-toolbar__link" href="#" data-currency="{{ currency }}">
-                        <b class="oro-toolbar__currency">{{ oro_currency_symbol(currency) }}</b>{{ oro_currency_name(currency) }}
-                    </a>
-                </li>
-                {% endfor %}
-            </ul>
+            <div data-page-component-module="oropricing/js/app/components/currency-switcher-component"
+                 data-page-component-options="{{ {
+                     'selectedCurrency': selected_currency,
+                     'currencySwitcherRoute': 'oro_pricing_frontend_set_current_currency'
+                 }|json_encode }}"
+                 data-dom-relocation-options="{{ {
+                     responsive: [
+                         {
+                             viewport: {
+                                 maxScreenType: 'tablet',
+                             },
+                             moveTo: '[data-switcher-currency-target]'
+                         }
+                     ]
+                 }|json_encode }}">
+                <ul class="oro-toolbar__list">
+                    {% for currency in currencies %}
+                    <li class="oro-toolbar__list-item">
+                        {% if selected_currency == currency %}
+                            <span class="oro-toolbar__link oro-toolbar__link--active">
+                                <b class="oro-toolbar__currency">{{ oro_currency_symbol(currency) }}</b>{{- oro_currency_name(currency) -}}
+                            </span>
+                        {% else %}
+                            <a class="oro-toolbar__link" href="#" data-currency="{{ currency }}">
+                                <b class="oro-toolbar__currency">{{ oro_currency_symbol(currency) }}</b>{{- oro_currency_name(currency) -}}
+                            </a>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
         </div>
     </div>
     {% endif %}
