@@ -16,9 +16,13 @@ use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Root job for generating Direct URLs for Sluggable entities.
+ * Splits all entities on batches and schedules JOB_GENERATE_DIRECT_URL_FOR_ENTITIES for each batch.
+ */
 class SluggableEntitiesProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
-    const BATCH_SIZE = 10000;
+    const BATCH_SIZE = 1000;
 
     /**
      * @var ManagerRegistry
