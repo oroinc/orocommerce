@@ -91,17 +91,6 @@ class CreateUpdateConfigFieldHandlerTest extends \PHPUnit\Framework\TestCase
             )
             ->willReturnOnConsecutiveCalls($newFieldModel, $newFieldStyleModel, $newFieldPropertiesModel);
 
-//        $styleFieldOptions = $fieldOptions;
-//        $propertiesFieldOptions = $fieldOptions;
-
-//        $styleFieldOptions['attribute']['is_attribute'] = false;
-//        $styleFieldOptions['extend']['is_serialized'] = true;
-//        $styleFieldOptions['attribute']['field_name'] = self::FIELD_NAME . WYSIWYGStyleType::TYPE_SUFFIX;
-//
-//        $propertiesFieldOptions['attribute']['is_attribute'] = false;
-//        $propertiesFieldOptions['extend']['is_serialized'] = true;
-//        $propertiesFieldOptions['attribute']['field_name'] = self::FIELD_NAME . WYSIWYGPropertiesType::TYPE_SUFFIX;
-
         $this->configHelper->expects($this->exactly(3))
             ->method('updateFieldConfigs')
             ->withConsecutive(
