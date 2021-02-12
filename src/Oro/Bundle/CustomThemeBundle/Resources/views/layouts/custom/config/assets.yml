@@ -29,3 +29,8 @@ styles:
         - 'bundles/orocustomtheme/FilterBundle/scss/styles.scss'
 
     output: 'css/styles.css'
+
+stylebook_styles:
+    inputs:
+        - 'bundles/orocustomtheme/FrontendBundle/scss/settings/main/global-settings.scss'
+    output: 'css/stylebook.css'

@@ -16,8 +16,15 @@ class OroPayPalExtension extends Extension
      *
      * @throws \Exception
      */
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
+        $configuration = new Configuration();
+        $config = $this->processConfiguration($configuration, $configs);
+        $container->setParameter(
+            Configuration::getConfigKey(Configuration::CONFIG_KEY_ALLOWED_IPS),
+            $config[Configuration::CONFIG_KEY_ALLOWED_IPS]
+        );
+
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
         $loader->load('form_types.yml');
@@ -33,7 +40,7 @@ class OroPayPalExtension extends Extension
     /**
      * {@inheritDoc}
      */
-    public function getAlias()
+    public function getAlias(): string
     {
         return self::ALIAS;
     }

@@ -179,7 +179,7 @@ oro_behat_extension:
     Currency Switcher:
       selector:
         type: 'xpath'
-        locator: '//div[contains(@data-bound-component, "currency-switcher")]'
+        locator: '//div[contains(@data-bound-component, "currency-switcher")]/ancestor::div[@class="oro-toolbar"]'
 
     Export Button:
       selector:

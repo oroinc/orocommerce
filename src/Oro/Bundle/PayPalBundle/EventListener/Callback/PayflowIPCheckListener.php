@@ -7,19 +7,30 @@ use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Symfony\Component\HttpFoundation\IpUtils;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Security level that checks whether it is possible to use PayFlow from allowed ip addresses.
+ */
 class PayflowIPCheckListener
 {
     /**
      * @var string[]
      */
     protected $allowedIPs = [
-        // Payflow Silent Post
-        '173.0.81.1',
-        '173.0.81.33',
-        '173.0.81.0/24',
-
-        // Payflow Silent Post Backup
-        '66.211.170.66',
+        '64.4.240.0/21',
+        '64.4.248.0/22',
+        '66.211.168.0/22',
+        '91.243.72.0/23',
+        '159.242.240.0/21',
+        '173.0.80.0/20',
+        '176.120.16.0/21',
+        '184.105.254.0/24',
+        '185.177.52.0/22',
+        '198.54.216.0/23',
+        '198.199.247.0/24',
+        '204.109.13.0/24',
+        '205.189.102.0/24',
+        '205.189.103.0/24',
+        '208.76.140.0/22'
     ];
 
     /**
@@ -40,6 +51,14 @@ class PayflowIPCheckListener
     {
         $this->requestStack = $requestStack;
         $this->paymentMethodProvider = $paymentMethodProvider;
+    }
+
+    /**
+     * @param array $allowedIPs
+     */
+    public function setAllowedIPs(array $allowedIPs): void
+    {
+        $this->allowedIPs = $allowedIPs ?: $this->allowedIPs;
     }
 
     /**

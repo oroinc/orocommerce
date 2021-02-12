@@ -65,7 +65,9 @@ class CreateUpdateConfigFieldHandler extends BaseCreateUpdateConfigFieldHandler
 
             $additionalFieldOptions = $fieldOptions;
             if ($this->isAttributeOptions($fieldOptions)) {
-                $additionalFieldOptions['attribute']['field_name'] = $fieldOptions['attribute']['field_name'] . $suffix;
+                $attributeFieldName = $fieldOptions['attribute']['field_name'] ?? $fieldName;
+
+                $additionalFieldOptions['attribute']['field_name'] = $attributeFieldName . $suffix;
                 $additionalFieldOptions['attribute']['is_attribute'] = false;
                 $additionalFieldOptions['extend']['is_serialized'] = true;
             }
