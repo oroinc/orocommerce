@@ -139,8 +139,8 @@ class RedirectExceptionListenerTest extends \PHPUnit\Framework\TestCase
     public function testOnKernelExceptionForRedirectWithBaseUrl()
     {
         $request = Request::create('/index.php/test');
-        $request->server->set('SCRIPT_FILENAME', 'index.php');
-        $request->server->set('SCRIPT_NAME', 'index.php');
+        $request->server->set('SCRIPT_FILENAME', '/index.php');
+        $request->server->set('SCRIPT_NAME', '/index.php');
         $event = $this->getEvent($request, true, new NotFoundHttpException());
 
         $this->matchedUrlDecisionMaker->expects($this->once())
