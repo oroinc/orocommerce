@@ -579,7 +579,7 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
 
         $this->assertResponseValidationError(
             [
-                'title'  => 'greater than zero constraint',
+                'title'  => 'greater than constraint',
                 'detail' => 'This value should be greater than 0.',
                 'source' => ['pointer' => '/data/attributes/quantity']
             ],
@@ -608,7 +608,7 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
 
         $this->assertResponseValidationError(
             [
-                'title'  => 'greater than zero constraint',
+                'title'  => 'greater than constraint',
                 'detail' => 'This value should be greater than 0.',
                 'source' => ['pointer' => '/data/attributes/quantity']
             ],
