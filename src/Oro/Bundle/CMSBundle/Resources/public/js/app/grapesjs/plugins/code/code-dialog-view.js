@@ -179,7 +179,7 @@ define(function(require) {
         onSave: function() {
             if (!this.disabled) {
                 const codeContent = _.escape(this.viewerEditor.getValue().trim());
-                this.editor.getSelected().set('content', codeContent);
+                this.editor.getSelected().components(codeContent);
                 this.dialog.remove();
             }
         }
