@@ -132,9 +132,7 @@ Delete a collection of brand records.
 
 {@inheritdoc}
 
-**Please note:**
-
-*This field is **required** and must remain defined.*
+**This field must not be empty, if it is passed.**
 
 ### names
 
@@ -144,17 +142,11 @@ Delete a collection of brand records.
 
 **The required field.**
 
-**The value is set in included section.**
-
 #### update
 
 {@inheritdoc}
 
-**Please note:**
-
-*This field is **required** and must remain defined.*
-
-**The value is set in included section.**
+**This field must not be empty, if it is passed.**
 
 ## SUBRESOURCES
 
