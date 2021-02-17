@@ -22,7 +22,7 @@ The created record is returned in the response.
 
 {@inheritdoc}
 
-**Note**: When an item is added to the default shopping list by using the string `default` as the shopping list ID
+**Note:** When an item is added to the default shopping list by using the string `default` as the shopping list ID
 and there ia no a shopping list, it will be created automatically.
 
 {@request:json_api}
@@ -118,9 +118,7 @@ Delete a collection of shopping list item records.
 
 {@inheritdoc}
 
-**Please note:**
-
-*This field is **required** and must remain defined.*
+**This field must not be empty, if it is passed.**
 
 ### quantity
 
@@ -134,9 +132,7 @@ Delete a collection of shopping list item records.
 
 {@inheritdoc}
 
-**Please note:**
-
-*This field is **required** and must remain defined.*
+**This field must not be empty, if it is passed.**
 
 ### unit
 
@@ -150,9 +146,7 @@ Delete a collection of shopping list item records.
 
 {@inheritdoc}
 
-**Please note:**
-
-*This field is **required** and must remain defined.*
+**This field must not be empty, if it is passed.**
 
 ### shoppingList
 
@@ -166,9 +160,7 @@ Delete a collection of shopping list item records.
 
 {@inheritdoc}
 
-**Please note:**
-
-*This field is **required** and must remain defined.*
+**This field must not be empty, if it is passed.**
 
 ### value
 

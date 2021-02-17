@@ -85,7 +85,7 @@ Delete a collection of product visibility records.
 
 ### visibility
 
-The visibility level. Possible values are `visible`, `hidden`, `category` and `config`.
+The visibility level. Possible values: `visible`, `hidden`, `category`, `config`.
 
 The `category` level is available only if a product is assigned to a category.
 
