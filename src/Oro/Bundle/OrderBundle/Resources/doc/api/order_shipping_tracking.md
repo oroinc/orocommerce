@@ -105,9 +105,7 @@ Delete a collection of order shipping tracking records.
 
 {@inheritdoc}
 
-**Please note:**
-
-*This field is **required** and must remain defined.*
+**This field must not be empty, if it is passed.**
 
 ### method
 
@@ -121,9 +119,7 @@ Delete a collection of order shipping tracking records.
 
 {@inheritdoc}
 
-**Please note:**
-
-*This field is **required** and must remain defined.*
+**This field must not be empty, if it is passed.**
 
 ### order
 
@@ -147,7 +143,7 @@ Retrieve ID of shipping tracking records assigned to a specific order record.
 
 #### update_relationship
 
-Replace shipping tracking assigned to a specific order record
+Replace shipping tracking assigned to a specific order record.
 
 {@request:json_api}
 Example:

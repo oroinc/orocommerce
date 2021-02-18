@@ -22,10 +22,6 @@ The created record is returned in the response.
 
 {@inheritdoc}
 
-`fallback` value should be one of: `0` or `1`.
-
-Fallback `0` maps to Customer Group fallback. Fallback `1`  maps to Current Customer Only fallback.
-
 {@request:json_api}
 Example:
 
@@ -56,10 +52,6 @@ Edit a specific price list customer fallback record.
 The updated record is returned in the response.
 
 {@inheritdoc}
-
-`fallback` value should be one of: `0` or `1`.
-
-Fallback `0` maps to Customer Group fallback. Fallback `1`  maps to Current Customer Only fallback.
 
 {@request:json_api}
 Example:
@@ -93,13 +85,23 @@ Delete a collection of price list customer fallback records.
 
 ### fallback
 
-Possible values: 1, 0. 0 - fallback to a customer group configuration. 1 - fallback to the current customer only.
+Possible values: `1`, `0`.
+
+`0` - fallback to a customer group configuration.
+
+`1` - fallback to the current customer only.
 
 #### create
 
 {@inheritdoc}
 
 **The required field.**
+
+#### update
+
+{@inheritdoc}
+
+**This field must not be empty, if it is passed.**
 
 ### customer
 

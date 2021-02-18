@@ -16,15 +16,15 @@ Retrieve a collection of price list records.
 
 ### create
 
-Create a new price list. Use `priceListCurrencies` field to set price list currencies as an array of strings.
+Create a new price list. Use the **priceListCurrencies** field to set price list currencies as an array of strings.
 Every string should match the existing currency code.
 
 The created record is returned in the response.
 
 {@inheritdoc}
 
-**Note:** The fields `createdAt`, `updatedAt`, `containSchedule` cannot be set via the API
-as their values are generated automatically.
+**Note:**
+The fields **createdAt**, **updatedAt**, **containSchedule** cannot be set via the API as their values are generated automatically.
 
 {@request:json_api}
 Example:
@@ -127,8 +127,9 @@ The updated record is returned in the response.
 {@inheritdoc}
 
 **Notes:**
-* The values for the fields `updatedAt`, `containSchedule` cannot are set via the API as their values are generated automatically.
-* The fields `createdAt`, `priceRules`, `schedules` are not allowed to be updated.
+
+* The values for the fields **updatedAt**, **containSchedule** cannot are set via the API as their values are generated automatically.
+* The fields **createdAt**, **priceRules**, **schedules** are not allowed to be updated.
 To modify the relationship with price rules and/or price list schedules, delete the incorrect price list and create a new one including the correct price rules and price schedule.
 
 {@request:json_api}
@@ -165,7 +166,7 @@ Delete a collection of price list records.
 
 ### name
 
-The name of the price list
+The name of the price list.
 
 #### create
 
@@ -175,7 +176,7 @@ The name of the price list
 
 ### priceListCurrencies
 
-Array of currency codes
+Array of currency codes.
 
 #### create
 
@@ -197,26 +198,26 @@ Array of currency codes
 
 #### get_subresource
 
-Get full information about the price list rules
+Get full information about the price list rules.
 
 #### get_relationship
 
-Retrieve the IDs of the price Rules configured for a specific price list
+Retrieve the IDs of the price Rules configured for a specific price list.
 
 #### delete_relationship
 
-Remove the price rules for a specific price list
+Remove the price rules for a specific price list.
 
 ### schedules
 
 #### get_subresource
 
-Get full information about the price list schedules
+Get full information about the price list schedules.
 
 #### get_relationship
 
-Retrieve the IDs of the schedules configured for a specific price list
+Retrieve the IDs of the schedules configured for a specific price list.
 
 #### delete_relationship
 
-Remove the schedules for a specific price list
+Remove the schedules for a specific price list.

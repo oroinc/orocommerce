@@ -27,7 +27,7 @@ the same attribute family which holds a custom attribute that is active on the c
 
 {@request:json_api}
 Example:
-  
+
 ```JSON
 {
   "data": {
@@ -64,7 +64,7 @@ The updated record is returned in the response.
 
 {@request:json_api}
 Example:
-  
+
 ```JSON
 {
   "data": {
@@ -139,7 +139,7 @@ Replace the configurable product for a specific variant.
 
 {@request:json_api}
 Example:
-  
+
 ```JSON
 {
   "data": {
@@ -166,7 +166,7 @@ Replace the product for a specific variant.
 
 {@request:json_api}
 Example:
-  
+
 ```JSON
 {
   "data": {
