@@ -17,14 +17,14 @@ For example:
 sku = "SKU1"
 ```
 
-This query will find a product with SKU equals `SKU1`. It uses the `sku` field, the `=` (EQUALS) operator,
+This query will find a product with SKU equals `SKU1`. It uses the **sku** field, the `=` (EQUALS) operator,
 and the `SKU1` value.
 
 ```
 sku in ("SKU1", "SKU2")
 ```
 
-This query will find products with SKU equals `SKU1` or `SKU2`. It uses the `sku` field, the `in` operator,
+This query will find products with SKU equals `SKU1` or `SKU2`. It uses the **sku** field, the `in` operator,
 and the `SKU1` and `SKU2` values.
 
 A more complex query might look like this:
@@ -36,9 +36,9 @@ name ~ "headlamp" and minimalPrice < 10
 This query will find all products that contain the `headlamp` word in name, and which minimal price is less than 10.
 It uses two simple expressions, `name ~ "headlamp"` and `minimalPrice < 10`, that are joined by the logical `and` operator.
 
-The locale for the name is equal to the locale selected for the website or the locale specified in the `X-Localization-ID` HTTP header if it is provided.
+The locale for the name is equal to the locale selected for the website or the locale specified in the **X-Localization-ID** HTTP header if it is provided.
 
-The currency for the minimal price is equal to the currency selected for the website or the currency specified in the `X-Currency` HTTP header if it is provided.
+The currency for the minimal price is equal to the currency selected for the website or the currency specified in the **X-Currency** HTTP header if it is provided.
 
 The parentheses in complex queries can be used to enforce the precedence of operators. For example:
 
@@ -46,20 +46,19 @@ The parentheses in complex queries can be used to enforce the precedence of oper
 (newArrival = true or minimalPrice < 10) and allText ~ "headlamp"
 ```
 
-**Note:** the space symbol must delimit an operator from a field and a value.
+**Notes:**
 
-**Note:** a string value that contains a space symbol must be enclosed by double quotes (`"`).
+* the space symbol must delimit an operator from a field and a value.
+* a string value that contains a space symbol must be enclosed by double quotes (`"`).
+* for boolean values use `0` for `false` and `1` for `true`.
+* a datetime value must be enclosed by double quotes (`"`) and formatted as `YYYY-MM-DD hh:mm:ss`, where:
 
-**Note:** for boolean values use `0` for `false` and `1` for `true`.
-
-**Note:** a datetime value must be enclosed by double quotes (`"`) and formatted as `YYYY-MM-DD hh:mm:ss`, where:
-
-- `YYYY` - four-digit year
-- `MM` - two-digit month (01=January, etc.)
-- `DD` - two-digit day of month (01 through 31)
-- `hh` - two digits of hour (00 through 23)
-- `mm` - two digits of minute (00 through 59)
-- `ss` - two digits of second (00 through 59)
+    - `YYYY` - four-digit year
+    - `MM` - two-digit month (01=January, etc.)
+    - `DD` - two-digit day of month (01 through 31)
+    - `hh` - two digits of hour (00 through 23)
+    - `mm` - two digits of minute (00 through 59)
+    - `ss` - two digits of second (00 through 59)
 
 <br />
 Keywords:
@@ -105,17 +104,17 @@ Operators for numeric and date values:
 <br />
 The list of fields that can be used in the search query:
 
-`allText`, `id`, `sku`, `skuUppercase`, `name`, `shortDescription`, `productType`, `isVariant`, `newArrival`,
-`inventoryStatus`, `minimalPrice`, `minimalPrice_{unit}`, `orderedAt`, `product`, `productFamily`, `category`.
+**allText**, **id**, **sku**, **skuUppercase**, **name**, **shortDescription**, **productType**, **isVariant**, **newArrival**,
+**inventoryStatus**, **minimalPrice**, **minimalPrice_{unit}**, **orderedAt**, **product**, **productFamily**, **category**.
 
 Also, any filterable product attribute can be used.
 
-The `allText` is a particular field that can be used to do an overall full-text search. The value of this field usually
+The **allText** is a particular field that can be used to do an overall full-text search. The value of this field usually
 contains values of all text fields.
 
-The `minimalPrice_{unit}` means that `{unit}` can be replaced with any
+The **minimalPrice_{unit}** means that **{unit}** can be replaced with any
 [product unit](https://doc.oroinc.com/user/back-office/products/products/product-units/).
-E.g., to specify the minimal price for the `set` product unit, the field name will be `minimalPrice_set`.
+E.g., to specify the minimal price for the `set` product unit, the field name will be **minimalPrice_set**.
 
 #### **aggregations** filter
 
@@ -131,8 +130,8 @@ uppercased first character, e.g., the result name for `productType count` will b
 
 The list of fields for which the aggregated data can be requested:
 
-`id`, `sku`, `skuUppercase`, `name`, `shortDescription`, `productType`, `isVariant`, `newArrival`,
-`inventoryStatus`, `minimalPrice`, `minimalPrice_{unit}`, `orderedAt`, `product`, `productFamily`, `category`.
+**id**, **sku**, **skuUppercase**, **name**, **shortDescription**, **productType**, **isVariant**, **newArrival**,
+**inventoryStatus**, **minimalPrice**, **minimalPrice_{unit}**, **orderedAt**, **product**, **productFamily**, **category**.
 
 Also, any filterable product attribute can be used.
 
@@ -147,12 +146,12 @@ Aggregating functions:
 | `max` | Returns the maximum value among the numeric values that are extracted from the search index. |
 
 <br />
-The aggregated data is returned in the `aggregatedData` field of `meta` section of the response.
+The aggregated data is returned in the **aggregatedData** field of **meta** section of the response.
 
 The response for the `count` aggregating function is an array. Each element of this array is an object with
-2 properties, `value` and `count`.
-The `value` property contains a value for which the count is calculated.
-The `count` property contains the number of occurrences of the value in the search result.
+2 properties, **value** and **count**.
+The **value** property contains a value for which the count is calculated.
+The **count** property contains the number of occurrences of the value in the search result.
 
 The response for other aggregating functions is a number.
 
@@ -176,10 +175,10 @@ An example:
 
 This filter is used to sort the result data.
 
-The list of fields that can be used in the `sort` filter:
+The list of fields that can be used in the **sort** filter:
 
-`relevance`, `id`, `sku`, `skuUppercase`, `name`, `productType`, `isVariant`, `newArrival`,
-`inventoryStatus`, `minimalPrice`, `orderedAt`.
+**relevance**, **id**, **sku**, **skuUppercase**, **name**, **productType**, **isVariant**, **newArrival**,
+**inventoryStatus**, **minimalPrice**, **orderedAt**.
 
 Also, any sortable product attribute can be used.
 
