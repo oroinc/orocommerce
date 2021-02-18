@@ -26,12 +26,12 @@ export const flattenData = data => {
         let {subData, ...item} = rawData;
         const itemClassName = [];
 
-        if (isError(item)) {
-            itemClassName.push('highlight-error');
-        }
-
         if (isHighlight(item)) {
             itemClassName.push('highlight');
+        }
+
+        if (isError(item)) {
+            itemClassName.push('highlight-error');
         }
 
         if (!subData) {
@@ -77,12 +77,12 @@ export const flattenData = data => {
                     className.push('sub-row-last');
                 }
 
-                if (isError(subItem)) {
-                    className.push('highlight-error');
-                }
-
                 if (isHighlight(subItem)) {
                     className.push('highlight');
+                }
+
+                if (isError(subItem)) {
+                    className.push('highlight-error');
                 }
 
                 if (subItem.filteredOut) {
