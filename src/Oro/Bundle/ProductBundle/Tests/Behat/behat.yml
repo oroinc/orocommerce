@@ -336,6 +336,9 @@ oro_behat_extension:
             locator: '//*[@name="oro_product[owner]"]'
             type: xpath
             element: Select2Entity
+          MultipleFiles 1:
+            locator: '//input[starts-with(@name, "oro_product[MultipleFiles") and contains(@name, "[file][file]")]'
+            type: xpath
           MultipleImages 1:
             locator: '//input[starts-with(@name, "oro_product[MultipleImages") and contains(@name, "[file][file]")]'
             type: xpath
