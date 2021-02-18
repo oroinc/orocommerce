@@ -127,7 +127,7 @@
         &.highlight {
             > .grid-cell:first-child {
                 &:before {
-                    background-color: get-color('ui', 'warning-dark');
+                    background-color: $shopping-list-grid-effect-warning-dark;
                 }
             }
         }
@@ -135,7 +135,7 @@
         &.highlight-error {
             > .grid-cell:first-child {
                 &:before {
-                    background-color: get-color('ui', 'error-dark');
+                    background-color: $shopping-list-grid-effect-error-dark;
                 }
             }
         }
@@ -145,6 +145,11 @@
 
             .grid-cell {
                 @include loading-blur-overlay;
+
+                &:first-child::before {
+                    transition: opacity 400ms;
+                    opacity: 0;
+                }
             }
         }
 
@@ -196,18 +201,18 @@
 
             &.highlight {
                 &:before {
-                    background-color: get-color('ui', 'warning-dark');
+                    background-color: $shopping-list-grid-effect-warning-dark;
                 }
             }
             &.highlight-error {
                 &:before {
-                    background-color: get-color('ui', 'error-dark');
+                    background-color: $shopping-list-grid-effect-error-dark;
                 }
             }
 
             &.error {
                 &:before {
-                    animation: line-bounce 1s;
+                    animation: line-bounce 400ms 1s;
                 }
             }
         }
