@@ -101,10 +101,11 @@ Oro\Bundle\OrderBundle\Entity\OrderDiscount:
             - Type:
                 groups: [Default, OrderDiscountItemType]
                 type: numeric
-            - Range:
+            - Oro\Bundle\FormBundle\Validator\Constraints\PercentRange:
                 groups: [Default, OrderDiscountItemType]
                 min: -100
                 max: 100
+                fractional: false
         amount:
             - NotBlank:
                 groups: [Default, OrderDiscountItemType]
