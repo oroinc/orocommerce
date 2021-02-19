@@ -105,7 +105,7 @@ Oro\Bundle\OrderBundle\Entity\OrderDiscount:
                 groups: [Default, OrderDiscountItemType]
                 min: -100
                 max: 100
-                fractional: false
+                type: fractional_100
         amount:
             - NotBlank:
                 groups: [Default, OrderDiscountItemType]
