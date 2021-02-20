@@ -47,4 +47,4 @@ dynamic-imports:
 shim:
     jquery-elevatezoom:
         imports:
-            - jQuery=jquery
+            - single|jquery|jQuery
