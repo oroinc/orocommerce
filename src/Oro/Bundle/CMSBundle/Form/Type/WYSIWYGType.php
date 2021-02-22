@@ -2,10 +2,13 @@
 
 namespace Oro\Bundle\CMSBundle\Form\Type;
 
+use Oro\Bundle\CMSBundle\Form\DataTransformer\DigitalAssetTwigTagsTransformer;
 use Oro\Bundle\CMSBundle\Provider\HTMLPurifierScopeProvider;
+use Oro\Bundle\CMSBundle\Tools\DigitalAssetTwigTagsConverter;
 use Oro\Bundle\FormBundle\Provider\HtmlTagProvider;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -15,20 +18,26 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class WYSIWYGType extends AbstractType
 {
-    /** @var HtmlTagProvider */
-    private $htmlTagProvider;
+    private HtmlTagProvider $htmlTagProvider;
+    private HTMLPurifierScopeProvider $purifierScopeProvider;
+    private DigitalAssetTwigTagsConverter $digitalAssetTwigTagsConverter;
 
-    /** @var HTMLPurifierScopeProvider */
-    private $purifierScopeProvider;
-
-    /**
-     * @param HtmlTagProvider $htmlTagProvider
-     * @param HTMLPurifierScopeProvider $purifierScopeProvider
-     */
-    public function __construct(HtmlTagProvider $htmlTagProvider, HTMLPurifierScopeProvider $purifierScopeProvider)
-    {
+    public function __construct(
+        HtmlTagProvider $htmlTagProvider,
+        HTMLPurifierScopeProvider $purifierScopeProvider,
+        DigitalAssetTwigTagsConverter $digitalAssetTwigTagsConverter
+    ) {
         $this->htmlTagProvider = $htmlTagProvider;
         $this->purifierScopeProvider = $purifierScopeProvider;
+        $this->digitalAssetTwigTagsConverter = $digitalAssetTwigTagsConverter;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder->addViewTransformer(new DigitalAssetTwigTagsTransformer($this->digitalAssetTwigTagsConverter));
     }
 
     /**
