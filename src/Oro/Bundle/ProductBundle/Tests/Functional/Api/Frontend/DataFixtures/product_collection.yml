@@ -32,7 +32,8 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     product1_short_description:
         string: 'Product 1 Short Description'
     product1_description:
-        string: 'Product 1 Description'
+        wysiwyg: 'Product 1 Description. Twig Expr: "{{ " test "|trim }}".'
+        wysiwygStyle: '.test {color: {{ " red "|trim }}}'
     product2_name:
         string: 'Product 2'
     product2_short_description:

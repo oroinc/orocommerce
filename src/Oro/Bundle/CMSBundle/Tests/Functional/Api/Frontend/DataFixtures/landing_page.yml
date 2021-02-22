@@ -52,7 +52,8 @@ Oro\Bundle\RedirectBundle\Entity\Slug:
 
 Oro\Bundle\CMSBundle\Entity\Page:
     page1:
-        content: 'Page 1 content'
+        content: 'Page 1 content. Twig Expr: "{{ " test "|trim }}".'
+        contentStyle: '.test {color: {{ " red "|trim }}}'
         metaTitles: ['@page1_meta_title', '@page1_es_meta_title']
         metaDescriptions: ['@page1_meta_description', '@page1_es_meta_description']
         metaKeywords: ['@page1_meta_keywords', '@page1_es_meta_keywords']

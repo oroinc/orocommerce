@@ -20,7 +20,7 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     category1_short_description:
         string: 'Category 1 Short Description'
     category1_description:
-        string: 'Category 1 Description'
+        wysiwyg: 'Category 1 Description. Twig Expr: "{{ " test "|trim }}".'
     category1_meta_title:
         string: 'Category 1 Meta Title'
     category1_meta_description:

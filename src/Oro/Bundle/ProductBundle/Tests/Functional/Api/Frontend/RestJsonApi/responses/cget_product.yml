@@ -11,7 +11,7 @@ data:
             newArrival: true
             name: 'Product 1'
             shortDescription: 'Product 1 Short Description'
-            description: 'Product 1 Description'
+            description: '<style type="text/css">.test {color: red}</style>Product 1 Description. Twig Expr: "test".'
             metaTitle: 'Product 1 Meta Title'
             metaDescription: 'Product 1 Meta Description'
             metaKeywords: 'Product 1 Meta Keywords'

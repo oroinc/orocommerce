@@ -74,7 +74,8 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
         string: 'Product 1 Spanish Short Description'
         localization: '@es'
     product1_description:
-        wysiwyg: 'Product 1 Description'
+        wysiwyg: 'Product 1 Description. Twig Expr: "{{ " test "|trim }}".'
+        wysiwygStyle: '.test {color: {{ " red "|trim }}}'
     product1_es_description:
         wysiwyg: 'Product 1 Spanish Description'
         localization: '@es'

@@ -12,12 +12,27 @@ api:
                     data_type: localizedFallbackValue:titles
                 content:
                     data_type: string
+                    property_path: _
+                    depends_on: [content, content_style]
+                _content:
+                    exclude: true
+                    property_path: content
+                contentStyle:
+                    exclude: true
+                    property_path: content_style
+                contentProperties:
+                    exclude: true
+                    property_path: content_properties
                 url:
                     data_type: string
                     property_path: _
                 urls:
                     data_type: objects
                     property_path: _
+                draftUuid:
+                    exclude: true
+                draftSource:
+                    exclude: true
             actions:
                 create: false
                 update: false
