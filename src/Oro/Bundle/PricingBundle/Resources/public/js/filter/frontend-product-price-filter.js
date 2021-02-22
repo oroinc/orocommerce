@@ -3,6 +3,7 @@ import template from 'tpl-loader!oropricing/templates/product/pricing-range-filt
 import unitTemplate from 'tpl-loader!oropricing/templates/product/pricing-range-units-filter.html';
 import localeSettings from 'orolocale/js/locale-settings';
 import tools from 'oroui/js/tools';
+import error from 'oroui/js/error';
 
 /**
  * Frontend product price filter
@@ -30,6 +31,9 @@ const FrontendProductPriceFilter = ProductPriceFilter.extend({
         type: '[data-choice-value-select]'
     },
 
+    /**
+     * @extends typeValues
+     */
     typeValues: {
         ...ProductPriceFilter.prototype.typeValues,
         moreThan: 2,
@@ -42,15 +46,43 @@ const FrontendProductPriceFilter = ProductPriceFilter.extend({
         'change [data-choice-value-select]': '_onChangeChoiceValue'
     },
 
+    /**
+     * Enable/disable show filter criteria selector
+     * @property {boolean}
+     */
     showChoices: true,
 
     /**
+     * Enabled single unit mode
+     * @property {boolean}
+     */
+    singleUnitMode: false,
+
+    /**
+     * Default unit
+     * @property {string}
+     */
+    defaultUnitCode: null,
+
+    /**
+     * @constructor
      * @inheritDoc
      */
     constructor: function FrontendProductPriceFilter(options) {
+        if (this.singleUnitMode && !this.defaultUnitCode) {
+            error.showErrorInConsole(
+                `'defaultUnitCode' property should be defined when 'singleUnitMode' property is enabled`
+            );
+        }
+
         FrontendProductPriceFilter.__super__.constructor.call(this, options);
     },
 
+    /**
+     * @override swapValues
+     * @param data
+     * @returns {Object}
+     */
     swapValues(data) {
         if (!this.isApplicable(data.type)) {
             return data;
@@ -64,38 +96,62 @@ const FrontendProductPriceFilter = ProductPriceFilter.extend({
             }
         }
 
-        if (!data.value && data.value_end) {
-            [data.value, data.value_end] = [parseFloat(data.value_end), ''];
-        }
-
         return data;
     },
 
+    /**
+     * @override
+     * @param newValue
+     * @param oldValue
+     * @returns {boolean}
+     */
     isUpdatable(newValue, oldValue) {
         return !tools.isEqualsLoosely(newValue, oldValue);
     },
 
+    /**
+     * @extends _formatRawValue
+     * @param value
+     * @returns {Object}
+     * @private
+     */
     _formatRawValue(value) {
         const result = FrontendProductPriceFilter.__super__._formatRawValue.call(this, value);
 
         return {
             ...result,
+            unit: this.singleUnitMode ? this.defaultUnitCode : result.unit,
             value: result.value ? result.value.toString() : '',
             value_end: result.value_end ? result.value_end.toString() : ''
         };
     },
 
+    /**
+     * @extends getTemplateData
+     * @returns {Object}
+     */
     getTemplateData() {
-        const data = FrontendProductPriceFilter.__super__.getTemplateData.call(this);
-
-        data.showChoices = this.showChoices;
-        data.currency = {
-            isPrepend: localeSettings.isCurrencySymbolPrepend(),
-            symbol: localeSettings.getCurrencySymbol(),
-            extended: localeSettings.getCurrencySymbol().length > 1
+        return {
+            ...FrontendProductPriceFilter.__super__.getTemplateData.call(this),
+            showChoices: this.showChoices,
+            currency: {
+                isPrepend: localeSettings.isCurrencySymbolPrepend(),
+                symbol: localeSettings.getCurrencySymbol(),
+                extended: localeSettings.getCurrencySymbol().length > 1
+            }
         };
+    },
 
-        return data;
+    /**
+     * @extends getUnitTemplateData
+     * @returns {Object}
+     */
+    getUnitTemplateData() {
+        return {
+            ...FrontendProductPriceFilter.__super__.getUnitTemplateData.call(this),
+            singleUnitMode: this.singleUnitMode,
+            defaultUnitCode: this.defaultUnitCode
+        };
     }
 });
 
