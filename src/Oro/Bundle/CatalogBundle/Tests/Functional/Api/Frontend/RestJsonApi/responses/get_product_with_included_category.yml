@@ -46,7 +46,7 @@ included:
             updatedAt: '@category1->updatedAt->format("Y-m-d\TH:i:s\Z")'
             title: 'Category 1'
             shortDescription: 'Category 1 Short Description'
-            description: 'Category 1 Description'
+            description: 'Category 1 Description. Twig Expr: "test".'
             url: '/category1_slug_default'
             urls:
                 - { url: '/category1_slug_en_CA', localizationId: '<toString(@en_CA->id)>' }

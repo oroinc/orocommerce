@@ -35,6 +35,14 @@ class WYSIWYGPropertiesTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expected, $form->getData());
     }
 
+    public function testSubmitEmpty(): void
+    {
+        $form = $this->factory->create(WYSIWYGPropertiesType::class);
+        $form->submit('[]');
+
+        $this->assertNull($form->getData());
+    }
+
     public function testFinishView(): void
     {
         $view = new FormView();
