@@ -196,9 +196,10 @@ define([
         },
 
         /**
-         * @private
+         * Return units template data
+         * @returns {{choices: [], selectedChoice, selectedChoiceLabel: string}}
          */
-        _appendUnitFilter: function($filter) {
+        getUnitTemplateData() {
             const value = _.extend({}, this.emptyValue, this.value);
             let selectedChoiceLabel = '';
 
@@ -208,11 +209,18 @@ define([
                 }).label;
             }
 
-            const $unitFilter = $(this.unitTemplate({
+            return {
                 choices: this.unitChoices,
                 selectedChoice: value.unit,
                 selectedChoiceLabel: selectedChoiceLabel
-            }));
+            };
+        },
+
+        /**
+         * @private
+         */
+        _appendUnitFilter: function($filter) {
+            const $unitFilter = $(this.unitTemplate(this.getUnitTemplateData()));
 
             $filter.addClass('product-price-filter-criteria');
             const $filterValue = $filter.find('.filter-value');
