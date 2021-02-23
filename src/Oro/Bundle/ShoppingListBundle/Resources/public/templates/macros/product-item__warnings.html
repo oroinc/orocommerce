@@ -1,7 +1,7 @@
 <% if (warnings && warnings.length) { %>
 <div class="notification notification--warning" role="alert">
     <% for (var i = 0; i < warnings.length; i++) { %>
-    <div class="notification__item">
+    <div class="notification__item notification__item--flex">
         <span class="fa-exclamation-circle" aria-hidden="true"></span>
         <span class="notification__text"><%- warnings[i] %></span>
     </div>
