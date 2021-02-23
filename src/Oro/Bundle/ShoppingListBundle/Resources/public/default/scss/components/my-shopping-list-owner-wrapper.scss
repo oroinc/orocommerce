@@ -8,6 +8,10 @@
     margin-bottom: $offset-y-s;
     margin-left: auto;
 
+    .action {
+        cursor: pointer;
+    }
+
     .shopping-list-owner,
     &__actions {
         padding: $offset-y-s 0;
