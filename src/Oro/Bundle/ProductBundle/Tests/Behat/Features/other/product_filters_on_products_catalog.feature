@@ -1,6 +1,10 @@
 @ticket-BB-7225
 @fixture-OroProductBundle:product_frontend.yml
 Feature: Product Filters On Products Catalog
+  In order to ...
+  As an ...
+  I should be able to ...
+
   Scenario: Feature Background
     Given sessions active:
       | admin    |first_session |
