@@ -1,10 +1,18 @@
 # Configuration for https://github.com/oroinc/phpstan-rules/
 trusted_data:
     variables:
+        Oro\Bundle\PricingBundle\ORM\MultiInsertShardQueryExecutor:
+            executeNative:
+                sourceSql: true
         Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRepository:
             deleteUnlinkedRules:
                 alias: true
                 entityName: true
+        Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository:
+            insertByProductsRangeForBaseProductPrice:
+                priceToProductRelationClass: true
+            insertByProductsRangeForBaseProductPriceToTempTable:
+                priceToProductRelationClass: true
         Oro\Bundle\PricingBundle\Model\FrontendProductListModifier:
             applyPriceListLimitations:
                 rootAlias: true
@@ -71,6 +79,12 @@ trusted_data:
             restrictByManualPrices:
                 qbSelectPart: true
     safe_methods:
+        Oro\Bundle\PricingBundle\ORM\MySqlTempTableManipulator:
+            getTempTableNameForEntity: true
+        Oro\Bundle\PricingBundle\ORM\PostgreSqlTempTableManipulator:
+            getTempTableNameForEntity: true
+        Oro\Bundle\PricingBundle\ORM\AbstractTempTableManipulator:
+            getTempTableNameForEntity: true
         Oro\Bundle\PricingBundle\Expression\PriceListQueryConverterExtension:
             generateTableAlias: true
         Oro\Bundle\PricingBundle\Sharding\ShardManager:
@@ -83,6 +97,11 @@ trusted_data:
         Oro\Bundle\PricingBundle\Compiler\PriceListRuleCompiler:
             getRootAlias: true
             getValueByExpression: true
+
     check_methods_safety:
         Oro\Bundle\PricingBundle\Model\FrontendProductListModifier:
             getParameterName: true
+
+    check_methods:
+        Oro\Bundle\PricingBundle\ORM\MultiInsertShardQueryExecutor:
+            executeNative: [0, 2]
