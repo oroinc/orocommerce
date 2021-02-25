@@ -153,6 +153,8 @@ services:
     oro_pricing.pricing_strategy.merge_price_combining_strategy:
         class: Oro\Bundle\PricingBundle\PricingStrategy\MergePricesCombiningStrategy
         parent: oro_pricing.pricing_strategy.abstract_price_combining_strategy
+        calls:
+            - ['setTempTableManipulator', ['@oro_pricing.orm.temp_table_manipulator']]
         tags:
             - { name: oro_pricing.price_strategy, alias: merge_by_priority }
 
@@ -1250,6 +1252,37 @@ services:
         abstract: true
         tags:
             - { name: oro_entity.sql_walker }
+
+    oro_pricing.sql_walker.temp_table:
+        class: Oro\Bundle\PricingBundle\ORM\Walker\TempTableOutputResultModifier
+        public: false
+        abstract: true
+        tags:
+            - { name: oro_entity.sql_walker }
+
+    oro_pricing.orm.temp_table_manipulator.abstract:
+        class: Oro\Bundle\PricingBundle\ORM\AbstractTempTableManipulator
+        abstract: true
+        arguments:
+            - '@doctrine'
+            - '@oro_entity.orm.native_query_executor_helper'
+            - '@oro_pricing.orm.multi_insert_shard_query_executor'
+            - '@oro_pricing.shard_manager'
+
+    oro_pricing.orm.temp_table_manipulator.mysql:
+        class: Oro\Bundle\PricingBundle\ORM\MySqlTempTableManipulator
+        parent: oro_pricing.orm.temp_table_manipulator.abstract
+
+    oro_pricing.orm.temp_table_manipulator.postgresql:
+        class: Oro\Bundle\PricingBundle\ORM\PostgreSqlTempTableManipulator
+        parent: oro_pricing.orm.temp_table_manipulator.abstract
+
+    oro_pricing.orm.temp_table_manipulator:
+        class:  Oro\Bundle\PricingBundle\ORM\TempTableManipulator
+        arguments:
+            - '@doctrine'
+            - '@oro_pricing.orm.temp_table_manipulator.postgresql'
+            - '@oro_pricing.orm.temp_table_manipulator.mysql'
 
     oro_pricing.manager.price_manager:
         class: Oro\Bundle\PricingBundle\Manager\PriceManager
