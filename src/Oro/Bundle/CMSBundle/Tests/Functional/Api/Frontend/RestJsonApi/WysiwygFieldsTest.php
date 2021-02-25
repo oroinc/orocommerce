@@ -31,14 +31,10 @@ class WysiwygFieldsTest extends FrontendRestJsonApiTestCase
                         'id'         => '<toString(@product1->id)>',
                         'attributes' => [
                             'productAttributes' => [
-                                'wysiwyg'     => [
-                                    'value' => 'Product 1 WYSIWYG Text',
-                                    'style' => '<style></style>'
-                                ],
-                                'wysiwygAttr' => [
-                                    'value' => 'Product 1 WYSIWYG Attr Text',
-                                    'style' => '<style></style>'
-                                ]
+                                'wysiwyg'     => '<style type="text/css">.test {color: red}</style>'
+                                    . 'Product 1 WYSIWYG Text. Twig Expr: "test".',
+                                'wysiwygAttr' => '<style type="text/css">.test {color: red}</style>'
+                                    . 'Product 1 WYSIWYG Attr Text. Twig Expr: "test".'
                             ]
                         ]
                     ],

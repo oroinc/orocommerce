@@ -131,9 +131,7 @@ The precision for the product unit precision.
 
 {@inheritdoc}
 
-**Please note:**
-
-*This field is **required** and must remain defined.*
+**This field must not be empty, if it is passed.**
 
 ### product
 

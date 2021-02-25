@@ -4,9 +4,12 @@ namespace Oro\Bundle\CMSBundle\Api\Processor;
 
 use Oro\Bundle\ApiBundle\ApiDoc\EntityDescriptionProvider;
 use Oro\Bundle\ApiBundle\Config\EntityDefinitionConfig;
-use Oro\Bundle\ApiBundle\Config\EntityDefinitionFieldConfig;
+use Oro\Bundle\ApiBundle\Processor\GetConfig\CompleteDescriptions\FieldDescriptionUtil;
 use Oro\Bundle\ApiBundle\Processor\GetConfig\ConfigContext;
+use Oro\Bundle\ApiBundle\Request\ApiAction;
 use Oro\Bundle\ApiBundle\Request\DataType;
+use Oro\Bundle\ApiBundle\Util\ConfigUtil;
+use Oro\Bundle\CMSBundle\Api\Processor\ConfigureCombinedWYSIWYGFields as WYSIWYGFields;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 use Symfony\Component\Config\FileLocatorInterface;
@@ -44,15 +47,35 @@ class CompleteWYSIWYGFieldsDescriptions implements ProcessorInterface
     {
         /** @var ConfigContext $context */
 
-        $wysiwygFields = ConfigureWYSIWYGFields::getWysiwygFields($context);
-        if (empty($wysiwygFields)) {
-            return;
-        }
-
-        $entityClass = $context->getClassName();
         $definition = $context->getResult();
+        $entityClass = $context->getClassName();
+        $targetAction = $context->getTargetAction();
+
+        $wysiwygFields = ConfigureWYSIWYGFields::getWysiwygFields($definition);
+        if ($wysiwygFields) {
+            $this->processWysiwygFields($definition, $entityClass, $wysiwygFields, $targetAction);
+        }
+        $renderedWysiwygFields = ConfigureWYSIWYGFields::getRenderedWysiwygFields($definition);
+        if ($renderedWysiwygFields) {
+            $this->processRenderedWysiwygFields($definition, $entityClass, $renderedWysiwygFields, $targetAction);
+        }
+    }
+
+    /**
+     * @param EntityDefinitionConfig $definition
+     * @param string                 $entityClass
+     * @param string[]               $wysiwygFields
+     * @param string|null            $targetAction
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
+    private function processWysiwygFields(
+        EntityDefinitionConfig $definition,
+        string $entityClass,
+        array $wysiwygFields,
+        ?string $targetAction
+    ): void {
         foreach ($wysiwygFields as $fieldName) {
-            $field = $this->getWysiwygField($definition, $fieldName);
+            $field = $definition->getField($fieldName);
             if (null === $field) {
                 continue;
             }
@@ -66,60 +89,68 @@ class CompleteWYSIWYGFieldsDescriptions implements ProcessorInterface
             if (null === $targetDefinition) {
                 continue;
             }
-            if ($this->isFieldNotExistOrExcluded($targetDefinition, 'value')) {
+            if ($this->isFieldNotExistOrExcluded($targetDefinition, WYSIWYGFields::FIELD_VALUE)
+                || $this->isFieldNotExistOrExcluded($targetDefinition, WYSIWYGFields::FIELD_STYLE)
+                || $this->isFieldNotExistOrExcluded($targetDefinition, WYSIWYGFields::FIELD_PROPERTIES)
+            ) {
                 continue;
             }
-            if ($this->isFieldNotExistOrExcluded($targetDefinition, 'style')) {
-                continue;
-            }
-            $field->setDescription(
-                $this->getWysiwygFieldDescription(
-                    $entityClass,
-                    $fieldName,
-                    !$this->isFieldNotExistOrExcluded($targetDefinition, 'properties')
-                )
-            );
+            $field->setDescription($this->getWysiwygFieldDescription(
+                $entityClass,
+                $targetDefinition->getField(WYSIWYGFields::FIELD_VALUE)->getPropertyPath($fieldName),
+                $targetAction,
+                $this->isFieldNotExistOrExcluded($targetDefinition, WYSIWYGFields::FIELD_VALUE_RENDERED)
+            ));
         }
     }
 
     /**
      * @param EntityDefinitionConfig $definition
-     * @param string                 $propertyPath
-     *
-     * @return EntityDefinitionFieldConfig|null
+     * @param string                 $entityClass
+     * @param array                  $renderedWysiwygFields
+     * @param string|null            $targetAction
      */
-    private function getWysiwygField(
+    private function processRenderedWysiwygFields(
         EntityDefinitionConfig $definition,
-        string $propertyPath
-    ): ?EntityDefinitionFieldConfig {
-        $fieldName = $definition->findFieldNameByPropertyPath($propertyPath);
-        if (0 === strncmp($fieldName, '_', 1)) {
-            $fieldName = substr($fieldName, 1);
-        }
+        string $entityClass,
+        array $renderedWysiwygFields,
+        ?string $targetAction
+    ): void {
+        foreach ($renderedWysiwygFields as $fieldName => $info) {
+            if (false !== strpos($fieldName, ConfigUtil::PATH_DELIMITER)) {
+                continue;
+            }
+            $field = $definition->getField($fieldName);
+            if (null === $field) {
+                continue;
+            }
+            if ($field->hasDescription()) {
+                continue;
+            }
 
-        return $definition->getField($fieldName);
+            $field->setDescription($this->getRenderedWysiwygFieldDescription(
+                $entityClass,
+                $fieldName,
+                $targetAction
+            ));
+        }
     }
 
     /**
-     * @param string $entityClass
-     * @param string $fieldName
-     * @param bool   $hasPropertiesField
+     * @param string      $entityClass
+     * @param string      $fieldName
+     * @param string|null $targetAction
+     * @param bool        $isRaw
      *
      * @return string
      */
     private function getWysiwygFieldDescription(
         string $entityClass,
         string $fieldName,
-        bool $hasPropertiesField
+        ?string $targetAction,
+        bool $isRaw
     ): string {
-        $descriptionFile = $hasPropertiesField ? 'wysiwyg.md' : 'wysiwyg_without_properties.md';
-        if (!isset($this->descriptions[$descriptionFile])) {
-            $this->descriptions[$descriptionFile] = file_get_contents(
-                $this->fileLocator->locate('@OroCMSBundle/Resources/doc/api/' . $descriptionFile)
-            );
-        }
-
-        $result = $this->descriptions[$descriptionFile];
+        $result = $this->loadDescriptionFile($this->getWysiwygFieldDescriptionFile($isRaw, $targetAction));
 
         $fieldDescription = $this->entityDescriptionProvider->getFieldDocumentation($entityClass, $fieldName);
         if ($fieldDescription) {
@@ -127,6 +158,67 @@ class CompleteWYSIWYGFieldsDescriptions implements ProcessorInterface
         }
 
         return $result;
+    }
+
+    /**
+     * @param bool        $isRaw
+     * @param string|null $targetAction
+     *
+     * @return string
+     */
+    private function getWysiwygFieldDescriptionFile(bool $isRaw, ?string $targetAction): string
+    {
+        if ($isRaw) {
+            return 'wysiwyg_raw.md';
+        }
+
+        if (ApiAction::CREATE === $targetAction || ApiAction::UPDATE === $targetAction) {
+            return 'wysiwyg_for_update.md';
+        }
+
+        return 'wysiwyg.md';
+    }
+
+    /**
+     * @param string      $entityClass
+     * @param string      $fieldName
+     * @param string|null $targetAction
+     *
+     * @return string
+     */
+    private function getRenderedWysiwygFieldDescription(
+        string $entityClass,
+        string $fieldName,
+        ?string $targetAction
+    ): string {
+        $result = $this->loadDescriptionFile('wysiwyg_rendered.md');
+
+        $fieldDescription = $this->entityDescriptionProvider->getFieldDocumentation($entityClass, $fieldName);
+        if ($fieldDescription) {
+            $result = $fieldDescription . "\n\n" . $result;
+        }
+
+        if (ApiAction::CREATE === $targetAction || ApiAction::UPDATE === $targetAction) {
+            $result .= "\n\n" . FieldDescriptionUtil::MODIFY_READ_ONLY_FIELD_DESCRIPTION;
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param string $descriptionFile
+     *
+     * @return string
+     */
+    private function loadDescriptionFile(string $descriptionFile): string
+    {
+        if (!isset($this->descriptions[$descriptionFile])) {
+            $this->descriptions[$descriptionFile] = file_get_contents(
+                $this->fileLocator->locate('@OroCMSBundle/Resources/doc/api/' . $descriptionFile)
+            );
+        }
+
+        return $this->descriptions[$descriptionFile];
     }
 
     /**

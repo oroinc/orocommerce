@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\CMSBundle\Api\Processor;
 
-use Oro\Bundle\ApiBundle\Config\EntityDefinitionConfig;
-use Oro\Bundle\ApiBundle\Config\EntityDefinitionFieldConfig;
 use Oro\Bundle\ApiBundle\Processor\GetConfig\ConfigContext;
 use Oro\Bundle\CMSBundle\Provider\WYSIWYGFieldsProvider;
 use Oro\Component\ChainProcessor\ContextInterface;
@@ -44,43 +42,21 @@ class ConfigureWYSIWYGAttributes implements ProcessorInterface
             return;
         }
 
-        $wysiwygFields = ConfigureWYSIWYGFields::getWysiwygFields($context);
-        if (empty($wysiwygFields)) {
+        $renderedWysiwygFields = ConfigureWYSIWYGFields::getRenderedWysiwygFields($definition);
+        if (!$renderedWysiwygFields) {
             return;
         }
 
         $entityClass = $context->getClassName();
-        foreach ($wysiwygFields as $fieldName) {
-            if (!$this->wysiwygFieldsProvider->isWysiwygAttribute($entityClass, $fieldName)) {
-                continue;
-            }
-            $field = $this->getWysiwygField($definition, $fieldName);
-            if (null === $field) {
-                continue;
-            }
-            $field->setExcluded();
-            $fieldDependsOn = $field->getDependsOn() ?? [];
-            foreach ($fieldDependsOn as $dependsOnFieldName) {
-                $attributesField->addDependsOn($dependsOnFieldName);
+        foreach ($renderedWysiwygFields as $fieldName => [$valuePropertyName, $stylePropertyName]) {
+            if ($this->wysiwygFieldsProvider->isWysiwygAttribute($entityClass, $valuePropertyName)) {
+                $field = $definition->getField($fieldName);
+                if (null !== $field) {
+                    $field->setExcluded();
+                    $attributesField->addDependsOn($valuePropertyName);
+                    $attributesField->addDependsOn($stylePropertyName);
+                }
             }
         }
-    }
-
-    /**
-     * @param EntityDefinitionConfig $definition
-     * @param string                 $propertyPath
-     *
-     * @return EntityDefinitionFieldConfig|null
-     */
-    private function getWysiwygField(
-        EntityDefinitionConfig $definition,
-        string $propertyPath
-    ): ?EntityDefinitionFieldConfig {
-        $fieldName = $definition->findFieldNameByPropertyPath($propertyPath);
-        if (0 === strncmp($fieldName, '_', 1)) {
-            $fieldName = substr($fieldName, 1);
-        }
-
-        return $definition->getField($fieldName);
     }
 }

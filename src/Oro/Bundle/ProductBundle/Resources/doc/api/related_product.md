@@ -54,7 +54,6 @@ Example:
       }
    }
 }
-
 ```
 {@/request}
 
@@ -63,8 +62,6 @@ Example:
 Delete a relationship between the main product and one of its related products.
 
 **Definition:** In the product details, related products (like accessories, additional services, and similar products) may be shown to the buyer and sales manager in the Related Items section, alongside with the up-sell and cross-sell products.
-
-{@inheritdoc}
 
 ### delete_list
 
