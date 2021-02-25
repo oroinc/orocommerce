@@ -95,7 +95,8 @@ is the same as in the created order.**
 
 {@inheritdoc}
 
-**This value can be omitted if `productSku` is specified in the request.**
+**Note:**
+This value can be omitted if the **productSku** field is specified in the request.
 
 ## SUBRESOURCES
 

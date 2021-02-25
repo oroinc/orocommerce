@@ -73,7 +73,7 @@ class ComputeProductAvailability implements ProcessorInterface
             if ($availabilityDate) {
                 $availabilityDate = $this->valueTransformer->transformFieldValue(
                     $availabilityDate,
-                    $context->getConfig()->getField($availabilityDateFieldName)->toArray(),
+                    $context->getConfig()->getField($availabilityDateFieldName)->toArray(true),
                     $context->getNormalizationContext()
                 );
             }

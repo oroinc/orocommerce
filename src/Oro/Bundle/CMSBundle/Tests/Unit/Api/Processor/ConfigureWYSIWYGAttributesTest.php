@@ -28,7 +28,7 @@ class ConfigureWYSIWYGAttributesTest extends ConfigProcessorTestCase
         );
     }
 
-    public function testProcessWithoutWysiwygFields()
+    public function testProcessWithoutRenderedWysiwygFields()
     {
         $config = [
             'fields' => [
@@ -49,7 +49,10 @@ class ConfigureWYSIWYGAttributesTest extends ConfigProcessorTestCase
     public function testProcessWithoutWysiwygAttributes()
     {
         $config = [
-            'fields' => [
+            'rendered_wysiwyg_fields' => [
+                'wysiwygField' => ['wysiwygField', 'wysiwygField_style']
+            ],
+            'fields'                  => [
                 self::ATTRIBUTES_FIELD_NAME => null,
                 'wysiwygField'              => null
             ]
@@ -60,13 +63,15 @@ class ConfigureWYSIWYGAttributesTest extends ConfigProcessorTestCase
             ->with(self::TEST_CLASS_NAME, 'wysiwygField')
             ->willReturn(false);
 
-        $this->context->set('_wysiwyg_fields', ['wysiwygField']);
         $this->context->setResult($this->createConfigObject($config));
         $this->processor->process($this->context);
 
         $this->assertConfig($config, $this->context->getResult());
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function testProcess()
     {
         $this->wysiwygFieldsProvider->expects(self::exactly(4))
@@ -78,12 +83,18 @@ class ConfigureWYSIWYGAttributesTest extends ConfigProcessorTestCase
                 [self::TEST_CLASS_NAME, 'wysiwygField4', false]
             ]);
 
-        $this->context->set('_wysiwyg_fields', ['wysiwygField1', 'wysiwygField2', 'wysiwygField3', 'wysiwygField4']);
+        $renderedWysiwygFields = [
+            'wysiwygField1'        => ['wysiwygField1', 'wysiwygField1_style'],
+            'renamedWysiwygField2' => ['wysiwygField2', 'wysiwygField2_style'],
+            'wysiwygField3'        => ['wysiwygField3', 'wysiwygField3_style'],
+            'wysiwygField4'        => ['wysiwygField4', 'wysiwygField4_style']
+        ];
         $this->context->setResult($this->createConfigObject([
-            'fields' => [
+            'rendered_wysiwyg_fields' => $renderedWysiwygFields,
+            'fields'                  => [
                 self::ATTRIBUTES_FIELD_NAME => null,
                 'wysiwygField1'             => [
-                    'depends_on' => ['wysiwygField1', 'wysiwygField1_style', 'wysiwygField1_properties']
+                    'depends_on' => ['wysiwygField1', 'wysiwygField1_style']
                 ],
                 '_wysiwygField1'            => [
                     'property_path' => 'wysiwygField1',
@@ -95,8 +106,8 @@ class ConfigureWYSIWYGAttributesTest extends ConfigProcessorTestCase
                 'wysiwygField1_properties'  => [
                     'exclude' => true
                 ],
-                'wysiwygField2'             => [
-                    'depends_on' => ['wysiwygField2', 'wysiwygField2_style', 'wysiwygField2_properties']
+                'renamedWysiwygField2'      => [
+                    'depends_on' => ['wysiwygField2', 'wysiwygField2_style']
                 ],
                 '_wysiwygField2'            => [
                     'property_path' => 'wysiwygField2',
@@ -116,19 +127,18 @@ class ConfigureWYSIWYGAttributesTest extends ConfigProcessorTestCase
 
         $this->assertConfig(
             [
-                'fields' => [
+                'rendered_wysiwyg_fields' => $renderedWysiwygFields,
+                'fields'                  => [
                     self::ATTRIBUTES_FIELD_NAME => [
                         'depends_on' => [
                             'wysiwygField1',
                             'wysiwygField1_style',
-                            'wysiwygField1_properties',
                             'wysiwygField2',
-                            'wysiwygField2_style',
-                            'wysiwygField2_properties'
+                            'wysiwygField2_style'
                         ]
                     ],
                     'wysiwygField1'             => [
-                        'depends_on' => ['wysiwygField1', 'wysiwygField1_style', 'wysiwygField1_properties'],
+                        'depends_on' => ['wysiwygField1', 'wysiwygField1_style'],
                         'exclude'    => true
                     ],
                     '_wysiwygField1'            => [
@@ -141,8 +151,8 @@ class ConfigureWYSIWYGAttributesTest extends ConfigProcessorTestCase
                     'wysiwygField1_properties'  => [
                         'exclude' => true
                     ],
-                    'wysiwygField2'             => [
-                        'depends_on' => ['wysiwygField2', 'wysiwygField2_style', 'wysiwygField2_properties'],
+                    'renamedWysiwygField2'      => [
+                        'depends_on' => ['wysiwygField2', 'wysiwygField2_style'],
                         'exclude'    => true
                     ],
                     '_wysiwygField2'            => [

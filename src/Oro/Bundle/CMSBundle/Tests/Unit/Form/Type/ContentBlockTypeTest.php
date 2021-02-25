@@ -10,6 +10,7 @@ use Oro\Bundle\CMSBundle\Form\Type\TextContentVariantCollectionType;
 use Oro\Bundle\CMSBundle\Form\Type\TextContentVariantType;
 use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType;
 use Oro\Bundle\CMSBundle\Provider\HTMLPurifierScopeProvider;
+use Oro\Bundle\CMSBundle\Tools\DigitalAssetTwigTagsConverter;
 use Oro\Bundle\CMSBundle\Validator\Constraints\TwigContent;
 use Oro\Bundle\CMSBundle\Validator\Constraints\TwigContentValidator;
 use Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYG;
@@ -48,6 +49,13 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
     {
         $htmlTagProvider = $this->createMock(HtmlTagProvider::class);
         $purifierScopeProvider = $this->createMock(HTMLPurifierScopeProvider::class);
+        $digitalAssetTwigTagsConverter = $this->createMock(DigitalAssetTwigTagsConverter::class);
+        $digitalAssetTwigTagsConverter->expects(self::any())
+            ->method('convertToUrls')
+            ->willReturnArgument(0);
+        $digitalAssetTwigTagsConverter->expects(self::any())
+            ->method('convertToTwigTags')
+            ->willReturnArgument(0);
 
         return [
             new PreloadedExtension(
@@ -57,7 +65,11 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
                     LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionTypeStub(),
                     new TextContentVariantCollectionType(),
                     new TextContentVariantType(),
-                    WYSIWYGType::class => new WYSIWYGType($htmlTagProvider, $purifierScopeProvider),
+                    WYSIWYGType::class => new WYSIWYGType(
+                        $htmlTagProvider,
+                        $purifierScopeProvider,
+                        $digitalAssetTwigTagsConverter
+                    )
                 ],
                 []
             ),

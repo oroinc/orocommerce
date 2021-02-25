@@ -8,8 +8,8 @@ Retrieve a product collection for the web catalog tree node content.
 
 This API resource uses high-performance search queries based on indexed products information.
 The detailed information about **searchQuery**, **aggregations** and **sort** filters can be found
-in the documentation for `productsearch` API resource.
-These filters are used to filter and sorting data for the `products` relationship.
+in the documentation for **productsearch** API resource.
+These filters are used to filter and sorting data for the **products** relationship.
 
 ## FIELDS
 

@@ -22,9 +22,8 @@ The created record is returned in the response.
 
 {@inheritdoc}
 
-**Please note:**
-
-*The fields **internal_status**, **customer_status**, **requestAdditionalNotes** are not configurable by API, because they depend on the workflow states.*
+**Note:**
+The fields **internal_status**, **customer_status**, **requestAdditionalNotes** are not configurable by API, because they depend on the workflow states.
 
 {@request:json_api}
 Example:
@@ -79,9 +78,8 @@ The updated record is returned in the response.
 
 {@inheritdoc}
 
-**Please note:**
-
-*The fields **internal_status**, **customer_status**, **requestAdditionalNotes** are not configurable by API, because they depend on the workflow states.*
+**Note:**
+The fields **internal_status**, **customer_status**, **requestAdditionalNotes** are not configurable by API, because they depend on the workflow states.
 
 {@request:json_api}
 Example:
@@ -155,9 +153,7 @@ Delete a collection of request records.
 
 {@inheritdoc}
 
-**Please note:**
-
-*This field is **required** and must remain defined.*
+**This field must not be empty, if it is passed.**
 
 ### lastName
 
@@ -171,9 +167,7 @@ Delete a collection of request records.
 
 {@inheritdoc}
 
-**Please note:**
-
-*This field is **required** and must remain defined.*
+**This field must not be empty, if it is passed.**
 
 ### email
 
@@ -187,9 +181,7 @@ Delete a collection of request records.
 
 {@inheritdoc}
 
-**Please note:**
-
-*This field is **required** and must remain defined.*
+**This field must not be empty, if it is passed.**
 
 ### company
 
@@ -203,9 +195,7 @@ Delete a collection of request records.
 
 {@inheritdoc}
 
-**Please note:**
-
-*This field is **required** and must remain defined.*
+**This field must not be empty, if it is passed.**
 
 ### customer_status
 
@@ -421,7 +411,6 @@ Example:
     }
   ]
 }
-
 ```
 {@/request}
 
@@ -445,7 +434,6 @@ Example:
     }
   ]
 }
-
 ```
 {@/request}
 
@@ -469,7 +457,6 @@ Example:
     }
   ]
 }
-
 ```
 {@/request}
 
@@ -503,7 +490,6 @@ Example:
     }
   ]
 }
-
 ```
 {@/request}
 
@@ -527,7 +513,6 @@ Example:
     }
   ]
 }
-
 ```
 {@/request}
 
@@ -551,7 +536,6 @@ Example:
     }
   ]
 }
-
 ```
 {@/request}
 

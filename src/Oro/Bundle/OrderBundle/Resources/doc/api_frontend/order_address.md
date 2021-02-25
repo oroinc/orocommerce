@@ -13,11 +13,11 @@ Retrieve a specific order address record.
 This resource describes an order address entity. It cannot be used independently to create addresses.
 Addresses can only be created together with an order via the order creation API resource.
 
-**Please note:**
+{@inheritdoc}
+
+**Note:**
 It is sufficient for the submitted order address to have at least one of the following:
 a customer user address, or a customer address, or filled in address fields.
-
-{@inheritdoc}
 
 ## FIELDS
 
@@ -28,7 +28,7 @@ a customer user address, or a customer address, or filled in address fields.
 {@inheritdoc}
 
 **Conditionally required field:**
-*Either **organization** or **firstName** and **lastName** must be defined.*
+Either **organization** or **firstName** and **lastName** must be defined.
 
 ### lastName
 
@@ -37,7 +37,7 @@ a customer user address, or a customer address, or filled in address fields.
 {@inheritdoc}
 
 **Conditionally required field:**
-*Either **organization** or **firstName** and **lastName** must be defined.*
+Either **organization** or **firstName** and **lastName** must be defined.
 
 ### organization
 
@@ -46,7 +46,7 @@ a customer user address, or a customer address, or filled in address fields.
 {@inheritdoc}
 
 **Conditionally required field:**
-*Either **organization** or **firstName** and **lastName** must be defined.*
+Either **organization** or **firstName** and **lastName** must be defined.
 
 ### street
 
@@ -87,7 +87,7 @@ a customer user address, or a customer address, or filled in address fields.
 {@inheritdoc}
 
 **Conditionally required field:**
-*State is required for some countries.*
+A state is required for some countries.
 
 ### customerUserAddress
 
