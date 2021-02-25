@@ -74,7 +74,9 @@ class CategoryTypeTest extends FormIntegrationTestCase
                 [
                     'label' => 'oro.catalog.category.titles.label',
                     'required' => true,
-                    'entry_options' => ['constraints' => [new NotBlank()]],
+                    'entry_options' => ['constraints' => [
+                        new NotBlank(['message' => 'oro.catalog.category.title.blank'])
+                    ]],
                 ]
             )
             ->will($this->returnSelf());

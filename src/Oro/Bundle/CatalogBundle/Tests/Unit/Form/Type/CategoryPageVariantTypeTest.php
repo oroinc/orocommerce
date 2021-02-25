@@ -9,6 +9,9 @@ use Oro\Bundle\CatalogBundle\Form\Type\CategoryTreeType;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\LocaleBundle\Validator\Constraints\NotBlankDefaultLocalizedFallbackValue;
+use Oro\Bundle\LocaleBundle\Validator\Constraints\NotBlankDefaultLocalizedFallbackValueValidator;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
@@ -88,8 +91,8 @@ class CategoryPageVariantTypeTest extends FormIntegrationTestCase
             ]
         );
 
-        $this->assertTrue($form->isSynchronized());
-        $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized(), 'Form isSynchronized');
+        $this->assertTrue($form->isValid(), 'Form isValid');
 
         $this->assertEquals(
             [
@@ -108,7 +111,10 @@ class CategoryPageVariantTypeTest extends FormIntegrationTestCase
     protected function getCategory($id)
     {
         if (!array_key_exists($id, self::$categories)) {
-            self::$categories[$id] = $this->getEntity(Category::class, ['id' => $id]);
+            /** @var Category $category */
+            $category = $this->getEntity(Category::class, ['id' => $id]);
+            $category->addTitle((new LocalizedFallbackValue())->setString('Category ' . $id));
+            self::$categories[$id] = $category;
         }
 
         return self::$categories[$id];
@@ -136,5 +142,19 @@ class CategoryPageVariantTypeTest extends FormIntegrationTestCase
     {
         $type = new CategoryPageVariantType();
         $this->assertEquals(CategoryPageVariantType::NAME, $type->getBlockPrefix());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getValidators()
+    {
+        $validators = [
+            NotBlankDefaultLocalizedFallbackValue::class => new NotBlankDefaultLocalizedFallbackValue(),
+            'oro_locale.default_localized_fallback_value.not_blank'
+            => new NotBlankDefaultLocalizedFallbackValueValidator()
+        ];
+
+        return array_merge(parent::getValidators(), $validators);
     }
 }

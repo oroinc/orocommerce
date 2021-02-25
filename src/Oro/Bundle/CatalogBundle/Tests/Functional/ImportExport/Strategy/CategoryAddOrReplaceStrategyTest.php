@@ -13,6 +13,9 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
 use Oro\Component\Testing\Unit\EntityTrait;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class CategoryAddOrReplaceStrategyTest extends WebTestCase
 {
     use EntityTrait;
@@ -88,7 +91,7 @@ class CategoryAddOrReplaceStrategyTest extends WebTestCase
     ): void {
         $this->context->setValue('rawItemData', ['parentCategory.title' => $parentCategory]);
 
-        $category = new Category();
+        $category = $this->createCategoryWithTitle('title');
         $category->setParentCategory(new Category());
 
         $this->assertSame(
@@ -123,7 +126,7 @@ class CategoryAddOrReplaceStrategyTest extends WebTestCase
             ['parentCategory.title' => LoadCategoryData::FIRST_LEVEL]
         );
 
-        $category = new Category();
+        $category = $this->createCategoryWithTitle('title');
         $expectedCategory = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
         $category->setParentCategory($this->getEntity(Category::class, ['id' => $expectedCategory->getId()]));
 
@@ -134,7 +137,7 @@ class CategoryAddOrReplaceStrategyTest extends WebTestCase
     {
         $newCategory = $this->strategy->process($this->createCategoryWithTitle('new_category'));
 
-        $category = new Category();
+        $category = $this->createCategoryWithTitle('title');
         $category->setParentCategory(new Category());
 
         $this->context->setValue('rawItemData', ['parentCategory.title' => 'All Products / new_category']);
@@ -147,7 +150,9 @@ class CategoryAddOrReplaceStrategyTest extends WebTestCase
 
     public function testProcessGedmoFieldsAreFilled(): void
     {
-        $category = $this->strategy->process(new Category());
+        $category = $this->strategy->process(
+            $this->createCategoryWithTitle('title')
+        );
 
         $categoryRepo = $this->getCategoryRepository();
 
@@ -163,7 +168,9 @@ class CategoryAddOrReplaceStrategyTest extends WebTestCase
     public function testProcessWhenRootHasParent(): void
     {
         $rootCategory = $this->getRootCategory();
-        $rootCategory->setParentCategory(new Category());
+        $rootCategory->setParentCategory(
+            $this->createCategoryWithTitle('title')
+        );
 
         $category = $this->strategy->process($rootCategory);
 
@@ -179,7 +186,9 @@ class CategoryAddOrReplaceStrategyTest extends WebTestCase
         $rootCategory = $this->getRootCategory();
 
         /** @var Category $category */
-        $category = $this->strategy->process(new Category());
+        $category = $this->strategy->process(
+            $this->createCategoryWithTitle('title')
+        );
 
         $this->assertEquals($rootCategory->getId(), $category->getParentCategory()->getId());
     }
@@ -226,6 +235,17 @@ class CategoryAddOrReplaceStrategyTest extends WebTestCase
         $this->assertEquals(
             [(new LocalizedFallbackValue())->setString('test-category')],
             $category->getSlugPrototypes()->toArray()
+        );
+    }
+
+    public function testProcessWhenCategoryHasNoTitle()
+    {
+        $category = $this->strategy->process(new Category());
+
+        $this->assertNull($category);
+        $this->assertContains(
+            'Error in row #0. Title Localization Name: Category Title should not be blank.',
+            $this->context->getErrors()
         );
     }
 

@@ -78,7 +78,9 @@ class CategoryType extends AbstractType
                 [
                     'label' => 'oro.catalog.category.titles.label',
                     'required' => true,
-                    'entry_options' => ['constraints' => [new NotBlank()]],
+                    'entry_options' => ['constraints' => [
+                        new NotBlank(['message' => 'oro.catalog.category.title.blank'])]
+                    ],
                 ]
             )
             ->add(

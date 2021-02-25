@@ -11,6 +11,8 @@ Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision:
 Oro\Bundle\CatalogBundle\Entity\Category:
     properties:
         titles:
+            - Oro\Bundle\LocaleBundle\Validator\Constraints\NotBlankDefaultLocalizedFallbackValue:
+                errorMessage: oro.catalog.category.title.blank
             - Valid: ~
         shortDescriptions:
             - Valid: ~
