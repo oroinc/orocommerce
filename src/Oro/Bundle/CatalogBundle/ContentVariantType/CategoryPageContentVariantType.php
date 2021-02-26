@@ -80,8 +80,10 @@ class CategoryPageContentVariantType implements ContentVariantTypeInterface, Con
         return new RouteData(
             'oro_product_frontend_product_index',
             [
-                'categoryId' => $category->getId(),
-                'includeSubcategories' => !$this->propertyAccessor->getValue($contentVariant, 'excludeSubcategories'),
+                RequestProductHandler::CONTENT_VARIANT_ID_KEY => $contentVariant->getId(),
+                RequestProductHandler::CATEGORY_ID_KEY => $category->getId(),
+                RequestProductHandler::INCLUDE_SUBCATEGORIES_KEY =>
+                    !$this->propertyAccessor->getValue($contentVariant, 'excludeSubcategories'),
                 RequestProductHandler::OVERRIDE_VARIANT_CONFIGURATION_KEY =>
                     $contentVariant->isOverrideVariantConfiguration(),
             ]

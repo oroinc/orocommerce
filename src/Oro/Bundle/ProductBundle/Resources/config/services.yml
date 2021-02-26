@@ -1263,10 +1263,11 @@ services:
         class: Oro\Bundle\ProductBundle\Helper\ProductGrouper\ProductsGrouperFactory
         public: false
 
-    oro_product.datagrid.event_listener.search_content_variant_filtering:
-        class: Oro\Bundle\ProductBundle\DataGrid\EventListener\SearchContentVariantFilteringEventListener
+    oro_product.datagrid.event_listener.product_collection_content_variant_filtering:
+        class: Oro\Bundle\ProductBundle\DataGrid\EventListener\ProductCollectionContentVariantFilteringEventListener
         arguments:
             - '@oro_product.handler.request_content_variant'
+            - '@doctrine'
             - '@oro_config.manager'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }

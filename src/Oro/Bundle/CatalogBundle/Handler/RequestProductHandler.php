@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class RequestProductHandler
 {
     const CATEGORY_ID_KEY = 'categoryId';
+    const CONTENT_VARIANT_ID_KEY = 'contentVariantId';
     const INCLUDE_SUBCATEGORIES_KEY = 'includeSubcategories';
     const INCLUDE_SUBCATEGORIES_DEFAULT_VALUE = false;
     const INCLUDE_NOT_CATEGORIZED_PRODUCTS_DEFAULT_VALUE = false;
@@ -27,20 +28,27 @@ class RequestProductHandler
         $this->requestStack = $requestStack;
     }
 
-    /**
-     * @return bool|integer
-     */
-    public function getCategoryId()
+    public function getCategoryId(): int
+    {
+        return $this->resolveValue(self::CATEGORY_ID_KEY);
+    }
+
+    public function getContentVariantId(): int
+    {
+        return $this->resolveValue(self::CONTENT_VARIANT_ID_KEY);
+    }
+
+    private function resolveValue(string $name): int
     {
         $request = $this->requestStack->getCurrentRequest();
         if (!$request) {
-            return false;
+            return 0;
         }
 
-        $value = $request->get(self::CATEGORY_ID_KEY);
+        $value = $request->get($name);
 
         if (is_bool($value)) {
-            return false;
+            return 0;
         }
 
         $value = filter_var($value, FILTER_VALIDATE_INT);
@@ -48,7 +56,7 @@ class RequestProductHandler
             return $value;
         }
 
-        return false;
+        return 0;
     }
 
     /**
