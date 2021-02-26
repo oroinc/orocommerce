@@ -2,7 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\DataGrid\EventListener;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\ProductBundle\ContentVariantType\ProductCollectionContentVariantType;
@@ -11,33 +13,32 @@ use Oro\Bundle\ProductBundle\Handler\RequestContentVariantHandler;
 use Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator;
 use Oro\Bundle\SearchBundle\Datagrid\Datasource\SearchDatasource;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
+use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
+use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 
 /**
- * Search event listener for filtering product results
+ * Datagrid preBuild/afterBuild event listener which adds extra parameters and extra criterias to the datagrid and its
+ * search datasource query for displaying product collection content variant.
  */
-class SearchContentVariantFilteringEventListener
+class ProductCollectionContentVariantFilteringEventListener
 {
     const CONTENT_VARIANT_ID_CONFIG_PATH = '[options][urlParams][contentVariantId]';
     const VIEW_LINK_PARAMS_CONFIG_PATH = '[properties][view_link][direct_params]';
     const OVERRIDE_VARIANT_CONFIGURATION_CONFIG_PATH = '[options][urlParams][overrideVariantConfiguration]';
 
-    /**
-     * @var RequestContentVariantHandler $requestHandler
-     */
-    private $requestHandler;
+    private RequestContentVariantHandler $requestHandler;
 
-    /**
-     * @var ConfigManager $configManager
-     */
-    private $configManager;
+    private ManagerRegistry $managerRegistry;
 
-    /**
-     * @param RequestContentVariantHandler $requestHandler
-     * @param ConfigManager $configManager
-     */
-    public function __construct(RequestContentVariantHandler $requestHandler, ConfigManager $configManager)
-    {
+    private ConfigManager $configManager;
+
+    public function __construct(
+        RequestContentVariantHandler $requestHandler,
+        ManagerRegistry $managerRegistry,
+        ConfigManager $configManager
+    ) {
         $this->requestHandler = $requestHandler;
+        $this->managerRegistry = $managerRegistry;
         $this->configManager = $configManager;
     }
 
@@ -46,32 +47,44 @@ class SearchContentVariantFilteringEventListener
      */
     public function onPreBuild(PreBuild $event)
     {
-        $parameterBag = $event->getParameters();
+        $parameters = $event->getParameters();
 
-        $contentVariantId = $parameterBag->has(ProductCollectionContentVariantType::CONTENT_VARIANT_ID_KEY)
-            ? $parameterBag->get(ProductCollectionContentVariantType::CONTENT_VARIANT_ID_KEY)
-            : $this->requestHandler->getContentVariantId();
-
-        if (!$contentVariantId) {
+        $contentVariantId = $this->getContentVariantId($parameters);
+        $contentVariant = $this->getProductCollectionContentVariant($contentVariantId);
+        if (!$contentVariant) {
+            // Skips adding contentVariantId to config and parameters as content variant is not found or
+            // not of product collection type.
             return;
         }
 
-        $overrideVariantConfiguration = $parameterBag->has('overrideVariantConfiguration')
-            ? $parameterBag->get('overrideVariantConfiguration')
-            : $this->requestHandler->getOverrideVariantConfiguration();
-
-        $parameterBag->set(ProductCollectionContentVariantType::CONTENT_VARIANT_ID_KEY, $contentVariantId);
-        $parameterBag->set(
-            ProductCollectionContentVariantType::OVERRIDE_VARIANT_CONFIGURATION_KEY,
-            (int)$overrideVariantConfiguration
-        );
-
         $gridConfig = $event->getConfig();
+        $parameters->set(ProductCollectionContentVariantType::CONTENT_VARIANT_ID_KEY, $contentVariantId);
         $gridConfig->offsetSetByPath(self::CONTENT_VARIANT_ID_CONFIG_PATH, $contentVariantId);
+
+        $overrideVariantConfiguration = $this->isOverrideVariantConfiguration($parameters);
+        $parameters->set(
+            ProductCollectionContentVariantType::OVERRIDE_VARIANT_CONFIGURATION_KEY,
+            $overrideVariantConfiguration
+        );
         $gridConfig->offsetSetByPath(
             self::OVERRIDE_VARIANT_CONFIGURATION_CONFIG_PATH,
             (int)$overrideVariantConfiguration
         );
+    }
+
+    private function getProductCollectionContentVariant(int $contentVariantId): ?ContentVariantInterface
+    {
+        if ($contentVariantId) {
+            // Method find() is used here because it does not make a query to database if entity is already present
+            // in unitOfWork.
+            $contentVariant = $this->managerRegistry
+                ->getManagerForClass(ContentVariant::class)
+                ->find(ContentVariant::class, $contentVariantId);
+        }
+
+        return !empty($contentVariant) && $contentVariant->getType() === ProductCollectionContentVariantType::TYPE
+            ? $contentVariant
+            : null;
     }
 
     /**
@@ -134,5 +147,29 @@ class SearchContentVariantFilteringEventListener
         );
 
         return $configValue !== Configuration::DISPLAY_SIMPLE_VARIATIONS_EVERYWHERE;
+    }
+
+    private function getContentVariantId(ParameterBag $parameters): int
+    {
+        $contentVariantId = filter_var(
+            $parameters->get(ProductCollectionContentVariantType::CONTENT_VARIANT_ID_KEY, 0),
+            FILTER_VALIDATE_INT
+        );
+
+        return $contentVariantId && $contentVariantId > 0
+            ? $contentVariantId
+            : $this->requestHandler->getContentVariantId();
+    }
+
+    private function isOverrideVariantConfiguration(ParameterBag $parameters): ?bool
+    {
+        if ($parameters->has(ProductCollectionContentVariantType::OVERRIDE_VARIANT_CONFIGURATION_KEY)) {
+            $overrideVariantConfiguration = $parameters
+                ->get(ProductCollectionContentVariantType::OVERRIDE_VARIANT_CONFIGURATION_KEY);
+        } else {
+            $overrideVariantConfiguration = $this->requestHandler->getOverrideVariantConfiguration();
+        }
+
+        return filter_var($overrideVariantConfiguration, FILTER_VALIDATE_BOOLEAN);
     }
 }
