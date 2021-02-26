@@ -54,6 +54,9 @@ const ShoppingListImagePopoverView = BaseView.extend({
                 title: this.title
             })
         }, true);
+
+        // Make it possible to follow the link
+        this.$el.off(`click${Popover.EVENT_KEY}`);
     },
 
     dispose() {
