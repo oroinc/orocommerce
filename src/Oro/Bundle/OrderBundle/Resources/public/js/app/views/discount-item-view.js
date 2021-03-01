@@ -106,6 +106,10 @@ define(function(require) {
             } else {
                 this.$valueInputElement.data('validation', this.$amountInputElement.data('validation'));
             }
+            this.$valueInputElement.data(
+                'validation',
+                _.extend({NotBlank: {}}, this.$valueInputElement.data('validation'))
+            );
         },
 
         /**

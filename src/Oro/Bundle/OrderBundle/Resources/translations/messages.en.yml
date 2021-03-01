@@ -193,7 +193,7 @@ oro:
                 description:      The relationship with the order this discount is created for.
             type:
                 label:            Order Discount Type
-                description:      "The type of discount applied to the order: amount (oro_order_discount_item_type_amount) or percent (oro_order_discount_item_type_percent)."
+                description:      The type of discount applied to the order.
             flash.save_success: Order Discount successfully added
             add_discount.label: Add Special Discount
             value.label: Discount

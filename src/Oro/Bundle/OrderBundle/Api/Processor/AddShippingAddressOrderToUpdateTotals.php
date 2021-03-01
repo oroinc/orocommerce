@@ -39,7 +39,7 @@ class AddShippingAddressOrderToUpdateTotals implements ProcessorInterface
 
         $order = $this->getOrder($context->getData());
         if (null !== $order) {
-            UpdateOrderTotals::addOrderToUpdateTotals($order, $context->getSharedData());
+            UpdateOrderTotals::addOrderToUpdateTotals($context->getSharedData(), $order, $context->getForm());
         }
     }
 
