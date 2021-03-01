@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CMSBundle\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Processor\CustomizeLoadedData\CustomizeLoadedDataContext;
+use Oro\Bundle\CMSBundle\Api\WYSIWYGValueRenderer;
 use Oro\Bundle\CMSBundle\Provider\WYSIWYGFieldsProvider;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
@@ -15,16 +16,24 @@ class ComputeWYSIWYGAttributes implements ProcessorInterface
     /** @var WYSIWYGFieldsProvider */
     private $wysiwygFieldsProvider;
 
+    /** @var WYSIWYGValueRenderer */
+    private $wysiwygValueRenderer;
+
     /** @var string */
     private $attributesFieldName;
 
     /**
      * @param WYSIWYGFieldsProvider $wysiwygFieldsProvider
+     * @param WYSIWYGValueRenderer  $wysiwygValueRenderer
      * @param string                $attributesFieldName
      */
-    public function __construct(WYSIWYGFieldsProvider $wysiwygFieldsProvider, string $attributesFieldName)
-    {
+    public function __construct(
+        WYSIWYGFieldsProvider $wysiwygFieldsProvider,
+        WYSIWYGValueRenderer $wysiwygValueRenderer,
+        string $attributesFieldName
+    ) {
         $this->wysiwygFieldsProvider = $wysiwygFieldsProvider;
+        $this->wysiwygValueRenderer = $wysiwygValueRenderer;
         $this->attributesFieldName = $attributesFieldName;
     }
 
@@ -44,15 +53,42 @@ class ComputeWYSIWYGAttributes implements ProcessorInterface
             return;
         }
 
+        $renderedWysiwygFields = $this->getRenderedWysiwygFields($context);
         $data = $context->getData();
         foreach ($data as $key => $item) {
             foreach ($wysiwygAttributes as $fieldName) {
-                $wysiwygFieldName = $this->getWysiwygFieldName($context, $fieldName);
-                $data[$key][$this->attributesFieldName][$fieldName] = $item[$wysiwygFieldName];
-                unset($data[$key][$wysiwygFieldName]);
+                $fieldName = $this->getWysiwygFieldName($context, $fieldName);
+                $fieldValue = null;
+                if (\array_key_exists($fieldName, $item)) {
+                    $fieldValue = $item[$fieldName];
+                } elseif ($renderedWysiwygFields && isset($renderedWysiwygFields[$fieldName])) {
+                    [$valuePropertyName, $stylePropertyName] = $renderedWysiwygFields[$fieldName];
+                    $fieldValue = $this->computeWysiwygAttributeValue(
+                        $context,
+                        $item,
+                        $valuePropertyName,
+                        $stylePropertyName
+                    );
+                }
+                $data[$key][$this->attributesFieldName][$fieldName] = $fieldValue;
+                unset($data[$key][$fieldName]);
             }
         }
         $context->setData($data);
+    }
+
+    /**
+     * @param CustomizeLoadedDataContext $context
+     *
+     * @return array|null
+     */
+    private function getRenderedWysiwygFields(CustomizeLoadedDataContext $context): ?array
+    {
+        $config = $context->getConfig();
+
+        return null !== $config
+            ? ConfigureWYSIWYGFields::getRenderedWysiwygFields($config)
+            : null;
     }
 
     /**
@@ -69,5 +105,33 @@ class ComputeWYSIWYGAttributes implements ProcessorInterface
         }
 
         return $fieldName;
+    }
+
+    /**
+     * @param CustomizeLoadedDataContext $context
+     * @param array                      $data
+     * @param string                     $valuePropertyName
+     * @param string                     $stylePropertyName
+     *
+     * @return string|null
+     */
+    private function computeWysiwygAttributeValue(
+        CustomizeLoadedDataContext $context,
+        array $data,
+        string $valuePropertyName,
+        string $stylePropertyName
+    ): ?string {
+        $value = null;
+        $valueFieldName = $context->getResultFieldName($valuePropertyName);
+        if ($valueFieldName && isset($data[$valueFieldName])) {
+            $value = $data[$valueFieldName];
+        }
+        $style = null;
+        $styleFieldName = $context->getResultFieldName($stylePropertyName);
+        if ($styleFieldName && isset($data[$styleFieldName])) {
+            $style = $data[$styleFieldName];
+        }
+
+        return $this->wysiwygValueRenderer->render($value, $style);
     }
 }

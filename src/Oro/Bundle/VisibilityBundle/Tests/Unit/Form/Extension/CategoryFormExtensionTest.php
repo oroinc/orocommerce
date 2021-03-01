@@ -5,12 +5,15 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Form\Extension;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryDefaultProductOptionsType;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryUnitPrecisionType;
+use Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
 use Oro\Bundle\CatalogBundle\Visibility\CategoryDefaultProductUnitOptionsVisibilityInterface;
 use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType;
 use Oro\Bundle\CMSBundle\Provider\HTMLPurifierScopeProvider;
+use Oro\Bundle\CMSBundle\Tools\DigitalAssetTwigTagsConverter;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Extension\Stub\ImageTypeStub;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Extension\Stub\OroRichTextTypeStub;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\DataChangesetTypeStub;
@@ -62,46 +65,36 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        /** @var ManagerRegistry $registry */
-        $registry = $this->createMock('Doctrine\Persistence\ManagerRegistry');
+        $registry = $this->createMock(ManagerRegistry::class);
 
-        /** @var VisibilityPostSetDataListener|\PHPUnit\Framework\MockObject\MockObject $postSetDataListener */
-        $postSetDataListener = $this->getMockBuilder(
-            'Oro\Bundle\VisibilityBundle\Form\EventListener\VisibilityPostSetDataListener'
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
+        $postSetDataListener = $this->createMock(VisibilityPostSetDataListener::class);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|VisibilityChoicesProvider $visibilityChoicesProvider */
         $visibilityChoicesProvider = $this->createMock(VisibilityChoicesProvider::class);
         $visibilityChoicesProvider->expects($this->any())
             ->method('getFormattedChoices')
             ->willReturn([]);
 
-        /** @var CategoryDefaultProductUnitOptionsVisibilityInterface $defaultProductOptionsVisibility */
-        $defaultProductOptionsVisibility = $this
-            ->getMockBuilder(CategoryDefaultProductUnitOptionsVisibilityInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $defaultProductOptionsVisibility = $this->createMock(
+            CategoryDefaultProductUnitOptionsVisibilityInterface::class
+        );
 
         $defaultProductOptions = new CategoryDefaultProductOptionsType();
-        $defaultProductOptions->setDataClass('Oro\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions');
+        $defaultProductOptions->setDataClass(CategoryDefaultProductOptions::class);
 
         $categoryUnitPrecision = new CategoryUnitPrecisionType($defaultProductOptionsVisibility);
-        $categoryUnitPrecision->setDataClass('Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision');
+        $categoryUnitPrecision->setDataClass(CategoryUnitPrecision::class);
 
-        /** @var ConfirmSlugChangeFormHelper $confirmSlugChangeFormHelper */
-        $confirmSlugChangeFormHelper = $this->getMockBuilder(ConfirmSlugChangeFormHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        /** @var RouterInterface $router */
+        $confirmSlugChangeFormHelper = $this->createMock(ConfirmSlugChangeFormHelper::class);
         $router = $this->createMock(RouterInterface::class);
-
-        /** @var HTMLPurifierScopeProvider|\PHPUnit\Framework\MockObject\MockObject $purifierScopeProvider */
         $purifierScopeProvider = $this->createMock(HTMLPurifierScopeProvider::class);
-        /** @var HtmlTagProvider|\PHPUnit\Framework\MockObject\MockObject $htmlTagProvider */
         $htmlTagProvider = $this->createMock(HtmlTagProvider::class);
+        $digitalAssetTwigTagsConverter = $this->createMock(DigitalAssetTwigTagsConverter::class);
+        $digitalAssetTwigTagsConverter->expects(self::any())
+            ->method('convertToUrls')
+            ->willReturnArgument(0);
+        $digitalAssetTwigTagsConverter->expects(self::any())
+            ->method('convertToTwigTags')
+            ->willReturnArgument(0);
 
         return [
             new PreloadedExtension(
@@ -130,7 +123,11 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
                     LocalizedSlugType::class => new LocalizedSlugTypeStub(),
                     LocalizedSlugWithRedirectType::class
                         => new LocalizedSlugWithRedirectType($confirmSlugChangeFormHelper),
-                    WYSIWYGType::class => new WYSIWYGType($htmlTagProvider, $purifierScopeProvider),
+                    WYSIWYGType::class => new WYSIWYGType(
+                        $htmlTagProvider,
+                        $purifierScopeProvider,
+                        $digitalAssetTwigTagsConverter
+                    )
                 ],
                 [
                     CategoryType::class => [$this->categoryFormExtension],

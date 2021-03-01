@@ -203,6 +203,7 @@ services:
             - '@oro_product.provider.product_variant_availability_provider'
             - '@oro_product.product_variant.registry.product_variant_type_handler_factory'
             - '@oro_product.provider.variant_field_provider'
+            - '@oro_frontend_localization.manager.user_localization'
             - '@property_accessor'
             - 'Oro\Bundle\ProductBundle\Entity\Product'
         tags:

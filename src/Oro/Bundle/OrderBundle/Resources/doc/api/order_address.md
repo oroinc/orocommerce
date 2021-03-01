@@ -127,9 +127,7 @@ Delete a collection of order address records.
 
 {@inheritdoc}
 
-**Please note:**
-
-*This field is **required** and must remain defined.*
+**This field must not be empty, if it is passed.**
 
 ### postalCode
 
@@ -143,9 +141,7 @@ Delete a collection of order address records.
 
 {@inheritdoc}
 
-**Please note:**
-
-*This field is **required** and must remain defined.*
+**This field must not be empty, if it is passed.**
 
 ### street
 
@@ -159,9 +155,7 @@ Delete a collection of order address records.
 
 {@inheritdoc}
 
-**Please note:**
-
-*This field is **required** and must remain defined.*
+**This field must not be empty, if it is passed.**
 
 ### firstName
 
@@ -170,14 +164,14 @@ Delete a collection of order address records.
 {@inheritdoc}
 
 **Conditionally required field:**
-*Either **organization** or **firstName** and **lastName** must be defined.*
+Either **organization** or **firstName** and **lastName** must be defined.
 
 #### update
 
 {@inheritdoc}
 
-**Please note:**
-*Either **organization** or **firstName** and **lastName** must remain defined.*
+**Conditionally required field:**
+Either **organization** or **firstName** and **lastName** must remain defined.
 
 ### lastName
 
@@ -186,14 +180,14 @@ Delete a collection of order address records.
 {@inheritdoc}
 
 **Conditionally required field:**
-*Either **organization** or **firstName** and **lastName** must be defined.*
+Either **organization** or **firstName** and **lastName** must be defined.
 
 #### update
 
 {@inheritdoc}
 
-**Please note:**
-*Either **organization** or **firstName** and **lastName** must remain defined.*
+**Conditionally required field:**
+Either **organization** or **firstName** and **lastName** must remain defined.
 
 ### organization
 
@@ -202,14 +196,14 @@ Delete a collection of order address records.
 {@inheritdoc}
 
 **Conditionally required field:**
-*Either **organization** or **firstName** and **lastName** must be defined.*
+Either **organization** or **firstName** and **lastName** must be defined.
 
 #### update
 
 {@inheritdoc}
 
-**Please note:**
-*Either **organization** or **firstName** and **lastName** must remain defined.*
+**Conditionally required field:**
+Either **organization** or **firstName** and **lastName** must remain defined.
 
 ### country
 
@@ -226,7 +220,7 @@ Delete a collection of order address records.
 {@inheritdoc}
 
 **Conditionally required field:**
-*State is required for some countries.*
+A state is required for some countries.
 
 ## SUBRESOURCES
 

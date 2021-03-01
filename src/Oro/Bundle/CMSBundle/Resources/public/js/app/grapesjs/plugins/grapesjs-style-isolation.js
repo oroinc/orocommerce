@@ -2,12 +2,15 @@ import GrapesJS from 'grapesjs';
 import {uniqueId, each} from 'underscore';
 import $ from 'jquery';
 
-const componentHtmlIdRegexp = /(<div id="isolation-scope-([\w]*))/g;
+import CONSTANTS from 'orocms/js/app/grapesjs/constants';
+const ISOLATION_SCOPE = `${CONSTANTS.ISOLATION_PREFIX}-`;
+
+const componentHtmlIdRegexp = new RegExp(`(<div id="${ISOLATION_SCOPE}([\\w]*))`, 'g');
 // @deprecated
-const componentCssIdRegexp = /(\[id="isolation-scope-([\w]*)"\])/g;
+const componentCssIdRegexp = new RegExp(`(\\[id="${ISOLATION_SCOPE}([\\w]*)"\\])`, 'g');
 const cssSelectorRegexp = /(?:[\.\#])[\#\.\w\:\-\s\(\)\[\]\=\"]+\s?(?=\{)/g;
-const cssWrapperScopeRegexp = /^#isolation-scope-[\w]+\{/;
-const cssChildrenScopeRegexp = /#isolation-scope-[\w]*\s+/g;
+const cssWrapperScopeRegexp = new RegExp(`^#${ISOLATION_SCOPE}[\\w]+\\{`);
+const cssChildrenScopeRegexp = new RegExp(`#${ISOLATION_SCOPE}[\\w]*\\s+`, 'g');
 
 const FORBIDDEN_ATTR = ['draggable', 'data-gjs[-\\w]+'];
 
@@ -56,7 +59,7 @@ function randomId(length = 20) {
 }
 
 export default GrapesJS.plugins.add('grapesjs-style-isolation', (editor, options) => {
-    const scopeId = 'isolation-scope-' + randomId();
+    const scopeId = ISOLATION_SCOPE + randomId();
 
     editor.getIsolatedHtml = content => {
         const wrapper = editor.getWrapper();

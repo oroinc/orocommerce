@@ -331,7 +331,7 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
 
         $this->assertResponseValidationError(
             [
-                'title'  => 'greater than zero constraint',
+                'title'  => 'greater than constraint',
                 'detail' => 'This value should be greater than 0.',
                 'source' => ['pointer' => '/included/0/attributes/quantity']
             ],

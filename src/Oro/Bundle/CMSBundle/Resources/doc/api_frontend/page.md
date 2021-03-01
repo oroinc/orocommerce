@@ -24,13 +24,7 @@ The localized title of the landing page.
 
 The content of the landing page.
 
-### content_style
-
-The styles of the landing page.
-
-### content_properties
-
-The properties of the landing page.
+Is a string that contains a text, including HTML tags and CSS definitions, that is ready to be rendered as HTML.
 
 ### url
 
@@ -47,23 +41,3 @@ Each element of the array is an object with the following properties:
 **localizationId** is a string that contains ID of the localization the url is intended for.
 
 Example of data: **\[{"url": "/en-url", "localizationId": "10"}, {"url": "/fr-url", "localizationId": "11"}\]**
-
-### draftSource
-
-A landing page record.
-
-### draftUuid
-
-The GUID of the landing page draft.
-
-## SUBRESOURCES
-
-### draftSource
-
-#### get_subresource
-
-Retrieve a landing page record.
-
-#### get_relationship
-
-Retrieve the ID of a landing page.

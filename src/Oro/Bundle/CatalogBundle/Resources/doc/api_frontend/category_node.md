@@ -14,7 +14,7 @@ Retrieve a collection of master catalog tree nodes visible to the customer user.
 
 {@inheritdoc}
 
-**Note:** The returned records are sorted by `order` field.
+**Note:** The returned records are sorted by the **order** field.
 
 ## FIELDS
 

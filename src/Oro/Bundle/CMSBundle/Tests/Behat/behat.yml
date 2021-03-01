@@ -29,6 +29,36 @@ oro_behat_extension:
                 type: 'xpath'
                 locator: '//pre[@data-gjs-type="code"]'
 
+        WysiwygFileTypeBlock:
+            selector:
+                type: 'xpath'
+                locator: '//a[@data-gjs-type="file"]'
+
+        WysiwygToolbarActionFileSettings:
+            selector:
+                type: 'xpath'
+                locator: '//div[contains(@class, "gjs-toolbar-item") and @label="File Settings"]'
+
+        WysiwygToolbarActionSelectParent:
+            selector:
+                type: 'xpath'
+                locator: '//div[contains(@class, "gjs-toolbar-item") and @label="Select Parent"]'
+
+        WysiwygToolbarActionMove:
+            selector:
+                type: 'xpath'
+                locator: '//div[contains(@class, "gjs-toolbar-item") and @label="Move"]'
+
+        WysiwygToolbarActionClone:
+            selector:
+                type: 'xpath'
+                locator: '//div[contains(@class, "gjs-toolbar-item") and @label="Clone"]'
+
+        WysiwygToolbarActionDelete:
+            selector:
+                type: 'xpath'
+                locator: '//div[contains(@class, "gjs-toolbar-item") and @label="Delete"]'
+
         LandingPageTitlesField:
             selector: "input[name='oro_cms_page[titles][values][default]']"
 

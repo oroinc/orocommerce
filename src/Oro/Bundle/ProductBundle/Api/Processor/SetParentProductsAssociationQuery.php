@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Api\Processor;
 
-use Oro\Bundle\ApiBundle\Config\EntityDefinitionConfig;
 use Oro\Bundle\ApiBundle\Processor\GetConfig\ConfigContext;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -32,7 +31,6 @@ class SetParentProductsAssociationQuery implements ProcessorInterface
     {
         /** @var ConfigContext $context */
 
-        /** @var EntityDefinitionConfig $definition */
         $definition = $context->getResult();
         $parentProductsField = $definition->getField('parentProducts');
         if (null !== $parentProductsField

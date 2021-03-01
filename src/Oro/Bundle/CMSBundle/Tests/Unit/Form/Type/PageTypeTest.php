@@ -8,6 +8,7 @@ use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\CMSBundle\Form\Type\PageType;
 use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType;
 use Oro\Bundle\CMSBundle\Provider\HTMLPurifierScopeProvider;
+use Oro\Bundle\CMSBundle\Tools\DigitalAssetTwigTagsConverter;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\FormBundle\Provider\HtmlTagProvider;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
@@ -113,6 +114,13 @@ class PageTypeTest extends FormIntegrationTestCase
         $purifierScopeProvider->expects($this->any())
             ->method('getScope')
             ->willReturn('default');
+        $digitalAssetTwigTagsConverter = $this->createMock(DigitalAssetTwigTagsConverter::class);
+        $digitalAssetTwigTagsConverter->expects(self::any())
+            ->method('convertToUrls')
+            ->willReturnArgument(0);
+        $digitalAssetTwigTagsConverter->expects(self::any())
+            ->method('convertToTwigTags')
+            ->willReturnArgument(0);
 
         return [
             new PreloadedExtension(
@@ -120,7 +128,11 @@ class PageTypeTest extends FormIntegrationTestCase
                     $this->type,
                     EntityIdentifierType::class => $entityIdentifierType,
                     'text' => new TextType(),
-                    WYSIWYGType::class => new WYSIWYGType($htmlTagProvider, $purifierScopeProvider),
+                    WYSIWYGType::class => new WYSIWYGType(
+                        $htmlTagProvider,
+                        $purifierScopeProvider,
+                        $digitalAssetTwigTagsConverter
+                    ),
                     LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionTypeStub(),
                     LocalizedSlugType::class => new LocalizedSlugTypeStub(),
                     LocalizedSlugWithRedirectType::class

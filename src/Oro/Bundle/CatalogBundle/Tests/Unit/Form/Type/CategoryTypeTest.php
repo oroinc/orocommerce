@@ -78,7 +78,9 @@ class CategoryTypeTest extends FormIntegrationTestCase
                     'label' => 'oro.catalog.category.titles.label',
                     'required' => true,
                     'value_class' => CategoryTitle::class,
-                    'entry_options' => ['constraints' => [new NotBlank()]],
+                    'entry_options' => ['constraints' => [
+                        new NotBlank(['message' => 'oro.catalog.category.title.blank'])
+                    ]],
                 ]
             )
             ->will($this->returnSelf());
@@ -262,9 +264,8 @@ class CategoryTypeTest extends FormIntegrationTestCase
             'entry_options' => [
                 'wysiwyg_options' => [
                     'autoRender' => false,
-                    'statusbar' => true,
+                    'elementpath' => true,
                     'resize' => true,
-                    'width' => 500,
                     'height' => 200,
                 ],
             ],

@@ -18,7 +18,7 @@ class TaxRuleRepositoryTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
 
-        $this->loadFixtures(['Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxRules']);
+        $this->loadFixtures([LoadTaxRules::class]);
     }
 
     public function testFindByCountryAndProductTaxCodeAndCustomerTaxCode()
@@ -76,6 +76,26 @@ class TaxRuleRepositoryTest extends WebTestCase
             LoadTaxJurisdictions::ZIP_CODE,
             $taxRule->getTaxJurisdiction()->getCountry(),
             $taxRule->getTaxJurisdiction()->getRegion()
+        );
+
+        $this->assertContainsId($taxRule, $result);
+    }
+
+    public function testFindByCountryAndZipCodeAndTaxCode()
+    {
+        /** @var TaxRule $taxRule */
+        $taxRule = $this->getReference(LoadTaxRules::REFERENCE_PREFIX . '.' . LoadTaxRules::TAX_RULE_4);
+
+        /** @var TaxRule[] $result */
+        $result = $this->getRepository()->findByCountryAndZipCodeAndTaxCode(
+            TaxCodes::create(
+                [
+                    TaxCode::create($taxRule->getProductTaxCode()->getCode(), TaxCodeInterface::TYPE_PRODUCT),
+                    TaxCode::create($taxRule->getCustomerTaxCode()->getCode(), TaxCodeInterface::TYPE_ACCOUNT),
+                ]
+            ),
+            LoadTaxJurisdictions::ZIP_CODE,
+            $taxRule->getTaxJurisdiction()->getCountry()
         );
 
         $this->assertContainsId($taxRule, $result);

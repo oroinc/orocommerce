@@ -20,8 +20,10 @@ class AddAssociatedOrderToUpdateTotals implements ProcessorInterface
 
         if ($context->getForm()->isValid()) {
             UpdateOrderTotals::addOrderToUpdateTotals(
+                $context->getSharedData(),
                 $context->getData()->getOrder(),
-                $context->getSharedData()
+                $context->getForm(),
+                $context->findFormFieldName('order')
             );
         }
     }
