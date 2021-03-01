@@ -17,7 +17,16 @@
                         'selectedLocalization': selected_localization.titles|localized_value,
                         'localizationSwitcherRoute': 'oro_frontend_localization_frontend_set_current_localization'
                      }|json_encode }}"
-                     data-localization-menu-container
+                     data-dom-relocation-options="{{ {
+                         responsive: [
+                             {
+                                 viewport: {
+                                     maxScreenType: 'tablet',
+                                 },
+                                 moveTo: '[data-switcher-localizations-target]'
+                             }
+                         ]
+                     }|json_encode }}"
                 >
                     <ul class="oro-toolbar__list">
                         {% for localization in localizations %}
@@ -25,11 +34,11 @@
                                 {% set title = localization.titles|localized_value %}
                                 {% if selected_localization.id == localization.id %}
                                     <span class="oro-toolbar__link oro-toolbar__link--active">
-                                    {{ title }}
-                                </span>
+                                        {{- title -}}
+                                    </span>
                                 {% else %}
                                     <a class="oro-toolbar__link" href="#" data-localization="{{ localization.id }}">
-                                        {{ title }}
+                                        {{- title -}}
                                     </a>
                                 {% endif %}
                             </li>

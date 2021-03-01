@@ -159,8 +159,8 @@ services:
         tags:
             - { name: oro.api.processor, action: customize_form_data, requestType: '!frontend', event: post_validate, parentAction: update, class: Oro\Bundle\OrderBundle\Entity\OrderAddress, priority: -25 }
 
-    oro_order.api.move_orders_to_update_totals_from_shared_data_to_context:
-        class: Oro\Bundle\OrderBundle\Api\Processor\MoveOrderToUpdateTotalsFromSharedDataToContext
+    oro_order.api.move_orders_require_totals_update_to_context:
+        class: Oro\Bundle\OrderBundle\Api\Processor\MoveOrdersRequireTotalsUpdateToContext
         tags:
             - { name: oro.api.processor, action: customize_form_data, event: post_validate, priority: -28 }
 
@@ -168,6 +168,7 @@ services:
         class: Oro\Bundle\OrderBundle\Api\Processor\UpdateOrderTotals
         arguments:
             - '@oro_order.order.total.total_helper'
+            - '@oro_api.form_validation_handler'
         tags:
             - { name: oro.api.processor, action: customize_form_data, event: post_validate, orders_to_update_totals: exists, priority: -30 }
 
@@ -186,6 +187,13 @@ services:
             - '@translator'
         tags:
             - { name: oro.api.processor, action: customize_form_data, requestType: frontend, event: post_validate, parentAction: create, class: Oro\Bundle\OrderBundle\Entity\Order, priority: -100 }
+
+    oro_order.api.update_order_discount_value:
+        class: Oro\Bundle\OrderBundle\Api\Processor\UpdateOrderDiscountValue
+        arguments:
+            - '@oro_currency.rounding.price_rounding_service'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, requestType: '!frontend', event: post_validate, class: Oro\Bundle\OrderBundle\Entity\OrderDiscount }
 
     oro_order.api.place_order:
         class: Oro\Bundle\OrderBundle\Api\Processor\PlaceOrder

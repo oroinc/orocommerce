@@ -177,7 +177,7 @@ An object represents the payment status that indicates whether the order is alre
 
 The object has two properties, **code** and **label**.
 
-The **code** property is a string contains the payment status code. Possible values are `full`, `partially`, `invoiced`, `authorized`, `declined`, `pending`.
+The **code** property is a string contains the payment status code. Possible values: `full`, `partially`, `invoiced`, `authorized`, `declined`, `pending`.
 
 The **label** property is a string contains the payment status label.
 

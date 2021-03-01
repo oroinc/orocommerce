@@ -375,7 +375,7 @@ class PurchaseActionTest extends AbstractActionTest
 
         $this->mockPaymentMethodProvider($paymentMethod, $options['paymentMethod']);
 
-        $this->logger->expects($this->once())->method('error')->with($this->isType('string'), $this->logicalAnd());
+        $this->logger->expects($this->once())->method('error')->with($this->isType('string'), $this->isType('array'));
 
         $this->action->initialize($options);
         $this->action->execute([]);

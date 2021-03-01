@@ -139,9 +139,7 @@ Delete a collection of line item records.
 
 {@inheritdoc}
 
-**Please note:**
-
-*This field is **required** and must remain defined.*
+**This field must not be empty, if it is passed.**
 
 ### quantity
 
@@ -155,9 +153,7 @@ Delete a collection of line item records.
 
 {@inheritdoc}
 
-**Please note:**
-
-*This field is **required** and must remain defined.*
+**This field must not be empty, if it is passed.**
 
 ### value
 
@@ -171,10 +167,8 @@ Delete a collection of line item records.
 
 {@inheritdoc}
 
-**Please note:**
+**This field must not be empty, if it is passed.**
 
-*This field is **required** and must remain defined.*
- 
 ### currency
 
 #### create
@@ -187,9 +181,7 @@ Delete a collection of line item records.
 
 {@inheritdoc}
 
-**Please note:**
-
-*This field is **required** and must remain defined.*
+**This field must not be empty, if it is passed.**
 
 ### productUnitCode
 

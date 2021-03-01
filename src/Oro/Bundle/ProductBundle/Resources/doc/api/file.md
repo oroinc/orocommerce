@@ -5,6 +5,7 @@
 ### filePath
 
 Relative URLs of the resized versions of the image.
+
 The object property name is a resized image type.
 The object property value is a relative URL.
 

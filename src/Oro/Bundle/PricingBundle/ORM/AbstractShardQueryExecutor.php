@@ -15,11 +15,6 @@ use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 abstract class AbstractShardQueryExecutor implements ShardQueryExecutorInterface
 {
     /**
-     * @var array
-     */
-    protected $tablesColumns;
-
-    /**
      * @var NativeQueryExecutorHelper
      */
     protected $helper;
@@ -134,33 +129,5 @@ abstract class AbstractShardQueryExecutor implements ShardQueryExecutorInterface
         }
 
         return $this->shardManager->getEnabledShardName($className, ['priceList' => (int)$priceListId]);
-    }
-
-    /**
-     * @param string $className
-     * @param array $fields
-     * @return array
-     */
-    protected function getColumns($className, array $fields)
-    {
-        $result = [];
-
-        foreach ($fields as $field) {
-            if (!isset($this->tablesColumns[$className][$field])) {
-                $classMetadata = $this->helper->getClassMetadata($className);
-                if (!$classMetadata->hasField($field) && !$classMetadata->hasAssociation($field)) {
-                    throw new \InvalidArgumentException(sprintf('Field %s is not known for %s', $field, $className));
-                }
-                if ($classMetadata->hasAssociation($field)) {
-                    $mapping = $classMetadata->getAssociationMapping($field);
-                    $this->tablesColumns[$className][$field] = array_shift($mapping['joinColumnFieldNames']);
-                } else {
-                    $this->tablesColumns[$className][$field] = $classMetadata->getColumnName($field);
-                }
-            }
-            $result[] = $this->tablesColumns[$className][$field];
-        }
-
-        return $result;
     }
 }

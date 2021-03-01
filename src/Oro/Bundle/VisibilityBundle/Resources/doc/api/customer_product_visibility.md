@@ -91,7 +91,7 @@ Delete a collection of customer product visibility records.
 
 ### visibility
 
-The visibility level. Possible values are `visible`, `hidden`, `category`, `customer_group` and `current_product`.
+The visibility level. Possible values: `visible`, `hidden`, `category`, `customer_group`, `current_product`.
 
 The `category` level is available only if a product is assigned to a category.
 

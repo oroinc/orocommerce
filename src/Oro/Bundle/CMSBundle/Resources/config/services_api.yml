@@ -16,7 +16,20 @@ services:
         tags:
             - { name: oro_frontend.api.resource_api_url_resolver, routeName: oro_cms_frontend_page_view, requestType: rest }
 
-    oro_cms.api.compute_landing_page_urls:
+    oro_cms.api.wysiwyg_value_renderer:
+        class: Oro\Bundle\CMSBundle\Api\WYSIWYGValueRenderer
+        arguments:
+            - '@twig'
+
+    oro_cms.api.frontend.localized_fallback_value_extractor:
+        class: Oro\Bundle\CMSBundle\Api\LocalizedFallbackValueExtractor
+        decorates: oro_frontend.api.localized_fallback_value_extractor
+        arguments:
+            - '@oro_cms.api.frontend.localized_fallback_value_extractor.inner'
+            - '@oro_cms.api.wysiwyg_value_renderer'
+            - '@oro_api.form_property_accessor'
+
+    oro_cms.api.frontend.compute_landing_page_urls:
         class: Oro\Bundle\RedirectBundle\Api\Processor\ComputeUrlFields
         arguments:
             - '@oro_api.doctrine_helper'
@@ -27,17 +40,21 @@ services:
             - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, collection: true, class: Oro\Bundle\CMSBundle\Entity\Page }
 
     oro_cms.api.configure_wysiwyg_fields:
-        class: Oro\Bundle\CMSBundle\Api\Processor\ConfigureWYSIWYGFields
+        class: Oro\Bundle\CMSBundle\Api\Processor\ConfigureCombinedWYSIWYGFields
         arguments:
             - '@oro_cms.provider.wysiwyg_fields_provider'
+            - '@oro_api.entity_field_filtering_helper'
+            - '@oro_api.doctrine_helper'
         tags:
             - { name: oro.api.processor, action: get_config, requestType: '!frontend', extra: '!identifier_fields_only', priority: -40 }
 
     oro_cms.api.frontend.configure_wysiwyg_fields:
-        class: Oro\Bundle\CMSBundle\Api\Processor\ConfigureWYSIWYGFields
+        class: Oro\Bundle\CMSBundle\Api\Processor\ConfigureSeparateWYSIWYGFields
         arguments:
             - '@oro_cms.provider.wysiwyg_fields_provider'
-            - true
+            - '@oro_api.entity_field_filtering_helper'
+            - '@oro_api.doctrine_helper'
+            - '@oro_api.resources_provider'
         tags:
             - { name: oro.api.processor, action: get_config, requestType: frontend, extra: '!identifier_fields_only', priority: -40 }
 
@@ -57,10 +74,18 @@ services:
         tags:
             - { name: oro.api.processor, action: get_config, extra: '!identifier_fields_only&descriptions', priority: -220 }
 
+    oro_cms.api.compute_rendered_wysiwyg_fields:
+        class: Oro\Bundle\CMSBundle\Api\Processor\ComputeRenderedWYSIWYGFields
+        arguments:
+            - '@oro_cms.api.wysiwyg_value_renderer'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data }
+
     oro_cms.api.frontend.product.compute_wysiwyg_attributes:
         class: Oro\Bundle\CMSBundle\Api\Processor\ComputeWYSIWYGAttributes
         arguments:
             - '@oro_cms.provider.wysiwyg_fields_provider'
+            - '@oro_cms.api.wysiwyg_value_renderer'
             - 'productAttributes'
         tags:
             - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, collection: true, class: Oro\Bundle\ProductBundle\Entity\Product, priority: -20 }

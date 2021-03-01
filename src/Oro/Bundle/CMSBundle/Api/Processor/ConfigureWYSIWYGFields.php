@@ -7,44 +7,134 @@ use Oro\Bundle\ApiBundle\Config\EntityDefinitionFieldConfig;
 use Oro\Bundle\ApiBundle\Processor\GetConfig\ConfigContext;
 use Oro\Bundle\ApiBundle\Request\DataType;
 use Oro\Bundle\ApiBundle\Util\ConfigUtil;
+use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
+use Oro\Bundle\ApiBundle\Util\EntityFieldFilteringHelper;
 use Oro\Bundle\CMSBundle\Provider\WYSIWYGFieldsProvider;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
 /**
- * Configures WYSIWYG fields as nested objects with the following properties: "value", "style" and "properties".
- * If excludeWysiwygProperties is TRUE than the "properties" property is not added to nested objects.
+ * The base processor to configure WYSIWYG fields.
  */
-class ConfigureWYSIWYGFields implements ProcessorInterface
+abstract class ConfigureWYSIWYGFields implements ProcessorInterface
 {
-    private const WYSIWYG_FIELDS = '_wysiwyg_fields';
+    public const FIELD_VALUE      = 'value';
+    public const FIELD_STYLE      = 'style';
+    public const FIELD_PROPERTIES = 'properties';
+
+    private const WYSIWYG_FIELDS          = 'wysiwyg_fields';
+    private const RENDERED_WYSIWYG_FIELDS = 'rendered_wysiwyg_fields';
 
     /** @var WYSIWYGFieldsProvider */
     private $wysiwygFieldsProvider;
 
-    /** @var bool */
-    private $excludeWysiwygProperties;
+    /** @var EntityFieldFilteringHelper */
+    private $entityFieldFilteringHelper;
+
+    /** @var DoctrineHelper */
+    protected $doctrineHelper;
 
     /**
-     * @param WYSIWYGFieldsProvider $wysiwygFieldsProvider
-     * @param bool                  $excludeWysiwygProperties
+     * @param WYSIWYGFieldsProvider      $wysiwygFieldsProvider
+     * @param EntityFieldFilteringHelper $entityFieldFilteringHelper
+     * @param DoctrineHelper             $doctrineHelper
      */
-    public function __construct(WYSIWYGFieldsProvider $wysiwygFieldsProvider, bool $excludeWysiwygProperties = false)
-    {
+    public function __construct(
+        WYSIWYGFieldsProvider $wysiwygFieldsProvider,
+        EntityFieldFilteringHelper $entityFieldFilteringHelper,
+        DoctrineHelper $doctrineHelper
+    ) {
         $this->wysiwygFieldsProvider = $wysiwygFieldsProvider;
-        $this->excludeWysiwygProperties = $excludeWysiwygProperties;
+        $this->entityFieldFilteringHelper = $entityFieldFilteringHelper;
+        $this->doctrineHelper = $doctrineHelper;
     }
 
     /**
      * Gets the list of names of WYSIWYG fields added by this processor.
      *
-     * @param ConfigContext $context
+     * @param EntityDefinitionConfig $definition
      *
-     * @return string[]|null
+     * @return string[]|null [field name, ...]
      */
-    public static function getWysiwygFields(ConfigContext $context): ?array
+    public static function getWysiwygFields(EntityDefinitionConfig $definition): ?array
     {
-        return $context->get(self::WYSIWYG_FIELDS);
+        return $definition->get(self::WYSIWYG_FIELDS);
+    }
+
+    /**
+     * Gets the list of names of "rendered" WYSIWYG fields added by this processor.
+     * The "rendered" WYSIWYG fields is read-only nested objects with "value" and "style" properties,
+     * both properties a processed by the specified TWIG template and contain ready to use HTML ans CSS.
+     *
+     * @param EntityDefinitionConfig $definition
+     *
+     * @return array|null [field path => ["value" property name, "style" property name], ...]
+     */
+    public static function getRenderedWysiwygFields(EntityDefinitionConfig $definition): ?array
+    {
+        return $definition->get(self::RENDERED_WYSIWYG_FIELDS);
+    }
+
+    /**
+     * @param EntityDefinitionConfig $definition
+     * @param string                 $fieldName
+     *
+     * @return bool
+     */
+    protected static function isWysiwygFieldProcessed(
+        EntityDefinitionConfig $definition,
+        string $fieldName
+    ): bool {
+        $wysiwygFields = $definition->get(self::WYSIWYG_FIELDS);
+
+        return $wysiwygFields && \in_array($fieldName, $wysiwygFields, true);
+    }
+
+    /**
+     * @param EntityDefinitionConfig $definition
+     * @param string                 $fieldName
+     *
+     * @return bool
+     */
+    protected static function isRenderedWysiwygFieldProcessed(
+        EntityDefinitionConfig $definition,
+        string $fieldName
+    ): bool {
+        $renderedWysiwygFields = $definition->get(self::RENDERED_WYSIWYG_FIELDS);
+
+        return $renderedWysiwygFields && isset($renderedWysiwygFields[$fieldName]);
+    }
+
+    /**
+     * @param EntityDefinitionConfig $definition
+     * @param string                 $fieldName
+     */
+    protected static function registerWysiwygField(
+        EntityDefinitionConfig $definition,
+        string $fieldName
+    ): void {
+        $wysiwygFields = $definition->get(self::WYSIWYG_FIELDS) ?? [];
+        if (!\in_array($fieldName, $wysiwygFields, true)) {
+            $wysiwygFields[] = $fieldName;
+            $definition->set(self::WYSIWYG_FIELDS, $wysiwygFields);
+        }
+    }
+
+    /**
+     * @param EntityDefinitionConfig $definition
+     * @param string                 $fieldName
+     * @param string                 $valueFieldName
+     * @param string                 $styleFieldName
+     */
+    protected static function registerRenderedWysiwygField(
+        EntityDefinitionConfig $definition,
+        string $fieldName,
+        string $valueFieldName,
+        string $styleFieldName
+    ): void {
+        $renderedWysiwygFields = $definition->get(self::RENDERED_WYSIWYG_FIELDS) ?? [];
+        $renderedWysiwygFields[$fieldName] = [$valueFieldName, $styleFieldName];
+        $definition->set(self::RENDERED_WYSIWYG_FIELDS, $renderedWysiwygFields);
     }
 
     /**
@@ -55,68 +145,129 @@ class ConfigureWYSIWYGFields implements ProcessorInterface
         /** @var ConfigContext $context */
 
         $entityClass = $context->getClassName();
+        if (!$this->doctrineHelper->isManageableEntityClass($entityClass)) {
+            return;
+        }
 
-        $wysiwygFields = $this->wysiwygFieldsProvider->getWysiwygFields($entityClass);
-        if (empty($wysiwygFields)) {
+        $wysiwygFieldNames = $this->wysiwygFieldsProvider->getWysiwygFields($entityClass);
+        $enabledWysiwygFieldNames = [];
+        if ($wysiwygFieldNames) {
+            $enabledWysiwygFieldNames = $this->entityFieldFilteringHelper->filterEntityFields(
+                $entityClass,
+                $wysiwygFieldNames,
+                $context->getExplicitlyConfiguredFieldNames(),
+                $context->getRequestedExclusionPolicy()
+            );
+        }
+        if (!$wysiwygFieldNames) {
             return;
         }
 
         $definition = $context->getResult();
-        foreach ($wysiwygFields as $fieldName) {
-            $field = $this->createWysiwygField($definition, $fieldName);
-
-            $valueField = $definition->getOrAddField('_' . $fieldName);
-            if (!$valueField->hasPropertyPath()) {
-                $valueField->setPropertyPath($fieldName);
-            }
-
-            $styleFieldName = $this->wysiwygFieldsProvider->getWysiwygStyleField($entityClass, $fieldName);
-            $propertiesFieldName = $this->wysiwygFieldsProvider->getWysiwygPropertiesField($entityClass, $fieldName);
-
-            $this->excludeField($definition, $entityClass, $fieldName);
-            $this->excludeField($definition, $entityClass, $styleFieldName);
-            $this->excludeField($definition, $entityClass, $propertiesFieldName);
-
-            $this->addNestedField($field, 'value', $fieldName, DataType::STRING);
-            $this->addNestedField($field, 'style', $styleFieldName, DataType::STRING);
-            if (!$this->excludeWysiwygProperties) {
-                $this->addNestedField($field, 'properties', $propertiesFieldName, DataType::OBJECT);
-            }
-
-            $this->addWysiwygFieldToContext($context, $fieldName);
+        foreach ($wysiwygFieldNames as $fieldName) {
+            $this->configureWysiwygField(
+                $context,
+                $definition,
+                $entityClass,
+                $fieldName,
+                !\in_array($fieldName, $enabledWysiwygFieldNames, true)
+            );
         }
     }
+
+    /**
+     * @param ConfigContext          $context
+     * @param EntityDefinitionConfig $definition
+     * @param string                 $fieldName
+     * @param bool                   $excluded
+     */
+    abstract protected function configureWysiwygField(
+        ConfigContext $context,
+        EntityDefinitionConfig $definition,
+        string $entityClass,
+        string $fieldName,
+        bool $excluded
+    ): void;
 
     /**
      * @param EntityDefinitionConfig $definition
-     * @param string                 $fieldName
+     * @param string                 $wysiwygFieldName
+     * @param bool                   $excluded
+     * @param string|null            $sourceWysiwygFieldName
      *
      * @return EntityDefinitionFieldConfig
      */
-    private function createWysiwygField(
+    protected function createWysiwygField(
         EntityDefinitionConfig $definition,
-        string $fieldName
+        string $wysiwygFieldName,
+        bool $excluded,
+        string $sourceWysiwygFieldName = null
     ): EntityDefinitionFieldConfig {
-        $field = $definition->findField($fieldName, true);
-        if (null === $field) {
-            $field = $definition->addField($fieldName);
+        if ($sourceWysiwygFieldName && $sourceWysiwygFieldName !== $wysiwygFieldName) {
+            $sourceWysiwygFieldName = $definition->findFieldNameByPropertyPath($sourceWysiwygFieldName);
+            if (null !== $sourceWysiwygFieldName) {
+                $definition->addField($wysiwygFieldName, $definition->getField($sourceWysiwygFieldName));
+                $definition->removeField($sourceWysiwygFieldName);
+            }
         }
-        $field->setDataType(DataType::NESTED_OBJECT);
-        $field->setPropertyPath(ConfigUtil::IGNORE_PROPERTY_PATH);
-        $field->setFormOption('inherit_data', true);
+        $wysiwygField = $definition->getField($wysiwygFieldName);
+        if (null === $wysiwygField) {
+            $wysiwygField = $definition->addField($wysiwygFieldName);
+        }
+        $wysiwygField->setDataType(DataType::NESTED_OBJECT);
+        $wysiwygField->setPropertyPath(ConfigUtil::IGNORE_PROPERTY_PATH);
+        $wysiwygField->setFormOption('inherit_data', true);
+        if ($excluded && !$wysiwygField->hasExcluded()) {
+            $wysiwygField->setExcluded();
+        }
+        $wysiwygField->getOrCreateTargetEntity()->setExcludeAll();
 
-        return $field;
+        return $wysiwygField;
     }
 
     /**
-     * @param ConfigContext $context
-     * @param string        $fieldName
+     * @param EntityDefinitionFieldConfig $wysiwygField
+     * @param string                      $fieldName
      */
-    private function addWysiwygFieldToContext(ConfigContext $context, string $fieldName): void
+    protected function addNestedValueField(EntityDefinitionFieldConfig $wysiwygField, string $fieldName): void
     {
-        $wysiwygFields = $context->get(self::WYSIWYG_FIELDS) ?? [];
-        $wysiwygFields[] = $fieldName;
-        $context->set(self::WYSIWYG_FIELDS, $wysiwygFields);
+        $this->addNestedField($wysiwygField, self::FIELD_VALUE, $fieldName, DataType::STRING);
+    }
+
+    /**
+     * @param EntityDefinitionFieldConfig $wysiwygField
+     * @param string                      $entityClass
+     * @param string                      $fieldName
+     */
+    protected function addNestedStyleField(
+        EntityDefinitionFieldConfig $wysiwygField,
+        string $entityClass,
+        string $fieldName
+    ): void {
+        $this->addNestedField(
+            $wysiwygField,
+            self::FIELD_STYLE,
+            $this->getWysiwygStyleFieldName($entityClass, $fieldName),
+            DataType::STRING
+        );
+    }
+
+    /**
+     * @param EntityDefinitionFieldConfig $wysiwygField
+     * @param string                      $entityClass
+     * @param string                      $fieldName
+     */
+    protected function addNestedPropertiesField(
+        EntityDefinitionFieldConfig $wysiwygField,
+        string $entityClass,
+        string $fieldName
+    ): void {
+        $this->addNestedField(
+            $wysiwygField,
+            self::FIELD_PROPERTIES,
+            $this->getWysiwygPropertiesFieldName($entityClass, $fieldName),
+            DataType::OBJECT
+        );
     }
 
     /**
@@ -125,16 +276,37 @@ class ConfigureWYSIWYGFields implements ProcessorInterface
      * @param string                      $propertyPath
      * @param string                      $dataType
      */
-    private function addNestedField(
+    protected function addNestedField(
         EntityDefinitionFieldConfig $wysiwygField,
         string $fieldName,
         string $propertyPath,
         string $dataType
     ): void {
-        $wysiwygField->addDependsOn($propertyPath);
-        $valueNestedField = $wysiwygField->getOrCreateTargetEntity()->addField($fieldName);
-        $valueNestedField->setPropertyPath($propertyPath);
-        $valueNestedField->setDataType($dataType);
+        $nestedField = $wysiwygField->getTargetEntity()->getOrAddField($fieldName);
+        $nestedField->setPropertyPath($propertyPath);
+        $nestedField->setDataType($dataType);
+        if (!$nestedField->isExcluded() && ConfigUtil::IGNORE_PROPERTY_PATH !== $propertyPath) {
+            $wysiwygField->addDependsOn($propertyPath);
+        }
+    }
+
+    /**
+     * @param EntityDefinitionConfig $definition
+     * @param string                 $entityClass
+     * @param string                 $fieldName
+     */
+    protected function configureSourceWysiwygFields(
+        EntityDefinitionConfig $definition,
+        string $entityClass,
+        string $fieldName
+    ): void {
+        $valueField = $definition->getOrAddField('_' . $fieldName);
+        if (!$valueField->hasPropertyPath()) {
+            $valueField->setPropertyPath($fieldName);
+        }
+        $this->excludeField($definition, $entityClass, $fieldName);
+        $this->excludeField($definition, $entityClass, $this->getWysiwygStyleFieldName($entityClass, $fieldName));
+        $this->excludeField($definition, $entityClass, $this->getWysiwygPropertiesFieldName($entityClass, $fieldName));
     }
 
     /**
@@ -142,7 +314,7 @@ class ConfigureWYSIWYGFields implements ProcessorInterface
      * @param string                 $entityClass
      * @param string                 $propertyPath
      */
-    private function excludeField(
+    protected function excludeField(
         EntityDefinitionConfig $definition,
         string $entityClass,
         string $propertyPath
@@ -163,5 +335,27 @@ class ConfigureWYSIWYGFields implements ProcessorInterface
         if ($this->wysiwygFieldsProvider->isSerializedWysiwygField($entityClass, $propertyPath)) {
             $field->addDependsOn('serialized_data');
         }
+    }
+
+    /**
+     * @param string $entityClass
+     * @param string $fieldName
+     *
+     * @return string
+     */
+    protected function getWysiwygStyleFieldName(string $entityClass, string $fieldName): string
+    {
+        return $this->wysiwygFieldsProvider->getWysiwygStyleField($entityClass, $fieldName);
+    }
+
+    /**
+     * @param string $entityClass
+     * @param string $fieldName
+     *
+     * @return string
+     */
+    protected function getWysiwygPropertiesFieldName(string $entityClass, string $fieldName): string
+    {
+        return $this->wysiwygFieldsProvider->getWysiwygPropertiesField($entityClass, $fieldName);
     }
 }

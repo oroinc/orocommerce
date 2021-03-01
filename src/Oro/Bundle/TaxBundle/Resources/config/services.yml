@@ -340,6 +340,14 @@ services:
         tags:
             - { name: oro_tax.address_matcher, type: zip_code}
 
+    oro_tax.matcher.country_and_zip_code_matcher:
+        parent: oro_tax.abstract.matcher
+        class: 'Oro\Bundle\TaxBundle\Matcher\CountryZipCodeMatcher'
+        calls:
+            - [ setCountryMatcher,  [ "@oro_tax.matcher.country_matcher" ] ]
+        tags:
+            - { name: oro_tax.address_matcher, type: country_and_zip_code }
+
     oro_tax.matcher.resolvable_matcher:
         class: 'Oro\Bundle\TaxBundle\Matcher\ResolvableMatcher'
         public: false

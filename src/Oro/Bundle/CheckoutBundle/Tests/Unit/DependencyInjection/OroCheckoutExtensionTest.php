@@ -1,46 +1,29 @@
 <?php
+declare(strict_types=1);
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\DependencyInjection;
 
 use Oro\Bundle\CheckoutBundle\DependencyInjection\OroCheckoutExtension;
 use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class OroCheckoutExtensionTest extends ExtensionTestCase
 {
-    /** @var OroCheckoutExtension */
-    protected $extension;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function buildContainerMock()
+    protected function buildContainerMock(): ContainerBuilder
     {
-        $mockBuilder = $this->getMockBuilder('Symfony\Component\DependencyInjection\ContainerBuilder')
-            ->setMethods(['setDefinition', 'setParameter', 'prependExtensionConfig', 'getParameter', 'setAlias'])
-            ->getMock();
-
-        $mockBuilder
-            ->expects($this->once())
+        $containerBuilder = parent::buildContainerMock();
+        $containerBuilder
+            ->expects(static::once())
             ->method('getParameter')
             ->with('kernel.bundles')
             ->willReturn(['OroSaleBundle' => []]);
 
-        return $mockBuilder;
+        return $containerBuilder;
     }
 
-    protected function setUp(): void
+    public function testLoad(): void
     {
-        $this->extension = new OroCheckoutExtension();
-    }
-
-    protected function tearDown(): void
-    {
-        unset($this->extension);
-    }
-
-    public function testLoad()
-    {
-        $this->loadExtension($this->extension);
+        $this->loadExtension(new OroCheckoutExtension());
 
         $expectedDefinitions = [
             'oro_checkout.provider.shipping_context',
@@ -49,13 +32,13 @@ class OroCheckoutExtensionTest extends ExtensionTestCase
             'oro_checkout.shipping_method.price_provider_chain_element',
             'oro_checkout.condition.checkout_has_applicable_shipping_methods',
         ];
-        $this->assertDefinitionsLoaded($expectedDefinitions);
 
+        $this->assertDefinitionsLoaded($expectedDefinitions);
         $this->assertExtensionConfigsLoaded([OroCheckoutExtension::ALIAS]);
     }
 
-    public function testGetAlias()
+    public function testGetAlias(): void
     {
-        $this->assertEquals(OroCheckoutExtension::ALIAS, $this->extension->getAlias());
+        static::assertEquals(OroCheckoutExtension::ALIAS, (new OroCheckoutExtension())->getAlias());
     }
 }

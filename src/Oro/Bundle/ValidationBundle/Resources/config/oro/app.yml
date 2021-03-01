@@ -1,0 +1,6 @@
+oro_api:
+    error_title_overrides:
+        'greater than zero constraint': 'greater than constraint'
+        'decimal constraint': 'type constraint'
+        'integer constraint': 'type constraint'
+        'numeric range constraint': 'range constraint'
