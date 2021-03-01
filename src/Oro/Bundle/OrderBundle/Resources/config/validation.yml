@@ -94,10 +94,10 @@ Oro\Bundle\OrderBundle\Entity\OrderDiscount:
     constraints:
         - Oro\Bundle\OrderBundle\Validator\Constraints\DiscountType:
             groups: [Default, OrderDiscountItemType]
+        - Oro\Bundle\OrderBundle\Validator\Constraints\NotBlankDiscountValue:
+            groups: [Default, OrderDiscountItemType]
     properties:
         percent:
-            - NotBlank:
-                groups: [Default, OrderDiscountItemType]
             - Type:
                 groups: [Default, OrderDiscountItemType]
                 type: numeric
@@ -107,8 +107,6 @@ Oro\Bundle\OrderBundle\Entity\OrderDiscount:
                 max: 100
                 type: fractional_100
         amount:
-            - NotBlank:
-                groups: [Default, OrderDiscountItemType]
             - Type:
                 groups: [Default, OrderDiscountItemType]
                 type: numeric
@@ -124,6 +122,9 @@ Oro\Bundle\OrderBundle\Entity\OrderDiscount:
             - Oro\Bundle\OrderBundle\Validator\Constraints\Discounts:
                 errorMessage: 'oro.order.discounts.sum.error.single_discount.label'
                 groups: [OrderDiscountItemType]
+            - Oro\Bundle\FormBundle\Validator\Constraints\UnchangeableField:
+                message: oro.order.discounts.order.changed
+                groups: [api]
 
 Oro\Bundle\OrderBundle\Entity\OrderShippingTracking:
     properties:
