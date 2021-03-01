@@ -105,9 +105,7 @@ The localized short label of the product unit.
 
 {@inheritdoc}
 
-**Please note:**
-
-*This field is **required** and must remain defined.*
+**This field must not be empty, if it is passed.**
 
 ### pluralLabel
 
@@ -123,9 +121,7 @@ The localized plural label of the product unit.
 
 {@inheritdoc}
 
-**Please note:**
-
-*This field is **required** and must remain defined.*
+**This field must not be empty, if it is passed.**
 
 ### shortPluralLabel
 
@@ -141,9 +137,7 @@ The localized short plural label of the product unit.
 
 {@inheritdoc}
 
-**Please note:**
-
-*This field is **required** and must remain defined.*
+**This field must not be empty, if it is passed.**
 
 ### defaultPrecision
 
@@ -157,6 +151,4 @@ The localized short plural label of the product unit.
 
 {@inheritdoc}
 
-**Please note:**
-
-*This field is **required** and must remain defined.*
+**This field must not be empty, if it is passed.**

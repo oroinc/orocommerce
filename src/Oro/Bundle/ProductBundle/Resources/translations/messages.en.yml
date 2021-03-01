@@ -468,7 +468,7 @@ oro:
                     tooltip: 'When enabled, the original image file name will be appended to the system-generated hash value.'
                 allow_partial_product_search:
                     label: 'Allow Partial Product Search'
-                    tooltip: 'When enabled, the customer can find a product in the global search and on quick order form using a substring inside a word. Enabling this option may have a performance impart on search behaviour.'
+                    tooltip: 'When enabled, the customer can find a product in the global search and on quick order form using a substring inside a word. Enabling this option may have a performance impact on search behaviour.'
                 brand_direct_url_prefix.label: 'Brand URL Prefix'
                 enable_related_products.label: 'Enable Related Products'
                 related_products_bidirectional:

@@ -23,7 +23,7 @@ Feature: Products Grid Frontend
 
   Scenario: Check Price Filter
     Given number of records in "Product Frontend Grid" should be 19
-    When I filter "Price" as equals "10"
+    And I set range filter "Price" as min value "10" and max value "10" use "each" unit
     Then I should see "PSKU1"
     And I should not see "PSKU5"
     And I click "Clear All Filters"

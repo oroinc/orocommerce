@@ -149,7 +149,8 @@ Oro\Bundle\ProductBundle\Entity\ProductShortDescription:
 
 Oro\Bundle\ProductBundle\Entity\ProductDescription:
     product1_description:
-        wysiwyg: 'Product 1 Description'
+        wysiwyg: 'Product 1 Description. Twig Expr: "{{ " test "|trim }}".'
+        wysiwygStyle: '.test {color: {{ " red "|trim }}}'
     product1_es_description:
         wysiwyg: 'Product 1 Spanish Description'
         localization: '@es'
@@ -335,11 +336,11 @@ Oro\Bundle\ProductBundle\Entity\Product:
         testAttrManyToMany: ['@customer_user1', '@customer_user2']
         testToManyId: ['@country.mexico', '@country.germany']
         slugs: ['@product1_slug_default', '@product1_slug_en_CA', '@product1_slug_es']
-        wysiwyg: 'Product 1 WYSIWYG Text'
-        wysiwyg_style: '\<style\>\</style\>'
+        wysiwyg: 'Product 1 WYSIWYG Text. Twig Expr: "{{ " test "|trim }}".'
+        wysiwyg_style: '.test {color: {{ " red "|trim }}}'
         wysiwyg_properties: { param: value }
-        wysiwygAttr: 'Product 1 WYSIWYG Attr Text'
-        wysiwygAttr_style: '\<style\>\</style\>'
+        wysiwygAttr: 'Product 1 WYSIWYG Attr Text. Twig Expr: "{{ " test "|trim }}".'
+        wysiwygAttr_style: '.test {color: {{ " red "|trim }}}'
         wysiwygAttr_properties: { param: value }
     product2:
         sku: 'PSKU2'

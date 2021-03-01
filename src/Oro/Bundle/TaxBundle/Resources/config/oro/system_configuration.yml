@@ -106,6 +106,7 @@ system_configuration:
                 choices:
                     oro.tax.system_configuration.fields.address_resolver_granularity.country.label: country
                     oro.tax.system_configuration.fields.address_resolver_granularity.region.label: region
+                    oro.tax.system_configuration.fields.address_resolver_granularity.country_and_zip.label: country_and_zip_code
                     oro.tax.system_configuration.fields.address_resolver_granularity.zip.label: zip_code
 
         oro_tax.use_as_base_exclusions:

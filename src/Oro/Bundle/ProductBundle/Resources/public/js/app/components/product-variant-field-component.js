@@ -12,7 +12,7 @@ define(function(require) {
          * @property {Object}
          */
         options: {
-            simpleProductVariants: []
+            simpleProductVariants: {}
         },
 
         /**
@@ -43,6 +43,9 @@ define(function(require) {
          * @property {Object}
          */
         state: null,
+
+        /** @property {Object} */
+        simpleProductVariants: {},
 
         /**
          * @inheritDoc
@@ -131,7 +134,7 @@ define(function(require) {
          * @private
          */
         _initVariantInstances: function() {
-            const onChangeHandler = _.bind(this._onVariantFieldChange, this, this.options.simpleProductVariants);
+            const onChangeHandler = _.bind(this._onVariantFieldChange, this, this.simpleProductVariants);
 
             if (this.$el.find('select').length) {
                 this.$el.find('select').each(_.bind(function(index, select) {
@@ -150,7 +153,7 @@ define(function(require) {
                 }, this));
             }
 
-            this._resolveVariantFieldsChain(this.options.simpleProductVariants);
+            this._resolveVariantFieldsChain(this.simpleProductVariants);
             this.$el.on('change', 'select', onChangeHandler);
         },
 
@@ -160,8 +163,8 @@ define(function(require) {
          * @private
          */
         _prepareProductVariants: function() {
-            this.options.simpleProductVariants = _.mapObject(this.options.simpleProductVariants, function(variant) {
-                return _.reduce(variant, function(memo, attr, key) {
+            this.simpleProductVariants = _.mapObject(this.options.simpleProductVariants, function(variant) {
+                return _.reduce(variant.attributes, function(memo, attr, key) {
                     memo[this._extractName(key)] = (
                         this._extractName(key) + '_' + this._normalizeBool(attr)
                     );
@@ -257,17 +260,19 @@ define(function(require) {
          * @private
          */
         _updateProduct: function() {
-            const variants = this.options.simpleProductVariants;
-            this.foundProductId = null;
+            const variants = this.simpleProductVariants;
 
             for (const variant in variants) {
                 if (variants.hasOwnProperty(variant) && _.isEqual(this.getState(), variants[variant])) {
-                    this.foundProductId = variant;
+                    const {attributes, ...data} = this.options.simpleProductVariants[variant];
+
+                    this.view.updateProductModel({
+                        id: variant,
+                        ...data
+                    });
                     break;
                 }
             }
-
-            this.view.updateProductInfo(this.foundProductId);
         },
 
         /**

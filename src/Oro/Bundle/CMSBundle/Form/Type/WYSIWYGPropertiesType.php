@@ -30,7 +30,7 @@ class WYSIWYGPropertiesType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->addViewTransformer(new ArrayToJsonTransformer());
+        $builder->addViewTransformer(new ArrayToJsonTransformer(true));
     }
 
     /**

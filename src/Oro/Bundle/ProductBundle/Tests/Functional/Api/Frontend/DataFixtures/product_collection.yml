@@ -50,7 +50,8 @@ Oro\Bundle\ProductBundle\Entity\ProductShortDescription:
 
 Oro\Bundle\ProductBundle\Entity\ProductDescription:
     product1_description:
-        wysiwyg: 'Product 1 Description'
+        wysiwyg: 'Product 1 Description. Twig Expr: "{{ " test "|trim }}".'
+        wysiwygStyle: '.test {color: {{ " red "|trim }}}'
     product2_description:
         wysiwyg: 'Product 2 Description'
     product3_description:

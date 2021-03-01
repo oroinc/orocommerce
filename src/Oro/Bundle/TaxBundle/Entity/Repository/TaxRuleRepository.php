@@ -9,6 +9,9 @@ use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\TaxBundle\Entity\TaxRule;
 use Oro\Bundle\TaxBundle\Model\TaxCodes;
 
+/**
+ * Repository for TaxRule ORM entity.
+ */
 class TaxRuleRepository extends EntityRepository
 {
     /**
@@ -29,8 +32,8 @@ class TaxRuleRepository extends EntityRepository
 
     /**
      * @param Country $country
-     * @param Region $region
-     * @param string $regionText
+     * @param Region|null $region
+     * @param string|null $regionText
      * @return QueryBuilder
      */
     protected function createRegionQueryBuilder(Country $country, Region $region = null, $regionText = null)
@@ -99,7 +102,7 @@ class TaxRuleRepository extends EntityRepository
      * @param TaxCodes $taxCodes
      * @param Country $country
      * @param Region|null $region
-     * @param null $regionText
+     * @param string|null $regionText
      * @return TaxRule[]
      */
     public function findByRegionAndTaxCode(
@@ -124,8 +127,8 @@ class TaxRuleRepository extends EntityRepository
      * @param TaxCodes $taxCodes
      * @param string $zipCode
      * @param Country $country
-     * @param Region $region
-     * @param string $regionText
+     * @param Region|null $region
+     * @param string|null $regionText
      * @return TaxRule[]
      */
     public function findByZipCodeAndTaxCode(
@@ -138,6 +141,38 @@ class TaxRuleRepository extends EntityRepository
         $this->assertRegion($region, $regionText);
 
         $qb = $this->createRegionQueryBuilder($country, $region, $regionText);
+        $qb
+            ->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->andX(
+                        $qb->expr()->lte('CAST(zipCodes.zipRangeStart as int)', ':zipCodeForRange'),
+                        $qb->expr()->gte('CAST(zipCodes.zipRangeEnd as int)', ':zipCodeForRange')
+                    ),
+                    $qb->expr()->eq('zipCodes.zipCode', ':zipCode')
+                )
+            )
+            ->setParameter('zipCode', $zipCode)
+            ->setParameter('zipCodeForRange', (int)$zipCode);
+
+        $this->joinTaxCodes($qb, $taxCodes);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * Find TaxRules by ZipCode (with Country check) and TaxCodes
+     *
+     * @param TaxCodes $taxCodes
+     * @param string $zipCode
+     * @param Country $country
+     * @return TaxRule[]
+     */
+    public function findByCountryAndZipCodeAndTaxCode(
+        TaxCodes $taxCodes,
+        $zipCode,
+        Country $country
+    ) {
+        $qb = $this->createCountryQueryBuilder($country);
         $qb
             ->andWhere(
                 $qb->expr()->orX(

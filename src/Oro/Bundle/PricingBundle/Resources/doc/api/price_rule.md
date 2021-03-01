@@ -24,8 +24,8 @@ The created record is returned in the response.
 
 Information about the currency, quantity, and product unit is required for price rule creation. 
 Currency, quantity, and product unit may be defined either by the value or via regular expression the value matches.
-The values should be provided in the `currency`, `quantity`, and `productUnit` fields (or the plain fields).
-The regular expressions should be provided in the `currencyExpression`, `quantityExpression`, and `productUnitExpression` (or the regular expression fields).
+The values should be provided in the **currency**, **quantity**, and **productUnit** fields (or the plain fields).
+The regular expressions should be provided in the **currencyExpression**, **quantityExpression**, and **productUnitExpression** (or the regular expression fields).
 
 The plain and regular expression fields are mutually exclusive. Do not leave both parameters unset and do not set both parameters in the same request. 
 
@@ -69,12 +69,12 @@ The updated record is returned in the response.
 
 Information about the currency, quantity, and product unit is required for price rule creation. 
 Currency, quantity, and product unit may be defined either by the value or via regular expression the value matches.
-The values should be provided in the `currency`, `quantity`, and `productUnit` fields (or the plain fields).
-The regular expressions should be provided in the `currencyExpression`, `quantityExpression`, and `productUnitExpression` (or the regular expression fields).
+The values should be provided in the **currency**, **quantity**, and **productUnit** fields (or the plain fields).
+The regular expressions should be provided in the **currencyExpression**, **quantityExpression**, and **productUnitExpression** (or the regular expression fields).
 
 The plain and regular expression fields are mutually exclusive. Do not leave both parameters unset and do not set both parameters in the same request. 
 
-The `priceList` value is not allowed to be updated. 
+The **priceList** association is not allowed to be updated. 
 
 To modify the relationship with the price list, delete the incorrect price rule and create a new one including the correct price list relationship.
 
@@ -138,7 +138,8 @@ Delete a collection of price rule records.
 
 {@inheritdoc}
 
-**One of the fields: `currency`, `currencyExpression` should be blank.**
+**Note:**
+One of the fields: **currency**, **currencyExpression** should be blank.
 
 ### currencyExpression
 
@@ -146,7 +147,8 @@ Delete a collection of price rule records.
 
 {@inheritdoc}
 
-**One of the fields: `currency`, `currencyExpression` should be blank.**
+**Note:**
+One of the fields: **currency**, **currencyExpression** should be blank.
 
 ### quantity
 
@@ -154,7 +156,8 @@ Delete a collection of price rule records.
 
 {@inheritdoc}
 
-**One of the fields: `quantity`, `quantityExpression` should be blank.**
+**Note:**
+One of the fields: **quantity**, **quantityExpression** should be blank.
 
 ### quantityExpression
 
@@ -162,7 +165,8 @@ Delete a collection of price rule records.
 
 {@inheritdoc}
 
-**One of the fields: `quantity`, `quantityExpression` should be blank.**
+**Note:**
+One of the fields: **quantity**, **quantityExpression** should be blank.
 
 ### productUnit
 
@@ -170,7 +174,8 @@ Delete a collection of price rule records.
 
 {@inheritdoc}
 
-**One of the fields: `productUnit`, `productUnitExpression` should be blank.**
+**Note:**
+One of the fields: **productUnit**, **productUnitExpression** should be blank.
 
 ### productUnitExpression
 
@@ -178,7 +183,8 @@ Delete a collection of price rule records.
 
 {@inheritdoc}
 
-**One of the fields: `productUnit`, `productUnitExpression` should be blank.**
+**Note:**
+One of the fields: **productUnit**, **productUnitExpression** should be blank.
 
 ### priority
 
@@ -192,9 +198,7 @@ Delete a collection of price rule records.
 
 {@inheritdoc}
 
-**Please note:**
-
-*This field is **required** and must remain defined.*
+**This field must not be empty, if it is passed.**
 
 ## SUBRESOURCES
 

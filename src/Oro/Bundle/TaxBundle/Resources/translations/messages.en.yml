@@ -146,9 +146,10 @@ oro.tax:
             shipping_rates_include_tax.tooltip: 'Select the box to avoid charging taxes on shipping twice if the shipping rates provided by the shipping carrier(s) or entered manually in the management console already include tax.'
             address_resolver_granularity:
                 label: 'Address Resolver Granularity'
-                country.label: 'Country'
-                region.label: 'Region'
-                zip.label: 'Zip code'
+                country.label: 'Only Country'
+                region.label: 'Only Country and Region'
+                country_and_zip.label: 'Only Country and Zip'
+                zip.label: 'Country, Region and Zip'
 
     providers:
         built_in.label: Built-In Table Rates

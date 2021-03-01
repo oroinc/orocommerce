@@ -52,7 +52,7 @@ Oro\Bundle\CatalogBundle\Entity\CategoryShortDescription:
 
 Oro\Bundle\CatalogBundle\Entity\CategoryLongDescription:
     category1_description:
-        wysiwyg: 'Category 1 Description'
+        wysiwyg: 'Category 1 Description. Twig Expr: "{{ " test "|trim }}".'
     category1_1_description:
         wysiwyg: 'Category 1_1 Description'
 

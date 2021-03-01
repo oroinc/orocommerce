@@ -16,35 +16,19 @@ const modelAttrStart = 'data-gjs-';
  * @returns {{html: Array, css: string}}
  */
 export const htmlParser = (html, config, compTypes, parserCss) => {
-    const res = {
-        html: [],
-        css: ''
+    const domParser = new DOMParser();
+    const body = domParser.parseFromString(html, 'text/html').body;
+
+    return {
+        html: parseNodes(body, config, compTypes, {
+            tagName: 'div',
+            root: body.childNodes.length > 1
+        }),
+        css: parserCss ? parserCss([...body.querySelectorAll('style')].reduce((acc, style) => {
+            acc += style.innerHTML;
+            return acc;
+        }, '')) : ''
     };
-    const el = document.createElement('div');
-    el.innerHTML = html;
-
-    res.html = parseNodes(el, config, compTypes, {
-        tagName: 'div',
-        root: el.childNodes.length > 1
-    });
-
-    // Detach style tags and parse them
-    if (parserCss) {
-        let styleStr = '';
-        const styles = el.querySelectorAll('style');
-        let j = styles.length;
-
-        while (j--) {
-            styleStr = styles[j].innerHTML + styleStr;
-            styles[j].parentNode.removeChild(styles[j]);
-        }
-
-        if (styleStr) {
-            res.css = parserCss(styleStr);
-        }
-    }
-
-    return res;
 };
 
 /**
@@ -112,7 +96,6 @@ function parseNodes(el, config, ct = '', parent = {}) {
         const attrs = node.attributes || [];
         const attrsLen = attrs.length;
         const nodePrev = result[result.length - 1];
-        const nodeChild = node.childNodes.length;
         let model = {};
 
         // Start with understanding what kind of component it is
@@ -197,20 +180,11 @@ function parseNodes(el, config, ct = '', parent = {}) {
             }
         }
 
-        // Check for nested elements but avoid it if already provided
-        if (nodeChild && !model.components) {
-            // Avoid infinite nested text nodes
-            const firstChild = node.childNodes[0];
-
-            // If there is only one child and it's a TEXTNODE
-            // just make it content of the current node
-            if (nodeChild === 1 && firstChild.nodeType === 3) {
+        if (node.childNodes.length && !model.components) {
+            if (_.some(node.childNodes, ({nodeType}) => nodeType === 3)) {
                 !model.type && (model.type = 'text');
-                model.content = _.escape(firstChild.nodeValue);
-            } else {
-                model.root = false;
-                model.components = parseNodes(node, config, ct, model);
             }
+            model.components = parseNodes(node, config, ct, model);
         }
 
         if (!model.type && _.some(model.components, ({type}) => type === 'text')) {

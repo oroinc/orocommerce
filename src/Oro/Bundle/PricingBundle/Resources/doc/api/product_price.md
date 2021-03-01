@@ -14,7 +14,7 @@ Retrieve a collection of product price records.
 
 {@inheritdoc}
 
-**Note:** It is required to provide priceList filter with request.
+**Note:** It is required to provide the **priceList** filter with request.
 
 ### create
 
@@ -58,7 +58,6 @@ Example:
         }
     }
 }
-
 ```
 {@/request}
 
@@ -114,13 +113,13 @@ Delete a collection of product price records.
 
 {@inheritdoc}
 
-**Note:** It is required to provide priceList filter with request.
+**Note:** It is required to provide the **priceList** filter with request.
 
 ## FIELDS
 
 ### currency
 
-The product price currency
+The product price currency.
 
 #### create
 
@@ -132,12 +131,11 @@ The product price currency
 
 {@inheritdoc}
 
-**Please note:**
-*This field is **required** and must remain defined.*
+**This field must not be empty, if it is passed.**
 
 ### quantity
 
-The product quantity
+The product quantity.
 
 #### create
 
@@ -149,12 +147,11 @@ The product quantity
 
 {@inheritdoc}
 
-**Please note:**
-*This field is **required** and must remain defined.*
+**This field must not be empty, if it is passed.**
 
 ### value
 
-The product price
+The product price.
 
 #### create
 
@@ -166,12 +163,11 @@ The product price
 
 {@inheritdoc}
 
-**Please note:**
-*This field is **required** and must remain defined.*
+**This field must not be empty, if it is passed.**
 
 ### priceList
 
-Price list related to a product price
+Price list related to a product price.
 
 #### create
 
@@ -187,7 +183,7 @@ Price list related to a product price
 
 ### product
 
-The product of a product price
+The product of a product price.
 
 #### create
 
@@ -199,12 +195,11 @@ The product of a product price
 
 {@inheritdoc}
 
-**Please note:**
-*This field is **required** and must remain defined.*
+**This field must not be empty, if it is passed.**
 
 ### unit
 
-The unit of a product
+The unit of a product.
 
 #### create
 
@@ -216,5 +211,4 @@ The unit of a product
 
 {@inheritdoc}
 
-**Please note:**
-*This field is **required** and must remain defined.*
+**This field must not be empty, if it is passed.**

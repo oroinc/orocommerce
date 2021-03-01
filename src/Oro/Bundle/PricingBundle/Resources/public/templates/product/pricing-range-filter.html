@@ -1,0 +1,48 @@
+<div class="choice-filter number-range-filter" data-number-range-filter-template>
+    <div class="filter-select-oro-wrapper">
+        <% if (showChoices) { %>
+            <select name="<%= name %>" class="select select--size-s select--full oro-select2 oro-select2--size-s" data-choice-value-select
+                <% if (_.isMobile()) { %>
+                    data-skip-input-widgets
+                <% } %>
+            >
+                <% _.each(choices, function (option) { %>
+                    <option value="<%= option.value %>"
+                        <% if (option.value == selectedChoice) { %>
+                            selected="selected"
+                        <% } %>
+                    >
+                        <%- option.label %>
+                    </option>
+                <% }); %>
+            </select>
+        <% } else { %>
+            <input name="<%- name %>" type="hidden" value="7" data-choice-value-select>
+        <% } %>
+    </div>
+    <div class="value-field-frame">
+        <div class="filter-value">
+            <div class="filter-value-range">
+                <div class="filter-start input-group">
+                    <div class="input-group-<%- currency.isPrepend ? 'prepend' : 'append' %> <%- currency.extended ? 'extended' : '' %>">
+                        <span class="input-group-text"><%- currency.symbol %></span>
+                    </div>
+                    <input class="input input--size-s input--full" type="number" placeholder="<%- _.__("oro.pricing.filter.product_price.min") %>" value="<%- value.value %>" name="value">
+                </div>
+                <span class="filter-separator">-</span>
+                <div class="filter-end input-group">
+                    <div class="input-group-<%- currency.isPrepend ? 'prepend' : 'append' %> <%- currency.extended ? 'extended' : '' %>">
+                        <span class="input-group-text"><%- currency.symbol %></span>
+                    </div>
+                    <input class="input input--size-s input--full" type="number" placeholder="<%- _.__("oro.pricing.filter.product_price.max") %>" value="<%- value.value_end %>" name="value_end">
+                </div>
+            </div>
+        </div>
+
+        <% if (renderMode !== 'toggle-mode') { %>
+            <div class="filter-action-row">
+                <button type="button" class="btn btn--action btn--size-s filter-update"><%- _.__("Apply") %></button>
+            </div>
+        <% } %>
+    </div>
+</div>

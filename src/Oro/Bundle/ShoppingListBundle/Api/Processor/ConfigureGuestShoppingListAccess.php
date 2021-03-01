@@ -11,8 +11,8 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
 /**
  * Configures security check for customer visitors:
- * * removes ACL resource for shopping list and line item entities;
- * * removes AccessGranted validators for shopping list and line item associations.
+ * * removes ACL resource for shopping list and line item entities
+ * * removes AccessGranted validators for shopping list and line item associations
  */
 class ConfigureGuestShoppingListAccess implements ProcessorInterface
 {

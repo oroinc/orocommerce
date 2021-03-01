@@ -31,7 +31,6 @@ Example:
     "type": "orderdiscounts",
     "attributes": {
       "description": "Sale",
-      "percent": 2.8421929223712,
       "amount": 100,
       "orderDiscountType": "oro_order_discount_item_type_amount"
     },
@@ -66,16 +65,7 @@ Example:
     "id": "1",
     "attributes": {
       "description": "Sale",
-      "percent": 3.0,
       "amount": 150     
-    },
-    "relationships": {
-      "order": {
-        "data": {
-          "type": "orders",
-          "id": "1"
-        }
-      }
     }
   }
 }
@@ -104,7 +94,16 @@ Delete a collection of discount records.
 
 **The required field.**
 
+#### update
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
+
 ### orderDiscountType
+
+{@inheritdoc}
+Possible values: `oro_order_discount_item_type_amount`, `oro_order_discount_item_type_percent`.
 
 #### create
 
@@ -116,9 +115,7 @@ Delete a collection of discount records.
 
 {@inheritdoc}
 
-**Please note:**
-
-*This field is **required** and must remain defined.*
+**This field must not be empty, if it is passed.**
 
 ### amount
 
@@ -126,15 +123,16 @@ Delete a collection of discount records.
 
 {@inheritdoc}
 
-**The required field.**
+**Note:**
+The field is required when the discount type is `oro_order_discount_item_type_amount`,
+otherwise a passed value will be ignored.
 
 #### update
 
 {@inheritdoc}
 
-**Please note:**
-
-*This field is **required** and must remain defined.*
+**Note:**
+This field must remain defined when the discount type is `oro_order_discount_item_type_amount`.
 
 ### percent
 
@@ -142,15 +140,16 @@ Delete a collection of discount records.
 
 {@inheritdoc}
 
-**The required field.**
+**Note:**
+The field is required when the discount type is `oro_order_discount_item_type_percent`,
+otherwise a passed value will be ignored.
 
 #### update
 
 {@inheritdoc}
 
-**Please note:**
-
-*This field is **required** and must remain defined.*
+**Note:**
+This field must remain defined when the discount type is `oro_order_discount_item_type_percent`.
 
 ## SUBRESOURCES
 
@@ -163,20 +162,3 @@ Retrieve the order record a specific discount record is assigned to.
 #### get_relationship
 
 Retrieve the ID of the order record which a specific discount record is assigned to.
-
-#### update_relationship
-
-Replace the order a specific discount record is assigned to.
-
-{@request:json_api}
-Example:
-
-```JSON
-{
-  "data": {
-    "type": "orders",
-    "id": "1"
-  }
-}
-```
-{@/request}

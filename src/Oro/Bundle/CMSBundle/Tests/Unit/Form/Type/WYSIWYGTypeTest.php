@@ -5,6 +5,7 @@ namespace Oro\Bundle\CMSBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType;
 use Oro\Bundle\CMSBundle\Provider\HTMLPurifierScopeProvider;
+use Oro\Bundle\CMSBundle\Tools\DigitalAssetTwigTagsConverter;
 use Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYG;
 use Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYGValidator;
 use Oro\Bundle\FormBundle\Provider\HtmlTagProvider;
@@ -25,6 +26,9 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
     /** @var HTMLPurifierScopeProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $purifierScopeProvider;
 
+    /** @var DigitalAssetTwigTagsConverter|\PHPUnit\Framework\MockObject\MockObject */
+    private $digitalAssetTwigTagsConverter;
+
     /**
      * {@inheritdoc}
      */
@@ -32,13 +36,24 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
     {
         $this->htmlTagProvider = $this->createMock(HtmlTagProvider::class);
         $this->purifierScopeProvider = $this->createMock(HTMLPurifierScopeProvider::class);
+        $this->digitalAssetTwigTagsConverter = $this->createMock(DigitalAssetTwigTagsConverter::class);
+        $this->digitalAssetTwigTagsConverter->expects(self::any())
+            ->method('convertToUrls')
+            ->willReturnArgument(0);
+        $this->digitalAssetTwigTagsConverter->expects(self::any())
+            ->method('convertToTwigTags')
+            ->willReturnArgument(0);
 
         parent::setUp();
     }
 
     public function testGetParent(): void
     {
-        $type = new WYSIWYGType($this->htmlTagProvider, $this->purifierScopeProvider);
+        $type = new WYSIWYGType(
+            $this->htmlTagProvider,
+            $this->purifierScopeProvider,
+            $this->digitalAssetTwigTagsConverter
+        );
         $this->assertEquals(TextareaType::class, $type->getParent());
     }
 
@@ -64,7 +79,11 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
             ])
             ->will($this->returnSelf());
 
-        $type = new WYSIWYGType($this->htmlTagProvider, $this->purifierScopeProvider);
+        $type = new WYSIWYGType(
+            $this->htmlTagProvider,
+            $this->purifierScopeProvider,
+            $this->digitalAssetTwigTagsConverter
+        );
         $type->configureOptions($resolver);
     }
 
@@ -114,7 +133,11 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
 
         $view = new FormView();
         $form = $this->factory->create(WYSIWYGType::class, null, ['data_class' => Page::class]);
-        $type = new WYSIWYGType($this->htmlTagProvider, $this->purifierScopeProvider);
+        $type = new WYSIWYGType(
+            $this->htmlTagProvider,
+            $this->purifierScopeProvider,
+            $this->digitalAssetTwigTagsConverter
+        );
         $type->finishView($view, $form, [
             'page-component' => [
                 'module' => 'component/module',
@@ -149,7 +172,11 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
 
         $view = new FormView();
         $form = $this->factory->create(WYSIWYGType::class, null, ['data_class' => Page::class]);
-        $type = new WYSIWYGType($this->htmlTagProvider, $this->purifierScopeProvider);
+        $type = new WYSIWYGType(
+            $this->htmlTagProvider,
+            $this->purifierScopeProvider,
+            $this->digitalAssetTwigTagsConverter
+        );
         $type->finishView($view, $form, [
             'page-component' => [
                 'module' => 'component/module',
@@ -197,7 +224,11 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    WYSIWYGType::class => new WYSIWYGType($this->htmlTagProvider, $this->purifierScopeProvider),
+                    WYSIWYGType::class => new WYSIWYGType(
+                        $this->htmlTagProvider,
+                        $this->purifierScopeProvider,
+                        $this->digitalAssetTwigTagsConverter
+                    )
                 ],
                 []
             ),

@@ -10,14 +10,16 @@ api:
             fields:
                 title:
                     data_type: localizedFallbackValue:titles
-                content:
-                    data_type: string
                 url:
                     data_type: string
                     property_path: _
                 urls:
                     data_type: objects
                     property_path: _
+                draftUuid:
+                    exclude: true
+                draftSource:
+                    exclude: true
             actions:
                 create: false
                 update: false

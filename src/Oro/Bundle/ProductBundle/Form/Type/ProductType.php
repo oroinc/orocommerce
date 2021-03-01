@@ -140,9 +140,8 @@ class ProductType extends AbstractType
                     'entry_options' => [
                         'wysiwyg_options' => [
                             'autoRender' => false,
-                            'statusbar' => true,
+                            'elementpath' => true,
                             'resize' => true,
-                            'width' => 500,
                             'height' => 300,
                         ]
                     ],

@@ -3,9 +3,11 @@
 namespace Oro\Bundle\CMSBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 
 /**
  * @dbIsolationPerTest
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class WysiwygFieldsTest extends RestJsonApiTestCase
 {
@@ -31,10 +33,35 @@ class WysiwygFieldsTest extends RestJsonApiTestCase
                     'id'         => '<toString(@test_value_with_wysiwyg->id)>',
                     'attributes' => [
                         'wysiwyg'  => [
-                            'value'      => 'Content',
-                            'style'      => '<style></style>',
-                            'properties' => ['param' => 'value']
+                            'value'         => 'Content. Twig Expr: "{{ " test "|trim }}".',
+                            'style'         => '.test {color: {{ " red "|trim }}}',
+                            'properties'    => ['param' => 'value'],
+                            'valueRendered' => '<style type="text/css">.test {color: red}</style>'
+                                . 'Content. Twig Expr: "test".'
                         ],
+                        'fallback' => null,
+                        'string'   => null,
+                        'text'     => 'Test Value'
+                    ]
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testGetWithEmptyValueForWysiwygField(): void
+    {
+        $response = $this->get(
+            ['entity' => 'localizedfallbackvalues', 'id' => '<toString(@test_value_with_empty_wysiwyg->id)>']
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type'       => 'localizedfallbackvalues',
+                    'id'         => '<toString(@test_value_with_empty_wysiwyg->id)>',
+                    'attributes' => [
+                        'wysiwyg'  => null,
                         'fallback' => null,
                         'string'   => null,
                         'text'     => 'Test Value'
@@ -75,8 +102,8 @@ class WysiwygFieldsTest extends RestJsonApiTestCase
                 'type'       => 'localizedfallbackvalues',
                 'attributes' => [
                     'wysiwyg'  => [
-                        'value'      => 'Content',
-                        'style'      => '<style></style>',
+                        'value'      => 'Content. Twig Expr: "{{ " test "|trim }}".',
+                        'style'      => '.test {color: red}',
                         'properties' => ['param' => 'value']
                     ],
                     'fallback' => null,
@@ -90,6 +117,33 @@ class WysiwygFieldsTest extends RestJsonApiTestCase
         $this->assertResponseContains($data, $response);
     }
 
+    public function testCreateWithWysiwygFieldAndRenderedWysiwygFieldThatShouldBeIgnored(): void
+    {
+        $data = [
+            'data' => [
+                'type'       => 'localizedfallbackvalues',
+                'attributes' => [
+                    'wysiwyg'  => [
+                        'value'         => 'Content. Twig Expr: "{{ " test "|trim }}".',
+                        'style'         => '.test {color: red}',
+                        'properties'    => ['param' => 'value'],
+                        'valueRendered' => '<style type="text/css">.another {color: blue}</style>'
+                            . 'Another Content. Twig Expr: "test".'
+                    ],
+                    'fallback' => null,
+                    'string'   => null,
+                    'text'     => 'text'
+                ]
+            ]
+        ];
+        $response = $this->post(['entity' => 'localizedfallbackvalues'], $data);
+
+        $expectedData = $data;
+        $expectedData['data']['attributes']['wysiwyg']['valueRendered'] =
+            '<style type="text/css">.test {color: red}</style>Content. Twig Expr: "test".';
+        $this->assertResponseContains($expectedData, $response);
+    }
+
     public function testCreateWithInvalidWysiwygField(): void
     {
         $data = [
@@ -98,7 +152,7 @@ class WysiwygFieldsTest extends RestJsonApiTestCase
                 'attributes' => [
                     'wysiwyg'  => [
                         'value'      => 'Content',
-                        'style'      => '<style></style>',
+                        'style'      => '.test {color: red}',
                         'properties' => 'not valid data'
                     ],
                     'fallback' => null,
@@ -127,8 +181,8 @@ class WysiwygFieldsTest extends RestJsonApiTestCase
                 'id'         => '<toString(@test_value_with_wysiwyg->id)>',
                 'attributes' => [
                     'wysiwyg' => [
-                        'value'      => 'New Content',
-                        'style'      => '<style>new style</style>',
+                        'value'      => 'New Content. Twig Expr: "{{ " test "|trim }}".',
+                        'style'      => '.new {color: {{ " blue "|trim }}}',
                         'properties' => ['new_param' => 'new_value']
                     ]
                 ]
@@ -140,6 +194,34 @@ class WysiwygFieldsTest extends RestJsonApiTestCase
         );
 
         $this->assertResponseContains($data, $response);
+    }
+
+    public function testUpdateWysiwygFieldAndRenderedWysiwygFieldThatShouldBeIgnored(): void
+    {
+        $data = [
+            'data' => [
+                'type'       => 'localizedfallbackvalues',
+                'id'         => '<toString(@test_value_with_wysiwyg->id)>',
+                'attributes' => [
+                    'wysiwyg' => [
+                        'value'         => 'New Content. Twig Expr: "{{ " test "|trim }}".',
+                        'style'         => '.new {color: {{ " blue "|trim }}}',
+                        'properties'    => ['new_param' => 'new_value'],
+                        'valueRendered' => '<style type="text/css">.new {color: blue}</style>'
+                            . 'New Content. Twig Expr: "test".'
+                    ]
+                ]
+            ]
+        ];
+        $response = $this->patch(
+            ['entity' => 'localizedfallbackvalues', 'id' => '<toString(@test_value_with_wysiwyg->id)>'],
+            $data
+        );
+
+        $expectedData = $data;
+        $expectedData['data']['attributes']['wysiwyg']['valueRendered'] =
+            '<style type="text/css">.new {color: blue}</style>New Content. Twig Expr: "test".';
+        $this->assertResponseContains($expectedData, $response);
     }
 
     public function testUpdateWysiwygFieldWithNullValue(): void
@@ -179,11 +261,45 @@ class WysiwygFieldsTest extends RestJsonApiTestCase
 
         $expectedData = $data;
         $expectedData['data']['attributes']['wysiwyg'] = [
-            'value'      => 'Content',
-            'style'      => '<style></style>',
-            'properties' => ['param' => 'value']
+            'value'         => 'Content. Twig Expr: "{{ " test "|trim }}".',
+            'style'         => '.test {color: {{ " red "|trim }}}',
+            'properties'    => ['param' => 'value'],
+            'valueRendered' => '<style type="text/css">.test {color: red}</style>'
+                . 'Content. Twig Expr: "test".'
         ];
         $this->assertResponseContains($expectedData, $response);
+    }
+
+    public function testUpdateWysiwygFieldWithEmptyValuesForProperties(): void
+    {
+        $id = $this->getReference('test_value_with_wysiwyg')->getId();
+        $data = [
+            'data' => [
+                'type'       => 'localizedfallbackvalues',
+                'id'         => (string)$id,
+                'attributes' => [
+                    'wysiwyg' => [
+                        'value'      => '',
+                        'style'      => '',
+                        'properties' => []
+                    ]
+                ]
+            ]
+        ];
+        $response = $this->patch(
+            ['entity' => 'localizedfallbackvalues', 'id' => (string)$id],
+            $data
+        );
+
+        $expectedData = $data;
+        $expectedData['data']['attributes']['wysiwyg'] = null;
+        $this->assertResponseContains($expectedData, $response);
+
+        /** @var LocalizedFallbackValue $entity */
+        $entity = $this->getEntityManager()->find(LocalizedFallbackValue::class, $id);
+        self::assertNull($entity->getWysiwyg());
+        self::assertNull($entity->getWysiwygStyle());
+        self::assertNull($entity->getWysiwygProperties());
     }
 
     public function testUpdateWysiwygFieldWithNotAllProperties(): void
@@ -205,7 +321,7 @@ class WysiwygFieldsTest extends RestJsonApiTestCase
         );
 
         $expectedData = $data;
-        $expectedData['data']['attributes']['wysiwyg']['style'] = '<style></style>';
+        $expectedData['data']['attributes']['wysiwyg']['style'] = '.test {color: {{ " red "|trim }}}';
         $expectedData['data']['attributes']['wysiwyg']['properties'] = ['param' => 'value'];
         $this->assertResponseContains($expectedData, $response);
     }
@@ -219,7 +335,7 @@ class WysiwygFieldsTest extends RestJsonApiTestCase
                 'attributes' => [
                     'wysiwyg' => [
                         'value'      => 'New Content',
-                        'style'      => '<style>new style</style>',
+                        'style'      => 'new style',
                         'properties' => 'not valid data'
                     ]
                 ]

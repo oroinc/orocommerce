@@ -124,7 +124,12 @@ class ProductStrategyTest extends WebTestCase
         $attributeFamily = $this->getEntity(AttributeFamily::class, ['code' => 'default_family']);
         $newProductSku = 'PR-V1';
         // Prepare new product that is imported in same batch and will be used later as variant link
-        $newProduct = $this->createProduct($newProductSku, $attributeFamily, $unit, $this->getInventoryStatus());
+        $newProduct = $this->createProduct(
+            $newProductSku,
+            $attributeFamily,
+            $unit,
+            $this->getInventoryStatus()
+        );
         //Add invalid ProductUnitPrecision without unit
         $newProduct->getUnitPrecisions()->add((new ProductUnitPrecision()));
         /** @var Product $processedNewProduct */
@@ -156,7 +161,12 @@ class ProductStrategyTest extends WebTestCase
         $attributeFamily = $this->getEntity(AttributeFamily::class, ['code' => 'default_family']);
         $newProductSku = 'PR-V1';
         // Prepare new product that is imported in same batch and will be used later as variant link
-        $newProduct = $this->createProduct($newProductSku, $attributeFamily, $unit, $this->getInventoryStatus());
+        $newProduct = $this->createProduct(
+            $newProductSku,
+            $attributeFamily,
+            $unit,
+            $this->getInventoryStatus()
+        );
         /** @var Product $processedNewProduct */
         $this->strategy->process($newProduct);
         $this->assertEquals(['Error in row #1. Each product unit code should be unique'], $context->getErrors());
@@ -188,6 +198,21 @@ class ProductStrategyTest extends WebTestCase
                 'of the Select or Boolean type to enable product variants. ' .
                 'The provided product family does not fit for configurable products.'
             ],
+            $context->getErrors()
+        );
+    }
+
+    public function testProcessWhenProductHasNoTitle()
+    {
+        $context = new Context([]);
+        $context->setValue('itemData', []);
+        $this->strategy->setImportExportContext($context);
+
+        $product = $this->strategy->process(new Product());
+
+        $this->assertNull($product);
+        $this->assertContains(
+            'Error in row #0. Name Localization Name: Product default name is blank',
             $context->getErrors()
         );
     }

@@ -5,6 +5,7 @@ namespace Oro\Bundle\CMSBundle\Tests\Unit\Api\Processor;
 use Oro\Bundle\ApiBundle\Config\EntityDefinitionConfig;
 use Oro\Bundle\ApiBundle\Tests\Unit\Processor\CustomizeLoadedData\CustomizeLoadedDataProcessorTestCase;
 use Oro\Bundle\CMSBundle\Api\Processor\ComputeWYSIWYGAttributes;
+use Oro\Bundle\CMSBundle\Api\WYSIWYGValueRenderer;
 use Oro\Bundle\CMSBundle\Provider\WYSIWYGFieldsProvider;
 
 class ComputeWYSIWYGAttributesTest extends CustomizeLoadedDataProcessorTestCase
@@ -14,6 +15,9 @@ class ComputeWYSIWYGAttributesTest extends CustomizeLoadedDataProcessorTestCase
     /** @var WYSIWYGFieldsProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $wysiwygFieldsProvider;
 
+    /** @var WYSIWYGValueRenderer|\PHPUnit\Framework\MockObject\MockObject */
+    private $wysiwygValueRenderer;
+
     /** @var ComputeWYSIWYGAttributes */
     private $processor;
 
@@ -22,9 +26,11 @@ class ComputeWYSIWYGAttributesTest extends CustomizeLoadedDataProcessorTestCase
         parent::setUp();
 
         $this->wysiwygFieldsProvider = $this->createMock(WYSIWYGFieldsProvider::class);
+        $this->wysiwygValueRenderer = $this->createMock(WYSIWYGValueRenderer::class);
 
         $this->processor = new ComputeWYSIWYGAttributes(
             $this->wysiwygFieldsProvider,
+            $this->wysiwygValueRenderer,
             self::ATTRIBUTES_FIELD_NAME
         );
     }
@@ -39,11 +45,8 @@ class ComputeWYSIWYGAttributesTest extends CustomizeLoadedDataProcessorTestCase
             [
                 self::ATTRIBUTES_FIELD_NAME => [],
                 'wysiwygAttribute'          => [
-                    'value'      => '<div id="test">test</div>div>',
-                    'style'      => 'id {color: red;}',
-                    'properties' => [
-                        ['name' => 'Row', 'content' => '']
-                    ]
+                    'value' => '<div id="test">test</div>div>',
+                    'style' => 'id {color: red;}'
                 ]
             ]
         ];
@@ -108,11 +111,8 @@ class ComputeWYSIWYGAttributesTest extends CustomizeLoadedDataProcessorTestCase
             [
                 self::ATTRIBUTES_FIELD_NAME => [],
                 'wysiwygAttribute'          => [
-                    'value'      => '<div id="test">test</div>div>',
-                    'style'      => 'id {color: red;}',
-                    'properties' => [
-                        ['name' => 'Row', 'content' => '']
-                    ]
+                    'value' => '<div id="test">test</div>div>',
+                    'style' => 'id {color: red;}'
                 ]
             ]
         ]);
@@ -123,11 +123,8 @@ class ComputeWYSIWYGAttributesTest extends CustomizeLoadedDataProcessorTestCase
                 [
                     self::ATTRIBUTES_FIELD_NAME => [
                         'wysiwygAttribute' => [
-                            'value'      => '<div id="test">test</div>div>',
-                            'style'      => 'id {color: red;}',
-                            'properties' => [
-                                ['name' => 'Row', 'content' => '']
-                            ]
+                            'value' => '<div id="test">test</div>div>',
+                            'style' => 'id {color: red;}'
                         ]
                     ]
                 ]

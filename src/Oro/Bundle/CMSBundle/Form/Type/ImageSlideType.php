@@ -105,7 +105,7 @@ class ImageSlideType extends AbstractType
                     'class' => 'image-slide-text'
                 ],
                 'wysiwyg_options' => [
-                    'statusbar' => true,
+                    'elementpath' => true,
                     'resize' => false,
                     'height' => 300,
                 ],
