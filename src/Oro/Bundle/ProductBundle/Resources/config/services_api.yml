@@ -100,6 +100,7 @@ services:
             - { name: oro.api.processor, action: add_relationship, group: initialize, requestType: frontend, priority: 250 }
             - { name: oro.api.processor, action: update_relationship, group: initialize, requestType: frontend, priority: 250 }
             - { name: oro.api.processor, action: not_allowed, group: initialize, requestType: frontend, priority: 250 }
+            - { name: oro.api.processor, action: unhandled_error, group: initialize, requestType: frontend, priority: 250 }
             - { name: oro.api.processor, action: options, group: initialize, requestType: frontend, priority: 250 }
 
     oro_product.api.compute_product_unit_label:
