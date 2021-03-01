@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Handler;
 
+use Oro\Bundle\CatalogBundle\ContentVariantType\CategoryPageContentVariantType;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -57,9 +58,9 @@ class RequestProductHandlerTest extends \PHPUnit\Framework\TestCase
     {
         $this->request->expects($this->once())
             ->method('get')
-            ->with(RequestProductHandler::CONTENT_VARIANT_ID_KEY)
+            ->with(CategoryPageContentVariantType::CATEGORY_CONTENT_VARIANT_ID_KEY)
             ->willReturn($value);
-        $actual = $this->requestProductHandler->getContentVariantId();
+        $actual = $this->requestProductHandler->getCategoryContentVariantId();
         $this->assertSame($expected, $actual);
     }
 
@@ -72,7 +73,7 @@ class RequestProductHandlerTest extends \PHPUnit\Framework\TestCase
     public function testGetContentVariantIdWithoutRequest(): void
     {
         $requestProductHandler = new RequestProductHandler(new RequestStack());
-        $this->assertSame(0, $requestProductHandler->getContentVariantId());
+        $this->assertSame(0, $requestProductHandler->getCategoryContentVariantId());
     }
 
     public function idDataProvider(): array
@@ -294,7 +295,7 @@ class RequestProductHandlerTest extends \PHPUnit\Framework\TestCase
     {
         $this->request->expects($this->once())
             ->method('get')
-            ->with(RequestProductHandler::OVERRIDE_VARIANT_CONFIGURATION_KEY)
+            ->with(CategoryPageContentVariantType::OVERRIDE_VARIANT_CONFIGURATION_KEY)
             ->willReturn($value);
         $actual = $this->requestProductHandler->getOverrideVariantConfiguration();
         $this->assertEquals($expected, $actual);

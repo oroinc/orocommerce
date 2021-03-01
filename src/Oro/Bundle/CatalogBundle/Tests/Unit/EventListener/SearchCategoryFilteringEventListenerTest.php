@@ -142,7 +142,7 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
             ->method('getIncludeSubcategoriesChoice');
 
         $this->requestProductHandler->expects($this->never())
-            ->method('getContentVariantId');
+            ->method('getCategoryContentVariantId');
 
         $this->requestProductHandler->expects($this->never())
             ->method('getOverrideVariantConfiguration');
@@ -168,8 +168,19 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
     ): void {
         $this->requestProductHandler
             ->expects($this->any())
-            ->method('getContentVariantId')
+            ->method('getCategoryContentVariantId')
             ->willReturn(0);
+
+        $this->requestProductHandler
+            ->expects($this->once())
+            ->method('getCategoryId')
+            ->willReturn(0);
+
+        $this->requestProductHandler
+            ->expects($this->once())
+            ->method('getIncludeSubcategoriesChoice')
+            ->with($parameters['includeSubcategories'])
+            ->willReturn($parameters['includeSubcategories']);
 
         $event = new PreBuild($this->config, new ParameterBag($parameters));
         $this->listener->onPreBuild($event);
@@ -276,7 +287,7 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
     ): void {
         $this->requestProductHandler
             ->expects($this->any())
-            ->method('getContentVariantId')
+            ->method('getCategoryContentVariantId')
             ->willReturn(0);
 
         $this->requestProductHandler
@@ -433,8 +444,20 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
         array $expectedConfig
     ): void {
         $this->requestProductHandler
-            ->expects($this->never())
-            ->method($this->anything());
+            ->expects($this->once())
+            ->method('getCategoryContentVariantId')
+            ->willReturn(0);
+
+        $this->requestProductHandler
+            ->expects($this->once())
+            ->method('getCategoryId')
+            ->willReturn(0);
+
+        $this->requestProductHandler
+            ->expects($this->once())
+            ->method('getIncludeSubcategoriesChoice')
+            ->with($parameters['includeSubcategories'])
+            ->willReturn($parameters['includeSubcategories']);
 
         $event = new PreBuild($this->config, new ParameterBag($parameters));
         $this->listener->onPreBuild($event);
@@ -478,13 +501,13 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
                 'parameters' => [
                     'categoryId' => self::CATEGORY_ID,
                     'includeSubcategories' => false,
-                    'contentVariantId' => self::CONTENT_VARIANT_OTHER_TYPE_ID,
+                    'categoryContentVariantId' => self::CONTENT_VARIANT_OTHER_TYPE_ID,
                     'overrideVariantConfiguration' => false,
                 ],
                 'expectedParameters' => [
                     'categoryId' => self::CATEGORY_ID,
                     'includeSubcategories' => false,
-                    'contentVariantId' => self::CONTENT_VARIANT_OTHER_TYPE_ID,
+                    'categoryContentVariantId' => self::CONTENT_VARIANT_OTHER_TYPE_ID,
                     'overrideVariantConfiguration' => false,
                 ],
                 'expectedConfig' => [
@@ -501,13 +524,13 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
                 'parameters' => [
                     'categoryId' => self::CATEGORY_ID,
                     'includeSubcategories' => false,
-                    'contentVariantId' => 100,
+                    'categoryContentVariantId' => 100,
                     'overrideVariantConfiguration' => false,
                 ],
                 'expectedParameters' => [
                     'categoryId' => self::CATEGORY_ID,
                     'includeSubcategories' => false,
-                    'contentVariantId' => 100,
+                    'categoryContentVariantId' => 100,
                     'overrideVariantConfiguration' => false,
                 ],
                 'expectedConfig' => [
@@ -524,20 +547,20 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
                 'parameters' => [
                     'categoryId' => self::CATEGORY_ID,
                     'includeSubcategories' => false,
-                    'contentVariantId' => self::CONTENT_VARIANT_ID,
+                    'categoryContentVariantId' => self::CONTENT_VARIANT_ID,
                     'overrideVariantConfiguration' => true,
                 ],
                 'expectedParameters' => [
                     'categoryId' => self::CATEGORY_ID,
                     'includeSubcategories' => false,
-                    'contentVariantId' => self::CONTENT_VARIANT_ID,
+                    'categoryContentVariantId' => self::CONTENT_VARIANT_ID,
                     'overrideVariantConfiguration' => true,
                 ],
                 'expectedConfig' => [
                     'filters' => $filters,
                     'options' => [
                         'urlParams' => [
-                            'contentVariantId' => self::CONTENT_VARIANT_ID,
+                            'categoryContentVariantId' => self::CONTENT_VARIANT_ID,
                             'overrideVariantConfiguration' => true,
                             'categoryId' => self::CATEGORY_ID,
                             'includeSubcategories' => false,
@@ -566,7 +589,12 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
     ): void {
         $this->requestProductHandler
             ->expects($this->once())
-            ->method('getContentVariantId')
+            ->method('getCategoryId')
+            ->willReturn(self::CATEGORY_ID);
+
+        $this->requestProductHandler
+            ->expects($this->once())
+            ->method('getCategoryContentVariantId')
             ->willReturn($contentVariantId);
 
         $this->requestProductHandler
@@ -613,8 +641,8 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
 
         return [
             'content variant not of expected type' => [
-                'parameters' => ['categoryId' => self::CATEGORY_ID, 'includeSubcategories' => false],
-                'contentVariantId' => self::CONTENT_VARIANT_OTHER_TYPE_ID,
+                'parameters' => [],
+                'categoryContentVariantId' => self::CONTENT_VARIANT_OTHER_TYPE_ID,
                 'overrideVariantConfiguration' => false,
                 'expectedParameters' => [
                     'categoryId' => self::CATEGORY_ID,
@@ -631,8 +659,8 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
                 ],
             ],
             'content variant not exists' => [
-                'parameters' => ['categoryId' => self::CATEGORY_ID, 'includeSubcategories' => false],
-                'contentVariantId' => 100,
+                'parameters' => [],
+                'categoryContentVariantId' => 100,
                 'overrideVariantConfiguration' => false,
                 'expectedParameters' => [
                     'categoryId' => self::CATEGORY_ID,
@@ -650,13 +678,13 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
             ],
             'invalid content variant id in parameters' => [
                 'parameters' => [
-                    'contentVariantId' => -101,
+                    'categoryContentVariantId' => -101,
                     'categoryId' => self::CATEGORY_ID,
                 ],
-                'contentVariantId' => 100,
+                'categoryContentVariantId' => 100,
                 'overrideVariantConfiguration' => true,
                 'expectedParameters' => [
-                    'contentVariantId' => -101,
+                    'categoryContentVariantId' => -101,
                     'categoryId' => self::CATEGORY_ID,
                     'includeSubcategories' => false,
                 ],
@@ -671,20 +699,20 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
                 ],
             ],
             'content variant exists' => [
-                'parameters' => ['categoryId' => self::CATEGORY_ID, 'includeSubcategories' => false],
-                'contentVariantId' => self::CONTENT_VARIANT_ID,
+                'parameters' => [],
+                'categoryContentVariantId' => self::CONTENT_VARIANT_ID,
                 'overrideVariantConfiguration' => true,
                 'expectedParameters' => [
                     'categoryId' => self::CATEGORY_ID,
                     'includeSubcategories' => false,
-                    'contentVariantId' => self::CONTENT_VARIANT_ID,
+                    'categoryContentVariantId' => self::CONTENT_VARIANT_ID,
                     'overrideVariantConfiguration' => true,
                 ],
                 'expectedConfig' => [
                     'filters' => $filters,
                     'options' => [
                         'urlParams' => [
-                            'contentVariantId' => self::CONTENT_VARIANT_ID,
+                            'categoryContentVariantId' => self::CONTENT_VARIANT_ID,
                             'overrideVariantConfiguration' => true,
                             'categoryId' => self::CATEGORY_ID,
                             'includeSubcategories' => false,
@@ -752,6 +780,11 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
         $websiteSearchQuery = $this->createMock(WebsiteSearchQuery::class);
         $websiteSearchQuery->expects($this->never())
             ->method($this->anything());
+
+        $this->requestProductHandler
+            ->expects($this->once())
+            ->method('getIncludeSubcategoriesChoice')
+            ->willReturn(true);
 
         $parameters = new ParameterBag(['categoryId' => self::CATEGORY_ID, 'includeSubcategories' => true]);
         $dataGrid = new Datagrid('test', $this->config, $parameters);
