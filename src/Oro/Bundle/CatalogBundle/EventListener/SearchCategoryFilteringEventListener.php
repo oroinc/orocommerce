@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CatalogBundle\EventListener;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\CatalogBundle\ContentVariantType\CategoryPageContentVariantType;
 use Oro\Bundle\CatalogBundle\Datagrid\Filter\SubcategoryFilter;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
@@ -13,7 +14,6 @@ use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\FilterBundle\Grid\Extension\Configuration;
-use Oro\Bundle\ProductBundle\ContentVariantType\ProductCollectionContentVariantType;
 use Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator;
 use Oro\Bundle\SearchBundle\Datagrid\Datasource\SearchDatasource;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
@@ -27,7 +27,7 @@ use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
  */
 class SearchCategoryFilteringEventListener
 {
-    private const CONTENT_VARIANT_ID_CONFIG_PATH = '[options][urlParams][contentVariantId]';
+    private const CATEGORY_CONTENT_VARIANT_ID_CONFIG_PATH = '[options][urlParams][categoryContentVariantId]';
     private const CATEGORY_ID_CONFIG_PATH = '[options][urlParams][categoryId]';
     private const INCLUDE_CAT_CONFIG_PATH = '[options][urlParams][includeSubcategories]';
     private const OVERRIDE_VARIANT_CONFIGURATION_CONFIG_PATH = '[options][urlParams][overrideVariantConfiguration]';
@@ -80,7 +80,7 @@ class SearchCategoryFilteringEventListener
 
         $this->addSubcategoryFilter($config, $categoryId, $isIncludeSubcategories);
 
-        $contentVariantId = $this->getContentVariantId($parameters);
+        $contentVariantId = $this->getCategoryContentVariantId($parameters);
         $contentVariant = $this->getCategoryContentVariant($contentVariantId);
         if (!$contentVariant) {
             // Skips adding contentVariantId to config and parameters if content variant is not found or
@@ -88,11 +88,14 @@ class SearchCategoryFilteringEventListener
             return;
         }
 
-        $parameters->set(RequestProductHandler::CONTENT_VARIANT_ID_KEY, $contentVariantId);
-        $config->offsetSetByPath(self::CONTENT_VARIANT_ID_CONFIG_PATH, $contentVariantId);
+        $parameters->set(CategoryPageContentVariantType::CATEGORY_CONTENT_VARIANT_ID_KEY, $contentVariantId);
+        $config->offsetSetByPath(self::CATEGORY_CONTENT_VARIANT_ID_CONFIG_PATH, $contentVariantId);
 
         $overrideVariantConfiguration = $this->isOverrideVariantConfiguration($parameters);
-        $parameters->set(RequestProductHandler::OVERRIDE_VARIANT_CONFIGURATION_KEY, $overrideVariantConfiguration);
+        $parameters->set(
+            CategoryPageContentVariantType::OVERRIDE_VARIANT_CONFIGURATION_KEY,
+            $overrideVariantConfiguration
+        );
         $config->offsetSetByPath(self::OVERRIDE_VARIANT_CONFIGURATION_CONFIG_PATH, (int)$overrideVariantConfiguration);
     }
 
@@ -106,7 +109,7 @@ class SearchCategoryFilteringEventListener
                 ->find(ContentVariant::class, $contentVariantId);
         }
 
-        return !empty($contentVariant) && $contentVariant->getType() === ProductCollectionContentVariantType::TYPE
+        return !empty($contentVariant) && $contentVariant->getType() === CategoryPageContentVariantType::TYPE
             ? $contentVariant
             : null;
     }
@@ -179,7 +182,7 @@ class SearchCategoryFilteringEventListener
             $this->isIncludeSubcategories($parameters)
         );
 
-        if ($parameters->get(RequestProductHandler::OVERRIDE_VARIANT_CONFIGURATION_KEY)) {
+        if ($parameters->get(CategoryPageContentVariantType::OVERRIDE_VARIANT_CONFIGURATION_KEY)) {
             $datasource->getSearchQuery()->addWhere(Criteria::expr()->gte('integer.is_variant', 0));
         }
     }
@@ -201,40 +204,51 @@ class SearchCategoryFilteringEventListener
 
     private function getCategoryId(ParameterBag $parameters): int
     {
-        $categoryId = filter_var(
-            $parameters->get(RequestProductHandler::CATEGORY_ID_KEY),
-            FILTER_VALIDATE_INT
-        );
+        $categoryId = $this->requestProductHandler->getCategoryId();
+        if (!$categoryId) {
+            $categoryId = filter_var(
+                $parameters->get(RequestProductHandler::CATEGORY_ID_KEY),
+                FILTER_VALIDATE_INT
+            );
+        }
 
-        return $categoryId && $categoryId > 0 ? $categoryId : $this->requestProductHandler->getCategoryId();
+        return $categoryId && $categoryId > 0 ? $categoryId : 0;
     }
 
-    private function getContentVariantId(ParameterBag $parameters): int
+    private function getCategoryContentVariantId(ParameterBag $parameters): int
     {
-        $contentVariantId = filter_var(
-            $parameters->get(ProductCollectionContentVariantType::CONTENT_VARIANT_ID_KEY),
-            FILTER_VALIDATE_INT
-        );
+        $contentVariantId = $this->requestProductHandler->getCategoryContentVariantId();
+        if (!$contentVariantId) {
+            $contentVariantId = filter_var(
+                $parameters->get(CategoryPageContentVariantType::CATEGORY_CONTENT_VARIANT_ID_KEY),
+                FILTER_VALIDATE_INT
+            );
+        }
 
         return $contentVariantId && $contentVariantId > 0
             ? $contentVariantId
-            : $this->requestProductHandler->getContentVariantId();
+            : 0;
     }
 
     private function isIncludeSubcategories(ParameterBag $parameters): bool
     {
-        $includeSubcategories = $parameters->has(RequestProductHandler::INCLUDE_SUBCATEGORIES_KEY)
-            ? $parameters->get(RequestProductHandler::INCLUDE_SUBCATEGORIES_KEY)
-            : $this->requestProductHandler->getIncludeSubcategoriesChoice();
-
-        return filter_var($includeSubcategories, FILTER_VALIDATE_BOOLEAN);
+        return $this->requestProductHandler->getIncludeSubcategoriesChoice(
+            filter_var(
+                $parameters->get(RequestProductHandler::INCLUDE_SUBCATEGORIES_KEY, null),
+                FILTER_VALIDATE_BOOLEAN,
+                ['flags' => FILTER_NULL_ON_FAILURE]
+            )
+        );
     }
 
     private function isOverrideVariantConfiguration(ParameterBag $parameters): ?bool
     {
-        $overrideVariantConfiguration = $parameters->has(RequestProductHandler::OVERRIDE_VARIANT_CONFIGURATION_KEY)
-            ? $parameters->get(RequestProductHandler::OVERRIDE_VARIANT_CONFIGURATION_KEY)
-            : $this->requestProductHandler->getOverrideVariantConfiguration();
+        if ($parameters->has(CategoryPageContentVariantType::OVERRIDE_VARIANT_CONFIGURATION_KEY)) {
+            $overrideVariantConfiguration = $parameters
+                ->get(CategoryPageContentVariantType::OVERRIDE_VARIANT_CONFIGURATION_KEY);
+        } else {
+            $overrideVariantConfiguration = $this->requestProductHandler->getOverrideVariantConfiguration();
+        }
 
         return filter_var($overrideVariantConfiguration, FILTER_VALIDATE_BOOLEAN);
     }

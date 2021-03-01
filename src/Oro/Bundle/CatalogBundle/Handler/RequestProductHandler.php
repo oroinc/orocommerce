@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\Handler;
 
+use Oro\Bundle\CatalogBundle\ContentVariantType\CategoryPageContentVariantType;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -10,12 +11,10 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class RequestProductHandler
 {
     const CATEGORY_ID_KEY = 'categoryId';
-    const CONTENT_VARIANT_ID_KEY = 'contentVariantId';
     const INCLUDE_SUBCATEGORIES_KEY = 'includeSubcategories';
     const INCLUDE_SUBCATEGORIES_DEFAULT_VALUE = false;
     const INCLUDE_NOT_CATEGORIZED_PRODUCTS_DEFAULT_VALUE = false;
     const INCLUDE_NOT_CATEGORIZED_PRODUCTS_KEY = 'includeNotCategorizedProducts';
-    const OVERRIDE_VARIANT_CONFIGURATION_KEY = 'overrideVariantConfiguration';
 
     /** @var RequestStack */
     protected $requestStack;
@@ -33,9 +32,9 @@ class RequestProductHandler
         return $this->resolveValue(self::CATEGORY_ID_KEY);
     }
 
-    public function getContentVariantId(): int
+    public function getCategoryContentVariantId(): int
     {
-        return $this->resolveValue(self::CONTENT_VARIANT_ID_KEY);
+        return $this->resolveValue(CategoryPageContentVariantType::CATEGORY_CONTENT_VARIANT_ID_KEY);
     }
 
     private function resolveValue(string $name): int
@@ -69,20 +68,23 @@ class RequestProductHandler
             return false;
         }
 
-        return filter_var($request->get(self::OVERRIDE_VARIANT_CONFIGURATION_KEY), FILTER_VALIDATE_BOOLEAN);
+        return filter_var(
+            $request->get(CategoryPageContentVariantType::OVERRIDE_VARIANT_CONFIGURATION_KEY),
+            FILTER_VALIDATE_BOOLEAN
+        );
     }
 
     /**
      * @param bool|null $defaultValue
      * @return bool
      */
-    public function getIncludeSubcategoriesChoice($defaultValue = null)
+    public function getIncludeSubcategoriesChoice($defaultValue = null): bool
     {
         if ($defaultValue === null) {
             $defaultValue = self::INCLUDE_SUBCATEGORIES_DEFAULT_VALUE;
         }
 
-        return $this->getChoice(self::INCLUDE_SUBCATEGORIES_KEY, $defaultValue);
+        return (bool) $this->getChoice(self::INCLUDE_SUBCATEGORIES_KEY, $defaultValue);
     }
 
     /**
