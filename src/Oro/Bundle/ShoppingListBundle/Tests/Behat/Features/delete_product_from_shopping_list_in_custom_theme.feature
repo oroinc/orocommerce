@@ -38,8 +38,8 @@ Feature: Delete product from Shopping List in custom theme
     And I click "Shopping List Add"
     And I should see "In Shopping List"
     When I click "Shopping List Edit"
-    And I click "Delete" in modal window
-    And I click "Yes, Delete" in modal window
+    And I click "Delete"
+    And I click "Yes, Delete"
     Then I should see "Shopping list item has been deleted" flash message
     And I should not see "In Shopping List"
     And I should see "Add to Shopping List 1"
