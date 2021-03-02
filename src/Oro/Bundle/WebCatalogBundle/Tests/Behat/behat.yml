@@ -173,6 +173,11 @@ oro_behat_extension:
                 type: xpath
                 locator: '//div[not(contains(@class,"content-variant-item-default")) and @data-role="content-variant-item"]//*[contains(@class, "removeRow")][1]'
 
+        Sub Categories Tooltip Icon:
+            selector:
+                type: xpath
+                locator: '//label[contains(., "Sub-Categories")]//i[contains(@class, "fa-info-circle") and contains(@class, "tooltip-icon")]'
+
     pages:
         Content Node Update:
             class: Oro\Bundle\WebCatalogBundle\Tests\Behat\Page\ContentNodeUpdate
