@@ -29,14 +29,18 @@
                  }|json_encode }}">
                 <ul class="oro-toolbar__list">
                     {% for currency in currencies %}
-                    <li class="oro-toolbar__list-item">
+                    <li class="oro-toolbar__list-item oro-toolbar__list-item--{{ currency|lower }}">
                         {% if selected_currency == currency %}
                             <span class="oro-toolbar__link oro-toolbar__link--active">
-                                <b class="oro-toolbar__currency">{{ oro_currency_symbol(currency) }}</b>{{- oro_currency_name(currency) -}}
+                                {%- spaceless -%}
+                                <b class="oro-toolbar__currency">{{ oro_currency_symbol(currency) }}</b>({{- oro_currency_name(currency) -}})
+                                {%- endspaceless -%}
                             </span>
                         {% else %}
                             <a class="oro-toolbar__link" href="#" data-currency="{{ currency }}">
-                                <b class="oro-toolbar__currency">{{ oro_currency_symbol(currency) }}</b>{{- oro_currency_name(currency) -}}
+                                {%- spaceless -%}
+                                <b class="oro-toolbar__currency">{{ oro_currency_symbol(currency) }}</b>({{- oro_currency_name(currency) -}})
+                                {%- endspaceless -%}
                             </a>
                         {% endif %}
                     </li>
