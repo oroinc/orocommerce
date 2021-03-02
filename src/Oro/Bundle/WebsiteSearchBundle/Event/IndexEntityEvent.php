@@ -121,10 +121,10 @@ class IndexEntityEvent extends Event
             return;
         }
 
-        if (!is_scalar($value) && !$value instanceof \DateTime) {
+        if (!is_scalar($value) && !$value instanceof \DateTime && !is_null($value)) {
             throw new \InvalidArgumentException(
                 sprintf(
-                    'Scalars and \DateTime are supported only, "%s" given',
+                    'Scalars, \DateTime and NULL are supported only, "%s" given',
                     is_object($value) ? get_class($value) : gettype($value)
                 )
             );
