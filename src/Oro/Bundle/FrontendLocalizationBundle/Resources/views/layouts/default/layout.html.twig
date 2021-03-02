@@ -30,7 +30,7 @@
                 >
                     <ul class="oro-toolbar__list">
                         {% for localization in localizations %}
-                            <li class="oro-toolbar__list-item">
+                            <li class="oro-toolbar__list-item oro-toolbar__list-item--{{ localization.formattingCode|lower }}">
                                 {% set title = localization.titles|localized_value %}
                                 {% if selected_localization.id == localization.id %}
                                     <span class="oro-toolbar__link oro-toolbar__link--active">
