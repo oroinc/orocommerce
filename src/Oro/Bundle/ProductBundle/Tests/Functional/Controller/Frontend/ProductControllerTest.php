@@ -100,12 +100,11 @@ class ProductControllerTest extends WebTestCase
             [
                 'sku' => LoadProductData::PRODUCT_7,
                 'name' => 'продукт-7.names.default',
-                'image' => 'http://localhost/media/cache/resolve/product_small/bundles/oroproduct/images/no_image.png',
+                'image' => '/media/cache/resolve/product_small/bundles/oroproduct/images/no_image.png',
                 'inventory_status' => 'in_stock',
                 'id' => $product7->getId(),
                 'url' => '/product/view/' . $product7->getId(),
-                'default_image' =>
-                    'http://localhost/media/cache/resolve/product_small/bundles/oroproduct/images/no_image.png',
+                'default_image' => '/media/cache/resolve/product_small/bundles/oroproduct/images/no_image.png',
                 'inventory_status_label' => 'In Stock',
             ],
             $data['products'][LoadProductData::PRODUCT_7]
@@ -115,12 +114,11 @@ class ProductControllerTest extends WebTestCase
             [
                 'sku' => LoadProductData::PRODUCT_9,
                 'name' => 'продукт-9.names.default',
-                'image' => 'http://localhost/media/cache/resolve/product_small/bundles/oroproduct/images/no_image.png',
+                'image' => '/media/cache/resolve/product_small/bundles/oroproduct/images/no_image.png',
                 'inventory_status' => 'in_stock',
                 'id' => $product9->getId(),
                 'url' => '/product/view/' . $product9->getId(),
-                'default_image' =>
-                    'http://localhost/media/cache/resolve/product_small/bundles/oroproduct/images/no_image.png',
+                'default_image' => '/media/cache/resolve/product_small/bundles/oroproduct/images/no_image.png',
                 'inventory_status_label' => 'In Stock',
             ],
             $data['products'][LoadProductData::PRODUCT_9]
