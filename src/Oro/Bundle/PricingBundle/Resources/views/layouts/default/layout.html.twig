@@ -1,3 +1,13 @@
+{% block _body_widget %}
+    {% if selected_currency is defined %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' currency--' ~ selected_currency|lower
+        }) %}
+    {% endif %}
+
+    {{ parent_block_widget(block) }}
+{% endblock %}
+
 {% block currency_switcher_widget %}
     {% if currencies|length > 1 %}
     <div class="oro-toolbar">
