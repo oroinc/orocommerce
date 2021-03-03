@@ -1,3 +1,13 @@
+{% block _body_widget %}
+    {% if selected_localization is defined %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' locale--' ~ selected_localization.formattingCode|lower
+        }) %}
+    {% endif %}
+
+    {{ parent_block_widget(block) }}
+{% endblock %}
+
 {% block localization_switcher_widget %}
     {% if localizations|length > 1 %}
         <div class="oro-toolbar oro-localization-switcher">
