@@ -77,7 +77,7 @@ oro_behat_extension:
     Localization dropdown:
       selector:
         type: xpath
-        locator: '//div[@class="oro-toolbar__content"]'
+        locator: '//div[contains(@class, "localization-switcher")]'
 
 
     Include SubCategories:
