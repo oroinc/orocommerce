@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\Entity\Repository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomerGroup;
@@ -14,6 +15,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\ORM\ShardQueryExecutorInterface;
+use Oro\Bundle\PricingBundle\ORM\TempTableManipulatorInterface;
 use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardOutputResultModifier;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -21,10 +23,122 @@ use Oro\Component\DoctrineUtils\ORM\UnionQueryBuilder;
 
 /**
  * Doctrine repository for Oro\Bundle\PricingBundle\Entity\CombinedProductPrice entity
+ *
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
 class CombinedProductPriceRepository extends BaseProductPriceRepository
 {
     const BATCH_SIZE = 10000;
+
+    /**
+     * @param ShardQueryExecutorInterface $insertFromSelectQueryExecutor
+     * @param CombinedPriceList $combinedPriceList
+     * @param PriceList $priceList
+     * @param bool $mergeAllowed
+     * @param array|Product[] $products
+     */
+    public function copyPricesByPriceList(
+        ShardQueryExecutorInterface $insertFromSelectQueryExecutor,
+        CombinedPriceList $combinedPriceList,
+        PriceList $priceList,
+        bool $mergeAllowed,
+        array $products = []
+    ) {
+        $this->doInsertByProducts(
+            $insertFromSelectQueryExecutor,
+            $priceList,
+            $products,
+            $this->getPricesQb($combinedPriceList, $mergeAllowed, $priceList)
+        );
+    }
+
+    /**
+     * @param TempTableManipulatorInterface $tempTableManipulator
+     * @param CombinedPriceList $combinedPriceList
+     * @param PriceList $priceList
+     * @param bool $mergeAllowed
+     * @param array $products
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function insertPricesByPriceListWithTempTable(
+        TempTableManipulatorInterface $tempTableManipulator,
+        CombinedPriceList $combinedPriceList,
+        PriceList $priceList,
+        bool $mergeAllowed,
+        array $products
+    ) {
+        // Copy prices for products that are not in the CPL yet to temp table (faster insert)
+        $notInListQb = $this->getPricesQb($combinedPriceList, $mergeAllowed, $priceList);
+        $this->addPresentProductsRestriction($notInListQb, $combinedPriceList);
+
+        $tempTableName = $tempTableManipulator->getTempTableNameForEntity(
+            CombinedProductPrice::class,
+            $combinedPriceList->getId()
+        );
+
+        // Source - PL, restricted by - CPL, target - TMP
+        $this->doInsertByProductsUsingTempTable(
+            $tempTableManipulator,
+            $combinedPriceList,
+            $priceList,
+            $products,
+            $notInListQb,
+            $tempTableName,
+            false
+        );
+
+        // For merge allowed add prices not blocked by merge:false for qty/units that are not present yet
+        // Skip prices moved to temp table
+        $qb = $this->getPricesQb($combinedPriceList, $mergeAllowed, $priceList);
+        $this->addProductsBlockedByMergeFlagRestriction($qb, $combinedPriceList);
+        $this->addPresentPricesRestriction($qb, $combinedPriceList);
+
+        // Apply restriction by temp table
+        $tempTableSubQb = $this->_em->createQueryBuilder();
+        $tempTableSubQb->select('cpp_tmp.id')
+            ->from(CombinedProductPrice::class, 'cpp_tmp')
+            ->where(
+                $tempTableSubQb->expr()->eq('pp.product', 'cpp_tmp.product')
+            );
+        $qb->andWhere(
+            $qb->expr()->not(
+                $qb->expr()->exists($tempTableSubQb->getDQL())
+            )
+        );
+
+        // Source - PL, restricted by - TMP, target - CPL
+        $this->doInsertByProductsUsingTempTable(
+            $tempTableManipulator,
+            $combinedPriceList,
+            $priceList,
+            $products,
+            $qb,
+            $tempTableManipulator->getTableNameForEntity(CombinedProductPrice::class),
+            true,
+            ['cpp_tmp' => $tempTableName]
+        );
+
+        // Move prices from temp to persistent CPL table
+        $tempTableManipulator->moveDataFromTemplateTableToEntityTable(
+            CombinedProductPrice::class,
+            $combinedPriceList->getId(),
+            [
+                'product',
+                'unit',
+                'priceList',
+                'productSku',
+                'quantity',
+                'value',
+                'currency',
+                'mergeAllowed',
+                'originPriceId',
+                'id'
+            ]
+        );
+    }
 
     /**
      * @param ShardQueryExecutorInterface $insertFromSelectQueryExecutor
@@ -40,31 +154,15 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         $mergeAllowed,
         array $products = []
     ) {
-        $qb = $this->getEntityManager()
-            ->getRepository(ProductPrice::class)
-            ->createQueryBuilder('pp');
-
-        $qb
-            ->select(
-                'IDENTITY(pp.product)',
-                'IDENTITY(pp.unit)',
-                (string)$qb->expr()->literal($combinedPriceList->getId()),
-                'pp.productSku',
-                'pp.quantity',
-                'pp.value',
-                'pp.currency',
-                sprintf('CAST(%d as boolean)', (int)$mergeAllowed),
-                'pp.id'
-            )
-            ->where($qb->expr()->eq('pp.priceList', ':currentPriceList'))
-            ->setParameter('currentPriceList', $priceList);
+        $qb = $this->getPricesQb($combinedPriceList, $mergeAllowed, $priceList);
         $this->addUniquePriceCondition($qb, $combinedPriceList, $mergeAllowed);
 
-        if (!$products) {
-            $this->insertByProductsRange($insertFromSelectQueryExecutor, $priceList, $qb);
-        } else {
-            $this->insertByProducts($insertFromSelectQueryExecutor, $qb, $products);
-        }
+        $this->doInsertByProducts(
+            $insertFromSelectQueryExecutor,
+            $priceList,
+            $products,
+            $qb
+        );
     }
 
     /**
@@ -91,7 +189,8 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
                 'pp.value',
                 'pp.currency',
                 sprintf('CAST(%d as boolean)', 1),
-                'pp.originPriceId'
+                'pp.originPriceId',
+                'UUID()'
             )
             ->where($qb->expr()->eq('pp.priceList', ':currentPriceList'))
             ->setParameter('currentPriceList', $sourceCpl);
@@ -158,6 +257,80 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         CombinedPriceList $combinedPriceList,
         $mergeAllowed
     ) {
+        if ($mergeAllowed) {
+            $this->addProductsBlockedByMergeFlagRestriction($qb, $combinedPriceList);
+            $this->addPresentPricesRestriction($qb, $combinedPriceList);
+        } else {
+            $this->addPresentProductsRestriction($qb, $combinedPriceList);
+        }
+    }
+
+    /**
+     * Filter out product prices by unit, quantity and currency that are already in the CPL.
+     * ProductPrice table alias should be pp.
+     *
+     * @param QueryBuilder $qb
+     * @param CombinedPriceList $combinedPriceList
+     */
+    private function addPresentPricesRestriction(
+        QueryBuilder $qb,
+        CombinedPriceList $combinedPriceList
+    ) {
+        $subQuery = $this->_em->createQueryBuilder();
+        $subQuery->select('cpp2.id')
+            ->from(CombinedProductPrice::class, 'cpp2')
+            ->where(
+                $qb->expr()->andX(
+                    $qb->expr()->eq('cpp2.priceList', ':combinedPriceList'),
+                    $qb->expr()->eq('pp.product', 'cpp2.product'),
+                    $qb->expr()->eq('pp.currency', 'cpp2.currency'),
+                    $qb->expr()->eq('pp.unit', 'cpp2.unit'),
+                    $qb->expr()->eq('pp.quantity', 'cpp2.quantity')
+                )
+            );
+
+        $qb->andWhere($qb->expr()->not($qb->expr()->exists($subQuery->getQuery()->getDQL())));
+        $qb->setParameter('combinedPriceList', $combinedPriceList->getId());
+    }
+
+    /**
+     * Filter out products that already have prices added with mergeAllowed = false.
+     * ProductPrice table alias should be pp.
+     *
+     * @param QueryBuilder $qb
+     * @param CombinedPriceList $combinedPriceList
+     */
+    private function addProductsBlockedByMergeFlagRestriction(
+        QueryBuilder $qb,
+        CombinedPriceList $combinedPriceList
+    ) {
+        $subQuery = $this->_em->createQueryBuilder();
+        $subQuery->select('cpp.id')
+            ->from(CombinedProductPrice::class, 'cpp')
+            ->where(
+                $qb->expr()->andX(
+                    $qb->expr()->eq('cpp.priceList', ':combinedPriceList'),
+                    $qb->expr()->eq('pp.product', 'cpp.product'),
+                    $subQuery->expr()->eq('cpp.mergeAllowed', ':mergeAllowed')
+                )
+            );
+
+        $qb->andWhere($qb->expr()->not($qb->expr()->exists($subQuery->getQuery()->getDQL())));
+        $qb->setParameter('combinedPriceList', $combinedPriceList->getId())
+            ->setParameter('mergeAllowed', false);
+    }
+
+    /**
+     * Filter out prices for products that are already present in the CPL.
+     * ProductPrice table alias should be pp.
+     *
+     * @param QueryBuilder $qb
+     * @param CombinedPriceList $combinedPriceList
+     */
+    private function addPresentProductsRestriction(
+        QueryBuilder $qb,
+        CombinedPriceList $combinedPriceList
+    ) {
         $subQuery = $this->_em->createQueryBuilder();
         $subQuery->select('cpp.id')
             ->from(CombinedProductPrice::class, 'cpp')
@@ -167,28 +340,9 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
                     $qb->expr()->eq('pp.product', 'cpp.product')
                 )
             );
-        if ($mergeAllowed) {
-            $subQuery->andWhere(
-                $subQuery->expr()->eq('cpp.mergeAllowed', ':mergeAllowed')
-            );
-            $qb->setParameter('mergeAllowed', false);
 
-            $subQuery2 = $this->_em->createQueryBuilder();
-            $subQuery2->select('cpp2.id')
-                ->from(CombinedProductPrice::class, 'cpp2')
-                ->where(
-                    $qb->expr()->andX(
-                        $qb->expr()->eq('cpp2.priceList', ':combinedPriceList'),
-                        $qb->expr()->eq('pp.product', 'cpp2.product'),
-                        $qb->expr()->eq('pp.currency', 'cpp2.currency'),
-                        $qb->expr()->eq('pp.unit', 'cpp2.unit'),
-                        $qb->expr()->eq('pp.quantity', 'cpp2.quantity')
-                    )
-                );
-            $qb->andWhere($qb->expr()->not($qb->expr()->exists($subQuery2->getQuery()->getDQL())));
-        }
-        $qb->andWhere($qb->expr()->not($qb->expr()->exists($subQuery->getQuery()->getDQL())))
-            ->setParameter('combinedPriceList', $combinedPriceList->getId());
+        $qb->andWhere($qb->expr()->not($qb->expr()->exists($subQuery->getQuery()->getDQL())));
+        $qb->setParameter('combinedPriceList', $combinedPriceList->getId());
     }
 
     /**
@@ -596,21 +750,12 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         PriceList $priceList,
         QueryBuilder $qb
     ) {
-        $qb->andWhere($qb->expr()->between('pp.product', ':product_min', ':product_max'));
-
-        $productPriceQb = $this->getEntityManager()
-            ->createQueryBuilder();
-        $productPriceQb->select('MIN(IDENTITY(ptp.product))')
-            ->from(PriceListToProduct::class, 'ptp')
-            ->where('ptp.priceList = :priceList')
-            ->setParameter('priceList', $priceList);
-
-        $minProductId = $productPriceQb->getQuery()->getSingleScalarResult();
-        $maxProductId = $productPriceQb->select('MAX(IDENTITY(ptp.product))')
-            ->getQuery()
-            ->getSingleScalarResult();
-
-        $this->insertByRange($insertFromSelectQueryExecutor, $qb, $minProductId, $maxProductId);
+        $this->insertByProductsRangeForBaseProductPrice(
+            $insertFromSelectQueryExecutor,
+            PriceListToProduct::class,
+            $priceList,
+            $qb
+        );
     }
 
     /**
@@ -623,14 +768,34 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         CombinedPriceList $sourceCpl,
         QueryBuilder $qb
     ) {
+        $this->insertByProductsRangeForBaseProductPrice(
+            $insertFromSelectQueryExecutor,
+            CombinedProductPrice::class,
+            $sourceCpl,
+            $qb
+        );
+    }
+
+    /**
+     * @param ShardQueryExecutorInterface $insertFromSelectQueryExecutor
+     * @param string $priceToProductRelationClass
+     * @param BasePriceList $priceList
+     * @param QueryBuilder $qb
+     */
+    private function insertByProductsRangeForBaseProductPrice(
+        ShardQueryExecutorInterface $insertFromSelectQueryExecutor,
+        string $priceToProductRelationClass,
+        BasePriceList $priceList,
+        QueryBuilder $qb
+    ) {
         $qb->andWhere($qb->expr()->between('pp.product', ':product_min', ':product_max'));
 
         $productPriceQb = $this->getEntityManager()
             ->createQueryBuilder();
         $productPriceQb->select('MIN(IDENTITY(ptp.product))')
-            ->from(CombinedProductPrice::class, 'ptp')
+            ->from($priceToProductRelationClass, 'ptp')
             ->where('ptp.priceList = :priceList')
-            ->setParameter('priceList', $sourceCpl);
+            ->setParameter('priceList', $priceList);
 
         $minProductId = $productPriceQb->getQuery()
             ->getSingleScalarResult();
@@ -653,7 +818,6 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         $minProductId,
         $maxProductId
     ) {
-        $qb->addSelect('UUID()');
         while ($minProductId <= $maxProductId) {
             $currentMax = $minProductId + self::BATCH_SIZE;
             if ($currentMax > $maxProductId) {
@@ -662,22 +826,7 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
             $qb->setParameter('product_min', $minProductId)
                 ->setParameter('product_max', $currentMax);
 
-            $insertFromSelectQueryExecutor->execute(
-                CombinedProductPrice::class,
-                [
-                    'product',
-                    'unit',
-                    'priceList',
-                    'productSku',
-                    'quantity',
-                    'value',
-                    'currency',
-                    'mergeAllowed',
-                    'originPriceId',
-                    'id'
-                ],
-                $qb
-            );
+            $this->insertToCombinedPricesFromQb($insertFromSelectQueryExecutor, $qb);
             // +1 because between operator includes boundary values
             $minProductId = $currentMax + 1;
         }
@@ -694,8 +843,53 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         array $products
     ) {
         $qb->andWhere($qb->expr()->in('pp.product', ':products'))
-            ->addSelect('UUID()')
             ->setParameter('products', $products);
+
+        $this->insertToCombinedPricesFromQb($insertFromSelectQueryExecutor, $qb);
+    }
+
+    /**
+     * @param CombinedPriceList $combinedPriceList
+     * @param bool $mergeAllowed
+     * @param PriceList $priceList
+     * @return QueryBuilder
+     */
+    private function getPricesQb(
+        CombinedPriceList $combinedPriceList,
+        bool $mergeAllowed,
+        PriceList $priceList
+    ): QueryBuilder {
+        $qb = $this->getEntityManager()
+            ->getRepository(ProductPrice::class)
+            ->createQueryBuilder('pp');
+
+        $qb
+            ->select(
+                'IDENTITY(pp.product)',
+                'IDENTITY(pp.unit)',
+                (string)$qb->expr()->literal($combinedPriceList->getId()),
+                'pp.productSku',
+                'pp.quantity',
+                'pp.value',
+                'pp.currency',
+                sprintf('CAST(%d as boolean)', (int)$mergeAllowed),
+                'pp.id',
+                'UUID()'
+            )
+            ->where($qb->expr()->eq('pp.priceList', ':currentPriceList'))
+            ->setParameter('currentPriceList', $priceList);
+
+        return $qb;
+    }
+
+    /**
+     * @param ShardQueryExecutorInterface $insertFromSelectQueryExecutor
+     * @param QueryBuilder $qb
+     */
+    private function insertToCombinedPricesFromQb(
+        ShardQueryExecutorInterface $insertFromSelectQueryExecutor,
+        QueryBuilder $qb
+    ): void {
         $insertFromSelectQueryExecutor->execute(
             CombinedProductPrice::class,
             [
@@ -711,6 +905,167 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
                 'id'
             ],
             $qb
+        );
+    }
+
+    /**
+     * @param ShardQueryExecutorInterface $insertFromSelectQueryExecutor
+     * @param PriceList $priceList
+     * @param array $products
+     * @param QueryBuilder $qb
+     */
+    private function doInsertByProducts(
+        ShardQueryExecutorInterface $insertFromSelectQueryExecutor,
+        PriceList $priceList,
+        array $products,
+        QueryBuilder $qb
+    ): void {
+        if (!$products) {
+            $this->insertByProductsRange($insertFromSelectQueryExecutor, $priceList, $qb);
+        } else {
+            $this->insertByProducts($insertFromSelectQueryExecutor, $qb, $products);
+        }
+    }
+
+    /**
+     * @param TempTableManipulatorInterface $tempTableManipulator
+     * @param CombinedPriceList $combinedPriceList
+     * @param PriceList $priceList
+     * @param array $products
+     * @param QueryBuilder $qb
+     * @param string $insertToTableName
+     * @param bool $applyOnDuplicateKeyUpdate
+     * @param array|null $tempTableAliases
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    private function doInsertByProductsUsingTempTable(
+        TempTableManipulatorInterface $tempTableManipulator,
+        CombinedPriceList $combinedPriceList,
+        PriceList $priceList,
+        array $products,
+        QueryBuilder $qb,
+        string $insertToTableName,
+        bool $applyOnDuplicateKeyUpdate = true,
+        ?array $tempTableAliases = []
+    ): void {
+        if (!$products) {
+            $this->insertByProductsRangeForBaseProductPriceToTempTable(
+                $tempTableManipulator,
+                $combinedPriceList,
+                PriceListToProduct::class,
+                $priceList,
+                $qb,
+                $insertToTableName,
+                $applyOnDuplicateKeyUpdate,
+                $tempTableAliases
+            );
+        } else {
+            $qb->andWhere($qb->expr()->in('pp.product', ':products'))
+                ->setParameter('products', $products);
+
+            $this->insertFromQbUsingCombinedPricesTempTable(
+                $tempTableManipulator,
+                $combinedPriceList,
+                $qb,
+                $insertToTableName,
+                $applyOnDuplicateKeyUpdate,
+                $tempTableAliases
+            );
+        }
+    }
+
+    /**
+     * @param TempTableManipulatorInterface $tempTableManipulator
+     * @param CombinedPriceList $combinedPriceList
+     * @param string $priceToProductRelationClass
+     * @param BasePriceList $priceList
+     * @param QueryBuilder $qb
+     * @param string $insertToTableName
+     * @param bool $applyOnDuplicateKeyUpdate
+     * @param array|null $tempTableAliases
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    private function insertByProductsRangeForBaseProductPriceToTempTable(
+        TempTableManipulatorInterface $tempTableManipulator,
+        CombinedPriceList $combinedPriceList,
+        string $priceToProductRelationClass,
+        BasePriceList $priceList,
+        QueryBuilder $qb,
+        string $insertToTableName,
+        bool $applyOnDuplicateKeyUpdate = true,
+        ?array $tempTableAliases = []
+    ) {
+        $qb->andWhere($qb->expr()->between('pp.product', ':product_min', ':product_max'));
+
+        $productPriceQb = $this->getEntityManager()
+            ->createQueryBuilder();
+        $productPriceQb->select('MIN(IDENTITY(ptp.product))')
+            ->from($priceToProductRelationClass, 'ptp')
+            ->where('ptp.priceList = :priceList')
+            ->setParameter('priceList', $priceList);
+
+        $minProductId = $productPriceQb->getQuery()
+            ->getSingleScalarResult();
+        $maxProductId = $productPriceQb->select('MAX(IDENTITY(ptp.product))')
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        while ($minProductId <= $maxProductId) {
+            $currentMax = $minProductId + self::BATCH_SIZE;
+            if ($currentMax > $maxProductId) {
+                $currentMax = $maxProductId;
+            }
+            $qb->setParameter('product_min', $minProductId)
+                ->setParameter('product_max', $currentMax);
+
+            $this->insertFromQbUsingCombinedPricesTempTable(
+                $tempTableManipulator,
+                $combinedPriceList,
+                $qb,
+                $insertToTableName,
+                $applyOnDuplicateKeyUpdate,
+                $tempTableAliases
+            );
+            // +1 because between operator includes boundary values
+            $minProductId = $currentMax + 1;
+        }
+    }
+
+    /**
+     * @param TempTableManipulatorInterface $tempTableManipulator
+     * @param CombinedPriceList $combinedPriceList
+     * @param QueryBuilder $qb
+     * @param string $insertToTableName
+     * @param bool $applyOnDuplicateKeyUpdate
+     * @param array|null $tempTableAliases
+     */
+    private function insertFromQbUsingCombinedPricesTempTable(
+        TempTableManipulatorInterface $tempTableManipulator,
+        CombinedPriceList $combinedPriceList,
+        QueryBuilder $qb,
+        string $insertToTableName,
+        bool $applyOnDuplicateKeyUpdate = true,
+        ?array $tempTableAliases = []
+    ): void {
+        $tempTableManipulator->insertData(
+            $insertToTableName,
+            CombinedProductPrice::class,
+            $combinedPriceList->getId(),
+            [
+                'product',
+                'unit',
+                'priceList',
+                'productSku',
+                'quantity',
+                'value',
+                'currency',
+                'mergeAllowed',
+                'originPriceId',
+                'id'
+            ],
+            $qb,
+            $applyOnDuplicateKeyUpdate,
+            $tempTableAliases
         );
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\SubtotalProcessor\Provider;
 
+use Brick\Math\BigDecimal;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
@@ -97,7 +98,8 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
         if (!$entity instanceof LineItemsNotPricedAwareInterface) {
             return null;
         }
-        $subtotalAmount = 0.0;
+
+        $subtotalAmount = BigDecimal::of(0);
         $subtotal = $this->createSubtotal();
 
         $productsPriceCriteria = $this->prepareProductsPriceCriteria($entity, $currency);
@@ -106,14 +108,15 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
             $prices = $this->productPriceProvider->getMatchedPrices($productsPriceCriteria, $searchScope);
             foreach ($prices as $identifier => $price) {
                 if ($price instanceof Price) {
-                    $priceValue = $price->getValue();
-                    $rowTotal = (float)$priceValue * $productsPriceCriteria[$identifier]->getQuantity();
-                    $subtotalAmount += $this->rounding->round($rowTotal);
+                    /** @var BigDecimal $priceValue */
+                    $priceValue = BigDecimal::of($price->getValue());
+                    $rowTotal = $priceValue->multipliedBy($productsPriceCriteria[$identifier]->getQuantity());
+                    $subtotalAmount = $subtotalAmount->plus($this->rounding->round($rowTotal->toFloat()));
                     $subtotal->setVisible(true);
                 }
             }
         }
-        $subtotal->setAmount($subtotalAmount);
+        $subtotal->setAmount($subtotalAmount->toFloat());
         $subtotal->setCurrency($currency);
 
         return $subtotal;

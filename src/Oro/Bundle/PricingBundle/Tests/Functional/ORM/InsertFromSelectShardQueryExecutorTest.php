@@ -37,6 +37,10 @@ class InsertFromSelectShardQueryExecutorTest extends WebTestCase
         $this->shardManager = $this->getContainer()->get('oro_pricing.shard_manager');
     }
 
+    /**
+     * @covers InsertFromSelectShardQueryExecutor::execute
+     * @covers InsertFromSelectShardQueryExecutor::executeNative
+     */
     public function testInsert()
     {
         $priceListFrom = $this->getReference(LoadPriceLists::PRICE_LIST_1);

@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManager;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
@@ -207,8 +208,8 @@ abstract class AbstractPriceCombiningStrategy implements
 
     /**
      * @param CombinedPriceList $combinedPriceList
-     * @param array $priceLists
-     * @param array $products
+     * @param array|CombinedPriceListToPriceList $priceLists
+     * @param array|Product[] $products
      * @param ProgressBar|null $progressBar
      */
     protected function processPriceLists(
@@ -219,19 +220,7 @@ abstract class AbstractPriceCombiningStrategy implements
     ) {
         $progress = 0;
         foreach ($priceLists as $priceListRelation) {
-            if ($this->isOutputEnabled()) {
-                if ($progressBar) {
-                    $progressBar->setProgress(++$progress);
-                    $progressBar->clear();
-                }
-                $this->output->writeln(
-                    'Processing price list: ' . $priceListRelation->getPriceList()->getName(),
-                    OutputInterface::VERBOSITY_VERY_VERBOSE
-                );
-                if ($progressBar) {
-                    $progressBar->display();
-                }
-            }
+            $this->moveProgress($progressBar, $progress, $priceListRelation);
             $this->processRelation($combinedPriceList, $priceListRelation, $products);
         }
     }
@@ -242,9 +231,8 @@ abstract class AbstractPriceCombiningStrategy implements
     protected function getManager()
     {
         if (!$this->manager) {
-            $className = 'OroPricingBundle:CombinedPriceList';
             $this->manager = $this->registry
-                ->getManagerForClass($className);
+                ->getManagerForClass(CombinedPriceList::class);
         }
 
         return $this->manager;
@@ -256,10 +244,8 @@ abstract class AbstractPriceCombiningStrategy implements
     protected function getCombinedPriceListRelationsRepository()
     {
         if (!$this->combinedPriceListRelationsRepository) {
-            $priceListRelationClassName = 'OroPricingBundle:CombinedPriceListToPriceList';
             $this->combinedPriceListRelationsRepository = $this->registry
-                ->getManagerForClass($priceListRelationClassName)
-                ->getRepository($priceListRelationClassName);
+                ->getRepository(CombinedPriceListToPriceList::class);
         }
 
         return $this->combinedPriceListRelationsRepository;
@@ -271,10 +257,8 @@ abstract class AbstractPriceCombiningStrategy implements
     protected function getCombinedProductPriceRepository()
     {
         if (!$this->combinedProductPriceRepository) {
-            $combinedPriceClassName = 'OroPricingBundle:CombinedProductPrice';
             $this->combinedProductPriceRepository = $this->registry
-                ->getManagerForClass($combinedPriceClassName)
-                ->getRepository($combinedPriceClassName);
+                ->getRepository(CombinedProductPrice::class);
         }
 
         return $this->combinedProductPriceRepository;
@@ -338,5 +322,30 @@ abstract class AbstractPriceCombiningStrategy implements
         }
 
         return $priceListRelations;
+    }
+
+    /**
+     * @param ProgressBar|null $progressBar
+     * @param int $progress
+     * @param CombinedPriceListToPriceList $priceListRelation
+     */
+    protected function moveProgress(
+        ?ProgressBar $progressBar,
+        int &$progress,
+        CombinedPriceListToPriceList $priceListRelation
+    ): void {
+        if ($this->isOutputEnabled()) {
+            if ($progressBar) {
+                $progressBar->setProgress(++$progress);
+                $progressBar->clear();
+            }
+            $this->output->writeln(
+                'Processing price list: ' . $priceListRelation->getPriceList()->getName(),
+                OutputInterface::VERBOSITY_VERY_VERBOSE
+            );
+            if ($progressBar) {
+                $progressBar->display();
+            }
+        }
     }
 }
