@@ -36,7 +36,11 @@ const VariantBodyView = BaseView.extend({
         }
 
         this.$trigger.off(this.eventNamespace());
-        delete this.loadingMaskView;
+
+        if (this.loadingMaskView) {
+            this.loadingMaskView.dispose();
+            delete this.loadingMaskView;
+        }
 
         VariantBodyView.__super__.dispose.call(this);
     },
