@@ -889,7 +889,7 @@ services:
         arguments:
            - "@request_stack"
         tags:
-            - { name: kernel.event_listener, event: kernel.exception, method: onAccessException }
+            - { name: kernel.event_listener, event: kernel.exception, method: onAccessException, priority: 1000 }
 
     oro_product.content_variant_type.product_page:
         class: Oro\Bundle\ProductBundle\ContentVariantType\ProductPageContentVariantType
