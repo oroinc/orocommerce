@@ -30,13 +30,24 @@ const VariantBodyView = BaseView.extend({
         this.initLayout().done(_.bind(this.handleLayoutInit, this));
     },
 
+    dispose() {
+        if (this.disposed) {
+            return;
+        }
+
+        this.$trigger.off(this.eventNamespace());
+        delete this.loadingMaskView;
+
+        VariantBodyView.__super__.dispose.call(this);
+    },
+
     handleLayoutInit() {
         this.$trigger = this.options.el.closest('.content-variant-item').find(this.options.selectors.trigger);
         this.$container = this.options.el.closest('.content-variant-item').find(this.options.selectors.container);
         this.loadingMaskView = new LoadingMaskView({container: this.$container});
 
         this.initializeCollapsedState();
-        this.$trigger.on('click', _.bind(this.onToggle, this));
+        this.$trigger.on(`click${this.eventNamespace()}`, _.bind(this.onToggle, this));
         layout.initPopover(this.$container);
     },
 
