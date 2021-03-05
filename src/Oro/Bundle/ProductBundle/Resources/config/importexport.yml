@@ -267,3 +267,8 @@ services:
         arguments:
             - '@oro_product.importexport.normalizer.product_image_aware_file_normalizer_decorator.inner'
             - '@oro_product.importexport.file_manager.product_images'
+
+    oro_product.importexport.frontend.configuration_provider.product:
+        class: 'Oro\Bundle\ProductBundle\ImportExport\Frontend\Configuration\ProductImportExportConfigurationProvider'
+        tags:
+            - { name: oro_importexport.configuration, alias: oro_product_frontend }

@@ -14,3 +14,7 @@ entity_config:
                     form:
                         options:
                             tooltip: oro.product.entity_config.field.items.attribute.sortable.tooltip
+                use_in_export:
+                    form:
+                        options:
+                            tooltip: oro.product.entity_config.field.items.attribute.use_in_export.tooltip

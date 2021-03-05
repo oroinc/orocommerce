@@ -75,7 +75,9 @@ class Configuration implements ConfigurationInterface
     const FILTERS_POSITION_TOP = 'top';
     const FILTERS_POSITION_SIDEBAR = 'sidebar';
     const ALLOW_PARTIAL_PRODUCT_SEARCH = 'allow_partial_product_search';
-    const PRODUCT_LISTING_EXPORT_ENABLED = 'product_listing_export_enabled';
+    const PRODUCT_DATA_EXPORT_ENABLED = 'product_data_export_enabled';
+    const PRODUCT_PRICES_EXPORT_ENABLED = 'product_prices_export_enabled';
+    const PRODUCT_PRICE_TIERS_ENABLED = 'product_price_tiers_export_enabled';
 
     /**
      * {@inheritDoc}
@@ -187,7 +189,15 @@ class Configuration implements ConfigurationInterface
                     'value' => static::FILTERS_POSITION_TOP
                 ],
                 static::ALLOW_PARTIAL_PRODUCT_SEARCH => ['value' => false, 'type' => 'boolean'],
-                static::PRODUCT_LISTING_EXPORT_ENABLED => [
+                static::PRODUCT_DATA_EXPORT_ENABLED => [
+                    'type' => 'boolean',
+                    'value' => false
+                ],
+                static::PRODUCT_PRICES_EXPORT_ENABLED => [
+                    'type' => 'boolean',
+                    'value' => false
+                ],
+                static::PRODUCT_PRICE_TIERS_ENABLED => [
                     'type' => 'boolean',
                     'value' => false
                 ]
