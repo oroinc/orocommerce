@@ -83,7 +83,7 @@ class ProductDatagridLowInventoryListener
     /**
      * @param Product[] $products
      *
-     * @return []
+     * @return array
      */
     protected function prepareDataForIsLowInventoryCollection(array $products)
     {

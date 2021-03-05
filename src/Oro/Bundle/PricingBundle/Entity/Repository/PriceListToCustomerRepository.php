@@ -292,7 +292,7 @@ class PriceListToCustomerRepository extends EntityRepository implements PriceLis
     }
 
     /**
-     * @param array Customer[]|int[] $holdersIds
+     * @param array|Customer[]|int[] $holdersIds
      * @return PriceListToCustomer[]
      */
     public function getRelationsByHolders(array $holdersIds)

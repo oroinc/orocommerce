@@ -22,14 +22,13 @@ class EntityPaymentMethodsProvider
     /**
      * @param PaymentTransactionProvider $paymentTransactionProvider
      */
-    public function __construct(
-        PaymentTransactionProvider $paymentTransactionProvider
-    ) {
+    public function __construct(PaymentTransactionProvider $paymentTransactionProvider)
+    {
         $this->paymentTransactionProvider = $paymentTransactionProvider;
     }
 
     /**
-     * @param object $object
+     * @param object         $entity
      * @param array|string[] $paymentMethods
      */
     public function storePaymentMethodsToEntity($entity, array $paymentMethods): void

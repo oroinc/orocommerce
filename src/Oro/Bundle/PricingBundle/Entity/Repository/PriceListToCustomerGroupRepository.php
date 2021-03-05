@@ -184,7 +184,7 @@ class PriceListToCustomerGroupRepository extends EntityRepository implements Pri
     }
 
     /**
-     * @param array CustomerGroup[]|int[] $holdersIds
+     * @param array|CustomerGroup[]|int[] $holdersIds
      * @return PriceListToCustomerGroup[]
      */
     public function getRelationsByHolders(array $holdersIds)
