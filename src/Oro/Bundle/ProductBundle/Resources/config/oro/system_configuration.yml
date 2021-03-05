@@ -87,11 +87,11 @@ system_configuration:
             title: oro.product.system_configuration.groups.product_fulltext_search.title
         product_search_autocomplete:
             title: oro.product.system_configuration.groups.product_search_autocomplete.title
-        product_listing:
-            title: oro.product.system_configuration.groups.product_listing.title
-            icon: 'fa-list-alt'
-        product_listing_export:
-            title: oro.product.system_configuration.groups.product_listing_export.title
+        customer_settings:
+            title: oro.product.system_configuration.groups.customer_settings.title
+            icon: 'fa-cogs'
+        product_data_export:
+            title: oro.product.system_configuration.groups.product_data_export.title
     fields:
         oro_product.related_products_enabled:
             data_type: boolean
@@ -623,13 +623,27 @@ system_configuration:
                     - NotBlank: ~
                     - Range:
                         min: 1
-        oro_product.product_listing_export_enabled:
+        oro_product.product_data_export_enabled:
             data_type: boolean
             type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
-            priority: 40
+            priority: 30
             options:
-                label: oro.product.system_configuration.fields.product_listing_export_enabled.label
-                tooltip: oro.product.system_configuration.fields.product_listing_export_enabled.tooltip
+                label: oro.product.system_configuration.fields.product_data_export_enabled.label
+                tooltip: oro.product.system_configuration.fields.product_data_export_enabled.tooltip
+        oro_product.product_prices_export_enabled:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            priority: 20
+            options:
+                label: oro.product.system_configuration.fields.product_prices_export_enabled.label
+                tooltip: oro.product.system_configuration.fields.product_prices_export_enabled.tooltip
+        oro_product.product_price_tiers_export_enabled:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            priority: 10
+            options:
+                label: oro.product.system_configuration.fields.product_price_tiers_export_enabled.label
+                tooltip: oro.product.system_configuration.fields.product_price_tiers_export_enabled.tooltip
 
     tree:
         system_configuration:
@@ -754,12 +768,14 @@ system_configuration:
                                             - oro_product.product_collections_indexation_cron_schedule
                                             - oro_product.product_collections_mass_action_limitation
                                             - oro_product.product_collections_indexation_partial
-                            product_listing:
+                            customer_settings:
                                 priority: 0
                                 children:
-                                    product_listing_export:
+                                    product_data_export:
                                         children:
-                                            - oro_product.product_listing_export_enabled
+                                            - oro_product.product_data_export_enabled
+                                            - oro_product.product_prices_export_enabled
+                                            - oro_product.product_price_tiers_export_enabled
                     product_inventory:
                         priority: 650
                         children:
