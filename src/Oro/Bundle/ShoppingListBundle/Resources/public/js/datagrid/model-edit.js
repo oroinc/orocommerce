@@ -14,21 +14,16 @@ const ShoppingListEditItemModel = ShoppingListModel.extend({
         }
     },
 
-    callBindModelMethod(method, ...args) {
-        if (this.get('bindModelId')) {
-            const bindModel = this.collection.get(this.get('bindModelId'));
-            if (!bindModel) {
-                return false;
-            }
-            bindModel[method](...args);
-        }
-
-        return false;
+    getMessageModel() {
+        return this.collection.get(this.get('messageModelId'));
     },
 
     highlightRow(type = 'success') {
         this.classList().add(type);
-        this.callBindModelMethod('highlightRow', type);
+        const messageModel = this.getMessageModel();
+        if (messageModel) {
+            messageModel.highlightRow(type);
+        }
     },
 
     unhighlightRow(type = 'success', delay = 0) {
@@ -38,7 +33,10 @@ const ShoppingListEditItemModel = ShoppingListModel.extend({
             this.classList().remove(type);
         }
 
-        this.callBindModelMethod('unhighlightRow', type, delay);
+        const messageModel = this.getMessageModel();
+        if (messageModel) {
+            messageModel.unhighlightRow(type, delay);
+        }
     },
 
     toggleLoadingOverlay(state) {

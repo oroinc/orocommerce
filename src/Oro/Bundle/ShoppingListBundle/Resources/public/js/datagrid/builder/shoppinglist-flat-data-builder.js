@@ -7,23 +7,22 @@ import ShoppingListRow from 'oroshoppinglist/js/datagrid/row/shopping-list-row';
 const isHighlight = item => item.isUpcoming;
 const isError = item => item.errors && item.errors.length;
 
-const bindModel = (item, data = {}) => {
-    data = {
+const messageModel = item => {
+    const messageItem = {
         ...item,
-        ...data,
         id: item.id + _.uniqueId('-bind-'),
         notificationCell: 'item',
         row_class_name: item.row_class_name + ' notification-row',
-        bound: true
+        isMessage: true
     };
 
-    item.bindModelId = data.id;
-    return data;
+    item.messageModelId = messageItem.id;
+    return messageItem;
 };
 
 export const flattenData = data => {
-    return data.reduce((flatData, rawData, memo, collection) => {
-        let {subData, ...item} = rawData;
+    return data.reduce((flatData, rawData) => {
+        const {subData, ...item} = rawData;
         const itemClassName = [];
 
         if (isHighlight(item)) {
@@ -42,7 +41,7 @@ export const flattenData = data => {
             item._isVariant = false;
 
             if (isError(item) || isHighlight(item)) {
-                flatData.push(bindModel(item));
+                flatData.push(messageModel(item));
             }
         } else {
             let filteredOutVariants = 0;
@@ -61,12 +60,12 @@ export const flattenData = data => {
             item._isVariant = false;
 
             if (isError(item) || isHighlight(item)) {
-                flatData.push(bindModel(item));
+                flatData.push(messageModel(item));
             }
 
             flatData.push(item);
 
-            subData = subData.reduce((memo, subItem, index) => {
+            const flatSubData = subData.reduce((subDataCollection, subItem, index) => {
                 const className = ['sub-row'];
 
                 if (subItem.units && subItem.units[item.unit]) {
@@ -100,13 +99,13 @@ export const flattenData = data => {
                     'data-product-group': item.productId
                 };
 
-                memo.push(subItem);
+                subDataCollection.push(subItem);
 
                 if (isError(subItem) || isHighlight(subItem)) {
-                    memo.push(bindModel(subItem));
+                    subDataCollection.push(messageModel(subItem));
                 }
 
-                return memo;
+                return subDataCollection;
             }, []);
 
             item.precision = precisions.length
@@ -125,7 +124,7 @@ export const flattenData = data => {
                 lastFiltered.row_class_name += ' filtered-out';
             }
 
-            flatData.push(...subData);
+            flatData.push(...flatSubData);
         }
 
         return flatData;

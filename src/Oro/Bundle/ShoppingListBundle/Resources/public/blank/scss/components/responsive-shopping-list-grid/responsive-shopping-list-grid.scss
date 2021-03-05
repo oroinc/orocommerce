@@ -64,13 +64,6 @@
 
     .notification-container {
         margin-top: $responsive-shopping-list-notification-container-offset;
-
-        .validation-error,
-        .notification {
-            background: transparent;
-            padding-left: 0;
-            padding-right: 0;
-        }
     }
 
     .highlight-error,
@@ -296,7 +289,7 @@
             }
 
             &.sub-row.notification-row {
-                padding-top: 7px;
+                padding-top: $responsive-shopping-notification-subrow-offset-top-mobile;
             }
         }
 

@@ -10,22 +10,17 @@ const shoppingListGridRepresentationBuilder = {
             const topToolBar = grid.toolbars.top;
 
             if (topToolBar) {
-                if (TogglePaginationView.isVisible(grid)) {
-                    const togglePaginationView = new TogglePaginationView({
-                        datagrid: grid,
-                        translationPrefix: 'oro_frontend.btn'
-                    });
-                    topToolBar.$('[data-section="left-side"]').append(togglePaginationView.render().$el);
-                }
+                const togglePaginationView = new TogglePaginationView({
+                    datagrid: grid,
+                    translationPrefix: 'oro_frontend.btn'
+                });
+                const toggleGroupView = new ToggleGroupView({
+                    datagrid: grid,
+                    translationPrefix: 'oro_frontend.btn'
+                });
 
-                if (ToggleGroupView.isVisible(grid)) {
-                    const toggleGroupView = new ToggleGroupView({
-                        datagrid: grid,
-                        translationPrefix: 'oro_frontend.btn'
-                    });
-
-                    topToolBar.$('[data-section="left-side"]').append(toggleGroupView.render().$el);
-                }
+                topToolBar.$('[data-section="left-side"]').append(togglePaginationView.render().$el);
+                togglePaginationView.$el.after(toggleGroupView.render().$el);
             }
         });
 

@@ -12,9 +12,6 @@ layout:
         - '@setBlockTheme':
             themes: 'layout.html.twig'
 
-        - '@remove':
-            id: __datagrid_items_counter
-
         - '@setOption':
             id: title
             optionName: params

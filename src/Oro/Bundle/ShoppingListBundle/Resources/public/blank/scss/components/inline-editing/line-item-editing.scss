@@ -58,8 +58,7 @@
         min-width: 80px;
 
         .highlight-error & {
-            border: 1px solid $input-border-color-error-state;
-            box-shadow: $input-box-shadow-error-state;
+            @extend .error;
             z-index: z('base') + 1;
         }
     }
