@@ -14,9 +14,9 @@ const ShoppingListRow = Row.extend({
     },
 
     filterCallback(view, included) {
-        const $el = ShoppingListRow.__super__.filterCallback.call(this, view, included);
+        const {$el} = view;
 
-        if (view.model.get('bound')) {
+        if (view.model.get('isMessage')) {
             if (included) {
                 const visibleColumns = this.columns.filter(column => column.get('renderable'));
                 const start = visibleColumns.findIndex(
@@ -24,10 +24,8 @@ const ShoppingListRow = Row.extend({
                 );
 
                 $el.attr('colspan', visibleColumns.length - start);
-                $el.attr('data-offset', start);
             } else {
-                $el.addClass('hide');
-                $el.show();
+                $el.empty();
             }
         }
 
@@ -35,24 +33,18 @@ const ShoppingListRow = Row.extend({
     },
 
     insertView(...args) {
-        const view = ShoppingListRow.__super__.insertView.apply(this, args);
+        const subviews = [...this.subviews];
+        subviews.pop();
 
-        if (view.$el.data('offset')) {
-            view.$el.prevAll('td').each((index, td) => {
-                td.innerHTML = '';
-                td.classList.remove('hide');
-            });
+        const messageCell = subviews.find(
+            subview => subview.column.get('name') === this.model.get('notificationCell')
+        );
+
+        if (messageCell) {
+            return;
         }
 
-        return view;
-    },
-
-    render() {
-        ShoppingListRow.__super__.render.call(this);
-
-        if (this.model.get('notificationCell')) {
-            this.$('.hide').remove();
-        }
+        return ShoppingListRow.__super__.insertView.call(this, ...args);
     }
 });
 

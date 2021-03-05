@@ -7,7 +7,8 @@ const ShoppingListItemCell = HtmlTemplateCell.extend({
     },
 
     render() {
-        const template = this.getTemplateFunction();
+        const templateKey = this.model.get('isMessage') ? 'message' : 'default';
+        const template = this.getTemplateFunction(templateKey);
         const html = template(this.getTemplateData());
 
         if (this._html !== html) { // prevents from unnecessary HTML update

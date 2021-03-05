@@ -390,7 +390,9 @@ datagrids:
             item:
                 label:         oro.frontend.shoppinglist.lineitem.item.label
                 frontend_type: html-template
-                frontend_template: tpl-loader!oroshoppinglist/templates/datagrid/cell/item.html
+                frontend_template:
+                    default: tpl-loader!oroshoppinglist/templates/datagrid/cell/item.html
+                    message: tpl-loader!oroshoppinglist/templates/datagrid/cell/item-message.html
                 image_placeholder: "@oro_product.provider.product_image_placeholder->getPath('product_small')"
                 inventory_statuses: "@oro_product.provider.product_inventory_status_provider->getAvailableProductInventoryStatuses()"
             inventoryStatus:
