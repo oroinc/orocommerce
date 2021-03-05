@@ -6,7 +6,6 @@ use Brick\Math\BigDecimal;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
@@ -46,11 +45,10 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
     protected $priceScopeCriteriaFactory;
 
     /**
-     * @param TranslatorInterface $translator
-     * @param RoundingServiceInterface $rounding
-     * @param ProductPriceProviderInterface $productPriceProvider
-     * @param DoctrineHelper $doctrineHelper
-     * @param SubtotalProviderConstructorArguments $arguments
+     * @param TranslatorInterface                       $translator
+     * @param RoundingServiceInterface                  $rounding
+     * @param ProductPriceProviderInterface             $productPriceProvider
+     * @param SubtotalProviderConstructorArguments      $arguments
      * @param ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory
      */
     public function __construct(

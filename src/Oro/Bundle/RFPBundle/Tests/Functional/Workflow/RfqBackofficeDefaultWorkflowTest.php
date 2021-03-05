@@ -303,7 +303,7 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
 
     /**
      * @param Request $request
-     * @param string
+     * @param string  $linkTitle
      * @return array
      */
     private function transit(Request $request, $linkTitle)

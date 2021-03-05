@@ -38,7 +38,7 @@ class PriceListTriggerHandlerTest extends \PHPUnit\Framework\TestCase
     /**
      * @param int $id
      *
-     * @return PriceList
+     * @return Product
      */
     private function getProduct(int $id): Product
     {
