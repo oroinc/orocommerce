@@ -6,7 +6,7 @@ use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueAssertTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * @method static ContainerInterface getContainer
+ * @method static ContainerInterface getContainer()
  */
 trait MessageQueueTrait
 {

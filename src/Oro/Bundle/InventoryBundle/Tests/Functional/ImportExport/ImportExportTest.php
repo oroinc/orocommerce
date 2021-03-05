@@ -399,8 +399,6 @@ class ImportExportTest extends AbstractImportExportTestCase
 
     /**
      * @param string $fileName
-     * @param array $configuration
-     *
      * @dataProvider inventoryStatusDataProvider
      */
     public function testImportInventoryStatuses($fileName)
@@ -444,8 +442,6 @@ class ImportExportTest extends AbstractImportExportTestCase
 
     /**
      * @param string $fileName
-     * @param array $configuration
-     *
      * @dataProvider inventoryLevelsDataProvider
      */
     public function testImportInventoryLevels($fileName)

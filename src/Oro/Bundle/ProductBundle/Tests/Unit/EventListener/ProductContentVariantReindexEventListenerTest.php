@@ -339,7 +339,7 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit\Framework\T
 
     /**
      * @param int $webCatalogId
-     * @return array|[ContentNode,Segment]
+     * @return array [<ContentNode>, <Segment>]
      */
     private function generateContentNodeAndSegment($webCatalogId = 1)
     {

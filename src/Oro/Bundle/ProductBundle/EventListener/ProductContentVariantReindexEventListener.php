@@ -19,6 +19,9 @@ use Oro\Component\WebCatalog\Entity\WebCatalogAwareInterface;
 use Oro\Component\WebCatalog\Provider\WebCatalogUsageProviderInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * Triggers Product re-indexation when some fields of ContentNode entity changed.
+ */
 class ProductContentVariantReindexEventListener implements ContentNodeFieldsChangesAwareInterface
 {
     use ChangedEntityGeneratorTrait;
@@ -106,7 +109,7 @@ class ProductContentVariantReindexEventListener implements ContentNodeFieldsChan
 
     /**
      * @param array|Collection $entities
-     * @param array            &$productIds
+     * @param array            $productIds
      */
     private function collectProductIds($entities, array &$productIds)
     {
@@ -141,7 +144,7 @@ class ProductContentVariantReindexEventListener implements ContentNodeFieldsChan
 
     /**
      * @param array|Collection $entities
-     * @param array            &$productIds
+     * @param array            $productIds
      * @param UnitOfWork       $unitOfWork
      */
     private function collectChangedProductIds($entities, array &$productIds, UnitOfWork $unitOfWork)
@@ -169,7 +172,7 @@ class ProductContentVariantReindexEventListener implements ContentNodeFieldsChan
 
     /**
      * @param array|Collection $entities
-     * @param array|null &$websitesId
+     * @param array|null $websitesId
      */
     private function collectWebsiteIds($entities, &$websitesId)
     {
@@ -266,7 +269,7 @@ class ProductContentVariantReindexEventListener implements ContentNodeFieldsChan
 
     /**
      * @param Product $product
-     * @param array &$productIds
+     * @param array $productIds
      */
     private function addProduct(Product $product, array &$productIds)
     {

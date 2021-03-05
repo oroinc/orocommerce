@@ -220,7 +220,6 @@ class PriceForProductUnitExistsValidatorTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @param $elements
-     * @param Product $product
      * @return PersistentCollection|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function createPersistentCollectionForUnitPrecisions($elements)

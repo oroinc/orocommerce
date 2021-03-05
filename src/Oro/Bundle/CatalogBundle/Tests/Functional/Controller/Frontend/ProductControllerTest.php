@@ -11,7 +11,7 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
- * @method \Oro\Bundle\FrontendTestFrameworkBundle\Test\Client getClient
+ * @method \Oro\Bundle\FrontendTestFrameworkBundle\Test\Client getClient()
  */
 class ProductControllerTest extends WebTestCase
 {

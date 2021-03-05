@@ -8,7 +8,7 @@ use Oro\Component\MessageQueue\Client\TraceableMessageProducer;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * @method static ContainerInterface getContainer
+ * @method static ContainerInterface getContainer()
  */
 trait MessageQueueTrait
 {

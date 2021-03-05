@@ -57,7 +57,7 @@ class LoginPageControllerTest extends WebTestCase
     }
 
     /**
-     * @param int
+     * @param int $id
      * @depends testCreate
      */
     public function testUpdate($id)
