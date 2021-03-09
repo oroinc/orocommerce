@@ -54,8 +54,6 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
     }
 
     /**
-     * @param string $entity
-     *
      * @return bool
      */
     private function isMySqlOrmSearchEngine(): bool

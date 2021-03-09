@@ -127,9 +127,8 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
 
     /**
      * @param ProductPrice $defaultData
-     * @param array $submittedData
+     * @param array        $submittedData
      * @param ProductPrice $expectedData
-     * @param boolean $rounding
      * @dataProvider submitProvider
      */
     public function testSubmit(

@@ -48,7 +48,7 @@ class CheckoutSubtotalProvider extends AbstractSubtotalProvider implements Subto
      * @param TranslatorInterface $translator
      * @param RoundingServiceInterface $rounding
      * @param ProductPriceProviderInterface $productPriceProvider
-     * @param PriceListTreeHandler $priceListTreeHandler ,
+     * @param PriceListTreeHandler $priceListTreeHandler
      * @param SubtotalProviderConstructorArguments $arguments
      * @param FeatureChecker $featureChecker
      * @param ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory

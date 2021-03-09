@@ -305,7 +305,7 @@ class CategoryTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param bool|false $default
+     * @param bool $default
      *
      * @return LocalizedFallbackValue
      */

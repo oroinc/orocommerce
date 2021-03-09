@@ -133,7 +133,7 @@ class DimensionsValueFormatterTest extends \PHPUnit\Framework\TestCase
     /**
      * @param float $inputNumber
      * @param string|float $outputNumber
-     * @param mixed attributes
+     * @param mixed $attributes
      */
     protected function configureFormatter($inputNumber, $outputNumber, $attributes): void
     {

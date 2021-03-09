@@ -284,8 +284,6 @@ class ShoppingListRepository extends EntityRepository implements ResettableCusto
 
     /**
      * @param array $categoriesIds
-     *
-     * @return array
      */
     private function loadRelatedEntityFallbackValuesForCategories(array $categoriesIds): void
     {

@@ -142,7 +142,6 @@ class LoadImageSlider extends AbstractFixture implements DependentFixtureInterfa
      * @param ObjectManager $manager
      * @param User $user
      * @param string $content
-     * @return ContentBlock|null
      */
     private function updateOrCreateContentBlock(ObjectManager $manager, User $user, string $content): void
     {

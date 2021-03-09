@@ -191,7 +191,6 @@ class PriceMatcherTest extends \PHPUnit\Framework\TestCase
      * @param array $orderLineItems
      * @param array $matchedPrices
      * @param array $expectedLineItemsPrices
-     * @param \InvalidArgumentException $exception
      */
     public function testFillMatchedPrices(
         array $orderLineItems = [],

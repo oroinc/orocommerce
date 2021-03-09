@@ -377,7 +377,7 @@ class QuoteControllerTest extends WebTestCase
     }
 
     /**
-     * @param array &$data
+     * @param array $data
      */
     protected function prepareProviderData(array &$data)
     {

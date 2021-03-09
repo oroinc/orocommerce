@@ -307,7 +307,6 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
     }
 
     /**
-     * @param null|integer $id
      * @return Form
      */
     protected function getCreateForm()

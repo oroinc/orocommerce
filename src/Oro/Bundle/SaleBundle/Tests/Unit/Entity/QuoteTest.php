@@ -278,7 +278,7 @@ class QuoteTest extends AbstractTest
     /**
      * @param int $quoteProductCount
      * @param int $quoteProductOfferCount
-     * @param bool|false $allowIncrements
+     * @param bool $allowIncrements
      * @return Quote
      */
     protected function createQuote($quoteProductCount, $quoteProductOfferCount, $allowIncrements = false): Quote

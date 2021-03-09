@@ -246,7 +246,7 @@ class IndexDataProvider
     }
 
     /**
-     * @param string|array  $existingValues
+     * @param string|array  $existingValue
      * @param string        $value
      *
      * @return string|array

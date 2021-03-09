@@ -5,15 +5,16 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 use Oro\Bundle\ProductBundle\EventListener\ProductAccessExceptionListener;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
+use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\Exception\InsufficientAuthenticationException;
 
 class ProductAccessExceptionListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var GetResponseForExceptionEvent|\PHPUnit\Framework\MockObject\MockObject
+     * @var ExceptionEvent|\PHPUnit\Framework\MockObject\MockObject
      */
     private $event;
 
@@ -29,27 +30,28 @@ class ProductAccessExceptionListenerTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->event = $this->getMockBuilder(GetResponseForExceptionEvent::class)
-            ->disableOriginalConstructor()->getMock();
-
+        $this->event = $this->createMock(ExceptionEvent::class);
         $this->requestStack = $this->createMock(RequestStack::class);
 
         $this->testable = new ProductAccessExceptionListener($this->requestStack);
     }
 
-    public function testOtherException()
+    public function testUnsupportedException()
     {
         $exampleException = new NotFoundHttpException();
 
-        $this->event->expects($this->at(0))
-            ->method('getException')
+        $this->event->expects($this->once())
+            ->method('getThrowable')
             ->willReturn($exampleException);
 
         $this->event->expects($this->never())
-            ->method('setException');
+            ->method('setThrowable');
 
         $this->testable->onAccessException($this->event);
+    }
 
+    public function testUnsupportedRoute()
+    {
         $request = new Request();
         $request->attributes->set('_route', 'unknown_route');
 
@@ -59,27 +61,26 @@ class ProductAccessExceptionListenerTest extends \PHPUnit\Framework\TestCase
 
         $exampleException = new AccessDeniedHttpException();
 
-        $this->event->expects($this->at(0))
-            ->method('getException')
+        $this->event->expects($this->once())
+            ->method('getThrowable')
             ->willReturn($exampleException);
 
         $this->testable->onAccessException($this->event);
     }
 
-    public function testAccessDeniedException()
+    /**
+     * @dataProvider exceptionDataProvider
+     * @param \Exception $exception
+     */
+    public function testAccessDeniedException(\Exception $exception)
     {
-        $message = 'somemessage';
-
-        $exampleException = new AccessDeniedHttpException($message);
+        $this->event->expects($this->once())
+            ->method('getThrowable')
+            ->willReturn($exception);
 
         $this->event->expects($this->once())
-            ->method('getException')
-            ->willReturn($exampleException);
-
-        $this->event->expects($this->once())
-            ->method('setException')
-            ->with(new NotFoundHttpException($message, $exampleException))
-            ->willReturn($exampleException);
+            ->method('setThrowable')
+            ->with(new NotFoundHttpException('somemessage'));
 
         $request = new Request();
         $request->attributes->set('_route', ProductAccessExceptionListener::PRODUCT_VIEW_ROUTE);
@@ -91,28 +92,12 @@ class ProductAccessExceptionListenerTest extends \PHPUnit\Framework\TestCase
         $this->testable->onAccessException($this->event);
     }
 
-    public function testInsufficientAuthenticationException()
+    public function exceptionDataProvider(): array
     {
-        $message = 'somemessage';
-
-        $exampleException = new InsufficientAuthenticationException($message);
-
-        $this->event->expects($this->once())
-            ->method('getException')
-            ->willReturn($exampleException);
-
-        $this->event->expects($this->once())
-            ->method('setException')
-            ->with(new NotFoundHttpException($message, $exampleException))
-            ->willReturn($exampleException);
-
-        $request = new Request();
-        $request->attributes->set('_route', ProductAccessExceptionListener::PRODUCT_VIEW_ROUTE);
-
-        $this->requestStack->expects($this->once())
-            ->method('getCurrentRequest')
-            ->willReturn($request);
-
-        $this->testable->onAccessException($this->event);
+        return [
+            [new AccessDeniedException('somemessage')],
+            [new AccessDeniedHttpException('somemessage')],
+            [new InsufficientAuthenticationException('somemessage')]
+        ];
     }
 }

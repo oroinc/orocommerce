@@ -199,12 +199,11 @@ class AjaxLineItemControllerTest extends WebTestCase
      * @dataProvider removeProductFromViewProvider
      *
      * @param string $productRef
-     * @param bool $expectedResult
+     * @param bool   $expectedResult
      * @param string $expectedMessage
-     * @param int $expectedInitCount
-     * @param bool $removeCurrent
+     * @param int    $expectedInitCount
+     * @param bool   $removeCurrent
      * @param string $shoppingListRef
-     * @param string $lineItemId
      */
     public function testRemoveProductFromView(
         $productRef,

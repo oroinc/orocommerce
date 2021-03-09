@@ -39,7 +39,7 @@ class ProductImageHelper
      *     - second element is the listing image
      *     - other elements are sorted by id ascending
      *
-     * @param ProductImage[]
+     * @param array|ProductImage[] $productImages
      * @return ProductImage[]
      */
     public function sortImages(array $productImages): array
