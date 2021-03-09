@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PricingBundle\Provider;
 
-use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\PricingBundle\Model\ProductPriceInterface;
@@ -93,7 +92,7 @@ class FrontendProductPricesDataProvider
     }
 
     /**
-     * @param Collection|ProductLineItemInterface[] $lineItems
+     * @param array|ProductLineItemInterface[] $lineItems
      * @return array
      */
     protected function getProductsPricesCriteria(array $lineItems)

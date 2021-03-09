@@ -35,8 +35,8 @@ class CustomFieldProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp(): void
     {
-        $this->extendConfigProvider = $this->getMockForClass(ConfigProvider::class);
-        $this->entityConfigProvider = $this->getMockForClass(ConfigProvider::class);
+        $this->extendConfigProvider = $this->createMock(ConfigProvider::class);
+        $this->entityConfigProvider = $this->createMock(ConfigProvider::class);
 
         $this->provider = new CustomFieldProvider($this->extendConfigProvider, $this->entityConfigProvider);
     }
@@ -215,17 +215,6 @@ class CustomFieldProviderTest extends \PHPUnit\Framework\TestCase
                 ],
             ]
         ];
-    }
-
-    /**
-     * @param string $className
-     * @return \PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function getMockForClass($className)
-    {
-        return $this->getMockBuilder($className)
-            ->disableOriginalConstructor()
-            ->getMock();
     }
 
     /**
