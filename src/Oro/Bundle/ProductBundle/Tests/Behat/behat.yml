@@ -1132,9 +1132,6 @@ oro_behat_extension:
       selector: 'div[data-bound-component="oroproduct/js/app/datagrid/backend-datagrid-component"] div.filter-box'
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGridFilters
 
-    Product unit dropdown:
-      selector: 'td.grid-body-cell-quantity div.select'
-
     Shopping list line item:
       selector: '.grid-row'
 
