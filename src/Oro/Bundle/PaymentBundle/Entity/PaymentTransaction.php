@@ -202,7 +202,7 @@ class PaymentTransaction implements DatesAwareInterface
     protected $transactionOptions;
 
     /**
-     * @param CustomerUser
+     * @var CustomerUser
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUser")
      * @ORM\JoinColumn(name="frontend_owner_id", referencedColumnName="id", onDelete="SET NULL")

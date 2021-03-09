@@ -133,8 +133,7 @@ class CustomerGroupCombinedPriceListsBuilderTest extends AbstractCombinedPriceLi
     /**
      * @dataProvider testBuildDataProvider
      * @param PriceListToCustomerGroup $priceListByCustomerGroup
-     * @param bool $hasFallback
-     * @param bool $force
+     * @param bool                     $force
      */
     public function testBuildForAll($priceListByCustomerGroup, $force = false)
     {
