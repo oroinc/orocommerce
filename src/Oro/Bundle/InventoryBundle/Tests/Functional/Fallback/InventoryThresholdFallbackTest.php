@@ -75,9 +75,8 @@ class InventoryThresholdFallbackTest extends WebTestCase
 
     /**
      * @param Product $product
-     * @param mixed $ownValue
-     * @param bool $useFallbackValue
-     * @param mixed $fallbackValue
+     * @param mixed   $ownValue
+     * @param mixed   $fallbackValue
      * @return Crawler
      */
     protected function setProductInventoryThresholdField($product, $ownValue, $fallbackValue)

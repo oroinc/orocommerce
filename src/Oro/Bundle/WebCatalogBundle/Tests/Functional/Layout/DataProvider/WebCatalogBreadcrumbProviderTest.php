@@ -56,9 +56,7 @@ class WebCatalogBreadcrumbProviderTest extends WebTestCase
         );
 
         $breadcrumbs = [];
-        /**
-         * @var $item \DOMElement
-         */
+        /** @var \DOMElement $item */
         foreach ($crawler->filter('.breadcrumbs__item a') as $key => $item) {
             $this->assertEquals($expectedBreadcrumbs[$key], $item->textContent);
             $breadcrumbs[] = trim($item->textContent);
@@ -83,7 +81,7 @@ class WebCatalogBreadcrumbProviderTest extends WebTestCase
 
         $breadcrumbUrls = [];
 
-        /** @var $item \DOMElement */
+        /** @var \DOMElement $item */
         foreach ($crawler->filter('.breadcrumbs__item a') as $key => $item) {
             $breadcrumbUrls[] = $item->getAttribute('href');
         }

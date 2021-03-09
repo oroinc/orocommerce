@@ -18,6 +18,9 @@ use Oro\Component\WebCatalog\Entity\WebCatalogAwareInterface;
 use Oro\Component\WebCatalog\Provider\WebCatalogUsageProviderInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
+/**
+ * Triggers Product re-indexation on some ContentNode fields changes
+ */
 class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwareInterface
 {
     use ChangedEntityGeneratorTrait;
@@ -105,7 +108,7 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
 
     /**
      * @param array|Collection $entities
-     * @param Category[] &$categories
+     * @param Category[] $categories
      */
     private function collectCategories($entities, array &$categories)
     {
@@ -124,7 +127,7 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
 
     /**
      * @param array|Collection $entities
-     * @param Category[] &$categories
+     * @param Category[] $categories
      * @param UnitOfWork $unitOfWork
      */
     private function collectChangedCategories($entities, array &$categories, UnitOfWork $unitOfWork)
@@ -149,7 +152,7 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
 
     /**
      * @param array|Collection $entities
-     * @param array|null &$websitesId
+     * @param array|null $websitesId
      */
     private function collectWebsiteIds($entities, &$websitesId)
     {
@@ -230,7 +233,7 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
     }
 
     /**
-     * @param Category[] &$categories
+     * @param Category[] $categories
      * @param Category $category
      */
     private function addCategory(array &$categories, Category $category)
