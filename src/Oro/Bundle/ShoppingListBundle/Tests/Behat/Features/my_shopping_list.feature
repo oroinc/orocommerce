@@ -264,7 +264,6 @@ Feature: My Shopping List
     And I should see "Shopping List 3"
     And I should see "Default"
     And I should see "Assigned To: Amanda Cole"
-    And I should see "30 total records"
     And I should see following grid:
       | SKU  | Item                                                     |              | Qty | Unit   | Price  | Subtotal                 |
       | BB4  | Configurable Product 1 Color: Red Size: M Note 4 text    | In Stock     | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
@@ -307,7 +306,6 @@ Feature: My Shopping List
 
   Scenario: Check SKU filter
     Given I reset grid
-    Then I should see "30 total records"
     When I filter SKU as contains "CC3"
     Then I should see following grid:
       | SKU  | Item                    |          | Qty | Unit   | Price  | Subtotal |
@@ -317,13 +315,11 @@ Feature: My Shopping List
       | CC33 | Product 33 Note 33 text | In Stock | 13  | pieces | $31.00 | $403.00  |
       | CC34 | Product 34 Note 34 text | In Stock | 13  | pieces | $31.00 | $403.00  |
       | CC35 | Product 35 Note 35 text | In Stock | 13  | pieces | $31.00 | $403.00  |
-    And I should see "6 total records"
     When I reset grid
     And I filter SKU as contains "BB4"
     Then I should see following grid:
       | SKU | Item                                                  |          | Qty | Unit  | Price  | Subtotal              |
       | BB4 | Configurable Product 1 Color: Red Size: M Note 4 text | In Stock | 3   | items | $11.00 | $33.00 -$16.50 $16.50 |
-    And I should see "1 total records"
 
   Scenario: Sort by SKU
     Given I reset grid
@@ -409,8 +405,7 @@ Feature: My Shopping List
     When I reset grid
     And I click "Show All"
     And I click "Group Similar"
-    Then I should see "27 total records"
-    And I should see following grid:
+    Then I should see following grid:
       | SKU  | Item                                                     |              | Qty | Unit   | Price  | Subtotal                 |
       | BB6  | Configurable Product 2 Color: Blue Size: S Note 6 text   | In Stock     | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
       | BB7  | Configurable Product 2 Color: Red Size: M Note 7 text    | Out of Stock | 5   | pieces | $17.00 | $85.00                   |
@@ -446,7 +441,6 @@ Feature: My Shopping List
       | CC35 | Product 35 Note 35 text                                  | In Stock     | 13  | pieces | $31.00 | $403.00                  |
     When I reload the page
     Then I should see "Ungroup Similar"
-    And I should see "27 total records"
     And I should see following grid:
       | SKU  | Item                                                     |              | Qty | Unit   | Price  | Subtotal                 |
       | BB6  | Configurable Product 2 Color: Blue Size: S Note 6 text   | In Stock     | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
@@ -484,8 +478,7 @@ Feature: My Shopping List
 
   Scenario: Check Show Less
     When I click "Show Less"
-    Then I should see "27 total records"
-    And I should see following grid:
+    Then I should see following grid:
       | SKU  | Item                                                     |              | Qty | Unit   | Price  | Subtotal                 |
       | BB6  | Configurable Product 2 Color: Blue Size: S Note 6 text   | In Stock     | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
       | BB7  | Configurable Product 2 Color: Red Size: M Note 7 text    | Out of Stock | 5   | pieces | $17.00 | $85.00                   |
@@ -525,8 +518,7 @@ Feature: My Shopping List
 
   Scenario: Check Ungroup similar
     When I click "Ungroup Similar"
-    Then I should see "30 total records"
-    And I should see following grid:
+    Then I should see following grid:
       | SKU  | Item                    |          | Qty | Unit   | Price  | Subtotal |
       | CC31 | Product 31 Note 31 text | In Stock | 13  | pieces | $31.00 | $403.00  |
       | CC32 | Product 32 Note 32 text | In Stock | 13  | pieces | $31.00 | $403.00  |
@@ -564,8 +556,7 @@ Feature: My Shopping List
     Given I reset grid
     When I click "Group Similar"
     And I check "Out of Stock" in Availability filter
-    Then I should see "8 total records"
-    And I should see following grid:
+    Then I should see following grid:
       | SKU  | Item                                                     |              | Qty | Unit   | Price  | Subtotal                 |
       |      | Configurable Product 1                                   |              | 13  | items  |        | $227.00 -$113.50 $113.50 |
       | BB5  | Color: Green Size: L Note 5 text And 2 more              | Out of Stock | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
@@ -578,8 +569,7 @@ Feature: My Shopping List
       | BB17 | Product 17 Note 17 text                                  | Out of Stock | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
       | BB19 | Product 19 Note 19 text                                  | Out of Stock | 11  | sets   | $29.00 | $319.00                  |
     When click on "Add 2 More Variants"
-    Then I should see "8 total records"
-    And I should see following grid:
+    Then I should see following grid:
       | SKU  | Item                                                     |              | Qty | Unit   | Price  | Subtotal                 |
       |      | Configurable Product 1                                   |              | 13  | items  |        | $227.00 -$113.50 $113.50 |
       | BB4  | Color: Red Size: M Note 4 text                           | In Stock     | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
@@ -594,8 +584,7 @@ Feature: My Shopping List
       | BB17 | Product 17 Note 17 text                                  | Out of Stock | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
       | BB19 | Product 19 Note 19 text                                  | Out of Stock | 11  | sets   | $29.00 | $319.00                  |
     When click on "Add 1 More Variants"
-    Then I should see "8 total records"
-    And I should see following grid:
+    Then I should see following grid:
       | SKU  | Item                                                     |              | Qty | Unit   | Price  | Subtotal                 |
       |      | Configurable Product 1                                   |              | 13  | items  |        | $227.00 -$113.50 $113.50 |
       | BB4  | Color: Red Size: M Note 4 text                           | In Stock     | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
@@ -614,8 +603,7 @@ Feature: My Shopping List
   Scenario: Check Quantity filter
     Given I reset grid
     When I filter Quantity as less than "10"
-    Then I should see "14 total records"
-    And I should see following grid:
+    Then I should see following grid:
       | SKU  | Item                                                     |              | Qty | Unit   | Price  | Subtotal                 |
       | BB4  | Configurable Product 1 Color: Red Size: M Note 4 text    | In Stock     | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
       | BB5  | Configurable Product 1 Color: Green Size: L Note 5 text  | Out of Stock | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
@@ -635,8 +623,7 @@ Feature: My Shopping List
   Scenario: Check Unit filter
     Given I reset grid
     When I check "set" in Unit filter
-    Then I should see "5 total records"
-    And I should see following grid:
+    Then I should see following grid:
       | SKU  | Item                                                     |              | Qty | Unit | Price  | Subtotal |
       | BB10 | Configurable Product 3 Color: Red Size: M Note 10 text   | In Stock     | 7   | sets | $19.00 | $133.00  |
       | BB11 | Configurable Product 2 Color: Green Size: L Note 11 text | Out of Stock | 7   | sets | $19.00 | $133.00  |
