@@ -389,7 +389,7 @@ datagrids:
                 label:         oro.frontend.shoppinglist.lineitem.sku.label
             item:
                 label:         oro.frontend.shoppinglist.lineitem.item.label
-                frontend_type: html-template
+                frontend_type: shoppinglist-item
                 frontend_template:
                     default: tpl-loader!oroshoppinglist/templates/datagrid/cell/item.html
                     message: tpl-loader!oroshoppinglist/templates/datagrid/cell/item-message.html
@@ -584,8 +584,6 @@ datagrids:
             jsmodules:
                 - oroshoppinglist/js/datagrid/builder/shoppinglist-editing-builder
         columns:
-            item:
-                frontend_type: shoppinglist-item
             quantity:
                 frontend_type: shoppinglist-line-item
                 frontend_template: tpl-loader!oroshoppinglist/templates/datagrid/cell/shoppinglist-line-item.html

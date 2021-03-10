@@ -86,6 +86,8 @@
         transition: $shopping-list-grid-effect-transition;
 
         > .grid-cell:first-child {
+            position: relative;
+
             &:before {
                 content: '';
                 position: absolute;
