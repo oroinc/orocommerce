@@ -39,6 +39,8 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
         notes:
             - Length:
                 max: 2048
+        lineItems:
+            - Valid: ~
 
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
     properties:
