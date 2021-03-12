@@ -90,7 +90,7 @@ class PriceListTriggerHandler
             }
             if (array_key_exists(self::PRODUCTS_KEY, $triggers) && $triggers[self::PRODUCTS_KEY]) {
                 $products = array_map(
-                    function (array $products) {
+                    static function (array $products) {
                         return array_values($products);
                     },
                     $triggers[self::PRODUCTS_KEY]
@@ -106,6 +106,19 @@ class PriceListTriggerHandler
     }
 
     /**
+     * @param PriceList $priceList
+     */
+    public function removeScheduledTriggersByPriceList(PriceList $priceList)
+    {
+        foreach ($this->triggersData as $topic => &$triggersByTopic) {
+            unset(
+                $triggersByTopic[self::PRICE_LISTS_KEY][$priceList->getId()],
+                $triggersByTopic[self::PRODUCTS_KEY][$priceList->getId()]
+            );
+        }
+    }
+
+    /**
      * Remove triggers that will lead to duplicate data processing.
      */
     protected function removeDuplicatedData()
@@ -117,7 +130,7 @@ class PriceListTriggerHandler
             if ($priceListTriggers) {
                 $filteredData = array_filter(
                     $filteredData,
-                    function ($priceListId) use ($priceListTriggers) {
+                    static function ($priceListId) use ($priceListTriggers) {
                         return !isset($priceListTriggers[$priceListId]);
                     },
                     ARRAY_FILTER_USE_KEY

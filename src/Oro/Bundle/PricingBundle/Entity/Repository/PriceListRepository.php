@@ -6,11 +6,11 @@ use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIteratorInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 
+/**
+ * Repository for PriceList ORM entity.
+ */
 class PriceListRepository extends BasePriceListRepository
 {
-    /**
-     * @todo: should be dropped in scope of BB-1858
-     */
     protected function dropDefaults()
     {
         $qb = $this->createQueryBuilder('pl');
@@ -26,7 +26,6 @@ class PriceListRepository extends BasePriceListRepository
     }
 
     /**
-     * @todo: should be dropped in scope of BB-1858
      * @param PriceList $priceList
      */
     public function setDefault(PriceList $priceList)
@@ -46,7 +45,6 @@ class PriceListRepository extends BasePriceListRepository
     }
 
     /**
-     * @todo: should be dropped in scope of BB-1858
      * @return PriceList
      */
     public function getDefault()
@@ -118,6 +116,7 @@ class PriceListRepository extends BasePriceListRepository
             $qb->update($this->_entityName, 'priceList');
             $qb->set('priceList.actual', ':actual')
                 ->where($qb->expr()->in('priceList.id', ':priceLists'))
+                ->andWhere($qb->expr()->neq('priceList.actual', ':actual'))
                 ->setParameter('actual', $actual)
                 ->setParameter('priceLists', $priceLists);
             $qb->getQuery()->execute();

@@ -175,10 +175,12 @@ class PriceListTriggerHandlerTest extends \PHPUnit\Framework\TestCase
 
     public function testSendScheduledTriggers()
     {
-        /** @var PriceList $priceList */
+        /** @var PriceList $priceList1 */
         $priceList1 = $this->getEntity(PriceList::class, ['id' => 1]);
-        /** @var PriceList $priceList */
+        /** @var PriceList $priceList2 */
         $priceList2 = $this->getEntity(PriceList::class, ['id' => 2]);
+        /** @var PriceList $priceList3 */
+        $priceList3 = $this->getEntity(PriceList::class, ['id' => 3]);
 
         /** @var Product $product1 */
         $product1 = $this->getEntity(Product::class, ['id' => 1]);
@@ -202,9 +204,12 @@ class PriceListTriggerHandlerTest extends \PHPUnit\Framework\TestCase
 
         $this->handler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList1, [$product1]);
         $this->handler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList1);
+        $this->handler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList3);
         $this->handler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList2, [$product2]);
 
         $this->assertAttributeCount(1, 'triggersData', $this->handler);
+
+        $this->handler->removeScheduledTriggersByPriceList($priceList3);
 
         $this->messageProducer->expects($this->exactly(2))
             ->method('send')

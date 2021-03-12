@@ -3,13 +3,14 @@
 namespace Oro\Bundle\PricingBundle\Async;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityNotFoundException;
 use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
+use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\NotificationMessage\Message;
 use Oro\Bundle\PricingBundle\NotificationMessage\Messenger;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
@@ -61,6 +62,11 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
     protected $messenger;
 
     /**
+     * @var PriceListTriggerHandler
+     */
+    private $triggerHandler;
+
+    /**
      * @param PriceListTriggerFactory $triggerFactory
      * @param ProductPriceBuilder $priceBuilder
      * @param LoggerInterface $logger
@@ -85,6 +91,14 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
     }
 
     /**
+     * @param PriceListTriggerHandler $triggerHandler
+     */
+    public function setTriggerHandler(PriceListTriggerHandler $triggerHandler)
+    {
+        $this->triggerHandler = $triggerHandler;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public static function getSubscribedTopics()
@@ -97,45 +111,65 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
      */
     public function process(MessageInterface $message, SessionInterface $session)
     {
-        /** @var EntityManagerInterface $em */
-        $em = $this->registry->getManagerForClass(PriceList::class);
-        $em->beginTransaction();
-        
         $trigger = null;
         try {
             $messageData = JSON::decode($message->getBody());
             $trigger = $this->triggerFactory->createFromArray($messageData);
-
-            $repository = $em->getRepository(PriceList::class);
-            foreach ($trigger->getProducts() as $plId => $plProducts) {
-                /** @var PriceList|null $priceList */
-                $priceList = $repository->find($plId);
-                if (null === $priceList) {
-                    throw new EntityNotFoundException(sprintf('PriceList entity with identifier %s not found', $plId));
-                }
-                $this->processPriceList($priceList, $plProducts);
-            }
-
-            $this->priceBuilder->flush();
-
-            $em->commit();
         } catch (InvalidArgumentException $e) {
-            $em->rollback();
             $this->logger->error(sprintf('Message is invalid: %s', $e->getMessage()));
 
             return self::REJECT;
-        } catch (\Exception $e) {
-            $em->rollback();
-            $this->logger->error(
-                'Unexpected exception occurred during Price Rule build',
-                ['exception' => $e]
-            );
-            if ($trigger && !empty($plId)) {
-                $this->onFailedPriceListId($plId);
+        }
+
+        /** @var EntityManagerInterface $em */
+        $em = $this->registry->getManagerForClass(PriceList::class);
+        $priceListsCount = count($trigger->getPriceListIds());
+        foreach ($trigger->getProducts() as $priceListId => $productIds) {
+            /** @var PriceList|null $priceList */
+            $priceList = $em->find(PriceList::class, $priceListId);
+            if (null === $priceList) {
+                $this->logger->warning(sprintf(
+                    'PriceList entity with identifier %s not found.',
+                    $priceListId
+                ));
+                continue;
             }
 
-            return self::REJECT;
+            $em->beginTransaction();
+            try {
+                $this->processPriceList($priceList, $productIds);
+                $em->commit();
+            } catch (\Exception $e) {
+                $em->rollback();
+                $this->triggerHandler->removeScheduledTriggersByPriceList($priceList);
+
+                $this->logger->error(
+                    'Unexpected exception occurred during Price Rule build.',
+                    ['exception' => $e]
+                );
+
+                if ($e instanceof RetryableException) {
+                    // On RetryableException send back to queue the message related to a single price list
+                    // that triggered an exception.
+                    // If this was the only one PL in the message REQUEUE it to persist retries counter
+                    if ($priceListsCount === 1) {
+                        return self::REQUEUE;
+                    }
+
+                    $this->triggerHandler->addTriggerForPriceList(
+                        Topics::RESOLVE_PRICE_RULES,
+                        $priceList,
+                        $productIds
+                    );
+                } else {
+                    $this->onFailedPriceListId($priceList->getId());
+                    if ($priceListsCount === 1) {
+                        return self::REJECT;
+                    }
+                }
+            }
         }
+        $this->triggerHandler->sendScheduledTriggers();
 
         return self::ACK;
     }

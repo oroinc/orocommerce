@@ -2,131 +2,286 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Async;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\DBAL\Exception\DeadlockException;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\PricingBundle\Async\NotificationMessages;
-use Oro\Bundle\PricingBundle\Async\PriceListProcessor;
 use Oro\Bundle\PricingBundle\Async\PriceRuleProcessor;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
-use Oro\Bundle\PricingBundle\Model\DTO\PriceListTrigger;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
+use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\NotificationMessage\Message;
 use Oro\Bundle\PricingBundle\NotificationMessage\Messenger;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
+use Oro\Component\MessageQueue\Util\JSON;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class PriceRuleProcessorTest extends AbstractPriceProcessorTest
+class PriceRuleProcessorTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var ProductPriceBuilder|\PHPUnit\Framework\MockObject\MockObject
+     * @var PriceListTriggerFactory
      */
-    protected $priceBuilder;
+    private $triggerFactory;
 
     /**
-     * @var PriceListProcessor
+     * @var LoggerInterface
      */
-    protected $priceRuleProcessor;
+    private $logger;
 
     /**
-     * @var Messenger|\PHPUnit\Framework\MockObject\MockObject
+     * @var ProductPriceBuilder
      */
-    protected $messenger;
+    private $priceBuilder;
 
     /**
-     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var ManagerRegistry
      */
-    protected $translator;
+    private $doctrine;
+
+    /**
+     * @var  PriceListRepository
+     */
+    private $priceListRepository;
+
+    /**
+     * @var TranslatorInterface
+     */
+    private $translator;
+
+    /**
+     * @var Messenger
+     */
+    private $messenger;
+
+    /**
+     * @var PriceListTriggerHandler
+     */
+    private $triggerHandler;
+
+    /**
+     * @var PriceRuleProcessor
+     */
+    private $processor;
 
     protected function setUp()
     {
-        parent::setUp();
-
-        $this->priceBuilder = $this->getMockBuilder(ProductPriceBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->messenger = $this->getMockBuilder(Messenger::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->triggerFactory = new PriceListTriggerFactory();
+        $this->priceBuilder = $this->createMock(ProductPriceBuilder::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
+        $this->messenger = $this->createMock(Messenger::class);
         $this->translator = $this->createMock(TranslatorInterface::class);
+        $this->triggerHandler = $this->createMock(PriceListTriggerHandler::class);
 
-        $this->priceRuleProcessor = new PriceRuleProcessor(
+        $this->processor = new PriceRuleProcessor(
             $this->triggerFactory,
             $this->priceBuilder,
             $this->logger,
-            $this->registry,
+            $this->doctrine,
             $this->messenger,
             $this->translator
         );
+        $this->processor->setTriggerHandler($this->triggerHandler);
     }
 
-    public function testProcessInvalidArgumentException()
+    /**
+     * @param mixed $body
+     *
+     * @return MessageInterface
+     */
+    private function getMessage($body): MessageInterface
     {
-        $message = $this->prepareMessageForProcessInvalidArgumentException();
+        $message = $this->createMock(MessageInterface::class);
+        $message->expects($this->once())
+            ->method('getBody')
+            ->willReturn(JSON::encode($body));
 
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
-        $session = $this->createMock(SessionInterface::class);
-
-        $this->assertEquals(MessageProcessorInterface::REJECT, $this->priceRuleProcessor->process($message, $session));
+        return $message;
     }
 
-    public function testProcessExceptionWithoutTrigger()
+    /**
+     * @return SessionInterface
+     */
+    private function getSession(): SessionInterface
     {
-        $exception = new \Exception('Some error');
+        return $this->createMock(SessionInterface::class);
+    }
 
-        $message = $this->prepareMessageForProcessExceptionWithoutTrigger($exception);
+    public function testGetSubscribedTopics()
+    {
+        $this->assertEquals(
+            [Topics::RESOLVE_PRICE_RULES],
+            PriceRuleProcessor::getSubscribedTopics()
+        );
+    }
 
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
-        $session = $this->createMock(SessionInterface::class);
+    public function testProcessWithInvalidMessage()
+    {
+        $messageData = null;
+        $message = $this->getMessage($messageData);
 
         $this->logger->expects($this->once())
             ->method('error')
-            ->with(
-                'Unexpected exception occurred during Price Rule build',
-                ['exception' => $exception]
-            );
+            ->with('Message is invalid: Message should not be empty.');
 
-        $this->assertEquals(MessageProcessorInterface::REJECT, $this->priceRuleProcessor->process($message, $session));
-    }
-
-    public function testProcessExceptionWithTrigger()
-    {
-        $exception = new \Exception('Some error');
-        $data = ['test' => 1];
-        $message = $this->prepareMessageWithBody($data);
-
-        /** @var PriceList $priceList */
-        $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
-
-        $this->priceListRepository->expects($this->once())
-            ->method('find')
-            ->with($priceList->getId())
-            ->willReturn($priceList);
-
-        $productIds = [2];
-        $trigger = new PriceListTrigger([$priceList->getId() => $productIds]);
-
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session * */
         $session = $this->createMock(SessionInterface::class);
 
-        $this->triggerFactory->expects($this->once())
-            ->method('createFromArray')
-            ->with($data)
-            ->willReturn($trigger);
+        $this->assertEquals(MessageProcessorInterface::REJECT, $this->processor->process($message, $session));
+    }
+
+    public function testProcessWhenSinglePriceListNotFound()
+    {
+        $messageData = null;
+        /** @var MessageInterface $message */
+        $message = $this->createMock(MessageInterface::class);
+        $message->expects($this->any())
+            ->method('getBody')
+            ->willReturn(JSON::encode($messageData));
+
+        $priceListId = 1;
+        $body = ['product' => [$priceListId => [2]]];
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->never())
+            ->method('beginTransaction');
+        $em->expects(($this->never()))
+            ->method('rollback');
+        $em->expects(($this->never()))
+            ->method('commit');
+
+        $this->doctrine->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(PriceList::class)
+            ->willReturn($em);
+
+        $em->expects($this->once())
+            ->method('find')
+            ->with(PriceList::class, $priceListId)
+            ->willReturn(null);
+
+        $this->logger->expects($this->once())
+            ->method('warning')
+            ->with('PriceList entity with identifier 1 not found.');
+
+        $session = $this->createMock(SessionInterface::class);
+        $this->assertEquals(
+            MessageProcessorInterface::ACK,
+            $this->processor->process($this->getMessage($body), $session)
+        );
+    }
+
+    public function testProcessWhenOneOfPriceListsNotFound()
+    {
+        $priceListId1 = 1;
+        $priceListId2 = 2;
+        $productIds = [2];
+        /** @var PriceList $priceList2 */
+        $priceList2 = $this->getEntity(PriceList::class, ['id' => $priceListId2, 'updatedAt' => new \DateTime()]);
+        $body = ['product' => [$priceListId1 => $productIds, $priceListId2 => $productIds]];
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->once())
+            ->method('beginTransaction');
+        $em->expects(($this->never()))
+            ->method('rollback');
+        $em->expects(($this->once()))
+            ->method('commit');
+
+        $this->doctrine->expects($this->any())
+            ->method('getManagerForClass')
+            ->with(PriceList::class)
+            ->willReturn($em);
+
+        $em->expects($this->exactly(2))
+            ->method('find')
+            ->withConsecutive(
+                [PriceList::class, $priceListId1],
+                [PriceList::class, $priceListId2],
+            )
+            ->willReturnOnConsecutiveCalls(
+                null,
+                $priceList2
+            );
+
+        $this->messenger->expects($this->once())
+            ->method('remove')
+            ->with(
+                NotificationMessages::CHANNEL_PRICE_LIST,
+                NotificationMessages::TOPIC_PRICE_RULES_BUILD,
+                PriceList::class,
+                $priceListId2
+            );
 
         $this->priceBuilder->expects($this->once())
             ->method('buildByPriceListWithoutTriggerSend')
-            ->with($priceList, $productIds);
+            ->with($priceList2, $productIds);
 
+        $em->expects($this->once())
+            ->method('refresh')
+            ->with($priceList2);
+
+        $repository = $this->createMock(PriceListRepository::class);
+        $em->expects($this->once())
+            ->method('getRepository')
+            ->willReturn($repository);
+        $repository->expects($this->once())
+            ->method('updatePriceListsActuality')
+            ->with([$priceList2], true);
+
+        $this->logger->expects($this->once())
+            ->method('warning')
+            ->with('PriceList entity with identifier 1 not found.');
+
+        $message = $this->getMessage($body);
+        $session = $this->createMock(SessionInterface::class);
+        $this->assertEquals(MessageProcessorInterface::ACK, $this->processor->process($message, $session));
+    }
+
+    public function testProcessExceptionInBuildByPriceList()
+    {
+        $priceListId = 1;
+        $productIds = [2];
+        $body = ['product' => [$priceListId => $productIds]];
+
+        /** @var PriceList $priceList */
+        $priceList = $this->getEntity(PriceList::class, ['id' => $priceListId, 'updatedAt' => new \DateTime()]);
+
+        $exception = new \Exception('Some error');
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->once())
+            ->method('beginTransaction');
+        $em->expects(($this->once()))
+            ->method('rollback');
+
+        $this->doctrine->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(PriceList::class)
+            ->willReturn($em);
+
+        $em->expects($this->once())
+            ->method('find')
+            ->with(PriceList::class, $priceList->getId())
+            ->willReturn($priceList);
+
+        $this->messenger->expects($this->once())
+            ->method('remove')
+            ->with(
+                NotificationMessages::CHANNEL_PRICE_LIST,
+                NotificationMessages::TOPIC_PRICE_RULES_BUILD,
+                PriceList::class,
+                $priceListId
+            );
         $this->priceBuilder->expects($this->once())
             ->method('buildByPriceListWithoutTriggerSend')
             ->with($priceList, $productIds)
@@ -135,222 +290,333 @@ class PriceRuleProcessorTest extends AbstractPriceProcessorTest
         $this->logger->expects($this->once())
             ->method('error')
             ->with(
-                'Unexpected exception occurred during Price Rule build',
+                'Unexpected exception occurred during Price Rule build.',
                 ['exception' => $exception]
             );
 
+        $messageText = 'Error occurred during price rule build';
         $this->translator->expects($this->once())
             ->method('trans')
             ->with('oro.pricing.notification.price_list.error.price_rule_build')
             ->willReturn('Error occurred during price rule build');
-
         $this->messenger->expects($this->once())
             ->method('send')
             ->with(
                 NotificationMessages::CHANNEL_PRICE_LIST,
                 NotificationMessages::TOPIC_PRICE_RULES_BUILD,
                 Message::STATUS_ERROR,
-                'Error occurred during price rule build',
-                PriceList::class,
-                $priceList->getId()
-            );
-
-        $this->assertEquals(MessageProcessorInterface::REJECT, $this->priceRuleProcessor->process($message, $session));
-    }
-
-    public function testProcess()
-    {
-        $data = ['test' => 1];
-        $body = json_encode($data);
-
-        $updateDate = new \DateTime();
-        /** @var PriceList $priceList */
-        $priceList = $this->getEntity(PriceList::class, ['id' => 1, 'updatedAt' => $updateDate]);
-        /** @var Product $product */
-        $productId = 2;
-        $trigger = new PriceListTrigger([$priceList->getId() => [$productId]]);
-
-        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
-        $message = $this->createMock(MessageInterface::class);
-        $message->expects($this->any())
-            ->method('getBody')
-            ->willReturn($body);
-
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
-        $session = $this->createMock(SessionInterface::class);
-
-        $this->triggerFactory->expects($this->once())
-            ->method('createFromArray')
-            ->with($data)
-            ->willReturn($trigger);
-
-        $this->priceBuilder->expects($this->once())
-            ->method('buildByPriceListWithoutTriggerSend')
-            ->with($priceList, [$productId]);
-        $this->priceBuilder->expects($this->once())
-            ->method('flush');
-
-        $repository = $this->assertEntityManagerCalled();
-        $repository->expects($this->once())
-            ->method('updatePriceListsActuality');
-        $repository->expects($this->once())
-            ->method('find')
-            ->with($priceList->getId())
-            ->willReturn($priceList);
-
-        $this->messenger->expects($this->once())
-            ->method('remove')
-            ->with(
-                NotificationMessages::CHANNEL_PRICE_LIST,
-                NotificationMessages::TOPIC_PRICE_RULES_BUILD,
-                PriceList::class,
-                $priceList->getId()
-            );
-
-        $this->assertEquals(MessageProcessorInterface::ACK, $this->priceRuleProcessor->process($message, $session));
-    }
-
-    public function testProcessWithoutPriceList()
-    {
-        $priceListId = 1001;
-        $productId = 2002;
-        $updateDate = new \DateTime();
-
-        $data = [PriceListTriggerFactory::PRODUCT => [$priceListId => [$productId]]];
-
-        $this->triggerFactory->expects($this->once())
-            ->method('createFromArray')
-            ->with($data)
-            ->willReturn(new PriceListTrigger($data[PriceListTriggerFactory::PRODUCT]));
-
-        /** @var PriceList $priceList */
-        $priceList = $this->getEntity(PriceList::class, ['id' => $priceListId, 'updatedAt' => $updateDate]);
-
-        $this->priceBuilder->expects($this->once())
-            ->method('buildByPriceListWithoutTriggerSend')
-            ->with($priceList, [$productId]);
-        $this->priceBuilder->expects($this->once())
-            ->method('flush');
-
-        $repository = $this->assertEntityManagerCalled();
-        $repository->expects($this->once())
-            ->method('updatePriceListsActuality');
-        $repository->expects($this->once())
-            ->method('find')
-            ->with($priceList->getId())
-            ->willReturn($priceList);
-
-        $this->messenger->expects($this->once())
-            ->method('remove')
-            ->with(
-                NotificationMessages::CHANNEL_PRICE_LIST,
-                NotificationMessages::TOPIC_PRICE_RULES_BUILD,
-                PriceList::class,
-                $priceList->getId()
-            );
-
-        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
-        $message = $this->createMock(MessageInterface::class);
-        $message->expects($this->any())
-            ->method('getBody')
-            ->willReturn(json_encode($data));
-
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
-        $session = $this->createMock(SessionInterface::class);
-
-        $this->assertEquals(MessageProcessorInterface::ACK, $this->priceRuleProcessor->process($message, $session));
-    }
-
-    /**
-     * @return PriceListRepository|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function assertEntityManagerCalled()
-    {
-        $repository = $this->createMock(PriceListRepository::class);
-
-        $manager = $this->createMock(EntityManagerInterface::class);
-        $manager->expects($this->any())
-            ->method('getRepository')
-            ->willReturn($repository);
-
-        $manager->expects($this->once())
-            ->method('refresh');
-
-        $manager->expects($this->once())
-            ->method('beginTransaction');
-
-        $manager->expects(($this->once()))
-            ->method('commit');
-
-        $this->registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->with(PriceList::class)
-            ->willReturn($manager);
-
-        return $repository;
-    }
-
-    public function testGetSubscribedTopics()
-    {
-        $this->assertEquals([Topics::RESOLVE_PRICE_RULES], $this->priceRuleProcessor->getSubscribedTopics());
-    }
-
-    public function testProcessWithUnknownPriceListId()
-    {
-        $priceListId = 1001;
-        $data = [PriceListTriggerFactory::PRODUCT => [$priceListId => []]];
-
-        $this->triggerFactory->expects($this->once())
-            ->method('createFromArray')
-            ->with($data)
-            ->willReturn(new PriceListTrigger($data[PriceListTriggerFactory::PRODUCT]));
-
-        $repository = $this->createMock(PriceListRepository::class);
-        $repository->expects($this->once())
-            ->method('find')
-            ->with($priceListId)
-            ->willReturn(null);
-
-        $manager = $this->createMock(EntityManagerInterface::class);
-        $this->registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->with(PriceList::class)
-            ->willReturn($manager);
-        $manager->expects($this->once())
-            ->method('beginTransaction');
-        $manager->expects($this->once())
-            ->method('getRepository')
-            ->willReturn($repository);
-
-        $this->logger->expects($this->once())
-            ->method('error')
-            ->with('Unexpected exception occurred during Price Rule build');
-
-        $this->translator->expects($this->once())
-            ->method('trans')
-            ->with('oro.pricing.notification.price_list.error.price_rule_build')
-            ->willReturn('Error occurred during price rule build');
-
-        $this->messenger->expects($this->once())
-            ->method('send')
-            ->with(
-                NotificationMessages::CHANNEL_PRICE_LIST,
-                NotificationMessages::TOPIC_PRICE_RULES_BUILD,
-                Message::STATUS_ERROR,
-                'Error occurred during price rule build',
+                $messageText,
                 PriceList::class,
                 $priceListId
             );
 
-        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
-        $message = $this->createMock(MessageInterface::class);
-        $message->expects($this->any())
-            ->method('getBody')
-            ->willReturn(json_encode($data));
+        $this->assertEquals(
+            MessageProcessorInterface::REJECT,
+            $this->processor->process($this->getMessage($body), $this->getSession())
+        );
+    }
 
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
+    public function testProcessSeveralWithSingleExceptionInBuildByPriceList()
+    {
+        $priceListId1 = 1;
+        $priceListId2 = 2;
+        $productIds = [2];
+        /** @var PriceList $priceList1 */
+        $priceList1 = $this->getEntity(PriceList::class, ['id' => $priceListId1, 'updatedAt' => new \DateTime()]);
+        /** @var PriceList $priceList2 */
+        $priceList2 = $this->getEntity(PriceList::class, ['id' => $priceListId2, 'updatedAt' => new \DateTime()]);
+        $body = ['product' => [$priceListId1 => $productIds, $priceListId2 => $productIds]];
+        $exception = new \Exception('Some error');
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->exactly(2))
+            ->method('beginTransaction');
+        $em->expects(($this->once()))
+            ->method('rollback');
+        $em->expects(($this->once()))
+            ->method('commit');
+
+        $this->doctrine->expects($this->any())
+            ->method('getManagerForClass')
+            ->with(PriceList::class)
+            ->willReturn($em);
+
+        $em->expects($this->exactly(2))
+            ->method('find')
+            ->withConsecutive(
+                [PriceList::class, $priceListId1],
+                [PriceList::class, $priceListId2],
+            )
+            ->willReturnOnConsecutiveCalls($priceList1, $priceList2);
+
+        $this->messenger->expects($this->exactly(2))
+            ->method('remove')
+            ->withConsecutive(
+                [
+                    NotificationMessages::CHANNEL_PRICE_LIST,
+                    NotificationMessages::TOPIC_PRICE_RULES_BUILD,
+                    PriceList::class,
+                    $priceListId1
+                ],
+                [
+                    NotificationMessages::CHANNEL_PRICE_LIST,
+                    NotificationMessages::TOPIC_PRICE_RULES_BUILD,
+                    PriceList::class,
+                    $priceListId2
+                ]
+            );
+        $this->priceBuilder->expects($this->exactly(2))
+            ->method('buildByPriceListWithoutTriggerSend')
+            ->withConsecutive(
+                [$priceList1, $productIds],
+                [$priceList2, $productIds]
+            )
+            ->willReturnCallback(
+                static function (PriceList $priceList, array $productIds) use ($priceListId1, $exception) {
+                    if ($priceList->getId() === $priceListId1) {
+                        throw $exception;
+                    }
+                }
+            );
+
+        $this->logger->expects($this->once())
+            ->method('error')
+            ->with('Unexpected exception occurred during Price Rule build.', ['exception' => $exception]);
+
+        $messageText = 'Error occurred during price rule build';
+        $this->translator->expects($this->once())
+            ->method('trans')
+            ->with('oro.pricing.notification.price_list.error.price_rule_build')
+            ->willReturn('Error occurred during price rule build');
+        $this->messenger->expects($this->once())
+            ->method('send')
+            ->with(
+                NotificationMessages::CHANNEL_PRICE_LIST,
+                NotificationMessages::TOPIC_PRICE_RULES_BUILD,
+                Message::STATUS_ERROR,
+                $messageText,
+                PriceList::class,
+                $priceListId1
+            );
+
+        $repository = $this->createMock(PriceListRepository::class);
+        $em->expects($this->once())
+            ->method('getRepository')
+            ->willReturn($repository);
+        $repository->expects($this->once())
+            ->method('updatePriceListsActuality')
+            ->with([$priceList2], true);
+        $this->triggerHandler->expects($this->never())
+            ->method('addTriggerForPriceList');
+
         $session = $this->createMock(SessionInterface::class);
+        $this->assertEquals(
+            MessageProcessorInterface::ACK,
+            $this->processor->process($this->getMessage($body), $session)
+        );
+    }
 
-        $this->assertEquals(MessageProcessorInterface::REJECT, $this->priceRuleProcessor->process($message, $session));
+    public function testProcessRetryableExceptionInBuildByPriceList()
+    {
+        $priceListId = 1;
+        $productIds = [2];
+        $body = ['product' => [$priceListId => $productIds]];
+
+        /** @var PriceList $priceList */
+        $priceList = $this->getEntity(PriceList::class, ['id' => $priceListId, 'updatedAt' => new \DateTime()]);
+
+        $exception = $this->createMock(DeadlockException::class);
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->once())
+            ->method('beginTransaction');
+        $em->expects(($this->once()))
+            ->method('rollback');
+
+        $this->doctrine->expects($this->any())
+            ->method('getManagerForClass')
+            ->with(PriceList::class)
+            ->willReturn($em);
+
+        $em->expects($this->once())
+            ->method('find')
+            ->with(PriceList::class, $priceList->getId())
+            ->willReturn($priceList);
+
+        $this->messenger->expects($this->once())
+            ->method('remove')
+            ->with(
+                NotificationMessages::CHANNEL_PRICE_LIST,
+                NotificationMessages::TOPIC_PRICE_RULES_BUILD,
+                PriceList::class,
+                $priceListId
+            );
+        $this->priceBuilder->expects($this->once())
+            ->method('buildByPriceListWithoutTriggerSend')
+            ->with($priceList, $productIds)
+            ->willThrowException($exception);
+
+        $this->logger->expects($this->once())
+            ->method('error')
+            ->with(
+                'Unexpected exception occurred during Price Rule build.',
+                ['exception' => $exception]
+            );
+
+        $this->messenger->expects($this->never())
+            ->method('send');
+
+        $this->assertEquals(
+            MessageProcessorInterface::REQUEUE,
+            $this->processor->process($this->getMessage($body), $this->getSession())
+        );
+    }
+
+    public function testProcessSeveralWithSingleRetryableExceptionInBuildByPriceList()
+    {
+        $priceListId1 = 1;
+        $priceListId2 = 2;
+        $productIds = [2];
+        /** @var PriceList $priceList1 */
+        $priceList1 = $this->getEntity(PriceList::class, ['id' => $priceListId1, 'updatedAt' => new \DateTime()]);
+        /** @var PriceList $priceList2 */
+        $priceList2 = $this->getEntity(PriceList::class, ['id' => $priceListId2, 'updatedAt' => new \DateTime()]);
+        $body = ['product' => [$priceListId1 => $productIds, $priceListId2 => $productIds]];
+        $exception = $this->createMock(DeadlockException::class);
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->exactly(2))
+            ->method('beginTransaction');
+        $em->expects(($this->once()))
+            ->method('rollback');
+        $em->expects(($this->once()))
+            ->method('commit');
+
+        $this->doctrine->expects($this->any())
+            ->method('getManagerForClass')
+            ->with(PriceList::class)
+            ->willReturn($em);
+
+        $em->expects($this->exactly(2))
+            ->method('find')
+            ->withConsecutive(
+                [PriceList::class, $priceListId1],
+                [PriceList::class, $priceListId2],
+            )
+            ->willReturnOnConsecutiveCalls($priceList1, $priceList2);
+
+        $this->messenger->expects($this->exactly(2))
+            ->method('remove')
+            ->withConsecutive(
+                [
+                    NotificationMessages::CHANNEL_PRICE_LIST,
+                    NotificationMessages::TOPIC_PRICE_RULES_BUILD,
+                    PriceList::class,
+                    $priceListId1
+                ],
+                [
+                    NotificationMessages::CHANNEL_PRICE_LIST,
+                    NotificationMessages::TOPIC_PRICE_RULES_BUILD,
+                    PriceList::class,
+                    $priceListId2
+                ]
+            );
+        $this->priceBuilder->expects($this->exactly(2))
+            ->method('buildByPriceListWithoutTriggerSend')
+            ->withConsecutive(
+                [$priceList1, $productIds],
+                [$priceList2, $productIds]
+            )
+            ->willReturnCallback(
+                static function (PriceList $priceList, array $productIds) use ($priceListId1, $exception) {
+                    if ($priceList->getId() === $priceListId1) {
+                        throw $exception;
+                    }
+                }
+            );
+
+        $this->logger->expects($this->once())
+            ->method('error')
+            ->with(
+                'Unexpected exception occurred during Price Rule build.',
+                ['exception' => $exception]
+            );
+        $this->messenger->expects($this->never())
+            ->method('send');
+        $this->triggerHandler->expects($this->once())
+            ->method('addTriggerForPriceList')
+            ->with(
+                Topics::RESOLVE_PRICE_RULES,
+                $priceList1,
+                $productIds
+            );
+
+        $repository = $this->createMock(PriceListRepository::class);
+        $em->expects($this->once())
+            ->method('getRepository')
+            ->willReturn($repository);
+        $repository->expects($this->once())
+            ->method('updatePriceListsActuality')
+            ->with([$priceList2], true);
+
+        $this->assertEquals(
+            MessageProcessorInterface::ACK,
+            $this->processor->process($this->getMessage($body), $this->getSession())
+        );
+    }
+
+    public function testProcess()
+    {
+        $priceListId = 1;
+        $productIds = [2];
+        $body = ['product' => [$priceListId => $productIds]];
+
+        /** @var PriceList $priceList */
+        $priceList = $this->getEntity(PriceList::class, ['id' => $priceListId, 'updatedAt' => new \DateTime()]);
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->once())
+            ->method('beginTransaction');
+        $em->expects(($this->once()))
+            ->method('commit');
+
+        $this->doctrine->expects($this->any())
+            ->method('getManagerForClass')
+            ->with(PriceList::class)
+            ->willReturn($em);
+
+        $em->expects($this->once())
+            ->method('find')
+            ->with(PriceList::class, $priceList->getId())
+            ->willReturn($priceList);
+
+        $this->messenger->expects($this->once())
+            ->method('remove')
+            ->with(
+                NotificationMessages::CHANNEL_PRICE_LIST,
+                NotificationMessages::TOPIC_PRICE_RULES_BUILD,
+                PriceList::class,
+                $priceListId
+            );
+        $this->priceBuilder->expects($this->once())
+            ->method('buildByPriceListWithoutTriggerSend')
+            ->with($priceList, $productIds);
+
+        $em->expects($this->once())
+            ->method('refresh')
+            ->with($priceList);
+
+        $repository = $this->createMock(PriceListRepository::class);
+        $em->expects($this->once())
+            ->method('getRepository')
+            ->willReturn($repository);
+        $repository->expects($this->once())
+            ->method('updatePriceListsActuality')
+            ->with([$priceList], true);
+
+        $this->assertEquals(
+            MessageProcessorInterface::ACK,
+            $this->processor->process($this->getMessage($body), $this->getSession())
+        );
     }
 }
