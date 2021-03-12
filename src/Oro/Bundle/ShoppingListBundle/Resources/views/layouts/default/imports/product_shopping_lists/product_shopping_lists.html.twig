@@ -44,7 +44,7 @@
                                     },
                                     save_api_accessor: {
                                         default_route_parameters: {
-                                            id: '<%=lineItem.id %>'
+                                            id: '<%- _.escapeForJSON(lineItem.id) %>'
                                         },
                                         route: 'oro_api_shopping_list_frontend_put_line_item'
                                     },
@@ -52,8 +52,8 @@
                                         showErrorsHandler: 'oroshoppinglist/js/shopping-list-item-errors-handler'
                                     },
                                     triggerData: {
-                                        lineItemId: '<%= lineItem.id %>',
-                                        shoppingListId: '<%= list.id %>'
+                                        lineItemId: '<%- _.escapeForJSON(lineItem.id) %>',
+                                        shoppingListId: '<%- _.escapeForJSON(list.id) %>'
                                     }
                                 }
                             })) }}>
@@ -87,10 +87,10 @@
                                                                 options: {
                                                                     route: 'oro_api_shopping_list_frontend_delete_line_item',
                                                                     routeParams: {
-                                                                        id: '<%= lineItem.id %>'
+                                                                        id: '<%- _.escapeForJSON(lineItem.id) %>'
                                                                     },
                                                                     triggerData: {
-                                                                        lineItemId: '<%= lineItem.id %>'
+                                                                        lineItemId: '<%-_.escapeForJSON(lineItem.id) %>'
                                                                     },
                                                                     confirmMessage: 'oro.frontend.shoppinglist.messages.line_item_delete_confirm'|trans,
                                                                     successMessage: 'oro.frontend.shoppinglist.messages.line_item_deleted'|trans
