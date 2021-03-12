@@ -121,7 +121,7 @@
                 {% for requestAdditionalNote in requestAdditionalNotes %}
                     <article class="notes__item">
                         <header class="notes__info">
-                            <p>
+                            <p class="notes__text">
                                 <span class="bold">{{ requestAdditionalNote.author }}</span>
                                 <span class="notes__date">{{ requestAdditionalNote.createdAt|oro_format_datetime }}</span>
                             </p>
@@ -166,7 +166,11 @@
                                         {{ requestProduct.product }}
                                     {% endif %}
                                 </h3>
-                                <div>{{ 'oro.frontend.rfp.requestproduct.product_sku.label'|trans }} <span class="customer-line-items__sku-value">{{ requestProduct.productSku }}</span></div>
+
+                                <div class="customer-line-items__row">
+                                    {{ 'oro.frontend.rfp.requestproduct.product_sku.label'|trans }}
+                                    <span class="customer-line-items__sku-value customer-line-items__item-offset">{{ requestProduct.productSku }}</span>
+                                </div>
 
                                 <div class="grid-row hide-on-desktop hide-on-strict-tablet">
                                     <div class="grid-head grid-cell--offset-l-none-mobile" aria-hidden="true">
@@ -196,8 +200,9 @@
                 {% if (requestProduct.comment is not empty) %}
                     <tr class="grid-row">
                         <td class="grid-cell notes-cell" colspan="4">
-                            <div class="customer-line-items__notes">
-                                {{ 'oro.frontend.rfp.requestproduct.comment.label'|trans }}: {{ requestProduct.comment }}
+                            <div class="customer-line-items__row customer-line-items__notes">
+                                {{ 'oro.frontend.rfp.requestproduct.comment.label'|trans }}:
+                                <span class="customer-line-items__item-offset">{{ requestProduct.comment }}</span>
                             </div>
                         </td>
                     </tr>

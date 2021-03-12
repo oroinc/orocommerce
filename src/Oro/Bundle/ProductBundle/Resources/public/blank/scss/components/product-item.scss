@@ -10,7 +10,15 @@
         }
     }
 
+    &__number {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
     &__sku-value {
+        margin-left: $product-item-sku-value-offset-start;
+
         color: $product-item-sku-value-color;
     }
 
