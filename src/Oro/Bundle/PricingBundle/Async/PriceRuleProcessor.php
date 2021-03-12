@@ -2,12 +2,13 @@
 
 namespace Oro\Bundle\PricingBundle\Async;
 
+use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
+use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\NotificationMessage\Message;
 use Oro\Bundle\PricingBundle\NotificationMessage\Messenger;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
@@ -38,11 +39,14 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
     /** @var TranslatorInterface */
     private $translator;
 
+    /** @var PriceListTriggerHandler */
+    private $triggerHandler;
+
     /**
-     * @param ManagerRegistry     $doctrine
-     * @param LoggerInterface     $logger
+     * @param ManagerRegistry $doctrine
+     * @param LoggerInterface $logger
      * @param ProductPriceBuilder $priceBuilder
-     * @param Messenger           $messenger
+     * @param Messenger $messenger
      * @param TranslatorInterface $translator
      */
     public function __construct(
@@ -57,6 +61,14 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
         $this->priceBuilder = $priceBuilder;
         $this->messenger = $messenger;
         $this->translator = $translator;
+    }
+
+    /**
+     * @param PriceListTriggerHandler $triggerHandler
+     */
+    public function setTriggerHandler(PriceListTriggerHandler $triggerHandler)
+    {
+        $this->triggerHandler = $triggerHandler;
     }
 
     /**
@@ -78,35 +90,52 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
 
             return self::REJECT;
         }
+        $priceListsCount = count($body['product']);
 
         /** @var EntityManagerInterface $em */
         $em = $this->doctrine->getManagerForClass(PriceList::class);
-        $em->beginTransaction();
-        try {
-            foreach ($body['product'] as $priceListId => $productIds) {
-                /** @var PriceList|null $priceList */
-                $priceList = $em->find(PriceList::class, $priceListId);
-                if (null === $priceList) {
-                    throw new EntityNotFoundException(sprintf(
-                        'PriceList entity with identifier %s not found.',
-                        $priceListId
-                    ));
-                }
+        foreach ($body['product'] as $priceListId => $productIds) {
+            /** @var PriceList|null $priceList */
+            $priceList = $em->find(PriceList::class, $priceListId);
+            if (null === $priceList) {
+                $this->logger->warning(sprintf(
+                    'PriceList entity with identifier %s not found.',
+                    $priceListId
+                ));
+                continue;
+            }
+
+            $em->beginTransaction();
+            try {
                 $this->processPriceList($em, $priceList, $productIds);
-            }
+                $em->commit();
+            } catch (\Exception $e) {
+                $em->rollback();
+                $this->logger->error(
+                    'Unexpected exception occurred during Price Rule build.',
+                    ['exception' => $e]
+                );
 
-            $em->commit();
-        } catch (\Exception $e) {
-            $em->rollback();
-            $this->logger->error(
-                'Unexpected exception occurred during Price Rule build.',
-                ['exception' => $e]
-            );
-            if (!empty($priceListId)) {
-                $this->onFailedPriceListId($priceListId);
-            }
+                if ($e instanceof RetryableException) {
+                    // On RetryableException send back to queue the message related to a single price list
+                    // that triggered an exception.
+                    // If this was the only one PL in the message REQUEUE it to persist retries counter
+                    if ($priceListsCount === 1) {
+                        return self::REQUEUE;
+                    }
 
-            return self::REJECT;
+                    $this->triggerHandler->handlePriceListTopic(
+                        Topics::RESOLVE_PRICE_RULES,
+                        $priceList,
+                        $productIds
+                    );
+                } else {
+                    $this->onFailedPriceListId($priceList->getId());
+                    if ($priceListsCount === 1) {
+                        return self::REJECT;
+                    }
+                }
+            }
         }
 
         return self::ACK;
@@ -114,8 +143,8 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
 
     /**
      * @param EntityManagerInterface $em
-     * @param PriceList              $priceList
-     * @param int[]                  $productIds
+     * @param PriceList $priceList
+     * @param int[] $productIds
      */
     private function processPriceList(EntityManagerInterface $em, PriceList $priceList, array $productIds): void
     {
@@ -148,8 +177,8 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
 
     /**
      * @param EntityManagerInterface $em
-     * @param PriceList              $priceList
-     * @param \DateTime              $startTime
+     * @param PriceList $priceList
+     * @param \DateTime $startTime
      */
     private function updatePriceListActuality(
         EntityManagerInterface $em,
