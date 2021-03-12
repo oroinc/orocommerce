@@ -1462,6 +1462,8 @@ services:
             - '@oro_frontend.request.frontend_helper'
             - '@oro_frontend_localization.manager.user_localization'
             - '@oro_pricing.user_currency_manager'
+            - '@oro_layout.layout_context_holder'
+            - '@oro_layout.theme_manager'
 
     oro_pricing.datagrid.extension.price:
         abstract: true
