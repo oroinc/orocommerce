@@ -1,11 +1,16 @@
 /* @theme: blank; */
 
 .sku {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
     margin: $sku-offset;
 
     font-size: $sku-font-size;
 
     &__code {
+        margin-left: $sku-offset-offset-start;
+
         color: $sku-offset-color;
     }
 }

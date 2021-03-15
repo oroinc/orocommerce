@@ -42,18 +42,17 @@
         margin-bottom: $offset-x-s;
     }
 
-    &__name,
-    &__details {
+    &__name {
         display: inline-block;
         vertical-align: middle;
-
-        word-break: break-all;
-    }
-
-    &__name {
         padding-#{$end}: $offset-x-m;
 
         text-transform: uppercase;
+    }
+
+    &__name,
+    &__details {
+        word-break: break-all;
     }
 
     &__name-inner {
@@ -67,6 +66,9 @@
     }
 
     &__details {
+        display: inline-flex;
+        flex-wrap: wrap;
+        align-items: center;
         text-align: $end;
         padding-left: $offset-x-s;
     }
