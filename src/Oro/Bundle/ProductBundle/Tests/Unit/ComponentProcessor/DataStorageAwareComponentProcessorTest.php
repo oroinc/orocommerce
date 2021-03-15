@@ -206,7 +206,7 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit\Framework\TestCase
      * @param array $data
      * @param array $allowedData
      * @param string $errorMessageSkus
-     * @param bool|true $isRedirectRoute
+     * @param bool $isRedirectRoute
      */
     public function testProcessorWithScope(
         $scope,
@@ -312,7 +312,7 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit\Framework\TestCase
      * @param string $scope
      * @param array $data
      * @param string|null $errorMessageSkus
-     * @param bool|false $isRedirectRoute
+     * @param bool $isRedirectRoute
      */
     public function testProcessorWithScopeAllRestricted(
         $scope,
@@ -377,7 +377,7 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit\Framework\TestCase
      * @dataProvider processorWithScopeAllAllowedDataProvider
      * @param string $scope
      * @param array $data
-     * @param bool|false $isRedirectRoute
+     * @param bool $isRedirectRoute
      */
     public function testProcessorWithScopeAllAllowed($scope, array $data, $isRedirectRoute = false)
     {

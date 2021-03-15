@@ -69,6 +69,19 @@ api:
 
         Oro\Bundle\OrderBundle\Entity\OrderDiscount:
             documentation_resource: '@OroOrderBundle/Resources/doc/api/order_discount.md'
+            fields:
+                percent:
+                    data_type: percent_100
+            actions:
+                update:
+                    fields:
+                        order:
+                            form_options:
+                                mapped: false
+            subresources:
+                order:
+                    actions:
+                        update_relationship: false
 
         Oro\Bundle\OrderBundle\Entity\OrderShippingTracking:
             documentation_resource: '@OroOrderBundle/Resources/doc/api/order_shipping_tracking.md'

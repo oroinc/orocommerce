@@ -27,11 +27,9 @@ class ContentWidgetPathProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider pathsDataProvider
      *
-     * @param array $expectedResults
      * @param string|null $theme
-     * @param string|null $route
-     * @param string|null $action
-     * @param string|null $pageTemplateKey
+     * @param string|null $contentWidgetType
+     * @param array       $expectedResults
      */
     public function testGetPaths(?string $theme, ?string $contentWidgetType, array $expectedResults): void
     {

@@ -6,7 +6,6 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
-use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTreeHandler;
@@ -48,12 +47,11 @@ class CheckoutSubtotalProvider extends AbstractSubtotalProvider implements
     protected $priceScopeCriteriaFactory;
 
     /**
-     * @param TranslatorInterface $translator
-     * @param RoundingServiceInterface $rounding
-     * @param ProductPriceProviderInterface $productPriceProvider
-     * @param CombinedPriceListTreeHandler $priceListTreeHandler ,
-     * @param SubtotalProviderConstructorArguments $arguments
-     * @param FeatureChecker $featureChecker
+     * @param TranslatorInterface                       $translator
+     * @param RoundingServiceInterface                  $rounding
+     * @param ProductPriceProviderInterface             $productPriceProvider
+     * @param CombinedPriceListTreeHandler              $priceListTreeHandler
+     * @param SubtotalProviderConstructorArguments      $arguments
      * @param ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory
      */
     public function __construct(

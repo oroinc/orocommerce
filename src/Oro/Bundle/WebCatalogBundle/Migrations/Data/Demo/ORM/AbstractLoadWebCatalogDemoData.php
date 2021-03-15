@@ -168,11 +168,7 @@ abstract class AbstractLoadWebCatalogDemoData extends AbstractFixture implements
     }
 
     /**
-     * @param ObjectManager $manager
      * @param string $title
-     *
-     * @throws \Doctrine\ORM\NoResultException
-     * @throws \Doctrine\ORM\NonUniqueResultException
      *
      * @return Category
      */
