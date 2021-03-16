@@ -6,7 +6,7 @@
         id: 'import-validation',
         'data-page-component-module': 'oroproduct/js/app/components/quick-add-import-validation-component',
         'data-page-component-options': widgetOptions|merge({
-            'titleTemplate': '<%- title %><span class="quick-order-add-widget-subtitle"> <%- subtitle %></span>',
+            'titleTemplate': '<%- _.escapeForJSON(title) %><span class="quick-order-add-widget-subtitle"> <%- _.escapeForJSON(subtitle) %></span>',
             'validItemsCount': collection.validRows|length
         })|json_encode,
         'class': 'validation-info hidden-form'

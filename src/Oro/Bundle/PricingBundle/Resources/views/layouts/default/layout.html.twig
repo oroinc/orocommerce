@@ -1,11 +1,21 @@
+{% block _body_widget %}
+    {% if selected_currency is defined %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' currency--' ~ selected_currency|lower
+        }) %}
+    {% endif %}
+
+    {{ parent_block_widget(block) }}
+{% endblock %}
+
 {% block currency_switcher_widget %}
     {% if currencies|length > 1 %}
     <div class="oro-toolbar">
         {% set togglerId = 'dropdown-'|uniqid %}
-        <div class="oro-toolbar__content" data-toggle="dropdown" data-popper="false" role="button" id="{{ togglerId }}"
+        <div class="oro-toolbar__content currency-switcher currency-switcher--{{ selected_currency|lower }}" data-toggle="dropdown" data-popper="false" role="button" data-currency="{{ selected_currency|lower }}" id="{{ togglerId }}"
              aria-haspopup="true" aria-expanded="false"
              aria-label="{{ 'oro.pricing.productprice.currency.label'|trans }}">
-            {{ oro_currency_symbol(selected_currency) }}
+            {{- oro_currency_symbol(selected_currency) -}}
             <span class="oro-toolbar__icon" aria-hidden="true">
                 <span class="fa-angle-down"></span>
             </span>
@@ -29,14 +39,18 @@
                  }|json_encode }}">
                 <ul class="oro-toolbar__list">
                     {% for currency in currencies %}
-                    <li class="oro-toolbar__list-item">
+                    <li class="oro-toolbar__list-item currency-switcher__item currency-switcher__item--{{ currency|lower }}">
                         {% if selected_currency == currency %}
                             <span class="oro-toolbar__link oro-toolbar__link--active">
-                                <b class="oro-toolbar__currency">{{ oro_currency_symbol(currency) }}</b>{{- oro_currency_name(currency) -}}
+                                {%- spaceless -%}
+                                <b class="oro-toolbar__currency">{{ oro_currency_symbol(currency) }}</b>({{- oro_currency_name(currency) -}})
+                                {%- endspaceless -%}
                             </span>
                         {% else %}
                             <a class="oro-toolbar__link" href="#" data-currency="{{ currency }}">
-                                <b class="oro-toolbar__currency">{{ oro_currency_symbol(currency) }}</b>{{- oro_currency_name(currency) -}}
+                                {%- spaceless -%}
+                                <b class="oro-toolbar__currency">{{ oro_currency_symbol(currency) }}</b>({{- oro_currency_name(currency) -}})
+                                {%- endspaceless -%}
                             </a>
                         {% endif %}
                     </li>
