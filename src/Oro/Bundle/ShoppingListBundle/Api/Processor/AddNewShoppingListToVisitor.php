@@ -10,8 +10,8 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
 /**
  * Adds the new shopping list to current visitor.
- * This processor is required because the association between shopping list and visitor is unidirectional association
- * on the visitor side and as result, it is not set automatically.
+ * This processor is required because the association between shopping list and visitor
+ * is unidirectional association on the visitor side and as result, it is not set automatically.
  */
 class AddNewShoppingListToVisitor implements ProcessorInterface
 {
