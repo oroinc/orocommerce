@@ -1492,6 +1492,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
         self::assertNotEmpty($galleryTrigger, sprintf('Image gallery not found for product "%s"', $SKU));
 
+        $galleryTrigger->focus();
         $galleryTrigger->click();
     }
 
