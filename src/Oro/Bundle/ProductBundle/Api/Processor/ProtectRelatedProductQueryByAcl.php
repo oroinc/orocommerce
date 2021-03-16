@@ -13,8 +13,8 @@ use Oro\Component\EntitySerializer\DoctrineHelper;
  * both products in relation are accessible by an user.
  * Since Related Items Entities has no ACLs, we need to decide if relation should be showed to a user.
  * We are doing it by checking if both products in relation are accessible by an user.
- * We are using fact, that ACL is checked for all relations for entity (in that case for both products) and if not
- * Doctrine set them as NULL.
+ * We are using fact, that ACL is checked for all relations for entity (in that case for both products)
+ * and if not Doctrine set them as NULL.
  */
 class ProtectRelatedProductQueryByAcl implements ProcessorInterface
 {
