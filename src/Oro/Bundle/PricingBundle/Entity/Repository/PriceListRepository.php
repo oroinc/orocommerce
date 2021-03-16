@@ -122,6 +122,7 @@ class PriceListRepository extends BasePriceListRepository
             $qb->update($this->_entityName, 'priceList');
             $qb->set('priceList.actual', ':actual')
                 ->where($qb->expr()->in('priceList.id', ':priceLists'))
+                ->andWhere($qb->expr()->neq('priceList.actual', ':actual'))
                 ->setParameter('actual', $actual)
                 ->setParameter('priceLists', $priceLists);
             $qb->getQuery()->execute();

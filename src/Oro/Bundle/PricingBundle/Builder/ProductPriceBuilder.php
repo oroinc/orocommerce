@@ -59,6 +59,11 @@ class ProductPriceBuilder implements FeatureToggleableInterface
     private $version;
 
     /**
+     * @var int
+     */
+    private $batchSize = ProductPriceRepository::BUFFER_SIZE;
+
+    /**
      * @param ManagerRegistry $registry
      * @param ShardQueryExecutorInterface $shardInsertQueryExecutor
      * @param PriceListRuleCompiler $ruleCompiler
@@ -77,6 +82,14 @@ class ProductPriceBuilder implements FeatureToggleableInterface
         $this->ruleCompiler = $ruleCompiler;
         $this->priceListTriggerHandler = $priceListTriggerHandler;
         $this->shardManager = $shardManager;
+    }
+
+    /**
+     * @param int $batchSize
+     */
+    public function setBatchSize(int $batchSize)
+    {
+        $this->batchSize = $batchSize;
     }
 
     /**
@@ -144,12 +157,8 @@ class ProductPriceBuilder implements FeatureToggleableInterface
         $rules = $priceList->getPriceRules()->toArray();
         usort(
             $rules,
-            function (PriceRule $a, PriceRule $b) {
-                if ($a->getPriority() === $b->getPriority()) {
-                    return 0;
-                }
-
-                return $a->getPriority() < $b->getPriority() ? -1 : 1;
+            static function (PriceRule $a, PriceRule $b) {
+                return $a->getPriority() <=> $b->getPriority();
             }
         );
 
@@ -162,11 +171,13 @@ class ProductPriceBuilder implements FeatureToggleableInterface
      */
     public function buildByPriceListWithoutTriggers(PriceList $priceList, array $products = [])
     {
-        $this->getProductPriceRepository()->deleteGeneratedPrices($this->shardManager, $priceList, $products);
-        if (count($priceList->getPriceRules()) > 0) {
-            $rules = $this->getSortedRules($priceList);
-            foreach ($rules as $rule) {
-                $this->applyRule($rule, $products);
+        foreach ($this->getProductBatches($products) as $productBatch) {
+            $this->getProductPriceRepository()->deleteGeneratedPrices($this->shardManager, $priceList, $productBatch);
+            if (count($priceList->getPriceRules()) > 0) {
+                $rules = $this->getSortedRules($priceList);
+                foreach ($rules as $rule) {
+                    $this->applyRule($rule, $productBatch);
+                }
             }
         }
     }
@@ -178,12 +189,13 @@ class ProductPriceBuilder implements FeatureToggleableInterface
     private function emitCplTriggers(PriceList $priceList, array $products): void
     {
         if ($products || count($priceList->getPriceRules()) === 0) {
-            $productsBatches = [$products];
+            $productsBatches = $this->getProductBatches($products);
         } else {
             $productsBatches = $this->getProductPriceRepository()->getProductsByPriceListAndVersion(
                 $this->shardManager,
                 $priceList,
-                $this->version
+                $this->version,
+                $this->batchSize
             );
         }
 
@@ -193,6 +205,21 @@ class ProductPriceBuilder implements FeatureToggleableInterface
                 $priceList,
                 $batch
             );
+        }
+    }
+
+    /**
+     * @param array $products
+     * @return \Generator
+     */
+    private function getProductBatches(array $products): \Generator
+    {
+        if (!$products) {
+            yield [];
+        } else {
+            foreach (array_chunk($products, $this->batchSize) as $batch) {
+                yield $batch;
+            }
         }
     }
 }
