@@ -19,28 +19,29 @@ use Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 use Oro\Bundle\PricingBundle\Provider\PriceListSequenceMember;
 use Oro\Bundle\PricingBundle\Resolver\PriceListScheduleResolver;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class CombinedPriceListActivationPlanBuilderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
+     * @var DoctrineHelper|MockObject
      */
     protected $doctrineHelper;
 
     /**
-     * @var PriceListScheduleResolver|\PHPUnit\Framework\MockObject\MockObject
+     * @var PriceListScheduleResolver|MockObject
      */
     protected $schedulerResolver;
 
     /**
-     * @var CombinedPriceListProvider|\PHPUnit\Framework\MockObject\MockObject
+     * @var CombinedPriceListProvider|MockObject
      */
     protected $combinedPriceListProvider;
 
     /**
-     * @var CombinedPriceListRelationHelperInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var CombinedPriceListRelationHelperInterface|MockObject
      */
     protected $relationHelper;
 
@@ -142,19 +143,18 @@ class CombinedPriceListActivationPlanBuilderTest extends \PHPUnit\Framework\Test
     }
 
     /**
-     * @param PriceList $priceList
+     * @param PriceList         $priceList
      * @param CombinedPriceList $cpl
-     * @param \PHPUnit\Framework\MockObject\MockObject $cplActivationRuleRepository
-     * @param \PHPUnit\Framework\MockObject\MockObject $priceListScheduleRepository
-     * @param \PHPUnit\Framework\MockObject\MockObject $cplToPriceListRepository
-     * @param array $repositoryMap
+     * @param MockObject        $cplActivationRuleRepository
+     * @param MockObject        $priceListScheduleRepository
+     * @param MockObject        $cplToPriceListRepository
      */
     private function assertBuildByCombinedPriceList(
         PriceList $priceList,
         CombinedPriceList $cpl,
-        \PHPUnit\Framework\MockObject\MockObject $cplActivationRuleRepository,
-        \PHPUnit\Framework\MockObject\MockObject $priceListScheduleRepository,
-        \PHPUnit\Framework\MockObject\MockObject $cplToPriceListRepository
+        MockObject $cplActivationRuleRepository,
+        MockObject $priceListScheduleRepository,
+        MockObject $cplToPriceListRepository
     ): void {
         $cplActivationRuleRepository->expects($this->once())
             ->method('deleteRulesByCPL')
@@ -189,7 +189,7 @@ class CombinedPriceListActivationPlanBuilderTest extends \PHPUnit\Framework\Test
                 ]
             ]);
 
-        /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject $manager */
+        /** @var EntityManager|MockObject $manager */
         $manager = $this->createMock(EntityManager::class);
         $manager->expects($this->once())->method('persist');
         $manager->expects($this->once())->method('flush');

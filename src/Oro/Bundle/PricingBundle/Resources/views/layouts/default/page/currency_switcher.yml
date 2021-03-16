@@ -8,3 +8,8 @@ layout:
             options:
                 currencies: '=data["oro_pricing_currency"].getAvailableCurrencies()'
                 selected_currency: '=data["oro_pricing_currency"].getUserCurrency()'
+
+        - '@appendOption':
+            id: body
+            optionName: vars.selected_currency
+            optionValue: '=data["oro_pricing_currency"].getUserCurrency()'

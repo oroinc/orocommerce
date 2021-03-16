@@ -251,8 +251,7 @@ class LocalizedFallbackValueCollectionNormalizerTest extends WebTestCase
 
     /**
      * @param mixed $data
-     * @param string $localizedFallbackValueClass
-     * @param bool $expected
+     * @param bool  $expected
      * @param array $context
      *
      * @dataProvider supportsNormalizationDataProvider

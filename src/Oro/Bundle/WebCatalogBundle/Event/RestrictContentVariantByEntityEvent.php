@@ -29,9 +29,8 @@ class RestrictContentVariantByEntityEvent extends Event
 
     /**
      * @param QueryBuilder $queryBuilder
-     * @param object $entity
-     * @param string $variantAlias
-     * @param array|null $additionalData
+     * @param object       $entity
+     * @param string       $variantAlias
      */
     public function __construct(
         QueryBuilder $queryBuilder,

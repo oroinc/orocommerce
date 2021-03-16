@@ -58,7 +58,7 @@ class ProductSelectPriceListAwareListenerTest extends \PHPUnit\Framework\TestCas
      * @dataProvider onDBQueryDataProvider
      * @param bool $applicable
      * @param array $parameters
-     * @param bool|false $withPriceList
+     * @param bool $withPriceList
      */
     public function testOnDBQuery($applicable, array $parameters = [], $withPriceList = false)
     {
