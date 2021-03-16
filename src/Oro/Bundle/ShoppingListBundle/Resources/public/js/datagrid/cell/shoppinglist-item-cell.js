@@ -13,7 +13,10 @@ const ShoppingListItemCell = HtmlTemplateCell.extend({
 
         if (this._html !== html) { // prevents from unnecessary HTML update
             this._html = html;
-            this.$el.html(html);
+            this.$el
+                .trigger('content:remove')
+                .html(html)
+                .trigger('content:changed');
             this.appendEditNotesAction();
         }
 

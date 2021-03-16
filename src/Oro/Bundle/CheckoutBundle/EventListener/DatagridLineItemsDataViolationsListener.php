@@ -8,6 +8,7 @@ use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
 use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
 use Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataViolationsListener as BaseListener;
 use Oro\Bundle\ShoppingListBundle\Validator\LineItemViolationsProvider;
+use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 
 /**
  * Adds line items errors data.
@@ -33,9 +34,9 @@ class DatagridLineItemsDataViolationsListener extends BaseListener
     /**
      * @param DatagridLineItemsDataEvent $event
      *
-     * @return null||WorkflowItem
+     * @return null|WorkflowItem
      */
-    protected function getAdditionalContext(DatagridLineItemsDataEvent $event): ?object
+    protected function getAdditionalContext(DatagridLineItemsDataEvent $event): ?WorkflowItem
     {
         $datagrid = $event->getDatagrid();
 

@@ -8,3 +8,8 @@ layout:
             options:
                 localizations: '=data["frontend_localization"].getEnabledLocalizations()'
                 selected_localization: '=data["frontend_localization"].getCurrentLocalization()'
+
+        - '@appendOption':
+            id: body
+            optionName: vars.selected_localization
+            optionValue: '=data["frontend_localization"].getCurrentLocalization()'
