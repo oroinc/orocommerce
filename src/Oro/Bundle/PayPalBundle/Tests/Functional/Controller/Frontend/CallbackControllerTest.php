@@ -14,8 +14,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class CallbackControllerTest extends WebTestCase
 {
-    const ALLOWED_REMOTE_ADDR = '173.0.81.1';
-
     protected function setUp(): void
     {
         $this->initClient();
@@ -24,7 +22,12 @@ class CallbackControllerTest extends WebTestCase
         $this->loadFixtures([LoadPaymentTransactionData::class]);
     }
 
-    public function testNotifyChangeState()
+    /**
+     * @dataProvider allowedIPsDataProvider
+     *
+     * @param string $remoteAddress
+     */
+    public function testNotifyChangeState(string $remoteAddress)
     {
         $parameters = [
             'PNREF' => 'REFERENCE',
@@ -50,7 +53,7 @@ class CallbackControllerTest extends WebTestCase
             ),
             $expectedData,
             [],
-            ['REMOTE_ADDR' => self::ALLOWED_REMOTE_ADDR]
+            ['REMOTE_ADDR' => $remoteAddress]
         );
 
         // Active flag of charge transaction after complete(notify request) action should be changed to false
@@ -62,29 +65,19 @@ class CallbackControllerTest extends WebTestCase
     /**
      * @return array[]
      */
-    public function returnAllowedIPs()
+    public function allowedIPsDataProvider()
     {
         return [
-            'Paypal\'s IP address 1 should be allowed' => ['173.0.81.1'],
-            'Paypal\'s IP address 2 should be allowed' => ['173.0.81.33'],
-            'Paypal\'s IP address 3 should be allowed' => ['173.0.81.65'],
-            'Paypal\'s IP address 4 should be allowed' => ['66.211.170.66'],
+            'Paypal\'s IP address 1 should be allowed' => ['255.255.255.1'],
+            'Paypal\'s IP address 2 should be allowed' => ['255.255.255.2'],
+            'Paypal\'s IP address 3 should be allowed' => ['255.255.255.3'],
+            'Paypal\'s IP address 4 should be allowed' => ['255.255.254.1'],
         ];
     }
 
     /**
-     * @return array[]
-     */
-    public function returnNotAllowedIPs()
-    {
-        return [
-            'Google\'s IP address 5 should not be allowed' => ['216.58.214.206'],
-            'Facebook\'s IP address 6 should not be allowed' => ['173.252.120.68'],
-        ];
-    }
-
-    /**
-     * @dataProvider returnAllowedIPs
+     * @dataProvider allowedIPsDataProvider
+     *
      * @param string $remoteAddress
      */
     public function testNotifyAllowedIPFiltering($remoteAddress)
@@ -110,7 +103,19 @@ class CallbackControllerTest extends WebTestCase
     }
 
     /**
-     * @dataProvider returnNotAllowedIPs
+     * @return array[]
+     */
+    public function notAllowedIPsDataProvider()
+    {
+        return [
+            'Google\'s IP address 5 should not be allowed' => ['216.58.214.206'],
+            'Facebook\'s IP address 6 should not be allowed' => ['173.252.120.68'],
+        ];
+    }
+
+    /**
+     * @dataProvider notAllowedIPsDataProvider
+     *
      * @param string $remoteAddress
      */
     public function testNotifyNotAllowedIPFiltering($remoteAddress)
