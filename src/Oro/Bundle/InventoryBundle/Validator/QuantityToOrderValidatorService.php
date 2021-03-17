@@ -190,4 +190,23 @@ class QuantityToOrderValidatorService
 
         return false;
     }
+    
+    
+    /**
+     * @param Product $product
+     * @param int $limit
+     * @param string $messageSuffix
+     * @return string
+     */
+    protected function getErrorMessage(Product $product, $limit, $messageSuffix)
+    {
+        return $this->translator->trans(
+            'oro.inventory.product.error.' . $messageSuffix,
+            [
+                '%limit%' => $limit,
+                '%sku%' => $product->getSku(),
+                '%product_name%' => $product->getName(),
+            ]
+        );
+    }
 }
