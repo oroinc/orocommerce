@@ -25,11 +25,12 @@ const ShoppingListItemCell = HtmlTemplateCell.extend({
 
     appendEditNotesAction() {
         const $note = this.$('[data-role=notes]');
-        if (!$note.length) {
+        const actionsColumn = this.column.collection.find(model => model.get('actions'));
+
+        if (!$note.length || !actionsColumn) {
             return;
         }
 
-        const actionsColumn = this.column.collection.find(model => model.get('actions'));
         const EditNotesAction = actionsColumn.get('actions').edit_notes;
         this.editNotesAction = new EditNotesAction({
             model: this.model,
