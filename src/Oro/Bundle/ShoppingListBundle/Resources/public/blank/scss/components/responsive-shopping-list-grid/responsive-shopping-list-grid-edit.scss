@@ -208,6 +208,12 @@
             margin: 0 !important;
         }
 
+        .grid-row {
+            .grid-body-cell.action-cell {
+                padding-top: $responsive-shopping-body-cell-offset-y-mobile;
+            }
+        }
+
         .group-row,
         .sub-row {
             position: relative;

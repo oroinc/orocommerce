@@ -177,6 +177,10 @@
 @include breakpoint('mobile-landscape') {
     .responsive-shopping-list-grid {
         .grid-row {
+            > .grid-cell:first-child {
+                position: static;
+            }
+
             &.loading {
                 @include loading-blur-overlay;
 
