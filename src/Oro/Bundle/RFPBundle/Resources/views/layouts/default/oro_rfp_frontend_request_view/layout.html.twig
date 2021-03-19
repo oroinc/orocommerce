@@ -168,8 +168,7 @@
                                 </h3>
 
                                 <div class="customer-line-items__row">
-                                    {{ 'oro.frontend.rfp.requestproduct.product_sku.label'|trans }}
-                                    <span class="customer-line-items__sku-value customer-line-items__item-offset">{{ requestProduct.productSku }}</span>
+                                    {{ 'oro.frontend.rfp.requestproduct.product_sku.label'|trans }} <span class="customer-line-items__sku-value">{{ requestProduct.productSku }}</span>
                                 </div>
 
                                 <div class="grid-row hide-on-desktop hide-on-strict-tablet">
@@ -202,7 +201,7 @@
                         <td class="grid-cell notes-cell" colspan="4">
                             <div class="customer-line-items__row customer-line-items__notes">
                                 {{ 'oro.frontend.rfp.requestproduct.comment.label'|trans }}:
-                                <span class="customer-line-items__item-offset">{{ requestProduct.comment }}</span>
+                                <span class="customer-line-items__value">{{ requestProduct.comment }}</span>
                             </div>
                         </td>
                     </tr>

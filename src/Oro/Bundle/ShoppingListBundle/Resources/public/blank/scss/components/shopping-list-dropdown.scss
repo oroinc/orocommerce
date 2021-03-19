@@ -66,11 +66,16 @@
     }
 
     &__details {
-        display: inline-flex;
-        flex-wrap: wrap;
-        align-items: center;
         text-align: $end;
         padding-left: $offset-x-s;
+    }
+
+    &__details-count {
+        display: inline-block;
+    }
+
+    &__details-subtotal {
+        display: inline-block;
     }
 
     &__products {
@@ -221,4 +226,3 @@
         }
     }
 }
-

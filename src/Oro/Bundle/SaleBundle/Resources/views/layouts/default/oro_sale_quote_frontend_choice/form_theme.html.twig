@@ -41,7 +41,7 @@
             </h3>
             <div class="customer-line-items__row">
                 {{ 'oro.frontend.sale.quoteproduct.product_sku.label'|trans }}
-                <span class="customer-line-items__sku-value customer-line-items__item-offset">
+                <span class="customer-line-items__sku-value">
                     {% if quoteProduct.isTypeNotAvailable %}
                         {{ quoteProduct.productReplacementSku }}
                     {% else %}
