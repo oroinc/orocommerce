@@ -1,1 +1,5 @@
+{%- if oro_is_rtl_mode() -%}
+<%= _.escape(obj['defaultName.string']) %> - <%= _.escape(sku) %>
+{%- else -%}
 <%= _.escape(sku) %> - <%= _.escape(obj['defaultName.string']) %>
+{%- endif -%}
