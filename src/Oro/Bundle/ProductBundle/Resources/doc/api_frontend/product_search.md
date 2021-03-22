@@ -36,10 +36,6 @@ name ~ "headlamp" and minimalPrice < 10
 This query will find all products that contain the `headlamp` word in name, and which minimal price is less than 10.
 It uses two simple expressions, `name ~ "headlamp"` and `minimalPrice < 10`, that are joined by the logical `and` operator.
 
-The locale for the name is equal to the locale selected for the website or the locale specified in the **X-Localization-ID** HTTP header if it is provided.
-
-The currency for the minimal price is equal to the currency selected for the website or the currency specified in the **X-Currency** HTTP header if it is provided.
-
 The parentheses in complex queries can be used to enforce the precedence of operators. For example:
 
 ```
