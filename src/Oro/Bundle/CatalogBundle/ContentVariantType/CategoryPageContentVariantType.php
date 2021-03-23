@@ -17,9 +17,9 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class CategoryPageContentVariantType implements ContentVariantTypeInterface, ContentVariantEntityProviderInterface
 {
-    public const TYPE = 'category_page';
-    public const CATEGORY_CONTENT_VARIANT_ID_KEY = 'categoryContentVariantId';
-    public const OVERRIDE_VARIANT_CONFIGURATION_KEY = 'overrideVariantConfiguration';
+    const TYPE = 'category_page';
+    const CATEGORY_CONTENT_VARIANT_ID_KEY = 'categoryContentVariantId';
+    const OVERRIDE_VARIANT_CONFIGURATION_KEY = 'overrideVariantConfiguration';
 
     /** @var AuthorizationCheckerInterface */
     private $authorizationChecker;

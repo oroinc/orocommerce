@@ -26,7 +26,8 @@ class PlaceholderHelperTest extends \PHPUnit\Framework\TestCase
         $this->placeholderRegistry = $this->createMock(PlaceholderRegistry::class);
         $this->searchMappingProvider = $this->createMock(AbstractSearchMappingProvider::class);
 
-        $this->helper = new PlaceholderHelper($this->placeholderRegistry, $this->searchMappingProvider);
+        $this->helper = new PlaceholderHelper($this->placeholderRegistry);
+        $this->helper->setSearchMappingProvider($this->searchMappingProvider);
     }
 
     /**

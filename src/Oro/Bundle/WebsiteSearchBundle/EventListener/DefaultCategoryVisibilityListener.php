@@ -6,7 +6,7 @@ use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\VisibilityBundle\Visibility\Resolver\CategoryVisibilityResolver;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Listens to category default visibility change and triggers products reindexation.

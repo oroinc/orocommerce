@@ -14,7 +14,7 @@ use Oro\Bundle\WebsiteSearchBundle\Event\BeforeReindexEvent;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderInterface;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Resolver\EntityDependenciesResolverInterface;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Abstract indexer for website search engine

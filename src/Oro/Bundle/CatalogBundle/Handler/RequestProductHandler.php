@@ -15,6 +15,7 @@ class RequestProductHandler
     const INCLUDE_SUBCATEGORIES_DEFAULT_VALUE = false;
     const INCLUDE_NOT_CATEGORIZED_PRODUCTS_DEFAULT_VALUE = false;
     const INCLUDE_NOT_CATEGORIZED_PRODUCTS_KEY = 'includeNotCategorizedProducts';
+    const OVERRIDE_VARIANT_CONFIGURATION_KEY = 'overrideVariantConfiguration';
 
     /** @var RequestStack */
     protected $requestStack;
@@ -27,7 +28,10 @@ class RequestProductHandler
         $this->requestStack = $requestStack;
     }
 
-    public function getCategoryId(): int
+    /**
+     * @return bool|integer
+     */
+    public function getCategoryId()
     {
         return $this->resolveValue(self::CATEGORY_ID_KEY);
     }
@@ -78,7 +82,7 @@ class RequestProductHandler
      * @param bool|null $defaultValue
      * @return bool
      */
-    public function getIncludeSubcategoriesChoice($defaultValue = null): bool
+    public function getIncludeSubcategoriesChoice($defaultValue = null)
     {
         if ($defaultValue === null) {
             $defaultValue = self::INCLUDE_SUBCATEGORIES_DEFAULT_VALUE;

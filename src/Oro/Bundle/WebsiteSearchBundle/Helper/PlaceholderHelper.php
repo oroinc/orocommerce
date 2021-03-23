@@ -12,20 +12,25 @@ use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderRegistry;
 class PlaceholderHelper
 {
     /** @var PlaceholderRegistry */
-    private PlaceholderRegistry $placeholderRegistry;
+    private $placeholderRegistry;
 
     /** @var AbstractSearchMappingProvider */
-    private AbstractSearchMappingProvider $searchMappingProvider;
+    private $searchMappingProvider;
 
     /**
      * @param PlaceholderRegistry $placeholderRegistry
      * @param AbstractSearchMappingProvider $searchMappingProvider
      */
-    public function __construct(
-        PlaceholderRegistry $placeholderRegistry,
-        AbstractSearchMappingProvider $searchMappingProvider
-    ) {
+    public function __construct(PlaceholderRegistry $placeholderRegistry)
+    {
         $this->placeholderRegistry = $placeholderRegistry;
+    }
+
+    /**
+     * @param AbstractSearchMappingProvider $searchMappingProvider
+     */
+    public function setSearchMappingProvider(AbstractSearchMappingProvider $searchMappingProvider): void
+    {
         $this->searchMappingProvider = $searchMappingProvider;
     }
 
@@ -36,7 +41,7 @@ class PlaceholderHelper
      * @param string $nameValue For example, "oro_product_1"
      * @return bool
      */
-    public function isNameMatch($name, $nameValue): bool
+    public function isNameMatch($name, $nameValue)
     {
         $placeholderNames = [];
         $placeholderPatterns = [];
@@ -74,6 +79,10 @@ class PlaceholderHelper
      */
     public function getEntityClassByResolvedIndexAlias(string $indexAlias): string
     {
+        if (!$this->searchMappingProvider) {
+            return '';
+        }
+
         $entityClass = '';
         $entityClassListAliases = $this->searchMappingProvider->getEntitiesListAliases();
         foreach ($entityClassListAliases as $className => $alias) {

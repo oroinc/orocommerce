@@ -7,7 +7,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\VisibilityBundle\Visibility\Resolver\CategoryVisibilityResolver;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Bundle\WebsiteSearchBundle\EventListener\DefaultCategoryVisibilityListener;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class DefaultCategoryVisibilityListenerTest extends \PHPUnit\Framework\TestCase
 {

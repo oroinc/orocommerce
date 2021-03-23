@@ -15,7 +15,7 @@ class ReindexMessageFilter implements MessageFilterInterface
     use ContextTrait;
 
     /** @var string */
-    private string $topic;
+    private $topic;
 
     /**
      * @param string $topic

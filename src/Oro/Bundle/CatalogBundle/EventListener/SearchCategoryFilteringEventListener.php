@@ -27,11 +27,11 @@ use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
  */
 class SearchCategoryFilteringEventListener
 {
-    private const CATEGORY_CONTENT_VARIANT_ID_CONFIG_PATH = '[options][urlParams][categoryContentVariantId]';
-    private const CATEGORY_ID_CONFIG_PATH = '[options][urlParams][categoryId]';
-    private const INCLUDE_CAT_CONFIG_PATH = '[options][urlParams][includeSubcategories]';
-    private const OVERRIDE_VARIANT_CONFIGURATION_CONFIG_PATH = '[options][urlParams][overrideVariantConfiguration]';
-    private const VIEW_LINK_PARAMS_CONFIG_PATH = '[properties][view_link][direct_params]';
+    const CATEGORY_CONTENT_VARIANT_ID_CONFIG_PATH = '[options][urlParams][categoryContentVariantId]';
+    const CATEGORY_ID_CONFIG_PATH = '[options][urlParams][categoryId]';
+    const INCLUDE_CAT_CONFIG_PATH = '[options][urlParams][includeSubcategories]';
+    const OVERRIDE_VARIANT_CONFIGURATION_CONFIG_PATH = '[options][urlParams][overrideVariantConfiguration]';
+    const VIEW_LINK_PARAMS_CONFIG_PATH = '[properties][view_link][direct_params]';
 
     /** @var RequestProductHandler $requestProductHandler */
     private $requestProductHandler;
@@ -232,7 +232,7 @@ class SearchCategoryFilteringEventListener
 
     private function isIncludeSubcategories(ParameterBag $parameters): bool
     {
-        return $this->requestProductHandler->getIncludeSubcategoriesChoice(
+        return (bool) $this->requestProductHandler->getIncludeSubcategoriesChoice(
             filter_var(
                 $parameters->get(RequestProductHandler::INCLUDE_SUBCATEGORIES_KEY, null),
                 FILTER_VALIDATE_BOOLEAN,

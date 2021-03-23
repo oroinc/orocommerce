@@ -1263,6 +1263,12 @@ services:
         class: Oro\Bundle\ProductBundle\Helper\ProductGrouper\ProductsGrouperFactory
         public: false
 
+    oro_product.datagrid.event_listener.search_content_variant_filtering:
+        class: Oro\Bundle\ProductBundle\DataGrid\EventListener\SearchContentVariantFilteringEventListener
+        arguments:
+            - '@oro_product.handler.request_content_variant'
+            - '@oro_config.manager'
+
     oro_product.datagrid.event_listener.product_collection_content_variant_filtering:
         class: Oro\Bundle\ProductBundle\DataGrid\EventListener\ProductCollectionContentVariantFilteringEventListener
         arguments:
@@ -1281,7 +1287,6 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.frontend-product-search-grid, method: onBuildAfter }
-
 
     oro_product.datagrid.event_listener.frontend_product_grid:
         class: 'Oro\Bundle\ProductBundle\DataGrid\EventListener\FrontendProductGridEventListener'
