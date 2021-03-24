@@ -33,7 +33,7 @@ class PriceRuleUpdateListTest extends RestJsonApiUpdateListTestCase
                         'quantityExpression'    => null,
                         'productUnitExpression' => null,
                         'ruleCondition'         => 'product.category.id == 1',
-                        'rule'                  => 'pricelist[0].prices.value * 0.8',
+                        'rule'                  => 'pricelist[1].prices.value * 0.8',
                         'priority'              => 5
                     ],
                     'relationships' => [
@@ -60,7 +60,7 @@ class PriceRuleUpdateListTest extends RestJsonApiUpdateListTestCase
                         'quantityExpression'    => null,
                         'productUnitExpression' => null,
                         'ruleCondition'         => 'product.category.id == 2',
-                        'rule'                  => 'pricelist[0].prices.value * 1.3',
+                        'rule'                  => 'pricelist[1].prices.value * 1.3',
                         'priority'              => 10
                     ],
                     'relationships' => [
@@ -118,7 +118,7 @@ class PriceRuleUpdateListTest extends RestJsonApiUpdateListTestCase
                     'type'       => 'pricerules',
                     'id'         => (string)$rule1Id,
                     'attributes' => [
-                        'rule' => 'pricelist[0].prices.value * 0.2'
+                        'rule' => 'pricelist[1].prices.value * 0.2'
                     ]
                 ],
                 [
@@ -126,7 +126,7 @@ class PriceRuleUpdateListTest extends RestJsonApiUpdateListTestCase
                     'type'       => 'pricerules',
                     'id'         => (string)$rule2Id,
                     'attributes' => [
-                        'rule' => 'pricelist[0].prices.value - 2'
+                        'rule' => 'pricelist[1].prices.value - 2'
                     ]
                 ]
             ]
@@ -167,7 +167,7 @@ class PriceRuleUpdateListTest extends RestJsonApiUpdateListTestCase
                     'type'       => 'pricerules',
                     'id'         => (string)$ruleId,
                     'attributes' => [
-                        'rule' => 'pricelist[0].prices.value - 2'
+                        'rule' => 'pricelist[1].prices.value - 2'
                     ]
                 ],
                 [
@@ -179,7 +179,7 @@ class PriceRuleUpdateListTest extends RestJsonApiUpdateListTestCase
                         'quantityExpression'    => null,
                         'productUnitExpression' => null,
                         'ruleCondition'         => 'product.category.id == 1',
-                        'rule'                  => 'pricelist[0].prices.value * 0.8',
+                        'rule'                  => 'pricelist[1].prices.value * 0.8',
                         'priority'              => 5
                     ],
                     'relationships' => [
@@ -233,7 +233,7 @@ class PriceRuleUpdateListTest extends RestJsonApiUpdateListTestCase
                         'currency'      => 'EUR',
                         'quantity'      => 1,
                         'ruleCondition' => 'product.category.id == 1',
-                        'rule'          => 'pricelist[0].prices.value * 0.8',
+                        'rule'          => 'pricelist[1].prices.value * 0.8',
                         'priority'      => 5
                     ],
                     'relationships' => [
@@ -257,7 +257,7 @@ class PriceRuleUpdateListTest extends RestJsonApiUpdateListTestCase
                         'currency'      => 'EUR',
                         'quantity'      => 1,
                         'ruleCondition' => 'product.category.id == 2',
-                        'rule'          => 'pricelist[0].prices.value * 1.3',
+                        'rule'          => 'pricelist[1].prices.value * 1.3',
                         'priority'      => 10
                     ],
                     'relationships' => [

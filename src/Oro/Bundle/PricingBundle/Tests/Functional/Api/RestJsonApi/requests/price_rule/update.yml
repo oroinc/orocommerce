@@ -3,9 +3,9 @@ data:
     id: '<toString(@price_list_1_price_rule_1->id)>'
     attributes:
         quantity: null
-        quantityExpression: 'pricelist[0].prices.quantity + 4'
+        quantityExpression: 'pricelist[1].prices.quantity + 4'
         ruleCondition: 'product.category.id > 0'
-        rule: 'pricelist[0].prices.value * 1'
+        rule: 'pricelist[1].prices.value * 1'
         priority: '5'
     relationships:
         productUnit:

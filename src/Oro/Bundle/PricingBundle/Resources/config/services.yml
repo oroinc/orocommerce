@@ -607,6 +607,22 @@ services:
             - '@doctrine'
             - 'Oro\Bundle\PricingBundle\Entity\PriceList'
 
+    oro_pricing.validator.price_rule_expressions:
+        class: 'Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpressionsValidator'
+        arguments:
+            - '@oro_pricing.compiler.price_list_rule_compiler'
+            - '%kernel.debug%'
+        tags:
+            - { name: validator.constraint_validator }
+
+    oro_pricing.validator.product_assignment_rule_expression:
+        class: 'Oro\Bundle\PricingBundle\Validator\Constraints\ProductAssignmentRuleExpressionValidator'
+        arguments:
+            - '@oro_pricing.compiler.product_assignment_rule_compiler'
+            - '%kernel.debug%'
+        tags:
+            - { name: validator.constraint_validator }
+
     oro_pricing.validator.unique_price_list:
         class: 'Oro\Bundle\PricingBundle\Validator\Constraints\UniquePriceListValidator'
         tags:
