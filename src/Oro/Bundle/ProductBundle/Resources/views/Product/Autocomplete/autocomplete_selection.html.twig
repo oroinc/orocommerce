@@ -1,5 +1,1 @@
-{%- if oro_is_rtl_mode() -%}
-<%= _.escape(obj['defaultName.string']) %> - <%= _.escape(sku) %>
-{%- else -%}
-<%= _.escape(sku) %> - <%= _.escape(obj['defaultName.string']) %>
-{%- endif -%}
+<bdo dir="ltr" class="quick-order-add__result-sku"><%- sku %></bdo> - <%- obj['defaultName.string'] %>
