@@ -36,12 +36,12 @@
                         </tr>
                         <tr class="customer-info-grid__row">
                             <td class="customer-info-grid__element-label">{{ 'oro.frontend.rfp.request.email.label'|trans }}</td>
-                            <td class="customer-info-grid__element-content">{{ request.email }}</td>
+                            <td class="customer-info-grid__element-content"><bdo dir="ltr">{{ request.email }}</bdo></td>
                         </tr>
                         {% if request.phone %}
                             <tr class="customer-info-grid__row">
                                 <td class="customer-info-grid__element-label">{{ 'oro.frontend.rfp.request.phone.label'|trans }}</td>
-                                <td class="customer-info-grid__element-content">{{ request.phone }}</td>
+                                <td class="customer-info-grid__element-content"><bdo dir="ltr">{{ request.phone }}</bdo></td>
                             </tr>
                         {% endif %}
                         <tr class="customer-info-grid__row">
@@ -57,13 +57,13 @@
                         {% if request.poNumber %}
                             <tr class="customer-info-grid__row">
                                 <td class="customer-info-grid__element-label">{{ 'oro.frontend.rfp.request.po_number.label'|trans }}</td>
-                                <td class="customer-info-grid__element-content">{{ request.poNumber }}</td>
+                                <td class="customer-info-grid__element-content"><bdo dir="ltr">{{ request.poNumber }}</bdo></td>
                             </tr>
                         {% endif %}
                         {% if request.shipUntil %}
                             <tr class="customer-info-grid__row">
                                 <td class="customer-info-grid__element-label">{{ 'oro.frontend.rfp.request.ship_until.label'|trans }}</td>
-                                <td class="customer-info-grid__element-content">{{ request.shipUntil|oro_format_date }}</td>
+                                <td class="customer-info-grid__element-content"><bdo dir="ltr">{{ request.shipUntil|oro_format_date }}</bdo></td>
                             </tr>
                         {% endif %}
                     </tbody>
