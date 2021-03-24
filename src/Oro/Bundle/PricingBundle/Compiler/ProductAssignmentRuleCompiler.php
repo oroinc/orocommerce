@@ -7,6 +7,9 @@ use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
+/**
+ * Compile product assignment rule to Query builder with all applied restrictions.
+ */
 class ProductAssignmentRuleCompiler extends AbstractRuleCompiler
 {
     /**
@@ -32,18 +35,25 @@ class ProductAssignmentRuleCompiler extends AbstractRuleCompiler
         $cacheKey = 'ar_' . $priceList->getId();
         $qb = $this->cache->fetch($cacheKey);
         if (!$qb) {
-            $qb = $this->createQueryBuilder($priceList);
-            $aliases = $qb->getRootAliases();
-            $rootAlias = reset($aliases);
-
-            $this->modifySelectPart($qb, $priceList, $rootAlias);
-            $this->applyRuleConditions($qb, $priceList);
-            $this->restrictByManualPrices($qb, $priceList, $rootAlias);
-            $qb->addGroupBy($rootAlias . '.id');
+            $qb = $this->compileQueryBuilder($priceList);
 
             $this->cache->save($cacheKey, $qb);
         }
         $this->restrictByGivenProduct($qb, $products);
+
+        return $qb;
+    }
+
+    public function compileQueryBuilder(PriceList $priceList): QueryBuilder
+    {
+        $qb = $this->createQueryBuilder($priceList);
+        $aliases = $qb->getRootAliases();
+        $rootAlias = reset($aliases);
+
+        $this->modifySelectPart($qb, $priceList, $rootAlias);
+        $this->applyRuleConditions($qb, $priceList);
+        $this->restrictByManualPrices($qb, $priceList, $rootAlias);
+        $qb->addGroupBy($rootAlias . '.id');
 
         return $qb;
     }
