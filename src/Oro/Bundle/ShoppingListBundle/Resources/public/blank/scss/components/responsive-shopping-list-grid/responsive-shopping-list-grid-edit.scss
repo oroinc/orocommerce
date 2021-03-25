@@ -209,8 +209,12 @@
         }
 
         .grid-row {
-            .grid-body-cell.action-cell {
-                padding-top: $responsive-shopping-body-cell-offset-y-mobile;
+            .grid-body-cell {
+                &-price,
+                &-subtotal,
+                &.action-cell {
+                    padding-top: $responsive-shopping-body-cell-offset-y-mobile;
+                }
             }
         }
 
