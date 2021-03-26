@@ -5,7 +5,11 @@
 {% endblock %}
 
 {% block order_body_column_widget %}
-    <div class="grid__column grid__column--6 grid__column--no-gutters-l">
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " grid__column grid__column--6 grid__column--no-gutters-l"
+    }) %}
+
+    <div {{ block('block_attributes') }}>
         <table class="customer-info-grid__table">
             <tbody>
                 {{ block_widget(block) }}
@@ -15,9 +19,14 @@
 {% endblock %}
 
 {% block order_body_column_element_widget %}
-    <tr>
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " customer-info-grid__element customer-info-grid__element--" ~ block.vars.id
+    }) %}
+    <tr {{ block('block_attributes') }}>
         <td class="customer-info-grid__element-label">{{ label|trans }}</td>
-        <td class="customer-info-grid__element-content">{{ block_widget(block) }}</td>
+        <td class="customer-info-grid__element-content">
+            <span class="customer-info-grid__element-value">{{- block_widget(block) -}}</span>
+        </td>
     </tr>
 {% endblock %}
 
@@ -60,8 +69,12 @@
 {% endblock %}
 
 {% block _order_information_head_widget %}
-    <h2 class="customer-info-grid__title">
-        {{ block_widget(block) }}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " customer-info-grid__title"
+    }) %}
+
+    <h2 {{ block('block_attributes') }}>
+        {{- block_widget(block) -}}
     </h2>
 {% endblock %}
 
@@ -72,15 +85,19 @@
 {% endblock %}
 
 {% block _order_line_items_grid_title_widget %}
-    <h2 class="customer-info-grid__title">
-        {{ block_widget(block) }}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " customer-info-grid__title"
+    }) %}
+
+    <h2 {{ block('block_attributes') }}>
+        {{- block_widget(block) -}}
     </h2>
 {% endblock %}
 
 {% block _order_po_number_widget %}
     {% set text = text|default('oro.ui.empty'|trans) %}
 
-    {{ parent_block_widget(block) }}
+    {{- parent_block_widget(block) -}}
 {% endblock %}
 
 {% block _order_payment_method_widget %}
