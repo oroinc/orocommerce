@@ -23,9 +23,6 @@ class EnableAttributesUsableInExport extends AbstractFixture implements Containe
                 'sku' => [
                     'use_in_export' => true,
                 ],
-                'names' => [
-                    'use_in_export' => true,
-                ],
                 'inventory_status' => [
                     'use_in_export' => true,
                 ],
