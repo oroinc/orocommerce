@@ -182,7 +182,7 @@
 
 {% block address_widget %}
     {% from 'OroAddressBundle::macros.html.twig' import renderAddress %}
-    {{ renderAddress(address) }}
+    {{ renderAddress(address, true) }}
 {% endblock %}
 
 {% block quote_body_column_element_widget %}
