@@ -1,14 +1,17 @@
+import _ from 'underscore';
 import BaseView from 'oroui/js/app/views/base/view';
 import UnitsUtil from 'oroproduct/js/app/units-util';
 import QuantityHelper from 'oroproduct/js/app/quantity-helper';
 import InputWidgetManager from 'oroui/js/input-widget-manager';
+import __ from 'orotranslation/js/translator';
 
 const QuickAddRowView = BaseView.extend({
     optionNames: BaseView.prototype.optionNames.concat([
-        'defaultQuantity'
+        'defaultQuantity', 'unitErrorText'
     ]),
 
     defaultQuantity: 1,
+    unitErrorText: 'oro.product.validation.unit.invalid',
 
     elem: {
         remove: '[data-role="row-remove"]'
@@ -53,6 +56,7 @@ const QuickAddRowView = BaseView.extend({
         }
 
         this.initModel(productsCollection, options);
+        this.initUnitValidator();
         this.$(this.attrElem.unit).removeClass('disabled');
         QuickAddRowView.__super__.initialize.call(this, options);
     },
@@ -68,6 +72,7 @@ const QuickAddRowView = BaseView.extend({
             this.model.collection.remove(this.model);
         }
         this.model.dispose();
+        this.$(this.attrElem.unit).removeData('unitValidator');
         return QuickAddRowView.__super__.dispose.call(this);
     },
 
@@ -96,6 +101,16 @@ const QuickAddRowView = BaseView.extend({
 
         // define row # in model
         this.model.set({_order: this.getRowNumber()});
+    },
+
+    initUnitValidator() {
+        this.$(this.attrElem.unit).data('unitValidator', {
+            isValid: () => this.model.isValidUnit(),
+            getMessage: () => {
+                const unitName = this.model.get('unit') || this.model.previous('unit_label');
+                return __(this.unitErrorText, {unit: _.escape(unitName)});
+            }
+        });
     },
 
     getRowNumber() {
@@ -209,6 +224,9 @@ const QuickAddRowView = BaseView.extend({
     },
 
     updateUI() {
+        if (!this.model.isValidUnit()) {
+            this.$el.closest('form').validate().element(this.$(this.attrElem.unit)[0]);
+        }
         this.$(this.elem.remove).toggle(Boolean(this.model.get('sku')));
     },
 
