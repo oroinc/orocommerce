@@ -79,21 +79,21 @@ Feature: Shopping List edit page
     Then I should see "Product has been saved" flash message
     Examples:
       | SKU  | Color | Size |
-      | BB4  | Red   | M    |
-      | BB5  | Green | L    |
-      | BB6  | Blue  | S    |
-      | BB7  | Red   | M    |
-      | BB8  | Green | L    |
-      | BB9  | Blue  | S    |
+      | BB04 | Red   | M    |
+      | BB05 | Green | L    |
+      | BB06 | Blue  | S    |
+      | BB07 | Red   | M    |
+      | BB08 | Green | L    |
+      | BB09 | Blue  | S    |
       | BB10 | Red   | M    |
       | BB11 | Green | L    |
       | BB12 | Blue  | S    |
       | BB13 | Green | M    |
 
-  Scenario: Set additional units for product BB6
+  Scenario: Set additional units for product BB06
     When I go to Products/Products
-    And I filter SKU as is equal to "BB6"
-    And I click Edit BB6 in grid
+    And I filter SKU as is equal to "BB06"
+    And I click Edit BB06 in grid
     And set Additional Unit with:
       | Unit | Precision | Rate |
       | each | 1         | 2    |
@@ -115,17 +115,17 @@ Feature: Shopping List edit page
     Then I should see "Product has been saved" flash message
     Examples:
       | MainSKU | SKU1 | SKU2 | SKU3 |
-      | AA1     | BB4  | BB5  | BB6  |
-      | AA3     | BB8  | BB9  | BB10 |
+      | AA01    | BB04 | BB05 | BB06 |
+      | AA03    | BB08 | BB09 | BB10 |
 
   Scenario: Prepare configurable product for One Dimensional Matrix
     When I go to Products/Products
-    And I filter SKU as is equal to "AA2"
-    And I click Edit AA2 in grid
+    And I filter SKU as is equal to "AA02"
+    And I click Edit AA02 in grid
     And I fill "ProductForm" with:
       | Configurable Attributes | [Color] |
     And I check records in grid:
-      | BB4  |
+      | BB04 |
       | BB13 |
     And I save and close form
     Then I should see "Product has been saved" flash message
@@ -147,7 +147,7 @@ Feature: Shopping List edit page
     And type "Shopping List 4" in "Shopping List Name"
     And I click "Create"
     Then I should see "Shopping list \"Shopping List 4\" was created successfully"
-    When type "AA1" in "search"
+    When type "AA01" in "search"
     And click "Search Button"
     Then I should see an "Matrix Grid Form" element
     When I click on "Shopping List Dropdown"
@@ -166,8 +166,8 @@ Feature: Shopping List edit page
     And I should see "There are no shopping list line items"
     When I open page with shopping list Shopping List 4
     Then I should see following grid:
-      | SKU | Item                   | QtyUpdate All                   | Price | Subtotal |
-      | AA1 | Configurable Product 1 | Click "edit" to select variants |       | N/A      |
+      | SKU  | Item                   | QtyUpdate All                   | Price | Subtotal |
+      | AA01 | Configurable Product 1 | Click "edit" to select variants |       | N/A      |
 
   Scenario: Set Default Action
     When I click "Shopping List Actions"
@@ -177,7 +177,7 @@ Feature: Shopping List edit page
     Then I should see "Shopping list has been successfully set as default" flash message
 
   Scenario: Order empty matrix form
-    When I click Edit AA1 in grid
+    When I click Edit AA01 in grid
     Then I should see an "Matrix Grid Form" element
     And I should see next rows in "Matrix Grid Form" table
       | S   | M   | L   |
@@ -207,8 +207,8 @@ Feature: Shopping List edit page
     And I filter Name as contains "Shopping List 4"
     And I click view Shopping List 4 in grid
     Then I should see following grid:
-      | SKU | Item                   | Qty | Unit                            | Price | Subtotal |
-      | AA1 | Configurable Product 1 |     | Click "edit" to select variants |       | N/A      |
+      | SKU  | Item                   | Qty | Unit                            | Price | Subtotal |
+      | AA01 | Configurable Product 1 |     | Click "edit" to select variants |       | N/A      |
 
   Scenario: Create request for quote with empty matrix form
     When I click "Shopping List Actions"
@@ -248,9 +248,9 @@ Feature: Shopping List edit page
     Then I should see "2 total records"
     And I should see following grid:
       | SKU  | Item                   |          | QtyUpdate All                   | Price  | Subtotal |
-      | AA1  | Configurable Product 1 |          | Click "edit" to select variants |        | N/A      |
+      | AA01 | Configurable Product 1 |          | Click "edit" to select variants |        | N/A      |
       | CC30 | Product 30             | In Stock | 1 piece                         | $31.00 | $31.00   |
-    When I click Edit AA1 in grid
+    When I click Edit AA01 in grid
     And I fill "Matrix Grid Form" with:
       |       | S | M | L |
       | Red   | - | 1 | - |
@@ -261,9 +261,9 @@ Feature: Shopping List edit page
     And I should see following grid:
       | SKU  | Item                                        |              | QtyUpdate All | Price  | Subtotal            |
       | CC30 | Product 30                                  | In Stock     | 1 piece       | $31.00 | $31.00              |
-      | BB4  | Configurable Product 1 Color: Red Size: M   | In Stock     | 1 item        | $11.00 | $11.00 -$5.50 $5.50 |
-      | BB5  | Configurable Product 1 Color: Green Size: L | Out of Stock | 1 item        | $11.00 | $11.00 -$5.50 $5.50 |
-      | BB6  | Configurable Product 1 Color: Blue Size: S  | In Stock     | 1 item        | $11.00 | $11.00 -$5.50 $5.50 |
+      | BB04 | Configurable Product 1 Color: Red Size: M   | In Stock     | 1 item        | $11.00 | $11.00 -$5.50 $5.50 |
+      | BB05 | Configurable Product 1 Color: Green Size: L | Out of Stock | 1 item        | $11.00 | $11.00 -$5.50 $5.50 |
+      | BB06 | Configurable Product 1 Color: Blue Size: S  | In Stock     | 1 item        | $11.00 | $11.00 -$5.50 $5.50 |
     And I should see "Summary 4 Items"
     And I should see "Subtotal $64.00"
     And I should see "Discount -$16.50"
@@ -287,7 +287,7 @@ Feature: Shopping List edit page
     And I should see "Product 6" in the "RequestAQuoteProducts" element
 
   Scenario: Matrix form with single attribute
-    When type "AA2" in "search"
+    When type "AA02" in "search"
     And click "Search Button"
     And I click "List View"
     Then I should see "One Dimensional Matrix Grid Form" for "Configurable Product 2" product
@@ -302,7 +302,7 @@ Feature: Shopping List edit page
     When I follow "Shopping List 5" link within flash message "Shopping list \"Shopping List 5\" was updated successfully"
     Then I should see following grid:
       | SKU  | Item                                |              | QtyUpdate All | Price  | Subtotal              |
-      | BB4  | Configurable Product 2 Color: Red   | In Stock     | 1 item        | $11.00 | $11.00 -$5.50 $5.50   |
+      | BB04 | Configurable Product 2 Color: Red   | In Stock     | 1 item        | $11.00 | $11.00 -$5.50 $5.50   |
       | BB13 | Configurable Product 2 Color: Green | Out of Stock | 1 item        | $23.00 | $23.00 -$11.50 $11.50 |
     When I click "Group Similar"
     And I click Edit Configurable Product 2 in grid
@@ -317,7 +317,7 @@ Feature: Shopping List edit page
     Then I should see following grid:
       | SKU  | Item                   |              | QtyUpdate All | Price  | Subtotal              |
       |      | Configurable Product 2 |              | 4 items       |        | $68.00 -$34.00 $34.00 |
-      | BB4  | Color: Red             | In Stock     | 2 item        | $11.00 | $22.00 -$11.00 $11.00 |
+      | BB04 | Color: Red             | In Stock     | 2 item        | $11.00 | $22.00 -$11.00 $11.00 |
       | BB13 | Color: Green           | Out of Stock | 2 item        | $23.00 | $46.00 -$23.00 $23.00 |
 
   Scenario: Inline edit quantity and unit
@@ -325,17 +325,17 @@ Feature: Shopping List edit page
     Then I should see following grid:
       | SKU  | Item                                        |              | QtyUpdate All | Price  | Subtotal            |
       | CC30 | Product 30                                  | In Stock     | 1 piece       | $31.00 | $31.00              |
-      | BB4  | Configurable Product 1 Color: Red Size: M   | In Stock     | 1 item        | $11.00 | $11.00 -$5.50 $5.50 |
-      | BB5  | Configurable Product 1 Color: Green Size: L | Out of Stock | 1 item        | $11.00 | $11.00 -$5.50 $5.50 |
-      | BB6  | Configurable Product 1 Color: Blue Size: S  | In Stock     | 1 item        | $11.00 | $11.00 -$5.50 $5.50 |
+      | BB04 | Configurable Product 1 Color: Red Size: M   | In Stock     | 1 item        | $11.00 | $11.00 -$5.50 $5.50 |
+      | BB05 | Configurable Product 1 Color: Green Size: L | Out of Stock | 1 item        | $11.00 | $11.00 -$5.50 $5.50 |
+      | BB06 | Configurable Product 1 Color: Blue Size: S  | In Stock     | 1 item        | $11.00 | $11.00 -$5.50 $5.50 |
     When I click "Group Similar"
     And I sort grid by "SKU"
     Then I should see following grid:
       | SKU  | Item                   |              | QtyUpdate All | Price  | Subtotal              |
       |      | Configurable Product 1 |              | 3 items       |        | $33.00 -$16.50 $16.50 |
-      | BB4  | Color: Red Size: M     | In Stock     | 1 item        | $11.00 | $11.00 -$5.50 $5.50   |
-      | BB5  | Color: Green Size: L   | Out of Stock | 1 item        | $11.00 | $11.00 -$5.50 $5.50   |
-      | BB6  | Color: Blue Size: S    | In Stock     | 1 item        | $11.00 | $11.00 -$5.50 $5.50   |
+      | BB04 | Color: Red Size: M     | In Stock     | 1 item        | $11.00 | $11.00 -$5.50 $5.50   |
+      | BB05 | Color: Green Size: L   | Out of Stock | 1 item        | $11.00 | $11.00 -$5.50 $5.50   |
+      | BB06 | Color: Blue Size: S    | In Stock     | 1 item        | $11.00 | $11.00 -$5.50 $5.50   |
       | CC30 | Product 30             | In Stock     | 1 piece       | $31.00 | $31.00                |
     When I click on "Shopping List Inline Line Item 4 Quantity"
     Then the "Shopping List Inline Line Item 4 Quantity Input" field element should contain "1"
@@ -346,10 +346,10 @@ Feature: Shopping List edit page
     And I click on "Shopping List Inline Line Item 4 Save Changes Button"
     Then I should see following grid:
       | SKU  | Item                                       |              | QtyUpdate All | Price  | Subtotal              |
-      | BB6  | Configurable Product 1 Color: Blue Size: S | In Stock     | 10 each       | N/A    | N/A                   |
       |      | Configurable Product 1                     |              | 2 items       |        | $22.00 -$11.00 $11.00 |
-      | BB4  | Color: Red Size: M                         | In Stock     | 1 item        | $11.00 | $11.00 -$5.50 $5.50   |
-      | BB5  | Color: Green Size: L                       | Out of Stock | 1 item        | $11.00 | $11.00 -$5.50 $5.50   |
+      | BB04 | Color: Red Size: M                         | In Stock     | 1 item        | $11.00 | $11.00 -$5.50 $5.50   |
+      | BB05 | Color: Green Size: L                       | Out of Stock | 1 item        | $11.00 | $11.00 -$5.50 $5.50   |
+      | BB06 | Configurable Product 1 Color: Blue Size: S | In Stock     | 10 each       | N/A    | N/A                   |
       | CC30 | Product 30                                 | In Stock     | 1 piece       | $31.00 | $31.00                |
     And I should see "Summary 4 Items"
     And I should see "Subtotal $53.00"
@@ -357,21 +357,21 @@ Feature: Shopping List edit page
     And I should see "Total $42.00"
 
   Scenario: Update all
-    When I click on "Shopping List Inline Line Item 1 Quantity"
-    Then the "Shopping List Inline Line Item 1 Quantity Input" field element should contain "10"
-    And the "Shopping List Inline Line Item 1 Unit Select" field element should contain "each"
-    When I type "1" in "Shopping List Inline Line Item 1 Quantity Input"
+    When I click on "Shopping List Inline Line Item 4 Quantity"
+    Then the "Shopping List Inline Line Item 4 Quantity Input" field element should contain "10"
+    And the "Shopping List Inline Line Item 4 Unit Select" field element should contain "each"
+    When I type "1" in "Shopping List Inline Line Item 4 Quantity Input"
     And I fill "Inline Line Item Edit Form" with:
       | Unit | item |
-    And I click on "Shopping List Inline Line Item 4 Quantity"
-    And I type "10" in "Shopping List Inline Line Item 4 Quantity Input"
+    And I click on "Shopping List Inline Line Item 3 Quantity"
+    And I type "10" in "Shopping List Inline Line Item 3 Quantity Input"
     And I click "Update All"
     Then I should see following grid:
       | SKU  | Item                   |              | QtyUpdate All | Price  | Subtotal               |
       |      | Configurable Product 1 |              | 12 items      |        | $132.00 -$66.00 $66.00 |
-      | BB4  | Color: Red Size: M     | In Stock     | 1 item        | $11.00 | $11.00 -$5.50 $5.50    |
-      | BB5  | Color: Green Size: L   | Out of Stock | 10 item       | $11.00 | $110.00 -$55.00 $55.00 |
-      | BB6  | Color: Blue Size: S    | In Stock     | 1 item        | $11.00 | $11.00 -$5.50 $5.50    |
+      | BB04 | Color: Red Size: M     | In Stock     | 1 item        | $11.00 | $11.00 -$5.50 $5.50    |
+      | BB05 | Color: Green Size: L   | Out of Stock | 10 item       | $11.00 | $110.00 -$55.00 $55.00 |
+      | BB06 | Color: Blue Size: S    | In Stock     | 1 item        | $11.00 | $11.00 -$5.50 $5.50    |
       | CC30 | Product 30             | In Stock     | 1 piece       | $31.00 | $31.00                 |
     And I should see "Summary 4 Items"
     And I should see "Subtotal $163.00"

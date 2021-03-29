@@ -89,8 +89,8 @@ Feature: My Shopping List Actions
     Then I should see "My shopping list updated notes" in the "Shopping List Notes" element
     And I sort grid by "SKU"
     And I should see following grid:
-      | SKU | Item                               |
-      | BB4 | Configurable Product 1 Note 4 text |
+      | SKU  | Item                               |
+      | BB04 | Configurable Product 1 Note 4 text |
     When I click "Edit Shopping List Line Item Note"
     Then I should see "UiWindow" with elements:
       | Title        | Edit note for "Configurable Product 1" product |
@@ -100,8 +100,8 @@ Feature: My Shopping List Actions
     And click "Save" in modal window
     Then should see "Line item note has been successfully updated" flash message
     And I should see following grid:
-      | SKU | Item                                       |
-      | BB4 | Configurable Product 1 Note 4 text updated |
+      | SKU  | Item                                       |
+      | BB04 | Configurable Product 1 Note 4 text updated |
 
   Scenario: Delete Action
     When I click "Shopping List Actions"
