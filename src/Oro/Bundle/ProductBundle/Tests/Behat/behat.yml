@@ -440,6 +440,11 @@ oro_behat_extension:
         type: 'css'
         locator: "input[name='oro_product_quick_add[products][0][productQuantity]']"
 
+    Quick Order Form > Unit1:
+      selector:
+        type: 'css'
+        locator: "input[name='oro_product_quick_add[products][0][productUnit]']"
+
     Quick Add Price Field:
       selector:
         type: 'xpath'
