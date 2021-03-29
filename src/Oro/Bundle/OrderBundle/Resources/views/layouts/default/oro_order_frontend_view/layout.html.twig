@@ -40,7 +40,7 @@
 
 {% block address_widget %}
     {% from 'OroAddressBundle::macros.html.twig' import renderAddress %}
-    {{ renderAddress(address) }}
+    {{ renderAddress(address, true) }}
 {% endblock %}
 
 {% block order_total_widget %}
