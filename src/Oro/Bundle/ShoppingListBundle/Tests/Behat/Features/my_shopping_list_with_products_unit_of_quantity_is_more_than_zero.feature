@@ -76,12 +76,12 @@ Feature: My Shopping List with products unit of quantity is more than zero
     Then I should see "Product has been saved" flash message
     Examples:
       | SKU  | Color | Size |
-      | BB4  | Red   | M    |
-      | BB5  | Green | L    |
-      | BB6  | Blue  | S    |
-      | BB7  | Red   | M    |
-      | BB8  | Green | L    |
-      | BB9  | Blue  | S    |
+      | BB04 | Red   | M    |
+      | BB05 | Green | L    |
+      | BB06 | Blue  | S    |
+      | BB07 | Red   | M    |
+      | BB08 | Green | L    |
+      | BB09 | Blue  | S    |
       | BB10 | Red   | M    |
       | BB11 | Green | L    |
       | BB12 | Blue  | S    |
@@ -100,34 +100,34 @@ Feature: My Shopping List with products unit of quantity is more than zero
     Then I should see "Product has been saved" flash message
     Examples:
       | MainSKU | SKU1 | SKU2 | SKU3 |
-      | AA1     | BB4  | BB5  | BB12 |
-      | AA2     | BB6  | BB7  | BB11 |
-      | AA3     | BB8  | BB9  | BB10 |
+      | AA01    | BB04 | BB05 | BB12 |
+      | AA02    | BB06 | BB07 | BB11 |
+      | AA03    | BB08 | BB09 | BB10 |
 
-  Scenario: Set Precision for product BB4
+  Scenario: Set Precision for product BB04
     When I go to Products/Products
-    And I filter SKU as is equal to "BB4"
-    And I click Edit BB4 in grid
+    And I filter SKU as is equal to "BB04"
+    And I click Edit BB04 in grid
     And I fill product fields with next data:
       | PrimaryUnit      | item |
       | PrimaryPrecision | 3    |
     And I save and close form
     Then I should see "Product has been saved" flash message
 
-  Scenario: Set Precision for product BB5
+  Scenario: Set Precision for product BB05
     When I go to Products/Products
-    And I filter SKU as is equal to "BB5"
-    And I click Edit BB5 in grid
+    And I filter SKU as is equal to "BB05"
+    And I click Edit BB05 in grid
     And I fill product fields with next data:
       | PrimaryUnit      | item |
       | PrimaryPrecision | 5    |
     And I save and close form
     Then I should see "Product has been saved" flash message
 
-  Scenario: Set Precision for product BB6
+  Scenario: Set Precision for product BB06
     When I go to Products/Products
-    And I filter SKU as is equal to "BB6"
-    And I click Edit BB6 in grid
+    And I filter SKU as is equal to "BB06"
+    And I click Edit BB06 in grid
     And I fill product fields with next data:
       | PrimaryUnit      | item |
       | PrimaryPrecision | 10   |
@@ -188,15 +188,15 @@ Feature: My Shopping List with products unit of quantity is more than zero
     And I should see following "Frontend Customer User Shopping List Edit Grid" grid containing rows:
       | SKU  | Item                                                     |              | QtyUpdate All       | Price  | Subtotal                                           |
       |      | Configurable Product 1                                   |              | 16.5779067891 items |        | $267.8384561493 -$133.91922807465 $133.91922807465 |
-      | BB4  | Color: Red Size: M Note 4 text                           | In Stock     | 4.331 item          | $11.00 | $47.641 -$23.8205 $23.8205                         |
-      | BB5  | Color: Green Size: L Note 5 text                         | Out of Stock | 5.12345 item        | $11.00 | $56.35795 -$28.178975 $28.178975                   |
+      | BB04 | Color: Red Size: M Note 4 text                           | In Stock     | 4.331 item          | $11.00 | $47.641 -$23.8205 $23.8205                         |
+      | BB05 | Color: Green Size: L Note 5 text                         | Out of Stock | 5.12345 item        | $11.00 | $56.35795 -$28.178975 $28.178975                   |
       | BB12 | Color: Blue Size: S Note 12 text                         | In Stock     | 7.1234567891 item   | $23.00 | $163.8395061493 -$81.91975307465 $81.91975307465   |
-      | BB6  | Configurable Product 2 Color: Blue Size: S Note 6 text   | In Stock     | 3 item              | $11.00 | $33.00 -$16.50 $16.50                              |
-      | BB7  | Configurable Product 2 Color: Red Size: M Note 7 text    | Out of Stock | 5 piece             | $17.00 | $85.00                                             |
+      | BB06 | Configurable Product 2 Color: Blue Size: S Note 6 text   | In Stock     | 3 item              | $11.00 | $33.00 -$16.50 $16.50                              |
+      | BB07 | Configurable Product 2 Color: Red Size: M Note 7 text    | Out of Stock | 5 piece             | $17.00 | $85.00                                             |
       | BB11 | Configurable Product 2 Color: Green Size: L Note 11 text | Out of Stock | 7 set               | $19.00 | $133.00                                            |
       |      | Configurable Product 3                                   |              | 10 pieces           |        | $170.00                                            |
-      | BB8  | Color: Green Size: L Note 8 text                         | In Stock     | 5 piece             | $17.00 | $85.00                                             |
-      | BB9  | Color: Blue Size: S Note 9 text                          | Out of Stock | 5 piece             | $17.00 | $85.00                                             |
+      | BB08 | Color: Green Size: L Note 8 text                         | In Stock     | 5 piece             | $17.00 | $85.00                                             |
+      | BB09 | Color: Blue Size: S Note 9 text                          | Out of Stock | 5 piece             | $17.00 | $85.00                                             |
       | BB10 | Configurable Product 3 Color: Red Size: M Note 10 text   | In Stock     | 7 set               | $19.00 | $133.00                                            |
       | BB13 | Product 13 Note 13 text                                  | Out of Stock | 9 item              | $23.00 | $207.00 -$103.50 $103.50                           |
       | BB14 | Product 14 Note 14 text                                  | In Stock     | 9 item              | $23.00 | $207.00 -$103.50 $103.50                           |
@@ -213,15 +213,15 @@ Feature: My Shopping List with products unit of quantity is more than zero
     And I should see following "Frontend Customer User Shopping List View Grid" grid:
       | SKU  | Item                                                     |              | Qty           | Unit   | Price  | Subtotal                                           |
       |      | Configurable Product 1                                   |              | 16.5779067891 | items  |        | $267.8384561493 -$133.91922807465 $133.91922807465 |
-      | BB4  | Color: Red Size: M Note 4 text                           | In Stock     | 4.331         | items  | $11.00 | $47.641 -$23.8205 $23.8205                         |
-      | BB5  | Color: Green Size: L Note 5 text                         | Out of Stock | 5.12345       | items  | $11.00 | $56.35795 -$28.178975 $28.178975                   |
+      | BB04 | Color: Red Size: M Note 4 text                           | In Stock     | 4.331         | items  | $11.00 | $47.641 -$23.8205 $23.8205                         |
+      | BB05 | Color: Green Size: L Note 5 text                         | Out of Stock | 5.12345       | items  | $11.00 | $56.35795 -$28.178975 $28.178975                   |
       | BB12 | Color: Blue Size: S Note 12 text                         | In Stock     | 7.1234567891  | items  | $23.00 | $163.8395061493 -$81.91975307465 $81.91975307465   |
-      | BB6  | Configurable Product 2 Color: Blue Size: S Note 6 text   | In Stock     | 3             | items  | $11.00 | $33.00 -$16.50 $16.50                              |
-      | BB7  | Configurable Product 2 Color: Red Size: M Note 7 text    | Out of Stock | 5             | pieces | $17.00 | $85.00                                             |
+      | BB06 | Configurable Product 2 Color: Blue Size: S Note 6 text   | In Stock     | 3             | items  | $11.00 | $33.00 -$16.50 $16.50                              |
+      | BB07 | Configurable Product 2 Color: Red Size: M Note 7 text    | Out of Stock | 5             | pieces | $17.00 | $85.00                                             |
       | BB11 | Configurable Product 2 Color: Green Size: L Note 11 text | Out of Stock | 7             | sets   | $19.00 | $133.00                                            |
       |      | Configurable Product 3                                   |              | 10            | pieces |        | $170.00                                            |
-      | BB8  | Color: Green Size: L Note 8 text                         | In Stock     | 5             | pieces | $17.00 | $85.00                                             |
-      | BB9  | Color: Blue Size: S Note 9 text                          | Out of Stock | 5             | pieces | $17.00 | $85.00                                             |
+      | BB08 | Color: Green Size: L Note 8 text                         | In Stock     | 5             | pieces | $17.00 | $85.00                                             |
+      | BB09 | Color: Blue Size: S Note 9 text                          | Out of Stock | 5             | pieces | $17.00 | $85.00                                             |
       | BB10 | Configurable Product 3 Color: Red Size: M Note 10 text   | In Stock     | 7             | sets   | $19.00 | $133.00                                            |
       | BB13 | Product 13 Note 13 text                                  | Out of Stock | 9             | items  | $23.00 | $207.00 -$103.50 $103.50                           |
       | BB14 | Product 14 Note 14 text                                  | In Stock     | 9             | items  | $23.00 | $207.00 -$103.50 $103.50                           |
