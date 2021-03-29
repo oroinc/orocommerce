@@ -8,7 +8,7 @@ data:
         quantityExpression: null
         productUnitExpression: null
         ruleCondition: 'product.category.id == 1 and product.status == "enabled"'
-        rule: 'pricelist[0].prices.value + 10'
+        rule: 'pricelist[1].prices.value + 10'
         priority: 1
     relationships:
         productUnit:

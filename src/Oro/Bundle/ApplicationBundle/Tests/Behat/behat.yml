@@ -164,6 +164,7 @@ oro_behat_extension:
       options:
         mapping:
           Price for quantity: 'oro_pricing_price_list[priceRules][0][quantity]'
+          Price for quantity expression: 'oro_pricing_price_list[priceRules][0][quantityExpression]'
           Price Unit: 'oro_pricing_price_list[priceRules][0][productUnitExpression]'
           Price Currency: 'oro_pricing_price_list[priceRules][0][currencyExpression]'
 

@@ -2,12 +2,12 @@ data:
     type: 'pricerules'
     attributes:
         currency: 'EUR'
-        currencyExpression: 'pricelist[0].prices.currency'
+        currencyExpression: 'pricelist[1].prices.currency'
         quantity: 1
-        quantityExpression: 'pricelist[0].prices.quantity + 3'
-        productUnitExpression: 'pricelist[0].prices.unit'
+        quantityExpression: 'pricelist[1].prices.quantity + 3'
+        productUnitExpression: 'pricelist[1].prices.unit'
         ruleCondition: 'product.category.id == 1'
-        rule: 'pricelist[0].prices.value * 0.8'
+        rule: 'pricelist[1].prices.value * 0.8'
         priority: '10'
     relationships:
         productUnit:
