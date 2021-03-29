@@ -89,7 +89,7 @@ class PriceRuleTest extends RestJsonApiTestCase
 
         $priceRule = $this->getEntityManager()
             ->getRepository(PriceRule::class)
-            ->findOneBy(['rule' => 'pricelist[0].prices.value * 0.8']);
+            ->findOneBy(['rule' => 'pricelist[1].prices.value * 0.8']);
 
         static::assertSame('EUR', $priceRule->getCurrency());
         static::assertNull($priceRule->getCurrencyExpression());
@@ -127,14 +127,14 @@ class PriceRuleTest extends RestJsonApiTestCase
 
         $priceRule = $this->getEntityManager()
             ->getRepository(PriceRule::class)
-            ->findOneBy(['rule' => 'pricelist[0].prices.value * 0.8']);
+            ->findOneBy(['rule' => 'pricelist[1].prices.value * 0.8']);
 
-        static::assertSame('pricelist[0].prices.currency', $priceRule->getCurrencyExpression());
+        static::assertSame('pricelist[1].prices.currency', $priceRule->getCurrencyExpression());
         static::assertEmpty($priceRule->getCurrency());
-        static::assertSame('pricelist[0].prices.quantity + 3', $priceRule->getQuantityExpression());
+        static::assertSame('pricelist[1].prices.quantity + 3', $priceRule->getQuantityExpression());
         static::assertNull($priceRule->getQuantity());
         static::assertNull($priceRule->getProductUnit());
-        static::assertSame('pricelist[0].prices.unit', $priceRule->getProductUnitExpression());
+        static::assertSame('pricelist[1].prices.unit', $priceRule->getProductUnitExpression());
         static::assertSame('product.category.id == 1', $priceRule->getRuleCondition());
 
         static::assertEquals(
@@ -178,7 +178,7 @@ class PriceRuleTest extends RestJsonApiTestCase
                             'currency' => 'EUR',
                             'quantity' => 1,
                             'priority' => 10,
-                            'rule'     => 'pricelist[0].prices.value * 0.8'
+                            'rule'     => 'pricelist[1].prices.value * 0.8'
                         ],
                         'relationships' => [
                             'productUnit' => [
@@ -192,7 +192,7 @@ class PriceRuleTest extends RestJsonApiTestCase
 
         $priceRule = $this->getEntityManager()
             ->getRepository(PriceRule::class)
-            ->findOneBy(['rule' => 'pricelist[0].prices.value * 0.8']);
+            ->findOneBy(['rule' => 'pricelist[1].prices.value * 0.8']);
 
         self::assertEquals($priceListId, $priceRule->getPriceList()->getId());
         self::assertMessageSent(
@@ -265,9 +265,9 @@ class PriceRuleTest extends RestJsonApiTestCase
             ->find($priceRuleId);
 
         static::assertNull($updatedPriceRule->getQuantity());
-        static::assertSame('pricelist[0].prices.quantity + 4', $updatedPriceRule->getQuantityExpression());
+        static::assertSame('pricelist[1].prices.quantity + 4', $updatedPriceRule->getQuantityExpression());
         static::assertSame('product.category.id > 0', $updatedPriceRule->getRuleCondition());
-        static::assertSame('pricelist[0].prices.value * 1', $updatedPriceRule->getRule());
+        static::assertSame('pricelist[1].prices.value * 1', $updatedPriceRule->getRule());
         static::assertSame(5, $updatedPriceRule->getPriority());
 
         static::assertEquals(

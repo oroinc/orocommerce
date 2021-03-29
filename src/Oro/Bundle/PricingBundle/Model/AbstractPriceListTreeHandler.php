@@ -7,7 +7,6 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
-use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
@@ -42,7 +41,6 @@ abstract class AbstractPriceListTreeHandler
      * @param ManagerRegistry $registry
      * @param WebsiteManager $websiteManager
      * @param ConfigManager $configManager
-     * @param TokenAccessorInterface $tokenAccessor
      */
     public function __construct(
         ManagerRegistry $registry,

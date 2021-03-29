@@ -63,6 +63,7 @@ oro_behat_extension:
           URL Slug: 'oro_product[slugPrototypesWithRedirect][slugPrototypes][values][default]'
           Name: 'oro_product[names][values][default]'
           Status: 'oro_product[status]'
+          Is Featured: 'oro_product[featured]'
           Unit Of Quantity: 'oro_product[primaryUnitPrecision][unit]'
           Product Image:
             type: 'xpath'
@@ -163,6 +164,7 @@ oro_behat_extension:
       options:
         mapping:
           Price for quantity: 'oro_pricing_price_list[priceRules][0][quantity]'
+          Price for quantity expression: 'oro_pricing_price_list[priceRules][0][quantityExpression]'
           Price Unit: 'oro_pricing_price_list[priceRules][0][productUnitExpression]'
           Price Currency: 'oro_pricing_price_list[priceRules][0][currencyExpression]'
 

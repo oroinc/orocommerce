@@ -47,7 +47,7 @@ class CombinedPriceListRepository extends BasePriceListRepository
     /**
      * @param Customer $customer
      * @param Website $website
-     * @param bool|true $isEnabled
+     * @param bool $isEnabled
      * @return null|CombinedPriceList
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
@@ -76,7 +76,7 @@ class CombinedPriceListRepository extends BasePriceListRepository
     /**
      * @param CustomerGroup $customerGroup
      * @param Website $website
-     * @param bool|true $isEnabled
+     * @param bool $isEnabled
      * @return null|CombinedPriceList
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
@@ -103,7 +103,7 @@ class CombinedPriceListRepository extends BasePriceListRepository
 
     /**
      * @param Website $website
-     * @param bool|true $isEnabled
+     * @param bool $isEnabled
      * @return CombinedPriceList|null
      */
     public function getPriceListByWebsite(Website $website, $isEnabled = true)

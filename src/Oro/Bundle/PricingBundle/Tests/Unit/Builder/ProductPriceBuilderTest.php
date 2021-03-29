@@ -74,7 +74,41 @@ class ProductPriceBuilderTest extends \PHPUnit\Framework\TestCase
             ->with('oro_price_lists_combined')
             ->willReturn(true);
 
-        /** @var Product|\PHPUnit\Framework\MockObject\MockObject $product * */
+        $productId1 = 1;
+        $productId2 = 2;
+        $productId3 = 2;
+
+        $repo = $this->getRepositoryMock();
+        $repo->expects($this->exactly(2))
+            ->method('deleteGeneratedPrices')
+            ->withConsecutive(
+                [$this->shardManager, $priceList, [$productId1, $productId2]],
+                [$this->shardManager, $priceList, [$productId3]],
+            );
+
+        $this->insertFromSelectQueryExecutor->expects($this->never())
+            ->method($this->anything());
+
+        $this->priceListTriggerHandler->expects($this->exactly(2))
+            ->method('handlePriceListTopic')
+            ->withConsecutive(
+                [Topics::RESOLVE_COMBINED_PRICES, $priceList, [$productId1, $productId2]],
+                [Topics::RESOLVE_COMBINED_PRICES, $priceList, [$productId3]]
+            );
+
+        $this->productPriceBuilder->setBatchSize(2);
+        $this->productPriceBuilder->buildByPriceList($priceList, [$productId1, $productId2, $productId3]);
+    }
+
+    public function testBuildByPriceListNoRulesWithAdjustedBatchSize()
+    {
+        $priceList = new PriceList();
+
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('oro_price_lists_combined')
+            ->willReturn(true);
+
         $productId = 1;
 
         $repo = $this->getRepositoryMock();
@@ -321,13 +355,14 @@ class ProductPriceBuilderTest extends \PHPUnit\Framework\TestCase
             ->method('compile')
             ->willReturn($qb);
 
-        $c = 1;
+        $expectedRules = [];
         foreach ($rules as $rule) {
-            $this->ruleCompiler->expects($this->at($c))
-                ->method('compile')
-                ->with($rule, $products);
-            $c += 2;
+            $expectedRules[] = [$rule, $products];
         }
+
+        $this->ruleCompiler->expects($this->exactly($rulesCount))
+            ->method('compile')
+            ->withConsecutive(...$expectedRules);
 
         return $qb;
     }
