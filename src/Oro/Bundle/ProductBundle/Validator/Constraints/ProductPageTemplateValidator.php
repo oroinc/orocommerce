@@ -25,9 +25,6 @@ class ProductPageTemplateValidator extends ConstraintValidator
     }
 
     /**
-     * @param $value
-     * @param Constraint
-     *
      * {@inheritdoc}
      */
     public function validate($entityFieldFallbackValue, Constraint $constraint)

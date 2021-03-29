@@ -15,6 +15,7 @@ use Oro\Bundle\CMSBundle\WYSIWYG\WYSIWYGProcessedEntityDTO;
 use Oro\Bundle\CMSBundle\WYSIWYG\WYSIWYGTwigFunctionProcessorInterface;
 use Oro\Bundle\EntityBundle\ORM\Event\PreClearEventArgs;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager as EntityConfigManager;
+use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\LocaleBundle\Entity\AbstractLocalizedFallbackValue;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerTrait;
@@ -410,17 +411,12 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
      */
     private function collectSerializedWysiwygFields(string $entityName, array $applicableFieldTypes): void
     {
-        $entityConfigModel = $this->getEntityConfigManager()->getConfigEntityModel($entityName);
-        if ($entityConfigModel) {
-            // Working with fieldConfigModels because regular doctrine metadata does not contain info about
-            // serialized fields.
-            foreach ($entityConfigModel->getFields() as $fieldConfigModel) {
-                $fieldName = $fieldConfigModel->getFieldName();
-                $fieldType = $fieldConfigModel->getType();
+        /** @var FieldConfigId $fieldConfigId */
+        foreach ($this->getEntityConfigManager()->getIds('extend', $entityName, true) as $fieldConfigId) {
+            $fieldType = $fieldConfigId->getFieldType();
 
-                if (\in_array($fieldType, $applicableFieldTypes, true)) {
-                    $this->fieldLists[$entityName][$fieldName] = $fieldType;
-                }
+            if (\in_array($fieldType, $applicableFieldTypes, true)) {
+                $this->fieldLists[$entityName][$fieldConfigId->getFieldName()] = $fieldType;
             }
         }
     }

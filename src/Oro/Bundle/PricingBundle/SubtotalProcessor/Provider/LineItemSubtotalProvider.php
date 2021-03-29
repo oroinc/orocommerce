@@ -12,6 +12,7 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalCacheAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\ProductBundle\Model\QuantityAwareInterface;
+use Oro\Component\Math\BigDecimal;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -100,16 +101,16 @@ class LineItemSubtotalProvider extends AbstractSubtotalProvider implements
      */
     protected function getRecalculatedSubtotalAmount($entity)
     {
-        $subtotalAmount = 0.0;
+        $subtotalAmount = BigDecimal::of(0);
         $baseCurrency   = $this->getBaseCurrency($entity);
         foreach ($entity->getLineItems() as $lineItem) {
             if ($lineItem instanceof PriceAwareInterface && $lineItem->getPrice() instanceof Price) {
                 $rowTotal = $this->getRowTotal($lineItem, $baseCurrency);
-                $subtotalAmount += $rowTotal;
+                $subtotalAmount = $subtotalAmount->plus($rowTotal);
             }
         }
 
-        return $subtotalAmount;
+        return $subtotalAmount->toFloat();
     }
 
     /**

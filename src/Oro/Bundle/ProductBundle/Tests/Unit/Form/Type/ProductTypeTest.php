@@ -393,10 +393,10 @@ class ProductTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param bool|false $withProductUnitPrecision
-     * @param bool|false $withNamesAndDescriptions
-     * @param bool|true $hasVariants
-     * @param bool|true hasImages
+     * @param bool $withProductUnitPrecision
+     * @param bool $withNamesAndDescriptions
+     * @param bool $hasVariants
+     * @param bool $hasImages
      * @return Product
      */
     protected function createExpectedProductEntity(
@@ -504,8 +504,9 @@ class ProductTypeTest extends FormIntegrationTestCase
 
         return $this->attributeFamily;
     }
+
     /**
-     * @param bool|true $hasVariants
+     * @param bool $hasVariants
      * @return Product
      */
     protected function createDefaultProductEntity($hasVariants = false)

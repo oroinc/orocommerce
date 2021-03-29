@@ -48,7 +48,7 @@ Feature: Rule Editor with Autocomplete in Price List
     Then Product Assignment Rule field should has pricelist[1].active  value
     When I save and close form
     Then I should see validation errors:
-      | Rule | Invalid logical expression |
+      | Rule | Invalid expression; Invalid logical expression |
     When type "pricelist[1].active == true" in "Product Assignment Rule"
     And I save and close form
     Then I should see "Price List has been saved" flash message

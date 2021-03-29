@@ -140,7 +140,7 @@ class CheckoutWorkflowHelper
 
     /**
      * @param CheckoutInterface $checkout
-     * @return mixed|WorkflowItem
+     * @return WorkflowItem
      *
      * @throws WorkflowException
      */
