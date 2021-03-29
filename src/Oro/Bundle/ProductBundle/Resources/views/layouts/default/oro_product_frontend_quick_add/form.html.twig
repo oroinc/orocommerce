@@ -45,6 +45,7 @@
             </div>
             <div class="quick-order-add__col quick-order-add__unit"
                  data-label="{{ 'oro.product.productunitprecision.unit.label'|trans }}"
+                 data-validation="{{ {'QuickAddUnit': {}}|json_encode(constant('JSON_FORCE_OBJECT')) }}"
             >
                 {{ form_widget(form.productUnit, {attr: {
                     'class': 'disabled',
