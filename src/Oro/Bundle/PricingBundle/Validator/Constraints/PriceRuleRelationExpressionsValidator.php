@@ -252,7 +252,11 @@ class PriceRuleRelationExpressionsValidator extends ConstraintValidator
         $fieldName,
         PriceRuleRelationExpressions $constraint
     ) {
-        $relationClassName = $this->fieldsProvider->getRealClassName($node->getContainer(), $node->getField());
+        try {
+            $relationClassName = $this->fieldsProvider->getRealClassName($node->getContainer(), $node->getField());
+        } catch (\Exception $e) {
+            return true;
+        }
         if (is_a($relationClassName, BaseProductPrice::class, true) && !$this->isRelationInRule($rule, $node)) {
             $this->addError(
                 $path,
