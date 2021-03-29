@@ -31,20 +31,25 @@ define(function(require) {
                 $el.prop('disabled', false);
                 $el.prop('readonly', options.length <= 1);
             } else {
-                if (!model.has('unit_placeholder')) {
-                    model.set('unit_placeholder', $el.find('option[value=""]').text() || '');
-                }
-                options.push(this.generateSelectOption('', model.get('unit_placeholder')));
-
                 $el.prop('disabled', true);
             }
 
-            $el.html(options.join(''));
-
             let value = model.get('unit_deferred') || model.get('unit') || oldValue;
-            if (!value || !$el.find('option[value="' + _.escape(value) + '"]').length) {
-                value = $el.val();
+            const wishfulLabel = model.get('unit_label');
+            if (_.isEmpty(units) || wishfulLabel && !value) {
+                // no units loaded or there's wishful unit label and it could not be resolved to a unit
+                // add placeholder option
+                if (!model.has('unit_placeholder')) {
+                    model.set('unit_placeholder', $el.find('option[value=""]').text() || '');
+                }
+                options.unshift(this.generateSelectOption('', model.get('unit_placeholder')));
+                value = '';
+            } else if (!_.isEmpty(units) && (!value || Object.keys(units).indexOf(value) === -1)) {
+                // current unit is not within available units
+                value = Object.keys(units)[0];
             }
+
+            $el.html(options.join(''));
 
             model.set('unit', value);
             if (value !== oldValue || value !== $el.val()) {
