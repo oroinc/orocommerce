@@ -181,6 +181,7 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
                     'query' => [
                         'select' => [
                             'lineItem.id',
+                            'product.sku as sortSku',
                         ],
                     ],
                 ],
@@ -236,6 +237,7 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
                     'query' => [
                         'select' => [
                             'lineItem.id',
+                            'product.sku as sortSku',
                         ],
                     ],
                 ],
@@ -299,6 +301,7 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
                     'query' => [
                         'select' => [
                             'lineItem.id',
+                            'product.sku as sortSku',
                         ],
                     ],
                 ],
@@ -375,6 +378,7 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
                     'query' => [
                         'select' => [
                             'lineItem.id',
+                            'product.sku as sortSku',
                         ],
                     ],
                 ],
@@ -432,6 +436,9 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
                             'OR innerItem.product = lineItem.product) ' .
                             'AND innerItem.shoppingList = lineItem.shoppingList ' .
                             'AND innerItem.unit = lineItem.unit) as allLineItemsIds',
+                            'GROUP_CONCAT(' .
+                            'COALESCE(CONCAT(parentProduct.sku, \':\', product.sku), product.sku)' .
+                            ') as sortSku',
                         ],
                     ],
                 ],
