@@ -44,7 +44,7 @@ define(function(require) {
         },
 
         indexPrices: function(prices) {
-            return Object.entries(prices).reduce((pricesIndex, [unit, unitPrices], ) => {
+            return Object.entries(prices).reduce((pricesIndex, [unit, unitPrices]) => {
                 unitPrices.forEach(price => pricesIndex[`${unit}_${price.quantity}`] = price);
                 return pricesIndex;
             }, {});
