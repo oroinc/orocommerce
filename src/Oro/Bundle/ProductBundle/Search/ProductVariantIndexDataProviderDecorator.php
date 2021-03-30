@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Search;
 
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\WebsiteSearchBundle\Attribute\SearchableInformationProvider;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexDataProvider;
 
 /**
@@ -59,13 +60,22 @@ class ProductVariantIndexDataProviderDecorator implements ProductIndexDataProvid
         FieldConfigModel $attribute
     ) {
         if (\in_array($attribute->getType(), ['enum', 'multiEnum'], true)) {
+            $searchableName = $attribute->getFieldName() . '_' . SearchableInformationProvider::SEARCHABLE_PREFIX;
+
             foreach ($variantData as $variantModel) {
+                $variantFieldName = $variantModel->getFieldName();
                 // if field value model (not all_text model)
-                if (strpos($variantModel->getFieldName(), $attribute->getFieldName() . '_') === 0) {
+                if (strpos($variantFieldName, $attribute->getFieldName() . '_') === 0) {
+                    // collect searchable enum values
+                    if ($variantFieldName === $searchableName && $variantModel->getValue()) {
+                        $productData[] = $variantModel;
+                        continue;
+                    }
+
                     $isVariantOptionMissing = true;
                     foreach ($productData as $productModel) {
                         // if product already has option from the variant
-                        if ($productModel->getFieldName() === $variantModel->getFieldName()) {
+                        if ($productModel->getFieldName() === $variantFieldName) {
                             $isVariantOptionMissing = false;
                             break;
                         }
@@ -76,9 +86,43 @@ class ProductVariantIndexDataProviderDecorator implements ProductIndexDataProvid
                     }
                 }
             }
+
+            $productData = $this->mergeSearchable($productData, $searchableName);
         }
 
         return $productData;
+    }
+
+    /**
+     * Merge searchable data into one field.
+     *
+     * @param array|ProductIndexDataModel[] $productData
+     * @param string                        $searchableName
+     *
+     * @return array|ProductIndexDataModel[]
+     */
+    private function mergeSearchable(array $productData, string $searchableName): array
+    {
+        $combinedValues = [];
+
+        foreach ($productData as $key => $model) {
+            if ($model->getFieldName() === $searchableName) {
+                $combinedValues[] = $model->getValue();
+                unset($productData[$key]);
+            }
+        }
+
+        if ($combinedValues) {
+            $productData[] = new ProductIndexDataModel(
+                $searchableName,
+                implode(' ', array_unique(explode(' ', implode(' ', $combinedValues)))),
+                [],
+                false,
+                false
+            );
+        }
+
+        return array_values($productData);
     }
 
     /**
