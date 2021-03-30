@@ -84,15 +84,20 @@ class FrontendLineItemsGridExtension extends AbstractExtension
      */
     public function processConfigs(DatagridConfiguration $config): void
     {
-        $queryPart = 'lineItem.id';
         if ($this->isLineItemsGrouped()) {
-            $queryPart = '(SELECT GROUP_CONCAT(innerItem.id ORDER BY innerItem.id ASC) ' .
+            $queryParts[] = '(SELECT GROUP_CONCAT(innerItem.id ORDER BY innerItem.id ASC) ' .
                 'FROM Oro\Bundle\ShoppingListBundle\Entity\LineItem innerItem ' .
                 'WHERE (innerItem.parentProduct = lineItem.parentProduct OR innerItem.product = lineItem.product) ' .
                 'AND innerItem.shoppingList = lineItem.shoppingList ' .
                 'AND innerItem.unit = lineItem.unit) as allLineItemsIds';
+            $queryParts[] = 'GROUP_CONCAT(' .
+                'COALESCE(CONCAT(parentProduct.sku, \':\', product.sku), product.sku)' .
+                ') as sortSku';
+        } else {
+            $queryParts[] = 'lineItem.id';
+            $queryParts[] = 'product.sku as sortSku';
         }
-        $config->offsetAddToArrayByPath(OrmQueryConfiguration::SELECT_PATH, [$queryPart]);
+        $config->offsetAddToArrayByPath(OrmQueryConfiguration::SELECT_PATH, $queryParts);
 
         if (!$this->tokenAccessor->hasUser() ||
             $this->configManager->get('oro_shopping_list.shopping_list_limit') === 1

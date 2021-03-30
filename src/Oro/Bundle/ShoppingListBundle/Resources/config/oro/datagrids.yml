@@ -421,7 +421,7 @@ datagrids:
                 id:
                     data_name: sortId
                 sku:
-                    data_name: sku
+                    data_name: sortSku
             default:
                 id: ASC
         filters:
