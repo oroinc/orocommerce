@@ -16,12 +16,12 @@
                     <a
                         href="tel:{{ blockView.attributes.contactInfo.phone }}"
                         class=" information-nav__item-content"
-                    >{{ blockView.attributes.contactInfo.phone }}</a>
+                    ><bdo dir="ltr">{{ blockView.attributes.contactInfo.phone }}</bdo></a>
                 </li>
             {% endif %}
             {% if blockView.attributes.contactInfo.email %}
                 <li class=" information-nav__item last">
-                    <a href="mailto:{{ blockView.attributes.contactInfo.email }}" class=" information-nav__item-content">{{ blockView.attributes.contactInfo.email }}</a>
+                    <a href="mailto:{{ blockView.attributes.contactInfo.email }}" class=" information-nav__item-content"><bdo dir="ltr">{{ blockView.attributes.contactInfo.email }}</bdo></a>
                 </li>
             {% endif %}
         </ul>

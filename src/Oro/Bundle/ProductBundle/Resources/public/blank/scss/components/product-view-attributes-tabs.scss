@@ -69,7 +69,7 @@
         &__link {
             text-align: $product-view-attributes-tabs-link-text-align-mobile-l;
 
-            @include fa-icon($fa-var-angle-right, after);
+            @include fa-icon(var(--fa-var-angle-right), after, false, true);
 
             &:after {
                 position: $product-view-attributes-tabs-link-after-position-mobile-l;
