@@ -71,6 +71,10 @@
 
             @include fa-icon($fa-var-angle-right, after);
 
+            [dir="rtl"] & {
+                @include fa-icon($fa-var-angle-left, after);
+            }
+
             &:after {
                 position: $product-view-attributes-tabs-link-after-position-mobile-l;
                 right: $product-view-attributes-tabs-link-after-right-mobile-l;
