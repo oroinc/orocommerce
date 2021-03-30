@@ -736,6 +736,8 @@ services:
             - '@oro_entity_config.provider.attribute_configuration'
             - '@oro_product.provider.index_fields'
             - '@property_accessor'
+        calls:
+            - [ setSearchableInformationProvider, ['@oro_website_search.attribute.searchable_information_provider'] ]
 
     oro_product.provider.website_search_index_data.product_variants:
         class: 'Oro\Bundle\ProductBundle\Search\ProductVariantIndexDataProviderDecorator'
@@ -1504,6 +1506,8 @@ services:
             - '@oro_entity_config.registry.attribute_type'
             - '@oro_entity_config.provider.attribute_configuration'
             - '@oro_product.provider.index_fields'
+        calls:
+            - [ setSearchableInformationProvider, ['@oro_website_search.attribute.searchable_information_provider'] ]
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.website_search_mapping.configuration, method: onWebsiteSearchMapping }
 

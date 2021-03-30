@@ -87,7 +87,7 @@ define(function(require) {
         });
 
         describe('check select update', function() {
-            it('we should get limited list of select options', function() {
+            it('we should get limited list of select options with first unit selected', function() {
                 UnitsUtil.updateSelect(model, $el);
 
                 expect(getOptions($el)).toEqual(['item', 'set', 'kilogram']);
@@ -96,13 +96,33 @@ define(function(require) {
                 expect($el.prop('readonly')).toBeFalsy();
             });
 
+            it('we should get a placeholder option, once unit_label is defined without unit in model', function() {
+                model.set('unit_label', 'piece');
+                UnitsUtil.updateSelect(model, $el);
+
+                expect(getOptions($el)).toEqual(['Please select...', 'item', 'set', 'kilogram']);
+                expect($el.val()).toEqual('');
+                expect($el.prop('disabled')).toBeFalsy();
+                expect($el.prop('readonly')).toBeFalsy();
+            });
+
+            it('we should get kilogram option selected, once it is defined unit in model', function() {
+                model.set('unit', 'kg');
+                UnitsUtil.updateSelect(model, $el);
+
+                expect(getOptions($el)).toEqual(['item', 'set', 'kilogram']);
+                expect($el.val()).toEqual('kg');
+                expect($el.prop('disabled')).toBeFalsy();
+                expect($el.prop('readonly')).toBeFalsy();
+            });
+
             it('we should see placeholder if units list is empty', function() {
                 model.set('product_units', []);
+                model.set('unit', 'kg');
                 UnitsUtil.updateSelect(model, $el);
 
                 expect(getOptions($el)).toEqual(['Please select...']);
                 expect(model.get('unit')).toEqual('');
-                expect(model.get('unit_placeholder')).toEqual('Please select...');
                 expect($el.prop('disabled')).toBeTruthy();
 
                 model.set('unit_placeholder', '--');

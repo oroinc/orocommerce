@@ -7,7 +7,7 @@ data:
         quantityExpression: null
         productUnitExpression: null
         ruleCondition: 'product.category.id == 1'
-        rule: 'pricelist[0].prices.value * 0.8'
+        rule: 'pricelist[1].prices.value * 0.8'
         priority: '10'
     relationships:
         productUnit:

@@ -15,6 +15,7 @@ use Oro\Component\Expression\FieldsProviderInterface;
 use Oro\Component\Expression\Node;
 
 /**
+ * Compile price rule to QueryBuilder with all applied restrictions.
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class PriceListRuleCompiler extends AbstractRuleCompiler
@@ -76,23 +77,30 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
         $cacheKey = 'pr_' . $rule->getId();
         $qb = $this->cache->fetch($cacheKey);
         if (!$qb) {
-            $this->reset();
-
-            $qb = $this->createQueryBuilder($rule);
-            $rootAlias = $this->getRootAlias($qb);
-
-            $this->modifySelectPart($qb, $rule, $rootAlias);
-            $this->applyRuleConditions($qb, $rule);
-            $this->restrictBySupportedUnits($qb, $rule, $rootAlias);
-            $this->restrictBySupportedCurrencies($qb, $rule);
-            $this->restrictBySupportedQuantity($qb, $rule);
-            $this->restrictByAssignedProducts($rule, $qb, $rootAlias);
-            $this->restrictByManualPrices($qb, $rule, $rootAlias);
+            $qb = $this->compileQueryBuilder($rule);
 
             $this->cache->save($cacheKey, $qb);
         }
 
         $this->restrictByGivenProduct($qb, $products);
+
+        return $qb;
+    }
+
+    public function compileQueryBuilder(PriceRule $rule): QueryBuilder
+    {
+        $this->reset();
+
+        $qb = $this->createQueryBuilder($rule);
+        $rootAlias = $this->getRootAlias($qb);
+
+        $this->modifySelectPart($qb, $rule, $rootAlias);
+        $this->applyRuleConditions($qb, $rule);
+        $this->restrictBySupportedUnits($qb, $rule, $rootAlias);
+        $this->restrictBySupportedCurrencies($qb, $rule);
+        $this->restrictBySupportedQuantity($qb, $rule);
+        $this->restrictByAssignedProducts($rule, $qb, $rootAlias);
+        $this->restrictByManualPrices($qb, $rule, $rootAlias);
 
         return $qb;
     }
