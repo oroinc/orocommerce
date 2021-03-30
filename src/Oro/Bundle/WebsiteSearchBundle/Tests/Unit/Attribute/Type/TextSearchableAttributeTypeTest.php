@@ -60,4 +60,12 @@ class TextSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
 
         $this->getSearchableAttributeType()->getSortableFieldName($this->attribute);
     }
+
+    public function testGetSearchableFieldName()
+    {
+        $this->assertSame(
+            self::FIELD_NAME,
+            $this->getSearchableAttributeType()->getSearchableFieldName($this->attribute)
+        );
+    }
 }

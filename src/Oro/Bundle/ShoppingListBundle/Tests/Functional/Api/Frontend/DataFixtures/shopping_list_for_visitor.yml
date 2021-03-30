@@ -5,8 +5,8 @@ dependencies:
     - Oro\Bundle\CustomerBundle\Tests\Functional\Api\DataFixtures\LoadFrontendApiWebsiteData
     - Oro\Bundle\CustomerBundle\Tests\Functional\Api\DataFixtures\LoadCustomerUserRoles
     - Oro\Bundle\ProductBundle\Tests\Functional\Api\DataFixtures\LoadProductUnits
-    - Oro\Bundle\ProductBundle\Tests\Functional\Api\DataFixtures\LoadProductDefaultAttributeFamily
-    - Oro\Bundle\ProductBundle\Tests\Functional\Api\DataFixtures\LoadProductInventoryStatuses
+    - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductDefaultAttributeFamily
+    - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductInventoryStatuses
     - Oro\Bundle\PricingBundle\Tests\Functional\Api\DataFixtures\LoadCombinedPriceList
 
 Oro\Bundle\WebsiteBundle\Entity\Website:

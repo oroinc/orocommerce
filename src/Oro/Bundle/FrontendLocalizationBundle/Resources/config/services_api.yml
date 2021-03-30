@@ -1,4 +1,12 @@
 services:
+    oro_frontend_localization.api_doc.documentation_provider.frontend_x_localization_id_header:
+        class: Oro\Bundle\ApiBundle\ApiDoc\DocumentationProvider
+        arguments:
+            - '@@OroFrontendLocalizationBundle/Resources/doc/api_frontend/x_localization_id_header.md'
+            - '@file_locator'
+        tags:
+            - { name: oro.api.documentation_provider, requestType: frontend, priority: 230 }
+
     oro_frontend_localization.api.update_localization_query:
         class: Oro\Bundle\FrontendLocalizationBundle\Api\Processor\UpdateLocalizationQuery
         arguments:

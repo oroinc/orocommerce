@@ -95,6 +95,7 @@ services:
         arguments:
             - '@request_stack'
             - '@oro_paypal.method.provider.payflow_gateway.credit_card'
+            - '%oro_paypal.allowed_ips%'
         tags:
             - { name: kernel.event_listener, event: oro_payment.callback.notify, method: onNotify, priority: 255 }
             - { name: kernel.event_listener, event: oro_payment.callback.notify, method: onNotify, priority: 255 }
@@ -105,6 +106,7 @@ services:
         arguments:
             - '@request_stack'
             - '@oro_paypal.method.provider.payments_pro.credit_card'
+            - '%oro_paypal.allowed_ips%'
         tags:
             - { name: kernel.event_listener, event: oro_payment.callback.notify, method: onNotify, priority: 255 }
             - { name: kernel.event_listener, event: oro_payment.callback.notify, method: onNotify, priority: 255 }

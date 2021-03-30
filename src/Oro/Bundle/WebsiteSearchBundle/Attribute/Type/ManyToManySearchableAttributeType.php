@@ -58,4 +58,12 @@ class ManyToManySearchableAttributeType extends AbstractSearchableAttributeType
     {
         return $this->getFilterableFieldNameMain($attribute);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSearchableFieldName(FieldConfigModel $attribute): string
+    {
+        return $this->getFilterableFieldNameMain($attribute);
+    }
 }

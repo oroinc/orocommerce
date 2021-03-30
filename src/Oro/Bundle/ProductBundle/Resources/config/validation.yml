@@ -199,6 +199,7 @@ Oro\Bundle\ProductBundle\Model\QuickAddRow:
         - QuantityUnitPrecision
     constraints:
         - Oro\Bundle\ProductBundle\Validator\Constraints\ProductUnitExists:
+            sell: true
             message: oro.product.frontend.quick_add.validation.invalid_unit
             groups: [ProductUnit]
         - Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
