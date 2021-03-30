@@ -63,7 +63,7 @@ class PriceListFormExtensionTest extends FormIntegrationTestCase
                 ],
                 [
                     PriceListSelectWithPriorityTypeStub::class => [$this->priceListFormExtension],
-                    [FormType::class => [new SortableExtension()]]
+                    [FormType::class => new SortableExtension()],
 
                 ]
             )
