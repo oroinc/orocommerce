@@ -158,11 +158,12 @@ class AttributeChangesListener
     /**
      * We should trigger update search index in case if state of attribute not changed,
      * but it is in active state and next conditions are met:
-     *  - searchable: no => yes
-     *  - searchable: yes => no
-     *  - filterable: no => yes
-     *  - sortable:   no => yes
-     *  - visible:    no => yes
+     *  - searchable:   no => yes
+     *  - searchable:   yes => no
+     *  - search_boost: null => value (for searchable)
+     *  - filterable:   no => yes
+     *  - sortable:     no => yes
+     *  - visible:      no => yes
      * or when state of attribute changed and some of required parameters already enabled
      *
      * @param ConfigManager $configManager
@@ -194,6 +195,7 @@ class AttributeChangesListener
         $isAnyOptionChangedToEnabled = array_filter(
             [
                 isset($attributeChangeSet['searchable']),
+                $isSearchable && $this->isSearchBoostEnabled($attributeChangeSet),
                 $isFilterable && isset($attributeChangeSet['filterable']),
                 $isSortable && isset($attributeChangeSet['sortable']),
                 $isVisible && isset($frontendChangeSet['is_displayable'])
@@ -217,6 +219,24 @@ class AttributeChangesListener
         }, $modelsForIndexation);
         
         $this->producer->send(Topics::REINDEX_PRODUCTS_BY_ATTRIBUTES, ['attributeIds' => $attributeIds]);
+    }
+
+    /**
+     * @param array $attributeChangeSet
+     *
+     * @return bool
+     */
+    protected function isSearchBoostEnabled(array $attributeChangeSet): bool
+    {
+        $isSearchBoostEnabled = false;
+
+        if (isset($attributeChangeSet['search_boost'])) {
+            [$searchBoostOldValue, $searchBoostNewValue] = $attributeChangeSet['search_boost'];
+
+            $isSearchBoostEnabled = !$searchBoostOldValue && $searchBoostNewValue;
+        }
+
+        return $isSearchBoostEnabled;
     }
 
     /**

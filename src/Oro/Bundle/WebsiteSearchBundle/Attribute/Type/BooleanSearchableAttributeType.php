@@ -57,4 +57,12 @@ class BooleanSearchableAttributeType extends AbstractSearchableAttributeType
     {
         return $attribute->getFieldName();
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSearchableFieldName(FieldConfigModel $attribute): string
+    {
+        throw new \RuntimeException('Not supported');
+    }
 }
