@@ -1,0 +1,21 @@
+entity_config:
+    attribute:
+        field:
+            items:
+                #
+                # Parameter to set search boost value to the field.
+                #
+                search_boost:
+                    options:
+                        value_type: 'decimal'
+                    form:
+                        type: 'Symfony\Component\Form\Extension\Core\Type\NumberType'
+                        options:
+                            block: 'attribute'
+                            required: false
+                            label: 'oro.website_search.entity_config.search_boost.label'
+                            tooltip: 'oro.website_search.entity_config.search_boost.tooltip'
+                            constraints:
+                                - Range:
+                                    min: 0
+                                - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~

@@ -188,6 +188,10 @@ define(function(require) {
 
             // Set proportionalWidth for zoom window
             this.options.zoomWindowWidth = proportionalWidth;
+
+            if (_.isRTL()) {
+                this.options.zoomWindowOffetx = -proportionalWidth;
+            }
         },
 
         /**

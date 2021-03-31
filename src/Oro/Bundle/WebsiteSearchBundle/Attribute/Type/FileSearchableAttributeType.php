@@ -56,4 +56,12 @@ class FileSearchableAttributeType extends AbstractSearchableAttributeType
     {
         throw new \RuntimeException('Not supported');
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSearchableFieldName(FieldConfigModel $attribute): string
+    {
+        throw new \RuntimeException('Not supported');
+    }
 }

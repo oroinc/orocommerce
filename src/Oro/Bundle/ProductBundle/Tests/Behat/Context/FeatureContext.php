@@ -1228,6 +1228,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     private function getImagesOrderInElement($elementName): array
     {
+        $this->waitForImagesToLoad();
         $element = $this->createElement($elementName);
         $images = $element->findAll('xpath', '//img');
         $pattern = '/\/media\/cache\/attachment[\/\w]+\/(.+)\.\w+/';
@@ -1252,6 +1253,24 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         self::assertNotEmpty($imagesOrder, sprintf('Images not found in the "%s" element', $elementName));
 
         return $imagesOrder;
+    }
+
+    /**
+     * Images to get loaded (since they are loaded lazily)
+     * @throws AssertionFailedError
+     * @param int $time Time should be in milliseconds
+     * @return bool
+     */
+    private function waitForImagesToLoad($time = 5000)
+    {
+        $result = $this->getSession()->getDriver()
+            ->wait($time, 0 == "document.querySelectorAll('.slick-loading').length");
+
+        if (!$result) {
+            self::fail(sprintf('Waited for images to load more than %d seconds', $time / 1000));
+        }
+
+        return $result;
     }
 
     /**

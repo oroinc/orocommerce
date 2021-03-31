@@ -4,9 +4,11 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Model;
 
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
+use Oro\Bundle\LayoutBundle\Layout\LayoutContextHolder;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings as BaseLocaleSettings;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\LocaleSettings;
+use Oro\Component\Layout\Extension\Theme\Model\ThemeManager;
 
 class LocaleSettingsTest extends \PHPUnit\Framework\TestCase
 {
@@ -22,6 +24,12 @@ class LocaleSettingsTest extends \PHPUnit\Framework\TestCase
     /** @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject */
     private $currencyManager;
 
+    /** @var LayoutContextHolder|\PHPUnit\Framework\MockObject\MockObject */
+    private $layoutContextHolder;
+
+    /** @var ThemeManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $themeManager;
+
     /** @var LocaleSettings */
     protected $localeSettings;
 
@@ -31,12 +39,16 @@ class LocaleSettingsTest extends \PHPUnit\Framework\TestCase
         $this->frontendHelper = $this->createMock(FrontendHelper::class);
         $this->localizationManager = $this->createMock(UserLocalizationManager::class);
         $this->currencyManager = $this->createMock(UserCurrencyManager::class);
+        $this->layoutContextHolder = $this->createMock(LayoutContextHolder::class);
+        $this->themeManager = $this->createMock(ThemeManager::class);
 
         $this->localeSettings = new LocaleSettings(
             $this->inner,
             $this->frontendHelper,
             $this->localizationManager,
-            $this->currencyManager
+            $this->currencyManager,
+            $this->layoutContextHolder,
+            $this->themeManager
         );
     }
 

@@ -21,8 +21,8 @@ $product-view-media-gallery-nav-image-current-border-color: rgba(get-color('seco
 $product-view-media-gallery-nav-arrow-height: 100% !default;
 $product-view-media-gallery-nav-arrow-border: 0 !default;
 $product-view-media-gallery-nav-arrow-bg: get-color('additional', 'light') !default;
-$product-view-media-gallery-nav-arrow-icon-prev: $fa-var-angle-left !default;
-$product-view-media-gallery-nav-arrow-icon-next: $fa-var-angle-right !default;
+$product-view-media-gallery-nav-arrow-icon-prev: var(--fa-var-angle-left) !default;
+$product-view-media-gallery-nav-arrow-icon-next: var(--fa-var-angle-right) !default;
 $product-view-media-gallery-nav-arrow-icon-size: $base-font-size !default;
 $product-view-media-gallery-nav-arrow-side-position: -$product-view-media-gallery-nav-arrow-width !default;
 

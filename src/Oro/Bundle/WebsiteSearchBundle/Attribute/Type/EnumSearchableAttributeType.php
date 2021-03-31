@@ -60,4 +60,12 @@ class EnumSearchableAttributeType extends AbstractSearchableAttributeType
     {
         return $attribute->getFieldName() . '_priority';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSearchableFieldName(FieldConfigModel $attribute): string
+    {
+        return $attribute->getFieldName() . '_' . self::SEARCHABLE_PREFIX;
+    }
 }

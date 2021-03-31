@@ -5,6 +5,9 @@ namespace Oro\Bundle\SaleBundle\Model;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 
+/**
+ * Matches {@see QuoteProduct} to {@see QuoteProductOffer}
+ */
 class QuoteProductOfferMatcher
 {
     /**
@@ -58,11 +61,7 @@ class QuoteProductOfferMatcher
                 $quantity1 = (float)$offer1->getQuantity();
                 $quantity2 = (float)$offer2->getQuantity();
 
-                if ($quantity1 === $quantity2) {
-                    return 0;
-                }
-
-                return $quantity1 > $quantity2 ? 1 : -1;
+                return $quantity1 <=> $quantity2;
             }
         );
 

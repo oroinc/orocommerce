@@ -27,6 +27,10 @@
     @include clearfix();
   }
 
+  &__result-sku {
+    display: inline-block;
+  }
+
   &__col {
     float: $quick-order-add-col-float;
     padding: $quick-order-add-col-padding;

@@ -4,8 +4,8 @@ dependencies:
     - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser
     - Oro\Bundle\CatalogBundle\Tests\Functional\Api\DataFixtures\LoadRootCategory
     - Oro\Bundle\ProductBundle\Tests\Functional\Api\DataFixtures\LoadProductUnits
-    - Oro\Bundle\ProductBundle\Tests\Functional\Api\DataFixtures\LoadProductDefaultAttributeFamily
-    - Oro\Bundle\ProductBundle\Tests\Functional\Api\DataFixtures\LoadProductInventoryStatuses
+    - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductDefaultAttributeFamily
+    - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductInventoryStatuses
     - Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData
     - Oro\Bundle\CatalogBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadCategoryVisibilityScopes
 

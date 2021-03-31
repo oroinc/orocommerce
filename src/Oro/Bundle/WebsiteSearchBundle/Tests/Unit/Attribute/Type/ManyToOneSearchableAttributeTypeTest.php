@@ -61,4 +61,12 @@ class ManyToOneSearchableAttributeTypeTest extends SearchableAttributeTypeTestCa
             $this->getSearchableAttributeType()->getSortableFieldName($this->attribute)
         );
     }
+
+    public function testGetSearchableFieldName()
+    {
+        $this->assertSame(
+            self::FIELD_NAME . '_' . LocalizationIdPlaceholder::NAME,
+            $this->getSearchableAttributeType()->getSearchableFieldName($this->attribute)
+        );
+    }
 }
