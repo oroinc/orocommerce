@@ -236,58 +236,58 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
                         'attribute1' => [
                             'name'            => 'attribute1',
                             'type'            => 'integer',
+                            'store'           => true,
                             'fulltext'        => false,
                             'organization_id' => null,
-                            'store' => true,
                         ],
                         $attribute1->getFieldName().'_'.EnumIdPlaceholder::NAME => [
                             'name'            => $attribute1->getFieldName().'_'.EnumIdPlaceholder::NAME,
                             'type'            => Query::TYPE_INTEGER,
+                            'store'           => true,
                             'fulltext'        => false,
                             'organization_id' => null,
-                            'store' => true,
                         ],
                         $attribute2->getFieldName().'_priority'                 => [
                             'name'            => $attribute2->getFieldName().'_priority',
                             'type'            => Query::TYPE_INTEGER,
+                            'store'           => true,
                             'fulltext'        => false,
                             'organization_id' => null,
-                            'store' => true,
                         ],
                         $attribute3->getFieldName().'_'.EnumIdPlaceholder::NAME => [
                             'name'            => $attribute3->getFieldName().'_'.EnumIdPlaceholder::NAME,
                             'type'            => Query::TYPE_INTEGER,
+                            'store'           => true,
                             'fulltext'        => false,
                             'organization_id' => null,
-                            'store' => true,
                         ],
                         $attribute3->getFieldName().'_priority'                 => [
                             'name'            => $attribute3->getFieldName().'_priority',
                             'type'            => Query::TYPE_INTEGER,
+                            'store'           => true,
                             'fulltext'        => false,
                             'organization_id' => null,
-                            'store' => true,
                         ],
                         $attribute5->getFieldName().'_'.EnumIdPlaceholder::NAME                 => [
                             'name'            => $attribute5->getFieldName().'_'.EnumIdPlaceholder::NAME,
                             'type'            => Query::TYPE_INTEGER,
+                            'store'           => true,
                             'fulltext'        => false,
                             'organization_id' => null,
-                            'store' => true,
                         ],
                         $attribute5->getFieldName().'_priority'                 => [
                             'name'            => $attribute5->getFieldName().'_priority',
                             'type'            => Query::TYPE_INTEGER,
+                            'store'           => true,
                             'fulltext'        => false,
                             'organization_id' => null,
-                            'store' => true,
                         ],
                         $attribute5->getFieldName().'_searchable'                 => [
                             'name'            => $attribute5->getFieldName().'_searchable',
                             'type'            => Query::TYPE_TEXT,
+                            'store'           => true,
                             'fulltext'        => true,
                             'organization_id' => null,
-                            'store' => true,
                         ]
                     ]
                 ],
@@ -297,8 +297,9 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
                         'first' => [
                             'name'            => 'first',
                             'type'            => 'text',
+                            'store'           => true,
                             'fulltext'        => true,
-                            'organization_id' => null
+                            'organization_id' => null,
                         ]
                     ]
                 ]
@@ -407,44 +408,49 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
                             'type'            => 'text',
                             'store'           => true,
                             'fulltext'        => true,
-                            'organization_id' => null
+                            'organization_id' => null,
                         ],
                         'lasttname' => [
                             'name'            => 'lasttname',
                             'type'            => 'text',
                             'store'           => true,
                             'fulltext'        => true,
-                            'organization_id' => null
+                            'organization_id' => null,
                         ],
                         'attribute1' => [
                             'name'            => 'attribute1',
                             'type'            => 'integer',
+                            'store'           => true,
                             'fulltext'        => false,
-                            'organization_id' => null
+                            'organization_id' => null,
                         ],
                         $attribute1->getFieldName() => [
                             'name'            => $attribute1->getFieldName(),
                             'type'            => Query::TYPE_TEXT,
+                            'store'           => true,
                             'fulltext'        => true,
-                            'organization_id' => null
+                            'organization_id' => null,
                         ],
                         $attribute2->getFieldName() => [
                             'name'            => $attribute2->getFieldName(),
                             'type'            => Query::TYPE_TEXT,
+                            'store'           => true,
                             'fulltext'        => false,
-                            'organization_id' => null
+                            'organization_id' => null,
                         ],
                         $attribute3->getFieldName() => [
                             'name'            => $attribute3->getFieldName(),
                             'type'            => Query::TYPE_TEXT,
+                            'store'           => true,
                             'fulltext'        => true,
-                            'organization_id' => null
+                            'organization_id' => null,
                         ],
                         $attribute5->getFieldName() => [
                             'name'            => $attribute5->getFieldName(),
                             'type'            => Query::TYPE_TEXT,
+                            'store'           => true,
                             'fulltext'        => true,
-                            'organization_id' => null
+                            'organization_id' => null,
                         ],
                     ]
                 ],
@@ -454,9 +460,9 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
                         'first' => [
                             'name'            => 'first',
                             'type'            => 'text',
+                            'store'           => true,
                             'fulltext'        => true,
                             'organization_id' => null,
-                            'store' => true,
                         ]
                     ]
                 ]
