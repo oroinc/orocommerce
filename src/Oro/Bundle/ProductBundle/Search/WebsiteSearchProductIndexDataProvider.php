@@ -7,6 +7,7 @@ use Oro\Bundle\EntityConfigBundle\Attribute\AttributeTypeRegistry;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\WebsiteSearchBundle\Attribute\SearchableInformationProvider;
 use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchAttributeTypeInterface;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexDataProvider;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
@@ -28,6 +29,9 @@ class WebsiteSearchProductIndexDataProvider implements ProductIndexDataProviderI
 
     /** @var PropertyAccessor */
     protected $propertyAccessor;
+
+    /** @var SearchableInformationProvider */
+    protected $searchableInformationProvider;
 
     /**
      * @param AttributeTypeRegistry $attributeTypeRegistry
@@ -96,10 +100,10 @@ class WebsiteSearchProductIndexDataProvider implements ProductIndexDataProviderI
         $placeholders = $localization ? [LocalizationIdPlaceholder::NAME => $localization->getId()] : [];
         $isLocalized = $localization !== null;
 
-        $filterFieldName = null;
+        $fieldNames = [];
         if ($this->isFilterable($attribute, $attributeType, $isForceIndexed)) {
             $filterFieldName = $attributeType
-                ->getFilterableFieldNames($attribute)[SearchAttributeTypeInterface::VALUE_MAIN] ?? '';
+                    ->getFilterableFieldNames($attribute)[SearchAttributeTypeInterface::VALUE_MAIN] ?? '';
 
             $fields = $this->addToFields(
                 $fields,
@@ -109,12 +113,14 @@ class WebsiteSearchProductIndexDataProvider implements ProductIndexDataProviderI
                 $isLocalized,
                 false
             );
+
+            $fieldNames[] = $filterFieldName;
         }
 
         if ($this->isSortable($attribute, $attributeType, $isForceIndexed)) {
             $sortFieldName = $attributeType->getSortableFieldName($attribute);
 
-            if ($filterFieldName !== $sortFieldName) {
+            if (!in_array($sortFieldName, $fieldNames, true)) {
                 $fields = $this->addToFields(
                     $fields,
                     $sortFieldName,
@@ -124,6 +130,8 @@ class WebsiteSearchProductIndexDataProvider implements ProductIndexDataProviderI
                     false
                 );
             }
+
+            $fieldNames[] = $sortFieldName;
         }
 
         if ($this->configurationProvider->isAttributeSearchable($attribute)) {
@@ -135,6 +143,23 @@ class WebsiteSearchProductIndexDataProvider implements ProductIndexDataProviderI
                 $isLocalized,
                 true
             );
+
+            if ($this->isBoostable($attribute, $attributeType)) {
+                $searchFieldName = $this
+                    ->getSearchableInformationProvider()
+                    ->getSearchableFieldName($attribute, $attributeType);
+
+                if (!in_array($searchFieldName, $fieldNames, true)) {
+                    $fields = $this->addToFields(
+                        $fields,
+                        $searchFieldName,
+                        $attributeType->getSearchableValue($attribute, $originalValue, $localization),
+                        $placeholders,
+                        $isLocalized,
+                        false
+                    );
+                }
+            }
         }
 
         return $fields;
@@ -211,5 +236,36 @@ class WebsiteSearchProductIndexDataProvider implements ProductIndexDataProviderI
     {
         return $type->isSortable($attribute) &&
             ($force || $this->configurationProvider->isAttributeSortable($attribute));
+    }
+
+    /**
+     * @param FieldConfigModel $attribute
+     * @param SearchAttributeTypeInterface $type
+     *
+     * @return bool
+     */
+    private function isBoostable(FieldConfigModel $attribute, SearchAttributeTypeInterface $type): bool
+    {
+        return $type->isSearchable() && $this->getSearchableInformationProvider()->getAttributeSearchBoost($attribute);
+    }
+
+    /**
+     * @return SearchableInformationProvider
+     */
+    public function getSearchableInformationProvider(): SearchableInformationProvider
+    {
+        if (!$this->searchableInformationProvider) {
+            throw new \RuntimeException('SearchableInformationProvider is not set.');
+        }
+
+        return $this->searchableInformationProvider;
+    }
+
+    /**
+     * @param SearchableInformationProvider $searchableInformationProvider
+     */
+    public function setSearchableInformationProvider(SearchableInformationProvider $searchableInformationProvider): void
+    {
+        $this->searchableInformationProvider = $searchableInformationProvider;
     }
 }

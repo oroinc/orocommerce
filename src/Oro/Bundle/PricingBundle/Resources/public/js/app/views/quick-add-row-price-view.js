@@ -94,7 +94,7 @@ const QuickAddRowPricesView = BaseView.extend({
                 priceObj.price * quantity,
                 priceObj.currency
             );
-        } else if (this.model.get('unit') && this.model.get('unit') !== this.model.get('unit_placeholder')) {
+        } else if (this.model.get('unit')) {
             return this.options.subtotalNotAvailable;
         }
 

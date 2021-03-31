@@ -42,18 +42,17 @@
         margin-bottom: $offset-x-s;
     }
 
-    &__name,
-    &__details {
+    &__name {
         display: inline-block;
         vertical-align: middle;
-
-        word-break: break-all;
-    }
-
-    &__name {
         padding-#{$end}: $offset-x-m;
 
         text-transform: uppercase;
+    }
+
+    &__name,
+    &__details {
+        word-break: break-all;
     }
 
     &__name-inner {
@@ -69,6 +68,14 @@
     &__details {
         text-align: $end;
         padding-left: $offset-x-s;
+    }
+
+    &__details-count {
+        display: inline-block;
+    }
+
+    &__details-subtotal {
+        display: inline-block;
     }
 
     &__products {
@@ -219,4 +226,3 @@
         }
     }
 }
-

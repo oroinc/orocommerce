@@ -9,6 +9,8 @@ use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Search\ProductIndexFieldsProvider;
 use Oro\Bundle\SearchBundle\Event\SearchMappingCollectEvent;
+use Oro\Bundle\SearchBundle\Query\Query;
+use Oro\Bundle\WebsiteSearchBundle\Attribute\SearchableInformationProvider;
 use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\FulltextAwareTypeInterface;
 use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchAttributeTypeInterface;
 use Oro\Bundle\WebsiteSearchBundle\Configuration\MappingConfiguration;
@@ -30,6 +32,9 @@ class WebsiteSearchMappingListener
 
     /** @var ProductIndexFieldsProvider */
     protected $fieldsProvider;
+
+    /** @var SearchableInformationProvider */
+    protected $searchableInformationProvider;
 
     /**
      * @param AttributeManager $attributeManager
@@ -68,20 +73,22 @@ class WebsiteSearchMappingListener
             $isForceIndexed = $this->fieldsProvider->isForceIndexed($attribute->getFieldName());
 
             if ($this->isFilterable($attribute, $attributeType, $isForceIndexed)) {
-                $names = $attributeType->getFilterableFieldNames($attribute);
-                $types = $attributeType->getFilterStorageFieldTypes();
+                $fields = $this->getFilterableFields($attributeType, $attribute, $fields, $organizationId);
+            }
 
-                foreach ($names as $key => $scalarName) {
-                    $field = [
-                        'name' => $scalarName,
-                        'type' => $types[$key],
-                        'organization_id' => $organizationId
-                    ];
-                    if ($attributeType instanceof FulltextAwareTypeInterface) {
-                        $field['fulltext'] = $attributeType->isFulltextSearchSupported();
-                    }
-                    $fields[$scalarName] = $field;
+            if ($this->isBoostable($attribute, $attributeType)) {
+                $name = $this->getSearchableInformationProvider()->getSearchableFieldName($attribute, $attributeType);
+
+                if (array_key_exists($name, $fields)) {
+                    continue;
                 }
+
+                $fields[$name] = [
+                    'name' => $name,
+                    'type' => Query::TYPE_TEXT,
+                    'organization_id' => $organizationId,
+                    'fulltext' => true
+                ];
             }
 
             if ($this->isSortable($attribute, $attributeType, $isForceIndexed)) {
@@ -122,6 +129,38 @@ class WebsiteSearchMappingListener
         }
 
         return $attributeType;
+    }
+
+    /**
+     * @param SearchAttributeTypeInterface $attributeType
+     * @param FieldConfigModel             $attribute
+     * @param array                        $fields
+     * @param int|null                     $organizationId
+     *
+     * @return array
+     */
+    protected function getFilterableFields(
+        SearchAttributeTypeInterface $attributeType,
+        FieldConfigModel $attribute,
+        array $fields,
+        ?int $organizationId
+    ): array {
+        $names = $attributeType->getFilterableFieldNames($attribute);
+        $types = $attributeType->getFilterStorageFieldTypes();
+
+        foreach ($names as $key => $scalarName) {
+            $field = [
+                'name' => $scalarName,
+                'type' => $types[$key],
+                'organization_id' => $organizationId
+            ];
+            if ($attributeType instanceof FulltextAwareTypeInterface) {
+                $field['fulltext'] = $attributeType->isFulltextSearchSupported();
+            }
+            $fields[$scalarName] = $field;
+        }
+
+        return $fields;
     }
 
     /**
@@ -166,5 +205,38 @@ class WebsiteSearchMappingListener
     {
         return $type->isSortable($attribute) &&
             ($force || $this->configurationProvider->isAttributeSortable($attribute));
+    }
+
+    /**
+     * @param FieldConfigModel $attribute
+     * @param SearchAttributeTypeInterface $type
+     *
+     * @return bool
+     */
+    private function isBoostable(FieldConfigModel $attribute, SearchAttributeTypeInterface $type): bool
+    {
+        return $type->isSearchable($attribute)
+            && $this->configurationProvider->isAttributeSearchable($attribute)
+            && $this->getSearchableInformationProvider()->getAttributeSearchBoost($attribute);
+    }
+
+    /**
+     * @return SearchableInformationProvider
+     */
+    public function getSearchableInformationProvider(): SearchableInformationProvider
+    {
+        if (!$this->searchableInformationProvider) {
+            throw new \RuntimeException('SearchableInformationProvider is not set.');
+        }
+
+        return $this->searchableInformationProvider;
+    }
+
+    /**
+     * @param SearchableInformationProvider $searchableInformationProvider
+     */
+    public function setSearchableInformationProvider(SearchableInformationProvider $searchableInformationProvider): void
+    {
+        $this->searchableInformationProvider = $searchableInformationProvider;
     }
 }

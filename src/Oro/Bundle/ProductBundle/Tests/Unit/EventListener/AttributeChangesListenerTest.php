@@ -23,6 +23,9 @@ use PHPUnit\Framework\MockObject\Rule\InvokedCount;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * @SuppressWarnings(PHPMD.ExcessiveClassLength)
+ */
 class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
 {
     const FIELD_NAME = 'test_field';
@@ -387,6 +390,255 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE]],
             'attributeConfigValues' => ['searchable' => false],
             'attributeChangeSet' => ['searchable' => [true, false]]
+        ];
+        //search_boost
+        yield 'state active and not changed, searchable, boost not changed' => [
+            'expected' => $this->never(),
+            'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
+            'extendChangeSet' => [],
+            'attributeConfigValues' => ['searchable' => true]
+        ];
+        yield 'state active and not changed, searchable, boost changed from null' => [
+            'expected' => $this->once(),
+            'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
+            'extendChangeSet' => [],
+            'attributeConfigValues' => ['searchable' => true, 'search_boost' => 1.0],
+            'attributeChangeSet' => ['search_boost' => [null, 1.0]]
+        ];
+        yield 'state active and not changed, searchable, boost changed from 0' => [
+            'expected' => $this->once(),
+            'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
+            'extendChangeSet' => [],
+            'attributeConfigValues' => ['searchable' => true, 'search_boost' => 1.0],
+            'attributeChangeSet' => ['search_boost' => [0, 1.0]]
+        ];
+        yield 'state active and not changed, searchable, boost changed from not empty value' => [
+            'expected' => $this->never(),
+            'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
+            'extendChangeSet' => [],
+            'attributeConfigValues' => ['searchable' => true, 'search_boost' => 1.0],
+            'attributeChangeSet' => ['search_boost' => [0.1, 1.0]]
+        ];
+        yield 'state active and not changed, searchable, boost changed to null' => [
+            'expected' => $this->never(),
+            'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
+            'extendChangeSet' => [],
+            'attributeConfigValues' => ['searchable' => true, 'search_boost' => null],
+            'attributeChangeSet' => ['search_boost' => [1.0, null]]
+        ];
+        yield 'state active and not changed, searchable, boost changed to 0' => [
+            'expected' => $this->never(),
+            'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
+            'extendChangeSet' => [],
+            'attributeConfigValues' => ['searchable' => true, 'search_boost' => 0],
+            'attributeChangeSet' => ['search_boost' => [1.0, 0]]
+        ];
+        yield 'state active and not changed, not searchable, boost not changed' => [
+            'expected' => $this->never(),
+            'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
+            'extendChangeSet' => [],
+            'attributeConfigValues' => ['searchable' => false]
+        ];
+        yield 'state active and not changed, not searchable, boost changed from null' => [
+            'expected' => $this->never(),
+            'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
+            'extendChangeSet' => [],
+            'attributeConfigValues' => ['searchable' => false, 'search_boost' => 1.0],
+            'attributeChangeSet' => ['search_boost' => [null, 1.0]]
+        ];
+        yield 'state active and not changed, not searchable, boost changed from 0' => [
+            'expected' => $this->never(),
+            'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
+            'extendChangeSet' => [],
+            'attributeConfigValues' => ['searchable' => false, 'search_boost' => 1.0],
+            'attributeChangeSet' => ['search_boost' => [0, 1.0]]
+        ];
+        yield 'state active and not changed, not searchable, boost changed from not empty value' => [
+            'expected' => $this->never(),
+            'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
+            'extendChangeSet' => [],
+            'attributeConfigValues' => ['searchable' => false, 'search_boost' => 1.0],
+            'attributeChangeSet' => ['search_boost' => [0.1, 1.0]]
+        ];
+        yield 'state active and not changed, not searchable, boost changed to null' => [
+            'expected' => $this->never(),
+            'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
+            'extendChangeSet' => [],
+            'attributeConfigValues' => ['searchable' => false, 'search_boost' => null],
+            'attributeChangeSet' => ['search_boost' => [1.0, null]]
+        ];
+        yield 'state active and not changed, not searchable, boost changed to 0' => [
+            'expected' => $this->never(),
+            'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
+            'extendChangeSet' => [],
+            'attributeConfigValues' => ['searchable' => false, 'search_boost' => 0],
+            'attributeChangeSet' => ['search_boost' => [1.0, 0]]
+        ];
+        // ----
+        yield 'state update and not changed, searchable, boost not changed' => [
+            'expected' => $this->never(),
+            'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
+            'extendChangeSet' => [],
+            'attributeConfigValues' => ['searchable' => true]
+        ];
+        yield 'state update and not changed, searchable, boost changed from null' => [
+            'expected' => $this->once(),
+            'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
+            'extendChangeSet' => [],
+            'attributeConfigValues' => ['searchable' => true, 'search_boost' => 1.0],
+            'attributeChangeSet' => ['search_boost' => [null, 1.0]]
+        ];
+        yield 'state update and not changed, searchable, boost changed from 0' => [
+            'expected' => $this->once(),
+            'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
+            'extendChangeSet' => [],
+            'attributeConfigValues' => ['searchable' => true, 'search_boost' => 1.0],
+            'attributeChangeSet' => ['search_boost' => [0, 1.0]]
+        ];
+        yield 'state update and not changed, searchable, boost changed from not empty value' => [
+            'expected' => $this->never(),
+            'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
+            'extendChangeSet' => [],
+            'attributeConfigValues' => ['searchable' => true, 'search_boost' => 1.0],
+            'attributeChangeSet' => ['search_boost' => [0.1, 1.0]]
+        ];
+        yield 'state update and not changed, searchable, boost changed to null' => [
+            'expected' => $this->never(),
+            'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
+            'extendChangeSet' => [],
+            'attributeConfigValues' => ['searchable' => true, 'search_boost' => null],
+            'attributeChangeSet' => ['search_boost' => [1.0, null]]
+        ];
+        yield 'state update and not changed, searchable, boost changed to 0' => [
+            'expected' => $this->never(),
+            'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
+            'extendChangeSet' => [],
+            'attributeConfigValues' => ['searchable' => true, 'search_boost' => 0],
+            'attributeChangeSet' => ['search_boost' => [1.0, 0]]
+        ];
+        yield 'state update and not changed, not searchable, boost not changed' => [
+            'expected' => $this->never(),
+            'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
+            'extendChangeSet' => [],
+            'attributeConfigValues' => ['searchable' => false]
+        ];
+        yield 'state update and not changed, not searchable, boost changed from null' => [
+            'expected' => $this->never(),
+            'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
+            'extendChangeSet' => [],
+            'attributeConfigValues' => ['searchable' => false, 'search_boost' => 1.0],
+            'attributeChangeSet' => ['search_boost' => [null, 1.0]]
+        ];
+        yield 'state update and not changed, not searchable, boost changed from 0' => [
+            'expected' => $this->never(),
+            'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
+            'extendChangeSet' => [],
+            'attributeConfigValues' => ['searchable' => false, 'search_boost' => 1.0],
+            'attributeChangeSet' => ['search_boost' => [0, 1.0]]
+        ];
+        yield 'state update and not changed, not searchable, boost changed from not empty value' => [
+            'expected' => $this->never(),
+            'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
+            'extendChangeSet' => [],
+            'attributeConfigValues' => ['searchable' => false, 'search_boost' => 1.0],
+            'attributeChangeSet' => ['search_boost' => [0.1, 1.0]]
+        ];
+        yield 'state update and not changed, not searchable, boost changed to null' => [
+            'expected' => $this->never(),
+            'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
+            'extendChangeSet' => [],
+            'attributeConfigValues' => ['searchable' => false, 'search_boost' => null],
+            'attributeChangeSet' => ['search_boost' => [1.0, null]]
+        ];
+        yield 'state update and not changed, not searchable, boost changed to 0' => [
+            'expected' => $this->never(),
+            'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
+            'extendChangeSet' => [],
+            'attributeConfigValues' => ['searchable' => false, 'search_boost' => 0],
+            'attributeChangeSet' => ['search_boost' => [1.0, 0]]
+        ];
+        // ----
+        yield 'state changed from active to update, searchable, boost not changed' => [
+            'expected' => $this->never(),
+            'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
+            'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE]],
+            'attributeConfigValues' => ['searchable' => true]
+        ];
+        yield 'state changed from active to update, searchable, boost changed from null' => [
+            'expected' => $this->once(),
+            'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
+            'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE]],
+            'attributeConfigValues' => ['searchable' => true, 'search_boost' => 1.0],
+            'attributeChangeSet' => ['search_boost' => [null, 1.0]]
+        ];
+        yield 'state changed from active to update, searchable, boost changed from 0' => [
+            'expected' => $this->once(),
+            'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
+            'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE]],
+            'attributeConfigValues' => ['searchable' => true, 'search_boost' => 1.0],
+            'attributeChangeSet' => ['search_boost' => [0, 1.0]]
+        ];
+        yield 'state changed from active to update, searchable, boost changed from not empty value' => [
+            'expected' => $this->never(),
+            'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
+            'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE]],
+            'attributeConfigValues' => ['searchable' => true, 'search_boost' => 1.0],
+            'attributeChangeSet' => ['search_boost' => [0.1, 1.0]]
+        ];
+        yield 'state changed from active to update, searchable, boost changed to null' => [
+            'expected' => $this->never(),
+            'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
+            'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE]],
+            'attributeConfigValues' => ['searchable' => true, 'search_boost' => null],
+            'attributeChangeSet' => ['search_boost' => [1.0, null]]
+        ];
+        yield 'state changed from active to update, searchable, boost changed to 0' => [
+            'expected' => $this->never(),
+            'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
+            'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE]],
+            'attributeConfigValues' => ['searchable' => true, 'search_boost' => 0],
+            'attributeChangeSet' => ['search_boost' => [1.0, 0]]
+        ];
+        yield 'state changed from active to update, not searchable, boost not changed' => [
+            'expected' => $this->never(),
+            'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
+            'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE]],
+            'attributeConfigValues' => ['searchable' => false]
+        ];
+        yield 'state changed from active to update, not searchable, boost changed from null' => [
+            'expected' => $this->never(),
+            'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
+            'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE]],
+            'attributeConfigValues' => ['searchable' => false, 'search_boost' => 1.0],
+            'attributeChangeSet' => ['search_boost' => [null, 1.0]]
+        ];
+        yield 'state changed from active to update, not searchable, boost changed from 0' => [
+            'expected' => $this->never(),
+            'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
+            'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE]],
+            'attributeConfigValues' => ['searchable' => false, 'search_boost' => 1.0],
+            'attributeChangeSet' => ['search_boost' => [0, 1.0]]
+        ];
+        yield 'state changed from active to update, not searchable, boost changed from not empty value' => [
+            'expected' => $this->never(),
+            'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
+            'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE]],
+            'attributeConfigValues' => ['searchable' => false, 'search_boost' => 1.0],
+            'attributeChangeSet' => ['search_boost' => [0.1, 1.0]]
+        ];
+        yield 'state changed from active to update, not searchable, boost changed to null' => [
+            'expected' => $this->never(),
+            'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
+            'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE]],
+            'attributeConfigValues' => ['searchable' => false, 'search_boost' => null],
+            'attributeChangeSet' => ['search_boost' => [1.0, null]]
+        ];
+        yield 'state changed from active to update, not searchable, boost changed to 0' => [
+            'expected' => $this->never(),
+            'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
+            'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE]],
+            'attributeConfigValues' => ['searchable' => false, 'search_boost' => 0],
+            'attributeChangeSet' => ['search_boost' => [1.0, 0]]
         ];
         //filterable
         yield 'state changed from active to not active, filterable and not changed' => [

@@ -2,3 +2,8 @@ oro.website_search:
     search_field_placeholder: Search for a product
     search_label: Search
     search_submit_btn: Start Searching
+
+    entity_config:
+        search_boost:
+            label: 'Global Search Boost'
+            tooltip: 'Decimal value greater than zero. Empty value means no boosting. Any value (even 0.1) already applies boosting. Works only for searchable attributes.'

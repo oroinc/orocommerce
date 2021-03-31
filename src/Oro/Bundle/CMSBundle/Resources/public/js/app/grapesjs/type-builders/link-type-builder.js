@@ -136,7 +136,7 @@ const LinkTypeBuilder = BaseTypeBuilder.extend({
                 },
                 editor: this.editor,
                 initialize() {
-                    this.listenTo(this.model, 'change:attributes:text', (model, val) => model.set('content', val));
+                    this.listenTo(this.model, 'change:attributes:text', (model, value) => model.components(value));
                 },
                 onRender() {
                     const traitText = this.model.getTrait('text');
@@ -163,7 +163,10 @@ const LinkTypeBuilder = BaseTypeBuilder.extend({
             label: __('oro.cms.wysiwyg.component.link.label'),
             content: {
                 type: this.componentType,
-                content: __('oro.cms.wysiwyg.component.link.content'),
+                components: [{
+                    type: 'textnode',
+                    content: __('oro.cms.wysiwyg.component.link.content')
+                }],
                 style: {
                     color: linkColor
                 }
