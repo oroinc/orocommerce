@@ -30,6 +30,7 @@ use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
 use Oro\Bundle\WarehouseBundle\SystemConfig\WarehouseConfig;
+use PHPUnit\Framework\AssertionFailedError;
 use Symfony\Component\DomCrawler\Crawler;
 
 /**
@@ -452,8 +453,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      *
      * @param string $value
      * @param string $elementName
-     *
-     * @return boolean
      */
     public function shouldSeeValueInElementOptions($value, $elementName)
     {
@@ -465,8 +464,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      *
      * @param string $value
      * @param string $elementName
-     *
-     * @return boolean
      */
     public function shouldNotSeeValueInElementOptions($value, $elementName)
     {
@@ -1377,7 +1374,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     private function waitForImagesToLoad($time = 5000)
     {
         $result = $this->getSession()->getDriver()
-            ->wait($time, 0 == "document.querySelectorAll('.slick-loading').length");
+            ->wait($time, "0 === document.querySelectorAll('.slick-loading').length");
 
         if (!$result) {
             self::fail(sprintf('Waited for images to load more than %d seconds', $time / 1000));
@@ -1391,7 +1388,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     public function iWaitPopupWidgetIsInitialized()
     {
-        $this->getSession()->getDriver()->wait(5000, 0 != "$('div.slick-track').length");
+        $this->getSession()->getDriver()->wait(5000, "0 !== $('div.slick-track').length");
     }
 
     /**
