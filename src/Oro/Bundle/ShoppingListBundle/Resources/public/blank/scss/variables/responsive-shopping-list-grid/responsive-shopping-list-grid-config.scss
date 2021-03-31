@@ -2,7 +2,9 @@
 $responsive-shopping-cell-desktop-offset: 23px !default;
 $responsive-shopping-sub-cell-desktop-offset: 18px !default;
 
-$responsive-shopping-list-notification-container-offset: 8px !default;
+$responsive-shopping-list-notification-container-offset: 0 !default;
+$responsive-shopping-list-notification-row-top-offset: 0 !default;
+$responsive-shopping-list-notification-row-bottom-offset: 7px !default;
 $responsive-shopping-sub-row-border-width: 12px !default;
 $responsive-shopping-sub-row-border-offset: $responsive-shopping-sub-row-border-width solid get-color('additional', 'ultra') !default;
 
@@ -11,6 +13,8 @@ $responsive-shopping-sub-row-cell-desktop-inner-offset: $datagrid-body-cell-offs
 
 // Tablet
 $responsive-shopping-group-cell-offset-tablet: 23px !default;
+$responsive-shopping-body-cell-offset-y-tablet: 23px !default;
+$responsive-shopping-subrow-body-cell-offset-y-tablet: 20px !default;
 
 // Mobile
 
@@ -21,6 +25,11 @@ $responsive-shopping-sub-row-border-mobile-color: get-color('additional', 'light
 $responsive-shopping-sub-row-border-mobile: 1px solid $responsive-shopping-sub-row-border-mobile-color !default;
 $responsive-shopping-grid-row-border-mobile: 2px dashed get-color('additional', 'middle');
 $responsive-shopping-header-row-border-mobile: 1px solid $responsive-shopping-sub-row-border-mobile-color !default;
+
+$responsive-shopping-notification-row-error-offset-mobile: 0 !default;
+$responsive-shopping-notification-row-offset-top-mobile: 0 !default;
+$responsive-shopping-notification-row-offset-bottom-mobile: 7px !default;
+$responsive-shopping-notification-subrow-offset-top-mobile: 7px !default;
 
 $responsive-shopping-body-cell-offset-y-mobile: 2px !default;
 $responsive-shopping-body-cell-offset-x-mobile: 10px !default;
