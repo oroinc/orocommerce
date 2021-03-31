@@ -405,7 +405,7 @@ services:
         arguments:
             - "@oro_tax.calculator.included_tax"
             - "@oro_tax.calculator.tax"
-            - "@oro_tax.matcher.zip_code_matcher"
+            - "@oro_tax.matcher.resolvable_matcher"
             - "@oro_tax.provider.taxation_settings_provider"
         tags:
             - { name: oro_tax.resolver, event: oro_tax.resolve_after, priority: -64 }
