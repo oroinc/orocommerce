@@ -1,0 +1,144 @@
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    product_price:
+        priceList: '@defaultPriceList'
+        product: '@product'
+        productSku: 'SKU123'
+        quantity: 1
+        unit: '@item'
+        value: 40
+        currency: 'USD'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision:
+        unit: '@item'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    product_name:
+        string: 'Product'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product:
+        sku: 'SKU'
+        primaryUnitPrecision: '@precision'
+        __calls:
+            - addName: ['@product_name']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        owner: '@business_unit'
+        organization: '@organization'
+        attributeFamily: '@defaultProductFamily'
+        taxCode: '@product_tax_code'
+
+Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+    lineitem:
+        product: '@product'
+        quantity: '1'
+        unit: '@item'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist'
+        organization: '@organization'
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    price_list_to_product:
+        product: '@product'
+        priceList: '@defaultPriceList'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+    shoppinglist:
+        label: 'Shopping list'
+        customerUser: '@amanda'
+        organization: '@organization'
+        owner: '@admin'
+        website: '@website1'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
+    shoppingListTotal:
+        __construct: ['@shoppinglist','USD']
+        shoppingList: '@shoppinglist'
+        currency: 'USD'
+        subtotalValue: '40'
+        valid: true
+
+Oro\Bundle\TaxBundle\Entity\CustomerTaxCode:
+    customer_tax_code:
+        owner: '@admin'
+        organization: '@organization'
+        code: 'Customer tax code'
+
+Oro\Bundle\TaxBundle\Entity\ProductTaxCode:
+    product_tax_code:
+        code: 'Product tax code'
+        organization: '@organization'
+
+Oro\Bundle\TaxBundle\Entity\Tax:
+    tax:
+        code: 'Tax'
+        rate: 0.1
+
+Oro\Bundle\TaxBundle\Entity\TaxJurisdiction:
+    tax_jurisdiction:
+        code: 'TaxJurisdiction'
+        country: '@united_states'
+
+Oro\Bundle\TaxBundle\Entity\TaxRule:
+    tax_rule:
+        productTaxCode: '@product_tax_code'
+        customerTaxCode: '@customer_tax_code'
+        taxJurisdiction: '@tax_jurisdiction'
+        tax: '@tax'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
+    address:
+        country: '@united_states'
+        region: '@florida'
+        label: 'Customer user address'
+        street: 'Street'
+        city: 'City'
+        postalCode: '90001'
+        frontendOwner: '@amanda'
+        owner: '@admin'
+        __calls:
+            - setDefaults: ['@shippingType', '@billingType']
+        systemOrganization: '@organization'
+        primary: true
+        organization: '@organization'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddressToAddressType:
+    billing:
+        address: '@address'
+        type: '@billingType'
+        default: true
+    shipping:
+        address: '@address'
+        type: '@shippingType'
+        default: true
+
+Oro\Bundle\CurrencyBundle\Entity\Price:
+    price:
+        value: '10'
+        currency: 'USD'
+
+Oro\Bundle\CustomerBundle\Entity\Customer:
+    customer:
+        name: 'Company A'
+        organization: '@organization'
+        owner: '@admin'
+        taxCode: '@customer_tax_code'
+        payment_term_7c4f1e8e: '@paymentTerm'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUser:
+    amanda:
+        email: 'AmandaRCole@example.org'
+        username: 'AmandaRCole@example.org'
+        password: 'gxP1L8r86hrdUMg9wKdfnsS/EZC4a7jOIdn6BMzegqL2S6e+KBIuHCrDVciMdiR/64osNnabmFonwK8l09vQxA=='
+        salt: 'fgswya1kzw0sck8ck48kosowckwo0ws'
+        firstName: 'Amanda'
+        lastName: 'Cole'
+        enabled: '1'
+        confirmed: '1'
+        customer: '@customer'
+        organization: '@organization'
+        roles: ['@buyer']
+        owner: '@admin'
+        website: '@website1'
