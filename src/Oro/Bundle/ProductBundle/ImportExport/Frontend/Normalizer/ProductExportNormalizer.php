@@ -11,6 +11,7 @@ use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ImportExport\Frontend\Configuration\ProductImportExportConfigurationProvider;
 use Oro\Bundle\ProductBundle\ImportExport\Frontend\DataConverter\ProductExportDataConverter;
+use Oro\Bundle\ProductBundle\ImportExport\Frontend\Event\ProductExportNormalizerEvent;
 
 /**
  * Product normalizer used for product listing export.
@@ -56,6 +57,12 @@ class ProductExportNormalizer extends ConfigurableEntityNormalizer
                 $object->getNames(),
                 $this->getCurrentLocalization($context)
             );
+        }
+
+        if ($this->dispatcher) {
+            $event = new ProductExportNormalizerEvent($object, $result, $context);
+            $this->dispatcher->dispatch($event, ProductExportNormalizerEvent::FRONTEND_PRODUCT_EXPORT_NORMALIZE);
+            $result = $event->getData();
         }
 
         return $result;

@@ -115,6 +115,9 @@ oro.pricing:
         field_name:
             label: 'Field Name'
             description: 'Price attribute expression field name'
+        enabled_in_export:
+            label: 'Enabled in Product Export'
+            description: 'If enabled this price attribute will be used in frontend product listing export.'
         id.label: Id
         organization:
             label: Organization
@@ -269,6 +272,10 @@ oro.pricing:
     form:
         choose_price_list: Choose a Price List...
         add_rule.label: Add
+        priceattributepricelist:
+            enabled_in_export:
+                yes: Yes
+                no: No
 
     grid:
         action:

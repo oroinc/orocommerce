@@ -56,6 +56,7 @@ class PriceAttributePriceListTypeTest extends FormIntegrationTestCase
         $submittedData = [
             'name' => 'Test Price Attribute',
             'currencies' => [],
+            'enabledInExport' => 0
         ];
         $expectedData = $submittedData;
 
@@ -72,6 +73,7 @@ class PriceAttributePriceListTypeTest extends FormIntegrationTestCase
         $result = $form->getData();
         $this->assertEquals($expectedData['name'], $result->getName());
         $this->assertEquals($expectedData['currencies'], array_values($result->getCurrencies()));
+        $this->assertEquals($expectedData['enabledInExport'], $result->isEnabledInExport());
     }
 
     public function testSubmitWithDefaultData()
@@ -80,6 +82,7 @@ class PriceAttributePriceListTypeTest extends FormIntegrationTestCase
             'name' => 'Test Price Attribute 01',
             'fieldName' => 'pa01',
             'currencies' => ['EUR', 'USD'],
+            'enabledInExport' => 1
         ];
 
         $expectedData = $submittedData;
@@ -87,6 +90,7 @@ class PriceAttributePriceListTypeTest extends FormIntegrationTestCase
             'name' => 'Test Price Attribute',
             'fieldName' => 'pa02',
             'currencies' => ['USD', 'UAH'],
+            'enabledInExport' => 0
         ];
         $existingPriceAttributePriceList = new PriceAttributePriceList();
         $class = new \ReflectionClass($existingPriceAttributePriceList);
@@ -114,5 +118,6 @@ class PriceAttributePriceListTypeTest extends FormIntegrationTestCase
         $result = $form->getData();
         $this->assertEquals($expectedData['name'], $result->getName());
         $this->assertEquals($expectedData['currencies'], array_values($result->getCurrencies()));
+        $this->assertEquals($expectedData['enabledInExport'], $result->isEnabledInExport());
     }
 }
