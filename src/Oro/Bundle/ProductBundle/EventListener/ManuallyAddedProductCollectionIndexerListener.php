@@ -175,7 +175,7 @@ class ManuallyAddedProductCollectionIndexerListener
     {
         $variantIds = [];
         if ($variantsByRecordId) {
-            $variantIds = array_merge(...$variantsByRecordId);
+            $variantIds = array_merge(...array_values($variantsByRecordId));
         }
 
         $repository = $this->registry->getManagerForClass(ContentVariant::class)->getRepository(ContentVariant::class);

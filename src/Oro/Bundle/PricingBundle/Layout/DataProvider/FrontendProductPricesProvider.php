@@ -153,7 +153,7 @@ class FrontendProductPricesProvider
         $configurableProducts = $this->productVariantAvailabilityProvider
             ->getSimpleProductsGroupedByConfigurable($products);
         if ($configurableProducts) {
-            $products = array_merge($products, array_merge(...$configurableProducts));
+            $products = array_merge($products, array_merge(...array_values($configurableProducts)));
         }
         // Can't use array_unique here, because it uses __toString() for comparison which uses LocalizedFallbackValue
         // And array_unique with SORT_REGULAR option leads to nesting level error on complex objects
