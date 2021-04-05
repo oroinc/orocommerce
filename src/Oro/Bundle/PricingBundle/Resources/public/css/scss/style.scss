@@ -13,7 +13,7 @@
         .removeRow {
             position: absolute;
             top: 4px;
-            #{$end}: 4px;
+            right: 4px;
             text-decoration: none;
         }
     }
@@ -95,7 +95,7 @@
     }
 
     .controls {
-        margin-#{$start}: $pricing-price-list-controls-offset !important;
+        margin-left: $pricing-price-list-controls-offset !important;
     }
 
     &__option-cell {
@@ -109,7 +109,7 @@
     table {
         th {
             .price-list-grid-form__options-label {
-                padding-#{$start}: $content-padding-small;
+                padding-left: $content-padding-small;
             }
         }
 
@@ -147,13 +147,13 @@
 .allow-merge-block {
     display: inline-block;
     vertical-align: middle;
-    margin-#{$end}: $allow-merge-block-label-offset;
+    margin-right: $allow-merge-block-label-offset;
 
     &__inner {
         display: block;
     }
 
     .merge-allowed-label {
-        margin-#{$start}: $allow-merge-block-label-offset;
+        margin-left: $allow-merge-block-label-offset;
     }
 }

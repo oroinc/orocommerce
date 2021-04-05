@@ -6,7 +6,7 @@
     .removeRow {
         position: absolute;
         top: 0;
-        #{$end}: 0;
+        right: 0;
     }
 
     .tax-address {
@@ -99,15 +99,15 @@
     }
 
     .tax-zip-zip-range {
-        padding-#{$end}: $table-td-first-child-inner-offset;
+        padding-right: $table-td-first-child-inner-offset;
     }
 
     .tax-zip-action {
         width: $btn-icon-width + $table-tbody-td-offset;
-        padding-#{$start}: 0;
+        padding-left: 0;
 
         &:last-child {
-            padding-#{$end}: 0;
+            padding-right: 0;
         }
     }
 }
