@@ -120,6 +120,26 @@
             // Line height is equal to a row line item height
             line-height: $responsive-shopping-list-edit-action-in-tablet-height;
         }
+
+        .grid-row{
+            .grid-body-cell {
+                &-price,
+                &-subtotal,
+                &.action-cell {
+                    padding-top: $responsive-shopping-body-cell-offset-y-tablet;
+                }
+            }
+        }
+
+        .sub-row {
+            .grid-body-cell {
+                &-price,
+                &-subtotal,
+                &.action-cell {
+                    padding-top: $responsive-shopping-subrow-body-cell-offset-y-tablet;
+                }
+            }
+        }
     }
 }
 
@@ -186,6 +206,16 @@
             width: $responsive-shopping-list-edit-action-cell-width-mobile;
             padding-left: 0;
             margin: 0 !important;
+        }
+
+        .grid-row {
+            .grid-body-cell {
+                &-price,
+                &-subtotal,
+                &.action-cell {
+                    padding-top: $responsive-shopping-body-cell-offset-y-mobile;
+                }
+            }
         }
 
         .group-row,

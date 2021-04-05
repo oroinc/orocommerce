@@ -1,5 +1,6 @@
 <% let clipLength = 30 %>
 <% let oroshoppinglist = _.macros('oroshoppinglist') %>
+
 <div class="product-item grid-line-items">
     <%= oroshoppinglist.renderProductItemImage({
         src: obj.image,
@@ -33,7 +34,7 @@
                 <% if (obj.sku) { %>
                     <span class="highlighted-in-mobile break-all"><%- sku %></span>
                 <% } %>
-                <% if (!isConfigurable) { %>
+                <% if (!obj.isConfigurable) { %>
                     <%= oroshoppinglist.renderInventoryStatus({name: inventoryStatus, label: inventoryStatusLabel(inventoryStatus), isLowInventory: isLowInventory}) %>
                 <% } %>
             </div>
@@ -74,21 +75,6 @@
         <% } %>
     </div>
 </div>
-
-<% if (obj.isUpcoming || obj.errors && obj.errors.length || obj.warnings && obj.warnings.length || (obj.success && obj.message)) { %>
-<div class="notification-container">
-    <%= oroshoppinglist.renderUpcoming({isUpcoming: isUpcoming, availabilityDate: obj.availabilityDate}) %>
-    <%= oroshoppinglist.renderWarnings({warnings: obj.warnings}) %>
-    <%= oroshoppinglist.renderErrors({errors: obj.errors}) %>
-
-    <% if (obj.success && obj.message) { %>
-    <div class="notification--success" role="alert">
-        <span class="fa-check" aria-hidden="true"></span>
-        <span class="notification__text"><%- obj.message %></span>
-    </div>
-    <% } %>
-</div>
-<% } %>
 
 <% if (obj.filteredOutData) { %>
     <%= oroshoppinglist.renderMoreVariantsButton(filteredOutData) %>

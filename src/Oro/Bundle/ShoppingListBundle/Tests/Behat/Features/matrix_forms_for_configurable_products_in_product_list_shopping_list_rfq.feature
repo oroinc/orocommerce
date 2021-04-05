@@ -347,8 +347,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | Value 13 |          |          | -        |
       | Value 14 | -        | -        | 1        |
     And I click "Accept"
-    Then I should see "6 total records"
-    And I should see following grid:
+    Then I should see following grid:
       | SKU       | Item                                                             |          | QtyUpdate All | Price  | Subtotal |
       | SKU123    | 400-Watt Bulb Work Light                                         | In Stock | 5 item        | $2.00  | $10.00   |
       | PROD_B_11 | ConfigurableProductB Attribute 1: Value 11 Attribute 2: Value 21 | In Stock | 1 item        | $12.00 | $12.00   |

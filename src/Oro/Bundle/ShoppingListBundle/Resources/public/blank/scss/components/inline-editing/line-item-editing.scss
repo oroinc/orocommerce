@@ -56,6 +56,11 @@
 
     .input {
         min-width: 80px;
+
+        .highlight-error & {
+            @extend .error;
+            z-index: z('base') + 1;
+        }
     }
 
     .edit-mode & {
@@ -106,7 +111,7 @@
             top: 1px;
             bottom: 1px;
             right: 1px;
-            width: $input-padding - 1;
+            width: $input-padding-y;
 
             background-color: $input-background-color;
 
