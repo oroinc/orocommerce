@@ -1,0 +1,14 @@
+<% let oroshoppinglist = _.macros('oroshoppinglist') %>
+
+<% if (obj.isUpcoming || obj.errors && obj.errors.length || obj.warnings && obj.warnings.length || (obj.success && obj.message)) { %>
+    <div class="notification-container">
+        <%= oroshoppinglist.renderWarnings({warnings: obj.warnings}) %>
+        <%= oroshoppinglist.renderErrors({errors: obj.errors}) %>
+        <% if (obj.success && obj.message) { %>
+            <div class="notification--success" role="alert">
+                <span class="fa-check" aria-hidden="true"></span>
+                <span class="notification__text"><%- obj.message %></span>
+            </div>
+        <% } %>
+    </div>
+<% } %>

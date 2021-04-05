@@ -50,10 +50,10 @@ define(function(require) {
             const success = __(this.messages.success, this.model.toJSON());
 
             for (const subModel of this.model.subModels()) {
-                subModel.classList().add('loading');
+                subModel.toggleLoadingOverlay(true);
             }
 
-            this.model.classList().add('loading');
+            this.model.toggleLoadingOverlay(true);
             this.model.destroy({
                 url: this.getLink(),
                 wait: true,

@@ -30,6 +30,7 @@ use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
 use Oro\Bundle\WarehouseBundle\SystemConfig\WarehouseConfig;
+use PHPUnit\Framework\AssertionFailedError;
 use Symfony\Component\DomCrawler\Crawler;
 
 /**
@@ -452,8 +453,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      *
      * @param string $value
      * @param string $elementName
-     *
-     * @return boolean
      */
     public function shouldSeeValueInElementOptions($value, $elementName)
     {
@@ -465,8 +464,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      *
      * @param string $value
      * @param string $elementName
-     *
-     * @return boolean
      */
     public function shouldNotSeeValueInElementOptions($value, $elementName)
     {
@@ -769,22 +766,34 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         );
     }
 
-    //@codingStandardsIgnoreStart
     /**
-     * Example: I should see "This item is running low on inventory" for "SKU123" product with Unit of Quantity "item" in order
-     * @Then /^(?:|I )should see "(?P<elementNameOrText>[^"]*)" for "(?P<SKU>[^"]*)" product with Unit of Quantity "(?P<unit>[^"]*)" in order$/
+     * @codingStandardsIgnoreStart
+     *
+     * Example: I should see notification "This item is running low on inventory" for "SKU123" product with Unit of Quantity "item" in order
+     * @Then /^(?:|I )should see notification "(?P<elementNameOrText>[^"]*)" for "(?P<SKU>[^"]*)" product with Unit of Quantity "(?P<unit>[^"]*)" in order$/
+     *
+     * @codingStandardsIgnoreEnd
      */
-    //@codingStandardsIgnoreEnd
-    public function shouldSeeForProductWithUnitInOrder($elementNameOrText, $SKU, $unit)
+    public function shouldSeeNotificationForProductWithUnitInOrder($elementNameOrText, $SKU, $unit): void
     {
-        $productItem = $this->findProductItemByUnitInOrder($SKU, $unit);
+        $selector = sprintf(
+            "//*[contains(text(), '%s')]/ancestor::tr//" .
+            "td[contains(@class, 'grid-body-cell-unit') and contains(text(), '%s')]/ancestor::tr/" .
+            "following-sibling::tr[contains(@class, 'notification-row') and position()=1]",
+            $SKU,
+            $unit
+        );
 
-        if ($this->isElementVisible($elementNameOrText, $productItem)) {
+        $notificationRow = $this->getSession()->getPage()->find('xpath', $selector);
+
+        self::assertNotNull($notificationRow, sprintf('notifications for the line item with SKU "%s" not found', $SKU));
+
+        if ($this->isElementVisible($elementNameOrText, $notificationRow)) {
             return;
         }
 
         self::assertNotFalse(
-            stripos($productItem->getText(), $elementNameOrText),
+            stripos($notificationRow->getText(), $elementNameOrText),
             sprintf(
                 '%s "%s" for product with SKU "%s" and Unit of Quantity "%s" is not present or not visible',
                 $this->hasElement($elementNameOrText) ? 'Element' : 'Text',
@@ -795,18 +804,28 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         );
     }
 
-    //@codingStandardsIgnoreStart
     /**
+     * @codingStandardsIgnoreStart
+     *
      * Example: I should not see "This item is running low on inventory" for "SKU123" product with Unit of Quantity "item" in order
      * @Then /^(?:|I )should not see "(?P<elementNameOrText>[^"]*)" for "(?P<SKU>[^"]*)" product with Unit of Quantity "(?P<unit>[^"]*)" in order$/
+     *
+     * @codingStandardsIgnoreEnd
      */
-    //@codingStandardsIgnoreEnd
-    public function shouldNotSeeForProductWithUnitInOrder($elementNameOrText, $SKU, $unit)
+    public function shouldNotSeeNotificationForProductWithUnitInOrder($elementNameOrText, $SKU, $unit): void
     {
-        $productItem = $this->findProductItemByUnitInOrder($SKU, $unit);
+        $selector = sprintf(
+            "//*[contains(text(), '%s')]/ancestor::tr//" .
+            "td[contains(@class, 'grid-body-cell-unit') and contains(text(), '%s')]/ancestor::tr/" .
+            "following-sibling::tr[contains(@class, 'notification-row') and position()=1]",
+            $SKU,
+            $unit
+        );
 
-        $textAndElementPresentedOnPage = $this->isElementVisible($elementNameOrText, $productItem)
-            || stripos($productItem->getText(), $elementNameOrText);
+        $notificationRow = $this->getSession()->getPage()->find('xpath', $selector);
+
+        $textAndElementPresentedOnPage = $this->isElementVisible($elementNameOrText, $notificationRow)
+            || ($notificationRow && stripos($notificationRow->getText(), $elementNameOrText));
 
         self::assertFalse(
             $textAndElementPresentedOnPage,
@@ -819,22 +838,34 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         );
     }
 
-    //@codingStandardsIgnoreStart
     /**
-     * Example: I should see "This item is running low on inventory" for "SKU123" product with Unit of Quantity "item" in shopping list
-     * @Then /^(?:|I )should see "(?P<elementNameOrText>[^"]*)" for "(?P<SKU>[^"]*)" product with Unit of Quantity "(?P<unit>[^"]*)" in shopping list$/
+     * @codingStandardsIgnoreStart
+     *
+     * Example: I should see notification "This item is running low on inventory" for "SKU123" product with Unit of Quantity "item" in shopping list
+     * @Then /^(?:|I )should see notification "(?P<elementNameOrText>[^"]*)" for "(?P<SKU>[^"]*)" product with Unit of Quantity "(?P<unit>[^"]*)" in shopping list$/
+     *
+     * @codingStandardsIgnoreEnd
      */
-    //@codingStandardsIgnoreEnd
-    public function shouldSeeForProductWithUnitInShoppingList($elementNameOrText, $SKU, $unit)
+    public function shouldSeeNotificationForProductWithUnitInShoppingList($elementNameOrText, $SKU, $unit): void
     {
-        $productItem = $this->findProductItemByUnitInShoppingList($SKU, $unit);
+        $selector = sprintf(
+            "//*[contains(text(), '%s')]/ancestor::tr//td[contains(@class, 'grid-body-cell-quantity')]//" .
+            "div[contains(@class, 'select') and contains(text(), '%s')]/ancestor::tr/" .
+            "following-sibling::tr[contains(@class, 'notification-row') and position()=1]",
+            $SKU,
+            $unit
+        );
 
-        if ($this->isElementVisible($elementNameOrText, $productItem)) {
+        $notificationRow = $this->getSession()->getPage()->find('xpath', $selector);
+
+        self::assertNotNull($notificationRow, sprintf('notifications for the line item with SKU "%s" not found', $SKU));
+
+        if ($this->isElementVisible($elementNameOrText, $notificationRow)) {
             return;
         }
 
         self::assertNotFalse(
-            stripos($productItem->getText(), $elementNameOrText),
+            stripos($notificationRow->getText(), $elementNameOrText),
             sprintf(
                 '%s "%s" for product with SKU "%s" and Unit of Quantity "%s" is not present or not visible',
                 $this->hasElement($elementNameOrText) ? 'Element' : 'Text',
@@ -845,18 +876,28 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         );
     }
 
-    //@codingStandardsIgnoreStart
     /**
-     * Example: I should not see "This item is running low on inventory" for "SKU123" product with Unit of Quantity "item" in shopping list
-     * @Then /^(?:|I )should not see "(?P<elementNameOrText>[^"]*)" for "(?P<SKU>[^"]*)" product with Unit of Quantity "(?P<unit>[^"]*)" in shopping list$/
+     * @codingStandardsIgnoreStart
+     *
+     * Example: I should not see notification "This item is running low on inventory" for "SKU123" product with Unit of Quantity "item" in shopping list
+     * @Then /^(?:|I )should not see notification "(?P<elementNameOrText>[^"]*)" for "(?P<SKU>[^"]*)" product with Unit of Quantity "(?P<unit>[^"]*)" in shopping list$/
+     *
+     * @codingStandardsIgnoreEnd
      */
-    //@codingStandardsIgnoreEnd
-    public function shouldNotSeeForProductWithUnitInShoppingList($elementNameOrText, $SKU, $unit)
+    public function shouldNotSeeNotificationForProductWithUnitInShoppingList($elementNameOrText, $SKU, $unit): void
     {
-        $productItem = $this->findProductItemByUnitInShoppingList($SKU, $unit);
+        $selector = sprintf(
+            "//*[contains(text(), '%s')]/ancestor::tr//td[contains(@class, 'grid-body-cell-quantity')]//" .
+            "div[contains(@class, 'select') and contains(text(), '%s')]/ancestor::tr/" .
+            "following-sibling::tr[contains(@class, 'notification-row') and position()=1]",
+            $SKU,
+            $unit
+        );
 
-        $textAndElementPresentedOnPage = $this->isElementVisible($elementNameOrText, $productItem)
-            || stripos($productItem->getText(), $elementNameOrText);
+        $notificationRow = $this->getSession()->getPage()->find('xpath', $selector);
+
+        $textAndElementPresentedOnPage = $this->isElementVisible($elementNameOrText, $notificationRow)
+            || ($notificationRow && stripos($notificationRow->getText(), $elementNameOrText));
 
         self::assertFalse(
             $textAndElementPresentedOnPage,
@@ -937,6 +978,44 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * @codingStandardsIgnoreStart
+     *
+     * @Then /^(?:|I )should see notification "(?P<elementName>[^"]*)" for "(?P<SKU>[^"]*)" line item "(?P<element>[^"]*)"$/
+     *
+     * @codingStandardsIgnoreEnd
+     */
+    public function shouldSeeNotificationForLineItem($elementName, $SKU, $element): void
+    {
+        $productItem = $this->findElementContains($element, $SKU);
+        self::assertNotNull($productItem, sprintf('line item with SKU "%s" not found', $SKU));
+
+        $notificationRow = $this->getSession()
+            ->getPage()
+            ->find(
+                'xpath',
+                sprintf(
+                    "(%s)/following-sibling::tr[contains(@class, 'notification-row') and position()=1]",
+                    $productItem->getXpath()
+                )
+            );
+
+        self::assertNotNull($notificationRow, sprintf('notifications for the line item with SKU "%s" not found', $SKU));
+
+        if ($this->isElementVisible($elementName, $notificationRow)) {
+            return;
+        }
+
+        self::assertNotFalse(
+            stripos($notificationRow->getText(), $elementName),
+            sprintf(
+                'text or element "%s" for line item with SKU "%s" is not present or not visible',
+                $elementName,
+                $SKU
+            )
+        );
+    }
+
+    /**
      * @Then /^(?:|I )should not see "(?P<elementName>[^"]*)" for "(?P<SKU>[^"]*)" line item "(?P<element>[^"]*)"$/
      */
     public function shouldNotSeeForLineItem($elementName, $SKU, $element)
@@ -946,6 +1025,37 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
         $textAndElementPresentedOnPage = $this->isElementVisible($elementName, $productItem)
             || stripos($productItem->getText(), $elementName);
+
+        self::assertFalse(
+            $textAndElementPresentedOnPage,
+            sprintf('text or element "%s" for line item with SKU "%s" is present or visible', $elementName, $SKU)
+        );
+    }
+
+    /**
+     * @codingStandardsIgnoreStart
+     *
+     * @Then /^(?:|I )should not see notification "(?P<elementName>[^"]*)" for "(?P<SKU>[^"]*)" line item "(?P<element>[^"]*)"$/
+     *
+     * @codingStandardsIgnoreEnd
+     */
+    public function shouldNotSeeNotificationForLineItem($elementName, $SKU, $element): void
+    {
+        $productItem = $this->findElementContains($element, $SKU);
+        self::assertNotNull($productItem, sprintf('line item with SKU "%s" not found', $SKU));
+
+        $notificationRow = $this->getSession()
+            ->getPage()
+            ->find(
+                'xpath',
+                sprintf(
+                    "(%s)/following-sibling::tr[contains(@class, 'notification-row') and position()=1]",
+                    $productItem->getXpath()
+                )
+            );
+
+        $textAndElementPresentedOnPage = $this->isElementVisible($elementName, $notificationRow)
+            || ($notificationRow && stripos($notificationRow->getText(), $elementName));
 
         self::assertFalse(
             $textAndElementPresentedOnPage,
@@ -1264,7 +1374,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     private function waitForImagesToLoad($time = 5000)
     {
         $result = $this->getSession()->getDriver()
-            ->wait($time, 0 == "document.querySelectorAll('.slick-loading').length");
+            ->wait($time, "0 === document.querySelectorAll('.slick-loading').length");
 
         if (!$result) {
             self::fail(sprintf('Waited for images to load more than %d seconds', $time / 1000));
@@ -1278,7 +1388,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     public function iWaitPopupWidgetIsInitialized()
     {
-        $this->getSession()->getDriver()->wait(5000, 0 != "$('div.slick-track').length");
+        $this->getSession()->getDriver()->wait(5000, "0 !== $('div.slick-track').length");
     }
 
     /**
@@ -1741,76 +1851,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     {
         $productItem = $this->findElementContains('Shopping list line item', $SKU, $context);
         self::assertNotNull($productItem, sprintf('Product with SKU "%s" not found', $SKU));
-
-        return $productItem;
-    }
-
-    /**
-     * @param string $SKU
-     * @param string $unit
-     * @param Element|null $context
-     * @return Element
-     */
-    private function findProductItemByUnitInOrder(string $SKU, string $unit, Element $context = null): Element
-    {
-        $items = $this->findAllElements('ProductLineItem', $context);
-
-        $productItem = null;
-
-        foreach ($items as $item) {
-            try {
-                static::assertStringContainsString($SKU, $item->getHtml());
-                static::assertStringContainsString(
-                    $unit,
-                    $item->getElement('Order Summary Products GridProductLineUnit')->getHtml()
-                );
-
-                $productItem = $item;
-                break;
-            } catch (\Exception $exception) {
-                continue;
-            }
-        }
-
-        self::assertNotNull(
-            $productItem,
-            sprintf('Product with SKU "%s" and Unit of Quantity "%s" not found', $SKU, $unit)
-        );
-
-        return $productItem;
-    }
-
-    /**
-     * @param string $SKU
-     * @param string $unit
-     * @param Element|null $context
-     * @return Element
-     */
-    private function findProductItemByUnitInShoppingList(string $SKU, string $unit, Element $context = null): Element
-    {
-        $items = $this->findAllElements('Shopping list line item', $context);
-
-        $productItem = null;
-
-        foreach ($items as $item) {
-            try {
-                static::assertStringContainsString($SKU, $item->getHtml());
-                static::assertStringContainsString(
-                    $unit,
-                    $item->getElement('Product unit dropdown')->getHtml()
-                );
-
-                $productItem = $item;
-                break;
-            } catch (\Exception $exception) {
-                continue;
-            }
-        }
-
-        self::assertNotNull(
-            $productItem,
-            sprintf('Product with SKU "%s" and Unit of Quantity "%s" not found', $SKU, $unit)
-        );
 
         return $productItem;
     }

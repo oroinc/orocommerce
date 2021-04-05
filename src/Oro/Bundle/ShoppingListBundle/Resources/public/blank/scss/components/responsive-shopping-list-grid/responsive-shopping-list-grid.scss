@@ -66,6 +66,32 @@
         margin-top: $responsive-shopping-list-notification-container-offset;
     }
 
+    .highlight-error,
+    .highlight {
+        .grid-cell {
+            padding-bottom: $responsive-shopping-list-notification-row-bottom-offset;
+        }
+
+        .grid-body-cell-item {
+            padding-bottom: 0;
+        }
+    }
+
+    .notification-row {
+        &:not(.sub-row) {
+            .grid-cell {
+                padding-top: $responsive-shopping-list-notification-row-top-offset;
+                padding-bottom: $responsive-shopping-list-notification-row-bottom-offset;
+            }
+        }
+
+        &.sub-row {
+            .grid-cell {
+                padding-top: $responsive-shopping-list-notification-row-top-offset;
+            }
+        }
+    }
+
     .price-value-container {
         position: relative;
     }
@@ -248,6 +274,37 @@
                 padding-top: $responsive-shopping-body-cell-offset-y-mobile;
                 padding-bottom: $responsive-shopping-body-cell-offset-y-mobile;
             }
+
+            &.highlight-error,
+            &.highlight {
+                padding-bottom: $responsive-shopping-notification-row-error-offset-mobile;
+            }
+
+            &:not(.sub-row) .notification-container {
+                .validation-error,
+                .notification {
+                    padding-left: 10px;
+                    padding-right: 10px;
+                }
+            }
+
+            &.sub-row.notification-row {
+                padding-top: $responsive-shopping-notification-subrow-offset-top-mobile;
+            }
+        }
+
+        .notification-row {
+            padding-top: $responsive-shopping-notification-row-offset-top-mobile;
+
+            &:not(.sub-row) {
+                .select-row-cell {
+                    display: none;
+                }
+            }
+
+            .grid-body-cell:last-child {
+                padding-bottom: $responsive-shopping-notification-row-offset-bottom-mobile;
+            }
         }
 
         .group-row {
@@ -322,6 +379,20 @@
         .label-in-mobile-start:before,
         .label-in-mobile-end:after {
             content: attr(data-label);
+        }
+    }
+}
+
+@include breakpoint('mobile') {
+    .responsive-shopping-list-grid {
+        .grid-row {
+            &.sub-row.notification-row {
+                padding-top: 0;
+
+                .grid-body-cell:last-child {
+                    padding-bottom: 4px;
+                }
+            }
         }
     }
 }
