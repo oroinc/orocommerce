@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\ImportExport\Frontend\DataConverter;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\LocaleBundle\ImportExport\DataConverter\PropertyPathTitleDataConverter;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\ImportExport\Frontend\Event\ProductExportDataConverterEvent;
 
 /**
  * Prepare product data for export.
@@ -46,6 +47,16 @@ class ProductExportDataConverter extends PropertyPathTitleDataConverter
 
         $rules = array_merge([self::PRODUCT_NAME_FIELD => self::PRODUCT_NAME_FIELD], $rules);
         $backendHeaders[] = self::PRODUCT_NAME_FIELD;
+
+        if ($this->dispatcher) {
+            $event = new ProductExportDataConverterEvent($rules, $backendHeaders);
+            $this->dispatcher->dispatch(
+                $event,
+                ProductExportDataConverterEvent::FRONTEND_PRODUCT_CONVERT_TO_EXPORT_DATA
+            );
+            $rules = $event->getHeaderRules();
+            $backendHeaders = $event->getBackendHeaders();
+        }
 
         return [$backendHeaders, $rules];
     }

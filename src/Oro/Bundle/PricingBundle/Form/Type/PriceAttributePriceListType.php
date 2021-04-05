@@ -5,10 +5,14 @@ namespace Oro\Bundle\PricingBundle\Form\Type;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for product price attribute entity.
+ */
 class PriceAttributePriceListType extends AbstractType
 {
     const NAME = 'oro_pricing_price_attribute_price_list';
@@ -51,6 +55,18 @@ class PriceAttributePriceListType extends AbstractType
                     'label' => 'oro.pricing.priceattributepricelist.currencies.label',
                     'additional_currencies' => $priceAttributePriceList ?
                         $priceAttributePriceList->getCurrencies() : [],
+                ]
+            )
+            ->add(
+                'enabledInExport',
+                ChoiceType::class,
+                [
+                    'label' => 'oro.pricing.priceattributepricelist.enabled_in_export.label',
+                    'choices' => [
+                        'oro.pricing.form.priceattributepricelist.enabled_in_export.no' => 0,
+                        'oro.pricing.form.priceattributepricelist.enabled_in_export.yes' => 1
+                    ],
+                    'placeholder' => false,
                 ]
             );
     }

@@ -72,6 +72,13 @@ class PriceAttributePriceList extends BasePriceList
     protected $fieldName;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="is_enabled_in_export", type="boolean", options={"default"=false})
+     */
+    protected $enabledInExport = false;
+
+    /**
      * @return string
      */
     public function getFieldName()
@@ -83,9 +90,28 @@ class PriceAttributePriceList extends BasePriceList
      * @param string $fieldName
      * @return $this
      */
-    public function setFieldName($fieldName)
+    public function setFieldName($fieldName): self
     {
         $this->fieldName = $fieldName;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEnabledInExport(): bool
+    {
+        return $this->enabledInExport;
+    }
+
+    /**
+     * @param bool $enabledInExport
+     * @return $this
+     */
+    public function setEnabledInExport(bool $enabledInExport): self
+    {
+        $this->enabledInExport = $enabledInExport;
 
         return $this;
     }
