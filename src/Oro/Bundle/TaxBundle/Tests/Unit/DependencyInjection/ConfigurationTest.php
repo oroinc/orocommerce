@@ -81,10 +81,14 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                 'address_resolver_granularity' => [
                     'value' =>  AddressResolverSettingsProvider::ADDRESS_RESOLVER_GRANULARITY_ZIP,
                     'scope' => 'app'
-                ]
+                ],
+                'calculate_taxes_after_promotions' => [
+                    'value' => false,
+                    'scope' => 'app'
+                ],
             ],
         ];
 
-        $this->assertEquals($expected, $processor->processConfiguration($configuration, []));
+        self::assertEquals($expected, $processor->processConfiguration($configuration, []));
     }
 }
