@@ -827,3 +827,27 @@ services:
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-edit-grid, method: onLineItemData }
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-checkout-line-items-grid, method: onLineItemData }
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-single-page-checkout-line-items-grid, method: onLineItemData }
+
+    oro_promotion.order_tax.mapper.order_after_discounts_mapper:
+        class: Oro\Bundle\PromotionBundle\OrderTax\Mapper\OrderAfterDiscountsMapper
+        decorates: oro_tax.order_tax.mapper.order_mapper
+        arguments:
+            - '@oro_promotion.order_tax.mapper.order_after_discounts_mapper.inner'
+            - '@oro_tax.provider.taxation_settings_provider'
+            - '@oro_promotion.promotion_executor'
+
+    oro_promotion.order_tax.mapper.order_line_item_after_discounts_mapper:
+        class: Oro\Bundle\PromotionBundle\OrderTax\Mapper\OrderLineItemAfterDiscountsMapper
+        decorates: oro_tax.order_tax.mapper.order_line_item_mapper
+        arguments:
+            - '@oro_promotion.order_tax.mapper.order_line_item_after_discounts_mapper.inner'
+            - '@oro_tax.provider.taxation_settings_provider'
+            - '@oro_promotion.promotion_executor'
+
+    oro_promotion.resolver.total_after_discounts:
+        class: Oro\Bundle\PromotionBundle\Resolver\TotalAfterDiscountsResolver
+        decorates: oro_tax.resolver.total
+        arguments:
+            - '@oro_tax.provider.taxation_settings_provider'
+            - '@oro_tax.resolver.rounding'
+            - '@oro_tax.calculator'

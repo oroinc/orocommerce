@@ -42,27 +42,9 @@ class TotalResolver implements ResolverInterface
             return;
         }
 
-        $taxResults = [];
-        $data = ResultElement::create(BigDecimal::zero(), BigDecimal::zero(), BigDecimal::zero(), BigDecimal::zero());
+        [$data, $taxResults] = $this->mergeItemsData($taxable);
 
-        foreach ($taxable->getItems() as $taxableItem) {
-            $taxableItemResult = $taxableItem->getResult();
-            $row = $taxableItemResult->getRow();
-
-            if ($this->settingsProvider->isStartCalculationOnItem()) {
-                $this->roundingResolver->round($row);
-            }
-
-            try {
-                $mergedData = $this->mergeData($data, $row);
-                $mergedTaxResults = $this->mergeTaxResultElements($taxResults, $taxableItemResult);
-            } catch (NumberFormatException $e) {
-                continue;
-            }
-
-            $data = $mergedData;
-            $taxResults = $mergedTaxResults;
-        }
+        $data = $this->mergeAdditionalData($taxable, $data);
 
         $data = $this->mergeShippingData($taxable, $data);
 
@@ -134,5 +116,37 @@ class TotalResolver implements ResolverInterface
         $resultElement = $taxable->getResult()->offsetGet(Result::SHIPPING);
 
         return $this->mergeData($target, $resultElement);
+    }
+
+    protected function mergeItemsData(Taxable $taxable): array
+    {
+        $taxResults = [];
+        $data = ResultElement::create(BigDecimal::zero(), BigDecimal::zero(), BigDecimal::zero(), BigDecimal::zero());
+
+        foreach ($taxable->getItems() as $taxableItem) {
+            $taxableItemResult = $taxableItem->getResult();
+            $row = $taxableItemResult->getRow();
+
+            if ($this->settingsProvider->isStartCalculationOnItem()) {
+                $this->roundingResolver->round($row);
+            }
+
+            try {
+                $mergedData = $this->mergeData($data, $row);
+                $mergedTaxResults = $this->mergeTaxResultElements($taxResults, $taxableItemResult);
+            } catch (NumberFormatException $e) {
+                continue;
+            }
+
+            $data = $mergedData;
+            $taxResults = $mergedTaxResults;
+        }
+
+        return [$data, $taxResults];
+    }
+
+    protected function mergeAdditionalData(Taxable $taxable, ResultElement $target): ResultElement
+    {
+        return $target;
     }
 }
