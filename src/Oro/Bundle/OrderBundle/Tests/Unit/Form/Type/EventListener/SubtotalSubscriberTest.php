@@ -6,58 +6,48 @@ use Oro\Bundle\CurrencyBundle\Converter\RateConverterInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
 use Oro\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber;
+use Oro\Bundle\OrderBundle\Handler\OrderLineItemCurrencyHandler;
 use Oro\Bundle\OrderBundle\Pricing\PriceMatcher;
 use Oro\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
 use Oro\Bundle\OrderBundle\Total\TotalHelper;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 
 class SubtotalSubscriberTest extends \PHPUnit\Framework\TestCase
 {
     /** @var SubtotalSubscriber */
-    protected $subscriber;
+    private $subscriber;
 
     /** @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $totalProvider;
+    private $totalProvider;
 
     /** @var LineItemSubtotalProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $lineItemSubtotalProvider;
+    private $lineItemSubtotalProvider;
 
     /** @var DiscountSubtotalProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $discountSubtotalProvider;
+    private $discountSubtotalProvider;
 
     /** @var PriceMatcher|\PHPUnit\Framework\MockObject\MockObject */
-    protected $priceMatcher;
+    private $priceMatcher;
 
     /** @var RateConverterInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $rateConverter;
+    private $rateConverter;
+
+    /** @var OrderLineItemCurrencyHandler|\PHPUnit\Framework\MockObject\MockObject */
+    private $currencyHandler;
 
     protected function setUp()
     {
-        $this->totalProvider = $this
-            ->getMockBuilder('Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->lineItemSubtotalProvider = $this
-            ->getMockBuilder('Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->discountSubtotalProvider = $this
-            ->getMockBuilder('Oro\Bundle\OrderBundle\Provider\DiscountSubtotalProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->priceMatcher = $this->getMockBuilder('Oro\Bundle\OrderBundle\Pricing\PriceMatcher')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->rateConverter = $this->getMockBuilder('Oro\Bundle\CurrencyBundle\Converter\RateConverterInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->totalProvider = $this->createMock(TotalProcessorProvider::class);
+        $this->lineItemSubtotalProvider = $this->createMock(LineItemSubtotalProvider::class);
+        $this->discountSubtotalProvider = $this->createMock(DiscountSubtotalProvider::class);
+        $this->priceMatcher = $this->createMock(PriceMatcher::class);
+        $this->rateConverter = $this->createMock(RateConverterInterface::class);
+        $this->currencyHandler = $this->createMock(OrderLineItemCurrencyHandler::class);
 
         $totalHelper = new TotalHelper(
             $this->totalProvider,
@@ -66,6 +56,7 @@ class SubtotalSubscriberTest extends \PHPUnit\Framework\TestCase
             $this->rateConverter
         );
         $this->subscriber = new SubtotalSubscriber($totalHelper, $this->priceMatcher);
+        $this->subscriber->setOrderLineItemCurrencyHandler($this->currencyHandler);
     }
 
     /**
@@ -82,7 +73,7 @@ class SubtotalSubscriberTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetSubscribedEvents()
+    public function testGetSubscribedEvents(): void
     {
         $this->assertEquals(
             [
@@ -92,26 +83,23 @@ class SubtotalSubscriberTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testOnSubmitEventListenerOnNotOrder()
+    public function testOnSubmitEventListenerOnNotOrder(): void
     {
-        $event = $this
-            ->getMockBuilder('Symfony\Component\Form\FormEvent')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $event->expects($this->never())
+        $event = $this->createMock(FormEvent::class);
+        $event
+            ->expects($this->once())
             ->method('getForm');
-
-        $event->expects($this->once())
+        $event
+            ->expects($this->once())
             ->method('getData');
-
-        $event->expects($this->never())
+        $event
+            ->expects($this->never())
             ->method('setData');
 
         $this->subscriber->onSubmitEventListener($event);
     }
 
-    public function testOnSubmitEventListenerOnOrderEmptyTotals()
+    public function testOnSubmitEventListenerOnOrderEmptyTotals(): void
     {
         $order = $this->prepareOrder();
         $event = $this->prepareEvent($order);
@@ -141,7 +129,7 @@ class SubtotalSubscriberTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(0, $order->getTotalDiscounts()->getValue());
     }
 
-    public function testOnSubmitEventListenerOnOrder()
+    public function testOnSubmitEventListenerOnOrder(): void
     {
         $order = $this->prepareOrder();
         $event = $this->prepareEvent($order);
@@ -155,7 +143,7 @@ class SubtotalSubscriberTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(10.00, $discounts[0]->getPercent());
     }
 
-    public function prepareProviders()
+    public function prepareProviders(): void
     {
         $subtotal = new Subtotal();
         $subtotalAmount = 42;
@@ -199,7 +187,7 @@ class SubtotalSubscriberTest extends \PHPUnit\Framework\TestCase
     /**
      * @return Order
      */
-    protected function prepareOrder()
+    protected function prepareOrder(): Order
     {
         $order = new Order();
         $discount1 = new OrderDiscount();
@@ -212,43 +200,47 @@ class SubtotalSubscriberTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @param $order
+     *
      * @return \PHPUnit\Framework\MockObject\MockObject|\Symfony\Component\Form\FormEvent
      */
-    protected function prepareEvent($order)
+    protected function prepareEvent($order): FormEvent
     {
-        $event = $this->getMockBuilder('Symfony\Component\Form\FormEvent')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $form = $this->getMockBuilder('Symfony\Component\Form\FormInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $event = $this->createMock(FormEvent::class);
+        $form = $this->createMock(FormInterface::class);
 
-        $event->expects($this->once())
+        $event
+            ->expects($this->once())
             ->method('getForm')
             ->willReturn($form);
 
-        $form->expects($this->once())
+        $form
+            ->expects($this->exactly(2))
             ->method('has')
             ->willReturn(true);
 
-        $event->expects($this->once())
+        $event
+            ->expects($this->once())
             ->method('getData')
             ->willReturn($order);
 
-        $event->expects($this->once())
+        $event
+            ->expects($this->once())
             ->method('setData');
 
-        $subForm = $this->getMockBuilder('Symfony\Component\Form\FormInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $subForm = $this->createMock(FormInterface::class);
 
-        $subForm->expects($this->once())
+        $subForm
+            ->expects($this->once())
             ->method('submit')
             ->willReturnSelf();
 
-        $form->expects($this->once())
+        $form
+            ->expects($this->any())
             ->method('get')
-            ->willReturn($subForm);
+            ->willReturnMap([
+                ['lineItems', $subForm],
+                ['discountsSum', $subForm]
+            ]);
 
         return $event;
     }

@@ -48,6 +48,10 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
       selector: 'tr.order-line-item:nth-child(2) div.line-item-taxes-results table.tax-result-grid'
 
+    Backend Order First Line Item Discounts Items Table:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
+      selector: 'tr.order-line-item:first-child table.applied_discounts-result-grid'
+
     Backend Order Add Product Button:
       selector: 'div.order-line-items a.add-list-item'
 

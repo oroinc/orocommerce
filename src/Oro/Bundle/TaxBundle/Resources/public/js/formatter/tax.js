@@ -32,13 +32,18 @@ define(['underscore', 'orolocale/js/formatter/number', 'orolocale/js/locale-sett
             return {
                 /**
                  * @param {Object} item
+                 * @param {null|string} currency
                  */
-                formatItem: function(item) {
+                formatItem: function(item, currency) {
+                    if (currency === undefined) {
+                        currency = localeSettings.getCurrency();
+                    }
+
                     const localItem = _.extend({
                         includingTax: 0,
                         excludingTax: 0,
                         taxAmount: 0,
-                        currency: localeSettings.getCurrency()
+                        currency: currency
                     }, item);
 
                     return {
