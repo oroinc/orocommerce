@@ -1,0 +1,172 @@
+Oro\Bundle\CustomerBundle\Entity\Customer:
+    customer:
+        name: 'Company A'
+        organization: '@organization'
+        owner: '@admin'
+        taxCode: '@customer_tax_code'
+        payment_term_7c4f1e8e: '@paymentTerm'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUser:
+    amanda:
+        email: 'AmandaRCole@example.org'
+        username: 'AmandaRCole@example.org'
+        password: 'gxP1L8r86hrdUMg9wKdfnsS/EZC4a7jOIdn6BMzegqL2S6e+KBIuHCrDVciMdiR/64osNnabmFonwK8l09vQxA=='
+        salt: 'fgswya1kzw0sck8ck48kosowckwo0ws'
+        firstName: 'Amanda'
+        lastName: 'Cole'
+        enabled: '1'
+        confirmed: '1'
+        customer: '@customer'
+        organization: '@organization'
+        roles: ['@buyer']
+        owner: '@admin'
+        website: '@website1'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    productName:
+        string: 'Product'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    attributeFamilyName:
+        string: 'Product Attribute Family'
+    discountPromotionLabel:
+        string: 'Line Item Discount Promotion'
+    discountPromotionDescription:
+        string: 'Line Item Discount Promotion Description'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    unitPrecision:
+        unit: '@item'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product:
+        type: 'simple'
+        sku: 'SKU'
+        primaryUnitPrecision: '@unitPrecision'
+        __calls:
+            - addName: ['@productName']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@defaultProductFamily'
+        taxCode: '@product_tax_code'
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    priceUSD:
+        product: '@product'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    priceEUR:
+        product: '@product'
+        priceList: '@defaultPriceList'
+        currency: 'EUR'
+        quantity: 1
+        unit: '@item'
+        value: 10
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceRelation:
+        product: '@product'
+        priceList: '@defaultPriceList'
+
+Oro\Bundle\TaxBundle\Entity\CustomerTaxCode:
+    customer_tax_code:
+        owner: '@admin'
+        organization: '@organization'
+        code: 'Customer tax code'
+
+Oro\Bundle\TaxBundle\Entity\ProductTaxCode:
+    product_tax_code:
+        code: 'Product tax code'
+        organization: '@organization'
+
+Oro\Bundle\TaxBundle\Entity\Tax:
+    tax:
+        code: 'Tax'
+        rate: 0.1
+
+Oro\Bundle\TaxBundle\Entity\TaxJurisdiction:
+    tax_jurisdiction:
+        code: 'TaxJurisdiction'
+        country: '@united_states'
+        region: '@florida'
+
+Oro\Bundle\TaxBundle\Entity\ZipCode:
+    tax_zip_code:
+        taxJurisdiction: '@tax_jurisdiction'
+        zipCode: '90001'
+
+Oro\Bundle\TaxBundle\Entity\TaxRule:
+    tax_rule:
+        productTaxCode: '@product_tax_code'
+        customerTaxCode: '@customer_tax_code'
+        taxJurisdiction: '@tax_jurisdiction'
+        tax: '@tax'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerAddress:
+    customerAddress:
+        country: '@united_states'
+        region: '@florida'
+        label: 'Primary address'
+        street: 'Fifth avenue'
+        city: 'Orlando'
+        postalCode: '90001'
+        frontendOwner: '@customer'
+        owner: '@admin'
+        __calls:
+            - setDefaults: ['@shippingType', '@billingType']
+        systemOrganization: '@organization'
+        primary: true
+        organization: '@organization'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerAddressToAddressType:
+    customerAddressShippingDefault:
+        address: '@customerAddress'
+        type: '@shippingType'
+        default: true
+    customerAddressBillingDefault:
+        address: '@customerAddress'
+        type: '@billingType'
+        default: true
+
+Oro\Bundle\SegmentBundle\Entity\Segment:
+    discountPromotionSegment:
+        name: 'Promotion Matching Products #1'
+        type: '@segment_dynamic_type'
+        entity: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
+        definition: <('{"filters":[[{"columnName":"sku","criterion":{"filter":"string","data":{"value":"SKU","type":"1"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}')>
+        organization: '@organization'
+        owner: '@business_unit'
+
+Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration:
+    discountConfiguration:
+        type: 'line_item'
+        options:
+            discount_product_unit_code: 'item'
+            discount_type: 'amount'
+            discount_currency: 'USD'
+            discount_value: 1
+            apply_to: 'each_item'
+
+Oro\Bundle\RuleBundle\Entity\Rule:
+    discountPromotionRule:
+        enabled: true
+        sortOrder: 1
+        name: 'Discount Promotion'
+
+Oro\Bundle\PromotionBundle\Entity\Promotion:
+    discountPromotion:
+        __calls:
+            - addLabel: ['@discountPromotionLabel']
+            - addDescription: ['@discountPromotionDescription']
+            - addScope: ['@default_scope']
+        productsSegment: '@discountPromotionSegment'
+        rule: '@discountPromotionRule'
+        discountConfiguration: '@discountConfiguration'
+        organization: '@organization'
+        owner: '@admin'
+        useCoupons: false

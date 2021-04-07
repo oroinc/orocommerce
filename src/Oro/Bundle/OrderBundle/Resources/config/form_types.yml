@@ -88,7 +88,8 @@ services:
         arguments:
             - '@oro_order.order.total.total_helper'
             - '@oro_order.pricing.price_matcher'
-            - '@oro_website.manager'
+        calls:
+            - [setOrderLineItemCurrencyHandler, [!service { class: Oro\Bundle\OrderBundle\Handler\OrderLineItemCurrencyHandler }]]
 
     oro_order.form.type.order_shipping_tracking:
         class: 'Oro\Bundle\OrderBundle\Form\Type\OrderShippingTrackingType'
@@ -107,3 +108,7 @@ services:
         tags:
             - { name: form.type }
 
+    oro_order.form.type.order_price:
+        class: 'Oro\Bundle\OrderBundle\Form\Type\OrderPriceType'
+        tags:
+            - { name: form.type }
