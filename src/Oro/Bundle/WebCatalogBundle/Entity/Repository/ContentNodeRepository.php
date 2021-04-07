@@ -48,14 +48,11 @@ class ContentNodeRepository extends NestedTreeRepository
      */
     public function getContentVariantQueryBuilder(WebCatalog $webCatalog)
     {
-        $qb = $this->createQueryBuilder('node');
-        $qb->select('node.id as nodeId, variant.id as variantId')
-            ->innerJoin(
-                ContentVariant::class,
-                'variant',
-                Join::WITH,
-                $qb->expr()->isMemberOf('variant', 'node.contentVariants')
-            )
+        $qb = $this->getEntityManager()
+            ->createQueryBuilder()
+            ->select('node.id as nodeId', 'variant.id as variantId')
+            ->from(ContentVariant::class, 'variant')
+            ->innerJoin(ContentNode::class, 'node', Join::WITH, 'variant.node = node')
             ->andWhere('node.webCatalog = :webCatalog')
             ->setParameter('webCatalog', $webCatalog);
 
