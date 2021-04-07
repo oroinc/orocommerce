@@ -62,6 +62,7 @@ class TotalAfterDiscountsResolver extends TotalResolver
 
         $newResultElement = $this->calculator->calculate($amountWithDiscount, $taxRate);
         $this->calculateAdjustment($newResultElement);
+        $newResultElement->setDiscountsIncluded(true);
 
         return $newResultElement;
     }
