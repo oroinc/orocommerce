@@ -8,7 +8,7 @@ namespace Oro\Bundle\PricingBundle\ORM;
 class PostgreSqlTempTableManipulator extends AbstractTempTableManipulator
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function createTempTableForEntity(string $className, $identifier)
     {
@@ -18,5 +18,27 @@ class PostgreSqlTempTableManipulator extends AbstractTempTableManipulator
                 $this->getTempTableNameForEntity($className, $identifier),
                 $this->helper->getTableName($className)
             ));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function truncateTempTableForEntity(string $className, $identifier)
+    {
+        $this->registry->getConnection()->executeQuery(sprintf(
+            'TRUNCATE %s',
+            $this->getTempTableNameForEntity($className, $identifier)
+        ));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function dropTempTableForEntity(string $className, $identifier)
+    {
+        $this->registry->getConnection()->executeQuery(sprintf(
+            'DROP TABLE IF EXISTS %s',
+            $this->getTempTableNameForEntity($className, $identifier)
+        ));
     }
 }

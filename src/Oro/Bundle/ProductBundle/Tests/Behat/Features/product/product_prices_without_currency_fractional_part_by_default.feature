@@ -1,6 +1,6 @@
 @ticket-BB-14800
 @regression
-@fixture-OroProductBundle:products_with_prices_in_japanese_yen.yml
+@fixture-OroProductBundle:single_product.yml
 
 Feature: Product prices without currency fractional part by default
   In order to use correct fractional prices in currencies without fractional digits by default
@@ -47,6 +47,19 @@ Feature: Product prices without currency fractional part by default
     When I save and close form
     Then I should see "Price List has been saved" flash message
 
+  Scenario: Add product prices
+    When download "Product Price" Data Template file
+    And I fill template with data:
+      | Product SKU | Quantity | Unit Code | Price  | Currency |
+      | PSKU1       | 1        | each      | 1      | JPY      |
+      | PSKU1       | 2        | each      | 1.6    | JPY      |
+      | PSKU1       | 3        | each      | 1.67   | JPY      |
+      | PSKU1       | 4        | each      | 1.678  | JPY      |
+      | PSKU1       | 5        | each      | 1.6789 | JPY      |
+    And I import file
+    And reload the page
+    Then number of records should be 5
+
   Scenario: Check pricing on storefront
     Given I proceed as the Buyer
     And I signed in as AmandaRCole@example.org on the store frontend
@@ -70,4 +83,3 @@ Feature: Product prices without currency fractional part by default
     When type "5" in "Quick Order Form > QTY1"
     And click on empty space
     Then "PSKU1" product should has "¥8.3945" value in price field
-
