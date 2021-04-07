@@ -6,8 +6,8 @@ dependencies:
     - Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUser
     - Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsite
     - Oro\Bundle\ProductBundle\Tests\Functional\Api\DataFixtures\LoadProductUnits
-    - Oro\Bundle\ProductBundle\Tests\Functional\Api\DataFixtures\LoadProductDefaultAttributeFamily
-    - Oro\Bundle\ProductBundle\Tests\Functional\Api\DataFixtures\LoadProductInventoryStatuses
+    - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductDefaultAttributeFamily
+    - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductInventoryStatuses
 
 Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm:
     payment_term_net_10:

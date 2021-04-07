@@ -76,23 +76,26 @@ const QuickAddModel = BaseModel.extend({
     /**
      * Gets valid unit code by unit label case insensitively.
      *
-     * @param {String|undefined} unit
+     * @param {String|undefined} unitLabel
      * @returns {String|undefined}
      * @private
      */
-    _resolveUnitCode(unit) {
-        if (typeof unit === 'string') {
-            unit = unit.toLowerCase();
+    _resolveUnitCode(unitLabel) {
+        if (typeof unitLabel === 'string') {
+            unitLabel = unitLabel.toLowerCase();
         }
 
         const labels = UnitsUtil.getUnitsLabel(this);
-
-        return _.findKey(labels, unitLabel => unitLabel.toLowerCase() === unit);
+        return _.findKey(labels, label => label.toLowerCase() === unitLabel);
     },
 
     clear() {
         const {_order, ...defaults} = _.result(this, 'defaults');
         this.set(defaults);
+    },
+
+    isValidUnit: function() {
+        return !this.get('units_loaded') || _.has(this.get('product_units'), this.get('unit'));
     }
 });
 

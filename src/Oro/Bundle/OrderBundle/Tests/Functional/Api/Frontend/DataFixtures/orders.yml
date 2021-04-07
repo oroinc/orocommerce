@@ -7,8 +7,8 @@ dependencies:
     - Oro\Bundle\AddressBundle\Tests\Functional\DataFixtures\LoadCountriesAndRegions
     - Oro\Bundle\AddressBundle\Tests\Functional\DataFixtures\LoadAddressTypes
     - Oro\Bundle\ProductBundle\Tests\Functional\Api\DataFixtures\LoadProductUnits
-    - Oro\Bundle\ProductBundle\Tests\Functional\Api\DataFixtures\LoadProductDefaultAttributeFamily
-    - Oro\Bundle\ProductBundle\Tests\Functional\Api\DataFixtures\LoadProductInventoryStatuses
+    - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductDefaultAttributeFamily
+    - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductInventoryStatuses
     - Oro\Bundle\PricingBundle\Tests\Functional\Api\DataFixtures\LoadCombinedPriceList
 
 Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm:

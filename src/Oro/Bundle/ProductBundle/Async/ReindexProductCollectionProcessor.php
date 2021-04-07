@@ -148,17 +148,17 @@ class ReindexProductCollectionProcessor implements MessageProcessorInterface, To
     {
         if ($isFull) {
             foreach ($this->segmentSnapshotDeltaProvider->getAllEntityIds($segment) as $batch) {
-                yield array_map('reset', $batch);
+                yield array_map(static fn ($batch) => reset($batch), $batch);
             }
         } else {
             foreach ($this->segmentSnapshotDeltaProvider->getAddedEntityIds($segment) as $batch) {
-                yield array_map('reset', $batch);
+                yield array_map(static fn ($batch) => reset($batch), $batch);
             }
         }
 
         if ($segment->getId()) {
             foreach ($this->segmentSnapshotDeltaProvider->getRemovedEntityIds($segment) as $batch) {
-                yield array_map('reset', $batch);
+                yield array_map(static fn ($batch) => reset($batch), $batch);
             }
         }
     }

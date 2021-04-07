@@ -61,4 +61,12 @@ class MultiEnumSearchableAttributeTypeTest extends SearchableAttributeTypeTestCa
 
         $this->getSearchableAttributeType()->getSortableFieldName($this->attribute);
     }
+
+    public function testGetSearchableFieldName()
+    {
+        $this->assertSame(
+            self::FIELD_NAME . '_searchable',
+            $this->getSearchableAttributeType()->getSearchableFieldName($this->attribute)
+        );
+    }
 }

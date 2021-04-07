@@ -57,4 +57,12 @@ class StringSearchableAttributeType extends AbstractSearchableAttributeType
     {
         return $attribute->getFieldName();
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSearchableFieldName(FieldConfigModel $attribute): string
+    {
+        return $attribute->getFieldName();
+    }
 }

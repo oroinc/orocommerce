@@ -389,8 +389,10 @@ datagrids:
                 label:         oro.frontend.shoppinglist.lineitem.sku.label
             item:
                 label:         oro.frontend.shoppinglist.lineitem.item.label
-                frontend_type: html-template
-                frontend_template: tpl-loader!oroshoppinglist/templates/datagrid/cell/item.html
+                frontend_type: shoppinglist-item
+                frontend_template:
+                    default: tpl-loader!oroshoppinglist/templates/datagrid/cell/item.html
+                    message: tpl-loader!oroshoppinglist/templates/datagrid/cell/item-message.html
                 image_placeholder: "@oro_product.provider.product_image_placeholder->getPath('product_small')"
                 inventory_statuses: "@oro_product.provider.product_inventory_status_provider->getAvailableProductInventoryStatuses()"
             inventoryStatus:
@@ -419,7 +421,7 @@ datagrids:
                 id:
                     data_name: sortId
                 sku:
-                    data_name: sku
+                    data_name: sortSku
             default:
                 id: ASC
         filters:
@@ -582,8 +584,6 @@ datagrids:
             jsmodules:
                 - oroshoppinglist/js/datagrid/builder/shoppinglist-editing-builder
         columns:
-            item:
-                frontend_type: shoppinglist-item
             quantity:
                 frontend_type: shoppinglist-line-item
                 frontend_template: tpl-loader!oroshoppinglist/templates/datagrid/cell/shoppinglist-line-item.html

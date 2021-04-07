@@ -6,6 +6,9 @@ use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 
+/**
+ * Transforms array of {@see PriceListConfig} to a scalar array and back
+ */
 class PriceListConfigConverter
 {
     const MERGE_KEY = 'mergeAllowed';
@@ -76,11 +79,7 @@ class PriceListConfigConverter
 
             usort(
                 $result,
-                function ($a, $b) {
-                    /** @var PriceListConfig $a */
-                    /** @var PriceListConfig $b */
-                    return ($a->getSortOrder() < $b->getSortOrder()) ? -1 : 1;
-                }
+                static fn (PriceListConfig $a, PriceListConfig $b) => $a->getSortOrder() <=> $b->getSortOrder()
             );
         }
 

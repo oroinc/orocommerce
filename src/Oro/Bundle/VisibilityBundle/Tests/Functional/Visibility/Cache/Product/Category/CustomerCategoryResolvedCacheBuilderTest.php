@@ -426,10 +426,10 @@ class CustomerCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCa
     protected function sortByCategoryAndScope(array $a, array $b)
     {
         if ($a['category'] == $b['category']) {
-            return $a['customer'] > $b['customer'] ? 1 : -1;
+            return $a['customer'] <=> $b['customer'];
         }
 
-        return $a['category'] > $b['category'] ? 1 : -1;
+        return $a['category'] <=> $b['category'];
     }
 
     /**

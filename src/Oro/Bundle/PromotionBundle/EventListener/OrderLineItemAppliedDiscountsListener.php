@@ -12,7 +12,7 @@ use Oro\Bundle\TaxBundle\Provider\TaxProviderInterface;
 use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
 
 /**
- * Updates OrderEvent with information about LineItem applied discounts
+ * Gets discounts and taxes for the order
  */
 class OrderLineItemAppliedDiscountsListener
 {
@@ -92,11 +92,13 @@ class OrderLineItemAppliedDiscountsListener
             $includingTax = (string) BigDecimal::of($taxesRow->getIncludingTax())->minus($discountAmount);
         }
 
+        $currency = $this->getLineItemCurrency($lineItem);
+
         return [
             'appliedDiscountsAmount' => $discountAmount,
             'rowTotalAfterDiscountExcludingTax' => $excludingTax,
             'rowTotalAfterDiscountIncludingTax' => $includingTax,
-            'currency' => $lineItem->getCurrency(),
+            'currency' => $currency,
         ];
     }
 
@@ -108,12 +110,25 @@ class OrderLineItemAppliedDiscountsListener
     protected function getDiscountsWithoutTaxes(float $discountAmount, OrderLineItem $lineItem)
     {
         $rowTotalWithoutDiscount = $this->lineItemSubtotalProvider->getRowTotal($lineItem, $lineItem->getCurrency());
+        $currency = $this->getLineItemCurrency($lineItem);
 
         return [
             'appliedDiscountsAmount' => $discountAmount,
             'rowTotalAfterDiscount' => $rowTotalWithoutDiscount - $discountAmount,
-            'currency' => $lineItem->getCurrency(),
+            'currency' => $currency,
         ];
+    }
+
+    /**
+     * @param OrderLineItem $lineItem
+     *
+     * @return string
+     */
+    private function getLineItemCurrency(OrderLineItem $lineItem): string
+    {
+        return $lineItem->getOrder() && $lineItem->getOrder()->getCurrency()
+            ? $lineItem->getOrder()->getCurrency()
+            : $lineItem->getCurrency();
     }
 
     /**

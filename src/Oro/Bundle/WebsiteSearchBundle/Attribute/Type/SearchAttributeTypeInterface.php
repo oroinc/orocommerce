@@ -20,6 +20,8 @@ interface SearchAttributeTypeInterface extends AttributeTypeInterface
     public const VALUE_MAIN = 'main';
     public const VALUE_AGGREGATE = 'aggregate';
 
+    public const SEARCHABLE_PREFIX = 'searchable';
+
     /**
      * @return array
      * Must return an array of field types used in filtering. Out of the box possible keys could be:
@@ -78,4 +80,11 @@ interface SearchAttributeTypeInterface extends AttributeTypeInterface
      * @return string
      */
     public function getSortableFieldName(FieldConfigModel $attribute): string;
+
+    /**
+     * @param FieldConfigModel $attribute
+     *
+     * @return string
+     */
+    public function getSearchableFieldName(FieldConfigModel $attribute): string;
 }

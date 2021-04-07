@@ -57,4 +57,12 @@ class WYSIWYGSearchableAttributeType extends AbstractSearchableAttributeType
     {
         throw new \RuntimeException('Not supported');
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSearchableFieldName(FieldConfigModel $attribute): string
+    {
+        return $attribute->getFieldName();
+    }
 }

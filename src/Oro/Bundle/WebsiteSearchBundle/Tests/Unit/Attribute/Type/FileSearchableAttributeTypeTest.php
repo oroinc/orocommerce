@@ -58,4 +58,12 @@ class FileSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
 
         $this->getSearchableAttributeType()->getSortableFieldName($this->attribute);
     }
+
+    public function testGetSearchableFieldName()
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Not supported');
+
+        $this->getSearchableAttributeType()->getSearchableFieldName($this->attribute);
+    }
 }

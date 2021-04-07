@@ -58,4 +58,12 @@ class ManyToOneSearchableAttributeType extends AbstractSearchableAttributeType
     {
         return $attribute->getFieldName() . '_' . LocalizationIdPlaceholder::NAME;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSearchableFieldName(FieldConfigModel $attribute): string
+    {
+        return $this->getSortableFieldName($attribute);
+    }
 }

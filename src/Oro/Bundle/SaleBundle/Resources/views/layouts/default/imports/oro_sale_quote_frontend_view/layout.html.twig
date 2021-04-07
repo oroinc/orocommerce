@@ -19,7 +19,7 @@
 {% block _quote_view_information_widget %}
     <div class="customer-info-grid">
         <h2 class="customer-info-grid__title">
-            {{ 'oro.frontend.sale.quote.sections.general'|trans }}
+            {{- 'oro.frontend.sale.quote.sections.general'|trans -}}
         </h2>
         <div class="grid__row">
             <div class="grid__column grid__column--6 grid__column--no-gutters-l">
@@ -43,7 +43,7 @@
                     </tr>
                     <tr class="customer-info-grid__row">
                         <td class="customer-info-grid__element-label">{{ 'oro.frontend.sale.quote.po_number.label'|trans }}</td>
-                        <td class="customer-info-grid__element-content">{{ quote.poNumber|default('N/A'|trans) }}</td>
+                        <td class="customer-info-grid__element-content"><bdo dir="ltr">{{ quote.poNumber|default('N/A'|trans) }}</bdo></td>
                     </tr>
                     </tbody>
                 </table>
@@ -80,7 +80,7 @@
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     <div class="customer-line-items">
         <h2 class="customer-line-items__title">
-            {{ 'oro.frontend.sale.quote.sections.quote_products.label'|trans }}
+            {{- 'oro.frontend.sale.quote.sections.quote_products.label'|trans -}}
         </h2>
         <table class="oro-grid-table customer-line-items__table">
             <thead class="grid-header hide-on-mobile-landscape">
@@ -106,7 +106,9 @@
                                         {{ quoteProduct.productName }}
                                     {% endif %}
                                 </h3>
-                                <div>{{ 'oro.frontend.sale.quoteproduct.product_sku.label'|trans }} <span class="customer-line-items__sku-value">{{ quoteProduct.productSku }}</span></div>
+                                <div class="customer-line-items__row">
+                                    {{ 'oro.frontend.sale.quoteproduct.product_sku.label'|trans }} <span class="customer-line-items__sku-value">{{ quoteProduct.productSku }}</span>
+                                </div>
 
                                 <div class="grid-row hide-on-desktop hide-on-strict-tablet">
                                     <div class="grid-head grid-cell--offset-l-none-mobile" aria-hidden="true">
@@ -180,7 +182,7 @@
 
 {% block address_widget %}
     {% from 'OroAddressBundle::macros.html.twig' import renderAddress %}
-    {{ renderAddress(address) }}
+    {{ renderAddress(address, true) }}
 {% endblock %}
 
 {% block quote_body_column_element_widget %}

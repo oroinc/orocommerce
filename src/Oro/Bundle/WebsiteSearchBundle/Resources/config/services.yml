@@ -330,3 +330,17 @@ services:
             - !php/const Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer::TOPIC_REINDEX
         tags:
             - { name: oro_message_queue.message_filter, topic: !php/const Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer::TOPIC_REINDEX }
+
+    oro_website_search.form.extension.remove_search_boost_attribute:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Form\Extension\RemoveSearchBoostAttributeExtension'
+        arguments:
+            - '%oro_website_search.engine%'
+            - '@oro_entity_config.provider.attribute'
+            - '@oro_entity_config.registry.attribute_type'
+        tags:
+            - { name: form.type_extension, alias: oro_entity_config_type, extended_type: Oro\Bundle\EntityConfigBundle\Form\Type\ConfigType }
+
+    oro_website_search.attribute.searchable_information_provider:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Attribute\SearchableInformationProvider'
+        arguments:
+            - '@oro_entity_config.config_manager'
