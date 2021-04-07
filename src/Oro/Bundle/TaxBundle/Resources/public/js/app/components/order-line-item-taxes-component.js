@@ -99,9 +99,10 @@ define(function(require) {
         },
 
         render: function(result) {
+            const currency = this.options.productModel.attributes.currency;
             result = _.defaults(result, this.emptyData);
-            result.row = TaxFormatter.formatItem(result.row);
-            result.unit = TaxFormatter.formatItem(result.unit);
+            result.row = TaxFormatter.formatItem(result.row, currency);
+            result.unit = TaxFormatter.formatItem(result.unit, currency);
             result.taxes = _.map(result.taxes, TaxFormatter.formatTax);
 
             this.$tableContainer.html(this.appliedTaxesTemplate(result));
