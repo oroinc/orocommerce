@@ -138,16 +138,25 @@ class TotalAfterDiscountsResolverTest extends \PHPUnit\Framework\TestCase
                 TaxationSettingsProvider::CALCULATION_SCALE,
                 RoundingMode::HALF_UP
             );
-        $expectedResultElement = ResultElement::create('21', '20', '0');
+
+        $resultElement = ResultElement::create('21', '20', '0');
+
+        $expectedResultElement = clone $resultElement;
+        $expectedResultElement->setDiscountsIncluded(true)
+            ->setAdjustment('0.00');
+
         $this->calculator->expects(self::once())
             ->method('calculate')
             ->with(BigDecimal::of(20), $taxRate)
-            ->willReturn($expectedResultElement);
+            ->willReturn($resultElement);
 
         $this->totalAfterDiscountsResolver->resolve($taxable);
 
         self::assertInstanceOf(Result::class, $taxable->getResult());
-        self::assertInstanceOf(ResultElement::class, $taxable->getResult()->getTotal());
-        self::assertEquals($expectedResultElement, $taxable->getResult()->getTotal());
+
+        $total = $taxable->getResult()->getTotal();
+
+        self::assertInstanceOf(ResultElement::class, $total);
+        self::assertEquals($expectedResultElement, $total);
     }
 }

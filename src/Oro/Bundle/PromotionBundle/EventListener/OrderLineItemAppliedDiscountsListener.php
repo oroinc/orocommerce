@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PromotionBundle\EventListener;
 
+use Brick\Math\BigDecimal;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
@@ -81,8 +82,16 @@ class OrderLineItemAppliedDiscountsListener
     protected function getDiscountWithTaxes(float $discountAmount, OrderLineItem $lineItem)
     {
         $taxesRow = $this->getProvider()->getTax($lineItem)->getRow();
-        $excludingTax = $taxesRow->getExcludingTax() - $discountAmount;
-        $includingTax = $taxesRow->getIncludingTax() - $discountAmount;
+
+        if ($taxesRow->isDiscountsIncluded()) {
+            $excludingTax = $taxesRow->getExcludingTax();
+            $includingTax = $taxesRow->getIncludingTax();
+        } else {
+            // Calculates using BigDecimal because subtotal with included/excluded tax can be a big decimal.
+            $excludingTax = (string) BigDecimal::of($taxesRow->getExcludingTax())->minus($discountAmount);
+            $includingTax = (string) BigDecimal::of($taxesRow->getIncludingTax())->minus($discountAmount);
+        }
+
         $currency = $this->getLineItemCurrency($lineItem);
 
         return [
