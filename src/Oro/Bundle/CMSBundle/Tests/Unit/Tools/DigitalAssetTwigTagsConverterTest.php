@@ -16,6 +16,8 @@ use Symfony\Component\Yaml\Yaml;
 
 class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
 {
+    private const NEW_UUID = '0e6bffee-15bb-44ec-9a4a-0113ca51452d';
+
     /** @var array */
     private static $fixturesData = [];
 
@@ -41,7 +43,7 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
         $this->converter
             ->expects($this->any())
             ->method('generateUuid')
-            ->willReturn('new-uuid');
+            ->willReturn(self::NEW_UUID);
     }
 
     /**
@@ -121,7 +123,7 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
                 static function (array $criteria) {
                     $uuid = $criteria['uuid'];
 
-                    if ($uuid === 'new-uuid') {
+                    if ($uuid === self::NEW_UUID) {
                         // File with such uuid does not exist.
                         return null;
                     }
@@ -153,6 +155,14 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
     public function convertToUrlsDataProvider(): array
     {
         return self::getFixturesData('convertToUrls');
+    }
+
+    public function testConvertToUrlsWhenInvalidUuid(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid UUID v4: invalid-uuid');
+
+        $this->converter->convertToUrls('{{ wysiwyg_file(42, "invalid-uuid") }}');
     }
 
     /**
@@ -278,7 +288,7 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
                         return [
                             'parentEntityClass' => \stdClass::class,
                             'parentEntityId' => 42,
-                            'uuid' => 'uuid-' . $fileId,
+                            'uuid' => 'e9ff6eea-' . $fileId . '-4689-ab69-ee2567103cd1',
                             'digitalAssetId' => $fileId / 10,
                         ];
                     }
@@ -287,7 +297,7 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
                     return [
                         'parentEntityClass' => DigitalAsset::class,
                         'parentEntityId' => $fileId / 10,
-                        'uuid' => 'uuid-' . $fileId,
+                        'uuid' => 'e9ff6eea-' . $fileId . '-4689-ab69-ee2567103cd1',
                         'digitalAssetId' => null,
                     ];
                 }

@@ -25,6 +25,7 @@ class LoadContentVariantData extends AbstractFixture implements DependentFixture
         $firstContentVariant = new ContentVariant();
         $firstContentVariant->setType(CategoryPageContentVariantType::TYPE);
         $firstContentVariant->setCategoryPageCategory($this->getReference(LoadCategoryData::FIRST_LEVEL));
+        $firstContentVariant->setExcludeSubcategories(false);
         $firstCatalogNode->addContentVariant($firstContentVariant);
 
         $this->setReference(self::VARIANT, $firstContentVariant);

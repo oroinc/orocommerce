@@ -205,13 +205,13 @@ Feature: My Shopping List with products unit of quantity is more than zero
       | BB16 | Product 16 Note 16 text                                  | In Stock     | 9 item              | $23.00 | $207.00 -$103.50 $103.50                           |
 
   Scenario: Check the unit of quantity for configurable product at my shopping list view page
-    And I follow "Account"
-    When I click on "Shopping Lists Navigation Link"
+    Given I follow "Account"
+    And I click on "Shopping Lists Navigation Link"
     And I click View "Shopping List 3" in grid
     And I click "Group Similar"
-    And I sort grid by "SKU"
     When I select 10 from per page list dropdown in "Frontend Customer User Shopping List View Grid"
-    And I should see following "Frontend Customer User Shopping List View Grid" grid:
+    And I sort grid by "SKU"
+    Then I should see following "Frontend Customer User Shopping List View Grid" grid:
       | SKU  | Item                                                     |              | Qty           | Unit   | Price  | Subtotal                                           |
       |      | Configurable Product 1                                   |              | 16.5779067891 | items  |        | $267.8384561493 -$133.91922807465 $133.91922807465 |
       | BB04 | Color: Red Size: M Note 4 text                           | In Stock     | 4.331         | items  | $11.00 | $47.641 -$23.8205 $23.8205                         |

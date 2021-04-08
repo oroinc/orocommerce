@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\EventListener;
 
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\WebCatalogBundle\Event\RestrictContentVariantByEntityEvent;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
@@ -49,7 +50,7 @@ class RestrictContentVariantByCategoryEventListener
                     ':excludeSubcategories'
                 ))
                 ->setParameter('category', $entity)
-                ->setParameter('excludeSubcategories', $excludeSubcategories);
+                ->setParameter('excludeSubcategories', $excludeSubcategories, Types::BOOLEAN);
         }
     }
 }
