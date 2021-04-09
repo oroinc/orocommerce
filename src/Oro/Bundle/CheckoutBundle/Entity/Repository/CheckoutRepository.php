@@ -5,6 +5,7 @@ namespace Oro\Bundle\CheckoutBundle\Entity\Repository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -284,7 +285,7 @@ class CheckoutRepository extends EntityRepository implements ResettableCustomerU
     }
 
     /**
-     * @return array|Checkout[]
+     * @return \Iterator|Checkout[]
      */
     public function findWithInvalidSubtotals()
     {
@@ -294,7 +295,7 @@ class CheckoutRepository extends EntityRepository implements ResettableCustomerU
             ->where('cs.valid = :valid')
             ->setParameter('valid', false, Types::BOOLEAN);
 
-        return $qb->getQuery()->getResult();
+        return new BufferedIdentityQueryResultIterator($qb);
     }
 
     /**

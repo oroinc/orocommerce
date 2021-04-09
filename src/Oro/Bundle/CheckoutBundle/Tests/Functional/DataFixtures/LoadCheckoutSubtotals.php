@@ -10,6 +10,7 @@ use Oro\Bundle\CheckoutBundle\Entity\CheckoutSubtotal;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists;
 
 class LoadCheckoutSubtotals extends AbstractFixture implements DependentFixtureInterface
 {
@@ -115,6 +116,7 @@ class LoadCheckoutSubtotals extends AbstractFixture implements DependentFixtureI
     {
         return [
             LoadShoppingListsCheckoutsData::class,
+            LoadCombinedPriceLists::class
         ];
     }
 }
