@@ -106,12 +106,6 @@ class FrontendProductPricesExportProvider
      */
     public function getProductPrices(Product $product, array $options): array
     {
-        $currentCurrency = $this->getCurrentCurrency($options);
-
-        if (!isset($options['currentCurrency'])) {
-            $options['currentCurrency'] = $currentCurrency;
-        }
-
         $priceAttributePrices = $this->getProductPriceAttributePrice($product, $options);
 
         $result = [];
@@ -162,12 +156,12 @@ class FrontendProductPricesExportProvider
     protected function getProductPriceAttributePrice(Product $product, array $options): array
     {
         if (null === $this->productPriceAttributesPrices) {
-            if (!isset($options['ids'])) {
-                return [];
+            if (empty($options['ids'])) {
+                $options['ids'] = [$product->getId()];
             }
 
             $productIds = $options['ids'];
-            $currency = $options['currentCurrency'];
+            $currency = $this->getCurrentCurrency($options);
             $this->productPriceAttributesPrices = $this->loadProductPriceAttributePrices($productIds, $currency);
         }
 

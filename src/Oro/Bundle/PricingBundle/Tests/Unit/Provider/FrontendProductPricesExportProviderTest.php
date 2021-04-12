@@ -209,7 +209,7 @@ class FrontendProductPricesExportProviderTest extends TestCase
         $this->assertEmpty($result3);
     }
 
-    public function testGetProductPricesWithoutCurrencyInOptions()
+    public function testGetProductPricesWithEmptyOptions()
     {
         $product = $this->createProduct(['id' => 1]);
 
@@ -217,19 +217,17 @@ class FrontendProductPricesExportProviderTest extends TestCase
             ->method('getOrganization')
             ->willReturn(new Organization());
 
-        $priceAttributeRepositoryMock = $this->createMock(PriceAttributePriceListRepository::class);
-
         $testPriceAttribute = $this->createPriceAttribute('test_price');
         $customPriceAttribute = $this->createPriceAttribute('custom_price');
 
-        $priceAttributes = [
-            $testPriceAttribute,
-            $customPriceAttribute
-        ];
+        $priceAttributeRepositoryMock = $this->createMock(PriceAttributePriceListRepository::class);
 
         $priceAttributeRepositoryMock->expects($this->once())
             ->method('findBy')
-            ->willReturn($priceAttributes);
+            ->willReturn([
+                $testPriceAttribute,
+                $customPriceAttribute
+            ]);
 
         $pricesRepository = $this->createMock(PriceAttributeProductPriceRepository::class);
 
@@ -260,7 +258,7 @@ class FrontendProductPricesExportProviderTest extends TestCase
             ->method('getUserCurrency')
             ->willReturn('USD');
 
-        $result = $this->provider->getProductPrices($product, ['ids' => [1, 2]]);
+        $result = $this->provider->getProductPrices($product, []);
 
         $this->assertCount(2, $result);
 
@@ -270,31 +268,6 @@ class FrontendProductPricesExportProviderTest extends TestCase
         ];
 
         $this->assertEquals($expectedResult, $result);
-    }
-
-    public function testGetProductPricesWithEmptyOptions()
-    {
-        $product = $this->createProduct(['id' => 1]);
-
-        $this->tokenAccessor->expects($this->never())
-            ->method('getOrganization');
-
-        $priceAttributeRepositoryMock = $this->createMock(PriceAttributePriceListRepository::class);
-
-        $priceAttributeRepositoryMock->expects($this->never())
-            ->method('findBy');
-
-        $pricesRepository = $this->createMock(PriceAttributeProductPriceRepository::class);
-
-        $pricesRepository->expects($this->never())
-            ->method('findByPriceAttributeProductPriceIdsAndProductIds');
-
-        $this->managerRegistry->expects($this->never())
-            ->method('getRepository');
-
-        $result = $this->provider->getProductPrices($product, []);
-
-        $this->assertCount(0, $result);
     }
 
     public function testGetTierPrices()
