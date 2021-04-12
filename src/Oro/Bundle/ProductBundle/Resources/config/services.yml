@@ -1009,6 +1009,8 @@ services:
             - '@oro_entity_extend.enum_value_provider'
             - '@logger'
             - '@oro_entity_config.config_manager'
+            - '@oro_locale.helper.localization'
+            - '@oro_locale.settings'
         calls:
             - [setCache, ['@oro_product.product_variant_field.field_value_handler.enum_type_handler.cache']]
 
