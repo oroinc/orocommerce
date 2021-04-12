@@ -1010,6 +1010,8 @@ services:
             - '@oro_entity_config.config_manager'
         calls:
             - [setCache, ['@oro_product.product_variant_field.field_value_handler.enum_type_handler.cache']]
+            - [setLocalizationHelper, ['@oro_locale.helper.localization']]
+            - [setLocaleSettings, ['@oro_locale.settings']]
 
     oro_product.product_variant_field.field_value_handler.boolean_type_handler:
         public: false
