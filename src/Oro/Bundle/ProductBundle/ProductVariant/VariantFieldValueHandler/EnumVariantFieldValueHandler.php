@@ -7,6 +7,8 @@ use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantFieldValueHandlerInterface;
 use Psr\Log\LoggerInterface;
@@ -35,6 +37,12 @@ class EnumVariantFieldValueHandler implements ProductVariantFieldValueHandlerInt
 
     /** @var int */
     private $cacheLifeTime;
+
+    /** @var LocalizationHelper */
+    private $localizationHelper;
+
+    /** @var LocaleSettings */
+    private $localeSettings;
 
     /**
      * @param DoctrineHelper $doctrineHelper
@@ -66,18 +74,59 @@ class EnumVariantFieldValueHandler implements ProductVariantFieldValueHandlerInt
     }
 
     /**
+     * @return LocalizationHelper
+     */
+    public function getLocalizationHelper(): LocalizationHelper
+    {
+        if (!$this->localizationHelper) {
+            throw new \LogicException('LocalizationHelper must not be null.');
+        }
+
+        return $this->localizationHelper;
+    }
+
+    /**
+     * @param LocalizationHelper $localizationHelper
+     */
+    public function setLocalizationHelper(LocalizationHelper $localizationHelper): void
+    {
+        $this->localizationHelper = $localizationHelper;
+    }
+
+    /**
+     * @return LocaleSettings
+     */
+    public function getLocaleSettings(): LocaleSettings
+    {
+        if (!$this->localeSettings) {
+            throw new \LogicException('LocaleSettings must not be null.');
+        }
+
+        return $this->localeSettings;
+    }
+
+    /**
+     * @param LocaleSettings $localeSettings
+     */
+    public function setLocaleSettings(LocaleSettings $localeSettings): void
+    {
+        $this->localeSettings = $localeSettings;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getPossibleValues($fieldName)
     {
-        $data = $this->cache->fetch($fieldName);
+        $key = sprintf('%s|%s', $fieldName, $this->getLocaleKey());
+        $data = $this->cache->fetch($key);
         if (!\is_array($data)) {
             $config = $this->configManager->getConfigFieldModel(Product::class, $fieldName);
             $extendConfig = $config->toArray('extend');
 
             $data = $this->enumValueProvider->getEnumChoices($extendConfig['target_entity']);
 
-            $this->cache->save($fieldName, $data, $this->cacheLifeTime);
+            $this->cache->save($key, $data, $this->cacheLifeTime);
         }
 
         return $data;
@@ -113,6 +162,16 @@ class EnumVariantFieldValueHandler implements ProductVariantFieldValueHandlerInt
         }
 
         return $value;
+    }
+
+    /**
+     * @return string
+     */
+    private function getLocaleKey(): string
+    {
+        return $this->getLocalizationHelper()->getCurrentLocalization()
+            ? $this->getLocalizationHelper()->getCurrentLocalization()->getFormattingCode()
+            : $this->getLocaleSettings()->getLocale();
     }
 
     /**
