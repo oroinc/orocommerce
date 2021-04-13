@@ -2,6 +2,11 @@ Please refer first to [UPGRADE.md](UPGRADE.md) for the most important items that
 
 The current file describes significant changes in the code that may affect the upgrade of your customizations.
 
+## 4.2.3
+
+#### PricingBundle
+* TEMPORARY (PostgreSQL)/CREATE TEMPORARY TABLES (MySQL) database privilege became required
+
 ## 4.2.2
 
 ### Changed

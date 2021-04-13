@@ -1,0 +1,24 @@
+include:
+    - '@OroFrontendLocalizationBundle:frontstore-customer.yml'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    locvalue1:
+        string: 'Product 1'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision1:
+        unit: '@each'
+        precision: 2
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        sku: 'PSKU1'
+        status: 'enabled'
+        type: 'simple'
+        organization: '@organization'
+        owner: '@business_unit'
+        primaryUnitPrecision: '@precision1'
+        attributeFamily: '@defaultProductFamily'
+        __calls:
+            - addName: ['@locvalue1']
+        inventoryStatus: '@enumInventoryStatuses'

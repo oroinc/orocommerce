@@ -32,7 +32,7 @@ class RestrictContentVariantByCategoryEventListenerTest extends WebTestCase
             LoadWebsiteData::class
         ]);
 
-        $this->configManager = $this->getContainer()->get('oro_config.manager');
+        $this->configManager = $this->getContainer()->get('oro_config.global');
         $this->contentNodeProvider = $this->getContainer()->get('oro_web_catalog.content_node_provider');
     }
 
@@ -42,7 +42,7 @@ class RestrictContentVariantByCategoryEventListenerTest extends WebTestCase
         /** @var Website $website */
         $website = $this->getReference(LoadWebsiteData::WEBSITE2);
 
-        $this->configManager->set('oro_web_catalog.web_catalog', $webCatalog->getId(), $website);
+        $this->configManager->set('oro_web_catalog.web_catalog', $webCatalog->getId());
         $this->configManager->flush();
 
         $entity = $this->getReference(LoadCategoryData::FIRST_LEVEL);

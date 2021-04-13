@@ -9,6 +9,7 @@ use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists;
 use Oro\Bundle\ProductBundle\Controller\Frontend\ProductController;
 use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
+use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -77,6 +78,13 @@ class ProductControllerTest extends WebTestCase
 
     public function testAutocompleteAction(): void
     {
+        $key = Configuration::getConfigKeyByName(Configuration::ALLOW_PARTIAL_PRODUCT_SEARCH);
+
+        $configManager = $this->getContainer()->get('oro_config.manager');
+        $originalValue = $configManager->get($key);
+        $configManager->set($key, true);
+        $configManager->flush();
+
         $this->client->request(
             'GET',
             $this->getUrl('oro_product_frontend_product_search_autocomplete'),
@@ -123,6 +131,9 @@ class ProductControllerTest extends WebTestCase
             ],
             $data['products'][LoadProductData::PRODUCT_9]
         );
+
+        $configManager->set($key, $originalValue);
+        $configManager->flush();
     }
 
     public function testIndexActionInSubfolder()

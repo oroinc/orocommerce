@@ -8,6 +8,9 @@ use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityExtendBundle\Model\EnumValue;
 use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ProductVariant\VariantFieldValueHandler\EnumVariantFieldValueHandler;
 use Psr\Log\LoggerInterface;
@@ -31,6 +34,12 @@ class EnumVariantFieldValueHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var EnumVariantFieldValueHandler */
     private $handler;
 
+    /** @var LocalizationHelper */
+    private $localizationHelper;
+
+    /** @var LocaleSettings */
+    private $localeSettings;
+
     /**
      * {@inheritdoc}
      */
@@ -40,6 +49,8 @@ class EnumVariantFieldValueHandlerTest extends \PHPUnit\Framework\TestCase
         $this->enumValueProvider = $this->createMock(EnumValueProvider::class);
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->configManager = $this->createMock(ConfigManager::class);
+        $this->localizationHelper = $this->createMock(LocalizationHelper::class);
+        $this->localeSettings = $this->createMock(LocaleSettings::class);
 
         $this->handler = new EnumVariantFieldValueHandler(
             $this->doctrineHelper,
@@ -47,6 +58,8 @@ class EnumVariantFieldValueHandlerTest extends \PHPUnit\Framework\TestCase
             $this->logger,
             $this->configManager
         );
+        $this->handler->setLocaleSettings($this->localeSettings);
+        $this->handler->setLocalizationHelper($this->localizationHelper);
     }
 
     /**
@@ -87,6 +100,12 @@ class EnumVariantFieldValueHandlerTest extends \PHPUnit\Framework\TestCase
             ->with('\stdClass')
             ->willReturn($enumValues);
 
+        $localization = (new Localization())->setFormattingCode('en_US');
+        $this->localizationHelper
+            ->expects($this->any())
+            ->method('getCurrentLocalization')
+            ->willReturn($localization);
+
         $this->assertEquals($enumValues, $this->handler->getPossibleValues($fieldName));
 
         //check array cache
@@ -101,10 +120,15 @@ class EnumVariantFieldValueHandlerTest extends \PHPUnit\Framework\TestCase
         $cache = $this->createMock(CacheProvider::class);
         $cache->expects($this->once())
             ->method('fetch')
-            ->with($fieldName)
+            ->with(sprintf('%s|%s', $fieldName, 'en_US'))
             ->willReturn($enumValues);
 
         $this->handler->setCache($cache);
+
+        $this->localeSettings
+            ->expects($this->any())
+            ->method('getLocale')
+            ->willReturn('en_US');
 
         $this->configManager->expects($this->never())
             ->method('getConfigFieldModel');

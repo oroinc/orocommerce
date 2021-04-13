@@ -16,3 +16,4 @@ dynamic-imports:
         - oroorder/js/app/views/possible-shipping-methods-view
         - oroorder/js/app/views/shipping-cost-view
         - oroorder/js/app/views/shipping-tracking-collection-view
+        - oroorder/js/app/views/currency-select-view
