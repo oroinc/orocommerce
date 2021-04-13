@@ -11,11 +11,14 @@ use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFami
 use Oro\Bundle\ProductBundle\Search\ProductRepository as ProductSearchRepository;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\SearchBundle\Engine\Orm\PdoMysql\MysqlVersionCheckTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 
 class ProductRepositoryTest extends WebTestCase
 {
+    use MysqlVersionCheckTrait;
+
     /** @var ConfigManager */
     private $configManager;
 
@@ -39,6 +42,8 @@ class ProductRepositoryTest extends WebTestCase
 
         $this->configKey = Configuration::getConfigKeyByName(Configuration::ALLOW_PARTIAL_PRODUCT_SEARCH);
         $this->originalConfigValue = $this->configManager->get($this->configKey);
+
+        $this->platform = $this->getContainer()->get('doctrine')->getManager()->getConnection()->getDatabasePlatform();
     }
 
     protected function tearDown(): void
@@ -153,6 +158,11 @@ class ProductRepositoryTest extends WebTestCase
 
     public function testFindBySkuOrName()
     {
+        if ($this->isMysqlPlatform() && $this->isInnoDBFulltextIndexSupported()) {
+            $this->configManager->set($this->configKey, true);
+            $this->configManager->flush();
+        }
+
         /** @var ProductRepository $ormRepository */
         $ormRepository = $this->client->getContainer()
             ->get('doctrine')
@@ -192,6 +202,12 @@ class ProductRepositoryTest extends WebTestCase
      */
     public function testGetSearchQueryBySkuOrName(bool $isConfigEnabled): void
     {
+        if (!$isConfigEnabled && $this->isMysqlPlatform() && $this->isInnoDBFulltextIndexSupported()) {
+            self::markTestSkipped(
+                'Skipped because current test implementation isn\'t compatible with InnoDB Full-Text index'
+            );
+        }
+
         $this->configManager->set($this->configKey, $isConfigEnabled);
         $this->configManager->flush();
 
@@ -237,6 +253,12 @@ class ProductRepositoryTest extends WebTestCase
      */
     public function testGetAutocompleteSearchQuery(bool $isConfigEnabled): void
     {
+        if (!$isConfigEnabled && $this->isMysqlPlatform() && $this->isInnoDBFulltextIndexSupported()) {
+            self::markTestSkipped(
+                'Skipped because current test implementation isn\'t compatible with InnoDB Full-Text index'
+            );
+        }
+
         $this->configManager->set($this->configKey, $isConfigEnabled);
         $this->configManager->flush();
 
@@ -283,6 +305,12 @@ class ProductRepositoryTest extends WebTestCase
      */
     public function testGetProductSearchOperator(bool $isConfigEnabled, string $expected): void
     {
+        if (!$isConfigEnabled && $this->isMysqlPlatform() && $this->isInnoDBFulltextIndexSupported()) {
+            self::markTestSkipped(
+                'Skipped because current test implementation isn\'t compatible with InnoDB Full-Text index'
+            );
+        }
+
         $this->configManager->set($this->configKey, $isConfigEnabled);
         $this->configManager->flush();
 

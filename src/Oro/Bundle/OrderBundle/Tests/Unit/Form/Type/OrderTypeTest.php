@@ -25,6 +25,7 @@ use Oro\Bundle\OrderBundle\Form\Type\OrderLineItemsCollectionType;
 use Oro\Bundle\OrderBundle\Form\Type\OrderLineItemType;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 use Oro\Bundle\OrderBundle\Handler\OrderCurrencyHandler;
+use Oro\Bundle\OrderBundle\Handler\OrderLineItemCurrencyHandler;
 use Oro\Bundle\OrderBundle\Pricing\PriceMatcher;
 use Oro\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
@@ -91,36 +92,19 @@ class OrderTypeTest extends TypeTestCase
     /** @var ValidatorInterface  */
     private $validator;
 
+    /** @var OrderLineItemCurrencyHandler */
+    private $currencyHandler;
+
     protected function setUp(): void
     {
-        $this->orderAddressSecurityProvider = $this
-            ->getMockBuilder(OrderAddressSecurityProvider::class)
-            ->disableOriginalConstructor()->getMock();
-        $this->orderCurrencyHandler = $this->getMockBuilder(OrderCurrencyHandler::class)
-            ->disableOriginalConstructor()->getMock();
-
-        $this->totalsProvider = $this
-            ->getMockBuilder(TotalProcessorProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->lineItemSubtotalProvider = $this
-            ->getMockBuilder(LineItemSubtotalProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->discountSubtotalProvider = $this
-            ->getMockBuilder(DiscountSubtotalProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->priceMatcher = $this->getMockBuilder(PriceMatcher::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->rateConverter = $this->getMockBuilder(RateConverterInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->orderAddressSecurityProvider = $this->createMock(OrderAddressSecurityProvider::class);
+        $this->orderCurrencyHandler = $this->createMock(OrderCurrencyHandler::class);
+        $this->totalsProvider = $this->createMock(TotalProcessorProvider::class);
+        $this->lineItemSubtotalProvider = $this->createMock(LineItemSubtotalProvider::class);
+        $this->discountSubtotalProvider = $this->createMock(DiscountSubtotalProvider::class);
+        $this->priceMatcher = $this->createMock(PriceMatcher::class);
+        $this->rateConverter = $this->createMock(RateConverterInterface::class);
+        $this->currencyHandler = $this->createMock(OrderLineItemCurrencyHandler::class);
 
         $totalHelper = new TotalHelper(
             $this->totalsProvider,
@@ -135,7 +119,7 @@ class OrderTypeTest extends TypeTestCase
         $this->type = new OrderType(
             $this->orderAddressSecurityProvider,
             $this->orderCurrencyHandler,
-            new SubtotalSubscriber($totalHelper, $this->priceMatcher)
+            new SubtotalSubscriber($totalHelper, $this->priceMatcher, $this->currencyHandler)
         );
 
         $this->type->setDataClass(Order::class);

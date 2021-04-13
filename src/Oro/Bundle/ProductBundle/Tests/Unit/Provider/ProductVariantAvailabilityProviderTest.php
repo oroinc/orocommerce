@@ -10,6 +10,8 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
 use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Event\RestrictProductVariantEvent;
@@ -108,11 +110,20 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
             ->getMock();
 
         $logger = $this->createMock(LoggerInterface::class);
-
         $configManager = $this->createMock(ConfigManager::class);
 
+        $localizationHelper = $this->createMock(LocalizationHelper::class);
+        $localeSettings = $this->createMock(LocaleSettings::class);
+
         $this->enumHandler = $this->getMockBuilder(EnumVariantFieldValueHandler::class)
-            ->setConstructorArgs([$this->doctrineHelper, $enumValueProvider, $logger, $configManager])
+            ->setConstructorArgs([
+                $this->doctrineHelper,
+                $enumValueProvider,
+                $logger,
+                $configManager,
+                $localizationHelper,
+                $localeSettings
+            ])
             ->setMethods(['getPossibleValues'])
             ->getMock();
 

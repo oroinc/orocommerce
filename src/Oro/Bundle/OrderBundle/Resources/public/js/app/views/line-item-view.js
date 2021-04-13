@@ -13,6 +13,14 @@ define(function(require) {
      * @class oroorder.app.views.LineItemView
      */
     const LineItemView = LineItemProductView.extend({
+        elements: _.extend({}, LineItemProductView.prototype.elements, {
+            isPriceChanged: '[data-name="field__is-price-changed"]'
+        }),
+        listen: {
+            'pricing:product-price:lock mediator': 'lineItemProductPriceLock',
+            'pricing:product-price:unlock mediator': 'lineItemProductPriceUnlock'
+        },
+
         /**
          * @property {Object}
          */
@@ -199,6 +207,14 @@ define(function(require) {
                     this.$el.find(this.options.selectors.productSku).text(data.sku || null);
                 }, this));
             }
+        },
+
+        lineItemProductPriceLock: function() {
+            this.getElement('isPriceChanged').val(1);
+        },
+
+        lineItemProductPriceUnlock: function() {
+            this.getElement('isPriceChanged').val(0);
         }
     });
 

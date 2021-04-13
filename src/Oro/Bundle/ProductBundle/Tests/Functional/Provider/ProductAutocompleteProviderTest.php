@@ -6,6 +6,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Provider;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists;
+use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Provider\ProductAutocompleteProvider;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -52,6 +53,13 @@ class ProductAutocompleteProviderTest extends WebTestCase
 
     public function testGetAutocompleteData(): void
     {
+        $key = Configuration::getConfigKeyByName(Configuration::ALLOW_PARTIAL_PRODUCT_SEARCH);
+
+        $configManager = $this->getContainer()->get('oro_config.manager');
+        $originalValue = $configManager->get($key);
+        $configManager->set($key, true);
+        $configManager->flush();
+
         $data = $this->provider->getAutocompleteData(new Request(), 'продукт');
 
         $this->assertArrayHasKey('total_count', $data);
@@ -89,5 +97,8 @@ class ProductAutocompleteProviderTest extends WebTestCase
             ],
             $data['products'][LoadProductData::PRODUCT_9]
         );
+
+        $configManager->set($key, $originalValue);
+        $configManager->flush();
     }
 }

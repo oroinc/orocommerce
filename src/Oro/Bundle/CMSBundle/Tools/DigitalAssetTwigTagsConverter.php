@@ -8,6 +8,7 @@ use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Provider\FileUrlProviderInterface;
 use Oro\Bundle\DigitalAssetBundle\Entity\DigitalAsset;
 use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
+use Oro\Bundle\SecurityBundle\Tools\UUIDValidator;
 
 /**
  * Replaces wysiwyg_image() / wysiwyg_file() twig function with corresponding URL and vice versa.
@@ -104,6 +105,10 @@ class DigitalAssetTwigTagsConverter
      */
     private function getFileByUuid(string $uuid): ?File
     {
+        if (!UUIDValidator::isValidV4($uuid)) {
+            throw new \InvalidArgumentException(sprintf('Invalid UUID v4: %s', $uuid));
+        }
+
         try {
             $file = $this->managerRegistry->getManagerForClass(File::class)
                 ->getRepository(File::class)
