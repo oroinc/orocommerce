@@ -42,7 +42,10 @@ const LinkButtonTypeBuilder = BaseTypeBuilder.extend({
                 defaults: {
                     classes: ['btn', 'btn--info'],
                     tagName: 'a',
-                    content: __('oro.cms.wysiwyg.component.link_button.content')
+                    components: [{
+                        type: 'textnode',
+                        content: __('oro.cms.wysiwyg.component.link_button.content')
+                    }]
                 }
             }
         });

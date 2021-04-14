@@ -150,14 +150,17 @@ class QuantityToOrderValidatorService
 
     /**
      * @param Product $product
-     * @param $quantity
+     * @param int|float $quantity
      * @return bool|string
      */
     public function getMinimumErrorIfInvalid(Product $product, $quantity)
     {
         $minLimit = $this->getMinimumLimit($product);
         if ($this->isLowerThenMinLimit($minLimit, $quantity)) {
-            return $this->getErrorMessage($product, $minLimit, 'quantity_below_min_limit');
+            return $this->translator->trans(
+                'oro.inventory.product.error.quantity_below_min_limit',
+                ['%limit%' => $minLimit]
+            );
         }
 
         return false;
@@ -165,38 +168,26 @@ class QuantityToOrderValidatorService
 
     /**
      * @param Product $product
-     * @param $quantity
+     * @param int|float $quantity
      * @return bool|string
      */
     public function getMaximumErrorIfInvalid(Product $product, $quantity)
     {
         $maxLimit = $this->getMaximumLimit($product);
         if (0 == $maxLimit) {
-            return $this->getErrorMessage($product, $maxLimit, 'quantity_limit_is_zero');
+            return $this->translator->trans(
+                'oro.inventory.product.error.quantity_limit_is_zero',
+                ['%limit%' => $maxLimit]
+            );
         }
 
         if ($this->isHigherThanMaxLimit($maxLimit, $quantity)) {
-            return $this->getErrorMessage($product, $maxLimit, 'quantity_over_max_limit');
+            return $this->translator->trans(
+                'oro.inventory.product.error.quantity_over_max_limit',
+                ['%limit%' => $maxLimit]
+            );
         }
 
         return false;
-    }
-
-    /**
-     * @param Product $product
-     * @param int $limit
-     * @param string $messageSuffix
-     * @return string
-     */
-    protected function getErrorMessage(Product $product, $limit, $messageSuffix)
-    {
-        return $this->translator->trans(
-            'oro.inventory.product.error.' . $messageSuffix,
-            [
-                '%limit%' => $limit,
-                '%sku%' => $product->getSku(),
-                '%product_name%' => $product->getName(),
-            ]
-        );
     }
 }

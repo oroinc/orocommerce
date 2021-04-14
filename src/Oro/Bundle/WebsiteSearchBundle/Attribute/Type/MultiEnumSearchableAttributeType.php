@@ -58,4 +58,12 @@ class MultiEnumSearchableAttributeType extends AbstractSearchableAttributeType
     {
         throw new \RuntimeException('Not supported');
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSearchableFieldName(FieldConfigModel $attribute): string
+    {
+        return $attribute->getFieldName() . '_' . self::SEARCHABLE_PREFIX;
+    }
 }

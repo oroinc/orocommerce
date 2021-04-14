@@ -28,6 +28,7 @@ use Oro\Bundle\ProductBundle\Search\ProductIndexDataModel;
 use Oro\Bundle\ProductBundle\Search\ProductIndexFieldsProvider;
 use Oro\Bundle\ProductBundle\Search\WebsiteSearchProductIndexDataProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
+use Oro\Bundle\WebsiteSearchBundle\Attribute\SearchableInformationProvider;
 use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\EnumSearchableAttributeType;
 use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\ManyToManySearchableAttributeType;
 use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\MultiEnumSearchableAttributeType;
@@ -75,12 +76,14 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
             );
 
         $this->filterableAttributeProvider = new ProductIndexFieldsProvider();
+        $searchableProvider = new SearchableInformationProvider($configManager);
 
         $this->provider = new WebsiteSearchProductIndexDataProvider(
             $this->attributeTypeRegistry,
             new AttributeConfigurationProvider($configManager),
             $this->filterableAttributeProvider,
-            new PropertyAccessor()
+            new PropertyAccessor(),
+            $searchableProvider
         );
     }
 
@@ -369,6 +372,160 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
                         'Best Sales New Discounts',
                         [],
                         false,
+                        true
+                    ),
+                ],
+            ],
+            'filterable, sortable, searchable, not localized, with not empty boost' => [
+                'attribute' => $enumAttribute,
+                'attributeType' => $enumSearchAttributeType,
+                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
+                'attributeConfig' => $this->getConfig(
+                    ['filterable' => true, 'sortable' => true, 'searchable' => true, 'search_boost' => 1.0]
+                ),
+                'expected' => [
+                    new ProductIndexDataModel(
+                        'inventoryStatus_' . Product::INVENTORY_STATUS_IN_STOCK,
+                        1,
+                        [],
+                        false,
+                        false
+                    ),
+                    new ProductIndexDataModel('inventoryStatus_priority', 42, [], false, false),
+                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_FIELD, 'In Stock', [], false, true),
+                    new ProductIndexDataModel('inventoryStatus_searchable', 'In Stock', [], false, false),
+                ],
+            ],
+            'filterable, sortable, searchable, not localized, with 0 boost' => [
+                'attribute' => $enumAttribute,
+                'attributeType' => $enumSearchAttributeType,
+                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
+                'attributeConfig' => $this->getConfig(
+                    ['filterable' => true, 'sortable' => true, 'searchable' => true, 'search_boost' => 0.0]
+                ),
+                'expected' => [
+                    new ProductIndexDataModel(
+                        'inventoryStatus_' . Product::INVENTORY_STATUS_IN_STOCK,
+                        1,
+                        [],
+                        false,
+                        false
+                    ),
+                    new ProductIndexDataModel('inventoryStatus_priority', 42, [], false, false),
+                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_FIELD, 'In Stock', [], false, true),
+                ],
+            ],
+            'filterable, sortable, searchable, not localized, with null boost' => [
+                'attribute' => $enumAttribute,
+                'attributeType' => $enumSearchAttributeType,
+                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
+                'attributeConfig' => $this->getConfig(
+                    ['filterable' => true, 'sortable' => true, 'searchable' => true, 'search_boost' => null]
+                ),
+                'expected' => [
+                    new ProductIndexDataModel(
+                        'inventoryStatus_' . Product::INVENTORY_STATUS_IN_STOCK,
+                        1,
+                        [],
+                        false,
+                        false
+                    ),
+                    new ProductIndexDataModel('inventoryStatus_priority', 42, [], false, false),
+                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_FIELD, 'In Stock', [], false, true),
+                ],
+            ],
+            'filterable, not sortable, searchable, not localized (multi enum), with boost' => [
+                'attribute' => $multiEnumAttribute,
+                'attributeType' => $multiEnumSearchAttributeType,
+                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
+                'attributeConfig' => $this->getConfig(
+                    ['filterable' => true, 'sortable' => false, 'searchable' => true, 'search_boost' => 1.0]
+                ),
+                'expected' => [
+                    new ProductIndexDataModel('flags_bestseller', 1, [], false, false),
+                    new ProductIndexDataModel('flags_discounts', 1, [], false, false),
+                    new ProductIndexDataModel(
+                        IndexDataProvider::ALL_TEXT_FIELD,
+                        'Best Sales New Discounts',
+                        [],
+                        false,
+                        true
+                    ),
+                    new ProductIndexDataModel('flags_searchable', 'Best Sales New Discounts', [], false, false)
+                ],
+            ],
+            'not filterable, not sortable, searchable, localized, with not empty boost' => [
+                'attribute' => $manyToManyAttribute,
+                'attributeType' => $manyToManySearchAttributeType,
+                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
+                'attributeConfig' => $this->getConfig(
+                    ['filterable' => false, 'sortable' => false, 'searchable' => true, 'search_boost' => 1.0]
+                ),
+                'expected' => [
+                    new ProductIndexDataModel(
+                        IndexDataProvider::ALL_TEXT_L10N_FIELD,
+                        'locale1 description',
+                        [LocalizationIdPlaceholder::NAME => 1001],
+                        true,
+                        true
+                    ),
+                    new ProductIndexDataModel(
+                        'descriptions_LOCALIZATION_ID',
+                        'locale1 description',
+                        [LocalizationIdPlaceholder::NAME => 1001],
+                        true,
+                        false
+                    ),
+                    new ProductIndexDataModel(
+                        IndexDataProvider::ALL_TEXT_L10N_FIELD,
+                        'locale2 description',
+                        [LocalizationIdPlaceholder::NAME => 1002],
+                        true,
+                        true
+                    ),
+                    new ProductIndexDataModel(
+                        'descriptions_LOCALIZATION_ID',
+                        'locale2 description',
+                        [LocalizationIdPlaceholder::NAME => 1002],
+                        true,
+                        false
+                    ),
+                ],
+            ],
+            'filterable, sortable, searchable, localized, with not empty boost (no duplicates)' => [
+                'attribute' => $manyToManyAttribute,
+                'attributeType' => $manyToManySearchAttributeType,
+                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
+                'attributeConfig' => $this->getConfig(
+                    ['filterable' => true, 'sortable' => true, 'searchable' => true, 'search_boost' => 1.0]
+                ),
+                'expected' => [
+                    new ProductIndexDataModel(
+                        'descriptions_LOCALIZATION_ID',
+                        'locale1 description',
+                        [LocalizationIdPlaceholder::NAME => 1001],
+                        true,
+                        false
+                    ),
+                    new ProductIndexDataModel(
+                        IndexDataProvider::ALL_TEXT_L10N_FIELD,
+                        'locale1 description',
+                        [LocalizationIdPlaceholder::NAME => 1001],
+                        true,
+                        true
+                    ),
+                    new ProductIndexDataModel(
+                        'descriptions_LOCALIZATION_ID',
+                        'locale2 description',
+                        [LocalizationIdPlaceholder::NAME => 1002],
+                        true,
+                        false
+                    ),
+                    new ProductIndexDataModel(
+                        IndexDataProvider::ALL_TEXT_L10N_FIELD,
+                        'locale2 description',
+                        [LocalizationIdPlaceholder::NAME => 1002],
+                        true,
                         true
                     ),
                 ],

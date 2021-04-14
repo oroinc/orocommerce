@@ -1,5 +1,5 @@
 dependencies:
-    - Oro\Bundle\ProductBundle\Tests\Functional\Api\DataFixtures\LoadProductDefaultAttributeFamily
+    - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductDefaultAttributeFamily
 
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     family1_name:

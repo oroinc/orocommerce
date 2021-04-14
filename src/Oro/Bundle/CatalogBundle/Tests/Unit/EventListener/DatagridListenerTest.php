@@ -315,7 +315,7 @@ class DatagridListenerTest extends \PHPUnit\Framework\TestCase
     {
         $event = $this->createPreBuildEvent();
 
-        $this->requestProductHandler->expects($this->once())->method('getCategoryId')->willReturn(false);
+        $this->requestProductHandler->expects($this->once())->method('getCategoryId')->willReturn(0);
         $this->doctrine->expects($this->never())->method('getRepository');
         $this->listener->onPreBuildProducts($event);
     }

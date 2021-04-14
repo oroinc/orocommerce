@@ -440,6 +440,11 @@ oro_behat_extension:
         type: 'css'
         locator: "input[name='oro_product_quick_add[products][0][productQuantity]']"
 
+    Quick Order Form > Unit1:
+      selector:
+        type: 'css'
+        locator: "input[name='oro_product_quick_add[products][0][productUnit]']"
+
     Quick Add Price Field:
       selector:
         type: 'xpath'
@@ -1132,9 +1137,6 @@ oro_behat_extension:
       selector: 'div[data-bound-component="oroproduct/js/app/datagrid/backend-datagrid-component"] div.filter-box'
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGridFilters
 
-    Product unit dropdown:
-      selector: 'td.grid-body-cell-quantity div.select'
-
     Shopping list line item:
       selector: '.grid-row'
 
@@ -1273,7 +1275,7 @@ oro_behat_extension:
     Apply Filters Button:
       selector: '.product-filters-sidebar .filter-box [data-role="apply"]'
 
-    Catalog Sidebar:
+    Catalog Sidebar Hints Container:
       selector: '[data-hint-container="frontend-product-search-grid"]'
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGridFilters
 

@@ -5,7 +5,7 @@ const ShoppingListEditItemModel = ShoppingListModel.extend({
         return ShoppingListEditItemModel.__super__.constructor.call(this, attributes, options);
     },
 
-    highlightDelay: 5000,
+    highlightDelay: 1300,
 
     initialize(attributes, options) {
         ShoppingListEditItemModel.__super__.initialize.call(this, attributes, options);
@@ -14,8 +14,16 @@ const ShoppingListEditItemModel = ShoppingListModel.extend({
         }
     },
 
+    getMessageModel() {
+        return this.collection.get(this.get('messageModelId'));
+    },
+
     highlightRow(type = 'success') {
         this.classList().add(type);
+        const messageModel = this.getMessageModel();
+        if (messageModel) {
+            messageModel.highlightRow(type);
+        }
     },
 
     unhighlightRow(type = 'success', delay = 0) {
@@ -23,6 +31,11 @@ const ShoppingListEditItemModel = ShoppingListModel.extend({
             setTimeout(() => this.classList().remove(type), delay);
         } else {
             this.classList().remove(type);
+        }
+
+        const messageModel = this.getMessageModel();
+        if (messageModel) {
+            messageModel.unhighlightRow(type, delay);
         }
     },
 

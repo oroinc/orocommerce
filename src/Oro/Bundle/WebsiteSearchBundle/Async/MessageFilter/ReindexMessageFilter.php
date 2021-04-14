@@ -4,15 +4,18 @@ namespace Oro\Bundle\WebsiteSearchBundle\Async\MessageFilter;
 
 use Oro\Bundle\MessageQueueBundle\Client\MessageBuffer;
 use Oro\Bundle\MessageQueueBundle\Client\MessageFilterInterface;
+use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Component\MessageQueue\Client\Message;
 
 /**
- * Removes duplicated messages for a specific product visibility management related topic.
+ * Aggregates multiple reindex messages.
  */
 class ReindexMessageFilter implements MessageFilterInterface
 {
+    use ContextTrait;
+
     /** @var string */
-    private $topic;
+    private string $topic;
 
     /**
      * @param string $topic
@@ -68,7 +71,7 @@ class ReindexMessageFilter implements MessageFilterInterface
                 $buffer->removeMessage($messageId);
             }
 
-            $entityIdsByMessageKey[$messageKey][] = (array) ($messageData['context']['entityIds'] ?? []);
+            $entityIdsByMessageKey[$messageKey][] = $this->getContextEntityIds($messageData['context'] ?? []);
         }
 
         if ($entityIdsByMessageKey) {
@@ -112,9 +115,10 @@ class ReindexMessageFilter implements MessageFilterInterface
     private function getMessageKey(array $messageData): string
     {
         return sprintf(
-            '%s|%s|%s',
-            implode(',', (array) ($messageData['class'] ?? [])),
-            implode(',', (array) ($messageData['context']['websiteIds'] ?? [])),
+            '%s|%s|%s|%s',
+            $messageData['jobId'] ?? '',
+            implode(',', (array)($messageData['class'] ?? [])),
+            implode(',', (array)($messageData['context']['websiteIds'] ?? [])),
             $messageData['granulize'] ?? false
         );
     }

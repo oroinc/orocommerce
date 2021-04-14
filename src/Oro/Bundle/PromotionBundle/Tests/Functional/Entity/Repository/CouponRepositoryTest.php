@@ -33,8 +33,8 @@ class CouponRepositoryTest extends WebTestCase
             -1
         ];
         $result = $this->getCouponRepository()->getCouponsWithPromotionByIds($ids);
-        usort($result, function (Coupon $a, Coupon $b) {
-            return $a->getUsesPerCoupon() >= $b->getUsesPerCoupon();
+        usort($result, static function (Coupon $a, Coupon $b) {
+            return $a->getUsesPerCoupon() <=> $b->getUsesPerCoupon();
         });
         $this->assertEquals(
             [

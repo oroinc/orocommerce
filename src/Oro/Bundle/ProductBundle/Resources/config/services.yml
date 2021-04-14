@@ -736,6 +736,7 @@ services:
             - '@oro_entity_config.provider.attribute_configuration'
             - '@oro_product.provider.index_fields'
             - '@property_accessor'
+            - '@oro_website_search.attribute.searchable_information_provider'
 
     oro_product.provider.website_search_index_data.product_variants:
         class: 'Oro\Bundle\ProductBundle\Search\ProductVariantIndexDataProviderDecorator'
@@ -1008,6 +1009,8 @@ services:
             - '@oro_entity_extend.enum_value_provider'
             - '@logger'
             - '@oro_entity_config.config_manager'
+            - '@oro_locale.helper.localization'
+            - '@oro_locale.settings'
         calls:
             - [setCache, ['@oro_product.product_variant_field.field_value_handler.enum_type_handler.cache']]
 
@@ -1263,10 +1266,11 @@ services:
         class: Oro\Bundle\ProductBundle\Helper\ProductGrouper\ProductsGrouperFactory
         public: false
 
-    oro_product.datagrid.event_listener.search_content_variant_filtering:
-        class: Oro\Bundle\ProductBundle\DataGrid\EventListener\SearchContentVariantFilteringEventListener
+    oro_product.datagrid.event_listener.product_collection_content_variant_filtering:
+        class: Oro\Bundle\ProductBundle\DataGrid\EventListener\ProductCollectionContentVariantFilteringEventListener
         arguments:
             - '@oro_product.handler.request_content_variant'
+            - '@doctrine'
             - '@oro_config.manager'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
@@ -1504,6 +1508,7 @@ services:
             - '@oro_entity_config.registry.attribute_type'
             - '@oro_entity_config.provider.attribute_configuration'
             - '@oro_product.provider.index_fields'
+            - '@oro_website_search.attribute.searchable_information_provider'
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.website_search_mapping.configuration, method: onWebsiteSearchMapping }
 

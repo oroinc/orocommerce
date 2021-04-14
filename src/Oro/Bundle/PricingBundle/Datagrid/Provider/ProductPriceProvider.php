@@ -90,12 +90,12 @@ class ProductPriceProvider
             ->getPricesByScopeCriteriaAndProducts($scopeCriteria, $products, [$currency]);
 
         foreach ($prices as &$productPrices) {
-            usort($productPrices, function (ProductPriceInterface $a, ProductPriceInterface $b) {
+            usort($productPrices, static function (ProductPriceInterface $a, ProductPriceInterface $b) {
                 if ($a->getUnit()->getCode() !== $b->getUnit()->getCode()) {
-                    return $a->getUnit()->getCode() > $b->getUnit()->getCode();
+                    return $a->getUnit()->getCode() <=> $b->getUnit()->getCode();
                 }
 
-                return $a->getQuantity() > $b->getQuantity();
+                return $a->getQuantity() <=> $b->getQuantity();
             });
         }
 

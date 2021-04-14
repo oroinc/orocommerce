@@ -272,7 +272,7 @@ class CategoryResolvedCacheBuilderTest extends AbstractProductResolvedCacheBuild
      */
     protected function sortByCategory(array $a, array $b)
     {
-        return $a['category'] > $b['category'] ? 1 : -1;
+        return $a['category'] <=> $b['category'];
     }
 
     /**

@@ -111,7 +111,7 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
         $this->requestProductHandler
             ->expects($this->once())
             ->method('getCategoryId')
-            ->willReturn(null);
+            ->willReturn(0);
 
         $this->masterCatalogProvider
             ->expects($this->once())

@@ -6,7 +6,10 @@ use Doctrine\ORM\Proxy\Proxy;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryWithEntityFallbackValuesData;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutSubtotal;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
+use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadCheckoutSubtotals;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadShoppingListsCheckoutsData;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
@@ -41,6 +44,7 @@ class CheckoutRepositoryTest extends FrontendWebTestCase
                 LoadCustomerUserData::class,
                 LoadCategoryProductData::class,
                 LoadCategoryWithEntityFallbackValuesData::class,
+                LoadCheckoutSubtotals::class
             ]
         );
 
@@ -52,7 +56,7 @@ class CheckoutRepositoryTest extends FrontendWebTestCase
      */
     protected function getRepository()
     {
-        return $this->getContainer()->get('doctrine')->getRepository('OroCheckoutBundle:Checkout');
+        return $this->getContainer()->get('doctrine')->getRepository(Checkout::class);
     }
 
     public function testGetCheckoutWithRelations()
@@ -287,6 +291,30 @@ class CheckoutRepositoryTest extends FrontendWebTestCase
         $this->assertNotProxyOrInitialized($category->getMaximumQuantityToOrder(), EntityFieldFallbackValue::class);
         $this->assertNotProxyOrInitialized($category->getHighlightLowInventory(), EntityFieldFallbackValue::class);
         $this->assertNotProxyOrInitialized($category->getIsUpcoming(), EntityFieldFallbackValue::class);
+    }
+
+    public function testFindWithInvalidSubtotals()
+    {
+        /** @var CheckoutSubtotal $subtotal1 */
+        $subtotal1 = $this->getReference(LoadCheckoutSubtotals::CHECKOUT_SUBTOTAL_1);
+        /** @var CheckoutSubtotal $subtotal2 */
+        $subtotal2 = $this->getReference(LoadCheckoutSubtotals::CHECKOUT_SUBTOTAL_2);
+
+        $subtotal1->setValid(false);
+        $subtotal2->setValid(false);
+
+        $em = $this->getContainer()->get('doctrine')->getManagerForClass(CheckoutSubtotal::class);
+        $em->flush();
+
+        $checkouts = $this->getRepository()->findWithInvalidSubtotals();
+        $this->assertCount(2, $checkouts);
+        $ids = [];
+        foreach ($checkouts as $checkout) {
+            $ids[] = $checkout->getId();
+        }
+
+        $this->assertContains($subtotal1->getCheckout()->getId(), $ids);
+        $this->assertContains($subtotal2->getCheckout()->getId(), $ids);
     }
 
     /**

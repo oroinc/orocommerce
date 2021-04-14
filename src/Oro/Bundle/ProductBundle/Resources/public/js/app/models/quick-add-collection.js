@@ -122,10 +122,12 @@ const QuickAddCollection = BaseCollection.extend({
      * Updates the collection with supplied items and loads product information
      *
      * @param {Array<{sku:string, quantity: string, unit_label?: string}>} items
+     * @param {Object} options
+     * @param {boolean=} options.ignoreIncorrectUnit by default product with incorrect units are added to collection
      * @return {Promise<{invalid: Object}>}
      */
-    addQuickAddRows(items) {
-        const promise = this._addQuickAddRows(items);
+    addQuickAddRows(items, options = {}) {
+        const promise = this._addQuickAddRows(items, options);
         this.trigger('quick-add-rows', promise);
         return promise;
     },
@@ -134,10 +136,12 @@ const QuickAddCollection = BaseCollection.extend({
      * Updates the collection with supplied items and loads product information
      *
      * @param {Array<{sku:string, quantity: string, unit_label?: string}>} items
+     * @param {Object} options
+     * @param {boolean=} options.ignoreIncorrectUnit by default product with incorrect units are added to collection
      * @return {Promise<{invalid: Object}>}
      * @protected
      */
-    async _addQuickAddRows(items) {
+    async _addQuickAddRows(items, options = {}) {
         const itemsToLoad = {};
 
         await window.sleep(0); // give time to repaint UI
@@ -157,7 +161,7 @@ const QuickAddCollection = BaseCollection.extend({
                 model.set({
                     sku: item.sku.toUpperCase(),
                     quantity: item.quantity,
-                    unit_label: item.unit_label && item.unit_label.toUpperCase()
+                    unit_label: item.unit_label
                 });
             }
 
@@ -171,7 +175,7 @@ const QuickAddCollection = BaseCollection.extend({
 
         let result;
         try {
-            result = await this.loadProductInfo(itemsToLoad);
+            result = await this.loadProductInfo(itemsToLoad, options);
         } catch (e) {
             throw e;
         } finally {
@@ -191,7 +195,14 @@ const QuickAddCollection = BaseCollection.extend({
         return result;
     },
 
-    async loadProductInfo(items) {
+    /**
+     *
+     * @param {Array<{sku:string, quantity: string, unit_label?: string}>} items
+     * @param {Object} options
+     * @param {boolean=} options.ignoreIncorrectUnit by default product with incorrect units are added to collection
+     * @return {Promise<{invalid: any}>}
+     */
+    async loadProductInfo(items, options = {}) {
         let remainingItems = Object.assign(items);
 
         const batches = _.chunk(_.unique(_.pluck(Object.values(items), 'sku')), this.loadProductsBatchSize);
@@ -214,7 +225,7 @@ const QuickAddCollection = BaseCollection.extend({
                         }
                     }, this.ajaxOptions)).done((data, status) => {
                         if (status === 'success') {
-                            remainingItems = this._updateModels(data.results, remainingItems);
+                            remainingItems = this._updateModels(data.results, remainingItems, options);
                             resolve();
                         } else {
                             reject(new Error('Invalid response'));
@@ -232,10 +243,12 @@ const QuickAddCollection = BaseCollection.extend({
      *
      * @param {Array<Object>} productInfo list of loaded product info data
      * @param {Object} itemsToUpdate map of model's CIDs to base product info data
+     * @param {Object} options
+     * @param {boolean=} options.ignoreIncorrectUnit by default product with incorrect units are added to collection
      * @return {Object} remaining items that was not updated
      * @private
      */
-    _updateModels(productInfo, itemsToUpdate) {
+    _updateModels(productInfo, itemsToUpdate, options= {}) {
         const updatedModels = [];
         productInfo.forEach(data => {
             const {id, sku, units, 'defaultName.string': productName, ...extraAttrs} = data;
@@ -252,7 +265,9 @@ const QuickAddCollection = BaseCollection.extend({
                     model.set(attrs);
 
                     const unitLabel = itemsToUpdate[model.cid].unit_label;
-                    if (!unitLabel || unitLabel.toUpperCase() === model.get('unit_label').toUpperCase()) {
+                    if (model.get('unit') || !unitLabel || options.ignoreIncorrectUnit !== false) {
+                        // unit is resolved properly, or no wishful unit, or incorrect unit has to be ignored
+                        // and to list to models that going to be updated
                         updatedModels.push(model.cid);
                     }
                 });
