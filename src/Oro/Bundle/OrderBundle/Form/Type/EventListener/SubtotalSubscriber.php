@@ -3,12 +3,14 @@
 namespace Oro\Bundle\OrderBundle\Form\Type\EventListener;
 
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Handler\OrderLineItemCurrencyHandler;
 use Oro\Bundle\OrderBundle\Pricing\PriceMatcher;
 use Oro\Bundle\OrderBundle\Total\TotalHelper;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Validator\Constraints\Range;
 
 /**
@@ -24,6 +26,9 @@ class SubtotalSubscriber implements EventSubscriberInterface
     /** @var PriceMatcher */
     protected $priceMatcher;
 
+    /** @var OrderLineItemCurrencyHandler */
+    protected $orderLineItemCurrencyHandler;
+
     /**
      * @param TotalHelper $totalHelper
      * @param PriceMatcher $priceMatcher
@@ -35,13 +40,19 @@ class SubtotalSubscriber implements EventSubscriberInterface
     }
 
     /**
+     * @param OrderLineItemCurrencyHandler $orderLineItemCurrencyHandler
+     */
+    public function setOrderLineItemCurrencyHandler(OrderLineItemCurrencyHandler $orderLineItemCurrencyHandler): void
+    {
+        $this->orderLineItemCurrencyHandler = $orderLineItemCurrencyHandler;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {
-        return [
-            FormEvents::SUBMIT => 'onSubmitEventListener',
-        ];
+        return [FormEvents::SUBMIT => 'onSubmitEventListener'];
     }
 
     /**
@@ -49,13 +60,15 @@ class SubtotalSubscriber implements EventSubscriberInterface
      */
     public function onSubmitEventListener(FormEvent $event)
     {
+        $form = $event->getForm();
         $data = $event->getData();
         if ($data instanceof Order) {
+            // As the order currency may change, need to reset all prices and recalculate it.
+            $this->resetLineItems($form, $data);
             $this->priceMatcher->addMatchingPrices($data);
             $this->totalHelper->fill($data);
             $event->setData($data);
 
-            $form = $event->getForm();
             if ($form->has('discountsSum')) {
                 $form->remove('discountsSum');
                 $form->add(
@@ -75,6 +88,17 @@ class SubtotalSubscriber implements EventSubscriberInterface
                 //submit with new max range value for correct validation
                 $form->get('discountsSum')->submit($data->getTotalDiscounts()->getValue());
             }
+        }
+    }
+
+    /**
+     * @param FormInterface $form
+     * @param Order $order
+     */
+    private function resetLineItems(FormInterface $form, Order $order): void
+    {
+        if ($form->has('lineItems')) {
+            $this->orderLineItemCurrencyHandler->resetLineItemsPrices($form->get('lineItems'), $order);
         }
     }
 }

@@ -37,12 +37,13 @@ class SearchEventListener
      */
     public function onPreBuild(PreBuild $event): void
     {
-        $searchString = $event->getParameters()->has(SearchProductHandler::SEARCH_KEY)
-            ? $event->getParameters()->get(SearchProductHandler::SEARCH_KEY)
+        $parameterBag = $event->getParameters();
+        $searchString = $parameterBag->has(SearchProductHandler::SEARCH_KEY)
+            ? $parameterBag->get(SearchProductHandler::SEARCH_KEY)
             : $this->searchProductHandler->getSearchString();
 
-
         if ($searchString) {
+            $parameterBag->set(SearchProductHandler::SEARCH_KEY, $searchString);
             $event->getConfig()->offsetSetByPath($this->getConfigPath(), $searchString);
 
             return;

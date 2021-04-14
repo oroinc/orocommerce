@@ -136,16 +136,19 @@ class ProductVariantIndexDataProviderDecoratorTest extends \PHPUnit\Framework\Te
                 'first simple product data' => [
                     new ProductIndexDataModel('color_red', 1, [], false, false),
                     new ProductIndexDataModel('color_priority', 10, [], false, false),
+                    new ProductIndexDataModel('color_searchable', 'Red', [], false, false),
                     new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'Red', [], true, true),
                 ],
                 'second simple product data' => [
                     new ProductIndexDataModel('color_green', 1, [], false, false),
                     new ProductIndexDataModel('color_priority', 20, [], false, false),
+                    new ProductIndexDataModel('color_searchable', 'Green', [], false, false),
                     new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'Green', [], true, true),
                 ],
                 'configurable product data' => [
                     new ProductIndexDataModel('color_blue', 1, [], false, false),
                     new ProductIndexDataModel('color_priority', 30, [], false, false),
+                    new ProductIndexDataModel('color_searchable', 'Blue', [], false, false),
                     new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'Blue', [], true, true),
                 ],
                 'expected configurable product data' => [
@@ -155,6 +158,7 @@ class ProductVariantIndexDataProviderDecoratorTest extends \PHPUnit\Framework\Te
                     new ProductIndexDataModel('color_red', 1, [], false, false),
                     new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'Red', [], true, true),
                     new ProductIndexDataModel('color_green', 1, [], false, false),
+                    new ProductIndexDataModel('color_searchable', 'Blue Red Green', [], false, false),
                     new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'Green', [], true, true),
                 ],
             ],
@@ -166,14 +170,17 @@ class ProductVariantIndexDataProviderDecoratorTest extends \PHPUnit\Framework\Te
                 'first simple product data' => [
                     new ProductIndexDataModel('options_pocket', 1, [], false, false),
                     new ProductIndexDataModel('options_collar', 1, [], false, false),
+                    new ProductIndexDataModel('options_searchable', 'Pocket Collar', [], false, false),
                     new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'Pocket Collar', [], true, true),
                 ],
                 'second simple product data' => [
                     new ProductIndexDataModel('options_seams', 1, [], false, false),
+                    new ProductIndexDataModel('options_searchable', 'Seams', [], false, false),
                     new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'Seams', [], true, true),
                 ],
                 'configurable product data' => [
                     new ProductIndexDataModel('options_pocket', 1, [], false, false),
+                    new ProductIndexDataModel('options_searchable', 'Pocket', [], false, false),
                     new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'Pocket', [], true, true),
                 ],
                 'expected configurable product data' => [
@@ -182,6 +189,7 @@ class ProductVariantIndexDataProviderDecoratorTest extends \PHPUnit\Framework\Te
                     new ProductIndexDataModel('options_collar', 1, [], false, false),
                     new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'Pocket Collar', [], true, true),
                     new ProductIndexDataModel('options_seams', 1, [], false, false),
+                    new ProductIndexDataModel('options_searchable', 'Pocket Collar Seams', [], false, false),
                     new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'Seams', [], true, true),
                 ],
             ],

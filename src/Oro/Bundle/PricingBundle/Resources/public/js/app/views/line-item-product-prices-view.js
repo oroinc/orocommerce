@@ -48,7 +48,9 @@ define(function(require) {
 
             mediator.on('pricing:collect:line-items', this.collectLineItems, this);
             mediator.on('pricing:refresh:products-tier-prices', this.refreshTierPrices, this);
+            mediator.on('pricing:currency:changed', this.currencyChanged, this);
 
+            mediator.trigger('pricing:currency:load', _.bind(this.currencyChanged, this));
             mediator.trigger('pricing:get:products-tier-prices', _.bind(function(tierPrices) {
                 const productId = this.model.get('id');
 
@@ -177,6 +179,12 @@ define(function(require) {
                 }
                 this.setPriceValue(price ? price.price : null);
                 this.getElement('priceValue').addClass('matched-price');
+            }
+        },
+
+        currencyChanged: function(options) {
+            if (options.currency) {
+                this.model.set('currency', options.currency);
             }
         },
 

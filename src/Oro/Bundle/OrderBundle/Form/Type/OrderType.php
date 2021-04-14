@@ -4,6 +4,7 @@ namespace Oro\Bundle\OrderBundle\Form\Type;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerSelectType;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserSelectType;
@@ -87,7 +88,10 @@ class OrderType extends AbstractType
                 TextareaType::class,
                 ['required' => false, 'label' => 'oro.order.customer_notes.label']
             )
-            ->add('currency', HiddenType::class)
+            ->add('currency', CurrencySelectionType::class, [
+                'label' => 'oro.order.currency.label',
+                'full_currency_name' => true,
+            ])
             ->add(
                 'lineItems',
                 OrderLineItemsCollectionType::class,

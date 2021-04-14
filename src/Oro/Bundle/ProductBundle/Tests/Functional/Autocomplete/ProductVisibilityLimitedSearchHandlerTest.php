@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Autocomplete;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler;
+use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
 use Oro\Bundle\ProductBundle\Event\ProductSearchQueryRestrictionEvent;
@@ -224,6 +225,13 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
 
     public function testConvertItemWhenSearchItem()
     {
+        $key = Configuration::getConfigKeyByName(Configuration::ALLOW_PARTIAL_PRODUCT_SEARCH);
+
+        $configManager = $this->getContainer()->get('oro_config.manager');
+        $originalValue = $configManager->get($key);
+        $configManager->set($key, true);
+        $configManager->flush();
+
         $this->client->getContainer()->get('request_stack')->push(Request::create(''));
 
         $searchItems = $this->client->getContainer()->get('oro_product.website_search.repository.product')
@@ -248,6 +256,9 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
             ],
             $result
         );
+
+        $configManager->set($key, $originalValue);
+        $configManager->flush();
     }
 
     public function testSearchByMultipleSkus()

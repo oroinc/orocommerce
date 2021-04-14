@@ -1,7 +1,17 @@
 /* @theme: custom; */
 
 .collapse-mode {
+    .filter-container {
+        display: flex;
+        flex-wrap: wrap;
+
+        > :first-child {
+            width: 100%;
+        }
+    }
+
     .filter-items-hint {
+        min-width: 100%;
         padding: $filter-collapse-mode-items-hint-offset-inner;
 
         line-height: $filter-collapse-mode-items-hint-line-height;

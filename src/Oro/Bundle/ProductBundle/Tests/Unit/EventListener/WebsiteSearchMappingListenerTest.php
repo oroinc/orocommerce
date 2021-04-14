@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 use Oro\Bundle\EntityConfigBundle\Attribute\AttributeConfigurationProvider;
 use Oro\Bundle\EntityConfigBundle\Attribute\AttributeTypeRegistry;
 use Oro\Bundle\EntityConfigBundle\Attribute\Type\EnumAttributeType;
+use Oro\Bundle\EntityConfigBundle\Attribute\Type\StringAttributeType;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -13,7 +14,9 @@ use Oro\Bundle\ProductBundle\Search\ProductIndexFieldsProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\EnumSearchableAttributeTypeStub;
 use Oro\Bundle\SearchBundle\Event\SearchMappingCollectEvent;
 use Oro\Bundle\SearchBundle\Query\Query;
+use Oro\Bundle\WebsiteSearchBundle\Attribute\SearchableInformationProvider;
 use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\EnumSearchableAttributeType;
+use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\StringSearchableAttributeType;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\EnumIdPlaceholder;
 
 class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
@@ -30,6 +33,9 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
     /** @var ProductIndexFieldsProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $fieldsProvider;
 
+    /** @var SearchableInformationProvider|\PHPUnit\Framework\MockObject\MockObject */
+    protected $searchableInformationProvider;
+
     /** @var WebsiteSearchMappingListener */
     protected $listener;
 
@@ -39,6 +45,7 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
         $this->attributeTypeRegistry = $this->createMock(AttributeTypeRegistry::class);
         $this->configurationProvider = $this->createMock(AttributeConfigurationProvider::class);
         $this->fieldsProvider = $this->createMock(ProductIndexFieldsProvider::class);
+        $this->searchableInformationProvider = $this->createMock(SearchableInformationProvider::class);
 
         $this->listener = new WebsiteSearchMappingListener(
             $this->attributeManager,
@@ -46,6 +53,8 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
             $this->configurationProvider,
             $this->fieldsProvider
         );
+
+        $this->listener->setSearchableInformationProvider($this->searchableInformationProvider);
     }
 
     public function testOnWebsiteSearchMappingWithoutAttributes()
@@ -127,11 +136,12 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
         $attribute2 = new FieldConfigModel('attribute2');
         $attribute3 = new FieldConfigModel('attribute3');
         $attribute4 = new FieldConfigModel('attribute4');
+        $attribute5 = new FieldConfigModel('attribute5');
 
         $this->attributeManager->expects($this->once())
             ->method('getAttributesByClass')
             ->with(Product::class)
-            ->willReturn([$attribute1, $attribute2, $attribute3, $attribute4]);
+            ->willReturn([$attribute1, $attribute2, $attribute3, $attribute4, $attribute5]);
 
         $attributeType = new EnumSearchableAttributeTypeStub(new EnumAttributeType());
 
@@ -150,7 +160,44 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
                     [$attribute1, true],
                     [$attribute2, false],
                     [$attribute3, false],
-                    [$attribute4, false]
+                    [$attribute4, false],
+                    [$attribute5, true]
+                ]
+            );
+
+        $this->configurationProvider->expects($this->any())
+            ->method('isAttributeSearchable')
+            ->willReturnMap(
+                [
+                    [$attribute1, false],
+                    [$attribute2, false],
+                    [$attribute3, true],
+                    [$attribute4, true],
+                    [$attribute5, true]
+                ]
+            );
+
+        $this->searchableInformationProvider->expects($this->any())
+            ->method('getAttributeSearchBoost')
+            ->willReturnMap(
+                [
+                    [$attribute1, null],
+                    [$attribute2, 1.0],
+                    [$attribute3, 0.0],
+                    [$attribute4, null],
+                    [$attribute5, 1.0]
+                ]
+            );
+
+        $this->searchableInformationProvider->expects($this->any())
+            ->method('getSearchableFieldName')
+            ->willReturnMap(
+                [
+                    [$attribute1, $attributeType, 'attribute1_searchable'],
+                    [$attribute2, $attributeType, 'attribute2_searchable'],
+                    [$attribute3, $attributeType, 'attribute3_searchable'],
+                    [$attribute4, $attributeType, 'attribute4_searchable'],
+                    [$attribute5, $attributeType, 'attribute5_searchable']
                 ]
             );
 
@@ -161,7 +208,8 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
                     [$attribute1, false],
                     [$attribute2, true],
                     [$attribute3, false],
-                    [$attribute4, false]
+                    [$attribute4, false],
+                    [$attribute5, true]
                 ]
             );
 
@@ -172,7 +220,8 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
                     [$attribute1->getFieldName(), false],
                     [$attribute2->getFieldName(), false],
                     [$attribute3->getFieldName(), true],
-                    [$attribute4->getFieldName(), false]
+                    [$attribute4->getFieldName(), false],
+                    [$attribute5->getFieldName(), false]
                 ]
             );
 
@@ -188,44 +237,70 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
                             'type'            => 'text',
                             'store'           => true,
                             'fulltext'        => true,
-                            'organization_id' => null
+                            'organization_id' => null,
                         ],
                         'lasttname' => [
                             'name'            => 'lasttname',
                             'type'            => 'text',
                             'store'           => true,
                             'fulltext'        => true,
-                            'organization_id' => null
+                            'organization_id' => null,
                         ],
                         'attribute1' => [
                             'name'            => 'attribute1',
                             'type'            => 'integer',
+                            'store'           => true,
                             'fulltext'        => false,
-                            'organization_id' => null
+                            'organization_id' => null,
                         ],
                         $attribute1->getFieldName().'_'.EnumIdPlaceholder::NAME => [
                             'name'            => $attribute1->getFieldName().'_'.EnumIdPlaceholder::NAME,
                             'type'            => Query::TYPE_INTEGER,
+                            'store'           => true,
                             'fulltext'        => false,
-                            'organization_id' => null
+                            'organization_id' => null,
                         ],
                         $attribute2->getFieldName().'_priority'                 => [
                             'name'            => $attribute2->getFieldName().'_priority',
                             'type'            => Query::TYPE_INTEGER,
+                            'store'           => true,
                             'fulltext'        => false,
-                            'organization_id' => null
+                            'organization_id' => null,
                         ],
                         $attribute3->getFieldName().'_'.EnumIdPlaceholder::NAME => [
                             'name'            => $attribute3->getFieldName().'_'.EnumIdPlaceholder::NAME,
                             'type'            => Query::TYPE_INTEGER,
+                            'store'           => true,
                             'fulltext'        => false,
-                            'organization_id' => null
+                            'organization_id' => null,
                         ],
                         $attribute3->getFieldName().'_priority'                 => [
                             'name'            => $attribute3->getFieldName().'_priority',
                             'type'            => Query::TYPE_INTEGER,
+                            'store'           => true,
                             'fulltext'        => false,
-                            'organization_id' => null
+                            'organization_id' => null,
+                        ],
+                        $attribute5->getFieldName().'_'.EnumIdPlaceholder::NAME                 => [
+                            'name'            => $attribute5->getFieldName().'_'.EnumIdPlaceholder::NAME,
+                            'type'            => Query::TYPE_INTEGER,
+                            'store'           => true,
+                            'fulltext'        => false,
+                            'organization_id' => null,
+                        ],
+                        $attribute5->getFieldName().'_priority'                 => [
+                            'name'            => $attribute5->getFieldName().'_priority',
+                            'type'            => Query::TYPE_INTEGER,
+                            'store'           => true,
+                            'fulltext'        => false,
+                            'organization_id' => null,
+                        ],
+                        $attribute5->getFieldName().'_searchable'                 => [
+                            'name'            => $attribute5->getFieldName().'_searchable',
+                            'type'            => Query::TYPE_TEXT,
+                            'store'           => true,
+                            'fulltext'        => true,
+                            'organization_id' => null,
                         ]
                     ]
                 ],
@@ -235,8 +310,184 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
                         'first' => [
                             'name'            => 'first',
                             'type'            => 'text',
+                            'store'           => true,
                             'fulltext'        => true,
-                            'organization_id' => null
+                            'organization_id' => null,
+                        ]
+                    ]
+                ]
+            ],
+            $event->getMappingConfig()
+        );
+    }
+
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
+    public function testOnWebsiteSearchMappingNoDuplicates()
+    {
+        $event = $this->createEventWithBasicConfiguration();
+
+        $attribute1 = new FieldConfigModel('attribute1');
+        $attribute2 = new FieldConfigModel('attribute2');
+        $attribute3 = new FieldConfigModel('attribute3');
+        $attribute4 = new FieldConfigModel('attribute4');
+        $attribute5 = new FieldConfigModel('attribute5');
+
+        $this->attributeManager->expects($this->once())
+            ->method('getAttributesByClass')
+            ->with(Product::class)
+            ->willReturn([$attribute1, $attribute2, $attribute3, $attribute4, $attribute5]);
+
+        $attributeType = new StringSearchableAttributeType(new StringAttributeType());
+
+        $this->attributeTypeRegistry->expects($this->any())
+            ->method('getAttributeType')
+            ->willReturn($attributeType);
+
+        $this->configurationProvider->expects($this->any())
+            ->method('isAttributeActive')
+            ->willReturn(true);
+
+        $this->configurationProvider->expects($this->any())
+            ->method('isAttributeFilterable')
+            ->willReturnMap(
+                [
+                    [$attribute1, true],
+                    [$attribute2, false],
+                    [$attribute3, false],
+                    [$attribute4, false],
+                    [$attribute5, false]
+                ]
+            );
+
+        $this->configurationProvider->expects($this->any())
+            ->method('isAttributeSearchable')
+            ->willReturnMap(
+                [
+                    [$attribute1, false],
+                    [$attribute2, false],
+                    [$attribute3, true],
+                    [$attribute4, true],
+                    [$attribute5, true]
+                ]
+            );
+
+        $this->searchableInformationProvider->expects($this->any())
+            ->method('getSearchableFieldName')
+            ->willReturnMap(
+                [
+                    [$attribute1, $attributeType, 'attribute1'],
+                    [$attribute2, $attributeType, 'attribute2'],
+                    [$attribute3, $attributeType, 'attribute3'],
+                    [$attribute4, $attributeType, 'attribute4'],
+                    [$attribute5, $attributeType, 'attribute5']
+                ]
+            );
+
+        $this->searchableInformationProvider->expects($this->any())
+            ->method('getAttributeSearchBoost')
+            ->willReturnMap(
+                [
+                    [$attribute1, null],
+                    [$attribute2, 1.0],
+                    [$attribute3, 0.0],
+                    [$attribute4, null],
+                    [$attribute5, 1.0]
+                ]
+            );
+
+        $this->configurationProvider->expects($this->any())
+            ->method('isAttributeSortable')
+            ->willReturnMap(
+                [
+                    [$attribute1, false],
+                    [$attribute2, true],
+                    [$attribute3, false],
+                    [$attribute4, false],
+                    [$attribute5, true]
+                ]
+            );
+
+        $this->fieldsProvider->expects($this->any())
+            ->method('isForceIndexed')
+            ->willReturnMap(
+                [
+                    [$attribute1->getFieldName(), false],
+                    [$attribute2->getFieldName(), false],
+                    [$attribute3->getFieldName(), true],
+                    [$attribute4->getFieldName(), false],
+                    [$attribute5->getFieldName(), false]
+                ]
+            );
+
+        $this->listener->onWebsiteSearchMapping($event);
+
+        $this->assertEquals(
+            [
+                Product::class   => [
+                    'alias'  => 'products',
+                    'fields' => [
+                        'firstname' => [
+                            'name'            => 'firstname',
+                            'type'            => 'text',
+                            'store'           => true,
+                            'fulltext'        => true,
+                            'organization_id' => null,
+                        ],
+                        'lasttname' => [
+                            'name'            => 'lasttname',
+                            'type'            => 'text',
+                            'store'           => true,
+                            'fulltext'        => true,
+                            'organization_id' => null,
+                        ],
+                        'attribute1' => [
+                            'name'            => 'attribute1',
+                            'type'            => 'integer',
+                            'store'           => true,
+                            'fulltext'        => false,
+                            'organization_id' => null,
+                        ],
+                        $attribute1->getFieldName() => [
+                            'name'            => $attribute1->getFieldName(),
+                            'type'            => Query::TYPE_TEXT,
+                            'store'           => true,
+                            'fulltext'        => true,
+                            'organization_id' => null,
+                        ],
+                        $attribute2->getFieldName() => [
+                            'name'            => $attribute2->getFieldName(),
+                            'type'            => Query::TYPE_TEXT,
+                            'store'           => true,
+                            'fulltext'        => false,
+                            'organization_id' => null,
+                        ],
+                        $attribute3->getFieldName() => [
+                            'name'            => $attribute3->getFieldName(),
+                            'type'            => Query::TYPE_TEXT,
+                            'store'           => true,
+                            'fulltext'        => true,
+                            'organization_id' => null,
+                        ],
+                        $attribute5->getFieldName() => [
+                            'name'            => $attribute5->getFieldName(),
+                            'type'            => Query::TYPE_TEXT,
+                            'store'           => true,
+                            'fulltext'        => true,
+                            'organization_id' => null,
+                        ],
+                    ]
+                ],
+                \stdClass::class => [
+                    'alias'  => 'std',
+                    'fields' => [
+                        'first' => [
+                            'name'            => 'first',
+                            'type'            => 'text',
+                            'store'           => true,
+                            'fulltext'        => true,
+                            'organization_id' => null,
                         ]
                     ]
                 ]

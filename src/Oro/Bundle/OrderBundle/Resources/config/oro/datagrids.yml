@@ -65,7 +65,7 @@ datagrids:
             shippingAddress:
                 label: oro.order.shipping_address.label
                 type: twig
-                template: 'OroOrderBundle:Order:Datagrid/shippingAddress.html.twig'
+                template: 'OroOrderBundle:Order:Datagrid/frontendShippingAddress.html.twig'
                 frontend_type: html
             total:
                 label:  oro.order.total.label

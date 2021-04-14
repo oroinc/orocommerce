@@ -3,10 +3,14 @@
 namespace Oro\Bundle\WebsiteSearchBundle\EventListener;
 
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\VisibilityBundle\Visibility\Resolver\CategoryVisibilityResolver;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * Listens to category default visibility change and triggers products reindexation.
+ */
 class DefaultCategoryVisibilityListener
 {
     /**
@@ -30,7 +34,7 @@ class DefaultCategoryVisibilityListener
     public function onUpdateAfter(ConfigUpdateEvent $event)
     {
         if ($event->isChanged(CategoryVisibilityResolver::OPTION_CATEGORY_VISIBILITY)) {
-            $reindexationEvent = new ReindexationRequestEvent();
+            $reindexationEvent = new ReindexationRequestEvent([Product::class]);
             $this->eventDispatcher->dispatch($reindexationEvent, ReindexationRequestEvent::EVENT_NAME);
         }
     }

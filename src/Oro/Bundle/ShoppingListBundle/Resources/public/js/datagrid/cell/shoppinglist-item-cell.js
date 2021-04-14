@@ -7,7 +7,8 @@ const ShoppingListItemCell = HtmlTemplateCell.extend({
     },
 
     render() {
-        const template = this.getTemplateFunction();
+        const templateKey = this.model.get('isMessage') ? 'message' : 'default';
+        const template = this.getTemplateFunction(templateKey);
         const html = template(this.getTemplateData());
 
         if (this._html !== html) { // prevents from unnecessary HTML update
@@ -24,11 +25,12 @@ const ShoppingListItemCell = HtmlTemplateCell.extend({
 
     appendEditNotesAction() {
         const $note = this.$('[data-role=notes]');
-        if (!$note.length) {
+        const actionsColumn = this.column.collection.find(model => model.get('actions'));
+
+        if (!$note.length || !actionsColumn) {
             return;
         }
 
-        const actionsColumn = this.column.collection.find(model => model.get('actions'));
         const EditNotesAction = actionsColumn.get('actions').edit_notes;
         this.editNotesAction = new EditNotesAction({
             model: this.model,

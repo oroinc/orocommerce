@@ -221,6 +221,7 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
             ->with(self::LIMIT_FILTERS_SORTERS)
             ->willReturn($limitFiltersSorters);
 
+        // Checks search query is executed not more than once.
         $this->familyAttributeCountsProvider->expects($this->atMost(1))
             ->method('getFamilyAttributeCounts')
             ->willReturn($aggregatedData);
@@ -244,17 +245,16 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
             ->with($this->datagridConfig, $this->datagrid->getParameters())
             ->willReturn($sortersState);
 
+        $this->datagridParametersHelper
+            ->expects($this->atLeastOnce())
+            ->method('isDatagridExtensionSkipped')
+            ->willReturn(false);
+
         $event = new PreBuild($this->datagridConfig, $this->datagrid->getParameters());
 
         $this->listener->onPreBuild($event);
 
         $this->assertEquals(array_merge(['name' => self::DATAGRID_NAME], $expected), $this->datagridConfig->toArray());
-
-        // Checks search query is executed only once.
-        $this->datagridParametersHelper
-            ->expects($this->once())
-            ->method('isDatagridExtensionSkipped')
-            ->willReturn(true);
 
         $event = new PreBuild($this->datagridConfig, $this->datagrid->getParameters());
 

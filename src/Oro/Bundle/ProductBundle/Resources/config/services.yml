@@ -736,6 +736,8 @@ services:
             - '@oro_entity_config.provider.attribute_configuration'
             - '@oro_product.provider.index_fields'
             - '@property_accessor'
+        calls:
+            - [ setSearchableInformationProvider, ['@oro_website_search.attribute.searchable_information_provider'] ]
 
     oro_product.provider.website_search_index_data.product_variants:
         class: 'Oro\Bundle\ProductBundle\Search\ProductVariantIndexDataProviderDecorator'
@@ -1010,6 +1012,8 @@ services:
             - '@oro_entity_config.config_manager'
         calls:
             - [setCache, ['@oro_product.product_variant_field.field_value_handler.enum_type_handler.cache']]
+            - [setLocalizationHelper, ['@oro_locale.helper.localization']]
+            - [setLocaleSettings, ['@oro_locale.settings']]
 
     oro_product.product_variant_field.field_value_handler.boolean_type_handler:
         public: false
@@ -1268,6 +1272,13 @@ services:
         arguments:
             - '@oro_product.handler.request_content_variant'
             - '@oro_config.manager'
+
+    oro_product.datagrid.event_listener.product_collection_content_variant_filtering:
+        class: Oro\Bundle\ProductBundle\DataGrid\EventListener\ProductCollectionContentVariantFilteringEventListener
+        arguments:
+            - '@oro_product.handler.request_content_variant'
+            - '@doctrine'
+            - '@oro_config.manager'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.frontend-product-search-grid, method: onBuildAfter }
@@ -1280,7 +1291,6 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.frontend-product-search-grid, method: onBuildAfter }
-
 
     oro_product.datagrid.event_listener.frontend_product_grid:
         class: 'Oro\Bundle\ProductBundle\DataGrid\EventListener\FrontendProductGridEventListener'
@@ -1504,6 +1514,8 @@ services:
             - '@oro_entity_config.registry.attribute_type'
             - '@oro_entity_config.provider.attribute_configuration'
             - '@oro_product.provider.index_fields'
+        calls:
+            - [ setSearchableInformationProvider, ['@oro_website_search.attribute.searchable_information_provider'] ]
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.website_search_mapping.configuration, method: onWebsiteSearchMapping }
 
