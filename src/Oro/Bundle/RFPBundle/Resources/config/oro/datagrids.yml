@@ -21,6 +21,7 @@ datagrids:
                 label:         oro.rfp.request.id.label
             poNumber:
                 label:         oro.rfp.request.po_number.label
+                cellClassName: 'direction-ltr'
             shipUntil:
                 label:         oro.rfp.request.ship_until.label
                 frontend_type: date

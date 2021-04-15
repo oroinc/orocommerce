@@ -657,6 +657,7 @@ datagrids:
         columns:
             productSku:
                 label: oro.product.sku.label
+                cellClassName: 'direction-ltr'
             product:
                 label:         oro.product.entity_label
                 type:          twig
@@ -776,6 +777,7 @@ datagrids:
                 label:         oro.report.datagrid.column.time_period.label
             productSku:
                 label:         oro.product.sku.label
+                cellClassName: 'direction-ltr'
             productName:
                 label:         oro.product.names.label
             qtySold:

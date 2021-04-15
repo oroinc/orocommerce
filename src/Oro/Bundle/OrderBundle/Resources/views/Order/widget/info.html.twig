@@ -23,8 +23,8 @@
 <div class="widget-content">
     <div class="row-fluid form-horizontal">
         <div class="responsive-block">
-            {{ UI.renderProperty('oro.order.identifier.label'|trans, order.identifier) }}
-            {{ UI.renderProperty('oro.order.po_number.label'|trans, order.poNumber) }}
+            {{ UI.renderProperty('oro.order.identifier.label'|trans, order.identifier, null, null, {'dir': 'ltr'}) }}
+            {{ UI.renderProperty('oro.order.po_number.label'|trans, order.poNumber, null, null, {'dir': 'ltr'}) }}
             {{ UI.renderProperty('oro.order.currency.label'|trans, order.currency) }}
             {{ UI.renderProperty('oro.order.subtotal.label'|trans, order.subtotal|oro_format_currency({'currency': order.currency})) }}
             {{ currency.convert_to_base_currency(order.subtotalObject, '', order, 'subtotal') }}
