@@ -26,4 +26,11 @@ class CategoryStub extends Category
     {
         return $this->getDefaultFallbackValue($this->slugPrototypes);
     }
+
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
+    }
 }

@@ -73,6 +73,7 @@ class CategoryPageContentVariantTypeTest extends \PHPUnit\Framework\TestCase
             new RouteData(
                 'oro_product_frontend_product_index',
                 [
+                    'categoryContentVariantId' => 1,
                     'categoryId' => 42,
                     'includeSubcategories' => $expectedIncludeSubcategories,
                     'overrideVariantConfiguration' => $expectedOverrideVariantConfiguration

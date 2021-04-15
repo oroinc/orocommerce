@@ -55,6 +55,7 @@ class IndexEntityEventTest extends \PHPUnit\Framework\TestCase
         $event->addField(2, 'name', 'Another product name', true);
         $date = new \DateTime();
         $event->addField(2, 'date', $date);
+        $event->addField(2, 'optional_field', null);
 
         $expectedData = [
             1 => [
@@ -67,16 +68,17 @@ class IndexEntityEventTest extends \PHPUnit\Framework\TestCase
             2 => [
                 'name' => [['value' => 'Another product name', 'all_text' => true]],
                 'date' => [['value' => $date, 'all_text' => false]],
+                'optional_field' => [['value' => null, 'all_text' => false]],
             ],
         ];
 
-        $this->assertEquals($expectedData, $event->getEntitiesData());
+        $this->assertSame($expectedData, $event->getEntitiesData());
     }
 
     public function testAddFieldObject()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Scalars and \DateTime are supported only, "stdClass" given');
+        $this->expectExceptionMessage('Scalars, \DateTime and NULL are supported only, "stdClass" given');
 
         $event = new IndexEntityEvent(\stdClass::class, [], []);
         $event->addField(1, 'sku', new \stdClass());
@@ -108,5 +110,22 @@ class IndexEntityEventTest extends \PHPUnit\Framework\TestCase
             ],
             $event->getEntitiesData()
         );
+    }
+
+    public function testRemoveEntityDataWhenNoEntity(): void
+    {
+        $event = new IndexEntityEvent(\stdClass::class, [], []);
+        $event->removeEntityData(1);
+
+        $this->assertEmpty($event->getEntitiesData());
+    }
+
+    public function testRemoveEntityData(): void
+    {
+        $event = new IndexEntityEvent(\stdClass::class, [], []);
+        $event->addField(1, 'sample_field', 'sample_value');
+        $event->removeEntityData(1);
+
+        $this->assertEmpty($event->getEntitiesData());
     }
 }

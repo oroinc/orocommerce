@@ -51,7 +51,7 @@ class MappingConfiguration implements ConfigurationInterface
                                 ->cannotBeEmpty()
                                 ->values($this->fieldTypes)
                             ->end()
-                            ->booleanNode('store')->end()
+                            ->booleanNode('store')->defaultTrue()->end()
                             ->booleanNode('default_search_field')->end()
                             ->booleanNode('fulltext')->defaultTrue()->end()
                             ->scalarNode('organization_id')->defaultNull()->end()

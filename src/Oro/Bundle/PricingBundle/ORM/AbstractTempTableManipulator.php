@@ -54,7 +54,7 @@ abstract class AbstractTempTableManipulator implements TempTableManipulatorInter
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function setInsertSelectExecutor(ShardQueryExecutorNativeSqlInterface $queryExecutor)
     {
@@ -62,29 +62,17 @@ abstract class AbstractTempTableManipulator implements TempTableManipulatorInter
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    public function dropTempTableForEntity(string $className, $identifier)
-    {
-        $this->registry->getConnection()->executeQuery(sprintf(
-            'DROP TABLE %s',
-            $this->getTempTableNameForEntity($className, $identifier)
-        ));
-    }
+    abstract public function dropTempTableForEntity(string $className, $identifier);
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    public function truncateTempTableForEntity(string $className, $identifier)
-    {
-        $this->registry->getConnection()->executeQuery(sprintf(
-            'TRUNCATE %s',
-            $this->getTempTableNameForEntity($className, $identifier)
-        ));
-    }
+    abstract public function truncateTempTableForEntity(string $className, $identifier);
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getTempTableNameForEntity(string $className, $identifier): string
     {
@@ -94,7 +82,7 @@ abstract class AbstractTempTableManipulator implements TempTableManipulatorInter
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getTableNameForEntity(string $className): string
     {
@@ -102,7 +90,7 @@ abstract class AbstractTempTableManipulator implements TempTableManipulatorInter
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function moveDataFromTemplateTableToEntityTable(string $className, $identifier, array $fields)
     {
@@ -123,7 +111,7 @@ abstract class AbstractTempTableManipulator implements TempTableManipulatorInter
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function insertData(
         string $insertToTableName,

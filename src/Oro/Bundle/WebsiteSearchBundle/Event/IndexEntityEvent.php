@@ -69,7 +69,7 @@ class IndexEntityEvent extends Event
     }
 
     /**
-     * @param int $entityId
+     * @param int|string $entityId
      * @param string $fieldName
      * @param string|int|float|\DateTime|array $value
      * @param bool $addToAllText
@@ -121,10 +121,10 @@ class IndexEntityEvent extends Event
             return;
         }
 
-        if (!is_scalar($value) && !$value instanceof \DateTime) {
+        if (!is_scalar($value) && !$value instanceof \DateTime && !is_null($value)) {
             throw new \InvalidArgumentException(
                 sprintf(
-                    'Scalars and \DateTime are supported only, "%s" given',
+                    'Scalars, \DateTime and NULL are supported only, "%s" given',
                     is_object($value) ? get_class($value) : gettype($value)
                 )
             );
@@ -137,5 +137,16 @@ class IndexEntityEvent extends Event
     public function getEntitiesData()
     {
         return $this->entitiesData;
+    }
+
+    /**
+     * @param int|string $entityId
+     * @return $this
+     */
+    public function removeEntityData($entityId): self
+    {
+        unset($this->entitiesData[$entityId]);
+
+        return $this;
     }
 }

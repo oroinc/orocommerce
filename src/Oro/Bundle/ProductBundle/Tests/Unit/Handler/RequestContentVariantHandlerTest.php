@@ -25,7 +25,7 @@ class RequestContentVariantHandlerTest extends \PHPUnit\Framework\TestCase
         $this->handler = new RequestContentVariantHandler($this->requestStack);
     }
 
-    public function testGetContentVariantIdNoRequest()
+    public function testGetCategoryContentVariantIdNoRequest()
     {
         $this->requestStack->expects($this->once())
             ->method('getCurrentRequest')
@@ -34,7 +34,7 @@ class RequestContentVariantHandlerTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($this->handler->getContentVariantId());
     }
 
-    public function testGetContentVariantIdIsBool()
+    public function testGetCategoryContentVariantIdIsBool()
     {
         $request = new Request([ProductCollectionContentVariantType::CONTENT_VARIANT_ID_KEY => false]);
         $this->requestStack->expects($this->once())
@@ -44,7 +44,7 @@ class RequestContentVariantHandlerTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($this->handler->getContentVariantId());
     }
 
-    public function testGetContentVariantIdZero()
+    public function testGetCategoryContentVariantIdZero()
     {
         $request = new Request([ProductCollectionContentVariantType::CONTENT_VARIANT_ID_KEY => 0]);
         $this->requestStack->expects($this->once())
@@ -54,7 +54,7 @@ class RequestContentVariantHandlerTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($this->handler->getContentVariantId());
     }
 
-    public function testGetContentVariantId()
+    public function testGetCategoryContentVariantId()
     {
         $value = 777;
         $request = new Request([ProductCollectionContentVariantType::CONTENT_VARIANT_ID_KEY => $value]);

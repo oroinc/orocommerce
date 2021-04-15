@@ -68,25 +68,29 @@ class MappingConfigurationProviderTest extends \PHPUnit\Framework\TestCase
                         'name' => 'title_LOCALIZATION_ID',
                         'type' => 'text',
                         'fulltext' => true,
-                        'organization_id' => null
+                        'organization_id' => null,
+                        'store' => true,
                     ],
                     'test_first_repeating_field' => [
                         'name' => 'test_first_repeating_field',
                         'type' => 'integer',
                         'fulltext' => false,
-                        'organization_id' => null
+                        'organization_id' => null,
+                        'store' => true,
                     ],
                     'test_second_repeating_field' => [
                         'name' => 'test_second_repeating_field',
                         'type' => 'integer',
                         'fulltext' => false,
-                        'organization_id' => null
+                        'organization_id' => null,
+                        'store' => true,
                     ],
                     'custom_field' => [
                         'name' => 'custom_field',
                         'type' => 'text',
                         'fulltext' => true,
-                        'organization_id' => null
+                        'organization_id' => null,
+                        'store' => true,
                     ]
                 ]
             ],
@@ -97,9 +101,16 @@ class MappingConfigurationProviderTest extends \PHPUnit\Framework\TestCase
                         'name' => 'title_LOCALIZATION_ID',
                         'type' => 'text',
                         'fulltext' => true,
-                        'organization_id' => null
+                        'organization_id' => null,
+                        'store' => true,
                     ],
-                    'price' => ['name' => 'price', 'type' => 'decimal', 'fulltext' => false, 'organization_id' => null]
+                    'price' => [
+                        'name' => 'price',
+                        'type' => 'decimal',
+                        'fulltext' => false,
+                        'organization_id' => null,
+                        'store' => true,
+                    ],
                 ]
             ]
         ];

@@ -10,6 +10,7 @@ define(function(require) {
     const layout = require('oroui/js/layout');
     const $ = require('jquery');
     const _ = require('underscore');
+    const mediator = require('oroui/js/mediator');
     const pricesHelper = require('oropricing/js/app/prices-helper');
 
     const ProductPricesEditableView = BaseProductPricesView.extend({
@@ -153,7 +154,7 @@ define(function(require) {
             $priceOverridden.insertAfter(this.getElement('priceValue'));
 
             if (_.isEmpty(this.getElement('priceValue').val()) && this.options.matchedPriceEnabled) {
-                this.getElement('priceValue').addClass('matched-price');
+                this.unlockPrice();
             }
         },
 
@@ -204,12 +205,12 @@ define(function(require) {
 
         onPriceSetManually: function(e, options) {
             if (options.manually && this.options.matchedPriceEnabled) {
-                this.getElement('priceValue').removeClass('matched-price');
+                this.lockPrice();
             }
         },
 
         setPriceFromHint: function(elem) {
-            this.getElement('priceValue').removeClass('matched-price');
+            this.lockPrice();
             const $elem = $(elem);
             this.model.set('unit', $elem.data('unit'));
             this.setPriceValue($elem.data('price'));
@@ -249,7 +250,17 @@ define(function(require) {
                 return;
             }
             this.setPriceValue(this.findPriceValue());
+            this.unlockPrice();
+        },
+
+        lockPrice: function() {
+            this.getElement('priceValue').removeClass('matched-price');
+            mediator.trigger('pricing:product-price:lock', this.getElement('priceValue'));
+        },
+
+        unlockPrice: function() {
             this.getElement('priceValue').addClass('matched-price');
+            mediator.trigger('pricing:product-price:unlock', this.getElement('priceValue'));
         }
     });
 

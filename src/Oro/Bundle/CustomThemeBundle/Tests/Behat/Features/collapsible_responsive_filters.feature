@@ -52,7 +52,7 @@ Feature: Collapsible responsive filters
     When I am on homepage
     And I click "Main Menu Button"
     And I click "NewCategoryLink"
-    Then I should see an "FrontendGridActionFilterButton" element
+    Then I should see an "Frontend Grid Action Filter Button" element
     # Uncomment when behat can be run on mobileEmulation capability
-    # And I click "FrontendGridActionFilterButton"
+    # And I click "Frontend Grid Action Filter Button"
     # And I should see an "Fullscreen Popup" element

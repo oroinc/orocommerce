@@ -70,6 +70,7 @@ class OrderControllerTest extends WebTestCase
                 'owner' => $this->getCurrentUser()->getId(),
                 'customer' => $orderCustomer->getId(),
                 'poNumber' => self::ORDER_PO_NUMBER,
+                'currency' => 'USD',
                 'lineItems' => $lineItems,
                 'discounts' => $discountItems,
             ]
@@ -94,6 +95,7 @@ class OrderControllerTest extends WebTestCase
                 'owner' => $this->getCurrentUser()->getId(),
                 'customer' => $orderCustomer->getId(),
                 'poNumber' => self::ORDER_PO_NUMBER_UPDATED,
+                'currency' => 'USD',
                 'lineItems' => $lineItems,
                 'discounts' => $discountItems,
             ]

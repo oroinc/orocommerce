@@ -277,7 +277,7 @@ oro_behat_extension:
       selector: 'a.add-to-shopping-list-button:contains("Add to Shopping List")'
 
     Add a Note to This Shopping List:
-      selector: 'input[name=addANote]+.custom-checkbox__icon'
+      selector: 'input[name=addANote]'
 
     Shopping List Notes:
       selector: 'form[data-role="edit-notes-form"] textarea[name="oro_shopping_list_notes_type[notes]"]'
@@ -417,7 +417,7 @@ oro_behat_extension:
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
 
     First Line Item Row Checkbox:
-      selector: '.grid-body .grid-row:first-child span.custom-checkbox__icon'
+      selector: '.grid-body .grid-row:first-child .custom-checkbox__input'
 
     Shopping Lists Navigation Link:
       selector:

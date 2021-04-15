@@ -55,6 +55,7 @@ class SearchEventListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->listener->onPreBuild($event);
         self::assertEquals($event->getConfig()->offsetGetByPath($this->getConfigPath()), $expected);
+        self::assertEquals($parameterBag->get(SearchProductHandler::SEARCH_KEY), $expected);
     }
 
     /**

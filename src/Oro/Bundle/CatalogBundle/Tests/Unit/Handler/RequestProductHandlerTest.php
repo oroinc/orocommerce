@@ -2,10 +2,15 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Handler;
 
+use Oro\Bundle\CatalogBundle\ContentVariantType\CategoryPageContentVariantType;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class RequestProductHandlerTest extends \PHPUnit\Framework\TestCase
 {
     const ROOT_CATEGORY_ID = 1;
@@ -28,52 +33,71 @@ class RequestProductHandlerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @dataProvider getCategoryIdDataProvider
+     * @dataProvider idDataProvider
      *
-     * @param $value
-     * @param $expected
+     * @param string|int|bool|null $value
+     * @param int $expected
      */
-    public function testGetCategoryId($value, $expected)
+    public function testGetCategoryId($value, int $expected): void
     {
         $this->request->expects($this->once())
             ->method('get')
             ->with(RequestProductHandler::CATEGORY_ID_KEY)
             ->willReturn($value);
         $actual = $this->requestProductHandler->getCategoryId();
-        $this->assertEquals($expected, $actual);
-    }
-
-    public function testGetCategoryIdWithoutRequest()
-    {
-        $requestProductHandler = new RequestProductHandler(new RequestStack());
-        $this->assertFalse($requestProductHandler->getCategoryId());
+        $this->assertSame($expected, $actual);
     }
 
     /**
-     * @return array
+     * @dataProvider idDataProvider
+     *
+     * @param string|int|bool|null $value
+     * @param int $expected
      */
-    public function getCategoryIdDataProvider()
+    public function testGetContentVariantId($value, int $expected): void
+    {
+        $this->request->expects($this->once())
+            ->method('get')
+            ->with(CategoryPageContentVariantType::CATEGORY_CONTENT_VARIANT_ID_KEY)
+            ->willReturn($value);
+        $actual = $this->requestProductHandler->getCategoryContentVariantId();
+        $this->assertSame($expected, $actual);
+    }
+
+    public function testGetCategoryIdWithoutRequest(): void
+    {
+        $requestProductHandler = new RequestProductHandler(new RequestStack());
+        $this->assertSame(0, $requestProductHandler->getCategoryId());
+    }
+
+    public function testGetContentVariantIdWithoutRequest(): void
+    {
+        $requestProductHandler = new RequestProductHandler(new RequestStack());
+        $this->assertSame(0, $requestProductHandler->getCategoryContentVariantId());
+    }
+
+    public function idDataProvider(): array
     {
         return [
             [
                 'value' => null,
-                'expected' => false,
+                'expected' => 0,
             ],
             [
                 'value' => false,
-                'expected' => false,
+                'expected' => 0,
             ],
             [
                 'value' => true,
-                'expected' => false,
+                'expected' => 0,
             ],
             [
                 'value' => 'true',
-                'expected' => false,
+                'expected' => 0,
             ],
             [
                 'value' => 'false',
-                'expected' => false,
+                'expected' => 0,
             ],
             [
                 'value' => 1,
@@ -81,23 +105,23 @@ class RequestProductHandlerTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 'value' => 0,
-                'expected' => false,
+                'expected' => 0,
             ],
             [
                 'value' => -1,
-                'expected' => false,
+                'expected' => 0,
             ],
             [
                 'value' => '1',
-                'expected' => true,
+                'expected' => 1,
             ],
             [
                 'value' => '0',
-                'expected' => false,
+                'expected' => 0,
             ],
             [
                 'value' => '-1',
-                'expected' => false,
+                'expected' => 0,
             ],
         ];
     }
@@ -271,7 +295,7 @@ class RequestProductHandlerTest extends \PHPUnit\Framework\TestCase
     {
         $this->request->expects($this->once())
             ->method('get')
-            ->with(RequestProductHandler::OVERRIDE_VARIANT_CONFIGURATION_KEY)
+            ->with(CategoryPageContentVariantType::OVERRIDE_VARIANT_CONFIGURATION_KEY)
             ->willReturn($value);
         $actual = $this->requestProductHandler->getOverrideVariantConfiguration();
         $this->assertEquals($expected, $actual);

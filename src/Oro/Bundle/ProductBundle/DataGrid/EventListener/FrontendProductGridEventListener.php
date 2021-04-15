@@ -334,7 +334,7 @@ class FrontendProductGridEventListener
         array $attributes
     ): array {
         $gridName = $config->getName();
-        if (!array_key_exists($gridName, $this->attributesToHide) ||
+        if (!array_key_exists($gridName, $this->attributesToHide) &&
             !$this->datagridParametersHelper->isDatagridExtensionSkipped($parameterBag)
         ) {
             $this->attributesToHide[$gridName] = [];
@@ -355,7 +355,7 @@ class FrontendProductGridEventListener
             }
         }
 
-        return $this->attributesToHide[$gridName];
+        return $this->attributesToHide[$gridName] ?? [];
     }
 
     /**

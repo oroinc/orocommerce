@@ -3,10 +3,11 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Event;
 
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\VisibilityBundle\Visibility\Resolver\CategoryVisibilityResolver;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Bundle\WebsiteSearchBundle\EventListener\DefaultCategoryVisibilityListener;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class DefaultCategoryVisibilityListenerTest extends \PHPUnit\Framework\TestCase
 {
@@ -42,7 +43,7 @@ class DefaultCategoryVisibilityListenerTest extends \PHPUnit\Framework\TestCase
             ->with(CategoryVisibilityResolver::OPTION_CATEGORY_VISIBILITY)
             ->willReturn(true);
 
-        $reindexationEvent = new ReindexationRequestEvent();
+        $reindexationEvent = new ReindexationRequestEvent([Product::class]);
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
             ->with($reindexationEvent, ReindexationRequestEvent::EVENT_NAME);
@@ -57,10 +58,8 @@ class DefaultCategoryVisibilityListenerTest extends \PHPUnit\Framework\TestCase
             ->with(CategoryVisibilityResolver::OPTION_CATEGORY_VISIBILITY)
             ->willReturn(false);
 
-        $reindexationEvent = new ReindexationRequestEvent();
         $this->eventDispatcher->expects($this->never())
-            ->method('dispatch')
-            ->with($reindexationEvent, ReindexationRequestEvent::EVENT_NAME);
+            ->method('dispatch');
 
         $this->listener->onUpdateAfter($this->event);
     }

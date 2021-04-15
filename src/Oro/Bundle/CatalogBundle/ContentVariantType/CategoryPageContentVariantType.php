@@ -17,7 +17,9 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class CategoryPageContentVariantType implements ContentVariantTypeInterface, ContentVariantEntityProviderInterface
 {
-    const TYPE = 'category_page';
+    public const TYPE = 'category_page';
+    public const CATEGORY_CONTENT_VARIANT_ID_KEY = 'categoryContentVariantId';
+    public const OVERRIDE_VARIANT_CONFIGURATION_KEY = 'overrideVariantConfiguration';
 
     /** @var AuthorizationCheckerInterface */
     private $authorizationChecker;
@@ -80,10 +82,11 @@ class CategoryPageContentVariantType implements ContentVariantTypeInterface, Con
         return new RouteData(
             'oro_product_frontend_product_index',
             [
-                'categoryId' => $category->getId(),
-                'includeSubcategories' => !$this->propertyAccessor->getValue($contentVariant, 'excludeSubcategories'),
-                RequestProductHandler::OVERRIDE_VARIANT_CONFIGURATION_KEY =>
-                    $contentVariant->isOverrideVariantConfiguration(),
+                self::CATEGORY_CONTENT_VARIANT_ID_KEY => $contentVariant->getId(),
+                RequestProductHandler::CATEGORY_ID_KEY => $category->getId(),
+                RequestProductHandler::INCLUDE_SUBCATEGORIES_KEY =>
+                    !$this->propertyAccessor->getValue($contentVariant, 'excludeSubcategories'),
+                self::OVERRIDE_VARIANT_CONFIGURATION_KEY => $contentVariant->isOverrideVariantConfiguration(),
             ]
         );
     }

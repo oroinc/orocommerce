@@ -115,10 +115,16 @@ class TempTableManipulatorTest extends WebTestCase
     {
         /** @var CombinedPriceList $cpl */
         $cpl = $this->getReference('2t_3t');
-        $tempTableName = $this->tempTableManipulator->getTempTableNameForEntity(
+        $tempTableName1 = $this->tempTableManipulator->getTempTableNameForEntity(
             CombinedProductPrice::class,
             $cpl->getId()
         );
+        $tempTableName2 = $this->tempTableManipulator->getTempTableNameForEntity(
+            CombinedProductPrice::class,
+            $cpl->getId() . '_copy'
+        );
+        $this->tempTableManipulator->createTempTableForEntity(CombinedProductPrice::class, $cpl->getId() . '_copy');
+        $this->insertPricesFromCplToTemp($tempTableName2);
 
         /** @var CombinedProductPriceRepository $repo */
         $repo = $this->registry->getRepository(CombinedProductPrice::class);
@@ -142,13 +148,13 @@ class TempTableManipulatorTest extends WebTestCase
         $query->setHint(
             TempTableOutputResultModifier::ORO_TEMP_TABLE_ALIASES,
             [
-                'cpp_temp1' => $tempTableName,
-                'cpp_temp2' => $tempTableName
+                'cpp_temp1' => $tempTableName1,
+                'cpp_temp2' => $tempTableName2
             ]
         );
 
-        $this->assertStringContainsString('FROM ' . $tempTableName, $query->getSQL());
-        $this->assertStringContainsString('JOIN ' . $tempTableName, $query->getSQL());
+        $this->assertStringContainsString('FROM ' . $tempTableName1, $query->getSQL());
+        $this->assertStringContainsString('JOIN ' . $tempTableName2, $query->getSQL());
         $result = $query->getResult();
         $this->assertEmpty($result);
 
@@ -156,10 +162,12 @@ class TempTableManipulatorTest extends WebTestCase
         $query2 = $qb2->getQuery();
         $query2->setHint(
             TempTableOutputResultModifier::ORO_TEMP_TABLE_ALIASES,
-            ['cpp' => $tempTableName]
+            ['cpp' => $tempTableName1]
         );
-        $this->assertStringContainsString('FROM ' . $tempTableName, $query2->getSQL());
+        $this->assertStringContainsString('FROM ' . $tempTableName1, $query2->getSQL());
         $this->assertCount(2, $query2->getResult(AbstractQuery::HYDRATE_ARRAY));
+
+        $this->tempTableManipulator->dropTempTableForEntity(CombinedProductPrice::class, $cpl->getId() . '_copy');
     }
 
     /**
@@ -249,16 +257,19 @@ class TempTableManipulatorTest extends WebTestCase
     }
 
     /**
+     * @param string $tempTableName
      * @return string
      */
-    private function insertPricesFromCplToTemp(): string
+    private function insertPricesFromCplToTemp(?string $tempTableName = null): string
     {
         /** @var CombinedPriceList $cpl */
         $cpl = $this->getReference('2t_3t');
-        $tempTableName = $this->tempTableManipulator->getTempTableNameForEntity(
-            CombinedProductPrice::class,
-            $cpl->getId()
-        );
+        if (!$tempTableName) {
+            $tempTableName = $this->tempTableManipulator->getTempTableNameForEntity(
+                CombinedProductPrice::class,
+                $cpl->getId()
+            );
+        }
 
         /** @var CombinedProductPriceRepository $repo */
         $repo = $this->registry->getRepository(CombinedProductPrice::class);

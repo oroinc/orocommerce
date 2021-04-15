@@ -12,17 +12,19 @@
                         </button>
                     </div>
                     <div class="filter-items"></div>
-                    <% if (obj.enableMultiselectWidget) { %>
-                    <select data-action="add-filter-select" multiple data-skip-input-widgets>
-                        <% _.each(filters, function (filter, name) { %>
-                            <% if (filter.visible) { %>
-                                <option title="<%- filter.label %>" value="<%- name %>" <% if (filter.enabled) { %>selected<% } %>>
-                                    <%- filter.label %>
-                                </option>
-                            <% } %>
-                        <% }); %>
-                    </select>
-                    <% } %>
+                    <div class="filter-actions" data-role="filter-actions">
+                        <% if (obj.enableMultiselectWidget) { %>
+                        <select data-action="add-filter-select" multiple data-skip-input-widgets>
+                            <% _.each(filters, function (filter, name) { %>
+                                <% if (filter.visible) { %>
+                                    <option title="<%- filter.label %>" value="<%- name %>" <% if (filter.enabled) { %>selected<% } %>>
+                                        <%- filter.label %>
+                                    </option>
+                                <% } %>
+                            <% }); %>
+                        </select>
+                        <% } %>
+                    </div>
                 </div>
             </div>
         </div>
@@ -73,21 +75,23 @@
     <% } else { %>
         <div class="filter-box dropdown-mode" <%= attributes %> >
             <div class="filter-container">
-                <% if (obj.enableMultiselectWidget) { %>
-                <select data-action="add-filter-select"
-                        data-skip-input-widgets
-                        multiple
-                >
-                    <% _.each(filters, function (filter, name) { %>
-                        <% if (filter.visible) { %>
-                            <option title="<%- filter.label %>" value="<%- name %>" <% if (filter.enabled) { %>selected<% } %>>
-                                <%- filter.label %>
-                            </option>
-                        <% } %>
-                    <% }); %>
-                </select>
-               <% } %>
                 <div class="filter-items"></div>
+                <div class="filter-actions" data-role="filter-actions">
+                    <% if (obj.enableMultiselectWidget) { %>
+                    <select data-action="add-filter-select"
+                            data-skip-input-widgets
+                            multiple
+                    >
+                        <% _.each(filters, function (filter, name) { %>
+                            <% if (filter.visible) { %>
+                                <option title="<%- filter.label %>" value="<%- name %>" <% if (filter.enabled) { %>selected<% } %>>
+                                    <%- filter.label %>
+                                </option>
+                            <% } %>
+                        <% }); %>
+                    </select>
+                    <% } %>
+                </div>
                 <div class="filter-items-hint">
                     <button type="button"
                             class="btn btn--link btn--size-s reset-filter-button"

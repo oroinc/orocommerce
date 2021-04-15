@@ -153,10 +153,10 @@ Feature: Sidebar filters on product listing page
       | Any Text: does not contain "product" |
     And I should not see "Apply Filters Button"
     When I set filter Name as does not contain ""
-    Then I reset "Name" filter in "Catalog Sidebar" sidebar
-    Then I reset "Any Text" filter in "Catalog Sidebar" sidebar
-    Then should not see hint for "Name" filter in "Catalog Sidebar" sidebar
-    Then should not see hint for "Any Text" filter in "Catalog Sidebar" sidebar
+    Then I reset "Name" filter in "Catalog Sidebar Hints Container" sidebar
+    Then I reset "Any Text" filter in "Catalog Sidebar Hints Container" sidebar
+    Then should not see hint for "Name" filter in "Catalog Sidebar Hints Container" sidebar
+    Then should not see hint for "Any Text" filter in "Catalog Sidebar Hints Container" sidebar
     And I should not see "Clear All Filters"
     And I should not see "Apply Filters Button"
 
