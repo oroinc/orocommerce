@@ -152,10 +152,23 @@ layout:
 
         - '@setOption':
             id: product_datagrid_export_export_button
-            optionName: configuration_alias
-            optionValue: 'oro_product_frontend'
+            optionName: exportRoute
+            optionValue: 'oro_product_frontend_export'
+
+        - '@setOption':
+            id: product_datagrid_export_export_button
+            optionName: routeOptions
+            optionValue:
+                filteredResultsGrid: 'frontend-product-search-grid'
+                filteredResultsGridParams: '=data["frontend_product_export_options"].getDefaultGridExportRequestOptions()'
 
         - '@setOption':
             id: product_datagrid_export_export_button
             optionName: successMessage
             optionValue: 'oro.product.frontend.importexport.product_data_export.success_message'
+
+        - '@setOption':
+            id: product_datagrid_export_export_button
+            optionName: attr
+            optionValue:
+                aria-label: 'oro.frontendimportexport.product_export.button.aria_label'
