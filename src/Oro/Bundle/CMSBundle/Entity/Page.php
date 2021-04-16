@@ -13,6 +13,7 @@ use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\AuditableOrganizationAwareTrait;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Entity\SluggableTrait;
@@ -84,7 +85,11 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
  *      }
  * )
  */
-class Page extends ExtendPage implements DatesAwareInterface, SluggableInterface, DraftableInterface
+class Page extends ExtendPage implements
+    DatesAwareInterface,
+    SluggableInterface,
+    DraftableInterface,
+    OrganizationAwareInterface
 {
     use AuditableOrganizationAwareTrait;
     use DatesAwareTrait;
@@ -231,6 +236,6 @@ class Page extends ExtendPage implements DatesAwareInterface, SluggableInterface
      */
     public function __toString()
     {
-        return (string) $this->getDefaultTitle();
+        return (string)$this->getDefaultTitle();
     }
 }
