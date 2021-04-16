@@ -247,8 +247,8 @@ class SlugRepositoryTest extends WebTestCase
         $customer = $this->getReference(LoadCustomers::DEFAULT_ACCOUNT_NAME);
 
         $criteria = $this->scopeManager->getCriteria(ScopeManager::BASE_SCOPE, ['customer' => $customer]);
-        $slug = $this->repository->getSlugBySlugPrototypeAndScopeCriteria('page', $criteria);
-        $expected = $this->getReference(LoadSlugsData::SLUG_URL_PAGE);
+        $slug = $this->repository->getSlugBySlugPrototypeAndScopeCriteria('page2', $criteria);
+        $expected = $this->getReference(LoadSlugsData::SLUG_URL_PAGE_2);
 
         $this->assertNotEmpty($slug);
         $this->assertSame($expected->getId(), $slug->getId());

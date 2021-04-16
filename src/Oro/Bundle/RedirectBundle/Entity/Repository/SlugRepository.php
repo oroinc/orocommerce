@@ -116,9 +116,9 @@ class SlugRepository extends EntityRepository
         AclHelper $aclHelper = null
     ) {
         $qb = $this->createQueryBuilder('slug');
-        $qb->leftJoin('slug.scopes', 'scopes', Join::WITH)
-            ->addSelect('scopes.id as matchedScopeId')
-            ->where($qb->expr()->eq('slug.slugPrototype', ':slugPrototype'))
+        $this->applyDirectUrlScopeCriteria($qb);
+        $qb->addSelect('scopes.id as matchedScopeId')
+            ->andWhere($qb->expr()->eq('slug.slugPrototype', ':slugPrototype'))
             ->setParameter('slugPrototype', $slugPrototype);
 
         return $this->getMatchingSlugForCriteria($qb, $scopeCriteria, $aclHelper);
