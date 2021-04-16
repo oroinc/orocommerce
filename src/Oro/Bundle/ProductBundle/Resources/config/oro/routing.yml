@@ -69,3 +69,9 @@ oro_brand:
     type:         annotation
     prefix:       /brand
 
+oro_product_frontend_export:
+    resource: "@OroProductBundle/Controller/Frontend/ExportController.php"
+    type: annotation
+    prefix: /export/products
+    options:
+        frontend: true
