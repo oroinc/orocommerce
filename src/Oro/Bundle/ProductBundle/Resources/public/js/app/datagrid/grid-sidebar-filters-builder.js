@@ -31,7 +31,7 @@ export default {
         const toolbarClassNames = ['datagrid-toolbar--no-x-offset'];
 
         if (toolbarOptions.className) {
-            toolbarClassNames.push(toolbarOptions.className );
+            toolbarClassNames.push(toolbarOptions.className);
         }
         toolbarOptions.className = _.uniq(toolbarClassNames).join(' ');
 

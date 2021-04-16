@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\PricingStrategy;
 
+use Doctrine\DBAL\Driver\Exception;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
@@ -54,7 +55,7 @@ class MergePricesCombiningStrategy extends AbstractPriceCombiningStrategy
         $progress = 0;
         $this->moveFirstPriceListPrices($combinedPriceList, $priceLists, $products, $progress, $progressBar);
 
-        if ($this->canUseTempTable($priceLists)) {
+        if ($this->canUseTempTable($priceLists, $combinedPriceList)) {
             $this->processPriceListsWithTempTable($combinedPriceList, $priceLists, $products, $progress, $progressBar);
         } else {
             foreach ($priceLists as $priceListRelation) {
@@ -91,18 +92,34 @@ class MergePricesCombiningStrategy extends AbstractPriceCombiningStrategy
 
     /**
      * @param array|CombinedPriceListToPriceList[] $priceLists
+     * @param CombinedPriceList $combinedPriceList
      * @return bool
      */
-    private function canUseTempTable(array $priceLists): bool
+    private function canUseTempTable(array $priceLists, CombinedPriceList $combinedPriceList): bool
     {
         if (!$this->insertFromSelectQueryExecutor instanceof ShardQueryExecutorNativeSqlInterface) {
             return false;
         }
 
+        $mayUseTempTable = false;
         /** @var CombinedPriceListToPriceList $priceListRelation */
         foreach ($priceLists as $priceListRelation) {
             if ($priceListRelation->isMergeAllowed()) {
+                $mayUseTempTable = true;
+                break;
+            }
+        }
+
+        if ($mayUseTempTable) {
+            try {
+                $this->tempTableManipulator->createTempTableForEntity(
+                    CombinedProductPrice::class,
+                    $combinedPriceList->getId()
+                );
+
                 return true;
+            } catch (Exception $e) {
+                return false;
             }
         }
 
@@ -123,11 +140,6 @@ class MergePricesCombiningStrategy extends AbstractPriceCombiningStrategy
         int &$progress,
         ?ProgressBar $progressBar
     ): void {
-        $this->tempTableManipulator->createTempTableForEntity(
-            CombinedProductPrice::class,
-            $combinedPriceList->getId()
-        );
-
         foreach ($priceLists as $priceListRelation) {
             $this->moveProgress($progressBar, $progress, $priceListRelation);
 

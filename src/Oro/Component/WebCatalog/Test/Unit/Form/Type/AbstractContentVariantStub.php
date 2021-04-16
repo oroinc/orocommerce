@@ -3,6 +3,8 @@
 namespace Oro\Component\WebCatalog\Test\Unit\Form\Type;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Oro\Bundle\RedirectBundle\Entity\SlugAwareInterface;
+use Oro\Bundle\RedirectBundle\Entity\SlugAwareTrait;
 use Oro\Component\WebCatalog\Entity\ContentNodeAwareInterface;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
@@ -10,8 +12,13 @@ use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 /**
  * Stub content variant that can be used for unit testing.
  */
-abstract class AbstractContentVariantStub implements ContentVariantInterface, ContentNodeAwareInterface
+abstract class AbstractContentVariantStub implements
+    ContentVariantInterface,
+    ContentNodeAwareInterface,
+    SlugAwareInterface
 {
+    use SlugAwareTrait;
+
     /**
      * @var string
      */
@@ -36,6 +43,8 @@ abstract class AbstractContentVariantStub implements ContentVariantInterface, Co
      * @var bool
      */
     protected $overrideVariantConfiguration;
+
+    protected int $id = 1;
 
     public function __construct()
     {
@@ -81,7 +90,14 @@ abstract class AbstractContentVariantStub implements ContentVariantInterface, Co
      */
     public function getId()
     {
-        return 1;
+        return $this->id;
+    }
+
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
     }
 
     /**

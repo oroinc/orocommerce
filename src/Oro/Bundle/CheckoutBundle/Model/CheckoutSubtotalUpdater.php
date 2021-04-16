@@ -26,6 +26,9 @@ class CheckoutSubtotalUpdater
     /** @var UserCurrencyManager */
     protected $currencyManager;
 
+    /** @var int */
+    private $batchSize = self::BATCH_COUNT;
+
     /**
      * @param ManagerRegistry $managerRegistry
      * @param CheckoutSubtotalProvider $subtotalProvider
@@ -41,6 +44,11 @@ class CheckoutSubtotalUpdater
         $this->currencyManager = $currencyManager;
     }
 
+    public function setBatchSize(int $batchSize)
+    {
+        $this->batchSize = $batchSize;
+    }
+
     public function recalculateInvalidSubtotals()
     {
         $entityManager = $this->getEntityManager();
@@ -53,14 +61,16 @@ class CheckoutSubtotalUpdater
         foreach ($checkouts as $checkout) {
             $cnt++;
             $this->processCheckoutSubtotals($checkout, $enabledCurrencies);
-            if ($cnt % self::BATCH_COUNT === 0) {
+            if ($cnt % $this->batchSize === 0) {
                 $entityManager->flush();
+                $entityManager->clear();
                 $cnt = 0;
             }
         }
 
         if ($cnt) {
             $entityManager->flush();
+            $entityManager->clear();
         }
     }
 

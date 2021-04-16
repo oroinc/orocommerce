@@ -108,8 +108,8 @@ MIN_SQL;
 
         if ($minIds) {
             $deleteQb = $connection->createQueryBuilder();
-            $deleteQb->delete($table, 'rel')
-                ->where($deleteQb->expr()->notIn('rel.id', ':ids'))
+            $deleteQb->delete($table)
+                ->where($deleteQb->expr()->notIn('id', ':ids'))
                 ->setParameter('ids', $minIds, Connection::PARAM_INT_ARRAY);
 
             $deleteQb->execute();
