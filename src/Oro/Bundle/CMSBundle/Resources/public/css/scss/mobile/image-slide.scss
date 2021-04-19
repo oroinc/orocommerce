@@ -4,7 +4,7 @@
     .oro-multiselect-holder {
         display: block;
 
-        padding-#{$end}: $content-padding;
+        padding-right: $content-padding;
 
         .image-slide-text {
             width: 100%;
@@ -14,17 +14,17 @@
 
 .responsive-medium .oro-image-slide-collection {
     .oro-multiselect-holder {
-        padding-#{$start}: $content-padding;
-        padding-#{$end}: $content-padding;
+        padding-left: $content-padding;
+        padding-right: $content-padding;
     }
 
     .responsive-block {
         &:first-of-type {
-            padding-#{$end}: $content-padding / 2;
+            padding-right: $content-padding / 2;
         }
 
         &:last-of-type {
-            padding-#{$start}: $content-padding / 2;
+            padding-left: $content-padding / 2;
         }
     }
 }

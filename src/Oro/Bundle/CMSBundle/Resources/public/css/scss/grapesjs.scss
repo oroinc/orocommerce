@@ -45,7 +45,7 @@
         padding: 0;
 
         &.#{$pn-prefix}options {
-            padding-#{$end}: 7px;
+            padding-right: 7px;
             display: flex;
             align-items: center;
         }
@@ -59,7 +59,7 @@
     }
 
     &select-control {
-        margin-#{$end}: 5px;
+        margin-right: 5px;
 
         .dropdown-menu {
             &[x-out-of-boundaries] {
@@ -83,7 +83,7 @@
         .#{$pn-prefix}btn {
             background-color: $button-bg-color;
             border-radius: 30px;
-            margin-#{$end}: 7px;
+            margin-right: 7px;
 
             &.#{$pn-prefix}active {
                 background-color: $additional-extra-light;
@@ -236,7 +236,7 @@
     }
 
     &rte-toolbar {
-        margin-#{$start}: -2px;
+        margin-left: -2px;
         border: none;
         box-shadow: 1px 1px 9px 3px rgba(0, 0, 0, .08);
     }
@@ -248,19 +248,19 @@
         .actionbar-group {
             display: flex;
             &:not(:last-child) {
-                margin-#{$end}: 16px;
+                margin-right: 16px;
             }
         }
 
         .#{$rte-prefix}action {
             order: 1;
-            border-#{$end}: none;
+            border-right: none;
             padding: 0;
-            margin-#{$end}: 8px;
+            margin-right: 8px;
 
 
             &:last-child {
-                margin-#{$end}: 0;
+                margin-right: 0;
             }
 
             &:hover,
@@ -269,7 +269,7 @@
             }
 
             select {
-                padding-#{$end}: 15px;
+                padding-right: 15px;
                 min-width: 95px;
             }
 
@@ -443,4 +443,3 @@
         }
     }
 }
-

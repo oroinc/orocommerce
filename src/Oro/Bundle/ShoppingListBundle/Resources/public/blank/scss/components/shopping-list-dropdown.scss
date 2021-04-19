@@ -25,7 +25,7 @@
     &__link {
         display: block;
         width: calc(100% - #{$shopping-list-dropdown-radio-width});
-        padding-#{$start}: $offset-x-s;
+        padding-left: $offset-x-s;
     }
 
     &__link,
@@ -45,7 +45,7 @@
     &__name {
         display: inline-block;
         vertical-align: middle;
-        padding-#{$end}: $offset-x-m;
+        padding-right: $offset-x-m;
 
         text-transform: uppercase;
     }
@@ -66,7 +66,7 @@
     }
 
     &__details {
-        text-align: $end;
+        text-align: right;
         padding-left: $offset-x-s;
     }
 
@@ -168,7 +168,7 @@
 
     &__product-base {
         width: calc(100% - 60px);
-        padding-#{$start}: 10px;
+        padding-left: 10px;
     }
 
     &__product-title {
@@ -183,8 +183,8 @@
     }
 
     &__product-total {
-        float: $end;
-        padding-#{$start}: 10px;
+        float: right;
+        padding-left: 10px;
     }
 
     &__product-sku {
