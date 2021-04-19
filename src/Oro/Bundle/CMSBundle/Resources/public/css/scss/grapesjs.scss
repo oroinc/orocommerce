@@ -31,8 +31,13 @@
             margin-top: -2px;
         }
 
-        ##{$app-prefix}tools {
+        ##{$app-prefix}tools,
+        .#{$app-prefix}tools {
             z-index: 2;
+            /*rtl:begin:ignore*/
+            left: 0;
+            right: auto;
+            /*rtl:end:ignore*/
         }
     }
 
@@ -188,6 +193,10 @@
     &toolbar {
         margin-top: -2px;
         white-space: nowrap;
+        /*rtl:begin:ignore*/
+        left: 0;
+        right: auto;
+        /*rtl:end:ignore*/
     }
 
     &com-badge,
@@ -295,6 +304,13 @@
             top: -10px;
         }
     }
+}
+
+.sp-container {
+    /*rtl:begin:ignore*/
+    left: 0;
+    right: auto;
+    /*rtl:end:ignore*/
 }
 
 .#{$rte-prefix}select2 {
