@@ -78,81 +78,161 @@ Oro\Bundle\OrderBundle\Entity\Order:
         customerUser: '@branda'
         createdAt: '<(new DateTime("01.01.2016 11:00"))>'
         updatedAt: '<(new DateTime("01.01.2016 11:00"))>'
+        identifier: 'OID1'
+        poNumber: 'OID1'
+        currency: 'USD'
+        total: 10.0
+        internal_status: '@order_internal_status_open'
     order2:
         organization: '@organization'
         customerUser: '@branda'
         createdAt: '<(new DateTime("01.01.2016 11:00"))>'
         updatedAt: '<(new DateTime("01.01.2016 11:00"))>'
+        identifier: 'OID2'
+        poNumber: 'OID2'
+        currency: 'USD'
+        total: 20.0
+        internal_status: '@order_internal_status_open'
     order3:
         organization: '@organization'
         customerUser: '@branda'
         createdAt: '<(new DateTime("01.01.2016 13:00"))>'
         updatedAt: '<(new DateTime("01.01.2016 13:00"))>'
+        identifier: 'OID3'
+        poNumber: 'OID3'
+        currency: 'USD'
+        total: 30.0
+        internal_status: '@order_internal_status_open'
     order4:
         organization: '@organization'
         customerUser: '@branda'
         createdAt: '<(new DateTime("01.01.2016 13:00"))>'
         updatedAt: '<(new DateTime("01.01.2016 13:00"))>'
+        identifier: 'OID4'
+        poNumber: 'OID4'
+        currency: 'USD'
+        total: 40.0
+        internal_status: '@order_internal_status_open'
     order5:
         organization: '@organization'
         customerUser: '@branda'
         createdAt: '<(new DateTime("10.01.2016 11:00"))>'
         updatedAt: '<(new DateTime("10.01.2016 11:00"))>'
+        identifier: 'OID5'
+        poNumber: 'OID5'
+        currency: 'USD'
+        total: 50.0
+        internal_status: '@order_internal_status_open'
     order6:
         organization: '@organization'
         customerUser: '@branda'
         createdAt: '<(new DateTime("03.01.2016 11:00"))>'
         updatedAt: '<(new DateTime("03.01.2016 11:00"))>'
+        identifier: 'OID6'
+        poNumber: 'OID6'
+        currency: 'USD'
+        total: 60.0
+        internal_status: '@order_internal_status_open'
     order7:
         organization: '@organization'
         customerUser: '@branda'
         createdAt: '<(new DateTime("03.01.2016 11:00"))>'
         updatedAt: '<(new DateTime("03.01.2016 11:00"))>'
+        identifier: 'OID7'
+        poNumber: 'OID7'
+        currency: 'USD'
+        total: 70.0
+        internal_status: '@order_internal_status_open'
     order8:
         organization: '@organization'
         customerUser: '@branda'
         createdAt: '<(new DateTime("03.01.2016 11:00"))>'
         updatedAt: '<(new DateTime("03.01.2016 11:00"))>'
+        identifier: 'OID8'
+        poNumber: 'OID8'
+        currency: 'USD'
+        total: 80.0
+        internal_status: '@order_internal_status_open'
     order9:
         organization: '@organization'
         customerUser: '@branda'
         createdAt: '<(new DateTime("01.02.2016 11:00"))>'
         updatedAt: '<(new DateTime("01.02.2016 11:00"))>'
+        identifier: 'OID9'
+        poNumber: 'OID9'
+        currency: 'USD'
+        total: 90.0
+        internal_status: '@order_internal_status_open'
     order10:
         organization: '@organization'
         customerUser: '@branda'
         createdAt: '<(new DateTime("01.02.2016 11:00"))>'
         updatedAt: '<(new DateTime("01.02.2016 11:00"))>'
+        identifier: 'OID10'
+        poNumber: 'OID10'
+        currency: 'USD'
+        total: 100.0
+        internal_status: '@order_internal_status_open'
     order11:
         organization: '@organization'
         customerUser: '@branda'
         createdAt: '<(new DateTime("01.05.2016 11:00"))>'
         updatedAt: '<(new DateTime("01.05.2016 11:00"))>'
+        identifier: 'OID11'
+        poNumber: 'OID11'
+        currency: 'USD'
+        total: 110.0
+        internal_status: '@order_internal_status_open'
     order12:
         organization: '@organization'
         customerUser: '@branda'
         createdAt: '<(new DateTime("01.05.2016 11:00"))>'
         updatedAt: '<(new DateTime("01.05.2016 11:00"))>'
+        identifier: 'OID12'
+        poNumber: 'OID12'
+        currency: 'USD'
+        total: 120.0
+        internal_status: '@order_internal_status_archived'
     order13:
         organization: '@organization'
         customerUser: '@branda'
         createdAt: '<(new DateTime("01.06.2016 11:00"))>'
         updatedAt: '<(new DateTime("01.06.2016 11:00"))>'
+        identifier: 'OID13'
+        poNumber: 'OID13'
+        currency: 'USD'
+        total: 130.0
+        internal_status: '@order_internal_status_cancelled'
     order14:
         organization: '@organization'
         customerUser: '@branda'
         createdAt: '<(new DateTime("01.06.2016 11:00"))>'
         updatedAt: '<(new DateTime("01.06.2016 11:00"))>'
+        identifier: 'OID14'
+        poNumber: 'OID14'
+        currency: 'USD'
+        total: 140.0
+        internal_status: '@order_internal_status_closed'
     order15:
         organization: '@organization'
         customerUser: '@branda'
         createdAt: '<(new DateTime("01.01.2017 11:00"))>'
         updatedAt: '<(new DateTime("01.01.2017 11:00"))>'
+        identifier: 'OID15'
+        poNumber: 'OID15'
+        currency: 'USD'
+        total: 150.0
+        internal_status: '@order_internal_status_open'
     order16:
         organization: '@organization'
         customerUser: '@amanda'
         createdAt: '<(new DateTime("01.01.2017 11:00"))>'
         updatedAt: '<(new DateTime("01.01.2017 11:00"))>'
+        identifier: 'OID16'
+        poNumber: 'OID16'
+        currency: 'USD'
+        total: 160.0
+        internal_status: '@order_internal_status_shipped'
 
 Oro\Bundle\OrderBundle\Entity\OrderLineItem:
     lineitem1:

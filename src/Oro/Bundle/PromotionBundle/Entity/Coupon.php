@@ -7,6 +7,7 @@ use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\BusinessUnitAwareTrait;
 
@@ -52,7 +53,8 @@ use Oro\Bundle\OrganizationBundle\Entity\Ownership\BusinessUnitAwareTrait;
  * )
  */
 class Coupon implements
-    DatesAwareInterface
+    DatesAwareInterface,
+    OrganizationAwareInterface
 {
     use BusinessUnitAwareTrait;
     use DatesAwareTrait;

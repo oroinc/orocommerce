@@ -13,6 +13,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\OrganizationAwareTrait;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Entity\SluggableTrait;
@@ -89,7 +90,7 @@ use Oro\Component\Tree\Entity\TreeTrait;
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.TooManyFields)
  */
-class Category extends ExtendCategory implements SluggableInterface, DatesAwareInterface
+class Category extends ExtendCategory implements SluggableInterface, DatesAwareInterface, OrganizationAwareInterface
 {
     use DatesAwareTrait;
     use TreeTrait;

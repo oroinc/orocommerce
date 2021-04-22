@@ -277,5 +277,6 @@ oro_behat_extension:
         - OroQueryDesignerBundle::QueryDesignerContext
         - OroProductBundle::QuickOrderFormContext
         - OroEmailBundle::EmailContext
+        - OroFilterBundle::FilterContext
       paths:
         - '@OroOrderBundle/Tests/Behat/Features'
