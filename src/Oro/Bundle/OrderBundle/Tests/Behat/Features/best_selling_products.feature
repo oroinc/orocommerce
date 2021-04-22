@@ -1,5 +1,6 @@
 @ticket-BB-4362
 @ticket-BAP-18841
+@ticket-BAP-20456
 
 Feature: Best Selling Products
   In order to understand what products have been sold best in specific periods of time
@@ -17,7 +18,7 @@ Feature: Best Selling Products
     Then there are 15 records in grid
     And I should see following grid:
       | Time Period |
-      | 1-1-2016	|
+      | 1-1-2016    |
       | 1-1-2016    |
       | 1-1-2016    |
       | 3-1-2016    |
@@ -47,7 +48,7 @@ Feature: Best Selling Products
       | 3-1-2016    |
       | 3-1-2016    |
       | 3-1-2016    |
-      | 1-1-2016	|
+      | 1-1-2016    |
       | 1-1-2016    |
       | 1-1-2016    |
 
@@ -141,11 +142,9 @@ Feature: Best Selling Products
     And I check "No" in Skip Empty Periods filter
     And I sort grid by "Qty Sold" again
     Then there are 10 records in grid
-    And I should see "66 Items" in grid with following data:
-      | Time Period | 1-2016   |
-      | SKU         | 9OL25    |
-    And I should see "55 Sets" in grid with following data:
-      | Time Period | 1-2016   |
-      | SKU         | 9OL25    |
+    And I should see following grid containing rows:
+      | Time Period | SKU   | QTY Sold |
+      | 1-2016      | 9OL25 | 46 Items |
+      | 1-2016      | 9OL25 | 40 Sets  |
     And I should see following records in grid:
       | N/A |
