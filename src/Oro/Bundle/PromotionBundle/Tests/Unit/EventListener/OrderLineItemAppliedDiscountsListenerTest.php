@@ -177,6 +177,63 @@ class OrderLineItemAppliedDiscountsListenerTest extends \PHPUnit\Framework\TestC
         ], $event->getData()->offsetGet('appliedDiscounts'));
     }
 
+    /**
+     * @param bool $isDiscountsIncluded
+     * @dataProvider getOnOrderEventEmptyTaxesRowDataProvider
+     */
+    public function testOnOrderEventEmptyTaxesRow(bool $isDiscountsIncluded): void
+    {
+        $order = new Order();
+        $lineItem1 = (new OrderLineItem())->setCurrency('USD');
+        $order->addLineItem($lineItem1);
+
+        $this->appliedDiscountsProvider->expects(self::atLeastOnce())
+            ->method('getDiscountsAmountByLineItem')
+            ->willReturnMap([
+                [$lineItem1, 0],
+            ]);
+
+        $this->taxationSettingsProvider->expects(self::once())
+            ->method('isEnabled')
+            ->willReturn(true);
+
+        $taxesRow = new ResultElement();
+        $taxesRow->setDiscountsIncluded($isDiscountsIncluded);
+
+        $result = new Result();
+        $result->offsetSet(Result::ROW, $taxesRow);
+        $this->taxProvider->expects(self::atLeastOnce())
+            ->method('getTax')
+            ->willReturn($result);
+
+        $event = new OrderEvent($this->createMock(FormInterface::class), $order);
+        $this->discountsListener->onOrderEvent($event);
+
+        self::assertSame(
+            [
+                [
+                    'appliedDiscountsAmount' => 0.0,
+                    'rowTotalAfterDiscountExcludingTax' => '0.0',
+                    'rowTotalAfterDiscountIncludingTax' => '0.0',
+                    'currency' => 'USD'
+                ]
+            ],
+            $event->getData()->offsetGet('appliedDiscounts')
+        );
+    }
+
+    public function getOnOrderEventEmptyTaxesRowDataProvider(): array
+    {
+        return [
+            'discounts not included' => [
+                'isDiscountsIncluded' => false,
+            ],
+            'discounts included' => [
+                'isDiscountsIncluded' => true,
+            ],
+        ];
+    }
+
     protected function prepareOrder(): Order
     {
         $order = new Order();
@@ -194,7 +251,8 @@ class OrderLineItemAppliedDiscountsListenerTest extends \PHPUnit\Framework\TestC
                     [$lineItem1, self::DISCOUNT1],
                     [$lineItem2, self::DISCOUNT2],
                     [$lineItem3, 0],
-                ]);
+                ]
+            );
 
         return $order;
     }
