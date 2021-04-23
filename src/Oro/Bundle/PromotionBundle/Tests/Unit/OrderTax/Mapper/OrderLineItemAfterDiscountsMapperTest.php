@@ -192,8 +192,18 @@ class OrderLineItemAfterDiscountsMapperTest extends \PHPUnit\Framework\TestCase
         self::assertEquals(clone $taxable, $this->orderLineItemAfterDiscountsMapper->map($lineItem));
     }
 
-    public function testMap(): void
-    {
+    /**
+     * @param float $lineItemSubtotal
+     * @param float $lineItemSubtotalAfterDiscounts
+     * @param float $expectedTaxablePrice
+     *
+     * @dataProvider getMapProvider
+     */
+    public function testMap(
+        float $lineItemSubtotal,
+        float $lineItemSubtotalAfterDiscounts,
+        float $expectedTaxablePrice
+    ): void {
         $taxable = new Taxable();
         $taxable->setPrice(4);
 
@@ -215,7 +225,8 @@ class OrderLineItemAfterDiscountsMapperTest extends \PHPUnit\Framework\TestCase
         $discountLineItem = new DiscountLineItem();
         $discountLineItem
             ->setSourceLineItem($lineItem)
-            ->setSubtotal(2);
+            ->setSubtotal($lineItemSubtotal)
+            ->setSubtotalAfterDiscounts($lineItemSubtotalAfterDiscounts);
         $discountContext = new DiscountContext();
         $discountContext->setLineItems([$discountLineItem]);
 
@@ -229,8 +240,26 @@ class OrderLineItemAfterDiscountsMapperTest extends \PHPUnit\Framework\TestCase
             ->willReturn($discountContext);
 
         $expectedTaxable = clone $taxable;
-        $expectedTaxable->setPrice(BigDecimal::of(2)->toScale(TaxationSettingsProvider::CALCULATION_SCALE));
+        $expectedTaxable->setPrice(
+            BigDecimal::of($expectedTaxablePrice)->toScale(TaxationSettingsProvider::CALCULATION_SCALE)
+        );
 
         self::assertEquals($expectedTaxable, $this->orderLineItemAfterDiscountsMapper->map($lineItem));
+    }
+
+    public function getMapProvider(): array
+    {
+        return [
+            'no order discounts' => [
+                'lineItemSubtotal' => 2,
+                'lineItemSubtotalAfterDiscounts' => 2,
+                'expectedTaxablePrice' => 2,
+            ],
+            'with order discount' => [
+                'lineItemSubtotal' => 3,
+                'lineItemSubtotalAfterDiscounts' => 2,
+                'expectedTaxablePrice' => 2,
+            ]
+        ];
     }
 }

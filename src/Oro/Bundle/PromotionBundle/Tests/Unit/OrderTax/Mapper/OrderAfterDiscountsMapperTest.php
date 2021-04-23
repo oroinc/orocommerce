@@ -39,7 +39,6 @@ class OrderAfterDiscountsMapperTest extends \PHPUnit\Framework\TestCase
     public function testMapCalculateAfterPromotionsDisabled(): void
     {
         $taxable = new Taxable();
-        $taxable->setAmount(4);
         $taxable->setShippingCost(2);
 
         $order = new Order();
@@ -65,7 +64,6 @@ class OrderAfterDiscountsMapperTest extends \PHPUnit\Framework\TestCase
     public function testMapExecutorNotSupportedEntity(): void
     {
         $taxable = new Taxable();
-        $taxable->setAmount(4);
         $taxable->setShippingCost(2);
 
         $order = new Order();
@@ -92,7 +90,6 @@ class OrderAfterDiscountsMapperTest extends \PHPUnit\Framework\TestCase
     public function testMap(): void
     {
         $taxable = new Taxable();
-        $taxable->setAmount(4);
         $taxable->setShippingCost(2);
 
         $order = new Order();
@@ -119,7 +116,6 @@ class OrderAfterDiscountsMapperTest extends \PHPUnit\Framework\TestCase
             ->willReturn($discountContext);
 
         $expectedTaxable = clone $taxable;
-        $expectedTaxable->setAmount($discountContext->getSubtotal());
         $expectedTaxable->setShippingCost($discountContext->getShippingCost());
 
         self::assertEquals($expectedTaxable, $this->orderAfterDiscountsMapper->map($order));

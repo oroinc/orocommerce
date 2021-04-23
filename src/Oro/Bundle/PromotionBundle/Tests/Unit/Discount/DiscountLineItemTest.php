@@ -19,7 +19,7 @@ class DiscountLineItemTest extends \PHPUnit\Framework\TestCase
     {
         $lineItem = new DiscountLineItem();
 
-        $this->assertPropertyAccessors(
+        self::assertPropertyAccessors(
             $lineItem,
             [
                 ['product', new Product()],
@@ -28,7 +28,8 @@ class DiscountLineItemTest extends \PHPUnit\Framework\TestCase
                 ['quantity', 10.5],
                 ['productUnit', new ProductUnit()],
                 ['subtotal', 42.2],
-                ['sourceLineItem', new \stdClass()]
+                ['sourceLineItem', new \stdClass()],
+                ['subtotalAfterDiscounts', 41.1, false],
             ]
         );
     }
@@ -40,10 +41,10 @@ class DiscountLineItemTest extends \PHPUnit\Framework\TestCase
 
         $lineItem = new DiscountLineItem();
         $lineItem->setProductSku('test2');
-        $this->assertEquals('test2', $lineItem->getProductSku());
+        self::assertEquals('test2', $lineItem->getProductSku());
 
         $lineItem->setProduct($product);
-        $this->assertEquals('test1', $lineItem->getProductSku());
+        self::assertEquals('test1', $lineItem->getProductSku());
     }
 
     public function testProductUnitCode()
@@ -53,34 +54,34 @@ class DiscountLineItemTest extends \PHPUnit\Framework\TestCase
 
         $lineItem = new DiscountLineItem();
         $lineItem->setProductUnitCode('test2');
-        $this->assertEquals('test2', $lineItem->getProductUnitCode());
+        self::assertEquals('test2', $lineItem->getProductUnitCode());
 
         $lineItem->setProductUnit($unit);
-        $this->assertEquals('test1', $lineItem->getProductUnitCode());
+        self::assertEquals('test1', $lineItem->getProductUnitCode());
     }
 
     public function testDiscounts()
     {
         $lineItem = new DiscountLineItem();
 
-        $this->assertEmpty($lineItem->getDiscounts());
+        self::assertEmpty($lineItem->getDiscounts());
         /** @var DiscountInterface $discount */
         $discount = $this->createMock(DiscountInterface::class);
 
         $lineItem->addDiscount($discount);
-        $this->assertSame([$discount], $lineItem->getDiscounts());
+        self::assertSame([$discount], $lineItem->getDiscounts());
     }
 
     public function testDiscountInformation()
     {
         $lineItem = new DiscountLineItem();
 
-        $this->assertEmpty($lineItem->getDiscountsInformation());
+        self::assertEmpty($lineItem->getDiscountsInformation());
         /** @var DiscountInformation $info */
         $info = $this->createMock(DiscountInformation::class);
 
         $lineItem->addDiscountInformation($info);
-        $this->assertSame([$info], $lineItem->getDiscountsInformation());
+        self::assertSame([$info], $lineItem->getDiscountsInformation());
     }
 
     public function testGetDiscountTotal()
@@ -94,7 +95,7 @@ class DiscountLineItemTest extends \PHPUnit\Framework\TestCase
         $lineItem->addDiscountInformation($discountInformation1);
         $lineItem->addDiscountInformation($discountInformation2);
 
-        $this->assertEquals(30.5, $lineItem->getDiscountTotal());
+        self::assertEquals(30.5, $lineItem->getDiscountTotal());
     }
 
     public function testClone()
@@ -112,9 +113,17 @@ class DiscountLineItemTest extends \PHPUnit\Framework\TestCase
         $lineItem->setProductUnit($productUnit);
 
         $clonedLineItem = clone $lineItem;
-        $this->assertEquals($lineItem, $clonedLineItem);
-        $this->assertSame($lineItem->getProduct(), $clonedLineItem->getProduct());
-        $this->assertNotSame($lineItem->getPrice(), $clonedLineItem->getPrice());
-        $this->assertNotSame($lineItem->getProductUnit(), $clonedLineItem->getProductUnit());
+        self::assertEquals($lineItem, $clonedLineItem);
+        self::assertSame($lineItem->getProduct(), $clonedLineItem->getProduct());
+        self::assertNotSame($lineItem->getPrice(), $clonedLineItem->getPrice());
+        self::assertNotSame($lineItem->getProductUnit(), $clonedLineItem->getProductUnit());
+    }
+
+    public function testGetSubtotalAfterDiscountsDefaultValue(): void
+    {
+        $lineItem = new DiscountLineItem();
+        $lineItem->setSubtotal(1.1);
+
+        self::assertEquals($lineItem->getSubtotal(), $lineItem->getSubtotalAfterDiscounts());
     }
 }

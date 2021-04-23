@@ -52,6 +52,9 @@ class DiscountLineItem implements DiscountLineItemInterface
      */
     protected $subtotal = 0.0;
 
+    /** @var float|null */
+    protected ?float $subtotalAfterDiscounts = null;
+
     /**
      * @var array|DiscountInterface[]
      */
@@ -205,6 +208,24 @@ class DiscountLineItem implements DiscountLineItemInterface
     public function setSubtotal($subtotal)
     {
         $this->subtotal = $subtotal;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSubtotalAfterDiscounts(): float
+    {
+        return $this->subtotalAfterDiscounts ?? $this->getSubtotal();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setSubtotalAfterDiscounts(float $subtotal): self
+    {
+        $this->subtotalAfterDiscounts = $subtotal;
 
         return $this;
     }
