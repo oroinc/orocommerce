@@ -9,6 +9,9 @@ use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
 use Oro\Bundle\TaxBundle\Form\Type\ProductTaxCodeAutocompleteType;
 use Symfony\Component\Form\FormBuilderInterface;
 
+/**
+ * Stands for handling tax code for Product.
+ */
 class ProductTaxExtension extends AbstractTaxExtension
 {
     /**
@@ -31,6 +34,7 @@ class ProductTaxExtension extends AbstractTaxExtension
                     'mapped' => false,
                     'label' => 'oro.tax.taxcode.label',
                     'create_form_route' => null,
+                    'dynamic_fields_ignore_exception' => true,
                 ]
             );
     }
