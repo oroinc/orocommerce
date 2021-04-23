@@ -39,7 +39,6 @@ class OrderAfterDiscountsMapper implements TaxMapperInterface
         ) {
             $discountContext = $this->promotionExecutor->execute($order);
 
-            $taxable->setAmount($discountContext->getSubtotal());
             $taxable->setShippingCost($discountContext->getShippingCost());
         }
 

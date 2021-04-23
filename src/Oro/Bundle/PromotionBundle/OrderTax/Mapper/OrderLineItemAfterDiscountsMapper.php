@@ -48,7 +48,7 @@ class OrderLineItemAfterDiscountsMapper implements TaxMapperInterface
             /** @var DiscountLineItemInterface $discountLineItem */
             foreach ($discountContext->getLineItems() as $discountLineItem) {
                 if ($discountLineItem->getSourceLineItem() === $lineItem) {
-                    $newPrice = BigDecimal::of($discountLineItem->getSubtotal())
+                    $newPrice = BigDecimal::of($discountLineItem->getSubtotalAfterDiscounts())
                         ->dividedBy(
                             $taxable->getQuantity(),
                             TaxationSettingsProvider::CALCULATION_SCALE,
