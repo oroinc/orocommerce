@@ -75,17 +75,6 @@ interface DiscountLineItemInterface extends
     public function setSubtotal($subtotal);
 
     /**
-     * @return float
-     */
-    public function getSubtotalAfterDiscounts(): float;
-
-    /**
-     * @param float $subtotal
-     * @return $this
-     */
-    public function setSubtotalAfterDiscounts(float $subtotal): self;
-
-    /**
      * @param DiscountInterface $discount
      * @return $this
      */

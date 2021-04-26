@@ -5,6 +5,7 @@ namespace Oro\Bundle\PromotionBundle\OrderTax\Mapper;
 use Brick\Math\BigDecimal;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItemInterface;
+use Oro\Bundle\PromotionBundle\Discount\DiscountLineItemSubtotalAfterDiscountsInterface;
 use Oro\Bundle\PromotionBundle\Executor\PromotionExecutor;
 use Oro\Bundle\TaxBundle\Mapper\TaxMapperInterface;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
@@ -45,8 +46,12 @@ class OrderLineItemAfterDiscountsMapper implements TaxMapperInterface
         ) {
             $discountContext = $this->promotionExecutor->execute($order);
 
-            /** @var DiscountLineItemInterface $discountLineItem */
+            /** @var DiscountLineItemInterface|DiscountLineItemSubtotalAfterDiscountsInterface $discountLineItem */
             foreach ($discountContext->getLineItems() as $discountLineItem) {
+                if (!($discountLineItem instanceof DiscountLineItemSubtotalAfterDiscountsInterface)) {
+                    continue;
+                }
+
                 if ($discountLineItem->getSourceLineItem() === $lineItem) {
                     $newPrice = BigDecimal::of($discountLineItem->getSubtotalAfterDiscounts())
                         ->dividedBy(

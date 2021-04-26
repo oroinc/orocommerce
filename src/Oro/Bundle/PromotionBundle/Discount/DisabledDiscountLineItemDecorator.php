@@ -9,7 +9,9 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 /**
  * Decorates DiscountLineItem to add disabled discounts (i.e. decorated with DisabledDiscountDecorator).
  */
-class DisabledDiscountLineItemDecorator implements DiscountLineItemInterface
+class DisabledDiscountLineItemDecorator implements
+    DiscountLineItemInterface,
+    DiscountLineItemSubtotalAfterDiscountsInterface
 {
     /**
      * @var DiscountLineItem

@@ -10,7 +10,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 /**
  * Implements DiscountLineItemInterface to support adding discount information on line item's level.
  */
-class DiscountLineItem implements DiscountLineItemInterface
+class DiscountLineItem implements DiscountLineItemInterface, DiscountLineItemSubtotalAfterDiscountsInterface
 {
     /**
      * @var Product|null

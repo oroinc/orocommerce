@@ -5,6 +5,7 @@ namespace Oro\Bundle\PromotionBundle\Discount\Strategy;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContextInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInformation;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItemInterface;
+use Oro\Bundle\PromotionBundle\Discount\DiscountLineItemSubtotalAfterDiscountsInterface;
 use Oro\Component\Math\BigDecimal;
 
 /**
@@ -73,7 +74,6 @@ abstract class AbstractStrategy implements StrategyInterface
         return $subtotal;
     }
 
-
     /**
      * Allocate discount amount for each Line Item as a part of Total Discount Amount
      *
@@ -104,8 +104,12 @@ abstract class AbstractStrategy implements StrategyInterface
         $lastLineItem = \array_pop($lineItems);
         $lastLineItemDiscountAmount = $discountAmount;
 
-        /** @var DiscountLineItemInterface $discountLineItem */
+        /** @var DiscountLineItemInterface|DiscountLineItemSubtotalAfterDiscountsInterface $discountLineItem */
         foreach ($lineItems as $discountLineItem) {
+            if (!($discountLineItem instanceof DiscountLineItemSubtotalAfterDiscountsInterface)) {
+                continue;
+            }
+
             $lineItemDiscountAmount = $this->calculateLineItemDiscountAmount(
                 $discountContext,
                 $discountLineItem,
@@ -121,7 +125,7 @@ abstract class AbstractStrategy implements StrategyInterface
             $lastLineItemDiscountAmount -= $lineItemDiscountAmount;
         }
 
-        if ($lastLineItem instanceof DiscountLineItemInterface) {
+        if ($lastLineItem instanceof DiscountLineItemSubtotalAfterDiscountsInterface) {
             $subtotalAfterDiscounts = $this->getSubtotalWithDiscount(
                 $lastLineItem->getSubtotalAfterDiscounts(),
                 $lastLineItemDiscountAmount
@@ -132,7 +136,7 @@ abstract class AbstractStrategy implements StrategyInterface
 
     protected function calculateLineItemDiscountAmount(
         DiscountContextInterface $discountContext,
-        DiscountLineItemInterface $discountLineItem,
+        DiscountLineItemSubtotalAfterDiscountsInterface $discountLineItem,
         float $discountAmount
     ): float {
         $subtotal = $discountContext->getSubtotal() + $discountAmount;
