@@ -4,6 +4,7 @@ namespace Oro\Bundle\TaxBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\OrganizationAwareTrait;
 use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
 
@@ -41,7 +42,7 @@ use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
  *      }
  * )
  */
-class ProductTaxCode extends AbstractTaxCode
+class ProductTaxCode extends AbstractTaxCode implements OrganizationAwareInterface
 {
     use OrganizationAwareTrait;
 

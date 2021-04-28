@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ShoppingListBundle\DataProvider;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
@@ -80,10 +81,10 @@ class ProductShoppingListsDataProvider
             return [];
         }
 
-        if ($currentShoppingList->getCustomerUser()) {
-            $shoppingLists = $this->prepareShoppingLists($products);
-        } else {
+        if ($this->tokenAccessor->getToken() instanceof AnonymousCustomerUserToken) {
             $shoppingLists = $this->prepareShoppingListsForGuestUser($currentShoppingList);
+        } else {
+            $shoppingLists = $this->prepareShoppingLists($products);
         }
 
         $shoppingLists = $this->sortShoppingLists($shoppingLists, $currentShoppingList);
@@ -125,7 +126,7 @@ class ProductShoppingListsDataProvider
     private function isShowAllInShoppingListWidget(): bool
     {
         if ($this->isShowAllShoppingLists === null) {
-            $this->isShowAllShoppingLists = $this->configManager
+            $this->isShowAllShoppingLists = (bool)$this->configManager
                 ->get('oro_shopping_list.show_all_in_shopping_list_widget');
         }
 

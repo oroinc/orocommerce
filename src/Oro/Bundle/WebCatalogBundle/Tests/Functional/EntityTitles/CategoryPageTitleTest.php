@@ -25,6 +25,7 @@ class CategoryPageTitleTest extends WebTestCase
 
     public function testWebCatalogTitles()
     {
+        $this->markTestSkipped('BAP-20556');
         $crawler = $this->client->request('GET', AbstractLoadWebCatalogData::CONTENT_NODE_SLUG);
 
         $result = $this->client->getResponse();

@@ -376,3 +376,19 @@
         {% endif %}
     </div>
 {% endblock %}
+
+{% block attribute_localized_fallback_widget %}
+    {%- if translated_value.wysiwygStyle is defined and translated_value.wysiwygStyle|length -%}
+        {%- spaceless -%}
+            <style type="text/css">{{ translated_value.wysiwygStyle|render_content }}</style>
+        {%- endspaceless -%}
+    {%- endif -%}
+
+    {% set valueIsWysiwyg = translated_value.wysiwyg is defined and translated_value.wysiwyg != null %}
+    {% set valueIsText = translated_value.text is defined and translated_value.text != null %}
+    {% if valueIsWysiwyg or valueIsText  %}
+        <div class="cms-typography">{{ translated_value|oro_html_sanitize }}</div>
+    {% else %}
+        {{ translated_value|oro_html_sanitize }}
+    {% endif %}
+{% endblock %}

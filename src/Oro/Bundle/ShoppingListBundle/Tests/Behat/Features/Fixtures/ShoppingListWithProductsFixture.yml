@@ -1,0 +1,55 @@
+include:
+    - '@OroCustomerBundle:BuyerCustomerFixture.yml'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision{1..2}:
+        unit: '@item'
+        precision: '1'
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceListToProduct{1..2}:
+        product: '@product<current()>'
+        pricelist: '@defaultPriceList'
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    productPrice{1..2}:
+        pricelist: '@defaultPriceList'
+        product: '@product<current()>'
+        productSku: 'PSKU<current()>'
+        quantity: 1
+        unit: '@item'
+        value: 1
+        currency: 'USD'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    locValue{1..2}:
+        string: 'Product <current()>'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product{1..2}:
+        sku: 'PSKU<current()>'
+        __calls:
+            - addName: ['@locValue<current()>']
+            - addUnitPrecision: ['@precision<current()>']
+            - setPrimaryUnitPrecision: ['@precision<current()>']
+        inventoryStatus: '@enumInventoryStatuses'
+        featured: true
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@defaultProductFamily'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+    shoppinglist:
+        label: 'Shopping List 1'
+        customerUser: '@amanda'
+        organization: '@organization'
+        website: '@website1'
+
+Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+    lineitem1:
+        product: '@product2'
+        quantity: '1'
+        unit: '@item'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist'
+        organization: '@organization'
