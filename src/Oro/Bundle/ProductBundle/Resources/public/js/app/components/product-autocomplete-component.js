@@ -61,7 +61,8 @@ define(function(require) {
 
             this.updateProduct();
 
-            this.$el.on('blur' + this.eventNamespace(), _.debounce(_.bind(this.onBlur, this), 150));
+            this.$el.on(`blur${this.eventNamespace()}`, _.debounce(this.onBlur.bind(this), 150));
+            this.$el.on(`input${this.eventNamespace()}`, this.abortRequestIfEmpty.bind(this));
 
             mediator.on('autocomplete:validate-response', this.validateResponse, this);
         },
@@ -83,6 +84,17 @@ define(function(require) {
                 this.resetProduct();
                 this.validateProduct(val);
             }
+        },
+
+        abortRequestIfEmpty() {
+            if (!this.disposed && !this.$el.val() && this.jqXHR) {
+                this.jqXHR.abort();
+            }
+        },
+
+        _searchForResults(...args) {
+            ProductAutocompleteComponent.__super__._searchForResults.apply(this, args);
+            this.abortRequestIfEmpty();
         },
 
         hasChanged: function(value) {
@@ -184,6 +196,11 @@ define(function(require) {
             if (this.$error) {
                 this.$error.hide();
             }
+        },
+
+        show: function() {
+            ProductAutocompleteComponent.__super__.show.call(this);
+            this.focus();
         },
 
         dispose: function() {
