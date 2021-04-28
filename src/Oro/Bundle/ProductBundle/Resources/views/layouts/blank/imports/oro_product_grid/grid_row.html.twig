@@ -48,8 +48,9 @@
         product: product
     }) %}
 
+    {% set _className = matrixFormType == 'inline' ? 'product-item__wrapper--{{ class_prefix }}' : '' %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': matrixFormType == 'inline' ? 'product-item__wrapper--{{ class_prefix }}' : '',
+        '~class': _className ~ ' product-item__base--' ~ class_prefix,
         'data-page-component-module': 'oroui/js/app/components/view-component',
         '~data-page-component-options': {
             view: 'oroproduct/js/app/views/base-product-view',
