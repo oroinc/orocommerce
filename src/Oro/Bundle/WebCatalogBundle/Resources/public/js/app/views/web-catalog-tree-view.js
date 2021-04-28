@@ -111,11 +111,17 @@ define(function(require) {
             const urls = this._getChangedUrls(nodeId, newParentId);
             for (const localization in urls) {
                 if (urls.hasOwnProperty(localization)) {
+                    const oldSlug = _.macros('oroui::renderDirection')({
+                        content: urls[localization].before
+                    }).trim();
+                    const newSlug = _.macros('oroui::renderDirection')({
+                        content: urls[localization].after
+                    }).trim();
                     list += '\n' + __(
                         'oro.redirect.confirm_slug_change.changed_slug_item',
                         {
-                            old_slug: urls[localization].before,
-                            new_slug: urls[localization].after,
+                            old_slug: oldSlug,
+                            new_slug: newSlug,
                             purpose: localization
                         }
                     );
