@@ -25,5 +25,9 @@ class OroSEOExtension extends Extension
         if (extension_loaded('zlib')) {
             $loader->load('sitemap_gzip.yml');
         }
+
+        if ('test' === $container->getParameter('kernel.environment')) {
+            $loader->load('services_test.yml');
+        }
     }
 }

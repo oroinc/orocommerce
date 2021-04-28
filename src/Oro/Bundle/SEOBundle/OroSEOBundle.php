@@ -5,6 +5,7 @@ namespace Oro\Bundle\SEOBundle;
 use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\DefaultFallbackExtensionPass;
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ContentNodeFieldsChangesCompilerPass;
 use Oro\Bundle\SEOBundle\DependencyInjection\Compiler\FullListUrlProvidersCompilerPass;
+use Oro\Bundle\SEOBundle\DependencyInjection\Compiler\MigrateFileStorageCommandCompilerPass;
 use Oro\Bundle\SEOBundle\DependencyInjection\Compiler\UrlItemsProviderCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -50,5 +51,6 @@ class OroSEOBundle extends Bundle
             'oro_seo.sitemap.website_access_denied_urls_provider'
         ));
         $container->addCompilerPass(new FullListUrlProvidersCompilerPass());
+        $container->addCompilerPass(new MigrateFileStorageCommandCompilerPass());
     }
 }
