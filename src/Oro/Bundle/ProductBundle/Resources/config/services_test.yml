@@ -24,3 +24,10 @@ services:
             - '@oro_product.tests.api.skipped_entity_provider.inner'
         calls:
             - [addSkippedEntity, ['Oro\Bundle\ProductBundle\Entity\Brand', ['create']]]
+
+    oro_product.tests.skipped_file_systems:
+        class: Oro\Bundle\GaufretteBundle\Tests\Functional\Environment\SkippedGaufretteFileSystemProvider
+        decorates: oro_gaufrette.tests.skipped_file_systems
+        arguments:
+            - '@oro_product.tests.skipped_file_systems.inner'
+            - ['import_product_images']
