@@ -24,7 +24,7 @@
             <div class="oro-toolbar__dropdown" role="menu" aria-labelledby="{{ togglerId }}">
                 <div data-page-component-module="orofrontendlocalization/js/app/components/localization-switcher-component"
                      data-page-component-options="{{ {
-                        'selectedLocalization': selected_localization.titles|localized_value,
+                        'selectedLocalization': selected_localization.id,
                         'localizationSwitcherRoute': 'oro_frontend_localization_frontend_set_current_localization'
                      }|json_encode }}"
                      data-dom-relocation-options="{{ {
