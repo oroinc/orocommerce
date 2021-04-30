@@ -36,19 +36,24 @@ define(function(require) {
 
         onCurrencyChange: function(e) {
             e.preventDefault();
-            const $el = $(e.target);
+            const newCurrency = $(e.target).data('currency');
+            const {selectedCurrency: initialCurrency} = this.options;
 
-            const currency = $el.data('currency');
-            if (currency !== this.options.selectedCurrency) {
-                mediator.execute('showLoading');
-                $.post(
-                    routing.generate(this.options.currencySwitcherRoute),
-                    {currency: currency},
-                    function() {
-                        mediator.execute('refreshPage');
-                    }
-                );
-            }
+            mediator.execute('showLoading');
+            this.syncActiveCurrency(newCurrency)
+                // try to refresh page if currency is successfully changed
+                // and return promise of page refresh action result
+                .then(() => mediator.execute('refreshPage'))
+                .fail(() => {
+                    // rollback selected currency if refresh was canceled
+                    this.syncActiveCurrency(initialCurrency)
+                        .done(() => mediator.execute('hideLoading'));
+                });
+        },
+
+        syncActiveCurrency(currency) {
+            const url = routing.generate(this.options.currencySwitcherRoute);
+            return $.post(url, {currency});
         },
 
         dispose: function() {

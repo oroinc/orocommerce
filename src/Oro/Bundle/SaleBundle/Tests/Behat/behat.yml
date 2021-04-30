@@ -62,6 +62,7 @@ oro_behat_extension:
           LineItemFreeFormSku: 'oro_sale_quote[quoteProducts][0][productSku]'
           LineItemFreeFormProduct: 'oro_sale_quote[quoteProducts][0][freeFormProduct]'
           LineItemPrice: 'oro_sale_quote[quoteProducts][0][quoteProductOffers][0][price][value]'
+          LineItemCurrency: 'oro_sale_quote[quoteProducts][0][quoteProductOffers][0][price][currency]'
           LineItemQuantity: 'oro_sale_quote[quoteProducts][0][quoteProductOffers][0][quantity]'
           LineItemFreeFormSku2: 'oro_sale_quote[quoteProducts][1][productSku]'
           LineItemFreeFormProduct2: 'oro_sale_quote[quoteProducts][1][freeFormProduct]'

@@ -21,7 +21,7 @@ layout:
                         - {breakpoint: 993, settings: {slidesToShow: 3, arrows: true}}
                         - {breakpoint: 641, settings: {slidesToShow: 2, arrows: true}}
                         - {breakpoint: 415, settings: {slidesToShow: 1, arrows: true}}
-                use_footer_align: true
+                use_footer_align: false
                 footer_align_component_options:
                     view: 'orofrontend/default/js/app/views/footer-align-view'
                     elements:
