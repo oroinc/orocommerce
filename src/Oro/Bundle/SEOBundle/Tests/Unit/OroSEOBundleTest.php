@@ -9,6 +9,7 @@ use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ContentNodeFieldsC
 use Oro\Bundle\ProductBundle\Entity\Brand;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SEOBundle\DependencyInjection\Compiler\FullListUrlProvidersCompilerPass;
+use Oro\Bundle\SEOBundle\DependencyInjection\Compiler\MigrateFileStorageCommandCompilerPass;
 use Oro\Bundle\SEOBundle\DependencyInjection\Compiler\UrlItemsProviderCompilerPass;
 use Oro\Bundle\SEOBundle\OroSEOBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -61,6 +62,7 @@ class OroSEOBundleTest extends \PHPUnit\Framework\TestCase
                     'oro_seo.sitemap.website_access_denied_urls_provider'
                 ),
                 new FullListUrlProvidersCompilerPass(),
+                new MigrateFileStorageCommandCompilerPass()
             ],
             $passes
         );

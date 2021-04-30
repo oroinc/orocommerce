@@ -4,6 +4,7 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\DataProvider;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Stub\CustomerUserStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -15,6 +16,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class ProductShoppingListsDataProviderTest extends \PHPUnit\Framework\TestCase
 {
@@ -72,6 +74,9 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit\Framework\TestCase
         $customerUser = new CustomerUserStub();
 
         $this->tokenAccessor->expects($this->any())
+            ->method('getToken')
+            ->willReturn($this->createMock(TokenInterface::class));
+        $this->tokenAccessor->expects($this->any())
             ->method('getUser')
             ->willReturn($customerUser);
 
@@ -109,6 +114,9 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit\Framework\TestCase
     ): void {
         $customerUser = new CustomerUserStub();
 
+        $this->tokenAccessor->expects($this->any())
+            ->method('getToken')
+            ->willReturn($this->createMock(TokenInterface::class));
         $this->tokenAccessor->expects($this->any())
             ->method('getUser')
             ->willReturn($customerUser);
@@ -232,9 +240,13 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testGetProductUnitsQuantityWithoutCustomerInShoppingList()
+    public function testGetProductUnitsQuantityForGuestUser()
     {
         $shoppingList = new ShoppingList();
+
+        $this->tokenAccessor->expects($this->any())
+            ->method('getToken')
+            ->willReturn($this->createMock(AnonymousCustomerUserToken::class));
 
         $this->currentShoppingListManager
             ->expects($this->any())

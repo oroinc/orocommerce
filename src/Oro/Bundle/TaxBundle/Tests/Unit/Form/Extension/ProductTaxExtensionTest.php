@@ -53,6 +53,7 @@ class ProductTaxExtensionTest extends AbstractTaxExtensionTest
                     'mapped' => false,
                     'label' => 'oro.tax.taxcode.label',
                     'create_form_route' => null,
+                    'dynamic_fields_ignore_exception' => true,
                 ]
             );
         $builder->expects($this->exactly(2))

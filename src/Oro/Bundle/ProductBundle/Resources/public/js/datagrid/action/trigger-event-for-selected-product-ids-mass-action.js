@@ -35,6 +35,11 @@ define([
          */
         execute: function() {
             const selectionState = this.datagrid.getSelectionState();
+
+            if (!this.checkSelectionState()) {
+                return;
+            }
+
             if (selectionState.inset) {
                 this._triggerSelectEvent(selectionState.selectedIds);
             } else {
