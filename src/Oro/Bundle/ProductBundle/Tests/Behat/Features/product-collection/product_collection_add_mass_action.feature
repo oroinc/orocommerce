@@ -16,8 +16,9 @@ Feature: Product collection add mass action
   Scenario: Check "add" mass action for Excluded tab popup grid when no products selected
     When I click "Excluded"
     And I click on "Add Button"
-    Then I should see "Add Products"
     When I click Add mass action in "Add Products Popup" grid
+    Then I should see "Please, select items to perform mass action." in the "UiDialog" element
+    When I click "Cancel" in modal window
     Then I should see following "Active Grid" grid:
       | SKU | NAME |
 
@@ -25,6 +26,8 @@ Feature: Product collection add mass action
     When I click on "Add Button"
     Then I should see "Add Products"
     When I click "Add" in "UiDialog ActionPanel" element
+    Then I should see "Please, select items to perform mass action." in the "UiDialog" element
+    When I click "Cancel" in modal window
     Then I should see following "Active Grid" grid:
       | SKU | NAME |
 
@@ -47,6 +50,8 @@ Feature: Product collection add mass action
     And I click on "Add Button"
     Then I should see "Add Products"
     When I click Add mass action in "Add Products Popup" grid
+    Then I should see "Please, select items to perform mass action." in the "UiDialog" element
+    When I click "Cancel" in modal window
     Then I should see following "Active Grid" grid:
       | SKU | NAME |
 
@@ -54,6 +59,8 @@ Feature: Product collection add mass action
     When I click on "Add Button"
     Then I should see "Add Products"
     When I click "Add" in "UiDialog ActionPanel" element
+    Then I should see "Please, select items to perform mass action." in the "UiDialog" element
+    When I click "Cancel" in modal window
     Then I should see following "Active Grid" grid:
       | SKU | NAME |
 

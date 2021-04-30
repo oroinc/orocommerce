@@ -19,6 +19,11 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        options: _.extend({}, DialogWidget.prototype.options, {triggerEventOnMessagesRemoved: false}),
+
+        /**
+         * @inheritDoc
+         */
         constructor: function ProductCollectionPopupAddProductsWidget(options) {
             ProductCollectionPopupAddProductsWidget.__super__.constructor.call(this, options);
         },
