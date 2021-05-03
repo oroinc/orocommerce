@@ -10,11 +10,12 @@ use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductDemand;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class QuoteDemandTest extends AbstractTest
+class QuoteDemandTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
+    use EntityTestCaseTrait;
 
     public function testProperties()
     {
@@ -58,8 +59,9 @@ class QuoteDemandTest extends AbstractTest
 
     public function testSourceDocument()
     {
-        /** @var Quote $quote */
-        $quote = $this->getEntity('Oro\Bundle\SaleBundle\Entity\Quote', ['id' => 1, 'poNumber' => 'PO123']);
+        $quote = new Quote();
+        ReflectionUtil::setId($quote, 1);
+        $quote->setPoNumber('PO123');
         $demand = new QuoteDemand();
         $demand->setQuote($quote);
 
@@ -69,8 +71,7 @@ class QuoteDemandTest extends AbstractTest
 
     public function testGetShippingMethod()
     {
-        /** @var Quote $quote */
-        $quote = $this->getEntity(Quote::class);
+        $quote = new Quote();
         $demand = new QuoteDemand();
         $demand->setQuote($quote);
         $this->assertNull($demand->getShippingMethod());
@@ -80,8 +81,7 @@ class QuoteDemandTest extends AbstractTest
 
     public function testGetShippingMethodType()
     {
-        /** @var Quote $quote */
-        $quote = $this->getEntity(Quote::class);
+        $quote = new Quote();
         $demand = new QuoteDemand();
         $demand->setQuote($quote);
         $this->assertNull($demand->getShippingMethodType());

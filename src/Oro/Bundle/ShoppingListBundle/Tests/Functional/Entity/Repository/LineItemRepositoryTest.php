@@ -374,16 +374,4 @@ class LineItemRepositoryTest extends WebTestCase
     {
         return $this->getContainer()->get('doctrine')->getRepository(CustomerUser::class);
     }
-
-    /**
-     * @param object $object
-     * @param string $property
-     * @param mixed $value
-     */
-    protected function setProperty($object, $property, $value)
-    {
-        $reflection = new \ReflectionProperty(get_class($object), $property);
-        $reflection->setAccessible(true);
-        $reflection->setValue($object, $value);
-    }
 }

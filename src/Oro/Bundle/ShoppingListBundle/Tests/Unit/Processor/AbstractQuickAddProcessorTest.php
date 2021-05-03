@@ -88,25 +88,6 @@ abstract class AbstractQuickAddProcessorTest extends \PHPUnit\Framework\TestCase
         unset($this->handler, $this->processor, $this->registry, $this->messageGenerator);
     }
 
-    /**
-     * @param string $className
-     * @param int $id
-     * @return object
-     */
-    protected function getEntity($className, $id = null)
-    {
-        $entity = new $className;
-
-        if ($id) {
-            $reflectionClass = new \ReflectionClass($className);
-            $method = $reflectionClass->getProperty('id');
-            $method->setAccessible(true);
-            $method->setValue($entity, $id);
-        }
-
-        return $entity;
-    }
-
     public function testIsValidationRequired()
     {
         $this->assertIsBool($this->processor->isValidationRequired());

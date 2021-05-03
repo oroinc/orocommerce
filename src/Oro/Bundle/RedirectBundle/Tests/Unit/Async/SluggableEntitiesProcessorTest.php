@@ -18,6 +18,7 @@ use Oro\Component\MessageQueue\Job\JobRunner;
 use Oro\Component\MessageQueue\Test\JobRunner as TestJobRunner;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
+use Oro\Component\Testing\ReflectionUtil;
 use Psr\Log\LoggerInterface;
 
 class SluggableEntitiesProcessorTest extends \PHPUnit\Framework\TestCase
@@ -87,9 +88,7 @@ class SluggableEntitiesProcessorTest extends \PHPUnit\Framework\TestCase
     public function testBatchSize($batchSize, $expected)
     {
         $this->processor->setBatchSize($batchSize);
-        $property = new \ReflectionProperty(SluggableEntitiesProcessor::class, 'batchSize');
-        $property->setAccessible(true);
-        static::assertSame($expected, $property->getValue($this->processor));
+        static::assertSame($expected, ReflectionUtil::getPropertyValue($this->processor, 'batchSize'));
     }
 
     /**

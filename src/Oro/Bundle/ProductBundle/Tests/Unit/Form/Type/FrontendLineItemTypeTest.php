@@ -9,6 +9,7 @@ use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Model\ProductLineItem;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
@@ -141,8 +142,8 @@ class FrontendLineItemTypeTest extends FormIntegrationTestCase
      */
     protected function getProductEntityWithPrecision($productId, $unitCode, $precision = 0)
     {
-        /** @var Product $product */
-        $product = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', $productId);
+        $product = new Product();
+        ReflectionUtil::setId($product, $productId);
 
         $unit = new ProductUnit();
         $unit->setCode($unitCode);
@@ -154,24 +155,6 @@ class FrontendLineItemTypeTest extends FormIntegrationTestCase
             ->setProduct($product);
 
         return $product->addUnitPrecision($unitPrecision);
-    }
-
-    /**
-     * @param string $className
-     * @param int    $id
-     *
-     * @return object
-     */
-    protected function getEntity($className, $id)
-    {
-        $entity = new $className;
-
-        $reflectionClass = new \ReflectionClass($className);
-        $method = $reflectionClass->getProperty('id');
-        $method->setAccessible(true);
-        $method->setValue($entity, $id);
-
-        return $entity;
     }
 
     /**

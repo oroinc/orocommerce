@@ -19,6 +19,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
@@ -84,8 +85,8 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
     {
         $entityType = new EntityType(
             [
-                1 => $this->getEntity('Oro\Bundle\PricingBundle\Entity\PriceList', 1),
-                2 => $this->getEntity('Oro\Bundle\PricingBundle\Entity\PriceList', 2)
+                1 => $this->getPriceList(1),
+                2 => $this->getPriceList(2)
             ]
         );
 
@@ -110,6 +111,14 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
             ),
             new ValidatorExtension(Validation::createValidator())
         ];
+    }
+
+    private function getPriceList(int $id): PriceList
+    {
+        $priceList = new PriceList();
+        ReflectionUtil::setId($priceList, $id);
+
+        return $priceList;
     }
 
     /**
@@ -151,8 +160,7 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
 
         $product->addUnitPrecision($productUnitPrecision);
 
-        /** @var PriceList $existingProductPriceList */
-        $existingProductPriceList = $this->getEntity('Oro\Bundle\PricingBundle\Entity\PriceList', 1);
+        $existingProductPriceList = $this->getPriceList(1);
         $existingProductPrice = new ProductPrice();
         $rule = new PriceRule();
         $existingProductPrice
@@ -172,8 +180,7 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
             ->setPrice((new Price())->setValue('42.0000')->setCurrency('USD'))
             ->setPriceRule(new PriceRule());
 
-        /** @var PriceList $expectedPriceList */
-        $expectedPriceList = $this->getEntity('Oro\Bundle\PricingBundle\Entity\PriceList', 2);
+        $expectedPriceList = $this->getPriceList(2);
         $expectedUnit = (new ProductUnit())->setCode('item');
         $expectedPrice = (new Price())->setValue('43.0000')->setCurrency('EUR');
 
@@ -258,25 +265,9 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
         return $choices;
     }
 
-    /**
-     * @param string $className
-     * @param int $id
-     * @return object
-     */
-    protected function getEntity($className, $id)
-    {
-        $entity = new $className;
-        $reflectionClass = new \ReflectionClass($className);
-        $method = $reflectionClass->getProperty('id');
-        $method->setAccessible(true);
-        $method->setValue($entity, $id);
-        return $entity;
-    }
-
     public function testOnPreSetData()
     {
-        /** @var PriceList $existingProductPriceList */
-        $existingProductPriceList = $this->getEntity('Oro\Bundle\PricingBundle\Entity\PriceList', 1);
+        $existingProductPriceList = $this->getPriceList(1);
         $existingProductPriceList->addCurrencyByCode('NewUSD');
         $existingProductPrice = new ProductPrice();
 

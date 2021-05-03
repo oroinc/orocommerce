@@ -6,6 +6,7 @@ use Oro\Bundle\FilterBundle\Filter\FilterUtility;
 use Oro\Bundle\PricingBundle\Filter\ProductPriceFilter;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormView;
@@ -54,9 +55,7 @@ class ProductPriceFilterTest extends \PHPUnit\Framework\TestCase
      */
     public function testParseData($data, $expected)
     {
-        $parseDataMethod = new \ReflectionMethod($this->filter, 'parseData');
-        $parseDataMethod->setAccessible(true);
-        $this->assertEquals($expected, $parseDataMethod->invoke($this->filter, $data));
+        $this->assertEquals($expected, ReflectionUtil::callMethod($this->filter, 'parseData', [$data]));
     }
 
     /**

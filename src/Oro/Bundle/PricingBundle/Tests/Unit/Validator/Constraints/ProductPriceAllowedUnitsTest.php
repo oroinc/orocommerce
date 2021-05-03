@@ -10,6 +10,7 @@ use Oro\Bundle\PricingBundle\Validator\Constraints\ProductPriceAllowedUnitsValid
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
@@ -109,12 +110,7 @@ class ProductPriceAllowedUnitsTest extends \PHPUnit\Framework\TestCase
     public function testValidateNotExistingUnit()
     {
         $price = $this->getProductPrice();
-
-        // Set null to product unit
-        $class = new \ReflectionClass($price);
-        $prop  = $class->getProperty('unit');
-        $prop->setAccessible(true);
-        $prop->setValue($price, null);
+        ReflectionUtil::setPropertyValue($price, 'unit', null);
 
         $builder = $this->createMock(ConstraintViolationBuilderInterface::class);
         $this->context->expects($this->once())
@@ -134,16 +130,8 @@ class ProductPriceAllowedUnitsTest extends \PHPUnit\Framework\TestCase
     public function testValidateNotExistingProduct()
     {
         $price = $this->getProductPrice();
-
-        // Set null to product and productSku
-        $class = new \ReflectionClass($price);
-        $product  = $class->getProperty('product');
-        $product->setAccessible(true);
-        $product->setValue($price, null);
-
-        $productSku  = $class->getProperty('productSku');
-        $productSku->setAccessible(true);
-        $productSku->setValue($price, null);
+        ReflectionUtil::setPropertyValue($price, 'product', null);
+        ReflectionUtil::setPropertyValue($price, 'productSku', null);
 
         $builder = $this->createMock(ConstraintViolationBuilderInterface::class);
         $this->context->expects($this->once())

@@ -13,6 +13,7 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeS
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Form\Type\LineItemType;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -126,7 +127,8 @@ class LineItemTypeTest extends AbstractFormIntegrationTestCase
             ->setUnit($expectedProduct->getUnitPrecision('kg')->getUnit())
             ->setNotes('my note');
 
-        $existingLineItem = $this->getEntity('Oro\Bundle\ShoppingListBundle\Entity\LineItem', 2);
+        $existingLineItem = new LineItem();
+        ReflectionUtil::setId($existingLineItem, 2);
         $existingLineItem
             ->setShoppingList($shoppingList)
             ->setProduct($expectedProduct)
@@ -188,8 +190,8 @@ class LineItemTypeTest extends AbstractFormIntegrationTestCase
         $resolvedOptions = $resolver->resolve();
 
         $lineItem = new LineItem();
-        /** @var LineItem $lineItem2 */
-        $lineItem2 = $this->getEntity('Oro\Bundle\ShoppingListBundle\Entity\LineItem', 1);
+        $lineItem2 = new LineItem();
+        ReflectionUtil::setId($lineItem2, 1);
 
         $this->assertEquals(self::DATA_CLASS, $resolvedOptions['data_class']);
         $this->assertEquals(['create'], $resolvedOptions['validation_groups']($this->getForm($lineItem)));

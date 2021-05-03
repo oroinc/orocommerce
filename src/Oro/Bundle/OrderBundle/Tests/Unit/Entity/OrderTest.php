@@ -15,6 +15,7 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -164,8 +165,8 @@ class OrderTest extends \PHPUnit\Framework\TestCase
 
         $value = 100;
         $currency = 'EUR';
-        $this->setProperty($item, 'totalDiscountsAmount', $value);
-        $this->setProperty($item, 'currency', $currency);
+        ReflectionUtil::setPropertyValue($item, 'totalDiscountsAmount', $value);
+        ReflectionUtil::setPropertyValue($item, 'currency', $currency);
 
         $item->postLoad();
 
@@ -252,7 +253,7 @@ class OrderTest extends \PHPUnit\Framework\TestCase
 
         $item->updateTotalDiscounts();
 
-        $this->assertEquals($value, $this->getProperty($item, 'totalDiscountsAmount'));
+        $this->assertEquals($value, ReflectionUtil::getPropertyValue($item, 'totalDiscountsAmount'));
     }
 
     public function testSetTotalDiscounts()
@@ -266,37 +267,7 @@ class OrderTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals($price, $item->getTotalDiscounts());
 
-        $this->assertEquals($value, $this->getProperty($item, 'totalDiscountsAmount'));
-    }
-
-    /**
-     * @param object $object
-     * @param string $property
-     * @param mixed $value
-     *
-     * @return OrderTest
-     */
-    protected function setProperty($object, $property, $value)
-    {
-        $reflection = new \ReflectionProperty(get_class($object), $property);
-        $reflection->setAccessible(true);
-        $reflection->setValue($object, $value);
-
-        return $this;
-    }
-
-    /**
-     * @param object $object
-     * @param string $property
-     *
-     * @return mixed $value
-     */
-    protected function getProperty($object, $property)
-    {
-        $reflection = new \ReflectionProperty(get_class($object), $property);
-        $reflection->setAccessible(true);
-
-        return $reflection->getValue($object);
+        $this->assertEquals($value, ReflectionUtil::getPropertyValue($item, 'totalDiscountsAmount'));
     }
 
     public function testGetProductsFromLineItems()

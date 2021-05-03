@@ -6,9 +6,13 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
+use Oro\Component\Testing\ReflectionUtil;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class RequestProductItemTest extends AbstractTest
+class RequestProductItemTest extends \PHPUnit\Framework\TestCase
 {
+    use EntityTestCaseTrait;
+
     public function testProperties()
     {
         $properties = [
@@ -27,8 +31,8 @@ class RequestProductItemTest extends AbstractTest
     {
         $item = new RequestProductItem();
         $value = 321;
-        $this->setProperty($item, 'id', $value);
-        $this->assertEquals($value, $item->getEntityIdentifier());
+        ReflectionUtil::setId($item, $value);
+        $this->assertSame($value, $item->getEntityIdentifier());
     }
 
     public function testGetProductHolder()
@@ -62,8 +66,8 @@ class RequestProductItemTest extends AbstractTest
 
         $this->assertEquals($price, $item->getPrice());
 
-        $this->assertEquals(22, $this->getProperty($item, 'value'));
-        $this->assertEquals('EUR', $this->getProperty($item, 'currency'));
+        $this->assertEquals(22, ReflectionUtil::getPropertyValue($item, 'value'));
+        $this->assertEquals('EUR', ReflectionUtil::getPropertyValue($item, 'currency'));
     }
 
     public function testLoadPrice()
@@ -72,7 +76,8 @@ class RequestProductItemTest extends AbstractTest
 
         $this->assertNull($item->getPrice());
 
-        $this->setProperty($item, 'value', 10)->setProperty($item, 'currency', 'USD');
+        ReflectionUtil::setPropertyValue($item, 'value', 10);
+        ReflectionUtil::setPropertyValue($item, 'currency', 'USD');
 
         $item->loadPrice();
 
@@ -86,7 +91,7 @@ class RequestProductItemTest extends AbstractTest
 
         $item->updatePrice();
 
-        $this->assertEquals(11, $this->getProperty($item, 'value'));
-        $this->assertEquals('EUR', $this->getProperty($item, 'currency'));
+        $this->assertEquals(11, ReflectionUtil::getPropertyValue($item, 'value'));
+        $this->assertEquals('EUR', ReflectionUtil::getPropertyValue($item, 'currency'));
     }
 }

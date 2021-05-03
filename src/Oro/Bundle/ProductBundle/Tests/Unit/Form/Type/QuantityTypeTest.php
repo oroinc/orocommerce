@@ -2,28 +2,27 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\QuantityParentTypeStub;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class QuantityTypeTest extends FormIntegrationTestCase
 {
     use QuantityTypeTrait;
 
     /** @var QuantityType */
-    protected $formType;
+    private $formType;
 
     /** @var QuantityParentTypeStub */
-    protected $parentType;
+    private $parentType;
 
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
         $this->formType = $this->getQuantityType();
@@ -68,33 +67,35 @@ class QuantityTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
+        $productUnit1 = new ProductUnit();
+        $productUnit1->setCode('kg');
+        $productUnitPrecision1 = new ProductUnitPrecision();
+        $productUnitPrecision1->setUnit($productUnit1);
+        $productUnitPrecision1->setPrecision(3);
+        $product1 = new Product();
+        ReflectionUtil::setId($product1, 1);
+        $product1->addUnitPrecision($productUnitPrecision1);
+
+        $product2 = new Product();
+        ReflectionUtil::setId($product2, 2);
+
+        $product3 = new Product();
+        ReflectionUtil::setId($product3, 1);
+
+        $productUnit2 = new ProductUnit();
+        $productUnit2->setCode('kg');
+
+        $productUnit3 = new ProductUnit();
+        $productUnit3->setCode('item');
+        $productUnit3->setDefaultPrecision(5);
+
         $entityType = new EntityTypeStub(
             [
-                1 => $this->getEntity(
-                    'Oro\Bundle\ProductBundle\Entity\Product',
-                    [
-                        'id' => 1,
-                        'unitPrecisions' => [
-                            $this->getEntity(
-                                'Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision',
-                                [
-                                    'unit' => $this->getEntity(
-                                        'Oro\Bundle\ProductBundle\Entity\ProductUnit',
-                                        ['code' => 'kg']
-                                    ),
-                                    'precision' => 3,
-                                ]
-                            ),
-                        ],
-                    ]
-                ),
-                2 => $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => 2]),
-                3 => $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => 3]),
-                'kg' => $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'kg']),
-                'item' => $this->getEntity(
-                    'Oro\Bundle\ProductBundle\Entity\ProductUnit',
-                    ['code' => 'item', 'defaultPrecision' => 5]
-                ),
+                1 => $product1,
+                2 => $product2,
+                3 => $product3,
+                'kg' => $productUnit2,
+                'item' => $productUnit3
             ]
         );
 
@@ -105,30 +106,5 @@ class QuantityTypeTest extends FormIntegrationTestCase
                 $this->getQuantityType()
             ], []),
         ];
-    }
-
-    /**
-     * @param string $className
-     * @param array $properties
-     * @return object
-     */
-    protected function getEntity($className, array $properties = [])
-    {
-        $entity = new $className;
-        $reflectionClass = new \ReflectionClass($className);
-        $propertyAccessor = PropertyAccess::createPropertyAccessor();
-
-        foreach ($properties as $property => $value) {
-            try {
-                $propertyAccessor->setValue($entity, $property, $value);
-            } catch (NoSuchPropertyException $e) {
-                $method = $reflectionClass->getProperty($property);
-                $method->setAccessible(true);
-                $method->setValue($entity, $value);
-            } catch (\ReflectionException $e) {
-            }
-        }
-
-        return $entity;
     }
 }

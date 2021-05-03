@@ -11,6 +11,7 @@ use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Provider\AddressProviderInterface;
 use Oro\Bundle\OrderBundle\Validator\Constraints\CustomerOrUserAddressGranted;
 use Oro\Bundle\OrderBundle\Validator\Constraints\CustomerOrUserAddressGrantedValidator;
+use Oro\Component\Testing\ReflectionUtil;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
@@ -79,15 +80,15 @@ class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestC
         $order->setCustomerUser($customerUser);
 
         $customerUserAddress = new CustomerUserAddress();
-        $this->setId($customerUserAddress, 123);
+        ReflectionUtil::setId($customerUserAddress, 123);
         $orderAddress = new OrderAddress();
         $orderAddress->setCustomerUserAddress($customerUserAddress);
         $order->setBillingAddress($orderAddress);
 
         $currentUserAddresses1 = new CustomerUserAddress();
-        $this->setId($currentUserAddresses1, 1);
+        ReflectionUtil::setId($currentUserAddresses1, 1);
         $currentUserAddresses2 = new CustomerUserAddress();
-        $this->setId($currentUserAddresses2, 2);
+        ReflectionUtil::setId($currentUserAddresses2, 2);
 
         $this->addressProvider->expects($this->once())
             ->method('getCustomerUserAddresses')
@@ -109,15 +110,15 @@ class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestC
         $order->setCustomer($customer);
 
         $customerAddress = new CustomerAddress();
-        $this->setId($customerAddress, 123);
+        ReflectionUtil::setId($customerAddress, 123);
         $orderAddress = new OrderAddress();
         $orderAddress->setCustomerAddress($customerAddress);
         $order->setBillingAddress($orderAddress);
 
         $currentAddresses1 = new CustomerAddress();
-        $this->setId($currentAddresses1, 1);
+        ReflectionUtil::setId($currentAddresses1, 1);
         $currentAddresses2 = new CustomerAddress();
-        $this->setId($currentAddresses2, 2);
+        ReflectionUtil::setId($currentAddresses2, 2);
 
         $this->addressProvider->expects($this->once())
             ->method('getCustomerAddresses')
@@ -139,15 +140,15 @@ class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestC
         $order->setCustomerUser($customerUser);
 
         $customerUserAddress = new CustomerUserAddress();
-        $this->setId($customerUserAddress, 123);
+        ReflectionUtil::setId($customerUserAddress, 123);
         $orderAddress = new OrderAddress();
         $orderAddress->setCustomerUserAddress($customerUserAddress);
         $order->setShippingAddress($orderAddress);
 
         $currentUserAddresses1 = new CustomerUserAddress();
-        $this->setId($currentUserAddresses1, 1);
+        ReflectionUtil::setId($currentUserAddresses1, 1);
         $currentUserAddresses2 = new CustomerUserAddress();
-        $this->setId($currentUserAddresses2, 2);
+        ReflectionUtil::setId($currentUserAddresses2, 2);
 
         $this->addressProvider->expects($this->once())
             ->method('getCustomerUserAddresses')
@@ -169,15 +170,15 @@ class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestC
         $order->setCustomer($customer);
 
         $customerAddress = new CustomerAddress();
-        $this->setId($customerAddress, 123);
+        ReflectionUtil::setId($customerAddress, 123);
         $orderAddress = new OrderAddress();
         $orderAddress->setCustomerAddress($customerAddress);
         $order->setShippingAddress($orderAddress);
 
         $currentAddresses1 = new CustomerAddress();
-        $this->setId($currentAddresses1, 1);
+        ReflectionUtil::setId($currentAddresses1, 1);
         $currentAddresses2 = new CustomerAddress();
-        $this->setId($currentAddresses2, 2);
+        ReflectionUtil::setId($currentAddresses2, 2);
 
         $this->addressProvider->expects($this->once())
             ->method('getCustomerAddresses')
@@ -199,15 +200,15 @@ class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestC
         $order->setCustomerUser($customerUser);
 
         $customerUserAddress = new CustomerUserAddress();
-        $this->setId($customerUserAddress, 123);
+        ReflectionUtil::setId($customerUserAddress, 123);
         $orderAddress = new OrderAddress();
         $orderAddress->setCustomerUserAddress($customerUserAddress);
         $order->setBillingAddress($orderAddress);
 
         $currentUserAddresses1 = new CustomerUserAddress();
-        $this->setId($currentUserAddresses1, 123);
+        ReflectionUtil::setId($currentUserAddresses1, 123);
         $currentUserAddresses2 = new CustomerUserAddress();
-        $this->setId($currentUserAddresses2, 2);
+        ReflectionUtil::setId($currentUserAddresses2, 2);
 
         $this->addressProvider->expects($this->once())
             ->method('getCustomerUserAddresses')
@@ -227,15 +228,15 @@ class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestC
         $order->setCustomer($customer);
 
         $customerAddress = new CustomerAddress();
-        $this->setId($customerAddress, 123);
+        ReflectionUtil::setId($customerAddress, 123);
         $orderAddress = new OrderAddress();
         $orderAddress->setCustomerAddress($customerAddress);
         $order->setBillingAddress($orderAddress);
 
         $currentAddresses1 = new CustomerAddress();
-        $this->setId($currentAddresses1, 123);
+        ReflectionUtil::setId($currentAddresses1, 123);
         $currentAddresses2 = new CustomerAddress();
-        $this->setId($currentAddresses2, 2);
+        ReflectionUtil::setId($currentAddresses2, 2);
 
         $this->addressProvider->expects($this->once())
             ->method('getCustomerAddresses')
@@ -255,15 +256,15 @@ class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestC
         $order->setCustomerUser($customerUser);
 
         $customerUserAddress = new CustomerUserAddress();
-        $this->setId($customerUserAddress, 123);
+        ReflectionUtil::setId($customerUserAddress, 123);
         $orderAddress = new OrderAddress();
         $orderAddress->setCustomerUserAddress($customerUserAddress);
         $order->setShippingAddress($orderAddress);
 
         $currentUserAddresses1 = new CustomerUserAddress();
-        $this->setId($currentUserAddresses1, 123);
+        ReflectionUtil::setId($currentUserAddresses1, 123);
         $currentUserAddresses2 = new CustomerUserAddress();
-        $this->setId($currentUserAddresses2, 2);
+        ReflectionUtil::setId($currentUserAddresses2, 2);
 
         $this->addressProvider->expects($this->once())
             ->method('getCustomerUserAddresses')
@@ -283,15 +284,15 @@ class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestC
         $order->setCustomer($customer);
 
         $customerAddress = new CustomerAddress();
-        $this->setId($customerAddress, 123);
+        ReflectionUtil::setId($customerAddress, 123);
         $orderAddress = new OrderAddress();
         $orderAddress->setCustomerAddress($customerAddress);
         $order->setShippingAddress($orderAddress);
 
         $currentAddresses1 = new CustomerAddress();
-        $this->setId($currentAddresses1, 123);
+        ReflectionUtil::setId($currentAddresses1, 123);
         $currentAddresses2 = new CustomerAddress();
-        $this->setId($currentAddresses2, 2);
+        ReflectionUtil::setId($currentAddresses2, 2);
 
         $this->addressProvider->expects($this->once())
             ->method('getCustomerAddresses')
@@ -301,19 +302,5 @@ class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestC
         $this->constraint->addressType = 'shipping';
         $this->validator->validate($order, $this->constraint);
         $this->assertNoViolation();
-    }
-
-    /**
-     * Cannot use EntityTrait because setValue declarations in trait and ConstraintValidatorTestCase are different.
-     *
-     * @param $entity
-     * @param $idValue
-     */
-    private function setId($entity, $idValue)
-    {
-        $reflectionClass = new \ReflectionClass($entity);
-        $method = $reflectionClass->getProperty('id');
-        $method->setAccessible(true);
-        $method->setValue($entity, $idValue);
     }
 }

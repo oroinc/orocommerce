@@ -11,6 +11,7 @@ use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use Oro\Bundle\ShippingBundle\EventListener\Datagrid\ProductShippingOptionsDatagridListener;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class ProductShippingOptionsDatagridListenerTest extends \PHPUnit\Framework\TestCase
@@ -46,11 +47,13 @@ class ProductShippingOptionsDatagridListenerTest extends \PHPUnit\Framework\Test
 
     public function testSetProductShippingOptionsClass()
     {
-        $this->assertNull($this->getProperty($this->listener, 'productShippingOptionsClass'));
+        $this->assertNull(ReflectionUtil::getPropertyValue($this->listener, 'productShippingOptionsClass'));
 
         $this->listener->setProductShippingOptionsClass('TestClass');
-
-        $this->assertEquals('TestClass', $this->getProperty($this->listener, 'productShippingOptionsClass'));
+        $this->assertEquals(
+            'TestClass',
+            ReflectionUtil::getPropertyValue($this->listener, 'productShippingOptionsClass')
+        );
     }
 
     public function testOnBuildBefore()
@@ -170,20 +173,6 @@ class ProductShippingOptionsDatagridListenerTest extends \PHPUnit\Framework\Test
                 'product' => $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => $productId])
             ]
         );
-    }
-
-    /**
-     * @param object $object
-     * @param string $property
-     *
-     * @return mixed $value
-     */
-    protected function getProperty($object, $property)
-    {
-        $reflection = new \ReflectionProperty(get_class($object), $property);
-        $reflection->setAccessible(true);
-
-        return $reflection->getValue($object);
     }
 
     /**

@@ -5,6 +5,7 @@ namespace Oro\Bundle\SEOBundle\Tests\Unit\Sitemap\Manager;
 use Oro\Bundle\SEOBundle\Manager\RobotsTxtFileManager;
 use Oro\Bundle\SEOBundle\Sitemap\Manager\RobotsTxtSitemapManager;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Component\Testing\ReflectionUtil;
 
 class RobotsTxtSitemapManagerTest extends \PHPUnit\Framework\TestCase
 {
@@ -28,14 +29,15 @@ class RobotsTxtSitemapManagerTest extends \PHPUnit\Framework\TestCase
 
     public function testAddSitemap()
     {
-        $reflection = new \ReflectionProperty(get_class($this->manager), 'newSitemaps');
-        $reflection->setAccessible(true);
-        $reflection->setValue($this->manager, ['sitemap1', 'sitemap2']);
+        ReflectionUtil::setPropertyValue($this->manager, 'newSitemaps', ['sitemap1', 'sitemap2']);
 
         $this->manager->addSitemap('sitemap1');
         $this->manager->addSitemap('sitemap3');
 
-        $this->assertEquals(['sitemap1', 'sitemap2', 'sitemap3'], $reflection->getValue($this->manager));
+        $this->assertEquals(
+            ['sitemap1', 'sitemap2', 'sitemap3'],
+            ReflectionUtil::getPropertyValue($this->manager, 'newSitemaps')
+        );
     }
 
     public function testFlush()
@@ -84,18 +86,8 @@ EOF;
 
     private function checkClear()
     {
-        $reflection = new \ReflectionClass(get_class($this->manager));
-
-        $reflectionContent = $reflection->getProperty('content');
-        $reflectionContent->setAccessible(true);
-        $this->assertEmpty($reflectionContent->getValue($this->manager));
-
-        $reflectionContent = $reflection->getProperty('newSitemaps');
-        $reflectionContent->setAccessible(true);
-        $this->assertEmpty($reflectionContent->getValue($this->manager));
-
-        $reflectionContent = $reflection->getProperty('existingSitemaps');
-        $reflectionContent->setAccessible(true);
-        $this->assertEmpty($reflectionContent->getValue($this->manager));
+        $this->assertEmpty(ReflectionUtil::getPropertyValue($this->manager, 'content'));
+        $this->assertEmpty(ReflectionUtil::getPropertyValue($this->manager, 'newSitemaps'));
+        $this->assertEmpty(ReflectionUtil::getPropertyValue($this->manager, 'existingSitemaps'));
     }
 }

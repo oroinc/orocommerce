@@ -16,6 +16,7 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Extension\Stub\ProductDataStorageExtensionStub;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\TestFrameworkBundle\Test\Logger\LoggerAwareTraitTestTrait;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -287,17 +288,10 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit\Fram
     public function getEntity($className, $id, $primaryKey = 'id')
     {
         static $entities = [];
-
         if (!isset($entities[$className][$id])) {
             $ident = $this->getPrimaryKey($className, $primaryKey);
-
-            $entity = new $className;
-            $reflectionClass = new \ReflectionClass($className);
-            $method = $reflectionClass->getProperty($ident);
-            $method->setAccessible(true);
-            $method->setValue($entity, $id);
-
-            $entities[$className][$id] = $entity;
+            $entities[$className][$id] = new $className();
+            ReflectionUtil::setPropertyValue($entities[$className][$id], $ident, $id);
         }
 
         return $entities[$className][$id];
