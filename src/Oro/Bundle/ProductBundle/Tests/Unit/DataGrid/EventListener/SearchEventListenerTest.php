@@ -18,7 +18,7 @@ class SearchEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     private const KEY = 'search';
 
-    /**  @var SearchProductHandler|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var SearchProductHandler|\PHPUnit\Framework\MockObject\MockObject */
     private $searchProductHandler;
 
     /** @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject */

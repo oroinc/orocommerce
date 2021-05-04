@@ -12,14 +12,10 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class PriceListWithPriorityCollectionHandlerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var PriceListWithPriorityCollectionHandler
-     */
+    /** @var PriceListWithPriorityCollectionHandler */
     protected $handler;
 
-    /**
-     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject $doctrineHelper
-     */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     protected $doctrineHelper;
 
     protected function setUp(): void

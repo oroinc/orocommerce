@@ -89,7 +89,7 @@ class UpdateSlugsDemoDataFixturesListenerTest extends DemoDataFixturesListenerTe
             ]
         );
 
-        /* @var $slug1 Slug */
+        /* @var Slug $slug1 */
         $slug1 = $this->getEntity(
             Slug::class,
             [
@@ -188,7 +188,7 @@ class UpdateSlugsDemoDataFixturesListenerTest extends DemoDataFixturesListenerTe
 
     public function testOnPostLoadWithDisabledDirectUrls()
     {
-        /* @var $slug1 Slug */
+        /* @var Slug $slug1 */
         $slug1 = $this->getEntity(
             Slug::class,
             [

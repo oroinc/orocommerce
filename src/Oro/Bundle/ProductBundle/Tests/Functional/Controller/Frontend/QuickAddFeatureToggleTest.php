@@ -11,7 +11,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class QuickAddFeatureToggleTest extends WebTestCase
 {
-    /** @var ConfigManager $configManager */
+    /** @var ConfigManager */
     protected $configManager;
 
     protected function setUp(): void

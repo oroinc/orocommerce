@@ -60,7 +60,7 @@ class CategoryTypeTest extends WebTestCase
         $defaultShortDescription = 'Default Short Description';
         $defaultLongDescription = 'Default Long Description';
 
-        /* @var $fileLocator FileLocator */
+        /* @var FileLocator $fileLocator */
         $fileLocator = $this->getContainer()->get('file_locator');
 
         $smallImageName = self::SMALL_IMAGE_NAME;

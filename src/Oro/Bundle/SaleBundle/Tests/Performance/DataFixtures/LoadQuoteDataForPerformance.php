@@ -13,10 +13,10 @@ class LoadQuoteDataForPerformance extends AbstractFixture
 
     const QUOTES_TO_EXPIRE = 10000;
 
-    /** @var int  */
+    /** @var int */
     protected $quotesToExpire = self::QUOTES_TO_EXPIRE;
 
-    /** @var array  */
+    /** @var array */
     protected static $quoteUpdateFields = [
         'user_owner_id',
         'qid',

@@ -70,7 +70,7 @@ class LoadConfigurableProductOrderLineItemData extends AbstractFixture implement
                 ->setProductUnit($this->getReference($definition['productUnit']))
                 ->setPrice(Price::create($definition['price']['value'], $definition['price']['currency']));
 
-            /* @var $order Order */
+            /* @var Order $order */
             $order = $this->getReference($definition['order']);
             $order->addLineItem($lineItem);
 

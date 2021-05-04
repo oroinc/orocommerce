@@ -90,7 +90,7 @@ class OrderTypeTest extends TypeTestCase
     /** @var NumberFormatter|\PHPUnit\Framework\MockObject\MockObject */
     private $numberFormatter;
 
-    /** @var ValidatorInterface  */
+    /** @var ValidatorInterface */
     private $validator;
 
     /** @var OrderLineItemCurrencyHandler */
@@ -129,7 +129,6 @@ class OrderTypeTest extends TypeTestCase
 
     public function testConfigureOptions()
     {
-        /* @var $resolver \PHPUnit\Framework\MockObject\MockObject|OptionsResolver */
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setDefaults')

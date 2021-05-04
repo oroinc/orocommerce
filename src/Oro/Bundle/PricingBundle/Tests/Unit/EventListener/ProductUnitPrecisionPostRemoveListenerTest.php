@@ -18,22 +18,15 @@ class ProductUnitPrecisionPostRemoveListenerTest extends \PHPUnit\Framework\Test
 {
     use EntityTrait;
 
-    /**
-     * @var ShardManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ShardManager|\PHPUnit\Framework\MockObject\MockObject */
     private $shardManager;
 
-    /**
-     * @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
     private $featureChecker;
 
-    /**
-     * @var ProductUnitPrecisionPostRemoveListener
-     * */
+    /** @var ProductUnitPrecisionPostRemoveListener */
     private $listener;
 
-    /** {@inheritdoc} */
     protected function setUp(): void
     {
         $this->shardManager = $this->createMock(ShardManager::class);

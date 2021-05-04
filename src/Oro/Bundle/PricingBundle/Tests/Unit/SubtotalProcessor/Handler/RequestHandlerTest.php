@@ -21,10 +21,10 @@ class RequestHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject|AuthorizationCheckerInterface */
     protected $authorizationChecker;
 
-    /** @var  \PHPUnit\Framework\MockObject\MockObject|EntityRoutingHelper */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|EntityRoutingHelper */
     protected $entityRoutingHelper;
 
-    /** @var  \PHPUnit\Framework\MockObject\MockObject|Registry */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|Registry */
     protected $doctrine;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|RequestHandler */

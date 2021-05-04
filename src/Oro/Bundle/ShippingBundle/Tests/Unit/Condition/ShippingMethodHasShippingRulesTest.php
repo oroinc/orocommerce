@@ -127,10 +127,7 @@ class ShippingMethodHasShippingRulesTest extends \PHPUnit\Framework\TestCase
 
     public function testSetContextAccessor()
     {
-        /** @var ContextAccessorInterface|\PHPUnit\Framework\MockObject\MockObject $contextAccessor * */
-        $contextAccessor = $this->getMockBuilder(ContextAccessorInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $contextAccessor = $this->createMock(ContextAccessorInterface::class);
 
         $this->shippingMethodHasShippingRulesCondition->setContextAccessor($contextAccessor);
 

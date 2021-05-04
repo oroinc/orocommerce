@@ -23,7 +23,7 @@ class CategoryTreeProviderTest extends \PHPUnit\Framework\TestCase
     /** @var CategoryTreeProvider */
     protected $provider;
 
-    /** @var MasterCatalogRootProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var MasterCatalogRootProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $masterCatalogRootProvider;
 
     protected function setUp(): void

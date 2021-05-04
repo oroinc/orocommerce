@@ -109,7 +109,6 @@ class QuoteTypeTest extends AbstractTest
             ->method('isGranted')
             ->with('oro_quote_add_free_form_items')
             ->willReturn(false);
-        /* @var $resolver \PHPUnit\Framework\MockObject\MockObject|OptionsResolver */
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setDefaults')
@@ -399,13 +398,10 @@ class QuoteTypeTest extends AbstractTest
      */
     protected function getExtensions()
     {
-        /* @var $translator \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface */
         $translator = $this->createMock(TranslatorInterface::class);
 
-        /* @var $registry ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
         $registry = $this->createMock(ManagerRegistry::class);
 
-        /* @var $productUnitLabelFormatter \PHPUnit\Framework\MockObject\MockObject|UnitLabelFormatterInterface */
         $productUnitLabelFormatter = $this->createMock(UnitLabelFormatterInterface::class);
 
         $userSelectType = new StubEntityType(

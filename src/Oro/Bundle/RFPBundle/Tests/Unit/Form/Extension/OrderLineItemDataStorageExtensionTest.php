@@ -267,8 +267,7 @@ class OrderLineItemDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
             );
         }
 
-        /** @var  $builder */
-        $builder = $this->createMock('Symfony\Component\Form\FormBuilderInterface');
+        $builder = $this->createMock(FormBuilderInterface::class);
         if ($expectsAddEventListener) {
             $builder->expects($this->exactly(2))->method('addEventListener')->with(
                 $this->isType('string'),

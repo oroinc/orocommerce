@@ -53,7 +53,7 @@ class DecrementInventoryTest extends CheckoutControllerTestCase
         $this->precisionBottleQuantity = self::processTemplateData(
             '@inventory_level.product_unit_precision.product-1.bottle->quantity'
         );
-        /* @var $configManager ConfigManager */
+        /* @var ConfigManager $configManager */
         $configManager = $this->getContainer()->get('oro_config.global');
         $configManager->set('oro_inventory.manage_inventory', true);
         $configManager->flush();

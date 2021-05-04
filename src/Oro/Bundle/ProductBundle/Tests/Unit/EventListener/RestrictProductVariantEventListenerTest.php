@@ -22,7 +22,7 @@ class RestrictProductVariantEventListenerTest extends \PHPUnit\Framework\TestCas
     /** @var RestrictProductVariantEventListener */
     private $listener;
 
-    /** @var RestrictProductVariantEvent|\PHPUnit\Framework\MockObject\MockObject*/
+    /** @var RestrictProductVariantEvent|\PHPUnit\Framework\MockObject\MockObject */
     private $event;
 
     /**

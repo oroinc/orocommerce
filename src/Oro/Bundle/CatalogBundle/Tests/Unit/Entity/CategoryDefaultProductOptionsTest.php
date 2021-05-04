@@ -12,7 +12,7 @@ class CategoryDefaultProductOptionsTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 
-    /** @var  CategoryDefaultProductOptions $defaultProductOptions */
+    /** @var CategoryDefaultProductOptions */
     protected $entity;
 
     protected function setUp(): void

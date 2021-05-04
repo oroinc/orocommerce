@@ -1,5 +1,6 @@
 <?php
 
+
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Persistence\ManagerRegistry;
@@ -77,9 +78,7 @@ class QuoteProductTypeTest extends AbstractTest
             ->willReturn($this->manager)
         ;
 
-        /* @var $productUnitLabelFormatter \PHPUnit\Framework\MockObject\MockObject|UnitLabelFormatterInterface */
         $productUnitLabelFormatter = $this->createMock(UnitLabelFormatterInterface::class);
-
         $productUnitLabelFormatter->expects($this->any())
             ->method('format')
             ->will($this->returnCallback(function ($unitCode, $isShort) {
@@ -110,7 +109,6 @@ class QuoteProductTypeTest extends AbstractTest
 
     public function testConfigureOptions()
     {
-        /* @var $resolver \PHPUnit\Framework\MockObject\MockObject|OptionsResolver */
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setDefaults')
@@ -146,7 +144,6 @@ class QuoteProductTypeTest extends AbstractTest
 
         $view->vars = $inputData['vars'];
 
-        /* @var $form \PHPUnit\Framework\MockObject\MockObject|FormInterface */
         $form = $this->createMock(FormInterface::class);
 
         $this->formType->finishView($view, $form, $inputData['options']);
@@ -551,38 +548,25 @@ class QuoteProductTypeTest extends AbstractTest
         $replacementSku = null,
         $type = QuoteProduct::TYPE_OFFER
     ) {
-        /* @var $quoteProduct \PHPUnit\Framework\MockObject\MockObject|QuoteProduct */
         $quoteProduct = $this->createMock(QuoteProduct::class);
-        $quoteProduct
-            ->expects($this->any())
+        $quoteProduct->expects($this->any())
             ->method('getId')
-            ->willReturn($id)
-        ;
-        $quoteProduct
-            ->expects($this->any())
+            ->willReturn($id);
+        $quoteProduct->expects($this->any())
             ->method('isTypeNotAvailable')
-            ->willReturn($type === QuoteProduct::TYPE_NOT_AVAILABLE)
-        ;
-        $quoteProduct
-            ->expects($this->any())
+            ->willReturn($type === QuoteProduct::TYPE_NOT_AVAILABLE);
+        $quoteProduct->expects($this->any())
             ->method('getProduct')
-            ->willReturn($product)
-        ;
-        $quoteProduct
-            ->expects($this->any())
+            ->willReturn($product);
+        $quoteProduct->expects($this->any())
             ->method('getProductSku')
-            ->willReturn($productSku)
-        ;
-        $quoteProduct
-            ->expects($this->any())
+            ->willReturn($productSku);
+        $quoteProduct->expects($this->any())
             ->method('getProductReplacement')
-            ->willReturn($replacement)
-        ;
-        $quoteProduct
-            ->expects($this->any())
+            ->willReturn($replacement);
+        $quoteProduct->expects($this->any())
             ->method('getProductReplacementSku')
-            ->willReturn($replacementSku)
-        ;
+            ->willReturn($replacementSku);
 
         return $quoteProduct;
     }

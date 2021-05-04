@@ -282,7 +282,6 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
         foreach (self::$items as $item) {
             $poNumber = 'CA' . mt_rand(1000, 9999) . 'USD';
 
-            /* @var $quote Quote */
             $quote = new Quote();
             $quote
                 ->setQid($item['qid'])

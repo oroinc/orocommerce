@@ -22,34 +22,22 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var ContentNodeTreeCacheDumper|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ContentNodeTreeCacheDumper|\PHPUnit\Framework\MockObject\MockObject */
     private $dumper;
 
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $registry;
 
-    /**
-     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $logger;
 
-    /**
-     * @var JobRunner|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var JobRunner|\PHPUnit\Framework\MockObject\MockObject */
     private $jobRunner;
 
-    /**
-     * @var ContentNodeTreeCacheProcessor
-     */
+    /** @var ContentNodeTreeCacheProcessor */
     private $processor;
 
-    /**
-     * @var CacheProvider|\PHPUnit_Framework_MockObject_MockObject
-     */
+    /** @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $layoutCacheProvider;
 
     protected function setUp(): void

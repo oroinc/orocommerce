@@ -155,14 +155,14 @@ class LoadUserData extends AbstractFixture
      */
     private function loadCustomerUsers(ObjectManager $manager)
     {
-        /* @var $userManager CustomerUserManager */
+        /* @var CustomerUserManager $userManager */
         $userManager = $this->container->get('oro_customer_user.manager');
 
         $defaultUser = $this->getUser($manager);
         $organization = $defaultUser->getOrganization();
 
         foreach ($this->customerUsers as $item) {
-            /* @var $customerUser CustomerUser */
+            /* @var CustomerUser $customerUser */
             $customerUser = $userManager->createUser();
 
             $customerUser
@@ -198,7 +198,7 @@ class LoadUserData extends AbstractFixture
         $roles = $defaultUser->getRoles();
 
         foreach ($this->users as $item) {
-            /* @var $user User */
+            /* @var User $user */
             $user = $userManager->createUser();
             $user
                 ->setFirstName($item['firstname'])

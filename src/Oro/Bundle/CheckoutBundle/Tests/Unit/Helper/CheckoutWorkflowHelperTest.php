@@ -22,10 +22,10 @@ class CheckoutWorkflowHelperTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var  CheckoutWorkflowHelper */
+    /** @var CheckoutWorkflowHelper */
     private $helper;
 
-    /** @var  WorkflowManager|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var WorkflowManager|\PHPUnit\Framework\MockObject\MockObject */
     private $workflowManager;
 
     /**

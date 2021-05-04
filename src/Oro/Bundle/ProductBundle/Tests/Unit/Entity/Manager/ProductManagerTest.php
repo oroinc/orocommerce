@@ -12,10 +12,10 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 class ProductManagerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var  EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $eventDispatcher;
 
-    /** @var  ProductManager */
+    /** @var ProductManager */
     protected $productManager;
 
     protected function setUp(): void

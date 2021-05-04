@@ -31,7 +31,6 @@ class UpsConnectionValidatorResultFactoryTest extends \PHPUnit\Framework\TestCas
         array $upsResponse,
         UpsConnectionValidatorResultInterface $expectedResult
     ) {
-        /** @var RestResponseInterface|\PHPUnit\Framework\MockObject\MockObject $response * */
         $response = $this->createMock(RestResponseInterface::class);
         $response->expects(static::once())
             ->method('json')

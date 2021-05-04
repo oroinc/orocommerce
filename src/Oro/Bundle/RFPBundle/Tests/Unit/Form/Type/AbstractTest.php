@@ -253,23 +253,16 @@ abstract class AbstractTest extends FormIntegrationTestCase
      */
     protected function createRequestProduct($id, $product, $productSku)
     {
-        /* @var $requestProduct \PHPUnit\Framework\MockObject\MockObject|RequestProduct */
-        $requestProduct = $this->createMock('Oro\Bundle\RFPBundle\Entity\RequestProduct');
-        $requestProduct
-            ->expects(static::any())
+        $requestProduct = $this->createMock(RequestProduct::class);
+        $requestProduct->expects(static::any())
             ->method('getId')
-            ->will(static::returnValue($id))
-        ;
-        $requestProduct
-            ->expects(static::any())
+            ->willReturn($id);
+        $requestProduct->expects(static::any())
             ->method('getProduct')
-            ->will(static::returnValue($product))
-        ;
-        $requestProduct
-            ->expects(static::any())
+            ->willReturn($product);
+        $requestProduct->expects(static::any())
             ->method('getProductSku')
-            ->will(static::returnValue($productSku))
-        ;
+            ->willReturn($productSku);
 
         return $requestProduct;
     }
@@ -339,9 +332,8 @@ abstract class AbstractTest extends FormIntegrationTestCase
      */
     protected function getRequestProduct($productId = null, $comment = null, array $items = [])
     {
-        /* @var $product Product */
+        /* @var Product|null $product */
         $product = null;
-
         if ($productId) {
             $product = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', $productId);
 
@@ -354,8 +346,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
         $requestProduct
             ->setRequest($this->getEntity('Oro\Bundle\RFPBundle\Entity\Request', $productId))
             ->setProduct($product)
-            ->setComment($comment)
-        ;
+            ->setComment($comment);
 
         foreach ($items as $item) {
             $requestProduct->addRequestProductItem($item);

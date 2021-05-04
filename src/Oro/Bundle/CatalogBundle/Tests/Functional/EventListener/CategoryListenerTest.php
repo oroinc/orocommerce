@@ -24,7 +24,7 @@ class CategoryListenerTest extends WebTestCase
     /** @var CategoryRepository */
     private $categoryRepo;
 
-    /** @var Category  */
+    /** @var Category */
     private $rootCategory;
 
     protected function setUp(): void

@@ -16,7 +16,7 @@ class ProductShippingOptionsTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 
-    /** @var ProductShippingOptions $entity */
+    /** @var ProductShippingOptions */
     protected $entity;
 
     protected function setUp(): void

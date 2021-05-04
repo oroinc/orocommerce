@@ -14,19 +14,13 @@ class ProductStepOneTypeTest extends WebTestCase
 {
     const CATEGORY_ID = 1;
 
-    /**
-     * @var FormFactoryInterface
-     */
+    /** @var FormFactoryInterface */
     protected $formFactory;
 
-    /**
-     * @var $defaultFamily AttributeFamily;
-     */
+    /** @var AttributeFamily */
     protected $defaultFamily;
 
-    /**
-     * @var CsrfTokenManagerInterface
-     */
+    /** @var CsrfTokenManagerInterface */
     protected $tokenManager;
 
     protected function setUp(): void

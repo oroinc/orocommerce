@@ -23,9 +23,7 @@ class LoadConfigValue extends AbstractFixture implements DependentFixtureInterfa
     {
         $configManager = $this->container->get('oro_config.manager');
 
-        /**
-         * @var $website Website
-         */
+        /** @var Website $website */
         $website = $this->getReference(LoadWebsiteData::WEBSITE1);
         $configManager->setScopeIdFromEntity($website);
 

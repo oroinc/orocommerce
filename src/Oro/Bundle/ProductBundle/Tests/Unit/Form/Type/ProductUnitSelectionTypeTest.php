@@ -338,7 +338,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
 
         if (isset($view->vars['choices'])) {
             $choices = [];
-            /* @var $choice ChoiceView */
+            /* @var ChoiceView $choice */
             foreach ($view->vars['choices'] as $choice) {
                 $choices[$choice->value] = $choice->label;
             }
@@ -513,7 +513,6 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         ProductUnit $productUnit = null,
         ProductHolderInterface $productHolder = null
     ) {
-        /* @var $productUmitHolder \PHPUnit\Framework\MockObject\MockObject|ProductUnitHolderInterface */
         $productUnitHolder = $this->createMock(ProductUnitHolderInterface::class);
         $productUnitHolder
             ->expects(static::any())
@@ -542,14 +541,11 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
      */
     protected function createProductHolder($productSku, Product $product = null)
     {
-        /* @var $productHolder \PHPUnit\Framework\MockObject\MockObject|ProductHolderInterface */
         $productHolder = $this->createMock(ProductHolderInterface::class);
-
         $productHolder
             ->expects(static::any())
             ->method('getProduct')
             ->willReturn($product);
-
         $productHolder
             ->expects(static::any())
             ->method('getProductSku')

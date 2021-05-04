@@ -17,7 +17,7 @@ class ProductUpcomingFormExtensionTest extends \PHPUnit\Framework\TestCase
      */
     protected $productFormExtension;
 
-    /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder * */
+    /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $builder;
 
     /**

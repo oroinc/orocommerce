@@ -28,11 +28,9 @@ class CombinedPriceListToPriceListRepositoryTest extends WebTestCase
      */
     public function testGetPriceListsByCombinedAndProduct($combinedPriceList, $product, $expectedPriceLists)
     {
-        /**
-         * @var $combinedPriceList CombinedPriceList
-         * @var $product Product
-         */
+        /** @var CombinedPriceList $combinedPriceList */
         $combinedPriceList = $this->getReference($combinedPriceList);
+        /** @var Product $product */
         $product = $this->getReference($product);
         $priceListsRelations = $this->getRepository()->getPriceListRelations($combinedPriceList, [$product]);
 

@@ -329,8 +329,8 @@ class ProductRepositoryTest extends WebTestCase
 
     public function testDeleteByProduct()
     {
+        /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
-        /** @var $product Product */
         $category = $this->getCategoryByProduct($product);
         $this->repository->deleteByProduct($product);
         $this->repository->insertByProduct(
@@ -347,8 +347,8 @@ class ProductRepositoryTest extends WebTestCase
 
     public function testInsertByProduct()
     {
+        /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
-        /** @var $product Product */
         $category = $this->getCategoryByProduct($product);
         $this->repository->deleteByProduct($product);
         $this->repository->insertByProduct(
@@ -364,6 +364,7 @@ class ProductRepositoryTest extends WebTestCase
 
     public function testInsertByProductWithoutCategory()
     {
+        /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_2);
 
         $visibility = new ProductVisibility();
@@ -374,7 +375,6 @@ class ProductRepositoryTest extends WebTestCase
         $em->persist($visibility);
         $em->flush();
 
-        /** @var $product Product */
         $this->repository->deleteByProduct($product);
         $this->repository->insertByProduct(
             $this->insertExecutor,

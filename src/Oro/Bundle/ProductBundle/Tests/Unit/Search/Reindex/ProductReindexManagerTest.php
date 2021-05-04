@@ -42,7 +42,7 @@ class ProductReindexManagerTest extends \PHPUnit\Framework\TestCase
     public function testReindexProduct()
     {
         $event = $this->getReindexationEvents(self::PRODUCT_ID, self::WEBSITE_ID);
-        /** @var $product Product|\PHPUnit\Framework\MockObject\MockObject */
+        /** @var Product $product */
         $product = $this->getEntity(Product::class, [ 'id' => self::PRODUCT_ID ]);
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')

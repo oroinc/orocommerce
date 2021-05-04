@@ -28,7 +28,7 @@ class EnumValueCollectionExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var EnumValueCollectionExtension */
     private $extension;
 
-    /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
+    /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $form;
 
     /** @var FormConfigInterface|\PHPUnit\Framework\MockObject\MockObject */

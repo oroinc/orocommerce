@@ -34,13 +34,13 @@ class ReindexProductOrderListenerTest extends \PHPUnit\Framework\TestCase
     /** @var ReindexProductOrderListener */
     protected $listener;
 
-    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject  */
+    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
     protected $featureChecker;
 
-    /** @var  Website */
+    /** @var Website */
     protected $website;
 
-    /** @var  OrderStub */
+    /** @var OrderStub */
     protected $order;
 
     /**

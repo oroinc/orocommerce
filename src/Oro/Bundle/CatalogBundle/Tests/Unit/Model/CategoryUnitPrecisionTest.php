@@ -10,7 +10,7 @@ class CategoryUnitPrecisionTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 
-    /** @var CategoryUnitPrecision $entity */
+    /** @var CategoryUnitPrecision */
     protected $entity;
 
     protected function setUp(): void

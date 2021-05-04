@@ -13,7 +13,7 @@ class QuoteFrontendPage extends EntityPage
      */
     public function assertPageContainsValue($label, $value)
     {
-        /* @var $rowElement TableRow */
+        /* @var TableRow $rowElement */
         $rowElement = $this->findElementContains('TableRow', $label);
 
         if (!$rowElement->isIsset()) {

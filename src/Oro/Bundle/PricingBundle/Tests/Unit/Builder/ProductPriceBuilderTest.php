@@ -154,7 +154,6 @@ class ProductPriceBuilderTest extends \PHPUnit\Framework\TestCase
     {
         $priceList = new PriceList();
 
-        /** @var Product|\PHPUnit\Framework\MockObject\MockObject $product * */
         $product = $this->createMock(Product::class);
 
         $rule1 = new PriceRule();
@@ -196,7 +195,6 @@ class ProductPriceBuilderTest extends \PHPUnit\Framework\TestCase
     {
         $priceList = new PriceList();
 
-        /** @var Product|\PHPUnit\Framework\MockObject\MockObject $product * */
         $product = $this->createMock(Product::class);
 
         $rule1 = new PriceRule();

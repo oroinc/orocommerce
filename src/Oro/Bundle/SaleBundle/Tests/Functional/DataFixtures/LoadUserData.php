@@ -230,7 +230,7 @@ class LoadUserData extends AbstractFixture
      */
     private function loadRoles(ObjectManager $manager)
     {
-        /* @var $aclManager AclManager */
+        /* @var AclManager $aclManager */
         $aclManager = $this->container->get('oro_security.acl.manager');
 
         foreach ($this->roles as $key => $items) {
@@ -282,14 +282,14 @@ class LoadUserData extends AbstractFixture
      */
     private function loadCustomerUsers(ObjectManager $manager)
     {
-        /* @var $userManager CustomerUserManager */
+        /* @var CustomerUserManager $userManager */
         $userManager = $this->container->get('oro_customer_user.manager');
 
         $defaultUser = $this->getUser($manager);
         $organization = $defaultUser->getOrganization();
 
         foreach ($this->customerUsers as $item) {
-            /* @var $customerUser CustomerUser */
+            /* @var CustomerUser $customerUser */
             $customerUser = $userManager->createUser();
 
             $customerUser
@@ -330,7 +330,7 @@ class LoadUserData extends AbstractFixture
         $roles = $defaultUser->getRoles();
 
         foreach ($this->users as $item) {
-            /* @var $user User */
+            /* @var User $user */
             $user = $userManager->createUser();
             $user
                 ->setEmail($item['email'])

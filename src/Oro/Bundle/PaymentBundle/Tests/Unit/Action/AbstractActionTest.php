@@ -27,10 +27,10 @@ abstract class AbstractActionTest extends \PHPUnit\Framework\TestCase
     /** @var AbstractPaymentMethodAction */
     protected $action;
 
-    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject $dispatcher */
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $dispatcher;
 
-    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject $dispatcher */
+    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $logger;
 
     protected function setUp(): void

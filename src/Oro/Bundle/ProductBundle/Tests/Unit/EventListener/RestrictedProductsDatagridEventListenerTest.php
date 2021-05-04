@@ -14,13 +14,13 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class RestrictedProductsDatagridEventListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var  ProductManager|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var ProductManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $productManager;
 
-    /** @var QueryBuilder|\PHPUnit\Framework\MockObject\MockObject $qb */
+    /** @var QueryBuilder|\PHPUnit\Framework\MockObject\MockObject */
     protected $qb;
 
-    /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject $requestStack */
+    /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject */
     protected $requestStack;
 
     /** @var RestrictedProductsDatagridEventListener */

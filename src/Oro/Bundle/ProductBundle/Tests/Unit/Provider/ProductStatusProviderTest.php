@@ -7,7 +7,7 @@ use Oro\Bundle\ProductBundle\Provider\ProductStatusProvider;
 
 class ProductStatusProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ProductStatusProvider $productStatusProvider */
+    /** @var ProductStatusProvider */
     protected $productStatusProvider;
 
     protected function setUp(): void

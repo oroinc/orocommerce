@@ -9,7 +9,7 @@ class FreightClassTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 
-    /** @var FreightClass $entity */
+    /** @var FreightClass */
     protected $entity;
 
     protected function setUp(): void

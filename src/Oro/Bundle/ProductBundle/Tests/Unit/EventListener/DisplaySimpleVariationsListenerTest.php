@@ -16,7 +16,7 @@ class DisplaySimpleVariationsListenerTest extends \PHPUnit\Framework\TestCase
     /** @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $categoryCache;
 
-    /** @var  DisplaySimpleVariationsListener */
+    /** @var DisplaySimpleVariationsListener */
     protected $eventListener;
 
     /**

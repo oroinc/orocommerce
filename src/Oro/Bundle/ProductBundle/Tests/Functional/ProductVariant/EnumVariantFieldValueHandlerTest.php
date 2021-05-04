@@ -19,8 +19,8 @@ class EnumVariantFieldValueHandlerTest extends WebTestCase
 {
     private const FIELD_NAME = 'fieldName';
 
-    /** @var EnumVariantFieldValueHandler  */
-    private $enumVarianFieldValueHandler;
+    /** @var EnumVariantFieldValueHandler */
+    private $enumVariantFieldValueHandler;
 
     /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
@@ -56,7 +56,7 @@ class EnumVariantFieldValueHandlerTest extends WebTestCase
         $this->localeSettings = $this->createMock(LocaleSettings::class);
         $this->cache = $this->getCache();
 
-        $this->enumVarianFieldValueHandler = new EnumVariantFieldValueHandler(
+        $this->enumVariantFieldValueHandler = new EnumVariantFieldValueHandler(
             $this->doctrineHelper,
             $this->enumValueProvider,
             $this->logger,
@@ -88,9 +88,9 @@ class EnumVariantFieldValueHandlerTest extends WebTestCase
             ->method('getLocale')
             ->willReturn('en_US');
 
-        $expected = $this->enumVarianFieldValueHandler->getPossibleValues('fieldName');
+        $expected = $this->enumVariantFieldValueHandler->getPossibleValues('fieldName');
         // Cache fetch
-        $actual = $this->enumVarianFieldValueHandler->getPossibleValues('fieldName');
+        $actual = $this->enumVariantFieldValueHandler->getPossibleValues('fieldName');
         $this->assertEquals($expected, $actual);
     }
 
@@ -116,8 +116,8 @@ class EnumVariantFieldValueHandlerTest extends WebTestCase
             ->method('getLocale')
             ->willReturnOnConsecutiveCalls('en_US', 'de_DE');
 
-        $enData = $this->enumVarianFieldValueHandler->getPossibleValues('fieldName');
-        $deData = $this->enumVarianFieldValueHandler->getPossibleValues('fieldName');
+        $enData = $this->enumVariantFieldValueHandler->getPossibleValues('fieldName');
+        $deData = $this->enumVariantFieldValueHandler->getPossibleValues('fieldName');
 
         $this->assertEquals(['cache_data_en'], $enData);
         $this->assertEquals(['cache_data_de'], $deData);

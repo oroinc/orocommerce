@@ -45,10 +45,10 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var DatagridInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $datagrid;
 
-    /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DatagridInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $datagridWithoutFilters;
 
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $registry */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $registry;
 
     /** @var SearchQueryInterface|\PHPUnit\Framework\MockObject\MockObject */
@@ -66,7 +66,7 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var CategoryCountsExtension */
     private $extension;
 
-    /** @var array  */
+    /** @var array */
     private $parameters = [
         'categoryId' => self::CATEGORY_ID,
         'includeSubcategories' => true,
@@ -110,7 +110,6 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
             ->method('getDatasource')
             ->willReturn($searchDatasource);
 
-        /** @var SearchDatasource|\PHPUnit_Framework_MockObject_MockObject $searchDatasource */
         $searchDatasourceWithoutFilters = $this->createMock(SearchDatasource::class);
         $searchDatasourceWithoutFilters->expects($this->any())
             ->method('getSearchQuery')

@@ -17,7 +17,7 @@ class OrderLineItemsOrderObjectAccessListenerTest extends \PHPUnit\Framework\Tes
     /** @var \PHPUnit\Framework\MockObject\MockObject */
     private $authorizationChecker;
 
-    /** @var BuildBefore*/
+    /** @var BuildBefore */
     private $event;
 
     /** @var OrderLineItemsOrderObjectAccessListener */

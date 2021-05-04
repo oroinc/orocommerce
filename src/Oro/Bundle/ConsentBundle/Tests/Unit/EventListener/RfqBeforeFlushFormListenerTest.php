@@ -15,7 +15,7 @@ use Symfony\Component\Form\FormInterface;
 
 class RfqBeforeFlushFormListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var FeatureChecker|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
     private $featureChecker;
 
     /** @var RfqBeforeFlushFormListener */
@@ -37,7 +37,6 @@ class RfqBeforeFlushFormListenerTest extends \PHPUnit\Framework\TestCase
             ->with('consents', null)
             ->willReturn(false);
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
         $form = $this->createMock(FormInterface::class);
 
         $event = new AfterFormProcessEvent($form, []);
@@ -63,7 +62,6 @@ class RfqBeforeFlushFormListenerTest extends \PHPUnit\Framework\TestCase
     {
         $this->configureFeatureEnabled();
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
         $form = $this->createMock(FormInterface::class);
 
         $event = new AfterFormProcessEvent($form, []);
@@ -78,7 +76,6 @@ class RfqBeforeFlushFormListenerTest extends \PHPUnit\Framework\TestCase
     {
         $this->configureFeatureEnabled();
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
         $form = $this->createMock(FormInterface::class);
 
         $requestForQuote = new Request();
@@ -96,7 +93,6 @@ class RfqBeforeFlushFormListenerTest extends \PHPUnit\Framework\TestCase
     {
         $this->configureFeatureEnabled();
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
         $form = $this->createMock(FormInterface::class);
 
         $requestForQuote = new Request();
@@ -104,7 +100,6 @@ class RfqBeforeFlushFormListenerTest extends \PHPUnit\Framework\TestCase
         $requestForQuote->setCustomerUser($customerUser);
         $event = new AfterFormProcessEvent($form, $requestForQuote);
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
         $consentFieldForm = $this->createMock(FormInterface::class);
 
         $form->expects($this->once())

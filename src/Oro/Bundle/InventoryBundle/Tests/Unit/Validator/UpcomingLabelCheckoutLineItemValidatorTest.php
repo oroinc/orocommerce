@@ -11,7 +11,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class UpcomingLabelCheckoutLineItemValidatorTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var  UpcomingLabelCheckoutLineItemValidator */
+    /** @var UpcomingLabelCheckoutLineItemValidator */
     private $validator;
 
     /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */

@@ -18,7 +18,7 @@ class WebsiteContextManagerTest extends \PHPUnit\Framework\TestCase
     /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelperMock;
 
-    /** @var  WebsiteContextManager */
+    /** @var WebsiteContextManager */
     private $websiteContextManager;
 
     /** @var WebsiteRepository|\PHPUnit\Framework\MockObject\MockObject */

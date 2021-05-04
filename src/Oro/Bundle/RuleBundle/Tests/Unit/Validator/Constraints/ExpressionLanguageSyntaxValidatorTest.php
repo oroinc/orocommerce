@@ -63,7 +63,6 @@ class ExpressionLanguageSyntaxValidatorTest extends \PHPUnit\Framework\TestCase
             ->method('addViolation')
             ->with($message);
 
-        /** @var Constraint|\PHPUnit\Framework\MockObject\MockObject $constraint * */
         $constraint = $this->createMock(Constraint::class);
         $this->expressionLanguageSyntaxValidator->initialize($this->context);
         $this->expressionLanguageSyntaxValidator->validate($expression, $constraint);

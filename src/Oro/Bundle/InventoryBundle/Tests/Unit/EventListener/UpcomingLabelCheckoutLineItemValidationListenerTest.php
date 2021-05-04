@@ -11,13 +11,13 @@ use Oro\Bundle\ShoppingListBundle\Event\LineItemValidateEvent;
 
 class UpcomingLabelCheckoutLineItemValidationListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var  UpcomingLabelCheckoutLineItemValidationListener */
+    /** @var UpcomingLabelCheckoutLineItemValidationListener */
     protected $listener;
 
-    /** @var  UpcomingLabelCheckoutLineItemValidator|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var UpcomingLabelCheckoutLineItemValidator|\PHPUnit\Framework\MockObject\MockObject */
     protected $validator;
 
-    /** @var  LineItemValidateEvent|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var LineItemValidateEvent|\PHPUnit\Framework\MockObject\MockObject */
     protected $event;
 
     protected function setUp(): void

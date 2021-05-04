@@ -17,13 +17,13 @@ class ProductControllerTest extends WebTestCase
     /** @var Client */
     protected $client;
 
-    /** @var Translator $translator*/
+    /** @var Translator */
     protected $translator;
 
-    /** @var ConfigManager $configManager */
+    /** @var ConfigManager */
     protected $configManager;
 
-    /** @var ConfigManager $globalConfigManager */
+    /** @var ConfigManager */
     protected $globalConfigManager;
 
     protected function setUp(): void

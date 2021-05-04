@@ -79,15 +79,15 @@ abstract class AbstractLoadCheckouts extends AbstractFixture implements
     public function load(ObjectManager $manager)
     {
         $this->manager = $manager;
-        /* @var $owner User */
+        /* @var User $owner */
         $owner = $manager->getRepository(User::class)->findOneBy([]);
-        /* @var $workflowManager WorkflowManager */
+        /* @var WorkflowManager $workflowManager */
         $workflowManager = $this->container->get('oro_workflow.manager');
         $this->clearPreconditions();
         $defaultCustomerUser = $this->getDefaultCustomerUser($manager);
         $website = $this->getReference(LoadWebsiteData::WEBSITE1);
         foreach ($this->getData() as $name => $checkoutData) {
-            /* @var $customerUser CustomerUser */
+            /* @var CustomerUser $customerUser */
             $customerUser = isset($checkoutData['customerUser']) ?
                 $this->getReference($checkoutData['customerUser']) :
                 $defaultCustomerUser;

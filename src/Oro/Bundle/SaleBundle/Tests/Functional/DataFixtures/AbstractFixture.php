@@ -41,7 +41,7 @@ abstract class AbstractFixture extends DoctrineAbstractFixture implements Contai
      */
     protected function getUser(ObjectManager $manager)
     {
-        /* @var $user User */
+        /* @var User $user */
         $user = $manager->getRepository('OroUserBundle:User')->findOneBy([
             'email' => LoadAdminUserData::DEFAULT_ADMIN_EMAIL,
         ]);

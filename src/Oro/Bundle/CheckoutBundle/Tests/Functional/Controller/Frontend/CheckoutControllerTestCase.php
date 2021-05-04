@@ -57,12 +57,10 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
     const TRANSITION_BACK_TO_BILLING_ADDRESS = 'back_to_billing_address';
     const TRANSITION_BACK_TO_SHIPPING_ADDRESS = 'back_to_shipping_address';
 
-    /** @var  ManagerRegistry */
+    /** @var ManagerRegistry */
     protected $registry;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected static $checkoutUrl;
 
     protected function setUp(): void

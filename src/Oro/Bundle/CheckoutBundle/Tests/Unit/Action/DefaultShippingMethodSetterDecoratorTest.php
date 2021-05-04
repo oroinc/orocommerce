@@ -70,13 +70,10 @@ class DefaultShippingMethodSetterDecoratorTest extends \PHPUnit\Framework\TestCa
         $quoteDemand->expects($this->never())
             ->method('getShippingMethodType');
 
-        /* @var $checkout Checkout|\PHPUnit\Framework\MockObject\MockObject */
         $checkout = $this->createMock(Checkout::class);
-
         $checkout->expects($this->once())
             ->method('getSourceEntity')
             ->willReturn($quoteDemand);
-
         $checkout->expects($this->never())
             ->method('setShippingMethod');
         $checkout->expects($this->never())
@@ -98,13 +95,10 @@ class DefaultShippingMethodSetterDecoratorTest extends \PHPUnit\Framework\TestCa
             ->method('getShippingMethodType')
             ->willReturn(null);
 
-        /* @var $checkout Checkout|\PHPUnit\Framework\MockObject\MockObject */
         $checkout = $this->createMock(Checkout::class);
-
         $checkout->expects($this->once())
             ->method('getSourceEntity')
             ->willReturn($quoteDemand);
-
         $checkout->expects($this->never())
             ->method('setShippingMethod');
         $checkout->expects($this->never())

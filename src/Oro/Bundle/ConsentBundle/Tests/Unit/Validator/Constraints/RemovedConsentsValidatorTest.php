@@ -26,7 +26,7 @@ class RemovedConsentsValidatorTest extends \PHPUnit\Framework\TestCase
     /** @var RemovedConsents */
     private $constraint;
 
-    /** @var ExecutionContext|\PHPUnit\Framework\MockObject\MockObject $context */
+    /** @var ExecutionContext|\PHPUnit\Framework\MockObject\MockObject */
     private $context;
 
     /**

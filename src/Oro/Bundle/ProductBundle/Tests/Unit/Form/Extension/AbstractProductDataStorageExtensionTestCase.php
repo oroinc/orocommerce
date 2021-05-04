@@ -317,8 +317,7 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit\Fram
      */
     protected function getBuilderMock($expectsAddEventListener = false)
     {
-        /** @var  $builder */
-        $builder = $this->createMock('Symfony\Component\Form\FormBuilderInterface');
+        $builder = $this->createMock(FormBuilderInterface::class);
         if ($expectsAddEventListener) {
             $builder->expects($this->any())->method('addEventListener')->with(
                 $this->isType('string'),

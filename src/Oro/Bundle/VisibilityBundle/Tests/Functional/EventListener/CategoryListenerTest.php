@@ -38,11 +38,11 @@ class CategoryListenerTest extends WebTestCase
 
     public function testChangeProductCategory()
     {
-        /** @var $product Product */
+        /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
         $previousCategory = $this->categoryRepository->findOneByProduct($product);
 
-        /** @var $newCategory Category */
+        /** @var Category $newCategory */
         $newCategory = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
         $this->categoryManager->refresh($newCategory);
 
@@ -58,7 +58,7 @@ class CategoryListenerTest extends WebTestCase
 
     public function testRemoveProductFromCategoryAndAddProductToCategory()
     {
-        /** @var $product Product */
+        /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_2);
         $category = $this->categoryRepository->findOneByProduct($product);
 

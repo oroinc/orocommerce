@@ -12,10 +12,10 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 class ProductStatusTypeTest extends FormIntegrationTestCase
 {
-    /** @var  ProductStatusType $productStatusType */
+    /** @var ProductStatusType */
     protected $productStatusType;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|ProductStatusProvider $productStatusProvider */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ProductStatusProvider */
     protected $productStatusProvider;
 
     protected function setUp(): void

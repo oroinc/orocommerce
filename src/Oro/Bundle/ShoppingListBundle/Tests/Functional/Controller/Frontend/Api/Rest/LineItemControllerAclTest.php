@@ -43,7 +43,7 @@ class LineItemControllerAclTest extends WebTestCase
 
     public function testDelete()
     {
-        /* @var $lineItem LineItem */
+        /* @var LineItem $lineItem */
         $lineItem = $this->getReference('shopping_list_line_item.1');
 
         $this->client->request(
@@ -56,7 +56,7 @@ class LineItemControllerAclTest extends WebTestCase
 
     public function testPut()
     {
-        /* @var $lineItem LineItem */
+        /* @var LineItem $lineItem */
         $lineItem = $this->getReference('shopping_list_line_item.1');
         $productUnit = $this->getReference('product_unit.bottle');
         $updatedLineItem = [FrontendLineItemType::NAME => ['unit' => $productUnit->getCode(), 'quantity' => 2]];
@@ -72,7 +72,7 @@ class LineItemControllerAclTest extends WebTestCase
 
     public function testDeleteAccessDenied()
     {
-        /* @var $lineItem LineItem */
+        /* @var LineItem $lineItem */
         $lineItem = $this->getReference('shopping_list_line_item.1');
 
         $this->client->request(
@@ -91,7 +91,7 @@ class LineItemControllerAclTest extends WebTestCase
 
     public function testPutAccessDenied()
     {
-        /* @var $lineItem LineItem */
+        /* @var LineItem $lineItem */
         $lineItem = $this->getReference('shopping_list_line_item.1');
         $productUnit = $this->getReference('product_unit.bottle');
         $updatedLineItem = [FrontendLineItemType::NAME => ['unit' => $productUnit->getCode(), 'quantity' => 2]];
@@ -112,7 +112,7 @@ class LineItemControllerAclTest extends WebTestCase
 
     public function testDeleteAccessDeniedByLineItemACL()
     {
-        /* @var $lineItem LineItem */
+        /* @var LineItem $lineItem */
         $lineItem = $this->getReference('shopping_list_line_item.1');
         $role = $lineItem->getCustomerUser()->getRoles()[0];
 
@@ -127,7 +127,7 @@ class LineItemControllerAclTest extends WebTestCase
 
     public function testPutAccessDeniedByLineItemACL()
     {
-        /* @var $lineItem LineItem */
+        /* @var LineItem $lineItem */
         $lineItem = $this->getReference('shopping_list_line_item.1');
         $role = $lineItem->getCustomerUser()->getRoles()[0];
         $productUnit = $this->getReference('product_unit.bottle');

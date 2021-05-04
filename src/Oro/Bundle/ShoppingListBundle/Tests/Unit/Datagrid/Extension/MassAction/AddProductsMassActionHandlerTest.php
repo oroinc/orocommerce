@@ -28,7 +28,7 @@ class AddProductsMassActionHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var AddProductsMassActionHandler */
     protected $handler;
 
-    /** @var  MassActionHandlerArgs */
+    /** @var MassActionHandlerArgs */
     protected $args;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|ShoppingListLineItemHandler */

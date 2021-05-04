@@ -253,7 +253,7 @@ class QuoteControllerTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader($inputData['login'], $inputData['password']));
 
-        /* @var $quote Quote */
+        /* @var Quote $quote */
         $quote = $this->getReference($inputData['qid']);
 
         $crawler = $this->client->request('GET', $this->getUrl(
@@ -268,12 +268,12 @@ class QuoteControllerTest extends WebTestCase
 
         $this->assertSameSize($expectedData['columns'], $controls);
 
-        /* @var $translator TranslatorInterface */
+        /* @var TranslatorInterface $translator */
         $translator = $this->getContainer()->get('translator');
 
         $accessor = PropertyAccess::createPropertyAccessor();
         foreach ($controls as $key => $control) {
-            /* @var $control \DOMElement */
+            /* @var \DOMElement $control */
             $column = $expectedData['columns'][$key];
 
             $label = $translator->trans($column['label']);
@@ -540,7 +540,7 @@ class QuoteControllerTest extends WebTestCase
     {
         $this->loginUser($user);
 
-        /* @var $quote Quote */
+        /* @var Quote $quote */
         $quote = $this->getReference(LoadQuoteData::QUOTE2);
 
         $this->client->request(
@@ -580,7 +580,7 @@ class QuoteControllerTest extends WebTestCase
     {
         $this->loginUser(LoadUserData::PARENT_ACCOUNT_USER1);
 
-        /* @var $quote Quote */
+        /* @var Quote $quote */
         $quote = $this->getReference(LoadQuoteData::QUOTE3);
 
         $this->client->request(
@@ -599,7 +599,7 @@ class QuoteControllerTest extends WebTestCase
     {
         $this->loginUser(LoadUserData::PARENT_ACCOUNT_USER1);
 
-        /* @var $quote Quote */
+        /* @var Quote $quote */
         $quote = $this->getReference(LoadQuoteData::QUOTE_DRAFT);
 
         $this->client->request(
@@ -634,8 +634,7 @@ class QuoteControllerTest extends WebTestCase
 
         $configManager->flush();
 
-        /** @var $quote Quote */
-
+        /** @var Quote $quote */
         $quote = $this->getReference($qid);
 
         $crawler = $this->client->request(
@@ -762,7 +761,7 @@ class QuoteControllerTest extends WebTestCase
     public function testActualQuantityNotEqualToOfferedValidation(): void
     {
         $this->loginUser(LoadUserData::ACCOUNT1_USER2);
-        /* @var $quote Quote */
+        /* @var Quote $quote */
         $quote = $this->getReference(LoadQuoteData::QUOTE13);
         $operationName = 'oro_sale_frontend_quote_submit_to_order';
         $entityId = $quote->getId();

@@ -123,7 +123,6 @@ abstract class AbstractCanonicalUrlGeneratorTestCase extends \PHPUnit\Framework\
     {
         $slugs = new ArrayCollection([$slug]);
 
-        /** @var SluggableInterface|\PHPUnit\Framework\MockObject\MockObject $data * */
         $data = $this->createMock(SluggableInterface::class);
         $data->expects($this->any())
             ->method('getSlugs')

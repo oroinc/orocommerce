@@ -20,7 +20,7 @@ class CustomerProductVisibilityResolvedTest extends \PHPUnit\Framework\TestCase
     /** @var Product */
     protected $product;
 
-    /** @var  @var Scope */
+    /** @var @var Scope */
     protected $scope;
 
     /**
