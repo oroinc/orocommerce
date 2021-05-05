@@ -49,10 +49,10 @@
                     tr {
                         td {
                             &:first-child {
-                                padding-#{$start}: 5px;
+                                padding-left: 5px;
                             }
                             &:last-child {
-                                padding-#{$end}: 5px;
+                                padding-right: 5px;
                             }
                         }
                     }
@@ -61,7 +61,7 @@
         }
 
         .validation-failed {
-            padding-#{$start}: $content-padding-medium;
+            padding-left: $content-padding-medium;
         }
     }
 }

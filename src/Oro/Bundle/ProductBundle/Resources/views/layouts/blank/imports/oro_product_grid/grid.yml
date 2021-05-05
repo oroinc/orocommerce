@@ -42,6 +42,9 @@ layout:
                     blockType: container
                 product_grid_container:
                     blockType: container
+                    options:
+                        vars:
+                            use_footer_align: false
             tree:
                 page_content:
                     product_index_page:

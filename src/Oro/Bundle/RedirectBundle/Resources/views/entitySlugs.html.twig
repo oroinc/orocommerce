@@ -8,4 +8,6 @@
     {% endif %}
 {% endset %}
 
-{{ UI.renderHtmlProperty('oro.redirect.slug.entity_plural_label'|trans, slugs) }}
+{{ UI.renderHtmlProperty('oro.redirect.slug.entity_plural_label'|trans, slugs, null, null, {
+    'dir': entitySlugs is empty ? null : 'ltr'
+}) }}

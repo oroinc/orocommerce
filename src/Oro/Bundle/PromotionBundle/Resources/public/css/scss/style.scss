@@ -52,7 +52,7 @@
     display: flex;
 
     .btn.btn-primary {
-        margin-#{$start}: $content-padding-small;
+        margin-left: $content-padding-small;
     }
 }
 
@@ -74,7 +74,7 @@ label.dashes-sequence-suffix-label {
         display: block;
 
         .btn.btn-primary {
-            margin-#{$start}: 0;
+            margin-left: 0;
             margin-top: $content-padding-small;
         }
     }

@@ -1,12 +1,35 @@
 /* @theme: blank; */
 
 .embedded-products {
+    display: flex;
+
     &__item {
         width: (100% / $embedded-products-item-count-desktop);
+        height: initial;
+        display: flex;
+        flex-direction: column;
+
+        &.slick-slide {
+            height: initial;
+            display: flex;
+            flex-direction: column;
+        }
+
+        &:not(.slick-slide) {
+            min-width: (100% / $embedded-products-item-count-desktop);
+        }
     }
 
     .slick-arrow {
         top: $embedded-products-slider-arrow-top;
+    }
+
+    .slick-track {
+        display: flex;
+    }
+
+    .slick-list {
+        width: 100%;
     }
 }
 

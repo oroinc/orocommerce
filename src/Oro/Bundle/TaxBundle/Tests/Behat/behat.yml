@@ -103,3 +103,10 @@ oro_behat_extension:
             locator: '//input[contains(@class, "select2-input")]'
             type: xpath
             element: Select2Entities
+
+    Tax Code Form:
+      selector: 'form[name="oro_entity_config_type"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Other, Show On Form: 'oro_entity_config_type[form][is_enabled]'
