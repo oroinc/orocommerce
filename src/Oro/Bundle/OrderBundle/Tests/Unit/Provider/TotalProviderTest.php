@@ -14,25 +14,19 @@ use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Provider\AbstractSubto
 
 class TotalProviderTest extends AbstractSubtotalProviderTest
 {
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|SubtotalProviderRegistry
-     */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|SubtotalProviderRegistry */
     protected $subtotalProviderRegistry;
 
-    /**
-     * @var TotalProvider
-     */
+    /** @var TotalProvider */
     protected $provider;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|TotalProcessorProvider
-     */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|TotalProcessorProvider */
     protected $processorProvider;
 
-    /** @var  \PHPUnit\Framework\MockObject\MockObject|RateConverterInterface */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|RateConverterInterface */
     protected $rateConverter;
 
-    /** @var  \PHPUnit\Framework\MockObject\MockObject|DefaultCurrencyProviderInterface */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|DefaultCurrencyProviderInterface */
     protected $currencyProvider;
 
     protected function setUp(): void

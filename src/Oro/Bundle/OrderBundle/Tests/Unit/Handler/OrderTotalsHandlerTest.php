@@ -12,22 +12,16 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class OrderTotalsHandlerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|TotalProcessorProvider
-     */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|TotalProcessorProvider */
     protected $totalsProvider;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|LineItemSubtotalProvider
-     */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|LineItemSubtotalProvider */
     protected $lineItemSubtotalProvider;
 
-    /**
-     * @var OrderTotalsHandler
-     */
+    /** @var OrderTotalsHandler */
     protected $handler;
 
-    /** @var RateConverterInterface  */
+    /** @var RateConverterInterface */
     protected $rateConverter;
 
     protected function setUp(): void

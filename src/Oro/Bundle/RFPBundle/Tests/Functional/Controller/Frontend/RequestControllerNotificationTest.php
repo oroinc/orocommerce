@@ -30,12 +30,10 @@ class RequestControllerNotificationTest extends WebTestCase
     /** @var ObjectManager */
     protected $em;
 
-    /** @var  ConfigManager */
+    /** @var ConfigManager */
     protected $configManager;
 
-    /**
-     * @var Website
-     */
+    /** @var Website */
     protected $website;
 
     /**

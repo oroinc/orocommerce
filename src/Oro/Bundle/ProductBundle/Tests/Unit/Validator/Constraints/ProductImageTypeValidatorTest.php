@@ -14,14 +14,10 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ProductImageTypeValidatorTest extends ConstraintValidatorTestCase
 {
-    /**
-     * @var ImageTypeProvider|\PHPUnit\Framework\MockObject\MockObject $imageTypeProvider
-     */
+    /** @var ImageTypeProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $imageTypeProvider;
 
-    /**
-     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject $translator
-     */
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $translator;
 
     protected function setUp(): void

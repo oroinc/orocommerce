@@ -15,10 +15,10 @@ use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 class FrontendProductCleanUpListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
-    /** @var AclHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $aclHelper;
 
     /** @var FrontendProductCleanUpListener */
@@ -35,9 +35,7 @@ class FrontendProductCleanUpListenerTest extends \PHPUnit\Framework\TestCase
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->aclHelper = $this->createMock(AclHelper::class);
         $this->listener = new FrontendProductCleanUpListener($this->doctrineHelper, $this->aclHelper);
-        /** @var $datagridMock DatagridInterface|\PHPUnit_Framework_MockObject_MockObject */
         $datagridMock = $this->createMock(DatagridInterface::class);
-        /** @var $queryMock SearchQueryInterface|\PHPUnit_Framework_MockObject_MockObject */
         $queryMock = $this->createMock(SearchQueryInterface::class);
         $this->event = new SearchResultAfter($datagridMock, $queryMock, []);
     }
@@ -82,7 +80,6 @@ class FrontendProductCleanUpListenerTest extends \PHPUnit\Framework\TestCase
      */
     private function configureQueryBuilder(array $expectedResult): void
     {
-        /** @var $repository ProductRepository|\PHPUnit\Framework\MockObject\MockObject */
         $repository = $this->createMock(ProductRepository::class);
 
         $queryBuilder = $this->createMock(QueryBuilder::class);

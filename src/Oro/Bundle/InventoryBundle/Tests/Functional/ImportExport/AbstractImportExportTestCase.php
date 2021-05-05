@@ -11,6 +11,7 @@ use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\Yaml\Yaml;
 
 abstract class AbstractImportExportTestCase extends WebTestCase
@@ -198,11 +199,7 @@ abstract class AbstractImportExportTestCase extends WebTestCase
     protected function cleanUpReader()
     {
         $reader = $this->getContainer()->get('oro_importexport.reader.csv');
-        $reflection = new \ReflectionProperty(get_class($reader), 'file');
-        $reflection->setAccessible(true);
-        $reflection->setValue($reader, null);
-        $reflection = new \ReflectionProperty(get_class($reader), 'header');
-        $reflection->setAccessible(true);
-        $reflection->setValue($reader, null);
+        ReflectionUtil::setPropertyValue($reader, 'file', null);
+        ReflectionUtil::setPropertyValue($reader, 'header', null);
     }
 }

@@ -19,7 +19,6 @@ abstract class ProductInventoryTest extends \PHPUnit\Framework\TestCase
      */
     public function testBuildForm(ProductStub $product, $expectedFallBackId)
     {
-        /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder * */
         $builder = $this->createMock(FormBuilderInterface::class);
 
         $builder->expects($this->once())

@@ -9,10 +9,10 @@ use Oro\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent;
 
 class ProductNormalizerEventListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var  ProductNormalizerEventListener */
+    /** @var ProductNormalizerEventListener */
     protected $listener;
 
-    /** @var  UpcomingProductProvider|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var UpcomingProductProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $productUpcomingProvider;
 
     protected function setUp(): void

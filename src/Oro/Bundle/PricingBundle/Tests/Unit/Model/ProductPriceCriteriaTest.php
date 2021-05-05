@@ -5,9 +5,18 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Model;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Component\Testing\ReflectionUtil;
 
 class ProductPriceCriteriaTest extends \PHPUnit\Framework\TestCase
 {
+    private function getProduct(int $id): Product
+    {
+        $product = new Product();
+        ReflectionUtil::setId($product, $id);
+
+        return $product;
+    }
+
     /**
      * @dataProvider productPriceCriteriaDataProvider
      *
@@ -107,20 +116,5 @@ class ProductPriceCriteriaTest extends \PHPUnit\Framework\TestCase
         $productPriceCriteria = new ProductPriceCriteria($product, $productUnit, 42, 'USD');
 
         $this->assertEquals('150-kg-42-USD', $productPriceCriteria->getIdentifier());
-    }
-
-    /**
-     * @param int $id
-     * @return Product
-     */
-    protected function getProduct($id)
-    {
-        $product = new Product();
-
-        $reflection = new \ReflectionProperty(get_class($product), 'id');
-        $reflection->setAccessible(true);
-        $reflection->setValue($product, $id);
-
-        return $product;
     }
 }

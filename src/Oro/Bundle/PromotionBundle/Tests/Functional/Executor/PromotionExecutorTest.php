@@ -28,9 +28,7 @@ class PromotionExecutorTest extends FrontendWebTestCase
     const STRATEGY_APPLY_ALL = 'apply_all';
     const SHIPPING_METHOD = '';
 
-    /**
-     * @var ConfigManager $configManager
-     */
+    /** @var ConfigManager */
     protected $configManager;
 
     protected function setUp(): void

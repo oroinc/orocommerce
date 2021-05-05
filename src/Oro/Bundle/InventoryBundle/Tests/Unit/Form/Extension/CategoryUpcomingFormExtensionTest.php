@@ -17,7 +17,7 @@ class CategoryUpcomingFormExtensionTest extends \PHPUnit\Framework\TestCase
      */
     protected $categoryFormExtension;
 
-    /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder * */
+    /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $builder;
 
     /**

@@ -11,6 +11,7 @@ use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitHolderTypeStub;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -149,12 +150,10 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
             ->method('getAdditionalUnitPrecisions')
             ->willReturn($additionalUnitPrecisions);
 
-        $method = new \ReflectionMethod(
-            ProductUnitSelectionType::class,
-            'getProductUnits'
+        $this->assertEquals(
+            $expectedData,
+            ReflectionUtil::callMethod($this->formType, 'getProductUnits', [$form, $product])
         );
-        $method->setAccessible(true);
-        $this->assertEquals($expectedData, $method->invokeArgs($this->formType, array($form, $product)));
     }
 
     /**
@@ -339,7 +338,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
 
         if (isset($view->vars['choices'])) {
             $choices = [];
-            /* @var $choice ChoiceView */
+            /* @var ChoiceView $choice */
             foreach ($view->vars['choices'] as $choice) {
                 $choices[$choice->value] = $choice->label;
             }
@@ -514,7 +513,6 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         ProductUnit $productUnit = null,
         ProductHolderInterface $productHolder = null
     ) {
-        /* @var $productUmitHolder \PHPUnit\Framework\MockObject\MockObject|ProductUnitHolderInterface */
         $productUnitHolder = $this->createMock(ProductUnitHolderInterface::class);
         $productUnitHolder
             ->expects(static::any())
@@ -543,14 +541,11 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
      */
     protected function createProductHolder($productSku, Product $product = null)
     {
-        /* @var $productHolder \PHPUnit\Framework\MockObject\MockObject|ProductHolderInterface */
         $productHolder = $this->createMock(ProductHolderInterface::class);
-
         $productHolder
             ->expects(static::any())
             ->method('getProduct')
             ->willReturn($product);
-
         $productHolder
             ->expects(static::any())
             ->method('getProductSku')
@@ -697,38 +692,19 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         $productUnit->setCode($code);
         $unitPrecision = new ProductUnitPrecision();
         $unitPrecision->setUnit($productUnit);
-        $product = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', 1);
+        $product = new Product();
+        ReflectionUtil::setId($product, 1);
         $product->addUnitPrecision($unitPrecision);
+        $productNoUnits = new Product();
+        ReflectionUtil::setId($productNoUnits, 1);
 
         return [
             'product not found' => [null, 'valid'],
-            'product without units' => [
-                $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', 1),
-                'valid',
-                'ERROR: oro.product.productunit.invalid' . "\n",
-            ],
+            'product without units' => [$productNoUnits, 'valid', 'ERROR: oro.product.productunit.invalid' . "\n"],
             'submit invalid' => [$product, 'not_valid', 'ERROR: oro.product.productunit.invalid' . "\n"],
             'submit valid' => [$product, 'valid'],
             'empty data' => [$product, null, 'ERROR: oro.product.productunit.invalid' . "\n"],
             'new product' => [new Product(), null],
         ];
-    }
-
-    /**
-     * @param string $className
-     * @param int $id
-     *
-     * @return object
-     */
-    protected function getEntity($className, $id)
-    {
-        $entity = new $className;
-
-        $reflectionClass = new \ReflectionClass($className);
-        $method = $reflectionClass->getProperty('id');
-        $method->setAccessible(true);
-        $method->setValue($entity, $id);
-
-        return $entity;
     }
 }

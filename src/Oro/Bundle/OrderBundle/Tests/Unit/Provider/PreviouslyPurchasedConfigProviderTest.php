@@ -16,10 +16,10 @@ class PreviouslyPurchasedConfigProviderTest extends \PHPUnit\Framework\TestCase
     /** @var PreviouslyPurchasedConfigProvider */
     protected $provider;
 
-    /** @var  LocaleSettings|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var LocaleSettings|\PHPUnit\Framework\MockObject\MockObject */
     protected $localeSettings;
 
-    /** @var DateTimeFormatter|\PHPUnit\Framework\MockObject\MockObject  */
+    /** @var DateTimeFormatter|\PHPUnit\Framework\MockObject\MockObject */
     protected $dateTimeFormatter;
 
     /**

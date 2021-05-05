@@ -15,10 +15,10 @@ class RequestProductHandlerTest extends \PHPUnit\Framework\TestCase
 {
     const ROOT_CATEGORY_ID = 1;
 
-    /** @var  Request|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var Request|\PHPUnit\Framework\MockObject\MockObject */
     protected $request;
 
-    /** @var  RequestProductHandler|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var RequestProductHandler|\PHPUnit\Framework\MockObject\MockObject */
     protected $requestProductHandler;
 
     protected function setUp(): void

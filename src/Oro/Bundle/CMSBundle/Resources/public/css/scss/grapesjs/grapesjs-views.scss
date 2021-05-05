@@ -9,19 +9,19 @@
         .#{$pn-prefix}buttons {
             .#{$pn-prefix}btn {
                 width: 100%;
-                margin-#{$end}: 0;
+                margin-right: 0;
                 border-radius: 0;
 
                 background-color: $primary-900;
                 border-top: 2px solid $primary-750;
-                border-#{$start}: 2px solid $primary-750;
+                border-left: 2px solid $primary-750;
                 border-bottom: 2px solid $primary-750;
                 line-height: 20px;
 
                 box-shadow: none;
 
                 &:last-child {
-                    border-#{$end}: 2px solid $primary-750;
+                    border-right: 2px solid $primary-750;
                 }
 
                 &.#{$pn-prefix}active {

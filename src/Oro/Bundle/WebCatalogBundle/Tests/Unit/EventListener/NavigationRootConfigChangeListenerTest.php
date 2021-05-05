@@ -10,10 +10,10 @@ use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
 class NavigationRootConfigChangeListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var CacheProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $layoutCacheProvider;
 
-    /** @var MessageProducerInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $messageProducer;
 
     /** @var NavigationRootConfigChangeListener */

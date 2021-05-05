@@ -7,6 +7,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Validator\Constraints\PrimaryProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Validator\Constraints\PrimaryProductUnitPrecisionValidator;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
@@ -66,7 +67,7 @@ class PrimaryProductUnitPrecisionValidatorTest extends ConstraintValidatorTestCa
     {
         $value = new Product();
         $precision = new ProductUnitPrecision();
-        $this->setEntityId($precision, 23);
+        ReflectionUtil::setId($precision, 23);
         $value->addUnitPrecision($precision);
 
         $this->validator->validate($value, $this->constraint);
@@ -78,8 +79,8 @@ class PrimaryProductUnitPrecisionValidatorTest extends ConstraintValidatorTestCa
     {
         $value = new Product();
         $precision = new ProductUnitPrecision();
+        ReflectionUtil::setId($precision, 23);
         $precision->setUnit(new ProductUnit());
-        $this->setEntityId($precision, 23);
         $value->setPrimaryUnitPrecision($precision);
 
         $this->validator->validate($value, $this->constraint);
@@ -91,8 +92,8 @@ class PrimaryProductUnitPrecisionValidatorTest extends ConstraintValidatorTestCa
     {
         $value = new Product();
         $precision = new ProductUnitPrecision();
+        ReflectionUtil::setId($precision, 23);
         $precision->setUnit(new ProductUnit());
-        $this->setEntityId($precision, 23);
         $value->setPrimaryUnitPrecision($precision);
 
         $value->getUnitPrecisions()->clear();
@@ -102,13 +103,5 @@ class PrimaryProductUnitPrecisionValidatorTest extends ConstraintValidatorTestCa
         $this->buildViolation($this->constraint->message)
             ->atPath('unitPrecisions')
             ->assertRaised();
-    }
-
-    private function setEntityId($entity, $id)
-    {
-        $reflectionClass = new \ReflectionClass($entity);
-        $method = $reflectionClass->getProperty('id');
-        $method->setAccessible(true);
-        $method->setValue($entity, $id);
     }
 }

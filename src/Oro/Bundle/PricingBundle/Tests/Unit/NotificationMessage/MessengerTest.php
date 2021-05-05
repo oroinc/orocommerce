@@ -118,7 +118,6 @@ class MessengerTest extends \PHPUnit\Framework\TestCase
             ->with($channel, $receiverEntityFQCN, $receiverEntityId, $topic)
             ->willReturn([$message1]);
 
-        /** @var TransportInterface|\PHPUnit\Framework\MockObject\MockObject $transport * */
         $transport = $this->createMock(TransportInterface::class);
         $transport->expects($this->once())
             ->method('receive')
@@ -169,7 +168,6 @@ class MessengerTest extends \PHPUnit\Framework\TestCase
             ->method('remove')
             ->with($channel, $topic, $receiverEntityFQCN, $receiverEntityId);
 
-        /** @var TransportInterface|\PHPUnit\Framework\MockObject\MockObject $transport * */
         $transport = $this->createMock(TransportInterface::class);
         $transport->expects($this->once())
             ->method('remove')

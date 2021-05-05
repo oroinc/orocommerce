@@ -163,7 +163,7 @@ class RequestControllerTest extends WebTestCase
     public function testView(array $inputData, array $expectedData)
     {
         $this->loginUser($inputData['login']);
-        /* @var $request Request */
+        /* @var Request $request */
         $request = $this->getReference($inputData['request']);
 
         $crawler = $this->client->request(
@@ -214,7 +214,7 @@ class RequestControllerTest extends WebTestCase
     public function testActionsForDeletedRequest(array $input, $path, $code)
     {
         $this->loginUser($input['login']);
-        /* @var $request Request */
+        /* @var Request $request */
         $request = $this->getReference(LoadRequestData::REQUEST14);
 
         $this->client->request('GET', $this->getUrl($path, ['id' => $request->getId()]));
@@ -485,7 +485,7 @@ class RequestControllerTest extends WebTestCase
             $this->initClient([]);
         }
 
-        /* @var $request Request */
+        /* @var Request $request */
         $request = $this->getReference($request);
 
         $this->client->request(
@@ -799,7 +799,7 @@ class RequestControllerTest extends WebTestCase
     {
         $this->loginUser(LoadUserData::ACCOUNT1_USER1);
 
-        /* @var $request Request */
+        /* @var Request $request */
         $request = $this->getReference(LoadRequestData::REQUEST2);
         $id = $request->getId();
 

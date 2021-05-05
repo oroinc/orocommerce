@@ -28,7 +28,7 @@ class CategoryControllerTest extends WebTestCase
     /** @var Category */
     protected $category;
 
-    /** @var  Customer */
+    /** @var Customer */
     protected $customer;
 
     /** @var CustomerGroup */

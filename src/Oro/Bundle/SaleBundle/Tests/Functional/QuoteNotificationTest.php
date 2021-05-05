@@ -5,7 +5,6 @@ namespace Oro\Bundle\SaleBundle\Tests\Functional;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Symfony\Component\DomCrawler\Form;
 
 class QuoteNotificationTest extends WebTestCase
 {
@@ -44,7 +43,6 @@ class QuoteNotificationTest extends WebTestCase
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
-        /* @var $form Form */
         $form = $crawler->selectButton('Send')->form();
 
         $this->client->followRedirects(true);

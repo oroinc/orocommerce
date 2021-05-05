@@ -6,6 +6,7 @@ use Oro\Bundle\ShippingBundle\Condition\ShippingMethodHasShippingRules;
 use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Component\ConfigExpression\ContextAccessorInterface;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\PropertyAccess\PropertyPathInterface;
 
 class ShippingMethodHasShippingRulesTest extends \PHPUnit\Framework\TestCase
@@ -126,22 +127,13 @@ class ShippingMethodHasShippingRulesTest extends \PHPUnit\Framework\TestCase
 
     public function testSetContextAccessor()
     {
-        /** @var ContextAccessorInterface|\PHPUnit\Framework\MockObject\MockObject $contextAccessor * */
-        $contextAccessor = $this->getMockBuilder(ContextAccessorInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $contextAccessor = $this->createMock(ContextAccessorInterface::class);
 
         $this->shippingMethodHasShippingRulesCondition->setContextAccessor($contextAccessor);
 
-        $reflection = new \ReflectionProperty(
-            get_class($this->shippingMethodHasShippingRulesCondition),
-            'contextAccessor'
-        );
-        $reflection->setAccessible(true);
-
         $this->assertInstanceOf(
             get_class($contextAccessor),
-            $reflection->getValue($this->shippingMethodHasShippingRulesCondition)
+            ReflectionUtil::getPropertyValue($this->shippingMethodHasShippingRulesCondition, 'contextAccessor')
         );
     }
 }

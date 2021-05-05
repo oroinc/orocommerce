@@ -15,10 +15,10 @@ class QuickAddControllerNotificationTest extends WebTestCase
 {
     const RFP_PRODUCT_VISIBILITY_KEY = 'oro_rfp.frontend_product_visibility';
 
-    /** @var ConfigManager $configManager */
+    /** @var ConfigManager */
     protected $configManager;
 
-    /** @var ConfigManager $globalConfigManager */
+    /** @var ConfigManager */
     protected $globalConfigManager;
 
     protected function setUp(): void

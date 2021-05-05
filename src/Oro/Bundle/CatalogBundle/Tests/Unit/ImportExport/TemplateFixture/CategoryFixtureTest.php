@@ -23,7 +23,7 @@ class CategoryFixtureTest extends \PHPUnit\Framework\TestCase
     /** @var CategoryFixture */
     private $fixture;
 
-    /** @var LocalizationManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var LocalizationManager|\PHPUnit\Framework\MockObject\MockObject */
     private $localizationManager;
 
     protected function setUp(): void

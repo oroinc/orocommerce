@@ -4,11 +4,11 @@
     td,
     th {
         &:first-child {
-            padding-#{$start}: $content-padding-medium;
+            padding-left: $content-padding-medium;
         }
 
         &:last-child {
-            padding-#{$end}: $content-padding-medium;
+            padding-right: $content-padding-medium;
         }
     }
 

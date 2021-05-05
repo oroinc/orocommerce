@@ -22,14 +22,10 @@ use Symfony\Component\Routing\RequestContext;
  */
 class ProductControllerTest extends WebTestCase
 {
-    /**
-     * @var Client
-     */
+    /** @var Client */
     protected $client;
 
-    /**
-     * @var Translator $translator
-     */
+    /** @var Translator */
     protected $translator;
 
     protected function setUp(): void

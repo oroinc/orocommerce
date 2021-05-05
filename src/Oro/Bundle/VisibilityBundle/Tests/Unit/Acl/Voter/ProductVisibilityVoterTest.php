@@ -47,7 +47,6 @@ class ProductVisibilityVoterTest extends \PHPUnit\Framework\TestCase
     {
         $product = new Product();
 
-        /** @var TokenInterface|\PHPUnit\Framework\MockObject\MockObject $token * */
         $token = $this->createMock(TokenInterface::class);
 
         $this->assertEquals(

@@ -29,10 +29,7 @@ class InventoryQuantityManagerTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp(): void
     {
-        $this->entityFallbackResolver = $this->getMockBuilder(EntityFallbackResolver::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        /** @var InventoryLevel|\PHPUnit\Framework\MockObject\MockObject $inventoryLevel * */
+        $this->entityFallbackResolver = $this->createMock(EntityFallbackResolver::class);
         $this->inventoryLevel = $this->createMock(InventoryLevel::class);
         $this->inventoryQuantityManager = new InventoryQuantityManager($this->entityFallbackResolver);
     }

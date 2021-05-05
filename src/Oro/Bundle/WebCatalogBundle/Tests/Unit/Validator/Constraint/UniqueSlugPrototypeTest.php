@@ -9,6 +9,7 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
 use Oro\Bundle\WebCatalogBundle\Validator\Constraint\UniqueSlugPrototype;
 use Oro\Bundle\WebCatalogBundle\Validator\Constraint\UniqueSlugPrototypeValidator;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class UniqueSlugPrototypeTest extends ConstraintValidatorTestCase
@@ -190,10 +191,7 @@ class UniqueSlugPrototypeTest extends ConstraintValidatorTestCase
     private function createContentNode(int $id): ContentNode
     {
         $node = new ContentNode();
-        $reflectionClass = new \ReflectionClass($node);
-        $method = $reflectionClass->getProperty('id');
-        $method->setAccessible(true);
-        $method->setValue($node, $id);
+        ReflectionUtil::setId($node, $id);
 
         return $node;
     }

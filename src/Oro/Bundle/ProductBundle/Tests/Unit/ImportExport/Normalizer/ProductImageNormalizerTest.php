@@ -15,46 +15,26 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ProductImageNormalizerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var FieldHelper|\PHPUnit\Framework\MockObject\MockObject $fieldHelper
-     */
+    /** @var FieldHelper|\PHPUnit\Framework\MockObject\MockObject */
     protected $fieldHelper;
 
-    /**
-     * @var ProductImageNormalizer $productImageNormalizer
-     */
+    /** @var ProductImageNormalizer */
     protected $productImageNormalizer;
 
-    /**
-     * @var FileLocator|\PHPUnit\Framework\MockObject\MockObject $fileLocator
-     */
+    /** @var FileLocator|\PHPUnit\Framework\MockObject\MockObject */
     protected $fileLocator;
 
-    /**
-     * @var ImageTypeProvider|\PHPUnit\Framework\MockObject\MockObject $imageTypeProvider
-     */
+    /** @var ImageTypeProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $imageTypeProvider;
 
-    /**
-     * @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $eventDispatcher;
 
     protected function setUp(): void
     {
-        /** @var ImageTypeProvider|\PHPUnit\Framework\MockObject\MockObject $imageTypeProvider * */
-        $this->imageTypeProvider = $this->getMockBuilder(ImageTypeProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        /** @var FileLocator|\PHPUnit\Framework\MockObject\MockObject $fileLocator * */
-        $this->fileLocator = $this->getMockBuilder(FileLocator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->fieldHelper = $this->getMockBuilder(FieldHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->imageTypeProvider = $this->createMock(ImageTypeProvider::class);
+        $this->fileLocator = $this->createMock(FileLocator::class);
+        $this->fieldHelper = $this->createMock(FieldHelper::class);
 
         $this->imageTypeProvider->expects($this->any())
             ->method('getImageTypes')

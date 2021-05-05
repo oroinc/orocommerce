@@ -51,7 +51,7 @@ class CheckoutActionGroupsTest extends FrontendActionTestCase
 
     public function testUpdateBillingAddress()
     {
-        /* @var $checkout Checkout */
+        /* @var Checkout $checkout */
         $checkout = $this->getReference(LoadQuoteCheckoutsData::CHECKOUT_1);
 
         $checkout->setShipToBillingAddress(true);
@@ -83,7 +83,7 @@ class CheckoutActionGroupsTest extends FrontendActionTestCase
 
     public function testUpdateBillingAddressWithDisallowShippingAddressEdit()
     {
-        /* @var $checkout Checkout */
+        /* @var Checkout $checkout */
         $checkout = $this->getReference(LoadQuoteCheckoutsData::CHECKOUT_1);
 
         $checkout->setShipToBillingAddress(true);
@@ -127,7 +127,7 @@ class CheckoutActionGroupsTest extends FrontendActionTestCase
 
     public function testUpdateShippingAddress()
     {
-        /* @var $checkout Checkout */
+        /* @var Checkout $checkout */
         $checkout = $this->getReference(LoadQuoteCheckoutsData::CHECKOUT_1);
 
         $checkout->setShipToBillingAddress(true);
@@ -168,7 +168,7 @@ class CheckoutActionGroupsTest extends FrontendActionTestCase
 
     public function testUpdateShippingMethod()
     {
-        /* @var $checkout Checkout */
+        /* @var Checkout $checkout */
         $checkout = $this->getReference(LoadQuoteCheckoutsData::CHECKOUT_1);
 
         $shippingCost = $checkout->getShippingCost();
@@ -196,7 +196,7 @@ class CheckoutActionGroupsTest extends FrontendActionTestCase
 
     public function testPlaceOrder()
     {
-        /* @var $checkout Checkout */
+        /* @var Checkout $checkout */
         $checkout = $this->getReference(LoadQuoteCheckoutsData::CHECKOUT_1);
 
         $billingAddress = $this->createEntity(OrderAddress::class, ['phone' => '123']);
@@ -213,7 +213,7 @@ class CheckoutActionGroupsTest extends FrontendActionTestCase
 
         $this->assertArrayHasKey('order', $result);
 
-        /* @var $order Order */
+        /* @var Order $order */
         $order = $result['order'];
 
         $this->assertNotNull($order);
@@ -252,7 +252,7 @@ class CheckoutActionGroupsTest extends FrontendActionTestCase
 
     public function testPurchaseOrder()
     {
-        /* @var $checkout Checkout */
+        /* @var Checkout $checkout */
         $checkout = $this->getReference(LoadQuoteCheckoutsData::CHECKOUT_1);
 
         $billingAddress = $this->createEntity(OrderAddress::class, ['phone' => '123']);
@@ -261,7 +261,7 @@ class CheckoutActionGroupsTest extends FrontendActionTestCase
         $checkout->setBillingAddress($billingAddress)->setShippingAddress($shippingAddress);
 
         $placeOrderResult = $this->executeActionGroup('b2b_flow_checkout_place_order', ['checkout' => $checkout]);
-        /* @var $order Order */
+        /* @var Order $order */
         $order = $placeOrderResult['order'];
 
         $result = $this->executeActionGroup(
@@ -297,7 +297,7 @@ class CheckoutActionGroupsTest extends FrontendActionTestCase
 
     public function testFinishCheckout()
     {
-        /* @var $checkout Checkout */
+        /* @var Checkout $checkout */
         $checkout = $this->getReference(LoadQuoteCheckoutsData::CHECKOUT_1);
 
         $billingAddress = $this->createEntity(OrderAddress::class, ['phone' => '123']);
@@ -306,7 +306,7 @@ class CheckoutActionGroupsTest extends FrontendActionTestCase
         $checkout->setBillingAddress($billingAddress)->setShippingAddress($shippingAddress);
 
         $placeOrderResult = $this->executeActionGroup('b2b_flow_checkout_place_order', ['checkout' => $checkout]);
-        /* @var $order Order */
+        /* @var Order $order */
         $order = $placeOrderResult['order'];
 
         $checkoutSourceClass = get_class($checkout->getSourceEntity());

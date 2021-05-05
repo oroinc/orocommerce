@@ -19,6 +19,7 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -181,7 +182,8 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
         $defaultProductPrice = new ProductPrice();
         $defaultProductPrice->setPriceList($priceList);
 
-        $defaultProductPriceWithId = $this->getEntity('Oro\Bundle\PricingBundle\Entity\ProductPrice', 1);
+        $defaultProductPriceWithId = new ProductPrice();
+        ReflectionUtil::setId($defaultProductPriceWithId, 1);
         $defaultProductPriceWithId->setPriceList($priceList);
         $defaultProductPriceWithId->setPrice((new Price())->setCurrency('USD')->setValue(1));
 
@@ -274,22 +276,6 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param string $className
-     * @param int $id
-     * @return object
-     */
-    protected function getEntity($className, $id)
-    {
-        $entity = new $className;
-        $reflectionClass = new \ReflectionClass($className);
-        $method = $reflectionClass->getProperty('id');
-        $method->setAccessible(true);
-        $method->setValue($entity, $id);
-
-        return $entity;
-    }
-
-    /**
      * @param integer $productId
      * @param string $unitCode
      * @param integer $precision
@@ -297,8 +283,8 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
      */
     protected function getProductEntityWithPrecision($productId, $unitCode, $precision = 0)
     {
-        /** @var \Oro\Bundle\ProductBundle\Entity\Product $product */
-        $product = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', $productId);
+        $product = new Product();
+        ReflectionUtil::setId($product, $productId);
 
         $unit = new ProductUnit();
         $unit->setCode($unitCode);

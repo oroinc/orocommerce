@@ -18,6 +18,7 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 
@@ -82,13 +83,9 @@ class ProductTest extends \PHPUnit\Framework\TestCase
 
     public function testJsonSerialize()
     {
-        $product = new Product();
-
         $id = 123;
-        $refProduct = new \ReflectionObject($product);
-        $refId = $refProduct->getProperty('id');
-        $refId->setAccessible(true);
-        $refId->setValue($product, $id);
+        $product = new Product();
+        ReflectionUtil::setId($product, $id);
 
         $unitPrecision = new ProductUnitPrecision();
         $unitPrecision->setUnit((new ProductUnit())->setCode('kg'));
@@ -253,7 +250,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
 
     public function testGetAvailableUnitsPrecision()
     {
-        list($kgPrecision, $itemPrecision) = $this->prepareUnitsPrecision();
+        [$kgPrecision, $itemPrecision] = $this->prepareUnitsPrecision();
 
         $product = new Product();
         $product->setPrimaryUnitPrecision($kgPrecision)->addUnitPrecision($itemPrecision);
@@ -263,7 +260,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
 
     public function testGetSellUnitsPrecision()
     {
-        list($kgPrecision, $itemPrecision) = $this->prepareUnitsPrecision();
+        [$kgPrecision, $itemPrecision] = $this->prepareUnitsPrecision();
 
         $product = new Product();
         $product->setPrimaryUnitPrecision($kgPrecision)->addUnitPrecision($itemPrecision);
@@ -312,6 +309,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $unitPrecision = new ProductUnitPrecision();
         $unitPrecision->setUnit($unit);
         $product = new Product();
+        ReflectionUtil::setId($product, $id);
         $product->addAdditionalUnitPrecision($unitPrecision);
         $product->getNames()->add(new LocalizedFallbackValue());
         $product->getDescriptions()->add(new LocalizedFallbackValue());
@@ -321,11 +319,6 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $product->addImage(new ProductImage());
         $product->addSlugPrototype(new LocalizedFallbackValue());
         $product->addSlug(new Slug());
-
-        $refProduct = new \ReflectionObject($product);
-        $refId = $refProduct->getProperty('id');
-        $refId->setAccessible(true);
-        $refId->setValue($product, $id);
 
         $this->assertEquals($id, $product->getId());
         $this->assertCount(1, $product->getUnitPrecisions());

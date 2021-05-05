@@ -18,6 +18,7 @@ use Oro\Component\MessageQueue\Job\JobRunner;
 use Oro\Component\MessageQueue\Test\JobRunner as TestJobRunner;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
+use Oro\Component\Testing\ReflectionUtil;
 use Psr\Log\LoggerInterface;
 
 class SluggableEntitiesProcessorTest extends \PHPUnit\Framework\TestCase
@@ -87,9 +88,7 @@ class SluggableEntitiesProcessorTest extends \PHPUnit\Framework\TestCase
     public function testBatchSize($batchSize, $expected)
     {
         $this->processor->setBatchSize($batchSize);
-        $property = new \ReflectionProperty(SluggableEntitiesProcessor::class, 'batchSize');
-        $property->setAccessible(true);
-        static::assertSame($expected, $property->getValue($this->processor));
+        static::assertSame($expected, ReflectionUtil::getPropertyValue($this->processor, 'batchSize'));
     }
 
     /**
@@ -116,7 +115,6 @@ class SluggableEntitiesProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('getMessageId')
             ->willReturn('mid-42');
 
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
         $this->doctrine->expects($this->once())
@@ -156,7 +154,6 @@ class SluggableEntitiesProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('getMessageId')
             ->willReturn('mid-42');
 
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
         $countQb = $this->assertCountQueryCalled();
@@ -224,7 +221,6 @@ class SluggableEntitiesProcessorTest extends \PHPUnit\Framework\TestCase
         $createRedirect = true;
         $message = $this->assertMessageDataCalls($class, $createRedirect);
 
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
         $countQb = $this->assertCountQueryCalled(5);
@@ -382,7 +378,6 @@ class SluggableEntitiesProcessorTest extends \PHPUnit\Framework\TestCase
      */
     private function assertMessageDataCalls($class, $createRedirect)
     {
-        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message * */
         $message = $this->createMock(MessageInterface::class);
         $messageData = [
             DirectUrlMessageFactory::class => $class,

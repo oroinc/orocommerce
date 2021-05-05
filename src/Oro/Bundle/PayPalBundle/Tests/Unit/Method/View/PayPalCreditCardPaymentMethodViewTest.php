@@ -23,7 +23,7 @@ class PayPalCreditCardPaymentMethodViewTest extends \PHPUnit\Framework\TestCase
     /** @var PayPalCreditCardPaymentMethodView */
     protected $methodView;
 
-    /** @var  PaymentTransactionProvider|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var PaymentTransactionProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentTransactionProvider;
 
     /** @var PayPalCreditCardConfigInterface|\PHPUnit\Framework\MockObject\MockObject */
@@ -54,7 +54,7 @@ class PayPalCreditCardPaymentMethodViewTest extends \PHPUnit\Framework\TestCase
     {
         $this->paymentTransactionProvider->expects($this->never())->method('getActiveValidatePaymentTransaction');
 
-        list($formView, $context) = $this->prepareMocks(false, true);
+        [$formView, $context] = $this->prepareMocks(false, true);
 
         $this->assertEquals(
             [
@@ -73,7 +73,7 @@ class PayPalCreditCardPaymentMethodViewTest extends \PHPUnit\Framework\TestCase
             ->method('getActiveValidatePaymentTransaction')
             ->willReturn(null);
 
-        list($formView, $context) = $this->prepareMocks(true, true);
+        [$formView, $context] = $this->prepareMocks(true, true);
 
         $this->assertEquals(
             [
@@ -95,7 +95,7 @@ class PayPalCreditCardPaymentMethodViewTest extends \PHPUnit\Framework\TestCase
             ->method('getActiveValidatePaymentTransaction')
             ->willReturn($paymentTransaction);
 
-        list($formView, $context) = $this->prepareMocks(true, true);
+        [$formView, $context] = $this->prepareMocks(true, true);
 
         $this->assertEquals(
             [
@@ -122,7 +122,7 @@ class PayPalCreditCardPaymentMethodViewTest extends \PHPUnit\Framework\TestCase
             ->method('getActiveValidatePaymentTransaction')
             ->willReturn($paymentTransaction);
 
-        list($formView, $context) = $this->prepareMocks(true, true);
+        [$formView, $context] = $this->prepareMocks(true, true);
 
         $this->assertEquals(
             [
@@ -148,7 +148,7 @@ class PayPalCreditCardPaymentMethodViewTest extends \PHPUnit\Framework\TestCase
             ->method('getActiveValidatePaymentTransaction')
             ->willReturn($paymentTransaction);
 
-        list($formView, $context) = $this->prepareMocks(true, false);
+        [$formView, $context] = $this->prepareMocks(true, false);
 
         $this->assertEquals(
             [

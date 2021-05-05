@@ -251,7 +251,6 @@ class QuantityToOrderConditionListenerTest extends \PHPUnit\Framework\TestCase
 
         $workflowItem->setEntity($checkout);
 
-        /** @var ExtendableConditionEvent|\PHPUnit\Framework\MockObject\MockObject $event * */
         $event = $this->createMock(ExtendableConditionEvent::class);
         $event->expects($this->any())
             ->method('getContext')

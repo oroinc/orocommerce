@@ -25,6 +25,7 @@ use Oro\Bundle\SaleBundle\Formatter\QuoteProductOfferFormatter;
 use Oro\Bundle\SaleBundle\Validator\Constraints;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Symfony\Component\Form\FormTypeInterface;
@@ -260,17 +261,9 @@ abstract class AbstractTest extends FormIntegrationTestCase
     protected function getEntity($className, $id, $primaryKey = 'id')
     {
         static $entities = [];
-
-        if (!isset($entities[$className])) {
-            $entities[$className] = [];
-        }
-
         if (!isset($entities[$className][$id])) {
-            $entities[$className][$id] = new $className;
-            $reflectionClass = new \ReflectionClass($className);
-            $method = $reflectionClass->getProperty($primaryKey);
-            $method->setAccessible(true);
-            $method->setValue($entities[$className][$id], $id);
+            $entities[$className][$id] = new $className();
+            ReflectionUtil::setPropertyValue($entities[$className][$id], $primaryKey, $id);
         }
 
         return $entities[$className][$id];

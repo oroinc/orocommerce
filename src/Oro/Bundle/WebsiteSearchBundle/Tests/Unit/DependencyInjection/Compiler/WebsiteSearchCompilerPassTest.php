@@ -7,9 +7,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class WebsiteSearchCompilerPassTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ContainerBuilder|\PHPUnit\Framework\MockObject\MockObject $containerBuilder
-     */
+    /** @var ContainerBuilder|\PHPUnit\Framework\MockObject\MockObject */
     private $containerBuilder;
 
     protected function setUp(): void

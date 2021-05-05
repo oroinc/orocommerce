@@ -33,7 +33,7 @@ class ProductSegmentContentWidgetTypeTest extends FormIntegrationTestCase
     /** @var ProductSegmentContentWidgetType */
     private $contentWidgetType;
 
-    /** @var AclHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $aclHelper;
 
     protected function setUp(): void

@@ -9,6 +9,7 @@ use Oro\Bundle\ConsentBundle\Entity\Consent;
 use Oro\Bundle\ConsentBundle\SystemConfig\ConsentConfig;
 use Oro\Bundle\ConsentBundle\SystemConfig\ConsentConfigConverter;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Component\Testing\ReflectionUtil;
 use PHPUnit\Framework\MockObject\MockObject;
 
 class ConsentConfigConverterTest extends \PHPUnit\Framework\TestCase
@@ -63,13 +64,9 @@ class ConsentConfigConverterTest extends \PHPUnit\Framework\TestCase
     public function createConfigs($count)
     {
         $result = [];
-        $reflectionClass = new \ReflectionClass(Consent::class);
-
         for ($i = 1; $i <= $count; $i++) {
             $consent = new Consent();
-            $reflectionProperty = $reflectionClass->getProperty('id');
-            $reflectionProperty->setAccessible(true);
-            $reflectionProperty->setValue($consent, $i);
+            ReflectionUtil::setId($consent, $i);
             $nameFallback = new LocalizedFallbackValue();
             $consent->addName($nameFallback->setString('Consent ' . $i));
 

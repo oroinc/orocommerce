@@ -29,11 +29,11 @@
         {{ codes|join(', ') }}
     {% endset %}
     {% set taxJurisdictionInfo %}
-        {{ UI.renderProperty('oro.tax.taxjurisdiction.code.label'|trans, entity.code) }}
+        {{ UI.renderProperty('oro.tax.taxjurisdiction.code.label'|trans, entity.code, null, null, {'dir': 'ltr'}) }}
         {{ UI.renderProperty('oro.tax.taxjurisdiction.description.label'|trans, entity.description) }}
         {{ UI.renderProperty('oro.tax.taxjurisdiction.region.label'|trans, entity.regionName) }}
         {{ UI.renderProperty('oro.tax.taxjurisdiction.country.label'|trans, entity.country) }}
-        {{ UI.renderProperty('oro.tax.taxjurisdiction.zip_codes.label'|trans, zipCodes) }}
+        {{ UI.renderProperty('oro.tax.taxjurisdiction.zip_codes.label'|trans, zipCodes, null, null, {'dir': 'ltr'}) }}
     {% endset %}
 
     {% set dataBlocks = [{

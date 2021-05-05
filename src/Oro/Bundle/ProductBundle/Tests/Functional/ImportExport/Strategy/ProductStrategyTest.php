@@ -24,9 +24,7 @@ class ProductStrategyTest extends WebTestCase
 {
     use EntityTrait;
 
-    /**
-     * @var ProductStrategy
-     * */
+    /** @var ProductStrategy */
     protected $strategy;
 
     protected function setUp(): void

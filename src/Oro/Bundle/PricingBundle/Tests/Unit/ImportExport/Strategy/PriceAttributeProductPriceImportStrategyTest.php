@@ -13,6 +13,7 @@ use Oro\Bundle\ImportExportBundle\Strategy\Import\NewEntitiesHelper;
 use Oro\Bundle\OrganizationBundle\Ownership\EntityOwnershipAssociationsSetter;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\ImportExport\Strategy\PriceAttributeProductPriceImportStrategy;
+use Oro\Component\Testing\ReflectionUtil;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -131,15 +132,8 @@ class PriceAttributeProductPriceImportStrategyTest extends TestCase
         $value,
         $currency
     ): PriceAttributeProductPrice {
-        $reflectionClass = new \ReflectionObject($entity);
-
-        $valueProperty = $reflectionClass->getProperty('value');
-        $valueProperty->setAccessible(true);
-        $valueProperty->setValue($entity, $value);
-
-        $currencyProperty = $reflectionClass->getProperty('currency');
-        $currencyProperty->setAccessible(true);
-        $currencyProperty->setValue($entity, $currency);
+        ReflectionUtil::setPropertyValue($entity, 'value', $value);
+        ReflectionUtil::setPropertyValue($entity, 'currency', $currency);
 
         return $entity;
     }

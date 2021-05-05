@@ -11,7 +11,7 @@ use Oro\Bundle\VisibilityBundle\Visibility\Cache\CacheBuilderInterface;
 
 abstract class AbstractCacheBuilderTest extends WebTestCase
 {
-    /** @var  Registry */
+    /** @var Registry */
     protected $registry;
 
     protected function setUp(): void

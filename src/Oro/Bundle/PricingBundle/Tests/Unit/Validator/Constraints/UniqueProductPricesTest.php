@@ -10,6 +10,7 @@ use Oro\Bundle\PricingBundle\Validator\Constraints\UniqueProductPrices;
 use Oro\Bundle\PricingBundle\Validator\Constraints\UniqueProductPricesValidator;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
@@ -126,12 +127,12 @@ class UniqueProductPricesTest extends \PHPUnit\Framework\TestCase
         $unit = new ProductUnit();
         $unit->setCode($unitCode);
 
-        /** @var Product $product */
-        $product = $this->getEntity(Product::class, 42);
+        $product = new Product();
+        ReflectionUtil::setId($product, 42);
         $product->setSku('sku');
 
-        /** @var PriceList $priceList */
-        $priceList = $this->getEntity(PriceList::class, $priceListId);
+        $priceList = new PriceList();
+        ReflectionUtil::setId($priceList, $priceListId);
         // Name is not unique for Price List, so it is set same for all price lists in test
         $priceList->setName('price_list');
 
@@ -152,20 +153,5 @@ class UniqueProductPricesTest extends \PHPUnit\Framework\TestCase
         }
 
         return $productPrice;
-    }
-
-    /**
-     * @param string $className
-     * @param int $id
-     * @return object
-     */
-    protected function getEntity($className, $id)
-    {
-        $entity = new $className;
-        $reflectionClass = new \ReflectionClass($className);
-        $method = $reflectionClass->getProperty('id');
-        $method->setAccessible(true);
-        $method->setValue($entity, $id);
-        return $entity;
     }
 }

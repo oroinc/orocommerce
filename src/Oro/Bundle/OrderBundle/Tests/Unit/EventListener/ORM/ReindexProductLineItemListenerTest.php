@@ -34,13 +34,13 @@ class ReindexProductLineItemListenerTest extends \PHPUnit\Framework\TestCase
     /** @var OrderLineItem|\PHPUnit\Framework\MockObject\MockObject */
     protected $lineItem;
 
-    /** @var  OrderStub */
+    /** @var OrderStub */
     protected $order;
 
-    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject  */
+    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
     protected $featureChecker;
 
-    /** @var  Website */
+    /** @var Website */
     protected $website;
 
     /**
@@ -293,9 +293,6 @@ class ReindexProductLineItemListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected function getPreUpdateEvent(array $changeSet = [])
     {
-        /**
-         * @var $em EntityManagerInterface
-         */
         $em = $this->createMock(EntityManagerInterface::class);
         return new PreUpdateEventArgs(
             $this->getEntity(OrderLineItem::class),

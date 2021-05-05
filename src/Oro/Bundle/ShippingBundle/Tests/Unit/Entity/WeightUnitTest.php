@@ -9,9 +9,7 @@ class WeightUnitTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 
-    /**
-     * @var WeightUnit $entity
-     */
+    /** @var WeightUnit */
     protected $entity;
 
     protected function setUp(): void

@@ -54,11 +54,11 @@ class ShoppingListActionsTest extends ActionTestCase
 
     public function testLineItemCreate()
     {
-        /* @var $shoppingList ShoppingList */
+        /* @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
-        /* @var $unit ProductUnit */
+        /* @var ProductUnit $unit */
         $unit = $this->getReference('product_unit.bottle');
-        /* @var $product2 Product */
+        /* @var Product $product2 */
         $product = $this->getReference('product-2');
 
         $crawler = $this->assertOperationForm(
@@ -81,7 +81,7 @@ class ShoppingListActionsTest extends ActionTestCase
 
     public function testLineItemCreateDuplicate()
     {
-        /* @var $lineItem LineItem  */
+        /* @var LineItem $lineItem */
         $lineItem = $this->getReference('shopping_list_line_item.1');
 
         $shoppingList = $lineItem->getShoppingList();

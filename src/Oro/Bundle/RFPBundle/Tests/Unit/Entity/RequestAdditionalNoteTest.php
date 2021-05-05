@@ -4,15 +4,15 @@ namespace Oro\Bundle\RFPBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Entity\RequestAdditionalNote;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class RequestAdditionalNoteTest extends AbstractTest
+class RequestAdditionalNoteTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var RequestAdditionalNote */
-    protected $requestAdditionalNote;
+    use EntityTestCaseTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    /** @var RequestAdditionalNote */
+    private $requestAdditionalNote;
+
     protected function setUp(): void
     {
         $this->requestAdditionalNote = new RequestAdditionalNote();

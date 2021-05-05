@@ -192,7 +192,6 @@ class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
         $expectedUrl = 'http://example.com/canonical';
         $website = $this->getEntity(Website::class, ['id' => 1]);
 
-        /** @var SluggableInterface|\PHPUnit\Framework\MockObject\MockObject $data * */
         $data = $this->createMock(SluggableInterface::class);
 
         $route = 'route';
@@ -223,7 +222,6 @@ class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
         $expectedUrl = 'https://example.com/canonical';
         $website = $this->getEntity(Website::class, ['id' => 777]);
 
-        /** @var SluggableInterface|\PHPUnit\Framework\MockObject\MockObject $data * */
         $data = $this->createMock(SluggableInterface::class);
 
         $route = 'route';
@@ -251,7 +249,6 @@ class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
 
     public function testGetUrlWithoutDirect()
     {
-        /** @var SluggableInterface|\PHPUnit\Framework\MockObject\MockObject $data * */
         $data = $this->createMock(SluggableInterface::class);
         $data->expects($this->any())
             ->method('getSlugs')

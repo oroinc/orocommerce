@@ -26,7 +26,7 @@
         &-container {
             @include clearfix();
 
-            margin-#{$end}: -$product-view-attribute-images-item-space;
+            margin-right: -$product-view-attribute-images-item-space;
             margin-bottom: -$product-view-attribute-images-item-space;
 
             &.show-less {
@@ -37,17 +37,17 @@
         }
 
         &-item {
-            float: $start;
+            float: left;
             width: $desktop-product-view-attribute-image-size;
             height: $desktop-product-view-attribute-image-size;
-            margin-#{$end}: $product-view-attribute-images-item-space;
+            margin-right: $product-view-attribute-images-item-space;
             margin-bottom: $product-view-attribute-images-item-space;
             cursor: pointer;
         }
 
         .show-more-link {
             margin-top: $product-view-attribute-images-show-more-link-margin-top;
-            float: $end;
+            float: right;
         }
     }
 
@@ -79,7 +79,7 @@
         }
 
         .show-more-link {
-            float: $end;
+            float: right;
         }
     }
 }

@@ -26,7 +26,7 @@ class RemovedLandingPagesValidatorTest extends \PHPUnit\Framework\TestCase
     /** @var RemovedLandingPages */
     private $constraint;
 
-    /** @var ExecutionContext|\PHPUnit\Framework\MockObject\MockObject $context */
+    /** @var ExecutionContext|\PHPUnit\Framework\MockObject\MockObject */
     private $context;
 
     /**

@@ -14,7 +14,7 @@ class ProductVariantFieldValidatorTest extends \PHPUnit\Framework\TestCase
     /** @var ProductVariantFieldValidator */
     protected $service;
 
-    /** @var  CustomFieldProvider|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var CustomFieldProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $customFieldProvider;
 
     /** @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject */
@@ -26,7 +26,7 @@ class ProductVariantFieldValidatorTest extends \PHPUnit\Framework\TestCase
         'field_second'
     ];
 
-    /** @var array  */
+    /** @var array */
     protected $incorrectCustomVariantFields = [
         'field_first' => [
             'name' => 'field_first',
@@ -40,7 +40,7 @@ class ProductVariantFieldValidatorTest extends \PHPUnit\Framework\TestCase
         ]
     ];
 
-    /** @var array  */
+    /** @var array */
     protected $correctCustomVariantFields = [
         'field_first' => [
             'name' => 'field_first',

@@ -6,9 +6,13 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductDemand;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use Oro\Component\Testing\ReflectionUtil;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class QuoteProductDemandTest extends AbstractTest
+class QuoteProductDemandTest extends \PHPUnit\Framework\TestCase
 {
+    use EntityTestCaseTrait;
+
     public function testProperties()
     {
         $productOffer = new QuoteProductOffer();
@@ -20,7 +24,7 @@ class QuoteProductDemandTest extends AbstractTest
         $productDemand->setQuantity($quantity);
         $productDemand->setQuoteDemand($demand);
         $productDemand->setQuoteProductOffer($productOffer);
-        $this->setProperty($productDemand, 'id', $id);
+        ReflectionUtil::setId($productDemand, $id);
         $this->assertSame($productDemand->getQuoteDemand(), $demand);
         $this->assertSame($productDemand->getQuantity(), $quantity);
         $this->assertSame($productDemand->getQuantity(), $quantity);

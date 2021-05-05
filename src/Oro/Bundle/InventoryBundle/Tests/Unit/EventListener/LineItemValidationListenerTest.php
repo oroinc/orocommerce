@@ -13,19 +13,13 @@ use Oro\Bundle\ShoppingListBundle\Event\LineItemValidateEvent;
 
 class LineItemValidationListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var QuantityToOrderValidatorService|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var QuantityToOrderValidatorService|\PHPUnit\Framework\MockObject\MockObject */
     protected $quantityValidator;
 
-    /**
-     * @var LineItemValidationListener
-     */
+    /** @var LineItemValidationListener */
     protected $lineItemValidationListener;
 
-    /**
-     * @var LineItemValidateEvent|\PHPUnit\Framework\MockObject\MockObject $event *
-     */
+    /** @var LineItemValidateEvent|\PHPUnit\Framework\MockObject\MockObject */
     protected $event;
 
     protected function setUp(): void

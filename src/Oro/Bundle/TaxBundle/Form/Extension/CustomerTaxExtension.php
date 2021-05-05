@@ -9,6 +9,9 @@ use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
 use Oro\Bundle\TaxBundle\Form\Type\CustomerTaxCodeAutocompleteType;
 use Symfony\Component\Form\FormBuilderInterface;
 
+/**
+ * Stands for handling tax code for Customer.
+ */
 class CustomerTaxExtension extends AbstractTaxExtension
 {
     /**
@@ -33,6 +36,7 @@ class CustomerTaxExtension extends AbstractTaxExtension
                     'mapped' => false,
                     'label' => 'oro.tax.taxcode.label',
                     'create_form_route' => null,
+                    'dynamic_fields_ignore_exception' => true,
                 ]
             );
     }

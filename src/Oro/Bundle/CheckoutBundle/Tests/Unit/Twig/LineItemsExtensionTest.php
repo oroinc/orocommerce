@@ -35,10 +35,10 @@ class LineItemsExtensionTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->totalsProvider = self::createMock(TotalProcessorProvider::class);
-        $this->lineItemSubtotalProvider = self::createMock(LineItemSubtotalProvider::class);
-        $this->localizedHelper = self::createMock(LocalizationHelper::class);
-        $this->entityNameResolver = self::createMock(EntityNameResolver::class);
+        $this->totalsProvider = $this->createMock(TotalProcessorProvider::class);
+        $this->lineItemSubtotalProvider = $this->createMock(LineItemSubtotalProvider::class);
+        $this->localizedHelper = $this->createMock(LocalizationHelper::class);
+        $this->entityNameResolver = $this->createMock(EntityNameResolver::class);
         $this->entityNameResolver
             ->method('getName')
             ->willReturnCallback(function ($param) {

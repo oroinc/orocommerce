@@ -13,7 +13,7 @@ class OrganizationPersistListenerTest extends \PHPUnit\Framework\TestCase
     /** @var OrganizationPersistListener */
     private $listener;
 
-    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
     protected function setUp(): void

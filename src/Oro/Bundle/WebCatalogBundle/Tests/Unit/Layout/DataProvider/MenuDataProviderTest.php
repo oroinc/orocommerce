@@ -44,7 +44,7 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
     /** @var MenuDataProvider */
     private $menuDataProvider;
 
-    /** @var CacheProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $cacheProvider;
 
     /** @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject */

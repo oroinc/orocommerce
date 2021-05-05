@@ -32,7 +32,7 @@ class ShoppingListControllerTest extends WebTestCase
     const RFP_PRODUCT_VISIBILITY_KEY = 'oro_rfp.frontend_product_visibility';
     const SHOPPING_LIST_AVAIL_FOR_GUEST_KEY = 'oro_shopping_list.availability_for_guests';
 
-    /** @var ConfigManager $configManager */
+    /** @var ConfigManager */
     protected $configManager;
 
     protected function setUp(): void
@@ -420,7 +420,7 @@ class ShoppingListControllerTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader($user, $user));
 
-        /* @var $resource ShoppingList */
+        /* @var ShoppingList $resource */
         $resource = $this->getReference($resource);
 
         $this->requestShoppingListPage($route, $resource->getId());

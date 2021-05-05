@@ -70,7 +70,7 @@
                             <span class="not-available">{{ 'N/A'|trans }}</span>
                         {% endif %}
                     </td>
-                    <td class="discount">
+                    <td class="discount direction-ltr">
                         {% if discount.order is not empty %}
                             -{{ discount.amountPrice|oro_format_price }}
                         {% endif %}

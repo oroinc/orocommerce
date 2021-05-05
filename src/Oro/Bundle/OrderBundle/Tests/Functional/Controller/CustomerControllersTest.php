@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CustomerControllersTest extends WebTestCase
 {
-    /** @var $customerUser CustomerUser */
+    /** @var CustomerUser */
     protected $customerUser;
 
     /**

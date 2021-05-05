@@ -11,12 +11,10 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class CategoryHandlerTest extends FormHandlerTestCase
 {
-    /**
-     * @var Category
-     */
+    /** @var Category */
     protected $entity;
 
-    /** @var  EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $eventDispatcher;
 
     protected function setUp(): void

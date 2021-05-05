@@ -11,6 +11,7 @@ use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType;
 use Oro\Bundle\PricingBundle\PricingStrategy\MergePricesCombiningStrategy;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -75,10 +76,11 @@ class PriceListSelectWithPriorityTypeTest extends FormIntegrationTestCase
      */
     public function submitDataProvider()
     {
-        $existingPriceList = $this->getPriceList(PriceListSelectTypeStub::PRICE_LIST_1);
+        $existingPriceList = new PriceList();
+        ReflectionUtil::setId($existingPriceList, PriceListSelectTypeStub::PRICE_LIST_1);
 
-        /** @var PriceList $expectedPriceList */
-        $expectedPriceList = $this->getPriceList(PriceListSelectTypeStub::PRICE_LIST_2);
+        $expectedPriceList = new PriceList();
+        ReflectionUtil::setId($expectedPriceList, PriceListSelectTypeStub::PRICE_LIST_2);
 
         return [
             'without default data' => [
@@ -139,20 +141,5 @@ class PriceListSelectWithPriorityTypeTest extends FormIntegrationTestCase
                     ->setPriceList($expectedPriceList),
             ],
         ];
-    }
-
-    /**
-     * @param int $id
-     * @return PriceList
-     */
-    protected function getPriceList($id)
-    {
-        $priceList = new PriceList();
-        $reflectionClass = new \ReflectionClass($priceList);
-        $method = $reflectionClass->getProperty('id');
-        $method->setAccessible(true);
-        $method->setValue($priceList, $id);
-
-        return $priceList;
     }
 }

@@ -417,6 +417,7 @@ datagrids:
         columns:
             productSku:
                 label:         oro.pricing.productprice.product_sku.label
+                cellClassName: 'direction-ltr'
             productName:
                 label:         oro.pricing.productprice.product_name.label
             quantity:

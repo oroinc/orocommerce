@@ -19,6 +19,7 @@ use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 use Oro\Bundle\RFPBundle\Form\Type\RequestProductItemType;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Symfony\Component\Form\FormTypeInterface;
@@ -252,23 +253,16 @@ abstract class AbstractTest extends FormIntegrationTestCase
      */
     protected function createRequestProduct($id, $product, $productSku)
     {
-        /* @var $requestProduct \PHPUnit\Framework\MockObject\MockObject|RequestProduct */
-        $requestProduct = $this->createMock('Oro\Bundle\RFPBundle\Entity\RequestProduct');
-        $requestProduct
-            ->expects(static::any())
+        $requestProduct = $this->createMock(RequestProduct::class);
+        $requestProduct->expects(static::any())
             ->method('getId')
-            ->will(static::returnValue($id))
-        ;
-        $requestProduct
-            ->expects(static::any())
+            ->willReturn($id);
+        $requestProduct->expects(static::any())
             ->method('getProduct')
-            ->will(static::returnValue($product))
-        ;
-        $requestProduct
-            ->expects(static::any())
+            ->willReturn($product);
+        $requestProduct->expects(static::any())
             ->method('getProductSku')
-            ->will(static::returnValue($productSku))
-        ;
+            ->willReturn($productSku);
 
         return $requestProduct;
     }
@@ -304,17 +298,9 @@ abstract class AbstractTest extends FormIntegrationTestCase
     protected function getEntity($className, $id, $primaryKey = 'id')
     {
         static $entities = [];
-
-        if (!isset($entities[$className])) {
-            $entities[$className] = [];
-        }
-
         if (!isset($entities[$className][$id])) {
             $entities[$className][$id] = new $className();
-            $reflectionClass = new \ReflectionClass($className);
-            $method = $reflectionClass->getProperty($primaryKey);
-            $method->setAccessible(true);
-            $method->setValue($entities[$className][$id], $id);
+            ReflectionUtil::setPropertyValue($entities[$className][$id], $primaryKey, $id);
         }
 
         return $entities[$className][$id];
@@ -346,9 +332,8 @@ abstract class AbstractTest extends FormIntegrationTestCase
      */
     protected function getRequestProduct($productId = null, $comment = null, array $items = [])
     {
-        /* @var $product Product */
+        /* @var Product|null $product */
         $product = null;
-
         if ($productId) {
             $product = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', $productId);
 
@@ -361,8 +346,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
         $requestProduct
             ->setRequest($this->getEntity('Oro\Bundle\RFPBundle\Entity\Request', $productId))
             ->setProduct($product)
-            ->setComment($comment)
-        ;
+            ->setComment($comment);
 
         foreach ($items as $item) {
             $requestProduct->addRequestProductItem($item);

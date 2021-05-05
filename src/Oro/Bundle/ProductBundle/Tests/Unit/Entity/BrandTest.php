@@ -10,6 +10,7 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Brand;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 /**
@@ -84,16 +85,12 @@ class BrandTest extends \PHPUnit\Framework\TestCase
     {
         $id = 123;
         $brand = new Brand();
+        ReflectionUtil::setId($brand, $id);
         $brand->getNames()->add(new LocalizedFallbackValue());
         $brand->getDescriptions()->add(new LocalizedFallbackValue());
         $brand->getShortDescriptions()->add(new LocalizedFallbackValue());
         $brand->addSlugPrototype(new LocalizedFallbackValue());
         $brand->addSlug(new Slug());
-
-        $refProduct = new \ReflectionObject($brand);
-        $refId = $refProduct->getProperty('id');
-        $refId->setAccessible(true);
-        $refId->setValue($brand, $id);
 
         $this->assertEquals($id, $brand->getId());
         $this->assertCount(1, $brand->getNames());

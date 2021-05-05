@@ -11,10 +11,10 @@ class StrategyRegisterTest extends \PHPUnit\Framework\TestCase
 {
     public function test()
     {
-        $configManager = self::createMock(ConfigManager::class);
+        $configManager = $this->createMock(ConfigManager::class);
         $configManager->method('get')->willReturn(MergePricesCombiningStrategy::NAME);
         $register = new StrategyRegister($configManager);
-        $strategy = self::createMock(PriceCombiningStrategyInterface::class);
+        $strategy = $this->createMock(PriceCombiningStrategyInterface::class);
         $register->add(MergePricesCombiningStrategy::NAME, $strategy);
         $this->assertSame($strategy, $register->getCurrentStrategy());
         $this->assertSame([MergePricesCombiningStrategy::NAME => $strategy], $register->getStrategies());
@@ -25,7 +25,7 @@ class StrategyRegisterTest extends \PHPUnit\Framework\TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Pricing strategy named "merge_by_priority" does not exist.');
 
-        $configManager = self::createMock(ConfigManager::class);
+        $configManager = $this->createMock(ConfigManager::class);
         $configManager->method('get')->willReturn(MergePricesCombiningStrategy::NAME);
         $register = new StrategyRegister($configManager);
         $register->getCurrentStrategy();

@@ -18,7 +18,7 @@ class QuotePriceComparatorTest extends \PHPUnit\Framework\TestCase
     /** @var Quote */
     private $quote;
 
-    /** @var QuoteProductPriceProvider|\PHPUnit\Framework\MockObject\MockObject $provider */
+    /** @var QuoteProductPriceProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $provider;
 
     protected function setUp(): void

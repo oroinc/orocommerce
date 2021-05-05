@@ -14,14 +14,10 @@ use Symfony\Component\Form\Extension\Core\Type\FormType;
 
 class PriceListFormExtensionTest extends FormIntegrationTestCase
 {
-    /**
-     * @var PriceListFormExtension
-     */
+    /** @var PriceListFormExtension */
     protected $priceListFormExtension;
 
-    /**
-     * @var ConfigManager $configManager
-     */
+    /** @var ConfigManager */
     protected $configManager;
 
     protected function setUp(): void

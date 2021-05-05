@@ -6,6 +6,7 @@ use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Form\Type\PriceAttributePriceListType;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
@@ -93,11 +94,7 @@ class PriceAttributePriceListTypeTest extends FormIntegrationTestCase
             'enabledInExport' => 0
         ];
         $existingPriceAttributePriceList = new PriceAttributePriceList();
-        $class = new \ReflectionClass($existingPriceAttributePriceList);
-        $prop = $class->getProperty('id');
-        $prop->setAccessible(true);
-
-        $prop->setValue($existingPriceAttributePriceList, 42);
+        ReflectionUtil::setId($existingPriceAttributePriceList, 42);
         $existingPriceAttributePriceList->setName($defaultData['name']);
 
         foreach ($defaultData['currencies'] as $currency) {

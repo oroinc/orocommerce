@@ -22,7 +22,7 @@ class ProductSegmentContentWidgetSettingsTypeTest extends FormIntegrationTestCas
     /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $registry;
 
-    /** @var AclHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $aclHelper;
 
     protected function setUp(): void

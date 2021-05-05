@@ -1,6 +1,5 @@
 import BaseView from 'oroui/js/app/views/base/view';
 import applyFilterTemplate from 'tpl-loader!oroproduct/templates/sidebar-filters/filter-applier.html';
-import _ from 'underscore';
 import __ from 'orotranslation/js/translator';
 import Popper from 'popper';
 
@@ -74,7 +73,7 @@ const FilterApplierView = BaseView.extend({
         this.destroyPopper();
 
         this.popper = new Popper(referenceEl, popperEl, {
-            placement: _.isRTL() ? 'left' : 'right',
+            placement: 'right',
             positionFixed: false,
             removeOnDestroy: false,
             modifiers: {

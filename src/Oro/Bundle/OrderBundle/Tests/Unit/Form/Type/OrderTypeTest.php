@@ -47,6 +47,7 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Form\Type\UserSelectType;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as StubEntityType;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -89,7 +90,7 @@ class OrderTypeTest extends TypeTestCase
     /** @var NumberFormatter|\PHPUnit\Framework\MockObject\MockObject */
     private $numberFormatter;
 
-    /** @var ValidatorInterface  */
+    /** @var ValidatorInterface */
     private $validator;
 
     /** @var OrderLineItemCurrencyHandler */
@@ -128,7 +129,6 @@ class OrderTypeTest extends TypeTestCase
 
     public function testConfigureOptions()
     {
-        /* @var $resolver \PHPUnit\Framework\MockObject\MockObject|OptionsResolver */
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setDefaults')
@@ -338,9 +338,9 @@ class OrderTypeTest extends TypeTestCase
         $currencySelectionType = new CurrencySelectionTypeStub();
 
         $this->validator = $this->createMock(ValidatorInterface::class);
-        $this->validator
+        $this->validator->expects($this->any())
             ->method('validate')
-            ->will($this->returnValue(new ConstraintViolationList()));
+            ->willReturn(new ConstraintViolationList());
 
         return [
             new PreloadedExtension(
@@ -380,17 +380,9 @@ class OrderTypeTest extends TypeTestCase
     protected function getEntity($className, $id, $primaryKey = 'id')
     {
         static $entities = [];
-
-        if (!isset($entities[$className])) {
-            $entities[$className] = [];
-        }
-
         if (!isset($entities[$className][$id])) {
-            $entities[$className][$id] = new $className;
-            $reflectionClass = new \ReflectionClass($className);
-            $method = $reflectionClass->getProperty($primaryKey);
-            $method->setAccessible(true);
-            $method->setValue($entities[$className][$id], $id);
+            $entities[$className][$id] = new $className();
+            ReflectionUtil::setPropertyValue($entities[$className][$id], $primaryKey, $id);
         }
 
         return $entities[$className][$id];
@@ -447,17 +439,9 @@ class OrderTypeTest extends TypeTestCase
                     $order->addLineItem($lineItem);
                 }
             } elseif ($fieldName === 'customerUser') {
-                $order->setCustomerUser($this->getEntity(
-                    CustomerUser::class,
-                    $value
-                ));
+                $order->setCustomerUser($this->getEntity(CustomerUser::class, $value));
             } elseif ($fieldName === 'customer') {
-                $order->setCustomer(
-                    $this->getEntity(
-                        Customer::class,
-                        $value
-                    )
-                );
+                $order->setCustomer($this->getEntity(Customer::class, $value));
             } else {
                 $accessor->setValue($order, $fieldName, $value);
             }

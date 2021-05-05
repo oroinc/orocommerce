@@ -39,19 +39,24 @@ define(function(require) {
          */
         onLocalizationChange: function(e) {
             e.preventDefault();
-            const $el = $(e.target);
+            const newLocalization = $(e.target).data('localization');
+            const {selectedLocalization: initialLocalization} = this.options;
 
-            const localization = $el.data('localization');
-            if (localization !== this.options.selectedLocalization) {
-                mediator.execute('showLoading');
-                $.post(
-                    routing.generate(this.options.localizationSwitcherRoute),
-                    {localization: localization},
-                    function() {
-                        mediator.execute('refreshPage');
-                    }
-                );
-            }
+            mediator.execute('showLoading');
+            this.syncActiveLocalization(newLocalization)
+                // try to refresh page if localization is successfully changed
+                // and return promise of page refresh action result
+                .then(() => mediator.execute('refreshPage'))
+                .fail(() => {
+                    // rollback selected localization if refresh was canceled
+                    this.syncActiveLocalization(initialLocalization)
+                        .done(() => mediator.execute('hideLoading'));
+                });
+        },
+
+        syncActiveLocalization(localization) {
+            const url = routing.generate(this.options.localizationSwitcherRoute);
+            return $.post(url, {localization});
         },
 
         dispose: function() {

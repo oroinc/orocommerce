@@ -21,13 +21,13 @@ class CustomerTaxCodeImportExportHelperTest extends \PHPUnit\Framework\TestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper */
     private $doctrineHelper;
 
-    /** @var  \PHPUnit\Framework\MockObject\MockObject|CustomerTaxCodeRepository */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|CustomerTaxCodeRepository */
     private $repository;
 
-    /** @var  \PHPUnit\Framework\MockObject\MockObject|EntityManager */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|EntityManager */
     private $entityManager;
 
-    /** @var  Customer[]|\PHPUnit\Framework\MockObject\MockObject[] */
+    /** @var Customer[]|\PHPUnit\Framework\MockObject\MockObject[] */
     private $customers;
 
     /** @var CustomerTaxCode[] */

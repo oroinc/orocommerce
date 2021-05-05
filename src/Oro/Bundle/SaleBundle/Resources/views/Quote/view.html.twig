@@ -59,9 +59,9 @@
                             {% if loop.first %}
                                 <td rowspan="{{ numSubItems }}">
                                     {% if quoteProduct.isTypeNotAvailable %}
-                                        {{ quoteProduct.productReplacementSku }}
+                                        <bdo dir="ltr">{{ quoteProduct.productReplacementSku }}</bdo>
                                     {% else %}
-                                        {{ quoteProduct.productSku }}
+                                        <bdo dir="ltr">{{ quoteProduct.productSku }}</bdo>
                                     {% endif %}
                                 </td>
                                 <td rowspan="{{ numSubItems }}">
@@ -110,7 +110,7 @@
             {{ UI.renderProperty('oro.sale.quoteaddress.street2.label'|trans,entity.shippingAddress.street2) }}
             {{ UI.renderProperty('oro.sale.quoteaddress.city.label'|trans, entity.shippingAddress.city) }}
             {{ UI.renderProperty('oro.sale.quoteaddress.region.label'|trans, entity.shippingAddress.region) }}
-            {{ UI.renderProperty('oro.sale.quoteaddress.postal_code.label'|trans, entity.shippingAddress.postalCode) }}
+            {{ UI.renderProperty('oro.sale.quoteaddress.postal_code.label'|trans, entity.shippingAddress.postalCode, null, null, {'dir': 'ltr'}) }}
             {{ UI.renderProperty('oro.sale.quoteaddress.phone.label'|trans, entity.shippingAddress.phone) }}
         {% else %}
             <div class="items list-box list-shaped"></div>

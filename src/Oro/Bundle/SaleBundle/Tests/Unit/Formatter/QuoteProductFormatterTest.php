@@ -126,7 +126,7 @@ class QuoteProductFormatterTest extends \PHPUnit\Framework\TestCase
      */
     public function testFormatRequest(array $inputData, array $expectedData)
     {
-        /* @var $item QuoteProductRequest */
+        /* @var QuoteProductRequest $item */
         $item = $inputData['item'];
 
         $item
@@ -177,7 +177,7 @@ class QuoteProductFormatterTest extends \PHPUnit\Framework\TestCase
      */
     public function testFormatOffer(array $inputData, array $expectedData)
     {
-        /* @var $item QuoteProductOffer */
+        /* @var QuoteProductOffer $item */
         $item = $inputData['item'];
 
         $item

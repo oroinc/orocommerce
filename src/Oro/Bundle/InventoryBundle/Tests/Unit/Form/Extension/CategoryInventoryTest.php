@@ -15,7 +15,7 @@ abstract class CategoryInventoryTest extends \PHPUnit\Framework\TestCase
      */
     protected $categoryFormExtension;
 
-    /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder * */
+    /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $builder;
 
     /** @var CategoryStub */
