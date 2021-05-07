@@ -450,3 +450,18 @@ services:
         public: false
         arguments:
             - !tagged_iterator oro_redirect.slug_source_entity_provider
+
+    oro_redirect.event_listener.import_sluggable_entity:
+        class: Oro\Bundle\RedirectBundle\EventListener\ImportSluggableEntityListener
+        arguments:
+            - '@oro_redirect.helper.slugify_entity_helper'
+        tags:
+            - { name: kernel.event_listener, event: oro_importexport.strategy.process_before, method: onProcessBefore }
+
+    oro_redirect.helper.slugify_entity_helper:
+        class: Oro\Bundle\RedirectBundle\Helper\SlugifyEntityHelper
+        arguments:
+            - '@oro_entity_config.slug.generator'
+            - '@oro_entity_config.config_manager'
+            - '@doctrine'
+        public: false

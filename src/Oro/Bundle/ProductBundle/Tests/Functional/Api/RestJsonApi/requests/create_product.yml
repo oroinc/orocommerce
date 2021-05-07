@@ -30,6 +30,9 @@ data:
                 -
                     type: localizedfallbackvalues
                     id: 'slug-id-1'
+                -
+                    type: localizedfallbackvalues
+                    id: 'slug-id-2'
         taxCode:
             data:
                 type: producttaxcodes
@@ -177,6 +180,18 @@ included:
         relationships:
             localization:
                 data: null
+    -
+        type: localizedfallbackvalues
+        id: 'slug-id-2'
+        attributes:
+            fallback: null
+            string: null
+            text: null
+        relationships:
+            localization:
+                data:
+                    type: "localizations"
+                    id: '<toString(@es->getId())>'
     -
         type: productunitprecisions
         id: 'product-unit-precision-id-1'

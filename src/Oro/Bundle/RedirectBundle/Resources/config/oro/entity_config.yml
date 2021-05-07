@@ -1,0 +1,8 @@
+entity_config:
+    slug:
+        entity:
+            items:
+                source:
+                    options:
+                        default_value: null
+                        indexed: true
