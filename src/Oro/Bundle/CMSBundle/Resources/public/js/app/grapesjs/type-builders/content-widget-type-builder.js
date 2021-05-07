@@ -180,7 +180,7 @@ const ContentWidgetTypeBuilder = BaseTypeBuilder.extend({
             dialog.on('grid-row-select', data => {
                 const sel = editor.getSelected();
                 if (event && event.selection) {
-                    const originalText = event.selection.anchorNode.innerHTML;
+                    const originalText = sel.view.el.innerHTML;
 
                     const offset = originalText.indexOf(event.nodeValue);
 
@@ -199,7 +199,25 @@ const ContentWidgetTypeBuilder = BaseTypeBuilder.extend({
                                 >{{ widget("${data.model.get('name')}") }}</span>`
                             , event.offset, event.extentOffset
                         )
-                    );
+                    ).forEach(child => {
+                        child.get('type') !== data.model.get('type') && child.set({
+                            layerable: 0,
+                            selectable: 0,
+                            hoverable: 0,
+                            editable: 0,
+                            draggable: 0,
+                            droppable: 0,
+                            highlightable: 0
+                        });
+
+                        if (child.get('attributes') && child.get('attributes').id) {
+                            const attrs = child.get('attributes');
+                            delete attrs.id;
+                            child.set('attributes', {
+                                ...attrs
+                            });
+                        }
+                    });
                 } else {
                     sel.onContentBlockChange(sel, data.model);
                 }
