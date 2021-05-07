@@ -130,6 +130,9 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
  *          },
  *          "attribute"={
  *              "has_attributes"=true
+ *          },
+ *          "slug"={
+ *              "source"="names"
  *          }
  *      }
  * )

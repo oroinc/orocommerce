@@ -54,6 +54,9 @@ use Oro\Component\WebCatalog\Entity\WebCatalogAwareInterface;
  *          },
  *          "activity"={
  *              "show_on_page"="\Oro\Bundle\ActivityBundle\EntityConfig\ActivityScope::UPDATE_PAGE"
+ *          },
+ *          "slug"={
+ *              "source"="titles"
  *          }
  *     }
  * )

@@ -4,6 +4,8 @@ services:
         arguments:
             - '@oro_redirect.helper.slugify_form_helper'
             - '@oro_entity_config.slug.generator'
+        calls:
+            - [setSlugifyEntityHelper, ['@oro_redirect.helper.slugify_entity_helper']]
         tags:
             - { name: form.type, alias: oro_redirect_localized_slug }
 

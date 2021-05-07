@@ -4,18 +4,21 @@ namespace Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Generator\SlugGenerator;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
+use Oro\Bundle\RedirectBundle\Helper\SlugifyEntityHelper;
 use Oro\Bundle\RedirectBundle\Helper\SlugifyFormHelper;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Entity\SluggableEntityStub;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type\Stub\SluggableEntityFormStub;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormConfigInterface;
@@ -35,14 +38,29 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
     private $slugifyFormHelper;
 
     /**
-     * @var SlugGenerator|\PHPUnit\Framework\MockObject\MockObject
+     * @var SlugifyEntityHelper|\PHPUnit\Framework\MockObject\MockObject
      */
-    private $slugGenerator;
+    private $slugifyEntityHelper;
 
     /**
      * @var LocalizedSlugType
      */
     private $formType;
+
+    /**
+     * @var SlugGenerator|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $slugGenerator;
+
+    /**
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $configManager;
+
+    /**
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $managerRegistry;
 
     /**
      * {@inheritDoc}
@@ -51,7 +69,15 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
     {
         $this->slugifyFormHelper = $this->createMock(SlugifyFormHelper::class);
         $this->slugGenerator = $this->createMock(SlugGenerator::class);
+        $this->configManager = $this->createMock(ConfigManager::class);
+        $this->managerRegistry = $this->createMock(ManagerRegistry::class);
+        $this->slugifyEntityHelper = new SlugifyEntityHelper(
+            $this->slugGenerator,
+            $this->configManager,
+            $this->managerRegistry
+        );
         $this->formType = new LocalizedSlugType($this->slugifyFormHelper, $this->slugGenerator);
+        $this->formType->setSlugifyEntityHelper($this->slugifyEntityHelper);
 
         $this->slugGenerator
             ->expects($this->any())
@@ -100,8 +126,11 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit(array $submitData, Collection $expectedSlugPrototypes): void
     {
-        $form = $this->factory->create(SluggableEntityFormStub::class, new SluggableEntityStub());
-
+        $form = $this->factory->create(
+            SluggableEntityFormStub::class,
+            new SluggableEntityStub(),
+            ['source_field' => 'titles']
+        );
         $form->submit($submitData);
 
         $this->assertTrue($form->isValid());
@@ -182,8 +211,8 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
 
         $form = $this->createMock(FormInterface::class);
         $form->expects($this->once())
-            ->method('getParent')
-            ->willReturn(null);
+            ->method('getRoot')
+            ->willReturn($form);
         $form->expects($this->once())
             ->method('getConfig')
             ->willReturn($formConfig);
@@ -207,7 +236,7 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
 
         /** @var \PHPUnit\Framework\MockObject\MockObject|FormEvent $event */
         $event = $this->createMock(FormEvent::class);
-        $event->expects($this->exactly(2))
+        $event->expects($this->exactly(3))
             ->method('getForm')
             ->willReturn($form);
 
@@ -267,7 +296,7 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
                 'localizedSources' => new ArrayCollection([$this->createLocalizedFallbackValue('test')]),
                 'localizedSlugs' => new ArrayCollection([$this->createLocalizedFallbackValue('', null, 1)]),
                 'expectedLocalizedSlugs' => new ArrayCollection(
-                    [$this->createLocalizedFallbackValue('', null, 1)]
+                    [$this->createLocalizedFallbackValue('test-slug', null, 1)]
                 ),
             ],
         ];
