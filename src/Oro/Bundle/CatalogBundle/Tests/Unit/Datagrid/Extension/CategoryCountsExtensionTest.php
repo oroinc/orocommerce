@@ -20,8 +20,8 @@ use Oro\Bundle\DataGridBundle\Tools\DatagridParametersHelper;
 use Oro\Bundle\FilterBundle\Grid\Extension\AbstractFilterExtension;
 use Oro\Bundle\SearchBundle\Datagrid\Datasource\SearchDatasource;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
+use Oro\Component\DependencyInjection\ServiceLink;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Component\TestUtils\Mocks\ServiceLink;
 
 class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
 {
@@ -82,9 +82,6 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
         ],
     ];
 
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
         $this->datagridManager = $this->createMock(Manager::class);
@@ -96,7 +93,6 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
         $this->datagridParametersHelper = $this->createMock(DatagridParametersHelper::class);
         $this->configManager = $this->createMock(ConfigManager::class);
 
-        /** @var SearchDatasource|\PHPUnit\Framework\MockObject\MockObject $searchDatasource */
         $searchDatasource = $this->createMock(SearchDatasource::class);
         $searchDatasource->expects($this->any())
             ->method('getSearchQuery')
@@ -129,15 +125,19 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
             ->with(Category::class)
             ->willReturn($this->categoryRepository);
 
-        /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $registry */
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->registry->expects($this->any())
             ->method('getManagerForClass')
             ->with(Category::class)
             ->willReturn($manager);
 
+        $datagridManagerLink = $this->createMock(ServiceLink::class);
+        $datagridManagerLink->expects($this->any())
+            ->method('getService')
+            ->willReturn($this->datagridManager);
+
         $this->extension = new CategoryCountsExtension(
-            new ServiceLink($this->datagridManager),
+            $datagridManagerLink,
             $this->registry,
             $this->productSearchRepository,
             $this->cache,
@@ -207,8 +207,13 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
      */
     public function testVisitMetadata(): void
     {
+        $datagridManagerLink = $this->createMock(ServiceLink::class);
+        $datagridManagerLink->expects($this->any())
+            ->method('getService')
+            ->willReturn($this->datagridManager);
+
         $this->extension = new CategoryCountsExtension(
-            new ServiceLink($this->datagridManager),
+            $datagridManagerLink,
             $this->registry,
             $this->productSearchRepository,
             $this->cache,
@@ -256,35 +261,23 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
             'dataGridSkipExtensionParam' => true
         ]);
 
-        $this->productSearchRepository->expects($this->at(0))
-            ->method('getCategoryCountsByCategory')
-            ->with($category, $this->searchQuery)
-            ->willReturn([1 => 2]);
-
-        $this->productSearchRepository->expects($this->at(1))
-            ->method('getCategoryCountsByCategory')
-            ->with($category, $this->searchQueryWithoutFilters)
-            ->willReturn([1 => 2, 2 => 3]);
-
-        $this->datagridManager->expects($this->at(0))
+        $this->datagridManager->expects($this->exactly(2))
             ->method('getDatagrid')
-            ->with(self::GRID_NAME, $parametersWithoutSubcategory)
-            ->willReturn($this->datagrid);
+            ->withConsecutive(
+                [self::GRID_NAME, $parametersWithoutSubcategory],
+                [self::GRID_NAME, $parametersWithoutFilters]
+            )
+            ->willReturnOnConsecutiveCalls(
+                $this->datagrid,
+                $this->datagridWithoutFilters
+            );
 
-        $this->datagridManager->expects($this->at(1))
-            ->method('getDatagrid')
-            ->with(self::GRID_NAME, $parametersWithoutFilters)
-            ->willReturn($this->datagridWithoutFilters);
-
-        $this->productSearchRepository->expects($this->at(0))
+        $this->productSearchRepository->expects($this->exactly(2))
             ->method('getCategoryCountsByCategory')
-            ->with($category, $this->searchQuery)
-            ->willReturn([1 => 2]);
-
-        $this->productSearchRepository->expects($this->at(1))
-            ->method('getCategoryCountsByCategory')
-            ->with($category, $this->searchQueryWithoutFilters)
-            ->willReturn([1 => 2, 2 => 3]);
+            ->willReturnMap([
+                [$category, $this->searchQuery, [1 => 2]],
+                [$category, $this->searchQueryWithoutFilters, [1 => 2, 2 => 3]]
+            ]);
 
         $keyWithoutSubCategories
             = 'grid1|{"_filter":{"filter1":[]},"categoryId":42,"dataGridSkipExtensionParam":true}';
@@ -339,8 +332,7 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
     {
         $this->testVisitMetadata();
 
-        $this->configManager
-            ->expects(self::never())
+        $this->configManager->expects(self::never())
             ->method('get');
 
         $filters = [['name' => 'supported_attribute']];
@@ -379,15 +371,13 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
 
         $key = 'grid1|{"_filter":{"filter1":[],"subcategory":{"value":[1,2,3]}},"categoryId":42}';
 
-        $this->cache->expects($this->at(0))
+        $this->cache->expects($this->exactly(2))
             ->method('getCounts')
             ->with($key)
-            ->willReturn([1 => 2]);
-
-        $this->cache->expects($this->at(1))
-            ->method('getCounts')
-            ->with($key)
-            ->willReturn([1 => 2, 2 => 3]);
+            ->willReturnOnConsecutiveCalls(
+                [1 => 2],
+                [1 => 2, 2 => 3]
+            );
 
         $this->cache->expects($this->never())
             ->method('setCounts');
