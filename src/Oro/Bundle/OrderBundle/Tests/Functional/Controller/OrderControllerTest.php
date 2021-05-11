@@ -306,7 +306,7 @@ class OrderControllerTest extends WebTestCase
                 'description' => 'some test description 333'
             ],
             [
-                'percent' => '21.162',
+                'percent' => '21.161904761905',
                 'amount' => '44.44',
                 'type' => OrderDiscount::TYPE_AMOUNT,
                 'description' => 'some other test description 444'
