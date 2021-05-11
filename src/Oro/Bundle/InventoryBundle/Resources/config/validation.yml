@@ -3,6 +3,10 @@ Oro\Bundle\InventoryBundle\Entity\InventoryLevel:
         quantity:
             - NotBlank: ~
             - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+            # DB column "Quantity" created with precision (20) and scale (10) values
+            - Oro\Bundle\EntityExtendBundle\Validator\Constraints\Decimal:
+                precision: 20
+                scale: 10
         product:
             - NotBlank: ~
         productUnitPrecision:
