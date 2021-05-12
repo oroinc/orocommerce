@@ -73,7 +73,6 @@ abstract class AbstractStrategy implements StrategyInterface
         return $subtotal;
     }
 
-
     /**
      * Allocate discount amount for each Line Item as a part of Total Discount Amount
      *
