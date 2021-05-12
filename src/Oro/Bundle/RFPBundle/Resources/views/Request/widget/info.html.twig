@@ -7,11 +7,11 @@
         <div class="responsive-block">
             {{ UI.renderProperty('oro.rfp.request.first_name.label'|trans, entity.firstName) }}
             {{ UI.renderProperty('oro.rfp.request.last_name.label'|trans, entity.lastName) }}
-            {{ UI.renderHtmlProperty('oro.rfp.request.email.label'|trans, EmailActions.sendEmailLink(entity.email, entity)) }}
-            {{ UI.renderProperty('oro.rfp.request.phone.label'|trans, entity.phone) }}
+            {{ UI.renderHtmlProperty('oro.rfp.request.email.label'|trans, EmailActions.sendEmailLink(entity.email, entity), null, null, {'dir': 'ltr'}) }}
+            {{ UI.renderProperty('oro.rfp.request.phone.label'|trans, entity.phone, null, null, {'dir': 'ltr'}) }}
             {{ UI.renderProperty('oro.rfp.request.company.label'|trans, entity.company|default('N/A'|trans)) }}
             {{ UI.renderProperty('oro.rfp.request.role.label'|trans, entity.role|default('N/A'|trans)) }}
-            {{ UI.renderProperty('oro.rfp.request.po_number.label'|trans, entity.poNumber|default('N/A'|trans)) }}
+            {{ UI.renderProperty('oro.rfp.request.po_number.label'|trans, entity.poNumber|default('N/A'|trans), null, null, {'dir': 'ltr'}) }}
             {{ UI.renderProperty('oro.rfp.request.ship_until.label'|trans, entity.shipUntil|oro_format_date|default('N/A'|trans)) }}
             {% if entity.customer %}
                 {{ UI.renderHtmlProperty('oro.rfp.request.customer.label'|trans, UI.entityViewLink(entity.customer, entity.customer.name, 'oro_customer_customer_view')) }}

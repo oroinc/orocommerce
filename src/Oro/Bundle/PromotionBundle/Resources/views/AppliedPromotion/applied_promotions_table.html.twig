@@ -36,7 +36,7 @@
                 >
                     <td>
                         {% if item.couponCode %}
-                            {{ item.couponCode }}
+                            <span dir="ltr">{{ item.couponCode }}</span>
                         {% else %}
                             <span class="not-available">{{ 'N/A'|trans }}</span>
                         {% endif %}
@@ -51,8 +51,12 @@
                         {% endif %}
                     </td>
                     <td class="discount">
-                        {% set amount =  item.amount > 0 ? -item.amount : item.amount %}
-                        {{ amount|oro_format_currency({currency: item.currency}) }}
+                        {% if item.amount > 0 %}
+                            {% set amount = -item.amount %}
+                            <span dir="ltr">{{ amount|oro_format_currency({currency: item.currency}) }}</span>
+                        {% else %}
+                            {{ item.amount|oro_format_currency({currency: item.currency}) }}
+                        {% endif %}
                     </td>
                     <td class="action">
                         {% if item.id %}

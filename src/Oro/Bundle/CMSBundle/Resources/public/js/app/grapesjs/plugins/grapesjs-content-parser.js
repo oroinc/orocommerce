@@ -217,6 +217,10 @@ function parseNodes(el, config, ct = '', parent = {}) {
                 droppable: 0,
                 highlightable: 0
             };
+
+            if (model.attributes && model.attributes.id) {
+                delete model.attributes.id;
+            }
         }
 
         // Check if it's a text node and if could be moved to the prevous model

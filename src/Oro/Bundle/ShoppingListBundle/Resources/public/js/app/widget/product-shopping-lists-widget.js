@@ -123,6 +123,10 @@ define(function(require) {
         },
 
         dispose: function() {
+            if (this.disposed) {
+                return;
+            }
+
             this.disposeElements();
             delete this.shoppingListCollection;
             mediator.off(null, null, this);

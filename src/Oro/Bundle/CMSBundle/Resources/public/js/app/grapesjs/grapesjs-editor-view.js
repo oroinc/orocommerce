@@ -412,6 +412,10 @@ const GrapesjsEditorView = BaseView.extend({
 
         this.builder.setStyle(pureStyles);
 
+        if (_.isRTL()) {
+            this.rtlFallback();
+        }
+
         mediator.trigger('grapesjs:created', this.builder);
 
         this.builderDelegateEvents();
@@ -884,6 +888,18 @@ const GrapesjsEditorView = BaseView.extend({
         if (pos.top < 0 && $builderIframe.innerHeight() > (pos.canvasOffsetTop + targetHeight)) {
             pos.top += $el.outerHeight() + targetHeight;
         }
+    },
+
+    rtlFallback() {
+        this.builder.LayerManager.render = _.wrap(this.builder.LayerManager.render, function(wrap) {
+            const root = wrap();
+
+            root.querySelectorAll('[data-toggle-select]').forEach(el => {
+                el.style.paddingRight = el.style.paddingLeft;
+                el.style.paddingLeft = '';
+            });
+            return root;
+        });
     }
 });
 

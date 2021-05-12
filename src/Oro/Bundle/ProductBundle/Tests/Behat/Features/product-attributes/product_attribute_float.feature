@@ -50,10 +50,10 @@ Feature: Product attribute float
     Then I should see validation errors:
       | FloatField | This value is not valid. |
     When I fill "Product Form" with:
-      | FloatField | 321.67 |
+      | FloatField | -1234.1234567891 |
     And I save and close form
     Then I should see "Product has been saved" flash message
-    And I should see "321.67"
+    And I should see "-1,234.1234567891"
 
   Scenario: Check product attribute is formatted according to localization
     Given I go to System/Configuration
@@ -70,14 +70,14 @@ Feature: Product attribute float
     Then I should see validation errors:
       | FloatField | This value is not valid. |
     When I fill "Product Form" with:
-      | FloatField | 321,67 |
+      | FloatField | -1234,1234567891 |
     And I save and close form
     Then I should see "Product has been saved" flash message
-    And I should see "321,67"
+    And I should see "-1.234,1234567891"
 
   Scenario: Check product grid search
     Given I login as AmandaRCole@example.org buyer
-    When I type "321.67" in "search"
+    When I type "-1234.1234567891" in "search"
     And I click "Search Button"
     Then I should not see "SKU123" product
     And I should not see "SKU456" product
@@ -86,17 +86,17 @@ Feature: Product attribute float
     Given I click "NewCategory"
     And I should see "SKU123" product
     And I should see "SKU456" product
-    When I filter FloatField as equals "321,67"
+    When I filter FloatField as equals "-1234,1234567891"
     Then I should see "SKU123" product
     And I should not see "SKU456" product
     And grid sorter should have "FloatField" options
 
   Scenario: Check product attribute is formatted according to localization on front store
     When I click "View Details" for "SKU123" product
-    Then I should see "321,67"
+    Then I should see "-1.234,1234567891"
     When I click "Localization Switcher"
     And I select "English" localization
-    Then I should see "321.67"
+    Then I should see "-1,234.1234567891"
 
   Scenario: Delete product attribute
     Given I login as administrator

@@ -62,7 +62,7 @@
             justify-content: space-between;
             flex-wrap: wrap;
 
-            &.has-offset {
+            &.has-offset:not(.in-sticky) {
                 margin: $checkout-head-margin;
             }
         }

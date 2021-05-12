@@ -83,6 +83,9 @@ use Oro\Component\Tree\Entity\TreeTrait;
  *              "owner_field_name"="organization",
  *              "owner_column_name"="organization_id"
  *          },
+ *          "slug"={
+ *              "source"="titles"
+ *          }
  *      }
  * )
  * @ORM\HasLifecycleCallbacks()

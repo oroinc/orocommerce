@@ -7,7 +7,7 @@
 
         .#{$app-prefix}radio-item {
             border: none;
-            margin-#{$start}: 1px;
+            margin-left: 1px;
             background-color: $primary-860;
             line-height: 1;
 
@@ -17,7 +17,7 @@
             }
 
             &:first-child {
-                margin-#{$start}: 0;
+                margin-left: 0;
                 border-radius: 20px 0 0 20px;
                 .#{$app-prefix}radio-item-label {
                     border-radius: 20px 0 0 20px;

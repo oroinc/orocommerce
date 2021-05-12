@@ -35,11 +35,11 @@
 
         input[type="radio"] {
             margin-top: -2px;
-            margin-#{$end}: 7px;
+            margin-right: 7px;
         }
 
         .content-variant-item-default-label {
-            margin-#{$start}: 7px;
+            margin-left: 7px;
         }
     }
 
@@ -58,13 +58,13 @@
     .btn-remove-variant {
         position: absolute;
         top: 5px;
-        #{$end}: 5px;
+        right: 5px;
     }
 
     .btn-toggle-variant {
         position: absolute;
         top: 5px;
-        #{$start}: 5px;
+        left: 5px;
     }
 
     .scope-collection {
