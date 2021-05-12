@@ -2,6 +2,7 @@ define(function(require) {
     'use strict';
 
     const _ = require('underscore');
+    const numeral = require('numeral');
 
     const PricesHelper = {
         sortByLowQuantity: function(prices = []) {
@@ -96,7 +97,7 @@ define(function(require) {
          * @returns {Number}
          */
         calcTotalPrice: function(prices, unit, quantity) {
-            return this.findPriceValue(prices, unit, quantity) * quantity;
+            return numeral(this.findPriceValue(prices, unit, quantity)).multiply(quantity).value();
         }
     };
 
