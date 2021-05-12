@@ -2,7 +2,7 @@
 
 .coupon-trigger {
     @include fa-icon($fa-var-plus-square-o, before, true) {
-        margin-#{$end}: $coupon-trigger-inner-icon-offset;
+        margin-right: $coupon-trigger-inner-icon-offset;
 
         vertical-align: middle;
     };

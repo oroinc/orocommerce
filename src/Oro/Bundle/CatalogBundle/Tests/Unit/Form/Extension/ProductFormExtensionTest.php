@@ -3,12 +3,15 @@
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Form\Extension;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Form\Extension\ProductFormExtension;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryTreeType;
+use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category as CategoryStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -19,38 +22,26 @@ use Symfony\Component\Form\FormInterface;
  */
 class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var CategoryRepository|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $categoryRepository;
+    /** @var CategoryRepository|\PHPUnit\Framework\MockObject\MockObject */
+    private $categoryRepository;
 
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $registry;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $registry;
 
-    /**
-     * @var ProductFormExtension
-     */
-    protected $extension;
+    /** @var ProductFormExtension */
+    private $extension;
 
     protected function setUp(): void
     {
-        $this->registry = $this->createMock('Doctrine\Persistence\ManagerRegistry');
+        $this->registry = $this->createMock(ManagerRegistry::class);
         $this->extension = new ProductFormExtension($this->registry);
     }
 
-    /**
-     * @param bool $expects
-     */
-    protected function prepareRegistry($expects = false)
+    private function prepareRegistry(bool $expects = false): void
     {
-        $this->categoryRepository =
-            $this->getMockBuilder('Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository')
-                ->disableOriginalConstructor()
-                ->getMock();
+        $this->categoryRepository = $this->createMock(CategoryRepository::class);
 
-        $entityManager = $this->createMock('Doctrine\Persistence\ObjectManager');
+        $entityManager = $this->createMock(ObjectManager::class);
         $entityManager->expects($expects ? $this->once() : $this->never())
             ->method('getRepository')
             ->with('OroCatalogBundle:Category')
@@ -69,8 +60,7 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
 
     public function testBuildForm()
     {
-        /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder */
-        $builder = $this->createMock('Symfony\Component\Form\FormBuilderInterface');
+        $builder = $this->createMock(FormBuilderInterface::class);
         $builder->expects($this->once())
             ->method('add')
             ->with(
@@ -201,7 +191,7 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
         $this->assertCategoryAdd($event, $newCategory);
         $this->categoryRepository->expects($this->once())
             ->method('findOneByProduct')
-            ->will($this->returnValue($categoryWithProduct));
+            ->willReturn($categoryWithProduct);
 
         $this->extension->onPostSubmit($event);
 
@@ -214,12 +204,11 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
      *
      * @return FormEvent
      */
-    protected function createEvent($data)
+    private function createEvent($data): FormEvent
     {
-        $categoryForm = $this->createMock('Symfony\Component\Form\FormInterface');
+        $categoryForm = $this->createMock(FormInterface::class);
 
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $mainForm */
-        $mainForm = $this->createMock('Symfony\Component\Form\FormInterface');
+        $mainForm = $this->createMock(FormInterface::class);
         $mainForm->expects($this->any())
             ->method('get')
             ->with('category')
@@ -228,49 +217,23 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
         return new FormEvent($mainForm, $data);
     }
 
-    /**
-     * @param int|null $id
-     *
-     * @return Product
-     */
-    protected function createProduct($id = null)
+    private function createProduct(int $id = null): Product
     {
-        return $this->createEntity('Oro\Bundle\ProductBundle\Entity\Product', $id);
+        $product = new Product();
+        ReflectionUtil::setId($product, $id);
+
+        return $product;
     }
 
-    /**
-     * @param int|null $id
-     *
-     * @return Category
-     */
-    protected function createCategory($id = null)
+    private function createCategory(int $id = null): Category
     {
-        return $this->createEntity(\Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category::class, $id);
+        $category = new CategoryStub();
+        ReflectionUtil::setId($category, $id);
+
+        return $category;
     }
 
-    /**
-     * @param          $class string
-     * @param int|null $id
-     *
-     * @return object
-     */
-    protected function createEntity($class, $id = null)
-    {
-        $entity = new $class();
-        if ($id) {
-            $reflection = new \ReflectionProperty($class, 'id');
-            $reflection->setAccessible(true);
-            $reflection->setValue($entity, $id);
-        }
-
-        return $entity;
-    }
-
-    /**
-     * @param FormEvent $event
-     * @param Category  $category
-     */
-    protected function assertCategoryAdd(FormEvent $event, Category $category)
+    private function assertCategoryAdd(FormEvent $event, Category $category): void
     {
         /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $mainForm */
         $mainForm = $event->getForm();
@@ -282,6 +245,6 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
         $categoryForm = $mainForm->get('category');
         $categoryForm->expects($this->once())
             ->method('getData')
-            ->will($this->returnValue($category));
+            ->willReturn($category);
     }
 }

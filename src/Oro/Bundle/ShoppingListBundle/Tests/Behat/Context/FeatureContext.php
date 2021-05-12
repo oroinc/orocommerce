@@ -13,7 +13,6 @@ use Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\ProductTable;
 use Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\ProductTableRow;
 use Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\ShoppingList as ShoppingListElement;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
-use Oro\Bundle\TestFrameworkBundle\Behat\Element\Element;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Table;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\TableRow;
@@ -39,7 +38,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $this->visitPath($this->getShoppingListViewUrl($shoppingList));
         $this->waitForAjax();
 
-        /* @var $element ShoppingListElement */
+        /* @var ShoppingListElement $element */
         $element = $this->createElement('ShoppingList');
         $element->assertTitle($shoppingListLabel);
     }
@@ -52,7 +51,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $this->getSession()->getPage()->clickLink('Request Quote');
         $this->waitForAjax();
 
-        /* @var $page RequestForQuote */
+        /* @var RequestForQuote $page */
         $page = $this->createElement('RequestForQuote');
         $page->assertTitle('Request A Quote');
         $this->waitForAjax();
@@ -68,11 +67,10 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     public function buyerIsViewRequestForQuote($message)
     {
-        /* @var $page RequestForQuote */
+        /* @var RequestForQuote $page */
         $page = $this->createElement('RequestForQuote');
         $page->assertTitle('Request For Quote');
 
-        /* @var $element Element */
         $element = $this->findElementContains('RequestForQuoteFlashMessage', $message);
         $this->assertTrue($element->isValid(), sprintf('Title "%s", was not match to current title', $message));
     }
@@ -137,7 +135,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $rows = $table->getRows();
         self::assertNotEmpty($rows);
 
-        /* @var $element ShoppingListElement */
+        /* @var ShoppingListElement $element */
         $element = $this->createElement('ShoppingList');
 
         self::assertEquals(reset($rows), $element->getLineItemsHeader());

@@ -5,7 +5,9 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Processor;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Processor\QuickAddProcessor;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -50,17 +52,16 @@ class QuickAddProcessorTest extends AbstractQuickAddProcessorTest
     ) {
         $entitiesCount = count($data);
 
-        $this->handler->expects($this->any())->method('getShoppingList')->will(
-            $this->returnCallback(
-                function ($shoppingListId) {
-                    if (!$shoppingListId) {
-                        return $this->getEntity('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList');
-                    }
-
-                    return $this->getEntity('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList', $shoppingListId);
+        $this->handler->expects($this->any())
+            ->method('getShoppingList')
+            ->willReturnCallback(function ($shoppingListId) {
+                $shoppingList = new ShoppingList();
+                if ($shoppingListId) {
+                    ReflectionUtil::setId($shoppingList, $shoppingListId);
                 }
-            )
-        );
+
+                return $shoppingList;
+            });
 
         $result = [];
         foreach ($productIds as $sku => $id) {

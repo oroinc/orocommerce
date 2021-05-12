@@ -96,11 +96,11 @@ class LoadCustomerUsersData extends AbstractFixture implements ContainerAwareInt
      */
     public function load(ObjectManager $manager)
     {
-        /* @var $userManager BaseUserManager */
+        /* @var BaseUserManager $userManager */
         $userManager = $this->container->get('oro_customer_user.manager');
         $organization = $manager->getRepository('OroOrganizationBundle:Organization')->getFirst();
-        /* @var $CustomerUserRoleRepository CustomerUserRoleRepository */
-        $CustomerUserRoleRepository =  $this->container
+        /* @var CustomerUserRoleRepository $customerUserRoleRepository */
+        $customerUserRoleRepository =  $this->container
             ->get('doctrine')
             ->getManagerForClass('OroCustomerBundle:CustomerUserRole')
             ->getRepository('OroCustomerBundle:CustomerUserRole');
@@ -110,11 +110,11 @@ class LoadCustomerUsersData extends AbstractFixture implements ContainerAwareInt
                 continue;
             }
 
-            /* @var $entity CustomerUser  */
+            /* @var CustomerUser $entity */
             $entity = $userManager->createUser();
 
             /** @var CustomerUserRole $role */
-            $role = $CustomerUserRoleRepository->findOneBy(['role' => $user['role']]);
+            $role = $customerUserRoleRepository->findOneBy(['role' => $user['role']]);
 
             /** @var Customer $customer */
             $customer = $this->getReference($user['customer']);

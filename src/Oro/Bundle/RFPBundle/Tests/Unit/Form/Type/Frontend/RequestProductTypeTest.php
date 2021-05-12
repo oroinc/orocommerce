@@ -44,7 +44,6 @@ class RequestProductTypeTest extends AbstractTest
 
     public function testConfigureOptions()
     {
-        /* @var $resolver \PHPUnit\Framework\MockObject\MockObject|OptionsResolver */
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects(static::once())
             ->method('setDefaults')

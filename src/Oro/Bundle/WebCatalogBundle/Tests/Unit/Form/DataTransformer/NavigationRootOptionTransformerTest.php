@@ -15,7 +15,7 @@ class NavigationRootOptionTransformerTest extends \PHPUnit\Framework\TestCase
     /** @var NavigationRootOptionTransformer */
     private $transformer;
 
-    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
     protected function setUp(): void

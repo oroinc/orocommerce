@@ -41,7 +41,7 @@ class CouponControllerTest extends WebTestCase
 
     public function testUpdate()
     {
-        /** @var Coupon $coupon*/
+        /** @var Coupon $coupon */
         $coupon = $this->getContainer()->get('doctrine')
             ->getManagerForClass(Coupon::class)
             ->getRepository(Coupon::class)
@@ -53,7 +53,7 @@ class CouponControllerTest extends WebTestCase
 
     public function testView()
     {
-        /** @var Coupon $coupon*/
+        /** @var Coupon $coupon */
         $coupon = $this->getContainer()->get('doctrine')
             ->getManagerForClass(Coupon::class)
             ->getRepository(Coupon::class)

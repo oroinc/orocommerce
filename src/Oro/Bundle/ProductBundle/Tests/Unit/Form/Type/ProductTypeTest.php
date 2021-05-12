@@ -162,7 +162,7 @@ class ProductTypeTest extends FormIntegrationTestCase
         $configProvider = $this->createMock(ConfigProvider::class);
         /** @var \PHPUnit\Framework\MockObject\MockObject|Translator $translator */
         $translator = $this->createMock(Translator::class);
-        /** @var \PHPUnit\Framework\MockObject\MockObject|ImageTypeProvider $imageTypeProvider*/
+        /** @var \PHPUnit\Framework\MockObject\MockObject|ImageTypeProvider $imageTypeProvider */
         $imageTypeProvider = $this->createMock(ImageTypeProvider::class);
         $imageTypeProvider->expects($this->any())
             ->method('getImageTypes')

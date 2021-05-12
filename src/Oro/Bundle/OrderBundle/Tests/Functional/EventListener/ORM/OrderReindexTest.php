@@ -51,7 +51,7 @@ class OrderReindexTest extends FrontendWebTestCase
 
     public function testReindexWhenOrderChangeStatusIsApplicable()
     {
-        /** get ORDER_4 because it has 2 product PRODUCT_1 and PRODUCT_6  */
+        /** get ORDER_4 because it has 2 product PRODUCT_1 and PRODUCT_6 */
         $order = $this->getReference(LoadOrders::ORDER_5);
         $this->changeOrderStatus($order, OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED);
 
@@ -231,7 +231,7 @@ class OrderReindexTest extends FrontendWebTestCase
             ->setProductUnit($this->getReference($productUnit))
             ->setPrice(Price::create($price['value'], $price['currency']));
 
-        /* @var $order Order */
+        /* @var Order $order */
         $order = $this->getReference($order);
         $order->addLineItem($lineItem);
 

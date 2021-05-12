@@ -21,7 +21,7 @@ class DisableQuotesProcessTest extends WebTestCase
     /** @var EntityManagerInterface */
     protected $quoteEm;
 
-    /** @var  DoctrineHelper */
+    /** @var DoctrineHelper */
     protected $doctrineHelper;
 
     protected function setUp(): void

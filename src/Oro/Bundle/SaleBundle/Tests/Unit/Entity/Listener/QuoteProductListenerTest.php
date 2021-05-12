@@ -9,16 +9,16 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class QuoteProductListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var  \PHPUnit\Framework\MockObject\MockObject|RequestStack $listener*/
+    /** @var \PHPUnit\Framework\MockObject\MockObject|RequestStack */
     private $requestStack;
 
-    /** @var  \PHPUnit\Framework\MockObject\MockObject|Request $listener*/
+    /** @var \PHPUnit\Framework\MockObject\MockObject|Request */
     private $request;
 
-    /** @var  \PHPUnit\Framework\MockObject\MockObject|PreUpdateEventArgs $event*/
+    /** @var \PHPUnit\Framework\MockObject\MockObject|PreUpdateEventArgs */
     private $event;
 
-    /** @var  QuoteProductListener $listener*/
+    /** @var QuoteProductListener */
     private $listener;
 
     protected function setUp(): void

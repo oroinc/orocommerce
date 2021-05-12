@@ -42,7 +42,7 @@ class WebsiteScopedTypeMockProvider extends \PHPUnit\Framework\TestCase
             ->with('website')
             ->willReturn($websiteQB);
 
-        /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $registry*/
+        /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $registry */
         $registry = $this->createMock(ManagerRegistry::class);
         $registry->expects($this->any())
             ->method('getRepository')

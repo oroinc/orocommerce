@@ -8,29 +8,18 @@ use Symfony\Component\Routing\RouterInterface;
 
 class FilteredDatagridRouteHelperTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var DatagridRouteHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var DatagridRouteHelper|\PHPUnit\Framework\MockObject\MockObject */
     protected $datagridRouteHelper;
 
-    /**
-     * @var string $gridRouteName
-     */
+    /** @var string */
     protected $gridRouteName;
 
-    /**
-     * @var string $gridName
-     */
+    /** @var string $gridName */
     protected $gridName;
 
-    /**
-     * @var FilteredDatagridRouteHelper
-     */
+    /** @var FilteredDatagridRouteHelper */
     protected $helper;
 
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
         $this->datagridRouteHelper = $this->createMock(DatagridRouteHelper::class);

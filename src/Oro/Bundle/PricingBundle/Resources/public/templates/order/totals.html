@@ -1,6 +1,10 @@
 <div class="attribute-item">
     <label class="attribute-item__term"><%- item.label %></label>
-    <div class="attribute-item__description">
+    <div class="attribute-item__description"
+        <% if (item.signedAmount < 0) { %>
+         dir="ltr"
+        <% } %>
+   >
         <label class="control-label"><%- item.formattedAmount %></label>
         <% if (item.formattedBaseAmount) { %>
             <div class="total-base-currency-wrapper">

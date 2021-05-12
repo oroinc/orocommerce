@@ -12,10 +12,10 @@ class UniquePriceListValidatorTest extends \PHPUnit\Framework\TestCase
 {
     use ConfigsGeneratorTrait;
 
-    /** @var  UniquePriceList */
+    /** @var UniquePriceList */
     protected $constraint;
 
-    /** @var  UniquePriceListValidator */
+    /** @var UniquePriceListValidator */
     protected $validator;
 
     protected function setUp(): void

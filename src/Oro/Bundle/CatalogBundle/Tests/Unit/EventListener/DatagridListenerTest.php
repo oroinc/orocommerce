@@ -60,13 +60,13 @@ class DatagridListenerTest extends \PHPUnit\Framework\TestCase
         ]
     ];
 
-    /** @var  ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     protected $doctrine;
 
     /** @var RequestProductHandler|\PHPUnit\Framework\MockObject\MockObject */
     protected $requestProductHandler;
 
-    /** @var  DatagridListener */
+    /** @var DatagridListener */
     protected $listener;
 
     protected function setUp(): void

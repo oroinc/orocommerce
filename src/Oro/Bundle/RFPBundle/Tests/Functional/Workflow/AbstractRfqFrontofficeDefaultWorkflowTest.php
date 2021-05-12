@@ -77,7 +77,7 @@ abstract class AbstractRfqFrontofficeDefaultWorkflowTest extends FrontendWebTest
      */
     protected function transitSystem($entity, $workflowName, $transitionName, $transitionData = [])
     {
-        /* @var $wi WorkflowItem */
+        /* @var WorkflowItem $wi */
         $wi = $this->systemManager->getWorkflowItem($entity, $workflowName);
         $this->assertNotNull($wi);
         $wi->getData()->add($transitionData);

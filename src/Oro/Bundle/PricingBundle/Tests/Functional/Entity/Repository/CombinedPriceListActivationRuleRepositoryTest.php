@@ -80,12 +80,12 @@ class CombinedPriceListActivationRuleRepositoryTest extends WebTestCase
             ],
         ];
         $this->createRules($data);
-        /** @var CombinedPriceList $cpl */
+        /** @var CombinedPriceListActivationRule[] $rules */
         $rules = $this->repository->getNewActualRules($now);
         $this->assertCount(1, $rules);
         $rule = $rules[0];
+        /** @var CombinedPriceList $cpl */
         $cpl = $this->getReference('1f');
-        /** @var $rule CombinedPriceListActivationRule */
         $this->assertSame($cpl->getName(), $rule->getCombinedPriceList()->getName());
     }
 

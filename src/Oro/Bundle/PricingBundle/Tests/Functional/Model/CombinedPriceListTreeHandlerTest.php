@@ -40,7 +40,7 @@ class CombinedPriceListTreeHandlerTest extends WebTestCase
 
         $this->websiteManager = $this->createMock(WebsiteManager::class);
 
-        /** @var $configManager ConfigManager */
+        /** @var ConfigManager $configManager */
         $this->configManager = $this->getContainer()->get('oro_config.global');
 
         $this->handler = new CombinedPriceListTreeHandler(

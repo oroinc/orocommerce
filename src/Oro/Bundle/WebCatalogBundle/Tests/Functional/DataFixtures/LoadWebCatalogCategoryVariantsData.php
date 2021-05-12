@@ -29,9 +29,7 @@ class LoadWebCatalogCategoryVariantsData extends AbstractFixture implements Depe
      */
     public function load(ObjectManager $manager)
     {
-        /**
-         * @var $scope Scope
-         */
+        /** @var Scope $scope */
         $scope = $this->getReference(LoadScopeData::DEFAULT_SCOPE);
 
         foreach (LoadContentNodesData::$data as $nodes) {

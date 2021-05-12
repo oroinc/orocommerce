@@ -52,8 +52,7 @@ trait PriceRuleEditorAwareTestTrait
             $formFactory,
             $twig
         );
-        /** @var \PHPUnit_Framework_MockObject_MockObject|UnitLabelFormatter $formatter */
-        $formatter = self::createMock(UnitLabelFormatter::class);
+        $formatter = $this->createMock(UnitLabelFormatter::class);
         $priceRuleEditor = new PriceRuleEditorType($priceRuleOptionsConfigurator);
         $priceRuleEditorText = new PriceRuleEditorTextType($priceRuleOptionsConfigurator);
 

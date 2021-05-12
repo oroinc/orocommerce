@@ -32,7 +32,7 @@ class RemoveCheckoutSourceEntityTest extends \PHPUnit\Framework\TestCase
     /** @var ActionInterface */
     protected $action;
 
-    /** @var  MockObject|EventDispatcher */
+    /** @var MockObject|EventDispatcher */
     protected $dispatcher;
 
     protected function setUp(): void

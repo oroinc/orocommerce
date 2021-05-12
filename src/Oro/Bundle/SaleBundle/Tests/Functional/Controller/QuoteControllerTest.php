@@ -11,7 +11,6 @@ use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\AbstractUser;
 use Oro\Bundle\UserBundle\Entity\User;
-use Symfony\Component\DomCrawler\Form;
 
 class QuoteControllerTest extends WebTestCase
 {
@@ -95,7 +94,6 @@ class QuoteControllerTest extends WebTestCase
 
         static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
-        /* @var $form Form */
         $form = $crawler->selectButton('Save and Close')->form();
         $form->remove('oro_sale_quote[quoteProducts][0]');
         $form['oro_sale_quote[owner]']      = $owner->getId();
@@ -162,7 +160,6 @@ class QuoteControllerTest extends WebTestCase
         $paymentTermProperty = $this->getContainer()->get('oro_payment_term.provider.payment_term_association')
             ->getDefaultAssociationName();
 
-        /* @var $form Form */
         $form = $crawler->selectButton('Save and Close')->form();
         $form->remove('oro_sale_quote[quoteProducts][0]');
         $form['oro_sale_quote[owner]'] = $owner->getId();
@@ -232,7 +229,6 @@ class QuoteControllerTest extends WebTestCase
     {
         $crawler    = $this->client->request('GET', $this->getUrl('oro_sale_quote_update', ['id' => $id]));
 
-        /* @var $form Form */
         $form = $crawler->selectButton('Save')->form();
         $form['oro_sale_quote[overriddenShippingCostAmount][value]']  = self::$overriddenShippingCostAmount;
         $form['oro_sale_quote[overriddenShippingCostAmount][currency]']  = self::$overriddenShippingCostCurrency;
@@ -336,7 +332,6 @@ class QuoteControllerTest extends WebTestCase
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_sale_quote_create'));
 
-        /* @var $form Form */
         $form = $crawler->selectButton('Save and Close')->form();
         $form->remove('oro_sale_quote[quoteProducts][0]');
         foreach ($submittedData as $field => $value) {

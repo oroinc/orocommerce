@@ -41,8 +41,7 @@ class QuoteProductRequestTypeTest extends AbstractTest
 
     public function testConfigureOptions()
     {
-        /* @var $resolver \PHPUnit\Framework\MockObject\MockObject|OptionsResolver */
-        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
+        $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with($this->callback(function (array $options) {
@@ -167,28 +166,19 @@ class QuoteProductRequestTypeTest extends AbstractTest
             }
         }
 
-        /* @var $item \PHPUnit\Framework\MockObject\MockObject|QuoteProductRequest */
-        $item = $this->createMock('Oro\Bundle\SaleBundle\Entity\QuoteProductRequest');
-        $item
-            ->expects($this->any())
+        $item = $this->createMock(QuoteProductRequest::class);
+        $item->expects($this->any())
             ->method('getId')
-            ->will($this->returnValue($id))
-        ;
-        $item
-            ->expects($this->any())
+            ->willReturn($id);
+        $item->expects($this->any())
             ->method('getQuoteProduct')
-            ->will($this->returnValue((new QuoteProduct())->setProduct($product)))
-        ;
-        $item
-            ->expects($this->any())
+            ->willReturn((new QuoteProduct())->setProduct($product));
+        $item->expects($this->any())
             ->method('getProductUnit')
-            ->will($this->returnValue($productUnit))
-        ;
-        $item
-            ->expects($this->any())
+            ->willReturn($productUnit);
+        $item->expects($this->any())
             ->method('getProductUnitCode')
-            ->will($this->returnValue($unitCode))
-        ;
+            ->willReturn($unitCode);
 
         return $item;
     }

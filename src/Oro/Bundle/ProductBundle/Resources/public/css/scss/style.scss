@@ -26,7 +26,7 @@
 
 .mobile-version {
     .quick-editable {
-        margin-#{$start}: auto;
+        margin-left: auto;
     }
 }
 
@@ -99,15 +99,15 @@
 .mobile-version {
     .product-container {
         .box-type1 {
-            margin-#{$start}: 0;
-            margin-#{$end}: 0;
+            margin-left: 0;
+            margin-right: 0;
         }
     }
 }
 
 .row-oro {
     &.add-products {
-        float: #{$start};
+        float: left;
         width: auto;
 
         .add-list-item,
@@ -117,16 +117,16 @@
 
         .add-products-sku {
             width: 310px;
-            padding-#{$end}: 0;
+            padding-right: 0;
         }
 
         .add-products-quantity {
-            padding-#{$start}: 2px;
+            padding-left: 2px;
         }
 
         .product-autocomplete-success {
             display: none;
-            float: #{$end};
+            float: right;
         }
 
         .fa-check-circle-o {
@@ -146,7 +146,7 @@
 
     .add-list-item {
         margin-top: $content-padding-small;
-        margin-#{$start}: 0;
+        margin-left: 0;
     }
 
     th,
@@ -178,7 +178,7 @@
     .scope-collection {
         div[data-validation-optional-group=""] {
             display: block;
-            padding-#{$end}: 0;
+            padding-right: 0;
         }
     }
 }
@@ -212,13 +212,13 @@
     }
 
     div.other-scroll-container {
-        margin-#{$start}: 0;
-        margin-#{$end}: 0;
+        margin-left: 0;
+        margin-right: 0;
     }
 
     .box-type1 {
         .title {
-            padding-#{$start}: 0;
+            padding-left: 0;
         }
     }
 
@@ -230,10 +230,10 @@
                 &.wrap {
                     float: none;
                     width: 60px;
-                    text-align: #{$start};
+                    text-align: left;
 
                     i {
-                        float: #{$end};
+                        float: right;
                         line-height: 20px;
                     }
 
@@ -251,7 +251,7 @@
             }
 
             .controls {
-                margin-#{$start}: 0;
+                margin-left: 0;
             }
         }
 
@@ -259,7 +259,7 @@
             .control-label {
                 &.wrap {
                     float: none;
-                    text-align: #{$start};
+                    text-align: left;
 
                     label {
                         color: $primary-550;
@@ -271,7 +271,7 @@
             }
 
             .controls {
-                margin-#{$start}: 0;
+                margin-left: 0;
             }
         }
     }
@@ -292,7 +292,7 @@
     overflow: hidden;
 
     &__button {
-        float: #{$end};
+        float: right;
     }
 
     ~ div .grid-views {
@@ -306,7 +306,7 @@ form[name*="product"] {
             &:not(.responsive-small) {
                 .responsive-cell {
                     &:last-child {
-                        padding-#{$start}: 0;
+                        padding-left: 0;
                     }
                 }
             }

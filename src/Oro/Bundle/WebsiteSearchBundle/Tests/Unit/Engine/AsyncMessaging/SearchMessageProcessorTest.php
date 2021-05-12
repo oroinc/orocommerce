@@ -22,49 +22,31 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var IndexerInterface|\PHPUnit\Framework\MockObject\MockObject $indexer
-     */
+    /** @var IndexerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $indexer;
 
-    /**
-     * @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject $indexer
-     */
+    /** @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $messageProducer;
 
-    /**
-     * @var IndexerInputValidator|\PHPUnit\Framework\MockObject\MockObject $indexer
-     */
+    /** @var IndexerInputValidator|\PHPUnit\Framework\MockObject\MockObject */
     private $indexerInputValidator;
 
-    /**
-     * @var ReindexMessageGranularizer|\PHPUnit\Framework\MockObject\MockObject $indexer
-     */
+    /** @var ReindexMessageGranularizer|\PHPUnit\Framework\MockObject\MockObject */
     private $reindexMessageGranularizer;
 
-    /**
-     * @var SearchMessageProcessor
-     */
+    /** @var SearchMessageProcessor */
     private $processor;
 
-    /**
-     * @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $session;
 
-    /**
-     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $logger;
 
-    /**
-     * @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $eventDispatcher;
 
-    /**
-     * @var JobRunner|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var JobRunner|\PHPUnit\Framework\MockObject\MockObject */
     private $jobRunner;
 
     protected function setUp(): void

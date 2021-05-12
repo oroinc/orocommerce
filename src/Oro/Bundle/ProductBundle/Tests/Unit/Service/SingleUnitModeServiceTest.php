@@ -15,19 +15,13 @@ class SingleUnitModeServiceTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var SingleUnitModeService $unitModeProvider
-     */
+    /** @var SingleUnitModeService */
     protected $unitModeProvider;
 
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $configManager;
 
-    /**
-     * @var DefaultProductUnitProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var DefaultProductUnitProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $unitProvider;
 
     protected function setUp(): void

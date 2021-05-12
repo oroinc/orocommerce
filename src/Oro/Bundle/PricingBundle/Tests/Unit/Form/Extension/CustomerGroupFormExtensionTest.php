@@ -20,6 +20,7 @@ use Oro\Bundle\PricingBundle\Tests\Unit\Form\Extension\Stub\CustomerGroupTypeStu
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\PriceListCollectionTypeExtensionsProvider;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
 use Oro\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -43,11 +44,10 @@ class CustomerGroupFormExtensionTest extends FormIntegrationTestCase
         $customerFormExtension = new CustomerGroupFormExtension($listener);
         $customerFormExtension->setRelationClass(PriceListToCustomer::class);
 
-        $reflection = new \ReflectionObject($customerFormExtension);
-        $relationClass = $reflection->getProperty('relationClass');
-        $relationClass->setAccessible(true);
-
-        $this->assertSame(PriceListToCustomer::class, $relationClass->getValue($customerFormExtension));
+        $this->assertEquals(
+            PriceListToCustomer::class,
+            ReflectionUtil::getPropertyValue($customerFormExtension, 'relationClass')
+        );
     }
 
     public function testBuildFormFeatureDisabled()

@@ -16,6 +16,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemWidgetType;
 use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -197,8 +198,8 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
      */
     protected function getShoppingList($id, $label)
     {
-        /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getEntity('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList', $id);
+        $shoppingList = new ShoppingList();
+        ReflectionUtil::setId($shoppingList, $id);
         $shoppingList->setLabel($label);
 
         return $shoppingList;

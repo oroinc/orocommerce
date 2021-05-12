@@ -89,10 +89,7 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtensionTest extends FormInteg
 
     public function testSetAvailableUnitsThrowsException()
     {
-        /** @var FormEvent|\PHPUnit\Framework\MockObject\MockObject $event * */
-        $event = $this->getMockBuilder(FormEvent::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $event = $this->createMock(FormEvent::class);
         $form = $this->createMock(FormInterface::class);
         $event->method('getForm')->willReturn($form);
         $this->expectException(\InvalidArgumentException::class);

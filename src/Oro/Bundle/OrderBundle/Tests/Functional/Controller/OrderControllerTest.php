@@ -306,7 +306,7 @@ class OrderControllerTest extends WebTestCase
                 'description' => 'some test description 333'
             ],
             [
-                'percent' => '21.162',
+                'percent' => '21.161904761905',
                 'amount' => '44.44',
                 'type' => OrderDiscount::TYPE_AMOUNT,
                 'description' => 'some other test description 444'
@@ -417,7 +417,6 @@ class OrderControllerTest extends WebTestCase
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_order_update', ['id' => $id]));
 
-        /* @var $form Form */
         $form = $crawler->selectButton('Save')->form();
         $form['oro_order_type[overriddenShippingCostAmount]'] = [
             'value' => self::$overriddenShippingCostAmount,
@@ -451,7 +450,6 @@ class OrderControllerTest extends WebTestCase
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_order_update', ['id' => $id]));
 
-        /* @var $form Form */
         $form = $crawler->selectButton('Save')->form();
         $form['oro_order_type[overriddenShippingCostAmount][value]'] = '';
 
@@ -482,7 +480,6 @@ class OrderControllerTest extends WebTestCase
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_order_update', ['id' => $id]));
 
-        /* @var $form Form */
         $form = $crawler->selectButton('Save')->form();
         $form['oro_order_type[overriddenShippingCostAmount][value]'] = 0;
 

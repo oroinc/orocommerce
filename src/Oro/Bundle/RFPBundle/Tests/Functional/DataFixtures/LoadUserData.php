@@ -205,7 +205,7 @@ class LoadUserData extends AbstractLoadCustomerUserFixture
         $roles = $defaultUser->getRoles();
 
         foreach ($this->users as $item) {
-            /* @var $user User */
+            /* @var User $user */
             $user = $userManager->createUser();
             $user
                 ->setEmail($item['email'])

@@ -6,6 +6,7 @@ import _ from 'underscore';
 import PricesHelper from 'oropricing/js/app/prices-helper';
 import layout from 'oroui/js/layout';
 import Popover from 'bootstrap-popover';
+import numeral from 'numeral';
 
 const QuickAddRowPricesView = BaseView.extend({
     defaults: {
@@ -91,7 +92,7 @@ const QuickAddRowPricesView = BaseView.extend({
 
         if (priceObj && quantity) {
             return NumberFormatter.formatCurrency(
-                priceObj.price * quantity,
+                numeral(priceObj.price).multiply(quantity).value(),
                 priceObj.currency
             );
         } else if (this.model.get('unit')) {

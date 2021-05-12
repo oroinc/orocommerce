@@ -157,8 +157,7 @@ class ProductSelectTypeTest extends FormIntegrationTestCase
      */
     protected function createProductHolder($id, $productSku, Product $product = null)
     {
-        /* @var $productHolder \PHPUnit\Framework\MockObject\MockObject|ProductHolderInterface */
-        $productHolder = $this->createMock('Oro\Bundle\ProductBundle\Model\ProductHolderInterface');
+        $productHolder = $this->createMock(ProductHolderInterface::class);
         $productHolder
             ->expects($this->any())
             ->method('getEntityIdentifier')

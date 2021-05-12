@@ -79,7 +79,7 @@
                             {% set price = subItem.price %}
                             <tr>
                                 {% if loop.first %}
-                                    <td rowspan="{{ numSubItems }}" class="rfp-line_item-sku">{{ lineItem.productSku }}</td>
+                                    <td rowspan="{{ numSubItems }}" class="rfp-line_item-sku" dir="ltr">{{ lineItem.productSku }}</td>
                                     <td rowspan="{{ numSubItems }}" class="rfp-line_item-product">
                                         {{ lineItem.product }}
                                     </td>

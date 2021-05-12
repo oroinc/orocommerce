@@ -5,14 +5,32 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\Entity;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductName;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product as ProductStub;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class OrderLineItemTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
+
+    private function getProduct(int $id): Product
+    {
+        $product = new Product();
+        ReflectionUtil::setId($product, $id);
+
+        return $product;
+    }
+
+    private function getProductUnit(string $code): ProductUnit
+    {
+        $productUnit = new ProductUnit();
+        $productUnit->setCode($code);
+
+        return $productUnit;
+    }
 
     public function testProperties()
     {
@@ -20,8 +38,8 @@ class OrderLineItemTest extends \PHPUnit\Framework\TestCase
         $properties = [
             ['id', '123'],
             ['order', new Order()],
-            ['product', new Product()],
-            ['parentProduct', new Product()],
+            ['product', new ProductStub()],
+            ['parentProduct', new ProductStub()],
             ['productSku', '1234'],
             ['productName', 'name', ''],
             ['freeFormProduct', 'Services'],
@@ -103,7 +121,7 @@ class OrderLineItemTest extends \PHPUnit\Framework\TestCase
         $productName = new ProductName();
         $productName->setString('Product Test Name');
 
-        $product = new Product();
+        $product = new ProductStub();
         $product->setSku('SKU')
             ->addName($productName)
             ->prePersist();
@@ -129,6 +147,7 @@ class OrderLineItemTest extends \PHPUnit\Framework\TestCase
      */
     public function testIsRequirePriceRecalculation(OrderLineItem $entity, $method, $value, $expectedResult)
     {
+        ReflectionUtil::setPropertyValue($entity, 'requirePriceRecalculation', false);
         $this->assertFalse($entity->isRequirePriceRecalculation());
 
         $entity->$method($value);
@@ -140,25 +159,20 @@ class OrderLineItemTest extends \PHPUnit\Framework\TestCase
      */
     public function isRequirePriceRecalculationDataProvider()
     {
-        $lineItemWithProduct = $this->getEntity(
-            'Oro\Bundle\OrderBundle\Entity\OrderLineItem',
-            'product',
-            $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', 'id', 42)
-        );
+        $lineItemWithProduct = new OrderLineItem();
+        $lineItemWithProduct->setProduct($this->getProduct(42));
 
-        $lineItemWithProductUnit = $this->getEntity(
-            'Oro\Bundle\OrderBundle\Entity\OrderLineItem',
-            'product',
-            $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnit', 'code', 'kg')
-        );
+        $lineItemWithProductUnit = new OrderLineItem();
+        $lineItemWithProductUnit->setProductUnit($this->getProductUnit('kg'));
 
-        $lineItemWithQuantity = $this->getEntity('Oro\Bundle\OrderBundle\Entity\OrderLineItem', 'quantity', 21);
+        $lineItemWithQuantity = new OrderLineItem();
+        $lineItemWithQuantity->setQuantity(21);
 
         return [
             [
                 new OrderLineItem(),
                 'setProduct',
-                new Product(),
+                new ProductStub(),
                 true
             ],
             [
@@ -176,13 +190,13 @@ class OrderLineItemTest extends \PHPUnit\Framework\TestCase
             [
                 $lineItemWithProduct,
                 'setProduct',
-                $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', 'id', 21),
+                $this->getProduct(21),
                 true
             ],
             [
                 $lineItemWithProductUnit,
                 'setProductUnit',
-                $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnit', 'code', 'item'),
+                $this->getProductUnit('item'),
                 true
             ],
             [
@@ -192,23 +206,5 @@ class OrderLineItemTest extends \PHPUnit\Framework\TestCase
                 true
             ]
         ];
-    }
-
-    /**
-     * @param string $className
-     * @param string $property
-     * @param mixed $value
-     * @return object
-     */
-    protected function getEntity($className, $property, $value)
-    {
-        $entity = new $className();
-
-        $reflectionClass = new \ReflectionClass($className);
-        $method = $reflectionClass->getProperty($property);
-        $method->setAccessible(true);
-        $method->setValue($entity, $value);
-
-        return $entity;
     }
 }

@@ -33,10 +33,10 @@ class ConsentSelectWithPriorityTypeTest extends FormIntegrationTestCase
     /** @var ConsentSelectWithPriorityType */
     private $formType;
 
-    /** @var SearchRegistry|\PHPUnit\Framework\MockObject\MockObject $authorizationChecker */
+    /** @var SearchRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $searchRegistry;
 
-    /** @var SearchHandlerInterface|\PHPUnit\Framework\MockObject\MockObject $authorizationChecker */
+    /** @var SearchHandlerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $searchHandler;
 
     /**

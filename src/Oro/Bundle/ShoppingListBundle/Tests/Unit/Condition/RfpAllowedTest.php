@@ -8,6 +8,7 @@ use Oro\Bundle\ShoppingListBundle\Condition\RfpAllowed;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Component\ConfigExpression\ContextAccessorInterface;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\PropertyAccess\PropertyPathInterface;
 
@@ -86,10 +87,10 @@ class RfpAllowedTest extends \PHPUnit\Framework\TestCase
 
         $this->rfpAllowed->setContextAccessor($contextAccessor);
 
-        $reflection = new \ReflectionProperty(get_class($this->rfpAllowed), 'contextAccessor');
-        $reflection->setAccessible(true);
-
-        $this->assertInstanceOf(get_class($contextAccessor), $reflection->getValue($this->rfpAllowed));
+        $this->assertInstanceOf(
+            get_class($contextAccessor),
+            ReflectionUtil::getPropertyValue($this->rfpAllowed, 'contextAccessor')
+        );
     }
 
     public function testEvaluates()

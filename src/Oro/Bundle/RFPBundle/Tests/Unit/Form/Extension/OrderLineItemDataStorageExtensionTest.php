@@ -9,6 +9,7 @@ use Oro\Bundle\OrderBundle\Form\Type\OrderLineItemType;
 use Oro\Bundle\ProductBundle\Storage\DataStorageInterface;
 use Oro\Bundle\RFPBundle\Form\Extension\OrderLineItemDataStorageExtension;
 use Oro\Bundle\RFPBundle\Storage\OffersFormStorage;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -266,8 +267,7 @@ class OrderLineItemDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
             );
         }
 
-        /** @var  $builder */
-        $builder = $this->createMock('Symfony\Component\Form\FormBuilderInterface');
+        $builder = $this->createMock(FormBuilderInterface::class);
         if ($expectsAddEventListener) {
             $builder->expects($this->exactly(2))->method('addEventListener')->with(
                 $this->isType('string'),
@@ -300,10 +300,7 @@ class OrderLineItemDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
      */
     protected function getOffers()
     {
-        $property = new \ReflectionProperty(get_class($this->extension), 'offers');
-        $property->setAccessible(true);
-
-        return $property->getValue($this->extension);
+        return ReflectionUtil::getPropertyValue($this->extension, 'offers');
     }
 
     /**
@@ -311,9 +308,7 @@ class OrderLineItemDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
      */
     protected function setOffers(array $offers = [])
     {
-        $property = new \ReflectionProperty(get_class($this->extension), 'offers');
-        $property->setAccessible(true);
-        $property->setValue($this->extension, $offers);
+        ReflectionUtil::setPropertyValue($this->extension, 'offers', $offers);
     }
 
     public function testSectionProviderInvalid()

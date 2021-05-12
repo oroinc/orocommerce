@@ -24,7 +24,7 @@ class ProductSelectionGridExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var ProductSelectionGridExtension */
     protected $extension;
 
-    /** @var  Request|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var Request|\PHPUnit\Framework\MockObject\MockObject */
     protected $request;
 
     protected function setUp(): void

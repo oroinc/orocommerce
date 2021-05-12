@@ -92,7 +92,7 @@ class FeatureContext extends OroFeatureContext implements KernelAwareContext, Fi
         $featureConfigManager = $this->getContainer()->get('oro_featuretoggle.configuration.manager');
         $toggleConfigOption = $featureConfigManager->get($feature, ConfigVoter::TOGGLE_KEY);
 
-        /* @var $configManager ConfigManager */
+        /* @var ConfigManager $configManager */
         $configManager = $this->getContainer()->get('oro_config.global');
         $configManager->set($toggleConfigOption, true);
         $configManager->flush();

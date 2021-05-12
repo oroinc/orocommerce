@@ -19,14 +19,10 @@ class WebCatalogScopeExtensionTest extends FormIntegrationTestCase
 {
     use EntityTrait;
 
-    /**
-     * @var WebCatalogScopeExtension
-     */
+    /** @var WebCatalogScopeExtension */
     protected $extension;
 
-    /**
-     * @var ScopeManager|\PHPUnit\Framework\MockObject\MockObject $scopeManager
-     */
+    /** @var ScopeManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $scopeManager;
 
     protected function setUp(): void

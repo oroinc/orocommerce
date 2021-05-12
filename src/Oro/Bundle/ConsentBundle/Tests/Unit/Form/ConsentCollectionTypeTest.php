@@ -40,10 +40,10 @@ class ConsentCollectionTypeTest extends FormIntegrationTestCase
     /** @var ConsentCollectionTransformer */
     private $collectionTransformer;
 
-    /** @var SearchRegistry|\PHPUnit\Framework\MockObject\MockObject $authorizationChecker */
+    /** @var SearchRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $searchRegistry;
 
-    /** @var SearchHandlerInterface|\PHPUnit\Framework\MockObject\MockObject $authorizationChecker */
+    /** @var SearchHandlerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $searchHandler;
 
     /**

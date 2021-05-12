@@ -78,7 +78,7 @@ abstract class AbstractQuoteAddressProviderTest extends \PHPUnit\Framework\TestC
                 $this->returnValueMap(
                     [
                         [$expectedPermission, null, false],
-                        ['VIEW;entity:' . $this->customerAddressClass, null, false],
+                        ['VIEW', 'entity:' . $this->customerAddressClass, false],
                     ]
                 )
             );
@@ -146,7 +146,7 @@ abstract class AbstractQuoteAddressProviderTest extends \PHPUnit\Framework\TestC
                 $this->returnValueMap(
                     [
                         [$expectedPermission, null, false],
-                        ['VIEW;entity:' . $this->customerAddressClass, null, true],
+                        ['VIEW', 'entity:' . $this->customerAddressClass, true],
                     ]
                 )
             );

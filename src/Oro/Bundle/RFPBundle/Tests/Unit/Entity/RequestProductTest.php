@@ -6,9 +6,13 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
+use Oro\Component\Testing\ReflectionUtil;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class RequestProductTest extends AbstractTest
+class RequestProductTest extends \PHPUnit\Framework\TestCase
 {
+    use EntityTestCaseTrait;
+
     public function testProperties()
     {
         $properties = [
@@ -30,8 +34,9 @@ class RequestProductTest extends AbstractTest
     {
         $request = new RequestProduct();
 
-        $this->setProperty($request, 'id', 321);
-        $this->assertEquals(321, $request->getEntityIdentifier());
+        $id = 123;
+        ReflectionUtil::setId($request, $id);
+        $this->assertSame($id, $request->getEntityIdentifier());
     }
 
     /**

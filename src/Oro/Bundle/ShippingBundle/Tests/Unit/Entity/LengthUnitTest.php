@@ -9,7 +9,7 @@ class LengthUnitTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 
-    /** @var LengthUnit $entity */
+    /** @var LengthUnit */
     protected $entity;
 
     protected function setUp(): void

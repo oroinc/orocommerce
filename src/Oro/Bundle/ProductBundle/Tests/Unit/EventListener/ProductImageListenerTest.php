@@ -22,39 +22,25 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ProductImageListener $listener
-     */
+    /** @var ProductImageListener */
     protected $listener;
 
-    /**
-     * @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject $eventDispatcher
-     */
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $eventDispatcher;
 
-    /**
-     * @var ImageTypeProvider|\PHPUnit\Framework\MockObject\MockObject $imageTypeProvider
-     */
+    /** @var ImageTypeProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $imageTypeProvider;
 
-    /**
-     * @var ProductImageHelper|\PHPUnit\Framework\MockObject\MockObject $productImageHelper
-     */
+    /** @var ProductImageHelper|\PHPUnit\Framework\MockObject\MockObject */
     protected $productImageHelper;
 
-    /**
-     * @var EntityManager|\PHPUnit\Framework\MockObject\MockObject $productImageEntityManager
-     */
+    /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $productImageEntityManager;
 
-    /**
-     * @var LifecycleEventArgs|\PHPUnit\Framework\MockObject\MockObject $lifecycleArgs
-     */
+    /** @var LifecycleEventArgs|\PHPUnit\Framework\MockObject\MockObject */
     protected $lifecycleArgs;
 
-    /**
-     * @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject $productRepository
-     */
+    /** @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject */
     protected $productRepository;
 
     protected function setUp(): void

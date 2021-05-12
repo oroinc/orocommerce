@@ -78,7 +78,6 @@ class UPSTransportTest extends \PHPUnit\Framework\TestCase
 
     public function testGetPrices()
     {
-        /** @var PriceRequest|\PHPUnit\Framework\MockObject\MockObject $rateRequest * */
         $rateRequest = $this->createMock(PriceRequest::class);
 
         $integration = new Channel();
@@ -118,7 +117,6 @@ class UPSTransportTest extends \PHPUnit\Framework\TestCase
 
     public function testGetPricesException()
     {
-        /** @var PriceRequest|\PHPUnit\Framework\MockObject\MockObject $rateRequest * */
         $rateRequest = $this->createMock(PriceRequest::class);
 
         $integration = new Channel();

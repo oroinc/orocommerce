@@ -7,6 +7,7 @@ use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityBundle\Tests\Functional\DataFixtures\LoadBusinessUnitData;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrganizations;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -71,6 +72,20 @@ class ProductTest extends RestJsonApiTestCase
         $this->assertEquals('simple', $product->getType());
         $this->assertEquals(true, $product->getFeatured());
         $this->assertEquals(false, $product->isNewArrival());
+        $this->assertSlugsPrototype(
+            [null, null, 'test-prod-slug', 'product-in-spanish'],
+            $product->getSlugPrototypes()->toArray()
+        );
+    }
+
+    /**
+     * @param array $expected
+     * @param array $slugs
+     */
+    private function assertSlugsPrototype(array $expected, array $slugs): void
+    {
+        $actual = array_map(fn (LocalizedFallbackValue $value) => $value->getString(), $slugs);
+        $this->assertEmpty(array_diff($actual, $expected));
     }
 
     public function testGetListFilteredByProduct()

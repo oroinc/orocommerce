@@ -13,7 +13,7 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
 class TotalHelperTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var  TotalHelper */
+    /** @var TotalHelper */
     protected $helper;
 
     /** @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject */

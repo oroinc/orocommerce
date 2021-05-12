@@ -7,13 +7,17 @@ use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
+use Oro\Component\Testing\ReflectionUtil;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class QuoteProductTest extends AbstractTest
+class QuoteProductTest extends \PHPUnit\Framework\TestCase
 {
+    use EntityTestCaseTrait;
+
     public function testProperties()
     {
         $properties = [
@@ -42,8 +46,8 @@ class QuoteProductTest extends AbstractTest
     {
         $product = new QuoteProduct();
         $value = 321;
-        $this->setProperty($product, 'id', $value);
-        $this->assertEquals($value, $product->getEntityIdentifier());
+        ReflectionUtil::setId($product, $value);
+        $this->assertSame($value, $product->getEntityIdentifier());
     }
 
     public function testUpdateProducts()
@@ -58,8 +62,8 @@ class QuoteProductTest extends AbstractTest
         $this->assertNull($quoteProduct->getProductReplacementSku());
         $this->assertNull($quoteProduct->getFreeFormProductReplacement());
 
-        $this->setProperty($quoteProduct, 'product', $product);
-        $this->setProperty($quoteProduct, 'productReplacement', $replacement);
+        ReflectionUtil::setPropertyValue($quoteProduct, 'product', $product);
+        ReflectionUtil::setPropertyValue($quoteProduct, 'productReplacement', $replacement);
 
         $quoteProduct->updateProducts();
 

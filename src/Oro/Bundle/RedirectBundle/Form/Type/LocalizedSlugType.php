@@ -4,10 +4,8 @@ namespace Oro\Bundle\RedirectBundle\Form\Type;
 
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\EntityBundle\EntityProperty\UpdatedAtAwareInterface;
-use Oro\Bundle\EntityConfigBundle\Generator\SlugGenerator;
-use Oro\Bundle\LocaleBundle\Entity\AbstractLocalizedFallbackValue;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
+use Oro\Bundle\RedirectBundle\Helper\SlugifyEntityHelper;
 use Oro\Bundle\RedirectBundle\Helper\SlugifyFormHelper;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -32,18 +30,18 @@ class LocalizedSlugType extends AbstractType
     private $slugifyFormHelper;
 
     /**
-     * @var SlugGenerator
+     * @var SlugifyEntityHelper
      */
-    private $slugGenerator;
+    private $slugifyEntityHelper;
 
     /**
      * @param SlugifyFormHelper $slugifyFormHelper
-     * @param SlugGenerator $slugGenerator
+     * @param SlugifyEntityHelper $slugifyEntityHelper
      */
-    public function __construct(SlugifyFormHelper $slugifyFormHelper, SlugGenerator $slugGenerator)
+    public function __construct(SlugifyFormHelper $slugifyFormHelper, SlugifyEntityHelper $slugifyEntityHelper)
     {
         $this->slugifyFormHelper = $slugifyFormHelper;
-        $this->slugGenerator = $slugGenerator;
+        $this->slugifyEntityHelper = $slugifyEntityHelper;
     }
 
     /**
@@ -85,74 +83,16 @@ class LocalizedSlugType extends AbstractType
      */
     public function onPostSubmit(FormEvent $event): void
     {
-        $form = $event->getForm();
-        $sourceFieldName = $form->getConfig()->getOption('source_field');
-
-        while ($form->getParent()) {
-            $form = $form->getParent();
-        }
-
-        $data = $form->getData();
-        if ($data instanceof UpdatedAtAwareInterface) {
-            $data->setUpdatedAt(new \DateTime('now', new \DateTimeZone('UTC')));
-        }
-
+        $sourceFieldName = $event->getForm()->getConfig()->getOption('source_field');
+        $form = $event->getForm()->getRoot();
+        $this->updateDateTime($form->getData());
         if ($form->has($sourceFieldName)) {
             $localizedSources = $form->get($sourceFieldName)->getData();
             $localizedSlugs = $event->getForm()->getData();
-
             if ($localizedSources instanceof Collection && $localizedSlugs instanceof Collection) {
-                $this->fillDefaultSlugs($localizedSources, $localizedSlugs);
+                $this->slugifyEntityHelper->fillFromSourceField($localizedSources, $localizedSlugs);
             }
         }
-    }
-
-    /**
-     * @param Collection|AbstractLocalizedFallbackValue[] $localizedSources
-     * @param Collection|AbstractLocalizedFallbackValue[] $localizedSlugs
-     */
-    private function fillDefaultSlugs(Collection $localizedSources, Collection $localizedSlugs): void
-    {
-        foreach ($localizedSources as $localizedSource) {
-            if (!$localizedSource->getString() || $this->isSlugExists($localizedSlugs, $localizedSource)) {
-                continue;
-            }
-
-            $localizedSlug = new LocalizedFallbackValue();
-            $localizedSlug->setLocalization($localizedSource->getLocalization());
-            $localizedSlug->setFallback($localizedSource->getFallback());
-            $localizedSlug->setString($this->slugGenerator->slugify($localizedSource->getString()));
-            $localizedSlugs->add($localizedSlug);
-        }
-    }
-
-    /**
-     * Skips creating default slug as it is already defined
-     *
-     * @param Collection|AbstractLocalizedFallbackValue[] $localizedSlugs
-     * @param AbstractLocalizedFallbackValue $localizedSource
-     * @return bool
-     */
-    private function isSlugExists(Collection $localizedSlugs, AbstractLocalizedFallbackValue $localizedSource): bool
-    {
-        foreach ($localizedSlugs as $localizedSlug) {
-            if (!$localizedSlug->getId() && !$localizedSlug->getString()) {
-                continue;
-            }
-
-            if ($localizedSource->getLocalization() === $localizedSlug->getLocalization()) {
-                return true;
-            }
-
-            if ($localizedSource->getLocalization() &&
-                $localizedSlug->getLocalization() &&
-                $localizedSource->getLocalization()->getId() === $localizedSlug->getLocalization()->getId()
-            ) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     /**
@@ -174,5 +114,17 @@ class LocalizedSlugType extends AbstractType
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $this->slugifyFormHelper->addSlugifyOptionsLocalized($view, $options);
+    }
+
+    /**
+     * @param $entity
+     *
+     * @throws \Exception
+     */
+    private function updateDateTime($entity): void
+    {
+        if ($entity instanceof UpdatedAtAwareInterface) {
+            $entity->setUpdatedAt(new \DateTime('now', new \DateTimeZone('UTC')));
+        }
     }
 }

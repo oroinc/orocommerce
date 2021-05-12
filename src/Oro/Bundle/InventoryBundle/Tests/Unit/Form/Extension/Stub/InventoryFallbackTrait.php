@@ -12,10 +12,10 @@ trait InventoryFallbackTrait
     /** @var EntityFieldFallbackValue */
     protected $maximumQuantityToOrder;
 
-    /** @var EntityFieldFallbackValue  */
+    /** @var EntityFieldFallbackValue */
     protected $highlightLowInventory;
 
-    /** @var EntityFieldFallbackValue  */
+    /** @var EntityFieldFallbackValue */
     protected $backOrder;
 
     /** @var EntityFieldFallbackValue */

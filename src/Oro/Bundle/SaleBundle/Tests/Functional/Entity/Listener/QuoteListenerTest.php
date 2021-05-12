@@ -26,7 +26,7 @@ class QuoteListenerTest extends WebTestCase
      */
     public function testPersistQuote()
     {
-        /* @var $em EntityManager */
+        /* @var EntityManager $em */
         $em = static::getContainer()->get('doctrine')->getManagerForClass('OroSaleBundle:Quote');
 
         $quote = new Quote();

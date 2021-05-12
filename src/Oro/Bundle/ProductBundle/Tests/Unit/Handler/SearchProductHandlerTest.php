@@ -22,7 +22,7 @@ class SearchProductHandlerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->requestStack = self::createMock(RequestStack::class);
+        $this->requestStack = $this->createMock(RequestStack::class);
         $this->searchProductHandler = new SearchProductHandler($this->requestStack);
     }
 
@@ -43,8 +43,7 @@ class SearchProductHandlerTest extends \PHPUnit\Framework\TestCase
 
     public function testGetSearchStringWithRequestSearchKeyNotExists(): void
     {
-        /** @var Request|\PHPUnit\Framework\MockObject\MockObject $request */
-        $request = self::createMock(Request::class);
+        $request = $this->createMock(Request::class);
         $request
             ->expects(self::once())
             ->method('get')
@@ -60,8 +59,7 @@ class SearchProductHandlerTest extends \PHPUnit\Framework\TestCase
 
     public function testGetSearchStringWithRequestSearchKeyExists(): void
     {
-        /** @var Request|\PHPUnit\Framework\MockObject\MockObject $request */
-        $request = self::createMock(Request::class);
+        $request = $this->createMock(Request::class);
         $request
             ->expects(self::once())
             ->method('get')

@@ -5,6 +5,7 @@ namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\TaxBundle\Form\Type\ZipCodeType;
 use Oro\Bundle\TaxBundle\Tests\Component\ZipCodeTestHelper;
 use Oro\Bundle\TaxBundle\Validator\Constraints\ZipCodeFields;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Validator\Context\ExecutionContext;
@@ -157,9 +158,7 @@ class ZipCodeTypeTest extends FormIntegrationTestCase
                 $builder->expects($this->any())->method('atPath')->with($this->isType('string'))->willReturn($builder);
                 $builder->expects($this->any())->method('addViolation');
 
-                $prop = new \ReflectionProperty(get_class($zipCodeFieldsValidator), 'context');
-                $prop->setAccessible(true);
-                $prop->setValue($zipCodeFieldsValidator, $context);
+                ReflectionUtil::setPropertyValue($zipCodeFieldsValidator, 'context', $context);
 
                 return true;
             }

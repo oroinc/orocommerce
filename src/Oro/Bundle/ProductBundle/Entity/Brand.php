@@ -86,6 +86,9 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
  *              "type"="ACL",
  *              "group_name"=""
  *          },
+ *          "slug"={
+ *              "source"="names"
+ *          }
  *      }
  * )
  * @ORM\HasLifecycleCallbacks()

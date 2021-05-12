@@ -10,6 +10,7 @@ use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -100,12 +101,7 @@ abstract class AbstractCustomerFormViewListenerTest extends \PHPUnit\Framework\T
         $listener = $this->getListener();
 
         $listener->setUpdateTemplate('test');
-
-        $reflection = new \ReflectionObject($listener);
-        $relationClass = $reflection->getProperty('updateTemplate');
-        $relationClass->setAccessible(true);
-
-        $this->assertSame('test', $relationClass->getValue($listener));
+        $this->assertSame('test', ReflectionUtil::getPropertyValue($listener, 'updateTemplate'));
     }
 
     public function testOnEntityEditFeatureDisabled()

@@ -31,13 +31,10 @@ class LateRegistrationTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        /** @var $validator ValidatorInterface|\PHPUnit_Framework_MockObject_MockObject */
         $validator = $this->createMock(ValidatorInterface::class);
-
         $validator
             ->method('validate')
             ->will($this->returnValue(new ConstraintViolationList()));
-
         $validator
             ->method('getMetadataFor')
             ->will($this->returnValue(new ClassMetadata(Form::class)));

@@ -187,9 +187,9 @@ class PriceListToCustomerRepositoryTest extends WebTestCase
      */
     public function testGetCustomerIteratorWithDefaultFallback($customerGroup, $website, $expectedCustomers)
     {
-        /** @var $customerGroup  CustomerGroup */
+        /** @var CustomerGroup $customerGroup */
         $customerGroup = $this->getReference($customerGroup);
-        /** @var $website Website */
+        /** @var Website $website */
         $website = $this->getReference($website);
 
         $iterator = $this->getRepository()->getCustomerIteratorWithDefaultFallback($customerGroup, $website);

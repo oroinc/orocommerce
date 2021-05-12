@@ -13,19 +13,13 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ProductImageCollectionValidatorTest extends ConstraintValidatorTestCase
 {
-    /**
-     * @var ImageTypeProvider|\PHPUnit\Framework\MockObject\MockObject $imageTypeProvider
-     */
+    /** @var ImageTypeProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $imageTypeProvider;
 
-    /**
-     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject $translator
-     */
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $translator;
 
-    /**
-     * @var ProductImageHelper|\PHPUnit\Framework\MockObject\MockObject $productImageHelper
-     */
+    /** @var ProductImageHelper|\PHPUnit\Framework\MockObject\MockObject */
     protected $productImageHelper;
 
     protected function setUp(): void

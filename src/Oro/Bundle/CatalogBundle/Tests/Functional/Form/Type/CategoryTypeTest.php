@@ -60,7 +60,7 @@ class CategoryTypeTest extends WebTestCase
         $defaultShortDescription = 'Default Short Description';
         $defaultLongDescription = 'Default Long Description';
 
-        /* @var $fileLocator FileLocator */
+        /* @var FileLocator $fileLocator */
         $fileLocator = $this->getContainer()->get('file_locator');
 
         $smallImageName = self::SMALL_IMAGE_NAME;
@@ -72,8 +72,8 @@ class CategoryTypeTest extends WebTestCase
             '@OroCatalogBundle/Tests/Functional/DataFixtures/files/' . $largeImageName
         );
 
-        $smallImage = new UploadedFile($smallImageFile, $smallImageName, null, null, null, true);
-        $largeImage = new UploadedFile($largeImageFile, $largeImageName, null, null, null, true);
+        $smallImage = new UploadedFile($smallImageFile, $smallImageName, null, null, true);
+        $largeImage = new UploadedFile($largeImageFile, $largeImageName, null, null, true);
 
         $productUnit = $productUnitRepository->findOneBy(['code' => 'kg']);
         $unitPrecision = new CategoryUnitPrecision();

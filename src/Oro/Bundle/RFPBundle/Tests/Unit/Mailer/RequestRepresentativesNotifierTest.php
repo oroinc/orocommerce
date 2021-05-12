@@ -28,19 +28,19 @@ class RequestRepresentativesNotifierTest extends \PHPUnit\Framework\TestCase
     /** @var RequestRepresentativesNotifier */
     protected $requestToQuoteRepresentativesNotifier;
 
-    /** @var Request|\PHPUnit\Framework\MockObject\MockObject $request * */
+    /** @var Request|\PHPUnit\Framework\MockObject\MockObject */
     protected $request;
 
-    /** @var  CustomerUser|\PHPUnit\Framework\MockObject\MockObject $customerUser */
+    /** @var CustomerUser|\PHPUnit\Framework\MockObject\MockObject */
     protected $customerUser;
 
-    /** @var  Customer|\PHPUnit\Framework\MockObject\MockObject $customerUser */
+    /** @var Customer|\PHPUnit\Framework\MockObject\MockObject */
     protected $customer;
 
-    /** @var  User $owner */
+    /** @var User $owner */
     protected $customerUserOwner;
 
-    /** @var  User $owner */
+    /** @var User $owner */
     protected $customerOwner;
 
     /** @var ArrayCollection */

@@ -120,9 +120,6 @@ class CopyCustomerConsentsHelperTest extends WebTestCase
     ) {
         $targetConsentAcceptances = [];
         foreach ($sourceConsentAcceptances as $sourceConsentAcceptance) {
-            /**
-             * @var $consentAcceptance ConsentAcceptance
-             */
             $consentAcceptance = new ConsentAcceptance();
             $consentAcceptance->setCustomerUser($targetCustomerUser);
             $consentAcceptance->setConsent($sourceConsentAcceptance->getConsent());

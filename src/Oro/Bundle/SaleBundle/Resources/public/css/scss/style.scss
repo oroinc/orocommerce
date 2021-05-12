@@ -85,11 +85,11 @@ td.quote-lineitem-notes {
 
 .quote-lineitem-offers {
     &-remove {
-        text-align: #{$end};
+        text-align: right;
     }
 
     .add-list-item {
-        margin-#{$start}: 0;
+        margin-left: 0;
     }
 }
 
@@ -146,13 +146,13 @@ table.quote-lineitem-offers {
 
     .quote-lineitem-offers-group-item {
         &:not(:last-child) {
-            padding-#{$end}: $content-padding-small;
+            padding-right: $content-padding-small;
         }
     }
 
     .quote-lineitem-offers-quantity-cell,
     .quote-lineitem-offers-price {
-        padding-#{$end}: 0;
+        padding-right: 0;
     }
 }
 
@@ -257,7 +257,7 @@ td.quote-lineitem-product-sku {
 }
 
 .quote-lineitem-remove {
-    text-align: #{$end};
+    text-align: right;
 }
 
 .oro-item-collection {

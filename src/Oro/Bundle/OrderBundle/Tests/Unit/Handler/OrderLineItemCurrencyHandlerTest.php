@@ -11,7 +11,7 @@ use Symfony\Component\Form\FormInterface;
 
 class OrderLineItemCurrencyHandlerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var OrderLineItemCurrencyHandler  */
+    /** @var OrderLineItemCurrencyHandler */
     private $handler;
 
     protected function setUp(): void

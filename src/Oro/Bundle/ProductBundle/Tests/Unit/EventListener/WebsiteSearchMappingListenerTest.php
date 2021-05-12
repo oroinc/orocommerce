@@ -33,7 +33,7 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
     /** @var ProductIndexFieldsProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $fieldsProvider;
 
-    /** @var SearchableInformationProvider|\PHPUnit\Framework\MockObject\MockObject  */
+    /** @var SearchableInformationProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $searchableProvider;
 
     /** @var WebsiteSearchMappingListener */

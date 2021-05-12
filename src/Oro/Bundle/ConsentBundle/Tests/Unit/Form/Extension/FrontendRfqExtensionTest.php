@@ -80,7 +80,6 @@ class FrontendRfqExtensionTest extends FormIntegrationTestCase
 
     public function testPreSetDataForExistingCustomer()
     {
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
         $form = $this->createMock(FormInterface::class);
 
         $requestForQuote = new Request();
@@ -111,7 +110,6 @@ class FrontendRfqExtensionTest extends FormIntegrationTestCase
 
     public function testPreSetDataForEmptyCustomer()
     {
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
         $form = $this->createMock(FormInterface::class);
 
         $requestForQuote = new Request();

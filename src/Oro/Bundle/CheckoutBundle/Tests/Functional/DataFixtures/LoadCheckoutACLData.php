@@ -13,6 +13,7 @@ use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserACLD
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
+use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
@@ -71,7 +72,7 @@ class LoadCheckoutACLData extends AbstractFixture implements
      */
     public function load(ObjectManager $manager)
     {
-        /* @var $workflowManager WorkflowManager */
+        /* @var WorkflowManager $workflowManager */
         $workflowManager = $this->container->get('oro_workflow.manager');
 
         foreach (self::$checkouts as $name => $checkout) {

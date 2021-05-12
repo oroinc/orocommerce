@@ -15,12 +15,16 @@ use Oro\Bundle\SaleBundle\Tests\Unit\Stub\QuoteStub as Quote;
 use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Component\Testing\ReflectionUtil;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class QuoteTest extends AbstractTest
+class QuoteTest extends \PHPUnit\Framework\TestCase
 {
+    use EntityTestCaseTrait;
+
     public function testProperties(): void
     {
         $now = new \DateTime('now');
@@ -63,14 +67,10 @@ class QuoteTest extends AbstractTest
 
     public function testToString(): void
     {
-        $id = '123';
         $quote = new Quote();
-        $class = new \ReflectionClass($quote);
-        $prop = $class->getProperty('id');
-        $prop->setAccessible(true);
-        $prop->setValue($quote, $id);
+        ReflectionUtil::setId($quote, 123);
 
-        $this->assertEquals($id, (string)$quote);
+        $this->assertSame('123', (string)$quote);
     }
 
     public function testGetEmail(): void

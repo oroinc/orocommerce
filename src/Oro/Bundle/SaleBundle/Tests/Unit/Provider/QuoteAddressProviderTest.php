@@ -7,6 +7,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\OrderBundle\Tests\Unit\Provider\AbstractQuoteAddressProviderTest;
 use Oro\Bundle\SaleBundle\Provider\QuoteAddressProvider;
+use Oro\Bundle\UserBundle\Entity\User;
 
 class QuoteAddressProviderTest extends AbstractQuoteAddressProviderTest
 {
@@ -87,7 +88,7 @@ class QuoteAddressProviderTest extends AbstractQuoteAddressProviderTest
                 ],
                 null,
                 [],
-                new \stdClass()
+                new User()
             ],
             [
                 'shipping',
@@ -96,7 +97,7 @@ class QuoteAddressProviderTest extends AbstractQuoteAddressProviderTest
                 ],
                 'getAddressesByType',
                 [new CustomerUserAddress()],
-                new \stdClass()
+                new User()
             ],
             [
                 'shipping',
@@ -106,7 +107,7 @@ class QuoteAddressProviderTest extends AbstractQuoteAddressProviderTest
                 ],
                 'getDefaultAddressesByType',
                 [new CustomerUserAddress()],
-                new \stdClass()
+                new User()
             ]
         ];
     }
@@ -118,7 +119,7 @@ class QuoteAddressProviderTest extends AbstractQuoteAddressProviderTest
     {
         return [
             ['shipping', 'oro_quote_address_shipping_customer_use_any', new CustomerUser()],
-            ['shipping', 'oro_quote_address_shipping_customer_use_any_backend', new \stdClass()],
+            ['shipping', 'oro_quote_address_shipping_customer_use_any_backend', new User()],
         ];
     }
 }

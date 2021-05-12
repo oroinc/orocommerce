@@ -16,7 +16,7 @@ class PriceListFilterTest extends \PHPUnit\Framework\TestCase
     /** @var FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $formFactory;
 
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject  */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrine;
 
     /** @var PriceListFilter */

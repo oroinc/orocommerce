@@ -418,7 +418,7 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
      */
     protected function transitSystem($entity, $workflowName, $transitionName, $transitionData = [])
     {
-        /** @var $wi WorkflowItem */
+        /** @var WorkflowItem $wi */
         $wi = $this->manager->getWorkflowItem($entity, $workflowName);
         $this->assertNotNull($wi);
 

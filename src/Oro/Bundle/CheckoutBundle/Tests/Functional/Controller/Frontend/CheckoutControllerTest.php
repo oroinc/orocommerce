@@ -51,7 +51,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $this->client->getKernel()->boot();
         $this->client->disableReboot();
 
-        /* @var $dispatcher EventDispatcherInterface */
+        /* @var EventDispatcherInterface $dispatcher */
         $dispatcher = static::getContainer()->get('event_dispatcher');
         $listener = function (CheckoutValidateEvent $event) {
             $event->setIsCheckoutRestartRequired(true);

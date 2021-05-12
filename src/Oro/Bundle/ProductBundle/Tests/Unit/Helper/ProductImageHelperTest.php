@@ -10,9 +10,7 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
 
 class ProductImageHelperTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ProductImageHelper $productImageHelper
-     */
+    /** @var ProductImageHelper */
     protected $productImageHelper;
 
     protected function setUp(): void

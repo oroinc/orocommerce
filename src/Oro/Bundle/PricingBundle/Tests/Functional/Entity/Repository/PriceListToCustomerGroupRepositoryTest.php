@@ -167,7 +167,7 @@ class PriceListToCustomerGroupRepositoryTest extends WebTestCase
 
     public function testGetCustomerGroupIteratorWithDefaultFallback()
     {
-        /** @var $website Website */
+        /** @var Website $website */
         $website = $this->getReference('US');
         $expectedCustomerGroups = [
             'Non-Authenticated Visitors',
@@ -186,7 +186,7 @@ class PriceListToCustomerGroupRepositoryTest extends WebTestCase
 
     public function testGetCustomerGroupIteratorWithSelfFallback()
     {
-        /** @var $website Website */
+        /** @var Website $website */
         $website = $this->getReference('US');
         $expectedCustomerGroups = [
             'customer_group.group2',

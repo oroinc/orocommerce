@@ -13,10 +13,10 @@ class CopyRobotsTxtTemplateListenerTest extends \PHPUnit\Framework\TestCase
     /** @var RobotsTxtFileManager|\PHPUnit\Framework\MockObject\MockObject */
     private $robotsTxtFileManager;
 
-    /** @var WebsiteInterface|\PHPUnit\Framework\MockObject\MockObject  */
+    /** @var WebsiteInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $website;
 
-    /** @var OnSitemapDumpFinishEvent  */
+    /** @var OnSitemapDumpFinishEvent */
     private $event;
 
     protected function setUp(): void

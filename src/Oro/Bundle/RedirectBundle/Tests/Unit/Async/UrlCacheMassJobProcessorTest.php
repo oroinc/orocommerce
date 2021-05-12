@@ -17,6 +17,7 @@ use Oro\Component\MessageQueue\Job\JobRunner;
 use Oro\Component\MessageQueue\Test\JobRunner as TestJobRunner;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Psr\Log\LoggerInterface;
 
@@ -200,9 +201,7 @@ class UrlCacheMassJobProcessorTest extends \PHPUnit\Framework\TestCase
     public function testBatchSize($batchSize, $expected)
     {
         $this->processor->setBatchSize($batchSize);
-        $property = new \ReflectionProperty(UrlCacheMassJobProcessor::class, 'batchSize');
-        $property->setAccessible(true);
-        static::assertSame($expected, $property->getValue($this->processor));
+        static::assertSame($expected, ReflectionUtil::getPropertyValue($this->processor, 'batchSize'));
     }
 
     /**

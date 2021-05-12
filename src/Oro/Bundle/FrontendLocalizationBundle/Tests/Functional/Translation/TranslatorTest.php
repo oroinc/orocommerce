@@ -55,7 +55,7 @@ class TranslatorTest extends FrontendWebTestCase
         $key = uniqid('TRANSLATION_KEY_', true);
         $enValue = uniqid('TEST_VALUE1_', true);
 
-        /** @var $manager TranslationManager */
+        /** @var TranslationManager $manager */
         $manager = $this->getContainer()->get('oro_translation.manager.translation');
         $manager->saveTranslation(
             $key,
@@ -109,7 +109,7 @@ class TranslatorTest extends FrontendWebTestCase
         [$key, $enValue] = $data;
         $lang1Value = uniqid('TEST_VALUE1_', true);
 
-        /** @var $manager TranslationManager */
+        /** @var TranslationManager $manager */
         $manager = $this->getContainer()->get('oro_translation.manager.translation');
         $manager->saveTranslation(
             $key,

@@ -11,10 +11,16 @@ define(function(require) {
          * @property {Object}
          */
         options: {
-            messageTemplate: '<%- message %><%- changedSlugs %><br><br>' +
-            '<label class="checkbox" for="confirm-create-redirect">' +
-            '<input type="checkbox" id="confirm-create-redirect" name="confirm-create-redirect">' +
-            '<%- checkboxLabel %></label>',
+            messageTemplate: `
+                <div><%- message %></div>
+                <div><%= changedSlugs %></div>
+                <div>
+                    <br/>
+                    <label class="checkbox" for="confirm-create-redirect">
+                        <input type="checkbox" id="confirm-create-redirect" name="confirm-create-redirect">
+                    <%- checkboxLabel %></label>
+                </div>
+            `,
             title: __('oro.redirect.confirm_slug_change.title'),
             okText: __('oro.redirect.confirm_slug_change.apply'),
             cancelText: __('oro.redirect.confirm_slug_change.cancel'),
@@ -85,12 +91,12 @@ define(function(require) {
          */
         _createContent: function(changedSlugs) {
             const template = _.template(this.options.messageTemplate);
-            const content = template({
+
+            return template({
                 message: this.options.message,
                 changedSlugs: changedSlugs,
                 checkboxLabel: this.options.checkboxLabel
             });
-            return _.nl2br(content);
         }
     });
 

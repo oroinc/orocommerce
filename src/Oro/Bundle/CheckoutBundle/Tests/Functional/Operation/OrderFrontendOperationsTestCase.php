@@ -38,7 +38,7 @@ abstract class OrderFrontendOperationsTestCase extends FrontendActionTestCase
 
         $this->loadFixtures($this->getFixtures());
 
-        /* @var $configManager ConfigManager */
+        /* @var ConfigManager $configManager */
         $configManager = $this->getContainer()->get('oro_config.global');
         $configManager->set('oro_inventory.manage_inventory', true);
         $configManager->flush();

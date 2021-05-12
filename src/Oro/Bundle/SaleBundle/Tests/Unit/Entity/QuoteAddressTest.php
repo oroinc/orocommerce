@@ -7,9 +7,12 @@ use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\SaleBundle\Entity\QuoteAddress;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class QuoteAddressTest extends AbstractTest
+class QuoteAddressTest extends \PHPUnit\Framework\TestCase
 {
+    use EntityTestCaseTrait;
+
     public function testProperties()
     {
         $now = new \DateTime('now');

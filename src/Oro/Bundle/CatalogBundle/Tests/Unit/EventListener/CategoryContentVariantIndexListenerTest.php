@@ -38,7 +38,7 @@ class CategoryContentVariantIndexListenerTest extends \PHPUnit\Framework\TestCas
     /** @var FieldUpdatesChecker|\PHPUnit\Framework\MockObject\MockObject */
     private $fieldUpdatesChecker;
 
-    /** @var WebCatalogUsageProviderInterface|\PHPUnit\Framework\MockObject\MockObject  */
+    /** @var WebCatalogUsageProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $provider;
 
     /** @var EntityManagerMockBuilder */

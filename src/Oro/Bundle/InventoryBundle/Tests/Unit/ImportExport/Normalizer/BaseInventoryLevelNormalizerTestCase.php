@@ -12,15 +12,13 @@ use Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService;
 
 class BaseInventoryLevelNormalizerTestCase extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var InventoryLevelNormalizer
-     */
+    /** @var InventoryLevelNormalizer */
     protected $inventoryLevelNormalizer;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|UnitLabelFormatterInterface */
     protected $formatter;
 
-    /** @var  \PHPUnit\Framework\MockObject\MockObject|QuantityRoundingService */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|QuantityRoundingService */
     protected $roundingService;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|FieldHelper */

@@ -12,9 +12,9 @@ use Oro\Bundle\EntityConfigBundle\Entity\EntityConfigModel;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Form\Type\ConfigType;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
-use Oro\Bundle\EntityConfigBundle\Tests\Unit\ReflectionUtil;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteSearchBundle\Form\Extension\RemoveSearchBoostAttributeExtension;
+use Oro\Component\Testing\ReflectionUtil;
 use PHPUnit\Framework\MockObject\Rule\InvokedCount;
 use Symfony\Component\Form\FormBuilderInterface;
 

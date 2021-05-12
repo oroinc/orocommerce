@@ -24,7 +24,7 @@ class TaxManagerTest extends \PHPUnit\Framework\TestCase
     /** @var TaxManager */
     protected $manager;
 
-    /**  @var \PHPUnit\Framework\MockObject\MockObject|TaxFactory */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|TaxFactory */
     protected $factory;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|TaxEventDispatcher */
@@ -33,10 +33,10 @@ class TaxManagerTest extends \PHPUnit\Framework\TestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject|TaxValueManager */
     protected $taxValueManager;
 
-    /** @var  \PHPUnit\Framework\MockObject\MockObject|TaxationSettingsProvider */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|TaxationSettingsProvider */
     protected $settingsProvider;
 
-    /** @var  \PHPUnit\Framework\MockObject\MockObject|ObjectCacheKeyGenerator */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ObjectCacheKeyGenerator */
     protected $objectCacheKeyGenerator;
 
     /** @var bool */

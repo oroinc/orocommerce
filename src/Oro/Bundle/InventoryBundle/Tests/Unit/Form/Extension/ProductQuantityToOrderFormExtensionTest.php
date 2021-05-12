@@ -22,7 +22,6 @@ class ProductQuantityToOrderFormExtensionTest extends \PHPUnit\Framework\TestCas
 
     public function testBuildForm()
     {
-        /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder * */
         $builder = $this->createMock(FormBuilderInterface::class);
         $product = new ProductStub();
         $builder->expects($this->once())

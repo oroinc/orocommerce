@@ -216,6 +216,12 @@ oro_behat_extension:
         mapping:
           SKU: 'oro_product[sku]'
           Name: 'oro_product[names][values][default]'
+          Name German:
+            type: 'xpath'
+            locator: '//div[contains(@class, "control-group-oro_redirect_localized_slug_with_redirect")]//div[contains(text(), "German_Loc")]/following-sibling::div//input[@class="fallback-item-value-input"]'
+          Name German Use Default:
+            type: 'xpath'
+            locator: '//div[contains(@class, "control-group-oro_redirect_localized_slug_with_redirect")]//div[contains(text(), "German_Loc")]/following-sibling::div//input[contains(@class, "checkbox-view__input")]'
           URL Slug: 'oro_product[slugPrototypesWithRedirect][slugPrototypes][values][default]'
           Description:
             type: 'css'
@@ -1009,6 +1015,11 @@ oro_behat_extension:
 
     Product Item Gallery Trigger:
       selector: '.product-item [data-trigger-gallery-open],div.product-item__image-holder--tiny [data-role^="data-trigger-gallery-open-product"]'
+
+    Product Form Name Fallbacks:
+      selector:
+        type: xpath
+        locator: '//label[text()="Name"]/ancestor::div[contains(@class, "control-group-oro_locale_localized_fallback_value_collection")]//button[contains(@class, "fallback-status")]'
 
     Product Form Slug Fallbacks:
       selector:

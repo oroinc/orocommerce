@@ -52,7 +52,6 @@ class CheckoutVoterTest extends \PHPUnit\Framework\TestCase
                 return null;
             });
 
-        /* @var $token TokenInterface|\PHPUnit\Framework\MockObject\MockObject */
         $token = $this->createMock(TokenInterface::class);
 
         $this->assertEquals(

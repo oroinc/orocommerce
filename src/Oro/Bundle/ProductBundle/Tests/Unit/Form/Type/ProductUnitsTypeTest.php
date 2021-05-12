@@ -11,10 +11,10 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 class ProductUnitsTypeTest extends FormIntegrationTestCase
 {
-    /** @var  ProductUnitsType $productUnitsType */
+    /** @var ProductUnitsType $productUnitsType */
     protected $productUnitsType;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|ProductUnitsProvider $productUnitsProvider */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ProductUnitsProvider */
     protected $productUnitsProvider;
 
     protected function setUp(): void

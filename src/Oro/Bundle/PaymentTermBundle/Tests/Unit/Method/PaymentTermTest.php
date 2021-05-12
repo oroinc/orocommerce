@@ -101,15 +101,10 @@ class PaymentTermTest extends \PHPUnit\Framework\TestCase
             ->method('setPaymentTerm')
             ->with($entity, $paymentTerm);
 
-        /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject $entityManager */
-        $entityManager = $this->getMockBuilder(EntityManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $entityManager = $this->createMock(EntityManager::class);
         $entityManager->expects($this->once())
             ->method('flush')
             ->with($entity);
-
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityManager')
             ->with($entity)
@@ -151,15 +146,10 @@ class PaymentTermTest extends \PHPUnit\Framework\TestCase
             ->method('setPaymentTerm')
             ->with($entity, $paymentTerm);
 
-        /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject $entityManager */
-        $entityManager = $this->getMockBuilder(EntityManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $entityManager = $this->createMock(EntityManager::class);
         $entityManager->expects($this->once())
             ->method('flush')
             ->with($entity);
-
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityManager')
             ->with($entity)

@@ -9,12 +9,7 @@
 {% endblock %}
 
 {% block _featured_categories_widget %}
-    <div class="embedded-list"
-        {% if use_footer_align %}
-            data-page-component-module="oroui/js/app/components/view-component"
-            data-page-component-options="{{ footer_align_component_options|json_encode }}"
-        {% endif %}
-    >
+    <div class="embedded-list">
         {% if use_slider %}
             {% set attr = layout_attr_defaults(attr, {
                 'data-page-component-module': 'orofrontend/js/app/components/list-slider-component',

@@ -10,77 +10,63 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
 use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
 use Oro\Bundle\OrderBundle\Manager\TypedOrderAddressCollection;
-use Oro\Bundle\OrderBundle\Tests\Unit\Form\Type\AbstractAddressTypeTest;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteAddress;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteAddressType;
 use Oro\Bundle\SaleBundle\Model\QuoteAddressManager;
 use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
+use Oro\Component\Testing\Unit\AddressFormExtensionTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormErrorIterator;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\ConstraintViolation;
 
-class QuoteAddressTypeTest extends AbstractAddressTypeTest
+class QuoteAddressTypeTest extends AddressFormExtensionTestCase
 {
     /** @var QuoteAddressType */
-    protected $formType;
-
-    /** @var \PHPUnit\Framework\MockObject\MockObject|AddressFormatter */
-    protected $addressFormatter;
+    private $formType;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|QuoteAddressSecurityProvider */
-    protected $quoteAddressSecurityProvider;
+    private $quoteAddressSecurityProvider;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|QuoteAddressManager */
-    protected $quoteAddressManager;
+    private $quoteAddressManager;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|Serializer */
-    protected $serializer;
+    private $serializer;
 
     /** @var TypedOrderAddressCollection|\PHPUnit\Framework\MockObject\MockObject */
-    protected $addressCollection;
+    private $addressCollection;
 
     protected function setUp(): void
     {
-        $this->addressFormatter = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Formatter\AddressFormatter')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->addressFormatter->expects($this->any())
+        $addressFormatter = $this->createMock(AddressFormatter::class);
+        $addressFormatter->expects($this->any())
             ->method('format')
             ->willReturnCallback(function (AbstractAddress $item) {
-                return $item->__toString();
+                return (string)$item;
             });
 
-        $this->quoteAddressSecurityProvider = $this
-            ->getMockBuilder('Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->quoteAddressSecurityProvider = $this->createMock(QuoteAddressSecurityProvider::class);
+        $this->quoteAddressManager = $this->createMock(QuoteAddressManager::class);
+        $this->serializer = $this->createMock(Serializer::class);
 
         $this->addressCollection = $this->createMock(TypedOrderAddressCollection::class);
-
-        $this->quoteAddressManager = $this->createMock(QuoteAddressManager::class);
         $this->quoteAddressManager->expects($this->any())
             ->method('getGroupedAddresses')
             ->willReturn($this->addressCollection);
 
-        $this->serializer = $this->getMockBuilder('Oro\Bundle\ImportExportBundle\Serializer\Serializer')
-            ->disableOriginalConstructor()
-            ->getMock();
-
         $this->formType = new QuoteAddressType(
-            $this->addressFormatter,
+            $addressFormatter,
             $this->quoteAddressManager,
             $this->quoteAddressSecurityProvider,
             $this->serializer
         );
+        $this->formType->setDataClass(QuoteAddress::class);
 
-        $this->formType->setDataClass('Oro\Bundle\SaleBundle\Entity\QuoteAddress');
         parent::setUp();
-    }
-
-    protected function tearDown(): void
-    {
-        unset($this->formType);
     }
 
     /**
@@ -88,21 +74,80 @@ class QuoteAddressTypeTest extends AbstractAddressTypeTest
      */
     protected function getExtensions()
     {
-        return array_merge([new PreloadedExtension([$this->formType], [])], parent::getExtensions());
+        return array_merge(
+            [new PreloadedExtension([$this->formType], [])],
+            [$this->getValidatorExtension(true)],
+            parent::getExtensions()
+        );
+    }
+
+    private function checkForm(
+        bool $isValid,
+        array $submittedData,
+        ?QuoteAddress $expectedData,
+        ?QuoteAddress $defaultData,
+        array $formErrors,
+        array $formOptions
+    ) {
+        $form = $this->factory->create(
+            get_class($this->formType),
+            $defaultData,
+            $formOptions
+        );
+        $this->assertSame($defaultData, $form->getData());
+
+        $form->submit($submittedData);
+
+        $this->assertTrue($form->isSynchronized());
+        $this->assertSame($isValid, $form->isValid());
+
+        /** @var FormErrorIterator|FormError[] $errors */
+        $errors = $form->getErrors(true);
+        if ($errors->count()) {
+            $this->assertNotEmpty($formErrors);
+        }
+
+        foreach ($errors as $error) {
+            $this->assertArrayHasKey($error->getOrigin()->getName(), $formErrors);
+
+            /** @var ConstraintViolation $violation */
+            $violation = $error->getCause();
+            $this->assertEquals(
+                $formErrors[$error->getOrigin()->getName()],
+                $error->getMessage(),
+                sprintf('Failed path: %s', $violation->getPropertyPath())
+            );
+        }
+        $this->assertEquals($expectedData, $form->getData());
+
+        $this->assertTrue($form->has('customerAddress'));
+        $this->assertTrue($form->get('customerAddress')->getConfig()->hasOption('attr'));
+        $customerAddressFormAttr = $form->get('customerAddress')->getConfig()->getOption('attr');
+        $this->assertArrayHasKey('data-addresses', $customerAddressFormAttr);
+        $this->assertIsString($customerAddressFormAttr['data-addresses']);
+        $this->assertIsArray(json_decode($customerAddressFormAttr['data-addresses'], true));
+        $this->assertArrayHasKey('data-default', $customerAddressFormAttr);
     }
 
     public function testConfigureOptions()
     {
-        /* @var $resolver \PHPUnit\Framework\MockObject\MockObject|OptionsResolver */
-        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
-        $resolver->expects($this->once())->method('setDefaults')->with($this->isType('array'))
-            ->will($this->returnSelf());
-        $resolver->expects($this->once())->method('setRequired')->with($this->isType('array'))
-            ->will($this->returnSelf());
-        $resolver->expects($this->once())->method('setAllowedValues')
-            ->with($this->isType('string'), $this->isType('array'))->will($this->returnSelf());
-        $resolver->expects($this->once())->method('setAllowedTypes')
-            ->with($this->isType('string'), $this->isType('string'))->will($this->returnSelf());
+        $resolver = $this->createMock(OptionsResolver::class);
+        $resolver->expects($this->once())
+            ->method('setRequired')
+            ->with(['quote', 'addressType'])
+            ->willReturnSelf();
+        $resolver->expects($this->once())
+            ->method('setDefaults')
+            ->with(['data_class' => QuoteAddress::class])
+            ->willReturnSelf();
+        $resolver->expects($this->once())
+            ->method('setAllowedValues')
+            ->with('addressType', [AddressTypeEntity::TYPE_SHIPPING])
+            ->willReturnSelf();
+        $resolver->expects($this->once())
+            ->method('setAllowedTypes')
+            ->with('quote', Quote::class)
+            ->willReturnSelf();
 
         $this->formType->configureOptions($resolver);
     }
@@ -113,40 +158,36 @@ class QuoteAddressTypeTest extends AbstractAddressTypeTest
     }
 
     /**
-     * @param bool $isValid
-     * @param array $submittedData
-     * @param mixed $expectedData
-     * @param mixed $defaultData
-     * @param array $formErrors
-     *
      * @dataProvider submitProvider
      */
     public function testSubmitWithManualPermission(
-        $isValid,
-        $submittedData,
-        $expectedData,
-        $defaultData,
+        bool $isValid,
+        array $submittedData,
+        ?QuoteAddress $expectedData,
+        ?QuoteAddress $defaultData,
         array $formErrors = []
     ) {
-        $this->serializer->expects($this->any())->method('normalize')->willReturn(['a_1' => ['street' => 'street']]);
+        $this->serializer->expects($this->any())
+            ->method('normalize')
+            ->willReturn(['a_1' => ['street' => 'street']]);
 
         $this->addressCollection->expects($this->once())
             ->method('toArray')
             ->willReturn([]);
 
-        $this->quoteAddressSecurityProvider->expects($this->once())->method('isManualEditGranted')->willReturn(true);
+        $this->quoteAddressSecurityProvider->expects($this->once())
+            ->method('isManualEditGranted')
+            ->willReturn(true);
 
-        $this->quoteAddressManager->expects($this->any())->method('updateFromAbstract')
-            ->will(
-                $this->returnCallback(
-                    function (CustomerAddress $address = null, QuoteAddress $orderAddress = null) {
-                        if (!$orderAddress) {
-                            $orderAddress = new QuoteAddress();
-                        }
-                        return $orderAddress;
-                    }
-                )
-            );
+        $this->quoteAddressManager->expects($this->any())
+            ->method('updateFromAbstract')
+            ->willReturnCallback(function (CustomerAddress $address = null, QuoteAddress $orderAddress = null) {
+                if (!$orderAddress) {
+                    $orderAddress = new QuoteAddress();
+                }
+
+                return $orderAddress;
+            });
 
         $formOptions = ['addressType' => AddressTypeEntity::TYPE_SHIPPING, 'quote' => new Quote()];
 
@@ -154,13 +195,11 @@ class QuoteAddressTypeTest extends AbstractAddressTypeTest
     }
 
     /**
-     * @return array
-     *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function submitProvider()
+    public function submitProvider(): array
     {
-        list($country, $region) = $this->getValidCountryAndRegion();
+        [$country, $region] = $this->getValidCountryAndRegion();
         $countryWithoutRegion = new Country(self::COUNTRY_WITHOUT_REGION);
 
         return [
@@ -234,69 +273,59 @@ class QuoteAddressTypeTest extends AbstractAddressTypeTest
     }
 
     /**
-     * @param bool $isValid
-     * @param array $submittedData
-     * @param mixed $expectedData
-     * @param mixed $defaultData
-     * @param array $formErrors
-     * @param array $groupedAddresses
      * @dataProvider submitWithoutPermissionProvider
      */
     public function testSubmitWithoutManualPermission(
-        $isValid,
-        $submittedData,
-        $expectedData,
-        $defaultData,
+        bool $isValid,
+        array $submittedData,
+        ?QuoteAddress $expectedData,
+        ?QuoteAddress $defaultData,
         array $formErrors = [],
         array $groupedAddresses = []
     ) {
-        $this->serializer->expects($this->any())->method('normalize')->willReturn(['a_1' => ['street' => 'street']]);
+        $this->serializer->expects($this->any())
+            ->method('normalize')
+            ->willReturn(['a_1' => ['street' => 'street']]);
 
         $this->addressCollection->expects($this->once())
             ->method('toArray')
             ->willReturn($groupedAddresses);
 
-        $this->quoteAddressManager->expects($this->any())->method('getEntityByIdentifier')
-            ->will(
-                $this->returnCallback(
-                    function ($identifier) use ($groupedAddresses) {
-                        foreach ($groupedAddresses as $groupedAddressesGroup) {
-                            if (array_key_exists($identifier, $groupedAddressesGroup)) {
-                                return $groupedAddressesGroup[$identifier];
-                            }
-                        }
-
-                        return null;
+        $this->quoteAddressManager->expects($this->any())
+            ->method('getEntityByIdentifier')
+            ->willReturnCallback(function ($identifier) use ($groupedAddresses) {
+                foreach ($groupedAddresses as $groupedAddressesGroup) {
+                    if (array_key_exists($identifier, $groupedAddressesGroup)) {
+                        return $groupedAddressesGroup[$identifier];
                     }
-                )
-            );
+                }
 
-        $this->quoteAddressManager->expects($this->any())->method('updateFromAbstract')
-            ->will(
-                $this->returnCallback(
-                    function (CustomerAddress $address) {
-                        $quoteAddress = new QuoteAddress();
-                        $quoteAddress->setCountry($address->getCountry());
-                        $quoteAddress->setStreet($address->getStreet());
+                return null;
+            });
 
-                        return $quoteAddress;
-                    }
-                )
-            );
+        $this->quoteAddressManager->expects($this->any())
+            ->method('updateFromAbstract')
+            ->willReturnCallback(function (CustomerAddress $address) {
+                $quoteAddress = new QuoteAddress();
+                $quoteAddress->setCountry($address->getCountry());
+                $quoteAddress->setStreet($address->getStreet());
 
-        $this->quoteAddressSecurityProvider->expects($this->once())->method('isManualEditGranted')->willReturn(false);
+                return $quoteAddress;
+            });
 
-        $this->quoteAddressManager->expects($this->any())->method('updateFromAbstract')
-            ->will(
-                $this->returnCallback(
-                    function (CustomerAddress $address = null, QuoteAddress $orderAddress = null) {
-                        if (!$orderAddress) {
-                            $orderAddress = new QuoteAddress();
-                        }
-                        return $orderAddress;
-                    }
-                )
-            );
+        $this->quoteAddressSecurityProvider->expects($this->once())
+            ->method('isManualEditGranted')
+            ->willReturn(false);
+
+        $this->quoteAddressManager->expects($this->any())
+            ->method('updateFromAbstract')
+            ->willReturnCallback(function (CustomerAddress $address = null, QuoteAddress $orderAddress = null) {
+                if (!$orderAddress) {
+                    $orderAddress = new QuoteAddress();
+                }
+
+                return $orderAddress;
+            });
 
         $formOptions = ['addressType' => AddressTypeEntity::TYPE_SHIPPING, 'quote' => new Quote()];
 
@@ -304,11 +333,9 @@ class QuoteAddressTypeTest extends AbstractAddressTypeTest
     }
 
     /**
-     * @return array
-     *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function submitWithoutPermissionProvider()
+    public function submitWithoutPermissionProvider(): array
     {
         $country = new Country('US');
 
@@ -358,7 +385,8 @@ class QuoteAddressTypeTest extends AbstractAddressTypeTest
             ->method('toArray')
             ->willReturn([]);
 
-        $this->quoteAddressSecurityProvider->expects($this->atLeastOnce())->method('isManualEditGranted')
+        $this->quoteAddressSecurityProvider->expects($this->atLeastOnce())
+            ->method('isManualEditGranted')
             ->willReturn(false);
 
         $form = $this->factory->create(

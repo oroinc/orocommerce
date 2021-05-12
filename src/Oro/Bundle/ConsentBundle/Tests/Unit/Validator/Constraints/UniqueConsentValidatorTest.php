@@ -11,10 +11,10 @@ use Symfony\Component\Validator\Violation\ConstraintViolationBuilder;
 
 class UniqueConsentValidatorTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var  UniqueConsent */
+    /** @var UniqueConsent */
     protected $constraint;
 
-    /** @var  UniqueConsentValidator */
+    /** @var UniqueConsentValidator */
     protected $validator;
 
     protected function setUp(): void

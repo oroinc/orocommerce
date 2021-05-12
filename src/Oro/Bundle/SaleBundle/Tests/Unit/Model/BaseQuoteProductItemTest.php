@@ -6,6 +6,7 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Model\BaseQuoteProductItem;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class BaseQuoteProductItemTest extends \PHPUnit\Framework\TestCase
@@ -45,24 +46,16 @@ class BaseQuoteProductItemTest extends \PHPUnit\Framework\TestCase
 
         $item->updatePrice();
 
-        $reflection = new \ReflectionProperty(get_class($item), 'value');
-        $reflection->setAccessible(true);
-        static::assertEquals($value, $reflection->getValue($item));
-
-        $reflection = new \ReflectionProperty(get_class($item), 'currency');
-        $reflection->setAccessible(true);
-        static::assertEquals($currency, $reflection->getValue($item));
+        self::assertEquals($value, ReflectionUtil::getPropertyValue($item, 'value'));
+        self::assertEquals($currency, ReflectionUtil::getPropertyValue($item, 'currency'));
     }
 
     public function testGetEntityIdentifier()
     {
         $item = new BaseQuoteProductItem();
+
         $value = 321;
-
-        $reflection = new \ReflectionProperty(get_class($item), 'id');
-        $reflection->setAccessible(true);
-        $reflection->setValue($item, $value);
-
+        ReflectionUtil::setId($item, $value);
         static::assertEquals($value, $item->getEntityIdentifier());
     }
 

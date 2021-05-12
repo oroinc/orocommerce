@@ -37,9 +37,7 @@ use Twig\TemplateWrapper;
 
 class ContentBlockTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var DefaultContentVariantScopesResolver|\PHPUnit_Framework_MockObject_MockObject
-     */
+    /** @var DefaultContentVariantScopesResolver|\PHPUnit\Framework\MockObject\MockObject */
     protected $defaultVariantScopesResolver;
 
     /**
@@ -267,7 +265,6 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
      */
     protected function getConstraintValidatorFactory()
     {
-        /* @var $factory \PHPUnit\Framework\MockObject\MockObject|ConstraintValidatorFactoryInterface */
         $factory = $this->createMock(ConstraintValidatorFactoryInterface::class);
         $factory->expects($this->any())
             ->method('getInstance')

@@ -50,7 +50,7 @@ class AjaxLocalizationControllerTest extends WebTestCase
         $this->assertSame($expectedResult, $data);
 
         $website = $this->client->getContainer()->get('oro_website.manager')->getDefaultWebsite();
-        /* @var $localizationManager UserLocalizationManager */
+        /* @var UserLocalizationManager $localizationManager */
         $localizationManager = $this->getContainer()->get('oro_frontend_localization.manager.user_localization');
         $currentLocalization = $localizationManager->getCurrentLocalization($website);
 

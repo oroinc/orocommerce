@@ -16,7 +16,7 @@ class CategoryQuantityToOrderFormExtensionTest extends \PHPUnit\Framework\TestCa
      */
     protected $categoryFormExtension;
 
-    /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder * */
+    /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $builder;
 
     /** @var CategoryStub */

@@ -25,7 +25,7 @@ class CategoryTest extends \PHPUnit\Framework\TestCase
 
     const LOCALIZED_VALUE = 'some string';
 
-    /** @var Category $category */
+    /** @var Category */
     protected $category;
 
     protected function setUp(): void

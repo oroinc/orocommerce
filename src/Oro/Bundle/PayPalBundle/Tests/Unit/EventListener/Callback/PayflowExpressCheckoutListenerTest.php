@@ -15,7 +15,7 @@ class PayflowExpressCheckoutListenerTest extends \PHPUnit\Framework\TestCase
     /** @var PayflowExpressCheckoutListener */
     protected $listener;
 
-    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject $dispatcher */
+    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $logger;
 
     /** @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */

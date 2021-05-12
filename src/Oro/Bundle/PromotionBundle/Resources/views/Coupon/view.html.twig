@@ -36,7 +36,7 @@
             'subblocks': [
                 {
                     'data' : {
-                        'code': UI.renderProperty('oro.promotion.coupon.code.label'|trans, entity.code),
+                        'code': UI.renderProperty('oro.promotion.coupon.code.label'|trans, entity.code, null, null, {'dir': 'ltr'}),
                         'promotion': UI.renderHtmlProperty('oro.promotion.coupon.promotion.label'|trans, promotion|default('N/A'|trans)),
                         'usesPerCoupon': UI.renderProperty('oro.promotion.coupon.uses_per_coupon.label'|trans, entity.usesPerCoupon),
                         'usesPerPerson': UI.renderProperty('oro.promotion.coupon.uses_per_person.label'|trans, entity.usesPerPerson),

@@ -13,7 +13,7 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
             type: 'text',
             content: __('oro.cms.wysiwyg.component.text.content'),
             style: {
-                padding: '10px'
+                'min-height': '18px'
             }
         }
     },
@@ -37,16 +37,62 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
         return _res;
     },
 
+    modelMixin: {
+        tagUpdated() {
+            if (!this.collection) {
+                return;
+            }
+            const styles = this.getStyle();
+            const at = this.collection.indexOf(this);
+            const {rteEnabled} = this.view;
+
+            if (rteEnabled) {
+                this.view.disableEditing(false);
+                this.editor.selectRemove(this);
+            }
+
+            this.constructor.__super__.tagUpdated.call(this);
+
+            const model = this.collection.at(at);
+            model.setStyle(styles);
+
+            if (rteEnabled) {
+                this.editor.selectToggle(model);
+                _.defer(() => {
+                    model.trigger('focus');
+                    this.view.setCaretToStart();
+                });
+            }
+        },
+
+        replaceWith(el) {
+            const styles = this.getStyle();
+            const classes = this.getClasses();
+            const newModels = this.constructor.__super__.replaceWith.call(this, el);
+
+            newModels.forEach(model => {
+                model.setStyle(styles);
+                model.setClass(classes);
+            });
+
+            return newModels;
+        }
+    },
+
     viewMixin: {
+        /**
+         * Post process enter press
+         * @param event
+         * @returns {boolean}
+         */
         onPressEnter(event) {
             if (event.keyCode !== 13) {
                 return true;
             }
 
             const {activeRte} = this;
-            const sel = activeRte.doc.getSelection();
             let newEle = activeRte.doc.createTextNode('\n');
-            let range = activeRte.doc.getSelection().getRangeAt(0);
+            const range = activeRte.doc.getSelection().getRangeAt(0);
 
             if (
                 range.startContainer.nodeType === 3 &&
@@ -75,29 +121,87 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
             docFragment.appendChild(newEle);
             range.deleteContents();
             range.insertNode(docFragment);
-            range = activeRte.doc.createRange();
-            range.setStartAfter(newEle);
-            range.collapse(true);
-
-            sel.removeAllRanges();
-            sel.addRange(range);
+            this.setCaretToStart(newEle);
 
             return false;
         },
 
-        onActive(e) {
-            this.constructor.__super__.onActive.call(this, e);
+        /**
+         * Set cursor position
+         * @param {Node} afterNode
+         */
+        setCaretToStart(afterNode = null) {
+            const {activeRte, el} = this;
+            const range = activeRte.doc.createRange();
+            const sel = activeRte.doc.getSelection();
+
+            if (afterNode) {
+                range.setStartAfter(afterNode);
+            } else {
+                range.setStart(el, 0);
+            }
+
+            range.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(range);
+
+            activeRte.updateActiveActions();
+        },
+
+        /**
+         * Wrapping component from tag
+         * @param tagName
+         */
+        wrapComponent(tagName = 'div') {
+            const {model} = this;
+            model
+                .set('content', model.toHTML())
+                .set('attributes', {})
+                .set('tagName', tagName);
+        },
+
+        /**
+         * Remove component wrapper
+         */
+        removeWrapper() {
+            const [model] = this.model.replaceWith(this.getContent());
+            this.editor.select(model);
+        },
+
+        /**
+         * Is single line text block
+         * @returns {boolean}
+         */
+        isSingleLine() {
+            const comps = this.model.components();
+
+            return this.model.get('tagName') === 'div' &&
+                comps.length === 1 &&
+                comps.at(0).get('type') !== 'textnode' &&
+                TAGS.includes(comps.at(0).get('tagName'));
+        },
+
+        /**
+         * Active RTE handler
+         * @param {Event} e
+         */
+        onActive(event) {
+            this.constructor.__super__.onActive.call(this, event);
             const {activeRte, $el, cid} = this;
 
             if (activeRte) {
                 $el.on(`keypress.${cid}`, this.onPressEnter.bind(this));
+
+                if (TAGS.includes(this.model.get('tagName'))) {
+                    this.wrapComponent('div');
+                }
             }
         },
 
         /**
          * Disable element content editing
          */
-        disableEditing() {
+        disableEditing(clean = true) {
             const {model, rte, activeRte, em, $el, cid} = this;
             if (!model) {
                 return;
@@ -118,6 +222,14 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
             }
 
             this.toggleEvents();
+
+            if (clean && this.isSingleLine()) {
+                this.removeWrapper();
+            }
+
+            if (model.get('tagName') && this.getContent() === '') {
+                model.set('content', __('oro.cms.wysiwyg.component.text.content'));
+            }
         },
 
         updateContentText({model, ...args}) {
@@ -132,10 +244,9 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
          * @param opts
          */
         syncContent(opts = {}) {
-            const tags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'];
             const {model, rte, rteEnabled} = this;
             if (!rteEnabled && !opts.force) return;
-            let content = this.getContent();
+            const content = this.getContent();
             const comps = model.components();
             const contentOpt = {
                 fromDisable: false,
@@ -143,7 +254,6 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
                 idUpdate: true,
                 ...opts
             };
-            let tagName = null;
             comps.length && comps.reset(null, opts);
             model.set('content', '', contentOpt);
 
@@ -175,25 +285,7 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
                 // Avoid re-render on reset with silent option
                 !opts.silent && model.trigger('change:content', model, '', contentOpt);
 
-                const el = document.createElement('div');
-                el.innerHTML = content;
-                if (el.children.length === 1 &&
-                    tags.includes(el.children[0].tagName.toLowerCase()) &&
-                    tags.includes(model.get('tagName'))) {
-                    tagName = el.children[0].tagName.toLowerCase();
-                    content = el.children[0].innerHTML;
-                }
-
                 comps.add(content, opts);
-
-                if (tagName) {
-                    this.editor.selectRemove(model);
-                    model.set('tagName', tagName);
-                    model.trigger('focus');
-                    rte.updatePosition();
-
-                    this.editor.select(model);
-                }
 
                 comps.each(model => clean(model));
                 comps.trigger('resetNavigator');

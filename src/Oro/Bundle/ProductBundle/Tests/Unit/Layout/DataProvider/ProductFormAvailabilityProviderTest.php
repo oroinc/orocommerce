@@ -29,7 +29,7 @@ class ProductFormAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ProductFormAvailabilityProvider */
     private $provider;
 
-    /** @var UserAgentProvider|\PHPUnit\Framework\MockObject\MockObject $userAgentProvider */
+    /** @var UserAgentProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $userAgentProvider;
 
     /**
