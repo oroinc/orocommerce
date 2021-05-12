@@ -1,0 +1,4 @@
+api:
+    entities:
+        Oro\Bundle\CustomerBundle\Entity\CustomerUser:
+            documentation_resource: '@OroCheckoutBundle/Resources/doc/api_frontend/customer_user.md'

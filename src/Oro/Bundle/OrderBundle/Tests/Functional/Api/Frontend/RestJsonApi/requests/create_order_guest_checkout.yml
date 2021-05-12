@@ -1,0 +1,92 @@
+data:
+    type: orders
+    relationships:
+        billingAddress:
+            data:
+                type: orderaddresses
+                id: billingAddress
+        shippingAddress:
+            data:
+                type: orderaddresses
+                id: shippingAddress
+        lineItems:
+            data:
+                -
+                    type: orderlineitems
+                    id: item1
+        customerUser:
+            data:
+                type: customerusers
+                id: guest
+included:
+    -
+        type: orderlineitems
+        id: item1
+        attributes:
+            quantity: 10
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product1->id)>'
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@item->code)>'
+    -
+        type: orderaddresses
+        id: billingAddress
+        attributes:
+            phone: 123-456
+            label: 'Billing Address'
+            street: 'Street 1'
+            street2: 'Street 2'
+            city: 'Los Angeles'
+            postalCode: '90001'
+            organization: Acme
+            customRegion: null
+            namePrefix: Mr.
+            firstName: John
+            middleName: Edgar
+            lastName: Doo
+            nameSuffix: M.D.
+        relationships:
+            country:
+                data:
+                    type: countries
+                    id: '<toString(@country_usa->iso2Code)>'
+            region:
+                data:
+                    type: regions
+                    id: '<toString(@region_usa_california->combinedCode)>'
+    -
+        type: orderaddresses
+        id: shippingAddress
+        attributes:
+            phone: 123-456
+            label: 'Shipping Address'
+            street: 'Street 1'
+            street2: 'Street 2'
+            city: 'Los Angeles'
+            postalCode: '90001'
+            organization: Acme
+            customRegion: null
+            namePrefix: Mr.
+            firstName: John
+            middleName: Edgar
+            lastName: Doo
+            nameSuffix: M.D.
+        relationships:
+            country:
+                data:
+                    type: countries
+                    id: '<toString(@country_usa->iso2Code)>'
+            region:
+                data:
+                    type: regions
+                    id: '<toString(@region_usa_california->combinedCode)>'
+    -
+        type: customerusers
+        id: guest
+        attributes:
+            email: test2341@test.com

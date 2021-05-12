@@ -8,10 +8,16 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerAddressRepository;
 use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerUserAddressRepository;
+use Oro\Bundle\SecurityBundle\Acl\Extension\EntityAclExtension;
+use Oro\Bundle\SecurityBundle\Acl\Extension\ObjectIdentityHelper;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
+use Oro\Bundle\UserBundle\Entity\User;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
+/**
+ * Provides customer and customer user addresses for an order.
+ */
 class OrderAddressProvider implements AddressProviderInterface
 {
     const ADDRESS_TYPE_SHIPPING = 'shipping';
@@ -106,11 +112,12 @@ class OrderAddressProvider implements AddressProviderInterface
         }
 
         $result = [];
-        $repository = $this->getCustomerAddressRepository();
-        if ($this->authorizationChecker->isGranted($this->getPermission($type, self::ACCOUNT_ADDRESS_ANY))) {
-            $result = $repository->getAddressesByType($customer, $type, $this->aclHelper);
-        } elseif ($this->authorizationChecker->isGranted(sprintf('VIEW;entity:%s', $this->customerAddressClass))) {
-            $result = $repository->getDefaultAddressesByType($customer, $type, $this->aclHelper);
+        if ($this->isGranted($this->getPermission($type, self::ACCOUNT_ADDRESS_ANY))) {
+            $result = $this->getCustomerAddressRepository()
+                ->getAddressesByType($customer, $type, $this->aclHelper);
+        } elseif ($this->isGranted('VIEW', $this->encodeEntityAclIdentityString($this->customerAddressClass))) {
+            $result = $this->getCustomerAddressRepository()
+                ->getDefaultAddressesByType($customer, $type, $this->aclHelper);
         }
 
         $this->cache[$key] = $result;
@@ -131,13 +138,12 @@ class OrderAddressProvider implements AddressProviderInterface
         }
 
         $result = [];
-        $repository = $this->getCustomerUserAddressRepository();
-        if ($this->authorizationChecker->isGranted($this->getPermission($type, self::ACCOUNT_USER_ADDRESS_ANY))) {
-            $result = $repository->getAddressesByType($customerUser, $type, $this->aclHelper);
-        } elseif ($this->authorizationChecker->isGranted(
-            $this->getPermission($type, self::ACCOUNT_USER_ADDRESS_DEFAULT)
-        )) {
-            $result = $repository->getDefaultAddressesByType($customerUser, $type, $this->aclHelper);
+        if ($this->isGranted($this->getPermission($type, self::ACCOUNT_USER_ADDRESS_ANY))) {
+            $result = $this->getCustomerUserAddressRepository()
+                ->getAddressesByType($customerUser, $type, $this->aclHelper);
+        } elseif ($this->isGranted($this->getPermission($type, self::ACCOUNT_USER_ADDRESS_DEFAULT))) {
+            $result = $this->getCustomerUserAddressRepository()
+                ->getDefaultAddressesByType($customerUser, $type, $this->aclHelper);
         }
 
         $this->cache[$key] = $result;
@@ -189,11 +195,32 @@ class OrderAddressProvider implements AddressProviderInterface
     protected function getPermission($type, $key)
     {
         $postfix = '';
-        if (!$this->tokenAccessor->getUser() instanceof CustomerUser) {
+        if ($this->tokenAccessor->getUser() instanceof User) {
             $postfix = self::ADMIN_ACL_POSTFIX;
         }
 
         return $this->permissionsByType[$type][$key] . $postfix;
+    }
+
+    /**
+     * @param string $attribute
+     * @param string|null $subject
+     *
+     * @return bool
+     */
+    protected function isGranted(string $attribute, string $subject = null): bool
+    {
+        return $this->authorizationChecker->isGranted($attribute, $subject);
+    }
+
+    /**
+     * @param string $entityClass
+     *
+     * @return string
+     */
+    protected function encodeEntityAclIdentityString(string $entityClass): string
+    {
+        return ObjectIdentityHelper::encodeIdentityString(EntityAclExtension::NAME, $entityClass);
     }
 
     /**

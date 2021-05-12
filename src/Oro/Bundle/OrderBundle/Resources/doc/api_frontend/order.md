@@ -54,27 +54,6 @@ Example:
   },
   "included": [
     {
-      "type": "orderlineitems",
-      "id": "item1",
-      "attributes": {
-        "quantity": 10
-      },
-      "relationships": {
-        "product": {
-          "data": {
-            "type": "products",
-            "id": "1"
-          }
-        },
-        "productUnit": {
-          "data": {
-            "type": "productunits",
-            "id": "item"
-          }
-        }
-      }
-    },
-    {
       "type": "orderaddresses",
       "id": "billing1",
       "relationships": {
@@ -94,6 +73,149 @@ Example:
           "data": {
             "type": "customeraddresses",
             "id": "1"
+          }
+        }
+      }
+    },
+    {
+      "type": "orderlineitems",
+      "id": "item1",
+      "attributes": {
+        "quantity": 10
+      },
+      "relationships": {
+        "product": {
+          "data": {
+            "type": "products",
+            "id": "1"
+          }
+        },
+        "productUnit": {
+          "data": {
+            "type": "productunits",
+            "id": "item"
+          }
+        }
+      }
+    }
+  ]
+}
+```
+{@/request}
+
+A visitor can also create an order when the "Guest Checkout" feature is enabled.
+
+{@request:json_api}
+Example:
+
+```JSON
+{
+  "data": {
+    "type": "orders",
+    "relationships": {
+      "customerUser": {
+        "data": {
+          "type": "customerusers",
+          "id": "guest1"
+        }
+      },
+      "billingAddress": {
+        "data": {
+          "type": "orderaddresses",
+          "id": "billing1"
+        }
+      },
+      "shippingAddress": {
+        "data": {
+          "type": "orderaddresses",
+          "id": "shipping1"
+        }
+      },
+      "lineItems": {
+        "data": [
+          {
+            "type": "orderlineitems",
+            "id": "item1"
+          }
+        ]
+      }
+    }
+  },
+  "included": [
+    {
+      "type": "customerusers",
+      "id": "guest1",
+      "attributes": {
+        "email": "AmandaCole@example.org"
+      }
+    },
+    {
+      "type": "orderaddresses",
+      "id": "billing1",
+      "attributes": {
+        "street": "1215 Caldwell Road",
+        "city": "Rochester",
+        "postalCode": "14608",
+        "firstName": "Amanda",
+        "lastName": "Cole"
+      },
+      "relationships": {
+        "country": {
+          "data": {
+            "type": "countries",
+            "id": "US"
+          }
+        },
+        "region": {
+          "data": {
+            "type": "regions",
+            "id": "US-NY"
+          }
+        }
+      }
+    },
+    {
+      "type": "orderaddresses",
+      "id": "shipping1",
+      "attributes": {
+        "street": "1215 Caldwell Road",
+        "city": "Rochester",
+        "postalCode": "14608",
+        "firstName": "Amanda",
+        "lastName": "Cole"
+      },
+      "relationships": {
+        "country": {
+          "data": {
+            "type": "countries",
+            "id": "US"
+          }
+        },
+        "region": {
+          "data": {
+            "type": "regions",
+            "id": "US-NY"
+          }
+        }
+      }
+    },
+    {
+      "type": "orderlineitems",
+      "id": "item1",
+      "attributes": {
+        "quantity": 10
+      },
+      "relationships": {
+        "product": {
+          "data": {
+            "type": "products",
+            "id": "1"
+          }
+        },
+        "productUnit": {
+          "data": {
+            "type": "productunits",
+            "id": "item"
           }
         }
       }
@@ -258,6 +380,22 @@ Example of data: **\[{"code": "payment_term_1", "label": "Payment Term"}, {"code
 **Only new order address can be passed.**
 
 **The required field.**
+
+### customer
+
+#### create
+
+{@inheritdoc}
+
+**When feature "Guest Checkout" is enabled and an order is created by a visitor, this field is read-only and a passed value will be ignored.**
+
+### customerUser
+
+#### create
+
+{@inheritdoc}
+
+**When feature "Guest Checkout" is enabled and an order is created by a visitor, this field is required.**
 
 ## SUBRESOURCES
 

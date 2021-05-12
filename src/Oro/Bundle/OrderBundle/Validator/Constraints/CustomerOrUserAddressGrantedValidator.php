@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\OrderBundle\Validator\Constraints;
 
-use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Provider\AddressProviderInterface;
@@ -19,9 +18,6 @@ class CustomerOrUserAddressGrantedValidator extends ConstraintValidator
     /** @var AddressProviderInterface */
     private $addressProvider;
 
-    /**
-     * @param AddressProviderInterface $addressProvider
-     */
     public function __construct(AddressProviderInterface $addressProvider)
     {
         $this->addressProvider = $addressProvider;
@@ -48,18 +44,13 @@ class CustomerOrUserAddressGrantedValidator extends ConstraintValidator
         $this->validateOrderAddress($address, $value, $constraint);
     }
 
-    /**
-     * @param OrderAddress                 $address
-     * @param Order                        $order
-     * @param CustomerOrUserAddressGranted $constraint
-     */
     private function validateOrderAddress(
         OrderAddress $address,
         Order $order,
         CustomerOrUserAddressGranted $constraint
     ): void {
         $customerUserAddress = $address->getCustomerUserAddress();
-        if (null !== $customerUserAddress) {
+        if (null !== $customerUserAddress && null !== $order->getCustomerUser()) {
             $this->validateAddress(
                 $customerUserAddress->getId(),
                 $this->addressProvider->getCustomerUserAddresses($order->getCustomerUser(), $constraint->addressType),
@@ -69,7 +60,7 @@ class CustomerOrUserAddressGrantedValidator extends ConstraintValidator
         }
 
         $customerAddress = $address->getCustomerAddress();
-        if (null !== $customerAddress) {
+        if (null !== $customerAddress && null !== $order->getCustomer()) {
             $this->validateAddress(
                 $customerAddress->getId(),
                 $this->addressProvider->getCustomerAddresses($order->getCustomer(), $constraint->addressType),
@@ -79,12 +70,6 @@ class CustomerOrUserAddressGrantedValidator extends ConstraintValidator
         }
     }
 
-    /**
-     * @param int               $addressId
-     * @param AbstractAddress[] $availableAddresses
-     * @param string            $addressPath
-     * @param string            $message
-     */
     private function validateAddress(
         int $addressId,
         array $availableAddresses,
@@ -102,12 +87,6 @@ class CustomerOrUserAddressGrantedValidator extends ConstraintValidator
             ->addViolation();
     }
 
-    /**
-     * @param Order  $order
-     * @param string $addressType
-     *
-     * @return OrderAddress|null
-     */
     private function getAddress(Order $order, string $addressType): ?OrderAddress
     {
         switch ($addressType) {
