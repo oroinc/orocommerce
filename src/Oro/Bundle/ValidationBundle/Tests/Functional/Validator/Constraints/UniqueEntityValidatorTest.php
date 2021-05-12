@@ -56,6 +56,11 @@ class UniqueEntityValidatorTest extends WebTestCase
         $validator = $this->createMock(ValidatorInterface::class);
         $contextualValidator = $this->createMock(ContextualValidatorInterface::class);
 
+        $translator
+            ->expects(self::any())
+            ->method('trans')
+            ->willReturnArgument(0);
+
         $context = new ExecutionContext(
             $validator,
             'root',
@@ -95,7 +100,7 @@ class UniqueEntityValidatorTest extends WebTestCase
         $parameters = []
     ) {
         return new ConstraintViolation(
-            null,
+            $message,
             $message,
             $parameters,
             $root,

@@ -117,6 +117,6 @@ class QuickAddImportFromFileTypeTest extends FormIntegrationTestCase
      */
     private function createUploadedFile($fileName)
     {
-        return new UploadedFile(__DIR__ . '/files/' . $fileName, $fileName, null, null, null, true);
+        return new UploadedFile(__DIR__ . '/files/' . $fileName, $fileName, null, null, true);
     }
 }
