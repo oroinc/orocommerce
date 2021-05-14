@@ -6,6 +6,58 @@ import select2OptionTemplate from 'tpl-loader!orocms/templates/grapesjs-select2-
 
 const tags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'];
 
+const isBlockFormatted = node => node.nodeType === 1 && tags.includes(node.tagName.toLowerCase());
+
+const surroundContent = (node, wrapper) => {
+    if (node.nodeType !== 1) {
+        return node;
+    }
+    wrapper.innerHTML = node.innerHTML;
+    node.innerHTML = '';
+    node.appendChild(wrapper);
+};
+
+const unwrap = node => {
+    const parent = node.parentNode;
+    while (node.firstChild) {
+        parent.insertBefore(node.firstChild, node);
+    }
+    parent.removeChild(node);
+};
+
+function makeSurroundNode(context) {
+    return (node, surround) => {
+        const parent = context.createElement(surround);
+        clearTextFormatting(node);
+        surroundContent(node, parent);
+    };
+};
+
+function clearTextFormatting(node) {
+    if (node.childNodes.length) {
+        node.childNodes.forEach(child => {
+            if (isBlockFormatted(child)) {
+                unwrap(child);
+                clearTextFormatting(child);
+            }
+        });
+    }
+};
+
+function findTextFormattingInRange(range, node = null) {
+    return [...(node ? node.childNodes : range.commonAncestorContainer.childNodes)].reduce((tags, child) => {
+        if (!range.intersectsNode(child)) {
+            return tags;
+        }
+
+        if (isBlockFormatted(child)) {
+            tags.push(child.tagName.toLowerCase());
+        }
+
+        return tags.concat(...findTextFormattingInRange(range, child));
+    }, []);
+}
+
 export default {
     name: 'formatBlock',
 
@@ -47,22 +99,80 @@ export default {
 
     result(rte) {
         const value = rte.actionbar.querySelector('[name="tag"]').value;
+        const selection = rte.doc.getSelection();
+        const parentNode = rte.selection().getRangeAt(0).startContainer.parentNode;
+        const range = selection.getRangeAt(0);
+        const surround = makeSurroundNode(rte.doc);
+        const isTag = range.commonAncestorContainer.nodeType === 1;
+        const isTextNode = range.commonAncestorContainer.nodeType === 3;
 
         if (value === 'normal') {
-            const parentNode = rte.selection().getRangeAt(0).startContainer.parentNode;
-            const text = parentNode.innerHTML;
-            parentNode.remove();
+            if (isTag) {
+                range.commonAncestorContainer.childNodes.forEach(node => {
+                    if (range.intersectsNode(node)) {
+                        clearTextFormatting(node);
+                    }
+                });
 
-            return rte.insertHTML(text);
+                this.editor.trigger('change:canvasOffset');
+                return;
+            }
+
+            if (isTextNode) {
+                const text = parentNode.innerHTML;
+                parentNode.remove();
+                this.editor.trigger('change:canvasOffset');
+                return rte.insertHTML(text);
+            }
         }
+
+        if (!range.collapsed && isTag) {
+            range.commonAncestorContainer.childNodes.forEach(node => {
+                if (range.intersectsNode(node)) {
+                    surround(node, value);
+                }
+            });
+            range.setStartAfter(range.endContainer);
+            selection.removeAllRanges();
+            this.editor.trigger('change:canvasOffset');
+            return;
+        }
+
+        if (isTextNode && !isBlockFormatted(range.commonAncestorContainer.parentNode)) {
+            const newParent = rte.doc.createElement(value);
+            const docFragment = rte.doc.createDocumentFragment();
+            newParent.appendChild(range.commonAncestorContainer);
+            docFragment.appendChild(newParent);
+            range.deleteContents();
+            range.insertNode(docFragment);
+            range.setStartAfter(newParent);
+            range.collapse(true);
+            selection.removeAllRanges();
+            selection.addRange(range);
+            this.editor.trigger('change:canvasOffset');
+            return;
+        }
+
+        this.editor.trigger('change:canvasOffset');
         return rte.exec('formatBlock', value);
     },
 
     update(rte, action) {
         const value = rte.doc.queryCommandValue(action.name);
         const select = rte.actionbar.querySelector('[name="tag"]');
+        const selection = rte.doc.getSelection();
+        if (selection.anchorNode) {
+            const range = selection.getRangeAt(0);
+            if (range.commonAncestorContainer.nodeType === 1) {
+                const formatting = findTextFormattingInRange(range);
+                if (formatting.length) {
+                    $(select).select2('val', formatting[0]);
+                    return;
+                }
+            }
+        }
 
-        if (value === '' && tags.includes(rte.el.tagName.toLowerCase())) {
+        if (value === '' && isBlockFormatted(rte.el)) {
             $(select).select2('val', rte.el.tagName.toLowerCase());
             return;
         }

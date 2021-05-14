@@ -81,6 +81,9 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
  *          },
  *          "draft"={
  *              "draftable"=true
+ *          },
+ *          "slug"={
+ *              "source"="titles"
  *          }
  *      }
  * )
