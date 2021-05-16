@@ -6,6 +6,7 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressProvider;
+use Oro\Bundle\UserBundle\Entity\User;
 
 class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
 {
@@ -51,9 +52,9 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
     {
         return [
             ['shipping', 'oro_order_address_shipping_customer_use_any', new CustomerUser()],
-            ['shipping', 'oro_order_address_shipping_customer_use_any_backend', new \stdClass()],
+            ['shipping', 'oro_order_address_shipping_customer_use_any_backend', new User()],
             ['billing', 'oro_order_address_billing_customer_use_any', new CustomerUser()],
-            ['billing', 'oro_order_address_billing_customer_use_any_backend', new \stdClass()],
+            ['billing', 'oro_order_address_billing_customer_use_any_backend', new User()],
         ];
     }
 
@@ -130,7 +131,7 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
                 ],
                 null,
                 [],
-                new \stdClass()
+                new User()
             ],
             [
                 'shipping',
@@ -139,7 +140,7 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
                 ],
                 'getAddressesByType',
                 [new CustomerUserAddress()],
-                new \stdClass()
+                new User()
             ],
             [
                 'shipping',
@@ -149,7 +150,7 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
                 ],
                 'getDefaultAddressesByType',
                 [new CustomerUserAddress()],
-                new \stdClass()
+                new User()
             ],
             [
                 'billing',
@@ -159,7 +160,7 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
                 ],
                 null,
                 [],
-                new \stdClass()
+                new User()
             ],
             [
                 'billing',
@@ -168,7 +169,7 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
                 ],
                 'getAddressesByType',
                 [new CustomerUserAddress()],
-                new \stdClass()
+                new User()
             ],
             [
                 'billing',
@@ -178,7 +179,7 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
                 ],
                 'getDefaultAddressesByType',
                 [new CustomerUserAddress()],
-                new \stdClass()
+                new User()
             ]
         ];
     }

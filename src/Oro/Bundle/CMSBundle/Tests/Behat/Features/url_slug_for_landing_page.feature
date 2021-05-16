@@ -14,14 +14,16 @@ Feature: URL Slug for Landing Page
       | Title | Other Page    |
       | Slugs | [/other-page] |
 
-  Scenario: Create New Landing Page with empty URL Slug
+  Scenario: Landing page with an automatically generated URL Slug
     Given I click "Edit"
-    When I fill in URL Slug field with ""
-    And I save and close form
-    And I reload the page
+    When I fill in Landing Page Titles field with "Other Page Acme"
+    And fill in URL Slug field with ""
+    And save and close form
+    And click "Apply" in modal window
+    And reload the page
     Then I should see Landing Page with:
-      | Title | Other Page |
-      | Slugs | N/A        |
+      | Title | Other Page Acme    |
+      | Slugs | [/other-page-acme] |
 
   Scenario: Create New Landing Page with non empty URL Slug
     Given I open Landing Page Create page

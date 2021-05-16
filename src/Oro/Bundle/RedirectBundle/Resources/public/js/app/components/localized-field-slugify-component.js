@@ -35,6 +35,7 @@ define(function(require) {
 
             if ($source.prop('type') === 'text') {
                 this.slugifySourceToTarget($source, $target);
+                $target.prop('disabled', false);
             } else if ($source.prop('type') === 'checkbox') {
                 $target.prop('checked', $source.prop('checked'));
                 $target.change();

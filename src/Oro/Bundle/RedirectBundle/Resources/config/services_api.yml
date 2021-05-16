@@ -20,3 +20,10 @@ services:
             - '@oro_frontend.api.resource_api_url_resolver'
         tags:
             - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, class: Oro\Bundle\RedirectBundle\Api\Model\Route }
+
+    oro_redirect.api.set_slugs:
+        class: Oro\Bundle\RedirectBundle\Api\Processor\SetSlugs
+        arguments:
+            - '@oro_redirect.helper.slugify_entity_helper'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: '!frontend' }

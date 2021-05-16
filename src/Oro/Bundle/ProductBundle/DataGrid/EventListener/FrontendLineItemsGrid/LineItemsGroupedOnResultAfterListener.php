@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\DataGrid\EventListener\FrontendLineItemsGrid;
 
+use Brick\Math\BigDecimal;
+use Brick\Math\BigNumber;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
@@ -106,19 +108,31 @@ class LineItemsGroupedOnResultAfterListener
     private function processSubtotal(array &$recordData, array $lineItemsData): void
     {
         foreach ($lineItemsData as $lineItemData) {
-            $recordData['quantity'] += $lineItemData['quantity'] ?? 0;
+            $recordData['quantity'] = $this->sumValuesAsBigDecimal(
+                $recordData['quantity'],
+                $lineItemData['quantity'] ?? 0
+            );
 
             if (!isset($lineItemData['subtotalValue'], $lineItemData['currency'])) {
                 $recordData['subtotalValue'] = $recordData['discountValue'] = null;
             }
 
             if ($recordData['subtotalValue'] !== null) {
-                $recordData['subtotalValue'] += $lineItemData['subtotalValue'];
+                $recordData['subtotalValue'] = $this->sumValuesAsBigDecimal(
+                    $recordData['subtotalValue'],
+                    $lineItemData['subtotalValue']
+                );
                 if (isset($lineItemData['discountValue'])) {
-                    $recordData['discountValue'] += $lineItemData['discountValue'];
+                    $recordData['discountValue'] = $this->sumValuesAsBigDecimal(
+                        $recordData['discountValue'],
+                        $lineItemData['discountValue']
+                    );
                     // It is supposed that subtotalValue already includes applied discount, so we should revert it
                     // to get correct row initial subtotal of configurable product.
-                    $recordData['subtotalValue'] += $lineItemData['discountValue'];
+                    $recordData['subtotalValue'] = $this->sumValuesAsBigDecimal(
+                        $recordData['subtotalValue'],
+                        $lineItemData['discountValue']
+                    );
                 }
             }
         }
@@ -164,5 +178,19 @@ class LineItemsGroupedOnResultAfterListener
         $parameters = $datagrid->getParameters()->get('_parameters', []);
 
         return isset($parameters['group']) ? filter_var($parameters['group'], FILTER_VALIDATE_BOOLEAN) : false;
+    }
+
+    /**
+     * @param BigNumber|int|float|string $valueOne
+     * @param BigNumber|int|float|string $valueTwo
+     * @return float
+     */
+    private function sumValuesAsBigDecimal($valueOne, $valueTwo): float
+    {
+        return BigDecimal::of($valueOne)
+            ->plus(
+                BigDecimal::of($valueTwo)
+            )
+            ->toFloat();
     }
 }

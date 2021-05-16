@@ -11,7 +11,6 @@ use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Provider\AddressProviderInterface;
 use Oro\Bundle\OrderBundle\Validator\Constraints\CustomerOrUserAddressGranted;
 use Oro\Bundle\OrderBundle\Validator\Constraints\CustomerOrUserAddressGrantedValidator;
-use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
@@ -23,8 +22,9 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
  */
 class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestCase
 {
-    /** @var MockObject */
+    /** @var AddressProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $addressProvider;
+
     /**
      * {@inheritDoc}
      */
@@ -43,6 +43,17 @@ class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestC
         $this->propertyPath = null;
 
         return parent::createContext();
+    }
+
+    /**
+     * Cannot use EntityTrait because setValue declarations in trait and ConstraintValidatorTestCase are different.
+     */
+    private function setId($entity, $idValue)
+    {
+        $reflectionClass = new \ReflectionClass($entity);
+        $method = $reflectionClass->getProperty('id');
+        $method->setAccessible(true);
+        $method->setValue($entity, $idValue);
     }
 
     public function testWithInvalidConstraint()
@@ -303,17 +314,39 @@ class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestC
         $this->assertNoViolation();
     }
 
-    /**
-     * Cannot use EntityTrait because setValue declarations in trait and ConstraintValidatorTestCase are different.
-     *
-     * @param $entity
-     * @param $idValue
-     */
-    private function setId($entity, $idValue)
+    public function testForOrderWithoutCustomerUser()
     {
-        $reflectionClass = new \ReflectionClass($entity);
-        $method = $reflectionClass->getProperty('id');
-        $method->setAccessible(true);
-        $method->setValue($entity, $idValue);
+        $order = new Order();
+
+        $customerUserAddress = new CustomerUserAddress();
+        $this->setId($customerUserAddress, 123);
+        $orderAddress = new OrderAddress();
+        $orderAddress->setCustomerUserAddress($customerUserAddress);
+        $order->setBillingAddress($orderAddress);
+
+        $this->addressProvider->expects($this->never())
+            ->method('getCustomerUserAddresses');
+
+        $this->constraint->addressType = 'billing';
+        $this->validator->validate($order, $this->constraint);
+        $this->assertNoViolation();
+    }
+
+    public function testForOrderWithoutCustomer()
+    {
+        $order = new Order();
+
+        $customerAddress = new CustomerAddress();
+        $this->setId($customerAddress, 123);
+        $orderAddress = new OrderAddress();
+        $orderAddress->setCustomerAddress($customerAddress);
+        $order->setBillingAddress($orderAddress);
+
+        $this->addressProvider->expects($this->never())
+            ->method('getCustomerAddresses');
+
+        $this->constraint->addressType = 'billing';
+        $this->validator->validate($order, $this->constraint);
+        $this->assertNoViolation();
     }
 }
