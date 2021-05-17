@@ -48,8 +48,8 @@ Feature: Checkout State Validation
   Scenario: After price change buyer is warned about checkout content changes
     Given I proceed as the Buyer
     When I click "Submit Order"
-    Then I should not see "Thank You For Your Purchase!"
-    And I should see "There was a change to the contents of your order." flash message
+    Then I should see "There was a change to the contents of your order." flash message
+    And I should not see "Thank You For Your Purchase!"
 
   Scenario: Buyer can finish checkout after he was acknowledged about changes
     Given I click "Submit Order"

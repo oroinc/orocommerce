@@ -186,6 +186,56 @@ class ReindexMessageFilterTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    public function testDoNotAggregateMessagesForDifferentJobs()
+    {
+        $buffer = new MessageBuffer();
+
+        $buffer->addMessage(
+            self::TOPIC,
+            [
+                'class' => 'SampleClass1',
+                'granulize' => true,
+                'context' => ['websiteIds' => [1], 'entityIds' => [1]],
+                'jobId' => 199,
+            ]
+        );
+        $buffer->addMessage(
+            self::TOPIC,
+            [
+                'class' => 'SampleClass1',
+                'granulize' => true,
+                'context' => ['websiteIds' => [2], 'entityIds' => [2]],
+                'jobId' => 200,
+            ]
+        );
+
+        $this->filter->apply($buffer);
+
+        $this->assertEquals(
+            [
+                0 => [
+                    self::TOPIC,
+                    [
+                        'class' => 'SampleClass1',
+                        'granulize' => true,
+                        'context' => ['websiteIds' => [1], 'entityIds' => [1]],
+                        'jobId' => 199,
+                    ],
+                ],
+                1 => [
+                    self::TOPIC,
+                    [
+                        'class' => 'SampleClass1',
+                        'granulize' => true,
+                        'context' => ['websiteIds' => [2], 'entityIds' => [2]],
+                        'jobId' => 200,
+                    ],
+                ],
+            ],
+            $buffer->getMessages()
+        );
+    }
+
     public function testApplyWhenJobId(): void
     {
         $buffer = new MessageBuffer();

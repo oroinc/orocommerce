@@ -33,6 +33,10 @@ class ProductPriceEntityListenerTest extends WebTestCase
             LoadProductPrices::class,
             LoadPriceRuleLexemes::class
         ]);
+
+        $this->getOptionalListenerManager()->enableListener('oro_pricing.entity_listener.product_price_cpl');
+        $this->getOptionalListenerManager()->enableListener('oro_pricing.entity_listener.price_list_to_product');
+
         $this->enableMessageBuffering();
     }
 

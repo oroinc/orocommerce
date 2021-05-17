@@ -1,3 +1,9 @@
+parameters:
+    optional_search_listeners:
+        - 'oro_search.index_listener'
+        - 'oro_website.indexation_request_listener'
+        - 'oro_website_search.reindex_request.listener'
+
 services:
     oro_product.alias.provider.content_variant_segment_provider:
         alias: oro_product.provider.content_variant_segment_provider
