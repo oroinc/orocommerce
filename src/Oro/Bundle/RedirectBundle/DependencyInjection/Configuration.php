@@ -7,22 +7,26 @@ use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
+/**
+ * Redirect bundle configuration definition.
+ */
 class Configuration implements ConfigurationInterface
 {
-    const ENABLE_DIRECT_URL = 'enable_direct_url';
-    const CANONICAL_URL_TYPE = 'canonical_url_type';
-    const REDIRECT_GENERATION_STRATEGY = 'redirect_generation_strategy';
+    public const ENABLE_DIRECT_URL = 'enable_direct_url';
+    public const CANONICAL_URL_TYPE = 'canonical_url_type';
+    public const USE_LOCALIZED_CANONICAL = 'use_localized_canonical';
+    public const REDIRECT_GENERATION_STRATEGY = 'redirect_generation_strategy';
 
-    const SYSTEM_URL = 'system';
-    const DIRECT_URL = 'direct';
+    public const SYSTEM_URL = 'system';
+    public const DIRECT_URL = 'direct';
 
-    const STRATEGY_ALWAYS = 'always';
-    const STRATEGY_NEVER = 'never';
-    const STRATEGY_ASK = 'ask';
+    public const STRATEGY_ALWAYS = 'always';
+    public const STRATEGY_NEVER = 'never';
+    public const STRATEGY_ASK = 'ask';
 
-    const CANONICAL_URL_SECURITY_TYPE = 'canonical_url_security_type';
-    const INSECURE = 'insecure';
-    const SECURE = 'secure';
+    public const CANONICAL_URL_SECURITY_TYPE = 'canonical_url_security_type';
+    public const INSECURE = 'insecure';
+    public const SECURE = 'secure';
 
     /**
      * {@inheritDoc}
@@ -39,7 +43,8 @@ class Configuration implements ConfigurationInterface
                 self::ENABLE_DIRECT_URL => ['value' => true],
                 self::CANONICAL_URL_TYPE => ['value' => self::SYSTEM_URL],
                 self::REDIRECT_GENERATION_STRATEGY => ['value' => self::STRATEGY_ASK],
-                self::CANONICAL_URL_SECURITY_TYPE => ['value' => self::SECURE]
+                self::CANONICAL_URL_SECURITY_TYPE => ['value' => self::SECURE],
+                self::USE_LOCALIZED_CANONICAL => ['value' => true]
             ]
         );
 

@@ -5,6 +5,7 @@ namespace Oro\Bundle\RedirectBundle\Generator;
 use Doctrine\Common\Cache\Cache;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Provider\LocalizationProviderInterface;
 use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
 use Oro\Bundle\RedirectBundle\DependencyInjection\OroRedirectExtension;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
@@ -46,24 +47,32 @@ class CanonicalUrlGenerator
     private $cache;
 
     /**
+     * @var LocalizationProviderInterface
+     */
+    private $localizationProvider;
+
+    /**
      * @param ConfigManager $configManager
      * @param Cache $cache
      * @param RequestStack $requestStack
      * @param RoutingInformationProvider $routingInformationProvider
      * @param WebsiteUrlResolver $websiteSystemUrlResolver
+     * @param LocalizationProviderInterface $localizationProvider
      */
     public function __construct(
         ConfigManager $configManager,
         Cache $cache,
         RequestStack $requestStack,
         RoutingInformationProvider $routingInformationProvider,
-        WebsiteUrlResolver $websiteSystemUrlResolver
+        WebsiteUrlResolver $websiteSystemUrlResolver,
+        LocalizationProviderInterface $localizationProvider
     ) {
         $this->configManager = $configManager;
         $this->cache = $cache;
         $this->requestStack = $requestStack;
         $this->routingInformationProvider = $routingInformationProvider;
         $this->websiteSystemUrlResolver = $websiteSystemUrlResolver;
+        $this->localizationProvider = $localizationProvider;
     }
 
     /**
@@ -180,13 +189,7 @@ class CanonicalUrlGenerator
      */
     public function getCanonicalUrlType(WebsiteInterface $website = null)
     {
-        $configKey = $this->getConfigKey(Configuration::CANONICAL_URL_TYPE);
-        $cacheKey = $this->getCacheKey($configKey, $website);
-        if (!$this->cache->contains($cacheKey)) {
-            $this->cache->save($cacheKey, $this->configManager->get($configKey, false, false, $website));
-        }
-
-        return $this->cache->fetch($cacheKey);
+        return $this->getCachedConfigValue(Configuration::CANONICAL_URL_TYPE, $website);
     }
 
     /**
@@ -196,13 +199,7 @@ class CanonicalUrlGenerator
      */
     public function getCanonicalUrlSecurityType(WebsiteInterface $website = null)
     {
-        $configKey = $this->getConfigKey(Configuration::CANONICAL_URL_SECURITY_TYPE);
-        $cacheKey = $this->getCacheKey($configKey, $website);
-        if (!$this->cache->contains($cacheKey)) {
-            $this->cache->save($cacheKey, $this->configManager->get($configKey, false, false, $website));
-        }
-
-        return $this->cache->fetch($cacheKey);
+        return $this->getCachedConfigValue(Configuration::CANONICAL_URL_SECURITY_TYPE, $website);
     }
 
     /**
@@ -218,23 +215,40 @@ class CanonicalUrlGenerator
             $this->getConfigKey(Configuration::CANONICAL_URL_SECURITY_TYPE),
             $website
         ));
+        $this->cache->delete($this->getCacheKey($this->getConfigKey(Configuration::USE_LOCALIZED_CANONICAL)));
+    }
+
+    private function getCachedConfigValue($key, WebsiteInterface $website = null)
+    {
+        $configKey = $this->getConfigKey($key);
+        $cacheKey = $this->getCacheKey($configKey, $website);
+        if (!$this->cache->contains($cacheKey)) {
+            $this->cache->save($cacheKey, $this->configManager->get($configKey, false, false, $website));
+        }
+
+        return $this->cache->fetch($cacheKey);
     }
 
     /**
      * @param SlugAwareInterface $entity
-     * @param Localization $localization
+     * @param Localization|null $localization
      *
      * @return null|Slug
      */
     protected function getDirectUrlSlug(SlugAwareInterface $entity, Localization $localization = null)
     {
-        if ($localization) {
-            $slug = $entity->getSlugByLocalization($localization);
-        } else {
-            $slug = $entity->getBaseSlug();
+        if ($localization === null) {
+            $localization = $this->getLocalization();
         }
 
-        return $slug;
+        if ($localization) {
+            $slug = $entity->getSlugByLocalization($localization);
+            if ($slug) {
+                return $slug;
+            }
+        }
+
+        return $entity->getBaseSlug();
     }
 
     /**
@@ -259,7 +273,8 @@ class CanonicalUrlGenerator
         }
 
         $urlParts[] = ltrim($url, '/');
-        return  implode('/', $urlParts);
+
+        return implode('/', $urlParts);
     }
 
     /**
@@ -279,5 +294,19 @@ class CanonicalUrlGenerator
     private function getCacheKey($configKey, WebsiteInterface $website = null)
     {
         return $website ? sprintf('%s.%s', $configKey, $website->getId()) : $configKey;
+    }
+
+    private function isLocalizedCanonicalUrlsEnabled(): bool
+    {
+        return (bool)$this->getCachedConfigValue(Configuration::USE_LOCALIZED_CANONICAL);
+    }
+
+    private function getLocalization(): ?Localization
+    {
+        if ($this->isLocalizedCanonicalUrlsEnabled()) {
+            return $this->localizationProvider->getCurrentLocalization();
+        }
+
+        return null;
     }
 }
