@@ -12,6 +12,15 @@ system_configuration:
                 label: oro.redirect.system_configuration.fields.enable_direct_url.label
                 required: false
 
+        oro_redirect.use_localized_canonical:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            priority: 100
+            options:
+                label: oro.redirect.system_configuration.fields.use_localized_canonical.label
+                tooltip: oro.redirect.system_configuration.fields.use_localized_canonical.tooltip
+                required: false
+
         oro_redirect.canonical_url_type:
             data_type: string
             type: 'Symfony\Component\Form\Extension\Core\Type\ChoiceType'
@@ -67,6 +76,7 @@ system_configuration:
                                         children:
                                             - oro_redirect.canonical_url_type
                                             - oro_redirect.canonical_url_security_type
+                                            - oro_redirect.use_localized_canonical
                                             - oro_redirect.redirect_generation_strategy
                                     oro_redirect_direct_urls:
                                         children:

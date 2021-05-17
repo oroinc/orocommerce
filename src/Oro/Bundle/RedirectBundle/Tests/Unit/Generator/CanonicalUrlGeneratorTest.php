@@ -9,6 +9,7 @@ use Oro\Bundle\RedirectBundle\DependencyInjection\OroRedirectExtension;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
+use Oro\Bundle\RedirectBundle\Tests\Unit\Entity\SluggableEntityStub;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Routing\RouteData;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,13 +24,16 @@ class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
      */
     protected function createGenerator(): CanonicalUrlGenerator
     {
-        return new CanonicalUrlGenerator(
+        $generator = new CanonicalUrlGenerator(
             $this->configManager,
             $this->cache,
             $this->requestStack,
             $this->routingInformationProvider,
             $this->websiteUrlResolver
         );
+        $generator->setLocalizationProvider($this->localizationProvider);
+
+        return $generator;
     }
 
     public function testIsDirectUrlEnabled()
@@ -107,7 +111,7 @@ class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
             ->method('contains')
             ->willReturn(false);
 
-        $entity = $this->getSluggableEntityMock($slug);
+        $entity = $this->getSluggableEntity($slug);
         $this->assertRequestCalls($entity, $expectedBaseUrl);
         $this->assertEquals($expectedUrl, $this->canonicalUrlGenerator->getUrl($entity, null, $website));
     }
@@ -132,7 +136,7 @@ class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
         $slug->setRouteParameters([]);
 
         $this->assertUrlTypeCalls($urlSecurityType, $website);
-        $entity = $this->getSluggableEntityMock($slug);
+        $entity = $this->getSluggableEntity($slug);
         $this->assertRequestCalls($entity, $expectedBaseUrl);
         $this->assertEquals($expectedUrl, $this->canonicalUrlGenerator->getUrl($entity, null, $website));
     }
@@ -157,34 +161,106 @@ class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
         $slug->setRouteParameters([]);
 
         $this->assertUrlTypeCalls($urlSecurityType, $website);
-        $entity = $this->getSluggableEntityMock($slug);
+        $entity = $this->getSluggableEntity($slug);
         $this->assertRequestCalls($entity, $expectedBaseUrl);
         $this->assertEquals($expectedUrl, $this->canonicalUrlGenerator->getUrl($entity, null, $website));
     }
 
-    public function testGetDirectUrlWithLocalePassed()
-    {
-        $canonicalPath = '/canonical';
+    /**
+     * @dataProvider localizedUrlDataProvider
+     * @param string $expectedUrl
+     * @param Localization|null $localization
+     * @param Localization|null $currentLocalization
+     */
+    public function testGetDirectUrl(
+        string $expectedUrl,
+        Localization $localization = null,
+        Localization $currentLocalization = null
+    ) {
         $expectedWebsiteUrl = 'http://example.com/';
-        $expectedUrl = 'http://example.com/canonical';
 
-        /** @var Localization $localization */
-        $localization = $this->getEntity(Localization::class, ['id' => 42]);
+        $this->configManager->expects($this->any())
+            ->method('get')
+            ->willReturnMap([
+                ['oro_redirect.use_localized_canonical', false, false, null, true]
+            ]);
+        $this->cache->expects($this->any())
+            ->method('fetch')
+            ->willReturnMap([
+                ['oro_redirect.use_localized_canonical', true]
+            ]);
+
+        /** @var Localization $localization1 */
+        $localization1 = $this->getEntity(Localization::class, ['id' => 1]);
+        /** @var Localization $localization2 */
+        $localization2 = $this->getEntity(Localization::class, ['id' => 2]);
+
+        $this->localizationProvider->expects($this->any())
+            ->method('getCurrentLocalization')
+            ->willReturn($currentLocalization);
 
         $this->websiteUrlResolver->expects($this->any())
             ->method('getWebsiteUrl')
             ->willReturn($expectedWebsiteUrl);
 
+        $baseSlug = new Slug();
+        $baseSlug->setUrl('/canonical_base');
+        $baseSlug->setRouteName('route_name');
+        $baseSlug->setRouteParameters([]);
+
         $slug = new Slug();
-        $slug->setUrl($canonicalPath);
+        $slug->setUrl('/canonical');
         $slug->setRouteName('route_name');
         $slug->setRouteParameters([]);
-        $slug->setLocalization($localization);
+        $slug->setLocalization($localization1);
+
+        $slug2 = new Slug();
+        $slug2->setUrl('/canonical_2');
+        $slug2->setRouteName('route_name');
+        $slug2->setRouteParameters([]);
+        $slug2->setLocalization($localization2);
 
         $this->assertUrlTypeCalls(Configuration::INSECURE);
-        $entity = $this->getSluggableEntityMock($slug);
+        $entity = new SluggableEntityStub();
+        $entity->addSlug($baseSlug);
+        $entity->addSlug($slug);
+        $entity->addSlug($slug2);
         $this->assertRequestCalls($entity);
-        $this->assertEquals($expectedUrl, $this->canonicalUrlGenerator->getUrl($entity, $localization));
+
+        $this->assertEquals($expectedUrl, $this->canonicalUrlGenerator->getDirectUrl($entity, $localization));
+    }
+
+    public function localizedUrlDataProvider()
+    {
+        yield 'current used' => [
+            'http://example.com/canonical',
+            null,
+            $this->getEntity(Localization::class, ['id' => 1])
+        ];
+
+        yield 'base used when not found for current' => [
+            'http://example.com/canonical_base',
+            null,
+            $this->getEntity(Localization::class, ['id' => 3])
+        ];
+
+        yield 'base used when no current' => [
+            'http://example.com/canonical_base',
+            null,
+            null
+        ];
+
+        yield 'by locale no current' => [
+            'http://example.com/canonical',
+            $this->getEntity(Localization::class, ['id' => 1]),
+            null
+        ];
+
+        yield 'by locale with another current' => [
+            'http://example.com/canonical_2',
+            $this->getEntity(Localization::class, ['id' => 2]),
+            $this->getEntity(Localization::class, ['id' => 1])
+        ];
     }
 
     public function testGetSystemUrlForInsecureCanonical()
@@ -260,15 +336,17 @@ class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
         $this->cache->expects($this->any())
             ->method('contains')
             ->willReturnMap([
-                ['oro_redirect.canonical_url_type', Configuration::DIRECT_URL],
-                ['oro_redirect.canonical_url_security_type', Configuration::INSECURE]
+                ['oro_redirect.canonical_url_type', true],
+                ['oro_redirect.canonical_url_security_type', true],
+                ['oro_redirect.use_localized_canonical', true]
             ]);
 
         $this->cache->expects($this->any())
             ->method('fetch')
             ->willReturnMap([
                 ['oro_redirect.canonical_url_type', Configuration::DIRECT_URL],
-                ['oro_redirect.canonical_url_security_type', Configuration::INSECURE]
+                ['oro_redirect.canonical_url_security_type', Configuration::INSECURE],
+                ['oro_redirect.use_localized_canonical', true]
             ]);
 
         $this->configManager->expects($this->never())->method('get');
@@ -294,11 +372,12 @@ class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
 
     public function testClearCacheWithoutWebsite()
     {
-        $this->cache->expects($this->exactly(2))
+        $this->cache->expects($this->exactly(3))
             ->method('delete')
             ->withConsecutive(
                 [sprintf('%s.%s', OroRedirectExtension::ALIAS, Configuration::CANONICAL_URL_TYPE)],
-                [sprintf('%s.%s', OroRedirectExtension::ALIAS, Configuration::CANONICAL_URL_SECURITY_TYPE)]
+                [sprintf('%s.%s', OroRedirectExtension::ALIAS, Configuration::CANONICAL_URL_SECURITY_TYPE)],
+                [sprintf('%s.%s', OroRedirectExtension::ALIAS, Configuration::USE_LOCALIZED_CANONICAL)]
             );
         $this->canonicalUrlGenerator->clearCache();
     }
@@ -306,7 +385,7 @@ class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
     public function testClearCacheWithWebsite()
     {
         $website = $this->getEntity(Website::class, ['id' => 777]);
-        $this->cache->expects($this->exactly(2))
+        $this->cache->expects($this->exactly(3))
             ->method('delete')
             ->withConsecutive(
                 [
@@ -324,7 +403,8 @@ class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
                         Configuration::CANONICAL_URL_SECURITY_TYPE,
                         777
                     )
-                ]
+                ],
+                [sprintf('%s.%s', OroRedirectExtension::ALIAS, Configuration::USE_LOCALIZED_CANONICAL)]
             );
 
         $this->canonicalUrlGenerator->clearCache($website);
