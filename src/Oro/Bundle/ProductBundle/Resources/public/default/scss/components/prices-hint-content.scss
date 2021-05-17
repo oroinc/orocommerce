@@ -12,6 +12,12 @@
         pointer-events: none;
     }
 
+    .matched-tier-price {
+        > td {
+            font-weight: font-weight('bold');
+        }
+    }
+
     .table {
         border-top: 0;
         margin-bottom: 0;
@@ -22,14 +28,14 @@
         thead {
             th {
                 background: none;
-                padding: 3px 8px 3px;
+                padding: 3px 8px;
                 text-align: center;
             }
         }
 
         td {
             width: 50%;
-            padding: 3px 8px 3px;
+            padding: 3px 8px;
             text-align: center;
         }
 
@@ -37,12 +43,6 @@
             td {
                 border-bottom: 0;
             }
-        }
-    }
-
-    .matched-tier-price {
-        > td {
-            font-weight: 700;
         }
     }
 }

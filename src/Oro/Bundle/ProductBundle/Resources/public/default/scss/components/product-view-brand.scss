@@ -1,8 +1,9 @@
 /* @theme: default; */
 
 .product-view-brand {
-    font-weight: bold;
+    font-weight: font-weight('bold');
 }
+
 .product-view-brand-title {
     color: $product-view-brand-title-color;
 }

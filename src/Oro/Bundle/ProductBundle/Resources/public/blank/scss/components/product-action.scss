@@ -29,7 +29,7 @@
 
         padding: $product-action-area-in-sticky-inner-offset;
 
-        background-color: get-color('additional', 'base');
+        background-color: $product-action-area-in-sticky-inner-bg-color;
 
         .product-action {
             min-width: $product-action-in-sticky-width;

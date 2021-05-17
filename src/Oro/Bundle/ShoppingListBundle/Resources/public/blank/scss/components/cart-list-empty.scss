@@ -1,6 +1,5 @@
 /* @theme: blank; */
 
-
 .cart-list-empty {
     position: relative;
 
@@ -11,7 +10,7 @@
     padding: 20px 20px 20px 90px;
     align-items: center;
 
-    border: 1px solid get-color('additional', 'light');
+    border: $cart-list-empty-border;
     border-radius: 5px;
 
     line-height: 2;

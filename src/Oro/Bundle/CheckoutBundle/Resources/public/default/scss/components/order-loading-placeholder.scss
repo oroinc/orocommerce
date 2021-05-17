@@ -4,16 +4,16 @@
     height: 110px;
     text-align: right;
 
-    &:before {
+    &::before {
         content: '';
-        background: rgba(get-color('additional', 'darker'), .2);
+        background: $totals-placeholder-before-background;
         height: 30px;
         display: block;
     }
 
-    &:after {
+    &::after {
         content: '';
-        background: rgba(get-color('additional', 'darker'), .2);
+        background: $totals-placeholder-after-background;
         width: 50%;
         height: 20px;
         display: block;
@@ -24,5 +24,5 @@
 .combined-buttons-placeholder {
     height: 40px;
     border-radius: 5px;
-    background: rgba(get-color('additional', 'darker'), .2);
+    background: $combined-buttons-placeholder-background;
 }

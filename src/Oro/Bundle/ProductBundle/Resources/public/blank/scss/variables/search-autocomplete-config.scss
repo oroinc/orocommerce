@@ -39,7 +39,9 @@ $search-autocomplete-product-image-flex-shrink: 0 !default;
 
 $search-autocomplete-product-image-img-max-width: 100% !default;
 
-$search-autocomplete-product-info-width: calc(100% - #{$search-autocomplete-product-image-width + $search-autocomplete-product-image-offset-right}) !default;
+$search-autocomplete-product-info-width: calc(
+    100% - #{$search-autocomplete-product-image-width + $search-autocomplete-product-image-offset-right}
+) !default;
 $search-autocomplete-product-info-flex-grow: 1 !default;
 $search-autocomplete-product-info-flex-shrink: 1 !default;
 
@@ -48,7 +50,6 @@ $search-autocomplete-product-head-justify-content: space-between !default;
 $search-autocomplete-product-head-offset-bottom: 6px !default;
 
 $search-autocomplete-product-title-min-width: 50% !default;
-$search-autocomplete-product-title-word-break-ie11: break-all !default;
 $search-autocomplete-product-title-word-break: break-word !default;
 
 $search-autocomplete-product-body-display: flex !default;

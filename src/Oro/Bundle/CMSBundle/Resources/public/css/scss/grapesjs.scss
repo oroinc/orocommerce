@@ -34,10 +34,12 @@
         ##{$app-prefix}tools,
         .#{$app-prefix}tools {
             z-index: 2;
-            /*rtl:begin:ignore*/
+
+            /* rtl:begin:ignore */
             left: 0;
             right: auto;
-            /*rtl:end:ignore*/
+
+            /* rtl:end:ignore */
         }
     }
 
@@ -57,6 +59,7 @@
 
         .nav-content {
             padding: 2px 16px 10px;
+
             input {
                 height: 32px;
             }
@@ -92,7 +95,7 @@
 
             &.#{$pn-prefix}active {
                 background-color: $additional-extra-light;
-                box-shadow: inset 0 2px 3px 2px rgba(0, 0, 0, 0.21);
+                box-shadow: $button-bg-shadow;
             }
         }
     }
@@ -120,7 +123,7 @@
     &sm-composite,
     &sm-stack {
         > .#{$app-prefix}sm-label {
-            font-weight: 700;
+            font-weight: font-weight('bold');
         }
     }
 
@@ -153,7 +156,7 @@
         .#{$app-prefix}sm-title,
         .#{$app-prefix}title {
             border-bottom: none;
-            font-weight: 700;
+            font-weight: font-weight('bold');
             padding: 6px 14px 5px;
             letter-spacing: normal;
             font-size: $base-font-size;
@@ -177,7 +180,6 @@
 
         .#{$sm-prefix}property {
             .#{$sm-prefix}layer {
-                ##{$sm-prefix}close-layer,
                 ##{$sm-prefix}close-layer {
                     line-height: 0;
                     top: 10px;
@@ -193,16 +195,18 @@
     &toolbar {
         margin-top: -2px;
         white-space: nowrap;
-        /*rtl:begin:ignore*/
+
+        /* rtl:begin:ignore */
         left: 0;
         right: auto;
-        /*rtl:end:ignore*/
+
+        /* rtl:end:ignore */
     }
 
     &com-badge,
     &com-badge-red,
     &badge {
-        /*rtl:ignore*/
+        /* rtl:ignore */
         margin-left: -2px;
         white-space: nowrap;
     }
@@ -213,12 +217,12 @@
 
     &mdl-dialog {
         border-radius: 4px;
-        box-shadow: 1px 1px 9px 3px rgba(0,0,0,.08);
+        box-shadow: $grapejs-shadow;
 
         .#{$app-prefix}btn-prim {
             display: inline-flex;
             padding: 0 16px;
-            font-size: 0.875rem;
+            font-size: .875rem;
             line-height: 32px;
             border-radius: 16px;
             margin-top: 10px;
@@ -227,14 +231,14 @@
 
     &mdl-header {
         background: $primary-200;
-        padding: 10px 18px 10px 18px;
+        padding: 10px 18px;
         border-radius: 4px 4px 0 0;
     }
 
     &mdl-title {
         color: $primary-inverse;
         font-size: $base-font-size--l;
-        font-weight: bold;
+        font-weight: font-weight('bold');
     }
 
     &mdl-content {
@@ -248,7 +252,7 @@
     &rte-toolbar {
         margin-left: -2px;
         border: none;
-        box-shadow: 1px 1px 9px 3px rgba(0, 0, 0, .08);
+        box-shadow: $grapejs-shadow;
     }
 
     &rte-actionbar {
@@ -257,6 +261,7 @@
 
         .actionbar-group {
             display: flex;
+
             &:not(:last-child) {
                 margin-right: 16px;
             }
@@ -267,7 +272,6 @@
             border-right: none;
             padding: 0;
             margin-right: 8px;
-
 
             &:last-child {
                 margin-right: 0;
@@ -308,15 +312,18 @@
 }
 
 .sp-container {
-    /*rtl:begin:ignore*/
+    /* rtl:begin:ignore */
     left: 0;
     right: auto;
-    /*rtl:end:ignore*/
+
+    /* rtl:end:ignore */
 }
 
 .#{$rte-prefix}select2 {
     &-dropdown {
-        width: 200px !important; // Override inline styles
+        // Override inline styles
+        // stylelint-disable-next-line declaration-no-important
+        width: 200px !important;
     }
 
     &-option {
@@ -329,21 +336,27 @@
             font-weight: $headings-font-weight;
             line-height: $headings-line-height;
         }
+
         &--h1 {
             @include font-size($h1-font-size);
         }
+
         &--h2 {
             @include font-size($h2-font-size);
         }
+
         &--h3 {
             @include font-size($h3-font-size);
         }
+
         &--h4 {
             @include font-size($h4-font-size);
         }
+
         &--h5 {
             @include font-size($h5-font-size);
         }
+
         &--h6 {
             @include font-size($h6-font-size);
         }
@@ -451,11 +464,13 @@
     div.CodeMirror {
         &-measure {
             + div {
+                // stylelint-disable-next-line declaration-no-important
                 z-index: 3 !important;
             }
         }
 
         &-selected {
+            // stylelint-disable-next-line declaration-no-important
             background-color: $codemirror-selected-background !important;
         }
     }

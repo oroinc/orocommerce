@@ -10,7 +10,7 @@
 
         @include safe-area-offset(padding, $shopping-list-dropdown-item-inner-offset);
 
-        border-bottom: 1px solid get-color('additional', 'light');
+        border-bottom: $shopping-list-dropdown-item-border;
 
         &--limit {
             display: block;
@@ -32,7 +32,7 @@
     &__link:hover {
         text-decoration: none;
 
-        color: get-color('additional', 'darker');
+        color: $shopping-list-dropdown-link-color;
     }
 
     &__title {
@@ -81,7 +81,7 @@
     &__products {
         display: block;
 
-        color: darken(get-color('additional', 'middle'), 20%);
+        color: $shopping-list-dropdown-products-color;
 
         &__item {
             display: block;
@@ -96,20 +96,6 @@
         color: $shopping-list-dropdown-info-color;
     }
 
-    &__link:hover &__info {
-        text-decoration: underline;
-    }
-
-    &__ellipsis {
-        display: inline-block;
-        width: 100%;
-
-        font-size: $base-font-size--large + 2px;
-
-        line-height: 0.4;
-        vertical-align: top;
-    }
-
     &__info-container {
         margin: 16px 0;
         padding: 0 12px;
@@ -120,13 +106,27 @@
         display: inline-block;
     }
 
+    &__link:hover &__info {
+        text-decoration: underline;
+    }
+
+    &__ellipsis {
+        display: inline-block;
+        width: 100%;
+
+        font-size: $base-font-size--large + 2px;
+
+        line-height: .4;
+        vertical-align: top;
+    }
+
     &__empty-list {
         text-align: center;
         padding: 34px 12px;
     }
 
     &__footer {
-        border-top: 1px solid get-color('additional', 'light');
+        border-top: $shopping-list-dropdown-footer-border;
     }
 
     &__total {
@@ -151,13 +151,13 @@
         display: flex;
 
         &:not(:first-child) {
-            border-top: 1px solid get-color('additional', 'light');
+            border-top: $shopping-list-dropdown-product-item-border-top;
         }
     }
 
     &__product-img {
         width: 60px;
-        border: 1px solid get-color('additional', 'light');
+        border: $shopping-list-dropdown-product-img-border-top;
 
         img {
             width: 58px;

@@ -1,9 +1,11 @@
+/* @theme: default; */
+
 .request-form-editline {
     padding: 10px;
 
-    background: lighten(get-color('additional', 'base'), 2%);
+    background: $request-form-editline-background;
 
-    border-top: 1px solid get-color('additional', 'light');
+    border-top: $request-form-editline-border;
 
     &__inner {
         display: flex;

@@ -17,17 +17,6 @@
         }
     }
 
-    .sub-row {
-        .grid-cell {
-            padding-top: $responsive-shopping-sub-row-cell-inner-offset;
-        }
-
-        &:not(.sub-row-last) .grid-cell {
-            padding-bottom: $responsive-shopping-sub-row-cell-inner-offset;
-            border-bottom-width: 0;
-        }
-    }
-
     .grid-header-cell-quantity,
     .grid-header-cell-price,
     .grid-header-cell-subtotal,
@@ -74,6 +63,17 @@
 
         .grid-body-cell-item {
             padding-bottom: 0;
+        }
+    }
+
+    .sub-row {
+        .grid-cell {
+            padding-top: $responsive-shopping-sub-row-cell-inner-offset;
+        }
+
+        &:not(.sub-row-last) .grid-cell {
+            padding-bottom: $responsive-shopping-sub-row-cell-inner-offset;
+            border-bottom-width: 0;
         }
     }
 
@@ -156,8 +156,8 @@
         color: $product-item-sku-value-color;
     }
 
-    .label-in-tablet-start:before,
-    .label-in-tablet-end:after {
+    .label-in-tablet-start::before,
+    .label-in-tablet-end::after {
         content: attr(data-label);
     }
 
@@ -227,6 +227,16 @@
             border-width: 0;
         }
 
+        .grid-body-cell {
+            display: block;
+            padding: $responsive-shopping-body-cell-offset-mobile;
+            width: 100%;
+
+            &:last-child {
+                padding-bottom: 0;
+            }
+        }
+
         .grid,
         .grid-header,
         .grid-header-row,
@@ -243,26 +253,8 @@
             align-items: center;
 
             background-color: $table-thead-background-color;
-        }
-
-        .sub-row {
-            position: relative;
-
-            border-bottom: $responsive-shopping-sub-row-border-mobile;
-
-            .grid-cell {
-                padding-top: $responsive-shopping-body-cell-offset-y-mobile;
-            }
-
-            &:not(.sub-row-last) .grid-cell {
-                padding-bottom: $responsive-shopping-body-cell-offset-y-mobile;
-            }
-        }
-
-        .sub-row:not(.sub-row-last) {
-            padding-top: $responsive-shopping-sub-row-offset-top-mobile;
-            padding-bottom: $responsive-shopping-sub-row-offset-bottom-mobile;
-            border-bottom: $responsive-shopping-sub-row-border-mobile;
+            border-top: $responsive-shopping-header-row-border-mobile;
+            border-bottom: $responsive-shopping-header-row-border-mobile;
         }
 
         .grid-row {
@@ -316,19 +308,24 @@
             }
         }
 
-        .grid-header-row {
-            border-top: $responsive-shopping-header-row-border-mobile;
-            border-bottom: $responsive-shopping-header-row-border-mobile;
+        .sub-row {
+            position: relative;
+
+            border-bottom: $responsive-shopping-sub-row-border-mobile;
+
+            .grid-cell {
+                padding-top: $responsive-shopping-body-cell-offset-y-mobile;
+            }
+
+            &:not(.sub-row-last) .grid-cell {
+                padding-bottom: $responsive-shopping-body-cell-offset-y-mobile;
+            }
         }
 
-        .grid-body-cell {
-            display: block;
-            padding: $responsive-shopping-body-cell-offset-mobile;
-            width: 100%;
-
-            &:last-child {
-                padding-bottom: 0;
-            }
+        .sub-row:not(.sub-row-last) {
+            padding-top: $responsive-shopping-sub-row-offset-top-mobile;
+            padding-bottom: $responsive-shopping-sub-row-offset-bottom-mobile;
+            border-bottom: $responsive-shopping-sub-row-border-mobile;
         }
 
         .grid-header-cell-sku,
@@ -370,14 +367,14 @@
         }
 
         .label-bold-in-mobile {
-            &:before,
-            &:after {
-                font-weight: bold;
+            &::before,
+            &::after {
+                font-weight: font-weight('bold');
             }
         }
 
-        .label-in-mobile-start:before,
-        .label-in-mobile-end:after {
+        .label-in-mobile-start::before,
+        .label-in-mobile-end::after {
             content: attr(data-label);
         }
     }

@@ -69,7 +69,7 @@
 
         &--top_right {
             top: $promo-slider-info-top-position;
-            right: $promo-slider-info-right-position;;
+            right: $promo-slider-info-right-position;
         }
 
         &--bottom_left {
@@ -99,6 +99,7 @@
                 $style-variants: map-remove($link-style, 'divider-style');
 
                 @extend %base-button;
+
                 @include button-custom-variant($style-variants...);
             }
         }
@@ -144,7 +145,7 @@
                 align-items: center;
                 min-height: $promo-slider-min-height;
 
-                > [data-role="slide-item-link"] {
+                > [data-role='slide-item-link'] {
                     display: block;
                     width: 100%;
                 }

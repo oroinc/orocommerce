@@ -33,7 +33,7 @@
 
             input:checked + .#{$app-prefix}radio-item-label {
                 background-color: $additional-extra-light;
-                box-shadow: inset 0 2px 3px 2px rgba(0, 0, 0, 0.21);
+                box-shadow: $grapejs-radio-shadow;
                 line-height: 1;
             }
         }

@@ -1,6 +1,5 @@
 /* @theme: blank; */
 
-
 @include breakpoint('mobile-landscape') {
     .responsive-shopping-list-grid-view .grid-body {
         .sub-row {
@@ -11,6 +10,8 @@
             }
 
             .grid-body-cell {
+                padding-left: $responsive-shopping-view-body-cell-item-offset-mobile;
+                padding-right: $responsive-shopping-view-body-cell-item-offset-mobile;
                 border-left: $responsive-shopping-view-body-cell-border-mobile;
                 border-right: $responsive-shopping-view-body-cell-border-mobile;
 
@@ -30,11 +31,6 @@
                 .grid-body-cell:last-child {
                     border-bottom: $responsive-shopping-view-body-cell-border-mobile;
                 }
-            }
-
-            .grid-body-cell {
-                padding-left: $responsive-shopping-view-body-cell-item-offset-mobile;
-                padding-right: $responsive-shopping-view-body-cell-item-offset-mobile;
             }
         }
 

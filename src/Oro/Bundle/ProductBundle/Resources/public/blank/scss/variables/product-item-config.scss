@@ -2,7 +2,15 @@
 
 $product-item-gallery-view-offset-x: $offset-x-m !default;
 $product-item-gallery-view-offset-bottom: 30px !default;
+$product-item-gallery-view-border: 1px solid get-color('additional', 'light') !default;
 $product-item-qty-height: 115px !default;
+
+$product-item-list-view-border: 1px solid get-color('additional', 'light') !default;
+
+$product-item-no-image-view-border: 1px solid get-color('additional', 'light') !default;
+
+$product-item-title-link-color: get-color('additional', 'dark') !default;
+$product-item-title-link-color-hover: get-color('additional', 'dark') !default;
 
 $product-item-title-gallery-view-font-size: 15px !default;
 $product-item-title-gallery-view-line-height: 1.35 !default;

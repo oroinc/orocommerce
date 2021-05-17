@@ -12,6 +12,7 @@ styles:
 
         - 'bundles/orocustomtheme/CommerceMenuBundle/scss/variables/main-menu/main-menu-columns-config.scss'
         - 'bundles/orocustomtheme/CommerceMenuBundle/scss/variables/main-menu/main-menu-column-config.scss'
+        - 'bundles/orocustomtheme/CommerceMenuBundle/scss/variables/main-menu/main-menu-config.scss'
         - 'bundles/orocustomtheme/CommerceMenuBundle/scss/variables/quick-access-container-config.scss'
         - 'bundles/orocustomtheme/CommerceMenuBundle/scss/styles.scss'
 
@@ -27,6 +28,8 @@ styles:
         - 'bundles/orocustomtheme/FilterBundle/scss/variables/filters-collapse-mode-config.scss'
         - 'bundles/orocustomtheme/FilterBundle/scss/variables/filters-box-collapse-config.scss'
         - 'bundles/orocustomtheme/FilterBundle/scss/styles.scss'
+
+        - 'bundles/orocustomtheme/ShoppingListBundle/scss/variables/shopping-list-config.scss'
 
     output: 'css/styles.css'
 

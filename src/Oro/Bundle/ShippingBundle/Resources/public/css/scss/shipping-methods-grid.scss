@@ -1,7 +1,9 @@
 /* @theme: admin.oro; */
 
+/* stylelint-disable no-descending-specificity */
+
 .shipping-methods-grid {
-    border: 1px solid #e4e4e4;
+    border: 1px solid $primary-800;
     border-radius: 3px;
 
     &__header {
@@ -10,11 +12,11 @@
         width: 100%;
         padding: 10px 15px;
 
-        background: #fafafa;
-        color: #7c7c7c;
+        background: $primary-860;
+        color: $primary-500;
 
         text-transform: uppercase;
-        font-weight: bold;
+        font-weight: font-weight('bold');
         font-size: 12px;
     }
 
@@ -24,7 +26,7 @@
         cursor: pointer;
 
         &.expanded {
-            .fa-plus-square-o:before {
+            .fa-plus-square-o::before {
                 content: $fa-var-minus-square-o;
             }
         }
@@ -34,12 +36,12 @@
         margin: 5px 6px 5px 0;
     }
 
-    [class*="fa-"] {
+    [class*='fa-'] {
         display: inline-flex;
         align-items: center;
 
         margin-right: 5px;
-        color: #7c7c7c;
+        color: $primary-500;
 
         font-size: 14px;
     }
@@ -57,8 +59,8 @@
 
         text-decoration: none;
 
-        &:after {
-            color: #bbb;
+        &::after {
+            color: $additional-ultra-light;
             content: $fa-var-trash;
         }
     }
@@ -66,7 +68,7 @@
 
 .shipping-method-config {
     &.expanded {
-        .fa-plus-square-o:before {
+        .fa-plus-square-o::before {
             content: $fa-var-minus-square-o;
         }
     }
@@ -76,28 +78,19 @@
 
         width: 100%;
         padding: 15px;
-        border-top: 1px solid #e4e4e4;
+        border-top: 1px solid $primary-800;
 
         cursor: pointer;
 
-        border-bottom: 1px solid #e4e4e4;
+        border-bottom: 1px solid $primary-800;
 
         &:hover {
-            background: #f5f5f5;
+            background: $primary-860;
         }
 
         .fa-plus-square-o {
             margin-right: 9px;
         }
-    }
-
-    &__info {
-        transition: all .6s;
-        opacity: 1;
-    }
-
-    &.shipping-method-config-grouped &__body {
-        padding: 35px;
     }
 
     &__body {
@@ -110,10 +103,14 @@
         @include selector-width(294px);
     }
 
+    &.shipping-method-config-grouped &__body {
+        padding: 35px;
+    }
+
     &__item {
         width: 40%;
-        font-weight: bold;
-        color: #5a5a5a;
+        font-weight: font-weight('bold');
+        color: $primary-300;
 
         img {
             max-height: 16px;
@@ -124,6 +121,8 @@
     }
 
     &__info {
+        transition: all .6s;
+        opacity: 1;
         width: 55%;
         overflow: hidden;
         white-space: nowrap;
@@ -141,13 +140,13 @@
             position: absolute;
             margin-top: 1px;
             left: 51px;
-            color: #6b92d0;
+            color: $secondary;
         }
     }
 }
 
 .shipping-method-config-grid {
-    border: 1px solid #e4e4e4;
+    border: 1px solid $primary-800;
     border-radius: 3px;
 
     &__header {
@@ -156,12 +155,12 @@
         width: 100%;
         padding: 7px 20px;
 
-        border-bottom: 1px solid #e4e4e4;
-        background: #fafafa;
-        color: #7c7c7c;
+        border-bottom: 1px solid $primary-800;
+        background: $primary-860;
+        color: $primary-500;
 
         text-transform: uppercase;
-        font-weight: bold;
+        font-weight: font-weight('bold');
         font-size: 11px;
 
         cursor: pointer;
@@ -237,7 +236,7 @@
                 width: 100%;
                 max-width: 100%;
 
-                border-bottom: 1px solid #e4e4e4;
+                border-bottom: 1px solid $primary-800;
             }
 
             .control-label.wrap {
@@ -324,7 +323,7 @@
 
     .shipping-methods-grid {
         &__header {
-            padding: 8px 10px 6px 10px;
+            padding: 8px 10px 6px;
         }
 
         &__header-method {

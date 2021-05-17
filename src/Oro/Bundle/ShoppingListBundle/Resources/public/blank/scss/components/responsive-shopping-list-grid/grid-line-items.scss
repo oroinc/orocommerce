@@ -11,13 +11,13 @@
 
         line-height: $grid-line-line-height;
 
+        &:last-child {
+            flex-grow: 1;
+        }
+
         &:not(:only-child):first-child {
             margin-right: $grid-line-items-row-offset-x;
             align-self: flex-start;
-        }
-
-        &:last-child {
-            flex-grow: 1;
         }
     }
 
@@ -29,25 +29,18 @@
         left: 0;
     }
 
-    &__clip-container {
-        width: 100%;
-    }
-
     &__clip-container,
     &__clip-notes-container {
         position: relative;
     }
 
     &__clip-container {
+        width: 100%;
         min-height: $grid-line-items-title-font-size * $grid-line-items-line-height;
     }
 
     &__clip-notes-container {
         min-height: $grid-line-clip-none-offset + $shopping-lists-notes-font-size * $shopping-lists-notes-line-height;
-    }
-
-    &__notes-container {
-        margin-top: $grid-line-clip-none-offset;
     }
 
     &__title {
@@ -58,6 +51,7 @@
 
     &__notes-container {
         display: flex;
+        margin-top: $grid-line-clip-none-offset;
         line-height: $shopping-lists-notes-line-height;
     }
 
@@ -90,7 +84,7 @@
         align-items: flex-start;
     }
 
-    &__field:not(:last-child):after {
+    &__field:not(:last-child)::after {
         display: inline-block;
         vertical-align: middle;
         width: 1px;
@@ -159,7 +153,7 @@
             justify-content: space-between;
             width: 100%;
 
-            &:not(:last-child):after {
+            &:not(:last-child)::after {
                 content: none;
             }
 

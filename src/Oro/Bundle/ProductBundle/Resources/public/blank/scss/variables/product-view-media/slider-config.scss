@@ -1,9 +1,11 @@
 /* @theme: blank; */
 
 $product-view-media-slider-border-width: 1px !default;
-$product-view-media-slider-border: $product-view-media-slider-border-width solid get-color('additional', 'light') !default;
+$product-view-media-slider-border: $product-view-media-slider-border-width
+    solid get-color('additional', 'light') !default;
 $product-view-media-slider-max-height: 380px !default;
-$product-view-media-slider-image-max-height: $product-view-media-slider-max-height - ($product-view-media-slider-border-width * 2) !default;
+$product-view-media-slider-image-max-height: $product-view-media-slider-max-height -
+    ($product-view-media-slider-border-width * 2) !default;
 
 $product-view-media-slider-arrow-width: 40px !default;
 $product-view-media-slider-arrow-height: 40px !default;

@@ -1,8 +1,10 @@
+/* @theme: default; */
+
 .request-form-editnote {
     padding: 7px 10px;
-    
+
     border-radius: 4px;
-    background: get-color('additional', 'light');
+    background: $request-form-editnote-background;
 
     &__body {
         display: none;
@@ -10,8 +12,8 @@
         margin-top: $offset-y-m;
     }
 
-    &__toggle:checked ~ &__body,
-    .checked ~ &__body {
+    .checked ~ &__body,
+    &__toggle:checked ~ &__body {
         display: block;
     }
 }

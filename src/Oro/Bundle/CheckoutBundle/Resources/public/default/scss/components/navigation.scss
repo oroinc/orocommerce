@@ -31,18 +31,21 @@
         top: 0;
         left: -$checkout-navigation-icon-size / 2;
 
-        font-weight: 700;
+        font-weight: font-weight('bold');
 
-        @include badge($checkout-navigation-icon-size, $checkout-navigation-icon-font-size, get-color('additional', 'middle'));
+        @include badge(
+            $checkout-navigation-icon-size,
+            $checkout-navigation-icon-font-size,
+            get-color('additional', 'middle')
+        );
 
         &--current {
-            background-color: get-color('primary', 'base');
+            background-color: $checkout-navigation-icon-current-background-color;
         }
 
         &--complete {
             color: $checkout-navigation-complete-color;
             background-color: $checkout-navigation-complete-background-color;
         }
-
     }
 }

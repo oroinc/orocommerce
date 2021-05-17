@@ -1,7 +1,4 @@
 css:
     inputs:
-        # Variables
-        - 'bundles/oroproduct/css/scss/variables/variables.scss'
-
         # Styles
         - 'bundles/oroproduct/css/scss/main.scss'

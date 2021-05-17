@@ -7,15 +7,6 @@
 
     overflow: hidden;
 
-    &.slick-initialized {
-        overflow: visible;
-
-        .product-view-media-slider__image-item {
-            //Should for reset slick display value
-            display: flex;
-        }
-    }
-
     &__image {
         max-width: 100%;
         max-height: $product-view-media-gallery-image-max-height;
@@ -30,6 +21,15 @@
         height: 378px;
     }
 
+    &.slick-initialized {
+        overflow: visible;
+
+        .product-view-media-slider__image-item {
+            // Should for reset slick display value
+            display: flex;
+        }
+    }
+
     @include slick-arrow(
         $slick-arrow-width: $product-view-media-slider-arrow-width,
         $slick-arrow-height: $product-view-media-slider-arrow-height,
@@ -42,6 +42,5 @@
         $slick-arrow-next-right: $product-view-media-slider-arrow-side-position,
         $slick-arrow-prev-left: $product-view-media-slider-arrow-side-position
     );
-
     @include slick-dots();
 }

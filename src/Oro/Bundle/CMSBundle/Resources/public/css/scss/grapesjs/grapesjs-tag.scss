@@ -2,7 +2,7 @@
 
 .#{$app-prefix} {
     &clm-tags {
-        padding: 0 0 10px 0;
+        padding: 0 0 10px;
         display: inline;
 
         ##{$clm-prefix}add-tag {
@@ -55,7 +55,9 @@
             margin-bottom: 6px;
         }
 
-        ##{$clm-prefix}new[style*=block] { //Hank for correct alignment of multiselect with classes
+        ##{$clm-prefix}new[style*=block] {
+            // Hank for correct alignment of multiselect with classes
+            // stylelint-disable-next-line declaration-no-important
             display: inline !important;
             width: auto;
         }
@@ -88,7 +90,7 @@
 
         ##{$clm-prefix}close {
             font-size: $base-font-size--xl;
-            font-weight: bold;
+            font-weight: font-weight('bold');
         }
     }
 }
