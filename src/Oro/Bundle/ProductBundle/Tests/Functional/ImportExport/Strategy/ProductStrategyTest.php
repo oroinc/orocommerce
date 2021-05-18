@@ -38,7 +38,7 @@ class ProductStrategyTest extends WebTestCase
         $container->get('oro_importexport.field.database_helper')->onClear();
         $this->strategy = new ProductStrategy(
             $container->get('event_dispatcher'),
-            $container->get('oro_importexport.strategy.import.helper'),
+            $container->get('oro_importexport.strategy.configurable_import_strategy_helper'),
             $container->get('oro_entity.helper.field_helper'),
             $container->get('oro_importexport.field.database_helper'),
             $container->get('oro_entity.entity_class_name_provider'),

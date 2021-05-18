@@ -2,6 +2,19 @@ Please refer first to [UPGRADE.md](UPGRADE.md) for the most important items that
 
 The current file describes significant changes in the code that may affect the upgrade of your customizations.
 
+## 4.2.4
+
+### Added
+
+### Changed
+#### WebsiteSearchBundle
+* Changed `oro_website_search.event_listener.orm.fulltext_index_listener` to use `doctrine.dbal.search_connection`
+* Changed `oro_website_search.fulltext_index_manager` to use `doctrine.dbal.search_connection`
+
+### Removed
+#### WebsiteSearchBundle
+* Removed `oro_website_search.tests.disable_listeners_for_data_fixtures`, listeners disabled by default during fixtures loading.
+
 ## 4.2.3
 
 #### PricingBundle

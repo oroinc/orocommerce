@@ -87,19 +87,11 @@ class PriceAttributeProductPriceImportResetStrategyTest extends TestCase
 
     public function testProcessForNoPriceList()
     {
-        $this->doctrineHelper
-            ->expects(static::never())
-            ->method('getEntityManager');
-
         $this->strategy->process(new PriceAttributeProductPrice());
     }
 
     public function testProcessForNewPriceList()
     {
-        $this->doctrineHelper
-            ->expects(static::never())
-            ->method('getEntityManager');
-
         $entity = new PriceAttributeProductPrice();
         $entity->setPriceList(new PriceAttributePriceList());
 
@@ -140,7 +132,7 @@ class PriceAttributeProductPriceImportResetStrategyTest extends TestCase
             ->willReturn($repository);
 
         $this->doctrineHelper
-            ->expects(static::once())
+            ->expects(static::any())
             ->method('getEntityManager')
             ->willReturn($entityManager);
 

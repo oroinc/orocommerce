@@ -8,6 +8,7 @@ use Doctrine\ORM\Event\OnFlushEventArgs;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
+use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerTrait;
 use Oro\Bundle\SearchBundle\Provider\SearchMappingProvider;
 use Oro\Bundle\SearchBundle\Utils\IndexationEntitiesContainer;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
@@ -18,10 +19,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class IndexationRequestListener implements OptionalListenerInterface
 {
-    /**
-     * @var bool
-     */
-    protected $enabled = true;
+    use OptionalListenerTrait;
 
     /**
      * @var DoctrineHelper
@@ -119,14 +117,6 @@ class IndexationRequestListener implements OptionalListenerInterface
         }
 
         $this->scheduleForSendingWithEvent($updatedEntity);
-    }
-
-    /**
-     * @param bool $enabled
-     */
-    public function setEnabled($enabled = true)
-    {
-        $this->enabled = $enabled;
     }
 
     /**

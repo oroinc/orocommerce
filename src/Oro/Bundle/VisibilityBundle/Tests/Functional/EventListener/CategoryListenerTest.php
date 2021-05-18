@@ -30,6 +30,9 @@ class CategoryListenerTest extends WebTestCase
         $this->loadFixtures([LoadProductVisibilityData::class]);
         self::enableMessageBuffering();
 
+        $this->getOptionalListenerManager()->enableListener('oro_visibility.event_listener.category_listener');
+        $this->getOptionalListenerManager()->enableListener('oro_visibility.entity_listener.change_product_category');
+
         $this->categoryManager = self::getContainer()->get('doctrine')
             ->getManagerForClass(Category::class);
         $this->categoryRepository = $this->categoryManager

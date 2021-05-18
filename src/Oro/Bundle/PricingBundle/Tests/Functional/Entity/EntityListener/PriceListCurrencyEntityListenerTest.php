@@ -22,6 +22,9 @@ class PriceListCurrencyEntityListenerTest extends WebTestCase
     {
         $this->initClient();
         $this->loadFixtures([LoadPriceRules::class]);
+
+        $this->getOptionalListenerManager()->enableListener('oro_pricing.entity_listener.price_list_currency');
+
         $this->enableMessageBuffering();
     }
 

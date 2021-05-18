@@ -6,13 +6,14 @@ use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CommerceEntityBundle\Storage\ExtraActionEntityStorageInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
+use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerTrait;
 
+/**
+ * Write additional changes from ExtraActionEntityStorageInterface
+ */
 class DoctrinePostFlushListener implements OptionalListenerInterface
 {
-    /**
-     * @var bool
-     */
-    protected $enabled = true;
+    use OptionalListenerTrait;
 
     /**
      * @var DoctrineHelper
@@ -71,13 +72,5 @@ class DoctrinePostFlushListener implements OptionalListenerInterface
         $this->managers->attach($em);
 
         return $em;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setEnabled($enabled = true)
-    {
-        $this->enabled = $enabled;
     }
 }
