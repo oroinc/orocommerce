@@ -15,10 +15,9 @@ layout:
             root: product_datagrid_cell_matrixForm
             namespace: product_datagrid_cell
 
-        -
-            id: frontend_export
-            root: product_datagrid_toolbar_export
-            namespace: product_datagrid_export
+        - id: frontend_export
+          root: product_datagrid_toolbar_export
+          namespace: product_datagrid_export
 
     actions:
         - '@setBlockTheme':
@@ -143,35 +142,35 @@ layout:
             optionValue: '=data["system_config_provider"].getValue("oro_shopping_list.mass_adding_on_product_listing_enabled") && (data["feature"].isFeatureEnabled("guest_shopping_list") || context["is_logged_in"])'
 
         - '@add':
-            id: product_datagrid_toolbar_export
-            parentId: product_datagrid_toolbar_rightside_container
-            siblingId: product_datagrid_toolbar_page_size
-            blockType: container
+              id: product_datagrid_toolbar_export
+              parentId: product_datagrid_toolbar_rightside_container
+              siblingId: product_datagrid_toolbar_page_size
+              blockType: container
 
         - '@setOption':
-            id: product_datagrid_export_export_button
-            optionName: visible
-            optionValue: '=data["system_config_provider"].getValue("oro_product.product_data_export_enabled") && context["is_logged_in"]'
+              id: product_datagrid_export_export_button
+              optionName: visible
+              optionValue: '=data["system_config_provider"].getValue("oro_product.product_data_export_enabled") && context["is_logged_in"] && data["frontend_product_export_options"].getExportAvailableForProductGrid(context["grid_config"])'
 
         - '@setOption':
-            id: product_datagrid_export_export_button
-            optionName: exportRoute
-            optionValue: 'oro_product_frontend_export'
+              id: product_datagrid_export_export_button
+              optionName: exportRoute
+              optionValue: 'oro_product_frontend_export'
 
         - '@setOption':
-            id: product_datagrid_export_export_button
-            optionName: routeOptions
-            optionValue:
-                filteredResultsGrid: 'frontend-product-search-grid'
-                filteredResultsGridParams: '=data["frontend_product_export_options"].getDefaultGridExportRequestOptions()'
+              id: product_datagrid_export_export_button
+              optionName: routeOptions
+              optionValue:
+                  filteredResultsGrid: 'frontend-product-search-grid'
+                  filteredResultsGridParams: '=data["frontend_product_export_options"].getDefaultGridExportRequestOptions()'
 
         - '@setOption':
-            id: product_datagrid_export_export_button
-            optionName: successMessage
-            optionValue: 'oro.product.frontend.importexport.product_data_export.success_message'
+              id: product_datagrid_export_export_button
+              optionName: successMessage
+              optionValue: 'oro.product.frontend.importexport.product_data_export.success_message'
 
         - '@setOption':
-            id: product_datagrid_export_export_button
-            optionName: attr
-            optionValue:
-                aria-label: 'oro.frontendimportexport.product_export.button.aria_label'
+              id: product_datagrid_export_export_button
+              optionName: attr
+              optionValue:
+                  aria-label: 'oro.frontendimportexport.product_export.button.aria_label'

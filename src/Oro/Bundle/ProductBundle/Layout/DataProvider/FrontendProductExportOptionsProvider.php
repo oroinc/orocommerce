@@ -52,6 +52,17 @@ class FrontendProductExportOptionsProvider
     }
 
     /**
+     * Check if product datagrid supports export functionality.
+     *
+     * @param array $gridContext
+     * @return bool
+     */
+    public function getExportAvailableForProductGrid(array $gridContext): bool
+    {
+        return array_key_exists('frontend-product-search-grid', $gridContext);
+    }
+
+    /**
      * @param ParameterBag $parameters
      */
     private function addCategoryParameters(ParameterBag $parameters): void
