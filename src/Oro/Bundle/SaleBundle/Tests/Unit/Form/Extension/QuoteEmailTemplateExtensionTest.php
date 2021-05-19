@@ -167,7 +167,7 @@ class QuoteEmailTemplateExtensionTest extends FormIntegrationTestCase
         $templateOptions['query_builder']($this->repository);
     }
 
-    public function testGetExtendedType(): void
+    public function testGetExtendedTypes(): void
     {
         $this->assertEquals([EmailType::class], QuoteEmailTemplateExtension::getExtendedTypes());
     }

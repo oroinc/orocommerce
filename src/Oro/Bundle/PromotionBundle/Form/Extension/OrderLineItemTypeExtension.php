@@ -19,6 +19,8 @@ use Symfony\Component\Form\FormView;
  */
 class OrderLineItemTypeExtension extends AbstractTypeExtension
 {
+    private const EXTENDED_TYPE = OrderLineItemType::class;
+
     const BASE_ORDER = 60;
 
     /**
@@ -85,7 +87,7 @@ class OrderLineItemTypeExtension extends AbstractTypeExtension
             ];
         }
 
-        $this->sectionProvider->addSections($this->getExtendedType(), $sections);
+        $this->sectionProvider->addSections(self::EXTENDED_TYPE, $sections);
     }
 
     /**
@@ -127,7 +129,7 @@ class OrderLineItemTypeExtension extends AbstractTypeExtension
      */
     public static function getExtendedTypes(): iterable
     {
-        return [OrderLineItemType::class];
+        return [self::EXTENDED_TYPE];
     }
 
     /**

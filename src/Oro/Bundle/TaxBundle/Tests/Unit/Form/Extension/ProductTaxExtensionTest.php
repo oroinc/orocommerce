@@ -32,7 +32,7 @@ class ProductTaxExtensionTest extends AbstractTaxExtensionTest
         return new ProductTaxExtension($this->doctrineHelper, 'OroTaxBundle:ProductTaxCode');
     }
 
-    public function testGetExtendedType()
+    public function testGetExtendedTypes(): void
     {
         $this->assertEquals([ProductType::class], ProductTaxExtension::getExtendedTypes());
     }
