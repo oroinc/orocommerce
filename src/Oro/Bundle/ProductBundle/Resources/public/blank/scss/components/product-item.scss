@@ -37,7 +37,7 @@
 
     &--list-view {
         padding: 30px 0;
-        border-bottom: 1px solid get-color('additional', 'light');
+        border-bottom: $product-item-list-view-border;
 
         @include clearfix();
 
@@ -53,7 +53,7 @@
         width: 100%;
         padding: 0 0 15px;
         margin: 0 0 15px;
-        border-bottom: 1px solid get-color('additional', 'light');
+        border-bottom: $product-item-no-image-view-border;
 
         &:last-child {
             border-bottom: 0;
@@ -105,7 +105,7 @@
         &--gallery-view {
             display: block;
             margin: 0 0 10px;
-            border: 1px solid get-color('additional', 'light');
+            border: $product-item-gallery-view-border;
         }
 
         &--list-view {
@@ -114,7 +114,7 @@
             max-width: $product-item-image-holder-list-view-max-width;
             width: 23%;
             margin-bottom: $offset-y * 2;
-            border: 1px solid get-color('additional', 'light');
+            border: $product-item-list-view-border;
         }
 
         &--no-image-view {
@@ -191,6 +191,22 @@
         }
     }
 
+    &__secondary-half {
+        &--no-image-view {
+            float: left;
+            width: 50%;
+            padding: 0 25px 0 0;
+
+            &:last-child {
+                padding-right: 0;
+            }
+        }
+
+        &--last-gallery-view {
+            margin-top: auto;
+        }
+    }
+
     &__secondary-content {
         &--list-view {
             float: left;
@@ -218,28 +234,12 @@
         }
     }
 
-    &__secondary-half {
-        &--no-image-view {
-            float: left;
-            width: 50%;
-            padding: 0 25px 0 0;
-
-            &:last-child {
-                padding-right: 0;
-            }
-        }
-
-        &--last-gallery-view {
-            margin-top: auto;
-        }
-    }
-
     &__title {
         a {
-            color: get-color('additional', 'dark');
+            color: $product-item-title-link-color;
 
             &:hover {
-                color: get-color('additional', 'dark');
+                color: $product-item-title-link-color-hover;
             }
         }
 
@@ -250,7 +250,10 @@
             margin: 0 0 5px;
 
             .view-product {
-                max-height: ($product-item-title-gallery-view-font-size * $product-item-title-gallery-view-line-height) * 2; // two rows
+                // two rows
+                max-height:
+                    ($product-item-title-gallery-view-font-size * $product-item-title-gallery-view-line-height)
+                    * 2;
 
                 overflow: hidden;
             }
@@ -276,7 +279,7 @@
         }
 
         .view-product {
-            [class^="fa-"] {
+            [class^='fa-'] {
                 font-size: $font-icon-button-s;
                 padding: 0 6px;
             }
@@ -393,26 +396,6 @@
             }
         }
 
-        &__secondary-content {
-            &--list-view {
-                float: none;
-                width: 100%;
-            }
-
-            &--no-image-view {
-                float: none;
-                width: 100%;
-                padding: 0;
-
-                .product-item__secondary-half--no-image-view {
-                    &:last-child {
-                        width: 100%;
-                        padding-left: 0;
-                    }
-                }
-            }
-        }
-
         &__secondary-half {
             &--list-view {
                 max-width: 100%;
@@ -429,6 +412,26 @@
                     width: 100%;
 
                     padding: 0;
+                }
+            }
+        }
+
+        &__secondary-content {
+            &--list-view {
+                float: none;
+                width: 100%;
+            }
+
+            &--no-image-view {
+                float: none;
+                width: 100%;
+                padding: 0;
+
+                .product-item__secondary-half--no-image-view {
+                    &:last-child {
+                        width: 100%;
+                        padding-left: 0;
+                    }
                 }
             }
         }

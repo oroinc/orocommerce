@@ -14,7 +14,7 @@
             margin: 0;
 
             .checkout-order-summary__subtitle {
-                color: get-color('additional', 'middle');
+                color: $checkout-order-summary-in-sticky-color;
             }
         }
     }

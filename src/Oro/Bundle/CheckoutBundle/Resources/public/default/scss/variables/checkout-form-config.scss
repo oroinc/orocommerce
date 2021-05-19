@@ -11,7 +11,7 @@ $checkout-form-select-exp-year-width: 40% !default;
 $checkout-form-submit-min-width: 200px !default;
 
 $checkout-form-payment-label-margin: 0 0 $offset-y-s !default;
-$checkout-form-payment-label-font-weight: 400 !default;
+$checkout-form-payment-label-font-weight: font-weight('normal') !default;
 
 $checkout-form-payment-container-margin: $offset-y-m 0 $offset-x !default;
 

@@ -156,14 +156,10 @@ class UserLocalizationManager implements UserLocalizationManagerInterface
     }
 
     /**
-     * {@inheritDoc}
-     *  Enabled for ajax action but not for API to remain it stateless
+     * {@inheritdoc}
      */
-    public function setCurrentLocalization(
-        Localization $localization,
-        Website $website = null,
-        $forceSessionStart = false
-    ): void {
+    public function setCurrentLocalization(Localization $localization, Website $website = null): void
+    {
         $website = $this->getWebsite($website);
         if (!$website) {
             return;
@@ -178,7 +174,7 @@ class UserLocalizationManager implements UserLocalizationManagerInterface
             }
             $userWebsiteSettings->setLocalization($localization);
             $this->doctrine->getManagerForClass(CustomerUser::class)->flush();
-        } elseif ($this->session->isStarted() || $forceSessionStart) {
+        } else {
             $sessionLocalizations = $this->getSessionLocalizations();
             $sessionLocalizations[$website->getId()] = $localization->getId();
             $this->session->set(self::SESSION_LOCALIZATIONS, $sessionLocalizations);

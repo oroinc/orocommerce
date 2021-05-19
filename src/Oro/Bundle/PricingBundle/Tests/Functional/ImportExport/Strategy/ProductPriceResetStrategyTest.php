@@ -57,7 +57,7 @@ class ProductPriceResetStrategyTest extends WebTestCase
 
         $this->strategy = new ProductPriceResetStrategy(
             $container->get('event_dispatcher'),
-            $container->get('oro_importexport.strategy.import.helper'),
+            $container->get('oro_importexport.strategy.configurable_import_strategy_helper'),
             $container->get('oro_entity.helper.field_helper'),
             $container->get('oro_importexport.field.database_helper'),
             $container->get('oro_entity.entity_class_name_provider'),
@@ -112,6 +112,8 @@ class ProductPriceResetStrategyTest extends WebTestCase
             new BeforeImportChunksEvent($body),
             Events::BEFORE_CREATING_IMPORT_CHUNK_JOBS
         );
+
+        $this->assertEquals([], $this->context->getErrors());
 
         // ProductPriceResetStrategy works in conjunction with PreChunksMessageProcessor
         // which clears the price list before importing prices in chunks

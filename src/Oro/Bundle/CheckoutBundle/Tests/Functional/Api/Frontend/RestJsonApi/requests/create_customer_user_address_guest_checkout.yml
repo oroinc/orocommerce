@@ -1,0 +1,20 @@
+data:
+    type: customeruseraddresses
+    attributes:
+        street: 'Street 1'
+        city: 'Los Angeles'
+        postalCode: '90001'
+        organization: 'Acme'
+    relationships:
+        customerUser:
+            data:
+                type: customerusers
+                id: guest_should_be_set_in_test
+        country:
+            data:
+                type: countries
+                id: '<toString(@country_usa->iso2Code)>'
+        region:
+            data:
+                type: regions
+                id: '<toString(@region_usa_california->combinedCode)>'

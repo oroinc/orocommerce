@@ -6,6 +6,7 @@
 
 @skip
 #  need to clarify with PO
+# Should be fixed in BB-15632
 Feature: Single Page Checkout State Validation
   In order to validate checkout information
   As a Customer User

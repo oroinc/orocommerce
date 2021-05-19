@@ -72,7 +72,7 @@ abstract class BaseQuoteBackofficeWorkflowTestCase extends WebTestCase
         /** @var TransitionManager $transitionManager */
         $transitionManager = $workflow->getTransitionManager();
 
-        $this->assertEquals(
+        $this->assertEqualsCanonicalizing(
             static::TRANSITIONS,
             array_keys($transitionManager->getTransitions()->toArray())
         );

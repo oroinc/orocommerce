@@ -209,4 +209,4 @@ services:
         arguments:
             - "@oro_inventory.manager.inventory_manager"
         tags:
-            - { name: doctrine.event_listener, event: onFlush, method: onFlush }
+            - { name: doctrine.event_listener, event: onFlush }

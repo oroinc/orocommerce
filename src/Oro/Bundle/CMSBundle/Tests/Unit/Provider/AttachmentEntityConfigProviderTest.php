@@ -4,16 +4,16 @@ namespace Oro\Bundle\CMSBundle\Tests\Unit\Provider;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\AttachmentBundle\Provider\AttachmentEntityConfigProviderInterface;
 use Oro\Bundle\CMSBundle\DBAL\Types\WYSIWYGPropertiesType;
 use Oro\Bundle\CMSBundle\DBAL\Types\WYSIWYGStyleType;
 use Oro\Bundle\CMSBundle\Provider\AttachmentEntityConfigProvider;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class AttachmentEntityConfigProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var RegistryInterface */
+    /** @var ManagerRegistry */
     private $doctrine;
 
     /** @var AttachmentEntityConfigProviderInterface */
@@ -24,7 +24,7 @@ class AttachmentEntityConfigProviderTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->doctrine = $this->createMock(RegistryInterface::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->innerAttachmentEntityConfigProvider = $this->createMock(AttachmentEntityConfigProviderInterface::class);
 
         $this->provider = new AttachmentEntityConfigProvider(

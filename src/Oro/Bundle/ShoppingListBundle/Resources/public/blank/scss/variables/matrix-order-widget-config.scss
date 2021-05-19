@@ -8,17 +8,25 @@ $matrix-order-widget-light-color: get-color('additional', 'ultra') !default;
 $matrix-order-widget-dark-color: get-color('additional', 'dark') !default;
 
 $matrix-order-widget-border: 1px solid get-color('additional', 'light') !default;
-$matrix-order-widget-base-shadow-gradient-right: linear-gradient(to right, rgba($matrix-order-widget-base-color, 1), rgba($matrix-order-widget-base-color, 0)) !default;
-$matrix-order-widget-base-shadow-gradient-left: linear-gradient(to left, rgba($matrix-order-widget-base-color, 1), rgba($matrix-order-widget-base-color, 0))  !default;
-$matrix-order-widget-light-shadow-gradient-right: linear-gradient(to right, rgba($matrix-order-widget-light-color, 1), rgba($matrix-order-widget-light-color, 0)) !default;
-$matrix-order-widget-light-shadow-gradient-left: linear-gradient(to left, rgba($matrix-order-widget-light-color, 1), rgba($matrix-order-widget-light-color, 0))  !default;
+$matrix-order-widget-base-gradient-right: linear-gradient(
+    to right, rgba($matrix-order-widget-base-color, 1), rgba($matrix-order-widget-base-color, 0)
+) !default;
+$matrix-order-widget-base-gradient-left: linear-gradient(
+    to left, rgba($matrix-order-widget-base-color, 1), rgba($matrix-order-widget-base-color, 0)
+) !default;
+$matrix-order-widget-light-gradient-right: linear-gradient(
+    to right, rgba($matrix-order-widget-light-color, 1), rgba($matrix-order-widget-light-color, 0)
+) !default;
+$matrix-order-widget-light-gradient-left: linear-gradient(
+    to left, rgba($matrix-order-widget-light-color, 1), rgba($matrix-order-widget-light-color, 0)
+) !default;
 
 $matrix-order-widget-clear: both !default;
 $matrix-order-widget-width: 100% !default;
 $matrix-order-widget-offset: 0 !default;
 
 $matrix-order-widget-not-available-line-height: 40px !default;
-$matrix-order-widget-not-available-background-color: get-color('additional' ,'base') !default;
+$matrix-order-widget-not-available-background-color: get-color('additional', 'base') !default;
 $matrix-order-widget-not-available-border-radius: 5px !default;
 
 // State Multi line Mode
@@ -87,21 +95,21 @@ $matrix-order-widget-grid-multi-rows-grid-footer-border-top: $matrix-order-widge
 $matrix-order-widget-grid-multi-rows-grid-footer-z-index: 1 !default;
 
 $matrix-order-widget-grid-multi-rows-grid-area-items-label-overflow: hidden !default;
-$matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-classes-position: absolute !default;
-$matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-classes-border-top: $matrix-order-widget-border !default;
-$matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-classes-border-bottom: $matrix-order-widget-border !default;
-$matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-classes-box-sizing: border-box !default;
-$matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-classes-background: $matrix-order-widget-base-shadow-gradient-right !default;
-$matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-classes-width: 20px !default;
-$matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-classes-height: 100% !default;
-$matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-classes-top: 0 !default;
-$matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-classes-left: $matrix-order-widget-aside-items-width !default;
-$matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-classes-content: '' !default;
-$matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-classes-z-index: 1 !default;
+$matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-position: absolute !default;
+$matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-border-top: $matrix-order-widget-border !default;
+$matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-border-bottom: $matrix-order-widget-border !default;
+$matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-box-sizing: border-box !default;
+$matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-bg: $matrix-order-widget-base-gradient-right !default;
+$matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-width: 20px !default;
+$matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-height: 100% !default;
+$matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-top: 0 !default;
+$matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-left: $matrix-order-widget-aside-items-width !default;
+$matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-content: '' !default;
+$matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-z-index: 1 !default;
 
-$matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-class-after-left: auto !default;
-$matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-class-after-right: 0 !default;
-$matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-class-after-background: $matrix-order-widget-base-shadow-gradient-left !default;
+$matrix-order-widget-grid-multi-rows-grid-area-items-label-after-left: auto !default;
+$matrix-order-widget-grid-multi-rows-grid-area-items-label-after-right: 0 !default;
+$matrix-order-widget-grid-multi-rows-grid-area-items-label-after-bg: $matrix-order-widget-base-gradient-left !default;
 
 $matrix-order-widget-grid-multi-rows-grid-area-items-wrapper-display: flex !default;
 $matrix-order-widget-grid-multi-rows-grid-area-items-wrapper-position: relative !default;
@@ -148,7 +156,7 @@ $matrix-order-widget-grid-side-overflow: hidden !default;
 $matrix-order-widget-grid-side-wrapper-overflow: hidden !default;
 
 $matrix-order-widget-grid-side-pseudo-classes-position: absolute !default;
-$matrix-order-widget-grid-side-pseudo-classes-background: $matrix-order-widget-light-shadow-gradient-right !default;
+$matrix-order-widget-grid-side-pseudo-classes-background: $matrix-order-widget-light-gradient-right !default;
 $matrix-order-widget-grid-side-pseudo-classes-width: 15px !default;
 $matrix-order-widget-grid-side-pseudo-classes-height: 100% !default;
 $matrix-order-widget-grid-side-pseudo-classes-top: 0 !default;
@@ -158,7 +166,7 @@ $matrix-order-widget-grid-side-pseudo-classes-z-index: 1 !default;
 
 $matrix-order-widget-grid-side-pseudo-class-after-left: auto !default;
 $matrix-order-widget-grid-side-pseudo-class-after-right: 0 !default;
-$matrix-order-widget-grid-side-pseudo-class-after-background: $matrix-order-widget-light-shadow-gradient-left !default;
+$matrix-order-widget-grid-side-pseudo-class-after-background: $matrix-order-widget-light-gradient-left !default;
 
 $matrix-order-widget-grid-side-form-row-display: flex !default;
 $matrix-order-widget-grid-side-form-row-justify-content: center !default;
@@ -297,7 +305,7 @@ $matrix-order-widget-dialog-item-content-strict-tablet-offset-inner: 10px 45px 1
 $matrix-order-widget-dialog-item-content-tablet-small-flex-basis: 25% !default;
 $matrix-order-widget-dialog-ui-widget-content-tablet-small-offset: 0 16px 8px 16px;
 $matrix-order-widget-dialog-tablet-small-offset-bottom: $offset-y-m !default;
-$matrix-order-widget-ui-dialog-buttonpane-tablet-small-offset:  0 15px 10px 15px !default;
+$matrix-order-widget-ui-dialog-buttonpane-tablet-small-offset: 0 15px 10px 15px !default;
 
 $matrix-order-widget-validation-failed-tablet-small-offset: 0 $offset-y-m !default;
 

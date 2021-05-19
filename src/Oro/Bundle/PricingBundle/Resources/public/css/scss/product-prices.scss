@@ -1,5 +1,7 @@
 /* @theme: admin.oro; */
 
+/* stylelint-disable no-descending-specificity, selector-max-compound-selectors */
+
 .pricing-price-list {
     td {
         &:last-child {
@@ -13,8 +15,9 @@
         width: 195px;
         position: relative;
 
-        input[type="text"] {
+        input[type='text'] {
             text-align: right;
+            // stylelint-disable-next-line declaration-no-important
             width: 105px !important;
             float: left;
         }
@@ -27,7 +30,7 @@
             opacity: 1;
 
             &.disabled > * {
-                opacity: 0.25;
+                opacity: .25;
             }
         }
     }
@@ -39,13 +42,13 @@ table.product-tier-prices-table {
     tr {
         &:hover {
             > td {
-                background-color: #fff;
+                background-color: $primary-inverse;
             }
         }
 
         &.matched-tier-price {
             > td {
-                font-weight: 700;
+                font-weight: font-weight('bold');
             }
         }
     }
@@ -53,6 +56,7 @@ table.product-tier-prices-table {
     td {
         border: none;
         padding: 2px;
+        // stylelint-disable-next-line declaration-no-important
         height: 19px !important;
     }
 }
@@ -86,7 +90,7 @@ table.product-tier-prices-table {
         font-size: $base-font-size--m;
         line-height: 1;
         margin-bottom: $content-padding-medium;
-        font-weight: bold;
+        font-weight: font-weight('bold');
     }
 
     &-popover {
@@ -101,7 +105,6 @@ table.product-price-attributes {
 }
 
 .form-horizontal {
-
     .pricing-price-attribute {
         .table {
             .price-value {
@@ -133,8 +136,9 @@ table.product-price-attributes {
                     }
 
                     &:not(:last-child) {
-                        &:after {
-                            content: "";
+                        // stylelint-disable-next-line max-nesting-depth
+                        &::after {
+                            content: '';
                             border-left: 1px solid $additional-ultra-light;
                             position: absolute;
                             top: 0;
@@ -162,7 +166,7 @@ table.product-price-attributes {
 
                     > .control-label {
                         font-size: 20px;
-                        font-weight: 700;
+                        font-weight: font-weight('bold');
                         text-align: left;
                         width: 100%;
                         margin-bottom: $content-padding-small;
@@ -180,6 +184,7 @@ table.product-price-attributes {
             #product_prices {
                 .control-group {
                     .controls {
+                        // stylelint-disable-next-line max-nesting-depth
                         &:first-child {
                             margin-left: 0;
                         }
@@ -188,16 +193,14 @@ table.product-price-attributes {
             }
         }
     }
-}
 
-.form-horizontal {
     .control-group.price-rules {
-        & > .controls {
+        > .controls {
             margin-left: 0;
         }
     }
 }
 
 .show-tier-prices-choice {
-    margin: 18px 0 9px 0;
+    margin: 18px 0 9px;
 }

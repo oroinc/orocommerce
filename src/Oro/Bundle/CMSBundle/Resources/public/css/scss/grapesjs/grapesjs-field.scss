@@ -4,7 +4,7 @@
     &field {
         border-radius: 2px;
         background-color: $primary-inverse;
-        border: 2px solid #d6d6d6;
+        border: 2px solid $primary-750;
         color: $primary-100;
 
         select {
@@ -15,13 +15,14 @@
         &-arrow-u {
             border-bottom-color: $primary-400;
         }
+
         &-arrow-d {
             border-top-color: $primary-400;
         }
 
         &.#{$app-prefix}field-checkbox {
             border: none;
-            background-color: none;
+            background-color: transparent;
             border-radius: 0;
 
             .#{$app-prefix}chk-icon {
@@ -34,12 +35,12 @@
                 border-radius: 3px;
             }
 
-            input[type="checkbox"]:checked {
+            input[type='checkbox']:checked {
                 + .#{$app-prefix}chk-icon {
                     border-color: $secondary;
                     background-color: $secondary;
 
-                    &:before {
+                    &::before {
                         content: $fa-var-check;
                         position: absolute;
                         top: 50%;
@@ -49,7 +50,7 @@
                         margin-left: -1px;
                         line-height: 1;
                         color: $primary-inverse;
-                        font-family: FontAwesome;
+                        font-family: $fa-font-family;
                     }
                 }
             }

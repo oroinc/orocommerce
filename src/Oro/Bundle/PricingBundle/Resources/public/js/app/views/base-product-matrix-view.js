@@ -7,6 +7,7 @@ define(function(require) {
     const ScrollView = require('orofrontend/js/app/views/scroll-view');
     const FitMatrixView = require('orofrontend/js/app/views/fit-matrix-view');
     const quantityHelper = require('oroproduct/js/app/quantity-helper');
+    const numeral = require('numeral');
     const $ = require('jquery');
     const _ = require('underscore');
 
@@ -243,8 +244,9 @@ define(function(require) {
          */
         changeTotal: function(totals, subtotals, modifier) {
             modifier = modifier || 1;
-            totals.quantity += subtotals.quantity * modifier;
-            totals.price += subtotals.price * modifier;
+            totals.quantity = numeral(subtotals.quantity).multiply(modifier).add(totals.quantity).value();
+            totals.price = numeral(subtotals.price).multiply(modifier).add(totals.price).value();
+
             if (NumberFormatter.formatDecimal(totals.price) === 'NaN') {
                 totals.price = 0;
             }

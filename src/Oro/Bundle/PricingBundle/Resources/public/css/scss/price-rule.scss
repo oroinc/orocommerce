@@ -1,7 +1,7 @@
 /* @theme: admin.oro; */
 
-/* temporary styles should be removed after new disign implemented */
 .price_rule {
+    // stylelint-disable-next-line declaration-no-important
     margin-bottom: 50px !important;
 
     &__currency,
@@ -19,7 +19,7 @@
     &__row {
         vertical-align: middle;
         line-height: 30px;
-        margin: 0 0 10px 0;
+        margin: 0 0 10px;
 
         > * {
             display: inline-block;
@@ -28,10 +28,30 @@
         }
     }
 
+    &__unit {
+        @include selector-width(100%);
+
+        input {
+            // stylelint-disable-next-line declaration-no-important
+            width: 91px !important;
+            margin: 0 0 0 4px;
+        }
+    }
+
+    &__currency {
+        @include selector-width(100%);
+
+        input {
+            // stylelint-disable-next-line declaration-no-important
+            width: 91px !important;
+        }
+    }
+
     &__row &__quantity {
         position: relative;
 
         input {
+            // stylelint-disable-next-line declaration-no-important
             width: 50px !important;
         }
     }
@@ -43,29 +63,13 @@
         margin-left: 25px;
     }
 
-    &__unit {
-        @include selector-width(100%);
-
-        input {
-            width: 91px !important;
-            margin: 0 0 0 4px;
-        }
-    }
-
-    &__currency {
-        @include selector-width(100%);
-
-        input {
-            width: 91px !important;
-        }
-    }
-
     &__in {
-        color: #777;
+        color: $primary-inverse;
     }
 
     &.error-block {
         margin-left: 170px;
+        // stylelint-disable-next-line declaration-no-important
         margin-bottom: 0 !important;
     }
 
@@ -80,4 +84,4 @@
     }
 }
 
-/* temporary styles should be removed after new disign implemented */
+/* temporary styles should be removed after new design will be implemented */

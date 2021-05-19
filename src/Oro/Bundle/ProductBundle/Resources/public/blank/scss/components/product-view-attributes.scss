@@ -55,8 +55,8 @@
         @include clearfix();
 
         .grid-cell .filename {
-            [class^="fa-"],
-            [class*=" fa-"] {
+            [class^='fa-'],
+            [class*=' fa-'] {
                 color: $product-view-attribute-files-icon-color;
             }
         }
@@ -65,7 +65,7 @@
             .table-responsive table {
                 position: relative;
 
-                &:after {
+                &::after {
                     display: block;
                     position: absolute;
                     left: 0;
@@ -143,13 +143,12 @@
                 }
             }
 
-            &.show-less .table-responsive table:after {
+            &.show-less .table-responsive table::after {
                 height: $mobile-product-view-attribute-files-gradient-height;
             }
         }
     }
 }
-
 
 @include breakpoint('mobile-small') {
     .product-view {

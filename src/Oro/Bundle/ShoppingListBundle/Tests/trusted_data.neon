@@ -14,9 +14,14 @@ trusted_data:
             invalidateByBasePriceList:
                 priceClass: true
                 subQuery: true
+        Oro\Bundle\CheckoutBundle\Api\GuestCheckoutQueryModifier:
+            getCustomerUserJoin:
+                joinDqlPart: true
     safe_methods:
         Oro\Bundle\ShoppingListBundle\Api\GuestShoppingListQueryModifier:
             getCustomerVisitorSubquery: true
             ensureShoppingListJoined: true
         Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository:
             getClassName: true
+        Oro\Bundle\CheckoutBundle\Api\GuestCheckoutQueryModifier:
+            ensureCustomerUserJoined: true

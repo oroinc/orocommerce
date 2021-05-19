@@ -59,6 +59,7 @@
         }
 
         &__frames {
+            // stylelint-disable-next-line declaration-no-important
             background-color: transparent !important;
             z-index: 1;
         }
@@ -78,10 +79,10 @@
         }
 
         .gjs-pn-btn {
-            font-family: FontAwesome;
+            font-family: $fa-font-family;
 
             &.desktop {
-                &:before {
+                &::before {
                     content: $fa-var-desktop;
                 }
             }
@@ -92,7 +93,7 @@
 
             &.tablet,
             &.tablet-small {
-                &:before {
+                &::before {
                     content: $fa-var-tablet;
                 }
             }
@@ -108,14 +109,15 @@
             &.mobile,
             &.mobile-big,
             &.mobile-small {
-                &:before {
+                &::before {
                     content: $fa-var-mobile;
                 }
             }
 
             &.mobile-landscape {
                 transform: rotate(90deg);
-                &:before {
+
+                &::before {
                     content: $fa-var-mobile;
                 }
             }

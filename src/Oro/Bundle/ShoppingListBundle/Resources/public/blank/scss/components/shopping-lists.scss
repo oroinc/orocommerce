@@ -33,7 +33,7 @@
     &__cart {
         @include fa-icon($shopping-lists-cart-icon, before, true) {
             font-size: $shopping-lists-cart-font-size;
-        };
+        }
     }
 
     &__area-trigger {
@@ -57,13 +57,13 @@
             opacity: 1;
 
             @include transition($btn-transition);
-        };
+        }
 
         &.focus-visible,
         &:hover,
         &:focus,
         &:not(.disabled):active {
-            &:before {
+            &::before {
                 color: $shopping-lists-content-color;
 
                 opacity: $shopping-lists-content-color-opacity-hover;

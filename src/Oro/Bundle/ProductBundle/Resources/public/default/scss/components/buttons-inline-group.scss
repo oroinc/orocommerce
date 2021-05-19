@@ -12,13 +12,12 @@
         background: $buttons-inline-group-btn-background;
         color: $buttons-inline-group-btn-color;
 
-        &.btn_bordered {
-            border-color: $buttons-inline-group-btn-bordered-border-color;
+        &:focus {
+            outline: 0;
         }
 
-        &:not(:first-child):not(:last-child) {
-            border-right: 0;
-            border-radius: 0;
+        &.btn_bordered {
+            border-color: $buttons-inline-group-btn-bordered-border-color;
         }
 
         &:first-child {
@@ -32,13 +31,14 @@
             border-bottom-left-radius: 0;
         }
 
+        &:not(:first-child):not(:last-child) {
+            border-right: 0;
+            border-radius: 0;
+        }
+
         &.current {
             background: $buttons-inline-group-btn-current-background;
             box-shadow: $buttons-inline-group-btn-current-box-shadow;
-        }
-
-        &:focus {
-            outline: 0;
         }
     }
 }

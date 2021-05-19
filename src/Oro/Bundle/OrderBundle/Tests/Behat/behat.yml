@@ -109,6 +109,10 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
+          Currency:
+            type: xpath
+            locator: '//select[@name="oro_order_type[currency]"]'
+            element: Select2Choices
           Billing Address:
             locator: '//h4[text()="Billing Address"]/..//div[contains(@id,"s2id_oro_order_type")]/input'
             type: xpath
@@ -229,7 +233,7 @@ oro_behat_extension:
 
     Discount Popup:
       selector:
-        locator: '//div[@class="ui-dialog-inner-wrapper"]'
+        locator: '//div[@class="ui-dialog"]'
         type: xpath
 
     Discount Popup Cancel Button:

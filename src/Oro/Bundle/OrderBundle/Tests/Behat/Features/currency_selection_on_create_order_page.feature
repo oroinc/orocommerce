@@ -57,8 +57,8 @@ Feature: Currency selection on create order page
       | Shipping | $3.00  |
       | Total    | $15.20 |
 
-    When fill "Order Form" with:
-      | Currency | Euro |
+    When I fill "Order Form" with:
+      | Currency | Euro (€) |
     Then I should see next rows in "Backend Order First Line Item Taxes Items Table" table
       |            | Incl. Tax | Excl. Tax | Tax Amount |
       | Unit Price | €11.00    | €10.00    | €1.00      |

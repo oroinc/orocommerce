@@ -75,7 +75,6 @@
 
     &__title {
         min-width: $search-autocomplete-product-title-min-width;
-        word-break: $search-autocomplete-product-title-word-break-ie11; // IE11 fallback
         word-break: $search-autocomplete-product-title-word-break;
     }
 

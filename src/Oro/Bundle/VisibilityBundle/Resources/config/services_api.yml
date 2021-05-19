@@ -80,7 +80,7 @@ services:
             - '@translator'
             - '@oro_visibility.provider.visibility_scope_provider'
         tags:
-            - { name: oro.api.processor, action: customize_form_data, requestType: '!frontend', event: post_validate, parentAction: create, class: Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility }
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: '!frontend', parentAction: create, class: Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility }
 
     oro_visibility.api.set_customer_product_visibility_scope:
         class: Oro\Bundle\VisibilityBundle\Api\Processor\SetCustomerProductVisibilityScope
@@ -90,7 +90,7 @@ services:
             - '@translator'
             - '@oro_visibility.provider.visibility_scope_provider'
         tags:
-            - { name: oro.api.processor, action: customize_form_data, requestType: '!frontend', event: post_validate, parentAction: create, class: Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility }
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: '!frontend', parentAction: create, class: Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility }
 
     oro_visibility.api.set_customer_group_product_visibility_scope:
         class: Oro\Bundle\VisibilityBundle\Api\Processor\SetCustomerGroupProductVisibilityScope
@@ -100,7 +100,7 @@ services:
             - '@translator'
             - '@oro_visibility.provider.visibility_scope_provider'
         tags:
-            - { name: oro.api.processor, action: customize_form_data, requestType: '!frontend', event: post_validate, parentAction: create, class: Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility }
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: '!frontend', parentAction: create, class: Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility }
 
     oro_visibility.api.disable_includes_for_visibility_entities:
         class: Oro\Bundle\VisibilityBundle\Api\Processor\DisableIncludesForVisibilityEntities

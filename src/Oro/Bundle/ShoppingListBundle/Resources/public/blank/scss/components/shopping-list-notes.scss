@@ -30,13 +30,13 @@
             max-height: $shopping-lists-notes-expanded-height;
             overflow: auto;
 
-            &:after {
+            &::after {
                 content: none;
             }
         }
     }
 
-    &.overflows .shopping-list-notes__content:after {
+    &.overflows .shopping-list-notes__content::after {
         position: absolute;
         bottom: 0;
 

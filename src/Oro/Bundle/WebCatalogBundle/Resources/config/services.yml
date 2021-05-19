@@ -101,7 +101,7 @@ services:
     oro_web_catalog.event_listener.orm.content_variant_remove_entity_listener:
         class: Oro\Bundle\WebCatalogBundle\EventListener\ContentVariantSlugsRemoveListener
         tags:
-            - { name: doctrine.event_listener, event: onFlush, method: onFlush }
+            - { name: doctrine.event_listener, event: onFlush }
 
     oro_web_catalog.model.content_node_materialized_path_modifier:
         class: 'Oro\Bundle\WebCatalogBundle\Model\ContentNodeMaterializedPathModifier'

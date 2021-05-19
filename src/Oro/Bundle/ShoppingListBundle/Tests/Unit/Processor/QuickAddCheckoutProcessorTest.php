@@ -247,8 +247,11 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
             ->expects($this->once())
             ->method('commit');
 
+        $request = new Request();
+        $request->setSession($this->createMock(Session::class));
+
         /** @var RedirectResponse $result */
-        $result = $this->processor->process($data, new Request());
+        $result = $this->processor->process($data, $request);
         $this->assertInstanceOf(RedirectResponse::class, $result);
         $this->assertEquals($redirectUrl, $result->getTargetUrl());
     }
@@ -329,7 +332,10 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
             )
             ->willReturn(count($data));
 
-        $this->processor->process($data, new Request());
+        $request = new Request();
+        $request->setSession($this->createMock(Session::class));
+
+        $this->processor->process($data, $request);
     }
 
     public function testProcessWhenActionGroupFailedWithErrors()

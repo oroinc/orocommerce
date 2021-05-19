@@ -25,7 +25,7 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
     protected $tokenAccessor;
 
     /**
-     * @var BusinessUnit
+     * @var int
      */
     protected $owner;
 
@@ -109,8 +109,6 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
         $event = new ProductStrategyEvent($entity, $this->context->getValue('itemData'));
         $this->eventDispatcher->dispatch($event, ProductStrategyEvent::PROCESS_AFTER);
 
-        $sku = $entity->getSku();
-
         /** @var Product $entity */
         $entity = parent::afterProcessEntity($entity);
         if ($entity) {
@@ -123,8 +121,8 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
             }
         }
 
-        if ($sku !== null) {
-            $this->processedProducts[$sku] = $entity;
+        if ($entity && $entity->getSkuUppercase()) {
+            $this->processedProducts[$entity->getSkuUppercase()] = $entity;
         }
 
         return $entity;
@@ -140,7 +138,7 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
         }
 
         if ($this->owner) {
-            $entity->setOwner($this->owner);
+            $entity->setOwner($this->doctrineHelper->getEntityReference(BusinessUnit::class, $this->owner));
 
             return;
         }
@@ -153,9 +151,9 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
             return;
         }
 
-        $this->owner = $this->databaseHelper->getEntityReference($user->getOwner());
+        $this->owner = $user->getOwner()->getId();
 
-        $entity->setOwner($this->owner);
+        $entity->setOwner($this->doctrineHelper->getEntityReference(BusinessUnit::class, $this->owner));
     }
 
     /**
@@ -221,8 +219,8 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
         array $searchContext = [],
         $entityIsRelation = false
     ) {
-        if ($entity instanceof Product && array_key_exists($entity->getSku(), $this->processedProducts)) {
-            return $this->processedProducts[$entity->getSku()];
+        if ($entity instanceof Product && array_key_exists($entity->getSkuUppercase(), $this->processedProducts)) {
+            return $this->processedProducts[$entity->getSkuUppercase()];
         }
 
         return parent::processEntity($entity, $isFullData, $isPersistNew, $itemData, $searchContext, $entityIsRelation);
@@ -250,22 +248,6 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
         }
 
         return null;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function generateValueForIdentityField($fieldValue)
-    {
-        if ($fieldValue instanceof Product) {
-            return $fieldValue->getSku();
-        }
-
-        if (is_object($fieldValue)) {
-            return $this->databaseHelper->getIdentifier($fieldValue);
-        }
-
-        return $fieldValue;
     }
 
     /**

@@ -1,5 +1,7 @@
 /* @theme: admin.oro; */
 
+/* stylelint-disable no-descending-specificity, selector-max-compound-selectors */
+
 .product-inventory-status-in_stock {
     color: $success;
 }
@@ -19,7 +21,7 @@
     height: 13px;
     font-size: 13px;
 
-    [class^="fa-"] {
+    [class^='fa-'] {
         margin: 0 $content-padding-small / 2;
     }
 }
@@ -27,6 +29,13 @@
 .mobile-version {
     .quick-editable {
         margin-left: auto;
+    }
+
+    .product-container {
+        .box-type1 {
+            margin-left: 0;
+            margin-right: 0;
+        }
     }
 }
 
@@ -49,8 +58,8 @@
         vertical-align: top;
     }
 
-    input[type="text"],
-    input[type="number"] {
+    input[type='text'],
+    input[type='number'] {
         &.precision,
         &.conversionRate {
             width: 56px;
@@ -91,16 +100,8 @@
 .product-container {
     div.box-type1 {
         div.title {
+            // stylelint-disable-next-line declaration-no-important
             padding: 0 !important;
-        }
-    }
-}
-
-.mobile-version {
-    .product-container {
-        .box-type1 {
-            margin-left: 0;
-            margin-right: 0;
         }
     }
 }
@@ -176,7 +177,7 @@
 .web-catalog-page-data,
 .oro-content-variant-collection {
     .scope-collection {
-        div[data-validation-optional-group=""] {
+        div[data-validation-optional-group=''] {
             display: block;
             padding-right: 0;
         }
@@ -240,10 +241,12 @@
                     label {
                         color: $primary-550;
                         font-size: 14px;
-                        font-weight: bold;
+                        font-weight: font-weight('bold');
                         display: block;
 
+                        // stylelint-disable-next-line max-nesting-depth
                         em {
+                            // stylelint-disable-next-line declaration-no-important
                             display: none !important;
                         }
                     }
@@ -264,7 +267,7 @@
                     label {
                         color: $primary-550;
                         font-size: 14px;
-                        font-weight: bold;
+                        font-weight: font-weight('bold');
                         display: block;
                     }
                 }
@@ -283,7 +286,7 @@
             background-image: none;
             background-color: $primary-800;
             outline: 0;
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, .15), 0 1px 2px rgba(0, 0, 0, .05);
+            box-shadow: $collapse-view-expanded-trigger-shadow;
         }
     }
 }
@@ -300,7 +303,7 @@
     }
 }
 
-form[name*="product"] {
+form[name*='product'] {
     .container-fluid {
         > .responsive-section {
             &:not(.responsive-small) {

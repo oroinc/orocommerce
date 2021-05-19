@@ -34,6 +34,10 @@ class CombinedPriceListScheduleCommandTest extends WebTestCase
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+
+        $this->getOptionalListenerManager()->enableListener('oro_pricing.entity_listener.product_price_cpl');
+        $this->getOptionalListenerManager()->enableListener('oro_pricing.entity_listener.price_list_to_product');
+
         self::getContainer()->get('oro_config.global')
             ->set('oro_pricing.price_strategy', MinimalPricesCombiningStrategy::NAME);
     }

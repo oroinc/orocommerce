@@ -30,8 +30,6 @@
         cursor: $btn-cursor;
     }
 
-    .product-item__preview:hover + &,
-    .product-item__preview:focus + &,
     &.focus-visible,
     &:hover {
         opacity: $view-product-gallery-hover-opacity;
@@ -39,6 +37,11 @@
 
     &:hover {
         background: $view-product-gallery-hover-background;
+    }
+
+    .product-item__preview:hover + &,
+    .product-item__preview:focus + & {
+        opacity: $view-product-gallery-hover-opacity;
     }
 
     &.stretched {
@@ -55,7 +58,7 @@
 
         border-radius: 0;
 
-        &:before {
+        &::before {
             margin: 0;
         }
     }

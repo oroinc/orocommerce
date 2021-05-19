@@ -31,7 +31,7 @@
         height: 16px;
 
         line-height: 1;
-        background: get-color('additional', 'light');
+        background: $my-shopping-list-owner-wrapper-separator-background;
     }
 
     &.show-separator .separator {

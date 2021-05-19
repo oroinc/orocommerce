@@ -21,13 +21,9 @@
 }
 
 .oro-promotions-collection.grid-container {
-    tr.disabled td {
-        color: rgb(203, 203, 203);
-    }
-
     td:first-child {
         white-space: nowrap;
-        font-weight: bold;
+        font-weight: font-weight('bold');
         font-size: 11px;
     }
 
@@ -35,6 +31,10 @@
     td.discount {
         width: 80px;
         text-align: right;
+    }
+
+    tr.disabled td {
+        color: $primary-860;
     }
 }
 

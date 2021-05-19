@@ -7,16 +7,18 @@
 
     .controls {
         .control-label {
-            font-weight: 700 !important;
+            // stylelint-disable-next-line declaration-no-important
+            font-weight: font-weight('bold') !important;
         }
     }
 }
 
+// stylelint-disable-next-line selector-max-compound-selectors
 .form-horizontal .totals-container .control-group .controls label.control-label,
 .totals-container .form-horizontal .control-group .controls .control-label {
     width: 120px;
     text-align: right;
-    color: #444;
+    color: $additional-lighten;
 }
 
 .totals-container .attribute-item .attribute-item__description .amount {
@@ -44,14 +46,11 @@
     .add-list-item {
         margin-top: $content-padding-small;
     }
-}
 
-.order-line-item-sku {
-    width: 134px;
-
-    .order-line-item-type-product,
-    input {
-        width: 70px !important;
+    .grid-body-cell-comment {
+        width: 450px;
+        max-width: 450px;
+        word-wrap: break-word;
     }
 }
 
@@ -59,6 +58,7 @@
     width: 155px;
 
     input {
+        // stylelint-disable-next-line declaration-no-important
         width: 120px !important;
     }
 }
@@ -66,16 +66,18 @@
 .order-line-item-type {
     width: 290px;
 
-    input[type="text"] {
+    input[type='text'] {
+        // stylelint-disable-next-line declaration-no-important
         width: $field-width !important;
         margin-bottom: 0;
     }
 }
 
 .order-line-item-quantity {
-    input[type="text"] {
+    input[type='text'] {
         text-align: right;
         margin-right: 3px;
+        // stylelint-disable-next-line declaration-no-important
         width: 76px !important;
         float: left;
     }
@@ -103,16 +105,6 @@
     }
 }
 
-.order-line-item-comment {
-    div[data-page-component-module] {
-        display: none;
-    }
-
-    .notes-widget {
-        width: 245px;
-    }
-}
-
 .order-line-item-price-value {
     float: left;
     margin-right: 10px;
@@ -124,7 +116,9 @@
 }
 
 .order-line-item-remove {
+    // stylelint-disable-next-line declaration-no-important
     padding-top: 7px !important;
+    // stylelint-disable-next-line declaration-no-important
     text-align: right !important;
 }
 
@@ -151,6 +145,26 @@
     }
 }
 
+.order-line-item-comment {
+    div[data-page-component-module] {
+        display: none;
+    }
+
+    .notes-widget {
+        width: 245px;
+    }
+}
+
+.order-line-item-sku {
+    width: 134px;
+
+    .order-line-item-type-product,
+    input {
+        // stylelint-disable-next-line declaration-no-important
+        width: 70px !important;
+    }
+}
+
 td.order-discount-item-remove {
     text-align: right;
 }
@@ -170,7 +184,7 @@ td.order-discount-item-remove {
 
     h5 {
         font-family: Helvetica, Arial, sans-serif;
-        font-weight: bold;
+        font-weight: font-weight('bold');
         font-size: 14px;
         text-transform: capitalize;
         display: inline;
@@ -190,7 +204,7 @@ td.order-discount-item-remove {
     }
 
     span.not-available {
-        color: rgb(203, 203, 203);
+        color: $primary-860;
     }
 }
 
@@ -206,16 +220,6 @@ td.order-discount-item-remove {
     th.discount,
     td.discount {
         text-align: right;
-    }
-}
-
-.oro-discount-collection {
-    max-width: 1000px;
-}
-
-.oro-discount-collection.grid-container {
-    th.order-discount-item-description {
-        width: 50%;
     }
 }
 
@@ -247,15 +251,7 @@ td.order-discount-item-remove {
 
     .discount-item-value-calculated {
         padding-top: 3px;
-        color: rgb(119, 119, 119);
-    }
-}
-
-.order-line-items {
-    .grid-body-cell-comment {
-        width: 450px;
-        max-width: 450px;
-        word-wrap: break-word;
+        color: $primary-500;
     }
 }
 
@@ -267,20 +263,20 @@ td.order-discount-item-remove {
     .possible_shipping_methods_container {
         max-width: none;
 
+        .table-bordered td {
+            color: $primary-500;
+        }
+
         .table-bordered td:not(:first-child),
         .table-bordered th:not(:first-child) {
             border-left: 0;
-        }
-
-        .table-bordered td {
-            color: #777;
         }
 
         label {
             margin-bottom: 0;
         }
 
-        input[type="radio"] {
+        input[type='radio'] {
             display: block;
             margin-left: auto;
             margin-right: auto;
@@ -296,7 +292,7 @@ td.order-discount-item-remove {
             min-width: 294px;
         }
 
-        input[type="radio"] {
+        input[type='radio'] {
             margin-top: 3px;
         }
     }
@@ -315,7 +311,7 @@ td.order-discount-item-remove {
 }
 
 .order-shipping-tracking {
-    input[type="text"] {
+    input[type='text'] {
         &.order-shipping-tracking-method,
         &.order-shipping-tracking-number {
             margin-bottom: 0;

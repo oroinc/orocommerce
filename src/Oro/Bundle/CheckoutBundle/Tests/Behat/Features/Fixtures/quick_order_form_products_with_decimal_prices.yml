@@ -1,0 +1,43 @@
+Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
+    businessUnit:
+        name: Common Business Unit
+        organization: '@organization'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    productName:
+        string: 'Product'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision:
+        unit: '@item'
+        precision: '1'
+        sell: true
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product:
+        sku: 'SKU'
+        type: 'simple'
+        organization: '@organization'
+        owner: '@businessUnit'
+        primaryUnitPrecision: '@precision'
+        attributeFamily: '@defaultProductFamily'
+        __calls:
+            -   setNames: [ [ '@productName' ] ]
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    price:
+        product: '@product'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 9.9995
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceRelation:
+        product: '@product'
+        priceList: '@defaultPriceList'
+

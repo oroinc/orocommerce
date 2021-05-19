@@ -12,8 +12,8 @@ use Oro\Bundle\OrderBundle\Provider\AddressProviderInterface;
 use Oro\Bundle\OrderBundle\Validator\Constraints\CustomerOrUserAddressGranted;
 use Oro\Bundle\OrderBundle\Validator\Constraints\CustomerOrUserAddressGrantedValidator;
 use Oro\Component\Testing\ReflectionUtil;
-use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 /**
@@ -24,51 +24,48 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
  */
 class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestCase
 {
-    /** @var MockObject */
+    /** @var AddressProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $addressProvider;
-    /**
-     * {@inheritDoc}
-     */
-    protected function createValidator()
+
+    protected function setUp(): void
     {
         $this->addressProvider = $this->createMock(AddressProviderInterface::class);
-        return new CustomerOrUserAddressGrantedValidator($this->addressProvider);
+
+        parent::setUp();
+
+        $this->setPropertyPath(null);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function createContext()
+    protected function createValidator()
     {
-        $this->constraint = new CustomerOrUserAddressGranted();
-        $this->propertyPath = null;
-
-        return parent::createContext();
+        return new CustomerOrUserAddressGrantedValidator($this->addressProvider);
     }
 
     public function testWithInvalidConstraint()
     {
-        $this->expectException(\Symfony\Component\Validator\Exception\UnexpectedTypeException::class);
+        $this->expectException(UnexpectedTypeException::class);
         $this->validator->validate(new Order(), $this->createMock(Constraint::class));
     }
 
     public function testWithInvalidEntity()
     {
-        $this->validator->validate(new \stdClass(), $this->constraint);
+        $this->validator->validate(new \stdClass(), new CustomerOrUserAddressGranted());
         $this->assertNoViolation();
     }
 
     public function testWithEmptyBillingAddress()
     {
-        $this->constraint->addressType = 'billing';
-        $this->validator->validate(new Order(), $this->constraint);
+        $constraint = new CustomerOrUserAddressGranted();
+        $constraint->addressType = 'billing';
+        $this->validator->validate(new Order(), $constraint);
         $this->assertNoViolation();
     }
 
     public function testWithEmptyShippingAddress()
     {
-        $this->constraint->addressType = 'shipping';
-        $this->validator->validate(new Order(), $this->constraint);
+        $constraint = new CustomerOrUserAddressGranted();
+        $constraint->addressType = 'shipping';
+        $this->validator->validate(new Order(), $constraint);
         $this->assertNoViolation();
     }
 
@@ -95,9 +92,10 @@ class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestC
             ->with($customerUser, 'billing')
             ->willReturn([$currentUserAddresses1, $currentUserAddresses2]);
 
-        $this->constraint->addressType = 'billing';
-        $this->validator->validate($order, $this->constraint);
-        $this->buildViolation($this->constraint->message)
+        $constraint = new CustomerOrUserAddressGranted();
+        $constraint->addressType = 'billing';
+        $this->validator->validate($order, $constraint);
+        $this->buildViolation($constraint->message)
             ->atPath('billingAddress.customerUserAddress')
             ->assertRaised();
     }
@@ -125,9 +123,10 @@ class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestC
             ->with($customer, 'billing')
             ->willReturn([$currentAddresses1, $currentAddresses2]);
 
-        $this->constraint->addressType = 'billing';
-        $this->validator->validate($order, $this->constraint);
-        $this->buildViolation($this->constraint->message)
+        $constraint = new CustomerOrUserAddressGranted();
+        $constraint->addressType = 'billing';
+        $this->validator->validate($order, $constraint);
+        $this->buildViolation($constraint->message)
             ->atPath('billingAddress.customerAddress')
             ->assertRaised();
     }
@@ -155,9 +154,10 @@ class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestC
             ->with($customerUser, 'shipping')
             ->willReturn([$currentUserAddresses1, $currentUserAddresses2]);
 
-        $this->constraint->addressType = 'shipping';
-        $this->validator->validate($order, $this->constraint);
-        $this->buildViolation($this->constraint->message)
+        $constraint = new CustomerOrUserAddressGranted();
+        $constraint->addressType = 'shipping';
+        $this->validator->validate($order, $constraint);
+        $this->buildViolation($constraint->message)
             ->atPath('shippingAddress.customerUserAddress')
             ->assertRaised();
     }
@@ -185,9 +185,10 @@ class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestC
             ->with($customer, 'shipping')
             ->willReturn([$currentAddresses1, $currentAddresses2]);
 
-        $this->constraint->addressType = 'shipping';
-        $this->validator->validate($order, $this->constraint);
-        $this->buildViolation($this->constraint->message)
+        $constraint = new CustomerOrUserAddressGranted();
+        $constraint->addressType = 'shipping';
+        $this->validator->validate($order, $constraint);
+        $this->buildViolation($constraint->message)
             ->atPath('shippingAddress.customerAddress')
             ->assertRaised();
     }
@@ -215,8 +216,9 @@ class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestC
             ->with($customerUser, 'billing')
             ->willReturn([$currentUserAddresses1, $currentUserAddresses2]);
 
-        $this->constraint->addressType = 'billing';
-        $this->validator->validate($order, $this->constraint);
+        $constraint = new CustomerOrUserAddressGranted();
+        $constraint->addressType = 'billing';
+        $this->validator->validate($order, $constraint);
         $this->assertNoViolation();
     }
 
@@ -243,8 +245,9 @@ class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestC
             ->with($customer, 'billing')
             ->willReturn([$currentAddresses1, $currentAddresses2]);
 
-        $this->constraint->addressType = 'billing';
-        $this->validator->validate($order, $this->constraint);
+        $constraint = new CustomerOrUserAddressGranted();
+        $constraint->addressType = 'billing';
+        $this->validator->validate($order, $constraint);
         $this->assertNoViolation();
     }
 
@@ -271,8 +274,9 @@ class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestC
             ->with($customerUser, 'shipping')
             ->willReturn([$currentUserAddresses1, $currentUserAddresses2]);
 
-        $this->constraint->addressType = 'shipping';
-        $this->validator->validate($order, $this->constraint);
+        $constraint = new CustomerOrUserAddressGranted();
+        $constraint->addressType = 'shipping';
+        $this->validator->validate($order, $constraint);
         $this->assertNoViolation();
     }
 
@@ -299,8 +303,47 @@ class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestC
             ->with($customer, 'shipping')
             ->willReturn([$currentAddresses1, $currentAddresses2]);
 
-        $this->constraint->addressType = 'shipping';
-        $this->validator->validate($order, $this->constraint);
+        $constraint = new CustomerOrUserAddressGranted();
+        $constraint->addressType = 'shipping';
+        $this->validator->validate($order, $constraint);
+        $this->assertNoViolation();
+    }
+
+    public function testForOrderWithoutCustomerUser()
+    {
+        $order = new Order();
+
+        $customerUserAddress = new CustomerUserAddress();
+        ReflectionUtil::setId($customerUserAddress, 123);
+        $orderAddress = new OrderAddress();
+        $orderAddress->setCustomerUserAddress($customerUserAddress);
+        $order->setBillingAddress($orderAddress);
+
+        $this->addressProvider->expects($this->never())
+            ->method('getCustomerUserAddresses');
+
+        $constraint = new CustomerOrUserAddressGranted();
+        $constraint->addressType = 'billing';
+        $this->validator->validate($order, $constraint);
+        $this->assertNoViolation();
+    }
+
+    public function testForOrderWithoutCustomer()
+    {
+        $order = new Order();
+
+        $customerAddress = new CustomerAddress();
+        ReflectionUtil::setId($customerAddress, 123);
+        $orderAddress = new OrderAddress();
+        $orderAddress->setCustomerAddress($customerAddress);
+        $order->setBillingAddress($orderAddress);
+
+        $this->addressProvider->expects($this->never())
+            ->method('getCustomerAddresses');
+
+        $constraint = new CustomerOrUserAddressGranted();
+        $constraint->addressType = 'billing';
+        $this->validator->validate($order, $constraint);
         $this->assertNoViolation();
     }
 }

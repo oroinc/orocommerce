@@ -1,3 +1,5 @@
 styles:
     inputs:
+        - 'bundles/oroshoppinglist/default/scss/variables/my-shopping-list-owner-wrapper-config.scss'
+
         - 'bundles/oroshoppinglist/default/scss/components/my-shopping-list-owner-wrapper.scss'

@@ -13,7 +13,9 @@ $checkout-view-column-gap: 28px !default;
 $checkout-view-column-width: 25% !default;
 $checkout-view-column-extra-width: 50% !default;
 $checkout-view-column-first-width: calc(#{$checkout-view-column-width} - #{$checkout-view-column-gap}) !default;
-$checkout-view-column-extended-width: calc(#{$checkout-view-column-extra-width} + #{$checkout-view-column-gap}) !default;
+$checkout-view-column-extended-width: calc(
+    #{$checkout-view-column-extra-width} + #{$checkout-view-column-gap}
+) !default;
 $checkout-view-column-margin: 0 0 $offset-y !default;
 $checkout-view-column-offset: 0 $checkout-view-column-gap !default;
 $checkout-view-column-min-width: 0 !default;
@@ -24,6 +26,8 @@ $checkout-view-title-color: $headline2-color !default;
 $checkout-view-title-font-size: $headline2-font-size !default;
 $checkout-view-title-line-height: $headline2-line-height !default;
 $checkout-view-title-font-weight: $headline2-font-weight !default;
+
+$checkout-view-notification-container-background: get-color('additional', 'ultra') !default;
 
 $checkout-view-sticky-column-offset: $offset-y-m $checkout-view-column-gap !default;
 
@@ -61,7 +65,9 @@ $checkout-view-checkout-order-summary-totals-sticky-right: 8px !default;
 
 $checkout-view-payment-methods-image-max-width: 100% !default;
 
-$checkout-view-summary-grid-container-shadow-background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 100%) !default;
+$checkout-view-summary-grid-container-shadow-background: linear-gradient(
+    to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%
+) !default;
 
 $checkout-view-breakpoint-max-desktop: $site-width !default;
 

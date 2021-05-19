@@ -3,13 +3,14 @@
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Generator;
 
 use Doctrine\Common\Cache\Cache;
-use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\LocaleBundle\Provider\LocalizationProviderInterface;
 use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
 use Oro\Bundle\RedirectBundle\Provider\RoutingInformationProvider;
+use Oro\Bundle\RedirectBundle\Tests\Unit\Entity\SluggableEntityStub;
 use Oro\Bundle\WebsiteBundle\Resolver\WebsiteUrlResolver;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Website\WebsiteInterface;
@@ -46,6 +47,11 @@ abstract class AbstractCanonicalUrlGeneratorTestCase extends \PHPUnit\Framework\
     protected $websiteUrlResolver;
 
     /**
+     * @var LocalizationProviderInterface
+     */
+    protected $localizationProvider;
+
+    /**
      * @var CanonicalUrlGenerator
      */
     protected $canonicalUrlGenerator;
@@ -57,6 +63,7 @@ abstract class AbstractCanonicalUrlGeneratorTestCase extends \PHPUnit\Framework\
         $this->requestStack = $this->createMock(RequestStack::class);
         $this->routingInformationProvider = $this->createMock(RoutingInformationProvider::class);
         $this->websiteUrlResolver = $this->createMock(WebsiteUrlResolver::class);
+        $this->localizationProvider = $this->createMock(LocalizationProviderInterface::class);
         $this->canonicalUrlGenerator = $this->createGenerator();
     }
 
@@ -119,22 +126,11 @@ abstract class AbstractCanonicalUrlGeneratorTestCase extends \PHPUnit\Framework\
      * @param Slug $slug
      * @return SluggableInterface|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected function getSluggableEntityMock(Slug $slug)
+    protected function getSluggableEntity(Slug $slug)
     {
-        $slugs = new ArrayCollection([$slug]);
+        $entity = new SluggableEntityStub();
+        $entity->addSlug($slug);
 
-        $data = $this->createMock(SluggableInterface::class);
-        $data->expects($this->any())
-            ->method('getSlugs')
-            ->willReturn($slugs);
-        $data->expects($this->any())
-            ->method('getBaseSlug')
-            ->willReturn($slug);
-
-        $data->expects($this->any())
-            ->method('getSlugByLocalization')
-            ->willReturn($slug);
-
-        return $data;
+        return $entity;
     }
 }

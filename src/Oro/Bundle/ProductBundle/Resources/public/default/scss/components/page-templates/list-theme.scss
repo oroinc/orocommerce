@@ -15,6 +15,7 @@
                     form {
                         display: $list-theme-product-view-line-item-form-display-desktop;
 
+                        // stylelint-disable-next-line selector-max-compound-selectors
                         > div {
                             flex: $list-theme-product-view-line-item-form-div-flex-desktop;
                         }

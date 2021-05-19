@@ -37,36 +37,6 @@
     }
 }
 
-.product-container {
-    .sidebar-items {
-        .currencies {
-            .oro-clearfix {
-                margin-bottom: 3px;
-            }
-        }
-    }
-
-    .include-sub-categories-choice {
-        margin-bottom: 4px;
-    }
-
-    .grid-container {
-        .product-price-unit-with-margin {
-            margin-top: 5px !important;
-        }
-
-        .string-cell {
-            tbody {
-                td {
-                    padding: 0 !important;
-                    height: 10px !important;
-                    border: 0 !important;
-                }
-            }
-        }
-    }
-}
-
 .pricing-price-list {
     .add-list-item {
         margin-top: $content-padding-small;
@@ -90,11 +60,13 @@
 
     input {
         &.priority {
+            // stylelint-disable-next-line declaration-no-important
             width: 50px !important;
         }
     }
 
     .controls {
+        // stylelint-disable-next-line declaration-no-important
         margin-left: $pricing-price-list-controls-offset !important;
     }
 
@@ -116,7 +88,6 @@
         td {
             vertical-align: middle;
         }
-
     }
 
     &__option-cell {
@@ -140,6 +111,41 @@
     .group-label {
         label {
             vertical-align: middle;
+        }
+    }
+}
+
+.product-container {
+    .sidebar-items {
+        .currencies {
+            .oro-clearfix {
+                margin-bottom: 3px;
+            }
+        }
+    }
+
+    .include-sub-categories-choice {
+        margin-bottom: 4px;
+    }
+
+    .grid-container {
+        .product-price-unit-with-margin {
+            // stylelint-disable-next-line declaration-no-important
+            margin-top: 5px !important;
+        }
+
+        .string-cell {
+            tbody {
+                // stylelint-disable-next-line selector-max-compound-selectors
+                td {
+                    // stylelint-disable-next-line declaration-no-important
+                    padding: 0 !important;
+                    // stylelint-disable-next-line declaration-no-important
+                    height: 10px !important;
+                    // stylelint-disable-next-line declaration-no-important
+                    border: 0 !important;
+                }
+            }
         }
     }
 }

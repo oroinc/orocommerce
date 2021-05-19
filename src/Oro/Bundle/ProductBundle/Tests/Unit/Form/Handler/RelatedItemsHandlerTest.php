@@ -78,6 +78,10 @@ class RelatedItemsHandlerTest extends \PHPUnit\Framework\TestCase
             ->with($this->isInstanceOf(FormError::class));
         $removeField = $this->getField();
 
+        $this->translator->expects(self::any())
+            ->method('trans')
+            ->willReturnCallback(static fn ($value) =>  $value . '_translated');
+
         $this->assignerShouldThrowException($exception);
         $this->handler->addAssigner(RelatedItemsHandler::RELATED_PRODUCTS, $this->relatedAssigner);
 

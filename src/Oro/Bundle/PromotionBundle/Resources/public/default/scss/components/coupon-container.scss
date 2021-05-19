@@ -5,7 +5,7 @@
         margin-right: $coupon-trigger-inner-icon-offset;
 
         vertical-align: middle;
-    };
+    }
 
     padding: $coupon-trigger-inner-offset;
 
@@ -37,7 +37,6 @@
         }
     }
 }
-
 
 @include breakpoint('mobile') {
     .coupon-container {
