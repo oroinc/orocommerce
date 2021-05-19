@@ -725,6 +725,7 @@ class Product extends ExtendProduct implements
     public function setSku($sku)
     {
         $this->sku = $sku;
+        $this->skuUppercase = mb_strtoupper($this->sku);
 
         return $this;
     }

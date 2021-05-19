@@ -40,6 +40,10 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                     'value' => 'secure',
                     'scope' => 'app'
                 ],
+                'use_localized_canonical' => [
+                    'value' => false,
+                    'scope' => 'app'
+                ],
             ]
         ];
 

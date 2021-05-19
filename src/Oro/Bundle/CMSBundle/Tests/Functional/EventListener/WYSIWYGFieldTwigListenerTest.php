@@ -24,6 +24,8 @@ class WYSIWYGFieldTwigListenerTest extends WebTestCase
     protected function setUp(): void
     {
         $this->initClient();
+        
+        $this->getOptionalListenerManager()->enableListener('oro_cms.event_listener.wysiwyg_field_twig_listener');
 
         $this->em = $this->getContainer()->get('doctrine')->getManager();
         $this->localization = $this->em->getRepository(Localization::class)

@@ -26,6 +26,8 @@ class DigitalAssetTwigFunctionProcessorTest extends WebTestCase
         $this->initClient();
         $this->loadFixtures([LoadDigitalAssetData::class]);
 
+        $this->getOptionalListenerManager()->enableListener('oro_cms.event_listener.wysiwyg_field_twig_listener');
+
         /** @var Registry */
         $doctrine = $this->getContainer()->get('doctrine');
 

@@ -41,6 +41,9 @@ class MergePricesCombiningStrategyTest extends WebTestCase
             LoadCombinedPriceLists::class
         ]);
 
+        $this->getOptionalListenerManager()->enableListener('oro_pricing.entity_listener.product_price_cpl');
+        $this->getOptionalListenerManager()->enableListener('oro_pricing.entity_listener.price_list_to_product');
+
         $this->resolver = $this->getContainer()->get('oro_pricing.pricing_strategy.strategy_register')
             ->get(MergePricesCombiningStrategy::NAME);
     }

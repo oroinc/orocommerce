@@ -86,9 +86,6 @@ class CategoryListener
     {
         $entityManager = $event->getEntityManager();
         $metadataFactory = $entityManager->getMetadataFactory();
-        if (!$metadataFactory->hasMetadataFor(Category::class)) {
-            return;
-        }
 
         /** @var CategoryRepository $categoryRepository */
         $unitOfWork = $entityManager->getUnitOfWork();

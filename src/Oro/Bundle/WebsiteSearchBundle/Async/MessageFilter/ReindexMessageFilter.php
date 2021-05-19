@@ -114,6 +114,10 @@ class ReindexMessageFilter implements MessageFilterInterface
      */
     private function getMessageKey(array $messageData): string
     {
+        if (!empty($messageData['jobId'])) {
+            return $messageData['jobId'];
+        }
+        
         return sprintf(
             '%s|%s|%s|%s',
             $messageData['jobId'] ?? '',

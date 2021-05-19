@@ -46,6 +46,8 @@ class ProductVisibilityListenerTest extends WebTestCase
         $this->loadFixtures([LoadProductVisibilityData::class]);
         self::enableMessageBuffering();
 
+        $this->getOptionalListenerManager()->enableListener('oro_visibility.entity_listener.product_visibility_change');
+
         $this->registry = $this->client->getContainer()->get('doctrine');
         $this->product = $this->getReference(LoadProductData::PRODUCT_1);
         $this->customerGroup = $this->getReference(LoadGroups::GROUP1);

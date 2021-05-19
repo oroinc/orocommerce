@@ -496,7 +496,7 @@ services:
             - '@oro_product.entity.event_listener.product_collection_variant_reindex_message_send_listener'
             - "@?oro_web_catalog.provider.web_catalog_usage_provider"
         tags:
-            - { name: doctrine.event_listener, event: onFlush, connection: default }
+            - { name: doctrine.event_listener, event: onFlush }
 
     oro_product.model.product_visibility_query_builder_modifier:
         class: 'Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier'
@@ -1612,7 +1612,7 @@ services:
             - 'oro_product'
             - 'idx_oro_product_new_arrival'
         tags:
-            - { name: doctrine.event_listener, event: loadClassMetadata, connection: default }
+            - { name: doctrine.event_listener, event: loadClassMetadata }
 
     oro_product.event_listener.orm.featured_index_listener:
         class: Oro\Bundle\EntityBundle\EventListener\ORM\PartialIndexListener
@@ -1621,7 +1621,7 @@ services:
             - 'oro_product'
             - 'idx_oro_product_featured'
         tags:
-            - { name: doctrine.event_listener, event: loadClassMetadata, connection: default }
+            - { name: doctrine.event_listener, event: loadClassMetadata }
 
     oro_product.action.condition.at_least_one_available_product:
         class: Oro\Bundle\ProductBundle\Action\Condition\AtLeastOneAvailableProduct

@@ -29,6 +29,11 @@ class ProductPriceTest extends RestJsonApiTestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->getOptionalListenerManager()->enableListener('oro_pricing.entity_listener.product_price_cpl');
+        $this->getOptionalListenerManager()->enableListener('oro_pricing.entity_listener.price_list_to_product');
+        $this->getOptionalListenerManager()->enableListener('oro_pricing.entity_listener.price_list_currency');
+
         $this->loadFixtures([LoadProductPricesWithRules::class]);
     }
 
