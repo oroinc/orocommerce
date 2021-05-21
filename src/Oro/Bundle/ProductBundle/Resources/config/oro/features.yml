@@ -31,3 +31,10 @@ features:
             - 'oro_product_frontend_quick_add_validation_result'
         dependencies:
             - 'guest_quick_order'
+
+    frontend_products_data_export:
+        label: oro.product.feature.frontend_products_data_export.label
+        description: oro.product.feature.frontend_products_data_export.description
+        toggle: oro_product.product_data_export_enabled
+        routes:
+            - 'oro_product_frontend_export'
