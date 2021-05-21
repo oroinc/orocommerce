@@ -147,7 +147,7 @@ layout:
         - '@setOption':
               id: product_datagrid_export_export_button
               optionName: visible
-              optionValue: '=data["system_config_provider"].getValue("oro_product.product_data_export_enabled") && context["is_logged_in"] && data["frontend_product_export_options"].getExportAvailableForProductGrid(context["grid_config"])'
+              optionValue: '=data["feature"].isFeatureEnabled("frontend_products_data_export") && context["is_logged_in"] && data["frontend_product_export_options"].getExportAvailableForProductGrid(context["grid_config"])'
 
         - '@setOption':
               id: product_datagrid_export_export_button
