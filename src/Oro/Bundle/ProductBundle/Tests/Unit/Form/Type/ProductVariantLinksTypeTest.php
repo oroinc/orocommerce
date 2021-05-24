@@ -14,54 +14,43 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 class ProductVariantLinksTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var ProductVariantLinksType
-     */
-    protected $formType;
+    /** @var ProductVariantLinksType */
+    private $formType;
 
-    /**
-     * @var array
-     */
-    protected $defaultData = [
+    /** @var array */
+    private $defaultData = [
         'appendVariants' => [],
         'removeVariants' => []
     ];
 
-    /**
-     * @var ProductVariantLinksDataTransformer|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $transformer;
+    /** @var ProductVariantLinksDataTransformer|\PHPUnit\Framework\MockObject\MockObject */
+    private $transformer;
 
-    /**
-     * @var array
-     */
-    protected $products = [];
+    /** @var array */
+    private $products = [];
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
-        $this->transformer = $this->createMock(
-            'Oro\Bundle\ProductBundle\Form\DataTransformer\ProductVariantLinksDataTransformer'
-        );
+        $this->transformer = $this->createMock(ProductVariantLinksDataTransformer::class);
         $this->formType = new ProductVariantLinksType($this->transformer);
         parent::setUp();
     }
 
-    /**
-     * @dataProvider submitProvider
-     *
-     * @param $submittedData
-     * @param $expectedData
-     * @param $transformerCalls
-     */
-    public function testSubmit($submittedData, $expectedData, $transformerCalls)
+    public function testSubmitNoChanges()
     {
-        $this->addTransformerCalls($transformerCalls);
+        $submittedData = $this->prepareVariantsData();
+        $expectedData = $this->prepareExpectedVariantLinks();
+
+        $this->transformer->expects(self::once())
+            ->method('transform')
+            ->with($this->prepareVariantsData())
+            ->willReturn(null);
+        $this->transformer->expects(self::once())
+            ->method('reverseTransform')
+            ->with($this->prepareVariantsData())
+            ->willReturn($expectedData);
 
         $form = $this->factory->create(ProductVariantLinksType::class, $this->defaultData);
-
         $this->assertEquals($this->defaultData, $form->getData());
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
@@ -70,75 +59,76 @@ class ProductVariantLinksTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedData, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitProvider()
+    public function testSubmitAddVariants()
     {
-        $this->initProducts();
+        $submittedData = $this->prepareVariantsData([1, 2]);
+        $expectedData = $this->prepareExpectedVariantLinks([$this->products[1], $this->products[2]]);
 
-        $expectedDataNoChanges = $this->prepareExpectedVariantLinks();
-        $expectedDataAddVariants = $this->prepareExpectedVariantLinks(
-            [$this->products[1], $this->products[2]]
-        );
-        $expectedDataRemoveVariants = $this->prepareExpectedVariantLinks([]);
-        $expectedDataAddAndRemoveVariants = $this->prepareExpectedVariantLinks(
-            [$this->products[1], $this->products[2]]
-        );
+        $this->transformer->expects(self::once())
+            ->method('transform')
+            ->with($this->prepareVariantsData())
+            ->willReturn(null);
+        $this->transformer->expects(self::once())
+            ->method('reverseTransform')
+            ->with($this->prepareVariantsData([$this->products[1], $this->products[2]]))
+            ->willReturn($expectedData);
 
-        return [
-            'no changes' => [
-                'submittedData' => $this->prepareVariantsData(),
-                'expectedData' => $expectedDataNoChanges,
-                'transformerCalls' => [
-                    ['transform', [$this->prepareVariantsData()], null],
-                    [
-                        'reverseTransform',
-                        [$this->prepareVariantsData()],
-                        $expectedDataNoChanges
-                    ]
-                ]
-            ],
-            'add variants' => [
-                'submittedData' => $this->prepareVariantsData([1, 2]),
-                'expectedData' => $expectedDataAddVariants,
-                'transformerCalls' => [
-                    ['transform', [$this->prepareVariantsData()], null],
-                    [
-                        'reverseTransform',
-                        [$this->prepareVariantsData([$this->products[1], $this->products[2]])],
-                        $expectedDataAddVariants
-                    ]
-                ]
-            ],
-            'remove variants' => [
-                'submittedData' => $this->prepareVariantsData([], [3, 4]),
-                'expectedData' => $expectedDataRemoveVariants,
-                'transformerCalls' => [
-                    ['transform', [$this->prepareVariantsData()], null],
-                    [
-                        'reverseTransform',
-                        [$this->prepareVariantsData([], [$this->products[3], $this->products[4]])],
-                        $expectedDataRemoveVariants
-                    ]
-                ]
-            ],
-            'add and remove variants' => [
-                'submittedData' => $this->prepareVariantsData([1, 2], [3, 4]),
-                'expectedData' => $expectedDataAddAndRemoveVariants,
-                'transformerCalls' => [
-                    ['transform', [$this->prepareVariantsData()], null],
-                    [
-                        'reverseTransform',
-                        [$this->prepareVariantsData(
-                            [$this->products[1], $this->products[2]],
-                            [$this->products[3], $this->products[4]]
-                        )],
-                        $expectedDataAddAndRemoveVariants
-                    ]
-                ]
-            ],
-        ];
+        $form = $this->factory->create(ProductVariantLinksType::class, $this->defaultData);
+        $this->assertEquals($this->defaultData, $form->getData());
+        $form->submit($submittedData);
+        $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
+
+        $this->assertEquals($expectedData, $form->getData());
+    }
+
+    public function testSubmitRemoveVariants()
+    {
+        $submittedData = $this->prepareVariantsData([], [3, 4]);
+        $expectedData = $this->prepareExpectedVariantLinks();
+
+        $this->transformer->expects(self::once())
+            ->method('transform')
+            ->with($this->prepareVariantsData())
+            ->willReturn(null);
+        $this->transformer->expects(self::once())
+            ->method('reverseTransform')
+            ->with($this->prepareVariantsData([], [$this->products[3], $this->products[4]]))
+            ->willReturn($expectedData);
+
+        $form = $this->factory->create(ProductVariantLinksType::class, $this->defaultData);
+        $this->assertEquals($this->defaultData, $form->getData());
+        $form->submit($submittedData);
+        $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
+
+        $this->assertEquals($expectedData, $form->getData());
+    }
+
+    public function testSubmitAddAndRemoveVariants()
+    {
+        $submittedData = $this->prepareVariantsData([1, 2], [3, 4]);
+        $expectedData = $this->prepareExpectedVariantLinks([$this->products[1], $this->products[2]]);
+
+        $this->transformer->expects(self::once())
+            ->method('transform')
+            ->with($this->prepareVariantsData())
+            ->willReturn(null);
+        $this->transformer->expects(self::once())
+            ->method('reverseTransform')
+            ->with($this->prepareVariantsData(
+                [$this->products[1], $this->products[2]],
+                [$this->products[3], $this->products[4]]
+            ))
+            ->willReturn($expectedData);
+
+        $form = $this->factory->create(ProductVariantLinksType::class, $this->defaultData);
+        $this->assertEquals($this->defaultData, $form->getData());
+        $form->submit($submittedData);
+        $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
+
+        $this->assertEquals($expectedData, $form->getData());
     }
 
     /**
@@ -156,32 +146,7 @@ class ProductVariantLinksTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * @param array $transformerCalls
-     */
-    private function addTransformerCalls(array $transformerCalls)
-    {
-        $index = 0;
-
-        foreach ($transformerCalls as $expectedCall) {
-            list($method, $arguments, $result) = $expectedCall;
-
-            if (is_callable($result)) {
-                $result = call_user_func($result);
-            }
-
-            $methodExpectation = $this->transformer->expects($this->at($index++))->method($method);
-            $methodExpectation = call_user_func_array([$methodExpectation, 'with'], $arguments);
-            $methodExpectation->will($this->returnValue($result));
-        }
-    }
-
-    /**
-     * @param array $appendVariants
-     * @param array $removeVariants
-     * @return array
-     */
-    private function prepareVariantsData(array $appendVariants = [], array $removeVariants = [])
+    private function prepareVariantsData(array $appendVariants = [], array $removeVariants = []): array
     {
         return [
             'appendVariants' => $appendVariants,
@@ -189,7 +154,7 @@ class ProductVariantLinksTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    protected function initProducts()
+    private function initProducts(): void
     {
         if (count($this->products) === 0) {
             $this->products[1] = (new Product())->setSku('sku1');
@@ -199,14 +164,9 @@ class ProductVariantLinksTypeTest extends FormIntegrationTestCase
         }
     }
 
-    /**
-     * @param array $products
-     * @return ArrayCollection
-     */
-    protected function prepareExpectedVariantLinks(array $products = [])
+    private function prepareExpectedVariantLinks(array $products = []): ArrayCollection
     {
         $expectedVariantLinks = new ArrayCollection([]);
-
         foreach ($products as $product) {
             $expectedVariantLinks->add(new ProductVariantLink(null, $product));
         }

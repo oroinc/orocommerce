@@ -7,6 +7,7 @@ use Oro\Bundle\AttachmentBundle\Provider\FileNamesProviderInterface;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Provider\ProductImageFileNamesProvider;
+use PHPUnit\Framework\MockObject\Stub\ReturnCallback;
 
 class ProductImageFileNamesProviderTest extends \PHPUnit\Framework\TestCase
 {
@@ -221,14 +222,17 @@ class ProductImageFileNamesProviderTest extends \PHPUnit\Framework\TestCase
                 ['oro_product.original_file_names_enabled', false]
             );
 
-        $this->innerProvider->expects(self::at(0))
+        $this->innerProvider->expects(self::exactly(2))
             ->method('getFileNames')
-            ->with($file)
-            ->willReturn(['attachment/filter/filter1/hash.jpg']);
-        $this->innerProvider->expects(self::at(1))
-            ->method('getFileNames')
-            ->with($file)
-            ->willThrowException($exception);
+            ->with(self::identicalTo($file))
+            ->willReturnOnConsecutiveCalls(
+                new ReturnCallback(function () {
+                    return ['attachment/filter/filter1/hash.jpg'];
+                }),
+                new ReturnCallback(function () use ($exception) {
+                    throw $exception;
+                })
+            );
 
         $this->expectException(get_class($exception));
         $this->expectExceptionMessage($exception->getMessage());

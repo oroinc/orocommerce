@@ -12,10 +12,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ProductAutocompleteTypeTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ProductAutocompleteType
-     */
-    protected $type;
+    /** @var ProductAutocompleteType */
+    private $type;
 
     protected function setUp(): void
     {
@@ -29,13 +27,12 @@ class ProductAutocompleteTypeTest extends \PHPUnit\Framework\TestCase
 
     public function testConfigureOptions()
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|OptionsResolver $resolver */
-        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
-        $resolver->expects($this->at(0))
+        $resolver = $this->createMock(OptionsResolver::class);
+        $resolver->expects($this->exactly(2))
             ->method('setDefaults')
-            ->with(
-                $this->callback(
-                    function (array $options) {
+            ->withConsecutive(
+                [
+                    $this->callback(function (array $options) {
                         $this->assertArrayHasKey('autocomplete', $options);
                         $this->assertEquals(
                             [
@@ -51,8 +48,9 @@ class ProductAutocompleteTypeTest extends \PHPUnit\Framework\TestCase
                         );
 
                         return true;
-                    }
-                )
+                    })
+                ],
+                [$this->isType('array')]
             );
 
         $this->type->configureOptions($resolver);
@@ -65,8 +63,7 @@ class ProductAutocompleteTypeTest extends \PHPUnit\Framework\TestCase
 
         $view = new FormView();
 
-        /** @var FormConfigInterface|\PHPUnit\Framework\MockObject\MockObject $form */
-        $config = $this->createMock('Symfony\Component\Form\FormConfigInterface');
+        $config = $this->createMock(FormConfigInterface::class);
         $config->expects($this->any())
             ->method('getOptions')
             ->willReturn(
@@ -77,8 +74,7 @@ class ProductAutocompleteTypeTest extends \PHPUnit\Framework\TestCase
                 ]
             );
 
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
-        $form = $this->createMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock(FormInterface::class);
         $form->expects($this->any())->method('getConfig')->willReturn($config);
 
         $view->vars['product'] = $product;
