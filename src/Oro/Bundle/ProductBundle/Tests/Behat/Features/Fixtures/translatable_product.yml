@@ -37,6 +37,48 @@ Oro\Bundle\ProductBundle\Entity\ProductName:
     string: 'Product3_ZU'
     localization: '@localization_zulu'
 
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+  slugPrototype{1..3}:
+    string: 'product<current()>'
+  zuluSlugPrototype{1..3}:
+    string: 'product_zulu<current()>'
+    localization: '@localization_zulu'
+
+Oro\Bundle\RedirectBundle\Entity\Slug:
+  slug1:
+    url: '/product1'
+    slugPrototype: 'product1'
+    routeName: 'oro_product_frontend_product_view'
+    routeParameters: {'id': '@product1->id'}
+  slug2:
+    url: '/product2'
+    slugPrototype: 'product2'
+    routeName: 'oro_product_frontend_product_view'
+    routeParameters: { 'id': '@product2->id' }
+  slug3:
+    url: '/product3'
+    slugPrototype: 'product3'
+    routeName: 'oro_product_frontend_product_view'
+    routeParameters: { 'id': '@product3->id' }
+  zuluSlug1:
+    url: '/product_zulu1'
+    slugPrototype: 'product_zulu1'
+    routeName: 'oro_product_frontend_product_view'
+    routeParameters: { 'id': '@product1->id' }
+    localization: '@localization_zulu'
+  zuluSlug2:
+    url: '/product_zulu2'
+    slugPrototype: 'product_zulu2'
+    routeName: 'oro_product_frontend_product_view'
+    routeParameters: { 'id': '@product2->id' }
+    localization: '@localization_zulu'
+  zuluSlug3:
+    url: '/product_zulu3'
+    slugPrototype: 'product_zulu3'
+    routeName: 'oro_product_frontend_product_view'
+    routeParameters: { 'id': '@product3->id' }
+    localization: '@localization_zulu'
+
 Oro\Bundle\ProductBundle\Entity\Product:
   product1:
     sku: 'SKU1'
@@ -48,6 +90,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
     attributeFamily: '@defaultProductFamily'
     __calls:
       - setNames: [['@locValue1', '@zuluLocValue1']]
+    slugPrototypes: ['@slugPrototype1', '@zuluSlugPrototype1']
+    slugs: ['@slug1', '@zuluSlug1']
     inventoryStatus: '@enumInventoryStatuses'
     status: 'enabled'
     newArrival: true
@@ -62,6 +106,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
     attributeFamily: '@defaultProductFamily'
     __calls:
       - setNames: [['@locValue2', '@zuluLocValue2']]
+    slugPrototypes: ['@slugPrototype2', '@zuluSlugPrototype2']
+    slugs: ['@slug2', '@zuluSlug2']
     inventoryStatus: '@enumInventoryStatuses'
     status: 'enabled'
     newArrival: true
@@ -76,6 +122,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
     attributeFamily: '@defaultProductFamily'
     __calls:
       - setNames: [['@locValue3', '@zuluLocValue3']]
+    slugPrototypes: ['@slugPrototype3', '@zuluSlugPrototype3']
+    slugs: ['@slug3', '@zuluSlug3']
     inventoryStatus: '@enumInventoryStatuses'
     status: 'enabled'
     newArrival: true

@@ -14,13 +14,11 @@ abstract class FrontendWebTestCase extends WebTestCase
     use WebsiteManagerTrait;
 
     /**
-     * @after
+     * @beforeResetClient
      */
-    public function afterFrontendTest()
+    public static function afterFrontendTest()
     {
-        if (null !== $this->client) {
-            $this->getWebsiteManagerStub()->disableStub();
-        }
+        self::getWebsiteManagerStub()->disableStub();
     }
 
     /**

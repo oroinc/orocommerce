@@ -18,6 +18,8 @@ class ResizeAllProductImagesCommandTest extends WebTestCase
     protected function setUp(): void
     {
         $this->initClient();
+
+        $this->getOptionalListenerManager()->enableListener('oro_product.event_listener.product_image_resize_listener');
     }
 
     public function testRun()

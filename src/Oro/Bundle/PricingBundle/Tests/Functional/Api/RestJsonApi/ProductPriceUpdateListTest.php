@@ -18,6 +18,10 @@ class ProductPriceUpdateListTest extends RestJsonApiUpdateListTestCase
     {
         parent::setUp();
         $this->loadFixtures([LoadProductPricesWithRules::class]);
+
+        $this->getOptionalListenerManager()->enableListener('oro_pricing.entity_listener.product_price_cpl');
+        $this->getOptionalListenerManager()->enableListener('oro_pricing.entity_listener.price_list_to_product');
+        $this->getOptionalListenerManager()->enableListener('oro_pricing.entity_listener.price_list_currency');
     }
 
     public function testCreateEntities()

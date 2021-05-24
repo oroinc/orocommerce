@@ -19,6 +19,7 @@ class CustomerGroupProductVisibilityUpdateListTest extends RestJsonApiUpdateList
     protected function setUp(): void
     {
         parent::setUp();
+        $this->getOptionalListenerManager()->enableListener('oro_visibility.entity_listener.product_visibility_change');
         $this->loadFixtures([
             '@OroVisibilityBundle/Tests/Functional/Api/DataFixtures/customer_group_product_visibilities.yml',
         ]);

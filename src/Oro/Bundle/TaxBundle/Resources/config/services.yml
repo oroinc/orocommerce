@@ -506,7 +506,7 @@ services:
             - 'Oro\Bundle\OrderBundle\Entity\Order'
         tags:
             # For correct generate "Created At" in TaxValue entity this listener must be a called before ModifyCreatedAndUpdatedPropertiesListener
-            - { name: doctrine.event_listener, event: onFlush, method: onFlush, priority: 200 }
+            - { name: doctrine.event_listener, event: onFlush, priority: 200 }
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\OrderBundle\Entity\Order', event: preRemove }
 
     # Service tracks changes of OrderLineItem entity and call tax calculation process
@@ -518,7 +518,7 @@ services:
             - 'Oro\Bundle\OrderBundle\Entity\OrderLineItem'
         tags:
             # For correct generate "Created At" in TaxValue entity this listener must be a called before ModifyCreatedAndUpdatedPropertiesListener
-            - { name: doctrine.event_listener, event: onFlush, method: onFlush, priority: 200 }
+            - { name: doctrine.event_listener, event: onFlush, priority: 200 }
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\OrderBundle\Entity\OrderLineItem', event: preRemove }
 
     oro_tax.layout.data_provider.tax:
