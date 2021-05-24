@@ -33,7 +33,8 @@ class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
             $this->cache,
             $this->requestStack,
             $this->routingInformationProvider,
-            $this->websiteUrlResolver
+            $this->websiteUrlResolver,
+            $this->localizationProvider
         );
 
         $this->contentNodeProvider = $this->createMock(ContentNodeProvider::class);
@@ -47,7 +48,7 @@ class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
 
     public function testGetUrlBasedOnWebCatalogNode()
     {
-        $entity = $this->getSluggableEntityMock($this->getSlug('/entity'));
+        $entity = $this->getSluggableEntity($this->getSlug('/entity'));
 
         $variant = new ContentVariant();
         $variant->addSlug($this->getSlug('/variant'));
@@ -69,7 +70,7 @@ class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
 
     public function testGetUrlNoVariantFound()
     {
-        $entity = $this->getSluggableEntityMock($this->getSlug('/entity'));
+        $entity = $this->getSluggableEntity($this->getSlug('/entity'));
 
         $this->websiteUrlResolver->expects($this->any())
             ->method('getWebsiteUrl')
@@ -92,7 +93,7 @@ class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
 
     public function testGetUrlFeatureDisabled()
     {
-        $entity = $this->getSluggableEntityMock($this->getSlug('/entity'));
+        $entity = $this->getSluggableEntity($this->getSlug('/entity'));
 
         $this->websiteUrlResolver->expects($this->any())
             ->method('getWebsiteUrl')

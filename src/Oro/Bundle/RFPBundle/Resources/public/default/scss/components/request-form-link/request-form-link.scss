@@ -1,11 +1,13 @@
+/* @theme: default; */
+
 .request-form-link {
     font-size: 15px;
 
     text-decoration: underline;
 
-    color: get-color('additional', 'dark');
+    color: $request-form-link-color;
 
     &:hover {
-        color: get-color('additional', 'dark');
+        color: $request-form-link-color-hover;
     }
 }

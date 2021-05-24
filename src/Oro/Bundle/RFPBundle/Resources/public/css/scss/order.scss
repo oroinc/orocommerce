@@ -13,7 +13,8 @@
         }
     }
 
-    input[type="radio"] {
+    input[type='radio'] {
+        // stylelint-disable-next-line declaration-no-important
         vertical-align: top !important;
     }
 

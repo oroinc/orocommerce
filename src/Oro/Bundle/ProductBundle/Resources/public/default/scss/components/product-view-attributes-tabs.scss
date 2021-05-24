@@ -44,7 +44,7 @@
     #{$product-view-attributes-tabs-link} {
         text-transform: uppercase;
     }
-};
+}
 
 @include breakpoint('mobile-landscape') {
     .product-attributes-tabs {
@@ -68,7 +68,7 @@
 
             @include fa-icon($fa-var-angle-right, after);
 
-            &:after {
+            &::after {
                 position: $product-view-attributes-tabs-link-after-position-mobile-l;
                 right: $product-view-attributes-tabs-link-after-right-mobile-l;
 

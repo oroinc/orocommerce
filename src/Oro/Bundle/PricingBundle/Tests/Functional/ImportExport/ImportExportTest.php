@@ -386,12 +386,11 @@ class ImportExportTest extends AbstractImportExportTestCase
      */
     protected function processExportMessage()
     {
-        $sentMessages = $this->getSentMessages();
-        $exportMessageData = reset($sentMessages);
+        $sentMessage = $this->getSentMessage(ImportExportTopics::PRE_EXPORT);
 
         $message = new Message();
         $message->setMessageId('abc');
-        $message->setBody(json_encode($exportMessageData['message']));
+        $message->setBody(json_encode($sentMessage));
 
         /** @var ExportMessageProcessor $processor */
         $processor = $this->getContainer()->get('oro_importexport.async.pre_export');

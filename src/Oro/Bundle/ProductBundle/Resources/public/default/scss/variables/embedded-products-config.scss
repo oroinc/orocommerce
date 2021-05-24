@@ -4,4 +4,5 @@ $embedded-products-slider-arrow-top: 18%;
 
 // desktop
 $embedded-products-item-image-height-desktop: 249px !default;
-$embedded-products-slider-arrow-top-desktop: ($embedded-products-item-image-height-desktop / 2) - ($embedded-list-slider-btn-arrow-height / 2) !default;
+$embedded-products-slider-arrow-top-desktop: ($embedded-products-item-image-height-desktop / 2) -
+    ($embedded-list-slider-btn-arrow-height / 2) !default;

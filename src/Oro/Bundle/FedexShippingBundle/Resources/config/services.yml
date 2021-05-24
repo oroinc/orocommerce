@@ -29,7 +29,7 @@ services:
     oro_fedex_shipping.client.rate_service.soap_settings:
         class: 'Oro\Bundle\SoapBundle\Client\Settings\SoapClientSettings'
         public: false
-        factory: 'oro_soap.client.factory.settings:create'
+        factory: ['@oro_soap.client.factory.settings', 'create']
         arguments:
             - '%fedex_root_dir%Resources/wsdl/RateService_v20.wsdl' #fedex_root_dir is defined in OroFedexShippingBundle class
             - 'getRates'
@@ -38,7 +38,7 @@ services:
     oro_fedex_shipping.client.rate_service.soap_test_settings:
         class: 'Oro\Bundle\SoapBundle\Client\Settings\SoapClientSettings'
         public: false
-        factory: 'oro_soap.client.factory.settings:create'
+        factory: ['@oro_soap.client.factory.settings', 'create']
         arguments:
             - '%fedex_root_dir%Resources/wsdl/RateService_v20_test_mode.wsdl' #fedex_root_dir is defined in OroFedexShippingBundle class
             - 'getRates'

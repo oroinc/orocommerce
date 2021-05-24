@@ -3,6 +3,17 @@
 
 @include breakpoint('desktop') {
     .two-columns-theme.product-view {
+        .product-price {
+            &__hint {
+                display: $two-columns-theme-product-price-hint-display-desktop;
+                flex-direction: $two-columns-theme-product-price-hint-flex-direction-desktop;
+            }
+
+            &__label {
+                font-weight: $two-columns-theme-product-price-label-font-weight-desktop;
+            }
+        }
+
         .product-view {
             &-quantity {
                 flex-direction: $two-columns-theme-product-view-quantity-flex-direction-desktop;
@@ -22,22 +33,10 @@
                         margin-top: 0;
                     }
 
-                    // Slider mode
-                    .embedded-list-slider {
-                        display: block;
-
-                        .embedded-list {
-                            &__item {
-                                width: (100% / $two-columns-theme-embedded-related-products-item-count-desktop);
-                                margin-right: 0;
-                            }
-                        }
-                    }
-
                     // Tiles mode
                     .embedded-list {
                         &__item {
-                            width: calc((100% / #{$two-columns-theme-embedded-related-products-item-count-desktop}) - #{$two-columns-theme-embedded-related-products-item-gap-desktop});
+                            width: $two-columns-theme-embedded-related-products-item-width;
                             margin-right: 0;
 
                             &:not(:nth-child(#{$two-columns-theme-embedded-related-products-item-count-desktop}n)) {
@@ -45,22 +44,23 @@
                             }
                         }
 
+                        // stylelint-disable-next-line selector-max-compound-selectors
                         .product-price {
                             max-width: $product-view-related-items-product-price-width;
                         }
                     }
+
+                    // Slider mode
+                    .embedded-list-slider {
+                        display: block;
+
+                        // stylelint-disable-next-line selector-max-compound-selectors
+                        .embedded-list__item {
+                            width: (100% / $two-columns-theme-embedded-related-products-item-count-desktop);
+                            margin-right: 0;
+                        }
+                    }
                 }
-            }
-        }
-
-        .product-price {
-            &__hint {
-                display: $two-columns-theme-product-price-hint-display-desktop;
-                flex-direction: $two-columns-theme-product-price-hint-flex-direction-desktop;
-            }
-
-            &__label {
-                font-weight: $two-columns-theme-product-price-label-font-weight-desktop;
             }
         }
     }

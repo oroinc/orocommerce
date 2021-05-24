@@ -1,8 +1,7 @@
 /* @theme: admin.oro; */
 
 .mobile-version {
-    @import "oroui/css/scss/mobile/variables/variables";
-    @import "variables";
-
-    @import "rfp";
+    @import 'oroui/css/scss/mobile/variables/variables';
+    @import 'variables';
+    @import 'rfp';
 }

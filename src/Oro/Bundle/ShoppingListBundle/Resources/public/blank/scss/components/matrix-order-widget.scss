@@ -1,5 +1,7 @@
 /* @theme: blank; */
 
+/* stylelint-disable no-descending-specificity */
+
 @mixin matrix-design-for-not-available () {
     .matrix-order-widget__item-not-available {
         width: 100%;
@@ -147,39 +149,42 @@
 
             border-bottom: $matrix-order-widget-grid-multi-rows-grid-footer-border-bottom;
 
-            &:before,
-            &:after {
-                position: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-classes-position;
+            &::before,
+            &::after {
+                position: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-position;
 
-                box-sizing: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-classes-box-sizing;
+                box-sizing: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-box-sizing;
 
-                background: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-classes-background;
-                width: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-classes-width;
-                height: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-classes-height;
-                top: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-classes-top;
-                left: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-classes-left;
+                background: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-bg;
+                width: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-width;
+                height: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-height;
+                top: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-top;
+                left: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-left;
 
-                z-index: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-classes-z-index;
+                z-index: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-z-index;
             }
 
-            &:after {
-                left: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-class-after-left;
-                right: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-class-after-right;
-                background: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-class-after-background;
+            &::after {
+                left: $matrix-order-widget-grid-multi-rows-grid-area-items-label-after-left;
+                right: $matrix-order-widget-grid-multi-rows-grid-area-items-label-after-right;
+                background: $matrix-order-widget-grid-multi-rows-grid-area-items-label-after-bg;
             }
         }
 
         &__grid-head-label {
-            &:before,
-            &:after {
-                border-bottom: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-classes-border-bottom;
+            &::before,
+            &::after {
+                border-bottom: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-border-bottom;
             }
         }
+
         &__grid-footer-label {
-            &:before,
-            &:after {
-                border-top: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-classes-border-top;
-                border-bottom: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-classes-border-bottom;
+            border-top: $matrix-order-widget-grid-multi-rows-grid-footer-border-top;
+
+            &::before,
+            &::after {
+                border-top: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-border-top;
+                border-bottom: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-border-bottom;
             }
         }
 
@@ -191,7 +196,7 @@
             .matrix-order-widget__form__col {
                 background: $matrix-order-widget-form-colored-background;
 
-                &:after {
+                &::after {
                     position: $matrix-order-widget-grid-multi-rows-grid-head-after-position;
                     left: $matrix-order-widget-grid-multi-rows-grid-head-after-left;
                     bottom: $matrix-order-widget-grid-multi-rows-grid-head-after-bottom;
@@ -207,7 +212,7 @@
 
         &__grid-footer-wrapper {
             .matrix-order-widget__form__col {
-                &:before {
+                &::before {
                     position: $matrix-order-widget-grid-multi-rows-grid-head-after-position;
                     top: $matrix-order-widget-grid-multi-rows-grid-head-after-top;
                     left: $matrix-order-widget-grid-multi-rows-grid-head-after-left;
@@ -219,10 +224,6 @@
                     z-index: $matrix-order-widget-grid-multi-rows-grid-head-after-z-index;
                 }
             }
-        }
-
-        &__grid-footer-label {
-            border-top: $matrix-order-widget-grid-multi-rows-grid-footer-border-top;
         }
     }
 
@@ -243,7 +244,7 @@
             align-items: $matrix-order-widget-grid-body-form-row-align-items;
 
             &:not(:last-child) {
-                .matrix-order-widget__form__col:after {
+                .matrix-order-widget__form__col::after {
                     position: $matrix-order-widget-form-row-not-last-child-position;
 
                     border-bottom: $matrix-order-widget-form-row-not-last-child-border-bottom;
@@ -309,8 +310,8 @@
             overflow: $matrix-order-widget-grid-side-wrapper-overflow;
         }
 
-        &:before,
-        &:after {
+        &::before,
+        &::after {
             position: $matrix-order-widget-grid-side-pseudo-classes-position;
 
             background: $matrix-order-widget-grid-side-pseudo-classes-background;
@@ -322,7 +323,7 @@
             z-index: $matrix-order-widget-grid-side-pseudo-classes-z-index;
         }
 
-        &:after {
+        &::after {
             left: $matrix-order-widget-grid-side-pseudo-class-after-left;
             right: $matrix-order-widget-grid-side-pseudo-class-after-right;
             background: $matrix-order-widget-grid-side-pseudo-class-after-background;
@@ -333,15 +334,15 @@
         &__grid--multi-rows {
             .matrix-order-widget__grid-footer-label,
             .matrix-order-widget__grid-head-label {
-                &:before,
-                &:after {
-                    content: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-classes-content;
+                &::before,
+                &::after {
+                    content: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-content;
                 }
             }
         }
 
         &__grid-side {
-            &:before {
+            &::before {
                 content: $matrix-order-widget-grid-side-pseudo-classes-content;
             }
         }
@@ -349,7 +350,7 @@
 
     &.has-x-scroll:not(.has-y-scroll) & {
         &__grid-side {
-            &:after {
+            &::after {
                 content: $matrix-order-widget-grid-side-pseudo-classes-content;
             }
         }

@@ -17,7 +17,7 @@
 
         &.fa-square-o {
             &.#{$pn-prefix}active {
-                &:before {
+                &::before {
                     content: $fa-var-check-square;
                 }
             }
@@ -37,10 +37,11 @@
         top: 16px;
         opacity: 1;
 
-        &:before {
+        &::before {
             content: $fa-var-close;
             font-size: $base-font-size--l;
-            font-family: FontAwesome;
+
+            font-family: $fa-font-family;
             text-align: center;
             line-height: 1;
         }

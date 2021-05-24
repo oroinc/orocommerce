@@ -24,7 +24,7 @@
         padding: 20px;
 
         border-radius: 4px;
-        background: get-color('additional', 'base');
+        background: $order-checkout-widget-container-background;
 
         &--fixed-width {
             width: 280px;
@@ -53,12 +53,12 @@
         height: 1px;
 
         border: none;
-        background-color: get-color('additional', 'light');
+        background-color: $order-checkout-widget-divider-background-color;
     }
 
     &__total {
         font-size: $base-font-size + 4px;
-        font-weight: 700;
+        font-weight: font-weight('bold');
     }
 
     &__quote {
@@ -67,10 +67,10 @@
 
     &__summary {
         font-size: $base-font-size--m;
-        font-weight: bold;
+        font-weight: font-weight('bold');
     }
 
-    [data-toggle="tooltip"] {
+    [data-toggle='tooltip'] {
         display: inline-block;
     }
 }
@@ -106,6 +106,7 @@
         page-break-inside: avoid;
 
         &__quote {
+            // stylelint-disable-next-line declaration-no-important
             display: none !important;
         }
 

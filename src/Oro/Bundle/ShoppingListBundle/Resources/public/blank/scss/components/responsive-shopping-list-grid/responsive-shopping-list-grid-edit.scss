@@ -16,6 +16,15 @@
         align-items: center;
     }
 
+    .grid-header-cell-quantity {
+        text-align: center;
+    }
+
+    .grid-header-cell-quantity,
+    .grid-body-cell-quantity {
+        padding-right: 0;
+    }
+
     .group-row {
         .grid-body-cell-quantity {
             text-align: left;
@@ -23,7 +32,7 @@
     }
 
     .group-row-has-children {
-        .select-row-cell:after {
+        .select-row-cell::after {
             position: absolute;
             top: $responsive-shopping-list-edit-action-in-desktop-height - 1px;
             left: $datagrid-body-select-row-cell-offset-start + $checkbox-icon-size / 2;
@@ -45,7 +54,7 @@
         }
 
         .select-row-cell {
-            &:after {
+            &::after {
                 position: absolute;
                 top: -($responsive-shopping-sub-row-border-width + 1px);
                 left: $datagrid-body-select-row-cell-offset-start + $checkbox-icon-size / 2;
@@ -75,25 +84,20 @@
         }
     }
 
-    .filtered-out .select-row-cell:after {
+    .filtered-out .select-row-cell::after {
         top: -1px;
-        height: $datagrid-body-cell-offset +  $responsive-shopping-list-edit-action-in-desktop-height / 2 - $responsive-shopping-sub-row-cell-inner-offset;
+        height:
+            $datagrid-body-cell-offset +  $responsive-shopping-list-edit-action-in-desktop-height / 2 -
+            $responsive-shopping-sub-row-cell-inner-offset;
         bottom: auto;
     }
 
-    .sub-row-last .select-row-cell:after {
+    .sub-row-last .select-row-cell::after {
         top: 0;
-        height: $responsive-shopping-sub-row-cell-inner-offset +  $responsive-shopping-list-edit-action-in-desktop-height / 2;
+        height:
+            $responsive-shopping-sub-row-cell-inner-offset +
+            $responsive-shopping-list-edit-action-in-desktop-height / 2;
         bottom: auto;
-    }
-
-    .grid-header-cell-quantity {
-        text-align: center;
-    }
-
-    .grid-header-cell-quantity,
-    .grid-body-cell-quantity {
-        padding-right: 0;
     }
 }
 
@@ -106,7 +110,7 @@
         }
 
         // Need to increase weight of selector
-        .action.stretched .icon:before {
+        .action.stretched .icon::before {
             // Line height is equal to a image height
             line-height: $responsive-shopping-list-edit-action-in-desktop-height;
         }
@@ -116,12 +120,12 @@
 @include breakpoint('tablet') {
     .responsive-shopping-list-grid-edit {
         // Need to increase weight of selector
-        .action.stretched .icon:before {
+        .action.stretched .icon::before {
             // Line height is equal to a row line item height
             line-height: $responsive-shopping-list-edit-action-in-tablet-height;
         }
 
-        .grid-row{
+        .grid-row {
             .grid-body-cell {
                 &-price,
                 &-subtotal,
@@ -145,10 +149,6 @@
 
 @include breakpoint('mobile-landscape') {
     .responsive-shopping-list-grid-edit {
-        .select-row-cell {
-            position: static;
-        }
-
         .grid-body-cell {
             display: flex;
             flex-wrap: wrap;
@@ -164,6 +164,7 @@
         }
 
         .select-row-cell {
+            position: static;
             display: inline-flex;
             align-items: center;
             align-self: flex-start;
@@ -174,10 +175,11 @@
             padding-right: 0;
             padding-left: 0;
             padding-bottom: 0;
-            margin: 0 !important;
+            margin: 0;
         }
 
         .grid-body-cell-quantity {
+            padding-top: 6px;
             padding-right: $responsive-shopping-body-cell-offset-x-mobile;
         }
 
@@ -185,17 +187,18 @@
             margin-right: -$responsive-shopping-list-edit-select-row-cell-width-mobile;
         }
 
-        .grid-body-cell-quantity {
-            padding-top: 6px;
-        }
-
         .grid-body-cell-item {
             display: inline-flex;
             flex-grow: 1;
             order: 1;
-            width: calc(100% - #{$responsive-shopping-list-edit-select-row-cell-width-mobile} - #{$responsive-shopping-list-edit-action-cell-width-mobile});
+            width:
+                calc(
+                    100% -
+                    #{$responsive-shopping-list-edit-select-row-cell-width-mobile} -
+                    #{$responsive-shopping-list-edit-action-cell-width-mobile}
+                );
             padding-left: 0;
-            margin: 0 !important;
+            margin: 0;
         }
 
         .action-cell {
@@ -205,7 +208,7 @@
             align-self: flex-start;
             width: $responsive-shopping-list-edit-action-cell-width-mobile;
             padding-left: 0;
-            margin: 0 !important;
+            margin: 0;
         }
 
         .grid-row {
@@ -225,44 +228,73 @@
 
         .single-row {
             .shift-mobile-row {
-                margin-left: -($responsive-shopping-list-edit-select-row-cell-width-mobile + $product-item-image-holder-tiny-width + $grid-line-items-row-offset-x-mobile - $responsive-shopping-body-cell-offset-x-mobile);
+                margin-left:
+                    -(
+                        $responsive-shopping-list-edit-select-row-cell-width-mobile +
+                        $product-item-image-holder-tiny-width +
+                        $grid-line-items-row-offset-x-mobile -
+                        $responsive-shopping-body-cell-offset-x-mobile
+                    );
             }
         }
 
-        .group-row-has-children {;
+        .group-row-has-children {
             .select-row-cell {
-                &:after {
+                &::after {
                     left: $responsive-shopping-list-edit-select-row-cell-width-mobile / 2;
                 }
             }
 
             .grid-body-cell {
-                margin-left: $responsive-shopping-list-edit-select-row-cell-width-mobile - $responsive-shopping-body-cell-offset-x-mobile;
+                margin-left:
+                    $responsive-shopping-list-edit-select-row-cell-width-mobile -
+                    $responsive-shopping-body-cell-offset-x-mobile;
             }
         }
 
         .sub-row {
             &:not(.sub-row-last) {
-                border-image: linear-gradient(to right, transparent #{$responsive-shopping-list-edit-select-row-cell-width-mobile + $responsive-shopping-list-edit-sub-row-offset}, $responsive-shopping-sub-row-border-mobile-color #{$responsive-shopping-list-edit-select-row-cell-width-mobile + $responsive-shopping-list-edit-sub-row-offset}) 1;
+                border-image:
+                    linear-gradient(
+                        to right,
+                        transparent #{
+                            $responsive-shopping-list-edit-select-row-cell-width-mobile +
+                            $responsive-shopping-list-edit-sub-row-offset
+                        },
+                        $responsive-shopping-sub-row-border-mobile-color #{
+                            $responsive-shopping-list-edit-select-row-cell-width-mobile +
+                            $responsive-shopping-list-edit-sub-row-offset
+                        }
+                    ) 1;
             }
 
             .select-row-cell {
-                width: $responsive-shopping-list-edit-select-row-cell-width-mobile + $responsive-shopping-list-edit-sub-row-offset;
+                width:
+                    $responsive-shopping-list-edit-select-row-cell-width-mobile +
+                    $responsive-shopping-list-edit-sub-row-offset;
 
-                &:after {
+                &::after {
                     left: $responsive-shopping-list-edit-sub-row-offset;
                 }
             }
 
             .grid-body-cell {
-                margin-left: $responsive-shopping-list-edit-select-row-cell-width-mobile + $responsive-shopping-list-edit-sub-row-offset - $responsive-shopping-body-cell-offset-x-mobile;
+                margin-left:
+                    $responsive-shopping-list-edit-select-row-cell-width-mobile +
+                    $responsive-shopping-list-edit-sub-row-offset -
+                    $responsive-shopping-body-cell-offset-x-mobile;
             }
 
             .grid-body-cell-item {
                 display: inline-flex;
                 flex-grow: 1;
                 order: 1;
-                width: calc(100% - #{$responsive-shopping-list-edit-sub-row-offset} - #{$responsive-shopping-list-edit-select-row-cell-width-mobile} - #{$responsive-shopping-list-edit-action-cell-width-mobile});
+                width:
+                    calc(
+                        100% - #{$responsive-shopping-list-edit-sub-row-offset} -
+                        #{$responsive-shopping-list-edit-select-row-cell-width-mobile} -
+                        #{$responsive-shopping-list-edit-action-cell-width-mobile}
+                    );
                 padding-left: 0;
                 margin-left: 0;
             }
@@ -271,25 +303,32 @@
                 padding-left: $responsive-shopping-list-edit-sub-row-offset;
             }
 
-             .cell-line {
-                 width: $responsive-shopping-list-edit-select-row-cell-width-mobile / 2;
-                 top: 50%;
-                 right: 50%;
+            .cell-line {
+                width: $responsive-shopping-list-edit-select-row-cell-width-mobile / 2;
+                top: 50%;
+                right: 50%;
             }
         }
 
-        .filtered-out .select-row-cell:after {
+        .filtered-out .select-row-cell::after {
             bottom: auto;
-            height: $responsive-shopping-grid-row-offset-mobile + $responsive-shopping-body-cell-offset-y-mobile + $responsive-shopping-list-edit-select-row-cell-height-mobile / 2 - $responsive-shopping-sub-row-cell-inner-offset;
+            height:
+                $responsive-shopping-grid-row-offset-mobile +
+                $responsive-shopping-body-cell-offset-y-mobile +
+                $responsive-shopping-list-edit-select-row-cell-height-mobile / 2 -
+                $responsive-shopping-sub-row-cell-inner-offset;
         }
 
-        .sub-row-last .select-row-cell:after {
+        .sub-row-last .select-row-cell::after {
             bottom: auto;
-            height: $responsive-shopping-grid-row-offset-mobile + $responsive-shopping-body-cell-offset-y-mobile + $responsive-shopping-list-edit-select-row-cell-height-mobile / 2;
+            height:
+                $responsive-shopping-grid-row-offset-mobile +
+                $responsive-shopping-body-cell-offset-y-mobile +
+                $responsive-shopping-list-edit-select-row-cell-height-mobile / 2;
         }
 
         // Need to increase weight of selector
-        .action.stretched .icon:before {
+        .action.stretched .icon::before {
             // Line height is equal to a image height
             line-height: $responsive-shopping-list-edit-action-in-mobile-height;
         }
@@ -303,7 +342,11 @@
         }
 
         .grid-body-cell-item {
-            width: calc(100% - #{$responsive-shopping-list-edit-select-row-cell-width-mobile-s} - #{$responsive-shopping-list-edit-action-cell-width-mobile});
+            width:
+                calc(
+                    100% - #{$responsive-shopping-list-edit-select-row-cell-width-mobile-s} -
+                    #{$responsive-shopping-list-edit-action-cell-width-mobile}
+                );
         }
 
         .grid-body-cell-item,
@@ -314,41 +357,70 @@
 
         .single-row {
             .shift-mobile-row {
-                margin-left: -($responsive-shopping-list-edit-select-row-cell-width-mobile-s + $product-item-image-holder-tiny-width + $grid-line-items-row-offset-x-mobile - $responsive-shopping-body-cell-offset-x-mobile);
+                margin-left:
+                    -(
+                        $responsive-shopping-list-edit-select-row-cell-width-mobile-s +
+                        $product-item-image-holder-tiny-width +
+                        $grid-line-items-row-offset-x-mobile -
+                        $responsive-shopping-body-cell-offset-x-mobile
+                    );
             }
         }
 
         .group-row-has-children {
             .select-row-cell {
-                &:after {
+                &::after {
                     left: $responsive-shopping-list-edit-sub-row-offset-mobile-s;
                 }
             }
 
             .grid-body-cell {
-                margin-left: $responsive-shopping-list-edit-select-row-cell-width-mobile-s - $responsive-shopping-body-cell-offset-x-mobile;
+                margin-left:
+                    $responsive-shopping-list-edit-select-row-cell-width-mobile-s -
+                    $responsive-shopping-body-cell-offset-x-mobile;
             }
         }
 
         .sub-row {
             &:not(.sub-row-last) {
-                border-image: linear-gradient(to right, transparent #{$responsive-shopping-list-edit-select-row-cell-width-mobile-s + $responsive-shopping-list-edit-sub-row-offset}, $responsive-shopping-sub-row-border-mobile-color #{$responsive-shopping-list-edit-select-row-cell-width-mobile-s + $responsive-shopping-list-edit-sub-row-offset}) 1;
+                border-image:
+                    linear-gradient(
+                            to right,
+                            transparent #{
+                                $responsive-shopping-list-edit-select-row-cell-width-mobile-s +
+                                $responsive-shopping-list-edit-sub-row-offset
+                            },
+                            $responsive-shopping-sub-row-border-mobile-color #{
+                                $responsive-shopping-list-edit-select-row-cell-width-mobile-s +
+                                $responsive-shopping-list-edit-sub-row-offset
+                           }
+                    ) 1;
             }
 
             .select-row-cell {
-                width: $responsive-shopping-list-edit-select-row-cell-width-mobile-s + $responsive-shopping-list-edit-sub-row-offset;
+                width:
+                    $responsive-shopping-list-edit-select-row-cell-width-mobile-s +
+                    $responsive-shopping-list-edit-sub-row-offset;
 
-                &:after {
+                &::after {
                     left: $responsive-shopping-list-edit-sub-row-offset-mobile-s;
                 }
             }
 
             .grid-body-cell-item {
-                width: calc(100% - #{$responsive-shopping-list-edit-sub-row-offset} - #{$responsive-shopping-list-edit-select-row-cell-width-mobile-s} - #{$responsive-shopping-list-edit-action-cell-width-mobile});
+                width:
+                    calc(
+                        100% - #{$responsive-shopping-list-edit-sub-row-offset} -
+                        #{$responsive-shopping-list-edit-select-row-cell-width-mobile-s} -
+                        #{$responsive-shopping-list-edit-action-cell-width-mobile}
+                    );
             }
 
             .grid-body-cell {
-                margin-left: $responsive-shopping-list-edit-select-row-cell-width-mobile-s + $responsive-shopping-list-edit-sub-row-offset - $responsive-shopping-body-cell-offset-x-mobile;
+                margin-left:
+                    $responsive-shopping-list-edit-select-row-cell-width-mobile-s +
+                    $responsive-shopping-list-edit-sub-row-offset -
+                    $responsive-shopping-body-cell-offset-x-mobile;
             }
         }
     }

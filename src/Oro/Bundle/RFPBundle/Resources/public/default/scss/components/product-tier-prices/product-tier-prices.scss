@@ -14,7 +14,8 @@
 }
 
 input {
-    &:hover, &:focus {
+    &:hover,
+    &:focus {
         + .product-tier-prices {
             border-color: $input-border-color-focus-state;
         }

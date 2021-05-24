@@ -2,6 +2,8 @@ system_configuration:
     groups:
         oro_redirect_direct_urls:
             title: oro.redirect.system_configuration.groups.direct_urls.label
+        oro_redirect_canonical_urls:
+            title: oro.redirect.system_configuration.groups.canonical_urls.label
 
     fields:
         oro_redirect.enable_direct_url:
@@ -10,6 +12,15 @@ system_configuration:
             priority: 500
             options:
                 label: oro.redirect.system_configuration.fields.enable_direct_url.label
+                required: false
+
+        oro_redirect.use_localized_canonical:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            priority: 100
+            options:
+                label: oro.redirect.system_configuration.fields.use_localized_canonical.label
+                tooltip: oro.redirect.system_configuration.fields.use_localized_canonical.tooltip
                 required: false
 
         oro_redirect.canonical_url_type:
@@ -65,9 +76,12 @@ system_configuration:
                                 children:
                                     websites_routing_general:
                                         children:
-                                            - oro_redirect.canonical_url_type
-                                            - oro_redirect.canonical_url_security_type
                                             - oro_redirect.redirect_generation_strategy
                                     oro_redirect_direct_urls:
                                         children:
                                             - oro_redirect.enable_direct_url
+                                    oro_redirect_canonical_urls:
+                                        children:
+                                            - oro_redirect.canonical_url_type
+                                            - oro_redirect.canonical_url_security_type
+                                            - oro_redirect.use_localized_canonical

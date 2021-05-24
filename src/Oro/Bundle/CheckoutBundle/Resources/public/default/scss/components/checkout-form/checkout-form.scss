@@ -31,28 +31,6 @@
         margin: 0 0 $offset-y-m;
     }
 
-    &__radio {
-        margin-bottom: $offset-y-m;
-
-        &:last-child {
-            margin-bottom: 0;
-
-            .checkout-form__payment-container {
-                margin-bottom: 0;
-            }
-        }
-
-        .custom-radio {
-            &.checked {
-                + .checkout-form__payment-container {
-                  .checkout-form__payment-methods-form {
-                      display: block;
-                  }
-                }
-            }
-        }
-    }
-
     &__submit {
         min-width: $checkout-form-submit-min-width;
     }
@@ -115,6 +93,28 @@
 
         &--offset-bottom {
             margin: $checkout-form-back-bottom-offset;
+        }
+    }
+
+    &__radio {
+        margin-bottom: $offset-y-m;
+
+        &:last-child {
+            margin-bottom: 0;
+
+            .checkout-form__payment-container {
+                margin-bottom: 0;
+            }
+        }
+
+        .custom-radio {
+            &.checked {
+                + .checkout-form__payment-container {
+                    .checkout-form__payment-methods-form {
+                        display: block;
+                    }
+                }
+            }
         }
     }
 

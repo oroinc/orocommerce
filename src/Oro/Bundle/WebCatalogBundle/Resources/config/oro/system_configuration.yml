@@ -23,7 +23,7 @@ system_configuration:
         oro_web_catalog.enable_web_catalog_canonical_url:
             data_type: boolean
             type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
-            priority: 250
+            priority: 50
             options:
                 label: oro.webcatalog.system_configuration.fields.enable_web_catalog_canonical_url.label
                 tooltip: oro.webcatalog.system_configuration.fields.enable_web_catalog_canonical_url.tooltip
@@ -38,6 +38,8 @@ system_configuration:
                                 children:
                                     websites_routing_general:
                                         children:
-                                            - oro_web_catalog.enable_web_catalog_canonical_url
                                             - oro_web_catalog.web_catalog
                                             - oro_web_catalog.navigation_root
+                                    oro_redirect_canonical_urls:
+                                        children:
+                                            - oro_web_catalog.enable_web_catalog_canonical_url

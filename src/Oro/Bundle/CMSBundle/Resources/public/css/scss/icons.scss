@@ -18,7 +18,7 @@ $icon-keys: (
 
 @each $icon, $code in $icon-keys {
     .gjs-icon-#{$icon} {
-        &:before {
+        &::before {
             content: $code;
         }
     }

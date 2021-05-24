@@ -44,9 +44,6 @@
 
         .quick-search-icon {
             display: none;
-        }
-
-        .quick-search-icon {
             position: absolute;
             right: 24px;
             top: 50%;
@@ -98,17 +95,17 @@
         &:not(:first-of-type) {
             margin-top: $offset-y-m;
 
-            &:before {
+            &::before {
                 content: '';
                 display: block;
                 margin: 0 $offset-x $offset-y-m;
-                border-top: 1px solid get-color('additional', 'light');
+                border-top: $product-item-qty-items-group-border;
             }
         }
 
         &.hide {
             + .items-group {
-                &:before {
+                &::before {
                     display: none;
                 }
             }

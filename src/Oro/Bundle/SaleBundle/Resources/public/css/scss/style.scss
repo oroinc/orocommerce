@@ -1,5 +1,7 @@
 /* @theme: admin.oro; */
 
+/* stylelint-disable no-descending-specificity */
+
 .grid-container {
     .table-bordered {
         tbody {
@@ -21,7 +23,8 @@
 
 .quote-lineitem-requested-quantity,
 .quote-lineitem-offers-quantity {
-    input[type="text"] {
+    input[type='text'] {
+        // stylelint-disable-next-line declaration-no-important
         width: 40px !important;
     }
 }
@@ -34,7 +37,8 @@
 
 .quote-lineitem-requested-price,
 .quote-lineitem-offers-price {
-    input[type="text"] {
+    input[type='text'] {
+        // stylelint-disable-next-line declaration-no-important
         width: 40px !important;
     }
 }
@@ -49,7 +53,13 @@
         position: relative;
     }
 
-    input[type="text"] {
+    td {
+        &:first-child {
+            padding-left: 0;
+        }
+    }
+
+    input[type='text'] {
         text-align: right;
     }
 }
@@ -61,8 +71,20 @@
 }
 
 .oro-item-collection {
+    table.quote-lineitem-offers {
+        td {
+            vertical-align: top;
+        }
+    }
+
+    tbody {
+        .quote-lineitem-remove {
+            padding: $content-padding-small;
+        }
+    }
+
     .sale-quoteproductitem-widget-price {
-        input[type="text"] {
+        input[type='text'] {
             width: 40px;
         }
     }
@@ -78,6 +100,14 @@ td.quote-lineitem-notes {
 }
 
 .quote-lineitems {
+    &__offers {
+        width: 100%;
+    }
+
+    table.grid {
+        overflow: auto;
+    }
+
     .add-list-item {
         margin-top: $content-padding-small;
     }
@@ -102,31 +132,8 @@ td.quote-lineitem-notes {
         margin-top: 4px;
     }
 
-    input[type="checkbox"] {
+    input[type='checkbox'] {
         margin-top: 0;
-    }
-}
-
-.quote-lineitem-offers-items {
-    .quote-lineitem-offers-item {
-        .quote-lineitem-offers-price {
-            input[type="text"] {
-                float: left;
-            }
-
-            table td {
-                border: 0;
-                padding: 0;
-            }
-        }
-    }
-}
-
-.quote-lineitem-offers-price {
-    td {
-        &:first-child {
-            padding-left: 0;
-        }
     }
 }
 
@@ -156,19 +163,28 @@ table.quote-lineitem-offers {
     }
 }
 
-.oro-item-collection {
-    table.quote-lineitem-offers {
-        td {
-            vertical-align: top;
+.quote-lineitem-offers-items {
+    .quote-lineitem-offers-item {
+        .quote-lineitem-offers-price {
+            input[type='text'] {
+                float: left;
+            }
+
+            // stylelint-disable-next-line selector-max-compound-selectors
+            table td {
+                border: 0;
+                padding: 0;
+            }
         }
     }
 }
 
 .quote-lineitem-notes-customer {
     label {
-        font-weight: bold;
+        font-weight: font-weight('bold');
         display: block;
     }
+
     textarea {
         max-height: 100px;
         width: 100%;
@@ -177,7 +193,7 @@ table.quote-lineitem-offers {
 
 .quote-lineitem-notes-seller-active {
     label {
-        font-weight: bold;
+        font-weight: font-weight('bold');
     }
 
     .quote-lineitem-notes-seller {
@@ -194,6 +210,7 @@ td.quote-product-offer-product-name,
 td.quote-product-offer-customer-notes,
 td.quote-product-offer-seller-notes,
 td.quote-product-offer-price {
+    // stylelint-disable-next-line declaration-no-important
     padding-top: 11px !important;
 }
 
@@ -209,7 +226,9 @@ td.quote-product-offer-select-offer {
 
         &.quote-product-offer-select-offer-choice {
             width: 16px;
+            // stylelint-disable-next-line declaration-no-important
             padding: 5px 0 !important;
+            // stylelint-disable-next-line declaration-no-important
             vertical-align: middle !important;
         }
 
@@ -220,6 +239,7 @@ td.quote-product-offer-select-offer {
         }
 
         input {
+            // stylelint-disable-next-line declaration-no-important
             margin-top: 0 !important;
         }
     }
@@ -242,30 +262,12 @@ span.quote-product-offer-quantity-unit {
     margin-left: 5px;
 }
 
-.quote-lineitems {
-    table.grid {
-        overflow: auto;
-    }
-
-    &__offers {
-        width: 100%;
-    }
-}
-
 td.quote-lineitem-product-sku {
     width: 100px;
 }
 
 .quote-lineitem-remove {
     text-align: right;
-}
-
-.oro-item-collection {
-    tbody {
-        .quote-lineitem-remove {
-            padding: $content-padding-small;
-        }
-    }
 }
 
 .quote-lineitem-product-sku-row {
@@ -276,7 +278,7 @@ td.quote-lineitem-product-sku {
     }
 
     .quote-lineitem-product-free-form {
-        input[type="text"] {
+        input[type='text'] {
             width: 70px;
         }
     }
@@ -289,7 +291,8 @@ td.quote-lineitem-product-sku {
 }
 
 .quote-lineitem-product-row {
-    input[type="text"] {
+    input[type='text'] {
+        // stylelint-disable-next-line declaration-no-important
         width: $field-width !important;
     }
 }

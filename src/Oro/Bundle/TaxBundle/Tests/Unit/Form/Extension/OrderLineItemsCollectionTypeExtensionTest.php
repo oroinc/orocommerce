@@ -47,7 +47,7 @@ class OrderLineItemsCollectionTypeExtensionTest extends \PHPUnit\Framework\TestC
         );
     }
 
-    public function testGetExtendedType(): void
+    public function testGetExtendedTypes(): void
     {
         $this->assertEquals(
             [OrderLineItemsCollectionType::class],

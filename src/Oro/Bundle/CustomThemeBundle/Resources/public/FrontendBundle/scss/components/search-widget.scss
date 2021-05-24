@@ -5,7 +5,7 @@
         margin: 0;
         padding: $offset-y;
 
-        border-bottom: 1px solid get-color('additional', 'light');
+        border-bottom: $search-container-tablet-border;
 
         &__submit {
             right: $offset-x;

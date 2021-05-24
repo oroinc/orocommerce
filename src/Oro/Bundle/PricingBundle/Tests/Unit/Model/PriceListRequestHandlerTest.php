@@ -84,6 +84,7 @@ class PriceListRequestHandlerTest extends \PHPUnit\Framework\TestCase
         $this->priceListTreeHandler = $this->createMock(CombinedPriceListTreeHandler::class);
 
         $this->request = $this->createMock(Request::class);
+        $this->request->expects($this->any())->method('hasSession')->willReturn(true);
         $this->request->expects($this->any())->method('getSession')->willReturn($this->session);
         $this->requestStack = $this->createMock(RequestStack::class);
 

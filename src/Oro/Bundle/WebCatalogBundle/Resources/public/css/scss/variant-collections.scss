@@ -22,6 +22,7 @@
 
     .content-variant-item-default {
         .content-variant-item-default-label {
+            // stylelint-disable-next-line declaration-no-important
             display: inline-block !important;
         }
 
@@ -31,9 +32,9 @@
     }
 
     .content-variant-item-title {
-        margin-bottom: 0px;
+        margin-bottom: 0;
 
-        input[type="radio"] {
+        input[type='radio'] {
             margin-top: -2px;
             margin-right: 7px;
         }
@@ -46,7 +47,7 @@
     .content-variant-item-content {
         &__body {
             margin-top: 10px;
-            border-top: rgb(230, 230, 230) solid 1px;
+            border-top: 1px solid $primary-800;
             padding-top: 8px;
         }
     }
@@ -69,9 +70,11 @@
 
     .scope-collection {
         .oro-item-collection {
+            // stylelint-disable-next-line declaration-no-important
             display: block !important;
 
             .row-oro {
+                // stylelint-disable-next-line declaration-no-important
                 background: $primary-860 !important;
             }
         }

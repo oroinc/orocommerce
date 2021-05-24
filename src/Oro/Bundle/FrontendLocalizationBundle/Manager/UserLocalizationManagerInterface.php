@@ -40,11 +40,6 @@ interface UserLocalizationManagerInterface
     /**
      * @param Localization $localization
      * @param Website|null $website
-     * @param bool $forceSessionStart Sets localization to the session even if it was not started.
      */
-    public function setCurrentLocalization(
-        Localization $localization,
-        Website $website = null,
-        $forceSessionStart = false
-    ): void;
+    public function setCurrentLocalization(Localization $localization, Website $website = null): void;
 }

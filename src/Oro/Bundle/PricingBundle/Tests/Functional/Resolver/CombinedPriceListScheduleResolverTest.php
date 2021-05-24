@@ -48,6 +48,9 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
             LoadCombinedProductAdditionalPrices::class
         ]);
 
+        $this->getOptionalListenerManager()->enableListener('oro_pricing.entity_listener.product_price_cpl');
+        $this->getOptionalListenerManager()->enableListener('oro_pricing.entity_listener.price_list_to_product');
+
         $this->resolver = $this->getContainer()->get('oro_pricing.resolver.combined_product_schedule_resolver');
         $this->configManager = $this->getContainer()->get('oro_config.global');
     }

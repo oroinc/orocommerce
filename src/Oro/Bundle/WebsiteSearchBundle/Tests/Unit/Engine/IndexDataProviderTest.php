@@ -15,13 +15,12 @@ use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Helper\PlaceholderHelper;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderInterface;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder;
+use PHPUnit\Framework\MockObject\Stub\ReturnCallback;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var IndexDataProvider */
-    protected $indexDataProvider;
-
     /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $eventDispatcher;
 
@@ -37,6 +36,9 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
     /** @var PlaceholderHelper|\PHPUnit\Framework\MockObject\MockObject */
     protected $placeholderHelper;
 
+    /** @var IndexDataProvider */
+    protected $indexDataProvider;
+
     protected function setUp(): void
     {
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
@@ -47,13 +49,16 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
         $this->placeholderHelper = $this->createMock(PlaceholderHelper::class);
         $this->placeholderHelper->expects($this->any())
             ->method('isNameMatch')
-            ->willReturnCallback(
-                function ($name, $nameValue) {
-                    return $name === 'custom_PLACEHOLDER_ID' && $nameValue === 'custom_42';
-                }
-            );
+            ->willReturnCallback(function ($name, $nameValue) {
+                return $name === 'custom_PLACEHOLDER_ID' && $nameValue === 'custom_42';
+            });
 
-        $this->indexDataProvider = new IndexDataProvider(
+        $this->indexDataProvider = $this->createIndexDataProvider();
+    }
+
+    protected function createIndexDataProvider(): IndexDataProvider
+    {
+        return new IndexDataProvider(
             $this->eventDispatcher,
             $this->aliasResolver,
             $this->placeholder,
@@ -72,50 +77,52 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
             AbstractIndexer::CONTEXT_CURRENT_WEBSITE_ID_KEY => $websiteId
         ];
 
-        $this->eventDispatcher->expects($this->once())->method('dispatch')->with(
-            $this->logicalAnd(
-                $this->isInstanceOf(CollectContextEvent::class),
-                $this->callback(
-                    function (CollectContextEvent $event) use ($expectedContext) {
+        $this->eventDispatcher->expects($this->once())
+            ->method('dispatch')
+            ->with(
+                $this->logicalAnd(
+                    $this->isInstanceOf(CollectContextEvent::class),
+                    $this->callback(function (CollectContextEvent $event) use ($expectedContext) {
                         $this->assertEquals($expectedContext, $event->getContext());
 
                         return true;
-                    }
-                )
-            ),
-            CollectContextEvent::NAME
-        );
+                    })
+                ),
+                CollectContextEvent::NAME
+            );
 
-        $this->assertEquals($expectedContext, $this->indexDataProvider->collectContextForWebsite($websiteId, $context));
+        $this->assertEquals(
+            $expectedContext,
+            $this->indexDataProvider->collectContextForWebsite($websiteId, $context)
+        );
     }
 
     public function testGetRestrictedEntitiesQueryBuilder()
     {
-        $this->aliasResolver->expects($this->once())->method('getAlias')->with(\stdClass::class)->willReturn('std');
+        $this->aliasResolver->expects($this->once())
+            ->method('getAlias')
+            ->with(\stdClass::class)
+            ->willReturn('std');
 
         $em = $this->createMock(EntityManagerInterface::class);
         $qb = new QueryBuilder($em);
 
         $this->assertEmpty($qb->getDQLPart('select'));
 
-        $this->eventDispatcher->expects($this->exactly(2))->method('dispatch')
+        $this->eventDispatcher->expects($this->exactly(2))
+            ->method('dispatch')
             ->withConsecutive(
-                [
-                    $this->isInstanceOf(RestrictIndexEntityEvent::class),
-                    RestrictIndexEntityEvent::NAME,
-                ],
-                [
-                    $this->isInstanceOf(RestrictIndexEntityEvent::class),
-                    RestrictIndexEntityEvent::NAME.'.std',
-                ]
+                [$this->isInstanceOf(RestrictIndexEntityEvent::class), RestrictIndexEntityEvent::NAME],
+                [$this->isInstanceOf(RestrictIndexEntityEvent::class), RestrictIndexEntityEvent::NAME . '.std']
             )
-            ->willReturnCallback(
-                function () use ($qb) {
-                    $qb->select(['something']);
-                }
-            );
+            ->willReturnCallback(function () use ($qb) {
+                $qb->select(['something']);
+            });
 
-        $this->assertSame($qb, $this->indexDataProvider->getRestrictedEntitiesQueryBuilder(\stdClass::class, $qb, []));
+        $this->assertSame(
+            $qb,
+            $this->indexDataProvider->getRestrictedEntitiesQueryBuilder(\stdClass::class, $qb, [])
+        );
         $this->assertNotEmpty($qb->getDQLPart('select'));
     }
 
@@ -127,47 +134,50 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetEntitiesData(array $entityConfig, array $indexData, array $expected)
     {
-        $this->aliasResolver->expects($this->once())->method('getAlias')->with(\stdClass::class)->willReturn('std');
-        $this->tagHelper->expects($this->any())->method('stripTags')->willReturnCallback(
-            function ($value) {
+        $this->aliasResolver->expects($this->once())
+            ->method('getAlias')
+            ->with(\stdClass::class)
+            ->willReturn('std');
+        $this->tagHelper->expects($this->any())
+            ->method('stripTags')
+            ->willReturnCallback(function ($value) {
                 return trim(strip_tags($value));
-            }
-        );
+            });
         $this->tagHelper->expects($this->any())
             ->method('stripLongWords')
-            ->willReturnCallback(
-                function ($value) {
-                    $words = preg_split('/\s+/', $value);
+            ->willReturnCallback(function ($value) {
+                $words = preg_split('/\s+/', $value);
+                $words = array_filter(
+                    $words,
+                    function ($item) {
+                        return \strlen($item) <= HtmlTagHelper::MAX_STRING_LENGTH;
+                    }
+                );
 
-                    $words = array_filter(
-                        $words,
-                        function ($item) {
-                            return \strlen($item) <= HtmlTagHelper::MAX_STRING_LENGTH;
-                        }
-                    );
-
-                    return implode(' ', $words);
-                }
-            );
-        $this->placeholder->expects($this->any())->method('replace')->willReturnCallback(
-            function ($string, array $values) {
+                return implode(' ', $words);
+            });
+        $this->placeholder->expects($this->any())
+            ->method('replace')
+            ->willReturnCallback(function ($string, array $values) {
                 return str_replace(array_keys($values), array_values($values), $string);
-            }
-        );
+            });
 
-        $this->eventDispatcher->expects($this->at(0))->method('dispatch')
-            ->with($this->isInstanceOf(IndexEntityEvent::class), IndexEntityEvent::NAME)
-            ->willReturnCallback(
-                function (IndexEntityEvent $event, $name) use ($indexData) {
+        $this->eventDispatcher->expects($this->exactly(2))
+            ->method('dispatch')
+            ->withConsecutive(
+                [$this->isInstanceOf(IndexEntityEvent::class), IndexEntityEvent::NAME],
+                [$this->isInstanceOf(IndexEntityEvent::class), IndexEntityEvent::NAME . '.std']
+            )
+            ->willReturnOnConsecutiveCalls(
+                new ReturnCallback(function (IndexEntityEvent $event) use ($indexData) {
                     foreach ($indexData as $data) {
                         $method = count($data) === 4 ? 'addField' : 'addPlaceholderField';
                         call_user_func_array([$event, $method], $data);
                     }
-                }
+                }),
+                new ReturnCallback(function () {
+                }),
             );
-
-        $this->eventDispatcher->expects($this->at(1))->method('dispatch')
-            ->with($this->isInstanceOf(IndexEntityEvent::class), IndexEntityEvent::NAME.'.std');
 
         $this->assertEquals(
             $expected,
@@ -176,10 +186,9 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return array
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function entitiesDataProvider()
+    public function entitiesDataProvider(): array
     {
         $date = \DateTime::createFromFormat('Y-m-d H:i:s', '2015-02-03 00:00:00', new \DateTimeZone('UTC'));
 
@@ -496,17 +505,19 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetEntitiesDataConfigMissing()
     {
-        $this->expectException(\Symfony\Component\Config\Definition\Exception\InvalidConfigurationException::class);
+        $this->expectException(InvalidConfigurationException::class);
         $this->expectExceptionMessage('Missing option "type" for "sku" field');
 
-        $this->aliasResolver->expects($this->once())->method('getAlias')->with(\stdClass::class)->willReturn('std');
+        $this->aliasResolver->expects($this->once())
+            ->method('getAlias')
+            ->with(\stdClass::class)
+            ->willReturn('std');
 
-        $this->eventDispatcher->expects($this->atLeastOnce())->method('dispatch')
-            ->willReturnCallback(
-                function (IndexEntityEvent $event, $name) {
-                    $event->addField(1, 'sku', 'SKU-01');
-                }
-            );
+        $this->eventDispatcher->expects($this->atLeastOnce())
+            ->method('dispatch')
+            ->willReturnCallback(function (IndexEntityEvent $event) {
+                $event->addField(1, 'sku', 'SKU-01');
+            });
 
         $this->indexDataProvider->getEntitiesData(\stdClass::class, [], [], ['fields' => []]);
     }

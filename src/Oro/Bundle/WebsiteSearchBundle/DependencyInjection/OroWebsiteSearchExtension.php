@@ -38,10 +38,6 @@ class OroWebsiteSearchExtension extends Extension
         foreach ($resources as $resource) {
             $loader->load($resource->path);
         }
-
-        if ('test' === $container->getParameter('kernel.environment')) {
-            $loader->load('services_test.yml');
-        }
     }
 
     /**

@@ -15,8 +15,9 @@
         &.controls {
             float: none;
         }
+
         .select2-container,
-        input[type="text"] {
+        input[type='text'] {
             width: 262px;
         }
 
@@ -33,6 +34,7 @@
 }
 
 .tax-result-grid {
+    /* stylelint-disable declaration-no-important */
     th {
         border-bottom-left-radius: 0 !important;
         border-bottom-right-radius: 0 !important;
@@ -41,6 +43,8 @@
     .other-scroll-container & {
         border: 1px solid $general-border-color !important;
     }
+
+    /* stylelint-enable declaration-no-important */
 }
 
 .order-line-item-unitPriceIncludingTax,

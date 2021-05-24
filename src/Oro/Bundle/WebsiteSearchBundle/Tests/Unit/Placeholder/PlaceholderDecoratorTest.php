@@ -8,28 +8,17 @@ use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderRegistry;
 
 class PlaceholderDecoratorTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var PlaceholderDecorator */
-    protected $placeholder;
-
     /** @var PlaceholderRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    protected $registry;
+    private $registry;
 
-    /**
-     * {@inheritdoc}
-     */
+    /** @var PlaceholderDecorator */
+    private $placeholder;
+
     protected function setUp(): void
     {
         $this->registry = $this->createMock(PlaceholderRegistry::class);
 
         $this->placeholder = new PlaceholderDecorator($this->registry);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown(): void
-    {
-        unset($this->registry, $this->placeholder);
     }
 
     public function testGetPlaceholderNotIntendedToRun()
@@ -41,9 +30,11 @@ class PlaceholderDecoratorTest extends \PHPUnit\Framework\TestCase
     public function testReplace()
     {
         $placeholder1 = $this->createMock(PlaceholderInterface::class);
-        $placeholder1->expects($this->once())->method('getPlaceholder')
+        $placeholder1->expects($this->once())
+            ->method('getPlaceholder')
             ->willReturn('PLACEHOLDER1');
-        $placeholder1->expects($this->once())->method('replace')
+        $placeholder1->expects($this->once())
+            ->method('replace')
             ->with(
                 'string_PLACEHOLDER1_PLACEHOLDER2',
                 ['PLACEHOLDER1' => 'value1', 'PLACEHOLDER2' => 'value2']
@@ -51,22 +42,26 @@ class PlaceholderDecoratorTest extends \PHPUnit\Framework\TestCase
             ->willReturn('string_value1_PLACEHOLDER2');
 
         $placeholder2 = $this->createMock(PlaceholderInterface::class);
-        $placeholder2->expects($this->once())->method('getPlaceholder')
+        $placeholder2->expects($this->once())
+            ->method('getPlaceholder')
             ->willReturn('PLACEHOLDER2');
-        $placeholder2->expects($this->once())->method('replace')
+        $placeholder2->expects($this->once())
+            ->method('replace')
             ->with(
                 'string_value1_PLACEHOLDER2',
                 ['PLACEHOLDER1' => 'value1', 'PLACEHOLDER2' => 'value2']
             )
             ->willReturn('string_value1_value2');
 
-        $this->registry->expects($this->at(0))->method('getPlaceholders')->willReturn([$placeholder1, $placeholder2]);
-        $this->registry->expects($this->at(1))->method('getPlaceholder')
-            ->with('PLACEHOLDER1')
-            ->willReturn($placeholder1);
-        $this->registry->expects($this->at(2))->method('getPlaceholder')
-            ->with('PLACEHOLDER2')
-            ->willReturn($placeholder2);
+        $this->registry->expects($this->once())
+            ->method('getPlaceholders')
+            ->willReturn([$placeholder1, $placeholder2]);
+        $this->registry->expects($this->exactly(2))
+            ->method('getPlaceholder')
+            ->willReturnMap([
+                ['PLACEHOLDER1', $placeholder1],
+                ['PLACEHOLDER2', $placeholder2]
+            ]);
 
         $this->assertEquals(
             'string_value1_value2',
@@ -80,16 +75,20 @@ class PlaceholderDecoratorTest extends \PHPUnit\Framework\TestCase
     public function testReplaceDefault()
     {
         $placeholder1 = $this->createMock(PlaceholderInterface::class);
-        $placeholder1->expects($this->once())->method('replaceDefault')
+        $placeholder1->expects($this->once())
+            ->method('replaceDefault')
             ->with('string_PLACEHOLDER1_PLACEHOLDER2')
             ->willReturn('string_value1_PLACEHOLDER2');
 
         $placeholder2 = $this->createMock(PlaceholderInterface::class);
-        $placeholder2->expects($this->once())->method('replaceDefault')
+        $placeholder2->expects($this->once())
+            ->method('replaceDefault')
             ->with('string_value1_PLACEHOLDER2')
             ->willReturn('string_value1_value2');
 
-        $this->registry->expects($this->once())->method('getPlaceholders')->willReturn([$placeholder1, $placeholder2]);
+        $this->registry->expects($this->once())
+            ->method('getPlaceholders')
+            ->willReturn([$placeholder1, $placeholder2]);
 
         $this->assertEquals(
             'string_value1_value2',
@@ -99,9 +98,9 @@ class PlaceholderDecoratorTest extends \PHPUnit\Framework\TestCase
 
     public function testReplaceWithNull()
     {
-        $this->registry->expects($this->once())->method('getPlaceholders')->willReturn(
-            []
-        );
+        $this->registry->expects($this->once())
+            ->method('getPlaceholders')
+            ->willReturn([]);
 
         $result = $this->placeholder->replace(null, []);
 

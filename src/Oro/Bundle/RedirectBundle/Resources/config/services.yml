@@ -286,6 +286,7 @@ services:
             - '@request_stack'
             - '@oro_redirect.provider.routing_information_provider'
             - '@oro_website.resolver.website_system_url_resolver'
+            - '@oro_locale.provider.current_localization'
 
     oro_redirect.canonical_url_configs.cache:
         public: false

@@ -46,7 +46,7 @@ class SlugRequestFactoryTest extends \PHPUnit\Framework\TestCase
         $expectedServerParameters['QUERY_STRING'] = 'query_prm1=query_prm_val1';
         self::assertEquals($expectedServerParameters, $slugRequest->server->all());
         self::assertEquals($request->getContent(), $slugRequest->getContent());
-        self::assertSame($session, $slugRequest->getSession());
+        self::assertSame($session, $slugRequest->hasSession() ? $slugRequest->getSession() : null);
         self::assertEquals($request->getLocale(), $slugRequest->getLocale());
         self::assertEquals($request->getDefaultLocale(), $slugRequest->getDefaultLocale());
     }
@@ -59,7 +59,7 @@ class SlugRequestFactoryTest extends \PHPUnit\Framework\TestCase
         $slugRequest = $this->factory->createSlugRequest($request);
 
         self::assertNotSame($request, $slugRequest);
-        self::assertNull($slugRequest->getSession());
+        self::assertFalse($slugRequest->hasSession());
     }
 
     public function testUpdateMainRequest()

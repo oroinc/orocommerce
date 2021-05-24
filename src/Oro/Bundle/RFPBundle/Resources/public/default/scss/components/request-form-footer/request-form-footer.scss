@@ -1,8 +1,10 @@
+/* @theme: default; */
+
 .request-form-footer {
     padding: 13px 0;
 
-    border-top: 1px solid get-color('additional', 'light');
-    border-bottom: 1px solid get-color('additional', 'light');
+    border-top: $request-form-footer-border-top;
+    border-bottom: $request-form-footer-border-bottom;
 }
 
 @include breakpoint('tablet') {

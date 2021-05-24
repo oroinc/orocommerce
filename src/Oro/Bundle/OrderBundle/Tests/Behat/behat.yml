@@ -233,7 +233,7 @@ oro_behat_extension:
 
     Discount Popup:
       selector:
-        locator: '//div[@class="ui-dialog-inner-wrapper"]'
+        locator: '//div[@class="ui-dialog"]'
         type: xpath
 
     Discount Popup Cancel Button:

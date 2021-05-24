@@ -29,11 +29,11 @@
     &__actions {
         float: right;
 
-        color: get-color('ui', 'normal');
+        color: $shopping-lists-units-actions-color;
     }
 
     &:hover &__actions {
-        transition-delay: 0.1s;
+        transition-delay: .1s;
     }
 }
 

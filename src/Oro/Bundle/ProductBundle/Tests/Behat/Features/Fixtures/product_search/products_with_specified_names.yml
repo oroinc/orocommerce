@@ -1,0 +1,32 @@
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    localProductName:
+        string: 'Product-name'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    localProductAttributeFamily:
+        string: 'Product Attribute Family'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    productUnitPrecision:
+        unit: '@item'
+        precision: '1'
+
+Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
+    productAttributeFamily:
+        entityClass: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
+        code: 'product_attribute_family_code'
+        __calls:
+            - addLabel: ['@localProductAttributeFamily']
+        owner: '@organization'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product:
+        type: 'simple'
+        sku: '87-13'
+        primaryUnitPrecision: '@productUnitPrecision'
+        __calls:
+            - addName: ['@localProductName']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@productAttributeFamily'

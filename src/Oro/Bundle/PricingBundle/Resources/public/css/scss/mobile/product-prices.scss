@@ -7,6 +7,14 @@
     }
 }
 
+.product-price-collection {
+    .oro-item-collection {
+        .row-oro {
+            padding: $content-padding;
+        }
+    }
+}
+
 .form-horizontal {
     .responsive-cell {
         &:only-child {
@@ -18,27 +26,21 @@
                     padding: 0;
 
                     &:not(:last-child) {
-                        &:after {
+                        // stylelint-disable-next-line max-nesting-depth
+                        &::after {
                             display: none;
                         }
                     }
                 }
 
                 .pricing-price-attribute {
+                    // stylelint-disable-next-line selector-max-compound-selectors
                     > .row-oro {
                         overflow-x: auto;
                         overflow-y: hidden;
                     }
                 }
             }
-        }
-    }
-}
-
-.product-price-collection {
-    .oro-item-collection {
-        .row-oro {
-            padding: $content-padding;
         }
     }
 }

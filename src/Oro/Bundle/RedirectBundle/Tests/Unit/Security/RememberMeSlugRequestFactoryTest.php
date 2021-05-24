@@ -41,7 +41,7 @@ class RememberMeSlugRequestFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateSlugRequestWithRememberMeCookieAttribute()
     {
-        $rememberMeCookie = new Cookie('TESTRM', 'test_value');
+        $rememberMeCookie = Cookie::create('TESTRM', 'test_value');
         $request = Request::create('/slug');
         $request->attributes->set(RememberMeServicesInterface::COOKIE_ATTR_NAME, $rememberMeCookie);
         $createdSlugRequest = Request::create('/resolved/slug');
@@ -79,7 +79,7 @@ class RememberMeSlugRequestFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdateMainRequestWithRememberMeCookieAttribute()
     {
-        $rememberMeCookie = new Cookie('TESTRM', 'test_value');
+        $rememberMeCookie = Cookie::create('TESTRM', 'test_value');
         $request = Request::create('/slug');
         $slugRequest = Request::create('/resolved/slug');
         $slugRequest->attributes->set(RememberMeServicesInterface::COOKIE_ATTR_NAME, $rememberMeCookie);
