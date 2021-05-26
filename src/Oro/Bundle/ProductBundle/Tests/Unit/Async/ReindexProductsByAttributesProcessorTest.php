@@ -12,16 +12,15 @@ use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Job\Job;
 use Oro\Component\MessageQueue\Test\JobRunner;
+use Oro\Component\MessageQueue\Transport\Message;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ReindexProductsByAttributesProcessorTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
     /** @var JobRunner|\PHPUnit\Framework\MockObject\MockObject */
     private $jobRunner;
 
@@ -100,7 +99,7 @@ class ReindexProductsByAttributesProcessorTest extends \PHPUnit\Framework\TestCa
 
     /**
      * @param array $productIds
-     * @param \PHPUnit\Framework\MockObject\Matcher\InvokedCount $dispatchExpected
+     * @param \PHPUnit\Framework\MockObject\Rule\InvokedCount $dispatchExpected
      *
      * @dataProvider getProductIds
      */
@@ -117,7 +116,6 @@ class ReindexProductsByAttributesProcessorTest extends \PHPUnit\Framework\TestCa
             ->with($attributeIds)
             ->willReturn($productIds);
 
-        /** @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject $registry */
         $manager = $this->createMock(ObjectManager::class);
         $manager->expects($this->any())
             ->method('getRepository')
@@ -152,7 +150,6 @@ class ReindexProductsByAttributesProcessorTest extends \PHPUnit\Framework\TestCa
             ->with($attributeIds)
             ->willReturn([1]);
 
-        /** @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject $registry */
         $manager = $this->createMock(ObjectManager::class);
         $manager->expects($this->any())
             ->method('getRepository')
@@ -182,10 +179,7 @@ class ReindexProductsByAttributesProcessorTest extends \PHPUnit\Framework\TestCa
         $this->assertEquals(MessageProcessorInterface::REJECT, $result);
     }
 
-    /**
-     * @return array
-     */
-    public function getProductIds()
+    public function getProductIds(): array
     {
         return [
             'empty array' => [
@@ -199,36 +193,24 @@ class ReindexProductsByAttributesProcessorTest extends \PHPUnit\Framework\TestCa
         ];
     }
 
-    /**
-     * @param array $body
-     * @return MessageInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function getMessage(array $body = [])
+    private function getMessage(array $body = []): MessageInterface
     {
-        $message = $this->createMock(MessageInterface::class);
-        $message->expects($this->any())
-            ->method('getBody')
-            ->willReturn(json_encode($body));
-        $message->expects($this->any())
-            ->method('getMessageId')
-            ->willReturn('msg-1');
+        $message = new Message();
+        $message->setBody(JSON::encode($body));
+        $message->setMessageId('msg-1');
 
         return $message;
     }
 
-    private function mockRunUniqueJob()
+    private function mockRunUniqueJob(): void
     {
-        /** @var Job $job */
-        $job      = $this->getEntity(Job::class, ['id' => 1]);
-        /** @var Job $childJob */
-        $childJob = $this->getEntity(
-            Job::class,
-            [
-                'id' => 2,
-                'rootJob' => $job,
-                'name' =>  Topics::REINDEX_PRODUCTS_BY_ATTRIBUTES
-            ]
-        );
+        $job = new Job();
+        $job->setId(1);
+
+        $childJob = new Job();
+        $childJob->setId(2);
+        $childJob->setRootJob($job);
+        $childJob->setName(Topics::REINDEX_PRODUCTS_BY_ATTRIBUTES);
 
         $this->jobRunner->expects($this->once())
             ->method('runUnique')

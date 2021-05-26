@@ -32,8 +32,7 @@ class FeaturedProductsProviderTest extends AbstractSegmentProductsProviderTest
 
     public function testGetProductsWithoutSegment()
     {
-        $this->configManager
-            ->expects($this->exactly(2))
+        $this->configManager->expects($this->exactly(2))
             ->method('get')
             ->with('oro_product.featured_products_segment_id')
             ->willReturn(1);
@@ -76,23 +75,19 @@ class FeaturedProductsProviderTest extends AbstractSegmentProductsProviderTest
 
     private function prepare()
     {
-        $this->configManager
-            ->expects($this->exactly(2))
+        $this->configManager->expects($this->exactly(2))
             ->method('get')
             ->with('oro_product.featured_products_segment_id')
             ->willReturn(1);
 
-        /** @var TokenInterface|\PHPUnit\Framework\MockObject\MockObject $token */
         $token = $this->createMock(TokenInterface::class);
         $token->expects($this->once())
             ->method('getUser')
             ->willReturn(null);
-        $this->websiteManager
-            ->expects($this->once())
+        $this->websiteManager->expects($this->once())
             ->method('getCurrentWebsite')
             ->willReturn($this->getEntity(Website::class, ['id' => 1]));
-        $this->tokenStorage
-            ->expects($this->once())
+        $this->tokenStorage->expects($this->once())
             ->method('getToken')
             ->willReturn($token);
     }

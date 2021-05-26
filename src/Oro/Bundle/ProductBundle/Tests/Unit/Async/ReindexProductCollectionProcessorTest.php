@@ -17,48 +17,34 @@ use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Job\Job;
 use Oro\Component\MessageQueue\Test\JobRunner;
+use Oro\Component\MessageQueue\Transport\Message as TransportMessage;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\MessageQueue\Util\JSON;
+use Oro\Component\Testing\ReflectionUtil;
 use Psr\Log\LoggerInterface;
 
 class ReindexProductCollectionProcessorTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
-    /**
-     * @var JobRunner|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var JobRunner|\PHPUnit\Framework\MockObject\MockObject */
     private $jobRunner;
 
-    /**
-     * @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $producer;
 
-    /**
-     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $logger;
 
-    /**
-     * @var ReindexMessageGranularizer|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ReindexMessageGranularizer|\PHPUnit\Framework\MockObject\MockObject */
     private $reindexMessageGranularizer;
 
-    /**
-     * @var SegmentMessageFactory|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var SegmentMessageFactory|\PHPUnit\Framework\MockObject\MockObject */
     private $messageFactory;
 
-    /**
-     * @var SegmentSnapshotDeltaProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var SegmentSnapshotDeltaProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $productCollectionDeltaProvider;
 
-    /**
-     * @var ReindexProductCollectionProcessor
-     */
+    /** @var ReindexProductCollectionProcessor */
     private $processor;
 
     protected function setUp(): void
@@ -100,7 +86,7 @@ class ReindexProductCollectionProcessorTest extends \PHPUnit\Framework\TestCase
                 ]
             );
 
-        $result = $this->processor->process($message, $this->getSession());
+        $result = $this->processor->process($message, $this->createMock(SessionInterface::class));
         $this->assertEquals(MessageProcessorInterface::REJECT, $result);
     }
 
@@ -125,7 +111,7 @@ class ReindexProductCollectionProcessorTest extends \PHPUnit\Framework\TestCase
                 ]
             );
 
-        $result = $this->processor->process($message, $this->getSession());
+        $result = $this->processor->process($message, $this->createMock(SessionInterface::class));
         $this->assertEquals(MessageProcessorInterface::REJECT, $result);
     }
 
@@ -138,8 +124,7 @@ class ReindexProductCollectionProcessorTest extends \PHPUnit\Framework\TestCase
             ->with($messageBody)
             ->willReturn($isFull);
 
-        /** @var Segment $segment */
-        $segment = $this->getEntity(Segment::class, ['id' => 2]);
+        $segment = $this->getSegment(2);
         $message = $this->getMessage($messageBody);
         $websiteIds = [777, 1];
         $this->expectedMessageFactory($messageBody, $segment, $websiteIds);
@@ -174,7 +159,7 @@ class ReindexProductCollectionProcessorTest extends \PHPUnit\Framework\TestCase
                 [$messageTwo]
             );
 
-        $expectedJobName = $this->getExpectedJobName($message, $segment);
+        $expectedJobName = $this->getExpectedJobName($segment);
         $this->expectedRunUnique($expectedJobName);
 
         $i = 5;
@@ -185,7 +170,7 @@ class ReindexProductCollectionProcessorTest extends \PHPUnit\Framework\TestCase
                 [$expectedJobName . ':reindex:2']
             )
             ->willReturnCallback(function ($name, $callback) use (&$i) {
-                $delayedJob = $this->getEntity(Job::class, ['id' => ++$i]);
+                $delayedJob = $this->getJob(++$i);
                 return $callback($this->jobRunner, $delayedJob);
             });
         $this->producer->expects($this->exactly(2))
@@ -201,7 +186,7 @@ class ReindexProductCollectionProcessorTest extends \PHPUnit\Framework\TestCase
                 ]
             );
 
-        $result = $this->processor->process($message, $this->getSession());
+        $result = $this->processor->process($message, $this->createMock(SessionInterface::class));
         $this->assertEquals(MessageProcessorInterface::ACK, $result);
     }
 
@@ -214,9 +199,7 @@ class ReindexProductCollectionProcessorTest extends \PHPUnit\Framework\TestCase
             ->with($messageBody)
             ->willReturn($isFull);
 
-        $definition = 'some definition';
-        /** @var Segment $segment */
-        $segment = $this->getEntity(Segment::class, ['id' => 2, 'definition' => $definition]);
+        $segment = $this->getSegment(2, 'some definition');
         $message = $this->getMessage($messageBody);
         $websiteIds = [777, 1];
         $this->expectedMessageFactory($messageBody, $segment, $websiteIds);
@@ -267,7 +250,7 @@ class ReindexProductCollectionProcessorTest extends \PHPUnit\Framework\TestCase
                 [$messageThree]
             );
 
-        $expectedJobName = $this->getExpectedJobName($message, $segment);
+        $expectedJobName = $this->getExpectedJobName($segment);
         $this->expectedRunUnique($expectedJobName);
 
         $i = 5;
@@ -279,7 +262,7 @@ class ReindexProductCollectionProcessorTest extends \PHPUnit\Framework\TestCase
                 [$expectedJobName . ':reindex:3']
             )
             ->willReturnCallback(function ($name, $callback) use (&$i) {
-                $delayedJob = $this->getEntity(Job::class, ['id' => ++$i]);
+                $delayedJob = $this->getJob(++$i);
                 return $callback($this->jobRunner, $delayedJob);
             });
         $this->producer->expects($this->exactly(3))
@@ -299,7 +282,7 @@ class ReindexProductCollectionProcessorTest extends \PHPUnit\Framework\TestCase
                 ]
             );
 
-        $result = $this->processor->process($message, $this->getSession());
+        $result = $this->processor->process($message, $this->createMock(SessionInterface::class));
         $this->assertEquals(MessageProcessorInterface::ACK, $result);
     }
 
@@ -312,8 +295,7 @@ class ReindexProductCollectionProcessorTest extends \PHPUnit\Framework\TestCase
             ->with($messageBody)
             ->willReturn($isFull);
 
-        /** @var Segment $segment */
-        $segment = $this->getEntity(Segment::class, ['id' => null]);
+        $segment = $this->getSegment();
         $message = $this->getMessage($messageBody);
         $websiteIds = [777, 1];
         $this->expectedMessageFactory($messageBody, $segment, $websiteIds);
@@ -326,10 +308,10 @@ class ReindexProductCollectionProcessorTest extends \PHPUnit\Framework\TestCase
         $this->productCollectionDeltaProvider->expects($this->never())
             ->method('getRemovedEntityIds');
 
-        $expectedJobName = $this->getExpectedJobName($message, $segment);
+        $expectedJobName = $this->getExpectedJobName($segment);
         $this->expectedSendForOneBatch($expectedJobName, $websiteIds, $addedProductsId);
 
-        $result = $this->processor->process($message, $this->getSession());
+        $result = $this->processor->process($message, $this->createMock(SessionInterface::class));
         $this->assertEquals(MessageProcessorInterface::ACK, $result);
     }
 
@@ -342,8 +324,7 @@ class ReindexProductCollectionProcessorTest extends \PHPUnit\Framework\TestCase
             ->with($messageBody)
             ->willReturn($isFull);
 
-        /** @var Segment $segment */
-        $segment = $this->getEntity(Segment::class, ['id' => null]);
+        $segment = $this->getSegment();
         $message = $this->getMessage($messageBody);
         $websiteIds = [777, 1];
         $this->expectedMessageFactory($messageBody, $segment, $websiteIds);
@@ -358,10 +339,10 @@ class ReindexProductCollectionProcessorTest extends \PHPUnit\Framework\TestCase
         $this->productCollectionDeltaProvider->expects($this->never())
             ->method('getRemovedEntityIds');
 
-        $expectedJobName = $this->getExpectedJobName($message, $segment);
+        $expectedJobName = $this->getExpectedJobName($segment);
         $this->expectedSendForOneBatch($expectedJobName, $websiteIds, $addedProductsId);
 
-        $result = $this->processor->process($message, $this->getSession());
+        $result = $this->processor->process($message, $this->createMock(SessionInterface::class));
         $this->assertEquals(MessageProcessorInterface::ACK, $result);
     }
 
@@ -373,12 +354,7 @@ class ReindexProductCollectionProcessorTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @param array $messageBody
-     * @param Segment $segment
-     * @param array $websiteIds
-     */
-    private function expectedMessageFactory(array $messageBody, Segment $segment, array $websiteIds)
+    private function expectedMessageFactory(array $messageBody, Segment $segment, array $websiteIds): void
     {
         $this->messageFactory->expects($this->once())
             ->method('getSegmentFromMessage')
@@ -390,30 +366,22 @@ class ReindexProductCollectionProcessorTest extends \PHPUnit\Framework\TestCase
             ->willReturn($websiteIds);
     }
 
-    /**
-     * @param MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message
-     * @param Segment $segment
-     * @return string
-     */
-    private function getExpectedJobName(MessageInterface $message, Segment $segment)
+    private function getExpectedJobName(Segment $segment): string
     {
-        $expectedJobName = Topics::REINDEX_PRODUCT_COLLECTION_BY_SEGMENT
+        return Topics::REINDEX_PRODUCT_COLLECTION_BY_SEGMENT
             . ':' . md5($segment->getDefinition()) . ':' . md5(implode([1, 777]));
-        $message->expects($this->any())
-            ->method('getMessageId')
-            ->willReturn('msg-001');
-
-        return $expectedJobName;
     }
 
-    /**
-     * @param string $expectedJobName
-     */
-    private function expectedRunUnique($expectedJobName)
+    private function expectedRunUnique(string $expectedJobName): void
     {
-        /** @var Job $job */
-        $job = $this->getEntity(Job::class, ['id' => 1]);
-        $childJob = $this->getEntity(Job::class, ['id' => 2, 'rootJob' => $job, 'name' => $expectedJobName]);
+        $job = new Job();
+        $job->setId(1);
+
+        $childJob = new Job();
+        $childJob->setId(2);
+        $childJob->setRootJob($job);
+        $childJob->setName($expectedJobName);
+
         $this->jobRunner->expects($this->once())
             ->method('runUnique')
             ->with('msg-001', $expectedJobName)
@@ -422,12 +390,7 @@ class ReindexProductCollectionProcessorTest extends \PHPUnit\Framework\TestCase
             });
     }
 
-    /**
-     * @param string $expectedJobName
-     * @param array $websiteIds
-     * @param array $productIds
-     */
-    private function expectedSendForOneBatch($expectedJobName, array $websiteIds, array $productIds)
+    private function expectedSendForOneBatch(string $expectedJobName, array $websiteIds, array $productIds): void
     {
         $messageOne = [
             'class'   => [Product::class],
@@ -445,7 +408,7 @@ class ReindexProductCollectionProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('createDelayed')
             ->with($expectedJobName . ':reindex:1')
             ->willReturnCallback(function ($name, $callback) use (&$i) {
-                $delayedJob = $this->getEntity(Job::class, ['id' => ++$i]);
+                $delayedJob = $this->getJob(++$i);
                 return $callback($this->jobRunner, $delayedJob);
             });
         $this->producer->expects($this->once())
@@ -456,33 +419,16 @@ class ReindexProductCollectionProcessorTest extends \PHPUnit\Framework\TestCase
             );
     }
 
-    /**
-     * @param array $body
-     * @return MessageInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function getMessage(array $body = [])
+    private function getMessage(array $body = []): MessageInterface
     {
-        $message = $this->createMock(MessageInterface::class);
-        $message->expects($this->any())
-            ->method('getBody')
-            ->willReturn(json_encode($body));
+        $message = new TransportMessage();
+        $message->setBody(JSON::encode($body));
+        $message->setMessageId('msg-001');
 
         return $message;
     }
 
-    /**
-     * @return SessionInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function getSession()
-    {
-        return $this->createMock(SessionInterface::class);
-    }
-
-    /**
-     * @param array $productIds
-     * @return \Generator
-     */
-    private function createGenerator(array $productIds)
+    private function createGenerator(array $productIds): \Generator
     {
         foreach ($productIds as &$productId) {
             $productId = ['id' => $productId];
@@ -490,5 +436,22 @@ class ReindexProductCollectionProcessorTest extends \PHPUnit\Framework\TestCase
         unset($productId);
 
         yield $productIds;
+    }
+
+    private function getJob(int $id): Job
+    {
+        $job = new Job();
+        $job->setId($id);
+
+        return $job;
+    }
+
+    private function getSegment(int $id = null, string $definition = null): Segment
+    {
+        $segment = new Segment();
+        ReflectionUtil::setId($segment, $id);
+        $segment->setDefinition($definition);
+
+        return $segment;
     }
 }

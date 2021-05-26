@@ -3,15 +3,17 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Engine;
 
 use Oro\Bundle\SearchBundle\Query\Query;
+use Oro\Bundle\WebsiteSearchBundle\Engine\IndexDataProvider;
 use Oro\Bundle\WebsiteSearchBundle\Engine\TextFilteredIndexDataProvider;
 
 class TextFilteredIndexDataProviderTest extends IndexDataProviderTest
 {
-    protected function setUp(): void
+    /**
+     * {@inheritDoc}
+     */
+    protected function createIndexDataProvider(): IndexDataProvider
     {
-        parent::setUp();
-
-        $this->indexDataProvider = new TextFilteredIndexDataProvider(
+        return new TextFilteredIndexDataProvider(
             $this->eventDispatcher,
             $this->aliasResolver,
             $this->placeholder,
@@ -21,12 +23,10 @@ class TextFilteredIndexDataProviderTest extends IndexDataProviderTest
     }
 
     /**
-     * Overwritten due to ORM limitations
-     *
-     * @return array
+     * {@inheritDoc}
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function entitiesDataProvider()
+    public function entitiesDataProvider(): array
     {
         return array_merge(
             parent::entitiesDataProvider(),

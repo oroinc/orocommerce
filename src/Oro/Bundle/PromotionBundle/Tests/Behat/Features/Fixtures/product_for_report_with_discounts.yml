@@ -1,0 +1,98 @@
+include:
+    - '@OroCustomerBundle:CustomerUserFixture.yml'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    productName:
+        string: 'Product'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    discountPromotionLabel1:
+        string: 'Order Discount Promotion 1'
+    discountPromotionLabel2:
+        string: 'Order Discount Promotion 2'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    unitPrecision:
+        unit: '@item'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product:
+        type: 'simple'
+        sku: 'SKU'
+        primaryUnitPrecision: '@unitPrecision'
+        __calls:
+            - addName: ['@productName']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@defaultProductFamily'
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    priceUSD:
+        product: '@product'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 100
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceRelation:
+        product: '@product'
+        priceList: '@defaultPriceList'
+
+Oro\Bundle\SegmentBundle\Entity\Segment:
+    discountPromotionSegment{1..2}:
+        name: 'Promotion<current()>'
+        type: '@segment_dynamic_type'
+        entity: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
+        definition: <('{"filters":[[{"columnName":"id","criterion":{"filter":"number","data":{"value":0,"type":"2"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}')>
+        organization: '@organization'
+        owner: '@business_unit'
+
+Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration:
+    discountConfiguration{1..2}:
+        type: 'order'
+        options:
+            discount_type: 'amount'
+            discount_currency: 'USD'
+            discount_value: 10
+
+Oro\Bundle\RuleBundle\Entity\Rule:
+    discountPromotionRule{1..2}:
+        enabled: true
+        sortOrder: 1
+        name: 'Discount Promotion'
+
+Oro\Bundle\PromotionBundle\Entity\Promotion:
+    discountPromotion{1..2}:
+        __calls:
+            - addLabel: ['@discountPromotionLabel<current()>']
+            - addScope: ['@default_scope']
+        productsSegment: '@discountPromotionSegment<current()>'
+        rule: '@discountPromotionRule<current()>'
+        discountConfiguration: '@discountConfiguration<current()>'
+        organization: '@organization'
+        owner: '@admin'
+        useCoupons: true
+
+Oro\Bundle\PromotionBundle\Entity\Coupon:
+    coupon{1..2}:
+        owner: '@business_unit'
+        organization: '@organization'
+        code: 'coupon-<current()>'
+        promotion: '@discountPromotion<current()>'
+        enabled: true
+        usesPerPerson: 100
+        usesPerCoupon: 100
+
+Oro\Bundle\OrderBundle\Entity\Order:
+    order:
+        organization: '@organization'
+        owner: '@admin'
+        customer: '@customer1'
+        customerUser: '@amanda'
+        identifier: 'Order'
+        website: '@website1'
+        currency: USD

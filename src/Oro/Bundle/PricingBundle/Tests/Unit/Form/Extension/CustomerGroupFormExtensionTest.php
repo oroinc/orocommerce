@@ -31,7 +31,7 @@ class CustomerGroupFormExtensionTest extends FormIntegrationTestCase
 {
     use EntityTrait;
 
-    public function testGetExtendedType()
+    public function testGetExtendedTypes(): void
     {
         $this->assertSame([CustomerGroupType::class], CustomerGroupFormExtension::getExtendedTypes());
     }

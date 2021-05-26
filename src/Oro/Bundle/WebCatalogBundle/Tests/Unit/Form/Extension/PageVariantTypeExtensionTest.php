@@ -70,7 +70,7 @@ class PageVariantTypeExtensionTest extends FormIntegrationTestCase
         ]);
     }
 
-    public function testGetExtendedType()
+    public function testGetExtendedTypes(): void
     {
         $this->assertEquals([PageVariantType::class], PageVariantTypeExtension::getExtendedTypes());
     }

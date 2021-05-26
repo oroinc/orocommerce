@@ -57,18 +57,7 @@ class ResizeProductImageMessageProcessorTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @return SessionInterface
-     */
-    private function getSession()
-    {
-        return $this->createMock(SessionInterface::class);
-    }
-
-    /**
-     * @return File|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function getImageMock(): File
+    private function getImageFile(): File
     {
         $image = $this->createMock(File::class);
         $productImage = new StubProductImage();
@@ -98,7 +87,7 @@ class ResizeProductImageMessageProcessorTest extends \PHPUnit\Framework\TestCase
         $message = new Message();
         $message->setBody('not valid json');
 
-        $this->processor->process($message, $this->getSession());
+        $this->processor->process($message, $this->createMock(SessionInterface::class));
     }
 
     public function testProcessInvalidData()
@@ -108,7 +97,7 @@ class ResizeProductImageMessageProcessorTest extends \PHPUnit\Framework\TestCase
         $message = new Message();
         $message->setBody(JSON::encode(['abc']));
 
-        $this->processor->process($message, $this->getSession());
+        $this->processor->process($message, $this->createMock(SessionInterface::class));
     }
 
     public function testProcessProductImageNotFound()
@@ -126,7 +115,7 @@ class ResizeProductImageMessageProcessorTest extends \PHPUnit\Framework\TestCase
 
         self::assertEquals(
             MessageProcessorInterface::REJECT,
-            $this->processor->process($message, $this->getSession())
+            $this->processor->process($message, $this->createMock(SessionInterface::class))
         );
     }
 
@@ -145,7 +134,7 @@ class ResizeProductImageMessageProcessorTest extends \PHPUnit\Framework\TestCase
 
         self::assertEquals(
             MessageProcessorInterface::REJECT,
-            $this->processor->process($message, $this->getSession())
+            $this->processor->process($message, $this->createMock(SessionInterface::class))
         );
     }
 
@@ -157,7 +146,7 @@ class ResizeProductImageMessageProcessorTest extends \PHPUnit\Framework\TestCase
             'force'          => self::FORCE_OPTION
         ]));
 
-        $image = $this->getImageMock();
+        $image = $this->getImageFile();
         $this->imageResizeManager->expects(self::exactly(3))
             ->method('applyFilter')
             ->withConsecutive(
@@ -168,7 +157,7 @@ class ResizeProductImageMessageProcessorTest extends \PHPUnit\Framework\TestCase
 
         self::assertEquals(
             MessageProcessorInterface::ACK,
-            $this->processor->process($message, $this->getSession())
+            $this->processor->process($message, $this->createMock(SessionInterface::class))
         );
     }
 
@@ -181,7 +170,7 @@ class ResizeProductImageMessageProcessorTest extends \PHPUnit\Framework\TestCase
             'dimensions'     => null
         ]));
 
-        $image = $this->getImageMock();
+        $image = $this->getImageFile();
         $this->imageResizeManager->expects(self::exactly(3))
             ->method('applyFilter')
             ->withConsecutive(
@@ -190,7 +179,7 @@ class ResizeProductImageMessageProcessorTest extends \PHPUnit\Framework\TestCase
                 [$image, self::SMALL, false]
             );
 
-        $this->processor->process($message, $this->getSession());
+        $this->processor->process($message, $this->createMock(SessionInterface::class));
     }
 
     public function testResizeValidDataWithPassedDimensions()
@@ -202,7 +191,7 @@ class ResizeProductImageMessageProcessorTest extends \PHPUnit\Framework\TestCase
             'dimensions'     => [self::ORIGINAL, self::SMALL]
         ]));
 
-        $image = $this->getImageMock();
+        $image = $this->getImageFile();
         $this->imageResizeManager->expects(self::exactly(2))
             ->method('applyFilter')
             ->withConsecutive(
@@ -212,7 +201,7 @@ class ResizeProductImageMessageProcessorTest extends \PHPUnit\Framework\TestCase
 
         self::assertEquals(
             MessageProcessorInterface::ACK,
-            $this->processor->process($message, $this->getSession())
+            $this->processor->process($message, $this->createMock(SessionInterface::class))
         );
     }
 }

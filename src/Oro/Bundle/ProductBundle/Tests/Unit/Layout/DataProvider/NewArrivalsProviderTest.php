@@ -32,15 +32,15 @@ class NewArrivalsProviderTest extends AbstractSegmentProductsProviderTest
 
     public function testGetProductsWithoutSegment()
     {
-        $this->configManager->expects($this->at(2))
+        $this->configManager->expects($this->atLeast(2))
             ->method('get')
-            ->with('oro_product.new_arrivals_products_segment_id')
-            ->willReturn(1);
+            ->willReturnCallback(function ($name) {
+                if ('oro_product.new_arrivals_products_segment_id' === $name) {
+                    return 1;
+                }
 
-        $this->configManager->expects($this->at(3))
-            ->method('get')
-            ->with('oro_product.new_arrivals_products_segment_id')
-            ->willReturn(1);
+                return null;
+            });
 
         $this->getProductsWithoutSegment();
     }
@@ -80,22 +80,21 @@ class NewArrivalsProviderTest extends AbstractSegmentProductsProviderTest
 
     private function prepare()
     {
-        $this->configManager->expects($this->at(2))
+        $this->configManager->expects($this->atLeast(2))
             ->method('get')
-            ->with('oro_product.new_arrivals_products_segment_id')
-            ->willReturn(1);
-        $this->configManager->expects($this->at(3))
-            ->method('get')
-            ->with('oro_product.new_arrivals_products_segment_id')
-            ->willReturn(1);
+            ->willReturnCallback(function ($name) {
+                if ('oro_product.new_arrivals_products_segment_id' === $name) {
+                    return 1;
+                }
 
-        /** @var TokenInterface|\PHPUnit\Framework\MockObject\MockObject $token */
+                return null;
+            });
+
         $token = $this->createMock(TokenInterface::class);
         $token->expects($this->once())
             ->method('getUser')
             ->willReturn(null);
-        $this->websiteManager
-            ->expects($this->once())
+        $this->websiteManager->expects($this->once())
             ->method('getCurrentWebsite')
             ->willReturn($this->getEntity(Website::class, ['id' => 1]));
         $this->tokenStorage->expects($this->once())
