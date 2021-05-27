@@ -9,6 +9,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Oro\Bundle\CatalogBundle\Model\ExtendCategory;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
+use Oro\Bundle\EntityBundle\EntityProperty\DenormalizedPropertyAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
@@ -93,7 +94,11 @@ use Oro\Component\Tree\Entity\TreeTrait;
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.TooManyFields)
  */
-class Category extends ExtendCategory implements SluggableInterface, DatesAwareInterface, OrganizationAwareInterface
+class Category extends ExtendCategory implements
+    SluggableInterface,
+    DatesAwareInterface,
+    OrganizationAwareInterface,
+    DenormalizedPropertyAwareInterface
 {
     use DatesAwareTrait;
     use TreeTrait;
@@ -542,10 +547,7 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
      */
     public function prePersist()
     {
-        if (!$this->getDefaultTitle()) {
-            throw new \RuntimeException('Category has to have a default title');
-        }
-        $this->denormalizedDefaultTitle = $this->getDefaultTitle()->getString();
+        $this->updateDenormalizedProperties();
     }
 
     /**
@@ -555,6 +557,11 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
 
+        $this->updateDenormalizedProperties();
+    }
+
+    public function updateDenormalizedProperties(): void
+    {
         if (!$this->getDefaultTitle()) {
             throw new \RuntimeException('Category has to have a default title');
         }
