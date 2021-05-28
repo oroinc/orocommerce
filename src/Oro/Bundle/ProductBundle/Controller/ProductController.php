@@ -227,7 +227,11 @@ class ProductController extends AbstractController
         $queryParams = $request->query->all();
 
         if ($handler->process()) {
-            return $this->forward('OroProductBundle:Product:createStepTwo', [], $queryParams);
+            return $this->forward(
+                __CLASS__ . '::createStepTwoAction',
+                [],
+                $queryParams
+            );
         }
 
         return [
