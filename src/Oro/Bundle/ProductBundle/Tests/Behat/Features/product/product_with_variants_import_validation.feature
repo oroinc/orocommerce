@@ -128,7 +128,7 @@ Feature: Product with variants import validation
   @skipWait
   Scenario: Check import error page from the email after importing file
     Given I import file
-    Then Email should contains the following "Errors: 4 processed: 1, read: 2, added: 0, updated: 0, replaced: 1" text
+    Then Email should contains the following "Errors: 2 processed: 1, read: 2, added: 0, updated: 0, replaced: 1" text
     And I follow "Error log" link from the email
     Then I should see "Error in row #2. Not found entity \"Product Unit\". Item data: {\"code\":\"unknown\"}."
     And I should see "Error in row #2. Unit of Quantity Unit Code: This value should not be blank."
@@ -146,7 +146,7 @@ Feature: Product with variants import validation
   @skipWait
   Scenario: Check import error page from the email after importing file
     Given I import file
-    Then Email should contains the following "Errors: 4 processed: 2, read: 3, added: 0, updated: 0, replaced: 2" text
+    Then Email should contains the following "Errors: 2 processed: 2, read: 3, added: 0, updated: 0, replaced: 2" text
     And I follow "Error log" link from the email
     Then I should see "Error in row #2. Not found entity \"Product Unit\". Item data: {\"code\":\"unknown\"}."
     And I should see "Error in row #2. Unit of Quantity Unit Code: This value should not be blank."
