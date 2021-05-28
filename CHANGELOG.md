@@ -8,6 +8,8 @@ The current file describes significant changes in the code that may affect the u
 #### ApplicationBundle
 * Removed all deprecated code intended to run multiple Symfony applications on the same codebase.
 
+## 5.0.0-alpha.2 (2021-05-28)
+[Show detailed list of changes](incompatibilities-5-0-alpha-2.md)
 
 ## 5.0.0-alpha.1 (2021-03-31)
 [Show detailed list of changes](incompatibilities-5-0-alpha-1.md)
