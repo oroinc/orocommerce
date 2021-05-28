@@ -6,7 +6,7 @@ use Oro\Bundle\RedirectBundle\Routing\MatchedUrlDecisionMaker;
 use Oro\Bundle\RedirectBundle\Routing\SlugRedirectMatcher;
 use Oro\Component\Routing\UrlUtil;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
+use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -14,16 +14,10 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class RedirectExceptionListener
 {
-    /** @var SlugRedirectMatcher */
-    private $redirectMatcher;
+    private SlugRedirectMatcher $redirectMatcher;
 
-    /** @var MatchedUrlDecisionMaker */
-    private $matchedUrlDecisionMaker;
+    private MatchedUrlDecisionMaker $matchedUrlDecisionMaker;
 
-    /**
-     * @param SlugRedirectMatcher     $redirectMatcher
-     * @param MatchedUrlDecisionMaker $matchedUrlDecisionMaker
-     */
     public function __construct(
         SlugRedirectMatcher $redirectMatcher,
         MatchedUrlDecisionMaker $matchedUrlDecisionMaker
@@ -32,10 +26,7 @@ class RedirectExceptionListener
         $this->matchedUrlDecisionMaker = $matchedUrlDecisionMaker;
     }
 
-    /**
-     * @param GetResponseForExceptionEvent $event
-     */
-    public function onKernelException(GetResponseForExceptionEvent $event): void
+    public function onKernelException(ExceptionEvent $event): void
     {
         if (!$this->isRedirectRequired($event)) {
             return;
@@ -44,19 +35,16 @@ class RedirectExceptionListener
         $request = $event->getRequest();
         $attributes = $this->redirectMatcher->match($request->getPathInfo());
         if ($attributes) {
-            $event->setResponse(new RedirectResponse(
-                UrlUtil::getAbsolutePath($attributes['pathInfo'], $request->getBaseUrl()),
-                $attributes['statusCode']
-            ));
+            $event->setResponse(
+                new RedirectResponse(
+                    UrlUtil::getAbsolutePath($attributes['pathInfo'], $request->getBaseUrl()),
+                    $attributes['statusCode']
+                )
+            );
         }
     }
 
-    /**
-     * @param GetResponseForExceptionEvent $event
-     *
-     * @return bool
-     */
-    private function isRedirectRequired(GetResponseForExceptionEvent $event): bool
+    private function isRedirectRequired(ExceptionEvent $event): bool
     {
         return
             $event->isMasterRequest()
