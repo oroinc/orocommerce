@@ -17,3 +17,8 @@ oro:
                 quantity:
                     equal: 'Quantity should be equal to offered quantity'
                     less: 'Quantity should be greater than or equal to offered quantity'
+
+        quote:
+            ship_until:
+                type:
+                    message: 'This value is not a valid date.'

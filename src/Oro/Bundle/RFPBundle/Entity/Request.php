@@ -569,11 +569,11 @@ class Request extends ExtendRequest implements
     /**
      * Set shipUntil
      *
-     * @param \DateTime $shipUntil
+     * @param \DateTime|null $shipUntil
      *
      * @return Request
      */
-    public function setShipUntil($shipUntil)
+    public function setShipUntil(\DateTime $shipUntil = null)
     {
         $this->shipUntil = $shipUntil;
 
@@ -583,9 +583,9 @@ class Request extends ExtendRequest implements
     /**
      * Get shipUntil
      *
-     * @return \DateTime
+     * @return \DateTime|null
      */
-    public function getShipUntil()
+    public function getShipUntil(): ?\DateTime
     {
         return $this->shipUntil;
     }

@@ -675,11 +675,11 @@ class Order extends ExtendOrder implements
     /**
      * Set shipUntil
      *
-     * @param \DateTime $shipUntil
+     * @param \DateTime|null $shipUntil
      *
      * @return Order
      */
-    public function setShipUntil($shipUntil)
+    public function setShipUntil(\DateTime $shipUntil = null)
     {
         $this->shipUntil = $shipUntil;
 
@@ -689,9 +689,9 @@ class Order extends ExtendOrder implements
     /**
      * Get shipUntil
      *
-     * @return \DateTime
+     * @return \DateTime|null
      */
-    public function getShipUntil()
+    public function getShipUntil(): ?\DateTime
     {
         return $this->shipUntil;
     }
