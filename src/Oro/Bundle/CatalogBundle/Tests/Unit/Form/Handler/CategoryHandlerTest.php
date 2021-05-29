@@ -2,12 +2,15 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Form\Handler;
 
+use Oro\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions;
+use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Form\Handler\CategoryHandler;
 use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\Testing\Unit\FormHandlerTestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Form\Form;
 
 class CategoryHandlerTest extends FormHandlerTestCase
 {
@@ -15,7 +18,7 @@ class CategoryHandlerTest extends FormHandlerTestCase
     protected $entity;
 
     /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $eventDispatcher;
+    private $eventDispatcher;
 
     protected function setUp(): void
     {
@@ -27,10 +30,6 @@ class CategoryHandlerTest extends FormHandlerTestCase
 
     /**
      * @dataProvider supportedMethods
-     *
-     * @param string $method
-     * @param boolean $isValid
-     * @param boolean $isProcessed
      */
     public function testProcessSupportedRequest($method, $isValid, $isProcessed)
     {
@@ -40,7 +39,7 @@ class CategoryHandlerTest extends FormHandlerTestCase
 
         $this->form->expects($this->any())
             ->method('isValid')
-            ->will($this->returnValue($isValid));
+            ->willReturn($isValid);
 
         if ($isValid) {
             $this->assertAppendRemoveProducts();
@@ -80,7 +79,7 @@ class CategoryHandlerTest extends FormHandlerTestCase
 
         $this->form->expects($this->once())
             ->method('isValid')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $this->assertAppendRemoveProducts();
         $this->assertCategoryUnitPrecisionUpdate();
@@ -96,62 +95,51 @@ class CategoryHandlerTest extends FormHandlerTestCase
         $this->assertTrue($this->handler->process($this->entity));
     }
 
-    protected function assertAppendRemoveProducts()
+    private function assertAppendRemoveProducts()
     {
         $this->eventDispatcher->expects($this->once())->method('dispatch')->with(
             new AfterFormProcessEvent($this->form, $this->entity),
             'oro_catalog.category.edit'
         );
-        $appendProducts = $this->getMockBuilder('Symfony\Component\Form\Form')
-            ->disableOriginalConstructor()
-            ->getMock();
 
+        $appendProducts = $this->createMock(Form::class);
         $appendProducts->expects($this->once())
             ->method('getData')
-            ->will($this->returnValue([new Product()]));
+            ->willReturn([new Product()]);
 
-        $this->form->expects($this->at(5))
-            ->method('get')
-            ->with('appendProducts')
-            ->will($this->returnValue($appendProducts));
-
-        $removeProducts = $this->getMockBuilder('Symfony\Component\Form\Form')
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $removeProducts = $this->createMock(Form::class);
         $removeProducts->expects($this->once())
             ->method('getData')
-            ->will($this->returnValue([new Product()]));
+            ->willReturn([new Product()]);
 
-        $this->form->expects($this->at(6))
+        $this->form->expects($this->exactly(2))
             ->method('get')
-            ->with('removeProducts')
-            ->will($this->returnValue($removeProducts));
+            ->willReturnMap([
+                ['appendProducts', $appendProducts],
+                ['removeProducts', $removeProducts]
+            ]);
     }
 
-    protected function mockProductCategory()
+    private function mockProductCategory()
     {
         $category = new Category();
-        $categoryRepository = $this
-            ->getMockBuilder('Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $categoryRepository = $this->createMock(CategoryRepository::class);
         $categoryRepository->expects($this->any())
             ->method('findOneByProduct')
-            ->will($this->returnValue($category));
+            ->willReturn($category);
         $this->manager->expects($this->any())
             ->method('getRepository')
             ->with('OroCatalogBundle:Category')
-            ->will($this->returnValue($categoryRepository));
+            ->willReturn($categoryRepository);
     }
 
-    protected function assertCategoryUnitPrecisionUpdate()
+    private function assertCategoryUnitPrecisionUpdate()
     {
-        $defaultProductOptions = $this->createMock('Oro\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions');
+        $defaultProductOptions = $this->createMock(CategoryDefaultProductOptions::class);
         $defaultProductOptions->expects($this->once())
             ->method('updateUnitPrecision');
         $this->entity->expects($this->any())
             ->method('getDefaultProductOptions')
-            ->will($this->returnValue($defaultProductOptions));
+            ->willReturn($defaultProductOptions);
     }
 }

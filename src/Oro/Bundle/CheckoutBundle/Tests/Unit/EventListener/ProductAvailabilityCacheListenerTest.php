@@ -3,48 +3,67 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\EventListener;
 
 use Doctrine\Common\Cache\CacheProvider;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
+use Doctrine\ORM\UnitOfWork;
 use Oro\Bundle\CheckoutBundle\EventListener\ProductAvailabilityCacheListener;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Component\Testing\Doctrine\EntityManagerMockBuilder;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 
 class ProductAvailabilityCacheListenerTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
-    /**
-     * @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $cache;
 
-    /**
-     * @var ProductAvailabilityCacheListener
-     */
+    /** @var ProductAvailabilityCacheListener */
     private $productAvailabilityCacheListener;
-
-    /**
-     * @var EntityManagerMockBuilder
-     */
-    private $entityManagerMockBuilder;
 
     protected function setUp(): void
     {
         $this->cache = $this->createMock(CacheProvider::class);
-        $this->entityManagerMockBuilder = new EntityManagerMockBuilder();
 
         $this->productAvailabilityCacheListener = new ProductAvailabilityCacheListener($this->cache);
     }
 
+    /**
+     * @return EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private function getEntityManager(
+        array $insertions = [],
+        array $updates = [],
+        array $deletions = [],
+        array $entityChangeSet = []
+    ) {
+        $unitOfWork = $this->createMock(UnitOfWork::class);
+        $unitOfWork->expects($this->any())
+            ->method('getScheduledEntityInsertions')
+            ->willReturn($insertions);
+        $unitOfWork->expects($this->any())
+            ->method('getScheduledEntityUpdates')
+            ->willReturn($updates);
+        $unitOfWork->expects($this->any())
+            ->method('getScheduledEntityDeletions')
+            ->willReturn($deletions);
+        $unitOfWork->expects($this->any())
+            ->method('getEntityChangeSet')
+            ->willReturn($entityChangeSet);
+
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager->expects($this->any())
+            ->method('getUnitOfWork')
+            ->willReturn($unitOfWork);
+
+        return $entityManager;
+    }
+
     public function testOnFlush()
     {
-        /** @var Product $firstProduct */
-        $firstProduct = $this->getEntity(Product::class, ['id' => 1]);
-        /** @var Product $secondProduct */
-        $secondProduct = $this->getEntity(Product::class, ['id' => 2]);
+        $firstProduct = new Product();
+        ReflectionUtil::setId($firstProduct, 1);
+        $secondProduct = new Product();
+        ReflectionUtil::setId($secondProduct, 2);
 
-        $entityManager = $this->entityManagerMockBuilder->getEntityManager(
-            $this,
+        $entityManager = $this->getEntityManager(
             [$firstProduct],
             [$secondProduct],
             [$firstProduct]
@@ -63,10 +82,8 @@ class ProductAvailabilityCacheListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnFlushNotProducts()
     {
-        /** @var Product $firstProduct */
-        $productWithoutId = $this->getEntity(Product::class);
-        $entityManager = $this->entityManagerMockBuilder->getEntityManager(
-            $this,
+        $productWithoutId = new Product();
+        $entityManager = $this->getEntityManager(
             [$productWithoutId],
             [new \stdClass()],
             [new \stdClass()]

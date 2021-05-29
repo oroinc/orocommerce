@@ -73,13 +73,11 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
                 ]
             );
         $builder->expects($this->exactly(2))
-            ->method('addEventListener');
-        $builder->expects($this->at(1))
             ->method('addEventListener')
-            ->with(FormEvents::POST_SET_DATA, [$this->extension, 'onPostSetData']);
-        $builder->expects($this->at(2))
-            ->method('addEventListener')
-            ->with(FormEvents::POST_SUBMIT, [$this->extension, 'onPostSubmit'], 10);
+            ->withConsecutive(
+                [FormEvents::POST_SET_DATA, [$this->extension, 'onPostSetData']],
+                [FormEvents::POST_SUBMIT, [$this->extension, 'onPostSubmit'], 10]
+            );
 
         $this->extension->buildForm($builder, []);
     }
@@ -164,7 +162,7 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
         $this->prepareRegistry();
 
         $product = $this->createProduct();
-        $event   = $this->createEvent($product);
+        $event = $this->createEvent($product);
 
         $category = $this->createCategory(1);
 
@@ -182,7 +180,7 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
         $this->prepareRegistry(true);
 
         $product = $this->createProduct(1);
-        $event   = $this->createEvent($product);
+        $event = $this->createEvent($product);
 
         $newCategory         = $this->createCategory(1);
         $categoryWithProduct = $this->createCategory(2);
@@ -199,12 +197,7 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals([], $categoryWithProduct->getProducts()->toArray());
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return FormEvent
-     */
-    private function createEvent($data): FormEvent
+    private function createEvent(?Product $data): FormEvent
     {
         $categoryForm = $this->createMock(FormInterface::class);
 
