@@ -8,16 +8,15 @@ use Oro\Bundle\ProductBundle\Entity\Repository\Restriction\RestrictedProductRepo
 use Oro\Bundle\ProductBundle\Layout\DataProvider\RelatedItem\RelatedItemDataProvider;
 use Oro\Bundle\ProductBundle\RelatedItem\FinderStrategyInterface;
 use Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\RelatedProductsConfigProvider;
-use Oro\Bundle\UIBundle\Tests\Unit\Provider\FakeUserAgentProvider;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Bundle\UIBundle\Provider\UserAgentInterface;
+use Oro\Bundle\UIBundle\Provider\UserAgentProviderInterface;
+use Oro\Component\Testing\ReflectionUtil;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class RelatedItemDataProviderTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
     /** @var RestrictedProductRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $restrictedRepository;
 
@@ -27,7 +26,7 @@ class RelatedItemDataProviderTest extends \PHPUnit\Framework\TestCase
     /** @var FinderStrategyInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $finder;
 
-    /** @var FakeUserAgentProvider */
+    /** @var UserAgentProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $userAgentProvider;
 
     /** @var RelatedItemDataProvider */
@@ -35,14 +34,10 @@ class RelatedItemDataProviderTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->finder = $this->getMockBuilder(FinderStrategyInterface::class)->getMock();
-        $this->configProvider = $this->getMockBuilder(RelatedProductsConfigProvider::class)
-            ->disableOriginalConstructor()->getMock();
-
-        $this->restrictedRepository = $this->getMockBuilder(RestrictedProductRepository::class)
-            ->disableOriginalConstructor()->getMock();
-
-        $this->userAgentProvider = new FakeUserAgentProvider();
+        $this->finder = $this->createMock(FinderStrategyInterface::class);
+        $this->configProvider = $this->createMock(RelatedProductsConfigProvider::class);
+        $this->restrictedRepository = $this->createMock(RestrictedProductRepository::class);
+        $this->userAgentProvider = $this->createMock(UserAgentProviderInterface::class);
 
         $this->dataProvider = new RelatedItemDataProvider(
             $this->finder,
@@ -56,8 +51,8 @@ class RelatedItemDataProviderTest extends \PHPUnit\Framework\TestCase
     {
         $this->finderReturnsRelatedProducts([]);
         $this->restrictionReturnsRelatedProducts(new ArrayCollection([
-            $this->getEntity(Product::class, ['id' => 2]),
-            $this->getEntity(Product::class, ['id' => 3]),
+            $this->getProduct(2),
+            $this->getProduct(3),
         ]));
 
         $this->assertEmpty($this->dataProvider->getRelatedItems(new Product()));
@@ -66,8 +61,8 @@ class RelatedItemDataProviderTest extends \PHPUnit\Framework\TestCase
     public function testReturnRelatedProducts()
     {
         $relatedProducts = new ArrayCollection([
-            $this->getEntity(Product::class, ['id' => 2]),
-            $this->getEntity(Product::class, ['id' => 3]),
+            $this->getProduct(2),
+            $this->getProduct(3),
         ]);
 
         $this->finderReturnsRelatedProducts([2, 3]);
@@ -90,8 +85,8 @@ class RelatedItemDataProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testReturnRestrictedRelatedProducts()
     {
-        $product2 = $this->getEntity(Product::class, ['id' => 2]);
-        $product3 = $this->getEntity(Product::class, ['id' => 3]);
+        $product2 = $this->getProduct(2);
+        $product3 = $this->getProduct(3);
 
         $restrictedProducts = new ArrayCollection([$product2, $product3]);
 
@@ -107,9 +102,9 @@ class RelatedItemDataProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testReturnNoMoreRestrictedRelatedProductsThanSpecifiedInMaximumItemsConfiguration()
     {
-        $product2 = $this->getEntity(Product::class, ['id' => 2]);
-        $product3 = $this->getEntity(Product::class, ['id' => 3]);
-        $product4 = $this->getEntity(Product::class, ['id' => 4]);
+        $product2 = $this->getProduct(2);
+        $product3 = $this->getProduct(3);
+        $product4 = $this->getProduct(4);
         $relatedProducts = new ArrayCollection([$product2, $product3, $product4]);
 
         $this->finderReturnsRelatedProducts([2, 3, 4]);
@@ -123,8 +118,8 @@ class RelatedItemDataProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testDoesNotReturnRestrictedProductsIfThereAreLessRelatedProductThanSpecifiedInMinConfiguration()
     {
-        $product2 = $this->getEntity(Product::class, ['id' => 2]);
-        $product3 = $this->getEntity(Product::class, ['id' => 3]);
+        $product2 = $this->getProduct(2);
+        $product3 = $this->getProduct(3);
 
         $restrictedProducts = new ArrayCollection([$product2, $product3]);
 
@@ -137,20 +132,20 @@ class RelatedItemDataProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testSliderEnabledOnDesktop()
     {
-        $this->userAgentProvider->isDesktop = true;
+        $this->isUserAgentOnMobile(false);
         $this->assertTrue($this->dataProvider->isSliderEnabled());
     }
 
     public function testSliderEnabledOnMobileWhenConfigEnabled()
     {
-        $this->userAgentProvider->isDesktop = false;
+        $this->isUserAgentOnMobile(true);
         $this->isSliderEnabledOnMobile(true);
         $this->assertTrue($this->dataProvider->isSliderEnabled());
     }
 
     public function testSliderDisabledOnMobileWhenConfigIsDisabled()
     {
-        $this->userAgentProvider->isDesktop = false;
+        $this->isUserAgentOnMobile(true);
         $this->assertFalse($this->dataProvider->isSliderEnabled());
     }
 
@@ -166,51 +161,54 @@ class RelatedItemDataProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($this->dataProvider->isAddButtonVisible());
     }
 
-    /**
-     * @param int[] $relatedProductIds
-     */
-    private function finderReturnsRelatedProducts(array $relatedProductIds)
+    private function getProduct(int $id): Product
+    {
+        $product = new Product();
+        ReflectionUtil::setId($product, $id);
+
+        return $product;
+    }
+
+    private function finderReturnsRelatedProducts(array $relatedProductIds): void
     {
         $this->finder->expects($this->once())
             ->method('findIds')
             ->willReturn($relatedProductIds);
     }
 
-    /**
-     * @param int $count
-     */
-    private function minimumRelatedProductsIs($count)
+    private function minimumRelatedProductsIs(int $count): void
     {
         $this->configProvider->expects($this->any())
             ->method('getMinimumItems')
             ->willReturn($count);
     }
 
-    /**
-     * @param bool $isEnabled
-     */
-    private function isSliderEnabledOnMobile($isEnabled)
+    private function isUserAgentOnMobile(bool $isMobile): void
+    {
+        $userAgent = $this->createMock(UserAgentInterface::class);
+        $this->userAgentProvider->expects($this->once())
+            ->method('getUserAgent')
+            ->willReturn($userAgent);
+        $userAgent->expects($this->once())
+            ->method('isMobile')
+            ->willReturn($isMobile);
+    }
+
+    private function isSliderEnabledOnMobile(bool $isEnabled): void
     {
         $this->configProvider->expects($this->any())
             ->method('isSliderEnabledOnMobile')
             ->willReturn($isEnabled);
     }
 
-    /**
-     * @param bool $isVisible
-     */
-    private function isAddButtonVisible($isVisible)
+    private function isAddButtonVisible(bool $isVisible): void
     {
         $this->configProvider->expects($this->any())
             ->method('isAddButtonVisible')
             ->willReturn($isVisible);
     }
 
-    /**
-     * @param Product[]|ArrayCollection $restrictedProducts
-     * @param null|int                      $max
-     */
-    private function restrictionReturnsRelatedProducts($restrictedProducts, $max = null)
+    private function restrictionReturnsRelatedProducts(ArrayCollection $restrictedProducts, int $max = null): void
     {
         if ($max) {
             $restrictedProducts = $restrictedProducts->slice(0, $max);

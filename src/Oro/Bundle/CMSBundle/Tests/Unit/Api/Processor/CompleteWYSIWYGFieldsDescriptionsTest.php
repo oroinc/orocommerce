@@ -14,10 +14,10 @@ use Symfony\Component\Config\FileLocatorInterface;
  */
 class CompleteWYSIWYGFieldsDescriptionsTest extends ConfigProcessorTestCase
 {
-    /** @var EntityDescriptionProvider|\Oro\Bundle\FormBundle\Tests\Unit\MockHelper */
+    /** @var EntityDescriptionProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $entityDescriptionProvider;
 
-    /** @var FileLocatorInterface|\Oro\Bundle\FormBundle\Tests\Unit\MockHelper */
+    /** @var FileLocatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $fileLocator;
 
     /** @var CompleteWYSIWYGFieldsDescriptions */

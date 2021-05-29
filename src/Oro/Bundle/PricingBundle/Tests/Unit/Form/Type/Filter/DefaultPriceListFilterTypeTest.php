@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Filter;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\ChoiceFilterType;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\EntityFilterType;
 use Oro\Bundle\FilterBundle\Tests\Unit\Form\Type\AbstractTypeTestCase;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Form\Type\Filter\DefaultPriceListFilterType;
 use Oro\Bundle\PricingBundle\Provider\PriceListProvider;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
@@ -12,24 +13,16 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 class DefaultPriceListFilterTypeTest extends AbstractTypeTestCase
 {
-    /**
-     * @var PriceListProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $provider;
+    /** @var PriceListProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $provider;
 
-    /**
-     * @var ShardManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $shardManager;
+    /** @var ShardManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $shardManager;
 
-    /**
-     * @var string
-     */
-    protected $priceListClass;
+    /** @var string */
+    private $priceListClass;
 
-    /**
-     * @var DefaultPriceListFilterType
-     */
+    /** @var DefaultPriceListFilterType */
     private $type;
 
     protected function setUp(): void
@@ -37,7 +30,7 @@ class DefaultPriceListFilterTypeTest extends AbstractTypeTestCase
         $translator = $this->createMockTranslator();
         $this->shardManager = $this->createMock(ShardManager::class);
         $this->provider = $this->createMock(PriceListProvider::class);
-        $this->priceListClass = 'Oro\Bundle\PricingBundle\Entity\PriceList';
+        $this->priceListClass = PriceList::class;
         $this->type = new DefaultPriceListFilterType(
             $translator,
             $this->provider,
@@ -63,11 +56,8 @@ class DefaultPriceListFilterTypeTest extends AbstractTypeTestCase
 
     /**
      * @dataProvider configureOptionsDataProvider
-     *
-     * @param array $parentDefaultOptions
-     * @param array $requiredOptions
      */
-    public function testConfigureOptions(array $parentDefaultOptions, array $requiredOptions = array())
+    public function testConfigureOptions(array $parentDefaultOptions, array $requiredOptions = [])
     {
         $defaultOptions = [
             'field_options' => [
@@ -77,14 +67,12 @@ class DefaultPriceListFilterTypeTest extends AbstractTypeTestCase
             'required' => true,
         ];
 
-        $this->shardManager
-            ->expects($this->once())
+        $this->shardManager->expects($this->once())
             ->method('isShardingEnabled')
             ->willReturn(true);
 
         $resolver = $this->createMockOptionsResolver();
-        $resolver
-            ->expects($this->exactly(2))
+        $resolver->expects($this->exactly(2))
             ->method('setDefaults')
             ->withConsecutive([$parentDefaultOptions], [$defaultOptions])
             ->willReturnSelf();
@@ -95,8 +83,6 @@ class DefaultPriceListFilterTypeTest extends AbstractTypeTestCase
 
     /**
      * @dataProvider configureOptionsDataProvider
-     *
-     * @param array $parentDefaultOptions
      */
     public function testConfigureOptionsWhenEntityNotSharded(array $parentDefaultOptions)
     {
@@ -108,15 +94,12 @@ class DefaultPriceListFilterTypeTest extends AbstractTypeTestCase
             'required' => false,
         ];
 
-        $this->shardManager
-            ->expects($this->once())
+        $this->shardManager->expects($this->once())
             ->method('isShardingEnabled')
             ->willReturn(false);
 
         $resolver = $this->createMockOptionsResolver();
-
-        $resolver
-            ->expects($this->exactly(2))
+        $resolver->expects($this->exactly(2))
             ->method('setDefaults')
             ->withConsecutive([$parentDefaultOptions], [$defaultOptions])
             ->willReturnSelf();
@@ -142,16 +125,12 @@ class DefaultPriceListFilterTypeTest extends AbstractTypeTestCase
 
     /**
      * @dataProvider bindDataProvider
-     * @param array $bindData
-     * @param array $formData
-     * @param array $viewData
-     * @param array $customOptions
      */
     public function testBindData(
         array $bindData,
         array $formData,
         array $viewData,
-        array $customOptions = array()
+        array $customOptions = []
     ) {
         // bind method should be tested in functional test
     }
@@ -161,12 +140,6 @@ class DefaultPriceListFilterTypeTest extends AbstractTypeTestCase
      */
     public function bindDataProvider()
     {
-        return array(
-            'empty' => array(
-                'bindData' => array(),
-                'formData' => array(),
-                'viewData' => array(),
-            ),
-        );
+        return [];
     }
 }
