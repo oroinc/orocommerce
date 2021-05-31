@@ -15,29 +15,23 @@ use Oro\Bundle\PaymentTermBundle\Method\Config\ParameterBag\ParameterBagPaymentT
 
 class ParameterBagPaymentTermConfigBySettingsFactoryTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ParameterBagPaymentTermConfigBySettingsFactory
-     */
-    private $testedFactory;
+    /** @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $localizationHelper;
 
-    /**
-     * @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $localizationHelperMock;
+    /** @var IntegrationIdentifierGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $integrationIdentifierGenerator;
 
-    /**
-     * @var IntegrationIdentifierGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $integrationIdentifierGeneratorMock;
+    /** @var ParameterBagPaymentTermConfigBySettingsFactory */
+    private $factory;
 
     protected function setUp(): void
     {
-        $this->localizationHelperMock = $this->createMock(LocalizationHelper::class);
-        $this->integrationIdentifierGeneratorMock = $this->createMock(IntegrationIdentifierGeneratorInterface::class);
+        $this->localizationHelper = $this->createMock(LocalizationHelper::class);
+        $this->integrationIdentifierGenerator = $this->createMock(IntegrationIdentifierGeneratorInterface::class);
 
-        $this->testedFactory = new ParameterBagPaymentTermConfigBySettingsFactory(
-            $this->localizationHelperMock,
-            $this->integrationIdentifierGeneratorMock
+        $this->factory = new ParameterBagPaymentTermConfigBySettingsFactory(
+            $this->localizationHelper,
+            $this->integrationIdentifierGenerator
         );
     }
 
@@ -47,46 +41,32 @@ class ParameterBagPaymentTermConfigBySettingsFactoryTest extends \PHPUnit\Framew
         $label = 'someLabel';
         $paymentMethodId = 'paymentMethodId';
 
-        $paymentSettingsMock = $this->createPaymentTermSettingsMock();
-        $channelMock = $this->createChannelMock();
-        $labelsCollection = $this->createLabelsCollectionMock();
-        $shortLabelsCollection = $this->createLabelsCollectionMock();
+        $paymentSettings = $this->createMock(PaymentTermSettings::class);
+        $channel = $this->createMock(Channel::class);
+        $labelsCollection = $this->createMock(Collection::class);
+        $shortLabelsCollection = $this->createMock(Collection::class);
 
-        $this->integrationIdentifierGeneratorMock
-            ->expects($this->once())
+        $this->integrationIdentifierGenerator->expects($this->once())
             ->method('generateIdentifier')
-            ->with($channelMock)
+            ->with($channel)
             ->willReturn($paymentMethodId);
 
-        $this->localizationHelperMock
-            ->expects($this->at(0))
+        $this->localizationHelper->expects($this->exactly(2))
             ->method('getLocalizedValue')
-            ->with($labelsCollection)
-            ->willReturn($label);
+            ->withConsecutive([$labelsCollection], [$shortLabelsCollection])
+            ->willReturnOnConsecutiveCalls($label, $label);
 
-        $this->localizationHelperMock
-            ->expects($this->at(1))
-            ->method('getLocalizedValue')
-            ->with($shortLabelsCollection)
-            ->willReturn($label);
-
-        $channelMock
-            ->expects($this->once())
+        $channel->expects($this->once())
             ->method('getName')
             ->willReturn($channelName);
 
-        $paymentSettingsMock
-            ->expects($this->once())
+        $paymentSettings->expects($this->once())
             ->method('getChannel')
-            ->willReturn($channelMock);
-
-        $paymentSettingsMock
-            ->expects($this->once())
+            ->willReturn($channel);
+        $paymentSettings->expects($this->once())
             ->method('getLabels')
             ->willReturn($labelsCollection);
-
-        $paymentSettingsMock
-            ->expects($this->once())
+        $paymentSettings->expects($this->once())
             ->method('getShortLabels')
             ->willReturn($shortLabelsCollection);
 
@@ -99,32 +79,8 @@ class ParameterBagPaymentTermConfigBySettingsFactoryTest extends \PHPUnit\Framew
             ]
         );
 
-        $actualSettings = $this->testedFactory->createConfigBySettings($paymentSettingsMock);
+        $actualSettings = $this->factory->createConfigBySettings($paymentSettings);
 
         $this->assertEquals($expectedSettings, $actualSettings);
-    }
-
-    /**
-     * @return PaymentTermSettings|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function createPaymentTermSettingsMock()
-    {
-        return $this->createMock(PaymentTermSettings::class);
-    }
-
-    /**
-     * @return Channel|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function createChannelMock()
-    {
-        return $this->createMock(Channel::class);
-    }
-
-    /**
-     * @return Collection|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function createLabelsCollectionMock()
-    {
-        return $this->createMock(Collection::class);
     }
 }

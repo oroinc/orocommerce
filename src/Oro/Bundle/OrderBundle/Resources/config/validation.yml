@@ -6,7 +6,9 @@ Oro\Bundle\OrderBundle\Entity\Order:
             - Length:
                 max: 255
         shipUntil:
-            - Date: ~
+            - Type:
+                type: \DateTimeInterface
+                message: oro.order.order.ship_until.type.message
         currency:
             - Currency: ~
         totalValue:

@@ -15,7 +15,9 @@ Oro\Bundle\SaleBundle\Entity\Quote:
             - Length:
                 max: 255
         shipUntil:
-            - Date: ~
+            - Type:
+                type: \DateTimeInterface
+                message: oro.sale.quote.ship_until.type.message
         quoteProducts:
             - Valid: ~
 

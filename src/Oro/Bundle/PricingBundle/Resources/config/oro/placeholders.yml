@@ -12,7 +12,7 @@ placeholders:
 
     items:
         product_sidebar_prices_config_selector:
-            action: OroPricingBundle:Product:sidebar
+            action: Oro\Bundle\PricingBundle\Controller\ProductController::sidebarAction
         quick_add_subtotal:
             template: OroPricingBundle:Product:subtotal.html.twig
         price_templates:

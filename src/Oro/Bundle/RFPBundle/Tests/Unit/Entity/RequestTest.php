@@ -50,6 +50,7 @@ class RequestTest extends \PHPUnit\Framework\TestCase
             ['createdAt', $date, false],
             ['updatedAt', $date, false],
             ['website', new Website()],
+            ['shipUntil', new \DateTime('now', new \DateTimeZone('UTC'))],
         ];
 
         $propertyRequest = new Request();

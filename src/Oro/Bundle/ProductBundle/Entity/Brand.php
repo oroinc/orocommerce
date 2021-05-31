@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
+use Oro\Bundle\EntityBundle\EntityProperty\DenormalizedPropertyAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
@@ -103,7 +104,8 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 class Brand extends ExtendBrand implements
     OrganizationAwareInterface,
     SluggableInterface,
-    DatesAwareInterface
+    DatesAwareInterface,
+    DenormalizedPropertyAwareInterface
 {
     use DatesAwareTrait;
     use SluggableTrait;
@@ -521,7 +523,7 @@ class Brand extends ExtendBrand implements
         $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
 
-        $this->defaultTitle = $this->getName()->getString();
+        $this->updateDenormalizedProperties();
     }
 
     /**
@@ -532,6 +534,12 @@ class Brand extends ExtendBrand implements
     public function preUpdate()
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+
+        $this->updateDenormalizedProperties();
+    }
+
+    public function updateDenormalizedProperties(): void
+    {
         $this->defaultTitle = $this->getName()->getString();
     }
 

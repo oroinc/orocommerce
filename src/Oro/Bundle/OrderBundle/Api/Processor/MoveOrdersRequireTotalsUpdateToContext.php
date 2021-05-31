@@ -8,8 +8,8 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
 
 /**
  * Moves orders that require the totals update from shared data to the current context.
- * It is done to avoid loading of the UpdateOrderTotals processor and services are used by it
- * when there are no orders that require the totals update.
+ * It is done to avoid loading of the {@see \Oro\Bundle\OrderBundle\Api\Processor\UpdateOrderTotals}
+ * processor and services are used by it when there are no orders that require the totals update.
  */
 class MoveOrdersRequireTotalsUpdateToContext implements ProcessorInterface
 {

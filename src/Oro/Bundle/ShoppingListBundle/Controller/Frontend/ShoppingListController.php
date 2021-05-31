@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\DataGridBundle\Controller\GridController;
 use Oro\Bundle\FormBundle\Model\UpdateHandler;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
@@ -126,7 +127,7 @@ class ShoppingListController extends AbstractController
         }
 
         return $this->forward(
-            'OroDataGridBundle:Grid:massAction',
+            GridController::class . '::massActionAction',
             ['gridName' => $gridName, 'actionName' => $actionName],
             $request->query->all()
         );
