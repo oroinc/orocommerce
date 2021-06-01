@@ -37,7 +37,7 @@ class ProductControllerTest extends FrontendWebTestCase
             ]
         );
 
-        $this->enablePreviouslyPurchasedFeature($this->getReference('defaultWebsite'));
+        $this->enablePreviouslyPurchasedFeature();
 
         $this->reindexProductData();
     }

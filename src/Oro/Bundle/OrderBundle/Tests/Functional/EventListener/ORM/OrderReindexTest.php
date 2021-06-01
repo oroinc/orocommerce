@@ -46,7 +46,7 @@ class OrderReindexTest extends FrontendWebTestCase
             LoadProductData::class
         ]);
 
-        $this->enablePreviouslyPurchasedFeature($this->getReference('defaultWebsite'));
+        $this->enablePreviouslyPurchasedFeature();
     }
 
     public function testReindexWhenOrderChangeStatusIsApplicable()

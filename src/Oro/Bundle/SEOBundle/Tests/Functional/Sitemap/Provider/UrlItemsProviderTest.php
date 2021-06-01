@@ -4,6 +4,7 @@ namespace Oro\Bundle\SEOBundle\Tests\Functional\Sitemap\Provider;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadPageData;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
 use Oro\Bundle\RedirectBundle\Tests\Functional\DataFixtures\LoadSlugsData;
@@ -18,6 +19,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class UrlItemsProviderTest extends WebTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     /**
      * @var CanonicalUrlGenerator
      */
@@ -42,11 +45,11 @@ class UrlItemsProviderTest extends WebTestCase
         $this->canonicalUrlGenerator = $this->getContainer()->get('oro_redirect.generator.canonical_url');
         /** @var EventDispatcherInterface $eventDispatcher */
         $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
-        $this->configManager = $this->getContainer()->get('oro_config.manager');
+        $this->configManager = self::getConfigManager('global');
 
         $this->provider = new UrlItemsProvider(
             $this->canonicalUrlGenerator,
-            $this->configManager,
+            self::getConfigManager(null),
             $eventDispatcher,
             $this->getContainer()->get('doctrine')
         );

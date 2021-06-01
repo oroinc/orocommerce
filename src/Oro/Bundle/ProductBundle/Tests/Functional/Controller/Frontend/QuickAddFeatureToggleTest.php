@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -11,6 +12,8 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class QuickAddFeatureToggleTest extends WebTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     /** @var ConfigManager */
     protected $configManager;
 
@@ -21,7 +24,7 @@ class QuickAddFeatureToggleTest extends WebTestCase
             $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
 
-        $this->configManager = $this->getContainer()->get('oro_config.manager');
+        $this->configManager = self::getConfigManager('global');
     }
 
     /**

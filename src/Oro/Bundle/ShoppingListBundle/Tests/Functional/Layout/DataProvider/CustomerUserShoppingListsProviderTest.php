@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Layout\DataProvider;
 
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListACLData;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListUserACLData;
@@ -9,6 +10,8 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class CustomerUserShoppingListsProviderTest extends WebTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     protected function setUp(): void
     {
         $this->initClient(
@@ -125,7 +128,7 @@ class CustomerUserShoppingListsProviderTest extends WebTestCase
      */
     public function testGetShoppingListsForWidgetWhenNotShowAll(array $shoppingLists, string $user): void
     {
-        $configManager = $this->getContainer()->get('oro_config.manager');
+        $configManager = self::getConfigManager('global');
         $configManager->set('oro_shopping_list.show_all_in_shopping_list_widget', false);
         $configManager->flush();
 

@@ -2,29 +2,48 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Functional\EventListener\ORM;
 
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\OrderBundle\DependencyInjection\Configuration;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * @method ContainerInterface getContainer()
+ * @method static ContainerInterface getContainer()
  */
 trait PreviouslyPurchasedFeatureTrait
 {
-    public function enablePreviouslyPurchasedFeature(Website $website)
+    use ConfigManagerAwareTestTrait;
+
+    /**
+     * @param string|null $scope
+     * @param object|int|null $scopeIdentifier
+     */
+    public function enablePreviouslyPurchasedFeature(?string $scope = 'global', $scopeIdentifier = null): void
     {
-        $this->getContainer()->get('oro_config.manager')
-            ->set(Configuration::getConfigKey(Configuration::CONFIG_KEY_ENABLE_PURCHASE_HISTORY), true, $website);
-        $this->getContainer()->get('oro_config.manager')->flush();
-        $this->getContainer()->get('oro_featuretoggle.checker.feature_checker')->resetCache();
+        $key = Configuration::getConfigKey(Configuration::CONFIG_KEY_ENABLE_PURCHASE_HISTORY);
+
+        $configManager = self::getConfigManager($scope);
+        $configManager->set($key, true, $scopeIdentifier);
+        $configManager->flush();
+        // Clears cache in general config manager.
+        self::getConfigManager(null)->reload();
+
+        self::getContainer()->get('oro_featuretoggle.checker.feature_checker')->resetCache();
     }
 
-
-    public function disablePreviouslyPurchasedFeature(Website $website)
+    /**
+     * @param string|null $scope
+     * @param object|int|null $scopeIdentifier
+     */
+    public function disablePreviouslyPurchasedFeature(?string $scope = 'global', $scopeIdentifier = null): void
     {
-        $this->getContainer()->get('oro_config.manager')
-            ->set(Configuration::getConfigKey(Configuration::CONFIG_KEY_ENABLE_PURCHASE_HISTORY), false, $website);
-        $this->getContainer()->get('oro_config.manager')->flush();
-        $this->getContainer()->get('oro_featuretoggle.checker.feature_checker')->resetCache();
+        $key = Configuration::getConfigKey(Configuration::CONFIG_KEY_ENABLE_PURCHASE_HISTORY);
+
+        $configManager = self::getConfigManager($scope);
+        $configManager->set($key, false, $scopeIdentifier);
+        $configManager->flush();
+        // Clears cache in general config manager.
+        self::getConfigManager(null)->reload();
+
+        self::getContainer()->get('oro_featuretoggle.checker.feature_checker')->resetCache();
     }
 }

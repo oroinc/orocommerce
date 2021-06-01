@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend\CheckoutControllerTestCase;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityBundle\Fallback\Provider\SystemConfigFallbackProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -24,6 +25,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class CheckoutControllerTest extends CheckoutControllerTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     const CONTINUE_BUTTON = "//button[contains(text(), 'Continue')]";
     const CHECKOUT_STEP_LABEL2 = "//h2[text()[contains(.,'%s')]]";
     const CHECKOUT_STEP_LABEL = "//h2[contains(@class, 'checkout__title')]";
@@ -52,7 +55,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
             EntityFieldFallbackValue::class
         );
         $this->translator = $this->getContainer()->get('translator');
-        $this->configManager = $this->getContainer()->get('oro_config.manager');
+        $this->configManager = self::getConfigManager('global');
     }
 
     protected function tearDown(): void
@@ -272,7 +275,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
      */
     protected function updateSystemQuantityLimits($minLimit, $maxLimit)
     {
-        $configManager = $this->getContainer()->get('oro_config.global');
+        $configManager = self::getConfigManager('global');
         $configManager->set('oro_inventory.minimum_quantity_to_order', $minLimit);
         $configManager->set('oro_inventory.maximum_quantity_to_order', $maxLimit);
         $configManager->flush();

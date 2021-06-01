@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller;
 
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Model\FallbackType;
@@ -18,6 +19,8 @@ use Symfony\Component\DomCrawler\Form;
  */
 class ProductControllerTest extends ProductHelperTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     /**
      * @var array
      */
@@ -559,7 +562,7 @@ class ProductControllerTest extends ProductHelperTestCase
         /** @var Product $product */
         $product = $this->getProductDataBySku(ProductTestHelper::UPDATED_SKU);
 
-        $configManager = $this->getContainer()->get('oro_config.global');
+        $configManager = self::getConfigManager('global');
         $configManager->set('oro_redirect.redirect_generation_strategy', $redirectStrategy);
         $configManager->flush();
         $configManager->reload();
