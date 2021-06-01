@@ -73,5 +73,5 @@ Feature: Product search
     Given I proceed as the User
     And I type "Z" in "search"
     When click "Search Button"
-    Then I should see "{0} All Products|]1,Inf] Search Results for Z 1"
+    Then I should see "Search Results for Z"
     And number of records in "Product Frontend Grid" should be 0
