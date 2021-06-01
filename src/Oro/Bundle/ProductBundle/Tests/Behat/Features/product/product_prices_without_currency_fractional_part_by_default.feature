@@ -13,10 +13,19 @@ Feature: Product prices without currency fractional part by default
       | Admin | first_session  |
       | Buyer | second_session |
 
-  Scenario: Add 'Japanese Yen' to allowed currencies
+  Scenario: Feature background
     Given I proceed as the Admin
     And login as administrator
-    And go to System/ Configuration
+    And I go to System/Configuration
+    And I follow "Commerce/Catalog/Pricing" on configuration sidebar
+    When fill "PricingConfigurationForm" with:
+      | Allow To Round Displayed Prices And Amounts System | false |
+      | Allow To Round Displayed Prices And Amounts        | false |
+    And click "Save settings"
+    Then I should see "Configuration saved" flash message
+
+  Scenario: Add 'Japanese Yen' to allowed currencies
+    Given I go to System/ Configuration
     And follow "System Configuration/General Setup/Currency" on configuration sidebar
     And fill "Currency Form" with:
       | Allowed Currencies | Japanese Yen (JPY) |

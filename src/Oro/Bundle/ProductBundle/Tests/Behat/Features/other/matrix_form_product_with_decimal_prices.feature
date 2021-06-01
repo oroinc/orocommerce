@@ -12,6 +12,17 @@ Feature: Matrix form product with decimal prices
       | User  | first_session  |
       | Admin | second_session |
 
+  Scenario: Enable dynamic precision
+    Given I proceed as the Admin
+    And login as administrator
+    And I go to System/Configuration
+    And I follow "Commerce/Catalog/Pricing" on configuration sidebar
+    When fill "PricingConfigurationForm" with:
+      | Allow To Round Displayed Prices And Amounts System | false |
+      | Allow To Round Displayed Prices And Amounts        | false |
+    And click "Save settings"
+    Then I should see "Configuration saved" flash message
+
   Scenario: Configure attributes
     Given I proceed as the Admin
     And login as administrator
