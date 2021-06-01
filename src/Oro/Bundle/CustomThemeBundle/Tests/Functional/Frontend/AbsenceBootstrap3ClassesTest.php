@@ -86,7 +86,7 @@ class AbsenceBootstrap3ClassesTest extends WebTestCase
      */
     protected function tearDown(): void
     {
-        $config = $this->getContainer()->get('oro_config.global');
+        $config = self::getConfigManager('global');
         $config->reset('oro_frontend.frontend_theme');
     }
 }

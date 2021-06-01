@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Provider;
 
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists;
@@ -16,6 +17,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 class ProductAutocompleteProviderTest extends WebTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     /** @var ProductAutocompleteProvider */
     private $provider;
 
@@ -55,7 +58,7 @@ class ProductAutocompleteProviderTest extends WebTestCase
     {
         $key = Configuration::getConfigKeyByName(Configuration::ALLOW_PARTIAL_PRODUCT_SEARCH);
 
-        $configManager = $this->getContainer()->get('oro_config.manager');
+        $configManager = self::getConfigManager('global');
         $originalValue = $configManager->get($key);
         $configManager->set($key, true);
         $configManager->flush();

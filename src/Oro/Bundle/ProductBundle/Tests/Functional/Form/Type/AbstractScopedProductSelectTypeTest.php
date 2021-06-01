@@ -2,10 +2,13 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Form\Type;
 
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 abstract class AbstractScopedProductSelectTypeTest extends AbstractProductSelectTypeTest
 {
+    use ConfigManagerAwareTestTrait;
+
     /** @var \Oro\Bundle\ConfigBundle\Config\ConfigManager */
     protected $configManager;
 
@@ -15,21 +18,23 @@ abstract class AbstractScopedProductSelectTypeTest extends AbstractProductSelect
     /**
      * @var int|object|null
      */
-    protected $configScope;
+    protected $configScopeIdentifier;
+
+    protected string $configScopeName = 'global';
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->configManager = $this->getContainer()->get('oro_config.manager');
+        $this->configManager = self::getConfigManager($this->configScopeName);
     }
 
     public function setUpBeforeRestriction()
     {
-        list($availableInventoryStatuses) = func_get_args();
+        [$availableInventoryStatuses] = func_get_args();
 
-        $this->configManager->set($this->configPath, $availableInventoryStatuses, $this->configScope);
-        $this->configManager->flush($this->configScope);
+        $this->configManager->set($this->configPath, $availableInventoryStatuses, $this->configScopeIdentifier);
+        $this->configManager->flush($this->configScopeIdentifier);
     }
 
     /**

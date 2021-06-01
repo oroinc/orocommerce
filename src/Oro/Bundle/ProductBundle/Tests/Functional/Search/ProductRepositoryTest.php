@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Search;
 
 use Doctrine\ORM\Query;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
@@ -18,6 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
 class ProductRepositoryTest extends WebTestCase
 {
     use MysqlVersionCheckTrait;
+    use ConfigManagerAwareTestTrait;
 
     /** @var ConfigManager */
     private $configManager;
@@ -37,8 +39,7 @@ class ProductRepositoryTest extends WebTestCase
             LoadFrontendProductData::class,
         ]);
 
-        $this->configManager = $this->client->getContainer()
-            ->get('oro_config.manager');
+        $this->configManager = self::getConfigManager('global');
 
         $this->configKey = Configuration::getConfigKeyByName(Configuration::ALLOW_PARTIAL_PRODUCT_SEARCH);
         $this->originalConfigValue = $this->configManager->get($this->configKey);

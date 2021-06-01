@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller\Frontend;
 
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\TextFilterType;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
@@ -22,6 +23,8 @@ use Symfony\Component\Routing\RequestContext;
  */
 class ProductControllerTest extends WebTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     /**
      * @var Client
      */
@@ -80,7 +83,7 @@ class ProductControllerTest extends WebTestCase
     {
         $key = Configuration::getConfigKeyByName(Configuration::ALLOW_PARTIAL_PRODUCT_SEARCH);
 
-        $configManager = $this->getContainer()->get('oro_config.manager');
+        $configManager = self::getConfigManager('global');
         $originalValue = $configManager->get($key);
         $configManager->set($key, true);
         $configManager->flush();

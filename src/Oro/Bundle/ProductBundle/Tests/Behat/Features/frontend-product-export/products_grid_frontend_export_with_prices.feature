@@ -16,11 +16,12 @@ Feature: Products grid frontend export with prices
   Scenario: Enable export product listing with Price attributes in admin console
     Given I proceed as the Admin
     And I login as administrator
-    And I go to System/Configuration
+    And I go to Customers/ Customer Groups
+    And I click Configuration AmandaRColeGroup in grid
     And I follow "Commerce/Product/Customer Settings" on configuration sidebar
-    And uncheck "Use default" for "Export Product Prices" field
+    And uncheck "Use Website" for "Export Product Prices" field
     And I fill "System Config Form" with:
-      | Export Product Prices  | true |
+      | Export Product Prices | true |
     When I save form
     Then I should see "Configuration saved" flash message
 
@@ -49,9 +50,10 @@ Feature: Products grid frontend export with prices
 
   Scenario: Enable in admin console Tier Prices in product export
     Given I proceed as the Admin
-    And I go to System/Configuration
+    And I go to Customers/ Customers
+    And I click Configuration AmandaRCole in grid
     And I follow "Commerce/Product/Customer Settings" on configuration sidebar
-    And uncheck "Use default" for "Export Price Tiers" field
+    And uncheck "Use Customer Group" for "Export Price Tiers" field
     And I fill "System Config Form" with:
       | Export Price Tiers | true |
     When I save form
