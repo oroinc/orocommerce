@@ -474,8 +474,27 @@ services:
             - '@doctrine'
             - '@oro_tax.manager.tax_manager'
             - '@oro_frontend.request.frontend_helper'
+            - '@event_dispatcher'
         tags:
             - { name: oro_tax.resolver, event: oro_tax.resolve_before }
+
+    oro_tax.event_listener.order_tax.abstract_taxable_listener:
+        class: 'Oro\Bundle\TaxBundle\EventListener\OrderTax\AbstractTaxableListener'
+        abstract:  true
+        arguments:
+            - '@doctrine'
+
+    oro_tax.event_listener.order_tax.order_taxable_listener:
+        class: 'Oro\Bundle\TaxBundle\EventListener\OrderTax\OrderTaxableListener'
+        parent: oro_tax.event_listener.order_tax.abstract_taxable_listener
+        tags:
+            - { name: kernel.event_listener, event: Oro\Bundle\TaxBundle\Event\SkipOrderTaxRecalculationEvent, method: onSkipOrderTaxRecalculation }
+
+    oro_tax.event_listener.order_tax.order_line_item_taxable_listener:
+        class: 'Oro\Bundle\TaxBundle\EventListener\OrderTax\OrderLineItemTaxableListener'
+        parent: oro_tax.event_listener.order_tax.abstract_taxable_listener
+        tags:
+            - { name: kernel.event_listener, event: Oro\Bundle\TaxBundle\Event\SkipOrderTaxRecalculationEvent, method: onSkipOrderTaxRecalculation }
 
     oro_tax.event_listener.tax_value:
         class: 'Oro\Bundle\TaxBundle\EventListener\TaxValueListener'

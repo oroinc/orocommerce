@@ -198,3 +198,23 @@ Feature: Calculate taxes after promotions
       | PONumber2 | $0.51     | $0.47     | $0.05     | $2.59     | $2.35     | $0.24     | $0.00     | $2.59       | $2.35       | $0.23     | $0.23     | $0.00     | $1.15     | $1.15     | $0.00     | $5.00     | $0.00       | $0.00       |
       | PONumber3 | $0.47     | $0.42     | $0.04     | $2.35     | $2.14     | $0.21     | $0.00     | $2.35       | $2.14       | $0.23     | $0.23     | $0.00     | $1.15     | $1.15     | $0.00     | $5.00     | $0.00       | $0.00       |
       | PONumber4 | $0.47     | $0.42     | $0.04     | $2.35     | $2.14     | $0.21     | $0.00     | $2.35       | $2.14       | $0.23     | $0.23     | $0.00     | $1.15     | $1.15     | $0.00     | $5.00     | $0.00       | $0.00       |
+
+  Scenario: Disable Product Prices Include Tax option
+    When I go to System/Configuration
+    And I follow "Commerce/Taxation/Tax Calculation" on configuration sidebar
+    And I uncheck "Product Prices Include Tax"
+    And check "Use default" for "Product Prices Include Tax" field
+    And I save form
+    Then I should see "Configuration saved" flash message
+
+  Scenario: Taxes recalculated after using coupons
+    Given I go to Sales/Orders
+    When click view "PONumber1" in grid
+    And click "Add Coupon Code"
+    And type "coupon50p" in "Coupon Code"
+    Then should see a "Highlighted Suggestion" element
+    When click on "Highlighted Suggestion"
+    And I click "Add" in modal window
+    And click "Apply" in modal window
+    Then I should see "Tax $0.12"
+    And I should see "Total $3.87"
