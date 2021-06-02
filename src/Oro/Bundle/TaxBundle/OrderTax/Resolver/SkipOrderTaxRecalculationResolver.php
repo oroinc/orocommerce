@@ -8,6 +8,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\TaxBundle\Event\SkipOrderTaxRecalculationEvent;
 use Oro\Bundle\TaxBundle\Exception\TaxationDisabledException;
 use Oro\Bundle\TaxBundle\Manager\TaxManager;
 use Oro\Bundle\TaxBundle\Model\Result;
@@ -16,6 +17,7 @@ use Oro\Bundle\TaxBundle\OrderTax\Specification\OrderLineItemRequiredTaxRecalcul
 use Oro\Bundle\TaxBundle\OrderTax\Specification\OrderRequiredTaxRecalculationSpecification;
 use Oro\Bundle\TaxBundle\Resolver\ResolverInterface;
 use Oro\Bundle\TaxBundle\Resolver\StopPropagationException;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Resolver which should stop tax recalculation for Order and OrderLineItem entities which taxes
@@ -36,6 +38,9 @@ class SkipOrderTaxRecalculationResolver implements ResolverInterface
     /** @var array */
     private array $orderRequiresTaxRecalculation = [];
 
+    /** @var EventDispatcherInterface */
+    private EventDispatcherInterface $eventDispatcher;
+
     /**
      * @param ManagerRegistry $doctrine
      * @param TaxManager $taxManager
@@ -46,6 +51,14 @@ class SkipOrderTaxRecalculationResolver implements ResolverInterface
         $this->doctrine = $doctrine;
         $this->taxManager = $taxManager;
         $this->frontendHelper = $frontendHelper;
+    }
+
+    /**
+     * @param EventDispatcherInterface $eventDispatcher
+     */
+    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher): void
+    {
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -70,7 +83,10 @@ class SkipOrderTaxRecalculationResolver implements ResolverInterface
 
         $uow = $entityManager->getUnitOfWork();
         $entity = $uow->tryGetById($taxable->getIdentifier(), $taxable->getClassName());
-        if ($entity instanceof Order) {
+
+        if ($entity !== false && $this->eventDispatcher instanceof EventDispatcherInterface) {
+            $this->resolveSkipOrderTaxRecalculationEvent($entity, $taxable);
+        } elseif ($entity instanceof Order) {
             $this->resolveOrderTaxable($uow, $entity, $taxable);
         } elseif ($entity instanceof OrderLineItem) {
             $this->resolveOrderLineItemTaxable($uow, $entity);
@@ -100,20 +116,7 @@ class SkipOrderTaxRecalculationResolver implements ResolverInterface
             }
         }
 
-        $taxResult = $taxable->getResult();
-        /**
-         * Tax items not always stored along with the order, so in some cases
-         * we need to load them separately
-         */
-        if ($order->getLineItems() && !$taxResult->getItems()) {
-            $itemsResult = [];
-            foreach ($order->getLineItems() as $lineItem) {
-                $itemsResult[] = $this->taxManager->loadTax($lineItem);
-            }
-            if ($itemsResult) {
-                $taxResult->offsetSet(Result::ITEMS, $itemsResult);
-            }
-        }
+        $this->loadTaxItems($taxable, $order);
 
         // Recalculation is not required.
         throw new StopPropagationException();
@@ -178,5 +181,48 @@ class SkipOrderTaxRecalculationResolver implements ResolverInterface
     public function clearOrderRequiresTaxRecalculationCache(): void
     {
         $this->orderRequiresTaxRecalculation = [];
+    }
+
+    /**
+     * @param object|false $entity
+     * @param Taxable $taxable
+     * @throws StopPropagationException
+     */
+    private function resolveSkipOrderTaxRecalculationEvent($entity, Taxable $taxable): void
+    {
+        $event = new SkipOrderTaxRecalculationEvent($taxable);
+
+        $this->eventDispatcher->dispatch($event);
+
+        if ($event->isSkipOrderTaxRecalculation()) {
+            if ($entity instanceof Order) {
+                $this->loadTaxItems($taxable, $entity);
+            }
+
+            // Recalculation is not required.
+            throw new StopPropagationException();
+        }
+    }
+
+    /**
+     * @param Taxable $taxable
+     * @param Order $order
+     */
+    private function loadTaxItems(Taxable $taxable, Order $order): void
+    {
+        $taxResult = $taxable->getResult();
+        /**
+         * Tax items not always stored along with the order, so in some cases
+         * we need to load them separately
+         */
+        if ($order->getLineItems() && !$taxResult->getItems()) {
+            $itemsResult = [];
+            foreach ($order->getLineItems() as $lineItem) {
+                $itemsResult[] = $this->taxManager->loadTax($lineItem);
+            }
+            if ($itemsResult) {
+                $taxResult->offsetSet(Result::ITEMS, $itemsResult);
+            }
+        }
     }
 }
