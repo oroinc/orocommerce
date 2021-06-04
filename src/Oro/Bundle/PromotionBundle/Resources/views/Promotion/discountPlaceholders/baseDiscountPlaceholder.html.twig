@@ -1,5 +1,5 @@
 {% block content %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
 
     {% set options = entity.discountConfiguration.options %}
     {% if options['discount_type'] == constant('Oro\\Bundle\\PromotionBundle\\Discount\\DiscountInterface::TYPE_AMOUNT') %}

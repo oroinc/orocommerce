@@ -13,7 +13,7 @@
     }) %}
     {{ form_widget(form, {'id': 'inventory-level-quantities', 'attr' : attr}) }}
 
-    {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+    {% import '@OroDataGrid/macros.html.twig' as dataGrid %}
     {{ dataGrid.renderGrid('inventory-level-grid', {'productId': product.id}) }}
 {% endblock %}
 

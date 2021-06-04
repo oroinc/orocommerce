@@ -1,5 +1,5 @@
-{% extends 'OroUIBundle:actions:view.html.twig' %}
-{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+{% extends '@OroUI/actions/view.html.twig' %}
+{% import '@OroDataGrid/macros.html.twig' as dataGrid %}
 
 {% oro_title_set({params : {"%name%": entity.name }}) %}
 
@@ -14,7 +14,7 @@
 {% endblock pageHeader %}
 
 {% block navButtons %}
-    {% include 'OroPricingBundle:ImportExport:buttons_from_configuration.html.twig' with {
+    {% include '@OroPricing/ImportExport/buttons_from_configuration.html.twig' with {
         'alias': 'oro_product_price',
         'options': {'price_list_id': entity.id}
     } %}

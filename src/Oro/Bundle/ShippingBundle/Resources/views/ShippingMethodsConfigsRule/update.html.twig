@@ -1,4 +1,4 @@
-{% extends 'OroUIBundle:actions:update.html.twig' %}
+{% extends '@OroUI/actions/update.html.twig' %}
 
 {% oro_title_set({params : {"%id%": entity.id|default('N/A'|trans)} }) %}
 
@@ -20,12 +20,12 @@
             'indexPath': path('oro_shipping_methods_configs_rule_create')
         } %}
         {% set title = 'oro.ui.create_entity'|trans({'%entityName%': 'oro.shipping.shippingmethodsconfigsrule.entity_label'|trans}) %}
-        {% include 'OroUIBundle::page_title_block.html.twig' with { title: title } %}
+        {% include '@OroUI/page_title_block.html.twig' with { title: title } %}
     {% endif %}
 {% endblock pageHeader %}
 
 {% block navButtons %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
 
     {{ parent() }}
 

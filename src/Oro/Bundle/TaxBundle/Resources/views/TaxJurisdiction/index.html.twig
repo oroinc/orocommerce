@@ -1,12 +1,12 @@
-{% extends 'OroUIBundle:actions:index.html.twig' %}
+{% extends '@OroUI/actions/index.html.twig' %}
 
-{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% import '@OroUI/macros.html.twig' as UI %}
 
 {% set gridName = 'tax-jurisdiction-grid' %}
 {% set pageTitle = 'oro.tax.taxjurisdiction.entity_plural_label'|trans %}
 
 {% block navButtons %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
 
     {% if is_granted('oro_tax_jurisdiction_create') %}
         <div class="btn-group">

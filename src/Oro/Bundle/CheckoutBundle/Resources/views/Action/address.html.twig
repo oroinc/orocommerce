@@ -1,9 +1,9 @@
-{% extends 'OroActionBundle:Operation:form.html.twig' %}
+{% extends '@OroAction/Operation/form.html.twig' %}
 
 {% form_theme form 'OroFrontendBundle:layouts/blank:form_theme.html.twig' %}
 
 {% block form_widget %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
 
     <div class="grid" {{ UI.attributes(form.vars.attr) }}>
         {% if form.visitor_email is defined and form.visitor_email %}

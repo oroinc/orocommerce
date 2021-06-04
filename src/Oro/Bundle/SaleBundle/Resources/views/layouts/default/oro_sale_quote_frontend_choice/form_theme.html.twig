@@ -1,5 +1,5 @@
 {% block oro_sale_quote_product_demand_widget %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
 
     {% set product = quoteProduct.productReplacement|default(quoteProduct.product) %}
     {% set isQuantityValid = form.quantity.vars.valid %}

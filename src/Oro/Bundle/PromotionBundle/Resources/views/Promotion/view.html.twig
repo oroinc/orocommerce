@@ -1,8 +1,8 @@
-{% extends 'OroUIBundle:actions:view.html.twig' %}
-{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
-{% import 'OroCronBundle::macros.html.twig' as cronSchedulIntervals %}
-{% import 'OroScopeBundle::macros.html.twig' as scopeMacros %}
-{% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
+{% extends '@OroUI/actions/view.html.twig' %}
+{% import '@OroDataGrid/macros.html.twig' as dataGrid %}
+{% import '@OroCron/macros.html.twig' as cronSchedulIntervals %}
+{% import '@OroScope/macros.html.twig' as scopeMacros %}
+{% import '@OroEntityConfig/macros.html.twig' as entityConfig %}
 
 {% oro_title_set({params : {"%name%": entity.rule.name }}) %}
 
@@ -17,7 +17,7 @@
 {% endblock pageHeader %}
 
 {% block breadcrumbs %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
 
     {{ parent() }}
     <span class="page-title__status">
@@ -30,7 +30,7 @@
 {% endblock breadcrumbs %}
 
 {% block content_data %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
 
     {% if entity.schedules.isEmpty() %}
         {% set schedulesBlock = 'N/A'|trans %}

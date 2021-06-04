@@ -1,4 +1,4 @@
-{% extends 'OroUIBundle:actions:update.html.twig' %}
+{% extends '@OroUI/actions/update.html.twig' %}
 
 {% set web_catalog = entity.webCatalog %}
 
@@ -13,7 +13,7 @@
 {% oro_title_set({params : {'%webCatalogName%': web_catalog.name} }) %}
 
 {% block ownerLink %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
 
     {% if isDesktopVersion() and web_catalog is not null %}
         {% set ownerLink = UI.entityOwnerLink(web_catalog) %}
@@ -40,7 +40,7 @@
 {% endblock pageHeader %}
 
 {% block navButtons %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
 
     {{ parent() }}
 
@@ -68,7 +68,7 @@
 {% endblock navButtons %}
 
 {% block content_data %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
 
     {% set id = 'web-catalog-tree-edit' %}
 
@@ -168,11 +168,11 @@
     } %}
 
     <div class="sidebar-container">
-        {% embed "OroUIBundle::content_sidebar.html.twig" with {options: {
+        {% embed "@OroUI/content_sidebar.html.twig" with {options: {
             fixSidebarHeight: false
         }} %}
             {% block sidebar %}
-                {% import 'OroUIBundle::macros.html.twig' as UI %}
+                {% import '@OroUI/macros.html.twig' as UI %}
                 {{ UI.renderJsTree(
                     {
                         'label': 'oro.webcatalog.contentnode.entity_plural_label'|trans,

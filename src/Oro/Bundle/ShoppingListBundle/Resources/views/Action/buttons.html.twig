@@ -28,7 +28,7 @@
 
 <div class="widget-content btn-group">
     <div class="mass-action-controls">
-        {% import 'OroUIBundle::macros.html.twig' as UI %}
+        {% import '@OroUI/macros.html.twig' as UI %}
         {{ UI.pinnedDropdownButton({
             'html': buttons.getQuickSearchHtml(quickSearchOptions|default({})) ~ buttons.getButtonsHtml(buttonsOptions),
             'mobileEnabled': true,

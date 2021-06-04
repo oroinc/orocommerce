@@ -1,5 +1,5 @@
-{% extends 'OroUIBundle:actions:update.html.twig' %}
-{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+{% extends '@OroUI/actions/update.html.twig' %}
+{% import '@OroDataGrid/macros.html.twig' as dataGrid %}
 
 {% oro_title_set({params : {"%sku%": entity.sku|default('N/A'|trans) , "%name%": (entity.id ? entity.defaultName.string : '')|default('N/A'|trans) } }) %}
 
@@ -10,7 +10,7 @@
 {% endif %}
 
 {% block navButtons %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
 
     {{ parent() }}
 
@@ -45,7 +45,7 @@
         {% set stats %}
             {{ block('stats') }}
         {% endset %}
-        {% include 'OroUIBundle::page_title_block.html.twig' with { title: title, pageStatsBlock: stats } %}
+        {% include '@OroUI/page_title_block.html.twig' with { title: title, pageStatsBlock: stats } %}
     {% endif %}
 {% endblock pageHeader %}
 

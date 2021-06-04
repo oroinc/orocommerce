@@ -187,7 +187,7 @@
 {% endmacro %}
 
 {% block oro_order_collection_table_widget %}
-    {% import 'OroOrderBundle:Order:macros.html.twig' as order_macros %}
+    {% import '@OroOrder/Order/macros.html.twig' as order_macros %}
     {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ ' grid-container oro-collection-table' }) %}
     <div {{ block('widget_container_attributes') }}>
         {% include template_name with {collection: form.vars.value, editable: true} %}
@@ -224,7 +224,7 @@
 
 {% block oro_order_shipping_tracking_collection_widget %}
     {% import _self as fields %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
 
     {% spaceless %}
         {% if prototype is defined %}
@@ -233,7 +233,7 @@
         {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection collection-fields-list' }) %}
         {% set id = id ~ '_collection' %}
         <div class="row-oro order-shipping-tracking"
-                {% import 'OroUIBundle::macros.html.twig' as UI %}
+                {% import '@OroUI/macros.html.twig' as UI %}
                 {{ UI.renderPageComponentAttributes({
                     module: form.vars.page_component,
                     options: form.vars.page_component_options
@@ -283,7 +283,7 @@
 
 {% block oro_select_switch_input_widget %}
     <div
-        {% import 'OroUIBundle::macros.html.twig' as UI %}
+        {% import '@OroUI/macros.html.twig' as UI %}
         {{ UI.renderPageComponentAttributes({
             module: form.vars.page_component,
             options: form.vars.page_component_options

@@ -13,7 +13,7 @@
 {% endblock %}
 
 {% block _checkout_view_widget %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
     {% import 'OroCheckoutBundle:layouts/default:layout.html.twig' as _layout %}
 
     {% set attr = attr|merge({
@@ -216,7 +216,7 @@
 
 {% block _shipping_address_widget -%}
     {% if workflowItem.data.get('disallow_shipping_address_edit') %}
-        {% from 'OroAddressBundle::macros.html.twig' import renderAddress %}
+        {% from '@OroAddress/macros.html.twig' import renderAddress %}
         <div>
             {{ renderAddress(checkout.shippingAddress, true) }}
         </div>
@@ -366,7 +366,7 @@
 {%- endblock %}
 
 {% block single_page_transition_container_widget %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
     {% import 'OroCheckoutBundle:layouts/default:layout.html.twig' as _layout %}
 
     <div {{ _layout.transitionAttributes(transitionData, checkout) }} >

@@ -16,7 +16,7 @@
 {% endblock %}
 
 {% block _rfp_request_view_information_widget %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
 
     <div class="customer-info-grid">
         <h2 class="customer-info-grid__title">
@@ -103,7 +103,7 @@
 {% endblock %}
 
 {% block _rfp_request_view_additional_notes_widget %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
     {% if block.vars.visible %}
         {% set attr = attr|merge({
             class: attr.class|default('') ~ " notes collapse-view expanded"
@@ -137,7 +137,7 @@
 {% endblock %}
 
 {% block _rfp_request_view_line_items_widget %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
     <div class="customer-line-items">
         <h2 class="customer-line-items__title">
             {{- 'oro.frontend.rfp.request.sections.request_products.label'|trans -}}

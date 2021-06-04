@@ -1,8 +1,8 @@
-{% extends 'OroUIBundle:actions:view.html.twig' %}
-{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
-{% import 'OroProductBundle::image_macros.html.twig' as Image %}
-{% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
-{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% extends '@OroUI/actions/view.html.twig' %}
+{% import '@OroDataGrid/macros.html.twig' as dataGrid %}
+{% import '@OroProduct/image_macros.html.twig' as Image %}
+{% import '@OroEntityConfig/macros.html.twig' as entityConfig %}
+{% import '@OroUI/macros.html.twig' as UI %}
 {% import 'OroProductBundle:Product/RelatedItems:macros.html.twig' as relatedProductsDataGrid %}
 
 {% oro_title_set({params : {"%sku%": entity.sku|default('N/A'|trans), "%name%": entity.defaultName.string|default('N/A'|trans) }}) %}
@@ -18,7 +18,7 @@
 {% endblock pageHeader %}
 
 {% block breadcrumbs %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
 
     {{ parent() }}
     <span class="page-title__status">
@@ -33,7 +33,7 @@
 {% endblock breadcrumbs %}
 
 {% block content_data %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
 
     {% set productInformationWidget %}
         {{ oro_widget_render({
