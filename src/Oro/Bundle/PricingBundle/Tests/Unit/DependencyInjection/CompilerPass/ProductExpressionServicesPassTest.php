@@ -5,248 +5,142 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\DependencyInjection\CompilerPass;
 use Oro\Bundle\PricingBundle\DependencyInjection\CompilerPass\ProductExpressionServicesPass;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
 class ProductExpressionServicesPassTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ProductExpressionServicesPass
-     */
-    protected $compilerPass;
-
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ContainerBuilder
-     */
-    protected $container;
+    /** @var ProductExpressionServicesPass */
+    private $compiler;
 
     protected function setUp(): void
     {
-        $this->container = $this->getMockBuilder(ContainerBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->compilerPass = new ProductExpressionServicesPass();
+        $this->compiler = new ProductExpressionServicesPass();
     }
 
     public function testNoExtensionsAreAddedWhenDefinitionsAreAbsent()
     {
-        $this->container->expects($this->exactly(7))
-            ->method('hasDefinition')
-            ->willReturn(false);
-        $this->container->expects($this->never())
-            ->method('getDefinition');
+        $container = new ContainerBuilder();
 
-        $this->compilerPass->process($this->container);
+        $this->compiler->process($container);
     }
 
     public function testAddPriceListNameMapping()
     {
-        $this->container->expects($this->any())
-            ->method('hasDefinition')
-            ->willReturnMap(
-                [
-                    [ProductExpressionServicesPass::EXPRESSION_PARSER, true]
-                ]
-            );
+        $container = new ContainerBuilder();
+        $expressionParserDef = $container->register('oro_product.expression.parser');
 
-        $definition = $this->getMockBuilder(Definition::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $definition->expects($this->once())
-            ->method('addMethodCall')
-            ->with('addNameMapping', ['pricelist', PriceList::class]);
+        $this->compiler->process($container);
 
-        $this->container->expects($this->any())
-            ->method('getDefinition')
-            ->willReturnMap(
-                [
-                    [ProductExpressionServicesPass::EXPRESSION_PARSER, $definition]
-                ]
-            );
-
-        $this->compilerPass->process($this->container);
+        self::assertEquals(
+            [
+                ['addNameMapping', ['pricelist', PriceList::class]]
+            ],
+            $expressionParserDef->getMethodCalls()
+        );
     }
 
     public function testRegisterAssignedProductsConverter()
     {
-        $this->container->expects($this->any())
-            ->method('hasDefinition')
-            ->willReturnMap(
+        $container = new ContainerBuilder();
+        $expressionBuilderDef = $container->register('oro_product.expression.query_expression_builder');
+
+        $this->compiler->process($container);
+
+        self::assertEquals(
+            [
                 [
-                    [ProductExpressionServicesPass::QUERY_EXPRESSION_BUILDER, true]
+                    'registerConverter',
+                    [new Reference('oro_pricing.expression.query_expression.converter.assigned_products'), 10]
                 ]
-            );
-
-        $definition = $this->getMockBuilder(Definition::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $definition->expects($this->once())
-            ->method('addMethodCall')
-            ->with(
-                'registerConverter',
-                [new Reference(ProductExpressionServicesPass::ASSIGNED_PRODUCTS_CONVERTER), 10]
-            );
-
-        $this->container->expects($this->any())
-            ->method('getDefinition')
-            ->willReturnMap(
-                [
-                    [ProductExpressionServicesPass::QUERY_EXPRESSION_BUILDER, $definition]
-                ]
-            );
-
-        $this->compilerPass->process($this->container);
+            ],
+            $expressionBuilderDef->getMethodCalls()
+        );
     }
 
     public function testRegisterPreprocessor()
     {
-        $this->container->expects($this->any())
-            ->method('hasDefinition')
-            ->willReturnMap(
+        $container = new ContainerBuilder();
+        $expressionPreprocessorDef = $container->register('oro_product.expression.preprocessor');
+
+        $this->compiler->process($container);
+
+        self::assertEquals(
+            [
                 [
-                    [ProductExpressionServicesPass::EXPRESSION_PREPROCESSOR, true]
+                    'registerPreprocessor',
+                    [new Reference('oro_pricing.expression.preprocessor.product_assignment_rule')]
                 ]
-            );
-
-        $definition = $this->getMockBuilder(Definition::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $definition->expects($this->once())
-            ->method('addMethodCall')
-            ->with(
-                'registerPreprocessor',
-                [new Reference(ProductExpressionServicesPass::ASSIGNMENT_RULE_PREPROCESSOR)]
-            );
-
-        $this->container->expects($this->any())
-            ->method('getDefinition')
-            ->willReturnMap(
-                [
-                    [ProductExpressionServicesPass::EXPRESSION_PREPROCESSOR, $definition]
-                ]
-            );
-
-        $this->compilerPass->process($this->container);
+            ],
+            $expressionPreprocessorDef->getMethodCalls()
+        );
     }
 
     public function testNodeToQueryDesignerConverter()
     {
-        $this->container->expects($this->any())
-            ->method('hasDefinition')
-            ->willReturnMap(
+        $container = new ContainerBuilder();
+        $expressionConverterDef = $container->register('oro_product.expression.node_to_query_designer_converter');
+
+        $this->compiler->process($container);
+
+        self::assertEquals(
+            [
                 [
-                    [ProductExpressionServicesPass::NODE_TO_QUERY_DESIGNER_CONVERTER, true]
+                    'addColumnInformationProvider',
+                    [new Reference('oro_pricing.expression.column_information.price_list_provider')]
                 ]
-            );
-
-        $definition = $this->getMockBuilder(Definition::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $definition->expects($this->once())
-            ->method('addMethodCall')
-            ->with(
-                'addColumnInformationProvider',
-                [new Reference(ProductExpressionServicesPass::PRICE_LIST_COLUMN_INFORMATION_PROVIDER)]
-            );
-
-        $this->container->expects($this->any())
-            ->method('getDefinition')
-            ->willReturnMap(
-                [
-                    [ProductExpressionServicesPass::NODE_TO_QUERY_DESIGNER_CONVERTER, $definition]
-                ]
-            );
-
-        $this->compilerPass->process($this->container);
+            ],
+            $expressionConverterDef->getMethodCalls()
+        );
     }
 
     public function testQueryConverter()
     {
-        $this->container->expects($this->any())
-            ->method('hasDefinition')
-            ->willReturnMap(
+        $container = new ContainerBuilder();
+        $expressionConverterDef = $container->register('oro_product.expression.query_converter');
+
+        $this->compiler->process($container);
+
+        self::assertEquals(
+            [
                 [
-                    [ProductExpressionServicesPass::QUERY_CONVERTER, true]
+                    'addExtension',
+                    [new Reference('oro_pricing.expression.price_list_query_converter_extension')]
                 ]
-            );
-
-        $definition = $this->getMockBuilder(Definition::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $definition->expects($this->once())
-            ->method('addMethodCall')
-            ->with(
-                'addExtension',
-                [new Reference(ProductExpressionServicesPass::PRICE_LIST_QUERY_CONVERTER_EXTENSION)]
-            );
-
-        $this->container->expects($this->any())
-            ->method('getDefinition')
-            ->willReturnMap(
-                [
-                    [ProductExpressionServicesPass::QUERY_CONVERTER, $definition]
-                ]
-            );
-
-        $this->compilerPass->process($this->container);
+            ],
+            $expressionConverterDef->getMethodCalls()
+        );
     }
 
     public function testFieldsProvider()
     {
-        $this->container->expects($this->any())
-            ->method('hasDefinition')
-            ->willReturnMap(
-                [
-                    [ProductExpressionServicesPass::FIELDS_PROVIDER, true]
-                ]
-            );
+        $container = new ContainerBuilder();
+        $expressionFieldsProviderDef = $container->register('oro_product.expression.fields_provider');
 
-        $definition = $this->getMockBuilder(Definition::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $definition->expects($this->once())
-            ->method('addMethodCall')
-            ->with(
-                'addFieldToWhiteList',
-                [PriceList::class, 'prices']
-            );
+        $this->compiler->process($container);
 
-        $this->container->expects($this->any())
-            ->method('getDefinition')
-            ->willReturnMap(
-                [
-                    [ProductExpressionServicesPass::FIELDS_PROVIDER, $definition]
-                ]
-            );
-
-        $this->compilerPass->process($this->container);
+        self::assertEquals(
+            [
+                ['addFieldToWhiteList', [PriceList::class, 'prices']]
+            ],
+            $expressionFieldsProviderDef->getMethodCalls()
+        );
     }
 
     public function testAutocompleteFieldsProvider()
     {
-        $this->container->expects($this->any())
-            ->method('hasDefinition')
-            ->willReturnMap(
-                [
-                    [ProductExpressionServicesPass::AUTOCOMPLETE_FIELDS_PROVIDER, true]
-                ]
-            );
+        $container = new ContainerBuilder();
+        $autocompleteFieldsProviderDef = $container->register('oro_product.autocomplete_fields_provider');
 
-        $definition = $this->getMockBuilder(Definition::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $definition->expects($this->exactly(2))
-            ->method('addMethodCall')
-            ->withConsecutive(
+        $this->compiler->process($container);
+
+        self::assertEquals(
+            [
                 [
                     'addSpecialFieldInformation',
                     [
                         PriceList::class,
                         'assignedProducts',
-                        [
-                            'label' => 'oro.pricing.pricelist.assigned_products.label',
-                            'type' => 'collection'
-                        ]
+                        ['label' => 'oro.pricing.pricelist.assigned_products.label', 'type' => 'collection']
                     ]
                 ],
                 [
@@ -254,21 +148,11 @@ class ProductExpressionServicesPassTest extends \PHPUnit\Framework\TestCase
                     [
                         PriceList::class,
                         'productAssignmentRule',
-                        [
-                            'type' => 'standalone'
-                        ]
+                        ['type' => 'standalone']
                     ]
                 ]
-            )->willReturnSelf();
-
-        $this->container->expects($this->any())
-            ->method('getDefinition')
-            ->willReturnMap(
-                [
-                    [ProductExpressionServicesPass::AUTOCOMPLETE_FIELDS_PROVIDER, $definition]
-                ]
-            );
-
-        $this->compilerPass->process($this->container);
+            ],
+            $autocompleteFieldsProviderDef->getMethodCalls()
+        );
     }
 }
