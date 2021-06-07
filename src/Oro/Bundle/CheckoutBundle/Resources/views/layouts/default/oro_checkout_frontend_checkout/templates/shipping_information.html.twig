@@ -7,7 +7,7 @@
             </div>
         </fieldset>
     {% else %}
-        {% import 'OroCheckoutBundle:layouts/default/oro_checkout_frontend_checkout/templates:address.html.twig' as address %}
+        {% import '@OroCheckout/layouts/default/oro_checkout_frontend_checkout/templates/address.html.twig' as address %}
         {% set hasCustomAddress = false %}
         {% if form.shipping_address.id.vars.value %}
             {% set hasCustomAddress = not form.shipping_address.vars.value.customerUserAddress and not form.shipping_address.vars.value.customerAddress %}

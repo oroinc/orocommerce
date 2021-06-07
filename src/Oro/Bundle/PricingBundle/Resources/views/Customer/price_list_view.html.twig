@@ -5,7 +5,7 @@
         <div class="responsive-block">
             {% if priceLists is defined %}
                 {% set entities = priceLists %}
-                {% include 'OroPricingBundle:PriceList/partial:list.html.twig'
+                {% include '@OroPricing/PriceList/partial/list.html.twig'
                     with {
                         'fallback': fallback,
                         'entities': entities

@@ -43,7 +43,7 @@
                 {% if scope %}
                     {% set content = '' %}
                     {% if form.children[scope.id] is defined  %}
-                        {% include 'OroVisibilityBundle:ProductVisibility/widget:scope.html.twig' with {form: form.children[scope.id]} %}
+                        {% include '@OroVisibility/ProductVisibility/widget/scope.html.twig' with {form: form.children[scope.id]} %}
                     {% endif %}
                 {% endif %}
             {% else %}
@@ -52,7 +52,7 @@
                     {% set content = '' %}
                     {% if form.children[scope.id] is defined  %}
                         {% set content %}
-                            {% include 'OroVisibilityBundle:ProductVisibility/widget:scope.html.twig' with {form: form.children[scope.id]} %}
+                            {% include '@OroVisibility/ProductVisibility/widget/scope.html.twig' with {form: form.children[scope.id]} %}
                         {% endset %}
                     {% endif %}
 

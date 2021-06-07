@@ -3,7 +3,7 @@
 {% import '@OroProduct/image_macros.html.twig' as Image %}
 {% import '@OroEntityConfig/macros.html.twig' as entityConfig %}
 {% import '@OroUI/macros.html.twig' as UI %}
-{% import 'OroProductBundle:Product/RelatedItems:macros.html.twig' as relatedProductsDataGrid %}
+{% import '@OroProduct/Product/RelatedItems/macros.html.twig' as relatedProductsDataGrid %}
 
 {% oro_title_set({params : {"%sku%": entity.sku|default('N/A'|trans), "%name%": entity.defaultName.string|default('N/A'|trans) }}) %}
 

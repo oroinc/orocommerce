@@ -1,6 +1,6 @@
 {% block _checkout_button_continue_right_widget %}
     {% if transitionData is defined and transitionData %}
-        {% import 'OroCheckoutBundle:layouts/default:layout.html.twig' as _layout %}
+        {% import '@OroCheckout/layouts/default/layout.html.twig' as _layout %}
         <div class="order-checkout-widget">
             <button type="submit"
                     class="btn btn--info btn--block{% if not transitionData.isAllowed %} btn--disabled{% endif %} btn--size-m checkout__submit-btn"
@@ -16,7 +16,7 @@
 
 {% block _checkout_button_back_right_widget %}
     {% if transitionData is defined and transitionData %}
-        {% import 'OroCheckoutBundle:layouts/default:layout.html.twig' as _layout %}
+        {% import '@OroCheckout/layouts/default/layout.html.twig' as _layout %}
         {% set attr = layout_attr_defaults(attr, {
             '~class': " checkout-form__back"
         }) %}

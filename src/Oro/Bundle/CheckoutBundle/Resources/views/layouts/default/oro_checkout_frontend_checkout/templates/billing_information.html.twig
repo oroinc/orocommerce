@@ -8,7 +8,7 @@
             </div>
         </div>
     {% else %}
-        {% import 'OroCheckoutBundle:layouts/default/oro_checkout_frontend_checkout/templates:address.html.twig' as address %}
+        {% import '@OroCheckout/layouts/default/oro_checkout_frontend_checkout/templates/address.html.twig' as address %}
         {% set hasCustomAddress = false %}
         {% if form.billing_address.id.vars.value %}
             {% set hasCustomAddress = not form.billing_address.vars.value.customerUserAddress and not form.billing_address.vars.value.customerAddress %}
