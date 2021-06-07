@@ -1377,7 +1377,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     private function waitForImagesToLoad($time = 5000)
     {
         $result = $this->getSession()->getDriver()
-            ->wait($time, 0 == "document.querySelectorAll('.slick-loading').length");
+            ->wait($time, "0 === document.querySelectorAll('.slick-loading').length");
 
         if (!$result) {
             self::fail(sprintf('Waited for images to load more than %d seconds', $time / 1000));
@@ -1391,7 +1391,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     public function iWaitPopupWidgetIsInitialized()
     {
-        $this->getSession()->getDriver()->wait(5000, 0 != "$('div.slick-track').length");
+        $this->getSession()->getDriver()->wait(5000, "0 !== $('div.slick-track').length");
     }
 
     /**

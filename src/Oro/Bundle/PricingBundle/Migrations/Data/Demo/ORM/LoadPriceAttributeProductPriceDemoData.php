@@ -8,6 +8,9 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 
+/**
+ * Loads MSRP and MAP price attributes demo data
+ */
 class LoadPriceAttributeProductPriceDemoData extends AbstractLoadProductPriceDemoData
 {
     /**
@@ -52,7 +55,7 @@ class LoadPriceAttributeProductPriceDemoData extends AbstractLoadProductPriceDem
             foreach ($priceAttributes as $attributeName) {
                 $priceAttributePriceList = $this->getPriceAttribute($manager, $attributeName);
                 foreach ($priceAttributePriceList->getCurrencies() as $currency) {
-                    $amount = round($row[$attributeName], 2);
+                    $amount = round((float)$row[$attributeName], 2);
                     $price = Price::create($amount, $currency);
 
                     $priceAttributeProductPrice = new PriceAttributeProductPrice();

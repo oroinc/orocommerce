@@ -67,12 +67,7 @@ class OroPriceListPriorityQuery extends ParametrizedMigrationQuery
 
         // Change priority only if already existing several default price lists
         if (count($defaultPriceLists) > 1) {
-            usort(
-                $defaultPriceLists,
-                function ($a, $b) {
-                    return ($a['priority'] < $b['priority']) ? -1 : 1;
-                }
-            );
+            usort($defaultPriceLists, static fn ($a, $b) => $a['priority'] <=> $b['priority']);
 
             $priceListsCount = count($defaultPriceLists);
             for ($i = 0; $i < (int)($priceListsCount/2); $i++) {
