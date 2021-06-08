@@ -6,7 +6,7 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
 use Oro\Bundle\PromotionBundle\OrderTax\Specification\OrderWithChangedPromotionsCollectionSpecification;
-use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadOrderItems;
+use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadAppliedPromotionData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
@@ -19,7 +19,7 @@ class OrderWithChangedPromotionsCollectionSpecificationTest extends WebTestCase
     protected function setUp(): void
     {
         $this->initClient();
-        $this->loadFixtures([LoadOrderItems::class]);
+        $this->loadFixtures([LoadAppliedPromotionData::class]);
 
         $uow = $this->getContainer()->get('doctrine')->getManager()->getUnitOfWork();
 
@@ -45,6 +45,17 @@ class OrderWithChangedPromotionsCollectionSpecificationTest extends WebTestCase
 
         $appliedPromotion = new AppliedPromotion();
         $order->addAppliedPromotion($appliedPromotion);
+
+        self::assertTrue($this->specification->isSatisfiedBy($order));
+    }
+
+    public function testOrderWithChangedPromotionStatusWillRequireTaxRecalculation(): void
+    {
+        /** @var Order $order */
+        $order = $this->getReference(LoadOrders::ORDER_1);
+
+        $appliedPromotion = $order->getAppliedPromotions()[0];
+        $appliedPromotion->setActive(false);
 
         self::assertTrue($this->specification->isSatisfiedBy($order));
     }
