@@ -41,9 +41,13 @@ Oro\Bundle\PromotionBundle\Entity\Coupon:
                 max: 255
             - Oro\Bundle\ValidationBundle\Validator\Constraints\AlphanumericDash: ~
         validFrom:
-            - Date: ~
+            - Type:
+                type: \DateTimeInterface
+                message: oro.promotion.coupon.valid_from.type.message
         validUntil:
-            - Date: ~
+            - Type:
+                type: \DateTimeInterface
+                message: oro.promotion.coupon.valid_until.type.message
         usesPerCoupon:
             - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
             - Range:

@@ -14,8 +14,8 @@ use Symfony\Component\Form\FormInterface;
 
 /**
  * Calculates totals, subtotals and discounts for orders and their line items.
- * It is expected that MoveSharedDataToContext processor is executed before this processor.
- * @see \Oro\Bundle\ApiBundle\Processor\Shared\MoveSharedDataToContext
+ * It is expected that {@see \Oro\Bundle\OrderBundle\Api\Processor\MoveOrdersRequireTotalsUpdateToContext}
+ * processor is executed before this processor.
  */
 class UpdateOrderTotals implements ProcessorInterface
 {

@@ -58,7 +58,7 @@
                 _collection_unique_prefix: form.parent.vars.unique_block_prefix
             } %}
             {% if allow_delete %}
-                <button class="btn btn--plain quick-order-add__remove-row removeRow" data-role="row-remove"
+                <button class="btn btn--plain quick-order-add__remove-row removeRow" data-role="row-remove" type="button"
                         aria-label="{{ 'oro.product.remove_row.aria_label'|trans }}">
                 </button>
             {% endif %}
@@ -100,7 +100,7 @@
 
         {% if allow_add %}
             <button class="btn btn--primary btn--block add-list-item"
-               data-container=".js-item-collection"
+               data-container=".js-item-collection" type="button"
             >
                 <span class="fa-plus-circle" aria-hidden="true"></span>
                 <span>{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</span>

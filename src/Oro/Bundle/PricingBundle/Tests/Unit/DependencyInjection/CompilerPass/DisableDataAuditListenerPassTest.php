@@ -4,104 +4,64 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\DependencyInjection\CompilerPass;
 
 use Oro\Bundle\PricingBundle\DependencyInjection\CompilerPass\DisableDataAuditListenerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
 
 class DisableDataAuditListenerPassTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ContainerBuilder|\PHPUnit\Framework\MockObject\MockObject */
-    private $containerBuilder;
-
     /** @var DisableDataAuditListenerPass */
-    private $compilerPass;
+    private $compiler;
 
     protected function setUp(): void
     {
-        $this->containerBuilder = $this->createMock(ContainerBuilder::class);
-
-        $this->compilerPass = new DisableDataAuditListenerPass();
-    }
-
-    public function testProcessNoParameter(): void
-    {
-        $this->containerBuilder->expects($this->once())
-            ->method('hasParameter')
-            ->with('installed')
-            ->willReturn(false);
-
-        $this->containerBuilder->expects($this->never())
-            ->method('getDefinition');
-
-        $this->compilerPass->process($this->containerBuilder);
+        $this->compiler = new DisableDataAuditListenerPass();
     }
 
     public function testProcessInstalled(): void
     {
-        $this->containerBuilder->expects($this->once())
-            ->method('hasParameter')
-            ->with('installed')
-            ->willReturn(true);
+        $container = new ContainerBuilder();
+        $container->setParameter('installed', true);
+        $listenerDef = $container->register('oro_pricing.entity_listener.send_changed_product_prices_to_message_queue');
 
-        $this->containerBuilder->expects($this->once())
-            ->method('getParameter')
-            ->with('installed')
-            ->willReturn(true);
+        $this->compiler->process($container);
 
-        $this->containerBuilder->expects($this->never())
-            ->method('getDefinition');
-
-        $this->compilerPass->process($this->containerBuilder);
+        self::assertSame([], $listenerDef->getMethodCalls());
     }
 
-    public function testProcessNoDefinition(): void
+    public function testProcessNotInstalledButNoListener(): void
     {
-        $this->containerBuilder->expects($this->once())
-            ->method('hasParameter')
-            ->with('installed')
-            ->willReturn(true);
+        $container = new ContainerBuilder();
+        $container->setParameter('installed', null);
 
-        $this->containerBuilder->expects($this->once())
-            ->method('getParameter')
-            ->with('installed')
-            ->willReturn(false);
-
-        $this->containerBuilder->expects($this->once())
-            ->method('hasDefinition')
-            ->with('oro_pricing.entity_listener.send_changed_product_prices_to_message_queue')
-            ->willReturn(false);
-
-        $this->containerBuilder->expects($this->never())
-            ->method('getDefinition');
-
-        $this->compilerPass->process($this->containerBuilder);
+        $this->compiler->process($container);
     }
 
-    public function testProcessWithDefinition(): void
+    public function testProcessNoInstalledParameter(): void
     {
-        $this->containerBuilder->expects($this->once())
-            ->method('hasParameter')
-            ->with('installed')
-            ->willReturn(true);
+        $container = new ContainerBuilder();
+        $listenerDef = $container->register('oro_pricing.entity_listener.send_changed_product_prices_to_message_queue');
 
-        $this->containerBuilder->expects($this->once())
-            ->method('getParameter')
-            ->with('installed')
-            ->willReturn(false);
+        $this->compiler->process($container);
 
-        $this->containerBuilder->expects($this->once())
-            ->method('hasDefinition')
-            ->with('oro_pricing.entity_listener.send_changed_product_prices_to_message_queue')
-            ->willReturn(true);
+        self::assertEquals(
+            [
+                ['setEnabled', [false]]
+            ],
+            $listenerDef->getMethodCalls()
+        );
+    }
 
-        $definition = $this->createMock(Definition::class);
-        $definition->expects($this->once())
-            ->method('addMethodCall')
-            ->with('setEnabled', [false]);
+    public function testProcess(): void
+    {
+        $container = new ContainerBuilder();
+        $container->setParameter('installed', null);
+        $listenerDef = $container->register('oro_pricing.entity_listener.send_changed_product_prices_to_message_queue');
 
-        $this->containerBuilder->expects($this->once())
-            ->method('getDefinition')
-            ->with('oro_pricing.entity_listener.send_changed_product_prices_to_message_queue')
-            ->willReturn($definition);
+        $this->compiler->process($container);
 
-        $this->compilerPass->process($this->containerBuilder);
+        self::assertEquals(
+            [
+                ['setEnabled', [false]]
+            ],
+            $listenerDef->getMethodCalls()
+        );
     }
 }

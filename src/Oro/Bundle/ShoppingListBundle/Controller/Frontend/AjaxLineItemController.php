@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 
+use Oro\Bundle\DataGridBundle\Controller\GridController;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionDispatcher;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionParametersParser;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionResponseInterface;
@@ -304,7 +305,7 @@ class AjaxLineItemController extends AbstractLineItemController
         }
 
         return $this->forward(
-            'OroDataGridBundle:Grid:get',
+            GridController::class . '::getAction',
             ['gridName' => 'frontend-customer-user-shopping-list-edit-grid'],
             $request->query->all()
         );

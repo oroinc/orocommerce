@@ -4,111 +4,57 @@ namespace Oro\Bundle\SEOBundle\Tests\Unit\DependencyInjection\Compiler;
 
 use Oro\Bundle\SEOBundle\DependencyInjection\Compiler\FullListUrlProvidersCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Exception\LogicException;
 use Symfony\Component\DependencyInjection\Reference;
 
 class FullListUrlProvidersCompilerPassTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var FullListUrlProvidersCompilerPass
-     */
-    private $compilerPass;
+    /** @var FullListUrlProvidersCompilerPass */
+    private $compiler;
 
-    /**
-     * @var ContainerBuilder|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $containerBuilder;
-
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
-        $this->containerBuilder = $this
-            ->getMockBuilder(ContainerBuilder::class)
-            ->getMock();
-
-        $this->compilerPass = new FullListUrlProvidersCompilerPass();
+        $this->compiler = new FullListUrlProvidersCompilerPass();
     }
 
     public function testProcessCompositeDoesNotExist()
     {
-        $this->containerBuilder
-            ->expects($this->once())
-            ->method('hasDefinition')
-            ->with(FullListUrlProvidersCompilerPass::PROVIDER_REGISTRY)
-            ->willReturn(false);
+        $container = new ContainerBuilder();
 
-        $this->containerBuilder
-            ->expects($this->never())
-            ->method('getDefinition');
-
-        $this->containerBuilder
-            ->expects($this->never())
-            ->method('findTaggedServiceIds');
-
-        $this->compilerPass->process($this->containerBuilder);
+        $this->compiler->process($container);
     }
 
     public function testProcessNoTaggedServicesFound()
     {
-        $this->containerBuilder
-            ->expects($this->once())
-            ->method('hasDefinition')
-            ->with(FullListUrlProvidersCompilerPass::PROVIDER_REGISTRY)
-            ->willReturn(true);
+        $container = new ContainerBuilder();
+        $registryDef = $container->register('oro_seo.sitemap.provider.full_list_urls_provider_registry')
+            ->addArgument([]);
 
-        $this->containerBuilder
-            ->expects($this->any())
-            ->method('findTaggedServiceIds')
-            ->willReturn([]);
+        $this->compiler->process($container);
 
-        $this->containerBuilder
-            ->expects($this->never())
-            ->method('getDefinition');
-
-        $this->compilerPass->process($this->containerBuilder);
+        self::assertSame([], $registryDef->getArgument(0));
     }
 
     public function testProcessWithTaggedServices()
     {
-        $this->containerBuilder
-            ->expects($this->once())
-            ->method('hasDefinition')
-            ->with(FullListUrlProvidersCompilerPass::PROVIDER_REGISTRY)
-            ->willReturn(true);
+        $container = new ContainerBuilder();
+        $registryDef = $container->register('oro_seo.sitemap.provider.full_list_urls_provider_registry')
+            ->addArgument([]);
 
-        $compositeServiceDefinition = $this->createMock(Definition::class);
+        $container->register('service.name.1')
+            ->addTag('oro_seo.sitemap.url_items_provider', ['alias' => 'taggedService1Alias']);
+        $container->register('service.name.2')
+            ->addTag('oro_seo.sitemap.url_items_provider', ['alias' => 'taggedService2Alias']);
 
-        $this->containerBuilder
-            ->expects($this->once())
-            ->method('getDefinition')
-            ->with(FullListUrlProvidersCompilerPass::PROVIDER_REGISTRY)
-            ->willReturn($compositeServiceDefinition);
+        $this->compiler->process($container);
 
-        $taggedServices = [
-            'service.name.1' => [['alias' => 'taggedService1Alias']],
-            'service.name.2' => [['alias' => 'taggedService2Alias']],
-        ];
-
-        $this->containerBuilder
-            ->expects($this->any())
-            ->method('findTaggedServiceIds')
-            ->willReturn($taggedServices);
-
-        $compositeServiceDefinition
-            ->expects($this->once())
-            ->method('replaceArgument')
-            ->with(
-                0,
-                [
-                    'taggedService1Alias' => new Reference('service.name.1'),
-                    'taggedService2Alias' => new Reference('service.name.2')
-                ]
-            );
-
-        $this->compilerPass->process($this->containerBuilder);
+        self::assertEquals(
+            [
+                'taggedService1Alias' => new Reference('service.name.1'),
+                'taggedService2Alias' => new Reference('service.name.2')
+            ],
+            $registryDef->getArgument(0)
+        );
     }
 
     public function testProcessWithTaggedServicesWithoutAlias()
@@ -116,21 +62,13 @@ class FullListUrlProvidersCompilerPassTest extends \PHPUnit\Framework\TestCase
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('Could not retrieve "alias" attribute for "service.name.1"');
 
-        $this->containerBuilder
-            ->expects($this->once())
-            ->method('hasDefinition')
-            ->with(FullListUrlProvidersCompilerPass::PROVIDER_REGISTRY)
-            ->willReturn(true);
+        $container = new ContainerBuilder();
+        $container->register('oro_seo.sitemap.provider.full_list_urls_provider_registry')
+            ->addArgument([]);
 
-        $taggedServices = [
-            'service.name.1' => ['not_alias' => 'test'],
-        ];
+        $container->register('service.name.1')
+            ->addTag('oro_seo.sitemap.url_items_provider');
 
-        $this->containerBuilder
-            ->expects($this->any())
-            ->method('findTaggedServiceIds')
-            ->willReturn($taggedServices);
-
-        $this->compilerPass->process($this->containerBuilder);
+        $this->compiler->process($container);
     }
 }

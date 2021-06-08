@@ -52,39 +52,28 @@ class QuoteTypeTest extends AbstractTest
     protected $formType;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|QuoteAddressSecurityProvider */
-    protected $quoteAddressSecurityProvider;
+    private $quoteAddressSecurityProvider;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|ConfigManager */
-    protected $configManager;
+    private $configManager;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|QuoteFormSubscriber */
-    protected $quoteFormSubscriber;
+    /** @var MutableFormEventSubscriber */
+    private $quoteFormSubscriber;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|AuthorizationCheckerInterface */
-    protected $authorizationChecker;
+    private $authorizationChecker;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->quoteAddressSecurityProvider = $this->createMock(QuoteAddressSecurityProvider::class);
-
         $this->configManager = $this->createMock(ConfigManager::class);
-        $this->configManager->expects($this->any())
-            ->method('get')
-            ->with('oro_currency.default_currency')
-            ->willReturn('USD');
-
-        $this->quoteFormSubscriber = $this->createMock(QuoteFormSubscriber::class);
-        $this->quoteFormSubscriber = new MutableFormEventSubscriber($this->quoteFormSubscriber);
-
-        $this->configManager->expects($this->any())
-            ->method('get')
-            ->with('oro_currency.default_currency')
-            ->willReturn('USD');
-
+        $this->quoteFormSubscriber = new MutableFormEventSubscriber($this->createMock(QuoteFormSubscriber::class));
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
+
+        $this->configManager->expects($this->any())
+            ->method('get')
+            ->with('oro_currency.default_currency')
+            ->willReturn('USD');
 
         $this->configureQuoteProductOfferFormatter();
 
@@ -101,14 +90,12 @@ class QuoteTypeTest extends AbstractTest
 
     public function testConfigureOptions()
     {
-        $this->authorizationChecker->expects($this->at(0))
+        $this->authorizationChecker->expects($this->exactly(2))
             ->method('isGranted')
-            ->with('oro_quote_prices_override')
-            ->willReturn(true);
-        $this->authorizationChecker->expects($this->at(1))
-            ->method('isGranted')
-            ->with('oro_quote_add_free_form_items')
-            ->willReturn(false);
+            ->willReturnMap([
+                ['oro_quote_prices_override', null, true],
+                ['oro_quote_add_free_form_items', null, false]
+            ]);
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setDefaults')
@@ -124,27 +111,16 @@ class QuoteTypeTest extends AbstractTest
         $this->formType->configureOptions($resolver);
     }
 
-    /**
-     * @param int $ownerId
-     * @param int $customerUserId
-     * @param int $customerId
-     * @param QuoteProduct[] $items
-     * @param string $poNumber
-     * @param string $shipUntil
-     * @param bool $shippingMethodLocked
-     * @param bool $allowedUnlistedShippingMethod
-     * @return Quote
-     */
-    protected function getQuote(
-        $ownerId,
-        $customerUserId = null,
-        $customerId = null,
+    private function getQuote(
+        int $ownerId,
+        int $customerUserId = null,
+        int $customerId = null,
         array $items = [],
-        $poNumber = null,
-        $shipUntil = null,
-        $shippingMethodLocked = false,
-        $allowedUnlistedShippingMethod = false
-    ) {
+        string $poNumber = null,
+        \DateTime $shipUntil = null,
+        bool $shippingMethodLocked = false,
+        bool $allowedUnlistedShippingMethod = false
+    ): Quote {
         $quote = new Quote();
 
         $quote->setShippingMethodLocked($shippingMethodLocked);
@@ -200,10 +176,9 @@ class QuoteTypeTest extends AbstractTest
     }
 
     /**
-     * @return array
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function submitProvider()
+    public function submitProvider(): array
     {
         $quoteProductOffer = $this->getQuoteProductOffer(2, 33, 'kg', self::QPO_PRICE_TYPE1, Price::create(44, 'USD'));
         $quoteProduct = $this->getQuoteProduct(2, self::QP_TYPE1, 'comment1', 'comment2', [], [$quoteProductOffer]);

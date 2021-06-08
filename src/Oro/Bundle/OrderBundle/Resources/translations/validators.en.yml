@@ -28,3 +28,7 @@ oro:
         orderaddress:
             multiple: 'Only order address fields, a customer user address or a customer address can be set.'
             not_allowed: 'It is not allowed to use this address for the order.'
+        order:
+            ship_until:
+                type:
+                    message: 'This value is not a valid date.'

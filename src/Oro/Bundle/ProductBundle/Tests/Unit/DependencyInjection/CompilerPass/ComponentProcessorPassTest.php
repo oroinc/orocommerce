@@ -4,90 +4,53 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\DependencyInjection\CompilerPass;
 
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ComponentProcessorPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
 
 class ComponentProcessorPassTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ComponentProcessorPass
-     */
-    protected $compilerPass;
-
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ContainerBuilder
-     */
-    protected $container;
+    /** @var ComponentProcessorPass */
+    private $compiler;
 
     protected function setUp(): void
     {
-        $this->container = $this
-            ->getMockBuilder('Symfony\Component\DependencyInjection\ContainerBuilder')
-            ->getMock();
-
-        $this->compilerPass = new ComponentProcessorPass();
-    }
-
-    protected function tearDown(): void
-    {
-        unset($this->container, $this->compilerPass);
+        $this->compiler = new ComponentProcessorPass();
     }
 
     public function testServiceNotExists()
     {
-        $this->container->expects($this->once())
-            ->method('hasDefinition')
-            ->with($this->equalTo(ComponentProcessorPass::REGISTRY_SERVICE))
-            ->will($this->returnValue(false));
+        $container = new ContainerBuilder();
 
-        $this->container->expects($this->never())
-            ->method('getDefinition');
-
-        $this->container->expects($this->never())
-            ->method('findTaggedServiceIds');
-
-        $this->compilerPass->process($this->container);
+        $this->compiler->process($container);
     }
 
-    public function testServiceExistsNotTaggedServices()
+    public function testNoTaggedServices()
     {
-        $this->container->expects($this->once())
-            ->method('hasDefinition')
-            ->with($this->equalTo(ComponentProcessorPass::REGISTRY_SERVICE))
-            ->will($this->returnValue(true));
+        $container = new ContainerBuilder();
+        $registryDef = $container->register('oro_product.component_processor.registry');
 
-        $this->container->expects($this->once())
-            ->method('findTaggedServiceIds')
-            ->with($this->equalTo(ComponentProcessorPass::TAG))
-            ->will($this->returnValue([]));
+        $this->compiler->process($container);
 
-        $this->container->expects($this->never())
-            ->method('getDefinition');
-
-        $this->compilerPass->process($this->container);
+        self::assertSame([], $registryDef->getMethodCalls());
     }
 
     public function testServiceExistsWithTaggedServices()
     {
-        $this->container->expects($this->once())
-            ->method('hasDefinition')
-            ->with($this->equalTo(ComponentProcessorPass::REGISTRY_SERVICE))
-            ->will($this->returnValue(true));
+        $container = new ContainerBuilder();
+        $registryDef = $container->register('oro_product.component_processor.registry');
 
-        $this->container->expects($this->once())
-            ->method('findTaggedServiceIds')
-            ->with($this->equalTo(ComponentProcessorPass::TAG))
-            ->will($this->returnValue(['service' => ['class' => '\stdClass']]));
+        $container->register('processor_1')
+            ->addTag('oro_product.quick_add_processor');
+        $container->register('processor_2')
+            ->addTag('oro_product.quick_add_processor');
 
-        $definition = $this->createMock('Symfony\Component\DependencyInjection\Definition');
+        $this->compiler->process($container);
 
-        $this->container->expects($this->once())
-            ->method('getDefinition')
-            ->with($this->equalTo(ComponentProcessorPass::REGISTRY_SERVICE))
-            ->will($this->returnValue($definition));
-
-        $definition->expects($this->once())
-            ->method('addMethodCall')
-            ->with('addProcessor', $this->isType('array'));
-
-        $this->compilerPass->process($this->container);
+        self::assertEquals(
+            [
+                ['addProcessor', [new Reference('processor_1')]],
+                ['addProcessor', [new Reference('processor_2')]]
+            ],
+            $registryDef->getMethodCalls()
+        );
     }
 }

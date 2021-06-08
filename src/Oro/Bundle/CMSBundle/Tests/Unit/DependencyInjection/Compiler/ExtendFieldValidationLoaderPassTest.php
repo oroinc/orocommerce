@@ -6,119 +6,43 @@ use Oro\Bundle\CMSBundle\DependencyInjection\Compiler\ExtendFieldValidationLoade
 use Oro\Bundle\CMSBundle\Validator\Constraints\TwigContent;
 use Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYG;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
 
 class ExtendFieldValidationLoaderPassTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ExtendFieldValidationLoaderPass */
-    private $pass;
+    private $compiler;
 
-    /** @var ContainerBuilder|\PHPUnit\Framework\MockObject\MockObject */
-    private $container;
-
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
-        $this->pass = new ExtendFieldValidationLoaderPass();
-        $this->container = $this->createMock(ContainerBuilder::class);
+        $this->compiler = new ExtendFieldValidationLoaderPass();
+    }
+
+    public function testProcessWithoutTargerServices(): void
+    {
+        $container = new ContainerBuilder();
+
+        $this->compiler->process($container);
     }
 
     public function testProcess(): void
     {
-        $entityExtendValidationLoaderDefinition = new Definition();
-        $serializedFieldsValidationLoaderDefinition = new Definition();
+        $container = new ContainerBuilder();
+        $validationLoaderDef = $container->register('oro_entity_extend.validation_loader');
+        $validatorDef = $container->register('oro_serialized_fields.validator.extend_entity_serialized_data');
 
-        $this->container
-            ->expects($this->exactly(2))
-            ->method('hasDefinition')
-            ->withConsecutive(
-                ['oro_entity_extend.validation_loader'],
-                ['oro_serialized_fields.validator.extend_entity_serialized_data']
-            )
-            ->willReturnOnConsecutiveCalls(
-                true,
-                true
-            );
+        $this->compiler->process($container);
 
-        $this->container
-            ->expects($this->exactly(2))
-            ->method('getDefinition')
-            ->withConsecutive(
-                ['oro_entity_extend.validation_loader'],
-                ['oro_serialized_fields.validator.extend_entity_serialized_data']
-            )
-            ->willReturnOnConsecutiveCalls(
-                $entityExtendValidationLoaderDefinition,
-                $serializedFieldsValidationLoaderDefinition
-            );
-
-        $this->pass->process($this->container);
-
-        $this->assertEquals([
-            ['addConstraints', ['wysiwyg', [[TwigContent::class => null], [WYSIWYG::class => null]]]]
-        ], $entityExtendValidationLoaderDefinition->getMethodCalls());
-        $this->assertEquals([
-            ['addConstraints', ['wysiwyg', [[TwigContent::class => null], [WYSIWYG::class => null]]]]
-        ], $serializedFieldsValidationLoaderDefinition->getMethodCalls());
-    }
-
-    public function testProcessWithoutEntityExtendValidationLoader(): void
-    {
-        $serializedFieldsValidationLoaderDefinition = new Definition();
-
-        $this->container
-            ->expects($this->exactly(2))
-            ->method('hasDefinition')
-            ->withConsecutive(
-                ['oro_entity_extend.validation_loader'],
-                ['oro_serialized_fields.validator.extend_entity_serialized_data']
-            )
-            ->willReturnOnConsecutiveCalls(
-                false,
-                true
-            );
-
-        $this->container
-            ->expects($this->once())
-            ->method('getDefinition')
-            ->with('oro_serialized_fields.validator.extend_entity_serialized_data')
-            ->willReturn($serializedFieldsValidationLoaderDefinition);
-
-        $this->pass->process($this->container);
-
-        $this->assertEquals([
-            ['addConstraints', ['wysiwyg', [[TwigContent::class => null], [WYSIWYG::class => null]]]]
-        ], $serializedFieldsValidationLoaderDefinition->getMethodCalls());
-    }
-
-    public function testProcessWithoutSerializedFieldsValidationLoader(): void
-    {
-        $entityExtendValidationLoaderDefinition = new Definition(null, ['', ['integer', 'boolean']]);
-
-        $this->container
-            ->expects($this->exactly(2))
-            ->method('hasDefinition')
-            ->withConsecutive(
-                ['oro_entity_extend.validation_loader'],
-                ['oro_serialized_fields.validator.extend_entity_serialized_data']
-            )
-            ->willReturnOnConsecutiveCalls(
-                true,
-                false
-            );
-
-        $this->container
-            ->expects($this->once())
-            ->method('getDefinition')
-            ->with('oro_entity_extend.validation_loader')
-            ->willReturn($entityExtendValidationLoaderDefinition);
-
-        $this->pass->process($this->container);
-
-        $this->assertEquals([
-            ['addConstraints', ['wysiwyg', [[TwigContent::class => null], [WYSIWYG::class => null]]]]
-        ], $entityExtendValidationLoaderDefinition->getMethodCalls());
+        $this->assertEquals(
+            [
+                ['addConstraints', ['wysiwyg', [[TwigContent::class => null], [WYSIWYG::class => null]]]]
+            ],
+            $validationLoaderDef->getMethodCalls()
+        );
+        $this->assertEquals(
+            [
+                ['addConstraints', ['wysiwyg', [[TwigContent::class => null], [WYSIWYG::class => null]]]]
+            ],
+            $validatorDef->getMethodCalls()
+        );
     }
 }

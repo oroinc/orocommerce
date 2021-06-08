@@ -26,13 +26,13 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Form\Extension\QuoteEmailTemplateExtension;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
-use Oro\Bundle\SecurityBundle\Tests\Unit\Authorization\FakeAuthorizationChecker;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Asset\Context\NullContext;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Translation\DataCollectorTranslator;
 
 class QuoteEmailTemplateExtensionTest extends FormIntegrationTestCase
@@ -60,13 +60,12 @@ class QuoteEmailTemplateExtensionTest extends FormIntegrationTestCase
         $this->em = $this->createMock(EntityManager::class);
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->repository = $this->createMock(EmailTemplateRepository::class);
-
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
-        $this->tokenAccessor
+        $this->featureChecker = $this->createMock(FeatureChecker::class);
+
+        $this->tokenAccessor->expects($this->any())
             ->method('getOrganization')
             ->willReturn(new Organization());
-
-        $this->featureChecker = $this->createMock(FeatureChecker::class);
 
         $this->extension = new QuoteEmailTemplateExtension($this->tokenAccessor, $this->featureChecker);
 
@@ -75,9 +74,6 @@ class QuoteEmailTemplateExtensionTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider buildFormDataProvider
-     *
-     * @param bool $isFeatureEnabled
-     * @param array $excludeNames
      */
     public function testBuildForm(bool $isFeatureEnabled, array $excludeNames): void
     {
@@ -117,9 +113,6 @@ class QuoteEmailTemplateExtensionTest extends FormIntegrationTestCase
         $this->assertSame($qb, $templateOptions['query_builder']($this->repository));
     }
 
-    /**
-     * @return array
-     */
     public function buildFormDataProvider(): array
     {
         return [
@@ -206,19 +199,18 @@ class QuoteEmailTemplateExtensionTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * @return EmailType
-     */
     private function createEmailType(): EmailType
     {
-        /** @var EmailRenderer $emailRenderer */
+        $authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         $emailRenderer = $this->createMock(EmailRenderer::class);
-
-        /** @var EmailModelBuilderHelper $emailModelBuilderHelper */
         $emailModelBuilderHelper = $this->createMock(EmailModelBuilderHelper::class);
 
+        $authorizationChecker->expects($this->any())
+            ->method('isGranted')
+            ->willReturn(true);
+
         return new EmailType(
-            new FakeAuthorizationChecker(),
+            $authorizationChecker,
             $this->tokenAccessor,
             $emailRenderer,
             $emailModelBuilderHelper,
@@ -226,15 +218,9 @@ class QuoteEmailTemplateExtensionTest extends FormIntegrationTestCase
         );
     }
 
-    /**
-     * @return ContextsSelectType
-     */
     private function createContextsSelectType(): ContextsSelectType
     {
-        /** @var EntityConfigManager $configManager */
         $configManager = $this->createMock(EntityConfigManager::class);
-
-        /** @var DataCollectorTranslator $translator */
         $translator = $this->createMock(DataCollectorTranslator::class);
 
         return new ContextsSelectType(
@@ -247,28 +233,17 @@ class QuoteEmailTemplateExtensionTest extends FormIntegrationTestCase
         );
     }
 
-    /**
-     * @return EmailOriginFromType
-     */
     private function createEmailOriginFromType(): EmailOriginFromType
     {
-        /** @var RelatedEmailsProvider $relatedEmailsProvider */
         $relatedEmailsProvider = $this->createMock(RelatedEmailsProvider::class);
-
-        /** @var EmailModelBuilderHelper $emailModelBuilderHelper */
         $emailModelBuilderHelper = $this->createMock(EmailModelBuilderHelper::class);
-
-        /** @var MailboxManager $mailboxManager */
         $mailboxManager = $this->createMock(MailboxManager::class);
-
-        /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $registry */
         $registry = $this->createMock(ManagerRegistry::class);
-        $registry
+        $emailOriginHelper = $this->createMock(EmailOriginHelper::class);
+
+        $registry->expects($this->any())
             ->method('getManager')
             ->willReturn($this->em);
-
-        /** @var EmailOriginHelper $emailOriginHelper */
-        $emailOriginHelper = $this->createMock(EmailOriginHelper::class);
 
         return new EmailOriginFromType(
             $this->tokenAccessor,

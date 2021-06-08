@@ -349,7 +349,7 @@
                                    aria-selected="true"
                                 >
                                     {{ 'oro.product.content_variant.ui.filtered_products'|trans }}
-                                    (<span data-role="counter">{{ render(controller('OroProductBundle:AjaxGetProductsCount:get', widgetRouteParameters)) }}</span>)
+                                    (<span data-role="counter">{{ render(controller('Oro\\Bundle\\ProductBundle\\Controller\\AjaxGetProductsCountController::getAction', widgetRouteParameters)) }}</span>)
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -363,7 +363,7 @@
                                    aria-selected="false"
                                 >
                                     {{ 'oro.product.content_variant.ui.excluded_products'|trans }}
-                                    (<span data-role="counter">{{ render(controller('OroProductBundle:AjaxGetProductsCount:get', excludedWidgetRouteParameters)) }}</span>)
+                                    (<span data-role="counter">{{ render(controller('Oro\\Bundle\\ProductBundle\\Controller\\AjaxGetProductsCountController::getAction', excludedWidgetRouteParameters)) }}</span>)
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -377,7 +377,7 @@
                                    aria-selected="false"
                                 >
                                     {{ 'oro.product.content_variant.ui.included_products'|trans }}
-                                    (<span data-role="counter">{{ render(controller('OroProductBundle:AjaxGetProductsCount:get', includedWidgetRouteParameters)) }}</span>)
+                                    (<span data-role="counter">{{ render(controller('Oro\\Bundle\\ProductBundle\\Controller\\AjaxGetProductsCountController::getAction', includedWidgetRouteParameters)) }}</span>)
                                 </a>
                             </li>
                             <li class="nav-item pull-right">
