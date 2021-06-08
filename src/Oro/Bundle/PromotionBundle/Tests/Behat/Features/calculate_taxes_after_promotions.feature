@@ -218,3 +218,9 @@ Feature: Calculate taxes after promotions
     And click "Apply" in modal window
     Then I should see "Tax $0.12"
     And I should see "Total $3.87"
+
+  Scenario: Taxes recalculated when coupon was deactivated
+    When I click "Edit"
+    And I click "Fifth Promotion Change Active Button"
+    Then I should see "Tax $0.24"
+    And I should see "Total $5.74"

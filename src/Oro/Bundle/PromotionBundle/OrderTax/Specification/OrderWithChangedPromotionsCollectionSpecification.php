@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\PromotionBundle\OrderTax\Specification;
 
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\PersistentCollection;
 use Doctrine\ORM\UnitOfWork;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\TaxBundle\OrderTax\Specification\OriginalDataAccessorTrait;
@@ -38,16 +40,6 @@ class OrderWithChangedPromotionsCollectionSpecification implements Specification
             return true;
         }
 
-        return $this->isPromotionsChanged($order);
-    }
-
-    /**
-     * @param Order $order
-     *
-     * @return bool
-     */
-    private function isPromotionsChanged(Order $order): bool
-    {
         $originalOrderData = $this->getOriginalEntityData($order);
         /**
          * If entity was not loaded it means no changes was made
@@ -56,6 +48,29 @@ class OrderWithChangedPromotionsCollectionSpecification implements Specification
             return false;
         }
 
-        return $order->getAppliedPromotions()->isDirty();
+        return $this->isPromotionsChanged($order->getAppliedPromotions());
+    }
+
+    /**
+     * @param Collection|array $appliedPromotions
+     *
+     * @return bool
+     */
+    private function isPromotionsChanged(Collection|array $appliedPromotions): bool
+    {
+        if ($appliedPromotions instanceof PersistentCollection && $appliedPromotions->isDirty()) {
+            return true;
+        }
+
+        foreach ($appliedPromotions as $appliedPromotion) {
+            $originalAppliedPromotion = $this->getOriginalEntityData($appliedPromotion);
+            $originalIsActiveStatus = $originalAppliedPromotion['active'] ?? null;
+
+            if ($appliedPromotion->isActive() !== $originalIsActiveStatus) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
