@@ -82,6 +82,7 @@ Feature: Product attribute float
     Then I should not see "SKU123" product
     And I should not see "SKU456" product
 
+  @skip
   Scenario: Check product grid filter and sorter
     Given I click "NewCategory"
     And I should see "SKU123" product
@@ -91,6 +92,7 @@ Feature: Product attribute float
     And I should not see "SKU456" product
     And grid sorter should have "FloatField" options
 
+  @skip
   Scenario: Check product attribute is formatted according to localization on front store
     When I click "View Details" for "SKU123" product
     Then I should see "-1.234,1234567891"
