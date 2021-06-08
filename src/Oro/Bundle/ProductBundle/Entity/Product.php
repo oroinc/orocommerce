@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
+use Oro\Bundle\EntityBundle\EntityProperty\DenormalizedPropertyAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamilyAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -150,7 +151,8 @@ class Product extends ExtendProduct implements
     \JsonSerializable,
     AttributeFamilyAwareInterface,
     SluggableInterface,
-    DatesAwareInterface
+    DatesAwareInterface,
+    DenormalizedPropertyAwareInterface
 {
     use SluggableTrait;
 
@@ -1016,7 +1018,7 @@ class Product extends ExtendProduct implements
     {
         $this->setDefaultFallbackValue($this->names, $value, ProductName::class);
         $this->getDefaultName()->setProduct($this);
-        $this->preUpdate();
+        $this->updateDenormalizedProperties();
 
         return $this;
     }
@@ -1057,7 +1059,7 @@ class Product extends ExtendProduct implements
             $this->names->add($name);
 
             if (!$name->getLocalization()) {
-                $this->preUpdate();
+                $this->updateDenormalizedProperties();
             }
         }
 
@@ -1373,12 +1375,8 @@ class Product extends ExtendProduct implements
     {
         $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
-        $this->skuUppercase = mb_strtoupper($this->sku);
-        if (!$this->getDefaultName()) {
-            throw new \RuntimeException('Product has to have a default name');
-        }
-        $this->denormalizedDefaultName = $this->getDefaultName()->getString();
-        $this->denormalizedDefaultNameUppercase = mb_strtoupper($this->denormalizedDefaultName);
+
+        $this->updateDenormalizedProperties();
     }
 
     /**
@@ -1389,17 +1387,24 @@ class Product extends ExtendProduct implements
     public function preUpdate()
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
-        $this->skuUppercase = mb_strtoupper($this->sku);
-        if (!$this->getDefaultName()) {
-            throw new \RuntimeException('Product has to have a default name');
-        }
-        $this->denormalizedDefaultName = $this->getDefaultName()->getString();
-        $this->denormalizedDefaultNameUppercase = mb_strtoupper($this->denormalizedDefaultName);
+
+        $this->updateDenormalizedProperties();
 
         if (!$this->isConfigurable()) {
             // Clear variantLinks in Oro\Bundle\ProductBundle\EventListener\ProductHandlerListener
             $this->variantFields = [];
         }
+    }
+
+    public function updateDenormalizedProperties(): void
+    {
+        $this->skuUppercase = mb_strtoupper($this->sku);
+
+        if (!$this->getDefaultName()) {
+            throw new \RuntimeException('Product has to have a default name');
+        }
+        $this->denormalizedDefaultName = $this->getDefaultName()->getString();
+        $this->denormalizedDefaultNameUppercase = mb_strtoupper($this->denormalizedDefaultName);
     }
 
     public function __clone()

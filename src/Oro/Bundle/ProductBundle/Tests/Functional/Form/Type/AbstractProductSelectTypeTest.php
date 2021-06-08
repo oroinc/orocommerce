@@ -40,7 +40,7 @@ abstract class AbstractProductSelectTypeTest extends WebTestCase
      */
     public function testSearchRestriction(array $restrictionParams, array $expectedProducts)
     {
-        call_user_func_array([$this, 'setUpBeforeRestriction'], $restrictionParams);
+        call_user_func_array([$this, 'setUpBeforeRestriction'], array_values($restrictionParams));
 
         $this->client->request(
             'GET',
@@ -67,7 +67,7 @@ abstract class AbstractProductSelectTypeTest extends WebTestCase
      */
     public function testDatagridRestriction(array $restrictionParams, array $expectedProducts)
     {
-        call_user_func_array([$this, 'setUpBeforeRestriction'], $restrictionParams);
+        call_user_func_array([$this, 'setUpBeforeRestriction'], array_values($restrictionParams));
 
         $this->client->request(
             'GET',

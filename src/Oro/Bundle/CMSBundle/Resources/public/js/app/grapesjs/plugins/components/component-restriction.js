@@ -65,7 +65,7 @@ define(function(require) {
             return this.allowTags;
         };
 
-        this.allowedIframeDomains = options.allowedIframeDomains || [];
+        this.allowedIframeDomains = options.allowedIframeDomains || null;
 
         editor.getAllowedIframeDomains = () => {
             return this.allowedIframeDomains;
@@ -128,6 +128,9 @@ define(function(require) {
          */
         isAllowedDomain: function(domain) {
             const allowedIframeDomains = this.editor.getAllowedIframeDomains();
+            if (allowedIframeDomains === null) {
+                return true;
+            }
 
             try {
                 const {hostname, pathname} = new URL(domain);
