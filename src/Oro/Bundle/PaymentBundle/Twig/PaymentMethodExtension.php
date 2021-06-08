@@ -23,7 +23,7 @@ use Twig\TwigFunction;
 class PaymentMethodExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
     const DEFAULT_METHOD_CONFIG_TEMPLATE =
-        'OroPaymentBundle:PaymentMethodsConfigsRule:paymentMethodWithOptions.html.twig';
+        '@OroPayment/PaymentMethodsConfigsRule/paymentMethodWithOptions.html.twig';
 
     /** @var ContainerInterface */
     protected $container;

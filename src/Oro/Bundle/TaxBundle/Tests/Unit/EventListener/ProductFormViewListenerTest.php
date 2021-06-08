@@ -37,7 +37,7 @@ class ProductFormViewListenerTest extends AbstractFormViewListenerTest
 
         $this->env->expects($this->once())
             ->method('render')
-            ->with('OroTaxBundle:Product:tax_code_update.html.twig', ['form' => $formView])
+            ->with('@OroTax/Product/tax_code_update.html.twig', ['form' => $formView])
             ->willReturn($htmlTemplate);
 
         $scrollData = new ScrollData([
@@ -117,7 +117,7 @@ class ProductFormViewListenerTest extends AbstractFormViewListenerTest
 
         $this->env->expects($this->once())
             ->method('render')
-            ->with('OroTaxBundle:Product:tax_code_view.html.twig', ['entity' => $taxCode])
+            ->with('@OroTax/Product/tax_code_view.html.twig', ['entity' => $taxCode])
             ->willReturn('rendered');
 
         $scrollData = new ScrollData([

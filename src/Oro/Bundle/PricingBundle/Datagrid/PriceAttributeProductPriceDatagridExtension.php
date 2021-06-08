@@ -183,7 +183,7 @@ class PriceAttributeProductPriceDatagridExtension extends AbstractExtension
         $columnConfig = [
             'label' => sprintf('%s (%s)', $priceAttributeName, $currencyIsoCode),
             'type' => 'twig',
-            'template' => 'OroPricingBundle:Datagrid:Column/productPrice.html.twig',
+            'template' => '@OroPricing/Datagrid/Column/productPrice.html.twig',
             'frontend_type' => 'html',
             'renderable' => true,
         ];

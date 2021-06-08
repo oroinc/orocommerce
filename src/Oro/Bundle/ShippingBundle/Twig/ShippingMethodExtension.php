@@ -23,7 +23,7 @@ class ShippingMethodExtension extends AbstractExtension implements ServiceSubscr
 {
     const SHIPPING_METHOD_EXTENSION_NAME = 'oro_shipping_method';
     const DEFAULT_METHOD_CONFIG_TEMPLATE
-        = 'OroShippingBundle:ShippingMethodsConfigsRule:shippingMethodWithOptions.html.twig';
+        = '@OroShipping/ShippingMethodsConfigsRule/shippingMethodWithOptions.html.twig';
 
     /** @var ContainerInterface */
     private $container;

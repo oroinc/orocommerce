@@ -41,7 +41,7 @@ class CustomerViewListener extends AbstractCustomerViewListener implements Featu
      */
     protected function getCustomerViewTemplate()
     {
-        return 'OroRFPBundle:Customer:rfp_view.html.twig';
+        return '@OroRFP/Customer/rfp_view.html.twig';
     }
 
     /**
@@ -57,7 +57,7 @@ class CustomerViewListener extends AbstractCustomerViewListener implements Featu
      */
     protected function getCustomerUserViewTemplate()
     {
-        return 'OroRFPBundle:CustomerUser:rfp_view.html.twig';
+        return '@OroRFP/CustomerUser/rfp_view.html.twig';
     }
 
     /**

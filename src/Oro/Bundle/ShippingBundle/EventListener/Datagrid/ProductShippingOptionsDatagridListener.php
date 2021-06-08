@@ -10,6 +10,9 @@ use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 
+/**
+ * Adds column with Product Shipping Options information to the Product grid.
+ */
 class ProductShippingOptionsDatagridListener
 {
     const SHIPPING_OPTIONS_COLUMN = 'product_shipping_options';
@@ -45,7 +48,7 @@ class ProductShippingOptionsDatagridListener
         $column = [
             'label' => 'oro.shipping.datagrid.shipping_options.column.label',
             'type' => 'twig',
-            'template' => 'OroShippingBundle:Datagrid:Column/productShippingOptions.html.twig',
+            'template' => '@OroShipping/Datagrid/Column/productShippingOptions.html.twig',
             'frontend_type' => 'html',
             'renderable' => false,
         ];

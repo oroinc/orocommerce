@@ -168,7 +168,7 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
         $environment->expects($this->at(1))
             ->method('render')
             ->with(
-                'OroPricingBundle:Product:prices_view.html.twig',
+                '@OroPricing/Product/prices_view.html.twig',
                 [
                     'entity' => $product,
                 ]
@@ -250,7 +250,7 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
         $environment = $this->createMock(Environment::class);
         $environment->expects($this->once())
             ->method('render')
-            ->with('OroPricingBundle:Product:prices_update.html.twig', ['form' => $formView])
+            ->with('@OroPricing/Product/prices_update.html.twig', ['form' => $formView])
             ->willReturn($templateHtml);
 
         $entity = new Product();
@@ -337,7 +337,7 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
         $environment->expects($this->at(0))
             ->method('render')
             ->with(
-                'OroPricingBundle:Product:price_attribute_prices_view.html.twig',
+                '@OroPricing/Product/price_attribute_prices_view.html.twig',
                 [
                     'product' => $product,
                     'priceList' => $priceList,

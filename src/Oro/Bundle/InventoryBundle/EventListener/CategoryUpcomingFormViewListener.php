@@ -5,6 +5,9 @@ namespace Oro\Bundle\InventoryBundle\EventListener;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\Fallback\AbstractFallbackFieldsFormView;
 
+/**
+ * Adds upcoming information to the category edit page.
+ */
 class CategoryUpcomingFormViewListener extends AbstractFallbackFieldsFormView
 {
     /**
@@ -14,7 +17,7 @@ class CategoryUpcomingFormViewListener extends AbstractFallbackFieldsFormView
     {
         $this->addBlockToEntityEdit(
             $event,
-            'OroInventoryBundle:Category:editUpcoming.html.twig',
+            '@OroInventory/Category/editUpcoming.html.twig',
             'oro.catalog.sections.default_options'
         );
     }

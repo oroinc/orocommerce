@@ -82,7 +82,7 @@ class DatagridListenerTest extends \PHPUnit\Framework\TestCase
                     'paymentTerm' => [
                         'type' => 'twig',
                         'frontend_type' => 'html',
-                        'template' => 'OroPaymentTermBundle:PaymentTerm:column.html.twig',
+                        'template' => '@OroPaymentTerm/PaymentTerm/column.html.twig',
                     ],
                 ],
                 'extended_entity_name' => \stdClass::class,

@@ -100,7 +100,7 @@ class FormViewListener implements FeatureToggleableInterface
         }
 
         $template = $event->getEnvironment()->render(
-            'OroPricingBundle:Product:prices_update.html.twig',
+            '@OroPricing/Product/prices_update.html.twig',
             ['form' => $event->getFormView()]
         );
         $scrollData = $event->getScrollData();
@@ -151,7 +151,7 @@ class FormViewListener implements FeatureToggleableInterface
                 ->getPricesWithUnitAndCurrencies($priceList, $product);
 
             $template = $event->getEnvironment()->render(
-                'OroPricingBundle:Product:price_attribute_prices_view.html.twig',
+                '@OroPricing/Product/price_attribute_prices_view.html.twig',
                 [
                     'product' => $product,
                     'priceList' => $priceList,
@@ -170,7 +170,7 @@ class FormViewListener implements FeatureToggleableInterface
         if (empty($priceLists)) {
             $subBlockId = $scrollData->addSubBlock(self::PRICE_ATTRIBUTES_BLOCK_NAME);
             $template = $event->getEnvironment()
-                ->render('OroPricingBundle:Product:price_attribute_no_data.html.twig', []);
+                ->render('@OroPricing/Product/price_attribute_no_data.html.twig', []);
             $scrollData->addSubBlockData(
                 self::PRICE_ATTRIBUTES_BLOCK_NAME,
                 $subBlockId,
@@ -203,7 +203,7 @@ class FormViewListener implements FeatureToggleableInterface
         $priceListSubBlockId = $scrollData->addSubBlock(self::PRICING_BLOCK_NAME);
 
         $template = $event->getEnvironment()->render(
-            'OroPricingBundle:Product:prices_view.html.twig',
+            '@OroPricing/Product/prices_view.html.twig',
             [
                 'entity' => $product,
             ]

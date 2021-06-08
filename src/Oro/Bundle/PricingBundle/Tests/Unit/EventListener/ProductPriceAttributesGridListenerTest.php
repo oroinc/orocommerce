@@ -100,7 +100,7 @@ class ProductPriceAttributesGridListenerTest extends \PHPUnit\Framework\TestCase
         $expectedColumn = [
             'label' => 'USD',
             'type' => 'twig',
-            'template' => 'OroPricingBundle:Datagrid:Column/priceValue.html.twig',
+            'template' => '@OroPricing/Datagrid/Column/priceValue.html.twig',
             'frontend_type' => 'html',
         ];
 

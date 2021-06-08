@@ -103,7 +103,7 @@ class CustomerUserViewListenerTest extends \PHPUnit\Framework\TestCase
         $this->env->expects($this->once())
             ->method('render')
             ->with(
-                'OroConsentBundle:CustomerUser:consent_view.html.twig',
+                '@OroConsent/CustomerUser/consent_view.html.twig',
                 ['consents' => $consentsWithAcceptances]
             )
             ->willReturn('template');

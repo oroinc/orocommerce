@@ -69,7 +69,7 @@ class OrderLineItemGridListener
                 'type' => 'twig',
                 'frontend_type' => 'html',
                 'data_name' => 'discountAmount',
-                'template' => 'OroPromotionBundle:Datagrid:Order/rowTotalDiscountAmount.html.twig',
+                'template' => '@OroPromotion/Datagrid/Order/rowTotalDiscountAmount.html.twig',
                 'renderable' => false
             ]
         );
@@ -82,7 +82,7 @@ class OrderLineItemGridListener
                     'type' => 'twig',
                     'frontend_type' => 'html',
                     'data_name' => 'discountAmount',
-                    'template' => 'OroPromotionBundle:Datagrid:Order/rowTotalAfterDiscountIncludingTax.html.twig',
+                    'template' => '@OroPromotion/Datagrid/Order/rowTotalAfterDiscountIncludingTax.html.twig',
                     'renderable' => false
                 ]
             );
@@ -93,7 +93,7 @@ class OrderLineItemGridListener
                     'type' => 'twig',
                     'frontend_type' => 'html',
                     'data_name' => 'discountAmount',
-                    'template' => 'OroPromotionBundle:Datagrid:Order/rowTotalAfterDiscountExcludingTax.html.twig',
+                    'template' => '@OroPromotion/Datagrid/Order/rowTotalAfterDiscountExcludingTax.html.twig',
                     'renderable' => false
                 ]
             );
@@ -105,7 +105,7 @@ class OrderLineItemGridListener
                     'type' => 'twig',
                     'frontend_type' => 'html',
                     'data_name' => 'discountAmount',
-                    'template' => 'OroPromotionBundle:Datagrid:Order/rowTotalAfterDiscount.html.twig',
+                    'template' => '@OroPromotion/Datagrid/Order/rowTotalAfterDiscount.html.twig',
                     'renderable' => false
                 ]
             );

@@ -14,7 +14,7 @@ class CustomerViewListener extends AbstractCustomerViewListener
      */
     protected function getCustomerViewTemplate()
     {
-        return 'OroSaleBundle:Customer:quote_view.html.twig';
+        return '@OroSale/Customer/quote_view.html.twig';
     }
 
     /**
@@ -30,7 +30,7 @@ class CustomerViewListener extends AbstractCustomerViewListener
      */
     protected function getCustomerUserViewTemplate()
     {
-        return 'OroSaleBundle:CustomerUser:quote_view.html.twig';
+        return '@OroSale/CustomerUser/quote_view.html.twig';
     }
 
     /**

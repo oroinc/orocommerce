@@ -85,7 +85,7 @@ class CustomerUserViewListener
      */
     protected function getCustomerUserViewTemplate()
     {
-        return 'OroConsentBundle:CustomerUser:consent_view.html.twig';
+        return '@OroConsent/CustomerUser/consent_view.html.twig';
     }
 
     /**

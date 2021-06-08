@@ -41,7 +41,7 @@ class BrandController extends AbstractController
 
     /**
      * @Route("/create", name="oro_product_brand_create")
-     * @Template("OroProductBundle:Brand:update.html.twig")
+     * @Template("@OroProduct/Brand/update.html.twig")
      * @Acl(
      *      id="oro_product_brand_create",
      *      type="entity",

@@ -9,6 +9,9 @@ use Oro\Bundle\UIBundle\View\ScrollData;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Adds visibility information to the category edit page.
+ */
 class FormViewListener
 {
     /**
@@ -57,7 +60,7 @@ class FormViewListener
         $category = $this->doctrineHelper->getEntityReference('OroCatalogBundle:Category', $categoryId);
         if ($category) {
             $template = $event->getEnvironment()->render(
-                'OroVisibilityBundle:Category:customer_category_visibility_edit.html.twig',
+                '@OroVisibility/Category/customer_category_visibility_edit.html.twig',
                 [
                     'entity' => $category,
                     'form' => $event->getFormView(),

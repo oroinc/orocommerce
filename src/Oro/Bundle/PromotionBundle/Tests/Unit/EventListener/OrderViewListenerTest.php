@@ -53,7 +53,7 @@ class OrderViewListenerTest extends \PHPUnit\Framework\TestCase
         $environment
             ->expects($this->once())
             ->method('render')
-            ->with('OroPromotionBundle:AppliedPromotion:applied_promotions_view_table.html.twig', ['entity' => $order])
+            ->with('@OroPromotion/AppliedPromotion/applied_promotions_view_table.html.twig', ['entity' => $order])
             ->willReturn($template);
 
         $scrollData = new ScrollData();
@@ -110,7 +110,7 @@ class OrderViewListenerTest extends \PHPUnit\Framework\TestCase
         $environment = $this->createMock(Environment::class);
         $environment->expects($this->once())
             ->method('render')
-            ->with('OroPromotionBundle:Order:applied_promotions_and_coupons.html.twig', ['form' => $formView])
+            ->with('@OroPromotion/Order/applied_promotions_and_coupons.html.twig', ['form' => $formView])
             ->willReturn($template);
 
         $event = new BeforeListRenderEvent($environment, $scrollData, new Order(), $formView);

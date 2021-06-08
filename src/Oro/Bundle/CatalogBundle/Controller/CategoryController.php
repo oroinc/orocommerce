@@ -29,7 +29,7 @@ class CategoryController extends AbstractController
 {
     /**
      * @Route("/create/{id}", name="oro_catalog_category_create", requirements={"id"="\d+"})
-     * @Template("OroCatalogBundle:Category:update.html.twig")
+     * @Template("@OroCatalog/Category/update.html.twig")
      * @Acl(
      *      id="oro_catalog_category_create",
      *      type="entity",

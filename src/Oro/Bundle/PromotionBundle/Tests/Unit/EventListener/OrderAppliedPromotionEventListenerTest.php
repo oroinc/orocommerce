@@ -124,7 +124,7 @@ class OrderAppliedPromotionEventListenerTest extends \PHPUnit\Framework\TestCase
         $view = 'Some html view';
         $this->engine->expects($this->once())
             ->method('render')
-            ->with('OroPromotionBundle:Order:applied_promotions.html.twig', ['form' => $formView])
+            ->with('@OroPromotion/Order/applied_promotions.html.twig', ['form' => $formView])
             ->willReturn($view);
 
         $this->appliedPromotionManager->expects($this->once())

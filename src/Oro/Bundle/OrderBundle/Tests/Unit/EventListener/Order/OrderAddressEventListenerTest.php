@@ -82,7 +82,7 @@ class OrderAddressEventListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->twigEngine->expects($this->once())
             ->method('render')
-            ->with('OroOrderBundle:Form:customerAddressSelector.html.twig', ['form' => $field1View])
+            ->with('@OroOrder/Form/customerAddressSelector.html.twig', ['form' => $field1View])
             ->willReturn('view1');
 
         /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $field1 */

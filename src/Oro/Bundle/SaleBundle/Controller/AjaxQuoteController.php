@@ -104,7 +104,7 @@ class AjaxQuoteController extends AbstractController
      */
     protected function renderForm(FormView $formView)
     {
-        return $this->renderView('OroSaleBundle:Form:customerAddressSelector.html.twig', ['form' => $formView]);
+        return $this->renderView('@OroSale/Form/customerAddressSelector.html.twig', ['form' => $formView]);
     }
 
     /**

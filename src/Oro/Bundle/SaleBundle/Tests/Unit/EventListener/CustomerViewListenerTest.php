@@ -24,7 +24,7 @@ class CustomerViewListenerTest extends AbstractCustomerViewListenerTest
      */
     protected function getCustomerViewTemplate()
     {
-        return 'OroSaleBundle:Customer:quote_view.html.twig';
+        return '@OroSale/Customer/quote_view.html.twig';
     }
 
     /**
@@ -40,7 +40,7 @@ class CustomerViewListenerTest extends AbstractCustomerViewListenerTest
      */
     protected function getCustomerUserViewTemplate()
     {
-        return 'OroSaleBundle:CustomerUser:quote_view.html.twig';
+        return '@OroSale/CustomerUser/quote_view.html.twig';
     }
 
     /**

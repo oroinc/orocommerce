@@ -25,8 +25,8 @@ class WYSIWYGValueRendererTest extends \PHPUnit\Framework\TestCase
         $this->twig->expects(self::exactly(2))
             ->method('render')
             ->withConsecutive(
-                ['OroApiBundle:Field:render_content.html.twig', ['value' => 'value']],
-                ['OroApiBundle:Field:render_content.html.twig', ['value' => 'style']]
+                ['@OroApi/Field/render_content.html.twig', ['value' => 'value']],
+                ['@OroApi/Field/render_content.html.twig', ['value' => 'style']]
             )
             ->willReturnOnConsecutiveCalls(
                 'rendered value',
@@ -51,7 +51,7 @@ class WYSIWYGValueRendererTest extends \PHPUnit\Framework\TestCase
     {
         $this->twig->expects(self::once())
             ->method('render')
-            ->with('OroApiBundle:Field:render_content.html.twig', ['value' => 'style'])
+            ->with('@OroApi/Field/render_content.html.twig', ['value' => 'style'])
             ->willReturn('rendered style');
 
         self::assertEquals(
@@ -64,7 +64,7 @@ class WYSIWYGValueRendererTest extends \PHPUnit\Framework\TestCase
     {
         $this->twig->expects(self::once())
             ->method('render')
-            ->with('OroApiBundle:Field:render_content.html.twig', ['value' => 'value'])
+            ->with('@OroApi/Field/render_content.html.twig', ['value' => 'value'])
             ->willReturn('rendered value');
 
         self::assertEquals(

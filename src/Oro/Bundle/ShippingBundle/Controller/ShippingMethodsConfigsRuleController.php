@@ -36,7 +36,7 @@ class ShippingMethodsConfigsRuleController extends AbstractController
 
     /**
      * @Route("/create", name="oro_shipping_methods_configs_rule_create")
-     * @Template("OroShippingBundle:ShippingMethodsConfigsRule:update.html.twig")
+     * @Template("@OroShipping/ShippingMethodsConfigsRule/update.html.twig")
      * @Acl(
      *     id="oro_shipping_methods_configs_rule_create",
      *     type="entity",

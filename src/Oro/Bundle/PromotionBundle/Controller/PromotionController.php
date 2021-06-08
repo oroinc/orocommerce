@@ -13,6 +13,9 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * CRUD controller for Promotion entity.
+ */
 class PromotionController extends AbstractController
 {
     /**
@@ -58,7 +61,7 @@ class PromotionController extends AbstractController
 
     /**
      * @Route("/create", name="oro_promotion_create")
-     * @Template("OroPromotionBundle:Promotion:update.html.twig")
+     * @Template("@OroPromotion/Promotion/update.html.twig")
      * @Acl(
      *      id="oro_promotion_create",
      *      type="entity",

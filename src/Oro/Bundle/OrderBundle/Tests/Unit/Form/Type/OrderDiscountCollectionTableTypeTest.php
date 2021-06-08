@@ -48,7 +48,7 @@ class OrderDiscountCollectionTableTypeTest extends FormIntegrationTestCase
 
         $options = $form->getConfig()->getOptions();
 
-        $this->assertSame('OroOrderBundle:Discount:order_discount_collection.html.twig', $options['template_name']);
+        $this->assertSame('@OroOrder/Discount/order_discount_collection.html.twig', $options['template_name']);
         $this->assertSame('oroui/js/app/components/view-component', $options['page_component']);
         $this->assertSame([
             'view' => 'oroorder/js/app/views/discount-collection-view',

@@ -58,7 +58,7 @@ class PriceRuleEditorOptionsConfiguratorTest extends \PHPUnit\Framework\TestCase
 
         $this->twig->expects($this->never())
             ->method('render')
-            ->with('OroPricingBundle:Form:form_widget.html.twig');
+            ->with('@OroPricing/Form/form_widget.html.twig');
 
         $expected = [
             'numericOnly' => false,
@@ -78,7 +78,7 @@ class PriceRuleEditorOptionsConfiguratorTest extends \PHPUnit\Framework\TestCase
         $selectHtml = '<select/>';
         $this->twig->expects($this->once())
             ->method('render')
-            ->with('OroPricingBundle:Form:form_widget.html.twig')
+            ->with('@OroPricing/Form/form_widget.html.twig')
             ->willReturn($selectHtml);
 
         $this->autocompleteFieldsProvider->expects($this->never())
@@ -114,7 +114,7 @@ class PriceRuleEditorOptionsConfiguratorTest extends \PHPUnit\Framework\TestCase
         $selectHtml = '<select/>';
         $this->twig->expects($this->once())
             ->method('render')
-            ->with('OroPricingBundle:Form:form_widget.html.twig')
+            ->with('@OroPricing/Form/form_widget.html.twig')
             ->willReturn($selectHtml);
 
         $this->autocompleteFieldsProvider->expects($this->once())
@@ -151,7 +151,7 @@ class PriceRuleEditorOptionsConfiguratorTest extends \PHPUnit\Framework\TestCase
         $this->assertFormCalled();
         $this->twig->expects($this->once())
             ->method('render')
-            ->with('OroPricingBundle:Form:form_widget.html.twig')
+            ->with('@OroPricing/Form/form_widget.html.twig')
             ->willThrowException(new \Exception('test'));
 
         $options = [

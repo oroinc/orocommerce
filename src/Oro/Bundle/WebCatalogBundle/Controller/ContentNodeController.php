@@ -32,7 +32,7 @@ class ContentNodeController extends AbstractController
      * @Route("/root/{id}", name="oro_content_node_update_root", requirements={"id"="\d+"})
      *
      * @AclAncestor("oro_web_catalog_update")
-     * @Template("OroWebCatalogBundle:ContentNode:update.html.twig")
+     * @Template("@OroWebCatalog/ContentNode/update.html.twig")
      *
      * @param WebCatalog $webCatalog
      * @return array
@@ -53,7 +53,7 @@ class ContentNodeController extends AbstractController
     /**
      * @Route("/create/parent/{id}", name="oro_content_node_create", requirements={"id"="\d+"})
      *
-     * @Template("OroWebCatalogBundle:ContentNode:update.html.twig")
+     * @Template("@OroWebCatalog/ContentNode/update.html.twig")
      *
      * @param ContentNode $parentNode
      * @return array
@@ -74,7 +74,7 @@ class ContentNodeController extends AbstractController
     /**
      * @Route("/update/{id}", name="oro_content_node_update", requirements={"id"="\d+"})
      *
-     * @Template("OroWebCatalogBundle:ContentNode:update.html.twig")
+     * @Template("@OroWebCatalog/ContentNode/update.html.twig")
      *
      * @param ContentNode $contentNode
      * @return array

@@ -10,6 +10,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * Serves AJAX Coupons actions
+ */
 class AjaxCouponController extends AbstractController
 {
     /**
@@ -27,7 +30,7 @@ class AjaxCouponController extends AbstractController
     {
         $coupons = $this->getCouponRepository()->getCouponsWithPromotionByIds(explode(',', $addedCouponIds));
         $view = $this->renderView(
-            'OroPromotionBundle:Coupon:addedCouponsTable.html.twig',
+            '@OroPromotion/Coupon/addedCouponsTable.html.twig',
             [
                 'coupons' => $coupons,
             ]

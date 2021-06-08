@@ -145,7 +145,7 @@ abstract class AbstractCustomerFormViewListenerTest extends \PHPUnit\Framework\T
         $this->env->expects($this->once())
             ->method('render')
             ->with(
-                'OroPricingBundle:Customer:price_list_view.html.twig',
+                '@OroPricing/Customer/price_list_view.html.twig',
                 [
                     'priceLists' => $priceLists,
                     'fallback' => $this->getFallbackLabel(),
@@ -170,7 +170,7 @@ abstract class AbstractCustomerFormViewListenerTest extends \PHPUnit\Framework\T
 
         $this->env->expects($this->once())
             ->method('render')
-            ->with('OroPricingBundle:Customer:price_list_update.html.twig', ['form' => $formView])
+            ->with('@OroPricing/Customer/price_list_update.html.twig', ['form' => $formView])
             ->willReturn($templateHtml);
 
         $this->featureChecker->expects($this->once())

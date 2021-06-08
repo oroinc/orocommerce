@@ -11,7 +11,7 @@ class ShippingRuleViewMethodTemplateListenerTest extends \PHPUnit\Framework\Test
     /**
      * @internal
      */
-    const TEMPLATE = 'FooBundle::bar.html.twig';
+    const TEMPLATE = '@Foo/bar.html.twig';
 
     /**
      * @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject

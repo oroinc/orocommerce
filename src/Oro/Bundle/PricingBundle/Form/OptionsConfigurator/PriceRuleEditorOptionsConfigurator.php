@@ -78,7 +78,7 @@ class PriceRuleEditorOptionsConfigurator
                     try {
                         return [
                             $key => $this->twig->render(
-                                'OroPricingBundle:Form:form_widget.html.twig',
+                                '@OroPricing/Form/form_widget.html.twig',
                                 ['form' => $priceListSelectView]
                             )
                         ];

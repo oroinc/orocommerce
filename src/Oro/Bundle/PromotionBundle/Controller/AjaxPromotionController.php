@@ -10,6 +10,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * Serves AJAX Promotion actions.
+ */
 class AjaxPromotionController extends AbstractController
 {
     /**
@@ -53,7 +56,7 @@ class AjaxPromotionController extends AbstractController
     private function getPromotionJsonResponse(PromotionDataInterface $promotionData): JsonResponse
     {
         $view = $this->renderView(
-            'OroPromotionBundle:Promotion:getPromotionDetails.html.twig',
+            '@OroPromotion/Promotion/getPromotionDetails.html.twig',
             [
                 'entity' => $promotionData,
                 'scopeEntities' => $this->get('oro_scope.scope_manager')->getScopeEntities('promotion')

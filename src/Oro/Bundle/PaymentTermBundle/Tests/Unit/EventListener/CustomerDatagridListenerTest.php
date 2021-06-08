@@ -202,7 +202,7 @@ class CustomerDatagridListenerTest extends \PHPUnit\Framework\TestCase
                     'customerPaymentTerm' => [
                         'type' => 'twig',
                         'frontend_type' => 'html',
-                        'template' => 'OroPaymentTermBundle:PaymentTerm:column.html.twig',
+                        'template' => '@OroPaymentTerm/PaymentTerm/column.html.twig',
                         'label' => 'oro.customer.payment_term_7c4f1e8e.label'
                     ],
                 ],
@@ -297,13 +297,13 @@ class CustomerDatagridListenerTest extends \PHPUnit\Framework\TestCase
                 'customerPaymentTerm' => [
                     'type' => 'twig',
                     'frontend_type' => 'html',
-                    'template' => 'OroPaymentTermBundle:PaymentTerm:column.html.twig',
+                    'template' => '@OroPaymentTerm/PaymentTerm/column.html.twig',
                     'label' => 'oro.customer.payment_term_7c4f1e8e.label',
                 ],
                 'customerPaymentTerm2' => [
                     'type' => 'twig',
                     'frontend_type' => 'html',
-                    'template' => 'OroPaymentTermBundle:PaymentTerm:column.html.twig',
+                    'template' => '@OroPaymentTerm/PaymentTerm/column.html.twig',
                     'label' => 'oro.customer.payment_term_7c4f1e8e.label',
                 ],
             ],

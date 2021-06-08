@@ -41,7 +41,7 @@ class ProductAutocompleteTypeTest extends \PHPUnit\Framework\TestCase
                                     'name' => 'oro_product_visibility_limited',
                                 ],
                                 'selection_template_twig' =>
-                                    'OroProductBundle:Product:Autocomplete/autocomplete_selection.html.twig',
+                                    '@OroProduct/Product/Autocomplete/autocomplete_selection.html.twig',
                                 'componentModule' => 'oroproduct/js/app/components/product-autocomplete-component',
                             ],
                             $options['autocomplete']

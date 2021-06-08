@@ -111,7 +111,7 @@ class CustomerDatagridListener
             $config->offsetSetByPath(sprintf('[columns][%s][frontend_type]', $associationName), 'html');
             $config->offsetSetByPath(
                 sprintf('[columns][%s][template]', $associationName),
-                'OroPaymentTermBundle:PaymentTerm:column.html.twig'
+                '@OroPaymentTerm/PaymentTerm/column.html.twig'
             );
         }
     }

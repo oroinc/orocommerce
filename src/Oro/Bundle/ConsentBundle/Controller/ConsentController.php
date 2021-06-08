@@ -36,7 +36,7 @@ class ConsentController extends AbstractController
      * Create consent
      *
      * @Route("/create", name="oro_consent_create")
-     * @Template("OroConsentBundle:Consent:update.html.twig")
+     * @Template("@OroConsent/Consent/update.html.twig")
      * @Acl(
      *      id="oro_consent_create",
      *      type="entity",

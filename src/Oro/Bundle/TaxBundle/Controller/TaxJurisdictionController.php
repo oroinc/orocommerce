@@ -52,7 +52,7 @@ class TaxJurisdictionController extends AbstractController
 
     /**
      * @Route("/create", name="oro_tax_jurisdiction_create")
-     * @Template("OroTaxBundle:TaxJurisdiction:update.html.twig")
+     * @Template("@OroTax/TaxJurisdiction/update.html.twig")
      * @Acl(
      *      id="oro_tax_jurisdiction_create",
      *      type="entity",

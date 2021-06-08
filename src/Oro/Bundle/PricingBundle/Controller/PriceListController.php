@@ -53,7 +53,7 @@ class PriceListController extends AbstractController
 
     /**
      * @Route("/info/{id}", name="oro_pricing_price_list_info", requirements={"id"="\d+"})
-     * @Template("OroPricingBundle:PriceList/widget:info.html.twig")
+     * @Template("@OroPricing/PriceList/widget/info.html.twig")
      * @AclAncestor("oro_pricing_price_list_view")
      * @param PriceList $priceList
      * @return array
@@ -83,7 +83,7 @@ class PriceListController extends AbstractController
      * Create price_list form
      *
      * @Route("/create", name="oro_pricing_price_list_create")
-     * @Template("OroPricingBundle:PriceList:update.html.twig")
+     * @Template("@OroPricing/PriceList/update.html.twig")
      * @Acl(
      *      id="oro_pricing_price_list_create",
      *      type="entity",

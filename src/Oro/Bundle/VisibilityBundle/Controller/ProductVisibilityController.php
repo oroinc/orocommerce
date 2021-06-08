@@ -72,7 +72,7 @@ class ProductVisibilityController extends AbstractController
      *      requirements={"productId"="\d+", "id"="\d+"}
      * )
      * @ParamConverter("product", options={"id" = "productId"})
-     * @Template("OroVisibilityBundle:ProductVisibility/widget:scope.html.twig")
+     * @Template("@OroVisibility/ProductVisibility/widget/scope.html.twig")
      * @AclAncestor("oro_product_update")
      *
      * @param Product $product
