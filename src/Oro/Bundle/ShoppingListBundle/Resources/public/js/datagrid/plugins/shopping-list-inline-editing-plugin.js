@@ -157,10 +157,12 @@ const ShoppingListInlineEditingPlugin = InlineEditingPlugin.extend({
             alreadySynced: true
         });
 
-        models.forEach(model => {
-            const errors = model.get('errors') || [];
-            model.flashRowHighlight(errors.length ? 'error' : 'success');
-        });
+        models
+            .filter(({id}) => this.main.collection.get(id))
+            .forEach(model => {
+                const errors = model.get('errors') || [];
+                model.flashRowHighlight(errors.length ? 'error' : 'success');
+            });
     },
 
     onSaveError(models) {

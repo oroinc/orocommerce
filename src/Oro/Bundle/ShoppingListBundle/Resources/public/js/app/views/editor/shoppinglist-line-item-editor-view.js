@@ -34,6 +34,15 @@ const ShoppinglistLineItemEditorView = TextEditorView.extend({
         };
     },
 
+    dispose() {
+        if (this.disposed) {
+            return;
+        }
+
+        this.model.isSyncedWithEditor(true);
+        ShoppinglistLineItemEditorView.__super__.dispose.call(this);
+    },
+
     getTemplateData() {
         return {
             data: this.model.toJSON()
@@ -52,13 +61,13 @@ const ShoppinglistLineItemEditorView = TextEditorView.extend({
     },
 
     isChanged() {
-        const res = _.some(Object.entries(this.getValue()), ([key, value]) => {
+        const isChanged = _.some(Object.entries(this.getValue()), ([key, value]) => {
             return this.model.get(key) !== value;
         });
 
-        this.model.set('_state', res);
+        this.model.isSyncedWithEditor(!isChanged);
 
-        return res;
+        return isChanged;
     },
 
     onFocusout(event) {
