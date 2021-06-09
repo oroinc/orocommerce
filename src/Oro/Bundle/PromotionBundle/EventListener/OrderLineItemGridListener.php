@@ -49,7 +49,6 @@ class OrderLineItemGridListener
      */
     protected function addSelect(DatagridConfiguration $config)
     {
-        // TODO: Fix this
         $rootAlias = $config->getOrmQuery()->getRootAlias();
         $config->getOrmQuery()->addSelect(
             '(SELECT SUM(discount.amount) FROM Oro\\Bundle\\PromotionBundle\\Entity\\AppliedDiscount AS discount '

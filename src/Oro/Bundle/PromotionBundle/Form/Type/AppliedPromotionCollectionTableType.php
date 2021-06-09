@@ -6,6 +6,9 @@ use Oro\Bundle\OrderBundle\Form\Type\OrderCollectionTableType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for Applied Promotion Collection.
+ */
 class AppliedPromotionCollectionTableType extends AbstractType
 {
     const NAME = 'oro_promotion_applied_promotion_collection_table';
