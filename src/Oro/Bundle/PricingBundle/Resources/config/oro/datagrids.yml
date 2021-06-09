@@ -36,7 +36,7 @@ datagrids:
                 label:         oro.pricing.pricelist_schedule.activity.label
                 type:          twig
                 frontend_type: html
-                template:      OroPricingBundle:PriceList:Datagrid/schedule.html.twig
+                template:      '@OroPricing/PriceList/Datagrid/schedule.html.twig'
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
@@ -426,11 +426,11 @@ datagrids:
                 label:         oro.pricing.productprice.unit_code.label
                 type:          twig
                 frontend_type: html
-                template:      OroProductBundle:ProductUnit:Datagrid/unitFullSingle.html.twig
+                template:      '@OroProduct/ProductUnit/Datagrid/unitFullSingle.html.twig'
             value:
                 label:         oro.pricing.productprice.value.label
                 type:          twig
-                template:      OroPricingBundle:Datagrid:Column/priceValue.html.twig
+                template:      '@OroPricing/Datagrid/Column/priceValue.html.twig'
                 frontend_type: html
             currency:
                 label:         oro.pricing.productprice.currency.label
@@ -438,7 +438,7 @@ datagrids:
                 label:         oro.pricing.productprice.type.label
                 type:          twig
                 frontend_type: html
-                template:      OroPricingBundle:Datagrid:Column/manual.html.twig
+                template:      '@OroPricing/Datagrid/Column/manual.html.twig'
         sorters:
             columns:
                 productSku:
@@ -577,11 +577,11 @@ datagrids:
                 label:         oro.pricing.productprice.unit_code.label
                 type:          twig
                 frontend_type: html
-                template:      OroProductBundle:ProductUnit:Datagrid/unitFullSingle.html.twig
+                template:      '@OroProduct/ProductUnit/Datagrid/unitFullSingle.html.twig'
             value:
                 label:         oro.pricing.productprice.value.label
                 type:          twig
-                template:      OroPricingBundle:Datagrid:Column/priceValue.html.twig
+                template:      '@OroPricing/Datagrid/Column/priceValue.html.twig'
                 frontend_type: html
             currency:
                 label:         oro.pricing.productprice.currency.label
@@ -660,7 +660,7 @@ datagrids:
                 label:         oro.pricing.priceattributepricelist.currencies.label
                 type:          twig
                 frontend_type: html
-                template:      OroPricingBundle:PriceAttributePriceList:Datagrid/currencies.html.twig
+                template:      '@OroPricing/PriceAttributePriceList/Datagrid/currencies.html.twig'
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime

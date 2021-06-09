@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroSaleBundle:layouts:blank/layout.html.twig'
+            themes: '@OroSale/layouts/blank/layout.html.twig'
         - '@addTree':
             items:
                 contact_info:

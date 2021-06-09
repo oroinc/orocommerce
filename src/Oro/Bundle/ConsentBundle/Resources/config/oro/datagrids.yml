@@ -31,7 +31,7 @@ datagrids:
                 label:         oro.consent.names.label
                 type:          twig
                 frontend_type: html
-                template:      OroConsentBundle:Consent:Datagrid/consent_name.html.twig
+                template:      '@OroConsent/Consent/Datagrid/consent_name.html.twig'
             type:
                 label:         oro.consent.type.label
                 frontend_type: select
@@ -42,7 +42,7 @@ datagrids:
                 label:         oro.consent.content_node.label
                 type:          twig
                 frontend_type: html
-                template:      OroConsentBundle:Consent:Datagrid/node_title.html.twig
+                template:      '@OroConsent/Consent/Datagrid/node_title.html.twig'
             content_source:
                 label:         oro.consent.content_source.label
                 frontend_type: string

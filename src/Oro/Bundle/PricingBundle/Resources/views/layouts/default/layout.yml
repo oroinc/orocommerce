@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroPricingBundle:layouts:default/layout.html.twig'
+            themes: '@OroPricing/layouts/default/layout.html.twig'
 
         - '@appendOption':
             id: switcher_info_trigger

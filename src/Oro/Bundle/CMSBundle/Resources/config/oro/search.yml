@@ -6,7 +6,7 @@ search:
             name:                       oro_cms_page_view
             parameters:
                 id:                     id
-        search_template:                OroCMSBundle:Page:searchResult.html.twig
+        search_template:                '@OroCMS/Page/searchResult.html.twig'
         fields:
             -
                 name:                   defaultTitle
@@ -40,7 +40,7 @@ search:
             name:                       oro_cms_content_widget_view
             parameters:
                 id:                     id
-        search_template:                OroCMSBundle:ContentWidget:searchResult.html.twig
+        search_template:                '@OroCMS/ContentWidget/searchResult.html.twig'
         fields:
             -
                 name:                   name

@@ -6,7 +6,7 @@ search:
             name:                       oro_promotion_view
             parameters:
                 id:                     id
-        search_template:                OroPromotionBundle:Promotion:searchResult.html.twig
+        search_template:                '@OroPromotion/Promotion/searchResult.html.twig'
         fields:
             -
                 name:                   rule
@@ -24,7 +24,7 @@ search:
             name:                       oro_promotion_coupon_view
             parameters:
                 id:                     id
-        search_template:                OroPromotionBundle:Coupon:searchResult.html.twig
+        search_template:                '@OroPromotion/Coupon/searchResult.html.twig'
         fields:
             -
                 name:                   code

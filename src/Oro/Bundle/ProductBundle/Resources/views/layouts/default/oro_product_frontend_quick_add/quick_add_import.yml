@@ -1,9 +1,9 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroProductBundle:layouts:default/oro_product_frontend_quick_add/quick_add_import.html.twig'
+            themes: '@OroProduct/layouts/default/oro_product_frontend_quick_add/quick_add_import.html.twig'
         - '@setFormTheme':
-            themes: 'OroProductBundle:layouts:default/oro_product_frontend_quick_add/form.html.twig'
+            themes: '@OroProduct/layouts/default/oro_product_frontend_quick_add/form.html.twig'
         - '@addTree':
             items:
                 quick_add_import_form:

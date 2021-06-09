@@ -6,8 +6,8 @@ layout:
     actions:
         - '@setBlockTheme':
             themes:
-                - 'OroFrontendBundle:layouts:blank/layout.html.twig'
-                - 'OroProductBundle:layouts:blank/page/layout.html.twig'
+                - '@OroFrontend/layouts/blank/layout.html.twig'
+                - '@OroProduct/layouts/blank/page/layout.html.twig'
         - '@setOption':
             id: products
             optionName: items

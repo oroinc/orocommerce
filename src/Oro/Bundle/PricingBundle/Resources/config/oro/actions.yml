@@ -10,7 +10,7 @@ operations:
             icon: fa-plus
 
         frontend_options:
-            template: OroPricingBundle:Action:addProductPrice.html.twig
+            template: '@OroPricing/Action/addProductPrice.html.twig'
             options:
                 allowMaximize: true
                 allowMinimize: true

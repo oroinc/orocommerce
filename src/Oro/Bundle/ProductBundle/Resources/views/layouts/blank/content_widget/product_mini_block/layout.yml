@@ -8,7 +8,7 @@ layout:
         - '@setBlockTheme':
             themes:
                 - 'layout.html.twig'
-                - 'OroProductBundle:layouts:blank/page/layout.html.twig'
+                - '@OroProduct/layouts/blank/page/layout.html.twig'
 
         - '@setOption':
             id: product

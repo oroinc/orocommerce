@@ -1,9 +1,9 @@
 layout:
     actions:
         - '@setBlockTheme':
-              themes: 'OroShoppingListBundle:layouts:blank/oro_shopping_list_frontend_matrix_grid_update/dialog/matrix_grid_update.html.twig'
+              themes: '@OroShoppingList/layouts/blank/oro_shopping_list_frontend_matrix_grid_update/dialog/matrix_grid_update.html.twig'
         - '@setFormTheme':
-              themes: 'OroShoppingListBundle:layouts:blank/oro_shopping_list_frontend_matrix_grid_update/dialog/matrix_grid_update_form.html.twig'
+              themes: '@OroShoppingList/layouts/blank/oro_shopping_list_frontend_matrix_grid_update/dialog/matrix_grid_update_form.html.twig'
         - '@addTree':
             items:
                 matrix_grid_update_form_wrapper:

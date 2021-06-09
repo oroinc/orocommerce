@@ -7,7 +7,7 @@ layout:
 
     actions:
         - '@setBlockTheme':
-            themes: 'OroCheckoutBundle:layouts:default/imports/oro_checkout_content/content.html.twig'
+            themes: '@OroCheckout/layouts/default/imports/oro_checkout_content/content.html.twig'
         - '@add':
             id: order_taxes_template
             blockType: block

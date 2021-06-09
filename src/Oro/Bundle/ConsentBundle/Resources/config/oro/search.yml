@@ -6,7 +6,7 @@ search:
             name:              oro_consent_view
             parameters:
                 id:            id
-        search_template:       OroConsentBundle:Consent:searchResult.html.twig
+        search_template:       '@OroConsent/Consent/searchResult.html.twig'
         fields:
             -
                 name:          defaultName

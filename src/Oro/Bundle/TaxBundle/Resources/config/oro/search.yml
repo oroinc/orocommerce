@@ -6,7 +6,7 @@ search:
             name:                       oro_tax_view
             parameters:
                 id:                     id
-        search_template:                OroTaxBundle:Tax:searchResult.html.twig
+        search_template:                '@OroTax/Tax/searchResult.html.twig'
         fields:
             -
                 name:                   code
@@ -24,7 +24,7 @@ search:
             name:                       oro_tax_product_tax_code_view
             parameters:
                 id:                     id
-        search_template:  OroTaxBundle:ProductTaxCode:searchResult.html.twig
+        search_template:  '@OroTax/ProductTaxCode/searchResult.html.twig'
         fields:
             -
                 name:                   code
@@ -42,7 +42,7 @@ search:
             name:                       oro_tax_customer_tax_code_view
             parameters:
                 id:                     id
-        search_template:  OroTaxBundle:CustomerTaxCode:searchResult.html.twig
+        search_template:  '@OroTax/CustomerTaxCode/searchResult.html.twig'
         fields:
             -
                 name:                   code
@@ -60,7 +60,7 @@ search:
             name:                       oro_tax_jurisdiction_view
             parameters:
                 id:                     id
-        search_template:                OroTaxBundle:TaxJurisdiction:searchResult.html.twig
+        search_template:                '@OroTax/TaxJurisdiction/searchResult.html.twig'
         fields:
             -
                 name:                   code

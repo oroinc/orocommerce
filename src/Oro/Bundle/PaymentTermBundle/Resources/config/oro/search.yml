@@ -6,7 +6,7 @@ search:
             name:                       oro_payment_term_view
             parameters:
                 id:                     id
-        search_template:                OroPaymentTermBundle:PaymentTerm:searchResult.html.twig
+        search_template:                '@OroPaymentTerm/PaymentTerm/searchResult.html.twig'
         fields:
             -
                 name:                   label

@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroCustomThemeBundle:layouts:custom/oro_checkout_frontend_checkout/templates/main.html.twig'
+            themes: '@OroCustomTheme/layouts/custom/oro_checkout_frontend_checkout/templates/main.html.twig'
 
         - '@setOption':
             id: page_title_container

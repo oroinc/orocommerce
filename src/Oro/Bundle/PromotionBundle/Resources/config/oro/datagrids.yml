@@ -143,7 +143,7 @@ datagrids:
                 label:         oro.promotion.coupon.promotion.label
                 frontend_type: html
                 type:          twig
-                template:      OroPromotionBundle:Coupon:Datagrid/Column/promotionName.html.twig
+                template:      '@OroPromotion/Coupon/Datagrid/Column/promotionName.html.twig'
             enabled:
                 label:         oro.promotion.coupon.enabled.label
                 frontend_type: boolean
@@ -376,7 +376,7 @@ datagrids:
                 label:         oro.promotion.coupon.promotion.label
                 frontend_type: html
                 type:          twig
-                template:      OroPromotionBundle:Coupon:Datagrid/Column/promotionName.html.twig
+                template:      '@OroPromotion/Coupon/Datagrid/Column/promotionName.html.twig'
             usesPerCoupon:
                 label:         oro.promotion.coupon.uses_per_coupon.label
             usesPerPerson:

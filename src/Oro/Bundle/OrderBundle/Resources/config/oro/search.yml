@@ -6,7 +6,7 @@ search:
             name:                       oro_order_view
             parameters:
                 id:                     id
-        search_template:                OroOrderBundle:Order:searchResult.html.twig
+        search_template:                '@OroOrder/Order/searchResult.html.twig'
         fields:
             -
                 name:                   identifier

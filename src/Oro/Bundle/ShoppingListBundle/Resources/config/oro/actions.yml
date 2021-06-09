@@ -27,7 +27,7 @@ operations:
         acl_resource: oro_shopping_list_frontend_update
         order: 30
         button_options:
-            template: OroShoppingListBundle:Action:buttons.html.twig
+            template: '@OroShoppingList/Action/buttons.html.twig'
         preactions:
             - '@call_service_method':
                 service: oro_shopping_list.manager.current_shopping_list
@@ -70,7 +70,7 @@ operations:
             icon: fa-shopping-cart
             page_component_module: oroshoppinglist/js/app/components/add-product-component
         frontend_options:
-            template: OroShoppingListBundle:Action:lineItem.html.twig
+            template: '@OroShoppingList/Action/lineItem.html.twig'
             title: oro.shoppinglist.lineitem.add_line_item
         form_options:
             attribute_fields:
@@ -97,7 +97,7 @@ operations:
     oro_shoppinglist_lineitem_base:
         label: ' '
         frontend_options:
-            template: OroShoppingListBundle:Action:lineItem.html.twig
+            template: '@OroShoppingList/Action/lineItem.html.twig'
             title: oro.shoppinglist.lineitem.add_line_item
             options:
                 width: 460

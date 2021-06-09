@@ -35,7 +35,7 @@ datagrids:
                 label:         oro.shoppinglist.subtotal.label
                 type:          twig
                 frontend_type: html
-                template:      OroPricingBundle:Datagrid:Column/subtotal.html.twig
+                template:      '@OroPricing/Datagrid/Column/subtotal.html.twig'
                 order:         60
             createdAt:
                 label:         oro.ui.created_at
@@ -106,13 +106,13 @@ datagrids:
                 label:         oro.shoppinglist.customer.label
                 type:          twig
                 frontend_type: html
-                template:      OroShoppingListBundle:Datagrid:Column/customer.html.twig
+                template:      '@OroShoppingList/Datagrid/Column/customer.html.twig'
                 order:         40
             customer_user:
                 label:         oro.shoppinglist.customer_user.label
                 type:          twig
                 frontend_type: html
-                template:      OroShoppingListBundle:Datagrid:Column/customer_user.html.twig
+                template:      '@OroShoppingList/Datagrid/Column/customer_user.html.twig'
                 order:         50
         sorters:
             columns:
@@ -149,7 +149,7 @@ datagrids:
                 label:         oro.shoppinglist.customer_user.label
                 type:          twig
                 frontend_type: html
-                template:      OroShoppingListBundle:Datagrid:Column/customer_user.html.twig
+                template:      '@OroShoppingList/Datagrid/Column/customer_user.html.twig'
                 order:         0
         sorters:
             columns:
@@ -214,7 +214,7 @@ datagrids:
                 label:         oro.shoppinglist.subtotal.label
                 type:          twig
                 frontend_type: html
-                template:      OroPricingBundle:Datagrid:Column/subtotal.html.twig
+                template:      '@OroPricing/Datagrid/Column/subtotal.html.twig'
                 order:         20
             lineItemsCount:
                 label:         oro.frontend.shoppinglist.line_items_count.label
@@ -295,7 +295,7 @@ datagrids:
                 label: ''
                 type: twig
                 frontend_type: html
-                template: OroShoppingListBundle:Datagrid:Column/shopping_list_select_radio.html.twig
+                template: '@OroShoppingList/Datagrid/Column/shopping_list_select_radio.html.twig'
                 manageable: false
                 order: 0
 
@@ -512,7 +512,7 @@ datagrids:
                 label: ''
                 type: twig
                 frontend_type: html
-                template: OroShoppingListBundle:Datagrid:Column/customer_user_owner_radio.html.twig
+                template: '@OroShoppingList/Datagrid/Column/customer_user_owner_radio.html.twig'
                 manageable: false
             firstName:
                 label: oro.customer.customeruser.first_name.label
@@ -714,7 +714,7 @@ datagrids:
                 label:         oro.shoppinglist.lineitem.unit.label
                 type:          twig
                 frontend_type: html
-                template:      OroProductBundle:ProductUnit:Datagrid/unitFullSingle.html.twig
+                template:      '@OroProduct/ProductUnit/Datagrid/unitFullSingle.html.twig'
             notes:
                 label:         oro.shoppinglist.lineitem.notes.label
         sorters:
