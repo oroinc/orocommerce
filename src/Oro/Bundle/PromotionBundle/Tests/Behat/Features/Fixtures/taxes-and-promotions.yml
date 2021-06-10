@@ -1,0 +1,144 @@
+include:
+    - '@OroPromotionBundle:shopping_list.yml'
+    - '@OroPromotionBundle:promotions.yml'
+
+Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration:
+    orderDiscountPromotionTypeAmountDiscountConfiguration:
+        type: 'order'
+        options:
+            discount_type: 'amount'
+            discount_currency: 'USD'
+            discount_value: 4
+    orderDiscountPromotionCouponDiscountConfiguration:
+        type: 'order'
+        options:
+            discount_type: 'percent'
+            discount_value: 0.5
+
+Oro\Bundle\RuleBundle\Entity\Rule:
+    orderDiscountPromotionTypeAmountRule:
+        enabled: true
+        sortOrder: 2
+        name: 'Order Discount Promotion Type Amount'
+    orderDiscountPromotionCouponRule:
+        enabled: true
+        sortOrder: 3
+        name: 'Order Discount Coupon Promotion'
+
+Oro\Bundle\PromotionBundle\Entity\Promotion:
+    orderDiscountPromotionTypeAmount:
+        __calls:
+            - addLabel: ['@orderDiscountPromotionTypeAmountLabel']
+            - addDescription: ['@orderDiscountPromotionTypeAmountDesc']
+            - addScope: ['@default_scope']
+        productsSegment: '@orderDiscountPromotionSegment'
+        rule: '@orderDiscountPromotionTypeAmountRule'
+        discountConfiguration: '@orderDiscountPromotionTypeAmountDiscountConfiguration'
+        organization: '@organization'
+        owner: '@admin'
+        useCoupons: false
+    orderDiscountPromotionCoupon:
+        __calls:
+            - addLabel: ['@orderDiscountPromotionCouponLabel']
+            - addDescription: ['@orderDiscountPromotionCouponDesc']
+            - addScope: ['@default_scope']
+        productsSegment: '@orderDiscountPromotionSegment'
+        rule: '@orderDiscountPromotionCouponRule'
+        discountConfiguration: '@orderDiscountPromotionCouponDiscountConfiguration'
+        organization: '@organization'
+        owner: '@admin'
+        useCoupons: true
+
+Oro\Bundle\TaxBundle\Entity\CustomerTaxCode:
+    customer_tax_code:
+        owner: '@admin'
+        organization: '@organization'
+        code: 'Customer tax code'
+
+Oro\Bundle\TaxBundle\Entity\ProductTaxCode:
+    product_tax_code:
+        code: 'Product tax code'
+        organization: '@organization'
+
+Oro\Bundle\TaxBundle\Entity\Tax:
+    tax:
+        code: 'Tax'
+        rate: 0.1
+
+Oro\Bundle\TaxBundle\Entity\TaxJurisdiction:
+    tax_jurisdiction:
+        code: 'TaxJurisdiction'
+        country: '@united_states'
+
+Oro\Bundle\TaxBundle\Entity\TaxRule:
+    tax_rule:
+        productTaxCode: '@product_tax_code'
+        customerTaxCode: '@customer_tax_code'
+        taxJurisdiction: '@tax_jurisdiction'
+        tax: '@tax'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
+    address:
+        country: '@united_states'
+        region: '@florida'
+        label: 'Customer user address'
+        street: 'Street'
+        city: 'City'
+        postalCode: '90001'
+        frontendOwner: '@amanda'
+        owner: '@admin'
+        __calls:
+            - setDefaults: ['@shippingType', '@billingType']
+        systemOrganization: '@organization'
+        primary: true
+        organization: '@organization'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddressToAddressType:
+    billing:
+        address: '@address'
+        type: '@billingType'
+        default: true
+    shipping:
+        address: '@address'
+        type: '@shippingType'
+        default: true
+
+Oro\Bundle\CustomerBundle\Entity\Customer:
+    customer:
+        name: 'Company A'
+        organization: '@organization'
+        owner: '@admin'
+        taxCode: '@customer_tax_code'
+        payment_term_7c4f1e8e: '@paymentTerm'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        sku: 'SKU1'
+        primaryUnitPrecision: '@precision1'
+        __calls:
+            - addName: ['@locValue1']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@productAttributeFamily'
+        taxCode: '@product_tax_code'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    orderDiscountPromotionTypeAmountLabel:
+        string: 'Order Discount Promotion With Type Amount'
+    orderDiscountPromotionTypeAmountDesc:
+        string: 'Order Discount Promotion With Type Amount Description'
+    orderDiscountPromotionCouponLabel:
+        string: 'Promotion for Coupon Label'
+    orderDiscountPromotionCouponDesc:
+        string: 'Promotion for Coupon Description'
+
+Oro\Bundle\PromotionBundle\Entity\Coupon:
+    coupon50p:
+        owner: '@business_unit'
+        organization: '@organization'
+        code: 'coupon50p'
+        promotion: '@orderDiscountPromotionCoupon'
+        enabled: true
+        usesPerPerson: 100
+        usesPerCoupon: 100

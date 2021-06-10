@@ -11,186 +11,93 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class ResolverEventConnectorPassTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ResolverEventConnectorPass
-     */
-    protected $compilerPass;
-
-    /**
-     * @var ContainerBuilder|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $containerBuilder;
+    /**@var ResolverEventConnectorPass */
+    private $compiler;
 
     protected function setUp(): void
     {
-        $this->containerBuilder = $this
-            ->getMockBuilder('Symfony\Component\DependencyInjection\ContainerBuilder')
-            ->getMock();
-
-        $this->compilerPass = new ResolverEventConnectorPass();
+        $this->compiler = new ResolverEventConnectorPass();
     }
 
     public function testNoTaggedServices()
     {
-        $this->containerBuilder
-            ->expects($this->once())
-            ->method('findTaggedServiceIds')
-            ->willReturn([]);
+        $container = new ContainerBuilder();
 
-        $this->containerBuilder
-            ->expects($this->never())
-            ->method('setDefinition');
-
-        $this->compilerPass->process($this->containerBuilder);
+        $this->compiler->process($container);
     }
 
-    /**
-     * @dataProvider emptyTagsDataProvider
-     * @param array $tags
-     * @param array $exception
-     */
-    public function testEmptyTags(array $tags, array $exception = [])
+    public function testEmptyEvent()
     {
-        if ($exception) {
-            list($exception, $message) = $exception;
-            $this->expectException($exception);
-            $this->expectExceptionMessage($message);
-        }
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Wrong tags configuration "[{"priority":-255}]"');
 
-        $this->containerBuilder
-            ->expects($this->once())
-            ->method('findTaggedServiceIds')
-            ->willReturn(['oro_tax.resolver.total' => $tags]);
+        $container = new ContainerBuilder();
 
-        $this->containerBuilder
-            ->expects($this->never())
-            ->method('setDefinition');
+        $container->register('resolver_1')
+            ->addTag('oro_tax.resolver', ['priority' => -255]);
 
-        $this->compilerPass->process($this->containerBuilder);
-    }
-
-    /**
-     * @return array
-     */
-    public function emptyTagsDataProvider()
-    {
-        return [
-            'empty tag' => [[]],
-            'empty event' => [
-                [['priority' => -255]],
-                ['\InvalidArgumentException', 'Wrong tags configuration "[{"priority":-255}]"'],
-            ],
-        ];
-    }
-
-    public function testTag()
-    {
-        $id = 'oro_tax.resolver.total';
-        $class = CustomResolverEventConnector::class;
-
-        $this->containerBuilder
-            ->expects($this->once())
-            ->method('findTaggedServiceIds')
-            ->willReturn(
-                [
-                    $id => [
-                        ['event' => ResolveTaxEvent::RESOLVE, 'priority' => -255],
-                        ['event' => ResolveTaxEvent::RESOLVE, 'priority' => 255],
-                    ],
-                ]
-            );
-
-        $this->containerBuilder
-            ->expects($this->once())
-            ->method('hasParameter')
-            ->with(ResolverEventConnectorPass::CONNECTOR_CLASS)
-            ->willReturn(true);
-        $this->containerBuilder
-            ->expects($this->once())
-            ->method('getParameter')
-            ->with(ResolverEventConnectorPass::CONNECTOR_CLASS)
-            ->willReturn($class);
-
-        $this->containerBuilder
-            ->expects($this->once())
-            ->method('setDefinition')
-            ->with(
-                sprintf('%s.%s', $id, ResolverEventConnectorPass::CONNECTOR_SERVICE_NAME_SUFFIX),
-                $this->callback(
-                    function (Definition $definition) use ($class, $id) {
-                        $this->assertEquals($class, $definition->getClass());
-                        $this->assertEquals([new Reference($id)], $definition->getArguments());
-                        $this->assertTrue($definition->hasTag('kernel.event_listener'));
-                        $this->assertEquals(
-                            [
-                                ['event' => ResolveTaxEvent::RESOLVE, 'method' => 'onResolve', 'priority' => -255],
-                                ['event' => ResolveTaxEvent::RESOLVE, 'method' => 'onResolve', 'priority' => 255],
-                            ],
-                            $definition->getTag('kernel.event_listener')
-                        );
-
-                        $this->assertTrue(method_exists($class, 'onResolve'));
-
-                        return true;
-                    }
-                )
-            );
-
-        $this->compilerPass->process($this->containerBuilder);
+        $this->compiler->process($container);
     }
 
     public function testDefaultResolverEventConnector()
     {
-        $id = 'oro_tax.resolver.total';
-        $class = ResolverEventConnector::class;
+        $container = new ContainerBuilder();
 
-        $this->containerBuilder
-            ->expects($this->once())
-            ->method('findTaggedServiceIds')
-            ->willReturn(
-                [
-                    $id => [
-                        ['event' => ResolveTaxEvent::RESOLVE, 'priority' => -255],
-                        ['event' => ResolveTaxEvent::RESOLVE, 'priority' => 255],
-                    ],
-                ]
-            );
+        $container->register('resolver_1')
+            ->addTag('oro_tax.resolver', ['event' => ResolveTaxEvent::RESOLVE])
+            ->addTag('oro_tax.resolver', ['event' => ResolveTaxEvent::RESOLVE, 'priority' => 255]);
 
-        $this->containerBuilder
-            ->expects($this->once())
-            ->method('hasParameter')
-            ->with(ResolverEventConnectorPass::CONNECTOR_CLASS)
-            ->willReturn(false);
-        $this->containerBuilder
-            ->expects($this->never())
-            ->method('getParameter')
-            ->with(ResolverEventConnectorPass::CONNECTOR_CLASS);
+        $this->compiler->process($container);
 
-        $this->containerBuilder
-            ->expects($this->once())
-            ->method('setDefinition')
-            ->with(
-                sprintf('%s.%s', $id, ResolverEventConnectorPass::CONNECTOR_SERVICE_NAME_SUFFIX),
-                $this->callback(
-                    function (Definition $definition) use ($class, $id) {
-                        $this->assertEquals($class, $definition->getClass());
-                        $this->assertEquals([new Reference($id)], $definition->getArguments());
-                        $this->assertTrue($definition->hasTag('kernel.event_listener'));
-                        $this->assertEquals(
-                            [
-                                ['event' => ResolveTaxEvent::RESOLVE, 'method' => 'onResolve', 'priority' => -255],
-                                ['event' => ResolveTaxEvent::RESOLVE, 'method' => 'onResolve', 'priority' => 255],
-                            ],
-                            $definition->getTag('kernel.event_listener')
-                        );
+        $expectedEventConnectorForResolver1Def = new Definition(
+            ResolverEventConnector::class,
+            [new Reference('resolver_1')]
+        );
+        $expectedEventConnectorForResolver1Def->addTag(
+            'kernel.event_listener',
+            ['event' => ResolveTaxEvent::RESOLVE, 'method' => 'onResolve']
+        );
+        $expectedEventConnectorForResolver1Def->addTag(
+            'kernel.event_listener',
+            ['event' => ResolveTaxEvent::RESOLVE, 'method' => 'onResolve', 'priority' => 255]
+        );
 
-                        $this->assertTrue(method_exists($class, 'onResolve'));
+        self::assertEquals(
+            $expectedEventConnectorForResolver1Def,
+            $container->getDefinition('resolver_1.event.resolver_event_connector')
+        );
+    }
 
-                        return true;
-                    }
-                )
-            );
+    public function testCustomResolverEventConnector()
+    {
+        $container = new ContainerBuilder();
+        $container->setParameter(
+            'oro_tax.event.resolver_event_connector.common_class',
+            CustomResolverEventConnector::class
+        );
 
-        $this->compilerPass->process($this->containerBuilder);
+        $container->register('resolver_1')
+            ->addTag('oro_tax.resolver', ['event' => ResolveTaxEvent::RESOLVE])
+            ->addTag('oro_tax.resolver', ['event' => ResolveTaxEvent::RESOLVE, 'priority' => 255]);
+
+        $this->compiler->process($container);
+
+        $expectedEventConnectorForResolver1Def = new Definition(
+            CustomResolverEventConnector::class,
+            [new Reference('resolver_1')]
+        );
+        $expectedEventConnectorForResolver1Def->addTag(
+            'kernel.event_listener',
+            ['event' => ResolveTaxEvent::RESOLVE, 'method' => 'onResolve']
+        );
+        $expectedEventConnectorForResolver1Def->addTag(
+            'kernel.event_listener',
+            ['event' => ResolveTaxEvent::RESOLVE, 'method' => 'onResolve', 'priority' => 255]
+        );
+
+        self::assertEquals(
+            $expectedEventConnectorForResolver1Def,
+            $container->getDefinition('resolver_1.event.resolver_event_connector')
+        );
     }
 }

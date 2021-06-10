@@ -306,7 +306,7 @@ services:
         class: 'Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingOptions\Factory\ShippingOptionsLineItemCollectionFactoryDecorator'
         arguments:
             - '@oro_shipping.context.doctrine_line_item_collection_factory'
-            - '@oro_entity.doctrine_helper'
+            - '@doctrine'
             - '@oro_shipping.line_item.factory_by_line_item_basic'
 
     oro_shipping.context.builder_factory_basic:

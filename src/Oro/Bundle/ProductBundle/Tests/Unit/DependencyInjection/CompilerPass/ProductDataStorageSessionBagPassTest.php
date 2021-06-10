@@ -8,91 +8,45 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class ProductDataStorageSessionBagPassTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ProductDataStorageSessionBagPass
-     */
-    protected $compilerPass;
-
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ContainerBuilder
-     */
-    protected $container;
+    /** @var ProductDataStorageSessionBagPass */
+    private $compiler;
 
     protected function setUp(): void
     {
-        $this->container = $this
-            ->getMockBuilder('Symfony\Component\DependencyInjection\ContainerBuilder')
-            ->getMock();
-
-        $this->compilerPass = new ProductDataStorageSessionBagPass();
+        $this->compiler = new ProductDataStorageSessionBagPass();
     }
 
     public function testSessionNotExists()
     {
-        $this->container->expects($this->once())
-            ->method('hasDefinition')
-            ->with($this->equalTo('session'))
-            ->will($this->returnValue(false));
+        $container = new ContainerBuilder();
+        $container->register('oro_product.storage.product_data_bag');
 
-        $this->container->expects($this->never())
-            ->method('getDefinition');
-
-        $this->compilerPass->process($this->container);
+        $this->compiler->process($container);
     }
 
     public function testBagServiceNotExists()
     {
-        $this->container->expects($this->exactly(2))
-            ->method('hasDefinition')
-            ->willReturnMap(
-                [
-                    ['session', true],
-                    ['oro_product.storage.product_data_bag', false],
-                ]
-            );
+        $container = new ContainerBuilder();
+        $sessionDef = $container->register('session');
 
-        $this->container->expects($this->never())
-            ->method('getDefinition');
+        $this->compiler->process($container);
 
-        $this->compilerPass->process($this->container);
+        self::assertSame([], $sessionDef->getMethodCalls());
     }
 
     public function testRegisterBag()
     {
-        $this->container->expects($this->exactly(2))
-            ->method('hasDefinition')
-            ->willReturnMap(
-                [
-                    ['session', true],
-                    ['oro_product.storage.product_data_bag', true],
-                ]
-            );
+        $container = new ContainerBuilder();
+        $sessionDef = $container->register('session');
+        $container->register('oro_product.storage.product_data_bag');
 
-        $definition = $this->createMock('Symfony\Component\DependencyInjection\Definition');
+        $this->compiler->process($container);
 
-        $this->container->expects($this->once())
-            ->method('getDefinition')
-            ->with($this->equalTo('session'))
-            ->will($this->returnValue($definition));
-
-        $definition->expects($this->once())
-            ->method('addMethodCall')
-            ->with(
-                'registerBag',
-                $this->callback(
-                    function ($value) {
-                        $this->assertIsArray($value);
-                        $this->assertArrayHasKey(0, $value);
-                        /** @var Reference $reference */
-                        $reference = $value[0];
-                        $this->assertInstanceOf('Symfony\Component\DependencyInjection\Reference', $reference);
-                        $this->assertEquals('oro_product.storage.product_data_bag', (string)$reference);
-
-                        return true;
-                    }
-                )
-            );
-
-        $this->compilerPass->process($this->container);
+        self::assertEquals(
+            [
+                ['registerBag', [new Reference('oro_product.storage.product_data_bag')]]
+            ],
+            $sessionDef->getMethodCalls()
+        );
     }
 }
