@@ -142,7 +142,7 @@ class VirtualFieldsProductDecorator
 
         $relatedEntities = $this->getRelatedEntities(
             $field['related_entity_name'],
-            call_user_func_array('array_merge', $relatedEntityIdsByProduct)
+            array_merge(...array_values($relatedEntityIdsByProduct))
         );
 
         if ($this->fieldHelper->isSingleRelation($field)) {

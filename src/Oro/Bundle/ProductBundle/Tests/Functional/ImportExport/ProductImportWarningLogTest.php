@@ -174,7 +174,7 @@ class ProductImportWarningLogTest extends WebTestCase
      */
     private function deleteImportFile(string $filename)
     {
-        unlink(FileManager::generateTmpFilePath($filename));
+        self::assertFileDoesNotExist(FileManager::generateTmpFilePath($filename));
 
         static::getContainer()
             ->get('oro_importexport.file.file_manager')

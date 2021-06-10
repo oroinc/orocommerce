@@ -19,12 +19,14 @@ system_configuration:
             type: Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType
             options:
                 label: oro.pricing.pricelist.entity_label
+
         oro_pricing.default_price_lists:
             data_type: array
             type: Oro\Bundle\PricingBundle\Form\Type\PriceListSystemConfigType
             options:
                 label: oro.pricing.system_configuration.fields.price_lists.title
                 resettable: false
+
         oro_pricing.rounding_type:
             data_type: string
             type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
@@ -43,6 +45,7 @@ system_configuration:
                     oro.pricing.system_configuration.fields.rounding_type.choices.half_down.label: 5
                     oro.pricing.system_configuration.fields.rounding_type.choices.half_up.label: 6
                     oro.pricing.system_configuration.fields.rounding_type.choices.half_even.label: 4
+
         oro_pricing.precision:
             data_type: integer
             type: Symfony\Component\Form\Extension\Core\Type\IntegerType
@@ -57,6 +60,17 @@ system_configuration:
                         min: 0
                     - Type:
                         type: integer
+
+        oro_pricing.allow_to_round_displayed_prices_and_amounts:
+            data_type: boolean
+            property_path: oro_locale.allow_to_round_displayed_prices_and_amounts
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            priority: 30
+            options:
+                required: false
+                label: oro.pricing.system_configuration.fields.allow_to_round_displayed_prices_and_amounts.title
+                tooltip: oro.pricing.system_configuration.fields.allow_to_round_displayed_prices_and_amounts.tooltip
+
         oro_pricing.offset_of_processing_cpl_prices:
             data_type: float
             type: Symfony\Component\Form\Extension\Core\Type\NumberType
@@ -70,6 +84,7 @@ system_configuration:
                     - Type:
                         type: float
                     - 'Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero': ~
+
         oro_pricing.price_strategy:
             data_type: string
             type: Oro\Bundle\PricingBundle\Form\Type\PriceListStrategySelectType
@@ -79,6 +94,7 @@ system_configuration:
                 multiple: false
                 constraints:
                     - NotBlank: ~
+
         oro_pricing.feature_enabled:
             data_type: boolean
             type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
@@ -88,6 +104,7 @@ system_configuration:
                 required: false
                 label: oro.pricing.system_configuration.fields.feature_enabled.label
                 tooltip: oro.pricing.system_configuration.fields.feature_enabled.tooltip
+
     tree:
         system_configuration:
             commerce:
@@ -106,6 +123,7 @@ system_configuration:
                                         children:
                                             - oro_pricing.rounding_type
                                             - oro_pricing.precision
+                                            - oro_pricing.allow_to_round_displayed_prices_and_amounts
                                     default_price_lists:
                                         priority: 100
                                         children:

@@ -98,8 +98,8 @@ class AjaxCouponControllerTest extends WebTestCase
 
         $this->assertJsonResponseStatusCodeEquals($result, 200);
         $appliedCouponsData = json_decode($result->getContent(), true);
-        usort($appliedCouponsData, function ($a, $b) {
-            return $a['sourceCouponId'] < $b['sourceCouponId'];
+        usort($appliedCouponsData, static function ($a, $b) {
+            return $b['sourceCouponId'] <=> $a['sourceCouponId'];
         });
         $this->assertCount(2, $appliedCouponsData);
         $this->assertEquals(

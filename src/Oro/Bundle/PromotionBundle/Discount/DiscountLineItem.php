@@ -10,7 +10,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 /**
  * Implements DiscountLineItemInterface to support adding discount information on line item's level.
  */
-class DiscountLineItem implements DiscountLineItemInterface
+class DiscountLineItem implements DiscountLineItemInterface, DiscountLineItemSubtotalAfterDiscountsInterface
 {
     /**
      * @var Product|null
@@ -51,6 +51,9 @@ class DiscountLineItem implements DiscountLineItemInterface
      * @var float
      */
     protected $subtotal = 0.0;
+
+    /** @var float|null */
+    protected ?float $subtotalAfterDiscounts = null;
 
     /**
      * @var array|DiscountInterface[]
@@ -205,6 +208,24 @@ class DiscountLineItem implements DiscountLineItemInterface
     public function setSubtotal($subtotal)
     {
         $this->subtotal = $subtotal;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSubtotalAfterDiscounts(): float
+    {
+        return $this->subtotalAfterDiscounts ?? $this->getSubtotal();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setSubtotalAfterDiscounts(float $subtotal): self
+    {
+        $this->subtotalAfterDiscounts = $subtotal;
 
         return $this;
     }

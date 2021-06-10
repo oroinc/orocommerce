@@ -120,6 +120,8 @@ oro_behat_extension:
           Pricing Precision: 'pricing[oro_pricing___precision][value]'
           Pricing Rounding Type System: 'pricing[oro_pricing___rounding_type][use_parent_scope_value]'
           Pricing Rounding Type: 'pricing[oro_pricing___rounding_type][value]'
+          Allow To Round Displayed Prices And Amounts System: 'pricing[oro_locale___allow_to_round_displayed_prices_and_amounts][use_parent_scope_value]'
+          Allow To Round Displayed Prices And Amounts: 'pricing[oro_locale___allow_to_round_displayed_prices_and_amounts][value]'
 
     Add Product Price Form:
       selector: '[id^="oro_action_operation-uid"]'

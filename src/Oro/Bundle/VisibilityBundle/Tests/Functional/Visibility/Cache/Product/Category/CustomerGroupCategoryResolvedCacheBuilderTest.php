@@ -364,10 +364,10 @@ class CustomerGroupCategoryResolvedCacheBuilderTest extends AbstractProductResol
     protected function sortByCategoryAndCustomerGroup(array $a, array $b)
     {
         if ($a['category'] == $b['category']) {
-            return $a['customerGroup'] > $b['customerGroup'] ? 1 : -1;
+            return $a['customerGroup'] <=> $b['customerGroup'];
         }
 
-        return $a['category'] > $b['category'] ? 1 : -1;
+        return $a['category'] <=> $b['category'];
     }
 
     /**

@@ -403,6 +403,7 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
 
     public function testFindMinByWebsiteForSort()
     {
+        $this->markTestSkipped('BB-20684');
         $website = $this->getReference(LoadWebsiteData::WEBSITE1);
         $product1 = $this->getReference(LoadProductData::PRODUCT_1);
         $actual = $this->getCombinedProductPriceRepository()

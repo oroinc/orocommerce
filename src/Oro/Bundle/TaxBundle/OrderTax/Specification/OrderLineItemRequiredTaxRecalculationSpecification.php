@@ -28,6 +28,10 @@ class OrderLineItemRequiredTaxRecalculationSpecification implements Specificatio
      */
     public function isSatisfiedBy($orderLineItem): bool
     {
+        if (!$orderLineItem instanceof OrderLineItem) {
+            return false;
+        }
+
         if (!$orderLineItem->getId()) {
             return true;
         }

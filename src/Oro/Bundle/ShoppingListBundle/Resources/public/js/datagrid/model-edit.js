@@ -8,10 +8,33 @@ const ShoppingListEditItemModel = ShoppingListModel.extend({
     highlightDelay: 1300,
 
     initialize(attributes, options) {
+        this.on('change:quantity change:unit', this.onModelChangeHandler);
+
         ShoppingListEditItemModel.__super__.initialize.call(this, attributes, options);
         if (!this.get('isConfigurable')) {
             this.set('unitCode', this.get('unit'), {silent: true});
         }
+    },
+
+    onModelChangeHandler() {
+        if (!this.isSyncedWithEditor()) {
+            return;
+        }
+        const errors = this.get('errors') || [];
+        this.flashRowHighlight(errors.length ? 'error' : 'success');
+    },
+
+    /**
+     * @Get model sync status with editor
+     * @Set model sync status with editor
+     * @param {boolean} isSynced
+     * @returns {boolean}
+     */
+    isSyncedWithEditor(isSynced) {
+        if (typeof isSynced === 'boolean') {
+            return isSynced ? this.unset('_state') : this.set('_state', !isSynced);
+        }
+        return !this.get('_state');
     },
 
     getMessageModel() {

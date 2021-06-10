@@ -292,6 +292,9 @@ oro.pricing:
             price_lists_update.title: 'Price List Calculations'
             price_strategies.title: Price Selection Strategy
         fields:
+            allow_to_round_displayed_prices_and_amounts:
+                title: Allow to round displayed prices and amounts
+                tooltip: If this option is enabled, the prices and other monetary amounts may be rounded when displayed to the users while the actual value remains unchanged.
             feature_enabled:
                 label: Enable Oro Pricing
                 tooltip: Enable the default OroCommerce pricing management system.

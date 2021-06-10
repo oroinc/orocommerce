@@ -827,3 +827,27 @@ services:
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-edit-grid, method: onLineItemData }
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-checkout-line-items-grid, method: onLineItemData }
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-single-page-checkout-line-items-grid, method: onLineItemData }
+
+    oro_promotion.order_tax.mapper.order_after_discounts_mapper:
+        class: Oro\Bundle\PromotionBundle\OrderTax\Mapper\OrderAfterDiscountsMapper
+        decorates: oro_tax.order_tax.mapper.order_mapper
+        arguments:
+            - '@oro_promotion.order_tax.mapper.order_after_discounts_mapper.inner'
+            - '@oro_tax.provider.taxation_settings_provider'
+            - '@oro_promotion.promotion_executor'
+
+    oro_promotion.order_tax.mapper.order_line_item_after_discounts_mapper:
+        class: Oro\Bundle\PromotionBundle\OrderTax\Mapper\OrderLineItemAfterDiscountsMapper
+        decorates: oro_tax.order_tax.mapper.order_line_item_mapper
+        arguments:
+            - '@oro_promotion.order_tax.mapper.order_line_item_after_discounts_mapper.inner'
+            - '@oro_tax.provider.taxation_settings_provider'
+            - '@oro_promotion.promotion_executor'
+
+    oro_promotion.event_listener.order_tax.order_taxable_listener:
+        class: Oro\Bundle\PromotionBundle\EventListener\OrderTax\OrderTaxableListener
+        parent: oro_tax.event_listener.order_tax.abstract_taxable_listener
+        arguments:
+            - '@oro_tax.provider.taxation_settings_provider'
+        tags:
+            - { name: kernel.event_listener, event: Oro\Bundle\TaxBundle\Event\SkipOrderTaxRecalculationEvent, method: onSkipOrderTaxRecalculation, priority: -250 }

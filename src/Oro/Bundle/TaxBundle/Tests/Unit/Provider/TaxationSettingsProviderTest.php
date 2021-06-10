@@ -478,34 +478,16 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($address, $this->provider->getOrigin());
     }
 
-    public function testIsEnabled()
+    public function testIsEnabled(): void
     {
-        $optionKey = 'oro_tax.tax_enable';
-        $isEnabled = true;
-        $cacheKey = TaxationSettingsProvider::class . '::isEnabled';
+        $this->mockSettingsCache(
+            TaxationSettingsProvider::class . '::isEnabled',
+            'oro_tax.tax_enable',
+            true
+        );
 
-        $this->configManager
-            ->expects($this->once())
-            ->method('get')
-            ->with($optionKey)
-            ->willReturn($isEnabled);
-
-        $this->cacheProvider->expects($this->exactly(2))
-            ->method('contains')
-            ->with($cacheKey)
-            ->willReturnOnConsecutiveCalls(false, true);
-
-        $this->cacheProvider->expects($this->once())
-            ->method('save')
-            ->with($cacheKey, $isEnabled);
-
-        $this->cacheProvider->expects($this->once())
-            ->method('fetch')
-            ->with($cacheKey)
-            ->willReturn($isEnabled);
-
-        $this->assertTrue($this->provider->isEnabled());
-        $this->assertFalse($this->provider->isDisabled());
+        self::assertTrue($this->provider->isEnabled());
+        self::assertFalse($this->provider->isDisabled());
     }
 
     public function testGetShippingTaxCodes()
@@ -530,5 +512,58 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
             ->willReturn(true);
 
         $this->assertTrue($this->provider->isShippingRatesIncludeTax());
+    }
+
+    /**
+     * @param bool $isEnabled
+     * @param bool $expected
+     *
+     * @dataProvider getIsCalculateAfterPromotionsEnabledDataProvider
+     */
+    public function testIsCalculateAfterPromotionsEnabled(bool $isEnabled, bool $expected): void
+    {
+        $this->mockSettingsCache(
+            TaxationSettingsProvider::class . '::isCalculateAfterPromotionsEnabled',
+            'oro_tax.calculate_taxes_after_promotions',
+            $isEnabled
+        );
+
+        self::assertEquals($expected, $this->provider->isCalculateAfterPromotionsEnabled());
+        // check cache
+        self::assertEquals($expected, $this->provider->isCalculateAfterPromotionsEnabled());
+    }
+
+    public function getIsCalculateAfterPromotionsEnabledDataProvider(): array
+    {
+        return [
+            ['isEnabled' => false, 'expected' => false],
+            ['isEnabled' => true, 'expected' => true],
+        ];
+    }
+
+    /**
+     * @param string $cacheKey
+     * @param string $settingKey
+     * @param mixed $value
+     */
+    private function mockSettingsCache(string $cacheKey, string $settingKey, $value): void
+    {
+        $this->cacheProvider->expects(self::exactly(2))
+            ->method('contains')
+            ->with($cacheKey)
+            ->willReturnOnConsecutiveCalls(false, true);
+        $this->cacheProvider->expects(self::once())
+            ->method('save')
+            ->with($cacheKey, $value);
+        $this->cacheProvider->expects(self::once())
+            ->method('fetch')
+            ->with($cacheKey)
+            ->willReturn($value);
+
+        $this->configManager
+            ->expects(self::once())
+            ->method('get')
+            ->with($settingKey)
+            ->willReturn($value);
     }
 }
