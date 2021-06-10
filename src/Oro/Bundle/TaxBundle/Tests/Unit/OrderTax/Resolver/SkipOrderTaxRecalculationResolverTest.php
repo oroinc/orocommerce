@@ -7,6 +7,7 @@ use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\TaxBundle\Manager\TaxManager;
 use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Bundle\TaxBundle\OrderTax\Resolver\SkipOrderTaxRecalculationResolver;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class SkipOrderTaxRecalculationResolverTest extends \PHPUnit\Framework\TestCase
 {
@@ -19,6 +20,9 @@ class SkipOrderTaxRecalculationResolverTest extends \PHPUnit\Framework\TestCase
     /** @var FrontendHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $frontendHelper;
 
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $eventDispatcher;
+
     /** @var SkipOrderTaxRecalculationResolver */
     private $resolver;
 
@@ -27,11 +31,13 @@ class SkipOrderTaxRecalculationResolverTest extends \PHPUnit\Framework\TestCase
         $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->taxManager = $this->createMock(TaxManager::class);
         $this->frontendHelper = $this->createMock(FrontendHelper::class);
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
         $this->resolver = new SkipOrderTaxRecalculationResolver(
             $this->doctrine,
             $this->taxManager,
-            $this->frontendHelper
+            $this->frontendHelper,
+            $this->eventDispatcher
         );
     }
 

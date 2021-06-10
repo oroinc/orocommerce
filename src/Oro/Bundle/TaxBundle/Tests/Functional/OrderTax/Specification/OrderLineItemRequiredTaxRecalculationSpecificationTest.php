@@ -29,6 +29,11 @@ class OrderLineItemRequiredTaxRecalculationSpecificationTest extends WebTestCase
         $this->specification = new OrderLineItemRequiredTaxRecalculationSpecification($uow);
     }
 
+    public function testNotOrderLineItemWillNotRequireTaxRecalculation(): void
+    {
+        self::assertFalse($this->specification->isSatisfiedBy(new \stdClass()));
+    }
+
     public function testOrderWithChangedLineItemQuantityWillRequireTaxRecalculation(): void
     {
         /** @var OrderLineItem $orderLineItem */

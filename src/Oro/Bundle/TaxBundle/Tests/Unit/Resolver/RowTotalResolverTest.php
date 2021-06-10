@@ -42,7 +42,7 @@ class RowTotalResolverTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testEmptyTaxRule()
+    public function testEmptyTaxRule(): void
     {
         $result = new Result();
         $amount = BigDecimal::zero();
@@ -50,8 +50,8 @@ class RowTotalResolverTest extends \PHPUnit\Framework\TestCase
 
         $this->resolver->resolveRowTotal($result, [], $amount, 0);
 
-        $this->assertEquals($resultElement, $result->getRow());
-        $this->assertEquals([], $result->getTaxes());
+        self::assertEquals($resultElement, $result->getRow());
+        self::assertEquals([], $result->getTaxes());
     }
 
     /**
@@ -62,46 +62,52 @@ class RowTotalResolverTest extends \PHPUnit\Framework\TestCase
      * @param int $quantity
      * @param bool $isStartCalculationWithRowTotal
      * @param bool $isStartCalculationOnItem
+     * @param bool $isCalculateAfterPromotionsEnabled
      */
     public function testResolveRowTotal(
         BigDecimal $amount,
         array $taxRules,
         array $expected,
-        $quantity,
-        $isStartCalculationWithRowTotal,
-        $isStartCalculationOnItem = false
-    ) {
+        int $quantity,
+        bool $isStartCalculationWithRowTotal,
+        bool $isStartCalculationOnItem = false,
+        bool $isCalculateAfterPromotionsEnabled = false
+    ): void {
         $result = new Result();
 
-        $this->settingsProvider->expects($this->any())
+        $this->settingsProvider->expects(self::any())
             ->method('isStartCalculationWithRowTotal')
             ->willReturn($isStartCalculationWithRowTotal);
-        $this->settingsProvider->expects($this->any())
+        $this->settingsProvider->expects(self::any())
             ->method('isStartCalculationWithUnitPrice')
             ->willReturn(!$isStartCalculationWithRowTotal);
 
-        $this->settingsProvider->expects($this->any())
+        $this->settingsProvider->expects(self::any())
             ->method('isStartCalculationOnItem')
             ->willReturn($isStartCalculationOnItem);
         if ($isStartCalculationOnItem) {
-            $this->roundingResolver->expects($this->atLeastOnce())
+            $this->roundingResolver->expects(self::atLeastOnce())
                 ->method('round')
                 ->with($this->isInstanceOf(TaxResultElement::class));
         } else {
-            $this->roundingResolver->expects($this->never())
+            $this->roundingResolver->expects(self::never())
                 ->method('round');
         }
 
+        $this->settingsProvider->expects(self::once())
+            ->method('isCalculateAfterPromotionsEnabled')
+            ->willReturn($isCalculateAfterPromotionsEnabled);
+
         $this->resolver->resolveRowTotal($result, $taxRules, $amount, $quantity);
-        $this->assertEquals($expected['row'], $result->getRow());
-        $this->assertEquals($expected['result'], $result->getTaxes());
+        self::assertEquals($expected['row'], $result->getRow());
+        self::assertEquals($expected['result'], $result->getTaxes());
     }
 
     /**
      * @return array
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function rowTotalDataProvider()
+    public function rowTotalDataProvider(): array
     {
         $taxResult1_1 = TaxResultElement::create('city', '0.08', '39.98', '3.198400');
         $taxResult1_2 = TaxResultElement::create('region', '0.07', '39.98', '2.798600');
@@ -111,6 +117,9 @@ class RowTotalResolverTest extends \PHPUnit\Framework\TestCase
 
         $taxResult3_1 = TaxResultElement::create('city', '0.081111', '39.98', '3.242818');
         $taxResult3_2 = TaxResultElement::create('region', '0.070404', '39.98', '2.814752');
+
+        $resultWithDiscountsIncluded = ResultElement::create('45.9770', '39.98', '5.9970', '-0.0030');
+        $resultWithDiscountsIncluded->setDiscountsIncluded(true);
 
         return [
             'without start calculation with row total' => [
@@ -217,15 +226,29 @@ class RowTotalResolverTest extends \PHPUnit\Framework\TestCase
                 'isStartCalculationWithRowTotal' => false,
                 'isStartCalculationOnItem' => true,
             ],
+            'option Calculate Taxes After Promotions is enabled' => [
+                'amount' => BigDecimal::of('19.9949'),
+                'taxRules' => [
+                    $this->getTaxRule('city', '0.08'),
+                    $this->getTaxRule('region', '0.07')
+                ],
+                'expected' => [
+                    'row' => $resultWithDiscountsIncluded,
+                    'result' => [
+                        $taxResult1_1,
+                        $taxResult1_2,
+                    ]
+
+                ],
+                'quantity' => 2,
+                'isStartCalculationWithRowTotal' => false,
+                'isStartCalculationOnItem' => true,
+                'isCalculateAfterPromotionsEnabled' => true,
+            ],
         ];
     }
 
-    /**
-     * @param string $taxCode
-     * @param string $taxRate
-     * @return TaxRule
-     */
-    protected function getTaxRule($taxCode, $taxRate)
+    protected function getTaxRule(string $taxCode, string $taxRate): TaxRule
     {
         $taxRule = new TaxRule();
         $tax = new Tax();

@@ -36,6 +36,7 @@ Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration:
             discount_product_unit_code: 'item'
             discount_value: 0.5
             apply_to: 'line_items_total'
+            maximum_qty: 100
     orderDiscountPromotionDiscountConfiguration:
         type: 'order'
         options:

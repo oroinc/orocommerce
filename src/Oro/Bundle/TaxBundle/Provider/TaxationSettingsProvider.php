@@ -264,4 +264,9 @@ class TaxationSettingsProvider
     {
         return (bool)$this->configManager->get('oro_tax.shipping_rates_include_tax');
     }
+
+    public function isCalculateAfterPromotionsEnabled(): bool
+    {
+        return (bool) $this->getCached(__METHOD__, 'oro_tax.calculate_taxes_after_promotions');
+    }
 }
