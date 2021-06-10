@@ -21,7 +21,7 @@ class ApplyAllStrategyTest extends \PHPUnit\Framework\TestCase
         $this->strategy = new ApplyAllStrategy();
     }
 
-    public function testGetLabel()
+    public function testGetLabel(): void
     {
         $this->assertEquals('oro.promotion.discount.strategy.apply_all.label', $this->strategy->getLabel());
     }
@@ -35,6 +35,7 @@ class ApplyAllStrategyTest extends \PHPUnit\Framework\TestCase
      * @param float $expectedSubtotal
      * @param float $expectedShippingCost
      * @param array $expectedDiscountsInformation
+     * @param array $expectedLineItemsSubtotalAfterDiscounts
      */
     public function testProcess(
         DiscountContext $discountContext,
@@ -43,8 +44,9 @@ class ApplyAllStrategyTest extends \PHPUnit\Framework\TestCase
         array $discounts,
         $expectedSubtotal,
         $expectedShippingCost,
-        array $expectedDiscountsInformation
-    ) {
+        array $expectedDiscountsInformation,
+        array $expectedLineItemsSubtotalAfterDiscounts
+    ): void {
         $discountContext->setShippingCost($shippingCost);
         $discountContext->setSubtotal($contextSubtotalAmount);
 
@@ -63,21 +65,28 @@ class ApplyAllStrategyTest extends \PHPUnit\Framework\TestCase
             $expectedDiscountsInformation['shipping'],
             $discountContext->getShippingDiscountsInformation()
         );
+
+        $this->assertEquals(
+            $expectedLineItemsSubtotalAfterDiscounts,
+            $this->getLineItemsSubtotalsAfterDiscounts($discountContext)
+        );
     }
 
     /**
      * @return array
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function processProvider()
+    public function processProvider(): array
     {
         $discountContext = new DiscountContext();
 
         // Add line items with discounts
         $discountLineItem1 = new DiscountLineItem();
+        $discountLineItem1->setSubtotal(800);
         $lineItemSubtotalDiscount1 = $this->createDiscount($discountContext, $discountLineItem1);
         $discountLineItem1->addDiscount($lineItemSubtotalDiscount1);
         $discountLineItem2 = new DiscountLineItem();
+        $discountLineItem2->setSubtotal(200);
         $lineItemSubtotalDiscount2 = $this->createDiscount($discountContext, $discountLineItem2);
         $lineItemSubtotalDiscount22 = $this->createDiscount($discountContext, $discountLineItem2);
         $discountLineItem2
@@ -150,6 +159,7 @@ class ApplyAllStrategyTest extends \PHPUnit\Framework\TestCase
                         new DiscountInformation($shippingDiscount2, $shippingDiscountAmount2),
                     ],
                 ],
+                'expectedLineItemsSubtotalAfterDiscounts' => [680, 170]
             ],
             'when discount amounts less than subtotal' => [
                 'context' => $newDiscountContext,
@@ -170,6 +180,7 @@ class ApplyAllStrategyTest extends \PHPUnit\Framework\TestCase
                         new DiscountInformation($newShippingDiscount, $newShippingDiscountAmount),
                     ],
                 ],
+                'expectedLineItemsSubtotalAfterDiscounts' => []
             ],
         ];
     }
@@ -201,7 +212,7 @@ class ApplyAllStrategyTest extends \PHPUnit\Framework\TestCase
      * @param DiscountContext $discountContext
      * @return array|DiscountInformation[]
      */
-    private function getLineItemsDiscountsInformation(DiscountContext $discountContext)
+    private function getLineItemsDiscountsInformation(DiscountContext $discountContext): array
     {
         $discountsInformation = [];
         foreach ($discountContext->getLineItems() as $lineItem) {
@@ -211,5 +222,15 @@ class ApplyAllStrategyTest extends \PHPUnit\Framework\TestCase
         }
 
         return $discountsInformation;
+    }
+
+    private function getLineItemsSubtotalsAfterDiscounts(DiscountContext $discountContext): array
+    {
+        $subtotals = [];
+        foreach ($discountContext->getLineItems() as $lineItem) {
+            $subtotals[] = $lineItem->getSubtotalAfterDiscounts();
+        }
+
+        return $subtotals;
     }
 }

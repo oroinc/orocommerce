@@ -215,6 +215,9 @@ oro_behat_extension:
     Coupon Delete Button:
       selector: 'button[data-role="remove-coupon"]'
 
+    Fifth Promotion Change Active Button:
+      selector: 'tr[data-role="applied-discount-table-row"]:nth-child(5) a[data-role="applied-promotion-change-active-button"]'
+
     FlatRateShippingMethod:
       selector: 'label:contains("Flat Rate:")'
 

@@ -9,7 +9,9 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 /**
  * Decorates DiscountLineItem to add disabled discounts (i.e. decorated with DisabledDiscountDecorator).
  */
-class DisabledDiscountLineItemDecorator implements DiscountLineItemInterface
+class DisabledDiscountLineItemDecorator implements
+    DiscountLineItemInterface,
+    DiscountLineItemSubtotalAfterDiscountsInterface
 {
     /**
      * @var DiscountLineItem
@@ -148,6 +150,24 @@ class DisabledDiscountLineItemDecorator implements DiscountLineItemInterface
     public function setSubtotal($subtotal)
     {
         $this->lineItem->setSubtotal($subtotal);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSubtotalAfterDiscounts(): float
+    {
+        return $this->lineItem->getSubtotalAfterDiscounts();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setSubtotalAfterDiscounts(float $subtotal): self
+    {
+        $this->lineItem->setSubtotalAfterDiscounts($subtotal);
 
         return $this;
     }
