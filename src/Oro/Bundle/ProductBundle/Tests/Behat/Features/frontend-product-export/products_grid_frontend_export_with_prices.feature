@@ -45,8 +45,8 @@ Feature: Products grid frontend export with prices
     And take the link from email and download the file from this link
     And the downloaded file from email contains at least the following data:
       | name      | sku   | inventory_status.id | priceAttribute |
-      | Product 5 | PSKU5 | in_stock            | 5.0000         |
-      | Product 7 | PSKU7 | out_of_stock        | 7.0000         |
+      | Product 5 | PSKU5 | in_stock            | $5.00 / each   |
+      | Product 7 | PSKU7 | out_of_stock        | $7.00 / each   |
 
   Scenario: Enable in admin console Tier Prices in product export
     Given I proceed as the Admin
@@ -70,5 +70,5 @@ Feature: Products grid frontend export with prices
     And take the link from email and download the file from this link
     And the downloaded file from email contains at least the following data:
       | name      | sku   | inventory_status.id | priceAttribute | tier_prices     |
-      | Product 5 | PSKU5 | in_stock            | 5.0000         | $5.00 \| 1 each |
-      | Product 7 | PSKU7 | out_of_stock        | 7.0000         | $7.00 \| 1 each |
+      | Product 5 | PSKU5 | in_stock            | $5.00 / each   | $5.00 \| 1 each |
+      | Product 7 | PSKU7 | out_of_stock        | $7.00 / each   | $7.00 \| 1 each |

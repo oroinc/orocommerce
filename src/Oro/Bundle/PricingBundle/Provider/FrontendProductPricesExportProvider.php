@@ -10,6 +10,7 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\PricingBundle\Model\ProductPriceInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
@@ -22,51 +23,48 @@ use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 class FrontendProductPricesExportProvider
 {
     private ConfigManager $configManager;
+
     private ProductPriceProvider $priceProvider;
+
     private TokenAccessorInterface $tokenAccessor;
+
     private ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory;
+
     private ManagerRegistry $managerRegistry;
+
     private UserCurrencyManager $currencyManager;
+
     private ?array $availableExportPriceAttributes = null;
+
     private ?array $productPriceAttributesPrices = null;
 
-    /**
-     * @param ConfigManager $configManager
-     * @param ProductPriceProvider $priceProvider
-     * @param TokenAccessorInterface $tokenAccessor
-     * @param ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory
-     * @param ManagerRegistry $managerRegistry
-     * @param UserCurrencyManager $currencyManager
-     */
+    private ?array $productPrices = null;
+
     public function __construct(
+        ManagerRegistry $managerRegistry,
         ConfigManager $configManager,
         ProductPriceProvider $priceProvider,
         TokenAccessorInterface $tokenAccessor,
         ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory,
-        ManagerRegistry $managerRegistry,
         UserCurrencyManager $currencyManager
     ) {
+        $this->managerRegistry = $managerRegistry;
         $this->configManager = $configManager;
         $this->priceProvider = $priceProvider;
         $this->tokenAccessor = $tokenAccessor;
         $this->priceScopeCriteriaFactory = $priceScopeCriteriaFactory;
-        $this->managerRegistry = $managerRegistry;
         $this->currencyManager = $currencyManager;
     }
 
-    /**
-     * @return bool
-     */
-    public function isPriceAttributesExportEnabled(): bool
+    public function isPricesExportEnabled(): bool
     {
-        return (bool) $this->configManager->get(Configuration::getConfigKeyByName(
-            Configuration::PRODUCT_PRICES_EXPORT_ENABLED
-        ));
+        return (bool)$this->configManager->get(
+            Configuration::getConfigKeyByName(
+                Configuration::PRODUCT_PRICES_EXPORT_ENABLED
+            )
+        );
     }
 
-    /**
-     * @return bool
-     */
     public function isTierPricesExportEnabled(): bool
     {
         return (bool) $this->configManager->get(Configuration::getConfigKeyByName(
@@ -74,20 +72,19 @@ class FrontendProductPricesExportProvider
         ));
     }
 
-    /**
-     * @return PriceAttributePriceList[]
-     */
     public function getAvailableExportPriceAttributes(): array
     {
-        if (null === $this->availableExportPriceAttributes) {
+        if ($this->availableExportPriceAttributes === null) {
             $organization = $this->getCurrentOrganization();
 
             $this->availableExportPriceAttributes = $this->managerRegistry
                 ->getRepository(PriceAttributePriceList::class)
-                ->findBy([
-                    'organization' => $organization,
-                    'enabledInExport' => true
-                ]);
+                ->findBy(
+                    [
+                        'organization' => $organization,
+                        'enabledInExport' => true,
+                    ]
+                );
         }
 
         return $this->availableExportPriceAttributes;
@@ -102,65 +99,12 @@ class FrontendProductPricesExportProvider
      *      'ids' => [1, 2],
      *      // ...
      *  ]
-     * @return array
+     * @return PriceAttributeProductPrice[]
      */
-    public function getProductPrices(Product $product, array $options): array
+    public function getProductPriceAttributesPrices(Product $product, array $options): array
     {
-        $priceAttributePrices = $this->getProductPriceAttributePrice($product, $options);
-
-        $result = [];
-        /** @var PriceAttributeProductPrice $attributePrice */
-        foreach ($priceAttributePrices as $attributePrice) {
-            $result[$attributePrice->getPriceList()->getFieldName()] = $attributePrice->getPrice()->getValue();
-        }
-
-        return $result;
-    }
-
-    /**
-     * @param Product $product
-     * @param array $options Contains export options
-     *  [
-     *      'currentCurrency' => 'USD',
-     *      'currentLocalizationId' => 2,
-     *      'ids' => [1, 2],
-     *      // ...
-     *  ]
-     * @return array
-     * [
-     *    'product.id' => ProductPriceInterface[],
-     *     ...
-     * ]
-     */
-    public function getTierPrices(Product $product, array $options): array
-    {
-        $currentCurrency = $this->getCurrentCurrency($options);
-        $currencies = $currentCurrency ? [$currentCurrency] : [];
-        $productUnit = $product->getPrimaryUnitPrecision()->getUnit()->getCode() ? : null;
-
-        $pricesScopeCriteria = $this->getProductPricesScopeCriteria();
-        return $this->priceProvider->getPricesByScopeCriteriaAndProducts(
-            $pricesScopeCriteria,
-            [$product],
-            $currencies,
-            $productUnit
-        );
-    }
-
-    /**
-     * @param Product $product
-     * @param array $options Data comes from export options
-     *                       [currentCurrency => USD, currentLocalizationId => 2, ids => [1, 2], ...],
-     * @return array
-     */
-    protected function getProductPriceAttributePrice(Product $product, array $options): array
-    {
-        if (null === $this->productPriceAttributesPrices) {
-            if (empty($options['ids'])) {
-                $options['ids'] = [$product->getId()];
-            }
-
-            $productIds = $options['ids'];
+        if ($this->productPriceAttributesPrices === null) {
+            $productIds = $options['ids'] ?? [$product->getId()];
             $currency = $this->getCurrentCurrency($options);
             $this->productPriceAttributesPrices = $this->loadProductPriceAttributePrices($productIds, $currency);
         }
@@ -175,7 +119,7 @@ class FrontendProductPricesExportProvider
      * @param string $currency
      * @return array
      */
-    protected function loadProductPriceAttributePrices(array $productIds, string $currency): array
+    private function loadProductPriceAttributePrices(array $productIds, string $currency): array
     {
         $availablePriceAttributes = $this->getAvailableExportPriceAttributes();
         $priceAttributesIds = array_map(
@@ -199,6 +143,69 @@ class FrontendProductPricesExportProvider
         }
 
         return $prices;
+    }
+
+    /**
+     * @param Product $product
+     * @param array $options Contains export options
+     *  [
+     *      'currentCurrency' => 'USD',
+     *      'currentLocalizationId' => 2,
+     *      'ids' => [1, 2],
+     *      // ...
+     *  ]
+     * @return ProductPriceInterface|null
+     */
+    public function getProductPrice(Product $product, array $options): ?ProductPriceInterface
+    {
+        $currentCurrency = $this->getCurrentCurrency($options);
+        $this->loadProductPrices($options['ids'] ?? [$product->getId()], $currentCurrency);
+
+        if (isset($this->productPrices[$product->getId()])) {
+            /** @var ProductPriceInterface $productPrice */
+            foreach ($this->productPrices[$product->getId()] as $productPrice) {
+                if ($productPrice->getUnit()->getCode() === $product->getPrimaryUnitPrecision()->getUnit()->getCode()) {
+                    return $productPrice;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private function loadProductPrices(array $productsIds, string $currency): void
+    {
+        if ($this->productPrices === null) {
+            $pricesScopeCriteria = $this->getProductPricesScopeCriteria();
+            $this->productPrices = $this->priceProvider->getPricesByScopeCriteriaAndProducts(
+                $pricesScopeCriteria,
+                $productsIds,
+                [$currency]
+            );
+        }
+    }
+
+    /**
+     * @param Product $product
+     * @param array $options Contains export options
+     *  [
+     *      'currentCurrency' => 'USD',
+     *      'currentLocalizationId' => 2,
+     *      'ids' => [1, 2],
+     *      // ...
+     *  ]
+     * @return array
+     * [
+     *    'product.id' => ProductPriceInterface[],
+     *     ...
+     * ]
+     */
+    public function getTierPrices(Product $product, array $options): array
+    {
+        $currentCurrency = $this->getCurrentCurrency($options);
+        $this->loadProductPrices($options['ids'] ?? [$product->getId()], $currentCurrency);
+
+        return $this->productPrices[$product->getId()] ?? [];
     }
 
     /**
@@ -243,23 +250,14 @@ class FrontendProductPricesExportProvider
         return null;
     }
 
-    /**
-     * @param array $options
-     * @return string|null
-     */
-    private function getCurrentCurrency(array $options): ?string
+    private function getCurrentCurrency(array $options): string
     {
-        $currency = null;
         if (isset($options['currentCurrency'])) {
-            return $options['currentCurrency'];
+            $currency = $options['currentCurrency'];
+        } else {
+            $currency = $this->currencyManager->getUserCurrency() ?: $this->currencyManager->getDefaultCurrency();
         }
 
-        $currency = $this->currencyManager->getUserCurrency();
-
-        if (!$currency) {
-            $currency = $this->currencyManager->getDefaultCurrency();
-        }
-
-        return $currency;
+        return (string) $currency;
     }
 }
