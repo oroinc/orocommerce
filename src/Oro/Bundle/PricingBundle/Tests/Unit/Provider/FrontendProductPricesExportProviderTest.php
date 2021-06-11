@@ -20,6 +20,7 @@ use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -30,40 +31,26 @@ class FrontendProductPricesExportProviderTest extends TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $configManager;
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    private ConfigManager $configManager;
 
-    /**
-     * @var ProductPriceProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $priceProvider;
+    /** @var ProductPriceProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private ProductPriceProvider $priceProvider;
 
-    /**
-     * @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $tokenAccessor;
+    /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private TokenAccessorInterface $tokenAccessor;
 
-    /**
-     * @var ProductPriceScopeCriteriaFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $priceScopeCriteriaFactory;
+    /** @var ProductPriceScopeCriteriaFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private ProductPriceScopeCriteriaFactoryInterface
+        $priceScopeCriteriaFactory;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry
-     */
-    private $managerRegistry;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private ManagerRegistry $managerRegistry;
 
-    /**
-     * @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $currencyManager;
+    /** @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject */
+    private UserCurrencyManager $currencyManager;
 
-    /**
-     * @var FrontendProductPricesExportProvider
-     */
-    private $provider;
+    private FrontendProductPricesExportProvider $provider;
 
     protected function setUp(): void
     {
@@ -75,63 +62,63 @@ class FrontendProductPricesExportProviderTest extends TestCase
         $this->currencyManager = $this->createMock(UserCurrencyManager::class);
 
         $this->provider = new FrontendProductPricesExportProvider(
+            $this->managerRegistry,
             $this->configManager,
             $this->priceProvider,
             $this->tokenAccessor,
             $this->priceScopeCriteriaFactory,
-            $this->managerRegistry,
             $this->currencyManager
         );
     }
 
-    public function testGetAvailableExportPriceAttributes()
+    public function testGetAvailableExportPriceAttributes(): void
     {
-        $this->tokenAccessor->expects($this->once())
+        $this->tokenAccessor->expects(self::once())
             ->method('getOrganization')
             ->willReturn(new Organization());
 
         $repositoryMock = $this->createMock(PriceAttributePriceListRepository::class);
 
         $priceAttributes = [
-            $this->createPriceAttribute('test_price'),
-            $this->createPriceAttribute('custom_price')
+            $this->createPriceAttributePriceList('test_price'),
+            $this->createPriceAttributePriceList('custom_price'),
         ];
 
-        $repositoryMock->expects($this->once())
+        $repositoryMock->expects(self::once())
             ->method('findBy')
             ->willReturn($priceAttributes);
 
-        $this->managerRegistry->expects($this->once())
+        $this->managerRegistry->expects(self::once())
             ->method('getRepository')
             ->willReturn($repositoryMock);
 
         $result = $this->provider->getAvailableExportPriceAttributes();
 
-        $this->assertCount(2, $priceAttributes);
-        $this->assertEquals($priceAttributes, $result);
+        self::assertCount(2, $priceAttributes);
+        self::assertEquals($priceAttributes, $result);
     }
 
-    public function testGetProductPrices()
+    public function testGetProductPriceAttributesPrices(): void
     {
-        $product = $this->createProduct(['id' => 1]);
-        $product2 = $this->createProduct(['id' => 2 ]);
-        $product3 = $this->createProduct(['id' => 3]);
+        $product = $this->createProduct(1);
+        $product2 = $this->createProduct(2);
+        $product3 = $this->createProduct(3);
 
-        $this->tokenAccessor->expects($this->once())
+        $this->tokenAccessor->expects(self::once())
             ->method('getOrganization')
             ->willReturn(new Organization());
 
         $priceAttributeRepositoryMock = $this->createMock(PriceAttributePriceListRepository::class);
 
-        $testPriceAttribute = $this->createPriceAttribute('test_price');
-        $customPriceAttribute = $this->createPriceAttribute('custom_price');
+        $testPriceAttribute = $this->createPriceAttributePriceList('test_price');
+        $customPriceAttribute = $this->createPriceAttributePriceList('custom_price');
 
         $priceAttributes = [
             $testPriceAttribute,
-            $customPriceAttribute
+            $customPriceAttribute,
         ];
 
-        $priceAttributeRepositoryMock->expects($this->once())
+        $priceAttributeRepositoryMock->expects(self::once())
             ->method('findBy')
             ->willReturn($priceAttributes);
 
@@ -143,137 +130,171 @@ class FrontendProductPricesExportProviderTest extends TestCase
          * For product3 expecting no any prices.
          */
         $priceAttributePrices = [
-            $this->getEntity(PriceAttributeProductPrice::class, [
-                'product' => $product,
-                'priceList' => $testPriceAttribute,
-                'unit' => $product->getPrimaryUnitPrecision()->getUnit(),
-                'price' => Price::create(10.00, 'USD')
-            ]),
-            $this->getEntity(PriceAttributeProductPrice::class, [
-                'product' => $product,
-                'priceList' => $customPriceAttribute,
-                'unit' => $product->getPrimaryUnitPrecision()->getUnit(),
-                'price' => Price::create(15.00, 'USD')
-            ]),
-            $this->getEntity(PriceAttributeProductPrice::class, [
-                'product' => $product2,
-                'priceList' => $testPriceAttribute,
-                'unit' => $product->getPrimaryUnitPrecision()->getUnit(),
-                'price' => Price::create(20.00, 'USD')
-            ]),
-            $this->getEntity(PriceAttributeProductPrice::class, [
-                'product' => $product2,
-                'priceList' => $testPriceAttribute,
-                'unit' => $product->getPrimaryUnitPrecision()->getUnit(),
-                'price' => Price::create(17.00, 'EUR')
-            ]),
-            $this->getEntity(PriceAttributeProductPrice::class, [
-                'product' => $product2,
-                'priceList' => $customPriceAttribute,
-                'unit' => $this->getEntity(ProductUnit::class, ['code' => 'set']),
-                'price' => Price::create(30.00, 'USD')
-            ]),
+            $this->createPriceAttributeProductPrice(
+                $product,
+                $testPriceAttribute,
+                $product->getPrimaryUnitPrecision()->getUnit(),
+                Price::create(10.00, 'USD')
+            ),
+            $this->createPriceAttributeProductPrice(
+                $product,
+                $customPriceAttribute,
+                $product->getPrimaryUnitPrecision()->getUnit(),
+                Price::create(15.00, 'USD')
+            ),
+            $this->createPriceAttributeProductPrice(
+                $product2,
+                $testPriceAttribute,
+                $product->getPrimaryUnitPrecision()->getUnit(),
+                Price::create(20.00, 'USD')
+            ),
+            $this->createPriceAttributeProductPrice(
+                $product2,
+                $testPriceAttribute,
+                $product->getPrimaryUnitPrecision()->getUnit(),
+                Price::create(17.00, 'EUR')
+            ),
+            $this->createPriceAttributeProductPrice(
+                $product2,
+                $customPriceAttribute,
+                (new ProductUnit())->setCode('set'),
+                Price::create(30.00, 'USD')
+            ),
         ];
 
-        $pricesRepository->expects($this->once())
+        $pricesRepository->expects(self::once())
             ->method('findByPriceAttributeProductPriceIdsAndProductIds')
             ->willReturn($priceAttributePrices);
 
-        $this->managerRegistry->expects($this->exactly(2))
+        $this->managerRegistry->expects(self::exactly(2))
             ->method('getRepository')
             ->willReturnOnConsecutiveCalls($priceAttributeRepositoryMock, $pricesRepository);
 
-        $result = $this->provider->getProductPrices($product, ['currentCurrency' => 'USD', 'ids' => [1, 2, 3]]);
+        $result = $this->provider->getProductPriceAttributesPrices(
+            $product,
+            ['currentCurrency' => 'USD', 'ids' => [1, 2, 3]]
+        );
+        self::assertEquals([$priceAttributePrices[0], $priceAttributePrices[1]], $result);
 
-        $this->assertCount(2, $result);
+        $result2 = $this->provider->getProductPriceAttributesPrices(
+            $product2,
+            ['currentCurrency' => 'USD', 'ids' => [1, 2, 3]]
+        );
+        self::assertEquals([$priceAttributePrices[2]], $result2);
 
-        $expectedResultForProduct1 = [
-            'test_price' => 10.00,
-            'custom_price' => 15.00
-        ];
-
-        $this->assertEquals($expectedResultForProduct1, $result);
-
-        $result2 = $this->provider->getProductPrices($product2, ['currentCurrency' => 'USD', 'ids' => [1, 2, 3]]);
-
-        $this->assertCount(1, $result2);
-
-        $expectedResultForProduct2 = [
-            'test_price' => 20.00
-        ];
-
-        $this->assertEquals($expectedResultForProduct2, $result2);
-
-        $result3 = $this->provider->getProductPrices($product3, ['currentCurrency' => 'USD', 'ids' => [1, 2, 3]]);
-        $this->assertCount(0, $result3);
-        $this->assertEmpty($result3);
+        $result3 = $this->provider->getProductPriceAttributesPrices(
+            $product3,
+            ['currentCurrency' => 'USD', 'ids' => [1, 2, 3]]
+        );
+        self::assertEmpty($result3);
     }
 
-    public function testGetProductPricesWithEmptyOptions()
+    public function testGetProductPriceAttributesPricesWithEmptyOptions(): void
     {
-        $product = $this->createProduct(['id' => 1]);
+        $product = $this->createProduct(1);
 
-        $this->tokenAccessor->expects($this->once())
+        $this->tokenAccessor->expects(self::once())
             ->method('getOrganization')
             ->willReturn(new Organization());
 
-        $testPriceAttribute = $this->createPriceAttribute('test_price');
-        $customPriceAttribute = $this->createPriceAttribute('custom_price');
+        $testPriceAttribute = $this->createPriceAttributePriceList('test_price');
+        $customPriceAttribute = $this->createPriceAttributePriceList('custom_price');
 
         $priceAttributeRepositoryMock = $this->createMock(PriceAttributePriceListRepository::class);
-        $priceAttributeRepositoryMock->expects($this->once())
+
+        $priceAttributeRepositoryMock->expects(self::once())
             ->method('findBy')
-            ->willReturn([
-                $testPriceAttribute,
-                $customPriceAttribute
-            ]);
+            ->willReturn(
+                [
+                    $testPriceAttribute,
+                    $customPriceAttribute,
+                ]
+            );
 
         $pricesRepository = $this->createMock(PriceAttributeProductPriceRepository::class);
 
         $priceAttributePrices = [
-            $this->getEntity(PriceAttributeProductPrice::class, [
-                'product'   => $product,
-                'priceList' => $testPriceAttribute,
-                'unit'      => $product->getPrimaryUnitPrecision()->getUnit(),
-                'price'     => Price::create(10.00, 'USD')
-            ]),
-            $this->getEntity(PriceAttributeProductPrice::class, [
-                'product'   => $product,
-                'priceList' => $customPriceAttribute,
-                'unit'      => $product->getPrimaryUnitPrecision()->getUnit(),
-                'price'     => Price::create(15.00, 'USD')
-            ]),
+            $this->createPriceAttributeProductPrice(
+                $product,
+                $testPriceAttribute,
+                $product->getPrimaryUnitPrecision()->getUnit(),
+                Price::create(10.00, 'USD')
+            ),
+            $this->createPriceAttributeProductPrice(
+                $product,
+                $customPriceAttribute,
+                $product->getPrimaryUnitPrecision()->getUnit(),
+                Price::create(15.00, 'USD')
+            ),
         ];
 
-        $pricesRepository->expects($this->once())
+        $pricesRepository->expects(self::once())
             ->method('findByPriceAttributeProductPriceIdsAndProductIds')
             ->willReturn($priceAttributePrices);
 
-        $this->managerRegistry->expects($this->exactly(2))
+        $this->managerRegistry->expects(self::exactly(2))
             ->method('getRepository')
             ->willReturnOnConsecutiveCalls($priceAttributeRepositoryMock, $pricesRepository);
 
-        $this->currencyManager->expects($this->once())
+        $this->currencyManager->expects(self::once())
             ->method('getUserCurrency')
             ->willReturn('USD');
 
-        $result = $this->provider->getProductPrices($product, []);
+        $result = $this->provider->getProductPriceAttributesPrices($product, []);
 
-        $this->assertCount(2, $result);
-
-        $expectedResult = [
-            'test_price'   => 10.00,
-            'custom_price' => 15.00
-        ];
-
-        $this->assertEquals($expectedResult, $result);
+        self::assertEquals($priceAttributePrices, $result);
     }
 
-    public function testGetTierPrices()
+    public function testGetProductPrice(): void
     {
         $customerUser = $this->createCustomerUser();
 
-        $this->tokenAccessor->expects($this->once())
+        $this->tokenAccessor->expects(self::once())
+            ->method('getUser')
+            ->willReturn($customerUser);
+
+        $productPriceScopeCriteria = new ProductPriceScopeCriteria();
+        $productPriceScopeCriteria->setCustomer($customerUser->getCustomer());
+        $productPriceScopeCriteria->setWebsite($customerUser->getWebsite());
+
+        $this->priceScopeCriteriaFactory->expects(self::once())
+            ->method('create')
+            ->willReturn($productPriceScopeCriteria);
+
+        $product = $this->createProduct(1);
+        $productUnit = $product->getPrimaryUnitPrecision()->getUnit();
+        $productTierPrices = [
+            $product->getId() => [
+                new ProductPriceDTO($product, Price::create(10.00, 'USD'), 1, $productUnit),
+                new ProductPriceDTO($product, Price::create(7.00, 'USD'), 10, $productUnit),
+                new ProductPriceDTO($product, Price::create(5.00, 'USD'), 20, $productUnit),
+            ],
+        ];
+
+        $this->priceProvider->expects(self::once())
+            ->method('getPricesByScopeCriteriaAndProducts')
+            ->with($productPriceScopeCriteria)
+            ->willReturn($productTierPrices);
+
+        $result = $this->provider->getProductPrice(
+            $product,
+            ['currentCurrency' => 'USD', 'ids' => [$product->getId()]]
+        );
+        self::assertEquals(reset($productTierPrices[$product->getId()]), $result);
+
+        // Checks local caching.
+        $result = $this->provider->getProductPrice(
+            $product,
+            ['currentCurrency' => 'USD', 'ids' => [$product->getId()]]
+        );
+        self::assertEquals(reset($productTierPrices[$product->getId()]), $result);
+    }
+
+    public function testGetProductPriceWithEmptyOptions(): void
+    {
+        $customerUser = $this->createCustomerUser();
+
+        $this->tokenAccessor->expects(self::once())
             ->method('getUser')
             ->willReturn($customerUser);
 
@@ -281,36 +302,80 @@ class FrontendProductPricesExportProviderTest extends TestCase
         $priceCriteria->setCustomer($customerUser->getCustomer());
         $priceCriteria->setWebsite($customerUser->getWebsite());
 
-        $this->priceScopeCriteriaFactory->expects($this->once())
+        $this->priceScopeCriteriaFactory->expects(self::once())
             ->method('create')
             ->willReturn($priceCriteria);
 
-        $product = $this->createProduct();
+        $product = $this->createProduct(1);
         $productUnit = $product->getPrimaryUnitPrecision()->getUnit();
         $productTierPrices = [
-            1 => [
+            $product->getId() => [
                 new ProductPriceDTO($product, Price::create(10.00, 'USD'), 1, $productUnit),
                 new ProductPriceDTO($product, Price::create(7.00, 'USD'), 10, $productUnit),
-                new ProductPriceDTO($product, Price::create(5.00, 'USD'), 20, $productUnit)
-            ]
+                new ProductPriceDTO($product, Price::create(5.00, 'USD'), 20, $productUnit),
+            ],
         ];
 
-        $this->priceProvider->expects($this->once())
+        $this->priceProvider->expects(self::once())
             ->method('getPricesByScopeCriteriaAndProducts')
             ->willReturn($productTierPrices);
 
-        $result = $this->provider->getTierPrices($product, ['currentCurrency' => 'USD']);
+        $this->currencyManager->expects(self::exactly(2))
+            ->method('getUserCurrency')
+            ->willReturn('USD');
 
-        $this->assertCount(1, $result);
-        $this->assertCount(3, current($result));
-        $this->assertEquals($productTierPrices, $result);
+        $result = $this->provider->getProductPrice($product, []);
+        self::assertEquals(reset($productTierPrices[$product->getId()]), $result);
+
+        // Checks local caching.
+        $result = $this->provider->getProductPrice($product, []);
+        self::assertEquals(reset($productTierPrices[$product->getId()]), $result);
     }
 
-    public function testGetTierPricesWithEmptyOptions()
+    public function testGetTierPrices(): void
     {
         $customerUser = $this->createCustomerUser();
 
-        $this->tokenAccessor->expects($this->once())
+        $this->tokenAccessor->expects(self::once())
+            ->method('getUser')
+            ->willReturn($customerUser);
+
+        $productPriceScopeCriteria = new ProductPriceScopeCriteria();
+        $productPriceScopeCriteria->setCustomer($customerUser->getCustomer());
+        $productPriceScopeCriteria->setWebsite($customerUser->getWebsite());
+
+        $this->priceScopeCriteriaFactory->expects(self::once())
+            ->method('create')
+            ->willReturn($productPriceScopeCriteria);
+
+        $product = $this->createProduct(1);
+        $productUnit = $product->getPrimaryUnitPrecision()->getUnit();
+        $productTierPrices = [
+            $product->getId() => [
+                new ProductPriceDTO($product, Price::create(10.00, 'USD'), 1, $productUnit),
+                new ProductPriceDTO($product, Price::create(7.00, 'USD'), 10, $productUnit),
+                new ProductPriceDTO($product, Price::create(5.00, 'USD'), 20, $productUnit),
+            ],
+        ];
+
+        $this->priceProvider->expects(self::once())
+            ->method('getPricesByScopeCriteriaAndProducts')
+            ->with($productPriceScopeCriteria)
+            ->willReturn($productTierPrices);
+
+        $result = $this->provider->getTierPrices($product, ['currentCurrency' => 'USD', 'ids' => [$product->getId()]]);
+        self::assertEquals($productTierPrices[$product->getId()], $result);
+
+        // Checks local caching.
+        $result = $this->provider->getTierPrices($product, ['currentCurrency' => 'USD', 'ids' => [$product->getId()]]);
+        self::assertEquals($productTierPrices[$product->getId()], $result);
+    }
+
+    public function testGetTierPricesWithEmptyOptions(): void
+    {
+        $customerUser = $this->createCustomerUser();
+
+        $this->tokenAccessor->expects(self::once())
             ->method('getUser')
             ->willReturn($customerUser);
 
@@ -318,127 +383,120 @@ class FrontendProductPricesExportProviderTest extends TestCase
         $priceCriteria->setCustomer($customerUser->getCustomer());
         $priceCriteria->setWebsite($customerUser->getWebsite());
 
-        $this->priceScopeCriteriaFactory->expects($this->once())
+        $this->priceScopeCriteriaFactory->expects(self::once())
             ->method('create')
             ->willReturn($priceCriteria);
 
-        $product = $this->createProduct();
+        $product = $this->createProduct(1);
         $productUnit = $product->getPrimaryUnitPrecision()->getUnit();
         $productTierPrices = [
-            1 => [
+            $product->getId() => [
                 new ProductPriceDTO($product, Price::create(10.00, 'USD'), 1, $productUnit),
                 new ProductPriceDTO($product, Price::create(7.00, 'USD'), 10, $productUnit),
-                new ProductPriceDTO($product, Price::create(5.00, 'USD'), 20, $productUnit)
-            ]
+                new ProductPriceDTO($product, Price::create(5.00, 'USD'), 20, $productUnit),
+            ],
         ];
 
-        $this->priceProvider->expects($this->once())
+        $this->priceProvider->expects(self::once())
             ->method('getPricesByScopeCriteriaAndProducts')
             ->willReturn($productTierPrices);
 
-        $this->currencyManager->expects($this->once())
+        $this->currencyManager->expects(self::exactly(2))
             ->method('getUserCurrency')
             ->willReturn('USD');
 
         $result = $this->provider->getTierPrices($product, []);
+        self::assertEquals($productTierPrices[$product->getId()], $result);
 
-        $this->assertCount(1, $result);
-        $this->assertCount(3, current($result));
-        $this->assertEquals($productTierPrices, $result);
+        // Checks local caching.
+        $result = $this->provider->getTierPrices($product, []);
+        self::assertEquals($productTierPrices[$product->getId()], $result);
     }
 
     /**
      * @dataProvider exportEnabledDataProvider
+     *
      * @param bool $configValue
      * @param bool $expectedValue
      */
-    public function testIsPriceAttributesExportEnabled(bool $configValue, bool $expectedValue)
+    public function testIsPriceAttributesExportEnabled(bool $configValue, bool $expectedValue): void
     {
-        $this->configManager->expects($this->once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->willReturn($configValue);
 
-        $result = $this->provider->isPriceAttributesExportEnabled();
+        $result = $this->provider->isPricesExportEnabled();
 
-        $this->assertEquals($expectedValue, $result);
+        self::assertEquals($expectedValue, $result);
     }
 
     /**
      * @dataProvider exportEnabledDataProvider
+     *
      * @param bool $configValue
      * @param bool $expectedValue
      */
-    public function testIsTierPricesExportEnabled(bool $configValue, bool $expectedValue)
+    public function testIsTierPricesExportEnabled(bool $configValue, bool $expectedValue): void
     {
-        $this->configManager->expects($this->once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->willReturn($configValue);
 
         $result = $this->provider->isTierPricesExportEnabled();
 
-        $this->assertEquals($expectedValue, $result);
+        self::assertEquals($expectedValue, $result);
     }
 
-    public function exportEnabledDataProvider()
+    public function exportEnabledDataProvider(): array
     {
         return [
             [false, false],
-            [true, true]
+            [true, true],
         ];
     }
 
-    /**
-     * @param string|null $name
-     * @return PriceAttributePriceList
-     */
-    private function createPriceAttribute(?string $name): PriceAttributePriceList
+    private function createPriceAttributePriceList(?string $name): PriceAttributePriceList
     {
-        return $this->getEntity(PriceAttributePriceList::class, [
-            'name' => $name,
-            'fieldName' => $name
-        ]);
+        return (new PriceAttributePriceList())
+            ->setName($name)
+            ->setFieldName($name);
     }
 
-    /**
-     * @param array $productOptions
-     * @return Product
-     */
-    private function createProduct(array $productOptions = []): Product
+    private function createProduct(int $id = 0): Product
     {
-        $product = $this->getEntity(Product::class, $productOptions);
+        $product = (new ProductStub())->setId($id);
 
-        $productUnit = new ProductUnit();
-        $productUnit->setCode('item');
-        $productUnitPrecision = $this->getEntity(ProductUnitPrecision::class, [
-            'product' => $product,
-            'unit' => $productUnit
-        ]);
+        $productUnit = (new ProductUnit())->setCode('item');
+        $productUnitPrecision = (new ProductUnitPrecision())
+            ->setProduct($product)
+            ->setUnit($productUnit);
 
         $product->setPrimaryUnitPrecision($productUnitPrecision);
 
         return $product;
     }
 
-    /**
-     * @return CustomerUser
-     */
     private function createCustomerUser(): CustomerUser
     {
-        $customer = $this->getEntity(Customer::class, [
-            'name' => 'Test Customer'
-        ]);
+        $customer = (new Customer())->setName('Test Customer');
+        $website = (new Website())->setName('Test Website');
 
-        $website = $this->getEntity(Website::class, [
-            'name' => 'Test Website'
-        ]);
+        return (new CustomerUser())
+            ->setUsername('Test')
+            ->setCustomer($customer)
+            ->setWebsite($website);
+    }
 
-        $user = $this->getEntity(CustomerUser::class, [
-            'username' => 'Test',
-            'customer' => $customer,
-            'website' => $website
-        ]);
-
-
-        return $user;
+    private function createPriceAttributeProductPrice(
+        Product $product,
+        PriceAttributePriceList $priceAttributePriceList,
+        ProductUnit $productUnit,
+        Price $price
+    ): PriceAttributeProductPrice {
+        return (new PriceAttributeProductPrice())
+            ->setProduct($product)
+            ->setPriceList($priceAttributePriceList)
+            ->setUnit($productUnit)
+            ->setPrice($price);
     }
 }
