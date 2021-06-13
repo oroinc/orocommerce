@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\InventoryBundle\Tests\Unit\Inventory\Stub\InventoryStatusStub;
+use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue as InventoryStatus;
 use Oro\Bundle\ProductBundle\Controller\Frontend\ProductController;
 use Oro\Bundle\ProductBundle\EventListener\RestrictProductViewByInventoryStatusListener;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
@@ -16,14 +16,10 @@ class RestrictProductViewByInventoryStatusListenerTest extends \PHPUnit\Framewor
 {
     use EntityTrait;
 
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
-    /**
-     * @var RestrictProductViewByInventoryStatusListener
-     */
+    /** @var RestrictProductViewByInventoryStatusListener */
     private $listener;
 
     protected function setUp(): void
@@ -43,7 +39,7 @@ class RestrictProductViewByInventoryStatusListenerTest extends \PHPUnit\Framewor
     public function testNoRestriction($controller, Product $product = null, $inventoryStatusCode = null)
     {
         if ($inventoryStatusCode) {
-            $inventoryStatus = new InventoryStatusStub($inventoryStatusCode, $inventoryStatusCode);
+            $inventoryStatus = new InventoryStatus($inventoryStatusCode, $inventoryStatusCode);
             if ($product) {
                 $product->setInventoryStatus($inventoryStatus);
             }
@@ -53,7 +49,6 @@ class RestrictProductViewByInventoryStatusListenerTest extends \PHPUnit\Framewor
         $request = Request::create('/product/view/1', 'GET', []);
         $request->attributes->set('product', $product);
 
-        /** @var ControllerEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->createMock(ControllerEvent::class);
         $event->expects($this->any())
             ->method('getController')
@@ -71,10 +66,7 @@ class RestrictProductViewByInventoryStatusListenerTest extends \PHPUnit\Framewor
         $this->listener->onKernelController($event);
     }
 
-    /**
-     * @return array
-     */
-    public function eventDataProvider()
+    public function eventDataProvider(): array
     {
         $productController = $this->createMock(ProductController::class);
 
@@ -93,7 +85,7 @@ class RestrictProductViewByInventoryStatusListenerTest extends \PHPUnit\Framewor
 
     public function testRestriction()
     {
-        $inventoryStatus = new InventoryStatusStub('out_of_stock', 'out_of_stock');
+        $inventoryStatus = new InventoryStatus('out_of_stock', 'out_of_stock');
         $product = $this->getEntity(Product::class, ['id' => 42]);
         $product->setInventoryStatus($inventoryStatus);
         $allowedStatuses = ['in_stock'];
@@ -101,7 +93,6 @@ class RestrictProductViewByInventoryStatusListenerTest extends \PHPUnit\Framewor
         $request = Request::create('/product/view/1', 'GET', []);
         $request->attributes->set('product', $product);
 
-        /** @var ControllerEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->createMock(ControllerEvent::class);
         $event->expects($this->any())
             ->method('getController')

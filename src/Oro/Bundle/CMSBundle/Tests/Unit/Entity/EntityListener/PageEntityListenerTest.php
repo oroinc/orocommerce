@@ -12,12 +12,10 @@ use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 
 class PageEntityListenerTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
     /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
@@ -27,15 +25,20 @@ class PageEntityListenerTest extends \PHPUnit\Framework\TestCase
     /** @var PageEntityListener */
     private $entityListener;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->messageProducer = $this->createMock(MessageProducerInterface::class);
 
         $this->entityListener = new PageEntityListener($this->doctrineHelper, $this->messageProducer);
+    }
+
+    private function getPageEntity(int $id): Page
+    {
+        $page = new Page();
+        ReflectionUtil::setId($page, $id);
+
+        return $page;
     }
 
     public function testPostRemove()
@@ -45,13 +48,11 @@ class PageEntityListenerTest extends \PHPUnit\Framework\TestCase
             ['id' => 5],
         ];
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject $query */
         $query = $this->createMock(AbstractQuery::class);
         $query->expects($this->once())
             ->method('getResult')
             ->willReturn($result);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject $qb */
         $qb = $this->createMock(QueryBuilder::class);
         $qb->expects($this->once())
             ->method('expr')
@@ -60,30 +61,25 @@ class PageEntityListenerTest extends \PHPUnit\Framework\TestCase
             ->method('getQuery')
             ->willReturn($query);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject $em */
         $em = $this->createMock(EntityRepository::class);
         $em->expects($this->once())
             ->method('createQueryBuilder')
             ->with('content_node')
             ->willReturn($qb);
 
-        $this->doctrineHelper
-            ->expects($this->once())
+        $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
             ->with(ContentNode::class)
             ->willReturn($em);
 
-        $this->messageProducer
-            ->expects($this->at(0))
+        $this->messageProducer->expects($this->exactly(2))
             ->method('send')
-            ->with('oro.web_catalog.calculate_cache', ['webCatalogId' => 3]);
+            ->withConsecutive(
+                ['oro.web_catalog.calculate_cache', ['webCatalogId' => 3]],
+                ['oro.web_catalog.calculate_cache', ['webCatalogId' => 5]]
+            );
 
-        $this->messageProducer
-            ->expects($this->at(1))
-            ->method('send')
-            ->with('oro.web_catalog.calculate_cache', ['webCatalogId' => 5]);
-
-        $entity = $this->getEntity(Page::class, ['id' => 2]);
+        $entity = $this->getPageEntity(2);
         $lifecycleEventArgs = $this->createMock(LifecycleEventArgs::class);
 
         $this->entityListener->preRemove($entity, $lifecycleEventArgs);
@@ -94,13 +90,11 @@ class PageEntityListenerTest extends \PHPUnit\Framework\TestCase
     {
         $result = [];
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject $query */
         $query = $this->createMock(AbstractQuery::class);
         $query->expects($this->once())
             ->method('getResult')
             ->willReturn($result);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject $qb */
         $qb = $this->createMock(QueryBuilder::class);
         $qb->expects($this->once())
             ->method('expr')
@@ -109,24 +103,21 @@ class PageEntityListenerTest extends \PHPUnit\Framework\TestCase
             ->method('getQuery')
             ->willReturn($query);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject $em */
         $em = $this->createMock(EntityRepository::class);
         $em->expects($this->once())
             ->method('createQueryBuilder')
             ->with('content_node')
             ->willReturn($qb);
 
-        $this->doctrineHelper
-            ->expects($this->once())
+        $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
             ->with(ContentNode::class)
             ->willReturn($em);
 
-        $this->messageProducer
-            ->expects($this->never())
+        $this->messageProducer->expects($this->never())
             ->method('send');
 
-        $entity = $this->getEntity(Page::class, ['id' => 2]);
+        $entity = $this->getPageEntity(2);
         $lifecycleEventArgs = $this->createMock(LifecycleEventArgs::class);
 
         $this->entityListener->preRemove($entity, $lifecycleEventArgs);

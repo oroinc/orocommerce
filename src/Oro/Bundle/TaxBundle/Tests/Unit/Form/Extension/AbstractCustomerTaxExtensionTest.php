@@ -15,8 +15,7 @@ abstract class AbstractCustomerTaxExtensionTest extends AbstractTaxExtensionTest
     {
         $customerTaxExtension = $this->getExtension();
 
-        /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder */
-        $builder = $this->createMock('Symfony\Component\Form\FormBuilderInterface');
+        $builder = $this->createMock(FormBuilderInterface::class);
         $builder->expects($this->once())
             ->method('add')
             ->with(
@@ -31,13 +30,11 @@ abstract class AbstractCustomerTaxExtensionTest extends AbstractTaxExtensionTest
                 ]
             );
         $builder->expects($this->exactly(2))
-            ->method('addEventListener');
-        $builder->expects($this->at(1))
             ->method('addEventListener')
-            ->with(FormEvents::POST_SET_DATA, [$customerTaxExtension, 'onPostSetData']);
-        $builder->expects($this->at(2))
-            ->method('addEventListener')
-            ->with(FormEvents::POST_SUBMIT, [$customerTaxExtension, 'onPostSubmit'], 10);
+            ->withConsecutive(
+                [FormEvents::POST_SET_DATA, [$customerTaxExtension, 'onPostSetData']],
+                [FormEvents::POST_SUBMIT, [$customerTaxExtension, 'onPostSubmit'], 10]
+            );
 
         $customerTaxExtension->buildForm($builder, []);
     }
@@ -51,7 +48,9 @@ abstract class AbstractCustomerTaxExtensionTest extends AbstractTaxExtensionTest
         /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $taxCodeForm */
         $taxCodeForm = $event->getForm()->get('taxCode');
 
-        $customer->method('getTaxCode')->willReturn($taxCode);
+        $customer->expects($this->any())
+            ->method('getTaxCode')
+            ->willReturn($taxCode);
 
         $taxCodeForm->expects($this->once())
             ->method('setData')
@@ -66,7 +65,7 @@ abstract class AbstractCustomerTaxExtensionTest extends AbstractTaxExtensionTest
      */
     protected function createTaxCode($id = null)
     {
-        return $this->getEntity('Oro\Bundle\TaxBundle\Entity\CustomerTaxCode', ['id' => $id]);
+        return $this->getEntity(CustomerTaxCode::class, ['id' => $id]);
     }
 
     /**

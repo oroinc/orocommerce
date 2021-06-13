@@ -4,65 +4,21 @@ namespace Oro\Bundle\ValidationBundle\Tests\Unit\Validator\Constraints;
 
 use Oro\Bundle\ValidationBundle\Validator\Constraints\NotBlankOneOf;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\NotBlankOneOfValidator;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class NotBlankOneOfValidatorTest extends \PHPUnit\Framework\TestCase
+class NotBlankOneOfValidatorTest extends ConstraintValidatorTestCase
 {
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ExecutionContextInterface
-     */
-    protected $context;
-
-    /**
-     * @var NotBlankOneOfValidator
-     */
-    protected $validator;
-
-    /**
-     * @var NotBlankOneOf
-     */
-    protected $constraint;
-
-    /**
-     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $translator;
-
-    /**
-     * @var string
-     */
-    protected $translatedLabel = ' key was translated.';
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp(): void
+    protected function createValidator()
     {
-        $this->context = $this->createMock(ExecutionContextInterface::class);
-        $this->constraint = new NotBlankOneOf();
-        $this->translator = $this->createMock(TranslatorInterface::class);
-
-        $this->translator->expects($this->any())
+        $translator = $this->createMock(TranslatorInterface::class);
+        $translator->expects($this->any())
             ->method('trans')
-            ->with(
-                $this->logicalOr(
-                    $this->equalTo('Field 1'),
-                    $this->equalTo('Field 2')
-                )
-            )
-            ->will(
-                $this->returnCallback(
-                    function ($param) {
-                        return $param . $this->translatedLabel;
-                    }
-                )
-            );
+            ->willReturnCallback(function ($id) {
+                return $id . ' (translated)';
+            });
 
-        $this->validator = new NotBlankOneOfValidator($this->translator);
-
-        $this->validator->initialize($this->context);
+        return new NotBlankOneOfValidator($translator);
     }
 
     public function testValidateValid()
@@ -75,7 +31,8 @@ class NotBlankOneOfValidatorTest extends \PHPUnit\Framework\TestCase
         $value->field3 = null;
         $value->field4 = 0;
 
-        $this->constraint->fields = [
+        $constraint = new NotBlankOneOf();
+        $constraint->fields = [
             [
                 'field1' => 'Field 1',
                 'field2' => 'Field 2',
@@ -86,7 +43,9 @@ class NotBlankOneOfValidatorTest extends \PHPUnit\Framework\TestCase
             ],
         ];
 
-        $this->validator->validate($value, $this->constraint);
+        $this->validator->validate($value, $constraint);
+
+        $this->assertNoViolation();
     }
 
     public function testValidateNotValid()
@@ -98,28 +57,19 @@ class NotBlankOneOfValidatorTest extends \PHPUnit\Framework\TestCase
             'field1' => 'Field 1',
             'field2' => 'Field 2',
         ];
-        $this->constraint->fields = [$fieldGroup];
 
-        $violationBuilder = $this->createMock(ConstraintViolationBuilderInterface::class);
+        $constraint = new NotBlankOneOf();
+        $constraint->fields = [$fieldGroup];
 
-        $violationBuilder->expects($this->at(0))
-            ->method('atPath')
-            ->with('field1')
-            ->willReturn($violationBuilder);
+        $this->validator->validate($value, $constraint);
 
-        $violationBuilder->expects($this->at(2))
-            ->method('atPath')
-            ->with('field2')
-            ->willReturn($this->createMock(ConstraintViolationBuilderInterface::class));
-
-        $this->context
-            ->expects($this->exactly(2))
-            ->method('buildViolation')
-            ->with($this->constraint->message, [
-                '%fields%' => 'Field 1' . $this->translatedLabel . ', Field 2' . $this->translatedLabel
-            ])
-            ->willReturn($violationBuilder);
-
-        $this->validator->validate($value, $this->constraint);
+        $this
+            ->buildViolation($constraint->message)
+            ->setParameter('%fields%', 'Field 1 (translated), Field 2 (translated)')
+            ->atPath('property.path.field1')
+            ->buildNextViolation($constraint->message)
+            ->setParameter('%fields%', 'Field 1 (translated), Field 2 (translated)')
+            ->atPath('property.path.field2')
+            ->assertRaised();
     }
 }

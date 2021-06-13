@@ -18,7 +18,6 @@ use Oro\Bundle\PayPalBundle\OptionsProvider\OptionsProviderInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\Response;
 use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Routing\RouterInterface;
 
 /**
@@ -27,38 +26,36 @@ use Symfony\Component\Routing\RouterInterface;
  */
 class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
 {
-    const CONFIG_PREFIX = 'payflow_express_checkout_';
-    const PRODUCTION_REDIRECT_URL = 'https://www.paypal.com/webscr?cmd=_express-checkout&useraction=commit&token=%s';
-    const PILOT_REDIRECT_URL = 'https://www.sandbox.paypal.com/webscr?cmd=_express-checkout&useraction=commit&token=%s';
-    const TOKEN = 'token';
-    const ENTITY_CLASS = 'EntityClass';
-    const ENTITY_ID = 15689;
-    const SHIPPING_COST = 1;
-    const DISCOUNT_AMOUNT = 5.5;
+    private const PRODUCTION_REDIRECT_URL =
+        'https://www.paypal.com/webscr?cmd=_express-checkout&useraction=commit&token=%s';
+    private const PILOT_REDIRECT_URL =
+        'https://www.sandbox.paypal.com/webscr?cmd=_express-checkout&useraction=commit&token=%s';
+    private const TOKEN = 'token';
+    private const ENTITY_CLASS = 'EntityClass';
+    private const ENTITY_ID = 15689;
+    private const SHIPPING_COST = 1;
+    private const DISCOUNT_AMOUNT = 5.5;
 
     /** @var Gateway|\PHPUnit\Framework\MockObject\MockObject */
-    protected $gateway;
+    private $gateway;
 
     /** @var RouterInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $router;
+    private $router;
 
     /** @var PayPalExpressCheckoutPaymentMethod */
-    protected $expressCheckout;
+    private $expressCheckout;
 
     /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
-    protected $doctrineHelper;
+    private $doctrineHelper;
 
     /** @var PayPalExpressCheckoutConfigInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $paymentConfig;
+    private $paymentConfig;
 
     /** @var OptionsProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $optionsProvider;
+    private $optionsProvider;
 
     /** @var SurchargeProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $surchargeProvider;
-
-    /** @var PropertyAccessor */
-    protected $propertyAccessor;
+    private $surchargeProvider;
 
     protected function setUp(): void
     {
@@ -68,7 +65,6 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->optionsProvider = $this->createMock(OptionsProviderInterface::class);
         $this->surchargeProvider = $this->createMock(SurchargeProvider::class);
-        $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
 
         $this->expressCheckout = new PayPalExpressCheckoutPaymentMethod(
             $this->gateway,
@@ -77,13 +73,8 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
             $this->doctrineHelper,
             $this->optionsProvider,
             $this->surchargeProvider,
-            $this->propertyAccessor
+            PropertyAccess::createPropertyAccessor()
         );
-    }
-
-    protected function tearDown(): void
-    {
-        unset($this->paymentConfig, $this->router, $this->gateway, $this->doctrineHelper, $this->expressCheckout);
     }
 
     public function testExecute()
@@ -92,16 +83,10 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
         $this->gateway->expects($this->any())
             ->method('request')
-            ->with(
-                'S',
-                array_merge(
-                    ['ACTION' => 'S'],
-                    $this->getAdditionalOptions()
-                )
-            )
+            ->with('S', array_merge(['ACTION' => 'S'], $this->getAdditionalOptions()))
             ->willReturn(new Response(['RESPMSG' => 'Approved', 'RESULT' => '0', 'TOKEN' => 'TOKEN']));
 
-        $this->gateway->expects($this->exactly(1))
+        $this->gateway->expects($this->once())
             ->method('setTestMode')
             ->with(false);
 
@@ -116,16 +101,10 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
         $this->gateway->expects($this->any())
             ->method('request')
-            ->with(
-                'S',
-                array_merge(
-                    ['ACTION' => 'S'],
-                    $this->getAdditionalOptions()
-                )
-            )
+            ->with('S', array_merge(['ACTION' => 'S'], $this->getAdditionalOptions()))
             ->willReturn(new Response(['RESPMSG' => 'Error', 'RESULT' => '1']));
 
-        $this->gateway->expects($this->exactly(1))
+        $this->gateway->expects($this->once())
             ->method('setTestMode')
             ->with(false);
 
@@ -145,20 +124,18 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
     public function testGetIdentifier()
     {
-        $this->paymentConfig->expects(static::once())
+        $this->paymentConfig->expects(self::once())
             ->method('getPaymentMethodIdentifier')
             ->willReturn('payflow_express_checkout');
+
         $this->assertSame('payflow_express_checkout', $this->expressCheckout->getIdentifier());
     }
 
     /**
-     * @param float $amount
-     * @param bool $expectedIsApplicable
      * @dataProvider isApplicableDataProvider
      */
-    public function testIsApplicable($amount, $expectedIsApplicable)
+    public function testIsApplicable(float $amount, bool $expectedIsApplicable)
     {
-        /** @var PaymentContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(PaymentContextInterface::class);
         $context->expects($this->once())
             ->method('getTotal')
@@ -167,10 +144,7 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedIsApplicable, $this->expressCheckout->isApplicable($context));
     }
 
-    /**
-     * @return array
-     */
-    public function isApplicableDataProvider()
+    public function isApplicableDataProvider(): array
     {
         return [
             'not applicable if order total is zero' => [
@@ -185,19 +159,14 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param bool $expected
-     * @param string $actionName
      * @dataProvider supportsDataProvider
      */
-    public function testSupports($expected, $actionName)
+    public function testSupports(bool $expected, string $actionName)
     {
         $this->assertSame($expected, $this->expressCheckout->supports($actionName));
     }
 
-    /**
-     * @return array
-     */
-    public function supportsDataProvider()
+    public function supportsDataProvider(): array
     {
         return [
             [true, PaymentMethodInterface::AUTHORIZE],
@@ -211,7 +180,9 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
     public function testPurchaseGetActionFromConfig()
     {
-        $this->configCredentials();
+        $this->paymentConfig->expects($this->once())
+            ->method('getCredentials')
+            ->willReturn($this->getCredentials());
         $this->paymentConfig->expects($this->once())
             ->method('getPurchaseAction')
             ->willReturn(PaymentMethodInterface::AUTHORIZE);
@@ -224,9 +195,7 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
         $this->gateway->expects($this->once())
             ->method('request')
             ->with('A')
-            ->willReturn(
-                new Response(['RESPMSG' => 'Approved', 'RESULT' => '0', 'TOKEN' => self::TOKEN])
-            );
+            ->willReturn(new Response(['RESPMSG' => 'Approved', 'RESULT' => '0', 'TOKEN' => self::TOKEN]));
 
         $this->gateway->expects($this->any())
             ->method('setTestMode')
@@ -241,7 +210,9 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
     public function testPurchasePaymentTransactionNonActive()
     {
-        $this->configCredentials();
+        $this->paymentConfig->expects($this->once())
+            ->method('getCredentials')
+            ->willReturn($this->getCredentials());
         $this->paymentConfig->expects($this->once())
             ->method('getPurchaseAction')
             ->willReturn(PaymentMethodInterface::AUTHORIZE);
@@ -254,9 +225,7 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
         $this->gateway->expects($this->once())
             ->method('request')
             ->with('A')
-            ->willReturn(
-                new Response(['RESPMSG' => 'NonApproved', 'RESULT' => '12', 'TOKEN' => self::TOKEN])
-            );
+            ->willReturn(new Response(['RESPMSG' => 'NonApproved', 'RESULT' => '12', 'TOKEN' => self::TOKEN]));
 
         $this->gateway->expects($this->any())
             ->method('setTestMode')
@@ -270,7 +239,12 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
     public function testPurchaseCheckRequest()
     {
-        $this->configCredentials();
+        $this->paymentConfig->expects($this->once())
+            ->method('getCredentials')
+            ->willReturn($this->getCredentials());
+        $this->paymentConfig->expects($this->once())
+            ->method('getPurchaseAction')
+            ->willReturn(PaymentMethodInterface::AUTHORIZE);
 
         $requestData = array_merge(
             $this->getCredentials(),
@@ -280,10 +254,6 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
             $this->getLineItemOptions(),
             $this->getSurchargeOptions()
         );
-
-        $this->paymentConfig->expects($this->once())
-            ->method('getPurchaseAction')
-            ->willReturn(PaymentMethodInterface::AUTHORIZE);
 
         $transaction = $this->createTransaction(PaymentMethodInterface::PURCHASE);
 
@@ -298,22 +268,11 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
             ->with($entity)
             ->willReturn($surcharge);
 
-        $this->router
-            ->expects($this->exactly(2))
+        $this->router->expects($this->exactly(2))
             ->method('generate')
             ->withConsecutive(
-                [
-                    'oro_payment_callback_return',
-                    [
-                        'accessIdentifier' => 'testAccessIdentifier',
-                    ],
-                ],
-                [
-                    'oro_payment_callback_error',
-                    [
-                        'accessIdentifier' => 'testAccessIdentifier',
-                    ],
-                ]
+                ['oro_payment_callback_return', ['accessIdentifier' => 'testAccessIdentifier']],
+                ['oro_payment_callback_error', ['accessIdentifier' => 'testAccessIdentifier']]
             )
             ->willReturnOnConsecutiveCalls('callbackReturnUrl', 'callbackErrorUrl');
 
@@ -335,23 +294,21 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
         $this->assertArrayHasKey('purchaseRedirectUrl', $result);
     }
 
-    protected function configureShippingAddressOptions()
+    private function configureShippingAddressOptions()
     {
         $entity = $this->getEntity();
 
-        $this->optionsProvider
-            ->expects($this->once())
+        $this->optionsProvider->expects($this->once())
             ->method('getShippingAddressOptions')
             ->with($entity->getShippingAddress())
             ->willReturn($this->getAddressOptionModel());
     }
 
-    protected function configureLineItemOptions()
+    private function configureLineItemOptions()
     {
         $entity = $this->getEntity();
 
-        $this->optionsProvider
-            ->expects($this->once())
+        $this->optionsProvider->expects($this->once())
             ->method('getLineItemOptions')
             ->with($entity)
             ->willReturn([$this->getLineItemOptionModel()]);
@@ -359,7 +316,12 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
     public function testPurchaseWithoutShippingAddress()
     {
-        $this->configCredentials();
+        $this->paymentConfig->expects($this->once())
+            ->method('getCredentials')
+            ->willReturn($this->getCredentials());
+        $this->paymentConfig->expects($this->once())
+            ->method('getPurchaseAction')
+            ->willReturn(PaymentMethodInterface::AUTHORIZE);
 
         $requestData = array_merge(
             $this->getCredentials(),
@@ -368,10 +330,6 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
             $this->getLineItemOptions(),
             $this->getSurchargeOptions()
         );
-
-        $this->paymentConfig->expects($this->once())
-            ->method('getPurchaseAction')
-            ->willReturn(PaymentMethodInterface::AUTHORIZE);
 
         $transaction = $this->createTransaction(PaymentMethodInterface::PURCHASE);
 
@@ -382,22 +340,11 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
             ->method('getSurcharges')
             ->willReturn($surcharge);
 
-        $this->router
-            ->expects($this->exactly(2))
+        $this->router->expects($this->exactly(2))
             ->method('generate')
             ->withConsecutive(
-                [
-                    'oro_payment_callback_return',
-                    [
-                        'accessIdentifier' => 'testAccessIdentifier',
-                    ],
-                ],
-                [
-                    'oro_payment_callback_error',
-                    [
-                        'accessIdentifier' => 'testAccessIdentifier',
-                    ],
-                ]
+                ['oro_payment_callback_return', ['accessIdentifier' => 'testAccessIdentifier']],
+                ['oro_payment_callback_error', ['accessIdentifier' => 'testAccessIdentifier']]
             )
             ->willReturnOnConsecutiveCalls('callbackReturnUrl', 'callbackErrorUrl');
 
@@ -417,17 +364,15 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider purchaseDataProvider
-     * @param bool $testMode
-     * @param string $redirectUrl
      */
-    public function testPurchaseCheckRedirectUrl($testMode, $redirectUrl)
+    public function testPurchaseCheckRedirectUrl(bool $testMode, string $redirectUrl)
     {
-        $this->configCredentials();
-
+        $this->paymentConfig->expects($this->once())
+            ->method('getCredentials')
+            ->willReturn($this->getCredentials());
         $this->paymentConfig->expects($this->once())
             ->method('getPurchaseAction')
             ->willReturn(PaymentMethodInterface::AUTHORIZE);
-
         $this->paymentConfig->expects($this->any())
             ->method('isTestMode')
             ->willReturn($testMode);
@@ -452,10 +397,7 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($redirectUrl, $result['purchaseRedirectUrl']);
     }
 
-    /**
-     * @return array
-     */
-    public function purchaseDataProvider()
+    public function purchaseDataProvider(): array
     {
         return [
             'production mode' => [
@@ -471,14 +413,12 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getLineItemOptionsProvider
-     * @param object $entity
-     * @param array $requestData
-     * @param int $calls
      */
-    public function testGetLineItemOptions($entity, array $requestData, $calls)
+    public function testGetLineItemOptions(object $entity, array $requestData, int $calls)
     {
-        $this->configCredentials();
-
+        $this->paymentConfig->expects($this->once())
+            ->method('getCredentials')
+            ->willReturn($this->getCredentials());
         $this->paymentConfig->expects($this->once())
             ->method('getPurchaseAction')
             ->willReturn(PaymentMethodInterface::AUTHORIZE);
@@ -496,37 +436,22 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
         $this->gateway->expects($this->once())
             ->method('request')
             ->with('A', $requestData)
-            ->willReturn(
-                new Response(['RESPMSG' => 'Approved', 'RESULT' => '0'])
-            );
+            ->willReturn(new Response(['RESPMSG' => 'Approved', 'RESULT' => '0']));
 
-        $this->router
-            ->expects($this->exactly(2))
+        $this->router->expects($this->exactly(2))
             ->method('generate')
             ->withConsecutive(
-                [
-                    'oro_payment_callback_return',
-                    [
-                        'accessIdentifier' => 'testAccessIdentifier',
-                    ],
-                ],
-                [
-                    'oro_payment_callback_error',
-                    [
-                        'accessIdentifier' => 'testAccessIdentifier',
-                    ],
-                ]
+                ['oro_payment_callback_return', ['accessIdentifier' => 'testAccessIdentifier']],
+                ['oro_payment_callback_error', ['accessIdentifier' => 'testAccessIdentifier']]
             )
             ->willReturnOnConsecutiveCalls('callbackReturnUrl', 'callbackErrorUrl');
 
         $entityStub = $this->getEntity();
-        $this->doctrineHelper
-            ->expects($this->any())
+        $this->doctrineHelper->expects($this->any())
             ->method('getEntityReference')
             ->willReturnOnConsecutiveCalls($entity, $entity, $entityStub);
 
-        $this->optionsProvider
-            ->expects($this->exactly($calls))
+        $this->optionsProvider->expects($this->exactly($calls))
             ->method('getLineItemOptions')
             ->willReturn([]);
 
@@ -534,10 +459,7 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
         $this->expressCheckout->execute($transaction->getAction(), $transaction);
     }
 
-    /**
-     * @return array
-     */
-    public function getLineItemOptionsProvider()
+    public function getLineItemOptionsProvider(): array
     {
         return [
             'non LineItemsAwareInterface' => [
@@ -569,25 +491,32 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
     public function testCompleteSuccess()
     {
-        $this->configCredentials();
+        $this->paymentConfig->expects($this->once())
+            ->method('getCredentials')
+            ->willReturn($this->getCredentials());
 
         // Prepare authorize transaction to use it then for complete action
         $transaction = $this->createTransaction(PaymentMethodInterface::AUTHORIZE);
 
         $authorizeTransactionRequest = array_merge(['ACTION' => 'S'], $this->getAdditionalOptions());
-        $this->gateway->expects($this->at(1))
+        $authorizeTransactionResponse = new Response([
+            'RESPMSG' => 'Approved',
+            'RESULT' => '0',
+            'TOKEN' => self::TOKEN,
+            'PayerID' => 'payerIdTest',
+        ]);
+        $completeTransactionRequest = array_merge(
+            ['AMT' => '10', 'TOKEN' => self::TOKEN, 'ACTION' => 'D', 'PAYERID' => 'payerIdTest'],
+            $this->getCredentials(),
+            $this->getAdditionalOptions(),
+            $this->getLineItemOptions(),
+            $this->getSurchargeOptions()
+        );
+        $completeTransactionResponse = new Response(['RESPMSG' => 'Approved', 'RESULT' => '0']);
+        $this->gateway->expects($this->exactly(2))
             ->method('request')
-            ->with('A', $authorizeTransactionRequest)
-            ->willReturn(
-                new Response(
-                    [
-                        'RESPMSG' => 'Approved',
-                        'RESULT' => '0',
-                        'TOKEN' => self::TOKEN,
-                        'PayerID' => 'payerIdTest',
-                    ]
-                )
-            );
+            ->withConsecutive(['A', $authorizeTransactionRequest], ['A', $completeTransactionRequest])
+            ->willReturnOnConsecutiveCalls($authorizeTransactionResponse, $completeTransactionResponse);
 
         $this->gateway->expects($this->any())
             ->method('setTestMode')
@@ -614,29 +543,7 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
             ->with(self::ENTITY_CLASS, self::ENTITY_ID)
             ->willReturn($entity);
 
-        $completeTransactionRequest = [
-            'AMT' => '10',
-            'TOKEN' => self::TOKEN,
-            'ACTION' => 'D',
-            'PAYERID' => 'payerIdTest',
-        ];
-
         $transaction->setAction(PayPalExpressCheckoutPaymentMethod::COMPLETE);
-
-        $completeTransactionRequest = array_merge(
-            $completeTransactionRequest,
-            $this->getCredentials(),
-            $this->getAdditionalOptions(),
-            $this->getLineItemOptions(),
-            $this->getSurchargeOptions()
-        );
-
-        $this->gateway->expects($this->at(1))
-            ->method('request')
-            ->with('A', $completeTransactionRequest)
-            ->willReturn(
-                new Response(['RESPMSG' => 'Approved', 'RESULT' => '0'])
-            );
 
         $this->expressCheckout->execute($transaction->getAction(), $transaction);
 
@@ -646,7 +553,9 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
     public function testCompleteWithPendingReason()
     {
-        $this->configCredentials();
+        $this->paymentConfig->expects($this->once())
+            ->method('getCredentials')
+            ->willReturn($this->getCredentials());
 
         $transaction = $this->createTransaction(PaymentMethodInterface::AUTHORIZE);
 
@@ -672,7 +581,9 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
     public function testCompleteWithAuthorizeAction()
     {
-        $this->configCredentials();
+        $this->paymentConfig->expects($this->once())
+            ->method('getCredentials')
+            ->willReturn($this->getCredentials());
 
         $transaction = $this->createTransaction(PaymentMethodInterface::AUTHORIZE);
 
@@ -698,7 +609,9 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
     public function testComplete()
     {
-        $this->configCredentials();
+        $this->paymentConfig->expects($this->once())
+            ->method('getCredentials')
+            ->willReturn($this->getCredentials());
 
         $requestOptions = array_merge(
             $this->getCredentials(),
@@ -740,7 +653,9 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
     public function testCaptureSuccess()
     {
-        $this->configCredentials();
+        $this->paymentConfig->expects($this->once())
+            ->method('getCredentials')
+            ->willReturn($this->getCredentials());
 
         $transaction = $this->createTransaction(PaymentMethodInterface::CAPTURE);
         $sourceTransaction = new PaymentTransaction();
@@ -775,13 +690,12 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider responseWithErrorDataProvider
-     *
-     * @param string $responseMessage
-     * @param string $expectedMessage
      */
-    public function testCaptureError($responseMessage, $expectedMessage)
+    public function testCaptureError(string $responseMessage, string $expectedMessage)
     {
-        $this->configCredentials();
+        $this->paymentConfig->expects($this->once())
+            ->method('getCredentials')
+            ->willReturn($this->getCredentials());
 
         $transaction = $this->createTransaction(PaymentMethodInterface::CAPTURE);
         $sourceTransaction = new PaymentTransaction();
@@ -795,13 +709,10 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
             $this->getDelayedCaptureOptions()
         );
 
-        $this->gateway
-            ->expects($this->once())
+        $this->gateway->expects($this->once())
             ->method('request')
             ->with('D', $requestOptions)
-            ->willReturn(
-                new Response(['RESULT' => '-1', 'RESPMSG' => $responseMessage])
-            );
+            ->willReturn(new Response(['RESULT' => '-1', 'RESPMSG' => $responseMessage]));
 
         $result = $this->expressCheckout->execute($transaction->getAction(), $transaction);
 
@@ -815,10 +726,7 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($result['successful']);
     }
 
-    /**
-     * @return array
-     */
-    public function responseWithErrorDataProvider()
+    public function responseWithErrorDataProvider(): array
     {
         return [
             'RESPMSG is filled' => [
@@ -832,10 +740,7 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @return array
-     */
-    protected function getCredentials()
+    private function getCredentials(): array
     {
         return [
             'VENDOR' => null,
@@ -846,11 +751,7 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param string $action
-     * @return PaymentTransaction
-     */
-    protected function createTransaction($action)
+    private function createTransaction(string $action): PaymentTransaction
     {
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction
@@ -864,10 +765,7 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
         return $paymentTransaction;
     }
 
-    /**
-     * @return array
-     */
-    protected function getExpressCheckoutOptions()
+    private function getExpressCheckoutOptions(): array
     {
         return [
             'PAYMENTTYPE' => 'instantonly',
@@ -880,10 +778,7 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @return array
-     */
-    protected function getShippingAddressOptions()
+    private function getShippingAddressOptions(): array
     {
         return [
             'SHIPTOFIRSTNAME' => 'First Name',
@@ -897,10 +792,7 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @return array
-     */
-    protected function getLineItemOptions()
+    private function getLineItemOptions(): array
     {
         return [
             'L_NAME1' => 'Product Name',
@@ -913,10 +805,7 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @return array
-     */
-    protected function getSurchargeOptions()
+    private function getSurchargeOptions(): array
     {
         return [
             'FREIGHTAMT' => self::SHIPPING_COST,
@@ -926,14 +815,9 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @return LineItemOptionModel
-     */
-    protected function getLineItemOptionModel()
+    private function getLineItemOptionModel(): LineItemOptionModel
     {
-        $lineItemModel = new LineItemOptionModel();
-
-        return $lineItemModel
+        return (new LineItemOptionModel())
             ->setName('Product Name')
             ->setDescription('Product Description')
             ->setCost(55.4)
@@ -943,11 +827,9 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
     /**
      * @return AddressOptionModel
      */
-    protected function getAddressOptionModel()
+    private function getAddressOptionModel(): AddressOptionModel
     {
-        $addressOptionModel = new AddressOptionModel();
-
-        return $addressOptionModel
+        return (new AddressOptionModel())
             ->setFirstName('First Name')
             ->setLastName('Last Name')
             ->setStreet('Street')
@@ -959,10 +841,7 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
     }
 
 
-    /**
-     * @return array
-     */
-    protected function getDelayedCaptureOptions()
+    private function getDelayedCaptureOptions(): array
     {
         return [
             'AMT' => '10',
@@ -970,28 +849,12 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @return EntityStub
-     */
-    protected function getEntity()
+    private function getEntity(): EntityStub
     {
-        /** @var AbstractAddress|\PHPUnit\Framework\MockObject\MockObject $abstractAddressMock */
-        $abstractAddressMock = $this->getMockForAbstractClass(AbstractAddress::class);
-
-        return new EntityStub($abstractAddressMock);
+        return new EntityStub($this->createMock(AbstractAddress::class));
     }
 
-    protected function configCredentials()
-    {
-        $this->paymentConfig->expects($this->once())
-            ->method('getCredentials')
-            ->willReturn($this->getCredentials());
-    }
-
-    /**
-     * @return array
-     */
-    protected function getAdditionalOptions()
+    private function getAdditionalOptions(): array
     {
         return [
             'BUTTONSOURCE' => 'OroCommerce_SP'

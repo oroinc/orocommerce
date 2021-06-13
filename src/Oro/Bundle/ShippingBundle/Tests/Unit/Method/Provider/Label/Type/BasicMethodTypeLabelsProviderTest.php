@@ -10,19 +10,12 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 
 class BasicMethodTypeLabelsProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $methodProvider;
 
-    /**
-     * @var BasicMethodTypeLabelsProvider
-     */
+    /** @var BasicMethodTypeLabelsProvider */
     private $provider;
 
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
         $this->methodProvider = $this->createMock(ShippingMethodProviderInterface::class);
@@ -40,27 +33,24 @@ class BasicMethodTypeLabelsProviderTest extends \PHPUnit\Framework\TestCase
         $label2 = 'Label 2';
 
         $type1 = $this->createMock(ShippingMethodTypeInterface::class);
-        $type1->expects(static::once())
+        $type1->expects(self::once())
             ->method('getLabel')
             ->willReturn($label1);
 
         $type2 = $this->createMock(ShippingMethodTypeInterface::class);
-        $type2->expects(static::once())
+        $type2->expects(self::once())
             ->method('getLabel')
             ->willReturn($label2);
 
         $method = $this->createMock(ShippingMethodInterface::class);
-        $method->expects(static::at(0))
+        $method->expects(self::exactly(2))
             ->method('getType')
-            ->with($typeId1)
-            ->willReturn($type1);
+            ->willReturnMap([
+                [$typeId1, $type1],
+                [$typeId2, $type2]
+            ]);
 
-        $method->expects(static::at(1))
-            ->method('getType')
-            ->with($typeId2)
-            ->willReturn($type2);
-
-        $this->methodProvider->expects(static::once())
+        $this->methodProvider->expects(self::once())
             ->method('getShippingMethod')
             ->with($methodId)
             ->willReturn($method);
@@ -75,7 +65,7 @@ class BasicMethodTypeLabelsProviderTest extends \PHPUnit\Framework\TestCase
 
         $methodId = 'method_id';
 
-        $this->methodProvider->expects(static::once())
+        $this->methodProvider->expects(self::once())
             ->method('getShippingMethod')
             ->with($methodId)
             ->willReturn(null);
@@ -94,12 +84,12 @@ class BasicMethodTypeLabelsProviderTest extends \PHPUnit\Framework\TestCase
         $typeId = 'type_id';
 
         $method = $this->createMock(ShippingMethodInterface::class);
-        $method->expects(static::once())
+        $method->expects(self::once())
             ->method('getType')
             ->with($typeId)
             ->willReturn(null);
 
-        $this->methodProvider->expects(static::once())
+        $this->methodProvider->expects(self::once())
             ->method('getShippingMethod')
             ->with($methodId)
             ->willReturn($method);
