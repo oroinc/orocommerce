@@ -38,3 +38,6 @@ features:
         toggle: oro_product.product_data_export_enabled
         routes:
             - 'oro_product_frontend_export'
+        configuration:
+            - 'oro_product.product_prices_export_enabled'
+            - 'oro_product.product_price_tiers_export_enabled'

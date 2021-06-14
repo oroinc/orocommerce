@@ -48,7 +48,7 @@ Feature: Products grid frontend export
   Scenario: Check product data exports correctly
     When I click "Frontend Product Grid Export Button"
     Then I should see "The product data export has started. You will receive download instructions by email once the export is finished." flash message
-    And email with Subject "Products export result is ready." containing the following was sent:
+    And email with Subject "Products export result is ready" containing the following was sent:
       | Body | Your products data export has been finished. Download Results |
     And take the link from email and download the file from this link
     And the downloaded file from email contains at least the following data:
@@ -60,7 +60,7 @@ Feature: Products grid frontend export
     When I click "Category 1"
     And I click "Frontend Product Grid Export Button"
     Then I should see "The product data export has started. You will receive download instructions by email once the export is finished." flash message
-    And email with Subject "Products export result is ready." containing the following was sent:
+    And email with Subject "Products export result is ready" containing the following was sent:
       | Body | Your products data export has been finished. Download Results |
     And take the link from email and download the file from this link
     And the downloaded file from email contains at least the following data:
@@ -77,7 +77,7 @@ Feature: Products grid frontend export
     And I should see "PSKU4"
     When I click "Frontend Product Grid Export Button"
     Then I should see "The product data export has started. You will receive download instructions by email once the export is finished." flash message
-    And email with Subject "Products export result is ready." containing the following was sent:
+    And email with Subject "Products export result is ready" containing the following was sent:
       | Body | Your products data export has been finished. Download Results |
     And take the link from email and download the file from this link
     And the downloaded file from email contains at least the following data:
@@ -92,7 +92,7 @@ Feature: Products grid frontend export
     Then number of records in "Product Frontend Grid" should be 2
     And I click "Frontend Product Grid Export Button"
     And I should see "The product data export has started. You will receive download instructions by email once the export is finished." flash message
-    And email with Subject "Products export result is ready." containing the following was sent:
+    And email with Subject "Products export result is ready" containing the following was sent:
       | Body | Your products data export has been finished. Download Results |
     And take the link from email and download the file from this link
     And the downloaded file from email contains at least the following data:
