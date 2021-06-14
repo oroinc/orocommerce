@@ -18,9 +18,9 @@ define(function(require) {
          */
         listen: function($fields) {
             ValueChangingListener.listen('total-target:changing', $fields);
-            _.each($fields, _.bind(function(field) {
-                $(field).change(_.bind(this.updateTotals, this));
-            }, this));
+            _.each($fields, field => {
+                $(field).change(this.updateTotals.bind(this));
+            });
         },
 
         /**

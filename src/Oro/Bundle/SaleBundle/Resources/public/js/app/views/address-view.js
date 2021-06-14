@@ -67,7 +67,7 @@ define(function(require) {
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
 
-            this.initLayout().done(_.bind(this.handleLayoutInit, this));
+            this.initLayout().done(this.handleLayoutInit.bind(this));
 
             this.loadingMaskView = new LoadingMaskView({container: this.$el});
 
@@ -257,7 +257,7 @@ define(function(require) {
             $oldAddress.inputWidget('dispose');
             $oldAddress.replaceWith(this.$address);
 
-            this.initLayout().done(_.bind(this.loadingEnd, this));
+            this.initLayout().done(this.loadingEnd.bind(this));
         },
 
         /**

@@ -46,7 +46,7 @@ define(function(require) {
             this.$select = this.options._sourceElement.find(this.options.unitSelect);
 
             this.options._sourceElement
-                .on('change', _.bind(this.onChange, this));
+                .on('change', this.onChange.bind(this));
             this.saveInitialOptions();
             this.options._sourceElement.trigger('change');
             this.onAdditionalPrecisionsChange(this.options.initialAdditionalUnits);
@@ -56,7 +56,7 @@ define(function(require) {
          * Handle change select
          */
         onChange: function() {
-            this.$select.on('change', _.bind(this.onSelectChange, this));
+            this.$select.on('change', this.onSelectChange.bind(this));
             const option = this.$select.find('option:selected');
             const changes = {};
             changes.removed = this.getData() || {};

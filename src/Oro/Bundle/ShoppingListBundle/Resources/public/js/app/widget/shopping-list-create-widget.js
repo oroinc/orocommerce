@@ -39,11 +39,11 @@ define(function(require) {
                 dialogClass: 'shopping-list-dialog'
             };
 
-            this.on('formSave', _.bind(this.onFormSave, this));
+            this.on('formSave', this.onFormSave.bind(this));
 
-            ShoppingListCollectionService.shoppingListCollection.done(_.bind(function(collection) {
+            ShoppingListCollectionService.shoppingListCollection.done(collection => {
                 this.shoppingListCollection = collection;
-            }, this));
+            });
 
             ShoppingListCreateWidget.__super__.initialize.call(this, options);
         },

@@ -30,8 +30,8 @@ define(function(require) {
             this.options = _.defaults(options || {}, this.options);
 
             this.options._sourceElement
-                .on('change', this.options.currenciesSelector, _.bind(this.onCurrenciesChange, this))
-                .on('change', this.options.showTierPricesSelector, _.bind(this.onShowTierPricesChange, this));
+                .on('change', this.options.currenciesSelector, this.onCurrenciesChange.bind(this))
+                .on('change', this.options.showTierPricesSelector, this.onShowTierPricesChange.bind(this));
         },
 
         onCurrenciesChange: function() {

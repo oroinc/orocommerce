@@ -123,7 +123,7 @@ define(function(require) {
                     parentProductId: this.model.get('parentProduct'),
                     ignoreProductVariant: true
                 }),
-                layoutSubtreeCallback: _.bind(this.afterProductChanged, this)
+                layoutSubtreeCallback: this.afterProductChanged.bind(this)
             });
         },
 

@@ -141,9 +141,9 @@ const ShoppingListInlineEditingPlugin = InlineEditingPlugin.extend({
 
         const sendModels = componentsToSend.map(component => component.getModel());
 
-        savePromise.done(_.bind(this.onSaveSuccess, this, sendModels.slice()))
-            .fail(_.bind(this.onSaveError, this, sendModels.slice()))
-            .always(_.bind(this.onSaveComplete, this));
+        savePromise.done(this.onSaveSuccess.bind(this, sendModels.slice()))
+            .fail(this.onSaveError.bind(this, sendModels.slice()))
+            .always(this.onSaveComplete.bind(this));
 
         _.invoke(componentsToSend, 'exitEditMode', true);
         return savePromise;

@@ -9,6 +9,6 @@ $.validator.loadMethod([
     'orovalidation/js/validator/greater-than-zero',
     'orovalidation/js/validator/integer',
     'orovalidation/js/validator/letters',
-    'orovalidation/js/validator/url',
+    // 'orovalidation/js/validator/url', /* turned off, due to it is too heavy and not in use on the front */
     'orovalidation/js/validator/url-safe'
 ]);
