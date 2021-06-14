@@ -627,6 +627,7 @@ system_configuration:
             data_type: boolean
             type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
             priority: 30
+            page_reload: true
             options:
                 label: oro.product.system_configuration.fields.product_data_export_enabled.label
                 tooltip: oro.product.system_configuration.fields.product_data_export_enabled.tooltip

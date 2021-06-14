@@ -1037,7 +1037,9 @@ oro:
     importexport:
         export:
             oro_product_product: Products
+
     frontendimportexport:
         product_export:
             button:
                 aria_label: Download Product Data
+                title: Download Product Data

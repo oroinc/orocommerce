@@ -40,7 +40,7 @@ Feature: Products grid frontend export with prices
     And I set range filter "Price" as min value "5" and max value "7" use "each" unit
     And I click "Frontend Product Grid Export Button"
     Then I should see "The product data export has started. You will receive download instructions by email once the export is finished." flash message
-    And email with Subject "Products export result is ready." containing the following was sent:
+    And email with Subject "Products export result is ready" containing the following was sent:
       | Body | Your products data export has been finished. Download Results |
     And take the link from email and download the file from this link
     And the downloaded file from email contains at least the following data:
@@ -65,7 +65,7 @@ Feature: Products grid frontend export with prices
     And I set range filter "Price" as min value "5" and max value "7" use "each" unit
     And I click "Frontend Product Grid Export Button"
     Then I should see "The product data export has started. You will receive download instructions by email once the export is finished." flash message
-    And email with Subject "Products export result is ready." containing the following was sent:
+    And email with Subject "Products export result is ready" containing the following was sent:
       | Body | Your products data export has been finished. Download Results |
     And take the link from email and download the file from this link
     And the downloaded file from email contains at least the following data:

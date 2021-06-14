@@ -174,3 +174,4 @@ layout:
               optionName: attr
               optionValue:
                   aria-label: 'oro.frontendimportexport.product_export.button.aria_label'
+                  title: 'oro.frontendimportexport.product_export.button.title'
