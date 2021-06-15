@@ -408,6 +408,9 @@ services:
         tags:
             - { name: oro_entity.name_provider, priority: 100 }
 
+    Oro\Bundle\PromotionBundle\Mapper\AppliedPromotionMapper:
+        alias: oro_promotion.mapper.applied_promotion
+
     oro_promotion.mapper.applied_promotion:
         class: Oro\Bundle\PromotionBundle\Mapper\AppliedPromotionMapper
         public: true
@@ -598,6 +601,9 @@ services:
         arguments:
             - '@oro_promotion.coupon_generation.coupon'
 
+    Oro\Bundle\PromotionBundle\CouponGeneration\Code\CodeGenerator:
+        alias: oro_promotion.coupon_generation.code_generator
+
     oro_promotion.coupon_generation.code_generator:
         class: Oro\Bundle\PromotionBundle\CouponGeneration\Code\CodeGenerator
         public: true
@@ -709,12 +715,18 @@ services:
             - '@event_dispatcher'
             - '@security.authorization_checker'
 
+    Oro\Bundle\PromotionBundle\Handler\CouponValidationHandler:
+        alias: oro_promotion.handler.coupon_validation_handler
+
     oro_promotion.handler.coupon_validation_handler:
         class: Oro\Bundle\PromotionBundle\Handler\CouponValidationHandler
         public: true
         parent: oro_promotion.handler.abstract_coupon_handler
         calls:
             - [setCouponApplicabilityValidationService, ['@oro_promotion.validation_service.coupon_applicability_validation']]
+
+    Oro\Bundle\PromotionBundle\Handler\FrontendCouponHandler:
+        alias: oro_promotion.handler.frontend_coupon_handler
 
     oro_promotion.handler.frontend_coupon_handler:
         class: Oro\Bundle\PromotionBundle\Handler\FrontendCouponHandler
@@ -725,6 +737,9 @@ services:
             - [setEntityCouponsProviderService, ['@oro_promotion.provider.entity_coupons_provider']]
             - [setConfigManager, ['@oro_config.manager']]
             - [disableFilter, ['Oro\Bundle\PromotionBundle\RuleFiltration\ShippingFiltrationService']]
+
+    Oro\Bundle\PromotionBundle\Handler\FrontendCouponRemoveHandler:
+        alias: oro_promotion.handler.frontend_coupon_remove_handler
 
     oro_promotion.handler.frontend_coupon_remove_handler:
         class: Oro\Bundle\PromotionBundle\Handler\FrontendCouponRemoveHandler

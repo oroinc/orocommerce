@@ -7,6 +7,9 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
+/**
+ * This is the class that loads and manages FedexShippingBundle service configuration
+ */
 class OroFedexShippingExtension extends Extension
 {
     /**
@@ -26,6 +29,7 @@ class OroFedexShippingExtension extends Extension
 
         $loader->load('services.yml');
         $loader->load('form_types.yml');
+        $loader->load('controllers.yml');
 
         if ($container->getParameter('kernel.environment') === 'test') {
             $loader->load('services_test.yml');

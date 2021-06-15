@@ -2,31 +2,31 @@ services:
     _defaults:
         public: true
 
-    Oro\Bundle\CMSBundle\Controller\PageController:
-        calls:
-            - ['setContainer', ['@Psr\Container\ContainerInterface']]
-        tags:
-            - { name: container.service_subscriber }
-
-    Oro\Bundle\CMSBundle\Controller\ContentWidgetController:
-        calls:
-            - ['setContainer', ['@Psr\Container\ContainerInterface']]
-        tags:
-            - { name: container.service_subscriber }
-
-    Oro\Bundle\CMSBundle\Controller\WysiwygContentController:
+    Oro\Bundle\PromotionBundle\Controller\AjaxPromotionController:
         calls:
             - [ 'setContainer', [ '@Psr\Container\ContainerInterface' ] ]
         tags:
             - { name: container.service_subscriber }
 
-    Oro\Bundle\CMSBundle\Controller\LoginPageController:
+    Oro\Bundle\PromotionBundle\Controller\PromotionController:
         calls:
             - ['setContainer', ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: container.service_subscriber }
 
-    Oro\Bundle\CMSBundle\Controller\ContentBlockController:
+    Oro\Bundle\PromotionBundle\Controller\AjaxCouponController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+
+    Oro\Bundle\PromotionBundle\Controller\CouponController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+
+    Oro\Bundle\PromotionBundle\Controller\Frontend\AjaxCouponController:
         calls:
             - ['setContainer', ['@Psr\Container\ContainerInterface']]
         tags:

@@ -49,6 +49,9 @@ services:
         arguments:
             - "@translator"
 
+    Oro\Bundle\SaleBundle\Model\QuoteProductOfferMatcher:
+        alias: oro_sale.service.quote_product_offer_matcher
+
     oro_sale.service.quote_product_offer_matcher:
         class: 'Oro\Bundle\SaleBundle\Model\QuoteProductOfferMatcher'
         public: true
@@ -128,6 +131,9 @@ services:
             - '@oro_sale.provider.quote_address'
             - 'Oro\Bundle\CustomerBundle\Entity\CustomerAddress'
             - 'Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress'
+
+    Oro\Bundle\SaleBundle\Model\QuoteRequestHandler:
+        alias: oro_sale.service.quote_request_handler
 
     oro_sale.service.quote_request_handler:
         class: 'Oro\Bundle\SaleBundle\Model\QuoteRequestHandler'
@@ -213,6 +219,9 @@ services:
 
     Oro\Bundle\SaleBundle\Quote\Demand\Subtotals\Calculator\QuoteDemandSubtotalsCalculatorInterface:
         alias: 'oro_sale.quote_demand.subtotals_calculator_main'
+
+    Oro\Bundle\SaleBundle\Storage\ReturnRouteDataStorage:
+        alias: oro_sale.storage.return_route_storage
 
     oro_sale.storage.return_route_storage:
         class: 'Oro\Bundle\SaleBundle\Storage\ReturnRouteDataStorage'

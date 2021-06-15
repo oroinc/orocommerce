@@ -2,31 +2,31 @@ services:
     _defaults:
         public: true
 
-    Oro\Bundle\CMSBundle\Controller\PageController:
+    Oro\Bundle\TaxBundle\Controller\CustomerTaxCodeController:
         calls:
             - ['setContainer', ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: container.service_subscriber }
 
-    Oro\Bundle\CMSBundle\Controller\ContentWidgetController:
+    Oro\Bundle\TaxBundle\Controller\ProductTaxCodeController:
         calls:
             - ['setContainer', ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: container.service_subscriber }
 
-    Oro\Bundle\CMSBundle\Controller\WysiwygContentController:
-        calls:
-            - [ 'setContainer', [ '@Psr\Container\ContainerInterface' ] ]
-        tags:
-            - { name: container.service_subscriber }
-
-    Oro\Bundle\CMSBundle\Controller\LoginPageController:
+    Oro\Bundle\TaxBundle\Controller\TaxController:
         calls:
             - ['setContainer', ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: container.service_subscriber }
 
-    Oro\Bundle\CMSBundle\Controller\ContentBlockController:
+    Oro\Bundle\TaxBundle\Controller\TaxJurisdictionController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+
+    Oro\Bundle\TaxBundle\Controller\TaxRuleController:
         calls:
             - ['setContainer', ['@Psr\Container\ContainerInterface']]
         tags:

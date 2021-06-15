@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Controller;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -54,6 +55,19 @@ abstract class AbstractAjaxProductUnitController extends AbstractController
      */
     protected function getProductUnitFormatter()
     {
-        return $this->container->get('oro_product.formatter.product_unit_label');
+        return $this->get(UnitLabelFormatter::class);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                UnitLabelFormatter::class,
+            ]
+        );
     }
 }
