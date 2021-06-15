@@ -196,6 +196,9 @@ define(function(require) {
             this.delegateElementsEvents();
 
             this.onLineItemFormEnableChanged();
+
+            this.model.set('product_units', this.getElement('unit').data('unit-precisions'));
+            this.setPrecision();
         },
 
         onLineItemFormEnableChanged: function() {
