@@ -148,7 +148,7 @@ layout:
               blockType: container
 
         - '@setOption':
-              id: product_datagrid_export_export_button
+              id: product_datagrid_toolbar_export
               optionName: visible
               optionValue: '=data["feature"].isFeatureEnabled("frontend_products_data_export") && context["is_logged_in"] && data["frontend_product_export_options"].getExportAvailableForProductGrid(context["grid_config"])'
 

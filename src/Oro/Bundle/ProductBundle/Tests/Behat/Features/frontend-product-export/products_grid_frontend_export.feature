@@ -23,9 +23,9 @@ Feature: Products grid frontend export
     And I login as administrator
     And I go to System/Configuration
     And I follow "Commerce/Product/Customer Settings" on configuration sidebar
-    And uncheck "Use default" for "Enable Products Export" field
+    And uncheck "Use default" for "Enable Product Grid Export" field
     And I fill "System Config Form" with:
-      | Enable Products Export | true |
+      | Enable Product Grid Export | true |
     When I save form
     Then I should see "Configuration saved" flash message
 
@@ -36,8 +36,14 @@ Feature: Products grid frontend export
     When I click "Category 1"
     Then I should not see an "Frontend Product Grid Export Button" element
     
-  Scenario: Checks that export button is visible and is working
+  Scenario: Checks that export button is not visible when no results
     Given I login as AmandaRCole@example.org buyer
+    When I type "missing_product" in "search"
+    And I click "Search Button"
+    Then I should not see an "Frontend Product Grid Export Button" element
+
+  Scenario: Checks that export button is visible and is working
+    Given I am on the homepage
     When I click "Search Button"
     And I set range filter "Price" as min value "5" and max value "7" use "each" unit
     Then I should see "PSKU5"
