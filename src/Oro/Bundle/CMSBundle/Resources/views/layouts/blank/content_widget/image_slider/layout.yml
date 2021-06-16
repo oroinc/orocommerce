@@ -2,7 +2,7 @@ layout:
     actions:
         - '@setBlockTheme':
             themes:
-                - 'layout.html.twig'
+                - '@OroCMS/layouts/blank/content_widget/image_slider/layout.html.twig'
 
         - '@add':
             id: content_widget_image_slider

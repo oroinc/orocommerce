@@ -19,12 +19,12 @@ use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 use Oro\Bundle\RFPBundle\Form\Extension\RequestDataStorageExtension;
 use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
 use Oro\Bundle\RFPBundle\Provider\ProductAvailabilityProviderInterface;
-use Symfony\Bundle\TwigBundle\TwigEngine;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Twig\Environment;
 
 class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensionTestCase
 {
@@ -39,9 +39,9 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
     protected $container;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|TwigEngine
+     * @var \PHPUnit\Framework\MockObject\MockObject|Environment
      */
-    protected $templating;
+    protected $twig;
 
     /**
      * @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface
@@ -99,9 +99,7 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->templating = $this->getMockBuilder('Symfony\Bundle\TwigBundle\TwigEngine')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->twig = $this->createMock(Environment::class);
 
         $this->translator = $this->getMockBuilder('Symfony\Contracts\Translation\TranslatorInterface')
             ->disableOriginalConstructor()
@@ -117,7 +115,7 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
 
         $this->productAvailabilityProvider = $this->createMock(ProductAvailabilityProviderInterface::class);
 
-        $this->container->expects($this->any())->method('get')->with('templating')->willReturn($this->templating);
+        $this->container->expects($this->any())->method('get')->with('twig')->willReturn($this->twig);
 
         $this->session->expects($this->any())->method('getFlashBag')->willReturn($this->flashBag);
 

@@ -10,33 +10,33 @@ use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Templating\EngineInterface;
+use Twig\Environment;
 
 class OrderAddressEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var OrderAddressEventListener */
     protected $listener;
 
-    /** @var EngineInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $twigEngine;
+    /** @var Environment|\PHPUnit\Framework\MockObject\MockObject */
+    protected $twig;
 
     /** @var FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $formFactory;
 
     protected function setUp(): void
     {
-        $this->twigEngine = $this->createMock('Symfony\Component\Templating\EngineInterface');
+        $this->twig = $this->createMock(Environment::class);
         $this->formFactory = $this->createMock('\Symfony\Component\Form\FormFactoryInterface');
 
-        $this->listener = new OrderAddressEventListener($this->twigEngine, $this->formFactory);
+        $this->listener = new OrderAddressEventListener($this->twig, $this->formFactory);
     }
 
     protected function tearDown(): void
     {
-        unset($this->listener, $this->twigEngine, $this->formFactory);
+        unset($this->listener, $this->twig, $this->formFactory);
     }
 
-    public function testOnOrderEvent()
+    public function testOnOrderEvent(): void
     {
         $order = new Order();
 
@@ -80,7 +80,7 @@ class OrderAddressEventListenerTest extends \PHPUnit\Framework\TestCase
 
         $field2->expects($this->never())->method('createView');
 
-        $this->twigEngine->expects($this->once())
+        $this->twig->expects($this->once())
             ->method('render')
             ->with('@OroOrder/Form/customerAddressSelector.html.twig', ['form' => $field1View])
             ->willReturn('view1');
@@ -109,7 +109,7 @@ class OrderAddressEventListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('view1', $eventData[$billingAddressField]);
     }
 
-    public function testDoNothingIfNoSubmission()
+    public function testDoNothingIfNoSubmission(): void
     {
         /** @var OrderEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = static::createMock(OrderEvent::class);

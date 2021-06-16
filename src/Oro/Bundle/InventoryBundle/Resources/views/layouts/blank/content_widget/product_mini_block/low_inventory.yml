@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'low_inventory.html.twig'
+            themes: '@OroInventory/layouts/blank/content_widget/product_mini_block/low_inventory.html.twig'
         - '@add':
             id: product_low_inventory_label
             parentId: product_specification

@@ -174,7 +174,7 @@ services:
         class: 'Oro\Bundle\OrderBundle\EventListener\Order\AbstractFormEventListener'
         abstract: true
         arguments:
-            - '@templating'
+            - '@twig'
             - '@form.factory'
 
     oro_order.event_listener.order.address:

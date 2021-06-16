@@ -7,7 +7,7 @@ layout:
     actions:
         - '@setBlockTheme':
             themes:
-                - 'layout.html.twig'
+                - '@OroProduct/layouts/blank/content_widget/product_mini_block/layout.html.twig'
                 - '@OroProduct/layouts/blank/page/layout.html.twig'
 
         - '@setOption':

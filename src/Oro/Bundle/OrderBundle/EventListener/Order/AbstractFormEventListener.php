@@ -6,7 +6,7 @@ use Oro\Bundle\OrderBundle\Event\OrderEvent;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\Templating\EngineInterface;
+use Twig\Environment;
 
 /**
  * This is class that can be used as base for implementation of adding to the event, block with some view HTML,
@@ -14,19 +14,19 @@ use Symfony\Component\Templating\EngineInterface;
  */
 abstract class AbstractFormEventListener
 {
-    /** @var EngineInterface */
-    protected $engine;
+    /** @var Environment */
+    protected $twig;
 
     /** @var FormFactoryInterface */
     protected $formFactory;
 
     /**
-     * @param EngineInterface $engine
+     * @param Environment $twig
      * @param FormFactoryInterface $formFactory
      */
-    public function __construct(EngineInterface $engine, FormFactoryInterface $formFactory)
+    public function __construct(Environment $twig, FormFactoryInterface $formFactory)
     {
-        $this->engine = $engine;
+        $this->twig = $twig;
         $this->formFactory = $formFactory;
     }
 
@@ -69,6 +69,6 @@ abstract class AbstractFormEventListener
      */
     protected function renderForm(FormView $formView, string $template)
     {
-        return $this->engine->render($template, ['form' => $formView]);
+        return $this->twig->render($template, ['form' => $formView]);
     }
 }

@@ -6,7 +6,7 @@ use Oro\Bundle\OrderBundle\Event\OrderEvent;
 use Oro\Bundle\OrderBundle\EventListener\Order\AbstractFormEventListener;
 use Oro\Bundle\PromotionBundle\Manager\AppliedPromotionManager;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Templating\EngineInterface;
+use Twig\Environment;
 
 /**
  * Listener renders applied promotion collection form by given data on entry point call
@@ -19,16 +19,16 @@ class OrderAppliedPromotionEventListener extends AbstractFormEventListener
     private $appliedPromotionManager;
 
     /**
-     * @param EngineInterface $engine
+     * @param Environment $twig
      * @param FormFactoryInterface $formFactory
      * @param AppliedPromotionManager $appliedPromotionManager
      */
     public function __construct(
-        EngineInterface $engine,
+        Environment $twig,
         FormFactoryInterface $formFactory,
         AppliedPromotionManager $appliedPromotionManager
     ) {
-        parent::__construct($engine, $formFactory);
+        parent::__construct($twig, $formFactory);
 
         $this->appliedPromotionManager = $appliedPromotionManager;
     }

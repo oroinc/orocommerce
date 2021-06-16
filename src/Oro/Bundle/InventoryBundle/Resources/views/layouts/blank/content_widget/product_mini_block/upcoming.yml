@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'upcoming.html.twig'
+            themes: '@OroInventory/layouts/blank/content_widget/product_mini_block/upcoming.html.twig'
         - '@add':
             id: product_upcoming_label
             parentId: product_specification

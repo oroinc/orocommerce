@@ -6,7 +6,7 @@ layout:
             root: __customer_user_form_fields_data_protection
     actions:
         - '@setBlockTheme':
-            themes: 'data_protection.html.twig'
+            themes: '@OroConsent/layouts/blank/imports/oro_customer_user_form/data_protection.html.twig'
         - '@setOption':
             id: edit_profile_consent_wrapper
             optionName: consents
