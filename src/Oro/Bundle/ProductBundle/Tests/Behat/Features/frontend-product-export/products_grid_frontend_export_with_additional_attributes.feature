@@ -11,7 +11,8 @@ Feature: Products grid frontend export with additional attributes
     Given sessions active:
       | Admin | first_session  |
       | Buyer | second_session |
-    And I set configuration property "oro_product.product_data_export_enabled" to "1"
+    And I enable configuration options:
+      | oro_product.product_data_export_enabled |
 
   Scenario: Enable product attributes for export
     Given I proceed as the Admin

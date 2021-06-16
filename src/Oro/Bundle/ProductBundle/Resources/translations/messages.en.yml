@@ -635,14 +635,14 @@ oro:
                         top: 'Top'
                         sidebar: 'Sidebar'
                 product_data_export_enabled:
-                    label: 'Enable Products Export'
+                    label: 'Enable Product Grid Export'
                     tooltip: 'If this option is enabled, customers will be able to export selected product data on the storefront. Please check individual field settings for Product entity in Entity Management, product attribute settings and price attribute settings to see what data will be included in the exported file.'
                 product_prices_export_enabled:
-                    label: 'Export Product Prices'
+                    label: 'Include Product Prices'
                     tooltip: 'If this option is enabled, the exported data will include the product prices per unit (only the primary unit of the product will used) for the minimum quantity that can be purchased, which is normally displayed to the customer as their price in the product listing. If multiple currencies are enabled, only the price in the currently selected currency will be included.'
                 product_price_tiers_export_enabled:
-                    label: 'Export Price Tiers'
-                    tooltip: 'Price tiers (if defined) will be exported into a single additional column as multi-line text value along with the starting quantity and product unit for each price tier. The product unit that have no prices defined will be omitted in the export file.'
+                    label: 'Include Price Tiers'
+                    tooltip: 'Price tiers (if defined) will be exported into a single additional column as multi-line text value along with the starting quantity and product unit for each price tier. The product units that have no prices defined will be omitted in the exported file.'
             notice:
                 product_image_watermark: >
                    The updated product image watermark settings will be used for the newly uploaded images only.
@@ -1031,7 +1031,7 @@ oro:
             save_the_file:
                 message: Save the file on your computer. CSV format (.csv) is recommended and click Upload.
         frontend_products_data_export:
-            label: Enable Products Export
+            label: Enable Product Grid Export
             description: If this option is enabled, customers will be able to export selected product data on the storefront. Please check individual field settings for Product entity in Entity Management, product attribute settings and price attribute settings to see what data will be included in the exported file.
 
     importexport:
