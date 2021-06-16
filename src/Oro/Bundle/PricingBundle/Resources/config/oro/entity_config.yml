@@ -13,6 +13,7 @@ entity_config:
                         value_type: boolean
                         default_value: false
     sharding:
+        # You can find out more about attributes in the documentation: https://doc.oroinc.com/backend/configuration/annotation/config.html#sharding
         field:
             items:
                 discrimination_field:

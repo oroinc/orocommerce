@@ -937,6 +937,9 @@ oro_behat_extension:
           Quantity: 'oro_product_frontend_line_item[quantity]'
           Unit: 'oro_product_frontend_line_item[unit]'
 
+    FrontendProductViewQuantityField:
+      selector: '[name="oro_product_frontend_line_item[quantity]"]'
+
     New Arrivals Block:
       selector:
         type: xpath
