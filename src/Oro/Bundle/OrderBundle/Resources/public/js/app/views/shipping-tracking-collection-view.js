@@ -2,7 +2,6 @@ define(function(require) {
     'use strict';
 
     const $ = require('jquery');
-    const _ = require('underscore');
     const BaseView = require('oroui/js/app/views/base/view');
 
     /**
@@ -29,8 +28,8 @@ define(function(require) {
             this.options = $.extend(true, {}, this.options, options || {});
 
             this.$el
-                .on('content:changed', _.bind(this.toggleTableVisibility, this))
-                .on('content:remove', _.bind(this.toggleTableVisibility, this));
+                .on('content:changed', this.toggleTableVisibility.bind(this))
+                .on('content:remove', this.toggleTableVisibility.bind(this));
             this.$el.trigger('content:changed');
         },
 

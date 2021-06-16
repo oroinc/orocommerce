@@ -57,8 +57,8 @@ define(function(require) {
                 entityId: this.options.entityId
             });
 
-            this.formView.on('after-check-form', _.bind(this.onAfterCheckForm, this));
-            this.formView.on('submit-form', _.bind(this.onSubmit, this));
+            this.formView.on('after-check-form', this.onAfterCheckForm.bind(this));
+            this.formView.on('submit-form', this.onSubmit.bind(this));
 
             SinglePageCheckoutComponent.__super__.initialize.call(this, this.options);
         },

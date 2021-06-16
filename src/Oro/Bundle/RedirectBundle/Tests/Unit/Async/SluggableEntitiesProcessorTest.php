@@ -23,42 +23,28 @@ use Psr\Log\LoggerInterface;
 
 class SluggableEntitiesProcessorTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrine;
 
-    /**
-     * @var JobRunner|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var JobRunner|\PHPUnit\Framework\MockObject\MockObject */
     private $jobRunner;
 
-    /**
-     * @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $producer;
 
-    /**
-     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $logger;
 
-    /**
-     * @var MessageFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var MessageFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $messageFactory;
 
-    /**
-     * @var SluggableEntitiesProcessor
-     */
+    /** @var SluggableEntitiesProcessor */
     private $processor;
 
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);
-        $this->jobRunner = $this->getMockBuilder(JobRunner::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->jobRunner = $this->createMock(JobRunner::class);
         $this->producer = $this->createMock(MessageProducerInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->messageFactory = $this->createMock(MessageFactoryInterface::class);
@@ -88,13 +74,10 @@ class SluggableEntitiesProcessorTest extends \PHPUnit\Framework\TestCase
     public function testBatchSize($batchSize, $expected)
     {
         $this->processor->setBatchSize($batchSize);
-        static::assertSame($expected, ReflectionUtil::getPropertyValue($this->processor, 'batchSize'));
+        self::assertSame($expected, ReflectionUtil::getPropertyValue($this->processor, 'batchSize'));
     }
 
-    /**
-     * @return array
-     */
-    public function batchSizeDataProvider()
+    public function batchSizeDataProvider(): array
     {
         return [
             'correct value' => [1, 1],
@@ -126,20 +109,15 @@ class SluggableEntitiesProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('error')
             ->with(sprintf('Entity manager is not defined for class: "%s"', $class));
 
-        /** @var Job|\PHPUnit\Framework\MockObject\MockObject $job */
-        $job = $this->getMockBuilder(Job::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $job = $this->createMock(Job::class);
         $this->jobRunner->expects($this->once())
             ->method('runUnique')
-            ->willReturnCallback(
-                function ($ownerId, $name, $closure) use ($class, $job) {
-                    $this->assertEquals('mid-42', $ownerId);
-                    $this->assertEquals(Topics::REGENERATE_DIRECT_URL_FOR_ENTITY_TYPE . ':' . $class, $name);
+            ->willReturnCallback(function ($ownerId, $name, $closure) use ($class, $job) {
+                $this->assertEquals('mid-42', $ownerId);
+                $this->assertEquals(Topics::REGENERATE_DIRECT_URL_FOR_ENTITY_TYPE . ':' . $class, $name);
 
-                    return $closure($this->jobRunner, $job);
-                }
-            );
+                return $closure($this->jobRunner, $job);
+            });
 
         $this->assertEquals(SluggableEntitiesProcessor::REJECT, $this->processor->process($message, $session));
     }
@@ -162,10 +140,7 @@ class SluggableEntitiesProcessorTest extends \PHPUnit\Framework\TestCase
         $repository = $this->configureRepositoryCalls($class);
         $repository->expects($this->exactly(2))
             ->method('createQueryBuilder')
-            ->willReturnOnConsecutiveCalls(
-                $countQb,
-                $idsQb
-            );
+            ->willReturnOnConsecutiveCalls($countQb, $idsQb);
 
         $this->messageFactory->expects($this->once())
             ->method('createMassMessage')
@@ -178,39 +153,29 @@ class SluggableEntitiesProcessorTest extends \PHPUnit\Framework\TestCase
                 ['className' => $class, 'id' => [42], 'jobId' => 123]
             );
 
-        /** @var Job|\PHPUnit\Framework\MockObject\MockObject $job */
-        $job = $this->getMockBuilder(Job::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        /** @var Job|\PHPUnit\Framework\MockObject\MockObject $job */
-        $childJob = $this->getMockBuilder(Job::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $job = $this->createMock(Job::class);
+        $childJob = $this->createMock(Job::class);
         $childJob->expects($this->once())
             ->method('getId')
             ->willReturn(123);
         $this->jobRunner->expects($this->once())
             ->method('runUnique')
-            ->willReturnCallback(
-                function ($ownerId, $name, $closure) use ($class, $job) {
-                    $this->assertEquals('mid-42', $ownerId);
-                    $this->assertEquals(Topics::REGENERATE_DIRECT_URL_FOR_ENTITY_TYPE . ':' . $class, $name);
+            ->willReturnCallback(function ($ownerId, $name, $closure) use ($class, $job) {
+                $this->assertEquals('mid-42', $ownerId);
+                $this->assertEquals(Topics::REGENERATE_DIRECT_URL_FOR_ENTITY_TYPE . ':' . $class, $name);
 
-                    return $closure($this->jobRunner, $job);
-                }
-            );
+                return $closure($this->jobRunner, $job);
+            });
         $this->jobRunner->expects($this->once())
             ->method('createDelayed')
-            ->willReturnCallback(
-                function ($name, $closure) use ($class, $childJob) {
-                    $this->assertEquals(
-                        sprintf('%s:%s:%s', Topics::JOB_GENERATE_DIRECT_URL_FOR_ENTITIES, $class, 0),
-                        $name
-                    );
+            ->willReturnCallback(function ($name, $closure) use ($class, $childJob) {
+                $this->assertEquals(
+                    sprintf('%s:%s:%s', Topics::JOB_GENERATE_DIRECT_URL_FOR_ENTITIES, $class, 0),
+                    $name
+                );
 
-                    return $closure($this->jobRunner, $childJob);
-                }
-            );
+                return $closure($this->jobRunner, $childJob);
+            });
 
         $this->assertEquals(SluggableEntitiesProcessor::ACK, $this->processor->process($message, $session));
     }
@@ -225,10 +190,7 @@ class SluggableEntitiesProcessorTest extends \PHPUnit\Framework\TestCase
 
         $countQb = $this->assertCountQueryCalled(5);
 
-        $idsQuery = $this->getMockBuilder(AbstractQuery::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getArrayResult'])
-            ->getMockForAbstractClass();
+        $idsQuery = $this->createMock(AbstractQuery::class);
         $idsQuery->expects($this->exactly(2))
             ->method('getArrayResult')
             ->willReturnOnConsecutiveCalls(
@@ -236,10 +198,7 @@ class SluggableEntitiesProcessorTest extends \PHPUnit\Framework\TestCase
                 [['id' => 4], ['id' => 5]]
             );
 
-        /** @var QueryBuilder|\PHPUnit\Framework\MockObject\MockObject $idsQb */
-        $idsQb = $this->getMockBuilder(QueryBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $idsQb = $this->createMock(QueryBuilder::class);
         $idsQb->expects($this->any())
             ->method('select')
             ->with('ids.id')
@@ -263,11 +222,7 @@ class SluggableEntitiesProcessorTest extends \PHPUnit\Framework\TestCase
         $repository = $this->configureRepositoryCalls($class);
         $repository->expects($this->exactly(3))
             ->method('createQueryBuilder')
-            ->willReturnOnConsecutiveCalls(
-                $countQb,
-                $idsQb,
-                $idsQb
-            );
+            ->willReturnOnConsecutiveCalls($countQb, $idsQb, $idsQb);
 
         $this->messageFactory->expects($this->exactly(2))
             ->method('createMassMessage')
@@ -304,23 +259,13 @@ class SluggableEntitiesProcessorTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(SluggableEntitiesProcessor::ACK, $this->processor->process($message, $session));
     }
 
-    /**
-     * @param int $count
-     * @return QueryBuilder|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function assertCountQueryCalled($count = 1)
+    private function assertCountQueryCalled(int $count = 1): QueryBuilder
     {
-        /** @var QueryBuilder|\PHPUnit\Framework\MockObject\MockObject $countQb */
-        $countQb = $this->getMockBuilder(QueryBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $countQb = $this->createMock(QueryBuilder::class);
         $countQb->expects($this->any())
             ->method('select')
             ->willReturnSelf();
-        $countQuery = $this->getMockBuilder(AbstractQuery::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getSingleScalarResult'])
-            ->getMockForAbstractClass();
+        $countQuery = $this->createMock(AbstractQuery::class);
         $countQuery->expects($this->once())
             ->method('getSingleScalarResult')
             ->willReturn($count);
@@ -334,20 +279,14 @@ class SluggableEntitiesProcessorTest extends \PHPUnit\Framework\TestCase
     /**
      * @return QueryBuilder|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected function assertIdsQueryCalled()
+    private function assertIdsQueryCalled()
     {
-        $idsQuery = $this->getMockBuilder(AbstractQuery::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getArrayResult'])
-            ->getMockForAbstractClass();
+        $idsQuery = $this->createMock(AbstractQuery::class);
         $idsQuery->expects($this->once())
             ->method('getArrayResult')
             ->willReturn([['id' => 42]]);
 
-        /** @var QueryBuilder|\PHPUnit\Framework\MockObject\MockObject $idsQb */
-        $idsQb = $this->getMockBuilder(QueryBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $idsQb = $this->createMock(QueryBuilder::class);
         $idsQb->expects($this->any())
             ->method('select')
             ->with('ids.id')
@@ -372,11 +311,9 @@ class SluggableEntitiesProcessorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param string $class
-     * @param bool $createRedirect
      * @return MessageInterface|\PHPUnit\Framework\MockObject\MockObject
      */
-    private function assertMessageDataCalls($class, $createRedirect)
+    private function assertMessageDataCalls(string $class, bool $createRedirect)
     {
         $message = $this->createMock(MessageInterface::class);
         $messageData = [
@@ -403,18 +340,13 @@ class SluggableEntitiesProcessorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param string $class
-     * @return \PHPUnit\Framework\MockObject\MockObject
+     * @return EntityRepository|\PHPUnit\Framework\MockObject\MockObject
      */
-    private function configureRepositoryCalls($class)
+    private function configureRepositoryCalls(string $class)
     {
-        /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject $em */
         $em = $this->createMock(EntityManagerInterface::class);
 
-        /** @var ClassMetadata|\PHPUnit\Framework\MockObject\MockObject $classMetadata */
-        $classMetadata = $this->getMockBuilder(ClassMetadata::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $classMetadata = $this->createMock(ClassMetadata::class);
         $classMetadata->expects($this->once())
             ->method('getSingleIdentifierFieldName')
             ->willReturn('id');
@@ -423,9 +355,7 @@ class SluggableEntitiesProcessorTest extends \PHPUnit\Framework\TestCase
             ->with($class)
             ->willReturn($classMetadata);
 
-        $repository = $this->getMockBuilder(EntityRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $repository = $this->createMock(EntityRepository::class);
 
         $em->expects($this->once())
             ->method('getRepository')

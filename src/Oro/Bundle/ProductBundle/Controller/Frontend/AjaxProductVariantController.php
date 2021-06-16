@@ -10,6 +10,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * Serves AJAX Product variants actions.
+ */
 class AjaxProductVariantController extends AbstractController
 {
     /**

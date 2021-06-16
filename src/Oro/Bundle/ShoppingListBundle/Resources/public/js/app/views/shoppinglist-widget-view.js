@@ -32,11 +32,11 @@ define(function(require) {
             this.options = _.defaults(options || {}, this.options);
             this.$el = $(this.options._sourceElement);
 
-            ShoppingListCollectionService.shoppingListCollection.done(_.bind(function(collection) {
+            ShoppingListCollectionService.shoppingListCollection.done(collection => {
                 this.shoppingListCollection = collection;
                 this.listenTo(collection, 'change', this.render);
                 this.render();
-            }, this));
+            });
         },
 
         dispose: function() {

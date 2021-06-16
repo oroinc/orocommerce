@@ -7,6 +7,9 @@ services:
             - 'Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule'
             - "@doctrine.orm.entity_manager"
 
+    Oro\Bundle\PaymentBundle\Form\Handler\PaymentMethodsConfigsRuleHandler:
+        alias: oro_payment.form.handler.payment_methods_configs_rule
+
     oro_payment.form.handler.payment_methods_configs_rule:
         class: 'Oro\Bundle\PaymentBundle\Form\Handler\PaymentMethodsConfigsRuleHandler'
         public: true
@@ -82,6 +85,9 @@ services:
             - '@oro_payment.payment_method_view.composite_provider'
         tags:
             - { name: layout.data_provider, alias: oro_payment_method_widget_provider }
+
+    Oro\Bundle\PaymentBundle\Event\CallbackHandler:
+        alias: oro_payment.event.callback_handler
 
     oro_payment.event.callback_handler:
         class: 'Oro\Bundle\PaymentBundle\Event\CallbackHandler'

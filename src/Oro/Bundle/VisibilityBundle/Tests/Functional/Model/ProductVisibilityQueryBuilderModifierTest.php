@@ -25,18 +25,14 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
 {
     use ConfigManagerAwareTestTrait;
 
-    const PRODUCT_VISIBILITY_CONFIGURATION_PATH = 'oro_visibility.product_visibility';
-    const CATEGORY_VISIBILITY_CONFIGURATION_PATH = 'oro_visibility.category_visibility';
+    private const PRODUCT_VISIBILITY_CONFIGURATION_PATH = 'oro_visibility.product_visibility';
+    private const CATEGORY_VISIBILITY_CONFIGURATION_PATH = 'oro_visibility.category_visibility';
 
-    /**
-     * @var ProductVisibilityQueryBuilderModifier
-     */
-    protected $modifier;
+    /** @var ProductVisibilityQueryBuilderModifier */
+    private $modifier;
 
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $configManager;
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
 
     /**
      * @dataProvider modifyDataProvider
@@ -61,17 +57,15 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
         $queryBuilder = $this->getProductRepository()->createQueryBuilder('p')
             ->select('p.sku')->orderBy('p.sku');
 
-        $this->configManager->expects($this->at(0))
+        $this->configManager->expects($this->exactly(2))
             ->method('get')
-            ->with(static::PRODUCT_VISIBILITY_CONFIGURATION_PATH)
-            ->willReturn($configValue);
-        $this->configManager->expects($this->at(1))
-            ->method('get')
-            ->with(static::CATEGORY_VISIBILITY_CONFIGURATION_PATH)
-            ->willReturn($configValue);
+            ->willReturnMap([
+                [self::PRODUCT_VISIBILITY_CONFIGURATION_PATH, false, false, null, $configValue],
+                [self::CATEGORY_VISIBILITY_CONFIGURATION_PATH, false, false, null, $configValue]
+            ]);
 
-        $this->modifier->setProductVisibilitySystemConfigurationPath(static::PRODUCT_VISIBILITY_CONFIGURATION_PATH);
-        $this->modifier->setCategoryVisibilitySystemConfigurationPath(static::CATEGORY_VISIBILITY_CONFIGURATION_PATH);
+        $this->modifier->setProductVisibilitySystemConfigurationPath(self::PRODUCT_VISIBILITY_CONFIGURATION_PATH);
+        $this->modifier->setCategoryVisibilitySystemConfigurationPath(self::CATEGORY_VISIBILITY_CONFIGURATION_PATH);
 
         $this->modifier->modify($queryBuilder);
 
@@ -253,10 +247,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
         }
     }
 
-    /**
-     * @return ProductRepository
-     */
-    protected function getProductRepository()
+    private function getProductRepository(): ProductRepository
     {
         return $this->getContainer()->get('doctrine')
             ->getManagerForClass(Product::class)
@@ -278,8 +269,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
 
         $this->getContainer()->get('oro_visibility.visibility.cache.cache_builder')->buildCache();
 
-        $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
-            ->disableOriginalConstructor()->getMock();
+        $this->configManager = $this->createMock(ConfigManager::class);
 
         $this->modifier = new ProductVisibilityQueryBuilderModifier(
             $this->configManager,
@@ -296,8 +286,8 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
             $this->getContainer()->get('oro_entity.doctrine_helper')
         );
 
-        $this->modifier->setProductVisibilitySystemConfigurationPath(static::PRODUCT_VISIBILITY_CONFIGURATION_PATH);
-        $this->modifier->setCategoryVisibilitySystemConfigurationPath(static::CATEGORY_VISIBILITY_CONFIGURATION_PATH);
+        $this->modifier->setProductVisibilitySystemConfigurationPath(self::PRODUCT_VISIBILITY_CONFIGURATION_PATH);
+        $this->modifier->setCategoryVisibilitySystemConfigurationPath(self::CATEGORY_VISIBILITY_CONFIGURATION_PATH);
         $this->modifier->setVisibilityScopeProvider(
             $this->getContainer()->get('oro_visibility.provider.visibility_scope_provider')
         );

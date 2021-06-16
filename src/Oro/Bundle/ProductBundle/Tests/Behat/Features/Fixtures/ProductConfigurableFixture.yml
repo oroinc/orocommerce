@@ -12,10 +12,13 @@ Oro\Bundle\ProductBundle\Entity\ProductName:
 Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     unit_precision1:
         unit: '@item'
+        precision: 2
+    unit_precision1_1:
+        unit: '@each'
         precision: 0
     unit_precision2:
         unit: '@item'
-        precision: 0
+        precision: 3
     unit_precision3:
         unit: '@item'
         precision: 0
@@ -30,6 +33,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         primaryUnitPrecision: '@unit_precision1'
         __calls:
             - addName: ['@product1_name']
+            - addUnitPrecision: ['@unit_precision1_1']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     product2:
@@ -63,6 +67,13 @@ Oro\Bundle\PricingBundle\Entity\ProductPrice:
         quantity: 1
         unit: '@item'
         value: 800
+    product1ItemPrice2:
+        product: '@product1'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@each'
+        value: 300
     product2ItemPrice:
         product: '@product2'
         priceList: '@defaultPriceList'

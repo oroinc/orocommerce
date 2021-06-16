@@ -173,7 +173,7 @@ define(function(require) {
                 precision: this.model.get('product_units')[this.model.get('unit')],
                 singleUnitMode: this.options.singleUnitMode,
                 singleUnitModeCodeVisible: this.options.singleUnitModeCodeVisible,
-                isProductApplySingleUnitMode: _.bind(this.isProductApplySingleUnitMode, this),
+                isProductApplySingleUnitMode: this.isProductApplySingleUnitMode.bind(this),
                 QuantityHelper: QuantityHelper
             })));
 
@@ -398,12 +398,12 @@ define(function(require) {
             );
 
             updatePromise
-                .done(_.bind(this.onLineItemUpdate, this, {
+                .done(this.onLineItemUpdate.bind(this, {
                     shoppingListId: shoppingListId,
                     lineItemId: lineItem.id,
                     value: modelData
                 }))
-                .fail(_.bind(this.onSaveError, this));
+                .fail(this.onSaveError.bind(this));
         },
 
         updateLineItems: function(lineItems, lineItemId, newLineItem) {

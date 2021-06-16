@@ -11,6 +11,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Back-office CRUD for RFQs.
@@ -91,8 +92,7 @@ class RequestController extends AbstractController
      */
     protected function update(RFPRequest $rfpRequest)
     {
-        /* @var $handler UpdateHandler */
-        $handler = $this->get('oro_form.model.update_handler');
+        $handler = $this->get(UpdateHandler::class);
 
         return $handler->handleUpdate(
             $rfpRequest,
@@ -109,7 +109,21 @@ class RequestController extends AbstractController
                     'parameters' => ['id' => $request->getId()],
                 ];
             },
-            $this->get('translator')->trans('oro.rfp.controller.request.saved.message')
+            $this->get(TranslatorInterface::class)->trans('oro.rfp.controller.request.saved.message')
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                TranslatorInterface::class,
+                UpdateHandler::class,
+            ]
         );
     }
 }

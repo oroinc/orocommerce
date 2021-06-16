@@ -6,7 +6,7 @@ use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
-use Oro\Bundle\InventoryBundle\Tests\Unit\Inventory\Stub\InventoryStatusStub;
+use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue as InventoryStatus;
 use Oro\Bundle\InventoryBundle\Tests\Unit\Stubs\ProductStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -310,7 +310,7 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
     /**
      * @dataProvider isAllowedRFPDataProvider
      *
-     * @param string|InventoryStatusStub $inventoryStatus
+     * @param string|InventoryStatus $inventoryStatus
      * @param string $status
      * @param bool $expectedResult
      */
@@ -343,8 +343,7 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
             ->with($this->productClass)
             ->willReturn($repo);
 
-        $this->aclHelper
-            ->expects($this->once())
+        $this->aclHelper->expects($this->once())
             ->method('apply')
             ->with($qb)
             ->willReturn($query);
@@ -352,9 +351,6 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
         $this->assertSame($expectedResult, $this->extension->isAllowedRFP([['productSku' => $sku]]));
     }
 
-    /**
-     * @return array
-     */
     public function isAllowedRFPDataProvider(): array
     {
         return [
@@ -374,7 +370,7 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
                 'expectedResult' => false,
             ],
             [
-                'inventoryStatus' => new InventoryStatusStub('in_stock', 'In Stock'),
+                'inventoryStatus' => new InventoryStatus('in_stock', 'In Stock'),
                 'status' => ProductStub::STATUS_ENABLED,
                 'expectedResult' => true,
             ],
@@ -389,7 +385,7 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
     /**
      * @dataProvider isAllowedRFPDataProvider
      *
-     * @param string|InventoryStatusStub $inventoryStatus
+     * @param string|InventoryStatus $inventoryStatus
      * @param string $status
      * @param bool $expectedResult
      */
@@ -422,8 +418,7 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
             ->with($this->productClass)
             ->willReturn($repo);
 
-        $this->aclHelper
-            ->expects($this->once())
+        $this->aclHelper->expects($this->once())
             ->method('apply')
             ->with($qb)
             ->willReturn($query);

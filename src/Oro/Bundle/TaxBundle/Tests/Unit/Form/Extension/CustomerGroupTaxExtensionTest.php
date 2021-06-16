@@ -59,7 +59,10 @@ class CustomerGroupTaxExtensionTest extends AbstractCustomerTaxExtensionTest
         $mock = $this->getMockBuilder(CustomerGroup::class)
             ->setMethods(['getTaxCode', 'setTaxCode', 'getId'])
             ->getMock();
-        $mock->method('getId')->willReturn($id);
+        $mock->expects($this->any())
+            ->method('getId')
+            ->willReturn($id);
+
         return $mock;
     }
 

@@ -54,19 +54,19 @@ define(function(require) {
             this.$excluded = this.options._sourceElement.find(this.options.selectors.excluded);
             mediator.on(
                 'product-collection-add-to-included:' + this.options.scope,
-                _.bind(this.onAddToIncluded, this)
+                this.onAddToIncluded.bind(this)
             );
             mediator.on(
                 'product-collection-add-to-excluded:' + this.options.scope,
-                _.bind(this.onAddToExcluded, this)
+                this.onAddToExcluded.bind(this)
             );
             mediator.on(
                 'product-collection-remove-from-included:' + this.options.scope,
-                _.bind(this.onRemoveFromIncluded, this)
+                this.onRemoveFromIncluded.bind(this)
             );
             mediator.on(
                 'product-collection-remove-from-excluded:' + this.options.scope,
-                _.bind(this.onRemoveFromExcluded, this)
+                this.onRemoveFromExcluded.bind(this)
             );
         },
 
@@ -74,15 +74,15 @@ define(function(require) {
          * @private
          */
         _checkOptions: function() {
-            const requiredMissed = _.filter(this.requiredOptions, _.bind(function(option) {
+            const requiredMissed = _.filter(this.requiredOptions, option => {
                 return _.isUndefined(this.options[option]);
-            }, this));
+            });
             if (requiredMissed.length) {
                 throw new TypeError('Missing required option(s): ' + requiredMissed.join(', '));
             }
 
             const requiredSelectors = [];
-            _.each(this.options.selectors, function(selector, selectorName) {
+            _.each(this.options.selectors, (selector, selectorName) => {
                 if (!selector) {
                     requiredSelectors.push(selectorName);
                 }

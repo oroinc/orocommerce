@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\FrontendLocalizationBundle\Controller\Frontend;
 
+use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
+use Oro\Bundle\LocaleBundle\Manager\LocalizationManager;
 use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -26,9 +28,9 @@ class AjaxLocalizationController extends AbstractController
      */
     public function setCurrentLocalizationAction(Request $request)
     {
-        $localization = $this->get('oro_locale.manager.localization')
+        $localization = $this->get(LocalizationManager::class)
             ->getLocalization($request->get('localization'), false);
-        $userLocalizationManager = $this->get('oro_frontend_localization.manager.user_localization');
+        $userLocalizationManager = $this->get(UserLocalizationManager::class);
 
         $result = false;
         if (array_key_exists($localization->getId(), $userLocalizationManager->getEnabledLocalizations())) {
@@ -37,5 +39,19 @@ class AjaxLocalizationController extends AbstractController
         }
 
         return new JsonResponse(['success' => $result]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                LocalizationManager::class,
+                UserLocalizationManager::class,
+            ]
+        );
     }
 }

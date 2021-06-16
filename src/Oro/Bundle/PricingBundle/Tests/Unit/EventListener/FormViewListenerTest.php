@@ -9,13 +9,13 @@ use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository;
-use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributeProductPriceRepository;
 use Oro\Bundle\PricingBundle\EventListener\FormViewListener;
 use Oro\Bundle\PricingBundle\Provider\PriceAttributePricesProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
+use Oro\Component\Exception\UnexpectedTypeException;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -23,69 +23,50 @@ use Twig\Environment;
 
 class FormViewListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $translator;
-
     /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
-    protected $doctrineHelper;
-
-    /** @var Environment|\PHPUnit\Framework\MockObject\MockObject */
-    protected $env;
-
-    /** @var FormViewListener */
-    protected $listener;
+    private $doctrineHelper;
 
     /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $authorizationChecker;
+    private $authorizationChecker;
 
     /** @var PriceAttributePricesProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $priceAttributePricesProvider;
+    private $priceAttributePricesProvider;
 
     /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
-    protected $featureChecker;
+    private $featureChecker;
 
     /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $aclHelper;
 
+    /** @var Environment|\PHPUnit\Framework\MockObject\MockObject */
+    private $env;
+
+    /** @var FormViewListener */
+    private $listener;
+
     protected function setUp(): void
     {
-        $this->translator = $this->createMock(TranslatorInterface::class);
-        $this->translator->expects($this->any())
-            ->method('trans')
-            ->willReturnCallback(
-                function ($id) {
-                    return $id . '.trans';
-                }
-            );
-
-        $this->env = $this->createMock(Environment::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
-
         $this->priceAttributePricesProvider = $this->createMock(PriceAttributePricesProvider::class);
         $this->featureChecker = $this->createMock(FeatureChecker::class);
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         $this->aclHelper = $this->createMock(AclHelper::class);
+        $this->env = $this->createMock(Environment::class);
+
+        $translator = $this->createMock(TranslatorInterface::class);
+        $translator->expects($this->any())
+            ->method('trans')
+            ->willReturnCallback(function ($id) {
+                return $id . '.trans';
+            });
 
         $this->listener = new FormViewListener(
-            $this->translator,
+            $translator,
             $this->doctrineHelper,
             $this->priceAttributePricesProvider,
             $this->authorizationChecker,
             $this->aclHelper
         );
-    }
-
-    protected function tearDown(): void
-    {
-        unset(
-            $this->listener,
-            $this->authorizationChecker,
-            $this->env,
-            $this->priceAttributePricesProvider,
-            $this->featureChecker
-        );
-
-        parent::tearDown();
     }
 
     public function testOnProductEditFeatureDisabled()
@@ -98,15 +79,15 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->setFeatureChecker($this->featureChecker);
         $this->listener->addFeature('feature1');
 
-        $this->env->expects($this->never())->method('render');
+        $this->env->expects($this->never())
+            ->method('render');
 
-        $event = $this->createEvent($this->env, new Product());
+        $event = $this->createEvent(new Product());
         $this->listener->onProductEdit($event);
     }
 
     public function testOnProductViewFeatureDisabled()
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|PriceAttributeProductPriceRepository */
         $priceAttributePriceListRepository = $this->createMock(PriceAttributePriceListRepository::class);
 
         $query = $this->createMock(AbstractQuery::class);
@@ -119,14 +100,12 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
             ->method('getPriceAttributesQueryBuilder')
             ->willReturn($queryBuilder);
 
-        $this->aclHelper
-            ->expects($this->once())
+        $this->aclHelper->expects($this->once())
             ->method('apply')
             ->with($queryBuilder)
             ->willReturn($query);
 
-        $this->doctrineHelper
-            ->expects($this->any())
+        $this->doctrineHelper->expects($this->any())
             ->method('getEntityRepository')
             ->willReturn($priceAttributePriceListRepository);
 
@@ -138,16 +117,17 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->setFeatureChecker($this->featureChecker);
         $this->listener->addFeature('feature1');
 
-        $this->authorizationChecker->expects($this->never())->method('isGranted');
+        $this->authorizationChecker->expects($this->never())
+            ->method('isGranted');
 
-        $event = $this->createEvent($this->env, new Product());
+        $event = $this->createEvent(new Product());
         $this->listener->onProductView($event);
     }
 
     public function testOnProductViewException()
     {
-        $this->expectException(\Oro\Component\Exception\UnexpectedTypeException::class);
-        /** @var BeforeListRenderEvent|\PHPUnit\Framework\MockObject\MockObject $event */
+        $this->expectException(UnexpectedTypeException::class);
+
         $event = $this->createMock(BeforeListRenderEvent::class);
         $event->expects($this->once())
             ->method('getEntity')
@@ -162,21 +142,19 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
         $templateHtmlProductAttributePrice = 'template_html_product_attribute_price';
         $templateHtmlProductPrice = 'template_html_product_price';
 
-        $this->assertPriceAttributeViewRendered($product, $templateHtmlProductAttributePrice);
-
-        $environment = $this->getEnvironment();
-        $environment->expects($this->at(1))
+        $priceAttributeViewRenderExpectation = $this->expectsPriceAttributeViewRender($product);
+        $this->env->expects($this->exactly(2))
             ->method('render')
-            ->with(
-                'OroPricingBundle:Product:prices_view.html.twig',
-                [
-                    'entity' => $product,
-                ]
+            ->withConsecutive(
+                $priceAttributeViewRenderExpectation,
+                ['OroPricingBundle:Product:prices_view.html.twig', ['entity' => $product]]
             )
-            ->willReturn($templateHtmlProductPrice);
+            ->willReturnOnConsecutiveCalls(
+                $templateHtmlProductAttributePrice,
+                $templateHtmlProductPrice
+            );
 
-        $this->authorizationChecker
-            ->expects($this->exactly(1))
+        $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
             ->willReturn(true);
 
@@ -185,7 +163,7 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
             ->with('feature1', null)
             ->willReturn(true);
 
-        $event = $this->createEvent($environment, $product);
+        $event = $this->createEvent($product);
         $this->listener->setFeatureChecker($this->featureChecker);
         $this->listener->addFeature('feature1');
         $this->listener->onProductView($event);
@@ -217,14 +195,17 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
         $product = new Product();
         $templateHtmlProductAttributePrice = 'template_html_product_attribute_price';
 
-        $this->assertPriceAttributeViewRendered($product, $templateHtmlProductAttributePrice);
+        $priceAttributeViewRenderExpectation = $this->expectsPriceAttributeViewRender($product);
+        $this->env->expects($this->once())
+            ->method('render')
+            ->with(...$priceAttributeViewRenderExpectation)
+            ->willReturn($templateHtmlProductAttributePrice);
 
-        $this->authorizationChecker
-            ->expects($this->once())
+        $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
             ->willReturn(false);
 
-        $event = $this->createEvent($this->getEnvironment(), $product);
+        $event = $this->createEvent($product);
         $this->listener->onProductView($event);
         $scrollData = $event->getScrollData()->getData();
 
@@ -246,15 +227,12 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
         $formView = new FormView();
         $templateHtml = 'template_html';
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|Environment $environment */
-        $environment = $this->createMock(Environment::class);
-        $environment->expects($this->once())
+        $this->env->expects($this->once())
             ->method('render')
             ->with('OroPricingBundle:Product:prices_update.html.twig', ['form' => $formView])
             ->willReturn($templateHtml);
 
-        $entity = new Product();
-        $event = $this->createEvent($environment, $entity, $formView);
+        $event = $this->createEvent(new Product(), $formView);
 
         $this->listener->onProductEdit($event);
         $scrollData = $event->getScrollData()->getData();
@@ -272,38 +250,27 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @param Environment $environment
-     * @param object $entity
-     * @param FormView $formView
-     * @return BeforeListRenderEvent
-     */
-    protected function createEvent(Environment $environment, $entity, FormView $formView = null)
+    private function createEvent(Product $entity, FormView $formView = null): BeforeListRenderEvent
     {
         $defaultData = [
             ScrollData::DATA_BLOCKS => [
                 [
                     ScrollData::SUB_BLOCKS => [
                         [
-                            ScrollData::DATA => [],
-                        ],
-                    ],
-                ],
-            ],
+                            ScrollData::DATA => []
+                        ]
+                    ]
+                ]
+            ]
         ];
 
-        return new BeforeListRenderEvent($environment, new ScrollData($defaultData), $entity, $formView);
+        return new BeforeListRenderEvent($this->env, new ScrollData($defaultData), $entity, $formView);
     }
 
-    /**
-     * @param $product
-     * @param $templateHtmlProductAttributePrice
-     */
-    private function assertPriceAttributeViewRendered($product, $templateHtmlProductAttributePrice)
+    private function expectsPriceAttributeViewRender(Product $product): array
     {
         $priceList = new PriceAttributePriceList();
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|PriceAttributePriceListRepository */
         $priceAttributePriceListRepository = $this->createMock(PriceAttributePriceListRepository::class);
 
         $query = $this->createMock(AbstractQuery::class);
@@ -316,8 +283,7 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
             ->method('getPriceAttributesQueryBuilder')
             ->willReturn($queryBuilder);
 
-        $this->aclHelper
-            ->expects($this->once())
+        $this->aclHelper->expects($this->once())
             ->method('apply')
             ->with($queryBuilder)
             ->willReturn($query);
@@ -328,34 +294,18 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
                 [PriceAttributePriceList::class, $priceAttributePriceListRepository],
             ]);
 
-        $this->priceAttributePricesProvider->expects($this->once())->method('getPricesWithUnitAndCurrencies')
+        $this->priceAttributePricesProvider->expects($this->once())
+            ->method('getPricesWithUnitAndCurrencies')
             ->with($priceList, $product)
             ->willReturn(['Test' => ['item' => ['USD' => 100]]]);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|Environment $environment */
-        $environment = $this->getEnvironment();
-        $environment->expects($this->at(0))
-            ->method('render')
-            ->with(
-                'OroPricingBundle:Product:price_attribute_prices_view.html.twig',
-                [
-                    'product' => $product,
-                    'priceList' => $priceList,
-                    'priceAttributePrices' => ['Test' => ['item' => ['USD' => 100]]],
-                ]
-            )
-            ->willReturn($templateHtmlProductAttributePrice);
-    }
-
-    /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|Environment
-     */
-    private function getEnvironment()
-    {
-        if (null === $this->env) {
-            $this->env = $this->createMock(Environment::class);
-        }
-
-        return $this->env;
+        return [
+            'OroPricingBundle:Product:price_attribute_prices_view.html.twig',
+            [
+                'product' => $product,
+                'priceList' => $priceList,
+                'priceAttributePrices' => ['Test' => ['item' => ['USD' => 100]]]
+            ]
+        ];
     }
 }

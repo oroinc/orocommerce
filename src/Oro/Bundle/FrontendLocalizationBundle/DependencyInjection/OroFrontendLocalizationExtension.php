@@ -7,6 +7,9 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
+/**
+ * This is the class that loads and manages FrontendLocalizationBundle service configuration
+ */
 class OroFrontendLocalizationExtension extends Extension
 {
     /**
@@ -19,5 +22,6 @@ class OroFrontendLocalizationExtension extends Extension
         $loader->load('services.yml');
         $loader->load('services_api.yml');
         $loader->load('layout.yml');
+        $loader->load('controllers.yml');
     }
 }

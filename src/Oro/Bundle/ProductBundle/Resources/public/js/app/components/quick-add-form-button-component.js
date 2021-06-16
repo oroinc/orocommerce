@@ -82,7 +82,7 @@ define(function(require) {
             // make own messages property from prototype
             this.messages = _.extend({}, this.defaultMessages, this.messages);
 
-            this.$button.on('click', _.bind(this.submit, this));
+            this.$button.on('click', this.submit.bind(this));
         },
 
         /**
@@ -109,16 +109,16 @@ define(function(require) {
                 return;
             }
 
-            _.each(this.options, _.bind(function(selector, data) {
+            _.each(this.options, (selector, data) => {
                 if (data === '_sourceElement') {
                     return;
                 }
 
                 this.$form.find(selector).val(this.$button.data(data));
-            }, this));
+            });
 
             if (this.confirmation) {
-                this.getConfirmDialog(_.bind(this.executeConfiguredAction, this)).open();
+                this.getConfirmDialog(this.executeConfiguredAction.bind(this)).open();
             } else {
                 this.executeConfiguredAction();
             }

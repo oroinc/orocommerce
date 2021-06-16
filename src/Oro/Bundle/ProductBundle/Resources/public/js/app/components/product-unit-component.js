@@ -66,7 +66,7 @@ define(function(require) {
             this.initializeLoadingMask(options);
 
             this.options._sourceElement
-                .on('change', this.options.productSelector, _.bind(this.onProductChange, this));
+                .on('change', this.options.productSelector, this.onProductChange.bind(this));
 
             this.quantitySelector = this.options._sourceElement.find(this.options.quantitySelector);
             this.unitSelector = this.options._sourceElement.find(this.options.unitSelector);

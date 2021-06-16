@@ -222,6 +222,9 @@ services:
           tags:
               - { name: layout.data_provider, alias: oro_shopping_list_matrix_grid_order }
 
+    Oro\Bundle\ShoppingListBundle\Datagrid\Provider\MassAction\AddLineItemMassActionProvider:
+        alias: oro_shopping_list.action.datagrid.mass_action_provider
+
     oro_shopping_list.action.datagrid.mass_action_provider:
         class: 'Oro\Bundle\ShoppingListBundle\Datagrid\Provider\MassAction\AddLineItemMassActionProvider'
         public: true

@@ -8,6 +8,7 @@ dynamic-imports:
         - oroorder/js/app/components/select-switch-input-component
         - oroorder/js/app/components/totals-component
         - oroorder/js/app/views/address-view
+        - oroorder/js/app/views/currency-select-view
         - oroorder/js/app/views/discount-collection-view
         - oroorder/js/app/views/discount-item-view
         - oroorder/js/app/views/line-item-view
@@ -16,4 +17,3 @@ dynamic-imports:
         - oroorder/js/app/views/possible-shipping-methods-view
         - oroorder/js/app/views/shipping-cost-view
         - oroorder/js/app/views/shipping-tracking-collection-view
-        - oroorder/js/app/views/currency-select-view

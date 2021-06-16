@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\VisibilityBundle\Controller;
 
+use Oro\Bundle\FormBundle\Model\UpdateHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopedDataType;
@@ -11,13 +12,16 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Form\Handler\VisibilityFormDataHandler;
 use Oro\Bundle\VisibilityBundle\Form\Type\EntityVisibilityType;
+use Oro\Bundle\VisibilityBundle\Provider\VisibilityRootScopesProvider;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Provides edit actions to update visibility for product and scope
@@ -35,7 +39,7 @@ class ProductVisibilityController extends AbstractController
      */
     public function editAction(Request $request, Product $product)
     {
-        $scopes = $this->get('oro_visibility.root_scopes_provider')->getScopes($product);
+        $scopes = $this->get(VisibilityRootScopesProvider::class)->getScopes($product);
         if (0 === count($scopes)) {
             $preloadedScopes = [];
         } else {
@@ -43,9 +47,9 @@ class ProductVisibilityController extends AbstractController
         }
         $form = $this->createScopedDataForm($product, $preloadedScopes);
 
-        $handler = new VisibilityFormDataHandler($form, $request, $this->get('event_dispatcher'));
+        $handler = new VisibilityFormDataHandler($form, $request, $this->get(EventDispatcherInterface::class));
 
-        return $this->get('oro_form.model.update_handler')->handleUpdate(
+        return $this->get(UpdateHandler::class)->handleUpdate(
             $product,
             $form,
             function (Product $product) {
@@ -60,7 +64,7 @@ class ProductVisibilityController extends AbstractController
                     'parameters' => ['id' => $product->getId()],
                 ];
             },
-            $this->get('translator')->trans('oro.visibility.event.saved.message'),
+            $this->get(TranslatorInterface::class)->trans('oro.visibility.event.saved.message'),
             $handler
         );
     }
@@ -105,13 +109,29 @@ class ProductVisibilityController extends AbstractController
                 'ownership_disabled' => true,
                 'dynamic_fields_disabled' => true,
                 ScopedDataType::PRELOADED_SCOPES_OPTION => $preloadedScopes,
-                ScopedDataType::SCOPES_OPTION => $this->get('oro_visibility.root_scopes_provider')->getScopes($product),
+                ScopedDataType::SCOPES_OPTION => $this->get(VisibilityRootScopesProvider::class)->getScopes($product),
                 ScopedDataType::TYPE_OPTION => EntityVisibilityType::class,
                 ScopedDataType::OPTIONS_OPTION => [
                     EntityVisibilityType::ALL_CLASS => ProductVisibility::class,
                     EntityVisibilityType::ACCOUNT_GROUP_CLASS => CustomerGroupProductVisibility::class,
                     EntityVisibilityType::ACCOUNT_CLASS => CustomerProductVisibility::class,
                 ]
+            ]
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                TranslatorInterface::class,
+                VisibilityRootScopesProvider::class,
+                EventDispatcherInterface::class,
+                UpdateHandler::class,
             ]
         );
     }

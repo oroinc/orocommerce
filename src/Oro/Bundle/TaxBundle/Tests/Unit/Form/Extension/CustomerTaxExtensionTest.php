@@ -54,10 +54,12 @@ class CustomerTaxExtensionTest extends AbstractCustomerTaxExtensionTest
     protected function createTaxCodeTarget($id = null)
     {
         $mock = $this->getMockBuilder(Customer::class)
-        ->disableOriginalConstructor()
-        ->setMethods(['getTaxCode', 'setTaxCode', 'getId'])
-        ->getMock();
-        $mock->method('getId')->willReturn($id);
+            ->disableOriginalConstructor()
+            ->setMethods(['getTaxCode', 'setTaxCode', 'getId'])
+            ->getMock();
+        $mock->expects($this->any())
+            ->method('getId')
+            ->willReturn($id);
 
         return $mock;
     }

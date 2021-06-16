@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Controller;
 
+use Oro\Bundle\FormBundle\Model\UpdateHandler;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Form\Type\PaymentTermType;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
@@ -11,6 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * CRUD for payment terms.
@@ -114,7 +116,7 @@ class PaymentTermController extends AbstractController
     {
         $form = $this->createForm(PaymentTermType::class, $paymentTerm);
 
-        return $this->get('oro_form.model.update_handler')->handleUpdate(
+        return $this->get(UpdateHandler::class)->handleUpdate(
             $paymentTerm,
             $form,
             function (PaymentTerm $paymentTerm) {
@@ -129,7 +131,21 @@ class PaymentTermController extends AbstractController
                     'parameters' => ['id' => $paymentTerm->getId()]
                 ];
             },
-            $this->get('translator')->trans('oro.paymentterm.controller.paymentterm.saved.message')
+            $this->get(TranslatorInterface::class)->trans('oro.paymentterm.controller.paymentterm.saved.message')
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                UpdateHandler::class,
+                TranslatorInterface::class,
+            ]
         );
     }
 }
