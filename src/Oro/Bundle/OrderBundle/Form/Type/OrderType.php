@@ -115,7 +115,7 @@ class OrderType extends AbstractType
                         [
                             'min' => PHP_INT_MAX * (-1), //use some big negative number
                             'max' => $order->getSubtotal(),
-                            'maxMessage' => 'oro.order.discounts.sum.error.label'
+                            'notInRangeMessage' => 'oro.order.discounts.sum.error.not_in_range.label'
                         ]
                     )],
                     'data' => $order->getTotalDiscounts() ? $order->getTotalDiscounts()->getValue() : 0
