@@ -282,8 +282,6 @@ HELP
             }
         }
         $this->builder->dispatchEvents();
-        $output->writeln('<info>Enabling triggers for the CPL table</info>');
-        $this->databaseTriggerManager->enable();
         $output->writeln('<info>The cache is updated successfully</info>');
     }
 
