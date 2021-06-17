@@ -8,6 +8,7 @@ oro:
             min.error.label: 'The subtotal amount cannot be less than {{ limit }}.'
         discounts:
             sum.error:
+                not_in_range.label: 'The sum of all discounts cannot exceed the order grand total amount. Please review some discounts above and make necessary adjustments.'
                 single_discount.label: 'The sum of all discounts cannot exceed the order grand total amount. Please review discount amount.'
                 label: 'The sum of all discounts cannot exceed the order grand total amount. Please review some discounts above and make necessary adjustments.'
             item.error.label: 'The discount amount cannot exceed the order grand total amount.'

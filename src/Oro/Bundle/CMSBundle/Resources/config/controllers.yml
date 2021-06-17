@@ -19,3 +19,15 @@ services:
             - [ 'setContainer', [ '@Psr\Container\ContainerInterface' ] ]
         tags:
             - { name: container.service_subscriber }
+
+    Oro\Bundle\CMSBundle\Controller\LoginPageController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+
+    Oro\Bundle\CMSBundle\Controller\ContentBlockController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }

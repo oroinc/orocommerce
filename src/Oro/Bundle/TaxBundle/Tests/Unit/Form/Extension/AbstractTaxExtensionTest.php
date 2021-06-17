@@ -3,9 +3,7 @@
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Extension;
 
 use Doctrine\ORM\EntityRepository;
-use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TaxBundle\Entity\AbstractTaxCode;
 use Oro\Bundle\TaxBundle\Form\Extension\AbstractTaxExtension;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -16,35 +14,20 @@ abstract class AbstractTaxExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     protected $doctrineHelper;
 
-    /**
-     * @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject */
     protected $entityRepository;
 
     protected function setUp(): void
     {
-        $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->doctrineHelper->expects($this->any())
             ->method('getEntityIdentifier')
-            ->willReturnCallback(
-                function ($entity) {
-                    /** @var Customer|Product $entity */
-                    return $entity->getId();
-                }
-            );
-    }
-
-    protected function tearDown(): void
-    {
-        unset($this->doctrineHelper);
+            ->willReturnCallback(function ($entity) {
+                return $entity->getId();
+            });
     }
 
     /**
@@ -73,10 +56,9 @@ abstract class AbstractTaxExtensionTest extends \PHPUnit\Framework\TestCase
      */
     protected function createEvent($data)
     {
-        $taxCodeForm = $this->createMock('Symfony\Component\Form\FormInterface');
+        $taxCodeForm = $this->createMock(FormInterface::class);
 
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $mainForm */
-        $mainForm = $this->createMock('Symfony\Component\Form\FormInterface');
+        $mainForm = $this->createMock(FormInterface::class);
         $mainForm->expects($this->any())
             ->method('get')
             ->with('taxCode')
@@ -116,7 +98,7 @@ abstract class AbstractTaxExtensionTest extends \PHPUnit\Framework\TestCase
         $taxCodeForm = $mainForm->get('taxCode');
         $taxCodeForm->expects($this->once())
             ->method('getData')
-            ->will($this->returnValue($taxCode));
+            ->willReturn($taxCode);
     }
 
     public function testOnPostSubmitNoEntity()

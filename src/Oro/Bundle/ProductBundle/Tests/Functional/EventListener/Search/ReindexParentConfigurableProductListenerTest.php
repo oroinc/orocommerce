@@ -7,12 +7,14 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadConfigurableProductWithVariants;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultWebsiteIdTestTrait;
 use Oro\Component\MessageQueue\Client\Message;
 use Oro\Component\MessageQueue\Client\MessagePriority;
 
 class ReindexParentConfigurableProductListenerTest extends WebTestCase
 {
     use MessageQueueAssertTrait;
+    use DefaultWebsiteIdTestTrait;
 
     protected function setUp(): void
     {
@@ -43,8 +45,11 @@ class ReindexParentConfigurableProductListenerTest extends WebTestCase
             new Message(
                 [
                     'class' => [Product::class],
-                    'context' => ['entityIds' => [$productVariant->getId(), $configurableProduct->getId()]],
-                    'granulize' => true
+                    'granulize' => true,
+                    'context' => [
+                        'websiteIds' => [$this->getDefaultWebsiteId()],
+                        'entityIds' => [$productVariant->getId(), $configurableProduct->getId()]
+                    ],
                 ],
                 MessagePriority::LOW
             )

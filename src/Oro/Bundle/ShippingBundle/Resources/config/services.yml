@@ -148,6 +148,9 @@ services:
             - '@oro_config.manager'
             - 'oro_shipping.length_units'
 
+    Oro\Bundle\ShippingBundle\Provider\FreightClassesProvider:
+        alias: oro_shipping.provider.measure_units.freight
+
     oro_shipping.provider.measure_units.freight:
         class: 'Oro\Bundle\ShippingBundle\Provider\FreightClassesProvider'
         public: true
@@ -254,12 +257,18 @@ services:
         calls:
             - [setNamespace, ['oro_shipping_price']]
 
+    Oro\Bundle\ShippingBundle\Form\Handler\ShippingMethodsConfigsRuleHandler:
+        alias: oro_shipping.form.handler.shipping_methods_configs_rule
+
     oro_shipping.form.handler.shipping_methods_configs_rule:
         class: 'Oro\Bundle\ShippingBundle\Form\Handler\ShippingMethodsConfigsRuleHandler'
         public: true
         arguments:
             - '@request_stack'
             - '@doctrine.orm.entity_manager'
+
+    Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider:
+        alias: oro_shipping.shipping_origin.provider
 
     oro_shipping.shipping_origin.provider:
         class: Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider
@@ -306,7 +315,7 @@ services:
         class: 'Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingOptions\Factory\ShippingOptionsLineItemCollectionFactoryDecorator'
         arguments:
             - '@oro_shipping.context.doctrine_line_item_collection_factory'
-            - '@oro_entity.doctrine_helper'
+            - '@doctrine'
             - '@oro_shipping.line_item.factory_by_line_item_basic'
 
     oro_shipping.context.builder_factory_basic:

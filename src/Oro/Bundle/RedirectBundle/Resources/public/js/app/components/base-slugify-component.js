@@ -3,7 +3,6 @@ define(function(require) {
 
     const $ = require('jquery');
     const __ = require('orotranslation/js/translator');
-    const _ = require('underscore');
     const routing = require('routing');
     const messenger = require('oroui/js/messenger');
     const BaseComponent = require('oroui/js/app/components/base/component');
@@ -45,8 +44,8 @@ define(function(require) {
             this.$targets = $(options.target);
             this.slugifyRoute = options.slugify_route;
 
-            this.$targets.on('change', _.bind(this.slugTriggerOff, this));
-            this.$sources.on('change', _.bind(this.syncField, this));
+            this.$targets.on('change', this.slugTriggerOff.bind(this));
+            this.$sources.on('change', this.syncField.bind(this));
         },
 
         /**
@@ -64,7 +63,7 @@ define(function(require) {
             $.ajax({
                 type: 'GET',
                 url: routing.generate(this.slugifyRoute, {string: $source.val()}),
-                success: _.bind(function($target, $source, result) {
+                success: result => {
                     if (result.slug) {
                         $target.val(result.slug);
                         $target.change();
@@ -74,7 +73,7 @@ define(function(require) {
                             __('oro.redirect.slugify_error', {string: $source.val()})
                         );
                     }
-                }, this, $target, $source)
+                }
             });
         },
 
@@ -95,8 +94,8 @@ define(function(require) {
                 return;
             }
 
-            this.$sources.off('change', _.bind(this.syncField, this));
-            this.$targets.off('change', _.bind(this.slugTriggerOff, this));
+            this.$sources.off('change', this.syncField.bind(this));
+            this.$targets.off('change', this.slugTriggerOff.bind(this));
 
             SlugifyComponent.__super__.dispose.call(this);
         }

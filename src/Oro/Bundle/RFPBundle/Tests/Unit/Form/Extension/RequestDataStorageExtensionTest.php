@@ -6,7 +6,7 @@ use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
-use Oro\Bundle\InventoryBundle\Tests\Unit\Inventory\Stub\InventoryStatusStub;
+use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue as InventoryStatus;
 use Oro\Bundle\InventoryBundle\Tests\Unit\Stubs\ProductStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -21,6 +21,7 @@ use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
 use Oro\Bundle\RFPBundle\Provider\ProductAvailabilityProviderInterface;
 use Symfony\Bundle\TwigBundle\TwigEngine;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -28,61 +29,48 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensionTestCase
 {
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $configManager;
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ContainerInterface
-     */
-    protected $container;
+    /** @var ContainerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $container;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|TwigEngine
-     */
-    protected $templating;
+    /** @var TwigEngine|\PHPUnit\Framework\MockObject\MockObject */
+    private $templating;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface
-     */
-    protected $translator;
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $translator;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|Session
-     */
-    protected $session;
+    /** @var Session|\PHPUnit\Framework\MockObject\MockObject */
+    private $session;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|FlashBagInterface
-     */
-    protected $flashBag;
+    /** @var FlashBagInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $flashBag;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ProductAvailabilityProviderInterface
-     */
-    protected $productAvailabilityProvider;
+    /** @var ProductAvailabilityProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $productAvailabilityProvider;
 
-    /**
-     * @var RequestDataStorageExtension
-     */
+    /** @var RequestDataStorageExtension */
     protected $extension;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         parent::setUp();
 
-        /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject $requestStack */
-        $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
-        $this->request = $this->createMock('Symfony\Component\HttpFoundation\Request');
-        $this->configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->request = $this->createMock(Request::class);
+        $this->configManager = $this->createMock(ConfigManager::class);
+        $this->container = $this->createMock(ContainerInterface::class);
+        $this->templating = $this->createMock(TwigEngine::class);
+        $this->translator = $this->createMock(TranslatorInterface::class);
+        $this->session = $this->createMock(Session::class);
+        $this->flashBag = $this->createMock(FlashBagInterface::class);
+        $this->productAvailabilityProvider = $this->createMock(ProductAvailabilityProviderInterface::class);
 
-        $requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
+        $requestStack = $this->createMock(RequestStack::class);
+        $requestStack->expects($this->any())
+            ->method('getCurrentRequest')
+            ->willReturn($this->request);
+
         $this->extension = new RequestDataStorageExtension(
             $requestStack,
             $this->storage,
@@ -90,36 +78,19 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
             $this->aclHelper,
             $this->productClass
         );
-        $this->extension->setDataClass('Oro\Bundle\RFPBundle\Entity\Request');
+        $this->extension->setDataClass(RFPRequest::class);
         $this->extension->setConfigManager($this->configManager);
 
         $this->setUpLoggerMock($this->extension);
 
-        $this->container = $this->getMockBuilder('Symfony\Component\DependencyInjection\ContainerBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->container->expects($this->any())
+            ->method('get')
+            ->with('templating')
+            ->willReturn($this->templating);
 
-        $this->templating = $this->getMockBuilder('Symfony\Bundle\TwigBundle\TwigEngine')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->translator = $this->getMockBuilder('Symfony\Contracts\Translation\TranslatorInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Session')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->flashBag = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->productAvailabilityProvider = $this->createMock(ProductAvailabilityProviderInterface::class);
-
-        $this->container->expects($this->any())->method('get')->with('templating')->willReturn($this->templating);
-
-        $this->session->expects($this->any())->method('getFlashBag')->willReturn($this->flashBag);
+        $this->session->expects($this->any())
+            ->method('getFlashBag')
+            ->willReturn($this->flashBag);
 
         $this->extension->setContainer($this->container);
         $this->extension->setTranslator($this->translator);
@@ -339,7 +310,7 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
     /**
      * @dataProvider isAllowedRFPDataProvider
      *
-     * @param string|InventoryStatusStub $inventoryStatus
+     * @param string|InventoryStatus $inventoryStatus
      * @param string $status
      * @param bool $expectedResult
      */
@@ -372,8 +343,7 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
             ->with($this->productClass)
             ->willReturn($repo);
 
-        $this->aclHelper
-            ->expects($this->once())
+        $this->aclHelper->expects($this->once())
             ->method('apply')
             ->with($qb)
             ->willReturn($query);
@@ -381,9 +351,6 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
         $this->assertSame($expectedResult, $this->extension->isAllowedRFP([['productSku' => $sku]]));
     }
 
-    /**
-     * @return array
-     */
     public function isAllowedRFPDataProvider(): array
     {
         return [
@@ -403,7 +370,7 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
                 'expectedResult' => false,
             ],
             [
-                'inventoryStatus' => new InventoryStatusStub('in_stock', 'In Stock'),
+                'inventoryStatus' => new InventoryStatus('in_stock', 'In Stock'),
                 'status' => ProductStub::STATUS_ENABLED,
                 'expectedResult' => true,
             ],
@@ -418,7 +385,7 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
     /**
      * @dataProvider isAllowedRFPDataProvider
      *
-     * @param string|InventoryStatusStub $inventoryStatus
+     * @param string|InventoryStatus $inventoryStatus
      * @param string $status
      * @param bool $expectedResult
      */
@@ -451,8 +418,7 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
             ->with($this->productClass)
             ->willReturn($repo);
 
-        $this->aclHelper
-            ->expects($this->once())
+        $this->aclHelper->expects($this->once())
             ->method('apply')
             ->with($qb)
             ->willReturn($query);

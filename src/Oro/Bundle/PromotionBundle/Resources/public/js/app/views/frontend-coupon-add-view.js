@@ -119,16 +119,16 @@ define(function(require) {
                 type: 'POST',
                 data: data,
                 dataType: 'json',
-                success: _.bind(function(response) {
+                success: response => {
                     if (response.success) {
                         this._showSuccess(__('oro.promotion.coupon.messages.coupon_code_applied_successfully'));
                         this._updatePageData();
                     } else {
                         this._showErrors(response.errors);
                     }
-                }, this)
+                }
             }).always(
-                _.bind(this._hideLoadingMask, this)
+                this._hideLoadingMask.bind(this)
             );
         },
 
@@ -149,12 +149,12 @@ define(function(require) {
                 ),
                 type: 'DELETE',
                 dataType: 'json',
-                success: _.bind(function() {
+                success: () => {
                     this._showSuccess(__('oro.promotion.coupon.messages.removed'));
                     this._updatePageData();
-                }, this)
+                }
             }).always(
-                _.bind(this._hideLoadingMask, this)
+                this._hideLoadingMask.bind(this)
             );
         },
 
@@ -243,15 +243,15 @@ define(function(require) {
          * @private
          */
         _checkOptions: function() {
-            const requiredMissed = this.requiredOptions.filter(_.bind(function(option) {
+            const requiredMissed = this.requiredOptions.filter(option => {
                 return _.isUndefined(this.options[option]) && !this.options[option];
-            }, this));
+            });
             if (requiredMissed.length) {
                 throw new TypeError('Missing required option(s): ' + requiredMissed.join(', '));
             }
 
             const requiredSelectors = [];
-            _.each(this.options.selectors, function(selector, selectorName) {
+            _.each(this.options.selectors, (selector, selectorName) => {
                 if (!selector) {
                     requiredSelectors.push(selectorName);
                 }

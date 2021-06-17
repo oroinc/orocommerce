@@ -2,8 +2,12 @@
 
 namespace Oro\Bundle\RFPBundle\Controller\Frontend;
 
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
+use Oro\Bundle\RFPBundle\Form\Handler\RequestUpdateHandler;
+use Oro\Bundle\RFPBundle\Layout\DataProvider\RFPFormProvider;
+use Oro\Bundle\RFPBundle\Model\RequestManager;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
@@ -14,6 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * CRUD for RFQs on the storefront.
@@ -84,7 +89,7 @@ class RequestController extends AbstractController
      */
     public function createAction(Request $request)
     {
-        $rfpRequest = $this->get('oro_rfp.request.manager')->create();
+        $rfpRequest = $this->get(RequestManager::class)->create();
         $this->addProductItemsToRfpRequest($rfpRequest, $request);
 
         $response = $this->update($rfpRequest);
@@ -134,7 +139,7 @@ class RequestController extends AbstractController
     {
         $rfqID = $this->get('session')->get(self::LAST_SUCCESS_RFQ_SESSION_NAME);
         if ($rfqID !== null) {
-            $repository = $this->get('oro_entity.doctrine_helper')->getEntityRepositoryForClass(RFPRequest::class);
+            $repository = $this->get(DoctrineHelper::class)->getEntityRepositoryForClass(RFPRequest::class);
             $rfpRequest = $repository->find($rfqID);
             if ($rfpRequest) {
                 $this->assertValidInternalStatus($rfpRequest);
@@ -156,9 +161,9 @@ class RequestController extends AbstractController
      */
     protected function update(RFPRequest $rfpRequest)
     {
-        $handler = $this->get('oro_rfp.service.request_update_handler');
+        $handler = $this->get(RequestUpdateHandler::class);
         $isCreateAction = !$rfpRequest->getId();
-        $form = $this->get('oro_rfp.layout.data_provider.request_form')->getRequestForm($rfpRequest);
+        $form = $this->get(RFPFormProvider::class)->getRequestForm($rfpRequest);
 
         return $handler->handleUpdate(
             $rfpRequest,
@@ -202,7 +207,7 @@ class RequestController extends AbstractController
                     'parameters' => [],
                 ];
             },
-            $this->get('translator')->trans('oro.rfp.controller.request.saved.message'),
+            $this->get(TranslatorInterface::class)->trans('oro.rfp.controller.request.saved.message'),
             null,
             function (RFPRequest $rfpRequest, FormInterface $form, Request $request) {
                 $url = $request->headers->get('referer', $request->getUri());
@@ -218,9 +223,9 @@ class RequestController extends AbstractController
     /**
      * @return WebsiteManager
      */
-    protected function getWebsiteManager()
+    protected function getWebsiteManager(): WebsiteManager
     {
-        return $this->get('oro_website.manager');
+        return $this->get(WebsiteManager::class);
     }
 
     /**
@@ -250,7 +255,7 @@ class RequestController extends AbstractController
         if (count($productLineItems) === 0) {
             return;
         }
-        $this->get('oro_rfp.request.manager')
+        $this->get(RequestManager::class)
             ->addProductLineItemsToRequest($rfpRequest, $filteredProducts);
     }
 
@@ -264,5 +269,23 @@ class RequestController extends AbstractController
         if ($status && $status->getId() === RFPRequest::INTERNAL_STATUS_DELETED) {
             throw $this->createNotFoundException();
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                TranslatorInterface::class,
+                DoctrineHelper::class,
+                RequestUpdateHandler::class,
+                RFPFormProvider::class,
+                WebsiteManager::class,
+                RequestManager::class
+            ]
+        );
     }
 }

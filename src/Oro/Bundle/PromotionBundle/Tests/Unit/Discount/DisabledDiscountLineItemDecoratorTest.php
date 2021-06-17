@@ -311,4 +311,28 @@ class DisabledDiscountLineItemDecoratorTest extends \PHPUnit\Framework\TestCase
 
         $this->decorator->setSourceLineItem($sourceLineItem);
     }
+
+    public function testSetSubtotalAfterDiscounts(): void
+    {
+        $subtotal = 7.5;
+
+        $this->lineItem
+            ->expects($this->once())
+            ->method('setSubtotalAfterDiscounts')
+            ->with($subtotal);
+
+        $this->decorator->setSubtotalAfterDiscounts($subtotal);
+    }
+
+    public function testGetSubtotalAfterDiscounts(): void
+    {
+        $subtotal = 7.5;
+
+        $this->lineItem
+            ->expects($this->once())
+            ->method('getSubtotalAfterDiscounts')
+            ->willReturn($subtotal);
+
+        self::assertEquals($subtotal, $this->decorator->getSubtotalAfterDiscounts());
+    }
 }

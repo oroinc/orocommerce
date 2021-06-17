@@ -1,10 +1,8 @@
 entity_config:
     attribute:
+        # You can find out more about attributes in the documentation: https://doc.oroinc.com/backend/configuration/annotation/config-field.html#attribute
         field:
             items:
-                #
-                # Parameter to set search boost value to the field.
-                #
                 search_boost:
                     options:
                         value_type: 'decimal'

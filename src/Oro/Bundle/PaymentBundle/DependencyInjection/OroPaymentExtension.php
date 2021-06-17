@@ -7,6 +7,9 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
+/**
+ * This is the class that loads and manages PaymentBundle service configuration
+ */
 class OroPaymentExtension extends Extension
 {
     const ALIAS = 'oro_payment';
@@ -25,6 +28,7 @@ class OroPaymentExtension extends Extension
         $loader->load('mass_action.yml');
         $loader->load('form_types.yml');
         $loader->load('block_types.yml');
+        $loader->load('controllers.yml');
     }
 
     /**

@@ -239,6 +239,9 @@ services:
         arguments:
             - "@oro_product.website_search.repository.product"
 
+    Oro\Bundle\ProductBundle\Search\ProductRepository:
+        alias: oro_product.website_search.repository.product
+
     oro_product.website_search.repository.product:
         parent: oro_website_search.repository.abstract
         public: true
@@ -265,6 +268,9 @@ services:
         calls:
             - [setComponentProcessorFilter,  ["@oro_product.component_processor.filter"]]
         abstract: true
+
+    Oro\Bundle\ProductBundle\Form\Handler\QuickAddHandler:
+        alias: oro_product.form_handler.quick_add
 
     oro_product.form_handler.quick_add:
         class: 'Oro\Bundle\ProductBundle\Form\Handler\QuickAddHandler'
@@ -923,6 +929,9 @@ services:
         tags:
             - { name: oro_redirect.routing_information_provider, alias: 'Oro\Bundle\ProductBundle\Entity\Brand' }
 
+    Oro\Bundle\ProductBundle\Provider\QuickAddCollectionProvider:
+        alias: oro_product.layout.data_provider.quick_add_collection
+
     oro_product.layout.data_provider.quick_add_collection:
         class: 'Oro\Bundle\ProductBundle\Provider\QuickAddCollectionProvider'
         public: true
@@ -1326,6 +1335,9 @@ services:
             - '@oro_entity_config.manager.attribute_manager'
             - '@oro_entity_config.provider.serialized_field_provider'
 
+    Oro\Bundle\ProductBundle\Provider\GridCountProvider:
+        alias: oro_product.provider.grid_count_provider
+
     oro_product.provider.grid_count_provider:
         class: Oro\Bundle\ProductBundle\Provider\GridCountProvider
         public: true
@@ -1337,6 +1349,9 @@ services:
     oro_product.provider.brand_status_provider:
         class: 'Oro\Bundle\ProductBundle\Provider\BrandStatusProvider'
         public: true
+
+    Oro\Bundle\ProductBundle\Service\ProductCollectionDefinitionConverter:
+        alias: oro_product.service.product_collection_definition_converter
 
     oro_product.service.product_collection_definition_converter:
         class: Oro\Bundle\ProductBundle\Service\ProductCollectionDefinitionConverter
@@ -1444,6 +1459,9 @@ services:
     oro_product.doctrine.abstract_cached_provider_decorator:
         class: 'Oro\Bundle\ProductBundle\Provider\Cache\Doctrine\CachedProductsProviderDecorator'
         abstract: true
+
+    Oro\Bundle\ProductBundle\Provider\ProductImagesURLsProvider:
+        alias: oro_product.provider.product_images_urls
 
     oro_product.provider.product_images_urls:
         class: 'Oro\Bundle\ProductBundle\Provider\ProductImagesURLsProvider'

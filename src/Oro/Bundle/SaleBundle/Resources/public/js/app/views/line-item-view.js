@@ -185,14 +185,14 @@ define(function(require) {
             this.$requestsOnlyContainer = this.$el.find(this.options.requestsOnlyContainer);
 
             this.$el
-                .on('change', this.options.productSelect, _.bind(this.onProductChanged, this))
-                .on('change', this.options.productReplacementSelect, _.bind(this.onProductChanged, this))
-                .on('change', this.options.typeSelect, _.bind(this.onTypeChanged, this))
-                .on('click', this.options.addNotesButton, _.bind(this.onAddNotesClick, this))
-                .on('click', this.options.removeNotesButton, _.bind(this.onRemoveNotesClick, this))
-                .on('click', this.options.freeFormLink, _.bind(this.onFreeFormLinkClick, this))
-                .on('click', this.options.productSelectLink, _.bind(this.onProductSelectLinkClick, this))
-                .on('content:changed', _.bind(this.onContentChanged, this))
+                .on('change', this.options.productSelect, this.onProductChanged.bind(this))
+                .on('change', this.options.productReplacementSelect, this.onProductChanged.bind(this))
+                .on('change', this.options.typeSelect, this.onTypeChanged.bind(this))
+                .on('click', this.options.addNotesButton, this.onAddNotesClick.bind(this))
+                .on('click', this.options.removeNotesButton, this.onRemoveNotesClick.bind(this))
+                .on('click', this.options.freeFormLink, this.onFreeFormLinkClick.bind(this))
+                .on('click', this.options.productSelectLink, this.onProductSelectLinkClick.bind(this))
+                .on('content:changed', this.onContentChanged.bind(this))
             ;
 
             this.listenTo(mediator, this.options.events.before, this.disableSubmit);
@@ -204,13 +204,13 @@ define(function(require) {
             this.$fields = this.$el.find(':input[name]');
 
             this.fieldsByName = {};
-            this.$fields.each(_.bind(function(i, field) {
+            this.$fields.each((i, field) => {
                 if (!this.fieldsByName[this.formFieldName(field)]) {
                     this.fieldsByName[this.formFieldName(field)] = [];
                 }
 
                 this.fieldsByName[this.formFieldName(field)].push($(field));
-            }, this));
+            });
 
             this.entryPointTriggers([
                 this.fieldsByName.quantity,

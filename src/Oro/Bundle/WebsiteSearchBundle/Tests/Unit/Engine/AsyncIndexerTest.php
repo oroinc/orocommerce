@@ -4,7 +4,9 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Engine;
 
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
 use Oro\Bundle\SearchBundle\Entity\Item;
+use Oro\Bundle\SearchBundle\Provider\SearchMappingProvider;
 use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
+use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging\ReindexMessageGranularizer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexerInputValidator;
@@ -32,6 +34,16 @@ class AsyncIndexerTest extends \PHPUnit\Framework\TestCase
     private $baseIndexer;
 
     /**
+     * @var SearchMappingProvider|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $mappingProvider;
+
+    /**
+     * @var WebsiteProviderInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $websiteProvider;
+
+    /**
      * @var IndexerInputValidator|\PHPUnit\Framework\MockObject\MockObject
      */
     private $inputValidator;
@@ -46,7 +58,18 @@ class AsyncIndexerTest extends \PHPUnit\Framework\TestCase
         $websiteRepository->method('getWebsiteIdentifiers')
             ->willReturn([self::WEBSITE_ID]);
 
-        $this->inputValidator = $this->createMock(IndexerInputValidator::class);
+        $this->websiteProvider = $this->createMock(WebsiteProviderInterface::class);
+        $this->websiteProvider
+            ->expects($this->any())
+            ->method('getWebsiteIds')
+            ->willReturn([1]);
+        $this->mappingProvider = $this->createMock(SearchMappingProvider::class);
+        $this->mappingProvider
+            ->expects($this->any())
+            ->method('isClassSupported')
+            ->willReturnCallback(fn ($class) => class_exists($class, true));
+
+        $this->inputValidator = new IndexerInputValidator($this->websiteProvider, $this->mappingProvider);
 
         $this->granularizer = $this->createMock(ReindexMessageGranularizer::class);
 
@@ -209,26 +232,17 @@ class AsyncIndexerTest extends \PHPUnit\Framework\TestCase
 
     public function testReindex()
     {
-        $context = ['test'];
-
         $expectedParams = [
-            'class' => Item::class,
-            'context' => [
-                'test'
-            ],
+            'class' => [Item::class],
+            'context' => ['websiteIds' => [1]],
             'granulize' => true
         ];
 
-        $this->inputValidator->method('validateRequestParameters')
-            ->willReturn([
-                            [Item::class],
-                            [self::WEBSITE_ID]
-                         ]);
-
-        $this->messageProducer->expects($this->atLeastOnce())
+        $this->messageProducer
+            ->expects($this->atLeastOnce())
             ->method('send')
             ->with(AsyncIndexer::TOPIC_REINDEX, new Message($expectedParams, AsyncIndexer::DEFAULT_PRIORITY_REINDEX));
 
-        $this->indexer->reindex(Item::class, $context);
+        $this->indexer->reindex(Item::class, []);
     }
 }

@@ -1,0 +1,9 @@
+services:
+    _defaults:
+        public: true
+
+    Oro\Bundle\ConsentBundle\Controller\ConsentController:
+        calls:
+            - [setContainer, ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }

@@ -94,9 +94,9 @@ define(function(require) {
                 changedSlugs: this._getChangedUrlsList(),
                 confirmState: this.confirmState
             })
-                .on('ok', _.bind(this.onConfirmModalOk, this))
-                .on('cancel', _.bind(this.onConfirmModalCancel, this))
-                .on('confirm-option-changed', _.bind(this.onConfirmModalOptionChange, this))
+                .on('ok', this.onConfirmModalOk.bind(this))
+                .on('cancel', this.onConfirmModalCancel.bind(this))
+                .on('confirm-option-changed', this.onConfirmModalOptionChange.bind(this))
                 .open();
         },
 
@@ -135,9 +135,9 @@ define(function(require) {
             $.ajax({
                 async: false,
                 url: routing.generate('oro_content_node_get_possible_urls', {id: nodeId, newParentId: newParentId}),
-                success: _.bind(function(result) {
+                success: result => {
                     urls = result;
-                }, this)
+                }
             });
 
             if (typeof urls !== 'undefined') {
@@ -180,7 +180,7 @@ define(function(require) {
                     position: data.position,
                     createRedirect: +createRedirect
                 },
-                success: _.bind(function(result) {
+                success: result => {
                     if (!result.status) {
                         this.rollback(data);
                         messenger.notificationFlashMessage(
@@ -195,7 +195,7 @@ define(function(require) {
                             });
                         }
                     }
-                }, this)
+                }
             });
         },
 

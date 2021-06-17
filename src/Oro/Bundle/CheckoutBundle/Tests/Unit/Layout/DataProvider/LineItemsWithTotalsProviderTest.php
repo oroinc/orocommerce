@@ -4,6 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Layout\DataProvider;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Layout\DataProvider\LineItemsWithTotalsProvider;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
@@ -15,32 +16,19 @@ class LineItemsWithTotalsProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var CheckoutLineItemsManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $checkoutLineItemsManager;
+    /** @var CheckoutLineItemsManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $checkoutLineItemsManager;
 
-    /**
-     * @var LineItemSubtotalProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $lineItemSubtotalProvider;
+    /** @var LineItemSubtotalProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $lineItemSubtotalProvider;
 
-    /**
-     * @var LineItemsWithTotalsProvider
-     */
-    protected $provider;
+    /** @var LineItemsWithTotalsProvider */
+    private $provider;
 
     protected function setUp(): void
     {
-        $this->checkoutLineItemsManager = $this
-            ->getMockBuilder('Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->lineItemSubtotalProvider = $this
-            ->getMockBuilder('Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->checkoutLineItemsManager = $this->createMock(CheckoutLineItemsManager::class);
+        $this->lineItemSubtotalProvider = $this->createMock(LineItemSubtotalProvider::class);
 
         $this->provider = new LineItemsWithTotalsProvider(
             $this->checkoutLineItemsManager,
@@ -75,24 +63,24 @@ class LineItemsWithTotalsProviderTest extends \PHPUnit\Framework\TestCase
         $lineItems->attach($lineItem1, ['total' => $lineItem1Total]);
         $lineItems->attach($lineItem2, ['total' => $lineItem2Total]);
 
-        $checkout = $this->getEntity('Oro\Bundle\CheckoutBundle\Entity\Checkout', ['id' => 42]);
+        /** @var Checkout $checkout */
+        $checkout = $this->getEntity(Checkout::class, ['id' => 42]);
 
         $this->checkoutLineItemsManager->expects($this->once())
             ->method('getData')
             ->with($checkout)
-            ->willReturn(new ArrayCollection(iterator_to_array($lineItems)));
+            ->willReturn(new ArrayCollection([$lineItem1, $lineItem2]));
 
-        $i = 0;
-        while ($lineItems->valid()) {
-            $info = $lineItems->getInfo();
-            /** @var Price $total */
-            $total = $info['total'];
-            $this->lineItemSubtotalProvider->expects($this->at($i))
-                ->method('getRowTotal')
-                ->willReturn($total->getValue());
-            $i++;
-            $lineItems->next();
-        }
+        $this->lineItemSubtotalProvider->expects($this->exactly(2))
+            ->method('getRowTotal')
+            ->withConsecutive(
+                [$lineItem1, $lineItem1->getCurrency()],
+                [$lineItem2, $lineItem2->getCurrency()]
+            )
+            ->willReturnOnConsecutiveCalls(
+                $lineItem1Total,
+                $lineItem2Total
+            );
 
         $result = $this->provider->getData($checkout);
         $this->assertEquals($lineItems, $result);

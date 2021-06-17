@@ -27,7 +27,7 @@ const VariantBodyView = BaseView.extend({
      */
     initialize(options) {
         this.options = _.defaults(options || {}, this.options);
-        this.initLayout().done(_.bind(this.handleLayoutInit, this));
+        this.initLayout().done(this.handleLayoutInit.bind(this));
     },
 
     dispose() {
@@ -51,7 +51,7 @@ const VariantBodyView = BaseView.extend({
         this.loadingMaskView = new LoadingMaskView({container: this.$container});
 
         this.initializeCollapsedState();
-        this.$trigger.on(`click${this.eventNamespace()}`, _.bind(this.onToggle, this));
+        this.$trigger.on(`click${this.eventNamespace()}`, this.onToggle.bind(this));
         layout.initPopover(this.$container);
     },
 

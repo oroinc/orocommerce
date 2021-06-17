@@ -4,61 +4,53 @@ namespace Oro\Bundle\RuleBundle\Tests\Unit\DependencyInjection\CompilerPass;
 
 use Oro\Bundle\RuleBundle\DependencyInjection\CompilerPass\ExpressionLanguageFunctionCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
 class ExpressionLanguageFunctionCompilerPassTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ContainerBuilder|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $containerBuilderMock;
-
-    /**
-     * @var Definition|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $definitionMock;
+    /** @var ExpressionLanguageFunctionCompilerPass */
+    private $compiler;
 
     protected function setUp(): void
     {
-        $this->containerBuilderMock = $this->createMock(ContainerBuilder::class);
-        $this->definitionMock = $this->createMock(Definition::class);
+        $this->compiler = new ExpressionLanguageFunctionCompilerPass();
+    }
+
+    public function testProcessNotExpressionLanguageService()
+    {
+        $container = new ContainerBuilder();
+
+        $this->compiler->process($container);
     }
 
     public function testProcess()
     {
-        $this->containerBuilderMock
-            ->expects($this->once())
-            ->method('hasDefinition')
-            ->with(ExpressionLanguageFunctionCompilerPass::EXPRESSION_LANGUAGE_SERVICE)
-            ->willReturn(true);
+        $container = new ContainerBuilder();
+        $expressionLanguageDef = $container->register('oro_rule.expression_language');
 
-        $this->containerBuilderMock
-            ->expects($this->once())
-            ->method('getDefinition')
-            ->with(ExpressionLanguageFunctionCompilerPass::EXPRESSION_LANGUAGE_SERVICE)
-            ->willReturn($this->definitionMock);
+        $container->register('function_service_1')
+            ->addTag('oro_rule.expression_language.function');
+        $container->register('function_service_2')
+            ->addTag('oro_rule.expression_language.function');
 
-        $this->containerBuilderMock
-            ->expects($this->once())
-            ->method('findTaggedServiceIds')
-            ->with(ExpressionLanguageFunctionCompilerPass::TAG)
-            ->willReturn([
-                'someId' => [],
-                'someOtherId' => []
-            ]);
+        $this->compiler->process($container);
 
-        $this->definitionMock
-            ->expects($this->at(0))
-            ->method('addMethodCall')
-            ->with('addFunction', [new Reference('someId')]);
+        self::assertEquals(
+            [
+                ['addFunction', [new Reference('function_service_1')]],
+                ['addFunction', [new Reference('function_service_2')]]
+            ],
+            $expressionLanguageDef->getMethodCalls()
+        );
+    }
 
-        $this->definitionMock
-            ->expects($this->at(1))
-            ->method('addMethodCall')
-            ->with('addFunction', [new Reference('someOtherId')]);
+    public function testProcessNoTagged()
+    {
+        $container = new ContainerBuilder();
+        $expressionLanguageDef = $container->register('oro_rule.expression_language');
 
-        $compilerPass = new ExpressionLanguageFunctionCompilerPass();
-        $compilerPass->process($this->containerBuilderMock);
+        $this->compiler->process($container);
+
+        self::assertSame([], $expressionLanguageDef->getMethodCalls());
     }
 }

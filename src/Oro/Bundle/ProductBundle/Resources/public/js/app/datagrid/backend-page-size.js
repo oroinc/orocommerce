@@ -41,16 +41,10 @@ define(function(require) {
          */
         render: function() {
             const $select = this.$el.find('[data-grid-pagesize-selector]');
-            const currentSizeLabel = _.filter(
-                this.items,
-                _.bind(
-                    function(item) {
-                        return item.size === undefined
-                            ? this.collection.state.pageSize === item : this.collection.state.pageSize === item.size;
-                    },
-                    this
-                )
-            );
+            const currentSizeLabel = _.filter(this.items, item => {
+                return item.size === undefined
+                    ? this.collection.state.pageSize === item : this.collection.state.pageSize === item.size;
+            });
 
             $select
                 .find('option')

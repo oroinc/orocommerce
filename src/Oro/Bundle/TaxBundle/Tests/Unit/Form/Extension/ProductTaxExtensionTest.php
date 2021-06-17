@@ -14,19 +14,9 @@ use Symfony\Component\Form\FormInterface;
 
 class ProductTaxExtensionTest extends AbstractTaxExtensionTest
 {
-    /**
-     * @var ProductTaxCodeRepository|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ProductTaxCodeRepository|\PHPUnit\Framework\MockObject\MockObject */
     protected $entityRepository;
 
-    /**
-     * @var ProductTaxExtension
-     */
-    protected $extension;
-
-    /**
-     * @return ProductTaxExtension
-     */
     protected function getExtension()
     {
         return new ProductTaxExtension($this->doctrineHelper, 'OroTaxBundle:ProductTaxCode');
@@ -41,8 +31,7 @@ class ProductTaxExtensionTest extends AbstractTaxExtensionTest
     {
         $productTaxExtension = $this->getExtension();
 
-        /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder */
-        $builder = $this->createMock('Symfony\Component\Form\FormBuilderInterface');
+        $builder = $this->createMock(FormBuilderInterface::class);
         $builder->expects($this->once())
             ->method('add')
             ->with(
@@ -57,13 +46,11 @@ class ProductTaxExtensionTest extends AbstractTaxExtensionTest
                 ]
             );
         $builder->expects($this->exactly(2))
-            ->method('addEventListener');
-        $builder->expects($this->at(1))
             ->method('addEventListener')
-            ->with(FormEvents::POST_SET_DATA, [$productTaxExtension, 'onPostSetData']);
-        $builder->expects($this->at(2))
-            ->method('addEventListener')
-            ->with(FormEvents::POST_SUBMIT, [$productTaxExtension, 'onPostSubmit'], 10);
+            ->withConsecutive(
+                [FormEvents::POST_SET_DATA, [$productTaxExtension, 'onPostSetData']],
+                [FormEvents::POST_SUBMIT, [$productTaxExtension, 'onPostSubmit'], 10]
+            );
 
         $productTaxExtension->buildForm($builder, []);
     }
@@ -73,7 +60,9 @@ class ProductTaxExtensionTest extends AbstractTaxExtensionTest
         $taxCode = $this->createTaxCode();
         $product = $this->createTaxCodeTarget(1);
         $event = $this->createEvent($product);
-        $product->method('getTaxCode')->willReturn($taxCode);
+        $product->expects($this->any())
+            ->method('getTaxCode')
+            ->willReturn($taxCode);
 
         /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $taxCodeForm */
         $taxCodeForm = $event->getForm()->get('taxCode');
@@ -89,9 +78,12 @@ class ProductTaxExtensionTest extends AbstractTaxExtensionTest
         $product = $this->createTaxCodeTarget();
         $event = $this->createEvent($product);
         $taxCode = $this->createTaxCode(1);
-        $product->expects($this->once())->method('setTaxCode');
+        $product->expects($this->once())
+            ->method('setTaxCode');
 
-        $product->method('getTaxCode')->willReturn($taxCode);
+        $product->expects($this->any())
+            ->method('getTaxCode')
+            ->willReturn($taxCode);
         $this->assertTaxCodeAdd($event, $taxCode);
 
         $this->getExtension()->onPostSubmit($event);
@@ -104,8 +96,11 @@ class ProductTaxExtensionTest extends AbstractTaxExtensionTest
 
         $newTaxCode = $this->createTaxCode(1);
         $taxCodeWithProduct = $this->createTaxCode(2);
-        $product->method('getTaxCode')->willReturn($taxCodeWithProduct);
-        $product->expects($this->once())->method('setTaxCode');
+        $product->expects($this->any())
+            ->method('getTaxCode')
+            ->willReturn($taxCodeWithProduct);
+        $product->expects($this->once())
+            ->method('setTaxCode');
         $this->assertTaxCodeAdd($event, $newTaxCode);
 
         $this->getExtension()->onPostSubmit($event);
@@ -122,7 +117,9 @@ class ProductTaxExtensionTest extends AbstractTaxExtensionTest
             ->disableOriginalConstructor()
             ->setMethods(['getId', 'setTaxCode', 'getTaxCode'])
             ->getMock();
-        $mock->method('getId')->willReturn($id);
+        $mock->expects($this->any())
+            ->method('getId')
+            ->willReturn($id);
 
         return $mock;
     }

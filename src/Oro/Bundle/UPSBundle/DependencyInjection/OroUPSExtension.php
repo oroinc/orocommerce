@@ -7,6 +7,9 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
+/**
+ * This is the class that loads and manages UPSBundle service configuration
+ */
 class OroUPSExtension extends Extension
 {
     /**
@@ -20,5 +23,6 @@ class OroUPSExtension extends Extension
         $loader->load('connection.yml');
         $loader->load('time_in_transit.yml');
         $loader->load('validators.yml');
+        $loader->load('controllers.yml');
     }
 }

@@ -131,9 +131,9 @@ define(function(require) {
             this.$form = this.options._sourceElement.closest('form');
 
             this.options._sourceElement
-                .on('click', this.options.selectors.apply, _.bind(this.onApplyQuery, this))
-                .on('click', this.options.selectors.reset, _.bind(this.onReset, this))
-                .on('query-designer:validate:not-empty-filters', _.bind(this.onFiltersValidate, this));
+                .on('click', this.options.selectors.apply, this.onApplyQuery.bind(this))
+                .on('click', this.options.selectors.reset, this.onReset.bind(this))
+                .on('query-designer:validate:not-empty-filters', this.onFiltersValidate.bind(this));
 
             this.initialDefinitionState = this._getSegmentDefinition();
             this.initialIncluded = this.$included.val();
@@ -143,10 +143,10 @@ define(function(require) {
                 this.currentDefinitionState = this.initialDefinitionState;
                 mediator.on('grid-sidebar:load:' + this.options.controlsBlockAlias, this._applyQuery, this);
             }
-            this.$form.on('submit' + this.eventNamespace(), _.bind(this.onSubmit, this));
+            this.$form.on('submit' + this.eventNamespace(), this.onSubmit.bind(this));
 
             this.applyQueryEventName = 'productCollection:applyQuery:' + this.eventNamespace();
-            mediator.on(this.applyQueryEventName, _.bind(this.applyQuery, this));
+            mediator.on(this.applyQueryEventName, this.applyQuery.bind(this));
             this._initializeInclusionExclusionSubComponent();
             this._initializeSelectedProductGridsSubComponent();
 
@@ -228,9 +228,9 @@ define(function(require) {
         },
 
         _checkOptions: function() {
-            const requiredMissed = this.requiredOptions.filter(_.bind(function(option) {
+            const requiredMissed = this.requiredOptions.filter(option => {
                 return _.isUndefined(this.options[option]);
-            }, this));
+            });
             if (requiredMissed.length) {
                 throw new TypeError('Missing required option(s): ' + requiredMissed.join(', '));
             }
@@ -345,7 +345,7 @@ define(function(require) {
                 okText: __('oro.product.product_collection.filter_query.continue')
             });
 
-            confirmModal.on('ok', _.bind(this.onConfirmModalOk, this));
+            confirmModal.on('ok', this.onConfirmModalOk.bind(this));
             confirmModal.open();
         },
 
@@ -401,9 +401,9 @@ define(function(require) {
             }
 
             const $conditionBuilder = this.options._sourceElement.find('.condition-builder');
-            const conditionBuilderInvalidElements = _.filter(invalidElements, _.bind(function(value) {
+            const conditionBuilderInvalidElements = _.filter(invalidElements, value => {
                 return $.contains($conditionBuilder[0], value);
-            }, this));
+            });
 
             return !conditionBuilderInvalidElements.length;
         },

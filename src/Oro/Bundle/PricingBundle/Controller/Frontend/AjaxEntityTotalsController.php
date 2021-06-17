@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Controller\Frontend;
 
 use Oro\Bundle\EntityBundle\Exception\EntityNotFoundException;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Handler\RequestHandler;
 use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -31,7 +32,7 @@ class AjaxEntityTotalsController extends AbstractController
     public function getEntityTotalsAction($entityClassName, $entityId)
     {
         try {
-            $totalRequestHandler = $this->get('oro_pricing.subtotal_processor.handler.request_handler');
+            $totalRequestHandler = $this->get(RequestHandler::class);
             $totals = $totalRequestHandler->recalculateTotals($entityClassName, $entityId);
         } catch (EntityNotFoundException $e) {
             return new JsonResponse('', Response::HTTP_NOT_FOUND);
@@ -60,7 +61,7 @@ class AjaxEntityTotalsController extends AbstractController
     public function recalculateTotalsAction(Request $request, $entityClassName, $entityId)
     {
         try {
-            $totalRequestHandler = $this->get('oro_pricing.subtotal_processor.handler.request_handler');
+            $totalRequestHandler = $this->get(RequestHandler::class);
             $totals = $totalRequestHandler->recalculateTotals($entityClassName, $entityId, $request);
         } catch (EntityNotFoundException $e) {
             return new JsonResponse('', Response::HTTP_NOT_FOUND);
@@ -68,6 +69,19 @@ class AjaxEntityTotalsController extends AbstractController
 
         return new JsonResponse(
             $totals
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                RequestHandler::class,
+            ]
         );
     }
 }

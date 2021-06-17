@@ -11,38 +11,29 @@ use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\InventoryBundle\EventListener\Frontend\ProductDatagridUpcomingLabelListener;
 use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
-use Oro\Bundle\InventoryBundle\Tests\Unit\Inventory\Stub\ProductStub;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class ProductDatagridUpcomingLabelListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var UpcomingProductProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var UpcomingProductProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $productUpcomingProvider;
 
-    /**
-     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
-    /**
-     * @var ProductDatagridUpcomingLabelListener
-     */
+    /** @var ProductDatagridUpcomingLabelListener */
     private $listener;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->productUpcomingProvider = $this->createMock(UpcomingProductProvider::class);
-
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
 
         $this->listener = new ProductDatagridUpcomingLabelListener(
@@ -78,7 +69,6 @@ class ProductDatagridUpcomingLabelListenerTest extends \PHPUnit\Framework\TestCa
 
     public function testOnResultAfterNoLowInventory()
     {
-        /** @var DatagridInterface|\PHPUnit\Framework\MockObject\MockObject $dataGrid */
         $dataGrid = $this->createMock(DatagridInterface::class);
 
         $product1 = $this->getProductEntity(777);
@@ -86,18 +76,21 @@ class ProductDatagridUpcomingLabelListenerTest extends \PHPUnit\Framework\TestCa
         $record = new ResultRecord(['id' => $product1->getId()]);
 
         $productRepository = $this->createMock(ProductRepository::class);
-        $productRepository->expects($this->once())->method('findBy')->willReturn([$product1]);
+        $productRepository->expects($this->once())
+            ->method('findBy')
+            ->willReturn([$product1]);
 
-        $this->doctrineHelper->expects($this->once())->method('getEntityRepositoryForClass')
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityRepositoryForClass')
             ->willReturn($productRepository);
 
-        $this->productUpcomingProvider
-            ->expects($this->once())->method('isUpcoming')->with($product1)->willReturn(false);
+        $this->productUpcomingProvider->expects($this->once())
+            ->method('isUpcoming')
+            ->with($product1)
+            ->willReturn(false);
 
-        /** @var SearchQueryInterface $query */
         $query = $this->createMock(SearchQueryInterface::class);
 
-        /** @var SearchResultAfter|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = new SearchResultAfter($dataGrid, $query, [$record]);
 
         $this->listener->onResultAfter($event);
@@ -107,22 +100,22 @@ class ProductDatagridUpcomingLabelListenerTest extends \PHPUnit\Framework\TestCa
 
     public function testOnResultAfterNoRecords()
     {
-        /** @var DatagridInterface|\PHPUnit\Framework\MockObject\MockObject $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
 
         $productRepository = $this->createMock(ProductRepository::class);
-        $productRepository->expects($this->once())->method('findBy')
+        $productRepository->expects($this->once())
+            ->method('findBy')
             ->willReturn([]);
 
-        $this->doctrineHelper->expects($this->once())->method('getEntityRepositoryForClass')
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityRepositoryForClass')
             ->willReturn($productRepository);
 
-        $this->productUpcomingProvider->expects($this->never())->method('isUpcoming');
+        $this->productUpcomingProvider->expects($this->never())
+            ->method('isUpcoming');
 
-        /** @var SearchQueryInterface $query */
         $query = $this->createMock(SearchQueryInterface::class);
 
-        /** @var SearchResultAfter|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = new SearchResultAfter($datagrid, $query, []);
 
         $this->listener->onResultAfter($event);
@@ -130,7 +123,6 @@ class ProductDatagridUpcomingLabelListenerTest extends \PHPUnit\Framework\TestCa
 
     public function testOnResultAfter()
     {
-        /** @var DatagridInterface|\PHPUnit\Framework\MockObject\MockObject $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
 
         $product1 = $this->getProductEntity(777);
@@ -142,28 +134,26 @@ class ProductDatagridUpcomingLabelListenerTest extends \PHPUnit\Framework\TestCa
         $record3 = new ResultRecord(['id' => $product3->getId()]);
 
         $productRepository = $this->createMock(ProductRepository::class);
-        $productRepository->expects($this->once())->method('findBy')
-            ->willReturn([$product1, $product2, $product3,]);
+        $productRepository->expects($this->once())
+            ->method('findBy')
+            ->willReturn([$product1, $product2, $product3]);
 
-        $this->doctrineHelper->expects($this->once())->method('getEntityRepositoryForClass')
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityRepositoryForClass')
             ->willReturn($productRepository);
 
-        $this->productUpcomingProvider->expects($this->at(0))->method('isUpcoming')
-            ->willReturn(true);
-        $this->productUpcomingProvider->expects($this->at(1))->method('isUpcoming')
-            ->willReturn(false);
-        $this->productUpcomingProvider->expects($this->at(2))->method('isUpcoming')
-            ->willReturn(false);
+        $this->productUpcomingProvider->expects($this->exactly(3))
+            ->method('isUpcoming')
+            ->willReturnOnConsecutiveCalls(true, false, false);
 
         $today = new \DateTime('now', new \DateTimeZone('UTC'));
 
-        $this->productUpcomingProvider->expects($this->exactly(1))->method('getAvailabilityDate')
+        $this->productUpcomingProvider->expects($this->once())
+            ->method('getAvailabilityDate')
             ->willReturn($today);
 
-        /** @var SearchQueryInterface $query */
         $query = $this->createMock(SearchQueryInterface::class);
 
-        /** @var SearchResultAfter|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = new SearchResultAfter(
             $datagrid,
             $query,
@@ -182,15 +172,10 @@ class ProductDatagridUpcomingLabelListenerTest extends \PHPUnit\Framework\TestCa
         $this->assertEquals(false, $record3->getValue('is_upcoming'));
     }
 
-    /**
-     * @param $id
-     *
-     * @return ProductStub
-     */
-    protected function getProductEntity($id, $withPrimaryUnitPrecision = true)
+    private function getProductEntity(int $id): Product
     {
-        $product = new ProductStub();
-        $product->setId($id);
+        $product = new Product();
+        ReflectionUtil::setId($product, $id);
 
         return $product;
     }

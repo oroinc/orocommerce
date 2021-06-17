@@ -101,15 +101,15 @@ define(function(require) {
             this.$addItemButton = this.$el.find(this.options.addItemButton);
             this.loadingMask = new LoadingMaskView({container: this.$el});
 
-            this.$el.on('content:changed', _.bind(this.onContentChanged, this));
+            this.$el.on('content:changed', this.onContentChanged.bind(this));
 
             this.initModel(options);
             this.initializeElements(options);
             this.model.set('product_units', this.options.units[this.model.get('productId')] || []);
 
-            this.$el.on('options:set:lineItemModel', _.bind(function(e, options) {
+            this.$el.on('options:set:lineItemModel', (e, options) => {
                 options.lineItemModel = this.model;
-            }, this));
+            });
 
             this.initializeSubviews({
                 lineItemModel: this.model

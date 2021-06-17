@@ -62,7 +62,7 @@ define(function(require) {
 
             this.$el.on(
                 this.options.redirectEvent,
-                _.debounce(_.bind(this.redirectToHomepage, this), this.options.delay)
+                _.debounce(this.redirectToHomepage.bind(this), this.options.delay)
             );
 
             this.$el.find(this.options.selectors.radio).filter(':selected').trigger('change');

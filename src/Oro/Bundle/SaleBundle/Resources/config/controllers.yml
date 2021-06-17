@@ -7,3 +7,21 @@ services:
             - [setContainer, ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: 'container.service_subscriber' }
+
+    Oro\Bundle\SaleBundle\Controller\Frontend\AjaxQuoteProductController:
+        calls:
+            - [ setContainer, [ '@Psr\Container\ContainerInterface' ] ]
+        tags:
+            - { name: 'container.service_subscriber' }
+
+    Oro\Bundle\SaleBundle\Controller\QuoteController:
+        calls:
+            - [setContainer, ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: 'container.service_subscriber' }
+
+    Oro\Bundle\SaleBundle\Controller\AjaxQuoteController:
+        calls:
+            - [setContainer, ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: 'container.service_subscriber' }

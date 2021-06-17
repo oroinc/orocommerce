@@ -18,20 +18,14 @@ class DefaultVariantScopesResolverTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $registry;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $registry;
 
-    /**
-     * @var ScopeManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $scopeManager;
+    /** @var ScopeManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $scopeManager;
 
-    /**
-     * @var DefaultVariantScopesResolver
-     */
-    protected $defaultVariantScopesResolver;
+    /** @var DefaultVariantScopesResolver */
+    private $defaultVariantScopesResolver;
 
     protected function setUp(): void
     {
@@ -79,25 +73,15 @@ class DefaultVariantScopesResolverTest extends \PHPUnit\Framework\TestCase
 
         $this->scopeManager->expects($this->any())
             ->method('findOrCreate')
-            ->with(
-                'web_content',
-                [ScopeWebCatalogProvider::WEB_CATALOG => $webCatalog]
-            )
+            ->with('web_content', [ScopeWebCatalogProvider::WEB_CATALOG => $webCatalog])
             ->willReturn($defaultScope);
 
-        $repository = $this->getMockBuilder(ContentNodeRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $repository = $this->createMock(ContentNodeRepository::class);
 
-        $repository->expects($this->at(0))
+        $repository->expects($this->exactly(2))
             ->method('getDirectNodesWithParentScopeUsed')
-            ->with($contentNode)
-            ->willReturn([$childNode]);
-
-        $repository->expects($this->at(1))
-            ->method('getDirectNodesWithParentScopeUsed')
-            ->with($childNode)
-            ->willReturn([]);
+            ->withConsecutive([$contentNode], [$childNode])
+            ->willReturnOnConsecutiveCalls([$childNode], []);
 
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->once())

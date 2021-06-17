@@ -12,17 +12,14 @@ use Oro\Bundle\VisibilityBundle\EventListener\ChangeVisibilityDemoDataFixturesLi
 class ChangeVisibilityDemoDataFixturesListenerTest extends DemoDataFixturesListenerTestCase
 {
     /** @var CustomerPartialUpdateDriverInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $partialUpdateDriver;
+    private $partialUpdateDriver;
 
     /** @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject */
-    protected $objectManager;
+    private $objectManager;
 
     /** @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject */
-    protected $entityRepository;
+    private $entityRepository;
 
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
         $this->partialUpdateDriver = $this->createMock(CustomerPartialUpdateDriverInterface::class);
@@ -32,9 +29,6 @@ class ChangeVisibilityDemoDataFixturesListenerTest extends DemoDataFixturesListe
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     protected function getListener()
     {
         return new ChangeVisibilityDemoDataFixturesListener(
@@ -100,13 +94,9 @@ class ChangeVisibilityDemoDataFixturesListenerTest extends DemoDataFixturesListe
             ->method('findAll')
             ->willReturn([$customer1, $customer2]);
 
-        $this->partialUpdateDriver->expects($this->at(0))
+        $this->partialUpdateDriver->expects($this->exactly(2))
             ->method('updateCustomerVisibility')
-            ->with($customer1);
-
-        $this->partialUpdateDriver->expects($this->at(1))
-            ->method('updateCustomerVisibility')
-            ->with($customer2);
+            ->withConsecutive([$customer1], [$customer2]);
 
         $this->listener->onPostLoad($this->event);
     }

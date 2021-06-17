@@ -2,9 +2,11 @@
 
 namespace Oro\Bundle\SaleBundle\Controller\Frontend;
 
+use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use Oro\Bundle\SaleBundle\Model\QuoteProductOfferMatcher;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -39,7 +41,7 @@ class AjaxQuoteProductController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        $matcher = $this->get('oro_sale.service.quote_product_offer_matcher');
+        $matcher = $this->get(QuoteProductOfferMatcher::class);
         $offer = $matcher->match($quoteProduct, $request->get('unit'), $request->get('qty'));
 
         return new JsonResponse($this->createResponseData($offer));
@@ -61,7 +63,7 @@ class AjaxQuoteProductController extends AbstractController
             return [];
         }
 
-        $formatter = $this->get('oro_locale.formatter.number');
+        $formatter = $this->get(NumberFormatter::class);
 
         return [
             'id' => $offer->getId(),
@@ -69,5 +71,19 @@ class AjaxQuoteProductController extends AbstractController
             'qty' => $offer->getQuantity(),
             'price' => $formatter->formatCurrency($price->getValue(), $price->getCurrency()),
         ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                QuoteProductOfferMatcher::class,
+                NumberFormatter::class,
+            ]
+        );
     }
 }
