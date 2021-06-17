@@ -15,149 +15,125 @@ use Oro\Component\Expression\Node\BinaryNode;
 use Oro\Component\Expression\Node\NameNode;
 use Oro\Component\Expression\Node\RelationNode;
 use Oro\Component\Expression\Node\ValueNode;
-use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
+use Oro\Component\Testing\ReflectionUtil;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-
-class LexemeCircularReferenceValidatorTest extends \PHPUnit\Framework\TestCase
+class LexemeCircularReferenceValidatorTest extends ConstraintValidatorTestCase
 {
-    use EntityTrait;
+    /** @var ExpressionParser|\PHPUnit\Framework\MockObject\MockObject */
+    private $parser;
 
-    /**
-     * @var LexemeCircularReferenceValidator|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $validator;
-
-    /**
-     * @var ExpressionParser|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $parser;
-
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $doctrine;
-
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ExecutionContextInterface
-     */
-    protected $context;
-
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $entityRepository;
-
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $entityManager;
+    /** @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject */
+    private $entityRepository;
 
     protected function setUp(): void
     {
-        $this->context = $this->createMock(ExecutionContextInterface::class);
-        $this->parser = $this->getMockBuilder(ExpressionParser::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->parser = $this->createMock(ExpressionParser::class);
+        $this->entityRepository = $this->createMock(EntityRepository::class);
 
-        $this->doctrine = $this->getMockBuilder(ManagerRegistry::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        parent::setUp();
+    }
 
-        $this->entityRepository = $this->getMockBuilder(EntityRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->entityManager = $this->getMockBuilder(ObjectManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->entityManager->expects($this->any())
+    protected function createValidator()
+    {
+        $entityManager = $this->createMock(ObjectManager::class);
+        $entityManager->expects($this->any())
             ->method('getRepository')
             ->withAnyParameters()
             ->willReturn($this->entityRepository);
 
-        $this->doctrine->expects($this->any())
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects($this->any())
             ->method('getManagerForClass')
             ->withAnyParameters()
-            ->willReturn($this->entityManager);
+            ->willReturn($entityManager);
 
-        $this->validator = new LexemeCircularReferenceValidator($this->parser, $this->doctrine);
-        $this->validator->initialize($this->context);
+        return new LexemeCircularReferenceValidator($this->parser, $doctrine);
+    }
+
+    private function getPriceList(int $id, string $productAssignmentRule = null): PriceList
+    {
+        $priceList = new PriceList();
+        ReflectionUtil::setId($priceList, $id);
+        if (null !== $productAssignmentRule) {
+            $priceList->setProductAssignmentRule($productAssignmentRule);
+        }
+
+        return $priceList;
+    }
+
+    private function getPriceRule(
+        int $id,
+        PriceList $priceList = null,
+        string $rule = null,
+        string $ruleCondition = null
+    ): PriceRule {
+        $priceRule = new PriceRule();
+        ReflectionUtil::setId($priceRule, $id);
+        if (null !== $priceList) {
+            $priceRule->setPriceList($priceList);
+        }
+        if (null !== $rule) {
+            $priceRule->setRule($rule);
+        }
+        if (null !== $ruleCondition) {
+            $priceRule->setRuleCondition($ruleCondition);
+        }
+
+        return $priceRule;
     }
 
     public function testValidateSuccess()
     {
-        $priceList1 = $this->getEntity(
-            PriceList::class,
-            ['id' => 1, 'productAssignmentRule' => 'priceList[2].productAssignmentRule']
-        );
-        $priceList2 = $this->getEntity(
-            PriceList::class,
-            ['id' => 2, 'productAssignmentRule' => 'priceList[3].productAssignmentRule']
-        );
-        $priceList3 = $this->getEntity(
-            PriceList::class,
-            ['id' => 3, 'productAssignmentRule' => null]
-        );
+        $priceList1 = $this->getPriceList(1, 'priceList[2].productAssignmentRule');
+        $priceList2 = $this->getPriceList(2, 'priceList[3].productAssignmentRule');
+        $priceList3 = $this->getPriceList(3);
 
         $this->parser->expects($this->exactly(2))
             ->method('parse')
             ->withConsecutive(
-                [$this->equalTo($priceList1->getProductAssignmentRule())],
-                [$this->equalTo($priceList2->getProductAssignmentRule())]
+                [$priceList1->getProductAssignmentRule()],
+                [$priceList2->getProductAssignmentRule()]
             )
             ->willReturnOnConsecutiveCalls(
                 new NameNode(PriceList::class, 'productAssignmentRule', 2),
                 new NameNode(PriceList::class, 'productAssignmentRule', 3)
             );
 
-        $this->prepareEntityRepository($priceList2, $priceList3);
-
+        $this->entityRepository->expects($this->exactly(2))
+            ->method('find')
+            ->withConsecutive([2], [3])
+            ->willReturnOnConsecutiveCalls($priceList2, $priceList3);
         $this->entityRepository->expects($this->exactly(2))
             ->method('findBy')
-            ->withConsecutive(
-                [['priceList' => 2]],
-                [['priceList' => 3]]
-            )
-            ->willReturnOnConsecutiveCalls(
-                [],
-                []
-            );
+            ->withConsecutive([['priceList' => 2]], [['priceList' => 3]])
+            ->willReturnOnConsecutiveCalls([], []);
 
         $constraint = new LexemeCircularReference();
         $constraint->fields = ['productAssignmentRule'];
-        $this->context->expects($this->never())->method('buildViolation');
         $this->validator->validate($priceList1, $constraint);
+
+        $this->assertNoViolation();
     }
 
     public function testValidateBinarySuccess()
     {
-        $priceList1 = $this->getEntity(
-            PriceList::class,
-            [
-                'id' => 1,
-                'productAssignmentRule' => 'priceList[2].productAssignmentRule and priceList[3].productAssignmentRule'
-            ]
+        $priceList1 = $this->getPriceList(
+            1,
+            'priceList[2].productAssignmentRule and priceList[3].productAssignmentRule'
         );
-        $priceList2 = $this->getEntity(
-            PriceList::class,
-            ['id' => 2, 'productAssignmentRule' => 'priceList[3].productAssignmentRule']
-        );
-        $priceList3 = $this->getEntity(
-            PriceList::class,
-            ['id' => 3, 'productAssignmentRule' => null]
-        );
+        $priceList2 = $this->getPriceList(2, 'priceList[3].productAssignmentRule');
+        $priceList3 = $this->getPriceList(3);
 
         $this->parser->expects($this->exactly(2))
             ->method('parse')
             ->withConsecutive(
-                [$this->equalTo($priceList1->getProductAssignmentRule())],
-                [$this->equalTo($priceList2->getProductAssignmentRule())]
+                [$priceList1->getProductAssignmentRule()],
+                [$priceList2->getProductAssignmentRule()]
             )
             ->willReturnOnConsecutiveCalls(
                 new BinaryNode(
@@ -170,58 +146,33 @@ class LexemeCircularReferenceValidatorTest extends \PHPUnit\Framework\TestCase
 
         $this->entityRepository->expects($this->exactly(3))
             ->method('find')
-            ->withConsecutive(
-                [$this->equalTo(2)],
-                [$this->equalTo(3)],
-                [$this->equalTo(3)]
-            )
-            ->willReturnOnConsecutiveCalls(
-                $priceList2,
-                $priceList3,
-                $priceList3
-            );
+            ->withConsecutive([2], [3], [3])
+            ->willReturnOnConsecutiveCalls($priceList2, $priceList3, $priceList3);
 
         $this->entityRepository->expects($this->exactly(3))
             ->method('findBy')
-            ->withConsecutive(
-                [['priceList' => 2]],
-                [['priceList' => 3]],
-                [['priceList' => 3]]
-            )
-            ->willReturnOnConsecutiveCalls(
-                [],
-                [],
-                []
-            );
+            ->withConsecutive([['priceList' => 2]], [['priceList' => 3]], [['priceList' => 3]])
+            ->willReturnOnConsecutiveCalls([], [], []);
 
         $constraint = new LexemeCircularReference();
         $constraint->fields = ['productAssignmentRule'];
-        $this->context->expects($this->never())->method('buildViolation');
         $this->validator->validate($priceList1, $constraint);
+
+        $this->assertNoViolation();
     }
 
     public function testValidateWithPriceRuleSuccess()
     {
-        $priceList1 = $this->getEntity(
-            PriceList::class,
-            ['id' => 1, 'productAssignmentRule' => 'priceList[2].productAssignmentRule']
-        );
-        $priceList2 = $this->getEntity(PriceList::class, ['id' => 2]);
-        $priceList3 = $this->getEntity(PriceList::class, ['id' => 3]);
+        $priceList1 = $this->getPriceList(1, 'priceList[2].productAssignmentRule');
+        $priceList2 = $this->getPriceList(2);
+        $priceList3 = $this->getPriceList(3);
 
-        /** @var PriceRule $priceRule1 */
-        $priceRule1 = $this->getEntity(
-            PriceRule::class,
-            ['id' => 1, 'priceList' => $priceList2, 'rule' => 'pricelist[3].productAssignmentRule']
-        );
-        /** @var PriceRule $priceRule2 */
-        $priceRule2 = $this->getEntity(
-            PriceRule::class,
-            [
-                'id' => 2,
-                'priceList' => $priceList2,
-                'ruleCondition' => 'product.id in pricelist[3].assignedProducts or pricelist[3].prices.quantity > 10'
-            ]
+        $priceRule1 = $this->getPriceRule(1, $priceList2, 'pricelist[3].productAssignmentRule');
+        $priceRule2 = $this->getPriceRule(
+            2,
+            $priceList2,
+            null,
+            'product.id in pricelist[3].assignedProducts or pricelist[3].prices.quantity > 10'
         );
 
         $this->parser->expects($this->exactly(3))
@@ -249,61 +200,42 @@ class LexemeCircularReferenceValidatorTest extends \PHPUnit\Framework\TestCase
                 )
             );
 
-        $this->prepareEntityRepository($priceList2, $priceList3);
-
+        $this->entityRepository->expects($this->exactly(2))
+            ->method('find')
+            ->withConsecutive([2], [3])
+            ->willReturnOnConsecutiveCalls($priceList2, $priceList3);
         $this->entityRepository->expects($this->exactly(2))
             ->method('findBy')
-            ->withConsecutive(
-                [['priceList' => 2]],
-                [['priceList' => 3]]
-            )
-            ->willReturnOnConsecutiveCalls(
-                [$priceRule1, $priceRule2],
-                [],
-                [],
-                []
-            );
+            ->withConsecutive([['priceList' => 2]], [['priceList' => 3]])
+            ->willReturnOnConsecutiveCalls([$priceRule1, $priceRule2], []);
 
         $constraint = new LexemeCircularReference();
         $constraint->fields = ['productAssignmentRule'];
-        $this->context->expects($this->never())->method('buildViolation');
         $this->validator->validate($priceList1, $constraint);
+
+        $this->assertNoViolation();
     }
 
     public function testValidatePriceRuleSuccess()
     {
-        $priceList1 = $this->getEntity(
-            PriceList::class,
-            ['id' => 1, 'productAssignmentRule' => 'pricelist[3].productAssignmentRule']
-        );
-        $priceList2 = $this->getEntity(PriceList::class, ['id' => 2]);
-        $priceList3 = $this->getEntity(PriceList::class, ['id' => 3]);
+        $priceList1 = $this->getPriceList(1, 'pricelist[3].productAssignmentRule');
+        $priceList2 = $this->getPriceList(2);
+        $priceList3 = $this->getPriceList(3);
 
-        $priceRule1 = $this->getEntity(
-            PriceRule::class,
-            ['id' => 1, 'priceList' => $priceList1, 'rule' => 'pricelist[2].productAssignmentRule']
+        $priceRule1 = $this->getPriceRule(1, $priceList1, 'pricelist[2].productAssignmentRule');
+        $priceRule2 = $this->getPriceRule(
+            2,
+            $priceList2,
+            null,
+            'product.id in pricelist[3].assignedProducts or pricelist[3].prices.quantity > 10'
         );
-        $priceRule2 = $this->getEntity(
-            PriceRule::class,
-            [
-                'id' => 2,
-                'priceList' => $priceList2,
-                'ruleCondition' => 'product.id in pricelist[3].assignedProducts or pricelist[3].prices.quantity > 10'
-            ]
-        );
-        $priceRule3 = $this->getEntity(
-            PriceRule::class,
-            [
-                'id' => 3,
-                'priceList' => $priceList3,
-            ]
-        );
+        $priceRule3 = $this->getPriceRule(3, $priceList3);
 
         $this->parser->expects($this->exactly(2))
             ->method('parse')
             ->withConsecutive(
-                [$this->equalTo($priceRule1->getRule())],
-                [$this->equalTo($priceRule2->getRuleCondition())]
+                [$priceRule1->getRule()],
+                [$priceRule2->getRuleCondition()]
             )
             ->willReturnOnConsecutiveCalls(
                 new NameNode(PriceList::class, 'productAssignmentRule', 2),
@@ -322,46 +254,34 @@ class LexemeCircularReferenceValidatorTest extends \PHPUnit\Framework\TestCase
                 )
             );
 
-        $this->prepareEntityRepository($priceList2, $priceList3);
-
+        $this->entityRepository->expects($this->exactly(2))
+            ->method('find')
+            ->withConsecutive([2], [3])
+            ->willReturnOnConsecutiveCalls($priceList2, $priceList3);
         $this->entityRepository->expects($this->exactly(2))
             ->method('findBy')
-            ->withConsecutive(
-                [['priceList' => 2]],
-                [['priceList' => 3]]
-            )
-            ->willReturnOnConsecutiveCalls(
-                [$priceRule2],
-                [$priceRule3]
-            );
+            ->withConsecutive([['priceList' => 2]], [['priceList' => 3]])
+            ->willReturnOnConsecutiveCalls([$priceRule2], [$priceRule3]);
 
         $constraint = new LexemeCircularReference();
         $constraint->fields = ['rule'];
-        $this->context->expects($this->never())->method('buildViolation');
         $this->validator->validate($priceRule1, $constraint);
+
+        $this->assertNoViolation();
     }
 
     public function testValidateFailed()
     {
-        $priceList1 = $this->getEntity(
-            PriceList::class,
-            ['id' => 1, 'productAssignmentRule' => 'priceList[2].productAssignmentRule']
-        );
-        $priceList2 = $this->getEntity(
-            PriceList::class,
-            ['id' => 2, 'productAssignmentRule' => 'priceList[3].productAssignmentRule']
-        );
-        $priceList3 = $this->getEntity(
-            PriceList::class,
-            ['id' => 3, 'productAssignmentRule' => 'priceList[1].productAssignmentRule']
-        );
+        $priceList1 = $this->getPriceList(1, 'priceList[2].productAssignmentRule');
+        $priceList2 = $this->getPriceList(2, 'priceList[3].productAssignmentRule');
+        $priceList3 = $this->getPriceList(3, 'priceList[1].productAssignmentRule');
 
         $this->parser->expects($this->exactly(3))
             ->method('parse')
             ->withConsecutive(
-                [$this->equalTo($priceList1->getProductAssignmentRule())],
-                [$this->equalTo($priceList2->getProductAssignmentRule())],
-                [$this->equalTo($priceList3->getProductAssignmentRule())]
+                [$priceList1->getProductAssignmentRule()],
+                [$priceList2->getProductAssignmentRule()],
+                [$priceList3->getProductAssignmentRule()]
             )
             ->willReturnOnConsecutiveCalls(
                 new NameNode(PriceList::class, 'productAssignmentRule', 2),
@@ -369,37 +289,39 @@ class LexemeCircularReferenceValidatorTest extends \PHPUnit\Framework\TestCase
                 new NameNode(PriceList::class, 'productAssignmentRule', 1)
             );
 
-        $this->prepareEntityRepository($priceList2, $priceList3);
+        $this->entityRepository->expects($this->exactly(2))
+            ->method('find')
+            ->withConsecutive([2], [3])
+            ->willReturnOnConsecutiveCalls($priceList2, $priceList3);
+        $this->entityRepository->expects($this->exactly(2))
+            ->method('findBy')
+            ->withConsecutive([['priceList' => 2]], [['priceList' => 3]])
+            ->willReturnOnConsecutiveCalls([], []);
 
-        $constraint = $this->getReferencePreparedToFail();
-
+        $constraint = new LexemeCircularReference();
+        $constraint->fields = ['productAssignmentRule'];
         $this->validator->validate($priceList1, $constraint);
+
+        $this->buildViolation($constraint->message)
+            ->atPath('property.path.productAssignmentRule')
+            ->assertRaised();
     }
 
     public function testValidateBinaryFailed()
     {
-        $priceList1 = $this->getEntity(
-            PriceList::class,
-            [
-                'id' => 1,
-                'productAssignmentRule' => 'priceList[2].productAssignmentRule and priceList[3].productAssignmentRule'
-            ]
+        $priceList1 = $this->getPriceList(
+            1,
+            'priceList[2].productAssignmentRule and priceList[3].productAssignmentRule'
         );
-        $priceList2 = $this->getEntity(
-            PriceList::class,
-            ['id' => 2, 'productAssignmentRule' => 'priceList[3].productAssignmentRule']
-        );
-        $priceList3 = $this->getEntity(
-            PriceList::class,
-            ['id' => 3, 'productAssignmentRule' => 'priceList[1].productAssignmentRule']
-        );
+        $priceList2 = $this->getPriceList(2, 'priceList[3].productAssignmentRule');
+        $priceList3 = $this->getPriceList(3, 'priceList[1].productAssignmentRule');
 
         $this->parser->expects($this->exactly(3))
             ->method('parse')
             ->withConsecutive(
-                [$this->equalTo($priceList1->getProductAssignmentRule())],
-                [$this->equalTo($priceList2->getProductAssignmentRule())],
-                [$this->equalTo($priceList3->getProductAssignmentRule())]
+                [$priceList1->getProductAssignmentRule()],
+                [$priceList2->getProductAssignmentRule()],
+                [$priceList3->getProductAssignmentRule()]
             )
             ->willReturnOnConsecutiveCalls(
                 new BinaryNode(
@@ -411,19 +333,29 @@ class LexemeCircularReferenceValidatorTest extends \PHPUnit\Framework\TestCase
                 new NameNode(PriceList::class, 'productAssignmentRule', 1)
             );
 
-        $this->prepareEntityRepository($priceList2, $priceList3);
+        $this->entityRepository->expects($this->exactly(2))
+            ->method('find')
+            ->withConsecutive([2], [3])
+            ->willReturnOnConsecutiveCalls($priceList2, $priceList3);
+        $this->entityRepository->expects($this->exactly(2))
+            ->method('findBy')
+            ->withConsecutive([['priceList' => 2]], [['priceList' => 3]])
+            ->willReturnOnConsecutiveCalls([], []);
 
-        $constraint = $this->getReferencePreparedToFail();
-
+        $constraint = new LexemeCircularReference();
+        $constraint->fields = ['productAssignmentRule'];
         $this->validator->validate($priceList1, $constraint);
+
+        $this->buildViolation($constraint->message)
+            ->atPath('property.path.productAssignmentRule')
+            ->assertRaised();
     }
 
     public function testValidatePriceRuleWithoutPriceListFailed()
     {
-        $priceRule = $this->getEntity(PriceRule::class);
+        $priceRule = new PriceRule();
 
-        $this->parser
-            ->expects(static::never())
+        $this->parser->expects(self::never())
             ->method('parse');
 
         $constraint = new LexemeCircularReference();
@@ -434,40 +366,25 @@ class LexemeCircularReferenceValidatorTest extends \PHPUnit\Framework\TestCase
 
     public function testValidatePriceRuleFailed()
     {
-        $priceList1 = $this->getEntity(
-            PriceList::class,
-            ['id' => 1, 'productAssignmentRule' => 'pricelist[3].productAssignmentRule']
-        );
-        $priceList2 = $this->getEntity(PriceList::class, ['id' => 2]);
-        $priceList3 = $this->getEntity(PriceList::class, ['id' => 3]);
+        $priceList1 = $this->getPriceList(1, 'pricelist[3].productAssignmentRule');
+        $priceList2 = $this->getPriceList(2);
+        $priceList3 = $this->getPriceList(3);
 
-        $priceRule1 = $this->getEntity(
-            PriceRule::class,
-            ['id' => 1, 'priceList' => $priceList1, 'rule' => 'pricelist[2].productAssignmentRule']
+        $priceRule1 = $this->getPriceRule(1, $priceList1, 'pricelist[2].productAssignmentRule');
+        $priceRule2 = $this->getPriceRule(
+            2,
+            $priceList2,
+            null,
+            'product.id in pricelist[3].assignedProducts or pricelist[3].prices.quantity > 10'
         );
-        $priceRule2 = $this->getEntity(
-            PriceRule::class,
-            [
-                'id' => 2,
-                'priceList' => $priceList2,
-                'ruleCondition' => 'product.id in pricelist[3].assignedProducts or pricelist[3].prices.quantity > 10'
-            ]
-        );
-        $priceRule3 = $this->getEntity(
-            PriceRule::class,
-            [
-                'id' => 3,
-                'priceList' => $priceList3,
-                'rule' => 'pricelist[1].productAssignmentRule'
-            ]
-        );
+        $priceRule3 = $this->getPriceRule(3, $priceList3, 'pricelist[1].productAssignmentRule');
 
         $this->parser->expects($this->exactly(3))
             ->method('parse')
             ->withConsecutive(
-                [$this->equalTo($priceRule1->getRule())],
-                [$this->equalTo($priceRule2->getRuleCondition())],
-                [$this->equalTo($priceRule3->getRule())]
+                [$priceRule1->getRule()],
+                [$priceRule2->getRuleCondition()],
+                [$priceRule3->getRule()]
             )
             ->willReturnOnConsecutiveCalls(
                 new NameNode(PriceList::class, 'productAssignmentRule', 2),
@@ -487,78 +404,21 @@ class LexemeCircularReferenceValidatorTest extends \PHPUnit\Framework\TestCase
                 new NameNode(PriceList::class, 'productAssignmentRule', 1)
             );
 
-        $this->prepareEntityRepository($priceList2, $priceList3);
-
+        $this->entityRepository->expects($this->exactly(2))
+            ->method('find')
+            ->withConsecutive([2], [3])
+            ->willReturnOnConsecutiveCalls($priceList2, $priceList3);
         $this->entityRepository->expects($this->exactly(2))
             ->method('findBy')
-            ->withConsecutive(
-                [['priceList' => 2]],
-                [['priceList' => 3]]
-            )
-            ->willReturnOnConsecutiveCalls(
-                [$priceRule2],
-                [$priceRule3]
-            );
+            ->withConsecutive([['priceList' => 2]], [['priceList' => 3]])
+            ->willReturnOnConsecutiveCalls([$priceRule2], [$priceRule3]);
 
         $constraint = new LexemeCircularReference();
         $constraint->fields = ['rule'];
-        $builder = $this->createMock(ConstraintViolationBuilderInterface::class);
-        $builder->expects($this->at(0))->method('atPath')->with('rule')->willReturn($builder);
-        $builder->expects($this->at(1))->method('addViolation');
-        $this->context->expects($this->any())
-            ->method('buildViolation')
-            ->with($constraint->message)
-            ->willReturn($builder);
-
         $this->validator->validate($priceRule1, $constraint);
-    }
 
-    /**
-     * @param PriceList $priceList2
-     * @param PriceList $priceList3
-     */
-    protected function prepareEntityRepository(PriceList $priceList2, PriceList $priceList3)
-    {
-        $this->entityRepository->expects($this->exactly(2))
-            ->method('find')
-            ->withConsecutive(
-                [$this->equalTo(2)],
-                [$this->equalTo(3)]
-            )
-            ->willReturnOnConsecutiveCalls(
-                $priceList2,
-                $priceList3
-            );
-    }
-
-    /**
-     * @return LexemeCircularReference
-     */
-    protected function getReferencePreparedToFail()
-    {
-        $this->entityRepository->expects($this->exactly(2))
-            ->method('findBy')
-            ->withConsecutive(
-                [['priceList' => 2]],
-                [['priceList' => 3]]
-            )
-            ->willReturnOnConsecutiveCalls(
-                [],
-                []
-            );
-
-        $constraint = new LexemeCircularReference();
-        $constraint->fields = ['productAssignmentRule'];
-
-        $builder = $this->createMock(ConstraintViolationBuilderInterface::class);
-        $builder->expects($this->at(0))->method('atPath')->with('productAssignmentRule')->willReturn($builder);
-        $builder->expects($this->at(1))->method('addViolation');
-
-        $this->context->expects($this->once())
-            ->method('buildViolation')
-            ->with($constraint->message)
-            ->willReturn($builder);
-
-        return $constraint;
+        $this->buildViolation($constraint->message)
+            ->atPath('property.path.rule')
+            ->assertRaised();
     }
 }

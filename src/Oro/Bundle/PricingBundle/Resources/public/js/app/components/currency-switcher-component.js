@@ -31,7 +31,7 @@ define(function(require) {
             this.options = _.defaults(options || {}, this.options);
 
             this.options._sourceElement
-                .on('click', this.options.currencyElement, _.bind(this.onCurrencyChange, this));
+                .on('click', this.options.currencyElement, this.onCurrencyChange.bind(this));
         },
 
         onCurrencyChange: function(e) {

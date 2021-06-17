@@ -54,9 +54,9 @@ define(function(require) {
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
-            const requiredMissed = this.requiredOptions.filter(_.bind(function(option) {
+            const requiredMissed = this.requiredOptions.filter(option => {
                 return _.isUndefined(this.options[option]);
-            }, this));
+            });
             if (requiredMissed.length) {
                 throw new TypeError('Missing required option(s): ' + requiredMissed.join(','));
             }

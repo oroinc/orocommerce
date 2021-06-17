@@ -4,6 +4,7 @@ namespace Oro\Bundle\PaymentBundle\Controller\Frontend;
 
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Event\CallbackErrorEvent;
+use Oro\Bundle\PaymentBundle\Event\CallbackHandler;
 use Oro\Bundle\PaymentBundle\Event\CallbackNotifyEvent;
 use Oro\Bundle\PaymentBundle\Event\CallbackReturnEvent;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -12,6 +13,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * Serves callback actions.
+ */
 class CallbackController extends AbstractController
 {
     /**
@@ -31,7 +35,7 @@ class CallbackController extends AbstractController
         $event = new CallbackReturnEvent($request->request->all() + $request->query->all());
         $event->setPaymentTransaction($paymentTransaction);
 
-        return $this->get('oro_payment.event.callback_handler')->handle($event);
+        return $this->get(CallbackHandler::class)->handle($event);
     }
 
     /**
@@ -51,7 +55,7 @@ class CallbackController extends AbstractController
         $event = new CallbackErrorEvent($request->request->all() + $request->query->all());
         $event->setPaymentTransaction($paymentTransaction);
 
-        return $this->get('oro_payment.event.callback_handler')->handle($event);
+        return $this->get(CallbackHandler::class)->handle($event);
     }
 
     /**
@@ -74,6 +78,19 @@ class CallbackController extends AbstractController
         $event = new CallbackNotifyEvent($request->request->all());
         $event->setPaymentTransaction($paymentTransaction);
 
-        return $this->get('oro_payment.event.callback_handler')->handle($event);
+        return $this->get(CallbackHandler::class)->handle($event);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                CallbackHandler::class,
+            ]
+        );
     }
 }

@@ -11,6 +11,8 @@ dynamic-imports:
     orodatagrid:
         - oro/datagrid/action/trigger-event-for-selected-product-ids-mass-action
         - oroproduct/js/app/datagrid/listener/related-product-listener
+    oroform-validate:
+        - oroproduct/js/validator/sku-regex
     oroproduct:
         - oro/product-collection-popup-add-products-widget
         - oro/related-items-widget
@@ -25,5 +27,3 @@ dynamic-imports:
         - oroproduct/js/app/components/product-variant-field-component
         - oroproduct/js/app/components/related-items-tabs-component
         - oroproduct/js/app/views/variant-fields-view
-    oroform-validate:
-        - oroproduct/js/validator/sku-regex

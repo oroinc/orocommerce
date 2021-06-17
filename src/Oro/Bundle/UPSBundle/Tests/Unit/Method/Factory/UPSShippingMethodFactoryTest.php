@@ -19,49 +19,30 @@ use Oro\Bundle\UPSBundle\Provider\UPSTransport;
 
 class UPSShippingMethodFactoryTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var UPSTransport|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var UPSTransport|\PHPUnit\Framework\MockObject\MockObject */
     private $transport;
 
-    /**
-     * @var PriceRequestFactory|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var PriceRequestFactory|\PHPUnit\Framework\MockObject\MockObject */
     private $priceRequestFactory;
 
-    /**
-     * @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $localizationHelper;
 
-    /**
-     * @var ShippingPriceCache|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ShippingPriceCache|\PHPUnit\Framework\MockObject\MockObject */
     private $shippingPriceCache;
 
-    /**
-     * @var IntegrationIdentifierGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var IntegrationIdentifierGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $integrationIdentifierGenerator;
 
-    /**
-     * @var UPSShippingMethodTypeFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var UPSShippingMethodTypeFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $methodTypeFactory;
 
-    /**
-     * @var IntegrationIconProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var IntegrationIconProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $integrationIconProvider;
 
-    /**
-     * @var UPSShippingMethodFactory
-     */
+    /** @var UPSShippingMethodFactory */
     private $factory;
 
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
         $this->transport = $this->createMock(UPSTransport::class);
@@ -89,14 +70,11 @@ class UPSShippingMethodFactoryTest extends \PHPUnit\Framework\TestCase
         $identifier = 'ups_1';
         $labelsCollection = $this->createMock(Collection::class);
 
-        /** @var UPSSettings|\PHPUnit\Framework\MockObject\MockObject $settings */
         $settings = $this->createMock(UPSSettings::class);
-
         $settings->expects($this->once())
             ->method('getLabels')
             ->willReturn($labelsCollection);
 
-        /** @var Channel|\PHPUnit\Framework\MockObject\MockObject $channel */
         $channel = $this->createMock(Channel::class);
         $channel->expects($this->any())
             ->method('getTransport')
@@ -105,8 +83,7 @@ class UPSShippingMethodFactoryTest extends \PHPUnit\Framework\TestCase
             ->method('isEnabled')
             ->willReturn(true);
 
-        $this->integrationIconProvider
-            ->expects(static::once())
+        $this->integrationIconProvider->expects(self::once())
             ->method('getIcon')
             ->with($channel)
             ->willReturn($iconUri);
@@ -117,15 +94,16 @@ class UPSShippingMethodFactoryTest extends \PHPUnit\Framework\TestCase
         $service1 = $this->createMock(ShippingService::class);
         $service2 = $this->createMock(ShippingService::class);
 
-        $this->methodTypeFactory->expects($this->at(0))
+        $this->methodTypeFactory->expects($this->exactly(2))
             ->method('create')
-            ->with($channel, $service1)
-            ->willReturn($type1);
-
-        $this->methodTypeFactory->expects($this->at(1))
-            ->method('create')
-            ->with($channel, $service2)
-            ->willReturn($type2);
+            ->withConsecutive(
+                [$channel, $service1],
+                [$channel, $service2]
+            )
+            ->willReturnOnConsecutiveCalls(
+                $type1,
+                $type2
+            );
 
         $serviceCollection = $this->createMock(Collection::class);
         $serviceCollection->expects($this->once())
@@ -136,8 +114,7 @@ class UPSShippingMethodFactoryTest extends \PHPUnit\Framework\TestCase
             ->method('getApplicableShippingServices')
             ->willReturn($serviceCollection);
 
-        $this->integrationIdentifierGenerator
-            ->expects($this->once())
+        $this->integrationIdentifierGenerator->expects($this->once())
             ->method('generateIdentifier')
             ->with($channel)
             ->willReturn($identifier);

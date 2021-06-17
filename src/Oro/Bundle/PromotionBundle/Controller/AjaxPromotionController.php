@@ -5,11 +5,16 @@ namespace Oro\Bundle\PromotionBundle\Controller;
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
+use Oro\Bundle\PromotionBundle\Mapper\AppliedPromotionMapper;
+use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * Serves promotion actions.
+ */
 class AjaxPromotionController extends AbstractController
 {
     /**
@@ -41,7 +46,7 @@ class AjaxPromotionController extends AbstractController
      */
     public function getPromotionDataByAppliedPromotionAction(AppliedPromotion $appliedPromotion): JsonResponse
     {
-        $mapper = $this->get('oro_promotion.mapper.applied_promotion');
+        $mapper = $this->get(AppliedPromotionMapper::class);
 
         return $this->getPromotionJsonResponse($mapper->mapAppliedPromotionToPromotionData($appliedPromotion));
     }
@@ -56,10 +61,24 @@ class AjaxPromotionController extends AbstractController
             'OroPromotionBundle:Promotion:getPromotionDetails.html.twig',
             [
                 'entity' => $promotionData,
-                'scopeEntities' => $this->get('oro_scope.scope_manager')->getScopeEntities('promotion')
+                'scopeEntities' => $this->get(ScopeManager::class)->getScopeEntities('promotion')
             ]
         );
 
         return new JsonResponse($view);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                AppliedPromotionMapper::class,
+                ScopeManager::class,
+            ]
+        );
     }
 }

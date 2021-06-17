@@ -41,6 +41,10 @@ class OrderRequiredTaxRecalculationSpecification implements SpecificationInterfa
      */
     public function isSatisfiedBy($entity): bool
     {
+        if (!$entity instanceof Order) {
+            return false;
+        }
+
         if (!$entity->getId()) {
             return true;
         }

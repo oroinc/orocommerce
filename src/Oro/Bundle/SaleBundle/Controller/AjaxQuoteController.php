@@ -14,6 +14,7 @@ use Oro\Bundle\SaleBundle\Model\QuoteRequestHandler;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -92,7 +93,7 @@ class AjaxQuoteController extends AbstractController
         $form->submit($submittedData);
 
         $event = new QuoteEvent($form, $form->getData(), $submittedData);
-        $this->get('event_dispatcher')->dispatch($event, QuoteEvent::NAME);
+        $this->get(EventDispatcherInterface::class)->dispatch($event, QuoteEvent::NAME);
 
         return new JsonResponse($event->getData());
     }
@@ -145,7 +146,7 @@ class AjaxQuoteController extends AbstractController
      */
     protected function getPaymentTermProvider()
     {
-        return $this->get('oro_payment_term.provider.payment_term');
+        return $this->get(PaymentTermProvider::class);
     }
 
     /**
@@ -159,8 +160,23 @@ class AjaxQuoteController extends AbstractController
     /**
      * @return QuoteRequestHandler
      */
-    protected function getQuoteRequestHandler()
+    protected function getQuoteRequestHandler(): QuoteRequestHandler
     {
-        return $this->get('oro_sale.service.quote_request_handler');
+        return $this->get(QuoteRequestHandler::class);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                EventDispatcherInterface::class,
+                PaymentTermProvider::class,
+                QuoteRequestHandler::class,
+            ]
+        );
     }
 }

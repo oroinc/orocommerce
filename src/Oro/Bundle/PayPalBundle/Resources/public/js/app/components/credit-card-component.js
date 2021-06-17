@@ -69,11 +69,13 @@ define(function(require) {
          */
         initialize: function(options) {
             this.options = _.extend({}, this.options, options);
-
-            $.validator.loadMethod('oropayment/js/validator/credit-card-number');
-            $.validator.loadMethod('oropayment/js/validator/credit-card-type');
-            $.validator.loadMethod('oropayment/js/validator/credit-card-expiration-date');
-            $.validator.loadMethod('oropayment/js/validator/credit-card-expiration-date-not-blank');
+            $.validator.loadMethod([
+                'oropayment/js/validator/credit-card-number',
+                'oropayment/js/validator/credit-card-type',
+                'oropayment/js/validator/credit-card-expiration-date',
+                'oropayment/js/validator/credit-card-expiration-date-not-blank'
+            ]);
+            $.validator.preloadMethods();
 
             this.$el = this.options._sourceElement;
 

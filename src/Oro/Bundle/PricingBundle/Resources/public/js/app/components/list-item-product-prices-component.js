@@ -1,5 +1,4 @@
 import _ from 'underscore';
-import tools from 'oroui/js/tools';
 import routing from 'routing';
 import BaseComponent from 'oroui/js/app/components/base/component';
 import localeSettings from 'orolocale/js/locale-settings';
@@ -59,11 +58,6 @@ const ListItemProductPricesComponent = BaseComponent.extend({
                 new Error(`Unable to load prices for ${this.productId} product`)))
             .finally(() => {
                 this.viewOptions.el.removeClass('loader-in-process');
-
-                if (tools.isIE11()) {
-                    // Force icon repaint
-                    this.viewOptions.el.find('.fa--loader-icon').css('display');
-                }
             });
     },
 

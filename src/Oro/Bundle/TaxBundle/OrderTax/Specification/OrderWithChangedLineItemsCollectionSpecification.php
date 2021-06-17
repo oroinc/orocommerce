@@ -36,6 +36,10 @@ class OrderWithChangedLineItemsCollectionSpecification implements SpecificationI
      */
     public function isSatisfiedBy($order): bool
     {
+        if (!$order instanceof Order) {
+            return false;
+        }
+
         $originalOrderData = $this->getOriginalEntityData($order);
         /**
          * If entity was not loaded it means no changes was made

@@ -4,6 +4,8 @@ namespace Oro\Bundle\ProductBundle\Controller\Frontend;
 
 use Doctrine\Common\Collections\Criteria;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Provider\ProductImagesURLsProvider;
+use Oro\Bundle\ProductBundle\Search\ProductRepository;
 use Oro\Bundle\SearchBundle\Query\Result;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -37,7 +39,7 @@ class AjaxProductController extends AbstractController
             return new JsonResponse($names);
         }
 
-        $searchQuery = $this->get('oro_product.website_search.repository.product')->getFilterSkuQuery($skus);
+        $searchQuery = $this->get(ProductRepository::class)->getFilterSkuQuery($skus);
 
         // Configurable products require additional option selection is not implemented yet
         // Thus we need to hide configurable products
@@ -70,7 +72,7 @@ class AjaxProductController extends AbstractController
      */
     public function productImagesByIdAction(Request $request, $id)
     {
-        $productImagesURLsProvider = $this->get('oro_product.provider.product_images_urls');
+        $productImagesURLsProvider = $this->get(ProductImagesURLsProvider::class);
         $filtersNames = $this->getFiltersNames($request);
         $images = $productImagesURLsProvider->getFilteredImagesByProductId($id, $filtersNames);
 
@@ -103,5 +105,19 @@ class AjaxProductController extends AbstractController
         }
 
         return $names;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                ProductRepository::class,
+                ProductImagesURLsProvider::class,
+            ]
+        );
     }
 }

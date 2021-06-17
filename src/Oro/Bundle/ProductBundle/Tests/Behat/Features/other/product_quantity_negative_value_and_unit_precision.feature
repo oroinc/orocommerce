@@ -26,7 +26,7 @@ Feature: Product quantity negative value and unit precision
     When I type "123.456789" in "ProductQuantityField"
     Then ProductQuantityField field should has 123.456789 value
     When I type "1-+2+3.g4*567&f8999" in "ProductQuantityField"
-    Then ProductQuantityField field should has 123.45678999 value
+    Then ProductQuantityField field should has 123.456789 value
 
   Scenario: Check precision field in product edit mode
     Given I proceed as the Admin
@@ -37,4 +37,4 @@ Feature: Product quantity negative value and unit precision
     When I type "-432423" in "ProductAdditionalPrecisionField"
     And I click on empty space
     Then I should see "ProductForm" validation errors:
-      | AdditionalPrecision | This value should be 0 or more. |
+      | AdditionalPrecision | This value should be between 0 and 10. |

@@ -6,6 +6,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\ORM\EntityAliasResolver;
 use Oro\Bundle\SearchBundle\Provider\AbstractSearchMappingProvider;
 use Oro\Bundle\SearchBundle\Tests\Functional\SearchExtensionTrait;
+use Oro\Bundle\TestFrameworkBundle\Entity\TestActivity;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestEmployee;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -24,6 +25,7 @@ use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultLocalizationId
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultWebsiteIdTestTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\OptionsResolver\Exception\InvalidArgumentException;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -331,7 +333,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
             $this->getRestrictEntityEventName(),
             function (RestrictIndexEntityEvent $event) use ($restrictedProduct) {
                 $qb = $event->getQueryBuilder();
-                list($rootAlias) = $qb->getRootAliases();
+                [$rootAlias] = $qb->getRootAliases();
                 $qb->where($qb->expr()->neq($rootAlias . '.id', ':id'))
                     ->setParameter('id', $restrictedProduct->getId());
             },
@@ -369,7 +371,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
             $this->getRestrictEntityEventName(),
             function (RestrictIndexEntityEvent $event) use ($restrictedIds) {
                 $qb = $event->getQueryBuilder();
-                list($rootAlias) = $qb->getRootAliases();
+                [$rootAlias] = $qb->getRootAliases();
                 $qb->where($qb->expr()->notIn($rootAlias . '.id', ':id'))
                     ->setParameter('id', $restrictedIds);
             },
@@ -419,17 +421,15 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
 
     public function testWrongMappingException()
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('There is no such entity in mapping config.');
+        $this->expectException(InvalidArgumentException::class);
 
-        $this->setClassSupportedExpectation('stdClass', false);
-        $this->indexer->reindex(\stdClass::class, []);
+        $this->setClassSupportedExpectation(TestActivity::class, false);
+        $this->indexer->reindex(TestActivity::class, []);
     }
 
     public function testSaveForNotSupportedEntity()
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('There is no such entity in mapping config.');
+        $this->expectException(InvalidArgumentException::class);
 
         $this->loadFixtures([LoadOtherWebsite::class, LoadProductsToIndex::class]);
 
@@ -532,7 +532,6 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
     public function testReindexException()
     {
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Entity ids passed into context. Please provide single class of entity');
 
         $this->indexer->reindex(
             ['class1', 'class2'],

@@ -9,11 +9,10 @@ use Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYGValidator;
 use Oro\Bundle\FormBundle\Provider\HtmlTagProvider;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Validator\Context\ExecutionContext;
-use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class WYSIWYGValidatorTest extends \PHPUnit\Framework\TestCase
+class WYSIWYGValidatorTest extends ConstraintValidatorTestCase
 {
     /** @var HtmlTagProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $htmlTagProvider;
@@ -24,29 +23,38 @@ class WYSIWYGValidatorTest extends \PHPUnit\Framework\TestCase
     /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $logger;
 
-    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $translator;
-
-    /** @var WYSIWYGValidator */
-    private $validator;
-
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->htmlTagProvider = $this->createMock(HtmlTagProvider::class);
-        $htmlTagHelper = new HtmlTagHelper($this->htmlTagProvider);
-
-        /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject $translator */
-        $this->translator = $this->createMock(TranslatorInterface::class);
-        $htmlTagHelper->setTranslator($this->translator);
-
         $this->purifierScopeProvider = $this->createMock(HTMLPurifierScopeProvider::class);
-        $translator = $this->createMock(TranslatorInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
 
-        $this->validator = new WYSIWYGValidator(
+        parent::setUp();
+
+        $this->setObject(new Page());
+        $this->setPropertyPath('content');
+    }
+
+    protected function createValidator()
+    {
+        $translator = $this->createMock(TranslatorInterface::class);
+        $translator->expects($this->any())
+            ->method('trans')
+            ->willReturnCallback(function ($id, array $parameters) {
+                if ('oro.htmlpurifier.messages.Strategy_RemoveForeignElements: Foreign element removed' === $id) {
+                    return 'Unrecognized $CurrentToken.Serialized tag removed';
+                }
+                if ('oro.htmlpurifier.formatted_error' === $id) {
+                    return strtr('- {{ message }} (near {{ place }}...)', $parameters);
+                }
+
+                return $id . ' (translated)';
+            });
+
+        $htmlTagHelper = new HtmlTagHelper($this->htmlTagProvider);
+        $htmlTagHelper->setTranslator($translator);
+
+        return new WYSIWYGValidator(
             $htmlTagHelper,
             $this->purifierScopeProvider,
             $translator,
@@ -58,210 +66,119 @@ class WYSIWYGValidatorTest extends \PHPUnit\Framework\TestCase
     {
         $value = '';
 
-        $this->purifierScopeProvider
-            ->expects($this->never())
+        $this->purifierScopeProvider->expects($this->never())
             ->method('getScope');
 
-        /** @var ExecutionContext|\PHPUnit\Framework\MockObject\MockObject $context */
-        $context = $this->createMock(ExecutionContext::class);
-        $context->expects($this->never())
-            ->method('getPropertyName');
-        $context->expects($this->never())
-            ->method('addViolation');
-
         $constraint = new WYSIWYG();
-        $this->validator->initialize($context);
-
         $this->validator->validate($value, $constraint);
+
+        $this->assertNoViolation();
     }
 
     public function testValidateValidValue(): void
     {
         $value = '<div><h1>Hello World!</h1></div>';
 
-        $this->purifierScopeProvider
-            ->expects($this->once())
+        $this->purifierScopeProvider->expects($this->once())
             ->method('getScope')
             ->with(Page::class, 'content')
             ->willReturn('default');
 
-        /** @var ExecutionContext|\PHPUnit\Framework\MockObject\MockObject $context */
-        $context = $this->createMock(ExecutionContext::class);
-        $context->expects($this->never())
-            ->method('addViolation');
-
-        $context->expects($this->once())
-            ->method('getClassName')
-            ->willReturn(Page::class);
-
-        $context->expects($this->once())
-            ->method('getPropertyName')
-            ->willReturn('content');
-
-        $this->logger
-            ->expects($this->never())
-            ->method('debug');
-
-        $this->htmlTagProvider
-            ->expects($this->once())
+        $this->htmlTagProvider->expects($this->once())
             ->method('getAllowedElements')
             ->with('default')
             ->willReturn(['div', 'h1']);
 
-        $constraint = new WYSIWYG();
-        $this->validator->initialize($context);
+        $this->logger->expects($this->never())
+            ->method('debug');
 
+        $constraint = new WYSIWYG();
         $this->validator->validate($value, $constraint);
+
+        $this->assertNoViolation();
     }
 
     public function testValidateInvalidValue(): void
     {
         $value = '<div><h1>Hello World!</h1></div>';
 
-        $this->purifierScopeProvider
-            ->expects($this->once())
+        $this->purifierScopeProvider->expects($this->once())
             ->method('getScope')
             ->with(Page::class, 'content')
             ->willReturn('default');
 
-        $constraint = new WYSIWYG();
-
-        /** @var ExecutionContext|\PHPUnit\Framework\MockObject\MockObject $context */
-        $context = $this->createMock(ExecutionContext::class);
-        $violationBuilder = $this->createMock(ConstraintViolationBuilderInterface::class);
-        $violationBuilder->expects($this->once())
-            ->method('setParameter')
-            ->with('{{ errorsList }}')
-            ->willReturn($violationBuilder);
-        $violationBuilder->expects($this->once())
-            ->method('addViolation');
-
-        $context->expects($this->once())
-            ->method('buildViolation')
-            ->with($constraint->message, [])
-            ->willReturn($violationBuilder);
-
-        $context->expects($this->once())
-            ->method('getClassName')
-            ->willReturn(Page::class);
-
-        $context->expects($this->once())
-            ->method('getPropertyName')
-            ->willReturn('content');
-
-        $this->htmlTagProvider
-            ->expects($this->once())
+        $this->htmlTagProvider->expects($this->once())
             ->method('getAllowedElements')
             ->with('default')
             ->willReturn([]);
 
-        $this->translator->expects($this->at(18))
-            ->method('trans')
-            ->with($this->stringContains('oro.htmlpurifier.messages'))
-            ->willReturn('Unrecognized $CurrentToken.Serialized tag removed');
+        $this->expectsDebugLogs();
 
-        $this->assertValidationErrors();
-
-        $this->validator->initialize($context);
-
+        $constraint = new WYSIWYG();
         $this->validator->validate($value, $constraint);
+
+        $this->assertViolationRaised($constraint, 'content');
     }
 
-    /**
-     * @dataProvider getTestValidateByPropertyPathDataProvider
-     * @param string $propertyPath
-     */
-    public function testValidateByPropertyPath(string $propertyPath): void
+    public function testValidateByPropertyPath(): void
     {
         $value = '<div><h1>Hello World!</h1></div>';
+        $propertyPath = 'data.content';
 
-        $this->purifierScopeProvider
-            ->expects($this->once())
+        $this->purifierScopeProvider->expects($this->once())
             ->method('getScope')
             ->with(Page::class, 'content')
             ->willReturn('default');
 
-        $constraint = new WYSIWYG();
-
-        $violationBuilder = $this->createMock(ConstraintViolationBuilderInterface::class);
-        $violationBuilder->expects($this->once())
-            ->method('setParameter')
-            ->with('{{ errorsList }}')
-            ->willReturn($violationBuilder);
-        $violationBuilder->expects($this->once())
-            ->method('addViolation');
-
-        /** @var ExecutionContext|\PHPUnit\Framework\MockObject\MockObject $context */
-        $context = $this->createMock(ExecutionContext::class);
-        $context->expects($this->once())
-            ->method('buildViolation')
-            ->with($constraint->message, [])
-            ->willReturn($violationBuilder);
-        $context->expects($this->once())
-            ->method('getClassName')
-            ->willReturn(Page::class);
-        $context->expects($this->once())
-            ->method('getPropertyName')
-            ->willReturn(null);
-        $context->expects($this->once())
-            ->method('getPropertyPath')
-            ->willReturn($propertyPath);
-
-        $this->htmlTagProvider
-            ->expects($this->once())
+        $this->htmlTagProvider->expects($this->once())
             ->method('getAllowedElements')
             ->with('default')
             ->willReturn([]);
 
-        $this->translator->expects($this->at(18))
-            ->method('trans')
-            ->with($this->stringContains('oro.htmlpurifier.messages'))
-            ->willReturn('Unrecognized $CurrentToken.Serialized tag removed');
+        $this->expectsDebugLogs();
 
-        $this->assertValidationErrors();
-
-        $this->validator->initialize($context);
-
+        $constraint = new WYSIWYG();
+        $this->setPropertyPath($propertyPath);
         $this->validator->validate($value, $constraint);
+
+        $this->assertViolationRaised($constraint, $propertyPath);
     }
 
-    /**
-     * @return array
-     */
-    public function getTestValidateByPropertyPathDataProvider(): array
+    private function expectsDebugLogs(): void
     {
-        return [
-            'fieldName as propertyPath' => [
-                'propertyPath' => 'content'
-            ],
-            'data propertyPath' => [
-                'propertyPath' => 'data.content'
-            ],
-        ];
-    }
-
-    private function assertValidationErrors(): void
-    {
-        $this->logger
-            ->expects($this->exactly(4))
+        $this->logger->expects($this->exactly(4))
             ->method('debug')
             ->withConsecutive(
-                ['WYSIWYG validation error: Unrecognized <div> tag removed', [
-                    'line' => 1,
-                    'severity' => 1
-                ]],
-                ['WYSIWYG validation error: Unrecognized <h1> tag removed', [
-                    'line' => 1,
-                    'severity' => 1
-                ]],
-                ['WYSIWYG validation error: Unrecognized </h1> tag removed', [
-                    'line' => 1,
-                    'severity' => 1
-                ]],
-                ['WYSIWYG validation error: Unrecognized </div> tag removed', [
-                    'line' => 1,
-                    'severity' => 1
-                ]]
+                [
+                    'WYSIWYG validation error: Unrecognized <div> tag removed',
+                    ['line' => 1, 'severity' => 1]
+                ],
+                [
+                    'WYSIWYG validation error: Unrecognized <h1> tag removed',
+                    ['line' => 1, 'severity' => 1]
+                ],
+                [
+                    'WYSIWYG validation error: Unrecognized </h1> tag removed',
+                    ['line' => 1, 'severity' => 1]
+                ],
+                [
+                    'WYSIWYG validation error: Unrecognized </div> tag removed',
+                    ['line' => 1, 'severity' => 1]
+                ]
             );
+    }
+
+    private function assertViolationRaised(WYSIWYG $constraint, string $propertyPath): void
+    {
+        $this->buildViolation($constraint->message)
+            ->setParameter(
+                '{{ errorsList }}',
+                '- Unrecognized <div> tag removed (near <div><h1>Hello World!</h1...);' . "\n"
+                . '- Unrecognized <h1> tag removed (near <h1>Hello World!</h1></di...);' . "\n"
+                . '- Unrecognized </h1> tag removed (near </h1></div>...);' . "\n"
+                . '- Unrecognized </div> tag removed (near </div>...)'
+            )
+            ->atPath($propertyPath)
+            ->assertRaised();
     }
 }

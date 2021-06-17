@@ -155,6 +155,24 @@ class DisabledDiscountLineItemDecorator implements DiscountLineItemInterface
     /**
      * {@inheritdoc}
      */
+    public function getSubtotalAfterDiscounts(): float
+    {
+        return $this->lineItem->getSubtotalAfterDiscounts();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setSubtotalAfterDiscounts(float $subtotal): self
+    {
+        $this->lineItem->setSubtotalAfterDiscounts($subtotal);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function addDiscount(DiscountInterface $discount)
     {
         $this->lineItem->addDiscount(new DisabledDiscountDecorator($discount));

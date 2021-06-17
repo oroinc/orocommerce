@@ -46,9 +46,9 @@ define(['jquery', 'underscore', 'oroui/js/mediator', 'orolocale/js/formatter/num
             this._formatInitialQuantity();
             this._applyValidationToGrid();
 
-            this.grid.collection.on('sync', _.bind(this._formatInitialQuantity, this));
-            this.grid.collection.on('sync', _.bind(this._applyValidationToGrid, this));
-            this.grid.collection.on('reset', _.bind(this._applyValidationToGrid, this));
+            this.grid.collection.on('sync', this._formatInitialQuantity.bind(this));
+            this.grid.collection.on('sync', this._applyValidationToGrid.bind(this));
+            this.grid.collection.on('reset', this._applyValidationToGrid.bind(this));
         },
 
         /**

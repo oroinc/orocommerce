@@ -3,12 +3,16 @@
 namespace Oro\Bundle\PricingBundle\Controller;
 
 use Oro\Bundle\EntityBundle\Exception\EntityNotFoundException;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Handler\RequestHandler;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * Ajax Entity Totals Controller
+ */
 class AjaxEntityTotalsController extends AbstractController
 {
     /**
@@ -27,7 +31,7 @@ class AjaxEntityTotalsController extends AbstractController
     public function getEntityTotalsAction($entityClassName, $entityId)
     {
         try {
-            $totalRequestHandler = $this->get('oro_pricing.subtotal_processor.handler.request_handler');
+            $totalRequestHandler = $this->get(RequestHandler::class);
             $totals = $totalRequestHandler->recalculateTotals($entityClassName, $entityId);
         } catch (EntityNotFoundException $e) {
             return new JsonResponse('', Response::HTTP_NOT_FOUND);
@@ -55,7 +59,7 @@ class AjaxEntityTotalsController extends AbstractController
     public function recalculateTotalsAction(Request $request, $entityClassName, $entityId)
     {
         try {
-            $totalRequestHandler = $this->get('oro_pricing.subtotal_processor.handler.request_handler');
+            $totalRequestHandler = $this->get(RequestHandler::class);
             $totals = $totalRequestHandler->recalculateTotals($entityClassName, $entityId, $request);
         } catch (EntityNotFoundException $e) {
             return new JsonResponse('', Response::HTTP_NOT_FOUND);
@@ -63,6 +67,19 @@ class AjaxEntityTotalsController extends AbstractController
 
         return new JsonResponse(
             $totals
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                RequestHandler::class,
+            ]
         );
     }
 }

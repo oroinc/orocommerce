@@ -49,7 +49,7 @@ define(function(require) {
             this.options = $.extend(true, {}, this.options, options || {});
             this.initLayout({
                 prices: this.options.tierPrices
-            }).done(_.bind(this.handleLayoutInit, this));
+            }).done(this.handleLayoutInit.bind(this));
 
             mediator.on('totals:update', this.updateValidators, this);
         },

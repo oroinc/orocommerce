@@ -115,6 +115,7 @@ oro.tax:
             origin_address.title: 'Origin'
             shipping.title: 'Shipping'
             shipping_tax.title: 'Shipping Tax'
+            promotions.title: 'Promotions'
         fields:
             tax_provider.label: 'Provider'
             tax_enable.label: 'Enabled'
@@ -150,6 +151,9 @@ oro.tax:
                 region.label: 'Only Country and Region'
                 country_and_zip.label: 'Only Country and Zip'
                 zip.label: 'Country, Region and Zip'
+            calculate_taxes_after_promotions:
+                label: 'Calculate Taxes After Promotions'
+                tooltip: 'If this option is enabled, the taxes will be calculated on the reduced price (subtotal) after discounts are applied. Otherwise the taxes are calculated on the full price (subtotal) before discounts.'
 
     providers:
         built_in.label: Built-In Table Rates

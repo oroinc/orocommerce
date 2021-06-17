@@ -8,6 +8,12 @@ services:
         tags:
             - { name: container.service_subscriber }
 
+    Oro\Bundle\OrderBundle\Controller\AjaxOrderController:
+        calls:
+            - [ 'setContainer', [ '@Psr\Container\ContainerInterface' ] ]
+        tags:
+            - { name: container.service_subscriber }
+
     Oro\Bundle\OrderBundle\Controller\Frontend\OrderController:
         calls:
             - ['setContainer', ['@Psr\Container\ContainerInterface']]

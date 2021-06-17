@@ -32,6 +32,11 @@ class OrderRequiredTaxRecalculationSpecificationTest extends WebTestCase
         $this->specification = new OrderRequiredTaxRecalculationSpecification($uow);
     }
 
+    public function testNotOrderWillNotRequireTaxRecalculation(): void
+    {
+        self::assertFalse($this->specification->isSatisfiedBy(new \stdClass()));
+    }
+
     public function testOrderWithoutChangesWillNotRequireTaxRecalculation()
     {
         $order = $this->getReference(LoadOrders::ORDER_1);

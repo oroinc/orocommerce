@@ -48,7 +48,7 @@ define(function(require) {
 
         appendTaxResult: function(totals) {
             const subtotals = _.extend({subtotals: {}}, totals).subtotals;
-            _.map(_.where(subtotals, {type: 'tax'}), _.bind(this.prepareItem, this));
+            _.map(_.where(subtotals, {type: 'tax'}), this.prepareItem.bind(this));
         },
 
         /**
