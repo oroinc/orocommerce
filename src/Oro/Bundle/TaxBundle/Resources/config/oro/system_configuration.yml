@@ -28,6 +28,8 @@ system_configuration:
             icon: fa-truck
         shipping_tax:
             title: oro.tax.system_configuration.groups.shipping_tax.title
+        promotions:
+            title: oro.tax.system_configuration.groups.promotions.title
 
     fields:
         oro_tax.tax_enable:
@@ -163,6 +165,14 @@ system_configuration:
                 tooltip: oro.tax.system_configuration.fields.shipping_rates_include_tax.tooltip
                 required: false
 
+        oro_tax.calculate_taxes_after_promotions:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            options:
+                required: false
+                label: oro.tax.system_configuration.fields.calculate_taxes_after_promotions.label
+                tooltip: oro.tax.system_configuration.fields.calculate_taxes_after_promotions.tooltip
+
     tree:
         system_configuration:
             commerce:
@@ -198,6 +208,10 @@ system_configuration:
                                         priority: 60
                                         children:
                                             - oro_tax.origin_address
+                                    promotions:
+                                        priority: 50
+                                        children:
+                                            - oro_tax.calculate_taxes_after_promotions
                             us_sales_tax:
                                 priority: 90
                                 children:

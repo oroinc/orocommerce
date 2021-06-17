@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\TaxBundle\Controller;
 
+use Oro\Bundle\FormBundle\Model\UpdateHandler;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
@@ -10,6 +11,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * CRUD for customer tax codes.
@@ -91,7 +93,7 @@ class CustomerTaxCodeController extends AbstractController
      */
     protected function update(CustomerTaxCode $customerTaxCode)
     {
-        return $this->get('oro_form.model.update_handler')->handleUpdate(
+        return $this->get(UpdateHandler::class)->handleUpdate(
             $customerTaxCode,
             $this->createForm(CustomerTaxCodeType::class, $customerTaxCode),
             function (CustomerTaxCode $customerTaxCode) {
@@ -106,7 +108,21 @@ class CustomerTaxCodeController extends AbstractController
                     'parameters' => ['id' => $customerTaxCode->getId()]
                 ];
             },
-            $this->get('translator')->trans('oro.tax.controller.customer_tax_code.saved.message')
+            $this->get(TranslatorInterface::class)->trans('oro.tax.controller.customer_tax_code.saved.message')
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                TranslatorInterface::class,
+                UpdateHandler::class,
+            ]
         );
     }
 }

@@ -9,16 +9,15 @@ use Oro\Bundle\ShippingBundle\Provider\MeasureUnitProvider;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
-use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestCase
 {
-    /** @var MockObject|MeasureUnitProvider */
+    /** @var MeasureUnitProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $provider;
 
-    /** @var UnitLabelFormatterInterface|MockObject */
+    /** @var UnitLabelFormatterInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $formatter;
 
     /** @var AbstractShippingOptionSelectType */
@@ -37,24 +36,17 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
         $this->formatter = $this->createMock(UnitLabelFormatterInterface::class);
     }
 
-    protected function tearDown(): void
-    {
-        unset($this->formType, $this->formatter, $this->provider);
-
-        parent::tearDown();
-    }
-
     public function testGetBlockPrefix()
     {
         $formType = new class() extends AbstractShippingOptionSelectType {
             const NAME = 'testname';
         };
-        static::assertEquals('testname', $formType->getBlockPrefix());
+        self::assertEquals('testname', $formType->getBlockPrefix());
     }
 
     public function testGetParent()
     {
-        static::assertEquals(EntityType::class, $this->formType->getParent());
+        self::assertEquals(EntityType::class, $this->formType->getParent());
     }
 
     public function testSetEntityClass()
@@ -63,7 +55,7 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
 
         // assertions
         $resolver = $this->createMock(OptionsResolver::class);
-        $resolver->expects(static::exactly(2))
+        $resolver->expects(self::exactly(2))
             ->method('setDefaults')
             ->withConsecutive(
                 [
@@ -86,7 +78,9 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
                 ]
             )
             ->willReturnSelf();
-        $resolver->method('setAllowedTypes')->willReturnSelf();
+        $resolver->expects(self::any())
+            ->method('setAllowedTypes')
+            ->willReturnSelf();
 
         $this->formType->configureOptions($resolver);
         $this->formType->setEntityClass($className);
@@ -134,12 +128,18 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
         $this->assertTrue($formConfig->hasOption('choices'));
         $this->assertEquals($units, $formConfig->getOption('choices'));
 
-        foreach ($expectedLabels as $key => $expectedLabel) {
-            $this->formatter->expects($this->at($key))
-                ->method('format')
-                ->with(array_shift($this->units), $formConfig->getOption('compact'), false)
-                ->willReturn($expectedLabel);
+        $formatMap = [];
+        for ($i = 0, $max = count($this->units); $i < $max; $i++) {
+            $formatMap[] = [
+                $this->units[$i],
+                $formConfig->getOption('compact'),
+                false,
+                $expectedLabels[$i] ?? null
+            ];
         }
+        $this->formatter->expects($this->exactly(count($formatMap)))
+            ->method('format')
+            ->willReturnMap($formatMap);
 
         $choices = $form->createView()->vars['choices'];
         foreach ($choices as $choice) {
@@ -155,10 +155,7 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
         $this->assertEquals($expectedData, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         return [
             [
@@ -210,10 +207,7 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
         ];
     }
 
-    /**
-     * @return array
-     */
-    protected function prepareChoices()
+    protected function prepareChoices(): array
     {
         $choices = [];
         foreach ($this->units as $unitCode) {
@@ -225,12 +219,14 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
 
     /**
      * @param string $code
-     * @return MeasureUnitInterface|MockObject
+     * @return MeasureUnitInterface|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected function createUnit($code)
+    protected function createUnit(string $code): MeasureUnitInterface
     {
         $unit = $this->createMock(MeasureUnitInterface::class);
-        $unit->expects(static::any())->method('getCode')->willReturn($code);
+        $unit->expects(self::any())
+            ->method('getCode')
+            ->willReturn($code);
 
         return $unit;
     }

@@ -6,6 +6,10 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\GuestCustomerUserManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Model\RequestManager;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
@@ -17,30 +21,20 @@ class RequestManagerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var RequestManager
-     */
-    protected $requestManager;
+    /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $tokenAccessor;
 
-    /**
-     * @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $tokenAccessor;
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrineHelper;
 
-    /**
-     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $doctrineHelper;
+    /** @var GuestCustomerUserManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $guestCustomerUserManager;
 
-    /**
-     * @var GuestCustomerUserManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $guestCustomerUserManager;
+    /** @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $websiteManager;
 
-    /**
-     * @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $websiteManager;
+    /** @var RequestManager */
+    private $requestManager;
 
     protected function setUp(): void
     {
@@ -60,8 +54,7 @@ class RequestManagerTest extends \PHPUnit\Framework\TestCase
     public function testCreate()
     {
         $website = new Website();
-        $this->websiteManager
-            ->expects(self::once())
+        $this->websiteManager->expects(self::once())
             ->method('getCurrentWebsite')
             ->willReturn($website);
 
@@ -99,29 +92,27 @@ class RequestManagerTest extends \PHPUnit\Framework\TestCase
         ];
         $request = new Request();
 
-        $product = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => $productId]);
-        $unit = $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnit', ['code' => $unitCode]);
+        $product = $this->getEntity(Product::class, ['id' => $productId]);
+        $unit = $this->getEntity(ProductUnit::class, ['code' => $unitCode]);
 
-        $productReposiotry = $this->getMockBuilder('Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository')
-            ->disableOriginalConstructor()->getMock();
-        $this->doctrineHelper->expects($this->at(0))
-            ->method('getEntityRepositoryForClass')
-            ->willReturn($productReposiotry);
-        $productReposiotry->expects($this->once())
+        $productRepository = $this->createMock(ProductRepository::class);
+        $productRepository->expects($this->once())
             ->method('findBy')
             ->with(['id' => [$productId]])
             ->willReturn([$product]);
 
-        $unitRepository = $this->getMockBuilder('Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository')
-            ->disableOriginalConstructor()->getMock();
-        $this->doctrineHelper->expects($this->at(1))
-            ->method('getEntityRepositoryForClass')
-            ->willReturn($unitRepository);
+        $unitRepository = $this->createMock(ProductUnitRepository::class);
         $unitRepository->expects($this->once())
             ->method('getProductsUnitsByCodes')
             ->with([$productId], [$unitCode])
             ->willReturn([$unitCode => $unit]);
-        $this->assertEmpty($request->getRequestProducts());
+
+        $this->doctrineHelper->expects($this->exactly(2))
+            ->method('getEntityRepositoryForClass')
+            ->willReturnOnConsecutiveCalls(
+                $productRepository,
+                $unitRepository
+            );
 
         $this->requestManager->addProductLineItemsToRequest($request, $data);
 

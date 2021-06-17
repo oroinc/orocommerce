@@ -97,33 +97,33 @@ define(function(require) {
             mediator.on(this.options.applyQueryEventName, this.onUpdateFilteredGrid, this);
             this.$excluded.on(
                 'change' + this.eventNamespace(),
-                _.throttle(_.bind(this.onChangeExcluded, this), this.options.wait)
+                _.throttle(this.onChangeExcluded.bind(this), this.options.wait)
             );
             this.$included.on(
                 'change' + this.eventNamespace(),
-                _.throttle(_.bind(this.onChangeIncluded, this), this.options.wait)
+                _.throttle(this.onChangeIncluded.bind(this), this.options.wait)
             );
 
-            this.reloadMainGrid = _.debounce(_.bind(this.triggerApplyQueryEvent, this), this.options.wait);
+            this.reloadMainGrid = _.debounce(this.triggerApplyQueryEvent.bind(this), this.options.wait);
         },
 
         _initializeTabElements: function() {
             this.tabs = {
                 filtered: {
                     tab: this.options._sourceElement.find(this.options.selectors.tabFiltered),
-                    loadCounter: _.debounce(_.bind(this._loadCounter, this), this.options.wait),
+                    loadCounter: _.debounce(this._loadCounter.bind(this), this.options.wait),
                     request: null,
                     update: 0
                 },
                 included: {
                     tab: this.options._sourceElement.find(this.options.selectors.tabIncluded),
-                    loadCounter: _.debounce(_.bind(this._loadCounter, this), this.options.wait),
+                    loadCounter: _.debounce(this._loadCounter.bind(this), this.options.wait),
                     request: null,
                     update: 0
                 },
                 excluded: {
                     tab: this.options._sourceElement.find(this.options.selectors.tabExcluded),
-                    loadCounter: _.debounce(_.bind(this._loadCounter, this), this.options.wait),
+                    loadCounter: _.debounce(this._loadCounter.bind(this), this.options.wait),
                     request: null,
                     update: 0
                 }
@@ -179,20 +179,16 @@ define(function(require) {
             }
             tabData.request = $.getJSON(
                 url + query,
-                _.bind(tabData.counter.html, tabData.counter)
+                tabData.counter.html.bind(tabData.counter)
             );
             tabData.request
-                .done(
-                    _.bind(function() {
-                        tabData.tab.effect('highlight', {color: this.options.highlightColor}, 1000);
-                    }, this)
-                )
-                .always(
-                    function() {
-                        tabData.update--;
-                        tabData.request = null;
-                    }
-                );
+                .done(() => {
+                    tabData.tab.effect('highlight', {color: this.options.highlightColor}, 1000);
+                })
+                .always(() => {
+                    tabData.update--;
+                    tabData.request = null;
+                });
         },
 
         /**
@@ -210,15 +206,15 @@ define(function(require) {
          * @private
          */
         _checkOptions: function() {
-            const requiredMissed = _.filter(this.requiredOptions, _.bind(function(option) {
+            const requiredMissed = _.filter(this.requiredOptions, option => {
                 return _.isUndefined(this.options[option]);
-            }, this));
+            });
             if (requiredMissed.length) {
                 throw new TypeError('Missing required option(s): ' + requiredMissed.join(', '));
             }
 
             const requiredSelectors = [];
-            _.each(this.options.selectors, function(selector, selectorName) {
+            _.each(this.options.selectors, (selector, selectorName) => {
                 if (!selector) {
                     requiredSelectors.push(selectorName);
                 }

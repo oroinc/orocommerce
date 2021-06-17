@@ -1,7 +1,6 @@
 define(function(require) {
     'use strict';
 
-    const _ = require('underscore');
     const $ = require('jquery');
     const routing = require('routing');
     const mediator = require('oroui/js/mediator');
@@ -69,23 +68,23 @@ define(function(require) {
         },
 
         listenerOn: function() {
-            const callback = _.bind(this._sendEntryPointAjax, this);
+            const callback = this._sendEntryPointAjax.bind(this);
 
-            const changeCallback = _.bind(function(e) {
+            const changeCallback = e => {
                 if (this.timeoutId || $(e.target).is('select')) {
                     mediator.trigger(this.options.events.before);
                     callback.call(this);
                 }
 
                 this.clearTimeout();
-            }, this);
+            };
 
-            const keyUpCallback = _.bind(function() {
+            const keyUpCallback = () => {
                 this.clearTimeout();
 
                 mediator.trigger(this.options.events.before);
-                this.timeoutId = setTimeout(_.bind(callback, this), this.options.triggerTimeout);
-            }, this);
+                this.timeoutId = setTimeout(callback.bind(this), this.options.triggerTimeout);
+            };
 
             this.options._sourceElement
                 .on('change', '[data-entry-point-trigger]', changeCallback)

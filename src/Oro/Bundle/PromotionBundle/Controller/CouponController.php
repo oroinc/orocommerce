@@ -4,6 +4,8 @@ namespace Oro\Bundle\PromotionBundle\Controller;
 
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionDispatcher;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
+use Oro\Bundle\PromotionBundle\CouponGeneration\Code\CodeGenerator;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationOptions;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
@@ -19,6 +21,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Promotion Coupon Controller
@@ -112,7 +115,7 @@ class CouponController extends AbstractController
 
         $emptyData = new Coupon();
         /** @var DoctrineHelper $doctrineHelper */
-        $doctrineHelper = $this->get('oro_entity.doctrine_helper');
+        $doctrineHelper = $this->get(DoctrineHelper::class);
         $gridName = $request->get('gridName');
         $gridParameters = $request->get($gridName);
         if (!empty($gridParameters['promotion_id'])) {
@@ -123,8 +126,7 @@ class CouponController extends AbstractController
         $form = $this->createForm(BaseCouponType::class, $emptyData);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var MassActionDispatcher $massActionDispatcher */
-            $massActionDispatcher = $this->get('oro_datagrid.mass_action.dispatcher');
+            $massActionDispatcher = $this->get(MassActionDispatcher::class);
             $response = $massActionDispatcher->dispatchByRequest(
                 $request->get('gridName'),
                 $request->get('actionName'),
@@ -164,7 +166,7 @@ class CouponController extends AbstractController
             return new JsonResponse(['error' => (string)$form->getErrors(true, false)]);
         }
 
-        $generator = $this->get('oro_promotion.coupon_generation.code_generator');
+        $generator = $this->get(CodeGenerator::class);
 
         return new JsonResponse(['error' => false, 'code' => $generator->generateOne($options)]);
     }
@@ -176,13 +178,30 @@ class CouponController extends AbstractController
      */
     protected function update(Coupon $coupon, Request $request)
     {
-        $handler = $this->get('oro_form.update_handler');
+        $handler = $this->get(UpdateHandlerFacade::class);
 
         return $handler->update(
             $coupon,
             CouponType::class,
-            $this->get('translator')->trans('oro.promotion.coupon.form.message.saved'),
+            $this->get(TranslatorInterface::class)->trans('oro.promotion.coupon.form.message.saved'),
             $request
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                TranslatorInterface::class,
+                UpdateHandlerFacade::class,
+                DoctrineHelper::class,
+                MassActionDispatcher::class,
+                CodeGenerator::class,
+            ]
         );
     }
 }

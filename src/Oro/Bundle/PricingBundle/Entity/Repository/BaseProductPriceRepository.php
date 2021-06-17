@@ -405,7 +405,7 @@ abstract class BaseProductPriceRepository extends EntityRepository
 
         $result = $qb->getQuery()->getScalarResult();
 
-        return array_map('current', $result);
+        return array_map(fn ($value) => (int) current($value), $result);
     }
 
     /**

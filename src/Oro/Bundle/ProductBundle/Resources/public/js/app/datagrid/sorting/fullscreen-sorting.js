@@ -42,7 +42,7 @@ define(function(require) {
 
         initEvents: function() {
             this.$popupHandler.on({
-                click: _.bind(this.onFullscreenPopup, this)
+                click: this.onFullscreenPopup.bind(this)
             });
         },
 
@@ -50,14 +50,14 @@ define(function(require) {
             e.preventDefault();
 
             this.$sortingSwitcher.on({
-                change: _.bind(this.onChange, this)
+                change: this.onChange.bind(this)
             });
 
             this.fullscreenView = new FullscreenPopupView({
                 contentElement: this.$popupContent,
                 popupIcon: 'fa-chevron-left'
             });
-            this.fullscreenView.on('close', _.bind(this.onClosePopup, this));
+            this.fullscreenView.on('close', this.onClosePopup.bind(this));
             this.fullscreenView.show();
         },
 

@@ -17,9 +17,6 @@ class OrderLineItemDeleteHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $em;
 
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $doctrine;
-
     /** @var TotalHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $totalHelper;
 
@@ -28,11 +25,11 @@ class OrderLineItemDeleteHandlerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->totalHelper = $this->createMock(TotalHelper::class);
-
         $this->em = $this->createMock(EntityManagerInterface::class);
-        $this->doctrine->expects($this->any())
+
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects($this->any())
             ->method('getManagerForClass')
             ->with(OrderLineItem::class)
             ->willReturn($this->em);
@@ -40,7 +37,7 @@ class OrderLineItemDeleteHandlerTest extends \PHPUnit\Framework\TestCase
         $accessDeniedExceptionFactory = new EntityDeleteAccessDeniedExceptionFactory();
 
         $extension = new EntityDeleteHandlerExtension();
-        $extension->setDoctrine($this->doctrine);
+        $extension->setDoctrine($doctrine);
         $extension->setAccessDeniedExceptionFactory($accessDeniedExceptionFactory);
         $extensionRegistry = $this->createMock(EntityDeleteHandlerExtensionRegistry::class);
         $extensionRegistry->expects($this->any())
@@ -51,7 +48,7 @@ class OrderLineItemDeleteHandlerTest extends \PHPUnit\Framework\TestCase
         $this->handler = new OrderLineItemDeleteHandler(
             $this->totalHelper
         );
-        $this->handler->setDoctrine($this->doctrine);
+        $this->handler->setDoctrine($doctrine);
         $this->handler->setAccessDeniedExceptionFactory($accessDeniedExceptionFactory);
         $this->handler->setExtensionRegistry($extensionRegistry);
     }
@@ -134,13 +131,11 @@ class OrderLineItemDeleteHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('flush');
 
         $this->totalHelper->expects($this->exactly(2))
-            ->method('fill');
-        $this->totalHelper->expects($this->at(0))
             ->method('fill')
-            ->with($this->identicalTo($order1));
-        $this->totalHelper->expects($this->at(1))
-            ->method('fill')
-            ->with($this->identicalTo($order2));
+            ->withConsecutive(
+                [$this->identicalTo($order1)],
+                [$this->identicalTo($order2)]
+            );
 
         $this->handler->flushAll([
             ['entity' => $lineItem1],

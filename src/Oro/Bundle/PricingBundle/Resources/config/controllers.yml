@@ -31,3 +31,21 @@ services:
             - [setContainer, ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: container.service_subscriber }
+
+    Oro\Bundle\PricingBundle\Controller\PriceAttributePriceListController:
+        calls:
+            - [setContainer, ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+
+    Oro\Bundle\PricingBundle\Controller\AjaxEntityTotalsController:
+        calls:
+            - [setContainer, ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+
+    Oro\Bundle\PricingBundle\Controller\Frontend\AjaxEntityTotalsController:
+        calls:
+            - [setContainer, ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }

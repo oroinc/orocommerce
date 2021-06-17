@@ -9,11 +9,13 @@ use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Form\Handler\ShippingMethodsConfigsRuleHandler;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleType;
+use Oro\Bundle\UIBundle\Route\Router;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Shipping Methods Configs Rule Controller
@@ -100,13 +102,13 @@ class ShippingMethodsConfigsRuleController extends AbstractController
     protected function update(ShippingMethodsConfigsRule $entity, Request $request)
     {
         $form = $this->createForm(ShippingMethodsConfigsRuleType::class);
-        if ($this->get('oro_shipping.form.handler.shipping_methods_configs_rule')->process($form, $entity)) {
+        if ($this->get(ShippingMethodsConfigsRuleHandler::class)->process($form, $entity)) {
             $this->get('session')->getFlashBag()->add(
                 'success',
-                $this->get('translator')->trans('oro.shipping.controller.rule.saved.message')
+                $this->get(TranslatorInterface::class)->trans('oro.shipping.controller.rule.saved.message')
             );
 
-            return $this->get('oro_ui.router')->redirect($entity);
+            return $this->get(Router::class)->redirect($entity);
         }
 
         if ($request->get(ShippingMethodsConfigsRuleHandler::UPDATE_FLAG, false)) {
@@ -139,8 +141,7 @@ class ShippingMethodsConfigsRuleController extends AbstractController
      */
     public function markMassAction($gridName, $actionName, Request $request)
     {
-        /** @var MassActionDispatcher $massActionDispatcher */
-        $massActionDispatcher = $this->get('oro_datagrid.mass_action.dispatcher');
+        $massActionDispatcher = $this->get(MassActionDispatcher::class);
 
         $response = $massActionDispatcher->dispatchByRequest($gridName, $actionName, $request);
 
@@ -150,5 +151,21 @@ class ShippingMethodsConfigsRuleController extends AbstractController
         ];
 
         return new JsonResponse(array_merge($data, $response->getOptions()));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                ShippingMethodsConfigsRuleHandler::class,
+                TranslatorInterface::class,
+                Router::class,
+                MassActionDispatcher::class,
+            ]
+        );
     }
 }

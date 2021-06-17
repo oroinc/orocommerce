@@ -41,14 +41,17 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
     /** @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $localizationHelper;
 
-    /** @var MenuDataProvider */
-    private $menuDataProvider;
-
     /** @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $cacheProvider;
 
     /** @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject */
     private $websiteManager;
+
+    /** @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $cache;
+
+    /** @var MenuDataProvider */
+    private $menuDataProvider;
 
     protected function setUp(): void
     {
@@ -97,9 +100,7 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getWebCatalog')
             ->willReturn($webCatalog);
 
-        $nodeRepository = $this->getMockBuilder(ContentNodeRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $nodeRepository = $this->createMock(ContentNodeRepository::class);
         $nodeRepository->expects($this->once())
             ->method('getRootNodeByWebCatalog')
             ->with($webCatalog)
@@ -117,9 +118,9 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->localizationHelper->expects($this->any())
             ->method('getLocalizedValue')
-            ->will($this->returnCallback(function (ArrayCollection $collection) {
+            ->willReturnCallback(function (ArrayCollection $collection) {
                 return $collection->first()->getString();
-            }));
+            });
 
         $localization = $this->getEntity(Localization::class, ['id' => 42]);
         $this->localizationHelper->expects($this->once())
@@ -175,9 +176,9 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->localizationHelper->expects($this->any())
             ->method('getLocalizedValue')
-            ->will($this->returnCallback(function (ArrayCollection $collection) {
+            ->willReturnCallback(function (ArrayCollection $collection) {
                 return $collection->first()->getString();
-            }));
+            });
 
         $localization = $this->getEntity(Localization::class, ['id' => 42]);
         $this->localizationHelper->expects($this->once())
@@ -231,7 +232,7 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
             ->with($website)
             ->willReturn($rootNode);
 
-        $this->cache->expects($this->at(0))
+        $this->cache->expects($this->once())
             ->method('fetch')
             ->with(sprintf(
                 'menu_items_%s_1_77_42',
@@ -243,10 +244,7 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedData, $actual);
     }
 
-    /**
-     * @return array
-     */
-    public function getItemsCachedDataProvider()
+    public function getItemsCachedDataProvider(): array
     {
         return [
             'without maxNodesNestedLevel' => [],
@@ -256,10 +254,7 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function getItemsDataProvider()
+    public function getItemsDataProvider(): array
     {
         return [
             'root without children' => [
@@ -330,17 +325,13 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param string                $id
-     * @param string                $identifier
-     * @param string                $title
-     * @param string                $url
-     * @param ResolvedContentNode[] $children
-     *
-     * @return ResolvedContentNode
-     */
-    private function getResolvedContentNode($id, $identifier, $title, $url, array $children = [])
-    {
+    private function getResolvedContentNode(
+        string $id,
+        string $identifier,
+        string $title,
+        string $url,
+        array $children = []
+    ): ResolvedContentNode {
         $nodeVariant = new ResolvedContentVariant();
         $nodeVariant->addLocalizedUrl((new LocalizedFallbackValue())->setString($url));
 

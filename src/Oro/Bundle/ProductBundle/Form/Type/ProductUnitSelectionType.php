@@ -118,6 +118,37 @@ class ProductUnitSelectionType extends AbstractProductAwareType
     /**
      * @param FormInterface $form
      * @param Product|null $product
+     * @return array
+     */
+    protected function getUnitPrecisions(FormInterface $form, Product $product = null)
+    {
+        if (!$product) {
+            return [];
+        }
+
+        $options = $form->getConfig()->getOptions();
+        $sell = $options['sell'];
+        $precisions = [];
+
+        foreach ($product->getAdditionalUnitPrecisions() as $unitPrecision) {
+            if ($sell === null) {
+                $precisions[$unitPrecision->getProductUnitCode()] = $unitPrecision->getPrecision();
+            } elseif ($sell === $unitPrecision->isSell()) {
+                $precisions[$unitPrecision->getProductUnitCode()] = $unitPrecision->getPrecision();
+            }
+        }
+
+        $primaryUnitPrecision = $product->getPrimaryUnitPrecision();
+        if ($primaryUnitPrecision) {
+            $precisions[$primaryUnitPrecision->getProductUnitCode()] = $primaryUnitPrecision->getPrecision();
+        }
+
+        return $precisions;
+    }
+
+    /**
+     * @param FormInterface $form
+     * @param Product|null $product
      * @return ProductUnit[]
      */
     protected function getProductUnits(FormInterface $form, Product $product = null)
@@ -189,12 +220,14 @@ class ProductUnitSelectionType extends AbstractProductAwareType
         $productUnitHolder = $formParent->getData();
         if (!$productUnitHolder) {
             $this->formatChoiceViews($view, $options);
+
             return;
         }
 
         $productHolder = $productUnitHolder->getProductHolder();
         if (!$productHolder || !$productHolder->getProduct()) {
             $this->formatChoiceViews($view, $options);
+
             return;
         }
 
@@ -214,6 +247,8 @@ class ProductUnitSelectionType extends AbstractProductAwareType
         }
 
         $this->setChoicesViews($view, $choices, $options);
+
+        $view->vars['attr']['data-unit-precisions'] = json_encode($this->getUnitPrecisions($form, $product));
     }
 
     /**
@@ -231,7 +266,7 @@ class ProductUnitSelectionType extends AbstractProductAwareType
         ProductUnit $productUnit = null
     ) {
         return (!$productUnit && $productUnitHolder->getEntityIdentifier())
-        || ($product && $productUnit && !in_array($productUnit, $choices, true));
+            || ($product && $productUnit && !in_array($productUnit, $choices, true));
     }
 
     /**

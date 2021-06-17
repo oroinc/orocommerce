@@ -8,187 +8,99 @@ use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Bundle\UPSBundle\Validator\Constraints\CountryShippingServicesConstraint;
 use Oro\Bundle\UPSBundle\Validator\Constraints\CountryShippingServicesValidator;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class CountryShippingServicesValidatorTest extends \PHPUnit\Framework\TestCase
+class CountryShippingServicesValidatorTest extends ConstraintValidatorTestCase
 {
-    const ALIAS = 'oro_ups_country_shipping_services_validator';
-
-    /**
-     * @internal
-     */
-    const VIOLATION_PATH = 'applicableShippingServices';
-
-    /**
-     * @var CountryShippingServicesConstraint|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $constraint;
-
-    /**
-     * @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $context;
-
-    /**
-     * @var CountryShippingServicesValidator
-     */
-    private $validator;
-
-    protected function setUp(): void
+    protected function createValidator()
     {
-        $this->constraint = $this->createMock(CountryShippingServicesConstraint::class);
-
-        $this->validator = new CountryShippingServicesValidator();
-
-        $this->context = $this->createMock(ExecutionContextInterface::class);
-
-        $this->validator->initialize($this->context);
+        return new CountryShippingServicesValidator();
     }
 
     public function testValidate()
     {
         $country = $this->createMock(Country::class);
-
-        $country
+        $country->expects(self::any())
             ->method('__toString')
             ->willReturn('country');
 
         $wrongCountry = $this->createMock(Country::class);
-
-        $wrongCountry
+        $wrongCountry->expects(self::any())
             ->method('__toString')
             ->willReturn('wrong country');
 
-        $settings = $this->createSettingsMock();
-
-        $settings->expects(static::once())
-            ->method('getUpsCountry')
-            ->willReturn($country);
-
-        $service1 = $this->createShippingServiceMock();
-
-        $service1->expects(static::once())
+        $service1 = $this->createMock(ShippingService::class);
+        $service1->expects(self::once())
             ->method('getCountry')
             ->willReturn($wrongCountry);
-
-        $service1->expects(static::once())
+        $service1->expects(self::once())
             ->method('__toString')
             ->willReturn('service1');
 
-        $service2 = $this->createShippingServiceMock();
-
-        $service2->expects(static::once())
+        $service2 = $this->createMock(ShippingService::class);
+        $service2->expects(self::once())
             ->method('getCountry')
             ->willReturn($wrongCountry);
-
-        $service2->expects(static::once())
+        $service2->expects(self::once())
             ->method('__toString')
             ->willReturn('service2');
 
-        $service3 = $this->createShippingServiceMock();
-
-        $service3->expects(static::once())
+        $service3 = $this->createMock(ShippingService::class);
+        $service3->expects(self::once())
             ->method('getCountry')
             ->willReturn($country);
-
-        $service3->expects(static::never())
+        $service3->expects(self::never())
             ->method('__toString');
 
-        $settings->expects(static::once())
+        $settings = $this->createMock(UPSTransport::class);
+        $settings->expects(self::once())
+            ->method('getUpsCountry')
+            ->willReturn($country);
+        $settings->expects(self::once())
             ->method('getApplicableShippingServices')
-            ->willReturn([
-                $service1,
-                $service2,
-                $service3,
-            ]);
+            ->willReturn([$service1, $service2, $service3]);
 
-        $builder1 = $this->createMock(ConstraintViolationBuilderInterface::class);
+        $constraint = new CountryShippingServicesConstraint();
+        $this->validator->validate($settings, $constraint);
 
-        $builder1->expects(static::once())
-            ->method('atPath')
-            ->with('applicableShippingServices')
-            ->willReturn($builder1);
-
-        $builder1->expects(static::once())
-            ->method('addViolation');
-
-        $this->context->expects(static::at(0))
-            ->method('buildViolation')
-            ->with('oro.ups.settings.shipping_service.wrong_country.message', [
-                '%shipping_service%' => 'service1',
-                '%settings_country%' => 'country',
+        $this
+            ->buildViolation($constraint->message)
+            ->setParameters([
+                '%shipping_service%'         => 'service1',
+                '%settings_country%'         => 'country',
                 '%shipping_service_country%' => 'wrong country',
             ])
-            ->willReturn($builder1);
-
-        $builder2 = $this->createMock(ConstraintViolationBuilderInterface::class);
-
-        $builder2->expects(static::once())
-            ->method('atPath')
-            ->with('applicableShippingServices')
-            ->willReturn($builder2);
-
-        $builder2->expects(static::once())
-            ->method('addViolation');
-
-        $this->context->expects(static::at(1))
-            ->method('buildViolation')
-            ->with('oro.ups.settings.shipping_service.wrong_country.message', [
-                '%shipping_service%' => 'service2',
-                '%settings_country%' => 'country',
+            ->atPath('property.path.applicableShippingServices')
+            ->buildNextViolation($constraint->message)
+            ->setParameters([
+                '%shipping_service%'         => 'service2',
+                '%settings_country%'         => 'country',
                 '%shipping_service_country%' => 'wrong country',
             ])
-            ->willReturn($builder2);
-
-        $this->validator->validate($settings, $this->constraint);
+            ->atPath('property.path.applicableShippingServices')
+            ->assertRaised();
     }
 
     public function testValidateNotSettings()
     {
-        $settings = $this->createTransportMock();
+        $settings = $this->createMock(Transport::class);
 
-        $this->context->expects(static::never())
-            ->method('buildViolation');
+        $constraint = new CountryShippingServicesConstraint();
+        $this->validator->validate($settings, $constraint);
 
-        $this->validator->validate($settings, $this->constraint);
+        $this->assertNoViolation();
     }
 
     public function testValidateNoCountry()
     {
-        $settings = $this->createSettingsMock();
-
-        $settings->expects(static::once())
+        $settings = $this->createMock(UPSTransport::class);
+        $settings->expects(self::once())
             ->method('getUpsCountry')
             ->willReturn(null);
 
-        $this->context->expects(static::never())
-            ->method('buildViolation');
+        $constraint = new CountryShippingServicesConstraint();
+        $this->validator->validate($settings, $constraint);
 
-        $this->validator->validate($settings, $this->constraint);
-    }
-
-    /**
-     * @return UPSTransport|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function createSettingsMock()
-    {
-        return $this->createMock(UPSTransport::class);
-    }
-
-    /**
-     * @return ShippingService|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function createShippingServiceMock()
-    {
-        return $this->createMock(ShippingService::class);
-    }
-
-    /**
-     * @return Transport|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function createTransportMock()
-    {
-        return $this->createMock(Transport::class);
+        $this->assertNoViolation();
     }
 }

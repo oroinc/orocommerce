@@ -1,0 +1,33 @@
+services:
+    _defaults:
+        public: true
+
+    Oro\Bundle\TaxBundle\Controller\CustomerTaxCodeController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+
+    Oro\Bundle\TaxBundle\Controller\ProductTaxCodeController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+
+    Oro\Bundle\TaxBundle\Controller\TaxController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+
+    Oro\Bundle\TaxBundle\Controller\TaxJurisdictionController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+
+    Oro\Bundle\TaxBundle\Controller\TaxRuleController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }

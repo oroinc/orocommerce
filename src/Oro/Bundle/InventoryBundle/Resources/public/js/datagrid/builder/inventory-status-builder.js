@@ -29,14 +29,12 @@ define(['jquery', 'underscore'], function($, _) {
          * @param {Object} [options.options] grid initialization options
          */
         initialize: function(options) {
-            const self = this;
-
-            self.datagrid = options.grid;
-            self.statusMetadata = _.find(options.options.metadata.columns, function(column) {
-                return column.name === self.options.statusColumnName;
+            this.datagrid = options.grid;
+            this.statusMetadata = _.find(options.options.metadata.columns, column => {
+                return column.name === this.options.statusColumnName;
             });
 
-            self.datagrid.collection.on('reset', _.bind(self._reloadInventoryStatus, this));
+            this.datagrid.collection.on('reset', this._reloadInventoryStatus.bind(this));
 
             this._reloadInventoryStatus();
         },

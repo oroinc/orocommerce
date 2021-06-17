@@ -2,7 +2,6 @@ define(function(require) {
     'use strict';
 
     const unitAndCurrencyVisibleLength = 12;
-    const _ = require('underscore');
     const $ = require('jquery');
     const AbstractSwitcher = require('oropricing/js/app/views/abstract-switcher');
 
@@ -33,10 +32,10 @@ define(function(require) {
          */
         initialize: function(options) {
             ExpressionFieldSwitcher.__super__.initialize.call(this, options);
-            this.initLayout().done(_.bind(this.initSwitcher, this));
-            this.$form.on('submit' + this.eventNamespace(), _.bind(function(e) {
+            this.initLayout().done(this.initSwitcher.bind(this));
+            this.$form.on('submit' + this.eventNamespace(), e => {
                 this.onSubmit(e);
-            }, this));
+            });
         },
 
         addValidationError: function($identifier) {
@@ -49,15 +48,15 @@ define(function(require) {
 
         initSwitcher: function() {
             const $expressionIdentifier = this.options.selectors.expressionType;
-            this.expressionLink.click(_.bind(function() {
+            this.expressionLink.click(() => {
                 this.changeFieldVisibility(this.field, this.expression);
                 this.expressionInput.val('');
                 $('div.error-block' + $expressionIdentifier).find('.validation-failed').remove();
-            }, this));
+            });
 
-            this.fieldLink.click(_.bind(function() {
+            this.fieldLink.click(() => {
                 this.changeFieldVisibility(this.expression, this.field);
-            }, this));
+            });
 
             if (this.expressionInput.val() === '') {
                 this.changeFieldVisibility(this.field, this.expression);
@@ -69,11 +68,11 @@ define(function(require) {
         },
 
         bindTooltipEvents: function($expressionInput) {
-            $expressionInput.mouseenter(_.bind(function() {
+            $expressionInput.mouseenter(() => {
                 if ($expressionInput.val().length > unitAndCurrencyVisibleLength) {
                     this.showTooltip($expressionInput);
                 }
-            }, this));
+            });
 
             this.setMouseLeaveEvent($expressionInput);
         },

@@ -7,6 +7,9 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
+/**
+ * This is the class that loads and manages RFPBundle service configuration
+ */
 class OroRFPExtension extends Extension
 {
     const ALIAS = 'oro_rfp';
@@ -24,6 +27,7 @@ class OroRFPExtension extends Extension
         $loader->load('services_api.yml');
         $loader->load('form_types.yml');
         $loader->load('block_types.yml');
+        $loader->load('controllers.yml');
 
         $container->prependExtensionConfig($this->getAlias(), array_intersect_key($config, array_flip(['settings'])));
     }

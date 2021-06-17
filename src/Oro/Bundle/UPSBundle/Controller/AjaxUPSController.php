@@ -8,6 +8,7 @@ use Oro\Bundle\IntegrationBundle\Form\Type\ChannelType;
 use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
 use Oro\Bundle\UPSBundle\Connection\Validator\Result\Factory\UpsConnectionValidatorResultFactory;
 use Oro\Bundle\UPSBundle\Connection\Validator\Result\UpsConnectionValidatorResultInterface;
+use Oro\Bundle\UPSBundle\Connection\Validator\UpsConnectionValidator;
 use Oro\Bundle\UPSBundle\Entity\Repository\ShippingServiceRepository;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -15,6 +16,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Ajax UPS Controller
@@ -33,8 +35,7 @@ class AjaxUPSController extends AbstractController
     public function getShippingServicesByCountryAction(Country $country)
     {
         /** @var ShippingServiceRepository $repository */
-        $repository = $this->container
-            ->get('doctrine')
+        $repository = $this->get('doctrine')
             ->getManagerForClass('OroUPSBundle:ShippingService')
             ->getRepository('OroUPSBundle:ShippingService');
         $services = $repository->getShippingServicesByCountry($country);
@@ -69,7 +70,7 @@ class AjaxUPSController extends AbstractController
 
         /** @var UPSTransport $transport */
         $transport = $channel->getTransport();
-        $result = $this->get('oro_ups.connection.validator')->validateConnectionByUpsSettings($transport);
+        $result = $this->get(UpsConnectionValidator::class)->validateConnectionByUpsSettings($transport);
 
         if (!$result->getStatus()) {
             return new JsonResponse([
@@ -78,9 +79,11 @@ class AjaxUPSController extends AbstractController
             ]);
         }
 
+        $translator = $this->get(TranslatorInterface::class);
+
         return new JsonResponse([
             'success' => true,
-            'message' => $this->get('translator')->trans('oro.ups.connection_validation.result.success.message'),
+            'message' => $translator->trans('oro.ups.connection_validation.result.success.message'),
         ]);
     }
 
@@ -106,6 +109,20 @@ class AjaxUPSController extends AbstractController
                 $message = 'oro.ups.connection_validation.result.server_error.message';
                 break;
         }
-        return $this->get('translator')->trans($message, $parameters);
+        return $this->get(TranslatorInterface::class)->trans($message, $parameters);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                TranslatorInterface::class,
+                UpsConnectionValidator::class,
+            ]
+        );
     }
 }

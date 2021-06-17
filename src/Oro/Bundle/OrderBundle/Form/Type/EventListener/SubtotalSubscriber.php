@@ -77,7 +77,7 @@ class SubtotalSubscriber implements EventSubscriberInterface
                             [
                                 'min' => PHP_INT_MAX * (-1), //use some big negative number
                                 'max' => $data->getSubtotal(),
-                                'maxMessage' => 'oro.order.discounts.sum.error.label'
+                                'notInRangeMessage' => 'oro.order.discounts.sum.error.not_in_range.label'
                             ]
                         )]
                     ]

@@ -27,7 +27,7 @@ define(function(require) {
             this.parameterName = options.parameterName;
 
             options._sourceElement
-                .on('click', '[data-catalog-view-trigger]', _.bind(this._onSwitch, this));
+                .on('click', '[data-catalog-view-trigger]', this._onSwitch.bind(this));
         },
 
         _onSwitch: function(e) {

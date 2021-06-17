@@ -93,6 +93,9 @@ class RowTotalResolver
 
             $taxResults[] = $taxResult;
         }
+        if ($this->settingsProvider->isCalculateAfterPromotionsEnabled()) {
+            $totalResultElement->setDiscountsIncluded(true);
+        }
 
         $result->offsetSet(Result::ROW, $totalResultElement);
         $result->offsetSet(Result::TAXES, $taxResults);

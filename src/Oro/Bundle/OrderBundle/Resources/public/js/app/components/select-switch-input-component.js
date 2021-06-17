@@ -35,7 +35,7 @@ define(function(require) {
          * @param options
          */
         initialize: function(options) {
-            const missingProperties = _.filter(this.requiredOptions, _.negate(_.bind(options.hasOwnProperty, options)));
+            const missingProperties = _.filter(this.requiredOptions, _.negate(options.hasOwnProperty.bind(options)));
             if (missingProperties.length) {
                 throw new Error(
                     'Following properties are required but weren\'t passed: ' +
@@ -62,8 +62,8 @@ define(function(require) {
                 this._onSelectToInput();
                 this.$el.find('input').val(options.value);
             }
-            this.$el.find(this.$select_to_input_btn).on('click', _.bind(this._onSelectToInput, this));
-            this.$el.find(this.$input_to_select_btn).on('click', _.bind(this._onInputToSelect, this));
+            this.$el.find(this.$select_to_input_btn).on('click', this._onSelectToInput.bind(this));
+            this.$el.find(this.$input_to_select_btn).on('click', this._onInputToSelect.bind(this));
         },
 
         /**

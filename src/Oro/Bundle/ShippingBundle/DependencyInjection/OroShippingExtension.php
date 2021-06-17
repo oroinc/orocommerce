@@ -7,6 +7,9 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
+/**
+ * This is the class that loads and manages ShippingBundle service configuration
+ */
 class OroShippingExtension extends Extension
 {
     const ALIAS = 'oro_shipping';
@@ -27,6 +30,7 @@ class OroShippingExtension extends Extension
         $loader->load('mass_action.yml');
         $loader->load('block_types.yml');
         $loader->load('method_event_listeners.yml');
+        $loader->load('controllers.yml');
     }
 
     /**

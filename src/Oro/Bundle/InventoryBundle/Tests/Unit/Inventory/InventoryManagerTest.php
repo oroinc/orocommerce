@@ -3,10 +3,10 @@
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\Inventory;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue as InventoryStatus;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Entity\Repository\InventoryLevelRepository;
 use Oro\Bundle\InventoryBundle\Inventory\InventoryManager;
-use Oro\Bundle\InventoryBundle\Tests\Unit\Inventory\Stub\InventoryStatusStub;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\Repository\OrganizationRepository;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -15,24 +15,15 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 
 class InventoryManagerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $doctrineHelper;
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrineHelper;
 
-    /**
-     * @var InventoryManager
-     */
-    protected $inventoryManager;
+    /** @var InventoryManager */
+    private $inventoryManager;
 
-    /**
-     * @inheritdoc
-     */
     protected function setUp(): void
     {
-        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
 
         $this->inventoryManager = new InventoryManager($this->doctrineHelper);
     }
@@ -40,7 +31,7 @@ class InventoryManagerTest extends \PHPUnit\Framework\TestCase
     public function testCreateInventoryLevel()
     {
         $product = new ProductStub();
-        $product->inventoryStatus = new InventoryStatusStub(1, Product::INVENTORY_STATUS_OUT_OF_STOCK);
+        $product->inventoryStatus = new InventoryStatus(1, Product::INVENTORY_STATUS_OUT_OF_STOCK);
         $productUnitPrecision = $this->createMock(ProductUnitPrecision::class);
         $productUnitPrecision->expects($this->exactly(2))
             ->method('getProduct')
@@ -52,7 +43,6 @@ class InventoryManagerTest extends \PHPUnit\Framework\TestCase
             ->with(Organization::class)
             ->willReturn($organizationRepository);
 
-        /** @var InventoryLevel $result */
         $result = $this->inventoryManager->createInventoryLevel($productUnitPrecision);
 
         $this->assertInstanceOf(InventoryLevel::class, $result);
@@ -81,9 +71,7 @@ class InventoryManagerTest extends \PHPUnit\Framework\TestCase
         $productUnitPrecision->expects($this->once())
             ->method('getProduct')
             ->willReturn($product);
-        $inventoryRepository = $this->getMockBuilder(InventoryLevelRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $inventoryRepository = $this->createMock(InventoryLevelRepository::class);
         $inventoryRepository->expects($this->once())
             ->method('deleteInventoryLevelByProductAndProductUnitPrecision')
             ->with($product, $productUnitPrecision);

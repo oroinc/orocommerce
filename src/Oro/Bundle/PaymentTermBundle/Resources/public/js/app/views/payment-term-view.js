@@ -56,7 +56,7 @@ define(function(require) {
 
             this.configureInput();
 
-            this.initLayout().done(_.bind(this.handleLayoutInit, this));
+            this.initLayout().done(this.handleLayoutInit.bind(this));
         },
 
         /**

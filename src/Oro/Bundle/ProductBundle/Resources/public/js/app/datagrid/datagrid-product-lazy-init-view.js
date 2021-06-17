@@ -1,7 +1,6 @@
 define(function(require) {
     'use strict';
 
-    const _ = require('underscore');
     const LazyInitView = require('orofrontend/js/app/views/lazy-init-view');
 
     /**
@@ -33,11 +32,9 @@ define(function(require) {
          * Bind MassAction selectAllVisible trigger with lazy-view
          */
         _onSelectAllVisible: function() {
-            this.initLazyView().then(
-                _.bind(function() {
-                    this.collection.trigger('backgrid:selectAllVisible');
-                }, this)
-            );
+            this.initLazyView().then(() => {
+                this.collection.trigger('backgrid:selectAllVisible');
+            });
         }
     });
 
