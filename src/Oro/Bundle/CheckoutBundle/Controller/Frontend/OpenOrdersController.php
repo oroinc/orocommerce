@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\Controller\Frontend;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -28,10 +29,23 @@ class OpenOrdersController extends AbstractController
      */
     public function openOrdersAction()
     {
-        if (!$this->get('oro_config.manager')->get('oro_checkout.frontend_show_open_orders')) {
+        if (!$this->get(ConfigManager::class)->get('oro_checkout.frontend_show_open_orders')) {
             throw new NotFoundHttpException();
         }
 
         return [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                ConfigManager::class,
+            ]
+        );
     }
 }

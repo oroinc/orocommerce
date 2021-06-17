@@ -95,15 +95,15 @@ define(function(require) {
 
             this.$edit.prepend(this.$notes);
 
-            this.$notes.change(_.bind(this.change, this));
-            this.$notes.blur(_.bind(this.change, this));
-            this.$preview.click(_.bind(this.addNotes, this));
-            this.$addBtn.click(_.bind(this.addNotes, this))
-                .mousedown(_.bind(this.addNotes, this));
-            this.$editBtn.click(_.bind(this.addNotes, this))
-                .mousedown(_.bind(this.addNotes, this));
-            this.$removeBtn.click(_.bind(this.removeNotes, this))
-                .mousedown(_.bind(this.removeNotes, this));
+            this.$notes.change(this.change.bind(this));
+            this.$notes.blur(this.change.bind(this));
+            this.$preview.click(this.addNotes.bind(this));
+            this.$addBtn.click(this.addNotes.bind(this))
+                .mousedown(this.addNotes.bind(this));
+            this.$editBtn.click(this.addNotes.bind(this))
+                .mousedown(this.addNotes.bind(this));
+            this.$removeBtn.click(this.removeNotes.bind(this))
+                .mousedown(this.removeNotes.bind(this));
 
             this.changed();
             this.$el.show();

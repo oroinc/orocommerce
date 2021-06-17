@@ -35,14 +35,14 @@ define(function(require) {
         _zoomedImageLoadedQueue: [],
 
         _init: function() {
-            this.options.onZoomedImageLoaded = _.bind(this._onZoomedImageLoaded, this);
+            this.options.onZoomedImageLoaded = this._onZoomedImageLoaded.bind(this);
 
             // Bind activeImage event of slick gallery
-            this.element.on('slider:activeImage', _.bind(function(e, activeImage) {
+            this.element.on('slider:activeImage', (e, activeImage) => {
                 if (!this.element.is(activeImage)) {
                     this._updateZoomContainer(activeImage);
                 }
-            }, this));
+            });
 
             const initImage = this.element.data('slider:activeImage') || this.element.get(0);
 
@@ -116,7 +116,7 @@ define(function(require) {
 
             for (let i = 0; i < this._zoomedImageLoadedQueue.length; i++) {
                 if (typeof this._zoomedImageLoadedQueue[i] === 'function') {
-                    _.bind(this._zoomedImageLoadedQueue[i], this)();
+                    this._zoomedImageLoadedQueue[i].call(this);
                 }
             }
 

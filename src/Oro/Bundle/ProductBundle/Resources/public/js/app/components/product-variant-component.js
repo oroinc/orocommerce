@@ -37,7 +37,7 @@ define(function(require) {
             this.variantFieldCheckboxes = this.options._sourceElement.find(this.options.productVariantFieldsSelector);
 
             this.options._sourceElement
-                .on('change', this.productVariantFieldsSelector, _.bind(this.onVariantFieldChange, this));
+                .on('change', this.productVariantFieldsSelector, this.onVariantFieldChange.bind(this));
 
             this.updateVisibilityChange();
             this.listenTo(mediator, 'grid_load:complete', function(collection) {

@@ -16,39 +16,26 @@ use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\EventListener\ProductPriceAttributesGridListener;
 use Oro\Bundle\PricingBundle\Provider\PriceAttributePricesProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 class ProductPriceAttributesGridListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $doctrineHelper;
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrineHelper;
 
-    /**
-     * @var PriceAttributePricesProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $priceAttributePricesProvider;
+    /** @var PriceAttributePricesProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $priceAttributePricesProvider;
 
-    /**
-     * @var DatagridInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $datagrid;
+    /** @var DatagridInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $datagrid;
 
-    /**
-     * @var ParameterBag
-     */
-    protected $parameterBag;
+    /** @var ParameterBag */
+    private $parameterBag;
 
-    /**
-     * @var ArrayDatasource
-     */
-    protected $arrayDatasource;
+    /** @var ArrayDatasource */
+    private $arrayDatasource;
 
-    /**
-     * @var ProductPriceAttributesGridListener
-     */
-    protected $productPriceAttributesGridListener;
+    /** @var ProductPriceAttributesGridListener */
+    private $productPriceAttributesGridListener;
 
     protected function setUp(): void
     {
@@ -58,7 +45,9 @@ class ProductPriceAttributesGridListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->parameterBag = new ParameterBag();
         $this->datagrid = $this->createMock(DatagridInterface::class);
-        $this->datagrid->expects($this->any())->method('getParameters')->willReturn($this->parameterBag);
+        $this->datagrid->expects($this->any())
+            ->method('getParameters')
+            ->willReturn($this->parameterBag);
         $this->arrayDatasource = new ArrayDatasource();
 
         $this->productPriceAttributesGridListener = new ProductPriceAttributesGridListener(
@@ -79,7 +68,9 @@ class ProductPriceAttributesGridListenerTest extends \PHPUnit\Framework\TestCase
     {
         $this->expectException(\LogicException::class);
         $this->parameterBag->set('price_list_id', 1);
-        $this->doctrineHelper->expects($this->once())->method('getEntity')->willReturn(null);
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntity')
+            ->willReturn(null);
 
         $datagridConfiguration = $this->createMock(DatagridConfiguration::class);
         $buildBeforeEvent = new BuildBefore($this->datagrid, $datagridConfiguration);
@@ -91,28 +82,35 @@ class ProductPriceAttributesGridListenerTest extends \PHPUnit\Framework\TestCase
         $this->parameterBag->set('price_list_id', 1);
 
         $priceList = $this->createMock(PriceAttributePriceList::class);
-        $priceList->expects($this->once())->method('getCurrencies')->willReturn(['USD']);
+        $priceList->expects($this->once())
+            ->method('getCurrencies')
+            ->willReturn(['USD']);
 
         $datagridConfig = $this->createMock(DatagridConfiguration::class);
-        $datagridConfig->expects($this->at(0))->method('offsetGetByPath')
-            ->with('[columns][USD]', [])->willReturn([]);
+        $datagridConfig->expects($this->exactly(2))
+            ->method('offsetGetByPath')
+            ->willReturnMap([
+                ['[columns][USD]', [], []],
+                ['[sorters][columns][USD]', [], []]
+            ]);
+        $datagridConfig->expects($this->exactly(2))
+            ->method('offsetSetByPath')
+            ->withConsecutive(
+                [
+                    '[columns][USD]',
+                    [
+                        'label' => 'USD',
+                        'type' => 'twig',
+                        'template' => '@OroPricing/Datagrid/Column/priceValue.html.twig',
+                        'frontend_type' => 'html'
+                    ]
+                ],
+                ['[sorters][columns][USD]', ['data_name' => 'USD']]
+            );
 
-        $expectedColumn = [
-            'label' => 'USD',
-            'type' => 'twig',
-            'template' => '@OroPricing/Datagrid/Column/priceValue.html.twig',
-            'frontend_type' => 'html',
-        ];
-
-        $datagridConfig->expects($this->at(1))->method('offsetSetByPath')
-            ->with('[columns][USD]', $expectedColumn);
-
-        $datagridConfig->expects($this->at(2))->method('offsetGetByPath')
-            ->with('[sorters][columns][USD]', [])->willReturn([]);
-        $datagridConfig->expects($this->at(3))->method('offsetSetByPath')
-            ->with('[sorters][columns][USD]', ['data_name' => 'USD']);
-
-        $this->doctrineHelper->expects($this->once())->method('getEntity')->willReturn($priceList);
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntity')
+            ->willReturn($priceList);
 
         $buildBeforeEvent = new BuildBefore($this->datagrid, $datagridConfig);
         $this->productPriceAttributesGridListener->onBuildBefore($buildBeforeEvent);
@@ -121,8 +119,11 @@ class ProductPriceAttributesGridListenerTest extends \PHPUnit\Framework\TestCase
     public function testOnBuildAfterWithWrongDatasource()
     {
         $this->expectException(\LogicException::class);
-        $this->datagrid->expects($this->never())->method('getParameters')->willReturn($this->parameterBag);
-        $this->datagrid->expects($this->once())->method('getDatasource')
+        $this->datagrid->expects($this->never())
+            ->method('getParameters')
+            ->willReturn($this->parameterBag);
+        $this->datagrid->expects($this->once())
+            ->method('getDatasource')
             ->willReturn($this->createMock(OrmDatasource::class));
 
         $buildAfterEvent = new BuildAfter($this->datagrid);
@@ -131,16 +132,15 @@ class ProductPriceAttributesGridListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider onBuildAfterWithEmptyRequiredParamsProvider
-     * @param null|int $productId
-     * @param null|int $priceListId
      */
-    public function testOnBuildAfterWithEmptyRequiredParams($productId, $priceListId)
+    public function testOnBuildAfterWithEmptyRequiredParams(?int $productId, ?int $priceListId)
     {
         $this->expectException(\LogicException::class);
         $this->parameterBag->set('product_id', $productId);
         $this->parameterBag->set('price_list_id', $priceListId);
 
-        $this->datagrid->expects($this->once())->method('getDatasource')
+        $this->datagrid->expects($this->once())
+            ->method('getDatasource')
             ->willReturn($this->createMock(ArrayDatasource::class));
 
         $buildAfterEvent = new BuildAfter($this->datagrid);
@@ -149,16 +149,15 @@ class ProductPriceAttributesGridListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider onBuildAfterWithEmptyRequiredEntitiesProvider
-     * @param null|Product $product
-     * @param null|PriceAttributePriceList $priceList
      */
-    public function testOnBuildAfterWithEmptyRequiredEntities($product, $priceList)
+    public function testOnBuildAfterWithEmptyRequiredEntities(?Product $product, ?PriceAttributePriceList $priceList)
     {
         $this->expectException(\LogicException::class);
         $this->parameterBag->set('product_id', 1);
         $this->parameterBag->set('price_list_id', 2);
 
-        $this->datagrid->expects($this->once())->method('getDatasource')
+        $this->datagrid->expects($this->once())
+            ->method('getDatasource')
             ->willReturn($this->arrayDatasource);
 
         $this->doctrineHelper->expects($this->any())
@@ -187,22 +186,22 @@ class ProductPriceAttributesGridListenerTest extends \PHPUnit\Framework\TestCase
                 [PriceAttributePriceList::class, 2, $priceList],
             ]);
 
-        $this->datagrid->expects($this->once())->method('getDatasource')
+        $this->datagrid->expects($this->once())
+            ->method('getDatasource')
             ->willReturn($this->arrayDatasource);
 
         $currencies = ['USD', 'EURO', 'GBP'];
-        $priceList->expects($this->once())->method('getCurrencies')->willReturn($currencies);
+        $priceList->expects($this->once())
+            ->method('getCurrencies')
+            ->willReturn($currencies);
 
         $usdPrice = $this->createPrice(110);
         $euroPrice = $this->createPrice(95);
         $gbpPrice = $this->createPrice(34);
 
-        $this->priceAttributePricesProvider->expects($this->once())->method('getPricesWithUnitAndCurrencies')
-            ->willReturn(
-                [
-                    'set' => ['USD' => $usdPrice, 'EURO' => $euroPrice, 'GBP' => $gbpPrice],
-                ]
-            );
+        $this->priceAttributePricesProvider->expects($this->once())
+            ->method('getPricesWithUnitAndCurrencies')
+            ->willReturn(['set' => ['USD' => $usdPrice, 'EURO' => $euroPrice, 'GBP' => $gbpPrice]]);
 
         $buildAfterEvent = new BuildAfter($this->datagrid);
         $this->productPriceAttributesGridListener->onBuildAfter($buildAfterEvent);
@@ -215,10 +214,7 @@ class ProductPriceAttributesGridListenerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @return array
-     */
-    public function onBuildAfterWithEmptyRequiredParamsProvider()
+    public function onBuildAfterWithEmptyRequiredParamsProvider(): array
     {
         return [
             [null, null],
@@ -227,10 +223,7 @@ class ProductPriceAttributesGridListenerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function onBuildAfterWithEmptyRequiredEntitiesProvider()
+    public function onBuildAfterWithEmptyRequiredEntitiesProvider(): array
     {
         return [
             [null, null],
@@ -239,21 +232,8 @@ class ProductPriceAttributesGridListenerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param double $value
-     * @return BaseProductPrice
-     */
-    protected function createPrice($value)
+    private function createPrice(float $value): BaseProductPrice
     {
         return (new BaseProductPrice())->setPrice((new Price())->setValue($value));
-    }
-
-    /**
-     * @param $unitCode
-     * @return ProductUnit
-     */
-    protected function createUnit($unitCode)
-    {
-        return (new ProductUnit())->setCode($unitCode);
     }
 }

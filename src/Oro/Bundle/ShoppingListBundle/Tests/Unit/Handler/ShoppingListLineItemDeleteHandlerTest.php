@@ -17,9 +17,6 @@ class ShoppingListLineItemDeleteHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $em;
 
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $doctrine;
-
     /** @var ShoppingListTotalManager|\PHPUnit\Framework\MockObject\MockObject */
     private $totalManager;
 
@@ -28,11 +25,11 @@ class ShoppingListLineItemDeleteHandlerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->totalManager = $this->createMock(ShoppingListTotalManager::class);
-
         $this->em = $this->createMock(EntityManagerInterface::class);
-        $this->doctrine->expects($this->any())
+
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects($this->any())
             ->method('getManagerForClass')
             ->with(LineItem::class)
             ->willReturn($this->em);
@@ -40,7 +37,7 @@ class ShoppingListLineItemDeleteHandlerTest extends \PHPUnit\Framework\TestCase
         $accessDeniedExceptionFactory = new EntityDeleteAccessDeniedExceptionFactory();
 
         $extension = new EntityDeleteHandlerExtension();
-        $extension->setDoctrine($this->doctrine);
+        $extension->setDoctrine($doctrine);
         $extension->setAccessDeniedExceptionFactory($accessDeniedExceptionFactory);
         $extensionRegistry = $this->createMock(EntityDeleteHandlerExtensionRegistry::class);
         $extensionRegistry->expects($this->any())
@@ -48,10 +45,8 @@ class ShoppingListLineItemDeleteHandlerTest extends \PHPUnit\Framework\TestCase
             ->with(LineItem::class)
             ->willReturn($extension);
 
-        $this->handler = new ShoppingListLineItemDeleteHandler(
-            $this->totalManager
-        );
-        $this->handler->setDoctrine($this->doctrine);
+        $this->handler = new ShoppingListLineItemDeleteHandler($this->totalManager);
+        $this->handler->setDoctrine($doctrine);
         $this->handler->setAccessDeniedExceptionFactory($accessDeniedExceptionFactory);
         $this->handler->setExtensionRegistry($extensionRegistry);
     }
@@ -134,13 +129,11 @@ class ShoppingListLineItemDeleteHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('flush');
 
         $this->totalManager->expects($this->exactly(2))
-            ->method('recalculateTotals');
-        $this->totalManager->expects($this->at(0))
             ->method('recalculateTotals')
-            ->with($this->identicalTo($shoppingList1), $this->isFalse());
-        $this->totalManager->expects($this->at(1))
-            ->method('recalculateTotals')
-            ->with($this->identicalTo($shoppingList2), $this->isFalse());
+            ->withConsecutive(
+                [$this->identicalTo($shoppingList1), $this->isFalse()],
+                [$this->identicalTo($shoppingList2), $this->isFalse()]
+            );
 
         $this->handler->flushAll([
             ['entity' => $lineItem1],

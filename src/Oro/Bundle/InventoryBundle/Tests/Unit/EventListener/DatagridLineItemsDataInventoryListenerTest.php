@@ -3,10 +3,10 @@
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
+use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue as InventoryStatus;
 use Oro\Bundle\InventoryBundle\EventListener\DatagridLineItemsDataInventoryListener;
 use Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider;
 use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
-use Oro\Bundle\InventoryBundle\Tests\Unit\Inventory\Stub\InventoryStatusStub;
 use Oro\Bundle\InventoryBundle\Tests\Unit\Stubs\ProductStub;
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatterInterface;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
@@ -84,7 +84,7 @@ class DatagridLineItemsDataInventoryListenerTest extends \PHPUnit\Framework\Test
     public function testOnLineItemData(): void
     {
         $product = new ProductStub(1);
-        $inventoryStatus = new InventoryStatusStub('in_stock', 'In Stock');
+        $inventoryStatus = new InventoryStatus('in_stock', 'In Stock');
         $product->setInventoryStatus($inventoryStatus);
 
         $this->upcomingProductProvider->expects($this->once())
@@ -124,7 +124,7 @@ class DatagridLineItemsDataInventoryListenerTest extends \PHPUnit\Framework\Test
     public function testOnLineItemDataWithoutAvailabilityDate(): void
     {
         $product = new ProductStub(1);
-        $inventoryStatus = new InventoryStatusStub('in_stock', 'In Stock');
+        $inventoryStatus = new InventoryStatus('in_stock', 'In Stock');
         $product->setInventoryStatus($inventoryStatus);
 
         $this->upcomingProductProvider->expects($this->once())
@@ -163,7 +163,7 @@ class DatagridLineItemsDataInventoryListenerTest extends \PHPUnit\Framework\Test
     public function testOnLineItemDataNotUpcoming(): void
     {
         $product = new ProductStub(1);
-        $inventoryStatus = new InventoryStatusStub('in_stock', 'In Stock');
+        $inventoryStatus = new InventoryStatus('in_stock', 'In Stock');
         $product->setInventoryStatus($inventoryStatus);
 
         $this->upcomingProductProvider->expects($this->once())

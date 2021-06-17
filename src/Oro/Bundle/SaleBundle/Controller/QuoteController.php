@@ -2,18 +2,21 @@
 
 namespace Oro\Bundle\SaleBundle\Controller;
 
+use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
 use Oro\Bundle\SaleBundle\Storage\ReturnRouteDataStorage;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Back-office CRUD for quotes.
@@ -88,7 +91,7 @@ class QuoteController extends AbstractController
         $this->createForm(QuoteType::class, $quote);
 
         if (!$quote->getWebsite()) {
-            $quote->setWebsite($this->get('oro_website.manager')->getDefaultWebsite());
+            $quote->setWebsite($this->get(WebsiteManager::class)->getDefaultWebsite());
         }
 
         $em = $this->get('doctrine')->getManagerForClass(Quote::class);
@@ -142,11 +145,11 @@ class QuoteController extends AbstractController
      */
     protected function update(Quote $quote, Request $request)
     {
-        $handler = $this->get('oro_form.update_handler');
+        $handler = $this->get(UpdateHandlerFacade::class);
         return $handler->update(
             $quote,
             QuoteType::class,
-            $this->get('translator')->trans('oro.sale.controller.quote.saved.message'),
+            $this->get(TranslatorInterface::class)->trans('oro.sale.controller.quote.saved.message'),
             $request,
             null,
             'quote_update'
@@ -168,22 +171,22 @@ class QuoteController extends AbstractController
         $updateResponse = $this->update($quote, $request);
 
         /** @var ReturnRouteDataStorage $redirectStorage */
-        $redirectStorage = $this->get('oro_sale.storage.return_route_storage');
+        $redirectStorage = $this->get(ReturnRouteDataStorage::class);
         $routeToRedirectBack = $redirectStorage->get();
 
         if ($this->isRequestHandledSuccessfully($updateResponse)) {
             // We don't need storage data anymore, so clean it and return user to route which we have to
             $redirectStorage->remove();
             return $this->redirectToRoute($routeToRedirectBack['route'], $routeToRedirectBack['parameters']);
-        } else {
-            // Render form with limited number of actions because we will redirect back
-            return $this->render(
-                $template,
-                array_merge($updateResponse, [
-                    'return_route' => $routeToRedirectBack
-                ])
-            );
         }
+
+        // Render form with limited number of actions because we will redirect back
+        return $this->render(
+            $template,
+            array_merge($updateResponse, [
+                'return_route' => $routeToRedirectBack
+            ])
+        );
     }
 
     /**
@@ -195,5 +198,21 @@ class QuoteController extends AbstractController
     private function isRequestHandledSuccessfully($updateResponse)
     {
         return $updateResponse instanceof RedirectResponse;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                WebsiteManager::class,
+                TranslatorInterface::class,
+                UpdateHandlerFacade::class,
+                ReturnRouteDataStorage::class,
+            ]
+        );
     }
 }

@@ -12,6 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Contains CRUD actions for consents
@@ -49,7 +50,7 @@ class ConsentController extends AbstractController
      */
     public function createAction(Request $request)
     {
-        $createMessage = $this->get('translator')->trans('oro.consent.form.messages.created');
+        $createMessage = $this->get(TranslatorInterface::class)->trans('oro.consent.form.messages.created');
 
         return $this->update(new Consent(), $request, $createMessage);
     }
@@ -73,7 +74,7 @@ class ConsentController extends AbstractController
      */
     public function updateAction(Consent $consent, Request $request)
     {
-        $updateMessage = $this->get('translator')->trans('oro.consent.form.messages.saved');
+        $updateMessage = $this->get(TranslatorInterface::class)->trans('oro.consent.form.messages.saved');
 
         return $this->update($consent, $request, $updateMessage);
     }
@@ -87,8 +88,7 @@ class ConsentController extends AbstractController
      */
     protected function update(Consent $consent, Request $request, $message = '')
     {
-        /** @var UpdateHandlerFacade $updateHandler */
-        $updateHandler = $this->get('oro_form.update_handler');
+        $updateHandler = $this->get(UpdateHandlerFacade::class);
 
         return $updateHandler->update(
             $consent,
@@ -133,5 +133,19 @@ class ConsentController extends AbstractController
         return [
             'consent' => $consent,
         ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                TranslatorInterface::class,
+                UpdateHandlerFacade::class,
+            ]
+        );
     }
 }

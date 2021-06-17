@@ -4,6 +4,7 @@ namespace Oro\Bundle\PromotionBundle\Controller;
 
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Entity\Repository\CouponRepository;
+use Oro\Bundle\PromotionBundle\Handler\CouponValidationHandler;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -11,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * Serves AJAX Coupons actions
+ * Serves coupon actions.
  */
 class AjaxCouponController extends AbstractController
 {
@@ -48,7 +49,7 @@ class AjaxCouponController extends AbstractController
      */
     public function validateCouponApplicabilityAction(Request $request)
     {
-        return $this->get('oro_promotion.handler.coupon_validation_handler')->handle($request);
+        return $this->get(CouponValidationHandler::class)->handle($request);
     }
 
     /**
@@ -82,9 +83,21 @@ class AjaxCouponController extends AbstractController
      */
     private function getCouponRepository()
     {
-        return $this->container
-            ->get('doctrine')
+        return $this->get('doctrine')
             ->getManagerForClass(Coupon::class)
             ->getRepository(Coupon::class);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                CouponValidationHandler::class,
+            ]
+        );
     }
 }

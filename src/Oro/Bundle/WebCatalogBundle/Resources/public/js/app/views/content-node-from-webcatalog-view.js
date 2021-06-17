@@ -1,7 +1,6 @@
 define(function(require) {
     'use strict';
 
-    const _ = require('underscore');
     const BaseView = require('oroui/js/app/views/base/view');
 
     /**
@@ -68,7 +67,7 @@ define(function(require) {
          * @private
          */
         _bindEvents: function() {
-            this.$('[name="' + this.listenedFieldName + '"]').on('change', _.bind(this._triggerUpdateAction, this));
+            this.$('[name="' + this.listenedFieldName + '"]').on('change', this._triggerUpdateAction.bind(this));
         },
 
         /**

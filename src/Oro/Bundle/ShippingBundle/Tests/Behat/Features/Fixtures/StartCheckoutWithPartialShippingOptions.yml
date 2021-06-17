@@ -1,0 +1,138 @@
+include:
+    - '@OroCheckoutBundle:CheckoutCustomerFixture.yml'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision{1..11}:
+        unit: '@item'
+        precision: '0'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    productName{1..11}:
+        string: 'Product<current()>'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product{1..11}:
+        type: 'simple'
+        organization: '@organization'
+        owner: '@business_unit'
+        sku: 'BB<sprintf("%02d", $current)>'
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@precision<current()>'
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        __calls:
+            - addName: ['@productName<current()>']
+
+Oro\Bundle\ShippingBundle\Model\DimensionsValue:
+    dimensionsValue{1..3}:
+        length: '<current()>'
+        width: '<current()>'
+        height: '<current()>'
+    dimensionsValue4:
+        length: 4
+    dimensionsValue5:
+        width: 5
+    dimensionsValue6:
+        height: 6
+    dimensionsValue7:
+        length: 7
+        width: 7
+    dimensionsValue8:
+        length: 8
+        height: 8
+    dimensionsValue9:
+        width: 9
+        height: 9
+
+Oro\Bundle\ShippingBundle\Model\Dimensions:
+    productDimensions1:
+        unit: '@inch'
+        value: '@dimensionsValue1'
+    productDimensions2:
+        value: '@dimensionsValue2'
+    productDimensions3:
+        unit: '@foot'
+        value: '@dimensionsValue3'
+    productDimensions4:
+        unit: '@centimeter'
+        value: '@dimensionsValue4'
+    productDimensions{5..9}:
+        unit: '@meter'
+        value: '@dimensionsValue<current()>'
+
+Oro\Bundle\ShippingBundle\Model\Weight:
+    productWeight1:
+        unit: '@kg'
+        value: 1
+    productWeight2:
+        unit: '@kg'
+        value: 2
+    productWeight3:
+        value: 3
+    productWeight{4..9}:
+        unit: '@lbs'
+        value: '<current()>'
+
+Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions:
+    productShippingOptions1:
+        product: '@product1'
+        productUnit: '@item'
+        freightClass: '@parcel'
+        weight: '@productWeight1'
+        dimensions: '@productDimensions1'
+    productShippingOptions2:
+        product: '@product2'
+        productUnit: '@item'
+        freightClass: '@parcel'
+        weight: '@productWeight2'
+        dimensions: '@productDimensions2'
+    productShippingOptions3:
+        product: '@product3'
+        productUnit: '@item'
+        freightClass: '@parcel'
+        weight: '@productWeight3'
+        dimensions: '@productDimensions3'
+    productShippingOptions{4..9}:
+        product: '@product<current()>'
+        productUnit: '@item'
+        weight: '@productWeight<current()>'
+        dimensions: '@productDimensions<current()>'
+        freightClass: '@parcel'
+    productShippingOptions10:
+        product: '@product10'
+        productUnit: '@item'
+        freightClass: '@parcel'
+    productShippingOptions11:
+        product: '@product11'
+        productUnit: '@item'
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    price{1..11}:
+        product: '@product<current()>'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: '<current()>'
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceRelation{1..11}:
+        product: '@product<current()>'
+        priceList: '@defaultPriceList'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+    shoppinglist1:
+        label: 'ShoppingList1'
+        customer: '@customer'
+        customerUser: '@amanda'
+        organization: '@organization'
+        website: '@website1'
+
+Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+    lineitem{1..11}:
+        product: '@product<current()>'
+        quantity: '<current()>'
+        unit: '@item'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist1'
+        organization: '@organization'

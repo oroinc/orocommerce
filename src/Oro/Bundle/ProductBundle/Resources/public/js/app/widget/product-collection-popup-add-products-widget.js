@@ -37,9 +37,9 @@ define(function(require) {
 
             this._checkOptions();
 
-            this.getAction('addProducts', 'adopted', _.bind(function(actionElement) {
-                actionElement.on('click', _.bind(this._triggerEvent, this));
-            }, this));
+            this.getAction('addProducts', 'adopted', actionElement => {
+                actionElement.on('click', this._triggerEvent.bind(this));
+            });
 
             mediator.on('product-collection-add-to-excluded', this._closeDialogWidget, this);
             mediator.on('product-collection-add-to-included', this._closeDialogWidget, this);
@@ -49,9 +49,9 @@ define(function(require) {
          * @private
          */
         _checkOptions: function() {
-            const requiredMissed = this.requiredOptions.filter(_.bind(function(option) {
+            const requiredMissed = this.requiredOptions.filter(option => {
                 return _.isUndefined(this.options[option]);
-            }, this));
+            });
             if (requiredMissed.length) {
                 throw new TypeError('Missing required option(s): ' + requiredMissed.join(', '));
             }

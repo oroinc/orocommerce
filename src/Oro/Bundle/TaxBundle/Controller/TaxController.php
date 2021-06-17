@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\TaxBundle\Controller;
 
+use Oro\Bundle\FormBundle\Model\UpdateHandler;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\TaxBundle\Entity\Tax;
@@ -10,6 +11,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * CRUD for tax rates.
@@ -91,7 +93,7 @@ class TaxController extends AbstractController
      */
     protected function update(Tax $tax)
     {
-        return $this->get('oro_form.model.update_handler')->handleUpdate(
+        return $this->get(UpdateHandler::class)->handleUpdate(
             $tax,
             $this->createForm(TaxType::class, $tax),
             function (Tax $tax) {
@@ -106,7 +108,21 @@ class TaxController extends AbstractController
                     'parameters' => ['id' => $tax->getId()]
                 ];
             },
-            $this->get('translator')->trans('oro.tax.controller.tax.saved.message')
+            $this->get(TranslatorInterface::class)->trans('oro.tax.controller.tax.saved.message')
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                TranslatorInterface::class,
+                UpdateHandler::class,
+            ]
         );
     }
 }

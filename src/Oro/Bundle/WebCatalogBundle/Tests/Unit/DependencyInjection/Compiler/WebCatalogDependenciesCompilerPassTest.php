@@ -4,46 +4,37 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\DependencyInjection\Compiler;
 
 use Oro\Bundle\WebCatalogBundle\DependencyInjection\Compiler\WebCatalogDependenciesCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
 class WebCatalogDependenciesCompilerPassTest extends \PHPUnit\Framework\TestCase
 {
+    /** @var WebCatalogDependenciesCompilerPass */
+    private $compiler;
+
+    protected function setUp(): void
+    {
+        $this->compiler = new WebCatalogDependenciesCompilerPass();
+    }
+
     public function testProcessNoDefinition()
     {
-        $container = $this->createMock(ContainerBuilder::class);
-        $container->expects($this->once())
-            ->method('hasDefinition')
-            ->with('oro_product.provider.content_variant_segment_provider')
-            ->willReturn(false);
-        $container->expects($this->never())
-            ->method('getDefinition');
+        $container = new ContainerBuilder();
 
-        $compilerPass = new WebCatalogDependenciesCompilerPass();
-        $compilerPass->process($container);
+        $this->compiler->process($container);
     }
 
     public function testProcess()
     {
-        $container = $this->createMock(ContainerBuilder::class);
-        $container->expects($this->once())
-            ->method('hasDefinition')
-            ->with('oro_product.provider.content_variant_segment_provider')
-            ->willReturn(true);
+        $container = new ContainerBuilder();
+        $providerDef = $container->register('oro_product.provider.content_variant_segment_provider');
 
-        $definition = $this->createMock(Definition::class);
-        $definition->expects($this->once())
-            ->method('addMethodCall')
-            ->with(
-                'setWebCatalogUsageProvider',
-                [new Reference('oro_web_catalog.provider.web_catalog_usage_provider')]
-            );
-        $container->expects($this->once())
-            ->method('getDefinition')
-            ->with('oro_product.provider.content_variant_segment_provider')
-            ->willReturn($definition);
+        $this->compiler->process($container);
 
-        $compilerPass = new WebCatalogDependenciesCompilerPass();
-        $compilerPass->process($container);
+        self::assertEquals(
+            [
+                ['setWebCatalogUsageProvider', [new Reference('oro_web_catalog.provider.web_catalog_usage_provider')]]
+            ],
+            $providerDef->getMethodCalls()
+        );
     }
 }

@@ -9,14 +9,10 @@ use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 
 class ShippingRuleEnabledCheckerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ShippingMethodEnabledByIdentifierCheckerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ShippingMethodEnabledByIdentifierCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $methodEnabledChecker;
 
-    /**
-     * @var ShippingRuleEnabledChecker
-     */
+    /** @var ShippingRuleEnabledChecker */
     private $ruleChecker;
 
     protected function setUp(): void
@@ -30,33 +26,28 @@ class ShippingRuleEnabledCheckerTest extends \PHPUnit\Framework\TestCase
 
     public function testCanBeEnabledForOneEnabledMethod()
     {
-        $this->methodEnabledChecker->expects(static::at(1))
+        $this->methodEnabledChecker->expects(self::once())
             ->method('isEnabled')
             ->willReturn(true);
 
-        $rule = $this->getRuleMock();
+        $rule = $this->getRule();
 
-        static::assertTrue($this->ruleChecker->canBeEnabled($rule));
+        self::assertTrue($this->ruleChecker->canBeEnabled($rule));
     }
 
     public function testCanBeEnabledForNoEnabledMethods()
     {
-        $rule = $this->getRuleMock();
+        $rule = $this->getRule();
 
-        static::assertFalse($this->ruleChecker->canBeEnabled($rule));
+        self::assertFalse($this->ruleChecker->canBeEnabled($rule));
     }
 
-    /**
-     * @return ShippingMethodsConfigsRule|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function getRuleMock()
+    private function getRule(): ShippingMethodsConfigsRule
     {
         $rule = $this->createMock(ShippingMethodsConfigsRule::class);
-        $rule->expects(static::any())
+        $rule->expects(self::any())
             ->method('getMethodConfigs')
-            ->willReturn([
-                new ShippingMethodConfig(), new ShippingMethodConfig()
-            ]);
+            ->willReturn([new ShippingMethodConfig(), new ShippingMethodConfig()]);
 
         return $rule;
     }

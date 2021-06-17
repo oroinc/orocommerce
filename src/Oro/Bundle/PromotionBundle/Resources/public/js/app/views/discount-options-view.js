@@ -2,7 +2,6 @@ define(function(require) {
     'use strict';
 
     const $ = require('jquery');
-    const _ = require('underscore');
     const BaseView = require('oroui/js/app/views/base/view');
     const mediator = require('oroui/js/mediator');
 
@@ -37,7 +36,7 @@ define(function(require) {
 
             const $el = this.options.el;
             this.$formContainer = $el.find(this.options.selectors.formContainerSelector);
-            $el.on('change', this.options.selectors.formTypesChoiceSelector, _.bind(this.changeDiscountForm, this));
+            $el.on('change', this.options.selectors.formTypesChoiceSelector, this.changeDiscountForm.bind(this));
         },
 
         /**

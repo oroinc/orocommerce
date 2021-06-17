@@ -44,6 +44,9 @@ services:
             - 'getRates'
             - connection_timeout: 3
 
+    Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceSoapClient:
+        alias: oro_fedex_shipping.client.rate_service
+
     oro_fedex_shipping.client.rate_service:
         class: 'Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceSoapClient'
         public: true
@@ -105,6 +108,9 @@ services:
         arguments:
             - '@oro_shipping.factory.shipping_package_options'
             - '@oro_fedex_shipping.expression_language'
+
+    Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRateServiceValidateConnectionRequestFactory:
+        alias: oro_fedex_shipping.client.rate_service.connection_validate_request.factory
 
     oro_fedex_shipping.client.rate_service.connection_validate_request.factory:
         class: 'Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRateServiceValidateConnectionRequestFactory'

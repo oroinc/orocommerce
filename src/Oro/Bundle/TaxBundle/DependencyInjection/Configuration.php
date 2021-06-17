@@ -8,6 +8,9 @@ use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
+/**
+ * OroTaxBundle configuration.
+ */
 class Configuration implements ConfigurationInterface
 {
     const ADDRESS_RESOLVER_GRANULARITY = 'address_resolver_granularity';
@@ -78,6 +81,10 @@ class Configuration implements ConfigurationInterface
                 'address_resolver_granularity' => [
                     'type'  =>  'text',
                     'value' =>  AddressResolverSettingsProvider::ADDRESS_RESOLVER_GRANULARITY_ZIP
+                ],
+                'calculate_taxes_after_promotions' => [
+                    'type' => 'boolean',
+                    'value' => false
                 ],
             ]
         );

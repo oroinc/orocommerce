@@ -65,6 +65,7 @@ Oro\Bundle\CMSBundle\Entity\ImageSlide:
             - Length:
                 min: 1
                 max: 255
+                allowEmptyString: false
             - Oro\Bundle\SecurityBundle\Validator\Constraints\NotDangerousProtocol:
                 message: oro.cms.image_slider.url.not_dangerous_protocol.message
         displayInSameWindow:
@@ -74,6 +75,7 @@ Oro\Bundle\CMSBundle\Entity\ImageSlide:
             - Length:
                 min: 1
                 max: 255
+                allowEmptyString: false
         textAlignment:
             - NotBlank: ~
             - Choice:

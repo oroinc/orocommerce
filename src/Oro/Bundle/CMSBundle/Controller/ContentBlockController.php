@@ -4,12 +4,15 @@ namespace Oro\Bundle\CMSBundle\Controller;
 
 use Oro\Bundle\CMSBundle\Entity\ContentBlock;
 use Oro\Bundle\CMSBundle\Form\Type\ContentBlockType;
+use Oro\Bundle\FormBundle\Model\UpdateHandler;
+use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * CMS Content Block Controller
@@ -46,7 +49,7 @@ class ContentBlockController extends AbstractController
      */
     public function viewAction(ContentBlock $contentBlock)
     {
-        $scopeEntities = $this->get('oro_scope.scope_manager')->getScopeEntities('cms_content_block');
+        $scopeEntities = $this->get(ScopeManager::class)->getScopeEntities('cms_content_block');
 
         return [
             'entity' => $contentBlock,
@@ -97,10 +100,25 @@ class ContentBlockController extends AbstractController
     {
         $form = $this->createForm(ContentBlockType::class, $contentBlock);
 
-        return $this->get('oro_form.model.update_handler')->update(
+        return $this->get(UpdateHandler::class)->update(
             $contentBlock,
             $form,
-            $this->get('translator')->trans('oro.cms.controller.contentblock.saved.message')
+            $this->get(TranslatorInterface::class)->trans('oro.cms.controller.contentblock.saved.message')
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                TranslatorInterface::class,
+                UpdateHandler::class,
+                ScopeManager::class,
+            ]
         );
     }
 }

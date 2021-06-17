@@ -21,42 +21,27 @@ class ContentNodeListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var ContentNodeMaterializedPathModifier|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $modifier;
+    /** @var ContentNodeMaterializedPathModifier|\PHPUnit\Framework\MockObject\MockObject */
+    private $modifier;
 
-    /**
-     * @var ExtraActionEntityStorageInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $storage;
+    /** @var ExtraActionEntityStorageInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $storage;
 
-    /**
-     * @var ContentNodeListener
-     */
-    protected $contentNodeListener;
+    /** @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $messageProducer;
 
-    /**
-     * @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $messageProducer;
+    /** @var ResolveNodeSlugsMessageFactory|\PHPUnit\Framework\MockObject\MockObject */
+    private $messageFactory;
 
-    /**
-     * @var ResolveNodeSlugsMessageFactory|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $messageFactory;
+    /** @var ContentNodeListener */
+    private $contentNodeListener;
 
     protected function setUp(): void
     {
-        $this->modifier = $this->getMockBuilder(ContentNodeMaterializedPathModifier::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->modifier = $this->createMock(ContentNodeMaterializedPathModifier::class);
         $this->storage = $this->createMock(ExtraActionEntityStorageInterface::class);
         $this->messageProducer = $this->createMock(MessageProducerInterface::class);
-        $this->messageFactory = $this->getMockBuilder(ResolveNodeSlugsMessageFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->messageFactory = $this->createMock(ResolveNodeSlugsMessageFactory::class);
 
         $this->contentNodeListener = new ContentNodeListener(
             $this->modifier,
@@ -74,10 +59,6 @@ class ContentNodeListenerTest extends \PHPUnit\Framework\TestCase
             ->method('calculateMaterializedPath')
             ->with($contentNode);
 
-        $this->modifier->expects($this->once())
-            ->method('calculateMaterializedPath')
-            ->with($contentNode);
-
         $this->contentNodeListener->postPersist($contentNode);
     }
 
@@ -86,21 +67,11 @@ class ContentNodeListenerTest extends \PHPUnit\Framework\TestCase
         /** @var ContentNode $contentNode */
         $contentNode = $this->getEntity(ContentNode::class, ['id' => 42]);
 
-        /** @var PreUpdateEventArgs|\PHPUnit\Framework\MockObject\MockObject $args */
-        $args = $this->getMockBuilder(PreUpdateEventArgs::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $args = $this->createMock(PreUpdateEventArgs::class);
 
         $args->expects($this->once())
             ->method('getEntityChangeSet')
-            ->willReturn(
-                [
-                    ContentNode::FIELD_PARENT_NODE => [
-                        null,
-                        new ContentNode()
-                    ]
-                ]
-            );
+            ->willReturn([ContentNode::FIELD_PARENT_NODE => [null, new ContentNode()]]);
 
         $childNode = new ContentNode();
 
@@ -109,13 +80,9 @@ class ContentNodeListenerTest extends \PHPUnit\Framework\TestCase
             ->with($contentNode)
             ->willReturn([new ContentNode()]);
 
-        $this->storage->expects($this->at(0))
+        $this->storage->expects($this->exactly(2))
             ->method('scheduleForExtraInsert')
-            ->with($contentNode);
-
-        $this->storage->expects($this->at(1))
-            ->method('scheduleForExtraInsert')
-            ->with($childNode);
+            ->withConsecutive([$contentNode], [$childNode]);
 
         $this->contentNodeListener->preUpdate($contentNode, $args);
     }
@@ -132,10 +99,7 @@ class ContentNodeListenerTest extends \PHPUnit\Framework\TestCase
             ->method('send')
             ->with(Topics::RESOLVE_NODE_SLUGS, []);
 
-        /** @var AfterFormProcessEvent|\PHPUnit\Framework\MockObject\MockObject $event */
-        $event = $this->getMockBuilder(AfterFormProcessEvent::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $event = $this->createMock(AfterFormProcessEvent::class);
         $event->expects($this->once())
             ->method('getData')
             ->willReturn($contentNode);
@@ -168,24 +132,17 @@ class ContentNodeListenerTest extends \PHPUnit\Framework\TestCase
                 ]
             );
 
-        /** @var UnitOfWork|\PHPUnit\Framework\MockObject\MockObject $uow */
-        $uow = $this->getMockBuilder(UnitOfWork::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $uow = $this->createMock(UnitOfWork::class);
         $uow->expects($this->once())
             ->method('isScheduledForDelete')
             ->with($parentNode)
             ->willReturn(false);
-        /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject $em */
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->once())
             ->method('getUnitOfWork')
             ->willReturn($uow);
 
-        /** @var LifecycleEventArgs|\PHPUnit\Framework\MockObject\MockObject $event */
-        $event = $this->getMockBuilder(LifecycleEventArgs::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $event = $this->createMock(LifecycleEventArgs::class);
         $event->expects($this->once())
             ->method('getEntityManager')
             ->willReturn($em);
@@ -209,10 +166,7 @@ class ContentNodeListenerTest extends \PHPUnit\Framework\TestCase
         $this->messageProducer->expects($this->once())
             ->method('send')
             ->with(Topics::CALCULATE_WEB_CATALOG_CACHE, ['webCatalogId' => 42]);
-        /** @var LifecycleEventArgs|\PHPUnit\Framework\MockObject\MockObject $event */
-        $event = $this->getMockBuilder(LifecycleEventArgs::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $event = $this->createMock(LifecycleEventArgs::class);
 
         $this->contentNodeListener->postRemove($contentNode, $event);
     }
@@ -230,24 +184,17 @@ class ContentNodeListenerTest extends \PHPUnit\Framework\TestCase
         $this->messageProducer->expects($this->never())
             ->method('send');
 
-        /** @var UnitOfWork|\PHPUnit\Framework\MockObject\MockObject $uow */
-        $uow = $this->getMockBuilder(UnitOfWork::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $uow = $this->createMock(UnitOfWork::class);
         $uow->expects($this->once())
             ->method('isScheduledForDelete')
             ->with($parentNode)
             ->willReturn(true);
-        /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject $em */
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->once())
             ->method('getUnitOfWork')
             ->willReturn($uow);
 
-        /** @var LifecycleEventArgs|\PHPUnit\Framework\MockObject\MockObject $event */
-        $event = $this->getMockBuilder(LifecycleEventArgs::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $event = $this->createMock(LifecycleEventArgs::class);
         $event->expects($this->once())
             ->method('getEntityManager')
             ->willReturn($em);

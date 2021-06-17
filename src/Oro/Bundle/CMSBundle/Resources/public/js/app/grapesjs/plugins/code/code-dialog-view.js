@@ -149,14 +149,14 @@ define(function(require) {
                     maxWidth: 856,
                     appendTo: this.editor.getEl(),
                     dialogClass: 'ui-dialog--import-template',
-                    close: _.bind(function() {
+                    close: () => {
                         this.dispose();
-                    }, this)
+                    }
                 }
             });
 
             this.viewerEditor.refresh();
-            this.importButton.on('click', _.bind(this.onSave, this));
+            this.importButton.on('click', this.onSave.bind(this));
         },
 
         /**

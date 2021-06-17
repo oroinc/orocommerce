@@ -3,7 +3,9 @@
 namespace Oro\Bundle\ProductBundle\Controller\Frontend;
 
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
+use Oro\Bundle\ProductBundle\Form\Handler\QuickAddHandler;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
+use Oro\Bundle\ProductBundle\Provider\QuickAddCollectionProvider;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -13,6 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
+ * Serves Quick Add actions.
  * @AclAncestor("oro_quick_add_form")
  */
 class QuickAddController extends AbstractController
@@ -26,7 +29,7 @@ class QuickAddController extends AbstractController
      */
     public function addAction(Request $request)
     {
-        $response = $this->get('oro_product.form_handler.quick_add')->process(
+        $response = $this->get(QuickAddHandler::class)->process(
             $request,
             'oro_product_frontend_quick_add'
         );
@@ -43,7 +46,7 @@ class QuickAddController extends AbstractController
      */
     public function importAction(Request $request)
     {
-        $collection = $this->get('oro_product.layout.data_provider.quick_add_collection')->processImport();
+        $collection = $this->get(QuickAddCollectionProvider::class)->processImport();
 
         return [
             'import_step' => $this->getImportStep($collection),
@@ -63,7 +66,7 @@ class QuickAddController extends AbstractController
      */
     public function copyPasteAction()
     {
-        $collection = $this->get('oro_product.layout.data_provider.quick_add_collection')->processCopyPaste();
+        $collection = $this->get(QuickAddCollectionProvider::class)->processCopyPaste();
 
         return [
             'import_step' => $collection === null ? 'form' : 'result',
@@ -81,7 +84,7 @@ class QuickAddController extends AbstractController
      */
     public function validationResultAction(Request $request)
     {
-        $response = $this->get('oro_product.form_handler.quick_add')->process(
+        $response = $this->get(QuickAddHandler::class)->process(
             $request,
             'oro_product_frontend_quick_add'
         );
@@ -108,5 +111,19 @@ class QuickAddController extends AbstractController
         }
 
         return 'form';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                QuickAddHandler::class,
+                QuickAddCollectionProvider::class,
+            ]
+        );
     }
 }

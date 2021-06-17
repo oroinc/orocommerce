@@ -11,14 +11,10 @@ use Oro\Bundle\ProductBundle\Visibility\UnitVisibilityInterface;
 
 class PriceUnitVisibilityProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var UnitVisibilityInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var UnitVisibilityInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $unitVisibility;
 
-    /**
-     * @var PriceUnitVisibilityProvider
-     */
+    /** @var PriceUnitVisibilityProvider */
     private $provider;
 
     protected function setUp(): void
@@ -29,7 +25,7 @@ class PriceUnitVisibilityProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testIsPriceUnitsVisibleByProduct()
     {
-        $unitPrecision1 = $this->createUnitPrecisionMock('item');
+        $unitPrecision1 = $this->createUnitPrecision('item');
 
         $product = $this->createProductMock([$unitPrecision1]);
 
@@ -43,28 +39,25 @@ class PriceUnitVisibilityProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testIsPriceUnitsVisibleByProductFalse()
     {
-        $unitPrecision1 = $this->createUnitPrecisionMock('item');
-        $unitPrecision2 = $this->createUnitPrecisionMock('set');
+        $unitPrecision1 = $this->createUnitPrecision('item');
+        $unitPrecision2 = $this->createUnitPrecision('set');
 
         $product = $this->createProductMock([$unitPrecision1, $unitPrecision2]);
 
-        $this->unitVisibility->expects($this->at(0))
+        $this->unitVisibility->expects($this->exactly(2))
             ->method('isUnitCodeVisible')
-            ->with('item')
-            ->willReturn(true);
-
-        $this->unitVisibility->expects($this->at(1))
-            ->method('isUnitCodeVisible')
-            ->with('set')
-            ->willReturn(false);
+            ->willReturnMap([
+                ['item', true],
+                ['set', false]
+            ]);
 
         $this->assertTrue($this->provider->isPriceUnitsVisibleByProduct($product));
     }
 
     public function testGetPriceUnitsVisibilityByProducts()
     {
-        $unitPrecision1 = $this->createUnitPrecisionMock('item');
-        $unitPrecision2 = $this->createUnitPrecisionMock('set');
+        $unitPrecision1 = $this->createUnitPrecision('item');
+        $unitPrecision2 = $this->createUnitPrecision('set');
 
         $product1 = $this->createProductMock([$unitPrecision1]);
         $product1->expects($this->once())
@@ -75,15 +68,12 @@ class PriceUnitVisibilityProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getId')
             ->willReturn(2);
 
-        $this->unitVisibility->expects($this->at(0))
+        $this->unitVisibility->expects($this->exactly(2))
             ->method('isUnitCodeVisible')
-            ->with('item')
-            ->willReturn(true);
-
-        $this->unitVisibility->expects($this->at(1))
-            ->method('isUnitCodeVisible')
-            ->with('set')
-            ->willReturn(false);
+            ->willReturnMap([
+                ['item', true],
+                ['set', false]
+            ]);
 
         $this->assertEquals([
             1 => true,
@@ -91,11 +81,7 @@ class PriceUnitVisibilityProviderTest extends \PHPUnit\Framework\TestCase
         ], $this->provider->getPriceUnitsVisibilityByProducts([$product1, $product2]));
     }
 
-    /**
-     * @param string $unitCode
-     * @return ProductUnitPrecision|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function createUnitPrecisionMock($unitCode)
+    private function createUnitPrecision(string $unitCode): ProductUnitPrecision
     {
         $unit = $this->createMock(ProductUnit::class);
         $unit->expects($this->once())
@@ -116,12 +102,12 @@ class PriceUnitVisibilityProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @param array $unitPrecisions
+     *
      * @return Product|\PHPUnit\Framework\MockObject\MockObject
      */
-    private function createProductMock(array $unitPrecisions)
+    private function createProductMock(array $unitPrecisions): Product
     {
         $product = $this->createMock(Product::class);
-
         $product->expects($this->once())
             ->method('getUnitPrecisions')
             ->willReturn(new ArrayCollection($unitPrecisions));

@@ -4,55 +4,25 @@ namespace Oro\Bundle\ValidationBundle\Tests\Unit\Validator\Constraints;
 
 use Oro\Bundle\ValidationBundle\Validator\Constraints\BlankOneOf;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\BlankOneOfValidator;
-use PHPUnit\Framework\TestCase;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class BlankOneOfValidatorTest extends TestCase
+class BlankOneOfValidatorTest extends ConstraintValidatorTestCase
 {
-    /**
-     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $translator;
-
-    /**
-     * @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $context;
-
-    /**
-     * @var PropertyAccessor
-     */
-    private $propertyAccessor;
-
-    /**
-     * @var BlankOneOfValidator
-     */
-    private $validator;
-
-    protected function setUp(): void
+    protected function createValidator()
     {
-        $this->translator = $this->createMock(TranslatorInterface::class);
-        $this->context = $this->createMock(ExecutionContextInterface::class);
-        $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
-
-        $this->translator->expects(static::any())
+        $translator = $this->createMock(TranslatorInterface::class);
+        $translator->expects($this->any())
             ->method('trans')
-            ->willReturnCallback(
-                function ($value) {
-                    return $value;
-                }
-            );
+            ->willReturnCallback(function ($id) {
+                return $id . ' (translated)';
+            });
 
-        $this->validator = new BlankOneOfValidator(
-            $this->translator,
-            $this->propertyAccessor
+        return new BlankOneOfValidator(
+            $translator,
+            new PropertyAccessor()
         );
-
-        $this->validator->initialize($this->context);
     }
 
     public function testValidateCorrectFields()
@@ -75,10 +45,9 @@ class BlankOneOfValidatorTest extends TestCase
             ['field5' => 'Field 5', 'field6' => 'Field 6'],
         ];
 
-        $this->context->expects(static::never())
-            ->method('buildViolation');
-
         $this->validator->validate($value, $constraint);
+
+        $this->assertNoViolation();
     }
 
     public function testValidateWrongValues()
@@ -101,29 +70,15 @@ class BlankOneOfValidatorTest extends TestCase
             ['field5' => 'Field 5', 'field6' => 'Field 6'],
         ];
 
-        $violationBuilder1 = $this->createMock(ConstraintViolationBuilderInterface::class);
-        $violationBuilder2 = $this->createMock(ConstraintViolationBuilderInterface::class);
-
-        $violationBuilder1->expects(static::once())
-            ->method('atPath')
-            ->with('field1')
-            ->willReturn($violationBuilder1);
-
-        $violationBuilder2->expects(static::once())
-            ->method('atPath')
-            ->with('field3')
-            ->willReturn($violationBuilder2);
-
-        $this->context
-            ->expects(static::at(0))
-            ->method('buildViolation')
-            ->willReturn($violationBuilder1);
-
-        $this->context
-            ->expects(static::at(1))
-            ->method('buildViolation')
-            ->willReturn($violationBuilder2);
-
         $this->validator->validate($value, $constraint);
+
+        $this
+            ->buildViolation($constraint->message)
+            ->setParameter('%fields%', 'Field 1 (translated), Field 2 (translated)')
+            ->atPath('property.path.field1')
+            ->buildNextViolation($constraint->message)
+            ->setParameter('%fields%', 'Field 3 (translated), Field 4 (translated)')
+            ->atPath('property.path.field3')
+            ->assertRaised();
     }
 }

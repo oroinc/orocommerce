@@ -28,6 +28,7 @@ class OroConsentExtension extends Extension
         $loader->load('services.yml');
         $loader->load('form_types.yml');
         $loader->load('block_types.yml');
+        $loader->load('controllers.yml');
 
         $container->prependExtensionConfig($this->getAlias(), $config);
     }

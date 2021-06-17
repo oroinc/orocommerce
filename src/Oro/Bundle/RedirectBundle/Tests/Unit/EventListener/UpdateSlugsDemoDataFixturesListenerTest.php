@@ -22,32 +22,29 @@ use Oro\Bundle\TestFrameworkBundle\Entity\Item;
 class UpdateSlugsDemoDataFixturesListenerTest extends DemoDataFixturesListenerTestCase
 {
     /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
-    protected $configManager;
+    private $configManager;
 
     /** @var SlugEntityGenerator|\PHPUnit\Framework\MockObject\MockObject */
-    protected $generator;
+    private $generator;
 
     /** @var UrlStorageCache|\PHPUnit\Framework\MockObject\MockObject */
-    protected $urlStorageCache;
+    private $urlStorageCache;
 
     /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $entityManager;
+    private $entityManager;
 
     /** @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject */
-    protected $redirectRepository;
+    private $redirectRepository;
 
     /** @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject */
-    protected $sluggableRepository;
+    private $sluggableRepository;
 
     /** @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject */
-    protected $slugRepository;
+    private $slugRepository;
 
     /** @var ClassMetadataFactory|\PHPUnit\Framework\MockObject\MockObject */
-    protected $metadataFactory;
+    private $metadataFactory;
 
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
@@ -100,13 +97,8 @@ class UpdateSlugsDemoDataFixturesListenerTest extends DemoDataFixturesListenerTe
             ]
         );
 
-        $redirect1 = $this->getMockBuilder(Redirect::class)
-            ->setMethods(['setScopes'])
-            ->getMock();
-
-        $redirect2 = $this->getMockBuilder(Redirect::class)
-            ->setMethods(['setScopes'])
-            ->getMock();
+        $redirect1 = $this->createMock(Redirect::class);
+        $redirect2 = $this->createMock(Redirect::class);
 
         $this->event->expects($this->once())
             ->method('isDemoFixtures')
@@ -148,13 +140,12 @@ class UpdateSlugsDemoDataFixturesListenerTest extends DemoDataFixturesListenerTe
             ->method('findAll')
             ->willReturn([$sluggable1, $sluggable2]);
 
-        $this->generator->expects($this->at(0))
+        $this->generator->expects($this->exactly(2))
             ->method('generate')
-            ->with($sluggable1, true);
-
-        $this->generator->expects($this->at(1))
-            ->method('generate')
-            ->with($sluggable2, false);
+            ->withConsecutive(
+                [$sluggable1, true],
+                [$sluggable2, false]
+            );
 
         $this->urlStorageCache->expects($this->once())
             ->method('flushAll');
@@ -199,9 +190,7 @@ class UpdateSlugsDemoDataFixturesListenerTest extends DemoDataFixturesListenerTe
             ]
         );
 
-        $redirect1 = $this->getMockBuilder(Redirect::class)
-            ->setMethods(['setScopes'])
-            ->getMock();
+        $redirect1 = $this->createMock(Redirect::class);
 
         $this->event->expects($this->once())
             ->method('isDemoFixtures')
@@ -283,11 +272,7 @@ class UpdateSlugsDemoDataFixturesListenerTest extends DemoDataFixturesListenerTe
         $this->listener->onPostLoad($this->event);
     }
 
-    /**
-     * @param string $className
-     * @return ClassMetadata|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function getMetadata($className)
+    private function getMetadata(string $className): ClassMetadata
     {
         $metadata = $this->createMock(ClassMetadata::class);
         $metadata->expects($this->once())

@@ -15,36 +15,24 @@ use Symfony\Component\HttpFoundation\Request;
 
 class ProductPriceHandlerTest extends \PHPUnit\Framework\TestCase
 {
-    const FORM_DATA = ['field' => 'value'];
+    private const FORM_DATA = ['field' => 'value'];
 
-    /**
-     * @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $eventDispatcher;
 
-    /**
-     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
-    /**
-     * @var FormInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $form;
 
-    /**
-     * @var Request
-     */
+    /** @var Request */
     private $request;
 
-    /**
-     * @var ProductPriceHandler
-     */
+    /** @var ProductPriceHandler */
     private $handler;
 
-    /**
-     * @var PriceManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var PriceManager|\PHPUnit\Framework\MockObject\MockObject */
     private $priceManager;
 
     protected function setUp(): void
@@ -61,13 +49,19 @@ class ProductPriceHandlerTest extends \PHPUnit\Framework\TestCase
     {
         $entity = new ProductPrice();
         $em = $this->formHandlerMock($entity);
-        $this->priceManager->expects($this->once())->method('flush');
-        $em->expects($this->once())->method('commit');
+        $this->priceManager->expects($this->once())
+            ->method('flush');
+        $em->expects($this->once())
+            ->method('commit');
 
-        $this->assertProcessEventsTriggered($this->form, $entity);
-        $this->assertProcessAfterEventsTriggered($this->form, $entity);
         $this->eventDispatcher->expects($this->exactly(4))
-            ->method('dispatch');
+            ->method('dispatch')
+            ->withConsecutive(
+                [new FormProcessEvent($this->form, $entity), Events::BEFORE_FORM_DATA_SET],
+                [new FormProcessEvent($this->form, $entity), Events::BEFORE_FORM_SUBMIT],
+                [new AfterFormProcessEvent($this->form, $entity), Events::BEFORE_FLUSH],
+                [new AfterFormProcessEvent($this->form, $entity), Events::AFTER_FLUSH]
+            );
 
         $this->assertTrue($this->handler->process($entity, $this->form, $this->request));
     }
@@ -89,10 +83,11 @@ class ProductPriceHandlerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param $entity
-     * @return \PHPUnit\Framework\MockObject\MockObject
+     * @param ProductPrice $entity
+     *
+     * @return EntityManager|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected function formHandlerMock($entity)
+    private function formHandlerMock(ProductPrice $entity): EntityManager
     {
         $this->form->expects($this->once())
             ->method('setData')
@@ -104,49 +99,18 @@ class ProductPriceHandlerTest extends \PHPUnit\Framework\TestCase
             ->with(self::FORM_DATA);
         $this->form->expects($this->once())
             ->method('isValid')
-            ->will($this->returnValue(true));
-        $em = $this->getMockBuilder(EntityManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+            ->willReturn(true);
+        $em = $this->createMock(EntityManager::class);
         $this->doctrineHelper->expects($this->any())
             ->method('getEntityManager')
             ->with($entity)
-            ->will($this->returnValue($em));
+            ->willReturn($em);
         $em->expects($this->once())
             ->method('beginTransaction');
         $this->priceManager->expects($this->once())
             ->method('persist')
             ->with($entity);
+
         return $em;
-    }
-
-    /**
-     * @param FormInterface $form
-     * @param object $entity
-     */
-    protected function assertProcessEventsTriggered(FormInterface $form, $entity)
-    {
-        $this->eventDispatcher->expects($this->at(0))
-            ->method('dispatch')
-            ->with(new FormProcessEvent($form, $entity), Events::BEFORE_FORM_DATA_SET);
-
-        $this->eventDispatcher->expects($this->at(1))
-            ->method('dispatch')
-            ->with(new FormProcessEvent($form, $entity), Events::BEFORE_FORM_SUBMIT);
-    }
-
-    /**
-     * @param FormInterface $form
-     * @param object $entity
-     */
-    protected function assertProcessAfterEventsTriggered(FormInterface $form, $entity)
-    {
-        $this->eventDispatcher->expects($this->at(2))
-            ->method('dispatch')
-            ->with(new AfterFormProcessEvent($form, $entity), Events::BEFORE_FLUSH);
-
-        $this->eventDispatcher->expects($this->at(3))
-            ->method('dispatch')
-            ->with(new AfterFormProcessEvent($form, $entity), Events::AFTER_FLUSH);
     }
 }

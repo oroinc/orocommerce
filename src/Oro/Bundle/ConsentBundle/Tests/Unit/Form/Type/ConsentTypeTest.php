@@ -23,50 +23,24 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ConsentTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var ConsentType
-     */
-    protected $formType;
-
-    /**
-     * @var WebCatalogProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var WebCatalogProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $webCatalogProvider;
 
-    /**
-     * @var FormFactory|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $formFactory;
+    /** @var ConsentType */
+    private $formType;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         parent::setUp();
+
         $this->webCatalogProvider = $this->createMock(WebCatalogProvider::class);
-        $this->formFactory = $this->createMock(FormFactory::class);
 
-        $this->formType = new ConsentType($this->webCatalogProvider, $this->formFactory);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown(): void
-    {
-        unset(
-            $this->formType,
-            $this->formFactory,
-            $this->webCatalogProvider
+        $this->formType = new ConsentType(
+            $this->webCatalogProvider,
+            $this->createMock(FormFactory::class)
         );
-
-        parent::tearDown();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     protected function getExtensions()
     {
         return [
@@ -82,22 +56,15 @@ class ConsentTypeTest extends FormIntegrationTestCase
     public function testBuildForm()
     {
         $builder = $this->createMock(FormBuilderInterface::class);
-
-        $builder->expects($this->at(0))
+        $builder->expects($this->exactly(3))
             ->method('add')
-            ->with('names', LocalizedFallbackValueCollectionType::class)
-            ->willReturn($builder);
-
-        $builder->expects($this->at(1))
-            ->method('add')
-            ->with('mandatory', ChoiceType::class)
-            ->willReturn($builder);
-
-        $builder->expects($this->at(2))
-            ->method('add')
-            ->with('declinedNotification', CheckboxType::class);
-
-        $builder->expects($this->at(3))
+            ->withConsecutive(
+                ['names', LocalizedFallbackValueCollectionType::class],
+                ['mandatory', ChoiceType::class],
+                ['declinedNotification', CheckboxType::class]
+            )
+            ->willReturnSelf();
+        $builder->expects($this->once())
             ->method('addEventListener')
             ->with(FormEvents::PRE_SET_DATA);
 
@@ -106,24 +73,23 @@ class ConsentTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider preSetDataProvider
-     *
-     * @param bool $isWebCatalogDefault
-     * @param bool $contentNodeWebCatalog
-     * @param int $expectedFieldsCount
-     * @param bool $isNewConsent
      */
-    public function testPreSetData($isWebCatalogDefault, $contentNodeWebCatalog, $expectedFieldsCount, $isNewConsent)
-    {
+    public function testPreSetData(
+        bool $isWebCatalogDefault,
+        bool $contentNodeWebCatalog,
+        int $expectedFieldsCount,
+        bool $isNewConsent
+    ) {
         $contentNode = $this->createMock(ContentNode::class);
         $consent = $this->createMock(Consent::class);
         $event = $this->createMock(FormEvent::class);
         $form = $this->createMock(FormInterface::class);
         $event->expects($this->once())
             ->method('getData')
-            ->will($this->returnValue($consent));
+            ->willReturn($consent);
         $event->expects($this->once())
             ->method('getForm')
-            ->will($this->returnValue($form));
+            ->willReturn($form);
         if ($isNewConsent) {
             $consent->expects($this->once())
                 ->method('getId')
@@ -161,10 +127,7 @@ class ConsentTypeTest extends FormIntegrationTestCase
         $this->formType->preSetData($event);
     }
 
-    /**
-     * @return array
-     */
-    public function preSetDataProvider()
+    public function preSetDataProvider(): array
     {
         return [
             'web catalog found' => [

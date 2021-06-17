@@ -74,21 +74,21 @@ define(function(require) {
         },
 
         listenerOn: function() {
-            const callback = _.bind(this.callEntryPoint, this);
+            const callback = this.callEntryPoint.bind(this);
 
-            const changeCallback = _.bind(function(e) {
+            const changeCallback = e => {
                 if (this.timeoutId || $(e.target).is('select')) {
                     callback.call(this, e);
                 }
 
                 this.clearTimeout();
-            }, this);
+            };
 
-            const keyUpCallback = _.bind(function(e) {
+            const keyUpCallback = e => {
                 this.clearTimeout();
 
-                this.timeoutId = setTimeout(_.bind(callback, this, e), this.options.triggerTimeout);
-            }, this);
+                this.timeoutId = setTimeout(callback.bind(this, e), this.options.triggerTimeout);
+            };
 
             this.options._sourceElement
                 .on('change', this.options.selectors.freightClassUpdateSelector, changeCallback)

@@ -30,11 +30,21 @@ class AjaxMassActionController extends AbstractController
         return new JsonResponse($formattedMassActions);
     }
 
-    /**
-     * @return AddLineItemMassActionProvider
-     */
-    private function getMassActionProvider()
+    private function getMassActionProvider(): AddLineItemMassActionProvider
     {
-        return $this->get('oro_shopping_list.action.datagrid.mass_action_provider');
+        return $this->get(AddLineItemMassActionProvider::class);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                AddLineItemMassActionProvider::class,
+            ]
+        );
     }
 }

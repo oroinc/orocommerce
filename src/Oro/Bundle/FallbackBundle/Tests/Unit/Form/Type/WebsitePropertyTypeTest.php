@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\FallbackBundle\Tests\Unit\Form\Type;
 
+use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\FallbackBundle\Form\Type\WebsiteCollectionType;
@@ -20,32 +23,25 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 class WebsitePropertyTypeTest extends FormIntegrationTestCase
 {
-    const WEBSITE_CLASS = 'Oro\Bundle\WebsiteBundle\Entity\Website';
+    private const WEBSITE_CLASS = Website::class;
 
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $registry;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $registry;
 
     protected function setUp(): void
     {
-        $this->registry = $this->createMock('Doctrine\Persistence\ManagerRegistry');
+        $this->registry = $this->createMock(ManagerRegistry::class);
 
         parent::setUp();
     }
 
-    /**
-     * @return array
-     */
     protected function getExtensions()
     {
         $websiteCollection = new WebsiteCollectionType($this->registry);
         $websiteCollection->setWebsiteClass(self::WEBSITE_CLASS);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|ConfigProvider $entityConfigProvider */
         $entityConfigProvider = $this->createMock(ConfigProvider::class);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|Translator $translator */
         $translator = $this->createMock(Translator::class);
 
         return [
@@ -90,10 +86,7 @@ class WebsitePropertyTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedData, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         return [
             'text with null data' => [
@@ -149,45 +142,38 @@ class WebsitePropertyTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    protected function setRegistryExpectations()
+    private function setRegistryExpectations()
     {
-        $query = $this->getMockBuilder('Doctrine\ORM\AbstractQuery')
-            ->disableOriginalConstructor()
-            ->setMethods(['getResult'])
-            ->getMockForAbstractClass();
+        $query = $this->createMock(AbstractQuery::class);
         $query->expects($this->once())
             ->method('getResult')
-            ->will($this->returnValue($this->getWebsites()));
+            ->willReturn($this->getWebsites());
 
-        $queryBuilder = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $queryBuilder = $this->createMock(QueryBuilder::class);
         $queryBuilder->expects($this->once())
             ->method('addOrderBy')
             ->with('website.id', 'ASC')
-            ->will($this->returnSelf());
+            ->willReturnSelf();
         $queryBuilder->expects($this->once())
             ->method('getQuery')
-            ->will($this->returnValue($query));
+            ->willReturn($query);
 
-        $repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $repository = $this->createMock(EntityRepository::class);
         $repository->expects($this->once())
             ->method('createQueryBuilder')
             ->with('website')
-            ->will($this->returnValue($queryBuilder));
+            ->willReturn($queryBuilder);
 
         $this->registry->expects($this->once())
             ->method('getRepository')
             ->with(self::WEBSITE_CLASS)
-            ->will($this->returnValue($repository));
+            ->willReturn($repository);
     }
 
     /**
      * @return Website[]
      */
-    protected function getWebsites()
+    private function getWebsites()
     {
         $first  = $this->createWebsite(1, 'first');
         $second = $this->createWebsite(2, 'second');
@@ -196,22 +182,15 @@ class WebsitePropertyTypeTest extends FormIntegrationTestCase
         return [$first, $second, $third];
     }
 
-    /**
-     * @param int $id
-     * @param string $name
-     * @return Website
-     */
-    protected function createWebsite($id, $name)
+    private function createWebsite(int $id, string $name): Website
     {
-        $website = $this->getMockBuilder('Oro\Bundle\WebsiteBundle\Entity\Website')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $website = $this->createMock(Website::class);
         $website->expects($this->any())
             ->method('getId')
-            ->will($this->returnValue($id));
+            ->willReturn($id);
         $website->expects($this->any())
             ->method('getName')
-            ->will($this->returnValue($name));
+            ->willReturn($name);
 
         return $website;
     }

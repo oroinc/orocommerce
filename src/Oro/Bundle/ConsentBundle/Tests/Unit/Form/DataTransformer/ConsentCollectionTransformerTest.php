@@ -38,12 +38,9 @@ class ConsentCollectionTransformerTest extends \PHPUnit\Framework\TestCase
      * @param array|null $output
      * @dataProvider transformDataProvider
      */
-    public function testTransform(array $consents, array $input, $output)
+    public function testTransform(array $consents, array $input, ?array $output)
     {
-        $repository = $this->getMockBuilder(EntityRepository::class)
-            ->setMethods(['findBy'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $repository = $this->createMock(EntityRepository::class);
         $entityManager = $this->createMock(ObjectManager::class);
         $this->doctrine->expects($this->any())
             ->method('getManagerForClass')
@@ -66,10 +63,7 @@ class ConsentCollectionTransformerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($output, $this->transformer->transform($input));
     }
 
-    /**
-     * @return array
-     */
-    public function transformDataProvider()
+    public function transformDataProvider(): array
     {
         $consent34 = $this->getEntity(Consent::class, ['id' => 34]);
         $consent42 = $this->getEntity(Consent::class, ['id' => 42]);
@@ -101,19 +95,14 @@ class ConsentCollectionTransformerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param array $input
-     * @param array|null $output
      * @dataProvider reverseTransformDataProvider
      */
-    public function testReverseTransform(array $input, $output)
+    public function testReverseTransform(array $input, ?array $output)
     {
         $this->assertEquals($output, $this->transformer->reverseTransform($input));
     }
 
-    /**
-     * @return array
-     */
-    public function reverseTransformDataProvider()
+    public function reverseTransformDataProvider(): array
     {
         $consent34 = $this->getEntity(Consent::class, ['id' => 34]);
         $consent42 = $this->getEntity(Consent::class, ['id' => 42]);

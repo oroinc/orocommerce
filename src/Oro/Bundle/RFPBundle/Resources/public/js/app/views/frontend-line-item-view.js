@@ -195,22 +195,22 @@ define(function(require) {
 
         saveFormState: function() {
             this.formState = {};
-            this.$el.find(':input[data-name]').each(_.bind(function(i, el) {
+            this.$el.find(':input[data-name]').each((i, el) => {
                 this.formState[el.name] = el.value;
-            }, this));
+            });
         },
 
         revertChanges: function() {
             if (!this.formState) {
                 return;
             }
-            this.$el.find(':input[data-name]').each(_.bind(function(i, el) {
+            this.$el.find(':input[data-name]').each((i, el) => {
                 const value = this.formState[el.name];
                 if (value !== undefined && el.value !== value) {
                     el.value = value;
                     $(el).change();
                 }
-            }, this));
+            });
         }
     }));
 

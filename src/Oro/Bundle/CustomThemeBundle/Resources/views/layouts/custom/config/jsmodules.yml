@@ -1,7 +1,7 @@
 configs:
     orocustomtheme/FilterBundle/js/datagrid/frontend-collection-filters-manager: {}
 dynamic-imports:
-    orocustomtheme:
+    orodatagrid:
         - orocustomtheme/FilterBundle/js/datagrid/frontend-collection-filters-manager
 map:
     "*":

@@ -1,7 +1,3 @@
-define(function(require) {
-    'use strict';
+import $ from 'jquery.validate';
 
-    const $ = require('jquery.validate');
-
-    $.validator.loadMethod('oroproduct/js/validator/sku-regex');
-});
+$.validator.loadMethod('oroproduct/js/validator/sku-regex');
