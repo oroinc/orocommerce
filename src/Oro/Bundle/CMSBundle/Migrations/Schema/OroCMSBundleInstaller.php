@@ -51,7 +51,7 @@ class OroCMSBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_9';
+        return 'v1_10';
     }
 
     /**
