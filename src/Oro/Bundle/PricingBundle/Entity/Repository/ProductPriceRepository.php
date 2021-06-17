@@ -231,7 +231,7 @@ class ProductPriceRepository extends BaseProductPriceRepository
             ->getQuery()
             ->getScalarResult();
 
-        return array_map('current', $result);
+        return array_map(fn ($value) => (int) current($value), $result);
     }
 
     /**

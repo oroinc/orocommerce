@@ -113,17 +113,14 @@ class AsyncIndexer implements IndexerInterface
      */
     public function reindex($class = null, array $context = [])
     {
-        $this->inputValidator->validateRequestParameters(
-            $class,
-            $context
-        );
+        $parameters = $this->inputValidator->validateClassAndContext([
+            'granulize' => true,
+            'class' => $class,
+            'context' => $context
+        ]);
 
         // granulization might take quite a lot of time, so it has to happen asynchronously inside a processor
-        $this->sendAsyncIndexerMessage(
-            self::TOPIC_REINDEX,
-            ['class' => $class, 'context' => $context, 'granulize' => true],
-            self::DEFAULT_PRIORITY_REINDEX
-        );
+        $this->sendAsyncIndexerMessage(self::TOPIC_REINDEX, $parameters, self::DEFAULT_PRIORITY_REINDEX);
     }
 
     /**

@@ -5,9 +5,11 @@ namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 use Oro\Bundle\SearchBundle\Provider\SearchMappingProvider;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
+use Symfony\Component\OptionsResolver\Options;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Validates Elasticsearch parameters, parses them and returns list of affected entities and websites
+ * Validates engine parameters, parses them and returns list of affected entities and websites.
  */
 class IndexerInputValidator
 {
@@ -21,88 +23,142 @@ class IndexerInputValidator
 
     /**
      * @param WebsiteProviderInterface $websiteProvider
-     * @param SearchMappingProvider    $mappingProvider
+     * @param SearchMappingProvider $mappingProvider
      */
-    public function __construct(
-        WebsiteProviderInterface $websiteProvider,
-        SearchMappingProvider $mappingProvider
-    ) {
+    public function __construct(WebsiteProviderInterface $websiteProvider, SearchMappingProvider $mappingProvider)
+    {
         $this->websiteProvider = $websiteProvider;
         $this->mappingProvider = $mappingProvider;
     }
 
     /**
-     * @param string|array|null $classOrClasses
+     * @param string|string[] $classOrClasses
      * @param array $context
-     * $context = [
-     *     'entityIds' int[] Array of entities ids to reindex
-     *     'websiteIds' int[] Array of websites ids to reindex
-     * ]
      *
      * @return array
      */
-    public function validateRequestParameters(
-        $classOrClasses,
-        array $context
-    ) {
-        if (is_array($classOrClasses) && count($classOrClasses) !== 1 && $this->getContextEntityIds($context)) {
-            throw new \LogicException('Entity ids passed into context. Please provide single class of entity');
-        }
-
-        $entityClassesToIndex = $this->getEntitiesToIndex($classOrClasses);
-        $websiteIdsToIndex    = $this->getWebsiteIdsToIndex($context);
-
-        if (empty($entityClassesToIndex)) {
-            throw new \LogicException('No entities defined to index');
-        }
-
-        return [$entityClassesToIndex, $websiteIdsToIndex];
-    }
-
-    /**
-     * @param string $class
-     * @throws \InvalidArgumentException
-     */
-    private function ensureEntityClassIsSupported($class)
+    public function validateRequestParameters($classOrClasses, array $context): array
     {
-        if (!$this->mappingProvider->isClassSupported($class)) {
-            throw new \InvalidArgumentException('There is no such entity in mapping config.');
-        }
+        $parameters = $this->validateClassAndContext(['class' => $classOrClasses, 'context' => $context]);
+
+        return [$parameters['class'], $parameters['context'][AbstractIndexer::CONTEXT_WEBSITE_IDS]];
     }
 
     /**
-     * @param string|null $class
-     * @return array
-     */
-    private function getEntitiesToIndex($class = null)
-    {
-        if ($class) {
-            $entityClasses = (array)$class;
-            foreach ($entityClasses as $entityClass) {
-                $this->ensureEntityClassIsSupported($entityClass);
-            }
-        } else {
-            $entityClasses = $this->mappingProvider->getEntityClasses();
-        }
-
-        return $entityClasses;
-    }
-
-    /**
-     * @param array $context
-     * $context = [
-     *     'websiteIds' int[] Array of websites ids to reindex
-     * ]
+     * @param array $parameters
      *
      * @return array
      */
-    private function getWebsiteIdsToIndex(array $context)
+    public function validateClassAndContext(array $parameters): array
     {
-        $websiteIds = $this->getContextWebsiteIds($context);
-        if ($websiteIds) {
-            return $websiteIds;
-        }
+        $resolver = $this->getOptionResolver();
+        $this->configureClassOptions($resolver);
+        $this->configureGranulizeOptions($resolver);
+        $this->configureContextOptions($resolver);
 
-        return $this->websiteProvider->getWebsiteIds();
+        return $resolver->resolve($parameters);
+    }
+
+    /**
+     * @param array $parameters
+     *
+     * @return array
+     */
+    public function validateEntityAndContext(array $parameters): array
+    {
+        $resolver = $this->getOptionResolver();
+        $this->configureEntityOptions($resolver);
+        $this->configureContextOptions($resolver);
+
+        return $resolver->resolve($parameters);
+    }
+
+    /**
+     * @param OptionsResolver $optionsResolver
+     */
+    public function configureContextOptions(OptionsResolver $optionsResolver): void
+    {
+        $optionsResolver->setRequired('context');
+        $optionsResolver->setAllowedTypes('context', 'array');
+        $optionsResolver->setDefault('context', function (OptionsResolver $resolver) {
+            $resolver->setDefined('skip_pre_processing');
+            $resolver->setDefined(AbstractIndexer::CONTEXT_WEBSITE_IDS);
+            $resolver->setDefined(AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY);
+            $resolver->setDefined(AbstractIndexer::CONTEXT_CURRENT_WEBSITE_ID_KEY);
+
+            $resolver->setAllowedTypes('skip_pre_processing', ['bool']);
+            $resolver->setAllowedTypes(AbstractIndexer::CONTEXT_WEBSITE_IDS, ['int[]', 'string[]']);
+            $resolver->setAllowedTypes(AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY, ['int[]', 'string[]']);
+            $resolver->setAllowedTypes(AbstractIndexer::CONTEXT_CURRENT_WEBSITE_ID_KEY, 'int');
+
+            $resolver->setDefault(AbstractIndexer::CONTEXT_WEBSITE_IDS, $this->websiteProvider->getWebsiteIds());
+            $resolver->setNormalizer(
+                AbstractIndexer::CONTEXT_WEBSITE_IDS,
+                fn (OptionsResolver $resolver, array $ids) => $ids ?: $this->websiteProvider->getWebsiteIds()
+            );
+
+            /**
+             * The data included in the index comes from different sources, so it is impossible to guarantee that
+             * their type will be the same, so allow the types 'int' and 'string' with subsequent normalization
+             * to the 'int' type.
+             */
+            $toIntCallBack = fn (OptionsResolver $resolver, array $ids) => array_map('intval', $ids);
+            $resolver->addNormalizer(AbstractIndexer::CONTEXT_WEBSITE_IDS, $toIntCallBack);
+            $resolver->addNormalizer(AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY, $toIntCallBack);
+        });
+    }
+
+    /**
+     * @param OptionsResolver $optionsResolver
+     */
+    private function configureClassOptions(OptionsResolver $optionsResolver)
+    {
+        $classesNormalizer = fn ($classes) => is_array($classes) ? $classes : array_filter([$classes]);
+        $optionsResolver->setDefined('class');
+        $optionsResolver->setDefault('class', []);
+        $optionsResolver->setAllowedValues('class', function ($classes) use ($classesNormalizer) {
+            $classes = $classesNormalizer($classes);
+            $supported = array_filter($classes, fn ($class) => $this->mappingProvider->isClassSupported($class));
+
+            return $classes === $supported;
+        });
+
+        $optionsResolver->setNormalizer('class', function (Options $options, $classes) use ($classesNormalizer) {
+            $definedClass = $this->mappingProvider->getEntityClasses();
+
+            return $classesNormalizer($classes) ?: $definedClass;
+        });
+    }
+
+    /**
+     * @param OptionsResolver $optionsResolver
+     */
+    private function configureEntityOptions(OptionsResolver $optionsResolver)
+    {
+        $optionsResolver->setRequired('entity');
+        $optionsResolver->setDefault('entity', function (OptionsResolver $resolver, Options $options) {
+            $resolver->setRequired('class');
+            $resolver->setRequired('id');
+            $resolver->setAllowedValues('class', fn ($class) => $this->mappingProvider->isClassSupported($class));
+            $resolver->setAllowedTypes('id', ['int']);
+        });
+    }
+
+    /**
+     * @param OptionsResolver $optionsResolver
+     */
+    private function configureGranulizeOptions(OptionsResolver $optionsResolver)
+    {
+        $optionsResolver->setRequired('granulize');
+        $optionsResolver->setDefault('granulize', false);
+        $optionsResolver->setAllowedTypes('granulize', ['bool']);
+    }
+
+    /**
+     * @return OptionsResolver
+     */
+    protected function getOptionResolver(): OptionsResolver
+    {
+        return new OptionsResolver();
     }
 }
