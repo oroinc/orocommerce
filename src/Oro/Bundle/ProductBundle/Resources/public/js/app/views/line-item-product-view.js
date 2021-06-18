@@ -16,7 +16,7 @@ define(function(require) {
         }),
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function LineItemProductView(options) {
             LineItemProductView.__super__.constructor.call(this, options);

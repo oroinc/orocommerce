@@ -16,14 +16,14 @@ define(function(require) {
         dropdownWidget: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function ProductAddToRfqView(options) {
             ProductAddToRfqView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             ProductAddToRfqView.__super__.initialize.call(this, options);

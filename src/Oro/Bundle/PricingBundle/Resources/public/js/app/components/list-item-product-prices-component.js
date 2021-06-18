@@ -23,14 +23,14 @@ const ListItemProductPricesComponent = BaseComponent.extend({
     viewOptions: null,
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     constructor: function ListItemProductPricesComponent(options) {
         ListItemProductPricesComponent.__super__.constructor.call(this, options);
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize: function(options) {
         Object.assign(this, _.pick(options, 'tierPricesRoute', 'productId'));

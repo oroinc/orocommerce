@@ -11,7 +11,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function BackendPaginationInput(options) {
             BackendPaginationInput.__super__.constructor.call(this, options);
@@ -36,7 +36,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         onChangePage: function(e) {
             const obj = {};
@@ -49,7 +49,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         onChangePageByInput: function(e) {
             const obj = {};
@@ -61,7 +61,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         render: function() {
             const state = this.collection.state;

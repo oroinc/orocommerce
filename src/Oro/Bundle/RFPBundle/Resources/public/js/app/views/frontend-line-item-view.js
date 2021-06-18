@@ -37,7 +37,7 @@ define(function(require) {
         formState: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function FrontendLineItemView(options) {
             FrontendLineItemView.__super__.constructor.call(this, options);

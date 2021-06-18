@@ -26,14 +26,14 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function BackendToolbar(options) {
             BackendToolbar.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             options = options || {};
@@ -60,7 +60,7 @@ define(function(require) {
         },
 
         /**
-         *  @inheritDoc
+         *  @inheritdoc
          */
         render: function() {
             let $pagination;

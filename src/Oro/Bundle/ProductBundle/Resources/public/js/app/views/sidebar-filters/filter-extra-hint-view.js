@@ -3,7 +3,7 @@ import _ from 'underscore';
 
 const FilterExtraHintView = BaseView.extend({
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     attributes: {
         'class': 'filter-extra-hint'
@@ -16,24 +16,24 @@ const FilterExtraHintView = BaseView.extend({
     filter: null,
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     tagName: 'span',
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     optionNames: BaseView.prototype.optionNames.concat(['filter', 'hintContentClass', 'hintContainerSelector']),
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     constructor: function FilterExtraHintView(options) {
         FilterExtraHintView.__super__.constructor.call(this, options);
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize(options) {
         if (!options.filter) {
@@ -45,7 +45,7 @@ const FilterExtraHintView = BaseView.extend({
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     delegateEvents: function() {
         FilterExtraHintView.__super__.delegateEvents.call(this);
@@ -55,7 +55,7 @@ const FilterExtraHintView = BaseView.extend({
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     render() {
         this.$el.attr(this.attributes);
@@ -91,7 +91,7 @@ const FilterExtraHintView = BaseView.extend({
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     dispose: function() {
         if (this.disposed) {

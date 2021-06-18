@@ -58,14 +58,14 @@ define(function(require) {
         disposable: true,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function CreditCardComponent(options) {
             CreditCardComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = _.extend({}, this.options, options);

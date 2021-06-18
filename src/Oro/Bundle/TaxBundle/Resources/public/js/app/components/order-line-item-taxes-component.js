@@ -52,14 +52,14 @@ define(function(require) {
         $tableContainer: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function OrderLineItemTaxesComponent(options) {
             OrderLineItemTaxesComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
@@ -125,7 +125,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed) {

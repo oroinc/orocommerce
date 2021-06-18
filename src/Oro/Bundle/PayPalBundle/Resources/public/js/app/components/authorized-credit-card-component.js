@@ -31,14 +31,14 @@ define(function(require) {
         $differentCard: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function AuthorizedCreditCardComponent(options) {
             AuthorizedCreditCardComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options.saveForLaterUse = false;
@@ -105,7 +105,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         beforeTransit: function(eventData) {
             if (!this.getGlobalPaymentValidate()) {
@@ -116,7 +116,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         handleSubmit: function(eventData) {
             if (eventData.responseData.paymentMethod === this.options.paymentMethod &&
@@ -127,7 +127,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed || !this.disposable) {

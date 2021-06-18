@@ -12,7 +12,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function VariantsCollectionView(options) {
             VariantsCollectionView.__super__.constructor.call(this, options);

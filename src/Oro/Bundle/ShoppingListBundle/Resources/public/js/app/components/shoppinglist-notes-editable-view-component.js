@@ -3,7 +3,7 @@ import NotesModel from 'oroshoppinglist/js/app/models/shoppinglist-notes-editabl
 
 const ShoppingListNotesEditableViewComponent = ViewComponent.extend({
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     constructor: function ShoppingListNotesEditableViewComponent(options) {
         ShoppingListNotesEditableViewComponent.__super__.constructor.call(this, options);

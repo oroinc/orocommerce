@@ -48,14 +48,14 @@ define(function(require) {
         simpleProductVariants: {},
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function ProductVariantFieldComponent(options) {
             ProductVariantFieldComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.filteredOptions = [];

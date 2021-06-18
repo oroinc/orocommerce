@@ -45,7 +45,7 @@ define(function(require) {
         $strategySelector: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function PrefixRedirect(options) {
             PrefixRedirect.__super__.constructor.call(this, options);

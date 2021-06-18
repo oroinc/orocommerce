@@ -1,13 +1,13 @@
 <% if (choices.length > 1 && !singleUnitMode) { %>
     <div class="product-price-filter">
-        <span class="product-price-unit-filter-separator"><%- _.__("oro.pricing.filter.product_price.per") %></span>
-        <div class="btn-group btn-block filter-trigger-wrapper product-price-unit-filter">
+        <span class="product-price-unit-filter-separator" aria-hidden="true"><%- _.__("oro.pricing.filter.product_price.per") %></span>
+        <div class="btn-group btn-block filter-trigger-wrapper product-price-unit-filter" role="group" aria-label="<%- unitsListAriaLabel %>">
             <% _.each(choices, function (option) { %>
             <div class="product-price-filter__unit">
                 <label class="custom-radio <%- selectedChoice === option.value ? 'checked' : '' %>" title="<%- option.label %>">
                     <span class="sr-only" aria-hidden="true"><%- option.label %></span>
                     <input type="radio" name="unit" data-role="set-default"
-                           value="<%= option.value %>" data-label="<%- option.label %>"
+                           value="<%- option.value %>" data-label="<%- option.label %>"
                            class="custom-radio__control"
                     <%- (selectedChoice === option.value ? 'checked' : '') %>
                     >

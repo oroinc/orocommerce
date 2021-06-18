@@ -53,7 +53,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function ProductQuantityEditableView(options) {
             ProductQuantityEditableView.__super__.constructor.call(this, options);

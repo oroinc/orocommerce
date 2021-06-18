@@ -47,7 +47,7 @@ const UpdateConfigurableProductAction = DialogAction.extend({
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     constructor: function UpdateConfigurableProductAction(options) {
         UpdateConfigurableProductAction.__super__.constructor.call(this, options);
@@ -80,7 +80,7 @@ const UpdateConfigurableProductAction = DialogAction.extend({
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     run: function() {
         const title = __('oro.frontend.shoppinglist.matrix_grid_update.title', {
@@ -129,7 +129,7 @@ const UpdateConfigurableProductAction = DialogAction.extend({
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     getLink: function() {
         return routing.generate('oro_shopping_list_frontend_matrix_grid_update', {

@@ -29,14 +29,14 @@ define(function(require) {
         selectedCount: 0,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function RelatedItemsWidget(options) {
             RelatedItemsWidget.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);

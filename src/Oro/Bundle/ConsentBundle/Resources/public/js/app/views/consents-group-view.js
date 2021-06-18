@@ -8,7 +8,7 @@ define(function(require) {
 
     const ConsentsGroupView = BaseView.extend({
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         optionNames: BaseView.prototype.optionNames.concat([
             'confirmModalTitle', 'confirmModalContent', 'confirmModalOkText',
@@ -52,14 +52,14 @@ define(function(require) {
         confirmModalCancelButtonClass: 'btn cancel btn--info',
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function ConsentsGroupView(options) {
             ConsentsGroupView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.initModal();
@@ -147,7 +147,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             this.undelegateEvents();

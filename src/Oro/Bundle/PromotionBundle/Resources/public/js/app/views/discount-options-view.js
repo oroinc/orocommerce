@@ -23,14 +23,14 @@ define(function(require) {
         $formContainer: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function DiscountOptionsView(options) {
             DiscountOptionsView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
@@ -54,7 +54,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed) {

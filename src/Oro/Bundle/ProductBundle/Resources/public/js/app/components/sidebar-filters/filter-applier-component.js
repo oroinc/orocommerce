@@ -6,14 +6,14 @@ import ApplyFilterView from 'oroproduct/js/app/views/sidebar-filters/filter-appl
 
 const FilterApplierComponent = BaseComponent.extend({
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     constructor: function FilterApplierComponent(options) {
         FilterApplierComponent.__super__.constructor.call(this, options);
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize(options) {
         this.filterManager = options.filterManager;
@@ -35,7 +35,7 @@ const FilterApplierComponent = BaseComponent.extend({
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     dispose() {
         if (!this.disposed) {
@@ -54,7 +54,7 @@ const FilterApplierComponent = BaseComponent.extend({
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     delegateListeners: function() {
         FilterApplierComponent.__super__.delegateListeners.call(this);
