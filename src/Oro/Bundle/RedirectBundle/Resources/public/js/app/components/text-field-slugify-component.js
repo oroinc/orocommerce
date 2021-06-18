@@ -7,7 +7,7 @@ define(function(require) {
     const TextFieldSlugifyComponent = BaseSlugifyComponent.extend({
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function TextFieldSlugifyComponent(options) {
             TextFieldSlugifyComponent.__super__.constructor.call(this, options);

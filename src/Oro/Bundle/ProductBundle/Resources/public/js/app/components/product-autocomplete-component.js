@@ -26,14 +26,14 @@ define(function(require) {
         autocompleteErrorTemplate: autocompleteErrorTemplate,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function ProductAutocompleteComponent(options) {
             ProductAutocompleteComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             const thisOptions = {

@@ -11,12 +11,12 @@ define(function(require, exports, module) {
 
     const FrontendCollectionFiltersManager = CollectionFiltersManager.extend({
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         enableMultiselectWidget: config.enableMultiselectWidget,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         _updateRenderMode: function() {
             if (viewportManager.isApplicable({
@@ -33,7 +33,7 @@ define(function(require, exports, module) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         isFiltersStateViewNeeded: function(options) {
             return false;

@@ -32,14 +32,14 @@ const CreateLinkModal = Modal.extend({
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     constructor: function CreateLinkModal(options) {
         CreateLinkModal.__super__.constructor.call(this, options);
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize(options) {
         this.options = _.extend({}, this.options, options || {});
@@ -78,7 +78,7 @@ const CreateLinkModal = Modal.extend({
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     open(...args) {
         CreateLinkModal.__super__.open.apply(this, ...args);

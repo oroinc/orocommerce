@@ -16,14 +16,14 @@ define(function(require) {
      */
     const DeleteProductAction = DeleteAction.extend({
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function DeleteProductAction(options) {
             DeleteProductAction.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         getConfirmDialogOptions() {
             return {
@@ -44,7 +44,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         doDelete() {
             const success = __(this.messages.success, this.model.toJSON());
@@ -68,7 +68,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         getLink: function() {
             if (this.model.attributes.isConfigurable) {

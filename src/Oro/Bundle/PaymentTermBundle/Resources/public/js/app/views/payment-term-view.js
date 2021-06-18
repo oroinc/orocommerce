@@ -39,14 +39,14 @@ define(function(require) {
         customerGroupPaymentTerm: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function PaymentTermView(options) {
             PaymentTermView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});

@@ -40,7 +40,7 @@ define(function(require) {
         ],
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function FrontendCouponAddView(options) {
             this.options = $.extend(true, {}, this.options, options || {});
@@ -49,7 +49,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             FrontendCouponAddView.__super__.initialize.call(this, options);
@@ -62,7 +62,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         events: function() {
             const events = {};

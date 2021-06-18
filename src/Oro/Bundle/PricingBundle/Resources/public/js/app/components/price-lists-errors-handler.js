@@ -6,14 +6,14 @@ define(function(require) {
 
     const PriceListsComponent = BaseComponent.extend({
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function PriceListsComponent(options) {
             PriceListsComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             const $el = options._sourceElement;

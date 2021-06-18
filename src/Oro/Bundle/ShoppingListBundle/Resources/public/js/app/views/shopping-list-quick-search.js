@@ -25,14 +25,14 @@ const ShoppingListQuickSearch = BaseView.extend(extend({}, ElementsHelper, {
     minimumResultsForSearch: 5,
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     constructor: function ShoppingListQuickSearch(options) {
         ShoppingListQuickSearch.__super__.constructor.call(this, options);
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize(options) {
         ShoppingListQuickSearch.__super__.initialize.call(this, options);
@@ -42,7 +42,7 @@ const ShoppingListQuickSearch = BaseView.extend(extend({}, ElementsHelper, {
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      * @param options
      */
     deferredInitialize(options) {
@@ -161,7 +161,7 @@ const ShoppingListQuickSearch = BaseView.extend(extend({}, ElementsHelper, {
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     dispose() {
         if (this.disposed) {

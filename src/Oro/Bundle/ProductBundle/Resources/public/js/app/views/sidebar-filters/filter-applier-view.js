@@ -5,12 +5,12 @@ import Popper from 'popper';
 
 const FilterApplierView = BaseView.extend({
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     template: applyFilterTemplate,
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     className: 'apply-filters',
 
@@ -20,26 +20,26 @@ const FilterApplierView = BaseView.extend({
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     events: {
         'click [data-role="apply"]': 'onClick'
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     optionNames: BaseView.prototype.optionNames.concat(['buttonOptions']),
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     constructor: function FilterApplierView(options) {
         FilterApplierView.__super__.constructor.call(this, options);
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     getTemplateData: function() {
         const data = FilterApplierView.__super__.getTemplateData.call(this);
@@ -50,7 +50,7 @@ const FilterApplierView = BaseView.extend({
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     dispose: function() {
         if (this.disposed) {

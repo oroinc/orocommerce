@@ -43,7 +43,7 @@ const QuickOrderFromView = BaseView.extend({
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize(options) {
         this.checkRowsQuantity = _.debounce(this.checkRowsQuantity.bind(this), 25);

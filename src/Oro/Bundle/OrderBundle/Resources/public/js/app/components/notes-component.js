@@ -66,14 +66,14 @@ define(function(require) {
         $removeBtn: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function NotesComponent(options) {
             NotesComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});

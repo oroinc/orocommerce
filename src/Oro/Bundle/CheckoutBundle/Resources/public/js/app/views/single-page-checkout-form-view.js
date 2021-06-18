@@ -31,7 +31,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         events: {
             change: 'onChange',
@@ -40,7 +40,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         listen: {
             'before-save-state': 'onBeforeSaveState',
@@ -58,7 +58,7 @@ define(function(require) {
         timeout: 50,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function SinglePageCheckoutFormView(options) {
             this.onChange = _.debounce(this.onChange, this.timeout);
@@ -66,7 +66,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = _.extend({}, this.options, options || {});
@@ -96,7 +96,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         delegateEvents: function(events) {
             SinglePageCheckoutFormView.__super__.delegateEvents.call(this, events);
@@ -237,7 +237,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed) {

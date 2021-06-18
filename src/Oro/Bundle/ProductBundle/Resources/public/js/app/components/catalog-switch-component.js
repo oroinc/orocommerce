@@ -12,14 +12,14 @@ define(function(require) {
         parameterName: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function CatalogSwitchComponent(options) {
             CatalogSwitchComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             CatalogSwitchComponent.__super__.initialize.call(this, options);

@@ -33,14 +33,14 @@ const AddNotesAction = ModelAction.extend({
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     constructor: function AddNotesAction(options) {
         AddNotesAction.__super__.constructor.call(this, options);
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     getLink() {
         return routing.generate(this.route, {id: this.model.get('id'), ...this.route_parameters});
@@ -52,7 +52,7 @@ const AddNotesAction = ModelAction.extend({
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _handleWidget() {
         if (this.dispatched) {
@@ -111,7 +111,7 @@ const AddNotesAction = ModelAction.extend({
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     getActionParameters() {
         const params = AddNotesAction.__super__.getActionParameters.call(this);

@@ -45,7 +45,7 @@ define(function(require) {
         ],
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function TypeValueSwitcher(options) {
             TypeValueSwitcher.__super__.constructor.call(this, options);
@@ -86,7 +86,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed) {

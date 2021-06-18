@@ -5,7 +5,8 @@
                 <% if (_.isMobile()) { %>
                     data-skip-input-widgets
                 <% } %>
-            >
+                    aria-label="<%- choiceAriaLabel %>"
+                >
                 <% _.each(choices, function (option) { %>
                     <option value="<%= option.value %>"
                         <% if (option.value == selectedChoice) { %>
@@ -24,24 +25,36 @@
         <div class="filter-value">
             <div class="filter-value-range">
                 <div class="filter-start input-group">
-                    <div class="input-group-<%- currency.isPrepend ? 'prepend' : 'append' %> <%- currency.extended ? 'extended' : '' %>">
+                    <div class="input-group-<%- currency.isPrepend ? 'prepend' : 'append' %> <%- currency.extended ? 'extended' : '' %>" aria-hidden="true">
                         <span class="input-group-text"><%- currency.symbol %></span>
                     </div>
-                    <input class="input input--size-s input--full" type="number" placeholder="<%- _.__("oro.pricing.filter.product_price.min") %>" value="<%- value.value %>" name="value">
+                    <input class="input input--size-s input--full"
+                           type="number"
+                           placeholder="<%- _.__("oro.pricing.filter.product_price.min") %>"
+                           value="<%- value.value %>"
+                           name="value"
+                           aria-label="<%- rangeStartFieldAriaLabel %>"
+                        >
                 </div>
-                <span class="filter-separator">-</span>
+                <span class="filter-separator" aria-hidden="true">-</span>
                 <div class="filter-end input-group">
-                    <div class="input-group-<%- currency.isPrepend ? 'prepend' : 'append' %> <%- currency.extended ? 'extended' : '' %>">
+                    <div class="input-group-<%- currency.isPrepend ? 'prepend' : 'append' %> <%- currency.extended ? 'extended' : '' %>" aria-hidden="true">
                         <span class="input-group-text"><%- currency.symbol %></span>
                     </div>
-                    <input class="input input--size-s input--full" type="number" placeholder="<%- _.__("oro.pricing.filter.product_price.max") %>" value="<%- value.value_end %>" name="value_end">
+                    <input class="input input--size-s input--full"
+                           type="number"
+                           placeholder="<%- _.__("oro.pricing.filter.product_price.max") %>"
+                           value="<%- value.value_end %>"
+                           name="value_end"
+                           aria-label="<%- rangeEndFieldAriaLabel %>"
+                    >
                 </div>
             </div>
         </div>
 
         <% if (renderMode !== 'toggle-mode') { %>
             <div class="filter-action-row">
-                <button type="button" class="btn btn--action btn--size-s filter-update"><%- _.__("Apply") %></button>
+                <button type="button" class="btn btn--action btn--size-s filter-update" aria-label="<%- updateButtonAriaLabel %>"><%- _.__("Apply") %></button>
             </div>
         <% } %>
     </div>

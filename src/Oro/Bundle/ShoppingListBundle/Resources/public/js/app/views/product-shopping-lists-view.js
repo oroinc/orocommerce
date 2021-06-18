@@ -24,14 +24,14 @@ define(function(require) {
         shoppingListCollection: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function ProductShoppingListsView(options) {
             ProductShoppingListsView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             ProductShoppingListsView.__super__.initialize.call(this, options);

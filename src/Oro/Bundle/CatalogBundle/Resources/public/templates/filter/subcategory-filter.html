@@ -1,5 +1,14 @@
+<% var selectorId = _.uniqueId('selector-'); %>
+<% var criteriaId = _.uniqueId('criteria-'); %>
 <div class="filter-item">
-    <div class="filter-select filter-criteria-selector <% if (isEmpty) { %>filter-default-value<% } %>">
+    <div id="<%- selectorId %>"
+        class="filter-select filter-criteria-selector <% if (isEmpty) { %>filter-default-value<% } %>"
+        tabindex="0"
+        role="button"
+    <% if (renderMode === 'toggle-mode') { %>
+        aria-controls="<%- criteriaId %>"
+    <% } %>
+    >
         <% if (showLabel) { %><span class="filter-item-label"><%- label %></span><% } %>
         <span class="filter-item-hint"></span>
         <select multiple data-skip-input-widgets>
@@ -31,6 +40,6 @@
         </div>
     </div>
     <% if (renderMode === 'toggle-mode') { %>
-        <div class="filter-criteria"></div>
+        <div id="<%- criteriaId %>" class="filter-criteria" aria-labelledby="<%- criteriaId %>"></div>
     <% } %>
 </div>

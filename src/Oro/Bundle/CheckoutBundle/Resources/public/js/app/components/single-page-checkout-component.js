@@ -39,14 +39,14 @@ define(function(require) {
         jqXHR: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function SinglePageCheckoutComponent(options) {
             SinglePageCheckoutComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = _.extend({}, this.options, options || {});
@@ -259,7 +259,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed) {
