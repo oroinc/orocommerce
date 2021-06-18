@@ -14,6 +14,7 @@ use Oro\Bundle\RedirectBundle\Async\Topics as RedirectTopics;
 use Oro\Bundle\SearchBundle\Async\Topics as SearchTopics;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer as WebsiteSearchAsyncIndexerTopics;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultWebsiteIdTestTrait;
 use Oro\Component\MessageQueue\Client\Message;
 use Oro\Component\MessageQueue\Client\MessagePriority;
 use Symfony\Component\HttpFoundation\File\File;
@@ -23,6 +24,7 @@ use Symfony\Component\HttpFoundation\File\File;
  */
 class ProductImageListenerTest extends WebTestCase
 {
+    use DefaultWebsiteIdTestTrait;
     use MessageQueueExtension;
 
     /** @var EntityManagerInterface */
@@ -75,10 +77,11 @@ class ProductImageListenerTest extends WebTestCase
         return new Message(
             [
                 'class' => [Product::class],
+                'granulize' => true,
                 'context' => [
                     'entityIds' => $entityIds,
+                    'websiteIds' => [$this->getDefaultWebsiteId()]
                 ],
-                'granulize' => true,
             ],
             MessagePriority::LOW
         );

@@ -37,4 +37,4 @@ Feature: Product quantity negative value and unit precision
     When I type "-432423" in "ProductAdditionalPrecisionField"
     And I click on empty space
     Then I should see "ProductForm" validation errors:
-      | AdditionalPrecision | This value should be 0 or more. |
+      | AdditionalPrecision | This value should be between 0 and 10. |

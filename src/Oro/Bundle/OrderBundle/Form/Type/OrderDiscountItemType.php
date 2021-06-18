@@ -126,7 +126,7 @@ class OrderDiscountItemType extends AbstractType
                             [
                                 'min' => 0,
                                 'max' => $options['total'],
-                                'maxMessage' => 'oro.order.discounts.item.error.label',
+                                'notInRangeMessage' => 'oro.order.discounts.item.error.label',
                                 'groups' => [self::VALIDATION_GROUP]
                             ]
                         ),

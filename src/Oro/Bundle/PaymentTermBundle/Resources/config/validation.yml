@@ -5,3 +5,4 @@ Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm:
             - Length:
                 min: 3
                 max: 255
+                allowEmptyString: false

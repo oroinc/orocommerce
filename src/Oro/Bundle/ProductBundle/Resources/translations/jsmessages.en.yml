@@ -149,8 +149,7 @@ oro:
                 import_from_file:
                     title: Import From File
                 validation:
-                    quantity_min: 'Quantity should be greater than 0.'
-                    quantity_max: 'Quantity should be less than {{ limit }}.'
+                    not_in_range: 'Quantity should be between {{ min }} and {{ max }}.'
                 import_validation:
                     title: Import Validation
                     subtitle: '{0} none|]0,1] {{ count }} item|]1,Inf[ {{ count }} items'

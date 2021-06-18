@@ -120,6 +120,11 @@ class PriceListRecalculateCommandTest extends WebTestCase
                 $this->databaseTriggerManager->expects($this->once())
                     ->method('enable');
             }
+        } else {
+            $this->databaseTriggerManager->expects($this->never())
+                ->method('enable');
+            $this->databaseTriggerManager->expects($this->never())
+                ->method('disable');
         }
 
         $result = $this->runCommand(PriceListRecalculateCommand::getDefaultName(), $params);

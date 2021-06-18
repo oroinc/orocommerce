@@ -20,6 +20,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer;
 use Oro\Component\MessageQueue\Client\Message;
@@ -133,11 +134,23 @@ class CombinedPriceListScheduleCommandTest extends WebTestCase
                         $this->getReference(LoadProductData::PRODUCT_1)->getId(),
                         $this->getReference(LoadProductData::PRODUCT_2)->getId()
                     ],
+                    'websiteIds' => $this->getWebsiteIds()
                 ],
                 'granulize' => true,
             ],
             $reindexMessage->getBody()
         );
+    }
+
+    /**
+     * @return array
+     */
+    private function getWebsiteIds(): array
+    {
+        /** @var WebsiteProviderInterface $websiteProvider */
+        $websiteProvider = $this->getContainer()->get('oro_website.website.provider');
+
+        return $websiteProvider->getWebsiteIds();
     }
 
     /**
