@@ -1082,7 +1082,6 @@ services:
         class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\ConfigurableProductProvider'
         arguments:
             - '@oro_product.provider.custom_field_provider'
-            - '@oro_product.provider.product_variant_availability_provider'
             - '@property_accessor'
             - '@oro_product.product_variant_field.registry.product_variant_field_value_handler_registry'
             - '@translator'

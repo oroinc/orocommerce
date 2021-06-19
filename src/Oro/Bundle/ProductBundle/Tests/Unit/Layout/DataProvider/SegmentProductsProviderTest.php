@@ -17,14 +17,12 @@ use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SegmentBundle\Entity\Manager\SegmentManager;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class SegmentProductsProviderTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
     private const CACHE_KEY = 'segment_products_0_42_1';
 
     /** @var SegmentManager|\PHPUnit\Framework\MockObject\MockObject */
@@ -35,9 +33,6 @@ class SegmentProductsProviderTest extends \PHPUnit\Framework\TestCase
 
     /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $em;
-
-    /** @var TokenStorageInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $tokenStorage;
 
     /** @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $cache;
@@ -67,8 +62,8 @@ class SegmentProductsProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getUser')
             ->willReturn(null);
 
-        $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
-        $this->tokenStorage->expects($this->any())
+        $tokenStorage = $this->createMock(TokenStorageInterface::class);
+        $tokenStorage->expects($this->any())
             ->method('getToken')
             ->willReturn($token);
 
@@ -80,20 +75,14 @@ class SegmentProductsProviderTest extends \PHPUnit\Framework\TestCase
             ->method('apply')
             ->willReturnArgument(0);
 
-        $this->segmentProductsProvider = $this->getMockBuilder(SegmentProductsProvider::class)
-            ->setMethods(['getMaxItemsLimit', 'getMinItemsLimit'])
-            ->setConstructorArgs(
-                [
-                    $this->segmentManager,
-                    $this->productManager,
-                    $registry,
-                    $this->tokenStorage,
-                    $this->crypter,
-                    $this->aclHelper
-                ]
-            )
-            ->getMock();
-
+        $this->segmentProductsProvider = new SegmentProductsProvider(
+            $this->segmentManager,
+            $this->productManager,
+            $registry,
+            $tokenStorage,
+            $this->crypter,
+            $this->aclHelper
+        );
         $this->segmentProductsProvider->setCache($this->cache, 3600);
     }
 
@@ -137,7 +126,6 @@ class SegmentProductsProviderTest extends \PHPUnit\Framework\TestCase
 
         $result = [new Product()];
 
-        /** @var Query|\PHPUnit\Framework\MockObject\MockObject $query */
         $query = $this->createMock(Query::class);
         $query->expects($this->once())
             ->method('setMaxResults')
@@ -209,7 +197,6 @@ class SegmentProductsProviderTest extends \PHPUnit\Framework\TestCase
 
         $result = [new Product()];
 
-        /** @var Query|\PHPUnit\Framework\MockObject\MockObject $query */
         $query = $this->createMock(Query::class);
         $query->expects($this->once())
             ->method('setMaxResults')
@@ -293,7 +280,6 @@ class SegmentProductsProviderTest extends \PHPUnit\Framework\TestCase
 
         $result = [new Product()];
 
-        /** @var Query|\PHPUnit\Framework\MockObject\MockObject $query */
         $query = $this->createMock(Query::class);
         $query->expects($this->once())
             ->method('setMaxResults')
@@ -347,24 +333,15 @@ class SegmentProductsProviderTest extends \PHPUnit\Framework\TestCase
         return $queryBuilder;
     }
 
-    /**
-     * @param int $id
-     * @return Segment
-     */
     private function getSegment(int $id): Segment
     {
-        $segment = $this->getEntity(Segment::class, ['id' => $id]);
+        $segment = new Segment();
+        ReflectionUtil::setId($segment, $id);
         $segment->setRecordsLimit(1);
 
         return $segment;
     }
 
-    /**
-     * @param string $dql
-     * @param array $parameters
-     * @param array $queryHints
-     * @return string
-     */
     private function getHashData(string $dql, array $parameters, array $queryHints): string
     {
         return md5(serialize([
