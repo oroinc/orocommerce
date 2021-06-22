@@ -8,6 +8,7 @@ use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardOutputResultModifier;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRuleLexemes;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPricesWithRules;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -23,9 +24,6 @@ class ProductPriceTest extends RestJsonApiTestCase
 {
     use MessageQueueExtension;
 
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -34,7 +32,7 @@ class ProductPriceTest extends RestJsonApiTestCase
         $this->getOptionalListenerManager()->enableListener('oro_pricing.entity_listener.price_list_to_product');
         $this->getOptionalListenerManager()->enableListener('oro_pricing.entity_listener.price_list_currency');
 
-        $this->loadFixtures([LoadProductPricesWithRules::class]);
+        $this->loadFixtures([LoadProductPricesWithRules::class, LoadPriceRuleLexemes::class]);
     }
 
     public function testGetList()
@@ -478,7 +476,59 @@ class ProductPriceTest extends RestJsonApiTestCase
             $this->getResourceId($response)
         );
 
-        $this->assertMessagesSentForCreateRequest('price_list_1');
+        $priceList1Id = $this->getReference('price_list_1')->getId();
+        $priceList2Id = $this->getReference('price_list_2')->getId();
+        $product1Id = $this->getReference('product-1')->getId();
+        $product5Id = $this->getReference('product-5')->getId();
+        self::assertMessageSent(
+            Topics::RESOLVE_COMBINED_PRICES,
+            ['product' => [$priceList1Id => [$product5Id]]]
+        );
+        self::assertMessageSent(
+            Topics::RESOLVE_PRICE_RULES,
+            [
+                'product' => [
+                    $priceList1Id => [$product5Id],
+                    $priceList2Id => [$product1Id, $product5Id]
+                ]
+            ]
+        );
+        self::assertMessageSent(
+            Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
+            ['product' => [$priceList2Id => [$product5Id]]]
+        );
+    }
+
+    public function testUpdateValueOnly()
+    {
+        $id =
+            $this->getReference(LoadProductPricesWithRules::PRODUCT_PRICE_2)->getId()
+            . '-'
+            . $this->getReference('price_list_1')->getId();
+        $data = [
+            'data' => [
+                'type'       => 'productprices',
+                'id'         => $id,
+                'attributes' => [
+                    'value' => '15.0000'
+                ]
+            ]
+        ];
+        $response = $this->patch(['entity' => 'productprices', 'id' => $id], $data);
+
+        $this->assertResponseContains($data, $response);
+
+        $priceList1Id = $this->getReference('price_list_1')->getId();
+        $priceList2Id = $this->getReference('price_list_2')->getId();
+        $product2Id = $this->getReference('product-2')->getId();
+        self::assertMessageSent(
+            Topics::RESOLVE_COMBINED_PRICES,
+            ['product' => [$priceList1Id => [$product2Id]]]
+        );
+        self::assertMessageSent(
+            Topics::RESOLVE_PRICE_RULES,
+            ['product' => [$priceList2Id => [$product2Id]]]
+        );
     }
 
     public function testTryToUpdateWithPriceList()
