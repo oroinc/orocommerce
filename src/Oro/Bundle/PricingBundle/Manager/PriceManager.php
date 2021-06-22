@@ -162,11 +162,21 @@ class PriceManager
     private function getChangeSet(UnitOfWork $uow, ClassMetadata $classMetadata, ProductPrice $price)
     {
         if ($price->getId()) {
+            /**
+             * Change the data type of the price value in the original data of UOW to the float to make it
+             * consistent with the ProductPrice entity if the price value is the float there.
+             * It is required because in some cases the {@see \Symfony\Component\Form\Extension\Core\Type\NumberType}
+             * form type is used to handle the price value field and this form type converts the value to a float
+             * and as result comparison of the product prices can work incorrect.
+             * @see \Oro\Bundle\PricingBundle\Entity\EntityListener\BaseProductPriceEntityListener::isPriceValueChanged
+             */
             $originalData = $uow->getOriginalEntityData($price);
-            //small workaround to tell Doctrine that the price value didn't change
-            if (!empty($originalData['value'])) {
-                $originalData['value'] = (float) $originalData['value'];
-
+            if (!empty($originalData['value'])
+                && !\is_float($originalData['value'])
+                && null !== $price->getPrice()
+                && \is_float($price->getPrice()->getValue())
+            ) {
+                $originalData['value'] = (float)$originalData['value'];
                 $uow->setOriginalEntityData($price, $originalData);
             }
 
