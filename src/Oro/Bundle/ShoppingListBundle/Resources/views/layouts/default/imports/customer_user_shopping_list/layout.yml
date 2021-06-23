@@ -10,7 +10,7 @@ layout:
 
     actions:
         - '@setBlockTheme':
-            themes: '@OroShoppingList/layouts/default/imports/customer_user_shopping_list/layout.html.twig'
+            themes: 'layout.html.twig'
 
         - '@setOption':
             id: title

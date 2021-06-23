@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: '@OroProduct/layouts/blank/imports/oro_product_grid_sidebar_filters/sidebar_filters.html.twig'
+            themes: 'sidebar_filters.html.twig'
 
         - '@addTree':
             items:

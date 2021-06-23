@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: '@OroConsent/layouts/blank/imports/oro_consent_list/oro_consent_list.html.twig'
+            themes: 'oro_consent_list.html.twig'
 
         - '@addTree':
             items:

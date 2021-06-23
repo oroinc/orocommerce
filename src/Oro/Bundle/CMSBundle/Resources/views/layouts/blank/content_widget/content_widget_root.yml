@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-              themes: '@OroCMS/layouts/blank/content_widget/content_widget_root.html.twig'
+              themes: 'content_widget_root.html.twig'
         - '@addTree':
               items:
                   content_widget_container:

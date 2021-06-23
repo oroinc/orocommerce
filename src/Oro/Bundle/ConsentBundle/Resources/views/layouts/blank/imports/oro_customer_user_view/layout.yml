@@ -6,7 +6,7 @@ layout:
             root: customer_user_view_information_data_protection
     actions:
         - '@setBlockTheme':
-            themes: '@OroConsent/layouts/blank/imports/oro_customer_user_view/data_protection.html.twig'
+            themes: 'data_protection.html.twig'
         - '@add':
             id: customer_user_view_information_container
             blockType: container

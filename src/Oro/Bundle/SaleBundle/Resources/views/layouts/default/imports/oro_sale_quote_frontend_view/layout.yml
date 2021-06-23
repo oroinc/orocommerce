@@ -6,7 +6,7 @@ layout:
             namespace: quote_view_page_toolbar
     actions:
         - '@setBlockTheme':
-            themes: '@OroSale/layouts/default/imports/oro_sale_quote_frontend_view/layout.html.twig'
+            themes: 'layout.html.twig'
 
         - '@setOption':
             id: title

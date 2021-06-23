@@ -7,7 +7,7 @@ layout:
 
     actions:
         - '@setBlockTheme':
-            themes: '@OroConsent/layouts/blank/imports/oro_rfp_frontend_request_edit/data_protection.html.twig'
+            themes: 'data_protection.html.twig'
 
         - '@add':
             id: __rfp_form_data_protection

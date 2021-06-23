@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: '@OroCustomTheme/layouts/custom/imports/oro_product_grid/js_modules_config.html.twig'
+            themes: 'js_modules_config.html.twig'
 
         - '@add':
             id: filters_js_modules_config

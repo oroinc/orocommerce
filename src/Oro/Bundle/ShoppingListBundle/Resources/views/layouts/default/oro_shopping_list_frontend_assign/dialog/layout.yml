@@ -6,7 +6,7 @@ layout:
 
     actions:
         - '@setBlockTheme':
-            themes: '@OroShoppingList/layouts/default/oro_shopping_list_frontend_assign/dialog/layout.html.twig'
+            themes: 'layout.html.twig'
 
         - '@addTree':
             items:

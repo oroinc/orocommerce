@@ -6,7 +6,7 @@ layout:
             root: checkout_consent_container
     actions:
         - '@setBlockTheme':
-            themes: '@OroCheckout/layouts/default/oro_checkout_frontend_checkout/templates/consents.html.twig'
+            themes: '../templates/consents.html.twig'
 
         - '@setOption':
             id: checkout_consent_wrapper

@@ -1,4 +1,4 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: '@OroCMS/layouts/blank/content_block.html.twig'
+            themes: 'content_block.html.twig'
