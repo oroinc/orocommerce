@@ -243,6 +243,14 @@ services:
             - { name: oro.api.processor, action: update, group: save_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice }
             - { name: oro.api.processor, action: create, group: save_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice }
 
+    oro_pricing.api.save_product_price:
+        class: Oro\Bundle\PricingBundle\Api\Processor\ProductPrice\SaveProductPrice
+        arguments:
+            - '@oro_pricing.manager.price_manager'
+        tags:
+            - { name: oro.api.processor, action: update, group: save_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: -15 }
+            - { name: oro.api.processor, action: create, group: save_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: -15 }
+
     oro_pricing.api.remember_product_price:
         class: Oro\Bundle\PricingBundle\Api\Processor\ProductPrice\RememberProductPrice
         tags:

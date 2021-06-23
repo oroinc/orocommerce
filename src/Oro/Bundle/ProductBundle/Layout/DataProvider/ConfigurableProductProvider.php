@@ -6,7 +6,6 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantFieldValueHandlerRegistry;
 use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
-use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -16,13 +15,10 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class ConfigurableProductProvider
 {
     /** @var CustomFieldProvider */
-    protected $customFieldProvider;
-
-    /** @var ProductVariantAvailabilityProvider */
-    protected $productVariantAvailabilityProvider;
+    private $customFieldProvider;
 
     /** @var ProductVariantFieldValueHandlerRegistry */
-    protected $fieldValueHandlerRegistry;
+    private $fieldValueHandlerRegistry;
 
     /** @var PropertyAccessor */
     private $propertyAccessor;
@@ -36,22 +32,13 @@ class ConfigurableProductProvider
     /** @var TranslatorInterface|null */
     private $translator;
 
-    /**
-     * @param CustomFieldProvider $customFieldProvider
-     * @param ProductVariantAvailabilityProvider $productVariantAvailabilityProvider
-     * @param PropertyAccessor $propertyAccessor
-     * @param ProductVariantFieldValueHandlerRegistry $fieldValueHandlerRegistry
-     * @param TranslatorInterface $translator
-     */
     public function __construct(
         CustomFieldProvider $customFieldProvider,
-        ProductVariantAvailabilityProvider $productVariantAvailabilityProvider,
         PropertyAccessor $propertyAccessor,
         ProductVariantFieldValueHandlerRegistry $fieldValueHandlerRegistry,
         TranslatorInterface $translator
     ) {
         $this->customFieldProvider = $customFieldProvider;
-        $this->productVariantAvailabilityProvider = $productVariantAvailabilityProvider;
         $this->propertyAccessor = $propertyAccessor;
         $this->fieldValueHandlerRegistry = $fieldValueHandlerRegistry;
         $this->translator = $translator;

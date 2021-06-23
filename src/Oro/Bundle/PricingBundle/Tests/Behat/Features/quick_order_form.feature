@@ -1,5 +1,6 @@
 @regression
 @ticket-BB-19138
+@ticket-BB-20670
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroCheckoutBundle:Payment.yml
@@ -31,3 +32,9 @@ Feature: Quick order form
     And I should see "QTY: 1 item"
     And I should see "Target Price $0.00"
     And I should see "Listed Price: N/A"
+
+  Scenario: Check products markup result in autocomplete drop down list
+    When I click "Quick Order Form"
+    And I type "class" in "QuickOrderFirstSkuField"
+    And I wait 2 seconds
+    And I should see exact "classPSKU - Product6Class" in the "QuickOrderFirstSkuFieldTypeahead" element
