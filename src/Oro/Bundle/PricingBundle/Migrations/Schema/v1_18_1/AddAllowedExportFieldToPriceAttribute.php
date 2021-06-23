@@ -17,6 +17,8 @@ class AddAllowedExportFieldToPriceAttribute implements Migration
     public function up(Schema $schema, QueryBag $queries): void
     {
         $table = $schema->getTable('oro_price_attribute_pl');
-        $table->addColumn('is_enabled_in_export', 'boolean', ['notnull' => true, 'default' => false]);
+        if (!$table->hasColumn('is_enabled_in_export')) {
+            $table->addColumn('is_enabled_in_export', 'boolean', ['notnull' => true, 'default' => false]);
+        }
     }
 }

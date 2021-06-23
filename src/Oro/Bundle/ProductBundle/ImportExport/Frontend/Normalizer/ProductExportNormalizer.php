@@ -15,32 +15,30 @@ use Oro\Bundle\ProductBundle\ImportExport\Frontend\Event\ProductExportNormalizer
 
 /**
  * Product normalizer used for product listing export.
- * Incapsulates logic for specific Product export with specific requirements so its priority should be always higher
+ * Encapsulates logic for specific Product export with specific requirements so its priority should be always higher
  * than common normalizers for Product Entity.
  */
 class ProductExportNormalizer extends ConfigurableEntityNormalizer
 {
-    protected ConfigProvider $attributeConfigProvider;
+    protected ConfigProvider $configProvider;
+
     protected LocalizationHelper $localizationHelper;
+
     protected ManagerRegistry $managerRegistry;
+
     protected ?Localization $currentLocalization = null;
+
     protected bool $localizedFields = false;
 
-    /**
-     * @param FieldHelper $fieldHelper
-     * @param ConfigProvider $attributeConfigProvider
-     * @param LocalizationHelper $localizationHelper
-     * @param ManagerRegistry $managerRegistry
-     */
     public function __construct(
         FieldHelper $fieldHelper,
-        ConfigProvider $attributeConfigProvider,
+        ConfigProvider $configProvider,
         LocalizationHelper $localizationHelper,
         ManagerRegistry $managerRegistry
     ) {
         parent::__construct($fieldHelper);
 
-        $this->attributeConfigProvider = $attributeConfigProvider;
+        $this->configProvider = $configProvider;
         $this->localizationHelper = $localizationHelper;
         $this->managerRegistry = $managerRegistry;
     }
@@ -52,12 +50,10 @@ class ProductExportNormalizer extends ConfigurableEntityNormalizer
     {
         $result = parent::normalize($object, $format, $context);
 
-        if (!array_key_exists(ProductExportDataConverter::PRODUCT_NAME_FIELD, $result)) {
-            $result[ProductExportDataConverter::PRODUCT_NAME_FIELD] = $this->localizationHelper->getLocalizedValue(
-                $object->getNames(),
-                $this->getCurrentLocalization($context)
-            );
-        }
+        $result[ProductExportDataConverter::PRODUCT_NAME_FIELD] = $this->localizationHelper->getLocalizedValue(
+            $object->getNames(),
+            $this->getCurrentLocalization($context)
+        );
 
         if ($this->dispatcher) {
             $event = new ProductExportNormalizerEvent($object, $result, $context);
@@ -94,7 +90,7 @@ class ProductExportNormalizer extends ConfigurableEntityNormalizer
      */
     protected function isFieldSkippedForNormalization($entityName, $fieldName, array $context)
     {
-        $config = $this->attributeConfigProvider->getConfig($entityName, $fieldName);
+        $config = $this->configProvider->getConfig($entityName, $fieldName);
         return $config->has('use_in_export') ? !$config->get('use_in_export', false, false) : true;
     }
 

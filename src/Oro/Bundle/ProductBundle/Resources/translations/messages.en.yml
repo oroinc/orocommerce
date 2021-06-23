@@ -154,7 +154,6 @@ oro:
                     searchable.tooltip: 'If enabled, attribute content can be found in the front store'
                     sortable.tooltip: 'Defines whether sorting is available for the attribute in the front store'
                     filterable.tooltip: 'Defines whether filter is available for the attribute in the front store'
-                    use_in_export.tooltip: 'If enabled, the value of this field will be present in the product data export file in the storefront.'
 
         status:
             enabled: Enabled
