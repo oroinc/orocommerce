@@ -135,7 +135,7 @@ class ShoppingListLimitManagerTest extends \PHPUnit\Framework\TestCase
     public function testIsCreateEnabled($limit, $count, $expected)
     {
         $this->tokenAccessor
-            ->expects($this->once())
+            ->expects($this->atLeastOnce())
             ->method('hasUser')
             ->willReturn(true);
 
@@ -149,6 +149,8 @@ class ShoppingListLimitManagerTest extends \PHPUnit\Framework\TestCase
             $this->configureCount($count);
         }
 
+        $this->assertEquals($expected, $this->shoppingListLimitManager->isCreateEnabled());
+        // Check internal cache
         $this->assertEquals($expected, $this->shoppingListLimitManager->isCreateEnabled());
     }
 
@@ -233,6 +235,8 @@ class ShoppingListLimitManagerTest extends \PHPUnit\Framework\TestCase
             ->willReturn($actualShoppingListCount);
 
         $this->assertEquals($result, $this->shoppingListLimitManager->isCreateEnabledForCustomerUser($user));
+        // Check internal cache
+        $this->assertEquals($result, $this->shoppingListLimitManager->isCreateEnabledForCustomerUser($user));
     }
 
     /**
@@ -281,7 +285,7 @@ class ShoppingListLimitManagerTest extends \PHPUnit\Framework\TestCase
     public function testIsOnlyOneEnabledLimitSet()
     {
         $this->tokenAccessor
-            ->expects($this->once())
+            ->expects($this->atLeastOnce())
             ->method('hasUser')
             ->willReturn(true);
 
@@ -293,6 +297,8 @@ class ShoppingListLimitManagerTest extends \PHPUnit\Framework\TestCase
 
         $this->configureCount(2);
 
+        $this->assertEquals(false, $this->shoppingListLimitManager->isOnlyOneEnabled());
+        // Check internal cache
         $this->assertEquals(false, $this->shoppingListLimitManager->isOnlyOneEnabled());
     }
 
