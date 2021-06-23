@@ -13,78 +13,85 @@ use Oro\Bundle\ProductBundle\ImportExport\Frontend\DataConverter\ProductExportDa
 
 class ProductExportDataConverterTest extends \PHPUnit\Framework\TestCase
 {
+    private FieldHelper|\PHPUnit\Framework\MockObject\MockObject $fieldHelper;
+
+    private ConfigProvider|\PHPUnit\Framework\MockObject\MockObject $configProvider;
+
     private ProductExportDataConverter $dataConverter;
-
-    /** @var FieldHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private FieldHelper $fieldHelper;
-
-    /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private ConfigProvider $attributeConfigProvider;
 
     protected function setUp(): void
     {
         $this->fieldHelper = $this->createMock(FieldHelper::class);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|RelationCalculator $relationCalculator */
         $relationCalculator = $this->createMock(RelationCalculator::class);
-        /** @var LocaleSettings|\PHPUnit\Framework\MockObject\MockObject */
         $localeSettings = $this->createMock(LocaleSettings::class);
-        $this->attributeConfigProvider = $this->createMock(ConfigProvider::class);
+        $this->configProvider = $this->createMock(ConfigProvider::class);
 
         $this->dataConverter = new ProductExportDataConverter($this->fieldHelper, $relationCalculator, $localeSettings);
         $this->dataConverter->setEntityName(Product::class);
-        $this->dataConverter->setAttributeConfigProvider($this->attributeConfigProvider);
+        $this->dataConverter->setConfigProvider($this->configProvider);
     }
 
     public function testConvertToExportFormat(): void
     {
-        $this->fieldHelper->expects($this->exactly(2))
+        $skuField = ['name' => 'sku', 'type' => 'string', 'label' => 'Sku'];
+        $typeField = ['name' => 'type', 'type' => 'string', 'label' => 'Type'];
+        $nameField = ['name' => 'names', 'type' => 'ref-many', 'label' => 'Names'];
+        $this->fieldHelper->expects(self::exactly(2))
             ->method('getFields')
-            ->willReturn([
-                ['name' => 'sku', 'type' => 'string', 'label' => 'Sku'],
-                ['name' => 'type', 'type' => 'string', 'label' => 'Type']
-            ]);
+            ->willReturn([$skuField, $typeField, $nameField]);
 
-        $this->attributeConfigProvider->expects($this->exactly(2))
+        $this->fieldHelper->expects(self::any())
+            ->method('isRelation')
+            ->willReturnMap([[$skuField, false], [$nameField, true]]);
+
+        $this->configProvider->expects(self::any())
             ->method('getConfig')
             ->willReturnMap(
                 [
                     [Product::class, 'sku', $this->getConfig(Product::class, ['use_in_export' => true])],
                     [Product::class, 'type', $this->getConfig(Product::class, [])],
+                    [Product::class, 'names', $this->getConfig(Product::class, [])],
                 ]
             );
 
-        $result = $this->dataConverter->convertToExportFormat(['sku' => '1234', 'name' => 'Test product']);
-        $this->assertArrayHasKey('sku', $result);
-        $this->assertArrayHasKey('name', $result);
-        $this->assertArrayNotHasKey('type', $result);
-        $this->assertEquals('1234', $result['sku']);
-        $this->assertEquals('Test product', $result['name']);
+        $result = $this->dataConverter->convertToExportFormat(['sku' => '1234', 'names' => 'Test product']);
+        self::assertArrayHasKey('sku', $result);
+        self::assertArrayHasKey('name', $result);
+        self::assertArrayNotHasKey('type', $result);
+        self::assertEquals('1234', $result['sku']);
+        self::assertEquals('Test product', $result['name']);
     }
 
     public function testConvertToExportFormatWithoutEnabledAttributes(): void
     {
-        $this->fieldHelper->expects($this->exactly(2))
+        $skuField = ['name' => 'sku', 'type' => 'string', 'label' => 'Sku'];
+        $nameField = ['name' => 'names', 'type' => 'ref-many', 'label' => 'Names'];
+        $this->fieldHelper->expects(self::exactly(2))
             ->method('getFields')
-            ->willReturn([
-                ['name' => 'sku', 'type' => 'string', 'label' => 'Sku'],
-            ]);
+            ->willReturn([$skuField, $nameField]);
 
-        $this->attributeConfigProvider->expects($this->exactly(1))
+        $this->fieldHelper->expects(self::any())
+            ->method('isRelation')
+            ->willReturnMap([[$skuField, false], [$nameField, true]]);
+
+        $this->configProvider->expects(self::any())
             ->method('getConfig')
-            ->willReturn($this->getConfig(Product::class, []));
+            ->willReturnMap(
+                [
+                    [Product::class, 'sku', $this->getConfig(Product::class, [])],
+                    [Product::class, 'names', $this->getConfig(Product::class, [])],
+                ]
+            );
 
-        $result = $this->dataConverter->convertToExportFormat(['name' => 'Test product']);
-        $this->assertArrayNotHasKey('sku', $result);
-        $this->assertArrayHasKey('name', $result);
-        $this->assertEquals('Test product', $result['name']);
+        $result = $this->dataConverter->convertToExportFormat(['names' => 'Test product']);
+        self::assertArrayNotHasKey('sku', $result);
+        self::assertArrayHasKey('name', $result);
+        self::assertEquals('Test product', $result['name']);
     }
 
     private function getConfig(string $className, array $values): Config
     {
-        return new Config(
-            new EntityConfigId('attribute', $className),
-            $values
-        );
+        return new Config(new EntityConfigId('attribute', $className), $values);
     }
 }

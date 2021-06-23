@@ -16,48 +16,36 @@ use Oro\Bundle\ProductBundle\ImportExport\Frontend\Normalizer\ProductExportNorma
 
 class ProductExportNormalizerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var FieldHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private FieldHelper $fieldHelper;
+    private FieldHelper|\PHPUnit\Framework\MockObject\MockObject $fieldHelper;
 
-    /**
-     * @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private ConfigProvider $attributeConfigProvider;
+    private ConfigProvider|\PHPUnit\Framework\MockObject\MockObject $configProvider;
 
-    /**
-     * @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private LocalizationHelper $localizationHelper;
+    private LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject $localizationHelper;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry
-     */
-    private ManagerRegistry $doctrine;
+    private ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $doctrine;
 
     private ProductExportNormalizer $productNormalizer;
 
     protected function setUp(): void
     {
         $this->fieldHelper = $this->createMock(FieldHelper::class);
-        $this->attributeConfigProvider = $this->createMock(ConfigProvider::class);
+        $this->configProvider = $this->createMock(ConfigProvider::class);
         $this->localizationHelper = $this->createMock(LocalizationHelper::class);
         $this->doctrine = $this->createMock(ManagerRegistry::class);
 
         $this->productNormalizer = new ProductExportNormalizer(
             $this->fieldHelper,
-            $this->attributeConfigProvider,
+            $this->configProvider,
             $this->localizationHelper,
             $this->doctrine
         );
     }
 
-    public function testNormalize()
+    public function testNormalize(): void
     {
         $product = new Product();
 
-        $this->fieldHelper->expects($this->once())
+        $this->fieldHelper->expects(self::once())
             ->method('getFields')
             ->willReturn(
                 [
@@ -74,7 +62,7 @@ class ProductExportNormalizerTest extends \PHPUnit\Framework\TestCase
                 ]
             );
 
-        $this->attributeConfigProvider->expects($this->exactly(2))
+        $this->configProvider->expects(self::exactly(2))
             ->method('getConfig')
             ->willReturnMap(
                 [
@@ -83,7 +71,7 @@ class ProductExportNormalizerTest extends \PHPUnit\Framework\TestCase
                 ]
             );
 
-        $this->fieldHelper->expects($this->once())
+        $this->fieldHelper->expects(self::once())
             ->method('getObjectValue')
             ->willReturnMap(
                 [
@@ -94,27 +82,27 @@ class ProductExportNormalizerTest extends \PHPUnit\Framework\TestCase
         $productName = new ProductName();
         $productName->setString('Test Name');
 
-        $this->localizationHelper->expects($this->once())
+        $this->localizationHelper->expects(self::once())
             ->method('getLocalizedValue')
             ->willReturn($productName);
 
-        $this->localizationHelper->expects($this->once())
+        $this->localizationHelper->expects(self::once())
             ->method('getCurrentLocalization')
             ->willReturn(new Localization());
 
         $result = $this->productNormalizer->normalize($product);
-        $this->assertArrayHasKey('sku', $result);
-        $this->assertArrayNotHasKey('type', $result);
-        $this->assertArrayHasKey('name', $result);
-        $this->assertEquals($result['sku'], 'SKU-1');
-        $this->assertEquals((string)$result['name'], 'Test Name');
+        self::assertArrayHasKey('sku', $result);
+        self::assertArrayNotHasKey('type', $result);
+        self::assertArrayHasKey('names', $result);
+        self::assertEquals('SKU-1', $result['sku']);
+        self::assertEquals('Test Name', (string)$result['names']);
     }
 
-    public function testNormalizeWithLocaleInOptions()
+    public function testNormalizeWithLocaleInOptions(): void
     {
         $product = new Product();
 
-        $this->fieldHelper->expects($this->once())
+        $this->fieldHelper->expects(self::once())
             ->method('getFields')
             ->willReturn(
                 [
@@ -126,7 +114,7 @@ class ProductExportNormalizerTest extends \PHPUnit\Framework\TestCase
                 ]
             );
 
-        $this->attributeConfigProvider->expects($this->once())
+        $this->configProvider->expects(self::once())
             ->method('getConfig')
             ->willReturnMap(
                 [
@@ -134,7 +122,7 @@ class ProductExportNormalizerTest extends \PHPUnit\Framework\TestCase
                 ]
             );
 
-        $this->fieldHelper->expects($this->once())
+        $this->fieldHelper->expects(self::once())
             ->method('getObjectValue')
             ->willReturnMap(
                 [
@@ -145,34 +133,34 @@ class ProductExportNormalizerTest extends \PHPUnit\Framework\TestCase
         $productName = new ProductName();
         $productName->setString('Test Name');
 
-        $this->localizationHelper->expects($this->once())
+        $this->localizationHelper->expects(self::once())
             ->method('getLocalizedValue')
             ->willReturn($productName);
 
         $repository = $this->createMock(LocalizationRepository::class);
-        $repository->expects($this->once())
+        $repository->expects(self::once())
             ->method('find')
             ->willReturn(new Localization());
 
-        $this->doctrine->expects($this->once())
+        $this->doctrine->expects(self::once())
             ->method('getRepository')
             ->willReturn($repository);
 
-        $this->localizationHelper->expects($this->never())
+        $this->localizationHelper->expects(self::never())
             ->method('getCurrentLocalization');
 
         $result = $this->productNormalizer->normalize($product, null, ['currentLocalizationId' => 1]);
-        $this->assertArrayHasKey('sku', $result);
-        $this->assertArrayHasKey('name', $result);
-        $this->assertEquals($result['sku'], 'SKU-1');
-        $this->assertEquals((string)$result['name'], 'Test Name');
+        self::assertArrayHasKey('sku', $result);
+        self::assertArrayHasKey('names', $result);
+        self::assertEquals('SKU-1', $result['sku']);
+        self::assertEquals('Test Name', (string)$result['names']);
     }
 
-    public function testNormalizeIfLocaleInOptionsNotFound()
+    public function testNormalizeIfLocaleInOptionsNotFound(): void
     {
         $product = new Product();
 
-        $this->fieldHelper->expects($this->once())
+        $this->fieldHelper->expects(self::once())
             ->method('getFields')
             ->willReturn(
                 [
@@ -184,7 +172,7 @@ class ProductExportNormalizerTest extends \PHPUnit\Framework\TestCase
                 ]
             );
 
-        $this->attributeConfigProvider->expects($this->once())
+        $this->configProvider->expects(self::once())
             ->method('getConfig')
             ->willReturnMap(
                 [
@@ -192,7 +180,7 @@ class ProductExportNormalizerTest extends \PHPUnit\Framework\TestCase
                 ]
             );
 
-        $this->fieldHelper->expects($this->once())
+        $this->fieldHelper->expects(self::once())
             ->method('getObjectValue')
             ->willReturnMap(
                 [
@@ -203,35 +191,35 @@ class ProductExportNormalizerTest extends \PHPUnit\Framework\TestCase
         $productName = new ProductName();
         $productName->setString('Test Name');
 
-        $this->localizationHelper->expects($this->once())
+        $this->localizationHelper->expects(self::once())
             ->method('getLocalizedValue')
             ->willReturn($productName);
 
         $repository = $this->createMock(LocalizationRepository::class);
-        $repository->expects($this->once())
+        $repository->expects(self::once())
             ->method('find')
             ->willReturn(null);
 
-        $this->doctrine->expects($this->once())
+        $this->doctrine->expects(self::once())
             ->method('getRepository')
             ->willReturn($repository);
 
-        $this->localizationHelper->expects($this->once())
+        $this->localizationHelper->expects(self::once())
             ->method('getCurrentLocalization')
             ->willReturn(new Localization());
 
         $result = $this->productNormalizer->normalize($product, null, ['currentLocalizationId' => 1]);
-        $this->assertArrayHasKey('sku', $result);
-        $this->assertArrayHasKey('name', $result);
-        $this->assertEquals($result['sku'], 'SKU-1');
-        $this->assertEquals((string)$result['name'], 'Test Name');
+        self::assertArrayHasKey('sku', $result);
+        self::assertArrayHasKey('names', $result);
+        self::assertEquals('SKU-1', $result['sku']);
+        self::assertEquals('Test Name', (string)$result['names']);
     }
 
-    public function testNormalizeWithoutEnabledAttributes()
+    public function testNormalizeWithoutEnabledAttributes(): void
     {
         $product = new Product();
 
-        $this->fieldHelper->expects($this->once())
+        $this->fieldHelper->expects(self::once())
             ->method('getFields')
             ->willReturn(
                 [
@@ -243,7 +231,7 @@ class ProductExportNormalizerTest extends \PHPUnit\Framework\TestCase
                 ]
             );
 
-        $this->attributeConfigProvider->expects($this->once())
+        $this->configProvider->expects(self::once())
             ->method('getConfig')
             ->willReturnMap(
                 [
@@ -251,29 +239,29 @@ class ProductExportNormalizerTest extends \PHPUnit\Framework\TestCase
                 ]
             );
 
-        $this->fieldHelper->expects($this->never())
+        $this->fieldHelper->expects(self::never())
             ->method('getObjectValue');
 
         $productName = new ProductName();
         $productName->setString('Test Name');
 
-        $this->localizationHelper->expects($this->once())
+        $this->localizationHelper->expects(self::once())
             ->method('getLocalizedValue')
             ->willReturn($productName);
 
         $repository = $this->createMock(LocalizationRepository::class);
-        $repository->expects($this->once())
+        $repository->expects(self::once())
             ->method('find')
             ->willReturn(new Localization());
 
-        $this->doctrine->expects($this->once())
+        $this->doctrine->expects(self::once())
             ->method('getRepository')
             ->willReturn($repository);
 
         $result = $this->productNormalizer->normalize($product, null, ['currentLocalizationId' => 1]);
-        $this->assertArrayNotHasKey('sku', $result);
-        $this->assertArrayHasKey('name', $result);
-        $this->assertEquals((string)$result['name'], 'Test Name');
+        self::assertArrayNotHasKey('sku', $result);
+        self::assertArrayHasKey('names', $result);
+        self::assertEquals('Test Name', (string)$result['names']);
     }
 
     /**
@@ -284,14 +272,11 @@ class ProductExportNormalizerTest extends \PHPUnit\Framework\TestCase
      *
      * @dataProvider normalizationDataProvider
      */
-    public function testSupportsNormalization($data, $format, array $context, bool $expected)
+    public function testSupportsNormalization($data, $format, array $context, bool $expected): void
     {
-        $this->assertEquals($expected, $this->productNormalizer->supportsNormalization($data, $format, $context));
+        self::assertEquals($expected, $this->productNormalizer->supportsNormalization($data, $format, $context));
     }
 
-    /**
-     * @return array
-     */
     public function normalizationDataProvider(): array
     {
         return [
@@ -308,9 +293,9 @@ class ProductExportNormalizerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testSupportsDenormalization()
+    public function testSupportsDenormalization(): void
     {
-        $this->assertFalse($this->productNormalizer->supportsDenormalization(new Product(), null, [
+        self::assertFalse($this->productNormalizer->supportsDenormalization(new Product(), null, [
             'processorAlias' => 'oro_product_frontend_product_listing'
         ]));
     }

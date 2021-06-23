@@ -12,16 +12,14 @@ use Oro\Bundle\ProductBundle\ImportExport\Frontend\Event\ProductExportDataConver
  */
 class ProductExportDataConverter extends PropertyPathTitleDataConverter
 {
-    public const PRODUCT_NAME_FIELD = 'name';
+    public const PRODUCT_NAME_FIELD = 'names';
+    public const PRODUCT_NAME_COLUMN = 'name';
 
-    protected ConfigProvider $attributeConfigProvider;
+    protected ConfigProvider $configProvider;
 
-    /**
-     * @param ConfigProvider $attributeConfigProvider
-     */
-    public function setAttributeConfigProvider(ConfigProvider $attributeConfigProvider)
+    public function setConfigProvider(ConfigProvider $configProvider): void
     {
-        $this->attributeConfigProvider = $attributeConfigProvider;
+        $this->configProvider = $configProvider;
     }
 
     /**
@@ -33,32 +31,83 @@ class ProductExportDataConverter extends PropertyPathTitleDataConverter
             return parent::isFieldAvailableForExport($entityName, $fieldName);
         }
 
-        $config = $this->attributeConfigProvider->getConfig($entityName, $fieldName);
+        if ($fieldName === self::PRODUCT_NAME_FIELD) {
+            // Name field should always be present in export.
+            return true;
+        }
+
+        $config = $this->configProvider->getConfig($entityName, $fieldName);
+
         return $config->has('use_in_export') ? $config->get('use_in_export', false, false) : false;
     }
 
-    /**
-     * @param array $headersAndRules
-     * @return array
-     */
-    protected function getHeadersAndRulesForCustomAttributes(array $headersAndRules): array
+    protected function getHeadersAndRulesForCustomAttributes(array $rules, array $backendHeaders): array
     {
-        [$rules, $backendHeaders] = $headersAndRules;
-
-        $rules = array_merge([self::PRODUCT_NAME_FIELD => self::PRODUCT_NAME_FIELD], $rules);
-        $backendHeaders[] = self::PRODUCT_NAME_FIELD;
-
         if ($this->dispatcher) {
             $event = new ProductExportDataConverterEvent($rules, $backendHeaders);
             $this->dispatcher->dispatch(
                 $event,
                 ProductExportDataConverterEvent::FRONTEND_PRODUCT_CONVERT_TO_EXPORT_DATA
             );
-            $rules = $event->getHeaderRules();
-            $backendHeaders = $event->getBackendHeaders();
+            [$rules, $backendHeaders] = [$event->getHeaderRules(), $event->getBackendHeaders()];
         }
 
-        return [$backendHeaders, $rules];
+        return [$rules, $backendHeaders];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getRelatedEntityRulesAndBackendHeaders(
+        $entityName,
+        $singleRelationDeepLevel,
+        $multipleRelationDeepLevel,
+        $field,
+        $fieldHeader,
+        $fieldOrder
+    ) {
+        if ($field['name'] === self::PRODUCT_NAME_FIELD && is_a($entityName, Product::class, true)) {
+            // Adds the rule and header for the "name" column.
+            return [
+                [self::PRODUCT_NAME_COLUMN => ['value' => $fieldHeader, 'order' => $fieldOrder]],
+                [['value' => $fieldHeader, 'order' => $fieldOrder]],
+            ];
+        }
+
+        return parent::getRelatedEntityRulesAndBackendHeaders(
+            $entityName,
+            $singleRelationDeepLevel,
+            $multipleRelationDeepLevel,
+            $field,
+            $fieldHeader,
+            $fieldOrder
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getRelatedEntityRules(
+        $entityName,
+        $singleRelationDeepLevel,
+        $multipleRelationDeepLevel,
+        $field,
+        $fieldHeader,
+        $fieldOrder
+    ) {
+        if ($field['name'] === self::PRODUCT_NAME_FIELD && is_a($entityName, Product::class, true)) {
+            // Adds the rule for the "name" column.
+            return [self::PRODUCT_NAME_COLUMN => ['value' => $fieldHeader, 'order' => $fieldOrder]];
+        }
+
+        return parent::getRelatedEntityRules(
+            $entityName,
+            $singleRelationDeepLevel,
+            $multipleRelationDeepLevel,
+            $field,
+            $fieldHeader,
+            $fieldOrder
+        );
     }
 
     /**
@@ -70,7 +119,7 @@ class ProductExportDataConverter extends PropertyPathTitleDataConverter
         $singleRelationDeepLevel = 0,
         $multipleRelationDeepLevel = 0
     ) {
-        $headersAndRules = parent::getEntityRulesAndBackendHeaders(
+        [$rules, $backendHeaders] = parent::getEntityRulesAndBackendHeaders(
             $entityName,
             $fullData,
             $singleRelationDeepLevel,
@@ -78,9 +127,9 @@ class ProductExportDataConverter extends PropertyPathTitleDataConverter
         );
 
         if (is_a($entityName, Product::class, true)) {
-            $headersAndRules = $this->getHeadersAndRulesForCustomAttributes($headersAndRules);
+            [$rules, $backendHeaders] = $this->getHeadersAndRulesForCustomAttributes($rules, $backendHeaders);
         }
 
-        return $headersAndRules;
+        return [$rules, $backendHeaders];
     }
 }

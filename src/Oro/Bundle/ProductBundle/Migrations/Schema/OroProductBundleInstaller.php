@@ -88,7 +88,7 @@ class OroProductBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_23';
+        return 'v1_24';
     }
 
     /**
@@ -382,6 +382,7 @@ class OroProductBundleInstaller implements
             [
                 'importexport' => ['order' => '25'],
                 'dataaudit' => ['auditable' => true],
+                'frontend' => ['use_in_export' => true],
             ]
         );
     }

@@ -277,7 +277,7 @@ services:
         class: Oro\Bundle\ProductBundle\ImportExport\Frontend\Normalizer\ProductExportNormalizer
         parent: oro_importexport.serializer.configurable_entity_normalizer
         arguments:
-            - '@oro_entity_config.provider.attribute'
+            - '@oro_entity_config.provider.frontend'
             - '@oro_locale.helper.localization'
             - '@doctrine'
         tags:
@@ -287,4 +287,4 @@ services:
         class: Oro\Bundle\ProductBundle\ImportExport\Frontend\DataConverter\ProductExportDataConverter
         parent: oro_locale.importexport.data_converter.property_path_title
         calls:
-            - [setAttributeConfigProvider, ['@oro_entity_config.provider.attribute']]
+            - [setConfigProvider, ['@oro_entity_config.provider.frontend']]

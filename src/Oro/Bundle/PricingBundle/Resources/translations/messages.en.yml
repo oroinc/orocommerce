@@ -117,7 +117,7 @@ oro.pricing:
             description: 'Price attribute expression field name'
         enabled_in_export:
             label: 'Enabled in Product Export'
-            description: 'If enabled this price attribute will be used in frontend product listing export.'
+            description: 'If enabled this price attribute will be used in storefront product listing export.'
         id.label: Id
         organization:
             label: Organization
