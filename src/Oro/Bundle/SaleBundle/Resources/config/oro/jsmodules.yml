@@ -1,7 +1,7 @@
 app-modules:
     - orosale/js/app/modules/validator-constraints-module
 dynamic-imports:
-    oroform-validate:
+    commons:
         - orosale/js/validator/quote-product-offer-quantity
     orosale:
         - orosale/js/app/components/dependent-field-component

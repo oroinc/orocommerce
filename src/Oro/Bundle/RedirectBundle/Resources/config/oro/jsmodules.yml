@@ -1,5 +1,5 @@
 dynamic-imports:
-    ororedirect:
+    commons:
         - ororedirect/js/app/components/confirm-slug-change-component
         - ororedirect/js/app/components/localized-field-slugify-component
         - ororedirect/js/app/components/text-field-slugify-component

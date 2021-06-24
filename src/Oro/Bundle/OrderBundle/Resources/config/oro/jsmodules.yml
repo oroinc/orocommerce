@@ -1,5 +1,5 @@
 dynamic-imports:
-    oroorder:
+    orosale:
         - oroorder/js/app/components/data-load-component
         - oroorder/js/app/components/entry-point-component
         - oroorder/js/app/components/notes-component

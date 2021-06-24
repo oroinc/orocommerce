@@ -3,12 +3,12 @@ aliases:
 app-modules:
     - oropricing/js/app/modules/validator-constraints-module
 dynamic-imports:
-    orofilter:
+    commons:
+        - oropricing/js/validator/unique-product-prices
+    orodatagrid:
         - oro/filter/price-attribute-product-price-filter
         - oro/filter/product-price-filter
-    oroform-validate:
-        - oropricing/js/validator/unique-product-prices
-    oropricing:
+    orosale:
         - oropricing/js/app/components/price-lists-errors-handler
         - oropricing/js/app/components/product-sidebar-component
         - oropricing/js/app/components/product-unit-precision-limitations-component
