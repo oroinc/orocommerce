@@ -38,7 +38,7 @@ Feature: Products grid frontend export
     
   Scenario: Checks that export button is not visible when no results
     Given I login as AmandaRCole@example.org buyer
-    When I type "missing_product" in "search"
+    When I type "Unsearchable" in "search"
     And I click "Search Button"
     Then I should not see an "Frontend Product Grid Export Button" element
 
