@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Controller\Frontend;
 
 use Doctrine\Common\Util\ClassUtils;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CurrencyBundle\DependencyInjection\Configuration as CurrencyConfig;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings;
@@ -17,6 +18,8 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  */
 class AjaxEntityTotalsControllerTest extends WebTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     protected function setUp(): void
     {
         $this->initClient(
@@ -38,7 +41,7 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
 
         // set customer user not default currency
-        $manager = $this->getContainer()->get('oro_config.manager');
+        $manager = self::getConfigManager('global');
         $manager->set(CurrencyConfig::getConfigKeyByName(CurrencyConfig::KEY_DEFAULT_CURRENCY), 'EUR');
 
         $user = $this->getCurrentUser();

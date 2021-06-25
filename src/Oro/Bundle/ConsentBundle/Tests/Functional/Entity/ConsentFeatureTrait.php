@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ConsentBundle\Tests\Functional\Entity;
 
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\ConsentBundle\DependencyInjection\Configuration;
 use Oro\Bundle\WebCatalogBundle\EventListener\WebCatalogConfigChangeListener;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -11,28 +12,31 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 trait ConsentFeatureTrait
 {
-    public function enableConsentFeature()
+    use ConfigManagerAwareTestTrait;
+
+    public function enableConsentFeature(): void
     {
-        $this->getContainer()->get('oro_config.global')
-            ->set(Configuration::getConfigKey(Configuration::CONSENT_FEATURE_ENABLED), true);
-        $this->getContainer()->get('oro_config.global')->flush();
+        $configManager = self::getConfigManager('global');
+        $configManager->set(Configuration::getConfigKey(Configuration::CONSENT_FEATURE_ENABLED), true);
+        $configManager->flush();
+
         $this->getContainer()->get('oro_featuretoggle.checker.feature_checker')->resetCache();
     }
 
-    public function disableConsentFeature()
+    public function disableConsentFeature(): void
     {
-        $this->getContainer()->get('oro_config.global')
-            ->set(Configuration::getConfigKey(Configuration::CONSENT_FEATURE_ENABLED), false);
-        $this->getContainer()->get('oro_config.global')->flush();
+        $configManager = self::getConfigManager('global');
+        $configManager->set(Configuration::getConfigKey(Configuration::CONSENT_FEATURE_ENABLED), false);
+        $configManager->flush();
+
         $this->getContainer()->get('oro_featuretoggle.checker.feature_checker')->resetCache();
     }
 
-    public function unsetDefaultWebCatalog()
+    public function unsetDefaultWebCatalog(): void
     {
-        $this->getContainer()->get('oro_config.global')->set(
-            WebCatalogConfigChangeListener::WEB_CATALOG_CONFIGURATION_NAME,
-            null
-        );
-        $this->getContainer()->get('oro_config.global')->flush();
+        $configManager = self::getConfigManager('global');
+
+        $configManager->set(WebCatalogConfigChangeListener::WEB_CATALOG_CONFIGURATION_NAME, null);
+        $configManager->flush();
     }
 }

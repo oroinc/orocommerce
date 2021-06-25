@@ -4,6 +4,7 @@ namespace Oro\Bundle\RFPBundle\Tests\Functional\Controller\Frontend;
 
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
@@ -20,6 +21,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 class RequestControllerNotificationTest extends WebTestCase
 {
     use ProductPriceReference;
+    use ConfigManagerAwareTestTrait;
 
     const PHONE = '2-(999)507-4625';
     const COMPANY = 'google';
@@ -30,7 +32,7 @@ class RequestControllerNotificationTest extends WebTestCase
     /** @var ObjectManager */
     protected $em;
 
-    /** @var  ConfigManager */
+    /** @var ConfigManager */
     protected $configManager;
 
     /**
@@ -60,7 +62,7 @@ class RequestControllerNotificationTest extends WebTestCase
             ->getManagerForClass(User::class);
         $this->website = $this->getContainer()->get('oro_website.manager')->getDefaultWebsite();
 
-        $this->configManager = $this->client->getContainer()->get('oro_config.manager');
+        $this->configManager = self::getConfigManager('global');
     }
 
     protected function tearDown(): void
@@ -126,12 +128,8 @@ class RequestControllerNotificationTest extends WebTestCase
         $customerUser->addSalesRepresentative($saleRep2);
         $this->em->flush();
 
-        $this->configManager->set(
-            'oro_rfp.notify_assigned_sales_reps_of_the_customer',
-            'noSaleReps',
-            $this->website
-        );
-        $this->configManager->flush($this->website);
+        $this->configManager->set('oro_rfp.notify_assigned_sales_reps_of_the_customer', 'noSaleReps');
+        $this->configManager->flush();
 
         $recipientEmails = [$saleRep2->getEmail()];
         $this->createRequest();
@@ -162,12 +160,8 @@ class RequestControllerNotificationTest extends WebTestCase
         $customerUser->addSalesRepresentative($saleRep);
         $this->em->flush();
 
-        $this->configManager->set(
-            'oro_rfp.notify_owner_of_customer',
-            'noSaleReps',
-            $this->website
-        );
-        $this->configManager->flush($this->website);
+        $this->configManager->set('oro_rfp.notify_owner_of_customer', 'noSaleReps');
+        $this->configManager->flush();
 
         $recipientEmails = [$saleRep->getEmail()];
         $this->createRequest();
@@ -200,12 +194,8 @@ class RequestControllerNotificationTest extends WebTestCase
         $customerUser->addSalesRepresentative($saleRep);
         $this->em->flush();
 
-        $this->configManager->set(
-            'oro_rfp.notify_owner_of_customer_user_record',
-            'noSaleReps',
-            $this->website
-        );
-        $this->configManager->flush($this->website);
+        $this->configManager->set('oro_rfp.notify_owner_of_customer_user_record', 'noSaleReps');
+        $this->configManager->flush();
 
         $recipientEmails = [$saleRep->getEmail()];
         $this->createRequest();

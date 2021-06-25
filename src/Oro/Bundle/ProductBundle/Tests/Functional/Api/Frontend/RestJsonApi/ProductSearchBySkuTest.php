@@ -29,7 +29,7 @@ class ProductSearchBySkuTest extends FrontendRestJsonApiTestCase
     protected function postFixtureLoad()
     {
         parent::postFixtureLoad();
-        $this->enablePreviouslyPurchasedFeature($this->getReference('website'));
+        $this->enablePreviouslyPurchasedFeature();
         $this->reindexProductData();
     }
 

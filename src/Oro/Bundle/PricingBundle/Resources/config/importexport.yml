@@ -192,3 +192,29 @@ services:
         public: false
         tags:
             - { name: kernel.event_listener, event: oro.import_export.before_import_chunks, method: onBeforeImportChunks }
+
+    oro_pricing.importexport.frontend.listener.frontend_product_export:
+        class: Oro\Bundle\PricingBundle\ImportExport\Frontend\EventListener\FrontendProductExportEventListener
+        arguments:
+            - '@oro_pricing.provider.frontend_product_prices_export'
+            - '@oro_pricing.formatter.import_export.product_prices_export_formatter'
+        tags:
+            - { name: kernel.event_listener, event: oro_product.frontend_product_export.convert_to_export, method: onConvertToExport }
+            - { name: kernel.event_listener, event: oro_product.frontend_product_export.normalize, method: onProductExportNormalize }
+
+    oro_pricing.provider.frontend_product_prices_export:
+        class: Oro\Bundle\PricingBundle\Provider\FrontendProductPricesExportProvider
+        arguments:
+            - '@doctrine'
+            - '@oro_config.manager'
+            - '@oro_pricing.provider.product_price'
+            - '@oro_security.token_accessor'
+            - '@oro_pricing.model.product_price_scope_criteria_factory'
+            - '@oro_pricing.user_currency_manager'
+
+    oro_pricing.formatter.import_export.product_prices_export_formatter:
+        class: Oro\Bundle\PricingBundle\ImportExport\Frontend\Formatter\ProductPricesExportFormatter
+        arguments:
+            - '@oro_locale.formatter.number'
+            - '@oro_product.formatter.product_unit_value'
+            - '@oro_product.formatter.product_unit_label'

@@ -4,13 +4,14 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Manager;
 
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Tests\Functional\Manager\ImageRemovalManagerTestingTrait;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class ImageRemovalManagerTest extends WebTestCase
 {
     use ImageRemovalManagerTestingTrait;
+    use ConfigManagerAwareTestTrait;
 
     private const PRODUCT_ORIGINAL_FILE_NAMES_ENABLED = 'oro_product.original_file_names_enabled';
 
@@ -21,7 +22,8 @@ class ImageRemovalManagerTest extends WebTestCase
     {
         $this->initClient([], self::generateBasicAuthHeader());
 
-        $this->initialOriginalFileNames = $this->getConfigManager()->get(self::PRODUCT_ORIGINAL_FILE_NAMES_ENABLED);
+        $this->initialOriginalFileNames = self::getConfigManager('global')
+            ->get(self::PRODUCT_ORIGINAL_FILE_NAMES_ENABLED);
     }
 
     protected function tearDown(): void
@@ -30,19 +32,11 @@ class ImageRemovalManagerTest extends WebTestCase
     }
 
     /**
-     * @return ConfigManager
-     */
-    private function getConfigManager(): ConfigManager
-    {
-        return self::getContainer()->get('oro_config.manager');
-    }
-
-    /**
      * @param bool $enabled
      */
     private function setOriginalFileNames(bool $enabled): void
     {
-        $configManager = $this->getConfigManager();
+        $configManager = self::getConfigManager(null);
         if ($configManager->get(self::PRODUCT_ORIGINAL_FILE_NAMES_ENABLED) !== $enabled) {
             $configManager->set(self::PRODUCT_ORIGINAL_FILE_NAMES_ENABLED, $enabled);
             $configManager->flush();

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -12,6 +13,8 @@ use Symfony\Bundle\FrameworkBundle\Translation\Translator;
 
 class ProductControllerTest extends WebTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     const RFP_PRODUCT_VISIBILITY_KEY = 'oro_rfp.frontend_product_visibility';
 
     /** @var Client */
@@ -37,7 +40,7 @@ class ProductControllerTest extends WebTestCase
 
         $this->translator = $this->getContainer()->get('translator');
 
-        $this->configManager = $this->getContainer()->get('oro_config.manager');
+        $this->configManager = self::getConfigManager('global');
         $this->configManager->set(self::RFP_PRODUCT_VISIBILITY_KEY, [Product::INVENTORY_STATUS_OUT_OF_STOCK]);
         $this->configManager->flush();
     }
@@ -52,13 +55,9 @@ class ProductControllerTest extends WebTestCase
 
     public function testViewProductWithoutRequestQuoteAvailable()
     {
-        $this->configManager = $this->getContainer()->get('oro_config.manager');
+        $this->configManager = self::getConfigManager('global');
         $this->configManager->set(self::RFP_PRODUCT_VISIBILITY_KEY, [Product::INVENTORY_STATUS_IN_STOCK]);
         $this->configManager->flush();
-
-        $this->globalConfigManager = $this->getContainer()->get('oro_config.global');
-        $this->globalConfigManager->set(self::RFP_PRODUCT_VISIBILITY_KEY, [Product::INVENTORY_STATUS_IN_STOCK]);
-        $this->globalConfigManager->flush();
 
         static::assertStringNotContainsString(
             $this->translator->trans('oro.frontend.product.view.request_a_quote'),

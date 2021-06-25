@@ -237,6 +237,18 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                     'value' => false,
                     'scope' => 'app'
                 ],
+                'product_data_export_enabled' => [
+                    'value' => false,
+                    'scope' => 'app'
+                ],
+                'product_prices_export_enabled' => [
+                    'value' => false,
+                    'scope' => 'app'
+                ],
+                'product_price_tiers_export_enabled' => [
+                    'value' => false,
+                    'scope' => 'app'
+                ]
             ]
         ];
 

@@ -36,7 +36,7 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
         $order2->setCreatedAt(new \DateTime('2018-10-05 10:30:00', new \DateTimeZone('UTC')));
         $this->getEntityManager()->flush();
 
-        $this->enablePreviouslyPurchasedFeature($this->getReference('website'));
+        $this->enablePreviouslyPurchasedFeature();
         $this->reindexProductData();
     }
 

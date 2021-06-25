@@ -4,6 +4,7 @@ namespace Oro\Bundle\OrderBundle\Tests\Functional\Process;
 
 use Doctrine\DBAL\Connection;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerAddresses;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
@@ -29,6 +30,8 @@ use Symfony\Bridge\Doctrine\ManagerRegistry;
  */
 class ExpireOrdersProcessTest extends AbstractProcessTest
 {
+    use ConfigManagerAwareTestTrait;
+
     /** @var ProcessDefinition */
     protected $processDefinition;
 
@@ -51,7 +54,7 @@ class ExpireOrdersProcessTest extends AbstractProcessTest
             ->findOneBy(['name' => 'expire_orders']);
 
         $this->managerRegistry = $this->getContainer()->get('doctrine');
-        $this->configManager = $this->getContainer()->get('oro_config.manager');
+        $this->configManager = self::getConfigManager('global');
 
         $this->loadFixtures([
             LoadCustomers::class,

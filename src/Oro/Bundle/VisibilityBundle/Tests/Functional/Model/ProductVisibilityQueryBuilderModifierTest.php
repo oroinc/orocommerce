@@ -3,6 +3,7 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Model;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -22,6 +23,8 @@ use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
  */
 class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     const PRODUCT_VISIBILITY_CONFIGURATION_PATH = 'oro_visibility.product_visibility';
     const CATEGORY_VISIBILITY_CONFIGURATION_PATH = 'oro_visibility.category_visibility';
 
@@ -288,7 +291,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
     private function prepareModifierForAnonymousRestrictionTests()
     {
         $this->modifier = new ProductVisibilityQueryBuilderModifier(
-            $this->getContainer()->get('oro_config.manager'),
+            self::getConfigManager(null),
             $this->getContainer()->get('oro_scope.scope_manager'),
             $this->getContainer()->get('oro_entity.doctrine_helper')
         );

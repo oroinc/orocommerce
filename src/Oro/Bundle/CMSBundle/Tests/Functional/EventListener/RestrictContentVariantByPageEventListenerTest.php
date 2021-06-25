@@ -5,6 +5,7 @@ namespace Oro\Bundle\CMSBundle\Tests\Functional\EventListener;
 use Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadContentVariantData;
 use Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadPageData;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Provider\ContentNodeProvider;
@@ -14,6 +15,8 @@ use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 class RestrictContentVariantByPageEventListenerTest extends WebTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     /**
      * @var ConfigManager
      */
@@ -32,7 +35,7 @@ class RestrictContentVariantByPageEventListenerTest extends WebTestCase
             LoadWebsiteData::class
         ]);
 
-        $this->configManager = $this->getContainer()->get('oro_config.manager');
+        $this->configManager = self::getConfigManager('global');
         $this->contentNodeProvider = $this->getContainer()->get('oro_web_catalog.content_node_provider');
     }
 
