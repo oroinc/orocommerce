@@ -31,7 +31,13 @@ abstract class FrontendWebTestCase extends WebTestCase
             ->getRepository(CustomerUser::class)
             ->findOneBy(['email' => $email]);
 
-        $token = new UsernamePasswordOrganizationToken($user, false, 'k', $user->getOrganization(), $user->getRoles());
+        $token = new UsernamePasswordOrganizationToken(
+            $user,
+            false,
+            'k',
+            $user->getOrganization(),
+            $user->getUserRoles()
+        );
         $this->getContainer()->get('security.token_storage')->setToken($token);
     }
 }

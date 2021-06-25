@@ -60,7 +60,7 @@ class LoadPaymentHistoryUserData extends AbstractLoadMultipleUserData
                 'password'  => self::USER_PAYMENT_HISTORY_VIEWER,
                 'firstname' => 'User',
                 'lastname'  => 'User',
-                'roles'     => [self::ROLE_VIEW_HISTORY],
+                'userRoles'     => [self::ROLE_VIEW_HISTORY],
             ],
             [
                 'email'     => self::USER_ORDER_VIEWER . '@test.com',
@@ -68,7 +68,7 @@ class LoadPaymentHistoryUserData extends AbstractLoadMultipleUserData
                 'password'  => self::USER_ORDER_VIEWER,
                 'firstname' => 'User',
                 'lastname'  => 'User',
-                'roles'     => [self::ROLE_VIEW_ORDER],
+                'userRoles'     => [self::ROLE_VIEW_ORDER],
             ],
         ];
     }

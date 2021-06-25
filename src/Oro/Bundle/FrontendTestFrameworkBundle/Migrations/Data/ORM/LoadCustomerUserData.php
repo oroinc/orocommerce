@@ -10,6 +10,9 @@ use Oro\Bundle\UserBundle\Entity\BaseUserManager;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Creates the customer user entity.
+ */
 class LoadCustomerUserData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
     const AUTH_USER = 'customer_user@example.com';
@@ -66,7 +69,7 @@ class LoadCustomerUserData extends AbstractFixture implements ContainerAwareInte
             ->setSalt('')
             ->setPlainPassword(self::AUTH_PW)
             ->setOrganization($organization)
-            ->addRole($role);
+            ->addUserRole($role);
 
         $userManager->updateUser($entity);
     }

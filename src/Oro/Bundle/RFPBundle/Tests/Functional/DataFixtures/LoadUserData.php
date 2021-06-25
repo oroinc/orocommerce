@@ -202,7 +202,7 @@ class LoadUserData extends AbstractLoadCustomerUserFixture
 
         $businessUnit = $defaultUser->getOwner();
         $organization = $defaultUser->getOrganization();
-        $roles = $defaultUser->getRoles();
+        $roles = $defaultUser->getUserRoles();
 
         foreach ($this->users as $item) {
             /* @var User $user */
@@ -214,7 +214,7 @@ class LoadUserData extends AbstractLoadCustomerUserFixture
                 ->setBusinessUnits($defaultUser->getBusinessUnits())
                 ->setOwner($businessUnit)
                 ->setOrganization($organization)
-                ->addRole($roles[0])
+                ->addUserRole($roles[0])
                 ->setUsername($item['username'])
                 ->setPlainPassword($item['password'])
                 ->setEnabled(true);

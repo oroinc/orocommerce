@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CMSBundle\Provider;
 
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessor;
-use Symfony\Component\Security\Core\Role\Role;
 
 /**
  * Provide purifier scope corresponds to content_restrictions mode
@@ -13,32 +12,14 @@ class HTMLPurifierScopeProvider
     private const UNSECURE_MODE = 'unsecure';
     private const DEFAULT_SCOPE = 'default';
 
-    /**
-     * @var TokenAccessor
-     */
-    private $tokenAccessor;
+    private TokenAccessor $tokenAccessor;
 
-    /**
-     * @var array
-     */
-    private $contentRestrictions = [];
+    private array $contentRestrictions;
 
-    /**
-     * @var string
-     */
-    private $contentRestrictionsMode;
+    private string $contentRestrictionsMode;
 
-    /**
-     * @var array
-     */
-    private $scopeMap = [];
+    private array $scopeMap = [];
 
-    /**
-     * @param TokenAccessor $tokenAccessor
-     * @param string $contentRestrictionsMode
-     * @param array $contentRestrictions
-     *
-     */
     public function __construct(
         TokenAccessor $tokenAccessor,
         string $contentRestrictionsMode,
@@ -49,36 +30,25 @@ class HTMLPurifierScopeProvider
         $this->contentRestrictions = $contentRestrictions;
     }
 
-    /**
-     * @param string $mode
-     * @param string|null $scope
-     */
-    public function addScopeMapping(string $mode, ?string $scope)
+    public function addScopeMapping(string $mode, ?string $scope): void
     {
         $this->scopeMap[$mode] = $scope;
     }
 
-    /**
-     * @param string $entityName
-     * @param string $fieldName
-     *
-     * @return string|null
-     */
     public function getScope(string $entityName, string $fieldName): ?string
     {
         if ($this->contentRestrictionsMode === self::UNSECURE_MODE) {
             return null;
         }
 
-        $availableRoles = $this->getUserRoles();
+        $availableRoles = $this->getRolesNames();
         $useSecureMode = true;
-        foreach ($availableRoles as $role) {
-            if (!$this->isRoleSupport($role)) {
+        foreach ($availableRoles as $roleName) {
+            if (!$this->isRoleSupported($roleName)) {
                 continue;
             }
 
-            $roleKey = $role->getRole();
-            foreach ($this->contentRestrictions[$roleKey] as $restrictionEntityName => $restrictionFields) {
+            foreach ($this->contentRestrictions[$roleName] as $restrictionEntityName => $restrictionFields) {
                 if ($restrictionEntityName === $entityName && in_array($fieldName, $restrictionFields, true)) {
                     $useSecureMode = false;
                     break;
@@ -98,22 +68,17 @@ class HTMLPurifierScopeProvider
     }
 
     /**
-     * @return array|Role[]
+     * @return string[]
      */
-    private function getUserRoles(): array
+    private function getRolesNames(): array
     {
         $token = $this->tokenAccessor->getToken();
 
-        return $token ? $token->getRoles() : [];
+        return $token ? $token->getRoleNames() : [];
     }
 
-    /**
-     * @param Role $role
-     *
-     * @return bool
-     */
-    private function isRoleSupport(Role $role): bool
+    private function isRoleSupported(string $roleName): bool
     {
-        return array_key_exists($role->getRole(), $this->contentRestrictions);
+        return array_key_exists($roleName, $this->contentRestrictions);
     }
 }

@@ -51,7 +51,7 @@ class LineItemControllerAclTest extends WebTestCase
             $this->getUrl('oro_api_shopping_list_frontend_delete_line_item', ['id' => $lineItem->getId()])
         );
 
-        $this->assertEmptyResponseStatusCodeEquals($this->client->getResponse(), Response::HTTP_NO_CONTENT);
+        self::assertEmptyResponseStatusCodeEquals($this->client->getResponse(), Response::HTTP_NO_CONTENT);
     }
 
     public function testPut()
@@ -67,7 +67,7 @@ class LineItemControllerAclTest extends WebTestCase
             $updatedLineItem
         );
 
-        $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), Response::HTTP_OK);
+        self::assertJsonResponseStatusCodeEquals($this->client->getResponse(), Response::HTTP_OK);
     }
 
     public function testDeleteAccessDenied()
@@ -86,7 +86,7 @@ class LineItemControllerAclTest extends WebTestCase
             )
         );
 
-        $this->assertEmptyResponseStatusCodeEquals($this->client->getResponse(), Response::HTTP_FORBIDDEN);
+        self::assertEmptyResponseStatusCodeEquals($this->client->getResponse(), Response::HTTP_FORBIDDEN);
     }
 
     public function testPutAccessDenied()
@@ -107,14 +107,14 @@ class LineItemControllerAclTest extends WebTestCase
             )
         );
 
-        $this->assertEmptyResponseStatusCodeEquals($this->client->getResponse(), Response::HTTP_FORBIDDEN);
+        self::assertEmptyResponseStatusCodeEquals($this->client->getResponse(), Response::HTTP_FORBIDDEN);
     }
 
     public function testDeleteAccessDeniedByLineItemACL()
     {
         /* @var LineItem $lineItem */
         $lineItem = $this->getReference('shopping_list_line_item.1');
-        $role = $lineItem->getCustomerUser()->getRoles()[0];
+        $role = $lineItem->getCustomerUser()->getUserRoles()[0];
 
         $this->updateRolePermission($role->getRole(), LineItem::class, AccessLevel::NONE_LEVEL, 'DELETE');
         $this->client->request(
@@ -122,14 +122,14 @@ class LineItemControllerAclTest extends WebTestCase
             $this->getUrl('oro_api_shopping_list_frontend_delete_line_item', ['id' => $lineItem->getId()])
         );
 
-        $this->assertEmptyResponseStatusCodeEquals($this->client->getResponse(), Response::HTTP_FORBIDDEN);
+        self::assertEmptyResponseStatusCodeEquals($this->client->getResponse(), Response::HTTP_FORBIDDEN);
     }
 
     public function testPutAccessDeniedByLineItemACL()
     {
         /* @var LineItem $lineItem */
         $lineItem = $this->getReference('shopping_list_line_item.1');
-        $role = $lineItem->getCustomerUser()->getRoles()[0];
+        $role = $lineItem->getCustomerUser()->getUserRoles()[0];
         $productUnit = $this->getReference('product_unit.bottle');
         $updatedLineItem = [FrontendLineItemType::NAME => ['unit' => $productUnit->getCode(), 'quantity' => 2]];
 
@@ -140,6 +140,6 @@ class LineItemControllerAclTest extends WebTestCase
             $updatedLineItem
         );
 
-        $this->assertEmptyResponseStatusCodeEquals($this->client->getResponse(), Response::HTTP_FORBIDDEN);
+        self::assertEmptyResponseStatusCodeEquals($this->client->getResponse(), Response::HTTP_FORBIDDEN);
     }
 }

@@ -54,7 +54,7 @@ class ShoppingListRepositoryTest extends WebTestCase
         );
 
         $this->customerUser = $this->getCustomerUser();
-        $this->aclHelper = $this->getContainer()->get('oro_security.acl_helper');
+        $this->aclHelper = self::getContainer()->get('oro_security.acl_helper');
 
         $this->client->getContainer()->get('security.token_storage')
             ->setToken($this->createToken($this->customerUser));
@@ -64,27 +64,27 @@ class ShoppingListRepositoryTest extends WebTestCase
     {
         // Isset current shopping list
         $availableShoppingList = $this->getRepository()->findAvailableForCustomerUser($this->aclHelper);
-        $this->assertInstanceOf(ShoppingList::class, $availableShoppingList);
+        self::assertInstanceOf(ShoppingList::class, $availableShoppingList);
 
         // the latest shopping list for current user
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_8);
-        $this->assertSame($shoppingList, $availableShoppingList);
+        self::assertSame($shoppingList, $availableShoppingList);
     }
 
     public function testFindByUser()
     {
         /** @var ShoppingList[] $shoppingLists */
         $shoppingLists = $this->getRepository()->findByUser($this->aclHelper, ['list.updatedAt' => Criteria::ASC]);
-        $this->assertCount(6, $shoppingLists);
+        self::assertCount(6, $shoppingLists);
 
         $updatedAt = null;
 
         foreach ($shoppingLists as $shoppingList) {
-            $this->assertInstanceOf(ShoppingList::class, $shoppingList);
-            $this->assertSame($this->customerUser, $shoppingList->getCustomerUser());
+            self::assertInstanceOf(ShoppingList::class, $shoppingList);
+            self::assertSame($this->customerUser, $shoppingList->getCustomerUser());
 
             if ($updatedAt) {
-                $this->assertTrue($updatedAt <= $shoppingList->getUpdatedAt());
+                self::assertTrue($updatedAt <= $shoppingList->getUpdatedAt());
             }
 
             $updatedAt = $shoppingList->getUpdatedAt();
@@ -100,16 +100,16 @@ class ShoppingListRepositoryTest extends WebTestCase
             $this->aclHelper,
             ['list.updatedAt' => Criteria::ASC]
         );
-        $this->assertCount(6, $shoppingLists);
+        self::assertCount(6, $shoppingLists);
 
         $updatedAt = null;
 
         foreach ($shoppingLists as $shoppingList) {
-            $this->assertInstanceOf(ShoppingList::class, $shoppingList);
-            $this->assertSame($this->customerUser, $shoppingList->getCustomerUser());
+            self::assertInstanceOf(ShoppingList::class, $shoppingList);
+            self::assertSame($this->customerUser, $shoppingList->getCustomerUser());
 
             if ($updatedAt) {
-                $this->assertTrue($updatedAt <= $shoppingList->getUpdatedAt());
+                self::assertTrue($updatedAt <= $shoppingList->getUpdatedAt());
             }
 
             $updatedAt = $shoppingList->getUpdatedAt();
@@ -122,15 +122,15 @@ class ShoppingListRepositoryTest extends WebTestCase
         $shoppingListReference = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
         $shoppingList = $this->getRepository()->findByUserAndId($this->aclHelper, $shoppingListReference->getId());
 
-        $this->assertInstanceOf(ShoppingList::class, $shoppingList);
-        $this->assertSame($this->customerUser, $shoppingList->getCustomerUser());
+        self::assertInstanceOf(ShoppingList::class, $shoppingList);
+        self::assertSame($this->customerUser, $shoppingList->getCustomerUser());
     }
 
     public function testFindByUserAndNonNumericalId()
     {
         $shoppingList = $this->getRepository()->findByUserAndId($this->aclHelper, 'abc');
 
-        $this->assertNull($shoppingList);
+        self::assertNull($shoppingList);
     }
 
     /**
@@ -138,7 +138,7 @@ class ShoppingListRepositoryTest extends WebTestCase
      */
     public function getCustomerUser()
     {
-        return $this->getContainer()
+        return self::getContainer()
             ->get('doctrine')
             ->getRepository(CustomerUser::class)
             ->findOneBy(['username' => LoadAuthCustomerUserData::AUTH_USER]);
@@ -149,7 +149,7 @@ class ShoppingListRepositoryTest extends WebTestCase
      */
     private function getRepository()
     {
-        return $this->getContainer()->get('doctrine')->getRepository(ShoppingList::class);
+        return self::getContainer()->get('doctrine')->getRepository(ShoppingList::class);
     }
 
     /**
@@ -163,7 +163,7 @@ class ShoppingListRepositoryTest extends WebTestCase
             false,
             'k',
             $customerUser->getOrganization(),
-            $customerUser->getRoles()
+            $customerUser->getUserRoles()
         );
     }
 
@@ -171,7 +171,7 @@ class ShoppingListRepositoryTest extends WebTestCase
     {
         $user = $this->getCustomerUser();
 
-        $doctrineHelper = $this->getContainer()->get('oro_entity.doctrine_helper');
+        $doctrineHelper = self::getContainer()->get('oro_entity.doctrine_helper');
         $website = $doctrineHelper->getEntityRepositoryForClass(Website::class)->getDefaultWebsite();
         $count = $this->getRepository()->countUserShoppingLists(
             $user->getId(),
@@ -179,7 +179,7 @@ class ShoppingListRepositoryTest extends WebTestCase
             $website
         );
 
-        $this->assertEquals(6, $count);
+        self::assertEquals(6, $count);
     }
 
     public function testCountUserShoppingListsForCertainWebsite()
@@ -194,7 +194,7 @@ class ShoppingListRepositoryTest extends WebTestCase
             $website
         );
 
-        $this->assertEquals(1, $count);
+        self::assertEquals(1, $count);
     }
 
     public function testGetRelatedEntitiesCount()
@@ -220,7 +220,7 @@ class ShoppingListRepositoryTest extends WebTestCase
         ]);
 
         $shoppingLists = $this->getRepository()->findBy(['customerUser' => null]);
-        $this->assertCount(2, $shoppingLists);
+        self::assertCount(2, $shoppingLists);
     }
 
     public function testResetCustomerUser()
@@ -229,20 +229,20 @@ class ShoppingListRepositoryTest extends WebTestCase
         $this->getRepository()->resetCustomerUser($customerUser);
 
         $shoppingLists = $this->getRepository()->findBy(['customerUser' => null]);
-        $this->assertCount(7, $shoppingLists);
+        self::assertCount(7, $shoppingLists);
     }
 
     public function testHasEmptyConfigurableLineItems(): void
     {
         $shoppingListRepository = $this->getRepository();
 
-        $this->assertTrue(
+        self::assertTrue(
             $shoppingListRepository->hasEmptyConfigurableLineItems(
                 $this->getReference(LoadShoppingLists::SHOPPING_LIST_2)
             )
         );
 
-        $this->assertFalse(
+        self::assertFalse(
             $shoppingListRepository->hasEmptyConfigurableLineItems(
                 $this->getReference(LoadShoppingLists::SHOPPING_LIST_1)
             )

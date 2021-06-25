@@ -55,7 +55,7 @@ class FrontendCouponHandlerTest extends AbstractCouponHandlerTestCase
             false,
             'k',
             $user->getOrganization(),
-            $user->getRoles()
+            $user->getUserRoles()
         );
     }
 

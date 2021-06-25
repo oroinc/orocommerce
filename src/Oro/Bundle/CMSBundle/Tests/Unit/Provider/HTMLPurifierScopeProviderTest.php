@@ -4,7 +4,6 @@ namespace Oro\Bundle\CMSBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\CMSBundle\Provider\HTMLPurifierScopeProvider;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessor;
-use Oro\Bundle\UserBundle\Entity\Role;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Security\Core\Authentication\Token\AbstractToken;
 
@@ -14,22 +13,22 @@ class HTMLPurifierScopeProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider testGetScopeDataProvider
+     *
      * @param string $mode
      * @param array $restrictions
      * @param string|null $expected
      */
     public function testGetScope(string $mode, array $restrictions, ?string $expected): void
     {
-        $role = new Role('ROLE_FOO');
+        $role = 'ROLE_FOO';
 
         $token = $this->createMock(AbstractToken::class);
-        $token->expects($this->any())
-            ->method('getRoles')
+        $token->expects(self::any())
+            ->method('getRoleNames')
             ->willReturn([$role]);
 
-        /** @var TokenAccessor|\PHPUnit\Framework\MockObject\MockObject $tokenAccessor */
         $tokenAccessor = $this->createMock(TokenAccessor::class);
-        $tokenAccessor->expects($this->any())
+        $tokenAccessor->expects(self::any())
             ->method('getToken')
             ->willReturn($token);
 
@@ -38,12 +37,9 @@ class HTMLPurifierScopeProviderTest extends \PHPUnit\Framework\TestCase
         $provider->addScopeMapping('selective', 'lax');
         $provider->addScopeMapping('unsecure', null);
 
-        $this->assertEquals($expected, $provider->getScope(\stdClass::class, 'field'));
+        self::assertEquals($expected, $provider->getScope(\stdClass::class, 'field'));
     }
 
-    /**
-     * @return array
-     */
     public function testGetScopeDataProvider(): array
     {
         return [

@@ -9,5 +9,5 @@ Oro\Bundle\UserBundle\Entity\User:
         organization: '@organization'
         organizations: ['@organization']
         owner: '@business_unit'
-        roles: ['@userRole']
+        userRoles: ['@userRole']
         businessUnits: ['@business_unit']
