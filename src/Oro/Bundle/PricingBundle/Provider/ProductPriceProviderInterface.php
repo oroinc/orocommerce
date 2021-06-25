@@ -14,8 +14,8 @@ interface ProductPriceProviderInterface
 {
     /**
      * @param ProductPriceScopeCriteriaInterface $scopeCriteria
-     * @param array|Product[] $products
-     * @param array|string[] $currencies
+     * @param int[]|Product[] $products
+     * @param string[] $currencies
      * @param string|null $unitCode
      *
      * @return array

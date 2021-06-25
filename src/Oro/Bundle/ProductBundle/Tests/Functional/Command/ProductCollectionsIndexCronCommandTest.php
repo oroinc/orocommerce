@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Command;
 
 use Doctrine\Persistence\Mapping\ClassMetadata;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CronBundle\Entity\Repository\ScheduleRepository;
 use Oro\Bundle\CronBundle\Entity\Schedule;
 use Oro\Bundle\FrontendTestFrameworkBundle\Entity\TestContentVariant;
@@ -24,6 +25,7 @@ use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 class ProductCollectionsIndexCronCommandTest extends WebTestCase
 {
     use MessageQueueExtension;
+    use ConfigManagerAwareTestTrait;
 
     /**
      * @var string
@@ -53,24 +55,21 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
      */
     public function testCommandWhenWebCatalogIsUsed($isPartialConfig)
     {
-        $websiteManager = self::getContainer()->get('oro_website.manager');
-        $configManager = self::getContainer()->get('oro_config.manager');
-
-        $defaultWebsite = $websiteManager->getDefaultWebsite();
+        $configManager = self::getConfigManager('global');
         $configManager->set(
             'oro_web_catalog.web_catalog',
-            $this->getReference(LoadWebCatalogsData::FIRST_WEB_CATALOG)->getId(),
-            $defaultWebsite
+            $this->getReference(LoadWebCatalogsData::FIRST_WEB_CATALOG)->getId()
         );
         $configManager->set(
             'oro_product.product_collections_indexation_partial',
             $isPartialConfig
         );
-
         $configManager->flush();
 
         self::runCommand(ProductCollectionsIndexCronCommand::getDefaultName(), []);
 
+        $websiteManager = self::getContainer()->get('oro_website.manager');
+        $defaultWebsite = $websiteManager->getDefaultWebsite();
         $expectedMessage = [
             [
                 'topic' => Topics::REINDEX_PRODUCT_COLLECTION_BY_SEGMENT,
@@ -123,24 +122,21 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
 
     public function testCommandWhenWebCatalogIsUsedPartialOptionPassed()
     {
-        $websiteManager = self::getContainer()->get('oro_website.manager');
-        $configManager = self::getContainer()->get('oro_config.manager');
-
-        $defaultWebsite = $websiteManager->getDefaultWebsite();
+        $configManager = self::getConfigManager('global');
         $configManager->set(
             'oro_web_catalog.web_catalog',
-            $this->getReference(LoadWebCatalogsData::FIRST_WEB_CATALOG)->getId(),
-            $defaultWebsite
+            $this->getReference(LoadWebCatalogsData::FIRST_WEB_CATALOG)->getId()
         );
         $configManager->set(
             'oro_product.product_collections_indexation_partial',
             false
         );
-
         $configManager->flush();
 
         self::runCommand(ProductCollectionsIndexCronCommand::getDefaultName(), ['--partial-reindex']);
 
+        $websiteManager = self::getContainer()->get('oro_website.manager');
+        $defaultWebsite = $websiteManager->getDefaultWebsite();
         $expectedMessage = [
             [
                 'topic' => Topics::REINDEX_PRODUCT_COLLECTION_BY_SEGMENT,
@@ -198,7 +194,7 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
         $this->assertNotEmpty($commandSchedule);
         $this->assertSame(Configuration::DEFAULT_CRON_SCHEDULE, $commandSchedule->getDefinition());
 
-        $configManager = $this->getContainer()->get('oro_config.manager');
+        $configManager = self::getConfigManager('global');
         $configManager->set(ProductCollectionsScheduleConfigurationListener::CONFIG_FIELD, '0 0 0 0 *');
         $configManager->flush();
         self::runCommand('oro:cron:definitions:load', []);

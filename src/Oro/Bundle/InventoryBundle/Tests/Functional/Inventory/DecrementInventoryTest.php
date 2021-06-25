@@ -4,7 +4,7 @@ namespace Oro\Bundle\InventoryBundle\Tests\Inventory;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend\CheckoutControllerTestCase;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
@@ -26,6 +26,7 @@ class DecrementInventoryTest extends CheckoutControllerTestCase
     use EnabledPaymentMethodIdentifierTrait {
         getReference as protected;
     }
+    use ConfigManagerAwareTestTrait;
 
     const CHECKOUT_STEP_LABEL = "//h2[contains(@class, 'checkout__title')]";
     const PRODUCT_ERROR_TEXT = "There is not enough quantity for this product";
@@ -53,8 +54,7 @@ class DecrementInventoryTest extends CheckoutControllerTestCase
         $this->precisionBottleQuantity = self::processTemplateData(
             '@inventory_level.product_unit_precision.product-1.bottle->quantity'
         );
-        /* @var ConfigManager $configManager */
-        $configManager = $this->getContainer()->get('oro_config.global');
+        $configManager = self::getConfigManager('global');
         $configManager->set('oro_inventory.manage_inventory', true);
         $configManager->flush();
     }

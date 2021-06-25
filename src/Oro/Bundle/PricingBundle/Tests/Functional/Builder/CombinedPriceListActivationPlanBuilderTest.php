@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Builder;
 
 use Doctrine\ORM\EntityManager;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -14,6 +15,8 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class CombinedPriceListActivationPlanBuilderTest extends WebTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     /**
      * @var CombinedPriceListActivationPlanBuilder
      */
@@ -39,7 +42,7 @@ class CombinedPriceListActivationPlanBuilderTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
         // Switch to merge by priority strategy to use old CPL naming
-        $this->getContainer()->get('oro_config.global')
+        self::getConfigManager('global')
             ->set('oro_pricing.price_strategy', MergePricesCombiningStrategy::NAME);
         $this->cplActivationPlanBuilder = $this->getContainer()
             ->get('oro_pricing.builder.combined_price_list_activation_plan_builder');

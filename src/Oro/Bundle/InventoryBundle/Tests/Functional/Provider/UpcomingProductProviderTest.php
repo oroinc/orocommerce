@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Functional\Provider;
 
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\InventoryBundle\DependencyInjection\Configuration;
 use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
 use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadProductUpcomingData;
@@ -13,6 +14,8 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class UpcomingProductProviderTest extends WebTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     protected function setUp(): void
     {
         $this->initClient();
@@ -190,7 +193,7 @@ class UpcomingProductProviderTest extends WebTestCase
      */
     private function setHideLabelsPastAvailabilityDateOption(bool $enabled): void
     {
-        $configManager = self::getContainer()->get('oro_config.global');
+        $configManager = self::getConfigManager('global');
         $name = sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::HIDE_LABELS_PAST_AVAILABILITY_DATE);
         $configManager->set($name, $enabled);
         $configManager->flush();

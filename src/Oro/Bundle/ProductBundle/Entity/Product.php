@@ -195,6 +195,9 @@ class Product extends ExtendProduct implements
      *          },
      *          "attribute"={
      *              "is_attribute"=true
+     *          },
+     *          "frontend"={
+     *              "use_in_export"=true
      *          }
      *      }
      * )
@@ -386,6 +389,9 @@ class Product extends ExtendProduct implements
      *          },
      *          "attribute"={
      *              "is_attribute"=true
+     *          },
+     *          "frontend"={
+     *              "use_in_export"=true
      *          }
      *      }
      * )

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Builder;
 
 use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListGarbageCollector;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceListsForGC;
@@ -10,6 +11,8 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class CombinedPriceListGarbageCollectorTest extends WebTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     /**
      * @var ObjectManager
      */
@@ -50,7 +53,7 @@ class CombinedPriceListGarbageCollectorTest extends WebTestCase
         /** @var CombinedPriceList $cpl */
         $cpl = $this->getReference('cpl_conf');
 
-        $cm = $this->getContainer()->get('oro_config.global');
+        $cm = self::getConfigManager('global');
         $this->prevCpl = $cm->get('oro_pricing.combined_price_list');
         $this->prevFullCpl = $cm->get('oro_pricing.full_combined_price_list');
         $cm->set('oro_pricing.combined_price_list', $cpl->getId());
@@ -61,7 +64,7 @@ class CombinedPriceListGarbageCollectorTest extends WebTestCase
 
     protected function tearDown(): void
     {
-        $cm = $this->getContainer()->get('oro_config.manager');
+        $cm = self::getConfigManager('global');
         $cm->set('oro_pricing.combined_price_list', $this->prevCpl);
         $cm->set('oro_pricing.full_combined_price_list', $this->prevFullCpl);
         $cm->flush();

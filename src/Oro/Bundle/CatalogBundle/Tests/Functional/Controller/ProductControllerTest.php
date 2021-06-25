@@ -8,6 +8,7 @@ use Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryUnitPrecisionData;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -16,6 +17,8 @@ use Symfony\Component\DomCrawler\Form;
 
 class ProductControllerTest extends WebTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     const SIDEBAR_ROUTE = 'oro_catalog_category_product_sidebar';
 
     /**
@@ -150,7 +153,7 @@ class ProductControllerTest extends WebTestCase
      */
     public function testDefaultProductUnitPrecision($singleUnitMode, $category, $expected)
     {
-        $configManager = $this->client->getContainer()->get('oro_config.manager');
+        $configManager = self::getConfigManager('global');
         $configManager->set('oro_product.single_unit_mode', $singleUnitMode);
         $configManager->flush();
         $systemDefaultUnit = $configManager->get('oro_product.default_unit');

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Functional\Command;
 
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CronBundle\Entity\Repository\ScheduleRepository;
 use Oro\Bundle\CronBundle\Entity\Schedule;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
@@ -14,6 +15,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 class GenerateSitemapCommandTest extends WebTestCase
 {
     use MessageQueueExtension;
+    use ConfigManagerAwareTestTrait;
 
     protected function setUp(): void
     {
@@ -38,7 +40,7 @@ class GenerateSitemapCommandTest extends WebTestCase
         $this->assertNotEmpty($commandSchedule);
         $this->assertSame(Configuration::DEFAULT_CRON_DEFINITION, $commandSchedule->getDefinition());
 
-        $configManager = $this->getContainer()->get('oro_config.manager');
+        $configManager = self::getConfigManager('global');
         $configManager->set(UpdateCronDefinitionConfigListener::CONFIG_FIELD, '0 0 0 0 *');
         $configManager->flush();
         self::runCommand('oro:cron:definitions:load', []);

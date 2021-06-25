@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Functional\Controller\Frontend;
 
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteAddressData;
@@ -18,6 +19,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class QuoteControllerTest extends WebTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     /**
      * {@inheritdoc}
      */
@@ -32,7 +35,7 @@ class QuoteControllerTest extends WebTestCase
 
     protected function tearDown(): void
     {
-        $configManager = $this->getContainer()->get('oro_config.manager');
+        $configManager = self::getConfigManager('global');
         $configManager->set('oro_sale.enable_guest_quote', false);
         $configManager->set('oro_checkout.guest_checkout', false);
         $configManager->flush();
@@ -626,7 +629,7 @@ class QuoteControllerTest extends WebTestCase
     {
         $this->initClient();
 
-        $configManager = $this->getContainer()->get('oro_config.manager');
+        $configManager = self::getConfigManager('global');
 
         foreach ($configs as $name => $value) {
             $configManager->set($name, $value);

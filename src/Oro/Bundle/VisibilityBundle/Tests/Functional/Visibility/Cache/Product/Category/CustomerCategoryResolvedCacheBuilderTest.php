@@ -6,6 +6,7 @@ use Doctrine\ORM\AbstractQuery;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
@@ -20,6 +21,8 @@ use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree\Visibi
 
 class CustomerCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCacheBuilderTest
 {
+    use ConfigManagerAwareTestTrait;
+
     /** @var Category */
     protected $category;
 
@@ -71,7 +74,7 @@ class CustomerCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCa
         $subtreeBuilder = new VisibilityChangeCustomerSubtreeCacheBuilder(
             $container->get('doctrine'),
             $container->get('oro_visibility.visibility.resolver.category_visibility_resolver'),
-            $container->get('oro_config.manager'),
+            self::getConfigManager(null),
             $this->scopeManager
         );
 

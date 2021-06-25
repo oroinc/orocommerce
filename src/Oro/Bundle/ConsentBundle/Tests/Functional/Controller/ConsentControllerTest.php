@@ -39,7 +39,7 @@ class ConsentControllerTest extends WebTestCase
             LoadContentNodesData::class,
         ]);
 
-        $this->configManager = $this->getContainer()->get('oro_config.global');
+        $this->configManager = self::getConfigManager('global');
         $this->enableConsentFeature();
     }
 

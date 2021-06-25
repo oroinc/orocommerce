@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\EventListener;
 
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductCollectionContentVariantWithManuallyAddedData;
@@ -13,6 +14,8 @@ use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Engine\ORM\OrmIndexerTest;
 
 class ManuallyAddedProductCollectionIndexerListenerTest extends FrontendWebTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     protected function setUp(): void
     {
         $this->initClient();
@@ -27,13 +30,8 @@ class ManuallyAddedProductCollectionIndexerListenerTest extends FrontendWebTestC
         $product2 = $this->getReference(LoadProductData::PRODUCT_2);
 
         $webCatalog = $this->getReference(LoadProductCollectionContentVariantWithManuallyAddedData::WEB_CATALOG);
-        // set WebCatalog for current Website
-        $configManager = self::getContainer()->get('oro_config.manager');
-        $configManager->set(
-            'oro_web_catalog.web_catalog',
-            $webCatalog->getId(),
-            self::getContainer()->get('oro_website.manager')->getCurrentWebsite()
-        );
+        $configManager = self::getConfigManager('global');
+        $configManager->set('oro_web_catalog.web_catalog', $webCatalog->getId());
         $configManager->flush();
 
         self::getContainer()->get('event_dispatcher')->dispatch(

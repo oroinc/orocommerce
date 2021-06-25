@@ -24,7 +24,7 @@ class WebCatalogTreeTestCase extends FrontendRestJsonApiTestCase
     protected function tearDown(): void
     {
         if (false !== $this->originalWebCatalog) {
-            $configManager = $this->getConfigManager(null);
+            $configManager = self::getConfigManager('global');
             $configManager->set(self::WEB_CATALOG_CONFIG_NAME, $this->originalWebCatalog);
             $configManager->flush();
         }
@@ -53,7 +53,7 @@ class WebCatalogTreeTestCase extends FrontendRestJsonApiTestCase
 
     protected function switchToWebCatalog()
     {
-        $configManager = $this->getConfigManager(null);
+        $configManager = self::getConfigManager('global');
         $this->originalWebCatalog = $configManager->get(self::WEB_CATALOG_CONFIG_NAME);
         $configManager->set(self::WEB_CATALOG_CONFIG_NAME, $this->getReference('catalog1')->getId());
         $configManager->flush();
@@ -61,7 +61,7 @@ class WebCatalogTreeTestCase extends FrontendRestJsonApiTestCase
 
     protected function switchToMasterCatalog()
     {
-        $configManager = $this->getConfigManager(null);
+        $configManager = self::getConfigManager('global');
         $configManager->set(self::WEB_CATALOG_CONFIG_NAME, null);
         $configManager->flush();
     }

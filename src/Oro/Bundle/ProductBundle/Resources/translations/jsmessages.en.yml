@@ -159,6 +159,9 @@ oro:
                 copy_paste:
                     error: 'Some of the products SKUs or units you have provided were not found. Correct them and try again.'
             choose_action: 'Choose Action'
+            importexport:
+                product_data_export:
+                    success_message: The product data export has started. You will receive download instructions by email once the export is finished.
         dialog:
             quick_add.confirm:
                 title: 'Create Order'
@@ -184,3 +187,6 @@ oro:
                 button:
                     all.label: '{1} See Result|]1,Inf] See All {{ productCount }} Results'
             no_found: 'No products were found to match your search'
+        frontend_importexport:
+            product_data_export:
+                success_message: The product data export has started. You will receive download instructions by email once the export is finished.
