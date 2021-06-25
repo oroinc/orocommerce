@@ -117,7 +117,7 @@ define(function(require) {
                 hasForm: true,
                 dialogUrl: dialogUrl,
                 jsDialogWidget: this.options.jsDialogWidget,
-                onDialogResult: _.bind(this.onDialogResult, this, event, previousVal),
+                onDialogResult: this.onDialogResult.bind(this, event, previousVal),
                 dialogOptions: {
                     title: this._title(addressType),
                     dialogOptions: {

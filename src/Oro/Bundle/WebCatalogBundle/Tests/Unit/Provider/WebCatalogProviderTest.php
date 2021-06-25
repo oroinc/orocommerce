@@ -15,20 +15,14 @@ class WebCatalogProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $registry;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $registry;
 
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $configManager;
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
 
-    /**
-     * @var WebCatalogProvider
-     */
-    protected $provider;
+    /** @var WebCatalogProvider */
+    private $provider;
 
     protected function setUp(): void
     {
@@ -46,7 +40,6 @@ class WebCatalogProviderTest extends \PHPUnit\Framework\TestCase
             ->with('oro_web_catalog.web_catalog', false, false, $website)
             ->willReturn(1);
 
-        /** @var WebCatalog $webCatalog */
         $webCatalog = $this->createMock(WebCatalog::class);
         $this->assertDatabaseSearchCall($webCatalog);
 
@@ -55,14 +48,12 @@ class WebCatalogProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetWebCatalogWithWebsite()
     {
-        /** @var WebsiteInterface $website */
         $website = $this->createMock(WebsiteInterface::class);
         $this->configManager->expects($this->once())
             ->method('get')
             ->with('oro_web_catalog.web_catalog', false, false, $website)
             ->willReturn(1);
 
-        /** @var WebCatalog $webCatalog */
         $webCatalog = $this->createMock(WebCatalog::class);
         $this->assertDatabaseSearchCall($webCatalog);
 
@@ -75,15 +66,12 @@ class WebCatalogProviderTest extends \PHPUnit\Framework\TestCase
         $rootContentNodeId = 2;
         $webCatalogId = 1;
 
-        $this->configManager->expects($this->at(0))
+        $this->configManager->expects($this->exactly(2))
             ->method('get')
-            ->with('oro_web_catalog.web_catalog', false, false, $website)
-            ->willReturn($webCatalogId);
-
-        $this->configManager->expects($this->at(1))
-            ->method('get')
-            ->with('oro_web_catalog.navigation_root', false, false, $website)
-            ->willReturn($rootContentNodeId);
+            ->willReturnMap([
+                ['oro_web_catalog.web_catalog', false, false, $website, $webCatalogId],
+                ['oro_web_catalog.navigation_root', false, false, $website, $rootContentNodeId]
+            ]);
 
         /** @var WebCatalog $webCatalogNode */
         $webCatalogNode = $this->getEntity(WebCatalog::class, ['id' => $webCatalogId]);
@@ -114,25 +102,21 @@ class WebCatalogProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetNavigationRootWithWebsite()
     {
-        /** @var WebsiteInterface $website */
         $website = $this->createMock(WebsiteInterface::class);
         $rootContentNodeId = 2;
         $webCatalogId = 1;
 
-        $this->configManager->expects($this->at(0))
+        $this->configManager->expects($this->exactly(2))
             ->method('get')
-            ->with('oro_web_catalog.web_catalog', false, false, $website)
-            ->willReturn($webCatalogId);
-
-        $this->configManager->expects($this->at(1))
-            ->method('get')
-            ->with('oro_web_catalog.navigation_root', false, false, $website)
-            ->willReturn($rootContentNodeId);
+            ->willReturnMap([
+                ['oro_web_catalog.web_catalog', false, false, $website, $webCatalogId],
+                ['oro_web_catalog.navigation_root', false, false, $website, $rootContentNodeId]
+            ]);
 
         /** @var WebCatalog $webCatalogNode */
         $webCatalogNode = $this->getEntity(WebCatalog::class, ['id' => $webCatalogId]);
 
-        /** @var  ContentNode $navigationRootNode */
+        /** @var ContentNode $navigationRootNode */
         $navigationRootNode = $this->getEntity(ContentNode::class, ['id' => $rootContentNodeId]);
 
         $navigationRootNode->setWebCatalog($webCatalogNode);
@@ -162,15 +146,12 @@ class WebCatalogProviderTest extends \PHPUnit\Framework\TestCase
         $rootContentNodeId = 2;
         $webCatalogId = 1;
 
-        $this->configManager->expects($this->at(0))
+        $this->configManager->expects($this->exactly(2))
             ->method('get')
-            ->with('oro_web_catalog.web_catalog', false, false, $website)
-            ->willReturn($webCatalogId);
-
-        $this->configManager->expects($this->at(1))
-            ->method('get')
-            ->with('oro_web_catalog.navigation_root', false, false, $website)
-            ->willReturn($rootContentNodeId);
+            ->willReturnMap([
+                ['oro_web_catalog.web_catalog', false, false, $website, $webCatalogId],
+                ['oro_web_catalog.navigation_root', false, false, $website, $rootContentNodeId]
+            ]);
 
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->once())
@@ -186,10 +167,7 @@ class WebCatalogProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($this->provider->getNavigationRoot());
     }
 
-    /**
-     * @param WebCatalog $webCatalog
-     */
-    private function assertDatabaseSearchCall(WebCatalog $webCatalog)
+    private function assertDatabaseSearchCall(WebCatalog $webCatalog): void
     {
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->once())

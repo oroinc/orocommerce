@@ -33,7 +33,7 @@ define(function(require) {
 
             this.shoppingListLabelSelector = this.options._sourceElement.find(this.options.shoppingListLabelSelector);
             this.options._sourceElement
-                .on('change', this.options.shoppingListSelector, _.bind(this.onShoppingListChange, this));
+                .on('change', this.options.shoppingListSelector, this.onShoppingListChange.bind(this));
         },
 
         /**

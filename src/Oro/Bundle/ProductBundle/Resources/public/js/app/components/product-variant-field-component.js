@@ -70,7 +70,7 @@ define(function(require) {
 
             this._prepareProductVariants();
 
-            this.deferredInit.done(_.bind(this._initVariantInstances, this));
+            this.deferredInit.done(this._initVariantInstances.bind(this));
         },
 
         /**
@@ -104,13 +104,13 @@ define(function(require) {
          * Trigger select2 to update view
          */
         updateFields: function() {
-            this.$el.find('select').each(_.bind(function(index, select) {
+            this.$el.find('select').each((index, select) => {
                 if (this._filtered.indexOf($(select).val()) === -1) {
                     $(select).val('');
                     this.setState(this._extractName($(select).data('name')), null);
                 }
                 $(select).trigger('change.select2');
-            }, this));
+            });
         },
 
         dispose: function() {
@@ -134,23 +134,23 @@ define(function(require) {
          * @private
          */
         _initVariantInstances: function() {
-            const onChangeHandler = _.bind(this._onVariantFieldChange, this, this.simpleProductVariants);
+            const onChangeHandler = this._onVariantFieldChange.bind(this, this.simpleProductVariants);
 
             if (this.$el.find('select').length) {
-                this.$el.find('select').each(_.bind(function(index, select) {
+                this.$el.find('select').each((index, select) => {
                     const $select = $(select);
                     const normalizeName = this._extractName($select.data('name'));
 
                     this.filteredOptions = this.filteredOptions.concat(
-                        $select.find('option').get().filter(_.bind(function(option) {
+                        $select.find('option').get().filter(option => {
                             option.value = option.value !== '' ? normalizeName + '_' + option.value : '';
                             return !option.disabled && option.value !== '';
-                        }, this))
+                        })
                     );
 
                     this._appendToHierarchy(normalizeName);
                     this.setState(normalizeName, $select.val());
-                }, this));
+                });
             }
 
             this._resolveVariantFieldsChain(this.simpleProductVariants);
@@ -217,9 +217,9 @@ define(function(require) {
         _resolveVariantFieldsChain: function(simpleProductVariants) {
             this._filtered = this._resolveHierarchy(simpleProductVariants);
 
-            this.filteredOptions.forEach(_.bind(function(field) {
+            this.filteredOptions.forEach(field => {
                 field.disabled = _.indexOf(this._filtered, field.value) === -1;
-            }, this));
+            });
 
             this._updateProduct();
             this.updateFields();
@@ -234,7 +234,7 @@ define(function(require) {
         _resolveHierarchy: function(simpleProductVariants) {
             let result = [];
 
-            this._hierarchy.forEach(_.bind(function(field, index) {
+            this._hierarchy.forEach((field, index) => {
                 const parentField = this._hierarchy[index - 1];
 
                 simpleProductVariants = _.isUndefined(parentField)
@@ -242,7 +242,7 @@ define(function(require) {
                     : _.where(simpleProductVariants, this._prepareFoundKeyValue(parentField));
 
                 result = result.concat(_.uniq(_.pluck(simpleProductVariants, field)));
-            }, this));
+            });
 
             return result;
         },

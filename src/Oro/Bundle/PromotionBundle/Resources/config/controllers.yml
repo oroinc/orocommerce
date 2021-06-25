@@ -1,0 +1,33 @@
+services:
+    _defaults:
+        public: true
+
+    Oro\Bundle\PromotionBundle\Controller\AjaxPromotionController:
+        calls:
+            - [ 'setContainer', [ '@Psr\Container\ContainerInterface' ] ]
+        tags:
+            - { name: container.service_subscriber }
+
+    Oro\Bundle\PromotionBundle\Controller\PromotionController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+
+    Oro\Bundle\PromotionBundle\Controller\AjaxCouponController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+
+    Oro\Bundle\PromotionBundle\Controller\CouponController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+
+    Oro\Bundle\PromotionBundle\Controller\Frontend\AjaxCouponController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }

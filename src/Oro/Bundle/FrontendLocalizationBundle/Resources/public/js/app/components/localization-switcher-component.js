@@ -31,7 +31,7 @@ define(function(require) {
             this.options = _.defaults(options || {}, this.options);
 
             this.options._sourceElement
-                .on('click', this.options.localizationElement, _.bind(this.onLocalizationChange, this));
+                .on('click', this.options.localizationElement, this.onLocalizationChange.bind(this));
         },
 
         /**

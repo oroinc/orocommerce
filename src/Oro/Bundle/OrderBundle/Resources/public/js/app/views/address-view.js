@@ -68,7 +68,7 @@ define(function(require) {
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
 
-            this.initLayout().done(_.bind(this.handleLayoutInit, this));
+            this.initLayout().done(this.handleLayoutInit.bind(this));
 
             this.loadingMaskView = new LoadingMaskView({container: this.$el});
 
@@ -227,7 +227,7 @@ define(function(require) {
                 this.$address.val(this.$address.data('default')).change();
             }
 
-            this.initLayout().done(_.bind(this.loadingEnd, this));
+            this.initLayout().done(this.loadingEnd.bind(this));
         },
 
         /**

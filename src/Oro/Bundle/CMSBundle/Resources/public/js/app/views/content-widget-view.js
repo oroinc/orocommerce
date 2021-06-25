@@ -49,7 +49,7 @@ define([
 
             this.options = _.defaults(options || {}, this.options);
 
-            $(this.options.typeSelector).on('change', _.bind(this.changeHandler, this));
+            $(this.options.typeSelector).on('change', this.changeHandler.bind(this));
 
             this.memoizeValue(this.options.typeSelector);
         },
@@ -75,14 +75,14 @@ define([
                         content: __('oro.cms.change_type.confirmation.body')
                     });
 
-                    confirm.on('ok', _.bind(function() {
+                    confirm.on('ok', () => {
                         this.processChange($el);
-                    }, this));
+                    });
 
-                    confirm.on('cancel', _.bind(function() {
+                    confirm.on('cancel', () => {
                         $el.data('cancelled', true).val(prevVal).trigger('change');
                         this.memoizeValue($el);
-                    }, this));
+                    });
 
                     confirm.open();
                 }

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Controller;
 
+use Oro\Bundle\FormBundle\Model\UpdateHandler;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Form\Type\PriceAttributePriceListType;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
@@ -10,6 +11,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * CRUD for price attributes.
@@ -91,7 +93,9 @@ class PriceAttributePriceListController extends AbstractController
      */
     protected function update(PriceAttributePriceList $priceAttribute)
     {
-        return $this->get('oro_form.model.update_handler')->handleUpdate(
+        $translator = $this->get(TranslatorInterface::class);
+
+        return $this->get(UpdateHandler::class)->handleUpdate(
             $priceAttribute,
             $this->createForm(PriceAttributePriceListType::class, $priceAttribute),
             function (PriceAttributePriceList $priceAttribute) {
@@ -106,7 +110,7 @@ class PriceAttributePriceListController extends AbstractController
                     'parameters' => ['id' => $priceAttribute->getId()],
                 ];
             },
-            $this->get('translator')->trans('oro.pricing.controller.price_attribute_price_list.saved.message')
+            $translator->trans('oro.pricing.controller.price_attribute_price_list.saved.message')
         );
     }
 
@@ -122,5 +126,19 @@ class PriceAttributePriceListController extends AbstractController
         return [
             'entity' => $priceAttribute
         ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                UpdateHandler::class,
+                TranslatorInterface::class,
+            ]
+        );
     }
 }

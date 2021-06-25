@@ -44,7 +44,7 @@ define([
             this.methodSelect = $(this.el).find(this.options.methodSelectSelector);
             this.button = $(this.el).find(options.buttonSelector);
 
-            this.button.on('click', _.bind(this.changeHandler, this));
+            this.button.on('click', this.changeHandler.bind(this));
 
             const elements = this.form.find(
                 '.oro-payment-rule-method-configs-collection .row-oro.oro-multiselect-holder'

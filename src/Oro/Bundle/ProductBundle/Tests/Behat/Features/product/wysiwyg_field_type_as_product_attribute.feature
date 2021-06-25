@@ -1,5 +1,3 @@
-@skip
-@ticket-BAP-20572
 @ticket-BB-18284
 @regression
 @fixture-OroProductBundle:quick_order_product.yml

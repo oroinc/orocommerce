@@ -2,7 +2,6 @@ define(function(require) {
     'use strict';
 
     const $ = require('jquery');
-    const _ = require('underscore');
     const BaseView = require('oroui/js/app/views/base/view');
 
     /**
@@ -65,10 +64,10 @@ define(function(require) {
             this.defaultPrefixValue = this.$prefixField.val();
             this.$createRedirectField = $(this.el).find(this.options.selectors.redirectSelector);
 
-            this.$prefixField.on('keyup', _.bind(this.onPrefixChange, this));
+            this.$prefixField.on('keyup', this.onPrefixChange.bind(this));
 
             if (this.$strategySelector.length) {
-                this.$strategySelector.on('change', _.bind(this.onStrategyChange, this));
+                this.$strategySelector.on('change', this.onStrategyChange.bind(this));
             }
         },
 

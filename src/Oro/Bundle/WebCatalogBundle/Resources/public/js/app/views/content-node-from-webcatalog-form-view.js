@@ -37,7 +37,7 @@ define(function(require) {
          */
         initialize: function(options) {
             ContentNodeFromWebCatalogFormView.__super__.initialize.call(this, options);
-            this.$fieldSelector.on('update:field', _.bind(this._onUpdateFieldValue, this));
+            this.$fieldSelector.on('update:field', this._onUpdateFieldValue.bind(this));
         },
 
         /**

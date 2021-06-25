@@ -12,10 +12,8 @@ use Oro\Bundle\ProductBundle\EventListener\ProductCollectionDatagridParametersLi
 
 class ProductCollectionDatagridParametersListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ProductCollectionDatagridParametersListener
-     */
-    protected $listener;
+    /** @var ProductCollectionDatagridParametersListener */
+    private $listener;
 
     protected function setUp(): void
     {
@@ -24,14 +22,8 @@ class ProductCollectionDatagridParametersListenerTest extends \PHPUnit\Framework
 
     public function testOnBuildAfterWhenWrongDatasource()
     {
-        /** @var DatasourceInterface|\PHPUnit\Framework\MockObject\MockObject $datasource */
-        $datasource = $this->getMockBuilder(DatasourceInterface::class)
-            ->setMethods(['process', 'getResults', 'getQueryBuilder'])
-            ->getMock();
-        $datasource->expects($this->never())
-            ->method('getQueryBuilder');
+        $datasource = $this->createMock(DatasourceInterface::class);
 
-        /** @var DatagridInterface|\PHPUnit\Framework\MockObject\MockObject $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
         $datagrid->expects($this->once())
             ->method('getDatasource')
@@ -53,7 +45,6 @@ class ProductCollectionDatagridParametersListenerTest extends \PHPUnit\Framework
             ->method('getQueryBuilder')
             ->willReturn($queryBuilder);
 
-        /** @var DatagridInterface|\PHPUnit\Framework\MockObject\MockObject $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
         $datagrid->expects($this->once())
             ->method('getDatasource')
@@ -82,7 +73,6 @@ class ProductCollectionDatagridParametersListenerTest extends \PHPUnit\Framework
             ->method('getQueryBuilder')
             ->willReturn($queryBuilder);
 
-        /** @var DatagridInterface|\PHPUnit\Framework\MockObject\MockObject $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
         $datagrid->expects($this->once())
             ->method('getDatasource')
@@ -94,10 +84,7 @@ class ProductCollectionDatagridParametersListenerTest extends \PHPUnit\Framework
         $this->assertEquals($expectedParameterValue, $parameter->getValue());
     }
 
-    /**
-     * @return array
-     */
-    public function onBuildAfterProvider()
+    public function onBuildAfterProvider(): array
     {
         return [
             'when parameter value is array' => [

@@ -204,7 +204,7 @@ define(function(require) {
         onRenderComplete: function() {
             this.disableSubmitElement();
             this.subview('popup').widget
-                .on('scroll', _.bind(this.onScroll, this));
+                .on('scroll', this.onScroll.bind(this));
         },
 
         /**

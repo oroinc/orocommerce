@@ -942,6 +942,9 @@ services:
             - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.oro_product, method: onBeforeFlush }
             - { name: oro_featuretogle.feature, feature: oro_price_lists }
 
+    Oro\Bundle\PricingBundle\SubtotalProcessor\Handler\RequestHandler:
+        alias: oro_pricing.subtotal_processor.handler.request_handler
+
     oro_pricing.subtotal_processor.handler.request_handler:
         class: 'Oro\Bundle\PricingBundle\SubtotalProcessor\Handler\RequestHandler'
         public: true

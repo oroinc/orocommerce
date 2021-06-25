@@ -83,13 +83,13 @@ define(function(require) {
                 this.model.on('editLineItem', this._onEditLineItem, this);
             }
 
-            this.$form.find(this.options.quantityField).on('keydown', _.bind(this._onQuantityEnter, this));
+            this.$form.find(this.options.quantityField).on('keydown', this._onQuantityEnter.bind(this));
 
-            ShoppingListCollectionService.shoppingListCollection.done(_.bind(function(collection) {
+            ShoppingListCollectionService.shoppingListCollection.done(collection => {
                 this.shoppingListCollection = collection;
                 this.listenTo(collection, 'change', this._onCollectionChange);
                 this.render();
-            }, this));
+            });
         },
 
         initModel: function(options) {
@@ -219,7 +219,7 @@ define(function(require) {
             this.findAllButtons()
                 .attr('role', 'button')
                 .off('click' + this.eventNamespace())
-                .on('click' + this.eventNamespace(), _.bind(this.onClick, this));
+                .on('click' + this.eventNamespace(), this.onClick.bind(this));
         },
 
         findDropdownButtons: function(filter) {
@@ -407,10 +407,10 @@ define(function(require) {
                 return;
             }
             const dialog = new ShoppingListCreateWidget({});
-            dialog.on('formSave', _.bind(function(response) {
+            dialog.on('formSave', response => {
                 urlOptions.shoppingListId = response.savedId;
                 this._addLineItem(url, urlOptions, formData);
-            }, this));
+            });
             dialog.render();
         },
 
@@ -491,15 +491,15 @@ define(function(require) {
             });
 
             savePromise
-                .done(_.bind(function(response) {
+                .done(response => {
                     lineItem.quantity = response.quantity;
                     lineItem.unit = response.unit;
                     this.shoppingListCollection.trigger('change', {
                         refresh: true
                     });
                     mediator.execute('showFlashMessage', 'success', _.__(this.options.messages.success));
-                }, this))
-                .always(function() {
+                })
+                .always(() => {
                     mediator.execute('hideLoading');
                 });
         },

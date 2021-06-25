@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShippingBundle\Controller;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
-use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use Oro\Bundle\ShippingBundle\Form\Extension\ProductFormExtension;
@@ -46,11 +46,9 @@ class AjaxProductShippingOptionsController extends AbstractController
         }
         $activeShippingOptions->setProduct($product);
 
-        /* @var $provider FreightClassesProvider */
-        $provider = $this->get('oro_shipping.provider.measure_units.freight');
+        $provider = $this->get(FreightClassesProvider::class);
 
-        /* @var $formatter UnitLabelFormatterInterface */
-        $formatter = $this->get('oro_shipping.formatter.freight_class_label');
+        $formatter = $this->get(UnitLabelFormatter::class);
 
         $units = $provider->getFreightClasses($activeShippingOptions);
 
@@ -100,5 +98,19 @@ class AjaxProductShippingOptionsController extends AbstractController
         }
 
         return $activeShippingOptions;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                FreightClassesProvider::class,
+                UnitLabelFormatter::class,
+            ]
+        );
     }
 }

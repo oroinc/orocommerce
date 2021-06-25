@@ -70,8 +70,8 @@ define(function(require) {
 
             this._initValueValidation();
 
-            this.$el.on('change', this.options.valueInput, _.bind(this.onValueInputChange, this));
-            this.$el.on('change', this.options.typeInput, _.bind(this.onValueInputChange, this));
+            this.$el.on('change', this.options.valueInput, this.onValueInputChange.bind(this));
+            this.$el.on('change', this.options.typeInput, this.onValueInputChange.bind(this));
         },
 
         /**

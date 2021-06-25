@@ -177,9 +177,9 @@ define(function(require) {
                 this.showError();
 
                 // move setting class to next processor tick so it's correctly set after submitting the form
-                _.defer(_.bind(function() {
+                _.defer(() => {
                     this.$el.addClass(this.options.errorClass);
-                }, this));
+                });
             }
         },
 

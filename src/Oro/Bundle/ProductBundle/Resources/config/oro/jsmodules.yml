@@ -8,16 +8,18 @@ app-modules:
 configs:
     oroproduct/js/validator/sku-regex: {}
 dynamic-imports:
+    commons:
+        - oroproduct/js/validator/sku-regex
     orodatagrid:
         - oro/datagrid/action/trigger-event-for-selected-product-ids-mass-action
+        - oroproduct/js/app/components/product-name-popup-editor-component
         - oroproduct/js/app/datagrid/listener/related-product-listener
-    oroproduct:
+    orosale:
         - oro/product-collection-popup-add-products-widget
         - oro/related-items-widget
         - oroproduct/js/app/components/config-single-unit-component
         - oroproduct/js/app/components/product-collection-apply-query-component
         - oroproduct/js/app/components/product-image-type-radio-control-component
-        - oroproduct/js/app/components/product-name-popup-editor-component
         - oroproduct/js/app/components/product-primary-unit-limitations-component
         - oroproduct/js/app/components/product-unit-component
         - oroproduct/js/app/components/product-unit-selection-limitations-component
@@ -25,5 +27,3 @@ dynamic-imports:
         - oroproduct/js/app/components/product-variant-field-component
         - oroproduct/js/app/components/related-items-tabs-component
         - oroproduct/js/app/views/variant-fields-view
-    oroform-validate:
-        - oroproduct/js/validator/sku-regex

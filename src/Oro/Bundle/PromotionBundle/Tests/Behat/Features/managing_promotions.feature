@@ -42,7 +42,7 @@ Feature: Managing promotions
     When I fill "Promotion Form" with:
       | Discount Value (%) | 1000000 |
     Then I should see "Promotion Form" validation errors:
-      | Discount Value (%) | This value should be 100 or less. |
+      | Discount Value (%) | This value should be between 0 and 100. |
     When I fill "Promotion Form" with:
       | Discount Value (%) | 20 |
     And I press "Add" in "Items To Discount" section

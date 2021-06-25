@@ -64,7 +64,6 @@ define(function(require) {
                 }
 
                 let urls = {};
-                const that = this;
 
                 mediator.execute('showLoading');
                 $.ajax({
@@ -72,22 +71,22 @@ define(function(require) {
                     type: 'POST',
                     data: {productName: this.view.getValue()},
                     dataType: 'json',
-                    success: function(response) {
+                    success: response => {
                         mediator.execute('hideLoading');
 
                         if (response.showRedirectConfirmation) {
                             urls = response.slugsData;
 
                             this.confirmModal = new ConfirmSlugChangeModal({
-                                changedSlugs: that._getUrlsList(urls),
-                                confirmState: that.createRedirectOption
+                                changedSlugs: this._getUrlsList(urls),
+                                confirmState: this.createRedirectOption
                             })
-                                .on('ok', _.bind(that.modalApply, that))
-                                .on('confirm-option-changed', _.bind(that.onConfirmModalOptionChange, that))
-                                .on('cancel', _.bind(that.modalCancel, that))
+                                .on('ok', this.modalApply.bind(this))
+                                .on('confirm-option-changed', this.onConfirmModalOptionChange.bind(this))
+                                .on('cancel', this.modalCancel.bind(this))
                                 .open();
                         } else {
-                            that.modalApply();
+                            this.modalApply();
                         }
                     },
                     error: function() {

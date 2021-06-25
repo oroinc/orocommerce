@@ -61,14 +61,14 @@ define(function(require, exports, module) {
             BackendActionHeaderCell.__super__.initialize.call(this, options);
             this.selectState = options.selectState;
             this.massActionsInSticky = options.massActionsInSticky;
-            this.listenTo(this.selectState, 'change', _.bind(_.debounce(this.canUse, 50), this));
+            this.listenTo(this.selectState, 'change', _.debounce(this.canUse.bind(this), 50));
 
-            ShoppingListCollectionService.shoppingListCollection.done(_.bind(function(collection) {
+            ShoppingListCollectionService.shoppingListCollection.done(collection => {
                 this.shoppingListCollection = collection;
-                this.listenTo(collection, 'change', _.bind(this._onShoppingListsRefresh, this));
+                this.listenTo(collection, 'change', this._onShoppingListsRefresh.bind(this));
 
                 this._onShoppingListsRefresh();
-            }, this));
+            });
         },
 
         /**

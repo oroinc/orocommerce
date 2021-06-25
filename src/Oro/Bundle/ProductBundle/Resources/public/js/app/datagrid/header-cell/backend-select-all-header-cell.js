@@ -44,12 +44,12 @@ define(function(require) {
          */
         delegateEvents: function(events) {
             this.$('[data-checkbox-change-visible]')
-                .on('change' + this.eventNamespace(), _.bind(_.debounce(this.onCheckboxChange, 50), this));
+                .on('change' + this.eventNamespace(), _.debounce(this.onCheckboxChange.bind(this), 50));
             this.$('[data-select-unbind]')
-                .on('click' + this.eventNamespace(), _.bind(_.debounce(this.onSelectUnbind, 50), this));
+                .on('click' + this.eventNamespace(), _.debounce(this.onSelectUnbind.bind(this), 50));
 
-            this.collection.on('backgrid:visible-changed', _.bind(_.debounce(this.unCheckCheckbox, 50), this));
-            this.listenTo(this.selectState, 'change', _.bind(_.debounce(this.updateState, 50), this));
+            this.collection.on('backgrid:visible-changed', _.debounce(this.unCheckCheckbox.bind(this), 50));
+            this.listenTo(this.selectState, 'change', _.debounce(this.updateState.bind(this), 50));
 
             BackendSelectAllHeaderCell.__super__.delegateEvents.call(this, events);
         },

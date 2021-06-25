@@ -27,6 +27,7 @@ class ProductVisibilityCacheListenerTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->resolvedProductVisibilityProvider = $this->createMock(ResolvedProductVisibilityProvider::class);
+
         $this->listener = new ProductVisibilityCacheListener($this->resolvedProductVisibilityProvider);
     }
 
@@ -62,13 +63,9 @@ class ProductVisibilityCacheListenerTest extends \PHPUnit\Framework\TestCase
             ->method('getUnitOfWork')
             ->willReturn($unitOfWork);
 
-        $this->resolvedProductVisibilityProvider->expects($this->at(0))
+        $this->resolvedProductVisibilityProvider->expects($this->exactly(2))
             ->method('clearCache')
-            ->with(1);
-
-        $this->resolvedProductVisibilityProvider->expects($this->at(1))
-            ->method('clearCache')
-            ->with(2);
+            ->withConsecutive([1], [2]);
 
         $args = new OnFlushEventArgs($em);
 
@@ -90,7 +87,6 @@ class ProductVisibilityCacheListenerTest extends \PHPUnit\Framework\TestCase
             ->method('getScheduledEntityDeletions')
             ->willReturn([]);
 
-        /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject $em */
         $em = $this->createMock(EntityManager::class);
         $em->expects($this->once())
             ->method('getUnitOfWork')

@@ -2,7 +2,6 @@ define(function(require) {
     'use strict';
 
     const $ = require('jquery');
-    const _ = require('underscore');
     const TotalsListener = require('oropricing/js/app/listener/totals-listener');
     const BaseView = require('oroui/js/app/views/base/view');
 
@@ -44,7 +43,7 @@ define(function(require) {
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
-            this.initLayout().done(_.bind(this.handleLayoutInit, this));
+            this.initLayout().done(this.handleLayoutInit.bind(this));
         },
 
         /**
@@ -55,9 +54,9 @@ define(function(require) {
             this.$fields = this.$el.find(':input[name]');
 
             this.fieldsByName = {};
-            this.$fields.each(_.bind(function(i, field) {
+            this.$fields.each((i, field) => {
                 this.fieldsByName[this.formFieldName(field)] = $(field);
-            }, this));
+            });
 
             this.subtotalFields(this.fieldsByName);
         },

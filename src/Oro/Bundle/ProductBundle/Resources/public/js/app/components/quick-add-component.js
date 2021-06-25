@@ -37,7 +37,7 @@ define(function(require) {
 
             this.$form = this.options._sourceElement;
 
-            this.$form.on('click', this.options.componentButtonSelector, _.bind(this.fillComponentData, this));
+            this.$form.on('click', this.options.componentButtonSelector, this.fillComponentData.bind(this));
 
             mediator.on(this.options.componentPrefix + ':submit', this.submit, this);
         },

@@ -39,13 +39,12 @@ define(function(require) {
         submitAction: function(widget) {
             const itemRows = $(this.options.itemsTableRows, widget.el);
             const result = [];
-            const that = this;
 
             itemRows.each((index, element) => {
                 result.push($(element).data('rowItem'));
             });
             mediator.trigger('quick-add-import-form:submit', result);
-            widgetManager.getWidgetInstance(that.options._wid, that.closeWidget);
+            widgetManager.getWidgetInstance(this.options._wid, this.closeWidget);
         },
 
         closeWidget: function(widget) {
@@ -55,18 +54,17 @@ define(function(require) {
         onWidgetRender: function() {
             const title = _.template(this.options.titleTemplate);
             let subtitle = '';
-            const that = this;
 
-            widgetManager.getWidgetInstance(this.options._wid, function(widget) {
+            widgetManager.getWidgetInstance(this.options._wid, widget => {
                 const dialogWidget = widget.getWidget();
                 const instanceData = dialogWidget.get(0);
                 const instance = $.data(instanceData, 'ui-dialog');
 
                 widget
                     .off('adoptedFormSubmitClick')
-                    .on('adoptedFormSubmitClick', _.bind(that.submitAction, that, widget));
+                    .on('adoptedFormSubmitClick', this.submitAction.bind(this, widget));
 
-                instance._title = function(title) {
+                instance._title = title => {
                     if (this.options.title) {
                         title.html(this.options.title);
                     } else {
@@ -74,11 +72,11 @@ define(function(require) {
                     }
                 };
 
-                if (that.options.validItemsCount !== undefined) {
+                if (this.options.validItemsCount !== undefined) {
                     subtitle = __(
                         'oro.product.frontend.quick_add.import_validation.subtitle',
-                        {count: that.options.validItemsCount},
-                        that.options.validItemsCount
+                        {count: this.options.validItemsCount},
+                        this.options.validItemsCount
                     );
                 }
 

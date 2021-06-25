@@ -48,11 +48,11 @@ define(function(require) {
             this.options = _.defaults(options || {}, this.options);
 
             this.options._sourceElement
-                .on('click', this.options.offersSelector, _.bind(this.onRadioClick, this));
+                .on('click', this.options.offersSelector, this.onRadioClick.bind(this));
 
             this.$product = $(this.options.productSelector);
             this.$product
-                .on('change', _.bind(this.onProductChange, this));
+                .on('change', this.onProductChange.bind(this));
         },
 
         /**

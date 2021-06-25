@@ -106,9 +106,9 @@ define(function(require) {
         },
 
         setMouseLeaveEvent: function($expression) {
-            $expression.mouseleave(_.bind(function() {
+            $expression.mouseleave(() => {
                 this.disposeTooltip($expression);
-            }, this));
+            });
         },
 
         showTooltip: function($expression) {

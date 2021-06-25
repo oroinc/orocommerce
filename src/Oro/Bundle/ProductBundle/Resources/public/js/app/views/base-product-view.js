@@ -123,7 +123,7 @@ define(function(require) {
                     parentProductId: this.model.get('parentProduct'),
                     ignoreProductVariant: true
                 }),
-                layoutSubtreeCallback: _.bind(this.afterProductChanged, this)
+                layoutSubtreeCallback: this.afterProductChanged.bind(this)
             });
         },
 
@@ -196,6 +196,9 @@ define(function(require) {
             this.delegateElementsEvents();
 
             this.onLineItemFormEnableChanged();
+
+            this.model.set('product_units', this.getElement('unit').data('unit-precisions'));
+            this.setPrecision();
         },
 
         onLineItemFormEnableChanged: function() {

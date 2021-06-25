@@ -140,8 +140,8 @@ define(function(require) {
                 ),
                 type: 'GET',
                 dataType: 'json',
-                success: _.bind($addedCouponsContainer.html, $addedCouponsContainer)
-            }).always(_.bind(this._hideLoadingMask, this));
+                success: $addedCouponsContainer.html.bind($addedCouponsContainer)
+            }).always(this._hideLoadingMask.bind(this));
         },
 
         clearErrors: function() {
@@ -220,9 +220,9 @@ define(function(require) {
          * @private
          */
         _checkOptions: function() {
-            const requiredMissed = this.requiredOptions.filter(_.bind(function(option) {
+            const requiredMissed = this.requiredOptions.filter(option => {
                 return _.isUndefined(this.options[option]) && !this.options[option];
-            }, this));
+            });
             if (requiredMissed.length) {
                 throw new TypeError('Missing required option(s): ' + requiredMissed.join(', '));
             }

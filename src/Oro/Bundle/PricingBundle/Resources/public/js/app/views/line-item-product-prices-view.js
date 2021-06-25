@@ -50,8 +50,8 @@ define(function(require) {
             mediator.on('pricing:refresh:products-tier-prices', this.refreshTierPrices, this);
             mediator.on('pricing:currency:changed', this.currencyChanged, this);
 
-            mediator.trigger('pricing:currency:load', _.bind(this.currencyChanged, this));
-            mediator.trigger('pricing:get:products-tier-prices', _.bind(function(tierPrices) {
+            mediator.trigger('pricing:currency:load', this.currencyChanged.bind(this));
+            mediator.trigger('pricing:get:products-tier-prices', tierPrices => {
                 const productId = this.model.get('id');
 
                 if (!_.isUndefined(productId) && _.isUndefined(tierPrices[productId])) {
@@ -60,7 +60,7 @@ define(function(require) {
                 }
 
                 this.setTierPrices(tierPrices, false);
-            }, this));
+            });
         },
 
         updateTierPrices: function() {
@@ -71,7 +71,7 @@ define(function(require) {
                 mediator.trigger(
                     'pricing:load:products-tier-prices',
                     [productId],
-                    _.bind(this.refreshTierPrices, this)
+                    this.refreshTierPrices.bind(this)
                 );
             }
         },

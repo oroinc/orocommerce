@@ -13,54 +13,35 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-/**
- *  Unit test for calculate totals in shopping lists
- */
 class ShoppingListTotalManagerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    const USD = 'USD';
-    const EUR = 'EUR';
-    const CAD = 'CAD';
-    /**
-     * @var ShoppingListTotalManager
-     */
-    protected $totalManager;
+    private const USD = 'USD';
+    private const EUR = 'EUR';
+    private const CAD = 'CAD';
 
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $registry;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $registry;
 
-    /**
-     * @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $currencyManager;
+    /** @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $currencyManager;
 
-    /**
-     * @var LineItemNotPricedSubtotalProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $subtotalProvider;
+    /** @var LineItemNotPricedSubtotalProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $subtotalProvider;
 
-    /**
-     * {@inheritdoc}
-     */
+    /** @var ShoppingListTotalManager */
+    private $totalManager;
+
     protected function setUp(): void
     {
-        $this->registry = $this->getMockBuilder(ManagerRegistry::class)->disableOriginalConstructor()->getMock();
+        $this->registry = $this->createMock(ManagerRegistry::class);
+        $this->subtotalProvider = $this->createMock(LineItemNotPricedSubtotalProvider::class);
+        $this->currencyManager = $this->createMock(UserCurrencyManager::class);
 
-        $this->currencyManager = $this->getMockBuilder(UserCurrencyManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->currencyManager->method('getUserCurrency')->willReturn(self::USD);
-
-        $this->subtotalProvider = $this->getMockBuilder(LineItemNotPricedSubtotalProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->registry = $this->getMockBuilder(ManagerRegistry::class)->disableOriginalConstructor()->getMock();
+        $this->currencyManager->expects($this->any())
+            ->method('getUserCurrency')
+            ->willReturn(self::USD);
 
         $this->totalManager = new ShoppingListTotalManager(
             $this->registry,
@@ -82,27 +63,34 @@ class ShoppingListTotalManagerTest extends \PHPUnit\Framework\TestCase
             ->setValid(true);
 
         $repository = $this->createMock(ObjectRepository::class);
-        $repository->expects($this->exactly(2))->method('findBy')->willReturn([$total]);
+        $repository->expects($this->exactly(2))
+            ->method('findBy')
+            ->willReturn([$total]);
 
         $em = $this->createMock(ObjectManager::class);
-        $em->expects($this->exactly(2))->method('getRepository')
+        $em->expects($this->exactly(2))
+            ->method('getRepository')
             ->with(ShoppingListTotal::class)
             ->willReturn($repository);
-        $em->expects($this->exactly(2))->method('persist');
-        $em->expects($this->once())->method('flush');
-        $this->registry->expects($this->once())->method('getManagerForClass')
+        $em->expects($this->exactly(2))
+            ->method('persist');
+        $em->expects($this->once())
+            ->method('flush');
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
             ->with(ShoppingListTotal::class)
             ->willReturn($em);
 
-        $this->subtotalProvider->expects($this->at(0))
+        $this->subtotalProvider->expects($this->exactly(2))
             ->method('getSubtotalByCurrency')
-            ->with($shoppingList1, self::USD)
-            ->willReturn((new Subtotal())->setCurrency(self::USD)->setAmount(100));
-
-        $this->subtotalProvider->expects($this->at(1))
-            ->method('getSubtotalByCurrency')
-            ->with($shoppingList2, self::USD)
-            ->willReturn((new Subtotal())->setCurrency(self::USD)->setAmount(200));
+            ->withConsecutive(
+                [$shoppingList1, self::USD],
+                [$shoppingList2, self::USD]
+            )
+            ->willReturnOnConsecutiveCalls(
+                (new Subtotal())->setCurrency(self::USD)->setAmount(100),
+                (new Subtotal())->setCurrency(self::USD)->setAmount(200)
+            );
 
         $this->totalManager->setSubtotals([$shoppingList1, $shoppingList2, $shoppingList3], false);
         $this->assertEquals(self::USD, $shoppingList1->getSubtotal()->getCurrency());
@@ -128,11 +116,15 @@ class ShoppingListTotalManagerTest extends \PHPUnit\Framework\TestCase
             ->willReturn([self::EUR, self::USD, self::CAD]);
 
         $em = $this->createMock(ObjectManager::class);
-        $em->expects($this->once())->method('contains')
+        $em->expects($this->once())
+            ->method('contains')
             ->willReturn(true);
-        $em->expects($this->once())->method('persist');
-        $em->expects($this->once())->method('flush');
-        $this->registry->expects($this->once())->method('getManagerForClass')
+        $em->expects($this->once())
+            ->method('persist');
+        $em->expects($this->once())
+            ->method('flush');
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
             ->with(ShoppingListTotal::class)
             ->willReturn($em);
 

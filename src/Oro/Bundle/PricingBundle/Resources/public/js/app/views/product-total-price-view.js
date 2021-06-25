@@ -34,10 +34,10 @@ define(function(require) {
             this.setPrices();
             this.initializeElements(options);
 
-            ShoppingListCollectionService.shoppingListCollection.done(_.bind(function(collection) {
+            ShoppingListCollectionService.shoppingListCollection.done(collection => {
                 this.shoppingListCollection = collection;
                 this.listenTo(collection, 'change', this.render);
-            }, this));
+            });
         },
 
         initModel: function(options) {

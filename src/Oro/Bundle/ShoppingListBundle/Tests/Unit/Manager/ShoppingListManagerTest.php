@@ -24,7 +24,7 @@ use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -33,8 +33,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
     /** @var ShoppingListManager */
     private $manager;
 
@@ -120,50 +118,35 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @param int  $id
-     * @param bool $isCurrent
-     *
-     * @return ShoppingList
-     */
-    private function getShoppingList($id, $isCurrent = false)
+    private function getShoppingList(int $id, bool $isCurrent = false): ShoppingList
     {
-        return $this->getEntity(ShoppingList::class, ['id' => $id, 'current' => $isCurrent]);
+        $shoppingList = new ShoppingList();
+        ReflectionUtil::setId($shoppingList, $id);
+        $shoppingList->setCurrent($isCurrent);
+
+        return $shoppingList;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return LineItem
-     */
-    private function getLineItem($id)
+    private function getLineItem(int $id): LineItem
     {
-        return $this->getEntity(LineItem::class, ['id' => $id]);
+        $lineItem = new LineItem();
+        ReflectionUtil::setId($lineItem, $id);
+
+        return $lineItem;
     }
 
-    /**
-     * @param int         $id
-     * @param string|null $type
-     *
-     * @return Product
-     */
-    private function getProduct($id, $type = null)
+    private function getProduct(int $id, string $type = null): Product
     {
-        $properties = ['id' => $id];
-        if ($type) {
-            $properties['type'] = $type;
+        $product = new Product();
+        ReflectionUtil::setId($product, $id);
+        if (null !== $type) {
+            $product->setType($type);
         }
 
-        return $this->getEntity(Product::class, $properties);
+        return $product;
     }
 
-    /**
-     * @param string $code
-     * @param int    $defaultPrecision
-     *
-     * @return ProductUnit
-     */
-    private function getProductUnit($code, $defaultPrecision)
+    private function getProductUnit(string $code, int $defaultPrecision): ProductUnit
     {
         $productUnit = new ProductUnit();
         $productUnit->setCode($code);
@@ -176,7 +159,7 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
      * @param LineItem[] $lineItems
      * @param bool       $flush
      */
-    private function assertDeleteLineItems(array $lineItems, bool $flush = true)
+    private function assertDeleteLineItems(array $lineItems, bool $flush = true): void
     {
         if ($lineItems) {
             $deleteHandler = $this->createMock(EntityDeleteHandlerInterface::class);
@@ -184,23 +167,20 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
                 ->method('getHandler')
                 ->with(LineItem::class)
                 ->willReturn($deleteHandler);
-            $index = 0;
+            $deleteExpectations = [];
+            $deletedRecords = [];
             foreach ($lineItems as $lineItem) {
-                $deleteHandler->expects($this->at($index))
-                    ->method('delete')
-                    ->with($this->identicalTo($lineItem), $this->isFalse())
-                    ->willReturn(['entity' => $lineItem]);
-                $index++;
+                $deleteExpectations[] = [$this->identicalTo($lineItem), $this->isFalse()];
+                $deletedRecords[] = ['entity' => $lineItem];
             }
+            $deleteHandler->expects($this->exactly(count($deleteExpectations)))
+                ->method('delete')
+                ->withConsecutive(...$deleteExpectations)
+                ->willReturnOnConsecutiveCalls(...$deletedRecords);
             if ($flush) {
-                $deleteHandler->expects($this->at($index))
+                $deleteHandler->expects($this->once())
                     ->method('flushAll')
-                    ->with(array_map(
-                        function ($lineItem) {
-                            return ['entity' => $lineItem];
-                        },
-                        $lineItems
-                    ));
+                    ->with($deletedRecords);
             } else {
                 $deleteHandler->expects($this->never())
                     ->method('flushAll');
@@ -309,8 +289,6 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param LineItem $lineItem
-     *
      * @dataProvider addLineItemDataProvider
      */
     public function testAddLineItem(LineItem $lineItem)
@@ -323,9 +301,6 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($lineItem->getOrganization());
     }
 
-    /**
-     * @return array
-     */
     public function addLineItemDataProvider(): array
     {
         $configurableLineItem = new LineItem();
@@ -436,13 +411,8 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider removeProductDataProvider
-     *
-     * @param array $lineItems
-     * @param array $relatedLineItems
-     * @param bool $flush
-     * @param bool $expectedFlush
      */
-    public function testRemoveProduct(array $lineItems, array $relatedLineItems, $flush, $expectedFlush)
+    public function testRemoveProduct(array $lineItems, array $relatedLineItems, bool $flush, bool $expectedFlush)
     {
         $shoppingList = $this->getShoppingList(1, true);
         foreach ($lineItems as $lineItem) {
@@ -463,10 +433,7 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(count($relatedLineItems), $result);
     }
 
-    /**
-     * @return array
-     */
-    public function removeProductDataProvider()
+    public function removeProductDataProvider(): array
     {
         $lineItem1 = $this->getLineItem(35);
         $lineItem2 = $this->getLineItem(36);
@@ -495,12 +462,9 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param array $simpleProducts
-     * @param array $lineItems
-     *
      * @dataProvider getSimpleProductsProvider
      */
-    public function testRemoveConfigurableProduct($simpleProducts, $lineItems)
+    public function testRemoveConfigurableProduct(array $simpleProducts, array $lineItems)
     {
         $product = $this->getProduct(43, Product::TYPE_CONFIGURABLE);
         $shoppingList = $this->getShoppingList(1);
@@ -527,10 +491,7 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(count($lineItems), $result);
     }
 
-    /**
-     * @return array
-     */
-    public function getSimpleProductsProvider()
+    public function getSimpleProductsProvider(): array
     {
         return [
             [
@@ -736,8 +697,7 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 
     public function testActualizeLineItemsWhenNoDeletedLineItems(): void
     {
-        /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getEntity(ShoppingList::class, ['id' => 42]);
+        $shoppingList = $this->getShoppingList(42);
         $allowedStatuses = ['in_stock'];
 
         $this->configManager->expects($this->once())
@@ -750,8 +710,7 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             ->with($shoppingList, $allowedStatuses)
             ->willReturn(0);
 
-        $this->totalManager
-            ->expects($this->never())
+        $this->totalManager->expects($this->never())
             ->method('recalculateTotals');
 
         $this->manager->actualizeLineItems($shoppingList);
@@ -759,8 +718,7 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 
     public function testActualizeLineItemsWhenLineItemsDeleted(): void
     {
-        /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getEntity(ShoppingList::class, ['id' => 42]);
+        $shoppingList = $this->getShoppingList(42);
         $allowedStatuses = ['in_stock'];
 
         $this->configManager->expects($this->once())
@@ -773,8 +731,7 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             ->with($shoppingList, $allowedStatuses)
             ->willReturn(2);
 
-        $this->totalManager
-            ->expects($this->once())
+        $this->totalManager->expects($this->once())
             ->method('recalculateTotals')
             ->with($shoppingList, true);
 

@@ -21,6 +21,8 @@ Oro\Bundle\ProductBundle\Entity\ProductName:
         string: 'Product4'
     locvalue5:
         string: 'Product5(disabled)'
+    locvalue6:
+        string: 'Product6Class'
 
 Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
     localNewCategory:
@@ -44,6 +46,10 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
         precision: '1'
         sell: true
     precision5:
+        unit: '@item'
+        precision: '1'
+        sell: true
+    precision6:
         unit: '@item'
         precision: '1'
         sell: true
@@ -116,6 +122,17 @@ Oro\Bundle\ProductBundle\Entity\Product:
             - addName: ['@locvalue5']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'disabled'
+    product6:
+        sku: 'classPSKU'
+        type: 'simple'
+        organization: '@organization'
+        owner: '@businessUnit'
+        primaryUnitPrecision: '@precision6'
+        attributeFamily: '@defaultProductFamily'
+        __calls:
+            -   addName: [ '@locvalue6' ]
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
 
 Oro\Bundle\PricingBundle\Entity\ProductPrice:
     price1:

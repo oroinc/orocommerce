@@ -89,7 +89,7 @@ define(function(require) {
             this.$unitPrice = this.$el.find(this.options.unitPriceSelector);
             this.$offerSelector = this.$el.find(this.options.offerSelector);
 
-            this.$offerSelector.on('change', _.bind(this.onOfferChange, this));
+            this.$offerSelector.on('change', this.onOfferChange.bind(this));
             this.addQuantityEvents();
             this.updateQuantityInputPrecision(this.$offerSelector.filter(':checked'));
         },
@@ -171,7 +171,7 @@ define(function(require) {
             this.$quantity.prop('readonly', disableFixedQuoteQuantityChange);
             this.$quantity.toggleClass('disabled', disableFixedQuoteQuantityChange);
 
-            this.$quantity.on('change', _.bind(function() {
+            this.$quantity.on('change', () => {
                 if (!this.quantityEventsEnabled) {
                     return;
                 }
@@ -179,9 +179,9 @@ define(function(require) {
                     clearTimeout(this.quantityChange);
                 }
                 this.onQuantityChange();
-            }, this));
+            });
 
-            this.$quantity.on('keyup', _.bind(function() {
+            this.$quantity.on('keyup', () => {
                 if (QuantityHelper.isQuantityLocalizedValueValid(this.$quantity.val())) {
                     this.updateUnitPriceValue(this.options.calculatingMessage);
                 } else {
@@ -194,8 +194,8 @@ define(function(require) {
                     clearTimeout(this.quantityChange);
                 }
                 this.setValidAttribute(this.$quantity, true);
-                this.quantityChange = setTimeout(_.bind(this.onQuantityChange, this), 1500);
-            }, this));
+                this.quantityChange = setTimeout(this.onQuantityChange.bind(this), 1500);
+            });
         },
 
         /**

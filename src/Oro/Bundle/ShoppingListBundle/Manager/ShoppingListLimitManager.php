@@ -29,6 +29,15 @@ class ShoppingListLimitManager
     /** @var WebsiteManager */
     private $websiteManager;
 
+    /** @var bool */
+    private $isCreateEnabled;
+
+    /** @var bool */
+    private $isCreateEnabledForCustomerUser;
+
+    /** @var bool */
+    private $isOnlyOneEnabled;
+
     /**
      * @param ConfigManager $configManager
      * @param TokenAccessor $tokenAccessor
@@ -45,6 +54,13 @@ class ShoppingListLimitManager
         $this->tokenAccessor = $tokenAccessor;
         $this->doctrineHelper = $doctrineHelper;
         $this->websiteManager = $websiteManager;
+    }
+
+    public function resetState()
+    {
+        $this->isCreateEnabled = null;
+        $this->isCreateEnabledForCustomerUser = null;
+        $this->isOnlyOneEnabled = null;
     }
 
     /**
@@ -67,17 +83,23 @@ class ShoppingListLimitManager
         if (!$this->tokenAccessor->hasUser()) {
             return false;
         }
+
+        if (null !== $this->isCreateEnabled) {
+            return $this->isCreateEnabled;
+        }
+
         $limitConfig = $this->getShoppingListLimit();
+        $this->isCreateEnabled = true;
 
         if ($limitConfig) {
             $user = $this->tokenAccessor->getUser();
             // Limit of created shopping lists is already reached
             if ($this->countUserShoppingLists($user) >= $limitConfig) {
-                return false;
+                $this->isCreateEnabled = false;
             }
         }
 
-        return true;
+        return $this->isCreateEnabled;
     }
 
     /**
@@ -87,16 +109,21 @@ class ShoppingListLimitManager
      */
     public function isCreateEnabledForCustomerUser(CustomerUser $user)
     {
+        if (null !== $this->isCreateEnabledForCustomerUser) {
+            return $this->isCreateEnabledForCustomerUser;
+        }
+
         $limitConfig = $this->getShoppingListLimit($user->getWebsite());
 
+        $this->isCreateEnabledForCustomerUser = true;
         if ($limitConfig) {
             // Limit of created shopping lists is already reached
             if ($this->countUserShoppingLists($user) >= $limitConfig) {
-                return false;
+                $this->isCreateEnabledForCustomerUser = false;
             }
         }
 
-        return true;
+        return $this->isCreateEnabledForCustomerUser;
     }
 
     /**
@@ -109,17 +136,22 @@ class ShoppingListLimitManager
             return true;
         }
 
+        if (null !== $this->isOnlyOneEnabled) {
+            return $this->isOnlyOneEnabled;
+        }
+
         $limitConfig = $this->getShoppingListLimit();
 
+        $this->isOnlyOneEnabled = false;
         if ($limitConfig) {
             $user = $this->tokenAccessor->getUser();
             // Limit set to one and user has one shopping list
             if ($limitConfig === 1 && $this->countUserShoppingLists($user) === 1) {
-                return true;
+                $this->isOnlyOneEnabled = true;
             }
         }
 
-        return false;
+        return $this->isOnlyOneEnabled;
     }
 
     /**

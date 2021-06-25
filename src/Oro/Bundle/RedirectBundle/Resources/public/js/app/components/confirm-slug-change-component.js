@@ -66,9 +66,9 @@ define(function(require) {
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
-            const requiredMissed = this.requiredOptions.filter(_.bind(function(option) {
+            const requiredMissed = this.requiredOptions.filter(option => {
                 return _.isUndefined(this.options[option]);
-            }, this));
+            });
             if (requiredMissed.length) {
                 throw new TypeError('Missing required option(s): ' + requiredMissed.join(','));
             }
@@ -126,7 +126,6 @@ define(function(require) {
         loadSlugListAndShowConfirmModal: function() {
             const formData = this.$form.serialize();
             let urls = {};
-            const that = this;
 
             mediator.execute('showLoading');
             $.ajax({
@@ -134,20 +133,20 @@ define(function(require) {
                 type: 'POST',
                 data: formData,
                 dataType: 'json',
-                success: function(response) {
+                success: response => {
                     mediator.execute('hideLoading');
                     urls = response;
 
                     if (!_.isArray(urls)) {
                         this.confirmModal = new ConfirmSlugChangeModal({
-                            changedSlugs: that._getUrlsList(urls),
-                            confirmState: that.$createRedirectCheckbox.prop('checked')
+                            changedSlugs: this._getUrlsList(urls),
+                            confirmState: this.$createRedirectCheckbox.prop('checked')
                         })
-                            .on('ok', _.bind(that.onConfirmModalOk, that))
-                            .on('confirm-option-changed', _.bind(that.onConfirmModalOptionChange, that))
+                            .on('ok', this.onConfirmModalOk.bind(this))
+                            .on('confirm-option-changed', this.onConfirmModalOptionChange.bind(this))
                             .open();
                     } else {
-                        that.onConfirmModalOk();
+                        this.onConfirmModalOk();
                     }
                 },
                 error: function() {
@@ -195,9 +194,9 @@ define(function(require) {
          * @private
          */
         _saveSlugFieldsInitialState: function() {
-            this.$slugFields.each(_.bind(function(index, item) {
+            this.$slugFields.each((index, item) => {
                 this.slugFieldsInitialState.splice(index, 0, $(item).val());
-            }, this));
+            });
         },
 
         /**
@@ -206,13 +205,13 @@ define(function(require) {
          */
         _isSlugFieldsChanged: function() {
             let isChanged = false;
-            this.$slugFields.each(_.bind(function(index, item) {
+            this.$slugFields.each((index, item) => {
                 if (this.slugFieldsInitialState[index] !== $(item).val()) {
                     isChanged = true;
                     return false;
                 }
                 return true;
-            }, this));
+            });
             return isChanged;
         },
 

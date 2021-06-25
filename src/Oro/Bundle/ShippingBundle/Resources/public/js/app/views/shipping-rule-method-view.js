@@ -85,7 +85,7 @@ define(function(require) {
             this.$form.on(
                 'change' + this.eventNamespace(),
                 this.options.currencySelector,
-                _.bind(this._onCurrencyChange, this)
+                this._onCurrencyChange.bind(this)
             );
         },
 

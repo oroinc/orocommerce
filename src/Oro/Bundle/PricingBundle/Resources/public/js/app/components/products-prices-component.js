@@ -74,7 +74,7 @@ define(function(require) {
                 requestAttributes: {}
             };
             mediator.trigger('pricing:refresh:products-tier-prices:before', context);
-            this.joinSubrequests(this.loadProductsTierPrices, products, callback, _.bind(function(products, callback) {
+            this.joinSubrequests(this.loadProductsTierPrices, products, callback, (products, callback) => {
                 let params = {
                     product_ids: products
                 };
@@ -83,7 +83,7 @@ define(function(require) {
                 params = _.extend({}, params, context.requestAttributes || {});
 
                 $.get(routing.generate(this.options.tierPricesRoute, params), callback);
-            }, this));
+            });
         },
 
         joinSubrequests: function(storage, data, callback, request) {

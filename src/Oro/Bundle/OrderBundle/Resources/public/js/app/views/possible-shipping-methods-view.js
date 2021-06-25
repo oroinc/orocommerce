@@ -105,10 +105,10 @@ define(function(require) {
             }));
 
             this.subview('confirmation')
-                .off('ok').on('ok', _.bind(function() {
+                .off('ok').on('ok', () => {
                     this.orderHasChanged = false;
                     this.getElement('$form').trigger('submit');
-                }, this))
+                })
                 .open();
         },
 

@@ -116,12 +116,12 @@ define(function(require) {
             const self = this;
             if ('add-order-discount-dialog' === widget.getAlias()) {
                 widget.on('contentLoad', function() {
-                    widget.$el.on('submit', _.bind(self.onAddSubmit, self, widget));
+                    widget.$el.on('submit', self.onAddSubmit.bind(self, widget));
                 });
             } else if ('edit-order-discount-dialog' === widget.getAlias()) {
                 widget.on('contentLoad', function() {
                     self._populateDialogForm(this);
-                    widget.$el.on('submit', _.bind(self.onEditSubmit, self, widget));
+                    widget.$el.on('submit', self.onEditSubmit.bind(self, widget));
                 });
             }
         },
@@ -174,12 +174,12 @@ define(function(require) {
          * @private
          */
         _populateCollectionInputsWithSubmission: function(form, $newInputs) {
-            _.each(this.options.selectors.formFields, _.bind(function(fieldSelector, fieldType) {
+            _.each(this.options.selectors.formFields, (fieldSelector, fieldType) => {
                 if ('value' !== fieldType) {
                     const submissionInputVal = $(fieldSelector, form).val();
                     $newInputs.filter(fieldSelector).attr('value', submissionInputVal);
                 }
-            }, this), form);
+            }, form);
         },
 
         /**
@@ -256,7 +256,7 @@ define(function(require) {
          * @private
          */
         _setDialogFormInputs: function($hiddenInputs, widget) {
-            _.each(this.options.selectors.formFields, _.bind(function(fieldSelector, fieldType) {
+            _.each(this.options.selectors.formFields, (fieldSelector, fieldType) => {
                 let hiddenInputVal;
                 if ('value' === fieldType) {
                     const selectedType = widget.$el
@@ -273,7 +273,7 @@ define(function(require) {
                     hiddenInputVal = $($hiddenInputs).filter(fieldSelector).val();
                     widget.$el.find(fieldSelector).val(hiddenInputVal);
                 }
-            }, this), widget);
+            }, widget);
         },
 
         /**

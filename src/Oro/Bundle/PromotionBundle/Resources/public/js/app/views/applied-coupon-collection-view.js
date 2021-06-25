@@ -87,9 +87,8 @@ define(function(require) {
          */
         attachDialogListeners: function(widget) {
             if (this.options.dialogWidgetAlias === widget.getAlias()) {
-                const self = this;
-                widget.on('contentLoad', function() {
-                    widget.$el.on('submit', _.bind(self.onAddSubmit, self, widget));
+                widget.on('contentLoad', () => {
+                    widget.$el.on('submit', this.onAddSubmit.bind(this, widget));
                 });
             }
         },
@@ -145,9 +144,9 @@ define(function(require) {
          * @private
          */
         _checkOptions: function() {
-            const requiredMissed = this.requiredOptions.filter(_.bind(function(option) {
+            const requiredMissed = this.requiredOptions.filter(option => {
                 return _.isUndefined(this.options[option]) && !this.options[option];
-            }, this));
+            });
             if (requiredMissed.length) {
                 throw new TypeError('Missing required option(s): ' + requiredMissed.join(', '));
             }

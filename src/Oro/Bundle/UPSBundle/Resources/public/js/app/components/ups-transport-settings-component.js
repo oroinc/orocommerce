@@ -62,7 +62,7 @@ define(function(require) {
 
             this.loadingMaskView = new LoadingMaskView({container: this.shippingServicesHolder});
 
-            this.$elem.find(this.country).on('change', _.bind(this.onCountryChange, this));
+            this.$elem.find(this.country).on('change', this.onCountryChange.bind(this));
 
             this.hideShippingServiceIfCountryNotSelected();
         },

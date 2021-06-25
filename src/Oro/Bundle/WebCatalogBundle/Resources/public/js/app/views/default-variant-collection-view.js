@@ -4,7 +4,6 @@ define(function(require) {
     const BaseView = require('oroui/js/app/views/base/view');
     const mediator = require('oroui/js/mediator');
     const $ = require('jquery');
-    const _ = require('underscore');
 
     const DefaultVariantCollectionView = BaseView.extend({
         $collection: null,
@@ -31,12 +30,9 @@ define(function(require) {
             this.$el.on(
                 'click',
                 this.options.defaultSelector,
-                _.bind(
-                    function(e) {
-                        this.onDefaultChange($(e.target));
-                    },
-                    this
-                )
+                e => {
+                    this.onDefaultChange($(e.target));
+                }
             );
             mediator.on('webcatalog:content-variant-collection:add', this.handleAdd, this);
             mediator.on('webcatalog:content-variant-collection:remove', this.handleRemove, this);

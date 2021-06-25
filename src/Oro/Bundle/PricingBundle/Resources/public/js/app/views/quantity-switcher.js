@@ -2,7 +2,6 @@ define(function(require) {
     'use strict';
 
     const quantityVisibleLength = 6;
-    const _ = require('underscore');
     const $ = require('jquery');
     const AbstractSwitcher = require('oropricing/js/app/views/abstract-switcher');
 
@@ -34,10 +33,10 @@ define(function(require) {
          */
         initialize: function(options) {
             QuantitySwitcher.__super__.initialize.call(this, options);
-            this.initLayout().done(_.bind(this.initSwitcher, this));
-            this.$form.on('submit' + this.eventNamespace(), _.bind(function(e) {
+            this.initLayout().done(this.initSwitcher.bind(this));
+            this.$form.on('submit' + this.eventNamespace(), e => {
                 this.onSubmit(e);
-            }, this));
+            });
         },
 
         addValidationError: function($identifier) {
@@ -51,23 +50,23 @@ define(function(require) {
         initSwitcher: function() {
             this.fieldInput = this.field.find('input');
             this.changeQuantityField();
-            this.expressionInput.mouseenter(_.bind(function() {
+            this.expressionInput.mouseenter(() => {
                 if (isNaN(this.expressionInput.val()) && (this.expressionInput.val().length > quantityVisibleLength)) {
                     this.showTooltip(this.expressionInput);
                 } else {
                     this.disposeTooltip(this.expressionInput);
                 }
-            }, this));
+            });
 
             this.setMouseLeaveEvent(this.expressionInput);
 
-            this.expressionInput.change(_.bind(function() {
+            this.expressionInput.change(() => {
                 this.changeQuantityField();
-            }, this));
+            });
 
-            this.fieldInput.change(_.bind(function() {
+            this.fieldInput.change(() => {
                 this.changeQuantityField();
-            }, this));
+            });
         },
 
         changeQuantityField: function() {

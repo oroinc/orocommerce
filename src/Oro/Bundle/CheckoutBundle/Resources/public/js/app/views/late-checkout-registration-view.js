@@ -35,7 +35,7 @@ define(function(require) {
 
             this.$switcher = this.$el.find(this.options.selectors.switcher);
             this.$fieldsContainer = this.$el.find(this.options.selectors.fieldsContainer);
-            this.$switcher.on('change', _.bind(this.onOptionChange, this));
+            this.$switcher.on('change', this.onOptionChange.bind(this));
             this.onOptionChange();
         },
 

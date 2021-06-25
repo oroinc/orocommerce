@@ -203,7 +203,7 @@ define(function(require) {
             const paymentMethod = this.$el.find(this.options.formPaymentMethodSelector).val();
             const eventData = {
                 stopped: false,
-                resume: _.bind(this.transit, this),
+                resume: this.transit.bind(this),
                 data: {paymentMethod: paymentMethod}
             };
 

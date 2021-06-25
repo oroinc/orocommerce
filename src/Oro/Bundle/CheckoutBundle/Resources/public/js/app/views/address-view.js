@@ -39,21 +39,19 @@ define(function(require) {
             this.$shipToBillingCheckbox = this.$el.find(this.options.selectors.shipToBillingCheckbox);
             this.shipToBillingContainer = this.$shipToBillingCheckbox.parent();
 
-            this.$addressSelector.on('change', _.bind(this._onAddressChanged, this));
+            this.$addressSelector.on('change', this._onAddressChanged.bind(this));
             this._onAddressChanged();
-            this.$regionSelector.on('change', _.bind(this._onRegionListChanged, this));
+            this.$regionSelector.on('change', this._onRegionListChanged.bind(this));
             this._onRegionListChanged();
 
             if (this.options.hideNewAddressForm) {
-                this.$shipToBillingCheckbox.on('change', _.bind(this._handleShipToBillingAddressCheckbox, this));
+                this.$shipToBillingCheckbox.on('change', this._handleShipToBillingAddressCheckbox.bind(this));
                 if (this.options.selectors.externalShipToBillingCheckbox) {
                     this.$externalShipToBillingCheckbox = $(this.options.selectors.externalShipToBillingCheckbox);
                     const $externalShipToBillingCheckboxContainer = this.$externalShipToBillingCheckbox.parent();
                     $externalShipToBillingCheckboxContainer.on('changeHiddenClass',
-                        _.bind(this._handleExternalShipToBillingAddressCheckboxContainer,
-                            this,
-                            $externalShipToBillingCheckboxContainer
-                        )
+                        this._handleExternalShipToBillingAddressCheckboxContainer
+                            .bind(this, $externalShipToBillingCheckboxContainer)
                     );
                 }
             }
@@ -94,7 +92,7 @@ define(function(require) {
                 this.$externalShipToBillingCheckbox.prop('checked', disabled);
                 this.$externalShipToBillingCheckbox.on(
                     'change',
-                    _.bind(this._handleExternalShipToBillingAddressCheckbox, this)
+                    this._handleExternalShipToBillingAddressCheckbox.bind(this)
                 );
             }
         },

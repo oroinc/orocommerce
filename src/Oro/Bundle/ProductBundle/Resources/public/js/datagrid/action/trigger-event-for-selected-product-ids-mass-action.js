@@ -96,7 +96,7 @@ define([
         _getForcedConfirmDialog: function(message) {
             if (!this.forcedConfirmDialog) {
                 this.forcedConfirmDialog = new StandardConfirmation({content: message});
-                this.forcedConfirmDialog.on('ok', _.bind(this.onForcedConfirmDialogOk, this));
+                this.forcedConfirmDialog.on('ok', this.onForcedConfirmDialogOk.bind(this));
             }
 
             return this.forcedConfirmDialog;

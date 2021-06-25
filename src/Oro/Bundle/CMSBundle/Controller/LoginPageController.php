@@ -4,12 +4,14 @@ namespace Oro\Bundle\CMSBundle\Controller;
 
 use Oro\Bundle\CMSBundle\Entity\LoginPage;
 use Oro\Bundle\CMSBundle\Form\Type\LoginPageType;
+use Oro\Bundle\FormBundle\Model\UpdateHandler;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * CRUD controller for the LoginPage entity.
@@ -47,7 +49,7 @@ class LoginPageController extends AbstractController
     {
         return [
             'entity' => $loginPage,
-            'loginPageCssField' => $this->container->getParameter('oro_cms.direct_editing.login_page_css_field')
+            'loginPageCssField' => $this->getParameter('oro_cms.direct_editing.login_page_css_field')
         ];
     }
 
@@ -92,7 +94,7 @@ class LoginPageController extends AbstractController
      */
     protected function update(LoginPage $loginPage)
     {
-        return $this->get('oro_form.model.update_handler')->handleUpdate(
+        return $this->get(UpdateHandler::class)->handleUpdate(
             $loginPage,
             $this->createForm(LoginPageType::class, $loginPage),
             function (LoginPage $loginPage) {
@@ -107,7 +109,21 @@ class LoginPageController extends AbstractController
                     'parameters' => ['id' => $loginPage->getId()]
                 ];
             },
-            $this->get('translator')->trans('oro.cms.loginpage.save.message')
+            $this->get(TranslatorInterface::class)->trans('oro.cms.loginpage.save.message')
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                TranslatorInterface::class,
+                UpdateHandler::class,
+            ]
         );
     }
 }

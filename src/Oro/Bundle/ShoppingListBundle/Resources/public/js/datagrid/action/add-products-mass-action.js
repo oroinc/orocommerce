@@ -64,12 +64,12 @@ define(function(require) {
             const datagrid = this.datagrid;
             const selectionState = datagrid.getSelectionState();
 
-            widget.on('formSave', _.bind(function(response) {
+            widget.on('formSave', response => {
                 datagrid.resetSelectionState(selectionState);
-                this.listenToOnce(datagrid.massActions, 'reset', function() {
+                this.listenToOnce(datagrid.massActions, 'reset', () => {
                     this._onSaveHandleWidget(response, datagrid);
                 });
-            }, this));
+            });
         },
 
         _onSaveHandleWidget: function(response, datagrid) {

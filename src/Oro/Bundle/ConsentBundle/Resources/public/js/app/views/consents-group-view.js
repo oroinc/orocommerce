@@ -85,7 +85,7 @@ define(function(require) {
                 disposeOnHidden: false
             });
 
-            this.listenTo(this.confirmModal, 'ok', _.bind(this._onModalConfirmed, this));
+            this.listenTo(this.confirmModal, 'ok', this._onModalConfirmed.bind(this));
         },
 
         /**
@@ -95,7 +95,7 @@ define(function(require) {
             ConsentsGroupView.__super__.delegateEvents.call(this, events);
 
             if (this.$form && this.$form.length) {
-                this.$form.on('submit' + this.eventNamespace(), _.bind(this._onFormSubmit, this));
+                this.$form.on('submit' + this.eventNamespace(), this._onFormSubmit.bind(this));
             }
         },
 

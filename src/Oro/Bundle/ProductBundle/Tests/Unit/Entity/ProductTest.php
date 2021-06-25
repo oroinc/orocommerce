@@ -20,7 +20,6 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -97,7 +96,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals(
             '{"id":123,"product_units":{"kg":3},"unit":"kg","name":"1234","sku":"SKU123"}',
-            json_encode($product)
+            json_encode($product, JSON_THROW_ON_ERROR)
         );
     }
 
@@ -106,8 +105,8 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $product = new Product();
         $this->addDefaultName($product, 'default');
         $product->prePersist();
-        $this->assertInstanceOf('\DateTime', $product->getCreatedAt());
-        $this->assertInstanceOf('\DateTime', $product->getUpdatedAt());
+        $this->assertInstanceOf(\DateTime::class, $product->getCreatedAt());
+        $this->assertInstanceOf(\DateTime::class, $product->getUpdatedAt());
     }
 
     public function testPrePersistWithoutDefaultName()
@@ -139,7 +138,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
 
         $product->preUpdate();
 
-        $this->assertInstanceOf('\DateTime', $product->getUpdatedAt());
+        $this->assertInstanceOf(\DateTime::class, $product->getUpdatedAt());
         $this->assertCount(0, $product->getVariantFields());
         $this->assertEquals('SAMPLE-SKU', $product->getSkuUppercase());
     }
@@ -170,7 +169,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(1, $product->getUnitPrecisions());
 
         $actual = $product->getUnitPrecisions();
-        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $actual);
+        $this->assertInstanceOf(ArrayCollection::class, $actual);
         $this->assertEquals([$unitPrecision], $actual->toArray());
 
         // Add already added ProductUnitPrecision
@@ -182,7 +181,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(0, $product->getUnitPrecisions());
 
         $actual = $product->getUnitPrecisions();
-        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $actual);
+        $this->assertInstanceOf(ArrayCollection::class, $actual);
         $this->assertNotContains($unitPrecision, $actual->toArray());
     }
 
@@ -197,7 +196,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(1, $product->getImages());
 
         $actual = $product->getImages();
-        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $actual);
+        $this->assertInstanceOf(ArrayCollection::class, $actual);
         $this->assertEquals([$productImage], $actual->toArray());
 
         $this->assertSame($product, $product->addImage($productImage));
@@ -207,7 +206,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(0, $product->getImages());
 
         $actual = $product->getImages();
-        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $actual);
+        $this->assertInstanceOf(ArrayCollection::class, $actual);
         $this->assertNotContains($productImage, $actual->toArray());
     }
 
@@ -268,7 +267,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(['kg' => 1], $product->getSellUnitsPrecision());
     }
 
-    private function prepareUnitsPrecision()
+    private function prepareUnitsPrecision(): array
     {
         $kgUnit = new ProductUnit();
         $kgUnit->setCode('kg')->setDefaultPrecision(3);
@@ -407,7 +406,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(1, $product->getVariantLinks());
 
         $actual = $product->getVariantLinks();
-        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $actual);
+        $this->assertInstanceOf(ArrayCollection::class, $actual);
         $this->assertEquals([$variantLink], $actual->toArray());
 
         // Add already added variant link
@@ -419,14 +418,11 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(0, $product->getVariantLinks());
 
         $actual = $product->getVariantLinks();
-        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $actual);
+        $this->assertInstanceOf(ArrayCollection::class, $actual);
         $this->assertNotContains($variantLink, $actual->toArray());
     }
 
-    /**
-     * @return array
-     */
-    public function getDefaultDescriptionExceptionDataProvider()
+    public function getDefaultDescriptionExceptionDataProvider(): array
     {
         return [
             'several default descriptions' => [[new LocalizedFallbackValue(), new LocalizedFallbackValue()]],
@@ -456,12 +452,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedAdditionalUnits, array_values($actualAdditionalUnits));
     }
 
-    /**
-     * @param string $code
-     * @param integer $precisionValue
-     * @return ProductUnitPrecision $unitPrecision
-     */
-    private function createUnitPrecision($code, $precisionValue)
+    private function createUnitPrecision(string $code, int $precisionValue): ProductUnitPrecision
     {
         $unit = new ProductUnit();
         $unit
@@ -472,6 +463,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $unitPrecision
             ->setUnit($unit)
             ->setPrecision($unit->getDefaultPrecision());
+
         return $unitPrecision;
     }
 
@@ -530,22 +522,16 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $parentProduct = new Product();
         $parentProduct->setId(2);
 
-        /** @var ProductVariantLink | MockObject $variantLink1 */
-        $variantLink1 = $this
-            ->getMockBuilder(ProductVariantLink::class)
+        $variantLink1 = $this->getMockBuilder(ProductVariantLink::class)
             ->setConstructorArgs([$parentProduct, $productSimple])
-            ->setMethods(['setParentProduct'])
+            ->onlyMethods(['setParentProduct'])
             ->getMock();
-
         $variantLink1->expects($this->never())
             ->method('setParentProduct');
 
-        /** @var ProductVariantLink | MockObject $variantLink2 */
-        $variantLink2 = $this
-            ->getMockBuilder(ProductVariantLink::class)
-            ->setMethods(['setParentProduct'])
+        $variantLink2 = $this->getMockBuilder(ProductVariantLink::class)
+            ->onlyMethods(['setParentProduct'])
             ->getMock();
-
         $variantLink2->expects($this->once())
             ->method('setParentProduct');
 
@@ -562,22 +548,16 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $parentProduct = new Product();
         $parentProduct->setId(2);
 
-        /** @var ProductVariantLink | MockObject $variantLink1 */
-        $variantLink1 = $this
-            ->getMockBuilder(ProductVariantLink::class)
+        $variantLink1 = $this->getMockBuilder(ProductVariantLink::class)
             ->setConstructorArgs([$parentProduct, $productSimple])
-            ->setMethods(['setParentProduct'])
+            ->onlyMethods(['setParentProduct'])
             ->getMock();
-
         $variantLink1->expects($this->never())
             ->method('setParentProduct');
 
-        /** @var ProductVariantLink | MockObject $variantLink2 */
-        $variantLink2 = $this
-            ->getMockBuilder(ProductVariantLink::class)
-            ->setMethods(['setProduct'])
+        $variantLink2 = $this->getMockBuilder(ProductVariantLink::class)
+            ->onlyMethods(['setProduct'])
             ->getMock();
-
         $variantLink2->expects($this->once())
             ->method('setProduct');
 
@@ -586,11 +566,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $product->addParentVariantLink($variantLink2);
     }
 
-    /**
-     * @param Product $product
-     * @param string $name
-     */
-    protected function addDefaultName(Product $product, $name)
+    private function addDefaultName(Product $product, string $name): void
     {
         $defaultName = new ProductName();
         $defaultName->setString($name);

@@ -57,13 +57,13 @@ define(function(require) {
             this.$container = $(options._sourceElement);
             this.template = this.getTemplateFunction();
 
-            this.model.on('backgrid:select', _.bind(function(model, checked) {
+            this.model.on('backgrid:select', (model, checked) => {
                 this.$(':checkbox').prop('checked', checked).change();
-            }, this));
+            });
 
-            this.model.on('backgrid:canSelected', _.bind(function(checked) {
+            this.model.on('backgrid:canSelected', checked => {
                 this.hideView(checked);
-            }, this));
+            });
         },
 
         /**

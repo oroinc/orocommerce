@@ -10,7 +10,6 @@ define(function(require) {
     const __ = require('orotranslation/js/translator');
     /** @var QuantityHelper QuantityHelper **/
     const QuantityHelper = require('oroproduct/js/app/quantity-helper');
-    const ENTER_KEY_CODE = 13;
 
     const ProductQuantityEditableView = BaseView.extend({
         options: {
@@ -96,7 +95,7 @@ define(function(require) {
 
             this.initValidator(options);
             if (this.deferredInit) {
-                this.deferredInit.done(_.bind(this.initListeners, this));
+                this.deferredInit.done(this.initListeners.bind(this));
             } else {
                 this.initListeners();
             }
@@ -106,29 +105,9 @@ define(function(require) {
         },
 
         _bindEvents: function() {
-            this.elements.unit.on('change' + this.eventNamespace(), _.bind(function() {
+            this.elements.unit.on('change' + this.eventNamespace(), () => {
                 mediator.trigger('unitChanged');
-            }, this));
-
-            // Emulate change event on blur and press enter in MS browsers
-            if (tools.isIE11() || tools.isEDGE()) {
-                let valueBeforeInput = this.elements.quantity.val();
-
-                this.elements.quantity
-                    .on('focus' + this.eventNamespace(), function(e) {
-                        valueBeforeInput = e.target.value;
-                    })
-                    .on('blur' + this.eventNamespace(), function(e) {
-                        if (valueBeforeInput !== e.target.value) {
-                            $(e.target).trigger('change');
-                        }
-                    })
-                    .on('keydown' + this.eventNamespace(), function(e) {
-                        if (e.keyCode === ENTER_KEY_CODE && !e.ctrlKey && valueBeforeInput !== e.target.value) {
-                            $(e.target).trigger('change');
-                        }
-                    });
-            }
+            });
 
             mediator.on('unitChanged', this.disableOptions, this);
         },
@@ -136,12 +115,12 @@ define(function(require) {
         disableOptions: function() {
             this.elements.unit.find('option').prop('disabled', false);
 
-            this.$el.siblings().each(_.bind(function(index, el) {
+            this.$el.siblings().each((index, el) => {
                 const value = $(el).find('[name="unit"]').val();
                 this.elements.unit
                     .find('[value="' + value + '"]')
                     .prop('disabled', true);
-            }, this));
+            });
             this._updateQuantityPrecision();
         },
 
@@ -165,12 +144,11 @@ define(function(require) {
 
             if (options.validation.showErrorsHandler) {
                 const waitors = [];
-                waitors.push(tools.loadModuleAndReplace(options.validation, 'showErrorsHandler').then(
-                    _.bind(function() {
+                waitors.push(tools.loadModuleAndReplace(options.validation, 'showErrorsHandler')
+                    .then(() => {
                         validationOptions.showErrors = options.validation.showErrorsHandler;
                         this.updateValidation($form, validationOptions);
-                    }, this)
-                ));
+                    }));
                 this.deferredInit = $.when(...waitors);
             } else {
                 this.updateValidation($form, validationOptions);
@@ -189,12 +167,12 @@ define(function(require) {
         initListeners: function() {
             let changeAction = this.onViewChange;
             if (this.elements.saveButton) {
-                this.elements.saveButton.on('click', _.bind(this.onViewChange, this));
+                this.elements.saveButton.on('click', this.onViewChange.bind(this));
                 changeAction = this.enableAccept;
             }
 
-            this.$el.on('change', this.elements.quantity, _.bind(changeAction, this));
-            this.$el.on('change', this.elements.unit, _.bind(changeAction, this));
+            this.$el.on('change', this.elements.quantity, changeAction.bind(this));
+            this.$el.on('change', this.elements.unit, changeAction.bind(this));
         },
 
         saveModelState: function() {
@@ -275,11 +253,11 @@ define(function(require) {
                 errorHandlerMessage: false
             });
             savePromise
-                .done(_.bind(this.onSaveSuccess, this))
-                .fail(_.bind(this.onSaveError, this))
-                .always(_.bind(function() {
+                .done(this.onSaveSuccess.bind(this))
+                .fail(this.onSaveError.bind(this))
+                .always(() => {
                     this._isSaving = false;
-                }, this));
+                });
         },
 
         onSaveSuccess: function(response) {

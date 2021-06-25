@@ -43,11 +43,11 @@
                             <li class="oro-toolbar__list-item localization-switcher__item localization-switcher__item--{{ localization.formattingCode|lower }}">
                                 {% set title = localization.titles|localized_value %}
                                 {% if selected_localization.id == localization.id %}
-                                    <span class="oro-toolbar__link oro-toolbar__link--active">
+                                    <span class="oro-toolbar__link oro-toolbar__link--active" dir="auto">
                                         {{- title -}}
                                     </span>
                                 {% else %}
-                                    <a class="oro-toolbar__link" href="#" data-localization="{{ localization.id }}">
+                                    <a class="oro-toolbar__link" href="#" data-localization="{{ localization.id }}" dir="auto">
                                         {{- title -}}
                                     </a>
                                 {% endif %}

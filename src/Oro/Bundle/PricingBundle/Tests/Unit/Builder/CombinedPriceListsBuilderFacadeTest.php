@@ -112,7 +112,6 @@ class CombinedPriceListsBuilderFacadeTest extends \PHPUnit\Framework\TestCase
 
         $startTimestamp = time();
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|PriceCombiningStrategyInterface $strategy */
         $strategy = $this->createMock(PriceCombiningStrategyInterface::class);
         $this->strategyRegister->expects($this->once())
             ->method('getCurrentStrategy')
@@ -217,17 +216,13 @@ class CombinedPriceListsBuilderFacadeTest extends \PHPUnit\Framework\TestCase
         $customerGroup2 = new CustomerGroup();
         $customerGroup3 = new CustomerGroup();
 
-        $this->customerGroupCombinedPriceListBuilder->expects($this->at(0))
+        $this->customerGroupCombinedPriceListBuilder->expects($this->exactly(3))
             ->method('build')
-            ->with($website, $customerGroup1, $forceTimestamp);
-
-        $this->customerGroupCombinedPriceListBuilder->expects($this->at(1))
-            ->method('build')
-            ->with($website, $customerGroup2, $forceTimestamp);
-
-        $this->customerGroupCombinedPriceListBuilder->expects($this->at(2))
-            ->method('build')
-            ->with($website, $customerGroup3, $forceTimestamp);
+            ->withConsecutive(
+                [$website, $customerGroup1, $forceTimestamp],
+                [$website, $customerGroup2, $forceTimestamp],
+                [$website, $customerGroup3, $forceTimestamp]
+            );
 
         $this->garbageCollector->expects($this->once())
             ->method('cleanCombinedPriceLists');
@@ -244,17 +239,13 @@ class CombinedPriceListsBuilderFacadeTest extends \PHPUnit\Framework\TestCase
         $customer2 = new Customer();
         $customer3 = new Customer();
 
-        $this->customerCombinedPriceListBuilder->expects($this->at(0))
+        $this->customerCombinedPriceListBuilder->expects($this->exactly(3))
             ->method('build')
-            ->with($website, $customer1, $forceTimestamp);
-
-        $this->customerCombinedPriceListBuilder->expects($this->at(1))
-            ->method('build')
-            ->with($website, $customer2, $forceTimestamp);
-
-        $this->customerCombinedPriceListBuilder->expects($this->at(2))
-            ->method('build')
-            ->with($website, $customer3, $forceTimestamp);
+            ->withConsecutive(
+                [$website, $customer1, $forceTimestamp],
+                [$website, $customer2, $forceTimestamp],
+                [$website, $customer3, $forceTimestamp]
+            );
 
         $this->garbageCollector->expects($this->once())
             ->method('cleanCombinedPriceLists');
@@ -344,12 +335,7 @@ class CombinedPriceListsBuilderFacadeTest extends \PHPUnit\Framework\TestCase
         $this->priceListToCustomerRepo->expects($this->once())
             ->method('getIteratorByPriceLists')
             ->with($priceLists)
-            ->willReturn([
-                [
-                    'website'  => $websiteId,
-                    'customer' => $customerId
-                ]
-            ]);
+            ->willReturn([['website' => $websiteId, 'customer' => $customerId]]);
         $this->customerCombinedPriceListBuilder->expects($this->once())
             ->method('build')
             ->with($website, $customer, $forceTimestamp);

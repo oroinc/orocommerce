@@ -142,10 +142,9 @@ define(function(require) {
 
         setDefaultTemplatesForData: function(totals) {
             if (totals.subtotals) {
-                const that = this;
-                _.map(totals.subtotals, function(subtotal) {
+                _.map(totals.subtotals, subtotal => {
                     if (!subtotal.template) {
-                        subtotal.template = that.subtotalTemplate;
+                        subtotal.template = this.subtotalTemplate;
                     }
 
                     return subtotal;
@@ -183,23 +182,23 @@ define(function(require) {
                 clearTimeout(this.getTotals.timeoutId);
             }
 
-            this.getTotals.timeoutId = setTimeout(_.bind(function() {
+            this.getTotals.timeoutId = setTimeout(() => {
                 this.getTotals.timeoutId = null;
 
                 const promises = [];
                 mediator.trigger(this.eventName, promises);
 
                 if (promises.length) {
-                    $.when(...promises).done(_.bind(this.updateTotals, this, e));
+                    $.when(...promises).done(this.updateTotals.bind(this, e));
                 } else {
-                    this.getTotals(_.bind(function(totals) {
+                    this.getTotals(totals => {
                         this.hideLoadingMask();
                         this.triggerTotalsUpdateEvent(totals);
                         totals = this.setDefaultTemplatesForData(totals);
                         this.render(totals);
-                    }, this));
+                    });
                 }
-            }, this), 100);
+            }, 100);
         },
 
         /**
@@ -256,7 +255,7 @@ define(function(require) {
         render: function(totals) {
             this.items = [];
 
-            _.each(totals.subtotals, _.bind(this.pushItem, this));
+            _.each(totals.subtotals, this.pushItem.bind(this));
 
             this.pushItem(totals.total);
 

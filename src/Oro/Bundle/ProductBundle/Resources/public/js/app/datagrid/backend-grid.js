@@ -75,7 +75,7 @@ define(function(require, exports, module) {
         },
 
         _listenToDocumentEvents: function() {
-            $(window).on('beforeunload.' + this.cid, _.bind(this.onWindowUnload, this));
+            $(window).on('beforeunload.' + this.cid, this.onWindowUnload.bind(this));
         },
 
         /**
@@ -115,7 +115,7 @@ define(function(require, exports, module) {
                 'backgrid:checkUnSavedData': this.checkUnSavedData,
                 'backgrid:hasMassActions': this.hasMassActions
             });
-            this.listenTo(this.selectState, 'change', _.bind(_.debounce(this.showStickyContainer, 50), this));
+            this.listenTo(this.selectState, 'change', _.debounce(this.showStickyContainer.bind(this), 50));
         },
 
         /**
@@ -139,7 +139,7 @@ define(function(require, exports, module) {
 
             this.initLayout({
                 collection: this.collection
-            }).always(_.bind(function() {
+            }).always(() => {
                 this.rendered = true;
                 /**
                  * Backbone event. Fired when the grid has been successfully rendered.
@@ -153,7 +153,7 @@ define(function(require, exports, module) {
                  */
                 mediator.trigger('grid_render:complete', this.$el);
                 this._resolveDeferredRender();
-            }, this));
+            });
 
             this.rendered = true;
             const self = this;

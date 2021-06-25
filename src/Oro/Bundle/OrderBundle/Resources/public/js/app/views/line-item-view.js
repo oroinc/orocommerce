@@ -96,9 +96,9 @@ define(function(require) {
             this.$fields = this.$el.find(':input[name]');
 
             this.fieldsByName = {};
-            this.$fields.each(_.bind(function(i, field) {
+            this.$fields.each((i, field) => {
                 this.fieldsByName[this.formFieldName(field)] = $(field);
-            }, this));
+            });
 
             this.initProduct();
 
@@ -131,16 +131,16 @@ define(function(require) {
                 $product.show();
             };
 
-            $freeForm.find('a' + this.options.selectors.productType).click(_.bind(function() {
+            $freeForm.find('a' + this.options.selectors.productType).click(() => {
                 showProductType();
                 $freeForm.find(':input').val('').change();
-            }, this));
+            });
 
-            $product.find('a' + this.options.selectors.freeFormType).click(_.bind(function() {
+            $product.find('a' + this.options.selectors.freeFormType).click(() => {
                 showFreeFormType();
                 this.fieldsByName.product.inputWidget('val', '');
                 this.fieldsByName.product.change();
-            }, this));
+            });
 
             if (this.fieldsByName.freeFormProduct.val() !== '') {
                 showFreeFormType();
@@ -200,12 +200,12 @@ define(function(require) {
 
         initProduct: function() {
             if (this.fieldsByName.product) {
-                this.fieldsByName.product.change(_.bind(function() {
+                this.fieldsByName.product.change(() => {
                     this.resetData();
 
                     const data = this.fieldsByName.product.inputWidget('data') || {};
                     this.$el.find(this.options.selectors.productSku).text(data.sku || null);
-                }, this));
+                });
             }
         },
 

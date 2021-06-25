@@ -2,7 +2,6 @@ define(function(require) {
     'use strict';
 
     const $ = require('jquery');
-    const _ = require('underscore');
     const ProductsPricesComponent = require('oropricing/js/app/components/products-prices-component');
     const BaseView = require('oroui/js/app/views/base/view');
 
@@ -41,7 +40,7 @@ define(function(require) {
                 customer: this.options.customer
             }));
 
-            this.initLayout().done(_.bind(this.handleLayoutInit, this));
+            this.initLayout().done(this.handleLayoutInit.bind(this));
         },
 
         /**

@@ -253,6 +253,7 @@ const GrapesjsEditorView = BaseView.extend({
             countdownOpts: false,
             importViewerOptions: {},
             codeViewerOptions: {},
+            customStyleManager: styleManagerModule,
             exportOpts: {
                 btnLabel: __('oro.cms.wysiwyg.export.btn_label')
             }
@@ -408,8 +409,6 @@ const GrapesjsEditorView = BaseView.extend({
             wrapperAttrs.class && this.builder.getWrapper().addClass(wrapperAttrs.class);
         }
 
-        // Ensures all changes to sectors, properties and types are applied.
-        this.builder.StyleManager.getSectors().reset(styleManagerModule);
         this.rte = this.builder.RichTextEditor;
 
         const pureStyles = this.builder.getPureStyle(this.$stylesInputElement.val());

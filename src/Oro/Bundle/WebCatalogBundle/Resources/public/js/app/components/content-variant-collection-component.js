@@ -28,8 +28,8 @@ define(function(require) {
 
             this.$el = this.options._sourceElement;
 
-            this.$el.on('click', this.options.buttonSelector, _.bind(this.onAdd, this));
-            this.$el.on('click', this.options.variantRemoveSelector, _.bind(this.onRemove, this));
+            this.$el.on('click', this.options.buttonSelector, this.onAdd.bind(this));
+            this.$el.on('click', this.options.variantRemoveSelector, this.onRemove.bind(this));
             this.prototypeName = this.$el.data('prototype-name') || '__name__';
             this.$collectionContainer = this.$el.find(this.options.collectionContainerSelector);
         },

@@ -59,7 +59,7 @@ define(function(require) {
 
             this.recalculateSelectedItemsCount();
 
-            $(this.elements.selectButtonSelector).on('click', _.bind(this.onSelectRelatedItems, this));
+            $(this.elements.selectButtonSelector).on('click', this.onSelectRelatedItems.bind(this));
         },
 
         prepareContentRequestOptions: function(data, method, url) {

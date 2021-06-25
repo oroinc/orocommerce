@@ -39,7 +39,7 @@ define(function(require) {
             this.options = _.defaults(options || {}, this.options);
 
             this.options._sourceElement
-                .on('content:changed', _.bind(this.onChange, this));
+                .on('content:changed', this.onChange.bind(this));
 
             this.options._sourceElement.trigger('content:changed');
         },

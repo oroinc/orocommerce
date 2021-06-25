@@ -3,6 +3,7 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Engine;
 
 use Oro\Bundle\SearchBundle\Provider\SearchMappingProvider;
+use Oro\Bundle\TestFrameworkBundle\Entity\TestActivity;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexerInputValidator;
@@ -32,13 +33,20 @@ class IndexerInputValidatorTest extends \PHPUnit\Framework\TestCase
     {
         $this->mappingProvider = $this->createMock(SearchMappingProvider::class);
 
-        $this->mappingProvider->method('isClassSupported')
-            ->willReturn(true);
+        $this->mappingProvider
+            ->expects($this->any())
+            ->method('isClassSupported')
+            ->willReturnCallback(fn ($class) => class_exists($class, true));
+        $this->mappingProvider
+            ->expects($this->any())
+            ->method('getEntityClasses')
+            ->willReturn([TestActivity::class]);
 
         $this->websiteProvider = $this->createMock(WebsiteProviderInterface::class);
-        $this->websiteProvider->expects($this->any())
+        $this->websiteProvider
+            ->expects($this->any())
             ->method('getWebsiteIds')
-            ->willReturn([self::WEBSITE_ID]);
+            ->willReturn([101,102]);
 
         $this->testable = new IndexerInputValidator(
             $this->websiteProvider,
@@ -50,28 +58,7 @@ class IndexerInputValidatorTest extends \PHPUnit\Framework\TestCase
     {
         $this->expectException(\LogicException::class);
         $context = [];
-        $context = $this->setContextEntityIds($context, [1,2,3]);
-        $this->testable->validateRequestParameters(['class1','class2'], $context);
-    }
-
-    public function testEmptyEntitiesInput()
-    {
-        $this->expectException(\LogicException::class);
-        $this->testable->validateRequestParameters([], []);
-    }
-
-    public function testValidation()
-    {
-        $context = [];
-        $context = $this->setContextEntityIds($context, [1,2,3]);
-        $result = $this->testable->validateRequestParameters(['class1'], $context);
-
-        $this->assertEquals(
-            $result,
-            [
-                ['class1'],
-                [self::WEBSITE_ID]
-            ]
-        );
+        $context = $this->setContextEntityIds($context, [1, 2, 3]);
+        $this->testable->validateRequestParameters(['class1', 'class2'], $context);
     }
 }

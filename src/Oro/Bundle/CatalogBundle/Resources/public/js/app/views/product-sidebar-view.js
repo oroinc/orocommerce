@@ -58,12 +58,12 @@ define(function(require) {
 
             this.selectedCategoryId = options.defaultCategoryId;
             this.$tree.jstree('select_node', this.selectedCategoryId);
-            this.$tree.on('select_node.jstree', _.bind(this.onCategorySelect, this));
+            this.$tree.on('select_node.jstree', this.onCategorySelect.bind(this));
 
             this.subcategoriesSelector = $(this.options.includeSubcategoriesSelector);
             this.notCategorizedProductSelector = $(this.options.includeNotCategorizedProductSelector);
-            this.subcategoriesSelector.on('change', _.bind(this.onIncludeSubcategoriesChange, this));
-            this.notCategorizedProductSelector.on('change', _.bind(this.onIncludeNonCategorizedProductChange, this));
+            this.subcategoriesSelector.on('change', this.onIncludeSubcategoriesChange.bind(this));
+            this.notCategorizedProductSelector.on('change', this.onIncludeNonCategorizedProductChange.bind(this));
 
             mediator.on('import-export:handleExport', this.onHandleExport, this);
         },

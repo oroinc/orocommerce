@@ -56,9 +56,9 @@ define(function(require) {
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
-            const requiredMissed = this.requiredOptions.filter(_.bind(function(option) {
+            const requiredMissed = this.requiredOptions.filter(option => {
                 return _.isUndefined(this.options[option]) || _.isNull(this.options[option]);
-            }, this));
+            });
             if (requiredMissed.length) {
                 throw new TypeError('Missing required option(s): ' + requiredMissed.join(', '));
             }
@@ -68,7 +68,7 @@ define(function(require) {
             this.$amountDiscountValue = $el.find(this.options.amount_discount_value_selector);
             this.$percentDiscountValue = $el.find(this.options.percent_discount_value_selector);
 
-            this.options.el.on('change', this.options.type_selector, _.bind(this.switchValues, this));
+            this.options.el.on('change', this.options.type_selector, this.switchValues.bind(this));
         },
 
         switchValues: function() {

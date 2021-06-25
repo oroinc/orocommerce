@@ -213,9 +213,9 @@ const ImportDialogView = BaseView.extend({
                 minWidth: 856,
                 appendTo: this.editor.getEl(),
                 dialogClass: 'ui-dialog--import-template',
-                close: _.bind(function() {
+                close: () => {
                     this.dispose();
-                }, this)
+                }
             }
         });
 

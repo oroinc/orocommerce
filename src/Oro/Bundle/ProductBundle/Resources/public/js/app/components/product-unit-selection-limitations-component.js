@@ -49,10 +49,10 @@ define(function(require) {
             this.options = _.defaults(options || {}, this.options);
 
             this.options._sourceElement
-                .on('content:changed', _.bind(this.onChange, this))
-                .on('content:remove', _.bind(this.askConfirmation, this))
-                .on('click', '.removeLineItem', _.bind(this.onRemoveRow, this))
-                .on('change', this.options.unitSelect, _.bind(this.onSelectChange, this));
+                .on('content:changed', this.onChange.bind(this))
+                .on('content:remove', this.askConfirmation.bind(this))
+                .on('click', '.removeLineItem', this.onRemoveRow.bind(this))
+                .on('change', this.options.unitSelect, this.onSelectChange.bind(this));
 
             mediator.on('page:afterChange', this.onChange, this);
         },

@@ -29,7 +29,7 @@ define(function(require) {
             this.$input = this.$el.find(this.options.precisionInput);
             this.$select = this.$el.find(this.options.unitSelect);
             this.$select
-                .on('change' + this.eventNamespace(), _.bind(this.onChange, this))
+                .on('change' + this.eventNamespace(), this.onChange.bind(this))
                 .trigger('change');
         },
 

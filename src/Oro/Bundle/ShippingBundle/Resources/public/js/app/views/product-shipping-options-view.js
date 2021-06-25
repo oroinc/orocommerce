@@ -46,18 +46,18 @@ define(function(require) {
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
             this.$itemsContainer = this.$el.find(this.options.selectors.itemsContainer);
-            this.initLayout().done(_.bind(this.handleLayoutInit, this));
+            this.initLayout().done(this.handleLayoutInit.bind(this));
         },
 
         handleLayoutInit: function() {
             this.$el
-                .on('content:changed', _.bind(this.onContentChanged, this));
+                .on('content:changed', this.onContentChanged.bind(this));
 
             mediator.on('product:precision:add', this.onContentChanged, this);
 
             this.$itemsContainer
-                .on('click', '.removeRow', _.bind(this.onRemoveRowClick, this))
-                .on('change', this.options.selectSelector, _.bind(this.onContentChanged, this));
+                .on('click', '.removeRow', this.onRemoveRowClick.bind(this))
+                .on('change', this.options.selectSelector, this.onContentChanged.bind(this));
 
             this.$el.find(this.options.selectors.subselects).data('selected', true);
 
@@ -142,9 +142,8 @@ define(function(require) {
          */
         getProductUnits: function() {
             let units = {};
-            const that = this;
-            $.each($(':data(' + this.options.unitsAttribute + ')'), function(index, element) {
-                const elementUnits = $(element).data(that.options.unitsAttribute) || {};
+            $.each($(':data(' + this.options.unitsAttribute + ')'), (index, element) => {
+                const elementUnits = $(element).data(this.options.unitsAttribute) || {};
                 units = $.extend(units, elementUnits);
             });
 

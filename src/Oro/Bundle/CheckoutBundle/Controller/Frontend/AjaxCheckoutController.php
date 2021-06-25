@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\Controller\Frontend;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Provider\CheckoutTotalsProvider;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -39,7 +40,7 @@ class AjaxCheckoutController extends AbstractController
 
         $this->setCorrectCheckoutShippingMethodData($checkout, $request);
 
-        return new JsonResponse($this->get('oro_checkout.provider.checkout_totals')->getTotalsArray($checkout));
+        return new JsonResponse($this->get(CheckoutTotalsProvider::class)->getTotalsArray($checkout));
     }
 
     /**
@@ -61,5 +62,18 @@ class AjaxCheckoutController extends AbstractController
         return $checkout
             ->setShippingMethod($workflowTransitionData['shipping_method'])
             ->setShippingMethodType($workflowTransitionData['shipping_method_type']);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                CheckoutTotalsProvider::class,
+            ]
+        );
     }
 }
