@@ -40,29 +40,19 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class AbstractConfigSubscriberTest extends FormIntegrationTestCase
 {
-    /**
-     * @var ConfigSubscriberProxyInterface
-     */
+    /** @var ConfigSubscriberProxyInterface */
     protected $subscriber;
 
-    /**
-     * @var MethodConfigSubscriberProxy
-     */
+    /** @var MethodConfigSubscriberProxy */
     protected $methodConfigSubscriber;
 
-    /**
-     * @var MethodConfigCollectionSubscriberProxy
-     */
+    /** @var MethodConfigCollectionSubscriberProxy */
     protected $methodConfigCollectionSubscriber;
 
-    /**
-     * @var MethodTypeConfigCollectionSubscriberProxy
-     */
+    /** @var MethodTypeConfigCollectionSubscriberProxy */
     protected $methodTypeConfigCollectionSubscriber;
 
-    /**
-     * @var ShippingMethodProviderInterface
-     */
+    /** @var ShippingMethodProviderInterface */
     protected $shippingMethodProvider;
 
     protected function setUp(): void
@@ -153,37 +143,30 @@ abstract class AbstractConfigSubscriberTest extends FormIntegrationTestCase
             ->method('getRoundType')
             ->willReturn(RoundingServiceInterface::ROUND_HALF_UP);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|CurrencyProviderInterface */
-        $currencyProvider = $this->getMockBuilder(CurrencyProviderInterface::class)
-            ->disableOriginalConstructor()->getMockForAbstractClass();
+        $currencyProvider = $this->createMock(CurrencyProviderInterface::class);
         $currencyProvider->expects($this->any())
             ->method('getCurrencyList')
             ->willReturn(['USD']);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|TranslatableEntityType */
         $translatableEntity = $this->getMockBuilder(TranslatableEntityType::class)
-            ->setMethods(['configureOptions', 'buildForm'])
+            ->onlyMethods(['configureOptions', 'buildForm'])
             ->disableOriginalConstructor()
             ->getMock();
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface */
         $translator = $this->createMock(TranslatorInterface::class);
-        $translator->expects(static::any())
+        $translator->expects(self::any())
             ->method('trans')
-            ->will(static::returnCallback(function ($message) {
-                return $message.'_translated';
-            }));
+            ->willReturnCallback(function ($message) {
+                return $message . '_translated';
+            });
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|ShippingMethodChoicesProviderInterface */
         $choicesProvider = $this->createMock(ShippingMethodChoicesProviderInterface::class);
         $choicesProvider->expects($this->any())
             ->method('getMethods')
             ->willReturn([]);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|ShippingMethodIconProviderInterface */
         $iconProvider = $this->createMock(ShippingMethodIconProviderInterface::class);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|AssetHelper */
         $assetHelper = $this->createMock(AssetHelper::class);
 
         return [
@@ -199,8 +182,8 @@ abstract class AbstractConfigSubscriberTest extends FormIntegrationTestCase
                         new ShippingMethodTypeConfigCollectionType($this->methodTypeConfigCollectionSubscriber),
                     CurrencySelectionType::class => new CurrencySelectionType(
                         $currencyProvider,
-                        $this->getMockBuilder(LocaleSettings::class)->disableOriginalConstructor()->getMock(),
-                        $this->getMockBuilder(CurrencyNameHelper::class)->disableOriginalConstructor()->getMock()
+                        $this->createMock(LocaleSettings::class),
+                        $this->createMock(CurrencyNameHelper::class)
                     ),
                     CollectionType::class => new CollectionType(),
                     ShippingMethodsConfigsRuleDestinationType::class => new ShippingMethodsConfigsRuleDestinationType(

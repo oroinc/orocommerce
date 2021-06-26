@@ -9,10 +9,8 @@ use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 
 class ContentNodeContentVariantProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ProductsContentVariantProvider
-     */
-    protected $provider;
+    /** @var ProductsContentVariantProvider */
+    private $provider;
 
     protected function setUp(): void
     {
@@ -34,17 +32,19 @@ class ContentNodeContentVariantProviderTest extends \PHPUnit\Framework\TestCase
     public function testGetLocalizedValues()
     {
         $node = $this->getMockBuilder(ContentNodeInterface::class)
-            ->setMethods(
-                [
-                    'getMetaTitles',
-                    'getMetaDescriptions',
-                    'getMetaKeywords'
-                ]
-            )
+            ->addMethods(['getMetaTitles', 'getMetaDescriptions', 'getMetaKeywords'])
             ->getMockForAbstractClass();
-        $node->expects($this->once())->method('getMetaTitles')->withAnyParameters()->willReturn(['array']);
-        $node->expects($this->once())->method('getMetaDescriptions')->withAnyParameters()->willReturn(['array']);
-        $node->expects($this->once())->method('getMetaKeywords')->willReturn(['keywords']);
+        $node->expects($this->once())
+            ->method('getMetaTitles')
+            ->withAnyParameters()
+            ->willReturn(['array']);
+        $node->expects($this->once())
+            ->method('getMetaDescriptions')
+            ->withAnyParameters()
+            ->willReturn(['array']);
+        $node->expects($this->once())
+            ->method('getMetaKeywords')
+            ->willReturn(['keywords']);
 
         $result = $this->provider->getLocalizedValues($node);
         $expectedCount = 3;
@@ -57,7 +57,7 @@ class ContentNodeContentVariantProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetValues()
     {
-        $node = $this->getMockBuilder(ContentNodeInterface::class)->getMock();
+        $node = $this->createMock(ContentNodeInterface::class);
         $this->assertSame([], $this->provider->getValues($node));
     }
 }

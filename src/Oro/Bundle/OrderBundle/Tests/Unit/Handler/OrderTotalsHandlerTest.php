@@ -13,33 +13,22 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 class OrderTotalsHandlerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var \PHPUnit\Framework\MockObject\MockObject|TotalProcessorProvider */
-    protected $totalsProvider;
+    private $totalsProvider;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|LineItemSubtotalProvider */
-    protected $lineItemSubtotalProvider;
+    private $lineItemSubtotalProvider;
 
     /** @var OrderTotalsHandler */
-    protected $handler;
+    private $handler;
 
     /** @var RateConverterInterface */
-    protected $rateConverter;
+    private $rateConverter;
 
     protected function setUp(): void
     {
-        $this->totalsProvider = $this
-            ->getMockBuilder('Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->lineItemSubtotalProvider = $this
-            ->getMockBuilder('Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->rateConverter = $this
-            ->getMockBuilder('Oro\Bundle\CurrencyBundle\Converter\RateConverterInterface')
-            ->setMethods(['getBaseCurrencyAmount'])
-            ->getMock();
+        $this->totalsProvider = $this->createMock(TotalProcessorProvider::class);
+        $this->lineItemSubtotalProvider = $this->createMock(LineItemSubtotalProvider::class);
+        $this->rateConverter = $this->createMock(RateConverterInterface::class);
 
         $this->handler = new OrderTotalsHandler(
             $this->totalsProvider,

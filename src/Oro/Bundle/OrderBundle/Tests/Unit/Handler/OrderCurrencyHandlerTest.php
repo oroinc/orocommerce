@@ -9,18 +9,14 @@ use Oro\Bundle\OrderBundle\Handler\OrderCurrencyHandler;
 class OrderCurrencyHandlerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var CurrencyProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $currencyProvider;
+    private $currencyProvider;
 
-    /**
-     * @var OrderCurrencyHandler
-     */
-    protected $handler;
+    /** @var OrderCurrencyHandler */
+    private $handler;
 
     protected function setUp(): void
     {
-        $this->currencyProvider = $this->getMockBuilder(CurrencyProviderInterface::class)
-            ->setMethods(['getDefaultCurrency'])
-            ->getMockForAbstractClass() ;
+        $this->currencyProvider = $this->createMock(CurrencyProviderInterface::class);
 
         $this->handler = new OrderCurrencyHandler($this->currencyProvider);
     }

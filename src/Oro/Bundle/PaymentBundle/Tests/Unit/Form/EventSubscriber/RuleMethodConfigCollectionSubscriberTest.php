@@ -29,17 +29,13 @@ use Symfony\Component\Form\FormEvents;
 
 class RuleMethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
 {
-    const PAYMENT_TYPE = 'payment_type_mock';
+    private const PAYMENT_TYPE = 'payment_type_mock';
 
-    /**
-     * @var RuleMethodConfigCollectionSubscriberProxy
-     */
-    protected $subscriber;
+    /** @var RuleMethodConfigCollectionSubscriberProxy */
+    private $subscriber;
 
-    /**
-     * @var CompositePaymentMethodProvider
-     */
-    protected $paymentMethodProvider;
+    /** @var CompositePaymentMethodProvider */
+    private $paymentMethodProvider;
 
     protected function setUp(): void
     {
@@ -93,7 +89,7 @@ class RuleMethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
      */
     public function getExtensions()
     {
-        $roundingService = $this->getMockBuilder(RoundingServiceInterface::class)->getMock();
+        $roundingService = $this->createMock(RoundingServiceInterface::class);
         $roundingService->expects($this->any())
             ->method('getPrecision')
             ->willReturn(4);
@@ -101,16 +97,13 @@ class RuleMethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
             ->method('getRoundType')
             ->willReturn(RoundingServiceInterface::ROUND_HALF_UP);
 
-        /** @var CurrencyProviderInterface|\PHPUnit\Framework\MockObject\MockObject $currencyProvider */
-        $currencyProvider = $this->getMockBuilder(CurrencyProviderInterface::class)
-            ->disableOriginalConstructor()->getMockForAbstractClass();
+        $currencyProvider = $this->createMock(CurrencyProviderInterface::class);
         $currencyProvider->expects($this->any())
             ->method('getCurrencyList')
             ->willReturn(['USD']);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|TranslatableEntityType $registry */
         $translatableEntity = $this->getMockBuilder(TranslatableEntityType::class)
-            ->setMethods(['configureOptions', 'buildForm'])
+            ->onlyMethods(['configureOptions', 'buildForm'])
             ->disableOriginalConstructor()
             ->getMock();
 

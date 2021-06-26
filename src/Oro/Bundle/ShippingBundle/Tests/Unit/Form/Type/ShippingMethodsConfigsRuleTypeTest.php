@@ -42,40 +42,26 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var MethodTypeConfigCollectionSubscriberProxy
-     */
-    protected $methodTypeConfigCollectionSubscriber;
+    /** @var MethodTypeConfigCollectionSubscriberProxy */
+    private $methodTypeConfigCollectionSubscriber;
 
-    /**
-     * @var MethodConfigCollectionSubscriberProxy
-     */
-    protected $methodConfigCollectionSubscriber;
+    /** @var MethodConfigCollectionSubscriberProxy */
+    private $methodConfigCollectionSubscriber;
 
-    /**
-     * @var MethodConfigSubscriberProxy
-     */
-    protected $methodConfigSubscriber;
+    /** @var MethodConfigSubscriberProxy */
+    private $methodConfigSubscriber;
 
-    /**
-     * @var CompositeShippingMethodProvider
-     */
-    protected $shippingMethodProvider;
+    /** @var CompositeShippingMethodProvider */
+    private $shippingMethodProvider;
 
-    /**
-     * @var ShippingMethodChoicesProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $choicesProvider;
+    /** @var ShippingMethodChoicesProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $choicesProvider;
 
-    /**
-     * @var ShippingMethodIconProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $iconProvider;
+    /** @var ShippingMethodIconProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $iconProvider;
 
-    /**
-     * @var AssetHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $assetHelper;
+    /** @var AssetHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $assetHelper;
 
     protected function setUp(): void
     {
@@ -99,13 +85,12 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
         $this->methodConfigCollectionSubscriber
             ->setFactory($this->factory)->setMethodRegistry($this->shippingMethodProvider);
 
-        /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject $translator */
         $translator = $this->createMock(TranslatorInterface::class);
-        $translator->expects(static::any())
+        $translator->expects(self::any())
             ->method('trans')
-            ->will(static::returnCallback(function ($message) {
-                return $message.'_translated';
-            }));
+            ->willReturnCallback(function ($message) {
+                return $message . '_translated';
+            });
     }
 
     public function testGetBlockPrefix()
@@ -116,10 +101,8 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitDataProvider
-     *
-     * @param array|null $data
      */
-    public function testSubmit($data)
+    public function testSubmit(ShippingMethodsConfigsRule $data)
     {
         $form = $this->factory->create(ShippingMethodsConfigsRuleType::class, $data);
 
@@ -180,10 +163,7 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
         $this->assertEquals($shippingRule, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         return [
             [new ShippingMethodsConfigsRule()],
@@ -229,15 +209,13 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
             ->method('getRoundType')
             ->willReturn(RoundingServiceInterface::ROUND_HALF_UP);
 
-        $currencyProvider = $this->getMockBuilder(CurrencyProviderInterface::class)
-            ->disableOriginalConstructor()->getMockForAbstractClass();
+        $currencyProvider = $this->createMock(CurrencyProviderInterface::class);
         $currencyProvider->expects($this->any())
             ->method('getCurrencyList')
             ->willReturn(['USD']);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|TranslatableEntityType $registry */
-        $translatableEntity = $this->getMockBuilder('Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType')
-            ->setMethods(['configureOptions', 'buildForm'])
+        $translatableEntity = $this->getMockBuilder(TranslatableEntityType::class)
+            ->onlyMethods(['configureOptions', 'buildForm'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -252,8 +230,8 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
                         new ShippingMethodTypeConfigCollectionType($this->methodTypeConfigCollectionSubscriber),
                     CurrencySelectionType::class => new CurrencySelectionType(
                         $currencyProvider,
-                        $this->getMockBuilder(LocaleSettings::class)->disableOriginalConstructor()->getMock(),
-                        $this->getMockBuilder(CurrencyNameHelper::class)->disableOriginalConstructor()->getMock()
+                        $this->createMock(LocaleSettings::class),
+                        $this->createMock(CurrencyNameHelper::class)
                     ),
                     ShippingMethodsConfigsRuleDestinationType::class => new ShippingMethodsConfigsRuleDestinationType(
                         new AddressCountryAndRegionSubscriberStub()

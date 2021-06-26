@@ -115,7 +115,8 @@ class ProductTaxExtensionTest extends AbstractTaxExtensionTest
     {
         $mock = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getId', 'setTaxCode', 'getTaxCode'])
+            ->onlyMethods(['getId'])
+            ->addMethods(['setTaxCode', 'getTaxCode'])
             ->getMock();
         $mock->expects($this->any())
             ->method('getId')
