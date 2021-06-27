@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Bundle\Tests\Unit\Factory;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Factory;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;

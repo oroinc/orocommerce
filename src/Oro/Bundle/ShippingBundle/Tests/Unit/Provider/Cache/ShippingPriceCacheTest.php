@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Provider\Cache;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Cache;
 
 use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
@@ -8,6 +8,7 @@ use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShipp
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextCacheKeyGenerator;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
+use Oro\Bundle\ShippingBundle\Provider\Cache\ShippingPriceCache;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class ShippingPriceCacheTest extends \PHPUnit\Framework\TestCase

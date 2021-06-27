@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\EventListener\Tests\Unit;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;

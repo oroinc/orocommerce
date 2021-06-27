@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\VisibilityBundle\Tests\Unit\EventListener;
 
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ProductBundle\Event\RestrictProductVariantEvent;

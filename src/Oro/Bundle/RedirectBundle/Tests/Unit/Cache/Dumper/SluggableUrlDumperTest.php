@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\RedirectBundle\Tests\Cache\Dumper;
+namespace Oro\Bundle\RedirectBundle\Tests\Unit\Cache\Dumper;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;

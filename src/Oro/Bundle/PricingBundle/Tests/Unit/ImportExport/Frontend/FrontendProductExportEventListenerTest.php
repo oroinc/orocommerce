@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PricingBundle\Tests\Unit\ImportExport\Frontend\EventListener;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\ImportExport\Frontend;
 
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;

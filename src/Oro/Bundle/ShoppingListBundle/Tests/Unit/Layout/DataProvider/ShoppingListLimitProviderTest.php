@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Layout\DataProvider;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Layout\DataProvider;
 
 use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\ShoppingListLimitProvider;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager;

@@ -1,6 +1,6 @@
 <?php
 
-namespace OrderBundle\Tests\Functional\EventListener\ORM;
+namespace Oro\Bundle\OrderBundle\Tests\Functional\EventListener\ORM;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;

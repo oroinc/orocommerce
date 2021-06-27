@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PricingBundle\Tests\Unit\Datagrid;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;

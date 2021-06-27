@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CatalogBundle\Tests\Functional\ImportExport\Strategy;
+namespace Oro\Bundle\CatalogBundle\Tests\Functional\ImportExport\Normalizer;
 
 use Oro\Bundle\CatalogBundle\ImportExport\Normalizer\CategoryNormalizer;
 use Oro\Bundle\CatalogBundle\Tests\Functional\CatalogTrait;

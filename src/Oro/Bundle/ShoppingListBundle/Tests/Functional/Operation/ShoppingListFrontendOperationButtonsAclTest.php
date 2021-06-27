@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ShoppingListBundle\Tests\Functional;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Operation;
 
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserACLData;

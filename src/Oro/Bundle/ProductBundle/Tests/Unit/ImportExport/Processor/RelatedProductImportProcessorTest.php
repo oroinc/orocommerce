@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\ImportExport\Processor;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\ImportExport\Processor;
 
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\QueryBuilder;
@@ -14,6 +14,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Entity\Repository\RelatedItem\RelatedProductRepository;
+use Oro\Bundle\ProductBundle\ImportExport\Processor\RelatedProductImportProcessor;
 use Oro\Bundle\ProductBundle\RelatedItem\AbstractRelatedItemConfigProvider;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Component\Testing\Unit\EntityTrait;

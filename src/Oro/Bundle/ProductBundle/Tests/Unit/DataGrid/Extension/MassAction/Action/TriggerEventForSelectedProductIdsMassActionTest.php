@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\Unit\DataGrid\Extension\Action\MassAction;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\DataGrid\Extension\MassAction\Action;
 
 use Oro\Bundle\DataGridBundle\Extension\Action\ActionConfiguration;
 use Oro\Bundle\ProductBundle\DataGrid\Extension\MassAction\Action\TriggerEventForSelectedProductIdsMassAction;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\TaxBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\EventListener\OrderTax;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ManagerRegistry;

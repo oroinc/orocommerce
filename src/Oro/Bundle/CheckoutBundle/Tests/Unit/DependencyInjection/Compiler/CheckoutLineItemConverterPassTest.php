@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CheckoutBundle\Tests\Unit\DependencyInjection;
+namespace Oro\Bundle\CheckoutBundle\Tests\Unit\DependencyInjection\Compiler;
 
 use Oro\Bundle\CheckoutBundle\DependencyInjection\Compiler\CheckoutLineItemConverterPass;
 use Symfony\Component\DependencyInjection\Argument\IteratorArgument;

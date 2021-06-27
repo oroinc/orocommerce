@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\OrderBundle\Bundle\Tests\Unit\Factory;
+namespace Oro\Bundle\OrderBundle\Tests\Unit\Factory;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
