@@ -2,6 +2,8 @@
 @fixture-OroProductBundle:ProductAttributesFixture.yml
 
 Feature: Zoom for Product image attributes
+  Check zoom for Product image attributes
+
   Scenario: Feature Background
     Given sessions active:
       | Admin | first_session  |
