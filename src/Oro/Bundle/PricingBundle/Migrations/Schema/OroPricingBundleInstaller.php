@@ -33,7 +33,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
      */
     public function getMigrationVersion()
     {
-        return 'v1_18';
+        return 'v1_19';
     }
 
     /**
@@ -437,6 +437,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('name', 'string', ['length' => 255]);
         $table->addColumn('field_name', 'string', ['length' => 255]);
+        $table->addColumn('is_enabled_in_export', 'boolean', ['notnull' => true, 'default' => false]);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->setPrimaryKey(['id']);

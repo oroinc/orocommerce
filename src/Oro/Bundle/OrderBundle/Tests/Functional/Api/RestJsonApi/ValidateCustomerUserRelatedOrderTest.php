@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CustomerBundle\Tests\Functional\Api\RestJsonApi;
+namespace Oro\Bundle\OrderBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
@@ -29,12 +29,12 @@ class ValidateCustomerUserRelatedOrderTest extends RestJsonApiTestCase
 
         /** @var User $user */
         $user = $this->getReference('user');
-        foreach ($user->getRoles() as $existingRole) {
-            $user->removeRole($existingRole);
+        foreach ($user->getUserRoles() as $existingRole) {
+            $user->removeUserRole($existingRole);
         }
         /** @var Role $newRole */
         $newRole = $this->getEntityManager()->getRepository(Role::class)->findOneBy(['role' => 'ROLE_USER']);
-        $user->addRole($newRole);
+        $user->addUserRole($newRole);
 
         self::getContainer()->get('oro_user.manager')->updateUser($user);
 
@@ -106,7 +106,7 @@ class ValidateCustomerUserRelatedOrderTest extends RestJsonApiTestCase
             false
         );
 
-        $this->assertResponseValidationError(
+        self::assertResponseValidationError(
             [
                 'title'  => 'customer related entities constraint',
                 'detail' => 'Can\'t change customer because you don\'t have permissions for updating'

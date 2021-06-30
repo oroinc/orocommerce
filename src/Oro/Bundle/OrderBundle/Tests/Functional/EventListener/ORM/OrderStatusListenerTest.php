@@ -1,8 +1,9 @@
 <?php
 
-namespace OrderBundle\Tests\Functional\EventListener\ORM;
+namespace Oro\Bundle\OrderBundle\Tests\Functional\EventListener\ORM;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerAddresses;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
@@ -24,6 +25,8 @@ use Symfony\Bridge\Doctrine\ManagerRegistry;
  */
 class OrderStatusListenerTest extends WebTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     /** @var ManagerRegistry */
     protected $managerRegistry;
 
@@ -35,7 +38,7 @@ class OrderStatusListenerTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
 
         $this->managerRegistry = $this->getContainer()->get('doctrine');
-        $this->configManager = $this->getContainer()->get('oro_config.manager');
+        $this->configManager = self::getConfigManager('global');
 
         $this->loadFixtures([
             LoadCustomers::class,

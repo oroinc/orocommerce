@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Functional\Layout\DataProvider;
 
-use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\SearchBundle\Tests\Functional\SearchExtensionTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -20,7 +19,7 @@ class WebCatalogBreadcrumbProviderTest extends WebTestCase
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
+            self::generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
         $this->client->useHashNavigation(false);
 
@@ -30,27 +29,28 @@ class WebCatalogBreadcrumbProviderTest extends WebTestCase
             ]
         );
 
-        $this->getContainer()->get('oro_website_search.indexer')->reindex();
+        self::getContainer()->get('oro_website_search.indexer')->reindex();
     }
 
     /**
      * @dataProvider getSlugs
-     * @param $reference string
-     * @param $expectedCount int
-     * @param $expectedBreadcrumbs array
+     *
+     * @param string $reference
+     * @param int $expectedCount
+     * @param array $expectedBreadcrumbs
      */
-    public function testBreadcrumbs($reference, $expectedCount, $expectedBreadcrumbs)
+    public function testBreadcrumbs(string $reference, int $expectedCount, array $expectedBreadcrumbs): void
     {
         $crawler = $this->client->request('GET', '/'.$reference);
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
 
-        static::assertStringContainsString(
+        self::assertStringContainsString(
             $reference,
             $crawler->filter('title')->html()
         );
 
-        static::assertStringContainsString(
+        self::assertStringContainsString(
             $reference,
             $crawler->filter('h1.category-title')->html()
         );
@@ -58,19 +58,20 @@ class WebCatalogBreadcrumbProviderTest extends WebTestCase
         $breadcrumbs = [];
         /** @var \DOMElement $item */
         foreach ($crawler->filter('.breadcrumbs__item a') as $key => $item) {
-            $this->assertEquals($expectedBreadcrumbs[$key], $item->textContent);
+            self::assertEquals($expectedBreadcrumbs[$key], $item->textContent);
             $breadcrumbs[] = trim($item->textContent);
         }
 
-        $this->assertCount($expectedCount, $breadcrumbs);
+        self::assertCount($expectedCount, $breadcrumbs);
     }
 
-    public function testGetItemsByProducWithBaseUrl()
+    public function testBreadcrumbsWhenInSubfolder(): void
     {
-        //Emulate subfolder request
+        // Emulates subfolder request.
+        $baseUrl = '/custom/base/url/';
         $crawler = $this->client->request(
             'GET',
-            '/custom/base/url/app.php/' . LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1_1,
+            $baseUrl . 'app.php/' . LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1_1,
             [],
             [],
             [
@@ -86,54 +87,49 @@ class WebCatalogBreadcrumbProviderTest extends WebTestCase
             $breadcrumbUrls[] = $item->getAttribute('href');
         }
 
-        static::assertCount(4, $breadcrumbUrls);
-        static::assertStringContainsString('/custom/base/url/app.php/', $breadcrumbUrls[0]);
-        static::assertStringContainsString('/custom/base/url/app.php/', $breadcrumbUrls[1]);
-        static::assertStringContainsString('/custom/base/url/app.php/', $breadcrumbUrls[2]);
-        static::assertStringContainsString('/custom/base/url/app.php/', $breadcrumbUrls[3]);
+        self::assertCount(3, $breadcrumbUrls);
+        self::assertStringContainsString($baseUrl . 'app.php/', $breadcrumbUrls[0]);
+        self::assertStringContainsString($baseUrl . 'app.php/', $breadcrumbUrls[1]);
+        self::assertStringContainsString($baseUrl . 'app.php/', $breadcrumbUrls[2]);
     }
 
     /**
      * @return array
      */
-    public function getSlugs()
+    public function getSlugs(): array
     {
         return [
             [
                 LoadContentNodesData::CATALOG_1_ROOT,
-                2,
+                1,
                 [
-                    'All Products',
-                    LoadCategoryData::FIRST_LEVEL,
+                    LoadContentNodesData::CATALOG_1_ROOT,
                 ]
             ],
             [
                 LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1,
-                3,
+                2,
                 [
-                    'All Products',
-                    LoadCategoryData::FIRST_LEVEL,
-                    LoadCategoryData::SECOND_LEVEL1,
+                    LoadContentNodesData::CATALOG_1_ROOT,
+                    LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1,
                 ]
             ],
             [
                 LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1_1,
-                4,
+                3,
                 [
-                    'All Products',
-                    LoadCategoryData::FIRST_LEVEL,
-                    LoadCategoryData::SECOND_LEVEL1,
-                    LoadCategoryData::THIRD_LEVEL1,
+                    LoadContentNodesData::CATALOG_1_ROOT,
+                    LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1,
+                    LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1_1,
                 ]
             ],
             [
                 LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1_2,
-                4,
+                3,
                 [
-                    'All Products',
-                    LoadCategoryData::FIRST_LEVEL,
-                    LoadCategoryData::SECOND_LEVEL2,
-                    LoadCategoryData::THIRD_LEVEL2,
+                    LoadContentNodesData::CATALOG_1_ROOT,
+                    LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1,
+                    LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1_2
                 ]
             ],
         ];

@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CatalogBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\InventoryBundle\EventListener\CategoryUpcomingFormViewListener;
 use Oro\Bundle\UIBundle\Tests\Unit\Fallback\AbstractFallbackFieldsFormViewTest;

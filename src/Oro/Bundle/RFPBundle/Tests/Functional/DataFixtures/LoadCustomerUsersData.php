@@ -130,7 +130,7 @@ class LoadCustomerUsersData extends AbstractFixture implements ContainerAwareInt
                 ->setSalt('')
                 ->setPlainPassword($user['password'])
                 ->setOrganization($organization)
-                ->addRole($role)
+                ->addUserRole($role)
             ;
 
             $this->setReference($entity->getEmail(), $entity);

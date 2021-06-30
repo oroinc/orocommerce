@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Autocomplete;
 
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler;
@@ -19,6 +20,8 @@ use Symfony\Contracts\EventDispatcher\Event;
  */
 class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     /**
      * @var Event
      */
@@ -227,7 +230,7 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
     {
         $key = Configuration::getConfigKeyByName(Configuration::ALLOW_PARTIAL_PRODUCT_SEARCH);
 
-        $configManager = $this->getContainer()->get('oro_config.manager');
+        $configManager = self::getConfigManager('global');
         $originalValue = $configManager->get($key);
         $configManager->set($key, true);
         $configManager->flush();

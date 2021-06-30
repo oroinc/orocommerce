@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Model;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
@@ -16,6 +17,8 @@ use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 class CombinedPriceListTreeHandlerTest extends WebTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     /**
      * @var CombinedPriceListTreeHandler
      */
@@ -40,13 +43,12 @@ class CombinedPriceListTreeHandlerTest extends WebTestCase
 
         $this->websiteManager = $this->createMock(WebsiteManager::class);
 
-        /** @var ConfigManager $configManager */
-        $this->configManager = $this->getContainer()->get('oro_config.global');
+        $this->configManager = self::getConfigManager('global');
 
         $this->handler = new CombinedPriceListTreeHandler(
             $this->getContainer()->get('doctrine'),
             $this->websiteManager,
-            $this->configManager
+            self::getConfigManager(null)
         );
     }
 

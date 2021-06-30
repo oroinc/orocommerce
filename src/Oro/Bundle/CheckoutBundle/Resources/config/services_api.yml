@@ -38,7 +38,7 @@ services:
         arguments:
             - '@oro_checkout.api.guest_checkout_checker'
             - '@oro_api.doctrine_helper'
-            - ['customer', 'roles', 'addresses']
+            - ['customer', 'userRoles', 'addresses']
         tags:
             - { name: oro.api.processor, action: get_config, extra: '!identifier_fields_only&!descriptions', requestType: frontend, class: Oro\Bundle\CustomerBundle\Entity\CustomerUser, targetAction: create, priority: -250 }
 
@@ -64,7 +64,7 @@ services:
         class: Oro\Bundle\CheckoutBundle\Api\Processor\ConfigureGuestCheckoutReadonlyFields
         arguments:
             - '@oro_checkout.api.guest_checkout_checker'
-            - ['customer', 'roles']
+            - ['customer', 'userRoles']
         tags:
             - { name: oro.api.processor, action: get_config, extra: '!identifier_fields_only&!descriptions', requestType: frontend, class: Oro\Bundle\CustomerBundle\Entity\CustomerUser, targetAction: create, priority: -250 }
 

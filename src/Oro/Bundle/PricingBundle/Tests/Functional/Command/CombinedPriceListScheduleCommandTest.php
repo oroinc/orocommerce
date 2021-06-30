@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Command;
 
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueAssertTrait;
@@ -31,6 +32,7 @@ use Oro\Component\MessageQueue\Client\Message;
 class CombinedPriceListScheduleCommandTest extends WebTestCase
 {
     use MessageQueueAssertTrait;
+    use ConfigManagerAwareTestTrait;
 
     protected function setUp(): void
     {
@@ -39,7 +41,7 @@ class CombinedPriceListScheduleCommandTest extends WebTestCase
         $this->getOptionalListenerManager()->enableListener('oro_pricing.entity_listener.product_price_cpl');
         $this->getOptionalListenerManager()->enableListener('oro_pricing.entity_listener.price_list_to_product');
 
-        self::getContainer()->get('oro_config.global')
+        self::getConfigManager('global')
             ->set('oro_pricing.price_strategy', MinimalPricesCombiningStrategy::NAME);
     }
 

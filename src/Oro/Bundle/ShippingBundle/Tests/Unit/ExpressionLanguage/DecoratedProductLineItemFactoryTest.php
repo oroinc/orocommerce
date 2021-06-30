@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Tests\Unit\EventListenerExpressionLanguage;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\ExpressionLanguage;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ProductBundle\Entity\Product;

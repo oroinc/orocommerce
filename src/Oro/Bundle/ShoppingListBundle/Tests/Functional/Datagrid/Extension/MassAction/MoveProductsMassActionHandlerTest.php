@@ -51,7 +51,7 @@ class MoveProductsMassActionHandlerTest extends WebTestCase
         $request = new Request();
         $request->setMethod(Request::METHOD_POST);
 
-        $container = $this->getContainer();
+        $container = self::getContainer();
         $container->get('request_stack')
             ->push($request);
 
@@ -77,14 +77,14 @@ class MoveProductsMassActionHandlerTest extends WebTestCase
             )
         );
 
-        $this->assertInstanceOf(MassActionResponse::class, $result);
-        $this->assertTrue($result->isSuccessful());
-        $this->assertEquals('One entity has been moved successfully.', $result->getMessage());
-        $this->assertEquals(['count' => 1], $result->getOptions());
+        self::assertInstanceOf(MassActionResponse::class, $result);
+        self::assertTrue($result->isSuccessful());
+        self::assertEquals('One entity has been moved successfully.', $result->getMessage());
+        self::assertEquals(['count' => 1], $result->getOptions());
 
         $lineItem = $this->getReference(LoadShoppingListLineItems::LINE_ITEM_1);
 
-        $this->assertEquals($targetShoppingList->getId(), $lineItem->getShoppingList()->getId());
+        self::assertEquals($targetShoppingList->getId(), $lineItem->getShoppingList()->getId());
     }
 
     /**
@@ -109,12 +109,12 @@ class MoveProductsMassActionHandlerTest extends WebTestCase
             )
         );
 
-        $this->assertInstanceOf(MassActionResponse::class, $result);
-        $this->assertTrue($result->isSuccessful());
-        $this->assertEquals('One entity has been moved successfully.', $result->getMessage());
-        $this->assertEquals(['count' => 1], $result->getOptions());
+        self::assertInstanceOf(MassActionResponse::class, $result);
+        self::assertTrue($result->isSuccessful());
+        self::assertEquals('One entity has been moved successfully.', $result->getMessage());
+        self::assertEquals(['count' => 1], $result->getOptions());
 
-        $this->assertEquals($targetShoppingList->getId(), $lineItem->getShoppingList()->getId());
+        self::assertEquals($targetShoppingList->getId(), $lineItem->getShoppingList()->getId());
     }
 
     /**
@@ -148,14 +148,14 @@ class MoveProductsMassActionHandlerTest extends WebTestCase
             )
         );
 
-        $this->assertInstanceOf(MassActionResponse::class, $result);
-        $this->assertTrue($result->isSuccessful());
-        $this->assertEquals('5 items have been moved successfully.', $result->getMessage());
-        $this->assertEquals(['count' => 5], $result->getOptions());
+        self::assertInstanceOf(MassActionResponse::class, $result);
+        self::assertTrue($result->isSuccessful());
+        self::assertEquals('5 items have been moved successfully.', $result->getMessage());
+        self::assertEquals(['count' => 5], $result->getOptions());
 
         $lineItem = $this->getReference(LoadShoppingListLineItems::LINE_ITEM_10);
 
-        $this->assertEquals($targetShoppingList->getId(), $lineItem->getShoppingList()->getId());
+        self::assertEquals($targetShoppingList->getId(), $lineItem->getShoppingList()->getId());
     }
 
     /**
@@ -163,7 +163,7 @@ class MoveProductsMassActionHandlerTest extends WebTestCase
      */
     private function getCustomerUser(): CustomerUser
     {
-        return $this->getContainer()
+        return self::getContainer()
             ->get('doctrine')
             ->getRepository(CustomerUser::class)
             ->findOneBy(['username' => LoadCustomerUserData::AUTH_USER]);
@@ -180,7 +180,7 @@ class MoveProductsMassActionHandlerTest extends WebTestCase
             false,
             'k',
             $customerUser->getOrganization(),
-            $customerUser->getRoles()
+            $customerUser->getUserRoles()
         );
     }
 
@@ -191,7 +191,7 @@ class MoveProductsMassActionHandlerTest extends WebTestCase
      */
     private function getDatagrid(CustomerUser $customerUser, ShoppingList $shoppingList): DatagridInterface
     {
-        return $this->getContainer()
+        return self::getContainer()
             ->get('oro_datagrid.datagrid.manager')
             ->getDatagrid(
                 'frontend-customer-user-shopping-list-edit-grid',
@@ -208,7 +208,7 @@ class MoveProductsMassActionHandlerTest extends WebTestCase
     private function getQuery(ShoppingList $shoppingList): Query
     {
         /** @var LineItemRepository $repository */
-        $repository = $this->getContainer()
+        $repository = self::getContainer()
             ->get('doctrine')
             ->getManagerForClass(LineItem::class)
             ->getrepository(LineItem::class);
@@ -230,7 +230,7 @@ class MoveProductsMassActionHandlerTest extends WebTestCase
         DatagridInterface $datagrid,
         SelectedItems $selectedItems
     ): IterableResultInterface {
-        return $this->getContainer()
+        return self::getContainer()
             ->get('oro_datagrid.extension.mass_action.iterable_result_factory_registry')
             ->createIterableResult(
                 $datagrid->getAcceptedDatasource(),

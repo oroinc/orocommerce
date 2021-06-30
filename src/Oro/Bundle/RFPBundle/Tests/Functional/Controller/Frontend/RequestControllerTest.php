@@ -3,6 +3,7 @@
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Controller\Frontend;
 
 use Doctrine\ORM\EntityManager;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
@@ -22,6 +23,7 @@ use Symfony\Component\DomCrawler\Field\InputFormField;
 class RequestControllerTest extends WebTestCase
 {
     use ProductPriceReference;
+    use ConfigManagerAwareTestTrait;
 
     const PHONE = '2-(999)507-4625';
     const COMPANY = 'google';
@@ -65,7 +67,7 @@ class RequestControllerTest extends WebTestCase
 
     public function testIndexAccessDeniedForAnonymousUsers()
     {
-        $configManager = $this->getContainer()->get('oro_config.manager');
+        $configManager = self::getConfigManager('global');
         $configManager->set('oro_rfp.guest_rfp', true);
         $configManager->flush();
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PaymentTermBundle\Tests\Unit\Datagrid;
+namespace Oro\Bundle\PaymentTermBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;

@@ -728,6 +728,9 @@ oro_behat_extension:
       selector: '.grid-row'
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGridRow
 
+    Frontend Product Grid Export Button:
+      selector: 'button.export-button'
+
     ProductRelatedProducts:
       selector: '.product-view__related-products .embedded-list__item'
 
@@ -1345,6 +1348,7 @@ oro_behat_extension:
         - '@OroProductBundle/Tests/Behat/Features/product'
         - '@OroProductBundle/Tests/Behat/Features/product-search'
         - '@OroProductBundle/Tests/Behat/Features/product-attributes'
+        - '@OroProductBundle/Tests/Behat/Features/frontend-product-export'
     OroProductBundleRelatedItems:
       contexts:
         - OroApplicationBundle::CommerceMainContext

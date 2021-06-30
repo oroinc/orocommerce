@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\Service;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Service;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\Service\SingleUnitModeService;

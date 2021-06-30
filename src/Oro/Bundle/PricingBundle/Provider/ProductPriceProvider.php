@@ -61,7 +61,7 @@ class ProductPriceProvider implements ProductPriceProviderInterface
         array $products,
         array $currencies,
         string $unitCode = null
-    ):array {
+    ): array {
         $currencies = $this->getAllowedCurrencies($scopeCriteria, $currencies);
         if (empty($currencies)) {
             // There is no sense to get prices because of no allowed currencies present.
@@ -70,7 +70,7 @@ class ProductPriceProvider implements ProductPriceProviderInterface
 
         $productsIds = [];
         foreach ($products as $product) {
-            $productId = $product->getId();
+            $productId = is_a($product, Product::class) ? $product->getId() : (int) $product;
             $productsIds[$productId] = $productId;
         }
 
@@ -89,7 +89,7 @@ class ProductPriceProvider implements ProductPriceProviderInterface
      * @param array $productPriceCriteria
      * @param ProductPriceScopeCriteriaInterface $scopeCriteria
      *
-     * @return array
+     * @return Price[]
      */
     public function getMatchedPrices(
         array $productPriceCriteria,
@@ -102,7 +102,7 @@ class ProductPriceProvider implements ProductPriceProviderInterface
      * @param array $productPriceCriteria
      * @param ProductPriceScopeCriteriaInterface $scopeCriteria
      *
-     * @return array
+     * @return Price[]
      */
     protected function getActualMatchedPrices(
         array $productPriceCriteria,
@@ -157,7 +157,7 @@ class ProductPriceProvider implements ProductPriceProviderInterface
     }
 
     /**
-     * @param array $prices
+     * @param ProductPriceInterface[] $prices
      */
     private function sortPrices(array &$prices)
     {
@@ -178,7 +178,7 @@ class ProductPriceProvider implements ProductPriceProviderInterface
      * @param array|null $productUnitCodes
      * @param array|null $currencies
      *
-     * @return array
+     * @return ProductPriceInterface[]
      */
     private function getPrices(
         ProductPriceScopeCriteriaInterface $scopeCriteria,

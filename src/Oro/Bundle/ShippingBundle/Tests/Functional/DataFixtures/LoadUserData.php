@@ -75,7 +75,7 @@ class LoadUserData extends AbstractLoadMultipleUserData implements ContainerAwar
             'password'  => self::USER_VIEWER,
             'firstname' => 'ShippingUser1FN',
             'lastname'  => 'ShippingUser1LN',
-            'roles'     => [self::ROLE_VIEW],
+            'userRoles'     => [self::ROLE_VIEW],
         ],
         [
             'email'     => 'shipping-user-editor@example.com',
@@ -83,7 +83,7 @@ class LoadUserData extends AbstractLoadMultipleUserData implements ContainerAwar
             'password'  => self::USER_EDITOR,
             'firstname' => 'ShippingUser2FN',
             'lastname'  => 'ShippingUser2LN',
-            'roles'     => [self::ROLE_VIEW, self::ROLE_EDIT],
+            'userRoles'     => [self::ROLE_VIEW, self::ROLE_EDIT],
         ],
         [
             'email'     => 'shipping-user-viewer-creator@example.com',
@@ -91,7 +91,7 @@ class LoadUserData extends AbstractLoadMultipleUserData implements ContainerAwar
             'password'  => self::USER_VIEWER_CREATOR,
             'firstname' => 'ShippingUser2FN',
             'lastname'  => 'ShippingUser2LN',
-            'roles'     => [self::ROLE_VIEW, self::ROLE_CREATE],
+            'userRoles'     => [self::ROLE_VIEW, self::ROLE_CREATE],
         ]
     ];
 

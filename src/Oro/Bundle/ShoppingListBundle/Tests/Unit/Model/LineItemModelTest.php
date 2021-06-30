@@ -1,6 +1,8 @@
 <?php
 
-namespace Oro\Bundle\ShoppingListBundle\Model;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Model;
+
+use Oro\Bundle\ShoppingListBundle\Model\LineItemModel;
 
 class LineItemModelTest extends \PHPUnit\Framework\TestCase
 {

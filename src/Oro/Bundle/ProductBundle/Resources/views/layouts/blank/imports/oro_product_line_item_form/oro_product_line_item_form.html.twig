@@ -81,7 +81,9 @@
             </div>
             <div class="hidden">
                 {{ form_widget(form._token) }}
-                {{ block_widget(block) }}
+                {% if render_rest %}
+                    {{ form_rest(form) }}
+                {% endif %}
             </div>
         </div>
     {% endif %}

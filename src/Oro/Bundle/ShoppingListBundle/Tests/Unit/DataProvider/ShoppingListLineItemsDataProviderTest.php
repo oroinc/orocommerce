@@ -28,8 +28,7 @@ class ShoppingListLineItemsDataProviderTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->registry = $this->getMockBuilder(ManagerRegistry::class)
-            ->setMethods(['getManagerForClass'])->disableOriginalConstructor()->getMockForAbstractClass();
+        $this->registry = $this->createMock(ManagerRegistry::class);
 
         $this->provider = new ShoppingListLineItemsDataProvider($this->registry);
     }
@@ -42,14 +41,12 @@ class ShoppingListLineItemsDataProviderTest extends TestCase
         ];
 
         $lazyCollection = $this->createMock(AbstractLazyCollection::class);
-        $lazyCollection
-            ->expects($this->once())
+        $lazyCollection->expects($this->once())
             ->method('isInitialized')
             ->willReturn(false);
 
         $shoppingList = $this->createMock(ShoppingList::class);
-        $shoppingList
-            ->expects($this->any())
+        $shoppingList->expects($this->any())
             ->method('getLineItems')
             ->willReturn($lazyCollection);
 
@@ -75,14 +72,11 @@ class ShoppingListLineItemsDataProviderTest extends TestCase
     public function testGetShoppingListLineItemsWhenArrayCollection(): void
     {
         $shoppingList = $this->createMock(ShoppingList::class);
-
-        $shoppingList
-            ->expects($this->any())
+        $shoppingList->expects($this->any())
             ->method('getLineItems')
             ->willReturn(new ArrayCollection());
 
-        $this->registry
-            ->expects($this->never())
+        $this->registry->expects($this->never())
             ->method('getManagerForClass');
 
         $this->assertEquals([], $this->provider->getShoppingListLineItems($shoppingList));
@@ -93,24 +87,19 @@ class ShoppingListLineItemsDataProviderTest extends TestCase
     public function testGetShoppingListLineItemsWhenEmptyPersistentCollection(): void
     {
         $lazyCollection = $this->createMock(AbstractLazyCollection::class);
-        $lazyCollection
-            ->expects($this->once())
+        $lazyCollection->expects($this->once())
             ->method('isInitialized')
             ->willReturn(true);
-
-        $lazyCollection
-            ->expects($this->once())
+        $lazyCollection->expects($this->once())
             ->method('toArray')
             ->willReturn([]);
 
         $shoppingList = $this->createMock(ShoppingList::class);
-        $shoppingList
-            ->expects($this->any())
+        $shoppingList->expects($this->any())
             ->method('getLineItems')
             ->willReturn($lazyCollection);
 
-        $this->registry
-            ->expects($this->never())
+        $this->registry->expects($this->never())
             ->method('getManagerForClass');
 
         $this->assertEquals([], $this->provider->getShoppingListLineItems($shoppingList));
@@ -131,9 +120,6 @@ class ShoppingListLineItemsDataProviderTest extends TestCase
         );
     }
 
-    /**
-     * @return array
-     */
     public function productsDataProvider(): array
     {
         $simple1 = $this->getEntity(Product::class, ['id' => 1, 'type' => Product::TYPE_SIMPLE]);

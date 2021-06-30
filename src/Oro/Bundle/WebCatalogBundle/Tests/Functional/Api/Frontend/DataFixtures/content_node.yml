@@ -27,7 +27,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUser:
         password: 'gxP1L8r86hrdUMg9wKdfnsS/EZC4a7jOIdn6BMzegqL2S6e+KBIuHCrDVciMdiR/64osNnabmFonwK8l09vQxA=='
         firstName: 'First Name <current()>'
         lastName: 'Last Name <current()>'
-        roles: ['@buyer']
+        userRoles: ['@buyer']
         website: '@website'
         owner: '@user'
         organization: '@organization'

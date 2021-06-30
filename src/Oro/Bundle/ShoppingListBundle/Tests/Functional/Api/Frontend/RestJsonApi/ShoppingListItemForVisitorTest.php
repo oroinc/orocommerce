@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Api\Frontend\RestJsonApi;
 
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\FrontendBundle\Tests\Functional\Api\FrontendRestJsonApiTestCase;
 use Oro\Bundle\SecurityBundle\Acl\AccessLevel;
 use Oro\Bundle\SecurityBundle\Test\Functional\RolePermissionExtension;
@@ -19,6 +20,7 @@ use Symfony\Component\HttpFoundation\Response;
 class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
 {
     use RolePermissionExtension;
+    use ConfigManagerAwareTestTrait;
 
     protected function setUp(): void
     {
@@ -83,7 +85,7 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
      */
     private function setGuestShoppingListFeatureStatus($status = true): void
     {
-        $configManager = $this->getContainer()->get('oro_config.global');
+        $configManager = self::getConfigManager('global');
         $configManager->set('oro_shopping_list.availability_for_guests', $status);
         $configManager->flush();
     }

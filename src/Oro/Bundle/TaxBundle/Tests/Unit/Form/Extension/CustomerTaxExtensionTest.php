@@ -28,7 +28,9 @@ class CustomerTaxExtensionTest extends AbstractCustomerTaxExtensionTest
         $event = $this->createEvent($customer);
 
         $taxCode = $this->createTaxCode(1);
-        $customer->expects($this->once())->method('setTaxCode')->with($taxCode);
+        $customer->expects($this->once())
+            ->method('setTaxCode')
+            ->with($taxCode);
         $this->assertTaxCodeAdd($event, $taxCode);
         $this->getExtension()->onPostSubmit($event);
     }
@@ -40,9 +42,13 @@ class CustomerTaxExtensionTest extends AbstractCustomerTaxExtensionTest
 
         $newTaxCode = $this->createTaxCode(1);
         $taxCodeWithCustomer = $this->createTaxCode(2);
-        $customer->expects($this->once())->method('getTaxCode')->willReturn($taxCodeWithCustomer);
+        $customer->expects($this->once())
+            ->method('getTaxCode')
+            ->willReturn($taxCodeWithCustomer);
         $this->assertTaxCodeAdd($event, $newTaxCode);
-        $customer->expects($this->once())->method('setTaxCode')->with($newTaxCode);
+        $customer->expects($this->once())
+            ->method('setTaxCode')
+            ->with($newTaxCode);
         $this->getExtension()->onPostSubmit($event);
     }
 
@@ -55,7 +61,8 @@ class CustomerTaxExtensionTest extends AbstractCustomerTaxExtensionTest
     {
         $mock = $this->getMockBuilder(Customer::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getTaxCode', 'setTaxCode', 'getId'])
+            ->onlyMethods(['getId'])
+            ->addMethods(['getTaxCode', 'setTaxCode'])
             ->getMock();
         $mock->expects($this->any())
             ->method('getId')

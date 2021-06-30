@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PricingBundle\Tests\Unit\ImportExport\Strategy;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\ImportExport\Writer;
 
 use Akeneo\Bundle\BatchBundle\Entity\StepExecution;
 use Doctrine\ORM\EntityManager;

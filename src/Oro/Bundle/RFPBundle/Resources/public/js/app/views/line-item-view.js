@@ -24,9 +24,7 @@ define(function(require) {
             ftid: '',
             selectors: {
                 quantitySelector: '[data-name="field__quantity"]',
-                unitSelector: '[data-name="field__product-unit"]',
-                priceSelector: '[data-role="lineitem-price"]',
-                currencySelector: '[data-role="lineitem-currency"]'
+                unitSelector: '[data-name="field__product-unit"]'
             },
             unitsRoute: 'oro_product_frontend_ajaxproductunit_productunits',
             compactUnits: false,

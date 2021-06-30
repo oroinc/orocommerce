@@ -55,7 +55,7 @@ class LoadOrderUsers extends AbstractFixture implements ContainerAwareInterface
             ->setFirstName($name . 'first_name')
             ->setLastName($name . 'last_name')
             ->setEmail($name . '@example.com')
-            ->addRole($role)
+            ->addUserRole($role)
             ->setEnabled(true);
 
         $userManager->updateUser($user, false);

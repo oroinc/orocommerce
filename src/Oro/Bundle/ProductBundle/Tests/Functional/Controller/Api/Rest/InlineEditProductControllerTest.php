@@ -1,7 +1,8 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller\Api\Rest;
 
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
@@ -12,6 +13,8 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class InlineEditProductControllerTest extends WebTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     const NEW_PRODUCT_NAME = 'New default product-1 name';
     const NEW_PRODUCT_SLUG_PROTOTYPE = 'new-default-product-1-name';
     const NEW_INVENTORY_STATUS_ID = 'out_of_stock';
@@ -89,7 +92,7 @@ class InlineEditProductControllerTest extends WebTestCase
         $this->assertEquals(LoadProductData::PRODUCT_1_DEFAULT_SLUG_PROTOTYPE, $product1->getDefaultSlugPrototype());
         $this->assertTrue($product1->getSlugPrototypesWithRedirect()->getCreateRedirect());
 
-        $configManager = $this->getContainer()->get('oro_config.global');
+        $configManager = self::getConfigManager('global');
         $configManager->set('oro_redirect.redirect_generation_strategy', $redirectStrategy);
         $configManager->flush();
         $configManager->reload();

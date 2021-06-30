@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ShoppingListBundle\Bundle\Tests\Unit\DependencyInjection;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\DependencyInjection;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\DependencyInjection\Configuration;

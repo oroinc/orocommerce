@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\InventoryBundle\Tests\Model\Data;
+namespace Oro\Bundle\InventoryBundle\Tests\Unit\Model\Data;
 
 use Doctrine\Inflector\Rules\English\InflectorFactory;
 use Oro\Bundle\InventoryBundle\Model\Data\ProductUnitTransformer;

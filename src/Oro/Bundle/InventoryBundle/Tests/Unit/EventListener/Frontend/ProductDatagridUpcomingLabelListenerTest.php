@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener\Frontend;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;

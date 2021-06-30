@@ -249,7 +249,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUser:
         firstName: 'John'
         middleName: 'Edgar'
         lastName: 'Doo'
-        roles: ['@admin']
+        userRoles: ['@admin']
         customer: '@customer1'
         website: '@website'
         owner: '@user'
@@ -261,7 +261,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUser:
         password: 'gxP1L8r86hrdUMg9wKdfnsS/EZC4a7jOIdn6BMzegqL2S6e+KBIuHCrDVciMdiR/64osNnabmFonwK8l09vQxA=='
         firstName: 'Amanda'
         lastName: 'Cole'
-        roles: ['@admin']
+        userRoles: ['@admin']
         customer: '@customer1'
         website: '@website'
         owner: '@user'
@@ -273,7 +273,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUser:
         password: 'gxP1L8r86hrdUMg9wKdfnsS/EZC4a7jOIdn6BMzegqL2S6e+KBIuHCrDVciMdiR/64osNnabmFonwK8l09vQxA=='
         firstName: 'Charlie'
         lastName: 'Smith'
-        roles: ['@admin']
+        userRoles: ['@admin']
         customer: '@customer1'
         website: '@website'
         owner: '@user'

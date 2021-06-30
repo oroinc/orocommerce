@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Extension;
 
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -27,12 +28,9 @@ class WebsiteScopedTypeMockProvider extends \PHPUnit\Framework\TestCase
             ->with(Website::class, 1)
             ->willReturn($this->getEntity(Website::class, ['id' => 1]));
 
-        $websiteQB = $this->getMockBuilder(QueryBuilder::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getResult'])
-            ->getMock();
-        $websiteQB
-            ->expects($this->any())
+        $websiteQuery = $this->createMock(AbstractQuery::class);
+        $websiteQB = $this->createMock(QueryBuilder::class);
+        $websiteQuery->expects($this->any())
             ->method('getResult')
             ->willReturn($websites);
 
@@ -42,7 +40,6 @@ class WebsiteScopedTypeMockProvider extends \PHPUnit\Framework\TestCase
             ->with('website')
             ->willReturn($websiteQB);
 
-        /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $registry */
         $registry = $this->createMock(ManagerRegistry::class);
         $registry->expects($this->any())
             ->method('getRepository')
@@ -56,7 +53,7 @@ class WebsiteScopedTypeMockProvider extends \PHPUnit\Framework\TestCase
         $aclHelper = $this->createMock(AclHelper::class);
         $aclHelper->expects($this->any())
             ->method('apply')
-            ->willReturn($websiteQB);
+            ->willReturn($websiteQuery);
 
         return new WebsiteScopedDataType($registry, $aclHelper);
     }

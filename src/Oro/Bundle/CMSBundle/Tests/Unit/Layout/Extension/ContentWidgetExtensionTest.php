@@ -41,11 +41,8 @@ class ContentWidgetExtensionTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $driverMockBuilder = $this->getMockBuilder(DriverInterface::class)
-            ->setMethods(['load', 'getUpdateFilenamePattern']);
-
-        $this->yamlDriver = $driverMockBuilder->getMock();
-        $this->phpDriver = $driverMockBuilder->getMock();
+        $this->yamlDriver = $this->createMock(DriverInterface::class);
+        $this->phpDriver = $this->createMock(DriverInterface::class);
 
         $loader = new LayoutUpdateLoader();
         $loader->addDriver('yml', $this->yamlDriver);
@@ -214,12 +211,6 @@ class ContentWidgetExtensionTest extends \PHPUnit\Framework\TestCase
         $this->extension->getLayoutUpdates($this->getLayoutItem('root', self::THEME));
     }
 
-    /**
-     * @param string $id
-     * @param null|string $theme
-     *
-     * @return LayoutItemInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
     private function getLayoutItem(string $id, ?string $theme = null): LayoutItemInterface
     {
         $contentWidget = null;

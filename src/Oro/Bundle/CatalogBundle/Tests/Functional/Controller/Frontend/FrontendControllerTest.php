@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CatalogBundle\Bundle\Tests\Functional\Controller\Frontend;
+namespace Oro\Bundle\CatalogBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;

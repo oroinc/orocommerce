@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ShoppingList\Tests\Unit\Entity\EntityListener;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Entity\EntityListener;
 
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;

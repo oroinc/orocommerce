@@ -2,11 +2,14 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
 
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData as OroLoadCustomerUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class OpenOrdersControllerTest extends WebTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     protected function setUp(): void
     {
         $this->initClient(
@@ -17,13 +20,14 @@ class OpenOrdersControllerTest extends WebTestCase
 
     public function testOpenOrdersWhenConfigIsOff()
     {
-        $website = self::getContainer()->get('oro_website.manager')->getDefaultWebsite();
-        self::getContainer()->get('oro_config.manager')->set('oro_checkout.frontend_show_open_orders', false, $website);
+        self::getConfigManager('global')->set('oro_checkout.frontend_show_open_orders', false);
+
         $this->client->request('GET', $this->getUrl('oro_checkout_frontend_open_orders'));
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 404);
-        self::getContainer()->get('oro_config.manager')->set('oro_checkout.frontend_show_open_orders', true, $website);
+
+        self::getConfigManager('global')->set('oro_checkout.frontend_show_open_orders', true);
     }
 
     public function testOpenOrders()
@@ -38,12 +42,12 @@ class OpenOrdersControllerTest extends WebTestCase
 
     public function testOpenOrdersIfSeparatePageSettingIsTrue()
     {
-        $configManager = $this
-            ->getContainer()
-            ->get('oro_config.manager');
+        $configManager = self::getConfigManager('global');
 
         $configManager->set('oro_checkout.frontend_open_orders_separate_page', true);
         $configManager->flush();
+        // Clears cache in general config manager.
+        self::getConfigManager(null)->reload();
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_order_frontend_index'));
         $result = $this->client->getResponse();
@@ -59,12 +63,12 @@ class OpenOrdersControllerTest extends WebTestCase
 
     public function testOpenOrdersIfSeparatePageSettingIsFalse()
     {
-        $configManager = $this
-            ->getContainer()
-            ->get('oro_config.manager');
+        $configManager = self::getConfigManager('global');
 
         $configManager->set('oro_checkout.frontend_open_orders_separate_page', false);
         $configManager->flush();
+        // Clears cache in general config manager.
+        self::getConfigManager(null)->reload();
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_order_frontend_index'));
         $result = $this->client->getResponse();

@@ -27,7 +27,10 @@ class CustomerGroupTaxExtensionTest extends AbstractCustomerTaxExtensionTest
         $taxCode = $this->createTaxCode(1);
 
         $customerGroup = $this->createTaxCodeTarget();
-        $customerGroup->expects($this->once())->method('setTaxCode')->with($taxCode);
+        $customerGroup->expects($this->once())
+            ->method('setTaxCode')
+            ->with($taxCode);
+
         $event = $this->createEvent($customerGroup);
 
         $this->assertTaxCodeAdd($event, $taxCode);
@@ -42,8 +45,12 @@ class CustomerGroupTaxExtensionTest extends AbstractCustomerTaxExtensionTest
 
         $newTaxCode = $this->createTaxCode(1);
         $taxCodeWithCustomerGroup = $this->createTaxCode(2);
-        $customerGroup->method('getTaxCode')->willReturn($taxCodeWithCustomerGroup);
-        $customerGroup->expects($this->once())->method('setTaxCode')->with($newTaxCode);
+        $customerGroup->expects($this->any())
+            ->method('getTaxCode')
+            ->willReturn($taxCodeWithCustomerGroup);
+        $customerGroup->expects($this->once())
+            ->method('setTaxCode')
+            ->with($newTaxCode);
 
         $this->assertTaxCodeAdd($event, $newTaxCode);
 
@@ -57,21 +64,14 @@ class CustomerGroupTaxExtensionTest extends AbstractCustomerTaxExtensionTest
     protected function createTaxCodeTarget($id = null)
     {
         $mock = $this->getMockBuilder(CustomerGroup::class)
-            ->setMethods(['getTaxCode', 'setTaxCode', 'getId'])
+            ->onlyMethods(['getId'])
+            ->addMethods(['getTaxCode', 'setTaxCode'])
             ->getMock();
         $mock->expects($this->any())
             ->method('getId')
             ->willReturn($id);
 
         return $mock;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getRepositoryFindMethod()
-    {
-        return 'findOneByCustomerGroup';
     }
 
     /**

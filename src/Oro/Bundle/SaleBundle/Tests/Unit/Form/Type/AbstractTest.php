@@ -6,8 +6,10 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserMultiSelectType;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
@@ -23,6 +25,7 @@ use Oro\Bundle\SaleBundle\Form\Type\QuoteProductRequestType;
 use Oro\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
 use Oro\Bundle\SaleBundle\Formatter\QuoteProductOfferFormatter;
 use Oro\Bundle\SaleBundle\Validator\Constraints;
+use Oro\Bundle\SecurityBundle\Model\Role;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 use Oro\Component\Testing\ReflectionUtil;
@@ -59,26 +62,15 @@ abstract class AbstractTest extends FormIntegrationTestCase
             ->getMock()
         ;
 
-        $this->quoteProductFormatter->expects($this->any())
+        $this->quoteProductFormatter
             ->method('formatTypeLabels')
-            ->will($this->returnCallback(function (array $types) {
-                return $types;
-            }))
-        ;
+            ->willReturnArgument(0);
 
-        $this->quoteProductOfferFormatter = $this->getMockBuilder(
-            'Oro\Bundle\SaleBundle\Formatter\QuoteProductOfferFormatter'
-        )
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
+        $this->quoteProductOfferFormatter = $this->createMock(QuoteProductOfferFormatter::class);
 
-        $this->quoteProductOfferFormatter->expects($this->any())
+        $this->quoteProductOfferFormatter->expects(self::any())
             ->method('formatPriceTypeLabels')
-            ->will($this->returnCallback(function (array $types) {
-                return $types;
-            }))
-        ;
+            ->willReturnArgument(0);
     }
 
     /**
@@ -94,14 +86,14 @@ abstract class AbstractTest extends FormIntegrationTestCase
     {
         $form = $this->factory->create(get_class($this->formType), $defaultData, $options);
 
-        $this->assertEquals($defaultData, $form->getData());
+        self::assertEquals($defaultData, $form->getData());
 
         $form->submit($submittedData);
 
-        $this->assertEquals($isValid, $form->isValid());
-        $this->assertTrue($form->isSynchronized());
+        self::assertEquals($isValid, $form->isValid());
+        self::assertTrue($form->isSynchronized());
 
-        $this->assertEquals($expectedData, $form->getData());
+        self::assertEquals($expectedData, $form->getData());
     }
 
     /**
@@ -121,7 +113,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
 
         $quantityUnitPrecision = new QuantityUnitPrecision();
         $roundingService = $this->createMock(RoundingServiceInterface::class);
-        $roundingService->expects($this->any())
+        $roundingService->expects(self::any())
             ->method('round')
             ->willReturnCallback(function ($quantity) {
                 return (float)$quantity;
@@ -282,10 +274,9 @@ abstract class AbstractTest extends FormIntegrationTestCase
         ;
 
         foreach ($fields as $method => $value) {
-            $mock->expects($this->any())
+            $mock->expects(self::any())
                 ->method($method)
-                ->will($this->returnValue($value))
-            ;
+                ->willReturn($value);
         }
 
         return $mock;
@@ -297,7 +288,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
      */
     protected function getUser($id)
     {
-        return $this->getEntity('Oro\Bundle\UserBundle\Entity\User', $id);
+        return $this->getEntity(User::class, $id);
     }
 
     /**
@@ -306,19 +297,19 @@ abstract class AbstractTest extends FormIntegrationTestCase
      */
     protected function getCustomerUser($id)
     {
-        $organization = $this->getMockBuilder('Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface')->getMock();
-        $role = $this->createMock('Symfony\Component\Security\Core\Role\Role');
+        $organization = $this->getMockBuilder(OrganizationInterface::class)->getMock();
+        $role = $this->createMock(Role::class);
 
-        $customer = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\Customer')->getMock();
+        $customer = $this->getMockBuilder(Customer::class)->getMock();
 
         /** @var CustomerUser $customerUser */
-        $customerUser = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', $id);
+        $customerUser = $this->getEntity(CustomerUser::class, $id);
         $customerUser->setEmail('test@test.test')
             ->setFirstName('First Name')
             ->setLastName('Last Name')
             ->setUsername('test@test.test')
             ->setCustomer($customer)
-            ->setRoles([$role])
+            ->setUserRoles([$role])
             ->setOrganization($organization);
 
         return $customerUser;

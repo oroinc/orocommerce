@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Layout\Extension;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Layout\Extension;
 
 use Oro\Bundle\ShoppingListBundle\Layout\Extension\ShoppingListLimitContextConfigurator;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager;
