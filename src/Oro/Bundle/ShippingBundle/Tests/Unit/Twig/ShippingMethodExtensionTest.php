@@ -111,7 +111,7 @@ class ShippingMethodExtensionTest extends \PHPUnit\Framework\TestCase
     public function testGetShippingMethodConfigRenderData()
     {
         $methodName = 'method_1';
-        $template = 'Bundle:template.html.twig';
+        $template = '@FooBar/template.html.twig';
 
         $this->dispatcher
             ->expects(static::once())

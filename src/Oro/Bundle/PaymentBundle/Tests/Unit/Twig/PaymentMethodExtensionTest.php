@@ -109,7 +109,7 @@ class PaymentMethodExtensionTest extends \PHPUnit\Framework\TestCase
     public function testGetPaymentMethodConfigRenderData()
     {
         $methodName = 'method_1';
-        $template = 'Bundle:template.html.twig';
+        $template = '@FooBar/template.html.twig';
 
         $this->dispatcher->expects(static::once())
             ->method('dispatch')
