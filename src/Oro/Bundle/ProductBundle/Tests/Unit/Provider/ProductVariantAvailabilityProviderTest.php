@@ -334,19 +334,19 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
                 ],
                 'productData' => [
                     'product1' => [
-                        'color' => 'red',
-                        'size' => 's',
+                        'color' => 'Red',
+                        'size' => 'S',
                         'slim_fit' => true,
                     ],
                     'product2' => [
-                        'color' => 'green',
-                        'size' => 'm',
+                        'color' => 'Green',
+                        'size' => 'M',
                         'slim_fit' => false,
                     ],
                 ],
                 'variantParameters' => [
-                    'size' => 's',
-                    'color' => 'red',
+                    'size' => 'S',
+                    'color' => 'Red',
                     'slim_fit' => true
                 ],
                 'variantFields' => [
@@ -356,15 +356,15 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
                 ],
                 'expected' => [
                     'size' => [
-                        's' => true,
-                        'm' => false,
-                        'l' => false,
-                        'xl' => false,
+                        'S' => true,
+                        'M' => false,
+                        'L' => false,
+                        'XL' => false,
                     ],
                     'color' => [
-                        'red' => true,
-                        'green' => false,
-                        'blue' => false,
+                        'Red' => true,
+                        'Green' => false,
+                        'Blue' => false,
                     ],
                     'slim_fit' => [
                         0 => false,
@@ -388,26 +388,26 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
                 ],
                 'productData' => [
                     'product1' => [
-                        'color' => 'red'
+                        'color' => 'Red'
                     ],
                     'product2' => [
-                        'color' => 'green'
+                        'color' => 'Green'
                     ],
                     'product3' => [
                         'color' => null
                     ],
                 ],
                 'variantParameters' => [
-                    'color' => 'green',
+                    'color' => 'Green',
                 ],
                 'variantFields' => [
                     'color',
                 ],
                 'expected' => [
                     'color' => [
-                        'red' => false,
-                        'green' => true,
-                        'blue' => false,
+                        'Red' => false,
+                        'Green' => true,
+                        'Blue' => false,
                     ]
                 ],
             ],

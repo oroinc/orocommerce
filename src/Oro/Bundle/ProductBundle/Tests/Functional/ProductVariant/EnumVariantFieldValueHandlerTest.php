@@ -79,7 +79,7 @@ class EnumVariantFieldValueHandlerTest extends WebTestCase
 
         $this->enumValueProvider
             ->expects($this->once())
-            ->method('getEnumChoices')
+            ->method('getEnumChoicesWithNonUniqueTranslation')
             ->with(Product::class)
             ->willReturn(['cache_data']);
 
@@ -107,7 +107,7 @@ class EnumVariantFieldValueHandlerTest extends WebTestCase
 
         $this->enumValueProvider
             ->expects($this->exactly(2))
-            ->method('getEnumChoices')
+            ->method('getEnumChoicesWithNonUniqueTranslation')
             ->with(Product::class)
             ->willReturnOnConsecutiveCalls(['cache_data_en'], ['cache_data_de']);
 
