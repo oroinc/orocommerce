@@ -81,8 +81,9 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
 
     /**
      * @param Localization $localization
-     * @param string|null  $string
-     * @param string|null  $text
+     * @param string|null $string
+     * @param string|null $text
+     *
      * @return LocalizedFallbackValue
      */
     private function prepareLocalizedValue($localization = null, $string = null, $text = null)
@@ -290,37 +291,37 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
             ],
             'image_product_small' => [
                 [
-                    'value'    => '/small/image',
+                    'value' => '/small/image',
                     'all_text' => false
                 ]
             ],
             'image_product_medium' => [
                 [
-                    'value'    => '/medium/image',
+                    'value' => '/medium/image',
                     'all_text' => false
                 ]
             ],
             'image_product_large' => [
                 [
-                    'value'    => '/large/image',
+                    'value' => '/large/image',
                     'all_text' => false
                 ]
             ],
             'product_units' => [
                 [
-                    'value'    => serialize(['item', 'set']),
+                    'value' => serialize(['item', 'set']),
                     'all_text' => false
                 ]
             ],
             'createdAt' => [
                 [
-                    'value'    => new \DateTime('2017-09-09 00:00:00'),
+                    'value' => new \DateTime('2017-09-09 00:00:00'),
                     'all_text' => false
                 ]
             ],
             'system' => [
                 [
-                    'value'    => 'system',
+                    'value' => 'system',
                     'all_text' => false
                 ]
             ],

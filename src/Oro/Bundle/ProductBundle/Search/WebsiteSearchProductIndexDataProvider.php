@@ -14,7 +14,7 @@ use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 /**
- * Provides product attributes information for the website search index
+ * Provides product attributes information for the website search index.
  */
 class WebsiteSearchProductIndexDataProvider implements ProductIndexDataProviderInterface
 {
@@ -56,44 +56,61 @@ class WebsiteSearchProductIndexDataProvider implements ProductIndexDataProviderI
      */
     public function getIndexData(Product $product, FieldConfigModel $attribute, array $localizations)
     {
-        $data = [];
-
-        $attributeType = $this->getAttributeType($attribute);
-        if ($attributeType) {
-            if ($attributeType->isLocalizable($attribute)) {
-                $data = array_reduce(
-                    array_map(
-                        function (Localization $localization) use ($product, $attribute, $attributeType) {
-                            return $this->getFields($product, $attribute, $attributeType, $localization);
-                        },
-                        $localizations
-                    ),
-                    'array_merge',
-                    []
-                );
-            } else {
-                $data = $this->getFields($product, $attribute, $attributeType);
-            }
-        }
+        $data = new \ArrayIterator();
+        $this->buildIndexData($product, $attribute, $localizations, $data);
 
         return $data;
     }
 
     /**
-     * @param Product $product
-     * @param FieldConfigModel $attribute
-     * @param SearchAttributeTypeInterface $attributeType
-     * @param Localization|null $localization
-     *
-     * @return array|ProductIndexDataModel[]
+     * {@inheritdoc}
      */
+    private function buildIndexData(
+        Product $product,
+        FieldConfigModel $attribute,
+        array $localizations,
+        \ArrayIterator $data
+    ): void {
+        $attributeType = $this->getAttributeType($attribute);
+        if ($attributeType) {
+            $attributeType->isLocalizable($attribute) ?
+                $this->getLocalizedFields($product, $attribute, $attributeType, $localizations, $data) :
+                $this->buildFields($product, $attribute, $attributeType, null, $data);
+        }
+    }
+
+    private function getLocalizedFields(
+        Product $product,
+        FieldConfigModel $attribute,
+        SearchAttributeTypeInterface $type,
+        array $localizations,
+        \ArrayIterator $data
+    ): void {
+        array_map(
+            fn (Localization $localization) => $this->buildFields($product, $attribute, $type, $localization, $data),
+            $localizations
+        );
+    }
+
     protected function getFields(
         Product $product,
         FieldConfigModel $attribute,
         SearchAttributeTypeInterface $attributeType,
         Localization $localization = null
     ) {
-        $fields = [];
+        $fields = new \ArrayIterator();
+        $this->buildFields($product, $attribute, $attributeType, $localization, $fields);
+
+        return $fields;
+    }
+
+    private function buildFields(
+        Product $product,
+        FieldConfigModel $attribute,
+        SearchAttributeTypeInterface $attributeType,
+        ?Localization $localization = null,
+        \ArrayIterator $data
+    ): void {
         $originalValue = $this->propertyAccessor->getValue($product, $attribute->getFieldName());
 
         $isForceIndexed = $this->indexFieldsProvider->isForceIndexed($attribute->getFieldName());
@@ -105,8 +122,8 @@ class WebsiteSearchProductIndexDataProvider implements ProductIndexDataProviderI
             $filterFieldName = $attributeType
                     ->getFilterableFieldNames($attribute)[SearchAttributeTypeInterface::VALUE_MAIN] ?? '';
 
-            $fields = $this->addToFields(
-                $fields,
+            $this->addToFields(
+                $data,
                 $filterFieldName,
                 $attributeType->getFilterableValue($attribute, $originalValue, $localization),
                 $placeholders,
@@ -121,8 +138,8 @@ class WebsiteSearchProductIndexDataProvider implements ProductIndexDataProviderI
             $sortFieldName = $attributeType->getSortableFieldName($attribute);
 
             if (!in_array($sortFieldName, $fieldNames, true)) {
-                $fields = $this->addToFields(
-                    $fields,
+                $this->addToFields(
+                    $data,
                     $sortFieldName,
                     $attributeType->getSortableValue($attribute, $originalValue, $localization),
                     $placeholders,
@@ -135,8 +152,8 @@ class WebsiteSearchProductIndexDataProvider implements ProductIndexDataProviderI
         }
 
         if ($this->configurationProvider->isAttributeSearchable($attribute)) {
-            $fields = $this->addToFields(
-                $fields,
+            $this->addToFields(
+                $data,
                 $isLocalized ? IndexDataProvider::ALL_TEXT_L10N_FIELD : IndexDataProvider::ALL_TEXT_FIELD,
                 $attributeType->getSearchableValue($attribute, $originalValue, $localization),
                 $placeholders,
@@ -150,8 +167,8 @@ class WebsiteSearchProductIndexDataProvider implements ProductIndexDataProviderI
                     ->getSearchableFieldName($attribute, $attributeType);
 
                 if (!in_array($searchFieldName, $fieldNames, true)) {
-                    $fields = $this->addToFields(
-                        $fields,
+                    $this->addToFields(
+                        $data,
                         $searchFieldName,
                         $attributeType->getSearchableValue($attribute, $originalValue, $localization),
                         $placeholders,
@@ -161,44 +178,41 @@ class WebsiteSearchProductIndexDataProvider implements ProductIndexDataProviderI
                 }
             }
         }
-
-        return $fields;
     }
 
     /**
-     * @param array $fields
+     * @param \ArrayIterator $fields
      * @param string $fieldName
-     * @param array|string $fieldValue
+     * @param array|string|null $fieldValue
      * @param array $placeholders
      * @param bool $localized
      * @param bool $searchable
-     * @return array
      */
-    private function addToFields(array $fields, $fieldName, $fieldValue, array $placeholders, $localized, $searchable)
-    {
+    private function addToFields(
+        \ArrayIterator $fields,
+        string $fieldName,
+        $fieldValue,
+        array $placeholders,
+        bool $localized,
+        bool $searchable
+    ): void {
         if (!\is_array($fieldValue)) {
             $fieldValue = [$fieldName => $fieldValue];
         }
 
         foreach ($fieldValue as $key => $value) {
-            $fields[] = new ProductIndexDataModel(
+            $productModel = new ProductIndexDataModel(
                 $key,
                 $value,
                 $placeholders,
                 $localized,
                 $searchable
             );
+            $fields->append($productModel);
         }
-
-        return $fields;
     }
 
-    /**
-     * @param FieldConfigModel $attribute
-     *
-     * @return null|SearchAttributeTypeInterface
-     */
-    protected function getAttributeType(FieldConfigModel $attribute)
+    protected function getAttributeType(FieldConfigModel $attribute): ?SearchAttributeTypeInterface
     {
         if (!$this->configurationProvider->isAttributeActive($attribute)) {
             return null;
@@ -212,46 +226,23 @@ class WebsiteSearchProductIndexDataProvider implements ProductIndexDataProviderI
         return $attributeType;
     }
 
-    /**
-     * @param FieldConfigModel $attribute
-     * @param SearchAttributeTypeInterface $type
-     * @param bool $force
-     *
-     * @return bool
-     */
-    private function isFilterable(FieldConfigModel $attribute, SearchAttributeTypeInterface $type, $force)
+    private function isFilterable(FieldConfigModel $attribute, SearchAttributeTypeInterface $type, $force): bool
     {
         return $type->isFilterable($attribute) &&
             ($force || $this->configurationProvider->isAttributeFilterable($attribute));
     }
 
-    /**
-     * @param FieldConfigModel $attribute
-     * @param SearchAttributeTypeInterface $type
-     * @param bool $force
-     *
-     * @return bool
-     */
-    private function isSortable(FieldConfigModel $attribute, SearchAttributeTypeInterface $type, $force)
+    private function isSortable(FieldConfigModel $attribute, SearchAttributeTypeInterface $type, $force): bool
     {
         return $type->isSortable($attribute) &&
             ($force || $this->configurationProvider->isAttributeSortable($attribute));
     }
 
-    /**
-     * @param FieldConfigModel $attribute
-     * @param SearchAttributeTypeInterface $type
-     *
-     * @return bool
-     */
     private function isBoostable(FieldConfigModel $attribute, SearchAttributeTypeInterface $type): bool
     {
         return $type->isSearchable() && $this->getSearchableInformationProvider()->getAttributeSearchBoost($attribute);
     }
 
-    /**
-     * @return SearchableInformationProvider
-     */
     public function getSearchableInformationProvider(): SearchableInformationProvider
     {
         if (!$this->searchableInformationProvider) {
@@ -261,9 +252,6 @@ class WebsiteSearchProductIndexDataProvider implements ProductIndexDataProviderI
         return $this->searchableInformationProvider;
     }
 
-    /**
-     * @param SearchableInformationProvider $searchableInformationProvider
-     */
     public function setSearchableInformationProvider(SearchableInformationProvider $searchableInformationProvider): void
     {
         $this->searchableInformationProvider = $searchableInformationProvider;
