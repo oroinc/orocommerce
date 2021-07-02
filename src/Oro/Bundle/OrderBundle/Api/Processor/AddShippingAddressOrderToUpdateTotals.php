@@ -15,12 +15,8 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class AddShippingAddressOrderToUpdateTotals implements ProcessorInterface
 {
-    /** @var DoctrineHelper */
-    private $doctrineHelper;
+    private DoctrineHelper $doctrineHelper;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(DoctrineHelper $doctrineHelper)
     {
         $this->doctrineHelper = $doctrineHelper;
@@ -39,15 +35,10 @@ class AddShippingAddressOrderToUpdateTotals implements ProcessorInterface
 
         $order = $this->getOrder($context->getData());
         if (null !== $order) {
-            UpdateOrderTotals::addOrderToUpdateTotals($context->getSharedData(), $order, $context->getForm());
+            UpdateOrderTotals::addOrderToUpdateTotals($context, $order, $context->getForm());
         }
     }
 
-    /**
-     * @param OrderAddress $orderAddress
-     *
-     * @return Order|null
-     */
     private function getOrder(OrderAddress $orderAddress): ?Order
     {
         return $this->doctrineHelper->createQueryBuilder(Order::class, 'o')

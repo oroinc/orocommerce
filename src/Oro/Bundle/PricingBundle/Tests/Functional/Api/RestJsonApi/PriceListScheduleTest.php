@@ -23,10 +23,7 @@ class PriceListScheduleTest extends RestJsonApiTestCase
     protected function setUp(): void
     {
         parent::setUp();
-
-        $this->loadFixtures([
-            LoadPriceListSchedules::class
-        ]);
+        $this->loadFixtures([LoadPriceListSchedules::class]);
     }
 
     /**
@@ -45,37 +42,21 @@ class PriceListScheduleTest extends RestJsonApiTestCase
         return parent::getResponseDataFolderName() . DIRECTORY_SEPARATOR . 'price_list_schedule';
     }
 
-    /**
-     * @return PriceListRepository
-     */
     private function getPriceListRepository(): PriceListRepository
     {
         return $this->getEntityManager()->getRepository(PriceList::class);
     }
 
-    /**
-     * @return PriceListScheduleRepository
-     */
     private function getSchedulesRepository(): PriceListScheduleRepository
     {
         return $this->getEntityManager()->getRepository(PriceListSchedule::class);
     }
 
-    /**
-     * @return CombinedPriceListActivationRuleRepository
-     */
     private function getCombinedPriceListActivationRuleRepository(): CombinedPriceListActivationRuleRepository
     {
         return $this->getEntityManager()->getRepository(CombinedPriceListActivationRule::class);
     }
 
-    /**
-     * @param \DateTime $activateAt
-     * @param \DateTime $deactivateAt
-     * @param PriceList $priceList
-     *
-     * @return Response
-     */
     private function sendCreateScheduleRequest(
         \DateTime $activateAt,
         \DateTime $deactivateAt,
@@ -103,13 +84,6 @@ class PriceListScheduleTest extends RestJsonApiTestCase
         );
     }
 
-    /**
-     * @param PriceListSchedule $schedule
-     * @param \DateTime         $activateAt
-     * @param \DateTime         $deactivateAt
-     *
-     * @return Response
-     */
     private function sendUpdateScheduleRequest(
         PriceListSchedule $schedule,
         \DateTime $activateAt,
@@ -249,7 +223,7 @@ class PriceListScheduleTest extends RestJsonApiTestCase
 
         $this->delete(['entity' => 'pricelistschedules', 'id' => $scheduleId]);
 
-        $this->assertNull($this->getSchedulesRepository()->find($scheduleId));
+        self::assertNull($this->getSchedulesRepository()->find($scheduleId));
     }
 
     public function testDeleteList()
@@ -379,7 +353,7 @@ class PriceListScheduleTest extends RestJsonApiTestCase
         $priceList = $this->getPriceListRepository()->getDefault();
 
         $createdActivationRules = $this->getCombinedPriceListActivationRuleRepository()->findAll();
-        $this->assertCount(0, $createdActivationRules);
+        self::assertCount(0, $createdActivationRules);
 
         $this->sendCreateScheduleRequest(
             new \DateTime(),
@@ -388,7 +362,7 @@ class PriceListScheduleTest extends RestJsonApiTestCase
         );
 
         $createdActivationRules = $this->getCombinedPriceListActivationRuleRepository()->findAll();
-        $this->assertGreaterThan(0, count($createdActivationRules));
+        self::assertGreaterThan(0, count($createdActivationRules));
     }
 
     public function testCombinedPriceListBuildOnScheduleUpdate()
@@ -401,7 +375,7 @@ class PriceListScheduleTest extends RestJsonApiTestCase
         $this->getEntityManager()->flush();
 
         $createdActivationRules = $this->getCombinedPriceListActivationRuleRepository()->findAll();
-        $this->assertCount(0, $createdActivationRules);
+        self::assertCount(0, $createdActivationRules);
 
         $this->sendUpdateScheduleRequest(
             $schedule,
@@ -410,7 +384,7 @@ class PriceListScheduleTest extends RestJsonApiTestCase
         );
 
         $createdActivationRules = $this->getCombinedPriceListActivationRuleRepository()->findAll();
-        $this->assertGreaterThan(0, count($createdActivationRules));
+        self::assertGreaterThan(0, count($createdActivationRules));
     }
 
     public function testCombinedPriceListBuildOnScheduleDelete()
@@ -428,12 +402,12 @@ class PriceListScheduleTest extends RestJsonApiTestCase
         $this->getEntityManager()->flush();
 
         $createdActivationRules = $this->getCombinedPriceListActivationRuleRepository()->findAll();
-        $this->assertCount(0, $createdActivationRules);
+        self::assertCount(0, $createdActivationRules);
 
         $this->delete(['entity' => 'pricelistschedules', 'id' => $scheduleTwo->getId()]);
 
         $createdActivationRules = $this->getCombinedPriceListActivationRuleRepository()->findAll();
-        $this->assertGreaterThan(0, count($createdActivationRules));
+        self::assertGreaterThan(0, count($createdActivationRules));
     }
 
     public function testCombinedPriceListBuildOnScheduleListDelete()
@@ -451,7 +425,7 @@ class PriceListScheduleTest extends RestJsonApiTestCase
         $this->getEntityManager()->flush();
 
         $createdActivationRules = $this->getCombinedPriceListActivationRuleRepository()->findAll();
-        $this->assertCount(0, $createdActivationRules);
+        self::assertCount(0, $createdActivationRules);
 
         $this->cdelete(
             ['entity' => 'pricelistschedules'],
@@ -459,7 +433,7 @@ class PriceListScheduleTest extends RestJsonApiTestCase
         );
 
         $createdActivationRules = $this->getCombinedPriceListActivationRuleRepository()->findAll();
-        $this->assertGreaterThan(0, count($createdActivationRules));
+        self::assertGreaterThan(0, count($createdActivationRules));
     }
 
     public function testCombinedPriceListBuildOnScheduleCreateAsIncludedData()
@@ -467,7 +441,7 @@ class PriceListScheduleTest extends RestJsonApiTestCase
         $priceList = $this->getPriceListRepository()->getDefault();
 
         $createdActivationRules = $this->getCombinedPriceListActivationRuleRepository()->findAll();
-        $this->assertCount(0, $createdActivationRules);
+        self::assertCount(0, $createdActivationRules);
 
         $this->patch(
             ['entity' => 'pricelists', 'id' => (string)$priceList->getId()],
@@ -497,7 +471,7 @@ class PriceListScheduleTest extends RestJsonApiTestCase
         );
 
         $createdActivationRules = $this->getCombinedPriceListActivationRuleRepository()->findAll();
-        $this->assertGreaterThan(0, count($createdActivationRules));
+        self::assertGreaterThan(0, count($createdActivationRules));
     }
 
     public function testCombinedPriceListBuildOnScheduleUpdateAsIncludedData()
@@ -510,7 +484,7 @@ class PriceListScheduleTest extends RestJsonApiTestCase
         $this->getEntityManager()->flush();
 
         $createdActivationRules = $this->getCombinedPriceListActivationRuleRepository()->findAll();
-        $this->assertCount(0, $createdActivationRules);
+        self::assertCount(0, $createdActivationRules);
 
         $this->patch(
             ['entity' => 'pricelists', 'id' => (string)$priceList->getId()],
@@ -547,7 +521,7 @@ class PriceListScheduleTest extends RestJsonApiTestCase
         );
 
         $createdActivationRules = $this->getCombinedPriceListActivationRuleRepository()->findAll();
-        $this->assertGreaterThan(0, count($createdActivationRules));
+        self::assertGreaterThan(0, count($createdActivationRules));
     }
 
     public function testCreateUpdatesScheduleContains()
@@ -556,13 +530,13 @@ class PriceListScheduleTest extends RestJsonApiTestCase
         $priceList = $this->getReference('price_list_5');
         $priceListId = $priceList->getId();
 
-        $this->assertFalse($priceList->isContainSchedule());
+        self::assertFalse($priceList->isContainSchedule());
 
         $this->sendCreateScheduleRequest(new \DateTime(), new \DateTime(), $priceList);
 
         /** @var PriceList $priceList */
         $priceList = $this->getEntityManager()->find(PriceList::class, $priceListId);
-        $this->assertTrue($priceList->isContainSchedule());
+        self::assertTrue($priceList->isContainSchedule());
     }
 
     public function testDeleteScheduleContains()
@@ -572,13 +546,13 @@ class PriceListScheduleTest extends RestJsonApiTestCase
         $scheduleId = $schedule->getId();
         $priceListId = $schedule->getPriceList()->getId();
 
-        $this->assertTrue($schedule->getPriceList()->isContainSchedule());
+        self::assertTrue($schedule->getPriceList()->isContainSchedule());
 
         $this->delete(['entity' => 'pricelistschedules', 'id' => (string)$scheduleId]);
 
         /** @var PriceList $priceList */
         $priceList = $this->getEntityManager()->find(PriceList::class, $priceListId);
-        $this->assertFalse($priceList->isContainSchedule());
+        self::assertFalse($priceList->isContainSchedule());
     }
 
     public function testDeleteListScheduleContains()
@@ -587,7 +561,7 @@ class PriceListScheduleTest extends RestJsonApiTestCase
         $priceList = $this->getReference('price_list_1');
         $priceListId = $priceList->getId();
 
-        $this->assertTrue($priceList->isContainSchedule());
+        self::assertTrue($priceList->isContainSchedule());
 
         $this->cdelete(
             ['entity' => 'pricelistschedules'],
@@ -595,7 +569,7 @@ class PriceListScheduleTest extends RestJsonApiTestCase
         );
 
         $priceList = $this->getEntityManager()->find(PriceList::class, $priceListId);
-        $this->assertFalse($priceList->isContainSchedule());
+        self::assertFalse($priceList->isContainSchedule());
     }
 
     public function testCreateAsIncludedDataUpdatesScheduleContains()
@@ -604,7 +578,7 @@ class PriceListScheduleTest extends RestJsonApiTestCase
         $priceList = $this->getReference('price_list_5');
         $priceListId = $priceList->getId();
 
-        $this->assertFalse($priceList->isContainSchedule());
+        self::assertFalse($priceList->isContainSchedule());
 
         $this->patch(
             ['entity' => 'pricelists', 'id' => (string)$priceListId],
@@ -634,6 +608,6 @@ class PriceListScheduleTest extends RestJsonApiTestCase
         );
 
         $priceList = $this->getEntityManager()->find(PriceList::class, $priceListId);
-        $this->assertTrue($priceList->isContainSchedule());
+        self::assertTrue($priceList->isContainSchedule());
     }
 }

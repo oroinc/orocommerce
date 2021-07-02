@@ -3,14 +3,14 @@
 namespace Oro\Bundle\PricingBundle\Api\Processor\ProductPrice;
 
 use Oro\Bundle\ApiBundle\Processor\SingleItemContext;
-use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
 /**
- * Saves a price list ID from product price to the context for later use.
+ * Saves a price list ID to the context for later use.
  */
-class StorePriceListInContextByProductPrice implements ProcessorInterface
+class StorePriceListInContext implements ProcessorInterface
 {
     /**
      * {@inheritdoc}
@@ -19,13 +19,8 @@ class StorePriceListInContextByProductPrice implements ProcessorInterface
     {
         /** @var SingleItemContext $context */
 
-        /** @var ProductPrice|null $entity */
-        $entity = $context->getResult();
-        if (null === $entity) {
-            return;
-        }
-
-        $priceList = $entity->getPriceList();
+        /** @var PriceList|null $entity */
+        $priceList = $context->getResult();
         if (null === $priceList || !$priceList->getId()) {
             return;
         }

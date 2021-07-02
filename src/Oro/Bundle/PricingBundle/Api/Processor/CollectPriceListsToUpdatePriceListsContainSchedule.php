@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Api\Processor;
 
-use Oro\Bundle\ApiBundle\Processor\Context;
+use Oro\Bundle\ApiBundle\Processor\ChangeContextInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
@@ -17,19 +17,19 @@ class CollectPriceListsToUpdatePriceListsContainSchedule implements ProcessorInt
      */
     public function process(ContextInterface $context)
     {
-        /** @var Context $context */
+        /** @var ChangeContextInterface $context */
 
-        $priceLists = $context->get(UpdatePriceListsContainSchedule::PRICE_LISTS) ?? [];
-        /** @var PriceListSchedule[] $entities */
         $entities = $context->getAllEntities(true);
         foreach ($entities as $entity) {
-            $priceList = $entity->getPriceList();
-            if (null !== $priceList) {
-                $priceLists[$priceList->getId()] = $priceList;
+            if ($entity instanceof PriceListSchedule) {
+                $priceList = $entity->getPriceList();
+                if (null !== $priceList) {
+                    UpdatePriceListsContainSchedule::addPriceListToUpdatePriceListsContainSchedule(
+                        $context,
+                        $priceList
+                    );
+                }
             }
-        }
-        if ($priceLists) {
-            $context->set(UpdatePriceListsContainSchedule::PRICE_LISTS, $priceLists);
         }
     }
 }
