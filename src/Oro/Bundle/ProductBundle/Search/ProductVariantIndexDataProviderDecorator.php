@@ -2,8 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\Search;
 
+use Oro\Bundle\EntityBundle\ORM\Registry;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchAttributeTypeInterface;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexDataProvider;
 
@@ -12,137 +14,128 @@ use Oro\Bundle\WebsiteSearchBundle\Engine\IndexDataProvider;
  */
 class ProductVariantIndexDataProviderDecorator implements ProductIndexDataProviderInterface
 {
-    /** @var ProductIndexDataProviderInterface */
-    private $originalProvider;
-
-    /**
-     * @param ProductIndexDataProviderInterface $originalProvider
-     */
-    public function __construct(ProductIndexDataProviderInterface $originalProvider)
-    {
-        $this->originalProvider = $originalProvider;
+    public function __construct(
+        private ProductIndexDataProviderInterface $originalProvider,
+        private Registry $registry
+    ) {
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getIndexData(Product $product, FieldConfigModel $attribute, array $localizations)
+    public function getIndexData(Product $product, FieldConfigModel $attribute, array $localizations): \ArrayIterator
     {
-        $productData = $this->originalProvider->getIndexData($product, $attribute, $localizations);
+        $data = $this->originalProvider->getIndexData($product, $attribute, $localizations);
+        $this->buildIndexData($product, $attribute, $localizations, $data);
 
+        return $data;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    private function buildIndexData(
+        Product $product,
+        FieldConfigModel $attribute,
+        array $localizations,
+        \ArrayIterator $data
+    ): void {
+        /** @var ProductRepository $productRepository */
+        $productRepository = $this->registry->getRepository(Product::class);
         if ($product->getType() === Product::TYPE_CONFIGURABLE) {
-            foreach ($product->getVariantLinks() as $link) {
-                $variantProduct = $link->getProduct();
+            foreach ($productRepository->getVariantsLinksProducts($product) as $variantProduct) {
                 if ($variantProduct->getType() === Product::TYPE_SIMPLE) {
                     // It means that we are indexing the simple products in scope of configurable product data and
                     // the separate product data for simple product as well.
                     // It's required to prevent excess re-indexation when value of "Display Simple Variations" option
                     // in the "System Configuration" become "Everywhere".
                     $variantData = $this->originalProvider->getIndexData($variantProduct, $attribute, $localizations);
-                    $productData = $this->addEnumVariantData($productData, $variantData, $attribute);
-                    $productData = $this->addAllTextVariantData($productData, $variantData);
+                    if (\in_array($attribute->getType(), ['enum', 'multiEnum'], true)) {
+                        $searchableName = $this->getSearchableName($attribute);
+                        $this->addEnumVariantData($data, $variantData, $attribute, $searchableName);
+                        $this->mergeSearchable($data, $searchableName);
+                    }
+                    $this->addAllTextVariantData($data, $variantData);
                 }
             }
         }
-
-        return $productData;
     }
 
-    /**
-     * @param array|ProductIndexDataModel[] $productData
-     * @param array|ProductIndexDataModel[] $variantData
-     * @param FieldConfigModel $attribute
-     * @return array|ProductIndexDataModel[]
-     */
     private function addEnumVariantData(
-        $productData,
-        $variantData,
-        FieldConfigModel $attribute
-    ) {
-        if (\in_array($attribute->getType(), ['enum', 'multiEnum'], true)) {
-            $searchableName = $attribute->getFieldName() . '_' . SearchAttributeTypeInterface::SEARCHABLE_PREFIX;
+        \ArrayIterator $data,
+        \ArrayIterator $variantData,
+        FieldConfigModel $attribute,
+        string $searchableName
+    ): void {
+        foreach ($variantData as $variantModel) {
+            $variantFieldName = $variantModel->getFieldName();
+            // if field value model (not all_text model)
+            if (strpos($variantFieldName, $attribute->getFieldName() . '_') === 0) {
+                // collect searchable enum values
+                if ($variantFieldName === $searchableName && $variantModel->getValue()) {
+                    $data->append($variantModel);
+                    continue;
+                }
 
-            foreach ($variantData as $variantModel) {
-                $variantFieldName = $variantModel->getFieldName();
-                // if field value model (not all_text model)
-                if (strpos($variantFieldName, $attribute->getFieldName() . '_') === 0) {
-                    // collect searchable enum values
-                    if ($variantFieldName === $searchableName && $variantModel->getValue()) {
-                        $productData[] = $variantModel;
-                        continue;
-                    }
-
-                    $isVariantOptionMissing = true;
-                    foreach ($productData as $productModel) {
-                        // if product already has option from the variant
-                        if ($productModel->getFieldName() === $variantFieldName) {
-                            $isVariantOptionMissing = false;
-                            break;
-                        }
-                    }
-                    // add missing option from the variant
-                    if ($isVariantOptionMissing) {
-                        $productData[] = $variantModel;
+                $isVariantOptionMissing = true;
+                foreach ($data as $productModel) {
+                    // if product already has option from the variant
+                    if ($productModel->getFieldName() === $variantFieldName) {
+                        $isVariantOptionMissing = false;
+                        break;
                     }
                 }
+                // add missing option from the variant
+                if ($isVariantOptionMissing) {
+                    $data->append($variantModel);
+                }
             }
-
-            $productData = $this->mergeSearchable($productData, $searchableName);
         }
-
-        return $productData;
     }
 
     /**
      * Merge searchable data into one field.
      *
-     * @param array|ProductIndexDataModel[] $productData
-     * @param string                        $searchableName
-     *
-     * @return array|ProductIndexDataModel[]
+     * @param \ArrayIterator $data
+     * @param string $searchableName
      */
-    private function mergeSearchable(array $productData, string $searchableName): array
+    private function mergeSearchable(\ArrayIterator $data, string $searchableName): void
     {
         $combinedValues = [];
-
-        foreach ($productData as $key => $model) {
-            if ($model->getFieldName() === $searchableName) {
-                $combinedValues[] = $model->getValue();
-                unset($productData[$key]);
+        foreach ($data as $key => $productModel) {
+            if ($productModel->getFieldName() === $searchableName) {
+                $combinedValues[] = $productModel->getValue();
+                $data->offsetUnset($key);
             }
         }
 
         if ($combinedValues) {
-            $productData[] = new ProductIndexDataModel(
+            $productModel = new ProductIndexDataModel(
                 $searchableName,
                 implode(' ', array_unique(explode(' ', implode(' ', $combinedValues)))),
                 [],
                 false,
                 false
             );
+            $data->append($productModel);
         }
-
-        return array_values($productData);
     }
 
-    /**
-     * @param array|ProductIndexDataModel[] $productData
-     * @param array|ProductIndexDataModel[] $variantData
-     * @return array|ProductIndexDataModel[]
-     */
-    private function addAllTextVariantData($productData, $variantData)
-    {
+    private function addAllTextVariantData(
+        \ArrayIterator $data,
+        \ArrayIterator $variantData
+    ): void {
+        $allTextFieldNames = [IndexDataProvider::ALL_TEXT_L10N_FIELD, IndexDataProvider::ALL_TEXT_FIELD];
         foreach ($variantData as $variantModel) {
             // add all_text fields from variants to main product
-            if (\in_array(
-                $variantModel->getFieldName(),
-                [IndexDataProvider::ALL_TEXT_L10N_FIELD, IndexDataProvider::ALL_TEXT_FIELD],
-                true
-            )) {
-                $productData[] = $variantModel;
+            if (\in_array($variantModel->getFieldName(), $allTextFieldNames, true)) {
+                $data->append($variantModel);
             }
         }
+    }
 
-        return $productData;
+    private function getSearchableName(FieldConfigModel $attribute): string
+    {
+        return sprintf('%s_%s', $attribute->getFieldName(), SearchAttributeTypeInterface::SEARCHABLE_PREFIX);
     }
 }

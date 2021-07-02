@@ -750,6 +750,7 @@ services:
         decoration_inner_name: 'oro_product.provider.website_search_index_data.original'
         arguments:
             - '@oro_product.provider.website_search_index_data.original'
+            - '@doctrine'
 
     oro_product.event_listener.website_search_index:
         class: 'Oro\Bundle\ProductBundle\EventListener\WebsiteSearchProductIndexerListener'

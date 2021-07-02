@@ -17,7 +17,7 @@ interface ProductIndexDataProviderInterface
      * @param Product $product
      * @param FieldConfigModel $attribute
      * @param array|Localization[] $localizations
-     * @return array|ProductIndexDataModel[]
+     * @return \ArrayIterator|ProductIndexDataModel[]
      */
-    public function getIndexData(Product $product, FieldConfigModel $attribute, array $localizations);
+    public function getIndexData(Product $product, FieldConfigModel $attribute, array $localizations): \ArrayIterator;
 }
