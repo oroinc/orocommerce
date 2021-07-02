@@ -50,9 +50,10 @@ class MysqlTemporaryPrivilegeRequirementProvider extends AbstractRequirementsPro
         try {
             if ($connection->getDatabasePlatform()->getName() === DatabasePlatform::MYSQL) {
                 $grantedPrivileges = $this->getGrantedPrivileges($connection);
+                $fulfilled = array_intersect(['ALL PRIVILEGES', 'CREATE TEMPORARY TABLES'], $grantedPrivileges) !== [];
 
                 $collection->addRequirement(
-                    in_array('CREATE TEMPORARY TABLES', $grantedPrivileges),
+                    $fulfilled,
                     sprintf(
                         'Connection "%s": "CREATE TEMPORARY TABLES" privilege is granted',
                         $connectionName
