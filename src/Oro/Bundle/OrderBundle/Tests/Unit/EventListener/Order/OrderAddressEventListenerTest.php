@@ -8,113 +8,97 @@ use Oro\Bundle\OrderBundle\Event\OrderEvent;
 use Oro\Bundle\OrderBundle\EventListener\Order\OrderAddressEventListener;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\Form\ResolvedFormTypeInterface;
 use Twig\Environment;
 
 class OrderAddressEventListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var OrderAddressEventListener */
-    protected $listener;
+    protected OrderAddressEventListener $listener;
 
-    /** @var Environment|\PHPUnit\Framework\MockObject\MockObject */
-    protected $twig;
+    protected Environment|\PHPUnit\Framework\MockObject\MockObject $twig;
 
-    /** @var FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $formFactory;
+    protected FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject $formFactory;
 
     protected function setUp(): void
     {
         $this->twig = $this->createMock(Environment::class);
-        $this->formFactory = $this->createMock('\Symfony\Component\Form\FormFactoryInterface');
+        $this->formFactory = $this->createMock(FormFactoryInterface::class);
 
         $this->listener = new OrderAddressEventListener($this->twig, $this->formFactory);
-    }
-
-    protected function tearDown(): void
-    {
-        unset($this->listener, $this->twig, $this->formFactory);
     }
 
     public function testOnOrderEvent(): void
     {
         $order = new Order();
 
-        $type = $this->createMock('Symfony\Component\Form\ResolvedFormTypeInterface');
-        $type->expects($this->once())->method('getInnerType')->willReturn(new FormType());
+        $type = $this->createMock(ResolvedFormTypeInterface::class);
+        $type->expects(self::once())->method('getInnerType')->willReturn(new FormType());
 
-        $formConfig = $this->createMock('Symfony\Component\Form\FormConfigInterface');
-        $formConfig->expects($this->once())->method('getType')->willReturn($type);
-        $formConfig->expects($this->once())->method('getOptions')->willReturn([]);
+        $formConfig = $this->createMock(FormConfigInterface::class);
+        $formConfig->expects(self::once())->method('getType')->willReturn($type);
+        $formConfig->expects(self::once())->method('getOptions')->willReturn([]);
 
-        /** @var Form|\PHPUnit\Framework\MockObject\MockObject $oldForm */
-        $oldForm = $this->getMockBuilder('Symfony\Component\Form\Form')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $oldForm->expects($this->any())->method('getName')->willReturn('order');
+        $oldForm = $this->createMock(Form::class);
+        $oldForm->expects(self::any())->method('getName')->willReturn('order');
 
         $billingAddressField = sprintf('%sAddress', AddressType::TYPE_BILLING);
         $shippingAddressField = sprintf('%sAddress', AddressType::TYPE_SHIPPING);
 
-        $oldForm->expects($this->exactly(2))
+        $oldForm->expects(self::exactly(2))
             ->method('has')
             ->withConsecutive([$this->equalTo($billingAddressField)], [$this->equalTo($shippingAddressField)])
             ->willReturnOnConsecutiveCalls(true, false);
 
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $field1 */
-        $field1 = $this->createMock('Symfony\Component\Form\FormInterface');
+        $field1 = $this->createMock(FormInterface::class);
 
-        $oldForm->expects($this->once())->method('get')->with($billingAddressField)->willReturn($field1);
+        $oldForm->expects(self::once())->method('get')->with($billingAddressField)->willReturn($field1);
 
+        $field1->expects(self::any())->method('getConfig')->willReturn($formConfig);
+        $field1->expects(self::any())->method('getName')->willReturn('name');
+        $field1->expects(self::any())->method('getData')->willReturn([]);
 
-        $field1->expects($this->any())->method('getConfig')->willReturn($formConfig);
-        $field1->expects($this->any())->method('getName')->willReturn('name');
-        $field1->expects($this->any())->method('getData')->willReturn([]);
+        $field1View = $this->createMock(FormView::class);
 
-        $field1View = $this->getMockBuilder('Symfony\Component\Form\FormView')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $field2 = $this->createMock(FormInterface::class);
+        $field2->expects(self::never())->method('createView');
 
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $field2 */
-        $field2 = $this->createMock('Symfony\Component\Form\FormInterface');
-
-        $field2->expects($this->never())->method('createView');
-
-        $this->twig->expects($this->once())
+        $this->twig->expects(self::once())
             ->method('render')
             ->with('@OroOrder/Form/customerAddressSelector.html.twig', ['form' => $field1View])
             ->willReturn('view1');
 
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $field1 */
-        $newField1 = $this->createMock('Symfony\Component\Form\FormInterface');
-        $newField1->expects($this->once())->method('createView')->willReturn($field1View);
-        /** @var Form|\PHPUnit\Framework\MockObject\MockObject $oldForm */
-        $newForm = $this->getMockBuilder('Symfony\Component\Form\Form')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $builder = $this->createMock('Symfony\Component\Form\FormBuilderInterface');
-        $builder->expects($this->once())->method('add')->with('billingAddress', FormType::class, $this->isType('array'))
+        $newField1 = $this->createMock(FormInterface::class);
+        $newField1->expects(self::once())->method('createView')->willReturn($field1View);
+
+        $newForm = $this->createMock(Form::class);
+        $builder = $this->createMock(FormBuilderInterface::class);
+        $builder->expects(self::once())->method('add')->with('billingAddress', FormType::class, $this->isType('array'))
             ->willReturnSelf();
-        $builder->expects($this->once())->method('getForm')->willReturn($newForm);
-        $this->formFactory->expects($this->once())->method('createNamedBuilder')->willReturn($builder);
-        $newForm->expects($this->once())->method('get')->with($billingAddressField)->willReturn($newField1);
-        $newForm->expects($this->once())->method('submit')->with($this->isType('array'));
+        $builder->expects(self::once())->method('getForm')->willReturn($newForm);
+        $this->formFactory->expects(self::once())->method('createNamedBuilder')->willReturn($builder);
+        $newForm->expects(self::once())->method('get')->with($billingAddressField)->willReturn($newField1);
+        $newForm->expects(self::once())->method('submit')->with($this->isType('array'));
 
         $event = new OrderEvent($oldForm, $order, ['order' => []]);
         $this->listener->onOrderEvent($event);
 
         $eventData = $event->getData()->getArrayCopy();
 
-        $this->assertArrayHasKey($billingAddressField, $eventData);
-        $this->assertEquals('view1', $eventData[$billingAddressField]);
+        self::assertArrayHasKey($billingAddressField, $eventData);
+        self::assertEquals('view1', $eventData[$billingAddressField]);
     }
 
     public function testDoNothingIfNoSubmission(): void
     {
-        /** @var OrderEvent|\PHPUnit\Framework\MockObject\MockObject $event */
-        $event = static::createMock(OrderEvent::class);
-        $event->expects(static::never())
+        $event = $this->createMock(OrderEvent::class);
+        $event->expects(self::never())
             ->method('getForm');
+
         $this->listener->onOrderEvent($event);
     }
 }
