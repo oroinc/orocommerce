@@ -8,6 +8,20 @@ use Oro\Bundle\ScopeBundle\Tests\Unit\Stub\StubScope;
 
 class Scope extends StubScope
 {
+    private ?int $id = null;
+
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
     /**
      * @return null|Customer
      */

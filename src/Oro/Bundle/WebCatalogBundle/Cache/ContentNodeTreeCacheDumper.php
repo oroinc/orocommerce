@@ -57,9 +57,11 @@ class ContentNodeTreeCacheDumper
     public function dumpForAllScopes(WebCatalog $webCatalog): void
     {
         $rootNode = $this->getContentNodeRepository()->getRootNodeByWebCatalog($webCatalog);
-        $scopes = $this->getWebCatalogRepository()->getUsedScopes($webCatalog);
-        foreach ($scopes as $scope) {
-            $this->dump($rootNode, $scope);
+        if ($rootNode) {
+            $scopes = $this->getWebCatalogRepository()->getUsedScopes($webCatalog);
+            foreach ($scopes as $scope) {
+                $this->dump($rootNode, $scope);
+            }
         }
     }
 
