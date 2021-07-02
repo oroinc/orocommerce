@@ -94,6 +94,7 @@ class PropertyPathTitleDataConverterTest extends WebTestCase
                     'wysiwyg_style' => '',
                     'wysiwyg' => '',
                     'wysiwyg_properties' => '',
+                    'fallback' => 'system',
                 ],
                 [
                     'string' => 'string value',
@@ -102,6 +103,7 @@ class PropertyPathTitleDataConverterTest extends WebTestCase
                     'wysiwyg_style' => '',
                     'wysiwyg' => '',
                     'wysiwyg_properties' => '',
+                    'fallback' => 'system',
                 ],
             ],
         ];

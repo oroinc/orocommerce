@@ -150,6 +150,9 @@ abstract class AbstractLoadProductData extends AbstractFixture implements
         if (array_key_exists('text', $name)) {
             $value->setText($name['text']);
         }
+        if (array_key_exists('wysiwyg', $name)) {
+            $value->setWysiwyg($name['wysiwyg']);
+        }
         $this->setReference($name['reference'], $value);
 
         return $value;

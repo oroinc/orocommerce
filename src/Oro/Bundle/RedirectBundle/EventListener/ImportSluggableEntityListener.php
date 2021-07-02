@@ -3,6 +3,7 @@
 namespace Oro\Bundle\RedirectBundle\EventListener;
 
 use Oro\Bundle\ImportExportBundle\Event\StrategyEvent;
+use Oro\Bundle\LocaleBundle\ImportExport\Normalizer\LocalizationCodeFormatter;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Helper\SlugifyEntityHelper;
 
@@ -32,6 +33,26 @@ class ImportSluggableEntityListener
         $entity = $event->getEntity();
         if ($entity instanceof SluggableInterface) {
             $this->slugifyEntityHelper->fill($entity);
+
+            $itemData = $event->getContext()->getValue('itemData');
+            if (!$itemData) {
+                return;
+            }
+
+            foreach ($entity->getSlugPrototypes() as $slugPrototype) {
+                $localizationCode = LocalizationCodeFormatter::formatName($slugPrototype->getLocalization());
+                $slugPrototypes = $itemData['slugPrototypes'][$localizationCode] ?? [];
+                if (empty($slugPrototypes['string']) && empty($slugPrototypes['fallback'])) {
+                    $slugPrototypes = [
+                        'string' => $slugPrototype->getString(),
+                        'fallback' => $slugPrototype->getFallback(),
+                    ];
+                }
+
+                $itemData['slugPrototypes'][$localizationCode] = $slugPrototypes;
+            }
+
+            $event->getContext()->setValue('itemData', $itemData);
         }
     }
 }
