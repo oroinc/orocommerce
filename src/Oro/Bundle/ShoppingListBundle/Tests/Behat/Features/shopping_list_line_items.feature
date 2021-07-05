@@ -15,7 +15,7 @@ Feature: Shopping List Line Items
     And I signed in as AmandaRCole@example.org on the store frontend
     And Buyer is on "Shopping List 5" shopping list
     And I click "Shopping List Actions"
-    When I click "Edit"
+    And I click "Edit"
     And I should see following grid:
       | SKU | QtyUpdate All |
       | AA1 | 1 set         |
@@ -24,9 +24,8 @@ Feature: Shopping List Line Items
     And I fill "Shopping List Line Item Form" with:
       | Quantity | 3    |
       | Unit     | item |
-    And I click on "Shopping List Line Item 1 Save Changes Button"
-    Then I should see "ShoppingListProductTableRowSuccess" element inside "Frontend Shopping List Edit Grid" element
-    And I should see following grid:
+    When I save changes for "Shopping List Line Item 1" row
+    Then I should see following grid:
       | SKU | QtyUpdate All |
       | AA1 | 5 item        |
 
