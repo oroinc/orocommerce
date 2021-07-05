@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\Tests\Functional\Handler;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -20,6 +21,8 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class FrontendCouponHandlerTest extends AbstractCouponHandlerTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     /**
      * {@inheritdoc}
      */
@@ -52,7 +55,7 @@ class FrontendCouponHandlerTest extends AbstractCouponHandlerTestCase
             false,
             'k',
             $user->getOrganization(),
-            $user->getRoles()
+            $user->getUserRoles()
         );
     }
 
@@ -157,7 +160,7 @@ class FrontendCouponHandlerTest extends AbstractCouponHandlerTestCase
 
     public function testHandleCaseInsensitive()
     {
-        $configManager = static::getContainer()->get('oro_config.manager');
+        $configManager = self::getConfigManager('global');
         $savedState = $configManager->get('oro_promotion.case_insensitive_coupon_search');
         $configManager->set('oro_promotion.case_insensitive_coupon_search', true);
         $configManager->flush();

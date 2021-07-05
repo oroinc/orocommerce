@@ -30,7 +30,6 @@ dynamic-imports:
         - oro/datagrid/action/update-configurable-product-action
         - oro/datagrid/cell/shoppinglist-item-cell
         - oro/datagrid/cell/shoppinglist-line-item-cell
-        - orodatagrid/js/app/components/cell-popup-editor-component
         - oroform/js/app/views/editor/related-id-relation-editor-view
         - oroform/js/app/views/editor/select-editor-view
         - oroshoppinglist/js/app/components/shopping-list-cell-popup-editor-component

@@ -467,3 +467,10 @@ services:
 
     Oro\Bundle\CMSBundle\Tools\DigitalAssetTwigTagsConverter:
         alias: oro_cms.tools.digital_asset_twig_tags_converter
+
+    Oro\Bundle\CMSBundle\Provider\MysqlTemporaryPrivilegeRequirementProvider:
+        class: Oro\Bundle\CMSBundle\Provider\MysqlTemporaryPrivilegeRequirementProvider
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: oro.requirements_provider }

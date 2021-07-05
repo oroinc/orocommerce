@@ -134,7 +134,7 @@ class CustomerUserForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTes
         $guestCustomerUserId = (int)$this->getResourceId($response);
 
         $response = $this->cget(['entity' => 'customerusers']);
-        $this->assertResponseContains(
+        self::assertResponseContains(
             [
                 'data' => [
                     [
@@ -153,7 +153,7 @@ class CustomerUserForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTes
         $guestCustomerUserId = (int)$this->getResourceId($response);
 
         $response = $this->get(['entity' => 'customerusers', 'id' => (string)$guestCustomerUserId]);
-        $this->assertResponseContains(
+        self::assertResponseContains(
             [
                 'data' => [
                     'type' => 'customerusers',
@@ -201,10 +201,10 @@ class CustomerUserForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTes
         $expectedContent['data']['attributes']['confirmed'] = false;
         $expectedContent['data']['relationships']['customer']['data'] = ['type' => 'customers'];
         $expectedContent['data']['relationships']['addresses']['data'] = [];
-        $expectedContent['data']['relationships']['roles']['data'] = [
+        $expectedContent['data']['relationships']['userRoles']['data'] = [
             ['type' => 'customeruserroles', 'id' => (string)$roleId]
         ];
-        $this->assertResponseContains($expectedContent, $response);
+        self::assertResponseContains($expectedContent, $response);
 
         $customerUser = $this->getEntityManager()->find(CustomerUser::class, $customerUserId);
         $customerUserData = $responseContent['data'];
@@ -219,15 +219,15 @@ class CustomerUserForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTes
         self::assertFalse($customerUser->isConfirmed());
         self::assertNotNull($customerUser->getCustomer());
         self::assertCount(0, $customerUser->getAddresses());
-        self::assertCount(1, $customerUser->getRoles());
-        self::assertSame($roleId, $customerUser->getRoles()[0]->getId());
+        self::assertCount(1, $customerUser->getUserRoles());
+        self::assertSame($roleId, $customerUser->getUserRoles()[0]->getId());
         self::assertTrue($customerUser->isGuest());
         self::assertSame($websiteId, $customerUser->getWebsite()->getId());
         self::assertSame($organizationId, $customerUser->getOrganization()->getId());
         self::assertSame($ownerId, $customerUser->getOwner()->getId());
         self::assertNotEmpty($customerUser->getPassword());
 
-        $this->assertGuestCustomer($customerUser);
+        self::assertGuestCustomer($customerUser);
 
         $currentVisitor = $this->getCurrentVisitor();
         $visitor = $this->getEntityManager()->find(CustomerVisitor::class, $currentVisitor->getId());
@@ -261,10 +261,10 @@ class CustomerUserForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTes
         $expectedContent['data']['relationships']['customer']['data'] = ['type' => 'customers'];
         $expectedContent['data']['relationships']['addresses']['data'][0]['id'] = (string)$addressId;
         $expectedContent['included'][0]['id'] = (string)$addressId;
-        $expectedContent['data']['relationships']['roles']['data'] = [
+        $expectedContent['data']['relationships']['userRoles']['data'] = [
             ['type' => 'customeruserroles', 'id' => (string)$roleId]
         ];
-        $this->assertResponseContains($expectedContent, $response);
+        self::assertResponseContains($expectedContent, $response);
 
         $customerUser = $this->getEntityManager()->find(CustomerUser::class, $customerUserId);
         $customerUserData = $responseContent['data'];
@@ -280,15 +280,15 @@ class CustomerUserForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTes
         self::assertNotNull($customerUser->getCustomer());
         self::assertCount(1, $customerUser->getAddresses());
         self::assertSame($addressId, $customerUser->getAddresses()->first()->getId());
-        self::assertCount(1, $customerUser->getRoles());
-        self::assertSame($roleId, $customerUser->getRoles()[0]->getId());
+        self::assertCount(1, $customerUser->getUserRoles());
+        self::assertSame($roleId, $customerUser->getUserRoles()[0]->getId());
         self::assertTrue($customerUser->isGuest());
         self::assertSame($websiteId, $customerUser->getWebsite()->getId());
         self::assertSame($organizationId, $customerUser->getOrganization()->getId());
         self::assertSame($ownerId, $customerUser->getOwner()->getId());
         self::assertNotEmpty($customerUser->getPassword());
 
-        $this->assertGuestCustomer($customerUser);
+        self::assertGuestCustomer($customerUser);
         $address = $this->getEntityManager()->find(CustomerUserAddress::class, $addressId);
         $addressData = $responseContent['included'][0];
         self::assertEquals($addressData['attributes']['organization'], $address->getOrganization());
@@ -321,12 +321,12 @@ class CustomerUserForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTes
         $expectedContent = $data;
         $expectedContent['data']['id'] = (string)$customerUserId;
         $expectedContent['data']['relationships']['customer']['data'] = ['type' => 'customers'];
-        $this->assertResponseContains($expectedContent, $response);
+        self::assertResponseContains($expectedContent, $response);
 
         $customerUser = $this->getEntityManager()->find(CustomerUser::class, $customerUserId);
         self::assertNotNull($customerUser->getCustomer());
         self::assertNotSame($submittedCustomerId, $customerUser->getCustomer()->getId());
-        $this->assertGuestCustomer($customerUser);
+        self::assertGuestCustomer($customerUser);
     }
 
     public function testTryToCreateWithRoles(): void
@@ -334,7 +334,7 @@ class CustomerUserForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTes
         $roleId = $this->getCurrentWebsite()->getDefaultRole()->getId();
 
         $data = $this->getRequestData('create_customer_user_guest_checkout_min.yml');
-        $data['data']['relationships']['roles']['data'] = [
+        $data['data']['relationships']['userRoles']['data'] = [
             ['type' => 'customeruserroles', 'id' => '<toString(@admin->id)>']
         ];
         $response = $this->post(['entity' => 'customerusers'], $data);
@@ -342,14 +342,14 @@ class CustomerUserForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTes
         $customerUserId = (int)$this->getResourceId($response);
         $expectedContent = $data;
         $expectedContent['data']['id'] = (string)$customerUserId;
-        $expectedContent['data']['relationships']['roles']['data'] = [
+        $expectedContent['data']['relationships']['userRoles']['data'] = [
             ['type' => 'customeruserroles', 'id' => (string)$roleId]
         ];
-        $this->assertResponseContains($expectedContent, $response);
+        self::assertResponseContains($expectedContent, $response);
 
         $customerUser = $this->getEntityManager()->find(CustomerUser::class, $customerUserId);
         self::assertNotNull($customerUser->getCustomer());
-        self::assertSame($roleId, $customerUser->getRoles()[0]->getId());
+        self::assertSame($roleId, $customerUser->getUserRoles()[0]->getId());
     }
 
     public function testTryToCreateWithEnabledAndConfirmed(): void
@@ -364,7 +364,7 @@ class CustomerUserForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTes
         $expectedContent['data']['id'] = (string)$customerUserId;
         $expectedContent['data']['attributes']['enabled'] = false;
         $expectedContent['data']['attributes']['confirmed'] = false;
-        $this->assertResponseContains($expectedContent, $response);
+        self::assertResponseContains($expectedContent, $response);
 
         $customerUser = $this->getEntityManager()->find(CustomerUser::class, $customerUserId);
         self::assertFalse($customerUser->isEnabled());
@@ -389,7 +389,7 @@ class CustomerUserForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTes
             [],
             false
         );
-        $this->assertResponseValidationError(
+        self::assertResponseValidationError(
             [
                 'title'  => 'access denied exception',
                 'detail' => 'No access to this type of entities.'
@@ -409,7 +409,7 @@ class CustomerUserForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTes
             [],
             false
         );
-        $this->assertResponseValidationError(
+        self::assertResponseValidationError(
             [
                 'title'  => 'access denied exception',
                 'detail' => 'No access to this type of entities.'
@@ -427,7 +427,7 @@ class CustomerUserForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTes
             [],
             false
         );
-        $this->assertResponseValidationError(
+        self::assertResponseValidationError(
             [
                 'title'  => 'access denied exception',
                 'detail' => 'No access to this type of entities.'

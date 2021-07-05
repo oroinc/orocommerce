@@ -2,10 +2,13 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Command;
 
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class SwitchPricingStorageCommandTest extends WebTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     public function testExecute(): void
     {
         $storageSwitch = [
@@ -14,7 +17,7 @@ class SwitchPricingStorageCommandTest extends WebTestCase
         ];
 
         static::bootKernel();
-        $configManager = $this->getContainer()->get('oro_config.manager');
+        $configManager = self::getConfigManager(null);
         $currentStorage = $configManager->get('oro_pricing.price_storage');
 
         // Check unknown storage

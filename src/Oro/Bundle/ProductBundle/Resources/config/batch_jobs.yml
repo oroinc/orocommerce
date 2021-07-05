@@ -25,3 +25,16 @@ connector:
                         processor: oro_importexport.processor.import_delegate
                         writer:    oro_product.importexport.writer.related_product.entity
                     parameters: ~
+
+        filtered_frontend_product_export_to_csv:
+            title: "Export Filtered Frontend Product Data to CSV"
+            type: export
+            steps:
+                export:
+                    title:     export
+                    class:     Oro\Bundle\BatchBundle\Step\ItemStep
+                    services:
+                        reader:    oro_datagrid.importexport.export_filtered_reader
+                        processor: oro_importexport.processor.export_delegate
+                        writer:    oro_importexport.writer.csv
+                    parameters: ~

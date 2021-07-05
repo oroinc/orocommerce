@@ -4,11 +4,10 @@ namespace Oro\Bundle\OrderBundle\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Form\FormUtil;
 use Oro\Bundle\ApiBundle\Form\FormValidationHandler;
-use Oro\Bundle\ApiBundle\Processor\CustomizeFormData\CustomizeFormDataContext;
+use Oro\Bundle\ApiBundle\Processor\SharedDataAwareContextInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Total\TotalHelper;
 use Oro\Component\ChainProcessor\ContextInterface;
-use Oro\Component\ChainProcessor\ParameterBagInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 use Symfony\Component\Form\FormInterface;
 
@@ -19,18 +18,12 @@ use Symfony\Component\Form\FormInterface;
  */
 class UpdateOrderTotals implements ProcessorInterface
 {
+    /** data structure: [order key => [order, form, orderFieldName], ...] */
     private const ORDERS = 'orders_to_update_totals';
 
-    /** @var TotalHelper */
-    private $totalHelper;
+    private TotalHelper $totalHelper;
+    private FormValidationHandler $validator;
 
-    /** @var FormValidationHandler */
-    private $validator;
-
-    /**
-     * @param TotalHelper           $totalHelper
-     * @param FormValidationHandler $validator
-     */
     public function __construct(TotalHelper $totalHelper, FormValidationHandler $validator)
     {
         $this->totalHelper = $totalHelper;
@@ -39,15 +32,10 @@ class UpdateOrderTotals implements ProcessorInterface
 
     /**
      * Adds the given order to the list of orders that require the totals update.
-     * This list is is stored in shared data.
-     *
-     * @param ParameterBagInterface $sharedData
-     * @param Order                 $order
-     * @param FormInterface         $form
-     * @param string|null           $orderFieldName
+     * This list is stored in shared data.
      */
     public static function addOrderToUpdateTotals(
-        ParameterBagInterface $sharedData,
+        SharedDataAwareContextInterface $context,
         Order $order,
         FormInterface $form,
         string $orderFieldName = null
@@ -57,6 +45,7 @@ class UpdateOrderTotals implements ProcessorInterface
             $orderKey = spl_object_hash($order);
         }
 
+        $sharedData = $context->getSharedData();
         $orders = $sharedData->get(self::ORDERS) ?? [];
         $orders[$orderKey] = [$order, $form, $orderFieldName];
         $sharedData->set(self::ORDERS, $orders);
@@ -64,10 +53,8 @@ class UpdateOrderTotals implements ProcessorInterface
 
     /**
      * Moves orders that require the totals update from shared data to the given context.
-     *
-     * @param CustomizeFormDataContext $context
      */
-    public static function moveOrdersRequireTotalsUpdateToContext(CustomizeFormDataContext $context): void
+    public static function moveOrdersRequireTotalsUpdateToContext(SharedDataAwareContextInterface $context): void
     {
         $sharedData = $context->getSharedData();
         if ($sharedData->has(self::ORDERS)) {
@@ -81,12 +68,6 @@ class UpdateOrderTotals implements ProcessorInterface
      */
     public function process(ContextInterface $context)
     {
-        /** @var CustomizeFormDataContext $context */
-
-        if (!$context->isPrimaryEntityRequest()) {
-            return;
-        }
-
         $orders = $context->get(self::ORDERS);
         foreach ($orders as [$order, $form, $orderFieldName]) {
             $this->totalHelper->fill($order);

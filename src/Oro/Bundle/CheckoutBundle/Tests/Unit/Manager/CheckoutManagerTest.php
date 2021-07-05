@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CheckoutBundle\Tests\Manager;
+namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Manager;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;

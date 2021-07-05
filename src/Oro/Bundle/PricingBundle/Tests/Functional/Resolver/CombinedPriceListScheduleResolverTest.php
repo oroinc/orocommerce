@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Resolver;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
 use Oro\Bundle\PricingBundle\Entity\BaseCombinedPriceListRelation;
@@ -26,6 +27,7 @@ use Oro\Component\MessageQueue\Client\Message;
 class CombinedPriceListScheduleResolverTest extends WebTestCase
 {
     use MessageQueueExtension;
+    use ConfigManagerAwareTestTrait;
 
     /** @var CombinedPriceListScheduleResolver */
     private $resolver;
@@ -52,7 +54,7 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
         $this->getOptionalListenerManager()->enableListener('oro_pricing.entity_listener.price_list_to_product');
 
         $this->resolver = $this->getContainer()->get('oro_pricing.resolver.combined_product_schedule_resolver');
-        $this->configManager = $this->getContainer()->get('oro_config.global');
+        $this->configManager = self::getConfigManager('global');
     }
 
     /**

@@ -5,6 +5,7 @@ namespace Oro\Bundle\RedirectBundle\Tests\Functional\Routing;
 use Doctrine\Common\Cache\ArrayCache;
 use Oro\Bundle\CacheBundle\Provider\FilesystemCache;
 use Oro\Bundle\CacheBundle\Provider\PhpFileCache;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
@@ -25,6 +26,7 @@ use Symfony\Component\Routing\Exception\RouteNotFoundException;
 class SluggableUrlGeneratorTest extends WebTestCase
 {
     use EntityTrait;
+    use ConfigManagerAwareTestTrait;
 
     protected function setUp(): void
     {
@@ -182,7 +184,7 @@ class SluggableUrlGeneratorTest extends WebTestCase
             $urlProvider,
             new ContextUrlProviderRegistry($contextUrlProviders),
             $localizationManager,
-            $this->getContainer()->get('oro_config.manager')
+            self::getConfigManager(null)
         );
         $urlGenerator->setBaseGenerator($this->getContainer()->get('router.default'));
 

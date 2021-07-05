@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PayPalBundle\Tests\Validator\Constraints;
+namespace Oro\Bundle\PayPalBundle\Tests\Unit\Validator\Constraints;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;

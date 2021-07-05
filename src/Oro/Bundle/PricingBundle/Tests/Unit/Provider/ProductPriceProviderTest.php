@@ -178,7 +178,19 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => [
                     1 => $this->getPricesArray(10, 10, self::TEST_CURRENCY, ['unit']),
                 ],
-            ]
+            ],
+            'with products as ids' => [
+                'currencies' => [self::TEST_CURRENCY],
+                'supportedCurrencies' => [self::TEST_CURRENCY, 'EUR'],
+                'availableCurrencies' => [self::TEST_CURRENCY, 'EUR'],
+                'finalCurrencies' => [self::TEST_CURRENCY],
+                'unitCode' => null,
+                'products' => [1],
+                'prices' => $this->getPricesArray(10, 10, self::TEST_CURRENCY, ['unit']),
+                'expectedResult' => [
+                    1 => $this->getPricesArray(10, 10, self::TEST_CURRENCY, ['unit']),
+                ],
+            ],
         ];
     }
 

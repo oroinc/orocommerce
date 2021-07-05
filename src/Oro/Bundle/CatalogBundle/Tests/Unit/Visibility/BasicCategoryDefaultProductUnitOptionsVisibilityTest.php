@@ -1,6 +1,8 @@
 <?php
 
-namespace Oro\Bundle\CatalogBundle\Visibility;
+namespace Oro\Bundle\CatalogBundle\Tests\Unit\Visibility;
+
+use Oro\Bundle\CatalogBundle\Visibility\BasicCategoryDefaultProductUnitOptionsVisibility;
 
 class BasicCategoryDefaultProductUnitOptionsVisibilityTest extends \PHPUnit\Framework\TestCase
 {

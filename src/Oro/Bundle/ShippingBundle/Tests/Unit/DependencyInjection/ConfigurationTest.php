@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Bundle\Tests\Unit\DependencyInjection;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\DependencyInjection;
 
 use Oro\Bundle\ShippingBundle\DependencyInjection\Configuration;
 use Symfony\Component\Config\Definition\Processor;

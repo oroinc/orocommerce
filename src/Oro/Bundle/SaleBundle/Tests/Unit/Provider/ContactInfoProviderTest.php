@@ -22,34 +22,22 @@ class ContactInfoProviderTest extends \PHPUnit\Framework\TestCase
         ContactInfoSourceOptionsProvider::CUSTOMER_OWNER => UserOptionsProvider::USE_USER_PROFILE_DATA,
     ];
 
-    /**
-     * @var NameFormatter
-     */
+    /** @var NameFormatter */
     private $nameFormatter;
 
-    /**
-     * @var ContactInfoProvider
-     */
+    /** @var ContactInfoProvider */
     private $contactInfoProvider;
 
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
-    /**
-     * @var ContactInfoSourceOptionsProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ContactInfoSourceOptionsProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $contactSourceProvider;
 
-    /**
-     * @var ContactInfoUserOptionsProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ContactInfoUserOptionsProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $contactInfoUserOptionsProvider;
 
-    /**
-     * @var ContactInfoFactory
-     */
+    /** @var ContactInfoFactory */
     private $contactInfoFactory;
 
     protected function setUp(): void
@@ -69,47 +57,41 @@ class ContactInfoProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param CustomerUser|null $customerUser
-     * @param $displayOption
-     * @param array|null $userSelectedOption
-     * @param bool $allowChoice
-     * @param array $infoData
-     *
      * @dataProvider infoDataProvider
      */
     public function testFromCustomerOwner(
         ?CustomerUser $customerUser,
-        $displayOption,
+        string $displayOption,
         ?array $userSelectedOption,
-        $allowChoice,
-        $infoData
+        bool $allowChoice,
+        array $infoData
     ) {
-        $this->nameFormatter
+        $this->nameFormatter->expects(self::any())
             ->method('format')
             ->willReturnCallback(function (User $user) {
                 return $user->getFullName();
             });
 
-        $this->contactSourceProvider
+        $this->contactSourceProvider->expects(self::any())
             ->method('getSelectedOption')
             ->willReturn($displayOption);
 
-        $this->contactInfoUserOptionsProvider
+        $this->contactInfoUserOptionsProvider->expects(self::any())
             ->method('getDefaultOption')
             ->willReturn(self::DEFAULT_OPTIONS_MAP[$displayOption]);
 
         if ($userSelectedOption) {
-            $this->contactInfoUserOptionsProvider
+            $this->contactInfoUserOptionsProvider->expects(self::any())
                 ->method('getSelectedOption')
                 ->willReturnMap($userSelectedOption);
         } else {
-            $this->contactInfoUserOptionsProvider
-                ->expects($this->never())
+            $this->contactInfoUserOptionsProvider->expects(self::never())
                 ->method('getSelectedOption');
         }
 
-        $this->configManager->method('get')->willReturnMap(
-            [
+        $this->configManager->expects(self::any())
+            ->method('get')
+            ->willReturnMap([
                 ['oro_sale.allow_user_configuration', false, false, null, $allowChoice],
                 [
                     'oro_sale.contact_info_manual_text',
@@ -127,8 +109,8 @@ class ContactInfoProviderTest extends \PHPUnit\Framework\TestCase
                 ],
                 ['oro_sale.contact_details', false, false, null, 'system text'],
                 ['oro_sale.guest_contact_info_text', false, false, null, 'text for anon'],
-            ]
-        );
+            ]);
+
         $contactInfo = $this->contactInfoProvider->getContactInfo($customerUser);
 
         $this->assertEquals($infoData, $contactInfo->all());
@@ -136,12 +118,11 @@ class ContactInfoProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     * @return array
      */
-    public function infoDataProvider()
+    public function infoDataProvider(): array
     {
-        $user = $this->createUserMock('John Doe', '1111', 'mail@exemple.dev');
-        $user2 = $this->createUserMock('Debra Morgan', '42', 'mail.debra@exemple.dev');
+        $user = $this->getUser('John Doe', '1111', 'mail@exemple.dev');
+        $user2 = $this->getUser('Debra Morgan', '42', 'mail.debra@exemple.dev');
         $customerUser1 = $this->getCustomerUser($user);
         $customerUser2 = $this->getCustomerUser($user, $user2);
 
@@ -324,12 +305,7 @@ class ContactInfoProviderTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param User $customerUserOwner
-     * @param User|null $customerOwner
-     * @return CustomerUser
-     */
-    private function getCustomerUser(User $customerUserOwner, User $customerOwner = null)
+    private function getCustomerUser(User $customerUserOwner, User $customerOwner = null): CustomerUser
     {
         $customer = new Customer();
         $customer->setOwner($customerOwner ?: $customerUserOwner);
@@ -340,21 +316,21 @@ class ContactInfoProviderTest extends \PHPUnit\Framework\TestCase
         return $customerUser;
     }
 
-    /**
-     * @param string $name
-     * @param string $phone
-     * @param string $email
-     *
-     * @return User|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function createUserMock($name, $phone, $email)
+    private function getUser(string $name, string $phone, string $email): User
     {
         $user = $this->getMockBuilder(User::class)
-            ->setMethods(['getPhone', 'getEmail', 'getFullName'])
+            ->onlyMethods(['getEmail', 'getFullName'])
+            ->addMethods(['getPhone'])
             ->getMock();
-        $user->method('getPhone')->willReturn($phone);
-        $user->method('getEmail')->willReturn($email);
-        $user->method('getFullName')->willReturn($name);
+        $user->expects(self::any())
+            ->method('getPhone')
+            ->willReturn($phone);
+        $user->expects(self::any())
+            ->method('getEmail')
+            ->willReturn($email);
+        $user->expects(self::any())
+            ->method('getFullName')
+            ->willReturn($name);
 
         return $user;
     }

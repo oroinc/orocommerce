@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Api\Processor\ProductPrice;
 
+use Oro\Bundle\ApiBundle\Processor\CustomizeFormData\CustomizeFormDataContext;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
@@ -17,7 +18,10 @@ class ResetPriceRuleField implements ProcessorInterface
      */
     public function process(ContextInterface $context)
     {
-        $productPrice = $context->getResult();
+        /** @var CustomizeFormDataContext $context */
+
+        /** @var ProductPrice|null $entity */
+        $productPrice = $context->getData();
         if (null === $productPrice) {
             return;
         }
@@ -33,12 +37,6 @@ class ResetPriceRuleField implements ProcessorInterface
         $context->remove(RememberProductPrice::PRODUCT_PRICE_ATTRIBUTE);
     }
 
-    /**
-     * @param ProductPrice $productPrice1
-     * @param ProductPrice $productPrice2
-     *
-     * @return bool
-     */
     private function needToResetPriceRule(ProductPrice $productPrice1, ProductPrice $productPrice2): bool
     {
         return

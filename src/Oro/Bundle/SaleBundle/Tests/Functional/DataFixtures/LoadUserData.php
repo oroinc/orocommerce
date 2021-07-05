@@ -136,7 +136,7 @@ class LoadUserData extends AbstractFixture
             'lastname'  => 'User1LN',
             'password'  => self::ACCOUNT1_USER1,
             'customer'   => self::ACCOUNT1,
-            'roles'     => [
+            'userRoles'     => [
                 self::ROLE1,
                 self::ROLE4,
             ],
@@ -147,7 +147,7 @@ class LoadUserData extends AbstractFixture
             'lastname'  => 'User2LN',
             'password'  => self::ACCOUNT1_USER2,
             'customer'   => self::ACCOUNT1,
-            'roles'     => [
+            'userRoles'     => [
                 self::ROLE2,
                 self::ROLE7,
             ],
@@ -158,7 +158,7 @@ class LoadUserData extends AbstractFixture
             'lastname'  => 'User3LN',
             'password'  => self::ACCOUNT1_USER3,
             'customer'   => self::ACCOUNT1,
-            'roles'     => [
+            'userRoles'     => [
                 self::ROLE3,
                 self::ROLE5,
                 self::ROLE7,
@@ -170,7 +170,7 @@ class LoadUserData extends AbstractFixture
             'lastname'  => 'User1LN',
             'password'  => self::ACCOUNT2_USER1,
             'customer'   => self::ACCOUNT2,
-            'roles'     => [
+            'userRoles'     => [
                 self::ROLE1,
             ],
         ],
@@ -180,7 +180,7 @@ class LoadUserData extends AbstractFixture
             'lastname'  => 'ParentUser1LN',
             'password'  => self::PARENT_ACCOUNT_USER1,
             'customer'   => self::PARENT_ACCOUNT,
-            'roles'     => [
+            'userRoles'     => [
                 self::ROLE6
             ],
         ],
@@ -190,7 +190,7 @@ class LoadUserData extends AbstractFixture
             'lastname'  => 'ParentUser2LN',
             'password'  => self::PARENT_ACCOUNT_USER2,
             'customer'   => self::PARENT_ACCOUNT,
-            'roles'     => [
+            'userRoles'     => [
                 self::ROLE2,
             ],
         ],
@@ -305,8 +305,8 @@ class LoadUserData extends AbstractFixture
                 ->setPlainPassword($item['password'])
                 ->setEnabled(true);
 
-            foreach ($item['roles'] as $role) {
-                $customerUser->addRole($this->getReference($role));
+            foreach ($item['userRoles'] as $role) {
+                $customerUser->addUserRole($this->getReference($role));
             }
 
             $userManager->updateUser($customerUser);
@@ -327,7 +327,7 @@ class LoadUserData extends AbstractFixture
 
         $businessUnit = $defaultUser->getOwner();
         $organization = $defaultUser->getOrganization();
-        $roles = $defaultUser->getRoles();
+        $roles = $defaultUser->getUserRoles();
 
         foreach ($this->users as $item) {
             /* @var User $user */
@@ -340,7 +340,7 @@ class LoadUserData extends AbstractFixture
                 ->setOwner($businessUnit)
                 ->setOrganization($organization)
                 ->addOrganization($organization)
-                ->addRole($roles[0])
+                ->addUserRole($roles[0])
                 ->setUsername($item['username'])
                 ->setPlainPassword($item['password'])
                 ->setEnabled(true);

@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PricingBundle\Tests\Functional\EventListener;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Provider;
 
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserAddressACLData;

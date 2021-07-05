@@ -7,7 +7,6 @@ use Oro\Bundle\ProductBundle\Layout\DataProvider\ConfigurableProductProvider;
 use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantFieldValueHandlerInterface;
 use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantFieldValueHandlerRegistry;
 use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
-use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -16,30 +15,17 @@ class ConfigurableProductProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var CustomFieldProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $customFieldProvider;
+    /** @var CustomFieldProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $customFieldProvider;
 
-    /**
-     * @var ProductVariantAvailabilityProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $productVariantAvailabilityProvider;
+    /** @var ProductVariantFieldValueHandlerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $fieldValueHandlerRegistry;
 
-    /**
-     * @var ProductVariantFieldValueHandlerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $productVariantFieldValueHandlerRegistry;
-
-    /**
-     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $translator;
 
-    /**
-     * @var array
-     */
-    protected $exampleCustomFields = [
+    /** @var array */
+    private $exampleCustomFields = [
         'size' => [
             'name' => 'size',
             'type' => 'boolean',
@@ -54,35 +40,22 @@ class ConfigurableProductProviderTest extends \PHPUnit\Framework\TestCase
         ],
     ];
 
-    /**
-     * @var ConfigurableProductProvider
-     */
-    protected $configurableProductProvider;
+    /** @var ConfigurableProductProvider */
+    private $configurableProductProvider;
 
     protected function setUp(): void
     {
-        $this->customFieldProvider = $this->getMockBuilder(CustomFieldProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->productVariantAvailabilityProvider = $this->getMockBuilder(ProductVariantAvailabilityProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->productVariantFieldValueHandlerRegistry =
-            $this->createMock(ProductVariantFieldValueHandlerRegistry::class);
-
+        $this->customFieldProvider = $this->createMock(CustomFieldProvider::class);
+        $this->fieldValueHandlerRegistry = $this->createMock(ProductVariantFieldValueHandlerRegistry::class);
         $this->translator = $this->createMock(TranslatorInterface::class);
 
         $this->configurableProductProvider = new ConfigurableProductProvider(
             $this->customFieldProvider,
-            $this->productVariantAvailabilityProvider,
             $this->getPropertyAccessor(),
-            $this->productVariantFieldValueHandlerRegistry,
+            $this->fieldValueHandlerRegistry,
             $this->translator
         );
     }
-
 
     public function testGetProductsWithoutLineItems()
     {
@@ -101,10 +74,10 @@ class ConfigurableProductProviderTest extends \PHPUnit\Framework\TestCase
         $parentProduct->setVariantFields(['size']);
         $lineItem->setParentProduct($parentProduct);
 
-        /** @var Product|\PHPUnit\Framework\MockObject\MockObject */
         $simpleProduct = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getId', 'getSize'])
+            ->onlyMethods(['getId'])
+            ->addMethods(['getSize'])
             ->getMock();
         $simpleProduct->expects($this->any())
             ->method('getSize')
@@ -120,14 +93,13 @@ class ConfigurableProductProviderTest extends \PHPUnit\Framework\TestCase
             ->willReturn($this->exampleCustomFields);
 
         $boolHandler = $this->createMock(ProductVariantFieldValueHandlerInterface::class);
-
         $boolHandler->expects($this->atLeastOnce())
             ->method('getHumanReadableValue')
             ->willReturnCallback(function ($value) {
                 return $value ? 'Yes' : 'No';
             });
 
-        $this->productVariantFieldValueHandlerRegistry->expects($this->any())
+        $this->fieldValueHandlerRegistry->expects($this->any())
             ->method('getVariantFieldValueHandler')
             ->with('boolean')
             ->willReturn($boolHandler);
@@ -144,8 +116,7 @@ class ConfigurableProductProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetVariantFieldsValuesForLineItemWhenNotTranslateLabels(): void
     {
-        $this->translator
-            ->expects($this->never())
+        $this->translator->expects($this->never())
             ->method($this->anything());
 
         $expectedField = [
@@ -170,14 +141,11 @@ class ConfigurableProductProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetVariantFieldsValuesForLineItemWhenTranslateLabels(): void
     {
-        $this->translator
-            ->expects($this->atLeastOnce())
+        $this->translator->expects($this->atLeastOnce())
             ->method('trans')
-            ->willReturnCallback(
-                static function (string $key) {
-                    return $key . 'Translated';
-                }
-            );
+            ->willReturnCallback(function (string $key) {
+                return $key . 'Translated';
+            });
 
         $expectedField = [
             2 => [

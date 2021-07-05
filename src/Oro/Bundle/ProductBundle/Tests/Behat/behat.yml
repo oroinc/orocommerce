@@ -228,6 +228,33 @@ oro_behat_extension:
             locator: '[name="oro_product[descriptions][values][default][wysiwyg]"]'
             class: Oro\Bundle\CMSBundle\Tests\Behat\Element\WysiwygField
           Short Description: 'oro_product[shortDescriptions][values][default]'
+          Name English (United States) value:
+            type: 'xpath'
+            locator: '//label[text() = "Name"]/ancestor::div[contains(@class, "control-group")]//div[text() = "English (United States)"]/following-sibling::div//input[contains(@class, "fallback-item-value-input")]'
+          Name English (United States) use fallback:
+            type: 'xpath'
+            locator: '//label[text() = "Name"]/ancestor::div[contains(@class, "control-group")]//div[text() = "English (United States)"]/following-sibling::div//input[contains(@class, "checkbox-view__input")]'
+          Name English (United States) fallback:
+            type: 'xpath'
+            locator: '//label[text() = "Name"]/ancestor::div[contains(@class, "control-group")]//div[text() = "English (United States)"]/following-sibling::div//select]'
+          Name Dutch value:
+            type: 'xpath'
+            locator: '//label[text() = "Name"]/ancestor::div[contains(@class, "control-group")]//div[text() = "Dutch"]/following-sibling::div//input[contains(@class, "fallback-item-value-input")]'
+          Name Dutch use fallback:
+            type: 'xpath'
+            locator: '//label[text() = "Name"]/ancestor::div[contains(@class, "control-group")]//div[text() = "Dutch"]/following-sibling::div//input[contains(@class, "checkbox-view__input")]'
+          Name Dutch fallback:
+            type: 'xpath'
+            locator: '//label[text() = "Name"]/ancestor::div[contains(@class, "control-group")]//div[text() = "Dutch"]/following-sibling::div//select]'
+          Name French value:
+            type: 'xpath'
+            locator: '//label[text() = "Name"]/ancestor::div[contains(@class, "control-group")]//div[text() = "French"]/following-sibling::div//input[contains(@class, "fallback-item-value-input")]'
+          Name French use fallback:
+            type: 'xpath'
+            locator: '//label[text() = "Name"]/ancestor::div[contains(@class, "control-group")]//div[text() = "French"]/following-sibling::div//input[contains(@class, "checkbox-view__input")]'
+          Name French fallback:
+            type: 'xpath'
+            locator: '//label[text() = "Name"]/ancestor::div[contains(@class, "control-group")]//div[text() = "French"]/following-sibling::div//select]'
           Description Localization 1: 'oro_product[descriptions][values][localizations][1][value][wysiwyg]'
           Description Localization 1 fallback selector: 'oro_product[descriptions][values][localizations][1][fallback]'
           Description Localization 2: 'oro_product[descriptions][values][localizations][2][value][wysiwyg]'
@@ -349,6 +376,44 @@ oro_behat_extension:
             locator: '//input[starts-with(@name, "oro_product[MultipleImages") and contains(@name, "[file][file]")]'
             type: xpath
           MultiFileField9_Excluded: 'oro_product[MultiFileField9_Excluded][0][file][file]'
+
+    NameEnglishUnitedStatesValue:
+      selector:
+        type: 'xpath'
+        locator: '//label[text() = "Name"]/ancestor::div[contains(@class, "control-group")]//div[text() = "English (United States)"]/following-sibling::div//input[contains(@class, "fallback-item-value-input")]'
+    NameEnglishUnitedStatesFallback:
+      selector:
+        type: 'xpath'
+        locator: '//label[text() = "Name"]/ancestor::div[contains(@class, "control-group")]//div[text() = "English (United States)"]/following-sibling::div//select/option[@selected]'
+    NameDutchValue:
+      selector:
+        type: 'xpath'
+        locator: '//label[text() = "Name"]/ancestor::div[contains(@class, "control-group")]//div[text() = "Dutch"]/following-sibling::div//input[contains(@class, "fallback-item-value-input")]'
+    NameDutchFallback:
+      selector:
+        type: 'xpath'
+        locator: '//label[text() = "Name"]/ancestor::div[contains(@class, "control-group")]//div[text() = "Dutch"]/following-sibling::div//select/option[@selected]'
+    NameFrenchValue:
+      selector:
+        type: 'xpath'
+        locator: '//label[text() = "Name"]/ancestor::div[contains(@class, "control-group")]//div[text() = "French"]/following-sibling::div//input[contains(@class, "fallback-item-value-input")]'
+    NameFrenchFallback:
+      selector:
+        type: 'xpath'
+        locator: '//label[text() = "Name"]/ancestor::div[contains(@class, "control-group")]//div[text() = "French"]/following-sibling::div//select/option[@selected]'
+
+    URLSlugEnglishValue:
+      selector:
+        type: 'xpath'
+        locator: '//label[contains(text(), "URL Slug")]/ancestor::div[contains(@class, "control-group")]//div[contains(@class, "fallback-item-value--first")]//input'
+    URLSlugEnglishUnitedStatesValue:
+      selector:
+        type: 'xpath'
+        locator: '//label[contains(text(), "URL Slug")]/ancestor::div[contains(@class, "control-group")]//div[text() = "English (United States)"]/following-sibling::div//input[contains(@class, "fallback-item-value-input")]'
+    URLSlugEnglishUnitedStatesFallback:
+      selector:
+        type: 'xpath'
+        locator: '//label[contains(text(), "URL Slug")]/ancestor::div[contains(@class, "control-group")]//div[text() = "English (United States)"]/following-sibling::div//input[contains(@class, "checkbox-view__input")]'
 
     RelatedProductsConfig:
       selector: 'form[name="related_items"]'
@@ -728,6 +793,9 @@ oro_behat_extension:
       selector: '.grid-row'
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGridRow
 
+    Frontend Product Grid Export Button:
+      selector: 'button.export-button'
+
     ProductRelatedProducts:
       selector: '.product-view__related-products .embedded-list__item'
 
@@ -1028,6 +1096,11 @@ oro_behat_extension:
       selector:
         type: xpath
         locator: '//label[text()="URL Slug"]/../..//button[contains(@class, "fallback-status")]'
+
+    Product Names Fallbacks:
+      selector:
+        type: xpath
+        locator: '//label[text()="Name"]/../..//button[contains(@class, "fallback-status")]'
 
     Content Node Titles Localization Form Fallbacks:
       selector:
@@ -1345,6 +1418,7 @@ oro_behat_extension:
         - '@OroProductBundle/Tests/Behat/Features/product'
         - '@OroProductBundle/Tests/Behat/Features/product-search'
         - '@OroProductBundle/Tests/Behat/Features/product-attributes'
+        - '@OroProductBundle/Tests/Behat/Features/frontend-product-export'
     OroProductBundleRelatedItems:
       contexts:
         - OroApplicationBundle::CommerceMainContext

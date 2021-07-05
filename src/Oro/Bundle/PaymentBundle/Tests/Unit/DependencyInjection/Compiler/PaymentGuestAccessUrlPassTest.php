@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PaymentBundle\Tests\Unit\DependencyInjection;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\DependencyInjection\Compiler;
 
 use Oro\Bundle\PaymentBundle\DependencyInjection\Compiler\PaymentGuestAccessUrlPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;

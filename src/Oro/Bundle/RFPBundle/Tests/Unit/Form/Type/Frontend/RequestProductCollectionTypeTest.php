@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Frontend\Type;
+namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Type\Frontend;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductCollectionType;

@@ -457,7 +457,7 @@ Feature: Commerce smoke e2e
       |Email Address|AmandaRCole1@example.org|
       |Password     |AmandaRCole1@example.org|
     And click "Sign In"
-    Then I should see "Account is locked."
+    Then I should see "Your login was unsuccessful. Please check your e-mail address and password before trying again."
 
   Scenario: Activate customer user
     Given  I proceed as the Admin
@@ -968,7 +968,7 @@ Feature: Commerce smoke e2e
     And click disable "TestUser1@test.com" in grid
     And click "Sign Out"
     And I signed in as TestUser1@test.com on the store frontend
-    Then should see "Account is locked."
+    Then I should see "Your login was unsuccessful. Please check your e-mail address and password before trying again."
     And I signed in as LonnieVTownsend1@example.org on the store frontend
     When follow "Account"
     And click "Users"

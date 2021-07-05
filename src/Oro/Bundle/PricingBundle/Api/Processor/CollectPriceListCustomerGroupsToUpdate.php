@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Api\Processor;
 
-use Oro\Bundle\ApiBundle\Processor\Context;
+use Oro\Bundle\ApiBundle\Processor\ChangeContextInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
 use Oro\Component\ChainProcessor\ContextInterface;
@@ -18,20 +18,21 @@ class CollectPriceListCustomerGroupsToUpdate implements ProcessorInterface
      */
     public function process(ContextInterface $context)
     {
-        /** @var Context $context */
+        /** @var ChangeContextInterface $context */
 
-        $customerGroups = $context->get(UpdatePriceListCustomerGroups::CUSTOMER_GROUPS) ?? [];
-        /** @var PriceListToCustomerGroup[]|PriceListCustomerGroupFallback[] $entities */
         $entities = $context->getAllEntities(true);
         foreach ($entities as $entity) {
-            $customerGroup = $entity->getCustomerGroup();
-            $website = $entity->getWebsite();
-            if (null !== $customerGroup && null !== $website) {
-                $customerGroups[$customerGroup->getId()][$website->getId()] = [$customerGroup, $website];
+            if ($entity instanceof PriceListToCustomerGroup || $entity instanceof PriceListCustomerGroupFallback) {
+                $customerGroup = $entity->getCustomerGroup();
+                $website = $entity->getWebsite();
+                if (null !== $customerGroup && null !== $website) {
+                    UpdatePriceListCustomerGroups::addCustomerGroupToUpdatePriceLists(
+                        $context,
+                        $customerGroup,
+                        $website
+                    );
+                }
             }
-        }
-        if ($customerGroups) {
-            $context->set(UpdatePriceListCustomerGroups::CUSTOMER_GROUPS, $customerGroups);
         }
     }
 }

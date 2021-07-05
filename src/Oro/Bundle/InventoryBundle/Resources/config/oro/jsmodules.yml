@@ -1,9 +1,10 @@
 app-modules:
     - oroinventory/js/app/modules/validator-constraints-module
 dynamic-imports:
-    oroform-validate:
+    commons:
         - oroinventory/js/validator/decimals-number
-    oroinventory:
-        - oroinventory/js/app/views/quantity-editor-view
+    orodatagrid:
         - oroinventory/js/datagrid/builder/inventory-status-builder
         - oroinventory/js/datagrid/builder/level-quantity-builder
+    orosale:
+        - oroinventory/js/app/views/quantity-editor-view

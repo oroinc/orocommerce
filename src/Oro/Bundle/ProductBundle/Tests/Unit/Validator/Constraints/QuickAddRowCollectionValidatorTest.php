@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\Validator\Constraints;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Validator\Constraints;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;

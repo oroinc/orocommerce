@@ -64,3 +64,9 @@ services:
         tags:
             - { name: container.service_subscriber }
             - { name: container.service_subscriber, id: oro_product.formatter.product_unit_label, key: Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter }
+
+    Oro\Bundle\ProductBundle\Controller\Frontend\ExportController:
+        calls:
+            - [setContainer, ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: 'container.service_subscriber' }

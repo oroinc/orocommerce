@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\EventListener;
 
 use Doctrine\ORM\EntityManager;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CustomerGroupCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
@@ -15,6 +16,8 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class ShoppingListTotalListenerTest extends WebTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     /** @var EntityManager */
     protected $manager;
 
@@ -41,7 +44,7 @@ class ShoppingListTotalListenerTest extends WebTestCase
         $shoppingListTotal = $this->createTotal($shoppingList);
         $website = $shoppingList->getWebsite();
 
-        $groupId = $this->getContainer()->get('oro_config.global')->get('oro_customer.anonymous_customer_group');
+        $groupId = self::getConfigManager('global')->get('oro_customer.anonymous_customer_group');
 
         $event = new CustomerGroupCPLUpdateEvent([
             ['websiteId' => $website->getId(), 'customerGroups' => [100, 200, 300, $groupId]]

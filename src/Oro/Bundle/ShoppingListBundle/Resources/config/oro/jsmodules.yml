@@ -1,7 +1,7 @@
 app-modules:
     - oroshoppinglist/js/app/modules/validator-constraints-module
 dynamic-imports:
-    oroform-validate:
+    commons:
         - oroshoppinglist/js/validator/decimal-precision
-    oroshoppinglist:
+    orosale:
         - oroshoppinglist/js/app/components/add-product-component

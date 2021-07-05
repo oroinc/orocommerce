@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadUserData as CatalogLoadUserData;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
@@ -23,6 +24,7 @@ use Symfony\Component\HttpFoundation\Response;
 class RelatedProductTest extends RestJsonApiTestCase
 {
     use RolePermissionExtension;
+    use ConfigManagerAwareTestTrait;
 
     protected function setUp(): void
     {
@@ -39,23 +41,17 @@ class RelatedProductTest extends RestJsonApiTestCase
         );
     }
 
-    /**
-     * @param bool $enabled
-     */
-    private function setRelatedProductsEnabled($enabled)
+    private function setRelatedProductsEnabled(bool $enabled): void
     {
-        $configManager = self::getContainer()->get('oro_config.global');
+        $configManager = self::getConfigManager();
         $name = sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::RELATED_PRODUCTS_ENABLED);
         $configManager->set($name, $enabled);
         $configManager->flush();
     }
 
-    /**
-     * @param int $limit
-     */
-    private function setRelatedProductsLimit($limit)
+    private function setRelatedProductsLimit(int $limit): void
     {
-        $configManager = self::getContainer()->get('oro_config.global');
+        $configManager = self::getConfigManager();
         $name = sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::MAX_NUMBER_OF_RELATED_PRODUCTS);
         $configManager->set($name, $limit, 0);
         $configManager->set($name, $limit, 1);
@@ -73,7 +69,7 @@ class RelatedProductTest extends RestJsonApiTestCase
      * oro_related_products_edit - false
      * Product::VIEW             - true
      */
-    public function testGetListAccessDeniedOnLackOfPermissionToEditRelatedProducts()
+    public function testTryToGetListWhenAccessDeniedOnLackOfPermissionToEditRelatedProducts()
     {
         $response = $this->cget(
             ['entity' => 'relatedproducts'],
@@ -99,7 +95,7 @@ class RelatedProductTest extends RestJsonApiTestCase
      * oro_related_products_edit - true
      * Product::VIEW             - false
      */
-    public function testGetListAccessDeniedOnLackOfPermissionToViewProductEntity()
+    public function testTryToGetListWhenAccessDeniedOnLackOfPermissionToViewProductEntity()
     {
         $this->updateRolePermission(
             CatalogLoadUserData::ROLE_CATALOG_MANAGER,
@@ -134,7 +130,7 @@ class RelatedProductTest extends RestJsonApiTestCase
      * oro_related_products_edit - false
      * Product::VIEW             - true
      */
-    public function testGetAccessDeniedOnLackOfPermissionToEditRelatedProducts()
+    public function testTryToGetWhenAccessDeniedOnLackOfPermissionToEditRelatedProducts()
     {
         $response = $this->get(
             [
@@ -163,7 +159,7 @@ class RelatedProductTest extends RestJsonApiTestCase
      * oro_related_products_edit - true
      * Product::VIEW             - false
      */
-    public function testGetAccessDeniedOnLackOfPermissionToViewProductEntity()
+    public function testTryToGetAccessDeniedOnLackOfPermissionToViewProductEntity()
     {
         $this->updateRolePermission(
             CatalogLoadUserData::ROLE_CATALOG_MANAGER,
@@ -187,7 +183,21 @@ class RelatedProductTest extends RestJsonApiTestCase
         self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
-    public function testValidationErrorOnPostInCaseFunctionalityIsDisabled()
+    public function testCreate()
+    {
+        $this->setRelatedProductsEnabled(true);
+        $this->setRelatedProductsLimit(100);
+
+        $response = $this->post(['entity' => 'relatedproducts'], 'related_product/post.yml');
+
+        $this->assertResponseContains('related_product/post.yml', $response);
+
+        // test that the entity was created
+        $entity = $this->getEntityManager()->find(RelatedProduct::class, $this->getResourceId($response));
+        self::assertNotNull($entity);
+    }
+
+    public function testTryToCreateWhenFunctionalityIsDisabled()
     {
         $this->setRelatedProductsEnabled(false);
 
@@ -202,7 +212,7 @@ class RelatedProductTest extends RestJsonApiTestCase
         );
     }
 
-    public function testValidationErrorOnPostInCaseUserTriesToAddProductToItself()
+    public function testTryToCreateWhenUserTriesToAddProductToItself()
     {
         $this->setRelatedProductsEnabled(true);
 
@@ -222,7 +232,7 @@ class RelatedProductTest extends RestJsonApiTestCase
         );
     }
 
-    public function testValidationErrorOnPostInCaseRelationAlreadyExist()
+    public function testTryToCreateWhenRelationAlreadyExist()
     {
         $response = $this->post(['entity' => 'relatedproducts'], 'related_product/post_relation_exists.yml', [], false);
 
@@ -235,7 +245,7 @@ class RelatedProductTest extends RestJsonApiTestCase
         );
     }
 
-    public function testValidationErrorOnPostInCaseLimitExceeded()
+    public function testTryToCreateWhenLimitExceeded()
     {
         $this->setRelatedProductsLimit(1);
 
@@ -250,7 +260,7 @@ class RelatedProductTest extends RestJsonApiTestCase
         );
     }
 
-    public function testValidationErrorOnPostIfRequestHasNoRelationshipData()
+    public function testTryToCreateWhenRequestHasNoRelationshipData()
     {
         $this->setRelatedProductsLimit(10);
 
@@ -278,7 +288,7 @@ class RelatedProductTest extends RestJsonApiTestCase
         );
     }
 
-    public function testValidationErrorOnPostIfRequestHasNoProductRelationshipData()
+    public function testTryToCreateWhenRequestHasNoProductRelationshipData()
     {
         $response = $this->post(
             ['entity' => 'relatedproducts'],
@@ -297,7 +307,7 @@ class RelatedProductTest extends RestJsonApiTestCase
         );
     }
 
-    public function testValidationErrorOnPostIfRequestHasNoRelatedItemRelationshipData()
+    public function testTryToCreateWhenRequestHasNoRelatedItemRelationshipData()
     {
         $response = $this->post(
             ['entity' => 'relatedproducts'],
@@ -314,6 +324,58 @@ class RelatedProductTest extends RestJsonApiTestCase
             ],
             $response
         );
+    }
+
+    /**
+     * oro_related_products_edit - false
+     * Product::VIEW,EDIT        - true
+     */
+    public function testTryToCreateWhenAccessDeniedOnLackOfPermissionToEditRelatedProducts()
+    {
+        $response = $this->post(
+            ['entity' => 'relatedproducts'],
+            'related_product/post.yml',
+            self::generateWsseAuthHeader(
+                LoadUserData::USER_NAME,
+                LoadUserData::USER_PASSWORD
+            ),
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'access denied exception',
+                'detail' => 'No access to change related products.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
+    }
+
+    /**
+     * oro_related_products_edit - true
+     * Product::VIEW             - true
+     * Product::EDIT             - false
+     */
+    public function testTryToCreateWhenAccessDeniedOnLackOfPermissionToEditProductEntity()
+    {
+        $this->updateRolePermissionForAction(
+            LoadRolesData::ROLE_USER,
+            'oro_related_products_edit',
+            true
+        );
+
+        $response = $this->post(
+            ['entity' => 'relatedproducts'],
+            'related_product/post.yml',
+            self::generateWsseAuthHeader(
+                LoadUserData::USER_NAME_2,
+                LoadUserData::USER_PASSWORD_2
+            ),
+            false
+        );
+
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
     public function testDelete()
@@ -343,7 +405,7 @@ class RelatedProductTest extends RestJsonApiTestCase
      * Product::EDIT             - true
      * Product::VIEW             - false
      */
-    public function testDeleteDeniedOnLackOfPermissionToViewProductEntity()
+    public function testTryToDeleteWhenDeniedOnLackOfPermissionToViewProductEntity()
     {
         $this->updateRolePermission(
             CatalogLoadUserData::ROLE_CATALOG_MANAGER,
@@ -380,71 +442,5 @@ class RelatedProductTest extends RestJsonApiTestCase
         );
 
         $this->assertResponseContains('related_product/get.yml', $response);
-    }
-
-    public function testRelatedProductIsAddedOnPost()
-    {
-        $this->setRelatedProductsEnabled(true);
-        $this->setRelatedProductsLimit(100);
-
-        $response = $this->post(['entity' => 'relatedproducts'], 'related_product/post.yml');
-
-        $this->assertResponseContains('related_product/post.yml', $response);
-
-        // test that the entity was created
-        $entity = $this->getEntityManager()->find(RelatedProduct::class, $this->getResourceId($response));
-        self::assertNotNull($entity);
-    }
-
-    /**
-     * oro_related_products_edit - false
-     * Product::VIEW,EDIT        - true
-     */
-    public function testPostAccessDeniedOnLackOfPermissionToEditRelatedProducts()
-    {
-        $response = $this->post(
-            ['entity' => 'relatedproducts'],
-            'related_product/post.yml',
-            self::generateWsseAuthHeader(
-                LoadUserData::USER_NAME,
-                LoadUserData::USER_PASSWORD
-            ),
-            false
-        );
-
-        $this->assertResponseValidationError(
-            [
-                'title'  => 'access denied exception',
-                'detail' => 'No access to change related products.'
-            ],
-            $response,
-            Response::HTTP_FORBIDDEN
-        );
-    }
-
-    /**
-     * oro_related_products_edit - true
-     * Product::VIEW             - true
-     * Product::EDIT             - false
-     */
-    public function testPostAccessDeniedOnLackOfPermissionToEditProductEntity()
-    {
-        $this->updateRolePermissionForAction(
-            LoadRolesData::ROLE_USER,
-            'oro_related_products_edit',
-            true
-        );
-
-        $response = $this->post(
-            ['entity' => 'relatedproducts'],
-            'related_product/post.yml',
-            self::generateWsseAuthHeader(
-                LoadUserData::USER_NAME_2,
-                LoadUserData::USER_PASSWORD_2
-            ),
-            false
-        );
-
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\ExpressCheckout\Option;
+namespace Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\ExpessCheckout\Option;
 
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\ExpressCheckout\Option\Action;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\ExpressCheckout\Option\Token;

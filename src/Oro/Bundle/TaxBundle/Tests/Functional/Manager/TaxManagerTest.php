@@ -5,6 +5,7 @@ namespace Oro\Bundle\TaxBundle\Tests\Functional\Manager;
 use Doctrine\Persistence\ManagerRegistry;
 use Fidry\AliceDataFixtures\LoaderInterface;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
@@ -32,6 +33,7 @@ class TaxManagerTest extends WebTestCase
 {
     use LoadTestCaseDataTrait;
     use ResultComparatorTrait;
+    use ConfigManagerAwareTestTrait;
 
     /** @var ConfigManager */
     protected $configManager;
@@ -55,7 +57,7 @@ class TaxManagerTest extends WebTestCase
         $this->initClient();
         $this->client->useHashNavigation(true);
 
-        $this->configManager = $this->getContainer()->get('oro_config.global');
+        $this->configManager = self::getConfigManager('global');
         $this->propertyAccessor = $this->getContainer()->get('property_accessor');
         $this->doctrine = $this->getContainer()->get('doctrine');
         $this->loader = $this->getContainer()->get('oro_test.alice_fixture_loader');

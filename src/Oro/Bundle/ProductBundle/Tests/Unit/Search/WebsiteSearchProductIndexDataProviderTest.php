@@ -136,7 +136,8 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
         $this->extendConfigProvider->expects($this->any())->method('getConfig')->willReturn($extendConfig);
         $this->attributeConfigProvider->expects($this->any())->method('getConfig')->willReturn($attributeConfig);
 
-        $this->assertEquals($expected, $this->provider->getIndexData($product, $attribute, [$locale1, $locale2]));
+        $data = $this->provider->getIndexData($product, $attribute, [$locale1, $locale2]);
+        $this->assertEquals($expected, array_values($data->getArrayCopy()));
     }
 
     /**

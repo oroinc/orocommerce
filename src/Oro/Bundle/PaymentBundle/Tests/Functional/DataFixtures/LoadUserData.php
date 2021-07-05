@@ -92,7 +92,7 @@ class LoadUserData extends AbstractLoadMultipleUserData
             'password'  => self::USER_VIEWER,
             'firstname' => 'PaymentUser1FN',
             'lastname'  => 'PaymentUser1LN',
-            'roles'     => [self::ROLE_VIEW],
+            'userRoles'     => [self::ROLE_VIEW],
         ],
         [
             'email'     => 'payment-user-editor@example.com',
@@ -100,7 +100,7 @@ class LoadUserData extends AbstractLoadMultipleUserData
             'password'  => self::USER_EDITOR,
             'firstname' => 'PaymentUser2FN',
             'lastname'  => 'PaymentUser2LN',
-            'roles'     => [self::ROLE_EDIT],
+            'userRoles'     => [self::ROLE_EDIT],
         ],
         [
             'email'     => 'payment-user-viewer-creator@example.com',
@@ -108,7 +108,7 @@ class LoadUserData extends AbstractLoadMultipleUserData
             'password'  => self::USER_VIEWER_CREATOR,
             'firstname' => 'PaymentUser2FN',
             'lastname'  => 'PaymentUser2LN',
-            'roles'     => [self::ROLE_VIEW, self::ROLE_CREATE],
+            'userRoles'     => [self::ROLE_VIEW, self::ROLE_CREATE],
         ]
     ];
 

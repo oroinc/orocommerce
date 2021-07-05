@@ -1,7 +1,7 @@
 app-modules:
     - oroshipping/js/app/modules/validator-constraints-module
 dynamic-imports:
-    oroform-validate:
+    commons:
         - oroshipping/js/validator/unique-product-unit-shipping-options
     oroshipping:
         - oroshipping/js/app/components/product-shipping-freight-classes-component

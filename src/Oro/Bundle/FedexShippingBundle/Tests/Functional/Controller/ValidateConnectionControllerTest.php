@@ -4,12 +4,15 @@ namespace Oro\Bundle\FedexShippingBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\FedexShippingBundle\Tests\Functional\Stub\SoapClientStub;
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class ValidateConnectionControllerTest extends WebTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     protected function setUp(): void
     {
         $this->initClient([], static::generateBasicAuthHeader());
@@ -120,7 +123,7 @@ class ValidateConnectionControllerTest extends WebTestCase
 
     private function setConfigShippingOrigin()
     {
-        $configManager = static::getContainer()->get('oro_config.global');
+        $configManager = self::getConfigManager('global');
 
         $configManager->set(
             'oro_shipping.shipping_origin',

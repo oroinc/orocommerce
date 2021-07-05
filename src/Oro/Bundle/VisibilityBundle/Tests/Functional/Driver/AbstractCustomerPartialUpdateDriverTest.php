@@ -3,6 +3,7 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Driver;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
@@ -24,6 +25,7 @@ use Symfony\Component\HttpFoundation\Request;
 abstract class AbstractCustomerPartialUpdateDriverTest extends WebTestCase
 {
     use DefaultWebsiteIdTestTrait;
+    use ConfigManagerAwareTestTrait;
 
     const PRODUCT_VISIBILITY_CONFIGURATION_PATH = 'oro_visibility.product_visibility';
     const CATEGORY_VISIBILITY_CONFIGURATION_PATH = 'oro_visibility.category_visibility';
@@ -46,12 +48,8 @@ abstract class AbstractCustomerPartialUpdateDriverTest extends WebTestCase
         if (!$this->isTestSkipped()) {
             $this->loadFixtures([LoadProductVisibilityScopedData::class]);
 
-            $anonymousGroupId = $this->getContainer()
-                ->get('oro_config.global')
-                ->get('oro_customer.anonymous_customer_group');
 
-            $this->configManager = $this->getContainer()->get('oro_config.global');
-            $this->configManager->set('oro_customer.anonymous_customer_group', $anonymousGroupId);
+            $this->configManager = self::getConfigManager('global');
 
             $this->driver = $this->getContainer()->get('oro_website_search.driver.customer_partial_update_driver');
             $this->getContainer()->get('oro_visibility.visibility.cache.product.cache_builder')->buildCache();

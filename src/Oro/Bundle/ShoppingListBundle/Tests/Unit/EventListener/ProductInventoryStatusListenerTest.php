@@ -19,29 +19,19 @@ class ProductInventoryStatusListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
-    /**
-     * @var MessageFactory|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var MessageFactory|\PHPUnit\Framework\MockObject\MockObject */
     private $messageFactory;
 
-    /**
-     * @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $producer;
 
-    /**
-     * @var WebsiteProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var WebsiteProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $websiteProvider;
 
-    /**
-     * @var ProductInventoryStatusListener
-     */
+    /** @var ProductInventoryStatusListener */
     private $listener;
 
     protected function setUp(): void
@@ -63,7 +53,6 @@ class ProductInventoryStatusListenerTest extends \PHPUnit\Framework\TestCase
     {
         /** @var Product $product */
         $product = $this->getEntity(Product::class, ['id' => 1]);
-        /** @var PreUpdateEventArgs|\PHPUnit\Framework\MockObject\MockObject $args */
         $args = $this->createMock(PreUpdateEventArgs::class);
         $args->expects($this->once())
             ->method('hasChangedField')
@@ -78,18 +67,13 @@ class ProductInventoryStatusListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testPreUpdate()
     {
-        /** @var AbstractEnumValue|\PHPUnit\Framework\MockObject\MockObject $inventoryStatus */
-        $inventoryStatus = $this->getMockBuilder(AbstractEnumValue::class)
-            ->setMethods(['getId'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $inventoryStatus = $this->createMock(AbstractEnumValue::class);
         $inventoryStatus->expects($this->any())
             ->method('getId')
             ->willReturn('out_of_stock');
         /** @var Product $product */
         $product = $this->getEntity(ProductWithInventoryStatus::class, ['id' => 1]);
         $product->setInventoryStatus($inventoryStatus);
-        /** @var PreUpdateEventArgs|\PHPUnit\Framework\MockObject\MockObject $args */
         $args = $this->createMock(PreUpdateEventArgs::class);
         $args->expects($this->once())
             ->method('hasChangedField')
@@ -139,18 +123,13 @@ class ProductInventoryStatusListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testPreUpdateWithZeroContext()
     {
-        /** @var AbstractEnumValue|\PHPUnit\Framework\MockObject\MockObject $inventoryStatus */
-        $inventoryStatus = $this->getMockBuilder(AbstractEnumValue::class)
-            ->setMethods(['getId'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $inventoryStatus = $this->createMock(AbstractEnumValue::class);
         $inventoryStatus->expects($this->any())
             ->method('getId')
             ->willReturn('out_of_stock');
         /** @var Product $product */
         $product = $this->getEntity(ProductWithInventoryStatus::class, ['id' => 1]);
         $product->setInventoryStatus($inventoryStatus);
-        /** @var PreUpdateEventArgs|\PHPUnit\Framework\MockObject\MockObject $args */
         $args = $this->createMock(PreUpdateEventArgs::class);
         $args->expects($this->once())
             ->method('hasChangedField')

@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\UPSBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\ShippingBundle\Event\ShippingMethodConfigDataEvent;
 use Oro\Bundle\ShippingBundle\EventListener\ShippingRuleViewMethodTemplateListener;

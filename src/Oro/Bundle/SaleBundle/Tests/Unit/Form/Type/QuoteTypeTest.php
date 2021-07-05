@@ -31,6 +31,7 @@ use Oro\Bundle\SaleBundle\Form\Type\QuoteProductRequestType;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteProductType;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
 use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
+use Oro\Bundle\SecurityBundle\Model\Role;
 use Oro\Bundle\TestFrameworkBundle\Test\Form\MutableFormEventSubscriber;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
@@ -41,7 +42,6 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Symfony\Component\Security\Core\Role\Role;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class QuoteTypeTest extends AbstractTest
@@ -70,7 +70,7 @@ class QuoteTypeTest extends AbstractTest
         $this->quoteFormSubscriber = new MutableFormEventSubscriber($this->createMock(QuoteFormSubscriber::class));
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
 
-        $this->configManager->expects($this->any())
+        $this->configManager->expects(self::any())
             ->method('get')
             ->with('oro_currency.default_currency')
             ->willReturn('USD');
@@ -90,14 +90,14 @@ class QuoteTypeTest extends AbstractTest
 
     public function testConfigureOptions()
     {
-        $this->authorizationChecker->expects($this->exactly(2))
+        $this->authorizationChecker->expects(self::exactly(2))
             ->method('isGranted')
             ->willReturnMap([
                 ['oro_quote_prices_override', null, true],
                 ['oro_quote_add_free_form_items', null, false]
             ]);
         $resolver = $this->createMock(OptionsResolver::class);
-        $resolver->expects($this->once())
+        $resolver->expects(self::once())
             ->method('setDefaults')
             ->with(
                 [
@@ -148,7 +148,7 @@ class QuoteTypeTest extends AbstractTest
                 ->setLastName('Last Name')
                 ->setUsername('test@test.test')
                 ->setCustomer($customer)
-                ->setRoles([$role])
+                ->setUserRoles([$role])
             ->setOrganization($organization);
             $quote->setCustomerUser($customerUser);
         }
@@ -341,8 +341,8 @@ class QuoteTypeTest extends AbstractTest
         $quote->setCustomer($customer);
 
         $builder->expects($this->atMost(18))->method('add')->willReturn($builder);
-        $builder->expects($this->once())->method('get')->willReturn($builder);
-        $builder->expects($this->once())->method('addEventSubscriber')->with($this->quoteFormSubscriber);
+        $builder->expects(self::once())->method('get')->willReturn($builder);
+        $builder->expects(self::once())->method('addEventSubscriber')->with($this->quoteFormSubscriber);
 
         $this->formType->buildForm(
             $builder,
@@ -357,8 +357,8 @@ class QuoteTypeTest extends AbstractTest
         $quote = new Quote();
 
         $builder->expects($this->atMost(18))->method('add')->willReturn($builder);
-        $builder->expects($this->once())->method('get')->willReturn($builder);
-        $builder->expects($this->once())->method('addEventSubscriber')->with($this->quoteFormSubscriber);
+        $builder->expects(self::once())->method('get')->willReturn($builder);
+        $builder->expects(self::once())->method('addEventSubscriber')->with($this->quoteFormSubscriber);
 
         $this->formType->buildForm(
             $builder,

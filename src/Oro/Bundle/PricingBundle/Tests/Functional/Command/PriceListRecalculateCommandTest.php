@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Command;
 
 use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\EntityBundle\Manager\Db\EntityTriggerManager;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueAssertTrait;
 use Oro\Bundle\PricingBundle\Command\PriceListRecalculateCommand;
@@ -24,6 +25,7 @@ use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 class PriceListRecalculateCommandTest extends WebTestCase
 {
     use MessageQueueAssertTrait;
+    use ConfigManagerAwareTestTrait;
 
     /** @var EntityTriggerManager|\PHPUnit\Framework\MockObject\MockObject */
     private $databaseTriggerManager;
@@ -34,7 +36,7 @@ class PriceListRecalculateCommandTest extends WebTestCase
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
-        $this->getContainer()->get('oro_config.global')
+        self::getConfigManager('global')
             ->set('oro_pricing.price_strategy', MinimalPricesCombiningStrategy::NAME);
 
         $this->databaseTriggerManager = $this->createMock(EntityTriggerManager::class);
@@ -118,6 +120,11 @@ class PriceListRecalculateCommandTest extends WebTestCase
                 $this->databaseTriggerManager->expects($this->once())
                     ->method('enable');
             }
+        } else {
+            $this->databaseTriggerManager->expects($this->never())
+                ->method('enable');
+            $this->databaseTriggerManager->expects($this->never())
+                ->method('disable');
         }
 
         $result = $this->runCommand(PriceListRecalculateCommand::getDefaultName(), $params);

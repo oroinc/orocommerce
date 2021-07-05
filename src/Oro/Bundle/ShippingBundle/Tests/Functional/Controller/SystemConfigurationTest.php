@@ -3,11 +3,14 @@
 namespace Oro\Bundle\ShippingBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\PhpUtils\ArrayUtil;
 
 class SystemConfigurationTest extends WebTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     /** @var ConfigManager */
     protected $configManager;
 
@@ -16,7 +19,7 @@ class SystemConfigurationTest extends WebTestCase
         $this->initClient([], static::generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
 
-        $this->configManager = static::getContainer()->get('oro_config.global');
+        $this->configManager = self::getConfigManager('global');
     }
 
     public function testConfig()

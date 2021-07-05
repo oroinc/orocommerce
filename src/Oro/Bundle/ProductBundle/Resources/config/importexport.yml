@@ -143,6 +143,13 @@ services:
         tags:
             - { name: oro_importexport.processor, type: export, entity: 'Oro\Bundle\ProductBundle\Entity\Product', alias: oro_product_product }
 
+    oro_product.importexport.processor.export.frontend_product_listing:
+        parent: oro_importexport.processor.export_abstract
+        calls:
+            - [setDataConverter, ['@oro_product.frontend_importexport.data_converter.product_data_export']]
+        tags:
+            - { name: oro_importexport.processor, type: export, entity: 'Oro\Bundle\ProductBundle\Entity\Product', alias: oro_product_frontend_product_listing }
+
     oro_product.importexport.processor.export_template.product:
         parent: oro_importexport.processor.export_abstract
         calls:
@@ -260,3 +267,24 @@ services:
         arguments:
             - '@oro_product.importexport.normalizer.product_image_aware_file_normalizer_decorator.inner'
             - '@oro_product.importexport.file_manager.product_images'
+
+    oro_product.importexport.frontend.configuration_provider.product:
+        class: 'Oro\Bundle\ProductBundle\ImportExport\Frontend\Configuration\ProductImportExportConfigurationProvider'
+        tags:
+            - { name: oro_importexport.configuration, alias: oro_product_frontend }
+
+    oro_product.frontend_importexport.normalizer.product_data_export_normalizer:
+        class: Oro\Bundle\ProductBundle\ImportExport\Frontend\Normalizer\ProductExportNormalizer
+        parent: oro_importexport.serializer.configurable_entity_normalizer
+        arguments:
+            - '@oro_entity_config.provider.frontend'
+            - '@oro_locale.helper.localization'
+            - '@doctrine'
+        tags:
+            - { name: oro_importexport.normalizer }
+
+    oro_product.frontend_importexport.data_converter.product_data_export:
+        class: Oro\Bundle\ProductBundle\ImportExport\Frontend\DataConverter\ProductExportDataConverter
+        parent: oro_locale.importexport.data_converter.property_path_title
+        calls:
+            - [setConfigProvider, ['@oro_entity_config.provider.frontend']]

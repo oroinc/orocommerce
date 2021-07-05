@@ -7,9 +7,7 @@ use Oro\Bundle\RuleBundle\RuleFiltration\BasicRuleFiltrationService;
 
 class BasicRuleFiltrationServiceTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var BasicRuleFiltrationService
-     */
+    /** @var BasicRuleFiltrationService */
     private $service;
 
     protected function setUp(): void
@@ -22,10 +20,10 @@ class BasicRuleFiltrationServiceTest extends \PHPUnit\Framework\TestCase
         $context = [];
 
         $ruleOwners = [
-            $this->createPartialMock(RuleOwnerInterface::class, ['getRule']),
-            $this->createPartialMock(RuleOwnerInterface::class, ['getRule']),
+            $this->createMock(RuleOwnerInterface::class),
+            $this->createMock(RuleOwnerInterface::class),
         ];
 
-        static::assertEquals($ruleOwners, $this->service->getFilteredRuleOwners($ruleOwners, $context));
+        self::assertEquals($ruleOwners, $this->service->getFilteredRuleOwners($ruleOwners, $context));
     }
 }

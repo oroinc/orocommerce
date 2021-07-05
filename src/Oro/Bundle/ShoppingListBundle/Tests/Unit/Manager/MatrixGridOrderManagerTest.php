@@ -124,8 +124,8 @@ class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
         $this->variantAvailability->expects($this->exactly(2))
             ->method('getVariantFieldValues')
             ->willReturnMap([
-                ['size', ['Small' => 's', 'Medium' => 'm']],
-                ['color', ['Red' => 'red', 'Green' => 'green']]
+                ['size', ['s' => 'Small' , 'm' => 'Medium']],
+                ['color', ['red' => 'Red' , 'green' => 'Green']]
             ]);
 
         $simpleProductSmallRed = (new ProductWithSizeAndColor())->setSize('s')->setColor('red')->setId(1);
@@ -215,8 +215,8 @@ class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
         $this->variantAvailability->expects($this->exactly(2))
             ->method('getVariantFieldValues')
             ->willReturnMap([
-                ['size', ['Small' => 's', 'Medium' => 'm']],
-                ['color', ['Red' => 'red', 'Green' => 'green']]
+                ['size', ['s' => 'Small' , 'm' => 'Medium']],
+                ['color', ['red' => 'Red' , 'green' => 'Green']]
             ]);
 
         $simpleProductSmallRed = (new ProductWithSizeAndColor())->setSize('s')->setColor('red')->setId(1);
@@ -371,8 +371,8 @@ class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
         $this->variantAvailability->expects($this->exactly(2))
             ->method('getVariantFieldValues')
             ->willReturnMap([
-                ['discount', ['Yes' => 1, 'No' => 0]],
-                ['inSale', ['Yes' => 1, 'No' => 0]]
+                ['discount', [1 => 'Yes', 0 => 'No']],
+                ['inSale', [1 => 'Yes', 0 => 'No']]
             ]);
 
         $simpleProductNoDiscountNotInSale = (new ProductWithInSaleAndDiscount())->setDiscount(false)->setInSale(false);
@@ -559,8 +559,8 @@ class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
         $this->variantAvailability->expects($this->exactly(2))
             ->method('getVariantFieldValues')
             ->willReturnMap([
-                ['size', ['Small' => 's', 'Medium' => 'm']],
-                ['color', ['Red' => 'red', 'Green' => 'green']]
+                ['size', ['s' => 'Small' , 'm' => 'Medium']],
+                ['color', ['red' => 'Red' , 'green' => 'Green']]
             ]);
 
         $simpleProductSmallRed = (new ProductWithSizeAndColor())->setSize('s')->setColor('red')->setId(2);

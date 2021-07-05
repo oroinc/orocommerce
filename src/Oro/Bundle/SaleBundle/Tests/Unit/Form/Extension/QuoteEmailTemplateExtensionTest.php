@@ -170,12 +170,10 @@ class QuoteEmailTemplateExtensionTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        /** @var TranslatableEntityType $translatableEntity */
         $translatableEntity = $this->getMockBuilder(TranslatableEntityType::class)
-            ->setMethods(['configureOptions', 'buildForm'])
+            ->onlyMethods(['configureOptions', 'buildForm'])
             ->disableOriginalConstructor()
             ->getMock();
-
         $htmlTagHelper = $this->createMock(HtmlTagHelper::class);
 
         return [

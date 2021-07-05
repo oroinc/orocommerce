@@ -34,7 +34,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUser:
         enabled: true
         confirmed: true
         customer: '@customer'
-        roles: ['@buyer']
+        userRoles: ['@buyer']
         website: '@website'
         owner: '@user'
         organization: '@organization'
@@ -47,7 +47,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUser:
         enabled: true
         confirmed: true
         customer: '@customer'
-        roles: ['@buyer']
+        userRoles: ['@buyer']
         website: '@website'
         owner: '@user'
         organization: '@organization'
@@ -62,7 +62,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUser:
         enabled: true
         confirmed: true
         customer: '@customer1'
-        roles: ['@buyer']
+        userRoles: ['@buyer']
         website: '@website'
         owner: '@user'
         organization: '@organization'

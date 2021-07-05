@@ -1,12 +1,4 @@
 services:
-    oro_pricing.api.batch.product_price_flush_data_handler_factory:
-        class: Oro\Bundle\PricingBundle\Api\Handler\BatchProductPriceFlushDataHandlerFactory
-        arguments:
-            - '@oro_api.batch.flush_data_handler_factory'
-            - '@oro_pricing.manager.price_manager'
-        tags:
-            - { name: oro.api.batch.flush_data_handler_factory, class: Oro\Bundle\PricingBundle\Entity\ProductPrice }
-
     oro_pricing.api.compute_price_list_currencies:
         class: Oro\Bundle\PricingBundle\Api\Processor\ComputePriceListCurrencies
         tags:
@@ -14,57 +6,55 @@ services:
 
     oro_pricing.api.collect_price_list_initial_statuses:
         class: Oro\Bundle\PricingBundle\Api\Processor\CollectPriceListInitialStatuses
-        arguments:
-            - '@oro_api.doctrine_helper'
         tags:
-            - { name: oro.api.processor, action: create, group: save_data, requestType: '!frontend', priority: 20 }
-            - { name: oro.api.processor, action: update, group: save_data, requestType: '!frontend', priority: 20 }
+            - { name: oro.api.processor, action: customize_form_data, event: pre_submit, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\PriceList }
 
-    oro_pricing.api.batch.collect_price_list_initial_statuses:
-        class: Oro\Bundle\PricingBundle\Api\Processor\BatchCollectPriceListInitialStatuses
-        arguments:
-            - '@oro_api.doctrine_helper'
+    oro_pricing.api.move_price_list_initial_statuses_to_context:
+        class: Oro\Bundle\PricingBundle\Api\Processor\MovePriceListInitialStatusesToContext
         tags:
-            - { name: oro.api.processor, action: batch_update, group: save_data, requestType: '!frontend', priority: 20 }
+            - { name: oro.api.processor, action: customize_form_data, event: post_save_data, requestType: '!frontend', priority: -90 }
 
     oro_pricing.api.handle_price_list_status_change:
         class: Oro\Bundle\PricingBundle\Api\Processor\HandlePriceListStatusChange
         arguments:
             - '@oro_pricing.price_list_relation_trigger_handler'
         tags:
-            - { name: oro.api.processor, action: create, group: save_data, requestType: '!frontend', initial_statuses_for_price_lists: exists, priority: -100 }
-            - { name: oro.api.processor, action: update, group: save_data, requestType: '!frontend', initial_statuses_for_price_lists: exists, priority: -100 }
-            - { name: oro.api.processor, action: batch_update, group: save_data, requestType: '!frontend', initial_statuses_for_price_lists: exists, priority: -100 }
+            - { name: oro.api.processor, action: customize_form_data, event: post_save_data, requestType: '!frontend', initial_statuses_for_price_lists: exists, priority: -100 }
 
     oro_pricing.api.collect_price_lists_to_update_combined_price_lists:
         class: Oro\Bundle\PricingBundle\Api\Processor\CollectPriceListsToUpdateCombinedPriceLists
         tags:
-            - { name: oro.api.processor, action: create, group: save_data, requestType: '!frontend', priority: -50 }
-            - { name: oro.api.processor, action: update, group: save_data, requestType: '!frontend', priority: -50 }
+            - { name: oro.api.processor, action: customize_form_data, event: post_save_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\PriceListSchedule }
             - { name: oro.api.processor, action: delete, group: delete_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\PriceListSchedule }
             - { name: oro.api.processor, action: delete_list, group: delete_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\PriceListSchedule }
 
-    oro_pricing.api.batch.collect_price_lists_to_update_combined_price_lists:
-        class: Oro\Bundle\PricingBundle\Api\Processor\BatchCollectPriceListsToUpdateCombinedPriceLists
+    oro_pricing.api.move_price_lists_to_update_combined_price_lists_to_context:
+        class: Oro\Bundle\PricingBundle\Api\Processor\MovePriceListsToUpdateCombinedPriceListsToContext
         tags:
-            - { name: oro.api.processor, action: batch_update, group: save_data, requestType: '!frontend', priority: -50 }
+            - { name: oro.api.processor, action: customize_form_data, event: post_save_data, requestType: '!frontend', priority: -90 }
+            - { name: oro.api.processor, action: delete, group: delete_data, requestType: '!frontend', priority: -90 }
+            - { name: oro.api.processor, action: delete_list, group: delete_data, requestType: '!frontend', priority: -90 }
 
     oro_pricing.api.update_combined_price_lists:
         class: Oro\Bundle\PricingBundle\Api\Processor\UpdateCombinedPriceLists
         arguments:
             - '@oro_pricing.builder.combined_price_list_activation_plan_builder'
         tags:
-            - { name: oro.api.processor, action: create, group: save_data, requestType: '!frontend', combined_price_lists_to_update: exists, priority: -100 }
-            - { name: oro.api.processor, action: update, group: save_data, requestType: '!frontend', combined_price_lists_to_update: exists, priority: -100 }
+            - { name: oro.api.processor, action: customize_form_data, event: post_save_data, requestType: '!frontend', combined_price_lists_to_update: exists, priority: -100 }
             - { name: oro.api.processor, action: delete, group: delete_data, requestType: '!frontend', combined_price_lists_to_update: exists, priority: -100 }
             - { name: oro.api.processor, action: delete_list, group: delete_data, requestType: '!frontend', combined_price_lists_to_update: exists, priority: -100 }
-            - { name: oro.api.processor, action: batch_update, group: save_data, requestType: '!frontend', combined_price_lists_to_update: exists, priority: -100 }
 
     oro_pricing.api.collect_price_lists_to_update_price_lists_contain_schedule:
         class: Oro\Bundle\PricingBundle\Api\Processor\CollectPriceListsToUpdatePriceListsContainSchedule
         tags:
             - { name: oro.api.processor, action: delete, group: delete_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\PriceListSchedule }
             - { name: oro.api.processor, action: delete_list, group: delete_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\PriceListSchedule }
+
+    oro_pricing.api.move_price_lists_to_update_price_lists_contain_schedule_to_context:
+        class: Oro\Bundle\PricingBundle\Api\Processor\MovePriceListsToUpdatePriceListsContainScheduleToContext
+        tags:
+            - { name: oro.api.processor, action: delete, group: delete_data, requestType: '!frontend', priority: -90 }
+            - { name: oro.api.processor, action: delete_list, group: delete_data, requestType: '!frontend', priority: -90 }
 
     oro_pricing.api.update_price_lists_contain_schedule:
         class: Oro\Bundle\PricingBundle\Api\Processor\UpdatePriceListsContainSchedule
@@ -77,37 +67,30 @@ services:
     oro_pricing.api.collect_price_lists_to_update_lexemes:
         class: Oro\Bundle\PricingBundle\Api\Processor\CollectPriceListsToUpdateLexemes
         tags:
-            - { name: oro.api.processor, action: create, group: save_data, requestType: '!frontend', priority: -50 }
-            - { name: oro.api.processor, action: update, group: save_data, requestType: '!frontend', priority: -50 }
-
-    oro_pricing.api.batch.collect_price_lists_to_update_lexemes:
-        class: Oro\Bundle\PricingBundle\Api\Processor\BatchCollectPriceListsToUpdateLexemes
-        tags:
-            - { name: oro.api.processor, action: batch_update, group: save_data, requestType: '!frontend', priority: -50 }
+            - { name: oro.api.processor, action: customize_form_data, event: post_save_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\PriceList }
 
     oro_pricing.api.collect_rule_price_price_lists_to_update_lexemes:
         class: Oro\Bundle\PricingBundle\Api\Processor\CollectPriceRulePriceListsToUpdateLexemes
         tags:
-            - { name: oro.api.processor, action: create, group: save_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\PriceRule, priority: -50 }
-            - { name: oro.api.processor, action: update, group: save_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\PriceRule, priority: -50 }
+            - { name: oro.api.processor, action: customize_form_data, event: post_save_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\PriceRule }
             - { name: oro.api.processor, action: delete, group: delete_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\PriceRule }
             - { name: oro.api.processor, action: delete_list, group: delete_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\PriceRule }
 
-    oro_pricing.api.batch.collect_rule_price_price_lists_to_update_lexemes:
-        class: Oro\Bundle\PricingBundle\Api\Processor\BatchCollectPriceRulePriceListsToUpdateLexemes
+    oro_pricing.api.move_price_lists_to_update_lexemes_to_context:
+        class: Oro\Bundle\PricingBundle\Api\Processor\MovePriceListsToUpdateLexemesToContext
         tags:
-            - { name: oro.api.processor, action: batch_update, group: save_data, requestType: '!frontend', priority: -50 }
+            - { name: oro.api.processor, action: customize_form_data, event: post_save_data, requestType: '!frontend', priority: -90 }
+            - { name: oro.api.processor, action: delete, group: delete_data, requestType: '!frontend', priority: -90 }
+            - { name: oro.api.processor, action: delete_list, group: delete_data, requestType: '!frontend', priority: -90 }
 
     oro_pricing.api.update_price_list_lexemes:
         class: Oro\Bundle\PricingBundle\Api\Processor\UpdatePriceListLexemes
         arguments:
-            - '@oro_pricing.hander.price_rule_lexeme_handler'
+            - '@oro_pricing.handler.price_rule_lexeme_handler'
         tags:
-            - { name: oro.api.processor, action: create, group: save_data, requestType: '!frontend', price_lists_to_update_lexemes: exists, priority: -100 }
-            - { name: oro.api.processor, action: update, group: save_data, requestType: '!frontend', price_lists_to_update_lexemes: exists, priority: -100 }
+            - { name: oro.api.processor, action: customize_form_data, event: post_save_data, requestType: '!frontend', price_lists_to_update_lexemes: exists, priority: -100 }
             - { name: oro.api.processor, action: delete, group: delete_data, requestType: '!frontend', price_lists_to_update_lexemes: exists, priority: -100 }
             - { name: oro.api.processor, action: delete_list, group: delete_data, requestType: '!frontend', price_lists_to_update_lexemes: exists, priority: -100 }
-            - { name: oro.api.processor, action: batch_update, group: save_data, requestType: '!frontend', price_lists_to_update_lexemes: exists, priority: -100 }
 
     oro_pricing.api.set_default_website:
         class: Oro\Bundle\WebsiteBundle\Api\Processor\SetDefaultWebsite
@@ -123,44 +106,52 @@ services:
     oro_pricing.api.collect_price_list_customers_to_update:
         class: Oro\Bundle\PricingBundle\Api\Processor\CollectPriceListCustomersToUpdate
         tags:
-            - { name: oro.api.processor, action: create, group: save_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\PriceListToCustomer, priority: -50 }
-            - { name: oro.api.processor, action: update, group: save_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\PriceListToCustomer, priority: -50 }
+            - { name: oro.api.processor, action: customize_form_data, event: post_save_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\PriceListToCustomer }
             - { name: oro.api.processor, action: delete, group: delete_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\PriceListToCustomer }
             - { name: oro.api.processor, action: delete_list, group: delete_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\PriceListToCustomer }
-            - { name: oro.api.processor, action: create, group: save_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback, priority: -50 }
-            - { name: oro.api.processor, action: update, group: save_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback, priority: -50 }
+            - { name: oro.api.processor, action: customize_form_data, event: post_save_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback }
             - { name: oro.api.processor, action: delete, group: delete_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback }
             - { name: oro.api.processor, action: delete_list, group: delete_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback }
+
+    oro_pricing.api.move_price_list_customers_to_update_to_context:
+        class: Oro\Bundle\PricingBundle\Api\Processor\MovePriceListCustomersToUpdateToContext
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: post_save_data, requestType: '!frontend', priority: -90 }
+            - { name: oro.api.processor, action: delete, group: delete_data, requestType: '!frontend', priority: -90 }
+            - { name: oro.api.processor, action: delete_list, group: delete_data, requestType: '!frontend', priority: -90 }
 
     oro_pricing.api.update_price_list_customers:
         class: Oro\Bundle\PricingBundle\Api\Processor\UpdatePriceListCustomers
         arguments:
             - '@oro_pricing.price_list_relation_trigger_handler'
         tags:
-            - { name: oro.api.processor, action: create, group: save_data, requestType: '!frontend', price_list_customers_to_update: exists, priority: -100 }
-            - { name: oro.api.processor, action: update, group: save_data, requestType: '!frontend', price_list_customers_to_update: exists, priority: -100 }
+            - { name: oro.api.processor, action: customize_form_data, event: post_save_data, requestType: '!frontend', price_list_customers_to_update: exists, priority: -100 }
             - { name: oro.api.processor, action: delete, group: delete_data, requestType: '!frontend', price_list_customers_to_update: exists, priority: -100 }
             - { name: oro.api.processor, action: delete_list, group: delete_data, requestType: '!frontend', price_list_customers_to_update: exists, priority: -100 }
 
     oro_pricing.api.collect_price_list_customer_groups_to_update:
         class: Oro\Bundle\PricingBundle\Api\Processor\CollectPriceListCustomerGroupsToUpdate
         tags:
-            - { name: oro.api.processor, action: create, group: save_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup, priority: -50 }
-            - { name: oro.api.processor, action: update, group: save_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup, priority: -50 }
+            - { name: oro.api.processor, action: customize_form_data, event: post_save_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup }
             - { name: oro.api.processor, action: delete, group: delete_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup }
             - { name: oro.api.processor, action: delete_list, group: delete_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup }
-            - { name: oro.api.processor, action: create, group: save_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback, priority: -50 }
-            - { name: oro.api.processor, action: update, group: save_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback, priority: -50 }
+            - { name: oro.api.processor, action: customize_form_data, event: post_save_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback }
             - { name: oro.api.processor, action: delete, group: delete_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback }
             - { name: oro.api.processor, action: delete_list, group: delete_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback }
+
+    oro_pricing.api.move_price_list_customer_groups_to_update_to_context:
+        class: Oro\Bundle\PricingBundle\Api\Processor\MovePriceListCustomerGroupsToUpdateToContext
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: post_save_data, requestType: '!frontend', priority: -90 }
+            - { name: oro.api.processor, action: delete, group: delete_data, requestType: '!frontend', priority: -90 }
+            - { name: oro.api.processor, action: delete_list, group: delete_data, requestType: '!frontend', priority: -90 }
 
     oro_pricing.api.update_price_list_customer_groups:
         class: Oro\Bundle\PricingBundle\Api\Processor\UpdatePriceListCustomerGroups
         arguments:
             - '@oro_pricing.price_list_relation_trigger_handler'
         tags:
-            - { name: oro.api.processor, action: create, group: save_data, requestType: '!frontend', price_list_customer_groups_to_update: exists, priority: -100 }
-            - { name: oro.api.processor, action: update, group: save_data, requestType: '!frontend', price_list_customer_groups_to_update: exists, priority: -100 }
+            - { name: oro.api.processor, action: customize_form_data, event: post_save_data, requestType: '!frontend', price_list_customer_groups_to_update: exists, priority: -100 }
             - { name: oro.api.processor, action: delete, group: delete_data, requestType: '!frontend', price_list_customer_groups_to_update: exists, priority: -100 }
             - { name: oro.api.processor, action: delete_list, group: delete_data, requestType: '!frontend', price_list_customer_groups_to_update: exists, priority: -100 }
 
@@ -188,6 +179,12 @@ services:
         class: Oro\Bundle\PricingBundle\Api\Processor\ProductPrice\ComputeProductPriceId
         tags:
             - { name: oro.api.processor, action: customize_loaded_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice }
+
+    oro_pricing.api.set_price_list_in_context:
+        class: Oro\Bundle\PricingBundle\Api\Processor\ProductPrice\StorePriceListInContext
+        tags:
+            - { name: oro.api.processor, action: create, group: save_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\PriceList, priority: -20 }
+            - { name: oro.api.processor, action: update, group: save_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\PriceList, priority: -20 }
 
     oro_pricing.api.set_price_list_in_context_by_product_price:
         class: Oro\Bundle\PricingBundle\Api\Processor\ProductPrice\StorePriceListInContextByProductPrice
@@ -240,23 +237,17 @@ services:
         arguments:
             - '@oro_pricing.manager.price_manager'
         tags:
-            - { name: oro.api.processor, action: update, group: save_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice }
-            - { name: oro.api.processor, action: create, group: save_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice }
+            - { name: oro.api.processor, action: customize_form_data, event: pre_flush_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: 100 }
 
     oro_pricing.api.remember_product_price:
         class: Oro\Bundle\PricingBundle\Api\Processor\ProductPrice\RememberProductPrice
         tags:
-            - { name: oro.api.processor, action: update, group: load_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: -45 }
+            - { name: oro.api.processor, action: customize_form_data, event: pre_submit, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: 200 }
 
     oro_pricing.api.reset_price_rule_field:
         class: Oro\Bundle\PricingBundle\Api\Processor\ProductPrice\ResetPriceRuleField
         tags:
-            - { name: oro.api.processor, action: update, group: save_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: 20 }
-
-    oro_pricing.api.batch.reset_price_rule_field:
-        class: Oro\Bundle\PricingBundle\Api\Processor\ProductPrice\BatchResetPriceRuleField
-        tags:
-            - { name: oro.api.processor, action: batch_update, group: save_data, requestType: '!frontend', priority: 20 }
+            - { name: oro.api.processor, action: customize_form_data, event: pre_flush_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice }
 
     oro_pricing.api.compute_product_prices:
         class: Oro\Bundle\PricingBundle\Api\Processor\ComputeProductPrices

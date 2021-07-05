@@ -188,7 +188,7 @@ class MatrixGridOrderManager
             $values = $this->variantAvailability->getVariantFieldValues($fieldName);
 
             $formattedValues = [];
-            foreach ($values as $label => $value) {
+            foreach ($values as $value => $label) {
                 $formattedValues[] = [
                     'value' => $value,
                     'label' => $label,

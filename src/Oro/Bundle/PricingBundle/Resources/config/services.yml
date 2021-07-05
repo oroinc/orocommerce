@@ -623,7 +623,7 @@ services:
         arguments:
             - '@oro_pricing.builder.combined_price_list_activation_plan_builder'
             - '@oro_pricing.price_list_relation_trigger_handler'
-            - '@oro_pricing.hander.price_rule_lexeme_handler'
+            - '@oro_pricing.handler.price_rule_lexeme_handler'
         tags:
             - { name: kernel.event_listener, event: oro.form.update_handler.before_form_submit.oro_pricing_price_list, method: beforeSubmit }
             - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.oro_pricing_price_list, method: onPostSubmit }
@@ -1068,7 +1068,7 @@ services:
         tags:
             - { name: oro_action.action, alias: price_list_recalculate }
 
-    oro_pricing.hander.price_rule_lexeme_handler:
+    oro_pricing.handler.price_rule_lexeme_handler:
         class: 'Oro\Bundle\PricingBundle\Handler\PriceRuleLexemeHandler'
         public: true
         arguments:

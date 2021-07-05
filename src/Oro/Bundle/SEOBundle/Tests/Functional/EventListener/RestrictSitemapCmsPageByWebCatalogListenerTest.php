@@ -5,6 +5,7 @@ namespace Oro\Bundle\SEOBundle\Tests\Functional\EventListener;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadPageData;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\SEOBundle\Event\RestrictSitemapEntitiesEvent;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
@@ -13,6 +14,8 @@ use Oro\Bundle\WebCatalogBundle\Tests\Functional\EntityTitles\DataFixtures\LoadW
 
 class RestrictSitemapCmsPageByWebCatalogListenerTest extends WebTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     /**
      * @var ConfigManager
      */
@@ -25,7 +28,7 @@ class RestrictSitemapCmsPageByWebCatalogListenerTest extends WebTestCase
             LoadWebCatalogPageData::class
         ]);
 
-        $this->configManager = $this->getContainer()->get('oro_config.manager');
+        $this->configManager = self::getConfigManager('global');
     }
 
     public function testRestrictDisabled()

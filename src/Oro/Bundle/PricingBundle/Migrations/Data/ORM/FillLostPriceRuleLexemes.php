@@ -24,7 +24,7 @@ class FillLostPriceRuleLexemes extends AbstractFixture implements
      */
     public function load(ObjectManager $manager)
     {
-        $lexemeHandler = $this->container->get('oro_pricing.hander.price_rule_lexeme_handler');
+        $lexemeHandler = $this->container->get('oro_pricing.handler.price_rule_lexeme_handler');
         $priceLists = $this->getPriceLists($manager);
         if (!$priceLists) {
             return;

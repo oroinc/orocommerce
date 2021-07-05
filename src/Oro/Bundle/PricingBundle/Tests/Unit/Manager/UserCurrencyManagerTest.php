@@ -49,10 +49,7 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
         $this->session = $this->createMock(Session::class);
         $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
         $this->doctrine = $this->createMock(ManagerRegistry::class);
-        $this->currencyProvider = $this->getMockBuilder(CurrencyProviderInterface::class)
-            ->setMethods(['getDefaultCurrency', 'getCurrencyList'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->currencyProvider = $this->createMock(CurrencyProviderInterface::class);
         $this->websiteManager = $this->createMock(WebsiteManager::class);
         $this->currentCurrencyProvider = $this->createMock(CurrentCurrencyProviderInterface::class);
 
@@ -72,10 +69,10 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
             ->method('getCurrentWebsite')
             ->willReturn(null);
 
-        $this->currencyProvider->expects(static::any())
+        $this->currencyProvider->expects(self::any())
             ->method('getCurrencyList')
             ->willReturn(['EUR', 'USD']);
-        $this->currencyProvider->expects(static::any())
+        $this->currencyProvider->expects(self::any())
             ->method('getDefaultCurrency')
             ->willReturn('EUR');
 
@@ -85,7 +82,7 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
     public function testGetUserCurrencyLoggedUser()
     {
         /** @var Website $website */
-        $website = $this->getEntity('Oro\Bundle\WebsiteBundle\Entity\Website', ['id' => 1]);
+        $website = $this->getEntity(Website::class, ['id' => 1]);
 
         $userWebsiteSettings = new CustomerUserSettings($website);
         $userWebsiteSettings->setCurrency('EUR');
@@ -136,10 +133,10 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
             ->method('getWebsiteSettings')
             ->with($website)
             ->willReturn($userWebsiteSettings);
-        $this->currencyProvider->expects(static::any())
+        $this->currencyProvider->expects(self::any())
             ->method('getCurrencyList')
             ->willReturn(['EUR', 'USD']);
-        $this->currencyProvider->expects(static::any())
+        $this->currencyProvider->expects(self::any())
             ->method('getDefaultCurrency')
             ->willReturn('EUR');
 
@@ -149,7 +146,7 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
     public function testGetUserCurrencyAnonymousHasCurrencyForWebsiteAndSessionWasStarted()
     {
         /** @var Website $website */
-        $website = $this->getEntity('Oro\Bundle\WebsiteBundle\Entity\Website', ['id' => 1]);
+        $website = $this->getEntity(Website::class, ['id' => 1]);
         $currency = 'EUR';
         $sessionCurrencies = [1 => $currency, 2 => 'GBP'];
 
@@ -172,7 +169,7 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
     public function testGetUserCurrencyAnonymousHasCurrencyForWebsiteAndSessionWasNotStarted()
     {
         /** @var Website $website */
-        $website = $this->getEntity('Oro\Bundle\WebsiteBundle\Entity\Website', ['id' => 1]);
+        $website = $this->getEntity(Website::class, ['id' => 1]);
         $currency = 'EUR';
 
         $this->websiteManager->expects($this->never())
@@ -194,15 +191,15 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
     public function testGetUserCurrencyAnonymousNoCurrencyForWebsiteAndSessionWasStarted()
     {
         /** @var Website $website */
-        $website = $this->getEntity('Oro\Bundle\WebsiteBundle\Entity\Website', ['id' => 1]);
+        $website = $this->getEntity(Website::class, ['id' => 1]);
         $sessionCurrencies = null;
 
         $this->websiteManager->expects($this->never())
             ->method('getCurrentWebsite');
-        $this->currencyProvider->expects(static::any())
+        $this->currencyProvider->expects(self::any())
             ->method('getCurrencyList')
             ->willReturn(['EUR', 'USD']);
-        $this->currencyProvider->expects(static::any())
+        $this->currencyProvider->expects(self::any())
             ->method('getDefaultCurrency')
             ->willReturn('EUR');
         $this->session->expects($this->once())
@@ -219,8 +216,7 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
     public function testGetUserCurrencyAnonymousNoCurrencyForWebsiteAndSessionWasNotStarted()
     {
         /** @var Website $website */
-        $website = $this->getEntity('Oro\Bundle\WebsiteBundle\Entity\Website', ['id' => 1]);
-        $sessionCurrencies = null;
+        $website = $this->getEntity(Website::class, ['id' => 1]);
 
         $this->websiteManager->expects($this->never())
             ->method('getCurrentWebsite');
@@ -241,15 +237,15 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
     public function testGetUserCurrencyAnonymousHasUnsupportedCurrencyForWebsiteAndSessionWasStarted()
     {
         /** @var Website $website */
-        $website = $this->getEntity('Oro\Bundle\WebsiteBundle\Entity\Website', ['id' => 1]);
+        $website = $this->getEntity(Website::class, ['id' => 1]);
         $sessionCurrencies = [1 => 'UAH', 2 => 'GBP'];
 
         $this->websiteManager->expects($this->never())
             ->method('getCurrentWebsite');
-        $this->currencyProvider->expects(static::any())
+        $this->currencyProvider->expects(self::any())
             ->method('getCurrencyList')
             ->willReturn(['EUR', 'USD']);
-        $this->currencyProvider->expects(static::any())
+        $this->currencyProvider->expects(self::any())
             ->method('getDefaultCurrency')
             ->willReturn('EUR');
         $this->session->expects($this->once())
@@ -266,7 +262,7 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
     public function testGetUserCurrencyAnonymousHasUnsupportedCurrencyForWebsiteAndSessionWasNotStarted()
     {
         /** @var Website $website */
-        $website = $this->getEntity('Oro\Bundle\WebsiteBundle\Entity\Website', ['id' => 1]);
+        $website = $this->getEntity(Website::class, ['id' => 1]);
 
         $this->websiteManager->expects($this->never())
             ->method('getCurrentWebsite');
@@ -287,7 +283,7 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
     public function testGetUserCurrencyWhenCurrentCurrencyProviderReturnsCurrentCurrency()
     {
         $currency = 'EUR';
-        $this->currencyProvider->expects(static::any())
+        $this->currencyProvider->expects(self::any())
             ->method('getCurrencyList')
             ->willReturn(['EUR', 'USD']);
         $this->currentCurrencyProvider->expects($this->any())
@@ -306,7 +302,7 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
     {
         $currency = 'UAH';
         $defaultCurrency = 'EUR';
-        $this->currencyProvider->expects(static::any())
+        $this->currencyProvider->expects(self::any())
             ->method('getCurrencyList')
             ->willReturn(['EUR', 'USD']);
         $this->currentCurrencyProvider->expects($this->any())
@@ -325,7 +321,6 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
     public function testSaveSelectedCurrencyLoggedUser()
     {
         $currency = 'USD';
-        /** @var Website|\PHPUnit\Framework\MockObject\MockObject $website */
         $website = $this->createMock(Website::class);
 
         $user = $this->createMock(CustomerUser::class);
@@ -357,7 +352,7 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
         $currency = 'USD';
         $sessionCurrencies = [2 => 'GBP'];
         /** @var Website $website */
-        $website = $this->getEntity('Oro\Bundle\WebsiteBundle\Entity\Website', ['id' => 1]);
+        $website = $this->getEntity(Website::class, ['id' => 1]);
 
         $this->websiteManager->expects($this->never())
             ->method('getCurrentWebsite');
@@ -379,7 +374,7 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
     {
         $currency = 'USD';
         /** @var Website $website */
-        $website = $this->getEntity('Oro\Bundle\WebsiteBundle\Entity\Website', ['id' => 1]);
+        $website = $this->getEntity(Website::class, ['id' => 1]);
 
         $this->websiteManager->expects($this->never())
             ->method('getCurrentWebsite');
@@ -399,7 +394,7 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
         $currency = 'USD';
         $sessionCurrencies = [2 => 'GBP'];
         /** @var Website $website */
-        $website = $this->getEntity('Oro\Bundle\WebsiteBundle\Entity\Website', ['id' => 1]);
+        $website = $this->getEntity(Website::class, ['id' => 1]);
 
         $this->websiteManager->expects($this->once())
             ->method('getCurrentWebsite')
@@ -422,7 +417,7 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
     {
         $currency = 'USD';
         /** @var Website $website */
-        $website = $this->getEntity('Oro\Bundle\WebsiteBundle\Entity\Website', ['id' => 1]);
+        $website = $this->getEntity(Website::class, ['id' => 1]);
 
         $this->websiteManager->expects($this->once())
             ->method('getCurrentWebsite')

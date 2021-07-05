@@ -1,7 +1,8 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Layout\DataProvider;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Layout\DataProvider;
 
+use Oro\Bundle\ProductBundle\Layout\DataProvider\UnitVisibilityProvider;
 use Oro\Bundle\ProductBundle\Visibility\UnitVisibilityInterface;
 
 class UnitVisibilityProviderTest extends \PHPUnit\Framework\TestCase

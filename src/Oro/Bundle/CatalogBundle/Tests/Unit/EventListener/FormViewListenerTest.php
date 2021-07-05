@@ -15,47 +15,28 @@ use Twig\Environment;
 
 class FormViewListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $translator;
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrineHelper;
 
-    /**
-     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $doctrineHelper;
+    /** @var Environment|\PHPUnit\Framework\MockObject\MockObject */
+    private $env;
 
-    /**
-     * @var Environment|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $env;
-
-    /**
-     * @var FormViewListener
-     */
-    protected $listener;
+    /** @var FormViewListener */
+    private $listener;
 
     protected function setUp(): void
     {
-        $this->translator = $this->createMock(TranslatorInterface::class);
-        $this->translator->expects($this->any())
+        $translator = $this->createMock(TranslatorInterface::class);
+        $translator->expects($this->any())
             ->method('trans')
-            ->willReturnCallback(
-                function ($id) {
-                    return $id . '.trans';
-                }
-            );
+            ->willReturnCallback(function ($id) {
+                return $id . '.trans';
+            });
 
         $this->env = $this->createMock(Environment::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
 
-        $this->listener = new FormViewListener($this->translator, $this->doctrineHelper);
-    }
-
-    protected function tearDown(): void
-    {
-        unset($this->listener);
-        parent::tearDown();
+        $this->listener = new FormViewListener($translator, $this->doctrineHelper);
     }
 
     public function testOnProductEdit()
@@ -73,23 +54,17 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnProductView()
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|CategoryRepository $repository */
-        $repository = $this->getMockBuilder(CategoryRepository::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['findOneByProduct'])
-            ->getMock();
+        $repository = $this->createMock(CategoryRepository::class);
 
         $product = new Product();
         $category = new Category();
 
-        $repository
-            ->expects($this->once())
+        $repository->expects($this->once())
             ->method('findOneByProduct')
             ->with($product)
             ->willReturn($category);
 
-        $this->doctrineHelper
-            ->expects($this->once())
+        $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
             ->with('OroCatalogBundle:Category')
             ->willReturn($repository);
@@ -109,22 +84,16 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnProductViewWithoutCategory()
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|CategoryRepository $repository */
-        $repository = $this->getMockBuilder(CategoryRepository::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['findOneByProduct'])
-            ->getMock();
+        $repository = $this->createMock(CategoryRepository::class);
 
         $product = new Product();
 
-        $repository
-            ->expects($this->once())
+        $repository->expects($this->once())
             ->method('findOneByProduct')
             ->with($product)
             ->willReturn(null);
 
-        $this->doctrineHelper
-            ->expects($this->once())
+        $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
             ->with('OroCatalogBundle:Category')
             ->willReturn($repository);
@@ -147,10 +116,7 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->onProductView($event);
     }
 
-    /**
-     * @return ScrollData
-     */
-    protected function getPreparedScrollData()
+    private function getPreparedScrollData(): ScrollData
     {
         $data[ScrollData::DATA_BLOCKS][FormViewListener::GENERAL_BLOCK][ScrollData::SUB_BLOCKS][0][ScrollData::DATA] = [
             'productName' => [],
@@ -159,9 +125,6 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
         return new ScrollData($data);
     }
 
-    /**
-     * @param ScrollData $scrollData
-     */
     private function assertScrollData(ScrollData $scrollData)
     {
         $data = $scrollData->getData();

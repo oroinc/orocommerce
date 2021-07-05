@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\EventListener;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\FrontendTestFrameworkBundle\Entity\TestContentNode;
 use Oro\Bundle\FrontendTestFrameworkBundle\Entity\TestContentVariant;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
@@ -16,6 +17,7 @@ use Oro\Bundle\ProductBundle\Tests\Functional\Stub\ProductCollectionSegmentHelpe
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\SegmentBundle\Entity\SegmentType;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 
 /**
@@ -24,6 +26,7 @@ use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 class ProductCollectionVariantReindexMessageSendListenerTest extends WebTestCase
 {
     use MessageQueueExtension;
+    use ConfigManagerAwareTestTrait;
 
     protected function setUp(): void
     {
@@ -33,7 +36,7 @@ class ProductCollectionVariantReindexMessageSendListenerTest extends WebTestCase
 
     public function testListenerWhenNewSegmentCreated()
     {
-        $this->setWebCatalogForWebsite();
+        $this->setWebCatalog();
         $segment = $this->createNewContentVariantWithSegment()[0];
 
         $expectedMessages = [
@@ -56,7 +59,7 @@ class ProductCollectionVariantReindexMessageSendListenerTest extends WebTestCase
 
     public function testListenerWhenSegmentRemoved()
     {
-        $this->setWebCatalogForWebsite();
+        $this->setWebCatalog();
         /**
          * @var Segment $segment
          * @var ContentVariantInterface $contentVariant
@@ -99,7 +102,7 @@ class ProductCollectionVariantReindexMessageSendListenerTest extends WebTestCase
 
     public function testListenerWhenNewSegmentCreatedAndWebCatalogIsOff()
     {
-        $this->setWebCatalogForWebsite();
+        $this->setWebCatalog();
 
         /** @var ProductCollectionSegmentHelperStub $helper */
         $helper = self::getContainer()->get('oro_product.helper.product_collection_segment');
@@ -113,7 +116,7 @@ class ProductCollectionVariantReindexMessageSendListenerTest extends WebTestCase
     public function testListenerWhenSegmentUpdatedButDefinitionNotChanged()
     {
         $this->loadFixtures([LoadContentVariantSegmentsWithRelationsData::class]);
-        $this->setWebCatalogForWebsite();
+        $this->setWebCatalog();
 
         /** @var Segment $segment */
         $segment = $this->getReference(LoadSegmentsWithRelationsData::FIRST_SEGMENT);
@@ -131,7 +134,7 @@ class ProductCollectionVariantReindexMessageSendListenerTest extends WebTestCase
     public function testListenerWhenSegmentUpdatedAndDefinitionChanged()
     {
         $this->loadFixtures([LoadContentVariantSegmentsWithRelationsData::class]);
-        $this->setWebCatalogForWebsite();
+        $this->setWebCatalog();
         $this->setTestContentVariantMetadata();
 
         /** @var Segment $segment */
@@ -142,6 +145,8 @@ class ProductCollectionVariantReindexMessageSendListenerTest extends WebTestCase
 
         $entityManager->persist($segment);
         $entityManager->flush();
+        // Clears cache in general config manager.
+        self::getConfigManager(null)->reload();
 
         $expectedMessages = [
             [
@@ -209,20 +214,18 @@ class ProductCollectionVariantReindexMessageSendListenerTest extends WebTestCase
         $metadata->name = TestContentVariant::class;
     }
 
-    private function setWebCatalogForWebsite()
+    private function setWebCatalog()
     {
-        $configManager = self::getContainer()->get('oro_config.manager');
+        $configManager = self::getConfigManager('global');
         $configManager->set(
             'oro_web_catalog.web_catalog',
-            $this->getReference(LoadWebCatalogsData::FIRST_WEB_CATALOG)->getId(),
-            $this->getDefaultWebsite()
+            $this->getReference(LoadWebCatalogsData::FIRST_WEB_CATALOG)->getId()
         );
-
         $configManager->flush();
     }
 
     /**
-     * @return \Oro\Bundle\WebsiteBundle\Entity\Website
+     * @return Website
      */
     private function getDefaultWebsite()
     {

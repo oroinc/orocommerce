@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Form\Extension;
 
 use Oro\Bundle\EntityConfigBundle\Attribute\AttributeTypeRegistry;
 use Oro\Bundle\EntityConfigBundle\Attribute\Type\AttributeTypeInterface;

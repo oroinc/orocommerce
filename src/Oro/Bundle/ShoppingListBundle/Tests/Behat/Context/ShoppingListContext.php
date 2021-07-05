@@ -109,4 +109,25 @@ class ShoppingListContext extends OroFeatureContext implements OroPageObjectAwar
             );
         }
     }
+
+    /**
+     * @When /^(?:|I )save changes for "(?P<elementName>[^"]+)" row$/
+     *
+     * @param string $elementName
+     */
+    public function saveChangesForRow(string $elementName): void
+    {
+        $savedButtonElement = $this->createElement($elementName . ' Save Changes Button');
+        $savedButtonElement->click();
+
+        $this->waitForAjax();
+
+        $rowElement = $this->createElement($elementName);
+
+        $className = 'success';
+        self::assertTrue(
+            $rowElement->hasClass($className),
+            sprintf('Element %s was expected to have class %s', $elementName, $className)
+        );
+    }
 }

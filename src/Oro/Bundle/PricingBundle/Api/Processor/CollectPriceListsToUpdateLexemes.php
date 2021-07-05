@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Api\Processor;
 
-use Oro\Bundle\ApiBundle\Processor\Context;
+use Oro\Bundle\ApiBundle\Processor\ChangeContextInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
@@ -17,17 +17,13 @@ class CollectPriceListsToUpdateLexemes implements ProcessorInterface
      */
     public function process(ContextInterface $context)
     {
-        /** @var Context $context */
+        /** @var ChangeContextInterface $context */
 
-        $priceLists = $context->get(UpdatePriceListLexemes::PRICE_LISTS) ?? [];
-        $entities = $context->getAllEntities();
+        $entities = $context->getAllEntities(true);
         foreach ($entities as $entity) {
             if ($entity instanceof PriceList) {
-                $priceLists[$entity->getId()] = $entity;
+                UpdatePriceListLexemes::addPriceListToUpdateLexemes($context, $entity);
             }
-        }
-        if ($priceLists) {
-            $context->set(UpdatePriceListLexemes::PRICE_LISTS, $priceLists);
         }
     }
 }
