@@ -33,13 +33,14 @@ class RecalculateDefaultVariantScopes extends AbstractFixture implements Contain
         $webCatalogs = $manager->getRepository(WebCatalog::class)->findAll();
         foreach ($webCatalogs as $webCatalog) {
             $rootNode = $contentNodeRepo->getRootNodeByWebCatalog($webCatalog);
+            if ($rootNode) {
+                $this->updateVariantScopes($webCatalog, $contentNodeRepo);
+                $slugGenerator->generate($rootNode);
 
-            $this->updateVariantScopes($webCatalog, $contentNodeRepo);
-            $slugGenerator->generate($rootNode);
+                $manager->flush();
 
-            $manager->flush();
-
-            $messageProducer->send(Topics::CALCULATE_WEB_CATALOG_CACHE, ['webCatalogId' => $webCatalog->getId()]);
+                $messageProducer->send(Topics::CALCULATE_WEB_CATALOG_CACHE, ['webCatalogId' => $webCatalog->getId()]);
+            }
         }
     }
 
