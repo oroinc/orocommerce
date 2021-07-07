@@ -93,11 +93,7 @@ class CreateAdditionalWysiwygFields implements Migration, ConnectionAwareInterfa
     private function configureColumn(Table $table, string $column, array $options, string $suffix, string $type): void
     {
         $columnName = $column . $suffix;
-        $attributeOptions = [OroOptions::KEY => ['attribute' => ['field_name' => $column]]];
-        $options = array_replace_recursive($options, $attributeOptions);
-        if ($table->hasColumn($columnName)) {
-            $table->getColumn($columnName)->setOptions($options);
-        } else {
+        if (!$table->hasColumn($columnName)) {
             $table->addColumn($columnName, $type, $options);
         }
     }
