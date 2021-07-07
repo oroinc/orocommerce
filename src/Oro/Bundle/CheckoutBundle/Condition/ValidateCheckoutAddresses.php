@@ -65,6 +65,14 @@ class ValidateCheckoutAddresses extends AbstractCondition implements ContextAcce
     /**
      * {@inheritdoc}
      */
+    protected function doEvaluate($context)
+    {
+        return $this->isConditionAllowed($context);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function isConditionAllowed($context)
     {
         /** @var Checkout $checkout */
@@ -76,23 +84,26 @@ class ValidateCheckoutAddresses extends AbstractCondition implements ContextAcce
 
         $billingAddress = $checkout->getBillingAddress();
 
+        $result = true;
         if (!$billingAddress || count($this->validator->validate($billingAddress))) {
             $this->setMessage('oro.checkout.workflow.condition.invalid_billing_address.message');
-            return false;
+            $this->addError($context);
+            $result = false;
         }
 
         if ($checkout->isShipToBillingAddress()) {
-            return true;
+            return $result;
         }
 
         $shippingAddress = $checkout->getShippingAddress();
 
         if (!$shippingAddress || count($this->validator->validate($shippingAddress))) {
             $this->setMessage('oro.checkout.workflow.condition.invalid_shipping_address.message');
-            return false;
+            $this->addError($context);
+            $result = false;
         }
 
-        return true;
+        return $result;
     }
 
     /**
