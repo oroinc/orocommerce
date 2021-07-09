@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -12,6 +13,8 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
  */
 class ProductImageTest extends RestJsonApiTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     /**
      * {@inheritdoc}
      */
@@ -95,7 +98,7 @@ class ProductImageTest extends RestJsonApiTestCase
 
     public function testGetWithIncludedImageAndOnlyFilePathIsRequestedAndOriginalNamesEnabled()
     {
-        $configManager = self::getContainer()->get('oro_config.global');
+        $configManager = self::getConfigManager('global');
         $configManager->set('oro_product.original_file_names_enabled', true);
         $configManager->flush();
 

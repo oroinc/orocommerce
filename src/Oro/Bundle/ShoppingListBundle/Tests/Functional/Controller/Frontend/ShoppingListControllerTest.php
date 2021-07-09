@@ -5,6 +5,7 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend;
 use Doctrine\ORM\PersistentCollection;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadCheckoutUserACLData;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData as BaseLoadCustomerData;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
@@ -27,6 +28,8 @@ use Symfony\Component\DomCrawler\Crawler;
  */
 class ShoppingListControllerTest extends WebTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     const TEST_LABEL1 = 'Shopping list label 1';
     const TEST_LABEL2 = 'Shopping list label 2';
     const RFP_PRODUCT_VISIBILITY_KEY = 'oro_rfp.frontend_product_visibility';
@@ -50,7 +53,7 @@ class ShoppingListControllerTest extends WebTestCase
             ]
         );
 
-        $this->configManager = $this->getContainer()->get('oro_config.manager');
+        $this->configManager = self::getConfigManager('global');
 
         $this->configManager->set(self::SHOPPING_LIST_AVAIL_FOR_GUEST_KEY, true);
         $this->configManager->flush();

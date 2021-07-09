@@ -6,6 +6,7 @@
 @fixture-OroOrderBundle:ConfigurableProductsShoppingList.yml
 
 Feature: Check shopping list dialog in configurable product
+  Check shopping list dialog
 
   Scenario: Create different window session
     Given sessions active:

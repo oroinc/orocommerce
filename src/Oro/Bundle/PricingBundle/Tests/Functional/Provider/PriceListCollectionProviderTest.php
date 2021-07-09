@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Provider;
 
 use Doctrine\ORM\EntityManager;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Provider\PriceListCollectionProvider;
@@ -15,6 +16,8 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class PriceListCollectionProviderTest extends WebTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     const DEFAULT_PRICE_LIST = 1;
 
     /**
@@ -390,7 +393,7 @@ class PriceListCollectionProviderTest extends WebTestCase
         $em = $this->getContainer()->get('doctrine')->getManager();
         $priceList = $em->getReference('OroPricingBundle:PriceList', self::DEFAULT_PRICE_LIST);
 
-        $configManager = $this->getContainer()->get('oro_config.global');
+        $configManager = self::getConfigManager('global');
         $configManager->set(
             'oro_pricing.default_price_lists',
             [new PriceListConfig($priceList, 100, true)]

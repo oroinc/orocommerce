@@ -46,7 +46,7 @@ class OrderReindexTest extends FrontendWebTestCase
             LoadProductData::class
         ]);
 
-        $this->enablePreviouslyPurchasedFeature($this->getReference('defaultWebsite'));
+        $this->enablePreviouslyPurchasedFeature();
     }
 
     public function testReindexWhenOrderChangeStatusIsApplicable()
@@ -157,12 +157,12 @@ class OrderReindexTest extends FrontendWebTestCase
         }, $products);
 
         return [
-            'class'     => [Product::class],
-            'context'   => [
-                'entityIds'  => $productsIds,
-                'websiteIds' => [$this->getDefaultWebsiteId()]
-            ],
+            'class' => [Product::class],
             'granulize' => true,
+            'context' => [
+                'websiteIds' => [$this->getDefaultWebsiteId()],
+                'entityIds' => $productsIds
+            ],
         ];
     }
 
@@ -175,13 +175,13 @@ class OrderReindexTest extends FrontendWebTestCase
         }
 
         return [
-                'class'     => [Product::class],
-                'context'   => [
-                    'entityIds' => $productIds,
-                    'websiteIds' => [$this->getDefaultWebsiteId()]
-                ],
-                'granulize' => true,
-            ];
+            'class' => [Product::class],
+            'granulize' => true,
+            'context' => [
+                'websiteIds' => [$this->getDefaultWebsiteId()],
+                'entityIds' => $productIds,
+            ],
+        ];
     }
 
     /**

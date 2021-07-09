@@ -124,7 +124,7 @@ class EnumVariantFieldValueHandler implements ProductVariantFieldValueHandlerInt
             $config = $this->configManager->getConfigFieldModel(Product::class, $fieldName);
             $extendConfig = $config->toArray('extend');
 
-            $data = $this->enumValueProvider->getEnumChoices($extendConfig['target_entity']);
+            $data = $this->enumValueProvider->getEnumChoicesWithNonUniqueTranslation($extendConfig['target_entity']);
 
             $this->cache->save($key, $data, $this->cacheLifeTime);
         }
@@ -148,7 +148,7 @@ class EnumVariantFieldValueHandler implements ProductVariantFieldValueHandlerInt
         $possibleValue = $this->getPossibleValues($fieldName);
         $fieldIdentifier = $this->getScalarValue($value);
 
-        $value = array_search($fieldIdentifier, $possibleValue, false);
+        $value = array_key_exists($fieldIdentifier, $possibleValue) ? $possibleValue[$fieldIdentifier] : null;
         if (!$value) {
             $value = 'N/A';
             $this->logger->error(
@@ -156,7 +156,7 @@ class EnumVariantFieldValueHandler implements ProductVariantFieldValueHandlerInt
                 'Available: "{availableAttributes}"',
                 [
                     'attribute' => (string)$fieldIdentifier,
-                    'availableAttributes' => implode(', ', array_values($possibleValue)),
+                    'availableAttributes' => implode(', ', array_keys($possibleValue)),
                 ]
             );
         }

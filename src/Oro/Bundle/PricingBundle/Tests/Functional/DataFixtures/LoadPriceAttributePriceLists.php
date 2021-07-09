@@ -26,36 +26,42 @@ class LoadPriceAttributePriceLists extends AbstractFixture implements DependentF
             'fieldName' => self::PRICE_ATTRIBUTE_PRICE_LIST_1,
             'reference' => self::PRICE_ATTRIBUTE_PRICE_LIST_1,
             'currencies' => ['USD', 'EUR', 'AUD', 'CAD'],
+            'enabledInExport' => true
         ],
         [
             'name' => 'priceAttributePriceList2',
             'fieldName' => self::PRICE_ATTRIBUTE_PRICE_LIST_2,
             'reference' => self::PRICE_ATTRIBUTE_PRICE_LIST_2,
             'currencies' => ['USD'],
+            'enabledInExport' => true
         ],
         [
             'name' => 'priceAttributePriceList3',
             'fieldName' => self::PRICE_ATTRIBUTE_PRICE_LIST_3,
             'reference' => self::PRICE_ATTRIBUTE_PRICE_LIST_3,
             'currencies' => ['CAD'],
+            'enabledInExport' => false
         ],
         [
             'name' => 'priceAttributePriceList4',
             'fieldName' => self::PRICE_ATTRIBUTE_PRICE_LIST_4,
             'reference' => self::PRICE_ATTRIBUTE_PRICE_LIST_4,
             'currencies' => ['GBP'],
+            'enabledInExport' => false
         ],
         [
             'name' => 'priceAttributePriceList5',
             'fieldName' => self::PRICE_ATTRIBUTE_PRICE_LIST_5,
             'reference' => self::PRICE_ATTRIBUTE_PRICE_LIST_5,
             'currencies' => ['GBP', 'EUR'],
+            'enabledInExport' => false
         ],
         [
             'name' => 'priceAttributePriceList6',
             'fieldName' => self::PRICE_ATTRIBUTE_PRICE_LIST_6,
             'reference' => self::PRICE_ATTRIBUTE_PRICE_LIST_6,
             'currencies' => ['USD'],
+            'enabledInExport' => false
         ],
     ];
 
@@ -81,6 +87,7 @@ class LoadPriceAttributePriceLists extends AbstractFixture implements DependentF
                 ->setName($priceAttributePriceListData['name'])
                 ->setFieldName($priceAttributePriceListData['fieldName'])
                 ->setCurrencies($priceAttributePriceListData['currencies'])
+                ->setEnabledInExport($priceAttributePriceListData['enabledInExport'])
                 ->setOrganization($organization)
                 ->setCreatedAt($now)
                 ->setUpdatedAt($now);

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Functional\Executor;
 
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
@@ -25,6 +26,8 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class PromotionExecutorTest extends FrontendWebTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     const STRATEGY_APPLY_ALL = 'apply_all';
     const SHIPPING_METHOD = '';
 
@@ -41,7 +44,7 @@ class PromotionExecutorTest extends FrontendWebTestCase
         );
         $this->client->useHashNavigation(true);
 
-        $this->configManager = static::getContainer()->get('oro_config.manager');
+        $this->configManager = self::getConfigManager('global');
         $this->loadFixtures([
             LoadOrderData::class,
             LoadCheckoutData::class,
@@ -1286,7 +1289,7 @@ class PromotionExecutorTest extends FrontendWebTestCase
     private function setStrategy(string $strategy)
     {
         // Change calculation strategy
-        $this->configManager = static::getContainer()->get('oro_config.manager');
+        $this->configManager = self::getConfigManager('global');
         $this->configManager->set('oro_promotion.' . Configuration::DISCOUNT_STRATEGY, $strategy);
         $this->configManager->flush();
     }

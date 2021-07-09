@@ -97,7 +97,7 @@ class ProductVariantAvailabilityProvider
             $fieldValues = $this->getVariantFieldValues($variantField);
 
             // All fields are not available by default
-            $variantsAvailability[$variantField] = array_fill_keys(array_values($fieldValues), false);
+            $variantsAvailability[$variantField] = array_fill_keys(array_keys($fieldValues), false);
 
             foreach ($availableSimpleProducts as $simpleProduct) {
                 $variantFieldValue = $this->getVariantFieldScalarValue($simpleProduct, $variantField);

@@ -96,7 +96,7 @@ class EnumVariantFieldValueHandlerTest extends \PHPUnit\Framework\TestCase
             ->willReturn($fieldConfig);
 
         $this->enumValueProvider->expects($this->once())
-            ->method('getEnumChoices')
+            ->method('getEnumChoicesWithNonUniqueTranslation')
             ->with('\stdClass')
             ->willReturn($enumValues);
 

@@ -745,6 +745,8 @@ services:
         decoration_inner_name: 'oro_product.provider.website_search_index_data.original'
         arguments:
             - '@oro_product.provider.website_search_index_data.original'
+        calls:
+            - ['setRegistry', ['@doctrine']]
 
     oro_product.event_listener.website_search_index:
         class: 'Oro\Bundle\ProductBundle\EventListener\WebsiteSearchProductIndexerListener'
@@ -1819,3 +1821,12 @@ services:
 
     Oro\Bundle\ProductBundle\Provider\ProductAutocompleteProvider:
         alias: oro_product.provider.product_autocomplete
+
+    oro_product.layout.data_provider.frontend_product_export_options:
+        class: Oro\Bundle\ProductBundle\Layout\DataProvider\FrontendProductExportOptionsProvider
+        arguments:
+            - '@oro_catalog.handler.request_product'
+            - '@oro_product.handler.search_product_handler'
+            - '@oro_product.handler.request_content_variant'
+        tags:
+            - { name: layout.data_provider, alias: frontend_product_export_options }

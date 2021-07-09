@@ -13,8 +13,8 @@ product-1:
         - { reference: product-1.slugPrototypes.default, string: product-1.slugPrototypes.default }
         - { reference: product-1.slugPrototypes.en_CA, string: product-1.slugPrototypes.en_CA, localization: en_CA }
     descriptions:
-        - { reference: product-1.descriptions.default, text: product-1.descriptions.default }
-        - { reference: product-1.descriptions.en_CA, text: product-1.descriptions.en_CA, localization: en_CA }
+        - { reference: product-1.descriptions.default, wysiwyg: product-1.descriptions.default }
+        - { reference: product-1.descriptions.en_CA, wysiwyg: product-1.descriptions.en_CA, localization: en_CA }
     shortDescriptions:
         - { reference: product-1.shortDescriptions.default, text: product-1.shortDescriptions.default }
         - { reference: product-1.shortDescriptions.en_CA, text: product-1.shortDescriptions.en_CA, localization: en_CA }
@@ -51,9 +51,10 @@ product-2:
     slugPrototypes:
         - { reference: product-2.slugPrototypes.default, string: product-2.slugPrototypes.default }
     descriptions:
-        - { reference: product-2.descriptions.default, text: product-2.descriptions.default }
+        - { reference: product-2.descriptions.default, wysiwyg: product-2.descriptions.default }
     shortDescriptions:
         - { reference: product-2.shortDescriptions.default, text: product-2.shortDescriptions.default }
+        - { reference: product-2.shortDescriptions.es, fallback: system, localization: es }
     images:
         - { reference: img, type: main }
     featured: true
@@ -75,7 +76,7 @@ product-3:
     slugPrototypes:
         - { reference: product-3.slugPrototypes.default, string: product-3.slugPrototypes.default }
     descriptions:
-        - { reference: product-3.descriptions.default, text: product-3.descriptions.default }
+        - { reference: product-3.descriptions.default, wysiwyg: product-3.descriptions.default }
     shortDescriptions:
         - { reference: product-3.shortDescriptions.default, text: product-3.shortDescriptions.default }
     images:
@@ -100,7 +101,7 @@ product-4:
     slugPrototypes:
         - { reference: product-4.slugPrototypes.default, string: product-4.slugPrototypes.default }
     descriptions:
-        - { reference: product-4.descriptions.default, text: product-4.descriptions.default }
+        - { reference: product-4.descriptions.default, wysiwyg: product-4.descriptions.default }
     shortDescriptions:
         - { reference: product-4.shortDescriptions.default, text: product-4.shortDescriptions.default }
     featured: true,
@@ -124,7 +125,7 @@ product-5:
     slugPrototypes:
         - { reference: product-5.slugPrototypes.default, string: product-5.slugPrototypes.default }
     descriptions:
-        - { reference: product-5.descriptions.default, text: product-5.descriptions.default }
+        - { reference: product-5.descriptions.default, wysiwyg: product-5.descriptions.default }
     shortDescriptions:
         - { reference: product-5.shortDescriptions.default, text: product-5.shortDescriptions.default }
     featured: false
@@ -159,7 +160,7 @@ product-6:
     slugPrototypes:
         - { reference: product-6.slugPrototypes.default, string: product-6.slugPrototypes.default }
     descriptions:
-        - { reference: product-6.descriptions.default, text: product-6.descriptions.default }
+        - { reference: product-6.descriptions.default, wysiwyg: product-6.descriptions.default }
     shortDescriptions:
         - { reference: product-6.shortDescriptions.default, text: product-6.shortDescriptions.default }
     featured: false
@@ -181,7 +182,7 @@ product-6:
     slugPrototypes:
         - { reference: продукт-7.slugPrototypes.default, string: продукт-7.slugPrototypes.default }
     descriptions:
-        - { reference: продукт-7.descriptions.default, text: продукт-7.descriptions.default }
+        - { reference: продукт-7.descriptions.default, wysiwyg: продукт-7.descriptions.default }
     shortDescriptions:
         - { reference: продукт-7.shortDescriptions.default, text: продукт-7.shortDescriptions.default }
     featured: false
@@ -203,7 +204,7 @@ product-8:
     slugPrototypes:
         - { reference: product-8.slugPrototypes.default, string: product-8.slugPrototypes.default }
     descriptions:
-        - { reference: product-8.descriptions.default, text: product-8.descriptions.default }
+        - { reference: product-8.descriptions.default, wysiwyg: product-8.descriptions.default }
     shortDescriptions:
         - { reference: product-8.shortDescriptions.default, text: product-8.shortDescriptions.default }
     featured: false
@@ -227,7 +228,7 @@ product-8:
     slugPrototypes:
         - { reference: продукт-9.slugPrototypes.default, string: продукт-9.slugPrototypes.default }
     descriptions:
-        - { reference: продукт-9.descriptions.default, text: продукт-9.descriptions.default }
+        - { reference: продукт-9.descriptions.default, wysiwyg: продукт-9.descriptions.default }
     shortDescriptions:
         - { reference: продукт-9.shortDescriptions.default, text: продукт-9.shortDescriptions.default }
     featured: false

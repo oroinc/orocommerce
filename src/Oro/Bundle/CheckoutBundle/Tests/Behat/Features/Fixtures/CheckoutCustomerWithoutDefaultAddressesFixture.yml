@@ -1,0 +1,117 @@
+Oro\Bundle\CustomerBundle\Entity\Customer:
+    customer:
+        name: 'Company A'
+        organization: '@organization'
+        owner: '@admin'
+        vatId: 'VATID'
+        payment_term_7c4f1e8e: '@paymentTerm'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUser:
+    customer_user_1:
+        email: 'AmandaRCole@example.org'
+        username: 'AmandaRCole@example.org'
+        password: 'gxP1L8r86hrdUMg9wKdfnsS/EZC4a7jOIdn6BMzegqL2S6e+KBIuHCrDVciMdiR/64osNnabmFonwK8l09vQxA=='
+        salt: 'fgswya1kzw0sck8ck48kosowckwo0ws'
+        firstName: 'Amanda'
+        lastName: 'Cole'
+        enabled: '1'
+        confirmed: '1'
+        customer: '@customer'
+        organization: '@organization'
+        roles: ['@buyer']
+        owner: '@admin'
+        website: '@website1'
+    customer_user_2:
+        email: 'MarleneSBradley@example.com'
+        username: 'MarleneSBradley@example.com'
+        password: 'MrXo6V++SF8Gy/oa/QDQ1klz12WLxzajuGjxFm6o+8NZ+CDRZjtP/QTvp23vl50GdKI60eknJ2dToR6oiSpskg=='
+        salt: 'lwoufelaumo8skw4s00o8k4cck4wckw'
+        firstName: 'Marlene'
+        lastName: 'Bradley'
+        enabled: '1'
+        confirmed: '1'
+        customer: '@customer'
+        organization: '@organization'
+        roles: [ '@buyer' ]
+        owner: '@admin'
+        website: '@website1'
+    customer_user_3:
+        email: 'NancyJSallee@example.org'
+        username: 'NancyJSallee@example.org'
+        password: 'RQ0+FN3TZyBpB4W6FenR4kTugMt0LW6Gcq9hsMkC5hwkA+C9UQBvt2th0RXEbVMG3DcV7LXi+26CjK8L2EkLVQ=='
+        salt: '687ji8ylggkck4wg8gggkooo44gks8g'
+        firstName: 'Nancy'
+        lastName: 'Sallee'
+        enabled: '1'
+        confirmed: '1'
+        customer: '@customer'
+        organization: '@organization'
+        roles: [ '@buyer' ]
+        owner: '@admin'
+        website: '@website1'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings:
+    customerUserSetting{1..3}:
+        customerUser: '@customer_user_<current()>'
+        __construct: ['@website1']
+        currency: 'USD'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
+    address1:
+        country: '@germany'
+        region: '@berlin'
+        label: 'Primary address'
+        street: 'Fifth avenue'
+        city: 'Berlin'
+        postalCode: '10115'
+        frontendOwner: '@customer_user_2'
+        owner: '@admin'
+        systemOrganization: '@organization'
+        primary: true
+        organization: '@organization'
+    address2:
+        country: '@germany'
+        region: '@berlin'
+        label: 'label'
+        street: 'Fourth avenue'
+        city: 'Berlin'
+        postalCode: '10111'
+        organization: '@organization'
+        frontendOwner: '@customer_user_3'
+        owner: '@admin'
+        systemOrganization: '@organization'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddressToAddressType:
+    billing:
+        address: '@address1'
+        type: '@billingType'
+        default: false
+    shipping:
+        address: '@address2'
+        type: '@shippingType'
+        default: false
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+    shoppinglist_{1..3}:
+        label: 'List 1'
+        customer: '@customer'
+        customerUser: '@customer_user_<current()>'
+        organization: '@organization'
+        website: '@website1'
+
+Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+    lineitem_{1..3}:
+        product: '@product'
+        quantity: '5'
+        unit: '@item'
+        customerUser: '@customer_user_<current()>'
+        shoppingList: '@shoppinglist_<current()>'
+        organization: '@organization'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
+    shoppingListTotal_{1..3}:
+        __construct: ['@shoppinglist_<current()>','USD']
+        shoppingList: '@shoppinglist_<current()>'
+        currency: 'USD'
+        subtotalValue: '10'
+        valid: true

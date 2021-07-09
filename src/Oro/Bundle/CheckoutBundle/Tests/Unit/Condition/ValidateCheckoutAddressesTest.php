@@ -138,6 +138,21 @@ class ValidateCheckoutAddressesTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(false, $this->condition->evaluate([]));
     }
 
+    public function testEvaluateEmptyAddresses()
+    {
+        $billingAddress = new OrderAddress();
+        $shippingAddress = new OrderAddress();
+        $checkout = (new Checkout())
+            ->setBillingAddress($billingAddress)
+            ->setShippingAddress($shippingAddress)
+            ->setShipToBillingAddress(false);
+        $this->condition->initialize(['checkout' =>  $checkout]);
+        $this->validator->expects($this->exactly(2))
+            ->method('validate')
+            ->willReturn(['error']);
+        $this->assertEquals(false, $this->condition->evaluate([]));
+    }
+
     public function testEvaluateInvalidShippingAddress()
     {
         $billingAddress = new OrderAddress();

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Functional\EventListener;
 
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -16,6 +17,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 class WebCatalogEntityIndexerListenerTest extends FrontendWebTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     const QUERY = 'web_catalog_entit_indexer_listener_test_query_string';
 
     protected function setUp(): void
@@ -38,10 +41,9 @@ class WebCatalogEntityIndexerListenerTest extends FrontendWebTestCase
         $webCatalog = $this->getReference(LoadWebCatalogWithContentNodes::WEB_CATALOG_NAME);
 
         // set WebCatalog for current Website
-        $container->get('oro_config.global')->set(
+        self::getConfigManager('global')->set(
             'oro_web_catalog.web_catalog',
-            $webCatalog->getId(),
-            $container->get('oro_website.manager')->getCurrentWebsite()
+            $webCatalog->getId()
         );
 
         /** @var ContentNode $contentNode */

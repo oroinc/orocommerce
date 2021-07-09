@@ -2,9 +2,11 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Search;
 
+use Oro\Bundle\EntityBundle\ORM\Registry;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Search\ProductIndexDataModel;
 use Oro\Bundle\ProductBundle\Search\ProductIndexDataProviderInterface;
 use Oro\Bundle\ProductBundle\Search\ProductVariantIndexDataProviderDecorator;
@@ -18,20 +20,24 @@ class ProductVariantIndexDataProviderDecoratorTest extends \PHPUnit\Framework\Te
     /** @var ProductIndexDataProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $originalProvider;
 
+    /** @var Registry|\PHPUnit\Framework\MockObject\MockObject */
+    private $registry;
+
     /** @var ProductVariantIndexDataProviderDecorator */
     private $productVariantProvider;
 
     protected function setUp(): void
     {
         $this->originalProvider = $this->createMock(ProductIndexDataProviderInterface::class);
-
+        $this->registry = $this->createMock(Registry::class);
         $this->productVariantProvider = new ProductVariantIndexDataProviderDecorator($this->originalProvider);
+        $this->productVariantProvider->setRegistry($this->registry);
     }
 
     /**
      * @param FieldConfigModel $attribute
      * @param array $firstVariantData
-     * @param array $secondVariantDate
+     * @param array $secondVariantData
      * @param array $configurableData
      * @param array $expectedConfigurableData
      *
@@ -40,7 +46,7 @@ class ProductVariantIndexDataProviderDecoratorTest extends \PHPUnit\Framework\Te
     public function testGetIndexData(
         FieldConfigModel $attribute,
         array $firstVariantData,
-        array $secondVariantDate,
+        array $secondVariantData,
         array $configurableData,
         array $expectedConfigurableData
     ) {
@@ -54,22 +60,31 @@ class ProductVariantIndexDataProviderDecoratorTest extends \PHPUnit\Framework\Te
 
         /** @var Product $configurableProduct */
         $configurableProduct = $this->getEntity(Product::class, ['id' => 3, 'type' => Product::TYPE_CONFIGURABLE]);
-        $configurableProduct
-            ->addVariantLink($firstVariantLink)
-            ->addVariantLink($secondVariantLink);
+        $variantLinks = function () use ($firstVariantLink, $secondVariantLink) {
+            yield $firstVariantLink->getProduct();
+            yield $secondVariantLink->getProduct();
+        };
+
+        $repository = $this->createMock(ProductRepository::class);
+        $repository
+            ->expects($this->once())
+            ->method('getVariantsLinksProducts')
+            ->willReturn($variantLinks());
+        $this->registry
+            ->expects($this->once())
+            ->method('getRepository')
+            ->willReturn($repository);
 
         $this->originalProvider->expects($this->any())
             ->method('getIndexData')
             ->willReturnMap([
-                [$firstSimpleProduct, $attribute, [], $firstVariantData],
-                [$secondSimpleProduct, $attribute, [], $secondVariantDate],
-                [$configurableProduct, $attribute, [], $configurableData],
+                [$firstSimpleProduct, $attribute, [], new \ArrayIterator($firstVariantData)],
+                [$secondSimpleProduct, $attribute, [], new \ArrayIterator($secondVariantData)],
+                [$configurableProduct, $attribute, [], new \ArrayIterator($configurableData)],
             ]);
 
-        $this->assertEquals(
-            $expectedConfigurableData,
-            $this->productVariantProvider->getIndexData($configurableProduct, $attribute, [])
-        );
+        $data = $this->productVariantProvider->getIndexData($configurableProduct, $attribute, []);
+        $this->assertEquals($expectedConfigurableData, array_values($data->getArrayCopy()));
     }
 
     /**

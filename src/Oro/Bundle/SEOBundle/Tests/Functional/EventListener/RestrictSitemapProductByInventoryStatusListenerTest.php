@@ -3,6 +3,7 @@
 namespace Oro\Bundle\SEOBundle\Tests\Functional\EventListener;
 
 use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\SEOBundle\Event\RestrictSitemapEntitiesEvent;
@@ -12,6 +13,8 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class RestrictSitemapProductByInventoryStatusListenerTest extends WebTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
@@ -30,7 +33,7 @@ class RestrictSitemapProductByInventoryStatusListenerTest extends WebTestCase
 
         $qb->select(UrlItemsProvider::ENTITY_ALIAS. '.id');
 
-        $configManager = $this->getContainer()->get('oro_config.manager');
+        $configManager = self::getConfigManager(null);
         $this->assertEquals(
             [
                 'in_stock',
@@ -71,9 +74,9 @@ class RestrictSitemapProductByInventoryStatusListenerTest extends WebTestCase
 
         $qb->select(UrlItemsProvider::ENTITY_ALIAS. '.id');
 
-        $configManager = $this->getContainer()->get('oro_config.manager');
+        $configManager = self::getConfigManager('global');
         $configManager->set('oro_product.general_frontend_product_visibility', []);
-        $listener = new RestrictSitemapProductByInventoryStatusListener($configManager);
+        $listener = new RestrictSitemapProductByInventoryStatusListener(self::getConfigManager(null));
         $listener->restrictQueryBuilder(new RestrictSitemapEntitiesEvent($qb, time()));
 
         $actual = array_map('current', $qb->getQuery()->getResult());

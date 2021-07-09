@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
 
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\PricingBundle\Async\Topics;
@@ -25,6 +26,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 class ProductPriceCPLEntityListenerTest extends WebTestCase
 {
     use MessageQueueExtension;
+    use ConfigManagerAwareTestTrait;
 
     /**
      * {@inheritdoc}
@@ -113,7 +115,7 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
 
     public function testOnUpdateFeatureDisabled()
     {
-        $configManager = $this->getContainer()->get('oro_config.global');
+        $configManager = self::getConfigManager('global');
         $savedStorage = $configManager->get('oro_pricing.price_storage');
         $configManager->set('oro_pricing.price_storage', 'flat');
         $this->getContainer()->get('oro_featuretoggle.checker.feature_checker')->resetCache();

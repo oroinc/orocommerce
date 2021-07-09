@@ -1,6 +1,8 @@
 @ticket-BB-20180
 @fixture-OroCMSBundle:copyright_content_widget_fixture.yml
 Feature: Wysiwyg check action title in the content
+  Check action title in content for Wysiwyg editor
+
   Scenario: Create sessions
     Given sessions active:
       | Admin | first_session  |

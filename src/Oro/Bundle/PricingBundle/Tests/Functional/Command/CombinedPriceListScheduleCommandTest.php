@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Command;
 
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueAssertTrait;
@@ -19,6 +20,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer;
 use Oro\Component\MessageQueue\Client\Message;
@@ -30,6 +32,7 @@ use Oro\Component\MessageQueue\Client\Message;
 class CombinedPriceListScheduleCommandTest extends WebTestCase
 {
     use MessageQueueAssertTrait;
+    use ConfigManagerAwareTestTrait;
 
     protected function setUp(): void
     {
@@ -38,7 +41,7 @@ class CombinedPriceListScheduleCommandTest extends WebTestCase
         $this->getOptionalListenerManager()->enableListener('oro_pricing.entity_listener.product_price_cpl');
         $this->getOptionalListenerManager()->enableListener('oro_pricing.entity_listener.price_list_to_product');
 
-        self::getContainer()->get('oro_config.global')
+        self::getConfigManager('global')
             ->set('oro_pricing.price_strategy', MinimalPricesCombiningStrategy::NAME);
     }
 
@@ -131,11 +134,23 @@ class CombinedPriceListScheduleCommandTest extends WebTestCase
                         $this->getReference(LoadProductData::PRODUCT_1)->getId(),
                         $this->getReference(LoadProductData::PRODUCT_2)->getId()
                     ],
+                    'websiteIds' => $this->getWebsiteIds()
                 ],
                 'granulize' => true,
             ],
             $reindexMessage->getBody()
         );
+    }
+
+    /**
+     * @return array
+     */
+    private function getWebsiteIds(): array
+    {
+        /** @var WebsiteProviderInterface $websiteProvider */
+        $websiteProvider = $this->getContainer()->get('oro_website.website.provider');
+
+        return $websiteProvider->getWebsiteIds();
     }
 
     /**

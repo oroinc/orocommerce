@@ -71,12 +71,12 @@ class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
         $this->variantAvailability->expects($this->at(1))
             ->method('getVariantFieldValues')
             ->with('size')
-            ->willReturn(['Small' => 's', 'Medium' => 'm']);
+            ->willReturn(['s' => 'Small', 'm' => 'Medium']);
 
         $this->variantAvailability->expects($this->at(2))
             ->method('getVariantFieldValues')
             ->with('color')
-            ->willReturn(['Red' => 'red', 'Green' => 'green']);
+            ->willReturn(['red' => 'Red' , 'green' => 'Green' ]);
 
         $simpleProductSmallRed = (new ProductWithSizeAndColor())->setSize('s')->setColor('red')->setId(1);
         $simpleProductMediumGreen = (new ProductWithSizeAndColor())->setSize('m')->setColor('green')->setId(2);
@@ -171,6 +171,8 @@ class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
         $productUnitPrecision = new ProductUnitPrecision();
         $productUnitPrecision->setUnit($productUnit);
 
+        $product->setPrimaryUnitPrecision($productUnitPrecision);
+
         $this->variantAvailability->expects($this->at(0))
             ->method('getVariantFieldsAvailability')
             ->with($product)
@@ -188,12 +190,12 @@ class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
         $this->variantAvailability->expects($this->at(1))
             ->method('getVariantFieldValues')
             ->with('size')
-            ->willReturn(['Small' => 's', 'Medium' => 'm']);
+            ->willReturn(['s' => 'Small', 'm' => 'Medium']);
 
         $this->variantAvailability->expects($this->at(2))
             ->method('getVariantFieldValues')
             ->with('color')
-            ->willReturn(['Red' => 'red', 'Green' => 'green']);
+            ->willReturn(['red' => 'Red' , 'green' => 'Green' ]);
 
         $simpleProductSmallRed = (new ProductWithSizeAndColor())->setSize('s')->setColor('red')->setId(1);
         $simpleProductMediumGreen = (new ProductWithSizeAndColor())->setSize('m')->setColor('green')->setId(2);
@@ -384,8 +386,8 @@ class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
             ->method('getVariantFieldValues')
             ->withConsecutive(['discount'], ['inSale'])
             ->willReturnOnConsecutiveCalls(
-                ['Yes' => 1, 'No' => 0],
-                ['Yes' => 1, 'No' => 0]
+                [1 => 'Yes', 0 => 'No'],
+                [1 => 'Yes', 0 => 'No']
             );
 
         $simpleProductNoDiscountNotInSale = (new ProductWithInSaleAndDiscount())->setDiscount(false)->setInSale(false);
@@ -598,12 +600,12 @@ class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
         $this->variantAvailability->expects($this->at(1))
             ->method('getVariantFieldValues')
             ->with('size')
-            ->willReturn(['Small' => 's', 'Medium' => 'm']);
+            ->willReturn(['s' => 'Small', 'm' => 'Medium']);
 
         $this->variantAvailability->expects($this->at(2))
             ->method('getVariantFieldValues')
             ->with('color')
-            ->willReturn(['Red' => 'red', 'Green' => 'green']);
+            ->willReturn(['red' => 'Red' , 'green' => 'Green' ]);
 
         $simpleProductSmallRed = (new ProductWithSizeAndColor())->setSize('s')->setColor('red')->setId(2);
         $simpleProductMediumGreen = (new ProductWithSizeAndColor())->setSize('m')->setColor('green')->setId(3);

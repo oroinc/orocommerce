@@ -345,3 +345,8 @@ services:
         class: 'Oro\Bundle\WebsiteSearchBundle\Attribute\SearchableInformationProvider'
         arguments:
             - '@oro_entity_config.config_manager'
+
+    oro_website_search.event_listener.search_processing_engine_exception_listener:
+        class: 'Oro\Bundle\WebsiteSearchBundle\EventListener\SearchProcessingEngineExceptionListener'
+        tags:
+            - { name: kernel.event_listener, event: oro_website_search.processing_engine_exception, method: process }

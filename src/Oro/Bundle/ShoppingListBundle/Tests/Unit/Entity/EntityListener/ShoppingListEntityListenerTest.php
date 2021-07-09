@@ -6,6 +6,7 @@ use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\ShoppingListBundle\Entity\EntityListener\ShoppingListEntityListener;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Provider\DefaultUserProvider;
 
@@ -17,6 +18,9 @@ class ShoppingListEntityListenerTest extends \PHPUnit\Framework\TestCase
     /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $tokenAccessor;
 
+    /** @var ShoppingListLimitManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $shoppingListLimitManager;
+
     /** @var ShoppingListEntityListener */
     private $listener;
 
@@ -27,8 +31,14 @@ class ShoppingListEntityListenerTest extends \PHPUnit\Framework\TestCase
     {
         $this->defaultUserProvider = $this->createMock(DefaultUserProvider::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
+        $this->shoppingListLimitManager = $this->createMock(ShoppingListLimitManager::class);
 
-        $this->listener = new ShoppingListEntityListener($this->defaultUserProvider, $this->tokenAccessor);
+        $this->listener = new ShoppingListEntityListener(
+            $this->defaultUserProvider,
+            $this->tokenAccessor
+        );
+
+        $this->listener->setShoppingListLimitManager($this->shoppingListLimitManager);
     }
 
     /**
@@ -111,5 +121,21 @@ class ShoppingListEntityListenerTest extends \PHPUnit\Framework\TestCase
                 'shoppingList' => new ShoppingList()
             ]
         ];
+    }
+
+    public function testPostPersist()
+    {
+        $this->shoppingListLimitManager->expects($this->once())
+            ->method('resetState');
+
+        $this->listener->postPersist();
+    }
+
+    public function testPostRemove()
+    {
+        $this->shoppingListLimitManager->expects($this->once())
+            ->method('resetState');
+
+        $this->listener->postRemove();
     }
 }

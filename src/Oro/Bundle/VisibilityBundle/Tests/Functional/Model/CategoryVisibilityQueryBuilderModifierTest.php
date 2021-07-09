@@ -5,12 +5,15 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Model;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\VisibilityBundle\Model\CategoryVisibilityQueryBuilderModifier;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData;
 
 class CategoryVisibilityQueryBuilderModifierTest extends WebTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     /**
      * @var QueryBuilder
      */
@@ -37,7 +40,7 @@ class CategoryVisibilityQueryBuilderModifierTest extends WebTestCase
         $doctrineHelper = $this->getContainer()->get('oro_entity.doctrine_helper');
         $this->categoryVisibilityQueryBuilderModifier = new CategoryVisibilityQueryBuilderModifier(
             $doctrineHelper,
-            $this->getContainer()->get('oro_config.manager'),
+            self::getConfigManager(null),
             $this->getContainer()->get('oro_scope.scope_manager')
         );
 
