@@ -150,14 +150,14 @@ const FrontendProductPriceFilter = ProductPriceFilter.extend({
     getUnitTemplateData() {
         return {
             ...FrontendProductPriceFilter.__super__.getUnitTemplateData.call(this),
-            ...this.getCriteriaProperties(),
+            ...this.getTemplateDataProps(),
             singleUnitMode: this.singleUnitMode,
             defaultUnitCode: this.defaultUnitCode
         };
     },
 
-    getCriteriaProperties() {
-        const data = FrontendProductPriceFilter.__super__.getCriteriaProperties.call(this);
+    getTemplateDataProps() {
+        const data = FrontendProductPriceFilter.__super__.getTemplateDataProps.call(this);
 
         return {
             ...data,
