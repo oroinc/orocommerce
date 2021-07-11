@@ -8,9 +8,9 @@ use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItem as LineItemConstraint;
 use Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItemValidator;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class LineItemValidatorTest extends \PHPUnit\Framework\TestCase
+class LineItemValidatorTest extends ConstraintValidatorTestCase
 {
     /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $managerRegistry;
@@ -18,77 +18,65 @@ class LineItemValidatorTest extends \PHPUnit\Framework\TestCase
     /** @var LineItemRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $repository;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|ExecutionContextInterface */
-    private $context;
-
     /** @var LineItem|\PHPUnit\Framework\MockObject\MockObject */
     private $lineItem;
 
     /** @var ShoppingList|\PHPUnit\Framework\MockObject\MockObject */
     private $shoppingList;
 
-    /** @var LineItemConstraint|\PHPUnit\Framework\MockObject\MockObject */
-    private $constraint;
-
     protected function setUp(): void
     {
         $this->managerRegistry = $this->createMock(ManagerRegistry::class);
         $this->repository = $this->createMock(LineItemRepository::class);
-        $this->context = $this->createMock(ExecutionContextInterface::class);
         $this->lineItem = $this->createMock(LineItem::class);
-        $this->constraint = $this->createMock(LineItemConstraint::class);
         $this->shoppingList = $this->createMock(ShoppingList::class);
 
-        $this->lineItem
-            ->expects($this->once())
+        $this->lineItem->expects($this->once())
             ->method('getShoppingList')
             ->willReturn($this->shoppingList);
+
+        parent::setUp();
+    }
+
+    protected function createValidator()
+    {
+        return new LineItemValidator($this->managerRegistry);
     }
 
     public function testValidateNoDuplicate(): void
     {
-        $this->repository
-            ->expects($this->once())
+        $this->repository->expects($this->once())
             ->method('findDuplicateInShoppingList')
             ->with($this->lineItem, $this->shoppingList)
             ->willReturn(null);
 
-        $this->managerRegistry
-            ->expects($this->once())
+        $this->managerRegistry->expects($this->once())
             ->method('getRepository')
             ->with(LineItem::class)
             ->willReturn($this->repository);
 
-        $this->context
-            ->expects($this->never())
-            ->method('addViolation');
+        $constraint = $this->createMock(LineItemConstraint::class);
+        $this->validator->validate($this->lineItem, $constraint);
 
-        $validator = new LineItemValidator($this->managerRegistry);
-        $validator->initialize($this->context);
-        $validator->validate($this->lineItem, $this->constraint);
+        $this->assertNoViolation();
     }
 
     public function testValidate(): void
     {
-        $this->repository
-            ->expects($this->once())
+        $this->repository->expects($this->once())
             ->method('findDuplicateInShoppingList')
             ->with($this->lineItem, $this->shoppingList)
             ->willReturn($this->createMock(LineItem::class));
 
-        $this->managerRegistry
-            ->expects($this->once())
+        $this->managerRegistry->expects($this->once())
             ->method('getRepository')
             ->with(LineItem::class)
             ->willReturn($this->repository);
 
-        $this->context
-            ->expects($this->once())
-            ->method('addViolation')
-            ->with($this->constraint->message);
+        $constraint = $this->createMock(LineItemConstraint::class);
+        $this->validator->validate($this->lineItem, $constraint);
 
-        $validator = new LineItemValidator($this->managerRegistry);
-        $validator->initialize($this->context);
-        $validator->validate($this->lineItem, $this->constraint);
+        $this->buildViolation($constraint->message)
+            ->assertRaised();
     }
 }

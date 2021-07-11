@@ -11,44 +11,28 @@ use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductBySku;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductBySkuValidator;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Form\FormConfigInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class ProductBySkuValidatorTest extends \PHPUnit\Framework\TestCase
+class ProductBySkuValidatorTest extends ConstraintValidatorTestCase
 {
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry
-     */
-    protected $registry;
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry */
+    private $registry;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ExecutionContextInterface
-     */
-    protected $context;
-
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ProductBySku
-     */
-    protected $constraint;
-
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|AclHelper
-     */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|AclHelper */
     private $aclHelper;
-
-    /**
-     * @var ProductBySkuValidator
-     */
-    protected $validator;
 
     protected function setUp(): void
     {
         $this->registry = $this->createMock(Registry::class);
-        $this->context = $this->createMock(ExecutionContextInterface::class);
-        $this->constraint = $this->createMock(ProductBySku::class);
         $this->aclHelper = $this->createMock(AclHelper::class);
+        parent::setUp();
+    }
 
-        $this->validator = new ProductBySkuValidator($this->registry, $this->aclHelper);
-        $this->validator->initialize($this->context);
+    protected function createValidator()
+    {
+        return new ProductBySkuValidator($this->registry, $this->aclHelper);
     }
 
     public function testValidateNoValue()
@@ -56,30 +40,27 @@ class ProductBySkuValidatorTest extends \PHPUnit\Framework\TestCase
         $this->registry->expects($this->never())
             ->method('getRepository');
 
-        $this->context->expects($this->never())
-            ->method('addViolation');
+        $constraint = $this->createMock(ProductBySku::class);
+        $this->validator->validate('', $constraint);
 
-        $this->validator->validate('', $this->constraint);
+        $this->assertNoViolation();
     }
 
     /**
-     * @param bool $useOptions
-     * @param string $sku
-     * @param Product|null $product
      * @dataProvider validateProvider
      */
-    public function testValidate($useOptions, $sku, $product)
+    public function testValidate(bool $useOptions, string $sku, ?Product $product)
     {
         if ($useOptions) {
             $products = [];
-            if ($product) {
+            if (null !== $product) {
                 $products[mb_strtoupper($sku)] = $product;
             }
         } else {
             $products = null;
         }
 
-        $config = $this->createMock('Symfony\Component\Form\FormConfigInterface');
+        $config = $this->createMock(FormConfigInterface::class);
         $config->expects($this->any())
             ->method('getOptions')
             ->willReturn(
@@ -98,39 +79,34 @@ class ProductBySkuValidatorTest extends \PHPUnit\Framework\TestCase
             ->with('products')
             ->willReturn($products);
 
-        $form = $this->createMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock(FormInterface::class);
         $form->expects($this->once())
             ->method('offsetExists')
             ->with('products')
             ->willReturn(true);
-
         $form->expects($this->once())
             ->method('offsetGet')
             ->with('products')
             ->willReturn($form);
-        $form->expects($this->any())->method('getConfig')->willReturn($config);
-
-        $this->context->expects($this->once())
-            ->method('getPropertyPath')
-            ->willReturn('[products]');
-        $this->context->expects($this->once())
-            ->method('getRoot')
-            ->willReturn($form);
+        $form->expects($this->any())
+            ->method('getConfig')
+            ->willReturn($config);
 
         if (!$useOptions) {
-            $repository = $this->createMock(ProductRepository::class);
-
             $query = $this->createMock(AbstractQuery::class);
             $query->expects($this->once())
                 ->method('getOneOrNullResult')
                 ->willReturn($product);
+
             $queryBuilder = $this->createMock(QueryBuilder::class);
+
+            $repository = $this->createMock(ProductRepository::class);
             $repository->expects($this->once())
                 ->method('getBySkuQueryBuilder')
                 ->with($sku)
                 ->willReturn($queryBuilder);
-            $this->aclHelper
-                ->expects($this->once())
+
+            $this->aclHelper->expects($this->once())
                 ->method('apply')
                 ->with($queryBuilder)
                 ->willReturn($query);
@@ -138,20 +114,24 @@ class ProductBySkuValidatorTest extends \PHPUnit\Framework\TestCase
             $this->registry->expects($this->once())
                 ->method('getRepository')
                 ->with(Product::class)
-                ->will($this->returnValue($repository));
+                ->willReturn($repository);
         }
 
-        $this->context->expects($product ? $this->never() : $this->once())
-            ->method('addViolation')
-            ->with($this->constraint->message);
+        $this->setRoot($form);
+        $this->setPropertyPath('[products]');
+        $constraint = $this->createMock(ProductBySku::class);
+        $this->validator->validate($sku, $constraint);
 
-        $this->validator->validate($sku, $this->constraint);
+        if (null === $product) {
+            $this->buildViolation($constraint->message)
+                ->atPath('[products]')
+                ->assertRaised();
+        } else {
+            $this->assertNoViolation();
+        }
     }
 
-    /**
-     * @return array
-     */
-    public function validateProvider()
+    public function validateProvider(): array
     {
         return [
             'fail repo' => [false, 'sku1', null],

@@ -4,29 +4,26 @@ namespace Oro\Bundle\CMSBundle\Tests\Unit\Validator\Constraints;
 
 use Oro\Bundle\CMSBundle\Validator\Constraints\TwigContent;
 use Oro\Bundle\CMSBundle\Validator\Constraints\TwigContentValidator;
-use Symfony\Component\Validator\Context\ExecutionContext;
-use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 use Twig\Environment;
 use Twig\Error\Error;
 use Twig\Template;
 use Twig\TemplateWrapper;
 
-class TwigContentValidatorTest extends \PHPUnit\Framework\TestCase
+class TwigContentValidatorTest extends ConstraintValidatorTestCase
 {
     /** @var Environment|\PHPUnit\Framework\MockObject\MockObject */
     private $twig;
 
-    /** @var TwigContentValidator */
-    private $validator;
-
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->twig = $this->createMock(Environment::class);
+        parent::setUp();
+    }
 
-        $this->validator = new TwigContentValidator($this->twig);
+    protected function createValidator()
+    {
+        return new TwigContentValidator($this->twig);
     }
 
     public function testValidateValidValue(): void
@@ -43,15 +40,10 @@ class TwigContentValidatorTest extends \PHPUnit\Framework\TestCase
             ->with($value)
             ->willReturn(new TemplateWrapper($this->twig, $template));
 
-        /** @var ExecutionContext|\PHPUnit\Framework\MockObject\MockObject $context */
-        $context = $this->createMock(ExecutionContext::class);
-        $context->expects($this->never())
-            ->method('addViolation');
-
         $constraint = new TwigContent();
-        $this->validator->initialize($context);
-
         $this->validator->validate($value, $constraint);
+
+        $this->assertNoViolation();
     }
 
     public function testValidateInvalidValue(): void
@@ -63,21 +55,10 @@ class TwigContentValidatorTest extends \PHPUnit\Framework\TestCase
             ->with($value)
             ->willThrowException(new Error(''));
 
-        /** @var ExecutionContext|\PHPUnit\Framework\MockObject\MockObject $context */
-        $context = $this->createMock(ExecutionContext::class);
-
-        $violationBuilder = $this->createMock(ConstraintViolationBuilderInterface::class);
-        $violationBuilder->expects($this->once())
-            ->method('addViolation');
-
         $constraint = new TwigContent();
-
-        $context->expects($this->once())
-            ->method('buildViolation')
-            ->with($constraint->message, [])
-            ->willReturn($violationBuilder);
-
-        $this->validator->initialize($context);
         $this->validator->validate($value, $constraint);
+
+        $this->buildViolation($constraint->message)
+            ->assertRaised();
     }
 }

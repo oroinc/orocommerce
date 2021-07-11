@@ -7,22 +7,13 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductImage;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageValidator;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class ProductImageValidatorTest extends \PHPUnit\Framework\TestCase
+class ProductImageValidatorTest extends ConstraintValidatorTestCase
 {
-    /** @var ProductImageValidator */
-    protected $productImageValidator;
-
-    /** @var ExecutionContextInterface */
-    protected $context;
-
-    protected function setUp(): void
+    protected function createValidator()
     {
-        $this->context = $this->createMock(ExecutionContextInterface::class);
-        $this->productImageValidator = new ProductImageValidator();
-        $this->productImageValidator->initialize($this->context);
+        return new ProductImageValidator();
     }
 
     public function testValidateValidImage()
@@ -31,21 +22,18 @@ class ProductImageValidatorTest extends \PHPUnit\Framework\TestCase
         $productImage->setImage((new File())->setFilename('test.jpg'));
         $productImage->setProduct(new Product());
 
-        $this->context->expects(static::never())->method('buildViolation');
+        $constraint = new ProductImage();
+        $this->validator->validate($productImage, $constraint);
 
-        $this->productImageValidator->validate($productImage, new ProductImage());
+        $this->assertNoViolation();
     }
 
     public function testValidateInvalidImage()
     {
         $constraint = new ProductImage();
-        $builder = $this->createMock(ConstraintViolationBuilderInterface::class);
+        $this->validator->validate(new StubProductImage(), $constraint);
 
-        $this->context->expects(static::once())
-            ->method('buildViolation')
-            ->with($constraint->message)
-            ->willReturn($builder);
-
-        $this->productImageValidator->validate(new StubProductImage(), $constraint);
+        $this->buildViolation($constraint->message)
+            ->assertRaised();
     }
 }

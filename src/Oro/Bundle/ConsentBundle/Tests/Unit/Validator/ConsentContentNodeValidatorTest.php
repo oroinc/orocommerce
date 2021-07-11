@@ -11,42 +11,29 @@ use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentNode;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentVariant;
 use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeTreeResolverInterface;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 use Psr\Log\LoggerInterface;
 
 class ConsentContentNodeValidatorTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
-    /**
-     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $logger;
 
-    /**
-     * @var ConsentContextProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ConsentContextProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $contextProvider;
 
-    /**
-     * @var ContentNodeTreeResolverInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ContentNodeTreeResolverInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $contentNodeTreeResolver;
 
-    /**
-     * @var ConsentContentNodeValidator
-     */
-    private $nodeValidator;
+    /** @var ConsentContentNodeValidator */
+    private $validator;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->contextProvider = $this->createMock(ConsentContextProvider::class);
         $this->contentNodeTreeResolver = $this->createMock(ContentNodeTreeResolverInterface::class);
-        $this->nodeValidator = new ConsentContentNodeValidator(
+        $this->validator = new ConsentContentNodeValidator(
             $this->logger,
             $this->contextProvider,
             $this->contentNodeTreeResolver
@@ -55,21 +42,11 @@ class ConsentContentNodeValidatorTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider isValidProvider
-     *
-     * @param Consent                $consent
-     * @param ContentNode            $contentNode
-     * @param Scope|null             $scope
-     * @param bool                   $logErrorsEnabled
-     * @param bool                   $isContentNodeResolved
-     * @param ResolvedContentVariant $contentVariant
-     * @param bool                   $expectedError
-     * @param string                 $errorMsg
-     * @param bool                   $expectedResult
      */
     public function testIsValid(
         Consent $consent,
         ContentNode $contentNode,
-        Scope $scope = null,
+        ?Scope $scope,
         bool $logErrorsEnabled,
         bool $isContentNodeResolved,
         ResolvedContentVariant $contentVariant,
@@ -81,15 +58,13 @@ class ConsentContentNodeValidatorTest extends \PHPUnit\Framework\TestCase
             ->method('getScope')
             ->willReturn($scope);
 
-        if (!$expectedError) {
-            $this->logger
-                ->expects($this->never())
-                ->method('error');
-        } else {
-            $this->logger
-                ->expects($this->once())
+        if ($expectedError) {
+            $this->logger->expects($this->once())
                 ->method('error')
                 ->with($errorMsg);
+        } else {
+            $this->logger->expects($this->never())
+                ->method('error');
         }
 
         $resolvedContentNode = null;
@@ -105,18 +80,20 @@ class ConsentContentNodeValidatorTest extends \PHPUnit\Framework\TestCase
             ->with($contentNode, $scope)
             ->willReturn($resolvedContentNode);
 
-        $this->assertEquals($expectedResult, $this->nodeValidator->isValid($contentNode, $consent, $logErrorsEnabled));
+        $this->assertEquals($expectedResult, $this->validator->isValid($contentNode, $consent, $logErrorsEnabled));
     }
 
-    /**
-     * @return array
-     */
-    public function isValidProvider()
+    public function isValidProvider(): array
     {
-        $consent = $this->getEntity(Consent::class, ['id' => 1]);
-        $contentNode = $this->getEntity(ContentNode::class, ['id' => 2]);
+        $consent = new Consent();
+        ReflectionUtil::setId($consent, 1);
 
-        $scope = $this->getEntity(Scope::class, ['id' => 123]);
+        $contentNode = new ContentNode();
+        ReflectionUtil::setId($contentNode, 2);
+
+        $scope = new Scope();
+        ReflectionUtil::setId($scope, 123);
+
         $contentVariantWithIncorrectType = new ResolvedContentVariant();
         $contentVariantWithIncorrectType->setType('incorrect_type');
 
@@ -132,7 +109,7 @@ class ConsentContentNodeValidatorTest extends \PHPUnit\Framework\TestCase
                 'isContentNodeResolved' => false,
                 'contentVariant' => $contentVariantWithCorrectType,
                 'expectedError' => false,
-                'errorMsg' => "",
+                'errorMsg' => '',
                 'expectedResult' => false
             ],
             "Can't resolve content node" => [
@@ -146,7 +123,7 @@ class ConsentContentNodeValidatorTest extends \PHPUnit\Framework\TestCase
                 'errorMsg' => '',
                 'expectedResult' => true
             ],
-            "Content variant type is invalid and log validation error enabled" => [
+            'Content variant type is invalid and log validation error enabled' => [
                 'consent' => $consent,
                 'contentNode' => $contentNode,
                 'scope' => $scope,
@@ -158,7 +135,7 @@ class ConsentContentNodeValidatorTest extends \PHPUnit\Framework\TestCase
                     "in Consent with id '1' with 'Scope' with id '123'!",
                 'expectedResult' => false
             ],
-            "Content variant type is invalid and log validation error disabled" => [
+            'Content variant type is invalid and log validation error disabled' => [
                 'consent' => $consent,
                 'contentNode' => $contentNode,
                 'scope' => $scope,
@@ -166,10 +143,10 @@ class ConsentContentNodeValidatorTest extends \PHPUnit\Framework\TestCase
                 'isContentNodeResolved' => true,
                 'contentVariant' => $contentVariantWithIncorrectType,
                 'expectedError' => false,
-                'errorMsg' => "",
+                'errorMsg' => '',
                 'expectedResult' => false
             ],
-            "Content variant is valid" => [
+            'Content variant is valid' => [
                 'consent' => $consent,
                 'contentNode' => $contentNode,
                 'scope' => $scope,
@@ -177,7 +154,7 @@ class ConsentContentNodeValidatorTest extends \PHPUnit\Framework\TestCase
                 'isContentNodeResolved' => true,
                 'contentVariant' => $contentVariantWithCorrectType,
                 'expectedError' => false,
-                'errorMsg' => "",
+                'errorMsg' => '',
                 'expectedResult' => true
             ]
         ];

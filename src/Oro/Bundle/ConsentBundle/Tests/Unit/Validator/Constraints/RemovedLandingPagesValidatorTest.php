@@ -9,56 +9,29 @@ use Oro\Bundle\ConsentBundle\Entity\ConsentAcceptance;
 use Oro\Bundle\ConsentBundle\Validator\Constraints\RemovedLandingPages;
 use Oro\Bundle\ConsentBundle\Validator\Constraints\RemovedLandingPagesValidator;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Component\Validator\Context\ExecutionContext;
-use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
+use Oro\Component\Testing\ReflectionUtil;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class RemovedLandingPagesValidatorTest extends \PHPUnit\Framework\TestCase
+class RemovedLandingPagesValidatorTest extends ConstraintValidatorTestCase
 {
-    use EntityTrait;
-
-    /** @var RemovedLandingPagesValidator */
-    private $validator;
-
     /** @var PageRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $pageRepository;
 
-    /** @var RemovedLandingPages */
-    private $constraint;
-
-    /** @var ExecutionContext|\PHPUnit\Framework\MockObject\MockObject */
-    private $context;
-
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->pageRepository = $this->createMock(PageRepository::class);
-        /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject $doctrineHelper */
+        parent::setUp();
+    }
+
+    protected function createValidator()
+    {
         $doctrineHelper = $this->createMock(DoctrineHelper::class);
-        $doctrineHelper
-            ->expects($this->any())
+        $doctrineHelper->expects($this->any())
             ->method('getEntityRepository')
             ->with(Page::class)
             ->willReturn($this->pageRepository);
 
-        $this->validator = new RemovedLandingPagesValidator($doctrineHelper);
-        $this->context = $this->createMock(ExecutionContext::class);
-        $this->validator->initialize($this->context);
-
-        $this->constraint = new RemovedLandingPages();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown(): void
-    {
-        unset($this->pageRepository);
-        unset($this->validator);
-        unset($this->context);
-        unset($this->constraint);
+        return new RemovedLandingPagesValidator($doctrineHelper);
     }
 
     public function testValidateWithIncorrectType()
@@ -66,82 +39,64 @@ class RemovedLandingPagesValidatorTest extends \PHPUnit\Framework\TestCase
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('Incorrect type of the value!');
 
-        $this->validator->validate('not array', $this->constraint);
+        $constraint = new RemovedLandingPages();
+        $this->validator->validate('not array', $constraint);
     }
 
     /**
      * @dataProvider validateProvider
-     *
-     * @param array $value
-     * @param array $checkedConsentIds
-     * @param array $nonExistentConsentIds
      */
     public function testValidate(array $value, array $checkedConsentIds, array $nonExistentConsentIds)
     {
         $value = new ArrayCollection($value);
 
         if (empty($checkedConsentIds)) {
-            $this->pageRepository
-                ->expects($this->never())
+            $this->pageRepository->expects($this->never())
                 ->method('getNonExistentPageIds');
         } else {
-            $this->pageRepository
-                ->expects($this->once())
+            $this->pageRepository->expects($this->once())
                 ->method('getNonExistentPageIds')
                 ->with($checkedConsentIds)
                 ->willReturn($nonExistentConsentIds);
         }
 
-        if (empty($nonExistentConsentIds)) {
-            $this->context
-                ->expects($this->never())
-                ->method('buildViolation');
-        } else {
-            $this->context
-                ->expects($this->once())
-                ->method('buildViolation')
-                ->with($this->constraint->message)
-                ->willReturn(
-                    $this->createMock(ConstraintViolationBuilderInterface::class)
-                );
-        }
+        $constraint = new RemovedLandingPages();
+        $this->validator->validate($value, $constraint);
 
-        $this->validator->validate($value, $this->constraint);
+        if (empty($nonExistentConsentIds)) {
+            $this->assertNoViolation();
+        } else {
+            $this->buildViolation($constraint->message)
+                ->assertRaised();
+        }
     }
 
-    /**
-     * @return array
-     */
-    public function validateProvider()
+    public function validateProvider(): array
     {
-        $consentAcceptanceWithExistedLandingPage = $this->getEntity(
-            ConsentAcceptance::class,
-            [
-                'id' => 7,
-                'landingPage' => $this->getEntity(Page::class, ['id' => 1])
-            ]
-        );
+        $page1 = new Page();
+        ReflectionUtil::setId($page1, 1);
+        $consentAcceptanceWithExistedLandingPage = new ConsentAcceptance();
+        ReflectionUtil::setId($consentAcceptanceWithExistedLandingPage, 7);
+        $consentAcceptanceWithExistedLandingPage->setLandingPage($page1);
 
-        $consentAcceptanceWithNonExistentLandingPage = $this->getEntity(
-            ConsentAcceptance::class,
-            [
-                'id' => 8,
-                'landingPage' => $this->getEntity(Page::class, ['id' => 2])
-            ]
-        );
+        $page2 = new Page();
+        ReflectionUtil::setId($page2, 2);
+        $consentAcceptanceWithNonExistentLandingPage = new ConsentAcceptance();
+        ReflectionUtil::setId($consentAcceptanceWithNonExistentLandingPage, 7);
+        $consentAcceptanceWithNonExistentLandingPage->setLandingPage($page2);
 
         return [
-            "Empty value" => [
+            'Empty value' => [
                 'value' => [],
                 'checkedConsentIds' => [],
                 'nonExistentConsentIds' => []
             ],
-            "Only existed landing pages in value" => [
+            'Only existed landing pages in value' => [
                 'value' => [$consentAcceptanceWithExistedLandingPage],
                 'checkedConsentIds' => [1],
                 'nonExistentConsentIds' => []
             ],
-            "Only not existed landing pages in value" => [
+            'Only not existed landing pages in value' => [
                 'value' => [$consentAcceptanceWithNonExistentLandingPage],
                 'checkedConsentIds' => [2],
                 'nonExistentConsentIds' => [2]
