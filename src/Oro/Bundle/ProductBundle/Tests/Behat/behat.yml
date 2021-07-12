@@ -71,7 +71,7 @@ oro_behat_extension:
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
 
     RelatedProductsViewGridFiltersState:
-      selector: 'div[data-page-component-name="products-related-products-view"] div.filters-state'
+      selector: 'div[data-page-component-name="products-related-products-view"] .filters-state'
 
     RelatedProductsViewGridFilterItem:
       selector: 'div[data-page-component-name="products-related-products-view"] div.filter-item'
@@ -93,7 +93,7 @@ oro_behat_extension:
         class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
 
     SelectRelatedProductsGridFiltersState:
-        selector: 'div[data-page-component-name="products-related-products-select"] div.filters-state'
+        selector: 'div[data-page-component-name="products-related-products-select"] .filters-state'
 
     SelectRelatedProductsGridFilterItem:
       selector: 'div[data-page-component-name="products-related-products-select"] div.filter-item'
@@ -112,7 +112,7 @@ oro_behat_extension:
         class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
 
     RelatedProductsEditGridFiltersState:
-        selector: 'div[data-page-component-name="products-related-products-edit"] div.filters-state'
+        selector: 'div[data-page-component-name="products-related-products-edit"] .filters-state'
 
     RelatedProductsEditGridFilterItem:
       selector: 'div[data-page-component-name="products-related-products-edit"] div.filter-item'
@@ -149,7 +149,7 @@ oro_behat_extension:
         class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
 
     SelectUpsellProductsGridFiltersState:
-        selector: 'div[data-page-component-name="products-upsell-products-select"] div.filters-state'
+        selector: 'div[data-page-component-name="products-upsell-products-select"] .filters-state'
 
     SelectUpsellProductsGridFilterItem:
       selector: 'div[data-page-component-name="products-upsell-products-select"] div.filter-item'
@@ -168,7 +168,7 @@ oro_behat_extension:
         class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
 
     UpsellProductsEditGridFiltersState:
-        selector: 'div[data-page-component-name="products-upsell-products-edit"] div.filters-state'
+        selector: 'div[data-page-component-name="products-upsell-products-edit"] .filters-state'
 
     UpsellProductsEditGridFilterItem:
       selector: 'div[data-page-component-name="products-upsell-products-edit"] div.filter-item'
@@ -755,7 +755,7 @@ oro_behat_extension:
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
 
     ProductFrontendGridFiltersState:
-      selector: 'div[data-page-component-name="frontend-product-search-grid"] div.filters-state'
+      selector: 'div[data-page-component-name="frontend-product-search-grid"] .filters-state'
 
     ProductFrontendGridToolbarActions:
       selector: 'div[data-page-component-name="frontend-product-search-grid"] div.toolbar div.actions-panel'

@@ -134,7 +134,7 @@ const FrontendProductPriceFilter = ProductPriceFilter.extend({
     getTemplateData() {
         return {
             ...FrontendProductPriceFilter.__super__.getTemplateData.call(this),
-            ...this.getCriteriaProperties(),
+            ...this.getTemplateDataProps(),
             showChoices: this.showChoices,
             currency: {
                 isPrepend: localeSettings.isCurrencySymbolPrepend(),
@@ -151,14 +151,14 @@ const FrontendProductPriceFilter = ProductPriceFilter.extend({
     getUnitTemplateData() {
         return {
             ...FrontendProductPriceFilter.__super__.getUnitTemplateData.call(this),
-            ...this.getCriteriaProperties(),
+            ...this.getTemplateDataProps(),
             singleUnitMode: this.singleUnitMode,
             defaultUnitCode: this.defaultUnitCode
         };
     },
 
-    getCriteriaProperties() {
-        const data = FrontendProductPriceFilter.__super__.getCriteriaProperties.call(this);
+    getTemplateDataProps() {
+        const data = FrontendProductPriceFilter.__super__.getTemplateDataProps.call(this);
 
         return {
             ...data,
