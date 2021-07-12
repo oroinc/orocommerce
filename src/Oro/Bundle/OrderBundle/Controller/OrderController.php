@@ -92,7 +92,7 @@ class OrderController extends AbstractController
      * Create order form
      *
      * @Route("/create", name="oro_order_create")
-     * @Template("OroOrderBundle:Order:update.html.twig")
+     * @Template("@OroOrder/Order/update.html.twig")
      * @Acl(
      *      id="oro_order_create",
      *      type="entity",

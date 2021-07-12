@@ -1,11 +1,11 @@
-{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% import '@OroUI/macros.html.twig' as UI %}
 
 <div id ="priceLists">
     <div class="row-fluid form-horizontal">
         <div class="responsive-block">
             {% if priceLists is defined %}
                 {% set entities = priceLists %}
-                {% include 'OroPricingBundle:PriceList/partial:list.html.twig'
+                {% include '@OroPricing/PriceList/partial/list.html.twig'
                     with {
                         'fallback': fallback,
                         'entities': entities

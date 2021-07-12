@@ -109,7 +109,7 @@ class PriceAttributeProductPriceDatagridExtensionTest extends AbstractProductsGr
                         'price_attribute_price_column_usd_1' => [
                             'label' => 'Sample Attribute (USD)',
                             'type' => 'twig',
-                            'template' => 'OroPricingBundle:Datagrid:Column/productPrice.html.twig',
+                            'template' => '@OroPricing/Datagrid/Column/productPrice.html.twig',
                             'frontend_type' => 'html',
                             'renderable' => true,
                         ],

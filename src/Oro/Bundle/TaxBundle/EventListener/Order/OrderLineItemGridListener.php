@@ -8,6 +8,9 @@ use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
+/**
+ * Adds tax information to the line items grid.
+ */
 class OrderLineItemGridListener
 {
     const ALIAS = 'taxValue';
@@ -117,7 +120,7 @@ class OrderLineItemGridListener
                 'type' => 'twig',
                 'frontend_type' => 'html',
                 'data_name' => 'result',
-                'template' => 'OroTaxBundle:Order:Datagrid/Property/unitIncludingTax.html.twig',
+                'template' => '@OroTax/Order/Datagrid/Property/unitIncludingTax.html.twig',
                 'renderable' => false
             ]
         );
@@ -129,7 +132,7 @@ class OrderLineItemGridListener
                 'type' => 'twig',
                 'frontend_type' => 'html',
                 'data_name' => 'result',
-                'template' => 'OroTaxBundle:Order:Datagrid/Property/unitExcludingTax.html.twig',
+                'template' => '@OroTax/Order/Datagrid/Property/unitExcludingTax.html.twig',
                 'renderable' => false
             ]
         );
@@ -141,7 +144,7 @@ class OrderLineItemGridListener
                 'type' => 'twig',
                 'frontend_type' => 'html',
                 'data_name' => 'result',
-                'template' => 'OroTaxBundle:Order:Datagrid/Property/unitTaxAmount.html.twig',
+                'template' => '@OroTax/Order/Datagrid/Property/unitTaxAmount.html.twig',
                 'renderable' => false
             ]
         );
@@ -153,7 +156,7 @@ class OrderLineItemGridListener
                 'type' => 'twig',
                 'frontend_type' => 'html',
                 'data_name' => 'result',
-                'template' => 'OroTaxBundle:Order:Datagrid/Property/rowIncludingTax.html.twig',
+                'template' => '@OroTax/Order/Datagrid/Property/rowIncludingTax.html.twig',
                 'renderable' => false
             ]
         );
@@ -165,7 +168,7 @@ class OrderLineItemGridListener
                 'type' => 'twig',
                 'frontend_type' => 'html',
                 'data_name' => 'result',
-                'template' => 'OroTaxBundle:Order:Datagrid/Property/rowExcludingTax.html.twig',
+                'template' => '@OroTax/Order/Datagrid/Property/rowExcludingTax.html.twig',
                 'renderable' => false
             ]
         );
@@ -177,7 +180,7 @@ class OrderLineItemGridListener
                 'type' => 'twig',
                 'frontend_type' => 'html',
                 'data_name' => 'result',
-                'template' => 'OroTaxBundle:Order:Datagrid/Property/rowTaxAmount.html.twig',
+                'template' => '@OroTax/Order/Datagrid/Property/rowTaxAmount.html.twig',
                 'renderable' => false
             ]
         );
@@ -189,7 +192,7 @@ class OrderLineItemGridListener
                 'type' => 'twig',
                 'frontend_type' => 'html',
                 'data_name' => 'result',
-                'template' => 'OroTaxBundle::Order/Datagrid/taxes.html.twig',
+                'template' => '@OroTax/Order/Datagrid/taxes.html.twig',
                 'renderable' => false
             ]
         );

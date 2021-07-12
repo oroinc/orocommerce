@@ -10,7 +10,7 @@ operations:
             icon: fa-plus
 
         frontend_options:
-            template: OroPricingBundle:Action:addProductPrice.html.twig
+            template: '@OroPricing/Action/addProductPrice.html.twig'
             options:
                 allowMaximize: true
                 allowMinimize: true
@@ -212,7 +212,7 @@ operations:
                 method_parameters: [$.data,$.newPriceList]
             - '@flush_entity': $.newPriceList
             - '@call_service_method':
-                service: oro_pricing.hander.price_rule_lexeme_handler
+                service: oro_pricing.handler.price_rule_lexeme_handler
                 method: updateLexemes
                 method_parameters: [$.newPriceList]
             - '@call_service_method':

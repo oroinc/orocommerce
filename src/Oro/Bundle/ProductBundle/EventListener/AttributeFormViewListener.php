@@ -167,7 +167,7 @@ class AttributeFormViewListener extends BaseAttributeFormViewListener
     protected function renderAttributeEditData(Environment $twig, FormView $attributeView, FieldConfigModel $attribute)
     {
         return $this->isSeparateGroup($attribute->getType())
-            ? $twig->render('OroEntityConfigBundle:Attribute:widget.html.twig', ['child' => $attributeView])
+            ? $twig->render('@OroEntityConfig/Attribute/widget.html.twig', ['child' => $attributeView])
             : parent::renderAttributeEditData($twig, $attributeView, $attribute);
     }
 
@@ -197,7 +197,7 @@ class AttributeFormViewListener extends BaseAttributeFormViewListener
     {
         if ($this->isSeparateGroup($attribute->getType())) {
             return $twig->render(
-                'OroEntityConfigBundle:Attribute:attributeCollapsibleView.html.twig',
+                '@OroEntityConfig/Attribute/attributeCollapsibleView.html.twig',
                 ['entity' => $entity, 'field' => $attribute]
             );
         }

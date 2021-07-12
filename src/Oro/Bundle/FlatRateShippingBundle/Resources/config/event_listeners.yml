@@ -1,5 +1,5 @@
 parameters:
-    oro_flat_rate_shipping.admin_view.method_template: 'OroFlatRateShippingBundle::method/flatRateMethodWithOptions.html.twig'
+    oro_flat_rate_shipping.admin_view.method_template: '@@OroFlatRateShipping/method/flatRateMethodWithOptions.html.twig'
 
 services:
     oro_flat_rate_shipping.event_listener.shipping_method_config_data:

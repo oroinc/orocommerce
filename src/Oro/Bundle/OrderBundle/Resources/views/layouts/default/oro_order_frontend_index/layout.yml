@@ -7,7 +7,7 @@ layout:
 
     actions:
         - '@setBlockTheme':
-            themes: 'OroOrderBundle:layouts:default/oro_order_frontend_index/layout.html.twig'
+            themes: '@OroOrder/layouts/default/oro_order_frontend_index/layout.html.twig'
 
         - '@appendOption':
             id: orders_datagrid

@@ -108,7 +108,7 @@
 {% endblock %}
 
 {% block oro_promotion_applied_coupon_collection_widget %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
     <div class="oro-collection-table-heading">
         <h5>{{ 'oro.promotion.all_label'|trans }}</h5>
         {% if not form.vars.entity.disablePromotions %}
@@ -150,7 +150,7 @@
             {{ 'oro.order.disable_promotions.disabled_for_oder'|trans }}
         </div>
     {% else %}
-        {% import 'OroOrderBundle:Order:macros.html.twig' as order_macros %}
+        {% import '@OroOrder/Order/macros.html.twig' as order_macros %}
         <div {{ block('widget_container_attributes') }}>
             {{ order_macros.hiddenCollection(form) }}
         </div>

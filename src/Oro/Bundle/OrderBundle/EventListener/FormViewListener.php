@@ -55,7 +55,7 @@ class FormViewListener
         $customerUser = $this->getEntityFromRequestId('OroCustomerBundle:CustomerUser');
         if ($customerUser) {
             $template = $event->getEnvironment()->render(
-                'OroOrderBundle:CustomerUser:orders_view.html.twig',
+                '@OroOrder/CustomerUser/orders_view.html.twig',
                 ['entity' => $customerUser]
             );
             $this->addSalesOrdersBlock($event->getScrollData(), $template);
@@ -71,7 +71,7 @@ class FormViewListener
         $customer = $this->getEntityFromRequestId('OroCustomerBundle:Customer');
         if ($customer) {
             $template = $event->getEnvironment()->render(
-                'OroOrderBundle:Customer:orders_view.html.twig',
+                '@OroOrder/Customer/orders_view.html.twig',
                 ['entity' => $customer]
             );
             $this->addSalesOrdersBlock($event->getScrollData(), $template);
@@ -87,7 +87,7 @@ class FormViewListener
         $shoppingList = $this->getEntityFromRequestId('OroShoppingListBundle:ShoppingList');
         if ($shoppingList) {
             $template = $event->getEnvironment()->render(
-                'OroOrderBundle:ShoppingList:orders_view.html.twig',
+                '@OroOrder/ShoppingList/orders_view.html.twig',
                 ['entity' => $shoppingList]
             );
             $this->addSalesOrdersBlock($event->getScrollData(), $template);

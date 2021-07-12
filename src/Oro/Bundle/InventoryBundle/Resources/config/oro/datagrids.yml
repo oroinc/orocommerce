@@ -32,7 +32,7 @@ datagrids:
                 label:         oro.product.productunit.entity_label
                 type:          twig
                 frontend_type: html
-                template:      OroProductBundle:ProductUnit:Datagrid/unitFullPlural.html.twig
+                template:      '@OroProduct/ProductUnit/Datagrid/unitFullPlural.html.twig'
         sorters:
             columns:
                 levelQuantity:
@@ -105,7 +105,7 @@ datagrids:
                 label:         oro.product.inventory_status.label
                 type:          twig
                 frontend_type: html
-                template:      OroProductBundle:Product:Datagrid/inventoryStatus.html.twig
+                template:      '@OroProduct/Product/Datagrid/inventoryStatus.html.twig'
                 inline_editing:
                     enable: true
                     editor:
@@ -134,7 +134,7 @@ datagrids:
                 label:           oro.product.productunitprecision.unit.label
                 type:            twig
                 frontend_type:   html
-                template:        OroProductBundle:ProductUnit:Datagrid/unitFullPlural.html.twig
+                template:        '@OroProduct/ProductUnit/Datagrid/unitFullPlural.html.twig'
         sorters:
             columns:
                 sku:

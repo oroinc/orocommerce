@@ -32,7 +32,7 @@ class AppliedPromotionCollectionTableTypeTest extends FormIntegrationTestCase
         $options = $form->getConfig()->getOptions();
 
         $this->assertSame(
-            'OroPromotionBundle:AppliedPromotion:applied_promotions_edit_table.html.twig',
+            '@OroPromotion/AppliedPromotion/applied_promotions_edit_table.html.twig',
             $options['template_name']
         );
         $this->assertSame('oroui/js/app/components/view-component', $options['page_component']);

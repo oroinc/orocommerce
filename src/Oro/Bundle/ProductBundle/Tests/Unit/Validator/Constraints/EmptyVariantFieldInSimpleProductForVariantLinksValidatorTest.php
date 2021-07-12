@@ -12,50 +12,27 @@ use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product as StubProduct;
 use Oro\Bundle\ProductBundle\Validator\Constraints\EmptyVariantFieldInSimpleProductForVariantLinks;
 use Oro\Bundle\ProductBundle\Validator\Constraints\EmptyVariantFieldInSimpleProductForVariantLinksValidator;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class EmptyVariantFieldInSimpleProductForVariantLinksValidatorTest extends \PHPUnit\Framework\TestCase
+class EmptyVariantFieldInSimpleProductForVariantLinksValidatorTest extends ConstraintValidatorTestCase
 {
-    use EntityTrait;
-
-    const VARIANT_FIELD_KEY_COLOR = 'color';
-    const VARIANT_FIELD_KEY_SIZE = 'size';
-    const ID_FIELD = 'id';
-    const MESSAGE = 'oro.product.product_variant_field.unique_variant_links_when_empty_variant_field_in_simple';
-
-    /** @var ExecutionContextInterface| \PHPUnit\Framework\MockObject\MockObject */
-    private $context;
-
     /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $registry;
 
-    /** @var EmptyVariantFieldInSimpleProductForVariantLinksValidator */
-    private $validator;
-
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
-        $propertyAccessor = PropertyAccess::createPropertyAccessor();
-        $this->context = $this->createMock(ExecutionContextInterface::class);
         $this->registry = $this->createMock(ManagerRegistry::class);
-
-        $this->validator = new EmptyVariantFieldInSimpleProductForVariantLinksValidator(
-            $propertyAccessor,
-            $this->registry
-        );
-        $this->validator->initialize($this->context);
+        parent::setUp();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown(): void
+    protected function createValidator()
     {
-        unset($this->context, $this->validator);
+        return new EmptyVariantFieldInSimpleProductForVariantLinksValidator(
+            PropertyAccess::createPropertyAccessor(),
+            $this->registry
+        );
     }
 
     public function testValidateUnsupportedClass()
@@ -65,18 +42,20 @@ class EmptyVariantFieldInSimpleProductForVariantLinksValidatorTest extends \PHPU
             'Entity must be instance of "Oro\Bundle\ProductBundle\Entity\Product", "stdClass" given'
         );
 
-        $this->validator->validate(new \stdClass(), new EmptyVariantFieldInSimpleProductForVariantLinks());
+        $constraint = new EmptyVariantFieldInSimpleProductForVariantLinks();
+        $this->validator->validate(new \stdClass(), $constraint);
     }
 
     public function testDoesNothingIfProductConfigurable()
     {
-        /** @var Product $product */
-        $product = $this->getEntity(Product::class, ['id' => 1]);
+        $product = new Product();
+        ReflectionUtil::setId($product, 1);
         $product->setType(Product::TYPE_CONFIGURABLE);
 
-        $this->context->expects($this->never())->method('addViolation');
+        $constraint = new EmptyVariantFieldInSimpleProductForVariantLinks();
+        $this->validator->validate($product, $constraint);
 
-        $this->validator->validate($product, new EmptyVariantFieldInSimpleProductForVariantLinks());
+        $this->assertNoViolation();
     }
 
     public function testDoesNothingIfNewProductHasNoParentVariantLinks()
@@ -86,19 +65,23 @@ class EmptyVariantFieldInSimpleProductForVariantLinksValidatorTest extends \PHPU
 
         $this->registry->expects($this->never())
             ->method($this->anything());
-        $this->context->expects($this->never())->method('addViolation');
 
-        $this->validator->validate($product, new EmptyVariantFieldInSimpleProductForVariantLinks());
+        $constraint = new EmptyVariantFieldInSimpleProductForVariantLinks();
+        $this->validator->validate($product, $constraint);
+
+        $this->assertNoViolation();
     }
 
     public function testDoesNothingIfExistingProductHasNoParentVariantLinks()
     {
-        $product = $this->prepareProduct(['id' => 1]);
+        $product = $this->prepareProduct(1);
 
-        $this->assertAttributeInfoCalls($product, []);
-        $this->context->expects($this->never())->method('addViolation');
+        $this->getRequiredAttributesForSimpleProductExpectations($product, []);
 
-        $this->validator->validate($product, new EmptyVariantFieldInSimpleProductForVariantLinks());
+        $constraint = new EmptyVariantFieldInSimpleProductForVariantLinks();
+        $this->validator->validate($product, $constraint);
+
+        $this->assertNoViolation();
     }
 
     public function testValidateWithOneErrorNewProduct()
@@ -106,102 +89,73 @@ class EmptyVariantFieldInSimpleProductForVariantLinksValidatorTest extends \PHPU
         $parentProduct1 = $this->prepareParentProduct(1, 'sku1', ['color', 'size']);
         $parentProduct2 = $this->prepareParentProduct(2, 'sku2', ['color']);
 
-        $product = $this->prepareProduct(['size' => 'M'], [$parentProduct1, $parentProduct2]);
-
-        $this->context->expects($this->once())
-            ->method('addViolation')
-            ->with(
-                self::MESSAGE,
-                [
-                    '%variantField%' => 'color',
-                    '%products%' => 'sku1, sku2'
-                ]
-            );
+        $product = $this->prepareProduct(null, 'M', [$parentProduct1, $parentProduct2]);
 
         $this->registry->expects($this->never())
             ->method($this->anything());
 
-        $this->validator->validate($product, new EmptyVariantFieldInSimpleProductForVariantLinks());
+        $constraint = new EmptyVariantFieldInSimpleProductForVariantLinks();
+        $this->validator->validate($product, $constraint);
+
+        $this->buildViolation($constraint->message)
+            ->setParameters(['%variantField%' => 'color', '%products%' => 'sku1, sku2'])
+            ->assertRaised();
     }
 
     public function testValidateWithOneErrorExistingProduct()
     {
-        $product = $this->prepareProduct(['size' => 'M', 'id' => 1]);
+        $product = $this->prepareProduct(1, 'M');
 
-        $this->context->expects($this->once())
-            ->method('addViolation')
-            ->with(
-                self::MESSAGE,
-                [
-                    '%variantField%' => 'color',
-                    '%products%' => 'sku1, sku2'
-                ]
-            );
+        $this->getRequiredAttributesForSimpleProductExpectations(
+            $product,
+            [
+                ['id' => 1, 'sku' => 'sku1', 'variantFields' => ['color', 'size']],
+                ['id' => 2, 'sku' => 'sku2', 'variantFields' => ['color']]
+            ]
+        );
 
-        $attributeInfo = [
-            ['id' => 1, 'sku' => 'sku1', 'variantFields' => ['color', 'size']],
-            ['id' => 2, 'sku' => 'sku2', 'variantFields' => ['color']]
-        ];
-        $this->assertAttributeInfoCalls($product, $attributeInfo);
+        $constraint = new EmptyVariantFieldInSimpleProductForVariantLinks();
+        $this->validator->validate($product, $constraint);
 
-        $this->validator->validate($product, new EmptyVariantFieldInSimpleProductForVariantLinks());
+        $this->buildViolation($constraint->message)
+            ->setParameters(['%variantField%' => 'color', '%products%' => 'sku1, sku2'])
+            ->assertRaised();
     }
 
     public function testValidateWithTwoErrorsExistingProduct()
     {
-        $product = $this->prepareProduct(['id' => 1]);
+        $product = $this->prepareProduct(1);
 
-        $this->context->expects($this->exactly(2))
-            ->method('addViolation')
-            ->withConsecutive(
-                [
-                    self::MESSAGE,
-                    [
-                        '%variantField%' => 'color',
-                        '%products%' => 'sku1, sku2'
-                    ]
-                ],
-                [
-                    self::MESSAGE,
-                    [
-                        '%variantField%' => 'size',
-                        '%products%' => 'sku1'
-                    ]
-                ]
-            );
-        $attributeInfo = [
-            ['id' => 1, 'sku' => 'sku1', 'variantFields' => ['color', 'size']],
-            ['id' => 2, 'sku' => 'sku2', 'variantFields' => ['color']]
-        ];
-        $this->assertAttributeInfoCalls($product, $attributeInfo);
+        $this->getRequiredAttributesForSimpleProductExpectations(
+            $product,
+            [
+                ['id' => 1, 'sku' => 'sku1', 'variantFields' => ['color', 'size']],
+                ['id' => 2, 'sku' => 'sku2', 'variantFields' => ['color']]
+            ]
+        );
 
-        $this->validator->validate($product, new EmptyVariantFieldInSimpleProductForVariantLinks());
+        $constraint = new EmptyVariantFieldInSimpleProductForVariantLinks();
+        $this->validator->validate($product, $constraint);
+
+        $this
+            ->buildViolation($constraint->message)
+            ->setParameters(['%variantField%' => 'color', '%products%' => 'sku1, sku2'])
+            ->buildNextViolation($constraint->message)
+            ->setParameters(['%variantField%' => 'size', '%products%' => 'sku1'])
+            ->assertRaised();
     }
 
-    /**
-     * @param array $parentProducts
-     * @param array $variantFieldsValue
-     * @return StubProduct
-     */
-    private function prepareProduct(array $variantFieldsValue, array $parentProducts = [])
+    private function prepareProduct(int $id = null, string $size = null, array $parentProducts = []): StubProduct
     {
         $product = (new StubProduct())
             ->setType(Product::TYPE_SIMPLE);
-
-        foreach ($variantFieldsValue as $variantField => $variantFieldValue) {
-            if ($variantField === self::VARIANT_FIELD_KEY_SIZE) {
-                $product->setSize($variantFieldValue);
-            }
-
-            if ($variantField === self::VARIANT_FIELD_KEY_COLOR) {
-                $product->setColor($variantFieldValue);
-            }
-            if ($variantField === self::ID_FIELD) {
-                $product->setId($variantFieldsValue);
-            }
+        if (null !== $id) {
+            $product->setId($id);
+        }
+        if (null !== $size) {
+            $product->setSize($size);
         }
 
-        /** @var AbstractLazyCollection|\PHPUnit\Framework\MockObject\MockObject $parentVariantLinks */
         $parentVariantLinks = $this->createMock(AbstractLazyCollection::class);
         $parentVariantLinks->expects($this->any())
             ->method('isInitialized')
@@ -221,11 +175,7 @@ class EmptyVariantFieldInSimpleProductForVariantLinksValidatorTest extends \PHPU
         return $product;
     }
 
-    /**
-     * @param Product $product
-     * @param array $attributeInfo
-     */
-    private function assertAttributeInfoCalls(Product $product, array $attributeInfo): void
+    private function getRequiredAttributesForSimpleProductExpectations(Product $product, array $attributeInfo): void
     {
         $repo = $this->createMock(ProductRepository::class);
         $repo->expects($this->once())
@@ -243,13 +193,7 @@ class EmptyVariantFieldInSimpleProductForVariantLinksValidatorTest extends \PHPU
             ->willReturn($em);
     }
 
-    /**
-     * @param int $id
-     * @param string $sku
-     * @param array $variantFields
-     * @return Product
-     */
-    private function prepareParentProduct($id, $sku, array $variantFields)
+    private function prepareParentProduct(int $id, string $sku, array $variantFields): Product
     {
         $product = new StubProduct();
         $product->setType(Product::TYPE_CONFIGURABLE)

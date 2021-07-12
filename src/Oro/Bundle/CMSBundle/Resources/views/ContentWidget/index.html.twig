@@ -1,11 +1,11 @@
-{% extends 'OroUIBundle:actions:index.html.twig' %}
-{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% extends '@OroUI/actions/index.html.twig' %}
+{% import '@OroUI/macros.html.twig' as UI %}
 
 {% set pageTitle = 'oro.cms.contentwidget.entity_plural_label'|trans %}
 {% set gridName = 'cms-content-widget-grid' %}
 
 {% block navButtons %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
 
     {% if is_granted('oro_cms_content_widget_create') %}
         <div class="btn-group">

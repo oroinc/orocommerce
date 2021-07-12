@@ -1,4 +1,4 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroShoppingListBundle:layouts:default/imports/product_shopping_lists/product_shopping_lists.html.twig'
+            themes: '@OroShoppingList/layouts/default/imports/product_shopping_lists/product_shopping_lists.html.twig'

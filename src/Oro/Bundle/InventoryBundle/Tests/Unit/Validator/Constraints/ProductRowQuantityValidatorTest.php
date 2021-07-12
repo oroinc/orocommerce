@@ -13,67 +13,50 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Model\ProductRow;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-use Symfony\Component\Validator\Violation\ConstraintViolationBuilder;
-use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class ProductRowQuantityValidatorTest extends \PHPUnit\Framework\TestCase
+class ProductRowQuantityValidatorTest extends ConstraintValidatorTestCase
 {
-    /**
-     * @var QuantityToOrderValidatorService|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $validatorService;
+    /** @var QuantityToOrderValidatorService|\PHPUnit\Framework\MockObject\MockObject */
+    private $validatorService;
 
-    /**
-     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $doctrineHelper;
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrineHelper;
 
-    /**
-     * @var AclHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $aclHelper;
-
-    /**
-     * @var ProductRowQuantityValidator
-     */
-    protected $validator;
-
-    /**
-     * @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $context;
-
-    /**
-     * @var ProductRowQuantity
-     */
-    protected $constraint;
 
     protected function setUp(): void
     {
         $this->validatorService = $this->createMock(QuantityToOrderValidatorService::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->aclHelper = $this->createMock(AclHelper::class);
-        $this->constraint = new ProductRowQuantity();
-        $this->context = $this->createMock(ExecutionContextInterface::class);
-        $this->validator = new ProductRowQuantityValidator(
+        parent::setUp();
+    }
+
+    protected function createValidator()
+    {
+        return new ProductRowQuantityValidator(
             $this->validatorService,
             $this->doctrineHelper,
             $this->aclHelper
         );
-        $this->validator->initialize($this->context);
     }
 
     public function testValidateEmptyValue()
     {
-        $this->context->expects($this->never())->method('addViolation');
-        $this->validator->validate(null, $this->constraint);
+        $constraint = new ProductRowQuantity();
+        $this->validator->validate(null, $constraint);
+
+        $this->assertNoViolation();
     }
 
     public function testValidateNoProductValue()
     {
-        $this->context->expects($this->never())->method('addViolation');
-        $this->validator->validate(new \stdClass(), $this->constraint);
+        $constraint = new ProductRowQuantity();
+        $this->validator->validate(new \stdClass(), $constraint);
+
+        $this->assertNoViolation();
     }
 
     public function testValidateNoProduct()
@@ -87,24 +70,23 @@ class ProductRowQuantityValidatorTest extends \PHPUnit\Framework\TestCase
             ->willReturn(null);
         $queryBuilder = $this->createMock(QueryBuilder::class);
         $repository = $this->createMock(ProductRepository::class);
-        $this
-            ->doctrineHelper
-            ->expects($this->once())
+        $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
             ->with(Product::class)
             ->willReturn($repository);
-        $repository
-            ->expects($this->once())
+        $repository->expects($this->once())
             ->method('getBySkuQueryBuilder')
             ->with($productRow->productSku)
             ->willReturn($queryBuilder);
-        $this->aclHelper
-            ->expects($this->once())
+        $this->aclHelper->expects($this->once())
             ->method('apply')
             ->with($queryBuilder)
             ->willReturn($query);
-        $this->context->expects($this->never())->method('addViolation');
-        $this->validator->validate($productRow, $this->constraint);
+
+        $constraint = new ProductRowQuantity();
+        $this->validator->validate($productRow, $constraint);
+
+        $this->assertNoViolation();
     }
 
     public function testValidateQuantityNotNumeric()
@@ -119,25 +101,23 @@ class ProductRowQuantityValidatorTest extends \PHPUnit\Framework\TestCase
             ->willReturn(new Product());
         $queryBuilder = $this->createMock(QueryBuilder::class);
         $repository = $this->createMock(ProductRepository::class);
-        $this
-            ->doctrineHelper
-            ->expects($this->once())
+        $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
             ->with(Product::class)
             ->willReturn($repository);
-        $repository
-            ->expects($this->once())
+        $repository->expects($this->once())
             ->method('getBySkuQueryBuilder')
             ->with($productRow->productSku)
             ->willReturn($queryBuilder);
-        $this->aclHelper
-            ->expects($this->once())
+        $this->aclHelper->expects($this->once())
             ->method('apply')
             ->with($queryBuilder)
             ->willReturn($query);
 
-        $this->context->expects($this->never())->method('addViolation');
-        $this->validator->validate($productRow, $this->constraint);
+        $constraint = new ProductRowQuantity();
+        $this->validator->validate($productRow, $constraint);
+
+        $this->assertNoViolation();
     }
 
     public function testValidateNoConstraint()
@@ -152,36 +132,31 @@ class ProductRowQuantityValidatorTest extends \PHPUnit\Framework\TestCase
             ->willReturn($product);
         $queryBuilder = $this->createMock(QueryBuilder::class);
         $repository = $this->createMock(ProductRepository::class);
-        $this
-            ->doctrineHelper
-            ->expects($this->once())
+        $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
             ->with(Product::class)
             ->willReturn($repository);
-        $repository
-            ->expects($this->once())
+        $repository->expects($this->once())
             ->method('getBySkuQueryBuilder')
             ->with($productRow->productSku)
             ->willReturn($queryBuilder);
-        $this->aclHelper
-            ->expects($this->once())
+        $this->aclHelper->expects($this->once())
             ->method('apply')
             ->with($queryBuilder)
             ->willReturn($query);
-        $this
-            ->validatorService
-            ->expects($this->once())
+        $this->validatorService->expects($this->once())
             ->method('getMinimumErrorIfInvalid')
             ->with($product)
             ->willReturn(false);
-        $this
-            ->validatorService
-            ->expects($this->once())
+        $this->validatorService->expects($this->once())
             ->method('getMaximumErrorIfInvalid')
             ->with($product)
             ->willReturn(false);
-        $this->context->expects($this->never())->method('addViolation');
-        $this->validator->validate($productRow, $this->constraint);
+
+        $constraint = new ProductRowQuantity();
+        $this->validator->validate($productRow, $constraint);
+
+        $this->assertNoViolation();
     }
 
     public function testValidateMaxLimitConstraint()
@@ -198,45 +173,33 @@ class ProductRowQuantityValidatorTest extends \PHPUnit\Framework\TestCase
             ->willReturn($product);
         $queryBuilder = $this->createMock(QueryBuilder::class);
         $repository = $this->createMock(ProductRepository::class);
-        $this
-            ->doctrineHelper
-            ->expects($this->once())
+        $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
             ->with(Product::class)
             ->willReturn($repository);
-        $repository
-            ->expects($this->once())
+        $repository->expects($this->once())
             ->method('getBySkuQueryBuilder')
             ->with($productRow->productSku)
             ->willReturn($queryBuilder);
-        $this->aclHelper
-            ->expects($this->once())
+        $this->aclHelper->expects($this->once())
             ->method('apply')
             ->with($queryBuilder)
             ->willReturn($query);
-        $this
-            ->validatorService
-            ->expects($this->once())
+        $this->validatorService->expects($this->once())
             ->method('getMaximumErrorIfInvalid')
             ->with($product)
             ->willReturn($maxErrorMessage);
         // should not be called as maximum validation is triggered
-        $this
-            ->validatorService
-            ->expects($this->never())
+        $this->validatorService->expects($this->never())
             ->method('getMinimumErrorIfInvalid')
             ->with($product);
-        $violationBuilder = $this->getMockBuilder(ConstraintViolationBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->context->expects($this->once())
-            ->method('buildViolation')
-            ->with($maxErrorMessage)
-            ->willReturn($violationBuilder);
-        $violationBuilder->expects($this->once())
-            ->method('atPath')
-            ->willReturn($this->createMock(ConstraintViolationBuilderInterface::class));
-        $this->validator->validate($productRow, $this->constraint);
+
+        $constraint = new ProductRowQuantity();
+        $this->validator->validate($productRow, $constraint);
+
+        $this->buildViolation($maxErrorMessage)
+            ->atPath('property.path.productQuantity')
+            ->assertRaised();
     }
 
     public function testValidateMinLimitConstraint()
@@ -253,45 +216,32 @@ class ProductRowQuantityValidatorTest extends \PHPUnit\Framework\TestCase
             ->willReturn($product);
         $queryBuilder = $this->createMock(QueryBuilder::class);
         $repository = $this->createMock(ProductRepository::class);
-        $this
-            ->doctrineHelper
-            ->expects($this->once())
+        $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
             ->with(Product::class)
             ->willReturn($repository);
-        $repository
-            ->expects($this->once())
+        $repository->expects($this->once())
             ->method('getBySkuQueryBuilder')
             ->with($productRow->productSku)
             ->willReturn($queryBuilder);
-        $this->aclHelper
-            ->expects($this->once())
+        $this->aclHelper->expects($this->once())
             ->method('apply')
             ->with($queryBuilder)
             ->willReturn($query);
-        $this
-            ->validatorService
-            ->expects($this->once())
+        $this->validatorService->expects($this->once())
             ->method('getMinimumErrorIfInvalid')
             ->with($product)
             ->willReturn($minMessage);
-        $this
-            ->validatorService
-            ->expects($this->once())
+        $this->validatorService->expects($this->once())
             ->method('getMaximumErrorIfInvalid')
             ->with($product)
             ->willReturn(false);
 
-        $violationBuilder = $this->getMockBuilder(ConstraintViolationBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->context->expects($this->once())
-            ->method('buildViolation')
-            ->with($minMessage)
-            ->willReturn($violationBuilder);
-        $violationBuilder->expects($this->once())
-            ->method('atPath')
-            ->willReturn($this->createMock(ConstraintViolationBuilderInterface::class));
-        $this->validator->validate($productRow, $this->constraint);
+        $constraint = new ProductRowQuantity();
+        $this->validator->validate($productRow, $constraint);
+
+        $this->buildViolation($minMessage)
+            ->atPath('property.path.productQuantity')
+            ->assertRaised();
     }
 }

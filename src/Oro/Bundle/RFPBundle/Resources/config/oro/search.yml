@@ -6,7 +6,7 @@ search:
             name:                       oro_rfp_request_view
             parameters:
                 id:                     id
-        search_template:                OroRFPBundle:Request:searchResult.html.twig
+        search_template:                '@OroRFP/Request/searchResult.html.twig'
         fields:
             -
                 name:                   firstName

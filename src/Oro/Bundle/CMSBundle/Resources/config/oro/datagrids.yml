@@ -233,7 +233,7 @@ datagrids:
                 label: oro.cms.contentwidget.description.label
                 type: twig
                 frontend_type: html
-                template: OroCMSBundle:ContentWidget:Datagrid/description.html.twig
+                template: '@OroCMS/ContentWidget/Datagrid/description.html.twig'
             widgetType:
                 label: oro.cms.contentwidget.widget_type.label
                 frontend_type: select
@@ -242,7 +242,7 @@ datagrids:
                 label: oro.cms.contentwidget.layout.label
                 type: twig
                 frontend_type: html
-                template: OroCMSBundle:ContentWidget:Datagrid/layout.html.twig
+                template: '@OroCMS/ContentWidget/Datagrid/layout.html.twig'
             createdAt:
                 label: oro.cms.contentwidget.created_at.label
                 frontend_type: datetime

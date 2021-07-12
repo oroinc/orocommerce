@@ -3,7 +3,7 @@ parameters:
     oro_ups.integration.transport.type: 'ups'
     oro_ups.api.url.production: 'https://onlinetools.ups.com/rest'
     oro_ups.api.url.test: 'https://wwwcie.ups.com/rest'
-    oro_ups.admin_view.method_template: 'OroUPSBundle::UPSMethodWithOptions.html.twig'
+    oro_ups.admin_view.method_template: '@@OroUPS/UPSMethodWithOptions.html.twig'
 
 services:
     # Providers

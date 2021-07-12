@@ -90,7 +90,7 @@
 {% endblock %}
 
 {% block __oro_product_line_item_form__line_item_form_widget %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
 
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' product-item__qty product-item__qty--{{ class_prefix }}',

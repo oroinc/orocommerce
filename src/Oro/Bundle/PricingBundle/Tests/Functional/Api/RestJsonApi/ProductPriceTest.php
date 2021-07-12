@@ -10,8 +10,6 @@ use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardOutputResultModifier;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRuleLexemes;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPricesWithRules;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -22,6 +20,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ProductPriceTest extends RestJsonApiTestCase
 {
+    use ProductPriceTestTrait;
     use MessageQueueExtension;
 
     protected function setUp(): void
@@ -276,6 +275,27 @@ class ProductPriceTest extends RestJsonApiTestCase
         self::assertEquals(
             $productPrice->getId() . '-' . $productPrice->getPriceList()->getId(),
             $this->getResourceId($response)
+        );
+
+        $this->assertMessagesSentForCreateRequest($priceListId);
+    }
+
+    public function testCreateTogetherWithPriceListViaPriceListCreate()
+    {
+        $response = $this->post(
+            ['entity' => 'pricelists'],
+            'product_price/create_with_priceList_via_createPriceList.yml'
+        );
+
+        $priceListId = (int)$this->getResourceId($response);
+        $productPrice = $this->getProductPrice($priceListId);
+        self::assertNotNull($productPrice);
+
+        $content = self::jsonToArray($response->getContent());
+        $productPriceId = $content['included'][0]['id'];
+        self::assertEquals(
+            $productPrice->getId() . '-' . $productPrice->getPriceList()->getId(),
+            $productPriceId
         );
 
         $this->assertMessagesSentForCreateRequest($priceListId);
@@ -579,9 +599,43 @@ class ProductPriceTest extends RestJsonApiTestCase
 
     public function testUpdateResetPriceRule()
     {
+        $priceList1Id = $this->getReference('price_list_1')->getId();
+        $priceList2Id = $this->getReference('price_list_2')->getId();
+        $productPrice1Id = $this->getReference(LoadProductPricesWithRules::PRODUCT_PRICE_1)->getId();
+        $productPrice1ApiId = $productPrice1Id . '-' . $priceList1Id;
+        $data = [
+            'data' => [
+                'type'          => 'productprices',
+                'id'            => $productPrice1ApiId,
+                'attributes'    => [
+                    'value'    => '150.0000'
+                ]
+            ]
+        ];
         $this->patch(
-            ['entity' => 'productprices', 'id' => $this->getFirstProductPriceApiId()],
-            'product_price/update_reset_rule.yml'
+            ['entity' => 'productprices', 'id' => $productPrice1ApiId],
+            $data
+        );
+
+        self::assertMessageSent(
+            Topics::RESOLVE_COMBINED_PRICES,
+            [
+                'product' => [
+                    $priceList1Id => [
+                        $this->getReference('product-1')->getId()
+                    ]
+                ]
+            ]
+        );
+        self::assertMessageSent(
+            Topics::RESOLVE_PRICE_RULES,
+            [
+                'product' => [
+                    $priceList2Id => [
+                        $this->getReference('product-1')->getId()
+                    ]
+                ]
+            ]
         );
 
         $productPrice = $this->findProductPriceByUniqueKey(
@@ -651,49 +705,6 @@ class ProductPriceTest extends RestJsonApiTestCase
 
         $query = $queryBuilder->getQuery();
         $query->setHint('priceList', $priceList->getId());
-        $query->setHint(
-            PriceShardOutputResultModifier::ORO_PRICING_SHARD_MANAGER,
-            self::getContainer()->get('oro_pricing.shard_manager')
-        );
-
-        return $query->getOneOrNullResult();
-    }
-
-    /**
-     * @param int         $quantity
-     * @param string      $currency
-     * @param PriceList   $priceList
-     * @param Product     $product
-     * @param ProductUnit $unit
-     *
-     * @return ProductPrice|null
-     */
-    private function findProductPriceByUniqueKey(
-        int $quantity,
-        string $currency,
-        PriceList $priceList,
-        Product $product,
-        ProductUnit $unit
-    ) {
-        $queryBuilder = $this->getEntityManager()
-            ->getRepository(ProductPrice::class)
-            ->createQueryBuilder('price');
-
-        $queryBuilder
-            ->andWhere('price.quantity = :quantity')
-            ->andWhere('price.currency = :currency')
-            ->andWhere('price.priceList = :priceList')
-            ->andWhere('price.product = :product')
-            ->andWhere('price.unit = :unit')
-            ->setParameter('quantity', $quantity)
-            ->setParameter('currency', $currency)
-            ->setParameter('priceList', $priceList)
-            ->setParameter('product', $product)
-            ->setParameter('unit', $unit);
-
-        $query = $queryBuilder->getQuery();
-        $query->useQueryCache(false);
-        $query->setHint('priceList', $this->getReference('price_list_3')->getId());
         $query->setHint(
             PriceShardOutputResultModifier::ORO_PRICING_SHARD_MANAGER,
             self::getContainer()->get('oro_pricing.shard_manager')

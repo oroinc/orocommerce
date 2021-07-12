@@ -38,7 +38,7 @@ class PaymentMethodsConfigsRuleController extends AbstractController
 
     /**
      * @Route("/create", name="oro_payment_methods_configs_rule_create")
-     * @Template("OroPaymentBundle:PaymentMethodsConfigsRule:update.html.twig")
+     * @Template("@OroPayment/PaymentMethodsConfigsRule/update.html.twig")
      * @Acl(
      *     id="oro_payment_methods_configs_rule_create",
      *     type="entity",

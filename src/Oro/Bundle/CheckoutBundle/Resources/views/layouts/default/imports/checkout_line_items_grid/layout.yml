@@ -6,7 +6,7 @@ layout:
 
     actions:
         - '@setBlockTheme':
-            themes: 'OroCheckoutBundle:layouts:default/imports/checkout_line_items_grid/layout.html.twig'
+            themes: '@OroCheckout/layouts/default/imports/checkout_line_items_grid/layout.html.twig'
 
         - '@setOption':
             id: __page_content

@@ -23,7 +23,7 @@
 {% endif %}
 
 {% if showTierPrices is defined %}
-    {% form_theme showTierPrices with 'OroPricingBundle:Form:sidebar.html.twig' %}
+    {% form_theme showTierPrices with '@OroPricing/Form/sidebar.html.twig' %}
     {% set pageComponentOptions = pageComponentOptions|merge({'showTierPricesSelector': '#' ~ showTierPrices.vars.id}) %}
 {% endif %}
 

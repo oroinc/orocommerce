@@ -5,7 +5,7 @@ layout:
     actions:
         - '@setBlockTheme':
             themes:
-                - 'OroCheckoutBundle:layouts:default/oro_checkout_frontend_checkout/templates/payment.html.twig'
+                - '@OroCheckout/layouts/default/oro_checkout_frontend_checkout/templates/payment.html.twig'
 
         - '@add':
             id: payment_methods

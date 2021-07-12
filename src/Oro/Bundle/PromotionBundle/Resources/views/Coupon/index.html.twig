@@ -1,17 +1,17 @@
-{% extends 'OroUIBundle:actions:index.html.twig' %}
-{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% extends '@OroUI/actions/index.html.twig' %}
+{% import '@OroUI/macros.html.twig' as UI %}
 
 {% set pageTitle = 'oro.promotion.coupon.entity_plural_label'|trans %}
 {% set params = oro_action_widget_parameters()|merge({'group': 'create_coupon_buttons'}) %}
 
 {% block navButtons %}
 
-    {% include 'OroImportExportBundle:ImportExport:buttons_from_configuration.html.twig' with {
+    {% include '@OroImportExport/ImportExport/buttons_from_configuration.html.twig' with {
         'alias': 'oro_coupon'
     } %}
 
     {% if is_granted('oro_promotion_coupon_create') %}
-        {% include 'OroActionBundle:Widget:_widget.html.twig' %}
+        {% include '@OroAction/Widget/_widget.html.twig' %}
     {% endif %}
 
 {% endblock %}

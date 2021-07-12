@@ -65,7 +65,7 @@ datagrids:
             shippingAddress:
                 label: oro.order.shipping_address.label
                 type: twig
-                template: 'OroOrderBundle:Order:Datagrid/frontendShippingAddress.html.twig'
+                template: '@OroOrder/Order/Datagrid/frontendShippingAddress.html.twig'
                 frontend_type: html
             total:
                 label:  oro.order.total.label
@@ -77,13 +77,13 @@ datagrids:
             paymentMethods:
                 label: oro.order.payment_method.label
                 type: twig
-                template: 'OroOrderBundle:Order:Datagrid/paymentMethod.html.twig'
+                template: '@OroOrder/Order/Datagrid/paymentMethod.html.twig'
                 frontend_type: html
             paymentStatus:
                 label:         oro.order.payment_status.label
                 type:          twig
                 frontend_type: html
-                template:      'OroOrderBundle:Order:Datagrid/paymentStatus.html.twig'
+                template:      '@OroOrder/Order/Datagrid/paymentStatus.html.twig'
             #Hidden fields goes next
             poNumber:
                 label:         oro.order.po_number.label
@@ -107,7 +107,7 @@ datagrids:
                 label:         oro.order.shipping_method.label
                 type:          twig
                 frontend_type: html
-                template:      'OroOrderBundle:Order:Datagrid/shippingMethodFull.html.twig'
+                template:      '@OroOrder/Order/Datagrid/shippingMethodFull.html.twig'
                 renderable:    false
             updatedAt:
                 label:         oro.ui.updated_at
@@ -242,7 +242,7 @@ datagrids:
                 label:         oro.order.order_discount.columns.title
                 type:          twig
                 frontend_type: html
-                template:      OroOrderBundle:Order:Datagrid/promotionalDiscount.html.twig
+                template:      '@OroOrder/Order/Datagrid/promotionalDiscount.html.twig'
                 renderable:    false
             customerName:
                 label:         oro.order.customer.label
@@ -256,29 +256,29 @@ datagrids:
                 label:         oro.order.payment_status.label
                 type:          twig
                 frontend_type: html
-                template:      'OroOrderBundle:Order:Datagrid/paymentStatus.html.twig'
+                template:      '@OroOrder/Order/Datagrid/paymentStatus.html.twig'
             paymentMethods:
                 label: oro.order.payment_method.label
                 renderable: true
                 type: twig
-                template: 'OroOrderBundle:Order:Datagrid/paymentMethodAdmin.html.twig'
+                template: '@OroOrder/Order/Datagrid/paymentMethodAdmin.html.twig'
                 frontend_type: html
             shippingMethod:
                 label:         oro.order.shipping_method.label
                 type:          twig
                 frontend_type: html
-                template:      'OroOrderBundle:Order:Datagrid/shippingMethodFull.html.twig'
+                template:      '@OroOrder/Order/Datagrid/shippingMethodFull.html.twig'
             sourceEntityClass:
                 label:         oro.order.source_document.label
                 type:          twig
                 frontend_type: html
-                template:      OroOrderBundle:Order:Datagrid/sourceDocument.html.twig
+                template:      '@OroOrder/Order/Datagrid/sourceDocument.html.twig'
                 renderable:    false
             totalDiscountsAmount:
                 label:         oro.order.order_discount.columns.special_discount.label
                 type:          twig
                 frontend_type: html
-                template:      OroOrderBundle:Order:Datagrid/specialDiscount.html.twig
+                template:      '@OroOrder/Order/Datagrid/specialDiscount.html.twig'
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
@@ -435,22 +435,22 @@ datagrids:
                 label:         oro.order.payment_status.label
                 type:          twig
                 frontend_type: html
-                template:      'OroOrderBundle:Order:Datagrid/paymentStatus.html.twig'
+                template:      '@OroOrder/Order/Datagrid/paymentStatus.html.twig'
             paymentMethods:
                 label:         oro.order.payment_method.label
                 type:          twig
-                template:      'OroOrderBundle:Order:Datagrid/paymentMethodAdmin.html.twig'
+                template:      '@OroOrder/Order/Datagrid/paymentMethodAdmin.html.twig'
                 frontend_type: html
             shippingMethod:
                 label:         oro.order.shipping_method.label
                 type:          twig
                 frontend_type: html
-                template:      'OroOrderBundle:Order:Datagrid/shippingMethodFull.html.twig'
+                template:      '@OroOrder/Order/Datagrid/shippingMethodFull.html.twig'
             totalDiscountsAmount:
                 label:         oro.order.order_discount.columns.special_discount.label
                 type:          twig
                 frontend_type: html
-                template:      OroOrderBundle:Order:Datagrid/specialDiscount.html.twig
+                template:      '@OroOrder/Order/Datagrid/specialDiscount.html.twig'
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
@@ -662,7 +662,7 @@ datagrids:
                 label:         oro.product.entity_label
                 type:          twig
                 frontend_type: html
-                template:      OroOrderBundle:Order:Datagrid/product.html.twig
+                template:      '@OroOrder/Order/Datagrid/product.html.twig'
             quantity:
                 label: oro.order.orderlineitem.quantity.label
                 frontend_type: decimal
@@ -672,7 +672,7 @@ datagrids:
                 label:         oro.order.orderlineitem.price.label
                 type:          twig
                 frontend_type: html
-                template:      OroOrderBundle:Order:Datagrid/price.html.twig
+                template:      '@OroOrder/Order/Datagrid/price.html.twig'
             shipBy:
                 label:         oro.order.orderlineitem.ship_by.label
                 frontend_type: date
@@ -686,17 +686,17 @@ datagrids:
                 label:         oro.product.entity_label
                 type:          twig
                 frontend_type: html
-                template:      OroOrderBundle:Order:Datagrid/frontendProduct.html.twig
+                template:      '@OroOrder/Order/Datagrid/frontendProduct.html.twig'
             quantity:
                 label: oro.order.orderlineitem.quantity.label
                 type:          twig
                 frontend_type: html
-                template:      OroOrderBundle:Order:Datagrid/frontendQuantity.html.twig
+                template:      '@OroOrder/Order/Datagrid/frontendQuantity.html.twig'
             price:
                 label:         oro.order.orderlineitem.price.label
                 type:          twig
                 frontend_type: html
-                template:      OroOrderBundle:Order:Datagrid/price.html.twig
+                template:      '@OroOrder/Order/Datagrid/price.html.twig'
             shipBy:
                 label:         oro.order.orderlineitem.ship_by.label
                 frontend_type: date
@@ -734,12 +734,12 @@ datagrids:
             method:
                 label: oro.order.shipping_tracking.method.label
                 type: twig
-                template: OroOrderBundle:Order:Datagrid/shippingTrackingMethod.html.twig
+                template: '@OroOrder/Order/Datagrid/shippingTrackingMethod.html.twig'
                 frontend_type: html
             number:
                 label: oro.order.shipping_tracking.number.label
                 type: twig
-                template: OroOrderBundle:Order:Datagrid/shippingTrackingLink.html.twig
+                template: '@OroOrder/Order/Datagrid/shippingTrackingLink.html.twig'
                 frontend_type: html
 
     best-selling-products:
@@ -783,7 +783,7 @@ datagrids:
             qtySold:
                 label:         oro.product.qty_sold.label
                 type:          twig
-                template:      OroOrderBundle:Order:Datagrid/productQtySold.html.twig
+                template:      '@OroOrder/Order/Datagrid/productQtySold.html.twig'
                 frontend_type: html
         sorters:
             columns:

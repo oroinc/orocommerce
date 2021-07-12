@@ -509,6 +509,27 @@ class ProductRepository extends EntityRepository
         return $mapping;
     }
 
+
+    /**
+     * @param Product $configurableProduct
+     *
+     * @return Product[]|\Generator
+     */
+    public function getVariantsLinksProducts(Product $configurableProduct): \Generator
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->from(ProductVariantLink::class, 'pvl')
+            ->select('pvl')
+            ->where($qb->expr()->in('pvl.parentProduct', ':parentProduct'))
+            ->setParameter('parentProduct', $configurableProduct);
+
+        /** @var ProductVariantLink $link */
+        foreach ($qb->getQuery()->toIterable() as $link) {
+            yield $link->getProduct();
+            $this->_em->detach($link);
+        }
+    }
+
     /**
      * @param Product $product
      * @return array

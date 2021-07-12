@@ -16,24 +16,16 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Validator\Constraints\AttributeFamilyUsageInVariantField;
 use Oro\Bundle\ProductBundle\Validator\Constraints\AttributeFamilyUsageInVariantFieldValidator;
-use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Oro\Component\Testing\ReflectionUtil;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class AttributeFamilyUsageInVariantFieldValidatorTest extends \PHPUnit\Framework\TestCase
+class AttributeFamilyUsageInVariantFieldValidatorTest extends ConstraintValidatorTestCase
 {
-    use EntityTrait;
-
     /** @var AttributeManager|\PHPUnit\Framework\MockObject\MockObject */
     private $attributeManager;
 
     /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
-
-    /** @var AttributeFamilyUsageInVariantFieldValidator */
-    private $validator;
-
-    /** @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $context;
 
     /** @var AttributeGroupRelationRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $attributeRelationRepository;
@@ -44,87 +36,70 @@ class AttributeFamilyUsageInVariantFieldValidatorTest extends \PHPUnit\Framework
     /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
-        $this->attributeManager = $this->getMockBuilder(AttributeManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->attributeManager = $this->createMock(AttributeManager::class);
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->configManager = $this->createMock(ConfigManager::class);
+        $this->attributeRelationRepository = $this->createMock(AttributeGroupRelationRepository::class);
+        $this->productRepository = $this->createMock(ProductRepository::class);
 
         $config = $this->createMock(ConfigInterface::class);
-        $config
-            ->expects($this->any())
+        $config->expects($this->any())
             ->method('get')
             ->withAnyParameters()
             ->will($this->returnArgument(2));
 
         $attributeProvider = $this->createMock(ConfigProvider::class);
-        $attributeProvider
-            ->expects($this->any())
+        $attributeProvider->expects($this->any())
             ->method('getConfig')
             ->willReturn($config);
 
-        $this->configManager
-            ->expects($this->any())
+        $this->configManager->expects($this->any())
             ->method('getProvider')
             ->willReturn($attributeProvider);
 
-        $this->validator = new AttributeFamilyUsageInVariantFieldValidator(
+        $this->doctrineHelper->expects($this->any())
+            ->method('getEntityRepositoryForClass')
+            ->willReturnCallback(function (string $class) {
+                switch ($class) {
+                    case AttributeGroupRelation::class:
+                        return $this->attributeRelationRepository;
+                    case Product::class:
+                        return $this->productRepository;
+                }
+                throw new \LogicException(sprintf('Unexpected entity class "%s".', $class));
+            });
+
+        parent::setUp();
+    }
+
+    protected function createValidator()
+    {
+        return new AttributeFamilyUsageInVariantFieldValidator(
             $this->attributeManager,
             $this->doctrineHelper,
             $this->configManager
         );
-
-        $this->context = $this->createMock(ExecutionContextInterface::class);
-        $this->validator->initialize($this->context);
-
-        $this->attributeRelationRepository = $this->getMockBuilder(AttributeGroupRelationRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->productRepository = $this->getMockBuilder(ProductRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->doctrineHelper->expects($this->any())
-            ->method('getEntityRepositoryForClass')
-            ->willReturnCallback(function ($class) {
-                switch ($class) {
-                    case AttributeGroupRelation::class:
-                        return $this->attributeRelationRepository;
-                        break;
-                    case Product::class:
-                        return $this->productRepository;
-                        break;
-                }
-            });
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown(): void
+    private function getAttributeFamily(int $id): AttributeFamily
     {
-        unset(
-            $this->validator,
-            $this->attributeManager,
-            $this->doctrineHelper,
-            $this->context,
-            $this->attributeRelationRepository,
-            $this->productRepository
-        );
+        $attributeFamily = new AttributeFamily();
+        ReflectionUtil::setId($attributeFamily, $id);
+
+        return $attributeFamily;
     }
 
-    //@codingStandardsIgnoreStart
-    //@codingStandardsIgnoreEnd
+    private function getAttributeGroupRelation(int $id, int $entityConfigFieldId): AttributeGroupRelation
+    {
+        $attributeGroupRelation = new AttributeGroupRelation();
+        ReflectionUtil::setId($attributeGroupRelation, $id);
+        $attributeGroupRelation->setEntityConfigFieldId($entityConfigFieldId);
+
+        return $attributeGroupRelation;
+    }
+
     public function testValidateUnsupportedClass()
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -133,46 +108,49 @@ class AttributeFamilyUsageInVariantFieldValidatorTest extends \PHPUnit\Framework
             AttributeFamily::class
         ));
 
-        $this->validator->validate(new \stdClass(), new AttributeFamilyUsageInVariantField());
+        $constraint = new AttributeFamilyUsageInVariantField();
+        $this->validator->validate(new \stdClass(), $constraint);
     }
 
     public function testReturnWhenEmptyDeleteFields()
     {
-        $attributeFamily = $this->getEntity(AttributeFamily::class, ['id' => 1]);
+        $attributeFamily = $this->getAttributeFamily(1);
 
         $this->attributeRelationRepository->expects($this->once())
             ->method('getAttributeGroupRelationsByFamily')
             ->with($attributeFamily)
             ->willReturn([]);
 
-        $this->context->expects($this->never())->method('addViolation');
+        $constraint = new AttributeFamilyUsageInVariantField();
+        $this->validator->validate($attributeFamily, $constraint);
 
-        $this->validator->validate($attributeFamily, new AttributeFamilyUsageInVariantField());
+        $this->assertNoViolation();
     }
 
     public function testValidateWhenAttributeFamilyNew()
     {
         $attributeFamily = new AttributeFamily();
 
-        $this->context->expects($this->never())->method('addViolation');
+        $constraint = new AttributeFamilyUsageInVariantField();
+        $this->validator->validate($attributeFamily, $constraint);
 
-        $this->validator->validate($attributeFamily, new AttributeFamilyUsageInVariantField());
+        $this->assertNoViolation();
     }
 
     public function testValidateWhenAttributeRelationsDoNotChange()
     {
-        $attributeFamily = $this->getEntity(AttributeFamily::class, ['id' => 1]);
+        $attributeFamily = $this->getAttributeFamily(1);
 
         $attributeGroup = new AttributeGroup();
         $attributeGroup2 = new AttributeGroup();
 
-        list(
+        [
             $attributeRelation,
             $attributeRelation2,
             $attributeRelation3,
             $attributeRelation4,
             $attributeRelation5
-        ) = $this->getAttributeRelations();
+        ] = $this->getAttributeRelations();
 
         $attributeGroup
             ->addAttributeRelation($attributeRelation)
@@ -198,24 +176,26 @@ class AttributeFamilyUsageInVariantFieldValidatorTest extends \PHPUnit\Framework
                 $attributeRelation5
             ]);
 
-        $this->context->expects($this->never())->method('addViolation');
+        $constraint = new AttributeFamilyUsageInVariantField();
+        $this->validator->validate($attributeFamily, $constraint);
 
-        $this->validator->validate($attributeFamily, new AttributeFamilyUsageInVariantField());
+        $this->assertNoViolation();
     }
 
     public function testValidateOneProductUsedAttributeFieldAsVariantFiled()
     {
-        list($product, $product2) = $this->getProducts();
+        [$product, $product2] = $this->getProducts();
 
-        $attributeFamily = $this->getEntity(AttributeFamily::class, ['id' => 1]);
+        $attributeFamily = new AttributeFamily();
+        ReflectionUtil::setId($attributeFamily, 1);
 
-        list(
+        [
             $attributeRelation,
             $attributeRelation2,
             $attributeRelation3,
             $attributeRelation4,
             $attributeRelation5
-        ) = $this->getAttributeRelations();
+        ] = $this->getAttributeRelations();
 
         $attributeGroup = new AttributeGroup();
         $attributeGroup2 = new AttributeGroup();
@@ -245,39 +225,34 @@ class AttributeFamilyUsageInVariantFieldValidatorTest extends \PHPUnit\Framework
         $this->attributeManager->expects($this->once())
             ->method('getAttributesByIdsWithIndex')
             ->with([11])
-            ->willReturn([$this->getEntity(FieldConfigModel::class, ['fieldName' => 'color'])]);
+            ->willReturn([new FieldConfigModel('color')]);
 
         $this->productRepository->expects($this->once())
             ->method('findBy')
             ->with(['type' => Product::TYPE_CONFIGURABLE, 'attributeFamily' => $attributeFamily])
             ->willReturn([$product, $product2]);
 
-        $this->context->expects($this->once())
-            ->method('addViolation')
-            ->with(
-                'oro.product.attribute_family.used_in_product_variant_field.message',
-                [
-                    '%products%' => 'sku1',
-                    '%names%' => 'color'
-                ]
-            );
+        $constraint = new AttributeFamilyUsageInVariantField();
+        $this->validator->validate($attributeFamily, $constraint);
 
-        $this->validator->validate($attributeFamily, new AttributeFamilyUsageInVariantField());
+        $this->buildViolation($constraint->message)
+            ->setParameters(['%products%' => 'sku1', '%names%' => 'color'])
+            ->assertRaised();
     }
 
     public function testValidateTwoProductUsedAttributeFieldAsVariantFiled()
     {
-        list($product, $product2) = $this->getProducts();
+        [$product, $product2] = $this->getProducts();
 
-        $attributeFamily = $this->getEntity(AttributeFamily::class, ['id' => 1]);
+        $attributeFamily = $this->getAttributeFamily(1);
 
-        list(
+        [
             $attributeRelation,
             $attributeRelation2,
             $attributeRelation3,
             $attributeRelation4,
             $attributeRelation5
-        ) = $this->getAttributeRelations();
+        ] = $this->getAttributeRelations();
 
         $attributeGroup = new AttributeGroup();
         $attributeGroup2 = new AttributeGroup();
@@ -295,12 +270,7 @@ class AttributeFamilyUsageInVariantFieldValidatorTest extends \PHPUnit\Framework
         $this->attributeManager->expects($this->once())
             ->method('getAttributesByIdsWithIndex')
             ->with([11, 15])
-            ->willReturn(
-                [
-                    $this->getEntity(FieldConfigModel::class, ['fieldName' => 'color']),
-                    $this->getEntity(FieldConfigModel::class, ['fieldName' => 'test']),
-                ]
-            );
+            ->willReturn([new FieldConfigModel('color'), new FieldConfigModel('test')]);
 
         $this->attributeRelationRepository->expects($this->once())
             ->method('getAttributeGroupRelationsByFamily')
@@ -318,33 +288,28 @@ class AttributeFamilyUsageInVariantFieldValidatorTest extends \PHPUnit\Framework
             ->with(['type' => Product::TYPE_CONFIGURABLE, 'attributeFamily' => $attributeFamily])
             ->willReturn([$product, $product2]);
 
-        $this->context->expects($this->once())
-            ->method('addViolation')
-            ->with(
-                'oro.product.attribute_family.used_in_product_variant_field.message',
-                [
-                    '%products%' => 'sku1, sku2',
-                    '%names%' => 'color, test'
-                ]
-            );
+        $constraint = new AttributeFamilyUsageInVariantField();
+        $this->validator->validate($attributeFamily, $constraint);
 
-        $this->validator->validate($attributeFamily, new AttributeFamilyUsageInVariantField());
+        $this->buildViolation($constraint->message)
+            ->setParameters(['%products%' => 'sku1, sku2', '%names%' => 'color, test'])
+            ->assertRaised();
     }
 
     public function testValidateWhenMovingAttributeToAnotherGroup()
     {
-        $attributeFamily = $this->getEntity(AttributeFamily::class, ['id' => 1]);
+        $attributeFamily = $this->getAttributeFamily(1);
 
         $attributeGroup = new AttributeGroup();
         $attributeGroup2 = new AttributeGroup();
 
-        list(
+        [
             $attributeRelation,
             $attributeRelation2,
             $attributeRelation3,
             $attributeRelation4,
             $attributeRelation5
-            ) = $this->getAttributeRelations();
+        ] = $this->getAttributeRelations();
 
         $attributeGroup
             ->addAttributeRelation($attributeRelation)
@@ -376,33 +341,39 @@ class AttributeFamilyUsageInVariantFieldValidatorTest extends \PHPUnit\Framework
                 $attributeRelation5
             ]);
 
-        $this->context->expects($this->never())->method('addViolation');
+        $constraint = new AttributeFamilyUsageInVariantField();
+        $this->validator->validate($attributeFamily, $constraint);
 
-        $this->validator->validate($attributeFamily, new AttributeFamilyUsageInVariantField());
+        $this->assertNoViolation();
     }
 
     /**
-     * @return array|AttributeGroupRelation[]
+     * @return AttributeGroupRelation[]
      */
-    private function getAttributeRelations()
+    private function getAttributeRelations(): array
     {
-        $attributeRelation = $this->getEntity(AttributeGroupRelation::class, ['id' => 1, 'entityConfigFieldId' => 11]);
-        $attributeRelation2 = $this->getEntity(AttributeGroupRelation::class, ['id' => 2, 'entityConfigFieldId' => 12]);
-        $attributeRelation3 = $this->getEntity(AttributeGroupRelation::class, ['id' => 3, 'entityConfigFieldId' => 13]);
-        $attributeRelation4 = $this->getEntity(AttributeGroupRelation::class, ['id' => 4, 'entityConfigFieldId' => 14]);
-        $attributeRelation5 = $this->getEntity(AttributeGroupRelation::class, ['id' => 5, 'entityConfigFieldId' => 15]);
-
-        return [$attributeRelation, $attributeRelation2, $attributeRelation3, $attributeRelation4, $attributeRelation5];
+        return [
+            $this->getAttributeGroupRelation(1, 11),
+            $this->getAttributeGroupRelation(2, 12),
+            $this->getAttributeGroupRelation(3, 13),
+            $this->getAttributeGroupRelation(4, 14),
+            $this->getAttributeGroupRelation(5, 15)
+        ];
     }
 
     /**
-     * @return array|Product[]
+     * @return Product[]
      */
-    private function getProducts()
+    private function getProducts(): array
     {
-        $product = $this->getEntity(Product::class, ['variantFields' => ['color', 'size'], 'sku' => 'sku1']);
-        $product2 = $this->getEntity(Product::class, ['variantFields' => ['test'], 'sku' => 'sku2']);
+        $product1 = new Product();
+        $product1->setSku('sku1');
+        $product1->setVariantFields(['color', 'size']);
 
-        return [$product, $product2];
+        $product2 = new Product();
+        $product2->setSku('sku2');
+        $product2->setVariantFields(['test']);
+
+        return [$product1, $product2];
     }
 }

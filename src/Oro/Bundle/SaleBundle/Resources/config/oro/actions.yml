@@ -49,7 +49,7 @@ operations:
             group: oro.sale.quote.notify_customer.label
 
         frontend_options:
-            template: OroSaleBundle:Action:emailNotification.html.twig
+            template: '@OroSale/Action/emailNotification.html.twig'
             title: oro.sale.quote.notify_customer.by_email.link.text
             options:
                 allowMaximize: true

@@ -1,11 +1,11 @@
-{% extends 'OroUIBundle:actions:index.html.twig' %}
-{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% extends '@OroUI/actions/index.html.twig' %}
+{% import '@OroUI/macros.html.twig' as UI %}
 {% set pageTitle = 'oro.catalog.category.entity_plural_label'|trans %}
 
 {% block navButtons %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
 
-    {% include 'OroImportExportBundle:ImportExport:buttons_from_configuration.html.twig' with {
+    {% include '@OroImportExport/ImportExport/buttons_from_configuration.html.twig' with {
         'alias': 'oro_category'
     } %}
 
@@ -21,7 +21,7 @@
 
 {% block content %}
     <div class="layout-content">
-        {% import 'OroUIBundle::macros.html.twig' as UI %}
+        {% import '@OroUI/macros.html.twig' as UI %}
 
         {{ parent() }}
 
@@ -34,11 +34,11 @@
         } %}
 
         <div class="scrollable-container sidebar-container">
-            {% embed "OroUIBundle::content_sidebar.html.twig" with {options: {
+            {% embed "@OroUI/content_sidebar.html.twig" with {options: {
                 fixSidebarHeight: false
             }} %}
                 {% block sidebar %}
-                    {% import 'OroUIBundle::macros.html.twig' as UI %}
+                    {% import '@OroUI/macros.html.twig' as UI %}
                     {{ UI.renderJsTree(
                         {
                             'label': 'oro.catalog.category.entity_plural_label'|trans,

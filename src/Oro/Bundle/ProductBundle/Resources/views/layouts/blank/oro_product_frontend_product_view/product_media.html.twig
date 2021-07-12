@@ -19,8 +19,8 @@
 {% endblock %}
 
 {% block _product_view_media_widget %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
-    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+    {% import '@OroProduct/image_macros.html.twig' as Image %}
 
     {% set productImages = collect_product_images_by_types(product, ['main', 'additional']) %}
 
@@ -36,7 +36,7 @@
 {% endblock %}
 
 {% block _product_view_media_gallery_widget %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
 
     {% set zoomOptions = {
         viewport: {
@@ -145,7 +145,7 @@
 {% endblock %}
 
 {% block _product_view_media_slider_widget %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
 
     {% set imageListOptions = {
         slidesToShow: 1,

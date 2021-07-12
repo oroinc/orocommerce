@@ -124,7 +124,7 @@ abstract class AbstractPriceListRelationDataGridListener implements FeatureToggl
             [
                 'label' => 'oro.pricing.pricelist.entity_plural_label',
                 'type' => 'twig',
-                'template' => 'OroPricingBundle:Datagrid:Column/priceLists.html.twig',
+                'template' => '@OroPricing/Datagrid/Column/priceLists.html.twig',
                 'frontend_type' => 'html',
                 'renderable' => false,
             ]

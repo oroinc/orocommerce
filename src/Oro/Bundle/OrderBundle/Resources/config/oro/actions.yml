@@ -108,7 +108,7 @@ operations:
         button_options:
             icon: fa-list-alt
         frontend_options:
-            template: OroOrderBundle:Action:shippingTrackingsChange.html.twig
+            template: '@OroOrder/Action/shippingTrackingsChange.html.twig'
             title: oro.order.shipping_tracking.entity_label
             options:
                 width: 550
@@ -244,7 +244,7 @@ operations:
     oro_order_discount_form:
         label: oro.order.widgets.order_discount_form
         frontend_options:
-            template: OroOrderBundle:Action:orderDiscount.html.twig
+            template: '@OroOrder/Action/orderDiscount.html.twig'
         attributes:
             orderDiscount:
                 label: ' '

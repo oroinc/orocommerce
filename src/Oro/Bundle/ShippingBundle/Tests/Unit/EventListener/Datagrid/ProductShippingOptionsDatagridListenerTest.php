@@ -71,7 +71,7 @@ class ProductShippingOptionsDatagridListenerTest extends \PHPUnit\Framework\Test
                     'product_shipping_options' => [
                         'label' => 'oro.shipping.datagrid.shipping_options.column.label',
                         'type' => 'twig',
-                        'template' => 'OroShippingBundle:Datagrid:Column/productShippingOptions.html.twig',
+                        'template' => '@OroShipping/Datagrid/Column/productShippingOptions.html.twig',
                         'frontend_type' => 'html',
                         'renderable' => false,
                     ]

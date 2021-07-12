@@ -12,7 +12,6 @@ use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
-use Oro\Bundle\ProductBundle\Search\ProductIndexDataModel;
 use Oro\Bundle\ProductBundle\Search\ProductIndexDataProviderInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
@@ -108,7 +107,6 @@ class WebsiteSearchProductIndexerListener
                 }
 
                 $data = $this->dataProvider->getIndexData($product, $attribute, $localizations);
-
                 $this->processIndexData($event, $productId, $data);
             }
 
@@ -169,10 +167,13 @@ class WebsiteSearchProductIndexerListener
     /**
      * @param IndexEntityEvent $event
      * @param int $productId
-     * @param ProductIndexDataModel[] $data
+     * @param iterable $data
      */
-    private function processIndexData(IndexEntityEvent $event, $productId, $data)
-    {
+    private function processIndexData(
+        IndexEntityEvent $event,
+        int $productId,
+        iterable $data
+    ): void {
         foreach ($data as $content) {
             $value = $this->cleanUpStrings($content->getValue());
             if (null === $value) {

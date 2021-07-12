@@ -4,7 +4,7 @@ layout:
 
     actions:
         - '@setBlockTheme':
-            themes: 'OroProductBundle:layouts:blank/oro_product_frontend_product_search/product_search.html.twig'
+            themes: '@OroProduct/layouts/blank/oro_product_frontend_product_search/product_search.html.twig'
 
         - '@add':
             id: search_title

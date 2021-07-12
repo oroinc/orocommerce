@@ -10,32 +10,17 @@ use Oro\Bundle\ConsentBundle\Validator\Constraints\RequiredConsents;
 use Oro\Bundle\ConsentBundle\Validator\Constraints\RequiredConsentsValidator;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
-use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
+use Oro\Component\Testing\ReflectionUtil;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class RequiredConsentsValidatorTest extends \PHPUnit\Framework\TestCase
+class RequiredConsentsValidatorTest extends ConstraintValidatorTestCase
 {
-    use EntityTrait;
-
     /** @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $localizedHelper;
 
     /** @var EnabledConsentProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $enabledConsentProvider;
 
-    /** @var RequiredConsentsValidator */
-    private $validator;
-
-    /** @var RequiredConsents */
-    private $constraint;
-
-    /** @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $context;
-
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->localizedHelper = $this->createMock(LocalizationHelper::class);
@@ -47,26 +32,13 @@ class RequiredConsentsValidatorTest extends \PHPUnit\Framework\TestCase
 
                 return $fallbackValue->getString();
             });
-
         $this->enabledConsentProvider = $this->createMock(EnabledConsentProvider::class);
-        $this->context = $this->createMock(ExecutionContextInterface::class);
-
-        $this->validator = new RequiredConsentsValidator($this->enabledConsentProvider, $this->localizedHelper);
-        $this->validator->initialize($this->context);
-        $this->constraint = new RequiredConsents();
+        parent::setUp();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown(): void
+    protected function createValidator()
     {
-        unset(
-            $this->localizedHelper,
-            $this->enabledConsentProvider,
-            $this->validator,
-            $this->constraint
-        );
+        return new RequiredConsentsValidator($this->enabledConsentProvider, $this->localizedHelper);
     }
 
     public function testIncorrectTypeValidateValue()
@@ -74,46 +46,42 @@ class RequiredConsentsValidatorTest extends \PHPUnit\Framework\TestCase
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('Incorrect type of the value!');
 
-        $this->validator->validate('', $this->constraint);
+        $constraint = new RequiredConsents();
+        $this->validator->validate('', $constraint);
     }
 
     /**
      * @dataProvider validateProvider
      *
      * @param ConsentAcceptance[] $validatedValue
-     * @param Consent[] $requiredConsents
-     * @param bool $isValid
-     * @param array $violationParameters
+     * @param Consent[]           $requiredConsents
+     * @param bool                $isValid
+     * @param array               $violationParameters
      */
     public function testValidate(
         array $validatedValue,
         array $requiredConsents,
-        $isValid,
+        bool $isValid,
         array $violationParameters
     ) {
         $validatedValue = new ArrayCollection($validatedValue);
-        $this->enabledConsentProvider
-            ->expects($this->once())
+        $this->enabledConsentProvider->expects($this->once())
             ->method('getUnacceptedRequiredConsents')
             ->willReturn($requiredConsents);
 
-        if (!$isValid) {
-            $this->context
-                ->expects($this->once())
-                ->method('buildViolation')
-                ->with($this->constraint->message, $violationParameters)
-                ->willReturn(
-                    $this->createMock(ConstraintViolationBuilderInterface::class)
-                );
-        }
+        $constraint = new RequiredConsents();
+        $this->validator->validate($validatedValue, $constraint);
 
-        $this->validator->validate($validatedValue, $this->constraint);
+        if ($isValid) {
+            $this->assertNoViolation();
+        } else {
+            $this->buildViolation($constraint->message)
+                ->setParameters($violationParameters)
+                ->assertRaised();
+        }
     }
 
-    /**
-     * @return array
-     */
-    public function validateProvider()
+    public function validateProvider(): array
     {
         return [
             'All required consents checked' => [
@@ -142,40 +110,30 @@ class RequiredConsentsValidatorTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param int $consentId
-     *
-     * @return ConsentAcceptance
-     */
-    private function createConsentAcceptanceWithConsent(int $consentId)
+    private function createConsentAcceptanceWithConsent(int $consentId): ConsentAcceptance
     {
         $fallbackValue = new LocalizedFallbackValue();
         $fallbackValue->setString('consent_' . $consentId);
 
-        return $this->getEntity(
-            ConsentAcceptance::class,
-            [
-                'consent' => $this->getEntity(Consent::class, [
-                    'id' => $consentId,
-                    'names' => new ArrayCollection([$fallbackValue])
-                ])
-            ]
-        );
+        $consent = new Consent();
+        ReflectionUtil::setId($consent, $consentId);
+        $consent->addName($fallbackValue);
+
+        $consentAcceptance = new ConsentAcceptance();
+        $consentAcceptance->setConsent($consent);
+
+        return $consentAcceptance;
     }
 
-    /**
-     * @param int $consentId
-     *
-     * @return Consent
-     */
-    private function createConsent(int $consentId)
+    private function createConsent(int $consentId): Consent
     {
         $fallbackValue = new LocalizedFallbackValue();
         $fallbackValue->setString('consent_' . $consentId);
 
-        return $this->getEntity(Consent::class, [
-            'id' => $consentId,
-            'names' => new ArrayCollection([$fallbackValue])
-        ]);
+        $consent = new Consent();
+        ReflectionUtil::setId($consent, $consentId);
+        $consent->addName($fallbackValue);
+
+        return $consent;
     }
 }

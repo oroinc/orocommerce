@@ -263,7 +263,7 @@ class ProductPriceDatagridExtension extends AbstractExtension implements Feature
         return [
             'label' => $this->translator->trans($message, $params),
             'type' => 'twig',
-            'template' => 'OroPricingBundle:Datagrid:Column/productPrice.html.twig',
+            'template' => '@OroPricing/Datagrid/Column/productPrice.html.twig',
             'frontend_type' => 'html',
             // Filters for price / unit pairs must not be renderable by default.
             'renderable' => !$unitCode,

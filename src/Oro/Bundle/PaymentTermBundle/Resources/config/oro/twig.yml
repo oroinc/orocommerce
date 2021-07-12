@@ -1,2 +1,2 @@
 bundles:
-    - OroPaymentTermBundle:PaymentTerm:fields.html.twig
+    - '@OroPaymentTerm/PaymentTerm/fields.html.twig'

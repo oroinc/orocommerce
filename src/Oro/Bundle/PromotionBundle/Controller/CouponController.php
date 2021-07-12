@@ -47,7 +47,7 @@ class CouponController extends AbstractController
 
     /**
      * @Route("/create", name="oro_promotion_coupon_create")
-     * @Template("OroPromotionBundle:Coupon:update.html.twig")
+     * @Template("@OroPromotion/Coupon/update.html.twig")
      * @Acl(
      *      id="oro_promotion_coupon_create",
      *      type="entity",
@@ -101,7 +101,7 @@ class CouponController extends AbstractController
     /**
      * @Route("/coupon-mass-edit-widget", name="oro_promotion_coupon_mass_edit_widget")
      * @AclAncestor("oro_promotion_coupon_edit")
-     * @Template("OroPromotionBundle:Coupon/widget:mass_update.html.twig")
+     * @Template("@OroPromotion/Coupon/widget/mass_update.html.twig")
      *
      * @param Request $request
      * @return array

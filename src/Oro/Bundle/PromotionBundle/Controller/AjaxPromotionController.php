@@ -58,7 +58,7 @@ class AjaxPromotionController extends AbstractController
     private function getPromotionJsonResponse(PromotionDataInterface $promotionData): JsonResponse
     {
         $view = $this->renderView(
-            'OroPromotionBundle:Promotion:getPromotionDetails.html.twig',
+            '@OroPromotion/Promotion/getPromotionDetails.html.twig',
             [
                 'entity' => $promotionData,
                 'scopeEntities' => $this->get(ScopeManager::class)->getScopeEntities('promotion')

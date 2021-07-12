@@ -96,7 +96,7 @@ class OrderLineItemGridListenerTest extends \PHPUnit\Framework\TestCase
                         'type' => 'twig',
                         'frontend_type' => 'html',
                         'data_name' => 'result',
-                        'template' => 'OroTaxBundle:Order:Datagrid/Property/unitIncludingTax.html.twig',
+                        'template' => '@OroTax/Order/Datagrid/Property/unitIncludingTax.html.twig',
                         'renderable' => false,
                     ],
                     'unitPriceExcludingTax' => [
@@ -104,7 +104,7 @@ class OrderLineItemGridListenerTest extends \PHPUnit\Framework\TestCase
                         'type' => 'twig',
                         'frontend_type' => 'html',
                         'data_name' => 'result',
-                        'template' => 'OroTaxBundle:Order:Datagrid/Property/unitExcludingTax.html.twig',
+                        'template' => '@OroTax/Order/Datagrid/Property/unitExcludingTax.html.twig',
                         'renderable' => false,
                     ],
                     'unitPriceTaxAmount' => [
@@ -112,7 +112,7 @@ class OrderLineItemGridListenerTest extends \PHPUnit\Framework\TestCase
                         'type' => 'twig',
                         'frontend_type' => 'html',
                         'data_name' => 'result',
-                        'template' => 'OroTaxBundle:Order:Datagrid/Property/unitTaxAmount.html.twig',
+                        'template' => '@OroTax/Order/Datagrid/Property/unitTaxAmount.html.twig',
                         'renderable' => false,
                     ],
                     'rowTotalIncludingTax' => [
@@ -120,7 +120,7 @@ class OrderLineItemGridListenerTest extends \PHPUnit\Framework\TestCase
                         'type' => 'twig',
                         'frontend_type' => 'html',
                         'data_name' => 'result',
-                        'template' => 'OroTaxBundle:Order:Datagrid/Property/rowIncludingTax.html.twig',
+                        'template' => '@OroTax/Order/Datagrid/Property/rowIncludingTax.html.twig',
                         'renderable' => false,
                     ],
                     'rowTotalExcludingTax' => [
@@ -128,7 +128,7 @@ class OrderLineItemGridListenerTest extends \PHPUnit\Framework\TestCase
                         'type' => 'twig',
                         'frontend_type' => 'html',
                         'data_name' => 'result',
-                        'template' => 'OroTaxBundle:Order:Datagrid/Property/rowExcludingTax.html.twig',
+                        'template' => '@OroTax/Order/Datagrid/Property/rowExcludingTax.html.twig',
                         'renderable' => false,
                     ],
                     'rowTotalTaxAmount' => [
@@ -136,7 +136,7 @@ class OrderLineItemGridListenerTest extends \PHPUnit\Framework\TestCase
                         'type' => 'twig',
                         'frontend_type' => 'html',
                         'data_name' => 'result',
-                        'template' => 'OroTaxBundle:Order:Datagrid/Property/rowTaxAmount.html.twig',
+                        'template' => '@OroTax/Order/Datagrid/Property/rowTaxAmount.html.twig',
                         'renderable' => false,
                     ],
                     'taxes' => [
@@ -144,7 +144,7 @@ class OrderLineItemGridListenerTest extends \PHPUnit\Framework\TestCase
                         'type' => 'twig',
                         'frontend_type' => 'html',
                         'data_name' => 'result',
-                        'template' => 'OroTaxBundle::Order/Datagrid/taxes.html.twig',
+                        'template' => '@OroTax/Order/Datagrid/taxes.html.twig',
                         'renderable' => false,
                     ],
                 ],

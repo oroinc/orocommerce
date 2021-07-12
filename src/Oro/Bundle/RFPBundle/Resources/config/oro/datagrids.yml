@@ -410,14 +410,14 @@ datagrids:
                 label:         oro.rfp.requestadditionalnote.type.label
                 type:          twig
                 frontend_type: html
-                template:      OroRFPBundle:RequestAdditionalNote:Datagrid/type.html.twig
+                template:      '@OroRFP/RequestAdditionalNote/Datagrid/type.html.twig'
             author:
                 label:         oro.rfp.requestadditionalnote.author.label
             text:
                 label:         oro.rfp.requestadditionalnote.text.label
                 type:          twig
                 frontend_type: html
-                template:      OroRFPBundle:RequestAdditionalNote:Datagrid/text.html.twig
+                template:      '@OroRFP/RequestAdditionalNote/Datagrid/text.html.twig'
             createdAt:
                 label:         oro.rfp.requestadditionalnote.created_at.label
                 frontend_type: datetime

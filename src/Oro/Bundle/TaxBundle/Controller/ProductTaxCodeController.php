@@ -54,7 +54,7 @@ class ProductTaxCodeController extends AbstractController
 
     /**
      * @Route("/create", name="oro_tax_product_tax_code_create")
-     * @Template("OroTaxBundle:ProductTaxCode:update.html.twig")
+     * @Template("@OroTax/ProductTaxCode/update.html.twig")
      * @Acl(
      *      id="oro_tax_product_tax_code_create",
      *      type="entity",

@@ -1,5 +1,5 @@
 {% macro renderRelatedItemButton(dataUrl, label, title, limit, itemsIdsToAddFieldName, itemsIdsToRemoveFieldName, gridName) %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
 
     {{ UI.clientLink({
         'dataUrl': dataUrl,
@@ -26,7 +26,7 @@
 {% endmacro %}
 
 {% macro renderGrid(name, params = {}, renderParams = {}) %}
-    {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+    {% import '@OroDataGrid/macros.html.twig' as dataGrid %}
 
     <div id="{{ name }}" role="tabpanel">
         {{ dataGrid.renderGrid(name, params, renderParams) }}

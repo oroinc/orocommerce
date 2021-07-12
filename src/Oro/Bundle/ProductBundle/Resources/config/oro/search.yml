@@ -6,7 +6,7 @@ search:
             name:                       oro_product_view
             parameters:
                 id:                     id
-        search_template:                OroProductBundle:Product:searchResult.html.twig
+        search_template:                '@OroProduct/Product/searchResult.html.twig'
         fields:
             -
                 name:                   sku
@@ -56,7 +56,7 @@ search:
             name:                       oro_product_brand_update
             parameters:
                 id:                     id
-        search_template:                OroProductBundle:Product:searchResult.html.twig
+        search_template:                '@OroProduct/Product/searchResult.html.twig'
         acl_permission:                'EDIT'
         fields:
             -

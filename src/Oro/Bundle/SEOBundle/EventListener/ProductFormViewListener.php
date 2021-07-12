@@ -35,19 +35,19 @@ class ProductFormViewListener extends BaseFormViewListener
         $product = $event->getEntity();
 
         $twigEnv = $event->getEnvironment();
-        $titleTemplate = $twigEnv->render('OroSEOBundle:SEO:title_view.html.twig', [
+        $titleTemplate = $twigEnv->render('@OroSEO/SEO/title_view.html.twig', [
             'entity' => $product,
             'labelPrefix' => $this->getMetaFieldLabelPrefix()
         ]);
-        $descriptionTemplate = $twigEnv->render('OroSEOBundle:SEO:description_view.html.twig', [
+        $descriptionTemplate = $twigEnv->render('@OroSEO/SEO/description_view.html.twig', [
             'entity' => $product,
             'labelPrefix' => $this->getMetaFieldLabelPrefix()
         ]);
-        $keywordsTemplate = $twigEnv->render('OroSEOBundle:SEO:keywords_view.html.twig', [
+        $keywordsTemplate = $twigEnv->render('@OroSEO/SEO/keywords_view.html.twig', [
             'entity' => $product,
             'labelPrefix' => $this->getMetaFieldLabelPrefix()
         ]);
-        $slugsTemplate = $twigEnv->render('OroRedirectBundle::entitySlugs.html.twig', [
+        $slugsTemplate = $twigEnv->render('@OroRedirect/entitySlugs.html.twig', [
             'entitySlugs' => $product->getSlugs()
         ]);
         $scrollData = $event->getScrollData();

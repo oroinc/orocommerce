@@ -67,14 +67,14 @@ class ProductFormViewListenerTest extends BaseFormViewListenerTestCase
             ->method('render')
             ->willReturnMap([
                 [
-                    'OroSEOBundle:SEO:title_view.html.twig',
+                    '@OroSEO/SEO/title_view.html.twig',
                     [
                         'entity' => $entityObject,
                         'labelPrefix' => $labelPrefix,
                     ],
                     '',
                 ],                [
-                    'OroSEOBundle:SEO:description_view.html.twig',
+                    '@OroSEO/SEO/description_view.html.twig',
                     [
                         'entity' => $entityObject,
                         'labelPrefix' => $labelPrefix,
@@ -82,7 +82,7 @@ class ProductFormViewListenerTest extends BaseFormViewListenerTestCase
                     '',
                 ],
                 [
-                    'OroSEOBundle:SEO:keywords_view.html.twig',
+                    '@OroSEO/SEO/keywords_view.html.twig',
                     [
                         'entity' => $entityObject,
                         'labelPrefix' => $labelPrefix,
@@ -90,7 +90,7 @@ class ProductFormViewListenerTest extends BaseFormViewListenerTestCase
                     '',
                 ],
                 [
-                    'OroRedirectBundle::entitySlugs.html.twig',
+                    '@OroRedirect/entitySlugs.html.twig',
                     [
                         'entitySlugs' => $entityObject->getSlugs(),
                     ],

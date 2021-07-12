@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block text_content_variant_collection_widget %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
     {% import _self as formfields %}
     {% set variantCollectionId = 'content-variant-collection-'|uniqid %}
     {% set variantCollectionItemParams = {variantCollectionId: variantCollectionId} %}

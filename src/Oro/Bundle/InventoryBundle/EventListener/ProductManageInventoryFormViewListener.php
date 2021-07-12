@@ -6,6 +6,9 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\Fallback\AbstractFallbackFieldsFormView;
 
+/**
+ * Adds manage inventory information to the product view and edit pages.
+ */
 class ProductManageInventoryFormViewListener extends AbstractFallbackFieldsFormView
 {
     /**
@@ -20,7 +23,7 @@ class ProductManageInventoryFormViewListener extends AbstractFallbackFieldsFormV
 
         $this->addBlockToEntityView(
             $event,
-            'OroInventoryBundle:Product:manageInventory.html.twig',
+            '@OroInventory/Product/manageInventory.html.twig',
             $product,
             'oro.product.sections.inventory'
         );
@@ -33,7 +36,7 @@ class ProductManageInventoryFormViewListener extends AbstractFallbackFieldsFormV
     {
         $this->addBlockToEntityEdit(
             $event,
-            'OroInventoryBundle:Product:manageInventoryFormWidget.html.twig',
+            '@OroInventory/Product/manageInventoryFormWidget.html.twig',
             'oro.product.sections.inventory'
         );
     }

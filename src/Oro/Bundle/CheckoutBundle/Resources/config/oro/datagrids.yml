@@ -45,7 +45,7 @@ datagrids:
                 label: oro.checkout.started_from.label
                 type: twig
                 frontend_type: html
-                template: OroCheckoutBundle:Checkout:Datagrid/startedFrom.html.twig
+                template: '@OroCheckout/Checkout/Datagrid/startedFrom.html.twig'
                 order: 10
             itemsCount:
                 label: oro.checkout.line_items_count.label
@@ -57,13 +57,13 @@ datagrids:
                 label: oro.checkout.grid.subtotal.label
                 type: twig
                 frontend_type: html
-                template: OroPricingBundle:Datagrid:Column/subtotal.html.twig
+                template: '@OroPricing/Datagrid/Column/subtotal.html.twig'
                 order: 25
             total:
                 label: oro.checkout.grid.total.label
                 type: twig
                 frontend_type: html
-                template: OroPricingBundle:Datagrid:Column/total.html.twig
+                template: '@OroPricing/Datagrid/Column/total.html.twig'
                 order: 85
                 renderable: false
             createdAt:
@@ -78,7 +78,7 @@ datagrids:
                 label: oro.checkout.payment_method.label
                 type: twig
                 frontend_type: html
-                template: OroCheckoutBundle:Checkout:Datagrid/paymentMethod.html.twig
+                template: '@OroCheckout/Checkout/Datagrid/paymentMethod.html.twig'
                 order: 50
             poNumber:
                 label: oro.checkout.po_number.label
@@ -93,7 +93,7 @@ datagrids:
                 label: oro.checkout.shipping_cost.label
                 type: twig
                 frontend_type: html
-                template: OroCheckoutBundle:Checkout:Datagrid/shippingCost.html.twig
+                template: '@OroCheckout/Checkout/Datagrid/shippingCost.html.twig'
                 renderable: false
                 order: 80
             customerNotes:
@@ -104,7 +104,7 @@ datagrids:
                 label:         oro.order.shipping_method.label
                 type:          twig
                 frontend_type: html
-                template:      'OroOrderBundle:Order:Datagrid/shippingMethodFull.html.twig'
+                template:      '@OroOrder/Order/Datagrid/shippingMethodFull.html.twig'
                 order: 100
         sorters:
             columns:

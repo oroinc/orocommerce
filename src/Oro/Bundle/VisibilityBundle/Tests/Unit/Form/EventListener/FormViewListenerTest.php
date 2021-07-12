@@ -92,7 +92,7 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
         $this->env->expects($this->once())
             ->method('render')
             ->with(
-                'OroVisibilityBundle:Category:customer_category_visibility_edit.html.twig',
+                '@OroVisibility/Category/customer_category_visibility_edit.html.twig',
                 ['entity' => $category, 'form' => $formView]
             )
             ->willReturn('rendered');

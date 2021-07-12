@@ -6,7 +6,7 @@ operations:
         applications: [commerce]
         acl_resource: oro_checkout_frontend_checkout
         frontend_options:
-            template: OroCheckoutBundle:Action:address.html.twig
+            template: '@OroCheckout/Action/address.html.twig'
 
     b2b_flow_checkout_single_page_new_billing_address:
         extends: b2b_flow_checkout_single_page_new_address

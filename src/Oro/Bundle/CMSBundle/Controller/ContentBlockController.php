@@ -60,7 +60,7 @@ class ContentBlockController extends AbstractController
     /**
      * @return array|RedirectResponse
      * @Route("/create", name="oro_cms_content_block_create")
-     * @Template("OroCMSBundle:ContentBlock:update.html.twig")
+     * @Template("@OroCMS/ContentBlock/update.html.twig")
      * @Acl(
      *      id="oro_cms_content_block_create",
      *      type="entity",

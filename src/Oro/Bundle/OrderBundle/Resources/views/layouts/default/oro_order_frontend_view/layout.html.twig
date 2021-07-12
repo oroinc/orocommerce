@@ -39,7 +39,7 @@
 {% endblock %}
 
 {% block address_widget %}
-    {% from 'OroAddressBundle::macros.html.twig' import renderAddress %}
+    {% from '@OroAddress/macros.html.twig' import renderAddress %}
     {{ renderAddress(address, true) }}
 {% endblock %}
 

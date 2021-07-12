@@ -11,6 +11,9 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Form type for Product select.
+ */
 class ProductSelectType extends AbstractType
 {
     const NAME = 'oro_product_select';
@@ -47,8 +50,8 @@ class ProductSelectType extends AbstractType
                 'empty_label' => 'oro.product.removed',
                 'configs' => [
                     'placeholder' => 'oro.product.form.choose',
-                    'result_template_twig' => 'OroProductBundle:Product:Autocomplete/result.html.twig',
-                    'selection_template_twig' => 'OroProductBundle:Product:Autocomplete/selection.html.twig',
+                    'result_template_twig' => '@OroProduct/Product/Autocomplete/result.html.twig',
+                    'selection_template_twig' => '@OroProduct/Product/Autocomplete/selection.html.twig',
                 ],
             ]
         );

@@ -237,15 +237,21 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
         $model6 = new ProductIndexDataModel('system', 'system', [], false, false);
         $model7 = new ProductIndexDataModel('descriptions', $this->createMultiControlCharString(), [], true, false);
 
-        $this->dataProvider->expects($this->exactly(5))
+        $this->dataProvider
+            ->expects($this->exactly(5))
             ->method('getIndexData')
-            ->willReturnMap([
-                [$product, $attribute1, [$firstLocale, $secondLocale], [$model1]],
-                [$product, $attribute2, [$firstLocale, $secondLocale], [$model2]],
-                [$product, $attribute3, [$firstLocale, $secondLocale], [$model3, $model4, $model7]],
-                [$product, $attribute4, [$firstLocale, $secondLocale], [$model5]],
-                [$product, $attribute6, [$firstLocale, $secondLocale], [$model6]],
-            ]);
+            ->willReturnMap(
+                [
+                    [$product, $attribute1, [$firstLocale, $secondLocale], new \ArrayIterator([$model1])],
+                    [$product, $attribute2, [$firstLocale, $secondLocale], new \ArrayIterator([$model2])],
+                    [
+                        $product, $attribute3, [$firstLocale, $secondLocale],
+                        new \ArrayIterator([$model3, $model4, $model7])
+                    ],
+                    [$product, $attribute4, [$firstLocale, $secondLocale], new \ArrayIterator([$model5])],
+                    [$product, $attribute6, [$firstLocale, $secondLocale], new \ArrayIterator([$model6])],
+                ]
+            );
 
         $this->listener->onWebsiteSearchIndex($event);
 
@@ -276,37 +282,37 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
             ],
             'image_product_small' => [
                 [
-                    'value'    => '/small/image',
+                    'value' => '/small/image',
                     'all_text' => false
                 ]
             ],
             'image_product_medium' => [
                 [
-                    'value'    => '/medium/image',
+                    'value' => '/medium/image',
                     'all_text' => false
                 ]
             ],
             'image_product_large' => [
                 [
-                    'value'    => '/large/image',
+                    'value' => '/large/image',
                     'all_text' => false
                 ]
             ],
             'product_units' => [
                 [
-                    'value'    => serialize(['item', 'set']),
+                    'value' => serialize(['item', 'set']),
                     'all_text' => false
                 ]
             ],
             'createdAt' => [
                 [
-                    'value'    => new \DateTime('2017-09-09 00:00:00'),
+                    'value' => new \DateTime('2017-09-09 00:00:00'),
                     'all_text' => false
                 ]
             ],
             'system' => [
                 [
-                    'value'    => 'system',
+                    'value' => 'system',
                     'all_text' => false
                 ]
             ],

@@ -39,12 +39,12 @@ datagrids:
                 label:         oro.payment.paymentmethodsconfigsrule.method_configs.label
                 type:          twig
                 frontend_type: html
-                template:      OroPaymentBundle:PaymentMethodsConfigsRule:Datagrid/configurations.html.twig
+                template:      '@OroPayment/PaymentMethodsConfigsRule/Datagrid/configurations.html.twig'
             destinations:
                 label:         oro.payment.paymentmethodsconfigsrule.destinations.label
                 type:          twig
                 frontend_type: html
-                template:      OroPaymentBundle:PaymentMethodsConfigsRule:Datagrid/destinations.html.twig
+                template:      '@OroPayment/PaymentMethodsConfigsRule/Datagrid/destinations.html.twig'
         properties:
             id: ~
             view_link:
@@ -165,17 +165,17 @@ datagrids:
                 label: oro.payment.paymenttransaction.paymentMethod.label
                 type: twig
                 frontend_type: html
-                template: 'OroPaymentBundle:PaymentTransaction/Datagrid:paymentMethod.html.twig'
+                template: '@OroPayment/PaymentTransaction/Datagrid/paymentMethod.html.twig'
             action:
                 label: oro.payment.paymenttransaction.action.label
                 type: twig
                 frontend_type: html
-                template: 'OroPaymentBundle:PaymentTransaction/Datagrid:action.html.twig'
+                template: '@OroPayment/PaymentTransaction/Datagrid/action.html.twig'
             amount:
                 label: oro.payment.paymenttransaction.amount.label
                 type: twig
                 frontend_type: html
-                template: OroPaymentBundle:PaymentTransaction:Datagrid/price.html.twig
+                template: '@OroPayment/PaymentTransaction/Datagrid/price.html.twig'
             active:
                 label: oro.payment.paymenttransaction.active.label
                 frontend_type: boolean

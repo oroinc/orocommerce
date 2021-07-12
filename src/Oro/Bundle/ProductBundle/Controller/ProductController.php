@@ -116,7 +116,7 @@ class ProductController extends AbstractController
      * Create product form
      *
      * @Route("/create", name="oro_product_create")
-     * @Template("OroProductBundle:Product:createStepOne.html.twig")
+     * @Template("@OroProduct/Product/createStepOne.html.twig")
      * @Acl(
      *      id="oro_product_create",
      *      type="entity",
@@ -136,7 +136,7 @@ class ProductController extends AbstractController
      *
      * @Route("/create/step-two", name="oro_product_create_step_two")
      *
-     * @Template("OroProductBundle:Product:createStepTwo.html.twig")
+     * @Template("@OroProduct/Product/createStepTwo.html.twig")
      *
      * @AclAncestor("oro_product_create")
      *
@@ -325,7 +325,7 @@ class ProductController extends AbstractController
      *     name="oro_product_possible_products_for_related_products",
      *     requirements={"id"="\d+"}
      * )
-     * @Template(template="OroProductBundle:Product:selectRelatedProducts.html.twig")
+     * @Template(template="@OroProduct/Product/selectRelatedProducts.html.twig")
      *
      * @param Product $product
      * @return array
@@ -341,7 +341,7 @@ class ProductController extends AbstractController
      *     name="oro_product_possible_products_for_upsell_products",
      *     requirements={"id"="\d+"}
      * )
-     * @Template(template="OroProductBundle:Product:selectUpsellProducts.html.twig")
+     * @Template(template="@OroProduct/Product/selectUpsellProducts.html.twig")
      *
      * @param Product $product
      * @return array

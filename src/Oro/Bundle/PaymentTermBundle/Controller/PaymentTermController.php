@@ -57,7 +57,7 @@ class PaymentTermController extends AbstractController
      * Create payment term form
      *
      * @Route("/create", name="oro_payment_term_create")
-     * @Template("OroPaymentTermBundle:PaymentTerm:update.html.twig")
+     * @Template("@OroPaymentTerm/PaymentTerm/update.html.twig")
      * @Acl(
      *      id="oro_payment_term_create",
      *      type="entity",

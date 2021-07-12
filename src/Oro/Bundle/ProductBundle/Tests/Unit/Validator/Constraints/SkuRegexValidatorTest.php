@@ -15,26 +15,15 @@ class SkuRegexValidatorTest extends \PHPUnit\Framework\TestCase
 {
     private const PATTERN = '/^[-_a-zA-Z0-9]*$/';
 
-    /**
-     * @var SkuRegex|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $constraint;
-
-    /**
-     * @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $context;
 
-    /**
-     * @var SkuRegexValidator
-     */
+    /** @var SkuRegexValidator */
     private $validator;
 
     protected function setUp(): void
     {
-        $this->constraint = $this->createMock(SkuRegex::class);
         $this->context = $this->createMock(ExecutionContextInterface::class);
-
         $this->validator = new SkuRegexValidator(self::PATTERN);
         $this->validator->initialize($this->context);
     }
@@ -42,6 +31,7 @@ class SkuRegexValidatorTest extends \PHPUnit\Framework\TestCase
     public function testValidate()
     {
         $value = 'abc_12-3';
+        $constraint = new SkuRegex();
 
         $this->context->expects($this->never())
             ->method('buildViolation');
@@ -56,12 +46,13 @@ class SkuRegexValidatorTest extends \PHPUnit\Framework\TestCase
             ->method('getValidator')
             ->willReturn($validator);
 
-        $this->validator->validate($value, $this->constraint);
+        $this->validator->validate($value, $constraint);
     }
 
     public function testValidateErrors()
     {
         $value = '~!@#$';
+        $constraint = new SkuRegex();
 
         $validator = $this->createMock(ValidatorInterface::class);
         $validator->expects($this->once())
@@ -69,11 +60,11 @@ class SkuRegexValidatorTest extends \PHPUnit\Framework\TestCase
             ->with($value, new Regex(['pattern' => self::PATTERN]))
             ->willReturn(new ConstraintViolationList([
                 new ConstraintViolation(
-                    "This value is not valid.",
-                    "This value is not valid.",
-                    ["{{value}}" => $value],
+                    'This value is not valid.',
+                    'This value is not valid.',
+                    ['{{value}}' => $value],
                     $value,
-                    "",
+                    '',
                     $value
                 )
             ]));
@@ -88,9 +79,9 @@ class SkuRegexValidatorTest extends \PHPUnit\Framework\TestCase
 
         $this->context->expects($this->once())
             ->method('buildViolation')
-            ->with($this->constraint->message)
+            ->with($constraint->message)
             ->willReturn($constraintViolationBuilder);
 
-        $this->validator->validate($value, $this->constraint);
+        $this->validator->validate($value, $constraint);
     }
 }

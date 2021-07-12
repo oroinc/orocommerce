@@ -6,7 +6,7 @@ search:
             name:                       oro_catalog_category_update
             parameters:
                 id:                     id
-        search_template:                OroCatalogBundle:Category:searchResult.html.twig
+        search_template:                '@OroCatalog/Category/searchResult.html.twig'
         acl_permission:                 'EDIT'
         fields:
             -

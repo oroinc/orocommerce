@@ -37,7 +37,7 @@ class CustomerFormViewListenerTest extends AbstractFormViewListenerTest
 
         $this->env->expects($this->once())
             ->method('render')
-            ->with('OroTaxBundle:Customer:tax_code_update.html.twig', ['form' => $formView])
+            ->with('@OroTax/Customer/tax_code_update.html.twig', ['form' => $formView])
             ->willReturn('rendered');
 
         $scrollData = new ScrollData([
@@ -99,7 +99,7 @@ class CustomerFormViewListenerTest extends AbstractFormViewListenerTest
         $this->env->expects($this->once())
             ->method('render')
             ->with(
-                'OroTaxBundle:Customer:tax_code_view.html.twig',
+                '@OroTax/Customer/tax_code_view.html.twig',
                 [
                     'entity' => $taxCode,
                     'groupCustomerTaxCode' => null,
@@ -171,7 +171,7 @@ class CustomerFormViewListenerTest extends AbstractFormViewListenerTest
         $this->env->expects($this->once())
             ->method('render')
             ->with(
-                'OroTaxBundle:Customer:tax_code_view.html.twig',
+                '@OroTax/Customer/tax_code_view.html.twig',
                 [
                     'entity' => null,
                     'groupCustomerTaxCode' => $customerTaxCode,
@@ -238,7 +238,7 @@ class CustomerFormViewListenerTest extends AbstractFormViewListenerTest
         $this->env->expects($this->once())
             ->method('render')
             ->with(
-                'OroTaxBundle:Customer:tax_code_view.html.twig',
+                '@OroTax/Customer/tax_code_view.html.twig',
                 [
                     'entity' => null,
                     'groupCustomerTaxCode' => null,

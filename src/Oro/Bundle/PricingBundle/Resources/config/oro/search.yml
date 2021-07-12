@@ -6,7 +6,7 @@ search:
             name:                       oro_pricing_price_list_view
             parameters:
                 id:                     id
-        search_template:                OroPricingBundle:PriceList:searchResult.html.twig
+        search_template:                '@OroPricing/PriceList/searchResult.html.twig'
         fields:
             -
                 name:                   name

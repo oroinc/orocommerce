@@ -54,7 +54,7 @@ class PriceAttributePriceListController extends AbstractController
 
     /**
      * @Route("/create", name="oro_pricing_price_attribute_price_list_create")
-     * @Template("OroPricingBundle:PriceAttributePriceList:update.html.twig")
+     * @Template("@OroPricing/PriceAttributePriceList/update.html.twig")
      * @Acl(
      *      id="oro_pricing_price_attribute_price_list_create",
      *      type="entity",
@@ -116,7 +116,7 @@ class PriceAttributePriceListController extends AbstractController
 
     /**
      * @Route("/info/{id}", name="oro_pricing_price_attribute_price_list_info", requirements={"id"="\d+"})
-     * @Template("OroPricingBundle:PriceAttributePriceList/widget:info.html.twig")
+     * @Template("@OroPricing/PriceAttributePriceList/widget/info.html.twig")
      * @AclAncestor("oro_pricing_price_attribute_price_list_view")
      * @param PriceAttributePriceList $priceAttribute
      * @return array

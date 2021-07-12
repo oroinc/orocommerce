@@ -160,7 +160,7 @@ class ProductPriceDatagridExtensionTest extends AbstractProductsGridPricesExtens
                         'price_column_usd' => [
                             'label' => 'oro.pricing.productprice.price_in_USD',
                             'type' => 'twig',
-                            'template' => 'OroPricingBundle:Datagrid:Column/productPrice.html.twig',
+                            'template' => '@OroPricing/Datagrid/Column/productPrice.html.twig',
                             'frontend_type' => 'html',
                             'renderable' => true,
                         ],
@@ -185,7 +185,7 @@ class ProductPriceDatagridExtensionTest extends AbstractProductsGridPricesExtens
                         'price_column_usd_item' => [
                             'label' => 'oro.pricing.productprice.price_item_in_USD',
                             'type' => 'twig',
-                            'template' => 'OroPricingBundle:Datagrid:Column/productPrice.html.twig',
+                            'template' => '@OroPricing/Datagrid/Column/productPrice.html.twig',
                             'frontend_type' => 'html',
                             'renderable' => false,
                         ],

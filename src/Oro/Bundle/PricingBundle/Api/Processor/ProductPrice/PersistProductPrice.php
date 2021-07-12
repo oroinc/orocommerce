@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Api\Processor\ProductPrice;
 
-use Oro\Bundle\ApiBundle\Processor\SingleItemContext;
+use Oro\Bundle\ApiBundle\Processor\CustomizeFormData\CustomizeFormDataContext;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Manager\PriceManager;
 use Oro\Component\ChainProcessor\ContextInterface;
@@ -29,10 +29,10 @@ class PersistProductPrice implements ProcessorInterface
      */
     public function process(ContextInterface $context)
     {
-        /** @var SingleItemContext $context */
+        /** @var CustomizeFormDataContext $context */
 
         /** @var ProductPrice|null $entity */
-        $entity = $context->getResult();
+        $entity = $context->getData();
         if (null === $entity) {
             return;
         }

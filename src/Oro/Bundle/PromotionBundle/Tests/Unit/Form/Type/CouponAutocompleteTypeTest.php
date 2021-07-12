@@ -41,8 +41,8 @@ class CouponAutocompleteTypeTest extends FormIntegrationTestCase
         $this->assertArrayHasKey('configs', $options);
         $this->assertEquals([
             'placeholder' => 'oro.promotion.coupon.autocomplete.placeholder',
-            'result_template_twig' => 'OroPromotionBundle:Coupon:Autocomplete/result.html.twig',
-            'selection_template_twig' => 'OroPromotionBundle:Coupon:Autocomplete/selection.html.twig',
+            'result_template_twig' => '@OroPromotion/Coupon/Autocomplete/result.html.twig',
+            'selection_template_twig' => '@OroPromotion/Coupon/Autocomplete/selection.html.twig',
         ], $options['configs']);
     }
 }

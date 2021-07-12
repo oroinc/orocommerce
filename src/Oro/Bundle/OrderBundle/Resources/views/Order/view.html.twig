@@ -1,5 +1,5 @@
-{% extends 'OroUIBundle:actions:view.html.twig' %}
-{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+{% extends '@OroUI/actions/view.html.twig' %}
+{% import '@OroDataGrid/macros.html.twig' as dataGrid %}
 
 {% oro_title_set({params : {"%identifier%": entity.identifier }}) %}
 
@@ -16,7 +16,7 @@
 {% endblock pageHeader %}
 
 {% block content_data %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
 
     {% set orderInformationWidget %}
         {{ oro_widget_render({
@@ -43,7 +43,7 @@
     ] %}
 
     {% set orderTotals %}
-        {% include 'OroPricingBundle:Totals:totals.html.twig' with {
+        {% include '@OroPricing/Totals/totals.html.twig' with {
             pageComponent: 'oroorder/js/app/components/totals-component',
             options: {totals: totals}
         } only %}
@@ -84,7 +84,7 @@
             'title': 'oro.order.sections.discounts'|trans,
             'priority': -75,
             'subblocks': [{'data' : [
-                oro_order_get_template_content('OroOrderBundle:Discount:order_discount_view_collection.html.twig', {entity: entity})
+                oro_order_get_template_content('@OroOrder/Discount/order_discount_view_collection.html.twig', {entity: entity})
             ]}]
         }
     }) %}

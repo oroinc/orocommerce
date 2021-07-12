@@ -369,7 +369,7 @@ datagrids:
                 label:         oro.product.image.label
                 type:          twig
                 frontend_type: html
-                template:      OroProductBundle:Product:Datagrid/image.html.twig
+                template:      '@OroProduct/Product/Datagrid/image.html.twig'
                 order:         2
             productName:
                 inline_editing:
@@ -542,7 +542,7 @@ datagrids:
                 label:         oro.product.inventory_status.label
                 type:          twig
                 frontend_type: html
-                template:      OroProductBundle:Product:Datagrid/inventoryStatus.html.twig
+                template:      '@OroProduct/Product/Datagrid/inventoryStatus.html.twig'
         sorters:
             columns:
                 isVariant:
@@ -582,7 +582,7 @@ datagrids:
                 label:         oro.product.inventory_status.label
                 type:          twig
                 frontend_type: html
-                template:      OroProductBundle:Product:Datagrid/inventoryStatus.html.twig
+                template:      '@OroProduct/Product/Datagrid/inventoryStatus.html.twig'
         sorters:
             columns:
                 visible:

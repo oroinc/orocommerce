@@ -84,7 +84,7 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->env->expects($this->once())
             ->method('render')
-            ->with('OroOrderBundle:CustomerUser:orders_view.html.twig', ['entity' => $customerUser])
+            ->with('@OroOrder/CustomerUser/orders_view.html.twig', ['entity' => $customerUser])
             ->willReturn('rendered');
 
         $scrollData = new ScrollData();
@@ -148,7 +148,7 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->env->expects($this->once())
             ->method('render')
-            ->with('OroOrderBundle:Customer:orders_view.html.twig', ['entity' => $customer])
+            ->with('@OroOrder/Customer/orders_view.html.twig', ['entity' => $customer])
             ->willReturn('rendered');
 
         $scrollData = new ScrollData();
@@ -210,7 +210,7 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->env->expects($this->once())
             ->method('render')
-            ->with('OroOrderBundle:ShoppingList:orders_view.html.twig', ['entity' => $shoppingList])
+            ->with('@OroOrder/ShoppingList/orders_view.html.twig', ['entity' => $shoppingList])
             ->willReturn('rendered');
 
         $scrollData = new ScrollData();

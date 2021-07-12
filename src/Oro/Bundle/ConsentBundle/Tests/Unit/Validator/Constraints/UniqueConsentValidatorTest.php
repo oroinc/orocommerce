@@ -6,95 +6,51 @@ use Oro\Bundle\ConsentBundle\SystemConfig\ConsentConfig;
 use Oro\Bundle\ConsentBundle\SystemConfig\ConsentConfigConverter;
 use Oro\Bundle\ConsentBundle\Validator\Constraints\UniqueConsent;
 use Oro\Bundle\ConsentBundle\Validator\Constraints\UniqueConsentValidator;
-use Symfony\Component\Validator\Context\ExecutionContext;
-use Symfony\Component\Validator\Violation\ConstraintViolationBuilder;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class UniqueConsentValidatorTest extends \PHPUnit\Framework\TestCase
+class UniqueConsentValidatorTest extends ConstraintValidatorTestCase
 {
-    /** @var UniqueConsent */
-    protected $constraint;
-
-    /** @var UniqueConsentValidator */
-    protected $validator;
-
-    protected function setUp(): void
+    protected function createValidator()
     {
-        parent::setUp();
-        $this->constraint = new UniqueConsent();
-        $this->validator = new UniqueConsentValidator();
+        return new UniqueConsentValidator();
     }
 
     public function testValidationOnValid()
     {
-        $context = $this->getContextMock();
+        $constraint = new UniqueConsent();
+        $this->validator->validate($this->createConfigsData(2), $constraint);
 
-        $this->validator->initialize($context);
-
-        $context->expects($this->never())
-            ->method('buildViolation');
-
-        $this->validator->validate($this->createConfigsData(2), $this->constraint);
+        $this->assertNoViolation();
     }
 
     public function testValidationOnValidConsentIdIsNull()
     {
-        $context = $this->getContextMock();
-
-        $this->validator->initialize($context);
-
-        $context->expects($this->never())
-            ->method('buildViolation');
-
         $configsData = [[ConsentConfigConverter::CONSENT_KEY => null]];
 
-        $this->validator->validate($configsData, $this->constraint);
+        $constraint = new UniqueConsent();
+        $this->validator->validate($configsData, $constraint);
+
+        $this->assertNoViolation();
     }
 
     public function testValidationOnInvalid()
     {
-        $builder = $this->getBuilderMock();
-
-        $builder->expects($this->once())
-            ->method('atPath')
-            ->with('[2].consent')
-            ->willReturn($builder);
-
-        $context = $this->getContextMock();
-        $context->expects($this->once())
-            ->method('buildViolation')
-            ->with($this->equalTo($this->constraint->message), [])
-            ->will($this->returnValue($builder));
-
-        $this->validator->initialize($context);
-
         $value = array_merge($this->createConfigsData(2), $this->createConfigsData(1));
-        $this->validator->validate($value, $this->constraint);
+
+        $constraint = new UniqueConsent();
+        $this->validator->validate($value, $constraint);
+
+        $this->buildViolation($constraint->message)
+            ->atPath('property.path[2].consent')
+            ->assertRaised();
     }
 
     /**
-     * @return ExecutionContext|\PHPUnit\Framework\MockObject\MockObject $context
-     */
-    protected function getContextMock()
-    {
-        return $this->createMock(ExecutionContext::class);
-    }
-
-    /**
-     * @return ConstraintViolationBuilder|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function getBuilderMock()
-    {
-        return $this->createMock(ConstraintViolationBuilder::class);
-    }
-
-    /**
-     * @param int $count
      * @return ConsentConfig[]
      */
-    public function createConfigsData($count)
+    private function createConfigsData(int $count): array
     {
         $result = [];
-
         for ($i = 1; $i <= $count; $i++) {
             $result[] = [
                 ConsentConfigConverter::CONSENT_KEY => $i,

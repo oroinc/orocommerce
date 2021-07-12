@@ -1,4 +1,4 @@
-{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% import '@OroUI/macros.html.twig' as UI %}
 
 {% if slidesToShow is defined %}
     {{ UI.renderProperty('oro.cms.content_widget_type.slider_options.slides_to_show.label'|trans, slidesToShow) }}

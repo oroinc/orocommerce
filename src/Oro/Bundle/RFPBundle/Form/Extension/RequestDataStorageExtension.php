@@ -124,8 +124,8 @@ class RequestDataStorageExtension extends AbstractProductDataStorageExtension
             }
         }
 
-        $message = $this->container->get('templating')->render(
-            'OroRFPBundle:Form/FlashBag:warning.html.twig',
+        $message = $this->container->get('twig')->render(
+            '@OroRFP/Form/FlashBag/warning.html.twig',
             [
                 'message' => $this->translator->trans('oro.frontend.rfp.data_storage.cannot_be_added_to_rfq'),
                 'products' => $canNotBeAddedToRFQ

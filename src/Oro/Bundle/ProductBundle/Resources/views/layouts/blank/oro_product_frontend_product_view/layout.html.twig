@@ -265,7 +265,7 @@
 {% endblock %}
 
 {% block attribute_multiimages_widget %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
 
     {% set collection = value %}
     {% set galleryImages = [] %}
@@ -305,7 +305,7 @@
 {% endblock %}
 
 {% block product_view_attribute_image_widget %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
 
     {% set popupGalleryAttr = {
         'data-page-component-view': {
@@ -328,7 +328,7 @@
 {% endblock %}
 
 {% block attribute_multifiles_widget %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
     {% set filesAttr = {
         'data-page-component-view': 'oroui/js/app/views/show-more/table-show-more-view'
     } %}

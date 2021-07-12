@@ -29,7 +29,7 @@
 {% endmacro %}
 
 {% macro buttonTemplate(options) %}
-    {% import 'OroFrontendBundle:layouts/blank:utils.html.twig' as utils %}
+    {% import '@OroFrontend/layouts/blank/utils.html.twig' as utils %}
     {% import _self as buttons %}
     {{ utils.underscoreRaw(buttons.addToCurrentButton({
         shoppingList: {
@@ -40,7 +40,7 @@
 {% endmacro %}
 
 {% macro getButton(options) %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
 
     {% set options = {
         shoppingList: null,
@@ -101,7 +101,7 @@
 {% endmacro %}
 
 {% macro getButtonsHtml(options) %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
     {% import _self as buttons %}
     {% set isShoppingListCreateEnabled = (feature_enabled('shopping_list_create') and is_granted('oro_shopping_list_frontend_create')) %}
     {% set showSingleAddToShoppingListButton = isShoppingListCreateEnabled or not app.user %}

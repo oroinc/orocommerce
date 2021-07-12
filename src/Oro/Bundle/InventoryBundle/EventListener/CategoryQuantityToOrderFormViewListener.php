@@ -6,6 +6,9 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\Fallback\AbstractFallbackFieldsFormView;
 
+/**
+ * Adds minimum/maximum quantity to order information to the category edit page.
+ */
 class CategoryQuantityToOrderFormViewListener extends AbstractFallbackFieldsFormView
 {
     /**
@@ -20,7 +23,7 @@ class CategoryQuantityToOrderFormViewListener extends AbstractFallbackFieldsForm
 
         $this->addBlockToEntityEdit(
             $event,
-            'OroInventoryBundle:Category:editQuantityToOrder.html.twig',
+            '@OroInventory/Category/editQuantityToOrder.html.twig',
             'oro.catalog.sections.default_options'
         );
     }

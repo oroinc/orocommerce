@@ -60,8 +60,8 @@ class ProductSelectTypeTest extends FormIntegrationTestCase
                         $this->assertArrayHasKey('data_parameters', $options);
                         $configs = [
                             'placeholder' => 'oro.product.form.choose',
-                            'result_template_twig' => 'OroProductBundle:Product:Autocomplete/result.html.twig',
-                            'selection_template_twig' => 'OroProductBundle:Product:Autocomplete/selection.html.twig',
+                            'result_template_twig' => '@OroProduct/Product/Autocomplete/result.html.twig',
+                            'selection_template_twig' => '@OroProduct/Product/Autocomplete/selection.html.twig',
                         ];
                         $this->assertArrayHasKey('autocomplete_alias', $options);
                         $this->assertArrayHasKey('create_form_route', $options);

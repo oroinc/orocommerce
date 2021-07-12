@@ -3,7 +3,12 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiUpdateListTestCase;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListScheduleRepository;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListSchedules;
 
 /**
@@ -15,6 +20,48 @@ class PriceListScheduleUpdateListTest extends RestJsonApiUpdateListTestCase
     {
         parent::setUp();
         $this->loadFixtures([LoadPriceListSchedules::class]);
+    }
+
+    private function getPriceListRepository(): PriceListRepository
+    {
+        return $this->getEntityManager()->getRepository(PriceList::class);
+    }
+
+    private function getSchedulesRepository(): PriceListScheduleRepository
+    {
+        return $this->getEntityManager()->getRepository(PriceListSchedule::class);
+    }
+
+    private function getCombinedPriceListActivationRuleRepository(): CombinedPriceListActivationRuleRepository
+    {
+        return $this->getEntityManager()->getRepository(CombinedPriceListActivationRule::class);
+    }
+
+    private function sendCreateScheduleBatchRequest(
+        \DateTime $activateAt,
+        \DateTime $deactivateAt,
+        PriceList $priceList
+    ): void {
+        $data = [
+            'data' => [
+                [
+                    'type'          => 'pricelistschedules',
+                    'attributes'    => [
+                        'activeAt'     => $activateAt->format('c'),
+                        'deactivateAt' => $deactivateAt->format('c')
+                    ],
+                    'relationships' => [
+                        'priceList' => [
+                            'data' => [
+                                'type' => 'pricelists',
+                                'id'   => (string)$priceList->getId()
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
+        $this->processUpdateList(PriceListSchedule::class, $data);
     }
 
     public function testCreateEntities()
@@ -293,5 +340,22 @@ class PriceListScheduleUpdateListTest extends RestJsonApiUpdateListTestCase
             $response
         );
         $this->assertResponseContains($responseContent, $response);
+    }
+
+    public function testCombinedPriceListBuildOnScheduleCreate()
+    {
+        $priceList = $this->getPriceListRepository()->getDefault();
+
+        $createdActivationRules = $this->getCombinedPriceListActivationRuleRepository()->findAll();
+        self::assertCount(0, $createdActivationRules);
+
+        $this->sendCreateScheduleBatchRequest(
+            new \DateTime(),
+            new \DateTime('tomorrow'),
+            $priceList
+        );
+
+        $createdActivationRules = $this->getCombinedPriceListActivationRuleRepository()->findAll();
+        self::assertGreaterThan(0, count($createdActivationRules));
     }
 }

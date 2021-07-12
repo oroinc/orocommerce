@@ -62,7 +62,7 @@ class ProductPriceAttributesGridListener
             $columnConfig = [
                     'label' => $currency,
                     'type' => 'twig',
-                    'template' => 'OroPricingBundle:Datagrid:Column/priceValue.html.twig',
+                    'template' => '@OroPricing/Datagrid/Column/priceValue.html.twig',
                     'frontend_type' => 'html',
                 ] + $config->offsetGetByPath($columnPath, []);
             $config->offsetSetByPath($columnPath, $columnConfig);

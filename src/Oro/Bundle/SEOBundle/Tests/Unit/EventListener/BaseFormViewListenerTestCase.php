@@ -39,7 +39,7 @@ abstract class BaseFormViewListenerTestCase extends \PHPUnit\Framework\TestCase
             ->method('render')
             ->willReturnMap([
                 [
-                    'OroSEOBundle:SEO:title_view.html.twig',
+                    '@OroSEO/SEO/title_view.html.twig',
                     [
                         'entity' => $entityObject,
                         'labelPrefix' => $labelPrefix
@@ -47,7 +47,7 @@ abstract class BaseFormViewListenerTestCase extends \PHPUnit\Framework\TestCase
                     ''
                 ],
                 [
-                    'OroSEOBundle:SEO:description_view.html.twig',
+                    '@OroSEO/SEO/description_view.html.twig',
                     [
                         'entity' => $entityObject,
                         'labelPrefix' => $labelPrefix
@@ -55,7 +55,7 @@ abstract class BaseFormViewListenerTestCase extends \PHPUnit\Framework\TestCase
                     ''
                 ],
                 [
-                    'OroSEOBundle:SEO:keywords_view.html.twig', [
+                    '@OroSEO/SEO/keywords_view.html.twig', [
                         'entity' => $entityObject,
                         'labelPrefix' => $labelPrefix
                     ],
@@ -77,9 +77,9 @@ abstract class BaseFormViewListenerTestCase extends \PHPUnit\Framework\TestCase
         $env->expects($this->exactly(3))
             ->method('render')
             ->willReturnMap([
-                ['OroSEOBundle:SEO:title_update.html.twig', ['form' => new FormView()], ''],
-                ['OroSEOBundle:SEO:description_update.html.twig', ['form' => new FormView()], ''],
-                ['OroSEOBundle:SEO:keywords_update.html.twig', ['form' => new FormView()], ''],
+                ['@OroSEO/SEO/title_update.html.twig', ['form' => new FormView()], ''],
+                ['@OroSEO/SEO/description_update.html.twig', ['form' => new FormView()], ''],
+                ['@OroSEO/SEO/keywords_update.html.twig', ['form' => new FormView()], ''],
             ]);
 
         return $env;

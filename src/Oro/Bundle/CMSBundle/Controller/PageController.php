@@ -71,7 +71,7 @@ class PageController extends AbstractController
 
     /**
      * @Route("/create", name="oro_cms_page_create")
-     * @Template("OroCMSBundle:Page:update.html.twig")
+     * @Template("@OroCMS/Page/update.html.twig")
      *
      * @Acl(
      *      id="oro_cms_page_create",

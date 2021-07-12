@@ -1,6 +1,6 @@
 {% block __shopping_list_buttons__line_item_form_buttons_shopping_list_widget %}
     {% if not is_configurable_product_type(product.type) or matrixFormType != 'none' %}
-        {% import 'OroShoppingListBundle:ShoppingList/Frontend:buttons.html.twig' as buttons %}
+        {% import '@OroShoppingList/ShoppingList/Frontend/buttons.html.twig' as buttons %}
 
         {% set view = 'oroshoppinglist/js/app/views/product-add-to-shopping-list-view' %}
         {% if matrixFormType == 'popup' %}
@@ -48,7 +48,7 @@
 {% endblock %}
 
 {% block __shopping_list_buttons__shopping_list_quick_search_widget %}
-    {% import 'OroShoppingListBundle:ShoppingList/Frontend:buttons.html.twig' as buttons %}
+    {% import '@OroShoppingList/ShoppingList/Frontend/buttons.html.twig' as buttons %}
 
     {{ buttons.getQuickSearchHtml(quickSearchOptions|default({})) }}
 {% endblock %}

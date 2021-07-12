@@ -76,7 +76,7 @@
 {% endblock %}
 
 {% block oro_pricing_price_list_collection_widget %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
     {% set widgetContainerAttributes = block('widget_container_attributes') %}
     {{ UI.sortable_list_view(form, attr, {
         collection_class: 'pricing-price-list',

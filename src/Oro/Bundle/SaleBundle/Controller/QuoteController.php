@@ -61,7 +61,7 @@ class QuoteController extends AbstractController
 
     /**
      * @Route("/create", name="oro_sale_quote_create")
-     * @Template("OroSaleBundle:Quote:update.html.twig")
+     * @Template("@OroSale/Quote/update.html.twig")
      * @Acl(
      *     id="oro_sale_quote_create",
      *     type="entity",
@@ -80,7 +80,7 @@ class QuoteController extends AbstractController
             return $this->handleRequestAndRedirectBack(
                 $request,
                 $quote,
-                'OroSaleBundle:Quote:createWithReturn.html.twig'
+                '@OroSale/Quote/createWithReturn.html.twig'
             );
         }
 

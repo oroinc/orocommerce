@@ -13,8 +13,8 @@
 {% endblock %}
 
 {% block _checkout_view_widget %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
-    {% import 'OroCheckoutBundle:layouts/default:layout.html.twig' as _layout %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+    {% import '@OroCheckout/layouts/default/layout.html.twig' as _layout %}
 
     {% set attr = attr|merge({
         'class': attr.class|default('') ~ " single-page-checkout-view"
@@ -216,15 +216,16 @@
 
 {% block _shipping_address_widget -%}
     {% if workflowItem.data.get('disallow_shipping_address_edit') %}
-        {% from 'OroAddressBundle::macros.html.twig' import renderAddress %}
+        {% from '@OroAddress/macros.html.twig' import renderAddress %}
         <div>
             {{ renderAddress(checkout.shippingAddress, true) }}
         </div>
     {% else %}
+        {% set renderedAddress = checkout.shippingAddress ? checkout.shippingAddress|oro_format_address(null, ', ') : 'N/A'|trans %}
         {{ form_row(form.shipping_address, {'attr': {
             'data-role': 'checkout-shipping-address',
             'data-address-type': 'shipping',
-            'data-new-address-label': checkout.shippingAddress|oro_format_address(null, ', '),
+            'data-new-address-label': renderedAddress,
             'placeholder': 'oro.checkout.form.address.enter.new_address.placeholder.label'|trans
         }, 'placeholder': ''}) }}
         {{ form_row(form.ship_to_billing_address, {'attr': {'data-role': 'checkout-ship-to'}}) }}
@@ -232,11 +233,12 @@
 {%- endblock %}
 
 {% block _billing_address_widget -%}
+    {% set renderedAddress = checkout.billingAddress ? checkout.billingAddress|oro_format_address(null, ', ') : 'N/A'|trans %}
     <div {{ block('block_attributes') }}>
         {{ form_row(form.billing_address, {'attr': {
             'data-role': 'checkout-billing-address',
             'data-address-type': 'billing',
-            'data-new-address-label': checkout.billingAddress|oro_format_address(null, ', '),
+            'data-new-address-label': renderedAddress,
             'placeholder': 'oro.checkout.form.address.enter.new_address.placeholder.label'|trans
         }, 'placeholder': ''}) }}
     </div>
@@ -366,8 +368,8 @@
 {%- endblock %}
 
 {% block single_page_transition_container_widget %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
-    {% import 'OroCheckoutBundle:layouts/default:layout.html.twig' as _layout %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+    {% import '@OroCheckout/layouts/default/layout.html.twig' as _layout %}
 
     <div {{ _layout.transitionAttributes(transitionData, checkout) }} >
         <div {{ UI.renderPageComponentAttributes({
@@ -385,7 +387,7 @@
 
 {% block _checkout_button_continue_right_widget %}
     {% if transitionData is defined and transitionData %}
-        {% import 'OroCheckoutBundle:layouts/default:layout.html.twig' as _layout %}
+        {% import '@OroCheckout/layouts/default/layout.html.twig' as _layout %}
         <div class="order-checkout-widget">
             {% if transitionData.isAllowed %}
                 <button type="submit" class="btn btn--size-m btn--info btn--block checkout__submit-btn">

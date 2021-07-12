@@ -31,7 +31,7 @@ class AjaxCouponController extends AbstractController
     {
         $coupons = $this->getCouponRepository()->getCouponsWithPromotionByIds(explode(',', $addedCouponIds));
         $view = $this->renderView(
-            'OroPromotionBundle:Coupon:addedCouponsTable.html.twig',
+            '@OroPromotion/Coupon/addedCouponsTable.html.twig',
             [
                 'coupons' => $coupons,
             ]

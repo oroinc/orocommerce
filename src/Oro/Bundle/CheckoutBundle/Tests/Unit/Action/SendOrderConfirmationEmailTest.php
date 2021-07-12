@@ -14,37 +14,30 @@ use Oro\Component\ConfigExpression\ContextAccessor;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Twig\Error\RuntimeError;
 
 class SendOrderConfirmationEmailTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ContextAccessor|\PHPUnit\Framework\MockObject\MockObject */
-    private $contextAccessor;
+    private ContextAccessor|\PHPUnit\Framework\MockObject\MockObject $contextAccessor;
 
-    /** @var Processor|\PHPUnit\Framework\MockObject\MockObject */
-    private $emailProcessor;
+    private Processor|\PHPUnit\Framework\MockObject\MockObject $emailProcessor;
 
-    /** @var EntityNameResolver|\PHPUnit\Framework\MockObject\MockObject */
-    private $entityNameResolver;
+    private EntityNameResolver|\PHPUnit\Framework\MockObject\MockObject $entityNameResolver;
 
-    /** @var ValidatorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $validator;
+    private ValidatorInterface|\PHPUnit\Framework\MockObject\MockObject $validator;
 
-    /** @var AggregatedEmailTemplatesSender|\PHPUnit\Framework\MockObject\MockObject */
-    private $sender;
+    private AggregatedEmailTemplatesSender|\PHPUnit\Framework\MockObject\MockObject $sender;
 
-    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $logger;
+    private LoggerInterface|\PHPUnit\Framework\MockObject\MockObject $logger;
 
-    /** @var EventDispatcher|\PHPUnit\Framework\MockObject\MockObject */
-    protected $dispatcher;
+    protected EventDispatcher|\PHPUnit\Framework\MockObject\MockObject $dispatcher;
 
-    /** @var SendOrderConfirmationEmail */
-    private $action;
+    private SendOrderConfirmationEmail $action;
 
     protected function setUp(): void
     {
         $this->contextAccessor = $this->createMock(ContextAccessor::class);
-        $this->contextAccessor->expects($this->any())
+        $this->contextAccessor->expects(self::any())
             ->method('getValue')
             ->willReturnArgument(1);
 
@@ -77,11 +70,11 @@ class SendOrderConfirmationEmailTest extends \PHPUnit\Framework\TestCase
      */
     public function testExecuteIgnoresExceptions(\Throwable $exception, string $logMessage): void
     {
-        $this->sender->expects($this->once())
+        $this->sender->expects(self::once())
             ->method('send')
             ->willThrowException($exception);
 
-        $this->logger->expects($this->once())
+        $this->logger->expects(self::once())
             ->method('error')
             ->with($logMessage);
 
@@ -106,7 +99,7 @@ class SendOrderConfirmationEmailTest extends \PHPUnit\Framework\TestCase
     {
         return [
             [
-                'exception' => new \Twig_Error_Runtime('Twig_Error_Runtime'),
+                'exception' => new RuntimeError('Twig_Error_Runtime'),
                 'logMessage' => 'Twig exception in @send_order_confirmation_email action',
             ],
             [

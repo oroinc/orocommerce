@@ -49,7 +49,7 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
      *     name="oro_product_price_update_widget",
      *     requirements={"priceListId"="\d+"}
      * )
-     * @Template("OroPricingBundle:ProductPrice:widget/update.html.twig")
+     * @Template("@OroPricing/ProductPrice/widget/update.html.twig")
      * @Acl(
      *      id="oro_pricing_product_price_update",
      *      type="entity",

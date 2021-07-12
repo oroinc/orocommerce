@@ -42,7 +42,7 @@ abstract class AbstractCustomerFormViewListener implements FeatureToggleableInte
     /**
      * @var string
      */
-    protected $updateTemplate = 'OroPricingBundle:Customer:price_list_update.html.twig';
+    protected $updateTemplate = '@OroPricing/Customer/price_list_update.html.twig';
 
     /**
      * @param RequestStack $requestStack
@@ -101,7 +101,7 @@ abstract class AbstractCustomerFormViewListener implements FeatureToggleableInte
         $fallback
     ) {
         $template = $event->getEnvironment()->render(
-            'OroPricingBundle:Customer:price_list_view.html.twig',
+            '@OroPricing/Customer/price_list_view.html.twig',
             [
                 'priceLists' => $priceLists,
                 'fallback' => $fallback

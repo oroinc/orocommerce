@@ -6,6 +6,9 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\Fallback\AbstractFallbackFieldsFormView;
 
+/**
+ * Adds low inventory threshold information to the category edit page.
+ */
 class CategoryLowInventoryThresholdFormViewListener extends AbstractFallbackFieldsFormView
 {
     /**
@@ -20,7 +23,7 @@ class CategoryLowInventoryThresholdFormViewListener extends AbstractFallbackFiel
 
         $this->addBlockToEntityEdit(
             $event,
-            'OroInventoryBundle:Category:editLowInventoryThreshold.html.twig',
+            '@OroInventory/Category/editLowInventoryThreshold.html.twig',
             'oro.catalog.sections.default_options'
         );
     }

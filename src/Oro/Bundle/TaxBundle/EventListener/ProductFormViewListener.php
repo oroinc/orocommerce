@@ -24,7 +24,7 @@ class ProductFormViewListener extends AbstractFormViewListener
         $entity = $product->getTaxCode();
 
         $template = $event->getEnvironment()->render(
-            'OroTaxBundle:Product:tax_code_view.html.twig',
+            '@OroTax/Product/tax_code_view.html.twig',
             ['entity' => $entity]
         );
         $event->getScrollData()->addSubBlockData('general', 1, $template);
@@ -36,7 +36,7 @@ class ProductFormViewListener extends AbstractFormViewListener
     public function onEdit(BeforeListRenderEvent $event)
     {
         $template = $event->getEnvironment()->render(
-            'OroTaxBundle:Product:tax_code_update.html.twig',
+            '@OroTax/Product/tax_code_update.html.twig',
             ['form' => $event->getFormView()]
         );
 

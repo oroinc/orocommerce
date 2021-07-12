@@ -60,7 +60,7 @@ class WebCatalogController extends AbstractController
 
     /**
      * @Route("/create", name="oro_web_catalog_create")
-     * @Template("OroWebCatalogBundle:WebCatalog:update.html.twig")
+     * @Template("@OroWebCatalog/WebCatalog/update.html.twig")
      * @Acl(
      *      id="oro_web_catalog_create",
      *      type="entity",

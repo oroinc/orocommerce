@@ -1,4 +1,4 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroCMSBundle:layouts:blank/twig_in_variables.html.twig'
+            themes: '@OroCMS/layouts/blank/twig_in_variables.html.twig'

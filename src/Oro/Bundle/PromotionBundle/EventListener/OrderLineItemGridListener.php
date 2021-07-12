@@ -49,7 +49,6 @@ class OrderLineItemGridListener
      */
     protected function addSelect(DatagridConfiguration $config)
     {
-        // TODO: Fix this
         $rootAlias = $config->getOrmQuery()->getRootAlias();
         $config->getOrmQuery()->addSelect(
             '(SELECT SUM(discount.amount) FROM Oro\\Bundle\\PromotionBundle\\Entity\\AppliedDiscount AS discount '
@@ -69,7 +68,7 @@ class OrderLineItemGridListener
                 'type' => 'twig',
                 'frontend_type' => 'html',
                 'data_name' => 'discountAmount',
-                'template' => 'OroPromotionBundle:Datagrid:Order/rowTotalDiscountAmount.html.twig',
+                'template' => '@OroPromotion/Datagrid/Order/rowTotalDiscountAmount.html.twig',
                 'renderable' => false
             ]
         );
@@ -82,7 +81,7 @@ class OrderLineItemGridListener
                     'type' => 'twig',
                     'frontend_type' => 'html',
                     'data_name' => 'discountAmount',
-                    'template' => 'OroPromotionBundle:Datagrid:Order/rowTotalAfterDiscountIncludingTax.html.twig',
+                    'template' => '@OroPromotion/Datagrid/Order/rowTotalAfterDiscountIncludingTax.html.twig',
                     'renderable' => false
                 ]
             );
@@ -93,7 +92,7 @@ class OrderLineItemGridListener
                     'type' => 'twig',
                     'frontend_type' => 'html',
                     'data_name' => 'discountAmount',
-                    'template' => 'OroPromotionBundle:Datagrid:Order/rowTotalAfterDiscountExcludingTax.html.twig',
+                    'template' => '@OroPromotion/Datagrid/Order/rowTotalAfterDiscountExcludingTax.html.twig',
                     'renderable' => false
                 ]
             );
@@ -105,7 +104,7 @@ class OrderLineItemGridListener
                     'type' => 'twig',
                     'frontend_type' => 'html',
                     'data_name' => 'discountAmount',
-                    'template' => 'OroPromotionBundle:Datagrid:Order/rowTotalAfterDiscount.html.twig',
+                    'template' => '@OroPromotion/Datagrid/Order/rowTotalAfterDiscount.html.twig',
                     'renderable' => false
                 ]
             );

@@ -12,11 +12,17 @@ use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\ImportExport\Normalizer\LocalizationCodeFormatter;
 use Oro\Bundle\LocaleBundle\ImportExport\Strategy\LocalizedFallbackValueAwareStrategy;
+use Oro\Bundle\LocaleBundle\Model\FallbackType;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductShortDescription;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\Unit\EntityTrait;
 
+/**
+ * @dbIsolationPerTest
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
 {
     use EntityTrait;
@@ -341,5 +347,249 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
             $this->assertEquals($expectedValue['string'], $localizedFallbackValue->getString());
             $this->assertEquals($expectedValue['fallback'], $localizedFallbackValue->getFallback());
         }
+    }
+
+    public function testNewText(): void
+    {
+        $itemData = [
+            'sku' => 'product-1',
+            'shortDescriptions' => [['text' => 'new value', 'fallback' => null]],
+        ];
+
+        $context = new Context([]);
+        $context->setValue('itemData', $itemData);
+        $this->strategy->setImportExportContext($context);
+        $this->strategy->setEntityName(Product::class);
+
+        $entity = new Product();
+        $entity->setSku('product-1');
+        $description = new ProductShortDescription();
+        $description->setLocalization($this->getReference('es'));
+        $description->setText('new value');
+        $entity->addShortDescription($description);
+
+        /** @var Product $result */
+        $result = $this->strategy->process($entity);
+
+        $this->assertEquals([], $context->getErrors());
+        $this->assertNotEmpty($result);
+
+        $this->assertEquals('new value', $result->getShortDescriptions()->first()->getText());
+        $this->assertNull($result->getShortDescriptions()->first()->getFallback());
+    }
+
+    public function testNewFallback(): void
+    {
+        $itemData = [
+            'sku' => 'product-1',
+            'shortDescriptions' => [['text' => null, 'fallback' => FallbackType::PARENT_LOCALIZATION]],
+        ];
+
+        $context = new Context([]);
+        $context->setValue('itemData', $itemData);
+        $this->strategy->setImportExportContext($context);
+        $this->strategy->setEntityName(Product::class);
+
+        $entity = new Product();
+        $entity->setSku('product-1');
+        $description = new ProductShortDescription();
+        $description->setLocalization($this->getReference('es'));
+        $description->setFallback(FallbackType::PARENT_LOCALIZATION);
+        $entity->addShortDescription($description);
+
+        /** @var Product $result */
+        $result = $this->strategy->process($entity);
+
+        $this->assertEquals([], $context->getErrors());
+        $this->assertNotEmpty($result);
+
+        $this->assertEquals(FallbackType::PARENT_LOCALIZATION, $result->getShortDescriptions()->first()->getFallback());
+        $this->assertNull($result->getShortDescriptions()->first()->getText());
+    }
+
+    public function testUpdateText(): void
+    {
+        $itemData = [
+            'sku' => 'product-1',
+            'shortDescriptions' => [['text' => 'product-1.shortDescriptions.en_CA_new', 'fallback' => null]],
+        ];
+
+        $context = new Context([]);
+        $context->setValue('itemData', $itemData);
+        $this->strategy->setImportExportContext($context);
+        $this->strategy->setEntityName(Product::class);
+
+        $entity = new Product();
+        $entity->setSku('product-1');
+        $description = new ProductShortDescription();
+        $description->setLocalization($this->getReference('en_CA'));
+        $description->setText('product-1.shortDescriptions.en_CA_new');
+        $entity->addShortDescription($description);
+
+        /** @var Product $result */
+        $result = $this->strategy->process($entity);
+
+        $this->assertEquals([], $context->getErrors());
+        $this->assertNotEmpty($result);
+
+        $this->assertEquals(
+            'product-1.shortDescriptions.en_CA_new',
+            $result->getShortDescriptions()->first()->getText()
+        );
+        $this->assertNull($result->getShortDescriptions()->first()->getFallback());
+    }
+
+    public function testUpdateFallback(): void
+    {
+        $itemData = [
+            'sku' => 'product-2',
+            'shortDescriptions' => [['text' => null, 'fallback' => FallbackType::SYSTEM]],
+        ];
+
+        $context = new Context([]);
+        $context->setValue('itemData', $itemData);
+        $this->strategy->setImportExportContext($context);
+        $this->strategy->setEntityName(Product::class);
+
+        $entity = new Product();
+        $entity->setSku('product-2');
+        $description = new ProductShortDescription();
+        $description->setLocalization($this->getReference('es'));
+        $description->setFallback(FallbackType::SYSTEM);
+        $entity->addShortDescription($description);
+
+        /** @var Product $result */
+        $result = $this->strategy->process($entity);
+
+        $this->assertEquals([], $context->getErrors());
+        $this->assertNotEmpty($result);
+
+        $this->assertEquals(
+            FallbackType::SYSTEM,
+            $result->getShortDescriptions()->first()->getFallback()
+        );
+        $this->assertNull($result->getShortDescriptions()->first()->getText());
+    }
+
+    public function testSwitchTextToFallback(): void
+    {
+        $itemData = [
+            'sku' => 'product-1',
+            'shortDescriptions' => [['text' => null, 'fallback' => FallbackType::SYSTEM]],
+        ];
+
+        $context = new Context([]);
+        $context->setValue('itemData', $itemData);
+        $this->strategy->setImportExportContext($context);
+        $this->strategy->setEntityName(Product::class);
+
+        $entity = new Product();
+        $entity->setSku('product-1');
+        $description = new ProductShortDescription();
+        $description->setLocalization($this->getReference('es'));
+        $description->setFallback(FallbackType::SYSTEM);
+        $entity->addShortDescription($description);
+
+        /** @var Product $result */
+        $result = $this->strategy->process($entity);
+
+        $this->assertEquals([], $context->getErrors());
+        $this->assertNotEmpty($result);
+
+        $this->assertEquals(
+            FallbackType::SYSTEM,
+            $result->getShortDescriptions()->first()->getFallback()
+        );
+        $this->assertNull($result->getShortDescriptions()->first()->getText());
+    }
+
+    public function testSwitchFallbackToText(): void
+    {
+        $itemData = [
+            'sku' => 'product-2',
+            'shortDescriptions' => [['text' => 'text', 'fallback' => null]],
+        ];
+
+        $context = new Context([]);
+        $context->setValue('itemData', $itemData);
+        $this->strategy->setImportExportContext($context);
+        $this->strategy->setEntityName(Product::class);
+
+        $entity = new Product();
+        $entity->setSku('product-2');
+        $description = new ProductShortDescription();
+        $description->setLocalization($this->getReference('es'));
+        $description->setText('text');
+        $entity->addShortDescription($description);
+
+        /** @var Product $result */
+        $result = $this->strategy->process($entity);
+
+        $this->assertEquals([], $context->getErrors());
+        $this->assertNotEmpty($result);
+
+        $this->assertEquals(
+            'text',
+            $result->getShortDescriptions()->first()->getText()
+        );
+        $this->assertNull($result->getShortDescriptions()->first()->getFallback());
+    }
+
+    public function testBothFallbackAndValueWithValuesAreValid(): void
+    {
+        $itemData = [
+            'sku' => 'product-2',
+            'shortDescriptions' => [['text' => 'text', 'fallback' => FallbackType::SYSTEM]],
+        ];
+
+        $context = new Context([]);
+        $context->setValue('itemData', $itemData);
+        $this->strategy->setImportExportContext($context);
+        $this->strategy->setEntityName(Product::class);
+
+        $entity = new Product();
+        $entity->setSku('product-2');
+        $description = new ProductShortDescription();
+        $description->setLocalization($this->getReference('es'));
+        $description->setText('text');
+        $description->setFallback(FallbackType::SYSTEM);
+        $entity->addShortDescription($description);
+
+        /** @var Product $result */
+        $result = $this->strategy->process($entity);
+
+        $this->assertEquals([], $context->getErrors());
+        $this->assertNotEmpty($result);
+
+        $this->assertNotNull($result->getShortDescriptions()->first()->getFallback());
+        $this->assertNotNull($result->getShortDescriptions()->first()->getText());
+    }
+
+    public function testBothFallbackAndValueWithoutValuesAreValid(): void
+    {
+        $itemData = [
+            'sku' => 'product-2',
+            'shortDescriptions' => [['text' => null, 'fallback' => null]],
+        ];
+
+        $context = new Context([]);
+        $context->setValue('itemData', $itemData);
+        $this->strategy->setImportExportContext($context);
+        $this->strategy->setEntityName(Product::class);
+
+        $entity = new Product();
+        $entity->setSku('product-2');
+        $description = new ProductShortDescription();
+        $description->setLocalization($this->getReference('es'));
+        $entity->addShortDescription($description);
+
+        /** @var Product $result */
+        $result = $this->strategy->process($entity);
+
+        $this->assertEquals([], $context->getErrors());
+        $this->assertNotEmpty($result);
+
+        $this->assertNull($result->getShortDescriptions()->first()->getFallback());
+        $this->assertNull($result->getShortDescriptions()->first()->getText());
     }
 }

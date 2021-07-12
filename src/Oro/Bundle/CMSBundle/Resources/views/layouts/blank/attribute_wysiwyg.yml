@@ -1,4 +1,4 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroCMSBundle:layouts:blank/attribute_wysiwyg.html.twig'
+            themes: '@OroCMS/layouts/blank/attribute_wysiwyg.html.twig'

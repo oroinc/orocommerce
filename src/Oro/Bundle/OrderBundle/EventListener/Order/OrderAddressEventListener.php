@@ -26,7 +26,7 @@ class OrderAddressEventListener extends AbstractFormEventListener
                 $form = $this->createFieldWithSubmission($orderForm, $fieldName, $event->getSubmittedData());
                 $view = $this->renderForm(
                     $form->get($fieldName)->createView(),
-                    'OroOrderBundle:Form:customerAddressSelector.html.twig'
+                    '@OroOrder/Form/customerAddressSelector.html.twig'
                 );
                 $event->getData()->offsetSet($fieldName, $view);
             }

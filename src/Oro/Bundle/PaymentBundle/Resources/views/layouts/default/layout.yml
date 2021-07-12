@@ -1,4 +1,4 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroPaymentBundle:layouts:default/layout.html.twig'
+            themes: '@OroPayment/layouts/default/layout.html.twig'

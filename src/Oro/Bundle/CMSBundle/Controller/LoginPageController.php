@@ -20,7 +20,7 @@ class LoginPageController extends AbstractController
 {
     /**
      * @Route("/", name="oro_cms_loginpage_index")
-     * @Template("OroCMSBundle:LoginPage:index.html.twig")
+     * @Template("@OroCMS/LoginPage/index.html.twig")
      * @AclAncestor("oro_cms_loginpage_view")
      *
      * @return array
@@ -55,7 +55,7 @@ class LoginPageController extends AbstractController
 
     /**
      * @Route("/create", name="oro_cms_loginpage_create")
-     * @Template("OroCMSBundle:LoginPage:update.html.twig")
+     * @Template("@OroCMS/LoginPage/update.html.twig")
      * @Acl(
      *      id="oro_cms_loginpage_create",
      *      type="entity",

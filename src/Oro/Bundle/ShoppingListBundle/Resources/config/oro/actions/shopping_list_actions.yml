@@ -165,7 +165,7 @@ operations:
         button_options:
             icon: fa-pencil
         frontend_options:
-            template: OroShoppingListBundle:Action:shoppingListActionRename.html.twig
+            template: '@OroShoppingList/Action/shoppingListActionRename.html.twig'
             title: oro.frontend.shoppinglist.view.rename.label
             show_dialog: true
             options:

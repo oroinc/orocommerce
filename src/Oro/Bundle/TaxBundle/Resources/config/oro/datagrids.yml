@@ -135,7 +135,7 @@ datagrids:
                 label: oro.tax.rate.label
                 type:          twig
                 frontend_type: html
-                template:      OroTaxBundle:TaxRate:Datagrid/percent.html.twig
+                template:      '@OroTax/TaxRate/Datagrid/percent.html.twig'
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime

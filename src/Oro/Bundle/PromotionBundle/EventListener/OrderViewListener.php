@@ -35,7 +35,7 @@ class OrderViewListener
         }
 
         $template = $event->getEnvironment()->render(
-            'OroPromotionBundle:AppliedPromotion:applied_promotions_view_table.html.twig',
+            '@OroPromotion/AppliedPromotion/applied_promotions_view_table.html.twig',
             ['entity' => $event->getEntity()]
         );
 
@@ -52,7 +52,7 @@ class OrderViewListener
         }
 
         $template = $event->getEnvironment()->render(
-            'OroPromotionBundle:Order:applied_promotions_and_coupons.html.twig',
+            '@OroPromotion/Order/applied_promotions_and_coupons.html.twig',
             ['form' => $event->getFormView()]
         );
 

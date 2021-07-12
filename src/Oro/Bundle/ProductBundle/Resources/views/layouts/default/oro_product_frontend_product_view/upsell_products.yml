@@ -6,7 +6,7 @@ layout:
             namespace: upsell
     actions:
         - '@setBlockTheme':
-            themes: 'OroProductBundle:layouts:default/oro_product_frontend_product_view/upsell_products.html.twig'
+            themes: '@OroProduct/layouts/default/oro_product_frontend_product_view/upsell_products.html.twig'
         - '@setOption':
             id: upsell_products
             optionName: items

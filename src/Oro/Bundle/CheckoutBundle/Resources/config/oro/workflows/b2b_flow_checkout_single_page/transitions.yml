@@ -46,6 +46,8 @@ workflows:
                                 address_type: 'billing'
                                 required: true
                                 translation_domain: messages
+                                configs:
+                                    allowClear: false
                         shipping_address:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressSelectType
                             options:
@@ -54,6 +56,8 @@ workflows:
                                 required: true
                                 disabled: $disallow_shipping_address_edit
                                 translation_domain: messages
+                                configs:
+                                    allowClear: false
                         ship_to_billing_address:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\ShipToBillingAddressType
                         shipping_method: ~
@@ -212,6 +216,8 @@ workflows:
                                 address_type: 'billing'
                                 required: true
                                 translation_domain: messages
+                                configs:
+                                    allowClear: false
                         shipping_address:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressSelectType
                             options:
@@ -220,6 +226,8 @@ workflows:
                                 required: true
                                 disabled: $disallow_shipping_address_edit
                                 translation_domain: messages
+                                configs:
+                                    allowClear: false
                         ship_to_billing_address:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\ShipToBillingAddressType
                         shipping_method:

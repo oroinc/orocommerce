@@ -5,6 +5,9 @@ namespace Oro\Bundle\TaxBundle\EventListener;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 
+/**
+ * Adds tax information to the customer view and edit pages.
+ */
 class CustomerFormViewListener extends AbstractFormViewListener
 {
     /**
@@ -26,7 +29,7 @@ class CustomerFormViewListener extends AbstractFormViewListener
         }
 
         $template = $event->getEnvironment()->render(
-            'OroTaxBundle:Customer:tax_code_view.html.twig',
+            '@OroTax/Customer/tax_code_view.html.twig',
             ['entity' => $entity, 'groupCustomerTaxCode' => $groupCustomerTaxCode]
         );
         $event->getScrollData()->addSubBlockData(0, 0, $template);
@@ -38,7 +41,7 @@ class CustomerFormViewListener extends AbstractFormViewListener
     public function onEdit(BeforeListRenderEvent $event)
     {
         $template = $event->getEnvironment()->render(
-            'OroTaxBundle:Customer:tax_code_update.html.twig',
+            '@OroTax/Customer/tax_code_update.html.twig',
             ['form' => $event->getFormView()]
         );
         $event->getScrollData()->addSubBlockData(0, 0, $template);

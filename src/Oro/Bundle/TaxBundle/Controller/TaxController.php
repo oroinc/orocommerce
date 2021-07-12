@@ -54,7 +54,7 @@ class TaxController extends AbstractController
 
     /**
      * @Route("/create", name="oro_tax_create")
-     * @Template("OroTaxBundle:Tax:update.html.twig")
+     * @Template("@OroTax/Tax/update.html.twig")
      * @Acl(
      *      id="oro_tax_create",
      *      type="entity",

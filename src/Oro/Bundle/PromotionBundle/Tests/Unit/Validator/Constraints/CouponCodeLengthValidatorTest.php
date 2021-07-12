@@ -5,53 +5,34 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\Validator\Constraints;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CodeGenerationOptions;
 use Oro\Bundle\PromotionBundle\Validator\Constraints\CouponCodeLength;
 use Oro\Bundle\PromotionBundle\Validator\Constraints\CouponCodeLengthValidator;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class CouponCodeLengthValidatorTest extends \PHPUnit\Framework\TestCase
+class CouponCodeLengthValidatorTest extends ConstraintValidatorTestCase
 {
-    /**
-     * @var CouponCodeLengthValidator
-     */
-    protected $validator;
-
-    /**
-     * @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $context;
-
-    /**
-     * @var CouponCodeLength
-     */
-    protected $constraint;
-
-    protected function setUp(): void
+    protected function createValidator()
     {
-        $this->constraint = new CouponCodeLength();
-        $this->context = $this->createMock(ExecutionContextInterface::class);
-
-        $this->validator = new CouponCodeLengthValidator();
-        $this->validator->initialize($this->context);
+        return new CouponCodeLengthValidator();
     }
 
     /**
      * @dataProvider validateDataProvider
-     *
-     * @param CodeGenerationOptions $entity
-     * @param bool $violationExpected
      */
     public function testValidate(CodeGenerationOptions $entity, bool $violationExpected)
     {
-        $this->context
-            ->expects($violationExpected ? $this->once() : $this->never())
-            ->method('addViolation');
+        $constraint = new CouponCodeLength();
+        $this->validator->validate($entity, $constraint);
 
-        $this->validator->validate($entity, $this->constraint);
+        if ($violationExpected) {
+            $this->buildViolation($constraint->message)
+                ->setParameters(['{{ actualLength }}' => 256, '{{ maxAllowedLength }}' => 255])
+                ->assertRaised();
+        } else {
+            $this->assertNoViolation();
+        }
     }
 
-    /**
-     * @return array
-     */
-    public function validateDataProvider()
+    public function validateDataProvider(): array
     {
         return [
             'max length exceeded' => [
@@ -113,15 +94,13 @@ class CouponCodeLengthValidatorTest extends \PHPUnit\Framework\TestCase
 
     public function testValidateWrongEntity()
     {
-        $this->expectException(\Symfony\Component\Validator\Exception\UnexpectedTypeException::class);
-        $this->validator->validate(new \stdClass(), $this->constraint);
+        $this->expectException(UnexpectedTypeException::class);
+
+        $constraint = new CouponCodeLength();
+        $this->validator->validate(new \stdClass(), $constraint);
     }
 
-    /**
-     * @param int $length
-     * @return string
-     */
-    protected function generateUnicodeString(int $length)
+    private function generateUnicodeString(int $length): string
     {
         // cyrillic symbol
         return str_repeat('Я', $length);

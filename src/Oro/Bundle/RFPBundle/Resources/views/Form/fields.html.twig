@@ -49,7 +49,7 @@
 
     <div class="request-form">
         <h2 class="request-form__title">{{ 'oro.rfp.frontend.request.title.label'|trans }}</h2>
-        {% include "OroUIBundle::view_loading.html.twig" %}
+        {% include "@OroUI/view_loading.html.twig" %}
         <div class="request-form__content" style="display: none;">
             <div class="row-oro">
                 {% set prototype_name = form.vars.prototype_name %}
@@ -80,7 +80,7 @@
 {% endblock %}
 
 {% macro oro_rfp_frontend_request_lineitem_prototype(widget, prototype_name, key, attributes) %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
 
     {% if 'collection' in widget.vars.block_prefixes %}
         {% set form = widget.vars.prototype %}
@@ -402,7 +402,7 @@
 
 {% block _oro_rfp_frontend_request_requestProducts_entry_requestProductItems_entry_widget %}
     {% set ariaControlsId = 'rfq-quantity-'|uniqid %}
-    {% use "OroPricingBundle:layouts/default:layout.html.twig" %}
+    {% use "@OroPricing/layouts/default/layout.html.twig" %}
     <div class="request-form-lineitem-unit request-form-lineitem-unit--size-m">
         {{ form_widget(form.quantity, {id: ariaControlsId}) }}
         {{ form_errors(form.quantity) }}

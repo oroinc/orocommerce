@@ -105,7 +105,7 @@
 {% endmacro %}
 
 {% macro oro_web_catalog_content_variant_button(form) %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
     {% set numberOfVariants = form.vars.prototypes|length %}
 
     <div class="btn-group pull-right">
@@ -189,7 +189,7 @@
 {% endblock %}
 
 {% macro content_vriant_default_js(context) %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
     <div {{ UI.renderPageComponentAttributes({
         module: 'oroui/js/app/components/view-component',
         options: {

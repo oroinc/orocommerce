@@ -6,6 +6,9 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\Fallback\AbstractFallbackFieldsFormView;
 
+/**
+ * Adds manage inventory information to the category edit page.
+ */
 class CategoryManageInventoryFormViewListener extends AbstractFallbackFieldsFormView
 {
     /**
@@ -20,7 +23,7 @@ class CategoryManageInventoryFormViewListener extends AbstractFallbackFieldsForm
 
         $this->addBlockToEntityEdit(
             $event,
-            'OroInventoryBundle:Category:editManageInventory.html.twig',
+            '@OroInventory/Category/editManageInventory.html.twig',
             'oro.catalog.sections.default_options'
         );
     }

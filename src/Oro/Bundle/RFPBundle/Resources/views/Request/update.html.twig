@@ -1,5 +1,5 @@
-{% extends 'OroUIBundle:actions:update.html.twig' %}
-{% form_theme form with ['OroFormBundle:Form:fields.html.twig'] %}
+{% extends '@OroUI/actions/update.html.twig' %}
+{% form_theme form with ['@OroForm/Form/fields.html.twig'] %}
 
 {% oro_title_set({params : {'%title%': entity.__toString(), '%entityName%' : 'oro.rfp.request.entity_label'|trans} }) %}
 
@@ -16,7 +16,7 @@
 {% endblock pageHeader %}
 
 {% block navButtons %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
 
     {{ parent() }}
 

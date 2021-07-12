@@ -42,12 +42,12 @@ datagrids:
                 label:         oro.shipping.shippingmethodsconfigsrule.method_configs.label
                 type:          twig
                 frontend_type: html
-                template:      OroShippingBundle:ShippingMethodsConfigsRule:Datagrid/configurations.html.twig
+                template:      '@OroShipping/ShippingMethodsConfigsRule/Datagrid/configurations.html.twig'
             destinations:
                 label:         oro.shipping.shippingmethodsconfigsrule.destinations.label
                 type:          twig
                 frontend_type: html
-                template:      OroShippingBundle:ShippingMethodsConfigsRule:Datagrid/destinations.html.twig
+                template:      '@OroShipping/ShippingMethodsConfigsRule/Datagrid/destinations.html.twig'
         properties:
             id: ~
             view_link:

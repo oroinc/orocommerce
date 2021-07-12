@@ -45,7 +45,7 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->env->expects($this->once())
             ->method('render')
-            ->with('OroCatalogBundle:Product:category_update.html.twig', ['form' => $formView])
+            ->with('@OroCatalog/Product/category_update.html.twig', ['form' => $formView])
             ->willReturn('');
 
         $event = new BeforeListRenderEvent($this->env, new ScrollData(), new Product(), $formView);
@@ -71,7 +71,7 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->env->expects($this->once())
             ->method('render')
-            ->with('OroCatalogBundle:Product:category_view.html.twig', ['entity' => $category])
+            ->with('@OroCatalog/Product/category_view.html.twig', ['entity' => $category])
             ->willReturn('');
 
         $scrollData = $this->getPreparedScrollData();

@@ -7,98 +7,75 @@ use Oro\Bundle\ShippingBundle\Checker\ShippingRuleEnabledCheckerInterface;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\ShippingRuleEnable;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\ShippingRuleEnableValidator;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
-use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class ShippingRuleEnableValidatorTest extends \PHPUnit\Framework\TestCase
+class ShippingRuleEnableValidatorTest extends ConstraintValidatorTestCase
 {
-    /**
-     * @var ShippingRuleEnabledCheckerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ShippingRuleEnabledCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $ruleEnabledChecker;
-
-    /**
-     * @var ShippingRuleEnable
-     */
-    private $constraint;
-
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ExecutionContextInterface
-     */
-    private $context;
-
-    /**
-     * @var ShippingRuleEnableValidator
-     */
-    private $validator;
 
     protected function setUp(): void
     {
         $this->ruleEnabledChecker = $this->createMock(ShippingRuleEnabledCheckerInterface::class);
-        $this->constraint = new ShippingRuleEnable();
-        $this->context = $this->createMock(ExecutionContextInterface::class);
+        parent::setUp();
+    }
 
-        $this->validator = new ShippingRuleEnableValidator($this->ruleEnabledChecker);
-        $this->validator->initialize($this->context);
+    protected function createValidator()
+    {
+        return new ShippingRuleEnableValidator($this->ruleEnabledChecker);
+    }
+
+    private function getShippingRule(bool $isEnabled): ShippingMethodsConfigsRule
+    {
+        $shippingRule = new ShippingMethodsConfigsRule();
+        $shippingRule->setRule((new Rule())->setEnabled($isEnabled));
+
+        return $shippingRule;
     }
 
     public function testValidateForWrongObject()
     {
         $this->expectException(UnexpectedTypeException::class);
 
-        $this->validator->validate(null, $this->constraint);
+        $constraint = new ShippingRuleEnable();
+        $this->validator->validate(null, $constraint);
     }
 
     public function testValidateForNotEnabledRule()
     {
-        $this->context->expects(static::never())->method('buildViolation');
-        $this->ruleEnabledChecker->expects(static::never())->method('canBeEnabled');
+        $this->ruleEnabledChecker->expects(self::never())
+            ->method('canBeEnabled');
 
-        $this->validator->validate($this->getShippingRule(false), $this->constraint);
+        $constraint = new ShippingRuleEnable();
+        $this->validator->validate($this->getShippingRule(false), $constraint);
+
+        $this->assertNoViolation();
     }
 
     public function testValidateForCanBeEnabledRule()
     {
-        $this->ruleEnabledChecker->expects(static::once())
+        $this->ruleEnabledChecker->expects(self::once())
             ->method('canBeEnabled')
             ->willReturn(true);
 
-        $this->context->expects(static::never())->method('buildViolation');
+        $constraint = new ShippingRuleEnable();
+        $this->validator->validate($this->getShippingRule(true), $constraint);
 
-        $this->validator->validate($this->getShippingRule(true), $this->constraint);
+        $this->assertNoViolation();
     }
 
     public function testValidateForCantBeEnabledRule()
     {
-        $this->ruleEnabledChecker->expects(static::once())
+        $this->ruleEnabledChecker->expects(self::once())
             ->method('canBeEnabled')
             ->willReturn(false);
 
-        $builder = $this->createMock(ConstraintViolationBuilderInterface::class);
+        $constraint = new ShippingRuleEnable();
+        $this->validator->validate($this->getShippingRule(true), $constraint);
 
-        $this->context->expects($this->once())
-            ->method('buildViolation')
-            ->with($this->constraint->message)
-            ->willReturn($builder);
-
-        $builder->expects($this->once())
-            ->method('atPath')
-            ->willReturn($builder);
-
-        $this->validator->validate($this->getShippingRule(true), $this->constraint);
-    }
-
-    /**
-     * @param bool $isEnabled
-     *
-     * @return ShippingMethodsConfigsRule
-     */
-    private function getShippingRule($isEnabled)
-    {
-        $shippingRule = new ShippingMethodsConfigsRule();
-        $shippingRule->setRule((new Rule())->setEnabled($isEnabled));
-
-        return $shippingRule;
+        $this->buildViolation($constraint->message)
+            ->atPath('property.path.rule')
+            ->assertRaised();
     }
 }

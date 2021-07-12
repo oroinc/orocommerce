@@ -6,7 +6,7 @@ layout:
             namespace: related
     actions:
         - '@setBlockTheme':
-            themes: 'OroProductBundle:layouts:default/oro_product_frontend_product_view/related_products.html.twig'
+            themes: '@OroProduct/layouts/default/oro_product_frontend_product_view/related_products.html.twig'
         - '@setOption':
             id: related_products
             optionName: items

@@ -147,7 +147,7 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
             ->method('render')
             ->withConsecutive(
                 $priceAttributeViewRenderExpectation,
-                ['OroPricingBundle:Product:prices_view.html.twig', ['entity' => $product]]
+                ['@OroPricing/Product/prices_view.html.twig', ['entity' => $product]]
             )
             ->willReturnOnConsecutiveCalls(
                 $templateHtmlProductAttributePrice,
@@ -229,7 +229,7 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->env->expects($this->once())
             ->method('render')
-            ->with('OroPricingBundle:Product:prices_update.html.twig', ['form' => $formView])
+            ->with('@OroPricing/Product/prices_update.html.twig', ['form' => $formView])
             ->willReturn($templateHtml);
 
         $event = $this->createEvent(new Product(), $formView);
@@ -300,7 +300,7 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
             ->willReturn(['Test' => ['item' => ['USD' => 100]]]);
 
         return [
-            'OroPricingBundle:Product:price_attribute_prices_view.html.twig',
+            '@OroPricing/Product/price_attribute_prices_view.html.twig',
             [
                 'product' => $product,
                 'priceList' => $priceList,

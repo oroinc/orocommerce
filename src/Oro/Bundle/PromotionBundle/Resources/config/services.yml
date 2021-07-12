@@ -788,7 +788,7 @@ services:
     oro_promotion.event_listener.order_applied_promotion_event_listener:
         class: Oro\Bundle\PromotionBundle\EventListener\OrderAppliedPromotionEventListener
         arguments:
-            - '@templating'
+            - '@twig'
             - '@form.factory'
             - '@oro_promotion.applied_promotion_manager'
         tags:

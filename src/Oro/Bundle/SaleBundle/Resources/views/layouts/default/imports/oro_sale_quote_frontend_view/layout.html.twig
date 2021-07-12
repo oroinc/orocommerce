@@ -77,7 +77,7 @@
 {% endblock %}
 
 {% block _quote_view_line_items_widget %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
     <div class="customer-line-items">
         <h2 class="customer-line-items__title">
             {{- 'oro.frontend.sale.quote.sections.quote_products.label'|trans -}}
@@ -181,7 +181,7 @@
 {% endblock %}
 
 {% block address_widget %}
-    {% from 'OroAddressBundle::macros.html.twig' import renderAddress %}
+    {% from '@OroAddress/macros.html.twig' import renderAddress %}
     {{ renderAddress(address, true) }}
 {% endblock %}
 

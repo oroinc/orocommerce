@@ -1,12 +1,12 @@
-{% extends 'OroUIBundle:actions:index.html.twig' %}
-{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% extends '@OroUI/actions/index.html.twig' %}
+{% import '@OroUI/macros.html.twig' as UI %}
 {% set gridName = 'products-grid' %}
 {% set pageTitle = 'oro.product.entity_plural_label'|trans %}
 
 {% block navButtons %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
 
-    {% include 'OroImportExportBundle:ImportExport:buttons_from_configuration.html.twig' with {
+    {% include '@OroImportExport/ImportExport/buttons_from_configuration.html.twig' with {
         'alias': 'oro_product_index',
         'options': { 'writer_skip_clear': true }
     } %}
@@ -30,7 +30,7 @@
 
     <div class="layout-content product-container" data-role="grid-sidebar-component-container">
         <div class="scrollable-container sidebar-container">
-            {% embed "OroUIBundle::content_sidebar.html.twig" %}
+            {% embed "@OroUI/content_sidebar.html.twig" %}
                 {% block sidebar %}
                     <div data-page-component-module="orodatagrid/js/app/components/grid-sidebar-component"
                          data-page-component-options="{{ componentOptions|json_encode }}"

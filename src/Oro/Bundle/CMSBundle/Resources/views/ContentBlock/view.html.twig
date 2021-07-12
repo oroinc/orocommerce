@@ -1,7 +1,7 @@
-{% extends 'OroUIBundle:actions:view.html.twig' %}
-{% import 'OroUIBundle::macros.html.twig' as UI %}
-{% import 'OroScopeBundle::macros.html.twig' as scope %}
-{% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
+{% extends '@OroUI/actions/view.html.twig' %}
+{% import '@OroUI/macros.html.twig' as UI %}
+{% import '@OroScope/macros.html.twig' as scope %}
+{% import '@OroEntityConfig/macros.html.twig' as entityConfig %}
 
 {% oro_title_set({params : {'%title%': entity.alias} }) %}
 
@@ -53,7 +53,7 @@
 {% endset %}
 
 {% block content_data %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
 
     {% set contentBlockInformation %}
         <div class="row-fluid form-horizontal">

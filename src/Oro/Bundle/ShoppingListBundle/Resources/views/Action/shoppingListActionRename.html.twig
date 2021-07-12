@@ -1,7 +1,7 @@
-{% extends 'OroActionBundle:Operation:form.html.twig' %}
+{% extends '@OroAction/Operation/form.html.twig' %}
 
 {% if form is defined %}
-    {% form_theme form 'OroFrontendBundle:layouts/blank:form_theme.html.twig' %}
+    {% form_theme form '@OroFrontend/layouts/blank/form_theme.html.twig' %}
 {% endif %}
 
 {% block form_widget %}

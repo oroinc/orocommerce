@@ -5,72 +5,56 @@ namespace Oro\Bundle\RuleBundle\Tests\Unit\Validator\Constraints;
 use Oro\Bundle\RuleBundle\Validator\Constraints\ExpressionLanguageSyntaxValidator;
 use Oro\Component\ExpressionLanguage\BasicExpressionLanguageValidator;
 use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class ExpressionLanguageSyntaxValidatorTest extends \PHPUnit\Framework\TestCase
+class ExpressionLanguageSyntaxValidatorTest extends ConstraintValidatorTestCase
 {
-    /**
-     * @var BasicExpressionLanguageValidator|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var BasicExpressionLanguageValidator|\PHPUnit\Framework\MockObject\MockObject */
     private $basicExpressionLanguageValidator;
-
-    /**
-     * @var ExpressionLanguageSyntaxValidator
-     */
-    private $expressionLanguageSyntaxValidator;
-
-    /**
-     * @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $context;
 
     protected function setUp(): void
     {
         $this->basicExpressionLanguageValidator = $this->createMock(BasicExpressionLanguageValidator::class);
-        $this->context = $this->createMock(ExecutionContextInterface::class);
-        $this->expressionLanguageSyntaxValidator = new ExpressionLanguageSyntaxValidator(
-            $this->basicExpressionLanguageValidator
-        );
+        parent::setUp();
+    }
+
+    protected function createValidator()
+    {
+        return new ExpressionLanguageSyntaxValidator($this->basicExpressionLanguageValidator);
     }
 
     public function testWithoutExpression()
     {
-        $constraint = $this->createMock(Constraint::class);
-        $this->basicExpressionLanguageValidator
-            ->expects(static::never())
+        $this->basicExpressionLanguageValidator->expects(self::never())
             ->method('validate');
-        $this->context
-            ->expects(static::never())
-            ->method('addViolation');
-        $this->expressionLanguageSyntaxValidator->validate('', $constraint);
+
+        $constraint = $this->createMock(Constraint::class);
+        $this->validator->validate('', $constraint);
+
+        $this->assertNoViolation();
     }
 
     /**
      * @dataProvider expressionsProvider
-     *
-     * @param string $expression
-     * @param string $message
      */
-    public function testValidate($expression, $message)
+    public function testValidate(string $expression, string $message)
     {
-        $this->basicExpressionLanguageValidator
-            ->expects(static::once())
+        $this->basicExpressionLanguageValidator->expects(self::once())
             ->method('validate')
             ->with($expression)
             ->willReturn($message);
-        $this->context
-            ->expects(static::any())
-            ->method('addViolation')
-            ->with($message);
 
         $constraint = $this->createMock(Constraint::class);
-        $this->expressionLanguageSyntaxValidator->initialize($this->context);
-        $this->expressionLanguageSyntaxValidator->validate($expression, $constraint);
+        $this->validator->validate($expression, $constraint);
+
+        if ($message) {
+            $this->buildViolation($message)
+                ->assertRaised();
+        } else {
+            $this->assertNoViolation();
+        }
     }
 
-    /**
-     * @return array
-     */
     public function expressionsProvider(): array
     {
         return [

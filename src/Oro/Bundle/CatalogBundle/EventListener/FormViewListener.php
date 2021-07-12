@@ -60,7 +60,7 @@ class FormViewListener
         }
 
         $template = $event->getEnvironment()->render(
-            'OroCatalogBundle:Product:category_view.html.twig',
+            '@OroCatalog/Product/category_view.html.twig',
             ['entity' => $category]
         );
 
@@ -73,7 +73,7 @@ class FormViewListener
     public function onProductEdit(BeforeListRenderEvent $event)
     {
         $template = $event->getEnvironment()->render(
-            'OroCatalogBundle:Product:category_update.html.twig',
+            '@OroCatalog/Product/category_update.html.twig',
             ['form' => $event->getFormView()]
         );
         $this->addCategoryBlock($event->getScrollData(), $template);

@@ -78,7 +78,7 @@
 {% endmacro %}
 
 {% block oro_entity_extend_enum_value_widget %}
-    {% import 'OroUIBundle::macros.html.twig' as ui %}
+    {% import '@OroUI/macros.html.twig' as ui %}
 
     <div class="float-holder {% if form.label.vars.errors|length > 0 %} validation-error{% endif %}">
         <div class="input-append input-append-sortable collection-element-primary">
@@ -97,7 +97,7 @@
         {{ form_errors(form.label) }}
     </div>
     {% if tooltip is defined  and tooltip %}
-        {% import 'OroUIBundle::macros.html.twig' as ui %}
+        {% import '@OroUI/macros.html.twig' as ui %}
         <div class="tooltip-icon-container">
             {{ ui.tooltip(
                 tooltip,
@@ -330,8 +330,8 @@
                  data-page-component-module="orodatagrid/js/app/components/grid-sidebar-component"
                  data-page-component-options="{{ gridSidebarComponentOptions|json_encode }}"
             >
-                {% import 'OroProductBundle::product_collection_macros.html.twig' as ProductCollection %}
-                {% import 'OroUIBundle::macros.html.twig' as UI %}
+                {% import '@OroProduct/product_collection_macros.html.twig' as ProductCollection %}
+                {% import '@OroUI/macros.html.twig' as UI %}
                 {% set uniqueId = 'dropdown-'|uniqid %}
                 <div class="oro-tabs"  {{ UI.renderPageComponentAttributes({
                     module: 'oroui/js/app/components/tabs-component'
@@ -532,7 +532,7 @@
 {% endblock %}
 
 {% block oro_product_custom_variant_fields_collection_widget %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
     <div class="enum-value-collection" {{ UI.renderPageComponentAttributes({
         module: 'oroui/js/app/components/view-component',
         options: {

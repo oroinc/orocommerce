@@ -6,7 +6,7 @@ search:
             name:                       oro_web_catalog_view
             parameters:
                 id:                     id
-        search_template:                OroWebCatalogBundle:WebCatalog:searchResult.html.twig
+        search_template:                '@OroWebCatalog/WebCatalog/searchResult.html.twig'
         fields:
             -
                 name:                   name

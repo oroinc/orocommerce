@@ -2,13 +2,13 @@
 
 namespace Oro\Bundle\PricingBundle\Api\Processor;
 
-use Oro\Bundle\ApiBundle\Processor\Context;
+use Oro\Bundle\ApiBundle\Processor\ChangeContextInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
 /**
- * Collects price lists with added, updated or deleted schedules to later update lexemes.
+ * Collects price lists with added, updated or deleted schedules to later build combined price lists.
  */
 class CollectPriceListsToUpdateCombinedPriceLists implements ProcessorInterface
 {
@@ -17,20 +17,16 @@ class CollectPriceListsToUpdateCombinedPriceLists implements ProcessorInterface
      */
     public function process(ContextInterface $context)
     {
-        /** @var Context $context */
+        /** @var ChangeContextInterface $context */
 
-        $priceLists = $context->get(UpdateCombinedPriceLists::PRICE_LISTS) ?? [];
-        $entities = $context->getAllEntities();
+        $entities = $context->getAllEntities(true);
         foreach ($entities as $entity) {
             if ($entity instanceof PriceListSchedule) {
                 $priceList = $entity->getPriceList();
                 if (null !== $priceList) {
-                    $priceLists[$priceList->getId()] = $priceList;
+                    UpdateCombinedPriceLists::addPriceListToUpdate($context, $priceList);
                 }
             }
-        }
-        if ($priceLists) {
-            $context->set(UpdateCombinedPriceLists::PRICE_LISTS, $priceLists);
         }
     }
 }

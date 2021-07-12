@@ -11,9 +11,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class UpcomingLabelCheckoutLineItemValidatorTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var UpcomingLabelCheckoutLineItemValidator */
-    private $validator;
-
     /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $translator;
 
@@ -22,6 +19,9 @@ class UpcomingLabelCheckoutLineItemValidatorTest extends \PHPUnit\Framework\Test
 
     /** @var DateTimeFormatterInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $dateFormatter;
+
+    /** @var UpcomingLabelCheckoutLineItemValidator */
+    private $validator;
 
     protected function setUp(): void
     {
@@ -41,10 +41,17 @@ class UpcomingLabelCheckoutLineItemValidatorTest extends \PHPUnit\Framework\Test
         $product = $this->createMock(Product::class);
 
         $lineItem = $this->createMock(CheckoutLineItem::class);
-        $lineItem->expects($this->once())->method('getProduct')->willReturn($product);
+        $lineItem->expects($this->once())
+            ->method('getProduct')
+            ->willReturn($product);
 
-        $this->provider->expects($this->once())->method('isUpcoming')->with($product)->willReturn(true);
-        $this->provider->expects($this->once())->method('getAvailabilityDate')->with($product)
+        $this->provider->expects($this->once())
+            ->method('isUpcoming')
+            ->with($product)
+            ->willReturn(true);
+        $this->provider->expects($this->once())
+            ->method('getAvailabilityDate')
+            ->with($product)
             ->willReturn(null);
 
         $message = 'This product will be available later';
@@ -61,11 +68,18 @@ class UpcomingLabelCheckoutLineItemValidatorTest extends \PHPUnit\Framework\Test
         $product = $this->createMock(Product::class);
 
         $lineItem = $this->createMock(CheckoutLineItem::class);
-        $lineItem->expects($this->once())->method('getProduct')->willReturn($product);
+        $lineItem->expects($this->once())
+            ->method('getProduct')
+            ->willReturn($product);
 
         $today = new \DateTime('now', new \DateTimeZone('UTC'));
-        $this->provider->expects($this->once())->method('isUpcoming')->with($product)->willReturn(true);
-        $this->provider->expects($this->once())->method('getAvailabilityDate')->with($product)
+        $this->provider->expects($this->once())
+            ->method('isUpcoming')
+            ->with($product)
+            ->willReturn(true);
+        $this->provider->expects($this->once())
+            ->method('getAvailabilityDate')
+            ->with($product)
             ->willReturn($today);
 
         $this->translator->expects($this->once())
@@ -73,7 +87,10 @@ class UpcomingLabelCheckoutLineItemValidatorTest extends \PHPUnit\Framework\Test
             ->with('oro.inventory.is_upcoming.notification_with_date')
             ->willReturn('This product will be available on 1/1/19');
 
-        $this->dateFormatter->expects($this->once())->method('formatDate')->with($today)->willReturn('1/1/19');
+        $this->dateFormatter->expects($this->once())
+            ->method('formatDate')
+            ->with($today)
+            ->willReturn('1/1/19');
 
         $this->assertSame(
             'This product will be available on 1/1/19',
@@ -86,9 +103,13 @@ class UpcomingLabelCheckoutLineItemValidatorTest extends \PHPUnit\Framework\Test
         $product = $this->createMock(Product::class);
 
         $lineItem = $this->createMock(CheckoutLineItem::class);
-        $lineItem->expects($this->once())->method('getProduct')->willReturn($product);
+        $lineItem->expects($this->once())
+            ->method('getProduct')
+            ->willReturn($product);
 
-        $this->provider->expects($this->once())->method('isUpcoming')->with($product)->willReturn(false);
+        $this->provider->expects($this->once())
+            ->method('isUpcoming')
+            ->with($product)->willReturn(false);
 
         $this->assertNull($this->validator->getMessageIfLineItemUpcoming($lineItem));
     }

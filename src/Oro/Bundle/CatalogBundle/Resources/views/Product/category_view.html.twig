@@ -1,4 +1,4 @@
-{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% import '@OroUI/macros.html.twig' as UI %}
 {% set categoryTitle  = oro_product_category_title(entity)|oro_html_sanitize %}
 
 {%- if entity and is_granted('EDIT', entity) -%}

@@ -1,12 +1,12 @@
-{% extends 'OroUIBundle:actions:update.html.twig' %}
-{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+{% extends '@OroUI/actions/update.html.twig' %}
+{% import '@OroDataGrid/macros.html.twig' as dataGrid %}
 
 {% oro_title_set({params : {"%sku%": entity.sku|default('N/A'|trans) , "%name%": (entity.id ? entity.defaultName.string : '')|default('N/A'|trans) } }) %}
 
 {% set formAction = path('oro_product_visibility_edit', { 'id': entity.id })  %}
 
 {% block navButtons %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
 
     {{ UI.cancelButton(path('oro_product_index')) }}
     {% set html = UI.saveAndCloseButton() %}
@@ -18,7 +18,7 @@
 
 {% block pageHeader %}
     {% if entity.id %}
-        {% import 'OroUIBundle::macros.html.twig' as UI %}
+        {% import '@OroUI/macros.html.twig' as UI %}
         {% set breadcrumbs = {
             'entity':      entity,
             'indexPath':   path('oro_product_index'),
@@ -43,7 +43,7 @@
                 {% if scope %}
                     {% set content = '' %}
                     {% if form.children[scope.id] is defined  %}
-                        {% include 'OroVisibilityBundle:ProductVisibility/widget:scope.html.twig' with {form: form.children[scope.id]} %}
+                        {% include '@OroVisibility/ProductVisibility/widget/scope.html.twig' with {form: form.children[scope.id]} %}
                     {% endif %}
                 {% endif %}
             {% else %}
@@ -52,7 +52,7 @@
                     {% set content = '' %}
                     {% if form.children[scope.id] is defined  %}
                         {% set content %}
-                            {% include 'OroVisibilityBundle:ProductVisibility/widget:scope.html.twig' with {form: form.children[scope.id]} %}
+                            {% include '@OroVisibility/ProductVisibility/widget/scope.html.twig' with {form: form.children[scope.id]} %}
                         {% endset %}
                     {% endif %}
 

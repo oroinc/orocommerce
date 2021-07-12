@@ -68,7 +68,7 @@ class FormViewListener
         }
 
         $template = $event->getEnvironment()->render(
-            'OroShippingBundle:Product:shipping_options_view.html.twig',
+            '@OroShipping/Product/shipping_options_view.html.twig',
             [
                 'entity' => $product,
                 'shippingOptions' => $shippingOptions
@@ -83,7 +83,7 @@ class FormViewListener
     public function onProductEdit(BeforeListRenderEvent $event)
     {
         $template = $event->getEnvironment()->render(
-            'OroShippingBundle:Product:shipping_options_update.html.twig',
+            '@OroShipping/Product/shipping_options_update.html.twig',
             ['form' => $event->getFormView()]
         );
         $this->addBlock($event->getScrollData(), $template, 'oro.shipping.product.section.shipping_options', 1800);
