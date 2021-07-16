@@ -23,11 +23,6 @@ class ProductSegmentWithLoggingErrorsProvider implements ProductSegmentProviderI
     /** @var TokenAccessorInterface */
     private $tokenAccessor;
 
-    /**
-     * @param SegmentManager         $segmentManager
-     * @param LoggerInterface        $logger
-     * @param TokenAccessorInterface $tokenAccessor
-     */
     public function __construct(
         SegmentManager $segmentManager,
         LoggerInterface $logger,

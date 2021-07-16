@@ -26,36 +26,23 @@ class DatagridListener
     /** @var string */
     protected $dataClass;
 
-    /**
-     * @param ManagerRegistry $doctrine
-     * @param RequestProductHandler $requestProductHandler
-     */
     public function __construct(ManagerRegistry $doctrine, RequestProductHandler $requestProductHandler)
     {
         $this->doctrine = $doctrine;
         $this->requestProductHandler = $requestProductHandler;
     }
 
-    /**
-     * @param BuildBefore $event
-     */
     public function onBuildBeforeProductsSelect(BuildBefore $event)
     {
         $this->addCategoryInfo($event->getConfig());
     }
 
-    /**
-     * @param PreBuild $event
-     */
     public function onPreBuildProducts(PreBuild $event)
     {
         $this->addFilterForNonCategorizedProduct($event);
         $this->addFilterByCategory($event);
     }
 
-    /**
-     * @param DatagridConfiguration $config
-     */
     protected function addCategoryInfo(DatagridConfiguration $config)
     {
         $query = $config->getOrmQuery();
@@ -83,9 +70,6 @@ class DatagridListener
         $this->addConfigElement($config, '[filters][columns]', $categoryFilter, self::CATEGORY_COLUMN);
     }
 
-    /**
-     * @param PreBuild $event
-     */
     protected function addFilterForNonCategorizedProduct(PreBuild $event)
     {
         $isIncludeNonCategorizedProducts = $event->getParameters()->get('includeNotCategorizedProducts')
@@ -103,9 +87,6 @@ class DatagridListener
         $config->getOrmQuery()->addOrWhere('product.category IS NULL');
     }
 
-    /**
-     * @param PreBuild $event
-     */
     protected function addFilterByCategory(PreBuild $event)
     {
         $categoryId = $event->getParameters()->get('categoryId');

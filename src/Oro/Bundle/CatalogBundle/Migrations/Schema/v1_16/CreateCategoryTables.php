@@ -34,8 +34,6 @@ class CreateCategoryTables implements Migration, OrderedMigrationInterface
 
     /**
      * Create oro_catalog_cat_title table
-     *
-     * @param Schema $schema
      */
     private function createOroCatalogCategoryTitleTable(Schema $schema): void
     {
@@ -52,8 +50,6 @@ class CreateCategoryTables implements Migration, OrderedMigrationInterface
 
     /**
      * Add oro_catalog_cat_title foreign keys.
-     *
-     * @param Schema $schema
      */
     private function addOroCatalogCategoryTitleForeignKeys(Schema $schema): void
     {
@@ -74,8 +70,6 @@ class CreateCategoryTables implements Migration, OrderedMigrationInterface
 
     /**
      * Create oro_catalog_cat_s_descr table
-     *
-     * @param Schema $schema
      */
     private function createOroCatalogCategoryShortDescriptionTable(Schema $schema): void
     {
@@ -91,8 +85,6 @@ class CreateCategoryTables implements Migration, OrderedMigrationInterface
 
     /**
      * Add oro_catalog_cat_s_descr foreign keys.
-     *
-     * @param Schema $schema
      */
     private function addOroCatalogCategoryShortDescriptionForeignKeys(Schema $schema): void
     {
@@ -113,8 +105,6 @@ class CreateCategoryTables implements Migration, OrderedMigrationInterface
 
     /**
      * Create oro_catalog_cat_l_descr table
-     *
-     * @param Schema $schema
      */
     private function createOroCatalogCategoryLongDescriptionTable(Schema $schema): void
     {
@@ -132,8 +122,6 @@ class CreateCategoryTables implements Migration, OrderedMigrationInterface
 
     /**
      * Add oro_catalog_cat_l_descr foreign keys.
-     *
-     * @param Schema $schema
      */
     private function addOroCatalogCategoryLongDescriptionForeignKeys(Schema $schema): void
     {

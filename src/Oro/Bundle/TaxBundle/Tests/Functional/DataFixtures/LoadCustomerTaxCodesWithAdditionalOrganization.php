@@ -122,9 +122,6 @@ class LoadCustomerTaxCodesWithAdditionalOrganization extends AbstractFixture imp
         return $customerTaxCode;
     }
 
-    /**
-     * @param ObjectManager $manager
-     */
     protected function createAdditionalOrganization(ObjectManager $manager)
     {
         $organization = new Organization();

@@ -12,9 +12,6 @@ class VisibilityIdFilterFactory
     /** @var VisibilityIdHelper */
     private $visibilityIdHelper;
 
-    /**
-     * @param VisibilityIdHelper $visibilityIdHelper
-     */
     public function __construct(VisibilityIdHelper $visibilityIdHelper)
     {
         $this->visibilityIdHelper = $visibilityIdHelper;
@@ -22,10 +19,6 @@ class VisibilityIdFilterFactory
 
     /**
      * Creates a new instance of VisibilityIdFilter.
-     *
-     * @param string $dataType
-     *
-     * @return VisibilityIdFilter
      */
     public function createFilter(string $dataType): VisibilityIdFilter
     {

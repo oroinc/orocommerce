@@ -21,10 +21,6 @@ class PrepareAddShoppingListItemsFormData implements ProcessorInterface
     /** @var ValidatorInterface */
     private $validator;
 
-    /**
-     * @param EntityInstantiator $entityInstantiator
-     * @param ValidatorInterface $validator
-     */
     public function __construct(EntityInstantiator $entityInstantiator, ValidatorInterface $validator)
     {
         $this->entityInstantiator = $entityInstantiator;

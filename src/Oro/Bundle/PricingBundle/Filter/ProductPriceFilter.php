@@ -28,12 +28,6 @@ class ProductPriceFilter extends NumberRangeFilter
     /** @var string */
     protected $productPriceClass;
 
-    /**
-     * @param FormFactoryInterface        $factory
-     * @param FilterUtility               $util
-     * @param UnitLabelFormatterInterface $formatter
-     * @param PriceListRequestHandler     $priceListRequestHandler
-     */
     public function __construct(
         FormFactoryInterface $factory,
         FilterUtility $util,

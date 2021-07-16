@@ -13,10 +13,6 @@ class CollectContextEvent extends Event
      */
     private $context = [];
 
-    /**
-     *
-     * @param array $context
-     */
     public function __construct(array $context)
     {
         $this->context = $context;

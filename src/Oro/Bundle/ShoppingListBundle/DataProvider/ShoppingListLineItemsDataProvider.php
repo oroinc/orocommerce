@@ -19,9 +19,6 @@ class ShoppingListLineItemsDataProvider
      */
     protected $lineItems = [];
 
-    /**
-     * @param ManagerRegistry $registry
-     */
     public function __construct(ManagerRegistry $registry)
     {
         $this->registry = $registry;
@@ -52,10 +49,6 @@ class ShoppingListLineItemsDataProvider
 
     /**
      * Checks if shopping list line items collection is initialized along with their products.
-     *
-     * @param ShoppingList $shoppingList
-     *
-     * @return bool
      */
     private function isInitializedWithProducts(ShoppingList $shoppingList): bool
     {

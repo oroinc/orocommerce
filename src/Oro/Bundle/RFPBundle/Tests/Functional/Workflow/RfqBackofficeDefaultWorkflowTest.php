@@ -376,10 +376,6 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
         return $crawler;
     }
 
-    /**
-     * @param Request $request
-     * @param array $buttonTitles
-     */
     private function assertButtonsAvailable(Request $request, array $buttonTitles)
     {
         $crawler = $this->openRequestWorkflowWidget($request);

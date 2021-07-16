@@ -26,10 +26,6 @@ class OroVisibilityBundle implements Migration, RenameExtensionAwareInterface
         $this->renameTables($schema, $queries);
     }
 
-    /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     */
     private function renameTables(Schema $schema, QueryBag $queries)
     {
         $extension = $this->renameExtension;
@@ -42,7 +38,6 @@ class OroVisibilityBundle implements Migration, RenameExtensionAwareInterface
         $extension->renameTable($schema, $queries, 'oro_acc_grp_ctgr_vsb_resolv', 'oro_cus_grp_ctgr_vsb_resolv');
         $extension->renameTable($schema, $queries, 'oro_acc_ctgr_vsb_resolv', 'oro_cus_ctgr_vsb_resolv');
     }
-
 
     /**
      * {@inheritdoc}

@@ -26,10 +26,6 @@ class ContentWidgetPathProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider pathsDataProvider
-     *
-     * @param string|null $theme
-     * @param string|null $contentWidgetType
-     * @param array       $expectedResults
      */
     public function testGetPaths(?string $theme, ?string $contentWidgetType, array $expectedResults): void
     {
@@ -52,9 +48,6 @@ class ContentWidgetPathProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($expectedResults, $this->provider->getPaths([]));
     }
 
-    /**
-     * @return array
-     */
     public function pathsDataProvider(): array
     {
         return [
@@ -93,9 +86,6 @@ class ContentWidgetPathProviderTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param array $themes
-     */
     private function setUpThemeManager(array $themes): void
     {
         $map = [];

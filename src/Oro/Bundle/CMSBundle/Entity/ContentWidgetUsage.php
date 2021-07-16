@@ -59,17 +59,11 @@ class ContentWidgetUsage
      */
     protected $entityField;
 
-    /**
-     * @return null|int
-     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @return null|ContentWidget
-     */
     public function getContentWidget(): ?ContentWidget
     {
         return $this->contentWidget;
@@ -86,9 +80,6 @@ class ContentWidgetUsage
         return $this;
     }
 
-    /**
-     * @return null|string
-     */
     public function getEntityClass(): ?string
     {
         return $this->entityClass;
@@ -105,9 +96,6 @@ class ContentWidgetUsage
         return $this;
     }
 
-    /**
-     * @return null|int
-     */
     public function getEntityId(): ?int
     {
         return $this->entityId;
@@ -124,9 +112,6 @@ class ContentWidgetUsage
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getEntityField(): ?string
     {
         return $this->entityField;

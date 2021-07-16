@@ -239,9 +239,6 @@ class LoadRequestData extends AbstractFixture implements ContainerAwareInterface
         ];
     }
 
-    /**
-     * @param ObjectManager $manager
-     */
     public function load(ObjectManager $manager)
     {
         /** @var User $owner */
@@ -297,9 +294,6 @@ class LoadRequestData extends AbstractFixture implements ContainerAwareInterface
         $this->updatedInternalStatus($manager);
     }
 
-    /**
-     * @param ObjectManager $manager
-     */
     protected function updatedInternalStatus(ObjectManager $manager)
     {
         $internalEntityClass = ExtendHelper::buildEnumValueClassName('rfp_internal_status');
@@ -324,9 +318,6 @@ class LoadRequestData extends AbstractFixture implements ContainerAwareInterface
         $manager->flush();
     }
 
-    /**
-     * @param Request $request
-     */
     protected function processRequestProducts(Request $request)
     {
         $currencies = $this->getCurrencies();

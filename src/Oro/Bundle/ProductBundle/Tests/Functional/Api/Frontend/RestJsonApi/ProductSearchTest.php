@@ -40,11 +40,6 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
         $this->reindexProductData();
     }
 
-    /**
-     * @param array $expectedContent
-     *
-     * @return array
-     */
     private function getExpectedContentWithPaginationLinks(array $expectedContent): array
     {
         $content = Yaml::dump($expectedContent);
@@ -53,9 +48,6 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
         return self::processTemplateData(Yaml::parse($content));
     }
 
-    /**
-     * @return bool
-     */
     private function isMySqlOrmSearchEngine(): bool
     {
         if (\Oro\Bundle\SearchBundle\Engine\Orm::ENGINE_NAME !== $this->getSearchEngine()) {

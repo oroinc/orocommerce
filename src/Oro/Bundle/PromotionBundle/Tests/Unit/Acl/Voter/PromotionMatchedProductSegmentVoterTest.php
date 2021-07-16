@@ -130,9 +130,6 @@ class PromotionMatchedProductSegmentVoterTest extends \PHPUnit\Framework\TestCas
         $this->voter->vote($token, $segment, $attributes);
     }
 
-    /**
-     * @return array
-     */
     public function supportedAttributesDataProvider(): array
     {
         return [
@@ -141,9 +138,6 @@ class PromotionMatchedProductSegmentVoterTest extends \PHPUnit\Framework\TestCas
         ];
     }
 
-    /**
-     * @return array
-     */
     public function unsupportedAttributesDataProvider(): array
     {
         return [

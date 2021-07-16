@@ -19,10 +19,6 @@ class MoneyOrderMethodProvider extends AbstractPaymentMethodProvider
      */
     private $configProvider;
 
-    /**
-     * @param MoneyOrderConfigProviderInterface $configProvider
-     * @param MoneyOrderPaymentMethodFactoryInterface $factory
-     */
     public function __construct(
         MoneyOrderConfigProviderInterface $configProvider,
         MoneyOrderPaymentMethodFactoryInterface $factory
@@ -44,9 +40,6 @@ class MoneyOrderMethodProvider extends AbstractPaymentMethodProvider
         }
     }
 
-    /**
-     * @param MoneyOrderConfigInterface $config
-     */
     protected function addMoneyOrderMethod(MoneyOrderConfigInterface $config)
     {
         $this->addMethod(

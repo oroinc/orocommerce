@@ -27,10 +27,6 @@ class OroOrderBundle implements Migration, OrderedMigrationInterface, RenameExte
         $this->updateOroOrderAddressTable($schema, $queries);
     }
 
-    /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     */
     private function updateOroOrderAddressTable(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('oro_order_address');
@@ -60,8 +56,6 @@ class OroOrderBundle implements Migration, OrderedMigrationInterface, RenameExte
 
     /**
      * Sets the RenameExtension
-     *
-     * @param RenameExtension $renameExtension
      */
     public function setRenameExtension(RenameExtension $renameExtension)
     {

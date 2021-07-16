@@ -88,9 +88,6 @@ class CombinedPriceListScheduleCommandTest extends WebTestCase
         $this->assertFalse($command->isActive());
     }
 
-    /**
-     * @return array
-     */
     public function activeDataProvider(): array
     {
         return [
@@ -142,9 +139,6 @@ class CombinedPriceListScheduleCommandTest extends WebTestCase
         );
     }
 
-    /**
-     * @return array
-     */
     private function getWebsiteIds(): array
     {
         /** @var WebsiteProviderInterface $websiteProvider */

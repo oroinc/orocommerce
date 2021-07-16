@@ -71,12 +71,6 @@ class LineItemController extends RestController implements ClassResourceInterfac
      *      resource=true
      * )
      * @AclAncestor("oro_shopping_list_frontend_update")
-     *
-     * @param int $shoppingListId
-     * @param int $productId
-     * @param string $unitCode
-     *
-     * @return Response
      */
     public function deleteConfigurableAction(int $shoppingListId, int $productId, string $unitCode): Response
     {

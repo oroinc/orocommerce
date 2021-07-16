@@ -29,11 +29,6 @@ class LandingPageProvider
      */
     private $localizationHelper;
 
-    /**
-     * @param ManagerRegistry $doctrine
-     * @param LocalizationHelper $localizationHelper
-     * @param TranslatorInterface $translator
-     */
     public function __construct(
         ManagerRegistry $doctrine,
         LocalizationHelper $localizationHelper,

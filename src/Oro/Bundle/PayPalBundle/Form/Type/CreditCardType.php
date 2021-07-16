@@ -136,7 +136,6 @@ class CreditCardType extends AbstractType
         ]);
     }
 
-
     /**
      * {@inheritdoc}
      */

@@ -11,10 +11,6 @@ use Oro\Bundle\RedirectBundle\Entity\Slug;
  */
 class BrandRepository extends EntityRepository
 {
-    /**
-     * @param Slug $slug
-     * @return Brand|null
-     */
     public function findOneBySlug(Slug $slug): ?Brand
     {
         $qb = $this->createQueryBuilder('b');

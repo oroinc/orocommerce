@@ -23,7 +23,7 @@ class SelectSwitchInputType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         parent::configureOptions($resolver);
-        
+
         $resolver->setRequired(['mode']);
         $resolver->setDefaults(
             [
@@ -37,7 +37,7 @@ class SelectSwitchInputType extends AbstractType
         $resolver->setAllowedTypes('page_component_options', 'array');
         $resolver->setAllowedTypes('page_component', 'string');
     }
-    
+
     /**
      * @return string
      */
@@ -62,19 +62,18 @@ class SelectSwitchInputType extends AbstractType
         return ChoiceType::class;
     }
 
-
     /**
      * {@inheritdoc}
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['page_component'] = $options['page_component'];
-        
+
         $component_options = [
             'choices' => $options['choices'],
             'mode' => $options['mode'],
             'value' => $form->getData()
-            
+
         ];
         $view->vars['page_component_options'] = array_merge($options['page_component_options'], $component_options);
     }

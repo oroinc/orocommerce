@@ -75,9 +75,6 @@ class LoadProductSearchData implements ProcessorInterface
     /**
      * Replaces "." delimiter in property_path and depends_on attributes with "_".
      * It is required due to "." is used to specify a path to a property of a nested object.
-     *
-     * @param EntityDefinitionConfig $config
-     * @param EntityMetadata         $metadata
      */
     private function updateConfigAndMetadata(EntityDefinitionConfig $config, EntityMetadata $metadata): void
     {

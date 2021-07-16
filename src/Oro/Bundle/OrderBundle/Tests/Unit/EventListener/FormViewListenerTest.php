@@ -259,9 +259,6 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->onShoppingListView(new BeforeListRenderEvent($this->env, new ScrollData(), new \stdClass()));
     }
 
-    /**
-     * @param int|null $id
-     */
     private function assertRequestCalled(?int $id): void
     {
         /** @var Request|\PHPUnit\Framework\MockObject\MockObject $request */

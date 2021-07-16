@@ -31,33 +31,21 @@ class ProductUpdateHandler extends UpdateHandler
     /** @var RelatedItemsHandler */
     private $relatedItemsHandler;
 
-    /**
-     * @param ActionGroupRegistry $actionGroupRegistry
-     */
     public function setActionGroupRegistry(ActionGroupRegistry $actionGroupRegistry)
     {
         $this->actionGroupRegistry = $actionGroupRegistry;
     }
 
-    /**
-     * @param TranslatorInterface $translator
-     */
     public function setTranslator(TranslatorInterface $translator)
     {
         $this->translator = $translator;
     }
 
-    /**
-     * @param SymfonyRouter $symfonyRouter
-     */
     public function setRouter(SymfonyRouter $symfonyRouter)
     {
         $this->symfonyRouter = $symfonyRouter;
     }
 
-    /**
-     * @param RelatedItemsHandler $relatedItemsHandler
-     */
     public function setRelatedItemsHandler(RelatedItemsHandler $relatedItemsHandler)
     {
         $this->relatedItemsHandler = $relatedItemsHandler;

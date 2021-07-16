@@ -10,9 +10,6 @@ use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
  */
 class DatagridLineItemsDataEditListener
 {
-    /**
-     * @param DatagridLineItemsDataEvent $event
-     */
     public function onLineItemData(DatagridLineItemsDataEvent $event): void
     {
         foreach ($event->getLineItems() as $lineItem) {
@@ -26,10 +23,6 @@ class DatagridLineItemsDataEditListener
         }
     }
 
-    /**
-     * @param Product $product
-     * @return array
-     */
     private function getProductUnitsList(Product $product): array
     {
         $list = [];

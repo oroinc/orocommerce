@@ -33,10 +33,6 @@ class ExpandProductCollectionContentVariant implements ProcessorInterface
     /** @var ValueNormalizer */
     private $valueNormalizer;
 
-    /**
-     * @param ActionProcessorBagInterface $processorBag
-     * @param ValueNormalizer             $valueNormalizer
-     */
     public function __construct(
         ActionProcessorBagInterface $processorBag,
         ValueNormalizer $valueNormalizer
@@ -69,12 +65,6 @@ class ExpandProductCollectionContentVariant implements ProcessorInterface
         $context->setData($data);
     }
 
-    /**
-     * @param CustomizeLoadedDataContext $context
-     * @param int                        $contentVariantId
-     *
-     * @return GetListContext
-     */
     private function searchProducts(CustomizeLoadedDataContext $context, int $contentVariantId): GetListContext
     {
         $productSearchProcessor = $this->processorBag->getProcessor(ApiAction::GET_LIST);
@@ -113,11 +103,6 @@ class ExpandProductCollectionContentVariant implements ProcessorInterface
         return $productSearchContext;
     }
 
-    /**
-     * @param RequestType $requestType
-     *
-     * @return string
-     */
     private function getProductSearchEntityType(RequestType $requestType): string
     {
         return ValueNormalizerUtil::convertToEntityType(

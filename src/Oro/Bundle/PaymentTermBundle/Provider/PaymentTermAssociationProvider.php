@@ -23,11 +23,6 @@ class PaymentTermAssociationProvider
     /** @var string */
     private $associationName;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param ConfigProvider $configProvider
-     * @param PropertyAccessor $propertyAccessor
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         ConfigProvider $configProvider,

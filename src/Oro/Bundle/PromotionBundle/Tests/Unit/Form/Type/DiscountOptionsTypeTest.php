@@ -249,9 +249,6 @@ class DiscountOptionsTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * @param FormInterface $form
-     */
     private function assertFormFieldsPreset(FormInterface $form)
     {
         $this->assertTrue($form->has(AbstractDiscount::DISCOUNT_TYPE));

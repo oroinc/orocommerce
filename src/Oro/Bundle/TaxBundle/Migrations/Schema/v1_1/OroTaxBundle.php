@@ -22,8 +22,6 @@ class OroTaxBundle implements Migration
 
     /**
      * Create orob2b_tax_value table
-     *
-     * @param Schema $schema
      */
     protected function createOroTaxValueTable(Schema $schema)
     {
@@ -41,8 +39,6 @@ class OroTaxBundle implements Migration
 
     /**
      * Create orob2b_tax_apply table
-     *
-     * @param Schema $schema
      */
     protected function createOroTaxApplyTable(Schema $schema)
     {
@@ -60,8 +56,6 @@ class OroTaxBundle implements Migration
 
     /**
      * Add orob2b_tax_apply foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroTaxApplyForeignKeys(Schema $schema)
     {

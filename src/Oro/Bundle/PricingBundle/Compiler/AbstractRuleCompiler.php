@@ -42,14 +42,6 @@ abstract class AbstractRuleCompiler
      */
     protected $cache;
 
-    /**
-     * @param ExpressionParser $parser
-     * @param ExpressionPreprocessorInterface $preprocessor
-     * @param NodeToQueryDesignerConverter $nodeConverter
-     * @param QueryConverter $queryConverter
-     * @param QueryExpressionBuilder $expressionBuilder
-     * @param Cache $cache
-     */
     public function __construct(
         ExpressionParser $parser,
         ExpressionPreprocessorInterface $preprocessor,
@@ -66,10 +58,6 @@ abstract class AbstractRuleCompiler
         $this->cache = $cache;
     }
 
-    /**
-     * @param QueryBuilder $qb
-     * @param array $params
-     */
     protected function applyParameters(QueryBuilder $qb, array $params)
     {
         foreach ($params as $key => $value) {
@@ -77,10 +65,6 @@ abstract class AbstractRuleCompiler
         }
     }
 
-    /**
-     * @param QueryBuilder $qb
-     * @param array $fieldsMap
-     */
     protected function addSelectInOrder(QueryBuilder $qb, array $fieldsMap)
     {
         $select = [];

@@ -22,9 +22,6 @@ class ShippingOriginType extends AbstractType
     /** @var AddressCountryAndRegionSubscriber */
     protected $countryAndRegionSubscriber;
 
-    /**
-     * @param AddressCountryAndRegionSubscriber $eventListener
-     */
     public function __construct(AddressCountryAndRegionSubscriber $eventListener)
     {
         $this->countryAndRegionSubscriber = $eventListener;

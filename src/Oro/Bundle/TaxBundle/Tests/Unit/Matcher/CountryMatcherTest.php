@@ -45,7 +45,6 @@ class CountryMatcherTest extends AbstractMatcherTest
             $taxCodes[] = TaxCode::create($customerTaxCode, TaxCodeInterface::TYPE_ACCOUNT);
         }
 
-
         $taxCodes = TaxCodes::create($taxCodes);
 
         $isCallFindByCountryAndTaxCode = $country && $taxCodes->isFullFilledTaxCode();

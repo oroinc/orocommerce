@@ -35,11 +35,6 @@ class AsyncIndexer implements IndexerInterface
      */
     private $inputValidator;
 
-    /**
-     * @param IndexerInterface $baseIndexer
-     * @param MessageProducerInterface $messageProducer
-     * @param IndexerInputValidator $indexerInputValidator
-     */
     public function __construct(
         IndexerInterface $baseIndexer,
         MessageProducerInterface $messageProducer,

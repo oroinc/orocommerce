@@ -29,12 +29,6 @@ class FrontendShoppingListsViewsList extends AbstractViewsList
     /** @var TokenAccessorInterface */
     private $tokenAccessor;
 
-    /**
-     * @param TranslatorInterface $translator
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param AclVoterInterface $aclVoter
-     * @param TokenAccessorInterface $tokenAccessor
-     */
     public function __construct(
         TranslatorInterface $translator,
         AuthorizationCheckerInterface $authorizationChecker,
@@ -78,9 +72,6 @@ class FrontendShoppingListsViewsList extends AbstractViewsList
         return $views;
     }
 
-    /**
-     * @return string
-     */
     private function getFullName(): string
     {
         /** @var CustomerUser $customerUser */
@@ -92,9 +83,6 @@ class FrontendShoppingListsViewsList extends AbstractViewsList
         return $customerUser->getFullName();
     }
 
-    /**
-     * @return int
-     */
     private function isViewAccessLevelBasic(): int
     {
         $observer = new OneShotIsGrantedObserver();

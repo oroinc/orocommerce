@@ -38,12 +38,6 @@ abstract class AbstractCouponHandler
      */
     protected $authorizationChecker;
 
-    /**
-     * @param EntityRoutingHelper $routingHelper
-     * @param ManagerRegistry $registry
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     */
     public function __construct(
         EntityRoutingHelper $routingHelper,
         ManagerRegistry $registry,

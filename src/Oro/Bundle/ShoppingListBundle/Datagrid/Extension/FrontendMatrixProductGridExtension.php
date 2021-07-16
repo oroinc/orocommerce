@@ -47,15 +47,6 @@ class FrontendMatrixProductGridExtension extends AbstractExtension
     /** @var DataGridThemeHelper */
     private $dataGridThemeHelper;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param CurrentShoppingListManager $currentShoppingListManager
-     * @param MatrixGridOrderFormProvider $matrixGridOrderFormProvider
-     * @param ProductFormAvailabilityProvider $productFormAvailabilityProvider
-     * @param FrontendProductPricesProvider $frontendProductPricesProvider
-     * @param MatrixGridOrderProvider $matrixGridOrderProvider
-     * @param DataGridThemeHelper $dataGridThemeHelper
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         CurrentShoppingListManager $currentShoppingListManager,

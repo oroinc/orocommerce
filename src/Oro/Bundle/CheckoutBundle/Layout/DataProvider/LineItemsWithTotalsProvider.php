@@ -27,10 +27,6 @@ class LineItemsWithTotalsProvider
      */
     protected $lineItems = [];
 
-    /**
-     * @param CheckoutLineItemsManager $checkoutLineItemsManager
-     * @param LineItemSubtotalProvider $lineItemsSubtotalProvider
-     */
     public function __construct(
         CheckoutLineItemsManager $checkoutLineItemsManager,
         LineItemSubtotalProvider $lineItemsSubtotalProvider

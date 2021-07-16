@@ -12,9 +12,6 @@ class OrderPaymentStatusProvider
      */
     protected $paymentStatusProvider;
 
-    /**
-     * @param PaymentStatusProviderInterface $paymentStatusProvider
-     */
     public function __construct(PaymentStatusProviderInterface $paymentStatusProvider)
     {
         $this->paymentStatusProvider = $paymentStatusProvider;

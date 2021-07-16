@@ -212,10 +212,6 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
         return $price ?: Price::create(mt_rand(10, 1000), $currency);
     }
 
-    /**
-     * @param Order $order
-     * @return ProductPriceScopeCriteriaInterface
-     */
     protected function getSearchScope(Order $order): ProductPriceScopeCriteriaInterface
     {
         return $this->container->get('oro_pricing.model.product_price_scope_criteria_factory')

@@ -15,9 +15,6 @@ class ProductVariantFieldValidator extends ConstraintValidator
     /** @var CustomFieldProvider */
     protected $customFieldProvider;
 
-    /**
-     * @param CustomFieldProvider $customFieldProvider
-     */
     public function __construct(CustomFieldProvider $customFieldProvider)
     {
         $this->customFieldProvider = $customFieldProvider;

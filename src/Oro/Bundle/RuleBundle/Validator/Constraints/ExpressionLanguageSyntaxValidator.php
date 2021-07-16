@@ -13,9 +13,6 @@ class ExpressionLanguageSyntaxValidator extends ConstraintValidator
      */
     private $basicExpressionLanguageValidator;
 
-    /**
-     * @param BasicExpressionLanguageValidator $basicExpressionLanguageValidator
-     */
     public function __construct(BasicExpressionLanguageValidator $basicExpressionLanguageValidator)
     {
         $this->basicExpressionLanguageValidator = $basicExpressionLanguageValidator;

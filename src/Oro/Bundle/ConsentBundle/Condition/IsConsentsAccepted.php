@@ -36,11 +36,6 @@ class IsConsentsAccepted extends AbstractCondition implements ContextAccessorAwa
     /** @var PropertyPath */
     private $acceptedConsents;
 
-    /**
-     * @param EnabledConsentProvider $enabledConsentProvider
-     * @param ConsentAcceptanceProvider $consentAcceptanceProvider
-     * @param TokenStorageInterface $tokenStorage
-     */
     public function __construct(
         EnabledConsentProvider $enabledConsentProvider,
         ConsentAcceptanceProvider $consentAcceptanceProvider,

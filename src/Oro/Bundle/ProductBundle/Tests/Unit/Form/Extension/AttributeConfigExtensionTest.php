@@ -49,10 +49,6 @@ class AttributeConfigExtensionTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider configProvider
-     *
-     * @param array $datagrid
-     * @param array $attribute
-     * @param array $expected
      */
     public function testBuildForm(array $datagrid, array $attribute, array $expected)
     {

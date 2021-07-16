@@ -55,9 +55,6 @@ class ContentVariantRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider findChildrenVariantIdsDataProvider
-     *
-     * @param array $context
-     * @param array $expected
      */
     public function testFindChildrenVariantIds(array $context, array $expected): void
     {

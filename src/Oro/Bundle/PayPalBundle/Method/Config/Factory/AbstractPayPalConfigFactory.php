@@ -24,10 +24,6 @@ abstract class AbstractPayPalConfigFactory
      */
     private $identifierGenerator;
 
-    /**
-     * @param LocalizationHelper $localizationHelper
-     * @param IntegrationIdentifierGeneratorInterface $identifierGenerator
-     */
     public function __construct(
         LocalizationHelper $localizationHelper,
         IntegrationIdentifierGeneratorInterface $identifierGenerator

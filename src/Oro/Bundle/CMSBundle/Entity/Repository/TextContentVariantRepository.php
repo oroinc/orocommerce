@@ -14,11 +14,6 @@ use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
  */
 class TextContentVariantRepository extends EntityRepository
 {
-    /**
-     * @param ContentBlock $contentBlock
-     * @param ScopeCriteria $scopeCriteria
-     * @return TextContentVariant|null
-     */
     public function getMatchingVariantForBlockByCriteria(
         ContentBlock $contentBlock,
         ScopeCriteria $scopeCriteria
@@ -39,10 +34,6 @@ class TextContentVariantRepository extends EntityRepository
         return reset($result);
     }
 
-    /**
-     * @param ContentBlock $contentBlock
-     * @return TextContentVariant|null
-     */
     public function getDefaultContentVariantForContentBlock(
         ContentBlock $contentBlock
     ): ?TextContentVariant {

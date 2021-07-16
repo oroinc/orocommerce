@@ -45,10 +45,6 @@ abstract class BaseProductVisibilityResolved extends BaseVisibilityResolved
      */
     protected $category;
 
-    /**
-     * @param Scope $scope
-     * @param Product $product
-     */
     public function __construct(Scope $scope, Product $product)
     {
         $this->scope = $scope;

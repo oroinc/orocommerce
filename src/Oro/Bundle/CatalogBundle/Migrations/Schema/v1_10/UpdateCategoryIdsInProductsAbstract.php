@@ -17,9 +17,6 @@ abstract class UpdateCategoryIdsInProductsAbstract extends ParametrizedMigration
      */
     private $extendExtension;
 
-    /**
-     * @param ExtendExtension $extendExtension
-     */
     public function setExtendExtension(ExtendExtension $extendExtension)
     {
         $this->extendExtension = $extendExtension;

@@ -53,14 +53,6 @@ class WebCatalogEntityIndexerListener
      */
     private $localizationHelper;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param ConfigManager $configManager
-     * @param AbstractWebsiteLocalizationProvider $websiteLocalizationProvider
-     * @param WebsiteContextManager $websiteContextManager
-     * @param ContentVariantProviderInterface $contentVariantProvider
-     * @param LocalizationHelper $localizationHelper
-     */
     public function __construct(
         ManagerRegistry $registry,
         ConfigManager $configManager,
@@ -77,9 +69,6 @@ class WebCatalogEntityIndexerListener
         $this->localizationHelper = $localizationHelper;
     }
 
-    /**
-     * @param IndexEntityEvent $event
-     */
     public function onWebsiteSearchIndex(IndexEntityEvent $event)
     {
         $websiteId = $this->websiteContextManager->getWebsiteId($event->getContext());

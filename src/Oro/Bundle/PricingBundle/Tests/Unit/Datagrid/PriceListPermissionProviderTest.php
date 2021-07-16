@@ -24,10 +24,6 @@ class PriceListPermissionProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param ResultRecordInterface $record
-     * @param array $actions
-     * @param array $expected
-     *
      * @dataProvider permissionsDataProvider
      */
     public function testGetPermissions(ResultRecordInterface $record, array $actions, array $expected)

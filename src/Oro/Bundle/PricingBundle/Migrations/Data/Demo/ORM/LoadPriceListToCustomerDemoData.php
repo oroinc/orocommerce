@@ -74,7 +74,6 @@ class LoadPriceListToCustomerDemoData extends LoadBasePriceListRelationDemoData
             $this->customers[$name] = $customer;
         }
 
-
         return $this->customers[$name];
     }
 

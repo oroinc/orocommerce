@@ -81,9 +81,6 @@ class CouponAddTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitProvider
-     *
-     * @param array $submittedData
-     * @param array $expectedData
      */
     public function testSubmit(array $submittedData, array $expectedData)
     {

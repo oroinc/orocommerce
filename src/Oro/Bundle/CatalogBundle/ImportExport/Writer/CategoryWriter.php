@@ -20,12 +20,6 @@ class CategoryWriter extends EntityWriter
     /** @var TreeListener */
     private $treeListener;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param EntityDetachFixer $detachFixer
-     * @param ContextRegistry $contextRegistry
-     * @param TreeListener $treeListener
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         EntityDetachFixer $detachFixer,

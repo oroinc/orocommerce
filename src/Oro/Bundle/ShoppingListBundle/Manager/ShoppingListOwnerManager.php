@@ -33,11 +33,6 @@ class ShoppingListOwnerManager
      */
     protected $configProvider;
 
-    /**
-     * @param AclHelper $aclHelper
-     * @param ManagerRegistry $registry
-     * @param ConfigProvider $configProvider
-     */
     public function __construct(AclHelper $aclHelper, ManagerRegistry $registry, ConfigProvider $configProvider)
     {
         $this->aclHelper = $aclHelper;
@@ -96,10 +91,6 @@ class ShoppingListOwnerManager
         return null !== $query->getOneOrNullResult(AbstractQuery::HYDRATE_SINGLE_SCALAR);
     }
 
-    /**
-     * @param ShoppingList $shoppingList
-     * @param CustomerUser $user
-     */
     private function assignLineItems(ShoppingList $shoppingList, CustomerUser $user): void
     {
         foreach ($shoppingList->getLineItems() as $lineItem) {

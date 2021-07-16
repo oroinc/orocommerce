@@ -30,11 +30,6 @@ class ConfigureProductSearchAttributes implements ProcessorInterface
     /** @var AttributeConfigurationProviderInterface */
     private $configurationProvider;
 
-    /**
-     * @param AttributeManager                        $attributeManager
-     * @param AttributeTypeRegistry                   $attributeTypeRegistry
-     * @param AttributeConfigurationProviderInterface $configurationProvider
-     */
     public function __construct(
         AttributeManager $attributeManager,
         AttributeTypeRegistry $attributeTypeRegistry,
@@ -96,11 +91,6 @@ class ConfigureProductSearchAttributes implements ProcessorInterface
         }
     }
 
-    /**
-     * @param FieldConfigModel $attribute
-     *
-     * @return SearchAttributeTypeInterface|null
-     */
     private function getAttributeType(FieldConfigModel $attribute): ?SearchAttributeTypeInterface
     {
         if (!$this->configurationProvider->isAttributeCustom($attribute)
@@ -117,12 +107,6 @@ class ConfigureProductSearchAttributes implements ProcessorInterface
         return $attributeType;
     }
 
-    /**
-     * @param SearchAttributeTypeInterface $attributeType
-     * @param FieldConfigModel             $attribute
-     *
-     * @return bool
-     */
     private function isAttributeFilterable(
         SearchAttributeTypeInterface $attributeType,
         FieldConfigModel $attribute
@@ -132,12 +116,6 @@ class ConfigureProductSearchAttributes implements ProcessorInterface
             && $this->configurationProvider->isAttributeFilterable($attribute);
     }
 
-    /**
-     * @param SearchAttributeTypeInterface $attributeType
-     * @param FieldConfigModel             $attribute
-     *
-     * @return bool
-     */
     private function isAttributeSortable(
         SearchAttributeTypeInterface $attributeType,
         FieldConfigModel $attribute
@@ -147,12 +125,6 @@ class ConfigureProductSearchAttributes implements ProcessorInterface
             && $this->configurationProvider->isAttributeSortable($attribute);
     }
 
-    /**
-     * @param SearchAttributeTypeInterface $attributeType
-     * @param FieldConfigModel             $attribute
-     *
-     * @return string|null
-     */
     private function getFilterableFieldName(
         SearchAttributeTypeInterface $attributeType,
         FieldConfigModel $attribute
@@ -165,11 +137,6 @@ class ConfigureProductSearchAttributes implements ProcessorInterface
         return $names[SearchAttributeTypeInterface::VALUE_MAIN];
     }
 
-    /**
-     * @param FilterFieldConfig $searchFilter
-     *
-     * @return array
-     */
     private function getSearchFilterMapping(FilterFieldConfig $searchFilter): array
     {
         $options = $searchFilter->getOptions();
@@ -177,10 +144,6 @@ class ConfigureProductSearchAttributes implements ProcessorInterface
         return $options['field_mappings'] ?? [];
     }
 
-    /**
-     * @param FilterFieldConfig $searchFilter
-     * @param array             $mapping
-     */
     private function setSearchFilterMapping(FilterFieldConfig $searchFilter, array $mapping): void
     {
         $options = $searchFilter->getOptions();

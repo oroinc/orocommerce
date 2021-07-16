@@ -79,14 +79,6 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
      */
     private $maintenanceMode;
 
-    /**
-     * @param RouterInterface $router
-     * @param ManagerRegistry $registry
-     * @param ScopeManager $scopeManager
-     * @param MatchedUrlDecisionMaker $matchedUrlDecisionMaker
-     * @param AclHelper $aclHelper
-     * @param MaintenanceMode $maintenanceMode
-     */
     public function __construct(
         RouterInterface $router,
         ManagerRegistry $registry,
@@ -111,9 +103,6 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
         $this->baseMatcher = $baseMatcher;
     }
 
-    /**
-     * @param $url
-     */
     public function addUrlToMatchSlugFirst($url)
     {
         $this->matchSlugsFirst[$url] = true;
@@ -331,9 +320,6 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
             ->getSlugBySlugPrototypeAndScopeCriteria($url, $this->getScopeCriteria(), $this->aclHelper);
     }
 
-    /**
-     * @return SlugRepository
-     */
     private function getSlugRepository(): SlugRepository
     {
         return $this->registry->getManagerForClass(Slug::class)

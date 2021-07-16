@@ -20,10 +20,6 @@ class BasicPayPalCreditCardPaymentMethodFactory implements PayPalCreditCardPayme
      */
     private $router;
 
-    /**
-     * @param Gateway $gateway
-     * @param RouterInterface $router
-     */
     public function __construct(Gateway $gateway, RouterInterface $router)
     {
         $this->gateway = $gateway;

@@ -37,8 +37,6 @@ class WebCatalogContextConfiguratorTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider allowedTypesDataProvider
-     *
-     * @param $webCatalogId
      */
     public function testConfigureContext($webCatalogId)
     {
@@ -69,8 +67,6 @@ class WebCatalogContextConfiguratorTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider notAllowedTypesDataProvider
-     *
-     * @param $webCatalogId
      */
     public function testConfigureContextTypeNotAllowed($webCatalogId)
     {

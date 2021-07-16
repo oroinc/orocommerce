@@ -67,11 +67,6 @@ class PriceListCustomerFallbackRepository extends EntityRepository
         return $qb;
     }
 
-    /**
-     * @param Website $website
-     * @param Customer $customer
-     * @return bool
-     */
     public function hasFallbackOnNextLevel(Website $website, Customer $customer): bool
     {
         $qb = $this->createQueryBuilder('f');

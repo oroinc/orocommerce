@@ -110,17 +110,12 @@ class ShoppingListDiscountContextConverterTest extends \PHPUnit\Framework\TestCa
 
     /**
      * @dataProvider supportsDataProvider
-     * @param object $entity
-     * @param bool $isSupported
      */
     public function testSupports(object $entity, bool $isSupported): void
     {
         $this->assertSame($isSupported, $this->converter->supports($entity));
     }
 
-    /**
-     * @return array
-     */
     public function supportsDataProvider(): array
     {
         return [

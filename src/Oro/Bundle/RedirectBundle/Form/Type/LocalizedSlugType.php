@@ -34,10 +34,6 @@ class LocalizedSlugType extends AbstractType
      */
     private $slugifyEntityHelper;
 
-    /**
-     * @param SlugifyFormHelper $slugifyFormHelper
-     * @param SlugifyEntityHelper $slugifyEntityHelper
-     */
     public function __construct(SlugifyFormHelper $slugifyFormHelper, SlugifyEntityHelper $slugifyEntityHelper)
     {
         $this->slugifyFormHelper = $slugifyFormHelper;
@@ -78,8 +74,6 @@ class LocalizedSlugType extends AbstractType
 
     /**
      * Change update at of owning entity on slug collection change
-     *
-     * @param FormEvent $event
      */
     public function onPostSubmit(FormEvent $event): void
     {
@@ -117,8 +111,6 @@ class LocalizedSlugType extends AbstractType
     }
 
     /**
-     * @param $entity
-     *
      * @throws \Exception
      */
     private function updateDateTime($entity): void

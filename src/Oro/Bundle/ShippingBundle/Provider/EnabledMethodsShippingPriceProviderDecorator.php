@@ -17,10 +17,6 @@ class EnabledMethodsShippingPriceProviderDecorator implements ShippingPriceProvi
      */
     protected $shippingMethodProvider;
 
-    /**
-     * @param ShippingPriceProviderInterface  $provider
-     * @param ShippingMethodProviderInterface $shippingMethodProvider
-     */
     public function __construct(
         ShippingPriceProviderInterface $provider,
         ShippingMethodProviderInterface $shippingMethodProvider

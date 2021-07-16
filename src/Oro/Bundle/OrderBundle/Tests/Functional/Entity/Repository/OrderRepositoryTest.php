@@ -169,10 +169,6 @@ class OrderRepositoryTest extends WebTestCase
         );
     }
 
-    /**
-     * @param string $email
-     * @return CustomerUser
-     */
     private function getCustomerUserByEmail(string $email): CustomerUser
     {
         return $this->getContainer()

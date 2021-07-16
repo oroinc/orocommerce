@@ -46,13 +46,6 @@ class SlugEntityGenerator
      */
     private $userLocalizationManager;
 
-    /**
-     * @param RoutingInformationProviderInterface $routingInformationProvider
-     * @param UniqueSlugResolver $slugResolver
-     * @param RedirectGenerator $redirectGenerator
-     * @param UrlCacheInterface $urlCache
-     * @param UserLocalizationManagerInterface $userLocalizationManager
-     */
     public function __construct(
         RoutingInformationProviderInterface $routingInformationProvider,
         UniqueSlugResolver $slugResolver,
@@ -305,10 +298,6 @@ class SlugEntityGenerator
         return 0;
     }
 
-    /**
-     * @param SluggableInterface $entity
-     * @return string
-     */
     private function getSlugPrefix(SluggableInterface $entity): string
     {
         return sprintf(

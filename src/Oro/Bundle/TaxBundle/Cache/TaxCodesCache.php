@@ -19,10 +19,6 @@ class TaxCodesCache
      */
     private $doctrineHelper;
 
-    /**
-     * @param CacheProvider $cacheProvider
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(CacheProvider $cacheProvider, DoctrineHelper $doctrineHelper)
     {
         $this->cacheProvider = $cacheProvider;

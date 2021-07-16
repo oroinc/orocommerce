@@ -28,7 +28,7 @@ class Amount extends BaseAmount implements OptionsDependentInterface
         if (!isset($options[Action::ACTION])) {
             return true;
         }
-        
+
         return in_array($options[Action::ACTION], [Action::SET_EC, Action::DO_EC], true);
     }
 

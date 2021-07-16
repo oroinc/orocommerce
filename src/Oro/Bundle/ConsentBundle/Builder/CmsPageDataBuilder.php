@@ -28,12 +28,6 @@ class CmsPageDataBuilder
     /** @var RouterInterface */
     protected $router;
 
-    /**
-     * @param CmsPageHelper $cmsPageHelper
-     * @param LocalizationHelper $localizationHelper
-     * @param RoutingInformationProviderInterface $routingInformationProvider
-     * @param RouterInterface $router
-     */
     public function __construct(
         CmsPageHelper $cmsPageHelper,
         LocalizationHelper $localizationHelper,

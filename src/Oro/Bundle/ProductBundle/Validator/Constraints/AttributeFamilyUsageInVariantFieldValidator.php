@@ -30,11 +30,6 @@ class AttributeFamilyUsageInVariantFieldValidator extends ConstraintValidator
     /** @var ConfigManager */
     private $configManager;
 
-    /**
-     * @param AttributeManager $attributeManager
-     * @param DoctrineHelper $doctrineHelper
-     * @param ConfigManager $configManager
-     */
     public function __construct(
         AttributeManager $attributeManager,
         DoctrineHelper $doctrineHelper,

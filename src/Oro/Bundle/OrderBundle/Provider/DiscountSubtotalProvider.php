@@ -35,13 +35,6 @@ class DiscountSubtotalProvider extends AbstractSubtotalProvider implements Subto
     /** @var TokenAccessorInterface */
     protected $tokenAccessor;
 
-    /**
-     * @param TranslatorInterface      $translator
-     * @param RoundingServiceInterface $rounding
-     * @param LineItemSubtotalProvider $lineItemSubtotal
-     * @param TokenAccessorInterface $tokenAccessor
-     * @param SubtotalProviderConstructorArguments $arguments
-     */
     public function __construct(
         TranslatorInterface $translator,
         RoundingServiceInterface $rounding,

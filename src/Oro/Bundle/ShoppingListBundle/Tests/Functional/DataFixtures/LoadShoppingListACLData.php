@@ -72,8 +72,6 @@ class LoadShoppingListACLData extends AbstractFixture implements DependentFixtur
 
     /**
      * Load data fixtures with the passed EntityManager
-     *
-     * @param ObjectManager $manager
      */
     public function load(ObjectManager $manager)
     {
@@ -109,9 +107,6 @@ class LoadShoppingListACLData extends AbstractFixture implements DependentFixtur
         $this->addReference($name, $shoppingList);
     }
 
-    /**
-     * @param ObjectManager $manager
-     */
     protected function createLineItem(ObjectManager $manager)
     {
         /** @var ShoppingList $shoppingList */

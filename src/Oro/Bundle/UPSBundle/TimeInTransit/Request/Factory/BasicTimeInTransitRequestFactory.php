@@ -13,9 +13,6 @@ class BasicTimeInTransitRequestFactory implements TimeInTransitRequestFactoryInt
      */
     private $timeInTransitRequestBuilderFactory;
 
-    /**
-     * @param TimeInTransitRequestBuilderFactoryInterface $timeInTransitRequestBuilderFactory
-     */
     public function __construct(TimeInTransitRequestBuilderFactoryInterface $timeInTransitRequestBuilderFactory)
     {
         $this->timeInTransitRequestBuilderFactory = $timeInTransitRequestBuilderFactory;

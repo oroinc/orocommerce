@@ -28,10 +28,6 @@ class ShoppingListLimitListener
      */
     private $doctrineHelper;
 
-    /**
-     * @param ShoppingListLimitManager $shoppingListLimitManager
-     * @param DoctrineHelper           $doctrineHelper
-     */
     public function __construct(
         ShoppingListLimitManager $shoppingListLimitManager,
         DoctrineHelper $doctrineHelper
@@ -40,9 +36,6 @@ class ShoppingListLimitListener
         $this->doctrineHelper           = $doctrineHelper;
     }
 
-    /**
-     * @param Event $event
-     */
     public function onCheckoutLogin(Event $event)
     {
         if (!class_exists(CheckoutSource::class)

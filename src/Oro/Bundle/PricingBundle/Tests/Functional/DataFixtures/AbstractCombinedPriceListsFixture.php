@@ -50,11 +50,6 @@ abstract class AbstractCombinedPriceListsFixture extends AbstractFixture impleme
         $manager->flush();
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param array $priceListData
-     * @param CombinedPriceList $combinedPriceList
-     */
     protected function loadCombinedPriceListToPriceList(
         ObjectManager $manager,
         array $priceListData,
@@ -80,11 +75,6 @@ abstract class AbstractCombinedPriceListsFixture extends AbstractFixture impleme
         $combinedPriceList->setCurrencies($currencies);
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param array $priceListData
-     * @param CombinedPriceList $combinedPriceList
-     */
     protected function loadCombinedPriceListToCustomer(
         ObjectManager $manager,
         array $priceListData,
@@ -104,11 +94,6 @@ abstract class AbstractCombinedPriceListsFixture extends AbstractFixture impleme
         }
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param array $priceListData
-     * @param CombinedPriceList $combinedPriceList
-     */
     protected function loadCombinedPriceListToCustomerGroup(
         ObjectManager $manager,
         array $priceListData,
@@ -128,11 +113,6 @@ abstract class AbstractCombinedPriceListsFixture extends AbstractFixture impleme
         }
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param array $priceListData
-     * @param CombinedPriceList $combinedPriceList
-     */
     protected function loadCombinedPriceListToWebsite(
         ObjectManager $manager,
         array $priceListData,

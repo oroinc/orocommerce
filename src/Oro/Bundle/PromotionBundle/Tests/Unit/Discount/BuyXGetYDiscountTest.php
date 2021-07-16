@@ -69,7 +69,6 @@ class BuyXGetYDiscountTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider invalidOptionsDataProvider
-     * @param array $options
      */
     public function testInvalidOptions(array $options)
     {
@@ -77,9 +76,6 @@ class BuyXGetYDiscountTest extends \PHPUnit\Framework\TestCase
         $this->discount->configure($options);
     }
 
-    /**
-     * @return array
-     */
     public function invalidOptionsDataProvider(): array
     {
         return [
@@ -149,7 +145,6 @@ class BuyXGetYDiscountTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return array
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function calculateDataProvider(): array

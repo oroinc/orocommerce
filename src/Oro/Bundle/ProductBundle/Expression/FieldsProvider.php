@@ -54,10 +54,6 @@ class FieldsProvider implements FieldsProviderInterface
      */
     protected $fieldsBlackList = [];
 
-    /**
-     * @param EntityFieldProvider $entityFieldProvider
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(EntityFieldProvider $entityFieldProvider, DoctrineHelper $doctrineHelper)
     {
         $this->entityFieldProvider = $entityFieldProvider;

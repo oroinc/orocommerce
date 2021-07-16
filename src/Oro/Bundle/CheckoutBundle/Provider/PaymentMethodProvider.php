@@ -28,11 +28,6 @@ class PaymentMethodProvider
      */
     protected $paymentMethodProvider;
 
-    /**
-     * @param CheckoutPaymentContextProvider $checkoutPaymentContextProvider
-     * @param CheckoutRepository $checkoutRepository
-     * @param PaymentBundleMethodProvider $paymentMethodProvider
-     */
     public function __construct(
         CheckoutPaymentContextProvider $checkoutPaymentContextProvider,
         CheckoutRepository $checkoutRepository,

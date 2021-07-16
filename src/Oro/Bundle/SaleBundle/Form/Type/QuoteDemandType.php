@@ -19,9 +19,6 @@ class QuoteDemandType extends AbstractType
      */
     protected $quoteDemandManager;
 
-    /**
-     * @param QuoteDemandManager $quoteDemandManager
-     */
     public function __construct(QuoteDemandManager $quoteDemandManager)
     {
         $this->quoteDemandManager = $quoteDemandManager;
@@ -70,9 +67,6 @@ class QuoteDemandType extends AbstractType
         return self::NAME;
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function postSubmit(FormEvent $event)
     {
         $data = $event->getData();

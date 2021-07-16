@@ -16,9 +16,6 @@ class RelatedProductDataConverterTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider convertDataProvider
-     *
-     * @param array $importedRecord
-     * @param array $exportedRecord
      */
     public function testConvertImportExport(array $importedRecord, array $exportedRecord): void
     {
@@ -26,9 +23,6 @@ class RelatedProductDataConverterTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($importedRecord, $this->dataConverter->convertToImportFormat($exportedRecord));
     }
 
-    /**
-     * @return array
-     */
     public function convertDataProvider(): array
     {
         return [

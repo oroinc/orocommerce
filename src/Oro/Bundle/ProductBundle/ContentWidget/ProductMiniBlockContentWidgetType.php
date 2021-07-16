@@ -30,11 +30,6 @@ class ProductMiniBlockContentWidgetType implements ContentWidgetTypeInterface
     /**@var ConfigManager */
     private $configManager;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param ConfigManager $configManager
-     */
     public function __construct(
         ManagerRegistry $registry,
         AuthorizationCheckerInterface $authorizationChecker,
@@ -112,10 +107,6 @@ class ProductMiniBlockContentWidgetType implements ContentWidgetTypeInterface
         return $data;
     }
 
-    /**
-     * @param Product $product
-     * @return bool
-     */
     private function isInventoryStatusVisible(Product $product): bool
     {
         $allowedStatuses = $this->configManager->get('oro_product.general_frontend_product_visibility');

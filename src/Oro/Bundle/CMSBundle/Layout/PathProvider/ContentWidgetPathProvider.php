@@ -20,9 +20,6 @@ class ContentWidgetPathProvider implements PathProviderInterface, ContextAwareIn
     /** @var ContextInterface */
     protected $context;
 
-    /**
-     * @param ThemeManager $themeManager
-     */
     public function __construct(ThemeManager $themeManager)
     {
         $this->themeManager = $themeManager;

@@ -14,17 +14,11 @@ class DatagridLineItemsDataViolationsListener
     /** @var LineItemViolationsProvider */
     private $violationsProvider;
 
-    /**
-     * @param LineItemViolationsProvider $violationsProvider
-     */
     public function __construct(LineItemViolationsProvider $violationsProvider)
     {
         $this->violationsProvider = $violationsProvider;
     }
 
-    /**
-     * @param DatagridLineItemsDataEvent $event
-     */
     public function onLineItemData(DatagridLineItemsDataEvent $event): void
     {
         $lineItems = $event->getLineItems();
@@ -47,20 +41,11 @@ class DatagridLineItemsDataViolationsListener
         }
     }
 
-    /**
-     * @return object|null
-     */
     protected function getAdditionalContext(DatagridLineItemsDataEvent $event): ?object
     {
         return null;
     }
 
-    /**
-     * @param array $violations
-     * @param string $sku
-     * @param string $unit
-     * @return array
-     */
     private function getMessages(array $violations, string $sku, string $unit): array
     {
         $warnings = [];

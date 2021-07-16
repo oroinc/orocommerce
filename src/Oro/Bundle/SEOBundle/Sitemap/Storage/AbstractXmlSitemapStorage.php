@@ -95,15 +95,9 @@ abstract class AbstractXmlSitemapStorage implements SitemapStorageInterface
      * Produces following xml part:
      * <?xml version="1.0" encoding="UTF-8"?>
      * <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-     *
-     * @param \XMLWriter $xmlWriter
      */
     abstract protected function startXmlTemplate(\XMLWriter $xmlWriter);
 
-    /**
-     * @param \XMLWriter $urlItemWriter
-     * @param UrlItemInterface $urlItem
-     */
     abstract protected function fillItem(\XMLWriter $urlItemWriter, UrlItemInterface $urlItem);
 
     /**
@@ -160,8 +154,6 @@ abstract class AbstractXmlSitemapStorage implements SitemapStorageInterface
     /**
      * Produces following xml part:
      * </urlset>
-     *
-     * @param \XMLWriter $xmlWriter
      */
     private function finishXmlTemplate(\XMLWriter $xmlWriter)
     {

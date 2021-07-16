@@ -20,10 +20,6 @@ class ScheduleFiltrationService extends AbstractSkippableFiltrationService
      */
     private $scheduleIntervalChecker;
 
-    /**
-     * @param RuleFiltrationServiceInterface $filtrationService
-     * @param ScheduleIntervalChecker $scheduleIntervalChecker
-     */
     public function __construct(
         RuleFiltrationServiceInterface $filtrationService,
         ScheduleIntervalChecker $scheduleIntervalChecker
@@ -42,10 +38,6 @@ class ScheduleFiltrationService extends AbstractSkippableFiltrationService
         return $this->filtrationService->getFilteredRuleOwners($filteredOwners, $context);
     }
 
-    /**
-     * @param RuleOwnerInterface $ruleOwner
-     * @return bool
-     */
     private function isScheduleEnabled(RuleOwnerInterface $ruleOwner): bool
     {
         if ($ruleOwner instanceof AppliedPromotionData) {
@@ -55,10 +47,6 @@ class ScheduleFiltrationService extends AbstractSkippableFiltrationService
         return $ruleOwner instanceof PromotionDataInterface && $this->isPromotionApplicable($ruleOwner);
     }
 
-    /**
-     * @param PromotionDataInterface $promotion
-     * @return bool
-     */
     private function isPromotionApplicable(PromotionDataInterface $promotion): bool
     {
         return $promotion->getSchedules()->isEmpty()

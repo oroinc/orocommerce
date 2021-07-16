@@ -35,9 +35,6 @@ class ProductRepositoryTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getCategoryCountsDataProvider
-     *
-     * @param Category $category
-     * @param array $expected
      */
     public function testGetCategoryCountsByCategory(Category $category, array $expected)
     {

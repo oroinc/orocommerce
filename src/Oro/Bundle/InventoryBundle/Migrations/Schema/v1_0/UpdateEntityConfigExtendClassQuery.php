@@ -23,7 +23,6 @@ class UpdateEntityConfigExtendClassQuery extends ParametrizedMigrationQuery
      */
     protected $toExtendClass;
 
-
     public function __construct($entityName, $fromExtendClass, $toExtendClass)
     {
         $this->entityName = $entityName;
@@ -48,7 +47,6 @@ class UpdateEntityConfigExtendClassQuery extends ParametrizedMigrationQuery
     }
 
     /**
-     * @param LoggerInterface $logger
      * @throws \Doctrine\DBAL\DBALException
      */
     protected function updateEntityConfig(LoggerInterface $logger)
@@ -63,7 +61,7 @@ class UpdateEntityConfigExtendClassQuery extends ParametrizedMigrationQuery
 
         $data['extend']['extend_class'] = $this->toExtendClass;
         $data['extend']['schema']['entity'] = $this->toExtendClass;
-        
+
         $extendConfig = $data['extend']['schema']['doctrine'][$this->fromExtendClass];
         unset($data['extend']['schema']['doctrine'][$this->fromExtendClass]);
         $data['extend']['schema']['doctrine'][$this->toExtendClass] = $extendConfig;

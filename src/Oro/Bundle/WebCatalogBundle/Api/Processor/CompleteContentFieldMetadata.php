@@ -17,9 +17,6 @@ class CompleteContentFieldMetadata implements ProcessorInterface
     /** @var ContentVariantTypeRegistry */
     private $contentVariantTypeRegistry;
 
-    /**
-     * @param ContentVariantTypeRegistry $contentVariantTypeRegistry
-     */
     public function __construct(ContentVariantTypeRegistry $contentVariantTypeRegistry)
     {
         $this->contentVariantTypeRegistry = $contentVariantTypeRegistry;

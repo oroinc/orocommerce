@@ -56,13 +56,6 @@ class RowTotalResolverTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider rowTotalDataProvider
-     * @param BigDecimal $amount
-     * @param array $taxRules
-     * @param array $expected
-     * @param int $quantity
-     * @param bool $isStartCalculationWithRowTotal
-     * @param bool $isStartCalculationOnItem
-     * @param bool $isCalculateAfterPromotionsEnabled
      */
     public function testResolveRowTotal(
         BigDecimal $amount,
@@ -104,7 +97,6 @@ class RowTotalResolverTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return array
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function rowTotalDataProvider(): array

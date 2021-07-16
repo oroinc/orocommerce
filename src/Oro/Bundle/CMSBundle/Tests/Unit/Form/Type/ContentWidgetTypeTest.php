@@ -68,11 +68,6 @@ class ContentWidgetTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitDataProvider
-     *
-     * @param FormInterface $widgetTypeForm
-     * @param ContentWidget|null $defaultData
-     * @param array|null $submittedData
-     * @param ContentWidget $expectedData
      */
     public function testSubmit(
         FormInterface $widgetTypeForm,
@@ -105,9 +100,6 @@ class ContentWidgetTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedData, $form->getData());
     }
 
-    /**
-     * @return array
-     */
     public function submitDataProvider(): array
     {
         $formBuilder = Forms::createFormFactory()
@@ -202,11 +194,6 @@ class ContentWidgetTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * @param array $settings
-     * @param int|null $id
-     * @return ContentWidget
-     */
     private function createContentWidget(array $settings = [], ?int $id = null): ContentWidget
     {
         return $this->getEntity(ContentWidget::class, ['settings' => $settings, 'id' => $id]);

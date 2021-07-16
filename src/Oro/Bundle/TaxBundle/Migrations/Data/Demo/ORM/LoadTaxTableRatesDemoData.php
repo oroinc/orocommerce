@@ -46,8 +46,6 @@ class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixt
 
     /**
      * {@inheritdoc}
-     *
-     * @param ObjectManager $manager
      */
     public function load(ObjectManager $manager)
     {

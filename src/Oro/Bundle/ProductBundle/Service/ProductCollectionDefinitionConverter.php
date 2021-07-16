@@ -22,9 +22,6 @@ class ProductCollectionDefinitionConverter
      */
     private $filtersPurifier;
 
-    /**
-     * @param SegmentFiltersPurifier $filterDefinitionPurifier
-     */
     public function __construct(SegmentFiltersPurifier $filterDefinitionPurifier)
     {
         $this->filtersPurifier = $filterDefinitionPurifier;
@@ -116,10 +113,6 @@ class ProductCollectionDefinitionConverter
         return !empty($definition['filters']);
     }
 
-    /**
-     * @param array $definition
-     * @return array
-     */
     private function normalizeFilters(array $definition): array
     {
         $filters = [];
@@ -186,10 +179,6 @@ class ProductCollectionDefinitionConverter
         return null;
     }
 
-    /**
-     * @param array $definition
-     * @return array
-     */
     private function getUserDefinedFilter(array $definition): array
     {
         if (isset($definition['filters'][0])

@@ -18,9 +18,6 @@ class ProductDuplicateListener
      */
     protected $categoryClass;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function setDoctrineHelper(DoctrineHelper $doctrineHelper)
     {
         $this->doctrineHelper = $doctrineHelper;
@@ -36,8 +33,6 @@ class ProductDuplicateListener
 
     /**
      * Link new product with category from source product
-     *
-     * @param ProductDuplicateAfterEvent $event
      */
     public function onDuplicateAfter(ProductDuplicateAfterEvent $event)
     {

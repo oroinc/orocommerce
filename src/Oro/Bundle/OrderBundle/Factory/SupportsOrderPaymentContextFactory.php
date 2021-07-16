@@ -23,10 +23,6 @@ class SupportsOrderPaymentContextFactory implements SupportsEntityPaymentContext
      */
     private $orderPaymentContextFactory;
 
-    /**
-     * @param DoctrineHelper $doctrine
-     * @param OrderPaymentContextFactory $orderPaymentContextFactory
-     */
     public function __construct(DoctrineHelper $doctrine, OrderPaymentContextFactory $orderPaymentContextFactory)
     {
         $this->doctrine = $doctrine;

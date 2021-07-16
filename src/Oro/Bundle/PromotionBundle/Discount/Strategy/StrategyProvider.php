@@ -21,10 +21,6 @@ class StrategyProvider
      */
     private $configManager;
 
-    /**
-     * @param StrategyRegistry $strategyRegistry
-     * @param ConfigManager $configManager
-     */
     public function __construct(
         StrategyRegistry $strategyRegistry,
         ConfigManager $configManager

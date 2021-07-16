@@ -22,10 +22,6 @@ class ValidateGuestShoppingListFeature implements ProcessorInterface
     /** @var GuestShoppingListManager */
     private $shoppingListManager;
 
-    /**
-     * @param TokenStorageInterface    $tokenStorage
-     * @param GuestShoppingListManager $shoppingListManager
-     */
     public function __construct(TokenStorageInterface $tokenStorage, GuestShoppingListManager $shoppingListManager)
     {
         $this->tokenStorage = $tokenStorage;

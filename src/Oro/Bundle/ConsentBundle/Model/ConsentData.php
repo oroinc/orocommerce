@@ -35,9 +35,6 @@ class ConsentData implements \JsonSerializable
      */
     private $accepted = false;
 
-    /**
-     ** @param Consent $consent
-     */
     public function __construct(Consent $consent)
     {
         $this->id = $consent->getId();

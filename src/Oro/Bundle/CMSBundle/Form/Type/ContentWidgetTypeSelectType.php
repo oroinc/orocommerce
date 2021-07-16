@@ -17,9 +17,6 @@ class ContentWidgetTypeSelectType extends AbstractType
     /** @var ContentWidgetTypeProvider */
     private $contentWidgetTypeProvider;
 
-    /**
-     * @param ContentWidgetTypeProvider $contentWidgetTypeProvider
-     */
     public function __construct(ContentWidgetTypeProvider $contentWidgetTypeProvider)
     {
         $this->contentWidgetTypeProvider = $contentWidgetTypeProvider;

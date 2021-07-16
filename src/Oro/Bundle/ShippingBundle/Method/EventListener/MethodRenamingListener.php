@@ -12,17 +12,11 @@ class MethodRenamingListener
      */
     private $shippingMethodConfigRepository;
 
-    /**
-     * @param ShippingMethodConfigRepository $shippingMethodConfigRepository
-     */
     public function __construct(ShippingMethodConfigRepository $shippingMethodConfigRepository)
     {
         $this->shippingMethodConfigRepository = $shippingMethodConfigRepository;
     }
 
-    /**
-     * @param MethodRenamingEvent $event
-     */
     public function onMethodRename(MethodRenamingEvent $event)
     {
         $this->updateRuleConfigs($event->getOldMethodIdentifier(), $event->getNewMethodIdentifier());

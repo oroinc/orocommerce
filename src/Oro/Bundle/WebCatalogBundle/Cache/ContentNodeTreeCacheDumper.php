@@ -24,11 +24,6 @@ class ContentNodeTreeCacheDumper
     /** @var ManagerRegistry */
     private $doctrine;
 
-    /**
-     * @param ContentNodeTreeResolverInterface $contentNodeTreeResolver
-     * @param ContentNodeTreeCache             $contentNodeTreeCache
-     * @param ManagerRegistry                  $doctrine
-     */
     public function __construct(
         ContentNodeTreeResolverInterface $contentNodeTreeResolver,
         ContentNodeTreeCache $contentNodeTreeCache,
@@ -39,10 +34,6 @@ class ContentNodeTreeCacheDumper
         $this->doctrine = $doctrine;
     }
 
-    /**
-     * @param ContentNode $node
-     * @param Scope       $scope
-     */
     public function dump(ContentNode $node, Scope $scope): void
     {
         // delete existing cached data
@@ -51,9 +42,6 @@ class ContentNodeTreeCacheDumper
         $this->contentNodeTreeResolver->getResolvedContentNode($node, $scope);
     }
 
-    /**
-     * @param WebCatalog $webCatalog
-     */
     public function dumpForAllScopes(WebCatalog $webCatalog): void
     {
         $rootNode = $this->getContentNodeRepository()->getRootNodeByWebCatalog($webCatalog);
@@ -65,17 +53,11 @@ class ContentNodeTreeCacheDumper
         }
     }
 
-    /**
-     * @return ContentNodeRepository
-     */
     private function getContentNodeRepository(): ContentNodeRepository
     {
         return $this->doctrine->getRepository(ContentNode::class);
     }
 
-    /**
-     * @return WebCatalogRepository
-     */
     private function getWebCatalogRepository(): WebCatalogRepository
     {
         return $this->doctrine->getRepository(WebCatalog::class);

@@ -34,10 +34,6 @@ class WebCatalogBreadcrumbProviderTest extends WebTestCase
 
     /**
      * @dataProvider getSlugs
-     *
-     * @param string $reference
-     * @param int $expectedCount
-     * @param array $expectedBreadcrumbs
      */
     public function testBreadcrumbs(string $reference, int $expectedCount, array $expectedBreadcrumbs): void
     {
@@ -93,9 +89,6 @@ class WebCatalogBreadcrumbProviderTest extends WebTestCase
         self::assertStringContainsString($baseUrl . 'app.php/', $breadcrumbUrls[2]);
     }
 
-    /**
-     * @return array
-     */
     public function getSlugs(): array
     {
         return [

@@ -26,8 +26,6 @@ class ContentWidgetController extends AbstractController
      * @Route("/", name="oro_cms_content_widget_index")
      * @Template
      * @AclAncestor("oro_cms_content_widget_view")
-     *
-     * @return array
      */
     public function indexAction(): array
     {
@@ -45,9 +43,6 @@ class ContentWidgetController extends AbstractController
      *      class="OroCMSBundle:ContentWidget",
      *      permission="VIEW"
      * )
-     *
-     * @param ContentWidget $contentWidget
-     * @return array
      */
     public function viewAction(ContentWidget $contentWidget): array
     {

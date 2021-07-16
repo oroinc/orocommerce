@@ -48,7 +48,6 @@ abstract class AbstractCustomerPartialUpdateDriverTest extends WebTestCase
         if (!$this->isTestSkipped()) {
             $this->loadFixtures([LoadProductVisibilityScopedData::class]);
 
-
             $this->configManager = self::getConfigManager('global');
 
             $this->driver = $this->getContainer()->get('oro_website_search.driver.customer_partial_update_driver');

@@ -89,10 +89,6 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitDataProvider
-     *
-     * @param string $htmlValue
-     * @param array $allowedElements
-     * @param bool $isValid
      */
     public function testSubmit(string $htmlValue, array $allowedElements, bool $isValid): void
     {
@@ -240,9 +236,6 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
         );
     }
 
-    /**
-     * @return array
-     */
     public function submitDataProvider(): array
     {
         return [

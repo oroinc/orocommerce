@@ -24,10 +24,6 @@ class ComputeOrderPaymentMethod implements ProcessorInterface
     /** @var PaymentMethodLabelFormatter */
     private $paymentMethodFormatter;
 
-    /**
-     * @param DoctrineHelper              $doctrineHelper
-     * @param PaymentMethodLabelFormatter $paymentMethodFormatter
-     */
     public function __construct(DoctrineHelper $doctrineHelper, PaymentMethodLabelFormatter $paymentMethodFormatter)
     {
         $this->doctrineHelper = $doctrineHelper;
@@ -53,13 +49,6 @@ class ComputeOrderPaymentMethod implements ProcessorInterface
         }
     }
 
-    /**
-     * @param CustomizeLoadedDataContext $context
-     * @param array                      $data
-     * @param string                     $orderIdFieldName
-     *
-     * @return array
-     */
     private function applyPaymentMethod(
         CustomizeLoadedDataContext $context,
         array $data,

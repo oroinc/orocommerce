@@ -32,9 +32,6 @@ class ApplyAllStrategy extends AbstractStrategy
         return $discountContext;
     }
 
-    /**
-     * @param DiscountContextInterface $discountContext
-     */
     private function updateContextSubtotal(DiscountContextInterface $discountContext)
     {
         $lineItemsTotalDiscount = 0.0;

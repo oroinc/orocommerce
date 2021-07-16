@@ -23,20 +23,12 @@ class PageEntityListener
     /** @var array */
     private $webCatalogIds;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param MessageProducerInterface $messageProducer
-     */
     public function __construct(DoctrineHelper $doctrineHelper, MessageProducerInterface $messageProducer)
     {
         $this->doctrineHelper = $doctrineHelper;
         $this->messageProducer = $messageProducer;
     }
 
-    /**
-     * @param Page $entity
-     * @param LifecycleEventArgs $args
-     */
     public function preRemove(Page $entity, LifecycleEventArgs $args)
     {
         $repository = $this->doctrineHelper->getEntityRepository(ContentNode::class);
@@ -50,10 +42,6 @@ class PageEntityListener
         $this->webCatalogIds = array_column($qb->getQuery()->getResult(), 'id');
     }
 
-    /**
-     * @param Page $entity
-     * @param LifecycleEventArgs $args
-     */
     public function postRemove(Page $entity, LifecycleEventArgs $args)
     {
         foreach ($this->webCatalogIds as $webCatalogId) {

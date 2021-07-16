@@ -33,19 +33,11 @@ class MoveGeneratedSitemapsProcessorTest extends \PHPUnit\Framework\TestCase
         $this->processor = new MoveGeneratedSitemapsProcessor($this->fileSystemAdapter, $this->logger);
     }
 
-    /**
-     * @return SessionInterface
-     */
     private function getSession(): SessionInterface
     {
         return $this->createMock(SessionInterface::class);
     }
 
-    /**
-     * @param array $body
-     *
-     * @return MessageInterface
-     */
     private function getMessage(array $body): MessageInterface
     {
         $message = new Message();

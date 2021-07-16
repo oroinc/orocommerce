@@ -22,10 +22,6 @@ class SitemapFilesystemAdapter
     /** @var SitemapFileWriterInterface */
     private $fileWriter;
 
-    /**
-     * @param FileManager                $fileManager
-     * @param SitemapFileWriterInterface $fileWriter
-     */
     public function __construct(FileManager $fileManager, SitemapFileWriterInterface $fileWriter)
     {
         $this->fileManager = $fileManager;
@@ -33,10 +29,6 @@ class SitemapFilesystemAdapter
     }
 
     /**
-     * @param string                  $filename
-     * @param WebsiteInterface        $website
-     * @param SitemapStorageInterface $sitemapUrlsStorage
-     *
      * @throws SitemapFileWriterException
      */
     public function dumpSitemapStorage(
@@ -52,10 +44,6 @@ class SitemapFilesystemAdapter
         }
     }
 
-    /**
-     * @param WebsiteInterface $website
-     * @param string           $version
-     */
     public function dumpVersion(WebsiteInterface $website, string $version): void
     {
         $this->fileManager->writeToStorage(

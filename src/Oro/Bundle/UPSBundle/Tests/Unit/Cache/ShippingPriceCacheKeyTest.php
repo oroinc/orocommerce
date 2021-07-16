@@ -162,12 +162,6 @@ class ShippingPriceCacheKeyTest extends \PHPUnit\Framework\TestCase
         $this->assertAddressesFieldAffectsKey($key1, $key2, $address1, $address2);
     }
 
-    /**
-     * @param ShippingPriceCacheKey $key1
-     * @param ShippingPriceCacheKey $key2
-     * @param PriceRequestAddressStub $address1
-     * @param PriceRequestAddressStub $address2
-     */
     protected function assertAddressesFieldAffectsKey(
         ShippingPriceCacheKey $key1,
         ShippingPriceCacheKey $key2,
@@ -220,19 +214,11 @@ class ShippingPriceCacheKeyTest extends \PHPUnit\Framework\TestCase
         $this->assertKeysEquals($key1, $key2);
     }
 
-    /**
-     * @param ShippingPriceCacheKey $key1
-     * @param ShippingPriceCacheKey $key2
-     */
     protected function assertKeysEquals(ShippingPriceCacheKey $key1, ShippingPriceCacheKey $key2)
     {
         $this->assertEquals($key1->generateKey(), $key2->generateKey());
     }
 
-    /**
-     * @param ShippingPriceCacheKey $key1
-     * @param ShippingPriceCacheKey $key2
-     */
     protected function assertKeysNotEquals(ShippingPriceCacheKey $key1, ShippingPriceCacheKey $key2)
     {
         $this->assertNotEquals($key1->generateKey(), $key2->generateKey());

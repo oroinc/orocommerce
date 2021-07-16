@@ -19,17 +19,11 @@ class ShoppingListWidgetExtension extends AbstractExtension implements ServiceSu
      */
     private $container;
 
-    /**
-     * @param ContainerInterface $container
-     */
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
     }
 
-    /**
-     * @return LayoutButtonProvider
-     */
     private function getLayoutButtonProvider(): LayoutButtonProvider
     {
         return $this->container->get('oro_action.layout.data_provider.button_provider');
@@ -48,10 +42,6 @@ class ShoppingListWidgetExtension extends AbstractExtension implements ServiceSu
         ];
     }
 
-    /**
-     * @param ShoppingList $shoppingList
-     * @return array
-     */
     public function getShoppingListWidgetButtons(ShoppingList $shoppingList): array
     {
         $buttons = $this->getLayoutButtonProvider()->getAll($shoppingList);
@@ -64,9 +54,6 @@ class ShoppingListWidgetExtension extends AbstractExtension implements ServiceSu
         return $buttons;
     }
 
-    /**
-     * @return array
-     */
     private function getAvailableButtonNames(): array
     {
         return [

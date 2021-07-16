@@ -202,22 +202,11 @@ class OrderAddressProvider implements AddressProviderInterface
         return $this->permissionsByType[$type][$key] . $postfix;
     }
 
-    /**
-     * @param string $attribute
-     * @param string|null $subject
-     *
-     * @return bool
-     */
     protected function isGranted(string $attribute, string $subject = null): bool
     {
         return $this->authorizationChecker->isGranted($attribute, $subject);
     }
 
-    /**
-     * @param string $entityClass
-     *
-     * @return string
-     */
     protected function encodeEntityAclIdentityString(string $entityClass): string
     {
         return ObjectIdentityHelper::encodeIdentityString(EntityAclExtension::NAME, $entityClass);

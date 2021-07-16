@@ -48,13 +48,6 @@ class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberIn
      */
     private $urlCache;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param SlugEntityGenerator $generator
-     * @param MessageFactoryInterface $messageFactory
-     * @param LoggerInterface $logger
-     * @param UrlCacheInterface $urlCache
-     */
     public function __construct(
         ManagerRegistry $registry,
         SlugEntityGenerator $generator,

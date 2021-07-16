@@ -32,11 +32,6 @@ class FedexRateServiceResponse implements FedexRateServiceResponseInterface
      */
     protected $prices;
 
-    /**
-     * @param string $severityType
-     * @param int    $severityCode
-     * @param array  $prices
-     */
     public function __construct(string $severityType, int $severityCode, array $prices = [])
     {
         $this->severityType = $severityType;

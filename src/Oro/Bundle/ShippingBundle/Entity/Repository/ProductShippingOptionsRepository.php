@@ -12,11 +12,6 @@ use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
  */
 class ProductShippingOptionsRepository extends EntityRepository
 {
-    /**
-     * @param array $unitsByProductIds
-     *
-     * @return array
-     */
     public function findIndexedByProductsAndUnits(array $unitsByProductIds): array
     {
         if (!$unitsByProductIds) {

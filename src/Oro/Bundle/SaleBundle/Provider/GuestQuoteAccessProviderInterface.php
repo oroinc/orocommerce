@@ -9,9 +9,5 @@ use Oro\Bundle\SaleBundle\Entity\Quote;
  */
 interface GuestQuoteAccessProviderInterface
 {
-    /**
-     * @param Quote $quote
-     * @return bool
-     */
     public function isGranted(Quote $quote): bool;
 }

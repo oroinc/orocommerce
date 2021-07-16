@@ -59,9 +59,6 @@ class InventoryLevelStrategy extends AbstractImportStrategy
         return $entity;
     }
 
-    /**
-     * @param InventoryLevelStrategyHelperInterface $inventoryLevelStrategyHelper
-     */
     public function setInventoryLevelStrategyHelper(
         InventoryLevelStrategyHelperInterface $inventoryLevelStrategyHelper
     ) {

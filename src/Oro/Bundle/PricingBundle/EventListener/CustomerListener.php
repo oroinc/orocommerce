@@ -26,17 +26,11 @@ class CustomerListener extends AbstractPriceListCollectionAwareListener
      */
     protected $fallbackClass = PriceListCustomerFallback::class;
 
-    /**
-     * @param CustomerEvent $event
-     */
     public function onCustomerGroupChange(CustomerEvent $event)
     {
         $this->handleSingleCustomerGroupChange($event->getCustomer());
     }
 
-    /**
-     * @param CustomerMassEvent $event
-     */
     public function onCustomerGroupMassChange(CustomerMassEvent $event)
     {
         foreach ($event->getCustomers() as $customer) {
@@ -105,9 +99,6 @@ class CustomerListener extends AbstractPriceListCollectionAwareListener
         $this->triggerHandler->handleCustomerChange($targetEntity, $website);
     }
 
-    /**
-     * @param Customer $customer
-     */
     protected function handleSingleCustomerGroupChange(Customer $customer)
     {
         /** @var WebsiteRepository $websiteRepo */

@@ -14,9 +14,6 @@ class QueryPlaceholderResolver implements QueryPlaceholderResolverInterface
     /** @var PlaceholderInterface */
     private $placeholder;
 
-    /**
-     * @param PlaceholderInterface $placeholder
-     */
     public function __construct(PlaceholderInterface $placeholder)
     {
         $this->placeholder = $placeholder;
@@ -33,9 +30,6 @@ class QueryPlaceholderResolver implements QueryPlaceholderResolverInterface
         $this->replaceInAggregations($query);
     }
 
-    /**
-     * @param Query $query
-     */
     private function replaceInSelect(Query $query)
     {
         $selectAliases = $query->getSelectAliases();
@@ -71,9 +65,6 @@ class QueryPlaceholderResolver implements QueryPlaceholderResolverInterface
         return $query->from($newEntities);
     }
 
-    /**
-     * @param Query $query
-     */
     private function replaceInCriteria(Query $query)
     {
         $criteria = $query->getCriteria();
@@ -95,9 +86,6 @@ class QueryPlaceholderResolver implements QueryPlaceholderResolverInterface
         }
     }
 
-    /**
-     * @param Query $query
-     */
     private function replaceInAggregations(Query $query)
     {
         $aggregations = $query->getAggregations();

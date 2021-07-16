@@ -28,10 +28,6 @@ class EnumValueCollectionExtension extends AbstractTypeExtension
     /** @var ConfigManager */
     private $configManager;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param ConfigManager $configManager
-     */
     public function __construct(DoctrineHelper $doctrineHelper, ConfigManager $configManager)
     {
         $this->doctrineHelper = $doctrineHelper;
@@ -82,10 +78,6 @@ class EnumValueCollectionExtension extends AbstractTypeExtension
         $this->updateChildrenViews($view, $optionsWithProductsSkusAssigned);
     }
 
-    /**
-     * @param FormView $formView
-     * @param array $optionsWithProductsSkusAssigned
-     */
     private function updateChildrenViews(FormView $formView, array $optionsWithProductsSkusAssigned)
     {
         foreach ($formView->children as $childView) {

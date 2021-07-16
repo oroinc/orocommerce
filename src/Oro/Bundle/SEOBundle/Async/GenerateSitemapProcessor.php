@@ -46,16 +46,6 @@ class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscr
     /** @var LoggerInterface */
     private $logger;
 
-    /**
-     * @param JobRunner                           $jobRunner
-     * @param DependentJobService                 $dependentJob
-     * @param MessageProducerInterface            $producer
-     * @param WebsiteUrlProvidersServiceInterface $websiteUrlProvidersService
-     * @param WebsiteForSitemapProviderInterface  $websiteProvider
-     * @param PublicSitemapFilesystemAdapter      $fileSystemAdapter
-     * @param CanonicalUrlGenerator               $canonicalUrlGenerator
-     * @param LoggerInterface                     $logger
-     */
     public function __construct(
         JobRunner $jobRunner,
         DependentJobService $dependentJob,
@@ -165,12 +155,6 @@ class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscr
         }
     }
 
-    /**
-     * @param JobRunner $jobRunner
-     * @param int       $version
-     * @param Website   $website
-     * @param string    $type
-     */
     private function scheduleGeneratingSitemapForWebsiteAndType(
         JobRunner $jobRunner,
         int $version,

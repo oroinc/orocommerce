@@ -97,7 +97,6 @@ class ProductMiniBlockContentWidgetTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider permissionDataProvider
-     * @param bool $isGranted
      */
     public function testGetWidgetData(bool $isGranted): void
     {
@@ -148,7 +147,6 @@ class ProductMiniBlockContentWidgetTypeTest extends FormIntegrationTestCase
             ->with('oro_product.general_frontend_product_visibility')
             ->willReturn([]);
 
-
         $this->assertSame(
             ['product' => null, 'instanceNumber' => 0],
             $this->contentWidgetType->getWidgetData($contentWidget)
@@ -180,7 +178,6 @@ class ProductMiniBlockContentWidgetTypeTest extends FormIntegrationTestCase
             ->with('oro_product.general_frontend_product_visibility')
             ->willReturn(['in_stock']);
 
-
         $this->assertSame(
             ['product' => $product, 'instanceNumber' => 0],
             $this->contentWidgetType->getWidgetData($contentWidget)
@@ -199,7 +196,6 @@ class ProductMiniBlockContentWidgetTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider permissionDataProvider
-     * @param bool $isGranted
      */
     public function testGetBackOfficeViewSubBlocks(bool $isGranted): void
     {
@@ -239,9 +235,6 @@ class ProductMiniBlockContentWidgetTypeTest extends FormIntegrationTestCase
         );
     }
 
-    /**
-     * @return array
-     */
     public function permissionDataProvider(): array
     {
         return [
@@ -259,9 +252,6 @@ class ProductMiniBlockContentWidgetTypeTest extends FormIntegrationTestCase
         $this->assertEquals('', $this->contentWidgetType->getDefaultTemplate($contentWidget, $twig));
     }
 
-    /**
-     * @return array
-     */
     protected function getExtensions(): array
     {
         $configProvider = $this->createMock(ConfigProvider::class);

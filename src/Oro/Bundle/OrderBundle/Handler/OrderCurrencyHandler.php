@@ -12,17 +12,11 @@ class OrderCurrencyHandler
      */
     protected $currencyProvider;
 
-    /**
-     * @param CurrencyProviderInterface $currencyProvider
-     */
     public function __construct(CurrencyProviderInterface $currencyProvider)
     {
         $this->currencyProvider = $currencyProvider;
     }
 
-    /**
-     * @param Order $order
-     */
     public function setOrderCurrency(Order $order)
     {
         if (!$order->getCurrency()) {

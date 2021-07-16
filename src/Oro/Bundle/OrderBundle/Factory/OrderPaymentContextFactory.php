@@ -23,10 +23,6 @@ class OrderPaymentContextFactory
      */
     private $paymentContextBuilderFactory;
 
-    /**
-     * @param OrderPaymentLineItemConverterInterface     $paymentLineItemConverter
-     * @param null|PaymentContextBuilderFactoryInterface $paymentContextBuilderFactory
-     */
     public function __construct(
         OrderPaymentLineItemConverterInterface $paymentLineItemConverter,
         PaymentContextBuilderFactoryInterface $paymentContextBuilderFactory = null

@@ -30,10 +30,6 @@ class ProductBySkuValidator extends ConstraintValidator
      */
     protected $propertyAccessor;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param AclHelper $aclHelper
-     */
     public function __construct(ManagerRegistry $registry, AclHelper $aclHelper)
     {
         $this->registry = $registry;

@@ -481,10 +481,6 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals([], $data->toArray());
     }
 
-    /**
-     * @param int $lineItemsCount
-     * @return Checkout
-     */
     private function createCheckout(int $lineItemsCount): Checkout
     {
         $checkout = new Checkout();

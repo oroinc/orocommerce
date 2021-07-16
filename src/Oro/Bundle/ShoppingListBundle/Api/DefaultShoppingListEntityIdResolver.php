@@ -32,12 +32,6 @@ class DefaultShoppingListEntityIdResolver implements EntityIdResolverInterface
     /** @var AclHelper */
     private $aclHelper;
 
-    /**
-     * @param TokenStorageInterface      $tokenStorage
-     * @param CurrentShoppingListStorage $currentShoppingListStorage
-     * @param DoctrineHelper             $doctrineHelper
-     * @param AclHelper                  $aclHelper
-     */
     public function __construct(
         TokenStorageInterface $tokenStorage,
         CurrentShoppingListStorage $currentShoppingListStorage,
@@ -86,11 +80,6 @@ MARKDOWN;
         return $defaultShoppingListId;
     }
 
-    /**
-     * @param int $customerUserId
-     *
-     * @return int|null
-     */
     private function getDefaultShoppingListIdForCustomerUser(int $customerUserId): ?int
     {
         $defaultShoppingListId = $this->currentShoppingListStorage->get($customerUserId);
@@ -107,11 +96,6 @@ MARKDOWN;
         return $defaultShoppingListId;
     }
 
-    /**
-     * @param int $visitorId
-     *
-     * @return int|null
-     */
     private function getDefaultShoppingListIdForVisitor(int $visitorId): ?int
     {
         $qb = $this->getDefaultShoppingListQueryBuilder();
@@ -131,9 +115,6 @@ MARKDOWN;
         return $rows[0]['id'];
     }
 
-    /**
-     * @return QueryBuilder
-     */
     private function getDefaultShoppingListQueryBuilder(): QueryBuilder
     {
         return $this->doctrineHelper

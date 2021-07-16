@@ -19,9 +19,6 @@ class PlaceholderDecorator implements PlaceholderInterface
      */
     protected $placeholderTokenCache;
 
-    /**
-     * @param PlaceholderRegistry $registry
-     */
     public function __construct(PlaceholderRegistry $registry)
     {
         $this->placeholderRegistry = $registry;

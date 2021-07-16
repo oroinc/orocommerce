@@ -296,9 +296,6 @@ class Coupon implements
         return $this->codeUppercase;
     }
 
-    /**
-     * @return bool
-     */
     public function isEnabled(): bool
     {
         return $this->enabled;
@@ -372,9 +369,6 @@ class Coupon implements
         return $this;
     }
 
-    /**
-     * @return \DateTime|null
-     */
     public function getValidFrom(): ?\DateTime
     {
         return $this->validFrom;
@@ -391,9 +385,6 @@ class Coupon implements
         return $this;
     }
 
-    /**
-     * @return \DateTime|null
-     */
     public function getValidUntil(): ?\DateTime
     {
         return $this->validUntil;

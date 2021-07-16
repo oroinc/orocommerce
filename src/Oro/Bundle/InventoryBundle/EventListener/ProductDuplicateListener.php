@@ -21,19 +21,12 @@ class ProductDuplicateListener
     /** @var DoctrineHelper */
     private $doctrineHelper;
 
-    /**
-     * @param PropertyAccessor $propertyAccessor
-     * @param array $fields
-     */
     public function __construct(PropertyAccessor $propertyAccessor, array $fields = [])
     {
         $this->propertyAccessor = $propertyAccessor;
         $this->fields = $fields;
     }
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function setDoctrineHelper(DoctrineHelper $doctrineHelper)
     {
         $this->doctrineHelper = $doctrineHelper;
@@ -41,8 +34,6 @@ class ProductDuplicateListener
 
     /**
      * Link new product with cloned inventory fields from source product
-     *
-     * @param ProductDuplicateAfterEvent $event
      */
     public function onDuplicateAfter(ProductDuplicateAfterEvent $event)
     {

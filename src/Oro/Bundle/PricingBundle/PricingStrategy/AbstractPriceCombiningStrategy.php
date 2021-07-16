@@ -65,11 +65,6 @@ abstract class AbstractPriceCombiningStrategy implements
      */
     protected $output;
 
-    /**
-     * @param Registry $registry
-     * @param ShardQueryExecutorInterface $insertFromSelectQueryExecutor
-     * @param CombinedPriceListTriggerHandler $triggerHandler
-     */
     public function __construct(
         Registry $registry,
         ShardQueryExecutorInterface $insertFromSelectQueryExecutor,
@@ -80,9 +75,6 @@ abstract class AbstractPriceCombiningStrategy implements
         $this->triggerHandler = $triggerHandler;
     }
 
-    /**
-     * @param OutputInterface $output
-     */
     public function setOutput(OutputInterface $output)
     {
         $this->output = $output;
@@ -324,11 +316,6 @@ abstract class AbstractPriceCombiningStrategy implements
         return $priceListRelations;
     }
 
-    /**
-     * @param ProgressBar|null $progressBar
-     * @param int $progress
-     * @param CombinedPriceListToPriceList $priceListRelation
-     */
     protected function moveProgress(
         ?ProgressBar $progressBar,
         int &$progress,

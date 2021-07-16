@@ -19,7 +19,6 @@ class UPSMethodTypeIdentifierGeneratorTest extends \PHPUnit\Framework\TestCase
             ->method('getCode')
             ->willReturn('59');
 
-
         $generator = new UPSMethodTypeIdentifierGenerator();
 
         $this->assertEquals('59', $generator->generateIdentifier($channel, $service));

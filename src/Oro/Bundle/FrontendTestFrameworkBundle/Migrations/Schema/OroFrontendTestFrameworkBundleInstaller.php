@@ -61,9 +61,6 @@ class OroFrontendTestFrameworkBundleInstaller implements
         $this->addWYSIWYGSerializedAttributeToProduct($schema);
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function createTestContentVariant(Schema $schema)
     {
         $table = $schema->createTable('oro_test_content_variant');
@@ -84,9 +81,6 @@ class OroFrontendTestFrameworkBundleInstaller implements
         $table->addForeignKeyConstraint('oro_test_content_node', ['node'], ['id'], ['onDelete' => 'CASCADE']);
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function createTestContentNode(Schema $schema)
     {
         $table = $schema->createTable('oro_test_content_node');
@@ -96,9 +90,6 @@ class OroFrontendTestFrameworkBundleInstaller implements
         $table->addForeignKeyConstraint('oro_test_web_catalog', ['web_catalog'], ['id']);
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function createTestWebCatalog(Schema $schema)
     {
         $table = $schema->createTable('oro_test_web_catalog');
@@ -114,9 +105,6 @@ class OroFrontendTestFrameworkBundleInstaller implements
         return 'v1_0';
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function addVariantFieldToProduct(Schema $schema)
     {
         if ($schema->hasTable('oro_product')) {
@@ -154,9 +142,6 @@ class OroFrontendTestFrameworkBundleInstaller implements
         }
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function addWYSIWYGFieldToProduct(Schema $schema)
     {
         if ($schema->hasTable('oro_product')) {
@@ -213,9 +198,6 @@ class OroFrontendTestFrameworkBundleInstaller implements
         }
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function addWYSIWYGSerializedAttributeToProduct(Schema $schema)
     {
         if (!$schema->hasTable('oro_product')) {

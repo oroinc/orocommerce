@@ -38,11 +38,6 @@ class MatrixGridOrderManager
      */
     private $collectionCache = [];
 
-    /**
-     * @param PropertyAccessor $propertyAccessor
-     * @param ProductVariantAvailabilityProvider $variantAvailability
-     * @param EmptyMatrixGridInterface $emptyMatrixGridManager
-     */
     public function __construct(
         PropertyAccessor $propertyAccessor,
         ProductVariantAvailabilityProvider $variantAvailability,

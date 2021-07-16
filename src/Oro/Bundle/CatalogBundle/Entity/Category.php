@@ -695,7 +695,6 @@ class Category extends ExtendCategory implements
     }
 
     /**
-     *
      * @return string
      */
     public function getMaterializedPath()

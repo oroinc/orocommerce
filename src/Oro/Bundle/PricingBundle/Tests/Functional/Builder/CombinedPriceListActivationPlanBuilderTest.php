@@ -57,8 +57,6 @@ class CombinedPriceListActivationPlanBuilderTest extends WebTestCase
 
     /**
      * @dataProvider activationPlanDataProvider
-     * @param $schedule
-     * @param $combinedPriceListsChanges
      */
     public function testBuildActivationPlan($schedule, $combinedPriceListsChanges)
     {
@@ -117,9 +115,6 @@ class CombinedPriceListActivationPlanBuilderTest extends WebTestCase
         ];
     }
 
-    /**
-     * @param array $scheduleData
-     */
     protected function updateSchedule(array $scheduleData)
     {
         foreach ($scheduleData as $priceListKey => $schedule) {
@@ -149,9 +144,6 @@ class CombinedPriceListActivationPlanBuilderTest extends WebTestCase
         }
     }
 
-    /**
-     * @param $combinedPriceListsChanges
-     */
     protected function comparePlan($combinedPriceListsChanges)
     {
         foreach ($combinedPriceListsChanges as $cplKey => $plan) {

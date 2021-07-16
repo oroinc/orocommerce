@@ -205,7 +205,6 @@ class PromotionExecutorTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider trueFalseDataProvider
-     * @param bool $result
      */
     public function testSupports(bool $result): void
     {
@@ -217,9 +216,6 @@ class PromotionExecutorTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($result, $this->executor->supports($entity));
     }
 
-    /**
-     * @return array
-     */
     public function trueFalseDataProvider(): array
     {
         return [

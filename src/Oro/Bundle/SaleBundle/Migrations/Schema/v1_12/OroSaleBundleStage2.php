@@ -21,9 +21,6 @@ class OroSaleBundleStage2 implements Migration, OrderedMigrationInterface
         $this->updateAccountRelation($schema);
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function addForeignKeyConstraint(Schema $schema)
     {
         $table = $schema->getTable('oro_quote_address');
@@ -42,9 +39,6 @@ class OroSaleBundleStage2 implements Migration, OrderedMigrationInterface
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function updateAccountRelation(Schema $schema)
     {
         $table = $schema->getTable('oro_sale_quote');

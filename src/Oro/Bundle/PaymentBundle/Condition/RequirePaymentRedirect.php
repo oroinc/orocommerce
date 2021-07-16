@@ -36,10 +36,6 @@ class RequirePaymentRedirect extends AbstractCondition implements ContextAccesso
      */
     private $eventDispatcher;
 
-    /**
-     * @param PaymentMethodProviderInterface $paymentMethodProvider
-     * @param EventDispatcherInterface $eventDispatcher
-     */
     public function __construct(
         PaymentMethodProviderInterface $paymentMethodProvider,
         EventDispatcherInterface $eventDispatcher

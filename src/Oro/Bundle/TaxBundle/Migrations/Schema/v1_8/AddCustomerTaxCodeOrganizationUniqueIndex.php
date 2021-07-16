@@ -9,9 +9,6 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 class AddCustomerTaxCodeOrganizationUniqueIndex implements Migration
 {
     /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     *
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     public function up(Schema $schema, QueryBag $queries): void
@@ -20,8 +17,6 @@ class AddCustomerTaxCodeOrganizationUniqueIndex implements Migration
     }
 
     /**
-     * @param Schema $schema
-     *
      * @throws \Doctrine\DBAL\Sgit chema\SchemaException
      */
     private function addCustomerTaxCodeOrganizationUniqueIndex(Schema $schema): void

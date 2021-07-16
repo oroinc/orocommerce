@@ -9,9 +9,6 @@ class ProductStub extends Product
     /** @var string|object|null */
     private $inventoryStatus;
 
-    /**
-     * @param int $id
-     */
     public function __construct(int $id)
     {
         $this->id = $id;

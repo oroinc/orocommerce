@@ -33,12 +33,6 @@ class VirtualFieldsProductDecoratorFactory
      */
     private $cacheProvider;
 
-    /**
-     * @param VirtualFieldsSelectQueryConverter $converter
-     * @param ManagerRegistry $doctrine
-     * @param FieldHelper $fieldHelper
-     * @param CacheProvider $cacheProvider
-     */
     public function __construct(
         VirtualFieldsSelectQueryConverter $converter,
         ManagerRegistry $doctrine,

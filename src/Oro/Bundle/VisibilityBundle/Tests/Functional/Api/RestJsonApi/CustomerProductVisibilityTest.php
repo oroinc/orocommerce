@@ -32,12 +32,6 @@ class CustomerProductVisibilityTest extends RestJsonApiTestCase
         ]);
     }
 
-    /**
-     * @param string $product
-     * @param string $customer
-     *
-     * @return string
-     */
     private function getId(string $product, string $customer): string
     {
         return sprintf(

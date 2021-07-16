@@ -18,10 +18,6 @@ class ShoppingListTotalsDemoDataFixturesListener
     /** @var ShoppingListTotalManager */
     private $shoppingListTotalManager;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param ShoppingListTotalManager $shoppingListTotalManager
-     */
     public function __construct(
         ManagerRegistry $registry,
         ShoppingListTotalManager $shoppingListTotalManager
@@ -30,9 +26,6 @@ class ShoppingListTotalsDemoDataFixturesListener
         $this->shoppingListTotalManager = $shoppingListTotalManager;
     }
 
-    /**
-     * @param MigrationDataFixturesEvent $event
-     */
     public function onPostLoad(MigrationDataFixturesEvent $event): void
     {
         if (!$event->isDemoFixtures()) {

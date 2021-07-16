@@ -37,12 +37,6 @@ class ContentNodeListener
      */
     protected $messageFactory;
 
-    /**
-     * @param ContentNodeMaterializedPathModifier $modifier
-     * @param ExtraActionEntityStorageInterface $storage
-     * @param MessageProducerInterface $messageProducer
-     * @param ResolveNodeSlugsMessageFactory $messageFactory
-     */
     public function __construct(
         ContentNodeMaterializedPathModifier $modifier,
         ExtraActionEntityStorageInterface $storage,
@@ -55,19 +49,12 @@ class ContentNodeListener
         $this->messageFactory = $messageFactory;
     }
 
-    /**
-     * @param ContentNode $contentNode
-     */
     public function postPersist(ContentNode $contentNode)
     {
         $contentNode = $this->modifier->calculateMaterializedPath($contentNode);
         $this->storage->scheduleForExtraInsert($contentNode);
     }
 
-    /**
-     * @param ContentNode $contentNode
-     * @param PreUpdateEventArgs $args
-     */
     public function preUpdate(ContentNode $contentNode, PreUpdateEventArgs $args)
     {
         $changeSet = $args->getEntityChangeSet();
@@ -83,10 +70,6 @@ class ContentNodeListener
         }
     }
 
-    /**
-     * @param ContentNode $contentNode
-     * @param LifecycleEventArgs $args
-     */
     public function postRemove(ContentNode $contentNode, LifecycleEventArgs $args)
     {
         if ($contentNode->getParentNode() && $contentNode->getParentNode()->getId()) {
@@ -103,17 +86,12 @@ class ContentNodeListener
     /**
      * Form after flush is used to catch all content node fields update, including collections of
      * localized fallback values which are used for Titles and Slug Prototypes.
-     *
-     * @param AfterFormProcessEvent $event
      */
     public function onFormAfterFlush(AfterFormProcessEvent $event)
     {
         $this->scheduleContentNodeRecalculation($event->getData());
     }
 
-    /**
-     * @param ContentNode $contentNode
-     */
     protected function scheduleContentNodeRecalculation(ContentNode $contentNode)
     {
         $this->messageProducer->send(Topics::RESOLVE_NODE_SLUGS, $this->messageFactory->createMessage($contentNode));

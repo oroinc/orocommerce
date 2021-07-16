@@ -56,14 +56,6 @@ class ReindexProductCollectionProcessor implements MessageProcessorInterface, To
      */
     private $segmentSnapshotDeltaProvider;
 
-    /**
-     * @param JobRunner $jobRunner
-     * @param MessageProducerInterface $producer
-     * @param LoggerInterface $logger
-     * @param ReindexMessageGranularizer $reindexMessageGranularizer
-     * @param SegmentMessageFactory $messageFactory
-     * @param SegmentSnapshotDeltaProvider $segmentSnapshotDeltaProvider
-     */
     public function __construct(
         JobRunner $jobRunner,
         MessageProducerInterface $producer,

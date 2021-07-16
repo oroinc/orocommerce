@@ -25,9 +25,6 @@ class WYSIWYGFieldExtension extends AbstractTypeExtension
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'onPreSetData']);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function onPreSetData(FormEvent $event): void
     {
         $form = $event->getForm();

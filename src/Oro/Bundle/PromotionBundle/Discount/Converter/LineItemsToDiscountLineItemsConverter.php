@@ -16,9 +16,6 @@ class LineItemsToDiscountLineItemsConverter extends AbstractLineItemsToDiscountL
      */
     protected $productPricesDataProvider;
 
-    /**
-     * @param FrontendProductPricesDataProvider $productPricesDataProvider
-     */
     public function __construct(FrontendProductPricesDataProvider $productPricesDataProvider)
     {
         $this->productPricesDataProvider = $productPricesDataProvider;

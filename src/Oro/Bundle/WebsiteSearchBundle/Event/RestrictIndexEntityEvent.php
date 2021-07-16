@@ -15,11 +15,6 @@ class RestrictIndexEntityEvent extends Event
     /** @var array */
     protected $context;
 
-    /**
-     * @param QueryBuilder $qb
-     * @param array $context
-     * @param array $context
-     */
     public function __construct(QueryBuilder $qb, array $context)
     {
         $this->queryBuilder = $qb;

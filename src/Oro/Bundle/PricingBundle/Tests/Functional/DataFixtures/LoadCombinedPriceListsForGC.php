@@ -243,11 +243,6 @@ class LoadCombinedPriceListsForGC extends AbstractCombinedPriceListsFixture impl
         $manager->flush();
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param array $priceListData
-     * @param CombinedPriceList $combinedPriceList
-     */
     protected function loadCombinedPriceListToCustomer(
         ObjectManager $manager,
         array $priceListData,
@@ -272,11 +267,6 @@ class LoadCombinedPriceListsForGC extends AbstractCombinedPriceListsFixture impl
         }
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param array $priceListData
-     * @param CombinedPriceList $combinedPriceList
-     */
     protected function loadCombinedPriceListToCustomerGroup(
         ObjectManager $manager,
         array $priceListData,
@@ -301,11 +291,6 @@ class LoadCombinedPriceListsForGC extends AbstractCombinedPriceListsFixture impl
         }
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param array $priceListData
-     * @param CombinedPriceList $combinedPriceList
-     */
     protected function loadCombinedPriceListToWebsite(
         ObjectManager $manager,
         array $priceListData,
@@ -327,11 +312,6 @@ class LoadCombinedPriceListsForGC extends AbstractCombinedPriceListsFixture impl
         }
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param string $fullCplReference
-     * @param string $cplReference
-     */
     private function createActivationRule(ObjectManager $manager, string $fullCplReference, string $cplReference)
     {
         /** @var CombinedPriceList $fullCpl */

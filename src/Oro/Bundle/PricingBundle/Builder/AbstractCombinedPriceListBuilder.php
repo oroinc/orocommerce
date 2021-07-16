@@ -101,14 +101,6 @@ abstract class AbstractCombinedPriceListBuilder
      */
     protected $strategyRegister;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param PriceListCollectionProvider $priceListCollectionProvider
-     * @param CombinedPriceListProvider $combinedPriceListProvider
-     * @param CombinedPriceListScheduleResolver $scheduleResolver
-     * @param StrategyRegister $strategyRegister
-     * @param CombinedPriceListTriggerHandler $triggerHandler
-     */
     public function __construct(
         ManagerRegistry $registry,
         PriceListCollectionProvider $priceListCollectionProvider,
@@ -214,7 +206,6 @@ abstract class AbstractCombinedPriceListBuilder
         return $this->fallbackRepository;
     }
 
-
     /**
      * @return string
      */
@@ -242,8 +233,6 @@ abstract class AbstractCombinedPriceListBuilder
     }
 
     /**
-     * @param callable $transactionalCallback
-     *
      * @throws \Exception
      */
     protected function wrapInTransaction(callable $transactionalCallback)

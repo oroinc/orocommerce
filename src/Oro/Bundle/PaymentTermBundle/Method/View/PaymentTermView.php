@@ -30,11 +30,6 @@ class PaymentTermView implements PaymentMethodViewInterface
      */
     protected $config;
 
-    /**
-     * @param PaymentTermProviderInterface $paymentTermProvider
-     * @param TranslatorInterface        $translator
-     * @param PaymentTermConfigInterface $config
-     */
     public function __construct(
         PaymentTermProviderInterface $paymentTermProvider,
         TranslatorInterface $translator,

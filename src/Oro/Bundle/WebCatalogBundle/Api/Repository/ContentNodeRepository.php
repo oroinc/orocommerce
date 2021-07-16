@@ -24,11 +24,6 @@ class ContentNodeRepository
     /** @var EntitySerializer */
     private $entitySerializer;
 
-    /**
-     * @param ContentNodeProvider $contentNodeProvider
-     * @param DoctrineHelper      $doctrineHelper
-     * @param EntitySerializer    $entitySerializer
-     */
     public function __construct(
         ContentNodeProvider $contentNodeProvider,
         DoctrineHelper $doctrineHelper,
@@ -41,12 +36,6 @@ class ContentNodeRepository
 
     /**
      * Gets all nodes available for the storefront.
-     *
-     * @param QueryBuilder           $qb
-     * @param EntityDefinitionConfig $config
-     * @param array                  $normalizationContext
-     *
-     * @return array
      */
     public function getContentNodes(
         QueryBuilder $qb,

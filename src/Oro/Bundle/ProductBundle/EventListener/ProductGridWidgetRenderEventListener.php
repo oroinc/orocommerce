@@ -12,17 +12,11 @@ class ProductGridWidgetRenderEventListener
      */
     protected $requestParameterBagFactory;
 
-    /**
-     * @param RequestParameterBagFactory $requestParameterBagFactory
-     */
     public function __construct(RequestParameterBagFactory $requestParameterBagFactory)
     {
         $this->requestParameterBagFactory = $requestParameterBagFactory;
     }
 
-    /**
-     * @param ProductGridWidgetRenderEvent $event
-     */
     public function onWidgetRender(ProductGridWidgetRenderEvent $event)
     {
         $params = $event->getWidgetRouteParameters();

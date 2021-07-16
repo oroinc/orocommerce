@@ -29,10 +29,6 @@ class FrontendConsentProvider implements FeatureToggleableInterface
      */
     private $tokenStorage;
 
-    /**
-     * @param ConsentDataProvider $provider
-     * @param TokenStorageInterface $tokenStorage
-     */
     public function __construct(ConsentDataProvider $provider, TokenStorageInterface $tokenStorage)
     {
         $this->provider = $provider;

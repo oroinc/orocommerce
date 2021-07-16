@@ -42,10 +42,6 @@ class IsCheckoutStateValid extends AbstractCondition implements ContextAccessorA
     /** @var array */
     private $currentState;
 
-    /**
-     * @param CheckoutStateDiffManager $checkoutStateDiffManager
-     * @param CheckoutDiffStorage $checkoutDiffStorage
-     */
     public function __construct(
         CheckoutStateDiffManager $checkoutStateDiffManager,
         CheckoutDiffStorage $checkoutDiffStorage

@@ -87,8 +87,6 @@ class PriceRuleLexemeTriggerHandlerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider productDataProvider
-     *
-     * @param Product|null $product
      */
     public function testProcessLexemes(Product $product = null)
     {

@@ -44,9 +44,6 @@ class LoadShippingServiceRulesData extends AbstractFixture implements OrderedFix
         $manager->flush();
     }
 
-    /**
-     * @return array
-     */
     private function getData(): array
     {
         return [

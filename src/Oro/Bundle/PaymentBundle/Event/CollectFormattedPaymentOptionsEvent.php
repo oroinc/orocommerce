@@ -22,19 +22,12 @@ class CollectFormattedPaymentOptionsEvent extends Event
      */
     private $options;
 
-    /**
-     * @param PaymentMethodViewInterface $paymentMethodView
-     * @param array $options
-     */
     public function __construct(PaymentMethodViewInterface $paymentMethodView, array $options = [])
     {
         $this->paymentMethodView = $paymentMethodView;
         $this->options = $options;
     }
 
-    /**
-     * @return PaymentMethodViewInterface
-     */
     public function getPaymentMethodView(): PaymentMethodViewInterface
     {
         return $this->paymentMethodView;

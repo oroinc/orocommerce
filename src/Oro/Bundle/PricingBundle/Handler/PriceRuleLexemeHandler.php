@@ -32,11 +32,6 @@ class PriceRuleLexemeHandler
      */
     protected $priceRuleProvider;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param ExpressionParser $parser
-     * @param FieldsProviderInterface $priceRuleProvider
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         ExpressionParser $parser,
@@ -47,9 +42,6 @@ class PriceRuleLexemeHandler
         $this->priceRuleProvider = $priceRuleProvider;
     }
 
-    /**
-     * @param PriceList $priceList
-     */
     public function updateLexemesWithoutFlush(PriceList $priceList)
     {
         $assignmentRule = $priceList->getProductAssignmentRule();
@@ -87,16 +79,13 @@ class PriceRuleLexemeHandler
         }
     }
 
-    /**
-     * @param PriceList $priceList
-     */
     public function updateLexemes(PriceList $priceList)
     {
         $this->updateLexemesWithoutFlush($priceList);
         $em = $this->doctrineHelper->getEntityManager(PriceRuleLexeme::class);
         $em->flush();
     }
-    
+
     /**
      * @param array $lexemes
      *  [

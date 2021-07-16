@@ -25,10 +25,6 @@ class Messenger
      */
     protected $eventDispatcher;
 
-    /**
-     * @param TransportInterface $sender
-     * @param EventDispatcherInterface $eventDispatcher
-     */
     public function __construct(
         TransportInterface $sender,
         EventDispatcherInterface $eventDispatcher
@@ -38,9 +34,6 @@ class Messenger
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    /**
-     * @param TransportInterface $transport
-     */
     public function addTransport(TransportInterface $transport)
     {
         if (!in_array($transport, $this->transports, true)) {

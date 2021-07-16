@@ -322,11 +322,6 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
         $qb->getQuery()->execute();
     }
 
-    /**
-     * @param Category $category
-     * @param array $customerIds
-     * @param $visibility
-     */
     protected function updateCustomersProductVisibility(Category $category, array $customerIds, $visibility)
     {
         if (!$customerIds) {
@@ -357,11 +352,6 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
         $qb->getQuery()->execute();
     }
 
-    /**
-     * @param Category $category
-     * @param array $customerIds
-     * @param $visibility
-     */
     protected function updateCustomersCategoryVisibility(Category $category, array $customerIds, $visibility)
     {
         if (!$customerIds) {
@@ -393,11 +383,6 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
         $qb->getQuery()->execute();
     }
 
-    /**
-     * @param Category $category
-     * @param array $customerGroupIds
-     * @param $visibility
-     */
     protected function updateCustomerGroupsCategoryVisibility(
         Category $category,
         array $customerGroupIds,

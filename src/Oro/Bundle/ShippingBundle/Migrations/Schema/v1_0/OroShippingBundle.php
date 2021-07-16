@@ -27,8 +27,6 @@ class OroShippingBundle implements Migration
 
     /**
      * Create orob2b_shipping_freight_class table
-     *
-     * @param Schema $schema
      */
     protected function createOrob2BShippingFreightClassTable(Schema $schema)
     {
@@ -39,8 +37,6 @@ class OroShippingBundle implements Migration
 
     /**
      * Create orob2b_shipping_length_unit table
-     *
-     * @param Schema $schema
      */
     protected function createOrob2BShippingLengthUnitTable(Schema $schema)
     {
@@ -52,8 +48,6 @@ class OroShippingBundle implements Migration
 
     /**
      * Create orob2b_shipping_orig_warehouse table
-     *
-     * @param Schema $schema
      */
     protected function createOrob2BShippingOrigWarehouseTable(Schema $schema)
     {
@@ -82,8 +76,6 @@ class OroShippingBundle implements Migration
 
     /**
      * Create orob2b_shipping_product_opts table
-     *
-     * @param Schema $schema
      */
     protected function createOrob2BShippingProductOptsTable(Schema $schema)
     {
@@ -107,8 +99,6 @@ class OroShippingBundle implements Migration
 
     /**
      * Create orob2b_shipping_weight_unit table
-     *
-     * @param Schema $schema
      */
     protected function createOrob2BShippingWeightUnitTable(Schema $schema)
     {
@@ -120,8 +110,6 @@ class OroShippingBundle implements Migration
 
     /**
      * Add orob2b_shipping_orig_warehouse foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOrob2BShippingOrigWarehouseForeignKeys(Schema $schema)
     {
@@ -148,8 +136,6 @@ class OroShippingBundle implements Migration
 
     /**
      * Add orob2b_shipping_product_opts foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOrob2BShippingProductOptsForeignKeys(Schema $schema)
     {

@@ -22,10 +22,6 @@ class RemoveNotAvailableCategoryNodeFromFilter implements ProcessorInterface
     /** @var CategoryNodeRepository */
     private $categoryNodeRepository;
 
-    /**
-     * @param string                 $filterKey
-     * @param CategoryNodeRepository $categoryNodeRepository
-     */
     public function __construct(string $filterKey, CategoryNodeRepository $categoryNodeRepository)
     {
         $this->filterKey = $filterKey;
@@ -54,10 +50,6 @@ class RemoveNotAvailableCategoryNodeFromFilter implements ProcessorInterface
         $this->correctFilterValue($filterValue, $context);
     }
 
-    /**
-     * @param FilterValue $filterValue
-     * @param Context     $context
-     */
     private function correctFilterValue(FilterValue $filterValue, Context $context): void
     {
         $value = $filterValue->getValue();

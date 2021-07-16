@@ -34,13 +34,6 @@ class WebCatalogBreadcrumbProvider
     /** @var CategoryBreadcrumbProvider */
     private $categoryBreadcrumbProvider;
 
-    /**
-     * @param ManagerRegistry                  $doctrine
-     * @param LocalizationHelper               $localizationHelper
-     * @param RequestStack                     $requestStack
-     * @param RequestWebContentVariantProvider $requestWebContentVariantProvider
-     * @param CategoryBreadcrumbProvider       $categoryBreadcrumbProvider
-     */
     public function __construct(
         ManagerRegistry $doctrine,
         LocalizationHelper $localizationHelper,
@@ -106,7 +99,6 @@ class WebCatalogBreadcrumbProvider
 
         return $breadcrumbs;
     }
-
 
     /**
      * Get breadcrumbs by content variant

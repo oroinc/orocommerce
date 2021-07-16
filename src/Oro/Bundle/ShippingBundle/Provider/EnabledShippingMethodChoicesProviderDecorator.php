@@ -16,10 +16,6 @@ class EnabledShippingMethodChoicesProviderDecorator implements ShippingMethodCho
      */
     protected $provider;
 
-    /**
-     * @param ShippingMethodProviderInterface        $shippingMethodProvider
-     * @param ShippingMethodChoicesProviderInterface $provider
-     */
     public function __construct(
         ShippingMethodProviderInterface $shippingMethodProvider,
         ShippingMethodChoicesProviderInterface $provider

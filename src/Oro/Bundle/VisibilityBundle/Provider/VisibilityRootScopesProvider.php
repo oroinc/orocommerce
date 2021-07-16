@@ -16,9 +16,6 @@ class VisibilityRootScopesProvider implements VisibilityRootScopesProviderInterf
      */
     protected $scopeManager;
 
-    /**
-     * @param ScopeManager $scopeManager
-     */
     public function __construct(ScopeManager $scopeManager)
     {
         $this->scopeManager = $scopeManager;

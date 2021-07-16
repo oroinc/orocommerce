@@ -31,10 +31,6 @@ class OroCheckoutExtension extends Extension
         $container->prependExtensionConfig($this->getAlias(), array_intersect_key($config, array_flip(['settings'])));
     }
 
-    /**
-     * @param Loader\YamlFileLoader $loader
-     * @param ContainerBuilder $container
-     */
     private function registerSaleBundleDependencies(Loader\YamlFileLoader $loader, ContainerBuilder $container)
     {
         $bundles = $container->getParameter('kernel.bundles');

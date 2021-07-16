@@ -51,9 +51,6 @@ class CategoryTitle extends AbstractLocalizedFallbackValue
      */
     protected $category;
 
-    /**
-     * @return null|Category
-     */
     public function getCategory(): ?Category
     {
         return $this->category;

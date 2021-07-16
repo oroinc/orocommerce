@@ -85,9 +85,6 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider pricesDataProvider
-     *
-     * @param array $productPrices
-     * @param array $expected
      */
     public function testGetPricesForProductsByPriceList(array $productPrices, array $expected)
     {
@@ -139,9 +136,6 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @return array
-     */
     public function pricesDataProvider(): array
     {
         return [

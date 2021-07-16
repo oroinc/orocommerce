@@ -40,7 +40,7 @@ class QuoteProductDemandType extends AbstractType
             ]
         );
     }
-    
+
     /**
      * {@inheritdoc}
      */

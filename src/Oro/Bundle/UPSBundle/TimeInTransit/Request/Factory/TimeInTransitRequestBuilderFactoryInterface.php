@@ -8,14 +8,6 @@ use Oro\Bundle\UPSBundle\TimeInTransit\Request\Builder\TimeInTransitRequestBuild
 
 interface TimeInTransitRequestBuilderFactoryInterface
 {
-    /**
-     * @param UPSTransport     $transport
-     * @param AddressInterface $shipFromAddress
-     * @param AddressInterface $shipToAddress
-     * @param \DateTime        $pickupDate
-     *
-     * @return TimeInTransitRequestBuilderInterface
-     */
     public function createTimeInTransitRequestBuilder(
         UPSTransport $transport,
         AddressInterface $shipFromAddress,

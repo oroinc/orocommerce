@@ -35,11 +35,6 @@ class ProductCollectionTest extends WebCatalogTreeTestCase
         $this->reindexProductData();
     }
 
-    /**
-     * @param array $expectedContent
-     *
-     * @return array
-     */
     private function getExpectedContentWithPaginationLinks(array $expectedContent): array
     {
         $content = Yaml::dump($expectedContent);

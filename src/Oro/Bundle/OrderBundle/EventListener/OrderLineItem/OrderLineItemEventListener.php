@@ -16,35 +16,21 @@ class OrderLineItemEventListener
     /** @var ConfigurableProductProvider */
     protected $configurableProductProvider;
 
-    /**
-     * @param ConfigurableProductProvider $configurableProductProvider
-     */
     public function __construct(ConfigurableProductProvider $configurableProductProvider)
     {
         $this->configurableProductProvider = $configurableProductProvider;
     }
 
-    /**
-     * @param OrderLineItem $lineItem
-     * @param LifecycleEventArgs $event
-     */
     public function prePersist(OrderLineItem $lineItem, LifecycleEventArgs $event)
     {
         $this->updateProductVariantFields($lineItem);
     }
 
-    /**
-     * @param OrderLineItem $lineItem
-     * @param PreUpdateEventArgs $event
-     */
     public function preUpdate(OrderLineItem $lineItem, PreUpdateEventArgs $event)
     {
         $this->updateProductVariantFields($lineItem);
     }
 
-    /**
-     * @param OrderLineItem $lineItem
-     */
     protected function updateProductVariantFields(OrderLineItem $lineItem)
     {
         $product = $lineItem->getProduct();

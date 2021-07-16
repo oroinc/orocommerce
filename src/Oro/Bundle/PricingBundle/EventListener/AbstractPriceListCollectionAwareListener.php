@@ -57,11 +57,6 @@ abstract class AbstractPriceListCollectionAwareListener implements FeatureToggle
      */
     protected $fallbacks = [];
 
-    /**
-     * @param PriceListWithPriorityCollectionHandler $collectionHandler
-     * @param DoctrineHelper $doctrineHelper
-     * @param PriceListRelationTriggerHandler $triggerHandler
-     */
     public function __construct(
         PriceListWithPriorityCollectionHandler $collectionHandler,
         DoctrineHelper $doctrineHelper,
@@ -72,9 +67,6 @@ abstract class AbstractPriceListCollectionAwareListener implements FeatureToggle
         $this->triggerHandler = $triggerHandler;
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function onPostSetData(FormEvent $event)
     {
         if (!$this->isFeaturesEnabled()) {
@@ -99,9 +91,6 @@ abstract class AbstractPriceListCollectionAwareListener implements FeatureToggle
         }
     }
 
-    /**
-     * @param AfterFormProcessEvent $event
-     */
     public function onPostSubmit(AfterFormProcessEvent $event)
     {
         if (!$this->isFeaturesEnabled()) {

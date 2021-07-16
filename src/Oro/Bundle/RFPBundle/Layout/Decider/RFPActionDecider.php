@@ -19,10 +19,6 @@ class RFPActionDecider
      */
     protected $request;
 
-    /**
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param RequestStack $requestStack
-     */
     public function __construct(EventDispatcherInterface $eventDispatcher, RequestStack $requestStack)
     {
         $this->eventDispatcher = $eventDispatcher;

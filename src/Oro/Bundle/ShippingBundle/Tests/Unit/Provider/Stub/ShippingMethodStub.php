@@ -41,7 +41,7 @@ class ShippingMethodStub implements ShippingMethodInterface
      * @var bool
      */
     protected $isGrouped = false;
-    
+
     /**
      * @return ShippingMethodTypeStub[]
      */

@@ -38,11 +38,6 @@ abstract class AbstractCustomerPartialUpdateDriver implements CustomerPartialUpd
      */
     protected $doctrineHelper;
 
-    /**
-     * @param PlaceholderProvider $placeholderProvider
-     * @param ProductVisibilityProvider $productVisibilityProvider
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(
         PlaceholderProvider $placeholderProvider,
         ProductVisibilityProvider $productVisibilityProvider,

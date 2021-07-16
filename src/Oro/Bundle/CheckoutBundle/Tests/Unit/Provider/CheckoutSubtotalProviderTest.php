@@ -364,11 +364,6 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
         return $product;
     }
 
-    /**
-     * @param $value
-     * @param $identifier
-     * @param $defaultQuantity
-     */
     protected function preparePrice($value, $identifier, $defaultQuantity)
     {
         $price = $this->createMock(Price::class);

@@ -13,9 +13,6 @@ use Symfony\Component\Form\FormInterface;
  */
 class BuildAddShoppingListItemsFormBuilder extends BuildCollectionFormBuilder
 {
-    /**
-     * @param FormHelper $formHelper
-     */
     public function __construct(FormHelper $formHelper)
     {
         parent::__construct($formHelper, true);

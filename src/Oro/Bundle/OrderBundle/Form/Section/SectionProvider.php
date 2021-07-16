@@ -18,9 +18,6 @@ class SectionProvider
      */
     private $formRegistry;
 
-    /**
-     * @param FormRegistryInterface $formRegistry
-     */
     public function __construct(FormRegistryInterface $formRegistry)
     {
         $this->formRegistry = $formRegistry;

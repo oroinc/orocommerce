@@ -22,10 +22,6 @@ class MethodAndTypeRemovalListener
      */
     private $logger;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param LoggerInterface $logger
-     */
     public function __construct(DoctrineHelper $doctrineHelper, LoggerInterface $logger)
     {
         $this->doctrineHelper = $doctrineHelper;
@@ -33,7 +29,6 @@ class MethodAndTypeRemovalListener
     }
 
     /**
-     * @param MethodRemovalEvent $event
      * @throws \Exception
      */
     public function onMethodRemove(MethodRemovalEvent $event)
@@ -54,7 +49,6 @@ class MethodAndTypeRemovalListener
     }
 
     /**
-     * @param MethodTypeRemovalEvent $event
      * @throws \Exception
      */
     public function onMethodTypeRemove(MethodTypeRemovalEvent $event)
@@ -119,7 +113,6 @@ class MethodAndTypeRemovalListener
     {
         return $this->doctrineHelper->getEntityRepository('OroShippingBundle:ShippingMethodTypeConfig');
     }
-
 
     /**
      * @return ShippingMethodsConfigsRuleRepository|\Doctrine\ORM\EntityRepository

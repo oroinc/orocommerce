@@ -27,9 +27,6 @@ class EmptyVariantFieldInSimpleProductForVariantLinksValidator extends Constrain
      */
     private $registry;
 
-    /**
-     * @param PropertyAccessor $propertyAccessor
-     */
     public function __construct(PropertyAccessor $propertyAccessor, ManagerRegistry $registry)
     {
         $this->propertyAccessor = $propertyAccessor;
@@ -94,10 +91,6 @@ class EmptyVariantFieldInSimpleProductForVariantLinksValidator extends Constrain
         }
     }
 
-    /**
-     * @param Product $product
-     * @return array
-     */
     private function getRequiredAttributesInfo(Product $product): array
     {
         $parentVariantLinks = $product->getParentVariantLinks();
@@ -125,10 +118,6 @@ class EmptyVariantFieldInSimpleProductForVariantLinksValidator extends Constrain
         return $attributesInfo;
     }
 
-    /**
-     * @param Product $product
-     * @return array
-     */
     private function getPreparedVariantFields(Product $product): array
     {
         $requiredAttributesInfo = $this->getRequiredAttributesInfo($product);

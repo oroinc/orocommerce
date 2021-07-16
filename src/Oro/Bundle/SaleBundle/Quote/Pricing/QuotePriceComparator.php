@@ -16,10 +16,6 @@ class QuotePriceComparator
     /** @var QuoteProductPriceProvider */
     protected $provider;
 
-    /**
-     * @param Quote $quote
-     * @param QuoteProductPriceProvider $provider
-     */
     public function __construct(
         Quote $quote,
         QuoteProductPriceProvider $provider

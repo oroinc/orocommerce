@@ -46,14 +46,6 @@ class CheckoutSubtotalProvider extends AbstractSubtotalProvider implements
     /** @var ProductPriceScopeCriteriaFactoryInterface */
     protected $priceScopeCriteriaFactory;
 
-    /**
-     * @param TranslatorInterface                       $translator
-     * @param RoundingServiceInterface                  $rounding
-     * @param ProductPriceProviderInterface             $productPriceProvider
-     * @param CombinedPriceListTreeHandler              $priceListTreeHandler
-     * @param SubtotalProviderConstructorArguments      $arguments
-     * @param ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory
-     */
     public function __construct(
         TranslatorInterface $translator,
         RoundingServiceInterface $rounding,
@@ -208,10 +200,6 @@ class CheckoutSubtotalProvider extends AbstractSubtotalProvider implements
         return $subtotal;
     }
 
-    /**
-     * @param ProductPriceScopeCriteriaInterface $criteria
-     * @param Subtotal $subtotal
-     */
     protected function setPriceListRelation(ProductPriceScopeCriteriaInterface $criteria, Subtotal $subtotal)
     {
         if ($this->isFeaturesEnabled()) {

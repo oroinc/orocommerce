@@ -56,14 +56,6 @@ class CategoryCountsExtension extends AbstractExtension
      */
     private $applied = [];
 
-    /**
-     * @param ServiceLink $datagridManagerLink
-     * @param ManagerRegistry $registry
-     * @param ProductRepository $productSearchRepository
-     * @param CategoryCountsCache $cache
-     * @param DatagridParametersHelper $datagridParametersHelper
-     * @param ConfigManager $configManager
-     */
     public function __construct(
         ServiceLink $datagridManagerLink,
         ManagerRegistry $registry,
@@ -135,10 +127,6 @@ class CategoryCountsExtension extends AbstractExtension
         $data->offsetSetByPath('[filters]', $filters);
     }
 
-    /**
-     * @param DatagridConfiguration $config
-     * @return array
-     */
     protected function getCounts(DatagridConfiguration $config): array
     {
         return $this->getFilterCounts($config);
@@ -228,12 +216,6 @@ class CategoryCountsExtension extends AbstractExtension
         return $categoryId && $categoryId > 0 ? $this->getCategoryRepository()->find($categoryId) : null;
     }
 
-    /**
-     * @param DatagridConfiguration $config
-     * @param ParameterBag $datagridParameters
-     *
-     * @return DatagridInterface
-     */
     protected function getGrid(DatagridConfiguration $config, ParameterBag $datagridParameters): DatagridInterface
     {
         /** @var Manager $datagridManager */
@@ -242,9 +224,6 @@ class CategoryCountsExtension extends AbstractExtension
         return $datagridManager->getDatagrid($config->getName(), $datagridParameters);
     }
 
-    /**
-     * @return CategoryRepository
-     */
     protected function getCategoryRepository(): CategoryRepository
     {
         return $this->registry
@@ -298,8 +277,6 @@ class CategoryCountsExtension extends AbstractExtension
 
     /**
      * Get array of parameters that should be taken into account for generating cache key
-     *
-     * @return array
      */
     private function getApplicableParameters(): array
     {

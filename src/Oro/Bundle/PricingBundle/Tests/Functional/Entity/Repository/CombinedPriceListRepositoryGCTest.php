@@ -155,9 +155,6 @@ class CombinedPriceListRepositoryGCTest extends WebTestCase
         }
     }
 
-    /**
-     * @return array
-     */
     public function trueFalseDataProvider(): array
     {
         return [

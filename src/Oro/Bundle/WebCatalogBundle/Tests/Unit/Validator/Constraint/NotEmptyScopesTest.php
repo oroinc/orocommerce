@@ -72,9 +72,6 @@ class NotEmptyScopesTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider validValuesDataProvider
-     * @param ArrayCollection $value
-     * @param WebCatalog $webCatalog
-     * @param Scope $defaultScope
      */
     public function testValidateValid(ArrayCollection $value, WebCatalog $webCatalog, Scope $defaultScope)
     {
@@ -92,9 +89,6 @@ class NotEmptyScopesTest extends \PHPUnit\Framework\TestCase
         $this->validator->validate($value, $this->constraint);
     }
 
-    /**
-     * @return array
-     */
     public function validValuesDataProvider(): array
     {
         $webCatalog = new WebCatalog();

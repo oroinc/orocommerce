@@ -31,9 +31,6 @@ class CustomerFormExtension extends AbstractTypeExtension implements FeatureTogg
      */
     protected $relationClass = 'Oro\Bundle\PricingBundle\Entity\PriceListToCustomer';
 
-    /**
-     * @param CustomerListener $listener
-     */
     public function __construct(CustomerListener $listener)
     {
         $this->listener = $listener;
@@ -74,7 +71,6 @@ class CustomerFormExtension extends AbstractTypeExtension implements FeatureTogg
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, [$this->listener, 'onPostSetData']);
     }
-
 
     /**
      * @return array

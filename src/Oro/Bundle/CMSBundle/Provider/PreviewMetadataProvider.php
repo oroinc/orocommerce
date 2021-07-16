@@ -22,11 +22,6 @@ class PreviewMetadataProvider implements PreviewMetadataProviderInterface
     /** @var MimeTypeChecker */
     private $mimeTypeChecker;
 
-    /**
-     * @param InnerPreviewMetadataProvider $innerPreviewMetadataProvider
-     * @param FileUrlProviderInterface $fileUrlProvider
-     * @param MimeTypeChecker $mimeTypeChecker
-     */
     public function __construct(
         InnerPreviewMetadataProvider $innerPreviewMetadataProvider,
         FileUrlProviderInterface $fileUrlProvider,
@@ -37,11 +32,6 @@ class PreviewMetadataProvider implements PreviewMetadataProviderInterface
         $this->mimeTypeChecker = $mimeTypeChecker;
     }
 
-    /**
-     * @param File $file
-     *
-     * @return array
-     */
     public function getMetadata(File $file): array
     {
         $metadata = $this->innerPreviewMetadataProvider->getMetadata($file);

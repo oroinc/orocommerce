@@ -41,14 +41,6 @@ class PriceListAssignedProductsProcessor implements MessageProcessorInterface, T
     /** @var PriceListTriggerHandler */
     private $triggerHandler;
 
-    /**
-     * @param ManagerRegistry $doctrine
-     * @param LoggerInterface $logger
-     * @param PriceListProductAssignmentBuilder $assignmentBuilder
-     * @param Messenger $messenger
-     * @param TranslatorInterface $translator
-     * @param PriceListTriggerHandler $triggerHandler
-     */
     public function __construct(
         ManagerRegistry $doctrine,
         LoggerInterface $logger,
@@ -151,9 +143,6 @@ class PriceListAssignedProductsProcessor implements MessageProcessorInterface, T
         $this->assignmentBuilder->buildByPriceList($priceList, $productIds);
     }
 
-    /**
-     * @param int $priceListId
-     */
     private function onFailedPriceListId(int $priceListId): void
     {
         $this->messenger->send(

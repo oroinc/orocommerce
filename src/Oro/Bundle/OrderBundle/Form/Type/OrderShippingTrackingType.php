@@ -64,10 +64,6 @@ class OrderShippingTrackingType extends AbstractType
         return $this->choices;
     }
 
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         parent::buildForm($builder, $options);
@@ -106,7 +102,6 @@ class OrderShippingTrackingType extends AbstractType
     }
 
     /**
-     * @param FormEvent $event
      * @throws AlreadySubmittedException
      * @throws LogicException
      * @throws \OutOfBoundsException
@@ -139,7 +134,6 @@ class OrderShippingTrackingType extends AbstractType
     }
 
     /**
-     * @param FormEvent $event
      * @throws AlreadySubmittedException
      * @throws LogicException
      * @throws \OutOfBoundsException
@@ -173,7 +167,6 @@ class OrderShippingTrackingType extends AbstractType
     }
 
     /**
-     * @param OptionsResolver $resolver
      * @throws AccessException
      */
     public function configureOptions(OptionsResolver $resolver)

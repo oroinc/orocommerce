@@ -186,11 +186,6 @@ class FedexShippingMethodTest extends TestCase
         return $type;
     }
 
-    /**
-     * @param string $code
-     *
-     * @return FedexShippingService
-     */
     private function createShippingService(string $code, ShippingServiceRule $rule): FedexShippingService
     {
         $service = new FedexShippingService();

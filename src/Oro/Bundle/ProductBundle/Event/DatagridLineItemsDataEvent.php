@@ -52,60 +52,36 @@ class DatagridLineItemsDataEvent extends Event
         return $this->lineItems;
     }
 
-    /**
-     * @return DatagridInterface
-     */
     public function getDatagrid(): DatagridInterface
     {
         return $this->datagrid;
     }
 
-    /**
-     * @return array
-     */
     public function getContext(): array
     {
         return $this->context;
     }
 
-    /**
-     * @param int $lineItemId
-     * @param array $lineItemData
-     */
     public function addDataForLineItem(int $lineItemId, array $lineItemData): void
     {
         $this->lineItemsData[$lineItemId] = array_replace($this->lineItemsData[$lineItemId] ?? [], $lineItemData);
     }
 
-    /**
-     * @param int $lineItemId
-     * @param array $lineItemData
-     */
     public function setDataForLineItem(int $lineItemId, array $lineItemData): void
     {
         $this->lineItemsData[$lineItemId] = $lineItemData;
     }
 
-    /**
-     * @param int $lineItemId
-     * @return array
-     */
     public function getDataForLineItem(int $lineItemId): array
     {
         return $this->lineItemsData[$lineItemId] ?? [];
     }
 
-    /**
-     * @return array
-     */
     public function getDataForAllLineItems(): array
     {
         return $this->lineItemsData;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return self::NAME . '.' . $this->datagrid->getName();

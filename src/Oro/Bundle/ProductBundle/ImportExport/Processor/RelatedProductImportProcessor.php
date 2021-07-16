@@ -32,13 +32,6 @@ class RelatedProductImportProcessor extends ImportProcessor
     /** @var AclHelper */
     private $aclHelper;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param TranslatorInterface $translator
-     * @param AbstractRelatedItemConfigProvider $configProvider
-     * @param ImportStrategyHelper $importStrategyHelper
-     * @param AclHelper $aclHelper
-     */
     public function __construct(
         ManagerRegistry $registry,
         TranslatorInterface $translator,
@@ -86,13 +79,6 @@ class RelatedProductImportProcessor extends ImportProcessor
         return $this->validateRelations($productId, $processed) ? $processed : [];
     }
 
-    /**
-     * @param string $sku
-     * @param array $relatedSkus
-     * @param array $item
-     *
-     * @return bool
-     */
     private function isValidRow(string $sku, array $relatedSkus, array $item): bool
     {
         $result = true;
@@ -110,11 +96,6 @@ class RelatedProductImportProcessor extends ImportProcessor
         return $result;
     }
 
-    /**
-     * @param array $item
-     *
-     * @return bool
-     */
     private function canBeProcessed(array $item): bool
     {
         $result = true;
@@ -136,10 +117,6 @@ class RelatedProductImportProcessor extends ImportProcessor
         return $result;
     }
 
-    /**
-     * @param string $sku
-     * @return int|null
-     */
     private function getProductId(string $sku): ?int
     {
         $qb = $this->getRepository(Product::class)->getProductIdBySkuQueryBuilder($sku);
@@ -155,11 +132,6 @@ class RelatedProductImportProcessor extends ImportProcessor
         return $product['id'];
     }
 
-    /**
-     * @param int $productId
-     * @param array $processed
-     * @return bool
-     */
     private function validateRelations(int $productId, array $processed): bool
     {
         $relatedProductIds = $this->getRepository(RelatedProduct::class)
@@ -177,19 +149,11 @@ class RelatedProductImportProcessor extends ImportProcessor
         return true;
     }
 
-    /**
-     * @param string $className
-     * @return ObjectRepository
-     */
     private function getRepository(string $className): ObjectRepository
     {
         return $this->registry->getManagerForClass($className)->getRepository($className);
     }
 
-    /**
-     * @param string $error
-     * @param array $parameters
-     */
     private function addError(string $error, array $parameters = []): void
     {
         $this->context->incrementErrorEntriesCount();

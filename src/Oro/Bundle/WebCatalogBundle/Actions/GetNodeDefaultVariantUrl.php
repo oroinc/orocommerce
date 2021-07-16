@@ -47,9 +47,6 @@ class GetNodeDefaultVariantUrl extends AbstractAction
 
     /**
      * {@inheritDoc}
-     * @param CanonicalUrlGenerator $canonicalUrlGenerator
-     * @param ConfigManager $configManager
-     * @param ManagerRegistry $managerRegistry
      */
     public function __construct(
         ContextAccessor $contextAccessor,
@@ -97,11 +94,6 @@ class GetNodeDefaultVariantUrl extends AbstractAction
         $this->contextAccessor->setValue($context, $this->options[self::ATTRIBUTE], $result);
     }
 
-    /**
-     * @param ContentNode $contentNode
-     * @param Website $website
-     * @return string
-     */
     private function getTargetUrl(ContentNode $contentNode, Website $website): string
     {
         $slug = $contentNode->getDefaultVariant()->getBaseSlug();
@@ -132,10 +124,6 @@ class GetNodeDefaultVariantUrl extends AbstractAction
     }
 
     /**
-     * @param ContentNode $contentNode
-     *
-     * @return Website
-     *
      * @throws ActionException
      */
     private function getContentNodeWebsite(ContentNode $contentNode): Website
@@ -173,19 +161,11 @@ class GetNodeDefaultVariantUrl extends AbstractAction
         return $websiteRepository->getAllWebsites($organization);
     }
 
-    /**
-     * @param ContentNode $contentNode
-     *
-     * @return OrganizationInterface
-     */
     private function getWebCatalogOrganization(ContentNode $contentNode): OrganizationInterface
     {
         return $contentNode->getWebCatalog()->getOrganization();
     }
 
-    /**
-     * @return OptionsResolver
-     */
     private function getOptionResolver(): OptionsResolver
     {
         $optionResolver = new OptionsResolver();

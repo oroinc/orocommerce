@@ -13,9 +13,6 @@ class WebsiteCPLUpdateEvent extends Event
      */
     protected $websiteIds;
 
-    /**
-     * @param array $websiteIds
-     */
     public function __construct(array $websiteIds)
     {
         $this->websiteIds = $websiteIds;

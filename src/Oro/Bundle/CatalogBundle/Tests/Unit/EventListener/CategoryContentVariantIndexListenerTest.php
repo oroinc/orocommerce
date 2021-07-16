@@ -343,10 +343,6 @@ class CategoryContentVariantIndexListenerTest extends \PHPUnit\Framework\TestCas
         return $contentVariant;
     }
 
-    /**
-     * @param array $categories
-     * @param array $websiteIds
-     */
     private function assertCategoriesReindexationScheduled(array $categories, array $websiteIds)
     {
         $arguments = [];

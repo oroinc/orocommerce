@@ -39,11 +39,6 @@ class WebsiteSearchProductPriceIndexerListener implements FeatureToggleableInter
      */
     private $configManager;
 
-    /**
-     * @param WebsiteContextManager $websiteContextManager
-     * @param ManagerRegistry $doctrine
-     * @param ConfigManager $configManager
-     */
     public function __construct(
         WebsiteContextManager $websiteContextManager,
         ManagerRegistry $doctrine,
@@ -54,9 +49,6 @@ class WebsiteSearchProductPriceIndexerListener implements FeatureToggleableInter
         $this->configManager = $configManager;
     }
 
-    /**
-     * @param IndexEntityEvent $event
-     */
     public function onWebsiteSearchIndex(IndexEntityEvent $event)
     {
         if (!$this->isFeaturesEnabled()) {

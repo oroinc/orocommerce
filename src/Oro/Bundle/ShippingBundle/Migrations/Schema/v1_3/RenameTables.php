@@ -51,10 +51,6 @@ class RenameTables implements Migration, RenameExtensionAwareInterface, OrderedM
         $this->renameShippingDestination($queries);
     }
 
-    /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     */
     private function renameShippingRuleMethodConfig(Schema $schema, QueryBag $queries)
     {
         $this->renameExtension
@@ -62,10 +58,6 @@ class RenameTables implements Migration, RenameExtensionAwareInterface, OrderedM
         $this->addDeleteFormEntityConfigQuery($queries, static::SHIPPING_RULE_METHOD_CONFIG_CLASS_NAME);
     }
 
-    /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     */
     private function renameShippingRuleMethodTypeConfig(Schema $schema, QueryBag $queries)
     {
         $this->renameExtension
@@ -73,9 +65,6 @@ class RenameTables implements Migration, RenameExtensionAwareInterface, OrderedM
         $this->addDeleteFormEntityConfigQuery($queries, static::SHIPPING_RULE_METHOD_TYPE_CONFIG_CLASS_NAME);
     }
 
-    /**
-     * @param QueryBag $queries
-     */
     private function renameShippingDestination(QueryBag $queries)
     {
         $this->addDeleteFormEntityConfigQuery($queries, static::SHIPPING_RULE_DESTINATION_CLASS_NAME);

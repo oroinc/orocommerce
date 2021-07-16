@@ -26,9 +26,6 @@ class CategoryUnitPrecisionType extends AbstractType
      */
     protected $defaultProductOptionsVisibility;
 
-    /**
-     * @param CategoryDefaultProductUnitOptionsVisibilityInterface $defaultProductOptionsVisibility
-     */
     public function __construct(CategoryDefaultProductUnitOptionsVisibilityInterface $defaultProductOptionsVisibility)
     {
         $this->defaultProductOptionsVisibility = $defaultProductOptionsVisibility;
@@ -42,10 +39,6 @@ class CategoryUnitPrecisionType extends AbstractType
         $this->dataClass = $dataClass;
     }
 
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $this->addUnitField($builder);
@@ -78,9 +71,6 @@ class CategoryUnitPrecisionType extends AbstractType
         return self::NAME;
     }
 
-    /**
-     * @param FormBuilderInterface $builder
-     */
     private function addUnitField(FormBuilderInterface $builder)
     {
         $type = EntityIdentifierType::class;
@@ -97,9 +87,6 @@ class CategoryUnitPrecisionType extends AbstractType
         $builder->add('unit', $type, $options);
     }
 
-    /**
-     * @param FormBuilderInterface $builder
-     */
     private function addPrecisionField(FormBuilderInterface $builder)
     {
         $type = HiddenType::class;

@@ -39,9 +39,6 @@ class AddressACLTest extends AbstractAddressACLTest
 
     /**
      * @dataProvider checkShippingAddressesDataProvider
-     * @param array $permissions
-     * @param array $capabilities
-     * @param array $expected
      */
     public function testCheckShippingAddresses(array $permissions, array $capabilities, array $expected)
     {
@@ -58,7 +55,6 @@ class AddressACLTest extends AbstractAddressACLTest
         $crawler = $this->client->request('GET', $this->getUrl('oro_sale_quote_update', ['id' => $quote->getId()]));
         $result  = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-
 
         if (!empty($expected)) {
             // Check shipping addresses

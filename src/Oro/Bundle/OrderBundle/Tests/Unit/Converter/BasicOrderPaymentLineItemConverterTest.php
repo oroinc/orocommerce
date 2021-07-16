@@ -44,9 +44,6 @@ class BasicOrderPaymentLineItemConverterTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider convertLineItemsDataProvider
-     *
-     * @param Collection $orderCollection
-     * @param array      $expectedLineItems
      */
     public function testConvertLineItems(Collection $orderCollection, array $expectedLineItems)
     {

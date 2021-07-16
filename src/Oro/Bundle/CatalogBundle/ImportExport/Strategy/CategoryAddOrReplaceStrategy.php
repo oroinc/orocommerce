@@ -31,17 +31,11 @@ class CategoryAddOrReplaceStrategy extends LocalizedFallbackValueAwareStrategy
     /** @var int|null */
     protected $maxLeft;
 
-    /**
-     * @param CategoryImportExportHelper $categoryImportExportHelper
-     */
     public function setCategoryImportExportHelper(CategoryImportExportHelper $categoryImportExportHelper): void
     {
         $this->categoryImportExportHelper = $categoryImportExportHelper;
     }
 
-    /**
-     * @param TokenAccessorInterface $tokenAccessor
-     */
     public function setTokenAccessor(TokenAccessorInterface $tokenAccessor)
     {
         $this->tokenAccessor = $tokenAccessor;
@@ -116,12 +110,6 @@ class CategoryAddOrReplaceStrategy extends LocalizedFallbackValueAwareStrategy
         return parent::importEntityFields($entity, $existingEntity, $isFullData, $entityIsRelation, $itemData);
     }
 
-    /**
-     * @param Category $category
-     * @param Category|null $existingCategory
-     *
-     * @return bool
-     */
     protected function importParentCategoryField(Category $category, ?Category $existingCategory): bool
     {
         if ($this->isRootCategory($category)) {
@@ -186,9 +174,6 @@ class CategoryAddOrReplaceStrategy extends LocalizedFallbackValueAwareStrategy
         return true;
     }
 
-    /**
-     * @param Category $category
-     */
     protected function postponeCategory(Category $category): void
     {
         $this->context->addPostponedRow($this->context->getValue('rawItemData'));
@@ -215,9 +200,6 @@ class CategoryAddOrReplaceStrategy extends LocalizedFallbackValueAwareStrategy
         }
     }
 
-    /**
-     * @return bool
-     */
     protected function isLastAttempt(): bool
     {
         return $this->context->hasOption('max_attempts') &&
@@ -262,11 +244,6 @@ class CategoryAddOrReplaceStrategy extends LocalizedFallbackValueAwareStrategy
         return parent::generateSearchContextForRelationsUpdate($entity, $entityName, $fieldName, $isPersistRelation);
     }
 
-    /**
-     * @param Category|null $category
-     *
-     * @return Organization
-     */
     protected function getOrganization(?Category $category): Organization
     {
         $organization = null;
@@ -285,11 +262,6 @@ class CategoryAddOrReplaceStrategy extends LocalizedFallbackValueAwareStrategy
         return $organization;
     }
 
-    /**
-     * @param Category $category
-     *
-     * @return Organization|null
-     */
     protected function getCategoryOrganization(Category $category): ?Organization
     {
         $organization = $category->getOrganization();
@@ -305,9 +277,6 @@ class CategoryAddOrReplaceStrategy extends LocalizedFallbackValueAwareStrategy
         return $organization;
     }
 
-    /**
-     * @return string
-     */
     protected function getCurrentParentCategoryPath(): string
     {
         $rawItemData = $this->context->getValue('rawItemData');
@@ -315,12 +284,6 @@ class CategoryAddOrReplaceStrategy extends LocalizedFallbackValueAwareStrategy
         return $rawItemData['parentCategory.title'] ?? '';
     }
 
-    /**
-     * @param string $categoryPath
-     * @param Organization $organization
-     *
-     * @return Category|null
-     */
     protected function findCategoryByPath(string $categoryPath, Organization $organization): ?Category
     {
         /** @var Category|null $foundCategory */
@@ -337,11 +300,6 @@ class CategoryAddOrReplaceStrategy extends LocalizedFallbackValueAwareStrategy
         return $foundCategory;
     }
 
-    /**
-     * @param Category $category
-     *
-     * @return bool
-     */
     protected function isRootCategory(Category $category): bool
     {
         $organization = $this->getOrganization($category);
@@ -349,11 +307,6 @@ class CategoryAddOrReplaceStrategy extends LocalizedFallbackValueAwareStrategy
         return (int)$this->getRootCategory($organization)->getId() === (int)$category->getId();
     }
 
-    /**
-     * @param Organization $organization
-     *
-     * @return Category
-     */
     protected function getRootCategory(Organization $organization): Category
     {
         if (!isset($this->rootCategories[$organization->getId()])) {
@@ -364,9 +317,6 @@ class CategoryAddOrReplaceStrategy extends LocalizedFallbackValueAwareStrategy
         return $this->rootCategories[$organization->getId()];
     }
 
-    /**
-     * @return int
-     */
     protected function getLeftOffset(): int
     {
         if ($this->maxLeft === null) {

@@ -28,9 +28,6 @@ class OrderAddressType extends AbstractType
     /** @var OrderAddressSecurityProvider */
     private $addressSecurityProvider;
 
-    /**
-     * @param OrderAddressSecurityProvider $addressSecurityProvider
-     */
     public function __construct(OrderAddressSecurityProvider $addressSecurityProvider)
     {
         $this->addressSecurityProvider = $addressSecurityProvider;

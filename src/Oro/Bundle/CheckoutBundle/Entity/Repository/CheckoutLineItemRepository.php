@@ -9,10 +9,6 @@ use Doctrine\ORM\EntityRepository;
  */
 class CheckoutLineItemRepository extends EntityRepository
 {
-    /**
-     * @param int $checkoutId
-     * @return bool
-     */
     public function canBeGrouped(int $checkoutId): bool
     {
         $qb = $this->createQueryBuilder('li');

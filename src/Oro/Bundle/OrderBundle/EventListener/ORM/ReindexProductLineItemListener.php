@@ -34,10 +34,6 @@ class ReindexProductLineItemListener
      */
     protected $statusesProvider;
 
-    /**
-     * @param ProductReindexManager        $productReindexManager
-     * @param OrderStatusesProviderInterface $statusesProvider
-     */
     public function __construct(
         ProductReindexManager $productReindexManager,
         OrderStatusesProviderInterface $statusesProvider
@@ -46,9 +42,6 @@ class ReindexProductLineItemListener
         $this->statusesProvider = $statusesProvider;
     }
 
-    /**
-     * @param OrderLineItem $lineItem
-     */
     public function reindexProductOnLineItemCreateOrDelete(OrderLineItem $lineItem)
     {
         if (!$this->isReindexAllowed($lineItem)) {
@@ -67,10 +60,6 @@ class ReindexProductLineItemListener
         }
     }
 
-    /**
-     * @param OrderLineItem $lineItem
-     * @param PreUpdateEventArgs $event
-     */
     public function reindexProductOnLineItemUpdate(OrderLineItem $lineItem, PreUpdateEventArgs $event)
     {
         if (!$this->isReindexAllowed($lineItem)) {
@@ -112,11 +101,6 @@ class ReindexProductLineItemListener
         return true;
     }
 
-    /**
-     * @param PreUpdateEventArgs $event
-     * @param string $field
-     * @param int $websiteId
-     */
     private function reindexFieldProduct(PreUpdateEventArgs $event, string $field, int $websiteId)
     {
         if (!$event->hasChangedField($field)) {

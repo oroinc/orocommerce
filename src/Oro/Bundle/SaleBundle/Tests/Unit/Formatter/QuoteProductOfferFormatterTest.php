@@ -38,9 +38,6 @@ class QuoteProductOfferFormatterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param array $inputData
-     * @param array $expectedData
-     *
      * @dataProvider formatPriceTypeLabelsProvider
      */
     public function testFormatPriceTypeLabels(array $inputData, array $expectedData)

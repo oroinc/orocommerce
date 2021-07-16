@@ -43,8 +43,6 @@ class AddContentBlockTable implements
 
     /**
      * Create `oro_cms_content_block` table
-     *
-     * @param Schema $schema
      */
     public function createOroCmsContentBlockTable(Schema $schema)
     {
@@ -62,8 +60,6 @@ class AddContentBlockTable implements
 
     /**
      * Create `oro_cms_content_block_title` table
-     *
-     * @param Schema $schema
      */
     protected function createOroCmsContentBlockTitleTable(Schema $schema)
     {
@@ -76,8 +72,6 @@ class AddContentBlockTable implements
 
     /**
      * Create `oro_cms_content_block_scope` table
-     *
-     * @param Schema $schema
      */
     protected function createOroCmsContentBlockScopeTable(Schema $schema)
     {
@@ -89,8 +83,6 @@ class AddContentBlockTable implements
 
     /**
      * Add `oro_cms_content_block_title` foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroCmsContentBlockTitleForeignKeys(Schema $schema)
     {
@@ -111,8 +103,6 @@ class AddContentBlockTable implements
 
     /**
      * Add `oro_cms_content_block_scope` foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroCmsContentBlockScopeForeignKeys(Schema $schema)
     {
@@ -133,8 +123,6 @@ class AddContentBlockTable implements
 
     /**
      * Add oro_cms_content_block foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOrganizationForeignKeys(Schema $schema)
     {

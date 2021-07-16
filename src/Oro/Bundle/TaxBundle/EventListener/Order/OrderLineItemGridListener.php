@@ -39,9 +39,6 @@ class OrderLineItemGridListener
         $this->taxationSettingsProvider = $taxationSettingsProvider;
     }
 
-    /**
-     * @param BuildBefore $event
-     */
     public function onBuildBefore(BuildBefore $event)
     {
         if (!$this->checkOnBefore($event)) {
@@ -76,9 +73,6 @@ class OrderLineItemGridListener
         return true;
     }
 
-    /**
-     * @param DatagridConfiguration $configuration
-     */
     protected function addJoin(DatagridConfiguration $configuration)
     {
         $configuration->getOrmQuery()->addLeftJoin(
@@ -98,9 +92,6 @@ class OrderLineItemGridListener
         );
     }
 
-    /**
-     * @param DatagridConfiguration $configuration
-     */
     protected function addSelect(DatagridConfiguration $configuration)
     {
         $configuration->getOrmQuery()->addSelect(
@@ -108,9 +99,6 @@ class OrderLineItemGridListener
         );
     }
 
-    /**
-     * @param DatagridConfiguration $configuration
-     */
     public function addColumn(DatagridConfiguration $configuration)
     {
         $configuration->offsetSetByPath(

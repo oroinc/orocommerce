@@ -16,9 +16,6 @@ class UnitResolver
      */
     protected $calculator;
 
-    /**
-     * @param TaxCalculatorInterface $calculator
-     */
     public function __construct(TaxCalculatorInterface $calculator)
     {
         $this->calculator = $calculator;

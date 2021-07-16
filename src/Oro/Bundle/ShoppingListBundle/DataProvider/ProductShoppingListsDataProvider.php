@@ -35,13 +35,6 @@ class ProductShoppingListsDataProvider
     /** @var boolean|null */
     private $isShowAllShoppingLists;
 
-    /**
-     * @param CurrentShoppingListManager $currentShoppingListManager
-     * @param LineItemRepository $lineItemRepository
-     * @param AclHelper $aclHelper
-     * @param TokenAccessorInterface $tokenAccessor
-     * @param ConfigManager $configManager
-     */
     public function __construct(
         CurrentShoppingListManager $currentShoppingListManager,
         LineItemRepository $lineItemRepository,
@@ -120,9 +113,6 @@ class ProductShoppingListsDataProvider
         return $this->prepareShoppingListsData($lineItems);
     }
 
-    /**
-     * @return bool
-     */
     private function isShowAllInShoppingListWidget(): bool
     {
         if ($this->isShowAllShoppingLists === null) {

@@ -21,10 +21,6 @@ class CalculatePriceForCollectionListener
      */
     private $quickAddCollectionPriceProvider;
 
-    /**
-     * @param QuickAddCollectionPriceProvider $quickAddCollectionPriceProvider
-     * @param ProductPriceScopeCriteriaRequestHandler $scopeCriteriaRequestHandler
-     */
     public function __construct(
         QuickAddCollectionPriceProvider $quickAddCollectionPriceProvider,
         ProductPriceScopeCriteriaRequestHandler $scopeCriteriaRequestHandler
@@ -33,9 +29,6 @@ class CalculatePriceForCollectionListener
         $this->scopeCriteriaRequestHandler = $scopeCriteriaRequestHandler;
     }
 
-    /**
-     * @param QuickAddRowsCollectionReadyEvent $quickAddRowsCollectionReadyEvent
-     */
     public function onQuickAddRowsCollectionReady(QuickAddRowsCollectionReadyEvent $quickAddRowsCollectionReadyEvent)
     {
         $quickAddRowsCollection = $quickAddRowsCollectionReadyEvent->getCollection();

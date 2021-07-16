@@ -37,9 +37,6 @@ class ProductDuplicateListener implements FeatureToggleableInterface
      */
     protected $priceManager;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function setDoctrineHelper(DoctrineHelper $doctrineHelper)
     {
         $this->doctrineHelper = $doctrineHelper;
@@ -53,9 +50,6 @@ class ProductDuplicateListener implements FeatureToggleableInterface
         $this->productPriceClass = $productPriceClass;
     }
 
-    /**
-     * @param PriceManager $priceManager
-     */
     public function setPriceManager(PriceManager $priceManager)
     {
         $this->priceManager = $priceManager;
@@ -63,8 +57,6 @@ class ProductDuplicateListener implements FeatureToggleableInterface
 
     /**
      * Copy product prices
-     *
-     * @param ProductDuplicateAfterEvent $event
      */
     public function onDuplicateAfter(ProductDuplicateAfterEvent $event)
     {
@@ -94,9 +86,6 @@ class ProductDuplicateListener implements FeatureToggleableInterface
         return $this->doctrineHelper->getEntityRepository($this->productPriceClass);
     }
 
-    /**
-     * @param ShardManager $shardManager
-     */
     public function setShardManager(ShardManager $shardManager)
     {
         $this->shardManager = $shardManager;

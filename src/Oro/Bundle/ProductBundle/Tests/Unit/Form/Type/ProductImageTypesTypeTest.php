@@ -27,9 +27,6 @@ class ProductImageTypesTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedTypes, $form->getData());
     }
 
-    /**
-     * @return array
-     */
     public function submitDataProvider(): array
     {
         $imageTypes = [

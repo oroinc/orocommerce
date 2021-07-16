@@ -34,12 +34,6 @@ class PayPalConfig
      */
     private $creditCardTypesDataProvider;
 
-    /**
-     * @param PaymentActionsDataProviderInterface  $paymentActionsDataProvider
-     * @param CreditCardTypesDataProviderInterface $creditCardTypesDataProvider
-     * @param ConfigManager                        $configManager
-     * @param PayPalConfigKeysProvider             $keysProvider
-     */
     public function __construct(
         PaymentActionsDataProviderInterface $paymentActionsDataProvider,
         CreditCardTypesDataProviderInterface $creditCardTypesDataProvider,

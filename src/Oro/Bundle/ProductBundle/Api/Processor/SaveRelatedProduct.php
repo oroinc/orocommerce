@@ -26,10 +26,6 @@ class SaveRelatedProduct implements ProcessorInterface
     /** @var DoctrineHelper */
     private $doctrineHelper;
 
-    /**
-     * @param AssignerStrategyInterface $assignerStrategy
-     * @param DoctrineHelper            $doctrineHelper
-     */
     public function __construct(AssignerStrategyInterface $assignerStrategy, DoctrineHelper $doctrineHelper)
     {
         $this->assignerStrategy = $assignerStrategy;
@@ -62,32 +58,16 @@ class SaveRelatedProduct implements ProcessorInterface
         $context->setProcessed(SaveEntity::OPERATION_NAME);
     }
 
-    /**
-     * @return RelatedProductRepository
-     */
     private function getRelatedProductsRepository(): RelatedProductRepository
     {
         return $this->doctrineHelper->getEntityRepositoryForClass(RelatedProduct::class);
     }
 
-    /**
-     * @param Product $productFrom
-     * @param Product $productTo
-     *
-     * @return bool
-     */
     private function relationAlreadyExists(Product $productFrom, Product $productTo): bool
     {
         return $this->getRelatedProductsRepository()->exists($productFrom, $productTo);
     }
 
-    /**
-     * @param Product           $productFrom
-     * @param Product           $productTo
-     * @param SingleItemContext $context
-     *
-     * @return bool
-     */
     private function addRelation(Product $productFrom, Product $productTo, SingleItemContext $context): bool
     {
         if ($this->relationAlreadyExists($productFrom, $productTo)) {

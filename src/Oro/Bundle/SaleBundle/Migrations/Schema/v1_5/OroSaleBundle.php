@@ -27,8 +27,6 @@ class OroSaleBundle implements Migration
 
     /**
      * Create oro_quote_assigned_acc_users table
-     *
-     * @param Schema $schema
      */
     protected function createOroQuoteAssignedAccUsersTable(Schema $schema)
     {
@@ -40,8 +38,6 @@ class OroSaleBundle implements Migration
 
     /**
      * Create oro_quote_assigned_users table
-     *
-     * @param Schema $schema
      */
     protected function createOroQuoteAssignedUsersTable(Schema $schema)
     {
@@ -53,8 +49,6 @@ class OroSaleBundle implements Migration
 
     /**
      * Add oro_quote_assigned_acc_users foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroQuoteAssignedAccUsersForeignKeys(Schema $schema)
     {
@@ -75,8 +69,6 @@ class OroSaleBundle implements Migration
 
     /**
      * Add oro_quote_assigned_users foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroQuoteAssignedUsersForeignKeys(Schema $schema)
     {
@@ -97,8 +89,6 @@ class OroSaleBundle implements Migration
 
     /**
      * Adds Shipping Estimate fields
-     *
-     * @param Schema $schema
      */
     protected function modifySaleQuoteTable(Schema $schema)
     {

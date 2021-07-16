@@ -66,10 +66,6 @@ class ProductUnitSelectTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitProvider
-     * @param array $inputOptions
-     * @param array $expectedOptions
-     * @param $submittedData
-     * @param $expectedData
      */
     public function testSubmit(array $inputOptions, array $expectedOptions, $submittedData, $expectedData)
     {

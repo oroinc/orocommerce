@@ -183,9 +183,6 @@ class QuoteAddressSecurityProviderTest extends \PHPUnit\Framework\TestCase
         return $data;
     }
 
-    /**
-     * @return array
-     */
     public function userDataProvider(): array
     {
         return [

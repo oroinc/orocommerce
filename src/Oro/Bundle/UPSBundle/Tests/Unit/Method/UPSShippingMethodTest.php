@@ -128,7 +128,6 @@ class UPSShippingMethodTest extends \PHPUnit\Framework\TestCase
         self::assertEquals('20', $this->upsShippingMethod->getSortOrder());
     }
 
-
     /**
      * @dataProvider calculatePricesDataProvider
      */

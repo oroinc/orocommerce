@@ -20,10 +20,6 @@ class PriceListWithPriorityCollectionHandler
      */
     protected $propertyAccessor;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param PropertyAccessor $propertyAccessor
-     */
     public function __construct(DoctrineHelper $doctrineHelper, PropertyAccessor $propertyAccessor)
     {
         $this->doctrineHelper = $doctrineHelper;

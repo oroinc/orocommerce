@@ -23,7 +23,6 @@ class CheckoutStepsProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected $workflowManager;
 
-
     /**
      * {@inheritdoc}
      */

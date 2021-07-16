@@ -12,9 +12,6 @@ class ProductImageTypeNormalizer extends ConfigurableEntityNormalizer
      */
     protected $productImageTypeClass;
 
-    /**
-     * @param $productImageTypeClass
-     */
     public function setProductImageTypeClass($productImageTypeClass)
     {
         $this->productImageTypeClass = $productImageTypeClass;

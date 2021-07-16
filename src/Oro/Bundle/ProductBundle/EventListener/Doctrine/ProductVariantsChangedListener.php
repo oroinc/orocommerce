@@ -16,9 +16,6 @@ class ProductVariantsChangedListener
     /** @var ProductReindexManager */
     private $productReindexManager;
 
-    /**
-     * @param ProductReindexManager $productReindexManager
-     */
     public function __construct(ProductReindexManager $productReindexManager)
     {
         $this->productReindexManager = $productReindexManager;
@@ -26,8 +23,6 @@ class ProductVariantsChangedListener
 
     /** @ORM\PrePersist()
      *
-     * @param ProductVariantLink $productVariantLink
-     * @param LifecycleEventArgs $event
      */
     public function prePersist(ProductVariantLink $productVariantLink, LifecycleEventArgs $event)
     {
@@ -38,7 +33,6 @@ class ProductVariantsChangedListener
 
     /** @ORM\PreRemove()
      *
-     * @param ProductVariantLink $productVariantLink
      */
     public function preRemove(ProductVariantLink $productVariantLink)
     {

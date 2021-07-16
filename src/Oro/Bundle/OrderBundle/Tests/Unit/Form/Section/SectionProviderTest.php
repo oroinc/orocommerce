@@ -49,10 +49,6 @@ class SectionProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param array $sections
-     * @param array $sectionsModifiers
-     * @param array $expectedSections
-     *
      * @dataProvider sectionsDataProvider
      */
     public function testSections(array $sections = [], array $sectionsModifiers = [], array $expectedSections = [])

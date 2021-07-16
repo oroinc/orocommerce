@@ -16,17 +16,11 @@ class PayflowExpressCheckoutListener
      */
     protected $paymentMethodProvider;
 
-    /**
-     * @param PaymentMethodProviderInterface $paymentMethodProvider
-     */
     public function __construct(PaymentMethodProviderInterface $paymentMethodProvider)
     {
         $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
-    /**
-     * @param AbstractCallbackEvent $event
-     */
     public function onError(AbstractCallbackEvent $event)
     {
         $paymentTransaction = $event->getPaymentTransaction();
@@ -44,9 +38,6 @@ class PayflowExpressCheckoutListener
             ->setActive(false);
     }
 
-    /**
-     * @param AbstractCallbackEvent $event
-     */
     public function onReturn(AbstractCallbackEvent $event)
     {
         $paymentTransaction = $event->getPaymentTransaction();

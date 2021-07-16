@@ -22,9 +22,6 @@ class AppliedPromotionsExtension extends AbstractExtension implements ServiceSub
     /** @var ContainerInterface */
     private $container;
 
-    /**
-     * @param ContainerInterface $container
-     */
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
@@ -97,10 +94,6 @@ class AppliedPromotionsExtension extends AbstractExtension implements ServiceSub
         return $items;
     }
 
-    /**
-     * @param Order $order
-     * @return array
-     */
     public function getAppliedPromotionsInfo(Order $order): array
     {
         /** @var AppliedPromotionRepository $repository */

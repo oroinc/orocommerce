@@ -38,8 +38,6 @@ class LoadTaxConfigurationDemoData extends AbstractFixture implements DependentF
 
     /**
      * {@inheritdoc}
-     *
-     * @param ObjectManager $manager
      */
     public function load(ObjectManager $manager)
     {

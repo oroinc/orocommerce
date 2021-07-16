@@ -11,9 +11,6 @@ use Oro\Bundle\UIBundle\Fallback\AbstractFallbackFieldsFormView;
  */
 class ProductUpcomingFormViewListener extends AbstractFallbackFieldsFormView
 {
-    /**
-     * @param BeforeListRenderEvent $event
-     */
     public function onProductView(BeforeListRenderEvent $event)
     {
         $product = $event->getEntity();
@@ -29,9 +26,6 @@ class ProductUpcomingFormViewListener extends AbstractFallbackFieldsFormView
         );
     }
 
-    /**
-     * @param BeforeListRenderEvent $event
-     */
     public function onProductEdit(BeforeListRenderEvent $event)
     {
         $this->addBlockToEntityEdit(

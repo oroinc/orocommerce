@@ -38,12 +38,6 @@ class ComputeProductAttributes implements ProcessorInterface
     /** @var ProductAttributeValueLoader */
     private $productAttributeValueLoader;
 
-    /**
-     * @param DoctrineHelper              $doctrineHelper
-     * @param ConfigManager               $configManager
-     * @param FieldTypeHelper             $fieldTypeHelper
-     * @param ProductAttributeValueLoader $productAttributeValueLoader
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         ConfigManager $configManager,
@@ -70,12 +64,6 @@ class ComputeProductAttributes implements ProcessorInterface
         }
     }
 
-    /**
-     * @param CustomizeLoadedDataContext $context
-     * @param array                      $data
-     *
-     * @return array
-     */
     private function applyAttributes(CustomizeLoadedDataContext $context, array $data): array
     {
         $version = $context->getVersion();

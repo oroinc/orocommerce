@@ -63,9 +63,6 @@ class ContentWidgetVoterTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider voteProvider
-     *
-     * @param bool $found
-     * @param int $expected
      */
     public function testVote(bool $found, int $expected): void
     {
@@ -79,9 +76,6 @@ class ContentWidgetVoterTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $this->voter->vote($this->token, $subject, ['DELETE']));
     }
 
-    /**
-     * @return array
-     */
     public function voteProvider() : array
     {
         return [

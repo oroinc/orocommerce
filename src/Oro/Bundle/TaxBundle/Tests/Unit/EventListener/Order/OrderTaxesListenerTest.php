@@ -68,9 +68,6 @@ class OrderTaxesListenerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param Result $result
-     * @param array $expectedResult
-     *
      * @dataProvider onOrderEventDataProvider
      */
     public function testOnOrderEvent(Result $result, array $expectedResult)

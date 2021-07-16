@@ -23,9 +23,6 @@ class UpsConnectionValidatorResultFactoryTest extends \PHPUnit\Framework\TestCas
 
     /**
      * @dataProvider getUpsResponse
-     *
-     * @param array                                 $upsResponse
-     * @param UpsConnectionValidatorResultInterface $expectedResult
      */
     public function testCreateResultByUpsClientResponse(
         array $upsResponse,

@@ -18,14 +18,11 @@ class ProductStepOneFormExtension extends AbstractTypeExtension
      */
     protected $defaultProductUnitProvider;
 
-    /**
-     * @param CategoryDefaultProductUnitProvider $defaultProductUnitProvider
-     */
     public function __construct(CategoryDefaultProductUnitProvider $defaultProductUnitProvider)
     {
         $this->defaultProductUnitProvider = $defaultProductUnitProvider;
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -53,9 +50,6 @@ class ProductStepOneFormExtension extends AbstractTypeExtension
         $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'onPostSubmit'], 10);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function onPostSubmit(FormEvent $event)
     {
         $form = $event->getForm();

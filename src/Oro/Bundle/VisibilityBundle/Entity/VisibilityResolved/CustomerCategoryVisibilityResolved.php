@@ -23,10 +23,6 @@ class CustomerCategoryVisibilityResolved extends BaseCategoryVisibilityResolved
      */
     protected $sourceCategoryVisibility;
 
-    /**
-     * @param Category $category
-     * @param Scope $scope
-     */
     public function __construct(Category $category, Scope $scope)
     {
         $this->scope = $scope;

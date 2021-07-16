@@ -10,9 +10,6 @@ class TaxProvider
     /** @var TaxProviderRegistry */
     private $taxProviderRegistry;
 
-    /**
-     * @param TaxProviderRegistry $taxProviderRegistry
-     */
     public function __construct(TaxProviderRegistry $taxProviderRegistry)
     {
         $this->taxProviderRegistry = $taxProviderRegistry;

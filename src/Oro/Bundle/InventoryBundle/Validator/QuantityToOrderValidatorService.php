@@ -30,11 +30,6 @@ class QuantityToOrderValidatorService
      */
     private $preloadingManager;
 
-    /**
-     * @param EntityFallbackResolver $fallbackResolver
-     * @param TranslatorInterface $translator
-     * @param PreloadingManager $preloadingManager
-     */
     public function __construct(
         EntityFallbackResolver $fallbackResolver,
         TranslatorInterface $translator,

@@ -18,11 +18,8 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
         $this->assertInstanceOf('Symfony\Component\Config\Definition\Builder\TreeBuilder', $builder);
     }
 
-
     /**
      * @dataProvider processConfigurationDataProvider
-     * @param array $configs
-     * @param array $expected
      */
     public function testProcessConfiguration(array $configs, array $expected)
     {

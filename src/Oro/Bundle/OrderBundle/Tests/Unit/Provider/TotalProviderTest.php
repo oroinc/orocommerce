@@ -59,8 +59,6 @@ class TotalProviderTest extends AbstractSubtotalProviderTest
 
     /**
      * @dataProvider subtotalsProvider
-     * @param $original
-     * @param $expectedResult
      */
     public function testGetTotalWithSubtotalsWithBaseCurrencyValues($original, $expectedResult)
     {

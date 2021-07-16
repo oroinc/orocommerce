@@ -18,10 +18,6 @@ class CopyRobotsTxtTemplateListener
     /** @var string */
     private $robotsTxtPathDirectory;
 
-    /**
-     * @param RobotsTxtFileManager $robotsTxtFileManager
-     * @param string               $robotsTxtPathDirectory
-     */
     public function __construct(
         RobotsTxtFileManager $robotsTxtFileManager,
         string $robotsTxtPathDirectory
@@ -30,9 +26,6 @@ class CopyRobotsTxtTemplateListener
         $this->robotsTxtPathDirectory = $robotsTxtPathDirectory;
     }
 
-    /**
-     * @param OnSitemapDumpFinishEvent $event
-     */
     public function onSitemapDumpStorage(OnSitemapDumpFinishEvent $event): void
     {
         $website = $event->getWebsite();
@@ -47,11 +40,6 @@ class CopyRobotsTxtTemplateListener
         $this->robotsTxtFileManager->dumpContent($content, $website);
     }
 
-    /**
-     * @param string $domainFileName
-     *
-     * @return string
-     */
     private function getTemplateContent(string $domainFileName): string
     {
         $websiteTemplateFileName = $this->robotsTxtPathDirectory . $domainFileName . '.dist';
@@ -67,9 +55,6 @@ class CopyRobotsTxtTemplateListener
         return $this->getDefaultRobotsTxtContent();
     }
 
-    /**
-     * @return string
-     */
     private function getDefaultRobotsTxtContent(): string
     {
         return <<<TEXT

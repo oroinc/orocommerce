@@ -18,19 +18,12 @@ class CombinedPriceListCreateEvent extends Event
     /** @var array */
     private $options = [];
 
-    /**
-     * @param CombinedPriceList $combinedPriceList
-     * @param array $options
-     */
     public function __construct(CombinedPriceList $combinedPriceList, array $options = [])
     {
         $this->combinedPriceList = $combinedPriceList;
         $this->options = $options;
     }
 
-    /**
-     * @return CombinedPriceList
-     */
     public function getCombinedPriceList(): CombinedPriceList
     {
         return $this->combinedPriceList;

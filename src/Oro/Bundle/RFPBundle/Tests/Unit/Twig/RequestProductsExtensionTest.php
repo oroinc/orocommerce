@@ -35,9 +35,6 @@ class RequestProductsExtensionTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getRequestProductsDataProvider
-     *
-     * @param Request $request
-     * @param array $expectedResult
      */
     public function testGetRequestProducts(Request $request, array $expectedResult): void
     {
@@ -48,8 +45,6 @@ class RequestProductsExtensionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return array
-     *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function getRequestProductsDataProvider(): array

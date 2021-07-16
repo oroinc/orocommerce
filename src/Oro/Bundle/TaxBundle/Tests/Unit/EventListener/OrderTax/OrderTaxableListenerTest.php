@@ -39,7 +39,6 @@ class OrderTaxableListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getOnSkipOrderTaxRecalculationWrongEntityDataProvider
-     * @param $entity
      */
     public function testOnSkipOrderTaxRecalculationWrongEntity($entity): void
     {

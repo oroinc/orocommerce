@@ -22,19 +22,12 @@ class NavigationRootConfigChangeListener implements OptionalListenerInterface
     /** @var MessageProducerInterface */
     private $messageProducer;
 
-    /**
-     * @param CacheProvider $layoutCacheProvider
-     * @param MessageProducerInterface $messageProducer
-     */
     public function __construct(CacheProvider $layoutCacheProvider, MessageProducerInterface $messageProducer)
     {
         $this->layoutCacheProvider = $layoutCacheProvider;
         $this->messageProducer = $messageProducer;
     }
 
-    /**
-     * @param ConfigUpdateEvent $event
-     */
     public function onConfigUpdate(ConfigUpdateEvent $event)
     {
         if (!$this->enabled || !$event->isChanged('oro_web_catalog.navigation_root')) {

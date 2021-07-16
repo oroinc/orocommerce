@@ -17,19 +17,12 @@ class RequestRepresentativesNotifier
      */
     private $configManager;
 
-    /**
-     * @param Processor $processor
-     * @param ConfigManager $configManager
-     */
     public function __construct(Processor $processor, ConfigManager $configManager)
     {
         $this->processor = $processor;
         $this->configManager = $configManager;
     }
 
-    /**
-     * @param Request $request
-     */
     public function notifyRepresentatives(Request $request)
     {
         if ($request->getId()) {
@@ -55,8 +48,6 @@ class RequestRepresentativesNotifier
 
     /**
      * Send confirmation email to guest customer user if request is created
-     *
-     * @param Request $request
      */
     public function sendConfirmationEmail(Request $request)
     {

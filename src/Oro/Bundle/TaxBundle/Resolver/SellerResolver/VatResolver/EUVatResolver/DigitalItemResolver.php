@@ -12,9 +12,6 @@ use Oro\Bundle\TaxBundle\Resolver\AbstractItemResolver;
  */
 class DigitalItemResolver extends AbstractItemResolver
 {
-    /**
-     * @param Taxable $taxable
-     */
     public function resolve(Taxable $taxable)
     {
         if ($taxable->getItems()->count() !== 0) {

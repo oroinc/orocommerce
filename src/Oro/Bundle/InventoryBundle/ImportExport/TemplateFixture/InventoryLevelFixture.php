@@ -21,9 +21,6 @@ class InventoryLevelFixture extends AbstractTemplateRepository implements Templa
     /** @var LocalizationManager */
     private $localizationManager;
 
-    /**
-     * @param LocalizationManager $localizationManager
-     */
     public function __construct(LocalizationManager $localizationManager)
     {
         $this->localizationManager = $localizationManager;
@@ -87,12 +84,6 @@ class InventoryLevelFixture extends AbstractTemplateRepository implements Templa
         $entity->setProductUnitPrecision($unitPrecision);
     }
 
-    /**
-     * @param string $id
-     * @param string $name
-     *
-     * @return AbstractEnumValue
-     */
     private function createInventoryStatus(string $id, string $name): AbstractEnumValue
     {
         $enumValueClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');

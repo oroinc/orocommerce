@@ -38,12 +38,6 @@ class FedexShippingMethodTypeFactory implements FedexShippingMethodTypeFactoryIn
      */
     private $rateServiceClient;
 
-    /**
-     * @param FedexMethodTypeIdentifierGeneratorInterface       $identifierGenerator
-     * @param FedexRateServiceRequestSettingsFactoryInterface   $rateServiceRequestSettingsFactory
-     * @param FedexRequestByRateServiceSettingsFactoryInterface $rateServiceRequestFactory
-     * @param FedexRateServiceBySettingsClientInterface         $rateServiceClient
-     */
     public function __construct(
         FedexMethodTypeIdentifierGeneratorInterface $identifierGenerator,
         FedexRateServiceRequestSettingsFactoryInterface $rateServiceRequestSettingsFactory,

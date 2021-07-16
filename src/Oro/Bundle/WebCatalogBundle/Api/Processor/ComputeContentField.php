@@ -22,10 +22,6 @@ class ComputeContentField implements ProcessorInterface
     /** @var ContentNodeProvider */
     private $contentNodeProvider;
 
-    /**
-     * @param ContentVariantTypeRegistry $contentVariantTypeRegistry
-     * @param ContentNodeProvider        $contentNodeProvider
-     */
     public function __construct(
         ContentVariantTypeRegistry $contentVariantTypeRegistry,
         ContentNodeProvider $contentNodeProvider

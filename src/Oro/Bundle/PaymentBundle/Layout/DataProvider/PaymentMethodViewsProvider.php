@@ -34,12 +34,6 @@ class PaymentMethodViewsProvider
      */
     protected $paymentTransactionProvider;
 
-    /**
-     * @param PaymentMethodViewProviderInterface $paymentMethodViewProvider
-     * @param ApplicablePaymentMethodsProvider $paymentMethodProvider
-     * @param PaymentTransactionProvider $transactionProvider
-     * @param CacheProvider $cacheProvider
-     */
     public function __construct(
         PaymentMethodViewProviderInterface $paymentMethodViewProvider,
         ApplicablePaymentMethodsProvider $paymentMethodProvider,

@@ -23,11 +23,6 @@ class FrontendRequestVoter extends AbstractEntityVoter
     /** @var WorkflowManager */
     protected $workflowManager;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param FrontendHelper $frontendHelper
-     * @param WorkflowManager $workflowManager
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         FrontendHelper $frontendHelper,

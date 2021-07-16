@@ -54,8 +54,6 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
 
     /**
      * Create oro_shopping_list_total table
-     *
-     * @param Schema $schema
      */
     protected function createOroShoppingListTotalTable(Schema $schema)
     {
@@ -75,8 +73,6 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
 
     /**
      * Create oro_shopping_list table
-     *
-     * @param Schema $schema
      */
     protected function createOroShoppingListTable(Schema $schema)
     {
@@ -97,8 +93,6 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
 
     /**
      * Create oro_shopping_list_line_item table
-     *
-     * @param Schema $schema
      */
     protected function createOroShoppingListLineItemTable(Schema $schema)
     {
@@ -122,8 +116,6 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
 
     /**
      * Add oro_shopping_list_total foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroShoppingListTotalForeignKeys(Schema $schema)
     {
@@ -138,8 +130,6 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
 
     /**
      * Add oro_shopping_list foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroShoppingListForeignKeys(Schema $schema)
     {
@@ -178,8 +168,6 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
 
     /**
      * Add oro_shopping_list_line_item foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroShoppingListLineItemForeignKeys(Schema $schema)
     {
@@ -228,9 +216,6 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addShoppingListCheckoutSource(Schema $schema)
     {
         if (class_exists('Oro\Bundle\CheckoutBundle\Entity\CheckoutSource')) {
@@ -260,9 +245,6 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
         }
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addShoppingListCustomerVisitor(Schema $schema)
     {
         $table = $schema->getTable('oro_customer_visitor');

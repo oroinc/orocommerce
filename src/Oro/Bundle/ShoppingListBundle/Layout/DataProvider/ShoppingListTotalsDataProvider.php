@@ -13,19 +13,11 @@ class ShoppingListTotalsDataProvider
     /** @var TotalProcessorProvider */
     private $totalProcessorProvider;
 
-    /**
-     * @param TotalProcessorProvider $totalProcessorProvider
-     */
     public function __construct(TotalProcessorProvider $totalProcessorProvider)
     {
         $this->totalProcessorProvider = $totalProcessorProvider;
     }
 
-    /**
-     * @param ShoppingList $shoppingList
-     *
-     * @return array
-     */
     public function getTotalWithSubtotalsAsArray(ShoppingList $shoppingList): array
     {
         return $this->totalProcessorProvider->getTotalWithSubtotalsAsArray($shoppingList);

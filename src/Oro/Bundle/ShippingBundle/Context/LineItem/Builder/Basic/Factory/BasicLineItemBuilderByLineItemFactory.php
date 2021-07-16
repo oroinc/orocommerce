@@ -14,9 +14,6 @@ class BasicLineItemBuilderByLineItemFactory implements LineItemBuilderByLineItem
      */
     private $builderFactory;
 
-    /**
-     * @param ShippingLineItemBuilderFactoryInterface $builderFactory
-     */
     public function __construct(ShippingLineItemBuilderFactoryInterface $builderFactory)
     {
         $this->builderFactory = $builderFactory;

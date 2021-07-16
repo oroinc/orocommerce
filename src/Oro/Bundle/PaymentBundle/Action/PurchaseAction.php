@@ -84,9 +84,6 @@ class PurchaseAction extends AbstractPaymentMethodAction
         return false;
     }
 
-    /**
-     * @param PaymentTransaction $paymentTransaction
-     */
     protected function handleSaveForLaterUse(PaymentTransaction $paymentTransaction)
     {
         $sourcePaymentTransaction = $paymentTransaction->getSourcePaymentTransaction();

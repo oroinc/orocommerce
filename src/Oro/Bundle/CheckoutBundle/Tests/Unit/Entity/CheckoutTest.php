@@ -122,9 +122,6 @@ class CheckoutTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getLineItemsDataProvider
-     *
-     * @param array $lineItems
-     * @param array $expected
      */
     public function testGetLineItems(array $lineItems, array $expected)
     {

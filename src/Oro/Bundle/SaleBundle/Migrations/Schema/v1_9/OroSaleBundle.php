@@ -18,10 +18,6 @@ class OroSaleBundle implements Migration
         $this->removeQuoteAddressSerializedDataColumn($schema);
     }
 
-    /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     */
     protected function enableQuoteExpiredProcess(Schema $schema, QueryBag $queries)
     {
         if (!$schema->hasTable('oro_process_definition')) {
@@ -35,7 +31,6 @@ class OroSaleBundle implements Migration
     }
 
     /**
-     * @param Schema $schema
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     protected function removeQuoteAddressSerializedDataColumn(Schema $schema)

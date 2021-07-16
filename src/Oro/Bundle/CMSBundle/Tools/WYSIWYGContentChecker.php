@@ -25,11 +25,6 @@ class WYSIWYGContentChecker
     /** @var TranslatorInterface */
     private $translator;
 
-    /**
-     * @param HTMLPurifierScopeProvider $htmlPurifierScopeProvider
-     * @param HtmlTagHelper $htmlTagHelper
-     * @param TranslatorInterface $translator
-     */
     public function __construct(
         HTMLPurifierScopeProvider $htmlPurifierScopeProvider,
         HtmlTagHelper $htmlTagHelper,
@@ -42,12 +37,6 @@ class WYSIWYGContentChecker
         $this->translator = $translator;
     }
 
-    /**
-     * @param string $content
-     * @param string $className
-     * @param string $fieldName
-     * @return array
-     */
     public function check(string $content, string $className, string $fieldName): array
     {
         return array_merge(
@@ -56,10 +45,6 @@ class WYSIWYGContentChecker
         );
     }
 
-    /**
-     * @param string $content
-     * @return array
-     */
     private function getTwigErrorList(string $content): array
     {
         try {
@@ -85,12 +70,6 @@ class WYSIWYGContentChecker
         return $errors ?? [];
     }
 
-    /**
-     * @param string $content
-     * @param string $className
-     * @param string $fieldName
-     * @return array
-     */
     private function getHtmlErrorList(string $content, string $className, string $fieldName): array
     {
         $scope = $this->htmlPurifierScopeProvider->getScope($className, $fieldName);

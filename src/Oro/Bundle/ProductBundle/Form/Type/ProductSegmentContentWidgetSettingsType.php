@@ -117,9 +117,6 @@ class ProductSegmentContentWidgetSettingsType extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'onPreSetData']);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function onPreSetData(FormEvent $event): void
     {
         $data = $event->getData();

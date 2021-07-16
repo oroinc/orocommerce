@@ -24,9 +24,6 @@ class CheckoutWorkflowListener
         $this->entityClass = $entityClass;
     }
 
-    /**
-     * @param WorkflowChangesEvent $event
-     */
     public function onDeactivationWorkflowDefinition(WorkflowChangesEvent $event)
     {
         if ($event->getDefinition() && $event->getDefinition()->getRelatedEntity() === $this->entityClass) {

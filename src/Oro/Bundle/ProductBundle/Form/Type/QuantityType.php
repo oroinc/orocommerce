@@ -53,9 +53,6 @@ class QuantityType extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'setDefaultData'], -1024);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function setDefaultData(FormEvent $event)
     {
         $options = $event->getForm()->getConfig()->getOptions();

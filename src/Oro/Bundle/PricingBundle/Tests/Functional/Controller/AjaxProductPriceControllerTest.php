@@ -133,9 +133,6 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
         static::assertStringContainsString($error, $html);
     }
 
-    /**
-     * @param Form $form
-     */
     protected function assertSaved(Form $form)
     {
         $this->client->followRedirects(true);

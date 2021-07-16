@@ -31,9 +31,6 @@ class PaymentMethodExtension extends AbstractExtension implements ServiceSubscri
     /** @var array */
     protected $configCache = [];
 
-    /**
-     * @param ContainerInterface $container
-     */
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;

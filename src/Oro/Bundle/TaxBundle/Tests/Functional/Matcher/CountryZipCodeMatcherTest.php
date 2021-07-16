@@ -131,13 +131,6 @@ class CountryZipCodeMatcherTest extends WebTestCase
         return $this->getReference(LoadTaxRules::REFERENCE_PREFIX . '.' . $reference);
     }
 
-    /**
-     * @param string|null $postalCode
-     * @param string|null $country
-     * @param string|null $region
-     * @param string|null $regionText
-     * @return Address
-     */
     protected function createAddress(
         ?string $postalCode,
         ?string $country,

@@ -21,9 +21,6 @@ class ProductUnitPrecisionPostRemoveListener implements FeatureToggleableInterfa
      */
     private $shardManager;
 
-    /**
-     * @param ShardManager $shardManager
-     */
     public function __construct(ShardManager $shardManager)
     {
         $this->shardManager = $shardManager;
@@ -34,9 +31,6 @@ class ProductUnitPrecisionPostRemoveListener implements FeatureToggleableInterfa
      */
     protected $priceAttributeClass;
 
-    /**
-     * @param LifecycleEventArgs $event
-     */
     public function postRemove(LifecycleEventArgs $event)
     {
         $entity = $event->getEntity();

@@ -104,7 +104,6 @@ class CustomerConsentsTransformerTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider reverseTransformInvalidDataProvider
      *
-     *
      * @param string $invalidData
      * @param string $exceptionMessage
      */
@@ -139,11 +138,6 @@ class CustomerConsentsTransformerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider reverseTransformProvider
-     *
-     * @param string $encodedConsentAcceptanceData
-     * @param array  $consentAcceptancesReturnedByProvider
-     * @param array  $consentAcceptancesOnCreate
-     * @param array  $expectedReverseTransformedValue
      */
     public function testReverseTransform(
         string $encodedConsentAcceptanceData,

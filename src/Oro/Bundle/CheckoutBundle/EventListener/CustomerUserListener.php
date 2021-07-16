@@ -61,9 +61,6 @@ class CustomerUserListener
         $this->firewallName = $firewallName;
     }
 
-    /**
-     * @param AfterFormProcessEvent $event
-     */
     public function afterFlush(AfterFormProcessEvent $event)
     {
         $customerUser = $event->getData();
@@ -93,9 +90,6 @@ class CustomerUserListener
         return $request->request->get($name);
     }
 
-    /**
-     * @param CustomerUserEmailSendEvent $event
-     */
     public function onCustomerUserEmailSend(CustomerUserEmailSendEvent $event)
     {
         $checkoutId = $this->getFromRequest('_checkout_id');

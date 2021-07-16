@@ -17,9 +17,6 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param array $treeConfig
-     * @param array $expected
-     *
      * @dataProvider configDataProvider
      */
     public function testProcessConfiguration(array $treeConfig, array $expected): void
@@ -31,9 +28,6 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $config);
     }
 
-    /**
-     * @return array
-     */
     public function configDataProvider(): array
     {
         return [

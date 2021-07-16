@@ -38,34 +38,22 @@ class FrontendCouponHandler extends AbstractCouponHandler
      */
     private $skippedFilters = [];
 
-    /**
-     * @param CouponApplicabilityValidationService $couponApplicabilityValidationService
-     */
     public function setCouponApplicabilityValidationService(
         CouponApplicabilityValidationService $couponApplicabilityValidationService
     ) {
         $this->couponApplicabilityValidationService = $couponApplicabilityValidationService;
     }
 
-    /**
-     * @param EntityCouponsProviderInterface $entityCouponsProvider
-     */
     public function setEntityCouponsProviderService(EntityCouponsProviderInterface $entityCouponsProvider)
     {
         $this->entityCouponsProvider = $entityCouponsProvider;
     }
 
-    /**
-     * @param ConfigManager $configManager
-     */
     public function setConfigManager(ConfigManager $configManager)
     {
         $this->configManager = $configManager;
     }
 
-    /**
-     * @param string $filterClass
-     */
     public function disableFilter(string $filterClass)
     {
         $this->skippedFilters[$filterClass] = true;
@@ -113,10 +101,6 @@ class FrontendCouponHandler extends AbstractCouponHandler
         return $this->getRepository(Coupon::class)->getSingleCouponByCode($couponCode, $caseInsensitive);
     }
 
-    /**
-     * @param Coupon $coupon
-     * @param AppliedCouponsAwareInterface $entity
-     */
     private function saveAppliedCoupon(Coupon $coupon, AppliedCouponsAwareInterface $entity)
     {
         $appliedCoupon = $this->entityCouponsProvider->createAppliedCouponByCoupon($coupon);

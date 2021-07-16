@@ -23,9 +23,6 @@ class ProductFixture extends AbstractTemplateRepository implements TemplateFixtu
     /** @var LocalizationManager */
     private $localizationManager;
 
-    /**
-     * @param LocalizationManager $localizationManager
-     */
     public function __construct(LocalizationManager $localizationManager)
     {
         $this->localizationManager = $localizationManager;
@@ -129,10 +126,6 @@ class ProductFixture extends AbstractTemplateRepository implements TemplateFixtu
             ->addShortDescription($localizedShortDescription);
     }
 
-    /**
-     * @param object $entity
-     * @param int    $id
-     */
     private function setEntityId(object $entity, int $id): void
     {
         $reflectionClass = new \ReflectionClass($entity);
@@ -141,12 +134,6 @@ class ProductFixture extends AbstractTemplateRepository implements TemplateFixtu
         $method->setValue($entity, $id);
     }
 
-    /**
-     * @param string $id
-     * @param string $name
-     *
-     * @return AbstractEnumValue
-     */
     private function createInventoryStatus(string $id, string $name): AbstractEnumValue
     {
         $enumValueClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');

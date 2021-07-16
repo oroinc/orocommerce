@@ -53,13 +53,6 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
      */
     private $isShowAllShoppingLists;
 
-    /**
-     * @param CurrentShoppingListManager $currentShoppingListManager
-     * @param TranslatorInterface $translator
-     * @param TokenStorageInterface $tokenStorage
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param ConfigManager $configManager
-     */
     public function __construct(
         CurrentShoppingListManager $currentShoppingListManager,
         TranslatorInterface $translator,
@@ -182,17 +175,11 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
         );
     }
 
-    /**
-     * @return bool
-     */
     private function isGuestCustomerUser(): bool
     {
         return $this->tokenStorage->getToken() instanceof AnonymousCustomerUserToken;
     }
 
-    /**
-     * @return CustomerUser|null
-     */
     private function getCustomerUser(): ?CustomerUser
     {
         $token = $this->tokenStorage->getToken();
@@ -205,25 +192,16 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
         return $user instanceof CustomerUser ? $user : null;
     }
 
-    /**
-     * @return bool
-     */
     private function isCreateAllowed(): bool
     {
         return $this->authorizationChecker->isGranted('oro_shopping_list_frontend_create');
     }
 
-    /**
-     * @return bool
-     */
     private function isEditAllowed(): bool
     {
         return $this->authorizationChecker->isGranted('oro_shopping_list_frontend_update');
     }
 
-    /**
-     * @return bool
-     */
     private function isShowAllInShoppingListWidget(): bool
     {
         if ($this->isShowAllShoppingLists === null) {

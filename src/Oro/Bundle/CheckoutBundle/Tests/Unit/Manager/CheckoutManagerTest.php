@@ -38,7 +38,6 @@ class CheckoutManagerTest extends \PHPUnit\Framework\TestCase
             ->with(777)
             ->willReturn(null);
 
-
         $this->checkoutManager->assignRegisteredCustomerUserToCheckout(new CustomerUser(), 777);
     }
 
@@ -96,7 +95,6 @@ class CheckoutManagerTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($checkout->getRegisteredCustomerUser());
         $this->assertSame($customerUser, $checkout->getCustomerUser());
     }
-
 
     /**
      * @return EntityRepository|\PHPUnit\Framework\MockObject\MockObject

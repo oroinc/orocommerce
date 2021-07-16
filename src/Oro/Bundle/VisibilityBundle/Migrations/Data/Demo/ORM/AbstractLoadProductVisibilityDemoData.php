@@ -67,8 +67,6 @@ abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture imp
 
     /**
      * Set fallback to parent category for all products with categories
-     *
-     * @param ObjectManager $manager
      */
     protected function resetVisibilities(ObjectManager $manager)
     {
@@ -99,8 +97,6 @@ abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture imp
     }
 
     /**
-     * @param ObjectManager $manager
-     * @param array $row
      * @throws \Exception
      */
     protected function setProductVisibility(ObjectManager $manager, array $row)

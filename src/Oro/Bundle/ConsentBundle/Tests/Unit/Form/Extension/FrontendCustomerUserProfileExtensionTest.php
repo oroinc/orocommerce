@@ -208,11 +208,6 @@ class FrontendCustomerUserProfileExtensionTest extends FormIntegrationTestCase
         $this->extension->onPostSubmit(new FormEvent($form, $customerUser));
     }
 
-    /**
-     * @param array $items
-     *
-     * @return PersistentCollection
-     */
     private function getCollection(array $items = []): PersistentCollection
     {
         $uow = new UnitOfWork();

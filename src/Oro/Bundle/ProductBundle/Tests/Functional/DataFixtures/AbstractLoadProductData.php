@@ -122,9 +122,6 @@ abstract class AbstractLoadProductData extends AbstractFixture implements
         $manager->flush();
     }
 
-    /**
-     * @return string
-     */
     abstract protected function getFilePath(): string;
 
     /**
@@ -190,10 +187,6 @@ abstract class AbstractLoadProductData extends AbstractFixture implements
         return $familyRepository->findOneBy(['code' => LoadProductDefaultAttributeFamilyData::DEFAULT_FAMILY_CODE]);
     }
 
-    /**
-     * @param array $item
-     * @param Product $product
-     */
     private function addAdvancedValue(array $item, Product $product)
     {
         if (!empty($item['names'])) {
@@ -221,10 +214,6 @@ abstract class AbstractLoadProductData extends AbstractFixture implements
         }
     }
 
-    /**
-     * @param array $item
-     * @param Product $product
-     */
     private function addProductImages(array $item, Product $product)
     {
         if (empty($item['images'])) {
@@ -258,10 +247,6 @@ abstract class AbstractLoadProductData extends AbstractFixture implements
         }
     }
 
-    /**
-     * @param array $item
-     * @param Product $product
-     */
     private function addEntityFieldFallbackValue(array $item, Product $product)
     {
         if (!empty($item['manageInventory'])) {

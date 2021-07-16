@@ -56,8 +56,6 @@ class OroShippingBundleInstaller implements Installation, ActivityExtensionAware
 
     /**
      * Create oro_ship_method_config table
-     *
-     * @param Schema $schema
      */
     protected function createOroShipMethodConfigTable(Schema $schema)
     {
@@ -72,8 +70,6 @@ class OroShippingBundleInstaller implements Installation, ActivityExtensionAware
 
     /**
      * Create oro_ship_method_configs_rule table
-     *
-     * @param Schema $schema
      */
     protected function createOroShipMethodConfigsRuleTable(Schema $schema)
     {
@@ -91,8 +87,6 @@ class OroShippingBundleInstaller implements Installation, ActivityExtensionAware
 
     /**
      * Create oro_ship_method_postal_code table
-     *
-     * @param Schema $schema
      */
     protected function createOroShipMethodPostalCodeTable(Schema $schema)
     {
@@ -106,8 +100,6 @@ class OroShippingBundleInstaller implements Installation, ActivityExtensionAware
 
     /**
      * Create oro_ship_method_type_config table
-     *
-     * @param Schema $schema
      */
     protected function createOroShipMethodTypeConfigTable(Schema $schema)
     {
@@ -123,8 +115,6 @@ class OroShippingBundleInstaller implements Installation, ActivityExtensionAware
 
     /**
      * Create oro_shipping_freight_class table
-     *
-     * @param Schema $schema
      */
     protected function createOroShippingFreightClassTable(Schema $schema)
     {
@@ -135,8 +125,6 @@ class OroShippingBundleInstaller implements Installation, ActivityExtensionAware
 
     /**
      * Create oro_shipping_length_unit table
-     *
-     * @param Schema $schema
      */
     protected function createOroShippingLengthUnitTable(Schema $schema)
     {
@@ -148,8 +136,6 @@ class OroShippingBundleInstaller implements Installation, ActivityExtensionAware
 
     /**
      * Create oro_shipping_product_opts table
-     *
-     * @param Schema $schema
      */
     protected function createOroShippingProductOptsTable(Schema $schema)
     {
@@ -175,8 +161,6 @@ class OroShippingBundleInstaller implements Installation, ActivityExtensionAware
 
     /**
      * Create oro_shipping_rule_destination table
-     *
-     * @param Schema $schema
      */
     protected function createOroShippingRuleDestinationTable(Schema $schema)
     {
@@ -194,8 +178,6 @@ class OroShippingBundleInstaller implements Installation, ActivityExtensionAware
 
     /**
      * Create oro_shipping_weight_unit table
-     *
-     * @param Schema $schema
      */
     protected function createOroShippingWeightUnitTable(Schema $schema)
     {
@@ -207,8 +189,6 @@ class OroShippingBundleInstaller implements Installation, ActivityExtensionAware
 
     /**
      * Add oro_ship_method_config foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroShipMethodConfigForeignKeys(Schema $schema)
     {
@@ -223,8 +203,6 @@ class OroShippingBundleInstaller implements Installation, ActivityExtensionAware
 
     /**
      * Add oro_ship_method_configs_rule foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroShipMethodConfigsRuleForeignKeys(Schema $schema)
     {
@@ -245,8 +223,6 @@ class OroShippingBundleInstaller implements Installation, ActivityExtensionAware
 
     /**
      * Add oro_ship_method_postal_code foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroShipMethodPostalCodeForeignKeys(Schema $schema)
     {
@@ -261,8 +237,6 @@ class OroShippingBundleInstaller implements Installation, ActivityExtensionAware
 
     /**
      * Add oro_ship_method_type_config foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroShipMethodTypeConfigForeignKeys(Schema $schema)
     {
@@ -277,8 +251,6 @@ class OroShippingBundleInstaller implements Installation, ActivityExtensionAware
 
     /**
      * Add oro_shipping_product_opts foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroShippingProductOptsForeignKeys(Schema $schema)
     {
@@ -317,8 +289,6 @@ class OroShippingBundleInstaller implements Installation, ActivityExtensionAware
 
     /**
      * Add oro_shipping_rule_destination foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroShippingRuleDestinationForeignKeys(Schema $schema)
     {
@@ -345,8 +315,6 @@ class OroShippingBundleInstaller implements Installation, ActivityExtensionAware
 
     /**
      * Create oro_ship_mtds_rule_website table
-     *
-     * @param Schema $schema
      */
     protected function createOroShipMtdsRuleWebsiteTable(Schema $schema)
     {
@@ -359,8 +327,6 @@ class OroShippingBundleInstaller implements Installation, ActivityExtensionAware
 
     /**
      * Add oro_ship_mtds_rule_website foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroShipMtdsRuleWebsiteForeignKeys(Schema $schema)
     {

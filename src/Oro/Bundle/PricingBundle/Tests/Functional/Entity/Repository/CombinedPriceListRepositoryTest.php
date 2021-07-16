@@ -113,7 +113,6 @@ class CombinedPriceListRepositoryTest extends WebTestCase
         $this->assertNull($this->getRepository()->getPriceListByWebsite($websiteCa));
     }
 
-
     public function testDeleteUnusedPriceListsWithIgnore()
     {
         $combinedPriceList = new CombinedPriceList();
@@ -351,8 +350,6 @@ class CombinedPriceListRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider getCPLsForPriceCollectByTimeOffsetDataProvider
-     * @param $offsetHours
-     * @param $result
      */
     public function testGetCPLsForPriceCollectByTimeOffset($offsetHours, $result)
     {

@@ -46,13 +46,6 @@ class MoveProductsMassActionHandler implements MassActionHandlerInterface
     /** @var ShoppingListTotalManager */
     private $shoppingListTotalManager;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param TranslatorInterface $translator
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param RequestStack $requestStack
-     * @param ShoppingListManager $shoppingListManager
-     */
     public function __construct(
         ManagerRegistry $registry,
         TranslatorInterface $translator,
@@ -87,10 +80,6 @@ class MoveProductsMassActionHandler implements MassActionHandlerInterface
         return $result;
     }
 
-    /**
-     * @param MassActionHandlerArgs $args
-     * @return MassActionResponse
-     */
     private function doHandle(MassActionHandlerArgs $args): MassActionResponse
     {
         $shoppingList = $this->getTargetShoppingList($args);
@@ -144,10 +133,6 @@ class MoveProductsMassActionHandler implements MassActionHandlerInterface
         return $this->getResponse($args->getMassAction(), $updated);
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param array $shoppingLists
-     */
     private function recalculateTotals(ObjectManager $manager, array $shoppingLists): void
     {
         foreach ($shoppingLists as $shoppingList) {
@@ -157,10 +142,6 @@ class MoveProductsMassActionHandler implements MassActionHandlerInterface
         $manager->flush();
     }
 
-    /**
-     * @param MassActionHandlerArgs $args
-     * @return ShoppingList|null
-     */
     private function getTargetShoppingList(MassActionHandlerArgs $args): ?ShoppingList
     {
         $id = $args->getData()['shopping_list_id'] ?? null;
@@ -173,10 +154,6 @@ class MoveProductsMassActionHandler implements MassActionHandlerInterface
             ->find($id);
     }
 
-    /**
-     * @param null|ShoppingList $shoppingList
-     * @return bool
-     */
     private function isEditAllowed(?ShoppingList $shoppingList): bool
     {
         return $shoppingList && $this->authorizationChecker->isGranted('EDIT', $shoppingList);
@@ -199,9 +176,6 @@ class MoveProductsMassActionHandler implements MassActionHandlerInterface
         );
     }
 
-    /**
-     * @return MassActionResponse
-     */
     private function getNoAccessResponse(): MassActionResponse
     {
         return new MassActionResponse(
@@ -211,10 +185,7 @@ class MoveProductsMassActionHandler implements MassActionHandlerInterface
     }
 
     /**
-     * @param MassActionHandlerArgs $args
-     *
      * @throws LogicException
-     * @return string
      */
     private function getEntityIdentifierField(MassActionHandlerArgs $args): string
     {

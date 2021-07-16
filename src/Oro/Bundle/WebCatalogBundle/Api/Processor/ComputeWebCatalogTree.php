@@ -22,19 +22,12 @@ class ComputeWebCatalogTree implements ProcessorInterface
     /** @var DoctrineHelper */
     private $doctrineHelper;
 
-    /**
-     * @param ContentNodeTreeHandler $treeHandler
-     * @param DoctrineHelper         $doctrineHelper
-     */
     public function __construct(ContentNodeTreeHandler $treeHandler, DoctrineHelper $doctrineHelper)
     {
         $this->treeHandler = $treeHandler;
         $this->doctrineHelper = $doctrineHelper;
     }
 
-    /**
-     * @param ContextInterface $context
-     */
     public function process(ContextInterface $context)
     {
         /** @var CustomizeLoadedDataContext $context */

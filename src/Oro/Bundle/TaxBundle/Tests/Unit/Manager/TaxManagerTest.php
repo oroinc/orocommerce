@@ -446,7 +446,6 @@ class TaxManagerTest extends \PHPUnit\Framework\TestCase
 
         $taxable->addItem($itemTaxable);
 
-
         $this->factory->expects($this->once())
             ->method('create')
             ->with($entity)

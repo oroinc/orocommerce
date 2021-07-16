@@ -16,9 +16,6 @@ class PriceListTriggerHandler
     /** @var MessageProducerInterface */
     private $messageProducer;
 
-    /**
-     * @param MessageProducerInterface $messageProducer
-     */
     public function __construct(MessageProducerInterface $messageProducer)
     {
         $this->messageProducer = $messageProducer;

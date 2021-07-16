@@ -17,8 +17,6 @@ class RuleTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitDataProvider
-     *
-     * @param RuleInterface $rule
      */
     public function testSubmitValid(RuleInterface $rule)
     {

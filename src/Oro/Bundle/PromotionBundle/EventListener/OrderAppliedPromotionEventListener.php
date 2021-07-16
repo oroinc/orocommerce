@@ -18,11 +18,6 @@ class OrderAppliedPromotionEventListener extends AbstractFormEventListener
      */
     private $appliedPromotionManager;
 
-    /**
-     * @param Environment $twig
-     * @param FormFactoryInterface $formFactory
-     * @param AppliedPromotionManager $appliedPromotionManager
-     */
     public function __construct(
         Environment $twig,
         FormFactoryInterface $formFactory,

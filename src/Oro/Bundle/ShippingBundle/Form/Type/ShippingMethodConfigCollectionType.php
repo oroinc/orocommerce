@@ -19,9 +19,6 @@ class ShippingMethodConfigCollectionType extends AbstractType
      */
     protected $subscriber;
 
-    /**
-     * @param MethodConfigCollectionSubscriber $subscriber
-     */
     public function __construct(MethodConfigCollectionSubscriber $subscriber)
     {
         $this->subscriber = $subscriber;

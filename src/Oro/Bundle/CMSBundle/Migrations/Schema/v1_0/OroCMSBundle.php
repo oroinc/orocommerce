@@ -35,8 +35,6 @@ class OroCMSBundle implements Migration, AttachmentExtensionAwareInterface
 
     /**
      * Create orob2b_cms_page table
-     *
-     * @param Schema $schema
      */
     protected function createOrob2BCmsPageTable(Schema $schema)
     {
@@ -59,8 +57,6 @@ class OroCMSBundle implements Migration, AttachmentExtensionAwareInterface
 
     /**
      * Create orob2b_cms_page_to_slug table
-     *
-     * @param Schema $schema
      */
     protected function createOrob2BCmsPageToSlugTable(Schema $schema)
     {
@@ -73,8 +69,6 @@ class OroCMSBundle implements Migration, AttachmentExtensionAwareInterface
 
     /**
      * Add orob2b_cms_page foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOrob2BCmsPageForeignKeys(Schema $schema)
     {
@@ -101,8 +95,6 @@ class OroCMSBundle implements Migration, AttachmentExtensionAwareInterface
 
     /**
      * Add orob2b_cms_page_to_slug foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOrob2BCmsPageToSlugForeignKeys(Schema $schema)
     {
@@ -123,8 +115,6 @@ class OroCMSBundle implements Migration, AttachmentExtensionAwareInterface
 
     /**
      * Create orob2b_cms_login_page table
-     *
-     * @param Schema $schema
      */
     protected function createOroCmsLoginPageTable(Schema $schema)
     {
@@ -136,9 +126,6 @@ class OroCMSBundle implements Migration, AttachmentExtensionAwareInterface
         $table->setPrimaryKey(['id']);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addImageAssociations(Schema $schema)
     {
         $this->attachmentExtension->addImageRelation(

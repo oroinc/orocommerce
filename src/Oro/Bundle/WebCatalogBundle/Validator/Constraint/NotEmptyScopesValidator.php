@@ -19,9 +19,6 @@ class NotEmptyScopesValidator extends ConstraintValidator
      */
     protected $scopeManager;
 
-    /**
-     * @param ScopeManager $scopeManager
-     */
     public function __construct(ScopeManager $scopeManager)
     {
         $this->scopeManager = $scopeManager;

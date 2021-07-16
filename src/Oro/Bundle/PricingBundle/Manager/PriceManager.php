@@ -38,11 +38,6 @@ class PriceManager
     /** @var ProductPrice[] */
     protected $pricesToRemove = [];
 
-    /**
-     * @param ShardManager             $shardManager
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param MessageBufferManager     $messageBufferManager
-     */
     public function __construct(
         ShardManager $shardManager,
         EventDispatcherInterface $eventDispatcher,
@@ -53,25 +48,16 @@ class PriceManager
         $this->messageBufferManager = $messageBufferManager;
     }
 
-    /**
-     * @param ProductPrice $price
-     */
     public function persist(ProductPrice $price)
     {
         $this->pricesToSave[] = $price;
     }
 
-    /**
-     * @param ProductPrice $price
-     */
     public function remove(ProductPrice $price)
     {
         $this->pricesToRemove[] = $price;
     }
 
-    /**
-     * @param ProductPrice $price
-     */
     protected function doSave(ProductPrice $price)
     {
         $price->updatePrice();
@@ -110,9 +96,6 @@ class PriceManager
         }
     }
 
-    /**
-     * @param ProductPrice $price
-     */
     protected function doRemove(ProductPrice $price)
     {
         $class = ClassUtils::getRealClass(get_class($price));
@@ -186,9 +169,6 @@ class PriceManager
         return $uow->getEntityChangeSet($price);
     }
 
-    /**
-     * @param PostFlushEventArgs $args
-     */
     public function postFlush(PostFlushEventArgs $args)
     {
         $this->flush();

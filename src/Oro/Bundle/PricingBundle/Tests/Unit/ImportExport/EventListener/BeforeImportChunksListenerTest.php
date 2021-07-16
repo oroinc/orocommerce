@@ -43,7 +43,6 @@ class BeforeImportChunksListenerTest extends TestCase
     }
 
     /**
-     * @param array $body
      * @dataProvider onBeforeImportChunksWithoutPriceListDataProvider
      */
     public function testOnBeforeImportChunksWithoutPriceList(array $body)

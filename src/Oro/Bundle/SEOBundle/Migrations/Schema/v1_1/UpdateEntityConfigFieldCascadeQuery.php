@@ -28,12 +28,6 @@ class UpdateEntityConfigFieldCascadeQuery extends ParametrizedMigrationQuery
      */
     protected $fields;
 
-    /**
-     * @param $entityFrom
-     * @param $entityTo
-     * @param $relationType
-     * @param array $fields
-     */
     public function __construct($entityFrom, $entityTo, $relationType, array $fields)
     {
         $this->entityFrom = $entityFrom;
@@ -59,7 +53,6 @@ class UpdateEntityConfigFieldCascadeQuery extends ParametrizedMigrationQuery
     }
 
     /**
-     * @param LoggerInterface $logger
      * @throws \Doctrine\DBAL\DBALException
      */
     protected function updateEntityConfig(LoggerInterface $logger)

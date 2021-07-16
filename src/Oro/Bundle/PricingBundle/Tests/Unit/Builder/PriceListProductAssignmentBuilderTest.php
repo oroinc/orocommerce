@@ -165,9 +165,6 @@ class PriceListProductAssignmentBuilderTest extends \PHPUnit\Framework\TestCase
         $this->priceListProductAssignmentBuilder->buildByPriceList($priceList, [$productId]);
     }
 
-    /**
-     * @param PriceList $priceList
-     */
     protected function assertClearGeneratedPricesCall(PriceList $priceList)
     {
         $priceListToProductRepository = $this->getMockBuilder(PriceListToProductRepository::class)

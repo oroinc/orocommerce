@@ -27,8 +27,6 @@ class OroCheckoutBundle implements Migration
 
     /**
      * Create orob2b_checkout_source table
-     *
-     * @param Schema $schema
      */
     protected function createOrob2BCheckoutSourceTable(Schema $schema)
     {
@@ -39,8 +37,6 @@ class OroCheckoutBundle implements Migration
 
     /**
      * Create orob2b_checkout table
-     *
-     * @param Schema $schema
      */
     protected function createOrob2BCheckoutTable(Schema $schema)
     {
@@ -84,8 +80,6 @@ class OroCheckoutBundle implements Migration
 
     /**
      * Add orob2b_checkout foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOrob2BCheckoutForeignKeys(Schema $schema)
     {

@@ -7,9 +7,6 @@ trait DriverAwareTrait
     /** @var DriverInterface */
     private $driver;
 
-    /**
-     * @param DriverInterface $driver
-     */
     public function setDriver(DriverInterface $driver)
     {
         $this->driver = $driver;

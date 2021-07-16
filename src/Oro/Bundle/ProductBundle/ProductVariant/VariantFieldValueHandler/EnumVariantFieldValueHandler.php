@@ -44,14 +44,6 @@ class EnumVariantFieldValueHandler implements ProductVariantFieldValueHandlerInt
     /** @var LocaleSettings */
     private $localeSettings;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param EnumValueProvider $enumValueProvider
-     * @param LoggerInterface $logger
-     * @param ConfigManager $configManager
-     * @param LocalizationHelper $localizationHelper
-     * @param LocaleSettings $localeSettings
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         EnumValueProvider $enumValueProvider,
@@ -69,10 +61,6 @@ class EnumVariantFieldValueHandler implements ProductVariantFieldValueHandlerInt
         $this->cache = new ArrayCache();
     }
 
-    /**
-     * @param CacheProvider $cache
-     * @param int $lifeTime
-     */
     public function setCache(CacheProvider $cache, int $lifeTime = 0): void
     {
         $this->cache = $cache;
@@ -130,9 +118,6 @@ class EnumVariantFieldValueHandler implements ProductVariantFieldValueHandlerInt
         return $value;
     }
 
-    /**
-     * @return string
-     */
     private function getLocaleKey(): string
     {
         return $this->localizationHelper->getCurrentLocalization()

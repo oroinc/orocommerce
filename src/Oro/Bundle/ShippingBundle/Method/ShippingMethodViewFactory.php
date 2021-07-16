@@ -11,9 +11,6 @@ class ShippingMethodViewFactory
      */
     private $shippingMethodProvider;
 
-    /**
-     * @param ShippingMethodProviderInterface $shippingMethodProvider
-     */
     public function __construct(ShippingMethodProviderInterface $shippingMethodProvider)
     {
         $this->shippingMethodProvider = $shippingMethodProvider;

@@ -10,9 +10,6 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 class CreatePaymentTermTransportLabelTable implements Migration
 {
     /**
-     * @param Schema   $schema
-     * @param QueryBag $queries
-     *
      * @throws SchemaException
      */
     public function up(Schema $schema, QueryBag $queries)
@@ -21,9 +18,6 @@ class CreatePaymentTermTransportLabelTable implements Migration
         $this->addOroPaymentTermTransportLabelForeignKeys($schema);
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function createOroPaymentTermTransportLabelTable(Schema $schema)
     {
         $table = $schema->createTable('oro_payment_term_trans_label');
@@ -37,8 +31,6 @@ class CreatePaymentTermTransportLabelTable implements Migration
     }
 
     /**
-     * @param Schema $schema
-     *
      * @throws SchemaException
      */
     private function addOroPaymentTermTransportLabelForeignKeys(Schema $schema)

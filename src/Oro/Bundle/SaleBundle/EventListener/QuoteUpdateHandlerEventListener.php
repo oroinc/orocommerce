@@ -25,11 +25,6 @@ class QuoteUpdateHandlerEventListener
      */
     private $requestStack;
 
-    /**
-     * @param WebsiteManager $websiteManager
-     * @param QuoteRequestHandler $quoteRequestHandler
-     * @param RequestStack $requestStack
-     */
     public function __construct(
         WebsiteManager $websiteManager,
         QuoteRequestHandler $quoteRequestHandler,
@@ -40,9 +35,6 @@ class QuoteUpdateHandlerEventListener
         $this->requestStack = $requestStack;
     }
 
-    /**
-     * @param FormProcessEvent $event
-     */
     public function ensureWebsite(FormProcessEvent $event)
     {
         /** @var Quote $quote */
@@ -53,9 +45,6 @@ class QuoteUpdateHandlerEventListener
         }
     }
 
-    /**
-     * @param FormProcessEvent $event
-     */
     public function ensureCustomer(FormProcessEvent $event)
     {
         $quote = $event->getData();

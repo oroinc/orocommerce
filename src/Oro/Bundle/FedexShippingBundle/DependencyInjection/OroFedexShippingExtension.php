@@ -18,9 +18,6 @@ class OroFedexShippingExtension extends Extension
     const ALIAS = 'oro_fedex_shipping';
 
     /**
-     * @param array            $configs
-     * @param ContainerBuilder $container
-     *
      * @throws \Exception
      */
     public function load(array $configs, ContainerBuilder $container)

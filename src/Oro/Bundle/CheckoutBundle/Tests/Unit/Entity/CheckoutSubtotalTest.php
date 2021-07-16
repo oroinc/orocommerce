@@ -16,7 +16,6 @@ class CheckoutSubtotalTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider priceListDataProvider
-     * @param BasePriceList $priceList
      */
     public function testAccessorsForPriceLists(BasePriceList $priceList)
     {
@@ -39,9 +38,6 @@ class CheckoutSubtotalTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('test price list', $entity->getSubtotal()->getPriceList()->getName());
     }
 
-    /**
-     * @return array
-     */
     public function priceListDataProvider(): array
     {
         return [

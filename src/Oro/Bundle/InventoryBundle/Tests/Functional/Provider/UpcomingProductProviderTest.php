@@ -107,7 +107,6 @@ class UpcomingProductProviderTest extends WebTestCase
 
     /**
      * @dataProvider hideLabelsProvider
-     * @param bool $enabled
      */
     public function testGetLatestAvailabilityDateWhenDatesAreInTheFuture(bool $enabled): void
     {
@@ -127,7 +126,6 @@ class UpcomingProductProviderTest extends WebTestCase
 
     /**
      * @dataProvider hideLabelsProvider
-     * @param bool $enabled
      */
     public function testGetLatestAvailabilityDatesWhenDatesAreInThePast(bool $enabled): void
     {
@@ -143,7 +141,6 @@ class UpcomingProductProviderTest extends WebTestCase
 
     /**
      * @dataProvider hideLabelsProvider
-     * @param bool $enabled
      */
     public function testGetAvailabilityDateForNonUpcomingProduct(bool $enabled): void
     {
@@ -155,7 +152,6 @@ class UpcomingProductProviderTest extends WebTestCase
 
     /**
      * @dataProvider hideLabelsProvider
-     * @param bool $enabled
      */
     public function testGetAvailabilityDateForNonUpcomingProduct2(bool $enabled): void
     {
@@ -165,9 +161,6 @@ class UpcomingProductProviderTest extends WebTestCase
         $this->getUpcomingProductProvider()->getAvailabilityDate($this->getReference(LoadProductData::PRODUCT_6));
     }
 
-    /**
-     * @return array
-     */
     public function hideLabelsProvider(): array
     {
         return [
@@ -180,17 +173,11 @@ class UpcomingProductProviderTest extends WebTestCase
         ];
     }
 
-    /**
-     * @return UpcomingProductProvider
-     */
     public function getUpcomingProductProvider(): UpcomingProductProvider
     {
         return self::getContainer()->get('oro_inventory.provider.upcoming_product_provider');
     }
 
-    /**
-     * @param bool $enabled
-     */
     private function setHideLabelsPastAvailabilityDateOption(bool $enabled): void
     {
         $configManager = self::getConfigManager('global');

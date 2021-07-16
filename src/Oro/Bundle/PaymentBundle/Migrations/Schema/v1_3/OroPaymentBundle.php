@@ -33,9 +33,6 @@ class OroPaymentBundle implements Migration
         ));
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addIndexToPaymentTransactionTable(Schema $schema)
     {
         $table = $schema->getTable('orob2b_payment_transaction');

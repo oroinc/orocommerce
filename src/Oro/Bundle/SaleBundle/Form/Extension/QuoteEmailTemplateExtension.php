@@ -25,10 +25,6 @@ class QuoteEmailTemplateExtension extends AbstractTypeExtension
     /** @var FeatureChecker */
     private $featureChecker;
 
-    /**
-     * @param TokenAccessorInterface $tokenAccessor
-     * @param FeatureChecker $featureChecker
-     */
     public function __construct(TokenAccessorInterface $tokenAccessor, FeatureChecker $featureChecker)
     {
         $this->tokenAccessor = $tokenAccessor;

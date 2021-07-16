@@ -19,10 +19,6 @@ class PaymentTermMethodProvider extends AbstractPaymentMethodProvider
      */
     private $configProvider;
 
-    /**
-     * @param PaymentTermConfigProviderInterface $configProvider
-     * @param PaymentTermPaymentMethodFactoryInterface $factory
-     */
     public function __construct(
         PaymentTermConfigProviderInterface $configProvider,
         PaymentTermPaymentMethodFactoryInterface $factory
@@ -44,9 +40,6 @@ class PaymentTermMethodProvider extends AbstractPaymentMethodProvider
         }
     }
 
-    /**
-     * @param PaymentTermConfigInterface $config
-     */
     protected function addPaymentTermMethod(PaymentTermConfigInterface $config)
     {
         $this->addMethod(

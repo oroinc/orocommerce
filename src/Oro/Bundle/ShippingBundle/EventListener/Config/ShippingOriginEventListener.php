@@ -15,17 +15,11 @@ class ShippingOriginEventListener
     /** @var ShippingOriginModelFactory */
     protected $shippingOriginModelFactory;
 
-    /**
-     * @param ShippingOriginModelFactory $shippingOriginModelFactory
-     */
     public function __construct(ShippingOriginModelFactory $shippingOriginModelFactory)
     {
         $this->shippingOriginModelFactory = $shippingOriginModelFactory;
     }
 
-    /**
-     * @param ConfigSettingsUpdateEvent $event
-     */
     public function formPreSet(ConfigSettingsUpdateEvent $event)
     {
         $settings = $event->getSettings();
@@ -37,9 +31,6 @@ class ShippingOriginEventListener
         $event->setSettings($settings);
     }
 
-    /**
-     * @param ConfigSettingsUpdateEvent $event
-     */
     public function beforeSave(ConfigSettingsUpdateEvent $event)
     {
         $settings = $event->getSettings();

@@ -18,10 +18,6 @@ class BasicOrderPaymentLineItemConverter implements OrderPaymentLineItemConverte
      */
     private $paymentLineItemBuilderFactory;
 
-    /**
-     * @param null|PaymentLineItemCollectionFactoryInterface $paymentLineItemCollectionFactory
-     * @param null|PaymentLineItemBuilderFactoryInterface $paymentLineItemBuilderFactory
-     */
     public function __construct(
         PaymentLineItemCollectionFactoryInterface $paymentLineItemCollectionFactory = null,
         PaymentLineItemBuilderFactoryInterface $paymentLineItemBuilderFactory = null

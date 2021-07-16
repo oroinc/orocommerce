@@ -170,10 +170,6 @@ class TaxSubtotalProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($this->provider->supportsCachedSubtotal(new \stdClass()));
     }
 
-    /**
-     * @param Subtotal $subtotal
-     * @param ResultElement $total
-     */
     protected function assertSubtotal(Subtotal $subtotal, ResultElement $total)
     {
         $this->assertInstanceOf('Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $subtotal);

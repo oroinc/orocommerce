@@ -33,11 +33,6 @@ class SaveAcceptedConsentsAction extends AbstractAction
     /** @var PropertyPath */
     private $acceptedConsents;
 
-    /**
-     * @param ContextAccessor $contextAccessor
-     * @param TokenStorageInterface $tokenStorage
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(
         ContextAccessor $contextAccessor,
         TokenStorageInterface $tokenStorage,

@@ -34,10 +34,6 @@ class AdditionalProductPricesIterator implements \Iterator
      */
     protected $offset = -1;
 
-    /**
-     * @param \Iterator $productIterator
-     * @param PriceList $priceList
-     */
     public function __construct(\Iterator $productIterator, PriceList $priceList)
     {
         $this->priceList = $priceList;

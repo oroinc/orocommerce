@@ -199,7 +199,6 @@ class CategoryControllerTest extends WebTestCase
 
     /**
      * @return array
-     *
      */
     public function dataProviderForNotExistingCategories()
     {

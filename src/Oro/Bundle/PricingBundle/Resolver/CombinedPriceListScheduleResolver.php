@@ -42,11 +42,6 @@ class CombinedPriceListScheduleResolver
      */
     protected $activationRulesRepository;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param ConfigManager $configManager
-     * @param CombinedPriceListTriggerHandler $triggerHandler
-     */
     public function __construct(
         ManagerRegistry $registry,
         ConfigManager $configManager,

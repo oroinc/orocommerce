@@ -65,10 +65,6 @@ class PageRepository extends EntityRepository
         return array_diff($pageIds, $existedPageIds);
     }
 
-    /**
-     * @param Slug $slug
-     * @return Page|null
-     */
     public function findOneBySlug(Slug $slug): ?Page
     {
         $qb = $this->createQueryBuilder('p');

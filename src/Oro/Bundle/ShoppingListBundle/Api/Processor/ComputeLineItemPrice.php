@@ -25,11 +25,6 @@ class ComputeLineItemPrice implements ProcessorInterface
     /** @var UserCurrencyManager */
     private $userCurrencyManager;
 
-    /**
-     * @param MatchingPriceProvider                   $matchingPriceProvider
-     * @param ProductPriceScopeCriteriaRequestHandler $scopeCriteriaRequestHandler
-     * @param UserCurrencyManager                     $userCurrencyManager
-     */
     public function __construct(
         MatchingPriceProvider $matchingPriceProvider,
         ProductPriceScopeCriteriaRequestHandler $scopeCriteriaRequestHandler,
@@ -68,7 +63,6 @@ class ComputeLineItemPrice implements ProcessorInterface
             return;
         }
 
-
         $data = $this->computeFields(
             $data,
             $config,
@@ -80,16 +74,6 @@ class ComputeLineItemPrice implements ProcessorInterface
         $context->setData($data);
     }
 
-    /**
-     * @param array                       $data
-     * @param EntityDefinitionConfig      $config
-     * @param string                      $currencyFieldName
-     * @param EntityDefinitionFieldConfig $currencyField
-     * @param string                      $valueFieldName
-     * @param EntityDefinitionFieldConfig $valueField
-     *
-     * @return array
-     */
     private function computeFields(
         array $data,
         EntityDefinitionConfig $config,
@@ -123,12 +107,6 @@ class ComputeLineItemPrice implements ProcessorInterface
         return $data;
     }
 
-    /**
-     * @param EntityDefinitionConfig $config
-     * @param string                 $associationName
-     *
-     * @return string
-     */
     private function getAssociationIdFieldName(EntityDefinitionConfig $config, string $associationName): string
     {
         $ids = $config->getField($associationName)->getTargetEntity()->getIdentifierFieldNames();

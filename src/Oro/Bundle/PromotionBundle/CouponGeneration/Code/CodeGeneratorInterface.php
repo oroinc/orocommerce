@@ -9,10 +9,6 @@ use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CodeGenerationOptions;
  */
 interface CodeGeneratorInterface
 {
-    /**
-     * @param CodeGenerationOptions $options
-     * @return string
-     */
     public function generateOne(CodeGenerationOptions $options): string;
 
     /**

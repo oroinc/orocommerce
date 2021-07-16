@@ -64,9 +64,6 @@ class CustomerCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBu
         $this->configureBuilderClasses($this->builder);
     }
 
-    /**
-     * @param CustomerCombinedPriceListsBuilder $builder
-     */
     protected function configureBuilderClasses(CustomerCombinedPriceListsBuilder $builder)
     {
         $builder->setPriceListToEntityClassName($this->priceListToEntityClass);
@@ -650,10 +647,6 @@ class CustomerCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBu
         $builder->build($website, $customer, $forceTimestamp);
     }
 
-    /**
-     * @param Website $website
-     * @param Customer $customer
-     */
     protected function assertRebuild(Website $website, Customer $customer)
     {
         $priceListCollection = [$this->getPriceListSequenceMember()];
@@ -679,10 +672,6 @@ class CustomerCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBu
             ->willReturn($relation);
     }
 
-    /**
-     * @param Customer $customer
-     * @param Website $website
-     */
     protected function configurePriceListToEntityRepositoryMock(Customer $customer, Website $website)
     {
         $this->priceListToEntityRepository->expects($this->any())

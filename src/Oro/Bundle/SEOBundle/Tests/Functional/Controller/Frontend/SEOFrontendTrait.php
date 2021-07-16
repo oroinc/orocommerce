@@ -6,10 +6,6 @@ use Symfony\Component\DomCrawler\Crawler;
 
 trait SEOFrontendTrait
 {
-    /**
-     * @param Crawler $crawler
-     * @param array $metaTags
-     */
     public function checkSEOFrontendMetaTags(Crawler $crawler, array $metaTags)
     {
         $metaCrawler = $crawler->filter('head > meta');

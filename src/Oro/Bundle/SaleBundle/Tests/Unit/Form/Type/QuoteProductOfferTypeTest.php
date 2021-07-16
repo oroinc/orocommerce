@@ -59,9 +59,6 @@ class QuoteProductOfferTypeTest extends AbstractTest
     }
 
     /**
-     * @param QuoteProductOffer $inputData
-     * @param array $expectedData
-     *
      * @dataProvider postSetDataProvider
      */
     public function testPostSetData(QuoteProductOffer $inputData, array $expectedData = [])

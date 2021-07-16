@@ -56,9 +56,6 @@ class ExpressionLanguageRuleFiltrationServiceTest extends \PHPUnit\Framework\Tes
         self::assertEquals($expectedRuleOwners, $actualRuleOwners);
     }
 
-    /**
-     * @return array
-     */
     public function ruleOwnersDataProvider(): array
     {
         $applicable = $this->createApplicableOwner('1');

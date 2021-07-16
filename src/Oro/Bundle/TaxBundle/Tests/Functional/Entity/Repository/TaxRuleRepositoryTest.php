@@ -101,10 +101,6 @@ class TaxRuleRepositoryTest extends WebTestCase
         $this->assertContainsId($taxRule, $result);
     }
 
-    /**
-     * @param TaxRule $expectedTaxRule
-     * @param array $result
-     */
     protected function assertContainsId(TaxRule $expectedTaxRule, array $result)
     {
         $ids = array_map(

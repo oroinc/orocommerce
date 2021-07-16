@@ -20,9 +20,6 @@ class ProductSearchQueryRestrictionEvent extends Event
      */
     private $query;
 
-    /**
-     * @param Query $query
-     */
     public function __construct(Query $query)
     {
         $this->query = $query;

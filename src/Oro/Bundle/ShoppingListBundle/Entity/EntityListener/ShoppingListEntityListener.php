@@ -25,11 +25,6 @@ class ShoppingListEntityListener
     /** @var ShoppingListLimitManager */
     private $shoppingListLimitManager;
 
-    /**
-     * @param DefaultUserProvider $defaultUserProvider
-     * @param TokenAccessorInterface $tokenAccessor
-     * @param ShoppingListLimitManager $shoppingListLimitManager
-     */
     public function __construct(
         DefaultUserProvider $defaultUserProvider,
         TokenAccessorInterface $tokenAccessor,
@@ -40,9 +35,6 @@ class ShoppingListEntityListener
         $this->shoppingListLimitManager = $shoppingListLimitManager;
     }
 
-    /**
-     * @param ShoppingList $shoppingList
-     */
     public function prePersist(ShoppingList $shoppingList)
     {
         if ($this->tokenAccessor->getToken() instanceof AnonymousCustomerUserToken

@@ -80,12 +80,6 @@ class ComputeCategoryNodeParentAndPath extends ComputeTreeNodePathField
         return [$isParentFieldRequested, $isPathFieldRequested];
     }
 
-    /**
-     * @param EntityDefinitionConfig $config
-     * @param bool                   $isPathFieldRequested
-     *
-     * @return EntityDefinitionConfig
-     */
     private function getTargetConfig(
         EntityDefinitionConfig $config,
         bool $isPathFieldRequested

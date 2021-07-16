@@ -28,17 +28,11 @@ class LineItemPriceAwareStub implements ProductLineItemInterface, PriceAwareInte
     /** @var null|Price */
     private $price;
 
-    /**
-     * @return int|null
-     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @param int|null $id
-     */
     public function setId(?int $id): void
     {
         $this->id = $id;
@@ -52,9 +46,6 @@ class LineItemPriceAwareStub implements ProductLineItemInterface, PriceAwareInte
         return $this->product;
     }
 
-    /**
-     * @param Product|null $product
-     */
     public function setProduct(?Product $product): void
     {
         $this->product = $product;
@@ -68,9 +59,6 @@ class LineItemPriceAwareStub implements ProductLineItemInterface, PriceAwareInte
         return $this->parentProduct;
     }
 
-    /**
-     * @param Product|null $parentProduct
-     */
     public function setParentProduct(?Product $parentProduct): void
     {
         $this->parentProduct = $parentProduct;
@@ -84,9 +72,6 @@ class LineItemPriceAwareStub implements ProductLineItemInterface, PriceAwareInte
         return $this->productUnit;
     }
 
-    /**
-     * @param ProductUnit|null $productUnit
-     */
     public function setProductUnit(?ProductUnit $productUnit): void
     {
         $this->productUnit = $productUnit;
@@ -100,9 +85,6 @@ class LineItemPriceAwareStub implements ProductLineItemInterface, PriceAwareInte
         return $this->quantity;
     }
 
-    /**
-     * @param float|null $quantity
-     */
     public function setQuantity(?float $quantity): void
     {
         $this->quantity = $quantity;
@@ -116,9 +98,6 @@ class LineItemPriceAwareStub implements ProductLineItemInterface, PriceAwareInte
         return $this->price;
     }
 
-    /**
-     * @param Price|null $price
-     */
     public function setPrice(?Price $price): void
     {
         $this->price = $price;

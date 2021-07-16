@@ -23,10 +23,6 @@ class DeclinedConsentsEvent extends Event
      */
     private $customerUser;
 
-    /**
-     * @param array $declinedConsents
-     * @param CustomerUser $customerUser
-     */
     public function __construct(array $declinedConsents, CustomerUser $customerUser)
     {
         $this->declinedConsents = $declinedConsents;
@@ -41,9 +37,6 @@ class DeclinedConsentsEvent extends Event
         return $this->declinedConsents;
     }
 
-    /**
-     * @return CustomerUser
-     */
     public function getCustomerUser(): CustomerUser
     {
         return $this->customerUser;

@@ -21,9 +21,6 @@ class QuoteGuestAccessExtension extends AbstractExtension implements ServiceSubs
     /** @var ContainerInterface */
     private $container;
 
-    /**
-     * @param ContainerInterface $container
-     */
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
@@ -39,10 +36,6 @@ class QuoteGuestAccessExtension extends AbstractExtension implements ServiceSubs
         ];
     }
 
-    /**
-     * @param Quote $quote
-     * @return string|null
-     */
     public function getGuestAccessLink(Quote $quote): ?string
     {
         if (!$quote->getWebsite() || !$this->getFeatureChecker()->isFeatureEnabled('guest_quote')) {
@@ -65,17 +58,11 @@ class QuoteGuestAccessExtension extends AbstractExtension implements ServiceSubs
         return static::NAME;
     }
 
-    /**
-     * @return FeatureChecker
-     */
     private function getFeatureChecker(): FeatureChecker
     {
         return $this->container->get(FeatureChecker::class);
     }
 
-    /**
-     * @return WebsiteUrlResolver
-     */
     private function getWebsiteUrlResolver(): WebsiteUrlResolver
     {
         return $this->container->get(WebsiteUrlResolver::class);

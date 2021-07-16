@@ -37,9 +37,6 @@ class OroProductBundle implements Migration, ExtendExtensionAwareInterface
         $this->createRelationToSegmentFromContentVariant($schema);
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function createRelationToSegmentFromContentVariant(Schema $schema)
     {
         if ($schema->hasTable('oro_web_catalog_variant')) {

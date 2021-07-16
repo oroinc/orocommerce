@@ -22,10 +22,6 @@ class ComputeShoppingListTotal implements ProcessorInterface
     /** @var TotalProcessorProvider */
     private $totalProvider;
 
-    /**
-     * @param DoctrineHelper         $doctrineHelper
-     * @param TotalProcessorProvider $totalProvider
-     */
     public function __construct(DoctrineHelper $doctrineHelper, TotalProcessorProvider $totalProvider)
     {
         $this->doctrineHelper = $doctrineHelper;
@@ -79,18 +75,6 @@ class ComputeShoppingListTotal implements ProcessorInterface
         $context->setData($data);
     }
 
-    /**
-     * @param array                       $data
-     * @param EntityDefinitionConfig      $config
-     * @param string                      $currencyFieldName
-     * @param EntityDefinitionFieldConfig $currencyField
-     * @param string                      $totalFieldName
-     * @param EntityDefinitionFieldConfig $totalField
-     * @param string                      $subTotalFieldName
-     * @param EntityDefinitionFieldConfig $subTotalField
-     *
-     * @return array
-     */
     private function computeFields(
         array $data,
         EntityDefinitionConfig $config,

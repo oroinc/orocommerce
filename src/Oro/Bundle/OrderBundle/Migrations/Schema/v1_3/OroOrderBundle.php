@@ -17,8 +17,6 @@ class OroOrderBundle implements Migration
     }
 
     /**
-     * @param Schema $schema
-     *
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     protected function alterAddressTable(Schema $schema)

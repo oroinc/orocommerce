@@ -29,13 +29,6 @@ class RequestHandler
     /** @var  Registry */
     protected $doctrine;
 
-    /**
-     * @param TotalProcessorProvider $totalProvider
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param EntityRoutingHelper $entityRoutingHelper
-     * @param Registry $doctrine
-     */
     public function __construct(
         TotalProcessorProvider $totalProvider,
         EventDispatcherInterface $eventDispatcher,

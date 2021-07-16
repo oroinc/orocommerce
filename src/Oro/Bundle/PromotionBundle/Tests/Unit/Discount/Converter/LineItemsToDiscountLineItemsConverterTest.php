@@ -33,9 +33,6 @@ class LineItemsToDiscountLineItemsConverterTest extends \PHPUnit\Framework\TestC
 
     /**
      * @dataProvider converterDataProvider
-     * @param array $lineItems
-     * @param array $matchedPrices
-     * @param array $expected
      */
     public function testConvert(array $lineItems, array $matchedPrices, array $expected)
     {

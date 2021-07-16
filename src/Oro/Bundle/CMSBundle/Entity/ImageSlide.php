@@ -161,9 +161,6 @@ class ImageSlide extends ExtendImageSlide implements OrganizationAwareInterface
         return $this->id;
     }
 
-    /**
-     * @return null|ContentWidget
-     */
     public function getContentWidget(): ?ContentWidget
     {
         return $this->contentWidget;
@@ -180,9 +177,6 @@ class ImageSlide extends ExtendImageSlide implements OrganizationAwareInterface
         return $this;
     }
 
-    /**
-     * @return null|int
-     */
     public function getSlideOrder(): ?int
     {
         return $this->slideOrder;
@@ -199,9 +193,6 @@ class ImageSlide extends ExtendImageSlide implements OrganizationAwareInterface
         return $this;
     }
 
-    /**
-     * @return null|string
-     */
     public function getUrl(): ?string
     {
         return $this->url;
@@ -218,9 +209,6 @@ class ImageSlide extends ExtendImageSlide implements OrganizationAwareInterface
         return $this;
     }
 
-    /**
-     * @return null|bool
-     */
     public function isDisplayInSameWindow(): ?bool
     {
         return $this->displayInSameWindow;
@@ -233,13 +221,10 @@ class ImageSlide extends ExtendImageSlide implements OrganizationAwareInterface
     public function setDisplayInSameWindow(?bool $displayInSameWindow): self
     {
         $this->displayInSameWindow = $displayInSameWindow;
-        
+
         return $this;
     }
 
-    /**
-     * @return null|string
-     */
     public function getTitle(): ?string
     {
         return $this->title;
@@ -252,13 +237,10 @@ class ImageSlide extends ExtendImageSlide implements OrganizationAwareInterface
     public function setTitle(?string $title): self
     {
         $this->title = $title;
-        
+
         return $this;
     }
 
-    /**
-     * @return null|string
-     */
     public function getText(): ?string
     {
         return $this->text;
@@ -271,13 +253,10 @@ class ImageSlide extends ExtendImageSlide implements OrganizationAwareInterface
     public function setText(?string $text): self
     {
         $this->text = $text;
-        
+
         return $this;
     }
 
-    /**
-     * @return null|string
-     */
     public function getTextAlignment(): ?string
     {
         return $this->textAlignment;

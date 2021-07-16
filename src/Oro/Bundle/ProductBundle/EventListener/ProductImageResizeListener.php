@@ -18,17 +18,11 @@ class ProductImageResizeListener implements OptionalListenerInterface
     /** @var MessageProducerInterface */
     private $producer;
 
-    /**
-     * @param MessageProducerInterface $producer
-     */
     public function __construct(MessageProducerInterface $producer)
     {
         $this->producer = $producer;
     }
 
-    /**
-     * @param ProductImageResizeEvent $event
-     */
     public function resizeProductImage(ProductImageResizeEvent $event): void
     {
         if (!$this->enabled) {

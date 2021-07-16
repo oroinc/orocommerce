@@ -139,9 +139,6 @@ class QuickAddControllerTest extends WebTestCase
         return $result;
     }
 
-    /**
-     * @param Form $form
-     */
     protected function updateFormActionToDialog(Form $form)
     {
         $form->getFormNode()->setAttribute(

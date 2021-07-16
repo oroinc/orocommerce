@@ -109,9 +109,6 @@ class AppliedPromotion extends ExtendAppliedPromotion implements DatesAwareInter
         return $this->id;
     }
 
-    /**
-     * @return bool
-     */
     public function isActive(): bool
     {
         return (bool)$this->active;
@@ -208,9 +205,6 @@ class AppliedPromotion extends ExtendAppliedPromotion implements DatesAwareInter
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getConfigOptions(): array
     {
         return $this->configOptions;
@@ -227,9 +221,6 @@ class AppliedPromotion extends ExtendAppliedPromotion implements DatesAwareInter
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getPromotionData(): array
     {
         return $this->promotionData;

@@ -18,10 +18,6 @@ class QuoteDemandManager
      */
     protected $subtotalProvider;
 
-    /**
-     * @param TotalProcessorProvider $totalProvider
-     * @param LineItemSubtotalProvider $subtotalProvider
-     */
     public function __construct(
         TotalProcessorProvider $totalProvider,
         LineItemSubtotalProvider $subtotalProvider
@@ -30,9 +26,6 @@ class QuoteDemandManager
         $this->subtotalProvider = $subtotalProvider;
     }
 
-    /**
-     * @param QuoteDemand $quoteDemand
-     */
     public function recalculateSubtotals(QuoteDemand $quoteDemand)
     {
         $subtotal = $this->subtotalProvider->getSubtotal($quoteDemand);

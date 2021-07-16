@@ -41,15 +41,8 @@ interface TempTableManipulatorInterface
      */
     public function getTempTableNameForEntity(string $className, $identifier): string;
 
-    /**
-     * @param string $className
-     * @return string
-     */
     public function getTableNameForEntity(string $className): string;
 
-    /**
-     * @param ShardQueryExecutorNativeSqlInterface $queryExecutor
-     */
     public function setInsertSelectExecutor(ShardQueryExecutorNativeSqlInterface $queryExecutor);
 
     /**

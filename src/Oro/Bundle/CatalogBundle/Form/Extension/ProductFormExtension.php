@@ -21,9 +21,6 @@ class ProductFormExtension extends AbstractTypeExtension
     /** @var ManagerRegistry */
     protected $registry;
 
-    /**
-     * @param ManagerRegistry $registry
-     */
     public function __construct(ManagerRegistry $registry)
     {
         $this->registry = $registry;
@@ -57,9 +54,6 @@ class ProductFormExtension extends AbstractTypeExtension
         $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'onPostSubmit'], 10);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function onPostSetData(FormEvent $event)
     {
         /** @var Product|null $product */
@@ -75,9 +69,6 @@ class ProductFormExtension extends AbstractTypeExtension
         }
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function onPostSubmit(FormEvent $event)
     {
         /** @var Product|null $product */

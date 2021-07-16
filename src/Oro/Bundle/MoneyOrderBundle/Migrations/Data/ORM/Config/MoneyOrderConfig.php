@@ -20,9 +20,6 @@ class MoneyOrderConfig
      */
     private $configManager;
 
-    /**
-     * @param ConfigManager $configManager
-     */
     public function __construct(ConfigManager $configManager)
     {
         $this->configManager = $configManager;
@@ -124,7 +121,7 @@ class MoneyOrderConfig
     private function getLocalizedFallbackValueFromConfig($key, $default)
     {
         $creditCardLabel = $this->getConfigValue($key);
-        
+
         return (new LocalizedFallbackValue())->setString($creditCardLabel ?: $default);
     }
 }

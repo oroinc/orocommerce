@@ -24,9 +24,6 @@ class ContentNodeStub implements ContentNodeInterface, WebCatalogAwareInterface
      */
     private $webCatalog;
 
-    /**
-     * @param $id
-     */
     public function __construct($id)
     {
         $this->id = $id;

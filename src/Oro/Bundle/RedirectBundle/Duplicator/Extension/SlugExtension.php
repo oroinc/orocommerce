@@ -24,25 +24,16 @@ class SlugExtension extends AbstractDuplicatorExtension
      */
     private $managerRegistry;
 
-    /**
-     * @param ManagerRegistry $managerRegistry
-     */
     public function __construct(ManagerRegistry $managerRegistry)
     {
         $this->managerRegistry = $managerRegistry;
     }
 
-    /**
-     * @return Filter
-     */
     public function getFilter(): Filter
     {
         return new DoctrineEmptyCollectionFilter();
     }
 
-    /**
-     * @return Matcher
-     */
     public function getMatcher(): Matcher
     {
         $source = $this->getContext()->offsetGet('source');
@@ -51,21 +42,11 @@ class SlugExtension extends AbstractDuplicatorExtension
         return new PropertiesNameMatcher($properties);
     }
 
-    /**
-     * @param DraftableInterface $source
-     *
-     * @return bool
-     */
     public function isSupport(DraftableInterface $source): bool
     {
         return $source instanceof SlugAwareInterface;
     }
 
-    /**
-     * @param DraftableInterface $source
-     *
-     * @return array
-     */
     private function getSlugProperties(DraftableInterface $source): array
     {
         $properties = [];

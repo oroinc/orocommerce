@@ -22,10 +22,6 @@ class ComputeProductImageFields implements ProcessorInterface
     /** @var ImageTypeProvider*/
     private $typeProvider;
 
-    /**
-     * @param AttachmentManager $attachmentManager
-     * @param ImageTypeProvider $typeProvider
-     */
     public function __construct(AttachmentManager $attachmentManager, ImageTypeProvider $typeProvider)
     {
         $this->attachmentManager = $attachmentManager;
@@ -68,12 +64,6 @@ class ComputeProductImageFields implements ProcessorInterface
         $context->setData($data);
     }
 
-    /**
-     * @param int $imageId
-     * @param string $filename
-     * @param array $imageTypes
-     * @return array
-     */
     private function getImageUrls(int $imageId, string $filename, array $imageTypes): array
     {
         if (empty($imageTypes)) {

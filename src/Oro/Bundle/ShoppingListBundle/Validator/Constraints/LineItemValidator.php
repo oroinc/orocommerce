@@ -12,12 +12,8 @@ use Symfony\Component\Validator\ConstraintValidator;
  */
 class LineItemValidator extends ConstraintValidator
 {
-    /** @var ManagerRegistry */
     private ManagerRegistry $registry;
 
-    /**
-     * @param ManagerRegistry $registry
-     */
     public function __construct(ManagerRegistry $registry)
     {
         $this->registry = $registry;

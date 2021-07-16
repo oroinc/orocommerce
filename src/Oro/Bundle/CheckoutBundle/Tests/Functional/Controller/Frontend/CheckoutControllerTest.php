@@ -254,7 +254,6 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
 
     /**
      * @depends testPaymentToOrderReviewTransition
-     * @param Crawler $crawler
      */
     public function testSubmitOrder(Crawler $crawler)
     {
@@ -315,10 +314,6 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         );
     }
 
-    /**
-     * @param array $formFields
-     * @param Crawler $crawler
-     */
     protected function checkValidationErrors(array $formFields, Crawler $crawler)
     {
         foreach ($formFields as $formField) {
@@ -332,9 +327,6 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         }
     }
 
-    /**
-     * @param Crawler $crawler
-     */
     protected function checkDataPreSet(Crawler $crawler)
     {
         $html = $crawler->html();
@@ -346,9 +338,6 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         static::assertStringContainsString(self::REGION, $html);
     }
 
-    /**
-     * @param Customer $customer
-     */
     protected function setCurrentCustomerOnAddresses(Customer $customer)
     {
         $addresses = $this->registry->getRepository('OroCustomerBundle:CustomerAddress')->findAll();

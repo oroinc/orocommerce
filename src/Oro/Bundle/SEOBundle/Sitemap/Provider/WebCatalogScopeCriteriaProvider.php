@@ -27,11 +27,6 @@ class WebCatalogScopeCriteriaProvider
      */
     private $registry;
 
-    /**
-     * @param ConfigManager $configManager
-     * @param ScopeManager $scopeManager
-     * @param ManagerRegistry $registry
-     */
     public function __construct(
         ConfigManager $configManager,
         ScopeManager $scopeManager,

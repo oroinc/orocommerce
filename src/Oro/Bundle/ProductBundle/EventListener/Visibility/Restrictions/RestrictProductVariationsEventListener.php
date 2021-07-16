@@ -28,11 +28,6 @@ class RestrictProductVariationsEventListener
     /** @var QueryBuilderModifierInterface */
     private $dbQueryBuilderModifier;
 
-    /**
-     ** @param ConfigManager $configManager
-     * @param FrontendHelper                $frontendHelper
-     * @param QueryBuilderModifierInterface $dbQueryBuilderModifier
-     */
     public function __construct(
         ConfigManager $configManager,
         FrontendHelper $frontendHelper,
@@ -43,9 +38,6 @@ class RestrictProductVariationsEventListener
         $this->dbQueryBuilderModifier = $dbQueryBuilderModifier;
     }
 
-    /**
-     * @param ProductSearchQueryRestrictionEvent $event
-     */
     public function onSearchQuery(ProductSearchQueryRestrictionEvent $event)
     {
         if ($this->isRestrictionApplicableForSearchEvent($event) &&
@@ -57,9 +49,6 @@ class RestrictProductVariationsEventListener
         }
     }
 
-    /**
-     * @param ProductDBQueryRestrictionEvent $event
-     */
     public function onDBQuery(ProductDBQueryRestrictionEvent $event)
     {
         if ($this->isRestrictionApplicableForDbEvent($event)) {
@@ -67,10 +56,6 @@ class RestrictProductVariationsEventListener
         }
     }
 
-    /**
-     * @param ProductSearchQueryRestrictionEvent $event
-     * @return bool
-     */
     protected function isRestrictionApplicableForSearchEvent(ProductSearchQueryRestrictionEvent $event): bool
     {
         if ($this->isRestrictionApplicable()) {
@@ -85,10 +70,6 @@ class RestrictProductVariationsEventListener
         return false;
     }
 
-    /**
-     * @param ProductDBQueryRestrictionEvent $event
-     * @return bool
-     */
     protected function isRestrictionApplicableForDbEvent(ProductDBQueryRestrictionEvent $event): bool
     {
         return $this->isRestrictionApplicable();
@@ -105,9 +86,6 @@ class RestrictProductVariationsEventListener
             $this->frontendHelper->isFrontendRequest();
     }
 
-    /**
-     * @return bool
-     */
     protected function isCatalogRestrictionApplicable(): bool
     {
         $displaySimpleVariations = $this->getDisplayVariationsConfigurationValue();

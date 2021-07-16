@@ -46,10 +46,6 @@ abstract class AbstractAjaxProductPriceController extends AbstractController
         );
     }
 
-    /**
-     * @param Request $request
-     * @return array
-     */
     protected function getRequestProducts(Request $request): array
     {
         $productIds = $request->get('product_ids', []);

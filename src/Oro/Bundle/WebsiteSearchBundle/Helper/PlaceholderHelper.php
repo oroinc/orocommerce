@@ -11,16 +11,10 @@ use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderRegistry;
  */
 class PlaceholderHelper
 {
-    /** @var PlaceholderRegistry */
     private PlaceholderRegistry $placeholderRegistry;
 
-    /** @var AbstractSearchMappingProvider */
     private AbstractSearchMappingProvider $searchMappingProvider;
 
-    /**
-     * @param PlaceholderRegistry $placeholderRegistry
-     * @param AbstractSearchMappingProvider $searchMappingProvider
-     */
     public function __construct(
         PlaceholderRegistry $placeholderRegistry,
         AbstractSearchMappingProvider $searchMappingProvider

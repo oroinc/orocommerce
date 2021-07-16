@@ -78,10 +78,6 @@ class NotificationHelperTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider guestAccessProvider
-     *
-     * @param bool $isGuestQuoteEnabled
-     * @param CustomerUser|null $customerUser
-     * @param string $expectedTemplate
      */
     public function testGetEmailModelGuestAccess(
         bool $isGuestQuoteEnabled,
@@ -118,9 +114,6 @@ class NotificationHelperTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @return array
-     */
     public function guestAccessProvider(): array
     {
         $common = new CustomerUser();

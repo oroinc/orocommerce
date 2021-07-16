@@ -140,9 +140,6 @@ class ShoppingListRepository extends EntityRepository implements ResettableCusto
         return $qb;
     }
 
-    /**
-     * @param QueryBuilder $qb
-     */
     protected function modifyQbWithRelations(QueryBuilder $qb)
     {
         $qb->addSelect('items', 'product', 'images', 'imageTypes', 'imageFile', 'unitPrecisions')
@@ -176,10 +173,6 @@ class ShoppingListRepository extends EntityRepository implements ResettableCusto
         return (integer) $results;
     }
 
-    /**
-     * @param ShoppingList $shoppingList
-     * @return bool
-     */
     public function hasEmptyConfigurableLineItems(ShoppingList $shoppingList): bool
     {
         $qb = $this->createQueryBuilder('shopping_list');

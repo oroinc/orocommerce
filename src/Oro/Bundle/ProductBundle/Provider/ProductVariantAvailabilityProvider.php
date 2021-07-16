@@ -43,14 +43,6 @@ class ProductVariantAvailabilityProvider
     /** @var ArrayCache */
     private $productsByVariantFieldsCache;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param CustomFieldProvider $customFieldProvider
-     * @param PropertyAccessor $propertyAccessor
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param ProductVariantFieldValueHandlerRegistry $fieldValueHandlerRegistry
-     * @param AclHelper $aclHelper
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         CustomFieldProvider $customFieldProvider,
@@ -342,11 +334,6 @@ class ProductVariantAvailabilityProvider
         return $configurableProducts;
     }
 
-    /**
-     * @param Product $configurableProduct
-     * @param array $variantParameters
-     * @return string
-     */
     private function getProductsByVariantsCacheKey(Product $configurableProduct, array $variantParameters = []): string
     {
         return md5($configurableProduct->getId() . json_encode($variantParameters));
@@ -373,7 +360,6 @@ class ProductVariantAvailabilityProvider
     }
 
     /**
-     * @param Product $product
      * @throws \InvalidArgumentException
      */
     private function ensureProductTypeIsConfigurable(Product $product)

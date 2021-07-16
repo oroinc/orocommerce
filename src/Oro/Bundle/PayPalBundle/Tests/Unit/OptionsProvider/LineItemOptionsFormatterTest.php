@@ -28,9 +28,6 @@ class LineItemOptionsFormatterTest extends TestCase
     }
 
     /**
-     * @param array $lineItemModelData
-     * @param int $currencyRoundingPrecision
-     * @param array $expected
      * @dataProvider formatLineItemOptionsDataProvider
      */
     public function testFormatLineItemOptions(
@@ -76,7 +73,6 @@ class LineItemOptionsFormatterTest extends TestCase
     }
 
     /**
-     * @return array
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function formatLineItemOptionsDataProvider(): array

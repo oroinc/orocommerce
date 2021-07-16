@@ -37,10 +37,6 @@ class UpdateFrontendShoppingListPermissions extends AbstractUpdatePermissions im
         $this->updatePermission($manager, 'SET_AS_DEFAULT_SHOPPING_LIST');
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param string $permission
-     */
     private function updatePermission(ObjectManager $manager, string $permission): void
     {
         $aclManager = $this->getAclManager();

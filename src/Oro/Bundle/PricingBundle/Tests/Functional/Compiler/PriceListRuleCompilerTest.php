@@ -245,7 +245,6 @@ class PriceListRuleCompilerTest extends WebTestCase
             ],
         ];
 
-
         $qb = $this->getQueryBuilder($priceRule);
         $actual = $this->getActualResult($qb);
         $this->assertEqualsPrices($expected, $actual);
@@ -290,7 +289,6 @@ class PriceListRuleCompilerTest extends WebTestCase
                 'value' => '1220.0000'
             ],
         ];
-
 
         $qb = $this->getQueryBuilder($priceRule);
         $actual = $this->getActualResult($qb);
@@ -339,7 +337,6 @@ class PriceListRuleCompilerTest extends WebTestCase
                 'value' => '1000.0000'
             ],
         ];
-
 
         $qb = $this->getQueryBuilder($priceRule);
         $actual = $this->getActualResult($qb);
@@ -833,10 +830,6 @@ class PriceListRuleCompilerTest extends WebTestCase
         $em->flush();
     }
 
-    /**
-     * @param array $expected
-     * @param array $actual
-     */
     protected function assertEqualsPrices(array $expected, array $actual)
     {
         $this->assertCount(count($expected), $actual);

@@ -21,19 +21,12 @@ class MasterCatalogRootProvider implements MasterCatalogRootProviderInterface
      */
     private $aclHelper;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param AclHelper $aclHelper
-     */
     public function __construct(ManagerRegistry $registry, AclHelper $aclHelper)
     {
         $this->registry = $registry;
         $this->aclHelper = $aclHelper;
     }
 
-    /**
-     * @return Category
-     */
     public function getMasterCatalogRoot(): Category
     {
         $categoryRepository = $this->registry->getManagerForClass(Category::class)->getRepository(Category::class);

@@ -12,9 +12,6 @@ class CheckoutStateDiffManager
      */
     protected $mapperRegistry;
 
-    /**
-     * @param CheckoutStateDiffMapperRegistry $mapperRegistry
-     */
     public function __construct(CheckoutStateDiffMapperRegistry $mapperRegistry)
     {
         $this->mapperRegistry = $mapperRegistry;

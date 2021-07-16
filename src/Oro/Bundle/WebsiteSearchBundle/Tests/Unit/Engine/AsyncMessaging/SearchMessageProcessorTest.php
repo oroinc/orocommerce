@@ -130,10 +130,6 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param $messageBody
-     * @param $topic
-     * @param $expectedMethod
-     *
      * @dataProvider processingMessageDataProvider
      */
     public function testProcessingMessage($messageBody, $topic, $expectedMethod): void
@@ -162,11 +158,6 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param array $messageBody
-     * @param array $classesToIndex
-     * @param array $websiteIdsToIndex
-     * @param array $granulizedMessages
-     *
      * @dataProvider processingReindexWithGranulizeDataProvider
      */
     public function testProcessingReindexWithGranulize(
@@ -210,11 +201,6 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param array $messageBody
-     * @param array $classesToIndex
-     * @param array $websiteIdsToIndex
-     * @param array $granulizedMessages
-     *
      * @dataProvider processingReindexWithGranulizeAsyncDataProvider
      */
     public function testProcessingReindexWithGranulizeAsync(
@@ -300,9 +286,6 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(MessageProcessorInterface::REJECT, $this->processor->process($message, $this->session));
     }
 
-    /**
-     * @return array
-     */
     public function processingMessageDataProvider(): array
     {
         return [
@@ -370,9 +353,6 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @return array
-     */
     public function processingReindexWithGranulizeDataProvider(): array
     {
         return [
@@ -465,7 +445,6 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     * @return array
      */
     public function processingReindexWithGranulizeAsyncDataProvider(): array
     {
@@ -653,9 +632,6 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($result, $this->processor->process($message, $this->session));
     }
 
-    /**
-     * @return array
-     */
     public function getProcessExceptionsDataProvider(): array
     {
         return [

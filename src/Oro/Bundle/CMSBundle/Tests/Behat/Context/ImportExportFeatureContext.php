@@ -12,7 +12,7 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 class ImportExportFeatureContext extends OroFeatureContext implements KernelAwareContext
 {
     use KernelDictionary;
-    
+
     /**
      * @var ImportExportContext
      */
@@ -20,8 +20,6 @@ class ImportExportFeatureContext extends OroFeatureContext implements KernelAwar
 
     /**
      * @BeforeScenario
-     *
-     * @param BeforeScenarioScope $scope
      */
     public function gatherContexts(BeforeScenarioScope $scope)
     {

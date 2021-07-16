@@ -68,7 +68,6 @@ class DraftableFilterTest extends WebTestCase
         $this->checkQueries();
     }
 
-
     public function testFindByMethod(): void
     {
         // Filter enabled
@@ -139,27 +138,18 @@ class DraftableFilterTest extends WebTestCase
         $filters->disable(DraftableFilter::FILTER_ID);
     }
 
-    /**
-     * @param string $query
-     */
     private function assertQueryModified(string $query): void
     {
         $needle = $this->getQueryNeedleString();
         static::assertStringContainsString($needle, $query);
     }
 
-    /**
-     * @param string $query
-     */
     private function assertQueryNotModified(string $query): void
     {
         $needle = $this->getQueryNeedleString();
         static::assertStringNotContainsString($needle, $query);
     }
 
-    /**
-     * @return string
-     */
     private function getQueryNeedleString(): string
     {
         $platform = $this->em->getConnection()->getDatabasePlatform();
@@ -168,9 +158,6 @@ class DraftableFilterTest extends WebTestCase
         return $platform->getIsNullExpression($metadata->getColumnName('draftUuid'));
     }
 
-    /**
-     * @return EntityRepository
-     */
     private function getRepository(): EntityRepository
     {
         return $this->em->getRepository(Page::class);
@@ -183,9 +170,6 @@ class DraftableFilterTest extends WebTestCase
         $this->assertQueryNotModified($queries[1]);
     }
 
-    /**
-     * @return array
-     */
     private function getOrganizationWithDraftPage(): array
     {
         return $this->em->createQueryBuilder()

@@ -107,9 +107,6 @@ class Subtotal
         return $this;
     }
 
-    /**
-     * @return float
-     */
     public function getAmount(): float
     {
         return $this->amount;

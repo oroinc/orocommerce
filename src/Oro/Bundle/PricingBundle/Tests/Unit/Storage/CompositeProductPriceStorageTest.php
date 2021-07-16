@@ -192,11 +192,6 @@ class CompositeProductPriceStorageTest extends \PHPUnit\Framework\TestCase
         $this->assertSame([], $this->storage->getSupportedCurrencies($scopeCriteria));
     }
 
-    /**
-     * @param Website $website
-     * @param Customer $customer
-     * @return ProductPriceScopeCriteriaInterface
-     */
     protected function getScopeCriteria(Website $website, Customer $customer): ProductPriceScopeCriteriaInterface
     {
         $scopeCriteria = new ProductPriceScopeCriteria();

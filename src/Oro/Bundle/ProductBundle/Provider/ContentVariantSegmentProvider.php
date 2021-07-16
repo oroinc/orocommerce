@@ -27,17 +27,11 @@ class ContentVariantSegmentProvider
      */
     private $webCatalogUsageProvider;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(DoctrineHelper $doctrineHelper)
     {
         $this->doctrineHelper = $doctrineHelper;
     }
 
-    /**
-     * @param WebCatalogUsageProviderInterface $webCatalogUsageProvider
-     */
     public function setWebCatalogUsageProvider(WebCatalogUsageProviderInterface $webCatalogUsageProvider)
     {
         $this->webCatalogUsageProvider = $webCatalogUsageProvider;
@@ -83,10 +77,6 @@ class ContentVariantSegmentProvider
         return new BufferedQueryResultIterator($queryBuilder);
     }
 
-    /**
-     * @param QueryBuilder $contentVariantQueryBuilder
-     * @return QueryBuilder
-     */
     private function getContentVariantSegmentQueryBuilder(QueryBuilder $contentVariantQueryBuilder): QueryBuilder
     {
         $queryBuilder = $this->getSegmentRepository()
@@ -109,9 +99,6 @@ class ContentVariantSegmentProvider
         return $queryBuilder;
     }
 
-    /**
-     * @return QueryBuilder
-     */
     private function getContentVariantQueryBuilder(): QueryBuilder
     {
         $contentVariantQueryBuilder = $this->getContentVariantRepository()

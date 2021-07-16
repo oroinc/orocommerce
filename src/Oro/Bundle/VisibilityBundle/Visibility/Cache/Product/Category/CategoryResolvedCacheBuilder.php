@@ -23,18 +23,12 @@ class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implemen
     /** @var PositionChangeCategorySubtreeCacheBuilder */
     protected $positionChangeCategorySubtreeCacheBuilder;
 
-    /**
-     * @param VisibilityChangeCategorySubtreeCacheBuilder $visibilityChangeCategorySubtreeCacheBuilder
-     */
     public function setVisibilityChangeCategorySubtreeCacheBuilder(
         VisibilityChangeCategorySubtreeCacheBuilder $visibilityChangeCategorySubtreeCacheBuilder
     ) {
         $this->visibilityChangeCategorySubtreeCacheBuilder = $visibilityChangeCategorySubtreeCacheBuilder;
     }
 
-    /**
-     * @param PositionChangeCategorySubtreeCacheBuilder $positionChangeCategorySubtreeCacheBuilder
-     */
     public function setPositionChangeCategorySubtreeCacheBuilder(
         PositionChangeCategorySubtreeCacheBuilder $positionChangeCategorySubtreeCacheBuilder
     ) {

@@ -6,9 +6,6 @@ interface DataStorageInterface
 {
     const STORAGE_KEY = 'storage';
 
-    /**
-     * @param array $data
-     */
     public function set(array $data);
 
     /**

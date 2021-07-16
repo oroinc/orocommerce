@@ -17,7 +17,6 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
 {
     private const NEW_UUID = '0e6bffee-15bb-44ec-9a4a-0113ca51452d';
 
-    /** @var array */
     private static array $fixturesData = [];
 
     /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
@@ -45,10 +44,6 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
             ->willReturnCallback(static fn () => self::NEW_UUID);
     }
 
-    /**
-     * @param string $name
-     * @return array
-     */
     private static function getFixturesData(string $name): array
     {
         if (!self::$fixturesData) {
@@ -65,9 +60,6 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider convertToUrlsDataProvider
-     *
-     * @param string $contentWithTwigTags
-     * @param string $expected
      */
     public function testConvertToUrls(string $contentWithTwigTags, string $expected): void
     {
@@ -148,9 +140,6 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $this->converter->convertToUrls($contentWithTwigTags));
     }
 
-    /**
-     * @return array
-     */
     public function convertToUrlsDataProvider(): array
     {
         return self::getFixturesData('convertToUrls');
@@ -166,9 +155,6 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider convertToUrlsWithExceptionDataProvider
-     *
-     * @param string $contentWithTwigTags
-     * @param string $expected
      */
     public function testConvertToUrlsWhenDatabaseException(string $contentWithTwigTags, string $expected): void
     {
@@ -238,9 +224,6 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $this->converter->convertToUrls($contentWithTwigTags));
     }
 
-    /**
-     * @return array
-     */
     public function convertToUrlsWithExceptionDataProvider(): array
     {
         return self::getFixturesData('convertToUrlsWithException');
@@ -248,9 +231,6 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider convertToTwigTagsDataProvider
-     *
-     * @param string $contentWithUrls
-     * @param string $expected
      */
     public function testConvertToTwigTags(string $contentWithUrls, string $expected): void
     {
@@ -305,9 +285,6 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $this->converter->convertToTwigTags($contentWithUrls));
     }
 
-    /**
-     * @return array
-     */
     public function convertToTwigTagsDataProvider(): array
     {
         return self::getFixturesData('convertToTwigTags');

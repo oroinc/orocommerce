@@ -16,9 +16,6 @@ class ContactInfoSourceOptionsType extends AbstractType
      */
     protected $optionsProvider;
 
-    /**
-     * @param OptionsProviderInterface $optionsProvider
-     */
     public function __construct(OptionsProviderInterface $optionsProvider)
     {
         $this->optionsProvider = $optionsProvider;

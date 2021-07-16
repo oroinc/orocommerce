@@ -42,8 +42,6 @@ class LineItemsGroupedOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
 
     /**
      * @dataProvider onResultAfterWhenNotGroupedDataProvider
-     *
-     * @param array $parameters
      */
     public function testOnResultAfterWhenNotGrouped(array $parameters): void
     {
@@ -60,9 +58,6 @@ class LineItemsGroupedOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
         $this->listener->onResultAfter($event);
     }
 
-    /**
-     * @return array
-     */
     public function onResultAfterWhenNotGroupedDataProvider(): array
     {
         return [
@@ -83,8 +78,6 @@ class LineItemsGroupedOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
 
     /**
      * @dataProvider onResultAfterWhenSimpleRowDataProvider
-     *
-     * @param array|null $lineItemsByIds
      */
     public function testOnResultAfterWhenSimpleRow(?array $lineItemsByIds): void
     {
@@ -107,9 +100,6 @@ class LineItemsGroupedOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
         $this->listener->onResultAfter($event);
     }
 
-    /**
-     * @return array
-     */
     public function onResultAfterWhenSimpleRowDataProvider(): array
     {
         return [
@@ -174,9 +164,6 @@ class LineItemsGroupedOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
 
     /**
      * @dataProvider onResultAfterDataProvider
-     *
-     * @param array $recordData
-     * @param array $expectedRecordData
      */
     public function testOnResultAfter(array $recordData, array $expectedRecordData): void
     {
@@ -204,8 +191,6 @@ class LineItemsGroupedOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
     }
 
     /**
-     * @return array
-     *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function onResultAfterDataProvider(): array
@@ -443,10 +428,6 @@ class LineItemsGroupedOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
         ];
     }
 
-    /**
-     * @param array $parameters
-     * @return Datagrid
-     */
     private function getDatagrid(array $parameters = []): Datagrid
     {
         return new Datagrid(

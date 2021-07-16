@@ -51,14 +51,6 @@ class SegmentProductsProvider
     /** @var int */
     private $cacheLifeTime;
 
-    /**
-     * @param SegmentManager $segmentManager
-     * @param ProductManager $productManager
-     * @param ManagerRegistry $registry
-     * @param TokenStorageInterface $tokenStorage
-     * @param SymmetricCrypterInterface $crypter
-     * @param AclHelper $aclHelper
-     */
     public function __construct(
         SegmentManager $segmentManager,
         ProductManager $productManager,
@@ -75,10 +67,6 @@ class SegmentProductsProvider
         $this->aclHelper = $aclHelper;
     }
 
-    /**
-     * @param CacheProvider $cache
-     * @param int $lifeTime
-     */
     public function setCache(CacheProvider $cache, int $lifeTime = 0): void
     {
         $this->cache = $cache;
@@ -120,10 +108,6 @@ class SegmentProductsProvider
         return [];
     }
 
-    /**
-     * @param Segment $segment
-     * @return array
-     */
     private function getCacheParts(Segment $segment): array
     {
         $token = $this->tokenStorage->getToken();
@@ -190,11 +174,6 @@ class SegmentProductsProvider
         ];
     }
 
-    /**
-     * @param array $data
-     *
-     * @return bool
-     */
     private function checkCacheDataConsistency(array $data): bool
     {
         if (!empty($data[self::DQL]) &&
@@ -213,13 +192,6 @@ class SegmentProductsProvider
         return false;
     }
 
-    /**
-     * @param string $dql
-     * @param array $parameters
-     * @param array $queryHints
-     *
-     * @return string|null
-     */
     private function getEncryptedData(string $dql, array $parameters = [], array $queryHints = []): ?string
     {
         $data = $this->getHashData($dql, $parameters, $queryHints);
@@ -227,13 +199,6 @@ class SegmentProductsProvider
         return $this->crypter->encryptData($data);
     }
 
-    /**
-     * @param string $dql
-     * @param array $parameters
-     * @param array $queryHints
-     *
-     * @return string
-     */
     private function getHashData(string $dql, array $parameters = [], array $queryHints = []): string
     {
         return md5(serialize([

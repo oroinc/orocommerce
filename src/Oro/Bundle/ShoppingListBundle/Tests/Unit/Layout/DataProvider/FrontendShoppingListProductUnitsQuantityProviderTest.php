@@ -39,9 +39,6 @@ class FrontendShoppingListProductUnitsQuantityProviderTest extends \PHPUnit\Fram
 
     /**
      * @dataProvider getByProductDataProvider
-     *
-     * @param Product|null $product
-     * @param array|null $expected
      */
     public function testGetByProduct(Product $product = null, array $expected = null)
     {

@@ -81,17 +81,11 @@ class FrontendVariantFiledType extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function preSetData(FormEvent $event)
     {
         $this->addVariantFields($event);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     private function addVariantFields(FormEvent $event)
     {
         /** @var Product|null $data */

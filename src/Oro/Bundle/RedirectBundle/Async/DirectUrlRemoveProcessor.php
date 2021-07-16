@@ -31,11 +31,6 @@ class DirectUrlRemoveProcessor implements MessageProcessorInterface, TopicSubscr
      */
     private $producer;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param LoggerInterface $logger
-     * @param MessageProducerInterface $producer
-     */
     public function __construct(
         ManagerRegistry $registry,
         LoggerInterface $logger,

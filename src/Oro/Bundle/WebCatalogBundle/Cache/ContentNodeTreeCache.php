@@ -24,10 +24,6 @@ class ContentNodeTreeCache
     /** @var Cache */
     private $cache;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param Cache          $cache
-     */
     public function __construct(DoctrineHelper $doctrineHelper, Cache $cache)
     {
         $this->doctrineHelper = $doctrineHelper;
@@ -59,10 +55,6 @@ class ContentNodeTreeCache
 
     /**
      * Saves a content node tree to the cache.
-     *
-     * @param int                      $nodeId
-     * @param int                      $scopeId
-     * @param ResolvedContentNode|null $tree
      */
     public function save(int $nodeId, int $scopeId, ?ResolvedContentNode $tree): void
     {
@@ -74,9 +66,6 @@ class ContentNodeTreeCache
 
     /**
      * Deletes a content node tree from the cache.
-     *
-     * @param int $nodeId
-     * @param int $scopeId
      */
     public function delete(int $nodeId, int $scopeId): void
     {
@@ -85,8 +74,6 @@ class ContentNodeTreeCache
 
     /**
      * Delete content node cache entries for every scope
-     *
-     * @param ContentNode $node
      */
     public function deleteForNode(ContentNode $node)
     {
@@ -112,9 +99,6 @@ class ContentNodeTreeCache
         return sprintf('node_%s_scope_%s', $nodeId, $scopeId);
     }
 
-    /**
-     * @param array $data
-     */
     private function resolveReferences(array &$data): void
     {
         foreach ($data as &$value) {
@@ -177,11 +161,6 @@ class ContentNodeTreeCache
         return $value;
     }
 
-    /**
-     * @param ResolvedContentNode $resolvedNode
-     *
-     * @return array
-     */
     private function convertResolvedContentNode(ResolvedContentNode $resolvedNode): array
     {
         return [
@@ -194,11 +173,6 @@ class ContentNodeTreeCache
         ];
     }
 
-    /**
-     * @param LocalizedFallbackValue $value
-     *
-     * @return array
-     */
     private function convertLocalizedValue(LocalizedFallbackValue $value): array
     {
         return [
@@ -208,11 +182,6 @@ class ContentNodeTreeCache
         ];
     }
 
-    /**
-     * @param ResolvedContentVariant $resolvedVariant
-     *
-     * @return array
-     */
     private function convertResolvedContentVariant(ResolvedContentVariant $resolvedVariant): array
     {
         return [
@@ -238,11 +207,6 @@ class ContentNodeTreeCache
         ];
     }
 
-    /**
-     * @param Collection $values
-     *
-     * @return array
-     */
     private function convertLocalizedValuesArray(Collection $values): array
     {
         return $this->convertArray(

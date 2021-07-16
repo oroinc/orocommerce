@@ -230,7 +230,6 @@ class CustomerGroupCategoryResolvedCacheBuilderTest extends AbstractProductResol
 
     /**
      * @dataProvider buildCacheDataProvider
-     * @param array $expectedVisibilities
      */
     public function testBuildCache(array $expectedVisibilities)
     {

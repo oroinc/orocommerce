@@ -74,9 +74,6 @@ class ProductDescription extends AbstractLocalizedFallbackValue
      */
     protected $wysiwygProperties;
 
-    /**
-     * @return null|Product
-     */
     public function getProduct(): ?Product
     {
         return $this->product;
@@ -93,9 +90,6 @@ class ProductDescription extends AbstractLocalizedFallbackValue
         return $this;
     }
 
-    /**
-     * @return null|string
-     */
     public function getWysiwyg(): ?string
     {
         return $this->wysiwyg;
@@ -112,9 +106,6 @@ class ProductDescription extends AbstractLocalizedFallbackValue
         return $this;
     }
 
-    /**
-     * @return null|string
-     */
     public function getWysiwygStyle(): ?string
     {
         return $this->wysiwygStyle;
@@ -131,9 +122,6 @@ class ProductDescription extends AbstractLocalizedFallbackValue
         return $this;
     }
 
-    /**
-     * @return null|array
-     */
     public function getWysiwygProperties(): ?array
     {
         return $this->wysiwygProperties;

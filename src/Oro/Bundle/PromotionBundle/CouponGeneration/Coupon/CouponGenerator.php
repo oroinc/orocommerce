@@ -47,11 +47,6 @@ class CouponGenerator implements CouponGeneratorInterface
      */
     protected $logger;
 
-    /**
-     * @param CodeGeneratorInterface $couponGenerator
-     * @param DoctrineHelper $doctrineHelper
-     * @param LoggerInterface $logger
-     */
     public function __construct(
         CodeGeneratorInterface $couponGenerator,
         DoctrineHelper $doctrineHelper,
@@ -110,11 +105,6 @@ class CouponGenerator implements CouponGeneratorInterface
         return $this->doctrineHelper->getEntityManager(Coupon::class)->getConnection();
     }
 
-    /**
-     * @param CouponGenerationOptions $options
-     * @param int $count
-     * @return Statement
-     */
     protected function getInsertStatement(CouponGenerationOptions $options, int $count): Statement
     {
         $connection = $this->getConnection();
@@ -264,9 +254,6 @@ class CouponGenerator implements CouponGeneratorInterface
         return $statistic;
     }
 
-    /**
-     * @param array $statistic
-     */
     protected function logStatistic(array $statistic)
     {
         $numberOfGeneratedCodes = array_sum($statistic);

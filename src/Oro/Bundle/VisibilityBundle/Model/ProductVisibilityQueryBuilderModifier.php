@@ -34,11 +34,6 @@ class ProductVisibilityQueryBuilderModifier implements QueryBuilderModifierInter
      */
     private $doctrineHelper;
 
-    /**
-     * @param ConfigManager $configManager
-     * @param ScopeManager $scopeManager
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(
         ConfigManager $configManager,
         ScopeManager $scopeManager,
@@ -49,9 +44,6 @@ class ProductVisibilityQueryBuilderModifier implements QueryBuilderModifierInter
         $this->doctrineHelper = $doctrineHelper;
     }
 
-    /**
-     * @param QueryBuilder $queryBuilder
-     */
     public function modify(QueryBuilder $queryBuilder)
     {
         $visibilities[] = $this->getProductVisibilityResolvedTerm($queryBuilder);
@@ -62,10 +54,6 @@ class ProductVisibilityQueryBuilderModifier implements QueryBuilderModifierInter
         $queryBuilder->andWhere($queryBuilder->expr()->gt($visibilityExpression, 0));
     }
 
-    /**
-     * @param QueryBuilder $queryBuilder
-     * @param WebsiteInterface $website
-     */
     public function restrictForAnonymous(QueryBuilder $queryBuilder, WebsiteInterface $website)
     {
         $productVisibilityTerm = $this->getProductVisibilityResolvedTermByWebsite(

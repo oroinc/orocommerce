@@ -49,13 +49,6 @@ class ContentVariantUrlItemsProvider implements UrlItemsProviderInterface
      */
     private $scopeCriteriaProvider;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param WebCatalogProvider $webCatalogProvider
-     * @param ContentNodeTreeResolverInterface $contentNodeTreeResolver
-     * @param CanonicalUrlGenerator $canonicalUrlGenerator
-     * @param WebCatalogScopeCriteriaProvider $scopeCriteriaProvider
-     */
     public function __construct(
         ManagerRegistry $registry,
         WebCatalogProvider $webCatalogProvider,

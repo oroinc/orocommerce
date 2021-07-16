@@ -40,8 +40,6 @@ class OroCheckoutBundle implements Migration, OrderedMigrationInterface, RenameE
 
     /**
      * Add checkout type column
-     *
-     * @param Schema $schema
      */
     protected function addCheckoutTypeColumn(Schema $schema)
     {
@@ -51,8 +49,6 @@ class OroCheckoutBundle implements Migration, OrderedMigrationInterface, RenameE
 
     /**
      * Set type existing checkouts
-     *
-     * @param QueryBag $queries
      */
     protected function setTypeExistingCheckouts(QueryBag $queries)
     {
@@ -82,8 +78,6 @@ class OroCheckoutBundle implements Migration, OrderedMigrationInterface, RenameE
 
     /**
      * Create orob2b_default_checkout table
-     *
-     * @param Schema $schema
      */
     protected function createOroDefaultCheckoutTable(Schema $schema)
     {
@@ -106,9 +100,6 @@ class OroCheckoutBundle implements Migration, OrderedMigrationInterface, RenameE
 
     /**
      * Add orob2b_default_checkout foreign keys
-     *
-     * @param Schema $schema
-     * @param QueryBag $queries
      */
     protected function addOroDefaultCheckoutForeignKeys(Schema $schema, QueryBag $queries)
     {
@@ -149,9 +140,6 @@ class OroCheckoutBundle implements Migration, OrderedMigrationInterface, RenameE
         );
     }
 
-    /**
-     * @param QueryBag $queries
-     */
     protected function copyExistingCheckoutsData(QueryBag $queries)
     {
         $sql = <<<SQL

@@ -67,7 +67,6 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider invalidMessageDataProvider
-     * @param array $messageData
      */
     public function testShouldRejectOnInvalidMessage(array $messageData)
     {

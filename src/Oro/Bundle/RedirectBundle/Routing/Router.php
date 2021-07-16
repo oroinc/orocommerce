@@ -89,10 +89,6 @@ class Router extends BaseRouter
         return $this->matcher;
     }
 
-    /**
-     * @param string $pathInfo
-     * @return bool
-     */
     private function matches(string $pathInfo): bool
     {
         if (!$this->urlDecisionMaker) {

@@ -111,9 +111,6 @@ abstract class AbstractLoadWebCatalogDemoData extends AbstractFixture implements
         }
     }
 
-    /**
-     * @param ContentNode $contentNode
-     */
     protected function generateSlugs(ContentNode $contentNode)
     {
         $this->container->get('oro_web_catalog.generator.slug_generator')
@@ -167,11 +164,6 @@ abstract class AbstractLoadWebCatalogDemoData extends AbstractFixture implements
         return $variant;
     }
 
-    /**
-     * @param string $title
-     *
-     * @return Category
-     */
     private function getCategory(string  $title): Category
     {
         $doctrine = $this->container->get('doctrine');
@@ -196,20 +188,12 @@ abstract class AbstractLoadWebCatalogDemoData extends AbstractFixture implements
         return Yaml::parse(file_get_contents($fileName));
     }
 
-    /**
-     * @param ContentNode $contentNode
-     */
     protected function resolveScopes(ContentNode $contentNode)
     {
         $this->container->get('oro_web_catalog.resolver.default_variant_scope')
             ->resolve($contentNode);
     }
 
-    /**
-     * @param WebCatalog $webCatalog
-     * @param array $contentVariantsData
-     * @param ContentNode $node
-     */
     protected function addContentVariants(WebCatalog $webCatalog, array $contentVariantsData, ContentNode $node)
     {
         foreach ($contentVariantsData as $contentVariant) {
@@ -226,9 +210,6 @@ abstract class AbstractLoadWebCatalogDemoData extends AbstractFixture implements
         }
     }
 
-    /**
-     * @param WebCatalog $webCatalog
-     */
     protected function generateCache(WebCatalog $webCatalog)
     {
         /** @var ContentNodeTreeCacheDumper $dumper */

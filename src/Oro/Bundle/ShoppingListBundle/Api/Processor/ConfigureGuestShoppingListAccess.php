@@ -22,10 +22,6 @@ class ConfigureGuestShoppingListAccess implements ProcessorInterface
     /** @var string */
     private $associationName;
 
-    /**
-     * @param TokenStorageInterface $tokenStorage
-     * @param string                $associationName
-     */
     public function __construct(TokenStorageInterface $tokenStorage, string $associationName)
     {
         $this->tokenStorage = $tokenStorage;

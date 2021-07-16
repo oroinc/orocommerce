@@ -44,12 +44,6 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
     }
 
     /**
-     * @param AbstractAddress $address
-     * @param QuoteAddress|null $expected
-     * @param AbstractAddress|null $expectedCustomerAddress
-     * @param AbstractAddress|null $expectedCustomerUserAddress
-     * @param QuoteAddress|null $quoteAddress
-     *
      * @dataProvider quoteDataProvider
      */
     public function testUpdateFromAbstract(
@@ -156,11 +150,6 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
     }
 
     /**
-     * @param Quote $quote
-     * @param array $customerAddresses
-     * @param array $customerUserAddresses
-     * @param array $expected
-     *
      * @dataProvider groupedAddressDataProvider
      */
     public function testGetGroupedAddresses(

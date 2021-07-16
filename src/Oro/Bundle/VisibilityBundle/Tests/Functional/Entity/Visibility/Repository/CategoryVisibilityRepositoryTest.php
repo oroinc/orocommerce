@@ -33,7 +33,6 @@ class CategoryVisibilityRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider getCategoriesVisibilitiesDataProvider
-     * @param array $expectedData
      */
     public function testGetCategoriesVisibilities(array $expectedData)
     {
@@ -94,11 +93,6 @@ class CategoryVisibilityRepositoryTest extends WebTestCase
         ];
     }
 
-    /**
-     * @param array $expectedData
-     * @param array $actualData
-     * @param array $fields
-     */
     protected function assertVisibilities(array $expectedData, array $actualData, array $fields = [])
     {
         $expectedData = $this->prepareRawExpectedData($expectedData);

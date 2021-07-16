@@ -22,9 +22,6 @@ class LoginPageTypeTest extends FormIntegrationTestCase
         $this->formType = new LoginPageType();
     }
 
-    /**
-     * @return array
-     */
     protected function getExtensions(): array
     {
         return [
@@ -52,9 +49,6 @@ class LoginPageTypeTest extends FormIntegrationTestCase
         self::assertFalse($form->has('css'));
     }
 
-    /**
-     * @return FormInterface
-     */
     private function buildForm(): FormInterface
     {
         $this->factory = Forms::createFormFactoryBuilder()

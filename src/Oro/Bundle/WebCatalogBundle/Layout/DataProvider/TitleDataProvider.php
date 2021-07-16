@@ -18,10 +18,6 @@ class TitleDataProvider implements TitleDataProviderInterface
     /** @var LocalizationHelper */
     private $localizationHelper;
 
-    /**
-     * @param RequestWebContentVariantProvider $requestWebContentVariantProvider
-     * @param LocalizationHelper               $localizationHelper
-     */
     public function __construct(
         RequestWebContentVariantProvider $requestWebContentVariantProvider,
         LocalizationHelper $localizationHelper

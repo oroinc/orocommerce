@@ -17,9 +17,6 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
  */
 class LoadMasterCatalogRootForAllOrganizations extends AbstractFixture
 {
-    /**
-     * @param ObjectManager $manager
-     */
     public function load(ObjectManager $manager)
     {
         $allOrganizations = $manager->getRepository(Organization::class)->findAll();
@@ -48,9 +45,6 @@ class LoadMasterCatalogRootForAllOrganizations extends AbstractFixture
     }
 
     /**
-     * @param ObjectManager $manager
-     * @param OrganizationInterface $organization
-     *
      * @throws NoResultException
      * @throws \Doctrine\ORM\NonUniqueResultException
      */

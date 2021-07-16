@@ -58,8 +58,6 @@ class PayflowIPCheckListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider returnAllowedIPs
-     *
-     * @param string $remoteAddress
      */
     public function testOnNotifyAllowed(string $remoteAddress): void
     {
@@ -104,8 +102,6 @@ class PayflowIPCheckListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider returnConfiguredAllowedIPs
-     *
-     * @param string $remoteAddress
      */
     public function testOnNotifyAllowedWithConfiguredIPs(string $remoteAddress): void
     {
@@ -154,8 +150,6 @@ class PayflowIPCheckListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider returnNotAllowedIPs
-     *
-     * @param string $remoteAddress
      */
     public function testOnNotifyNotAllowed(string $remoteAddress): void
     {

@@ -16,17 +16,11 @@ class MassStorageUpdateEvent extends Event
      */
     protected $priceListIds;
 
-    /**
-     * @param array $ids
-     */
     public function __construct(array $ids)
     {
         $this->priceListIds = $ids;
     }
 
-    /**
-     * @return array
-     */
     public function getPriceListIds(): array
     {
         return $this->priceListIds;

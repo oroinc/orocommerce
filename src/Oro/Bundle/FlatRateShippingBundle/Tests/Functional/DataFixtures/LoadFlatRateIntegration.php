@@ -41,7 +41,6 @@ class LoadFlatRateIntegration extends AbstractFixture implements ContainerAwareI
         $this->setReference(self::REFERENCE_FLAT_RATE, $channel);
     }
 
-
     /**
      * @return Organization
      */

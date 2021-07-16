@@ -23,8 +23,6 @@ abstract class AbstractFrontendScopedProductSelectTypeTest extends AbstractScope
 
     /**
      * @dataProvider restrictionSelectDataProvider
-     * @param array $restrictionParams
-     * @param array $expectedProducts
      */
     public function testSearchRestriction(array $restrictionParams, array $expectedProducts)
     {

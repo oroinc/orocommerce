@@ -24,11 +24,6 @@ class QuoteProductOfferMatcherTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider matchDataProvider
-     *
-     * @param $quoteProduct
-     * @param $unitCode
-     * @param $quantity
-     * @param $expectedResult
      */
     public function testMatch($quoteProduct, $unitCode, $quantity, $expectedResult)
     {

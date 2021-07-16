@@ -23,9 +23,6 @@ class ProductCollectionDatagridParametersListener
         $this->parameterName = $parameterName;
     }
 
-    /**
-     * @param BuildAfter $event
-     */
     public function onBuildAfter(BuildAfter $event)
     {
         $datagrid = $event->getDatagrid();

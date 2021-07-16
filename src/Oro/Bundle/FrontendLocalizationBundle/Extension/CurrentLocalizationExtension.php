@@ -24,10 +24,6 @@ class CurrentLocalizationExtension implements CurrentLocalizationExtensionInterf
      */
     protected $localizationManager;
 
-    /**
-     * @param TokenStorageInterface $tokenStorage
-     * @param UserLocalizationManagerInterface $localizationManager
-     */
     public function __construct(
         TokenStorageInterface $tokenStorage,
         UserLocalizationManagerInterface $localizationManager

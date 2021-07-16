@@ -21,24 +21,14 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class SkipOrderTaxRecalculationResolver implements ResolverInterface
 {
-    /** @var ManagerRegistry */
     private ManagerRegistry $doctrine;
 
-    /** @var TaxManager */
     private TaxManager $taxManager;
 
-    /** @var FrontendHelper */
     private FrontendHelper $frontendHelper;
 
-    /** @var EventDispatcherInterface */
     private EventDispatcherInterface $eventDispatcher;
 
-    /**
-     * @param ManagerRegistry $doctrine
-     * @param TaxManager $taxManager
-     * @param FrontendHelper $frontendHelper
-     * @param EventDispatcherInterface $eventDispatcher
-     */
     public function __construct(
         ManagerRegistry $doctrine,
         TaxManager $taxManager,

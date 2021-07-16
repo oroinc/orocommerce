@@ -18,10 +18,6 @@ class DatagridLineItemsDataViolationsListener extends BaseListener
     /** @var CheckoutWorkflowHelper */
     private $checkoutWorkflowHelper;
 
-    /**
-     * @param LineItemViolationsProvider $violationsProvider
-     * @param CheckoutWorkflowHelper $checkoutWorkflowHelper
-     */
     public function __construct(
         LineItemViolationsProvider $violationsProvider,
         CheckoutWorkflowHelper $checkoutWorkflowHelper
@@ -31,11 +27,6 @@ class DatagridLineItemsDataViolationsListener extends BaseListener
         $this->checkoutWorkflowHelper = $checkoutWorkflowHelper;
     }
 
-    /**
-     * @param DatagridLineItemsDataEvent $event
-     *
-     * @return null|WorkflowItem
-     */
     protected function getAdditionalContext(DatagridLineItemsDataEvent $event): ?WorkflowItem
     {
         $datagrid = $event->getDatagrid();

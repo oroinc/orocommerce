@@ -182,10 +182,6 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         return $crawler;
     }
 
-    /**
-     * @param Crawler $crawler
-     * @param Product $product
-     */
     protected function validateStep(Crawler $crawler, Product $product)
     {
         $this->verifyQuantityError($crawler, $product, false, false, false, null);
@@ -281,9 +277,6 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $configManager->flush();
     }
 
-    /**
-     * @param Product $product
-     */
     protected function initProductLimitAsSystemFallback(Product $product)
     {
         $entityFallback = new EntityFieldFallbackValue();
@@ -298,14 +291,10 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $this->emFallback->flush();
     }
 
-    /**
-     * @param QuoteDemand $quoteDemand
-     */
     protected function startCheckoutFromQuoteDemand(QuoteDemand $quoteDemand)
     {
         $this->startCheckoutByData($this->getCheckoutFromQuoteDemandData($quoteDemand));
     }
-
 
     /**
      * @param QuoteDemand $quoteDemand

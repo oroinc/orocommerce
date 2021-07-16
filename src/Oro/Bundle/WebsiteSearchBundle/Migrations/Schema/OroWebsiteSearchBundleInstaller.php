@@ -52,7 +52,6 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
 
     /**
      * Create oro_website_search_decimal table
-     * @param Schema $schema
      */
     protected function createOroWebsiteSearchDecimalTable(Schema $schema)
     {
@@ -69,7 +68,6 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
 
     /**
      * Create oro_website_search_integer table
-     * @param Schema $schema
      */
     protected function createOroWebsiteSearchIntegerTable(Schema $schema)
     {
@@ -86,7 +84,6 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
 
     /**
      * Create oro_website_search_datetime table
-     * @param Schema $schema
      */
     protected function createOroWebsiteSearchDatetimeTable(Schema $schema)
     {
@@ -103,7 +100,6 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
 
     /**
      * Create oro_website_search_item table
-     * @param Schema $schema
      */
     protected function createOroWebsiteSearchItemTable(Schema $schema)
     {
@@ -125,9 +121,6 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
 
     /**
      * Create oro_website_search_text table
-     *
-     * @param Schema $schema
-     * @param QueryBag $queries
      */
     protected function createOroWebsiteSearchTextTable(Schema $schema, QueryBag $queries)
     {
@@ -152,7 +145,6 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
 
     /**
      * Add oro_website_search_decimal foreign keys.
-     * @param Schema $schema
      */
     protected function addOroWebsiteSearchDecimalForeignKeys(Schema $schema)
     {
@@ -167,7 +159,6 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
 
     /**
      * Add oro_website_search_integer foreign keys.
-     * @param Schema $schema
      */
     protected function addOroWebsiteSearchIntegerForeignKeys(Schema $schema)
     {
@@ -182,7 +173,6 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
 
     /**
      * Add oro_website_search_datetime foreign keys.
-     * @param Schema $schema
      */
     protected function addOroWebsiteSearchDatetimeForeignKeys(Schema $schema)
     {
@@ -197,7 +187,6 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
 
     /**
      * Add oro_website_search_text foreign keys.
-     * @param Schema $schema
      */
     protected function addOroWebsiteSearchTextForeignKeys(Schema $schema)
     {

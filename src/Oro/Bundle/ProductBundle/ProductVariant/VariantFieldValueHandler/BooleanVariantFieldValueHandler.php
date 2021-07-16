@@ -17,9 +17,6 @@ class BooleanVariantFieldValueHandler implements ProductVariantFieldValueHandler
      */
     protected $translator;
 
-    /**
-     * @param TranslatorInterface $translator
-     */
     public function __construct(TranslatorInterface $translator)
     {
         $this->translator = $translator;

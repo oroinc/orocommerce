@@ -82,17 +82,11 @@ class CouponGenerationOptions extends CodeGenerationOptions
         $this->promotion = $promotion;
     }
 
-    /**
-     * @return bool
-     */
     public function isEnabled(): bool
     {
         return $this->enabled;
     }
 
-    /**
-     * @param bool $enabled
-     */
     public function setEnabled(bool $enabled)
     {
         $this->enabled = $enabled;

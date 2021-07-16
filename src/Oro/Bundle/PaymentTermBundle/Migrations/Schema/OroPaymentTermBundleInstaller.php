@@ -118,8 +118,6 @@ class OroPaymentTermBundleInstaller implements
 
     /**
      * Create table for PaymentTerm entity
-     *
-     * @param Schema $schema
      */
     protected function createOroPaymentTermTable(Schema $schema)
     {
@@ -136,7 +134,7 @@ class OroPaymentTermBundleInstaller implements
     {
         $this->paymentTermExtension->addPaymentTermAssociation($schema, 'oro_customer');
         $this->paymentTermExtension->addPaymentTermAssociation($schema, 'oro_customer_group');
-        
+
         $this->migrateRelations($schema, $queries);
 
         $associationTableName = $this->activityExtension->getAssociationTableName('oro_note', self::TABLE_NAME);
@@ -156,10 +154,6 @@ class OroPaymentTermBundleInstaller implements
         }
     }
 
-    /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     */
     protected function migrateRelations(Schema $schema, QueryBag $queries)
     {
         if ($this->platform instanceof MySqlPlatform) {
@@ -211,9 +205,6 @@ QUERY;
         }
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function createOroPaymentTermTransportLabelTable(Schema $schema)
     {
         $table = $schema->createTable('oro_payment_term_trans_label');
@@ -226,9 +217,6 @@ QUERY;
         $table->addUniqueIndex(['localized_value_id'], 'oro_payment_term_trans_label_localized_value_id', []);
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function createOroPaymentTermShortLabelTable(Schema $schema)
     {
         $table = $schema->createTable('oro_payment_term_short_label');
@@ -242,8 +230,6 @@ QUERY;
     }
 
     /**
-     * @param Schema $schema
-     *
      * @throws SchemaException
      */
     private function addOroPaymentTermTransportLabelForeignKeys(Schema $schema)
@@ -266,8 +252,6 @@ QUERY;
     }
 
     /**
-     * @param Schema $schema
-     *
      * @throws SchemaException
      */
     private function addOroPaymentTermShortLabelForeignKeys(Schema $schema)
@@ -280,7 +264,7 @@ QUERY;
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
-        
+
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_integration_transport'),
             ['transport_id'],

@@ -403,9 +403,6 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
         $this->sluggableEntityListener->postFlush();
     }
 
-    /**
-     * @return array
-     */
     public function slugPrototypeWithRedirectDataProvider(): array
     {
         return [

@@ -427,9 +427,6 @@ class ImportExportTest extends AbstractImportExportTestCase
         return $result->getContent();
     }
 
-    /**
-     * @return ImportExportConfiguration
-     */
     private function getExportImportConfiguration(): ImportExportConfiguration
     {
         $priceListId = $this->getReference('price_list_1')->getId();

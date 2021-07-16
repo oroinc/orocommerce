@@ -30,11 +30,6 @@ class VisibilityFormFieldDataProvider
      */
     protected $formScopeCriteriaResolver;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param ScopeManager $scopeManager
-     * @param FormScopeCriteriaResolver $formScopeCriteriaResolver
-     */
     public function __construct(
         ManagerRegistry $registry,
         ScopeManager $scopeManager,

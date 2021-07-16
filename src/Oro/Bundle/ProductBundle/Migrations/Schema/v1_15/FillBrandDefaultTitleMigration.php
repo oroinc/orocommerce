@@ -48,8 +48,6 @@ class FillBrandDefaultTitleMigration implements Migration, DatabasePlatformAware
 
     /**
      * Fills default brand title column with localized value
-     *
-     * @param QueryBag $queries
      */
     private function applyForPostgreSql(QueryBag $queries)
     {
@@ -73,8 +71,6 @@ SQL
 
     /**
      * Fills default brand title column with localized value
-     *
-     * @param QueryBag $queries
      */
     private function applyForMySql(QueryBag $queries)
     {

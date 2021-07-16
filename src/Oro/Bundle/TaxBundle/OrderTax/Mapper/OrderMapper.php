@@ -23,12 +23,6 @@ class OrderMapper extends AbstractOrderMapper
     /** @var PreloadingManager */
     private $preloadingManager;
 
-    /**
-     * @param ContextEventDispatcher $contextEventDispatcher
-     * @param TaxationAddressProvider $addressProvider
-     * @param TaxMapperInterface $orderLineItemMapper
-     * @param PreloadingManager $preloadingManager
-     */
     public function __construct(
         ContextEventDispatcher $contextEventDispatcher,
         TaxationAddressProvider $addressProvider,

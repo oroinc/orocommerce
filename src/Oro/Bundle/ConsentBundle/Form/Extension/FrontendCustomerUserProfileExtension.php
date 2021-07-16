@@ -29,18 +29,11 @@ class FrontendCustomerUserProfileExtension extends AbstractTypeExtension impleme
      */
     private $eventDispatcher;
 
-    /**
-     * @param EventDispatcherInterface $eventDispatcher
-     */
     public function __construct(EventDispatcherInterface $eventDispatcher)
     {
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array                $options
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         if (!$this->isFeaturesEnabled()) {
@@ -73,8 +66,6 @@ class FrontendCustomerUserProfileExtension extends AbstractTypeExtension impleme
 
     /**
      * Retrieves declined consents and throws DeclinedConsentsEvent
-     *
-     * @param FormEvent $event
      */
     public function onPostSubmit(FormEvent $event): void
     {

@@ -22,11 +22,6 @@ class CustomerGroupProductRepository extends AbstractVisibilityRepository
 {
     use BasicOperationRepositoryTrait;
 
-    /**
-     * @param InsertFromSelectQueryExecutor $insertExecutor
-     * @param ScopeManager $scopeManager
-     * @param Scope|null $scope
-     */
     public function insertByCategory(
         InsertFromSelectQueryExecutor $insertExecutor,
         ScopeManager $scopeManager,
@@ -48,10 +43,6 @@ class CustomerGroupProductRepository extends AbstractVisibilityRepository
         );
     }
 
-    /**
-     * @param InsertFromSelectQueryExecutor $insertExecutor
-     * @param Scope|null $scope
-     */
     public function insertStatic(
         InsertFromSelectQueryExecutor $insertExecutor,
         Scope $scope = null
@@ -71,9 +62,6 @@ class CustomerGroupProductRepository extends AbstractVisibilityRepository
         );
     }
 
-    /**
-     * @param Product $product
-     */
     public function deleteByProduct(Product $product)
     {
         $this->createQueryBuilder('resolvedVisibility')
@@ -84,11 +72,6 @@ class CustomerGroupProductRepository extends AbstractVisibilityRepository
             ->execute();
     }
 
-    /**
-     * @param InsertFromSelectQueryExecutor $insertExecutor
-     * @param Product $product
-     * @param Category|null $category
-     */
     public function insertByProduct(
         InsertFromSelectQueryExecutor $insertExecutor,
         Product $product,
@@ -213,7 +196,6 @@ class CustomerGroupProductRepository extends AbstractVisibilityRepository
 
         return $queryBuilder;
     }
-
 
     /**
      * @param Product $product

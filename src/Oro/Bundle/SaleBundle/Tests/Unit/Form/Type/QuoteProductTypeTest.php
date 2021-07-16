@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Persistence\ManagerRegistry;
@@ -128,9 +127,6 @@ class QuoteProductTypeTest extends AbstractTest
     }
 
     /**
-     * @param array $inputData
-     * @param array $expectedData
-     *
      * @dataProvider finishViewProvider
      */
     public function testFinishView(array $inputData, array $expectedData)

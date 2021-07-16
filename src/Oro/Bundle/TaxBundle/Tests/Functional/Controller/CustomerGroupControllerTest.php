@@ -65,7 +65,6 @@ class CustomerGroupControllerTest extends WebTestCase
     }
 
     /**
-     * @param $id int
      * @depends testCreate
      */
     public function testView($id)

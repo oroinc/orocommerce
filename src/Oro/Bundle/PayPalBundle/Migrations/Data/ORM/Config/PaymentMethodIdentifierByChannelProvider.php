@@ -27,12 +27,6 @@ class PaymentMethodIdentifierByChannelProvider
      */
     private $paymentsProExpressCheckoutIdentifierGenerator;
 
-    /**
-     * @param IntegrationIdentifierGeneratorInterface $payflowGatewayCreditCardIdentifierGenerator
-     * @param IntegrationIdentifierGeneratorInterface $payflowGatewayExpressCheckoutIdentifierGenerator
-     * @param IntegrationIdentifierGeneratorInterface $paymentsProCreditCardIdentifierGenerator
-     * @param IntegrationIdentifierGeneratorInterface $paymentsProExpressCheckoutIdentifierGenerator
-     */
     public function __construct(
         IntegrationIdentifierGeneratorInterface $payflowGatewayCreditCardIdentifierGenerator,
         IntegrationIdentifierGeneratorInterface $payflowGatewayExpressCheckoutIdentifierGenerator,

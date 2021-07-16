@@ -46,9 +46,6 @@ class FreightClassesProvider extends MeasureUnitProvider
         });
     }
 
-    /**
-     * @return bool
-     */
     private function hasExtensions(): bool
     {
         if (null !== $this->extensions) {

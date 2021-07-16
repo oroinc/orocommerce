@@ -17,9 +17,6 @@ class PlatformUpdateCommandListener
      */
     protected $configModelManager;
 
-    /**
-     * @param ConfigModelManager $configModelManager
-     */
     public function __construct(ConfigModelManager $configModelManager)
     {
         $this->configModelManager = $configModelManager;
@@ -27,8 +24,6 @@ class PlatformUpdateCommandListener
 
     /**
      * Remove status enum metadata from DB
-     *
-     * @param ConsoleEvent $event
      */
     public function onConsoleCommand(ConsoleEvent $event)
     {

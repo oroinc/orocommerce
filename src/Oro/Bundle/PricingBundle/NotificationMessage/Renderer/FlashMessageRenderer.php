@@ -24,17 +24,11 @@ class FlashMessageRenderer implements RendererInterface
         Message::STATUS_WARNING => 'warning',
     ];
 
-    /**
-     * @param FlashBagInterface $flashBag
-     */
     public function __construct(FlashBagInterface $flashBag)
     {
         $this->flashBag = $flashBag;
     }
 
-    /**
-     * @param Message $message
-     */
     public function render(Message $message)
     {
         if (array_key_exists($message->getStatus(), self::$statusMap)) {

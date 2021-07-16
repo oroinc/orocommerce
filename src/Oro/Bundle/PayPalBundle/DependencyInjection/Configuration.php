@@ -41,11 +41,6 @@ class Configuration implements ConfigurationInterface
         return $treeBuilder;
     }
 
-    /**
-     * @param string $address
-     *
-     * @return bool
-     */
     private function isValidIp(string $address): bool
     {
         $parts = explode('/', $address);

@@ -36,11 +36,6 @@ class InvalidateTotalsByInventoryStatusPerProductProcessor implements
      */
     private $logger;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param MessageFactory $messageFactory
-     * @param LoggerInterface $logger
-     */
     public function __construct(
         ManagerRegistry $registry,
         MessageFactory $messageFactory,

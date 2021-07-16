@@ -17,9 +17,6 @@ class AddIndicesToProductTables implements Migration
         $this->addProductIndices($schema);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addProductIndices(Schema $schema)
     {
         $table = $schema->getTable(OroProductBundleInstaller::PRODUCT_TABLE_NAME);

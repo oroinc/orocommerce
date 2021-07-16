@@ -123,9 +123,6 @@ class CustomerGroupFormExtensionTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitDataProvider
-     *
-     * @param array $submitted
-     * @param array $expected
      */
     public function testSubmit(array $submitted, array $expected)
     {

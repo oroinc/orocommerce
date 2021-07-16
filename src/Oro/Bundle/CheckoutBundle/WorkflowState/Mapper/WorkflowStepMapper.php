@@ -12,9 +12,6 @@ class WorkflowStepMapper implements CheckoutStateDiffMapperInterface
     /** @var WorkflowAwareManager */
     protected $workflowAwareManager;
 
-    /**
-     * @param WorkflowAwareManager $workflowAwareManager
-     */
     public function __construct(WorkflowAwareManager $workflowAwareManager)
     {
         $this->workflowAwareManager = $workflowAwareManager;

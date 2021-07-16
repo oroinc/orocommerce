@@ -51,14 +51,6 @@ class CanonicalUrlGenerator
      */
     private $localizationProvider;
 
-    /**
-     * @param ConfigManager $configManager
-     * @param Cache $cache
-     * @param RequestStack $requestStack
-     * @param RoutingInformationProvider $routingInformationProvider
-     * @param WebsiteUrlResolver $websiteSystemUrlResolver
-     * @param LocalizationProviderInterface $localizationProvider
-     */
     public function __construct(
         ConfigManager $configManager,
         Cache $cache,
@@ -122,10 +114,6 @@ class CanonicalUrlGenerator
         return $url;
     }
 
-    /**
-     * @param WebsiteInterface|null $website
-     * @return string|null
-     */
     public function getCanonicalDomainUrl(WebsiteInterface $website = null): ?string
     {
         if ($this->getCanonicalUrlSecurityType($website) === Configuration::SECURE) {
@@ -202,9 +190,6 @@ class CanonicalUrlGenerator
         return $this->getCachedConfigValue(Configuration::CANONICAL_URL_SECURITY_TYPE, $website);
     }
 
-    /**
-     * @param WebsiteInterface|null $website
-     */
     public function clearCache(WebsiteInterface $website = null)
     {
         $this->cache->delete($this->getCacheKey(

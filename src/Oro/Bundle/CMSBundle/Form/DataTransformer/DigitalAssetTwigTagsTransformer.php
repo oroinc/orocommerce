@@ -13,9 +13,6 @@ class DigitalAssetTwigTagsTransformer implements DataTransformerInterface
 {
     private DigitalAssetTwigTagsConverter $digitalAssetTwigTagsConverter;
 
-    /**
-     * @param DigitalAssetTwigTagsConverter $digitalAssetTwigTagsConverter
-     */
     public function __construct(DigitalAssetTwigTagsConverter $digitalAssetTwigTagsConverter)
     {
         $this->digitalAssetTwigTagsConverter = $digitalAssetTwigTagsConverter;

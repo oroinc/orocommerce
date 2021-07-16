@@ -16,10 +16,6 @@ class SingleUnitDefaultProductUnitProvider implements DefaultProductUnitProvider
      */
     private $provider;
 
-    /**
-     * @param SingleUnitModeServiceInterface $singleUnitModeService
-     * @param DefaultProductUnitProviderInterface $provider
-     */
     public function __construct(
         SingleUnitModeServiceInterface $singleUnitModeService,
         DefaultProductUnitProviderInterface $provider

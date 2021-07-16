@@ -24,11 +24,6 @@ class ProductFamilySearchHandler implements SearchHandlerInterface
     /** @var AclHelper */
     private $aclHelper;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param PropertyAccessor $propertyAccessor
-     * @param AclHelper $aclHelper
-     */
     public function __construct(ManagerRegistry $registry, PropertyAccessor $propertyAccessor, AclHelper $aclHelper)
     {
         $this->registry = $registry;

@@ -52,13 +52,6 @@ class LoadTaxesData extends AbstractFixture implements DependentFixtureInterface
         $this->container->get('oro_tax.taxation_provider.cache')->deleteAll();
     }
 
-    /**
-     * @param ObjectManager   $manager
-     * @param Tax             $tax
-     * @param CustomerTaxCode $customerTaxCode
-     * @param ProductTaxCode  $productTaxCode
-     * @param TaxJurisdiction $taxJurisdiction
-     */
     private function createTaxRule(
         ObjectManager $manager,
         Tax $tax,
@@ -76,12 +69,6 @@ class LoadTaxesData extends AbstractFixture implements DependentFixtureInterface
         $manager->persist($taxRule);
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param float         $rate
-     *
-     * @return Tax
-     */
     private function createTax(ObjectManager $manager, float $rate): Tax
     {
         $tax = new Tax();
@@ -94,11 +81,6 @@ class LoadTaxesData extends AbstractFixture implements DependentFixtureInterface
         return $tax;
     }
 
-    /**
-     * @param ObjectManager $manager
-     *
-     * @return CustomerTaxCode
-     */
     private function createCustomerTaxCode(ObjectManager $manager): CustomerTaxCode
     {
         $customerTaxCode = new CustomerTaxCode();
@@ -116,11 +98,6 @@ class LoadTaxesData extends AbstractFixture implements DependentFixtureInterface
         return $customerTaxCode;
     }
 
-    /**
-     * @param ObjectManager $manager
-     *
-     * @return ProductTaxCode
-     */
     private function createProductTaxCode(ObjectManager $manager): ProductTaxCode
     {
         $productTaxCode = new ProductTaxCode();
@@ -137,11 +114,6 @@ class LoadTaxesData extends AbstractFixture implements DependentFixtureInterface
         return $productTaxCode;
     }
 
-    /**
-     * @param ObjectManager $manager
-     *
-     * @return TaxJurisdiction
-     */
     private function createTaxJurisdiction(ObjectManager $manager): TaxJurisdiction
     {
         $taxJurisdiction = new TaxJurisdiction();
@@ -154,9 +126,6 @@ class LoadTaxesData extends AbstractFixture implements DependentFixtureInterface
         return $taxJurisdiction;
     }
 
-    /**
-     * @return User
-     */
     private function getUser(): User
     {
         return $this->getReference('user');

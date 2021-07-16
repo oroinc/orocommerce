@@ -81,7 +81,6 @@ class CustomerFlatPricingRelationFormListenerTest extends AbstractFlatPricingRel
         $this->listener->onPostSetData($formEvent);
     }
 
-
     /**
      * @dataProvider wrongEntityDataProvider
      */

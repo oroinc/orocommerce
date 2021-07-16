@@ -13,9 +13,6 @@ class ShippingOrigin extends AbstractAddress
     /** @var bool */
     protected $system = true;
 
-    /**
-     * @param array $data
-     */
     public function __construct(array $data = [])
     {
         $this->data = new \ArrayObject();

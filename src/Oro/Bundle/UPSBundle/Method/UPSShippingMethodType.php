@@ -38,7 +38,7 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
 
     /** @var string */
     private $label;
-    
+
     /**
      * @param string $identifier
      * @param string $label
@@ -68,7 +68,6 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
         $this->priceRequestFactory = $priceRequestFactory;
         $this->cache = $cache;
     }
-
 
     /**
      * {@inheritdoc}

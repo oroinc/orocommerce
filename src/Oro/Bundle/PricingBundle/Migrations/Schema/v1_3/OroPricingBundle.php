@@ -75,8 +75,6 @@ class OroPricingBundle implements
 
     /**
      * Create orob2b_price_list_schedule table
-     *
-     * @param Schema $schema
      */
     protected function createOroPriceListScheduleTable(Schema $schema)
     {
@@ -91,8 +89,6 @@ class OroPricingBundle implements
 
     /**
      * Create orob2b_cpl_activation_rule table
-     *
-     * @param Schema $schema
      */
     protected function createOroCplActivationRuleTable(Schema $schema)
     {
@@ -108,8 +104,6 @@ class OroPricingBundle implements
 
     /**
      * Create orob2b_cpl_activation_rule table
-     *
-     * @param Schema $schema
      */
     protected function updatePriceListChangeTriggerTable(Schema $schema)
     {
@@ -119,8 +113,6 @@ class OroPricingBundle implements
 
     /**
      * Add orob2b_price_list_schedule foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOrob2BPriceListScheduleForeignKeys(Schema $schema)
     {
@@ -135,8 +127,6 @@ class OroPricingBundle implements
 
     /**
      * Add orob2b_cpl_activation_rule foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOrob2BCplActivationRuleForeignKeys(Schema $schema)
     {
@@ -157,8 +147,6 @@ class OroPricingBundle implements
 
     /**
      * Create orob2b_cmb_price_list_to_acc table
-     *
-     * @param Schema $schema
      */
     protected function createOroCmbPriceListToAccTable(Schema $schema)
     {
@@ -174,8 +162,6 @@ class OroPricingBundle implements
 
     /**
      * Create orob2b_cmb_plist_to_acc_gr table
-     *
-     * @param Schema $schema
      */
     protected function createOroCmbPriceListToAccGrTable(Schema $schema)
     {
@@ -191,8 +177,6 @@ class OroPricingBundle implements
 
     /**
      * Create orob2b_cmb_price_list_to_ws table
-     *
-     * @param Schema $schema
      */
     protected function createOroCmbPriceListToWsTable(Schema $schema)
     {
@@ -207,9 +191,6 @@ class OroPricingBundle implements
 
     /**
      * Add orob2b_cmb_plist_to_acc_gr foreign keys.
-     *
-     * @param Schema $schema
-     * @param QueryBag $queries
      */
     protected function addOrob2BCmbPriceListToAccGrForeignKeys(Schema $schema, QueryBag $queries)
     {
@@ -249,9 +230,6 @@ class OroPricingBundle implements
 
     /**
      * Add orob2b_cmb_price_list_to_ws foreign keys.
-     *
-     * @param Schema $schema
-     * @param QueryBag $queries
      */
     protected function addOrob2BCmbPriceListToWsForeignKeys(Schema $schema, QueryBag $queries)
     {
@@ -282,9 +260,6 @@ class OroPricingBundle implements
 
     /**
      * Add orob2b_cmb_price_list_to_acc foreign keys.
-     *
-     * @param Schema $schema
-     * @param QueryBag $queries
      */
     protected function addOrob2BCmbPriceListToAccForeignKeys(Schema $schema, QueryBag $queries)
     {
@@ -322,8 +297,6 @@ class OroPricingBundle implements
     }
 
     /**
-     * @param Schema $schema
-     * @param QueryBag $queries
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     protected function alterOroPriceListTable(Schema $schema, QueryBag $queries)
@@ -345,8 +318,6 @@ class OroPricingBundle implements
     }
 
     /**
-     * @param Schema $schema
-     * @param QueryBag $queries
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     protected function alterOroPriceListCombinedTable(Schema $schema, QueryBag $queries)
@@ -365,8 +336,6 @@ class OroPricingBundle implements
 
     /**
      * Create orob2b_price_product_minimal table
-     *
-     * @param Schema $schema
      */
     protected function createOrob2BPriceProductMinimalTable(Schema $schema)
     {
@@ -392,9 +361,6 @@ class OroPricingBundle implements
 
     /**
      * Add orob2b_price_product_minimal foreign keys.
-     *
-     * @param Schema $schema
-     * @param QueryBag $queries
      */
     protected function addOrob2BPriceProductMinimalForeignKeys(Schema $schema, QueryBag $queries)
     {
