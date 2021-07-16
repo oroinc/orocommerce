@@ -3,7 +3,7 @@
 namespace Oro\Bundle\RedirectBundle\Routing;
 
 use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\PlatformBundle\Maintenance\Mode as MaintenanceMode;
+use Oro\Bundle\MaintenanceBundle\Maintenance\Mode as MaintenanceMode;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
