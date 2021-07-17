@@ -148,9 +148,6 @@ class MigratePromotionDataQuery extends ParametrizedSqlMigrationQuery
         }
     }
 
-    /**
-     * @param array $orderRow
-     */
     private function migrateDiscountsForOrder(array $orderRow)
     {
         $params = ['orderId' => $orderRow['id']];
@@ -207,9 +204,6 @@ class MigratePromotionDataQuery extends ParametrizedSqlMigrationQuery
         }
     }
 
-    /**
-     * @return int
-     */
     private function getOrdersSteps(): int
     {
         $qb = $this->getOrdersWithPromotionsQb()
@@ -230,9 +224,6 @@ class MigratePromotionDataQuery extends ParametrizedSqlMigrationQuery
             ->where('EXISTS (SELECT 1 FROM oro_promotion_applied ap WHERE ap.order_id = o.id)');
     }
 
-    /**
-     * @return string
-     */
     private function getDiscountsSelectStatement(): string
     {
         $concatExpression = $this->getFieldConcatExpression('ad.line_item_id', 'line_items');
@@ -342,10 +333,6 @@ SQL;
         return $definition;
     }
 
-    /**
-     * @param array $orderRow
-     * @return string
-     */
     private function getCustomerRestrictionExpression(array $orderRow): string
     {
         $expression = 'customer.id = ' . $orderRow['customer_id'];
@@ -476,9 +463,6 @@ SQL;
         return sprintf('CAST(%s AS TEXT)%s', $fieldName, $select ? '::json' : '');
     }
 
-    /**
-     * @return int
-     */
     private function getLineItemDuplicatedQueriesQty(): int
     {
         $maxDuplicatedDeletedLineItemsPromotions = <<<SQL

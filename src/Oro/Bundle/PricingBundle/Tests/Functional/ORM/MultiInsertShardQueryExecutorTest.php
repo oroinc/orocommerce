@@ -161,10 +161,6 @@ class MultiInsertShardQueryExecutorTest extends WebTestCase
         $this->assertEquals($originalCount, $countSaved);
     }
 
-    /**
-     * @param PriceList $priceListFrom
-     * @param Product $product
-     */
     private function createProductPrices(PriceList $priceListFrom, Product $product): void
     {
         $priceManager = $this->getContainer()->get('oro_pricing.manager.price_manager');
@@ -183,12 +179,6 @@ class MultiInsertShardQueryExecutorTest extends WebTestCase
         $priceManager->flush();
     }
 
-    /**
-     * @param PriceList $priceListInto
-     * @param PriceList $priceListFrom
-     * @param Product $product
-     * @return QueryBuilder
-     */
     protected function getInsertQueryBuilder(
         PriceList $priceListInto,
         PriceList $priceListFrom,

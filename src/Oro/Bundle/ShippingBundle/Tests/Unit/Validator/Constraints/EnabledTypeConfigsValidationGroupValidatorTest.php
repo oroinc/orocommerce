@@ -51,7 +51,6 @@ class EnabledTypeConfigsValidationGroupValidatorTest extends \PHPUnit\Framework\
     {
         $this->context->expects($this->never())->method('buildViolation');
 
-
         $data = new ArrayCollection([
             (new ShippingMethodTypeConfig())->setEnabled(false),
             (new ShippingMethodTypeConfig())->setEnabled(true),

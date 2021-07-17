@@ -33,12 +33,6 @@ class WebsiteSearchProductIndexDataProvider implements ProductIndexDataProviderI
     /** @var SearchableInformationProvider */
     protected $searchableInformationProvider;
 
-    /**
-     * @param AttributeTypeRegistry $attributeTypeRegistry
-     * @param AttributeConfigurationProviderInterface $configurationProvider
-     * @param ProductIndexFieldsProvider $indexFieldsProvider
-     * @param PropertyAccessor $propertyAccessor
-     */
     public function __construct(
         AttributeTypeRegistry $attributeTypeRegistry,
         AttributeConfigurationProviderInterface $configurationProvider,

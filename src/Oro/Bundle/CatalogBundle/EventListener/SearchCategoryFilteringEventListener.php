@@ -42,11 +42,6 @@ class SearchCategoryFilteringEventListener
     /** @var SubcategoryProvider */
     private $categoryProvider;
 
-    /**
-     * @param RequestProductHandler $requestProductHandler
-     * @param ManagerRegistry $registry
-     * @param SubcategoryProvider $categoryProvider
-     */
     public function __construct(
         RequestProductHandler $requestProductHandler,
         ManagerRegistry $registry,
@@ -57,9 +52,6 @@ class SearchCategoryFilteringEventListener
         $this->categoryProvider = $categoryProvider;
     }
 
-    /**
-     * @param PreBuild $event
-     */
     public function onPreBuild(PreBuild $event)
     {
         $parameters = $event->getParameters();
@@ -149,9 +141,6 @@ class SearchCategoryFilteringEventListener
         $config->offsetSetByPath('[filters]', $filters);
     }
 
-    /**
-     * @param BuildAfter $event
-     */
     public function onBuildAfter(BuildAfter $event)
     {
         $datasource = $event->getDatagrid()->getDatasource();
@@ -253,9 +242,6 @@ class SearchCategoryFilteringEventListener
         return filter_var($overrideVariantConfiguration, FILTER_VALIDATE_BOOLEAN);
     }
 
-    /**
-     * @return CategoryRepository
-     */
     private function getCategoryRepository(): CategoryRepository
     {
         return $this->registry->getManagerForClass(Category::class)

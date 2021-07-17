@@ -16,9 +16,6 @@ class OroProductBundle implements Migration
         $this->addAttributeFamilyField($schema);
     }
 
-    /**
-     * @param Schema $schema
-     */
     public function addAttributeFamilyField(Schema $schema)
     {
         $table = $schema->getTable('oro_product');

@@ -8,11 +8,5 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 interface LineItemByShoppingListAndProductFactoryInterface
 {
-    /**
-     * @param ShoppingList $shoppingList
-     * @param Product      $product
-     *
-     * @return LineItem
-     */
     public function create(ShoppingList $shoppingList, Product $product): LineItem;
 }

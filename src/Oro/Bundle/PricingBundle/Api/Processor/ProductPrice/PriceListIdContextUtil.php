@@ -13,9 +13,6 @@ class PriceListIdContextUtil
 
     /**
      * Stores the given price list ID to the context.
-     *
-     * @param SharedDataAwareContextInterface $context
-     * @param int                             $priceListId
      */
     public static function storePriceListId(SharedDataAwareContextInterface $context, int $priceListId): void
     {
@@ -24,10 +21,6 @@ class PriceListIdContextUtil
 
     /**
      * Retrieves a price list ID from the context.
-     *
-     * @param SharedDataAwareContextInterface $context
-     *
-     * @return int
      */
     public static function getPriceListId(SharedDataAwareContextInterface $context): int
     {
@@ -41,10 +34,6 @@ class PriceListIdContextUtil
 
     /**
      * Checks whether a price list ID exists in the context.
-     *
-     * @param SharedDataAwareContextInterface $context
-     *
-     * @return bool
      */
     public static function hasPriceListId(SharedDataAwareContextInterface $context): bool
     {
@@ -53,11 +42,6 @@ class PriceListIdContextUtil
 
     /**
      * Adds a price list ID stored in the context as a suffix to the given product price ID.
-     *
-     * @param SharedDataAwareContextInterface $context
-     * @param string                          $productPriceId
-     *
-     * @return string
      */
     public static function normalizeProductPriceId(
         SharedDataAwareContextInterface $context,

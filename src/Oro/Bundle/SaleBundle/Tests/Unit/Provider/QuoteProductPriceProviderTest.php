@@ -138,7 +138,6 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getCurrencyList')
             ->willReturn($currencies);
 
-
         if ($products) {
             $productScopeCriteria = $this->createMock(ProductPriceScopeCriteriaInterface::class);
             $this->priceScopeCriteriaFactory->expects($this->once())
@@ -383,9 +382,6 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param array $matchedPrices
-     * @param Price|null $expectedResult
-     *
      * @dataProvider getMatchedProductPriceProvider
      */
     public function testGetMatchedProductPrice(array $matchedPrices, Price $expectedResult = null)

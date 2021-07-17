@@ -11,9 +11,6 @@ class CheckoutLineItemsFactory
     /** @var CheckoutLineItemConverterRegistry */
     protected $lineItemConverterRegistry;
 
-    /**
-     * @param CheckoutLineItemConverterRegistry $lineItemConverterRegistry
-     */
     public function __construct(CheckoutLineItemConverterRegistry $lineItemConverterRegistry)
     {
         $this->lineItemConverterRegistry = $lineItemConverterRegistry;

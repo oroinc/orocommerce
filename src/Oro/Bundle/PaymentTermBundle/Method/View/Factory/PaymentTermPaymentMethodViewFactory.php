@@ -22,10 +22,6 @@ class PaymentTermPaymentMethodViewFactory implements PaymentTermPaymentMethodVie
      */
     protected $translator;
 
-    /**
-     * @param PaymentTermProviderInterface $paymentTermProvider
-     * @param TranslatorInterface $translator
-     */
     public function __construct(PaymentTermProviderInterface $paymentTermProvider, TranslatorInterface $translator)
     {
         $this->paymentTermProvider = $paymentTermProvider;

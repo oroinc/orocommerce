@@ -32,11 +32,6 @@ class SlugifyEntityHelper
      */
     private $configManager;
 
-    /**
-     * @param SlugGenerator $slugGenerator
-     * @param ConfigManager $configManager
-     * @param ManagerRegistry $managerRegistry
-     */
     public function __construct(
         SlugGenerator $slugGenerator,
         ConfigManager $configManager,
@@ -47,9 +42,6 @@ class SlugifyEntityHelper
         $this->managerRegistry = $managerRegistry;
     }
 
-    /**
-     * @param SluggableInterface $entity
-     */
     public function fill(SluggableInterface $entity): void
     {
         $localizedSources = $this->getSourceField($entity);
@@ -84,11 +76,6 @@ class SlugifyEntityHelper
         }
     }
 
-    /**
-     * @param string $className
-     *
-     * @return string|null
-     */
     public function getSourceFieldName(string $className): ?string
     {
         $provider = $this->configManager->getProvider('slug');
@@ -117,10 +104,6 @@ class SlugifyEntityHelper
 
     /**
      * Slug is considered empty if there is no text and not have parent or system slug.
-     *
-     * @param AbstractLocalizedFallbackValue $localizedSlug
-     *
-     * @return bool
      */
     private function isSlugEmpty(AbstractLocalizedFallbackValue $localizedSlug): bool
     {

@@ -23,11 +23,6 @@ class DatagridLineItemsDataListener
     /** @var AttachmentManager */
     private $attachmentManager;
 
-    /**
-     * @param ConfigurableProductProvider $configurableProductProvider
-     * @param LocalizationHelper $localizationHelper
-     * @param AttachmentManager $attachmentManager
-     */
     public function __construct(
         ConfigurableProductProvider $configurableProductProvider,
         LocalizationHelper $localizationHelper,
@@ -38,9 +33,6 @@ class DatagridLineItemsDataListener
         $this->attachmentManager = $attachmentManager;
     }
 
-    /**
-     * @param DatagridLineItemsDataEvent $event
-     */
     public function onLineItemData(DatagridLineItemsDataEvent $event): void
     {
         /** @var ProductLineItemInterface $lineItem */
@@ -78,10 +70,6 @@ class DatagridLineItemsDataListener
         }
     }
 
-    /**
-     * @param ProductLineItemInterface $lineItem
-     * @return string
-     */
     protected function getProductName(ProductLineItemInterface $lineItem): string
     {
         $product = $lineItem->getProduct();
@@ -96,11 +84,6 @@ class DatagridLineItemsDataListener
         );
     }
 
-    /**
-     * @param Product $product
-     * @param string $productUnitCode
-     * @return int|null
-     */
     private function getProductUnitPrecision(Product $product, string $productUnitCode): ?int
     {
         foreach ($product->getUnitPrecisions() as $unitPrecision) {
@@ -115,10 +98,6 @@ class DatagridLineItemsDataListener
         return null;
     }
 
-    /**
-     * @param ProductLineItemInterface $lineItem
-     * @return array
-     */
     private function getVariantFieldsValuesForLineItem(ProductLineItemInterface $lineItem): array
     {
         $configurableProductsVariantFields = $this->configurableProductProvider
@@ -127,10 +106,6 @@ class DatagridLineItemsDataListener
         return $configurableProductsVariantFields[$lineItem->getProduct()->getId()] ?? [];
     }
 
-    /**
-     * @param Product $product
-     * @return string
-     */
     private function getImageUrl(Product $product): string
     {
         $image = $product->getImagesByType('listing')->first();

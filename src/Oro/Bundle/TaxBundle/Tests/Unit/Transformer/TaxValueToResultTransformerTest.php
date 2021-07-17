@@ -80,9 +80,6 @@ class TaxValueToResultTransformerTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(1, $taxValue->getResult()->getTaxes());
     }
 
-    /**
-     * @param Result $result
-     */
     protected function assertResult(Result $result)
     {
         $this->assertInstanceOf('Oro\Bundle\TaxBundle\Model\Result', $result);

@@ -17,10 +17,6 @@ abstract class AbstractProductDuplicateEvent extends Event
      */
     protected $sourceProduct;
 
-    /**
-     * @param Product $product
-     * @param Product $sourceProduct
-     */
     public function __construct(Product $product, Product $sourceProduct)
     {
         $this->product = $product;

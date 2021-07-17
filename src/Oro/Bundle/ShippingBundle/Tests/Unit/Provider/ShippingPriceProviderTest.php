@@ -124,9 +124,6 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getApplicableShippingMethodsConfigsRulesProvider
-     *
-     * @param array $shippingRules
-     * @param array $expectedData
      */
     public function testGetApplicableMethodsViews(array $shippingRules, array $expectedData)
     {
@@ -159,9 +156,6 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getApplicableShippingMethodsConfigsRulesProvider
-     *
-     * @param array $shippingRules
-     * @param array $expectedData
      */
     public function testGetApplicableMethodsViewsWhenMemoryCacheProvider(array $shippingRules, array $expectedData)
     {

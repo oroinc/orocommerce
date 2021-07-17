@@ -24,9 +24,6 @@ class ProductRowType extends AbstractProductAwareType
      */
     protected $productUnitsProvider;
 
-    /**
-     * @param ProductUnitsProvider $productUnitsProvider
-     */
     public function __construct(ProductUnitsProvider $productUnitsProvider)
     {
         $this->productUnitsProvider = $productUnitsProvider;

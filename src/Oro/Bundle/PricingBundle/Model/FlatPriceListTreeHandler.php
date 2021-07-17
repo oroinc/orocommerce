@@ -70,10 +70,6 @@ class FlatPriceListTreeHandler extends AbstractPriceListTreeHandler
         return $this->priceListRepository;
     }
 
-    /**
-     * @param Website|null $website
-     * @return PriceList|null
-     */
     private function getDefaultPriceList(?Website $website = null): ?PriceList
     {
         $priceListId = $this->configManager->get('oro_pricing.default_price_list', false, false, $website);
@@ -88,9 +84,6 @@ class FlatPriceListTreeHandler extends AbstractPriceListTreeHandler
 
     /**
      * Return price list only if it has no schedule or the current schedule is active.
-     *
-     * @param PriceList|null $priceList
-     * @return PriceList|null
      */
     private function checkPriceListSchedule(?PriceList $priceList): ?PriceList
     {

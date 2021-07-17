@@ -69,7 +69,6 @@ class UpdateEmailNotificationQuery extends ParametrizedMigrationQuery
     /**
      * Get quote_created template id
      *
-     * @return int
      * @throws \Doctrine\DBAL\DBALException
      */
     private function getTemplateId(): int

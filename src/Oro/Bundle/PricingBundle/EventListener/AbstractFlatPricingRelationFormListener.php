@@ -32,10 +32,6 @@ abstract class AbstractFlatPricingRelationFormListener implements FeatureTogglea
      */
     protected $triggerHandler;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param PriceListRelationTriggerHandler $triggerHandler
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         PriceListRelationTriggerHandler $triggerHandler
@@ -64,9 +60,6 @@ abstract class AbstractFlatPricingRelationFormListener implements FeatureTogglea
      */
     abstract protected function handlePriceListChanges(Website $website, $targetEntity);
 
-    /**
-     * @param FormEvent $event
-     */
     public function onPostSetData(FormEvent $event)
     {
         if (!$this->isFeaturesEnabled()) {
@@ -88,9 +81,6 @@ abstract class AbstractFlatPricingRelationFormListener implements FeatureTogglea
         }
     }
 
-    /**
-     * @param AfterFormProcessEvent $event
-     */
     public function onPostSubmit(AfterFormProcessEvent $event)
     {
         if (!$this->isFeaturesEnabled()) {

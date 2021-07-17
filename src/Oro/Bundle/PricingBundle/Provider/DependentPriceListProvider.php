@@ -13,9 +13,6 @@ class DependentPriceListProvider
     /** @var PriceRuleLexemeTriggerHandler */
     protected $priceRuleLexemeTriggerHandler;
 
-    /**
-     * @param PriceRuleLexemeTriggerHandler $priceRuleLexemeTriggerHandler
-     */
     public function __construct(PriceRuleLexemeTriggerHandler $priceRuleLexemeTriggerHandler)
     {
         $this->priceRuleLexemeTriggerHandler = $priceRuleLexemeTriggerHandler;

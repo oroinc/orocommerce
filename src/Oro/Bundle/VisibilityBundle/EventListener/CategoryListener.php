@@ -18,9 +18,6 @@ class CategoryListener implements OptionalListenerInterface
     /** @var bool */
     private $enabled = true;
 
-    /**
-     * @param MessageProducerInterface $messageProducer
-     */
     public function __construct(MessageProducerInterface $messageProducer)
     {
         $this->messageProducer = $messageProducer;
@@ -34,9 +31,6 @@ class CategoryListener implements OptionalListenerInterface
         $this->enabled = $enabled;
     }
 
-    /**
-     * @param ProductsChangeRelationEvent $event
-     */
     public function onProductsChangeRelation(ProductsChangeRelationEvent $event): void
     {
         if (!$this->enabled) {

@@ -12,9 +12,6 @@ class RestrictProductVariantEvent extends Event
     /** @var QueryBuilder */
     protected $queryBuilder;
 
-    /**
-     * @param QueryBuilder $qb
-     */
     public function __construct(QueryBuilder $qb)
     {
         $this->queryBuilder = $qb;

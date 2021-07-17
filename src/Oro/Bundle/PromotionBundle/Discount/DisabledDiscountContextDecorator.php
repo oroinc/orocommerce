@@ -13,17 +13,11 @@ class DisabledDiscountContextDecorator implements DiscountContextInterface
      */
     private $context;
 
-    /**
-     * @param DiscountContextInterface $discountContext
-     */
     public function __construct(DiscountContextInterface $discountContext)
     {
         $this->context = $discountContext;
     }
 
-    /**
-     * @return float
-     */
     public function getSubtotal(): float
     {
         return $this->context->getSubtotal();
@@ -121,9 +115,6 @@ class DisabledDiscountContextDecorator implements DiscountContextInterface
         return $this->context->getLineItemDiscounts();
     }
 
-    /**
-     * @return float
-     */
     public function getShippingCost(): float
     {
         return $this->context->getShippingCost();
@@ -178,25 +169,16 @@ class DisabledDiscountContextDecorator implements DiscountContextInterface
         return $this->context->getShippingDiscountsInformation();
     }
 
-    /**
-     * @return float
-     */
     public function getShippingDiscountTotal(): float
     {
         return $this->context->getShippingDiscountTotal();
     }
 
-    /**
-     * @return float
-     */
     public function getSubtotalDiscountTotal(): float
     {
         return $this->context->getSubtotalDiscountTotal();
     }
 
-    /**
-     * @return float
-     */
     public function getTotalLineItemsDiscount(): float
     {
         return $this->context->getTotalLineItemsDiscount();
@@ -211,9 +193,6 @@ class DisabledDiscountContextDecorator implements DiscountContextInterface
         return $this->context->getDiscountByLineItem($lineItem);
     }
 
-    /**
-     * @return float
-     */
     public function getTotalDiscountAmount(): float
     {
         return $this->context->getTotalDiscountAmount();

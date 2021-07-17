@@ -28,12 +28,6 @@ class OrderLineItemTypeExtension extends AbstractTypeExtension
     /** @var SectionProvider */
     protected $sectionProvider;
 
-    /**
-     * @param TaxationSettingsProvider $taxationSettingsProvider
-     * @param TaxProviderRegistry $taxProviderRegistry
-     * @param TotalProcessorProvider $totalProcessorProvider
-     * @param SectionProvider $sectionProvider
-     */
     public function __construct(
         TaxationSettingsProvider $taxationSettingsProvider,
         TaxProviderRegistry $taxProviderRegistry,
@@ -93,7 +87,6 @@ class OrderLineItemTypeExtension extends AbstractTypeExtension
 
         $view->vars['result'] = $this->getProvider()->getTax($entity);
     }
-
 
     /**
      * @return TaxProviderInterface

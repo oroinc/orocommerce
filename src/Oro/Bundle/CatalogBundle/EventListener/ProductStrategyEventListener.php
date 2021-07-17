@@ -9,9 +9,6 @@ use Oro\Bundle\ProductBundle\ImportExport\Event\ProductStrategyEvent;
  */
 class ProductStrategyEventListener extends AbstractProductImportEventListener
 {
-    /**
-     * @param ProductStrategyEvent $event
-     */
     public function onProcessAfter(ProductStrategyEvent $event)
     {
         $rawData = $event->getRawData();

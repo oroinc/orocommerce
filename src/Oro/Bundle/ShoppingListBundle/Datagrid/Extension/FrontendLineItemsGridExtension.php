@@ -37,11 +37,6 @@ class FrontendLineItemsGridExtension extends AbstractExtension
     /** @var array */
     private $cache = [];
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param ConfigManager $configManager
-     * @param TokenAccessorInterface $tokenAccessor
-     */
     public function __construct(
         ManagerRegistry $registry,
         ConfigManager $configManager,
@@ -165,17 +160,11 @@ class FrontendLineItemsGridExtension extends AbstractExtension
         );
     }
 
-    /**
-     * @return int
-     */
     private function getShoppingListId(): int
     {
         return (int) $this->parameters->get('shopping_list_id');
     }
 
-    /**
-     * @return bool
-     */
     private function isLineItemsGrouped(): bool
     {
         $parameters = $this->parameters->get('_parameters', []);
@@ -183,10 +172,6 @@ class FrontendLineItemsGridExtension extends AbstractExtension
         return isset($parameters['group']) ? filter_var($parameters['group'], FILTER_VALIDATE_BOOLEAN) : false;
     }
 
-    /**
-     * @param int $shoppingListId
-     * @return bool
-     */
     private function hasEmptyMatrix(int $shoppingListId): bool
     {
         if (!isset($this->cache['hasEmptyMatrix'][$shoppingListId])) {
@@ -199,10 +184,6 @@ class FrontendLineItemsGridExtension extends AbstractExtension
         return $this->cache['hasEmptyMatrix'][$shoppingListId];
     }
 
-    /**
-     * @param int $shoppingListId
-     * @return bool
-     */
     private function canBeGrouped(int $shoppingListId): bool
     {
         if (!isset($this->cache['canBeGrouped'][$shoppingListId])) {
@@ -215,10 +196,6 @@ class FrontendLineItemsGridExtension extends AbstractExtension
         return $this->cache['canBeGrouped'][$shoppingListId];
     }
 
-    /**
-     * @param int $shoppingListId
-     * @return ShoppingList|null
-     */
     private function getShoppingList(int $shoppingListId): ?ShoppingList
     {
         if (!isset($this->cache['shoppingLists'][$shoppingListId])) {

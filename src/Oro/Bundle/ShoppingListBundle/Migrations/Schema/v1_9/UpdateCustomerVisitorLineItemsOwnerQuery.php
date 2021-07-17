@@ -30,10 +30,6 @@ class UpdateCustomerVisitorLineItemsOwnerQuery extends ParametrizedMigrationQuer
         $this->doExecute($logger);
     }
 
-    /**
-     * @param LoggerInterface $logger
-     * @param bool $dryRun
-     */
     private function doExecute(LoggerInterface $logger, bool $dryRun = false): void
     {
         $data = $this->getData($logger);
@@ -54,10 +50,6 @@ class UpdateCustomerVisitorLineItemsOwnerQuery extends ParametrizedMigrationQuer
         }
     }
 
-    /**
-     * @param LoggerInterface $logger
-     * @return array
-     */
     private function getData(LoggerInterface $logger): array
     {
         $query = 'SELECT li.id

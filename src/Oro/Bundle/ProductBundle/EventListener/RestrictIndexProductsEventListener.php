@@ -33,9 +33,6 @@ class RestrictIndexProductsEventListener
         $this->configPath = $configPath;
     }
 
-    /**
-     * @param RestrictIndexEntityEvent $event
-     */
     public function onRestrictIndexEntityEvent(RestrictIndexEntityEvent $event)
     {
         $this->modifier->modifyByStatus($event->getQueryBuilder(), [Product::STATUS_ENABLED]);

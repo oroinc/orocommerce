@@ -64,11 +64,6 @@ class RoutingInformationProvider implements RoutingInformationProviderInterface
         return $this->entityClasses;
     }
 
-    /**
-     * @param string $entityClass
-     *
-     * @return RoutingInformationProviderInterface
-     */
     private function getProvider(string $entityClass): RoutingInformationProviderInterface
     {
         return $this->providers->get($entityClass);

@@ -34,12 +34,6 @@ class InvalidateCacheActionHandler implements InvalidateCacheActionHandlerInterf
      */
     private $timeInTransitCacheProviderFactory;
 
-    /**
-     * @param DoctrineHelper                             $doctrineHelper
-     * @param UPSShippingPriceCache                      $upsPriceCache
-     * @param ShippingPriceCache                         $shippingPriceCache
-     * @param TimeInTransitCacheProviderFactoryInterface $timeInTransitCacheProviderFactory
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         UPSShippingPriceCache $upsPriceCache,
@@ -52,9 +46,6 @@ class InvalidateCacheActionHandler implements InvalidateCacheActionHandlerInterf
         $this->timeInTransitCacheProviderFactory = $timeInTransitCacheProviderFactory;
     }
 
-    /**
-     * @param DataStorageInterface $dataStorage
-     */
     public function handle(DataStorageInterface $dataStorage)
     {
         $transportId = $dataStorage->get(self::PARAM_TRANSPORT_ID);

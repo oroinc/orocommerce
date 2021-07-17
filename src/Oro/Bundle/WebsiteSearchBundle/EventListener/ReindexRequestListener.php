@@ -28,10 +28,6 @@ class ReindexRequestListener implements OptionalListenerInterface
      */
     private $granularizer;
 
-    /**
-     * @param IndexerInterface|null $regularIndexer
-     * @param IndexerInterface|null $asyncIndexer
-     */
     public function __construct(
         IndexerInterface $regularIndexer = null,
         IndexerInterface $asyncIndexer = null
@@ -40,16 +36,12 @@ class ReindexRequestListener implements OptionalListenerInterface
         $this->asyncIndexer   = $asyncIndexer;
     }
 
-    /**
-     * @param ReindexMessageGranularizer $granularizer
-     */
     public function setReindexMessageGranularizer(ReindexMessageGranularizer $granularizer)
     {
         $this->granularizer = $granularizer;
     }
 
     /**
-     * @param ReindexationRequestEvent $event
      * @throws \LogicException
      */
     public function process(ReindexationRequestEvent $event)
@@ -65,8 +57,6 @@ class ReindexRequestListener implements OptionalListenerInterface
     }
 
     /**
-     * @param ReindexationRequestEvent $event
-     * @param IndexerInterface         $indexer
      * @throws \LogicException
      */
     protected function processWithIndexer(ReindexationRequestEvent $event, IndexerInterface $indexer)

@@ -87,9 +87,6 @@ class LoadImageSlider extends AbstractFixture implements DependentFixtureInterfa
         ];
     }
 
-    /**
-     * @param ObjectManager $manager
-     */
     public function load(ObjectManager $manager)
     {
         $user = $this->getFirstUser($manager);
@@ -138,11 +135,6 @@ class LoadImageSlider extends AbstractFixture implements DependentFixtureInterfa
         );
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param User $user
-     * @param string $content
-     */
     private function updateOrCreateContentBlock(ObjectManager $manager, User $user, string $content): void
     {
         $contentBlock = $manager->getRepository(ContentBlock::class)
@@ -179,12 +171,6 @@ class LoadImageSlider extends AbstractFixture implements DependentFixtureInterfa
         $manager->flush();
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param User $user
-     * @param string $filename
-     * @return AttachmentFile
-     */
     private function createImage(ObjectManager $manager, User $user, string $filename): AttachmentFile
     {
         $locator = $this->container->get('file_locator');
@@ -219,12 +205,6 @@ class LoadImageSlider extends AbstractFixture implements DependentFixtureInterfa
         return $image;
     }
 
-    /**
-     * @param AttachmentFile $file
-     * @param FileLocator $locator
-     * @param $filename
-     * @param $filter
-     */
     private function writeDigitalAssets(AttachmentFile $file, FileLocator $locator, $filename, $filter): void
     {
         $storagePath = $this->container->get('oro_attachment.provider.resized_image_path')

@@ -130,9 +130,6 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
     }
 
     /**
-     * @param array $data
-     * @param array $expected
-     *
      * @dataProvider importDataProvider
      */
     public function testConvertToImportFormat(array $data, array $expected)
@@ -172,9 +169,6 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
     }
 
     /**
-     * @param array $data
-     * @param array $expected
-     *
      * @dataProvider exportDataProvider
      */
     public function testConvertToExportFormat(array $data, array $expected)

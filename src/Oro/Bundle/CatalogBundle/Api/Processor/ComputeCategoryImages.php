@@ -17,9 +17,6 @@ class ComputeCategoryImages implements ProcessorInterface
     /** @var AttachmentManager */
     private $attachmentManager;
 
-    /**
-     * @param AttachmentManager $attachmentManager
-     */
     public function __construct(AttachmentManager $attachmentManager)
     {
         $this->attachmentManager = $attachmentManager;
@@ -60,13 +57,6 @@ class ComputeCategoryImages implements ProcessorInterface
         $context->setData($data);
     }
 
-    /**
-     * @param array  $image
-     * @param string $imageFilter
-     * @param string $imageType
-     *
-     * @return array
-     */
     private function getImageInfo(array $image, string $imageFilter, string $imageType): array
     {
         return [

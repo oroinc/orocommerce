@@ -33,11 +33,6 @@ class PricingStorageSwitchHandler implements PricingStorageSwitchHandlerInterfac
      */
     private $configConverter;
 
-    /**
-     * @param ConfigManager $configManager
-     * @param ManagerRegistry $registry
-     * @param PriceListConfigConverter $configConverter
-     */
     public function __construct(
         ConfigManager $configManager,
         ManagerRegistry $registry,
@@ -75,8 +70,6 @@ class PricingStorageSwitchHandler implements PricingStorageSwitchHandlerInterfac
      * Any change to switch logic will lead to query changes and vise versa, so Single Responsibility principle
      * isn't broken here.
      *
-     * @param string $table
-     * @param string $associationColumn
      * @throws \Doctrine\DBAL\DBALException
      */
     private function deleteNonFirstPriceListAssociations(string $table, string $associationColumn)
@@ -152,10 +145,6 @@ MIN_SQL;
         $this->configManager->flush();
     }
 
-    /**
-     * @param string $className
-     * @return string
-     */
     private function getTableName(string $className): string
     {
         /** @var EntityManagerInterface $em */

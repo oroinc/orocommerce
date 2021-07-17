@@ -11,9 +11,6 @@ class UrlDataStorage implements \JsonSerializable
      */
     private $data = [];
 
-    /**
-     * @param array $data
-     */
     public function __construct(array $data = [])
     {
         $this->data = $data;
@@ -121,9 +118,6 @@ class UrlDataStorage implements \JsonSerializable
         return md5(serialize($routeParameters));
     }
 
-    /**
-     * @param UrlDataStorage $storage
-     */
     public function merge(UrlDataStorage $storage)
     {
         $this->data = array_replace_recursive($this->data, $storage->getData());

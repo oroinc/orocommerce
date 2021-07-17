@@ -27,10 +27,6 @@ class OroCheckoutBundle implements Migration, RenameExtensionAwareInterface, Ord
         $this->updateCheckoutTable($schema, $queries);
     }
 
-    /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     */
     protected function updateCheckoutTable(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('oro_checkout');
@@ -55,8 +51,6 @@ class OroCheckoutBundle implements Migration, RenameExtensionAwareInterface, Ord
 
     /**
      * Sets the RenameExtension
-     *
-     * @param RenameExtension $renameExtension
      */
     public function setRenameExtension(RenameExtension $renameExtension)
     {

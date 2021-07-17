@@ -46,13 +46,6 @@ class ProductPriceCPLEntityListener implements OptionalListenerInterface, Featur
     /** @var EventDispatcherInterface */
     protected $eventDispatcher;
 
-    /**
-     * @param ExtraActionEntityStorageInterface $extraActionsStorage
-     * @param ManagerRegistry $registry
-     * @param PriceListTriggerHandler $priceListTriggerHandler
-     * @param ShardManager $shardManager
-     * @param EventDispatcherInterface $eventDispatcher
-     */
     public function __construct(
         ExtraActionEntityStorageInterface $extraActionsStorage,
         ManagerRegistry $registry,
@@ -67,9 +60,6 @@ class ProductPriceCPLEntityListener implements OptionalListenerInterface, Featur
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    /**
-     * @param ProductPriceSaveAfterEvent $event
-     */
     public function onSave(ProductPriceSaveAfterEvent $event)
     {
         /** @var ProductPrice $productPrice */
@@ -78,9 +68,6 @@ class ProductPriceCPLEntityListener implements OptionalListenerInterface, Featur
         $this->handleChanges($productPrice);
     }
 
-    /**
-     * @param ProductPriceRemove $event
-     */
     public function onRemove(ProductPriceRemove $event)
     {
         $productPrice = $event->getPrice();
@@ -88,9 +75,6 @@ class ProductPriceCPLEntityListener implements OptionalListenerInterface, Featur
         $this->handleChanges($productPrice);
     }
 
-    /**
-     * @param ProductPrice $productPrice
-     */
     protected function handleChanges(ProductPrice $productPrice)
     {
         if (!$this->enabled || !$this->isProductPriceValid($productPrice)) {
@@ -107,9 +91,6 @@ class ProductPriceCPLEntityListener implements OptionalListenerInterface, Featur
         );
     }
 
-    /**
-     * @param ProductPrice $productPrice
-     */
     protected function addPriceListToProductRelation(ProductPrice $productPrice)
     {
         if (!$this->isProductPriceValid($productPrice)) {
@@ -135,9 +116,6 @@ class ProductPriceCPLEntityListener implements OptionalListenerInterface, Featur
         }
     }
 
-    /**
-     * @param ProductPrice $productPrice
-     */
     protected function removePriceListToProductRelation(ProductPrice $productPrice)
     {
         if (!$this->isProductPriceValid($productPrice)) {
@@ -186,10 +164,6 @@ class ProductPriceCPLEntityListener implements OptionalListenerInterface, Featur
         return $priceList && $product && $priceList->getId() && $product->getId();
     }
 
-    /**
-     * @param string $className
-     * @return ObjectRepository
-     */
     protected function getRepository(string $className): ObjectRepository
     {
         return $this->registry->getManagerForClass($className)->getRepository($className);

@@ -17,11 +17,6 @@ class VisibilityChoiceFilter extends ChoiceFilter
     /** @var ManagerRegistry */
     protected $doctrine;
 
-    /**
-     * @param FormFactoryInterface $factory
-     * @param FilterUtility        $util
-     * @param ManagerRegistry      $doctrine
-     */
     public function __construct(FormFactoryInterface $factory, FilterUtility $util, ManagerRegistry $doctrine)
     {
         parent::__construct($factory, $util);

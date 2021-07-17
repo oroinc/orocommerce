@@ -36,11 +36,6 @@ class SitemapFilesProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @param int $id
-     *
-     * @return WebsiteInterface
-     */
     private function getWebsite(int $id): WebsiteInterface
     {
         $website = $this->createMock(WebsiteInterface::class);
@@ -51,11 +46,6 @@ class SitemapFilesProviderTest extends \PHPUnit\Framework\TestCase
         return $website;
     }
 
-    /**
-     * @param string $fileName
-     *
-     * @return File
-     */
     private function getFile(string $fileName): File
     {
         $file = $this->createMock(File::class);

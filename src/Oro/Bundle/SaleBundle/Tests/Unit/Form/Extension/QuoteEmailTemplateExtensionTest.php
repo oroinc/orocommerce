@@ -75,9 +75,6 @@ class QuoteEmailTemplateExtensionTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider buildFormDataProvider
-     *
-     * @param bool $isFeatureEnabled
-     * @param array $excludeNames
      */
     public function testBuildForm(bool $isFeatureEnabled, array $excludeNames): void
     {
@@ -117,9 +114,6 @@ class QuoteEmailTemplateExtensionTest extends FormIntegrationTestCase
         $this->assertSame($qb, $templateOptions['query_builder']($this->repository));
     }
 
-    /**
-     * @return array
-     */
     public function buildFormDataProvider(): array
     {
         return [
@@ -206,9 +200,6 @@ class QuoteEmailTemplateExtensionTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * @return EmailType
-     */
     private function createEmailType(): EmailType
     {
         /** @var EmailRenderer $emailRenderer */
@@ -226,9 +217,6 @@ class QuoteEmailTemplateExtensionTest extends FormIntegrationTestCase
         );
     }
 
-    /**
-     * @return ContextsSelectType
-     */
     private function createContextsSelectType(): ContextsSelectType
     {
         /** @var EntityConfigManager $configManager */
@@ -247,9 +235,6 @@ class QuoteEmailTemplateExtensionTest extends FormIntegrationTestCase
         );
     }
 
-    /**
-     * @return EmailOriginFromType
-     */
     private function createEmailOriginFromType(): EmailOriginFromType
     {
         /** @var RelatedEmailsProvider $relatedEmailsProvider */

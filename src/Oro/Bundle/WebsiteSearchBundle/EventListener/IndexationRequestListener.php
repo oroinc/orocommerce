@@ -41,12 +41,6 @@ class IndexationRequestListener implements OptionalListenerInterface
      */
     protected $changedEntities;
 
-    /**
-     * @param DoctrineHelper              $doctrineHelper
-     * @param SearchMappingProvider       $mappingProvider
-     * @param EventDispatcherInterface    $dispatcher
-     * @param IndexationEntitiesContainer $changedEntities
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         SearchMappingProvider $mappingProvider,
@@ -59,9 +53,6 @@ class IndexationRequestListener implements OptionalListenerInterface
         $this->changedEntities = $changedEntities;
     }
 
-    /**
-     * @param OnFlushEventArgs $args
-     */
     public function onFlush(OnFlushEventArgs $args)
     {
         if (!$this->enabled) {
@@ -100,9 +91,6 @@ class IndexationRequestListener implements OptionalListenerInterface
         }
     }
 
-    /**
-     * @param AfterFormProcessEvent $event
-     */
     public function beforeEntityFlush(AfterFormProcessEvent $event)
     {
         if (!$this->enabled) {
@@ -119,9 +107,6 @@ class IndexationRequestListener implements OptionalListenerInterface
         $this->scheduleForSendingWithEvent($updatedEntity);
     }
 
-    /**
-     * @param OnClearEventArgs $event
-     */
     public function onClear(OnClearEventArgs $event)
     {
         if (!$event->getEntityClass()) {

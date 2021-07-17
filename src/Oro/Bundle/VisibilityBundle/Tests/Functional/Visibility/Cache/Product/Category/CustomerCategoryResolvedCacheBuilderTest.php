@@ -119,7 +119,6 @@ class CustomerCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCa
         $visibility = $this->getVisibility();
         $visibility->setVisibility(CustomerCategoryVisibility::CATEGORY);
 
-
         $customerCategoryVisibility = $this->getVisibility();
         $customerCategoryVisibility->setVisibility(CustomerCategoryVisibility::CATEGORY);
         $em = $this->registry->getManagerForClass(CustomerCategoryVisibility::class);
@@ -182,7 +181,6 @@ class CustomerCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCa
 
     /**
      * @dataProvider buildCacheDataProvider
-     * @param array $expectedVisibilities
      */
     public function testBuildCache(array $expectedVisibilities)
     {

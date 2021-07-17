@@ -10,9 +10,6 @@ class GzipSitemapFileWriter implements SitemapFileWriterInterface
     /** @var SitemapFileWriterInterface */
     private $sitemapFileWriter;
 
-    /**
-     * @param SitemapFileWriterInterface $sitemapFileWriter
-     */
     public function __construct(SitemapFileWriterInterface $sitemapFileWriter)
     {
         $this->sitemapFileWriter = $sitemapFileWriter;

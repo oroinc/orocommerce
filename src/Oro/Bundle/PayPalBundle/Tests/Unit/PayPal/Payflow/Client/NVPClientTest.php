@@ -140,9 +140,6 @@ class NVPClientTest extends TestCase
 
     /**
      * @dataProvider connectionOptionsDataProvider
-     *
-     * @param array $connectionOptions
-     * @param array $expectedClientOptions
      */
     public function testConnectionOptionsArePassedToHttpClient(array $connectionOptions, array $expectedClientOptions)
     {

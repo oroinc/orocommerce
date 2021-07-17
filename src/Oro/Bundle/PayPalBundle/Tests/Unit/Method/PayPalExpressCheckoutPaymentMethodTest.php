@@ -958,7 +958,6 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
             ->setCountryIso2('US');
     }
 
-
     /**
      * @return array
      */

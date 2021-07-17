@@ -34,13 +34,6 @@ class ContentBlockView
      */
     private $contentStyle;
 
-    /**
-     * @param string $alias
-     * @param Collection $titles
-     * @param bool $enabled
-     * @param string $content
-     * @param string $contentStyle
-     */
     public function __construct(
         string $alias,
         Collection $titles,

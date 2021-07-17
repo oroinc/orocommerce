@@ -53,12 +53,6 @@ class BatchResetPriceRuleField implements ProcessorInterface
         }
     }
 
-    /**
-     * @param ProductPrice $productPrice1
-     * @param ProductPrice $productPrice2
-     *
-     * @return bool
-     */
     private function needToResetPriceRule(ProductPrice $productPrice1, ProductPrice $productPrice2): bool
     {
         return

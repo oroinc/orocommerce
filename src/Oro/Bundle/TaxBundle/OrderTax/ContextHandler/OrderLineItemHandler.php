@@ -46,9 +46,6 @@ class OrderLineItemHandler
         $this->orderLineItemClass = $orderLineItemClass;
     }
 
-    /**
-     * @param ContextEvent $contextEvent
-     */
     public function onContextEvent(ContextEvent $contextEvent)
     {
         /** @var OrderLineItem $lineItem */

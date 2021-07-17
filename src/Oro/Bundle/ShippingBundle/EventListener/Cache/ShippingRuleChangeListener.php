@@ -22,9 +22,6 @@ class ShippingRuleChangeListener
      */
     private $executed = false;
 
-    /**
-     * @param ShippingPriceCache $priceCache
-     */
     public function __construct(ShippingPriceCache $priceCache)
     {
         $this->priceCache = $priceCache;

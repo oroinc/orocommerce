@@ -61,9 +61,6 @@ class AppliedPromotionNormalizerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider normalizeDataProvider
-     *
-     * @param PromotionDataInterface $promotion
-     * @param array $expected
      */
     public function testNormalize(
         PromotionDataInterface $promotion,
@@ -334,7 +331,6 @@ class AppliedPromotionNormalizerTest extends \PHPUnit\Framework\TestCase
 
         $this->normalizer->denormalize($ruleData);
     }
-
 
     public function testInvalidArgumentException()
     {

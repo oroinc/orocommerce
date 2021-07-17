@@ -35,9 +35,6 @@ class CouponCodeLengthValidatorTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider validateDataProvider
-     *
-     * @param CodeGenerationOptions $entity
-     * @param bool $violationExpected
      */
     public function testValidate(CodeGenerationOptions $entity, bool $violationExpected)
     {

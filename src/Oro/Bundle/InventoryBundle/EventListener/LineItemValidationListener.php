@@ -18,17 +18,11 @@ class LineItemValidationListener
      */
     protected $validatorService;
 
-    /**
-     * @param QuantityToOrderValidatorService $quantityValidator
-     */
     public function __construct(QuantityToOrderValidatorService $quantityValidator)
     {
         $this->validatorService = $quantityValidator;
     }
 
-    /**
-     * @param LineItemValidateEvent $event
-     */
     public function onLineItemValidate(LineItemValidateEvent $event)
     {
         $lineItems = $event->getLineItems();

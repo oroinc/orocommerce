@@ -38,8 +38,6 @@ class ProductSelectGridTest extends WebTestCase
 
     /**
      * @dataProvider sorterProvider
-     * @param array $sortBy
-     * @param array $expectedResult
      */
     public function testGridCanBeSorted(array $sortBy, array $expectedResult)
     {
@@ -81,9 +79,6 @@ class ProductSelectGridTest extends WebTestCase
         $this->assertSame($expectedResult, $productNames);
     }
 
-    /**
-     * @return array
-     */
     public function sorterProvider(): array
     {
         return [
@@ -138,9 +133,6 @@ class ProductSelectGridTest extends WebTestCase
         ];
     }
 
-    /**
-     * @return array
-     */
     public function filterProvider(): array
     {
         return [

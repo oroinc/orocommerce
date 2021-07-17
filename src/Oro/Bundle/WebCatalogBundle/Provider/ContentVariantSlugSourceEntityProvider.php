@@ -28,10 +28,6 @@ class ContentVariantSlugSourceEntityProvider implements SlugSourceEntityProvider
      */
     protected $websiteManager;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param WebsiteManager $websiteManager
-     */
     public function __construct(ManagerRegistry $registry, WebsiteManager $websiteManager)
     {
         $this->registry = $registry;

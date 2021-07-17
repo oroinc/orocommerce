@@ -47,8 +47,6 @@ class ProductVisibilityRepositoryTest extends AbstractProductVisibilityRepositor
 
     /**
      * @dataProvider setToDefaultWithoutCategoryDataProvider
-     * @param $categoryName
-     * @param array $expected
      */
     public function testSetToDefaultWithoutCategory($categoryName, array $expected)
     {

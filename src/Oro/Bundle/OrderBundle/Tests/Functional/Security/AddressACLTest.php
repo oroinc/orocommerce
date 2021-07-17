@@ -42,9 +42,6 @@ class AddressACLTest extends AbstractAddressACLTest
 
     /**
      * @dataProvider checkShippingAddressesDataProvider
-     * @param array $permissions
-     * @param array $capabilities
-     * @param array $expected
      */
     public function testCheckShippingAddresses(array $permissions, array $capabilities, array $expected)
     {
@@ -549,9 +546,6 @@ class AddressACLTest extends AbstractAddressACLTest
 
     /**
      * @dataProvider checkBillingAddressesDataProvider
-     * @param array $permissions
-     * @param array $capabilities
-     * @param array $expected
      */
     public function testCheckBillingAddresses(array $permissions, array $capabilities, array $expected)
     {

@@ -18,12 +18,6 @@ class LocaleSettings extends FrontendLocaleSettings
      */
     protected $currencyManager;
 
-    /**
-     * @param BaseLocaleSettings $inner
-     * @param FrontendHelper $frontendHelper
-     * @param UserLocalizationManagerInterface $localizationManager
-     * @param UserCurrencyManager $currencyManager
-     */
     public function __construct(
         BaseLocaleSettings $inner,
         FrontendHelper $frontendHelper,

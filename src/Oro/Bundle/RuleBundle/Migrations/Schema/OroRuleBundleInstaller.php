@@ -33,8 +33,6 @@ class OroRuleBundleInstaller implements Installation
 
     /**
      * Create oro_rule table
-     *
-     * @param Schema $schema
      */
     protected function createOroRuleTable(Schema $schema)
     {

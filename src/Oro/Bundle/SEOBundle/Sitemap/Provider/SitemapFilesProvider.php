@@ -24,11 +24,6 @@ class SitemapFilesProvider implements UrlItemsProviderInterface
     /** @var string */
     private $webPath;
 
-    /**
-     * @param SitemapFilesystemAdapter $filesystemAdapter
-     * @param CanonicalUrlGenerator    $canonicalUrlGenerator
-     * @param string                   $webPath
-     */
     public function __construct(
         SitemapFilesystemAdapter $filesystemAdapter,
         CanonicalUrlGenerator $canonicalUrlGenerator,
@@ -64,12 +59,6 @@ class SitemapFilesProvider implements UrlItemsProviderInterface
         }
     }
 
-    /**
-     * @param WebsiteInterface $website
-     * @param string           $url
-     *
-     * @return string
-     */
     protected function getSitemapFileUrl(WebsiteInterface $website, string $url): string
     {
         $domainUrl = rtrim($this->canonicalUrlGenerator->getCanonicalDomainUrl($website), '/');

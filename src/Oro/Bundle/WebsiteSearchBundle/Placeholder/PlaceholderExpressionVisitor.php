@@ -14,9 +14,6 @@ class PlaceholderExpressionVisitor extends ExpressionVisitor
      */
     private $placeholder;
 
-    /**
-     * @param PlaceholderInterface $placeholder
-     */
     public function __construct(PlaceholderInterface $placeholder)
     {
         $this->placeholder = $placeholder;

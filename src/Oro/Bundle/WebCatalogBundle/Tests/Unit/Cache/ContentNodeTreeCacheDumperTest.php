@@ -28,7 +28,6 @@ class ContentNodeTreeCacheDumperTest extends \PHPUnit\Framework\TestCase
     /** @var WebCatalogRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $webCatalogRepository;
 
-    /** @var ContentNodeTreeCacheDumper */
     private ContentNodeTreeCacheDumper $dumper;
 
     protected function setUp(): void

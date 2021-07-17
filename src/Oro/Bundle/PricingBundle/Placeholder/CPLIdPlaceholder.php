@@ -28,10 +28,6 @@ class CPLIdPlaceholder extends AbstractPlaceholder implements FeatureToggleableI
      */
     private $tokenStorage;
 
-    /**
-     * @param CombinedPriceListTreeHandler $priceListTreeHandler
-     * @param TokenStorageInterface $tokenStorage
-     */
     public function __construct(CombinedPriceListTreeHandler $priceListTreeHandler, TokenStorageInterface $tokenStorage)
     {
         $this->priceListTreeHandler = $priceListTreeHandler;

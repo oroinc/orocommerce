@@ -44,17 +44,11 @@ class ProductVisibilityVoter extends AbstractEntityVoter
             : self::ACCESS_DENIED;
     }
 
-    /**
-     * @param FrontendHelper $frontendHelper
-     */
     public function setFrontendHelper(FrontendHelper $frontendHelper): void
     {
         $this->frontendHelper = $frontendHelper;
     }
 
-    /**
-     * @param ResolvedProductVisibilityProvider|null $resolvedProductVisibilityProvider
-     */
     public function setResolvedProductVisibilityProvider(
         ?ResolvedProductVisibilityProvider $resolvedProductVisibilityProvider
     ): void {

@@ -39,11 +39,6 @@ class ProductDBQueryRestrictionEventListener
      */
     protected $event;
 
-    /**
-     * @param ConfigManager $configManager
-     * @param ProductVisibilityQueryBuilderModifier $modifier
-     * @param FrontendHelper $helper
-     */
     public function __construct(
         ConfigManager $configManager,
         ProductVisibilityQueryBuilderModifier $modifier,
@@ -70,9 +65,6 @@ class ProductDBQueryRestrictionEventListener
         $this->backendSystemConfigurationPath = $backendSystemConfigurationPath;
     }
 
-    /**
-     * @param ProductDBQueryRestrictionEvent $event
-     */
     public function onDBQuery(ProductDBQueryRestrictionEvent $event)
     {
         $this->event = $event;

@@ -29,10 +29,6 @@ class ContentBlockRenderer implements LoggerAwareInterface
     /** @var Template|null */
     private $template;
 
-    /**
-     * @param ContentBlockDataProvider $contentBlockDataProvider
-     * @param Environment $twig
-     */
     public function __construct(ContentBlockDataProvider $contentBlockDataProvider, Environment $twig)
     {
         $this->contentBlockDataProvider = $contentBlockDataProvider;
@@ -40,18 +36,11 @@ class ContentBlockRenderer implements LoggerAwareInterface
         $this->logger = new NullLogger();
     }
 
-    /**
-     * @param LoggerInterface $logger
-     */
     public function setLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
     }
 
-    /**
-     * @param string $blockAlias
-     * @return string
-     */
     public function render(string $blockAlias): string
     {
         $content = '';
@@ -80,9 +69,6 @@ class ContentBlockRenderer implements LoggerAwareInterface
         return $content;
     }
 
-    /**
-     * @return Template
-     */
     private function getTemplate(): Template
     {
         if (!$this->template) {

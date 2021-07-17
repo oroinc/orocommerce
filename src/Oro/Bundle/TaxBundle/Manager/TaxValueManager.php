@@ -159,9 +159,6 @@ class TaxValueManager
             ->findOneBy(['entityClass' => $entityClass, 'entityId' => $entityId]);
     }
 
-    /**
-     * @param TaxValue $taxValue
-     */
     public function saveTaxValue(TaxValue $taxValue)
     {
         $em = $this->getTaxValueEntityManager();

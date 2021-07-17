@@ -198,13 +198,6 @@ class DatagridLineItemsDataPricingListenerTest extends \PHPUnit\Framework\TestCa
         );
     }
 
-    /**
-     * @param int $id
-     * @param int $quantity
-     * @param string $unit
-     * @param float|null $price
-     * @return ProductLineItemInterface
-     */
     private function getLineItem(int $id, int $quantity, string $unit, float $price = null): ProductLineItemInterface
     {
         $product = $this->getEntity(Product::class, ['id' => $id * 10]);

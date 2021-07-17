@@ -96,9 +96,6 @@ class LoadConsentDemoData extends AbstractLoadWebCatalogDemoData implements Depe
         return $consent;
     }
 
-    /**
-     * @param ObjectManager $manager
-     */
     public function load(ObjectManager $manager)
     {
         $webCatalog = $this->getWebCatalog($manager);

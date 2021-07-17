@@ -22,9 +22,6 @@ class ProductSegmentContentWidgetType implements ContentWidgetTypeInterface
     /** @var int */
     private $instanceNumber = 0;
 
-    /**
-     * @param ManagerRegistry $registry
-     */
     public function __construct(ManagerRegistry $registry)
     {
         $this->registry = $registry;

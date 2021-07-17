@@ -28,11 +28,6 @@ class FeaturedCategoriesProvider
     /** @var int */
     private $cacheLifeTime;
 
-    /**
-     * @param CategoriesProvider $categoryTreeProvider
-     * @param TokenAccessor $tokenAccessor
-     * @param LocalizationHelper $localizationHelper
-     */
     public function __construct(
         CategoriesProvider $categoryTreeProvider,
         TokenAccessor $tokenAccessor,

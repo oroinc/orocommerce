@@ -40,9 +40,6 @@ class RoundingResolver implements ResolverInterface
         }
     }
 
-    /**
-     * @param AbstractResultElement $result
-     */
     public function round(AbstractResultElement $result)
     {
         foreach ($result as $key => $value) {

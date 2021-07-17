@@ -24,11 +24,6 @@ class ProductFormAvailabilityProvider
 
     const POPUP_PRODUCT_VIEWS = ['gallery-view'];
 
-    /**
-     * @param ConfigManager $configManager
-     * @param ProductMatrixAvailabilityProvider $productMatrixAvailabilityProvider
-     * @param UserAgentProvider $userAgentProvider
-     */
     public function __construct(
         ConfigManager $configManager,
         ProductMatrixAvailabilityProvider $productMatrixAvailabilityProvider,

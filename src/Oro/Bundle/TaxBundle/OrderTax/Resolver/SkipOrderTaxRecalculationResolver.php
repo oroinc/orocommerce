@@ -26,26 +26,16 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class SkipOrderTaxRecalculationResolver implements ResolverInterface
 {
-    /** @var ManagerRegistry */
     private ManagerRegistry $doctrine;
 
-    /** @var TaxManager */
     private TaxManager $taxManager;
 
-    /** @var FrontendHelper */
     private FrontendHelper $frontendHelper;
 
-    /** @var array */
     private array $orderRequiresTaxRecalculation = [];
 
-    /** @var EventDispatcherInterface */
     private EventDispatcherInterface $eventDispatcher;
 
-    /**
-     * @param ManagerRegistry $doctrine
-     * @param TaxManager $taxManager
-     * @param FrontendHelper $frontendHelper
-     */
     public function __construct(ManagerRegistry $doctrine, TaxManager $taxManager, FrontendHelper $frontendHelper)
     {
         $this->doctrine = $doctrine;
@@ -53,9 +43,6 @@ class SkipOrderTaxRecalculationResolver implements ResolverInterface
         $this->frontendHelper = $frontendHelper;
     }
 
-    /**
-     * @param EventDispatcherInterface $eventDispatcher
-     */
     public function setEventDispatcher(EventDispatcherInterface $eventDispatcher): void
     {
         $this->eventDispatcher = $eventDispatcher;
@@ -94,10 +81,6 @@ class SkipOrderTaxRecalculationResolver implements ResolverInterface
     }
 
     /**
-     * @param UnitOfWork $uow
-     * @param Order      $order
-     * @param Taxable    $taxable
-     *
      * @throws StopPropagationException
      * @throws TaxationDisabledException
      */
@@ -123,8 +106,6 @@ class SkipOrderTaxRecalculationResolver implements ResolverInterface
     }
 
     /**
-     * @param UnitOfWork    $uow
-     * @param OrderLineItem $orderLineItem
      * @throws StopPropagationException
      */
     private function resolveOrderLineItemTaxable(UnitOfWork $uow, OrderLineItem $orderLineItem)
@@ -144,11 +125,6 @@ class SkipOrderTaxRecalculationResolver implements ResolverInterface
         throw new StopPropagationException();
     }
 
-    /**
-     * @param Order $order
-     * @param UnitOfWork $uow
-     * @return bool
-     */
     private function isOrderTaxRecalculationRequiredCached(Order $order, UnitOfWork $uow): bool
     {
         $orderId = $order->getId();
@@ -163,11 +139,6 @@ class SkipOrderTaxRecalculationResolver implements ResolverInterface
         return $this->orderRequiresTaxRecalculation[$orderId];
     }
 
-    /**
-     * @param Order $order
-     * @param UnitOfWork $uow
-     * @return bool
-     */
     private function isOrderTaxRecalculationRequired(Order $order, UnitOfWork $uow): bool
     {
         $specification = new OrderRequiredTaxRecalculationSpecification($uow);
@@ -204,10 +175,6 @@ class SkipOrderTaxRecalculationResolver implements ResolverInterface
         }
     }
 
-    /**
-     * @param Taxable $taxable
-     * @param Order $order
-     */
     private function loadTaxItems(Taxable $taxable, Order $order): void
     {
         $taxResult = $taxable->getResult();

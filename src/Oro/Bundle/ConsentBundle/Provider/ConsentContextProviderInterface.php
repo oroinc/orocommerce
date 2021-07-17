@@ -11,9 +11,6 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  */
 interface ConsentContextProviderInterface
 {
-    /**
-     * @param Website $website
-     */
     public function setWebsite(Website $website);
 
     /**

@@ -12,9 +12,6 @@ class ModelEvent extends Event
      */
     protected $model;
 
-    /**
-     * @param ModelInterface $model
-     */
     public function __construct(ModelInterface $model)
     {
         $this->setModel($model);
@@ -28,9 +25,6 @@ class ModelEvent extends Event
         return $this->model;
     }
 
-    /**
-     * @param ModelInterface $model
-     */
     public function setModel(ModelInterface $model)
     {
         $this->model = $model;

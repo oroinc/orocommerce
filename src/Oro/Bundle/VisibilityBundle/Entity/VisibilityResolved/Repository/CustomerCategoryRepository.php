@@ -205,9 +205,6 @@ class CustomerCategoryRepository extends EntityRepository
             ->execute();
     }
 
-    /**
-     * @param InsertFromSelectQueryExecutor $insertExecutor
-     */
     public function insertStaticValues(InsertFromSelectQueryExecutor $insertExecutor)
     {
         $visibilityCondition = sprintf(
@@ -239,9 +236,6 @@ class CustomerCategoryRepository extends EntityRepository
         );
     }
 
-    /**
-     * @param InsertFromSelectQueryExecutor $insertExecutor
-     */
     public function insertCategoryValues(InsertFromSelectQueryExecutor $insertExecutor)
     {
         $visibilityCondition = sprintf(

@@ -13,9 +13,6 @@ class ProductGridWidgetRenderEvent extends Event
      */
     protected $widgetRouteParameters = [];
 
-    /**
-     * @param array $widgetRouteParameters
-     */
     public function __construct(array $widgetRouteParameters)
     {
         $this->widgetRouteParameters = $widgetRouteParameters;

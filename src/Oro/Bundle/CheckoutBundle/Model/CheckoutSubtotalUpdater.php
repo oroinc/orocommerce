@@ -29,11 +29,6 @@ class CheckoutSubtotalUpdater
     /** @var int */
     private $batchSize = self::BATCH_COUNT;
 
-    /**
-     * @param ManagerRegistry $managerRegistry
-     * @param CheckoutSubtotalProvider $subtotalProvider
-     * @param UserCurrencyManager $currencyManager
-     */
     public function __construct(
         ManagerRegistry $managerRegistry,
         CheckoutSubtotalProvider $subtotalProvider,
@@ -90,9 +85,6 @@ class CheckoutSubtotalUpdater
     /**
      * Prepare subtotals collection for all enabled system currencies. Old subtotals of checkout will be updated.
      * If for some currencies there are no ssubtotals they will be created.
-     *
-     * @param Checkout $checkout
-     * @param array $enabledCurrencies
      */
     protected function processCheckoutSubtotals(Checkout $checkout, array $enabledCurrencies)
     {

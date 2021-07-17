@@ -53,13 +53,6 @@ class UrlCacheMassJobProcessor implements MessageProcessorInterface, TopicSubscr
      */
     private $batchSize = self::BATCH_SIZE;
 
-    /**
-     * @param JobRunner $jobRunner
-     * @param MessageProducerInterface $producer
-     * @param ManagerRegistry $registry
-     * @param LoggerInterface $logger
-     * @param UrlCacheInterface $cache
-     */
     public function __construct(
         JobRunner $jobRunner,
         MessageProducerInterface $producer,

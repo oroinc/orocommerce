@@ -47,7 +47,6 @@ class RuleType extends AbstractType
     }
 
     /**
-     * @param OptionsResolver $resolver
      * @throws AccessException
      */
     public function configureOptions(OptionsResolver $resolver)

@@ -37,7 +37,6 @@ class ProductImageListenerTest extends WebTestCase
 
         $this->em = $this->getContainer()->get('doctrine')->getManagerForClass(ProductImage::class);
 
-
         $this->getOptionalListenerManager()->enableListener('oro_product.event_listener.product_image_resize_listener');
         $this->getOptionalListenerManager()->enableListener('oro_redirect.event_listener.slug_prototype_change');
         $this->getOptionalListenerManager()->enableListener('oro_redirect.event_listener.slug_change');

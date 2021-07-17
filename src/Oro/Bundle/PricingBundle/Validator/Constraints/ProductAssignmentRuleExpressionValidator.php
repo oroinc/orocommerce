@@ -27,10 +27,6 @@ class ProductAssignmentRuleExpressionValidator extends ConstraintValidator
      */
     private $isDebug;
 
-    /**
-     * @param ProductAssignmentRuleCompiler $compiler
-     * @param bool $isDebug
-     */
     public function __construct(
         ProductAssignmentRuleCompiler $compiler,
         bool $isDebug = false

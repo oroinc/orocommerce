@@ -24,10 +24,6 @@ class PayPalConfigToSettingsConverter
         return $settings;
     }
 
-    /**
-     * @param PayPalSettings $settings
-     * @param PayPalConfig   $config
-     */
     private function moveCreditCardDisplayOptionsData(PayPalSettings $settings, PayPalConfig $config)
     {
         $settings->addCreditCardLabel($config->getCreditCardLabel());
@@ -38,10 +34,6 @@ class PayPalConfigToSettingsConverter
         }
     }
 
-    /**
-     * @param PayPalSettings $settings
-     * @param PayPalConfig   $config
-     */
     private function moveIntegrationSettingsData(PayPalSettings $settings, PayPalConfig $config)
     {
         $settings->setPartner($config->getPartner());
@@ -55,10 +47,6 @@ class PayPalConfigToSettingsConverter
         }
     }
 
-    /**
-     * @param PayPalSettings $settings
-     * @param PayPalConfig   $config
-     */
     private function moveConnectionSettingsData(PayPalSettings $settings, PayPalConfig $config)
     {
         $useProxy = $config->getUseProxy();
@@ -75,10 +63,6 @@ class PayPalConfigToSettingsConverter
         }
     }
 
-    /**
-     * @param PayPalSettings $settings
-     * @param PayPalConfig   $config
-     */
     private function moveAdvancedSettingsData(PayPalSettings $settings, PayPalConfig $config)
     {
         $settings->setCreditCardPaymentAction($config->getCreditCardPaymentAction());
@@ -104,10 +88,6 @@ class PayPalConfigToSettingsConverter
         }
     }
 
-    /**
-     * @param PayPalSettings $settings
-     * @param PayPalConfig   $config
-     */
     private function moveExpressCheckoutData(PayPalSettings $settings, PayPalConfig $config)
     {
         $expressCheckoutLabel = $config->getExpressCheckoutLabel();

@@ -19,10 +19,6 @@ class BasicMethodsConfigsRulesFiltrationService implements MethodsConfigsRulesFi
      */
     private $paymentContextToRulesValueConverter;
 
-    /**
-     * @param RuleFiltrationServiceInterface       $filtrationService
-     * @param PaymentContextToRulesValueConverterInterface $converter
-     */
     public function __construct(
         RuleFiltrationServiceInterface $filtrationService,
         PaymentContextToRulesValueConverterInterface $converter

@@ -18,19 +18,12 @@ class ProductVisibilityPostSubmitListener
      */
     protected $registry;
 
-    /**
-     * @param VisibilityFormPostSubmitDataHandler $postSubmitDataHandler
-     * @param ManagerRegistry $registry
-     */
     public function __construct(VisibilityFormPostSubmitDataHandler $postSubmitDataHandler, ManagerRegistry $registry)
     {
         $this->postSubmitDataHandler = $postSubmitDataHandler;
         $this->registry = $registry;
     }
 
-    /**
-     * @param AfterFormProcessEvent $event
-     */
     public function onPostSubmit(AfterFormProcessEvent $event)
     {
         $form = $event->getForm();

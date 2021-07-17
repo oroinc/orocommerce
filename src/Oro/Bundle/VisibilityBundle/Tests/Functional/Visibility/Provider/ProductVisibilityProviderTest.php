@@ -376,11 +376,6 @@ class ProductVisibilityProviderTest extends WebTestCase
         return $items;
     }
 
-    /**
-     * @param array $a
-     * @param array $b
-     * @return int
-     */
     private function compare(array $a, array $b): int
     {
         if ($a['productId'] === $b['productId']) {

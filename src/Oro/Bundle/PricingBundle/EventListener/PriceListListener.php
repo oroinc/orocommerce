@@ -48,11 +48,6 @@ class PriceListListener implements FeatureToggleableInterface
      */
     protected $priceRuleLexemeHandler;
 
-    /**
-     * @param CombinedPriceListActivationPlanBuilder $activationPlanBuilder
-     * @param PriceListRelationTriggerHandler $triggerHandler
-     * @param PriceRuleLexemeHandler $priceRuleLexemeHandler
-     */
     public function __construct(
         CombinedPriceListActivationPlanBuilder $activationPlanBuilder,
         PriceListRelationTriggerHandler $triggerHandler,
@@ -63,9 +58,6 @@ class PriceListListener implements FeatureToggleableInterface
         $this->priceRuleLexemeHandler = $priceRuleLexemeHandler;
     }
 
-    /**
-     * @param FormProcessEvent $event
-     */
     public function beforeSubmit(FormProcessEvent $event)
     {
         /** @var PriceList $priceList */
@@ -79,9 +71,6 @@ class PriceListListener implements FeatureToggleableInterface
         }
     }
 
-    /**
-     * @param AfterFormProcessEvent $event
-     */
     public function onPostSubmit(AfterFormProcessEvent $event)
     {
         /** @var PriceList $priceList */
@@ -89,9 +78,6 @@ class PriceListListener implements FeatureToggleableInterface
         $this->priceRuleLexemeHandler->updateLexemes($priceList);
     }
 
-    /**
-     * @param AfterFormProcessEvent $event
-     */
     public function afterFlush(AfterFormProcessEvent $event)
     {
         /** @var PriceList $priceList */

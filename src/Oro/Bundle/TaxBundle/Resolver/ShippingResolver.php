@@ -39,12 +39,6 @@ class ShippingResolver implements ResolverInterface
      */
     protected $taxationSettingsProvider;
 
-    /**
-     * @param TaxCalculatorInterface $incTaxCalculator
-     * @param TaxCalculatorInterface $excTaxCalculator
-     * @param MatcherInterface $matcher
-     * @param TaxationSettingsProvider $taxationSettingsProvider
-     */
     public function __construct(
         TaxCalculatorInterface $incTaxCalculator,
         TaxCalculatorInterface $excTaxCalculator,

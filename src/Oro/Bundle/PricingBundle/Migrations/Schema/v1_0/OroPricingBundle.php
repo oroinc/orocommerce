@@ -34,9 +34,6 @@ class OroPricingBundle implements Migration, ActivityExtensionAwareInterface
         $this->addOroPriceProductForeignKeys($schema);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function createOrob2BPriceListCurrencyTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_price_list_currency');
@@ -46,9 +43,6 @@ class OroPricingBundle implements Migration, ActivityExtensionAwareInterface
         $table->setPrimaryKey(['id']);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function createOrob2BPriceListTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_price_list');
@@ -62,9 +56,6 @@ class OroPricingBundle implements Migration, ActivityExtensionAwareInterface
         $this->activityExtension->addActivityAssociation($schema, 'oro_note', 'orob2b_price_list');
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function createOroPriceProductTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_price_product');
@@ -83,9 +74,6 @@ class OroPricingBundle implements Migration, ActivityExtensionAwareInterface
         $table->setPrimaryKey(['id']);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function createOrob2BPriceListIntersectionTables(Schema $schema)
     {
         $table = $schema->createTable('orob2b_price_list_to_website');
@@ -107,9 +95,6 @@ class OroPricingBundle implements Migration, ActivityExtensionAwareInterface
         $table->addUniqueIndex(['account_group_id']);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addOrob2BPriceListCurrencyForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_price_list_currency');
@@ -121,9 +106,6 @@ class OroPricingBundle implements Migration, ActivityExtensionAwareInterface
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addOrob2BPriceListToWebsiteForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_price_list_to_website');
@@ -141,9 +123,6 @@ class OroPricingBundle implements Migration, ActivityExtensionAwareInterface
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addOrob2BPriceListToAccountForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_price_list_to_account');
@@ -161,9 +140,6 @@ class OroPricingBundle implements Migration, ActivityExtensionAwareInterface
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addOrob2BPriceListToAccountGroupForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_price_list_to_c_group');
@@ -181,9 +157,6 @@ class OroPricingBundle implements Migration, ActivityExtensionAwareInterface
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addOroPriceProductForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_price_product');

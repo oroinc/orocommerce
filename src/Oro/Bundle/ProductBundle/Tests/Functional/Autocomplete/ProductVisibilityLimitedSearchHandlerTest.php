@@ -54,9 +54,6 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
 
     /**
      * @dataProvider frontendVisibilityDataProvider
-     * @param string $query
-     * @param string $searchHandlerName
-     * @param array $expectedProducts
      */
     public function testFrontendVisibility(string $query, string $searchHandlerName, array $expectedProducts): void
     {
@@ -99,9 +96,6 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
         );
     }
 
-    /**
-     * @return array
-     */
     public function frontendVisibilityDataProvider(): array
     {
         return [
@@ -131,8 +125,6 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
 
     /**
      * @dataProvider backendVisibilityDataProvider
-     * @param string $searchHandlerName
-     * @param array $expectedProducts
      */
     public function testBackendVisibility(string $searchHandlerName, array $expectedProducts): void
     {
@@ -176,9 +168,6 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
         );
     }
 
-    /**
-     * @return array
-     */
     public function backendVisibilityDataProvider(): array
     {
         return [
@@ -283,17 +272,11 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
         }
     }
 
-    /**
-     * @param Event $event
-     */
     public function eventCatcher(Event $event)
     {
         $this->firedEvent = $event;
     }
 
-    /**
-     * @param string $localizationCode
-     */
     private function changeLocalization(string $localizationCode): void
     {
         $localization = $this->getReference($localizationCode);
@@ -303,9 +286,6 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
             ->setCurrentLocalization($localization);
     }
 
-    /**
-     * @return ProductVisibilityLimitedSearchHandler
-     */
     private function getSearchHandler(): ProductVisibilityLimitedSearchHandler
     {
         return $this->client->getContainer()
@@ -313,11 +293,6 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
             ->getSearchHandler('oro_product_visibility_limited');
     }
 
-    /**
-     * @param array $productConstants
-     * @param array $results
-     * @return void
-     */
     private function assertResultForProducts(array $productConstants, array $results): void
     {
         static::assertCount(\count($productConstants), $results);

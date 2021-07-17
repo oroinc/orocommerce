@@ -18,10 +18,6 @@ class DatagridLineItemsDataViolationsListener extends BaseListener
     /** @var CheckoutWorkflowHelper */
     private $checkoutWorkflowHelper;
 
-    /**
-     * @param LineItemViolationsProvider $violationsProvider
-     * @param CheckoutWorkflowHelper $checkoutWorkflowHelper
-     */
     public function __construct(
         LineItemViolationsProvider $violationsProvider,
         CheckoutWorkflowHelper $checkoutWorkflowHelper

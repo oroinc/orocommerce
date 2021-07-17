@@ -16,19 +16,12 @@ class OrderStatusListener
     /** @var ManagerRegistry */
     protected $registry;
 
-    /**
-     * @param OrderConfigurationProviderInterface $configurationProvider
-     * @param ManagerRegistry $registry
-     */
     public function __construct(OrderConfigurationProviderInterface $configurationProvider, ManagerRegistry $registry)
     {
         $this->configurationProvider = $configurationProvider;
         $this->registry = $registry;
     }
 
-    /**
-     * @param Order $entity
-     */
     public function prePersist(Order $entity)
     {
         if (!$entity->getInternalStatus()) {

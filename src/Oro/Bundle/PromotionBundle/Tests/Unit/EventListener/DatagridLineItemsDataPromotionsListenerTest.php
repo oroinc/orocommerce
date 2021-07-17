@@ -310,13 +310,6 @@ class DatagridLineItemsDataPromotionsListenerTest extends \PHPUnit\Framework\Tes
         );
     }
 
-    /**
-     * @param int $id
-     * @param string $sku
-     * @param string $unitCode
-     * @param float $quantity
-     * @return LineItem
-     */
     private function getLineItem(int $id, string $sku, string $unitCode, float $quantity): LineItem
     {
         $product = new Product();

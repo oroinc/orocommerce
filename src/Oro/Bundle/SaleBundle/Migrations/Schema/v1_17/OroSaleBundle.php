@@ -27,9 +27,6 @@ class OroSaleBundle implements Migration
         $this->addQuoteDemandCustomerVisitor($schema);
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function addQuoteDemandCustomerVisitor(Schema $schema)
     {
         $table = $schema->getTable('oro_quote_demand');

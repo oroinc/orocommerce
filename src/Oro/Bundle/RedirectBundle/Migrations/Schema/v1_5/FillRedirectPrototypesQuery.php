@@ -89,10 +89,6 @@ class FillRedirectPrototypesQuery extends ParametrizedMigrationQuery
         }
     }
 
-    /**
-     * @param LoggerInterface $logger
-     * @return array
-     */
     private function getScope(LoggerInterface $logger): array
     {
         $query = 'SELECT MIN(id) AS start, MAX(id) AS end FROM oro_redirect LIMIT 1';

@@ -35,8 +35,6 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
 
     /**
      * @dataProvider modifyByStatusDataProvider
-     * @param array $statuses
-     * @param array $expected
      */
     public function testModifyByStatus(array $statuses, array $expected)
     {
@@ -96,8 +94,6 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
 
     /**
      * @dataProvider modifyByInventoryStatusDataProvider
-     * @param array $statuses
-     * @param array $expected
      */
     public function testModifyByInventoryStatus(array $statuses, array $expected)
     {

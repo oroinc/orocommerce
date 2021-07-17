@@ -44,11 +44,6 @@ class UniqueSlugResolver
      */
     private $processedUrls = [];
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param AclHelper $aclHelper
-     * @param EventDispatcherInterface $eventDispatcher
-     */
     public function __construct(
         ManagerRegistry $registry,
         AclHelper $aclHelper,
@@ -147,11 +142,6 @@ class UniqueSlugResolver
         return sprintf(self::SLUG_INCREMENT_PATTERN, preg_quote($slug, '/'));
     }
 
-    /**
-     * @param string $slug
-     * @param SluggableInterface $entity
-     * @return bool
-     */
     private function hasExistingSlug(string $slug, SluggableInterface $entity): bool
     {
         if ($this->hasUrlDuplicateWithinBatch($slug, $entity)) {
@@ -177,11 +167,6 @@ class UniqueSlugResolver
         );
     }
 
-    /**
-     * @param string $slug
-     * @param SluggableInterface $entity
-     * @return array
-     */
     private function findProcessedUrls(string $slug, SluggableInterface $entity): array
     {
         $foundUrls = [];
@@ -195,31 +180,17 @@ class UniqueSlugResolver
         return $foundUrls;
     }
 
-    /**
-     * @param SluggableInterface $entity
-     * @return string
-     */
     private function getEntityIdentifier(SluggableInterface $entity): string
     {
         return ClassUtils::getClass($entity) . ':' . $entity->getId();
     }
 
-    /**
-     * @param string $slug
-     * @param SluggableInterface $entity
-     * @return bool
-     */
     private function hasUrlDuplicateWithinBatch(string $slug, SluggableInterface $entity): bool
     {
         return !empty($this->processedUrls[$slug])
             && $this->processedUrls[$slug] !== $this->getEntityIdentifier($entity);
     }
 
-    /**
-     * @param QueryBuilder $qb
-     * @param SluggableInterface $entity
-     * @return QueryBuilder
-     */
     private function getRestrictedOneDirectUrlBySlugQueryBuilder(
         QueryBuilder $qb,
         SluggableInterface $entity
@@ -230,9 +201,6 @@ class UniqueSlugResolver
         return $restrictSlugIncrementEvent->getQueryBuilder();
     }
 
-    /**
-     * @return SlugRepository
-     */
     private function getSlugRepository(): SlugRepository
     {
         return $this->registry->getManagerForClass(Slug::class)

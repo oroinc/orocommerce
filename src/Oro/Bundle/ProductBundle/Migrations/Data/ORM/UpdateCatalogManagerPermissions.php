@@ -21,9 +21,6 @@ class UpdateCatalogManagerPermissions extends AbstractUpdatePermissions implemen
         return [LoadUserRolesData::class];
     }
 
-    /**
-     * @param ObjectManager $manager
-     */
     public function load(ObjectManager $manager)
     {
         $aclManager = $this->getAclManager();

@@ -29,9 +29,6 @@ class SearchProcessingEngineExceptionListenerTest extends \PHPUnit\Framework\Tes
     }
 
     /**
-     * @param string $exception
-     * @param string $expected
-     *
      * @dataProvider supportedExceptions
      */
     public function testSupportedExceptions(string $exception, string $expected): void

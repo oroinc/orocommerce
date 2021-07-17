@@ -271,10 +271,6 @@ class UniqueVariantLinksSimpleProductValidatorTest extends \PHPUnit\Framework\Te
         return $product;
     }
 
-    /**
-     * @param Product $product
-     * @param array $partntProducts
-     */
     private function assertRepositoryCallsProductVariantLinks(Product $product, array $partntProducts): void
     {
         $k = 1;

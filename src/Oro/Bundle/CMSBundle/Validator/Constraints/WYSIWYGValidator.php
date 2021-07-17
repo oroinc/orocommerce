@@ -27,12 +27,6 @@ class WYSIWYGValidator extends ConstraintValidator
     /** @var LoggerInterface */
     private $logger;
 
-    /**
-     * @param HtmlTagHelper $htmlTagHelper
-     * @param HTMLPurifierScopeProvider $purifierScopeProvider
-     * @param TranslatorInterface $translator
-     * @param LoggerInterface $logger
-     */
     public function __construct(
         HtmlTagHelper $htmlTagHelper,
         HTMLPurifierScopeProvider $purifierScopeProvider,
@@ -113,9 +107,6 @@ class WYSIWYGValidator extends ConstraintValidator
 
     /**
      * Get field name by property path
-     *
-     * @param string $propertyPath
-     * @return string
      */
     private function resolvePropertyPath(string $propertyPath): string
     {

@@ -18,9 +18,6 @@ class UpdateCombinedPriceLists implements ProcessorInterface
     /** @var CombinedPriceListActivationPlanBuilder */
     private $combinedPriceListBuilder;
 
-    /**
-     * @param CombinedPriceListActivationPlanBuilder $combinedPriceListBuilder
-     */
     public function __construct(CombinedPriceListActivationPlanBuilder $combinedPriceListBuilder)
     {
         $this->combinedPriceListBuilder = $combinedPriceListBuilder;

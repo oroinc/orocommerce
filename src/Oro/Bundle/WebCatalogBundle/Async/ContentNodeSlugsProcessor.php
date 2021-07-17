@@ -59,15 +59,6 @@ class ContentNodeSlugsProcessor implements MessageProcessorInterface, TopicSubsc
      */
     protected $contentNodeTreeCache;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param DefaultVariantScopesResolver $defaultVariantScopesResolver
-     * @param SlugGenerator $slugGenerator
-     * @param MessageProducerInterface $messageProducer
-     * @param ResolveNodeSlugsMessageFactory $messageFactory
-     * @param LoggerInterface $logger
-     * @param ContentNodeTreeCache $contentNodeTreeCache
-     */
     public function __construct(
         ManagerRegistry $registry,
         DefaultVariantScopesResolver $defaultVariantScopesResolver,

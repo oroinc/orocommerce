@@ -35,11 +35,6 @@ class PayPalOuterRedirectEventListener
      */
     private $httpKernel;
 
-    /**
-     * @param RouterInterface $router
-     * @param DoctrineHelper $doctrineHelper
-     * @param HttpKernelInterface $httpKernel
-     */
     public function __construct(
         RouterInterface $router,
         DoctrineHelper $doctrineHelper,
@@ -50,9 +45,6 @@ class PayPalOuterRedirectEventListener
         $this->httpKernel = $httpKernel;
     }
 
-    /**
-     * @param GetResponseEvent $event
-     */
     public function onKernelRequest(GetResponseEvent $event)
     {
         $request = $event->getRequest();

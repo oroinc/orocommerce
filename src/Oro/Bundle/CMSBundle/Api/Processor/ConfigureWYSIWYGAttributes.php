@@ -18,10 +18,6 @@ class ConfigureWYSIWYGAttributes implements ProcessorInterface
     /** @var string */
     private $attributesFieldName;
 
-    /**
-     * @param WYSIWYGFieldsProvider $wysiwygFieldsProvider
-     * @param string                $attributesFieldName
-     */
     public function __construct(WYSIWYGFieldsProvider $wysiwygFieldsProvider, string $attributesFieldName)
     {
         $this->wysiwygFieldsProvider = $wysiwygFieldsProvider;

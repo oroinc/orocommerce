@@ -9,8 +9,5 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
  */
 interface MasterCatalogRootProviderInterface
 {
-    /**
-     * @return Category
-     */
     public function getMasterCatalogRoot(): Category;
 }

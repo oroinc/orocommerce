@@ -39,7 +39,6 @@ class DiscountConfigurationDataMapper implements DataMapperInterface
             return;
         }
 
-
         if (!is_array($data)) {
             throw new UnexpectedTypeException($data, 'array');
         }

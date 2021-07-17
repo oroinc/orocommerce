@@ -37,11 +37,6 @@ class SluggableUrlDatabaseAwareProvider implements SluggableUrlProviderInterface
      */
     protected $slugRepository;
 
-    /**
-     * @param SluggableUrlCacheAwareProvider $urlCacheAwareProvider
-     * @param UrlCacheInterface $cache
-     * @param ManagerRegistry $registry
-     */
     public function __construct(
         SluggableUrlCacheAwareProvider $urlCacheAwareProvider,
         UrlCacheInterface $cache,
@@ -147,9 +142,6 @@ class SluggableUrlDatabaseAwareProvider implements SluggableUrlProviderInterface
         return $slugData;
     }
 
-    /**
-     * @param array $sluggableRoutes
-     */
     protected function updateSluggableRoutes(array $sluggableRoutes)
     {
         $this->cache->setUrl(self::SLUG_ROUTES_KEY, [], json_encode($sluggableRoutes));

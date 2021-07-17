@@ -12,18 +12,11 @@ class CategoryMaterializedPathModifier
      */
     protected $doctrineHelper;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(DoctrineHelper $doctrineHelper)
     {
         $this->doctrineHelper = $doctrineHelper;
     }
 
-    /**
-     * @param Category $category
-     * @param array $children
-     */
     public function updateMaterializedPathNested(Category $category, array $children = [])
     {
         $this->calculateMaterializedPath($category);

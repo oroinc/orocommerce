@@ -131,9 +131,6 @@ class ShoppingListLineItemsDataProviderTest extends TestCase
         );
     }
 
-    /**
-     * @return array
-     */
     public function productsDataProvider(): array
     {
         $simple1 = $this->getEntity(Product::class, ['id' => 1, 'type' => Product::TYPE_SIMPLE]);

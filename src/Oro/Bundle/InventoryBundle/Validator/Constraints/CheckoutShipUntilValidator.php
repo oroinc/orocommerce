@@ -24,10 +24,6 @@ class CheckoutShipUntilValidator extends ConstraintValidator
      */
     protected $checkoutLineItemsManager;
 
-    /**
-     * @param UpcomingProductProvider $upcomingProvider
-     * @param CheckoutLineItemsManager $checkoutLineItemsManager
-     */
     public function __construct(
         UpcomingProductProvider $upcomingProvider,
         CheckoutLineItemsManager $checkoutLineItemsManager

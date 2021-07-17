@@ -193,10 +193,6 @@ class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertProductImageTypes(['main', 'listing', 'additional'], $newImage);
     }
 
-    /**
-     * @param array $expected
-     * @param StubProductImage $productImage
-     */
     private function assertProductImageTypes(array $expected, StubProductImage $productImage): void
     {
         $types = array_map(

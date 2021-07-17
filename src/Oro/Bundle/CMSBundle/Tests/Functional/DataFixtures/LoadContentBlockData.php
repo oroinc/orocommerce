@@ -33,11 +33,6 @@ class LoadContentBlockData extends AbstractFixture implements DependentFixtureIn
         $manager->flush();
     }
 
-    /**
-     * @param bool $enabled
-     * @param string $alias
-     * @return ContentBlock
-     */
     protected function createContentBlock(bool $enabled, string $alias): ContentBlock
     {
         $contentBlock = new ContentBlock();

@@ -23,11 +23,6 @@ class PriceMatcher
     /** @var LoggerInterface */
     private $logger;
 
-    /**
-     * @param MatchingPriceProvider $provider
-     * @param ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory
-     * @param LoggerInterface $logger
-     */
     public function __construct(
         MatchingPriceProvider $provider,
         ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory,
@@ -63,10 +58,6 @@ class PriceMatcher
         );
     }
 
-    /**
-     * @param Order $order
-     * @param array $matchedPrices
-     */
     public function fillMatchingPrices(Order $order, array $matchedPrices = [])
     {
         $lineItems = $order->getLineItems()->toArray();
@@ -86,9 +77,6 @@ class PriceMatcher
         );
     }
 
-    /**
-     * @param Order $order
-     */
     public function addMatchingPrices(Order $order)
     {
         $matchedPrices = $this->getMatchingPrices($order);
@@ -96,10 +84,6 @@ class PriceMatcher
         $this->fillMatchingPrices($order, $matchedPrices);
     }
 
-    /**
-     * @param OrderLineItem $orderLineItem
-     * @param array $matchedPrice
-     */
     protected function fillOrderLineItemData(OrderLineItem $orderLineItem, array $matchedPrice = [])
     {
         if (null === $orderLineItem->getCurrency() && !empty($matchedPrice['currency'])) {

@@ -50,14 +50,6 @@ class FrontendConsentContentNodeValidFilter implements ConsentFilterInterface
      */
     private $consentAcceptanceProvider;
 
-    /**
-     * @param WebCatalogProvider $webCatalogProvider
-     * @param LoggerInterface $logger
-     * @param WebsiteManager $websiteManager
-     * @param FrontendHelper $frontendHelper
-     * @param ConsentContentNodeValidator $contentNodeValidator
-     * @param ConsentAcceptanceProvider $consentAcceptanceProvider
-     */
     public function __construct(
         WebCatalogProvider $webCatalogProvider,
         LoggerInterface $logger,

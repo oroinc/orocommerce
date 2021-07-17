@@ -307,7 +307,6 @@ class QuoteProductTest extends AbstractTest
         $this->assertEquals($expectedResult, $quoteProduct->getProductName());
     }
 
-
     /**
      * @return array
      */

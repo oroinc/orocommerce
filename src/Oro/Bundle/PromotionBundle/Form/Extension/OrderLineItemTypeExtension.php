@@ -46,13 +46,6 @@ class OrderLineItemTypeExtension extends AbstractTypeExtension
      */
     protected $lineItemSubtotalProvider;
 
-    /**
-     * @param TaxationSettingsProvider $taxationSettingsProvider
-     * @param TaxProviderRegistry $taxProviderRegistry
-     * @param AppliedDiscountsProvider $appliedDiscountsProvider
-     * @param SectionProvider $sectionProvider
-     * @param LineItemSubtotalProvider $lineItemSubtotalProvider
-     */
     public function __construct(
         TaxationSettingsProvider $taxationSettingsProvider,
         TaxProviderRegistry $taxProviderRegistry,

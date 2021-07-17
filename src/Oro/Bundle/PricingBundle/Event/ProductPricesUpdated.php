@@ -25,9 +25,6 @@ class ProductPricesUpdated extends Event
         return $this->entityManager;
     }
 
-    /**
-     * @param EntityManager $entityManager
-     */
     public function setEntityManager(EntityManager $entityManager)
     {
         $this->entityManager = $entityManager;

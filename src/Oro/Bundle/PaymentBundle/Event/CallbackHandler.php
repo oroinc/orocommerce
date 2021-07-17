@@ -17,10 +17,6 @@ class CallbackHandler
     /** @var PaymentTransactionProvider */
     protected $paymentTransactionProvider;
 
-    /**
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param PaymentTransactionProvider $paymentTransactionProvider
-     */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
         PaymentTransactionProvider $paymentTransactionProvider

@@ -39,17 +39,12 @@ class FrontendLineItemWidgetType extends AbstractType
      * @var string
      */
     protected $shoppingListClass;
-    
+
     /**
      * @var TranslatorInterface
      */
     protected $translator;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param TranslatorInterface $translator
-     * @param CurrentShoppingListManager $currentShoppingListManager
-     */
     public function __construct(
         ManagerRegistry $registry,
         TranslatorInterface $translator,
@@ -96,9 +91,6 @@ class FrontendLineItemWidgetType extends AbstractType
             ->addEventListener(FormEvents::POST_SUBMIT, [$this, 'postSubmit']);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function postSetData(FormEvent $event)
     {
         /* @var $lineItem LineItem */
@@ -107,9 +99,6 @@ class FrontendLineItemWidgetType extends AbstractType
         $event->getForm()->get('shoppingList')->setData($lineItem->getShoppingList());
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function postSubmit(FormEvent $event)
     {
         $form = $event->getForm();

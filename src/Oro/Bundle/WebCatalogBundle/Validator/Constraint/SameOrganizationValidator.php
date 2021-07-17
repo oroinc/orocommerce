@@ -27,10 +27,6 @@ class SameOrganizationValidator extends ConstraintValidator
      */
     private $entityOwnerAccessor;
 
-    /**
-     * @param ContentVariantTypeRegistry $typeRegistry
-     * @param EntityOwnerAccessor $entityOwnerAccessor
-     */
     public function __construct(
         ContentVariantTypeRegistry $typeRegistry,
         EntityOwnerAccessor $entityOwnerAccessor
@@ -76,11 +72,6 @@ class SameOrganizationValidator extends ConstraintValidator
         }
     }
 
-    /**
-     * @param object $attachedEntity
-     * @param OrganizationInterface|null $expectedOrganization
-     * @return bool
-     */
     private function validateAttachedEntity(
         object $attachedEntity,
         ?OrganizationInterface $expectedOrganization

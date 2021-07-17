@@ -13,9 +13,6 @@ class WebsiteIdPlaceholder extends AbstractPlaceholder
      */
     private $websiteManager;
 
-    /**
-     * @param WebsiteManager $websiteManager
-     */
     public function __construct(WebsiteManager $websiteManager)
     {
         $this->websiteManager = $websiteManager;

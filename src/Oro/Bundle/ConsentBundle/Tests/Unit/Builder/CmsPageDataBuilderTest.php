@@ -138,9 +138,6 @@ class CmsPageDataBuilderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    /**
-     * @return Consent
-     */
     private function getConsent(): Consent
     {
         $fallbackValue = new LocalizedFallbackValue();

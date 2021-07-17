@@ -46,12 +46,6 @@ class ProductContentVariantReindexEventListener implements ContentNodeFieldsChan
      */
     protected $fieldsChangesListenTo = ['titles'];
 
-    /**
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param FieldUpdatesChecker $fieldUpdatesChecker
-     * @param ProductCollectionVariantReindexMessageSendListener $messageSendListener
-     * @param WebCatalogUsageProviderInterface|null $webCatalogUsageProvider
-     */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
         FieldUpdatesChecker $fieldUpdatesChecker,
@@ -84,9 +78,6 @@ class ProductContentVariantReindexEventListener implements ContentNodeFieldsChan
         return $this->fieldsChangesListenTo;
     }
 
-    /**
-     * @param OnFlushEventArgs $event
-     */
     public function onFlush(OnFlushEventArgs $event)
     {
         $unitOfWork = $event->getEntityManager()->getUnitOfWork();
@@ -253,10 +244,6 @@ class ProductContentVariantReindexEventListener implements ContentNodeFieldsChan
         return true;
     }
 
-    /**
-     * @param array $productIds
-     * @param array $websiteIds
-     */
     private function triggerReindex(array $productIds, array $websiteIds)
     {
         if (count($productIds) === 0 || count($websiteIds) === 0) {
@@ -267,10 +254,6 @@ class ProductContentVariantReindexEventListener implements ContentNodeFieldsChan
         $this->eventDispatcher->dispatch($event, ReindexationRequestEvent::EVENT_NAME);
     }
 
-    /**
-     * @param Product $product
-     * @param array $productIds
-     */
     private function addProduct(Product $product, array &$productIds)
     {
         $productId = $product->getId();

@@ -15,9 +15,6 @@ class DefaultProvider implements ColumnInformationProviderInterface
      */
     protected $fieldsProvider;
 
-    /**
-     * @param FieldsProviderInterface $fieldsProvider
-     */
     public function __construct(FieldsProviderInterface $fieldsProvider)
     {
         $this->fieldsProvider = $fieldsProvider;

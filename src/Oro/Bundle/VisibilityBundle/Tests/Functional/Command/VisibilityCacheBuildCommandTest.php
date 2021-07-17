@@ -29,9 +29,6 @@ class VisibilityCacheBuildCommandTest extends WebTestCase
 
     /**
      * @dataProvider executeDataProvider
-     * @param array $params
-     * @param array $expectedMessages
-     * @param array $expectedRecordsCount
      */
     public function testExecute(array $params, array $expectedMessages, array $expectedRecordsCount)
     {
@@ -235,9 +232,6 @@ class VisibilityCacheBuildCommandTest extends WebTestCase
             ->getSingleScalarResult();
     }
 
-    /**
-     * @param EntityRepository $repository
-     */
     protected function deleteAllEntities(EntityRepository $repository)
     {
         $repository->createQueryBuilder('entity')

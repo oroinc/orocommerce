@@ -15,9 +15,6 @@ class WYSIWYGAttributeType implements AttributeTypeInterface
     /** @var HtmlTagHelper */
     private $htmlTagHelper;
 
-    /**
-     * @param HtmlTagHelper $htmlTagHelper
-     */
     public function __construct(HtmlTagHelper $htmlTagHelper)
     {
         $this->htmlTagHelper = $htmlTagHelper;

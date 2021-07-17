@@ -36,9 +36,6 @@ class OrderDiscountItemType extends AbstractType
      */
     protected $dataClass;
 
-    /**
-     * @param TotalHelper $totalHelper
-     */
     public function __construct(TotalHelper $totalHelper)
     {
         $this->totalHelper = $totalHelper;
@@ -157,8 +154,6 @@ class OrderDiscountItemType extends AbstractType
 
     /**
      * SUBMIT event handler
-     *
-     * @param FormEvent $event
      */
     public function submit(FormEvent $event)
     {
@@ -172,8 +167,6 @@ class OrderDiscountItemType extends AbstractType
 
     /**
      * POST_SET_DATA event handler
-     *
-     * @param FormEvent $event
      */
     public function postSetData(FormEvent $event)
     {

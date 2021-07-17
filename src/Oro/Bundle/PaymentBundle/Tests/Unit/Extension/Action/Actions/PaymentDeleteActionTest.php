@@ -8,8 +8,6 @@ use Oro\Bundle\PaymentBundle\Extension\Action\Actions\PaymentDeleteAction;
 class PaymentDeleteActionTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @param array $options
-     * @param ActionConfiguration $expected
      * @dataProvider setOptionsDataProvider
      */
     public function testSetOptions(array $options, ActionConfiguration $expected)

@@ -12,9 +12,6 @@ class SourceDocumentFormatter
     /** @var EntityClassNameProviderInterface */
     private $entityClassNameProvider;
 
-    /**
-     * @param EntityClassNameProviderInterface $entityClassNameProvider
-     */
     public function __construct(EntityClassNameProviderInterface $entityClassNameProvider)
     {
         $this->entityClassNameProvider = $entityClassNameProvider;

@@ -186,9 +186,6 @@ class WebCatalogProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($this->provider->getNavigationRoot());
     }
 
-    /**
-     * @param WebCatalog $webCatalog
-     */
     private function assertDatabaseSearchCall(WebCatalog $webCatalog)
     {
         $em = $this->createMock(EntityManagerInterface::class);

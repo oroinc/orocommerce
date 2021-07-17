@@ -29,12 +29,6 @@ class TotalHelper
     /** @var RateConverterInterface */
     protected $rateConverter;
 
-    /**
-     * @param TotalProcessorProvider $totalProvider
-     * @param LineItemSubtotalProvider $lineItemSubtotalProvider
-     * @param DiscountSubtotalProvider $discountSubtotalProvider
-     * @param RateConverterInterface $rateConverter
-     */
     public function __construct(
         TotalProcessorProvider $totalProvider,
         LineItemSubtotalProvider $lineItemSubtotalProvider,
@@ -47,9 +41,6 @@ class TotalHelper
         $this->rateConverter = $rateConverter;
     }
 
-    /**
-     * @param Order $order
-     */
     public function fill(Order $order)
     {
         $this->fillSubtotals($order);
@@ -57,9 +48,6 @@ class TotalHelper
         $this->fillTotal($order);
     }
 
-    /**
-     * @param Order $order
-     */
     public function fillSubtotals(Order $order)
     {
         $subtotal = $this->lineItemSubtotalProvider->getSubtotal($order);
@@ -78,9 +66,6 @@ class TotalHelper
         }
     }
 
-    /**
-     * @param Order $order
-     */
     public function fillDiscounts(Order $order)
     {
         $discountSubtotals = $this->discountSubtotalProvider->getSubtotal($order);
@@ -95,9 +80,6 @@ class TotalHelper
         $order->setTotalDiscounts($discountSubtotalAmount);
     }
 
-    /**
-     * @param Order $order
-     */
     public function fillTotal(Order $order)
     {
         $total = $this->totalProvider->enableRecalculation()->getTotal($order);

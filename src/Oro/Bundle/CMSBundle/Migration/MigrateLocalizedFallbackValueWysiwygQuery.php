@@ -56,9 +56,5 @@ abstract class MigrateLocalizedFallbackValueWysiwygQuery extends ParametrizedMig
         }
     }
 
-    /**
-     * @param LoggerInterface $logger
-     * @return array
-     */
     abstract protected function getLocalizedValueIds(LoggerInterface $logger): array;
 }

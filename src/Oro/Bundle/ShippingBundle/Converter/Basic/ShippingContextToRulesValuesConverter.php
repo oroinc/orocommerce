@@ -18,18 +18,11 @@ class ShippingContextToRulesValuesConverter implements ShippingContextToRulesVal
      */
     private $decoratedProductLineItemFactory;
 
-    /**
-     * @param DecoratedProductLineItemFactory $decoratedProductLineItemFactory
-     */
     public function __construct(DecoratedProductLineItemFactory $decoratedProductLineItemFactory)
     {
         $this->decoratedProductLineItemFactory = $decoratedProductLineItemFactory;
     }
 
-    /**
-     * @param ShippingContextInterface $context
-     * @return array
-     */
     public function convert(ShippingContextInterface $context): array
     {
         $lineItems = $context->getLineItems()->toArray();
@@ -56,10 +49,6 @@ class ShippingContextToRulesValuesConverter implements ShippingContextToRulesVal
         ];
     }
 
-    /**
-     * @param array $lineItems
-     * @return array
-     */
     private function getProductIds(array $lineItems): array
     {
         $productIds = array_map(

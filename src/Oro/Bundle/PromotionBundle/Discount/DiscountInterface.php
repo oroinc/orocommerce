@@ -13,10 +13,6 @@ interface DiscountInterface
     const TYPE_AMOUNT = 'amount';
     const TYPE_PERCENT = 'percent';
 
-    /**
-     * @param array $options
-     * @return array
-     */
     public function configure(array $options): array;
 
     /**
@@ -32,14 +28,9 @@ interface DiscountInterface
 
     /**
      * Get type of discount: TYPE_AMOUNT or TYPE_PERCENT
-     *
-     * @return string
      */
     public function getDiscountType(): string;
 
-    /**
-     * @return float
-     */
     public function getDiscountValue(): float;
 
     /**
@@ -51,8 +42,6 @@ interface DiscountInterface
 
     /**
      * Add information about discount to context
-     *
-     * @param DiscountContextInterface $discountContext
      */
     public function apply(DiscountContextInterface $discountContext);
 

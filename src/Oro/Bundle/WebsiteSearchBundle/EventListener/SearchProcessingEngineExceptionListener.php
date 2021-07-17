@@ -13,9 +13,6 @@ use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
  */
 class SearchProcessingEngineExceptionListener
 {
-    /**
-     * @param SearchProcessingEngineExceptionEvent $event
-     */
     public function process(SearchProcessingEngineExceptionEvent $event): void
     {
         if ($this->isSupported($event->getException())) {
@@ -23,11 +20,6 @@ class SearchProcessingEngineExceptionListener
         }
     }
 
-    /**
-     * @param \Exception $exception
-     *
-     * @return bool
-     */
     private function isSupported(\Exception $exception): bool
     {
         return $exception instanceof RetryableException

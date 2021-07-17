@@ -58,7 +58,6 @@ class AddressExtractorTest extends \PHPUnit\Framework\TestCase
      * @param mixed $object
      * @param string $property
      *
-     *
      * @dataProvider extractFailedDataProvider
      */
     public function testExtractFailed($object, $property)

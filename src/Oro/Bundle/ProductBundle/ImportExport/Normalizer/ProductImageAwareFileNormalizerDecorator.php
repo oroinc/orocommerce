@@ -19,10 +19,6 @@ class ProductImageAwareFileNormalizerDecorator implements DenormalizerInterface,
     /** @var FileManager */
     private $fileManager;
 
-    /**
-     * @param FileNormalizer $fileNormalizer
-     * @param FileManager    $fileManager
-     */
     public function __construct(FileNormalizer $fileNormalizer, FileManager $fileManager)
     {
         $this->fileNormalizer = $fileNormalizer;
@@ -75,11 +71,6 @@ class ProductImageAwareFileNormalizerDecorator implements DenormalizerInterface,
         return $result;
     }
 
-    /**
-     * @param string $path
-     *
-     * @return bool
-     */
     private function isRelativePath(string $path): bool
     {
         return

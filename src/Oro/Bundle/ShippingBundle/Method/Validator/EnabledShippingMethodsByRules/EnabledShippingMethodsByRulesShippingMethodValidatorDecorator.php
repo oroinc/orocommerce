@@ -45,14 +45,6 @@ class EnabledShippingMethodsByRulesShippingMethodValidatorDecorator implements S
      */
     private $logger;
 
-    /**
-     * @param ShippingMethodValidatorInterface                                $parentShippingMethodValidator
-     * @param Common\CommonShippingMethodValidatorResultErrorFactoryInterface $errorFactory
-     * @param NonDeletableMethodTypeIdentifiersProviderInterface              $nonDeletableTypeIdentifiersProvider
-     * @param MethodTypeLabelsProviderInterface                               $methodTypeLabelsProvider
-     * @param TranslatorInterface                                             $translator
-     * @param LoggerInterface                                                 $logger
-     */
     public function __construct(
         ShippingMethodValidatorInterface $parentShippingMethodValidator,
         Common\CommonShippingMethodValidatorResultErrorFactoryInterface $errorFactory,

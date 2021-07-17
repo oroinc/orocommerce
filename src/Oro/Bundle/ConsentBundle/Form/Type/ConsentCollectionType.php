@@ -18,18 +18,11 @@ class ConsentCollectionType extends AbstractType
     /** @var DataTransformerInterface */
     protected $consentCollectionTransformer;
 
-    /**
-     ** @param DataTransformerInterface $consentCollectionTransformer
-     */
     public function __construct(DataTransformerInterface $consentCollectionTransformer)
     {
         $this->consentCollectionTransformer = $consentCollectionTransformer;
     }
 
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addModelTransformer($this->consentCollectionTransformer);

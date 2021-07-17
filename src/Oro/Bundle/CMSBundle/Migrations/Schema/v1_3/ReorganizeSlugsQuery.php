@@ -47,9 +47,6 @@ class ReorganizeSlugsQuery extends ParametrizedMigrationQuery
         $this->updateRelations($logger, $dryRun);
     }
 
-    /**
-     * @param LoggerInterface $logger
-     */
     protected function prepareRelations(LoggerInterface $logger)
     {
         $query = 'SELECT

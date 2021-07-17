@@ -146,10 +146,6 @@ class CheckoutAddressSelectTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitWhenEnterManuallyDataProvider
-     *
-     * @param Checkout $checkout
-     * @param OrderAddress $orderAddress
-     * @param string $addressType
      */
     public function testSubmitWhenEnterManually(
         Checkout $checkout,
@@ -183,9 +179,6 @@ class CheckoutAddressSelectTypeTest extends FormIntegrationTestCase
         $this->assertEquals($orderAddress, $form->getData());
     }
 
-    /**
-     * @return array
-     */
     public function submitWhenEnterManuallyDataProvider(): array
     {
         $orderAddress = new OrderAddress();
@@ -205,9 +198,6 @@ class CheckoutAddressSelectTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitWhenEnterManuallyButAlreadySetInCheckoutDataProvider
-     *
-     * @param Checkout $checkout
-     * @param string $addressType
      */
     public function testSubmitWhenEnterManuallyButAlreadySetInCheckout(Checkout $checkout, string $addressType): void
     {
@@ -238,9 +228,6 @@ class CheckoutAddressSelectTypeTest extends FormIntegrationTestCase
         $this->assertEquals(0, $form->getData());
     }
 
-    /**
-     * @return array
-     */
     public function submitWhenEnterManuallyButAlreadySetInCheckoutDataProvider(): array
     {
         $orderAddress = new OrderAddress();

@@ -11,9 +11,6 @@ use Oro\Component\MessageQueue\Client\MessageProducerInterface;
  */
 class CategoryVisibilityListener extends AbstractVisibilityListener
 {
-    /**
-     * @param MessageProducerInterface $messageProducer
-     */
     public function __construct(MessageProducerInterface $messageProducer)
     {
         parent::__construct($messageProducer, Topics::CHANGE_CATEGORY_VISIBILITY);

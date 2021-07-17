@@ -52,41 +52,26 @@ class RequestDataStorageExtension extends AbstractProductDataStorageExtension
      */
     protected $supportedStatuses = [];
 
-    /**
-     * @param ConfigManager $configManager
-     */
     public function setConfigManager(ConfigManager $configManager)
     {
         $this->configManager = $configManager;
     }
 
-    /**
-     * @param Session $session
-     */
     public function setSession(Session $session)
     {
         $this->session = $session;
     }
 
-    /**
-     * @param TranslatorInterface $translator
-     */
     public function setTranslator(TranslatorInterface $translator)
     {
         $this->translator = $translator;
     }
 
-    /**
-     * @param ContainerInterface $container
-     */
     public function setContainer(ContainerInterface $container)
     {
         $this->container = $container;
     }
 
-    /**
-     * @param ProductAvailabilityProviderInterface $productAvailabilityProvider
-     */
     public function setProductAvailabilityProvider(ProductAvailabilityProviderInterface $productAvailabilityProvider)
     {
         $this->productAvailabilityProvider = $productAvailabilityProvider;
@@ -224,11 +209,6 @@ class RequestDataStorageExtension extends AbstractProductDataStorageExtension
         return false;
     }
 
-    /**
-     * @param array $productsIds
-     *
-     * @return bool
-     */
     public function isAllowedRFPByProductsIds(array $productsIds): bool
     {
         $repository = $this->getProductRepository();

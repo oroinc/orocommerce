@@ -49,13 +49,6 @@ class SlugGenerator
      */
     private $uniqueSlugPrototypesResolver;
 
-    /**
-     * @param ContentVariantTypeRegistry $contentVariantTypeRegistry
-     * @param RedirectGenerator $redirectGenerator
-     * @param LocalizationHelper $localizationHelper
-     * @param SlugUrlDiffer $slugUrlDiffer
-     * @param UniqueContentNodeSlugPrototypesResolver $uniqueSlugPrototypesResolver
-     */
     public function __construct(
         ContentVariantTypeRegistry $contentVariantTypeRegistry,
         RedirectGenerator $redirectGenerator,
@@ -305,12 +298,6 @@ class SlugGenerator
         return 0;
     }
 
-    /**
-     * @param Slug $slug
-     * @param SlugUrl $slugUrl
-     * @param RouteData $routeData
-     * @param Collection $scopes
-     */
     protected function fillSlug(Slug $slug, SlugUrl $slugUrl, RouteData $routeData, Collection $scopes)
     {
         $slug->setLocalization($slugUrl->getLocalization());
@@ -341,10 +328,6 @@ class SlugGenerator
         return null;
     }
 
-    /**
-     * @param ContentNode $contentNode
-     * @param Collection $slugUrls
-     */
     protected function updateLocalizedUrls(ContentNode $contentNode, Collection $slugUrls)
     {
         $toRemove = [];

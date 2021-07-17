@@ -28,11 +28,6 @@ class ShippingCostSubtotalProvider extends AbstractSubtotalProvider implements S
      */
     protected $rounding;
 
-    /**
-     * @param TranslatorInterface $translator
-     * @param RoundingServiceInterface $rounding
-     * @param SubtotalProviderConstructorArguments $arguments
-     */
     public function __construct(
         TranslatorInterface $translator,
         RoundingServiceInterface $rounding,

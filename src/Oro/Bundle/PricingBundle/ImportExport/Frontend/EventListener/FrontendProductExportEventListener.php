@@ -28,9 +28,6 @@ class FrontendProductExportEventListener
         $this->productExportPricesFormatter = $productPriceFormatter;
     }
 
-    /**
-     * @param ProductExportDataConverterEvent $event
-     */
     public function onConvertToExport(ProductExportDataConverterEvent $event): void
     {
         $backendHeaders = $event->getBackendHeaders();
@@ -59,9 +56,6 @@ class FrontendProductExportEventListener
         $event->setHeaderRules($rules);
     }
 
-    /**
-     * @param ProductExportNormalizerEvent $event
-     */
     public function onProductExportNormalize(ProductExportNormalizerEvent $event): void
     {
         $product = $event->getProduct();

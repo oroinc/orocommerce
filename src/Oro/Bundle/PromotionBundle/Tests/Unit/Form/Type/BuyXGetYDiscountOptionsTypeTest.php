@@ -55,10 +55,6 @@ class BuyXGetYDiscountOptionsTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitDataProvider
-     *
-     * @param array $existingData
-     * @param array $submittedData
-     * @param array $expectedData
      */
     public function testSubmit(array $existingData, array $submittedData, array $expectedData)
     {

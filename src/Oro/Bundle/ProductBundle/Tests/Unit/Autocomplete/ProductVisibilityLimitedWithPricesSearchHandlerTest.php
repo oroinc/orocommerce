@@ -88,9 +88,6 @@ class ProductVisibilityLimitedWithPricesSearchHandlerTest extends TestCase
 
     /**
      * @dataProvider searchDataProvider
-     * @param array $result
-     * @param array $pricesResult
-     * @param array $expected
      */
     public function testSearch(array $result, array $pricesResult, array $expected)
     {

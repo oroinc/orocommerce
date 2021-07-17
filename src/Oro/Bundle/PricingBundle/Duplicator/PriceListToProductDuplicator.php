@@ -24,10 +24,6 @@ class PriceListToProductDuplicator
      */
     protected $entityName;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param InsertFromSelectQueryExecutor $insertQueryExecutor
-     */
     public function __construct(
         ManagerRegistry $registry,
         InsertFromSelectQueryExecutor $insertQueryExecutor
@@ -36,10 +32,6 @@ class PriceListToProductDuplicator
         $this->insertQueryExecutor = $insertQueryExecutor;
     }
 
-    /**
-     * @param PriceList $sourcePriceList
-     * @param PriceList $targetPriceList
-     */
     public function duplicate(PriceList $sourcePriceList, PriceList $targetPriceList)
     {
         /** @var PriceListToProductRepository $repository */

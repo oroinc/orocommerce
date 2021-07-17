@@ -25,20 +25,11 @@ class SearchableInformationProvider
     /** @var ConfigManager */
     protected $configManager;
 
-    /**
-     * @param ConfigManager $configManager
-     */
     public function __construct(ConfigManager $configManager)
     {
         $this->configManager = $configManager;
     }
 
-    /**
-     * @param FieldConfigModel $attribute
-     * @param SearchAttributeTypeInterface $attributeType
-     *
-     * @return string
-     */
     public function getSearchableFieldName(
         FieldConfigModel $attribute,
         SearchAttributeTypeInterface $attributeType
@@ -60,11 +51,6 @@ class SearchableInformationProvider
         throw new \LogicException(sprintf('Type %s is not supported', get_class($attributeType)));
     }
 
-    /**
-     * @param FieldConfigModel $attribute
-     *
-     * @return float|null
-     */
     public function getAttributeSearchBoost(FieldConfigModel $attribute): ?float
     {
         $className = $attribute->getEntity()->getClassName();

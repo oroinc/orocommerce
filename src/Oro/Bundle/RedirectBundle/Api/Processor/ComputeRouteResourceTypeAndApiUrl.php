@@ -23,10 +23,6 @@ class ComputeRouteResourceTypeAndApiUrl implements ProcessorInterface
     /** @var ResourceApiUrlResolverInterface */
     private $apiUrlResolver;
 
-    /**
-     * @param ResourceTypeResolverInterface   $resourceTypeResolver
-     * @param ResourceApiUrlResolverInterface $apiUrlResolver
-     */
     public function __construct(
         ResourceTypeResolverInterface $resourceTypeResolver,
         ResourceApiUrlResolverInterface $apiUrlResolver

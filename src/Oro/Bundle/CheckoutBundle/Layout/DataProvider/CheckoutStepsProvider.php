@@ -18,9 +18,6 @@ class CheckoutStepsProvider
      */
     protected $workflowManager;
 
-    /**
-     * @param WorkflowManager $workflowManager
-     */
     public function __construct(WorkflowManager $workflowManager)
     {
         $this->workflowManager = $workflowManager;
@@ -56,7 +53,6 @@ class CheckoutStepsProvider
      * @param array $excludedStepNames
      *
      * @return int|null
-     *
      */
     public function getStepOrder(WorkflowItem $workflowItem, $stepName, array $excludedStepNames = [])
     {

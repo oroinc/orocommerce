@@ -7,9 +7,6 @@ use Oro\Bundle\UIBundle\Fallback\AbstractFallbackFieldsFormView;
 
 class CategoryUpcomingFormViewListener extends AbstractFallbackFieldsFormView
 {
-    /**
-     * @param BeforeListRenderEvent $event
-     */
     public function onCategoryEdit(BeforeListRenderEvent $event)
     {
         $this->addBlockToEntityEdit(

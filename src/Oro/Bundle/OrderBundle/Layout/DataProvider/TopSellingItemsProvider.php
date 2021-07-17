@@ -29,11 +29,6 @@ class TopSellingItemsProvider implements ProductsProviderInterface
      */
     private $aclHelper;
 
-    /**
-     * @param ProductRepository $productRepository
-     * @param ProductManager $productManager
-     * @param AclHelper $aclHelper
-     */
     public function __construct(
         ProductRepository $productRepository,
         ProductManager $productManager,

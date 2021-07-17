@@ -47,9 +47,6 @@ class ModifyAppliedDiscount implements Migration, OrderedMigrationInterface, Dat
 
     /**
      * Add fields to applied discount.
-     *
-     * @param Schema $schema
-     * @param QueryBag $queries
      */
     protected function modifyAppliedDiscount(Schema $schema, QueryBag $queries)
     {

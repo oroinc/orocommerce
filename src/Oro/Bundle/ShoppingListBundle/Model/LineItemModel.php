@@ -16,11 +16,6 @@ class LineItemModel
     /** @var string */
     private $unitCode;
 
-    /**
-     * @param int $id
-     * @param float $quantity
-     * @param string $unitCode
-     */
     public function __construct(int $id, float $quantity, string $unitCode)
     {
         $this->id = $id;
@@ -28,25 +23,16 @@ class LineItemModel
         $this->unitCode = $unitCode;
     }
 
-    /**
-     * @return int
-     */
     public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @return float
-     */
     public function getQuantity(): float
     {
         return $this->quantity;
     }
 
-    /**
-     * @return string
-     */
     public function getUnitCode(): string
     {
         return $this->unitCode;

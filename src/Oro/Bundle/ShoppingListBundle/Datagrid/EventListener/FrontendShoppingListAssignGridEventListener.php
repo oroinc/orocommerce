@@ -22,19 +22,12 @@ class FrontendShoppingListAssignGridEventListener
     /** @var AclHelper */
     private $aclHelper;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param AclHelper $aclHelper
-     */
     public function __construct(ManagerRegistry $registry, AclHelper $aclHelper)
     {
         $this->registry = $registry;
         $this->aclHelper = $aclHelper;
     }
 
-    /**
-     * @param BuildBefore $event
-     */
     public function onBuildBefore(BuildBefore $event): void
     {
         $config = $event->getConfig();

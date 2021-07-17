@@ -35,12 +35,6 @@ class ProductVariantIndexDataProviderDecoratorTest extends \PHPUnit\Framework\Te
     }
 
     /**
-     * @param FieldConfigModel $attribute
-     * @param array $firstVariantData
-     * @param array $secondVariantData
-     * @param array $configurableData
-     * @param array $expectedConfigurableData
-     *
      * @dataProvider getIndexDataDataProvider
      */
     public function testGetIndexData(

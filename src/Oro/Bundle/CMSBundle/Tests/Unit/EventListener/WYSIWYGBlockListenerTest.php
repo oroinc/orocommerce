@@ -97,9 +97,6 @@ class WYSIWYGBlockListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedData, $event->getFormData());
     }
 
-    /**
-     * @return array
-     */
     public function onBeforeFormRenderDataProvider(): array
     {
         $formData = [

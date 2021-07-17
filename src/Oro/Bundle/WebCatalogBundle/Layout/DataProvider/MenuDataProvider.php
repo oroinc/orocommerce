@@ -52,14 +52,6 @@ class MenuDataProvider
     /** @var ContentNode */
     private $rootNode = false;
 
-    /**
-     * @param ManagerRegistry $doctrine
-     * @param WebCatalogProvider $webCatalogProvider
-     * @param ContentNodeTreeResolverInterface $contentNodeTreeResolver
-     * @param LocalizationHelper $localizationHelper
-     * @param RequestWebContentScopeProvider $requestWebContentScopeProvider
-     * @param WebsiteManager $websiteManager
-     */
     public function __construct(
         ManagerRegistry $doctrine,
         WebCatalogProvider $webCatalogProvider,
@@ -186,12 +178,6 @@ class MenuDataProvider
         return $this->doctrine->getRepository(ContentNode::class);
     }
 
-    /**
-     * @param Scope    $scope
-     * @param int|null $maxNodesNestedLevel
-     *
-     * @return string
-     */
     private function getCacheKey(Scope $scope, ?int $maxNodesNestedLevel): string
     {
         $rootNode = $this->getRootNode();

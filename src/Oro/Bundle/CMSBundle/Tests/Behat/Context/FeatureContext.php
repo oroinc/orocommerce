@@ -16,7 +16,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
     /**
      * @When /^(?:|I )type "(?P<value>(?:[^"]|\\")*)" in Landing Page Titles field$/
-     * @param string $value
      */
     public function typeInLandingPageTitlesField(string $value): void
     {
@@ -70,8 +69,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      * Example: I open code editor of code type block containing the text "Same text 1"
      *
      * @When /^(?:|I )open code editor of code type block containing the text "(?P<value>(?:[^"]|\\")*)"$/
-     *
-     * @param string $value
      */
     public function openCodeEditorOfCodeTypeBlockContainingTheText(string $value): void
     {
@@ -81,8 +78,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
     /**
      * @Then /^(?:|I )should see text matching (?P<pattern>"(?:[^"]|\\")*") in WYSIWYG editor$/
-     *
-     * @param string $pattern
      */
     public function assertWysiwygEditorMatchesText(string $pattern): void
     {
@@ -94,8 +89,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
     /**
      * @Then /^(?:|I )should not see text matching (?P<pattern>"(?:[^"]|\\")*") in WYSIWYG editor$/
-     *
-     * @param string $pattern
      */
     public function assertWysiwygEditorNotMatchesText(string $pattern): void
     {
@@ -113,9 +106,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      * @When /^(?:|I )fill the code type block containing the text "(?P<existingValue>(?:[^"]|\\")*)" with the value "(?P<newValue>(?:[^"]|\\")*)"$/
      *
      * @codingStandardsIgnoreEnd
-     *
-     * @param string $existingValue
-     * @param string $newValue
      */
     public function fillTheCodeTypeBlockContainingTheTextWithTheValue(string $existingValue, string $newValue): void
     {
@@ -134,9 +124,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      * Example: When I click on "WysiwygFileTypeBlock" with title "File name" in WYSIWYG editor
      *
      * @When /^(?:|I )click on "(?P<selector>[^"]+)" with title "(?P<title>[^"]+)" in WYSIWYG editor$/
-     *
-     * @param string $selector
-     * @param string $title
      */
     public function iClickOnElementWithTitleInWysiwygEditor(string $selector, string $title)
     {
@@ -153,11 +140,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $this->getDriver()->switchToWindow();
     }
 
-    /**
-     * @param string $containingValue
-     *
-     * @return Element
-     */
     private function findCodeTypeBlock(string $containingValue): Element
     {
         // Switch to WYSIWYG editor iframe.
@@ -181,9 +163,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         return $element;
     }
 
-    /**
-     * @param Element $codeTypeBlockElement
-     */
     private function openCodeTypeBlockEditor(Element $codeTypeBlockElement): void
     {
         // Switch to WYSIWYG editor iframe.

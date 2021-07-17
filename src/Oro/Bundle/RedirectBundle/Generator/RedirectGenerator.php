@@ -18,9 +18,6 @@ class RedirectGenerator
      */
     protected $registry;
 
-    /**
-     * @param ManagerRegistry $registry
-     */
     public function __construct(ManagerRegistry $registry)
     {
         $this->registry = $registry;
@@ -42,10 +39,6 @@ class RedirectGenerator
         $repository->deleteCyclicRedirects($slug);
     }
 
-    /**
-     * @param Slug $from
-     * @param Slug $to
-     */
     public function generateForSlug(Slug $from, Slug $to)
     {
         if ($from->getUrl() === $to->getUrl()) {

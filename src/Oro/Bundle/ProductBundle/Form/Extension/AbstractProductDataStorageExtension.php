@@ -161,10 +161,6 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
         }
     }
 
-    /**
-     * @param $entity
-     * @param array $itemsData
-     */
     protected function fillItemsData($entity, array $itemsData = [])
     {
         $repository = $this->getProductRepository();

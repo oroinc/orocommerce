@@ -48,9 +48,6 @@ class AddCustomerUserRelation implements Migration, ExtendExtensionAwareInterfac
         return 1;
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function addConsentAcceptanceCustomerUserRelation(Schema $schema): void
     {
         $table = $schema->getTable('oro_customer_user');
@@ -105,9 +102,6 @@ class AddCustomerUserRelation implements Migration, ExtendExtensionAwareInterfac
         );
     }
 
-    /**
-     * @param QueryBag $queries
-     */
     private function updateNewCustomerUserIdFieldWithExistingValues(QueryBag $queries)
     {
         $queries->addQuery('UPDATE oro_consent_acceptance SET customerUser_id=customer_user_id');

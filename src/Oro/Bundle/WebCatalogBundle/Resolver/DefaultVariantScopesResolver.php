@@ -23,19 +23,12 @@ class DefaultVariantScopesResolver
      */
     protected $scopeManager;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param ScopeManager $scopeManager
-     */
     public function __construct(ManagerRegistry $registry, ScopeManager $scopeManager)
     {
         $this->registry = $registry;
         $this->scopeManager = $scopeManager;
     }
 
-    /**
-     * @param ContentNode $contentNode
-     */
     public function resolve(ContentNode $contentNode)
     {
         /** @var ContentNodeRepository $contentNodeRepository */
@@ -45,10 +38,6 @@ class DefaultVariantScopesResolver
         $this->updateDefaultVariantScopesWithDepended($contentNode, $contentNodeRepository);
     }
 
-    /**
-     * @param ContentNode $contentNode
-     * @param ContentNodeRepository $contentNodeRepository
-     */
     protected function updateDefaultVariantScopesWithDepended(
         ContentNode $contentNode,
         ContentNodeRepository $contentNodeRepository
@@ -63,9 +52,6 @@ class DefaultVariantScopesResolver
         }
     }
 
-    /**
-     * @param ContentNode $contentNode
-     */
     protected function updateDefaultVariantScopes(ContentNode $contentNode)
     {
         $defaultVariant = $contentNode->getDefaultVariant();
@@ -103,9 +89,6 @@ class DefaultVariantScopesResolver
         }
     }
 
-    /**
-     * @param ContentNode $contentNode
-     */
     protected function removeEmptyScopeFromVariants(ContentNode $contentNode)
     {
         $defaultScope = $this->scopeManager->findOrCreate(

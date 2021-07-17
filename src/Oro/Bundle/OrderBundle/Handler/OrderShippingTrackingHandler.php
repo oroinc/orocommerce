@@ -2,11 +2,9 @@
 
 namespace Oro\Bundle\OrderBundle\Handler;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\OrderBundle\Entity\OrderShippingTracking;
 use Symfony\Component\Form\Exception\AlreadySubmittedException;
 use Symfony\Component\Form\FormInterface;
 
@@ -17,17 +15,12 @@ class OrderShippingTrackingHandler
      */
     protected $manager;
 
-    /**
-     * @param ManagerRegistry $managerRegistry
-     */
     public function __construct(ManagerRegistry $managerRegistry)
     {
         $this->manager = $managerRegistry->getManagerForClass(Order::class);
     }
 
     /**
-     * @param Order $order
-     * @param FormInterface $form
      * @throws AlreadySubmittedException
      * @throws \OutOfBoundsException
      */
@@ -40,10 +33,6 @@ class OrderShippingTrackingHandler
         }
     }
 
-    /**
-     * @param Order $order
-     * @param $trackings OrderShippingTracking[]|ArrayCollection
-     */
     protected function handleOrderShippingTrackings(Order $order, $trackings)
     {
         $old_trackings = $order->getShippingTrackings()->toArray();

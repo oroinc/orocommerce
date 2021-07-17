@@ -12,7 +12,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 
     /**
      * @Then /^Page should contain Canonical URL with URI "(?P<uri>(?:[^"]|\\")*)"$/
-     * @param string $uri
      */
     public function shouldSeeSlugPrototypesFieldFilledWithValue(string $uri)
     {
@@ -23,9 +22,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
         );
     }
 
-    /**
-     * @return string
-     */
     private function getCurrentApplicationUrl(): string
     {
         $currentUrl = $this->getSession()->getCurrentUrl();

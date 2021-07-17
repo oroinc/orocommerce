@@ -23,9 +23,6 @@ class MergePricesCombiningStrategy extends AbstractPriceCombiningStrategy
      */
     private $tempTableManipulator;
 
-    /**
-     * @param TempTableManipulatorInterface $tempTableManipulator
-     */
     public function setTempTableManipulator(TempTableManipulatorInterface $tempTableManipulator)
     {
         $this->tempTableManipulator = $tempTableManipulator;
@@ -65,13 +62,6 @@ class MergePricesCombiningStrategy extends AbstractPriceCombiningStrategy
         }
     }
 
-    /**
-     * @param CombinedPriceList $combinedPriceList
-     * @param array $priceLists
-     * @param array $products
-     * @param int $progress
-     * @param ProgressBar|null $progressBar
-     */
     private function moveFirstPriceListPrices(
         CombinedPriceList $combinedPriceList,
         array &$priceLists,
@@ -126,13 +116,6 @@ class MergePricesCombiningStrategy extends AbstractPriceCombiningStrategy
         return false;
     }
 
-    /**
-     * @param CombinedPriceList $combinedPriceList
-     * @param array $priceLists
-     * @param array $products
-     * @param int $progress
-     * @param ProgressBar|null $progressBar
-     */
     private function processPriceListsWithTempTable(
         CombinedPriceList $combinedPriceList,
         array $priceLists,
@@ -156,11 +139,6 @@ class MergePricesCombiningStrategy extends AbstractPriceCombiningStrategy
         );
     }
 
-    /**
-     * @param CombinedPriceList $combinedPriceList
-     * @param CombinedPriceListToPriceList $priceListRelation
-     * @param array $products
-     */
     private function processRelationWithTempTable(
         CombinedPriceList $combinedPriceList,
         CombinedPriceListToPriceList $priceListRelation,

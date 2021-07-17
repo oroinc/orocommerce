@@ -33,11 +33,6 @@ class CategoryContextUrlProvider implements ContextUrlProviderInterface
      */
     private $userLocalizationManager;
 
-    /**
-     * @param RequestStack $requestStack
-     * @param UrlCacheInterface $cache
-     * @param UserLocalizationManagerInterface $userLocalizationManager
-     */
     public function __construct(
         RequestStack $requestStack,
         UrlCacheInterface $cache,

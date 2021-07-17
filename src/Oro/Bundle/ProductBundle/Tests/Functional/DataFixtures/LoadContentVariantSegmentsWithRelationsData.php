@@ -61,11 +61,6 @@ class LoadContentVariantSegmentsWithRelationsData extends AbstractFixture implem
         $manager->flush();
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param TestWebCatalog $webCatalog
-     * @param Segment|null $segment
-     */
     private function createTestContentVariant(
         ObjectManager $manager,
         TestWebCatalog $webCatalog,

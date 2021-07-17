@@ -68,8 +68,6 @@ class ConsentAcceptanceProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getCustomerConsentAcceptancesProvider
-     *
-     * @param array $consentAcceptances
      */
     public function testGetCustomerConsentAcceptances(array $consentAcceptances = [])
     {
@@ -122,10 +120,6 @@ class ConsentAcceptanceProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getGetCustomerConsentAcceptanceByConsentId
-     *
-     * @param array                  $consentAcceptances
-     * @param int                    $consentId
-     * @param ConsentAcceptance|null $expectedResult
      */
     public function testGetCustomerConsentAcceptanceByConsentId(
         array $consentAcceptances,
@@ -213,10 +207,6 @@ class ConsentAcceptanceProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getGetCustomerConsentAcceptancesByConsents
-     *
-     * @param array $consentAcceptances
-     * @param array $consents
-     * @param array $expectedResult
      */
     public function testGetCustomerConsentAcceptancesByConsents(
         array $consentAcceptances,

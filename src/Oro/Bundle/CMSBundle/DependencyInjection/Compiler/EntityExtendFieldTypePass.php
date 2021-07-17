@@ -26,9 +26,6 @@ class EntityExtendFieldTypePass implements CompilerPassInterface
         $this->addFieldGuesser($container);
     }
 
-    /**
-     * @param ContainerBuilder $container
-     */
     private function addFieldType(ContainerBuilder $container)
     {
         if ($container->hasDefinition(self::ENTITY_EXTEND_FIELD_TYPE_PROVIDER_SERVICE_ID)) {
@@ -39,9 +36,6 @@ class EntityExtendFieldTypePass implements CompilerPassInterface
         }
     }
 
-    /**
-     * @param ContainerBuilder $container
-     */
     private function addFieldGuesser(ContainerBuilder $container)
     {
         if ($container->hasDefinition(self::ENTITY_EXTEND_FIELD_FORM_GUESSER_SERVICE_ID)) {

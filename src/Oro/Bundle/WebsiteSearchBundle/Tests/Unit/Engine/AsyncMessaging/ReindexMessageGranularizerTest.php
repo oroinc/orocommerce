@@ -39,8 +39,6 @@ class ReindexMessageGranularizerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider smallDataProvider
-     * @param $input
-     * @param $output
      */
     public function testGranulationSmall($input, $output)
     {
@@ -62,8 +60,6 @@ class ReindexMessageGranularizerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider bigDataProvider
-     * @param $input
-     * @param $output
      */
     public function testGranulation($input, $output)
     {

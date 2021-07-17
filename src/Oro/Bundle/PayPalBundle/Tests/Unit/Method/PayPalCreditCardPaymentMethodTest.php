@@ -879,9 +879,6 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider isApplicableProvider
-     *
-     * @param int $value
-     * @param bool $expectedResult
      */
     public function testIsApplicable(int $value, bool $expectedResult)
     {
@@ -946,7 +943,6 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('ref', $paymentTransaction->getReference());
         $this->assertFalse($paymentTransaction->isActive());
     }
-
 
     public function testGetIdentifier()
     {

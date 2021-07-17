@@ -38,9 +38,6 @@ class LoadPriceListData extends AbstractFixture implements ContainerAwareInterfa
         $this->container = $container;
     }
 
-    /**
-     * @param ObjectManager $manager
-     */
     public function load(ObjectManager $manager)
     {
         $priceList = new PriceList();

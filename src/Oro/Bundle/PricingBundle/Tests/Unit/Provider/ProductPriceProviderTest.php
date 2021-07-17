@@ -53,9 +53,6 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getSupportedCurrenciesProvider
-     * @param array $availableCurrencies
-     * @param array $supportedCurrencies
-     * @param array $expectedResult
      */
     public function testGetSupportedCurrencies(
         array $availableCurrencies,
@@ -261,15 +258,6 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getMatchedPricesProvider
-     *
-     * @param array $productPriceCriteria
-     * @param array $products
-     * @param array $productUnitCodes
-     * @param array $prices
-     * @param array $supportedCurrencies
-     * @param array $availableCurrencies
-     * @param array $finalCurrencies
-     * @param array $expectedResult
      */
     public function testGetMatchedPrices(
         array $productPriceCriteria,
@@ -309,15 +297,6 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getMatchedPricesProvider
-     *
-     * @param array $productPriceCriteria
-     * @param array $products
-     * @param array $productUnitCodes
-     * @param array $prices
-     * @param array $supportedCurrencies
-     * @param array $availableCurrencies
-     * @param array $finalCurrencies
-     * @param array $expectedResult
      */
     public function testGetMatchedPricesWhenMemoryCacheProvider(
         array $productPriceCriteria,

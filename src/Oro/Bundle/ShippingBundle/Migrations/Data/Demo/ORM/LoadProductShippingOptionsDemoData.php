@@ -140,10 +140,6 @@ class LoadProductShippingOptionsDemoData extends AbstractFixture implements
         return $this->productUnits[$code];
     }
 
-    /**
-     * @param ProductShippingOptions $productShippingOptions
-     * @param ObjectManager $manager
-     */
     protected function setProductWeight(ProductShippingOptions $productShippingOptions, ObjectManager $manager)
     {
         $model = new Weight();
@@ -152,10 +148,6 @@ class LoadProductShippingOptionsDemoData extends AbstractFixture implements
         $productShippingOptions->setWeight($model);
     }
 
-    /**
-     * @param ProductShippingOptions $productShippingOptions
-     * @param ObjectManager $manager
-     */
     protected function setProductDimensions(ProductShippingOptions $productShippingOptions, ObjectManager $manager)
     {
         $model = Dimensions::create(

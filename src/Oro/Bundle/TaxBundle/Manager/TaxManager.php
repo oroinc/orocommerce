@@ -39,14 +39,6 @@ class TaxManager
     /** @var ObjectCacheKeyGenerator */
     protected $objectCacheKeyGenerator;
 
-    /**
-     * @param TaxFactory $taxFactory
-     * @param TaxEventDispatcher $eventDispatcher
-     * @param TaxValueManager $taxValueManager
-     * @param TaxationSettingsProvider $settingsProvider
-     * @param CacheProvider $cacheProvider
-     * @param ObjectCacheKeyGenerator $objectCacheKeyGenerator
-     */
     public function __construct(
         TaxFactory $taxFactory,
         TaxEventDispatcher $eventDispatcher,
@@ -248,9 +240,6 @@ class TaxManager
         return $taxable;
     }
 
-    /**
-     * @param Taxable $taxable
-     */
     protected function saveTaxValueByTaxable(Taxable $taxable)
     {
         $itemResult = $taxable->getResult();

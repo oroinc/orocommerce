@@ -20,10 +20,6 @@ class AddOrderPromotionDiscounts implements ProcessorInterface
     /** @var TranslatorInterface */
     private $translator;
 
-    /**
-     * @param DoctrineHelper      $doctrineHelper
-     * @param TranslatorInterface $translator
-     */
     public function __construct(DoctrineHelper $doctrineHelper, TranslatorInterface $translator)
     {
         $this->doctrineHelper = $doctrineHelper;
@@ -50,14 +46,6 @@ class AddOrderPromotionDiscounts implements ProcessorInterface
         }
     }
 
-    /**
-     * @param CustomizeLoadedDataContext $context
-     * @param array                      $data
-     * @param string                     $orderIdFieldName
-     * @param string                     $discountsFieldName
-     *
-     * @return array
-     */
     private function addPromotionDiscounts(
         CustomizeLoadedDataContext $context,
         array $data,
@@ -106,11 +94,6 @@ class AddOrderPromotionDiscounts implements ProcessorInterface
         return $result;
     }
 
-    /**
-     * @param string $type
-     *
-     * @return string
-     */
     private function getPromotionDiscountDescription(string $type): string
     {
         return $this->translator->trans(sprintf(

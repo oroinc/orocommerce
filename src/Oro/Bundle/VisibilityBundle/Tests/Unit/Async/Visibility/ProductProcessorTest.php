@@ -60,9 +60,6 @@ class ProductProcessorTest extends \PHPUnit\Framework\TestCase
         return $message;
     }
 
-    /**
-     * @return SessionInterface
-     */
     private function getSession(): SessionInterface
     {
         return $this->createMock(SessionInterface::class);
@@ -267,7 +264,6 @@ class ProductProcessorTest extends \PHPUnit\Framework\TestCase
                 [ProductVisibilityResolved::class, $em],
                 [Product::class, $em]
             ]);
-
 
         $repository = $this->createMock(ProductRepository::class);
         $repository

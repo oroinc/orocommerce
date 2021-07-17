@@ -35,26 +35,16 @@ class LocalizedSlugType extends AbstractType
      */
     private $slugifyEntityHelper;
 
-    /**
-     * @param SlugifyFormHelper $slugifyFormHelper
-     * @param SlugGenerator $slugGenerator
-     */
     public function __construct(SlugifyFormHelper $slugifyFormHelper, SlugGenerator $slugGenerator)
     {
         $this->slugifyFormHelper = $slugifyFormHelper;
     }
 
-    /**
-     * @param SlugifyEntityHelper $slugifyEntityHelper
-     */
     public function setSlugifyEntityHelper(SlugifyEntityHelper $slugifyEntityHelper): void
     {
         $this->slugifyEntityHelper = $slugifyEntityHelper;
     }
 
-    /**
-     * @return SlugifyEntityHelper
-     */
     public function getSlugifyEntityHelper(): SlugifyEntityHelper
     {
         if (!$this->slugifyEntityHelper) {
@@ -98,8 +88,6 @@ class LocalizedSlugType extends AbstractType
 
     /**
      * Change update at of owning entity on slug collection change
-     *
-     * @param FormEvent $event
      */
     public function onPostSubmit(FormEvent $event): void
     {
@@ -137,8 +125,6 @@ class LocalizedSlugType extends AbstractType
     }
 
     /**
-     * @param $entity
-     *
      * @throws \Exception
      */
     private function updateDateTime($entity): void

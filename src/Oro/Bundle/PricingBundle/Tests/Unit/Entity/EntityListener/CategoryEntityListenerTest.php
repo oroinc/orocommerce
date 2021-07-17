@@ -56,9 +56,6 @@ class CategoryEntityListenerTest extends AbstractRuleEntityListenerTest
 
     /**
      * @dataProvider preUpdateData
-     * @param array $changeSet
-     * @param array $expectedFields
-     * @param int $numberOfCalls
      */
     public function testPreUpdate(array $changeSet, array $expectedFields, int $numberOfCalls)
     {

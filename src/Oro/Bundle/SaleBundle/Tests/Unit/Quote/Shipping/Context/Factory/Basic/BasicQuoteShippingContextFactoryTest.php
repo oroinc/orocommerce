@@ -219,15 +219,6 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
         return $this->createMock(ShippingContext::class);
     }
 
-    /**
-     * @param int $quoteId
-     * @param string $currency
-     * @param QuoteAddress $shippingAddressMock
-     * @param Website $website
-     * @param Customer $customer
-     * @param CustomerUser $customerUser
-     * @return Quote
-     */
     private function createQuote(
         int $quoteId,
         string $currency,

@@ -27,9 +27,6 @@ class LocalizedSlugWithRedirectType extends AbstractType
      */
     private $confirmSlugChangeFormHelper;
 
-    /**
-     * @param ConfirmSlugChangeFormHelper $confirmSlugChangeFormHelper
-     */
     public function __construct(ConfirmSlugChangeFormHelper $confirmSlugChangeFormHelper)
     {
         $this->confirmSlugChangeFormHelper = $confirmSlugChangeFormHelper;

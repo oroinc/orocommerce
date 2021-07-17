@@ -156,7 +156,6 @@ class UPSShippingMethodTest extends \PHPUnit\Framework\TestCase
         static::assertEquals('20', $this->upsShippingMethod->getSortOrder());
     }
 
-
     /**
      * @param int $methodSurcharge
      * @param int $typeSurcharge

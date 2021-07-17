@@ -17,10 +17,6 @@ class CategoryVisibilityProvider
     /** @var CustomerUserRelationsProvider */
     private $customerUserRelationsProvider;
 
-    /**
-     * @param CategoryVisibilityResolverInterface $categoryVisibilityResolver
-     * @param CustomerUserRelationsProvider       $customerUserRelationsProvider
-     */
     public function __construct(
         CategoryVisibilityResolverInterface $categoryVisibilityResolver,
         CustomerUserRelationsProvider $customerUserRelationsProvider

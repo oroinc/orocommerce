@@ -72,8 +72,6 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
 
     /**
      * @dataProvider priceListRelationDataProvider
-     * @param array $submittedData
-     * @param array $expectedData
      */
     public function testAddOnCreate(array $submittedData, array  $expectedData)
     {
@@ -96,8 +94,6 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
 
     /**
      * @dataProvider priceListRelationDataProvider
-     * @param array $submittedData
-     * @param array $expectedData
      */
     public function testAddOnUpdate(array $submittedData, array  $expectedData)
     {
@@ -382,10 +378,6 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
         return $this->explodeArrayPaths($formValues);
     }
 
-    /**
-     * @param array $expectedData
-     * @param Form $form
-     */
     protected function checkExpectedData(array $expectedData, Form $form)
     {
         $formValues = $this->explodeArrayPaths($form->getValues());

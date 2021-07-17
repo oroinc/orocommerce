@@ -197,11 +197,6 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
         return $simpleProduct;
     }
 
-    /**
-     * @param Product $configurableProduct
-     * @param array $variantParameters
-     * @param array $result
-     */
     protected function setUpRepositoryResult(Product $configurableProduct, array $variantParameters, array $result)
     {
         $this->productRepository
@@ -677,10 +672,6 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @param array $variantsData
-     * @param array $productData
-     */
     protected function configureMocks(array $variantsData, array $productData)
     {
         $this->customFieldProvider->expects($this->any())
@@ -707,10 +698,6 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
         $this->configureRepositoryMock($variantsData, $productData);
     }
 
-    /**
-     * @param array $variantsData
-     * @param array $productData
-     */
     protected function configureRepositoryMock(array $variantsData, array $productData)
     {
         $simpleProducts = $this->getSimpleProductsWithVariants($variantsData, $productData);
@@ -784,9 +771,6 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
         return $products;
     }
 
-    /**
-     * @param array $simpleProductResult
-     */
     protected function assertGetSimpleProductsCall(array $simpleProductResult)
     {
         $query = $this->createMock(AbstractQuery::class);

@@ -14,10 +14,6 @@ class ProductEntityListener extends AbstractRuleEntityListener implements Featur
 {
     use FeatureCheckerHolderTrait;
 
-    /**
-     * @param Product $product
-     * @param PreUpdateEventArgs $event
-     */
     public function preUpdate(Product $product, PreUpdateEventArgs $event)
     {
         if (!$this->isFeaturesEnabled()) {
@@ -27,9 +23,6 @@ class ProductEntityListener extends AbstractRuleEntityListener implements Featur
         $this->recalculateByEntityFieldsUpdate($event->getEntityChangeSet(), $product);
     }
 
-    /**
-     * @param Product $product
-     */
     public function postPersist(Product $product)
     {
         if (!$this->isFeaturesEnabled()) {

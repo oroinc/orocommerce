@@ -39,9 +39,6 @@ class LoadShippingServicesData extends AbstractFixture implements OrderedFixture
         $manager->flush();
     }
 
-    /**
-     * @return array
-     */
     private function getData(): array
     {
         return [

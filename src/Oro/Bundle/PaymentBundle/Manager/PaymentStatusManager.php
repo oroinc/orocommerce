@@ -22,11 +22,6 @@ class PaymentStatusManager
     /** @var PaymentTransactionProvider */
     protected $paymentTransactionProvider;
 
-    /**
-     * @param PaymentStatusProviderInterface $provider
-     * @param DoctrineHelper $doctrineHelper
-     * @param PaymentTransactionProvider $transactionProvider
-     */
     public function __construct(
         PaymentStatusProviderInterface $provider,
         DoctrineHelper $doctrineHelper,
@@ -37,9 +32,6 @@ class PaymentStatusManager
         $this->paymentTransactionProvider = $transactionProvider;
     }
 
-    /**
-     * @param PaymentTransaction $transaction
-     */
     public function updateStatus(PaymentTransaction $transaction)
     {
         $entityClass = $transaction->getEntityClass();
@@ -59,11 +51,6 @@ class PaymentStatusManager
         $em->flush($paymentStatusEntity);
     }
 
-    /**
-     * @param string $entityClass
-     * @param int $entityId
-     * @return PaymentStatus
-     */
     public function getPaymentStatusForEntity(string $entityClass, int $entityId): PaymentStatus
     {
         $paymentStatusEntity = $this->findPaymentStatus($entityClass, $entityId);
@@ -78,11 +65,6 @@ class PaymentStatusManager
         return $paymentStatusEntity;
     }
 
-    /**
-     * @param string $entityClass
-     * @param int $entityId
-     * @return PaymentStatus
-     */
     private function createPaymentStatus(string $entityClass, int $entityId): PaymentStatus
     {
         $paymentStatusEntity = new PaymentStatus();
@@ -92,11 +74,6 @@ class PaymentStatusManager
         return $paymentStatusEntity;
     }
 
-    /**
-     * @param string $entityClass
-     * @param int $entityId
-     * @return PaymentStatus|null
-     */
     private function findPaymentStatus(string $entityClass, int $entityId): ?PaymentStatus
     {
         /** @var PaymentStatus $paymentStatusEntity */

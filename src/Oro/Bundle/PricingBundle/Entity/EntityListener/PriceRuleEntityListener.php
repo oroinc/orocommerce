@@ -21,10 +21,6 @@ class PriceRuleEntityListener
     /** @var PriceListTriggerHandler */
     protected $priceListTriggerHandler;
 
-    /**
-     * @param Cache $cache
-     * @param PriceListTriggerHandler $priceListTriggerHandler
-     */
     public function __construct(Cache $cache, PriceListTriggerHandler $priceListTriggerHandler)
     {
         $this->cache = $cache;
@@ -33,8 +29,6 @@ class PriceRuleEntityListener
 
     /**
      * Recalculate price rules on price rule change.
-     *
-     * @param PriceRule $priceRule
      */
     public function postPersist(PriceRule $priceRule)
     {
@@ -46,9 +40,6 @@ class PriceRuleEntityListener
 
     /**
      * Recalculate price rules on price rule change.
-     *
-     * @param PriceRule $priceRule
-     * @param PreUpdateEventArgs $event
      */
     public function preUpdate(PriceRule $priceRule, PreUpdateEventArgs $event)
     {
@@ -65,21 +56,16 @@ class PriceRuleEntityListener
 
     /**
      * Recalculate price rules on price rule remove.
-     *
-     * @param PriceRule $priceRule
      */
     public function preRemove(PriceRule $priceRule)
     {
         $priceRule->getPriceList()->setActual(false);
         $this->clearCache($priceRule);
         $priceList = $priceRule->getPriceList();
-        
+
         $this->priceListTriggerHandler->handlePriceListTopic(Topics::RESOLVE_PRICE_RULES, $priceList);
     }
 
-    /**
-     * @param PriceRule $priceRule
-     */
     protected function clearCache(PriceRule $priceRule)
     {
         $this->cache->delete('pr_' . $priceRule->getId());

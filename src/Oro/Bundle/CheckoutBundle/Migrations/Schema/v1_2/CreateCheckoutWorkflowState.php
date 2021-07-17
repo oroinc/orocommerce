@@ -18,7 +18,6 @@ class CreateCheckoutWorkflowState implements Migration
 
     /**
      * Create oro_checkout_workflow_state table
-     * @param Schema $schema
      */
     protected function createCheckoutWorkflowStateTable(Schema $schema)
     {

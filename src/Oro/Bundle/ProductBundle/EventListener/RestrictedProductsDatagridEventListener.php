@@ -20,10 +20,6 @@ class RestrictedProductsDatagridEventListener
     /** @var  ProductManager */
     protected $productManager;
 
-    /**
-     * @param RequestStack   $requestStack
-     * @param ProductManager $productManager
-     */
     public function __construct(
         RequestStack $requestStack,
         ProductManager $productManager
@@ -32,9 +28,6 @@ class RestrictedProductsDatagridEventListener
         $this->productManager = $productManager;
     }
 
-    /**
-     * @param BuildAfter $event
-     */
     public function onBuildAfter(BuildAfter $event)
     {
         /** @var OrmDatasource $dataSource */

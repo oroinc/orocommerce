@@ -14,20 +14,13 @@ use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
  */
 class OrderAddressToAddressIdentifierViewTransformer implements DataTransformerInterface
 {
-    /** @var OrderAddressManager */
     private OrderAddressManager $addressManager;
 
-    /** @var PropertyAccessorInterface */
     private PropertyAccessorInterface $propertyAccessor;
 
     /** @var string[] */
     private array $requiredFields;
 
-    /**
-     * @param OrderAddressManager $addressManager
-     * @param PropertyAccessorInterface $propertyAccessor
-     * @param array $requiredFields
-     */
     public function __construct(
         OrderAddressManager $addressManager,
         PropertyAccessorInterface $propertyAccessor,
@@ -72,9 +65,6 @@ class OrderAddressToAddressIdentifierViewTransformer implements DataTransformerI
     /**
      * Check if new address is fulfilled with some data. Assume address is not empty if one of the required fields
      * is not empty.
-     *
-     * @param OrderAddress $address
-     * @return bool
      */
     private function addressIsEmpty(OrderAddress $address): bool
     {

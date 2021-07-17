@@ -18,7 +18,6 @@ class OroRFPBundle implements Migration
     }
 
     /**
-     * @param Schema $schema
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     protected function modifyRfpRequestTable(Schema $schema)

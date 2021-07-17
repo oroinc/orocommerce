@@ -28,12 +28,6 @@ class RelatedProductEntityReader extends IteratorBasedReader
     /** @var AbstractRelatedItemConfigProvider */
     private $configProvider;
 
-    /**
-     * @param ContextRegistry $contextRegistry
-     * @param ManagerRegistry $registry
-     * @param AclHelper $aclHelper
-     * @param AbstractRelatedItemConfigProvider $configProvider
-     */
     public function __construct(
         ContextRegistry $contextRegistry,
         ManagerRegistry $registry,
@@ -97,10 +91,6 @@ class RelatedProductEntityReader extends IteratorBasedReader
         ];
     }
 
-    /**
-     * @param string $className
-     * @return ObjectRepository
-     */
     private function getRepository(string $className): ObjectRepository
     {
         return $this->registry->getManagerForClass($className)->getRepository($className);

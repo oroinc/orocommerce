@@ -19,9 +19,6 @@ class CustomerCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder
     /** @var VisibilityChangeCustomerSubtreeCacheBuilder */
     protected $visibilityChangeCustomerSubtreeCacheBuilder;
 
-    /**
-     * @param VisibilityChangeCustomerSubtreeCacheBuilder $visibilityChangeCustomerSubtreeCacheBuilder
-     */
     public function setVisibilityChangeCustomerSubtreeCacheBuilder(
         VisibilityChangeCustomerSubtreeCacheBuilder $visibilityChangeCustomerSubtreeCacheBuilder
     ) {

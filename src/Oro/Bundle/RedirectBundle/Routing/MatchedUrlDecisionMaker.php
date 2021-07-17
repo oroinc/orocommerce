@@ -41,11 +41,6 @@ class MatchedUrlDecisionMaker
         }
     }
 
-    /**
-     * @param string $url
-     *
-     * @return bool
-     */
     public function matches(string $url): bool
     {
         return
@@ -53,11 +48,6 @@ class MatchedUrlDecisionMaker
             && !$this->isSkippedUrl($url);
     }
 
-    /**
-     * @param string $url
-     *
-     * @return bool
-     */
     private function isSkippedUrl(string $url): bool
     {
         $result = $this->checkedUrls[$url] ?? null;

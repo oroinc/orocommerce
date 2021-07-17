@@ -61,8 +61,6 @@ class LineItemsMatrixFormOnResultAfterListenerTest extends \PHPUnit\Framework\Te
 
     /**
      * @dataProvider onResultAfterWhenNoLineItemsDataProvider
-     *
-     * @param array $recordData
      */
     public function testOnResultAfterWhenNoLineItems(array $recordData): void
     {
@@ -87,9 +85,6 @@ class LineItemsMatrixFormOnResultAfterListenerTest extends \PHPUnit\Framework\Te
         $this->assertNull($resultRecord->getValue('isMatrixFormAvailable'));
     }
 
-    /**
-     * @return array
-     */
     public function onResultAfterWhenNoLineItemsDataProvider(): array
     {
         return [
@@ -107,11 +102,6 @@ class LineItemsMatrixFormOnResultAfterListenerTest extends \PHPUnit\Framework\Te
 
     /**
      * @dataProvider onResultAfterDataProvider
-     *
-     * @param ProductLineItemInterface $lineItem
-     * @param Product $product
-     * @param array $isMatrixFormAvailable
-     * @param bool $expectedResult
      */
     public function testOnResultAfter(
         ProductLineItemInterface $lineItem,
@@ -143,9 +133,6 @@ class LineItemsMatrixFormOnResultAfterListenerTest extends \PHPUnit\Framework\Te
         $this->assertEquals($expectedResult, $resultRecord->getValue('isMatrixFormAvailable'));
     }
 
-    /**
-     * @return array
-     */
     public function onResultAfterDataProvider(): array
     {
         $parentProduct = $this->createMock(Product::class);
@@ -188,10 +175,6 @@ class LineItemsMatrixFormOnResultAfterListenerTest extends \PHPUnit\Framework\Te
         ];
     }
 
-    /**
-     * @param array $parameters
-     * @return Datagrid
-     */
     private function getDatagrid(array $parameters = []): Datagrid
     {
         return new Datagrid(

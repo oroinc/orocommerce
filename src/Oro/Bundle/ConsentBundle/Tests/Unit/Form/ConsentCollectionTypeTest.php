@@ -61,8 +61,6 @@ class ConsentCollectionTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param array $submitted
-     * @param array $expected
      * @dataProvider submitDataProvider
      */
     public function testSubmit(array $submitted, array $expected)

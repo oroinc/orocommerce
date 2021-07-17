@@ -22,10 +22,6 @@ class SluggableUrlDumper
      */
     private $cache;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param UrlCacheInterface $cache
-     */
     public function __construct(ManagerRegistry $registry, UrlCacheInterface $cache)
     {
         $this->registry = $registry;

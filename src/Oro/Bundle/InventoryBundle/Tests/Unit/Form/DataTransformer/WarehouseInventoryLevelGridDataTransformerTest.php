@@ -48,10 +48,6 @@ class WarehouseInventoryLevelGridDataTransformerTest extends \PHPUnit\Framework\
     }
 
     /**
-     * @param $value
-     * @param $expected
-     * @param DoctrineHelper|null $doctrineHelper
-     * @param Product|null $product
      * @dataProvider reverseTransformDataProvider
      */
     public function testReverseTransform(

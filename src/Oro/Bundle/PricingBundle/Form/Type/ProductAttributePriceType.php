@@ -19,10 +19,6 @@ class ProductAttributePriceType extends AbstractType implements DataMapperInterf
     const NAME = 'oro_pricing_product_attribute_price';
     const PRICE = 'price';
 
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add(self::PRICE, NumberType::class, [

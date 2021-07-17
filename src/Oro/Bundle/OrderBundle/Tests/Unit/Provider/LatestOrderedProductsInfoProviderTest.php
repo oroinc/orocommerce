@@ -123,10 +123,6 @@ class LatestOrderedProductsInfoProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @param array $items
-     * @return \PHPUnit\Framework\MockObject\MockObject
-     */
     private function configureQueryBuilder(array $items): MockObject
     {
         $queryBuilder = $this->createMock(QueryBuilder::class);
@@ -144,9 +140,6 @@ class LatestOrderedProductsInfoProviderTest extends \PHPUnit\Framework\TestCase
         return $queryBuilder;
     }
 
-    /**
-     * @return MockObject
-     */
     private function configureRegistry(): MockObject
     {
         $repository = $this->createMock(OrderRepository::class);

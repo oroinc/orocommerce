@@ -194,10 +194,10 @@ class ProductUnitPrecision implements ProductUnitHolderInterface
     public function setConversionRate($conversionRate)
     {
         $this->conversionRate = $conversionRate;
-        
+
         return $this;
     }
-    
+
     /**
      * @return float
      */
@@ -221,7 +221,7 @@ class ProductUnitPrecision implements ProductUnitHolderInterface
     public function setSell($sell)
     {
         $this->sell = $sell;
-        
+
         return $this;
     }
 

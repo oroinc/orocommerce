@@ -18,9 +18,6 @@ class SetSlugs implements ProcessorInterface
      */
     private $slugifyEntityHelper;
 
-    /**
-     * @param SlugifyEntityHelper $slugifyEntityHelper
-     */
     public function __construct(SlugifyEntityHelper $slugifyEntityHelper)
     {
         $this->slugifyEntityHelper = $slugifyEntityHelper;

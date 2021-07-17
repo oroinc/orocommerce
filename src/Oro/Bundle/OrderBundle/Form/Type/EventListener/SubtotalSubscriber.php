@@ -29,19 +29,12 @@ class SubtotalSubscriber implements EventSubscriberInterface
     /** @var OrderLineItemCurrencyHandler */
     protected $orderLineItemCurrencyHandler;
 
-    /**
-     * @param TotalHelper $totalHelper
-     * @param PriceMatcher $priceMatcher
-     */
     public function __construct(TotalHelper $totalHelper, PriceMatcher $priceMatcher)
     {
         $this->totalHelper = $totalHelper;
         $this->priceMatcher = $priceMatcher;
     }
 
-    /**
-     * @param OrderLineItemCurrencyHandler $orderLineItemCurrencyHandler
-     */
     public function setOrderLineItemCurrencyHandler(OrderLineItemCurrencyHandler $orderLineItemCurrencyHandler): void
     {
         $this->orderLineItemCurrencyHandler = $orderLineItemCurrencyHandler;
@@ -55,9 +48,6 @@ class SubtotalSubscriber implements EventSubscriberInterface
         return [FormEvents::SUBMIT => 'onSubmitEventListener'];
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function onSubmitEventListener(FormEvent $event)
     {
         $form = $event->getForm();
@@ -91,10 +81,6 @@ class SubtotalSubscriber implements EventSubscriberInterface
         }
     }
 
-    /**
-     * @param FormInterface $form
-     * @param Order $order
-     */
     private function resetLineItems(FormInterface $form, Order $order): void
     {
         if ($form->has('lineItems')) {

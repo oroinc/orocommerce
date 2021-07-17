@@ -32,7 +32,6 @@ class ProductInventoryThresholdFormViewListenerTest extends AbstractFallbackFiel
         parent::tearDown();
     }
 
-
     /**
      * {@inheritdoc}
      */

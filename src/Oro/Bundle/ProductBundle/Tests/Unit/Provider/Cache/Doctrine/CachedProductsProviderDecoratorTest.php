@@ -63,8 +63,6 @@ class CachedProductsProviderDecoratorTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider productDataProvider
-     *
-     * @param array $products
      */
     public function testGetProductsEmptyCache(array $products)
     {
@@ -84,9 +82,6 @@ class CachedProductsProviderDecoratorTest extends \PHPUnit\Framework\TestCase
         static::assertEquals($products, $this->provider->getProducts());
     }
 
-    /**
-     * @return array
-     */
     public function productDataProvider(): array
     {
         return [

@@ -17,10 +17,6 @@ class InventoryQuantityProvider implements InventoryQuantityProviderInterface
     /** @var InventoryQuantityManager */
     protected $quantityManager;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param InventoryQuantityManager $quantityManager
-     */
     public function __construct(DoctrineHelper $doctrineHelper, InventoryQuantityManager $quantityManager)
     {
         $this->doctrineHelper = $doctrineHelper;

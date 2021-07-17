@@ -31,11 +31,6 @@ class ConsentContentNodeValidator
      */
     private $contentNodeTreeResolver;
 
-    /**
-     * @param LoggerInterface $logger
-     * @param ConsentContextProviderInterface $contextProvider
-     * @param ContentNodeTreeResolverInterface $contentNodeTreeResolver
-     */
     public function __construct(
         LoggerInterface $logger,
         ConsentContextProviderInterface $contextProvider,

@@ -162,9 +162,6 @@ class PriceListCustomerFallbackTest extends AbstractApiPriceListRelationTest
         );
     }
 
-    /**
-     * @return Website
-     */
     protected function getWebsiteForTest(): Website
     {
         return $this->getEntityManager()->getRepository(Website::class)->getDefaultWebsite();

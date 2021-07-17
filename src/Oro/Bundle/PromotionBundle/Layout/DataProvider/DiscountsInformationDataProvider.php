@@ -19,10 +19,6 @@ class DiscountsInformationDataProvider
      */
     private $currencyManager;
 
-    /**
-     * @param PromotionExecutor $promotionExecutor
-     * @param UserCurrencyManager $currencyManager
-     */
     public function __construct(PromotionExecutor $promotionExecutor, UserCurrencyManager $currencyManager)
     {
         $this->promotionExecutor = $promotionExecutor;

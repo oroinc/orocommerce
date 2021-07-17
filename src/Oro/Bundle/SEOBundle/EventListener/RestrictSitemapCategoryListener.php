@@ -17,18 +17,12 @@ class RestrictSitemapCategoryListener
      */
     private $categoryVisibilityQueryBuilderModifier;
 
-    /**
-     * @param CategoryVisibilityQueryBuilderModifier $categoryVisibilityQueryBuilderModifier
-     */
     public function __construct(
         CategoryVisibilityQueryBuilderModifier $categoryVisibilityQueryBuilderModifier
     ) {
         $this->categoryVisibilityQueryBuilderModifier = $categoryVisibilityQueryBuilderModifier;
     }
 
-    /**
-     * @param RestrictSitemapEntitiesEvent $event
-     */
     public function restrictQueryBuilder(RestrictSitemapEntitiesEvent $event)
     {
         $qb = $event->getQueryBuilder();

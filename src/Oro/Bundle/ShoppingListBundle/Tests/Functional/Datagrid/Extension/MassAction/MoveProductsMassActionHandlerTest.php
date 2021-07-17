@@ -88,8 +88,6 @@ class MoveProductsMassActionHandlerTest extends WebTestCase
     }
 
     /**
-     * @param string $lineItemName
-     *
      * @dataProvider handleWhenSingleItemDataProvider
      */
     public function testHandleWhenSingleItem(string $lineItemName): void
@@ -117,9 +115,6 @@ class MoveProductsMassActionHandlerTest extends WebTestCase
         $this->assertEquals($targetShoppingList->getId(), $lineItem->getShoppingList()->getId());
     }
 
-    /**
-     * @return array
-     */
     public function handleWhenSingleItemDataProvider(): array
     {
         return [
@@ -158,9 +153,6 @@ class MoveProductsMassActionHandlerTest extends WebTestCase
         $this->assertEquals($targetShoppingList->getId(), $lineItem->getShoppingList()->getId());
     }
 
-    /**
-     * @return CustomerUser
-     */
     private function getCustomerUser(): CustomerUser
     {
         return $this->getContainer()
@@ -169,10 +161,6 @@ class MoveProductsMassActionHandlerTest extends WebTestCase
             ->findOneBy(['username' => LoadCustomerUserData::AUTH_USER]);
     }
 
-    /**
-     * @param CustomerUser $customerUser
-     * @return UsernamePasswordOrganizationToken
-     */
     private function createToken(CustomerUser $customerUser): UsernamePasswordOrganizationToken
     {
         return new UsernamePasswordOrganizationToken(
@@ -184,11 +172,6 @@ class MoveProductsMassActionHandlerTest extends WebTestCase
         );
     }
 
-    /**
-     * @param CustomerUser $customerUser
-     * @param ShoppingList $shoppingList
-     * @return DatagridInterface
-     */
     private function getDatagrid(CustomerUser $customerUser, ShoppingList $shoppingList): DatagridInterface
     {
         return $this->getContainer()
@@ -201,10 +184,6 @@ class MoveProductsMassActionHandlerTest extends WebTestCase
             );
     }
 
-    /**
-     * @param ShoppingList $shoppingList
-     * @return Query
-     */
     private function getQuery(ShoppingList $shoppingList): Query
     {
         /** @var LineItemRepository $repository */
@@ -220,12 +199,6 @@ class MoveProductsMassActionHandlerTest extends WebTestCase
             ->getQuery();
     }
 
-    /**
-     * @param DatagridInterface $datagrid
-     * @param SelectedItems $selectedItems
-     *
-     * @return IterableResultInterface
-     */
     private function getIterableResultFromDatagrid(
         DatagridInterface $datagrid,
         SelectedItems $selectedItems
@@ -240,9 +213,6 @@ class MoveProductsMassActionHandlerTest extends WebTestCase
             );
     }
 
-    /**
-     * @return MoveProductsMassAction
-     */
     private function getMoveProductsMassAction(): MoveProductsMassAction
     {
         $moveProductsMassAction = new MoveProductsMassAction();
@@ -251,9 +221,6 @@ class MoveProductsMassActionHandlerTest extends WebTestCase
         return $moveProductsMassAction;
     }
 
-    /**
-     * @return ActionConfiguration
-     */
     private function getActionConfiguration(): ActionConfiguration
     {
         return ActionConfiguration::create(['data_identifier' => 'lineItem.id']);

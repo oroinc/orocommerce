@@ -552,9 +552,6 @@ class UserLocalizationManagerTest extends \PHPUnit\Framework\TestCase
         $this->userLocalizationManager->setCurrentLocalization($localization, null, true);
     }
 
-    /**
-     * @return array
-     */
     private function getEnabledLocalizations(): array
     {
         return [

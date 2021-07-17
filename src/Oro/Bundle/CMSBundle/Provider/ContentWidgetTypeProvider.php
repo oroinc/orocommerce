@@ -16,19 +16,12 @@ class ContentWidgetTypeProvider
     /** @var TranslatorInterface */
     private $translator;
 
-    /**
-     * @param ContentWidgetTypeRegistry $contentWidgetTypeRegistry
-     * @param TranslatorInterface $translator
-     */
     public function __construct(ContentWidgetTypeRegistry $contentWidgetTypeRegistry, TranslatorInterface $translator)
     {
         $this->contentWidgetTypeRegistry = $contentWidgetTypeRegistry;
         $this->translator = $translator;
     }
 
-    /**
-     * @return array
-     */
     public function getAvailableContentWidgetTypes(): array
     {
         $types = [];

@@ -21,10 +21,6 @@ class TotalResolver implements ResolverInterface
     /**  @var RoundingResolver */
     protected $roundingResolver;
 
-    /**
-     * @param TaxationSettingsProvider $settingsProvider
-     * @param RoundingResolver $roundingResolver
-     */
     public function __construct(TaxationSettingsProvider $settingsProvider, RoundingResolver $roundingResolver)
     {
         $this->settingsProvider = $settingsProvider;

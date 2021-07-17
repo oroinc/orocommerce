@@ -15,7 +15,6 @@ class CommonUnitValueTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-
     public function testConfigure(): void
     {
         $form = $this->factory->create(CommonUnitValueType::class);
@@ -35,9 +34,6 @@ class CommonUnitValueTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider formDataProvider
-     *
-     * @param $actual
-     * @param $expected
      */
     public function testSubmit($actual, $expected): void
     {
@@ -49,9 +45,6 @@ class CommonUnitValueTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expected, $form->getViewData());
     }
 
-    /**
-     * @return array
-     */
     public function formDataProvider(): array
     {
         return [

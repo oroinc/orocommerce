@@ -33,9 +33,6 @@ class OroCalendarCommerceBridgeBundle implements Migration, ActivityExtensionAwa
 
     /**
      * Enable activities
-     *
-     * @param Schema            $schema
-     * @param ActivityExtension $activityExtension
      */
     public static function addCalendarActivityAssociations(Schema $schema, ActivityExtension $activityExtension)
     {

@@ -53,9 +53,6 @@ class ProductTaxCodeEventListener
         $this->settingsKey = (string)$settingsKey;
     }
 
-    /**
-     * @param ConfigSettingsUpdateEvent $event
-     */
     public function formPreSet(ConfigSettingsUpdateEvent $event)
     {
         $settings = $event->getSettings();
@@ -79,9 +76,6 @@ class ProductTaxCodeEventListener
         $event->setSettings($settings);
     }
 
-    /**
-     * @param ConfigSettingsUpdateEvent $event
-     */
     public function beforeSave(ConfigSettingsUpdateEvent $event)
     {
         $settings = $event->getSettings();

@@ -22,9 +22,6 @@ class UpdateOrderLineItemProduct implements ProcessorInterface
     /** @var DoctrineHelper */
     private $doctrineHelper;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(DoctrineHelper $doctrineHelper)
     {
         $this->doctrineHelper = $doctrineHelper;
@@ -54,11 +51,6 @@ class UpdateOrderLineItemProduct implements ProcessorInterface
         );
     }
 
-    /**
-     * @param OrderLineItem                 $lineItem
-     * @param ParameterBagInterface         $sharedData
-     * @param IncludedEntityCollection|null $includedEntities
-     */
     private function updateLineItemProduct(
         OrderLineItem $lineItem,
         ParameterBagInterface $sharedData,
@@ -73,11 +65,6 @@ class UpdateOrderLineItemProduct implements ProcessorInterface
         }
     }
 
-    /**
-     * @param OrderLineItem $lineItem
-     *
-     * @return bool
-     */
     private function isApplicableLineItem(OrderLineItem $lineItem): bool
     {
         return
@@ -86,20 +73,11 @@ class UpdateOrderLineItemProduct implements ProcessorInterface
             && null === $lineItem->getProduct();
     }
 
-    /**
-     * @param OrderLineItem $lineItem
-     *
-     * @return string
-     */
     private function getProductSku(OrderLineItem $lineItem): string
     {
         return mb_strtoupper($lineItem->getProductSku());
     }
 
-    /**
-     * @param ParameterBagInterface         $sharedData
-     * @param IncludedEntityCollection|null $includedEntities
-     */
     private function ensureProductIdsInitialized(
         ParameterBagInterface $sharedData,
         ?IncludedEntityCollection $includedEntities
@@ -113,12 +91,6 @@ class UpdateOrderLineItemProduct implements ProcessorInterface
         }
     }
 
-    /**
-     * @param string                $productSku
-     * @param ParameterBagInterface $sharedData
-     *
-     * @return Product|null
-     */
     private function getProduct(string $productSku, ParameterBagInterface $sharedData): ?Product
     {
         $productIds = $sharedData->get(self::PRODUCT_IDS);
@@ -163,11 +135,6 @@ class UpdateOrderLineItemProduct implements ProcessorInterface
         return $this->loadProductIds(array_keys($productSkus));
     }
 
-    /**
-     * @param string $productSku
-     *
-     * @return int|null
-     */
     private function loadProductId(string $productSku): ?int
     {
         $productIds = $this->loadProductIds([$productSku]);

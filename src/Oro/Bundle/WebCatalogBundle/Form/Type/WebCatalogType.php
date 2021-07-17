@@ -16,10 +16,6 @@ class WebCatalogType extends AbstractType
 {
     const NAME = 'oro_web_catalog';
 
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder

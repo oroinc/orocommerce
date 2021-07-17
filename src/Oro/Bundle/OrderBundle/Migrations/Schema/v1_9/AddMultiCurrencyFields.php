@@ -14,7 +14,6 @@ class AddMultiCurrencyFields implements
     Migration,
     RenameExtensionAwareInterface
 {
-
     /**
      * @var RenameExtension
      */
@@ -36,11 +35,6 @@ class AddMultiCurrencyFields implements
         self::addColumnsForMultiCurrency($schema, $queryBag, $this->renameExtension);
     }
 
-    /**
-     * @param Schema $schema
-     * @param QueryBag $queryBag
-     * @param RenameExtension $renameExtension
-     */
     public static function addColumnsForMultiCurrency(
         Schema $schema,
         QueryBag $queryBag,
@@ -77,11 +71,6 @@ class AddMultiCurrencyFields implements
         self::fillCurrencyFieldsWithDefaultValue($queryBag);
     }
 
-    /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     * @param RenameExtension $renameExtension
-     */
     public static function renameOrderFields(
         Schema $schema,
         QueryBag $queries,
@@ -117,9 +106,6 @@ class AddMultiCurrencyFields implements
         );
     }
 
-    /**
-     * @param QueryBag $queries
-     */
     public static function fillCurrencyFieldsWithDefaultValue(QueryBag $queries)
     {
         $queries->addPostQuery(

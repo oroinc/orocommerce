@@ -16,9 +16,6 @@ class UrlLocalCache implements UrlCacheInterface, ClearableCache
      */
     protected $localCache;
 
-    /**
-     * @param Cache $localCache
-     */
     public function __construct(Cache $localCache)
     {
         $this->localCache = $localCache;

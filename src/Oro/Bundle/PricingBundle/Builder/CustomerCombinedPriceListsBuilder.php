@@ -170,10 +170,6 @@ class CustomerCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
         return !empty($this->builtList['customer'][$website->getId()][$customer->getId()]);
     }
 
-    /**
-     * @param Website $website
-     * @param Customer $customer
-     */
     protected function setBuiltForCustomer(Website $website, Customer $customer)
     {
         $this->builtList['customer'][$website->getId()][$customer->getId()] = true;
@@ -189,20 +185,11 @@ class CustomerCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
         return !empty($this->builtList['group'][$website->getId()][$customerGroup->getId()]);
     }
 
-    /**
-     * @param Website $website
-     * @param CustomerGroup $customerGroup
-     */
     protected function setBuiltForCustomerGroup(Website $website, CustomerGroup $customerGroup)
     {
         $this->builtList['group'][$website->getId()][$customerGroup->getId()] = true;
     }
 
-    /**
-     * @param Website $website
-     * @param Customer $customer
-     * @return bool
-     */
     protected function hasFallbackOnNextLevel(Website $website, Customer $customer): bool
     {
         if ($this->customersWithDefaultFallbackBatchProcessing) {
@@ -215,11 +202,6 @@ class CustomerCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
         return $repo->hasFallbackOnNextLevel($website, $customer);
     }
 
-    /**
-     * @param Website $website
-     * @param Customer $customer
-     * @return bool
-     */
     protected function hasAssignedPriceLists(Website $website, Customer $customer): bool
     {
         if ($this->customersWithDefaultFallbackBatchProcessing) {
@@ -234,9 +216,6 @@ class CustomerCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
 
     /**
      * Mass load information about customers with assigned price lists to avoid n+1 query in loop
-     *
-     * @param Website $website
-     * @param CustomerGroup|null $customerGroup
      */
     protected function loadCustomerPriceListsInfoByWebsiteAndCustomerGroup(
         Website $website,

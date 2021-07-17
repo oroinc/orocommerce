@@ -28,10 +28,6 @@ class ProductEntityAliasProvider implements EntityAliasProviderInterface
     private $classes;
     private Inflector $inflector;
 
-    /**
-     * @param ConfigManager                $configManager
-     * @param DuplicateEntityAliasResolver $duplicateResolver
-     */
     public function __construct(
         ConfigManager $configManager,
         DuplicateEntityAliasResolver $duplicateResolver,
@@ -67,11 +63,6 @@ class ProductEntityAliasProvider implements EntityAliasProviderInterface
         return $entityAlias;
     }
 
-    /**
-     * @param string $entityClass
-     *
-     * @return EntityAlias
-     */
     private function doGetEntityAlias(string $entityClass): EntityAlias
     {
         // remove namespace to get a short class name

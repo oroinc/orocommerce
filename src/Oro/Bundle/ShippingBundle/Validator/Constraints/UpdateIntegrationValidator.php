@@ -28,11 +28,6 @@ class UpdateIntegrationValidator extends ConstraintValidator
      */
     private $violationPath;
 
-    /**
-     * @param IntegrationShippingMethodFactoryInterface $shippingMethodFactory
-     * @param ShippingMethodValidatorInterface          $shippingMethodValidator
-     * @param string                                    $violationPath
-     */
     public function __construct(
         IntegrationShippingMethodFactoryInterface $shippingMethodFactory,
         ShippingMethodValidatorInterface $shippingMethodValidator,
@@ -63,9 +58,6 @@ class UpdateIntegrationValidator extends ConstraintValidator
         $this->handleValidationResult($shippingMethodValidatorResult);
     }
 
-    /**
-     * @param ShippingMethodValidatorResultInterface $shippingMethodValidatorResult
-     */
     private function handleValidationResult(ShippingMethodValidatorResultInterface $shippingMethodValidatorResult)
     {
         if ($shippingMethodValidatorResult->getErrors()->isEmpty()) {

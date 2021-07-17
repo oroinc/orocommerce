@@ -85,7 +85,6 @@ class WYSIWYGProcessedEntityDTOTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @depends testGetMetadata
-     * @param WYSIWYGProcessedEntityDTO $dto
      */
     public function testGetFieldValue(WYSIWYGProcessedEntityDTO $dto): void
     {
@@ -98,7 +97,6 @@ class WYSIWYGProcessedEntityDTOTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @depends testGetMetadata
-     * @param WYSIWYGProcessedEntityDTO $dto
      */
     public function testIsRelation(WYSIWYGProcessedEntityDTO $dto): void
     {

@@ -37,11 +37,6 @@ class QuoteFormSubscriber implements EventSubscriberInterface
     /** @var DoctrineHelper */
     protected $doctrineHelper;
 
-    /**
-     * @param QuoteProductPriceProvider $provider
-     * @param TranslatorInterface $translator
-     * @param DoctrineHelper      $doctrineHelper
-     */
     public function __construct(
         QuoteProductPriceProvider $provider,
         TranslatorInterface $translator,
@@ -76,9 +71,6 @@ class QuoteFormSubscriber implements EventSubscriberInterface
         $this->setQuoteCustomer($quote, $data);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function onSubmit(FormEvent $event)
     {
         $form = $event->getForm();
@@ -91,10 +83,6 @@ class QuoteFormSubscriber implements EventSubscriberInterface
         $this->processProductPriceChanges($form, $quote);
     }
 
-    /**
-     * @param Quote $quote
-     * @param array $data
-     */
     private function setQuoteWebsite(Quote $quote, array $data)
     {
         if ($quote->getWebsite() === null && isset($data['website']) && $data['website']) {
@@ -103,10 +91,6 @@ class QuoteFormSubscriber implements EventSubscriberInterface
         }
     }
 
-    /**
-     * @param Quote $quote
-     * @param array $data
-     */
     private function setQuoteCustomer(Quote $quote, array $data)
     {
         if ($quote->getCustomer() === null && isset($data['customer']) && $data['customer']) {
@@ -115,10 +99,6 @@ class QuoteFormSubscriber implements EventSubscriberInterface
         }
     }
 
-    /**
-     * @param FormInterface $form
-     * @param Quote $quote
-     */
     protected function processProductPriceChanges(FormInterface $form, Quote $quote): void
     {
         $config = $form->getConfig();
@@ -157,10 +137,6 @@ class QuoteFormSubscriber implements EventSubscriberInterface
         }
     }
 
-    /**
-     * @param Quote $quote
-     * @return array
-     */
     protected function getTierPricesByQuote(Quote $quote): array
     {
         $products = [];
@@ -194,13 +170,6 @@ class QuoteFormSubscriber implements EventSubscriberInterface
         return $this->provider->getTierPricesForProducts($quote, $products);
     }
 
-    /**
-     * @param Product $product
-     * @param QuoteProductOffer $quoteProductOffer
-     * @param array $tierPrices
-     *
-     * @return bool
-     */
     protected function isTierProductPrice(
         Product $product,
         QuoteProductOffer $quoteProductOffer,
@@ -283,13 +252,6 @@ class QuoteFormSubscriber implements EventSubscriberInterface
         return $options['allow_add_free_form_items'] ?? false;
     }
 
-    /**
-     * @param Quote $quote
-     * @param QuoteProduct $quoteProduct
-     * @param QuoteProductOffer $quoteProductOffer
-     * @param FormInterface $form
-     * @return bool
-     */
     private function isValidPrice(
         Quote $quote,
         QuoteProduct $quoteProduct,

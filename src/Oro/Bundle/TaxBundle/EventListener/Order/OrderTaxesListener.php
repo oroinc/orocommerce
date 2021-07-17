@@ -23,11 +23,6 @@ class OrderTaxesListener
     /** @var PriceMatcher */
     protected $priceMatcher;
 
-    /**
-     * @param TaxProviderRegistry $taxProviderRegistry
-     * @param TaxationSettingsProvider $taxationSettingsProvider
-     * @param PriceMatcher $priceMatcher
-     */
     public function __construct(
         TaxProviderRegistry $taxProviderRegistry,
         TaxationSettingsProvider $taxationSettingsProvider,
@@ -38,9 +33,6 @@ class OrderTaxesListener
         $this->priceMatcher = $priceMatcher;
     }
 
-    /**
-     * @param OrderEvent $event
-     */
     public function onOrderEvent(OrderEvent $event)
     {
         if (!$this->taxationSettingsProvider->isEnabled()) {
@@ -72,10 +64,6 @@ class OrderTaxesListener
         $data->offsetSet('taxItems', $taxItems);
     }
 
-    /**
-     * @param Order $order
-     * @param \ArrayAccess $data
-     */
     protected function addMatchedPriceToOrderLineItems(Order $order, \ArrayAccess $data)
     {
         if (!$data->offsetExists(MatchingPriceEventListener::MATCHED_PRICES_KEY)) {

@@ -23,10 +23,6 @@ class ComputeOrderPaymentStatus implements ProcessorInterface
     /** @var PaymentStatusLabelFormatter */
     private $paymentStatusLabelFormatter;
 
-    /**
-     * @param DoctrineHelper              $doctrineHelper
-     * @param PaymentStatusLabelFormatter $paymentStatusLabelFormatter
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         PaymentStatusLabelFormatter $paymentStatusLabelFormatter
@@ -54,13 +50,6 @@ class ComputeOrderPaymentStatus implements ProcessorInterface
         }
     }
 
-    /**
-     * @param CustomizeLoadedDataContext $context
-     * @param array                      $data
-     * @param string                     $orderIdFieldName
-     *
-     * @return array
-     */
     private function applyPaymentStatus(
         CustomizeLoadedDataContext $context,
         array $data,

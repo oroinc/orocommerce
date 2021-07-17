@@ -27,9 +27,6 @@ class ShoppingListVoter extends AbstractEntityVoter
      */
     protected $websiteManager;
 
-    /**
-     * @param WebsiteManager $websiteManager
-     */
     public function setWebsiteManager(WebsiteManager $websiteManager)
     {
         $this->websiteManager = $websiteManager;

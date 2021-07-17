@@ -232,10 +232,6 @@ class PriceListTypeTest extends FormIntegrationTestCase
         return $entity;
     }
 
-    /**
-     * @param array $expectedData
-     * @param PriceList $result
-     */
     protected function assertSchedules(array $expectedData, PriceList $result)
     {
         /** @var PriceListSchedule[] $actualSchedules */

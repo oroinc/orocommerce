@@ -39,9 +39,6 @@ class CheckCheckoutStates extends AbstractCondition implements ContextAccessorAw
     /** @var string */
     protected $state2;
 
-    /**
-     * @param CheckoutStateDiffManager $diffManager
-     */
     public function __construct(CheckoutStateDiffManager $diffManager)
     {
         $this->diffManager = $diffManager;

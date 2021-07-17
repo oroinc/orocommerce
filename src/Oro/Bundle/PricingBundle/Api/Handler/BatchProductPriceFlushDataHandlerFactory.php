@@ -17,10 +17,6 @@ class BatchProductPriceFlushDataHandlerFactory implements BatchFlushDataHandlerF
     /** @var PriceManager */
     private $priceManager;
 
-    /**
-     * @param BatchFlushDataHandlerFactoryInterface $innerFactory
-     * @param PriceManager                          $priceManager
-     */
     public function __construct(BatchFlushDataHandlerFactoryInterface $innerFactory, PriceManager $priceManager)
     {
         $this->innerFactory = $innerFactory;

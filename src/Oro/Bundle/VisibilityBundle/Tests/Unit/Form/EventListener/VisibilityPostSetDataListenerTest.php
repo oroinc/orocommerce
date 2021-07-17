@@ -82,7 +82,6 @@ class VisibilityPostSetDataListenerTest extends \PHPUnit\Framework\TestCase
                 ]
             );
 
-
         $allForm = $this->createMock(FormInterface::class);
         $customerForm = $this->createMock(FormInterface::class);
         $customerGroupForm = $this->createMock(FormInterface::class);

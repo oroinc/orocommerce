@@ -44,11 +44,6 @@ abstract class AbstractFlatPricingRelationFormListenerTest extends \PHPUnit\Fram
         $this->featureChecker = $this->createMock(FeatureChecker::class);
     }
 
-    /**
-     * @param Website $website
-     * @param $targetEntity
-     * @param BasePriceListRelation|null $relation
-     */
     abstract protected function assertGetPriceListRelation(
         Website $website,
         $targetEntity,

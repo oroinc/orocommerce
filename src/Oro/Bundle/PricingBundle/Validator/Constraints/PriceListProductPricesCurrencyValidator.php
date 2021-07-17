@@ -25,10 +25,6 @@ class PriceListProductPricesCurrencyValidator extends ConstraintValidator
      */
     protected $registry;
 
-    /**
-     * @param Registry $registry
-     * @param ShardManager $shardManager
-     */
     public function __construct(Registry $registry, ShardManager $shardManager)
     {
         $this->registry = $registry;

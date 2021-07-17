@@ -48,10 +48,6 @@ class LexemeCircularReferenceValidator extends ConstraintValidator
      */
     protected static $priceListProperties = ['productAssignmentRule'];
 
-    /**
-     * @param ExpressionParser $expressionParser
-     * @param ManagerRegistry $doctrine
-     */
     public function __construct(
         ExpressionParser $expressionParser,
         ManagerRegistry $doctrine

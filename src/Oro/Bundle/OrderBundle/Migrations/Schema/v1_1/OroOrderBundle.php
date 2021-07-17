@@ -10,8 +10,6 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 class OroOrderBundle implements Migration
 {
     /**
-     * @param Schema $schema
-     * @param QueryBag $queries
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     public function up(Schema $schema, QueryBag $queries)

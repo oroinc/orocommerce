@@ -39,12 +39,6 @@ class NotificationHelper
     /** @var bool */
     protected $enabled = true;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param EmailModelBuilder $emailModelBuilder
-     * @param Processor $emailProcessor
-     * @param FeatureChecker $featureChecker
-     */
     public function __construct(
         ManagerRegistry $registry,
         EmailModelBuilder $emailModelBuilder,
@@ -57,9 +51,6 @@ class NotificationHelper
         $this->featureChecker = $featureChecker;
     }
 
-    /**
-     * @param bool $enabled
-     */
     public function setEnabled(bool $enabled): void
     {
         $this->enabled = $enabled;
@@ -96,9 +87,6 @@ class NotificationHelper
         return $this->createEmailModel($quote);
     }
 
-    /**
-     * @param Email $emailModel
-     */
     public function send(Email $emailModel)
     {
         if (!$this->enabled) {
@@ -131,9 +119,6 @@ class NotificationHelper
         return $emailModel;
     }
 
-    /**
-     * @param Quote $quote
-     */
     protected function applyEntityContext(Quote $quote)
     {
         // pass entityClass end entityId to request, because no way to set up entityClass and entityId as arguments
@@ -170,10 +155,6 @@ class NotificationHelper
         return $this->getManager($className)->getRepository($className);
     }
 
-    /**
-     * @param Quote $quote
-     * @return bool
-     */
     private function isGuestAccessTemplateApplicable(Quote $quote): bool
     {
         return $this->featureChecker &&

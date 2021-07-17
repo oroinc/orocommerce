@@ -39,12 +39,6 @@ class PaymentTerm implements PaymentMethodWithPostponedCaptureInterface
      */
     protected $config;
 
-    /**
-     * @param PaymentTermProviderInterface $paymentTermProvider
-     * @param PaymentTermAssociationProvider $paymentTermAssociationProvider
-     * @param DoctrineHelper $doctrineHelper
-     * @param PaymentTermConfigInterface $config
-     */
     public function __construct(
         PaymentTermProviderInterface $paymentTermProvider,
         PaymentTermAssociationProvider $paymentTermAssociationProvider,
@@ -71,10 +65,6 @@ class PaymentTerm implements PaymentMethodWithPostponedCaptureInterface
         return $this->$action($paymentTransaction);
     }
 
-    /**
-     * @param PaymentTransaction $paymentTransaction
-     * @return bool
-     */
     protected function assignPaymentTerm(PaymentTransaction $paymentTransaction): bool
     {
         $entity = $this->doctrineHelper->getEntityReference(

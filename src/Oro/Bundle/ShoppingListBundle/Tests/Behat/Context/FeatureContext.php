@@ -129,8 +129,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
     /**
      * @When /^(?:|I )should see following header in shopping list line items table:$/
-     *
-     * @param TableNode $table
      */
     public function iShouldSeeFollowingColumns(TableNode $table)
     {
@@ -191,10 +189,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     //@codingStandardsIgnoreStart
     /**
      * @When /^(?:|I )click on "(?P<sku>[^"]+)" configurable product in "(?P<tableName>[^"]+)"(?:| with the following attributes:)$/
-     *
-     * @param string $sku
-     * @param string $tableName
-     * @param null|TableNode $table
      */
     //@codingStandardsIgnoreEnd
     public function iClickOnConfigurableProductWithAttributes(string $sku, string $tableName, TableNode $table = null)
@@ -233,9 +227,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
     /**
      * @When /^(?:|I )click on "(?P<sku>[^"]+)" product in "(?P<tableName>[^"]+)"$/
-     *
-     * @param string $sku
-     * @param string $tableName
      */
     public function iClickOnProductInShoppingList(string $sku, string $tableName)
     {
@@ -350,11 +341,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         return $this->createElement('Shopping List Line Item Product Price', $tableRowElement)->getText();
     }
 
-    /**
-     * @param TableRow $rowElement
-     * @param array $columns
-     * @return array
-     */
     private function getLineItemRowColumnsValues(TableRow $rowElement, array $columns): array
     {
         $values = [];

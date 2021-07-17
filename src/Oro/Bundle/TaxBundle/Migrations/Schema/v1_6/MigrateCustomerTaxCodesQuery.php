@@ -8,7 +8,6 @@ use Psr\Log\LoggerInterface;
 
 class MigrateCustomerTaxCodesQuery extends ParametrizedMigrationQuery
 {
-
     /**
      * {@inheritdoc}
      */

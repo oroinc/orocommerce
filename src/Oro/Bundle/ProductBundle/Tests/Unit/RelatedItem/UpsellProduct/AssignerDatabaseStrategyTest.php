@@ -257,9 +257,6 @@ class AssignerDatabaseStrategyTest extends \PHPUnit\Framework\TestCase
             ->willReturn(true);
     }
 
-    /**
-     * @param $upsellProduct
-     */
     private function scheduledRelationShouldBeRemoved($upsellProduct)
     {
         $this->entityManager->expects($this->once())
@@ -283,10 +280,6 @@ class AssignerDatabaseStrategyTest extends \PHPUnit\Framework\TestCase
             ->willReturn($upsellProduct);
     }
 
-    /**
-     * @param Product $productFrom
-     * @param Product $productTo
-     */
     private function findOneByShouldReturnNull(Product $productFrom, Product $productTo)
     {
         $this->upsellProductRepository->expects($this->any())

@@ -18,9 +18,6 @@ class CustomerGroupListener extends AbstractPriceListCollectionAwareListener
      */
     protected $fallbackClass = 'Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback';
 
-    /**
-     * @param CustomerGroupEvent $event
-     */
     public function onGroupRemove(CustomerGroupEvent $event)
     {
         $this->triggerHandler->handleCustomerGroupRemove($event->getData());

@@ -178,9 +178,6 @@ class CombinedPriceListActivationRuleRepositoryTest extends WebTestCase
         $this->assertNotEmpty($rules2);
     }
 
-    /**
-     * @param array $rulesData
-     */
     protected function createRules(array $rulesData)
     {
         foreach ($rulesData as $data) {

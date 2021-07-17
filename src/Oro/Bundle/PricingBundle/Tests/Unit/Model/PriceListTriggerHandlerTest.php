@@ -25,21 +25,11 @@ class PriceListTriggerHandlerTest extends \PHPUnit\Framework\TestCase
         $this->handler = new PriceListTriggerHandler($this->messageProducer);
     }
 
-    /**
-     * @param int $id
-     *
-     * @return PriceList
-     */
     private function getPriceList(int $id): PriceList
     {
         return $this->getEntity(PriceList::class, ['id' => $id]);
     }
 
-    /**
-     * @param int $id
-     *
-     * @return Product
-     */
     private function getProduct(int $id): Product
     {
         return $this->getEntity(Product::class, ['id' => $id]);

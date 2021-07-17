@@ -24,10 +24,6 @@ class UrlCacheProcessor implements MessageProcessorInterface, TopicSubscriberInt
      */
     private $logger;
 
-    /**
-     * @param SluggableUrlDumper $dumper
-     * @param LoggerInterface $logger
-     */
     public function __construct(
         SluggableUrlDumper $dumper,
         LoggerInterface $logger

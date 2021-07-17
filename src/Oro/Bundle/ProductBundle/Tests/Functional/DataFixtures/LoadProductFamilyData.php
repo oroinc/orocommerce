@@ -19,9 +19,6 @@ class LoadProductFamilyData extends AbstractFixture
         self::PRODUCT_FAMILY_2 => [],
     ];
 
-    /**
-     * @param ObjectManager $manager
-     */
     public function load(ObjectManager $manager)
     {
         foreach ($this->families as $familyName => $groups) {
@@ -38,10 +35,6 @@ class LoadProductFamilyData extends AbstractFixture
         $manager->flush();
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @return Organization
-     */
     private function getOrganization(ObjectManager $manager): Organization
     {
         return $manager->getRepository(Organization::class)->getFirst();

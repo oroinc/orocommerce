@@ -18,9 +18,6 @@ use Oro\Component\Tree\Entity\Repository\NestedTreeRepository;
  */
 class CategoryRepository extends NestedTreeRepository
 {
-    /**
-     * @return QueryBuilder
-     */
     public function getMasterCatalogRootQueryBuilder(): QueryBuilder
     {
         return $this->createQueryBuilder('category')
@@ -83,11 +80,6 @@ class CategoryRepository extends NestedTreeRepository
         return array_map('current', $result);
     }
 
-    /**
-     * @param string $title
-     *
-     * @return QueryBuilder
-     */
     public function findOneByDefaultTitleQueryBuilder(string $title): QueryBuilder
     {
         return $this->createQueryBuilder('category')
@@ -97,13 +89,6 @@ class CategoryRepository extends NestedTreeRepository
             ->setMaxResults(1);
     }
 
-    /**
-     * @param string $title
-     * @param Organization $organization
-     * @param Category|null $parentCategory
-     *
-     * @return Category|null
-     */
     public function findOneOrNullByDefaultTitleAndParent(
         string $title,
         Organization $organization,
@@ -267,9 +252,6 @@ class CategoryRepository extends NestedTreeRepository
         return $productCategoryMap;
     }
 
-    /**
-     * @param Category $category
-     */
     public function updateMaterializedPath(Category $category)
     {
         $this->_em->createQueryBuilder()
@@ -284,8 +266,6 @@ class CategoryRepository extends NestedTreeRepository
 
     /**
      * Gets max value of Gedmo tree "left" field.
-     *
-     * @return int
      */
     public function getMaxLeft(): int
     {
@@ -297,10 +277,6 @@ class CategoryRepository extends NestedTreeRepository
             ->getSingleScalarResult();
     }
 
-    /**
-     * @param Slug $slug
-     * @return Category|null
-     */
     public function findOneBySlug(Slug $slug): ?Category
     {
         $qb = $this->createQueryBuilder('c');

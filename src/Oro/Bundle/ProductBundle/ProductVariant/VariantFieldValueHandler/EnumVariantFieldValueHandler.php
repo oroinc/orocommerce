@@ -44,12 +44,6 @@ class EnumVariantFieldValueHandler implements ProductVariantFieldValueHandlerInt
     /** @var LocaleSettings */
     private $localeSettings;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param EnumValueProvider $enumValueProvider
-     * @param LoggerInterface $logger
-     * @param ConfigManager $configManager
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         EnumValueProvider $enumValueProvider,
@@ -63,19 +57,12 @@ class EnumVariantFieldValueHandler implements ProductVariantFieldValueHandlerInt
         $this->cache = new ArrayCache();
     }
 
-    /**
-     * @param CacheProvider $cache
-     * @param int $lifeTime
-     */
     public function setCache(CacheProvider $cache, int $lifeTime = 0): void
     {
         $this->cache = $cache;
         $this->cacheLifeTime = $lifeTime;
     }
 
-    /**
-     * @return LocalizationHelper
-     */
     public function getLocalizationHelper(): LocalizationHelper
     {
         if (!$this->localizationHelper) {
@@ -85,17 +72,11 @@ class EnumVariantFieldValueHandler implements ProductVariantFieldValueHandlerInt
         return $this->localizationHelper;
     }
 
-    /**
-     * @param LocalizationHelper $localizationHelper
-     */
     public function setLocalizationHelper(LocalizationHelper $localizationHelper): void
     {
         $this->localizationHelper = $localizationHelper;
     }
 
-    /**
-     * @return LocaleSettings
-     */
     public function getLocaleSettings(): LocaleSettings
     {
         if (!$this->localeSettings) {
@@ -105,9 +86,6 @@ class EnumVariantFieldValueHandler implements ProductVariantFieldValueHandlerInt
         return $this->localeSettings;
     }
 
-    /**
-     * @param LocaleSettings $localeSettings
-     */
     public function setLocaleSettings(LocaleSettings $localeSettings): void
     {
         $this->localeSettings = $localeSettings;
@@ -164,9 +142,6 @@ class EnumVariantFieldValueHandler implements ProductVariantFieldValueHandlerInt
         return $value;
     }
 
-    /**
-     * @return string
-     */
     private function getLocaleKey(): string
     {
         return $this->getLocalizationHelper()->getCurrentLocalization()

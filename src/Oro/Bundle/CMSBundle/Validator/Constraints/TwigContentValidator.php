@@ -15,9 +15,6 @@ class TwigContentValidator extends ConstraintValidator
     /** @var Environment */
     private $twig;
 
-    /**
-     * @param Environment $twig
-     */
     public function __construct(Environment $twig)
     {
         $this->twig = $twig;

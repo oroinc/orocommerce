@@ -22,9 +22,6 @@ class ProductVisibilityIndexer
      */
     private $visibilityProvider;
 
-    /**
-     * @param ProductVisibilityProvider $visibilityProvider
-     */
     public function __construct(ProductVisibilityProvider $visibilityProvider)
     {
         $this->visibilityProvider = $visibilityProvider;

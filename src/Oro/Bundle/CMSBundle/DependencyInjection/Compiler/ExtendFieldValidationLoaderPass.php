@@ -27,9 +27,6 @@ class ExtendFieldValidationLoaderPass implements CompilerPassInterface
         $this->addSerializedFieldConstraints($container);
     }
 
-    /**
-     * @param ContainerBuilder $container
-     */
     private function addTableFieldConstraints(ContainerBuilder $container): void
     {
         if ($container->hasDefinition(self::ENTITY_EXTEND_FIELD_VALIDATION_LOADER_SERVICE_ID)) {
@@ -41,9 +38,6 @@ class ExtendFieldValidationLoaderPass implements CompilerPassInterface
         }
     }
 
-    /**
-     * @param ContainerBuilder $container
-     */
     private function addSerializedFieldConstraints(ContainerBuilder $container): void
     {
         if ($container->hasDefinition(self::SERIALIZED_FIELDS_EXTEND_FIELD_VALIDATOR_SERVICE_ID)) {

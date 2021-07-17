@@ -71,7 +71,6 @@ class ProductExtensionTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider dataProviderRelatedProductIds
-     * @param array $ids
      */
     public function testGetRelatedProductsIds(array $ids): void
     {
@@ -82,9 +81,6 @@ class ProductExtensionTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($ids, $this->extension->getRelatedProductsIds(new Product()));
     }
 
-    /**
-     * @return array
-     */
     public function dataProviderRelatedProductIds(): array
     {
         return [

@@ -15,9 +15,6 @@ class TwigParser
     /** @var Environment */
     private $twig;
 
-    /**
-     * @param Environment $twig
-     */
     public function __construct(Environment $twig)
     {
         $this->twig = $twig;
@@ -67,10 +64,6 @@ class TwigParser
         return $response;
     }
 
-    /**
-     * @param Node $node
-     * @return array
-     */
     private function parseArguments(Node $node): array
     {
         $arguments = [];

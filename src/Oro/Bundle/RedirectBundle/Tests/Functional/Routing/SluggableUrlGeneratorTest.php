@@ -136,9 +136,6 @@ class SluggableUrlGeneratorTest extends WebTestCase
         );
     }
 
-    /**
-     * @return array
-     */
     public function urlServicesDataProvider(): array
     {
         return [

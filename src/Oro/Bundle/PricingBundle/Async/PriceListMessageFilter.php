@@ -47,9 +47,6 @@ class PriceListMessageFilter implements MessageFilterInterface
         $this->collapseMessages($buffer);
     }
 
-    /**
-     * @param MessageBuffer $buffer
-     */
     private function removeRedundantAndDuplicatedMessages(MessageBuffer $buffer): void
     {
         $priceListMap = [];
@@ -140,8 +137,6 @@ class PriceListMessageFilter implements MessageFilterInterface
     /**
      * Removes resolve price rules messages if the corresponding price list assignment messages exist,
      * because assignment calculation will trigger all rules rebuild.
-     *
-     * @param MessageBuffer $buffer
      */
     private function removeRedundantMessagesForResolvePriceRules(MessageBuffer $buffer): void
     {
@@ -262,8 +257,6 @@ class PriceListMessageFilter implements MessageFilterInterface
 
     /**
      * Splits messages contain items for price list and items for price list + products into different messages.
-     *
-     * @param MessageBuffer $buffer
      */
     private function splitMixedMessages(MessageBuffer $buffer): void
     {
@@ -290,11 +283,6 @@ class PriceListMessageFilter implements MessageFilterInterface
 
     /**
      * Splits a message contain items for price list and items for price list + products into different messages.
-     *
-     * @param MessageBuffer $buffer
-     * @param string        $topic
-     * @param int           $messageId
-     * @param array         $message
      */
     private function splitMixedMessage(MessageBuffer $buffer, string $topic, int $messageId, array $message): void
     {
@@ -315,8 +303,6 @@ class PriceListMessageFilter implements MessageFilterInterface
 
     /**
      * Collapses messages from the same topic into one message.
-     *
-     * @param MessageBuffer $buffer
      */
     private function collapseMessages(MessageBuffer $buffer): void
     {
@@ -350,11 +336,6 @@ class PriceListMessageFilter implements MessageFilterInterface
         }
     }
 
-    /**
-     * @param array $message
-     *
-     * @return bool
-     */
     private function hasProducts(array $message): bool
     {
         $firstKey = key($message[self::PRODUCT]);

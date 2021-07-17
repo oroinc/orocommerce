@@ -20,9 +20,6 @@ class HandleVariantsFilter implements ProcessorInterface
     /** @var QueryBuilderModifierInterface */
     private $modifier;
 
-    /**
-     * @param QueryBuilderModifierInterface $modifier
-     */
     public function __construct(QueryBuilderModifierInterface $modifier)
     {
         $this->modifier = $modifier;

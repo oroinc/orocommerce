@@ -31,12 +31,6 @@ class PriceListEntityListener
     /** @var PriceRuleLexemeTriggerHandler */
     protected $priceRuleLexemeTriggerHandler;
 
-    /**
-     * @param PriceListRelationTriggerHandler $triggerHandler
-     * @param Cache $cache
-     * @param PriceListTriggerHandler $priceListTriggerHandler
-     * @param PriceRuleLexemeTriggerHandler $priceRuleLexemeTriggerHandler
-     */
     public function __construct(
         PriceListRelationTriggerHandler $triggerHandler,
         Cache $cache,
@@ -51,9 +45,6 @@ class PriceListEntityListener
 
     /**
      * Recalculate product assignments and price rules on product assignment rule change or price list activation.
-     *
-     * @param PriceList $priceList
-     * @param PreUpdateEventArgs $event
      */
     public function preUpdate(PriceList $priceList, PreUpdateEventArgs $event)
     {
@@ -68,9 +59,6 @@ class PriceListEntityListener
         }
     }
 
-    /**
-     * @param PriceList $priceList
-     */
     public function preRemove(PriceList $priceList)
     {
         // Remove caches
@@ -86,9 +74,6 @@ class PriceListEntityListener
         $this->scheduleDependentPriceListsUpdate($priceList);
     }
 
-    /**
-     * @param PriceList $priceList
-     */
     public function postPersist(PriceList $priceList)
     {
         if ($priceList->getProductAssignmentRule()) {
@@ -96,25 +81,16 @@ class PriceListEntityListener
         }
     }
 
-    /**
-     * @param PriceList $priceList
-     */
     protected function clearAssignmentRuleCache(PriceList $priceList)
     {
         $this->cache->delete('ar_' . $priceList->getId());
     }
 
-    /**
-     * @param PriceRule $priceRule
-     */
     protected function clearPriceRuleCache(PriceRule $priceRule)
     {
         $this->cache->delete('pr_' . $priceRule->getId());
     }
 
-    /**
-     * @param PriceList $priceList
-     */
     protected function scheduleDependentPriceListsUpdate(PriceList $priceList)
     {
         $lexemes = $this->priceRuleLexemeTriggerHandler->findEntityLexemes(
@@ -143,9 +119,6 @@ class PriceListEntityListener
         }
     }
 
-    /**
-     * @param PriceList $priceList
-     */
     protected function triggerPriceListRecalculation(PriceList $priceList): void
     {
         // Skip processing of inactive Price Lists

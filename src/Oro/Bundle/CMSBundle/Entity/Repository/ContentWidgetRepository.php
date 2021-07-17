@@ -28,12 +28,6 @@ class ContentWidgetRepository extends EntityRepository
         return $aclHelper->apply($qb)->getResult();
     }
 
-    /**
-     * @param string $name
-     * @param Organization $organization
-     *
-     * @return null|ContentWidget
-     */
     public function findOneByName(string $name, Organization $organization): ?ContentWidget
     {
         $qb = $this->createQueryBuilder('content_widget');

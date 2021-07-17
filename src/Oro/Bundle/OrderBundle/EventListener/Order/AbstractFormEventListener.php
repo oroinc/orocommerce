@@ -20,19 +20,12 @@ abstract class AbstractFormEventListener
     /** @var FormFactoryInterface */
     protected $formFactory;
 
-    /**
-     * @param EngineInterface $engine
-     * @param FormFactoryInterface $formFactory
-     */
     public function __construct(EngineInterface $engine, FormFactoryInterface $formFactory)
     {
         $this->engine = $engine;
         $this->formFactory = $formFactory;
     }
 
-    /**
-     * @param OrderEvent $event
-     */
     abstract public function onOrderEvent(OrderEvent $event);
 
     /**

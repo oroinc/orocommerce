@@ -30,15 +30,11 @@ class PriceListWebsiteFallbackRepositoryTest extends AbstractFallbackRepositoryT
         /** @var Website $website */
         $website = $this->getReference($websiteReference);
 
-
         /** @var PriceListWebsiteFallbackRepository $repo */
         $repo = $this->doctrine->getRepository(PriceListWebsiteFallback::class);
         $this->assertEquals($expected, $repo->hasFallbackOnNextLevel($website));
     }
 
-    /**
-     * @return array
-     */
     public function fallbackDataProvider(): array
     {
         return [

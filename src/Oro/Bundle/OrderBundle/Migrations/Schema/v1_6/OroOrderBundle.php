@@ -21,8 +21,6 @@ class OroOrderBundle implements Migration
 
     /**
      * Create oro_order_shipping_tracking table
-     *
-     * @param Schema $schema
      */
     protected function createOroOrderShippingTrackingTable(Schema $schema)
     {
@@ -36,8 +34,6 @@ class OroOrderBundle implements Migration
 
     /**
      * Add oro_order_shipping_tracking foreign keys.
-     *
-     * @param Schema $schema
      *
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */

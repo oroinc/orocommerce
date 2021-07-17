@@ -21,11 +21,6 @@ abstract class AbstractEngine implements EngineInterface
     /** @var AbstractSearchMappingProvider */
     protected $mappingProvider;
 
-    /**
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param QueryPlaceholderResolverInterface $queryPlaceholderResolver
-     * @param AbstractSearchMappingProvider $mappingProvider
-     */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
         QueryPlaceholderResolverInterface $queryPlaceholderResolver,

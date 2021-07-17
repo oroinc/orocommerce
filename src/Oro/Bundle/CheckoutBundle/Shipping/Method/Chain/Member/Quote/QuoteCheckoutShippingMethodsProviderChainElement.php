@@ -30,11 +30,6 @@ class QuoteCheckoutShippingMethodsProviderChainElement extends AbstractCheckoutS
      */
     private $quoteShippingConfigurationFactory;
 
-    /**
-     * @param CheckoutShippingContextProvider $checkoutShippingContextProvider
-     * @param ShippingConfiguredPriceProviderInterface $shippingConfiguredPriceProvider
-     * @param QuoteShippingConfigurationFactory $quoteShippingConfigurationFactory
-     */
     public function __construct(
         CheckoutShippingContextProvider $checkoutShippingContextProvider,
         ShippingConfiguredPriceProviderInterface $shippingConfiguredPriceProvider,

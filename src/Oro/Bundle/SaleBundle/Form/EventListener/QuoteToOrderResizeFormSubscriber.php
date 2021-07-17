@@ -10,8 +10,6 @@ class QuoteToOrderResizeFormSubscriber extends ResizeFormListener
 {
     /**
      * Copy-pasted from ResizeFormListener to provide ability to pass data to form
-     *
-     * @param FormEvent $event
      */
     public function preSetData(FormEvent $event)
     {

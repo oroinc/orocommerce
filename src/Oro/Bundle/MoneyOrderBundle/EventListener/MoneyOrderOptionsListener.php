@@ -17,17 +17,11 @@ class MoneyOrderOptionsListener
      */
     protected $translator;
 
-    /**
-     * @param TranslatorInterface $translator
-     */
     public function __construct(TranslatorInterface $translator)
     {
         $this->translator = $translator;
     }
 
-    /**
-     * @param CollectFormattedPaymentOptionsEvent $event
-     */
     public function onCollectPaymentOptions(CollectFormattedPaymentOptionsEvent $event)
     {
         $paymentMethodView = $event->getPaymentMethodView();

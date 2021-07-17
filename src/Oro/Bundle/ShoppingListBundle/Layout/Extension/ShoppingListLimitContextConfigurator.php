@@ -16,9 +16,6 @@ class ShoppingListLimitContextConfigurator implements ContextConfiguratorInterfa
      */
     private $limitManager;
 
-    /**
-     * @param ShoppingListLimitManager $limitManager
-     */
     public function __construct(ShoppingListLimitManager $limitManager)
     {
         $this->limitManager = $limitManager;

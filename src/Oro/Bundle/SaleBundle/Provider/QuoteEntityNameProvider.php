@@ -13,9 +13,6 @@ class QuoteEntityNameProvider implements EntityNameProviderInterface
      */
     private $translator;
 
-    /**
-     * @param TranslatorInterface $translator
-     */
     public function __construct(
         TranslatorInterface $translator
     ) {

@@ -31,8 +31,6 @@ class FrontendProductExportOptionsProvider
     /**
      * Get default filteredResultsGridParams to provide correct data grid filtering by category id if no any filters
      * were chosen.
-     *
-     * @return string|null
      */
     public function getDefaultGridExportRequestOptions(): ?string
     {
@@ -53,18 +51,12 @@ class FrontendProductExportOptionsProvider
 
     /**
      * Check if product datagrid supports export functionality.
-     *
-     * @param array $gridContext
-     * @return bool
      */
     public function getExportAvailableForProductGrid(array $gridContext): bool
     {
         return array_key_exists('frontend-product-search-grid', $gridContext);
     }
 
-    /**
-     * @param ParameterBag $parameters
-     */
     private function addCategoryParameters(ParameterBag $parameters): void
     {
         $categoryId = $this->requestProductHandler->getCategoryId();
@@ -87,9 +79,6 @@ class FrontendProductExportOptionsProvider
         }
     }
 
-    /**
-     * @param ParameterBag $parameters
-     */
     private function addSearchParameters(ParameterBag $parameters): void
     {
         $searchString = $this->searchProductHandler->getSearchString();
@@ -98,9 +87,6 @@ class FrontendProductExportOptionsProvider
         }
     }
 
-    /**
-     * @param ParameterBag $parameters
-     */
     private function addContentVariantParams(ParameterBag $parameters): void
     {
         $contentVariantId = $this->requestHandler->getContentVariantId();
@@ -114,9 +100,6 @@ class FrontendProductExportOptionsProvider
         }
     }
 
-    /**
-     * @return bool
-     */
     private function isOverrideConfiguration(): bool
     {
         $overrideVariantConfiguration = $this->requestProductHandler->getOverrideVariantConfiguration();

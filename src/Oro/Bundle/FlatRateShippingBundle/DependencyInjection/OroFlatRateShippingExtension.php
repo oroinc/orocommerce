@@ -13,9 +13,6 @@ class OroFlatRateShippingExtension extends Extension
     const ALIAS = 'oro_flat_rate_shipping';
 
     /**
-     * @param array            $configs
-     * @param ContainerBuilder $container
-     *
      * @throws \Exception
      */
     public function load(array $configs, ContainerBuilder $container)

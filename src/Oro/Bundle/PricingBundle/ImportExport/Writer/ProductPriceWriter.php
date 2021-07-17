@@ -29,14 +29,6 @@ class ProductPriceWriter extends PersistentBatchWriter
      */
     protected $listeners = [];
 
-    /**
-     * @param ManagerRegistry          $registry
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param ContextRegistry          $contextRegistry
-     * @param LoggerInterface          $logger
-     * @param PriceManager             $priceManager
-     * @param OptionalListenerManager  $listenerManager
-     */
     public function __construct(
         ManagerRegistry $registry,
         EventDispatcherInterface $eventDispatcher,
@@ -60,10 +52,6 @@ class ProductPriceWriter extends PersistentBatchWriter
         parent::write($items);
     }
 
-    /**
-     * @param array         $items
-     * @param EntityManager $em
-     */
     protected function saveItems(array $items, EntityManager $em)
     {
         $this->listenerManager->disableListeners($this->listeners);

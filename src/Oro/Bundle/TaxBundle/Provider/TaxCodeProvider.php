@@ -23,11 +23,6 @@ class TaxCodeProvider
      */
     private $taxCodesCache;
 
-    /**
-     * @param AbstractTaxCodeRepository $productTaxCodeRepository
-     * @param AbstractTaxCodeRepository $customerTaxCodeRepository
-     * @param TaxCodesCache $cacheProvider
-     */
     public function __construct(
         AbstractTaxCodeRepository $productTaxCodeRepository,
         AbstractTaxCodeRepository $customerTaxCodeRepository,

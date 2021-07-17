@@ -33,8 +33,6 @@ class OroCMSBundle implements Migration, AttachmentExtensionAwareInterface
 
     /**
      * Create oro_cms_content_widget table
-     *
-     * @param Schema $schema
      */
     private function createOroCmsContentWidgetTable(Schema $schema): void
     {
@@ -54,8 +52,6 @@ class OroCMSBundle implements Migration, AttachmentExtensionAwareInterface
 
     /**
      * Create oro_cms_content_widget_usage table
-     *
-     * @param Schema $schema
      */
     private function createOroCmsContentWidgetUsageTable(Schema $schema): void
     {
@@ -74,8 +70,6 @@ class OroCMSBundle implements Migration, AttachmentExtensionAwareInterface
 
     /**
      * Create oro_cms_image_slide table
-     *
-     * @param Schema $schema
      */
     private function createOroCmsImageSlideTable(Schema $schema): void
     {
@@ -117,8 +111,6 @@ class OroCMSBundle implements Migration, AttachmentExtensionAwareInterface
 
     /**
      * Add oro_cms_content_widget foreign keys.
-     *
-     * @param Schema $schema
      */
     private function addOroCmsContentWidgetForeignKeys(Schema $schema): void
     {
@@ -133,8 +125,6 @@ class OroCMSBundle implements Migration, AttachmentExtensionAwareInterface
 
     /**
      * Add oro_cms_content_widget_usage foreign keys.
-     *
-     * @param Schema $schema
      */
     private function addOroCmsContentWidgetUsageForeignKeys(Schema $schema): void
     {
@@ -149,8 +139,6 @@ class OroCMSBundle implements Migration, AttachmentExtensionAwareInterface
 
     /**
      * Add oro_cms_image_slide foreign keys.
-     *
-     * @param Schema $schema
      */
     private function addOroCmsImageSlideForeignKeys(Schema $schema): void
     {

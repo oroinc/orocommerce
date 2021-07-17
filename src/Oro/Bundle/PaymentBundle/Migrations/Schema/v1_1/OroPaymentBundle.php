@@ -20,8 +20,6 @@ class OroPaymentBundle implements Migration
 
     /**
      * Create table for PaymentTransaction entity
-     *
-     * @param Schema $schema
      */
     protected function createOroPaymentTransactionTable(Schema $schema)
     {
@@ -48,8 +46,6 @@ class OroPaymentBundle implements Migration
 
     /**
      * Add orob2b_payment_transaction foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPaymentTransactionForeignKeys(Schema $schema)
     {

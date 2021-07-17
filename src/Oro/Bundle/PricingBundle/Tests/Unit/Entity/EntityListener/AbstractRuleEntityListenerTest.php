@@ -77,14 +77,6 @@ abstract class AbstractRuleEntityListenerTest extends \PHPUnit\Framework\TestCas
         return $this->listener;
     }
 
-    /**
-     * @param int $providerNumberOfCalls
-     * @param int $handlerNumberOfCalls
-     * @param array $expectedFields
-     * @param array $changeSet
-     * @param Product|null $product
-     * @param int|null $relationId
-     */
     protected function assertRecalculateByEntityFieldsUpdate(
         int $providerNumberOfCalls,
         int $handlerNumberOfCalls,

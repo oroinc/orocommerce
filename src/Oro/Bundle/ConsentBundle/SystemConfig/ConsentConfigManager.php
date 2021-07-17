@@ -27,11 +27,6 @@ class ConsentConfigManager
      */
     private $globalConfig;
 
-    /**
-     * @param ConfigManager $configManager
-     * @param ConfigManager $globalConfig
-     * @param ConsentConfigConverter $converter
-     */
     public function __construct(
         ConfigManager $configManager,
         ConfigManager $globalConfig,
@@ -42,28 +37,16 @@ class ConsentConfigManager
         $this->converter = $converter;
     }
 
-    /**
-     * @param Consent $consent
-     * @param Website|null $website
-     */
     public function updateConsentsConfigForWebsiteScope(Consent $consent, Website $website = null)
     {
         $this->updateConsentsConfig($consent, $this->configManager, $website);
     }
 
-    /**
-     * @param Consent $consent
-     */
     public function updateConsentsConfigForGlobalScope(Consent $consent)
     {
         $this->updateConsentsConfig($consent, $this->globalConfig);
     }
 
-    /**
-     * @param Consent $consent
-     * @param ConfigManager|null $configManager
-     * @param Website|null $website
-     */
     private function updateConsentsConfig(
         Consent $consent,
         ConfigManager $configManager = null,

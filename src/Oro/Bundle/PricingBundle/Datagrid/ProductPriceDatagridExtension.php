@@ -56,13 +56,6 @@ class ProductPriceDatagridExtension extends AbstractExtension implements Feature
     /** @var array */
     private $enabledPriceColumns;
 
-    /**
-     * @param PriceListRequestHandler $priceListRequestHandler
-     * @param DoctrineHelper $doctrineHelper
-     * @param SelectedFieldsProviderInterface $selectedFieldsProvider
-     * @param TranslatorInterface $translator
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     */
     public function __construct(
         PriceListRequestHandler $priceListRequestHandler,
         DoctrineHelper $doctrineHelper,
@@ -133,9 +126,6 @@ class ProductPriceDatagridExtension extends AbstractExtension implements Feature
         }
     }
 
-    /**
-     * @param DatagridConfiguration $config
-     */
     private function addColumns(DatagridConfiguration $config): void
     {
         $currencies = $this->getCurrencies();
@@ -174,11 +164,6 @@ class ProductPriceDatagridExtension extends AbstractExtension implements Feature
         }
     }
 
-    /**
-     * @param DatagridConfiguration $config
-     * @param array $dataColumns
-     * @return array
-     */
     private function getSelectedFields(DatagridConfiguration $config, array $dataColumns): array
     {
         array_walk(
@@ -196,9 +181,6 @@ class ProductPriceDatagridExtension extends AbstractExtension implements Feature
         );
     }
 
-    /**
-     * @return array
-     */
     private function getCurrencies(): array
     {
         $priceList = $this->getPriceList();
@@ -243,12 +225,6 @@ class ProductPriceDatagridExtension extends AbstractExtension implements Feature
         return array_unique([$columnName, $filterConfig['data_name']]);
     }
 
-    /**
-     * @param string $currencyIsoCode
-     * @param null|string $unitCode
-     *
-     * @return array
-     */
     private function createPriceColumnConfig(
         string $currencyIsoCode,
         ?string $unitCode = null
@@ -270,13 +246,6 @@ class ProductPriceDatagridExtension extends AbstractExtension implements Feature
         ];
     }
 
-    /**
-     * @param string $columnName
-     * @param string $currencyIsoCode
-     * @param null|string $unitCode
-     *
-     * @return array
-     */
     private function createPriceFilterConfig(
         string $columnName,
         string $currencyIsoCode,
@@ -296,12 +265,6 @@ class ProductPriceDatagridExtension extends AbstractExtension implements Feature
         return $filter;
     }
 
-    /**
-     * @param string $currencyIsoCode
-     * @param null|string $unitCode
-     *
-     * @return string
-     */
     private function getColumnName(string $currencyIsoCode, ?string $unitCode = null): string
     {
         $result = 'price_column_' . strtolower($currencyIsoCode);
@@ -309,11 +272,6 @@ class ProductPriceDatagridExtension extends AbstractExtension implements Feature
         return $unitCode ? sprintf('%s_%s', $result, strtolower($unitCode)) : $result;
     }
 
-    /**
-     * @param string $columnName
-     *
-     * @return string
-     */
     private function getJoinAlias(string $columnName): string
     {
         QueryBuilderUtil::checkIdentifier($columnName);
@@ -321,12 +279,6 @@ class ProductPriceDatagridExtension extends AbstractExtension implements Feature
         return $columnName . '_table';
     }
 
-    /**
-     * @param DatagridConfiguration $config
-     * @param string $columnName
-     * @param string $currencyIsoCode
-     * @param null|string $unitCode
-     */
     private function addColumnToQueryConfig(
         DatagridConfiguration $config,
         string $columnName,
@@ -359,12 +311,6 @@ class ProductPriceDatagridExtension extends AbstractExtension implements Feature
         $this->addJoinToQueryConfig($config, $columnName, $currencyIsoCode, $unitCode);
     }
 
-    /**
-     * @param DatagridConfiguration $config
-     * @param string $columnName
-     * @param string $currencyIsoCode
-     * @param null|string $unitCode
-     */
     private function addJoinToQueryConfig(
         DatagridConfiguration $config,
         string $columnName,
@@ -398,9 +344,6 @@ class ProductPriceDatagridExtension extends AbstractExtension implements Feature
         );
     }
 
-    /**
-     * @return PriceList|null
-     */
     private function getPriceList(): ?PriceList
     {
         if (!$this->priceList) {
@@ -410,11 +353,6 @@ class ProductPriceDatagridExtension extends AbstractExtension implements Feature
         return $this->priceList;
     }
 
-    /**
-     * @param ResultRecord $record
-     * @param string $columnName
-     * @param string $currencyIsoCode
-     */
     private function unpackPrices(ResultRecord $record, string $columnName, string $currencyIsoCode): void
     {
         $rawPrices = $record->getValue($columnName);
@@ -424,12 +362,6 @@ class ProductPriceDatagridExtension extends AbstractExtension implements Feature
         }
     }
 
-    /**
-     * @param string $rawPrices
-     * @param string $currencyIsoCode
-     *
-     * @return array
-     */
     private function unpackPriceFromRaw(string $rawPrices, string $currencyIsoCode): array
     {
         $prices = [];
@@ -446,9 +378,6 @@ class ProductPriceDatagridExtension extends AbstractExtension implements Feature
         return $prices;
     }
 
-    /**
-     * @return bool
-     */
     private function isGrantedToViewPriceFields(): bool
     {
         return $this->authorizationChecker->isGranted('VIEW', sprintf('entity:%s', ProductPrice::class));

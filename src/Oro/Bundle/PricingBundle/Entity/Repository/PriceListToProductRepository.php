@@ -112,11 +112,6 @@ class PriceListToProductRepository extends EntityRepository
         $qb->getQuery()->execute();
     }
 
-    /**
-     * @param PriceList $sourcePriceList
-     * @param PriceList $targetPriceList
-     * @param InsertFromSelectQueryExecutor $insertQueryExecutor
-     */
     public function copyRelations(
         PriceList $sourcePriceList,
         PriceList $targetPriceList,

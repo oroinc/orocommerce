@@ -55,15 +55,6 @@ class OrderContextDataConverter implements ContextDataConverterInterface
      */
     protected $paymentMethodsProvider;
 
-    /**
-     * @param CriteriaDataProvider $criteriaDataProvider
-     * @param OrderLineItemsToDiscountLineItemsConverter $lineItemsConverter
-     * @param ScopeManager $scopeManager
-     * @param SubtotalProviderInterface $lineItemSubtotalProvider
-     * @param CouponValidationService $couponValidationService
-     * @param EntityCouponsProviderInterface $entityCouponsProvider
-     * @param EntityPaymentMethodsProvider $paymentMethodsProvider
-     */
     public function __construct(
         CriteriaDataProvider $criteriaDataProvider,
         OrderLineItemsToDiscountLineItemsConverter $lineItemsConverter,

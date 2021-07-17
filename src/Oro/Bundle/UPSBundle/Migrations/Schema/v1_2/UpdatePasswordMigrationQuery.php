@@ -26,8 +26,6 @@ class UpdatePasswordMigrationQuery implements MigrationQuery, ConnectionAwareInt
 
     /**
      * UpdatePasswordMigrationQuery constructor.
-     *
-     * @param ContainerInterface $container
      */
     public function __construct(ContainerInterface $container)
     {

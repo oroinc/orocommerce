@@ -14,17 +14,11 @@ class ActionDependent implements OptionInterface
      */
     protected $options;
 
-    /**
-     * @param array $options
-     */
     public function __construct(array $options)
     {
         $this->options = $options;
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
     public function configureOption(OptionsResolver $resolver)
     {
         if (isset($this->options[ECOption\Action::ACTION])) {
@@ -34,10 +28,6 @@ class ActionDependent implements OptionInterface
         }
     }
 
-    /**
-     * @param array $options
-     * @param OptionsResolver $resolver
-     */
     protected function configureActionRequiredOptions(array $options, OptionsResolver $resolver)
     {
         $action = $options[ECOption\Action::ACTION];
@@ -76,9 +66,6 @@ class ActionDependent implements OptionInterface
         }
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
     private function configureNoActionRequiredOptions(OptionsResolver $resolver)
     {
         $this->addOptions($resolver, [
@@ -87,10 +74,6 @@ class ActionDependent implements OptionInterface
         ]);
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     * @param array $options
-     */
     protected function addOptions(OptionsResolver $resolver, array $options)
     {
         /** @var OptionInterface $option */

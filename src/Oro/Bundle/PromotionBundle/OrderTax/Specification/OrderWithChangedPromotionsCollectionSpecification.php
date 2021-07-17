@@ -17,9 +17,6 @@ class OrderWithChangedPromotionsCollectionSpecification implements Specification
 {
     use OriginalDataAccessorTrait;
 
-    /**
-     * @param UnitOfWork $unitOfWork
-     */
     public function __construct(UnitOfWork $unitOfWork)
     {
         $this->unitOfWork = $unitOfWork;

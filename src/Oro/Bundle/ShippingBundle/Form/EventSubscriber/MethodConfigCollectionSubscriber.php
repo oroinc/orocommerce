@@ -16,9 +16,6 @@ class MethodConfigCollectionSubscriber implements EventSubscriberInterface
      */
     protected $shippingMethodProvider;
 
-    /**
-     * @param ShippingMethodProviderInterface $shippingMethodProvider
-     */
     public function __construct(ShippingMethodProviderInterface $shippingMethodProvider)
     {
         $this->shippingMethodProvider = $shippingMethodProvider;
@@ -35,9 +32,6 @@ class MethodConfigCollectionSubscriber implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function preSet(FormEvent $event)
     {
         /** @var Collection|ShippingMethodConfig[] $data */
@@ -58,9 +52,6 @@ class MethodConfigCollectionSubscriber implements EventSubscriberInterface
         $event->setData($data);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function preSubmit(FormEvent $event)
     {
         /** @var array $data */

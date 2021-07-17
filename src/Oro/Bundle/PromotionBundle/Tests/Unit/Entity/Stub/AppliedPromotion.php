@@ -23,9 +23,6 @@ class AppliedPromotion extends BaseAppliedPromotion
         return $this;
     }
 
-    /**
-     * @return BaseOrder
-     */
     public function getOrder(): BaseOrder
     {
         return $this->order;

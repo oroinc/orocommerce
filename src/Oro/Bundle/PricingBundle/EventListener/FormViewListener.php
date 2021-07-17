@@ -55,13 +55,6 @@ class FormViewListener implements FeatureToggleableInterface
      */
     private $aclHelper;
 
-    /**
-     * @param TranslatorInterface $translator
-     * @param DoctrineHelper $doctrineHelper
-     * @param PriceAttributePricesProvider $provider
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param AclHelper $aclHelper
-     */
     public function __construct(
         TranslatorInterface $translator,
         DoctrineHelper $doctrineHelper,
@@ -76,9 +69,6 @@ class FormViewListener implements FeatureToggleableInterface
         $this->aclHelper = $aclHelper;
     }
 
-    /**
-     * @param BeforeListRenderEvent $event
-     */
     public function onProductView(BeforeListRenderEvent $event)
     {
         $product = $event->getEntity();
@@ -90,9 +80,6 @@ class FormViewListener implements FeatureToggleableInterface
         $this->addProductPricesViewBlock($event, $product);
     }
 
-    /**
-     * @param BeforeListRenderEvent $event
-     */
     public function onProductEdit(BeforeListRenderEvent $event)
     {
         if (!$this->isFeaturesEnabled()) {
@@ -128,10 +115,6 @@ class FormViewListener implements FeatureToggleableInterface
         return $this->doctrineHelper->getEntityRepository(PriceAttributePriceList::class);
     }
 
-    /**
-     * @param BeforeListRenderEvent $event
-     * @param Product $product
-     */
     protected function addPriceAttributesViewBlock(BeforeListRenderEvent $event, Product $product)
     {
         $scrollData = $event->getScrollData();
@@ -180,10 +163,6 @@ class FormViewListener implements FeatureToggleableInterface
         }
     }
 
-    /**
-     * @param BeforeListRenderEvent $event
-     * @param Product $product
-     */
     protected function addProductPricesViewBlock(BeforeListRenderEvent $event, Product $product)
     {
         if (!$this->isFeaturesEnabled()) {

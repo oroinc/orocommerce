@@ -19,9 +19,6 @@ class RequirePaymentRedirectEvent extends Event
      */
     private $redirectRequired;
 
-    /**
-     * @param PaymentMethodInterface $paymentMethod
-     */
     public function __construct(PaymentMethodInterface $paymentMethod)
     {
         $this->paymentMethod = $paymentMethod;

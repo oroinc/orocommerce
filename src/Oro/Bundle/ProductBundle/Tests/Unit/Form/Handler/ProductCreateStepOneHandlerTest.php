@@ -23,7 +23,6 @@ class ProductCreateStepOneHandlerTest extends \PHPUnit\Framework\TestCase
      */
     protected $request;
 
-
     protected function setUp(): void
     {
         $this->form = $this->createMock('Symfony\Component\Form\FormInterface');

@@ -34,8 +34,6 @@ class OroFlatRateBundleInstaller implements Installation
 
     /**
      * Create oro_flat_rate_transport_label table
-     *
-     * @param Schema $schema
      */
     protected function createOroFlatRateTransportLabelTable(Schema $schema)
     {
@@ -51,8 +49,6 @@ class OroFlatRateBundleInstaller implements Installation
 
     /**
      * Add oro_flat_rate_transport_label foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroFlatRateTransportLabelForeignKeys(Schema $schema)
     {

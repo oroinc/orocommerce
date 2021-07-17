@@ -23,11 +23,6 @@ class TotalCalculateListener
     /** @var FrontendHelper */
     private $frontendHelper;
 
-    /**
-     * @param FormFactory           $formFactory
-     * @param FormRegistryInterface $formRegistry
-     * @param FrontendHelper        $frontendHelper
-     */
     public function __construct(
         FormFactory $formFactory,
         FormRegistryInterface $formRegistry,
@@ -38,9 +33,6 @@ class TotalCalculateListener
         $this->frontendHelper = $frontendHelper;
     }
 
-    /**
-     * @param TotalCalculateBeforeEvent $event
-     */
     public function onBeforeTotalCalculate(TotalCalculateBeforeEvent $event)
     {
         $entity = $event->getEntity();
@@ -55,11 +47,6 @@ class TotalCalculateListener
         }
     }
 
-    /**
-     * @param string $type
-     *
-     * @return string
-     */
     private function getFormName(string $type): string
     {
         return $this->formRegistry->getType($type)->getBlockPrefix();

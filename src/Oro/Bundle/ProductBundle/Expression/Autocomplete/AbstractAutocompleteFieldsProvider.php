@@ -50,11 +50,6 @@ abstract class AbstractAutocompleteFieldsProvider implements AutocompleteFieldsP
      */
     protected $specialFieldsInformation = [];
 
-    /**
-     * @param ExpressionParser $expressionParser
-     * @param FieldsProviderInterface $fieldsProvider
-     * @param TranslatorInterface $translator
-     */
     public function __construct(
         ExpressionParser $expressionParser,
         FieldsProviderInterface $fieldsProvider,
@@ -139,9 +134,6 @@ abstract class AbstractAutocompleteFieldsProvider implements AutocompleteFieldsP
         return $data;
     }
 
-    /**
-     * @param array $result
-     */
     protected function removeEmptyRelations(array &$result)
     {
         $hasChanges = true;

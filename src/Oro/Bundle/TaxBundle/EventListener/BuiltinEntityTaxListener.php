@@ -23,9 +23,6 @@ class BuiltinEntityTaxListener
     /** @var TaxValue[] */
     private $taxValues = [];
 
-    /**
-     * @param TaxProviderRegistry $taxProviderRegistry
-     */
     public function __construct(TaxProviderRegistry $taxProviderRegistry)
     {
         $this->taxProviderRegistry = $taxProviderRegistry;
@@ -86,7 +83,6 @@ class BuiltinEntityTaxListener
             unset($this->taxValues[$key]);
         }
     }
-
 
     /**
      * @param object $object

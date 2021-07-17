@@ -8,12 +8,6 @@ use Oro\Bundle\FedexShippingBundle\Model\FedexPackageSettingsInterface;
 
 interface FedexPackageSettingsByIntegrationSettingsAndRuleFactoryInterface
 {
-    /**
-     * @param FedexIntegrationSettings $settings
-     * @param ShippingServiceRule      $rule
-     *
-     * @return FedexPackageSettingsInterface
-     */
     public function create(
         FedexIntegrationSettings $settings,
         ShippingServiceRule $rule

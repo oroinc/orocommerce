@@ -35,9 +35,6 @@ class DigitalAssetTwigFunctionProcessorTest extends WebTestCase
         $this->fileRepository = $this->em->getRepository(File::class);
     }
 
-    /**
-     * @return Page
-     */
     public function testPostPersist(): Page
     {
         //cleanup
@@ -88,9 +85,6 @@ class DigitalAssetTwigFunctionProcessorTest extends WebTestCase
 
     /**
      * @depends testPostPersist
-     *
-     * @param Page $page
-     * @return Page
      */
     public function testPreUpdate(Page $page): Page
     {
@@ -138,8 +132,6 @@ class DigitalAssetTwigFunctionProcessorTest extends WebTestCase
 
     /**
      * @depends testPreUpdate
-     *
-     * @param Page $page
      */
     public function testRemove(Page $page): void
     {

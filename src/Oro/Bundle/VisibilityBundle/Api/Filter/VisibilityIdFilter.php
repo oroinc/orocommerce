@@ -26,9 +26,6 @@ class VisibilityIdFilter extends StandaloneFilter implements FieldFilterInterfac
     /** @var EntityDefinitionConfig */
     private $config;
 
-    /**
-     * @param VisibilityIdHelper $visibilityIdHelper
-     */
     public function setVisibilityIdHelper(VisibilityIdHelper $visibilityIdHelper): void
     {
         $this->visibilityIdHelper = $visibilityIdHelper;
@@ -112,11 +109,6 @@ class VisibilityIdFilter extends StandaloneFilter implements FieldFilterInterfac
         return $expr;
     }
 
-    /**
-     * @param string $value
-     *
-     * @return array
-     */
     private function decodeVisibilityId(string $value): array
     {
         $visibilityId = $this->visibilityIdHelper->decodeVisibilityId($value, $this->config->getField('id'));
@@ -160,11 +152,6 @@ class VisibilityIdFilter extends StandaloneFilter implements FieldFilterInterfac
         return new CompositeExpression(CompositeExpression::TYPE_OR, $expressions);
     }
 
-    /**
-     * @param string $propertyPath
-     *
-     * @return string
-     */
     private function getAssociationPropertyPath(string $propertyPath): string
     {
         return substr($propertyPath, 0, strrpos($propertyPath, ConfigUtil::PATH_DELIMITER));

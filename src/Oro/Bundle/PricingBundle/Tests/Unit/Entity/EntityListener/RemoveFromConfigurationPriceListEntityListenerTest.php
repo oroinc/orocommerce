@@ -109,11 +109,6 @@ class RemoveFromConfigurationPriceListEntityListenerTest extends TestCase
         $this->listener->preRemove($this->createPriceList(4));
     }
 
-    /**
-     * @param int $id
-     *
-     * @return PriceList
-     */
     private function createPriceList(int $id): PriceList
     {
         return $this->getEntity(PriceList::class, ['id' => $id]);

@@ -43,9 +43,6 @@ class DatagridLineItemsDataListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider onLineItemDataDataProvider
-     *
-     * @param CheckoutLineItem $lineItem
-     * @param array $expectedArgs
      */
     public function testOnLineItemData(CheckoutLineItem $lineItem, array $expectedArgs): void
     {
@@ -60,9 +57,6 @@ class DatagridLineItemsDataListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->onLineItemData($event);
     }
 
-    /**
-     * @return array
-     */
     public function onLineItemDataDataProvider(): array
     {
         $lineItemId = 10;

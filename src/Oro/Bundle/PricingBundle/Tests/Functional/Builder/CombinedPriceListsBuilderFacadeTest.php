@@ -129,9 +129,6 @@ class CombinedPriceListsBuilderFacadeTest extends WebTestCase
         $this->assertCount($expectedCpls, $allCpls);
     }
 
-    /**
-     * @return array
-     */
     public function priceListDataProvider(): array
     {
         return [

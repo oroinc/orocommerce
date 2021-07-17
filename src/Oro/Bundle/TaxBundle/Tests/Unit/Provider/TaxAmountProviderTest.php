@@ -71,9 +71,6 @@ class TaxAmountProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($expected, $actual);
     }
 
-    /**
-     * @return array
-     */
     public function getTaxAmountDataProvider(): array
     {
         return [
@@ -100,9 +97,6 @@ class TaxAmountProviderTest extends \PHPUnit\Framework\TestCase
         $this->provider->getTaxAmount($this->sourceEntity);
     }
 
-    /**
-     * @return array
-     */
     public function getTaxAmountWithUnHandledExceptionDataProvider(): array
     {
         return [

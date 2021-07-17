@@ -27,10 +27,6 @@ class UpdateOrderTotals implements ProcessorInterface
     /** @var FormValidationHandler */
     private $validator;
 
-    /**
-     * @param TotalHelper           $totalHelper
-     * @param FormValidationHandler $validator
-     */
     public function __construct(TotalHelper $totalHelper, FormValidationHandler $validator)
     {
         $this->totalHelper = $totalHelper;
@@ -40,11 +36,6 @@ class UpdateOrderTotals implements ProcessorInterface
     /**
      * Adds the given order to the list of orders that require the totals update.
      * This list is is stored in shared data.
-     *
-     * @param ParameterBagInterface $sharedData
-     * @param Order                 $order
-     * @param FormInterface         $form
-     * @param string|null           $orderFieldName
      */
     public static function addOrderToUpdateTotals(
         ParameterBagInterface $sharedData,
@@ -64,8 +55,6 @@ class UpdateOrderTotals implements ProcessorInterface
 
     /**
      * Moves orders that require the totals update from shared data to the given context.
-     *
-     * @param CustomizeFormDataContext $context
      */
     public static function moveOrdersRequireTotalsUpdateToContext(CustomizeFormDataContext $context): void
     {

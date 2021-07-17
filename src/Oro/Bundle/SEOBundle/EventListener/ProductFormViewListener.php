@@ -13,8 +13,6 @@ class ProductFormViewListener extends BaseFormViewListener
 {
     /**
      * Insert SEO information
-     *
-     * @param BeforeListRenderEvent $event
      */
     public function onProductView(BeforeListRenderEvent $event)
     {
@@ -60,9 +58,6 @@ class ProductFormViewListener extends BaseFormViewListener
         $scrollData->addSubBlockData(self::SEO_BLOCK_ID, $subBlock, $keywordsTemplate, 'metaKeywords');
     }
 
-    /**
-     * @param BeforeListRenderEvent $event
-     */
     public function onProductEdit(BeforeListRenderEvent $event)
     {
         $this->addEditPageBlock($event, 1700);

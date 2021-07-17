@@ -18,9 +18,6 @@ class AddShippingAddressOrderToUpdateTotals implements ProcessorInterface
     /** @var DoctrineHelper */
     private $doctrineHelper;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(DoctrineHelper $doctrineHelper)
     {
         $this->doctrineHelper = $doctrineHelper;
@@ -43,11 +40,6 @@ class AddShippingAddressOrderToUpdateTotals implements ProcessorInterface
         }
     }
 
-    /**
-     * @param OrderAddress $orderAddress
-     *
-     * @return Order|null
-     */
     private function getOrder(OrderAddress $orderAddress): ?Order
     {
         return $this->doctrineHelper->createQueryBuilder(Order::class, 'o')

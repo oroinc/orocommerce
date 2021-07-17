@@ -18,14 +18,11 @@ class BasicPaymentContextToRulesValueConverter implements PaymentContextToRulesV
      */
     protected $decoratedProductLineItemFactory;
 
-    /**
-     * @param DecoratedProductLineItemFactory $decoratedProductLineItemFactory
-     */
     public function __construct(DecoratedProductLineItemFactory $decoratedProductLineItemFactory)
     {
         $this->decoratedProductLineItemFactory = $decoratedProductLineItemFactory;
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -56,10 +53,6 @@ class BasicPaymentContextToRulesValueConverter implements PaymentContextToRulesV
         ];
     }
 
-    /**
-     * @param array $lineItems
-     * @return array
-     */
     private function getProductIds(array $lineItems): array
     {
         $productIds = array_map(

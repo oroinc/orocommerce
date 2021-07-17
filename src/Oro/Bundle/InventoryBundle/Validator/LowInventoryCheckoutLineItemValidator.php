@@ -18,10 +18,6 @@ class LowInventoryCheckoutLineItemValidator
      */
     protected $lowInventoryManager;
 
-    /**
-     * @param LowInventoryProvider $lowInventoryProvider
-     * @param TranslatorInterface  $translator
-     */
     public function __construct(
         LowInventoryProvider $lowInventoryProvider,
         TranslatorInterface $translator

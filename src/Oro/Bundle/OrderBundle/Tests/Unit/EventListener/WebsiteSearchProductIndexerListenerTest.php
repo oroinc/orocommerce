@@ -109,10 +109,6 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
 
     /**
      * @dataProvider productsInfo
-     *
-     * @param array     $products
-     * @param array     $orderInfo
-     * @param callable  $assertPlaceholderFieldCallback
      */
     public function testWebsiteSearchIndex(
         array $products,

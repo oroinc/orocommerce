@@ -31,8 +31,6 @@ class CheckoutErrorHandlerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider filterWorkflowStateErrorProvider
-     * @param array $passedFormErrors
-     * @param array $expectedFormErrors
      */
     public function testFilterWorkflowStateError(array $passedFormErrors, array $expectedFormErrors)
     {
@@ -91,8 +89,6 @@ class CheckoutErrorHandlerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider addFlashWorkflowStateWarningProvider
-     * @param array $passedFormErrors
-     * @param array $expectedFlashMessages
      */
     public function testAddFlashWorkflowStateWarning(array $passedFormErrors, array $expectedFlashMessages)
     {
@@ -165,18 +161,12 @@ class CheckoutErrorHandlerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getWorkflowErrorsDataTransformer
-     *
-     * @param FormErrorIterator $errorIterator
-     * @param array $expectedErrors
      */
     public function testGetWorkflowErrors(FormErrorIterator $errorIterator, array $expectedErrors): void
     {
         $this->assertEquals($expectedErrors, $this->handler->getWorkflowErrors($errorIterator));
     }
 
-    /**
-     * @return array
-     */
     public function getWorkflowErrorsDataTransformer(): array
     {
         $transitionIsAllowedConstraintViolation = $this->createMock(ConstraintViolation::class);

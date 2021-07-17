@@ -32,13 +32,6 @@ class SaveProductUnitLabels implements ProcessorInterface
     /** @var MessageProducerInterface */
     protected $producer;
 
-    /**
-     * @param TranslationManager          $translationManager
-     * @param Translator                  $translator
-     * @param UnitLabelFormatterInterface $formatter
-     * @param MessageProducerInterface    $producer
-     * @param array                       $mapping
-     */
     public function __construct(
         TranslationManager $translationManager,
         Translator $translator,
@@ -81,12 +74,6 @@ class SaveProductUnitLabels implements ProcessorInterface
         $this->modifyTranslatableLabels($data, $productUnitCode);
     }
 
-    /**
-     * @param string                   $fieldName
-     * @param CustomizeFormDataContext $context
-     *
-     * @return string|null
-     */
     private function getLabelDataFromForm(string $fieldName, CustomizeFormDataContext $context): ?string
     {
         $form = $context->findFormField($fieldName);
@@ -98,12 +85,6 @@ class SaveProductUnitLabels implements ProcessorInterface
         return $value;
     }
 
-    /**
-     * @param array  $data
-     * @param string $productUnitCode
-     *
-     * @return array
-     */
     private function collectNotSubmittedLabels(array $data, string $productUnitCode): array
     {
         $result = [];
@@ -118,12 +99,6 @@ class SaveProductUnitLabels implements ProcessorInterface
         return $result;
     }
 
-    /**
-     * @param string $placeholder
-     * @param string $productUnitCode
-     *
-     * @return string
-     */
     private function getExistingLabel(string $placeholder, string $productUnitCode): string
     {
         $value = '';
@@ -144,10 +119,6 @@ class SaveProductUnitLabels implements ProcessorInterface
         return $value;
     }
 
-    /**
-     * @param array  $data
-     * @param string $productUnitCode
-     */
     private function modifyTranslatableLabels(array $data, string $productUnitCode): void
     {
         $search = array_keys($data);
@@ -172,11 +143,6 @@ class SaveProductUnitLabels implements ProcessorInterface
         $this->producer->send(Topics::JS_TRANSLATIONS_DUMP, []);
     }
 
-    /**
-     * @param array $data
-     *
-     * @return bool
-     */
     private function isSubmittedAtLeastOneLabel(array $data): bool
     {
         foreach ($data as $label) {

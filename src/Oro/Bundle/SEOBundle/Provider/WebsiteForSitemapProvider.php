@@ -13,9 +13,6 @@ class WebsiteForSitemapProvider implements WebsiteForSitemapProviderInterface
     /** @var WebsiteProviderInterface */
     private $websiteProvider;
 
-    /**
-     * @param WebsiteProviderInterface $websiteProvider
-     */
     public function __construct(WebsiteProviderInterface $websiteProvider)
     {
         $this->websiteProvider = $websiteProvider;

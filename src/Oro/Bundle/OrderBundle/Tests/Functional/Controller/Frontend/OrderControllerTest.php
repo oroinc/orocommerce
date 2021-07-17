@@ -227,10 +227,6 @@ class OrderControllerTest extends WebTestCase
         ];
     }
 
-    /**
-     * @param Crawler $crawler
-     * @param array $expectedViewData
-     */
     public function assertViewPage(Crawler $crawler, array $expectedViewData)
     {
         $html = $crawler->html();

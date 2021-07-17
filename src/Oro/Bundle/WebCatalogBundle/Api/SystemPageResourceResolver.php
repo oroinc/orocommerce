@@ -29,12 +29,6 @@ class SystemPageResourceResolver implements ResourceTypeResolverInterface, Resou
     /** @var ValueNormalizer */
     private $valueNormalizer;
 
-    /**
-     * @param SystemPageRepository  $systemPageRepository
-     * @param UrlGeneratorInterface $urlGenerator
-     * @param RestRoutesRegistry    $routesRegistry
-     * @param ValueNormalizer       $valueNormalizer
-     */
     public function __construct(
         SystemPageRepository $systemPageRepository,
         UrlGeneratorInterface $urlGenerator,
@@ -84,12 +78,6 @@ class SystemPageResourceResolver implements ResourceTypeResolverInterface, Resou
         );
     }
 
-    /**
-     * @param string $routeName
-     * @param array  $routeParameters
-     *
-     * @return bool
-     */
     private function isSystemPage(string $routeName, array $routeParameters): bool
     {
         return !$routeParameters && null !== $this->systemPageRepository->findSystemPage($routeName);

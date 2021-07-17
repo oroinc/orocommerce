@@ -68,7 +68,6 @@ class DigitalItemResolverTest extends \PHPUnit\Framework\TestCase
         $taxable->getContext()->offsetSet(Taxable::DIGITAL_PRODUCT, true);
         $taxable->getContext()->offsetSet(Taxable::PRODUCT_TAX_CODE, 'prod_tax_code');
 
-
         $this->matcher->expects($this->once())->method('match')->willReturn($taxRules);
 
         $taxableUnitPrice = BigDecimal::of($taxable->getPrice());

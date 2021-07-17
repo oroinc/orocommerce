@@ -13,11 +13,6 @@ class RouteForVisitorTest extends FrontendRestJsonApiTestCase
         $this->loadVisitor();
     }
 
-    /**
-     * @param string $pathIfo
-     *
-     * @return string
-     */
     private function getRouteId(string $pathIfo): string
     {
         return str_replace('/', ':', $pathIfo);

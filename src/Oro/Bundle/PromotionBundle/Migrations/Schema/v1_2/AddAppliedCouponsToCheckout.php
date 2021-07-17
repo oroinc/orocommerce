@@ -32,9 +32,6 @@ class AddAppliedCouponsToCheckout implements Migration, ExtendExtensionAwareInte
         $this->addAppliedCouponsToCheckout($schema);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addAppliedCouponsToCheckout(Schema $schema)
     {
         $this->extendExtension->addManyToOneRelation(

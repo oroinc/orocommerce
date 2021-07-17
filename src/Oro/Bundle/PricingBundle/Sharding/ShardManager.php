@@ -50,9 +50,6 @@ class ShardManager implements \Serializable
      */
     protected $enableSharding;
 
-    /**
-     * @param array $shardList
-     */
     public function __construct(array $shardList = [])
     {
         $this->shardList = $shardList;
@@ -226,7 +223,6 @@ class ShardManager implements \Serializable
     /**
      * @param string $className
      * @param string $shardName
-     *
      */
     public function create($className, $shardName)
     {
@@ -415,9 +411,6 @@ class ShardManager implements \Serializable
         $this->shardList = $shardList;
     }
 
-    /**
-     * @param ManagerRegistry $registry
-     */
     public function setRegistry(ManagerRegistry $registry)
     {
         $this->registry = $registry;

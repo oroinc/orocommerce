@@ -196,10 +196,6 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param array $productIds
-     * @param array $productUnitsWithQuantities
-     * @param array $expectedLineItems
-     *
      * @dataProvider itemDataProvider
      */
     public function testCreateForShoppingList(

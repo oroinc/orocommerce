@@ -10,10 +10,6 @@ use Oro\Bundle\CMSBundle\Entity\ImageSlide;
  */
 class ImageSlideEntityListener
 {
-    /**
-     * @param ImageSlide $imageSlide
-     * @param LifecycleEventArgs $args
-     */
     public function preRemove(ImageSlide $imageSlide, LifecycleEventArgs $args): void
     {
         $manager = $args->getEntityManager();

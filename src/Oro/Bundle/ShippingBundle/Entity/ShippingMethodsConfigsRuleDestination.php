@@ -115,7 +115,6 @@ class ShippingMethodsConfigsRuleDestination
      */
     protected $methodConfigsRule;
 
-
     public function __construct()
     {
         $this->postalCodes = new ArrayCollection();

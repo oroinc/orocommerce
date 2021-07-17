@@ -19,9 +19,6 @@ class ProductStatusQueryModifier implements QueryModifierInterface
     /** @var EntityClassResolver */
     private $entityClassResolver;
 
-    /**
-     * @param EntityClassResolver $entityClassResolver
-     */
     public function __construct(EntityClassResolver $entityClassResolver)
     {
         $this->entityClassResolver = $entityClassResolver;
@@ -44,10 +41,6 @@ class ProductStatusQueryModifier implements QueryModifierInterface
         }
     }
 
-    /**
-     * @param QueryBuilder $qb
-     * @param string       $rootAlias
-     */
     private function applyRootRestriction(QueryBuilder $qb, string $rootAlias): void
     {
         QueryBuilderUtil::checkIdentifier($rootAlias);

@@ -19,9 +19,6 @@ class AjaxPromotionController extends AbstractController
      *      requirements={"id"="\d+"}
      * )
      * @AclAncestor("oro_promotion_view")
-     *
-     * @param Promotion $promotion
-     * @return JsonResponse
      */
     public function getPromotionDataByPromotionAction(Promotion $promotion): JsonResponse
     {
@@ -35,9 +32,6 @@ class AjaxPromotionController extends AbstractController
      *      requirements={"id"="\d+"}
      * )
      * @AclAncestor("oro_promotion_view")
-     *
-     * @param AppliedPromotion $appliedPromotion
-     * @return JsonResponse
      */
     public function getPromotionDataByAppliedPromotionAction(AppliedPromotion $appliedPromotion): JsonResponse
     {
@@ -46,10 +40,6 @@ class AjaxPromotionController extends AbstractController
         return $this->getPromotionJsonResponse($mapper->mapAppliedPromotionToPromotionData($appliedPromotion));
     }
 
-    /**
-     * @param PromotionDataInterface $promotionData
-     * @return JsonResponse
-     */
     private function getPromotionJsonResponse(PromotionDataInterface $promotionData): JsonResponse
     {
         $view = $this->renderView(

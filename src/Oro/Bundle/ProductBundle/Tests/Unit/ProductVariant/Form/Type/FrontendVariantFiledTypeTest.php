@@ -328,9 +328,6 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
         $this->assertEquals(json_encode($expectedComponentOptions), $attr['data-page-component-options']);
     }
 
-    /**
-     * @return array
-     */
     public function getFinishViewDataProvider(): array
     {
         $productVariantDefaultName = 'simpleProductName';

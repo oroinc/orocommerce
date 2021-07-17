@@ -33,7 +33,6 @@ class ProductFormProvider extends AbstractFormProvider
 
     /**
      * {@inheritdoc}
-     * @param ProductVariantAvailabilityProvider $productVariantAvailabilityProvider
      */
     public function __construct(
         FormFactoryInterface $formFactory,
@@ -144,11 +143,6 @@ class ProductFormProvider extends AbstractFormProvider
         return $this->getForm(FrontendVariantFiledType::class, $data, $options, ['parentProduct' => $product->getId()]);
     }
 
-    /**
-     * @param Product $product
-     * @param Product $variantProduct
-     * @return FormView
-     */
     public function getVariantFieldsFormViewByVariantProduct(Product $product, Product $variantProduct): FormView
     {
         $options = $this->getVariantFieldsFormOptions($product);
@@ -161,10 +155,6 @@ class ProductFormProvider extends AbstractFormProvider
         );
     }
 
-    /**
-     * @param Product $product
-     * @return FormView
-     */
     public function getVariantFieldsFormView(Product $product): FormView
     {
         $data = $this->getVariantFieldsFormData($product);

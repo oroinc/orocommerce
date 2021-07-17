@@ -13,10 +13,6 @@ class ProductCreateStepOneHandler
     /** @var Request */
     protected $request;
 
-    /**
-     * @param FormInterface $form
-     * @param Request $request
-     */
     public function __construct(
         FormInterface $form,
         Request $request

@@ -43,27 +43,17 @@ class PayflowIPCheckListener
      */
     protected $paymentMethodProvider;
 
-    /**
-     * @param RequestStack $requestStack
-     * @param PaymentMethodProviderInterface $paymentMethodProvider
-     */
     public function __construct(RequestStack $requestStack, PaymentMethodProviderInterface $paymentMethodProvider)
     {
         $this->requestStack = $requestStack;
         $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
-    /**
-     * @param array $allowedIPs
-     */
     public function setAllowedIPs(array $allowedIPs): void
     {
         $this->allowedIPs = $allowedIPs ?: $this->allowedIPs;
     }
 
-    /**
-     * @param AbstractCallbackEvent $event
-     */
     public function onNotify(AbstractCallbackEvent $event)
     {
         $paymentTransaction = $event->getPaymentTransaction();

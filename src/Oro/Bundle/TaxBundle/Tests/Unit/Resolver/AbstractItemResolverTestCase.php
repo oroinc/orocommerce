@@ -82,9 +82,6 @@ abstract class AbstractItemResolverTestCase extends \PHPUnit\Framework\TestCase
      */
     abstract protected function getTaxable();
 
-    /**
-     * @param Taxable $taxable
-     */
     abstract protected function assertEmptyResult(Taxable $taxable);
 
     public function testDestinationMissing()

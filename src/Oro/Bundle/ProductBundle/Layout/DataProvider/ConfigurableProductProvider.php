@@ -36,13 +36,6 @@ class ConfigurableProductProvider
     /** @var TranslatorInterface|null */
     private $translator;
 
-    /**
-     * @param CustomFieldProvider $customFieldProvider
-     * @param ProductVariantAvailabilityProvider $productVariantAvailabilityProvider
-     * @param PropertyAccessor $propertyAccessor
-     * @param ProductVariantFieldValueHandlerRegistry $fieldValueHandlerRegistry
-     * @param TranslatorInterface $translator
-     */
     public function __construct(
         CustomFieldProvider $customFieldProvider,
         ProductVariantAvailabilityProvider $productVariantAvailabilityProvider,
@@ -92,11 +85,6 @@ class ConfigurableProductProvider
         return $parentProduct;
     }
 
-    /**
-     * @param bool $translateLabels
-     *
-     * @return array
-     */
     private function getProductCustomFields(bool $translateLabels): array
     {
         if (!$this->customFields) {

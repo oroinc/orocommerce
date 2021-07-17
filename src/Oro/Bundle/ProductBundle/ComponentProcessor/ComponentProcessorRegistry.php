@@ -9,9 +9,6 @@ class ComponentProcessorRegistry
      */
     protected $processors = [];
 
-    /**
-     * @param ComponentProcessorInterface $processor
-     */
     public function addProcessor(ComponentProcessorInterface $processor)
     {
         $this->processors[$processor->getName()] = $processor;

@@ -16,9 +16,6 @@ class PersistProductPrice implements ProcessorInterface
     /** @var PriceManager */
     private $priceManager;
 
-    /**
-     * @param PriceManager $priceManager
-     */
     public function __construct(PriceManager $priceManager)
     {
         $this->priceManager = $priceManager;

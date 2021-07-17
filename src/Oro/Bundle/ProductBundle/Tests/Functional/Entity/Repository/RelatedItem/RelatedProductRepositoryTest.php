@@ -201,9 +201,6 @@ class RelatedProductRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider getUniqueProductDataProvider
-     *
-     * @param bool $isBidirectional
-     * @param array $expected
      */
     public function testGetUniqueProductDataQueryBuilder(bool $isBidirectional, array $expected): void
     {
@@ -221,9 +218,6 @@ class RelatedProductRepositoryTest extends WebTestCase
         $this->assertEquals($expected, $actual);
     }
 
-    /**
-     * @return array
-     */
     public function getUniqueProductDataProvider(): array
     {
         return [

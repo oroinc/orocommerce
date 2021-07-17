@@ -20,9 +20,6 @@ class ProductVariantIndexDataProviderDecorator implements ProductIndexDataProvid
     /** @var Registry */
     private $registry;
 
-    /**
-     * @param ProductIndexDataProviderInterface $originalProvider
-     */
     public function __construct(ProductIndexDataProviderInterface $originalProvider)
     {
         $this->originalProvider = $originalProvider;
@@ -113,9 +110,6 @@ class ProductVariantIndexDataProviderDecorator implements ProductIndexDataProvid
 
     /**
      * Merge searchable data into one field.
-     *
-     * @param \ArrayIterator $data
-     * @param string $searchableName
      */
     private function mergeSearchable(\ArrayIterator $data, string $searchableName): void
     {
@@ -139,10 +133,6 @@ class ProductVariantIndexDataProviderDecorator implements ProductIndexDataProvid
         }
     }
 
-    /**
-     * @param \ArrayIterator $data
-     * @param \ArrayIterator $variantData
-     */
     private function addAllTextVariantData(
         \ArrayIterator $data,
         \ArrayIterator $variantData

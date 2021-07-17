@@ -21,50 +21,26 @@ class VisibilityScopeProvider
     /** @var ScopeManager */
     private $scopeManager;
 
-    /**
-     * @param ScopeManager $scopeManager
-     */
     public function __construct(ScopeManager $scopeManager)
     {
         $this->scopeManager = $scopeManager;
     }
 
-    /**
-     * @param WebsiteInterface $website
-     *
-     * @return Scope
-     */
     public function getProductVisibilityScope(WebsiteInterface $website): Scope
     {
         return $this->findOrCreateScope(ProductVisibility::getScopeType());
     }
 
-    /**
-     * @param WebsiteInterface $website
-     *
-     * @return Scope|null
-     */
     public function findProductVisibilityScope(WebsiteInterface $website): ?Scope
     {
         return $this->findScope(ProductVisibility::getScopeType());
     }
 
-    /**
-     * @param WebsiteInterface $website
-     *
-     * @return int|null
-     */
     public function findProductVisibilityScopeId(WebsiteInterface $website): ?int
     {
         return $this->findScopeId(ProductVisibility::getScopeType());
     }
 
-    /**
-     * @param Customer         $customer
-     * @param WebsiteInterface $website
-     *
-     * @return Scope
-     */
     public function getCustomerProductVisibilityScope(
         Customer $customer,
         WebsiteInterface $website
@@ -75,12 +51,6 @@ class VisibilityScopeProvider
         );
     }
 
-    /**
-     * @param Customer         $customer
-     * @param WebsiteInterface $website
-     *
-     * @return Scope|null
-     */
     public function findCustomerProductVisibilityScope(
         Customer $customer,
         WebsiteInterface $website
@@ -91,12 +61,6 @@ class VisibilityScopeProvider
         );
     }
 
-    /**
-     * @param Customer         $customer
-     * @param WebsiteInterface $website
-     *
-     * @return int|null
-     */
     public function findCustomerProductVisibilityScopeId(
         Customer $customer,
         WebsiteInterface $website
@@ -107,12 +71,6 @@ class VisibilityScopeProvider
         );
     }
 
-    /**
-     * @param CustomerGroup    $customerGroup
-     * @param WebsiteInterface $website
-     *
-     * @return Scope
-     */
     public function getCustomerGroupProductVisibilityScope(
         CustomerGroup $customerGroup,
         WebsiteInterface $website
@@ -123,12 +81,6 @@ class VisibilityScopeProvider
         );
     }
 
-    /**
-     * @param CustomerGroup    $customerGroup
-     * @param WebsiteInterface $website
-     *
-     * @return Scope|null
-     */
     public function findCustomerGroupProductVisibilityScope(
         CustomerGroup $customerGroup,
         WebsiteInterface $website
@@ -139,12 +91,6 @@ class VisibilityScopeProvider
         );
     }
 
-    /**
-     * @param CustomerGroup    $customerGroup
-     * @param WebsiteInterface $website
-     *
-     * @return int|null
-     */
     public function findCustomerGroupProductVisibilityScopeId(
         CustomerGroup $customerGroup,
         WebsiteInterface $website
@@ -155,34 +101,16 @@ class VisibilityScopeProvider
         );
     }
 
-    /**
-     * @param string     $scopeType
-     * @param array|null $context
-     *
-     * @return Scope
-     */
     protected function findOrCreateScope(string $scopeType, array $context = null): Scope
     {
         return $this->scopeManager->findOrCreate($scopeType, $context);
     }
 
-    /**
-     * @param string     $scopeType
-     * @param array|null $context
-     *
-     * @return Scope|null
-     */
     protected function findScope(string $scopeType, array $context = null): ?Scope
     {
         return $this->scopeManager->find($scopeType, $context);
     }
 
-    /**
-     * @param string     $scopeType
-     * @param array|null $context
-     *
-     * @return int|null
-     */
     protected function findScopeId(string $scopeType, array $context = null): ?int
     {
         return $this->scopeManager->findId($scopeType, $context);

@@ -18,10 +18,6 @@ class WebsiteSearchProductVisibilityIndexerListener
      */
     private $websiteContextManager;
 
-    /**
-     * @param ProductVisibilityIndexer $visibilityIndexer
-     * @param WebsiteContextManager $websiteContextManager
-     */
     public function __construct(
         ProductVisibilityIndexer $visibilityIndexer,
         WebsiteContextManager $websiteContextManager
@@ -30,9 +26,6 @@ class WebsiteSearchProductVisibilityIndexerListener
         $this->websiteContextManager = $websiteContextManager;
     }
 
-    /**
-     * @param IndexEntityEvent $event
-     */
     public function onWebsiteSearchIndex(IndexEntityEvent $event)
     {
         $websiteId = $this->websiteContextManager->getWebsiteId($event->getContext());

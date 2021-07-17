@@ -76,10 +76,6 @@ class ProductFamilyBuilder
     /** @var AttributeFamily */
     private $family;
 
-    /**
-     * @param TranslatorInterface $translator
-     * @param AttributeGroupManager $attributeGroupManager
-     */
     public function __construct(TranslatorInterface $translator, AttributeGroupManager $attributeGroupManager)
     {
         $this->translator = $translator;
@@ -121,9 +117,6 @@ class ProductFamilyBuilder
         return $this;
     }
 
-    /**
-     * @return AttributeFamily|null
-     */
     public function getFamily(): ?AttributeFamily
     {
         return $this->family;

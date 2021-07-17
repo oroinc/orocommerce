@@ -30,11 +30,6 @@ class Firewall
     /** @var bool */
     private $slugApplied = false;
 
-    /**
-     * @param MatchedUrlDecisionMaker     $matchedUrlDecisionMaker
-     * @param SlugRequestFactoryInterface $slugRequestFactory
-     * @param RequestContext|null         $context
-     */
     public function __construct(
         MatchedUrlDecisionMaker $matchedUrlDecisionMaker,
         SlugRequestFactoryInterface $slugRequestFactory,
@@ -47,8 +42,6 @@ class Firewall
 
     /**
      * Sets alternative base firewall.
-     *
-     * @param FrameworkFirewall $firewall
      */
     public function setFirewall(FrameworkFirewall $firewall)
     {
@@ -57,8 +50,6 @@ class Firewall
 
     /**
      * Initialize request context by current request, call default firewall behaviour.
-     *
-     * @param RequestEvent $event
      */
     public function onKernelRequestBeforeRouting(RequestEvent $event)
     {
@@ -78,8 +69,6 @@ class Firewall
 
     /**
      * For Slugs perform additional authentication checks for detected route.
-     *
-     * @param RequestEvent $event
      */
     public function onKernelRequestAfterRouting(RequestEvent $event)
     {
@@ -112,8 +101,6 @@ class Firewall
 
     /**
      * Unregister exception listeners.
-     *
-     * @param FinishRequestEvent $event
      */
     public function onKernelFinishRequest(FinishRequestEvent $event)
     {

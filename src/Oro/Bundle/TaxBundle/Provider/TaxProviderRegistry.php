@@ -70,10 +70,6 @@ class TaxProviderRegistry implements ResetInterface
     /**
      * Gets a tax provider by its name.
      *
-     * @param string $name
-     *
-     * @return TaxProviderInterface
-     *
      * @throws \LogicException if a provider with the given name not found
      */
     public function getProvider(string $name): TaxProviderInterface
@@ -102,8 +98,6 @@ class TaxProviderRegistry implements ResetInterface
 
     /**
      * Retrieves a tax provider, currently enabled in the system config.
-     *
-     * @return TaxProviderInterface
      */
     public function getEnabledProvider(): TaxProviderInterface
     {

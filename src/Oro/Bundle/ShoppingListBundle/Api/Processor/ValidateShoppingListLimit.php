@@ -31,12 +31,6 @@ class ValidateShoppingListLimit implements ProcessorInterface
     /** @var TranslatorInterface */
     private $translator;
 
-    /**
-     * @param FeatureChecker           $featureChecker
-     * @param GuestShoppingListManager $guestShoppingListManager
-     * @param TokenStorageInterface    $tokenStorage
-     * @param TranslatorInterface      $translator
-     */
     public function __construct(
         FeatureChecker $featureChecker,
         GuestShoppingListManager $guestShoppingListManager,
@@ -70,9 +64,6 @@ class ValidateShoppingListLimit implements ProcessorInterface
         }
     }
 
-    /**
-     * @param FormInterface $form
-     */
     private function addCreateNotAllowedConstraint(FormInterface $form)
     {
         FormUtil::addNamedFormError(

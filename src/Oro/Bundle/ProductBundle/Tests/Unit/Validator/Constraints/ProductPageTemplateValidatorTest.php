@@ -61,7 +61,6 @@ class ProductPageTemplateValidatorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param $scalarValue
      * @dataProvider validateProvider
      */
     public function testValidate($scalarValue)

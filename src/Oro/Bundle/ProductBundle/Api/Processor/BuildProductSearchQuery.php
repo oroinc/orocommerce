@@ -40,12 +40,6 @@ class BuildProductSearchQuery implements ProcessorInterface
     /** @var FilterNamesRegistry */
     private $filterNamesRegistry;
 
-    /**
-     * @param SearchEngine                  $searchEngine
-     * @param AbstractSearchMappingProvider $searchMappingProvider
-     * @param ProductManager                $productManager
-     * @param FilterNamesRegistry           $filterNamesRegistry
-     */
     public function __construct(
         SearchEngine $searchEngine,
         AbstractSearchMappingProvider $searchMappingProvider,
@@ -153,12 +147,6 @@ class BuildProductSearchQuery implements ProcessorInterface
         return $resolvedOrderings;
     }
 
-    /**
-     * @param RequestType                  $requestType
-     * @param FilterValueAccessorInterface $filterValues
-     *
-     * @return string
-     */
     private function getSortFilterName(RequestType $requestType, FilterValueAccessorInterface $filterValues): string
     {
         $sortFilterName = $this->filterNamesRegistry

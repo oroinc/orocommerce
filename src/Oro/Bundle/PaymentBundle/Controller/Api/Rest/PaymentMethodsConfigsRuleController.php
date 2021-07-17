@@ -60,7 +60,6 @@ class PaymentMethodsConfigsRuleController extends RestController implements Clas
             $view = $this->view(null, Response::HTTP_NOT_FOUND);
         }
 
-
         return $this->handleView(
             $view
         );
@@ -106,7 +105,6 @@ class PaymentMethodsConfigsRuleController extends RestController implements Clas
             /** @var View $view */
             $view = $this->view(null, Response::HTTP_NOT_FOUND);
         }
-
 
         return $this->handleView(
             $view

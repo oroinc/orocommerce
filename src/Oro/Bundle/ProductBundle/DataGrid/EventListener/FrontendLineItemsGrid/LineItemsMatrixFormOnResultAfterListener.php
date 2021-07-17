@@ -16,17 +16,11 @@ class LineItemsMatrixFormOnResultAfterListener
     /** @var ProductMatrixAvailabilityProvider */
     private $productMatrixAvailabilityProvider;
 
-    /**
-     * @param ProductMatrixAvailabilityProvider $productMatrixAvailabilityProvider
-     */
     public function __construct(ProductMatrixAvailabilityProvider $productMatrixAvailabilityProvider)
     {
         $this->productMatrixAvailabilityProvider = $productMatrixAvailabilityProvider;
     }
 
-    /**
-     * @param OrmResultAfter $event
-     */
     public function onResultAfter(OrmResultAfter $event): void
     {
         $records = $event->getRecords();
@@ -62,10 +56,6 @@ class LineItemsMatrixFormOnResultAfterListener
         return $products;
     }
 
-    /**
-     * @param ResultRecordInterface $record
-     * @return Product
-     */
     private function getConfigurableProduct(ResultRecordInterface $record): Product
     {
         /** @var ProductLineItemInterface[] $firstLineItem */

@@ -51,11 +51,6 @@ class SluggableEntityListener implements OptionalListenerInterface
      */
     private $sluggableEntities = [];
 
-    /**
-     * @param MessageFactoryInterface $messageFactory
-     * @param MessageProducerInterface $messageProducer
-     * @param ConfigManager $configManager
-     */
     public function __construct(
         MessageFactoryInterface $messageFactory,
         MessageProducerInterface $messageProducer,
@@ -66,9 +61,6 @@ class SluggableEntityListener implements OptionalListenerInterface
         $this->configManager = $configManager;
     }
 
-    /**
-     * @param LifecycleEventArgs $args
-     */
     public function postPersist(LifecycleEventArgs $args)
     {
         if (!$this->enabled) {
@@ -81,9 +73,6 @@ class SluggableEntityListener implements OptionalListenerInterface
         }
     }
 
-    /**
-     * @param OnFlushEventArgs $event
-     */
     public function onFlush(OnFlushEventArgs $event)
     {
         if (!$this->enabled) {
@@ -119,9 +108,6 @@ class SluggableEntityListener implements OptionalListenerInterface
 
     /**
      * Goes through sluggable entities, checks if their slugPrototypes are changed and schedules for recalculation.
-     *
-     * @param UnitOfWork $unitOfWork
-     * @param array $sluggableEntitiesToCheck
      */
     private function checkSluggableEntities(UnitOfWork $unitOfWork, array $sluggableEntitiesToCheck)
     {
@@ -190,9 +176,6 @@ class SluggableEntityListener implements OptionalListenerInterface
         }
     }
 
-    /**
-     * @param SluggableInterface $entity
-     */
     protected function scheduleEntitySlugCalculation(SluggableInterface $entity)
     {
         if ($entity instanceof DraftableInterface && DraftHelper::isDraft($entity)) {

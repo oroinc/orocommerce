@@ -31,9 +31,6 @@ class ShippingMethodTypeConfigType extends AbstractType
         $builder->add('options', $options['options_type']);
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([

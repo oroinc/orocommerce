@@ -103,9 +103,6 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
         return [UpdateInventoryLevelsQuantities::class];
     }
 
-    /**
-     * @param ShoppingList $shoppingList
-     */
     protected function startCheckout(ShoppingList $shoppingList)
     {
         $this->startCheckoutByData($this->getCheckoutData($shoppingList));
@@ -251,9 +248,6 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
         );
     }
 
-    /**
-     * @param array $data
-     */
     protected function startCheckoutByData(array $data)
     {
         $userManager = $this->getContainer()->get('oro_customer_user.manager');

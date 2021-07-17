@@ -260,9 +260,6 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->onBuildAfter($event);
     }
 
-    /**
-     * @return array
-     */
     public function gridNameDataProvider(): array
     {
         return [
@@ -274,7 +271,6 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider definitionEmptyAndNoIncludedProductsDataProvider
-     * @param array $requestData
      */
     public function testOnBuildAfterWhenDefinitionFilterIsEmptyAndNoIncludedProducts(array $requestData)
     {

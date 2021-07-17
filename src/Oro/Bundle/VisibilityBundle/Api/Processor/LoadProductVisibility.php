@@ -17,13 +17,6 @@ class LoadProductVisibility extends AbstractLoadVisibility
     /** @var VisibilityScopeProvider */
     private $visibilityScopeProvider;
 
-    /**
-     * @param DoctrineHelper          $doctrineHelper
-     * @param AclHelper               $aclHelper
-     * @param WebsiteManager          $websiteManager
-     * @param VisibilityIdHelper      $visibilityIdHelper
-     * @param VisibilityScopeProvider $visibilityScopeProvider
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         AclHelper $aclHelper,

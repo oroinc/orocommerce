@@ -51,9 +51,6 @@ class OroMoneyOrderBundleInstaller implements Installation, ContainerAwareInterf
         $this->addOroMoneyOrderShortLabelForeignKeys($schema);
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function createOroMoneyOrderTransportLabelTable(Schema $schema)
     {
         $table = $schema->createTable('oro_money_order_trans_label');
@@ -67,8 +64,6 @@ class OroMoneyOrderBundleInstaller implements Installation, ContainerAwareInterf
     }
 
     /**
-     * @param Schema $schema
-     *
      * @throws SchemaException
      */
     private function addOroMoneyOrderTransportLabelForeignKeys(Schema $schema)
@@ -90,8 +85,6 @@ class OroMoneyOrderBundleInstaller implements Installation, ContainerAwareInterf
     }
 
     /**
-     * @param Schema $schema
-     *
      * @throws SchemaException
      */
     private function updateOroIntegrationTransportTable(Schema $schema)
@@ -102,9 +95,6 @@ class OroMoneyOrderBundleInstaller implements Installation, ContainerAwareInterf
         $table->addColumn('money_order_send_to', 'text', ['notnull' => false]);
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function createOroMoneyOrderShortLabelTable(Schema $schema)
     {
         $table = $schema->createTable('oro_money_order_short_label');
@@ -117,8 +107,6 @@ class OroMoneyOrderBundleInstaller implements Installation, ContainerAwareInterf
         $table->addUniqueIndex(['localized_value_id'], 'oro_money_order_short_label_localized_value_id', []);
     }
     /**
-     * @param Schema $schema
-     *
      * @throws SchemaException
      */
     private function addOroMoneyOrderShortLabelForeignKeys(Schema $schema)

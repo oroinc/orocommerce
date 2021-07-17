@@ -26,9 +26,6 @@ class PlaceholderHelper
         $this->placeholderRegistry = $placeholderRegistry;
     }
 
-    /**
-     * @param AbstractSearchMappingProvider $searchMappingProvider
-     */
     public function setSearchMappingProvider(AbstractSearchMappingProvider $searchMappingProvider): void
     {
         $this->searchMappingProvider = $searchMappingProvider;

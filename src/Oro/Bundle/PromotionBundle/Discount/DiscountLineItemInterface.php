@@ -29,9 +29,6 @@ interface DiscountLineItemInterface extends
      */
     public function setProduct(Product $product = null);
 
-    /**
-     * @return string
-     */
     public function getProductSku(): string;
 
     /**
@@ -51,9 +48,6 @@ interface DiscountLineItemInterface extends
      */
     public function setProductUnit(ProductUnit $productUnit = null);
 
-    /**
-     * @return string
-     */
     public function getProductUnitCode(): string;
 
     /**
@@ -102,9 +96,6 @@ interface DiscountLineItemInterface extends
      */
     public function getDiscountsInformation(): array;
 
-    /**
-     * @return float
-     */
     public function getDiscountTotal(): float;
 
     /**

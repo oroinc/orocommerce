@@ -35,7 +35,6 @@ class TaxSelectTypeTest extends \PHPUnit\Framework\TestCase
         $this->type->configureOptions($resolver);
         $options = $resolver->resolve([]);
 
-
         $this->assertArrayHasKey('autocomplete_alias', $options);
         $this->assertArrayHasKey('create_form_route', $options);
         $this->assertArrayHasKey('configs', $options);

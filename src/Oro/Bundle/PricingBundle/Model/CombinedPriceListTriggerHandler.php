@@ -45,8 +45,6 @@ class CombinedPriceListTriggerHandler
 
     /**
      * CombinedPriceListTriggerHandler constructor.
-     * @param Registry $registry
-     * @param EventDispatcherInterface $eventDispatcher
      */
     public function __construct(Registry $registry, EventDispatcherInterface $eventDispatcher)
     {
@@ -54,10 +52,6 @@ class CombinedPriceListTriggerHandler
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    /**
-     * @param CombinedPriceList $combinedPriceList
-     * @param Website|null $website
-     */
     public function process(CombinedPriceList $combinedPriceList, Website $website = null)
     {
         $this->scheduleCpl[$this->getWebsiteId($website)][$combinedPriceList->getId()] = $combinedPriceList->getId();
@@ -84,10 +78,6 @@ class CombinedPriceListTriggerHandler
         }
     }
 
-    /**
-     * @param array $combinedPriceLists
-     * @param Website|null $website
-     */
     public function massProcess(array $combinedPriceLists, Website $website = null)
     {
         $productIds = $this->getProductIdsByCombinedPriceLists($combinedPriceLists);
@@ -166,17 +156,11 @@ class CombinedPriceListTriggerHandler
         }
     }
 
-    /**
-     * @return bool
-     */
     private function isSendUnlocked(): bool
     {
         return $this->isSessionStarted === 0;
     }
 
-    /**
-     * @return bool
-     */
     private function checkNestedSession(): bool
     {
         if ($this->isSessionStarted > 0) {
@@ -201,10 +185,6 @@ class CombinedPriceListTriggerHandler
         $this->productsSchedule = [];
     }
 
-    /**
-     * @param array $combinedPriceLists
-     * @return array
-     */
     private function getProductIdsByCombinedPriceLists(array $combinedPriceLists): array
     {
         /** @var CombinedProductPriceRepository $repository */

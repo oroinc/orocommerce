@@ -19,11 +19,6 @@ class CombinedProductPriceORMStorage extends AbstractProductPriceORMStorage
      */
     private $priceListTreeHandler;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param ShardManager $shardManager
-     * @param CombinedPriceListTreeHandler $priceListTreeHandler
-     */
     public function __construct(
         ManagerRegistry $registry,
         ShardManager $shardManager,

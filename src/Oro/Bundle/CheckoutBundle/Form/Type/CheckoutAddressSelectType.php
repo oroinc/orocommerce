@@ -22,16 +22,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class CheckoutAddressSelectType extends AbstractType
 {
-    /** @var OrderAddressManager */
     private OrderAddressManager $addressManager;
 
-    /** @var OrderAddressToAddressIdentifierViewTransformer */
     private OrderAddressToAddressIdentifierViewTransformer $orderAddressToAddressIdentifierViewTransforLmer;
 
-    /**
-     * @param OrderAddressManager $addressManager
-     * @param OrderAddressToAddressIdentifierViewTransformer $orderAddressToAddressIdentifierViewTransforLmer
-     */
     public function __construct(
         OrderAddressManager $addressManager,
         OrderAddressToAddressIdentifierViewTransformer $orderAddressToAddressIdentifierViewTransforLmer
@@ -66,9 +60,6 @@ class CheckoutAddressSelectType extends AbstractType
         $builder->addEventListener(FormEvents::SUBMIT, [$this, 'onSubmit']);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function onSubmit(FormEvent $event): void
     {
         $options = $event->getForm()->getConfig()->getOptions();

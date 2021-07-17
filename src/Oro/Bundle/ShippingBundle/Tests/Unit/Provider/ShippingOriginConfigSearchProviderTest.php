@@ -44,9 +44,6 @@ class ShippingOriginConfigSearchProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($expected, $this->provider->supports($name));
     }
 
-    /**
-     * @return array
-     */
     public function supportsDataProvider(): array
     {
         return [

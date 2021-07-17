@@ -31,7 +31,7 @@ class QuantityTransformerTest extends \PHPUnit\Framework\TestCase
         $transformer = new QuantityTransformer($this->numberFormatter);
 
         $actual = $transformer->transform($valueForTransformation);
-        
+
         self::assertEquals($expectedTransformedValue, $actual);
     }
 

@@ -23,20 +23,12 @@ class ContentWidgetDataProvider implements LoggerAwareInterface
     /** @var Environment */
     private $twig;
 
-    /**
-     * @param ContentWidgetTypeRegistry $contentWidgetTypeRegistry
-     * @param Environment $twig
-     */
     public function __construct(ContentWidgetTypeRegistry $contentWidgetTypeRegistry, Environment $twig)
     {
         $this->contentWidgetTypeRegistry = $contentWidgetTypeRegistry;
         $this->twig = $twig;
     }
 
-    /**
-     * @param ContentWidget $contentWidget
-     * @return array
-     */
     public function getWidgetData(ContentWidget $contentWidget): array
     {
         $contentWidgetType = $this->getType($contentWidget);
@@ -44,10 +36,6 @@ class ContentWidgetDataProvider implements LoggerAwareInterface
         return $contentWidgetType ? $contentWidgetType->getWidgetData($contentWidget) : [];
     }
 
-    /**
-     * @param ContentWidget $contentWidget
-     * @return string
-     */
     public function getDefaultTemplate(ContentWidget $contentWidget): string
     {
         $contentWidgetType = $this->getType($contentWidget);
@@ -55,11 +43,6 @@ class ContentWidgetDataProvider implements LoggerAwareInterface
         return $contentWidgetType ? $contentWidgetType->getDefaultTemplate($contentWidget, $this->twig) : '';
     }
 
-    /**
-     * @param ContentWidget $contentWidget
-     *
-     * @return ContentWidgetTypeInterface|null
-     */
     private function getType(ContentWidget $contentWidget): ?ContentWidgetTypeInterface
     {
         $contentWidgetType = $this->contentWidgetTypeRegistry->getWidgetType($contentWidget->getWidgetType());

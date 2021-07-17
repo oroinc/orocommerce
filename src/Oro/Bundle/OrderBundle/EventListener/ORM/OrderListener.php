@@ -13,18 +13,11 @@ class OrderListener
      */
     protected $idGenerator;
 
-    /**
-     * @param EntityAwareGeneratorInterface $idGenerator
-     */
     public function __construct(EntityAwareGeneratorInterface $idGenerator)
     {
         $this->idGenerator = $idGenerator;
     }
 
-    /**
-     * @param Order $entity
-     * @param LifecycleEventArgs $args
-     */
     public function postPersist(Order $entity, LifecycleEventArgs $args)
     {
         if (!$entity->getIdentifier()) {

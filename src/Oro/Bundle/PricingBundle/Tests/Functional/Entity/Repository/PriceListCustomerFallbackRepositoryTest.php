@@ -91,9 +91,6 @@ class PriceListCustomerFallbackRepositoryTest extends AbstractFallbackRepository
         $this->assertEquals($expected, $repo->hasFallbackOnNextLevel($website, $customer));
     }
 
-    /**
-     * @return array
-     */
     public function fallbackDataProvider(): array
     {
         return [

@@ -18,9 +18,6 @@ class UpdatePriceListLexemes implements ProcessorInterface
     /** @var PriceRuleLexemeHandler */
     private $priceRuleLexemeHandler;
 
-    /**
-     * @param PriceRuleLexemeHandler $priceRuleLexemeHandler
-     */
     public function __construct(PriceRuleLexemeHandler $priceRuleLexemeHandler)
     {
         $this->priceRuleLexemeHandler = $priceRuleLexemeHandler;

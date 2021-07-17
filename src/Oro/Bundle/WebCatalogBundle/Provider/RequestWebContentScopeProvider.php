@@ -32,12 +32,6 @@ class RequestWebContentScopeProvider
     /** @var MatchedUrlDecisionMaker */
     private $matchedUrlDecisionMaker;
 
-    /**
-     * @param RequestStack            $requestStack
-     * @param ManagerRegistry         $doctrine
-     * @param ScopeManager            $scopeManager
-     * @param MatchedUrlDecisionMaker $matchedUrlDecisionMaker
-     */
     public function __construct(
         RequestStack $requestStack,
         ManagerRegistry $doctrine,
@@ -50,9 +44,6 @@ class RequestWebContentScopeProvider
         $this->matchedUrlDecisionMaker = $matchedUrlDecisionMaker;
     }
 
-    /**
-     * @return Scope|null
-     */
     public function getScope(): ?Scope
     {
         $request = $this->requestStack->getCurrentRequest();
@@ -74,9 +65,6 @@ class RequestWebContentScopeProvider
         return $scope;
     }
 
-    /**
-     * @return ScopeCriteria|null
-     */
     public function getScopeCriteria(): ?ScopeCriteria
     {
         $request = $this->requestStack->getCurrentRequest();
@@ -87,11 +75,6 @@ class RequestWebContentScopeProvider
         return $this->getRequestScopeCriteria($request);
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return ScopeCriteria|null
-     */
     private function getRequestScopeCriteria(Request $request): ?ScopeCriteria
     {
         if ($request->attributes->has(self::REQUEST_CRITERIA_ATTRIBUTE)) {
@@ -107,9 +90,6 @@ class RequestWebContentScopeProvider
         return $criteria;
     }
 
-    /**
-     * @return SlugRepository
-     */
     private function getSlugRepository(): SlugRepository
     {
         return $this->doctrine->getRepository(Slug::class);

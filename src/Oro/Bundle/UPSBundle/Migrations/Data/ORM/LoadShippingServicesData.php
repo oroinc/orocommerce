@@ -59,7 +59,6 @@ class LoadShippingServicesData extends AbstractFixture implements ContainerAware
     }
 
     /**
-     * @param ObjectManager $manager
      * @throws \InvalidArgumentException
      */
     public function loadSpecifiedCountryServices(ObjectManager $manager)
@@ -94,7 +93,6 @@ class LoadShippingServicesData extends AbstractFixture implements ContainerAware
     }
 
     /**
-     * @param ObjectManager $manager
      * @throws \InvalidArgumentException
      */
     public function loadEUCountriesServices(ObjectManager $manager)
@@ -135,7 +133,6 @@ class LoadShippingServicesData extends AbstractFixture implements ContainerAware
     }
 
     /**
-     * @param ObjectManager $manager
      * @throws \InvalidArgumentException
      */
     public function loadUnspecifiedCountryServices(ObjectManager $manager)

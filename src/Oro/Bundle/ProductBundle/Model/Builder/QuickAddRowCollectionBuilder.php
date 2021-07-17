@@ -49,13 +49,6 @@ class QuickAddRowCollectionBuilder
      */
     private $aclHelper;
 
-    /**
-     * @param EntityRepository $productRepository
-     * @param ProductManager $productManager
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param QuickAddRowInputParser $quickAddRowInputParser
-     * @param AclHelper $aclHelper
-     */
     public function __construct(
         EntityRepository $productRepository,
         ProductManager $productManager,
@@ -206,9 +199,6 @@ class QuickAddRowCollectionBuilder
         throw new UnsupportedTypeException();
     }
 
-    /**
-     * @param QuickAddRowCollection $collection
-     */
     private function mapProducts(QuickAddRowCollection $collection)
     {
         $products = $this->getRestrictedProductsBySkus($collection->getSkus());

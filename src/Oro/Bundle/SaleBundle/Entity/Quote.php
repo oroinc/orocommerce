@@ -561,19 +561,11 @@ class Quote extends ExtendQuote implements
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isPricesChanged(): bool
     {
         return $this->pricesChanged;
     }
 
-    /**
-     * @param bool $pricesChanged
-     *
-     * @return Quote
-     */
     public function setPricesChanged(bool $pricesChanged): Quote
     {
         $this->pricesChanged = (bool)$pricesChanged;

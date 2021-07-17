@@ -30,8 +30,6 @@ class DeleteDefaultCheckoutFields implements Migration, OrderedMigrationInterfac
 
     /**
      * Delete default checkout fields from orob2b_checkout
-     *
-     * @param Schema $schema
      */
     protected function deleteDefaultCheckoutFieldsFromCheckout(Schema $schema)
     {
@@ -58,8 +56,6 @@ class DeleteDefaultCheckoutFields implements Migration, OrderedMigrationInterfac
 
     /**
      * add checkout type column
-     *
-     * @param Schema $schema
      */
     protected function addCheckoutTypeColumn(Schema $schema)
     {

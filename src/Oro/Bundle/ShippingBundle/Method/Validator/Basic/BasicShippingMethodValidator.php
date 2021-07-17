@@ -13,9 +13,6 @@ class BasicShippingMethodValidator implements ShippingMethodValidatorInterface
      */
     private $commonShippingMethodValidatorResultFactory;
 
-    /**
-     * @param Common\CommonShippingMethodValidatorResultFactoryInterface $commonShippingMethodValidatorResultFactory
-     */
     public function __construct(
         Common\CommonShippingMethodValidatorResultFactoryInterface $commonShippingMethodValidatorResultFactory
     ) {

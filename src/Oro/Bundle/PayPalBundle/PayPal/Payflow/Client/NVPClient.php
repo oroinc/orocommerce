@@ -16,10 +16,6 @@ class NVPClient implements ClientInterface
     /** @var EncoderInterface */
     protected $encoder;
 
-    /**
-     * @param HTTPClientInterface $httpClient
-     * @param EncoderInterface $encoder
-     */
     public function __construct(HTTPClientInterface $httpClient, EncoderInterface $encoder)
     {
         $this->httpClient = $httpClient;

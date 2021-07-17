@@ -21,9 +21,6 @@ class OroProductBundle implements Migration
         $this->addOroProductShortDescriptionForeignKeys($schema);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function createOroProductShortDescriptionTable(Schema $schema)
     {
         $table = $schema->createTable(self::PRODUCT_SHORT_DESCRIPTION_TABLE_NAME);
@@ -33,9 +30,6 @@ class OroProductBundle implements Migration
         $table->addUniqueIndex(['localized_value_id']);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addOroProductShortDescriptionForeignKeys(Schema $schema)
     {
         $table = $schema->getTable(self::PRODUCT_SHORT_DESCRIPTION_TABLE_NAME);

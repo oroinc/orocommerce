@@ -71,9 +71,6 @@ class UrlSafeTest extends \PHPUnit\Framework\TestCase
         $this->validator->validate($data, $constraint);
     }
 
-    /**
-     * @return array
-     */
     public function validateDataProvider(): array
     {
         return [

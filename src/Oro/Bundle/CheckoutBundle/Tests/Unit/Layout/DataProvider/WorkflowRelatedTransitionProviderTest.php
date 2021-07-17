@@ -37,8 +37,6 @@ class WorkflowRelatedTransitionProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider methodsDataProvider
-     * @param string $method
-     * @param array $arguments
      */
     public function testDefaultProviderCalls(string $method, array $arguments)
     {
@@ -54,8 +52,6 @@ class WorkflowRelatedTransitionProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider methodsDataProvider
-     * @param string $method
-     * @param array $arguments
      */
     public function testWorkflowRelateProviderCalls(string $method, array $arguments)
     {
@@ -80,8 +76,6 @@ class WorkflowRelatedTransitionProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider methodsDataProvider
-     * @param string $method
-     * @param array $arguments
      */
     public function testWorkflowRelateProviderCallsWhenIncative(string $method, array $arguments)
     {
@@ -104,9 +98,6 @@ class WorkflowRelatedTransitionProviderTest extends \PHPUnit\Framework\TestCase
         $this->provider->$method(...$arguments);
     }
 
-    /**
-     * @return array
-     */
     public function methodsDataProvider(): array
     {
         return [

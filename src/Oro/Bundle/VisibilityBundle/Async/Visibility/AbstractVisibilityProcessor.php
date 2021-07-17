@@ -29,11 +29,6 @@ abstract class AbstractVisibilityProcessor implements MessageProcessorInterface
     /** @var LoggerInterface */
     protected $logger;
 
-    /**
-     * @param ManagerRegistry       $doctrine
-     * @param LoggerInterface       $logger
-     * @param CacheBuilderInterface $cacheBuilder
-     */
     public function __construct(
         ManagerRegistry $doctrine,
         LoggerInterface $logger,
@@ -79,16 +74,8 @@ abstract class AbstractVisibilityProcessor implements MessageProcessorInterface
         return self::ACK;
     }
 
-    /**
-     * @return string
-     */
     abstract protected function getResolvedVisibilityClassName(): string;
 
-    /**
-     * @param array $body
-     *
-     * @return bool
-     */
     protected function isMessageValid(array $body): bool
     {
         $result =
@@ -107,17 +94,11 @@ abstract class AbstractVisibilityProcessor implements MessageProcessorInterface
     }
 
     /**
-     * @param array $body
-     *
      * @throws EntityNotFoundException if a visibility entity does not exist
      */
     abstract protected function resolveVisibility(array $body): void;
 
     /**
-     * @param array $body
-     *
-     * @return VisibilityInterface
-     *
      * @throws EntityNotFoundException if a visibility entity does not exist
      */
     protected function getVisibility(array $body): VisibilityInterface

@@ -27,11 +27,6 @@ class RestrictContentVariantByEntityEvent extends Event
      */
     private $variantAlias;
 
-    /**
-     * @param QueryBuilder $queryBuilder
-     * @param object       $entity
-     * @param string       $variantAlias
-     */
     public function __construct(
         QueryBuilder $queryBuilder,
         object $entity,
@@ -42,25 +37,16 @@ class RestrictContentVariantByEntityEvent extends Event
         $this->variantAlias = $variantAlias;
     }
 
-    /**
-     * @return QueryBuilder
-     */
     public function getQueryBuilder(): QueryBuilder
     {
         return $this->queryBuilder;
     }
 
-    /**
-     * @return object
-     */
     public function getEntity(): object
     {
         return $this->entity;
     }
 
-    /**
-     * @return string
-     */
     public function getVariantAlias(): string
     {
         return $this->variantAlias;

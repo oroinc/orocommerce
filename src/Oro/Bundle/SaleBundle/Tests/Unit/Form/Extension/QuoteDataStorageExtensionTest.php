@@ -86,8 +86,6 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
     }
 
     /**
-     * @param array $inputData
-     *
      * @dataProvider buildProvider
      */
     public function testBuild(array $inputData)

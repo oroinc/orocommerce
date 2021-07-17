@@ -49,9 +49,6 @@ class PriceListRelationTriggerHandlerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider methodsDataProvider
-     * @param string $method
-     * @param array $args
-     * @param bool $featureEnabled
      */
     public function testMethods(
         string $method,

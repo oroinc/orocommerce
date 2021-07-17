@@ -18,8 +18,6 @@ class FeatureContext extends OroFeatureContext implements KernelAwareContext
 
     /**
      * @Given /^(?:I )?create payment rule with "(?P<paymentMethodName>(?:[^"]+))" payment method$/
-     *
-     * @param string $paymentMethodName
      */
     public function iCreatePaymentMethodsConfigsRule(string $paymentMethodName)
     {
@@ -50,11 +48,6 @@ class FeatureContext extends OroFeatureContext implements KernelAwareContext
         $entityManager->flush();
     }
 
-    /**
-     * @param string $paymentMethodName
-     *
-     * @return string
-     */
     private function getPaymentMethodIdentifier(string $paymentMethodName): string
     {
         $paymentMethodProvider = $this->getContainer()->get('oro_payment.payment_method.composite_provider');

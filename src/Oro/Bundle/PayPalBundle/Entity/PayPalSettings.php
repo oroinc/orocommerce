@@ -28,16 +28,16 @@ class PayPalSettings extends Transport
     const EXPRESS_CHECKOUT_LABELS_KEY = 'express_checkout_labels';
     const EXPRESS_CHECKOUT_SHORT_LABELS_KEY = 'express_checkout_short_labels';
     const EXPRESS_CHECKOUT_PAYMENT_ACTION_KEY = 'express_checkout_payment_action';
-    
+
     const ALLOWED_CREDIT_CARD_TYPES_KEY = 'allowed_credit_card_types';
     const PARTNER_KEY = 'partner';
     const VENDOR_KEY = 'vendor';
     const USER_KEY = 'user';
     const PASSWORD_KEY = 'password';
-    
+
     const TEST_MODE_KEY = 'test_mode';
     const DEBUG_MODE_KEY = 'debug_mode';
-    
+
     const USE_PROXY_KEY = 'use_proxy';
     const PROXY_HOST_KEY = 'proxy_host';
     const PROXY_PORT_KEY = 'proxy_port';
@@ -46,7 +46,7 @@ class PayPalSettings extends Transport
     const REQUIRE_CVV_ENTRY_KEY = 'require_cvv_entry';
     const ZERO_AMOUNT_AUTHORIZATION_KEY = 'zero_amount_authorization';
     const AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY = 'authorization_for_required_amount';
-    
+
     /**
      * @var ParameterBag
      */

@@ -58,9 +58,6 @@ class ProductUpcomingFormExtension extends AbstractTypeExtension
         $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'onPostSubmit']);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function onPreSetData(FormEvent $event)
     {
         // set default fallback setting
@@ -74,9 +71,6 @@ class ProductUpcomingFormExtension extends AbstractTypeExtension
         }
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function onPostSubmit(FormEvent $event)
     {
         $accessor = PropertyAccess::createPropertyAccessor();

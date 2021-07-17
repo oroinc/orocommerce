@@ -31,9 +31,6 @@ class CustomerGroupFormExtension extends AbstractTypeExtension implements Featur
      */
     protected $relationClass = 'Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup';
 
-    /**
-     * @param CustomerGroupListener $listener
-     */
     public function __construct(CustomerGroupListener $listener)
     {
         $this->listener = $listener;

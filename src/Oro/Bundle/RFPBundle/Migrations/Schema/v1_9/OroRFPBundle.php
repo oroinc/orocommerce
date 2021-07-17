@@ -37,8 +37,6 @@ class OroRFPBundle implements Migration, ExtendExtensionAwareInterface, RenameEx
 
     /**
      * Sets the RenameExtension
-     *
-     * @param RenameExtension $renameExtension
      */
     public function setRenameExtension(RenameExtension $renameExtension)
     {
@@ -62,8 +60,6 @@ class OroRFPBundle implements Migration, ExtendExtensionAwareInterface, RenameEx
 
     /**
      * Update oro_rfp_request table
-     *
-     * @param Schema $schema
      */
     protected function updateOroRfpRequestTable(Schema $schema)
     {
@@ -108,9 +104,6 @@ class OroRFPBundle implements Migration, ExtendExtensionAwareInterface, RenameEx
         $internalStatusEnumTable->addOption(OroOptions::KEY, $internalStatusOptions);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function createOroRfpRequestAddNoteTable(Schema $schema)
     {
         $table = $schema->createTable('oro_rfp_request_add_note');
@@ -125,9 +118,6 @@ class OroRFPBundle implements Migration, ExtendExtensionAwareInterface, RenameEx
         $table->setPrimaryKey(['id']);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addOroRfpRequestAddNoteForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('oro_rfp_request_add_note');
@@ -139,10 +129,6 @@ class OroRFPBundle implements Migration, ExtendExtensionAwareInterface, RenameEx
         );
     }
 
-    /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     */
     protected function removeOroRfpRequestStatusTable(Schema $schema, QueryBag $queries)
     {
         $schema->dropTable('oro_rfp_status');
@@ -152,9 +138,6 @@ class OroRFPBundle implements Migration, ExtendExtensionAwareInterface, RenameEx
         $queries->addPostQuery(new RemoveTableQuery('Oro\Bundle\RFPBundle\Entity\RequestStatus'));
     }
 
-    /**
-     * @param QueryBag $queries
-     */
     protected function removeUnusedTranslationKeys(QueryBag $queries)
     {
         $data = [
@@ -196,10 +179,6 @@ class OroRFPBundle implements Migration, ExtendExtensionAwareInterface, RenameEx
         }
     }
 
-    /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     */
     protected function renameFieldForAssignedCustomers(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('oro_rfp_assigned_cus_users');
@@ -223,10 +202,6 @@ class OroRFPBundle implements Migration, ExtendExtensionAwareInterface, RenameEx
         );
     }
 
-    /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     */
     protected function renameFieldForAssignedUsers(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('oro_rfp_assigned_users');

@@ -31,19 +31,12 @@ class SearchContentVariantFilteringEventListener
      */
     private $configManager;
 
-    /**
-     * @param RequestContentVariantHandler $requestHandler
-     * @param ConfigManager $configManager
-     */
     public function __construct(RequestContentVariantHandler $requestHandler, ConfigManager $configManager)
     {
         $this->requestHandler = $requestHandler;
         $this->configManager = $configManager;
     }
 
-    /**
-     * @param PreBuild $event
-     */
     public function onPreBuild(PreBuild $event)
     {
         $parameters = $event->getParameters();
@@ -66,9 +59,6 @@ class SearchContentVariantFilteringEventListener
         );
     }
 
-    /**
-     * @param BuildAfter $event
-     */
     public function onBuildAfter(BuildAfter $event)
     {
         $datasource = $event->getDatagrid()->getDatasource();
@@ -112,9 +102,6 @@ class SearchContentVariantFilteringEventListener
         }
     }
 
-    /**
-     * @return bool
-     */
     private function isVariationsHideCompletely(): bool
     {
         $configValue = $this->configManager->get(

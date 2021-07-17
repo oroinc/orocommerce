@@ -19,10 +19,6 @@ class SlugUrlDiffer
      */
     private $translator;
 
-    /**
-     * @param LocalizationHelper $localizationHelper
-     * @param TranslatorInterface $translator
-     */
     public function __construct(LocalizationHelper $localizationHelper, TranslatorInterface $translator)
     {
         $this->localizationHelper = $localizationHelper;

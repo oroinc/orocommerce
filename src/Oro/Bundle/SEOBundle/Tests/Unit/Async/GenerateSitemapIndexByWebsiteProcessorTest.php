@@ -51,19 +51,11 @@ class GenerateSitemapIndexByWebsiteProcessorTest extends \PHPUnit\Framework\Test
         );
     }
 
-    /**
-     * @return SessionInterface
-     */
     private function getSession(): SessionInterface
     {
         return $this->createMock(SessionInterface::class);
     }
 
-    /**
-     * @param array $body
-     *
-     * @return MessageInterface
-     */
     private function getMessage(array $body): MessageInterface
     {
         $message = new Message();
@@ -72,11 +64,6 @@ class GenerateSitemapIndexByWebsiteProcessorTest extends \PHPUnit\Framework\Test
         return $message;
     }
 
-    /**
-     * @param int $websiteId
-     *
-     * @return Website
-     */
     private function getWebsite(int $websiteId): Website
     {
         $website = $this->createMock(Website::class);

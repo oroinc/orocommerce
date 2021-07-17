@@ -76,8 +76,6 @@ class OroOrderBundle implements Migration, RenameExtensionAwareInterface, Ordere
 
     /**
      * Add shipping_method, shipping_method_type columns
-     *
-     * @param Schema $schema
      */
     protected function addShippingMethodColumns(Schema $schema)
     {

@@ -16,10 +16,6 @@ class TotalCalculateBeforeEvent extends Event
     /** @var Request */
     protected $request;
 
-    /**
-     * @param $entity
-     * @param Request $request
-     */
     public function __construct($entity, Request $request)
     {
         $this->entity = $entity;

@@ -111,7 +111,6 @@ class UniqueProductUnitShippingOptionsTest extends \PHPUnit\Framework\TestCase
             ->getMock();
         $option->expects($this->atLeastOnce())->method('getProductUnit')->willReturn($unit);
 
-
         return $option;
     }
 }

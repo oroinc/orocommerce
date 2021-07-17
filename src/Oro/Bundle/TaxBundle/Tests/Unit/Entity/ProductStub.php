@@ -20,9 +20,6 @@ class ProductStub extends Product
         return $this->taxCode;
     }
 
-    /**
-     * @param ProductTaxCode|null $taxCode
-     */
     public function setTaxCode(ProductTaxCode $taxCode = null)
     {
         $this->taxCode = $taxCode;

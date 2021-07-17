@@ -62,7 +62,6 @@ class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
 
     /**
      * @depends testMoneyOrderPaymentMethodExists
-     * @param Crawler $crawler
      */
     public function testSubmitOrder(Crawler $crawler)
     {
@@ -182,7 +181,6 @@ class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
         $addressTypePath = sprintf('%s[%s][customerAddress]', self::ORO_WORKFLOW_TRANSITION, $addressType);
         $form->setValues([$addressTypePath => $addressId]);
     }
-
 
     /**
      * @param Channel $channel

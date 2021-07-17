@@ -13,9 +13,6 @@ use Oro\Component\Math\BigDecimal;
  */
 abstract class AbstractStrategy implements StrategyInterface
 {
-    /**
-     * @param DiscountContextInterface $discountContext
-     */
     protected function processLineItemDiscounts(DiscountContextInterface $discountContext)
     {
         foreach ($discountContext->getLineItems() as $discountLineItem) {
@@ -29,9 +26,6 @@ abstract class AbstractStrategy implements StrategyInterface
         }
     }
 
-    /**
-     * @param DiscountContextInterface $discountContext
-     */
     protected function processTotalDiscounts(DiscountContextInterface $discountContext)
     {
         foreach ($discountContext->getSubtotalDiscounts() as $discount) {
@@ -45,9 +39,6 @@ abstract class AbstractStrategy implements StrategyInterface
         }
     }
 
-    /**
-     * @param DiscountContextInterface $discountContext
-     */
     protected function processShippingDiscounts(DiscountContextInterface $discountContext)
     {
         foreach ($discountContext->getShippingDiscounts() as $discount) {
@@ -90,11 +81,6 @@ abstract class AbstractStrategy implements StrategyInterface
      *
      * Verification:
      * 9.09$ + 0.91$ = 10$ (Total discount amount value)
-     *
-     * @param DiscountContextInterface $discountContext
-     * @param float $discountAmount
-     *
-     * @return void
      */
     protected function allocateTotalDiscountAmountToLineItems(
         DiscountContextInterface $discountContext,

@@ -283,7 +283,6 @@ class CategoryContentVariantIndexListenerTest extends \PHPUnit\Framework\TestCas
 
     /**
      * @dataProvider dataProviderForNotWebCatalogAwareEntities
-     * @param ContentVariantInterface $contentVariant
      */
     public function testReindexationWillNotBeTriggeredWhenThereAreNotWebCatalogAwareEntitiesChanged(
         ContentVariantInterface $contentVariant
@@ -333,10 +332,6 @@ class CategoryContentVariantIndexListenerTest extends \PHPUnit\Framework\TestCas
         );
     }
 
-    /**
-     * @param array $categories
-     * @param array $websiteIds
-     */
     private function assertCategoriesReindexationScheduled(array $categories, array $websiteIds)
     {
         $arguments = [];

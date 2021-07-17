@@ -59,8 +59,6 @@ class OrderLineItemAppliedDiscountsListenerTest extends \PHPUnit\Framework\TestC
     }
 
     /**
-     * @param bool $isDiscountsIncluded
-     * @param array $expectedDiscounts
      * @dataProvider getOnOrderEventWithTaxationDataProvider
      */
     public function testOnOrderEventWithTaxation(bool $isDiscountsIncluded, array $expectedDiscounts): void
@@ -178,7 +176,6 @@ class OrderLineItemAppliedDiscountsListenerTest extends \PHPUnit\Framework\TestC
     }
 
     /**
-     * @param bool $isDiscountsIncluded
      * @dataProvider getOnOrderEventEmptyTaxesRowDataProvider
      */
     public function testOnOrderEventEmptyTaxesRow(bool $isDiscountsIncluded): void

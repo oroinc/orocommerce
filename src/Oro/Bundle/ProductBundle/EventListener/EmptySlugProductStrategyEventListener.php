@@ -13,9 +13,6 @@ class EmptySlugProductStrategyEventListener
     /** @var SlugGenerator */
     private $slugGenerator;
 
-    /**
-     * @param SlugGenerator $slugGenerator
-     */
     public function __construct(SlugGenerator $slugGenerator)
     {
         $this->slugGenerator = $slugGenerator;
@@ -23,8 +20,6 @@ class EmptySlugProductStrategyEventListener
 
     /**
      * @deprecated Use SlugifyEntityHelper to handle slugs.
-     *
-     * @param ProductStrategyEvent $event
      */
     public function onProcessAfter(ProductStrategyEvent $event): void
     {

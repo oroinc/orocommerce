@@ -12,17 +12,11 @@ class DefaultShippingMethodSetterDecorator
      */
     private $defaultShippingMethodSetter;
 
-    /**
-     * @param DefaultShippingMethodSetter $defaultShippingMethodSetter
-     */
     public function __construct(DefaultShippingMethodSetter $defaultShippingMethodSetter)
     {
         $this->defaultShippingMethodSetter = $defaultShippingMethodSetter;
     }
 
-    /**
-     * @param Checkout $checkout
-     */
     public function setDefaultShippingMethod(Checkout $checkout)
     {
         if ($checkout->getShippingMethod()) {

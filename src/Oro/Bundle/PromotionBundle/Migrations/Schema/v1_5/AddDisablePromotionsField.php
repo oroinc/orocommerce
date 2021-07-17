@@ -12,10 +12,6 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
  */
 class AddDisablePromotionsField implements Migration
 {
-    /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     */
     public function up(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('oro_order');

@@ -31,10 +31,6 @@ class ProfitableStrategy extends AbstractStrategy
         return $discountContext;
     }
 
-    /**
-     * @param DiscountInterface $discount
-     * @param DiscountContextInterface $discountContext
-     */
     private function calculateDiscount(DiscountInterface $discount, DiscountContextInterface $discountContext)
     {
         $discount->apply($discountContext);
@@ -44,10 +40,6 @@ class ProfitableStrategy extends AbstractStrategy
         $this->processShippingDiscounts($discountContext);
     }
 
-    /**
-     * @param DiscountContextInterface $discountContext
-     * @param DiscountContextInterface $appliedDiscountContext
-     */
     private function applyMaxProductDiscount(
         DiscountContextInterface $discountContext,
         DiscountContextInterface $appliedDiscountContext
@@ -67,10 +59,6 @@ class ProfitableStrategy extends AbstractStrategy
         }
     }
 
-    /**
-     * @param DiscountContextInterface $discountContext
-     * @param DiscountContextInterface $appliedDiscountContext
-     */
     private function applyMaxShippingDiscount(
         DiscountContextInterface $discountContext,
         DiscountContextInterface $appliedDiscountContext
@@ -121,10 +109,6 @@ class ProfitableStrategy extends AbstractStrategy
         return $appliedDiscountContext;
     }
 
-    /**
-     * @param DiscountContextInterface $discountContext
-     * @return DiscountContextInterface
-     */
     private function cloneContext(DiscountContextInterface $discountContext): DiscountContextInterface
     {
         if (\method_exists($discountContext, '__clone')) {

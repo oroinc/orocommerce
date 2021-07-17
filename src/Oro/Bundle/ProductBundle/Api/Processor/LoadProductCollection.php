@@ -36,11 +36,6 @@ class LoadProductCollection implements ProcessorInterface
     /** @var ValueNormalizer */
     private $valueNormalizer;
 
-    /**
-     * @param ActionProcessorBagInterface $processorBag
-     * @param SerializationHelper         $serializationHelper
-     * @param ValueNormalizer             $valueNormalizer
-     */
     public function __construct(
         ActionProcessorBagInterface $processorBag,
         SerializationHelper $serializationHelper,
@@ -80,12 +75,6 @@ class LoadProductCollection implements ProcessorInterface
         $context->skipGroup(ApiActionGroup::NORMALIZE_DATA);
     }
 
-    /**
-     * @param SingleItemContext $context
-     * @param array             $normalizedProducts
-     *
-     * @return array
-     */
     private function getNormalizedData(SingleItemContext $context, array $normalizedProducts): array
     {
         $item = [
@@ -104,11 +93,6 @@ class LoadProductCollection implements ProcessorInterface
         return reset($items);
     }
 
-    /**
-     * @param SingleItemContext $context
-     *
-     * @return GetListContext
-     */
     private function searchProducts(SingleItemContext $context): GetListContext
     {
         $productSearchProcessor = $this->processorBag->getProcessor(ApiAction::GET_LIST);
@@ -149,11 +133,6 @@ class LoadProductCollection implements ProcessorInterface
         return $productSearchContext;
     }
 
-    /**
-     * @param RequestType $requestType
-     *
-     * @return string
-     */
     private function getProductSearchEntityType(RequestType $requestType): string
     {
         return ValueNormalizerUtil::convertToEntityType(

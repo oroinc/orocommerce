@@ -9,7 +9,6 @@ use Oro\Bundle\ProductBundle\Model\ProductRow;
  */
 class ProductRowsGrouper implements ProductsGrouperInterface
 {
-
     /**
      * {@inheritDoc}
      * @param ProductRow[] $products
@@ -41,10 +40,6 @@ class ProductRowsGrouper implements ProductsGrouperInterface
         return sprintf('%s_%s', mb_strtoupper($productRow->productSku), $productRow->productUnit);
     }
 
-    /**
-     * @param ProductRow $productRowTo
-     * @param ProductRow $productRowFrom
-     */
     private function addQuantity(ProductRow $productRowTo, ProductRow $productRowFrom)
     {
         $productRowTo->productQuantity += $productRowFrom->productQuantity;

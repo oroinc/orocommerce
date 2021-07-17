@@ -26,9 +26,6 @@ class PaymentTransactionWasCharged extends AbstractCondition implements ContextA
      */
     private $transactionRepository;
 
-    /**
-     * @param PaymentTransactionRepository $transactionRepository
-     */
     public function __construct(PaymentTransactionRepository $transactionRepository)
     {
         $this->transactionRepository = $transactionRepository;

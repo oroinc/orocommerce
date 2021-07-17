@@ -21,10 +21,6 @@ class ShippingOriginConfigSearchProvider implements SearchProviderInterface
      */
     private $configManager;
 
-    /**
-     * @param TranslatorInterface $translator
-     * @param ConfigManager $configManager
-     */
     public function __construct(TranslatorInterface $translator, ConfigManager $configManager)
     {
         $this->translator = $translator;

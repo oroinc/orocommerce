@@ -17,8 +17,6 @@ class OroRFPBundle implements Migration, RenameExtensionAwareInterface
 
     /**
      * Sets the RenameExtension
-     *
-     * @param RenameExtension $renameExtension
      */
     public function setRenameExtension(RenameExtension $renameExtension)
     {

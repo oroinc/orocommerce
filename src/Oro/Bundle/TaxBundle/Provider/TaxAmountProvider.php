@@ -14,9 +14,6 @@ class TaxAmountProvider
      */
     private $taxProviderRegistry;
 
-    /**
-     * @param TaxProviderRegistry $taxProviderRegistry
-     */
     public function __construct(TaxProviderRegistry $taxProviderRegistry)
     {
         $this->taxProviderRegistry = $taxProviderRegistry;
@@ -40,9 +37,6 @@ class TaxAmountProvider
 
     /**
      * Prepares result.
-     *
-     * @param float $taxAmount
-     * @return float
      */
     private function prepareResult(float $taxAmount): float
     {

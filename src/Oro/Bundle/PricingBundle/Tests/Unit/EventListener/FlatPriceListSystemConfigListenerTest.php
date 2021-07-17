@@ -91,9 +91,6 @@ class FlatPriceListSystemConfigListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->onFormPreSetData($event);
     }
 
-    /**
-     * @return array
-     */
     public function unsupportedSettingsDataProvider(): array
     {
         $settingsKey = implode(ConfigManager::SECTION_VIEW_SEPARATOR, ['oro_pricing', 'default_price_list']);
@@ -126,7 +123,6 @@ class FlatPriceListSystemConfigListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider unsupportedSettingsDataProvider
-     * @param $settings
      */
     public function testOnSettingsSaveBeforeUnsupported($settings)
     {

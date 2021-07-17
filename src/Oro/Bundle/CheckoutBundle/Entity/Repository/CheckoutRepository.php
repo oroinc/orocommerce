@@ -26,10 +26,6 @@ class CheckoutRepository extends EntityRepository implements ResettableCustomerU
     /**
      * Used in CheckoutController::checkoutAction().
      * Loads related entities to eliminate extra queries on checkout.
-     *
-     * @param int $checkoutId
-     *
-     * @return Checkout|null
      */
     public function findForCheckoutAction(int $checkoutId): ?Checkout
     {
@@ -86,9 +82,6 @@ class CheckoutRepository extends EntityRepository implements ResettableCustomerU
         return $checkout;
     }
 
-    /**
-     * @param array $productIds
-     */
     private function loadRelatedProductNames(array $productIds): void
     {
         $qb = $this->getEntityManager()->createQueryBuilder();

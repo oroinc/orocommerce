@@ -33,9 +33,6 @@ class WebsiteCollectionType extends AbstractType
      */
     protected $websiteClass;
 
-    /**
-     * @param ManagerRegistry $registry
-     */
     public function __construct(ManagerRegistry $registry)
     {
         $this->registry = $registry;

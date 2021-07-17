@@ -146,14 +146,8 @@ abstract class UnitLabelFormatterTestCase extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @return UnitLabelFormatterInterface
-     */
     abstract protected function createFormatter(): UnitLabelFormatterInterface;
 
-    /**
-     * @return string
-     */
     abstract protected function getTranslationPrefix(): string;
 
     /**

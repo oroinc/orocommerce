@@ -28,9 +28,6 @@ class OriginAddressType extends AbstractType
      */
     protected $countryAndRegionSubscriber;
 
-    /**
-     * @param AddressCountryAndRegionSubscriber $eventListener
-     */
     public function __construct(AddressCountryAndRegionSubscriber $eventListener)
     {
         $this->countryAndRegionSubscriber = $eventListener;

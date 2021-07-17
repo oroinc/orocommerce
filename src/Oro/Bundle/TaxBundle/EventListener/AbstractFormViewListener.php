@@ -8,7 +8,6 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 abstract class AbstractFormViewListener
 {
-
     /** @var DoctrineHelper */
     protected $doctrineHelper;
 
@@ -58,13 +57,7 @@ abstract class AbstractFormViewListener
         return $this->doctrineHelper->getEntityReference($this->entityClass, $customerId);
     }
 
-    /**
-     * @param BeforeListRenderEvent $event
-     */
     abstract public function onEdit(BeforeListRenderEvent $event);
 
-    /**
-     * @param BeforeListRenderEvent $event
-     */
     abstract public function onView(BeforeListRenderEvent $event);
 }

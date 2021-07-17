@@ -10,7 +10,7 @@ class SlugUrl
      * @var string
      */
     protected $url;
-    
+
     /**
      * @var Localization
      */

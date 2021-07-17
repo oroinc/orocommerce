@@ -36,7 +36,6 @@ class ResultElementTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param bool $isDiscountsIncluded
      * @dataProvider getDiscountsIncludedDataProvider
      */
     public function testDiscountsIncluded(bool $isDiscountsIncluded): void

@@ -27,11 +27,6 @@ class UpcomingLabelCheckoutLineItemValidator
      */
     private $productUpcomingProvider;
 
-    /**
-     * @param UpcomingProductProvider $ProductUpcomingProvider
-     * @param TranslatorInterface $translator
-     * @param DateTimeFormatterInterface $dateFormatter
-     */
     public function __construct(
         UpcomingProductProvider $ProductUpcomingProvider,
         TranslatorInterface $translator,

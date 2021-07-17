@@ -65,11 +65,6 @@ class CmsPageSlugRedirectOrganization extends AbstractFixture implements Depende
         }
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param Organization $organization
-     * @return BufferedQueryResultIterator
-     */
     private function getPageSlugIdsIterator(
         ObjectManager $manager,
         Organization $organization

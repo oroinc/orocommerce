@@ -63,13 +63,6 @@ class ProductPriceBuilder implements FeatureToggleableInterface
      */
     private $batchSize = ProductPriceRepository::BUFFER_SIZE;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param ShardQueryExecutorInterface $shardInsertQueryExecutor
-     * @param PriceListRuleCompiler $ruleCompiler
-     * @param PriceListTriggerHandler $priceListTriggerHandler
-     * @param ShardManager $shardManager
-     */
     public function __construct(
         ManagerRegistry $registry,
         ShardQueryExecutorInterface $shardInsertQueryExecutor,
@@ -84,17 +77,11 @@ class ProductPriceBuilder implements FeatureToggleableInterface
         $this->shardManager = $shardManager;
     }
 
-    /**
-     * @param int $batchSize
-     */
     public function setBatchSize(int $batchSize)
     {
         $this->batchSize = $batchSize;
     }
 
-    /**
-     * @param ShardQueryExecutorInterface $shardInsertQueryExecutor
-     */
     public function setShardInsertQueryExecutor(ShardQueryExecutorInterface $shardInsertQueryExecutor)
     {
         $this->shardInsertQueryExecutor = $shardInsertQueryExecutor;
@@ -182,10 +169,6 @@ class ProductPriceBuilder implements FeatureToggleableInterface
         }
     }
 
-    /**
-     * @param PriceList $priceList
-     * @param array $products
-     */
     private function emitCplTriggers(PriceList $priceList, array $products): void
     {
         if ($products || count($priceList->getPriceRules()) === 0) {
@@ -208,10 +191,6 @@ class ProductPriceBuilder implements FeatureToggleableInterface
         }
     }
 
-    /**
-     * @param array $products
-     * @return \Generator
-     */
     private function getProductBatches(array $products): \Generator
     {
         if (!$products) {

@@ -26,11 +26,6 @@ class ProductInventoryStatusQueryModifier implements QueryModifierInterface
     /** @var ConfigManager */
     private $configManager;
 
-    /**
-     * @param EntityClassResolver                   $entityClassResolver
-     * @param ProductVisibilityQueryBuilderModifier $modifier
-     * @param ConfigManager                         $configManager
-     */
     public function __construct(
         EntityClassResolver $entityClassResolver,
         ProductVisibilityQueryBuilderModifier $modifier,

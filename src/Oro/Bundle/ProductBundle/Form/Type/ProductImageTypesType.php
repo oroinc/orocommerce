@@ -15,18 +15,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class ProductImageTypesType extends AbstractType
 {
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addModelTransformer(new ProductImageTypesTransformer());
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver
@@ -44,10 +37,6 @@ class ProductImageTypesType extends AbstractType
             ]);
     }
 
-
-    /**
-     * @return string
-     */
     public function getParent(): string
     {
         return ChoiceType::class;

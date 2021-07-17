@@ -27,11 +27,6 @@ class ProductPriceFormatter
      */
     protected $unitValueFormatter;
 
-    /**
-     * @param NumberFormatter $numberFormatter
-     * @param UnitLabelFormatterInterface $unitLabelFormatter
-     * @param UnitValueFormatterInterface $unitValueFormatter
-     */
     public function __construct(
         NumberFormatter $numberFormatter,
         UnitLabelFormatterInterface $unitLabelFormatter,

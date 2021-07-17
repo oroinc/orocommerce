@@ -247,9 +247,6 @@ class InvalidateTotalsByInventoryStatusPerWebsiteProcessorTest extends \PHPUnit\
         );
     }
 
-    /**
-     * @param Website $website
-     */
     private function assertRepositoryCall(Website $website): void
     {
         $repo = $this->createMock(ShoppingListTotalRepository::class);

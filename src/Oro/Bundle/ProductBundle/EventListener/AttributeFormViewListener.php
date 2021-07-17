@@ -58,11 +58,6 @@ class AttributeFormViewListener extends BaseAttributeFormViewListener
      */
     private $eventType;
 
-    /**
-     * @param AttributeManager $attributeManager
-     * @param ConfigProvider $entityConfigProvider
-     * @param TranslatorInterface $translator
-     */
     public function __construct(
         AttributeManager $attributeManager,
         ConfigProvider $entityConfigProvider,
@@ -108,10 +103,6 @@ class AttributeFormViewListener extends BaseAttributeFormViewListener
         return $this->fieldsRestrictedToMove;
     }
 
-    /**
-     * @param ScrollData $scrollData
-     * @param array $groups
-     */
     protected function addNotEmptyGroupBlocks(ScrollData $scrollData, array $groups)
     {
         parent::addNotEmptyGroupBlocks($scrollData, $groups);
@@ -205,10 +196,6 @@ class AttributeFormViewListener extends BaseAttributeFormViewListener
         return parent::renderAttributeViewData($twig, $entity, $attribute);
     }
 
-    /**
-     * @param string|null $type
-     * @return bool
-     */
     protected function isSeparateGroup(?string $type): bool
     {
         return in_array(

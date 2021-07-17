@@ -10,10 +10,6 @@ class VariantField
     /** @var string */
     private $label;
 
-    /**
-     * @param $name
-     * @param $label
-     */
     public function __construct($name, $label)
     {
         $this->label = $label;

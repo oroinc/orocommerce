@@ -33,19 +33,12 @@ class ProductImagesConfigurationListener
      */
     private $spaceWarningAdded = false;
 
-    /**
-     * @param Session $session
-     * @param TranslatorInterface $translator
-     */
     public function __construct(Session $session, TranslatorInterface $translator)
     {
         $this->session = $session;
         $this->translator = $translator;
     }
 
-    /**
-     * @param ConfigUpdateEvent $event
-     */
     public function afterUpdate(ConfigUpdateEvent $event)
     {
         $changeSet = $event->getChangeSet();

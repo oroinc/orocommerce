@@ -266,10 +266,6 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
         return $entity;
     }
 
-    /**
-     * @param FormEvent $event
-     * @param Category  $category
-     */
     protected function assertCategoryAdd(FormEvent $event, Category $category)
     {
         /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $mainForm */

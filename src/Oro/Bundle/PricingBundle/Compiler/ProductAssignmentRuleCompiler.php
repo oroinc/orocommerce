@@ -96,10 +96,6 @@ class ProductAssignmentRuleCompiler extends AbstractRuleCompiler
         );
     }
 
-    /**
-     * @param QueryBuilder $qb
-     * @param PriceList $priceList
-     */
     protected function applyRuleConditions(QueryBuilder $qb, PriceList $priceList)
     {
         $params = [];

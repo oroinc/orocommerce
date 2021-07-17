@@ -21,9 +21,6 @@ class CheckRequest extends AbstractCondition implements ContextAccessorAwareInte
      */
     protected $requestStack;
 
-    /**
-     * @param RequestStack $requestStack
-     */
     public function __construct(RequestStack $requestStack)
     {
         $this->requestStack = $requestStack;

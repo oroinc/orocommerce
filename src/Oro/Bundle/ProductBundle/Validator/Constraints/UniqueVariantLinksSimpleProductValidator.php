@@ -26,9 +26,6 @@ class UniqueVariantLinksSimpleProductValidator extends ConstraintValidator
      */
     private $registry;
 
-    /**
-     * @param ValidatorInterface $validator
-     */
     public function __construct(ValidatorInterface $validator, ManagerRegistry $registry)
     {
         $this->validator = $validator;

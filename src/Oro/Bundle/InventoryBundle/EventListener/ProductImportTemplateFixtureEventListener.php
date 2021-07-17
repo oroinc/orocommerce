@@ -12,9 +12,6 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 /** This event listener is used to add data to product import template fixture */
 class ProductImportTemplateFixtureEventListener
 {
-    /**
-     * @param LoadTemplateFixturesEvent $event
-     */
     public function afterLoadTemplateFixture(LoadTemplateFixturesEvent $event)
     {
         $entities = $event->getEntities();

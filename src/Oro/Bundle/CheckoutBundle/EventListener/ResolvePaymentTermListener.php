@@ -24,11 +24,6 @@ class ResolvePaymentTermListener
     /** @var PaymentTermProviderInterface */
     private $paymentTermProvider;
 
-    /**
-     * @param RequestStack $requestStack
-     * @param ManagerRegistry $registry
-     * @param PaymentTermProviderInterface $paymentTermProvider
-     */
     public function __construct(
         RequestStack $requestStack,
         ManagerRegistry $registry,
@@ -39,9 +34,6 @@ class ResolvePaymentTermListener
         $this->paymentTermProvider = $paymentTermProvider;
     }
 
-    /**
-     * @param ResolvePaymentTermEvent $event
-     */
     public function onResolvePaymentTerm(ResolvePaymentTermEvent $event)
     {
         $checkout = $this->getCurrentCheckout();

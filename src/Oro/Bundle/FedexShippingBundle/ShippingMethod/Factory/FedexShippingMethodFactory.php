@@ -55,15 +55,6 @@ class FedexShippingMethodFactory implements IntegrationShippingMethodFactoryInte
      */
     private $rateServiceClient;
 
-    /**
-     * @param IntegrationIdentifierGeneratorInterface           $identifierGenerator
-     * @param LocalizationHelper                                $localizationHelper
-     * @param IntegrationIconProviderInterface                  $iconProvider
-     * @param FedexShippingMethodTypeFactoryInterface           $typeFactory
-     * @param FedexRateServiceRequestSettingsFactoryInterface   $rateServiceRequestSettingsFactory
-     * @param FedexRequestByRateServiceSettingsFactoryInterface $rateServiceRequestFactory
-     * @param FedexRateServiceBySettingsClientInterface         $rateServiceClient
-     */
     public function __construct(
         IntegrationIdentifierGeneratorInterface $identifierGenerator,
         LocalizationHelper $localizationHelper,
@@ -100,11 +91,6 @@ class FedexShippingMethodFactory implements IntegrationShippingMethodFactoryInte
         );
     }
 
-    /**
-     * @param Channel $channel
-     *
-     * @return string
-     */
     private function getLabel(Channel $channel): string
     {
         return (string)$this->localizationHelper->getLocalizedValue(

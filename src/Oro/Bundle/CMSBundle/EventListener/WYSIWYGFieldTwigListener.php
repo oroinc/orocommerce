@@ -46,9 +46,6 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
     /** @var array */
     private $scheduled = [];
 
-    /**
-     * @param ContainerInterface $container
-     */
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
@@ -68,9 +65,6 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
         ];
     }
 
-    /**
-     * @param LifecycleEventArgs $args
-     */
     public function postPersist(LifecycleEventArgs $args): void
     {
         if ($this->isApplicable($args)) {
@@ -79,9 +73,6 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
         }
     }
 
-    /**
-     * @param PreUpdateEventArgs $args
-     */
     public function preUpdate(PreUpdateEventArgs $args): void
     {
         if ($this->isApplicable($args)) {
@@ -90,9 +81,6 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
         }
     }
 
-    /**
-     * @param LifecycleEventArgs $args
-     */
     public function preRemove(LifecycleEventArgs $args): void
     {
         if ($this->isApplicable($args)) {
@@ -100,10 +88,6 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
         }
     }
 
-    /**
-     * @param LifecycleEventArgs $args
-     * @return bool
-     */
     private function isApplicable(LifecycleEventArgs $args): bool
     {
         if (!$this->enabled
@@ -123,10 +107,6 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
         return !empty($this->getWysiwygFields($metadata));
     }
 
-    /**
-     * @param LifecycleEventArgs $args
-     * @param bool $isFlushNeeded
-     */
     private function postProcess(LifecycleEventArgs $args, bool $isFlushNeeded): void
     {
         if (!$isFlushNeeded) {
@@ -153,8 +133,6 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
      *
      * @see https://github.com/doctrine/orm/issues/6292
      * @see https://github.com/doctrine/orm/issues/6024
-     *
-     * @param PostFlushEventArgs $args
      */
     public function postFlush(PostFlushEventArgs $args): void
     {
@@ -216,18 +194,11 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
         }
     }
 
-    /**
-     * @param PreClearEventArgs $preClearEventArgs
-     */
     public function preClear(PreClearEventArgs $preClearEventArgs): void
     {
         $this->onTerminate();
     }
 
-    /**
-     * @param LifecycleEventArgs $args
-     * @return WYSIWYGProcessedDTO
-     */
     private function createDTO(LifecycleEventArgs $args): WYSIWYGProcessedDTO
     {
         return new WYSIWYGProcessedDTO(
@@ -240,10 +211,6 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
         );
     }
 
-    /**
-     * @param WYSIWYGProcessedDTO $processedDTO
-     * @return bool
-     */
     private function processEntity(WYSIWYGProcessedDTO $processedDTO): bool
     {
         $isFlushNeeded = false;
@@ -262,10 +229,6 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
         return $isFlushNeeded;
     }
 
-    /**
-     * @param WYSIWYGProcessedDTO $processedDTO
-     * @return bool
-     */
     private function processField(WYSIWYGProcessedDTO $processedDTO): bool
     {
         $processedEntity = $processedDTO->getProcessedEntity();
@@ -287,10 +250,6 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
         return $twigFunctionProcessor->processTwigFunctions($processedDTO, $foundTwigFunctionCalls);
     }
 
-    /**
-     * @param WYSIWYGProcessedDTO $processedDTO
-     * @return bool
-     */
     private function processRelation(WYSIWYGProcessedDTO $processedDTO): bool
     {
         $processedEntity = $processedDTO->getProcessedEntity();
@@ -363,10 +322,6 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
         return false;
     }
 
-    /**
-     * @param ClassMetadata $metadata
-     * @return array
-     */
     private function getWysiwygFields(ClassMetadata $metadata): array
     {
         $entityName = $metadata->getName();
@@ -381,10 +336,6 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
         return $this->fieldLists[$entityName];
     }
 
-    /**
-     * @param ClassMetadata $metadata
-     * @param array $applicableFieldTypes
-     */
     private function collectRegularWysiwygFields(ClassMetadata $metadata, array $applicableFieldTypes): void
     {
         $entityName = $metadata->getName();
@@ -405,10 +356,6 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
         }
     }
 
-    /**
-     * @param string $entityName
-     * @param array $applicableFieldTypes
-     */
     private function collectSerializedWysiwygFields(string $entityName, array $applicableFieldTypes): void
     {
         /** @var FieldConfigId $fieldConfigId */
@@ -421,33 +368,21 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
         }
     }
 
-    /**
-     * @return TwigParser
-     */
     private function getTwigParser(): TwigParser
     {
         return $this->container->get('oro_cms.parser.twig');
     }
 
-    /**
-     * @return WYSIWYGTwigFunctionProcessorInterface
-     */
     private function getTwigFunctionProcessor(): WYSIWYGTwigFunctionProcessorInterface
     {
         return $this->container->get('oro_cms.wysiwyg.chain_twig_function_processor');
     }
 
-    /**
-     * @return EntityConfigManager
-     */
     private function getEntityConfigManager(): EntityConfigManager
     {
         return $this->container->get(EntityConfigManager::class);
     }
 
-    /**
-     * @return PropertyAccessorInterface
-     */
     private function getPropertyAccessor(): PropertyAccessorInterface
     {
         return $this->container->get(PropertyAccessorInterface::class);

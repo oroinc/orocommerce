@@ -20,15 +20,11 @@ interface ModelRepositoryInterface
 
     /**
      * Save model data to storage
-     *
-     * @param ModelInterface $model
      */
     public function save(ModelInterface $model);
 
     /**
      * Delete model data from storage
-     *
-     * @param ModelInterface $model
      */
     public function delete(ModelInterface $model);
 }

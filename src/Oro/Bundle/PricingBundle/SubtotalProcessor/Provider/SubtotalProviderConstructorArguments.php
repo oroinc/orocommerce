@@ -13,10 +13,6 @@ class SubtotalProviderConstructorArguments
     /** @var WebsiteCurrencyProvider */
     protected $websiteCurrencyProvider;
 
-    /**
-     * @param UserCurrencyManager $currencyManager
-     * @param WebsiteCurrencyProvider $websiteCurrencyProvider
-     */
     public function __construct(UserCurrencyManager $currencyManager, WebsiteCurrencyProvider $websiteCurrencyProvider)
     {
         $this->currencyManager = $currencyManager;
