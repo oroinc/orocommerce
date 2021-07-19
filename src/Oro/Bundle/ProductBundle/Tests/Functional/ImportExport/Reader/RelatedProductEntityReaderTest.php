@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\ImportExport\Reader;
 
-use Akeneo\Bundle\BatchBundle\Entity\JobExecution;
-use Akeneo\Bundle\BatchBundle\Entity\JobInstance;
-use Akeneo\Bundle\BatchBundle\Entity\StepExecution;
-use Akeneo\Bundle\BatchBundle\Item\ExecutionContext;
+use Oro\Bundle\BatchBundle\Entity\JobExecution;
+use Oro\Bundle\BatchBundle\Entity\JobInstance;
+use Oro\Bundle\BatchBundle\Entity\StepExecution;
+use Oro\Bundle\BatchBundle\Item\ExecutionContext;
 use Oro\Bundle\ImportExportBundle\Context\Context;
 use Oro\Bundle\ProductBundle\ImportExport\Reader\RelatedProductEntityReader;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;

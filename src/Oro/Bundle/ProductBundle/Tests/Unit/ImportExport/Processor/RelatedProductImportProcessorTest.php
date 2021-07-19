@@ -161,8 +161,6 @@ class RelatedProductImportProcessorTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider processWhenSkuColumnMissingDataProvider
-     *
-     * @throws \Akeneo\Bundle\BatchBundle\Item\InvalidItemException
      */
     public function testProcessWhenColumnMissing(array $item, string $expectedError): void
     {
