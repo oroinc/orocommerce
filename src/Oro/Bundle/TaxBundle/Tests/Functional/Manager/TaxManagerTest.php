@@ -135,11 +135,6 @@ class TaxManagerTest extends WebTestCase
         $this->compareResult($expectedResult, $manager->{$method}($object, true));
     }
 
-    /**
-     * @param array $databaseBefore
-     * @param array $databaseBeforeSecondPart
-     * @param bool  $disableTaxCalculation
-     */
     protected function prepareDatabase(
         array $databaseBefore,
         array $databaseBeforeSecondPart,
@@ -202,9 +197,6 @@ class TaxManagerTest extends WebTestCase
         return $config;
     }
 
-    /**
-     * @param array $databaseAfter
-     */
     protected function assertDatabase(array $databaseAfter)
     {
         foreach ($databaseAfter as $class => $items) {
@@ -626,10 +618,6 @@ class TaxManagerTest extends WebTestCase
         self::assertEquals($expectedTaxes, $actualTaxes);
     }
 
-    /**
-     * @param string $code
-     * @param float $newRate
-     */
     protected function changeTaxTo(string $code, float $newRate)
     {
         /** @var Tax $tax */

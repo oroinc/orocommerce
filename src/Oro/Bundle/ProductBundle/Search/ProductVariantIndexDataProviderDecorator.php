@@ -95,9 +95,6 @@ class ProductVariantIndexDataProviderDecorator implements ProductIndexDataProvid
 
     /**
      * Merge searchable data into one field.
-     *
-     * @param \ArrayIterator $data
-     * @param string $searchableName
      */
     private function mergeSearchable(\ArrayIterator $data, string $searchableName): void
     {

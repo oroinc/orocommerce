@@ -64,9 +64,6 @@ class ConfigurableProductProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(null, $this->configurableProductProvider->getProducts($lineItems));
     }
 
-    /**
-     * @param LineItem $lineItem
-     */
     private function mockGetVariantFieldsValuesForLineItem(LineItem $lineItem): void
     {
         /** @var Product $parentProduct */

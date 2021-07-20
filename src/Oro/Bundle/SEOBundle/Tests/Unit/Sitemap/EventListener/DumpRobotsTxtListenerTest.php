@@ -44,12 +44,6 @@ class DumpRobotsTxtListenerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @param int  $id
-     * @param bool $isDefault
-     *
-     * @return WebsiteInterface
-     */
     private function getWebsite(int $id, bool $isDefault): WebsiteInterface
     {
         $website = $this->createMock(WebsiteInterface::class);
@@ -63,11 +57,6 @@ class DumpRobotsTxtListenerTest extends \PHPUnit\Framework\TestCase
         return $website;
     }
 
-    /**
-     * @param string $fileName
-     *
-     * @return File
-     */
     private function getFile(string $fileName): File
     {
         $file = $this->createMock(File::class);

@@ -16,9 +16,6 @@ class LoadSystemPage implements ProcessorInterface
     /** @var SystemPageRepository */
     private $systemPageRepository;
 
-    /**
-     * @param SystemPageRepository $systemPageRepository
-     */
     public function __construct(SystemPageRepository $systemPageRepository)
     {
         $this->systemPageRepository = $systemPageRepository;

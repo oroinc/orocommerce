@@ -72,9 +72,6 @@ class CustomerControllersTest extends WebTestCase
         $this->checkDatagridResponse($response);
     }
 
-    /**
-     * @param Response $response
-     */
     protected function checkDatagridResponse(Response $response)
     {
         $result = $this->getJsonResponseContent($response, 200);

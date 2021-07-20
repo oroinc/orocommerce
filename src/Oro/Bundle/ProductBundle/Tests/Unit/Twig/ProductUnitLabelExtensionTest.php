@@ -100,9 +100,6 @@ class ProductUnitLabelExtensionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @return array
-     */
     public function formatShortProvider(): array
     {
         return [

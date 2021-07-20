@@ -69,10 +69,6 @@ class ReorganizePageSlugs implements Migration, DatabasePlatformAwareInterface, 
         return $comparator->compare($schema, $toSchema)->toSql($this->platform);
     }
 
-    /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     */
     protected function dropCurrentSlugRelation(Schema $schema, QueryBag $queries)
     {
         $preSchema = clone $schema;

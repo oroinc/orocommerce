@@ -38,11 +38,6 @@ class EnabledConsentProvider
      */
     private $filters;
 
-    /**
-     * @param ConfigManager $configManager
-     * @param ConsentConfigConverter $converter
-     * @param ConsentContextProviderInterface $contextProvider
-     */
     public function __construct(
         ConfigManager $configManager,
         ConsentConfigConverter $converter,
@@ -53,9 +48,6 @@ class EnabledConsentProvider
         $this->contextProvider = $contextProvider;
     }
 
-    /**
-     * @param ConsentFilterInterface $filter
-     */
     public function addFilter(ConsentFilterInterface $filter)
     {
         $this->filters[] = $filter;

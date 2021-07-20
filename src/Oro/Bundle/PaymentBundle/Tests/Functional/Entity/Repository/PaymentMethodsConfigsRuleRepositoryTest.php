@@ -51,8 +51,6 @@ class PaymentMethodsConfigsRuleRepositoryTest extends WebTestCase
     }
 
     /**
-     * @param array $data
-     *
      * @dataProvider getByDestinationAndCurrencyTestProvider
      */
     public function testGetByDestinationAndCurrency(array $data)

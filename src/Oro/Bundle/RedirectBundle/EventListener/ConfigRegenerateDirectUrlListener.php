@@ -69,9 +69,6 @@ class ConfigRegenerateDirectUrlListener
         $this->entityClass = $entityClass;
     }
 
-    /**
-     * @param ConfigUpdateEvent $event
-     */
     public function onUpdateAfter(ConfigUpdateEvent $event)
     {
         if ($event->isChanged($this->configParameter)) {

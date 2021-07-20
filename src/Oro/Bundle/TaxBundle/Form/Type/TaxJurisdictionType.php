@@ -35,9 +35,6 @@ class TaxJurisdictionType extends AbstractType
         $this->dataClass = $dataClass;
     }
 
-    /**
-     * @param AddressCountryAndRegionSubscriber $countryAndRegionSubscriber
-     */
     public function __construct(AddressCountryAndRegionSubscriber $countryAndRegionSubscriber)
     {
         $this->countryAndRegionSubscriber = $countryAndRegionSubscriber;

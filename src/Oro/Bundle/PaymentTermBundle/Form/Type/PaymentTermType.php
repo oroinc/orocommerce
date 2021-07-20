@@ -25,19 +25,12 @@ class PaymentTermType extends AbstractType
         $this->dataClass = $dataClass;
     }
 
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
             ->add('label', TextType::class, ['required' => true, 'label' => 'oro.paymentterm.label.label']);
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(

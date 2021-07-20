@@ -183,9 +183,6 @@ class ProductRepositoryTest extends WebTestCase
         }
     }
 
-    /**
-     * @param array $actual
-     */
     protected function assertInsertedByCategory(array $actual)
     {
         $categoryRepository = $this->getCategoryRepository();
@@ -216,9 +213,6 @@ class ProductRepositoryTest extends WebTestCase
         }
     }
 
-    /**
-     * @param array $actual
-     */
     protected function assertInsertedFromBaseTable(array $actual)
     {
         foreach ($this->getProductVisibilities() as $pv) {

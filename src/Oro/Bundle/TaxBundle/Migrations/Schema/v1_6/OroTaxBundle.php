@@ -29,9 +29,6 @@ class OroTaxBundle implements Migration, ExtendExtensionAwareInterface, OrderedM
         $queries->addQuery(new MigrateProductTaxCodesQuery());
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addCustomerExtendFields(Schema $schema)
     {
         $this->extendExtension->addManyToOneRelation(

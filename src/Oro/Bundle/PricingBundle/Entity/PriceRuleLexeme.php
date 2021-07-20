@@ -155,7 +155,7 @@ class PriceRuleLexeme
     public function setRelationId($relationId)
     {
         $this->relationId = $relationId;
-        
+
         return $this;
     }
 }

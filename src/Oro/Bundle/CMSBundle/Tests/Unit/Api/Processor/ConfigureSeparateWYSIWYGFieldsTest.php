@@ -35,11 +35,6 @@ class ConfigureSeparateWYSIWYGFieldsTest extends ConfigProcessorTestCase
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
     }
 
-    /**
-     * @param bool $isReadOnlyResource
-     *
-     * @return ConfigureSeparateWYSIWYGFields
-     */
     private function getProcessor(bool $isReadOnlyResource = false): ConfigureSeparateWYSIWYGFields
     {
         $resourcesProvider = $this->createMock(ResourcesProvider::class);
@@ -55,10 +50,6 @@ class ConfigureSeparateWYSIWYGFieldsTest extends ConfigProcessorTestCase
         );
     }
 
-    /**
-     * @param bool $isSerializedWysiwygField
-     * @param bool $skipEntityMetadataExpectation
-     */
     private function setWysiwygFieldsExpectation(
         bool $isSerializedWysiwygField = false,
         bool $skipEntityMetadataExpectation = false

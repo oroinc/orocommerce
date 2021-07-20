@@ -30,11 +30,6 @@ class GridCountProvider
      */
     private $pager;
 
-    /**
-     * @param ManagerInterface $gridManager
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param Pager $pager
-     */
     public function __construct(
         ManagerInterface $gridManager,
         AuthorizationCheckerInterface $authorizationChecker,

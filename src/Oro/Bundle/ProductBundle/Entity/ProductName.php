@@ -51,9 +51,6 @@ class ProductName extends AbstractLocalizedFallbackValue
      */
     protected $product;
 
-    /**
-     * @return null|Product
-     */
     public function getProduct(): ?Product
     {
         return $this->product;

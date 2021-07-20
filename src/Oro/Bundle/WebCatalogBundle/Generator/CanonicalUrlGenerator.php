@@ -22,9 +22,6 @@ class CanonicalUrlGenerator extends BaseGenerator implements FeatureToggleableIn
      */
     private $contentNodeProvider;
 
-    /**
-     * @param ContentNodeProvider $contentNodeProvider
-     */
     public function setContentNodeProvider(ContentNodeProvider $contentNodeProvider): void
     {
         $this->contentNodeProvider = $contentNodeProvider;

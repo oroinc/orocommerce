@@ -37,9 +37,6 @@ class PriceAttributeProductPriceImportStrategy extends ConfigurableAddOrReplaceS
         return parent::afterProcessEntity($entity);
     }
 
-    /**
-     * @param PriceAttributeProductPrice $entity
-     */
     protected function setPrice(PriceAttributeProductPrice $entity)
     {
         $entity->loadPrice();

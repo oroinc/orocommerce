@@ -23,10 +23,6 @@ class PriceListVoter extends AbstractEntityVoter
     /** @var PriceListReferenceChecker */
     protected $priceListReferenceChecker;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param PriceListReferenceChecker $priceListReferenceChecker
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         PriceListReferenceChecker $priceListReferenceChecker

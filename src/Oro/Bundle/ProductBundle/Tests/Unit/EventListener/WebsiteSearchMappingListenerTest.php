@@ -471,9 +471,6 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @return SearchMappingCollectEvent
-     */
     protected function createEventWithBasicConfiguration(): SearchMappingCollectEvent
     {
         return new SearchMappingCollectEvent(

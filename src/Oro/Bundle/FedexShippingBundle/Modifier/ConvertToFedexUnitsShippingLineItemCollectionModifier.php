@@ -40,13 +40,6 @@ class ConvertToFedexUnitsShippingLineItemCollectionModifier implements
      */
     private $lineItemBuilderFactory;
 
-    /**
-     * @param MeasureUnitConversion                      $measureUnitConverter
-     * @param FedexToShippingUnitTransformerInterface    $weightUnitTransformer
-     * @param FedexToShippingUnitTransformerInterface    $dimensionsUnitTransformer
-     * @param ShippingLineItemCollectionFactoryInterface $collectionFactory
-     * @param ShippingLineItemBuilderFactoryInterface    $lineItemBuilderFactory
-     */
     public function __construct(
         MeasureUnitConversion $measureUnitConverter,
         FedexToShippingUnitTransformerInterface $weightUnitTransformer,
@@ -93,13 +86,6 @@ class ConvertToFedexUnitsShippingLineItemCollectionModifier implements
         return $this->collectionFactory->createShippingLineItemCollection($newLineItems);
     }
 
-    /**
-     * @param ShippingLineItemInterface $lineItem
-     * @param Dimensions|null           $dimensions
-     * @param Weight|null               $weight
-     *
-     * @return ShippingLineItemInterface
-     */
     private function createLineItemWithConvertedUnits(
         ShippingLineItemInterface $lineItem,
         Dimensions $dimensions = null,

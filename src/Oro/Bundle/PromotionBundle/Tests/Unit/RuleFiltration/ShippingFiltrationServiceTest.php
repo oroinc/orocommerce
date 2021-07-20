@@ -29,7 +29,6 @@ class ShippingFiltrationServiceTest extends AbstractSkippableFiltrationServiceTe
 
     /**
      * @dataProvider contextDataProvider
-     * @param array $context
      */
     public function testFilterRuleOwnersWithNotSupportedClass(array $context)
     {
@@ -66,7 +65,6 @@ class ShippingFiltrationServiceTest extends AbstractSkippableFiltrationServiceTe
 
     /**
      * @dataProvider contextDataProvider
-     * @param array $context
      */
     public function testFilterShippingPromotionsWithNotMatchedShippingOptions(array $context)
     {

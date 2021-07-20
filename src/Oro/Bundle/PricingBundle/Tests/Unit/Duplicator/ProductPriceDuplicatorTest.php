@@ -53,8 +53,6 @@ class ProductPriceDuplicatorTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider duplicateDataProvider
-     * @param PriceList $sourcePriceList
-     * @param PriceList $targetPriceList
      */
     public function testDuplicate(PriceList $sourcePriceList, PriceList $targetPriceList)
     {

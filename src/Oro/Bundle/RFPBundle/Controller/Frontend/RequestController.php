@@ -220,18 +220,11 @@ class RequestController extends AbstractController
         );
     }
 
-    /**
-     * @return WebsiteManager
-     */
     protected function getWebsiteManager(): WebsiteManager
     {
         return $this->get(WebsiteManager::class);
     }
 
-    /**
-     * @param RFPRequest $rfpRequest
-     * @param Request $request
-     */
     protected function addProductItemsToRfpRequest(RFPRequest $rfpRequest, Request $request)
     {
         $productLineItems = (array)$request->query->get('product_items', []);
@@ -260,7 +253,6 @@ class RequestController extends AbstractController
     }
 
     /**
-     * @param RFPRequest $request
      * @throws NotFoundHttpException
      */
     private function assertValidInternalStatus(RFPRequest $request)

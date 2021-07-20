@@ -108,9 +108,6 @@ class LoadConsentsData extends AbstractFixture implements DependentFixtureInterf
         return $consentRef . '_CONSENT_ACCEPTANCE';
     }
 
-    /**
-     * @param ObjectManager $objectManager
-     */
     public function load(ObjectManager $objectManager)
     {
         foreach ($this->consentData as $consentItem) {

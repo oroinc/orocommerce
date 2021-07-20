@@ -29,17 +29,12 @@ class MessageFactoryTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider productIdsDataProvider
-     * @param array $data
-     * @param array $expected
      */
     public function testGetProductIds(array $data, array $expected)
     {
         $this->assertEquals($expected, $this->factory->getProductIds($data));
     }
 
-    /**
-     * @return array
-     */
     public function productIdsDataProvider(): array
     {
         return [
@@ -98,9 +93,6 @@ class MessageFactoryTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @return array
-     */
     public function messageDataProvider(): array
     {
         $products = [1, 2];

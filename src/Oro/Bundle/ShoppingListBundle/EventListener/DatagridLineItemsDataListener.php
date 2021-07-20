@@ -10,9 +10,6 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
  */
 class DatagridLineItemsDataListener
 {
-    /**
-     * @param DatagridLineItemsDataEvent $event
-     */
     public function onLineItemData(DatagridLineItemsDataEvent $event): void
     {
         $lineItems = $event->getLineItems();

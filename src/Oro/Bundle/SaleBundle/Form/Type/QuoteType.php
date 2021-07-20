@@ -50,12 +50,6 @@ class QuoteType extends AbstractType
     /** @var AuthorizationCheckerInterface */
     protected $authorizationChecker;
 
-    /**
-     * @param QuoteAddressSecurityProvider $quoteAddressSecurityProvider
-     * @param ConfigManager $configManager
-     * @param EventSubscriberInterface $quoteFormSubscriber
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     */
     public function __construct(
         QuoteAddressSecurityProvider $quoteAddressSecurityProvider,
         ConfigManager $configManager,

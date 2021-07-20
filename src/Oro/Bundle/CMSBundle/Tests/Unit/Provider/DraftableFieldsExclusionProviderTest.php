@@ -8,8 +8,6 @@ use Oro\Bundle\CMSBundle\Provider\DraftableFieldsExclusionProvider;
 class DraftableFieldsExclusionProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @param string $className
-     * @param bool $expectedResult
      * @dataProvider getIsSupportDataProvider
      */
     public function testIsSupport(string $className, bool $expectedResult): void

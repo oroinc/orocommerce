@@ -41,11 +41,6 @@ class ContentVariantListener
      */
     private $propertyAccessor;
 
-    /**
-     * @param ContentVariantTypeRegistry $typeRegistry
-     * @param OwnershipMetadataProviderInterface $metadataProvider
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(
         ContentVariantTypeRegistry $typeRegistry,
         OwnershipMetadataProviderInterface $metadataProvider,
@@ -56,25 +51,16 @@ class ContentVariantListener
         $this->doctrineHelper = $doctrineHelper;
     }
 
-    /**
-     * @param ContentVariant $contentVariant
-     */
     public function prePersist(ContentVariant $contentVariant)
     {
         $this->fillOwnershipForNewEntities($contentVariant);
     }
 
-    /**
-     * @param ContentVariant $contentVariant
-     */
     public function preUpdate(ContentVariant $contentVariant)
     {
         $this->fillOwnershipForNewEntities($contentVariant);
     }
 
-    /**
-     * @param ContentVariant $contentVariant
-     */
     private function fillOwnershipForNewEntities(ContentVariant $contentVariant): void
     {
         if (!$contentVariant->getNode()) {

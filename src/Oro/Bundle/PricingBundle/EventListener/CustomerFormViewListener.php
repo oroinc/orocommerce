@@ -23,9 +23,6 @@ class CustomerFormViewListener extends AbstractCustomerFormViewListener
             'oro.pricing.fallback.customer_group.label',
     ];
 
-    /**
-     * @param BeforeListRenderEvent $event
-     */
     public function onCustomerView(BeforeListRenderEvent $event)
     {
         if (!$this->isFeaturesEnabled()) {

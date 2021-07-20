@@ -41,11 +41,6 @@ class OrderLineItemDataStorageExtension extends AbstractTypeExtension implements
     /** @var OffersFormStorage */
     private $formStorage;
 
-    /**
-     * @param RequestStack $requestStack
-     * @param DataStorageInterface $sessionStorage
-     * @param OffersFormStorage $formStorage
-     */
     public function __construct(
         RequestStack $requestStack,
         DataStorageInterface $sessionStorage,

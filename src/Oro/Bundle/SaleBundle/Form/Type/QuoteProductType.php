@@ -55,12 +55,6 @@ class QuoteProductType extends AbstractType
      */
     protected $productUnitClass;
 
-    /**
-     * @param TranslatorInterface $translator
-     * @param UnitLabelFormatterInterface $labelFormatter
-     * @param QuoteProductFormatter $formatter
-     * @param ManagerRegistry $registry
-     */
     public function __construct(
         TranslatorInterface $translator,
         UnitLabelFormatterInterface $labelFormatter,

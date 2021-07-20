@@ -85,9 +85,6 @@ class PriceListProductPriceType extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPreSubmit']);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function preSetData(FormEvent $event)
     {
         $data = $event->getData();
@@ -105,9 +102,7 @@ class PriceListProductPriceType extends AbstractType
                 );
         }
     }
-    /**
-     * @param FormEvent $event
-     */
+
     public function onPreSubmit(FormEvent $event)
     {
         $submittedData = $event->getData();

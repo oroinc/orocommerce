@@ -9,9 +9,6 @@ class ProductProxyStub extends Product implements Proxy
 {
     protected $initialized = false;
 
-    /**
-     * @param $initialized
-     */
     public function setInitialized($initialized)
     {
         $this->initialized = $initialized;

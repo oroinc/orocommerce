@@ -62,11 +62,6 @@ abstract class AbstractCategoryFixture extends AbstractFixture implements Contai
         $manager->flush();
     }
 
-    /**
-     * @param Category      $root
-     * @param array         $categories
-     * @param ObjectManager $manager
-     */
     protected function addCategories(Category $root, array $categories, ObjectManager $manager): void
     {
         if (!$categories) {
@@ -102,10 +97,6 @@ abstract class AbstractCategoryFixture extends AbstractFixture implements Contai
         }
     }
 
-    /**
-     * @param array $categories
-     * @param SlugEntityGenerator $slugEntityGenerator
-     */
     private function generateSlugs(array $categories, SlugEntityGenerator $slugEntityGenerator)
     {
         foreach ($categories as $title => $nestedCategories) {
@@ -118,11 +109,6 @@ abstract class AbstractCategoryFixture extends AbstractFixture implements Contai
         }
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param Category $category
-     * @param string $title
-     */
     private function fillCategoryDescriptions(ObjectManager $manager, Category $category, string $title): void
     {
         if (!empty($this->categoryDescriptions[$title])) {
@@ -148,11 +134,6 @@ abstract class AbstractCategoryFixture extends AbstractFixture implements Contai
         }
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param Category $category
-     * @param string $title
-     */
     private function fillCategoryImages(ObjectManager $manager, Category $category, string $title): void
     {
         if (!empty($this->categoryImages[$title])) {
@@ -196,12 +177,8 @@ abstract class AbstractCategoryFixture extends AbstractFixture implements Contai
     }
 
     /**
-     * @param ObjectManager $manager
-     *
      * @throws \Doctrine\ORM\NoResultException
      * @throws \Doctrine\ORM\NonUniqueResultException
-     *
-     * @return Category
      */
     private function getCategory(ObjectManager $manager): Category
     {

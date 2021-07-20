@@ -29,12 +29,6 @@ class CategoryBreadcrumbProvider
      */
     protected $requestStack;
 
-    /**
-     * @param CategoryProvider   $categoryProvider
-     * @param LocalizationHelper $localizationHelper
-     * @param Router             $router
-     * @param RequestStack       $requestStack
-     */
     public function __construct(
         CategoryProvider $categoryProvider,
         LocalizationHelper $localizationHelper,

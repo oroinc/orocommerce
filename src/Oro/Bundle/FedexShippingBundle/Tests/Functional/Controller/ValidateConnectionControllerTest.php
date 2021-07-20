@@ -93,11 +93,6 @@ class ValidateConnectionControllerTest extends WebTestCase
         );
     }
 
-    /**
-     * @param string $key
-     *
-     * @return array
-     */
     private function getRequestFormData(string $key): array
     {
         return [
@@ -137,9 +132,6 @@ class ValidateConnectionControllerTest extends WebTestCase
         $configManager->flush();
     }
 
-    /**
-     * @param string $message
-     */
     private function assertResponseHasErrorMessage(string $message)
     {
         $result = static::getJsonResponseContent($this->client->getResponse(), 200);

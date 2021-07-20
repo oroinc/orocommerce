@@ -24,12 +24,6 @@ class PublicSitemapFilesystemAdapter
     /** @var ManagerRegistry */
     private $doctrine;
 
-    /**
-     * @param FileManager          $fileManager
-     * @param FileManager          $tmpDataFileManager
-     * @param RobotsTxtFileManager $robotsTxtFileManager
-     * @param ManagerRegistry      $doctrine
-     */
     public function __construct(
         FileManager $fileManager,
         FileManager $tmpDataFileManager,
@@ -68,9 +62,6 @@ class PublicSitemapFilesystemAdapter
         $this->tmpDataFileManager->deleteAllFiles();
     }
 
-    /**
-     * @param int $websiteId
-     */
     private function moveSitemapFiles(int $websiteId): void
     {
         $fileNames = $this->tmpDataFileManager->findFiles($websiteId . DIRECTORY_SEPARATOR);
@@ -80,9 +71,6 @@ class PublicSitemapFilesystemAdapter
         }
     }
 
-    /**
-     * @param int $websiteId
-     */
     private function moveRobotsTxtFile(int $websiteId): void
     {
         $fileName = $this->robotsTxtFileManager->getFileNameByWebsite(

@@ -22,9 +22,6 @@ class LocalizedFallbackValueCollectionNormalizerTest extends WebTestCase
     }
 
     /**
-     * @param array $actualData
-     * @param array $expectedData
-     *
      * @dataProvider normalizeDataProvider
      */
     public function testNormalize(array $actualData, array $expectedData = [])

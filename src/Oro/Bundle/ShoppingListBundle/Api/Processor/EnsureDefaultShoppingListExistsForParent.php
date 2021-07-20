@@ -17,9 +17,6 @@ class EnsureDefaultShoppingListExistsForParent implements ProcessorInterface
     /** @var DefaultShoppingListFactory */
     private $defaultShoppingListFactory;
 
-    /**
-     * @param DefaultShoppingListFactory $defaultShoppingListFactory
-     */
     public function __construct(DefaultShoppingListFactory $defaultShoppingListFactory)
     {
         $this->defaultShoppingListFactory = $defaultShoppingListFactory;

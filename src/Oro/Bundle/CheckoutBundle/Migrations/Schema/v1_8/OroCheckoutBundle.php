@@ -54,8 +54,6 @@ class OroCheckoutBundle implements Migration, ContainerAwareInterface, DatabaseP
 
     /**
      * Update oro_checkout_subtotal table
-     *
-     * @param Schema $schema
      */
     private function updateOroCheckoutSubtotalTable(Schema $schema)
     {
@@ -66,8 +64,6 @@ class OroCheckoutBundle implements Migration, ContainerAwareInterface, DatabaseP
 
     /**
      * Add oro_checkout_subtotal foreign keys.
-     *
-     * @param Schema $schema
      */
     private function addOroCheckoutSubtotalForeignKeys(Schema $schema)
     {

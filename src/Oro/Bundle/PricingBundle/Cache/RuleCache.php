@@ -32,11 +32,6 @@ class RuleCache implements Cache
      */
     private $crypter;
 
-    /**
-     * @param Cache $cache
-     * @param ManagerRegistry $registry
-     * @param SymmetricCrypterInterface $crypter
-     */
     public function __construct(Cache $cache, ManagerRegistry $registry, SymmetricCrypterInterface $crypter)
     {
         $this->cacheStorage = $cache;

@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener;
 
-use Akeneo\Bundle\BatchBundle\Entity\JobExecution;
-use Akeneo\Bundle\BatchBundle\Entity\StepExecution;
-use Akeneo\Bundle\BatchBundle\Event\StepExecutionEvent;
-use Akeneo\Bundle\BatchBundle\Item\ExecutionContext;
+use Oro\Bundle\BatchBundle\Entity\JobExecution;
+use Oro\Bundle\BatchBundle\Entity\StepExecution;
+use Oro\Bundle\BatchBundle\Event\StepExecutionEvent;
+use Oro\Bundle\BatchBundle\Item\ExecutionContext;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\EventListener\InventoryLevelsImportListener;
 use Oro\Bundle\InventoryBundle\ImportExport\Strategy\InventoryLevelStrategy;

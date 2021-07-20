@@ -37,10 +37,6 @@ class FedexIntegrationSettingsType extends AbstractType
      */
     private $shippingPriceCache;
 
-    /**
-     * @param FedexResponseCacheInterface $fedexResponseCache
-     * @param ShippingPriceCache $shippingPriceCache
-     */
     public function __construct(
         FedexResponseCacheInterface $fedexResponseCache,
         ShippingPriceCache $shippingPriceCache

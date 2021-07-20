@@ -73,9 +73,6 @@ class MoveConfigValuesToSettings extends AbstractMoveConfigValuesToSettings
         $manager->flush();
     }
 
-    /**
-     * @param Channel $channel
-     */
     protected function dispatchPaymentMethodRenamingEvent(Channel $channel)
     {
         $this->dispatcher->dispatch(

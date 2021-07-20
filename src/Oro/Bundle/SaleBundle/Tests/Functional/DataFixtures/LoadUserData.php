@@ -225,9 +225,6 @@ class LoadUserData extends AbstractFixture
         $this->loadCustomerUsers($manager);
     }
 
-    /**
-     * @param ObjectManager $manager
-     */
     private function loadRoles(ObjectManager $manager)
     {
         /* @var AclManager $aclManager */
@@ -252,9 +249,6 @@ class LoadUserData extends AbstractFixture
         $aclManager->flush();
     }
 
-    /**
-     * @param ObjectManager $manager
-     */
     private function loadCustomers(ObjectManager $manager)
     {
         $defaultUser    = $this->getUser($manager);
@@ -277,9 +271,6 @@ class LoadUserData extends AbstractFixture
         $manager->flush();
     }
 
-    /**
-     * @param ObjectManager $manager
-     */
     private function loadCustomerUsers(ObjectManager $manager)
     {
         /* @var CustomerUserManager $userManager */
@@ -315,9 +306,6 @@ class LoadUserData extends AbstractFixture
         }
     }
 
-    /**
-     * @param ObjectManager $manager
-     */
     private function loadUsers(ObjectManager $manager)
     {
         /* @var UserManager $userManager */

@@ -103,10 +103,6 @@ class CategoryRepository extends EntityRepository
             ->execute();
     }
 
-    /**
-     * @param InsertFromSelectQueryExecutor $insertExecutor
-     * @param Scope $scope
-     */
     public function insertStaticValues(InsertFromSelectQueryExecutor $insertExecutor, Scope $scope)
     {
         $visibilityCondition = sprintf(

@@ -155,11 +155,6 @@ class FedexResponseCacheTest extends TestCase
             ->with('oro_fedex_shipping_price');
     }
 
-    /**
-     * @param \DateTime|null $invalidateAt
-     *
-     * @return FedexResponseCacheKey
-     */
     private function createCacheKey(\DateTime $invalidateAt = null): FedexResponseCacheKey
     {
         return new FedexResponseCacheKey(

@@ -11,9 +11,6 @@ class PaymentTransactionCancelActionTest extends AbstractActionTest
 {
     /**
      * @dataProvider executeDataProvider
-     *
-     * @param array $data
-     * @param array $expected
      */
     public function testExecute(array $data, array $expected)
     {

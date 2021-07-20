@@ -23,9 +23,6 @@ class UpdateMetaTitleLocalizationsConfigsMigration implements Migration
         $this->updateEntityFieldsConfig($queries);
     }
 
-    /**
-     * @param QueryBag $queries
-     */
     private function moveLocalizationTextToString(QueryBag $queries)
     {
         // product meta titles, set string field
@@ -54,9 +51,6 @@ class UpdateMetaTitleLocalizationsConfigsMigration implements Migration
         );
     }
 
-    /**
-     * @param QueryBag $queries
-     */
     private function updateEntityFieldsConfig(QueryBag $queries)
     {
         foreach ([Product::class, Category::class, Page::class, ContentNode::class, Brand::class] as $className) {

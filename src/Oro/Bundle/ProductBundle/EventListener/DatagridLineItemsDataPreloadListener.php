@@ -68,17 +68,11 @@ class DatagridLineItemsDataPreloadListener
         ],
     ] + self::FIELDS_FOR_SIMPLE;
 
-    /**
-     * @param PreloadingManager $preloadingManager
-     */
     public function __construct(PreloadingManager $preloadingManager)
     {
         $this->preloadingManager = $preloadingManager;
     }
 
-    /**
-     * @param DatagridLineItemsDataEvent $event
-     */
     public function onLineItemData(DatagridLineItemsDataEvent $event): void
     {
         $isGrouped = $event->getContext()['isGrouped'] ?? false;

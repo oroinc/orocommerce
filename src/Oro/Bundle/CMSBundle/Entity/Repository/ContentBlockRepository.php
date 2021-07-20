@@ -13,11 +13,6 @@ use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
  */
 class ContentBlockRepository extends EntityRepository
 {
-    /**
-     * @param ContentBlock $contentBlock
-     * @param ScopeCriteria $criteria
-     * @return Scope|null
-     */
     public function getMostSuitableScope(
         ContentBlock $contentBlock,
         ScopeCriteria $criteria

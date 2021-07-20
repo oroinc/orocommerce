@@ -76,7 +76,6 @@ class TaxCodeGridListenerTest extends AbstractTaxCodeGridListenerTest
         $this->listener->onBuildBefore($event);
     }
 
-
     /**
      * @return TaxCodeGridListener
      */

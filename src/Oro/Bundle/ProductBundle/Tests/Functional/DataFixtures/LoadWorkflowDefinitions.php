@@ -35,9 +35,6 @@ class LoadWorkflowDefinitions extends AbstractFixture implements ContainerAwareI
         $cache->invalidateActiveRelated();
     }
 
-    /**
-     * @return array
-     */
     private function getConfiguration(): array
     {
         return Yaml::parse(file_get_contents(__DIR__ . '/workflows_fixture.yml'));

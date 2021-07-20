@@ -29,8 +29,6 @@ class CacheBuilderTest extends AbstractCacheBuilderTest
 
     /**
      * @dataProvider productCategoryChangedDataProvider
-     *
-     * @param bool $scheduleReindex
      */
     public function testProductCategoryChanged(bool $scheduleReindex): void
     {
@@ -47,9 +45,6 @@ class CacheBuilderTest extends AbstractCacheBuilderTest
         $this->cacheBuilder->productCategoryChanged($product, $scheduleReindex);
     }
 
-    /**
-     * @return array
-     */
     public function productCategoryChangedDataProvider(): array
     {
         return [

@@ -22,9 +22,6 @@ class OroSaleBundle implements Migration
         $this->addOroQuoteAddressForeignKeys($schema);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function createFieldShippingAddress(Schema $schema)
     {
         $table = $schema->getTable('orob2b_sale_quote');
@@ -34,8 +31,6 @@ class OroSaleBundle implements Migration
 
     /**
      * Create orob2b_quote_address table
-     *
-     * @param Schema $schema
      */
     protected function createOroQuoteAddressTable(Schema $schema)
     {
@@ -64,8 +59,6 @@ class OroSaleBundle implements Migration
 
     /**
      * Add orob2b_sale_quote foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroSaleQuoteForeignKeys(Schema $schema)
     {
@@ -80,8 +73,6 @@ class OroSaleBundle implements Migration
 
     /**
      * Add orob2b_quote_address foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroQuoteAddressForeignKeys(Schema $schema)
     {

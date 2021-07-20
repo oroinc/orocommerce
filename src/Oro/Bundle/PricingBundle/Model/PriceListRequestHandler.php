@@ -39,10 +39,6 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
      */
     protected $priceListRepository;
 
-    /**
-     * @param RequestStack $requestStack
-     * @param ManagerRegistry $registry
-     */
     public function __construct(
         RequestStack $requestStack,
         ManagerRegistry $registry

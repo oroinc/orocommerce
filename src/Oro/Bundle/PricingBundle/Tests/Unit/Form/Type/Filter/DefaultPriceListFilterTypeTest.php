@@ -80,7 +80,6 @@ class DefaultPriceListFilterTypeTest extends AbstractTypeTestCase
         $this->getTestFormType()->configureOptions($resolver);
     }
 
-
     /**
      * @dataProvider configureOptionsDataProvider
      */

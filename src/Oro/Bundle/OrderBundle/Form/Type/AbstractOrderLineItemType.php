@@ -43,9 +43,6 @@ abstract class AbstractOrderLineItemType extends AbstractType
         return $this->sectionProvider;
     }
 
-    /**
-     * @param SectionProvider $sectionProvider
-     */
     public function setSectionProvider(SectionProvider $sectionProvider)
     {
         $this->sectionProvider = $sectionProvider;
@@ -194,8 +191,5 @@ abstract class AbstractOrderLineItemType extends AbstractType
         }
     }
 
-    /**
-     * @param FormInterface $form
-     */
     abstract protected function updateAvailableUnits(FormInterface $form);
 }

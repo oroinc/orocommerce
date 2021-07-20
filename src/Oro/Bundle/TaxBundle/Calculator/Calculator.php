@@ -21,11 +21,6 @@ class Calculator implements TaxCalculatorInterface
     /** @var bool */
     protected $isProductPricesIncludeTax;
 
-    /**
-     * @param TaxationSettingsProvider $settingsProvider
-     * @param TaxCalculatorInterface $includedTaxCalculator
-     * @param TaxCalculatorInterface $taxCalculator
-     */
     public function __construct(
         TaxationSettingsProvider $settingsProvider,
         TaxCalculatorInterface $includedTaxCalculator,
@@ -54,9 +49,6 @@ class Calculator implements TaxCalculatorInterface
             : $this->taxCalculator->getAmountKey();
     }
 
-    /**
-     * @return bool
-     */
     protected function isProductPricesIncludeTax(): bool
     {
         if (null === $this->isProductPricesIncludeTax) {

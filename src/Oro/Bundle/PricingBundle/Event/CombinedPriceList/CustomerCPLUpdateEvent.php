@@ -13,9 +13,6 @@ class CustomerCPLUpdateEvent extends Event
      */
     protected $customersData;
 
-    /**
-     * @param array $customersData
-     */
     public function __construct(array $customersData)
     {
         $this->customersData = $customersData;

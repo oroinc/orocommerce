@@ -7,10 +7,6 @@ use Oro\Bundle\SaleBundle\Entity\Quote;
 
 class QuoteListener
 {
-    /**
-     * @param Quote $quote
-     * @param LifecycleEventArgs $event
-     */
     public function postPersist(Quote $quote, LifecycleEventArgs $event)
     {
         if ($quote->getQid()) {

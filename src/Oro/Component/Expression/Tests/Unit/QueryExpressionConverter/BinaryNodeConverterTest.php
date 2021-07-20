@@ -113,9 +113,6 @@ class BinaryNodeConverterTest extends \PHPUnit\Framework\TestCase
         $this->assertArrayNotHasKey(QueryExpressionConverterInterface::REQUIRE_PARAMETRIZATION, $params);
     }
 
-    /**
-     * @return array
-     */
     public function operationWithValueDataProvider(): array
     {
         return [

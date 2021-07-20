@@ -76,11 +76,6 @@ class ProductImageImportTest extends TestCase
         $this->assertProductImageTypes(['additional'], 'product-1_3.jpg', $product);
     }
 
-    /**
-     * @param array $expected
-     * @param string $imageName
-     * @param Product $product
-     */
     private function assertProductImageTypes(array $expected, string $imageName, Product $product): void
     {
         $productImage = null;

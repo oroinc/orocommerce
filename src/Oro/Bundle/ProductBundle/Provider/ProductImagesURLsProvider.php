@@ -29,11 +29,6 @@ class ProductImagesURLsProvider
      */
     protected $productImageHelper;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param AttachmentManager $attachmentManager
-     * @param ProductImageHelper $productImageHelper
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         AttachmentManager $attachmentManager,
@@ -78,13 +73,6 @@ class ProductImagesURLsProvider
         return $images;
     }
 
-    /**
-     * @param ProductImage $productImage
-     * @param array $filtersNames
-     * @param string $initialImageType
-     *
-     * @return array
-     */
     private function getFilteredImageUrls(
         ProductImage $productImage,
         array $filtersNames,

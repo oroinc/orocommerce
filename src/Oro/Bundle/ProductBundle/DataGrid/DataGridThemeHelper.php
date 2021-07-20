@@ -25,10 +25,6 @@ class DataGridThemeHelper
      */
     protected $session;
 
-    /**
-     * @param RequestStack $requestStack
-     * @param SessionInterface $session
-     */
     public function __construct(RequestStack $requestStack, SessionInterface $session)
     {
         $this->requestStack = $requestStack;
@@ -36,7 +32,6 @@ class DataGridThemeHelper
     }
 
     /**
-     *
      * @param string $gridName
      * @return null|string
      */

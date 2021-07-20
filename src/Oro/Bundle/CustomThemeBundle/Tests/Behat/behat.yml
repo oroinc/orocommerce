@@ -12,7 +12,6 @@ oro_behat_extension:
         - OroCustomerBundle::CustomerUserContext
         - OroCustomerBundle::ACLContext
         - OroCustomerBundle::FrontendGridContext
-        - OroSecurityBundle::PermissionContext
         - OroCustomerBundle::RegistrationInstructionFeatureContext
         - OroCustomerBundle::CustomerVisitorContext
       paths:

@@ -17,8 +17,6 @@ class AddOrganizationToPriceAttribute implements Migration
     }
 
     /**
-     * @param Schema $schema
-     *
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     private function addOrganizationToPriceAttributePriceListTable(Schema $schema): void

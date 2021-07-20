@@ -46,11 +46,6 @@ class ResolverEventConnectorPass implements CompilerPassInterface
         }
     }
 
-    /**
-     * @param ContainerBuilder $container
-     *
-     * @return string
-     */
     private function getConnectorClass(ContainerBuilder $container): string
     {
         if ($container->hasParameter(self::CONNECTOR_CLASS)) {

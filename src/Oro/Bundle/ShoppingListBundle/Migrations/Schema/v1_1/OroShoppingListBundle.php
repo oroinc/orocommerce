@@ -18,8 +18,6 @@ class OroShoppingListBundle implements Migration
 
     /**
      * Add fields to orob2b_shopping_list table
-     *
-     * @param Schema $schema
      */
     protected function updateShoppingListTable(Schema $schema)
     {

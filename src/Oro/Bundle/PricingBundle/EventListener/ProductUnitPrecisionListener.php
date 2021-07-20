@@ -40,12 +40,6 @@ class ProductUnitPrecisionListener implements FeatureToggleableInterface
      */
     private $doctrineHelper;
 
-    /**
-     * @param $productPriceClass
-     * @param EventDispatcherInterface $dispatcher
-     * @param ShardManager $shardManager
-     * @param DoctrineHelper $helper
-     */
     public function __construct(
         $productPriceClass,
         EventDispatcherInterface $dispatcher,
@@ -58,10 +52,6 @@ class ProductUnitPrecisionListener implements FeatureToggleableInterface
         $this->doctrineHelper = $helper;
     }
 
-    /**
-     * @param ProductUnitPrecision $precision
-     * @param LifecycleEventArgs $event
-     */
     public function postRemove(ProductUnitPrecision $precision, LifecycleEventArgs $event)
     {
         if (!$this->isFeaturesEnabled()) {

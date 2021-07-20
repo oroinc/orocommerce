@@ -60,9 +60,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $this->pressNextButton($button);
     }
 
-    /**
-     * @param string $button
-     */
     private function pressNextButton(string $button): void
     {
         $page = $this->getSession()->getPage();
@@ -175,7 +172,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $this->pressNextButton($button);
     }
 
-
     /**
      * @When /^on the "(?P<step>[\w\s]+)" checkout step I press (?P<button>[\w\s]+)$/
      *
@@ -222,9 +218,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         }
     }
 
-    /**
-     * @param string $oldTitle
-     */
     protected function assertNotTitle(string $oldTitle): void
     {
         $spinExecutionResult = $this->spin(function () use ($oldTitle) {

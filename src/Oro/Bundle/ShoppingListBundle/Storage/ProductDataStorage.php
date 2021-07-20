@@ -14,17 +14,11 @@ class ProductDataStorage
     /** @var Storage */
     protected $storage;
 
-    /**
-     * @param Storage $storage
-     */
     public function __construct(Storage $storage)
     {
         $this->storage = $storage;
     }
 
-    /**
-     * @param ShoppingList $shoppingList
-     */
     public function saveToStorage(ShoppingList $shoppingList)
     {
         $data = [

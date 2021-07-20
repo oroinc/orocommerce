@@ -17,18 +17,12 @@ class OroPaymentBundle implements Migration
         $this->addConstraintsToPaymentTransactionTable($schema, $queries);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function updatePaymentTransactionTable(Schema $schema)
     {
         $table = $schema->getTable('oro_payment_transaction');
         $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addConstraintsToPaymentTransactionTable(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('oro_payment_transaction');

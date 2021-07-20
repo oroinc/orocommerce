@@ -36,8 +36,6 @@ class PriceListToCustomerRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider restrictByPriceListDataProvider
-     * @param $priceList
-     * @param array $expectedCustomers
      */
     public function testRestrictByPriceList($priceList, array $expectedCustomers)
     {
@@ -309,8 +307,6 @@ class PriceListToCustomerRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider dataProviderRelationsByCustomer
-     * @param $customers
-     * @param $expectsResult
      */
     public function testGetRelationsByHolders($customers, $expectsResult)
     {
@@ -378,9 +374,6 @@ class PriceListToCustomerRepositoryTest extends WebTestCase
         $this->assertEquals($expected, $this->getRepository()->hasAssignedPriceLists($website, $customer));
     }
 
-    /**
-     * @return array
-     */
     public function assignedPriceListsDataProvider(): array
     {
         return [

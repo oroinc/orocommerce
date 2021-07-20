@@ -152,7 +152,6 @@ class UserIdToEmailTransformerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $transformer->reverseTransform($input));
     }
 
-
     public function testReverseTransformException()
     {
         $this->expectException(\Symfony\Component\Form\Exception\TransformationFailedException::class);

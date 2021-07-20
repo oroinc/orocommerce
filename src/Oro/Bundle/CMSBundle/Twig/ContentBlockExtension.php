@@ -15,9 +15,6 @@ class ContentBlockExtension extends AbstractExtension
     /** @var ContentBlockRenderer */
     private $contentBlockRenderer;
 
-    /**
-     * @param ContentBlockRenderer $contentBlockRenderer
-     */
     public function __construct(ContentBlockRenderer $contentBlockRenderer)
     {
         $this->contentBlockRenderer = $contentBlockRenderer;

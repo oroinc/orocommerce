@@ -18,9 +18,6 @@ class PaymentTermSettingsType extends AbstractType
     const BLOCK_PREFIX = 'oro_payment_term_settings';
 
     /**
-     * @param FormBuilderInterface $builder
-     * @param array                $options
-     *
      * @throws ConstraintDefinitionException
      * @throws InvalidOptionsException
      * @throws MissingOptionsException
@@ -49,8 +46,6 @@ class PaymentTermSettingsType extends AbstractType
     }
 
     /**
-     * @param OptionsResolver $resolver
-     *
      * @throws AccessException
      */
     public function configureOptions(OptionsResolver $resolver)

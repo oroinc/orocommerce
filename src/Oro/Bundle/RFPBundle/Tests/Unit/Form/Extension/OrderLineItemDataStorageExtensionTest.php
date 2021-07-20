@@ -210,7 +210,6 @@ class OrderLineItemDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(false, $this->getOffers());
     }
 
-
     public function testBuildFormWrongType()
     {
         $request = $this->createMock('Symfony\Component\HttpFoundation\Request');
@@ -223,7 +222,6 @@ class OrderLineItemDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals(false, $this->getOffers());
     }
-
 
     public function testBuildForm()
     {
@@ -303,9 +301,6 @@ class OrderLineItemDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
         return ReflectionUtil::getPropertyValue($this->extension, 'offers');
     }
 
-    /**
-     * @param array $offers
-     */
     protected function setOffers(array $offers = [])
     {
         ReflectionUtil::setPropertyValue($this->extension, 'offers', $offers);

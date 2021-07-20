@@ -47,11 +47,6 @@ class PayPalSettingsType extends AbstractType
      */
     private $paymentActionsDataProvider;
 
-    /**
-     * @param TranslatorInterface                  $translator
-     * @param CreditCardTypesDataProviderInterface $creditCardTypesDataProvider
-     * @param PaymentActionsDataProviderInterface  $paymentActionsDataProvider
-     */
     public function __construct(
         TranslatorInterface $translator,
         CreditCardTypesDataProviderInterface $creditCardTypesDataProvider,
@@ -63,9 +58,6 @@ class PayPalSettingsType extends AbstractType
     }
 
     /**
-     * @param FormBuilderInterface $builder
-     * @param array                $options
-     *
      * @throws ConstraintDefinitionException
      * @throws InvalidOptionsException
      * @throws MissingOptionsException
@@ -185,9 +177,6 @@ class PayPalSettingsType extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function preSetData(FormEvent $event)
     {
         /** @var PayPalSettings|null $data */
@@ -198,8 +187,6 @@ class PayPalSettingsType extends AbstractType
     }
 
     /**
-     * @param OptionsResolver $resolver
-     *
      * @throws AccessException
      */
     public function configureOptions(OptionsResolver $resolver)

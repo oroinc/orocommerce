@@ -36,10 +36,6 @@ class ConsentType extends AbstractType
      */
     private $factory;
 
-    /**
-     * @param WebCatalogProvider $webCatalogProvider
-     * @param FormFactory $factory
-     */
     public function __construct(WebCatalogProvider $webCatalogProvider, FormFactory $factory)
     {
         $this->webCatalogProvider = $webCatalogProvider;
@@ -103,9 +99,6 @@ class ConsentType extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function preSetData(FormEvent $event)
     {
         $consent = $event->getData();
@@ -119,10 +112,6 @@ class ConsentType extends AbstractType
         $event->setData($consent);
     }
 
-    /**
-     * @param Consent $consent
-     * @param FormInterface $form
-     */
     protected function preSetWebCatalogAndContentNode(Consent $consent, FormInterface $form)
     {
         $contentNode = $consent->getContentNode();

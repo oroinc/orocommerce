@@ -48,13 +48,6 @@ class InvalidateTotalsByInventoryStatusPerWebsiteProcessor implements
      */
     private $logger;
 
-    /**
-     * @param ConfigManager $configManager
-     * @param WebsiteProviderInterface $websiteProvider
-     * @param ManagerRegistry $registry
-     * @param MessageFactory $messageFactory
-     * @param LoggerInterface $logger
-     */
     public function __construct(
         ConfigManager $configManager,
         WebsiteProviderInterface $websiteProvider,

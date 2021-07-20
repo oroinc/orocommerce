@@ -245,21 +245,11 @@ class ConsentConfigManagerTest extends \PHPUnit\Framework\TestCase
         $this->consentConfigManager->updateConsentsConfigForGlobalScope($consent);
     }
 
-    /**
-     * @param int $id
-     *
-     * @return Consent
-     */
     private function createConsent(int $id): Consent
     {
         return $this->getEntity(Consent::class, ['id' => $id]);
     }
 
-    /**
-     * @param int $id
-     *
-     * @return Website
-     */
     private function createWebsite(int $id): Website
     {
         return $this->getEntity(Website::class, ['id' => $id]);

@@ -24,9 +24,6 @@ class FrontendProductGridContext extends OroFeatureContext implements OroPageObj
      *            | Quanity | 3    |
      *
      * @When /^(?:I |)fill line item with "(?P<content>\S+)" in frontend product grid:$/
-     *
-     * @param string $content
-     * @param TableNode $values
      */
     public function fillLineItemFormForProductRow(string $content, TableNode $values)
     {

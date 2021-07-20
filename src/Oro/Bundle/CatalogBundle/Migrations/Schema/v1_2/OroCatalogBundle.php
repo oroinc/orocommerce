@@ -26,10 +26,6 @@ class OroCatalogBundle implements Migration, AttachmentExtensionAwareInterface
         $this->addCategoryImageAssociation($schema, 'smallImage');
     }
 
-    /**
-     * @param Schema $schema
-     * @param $fieldName
-     */
     public function addCategoryImageAssociation(Schema $schema, $fieldName)
     {
         $this->attachmentExtension->addImageRelation(

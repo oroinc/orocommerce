@@ -48,7 +48,6 @@ class QuantityTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedAfter, $form->getData());
     }
 
-
     /**
      * @return array
      */

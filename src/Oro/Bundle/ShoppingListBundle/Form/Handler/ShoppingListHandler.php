@@ -36,12 +36,6 @@ class ShoppingListHandler
      */
     protected $doctrine;
 
-    /**
-     * @param FormInterface              $form
-     * @param Request                    $request
-     * @param CurrentShoppingListManager $currentShoppingListManager
-     * @param ManagerRegistry            $doctrine
-     */
     public function __construct(
         FormInterface $form,
         Request $request,

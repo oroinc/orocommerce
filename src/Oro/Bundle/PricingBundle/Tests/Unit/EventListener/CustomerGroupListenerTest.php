@@ -147,13 +147,9 @@ class CustomerGroupListenerTest extends AbstractPriceListCollectionAwareListener
             ->method('getForm')
             ->willReturn($form);
 
-
         $this->listener->onPostSetData($formEvent);
     }
 
-    /**
-     * @return array
-     */
     public function wrongEntityDataProvider(): array
     {
         return [
@@ -208,7 +204,6 @@ class CustomerGroupListenerTest extends AbstractPriceListCollectionAwareListener
         /** @var AfterFormProcessEvent|\PHPUnit\Framework\MockObject\MockObject $formEvent */
         $formEvent = $this->createMock(AfterFormProcessEvent::class);
         $this->assertPostSubmitFormCalls($targetEntity, $website, $fallbackData, $submitted, $formEvent);
-
 
         /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $priceListByWebsiteForm */
         $entityManager = $this->createMock(EntityManager::class);

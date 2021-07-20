@@ -20,19 +20,12 @@ abstract class AbstractFormEventListener
     /** @var FormFactoryInterface */
     protected $formFactory;
 
-    /**
-     * @param Environment $twig
-     * @param FormFactoryInterface $formFactory
-     */
     public function __construct(Environment $twig, FormFactoryInterface $formFactory)
     {
         $this->twig = $twig;
         $this->formFactory = $formFactory;
     }
 
-    /**
-     * @param OrderEvent $event
-     */
     abstract public function onOrderEvent(OrderEvent $event);
 
     /**

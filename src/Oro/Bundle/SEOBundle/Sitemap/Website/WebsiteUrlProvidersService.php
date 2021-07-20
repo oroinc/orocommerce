@@ -23,11 +23,6 @@ class WebsiteUrlProvidersService implements WebsiteUrlProvidersServiceInterface
      */
     private $accessDeniedProviderRegistry;
 
-    /**
-     * @param ConfigManager                     $configManager
-     * @param UrlItemsProviderRegistryInterface $urlItemsProviderRegistry
-     * @param UrlItemsProviderRegistryInterface $accessDeniedProviderRegistry
-     */
     public function __construct(
         ConfigManager $configManager,
         UrlItemsProviderRegistryInterface $urlItemsProviderRegistry,

@@ -17,9 +17,6 @@ class ComputeLocalizationDefaultField implements ProcessorInterface
     /** @var LocalizationManager */
     private $localizationManager;
 
-    /**
-     * @param LocalizationManager $localizationManager
-     */
     public function __construct(LocalizationManager $localizationManager)
     {
         $this->localizationManager = $localizationManager;

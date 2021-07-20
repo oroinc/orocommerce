@@ -23,11 +23,6 @@ class OrderEvent extends Event implements EntityDataAwareEventInterface
     /** @var array|null */
     protected $submittedData;
 
-    /**
-     * @param FormInterface $form
-     * @param Order $order
-     * @param array|null $submittedData
-     */
     public function __construct(FormInterface $form, Order $order, array $submittedData = null)
     {
         $this->form = $form;

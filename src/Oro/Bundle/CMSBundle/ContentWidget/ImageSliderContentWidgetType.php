@@ -33,9 +33,6 @@ class ImageSliderContentWidgetType implements ContentWidgetTypeInterface
     /** @var array */
     private $widgetData = [];
 
-    /**
-     * @param ManagerRegistry $registry
-     */
     public function __construct(ManagerRegistry $registry)
     {
         $this->registry = $registry;
@@ -228,10 +225,6 @@ class ImageSliderContentWidgetType implements ContentWidgetTypeInterface
         ];
     }
 
-    /**
-     * @param array $settings
-     * @return Collection
-     */
     private function getPageComponentOptions(array $settings): Collection
     {
         // replace default settings by settings which configured in the UI for the content widget
@@ -251,10 +244,6 @@ class ImageSliderContentWidgetType implements ContentWidgetTypeInterface
         );
     }
 
-    /**
-     * @param ContentWidget $contentWidget
-     * @return Collection
-     */
     private function getImageSlides(ContentWidget $contentWidget): Collection
     {
         $repository = $this->registry->getManagerForClass(ImageSlide::class)

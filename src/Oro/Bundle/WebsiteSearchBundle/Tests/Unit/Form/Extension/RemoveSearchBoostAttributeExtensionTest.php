@@ -40,14 +40,6 @@ class RemoveSearchBoostAttributeExtensionTest extends \PHPUnit\Framework\TestCas
     }
 
     /**
-     * @param InvokedCount                $expected
-     * @param object                      $attributeConfigModel
-     * @param bool                        $formHasAttribute
-     * @param AttributeTypeInterface|null $attributeType
-     * @param string                      $searchEngine
-     * @param array                       $classConfigValues
-     * @param array                       $attributeConfigValues
-     *
      * @dataProvider buildFormDataProvider
      */
     public function testBuildForm(
@@ -184,11 +176,6 @@ class RemoveSearchBoostAttributeExtensionTest extends \PHPUnit\Framework\TestCas
         ];
     }
 
-    /**
-     * @param string $className
-     *
-     * @return FieldConfigModel
-     */
     private function getFieldConfigModel(string $className): FieldConfigModel
     {
         $entityModel = new EntityConfigModel();

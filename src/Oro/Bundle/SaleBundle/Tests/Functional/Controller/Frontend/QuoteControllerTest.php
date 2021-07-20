@@ -42,9 +42,6 @@ class QuoteControllerTest extends WebTestCase
     }
 
     /**
-     * @param array $inputData
-     * @param array $expectedData
-     *
      * @dataProvider indexProvider
      */
     public function testIndex(array $inputData, array $expectedData): void
@@ -88,8 +85,6 @@ class QuoteControllerTest extends WebTestCase
     }
 
     /**
-     * @return array
-     *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function indexProvider(): array
@@ -247,9 +242,6 @@ class QuoteControllerTest extends WebTestCase
     }
 
     /**
-     * @param array $inputData
-     * @param array $expectedData
-     *
      * @dataProvider viewProvider
      */
     public function testView(array $inputData, array $expectedData): void
@@ -299,8 +291,6 @@ class QuoteControllerTest extends WebTestCase
     }
 
     /**
-     * @return array
-     *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function viewProvider(): array
@@ -558,9 +548,6 @@ class QuoteControllerTest extends WebTestCase
         static::assertHtmlResponseStatusCodeEquals($response, $status);
     }
 
-    /**
-     * @return array
-     */
     public function ACLProvider(): array
     {
         return [
@@ -619,11 +606,6 @@ class QuoteControllerTest extends WebTestCase
 
     /**
      * @dataProvider guestAccessProvider
-     *
-     * @param array $configs
-     * @param string $qid
-     * @param int $expected
-     * @param bool $expectedButton
      */
     public function testGuestAccess(array $configs, string $qid, int $expected, bool $expectedButton)
     {
@@ -815,13 +797,6 @@ class QuoteControllerTest extends WebTestCase
         );
     }
 
-    /**
-     * @param $operationName
-     * @param $entityId
-     * @param $entityClass
-     *
-     * @return array
-     */
     protected function getOperationExecuteParams($operationName, $entityId, $entityClass): array
     {
         $actionContext = [

@@ -17,9 +17,6 @@ class OroTaxBundleStage2 implements Migration, OrderedMigrationInterface
         $this->restoreForeigneys($schema);
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function restoreForeigneys(Schema $schema)
     {
         $table = $schema->getTable('oro_tax_cus_grp_tc_cus_grp');

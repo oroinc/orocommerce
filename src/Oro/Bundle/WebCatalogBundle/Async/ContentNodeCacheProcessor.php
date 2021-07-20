@@ -33,11 +33,6 @@ class ContentNodeCacheProcessor implements MessageProcessorInterface, TopicSubsc
     /** @var ManagerRegistry */
     private $doctrine;
 
-    /**
-     * @param JobRunner                $jobRunner
-     * @param MessageProducerInterface $producer
-     * @param ManagerRegistry          $doctrine
-     */
     public function __construct(
         JobRunner $jobRunner,
         MessageProducerInterface $producer,
@@ -72,10 +67,6 @@ class ContentNodeCacheProcessor implements MessageProcessorInterface, TopicSubsc
         return $result ? self::ACK : self::REJECT;
     }
 
-    /**
-     * @param JobRunner $jobRunner
-     * @param ContentNode $contentNode
-     */
     private function scheduleCacheRecalculationForContentNodeTree(JobRunner $jobRunner, ContentNode $contentNode)
     {
         $scopes = $this->getUsedScopes($contentNode->getWebCatalog());
@@ -126,11 +117,6 @@ class ContentNodeCacheProcessor implements MessageProcessorInterface, TopicSubsc
         return $repository->getUsedScopes($webCatalog);
     }
 
-    /**
-     * @param MessageInterface $message
-     *
-     * @return array
-     */
     private function getMessageData(MessageInterface $message): array
     {
         $body = JSON::decode($message->getBody());
@@ -142,9 +128,6 @@ class ContentNodeCacheProcessor implements MessageProcessorInterface, TopicSubsc
         }
     }
 
-    /**
-     * @return OptionsResolver
-     */
     private function getOptionsResolver(): OptionsResolver
     {
         $resolver = new OptionsResolver();

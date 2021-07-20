@@ -17,9 +17,6 @@ class ExpressionLanguageConverter
      */
     protected $fieldsProvider;
 
-    /**
-     * @param FieldsProviderInterface $fieldsProvider
-     */
     public function __construct(FieldsProviderInterface $fieldsProvider)
     {
         $this->fieldsProvider = $fieldsProvider;

@@ -29,12 +29,6 @@ class QuoteRequestHandler
     /** @var string */
     protected $customerUserClass;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param RequestStack $requestStack
-     * @param $customerClass
-     * @param $customerUserClass
-     */
     public function __construct(
         ManagerRegistry $registry,
         RequestStack $requestStack,

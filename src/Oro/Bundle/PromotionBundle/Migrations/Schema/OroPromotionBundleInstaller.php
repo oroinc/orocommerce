@@ -93,8 +93,6 @@ class OroPromotionBundleInstaller implements
 
     /**
      * Create oro_promotion table
-     *
-     * @param Schema $schema
      */
     protected function createOroPromotionTable(Schema $schema)
     {
@@ -114,8 +112,6 @@ class OroPromotionBundleInstaller implements
 
     /**
      * Create oro_promotion_coupon table
-     *
-     * @param Schema $schema
      */
     protected function createOroPromotionCouponTable(Schema $schema)
     {
@@ -142,8 +138,6 @@ class OroPromotionBundleInstaller implements
 
     /**
      * Create oro_promotion_description table
-     *
-     * @param Schema $schema
      */
     protected function createOroPromotionDescriptionTable(Schema $schema)
     {
@@ -156,8 +150,6 @@ class OroPromotionBundleInstaller implements
 
     /**
      * Create oro_promotion_discount_config table
-     *
-     * @param Schema $schema
      */
     protected function createOroPromotionDiscountConfigTable(Schema $schema)
     {
@@ -171,8 +163,6 @@ class OroPromotionBundleInstaller implements
 
     /**
      * Create oro_promotion_label table
-     *
-     * @param Schema $schema
      */
     protected function createOroPromotionLabelTable(Schema $schema)
     {
@@ -185,8 +175,6 @@ class OroPromotionBundleInstaller implements
 
     /**
      * Create oro_promotion_schedule table
-     *
-     * @param Schema $schema
      */
     protected function createOroPromotionScheduleTable(Schema $schema)
     {
@@ -200,8 +188,6 @@ class OroPromotionBundleInstaller implements
 
     /**
      * Create oro_promotion_scope table
-     *
-     * @param Schema $schema
      */
     protected function createOroPromotionScopeTable(Schema $schema)
     {
@@ -213,8 +199,6 @@ class OroPromotionBundleInstaller implements
 
     /**
      * Create oro_promotion_applied_discount table
-     *
-     * @param Schema $schema
      */
     protected function createOroPromotionAppliedDiscountTable(Schema $schema)
     {
@@ -235,8 +219,6 @@ class OroPromotionBundleInstaller implements
 
     /**
      * Create oro_promotion_coupon_usage table
-     *
-     * @param Schema $schema
      */
     protected function createOroPromotionCouponUsageTable(Schema $schema)
     {
@@ -250,8 +232,6 @@ class OroPromotionBundleInstaller implements
 
     /**
      * Create oro_promotion_applied_coupon table
-     *
-     * @param Schema $schema
      */
     protected function createOroPromotionAppliedCouponTable(Schema $schema)
     {
@@ -268,8 +248,6 @@ class OroPromotionBundleInstaller implements
 
     /**
      * Create oro_promotion_applied table
-     *
-     * @param Schema $schema
      */
     protected function createOroPromotionAppliedTable(Schema $schema)
     {
@@ -288,8 +266,6 @@ class OroPromotionBundleInstaller implements
 
     /**
      * Add oro_promotion foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPromotionForeignKeys(Schema $schema)
     {
@@ -328,8 +304,6 @@ class OroPromotionBundleInstaller implements
 
     /**
      * Add oro_promotion_coupon foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPromotionCouponForeignKeys(Schema $schema)
     {
@@ -356,8 +330,6 @@ class OroPromotionBundleInstaller implements
 
     /**
      * Add oro_promotion_description foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPromotionDescriptionForeignKeys(Schema $schema)
     {
@@ -378,8 +350,6 @@ class OroPromotionBundleInstaller implements
 
     /**
      * Add oro_promotion_label foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPromotionLabelForeignKeys(Schema $schema)
     {
@@ -400,8 +370,6 @@ class OroPromotionBundleInstaller implements
 
     /**
      * Add oro_promotion_schedule foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPromotionScheduleForeignKeys(Schema $schema)
     {
@@ -416,8 +384,6 @@ class OroPromotionBundleInstaller implements
 
     /**
      * Add oro_promotion_scope foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPromotionScopeForeignKeys(Schema $schema)
     {
@@ -438,8 +404,6 @@ class OroPromotionBundleInstaller implements
 
     /**
      * Add oro_promotion_applied_discount foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPromotionAppliedDiscountForeignKeys(Schema $schema)
     {
@@ -460,8 +424,6 @@ class OroPromotionBundleInstaller implements
 
     /**
      * Add oro_promotion_coupon_usage foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPromotionCouponUsageForeignKeys(Schema $schema)
     {
@@ -488,8 +450,6 @@ class OroPromotionBundleInstaller implements
 
     /**
      * Add oro_promotion_applied_coupon foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPromotionAppliedCouponForeignKeys(Schema $schema)
     {
@@ -502,17 +462,11 @@ class OroPromotionBundleInstaller implements
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addActivityAssociations(Schema $schema)
     {
         $this->activityExtension->addActivityAssociation($schema, 'oro_note', 'oro_promotion');
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addAppliedCouponsToOrder(Schema $schema)
     {
         $this->extendExtension->addManyToOneRelation(
@@ -555,9 +509,6 @@ class OroPromotionBundleInstaller implements
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addAppliedCouponsToCheckout(Schema $schema)
     {
         $this->extendExtension->addManyToOneRelation(
@@ -600,9 +551,6 @@ class OroPromotionBundleInstaller implements
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addAppliedPromotionsToOrder(Schema $schema)
     {
         $this->extendExtension->addManyToOneRelation(
@@ -646,9 +594,6 @@ class OroPromotionBundleInstaller implements
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addDisablePromotionsToOrder(Schema $schema)
     {
         $table = $schema->getTable('oro_order');

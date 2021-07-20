@@ -143,8 +143,6 @@ class OroProductBundleInstaller implements
 
     /**
      * Create oro_product table
-     *
-     * @param Schema $schema
      */
     protected function createOroProductTable(Schema $schema)
     {
@@ -185,8 +183,6 @@ class OroProductBundleInstaller implements
 
     /**
      * Create oro_product_unit table
-     *
-     * @param Schema $schema
      */
     protected function createOroProductUnitTable(Schema $schema)
     {
@@ -198,8 +194,6 @@ class OroProductBundleInstaller implements
 
     /**
      * Create oro_product_unit_precision table
-     *
-     * @param Schema $schema
      */
     protected function createOroProductUnitPrecisionTable(Schema $schema)
     {
@@ -214,9 +208,6 @@ class OroProductBundleInstaller implements
         $table->addUniqueIndex(['product_id', 'unit_code'], 'uidx_oro_product_unit_precision');
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function createOroProductNameTable(Schema $schema)
     {
         $table = $schema->createTable('oro_product_prod_name');
@@ -230,9 +221,6 @@ class OroProductBundleInstaller implements
         $table->addIndex(['string'], 'idx_product_prod_name_string', []);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function createOroProductDescriptionTable(Schema $schema)
     {
         $table = $schema->createTable('oro_product_prod_descr');
@@ -249,8 +237,6 @@ class OroProductBundleInstaller implements
 
     /**
      * Create oro_product_slug table
-     *
-     * @param Schema $schema
      */
     protected function createOroProductSlugTable(Schema $schema)
     {
@@ -264,8 +250,6 @@ class OroProductBundleInstaller implements
 
     /**
      * Create oro_product_slug_prototype table
-     *
-     * @param Schema $schema
      */
     protected function createOroProductSlugPrototypeTable(Schema $schema)
     {
@@ -279,8 +263,6 @@ class OroProductBundleInstaller implements
 
     /**
      * Add oro_product foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroProductForeignKeys(Schema $schema)
     {
@@ -307,8 +289,6 @@ class OroProductBundleInstaller implements
 
     /**
      * Add oro_product_unit_precision foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroProductUnitPrecisionForeignKeys(Schema $schema)
     {
@@ -327,9 +307,6 @@ class OroProductBundleInstaller implements
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addOroProductNameForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('oro_product_prod_name');
@@ -347,9 +324,6 @@ class OroProductBundleInstaller implements
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addOroProductDescriptionForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('oro_product_prod_descr');
@@ -367,9 +341,6 @@ class OroProductBundleInstaller implements
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function updateProductTable(Schema $schema)
     {
         $this->extendExtension->addEnumField(
@@ -387,17 +358,11 @@ class OroProductBundleInstaller implements
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addNoteAssociations(Schema $schema)
     {
         $this->activityExtension->addActivityAssociation($schema, 'oro_note', self::PRODUCT_TABLE_NAME);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addAttachmentAssociations(Schema $schema)
     {
         $this->attachmentExtension->addAttachmentAssociation(
@@ -424,9 +389,6 @@ class OroProductBundleInstaller implements
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function createOroProductVariantLinkTable(Schema $schema)
     {
         $table = $schema->createTable(self::PRODUCT_VARIANT_LINK_TABLE_NAME);
@@ -437,9 +399,6 @@ class OroProductBundleInstaller implements
         $table->setPrimaryKey(['id']);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addOroProductVariantLinkForeignKeys(Schema $schema)
     {
         $table = $schema->getTable(self::PRODUCT_VARIANT_LINK_TABLE_NAME);
@@ -457,9 +416,6 @@ class OroProductBundleInstaller implements
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function createOroProductShortDescriptionTable(Schema $schema)
     {
         $table = $schema->createTable('oro_product_prod_s_descr');
@@ -472,9 +428,6 @@ class OroProductBundleInstaller implements
         $table->addIndex(['fallback'], 'idx_product_prod_s_descr_fallback', []);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addOroProductShortDescriptionForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('oro_product_prod_s_descr');
@@ -492,9 +445,6 @@ class OroProductBundleInstaller implements
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function createOroProductImageTable(Schema $schema)
     {
         $table = $schema->createTable(self::PRODUCT_IMAGE_TABLE_NAME);
@@ -504,9 +454,6 @@ class OroProductBundleInstaller implements
         $table->setPrimaryKey(['id']);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function createOroProductImageTypeTable(Schema $schema)
     {
         $table = $schema->createTable(self::PRODUCT_IMAGE_TYPE_TABLE_NAME);
@@ -517,9 +464,6 @@ class OroProductBundleInstaller implements
         $table->setPrimaryKey(['id']);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addOroProductImageForeignKeys(Schema $schema)
     {
         $table = $schema->getTable(self::PRODUCT_IMAGE_TABLE_NAME);
@@ -531,9 +475,6 @@ class OroProductBundleInstaller implements
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addOroProductImageTypeForeignKeys(Schema $schema)
     {
         $table = $schema->getTable(self::PRODUCT_IMAGE_TYPE_TABLE_NAME);
@@ -545,9 +486,6 @@ class OroProductBundleInstaller implements
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     public function addProductContentVariants(Schema $schema)
     {
         if ($schema->hasTable('oro_web_catalog_variant')) {
@@ -582,9 +520,6 @@ class OroProductBundleInstaller implements
         }
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function addProductCollectionContentVariants(Schema $schema)
     {
         if ($schema->hasTable('oro_web_catalog_variant')) {
@@ -618,9 +553,6 @@ class OroProductBundleInstaller implements
         }
     }
 
-    /**
-     * @param Schema $schema
-     */
     public function addAttributeFamilyField(Schema $schema)
     {
         $table = $schema->getTable('oro_product');
@@ -635,9 +567,6 @@ class OroProductBundleInstaller implements
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     public function addPageTemplateField(Schema $schema)
     {
         $this->addFallbackRelation(
@@ -654,9 +583,6 @@ class OroProductBundleInstaller implements
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function createRelatedProductsTable(Schema $schema)
     {
         $table = $schema->createTable(self::RELATED_PRODUCTS_TABLE_NAME);
@@ -709,8 +635,6 @@ class OroProductBundleInstaller implements
 
     /**
      * Create oro_brand table
-     *
-     * @param Schema $schema
      */
     protected function createOroBrandTable(Schema $schema)
     {
@@ -730,8 +654,6 @@ class OroProductBundleInstaller implements
 
     /**
      * Create oro_brand_description table
-     *
-     * @param Schema $schema
      */
     protected function createOroBrandDescriptionTable(Schema $schema)
     {
@@ -744,8 +666,6 @@ class OroProductBundleInstaller implements
 
     /**
      * Add oro_brand foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addBrandForeignKeys(Schema $schema)
     {
@@ -766,8 +686,6 @@ class OroProductBundleInstaller implements
 
     /**
      * Create oro_brand_name table
-     *
-     * @param Schema $schema
      */
     protected function createOroBrandNameTable(Schema $schema)
     {
@@ -780,8 +698,6 @@ class OroProductBundleInstaller implements
 
     /**
      * Create oro_brand_short_desc table
-     *
-     * @param Schema $schema
      */
     protected function createOroBrandShortDescTable(Schema $schema)
     {
@@ -794,8 +710,6 @@ class OroProductBundleInstaller implements
 
     /**
      * Create oro_brand_slug table
-     *
-     * @param Schema $schema
      */
     protected function createOroBrandSlugTable(Schema $schema)
     {
@@ -809,8 +723,6 @@ class OroProductBundleInstaller implements
 
     /**
      * Create oro_brand_slug_prototype table
-     *
-     * @param Schema $schema
      */
     protected function createOroBrandSlugPrototypeTable(Schema $schema)
     {
@@ -824,8 +736,6 @@ class OroProductBundleInstaller implements
 
     /**
      * Add oro_brand_description foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroBrandDescriptionForeignKeys(Schema $schema)
     {
@@ -846,8 +756,6 @@ class OroProductBundleInstaller implements
 
     /**
      * Add oro_brand_name foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroBrandNameForeignKeys(Schema $schema)
     {
@@ -868,8 +776,6 @@ class OroProductBundleInstaller implements
 
     /**
      * Add oro_brand_short_desc foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroBrandShortDescForeignKeys(Schema $schema)
     {
@@ -888,9 +794,6 @@ class OroProductBundleInstaller implements
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     public function addProductToBrand(Schema $schema)
     {
         $table = $schema->getTable(self::PRODUCT_TABLE_NAME);

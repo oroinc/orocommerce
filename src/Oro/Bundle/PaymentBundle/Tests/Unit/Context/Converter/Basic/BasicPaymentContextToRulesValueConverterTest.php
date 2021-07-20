@@ -91,7 +91,6 @@ class BasicPaymentContextToRulesValueConverterTest extends \PHPUnit\Framework\Te
             PaymentContext::FIELD_TOTAL => $totalAmount
         ]);
 
-
         $converter = new BasicPaymentContextToRulesValueConverter($factory);
 
         $this->assertEquals([

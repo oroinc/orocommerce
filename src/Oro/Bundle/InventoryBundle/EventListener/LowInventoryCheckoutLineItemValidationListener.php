@@ -17,17 +17,11 @@ class LowInventoryCheckoutLineItemValidationListener
      */
     protected $validator;
 
-    /**
-     * @param LowInventoryCheckoutLineItemValidator $validator
-     */
     public function __construct(LowInventoryCheckoutLineItemValidator $validator)
     {
         $this->validator = $validator;
     }
 
-    /**
-     * @param LineItemValidateEvent $event
-     */
     public function onLineItemValidate(LineItemValidateEvent $event)
     {
         $lineItems = $event->getLineItems();

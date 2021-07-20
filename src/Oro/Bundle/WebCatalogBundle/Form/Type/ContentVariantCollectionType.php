@@ -21,9 +21,6 @@ class ContentVariantCollectionType extends AbstractType
      */
     private $variantTypeRegistry;
 
-    /**
-     * @param ContentVariantTypeRegistry $variantTypeRegistry
-     */
     public function __construct(ContentVariantTypeRegistry $variantTypeRegistry)
     {
         $this->variantTypeRegistry = $variantTypeRegistry;
@@ -88,10 +85,6 @@ class ContentVariantCollectionType extends AbstractType
         return static::NAME;
     }
 
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     */
     protected function initializeContentVariantPrototypes(FormBuilderInterface $builder, array $options)
     {
         $prototypes = [];

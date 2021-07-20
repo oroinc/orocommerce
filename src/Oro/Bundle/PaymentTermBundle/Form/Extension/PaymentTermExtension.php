@@ -23,9 +23,6 @@ class PaymentTermExtension extends AbstractTypeExtension
     /** @var bool[] */
     protected $replacedFields = [];
 
-    /**
-     * @param PaymentTermProviderInterface $paymentTermProvider
-     */
     public function __construct(PaymentTermProviderInterface $paymentTermProvider)
     {
         $this->paymentTermProvider = $paymentTermProvider;

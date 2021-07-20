@@ -14,9 +14,6 @@ use Oro\Bundle\UserBundle\Entity\Role;
  */
 class SetPriceListRecalculatePermission extends AbstractUpdatePermissions
 {
-    /**
-     * @param ObjectManager $manager
-     */
     public function load(ObjectManager $manager)
     {
         if (!$this->container->hasParameter('installed') || !$this->container->getParameter('installed')) {

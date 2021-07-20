@@ -33,12 +33,6 @@ class ReindexProductsByAttributesProcessor implements MessageProcessorInterface,
     /** @var LoggerInterface */
     private $logger;
 
-    /**
-     * @param JobRunner                $jobRunner
-     * @param ManagerRegistry          $registry
-     * @param EventDispatcherInterface $dispatcher
-     * @param LoggerInterface          $logger
-     */
     public function __construct(
         JobRunner $jobRunner,
         ManagerRegistry $registry,

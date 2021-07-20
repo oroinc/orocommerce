@@ -11,9 +11,6 @@ use Oro\Bundle\UIBundle\Fallback\AbstractFallbackFieldsFormView;
  */
 class CategoryInventoryDecrementFormViewListener extends AbstractFallbackFieldsFormView
 {
-    /**
-     * @param BeforeListRenderEvent $event
-     */
     public function onCategoryEdit(BeforeListRenderEvent $event)
     {
         $category = $this->getEntityFromRequest(Category::class);

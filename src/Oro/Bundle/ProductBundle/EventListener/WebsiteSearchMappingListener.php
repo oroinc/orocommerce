@@ -36,13 +36,6 @@ class WebsiteSearchMappingListener
     /** @var SearchableInformationProvider */
     private $searchableProvider;
 
-    /**
-     * @param AttributeManager $attributeManager
-     * @param AttributeTypeRegistry $attributeTypeRegistry
-     * @param AttributeConfigurationProviderInterface $configurationProvider
-     * @param ProductIndexFieldsProvider $fieldsProvider
-     * @param SearchableInformationProvider $searchableProvider
-     */
     public function __construct(
         AttributeManager $attributeManager,
         AttributeTypeRegistry $attributeTypeRegistry,
@@ -57,9 +50,6 @@ class WebsiteSearchMappingListener
         $this->searchableProvider = $searchableProvider;
     }
 
-    /**
-     * @param SearchMappingCollectEvent $event
-     */
     public function onWebsiteSearchMapping(SearchMappingCollectEvent $event)
     {
         $attributes = $this->attributeManager->getAttributesByClass(Product::class);
@@ -134,14 +124,6 @@ class WebsiteSearchMappingListener
         return $attributeType;
     }
 
-    /**
-     * @param SearchAttributeTypeInterface $attributeType
-     * @param FieldConfigModel             $attribute
-     * @param array                        $fields
-     * @param int|null                     $organizationId
-     *
-     * @return array
-     */
     protected function getFilterableFields(
         SearchAttributeTypeInterface $attributeType,
         FieldConfigModel $attribute,
@@ -168,9 +150,6 @@ class WebsiteSearchMappingListener
 
     /**
      * Merge the config with the existing one.
-     *
-     * @param SearchMappingCollectEvent $event
-     * @param array $fields
      */
     private function setConfiguration(SearchMappingCollectEvent $event, array $fields)
     {

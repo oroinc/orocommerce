@@ -187,7 +187,6 @@ class PriceListToCustomerRepository extends EntityRepository implements PriceLis
             // order required for BufferedIdentityQueryResultIterator on PostgreSql
             ->orderBy('priceListToCustomer.customer');
 
-
         return new BufferedQueryResultIterator($qb);
     }
 
@@ -365,11 +364,6 @@ class PriceListToCustomerRepository extends EntityRepository implements PriceLis
         return $data;
     }
 
-    /**
-     * @param Website $website
-     * @param Customer $customer
-     * @return bool
-     */
     public function hasAssignedPriceLists(Website $website, Customer $customer): bool
     {
         $qb = $this->createQueryBuilder('p');
@@ -384,11 +378,6 @@ class PriceListToCustomerRepository extends EntityRepository implements PriceLis
         return $qb->getQuery()->getOneOrNullResult() !== null;
     }
 
-    /**
-     * @param Website $website
-     * @param Customer $customer
-     * @return PriceListToCustomer|null
-     */
     public function getFirstRelation(Website $website, Customer $customer): ?PriceListToCustomer
     {
         $qb = $this->createQueryBuilder('rel');

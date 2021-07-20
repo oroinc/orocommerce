@@ -19,10 +19,6 @@ class RegardlessDestinationMethodsConfigsRulesByContextProvider implements Metho
      */
     private $repository;
 
-    /**
-     * @param MethodsConfigsRulesFiltrationServiceInterface $filtrationService
-     * @param PaymentMethodsConfigsRuleRepository          $repository
-     */
     public function __construct(
         MethodsConfigsRulesFiltrationServiceInterface $filtrationService,
         PaymentMethodsConfigsRuleRepository $repository

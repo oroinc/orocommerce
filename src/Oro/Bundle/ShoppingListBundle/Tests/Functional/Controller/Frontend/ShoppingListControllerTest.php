@@ -593,10 +593,6 @@ class ShoppingListControllerTest extends WebTestCase
         $this->assertEquals($quantity, $item->getQuantity());
     }
 
-    /**
-     * @param $expected
-     * @param array $data
-     */
     protected function assertLineItemPriceEquals($expected, array $data)
     {
         $expected = (array)$expected;
@@ -613,10 +609,6 @@ class ShoppingListControllerTest extends WebTestCase
         $this->configManager->flush();
     }
 
-    /**
-     * @param string $route
-     * @param int $id
-     */
     private function requestShoppingListPage(string $route, int $id): void
     {
         $this->client->request(

@@ -17,10 +17,6 @@ class PlaceholderProvider
      */
     private $mappingProvider;
 
-    /**
-     * @param PlaceholderInterface $placeholder
-     * @param AbstractSearchMappingProvider $mappingProvider
-     */
     public function __construct(
         PlaceholderInterface $placeholder,
         AbstractSearchMappingProvider $mappingProvider

@@ -33,11 +33,8 @@ class LoadMasterCatalogLocalizedTitles extends AbstractFixture implements Depend
     }
 
     /**
-     * @param ObjectManager $manager
-     *
      * @throws \Doctrine\ORM\NoResultException
      * @throws \Doctrine\ORM\NonUniqueResultException
-     * @return Category
      */
     private function getCategory(ObjectManager $manager): Category
     {

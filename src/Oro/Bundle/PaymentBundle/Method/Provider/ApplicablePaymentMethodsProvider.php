@@ -26,10 +26,6 @@ class ApplicablePaymentMethodsProvider
      */
     private $paymentMethodsConfigsRulesProvider;
 
-    /**
-     * @param PaymentMethodProviderInterface $paymentMethodProvider
-     * @param MethodsConfigsRulesByContextProviderInterface $paymentMethodsConfigsRulesProvider
-     */
     public function __construct(
         PaymentMethodProviderInterface $paymentMethodProvider,
         MethodsConfigsRulesByContextProviderInterface $paymentMethodsConfigsRulesProvider
@@ -53,11 +49,6 @@ class ApplicablePaymentMethodsProvider
         );
     }
 
-    /**
-     * @param PaymentContextInterface $context
-     *
-     * @return array
-     */
     protected function getActualApplicablePaymentMethods(PaymentContextInterface $context): array
     {
         $paymentMethodsConfigsRules = $this->paymentMethodsConfigsRulesProvider

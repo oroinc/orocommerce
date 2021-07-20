@@ -58,10 +58,6 @@ class AppliedDiscountsProvider
         return $amount;
     }
 
-    /**
-     * @param OrderLineItem $lineItem
-     * @return float
-     */
     public function getDiscountsAmountByLineItem(OrderLineItem $lineItem): float
     {
         $amount = 0.0;

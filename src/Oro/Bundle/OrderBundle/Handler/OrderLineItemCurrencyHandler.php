@@ -11,10 +11,6 @@ use Symfony\Component\Form\FormInterface;
  */
 class OrderLineItemCurrencyHandler
 {
-    /**
-     * @param FormInterface $orderLineItemsForm
-     * @param Order $order
-     */
     public function resetLineItemsPrices(FormInterface $orderLineItemsForm, Order $order): void
     {
         /** @var OrderLineItem[] $lineItems */

@@ -20,27 +20,17 @@ class SearchProductDataProvider
      */
     private $translator;
 
-    /**
-     * @param SearchProductHandler $searchProductHandler
-     * @param TranslatorInterface $translator
-     */
     public function __construct(SearchProductHandler $searchProductHandler, TranslatorInterface $translator)
     {
         $this->searchProductHandler = $searchProductHandler;
         $this->translator = $translator;
     }
 
-    /**
-     * @return string
-     */
     public function getSearchString(): string
     {
         return $this->searchProductHandler->getSearchString();
     }
 
-    /**
-     * @return string
-     */
     public function getTitle(): string
     {
         $searchString = $this->getSearchString();

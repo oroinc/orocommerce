@@ -28,10 +28,6 @@ class PriceRequestFactory
 
     /**
      * PriceRequestFactory constructor.
-     *
-     * @param MeasureUnitConversion     $measureUnitConversion
-     * @param UnitsMapper               $unitsMapper
-     * @param SymmetricCrypterInterface $symmetricCrypter
      */
     public function __construct(
         MeasureUnitConversion $measureUnitConversion,

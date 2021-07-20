@@ -45,10 +45,6 @@ class OroShoppingListBundle implements Migration, RenameExtensionAwareInterface,
         $this->updateOroShoppingListLineItemTable($schema, $queries);
     }
 
-    /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     */
     protected function updateOroShoppingListLineItemTable(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('oro_shopping_list_line_item');
@@ -71,8 +67,6 @@ class OroShoppingListBundle implements Migration, RenameExtensionAwareInterface,
 
     /**
      * Sets the RenameExtension
-     *
-     * @param RenameExtension $renameExtension
      */
     public function setRenameExtension(RenameExtension $renameExtension)
     {

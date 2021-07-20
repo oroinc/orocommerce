@@ -21,11 +21,6 @@ class PreviouslyPurchasedConfigProvider
     /** @var DateTimeFormatter */
     protected $dateTimeFormatter;
 
-    /**
-     * @param ConfigManager $configManager
-     * @param LocaleSettings    $localeSettings
-     * @param DateTimeFormatter $dateTimeFormatter
-     */
     public function __construct(
         ConfigManager $configManager,
         LocaleSettings $localeSettings,

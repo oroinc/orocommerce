@@ -17,10 +17,6 @@ class GuestQuoteAccessProvider implements GuestQuoteAccessProviderInterface
     /** @var WebsiteManager */
     private $websiteManager;
 
-    /**
-     * @param FeatureChecker $featureChecker
-     * @param WebsiteManager $websiteManager
-     */
     public function __construct(FeatureChecker $featureChecker, WebsiteManager $websiteManager)
     {
         $this->featureChecker = $featureChecker;

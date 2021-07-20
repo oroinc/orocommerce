@@ -28,11 +28,6 @@ class ValidateConnectionController extends AbstractController
      * @ParamConverter("channel", class="OroIntegrationBundle:Channel", options={"id" = "channelId"})
      * @CsrfProtection()
      *
-     * @param Request      $request
-     * @param Channel|null $channel
-     *
-     * @return JsonResponse
-     *
      * @throws \InvalidArgumentException
      */
     public function validateConnectionAction(Request $request, Channel $channel = null): JsonResponse
@@ -77,11 +72,6 @@ class ValidateConnectionController extends AbstractController
         ]);
     }
 
-    /**
-     * @param FedexRateServiceResponseInterface $response
-     *
-     * @return string
-     */
     private function getErrorMessageTranslation(FedexRateServiceResponseInterface $response): string
     {
         if ($response->getSeverityCode() === FedexRateServiceResponse::AUTHORIZATION_ERROR) {
@@ -95,9 +85,6 @@ class ValidateConnectionController extends AbstractController
         return 'oro.fedex.connection_validation.result.connection_error.message';
     }
 
-    /**
-     * @return bool
-     */
     private function isShippingOriginProvided(): bool
     {
         $shippingOrigin = $this->get(ShippingOriginProvider::class)->getSystemShippingOrigin();

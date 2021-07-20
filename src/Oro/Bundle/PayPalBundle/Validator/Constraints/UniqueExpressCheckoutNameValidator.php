@@ -28,10 +28,6 @@ class UniqueExpressCheckoutNameValidator extends ConstraintValidator
      */
     private $translator;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param TranslatorInterface $translator
-     */
     public function __construct(DoctrineHelper $doctrineHelper, TranslatorInterface $translator)
     {
         $this->doctrineHelper = $doctrineHelper;
@@ -60,11 +56,6 @@ class UniqueExpressCheckoutNameValidator extends ConstraintValidator
         $this->validateIntegrationNameUniqueness($value, $constraint);
     }
 
-    /**
-     * @param Channel $integration
-     * @param UniqueExpressCheckoutName $constraint
-     * @return bool
-     */
     private function validateExpressCheckoutName(
         Channel $integration,
         UniqueExpressCheckoutName $constraint
@@ -83,28 +74,16 @@ class UniqueExpressCheckoutNameValidator extends ConstraintValidator
         return true;
     }
 
-    /**
-     * @param string $expressCheckoutName
-     * @return bool
-     */
     private function integrationNameAlreadyTaken(string $expressCheckoutName): bool
     {
         return $this->getRepository(Channel::class)->findOneBy(['name' => $expressCheckoutName]) !== null;
     }
 
-    /**
-     * @param string $entityName
-     * @return EntityRepository
-     */
     private function getRepository(string $entityName): EntityRepository
     {
         return $this->doctrineHelper->getEntityRepository($entityName);
     }
 
-    /**
-     * @param Channel $integration
-     * @param UniqueExpressCheckoutName $constraint
-     */
     private function validateIntegrationNameUniqueness(
         Channel $integration,
         UniqueExpressCheckoutName $constraint

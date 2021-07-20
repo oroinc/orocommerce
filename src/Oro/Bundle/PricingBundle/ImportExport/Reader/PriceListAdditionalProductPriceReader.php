@@ -29,11 +29,6 @@ class PriceListAdditionalProductPriceReader extends IteratorBasedReader
      */
     protected $registry;
 
-    /**
-     * @param ContextRegistry $contextRegistry
-     * @param ManagerRegistry $registry
-     * @param ShardManager $shardManager
-     */
     public function __construct(
         ContextRegistry $contextRegistry,
         ManagerRegistry $registry,

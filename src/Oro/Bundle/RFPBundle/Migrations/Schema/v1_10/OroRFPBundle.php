@@ -19,8 +19,6 @@ class OroRFPBundle implements Migration
 
     /**
      * Add website relation to oro_rfp_request table.
-     *
-     * @param Schema $schema
      */
     protected function updateOroRfpRequestTable(Schema $schema)
     {
@@ -29,9 +27,6 @@ class OroRFPBundle implements Migration
         $table->addIndex(['website_id'], 'idx_de1d53c18f45c82', []);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addOroRfpRequestForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('oro_rfp_request');

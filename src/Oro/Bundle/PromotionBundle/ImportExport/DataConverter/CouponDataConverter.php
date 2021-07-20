@@ -18,12 +18,6 @@ class CouponDataConverter extends ConfigurableTableDataConverter
      */
     protected $translator;
 
-    /**
-     * @param FieldHelper $fieldHelper
-     * @param RelationCalculatorInterface $relationCalculator
-     * @param LocaleSettings $localeSettings
-     * @param TranslatorInterface $translator
-     */
     public function __construct(
         FieldHelper $fieldHelper,
         RelationCalculatorInterface $relationCalculator,

@@ -22,17 +22,11 @@ class RemoveProductImageListener
     /** @var File[] */
     private $imagesToRemove = [];
 
-    /**
-     * @param MessageProducerInterface $messageProducer
-     */
     public function __construct(MessageProducerInterface $messageProducer)
     {
         $this->messageProducer = $messageProducer;
     }
 
-    /**
-     * @param int $batchSize
-     */
     public function setBatchSize(int $batchSize): void
     {
         if ($batchSize > 0) {
@@ -40,9 +34,6 @@ class RemoveProductImageListener
         }
     }
 
-    /**
-     * @param ProductImage $productImage
-     */
     public function preRemove(ProductImage $productImage): void
     {
         $file = $productImage->getImage();
@@ -80,9 +71,6 @@ class RemoveProductImageListener
         }
     }
 
-    /**
-     * @param OnClearEventArgs $event
-     */
     public function onClear(OnClearEventArgs $event): void
     {
         if (!$event->getEntityClass() || $event->getEntityClass() === ProductImage::class) {

@@ -31,11 +31,6 @@ class ComputeCategoryNodeCategory implements ProcessorInterface
     /** @var DataAccessorInterface */
     private $dataAccessor;
 
-    /**
-     * @param EntitySerializer      $entitySerializer
-     * @param DoctrineHelper        $doctrineHelper
-     * @param DataAccessorInterface $dataAccessor
-     */
     public function __construct(
         EntitySerializer $entitySerializer,
         DoctrineHelper $doctrineHelper,
@@ -87,14 +82,6 @@ class ComputeCategoryNodeCategory implements ProcessorInterface
         $context->setData($data);
     }
 
-    /**
-     * @param array                      $data
-     * @param CustomizeLoadedDataContext $context
-     * @param EntityDefinitionConfig     $config
-     * @param string                     $categoryPrefix
-     *
-     * @return bool
-     */
     private function isCategoryFieldRequested(
         array $data,
         CustomizeLoadedDataContext $context,
@@ -156,12 +143,6 @@ class ComputeCategoryNodeCategory implements ProcessorInterface
         return $dependedFieldNames;
     }
 
-    /**
-     * @param EntityDefinitionConfig $config
-     * @param string                 $categoryPrefix
-     *
-     * @return EntityDefinitionConfig
-     */
     private function getCategoryConfig(EntityDefinitionConfig $config, string $categoryPrefix): EntityDefinitionConfig
     {
         $categoryConfig = $config->getField(self::CATEGORY_FIELD)->getTargetEntity();
@@ -256,11 +237,6 @@ class ComputeCategoryNodeCategory implements ProcessorInterface
         return $result;
     }
 
-    /**
-     * @param EntityDefinitionConfig $config
-     *
-     * @return string
-     */
     private function getIdentifierFieldName(EntityDefinitionConfig $config): string
     {
         $idFieldNames = $config->getIdentifierFieldNames();

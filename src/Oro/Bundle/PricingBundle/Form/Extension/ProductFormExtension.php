@@ -41,12 +41,6 @@ class ProductFormExtension extends AbstractTypeExtension implements FeatureToggl
     /** @var ManagerRegistry */
     protected $registry;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param ShardManager $shardManager
-     * @param PriceManager $priceManager
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     */
     public function __construct(
         ManagerRegistry $registry,
         ShardManager $shardManager,
@@ -74,9 +68,6 @@ class ProductFormExtension extends AbstractTypeExtension implements FeatureToggl
         $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'onPostSubmit'], 10);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function addFormOnPreSetData(FormEvent $event)
     {
         /** @var Product|null $product */
@@ -302,10 +293,6 @@ class ProductFormExtension extends AbstractTypeExtension implements FeatureToggl
         return $submittedData;
     }
 
-    /**
-     * @param array   $prices
-     * @param Product $product
-     */
     private function processPrices(array $prices, Product $product)
     {
         $repository = $this->getProductPriceRepository();

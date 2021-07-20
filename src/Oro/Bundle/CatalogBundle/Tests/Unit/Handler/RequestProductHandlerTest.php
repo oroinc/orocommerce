@@ -128,9 +128,6 @@ class RequestProductHandlerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getIncludeSubcategoriesChoiceDataProvider
-     *
-     * @param $value
-     * @param $expected
      */
     public function testGetIncludeSubcategoriesChoice($value, $expected)
     {
@@ -214,9 +211,6 @@ class RequestProductHandlerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getIncludeNotCategorizedProductsChoiceDataProvider
-     *
-     * @param $value
-     * @param $expected
      */
     public function testGetIncludeNotCategorizedProductsChoice($value, $expected)
     {

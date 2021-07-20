@@ -13,7 +13,7 @@ class SlugTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
     use EntityTrait;
-    
+
     public function testProperties()
     {
         $properties = [

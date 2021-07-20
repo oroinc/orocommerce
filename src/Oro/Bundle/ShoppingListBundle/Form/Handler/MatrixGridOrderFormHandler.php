@@ -37,12 +37,6 @@ class MatrixGridOrderFormHandler implements FormHandlerInterface
     /** @var ShoppingListManager */
     private $shoppingListManager;
 
-    /**
-     * @param EventDispatcher $eventDispatcher
-     * @param DoctrineHelper $doctrineHelper
-     * @param MatrixGridOrderManager $matrixGridOrderManager
-     * @param ShoppingListManager $shoppingListManager
-     */
     public function __construct(
         EventDispatcher $eventDispatcher,
         DoctrineHelper $doctrineHelper,
@@ -104,11 +98,6 @@ class MatrixGridOrderFormHandler implements FormHandlerInterface
         return false;
     }
 
-    /**
-     * @param MatrixCollection $data
-     * @param FormInterface $form
-     * @param Request $request
-     */
     protected function saveData(MatrixCollection $data, FormInterface $form, Request $request): void
     {
         $shoppingList = $request->attributes->get('shoppingList');

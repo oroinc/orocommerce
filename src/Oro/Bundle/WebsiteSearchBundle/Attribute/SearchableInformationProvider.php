@@ -13,19 +13,11 @@ class SearchableInformationProvider
     /** @var ConfigManager */
     private $configManager;
 
-    /**
-     * @param ConfigManager $configManager
-     */
     public function __construct(ConfigManager $configManager)
     {
         $this->configManager = $configManager;
     }
 
-    /**
-     * @param FieldConfigModel $attribute
-     *
-     * @return float|null
-     */
     public function getAttributeSearchBoost(FieldConfigModel $attribute): ?float
     {
         $className = $attribute->getEntity()->getClassName();

@@ -42,9 +42,6 @@ class CategoryType extends AbstractType
      */
     protected $urlGenerator;
 
-    /**
-     * @param UrlGeneratorInterface $urlGenerator
-     */
     public function __construct(UrlGeneratorInterface $urlGenerator)
     {
         $this->urlGenerator = $urlGenerator;
@@ -177,9 +174,6 @@ class CategoryType extends AbstractType
             ->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetDataListener']);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function preSetDataListener(FormEvent $event)
     {
         $category = $event->getData();

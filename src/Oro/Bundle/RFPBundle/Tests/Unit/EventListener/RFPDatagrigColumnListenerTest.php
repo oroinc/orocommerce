@@ -12,10 +12,6 @@ class RFPDatagrigColumnListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider buildBeforeDataProvider
-     *
-     * @param array $configuration
-     * @param $datagridName
-     * @param array $expected
      */
     public function testBuildBefore(array $configuration, $datagridName, array $expected)
     {

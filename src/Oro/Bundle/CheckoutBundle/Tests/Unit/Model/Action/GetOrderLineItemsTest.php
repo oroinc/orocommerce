@@ -16,7 +16,6 @@ use Symfony\Component\PropertyAccess\PropertyPath;
 
 class GetOrderLineItemsTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ContextAccessor */
     private ContextAccessor $contextAccessor;
 
     /** @var CheckoutLineItemsManager|\PHPUnit\Framework\MockObject\MockObject */
@@ -66,9 +65,6 @@ class GetOrderLineItemsTest extends \PHPUnit\Framework\TestCase
         $this->action->initialize($options);
     }
 
-    /**
-     * @return array
-     */
     public function initializeExceptionDataProvider(): array
     {
         return [
@@ -99,9 +95,6 @@ class GetOrderLineItemsTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider executeDataProvider
-     * @param array $contextData
-     * @param array $options
-     * @param array $expectedArguments
      */
     public function testExecute(array $contextData, array $options, array $expectedArguments): void
     {
@@ -119,9 +112,6 @@ class GetOrderLineItemsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($orderLineItems, $context['lineItems']);
     }
 
-    /**
-     * @return array
-     */
     public function executeDataProvider(): array
     {
         $checkout = new Checkout();

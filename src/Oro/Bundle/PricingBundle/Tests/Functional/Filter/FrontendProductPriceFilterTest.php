@@ -25,9 +25,6 @@ class FrontendProductPriceFilterTest extends FrontendWebTestCase
 
     /**
      * @dataProvider testProductGridProvider
-     *
-     * @param array $expected
-     * @param array $filter
      */
     public function testProductGrid(array $expected, array $filter)
     {

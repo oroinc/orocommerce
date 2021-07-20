@@ -238,10 +238,6 @@ class LoadQuoteDemoData extends AbstractFixture implements
         return $quoteProduct;
     }
 
-    /**
-     * @param QuoteProduct $quoteProduct
-     * @param RFPRequestProduct $requestProduct
-     */
     protected function processRequestProductItems(QuoteProduct $quoteProduct, RFPRequestProduct $requestProduct)
     {
         foreach ($requestProduct->getRequestProductItems() as $requestProductItem) {

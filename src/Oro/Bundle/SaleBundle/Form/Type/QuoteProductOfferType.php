@@ -34,9 +34,6 @@ class QuoteProductOfferType extends AbstractType
      */
     protected $dataClass;
 
-    /**
-     * @param QuoteProductOfferFormatter $formatter
-     */
     public function __construct(QuoteProductOfferFormatter $formatter)
     {
         $this->formatter = $formatter;
@@ -109,9 +106,6 @@ class QuoteProductOfferType extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'onPreSetData']);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function onPreSetData(FormEvent $event)
     {
         $data = $event->getData();

@@ -409,9 +409,6 @@ class FrontendProductPricesExportProviderTest extends TestCase
 
     /**
      * @dataProvider exportEnabledDataProvider
-     *
-     * @param bool $configValue
-     * @param bool $expectedValue
      */
     public function testIsPriceAttributesExportEnabled(bool $configValue, bool $expectedValue): void
     {
@@ -426,9 +423,6 @@ class FrontendProductPricesExportProviderTest extends TestCase
 
     /**
      * @dataProvider exportEnabledDataProvider
-     *
-     * @param bool $configValue
-     * @param bool $expectedValue
      */
     public function testIsTierPricesExportEnabled(bool $configValue, bool $expectedValue): void
     {

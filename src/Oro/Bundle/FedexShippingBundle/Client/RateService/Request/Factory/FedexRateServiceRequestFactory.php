@@ -34,12 +34,6 @@ class FedexRateServiceRequestFactory implements FedexRequestByRateServiceSetting
      */
     private $convertToFedexUnitsModifier;
 
-    /**
-     * @param SymmetricCrypterInterface $crypter
-     * @param FedexPackageSettingsByIntegrationSettingsAndRuleFactoryInterface $packageSettingsFactory
-     * @param FedexPackagesByLineItemsAndPackageSettingsFactoryInterface $packagesFactory
-     * @param ShippingLineItemCollectionBySettingsModifierInterface $convertToFedexUnitsModifier
-     */
     public function __construct(
         SymmetricCrypterInterface $crypter,
         FedexPackageSettingsByIntegrationSettingsAndRuleFactoryInterface $packageSettingsFactory,

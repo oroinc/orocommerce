@@ -208,9 +208,6 @@ class FrontendProductPricesExportProvider
         return $this->productPrices[$product->getId()] ?? [];
     }
 
-    /**
-     * @return ProductPriceScopeCriteriaInterface
-     */
     private function getProductPricesScopeCriteria(): ProductPriceScopeCriteriaInterface
     {
         $customerUser = $this->getUser();
@@ -228,17 +225,11 @@ class FrontendProductPricesExportProvider
         );
     }
 
-    /**
-     * @return Organization|null
-     */
     private function getCurrentOrganization(): ?Organization
     {
         return $this->tokenAccessor->getOrganization();
     }
 
-    /**
-     * @return CustomerUser|null
-     */
     private function getUser(): ?CustomerUser
     {
         $user = $this->tokenAccessor->getUser();

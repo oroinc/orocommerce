@@ -171,9 +171,6 @@ class ShoppingListContextDataConverterTest extends \PHPUnit\Framework\TestCase
         return $discountLineItems;
     }
 
-    /**
-     * @return string
-     */
     private function getCurrency(): string
     {
         $currency = 'USD';
@@ -184,12 +181,6 @@ class ShoppingListContextDataConverterTest extends \PHPUnit\Framework\TestCase
         return $currency;
     }
 
-    /**
-     * @param Customer $customer
-     * @param CustomerGroup $customerGroup
-     * @param Website $website
-     * @return ScopeCriteria
-     */
     private function getScopeCriteria(Customer $customer, CustomerGroup $customerGroup, Website $website): ScopeCriteria
     {
         $scopeContext = [

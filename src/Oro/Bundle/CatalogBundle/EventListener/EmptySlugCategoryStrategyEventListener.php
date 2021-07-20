@@ -16,17 +16,11 @@ class EmptySlugCategoryStrategyEventListener
     /** @var SlugGenerator */
     private $slugGenerator;
 
-    /**
-     * @param SlugGenerator $slugGenerator
-     */
     public function __construct(SlugGenerator $slugGenerator)
     {
         $this->slugGenerator = $slugGenerator;
     }
 
-    /**
-     * @param CategoryStrategyAfterProcessEntityEvent $event
-     */
     public function onProcessAfter(CategoryStrategyAfterProcessEntityEvent $event): void
     {
         $category = $event->getCategory();
@@ -42,10 +36,6 @@ class EmptySlugCategoryStrategyEventListener
         }
     }
 
-    /**
-     * @param Category $category
-     * @param CategoryTitle $localizedTitle
-     */
     private function addSlug(Category $category, CategoryTitle $localizedTitle): void
     {
         $localizedSlug = LocalizedFallbackValue::createFromAbstract($localizedTitle);

@@ -23,10 +23,6 @@ class QuantityTransformer implements DataTransformerInterface
      */
     private $skipTransformation;
 
-    /**
-     * @param NumberFormatter $formatter
-     * @param bool            $skipTransformation
-     */
     public function __construct(NumberFormatter $formatter, bool $skipTransformation = false)
     {
         $this->numberFormatter = $formatter;

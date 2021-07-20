@@ -19,9 +19,6 @@ class ShippingContext extends ParameterBag implements ShippingContextInterface
     const FIELD_SOURCE_ENTITY_ID = 'source_entity_id';
     const FIELD_WEBSITE = 'website';
 
-    /**
-     * @param array $params
-     */
     public function __construct(array $params)
     {
         parent::__construct($params);

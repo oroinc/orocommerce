@@ -23,9 +23,6 @@ class PriceRuleEntityListenerTest extends WebTestCase
         $this->enableMessageBuffering();
     }
 
-    /**
-     * @return EntityManagerInterface
-     */
     private function getEntityManager(): EntityManagerInterface
     {
         return $this->getContainer()->get('doctrine')->getManagerForClass(PriceRule::class);

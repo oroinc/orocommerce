@@ -17,17 +17,11 @@ class ImportSluggableEntityListener
      */
     private $slugifyEntityHelper;
 
-    /**
-     * @param SlugifyEntityHelper $slugifyEntityHelper
-     */
     public function __construct(SlugifyEntityHelper $slugifyEntityHelper)
     {
         $this->slugifyEntityHelper = $slugifyEntityHelper;
     }
 
-    /**
-     * @param StrategyEvent $event
-     */
     public function onProcessBefore(StrategyEvent $event): void
     {
         $entity = $event->getEntity();

@@ -26,10 +26,6 @@ class GuestShoppingListQueryModifier implements QueryModifierInterface
     /** @var TokenStorageInterface */
     private $tokenStorage;
 
-    /**
-     * @param EntityClassResolver   $entityClassResolver
-     * @param TokenStorageInterface $tokenStorage
-     */
     public function __construct(
         EntityClassResolver $entityClassResolver,
         TokenStorageInterface $tokenStorage
@@ -84,11 +80,6 @@ class GuestShoppingListQueryModifier implements QueryModifierInterface
         return $currentUser;
     }
 
-    /**
-     * @param QueryBuilder         $qb
-     * @param string               $rootAlias
-     * @param CustomerVisitor|null $visitor
-     */
     private function applyShoppingListRootRestriction(
         QueryBuilder $qb,
         string $rootAlias,
@@ -103,11 +94,6 @@ class GuestShoppingListQueryModifier implements QueryModifierInterface
         }
     }
 
-    /**
-     * @param QueryBuilder         $qb
-     * @param string               $rootAlias
-     * @param CustomerVisitor|null $visitor
-     */
     private function applyShoppingListItemItemRootRestriction(
         QueryBuilder $qb,
         string $rootAlias,
@@ -125,11 +111,6 @@ class GuestShoppingListQueryModifier implements QueryModifierInterface
         }
     }
 
-    /**
-     * @param QueryBuilder    $qb
-     * @param string          $shoppingListAlias
-     * @param CustomerVisitor $currentVisitor
-     */
     private function applyCustomerVisitorRootRestriction(
         QueryBuilder $qb,
         string $shoppingListAlias,
@@ -142,13 +123,6 @@ class GuestShoppingListQueryModifier implements QueryModifierInterface
             ->setParameter($paramName, $currentVisitor);
     }
 
-    /**
-     * @param QueryBuilder $qb
-     * @param string       $shoppingListAlias
-     * @param string       $customerVisitorParamName
-     *
-     * @return string
-     */
     private function getCustomerVisitorSubquery(
         QueryBuilder $qb,
         string $shoppingListAlias,
@@ -167,12 +141,6 @@ class GuestShoppingListQueryModifier implements QueryModifierInterface
             ->getDQL();
     }
 
-    /**
-     * @param QueryBuilder $qb
-     * @param string       $rootAlias
-     *
-     * @return string
-     */
     private function ensureShoppingListJoined(QueryBuilder $qb, string $rootAlias): string
     {
         $shoppingListJoin = $this->getShoppingListJoin($qb, $rootAlias);
@@ -187,12 +155,6 @@ class GuestShoppingListQueryModifier implements QueryModifierInterface
         return $shoppingListJoinAlias;
     }
 
-    /**
-     * @param QueryBuilder $qb
-     * @param string       $rootAlias
-     *
-     * @return Expr\Join|null
-     */
     private function getShoppingListJoin(QueryBuilder $qb, string $rootAlias): ?Expr\Join
     {
         $result = null;

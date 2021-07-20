@@ -46,9 +46,6 @@ class PriceAttributeProductPriceDataConverterTest extends TestCase
         );
     }
 
-    /**
-     * @return array
-     */
     private function getFileFormatData(): array
     {
         return [
@@ -60,9 +57,6 @@ class PriceAttributeProductPriceDataConverterTest extends TestCase
         ];
     }
 
-    /**
-     * @return array
-     */
     private function getBackendFormatData():array
     {
         return [

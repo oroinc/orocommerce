@@ -55,8 +55,6 @@ class PossibleShippingMethodsEventListenerTest extends \PHPUnit\Framework\TestCa
 
     /**
      * @dataProvider onOrderEventEmptyKeyDataProvider
-     *
-     * @param array $submittedData
      */
     public function testOnOrderEventEmptyKey(array $submittedData)
     {

@@ -59,10 +59,6 @@ class ShippingMethodsListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider modifyPricesDataProvider
-     *
-     * @param ShippingMethodViewCollection $shippingMethodViewCollection
-     * @param array $discountContexts
-     * @param ShippingMethodViewCollection $modifiedShippingMethodViewCollection
      */
     public function testModifyPrices(
         ShippingMethodViewCollection $shippingMethodViewCollection,
@@ -91,8 +87,6 @@ class ShippingMethodsListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     *
-     * @return array
      */
     public function modifyPricesDataProvider(): array
     {

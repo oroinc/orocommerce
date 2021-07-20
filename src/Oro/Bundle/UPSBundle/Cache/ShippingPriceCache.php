@@ -27,10 +27,6 @@ class ShippingPriceCache
      */
     protected $lifetimeProvider;
 
-    /**
-     * @param CacheProvider             $cache
-     * @param LifetimeProviderInterface $lifetimeProvider
-     */
     public function __construct(CacheProvider $cache, LifetimeProviderInterface $lifetimeProvider)
     {
         $this->cache = $cache;

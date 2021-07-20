@@ -30,11 +30,6 @@ class FrontendProductPricesDataProvider
      */
     protected $scopeCriteriaRequestHandler;
 
-    /**
-     * @param ProductPriceProviderInterface $productPriceProvider
-     * @param UserCurrencyManager $userCurrencyManager
-     * @param ProductPriceScopeCriteriaRequestHandler $scopeCriteriaRequestHandler
-     */
     public function __construct(
         ProductPriceProviderInterface $productPriceProvider,
         UserCurrencyManager $userCurrencyManager,

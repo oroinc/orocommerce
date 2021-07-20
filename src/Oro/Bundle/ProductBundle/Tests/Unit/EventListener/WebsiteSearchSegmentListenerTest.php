@@ -59,9 +59,6 @@ class WebsiteSearchSegmentListenerTest extends \PHPUnit\Framework\TestCase
         $this->websiteSearchSegmentListener->process($event);
     }
 
-    /**
-     * @return array
-     */
     public function processWithoutProductEntityProvider(): array
     {
         return [
@@ -119,9 +116,6 @@ class WebsiteSearchSegmentListenerTest extends \PHPUnit\Framework\TestCase
         $this->websiteSearchSegmentListener->process($event);
     }
 
-    /**
-     * @return array
-     */
     public function processProvider(): array
     {
         return [

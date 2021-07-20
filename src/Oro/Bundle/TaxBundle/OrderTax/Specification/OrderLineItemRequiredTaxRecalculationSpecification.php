@@ -13,9 +13,6 @@ class OrderLineItemRequiredTaxRecalculationSpecification implements Specificatio
 {
     use OriginalDataAccessorTrait;
 
-    /**
-     * @param UnitOfWork $unitOfWork
-     */
     public function __construct(UnitOfWork $unitOfWork)
     {
         $this->unitOfWork = $unitOfWork;
@@ -61,12 +58,6 @@ class OrderLineItemRequiredTaxRecalculationSpecification implements Specificatio
         return $this->isQuantityChanged($orderLineItem, $originalData);
     }
 
-    /**
-     * @param OrderLineItem $orderLineItem
-     * @param array $originalData
-     *
-     * @return bool
-     */
     private function isProductChanged(OrderLineItem $orderLineItem, array $originalData): bool
     {
         $newProductId = $orderLineItem->getProduct()
@@ -79,12 +70,6 @@ class OrderLineItemRequiredTaxRecalculationSpecification implements Specificatio
         return $newProductId != $oldProductId;
     }
 
-    /**
-     * @param OrderLineItem $orderLineItem
-     * @param array $originalData
-     *
-     * @return bool
-     */
     private function isProductUnitChanged(OrderLineItem $orderLineItem, array $originalData): bool
     {
         $newProductUnitCode = $orderLineItem->getProductUnit()

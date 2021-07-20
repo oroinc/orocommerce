@@ -25,9 +25,6 @@ class AddEnabledToCoupon implements Migration
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function updateOroPromotionCouponTable(Schema $schema)
     {
         $table = $schema->getTable('oro_promotion_coupon');

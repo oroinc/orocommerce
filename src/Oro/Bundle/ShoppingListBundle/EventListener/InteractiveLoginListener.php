@@ -42,13 +42,6 @@ class InteractiveLoginListener
     /** @var SendChangedEntitiesToMessageQueueListener */
     private $sendChangedEntitiesToMessageQueueListener;
 
-    /**
-     * @param CustomerVisitorManager $visitorManager
-     * @param GuestShoppingListMigrationManager $guestShoppingListMigrationManager
-     * @param LoggerInterface $logger
-     * @param ConfigManager $configManager
-     * @param SendChangedEntitiesToMessageQueueListener $sendChangedEntitiesToMessageQueueListener
-     */
     public function __construct(
         CustomerVisitorManager $visitorManager,
         GuestShoppingListMigrationManager $guestShoppingListMigrationManager,
@@ -63,9 +56,6 @@ class InteractiveLoginListener
         $this->sendChangedEntitiesToMessageQueueListener = $sendChangedEntitiesToMessageQueueListener;
     }
 
-    /**
-     * @param InteractiveLoginEvent $event
-     */
     public function onInteractiveLogin(InteractiveLoginEvent $event)
     {
         $user = $event->getAuthenticationToken()->getUser();

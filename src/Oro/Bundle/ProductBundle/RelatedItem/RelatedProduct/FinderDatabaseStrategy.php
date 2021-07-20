@@ -25,10 +25,6 @@ class FinderDatabaseStrategy implements FinderStrategyInterface
      */
     private $configProvider;
 
-    /**
-     * @param DoctrineHelper                    $doctrineHelper
-     * @param AbstractRelatedItemConfigProvider $configProvider
-     */
     public function __construct(DoctrineHelper $doctrineHelper, AbstractRelatedItemConfigProvider $configProvider)
     {
         $this->doctrineHelper = $doctrineHelper;

@@ -31,9 +31,6 @@ class ContentWidgetDatagridListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider onPreBuildDataProvider
-     *
-     * @param bool $isInline
-     * @param array $expected
      */
     public function testOnPreBuild(bool $isInline, array $expected): void
     {
@@ -45,9 +42,6 @@ class ContentWidgetDatagridListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $event->getParameters()->get('contentWidgetTypes'));
     }
 
-    /**
-     * @return array
-     */
     public function onPreBuildDataProvider(): array
     {
         return [

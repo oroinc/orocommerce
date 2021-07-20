@@ -31,9 +31,6 @@ class RfpAllowed extends AbstractCondition implements ContextAccessorAwareInterf
      */
     protected $requestDataStorageExtension;
 
-    /**
-     * @param RequestDataStorageExtension $requestDataStorageExtension
-     */
     public function __construct(RequestDataStorageExtension $requestDataStorageExtension)
     {
         $this->requestDataStorageExtension = $requestDataStorageExtension;

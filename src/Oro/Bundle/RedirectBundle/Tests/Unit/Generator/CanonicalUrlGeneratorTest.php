@@ -19,9 +19,6 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
 {
-    /**
-     * @return CanonicalUrlGenerator
-     */
     protected function createGenerator(): CanonicalUrlGenerator
     {
         return new CanonicalUrlGenerator(
@@ -166,9 +163,6 @@ class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
 
     /**
      * @dataProvider localizedUrlDataProvider
-     * @param string $expectedUrl
-     * @param Localization|null $localization
-     * @param Localization|null $currentLocalization
      */
     public function testGetDirectUrl(
         string $expectedUrl,

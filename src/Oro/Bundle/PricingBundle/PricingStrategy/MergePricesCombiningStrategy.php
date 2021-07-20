@@ -23,9 +23,6 @@ class MergePricesCombiningStrategy extends AbstractPriceCombiningStrategy
      */
     private $tempTableManipulator;
 
-    /**
-     * @param TempTableManipulatorInterface $tempTableManipulator
-     */
     public function setTempTableManipulator(TempTableManipulatorInterface $tempTableManipulator)
     {
         $this->tempTableManipulator = $tempTableManipulator;
@@ -52,26 +49,27 @@ class MergePricesCombiningStrategy extends AbstractPriceCombiningStrategy
         array $products = [],
         ProgressBar $progressBar = null
     ) {
-        $progress = 0;
-        $this->moveFirstPriceListPrices($combinedPriceList, $priceLists, $products, $progress, $progressBar);
+        if (count($priceLists) > 0) {
+            $progress = 0;
+            $this->moveFirstPriceListPrices($combinedPriceList, $priceLists, $products, $progress, $progressBar);
 
-        if ($this->canUseTempTable($priceLists, $combinedPriceList)) {
-            $this->processPriceListsWithTempTable($combinedPriceList, $priceLists, $products, $progress, $progressBar);
-        } else {
-            foreach ($priceLists as $priceListRelation) {
-                $this->moveProgress($progressBar, $progress, $priceListRelation);
-                $this->processRelation($combinedPriceList, $priceListRelation, $products);
+            if ($this->canUseTempTable($priceLists, $combinedPriceList)) {
+                $this->processPriceListsWithTempTable(
+                    $combinedPriceList,
+                    $priceLists,
+                    $products,
+                    $progress,
+                    $progressBar
+                );
+            } else {
+                foreach ($priceLists as $priceListRelation) {
+                    $this->moveProgress($progressBar, $progress, $priceListRelation);
+                    $this->processRelation($combinedPriceList, $priceListRelation, $products);
+                }
             }
         }
     }
 
-    /**
-     * @param CombinedPriceList $combinedPriceList
-     * @param array $priceLists
-     * @param array $products
-     * @param int $progress
-     * @param ProgressBar|null $progressBar
-     */
     private function moveFirstPriceListPrices(
         CombinedPriceList $combinedPriceList,
         array &$priceLists,
@@ -126,13 +124,6 @@ class MergePricesCombiningStrategy extends AbstractPriceCombiningStrategy
         return false;
     }
 
-    /**
-     * @param CombinedPriceList $combinedPriceList
-     * @param array $priceLists
-     * @param array $products
-     * @param int $progress
-     * @param ProgressBar|null $progressBar
-     */
     private function processPriceListsWithTempTable(
         CombinedPriceList $combinedPriceList,
         array $priceLists,
@@ -156,11 +147,6 @@ class MergePricesCombiningStrategy extends AbstractPriceCombiningStrategy
         );
     }
 
-    /**
-     * @param CombinedPriceList $combinedPriceList
-     * @param CombinedPriceListToPriceList $priceListRelation
-     * @param array $products
-     */
     private function processRelationWithTempTable(
         CombinedPriceList $combinedPriceList,
         CombinedPriceListToPriceList $priceListRelation,

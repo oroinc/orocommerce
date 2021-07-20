@@ -51,9 +51,6 @@ class OroUPSBundleInstaller implements Installation, ContainerAwareInterface
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     public function updateOroIntegrationTransportTable(Schema $schema)
     {
         $table = $schema->getTable('oro_integration_transport');
@@ -73,9 +70,6 @@ class OroUPSBundleInstaller implements Installation, ContainerAwareInterface
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     public function createOroUPSShippingServiceTable(Schema $schema)
     {
         $table = $schema->createTable('oro_ups_shipping_service');
@@ -87,9 +81,6 @@ class OroUPSBundleInstaller implements Installation, ContainerAwareInterface
         $table->addIndex(['country_code'], 'IDX_C6DD8778F026BB7C', []);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function createOroUPSTransportShipServiceTable(Schema $schema)
     {
         $table = $schema->createTable('oro_ups_transport_ship_service');
@@ -100,9 +91,6 @@ class OroUPSBundleInstaller implements Installation, ContainerAwareInterface
         $table->addIndex(['ship_service_id'], 'IDX_1554DDE37CA9B1D', []);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function createOroUPSTransportLabelTable(Schema $schema)
     {
         $table = $schema->createTable('oro_ups_transport_label');
@@ -113,9 +101,6 @@ class OroUPSBundleInstaller implements Installation, ContainerAwareInterface
         $table->addUniqueIndex(['localized_value_id'], 'UNIQ_1554DDE37CA9B1F', []);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addOroIntegrationTransportForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('oro_integration_transport');
@@ -127,9 +112,6 @@ class OroUPSBundleInstaller implements Installation, ContainerAwareInterface
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addOroUPSShippingServiceForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('oro_ups_shipping_service');
@@ -141,9 +123,6 @@ class OroUPSBundleInstaller implements Installation, ContainerAwareInterface
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addOroUpsTransportShipServiceForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('oro_ups_transport_ship_service');
@@ -161,9 +140,6 @@ class OroUPSBundleInstaller implements Installation, ContainerAwareInterface
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addOroUpsTransportLabelForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('oro_ups_transport_label');

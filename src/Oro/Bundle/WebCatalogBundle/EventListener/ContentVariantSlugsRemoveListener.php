@@ -20,9 +20,6 @@ class ContentVariantSlugsRemoveListener
     /** @var null|array */
     private $contentVariantLinkedEntities;
 
-    /**
-     * @param OnFlushEventArgs $eventArgs
-     */
     public function onFlush(OnFlushEventArgs $eventArgs)
     {
         $em = $eventArgs->getEntityManager();

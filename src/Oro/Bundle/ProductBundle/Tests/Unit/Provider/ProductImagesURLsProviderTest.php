@@ -49,11 +49,6 @@ class ProductImagesURLsProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getFilteredImagesByProductIdDataProvider
-     *
-     * @param Product $product
-     * @param array $imageFiles
-     * @param array $filtersNames
-     * @param array $expectedImages
      */
     public function testGetFilteredImagesByProductId(
         Product $product,

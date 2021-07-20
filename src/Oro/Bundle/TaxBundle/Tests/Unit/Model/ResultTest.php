@@ -133,7 +133,6 @@ class ResultTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($result->isResultLocked());
     }
 
-
     public function testJsonSerializeItemsDropped()
     {
         $result = $this->createResultModel();

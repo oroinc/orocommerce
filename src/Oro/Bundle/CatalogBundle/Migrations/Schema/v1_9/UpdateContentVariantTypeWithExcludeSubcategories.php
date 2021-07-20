@@ -20,9 +20,6 @@ class UpdateContentVariantTypeWithExcludeSubcategories implements Migration
         $this->updateContentVariantEntity($schema);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function updateContentVariantEntity(Schema $schema)
     {
         if ($schema->hasTable('oro_web_catalog_variant')) {

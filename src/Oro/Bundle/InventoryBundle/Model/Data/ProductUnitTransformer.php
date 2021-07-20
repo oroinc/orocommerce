@@ -14,9 +14,6 @@ class ProductUnitTransformer
     protected $productUnitsProvider;
     private Inflector $inflector;
 
-    /**
-     * @param ProductUnitsProvider $productUnitsProvider
-     */
     public function __construct(ProductUnitsProvider $productUnitsProvider, Inflector $inflector)
     {
         $this->productUnitsProvider = $productUnitsProvider;

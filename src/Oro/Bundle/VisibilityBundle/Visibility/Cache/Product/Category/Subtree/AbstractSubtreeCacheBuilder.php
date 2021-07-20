@@ -40,12 +40,6 @@ abstract class AbstractSubtreeCacheBuilder
      */
     protected $scopeManager;
 
-    /**
-     * @param Registry $registry
-     * @param CategoryVisibilityResolverInterface $categoryVisibilityResolver
-     * @param ConfigManager $configManager
-     * @param ScopeManager $scopeManager
-     */
     public function __construct(
         Registry $registry,
         CategoryVisibilityResolverInterface $categoryVisibilityResolver,

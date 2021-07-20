@@ -80,9 +80,6 @@ class InventoryLevelControllerTest extends WebTestCase
         $this->assertLevelsData($changeSet);
     }
 
-    /**
-     * @param array $data
-     */
     protected function assertLevelsData(array $data)
     {
         $repository = $this->getRepository('OroInventoryBundle:InventoryLevel');
@@ -122,10 +119,6 @@ class InventoryLevelControllerTest extends WebTestCase
         return $quantities;
     }
 
-    /**
-     * @param Product $product
-     * @param array $data
-     */
     protected function assertLevelsGridData(Product $product, array $data)
     {
         $expectedCombinedIds = [];

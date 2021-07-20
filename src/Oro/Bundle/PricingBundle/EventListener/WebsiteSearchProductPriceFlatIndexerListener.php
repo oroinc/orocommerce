@@ -45,12 +45,6 @@ class WebsiteSearchProductPriceFlatIndexerListener implements FeatureToggleableI
      */
     private $priceListTreeHandler;
 
-    /**
-     * @param WebsiteContextManager $websiteContextManager
-     * @param ManagerRegistry $doctrine
-     * @param ConfigManager $configManager
-     * @param AbstractPriceListTreeHandler $priceListTreeHandler
-     */
     public function __construct(
         WebsiteContextManager $websiteContextManager,
         ManagerRegistry $doctrine,
@@ -63,9 +57,6 @@ class WebsiteSearchProductPriceFlatIndexerListener implements FeatureToggleableI
         $this->priceListTreeHandler = $priceListTreeHandler;
     }
 
-    /**
-     * @param IndexEntityEvent $event
-     */
     public function onWebsiteSearchIndex(IndexEntityEvent $event)
     {
         if (!$this->isFeaturesEnabled()) {
@@ -123,9 +114,6 @@ class WebsiteSearchProductPriceFlatIndexerListener implements FeatureToggleableI
         }
     }
 
-    /**
-     * @return ProductPriceRepository
-     */
     private function getPriceRepository(): ProductPriceRepository
     {
         return $this->doctrine

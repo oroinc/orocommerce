@@ -19,9 +19,6 @@ class AddDefaultProductAttributes implements Migration
         $this->addDefaultProductAttributes($queries);
     }
 
-    /**
-     * @param QueryBag $queries
-     */
     public function addDefaultProductAttributes(QueryBag $queries)
     {
         $defaultProductFields = [

@@ -20,9 +20,6 @@ class Product extends BaseProduct
         return $this->category;
     }
 
-    /**
-     * @param Category $category
-     */
     public function setCategory(Category $category)
     {
         $this->category = $category;

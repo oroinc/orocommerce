@@ -17,8 +17,6 @@ class MakeContentOptional implements Migration
     }
 
     /**
-     * @param Schema $schema
-     *
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     protected function alterOroCmsPageTable(Schema $schema)

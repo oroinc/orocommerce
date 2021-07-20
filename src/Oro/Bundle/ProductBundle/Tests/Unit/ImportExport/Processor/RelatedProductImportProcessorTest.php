@@ -161,11 +161,6 @@ class RelatedProductImportProcessorTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider processWhenSkuColumnMissingDataProvider
-     *
-     * @param array $item
-     * @param string $expectedError
-     *
-     * @throws \Akeneo\Bundle\BatchBundle\Item\InvalidItemException
      */
     public function testProcessWhenColumnMissing(array $item, string $expectedError): void
     {
@@ -186,9 +181,6 @@ class RelatedProductImportProcessorTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($this->processor->process($item));
     }
 
-    /**
-     * @return array
-     */
     public function processWhenSkuColumnMissingDataProvider(): array
     {
         return [
@@ -342,9 +334,6 @@ class RelatedProductImportProcessorTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals([], $this->processor->process($this->item));
     }
 
-    /**
-     * @param array|null $result
-     */
     private function setUpQueryMock(?array $result): void
     {
         $queryBuilder = $this->createMock(QueryBuilder::class);

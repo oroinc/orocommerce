@@ -7,9 +7,6 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 
 interface CacheBuilderInterface
 {
-    /**
-     * @param VisibilityInterface $visibilitySettings
-     */
     public function resolveVisibilitySettings(VisibilityInterface $visibilitySettings);
 
     /**

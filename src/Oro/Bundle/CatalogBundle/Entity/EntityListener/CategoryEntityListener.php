@@ -19,10 +19,6 @@ class CategoryEntityListener
     /** @var CacheProvider */
     private $categoryCache;
 
-    /**
-     * @param ProductIndexScheduler $productIndexScheduler
-     * @param CacheProvider $categoryCache
-     */
     public function __construct(
         ProductIndexScheduler $productIndexScheduler,
         CacheProvider $categoryCache
@@ -31,28 +27,18 @@ class CategoryEntityListener
         $this->categoryCache = $categoryCache;
     }
 
-    /**
-     * @param Category $category
-     */
     public function preRemove(Category $category)
     {
         $this->productIndexScheduler->scheduleProductsReindex([$category]);
         $this->categoryCache->deleteAll();
     }
 
-    /**
-     * @param Category $category
-     */
     public function postPersist(Category $category)
     {
         $this->productIndexScheduler->scheduleProductsReindex([$category]);
         $this->categoryCache->deleteAll();
     }
 
-    /**
-     * @param Category $category
-     * @param PreUpdateEventArgs $eventArgs
-     */
     public function preUpdate(Category $category, PreUpdateEventArgs $eventArgs)
     {
         if ($eventArgs->getEntityChangeSet()) {

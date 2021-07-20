@@ -214,10 +214,6 @@ class ContentNodeController extends AbstractController
         ]);
     }
 
-    /**
-     * @param int $nodeId
-     * @return array
-     */
     private function getSlugPrototypeStrings(int $nodeId): array
     {
         /** @var ContentNode $movedNode */

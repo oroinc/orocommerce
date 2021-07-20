@@ -307,9 +307,6 @@ class OrderLineItem extends ExtendOrderLineItem implements
         return (array)$this->productVariantFields;
     }
 
-    /**
-     * @param array|null $productVariantFields
-     */
     public function setProductVariantFields(array $productVariantFields = null)
     {
         $this->productVariantFields = $productVariantFields;

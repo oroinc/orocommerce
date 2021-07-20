@@ -45,13 +45,6 @@ class RedirectListener
      */
     protected $websiteManager;
 
-    /**
-     * @param UserLocalizationManagerInterface $userLocalizationManager
-     * @param SlugSourceEntityProviderInterface $slugSourceEntityProvider
-     * @param ManagerRegistry $registry
-     * @param CanonicalUrlGenerator $canonicalUrlGenerator
-     * @param WebsiteManager $websiteManager
-     */
     public function __construct(
         UserLocalizationManagerInterface $userLocalizationManager,
         SlugSourceEntityProviderInterface $slugSourceEntityProvider,
@@ -66,9 +59,6 @@ class RedirectListener
         $this->websiteManager = $websiteManager;
     }
 
-    /**
-     * @param RequestEvent $event
-     */
     public function onRequest(RequestEvent $event)
     {
         $request = $event->getRequest();
@@ -102,11 +92,6 @@ class RedirectListener
         }
     }
 
-    /**
-     * @param Slug $usedSlug
-     * @param Localization|null $localization
-     * @return Slug|null
-     */
     private function getLocalizedSlug(Slug $usedSlug, ?Localization $localization): ?Slug
     {
         $this->registry->getManagerForClass(Slug::class)->refresh($usedSlug);

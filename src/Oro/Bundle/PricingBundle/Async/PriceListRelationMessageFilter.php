@@ -51,9 +51,6 @@ class PriceListRelationMessageFilter implements MessageFilterInterface
     /** @var array|null */
     private $preserveCustomers;
 
-    /**
-     * @param ManagerRegistry $doctrine
-     */
     public function __construct(ManagerRegistry $doctrine)
     {
         $this->doctrine = $doctrine;
@@ -129,11 +126,6 @@ class PriceListRelationMessageFilter implements MessageFilterInterface
         return $fullRebuildMessageId;
     }
 
-    /**
-     * @param array $message
-     *
-     * @return string
-     */
     private function getMessageKey(array $message): string
     {
         return sprintf(
@@ -145,20 +137,11 @@ class PriceListRelationMessageFilter implements MessageFilterInterface
         );
     }
 
-    /**
-     * @param array $message
-     *
-     * @return bool
-     */
     private function isFullRebuildMessage(array $message): bool
     {
         return isset($message[self::FORCE]) && $message[self::FORCE] && count($message) === 1;
     }
 
-    /**
-     * @param MessageBuffer $buffer
-     * @param int           $fullRebuildMessageId
-     */
     private function removeAllMessagesExceptFullRebuildMessage(MessageBuffer $buffer, int $fullRebuildMessageId): void
     {
         $messages = $buffer->getMessagesForTopic(Topics::REBUILD_COMBINED_PRICE_LISTS);
@@ -169,9 +152,6 @@ class PriceListRelationMessageFilter implements MessageFilterInterface
         }
     }
 
-    /**
-     * @param MessageBuffer $buffer
-     */
     private function removeRedundantMessages(MessageBuffer $buffer): void
     {
         $messages = $buffer->getMessagesForTopic(Topics::REBUILD_COMBINED_PRICE_LISTS);
@@ -193,11 +173,6 @@ class PriceListRelationMessageFilter implements MessageFilterInterface
         }
     }
 
-    /**
-     * @param array $message
-     *
-     * @return bool
-     */
     private function isRedundantCustomerGroupMessage(array $message): bool
     {
         if (isset($this->changedWebsites[$message[self::WEBSITE]])) {
@@ -206,11 +181,6 @@ class PriceListRelationMessageFilter implements MessageFilterInterface
         return false;
     }
 
-    /**
-     * @param array $message
-     *
-     * @return bool
-     */
     private function isRedundantCustomerMessage(array $message): bool
     {
         if (isset($this->changedWebsites[$message[self::WEBSITE]])) {
@@ -234,11 +204,6 @@ class PriceListRelationMessageFilter implements MessageFilterInterface
         return !$this->isRedundantCustomerGroupMessage($customerGroupMessage);
     }
 
-    /**
-     * @param array $message
-     *
-     * @return bool
-     */
     private function isPreserveCustomerGroup(array $message): bool
     {
         if (null === $this->preserveCustomerGroups) {
@@ -253,11 +218,6 @@ class PriceListRelationMessageFilter implements MessageFilterInterface
         return isset($this->preserveCustomerGroups[$preserveCustomerGroupKey]);
     }
 
-    /**
-     * @param array $message
-     *
-     * @return bool
-     */
     private function isPreserveCustomer(array $message): bool
     {
         if (null === $this->preserveCustomers) {
@@ -272,9 +232,6 @@ class PriceListRelationMessageFilter implements MessageFilterInterface
         return isset($this->preserveCustomers[$preserveCustomerKey]);
     }
 
-    /**
-     * @return array
-     */
     private function loadPreserveCustomerGroups(): array
     {
         $customerGroups = array_keys($this->checkCustomerGroupFallback[self::CUSTOMER_GROUP]);
@@ -305,9 +262,6 @@ class PriceListRelationMessageFilter implements MessageFilterInterface
         return $preserveCustomerGroups;
     }
 
-    /**
-     * @return array
-     */
     private function loadPreserveCustomers(): array
     {
         $customers = array_keys($this->checkCustomerFallback[self::CUSTOMER]);
@@ -338,23 +292,11 @@ class PriceListRelationMessageFilter implements MessageFilterInterface
         return $preserveCustomers;
     }
 
-    /**
-     * @param int $websiteId
-     * @param int $customerGroupId
-     *
-     * @return string
-     */
     private function getPreserveCustomerGroupKey(int $websiteId, int $customerGroupId): string
     {
         return $websiteId . '_' . $customerGroupId;
     }
 
-    /**
-     * @param int $websiteId
-     * @param int $customerId
-     *
-     * @return string
-     */
     private function getPreserveCustomerKey(int $websiteId, int $customerId): string
     {
         return $websiteId . '_' . $customerId;

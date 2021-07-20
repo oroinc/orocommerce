@@ -23,9 +23,6 @@ class LoadShoppingListUserACLData extends AbstractLoadACLData
         return array_keys($this->getRolesAndPermissions());
     }
 
-    /**
-     * @return array
-     */
     protected function getRolesAndPermissions(): array
     {
         return [

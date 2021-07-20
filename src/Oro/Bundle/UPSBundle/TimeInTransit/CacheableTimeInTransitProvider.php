@@ -23,10 +23,6 @@ class CacheableTimeInTransitProvider implements TimeInTransitProviderInterface
      */
     protected $timeInTransitCacheProviderFactory;
 
-    /**
-     * @param TimeInTransitProviderInterface                      $timeInTransit
-     * @param TimeInTransitCacheProviderFactoryInterface $timeInTransitCacheProviderFactory
-     */
     public function __construct(
         TimeInTransitProviderInterface $timeInTransit,
         TimeInTransitCacheProviderFactoryInterface $timeInTransitCacheProviderFactory

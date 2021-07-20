@@ -25,11 +25,6 @@ class BasicPaymentTermConfigProvider implements PaymentTermConfigProviderInterfa
      */
     protected $logger;
 
-    /**
-     * @param ManagerRegistry                             $doctrine
-     * @param LoggerInterface                             $logger
-     * @param PaymentTermConfigBySettingsFactoryInterface $paymentTermConfigBySettingsFactory
-     */
     public function __construct(
         ManagerRegistry $doctrine,
         LoggerInterface $logger,
@@ -79,7 +74,6 @@ class BasicPaymentTermConfigProvider implements PaymentTermConfigProviderInterfa
     {
         return null !== $this->getPaymentConfig($identifier);
     }
-
 
     /**
      * @return PaymentTermSettings[]

@@ -100,10 +100,6 @@ class TypedOrderAddressCollection
         $this->defaultAddress = $addresses[$this->defaultAddressKey];
     }
 
-    /**
-     * @param AbstractDefaultTypedAddress $address
-     * @return bool
-     */
     protected function isAddressCustomerUserApplicable(AbstractDefaultTypedAddress $address): bool
     {
         $frontendOwner = $address->getFrontendOwner();

@@ -128,9 +128,6 @@ class ProductPriceDTO implements \JsonSerializable, ProductPriceInterface
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function toArray(): array
     {
         return [

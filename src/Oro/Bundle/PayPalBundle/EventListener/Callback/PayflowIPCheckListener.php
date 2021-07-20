@@ -58,9 +58,6 @@ class PayflowIPCheckListener
         $this->allowedIPs = $allowedIPs ?: $this->allowedIPs;
     }
 
-    /**
-     * @param AbstractCallbackEvent $event
-     */
     public function onNotify(AbstractCallbackEvent $event)
     {
         $paymentTransaction = $event->getPaymentTransaction();

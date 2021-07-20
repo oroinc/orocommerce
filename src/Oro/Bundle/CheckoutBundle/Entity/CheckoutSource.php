@@ -40,11 +40,6 @@ class CheckoutSource extends ExtendCheckoutSource
         return $this->id;
     }
 
-    /**
-     * @param bool $deleted
-     *
-     * @return CheckoutSource
-     */
     public function setDeleted(bool $deleted): CheckoutSource
     {
         $this->deleted = (bool)$deleted;
@@ -52,9 +47,6 @@ class CheckoutSource extends ExtendCheckoutSource
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isDeleted(): bool
     {
         return $this->deleted;

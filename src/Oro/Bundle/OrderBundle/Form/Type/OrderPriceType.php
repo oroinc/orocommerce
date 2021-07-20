@@ -13,10 +13,6 @@ use Symfony\Component\Form\FormBuilderInterface;
  */
 class OrderPriceType extends AbstractType
 {
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('is_price_changed', HiddenType::class, ['mapped' => false]);

@@ -311,7 +311,6 @@ class QuoteProductTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedResult, $quoteProduct->getProductName());
     }
 
-
     /**
      * @return array
      */

@@ -45,12 +45,6 @@ class OrderAddressSelectType extends AbstractType
     /** @var Serializer */
     private $serializer;
 
-    /**
-     * @param OrderAddressManager $addressManager
-     * @param AddressFormatter $addressFormatter
-     * @param OrderAddressSecurityProvider $addressSecurityProvider
-     * @param Serializer $serializer
-     */
     public function __construct(
         OrderAddressManager $addressManager,
         AddressFormatter $addressFormatter,

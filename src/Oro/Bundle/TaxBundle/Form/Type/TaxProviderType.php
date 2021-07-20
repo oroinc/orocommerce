@@ -19,9 +19,6 @@ class TaxProviderType extends AbstractType
      */
     protected $registry;
 
-    /**
-     * @param TaxProviderRegistry $registry
-     */
     public function __construct(TaxProviderRegistry $registry)
     {
         $this->registry = $registry;

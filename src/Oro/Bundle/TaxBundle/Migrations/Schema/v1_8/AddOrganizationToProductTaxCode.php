@@ -9,9 +9,6 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 class AddOrganizationToProductTaxCode implements Migration
 {
     /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     *
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     public function up(Schema $schema, QueryBag $queries): void
@@ -21,8 +18,6 @@ class AddOrganizationToProductTaxCode implements Migration
     }
 
     /**
-     * @param Schema $schema
-     *
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     private function addOrganizationToProductTaxCode(Schema $schema): void
@@ -38,8 +33,6 @@ class AddOrganizationToProductTaxCode implements Migration
     }
 
     /**
-     * @param Schema $schema
-     *
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     private function addProductTaxCodeOrganizationUniqueIndex(Schema $schema): void

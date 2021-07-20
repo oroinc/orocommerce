@@ -85,11 +85,6 @@ class SluggableEntityStub implements DatesAwareInterface, SluggableInterface
         return $this->titles;
     }
 
-    /**
-     * @param LocalizedFallbackValue $title
-     *
-     * @return self
-     */
     public function addTitle(LocalizedFallbackValue $title): self
     {
         if (!$this->titles->contains($title)) {
@@ -99,11 +94,6 @@ class SluggableEntityStub implements DatesAwareInterface, SluggableInterface
         return $this;
     }
 
-    /**
-     * @param LocalizedFallbackValue $title
-     *
-     * @return self
-     */
     public function removeTitle(LocalizedFallbackValue $title): self
     {
         if ($this->titles->contains($title)) {

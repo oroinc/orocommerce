@@ -18,9 +18,6 @@ class AssignedProductsConverter implements QueryExpressionConverterInterface
      */
     protected $fieldsProvider;
 
-    /**
-     * @param FieldsProviderInterface $fieldsProvider
-     */
     public function __construct(FieldsProviderInterface $fieldsProvider)
     {
         $this->fieldsProvider = $fieldsProvider;
@@ -66,9 +63,6 @@ class AssignedProductsConverter implements QueryExpressionConverterInterface
         return null;
     }
 
-    /**
-     * @param Node\NodeInterface $left
-     */
     protected function assertLeftOperand(Node\NodeInterface $left)
     {
         $isAllowedNode = false;

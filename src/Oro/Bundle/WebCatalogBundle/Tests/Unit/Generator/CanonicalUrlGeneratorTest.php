@@ -112,10 +112,6 @@ class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
         $this->assertEquals('http://example.com/entity', $this->canonicalUrlGenerator->getUrl($entity));
     }
 
-    /**
-     * @param string $url
-     * @return Slug
-     */
     protected function getSlug(string $url): Slug
     {
         $entitySlug = new Slug();

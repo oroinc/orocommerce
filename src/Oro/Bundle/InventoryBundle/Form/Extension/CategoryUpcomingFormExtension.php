@@ -58,9 +58,6 @@ class CategoryUpcomingFormExtension extends AbstractTypeExtension
         $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'onPostSubmit']);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function onPreSetData(FormEvent $event)
     {
         /** @var Category $category */
@@ -76,9 +73,6 @@ class CategoryUpcomingFormExtension extends AbstractTypeExtension
         }
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function onPostSubmit(FormEvent $event)
     {
         $accessor = PropertyAccess::createPropertyAccessor();

@@ -13,17 +13,11 @@ class OrderFormListener
      */
     private $appliedPromotionManager;
 
-    /**
-     * @param AppliedPromotionManager $appliedPromotionManager
-     */
     public function __construct(AppliedPromotionManager $appliedPromotionManager)
     {
         $this->appliedPromotionManager = $appliedPromotionManager;
     }
 
-    /**
-     * @param AfterFormProcessEvent $event
-     */
     public function onBeforeFlush(AfterFormProcessEvent $event)
     {
         /** @var Order $order */

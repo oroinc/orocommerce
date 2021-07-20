@@ -202,9 +202,6 @@ class ImageSliderContentWidgetTypeTest extends FormIntegrationTestCase
         );
     }
 
-    /**
-     * @return array
-     */
     protected function getExtensions(): array
     {
         $fileType = new FileType();

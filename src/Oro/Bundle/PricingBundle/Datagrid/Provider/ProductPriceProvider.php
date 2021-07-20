@@ -30,11 +30,6 @@ class ProductPriceProvider
      */
     private $doctrineHelper;
 
-    /**
-     * @param ProductPriceProviderInterface $productPriceProvider
-     * @param ProductPriceFormatter $priceFormatter
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(
         ProductPriceProviderInterface $productPriceProvider,
         ProductPriceFormatter $priceFormatter,

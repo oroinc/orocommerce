@@ -13,8 +13,6 @@ class CreditCardExpirationDateTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider formConfigurationProvider
-     * @param array $formFields
-     * @param array $formOptions
      */
     public function testFormConfiguration(array $formFields, array $formOptions)
     {
@@ -61,10 +59,6 @@ class CreditCardExpirationDateTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * @param FormConfigInterface $formConfig
-     * @param array $formOptions
-     */
     protected function assertFormOptions(FormConfigInterface $formConfig, array $formOptions)
     {
         $options = $formConfig->getOptions();

@@ -306,11 +306,6 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
         );
     }
 
-    /**
-     * @param int $productId
-     * @param ShoppingList $shoppingList
-     * @return int
-     */
     protected function getLineItemIdByProductId(int $productId, ShoppingList $shoppingList): int
     {
         $lineItems = $shoppingList->getLineItems();

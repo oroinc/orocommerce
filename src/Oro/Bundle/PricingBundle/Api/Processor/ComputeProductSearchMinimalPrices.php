@@ -22,10 +22,6 @@ class ComputeProductSearchMinimalPrices implements ProcessorInterface
     /** @var UserCurrencyManager */
     private $currencyManager;
 
-    /**
-     * @param ValueTransformer    $valueTransformer
-     * @param UserCurrencyManager $currencyManager
-     */
     public function __construct(ValueTransformer $valueTransformer, UserCurrencyManager $currencyManager)
     {
         $this->valueTransformer = $valueTransformer;
@@ -77,12 +73,6 @@ class ComputeProductSearchMinimalPrices implements ProcessorInterface
         $context->setData($data);
     }
 
-    /**
-     * @param array  $data
-     * @param string $unitName
-     *
-     * @return string|null
-     */
     private function getPriceFieldNameForProductUnit(array $data, string $unitName): ?string
     {
         $suffix = '_' . $unitName;

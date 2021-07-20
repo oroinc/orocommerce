@@ -22,8 +22,6 @@ class AddIntegrationSettingsMigration implements Migration
     }
 
     /**
-     * @param Schema $schema
-     *
      * @throws SchemaException
      */
     private function createOroFedexTransportLabelTable(Schema $schema)
@@ -53,8 +51,6 @@ class AddIntegrationSettingsMigration implements Migration
     }
 
     /**
-     * @param Schema $schema
-     *
      * @throws SchemaException
      */
     private function updateOroIntegrationTransportTable(Schema $schema)
@@ -75,9 +71,6 @@ class AddIntegrationSettingsMigration implements Migration
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function createOroFedexShippingServiceTable(Schema $schema)
     {
         $table = $schema->createTable('oro_fedex_transp_ship_service');
@@ -94,7 +87,6 @@ class AddIntegrationSettingsMigration implements Migration
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
-
 
         $table->addIndex(['ship_service_id'], 'oro_fedex_transp_ship_service_id');
         $table->addForeignKeyConstraint(

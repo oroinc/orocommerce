@@ -34,12 +34,6 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
     /** @var CombinedPriceListsBuilderFacade */
     private $builderFacade;
 
-    /**
-     * @param ManagerRegistry                 $doctrine
-     * @param LoggerInterface                 $logger
-     * @param CombinedPriceListTriggerHandler $triggerHandler
-     * @param CombinedPriceListsBuilderFacade $builderFacade
-     */
     public function __construct(
         ManagerRegistry $doctrine,
         LoggerInterface $logger,
@@ -99,9 +93,6 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
         return self::ACK;
     }
 
-    /**
-     * @param array $body
-     */
     private function handlePriceListRelationTrigger(array $body): void
     {
         $force = $body['force'] ?? false;
@@ -121,11 +112,6 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
         }
     }
 
-    /**
-     * @param array $body
-     *
-     * @return Customer|null
-     */
     private function findCustomer(array $body): ?Customer
     {
         if (!isset($body['customer'])) {
@@ -142,11 +128,6 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
         return $customer;
     }
 
-    /**
-     * @param array $body
-     *
-     * @return CustomerGroup|null
-     */
     private function findCustomerGroup(array $body): ?CustomerGroup
     {
         if (!isset($body['customerGroup'])) {
@@ -163,11 +144,6 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
         return $customerGroup;
     }
 
-    /**
-     * @param array $body
-     *
-     * @return Website|null
-     */
     private function findWebsite(array $body): ?Website
     {
         if (!isset($body['website'])) {

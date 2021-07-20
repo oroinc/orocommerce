@@ -31,11 +31,6 @@ class ShippingMethodTypesChoiceType extends AbstractType
      */
     private $iconProvider;
 
-    /**
-     * @param ShippingMethodProviderInterface $provider
-     * @param ShippingMethodIconProviderInterface $iconProvider
-     * @param AssetHelper $assetHelper
-     */
     public function __construct(
         ShippingMethodProviderInterface $provider,
         ShippingMethodIconProviderInterface $iconProvider,

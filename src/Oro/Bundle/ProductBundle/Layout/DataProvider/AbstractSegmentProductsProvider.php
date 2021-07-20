@@ -62,17 +62,6 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
     /** @var int */
     private $cacheLifeTime;
 
-    /**
-     * @param SegmentManager $segmentManager
-     * @param WebsiteManager $websiteManager
-     * @param ProductSegmentProviderInterface $productSegmentProvider
-     * @param ProductManager $productManager
-     * @param ConfigManager $configManager
-     * @param ManagerRegistry $registry
-     * @param TokenStorageInterface $tokenStorage
-     * @param SymmetricCrypterInterface $crypter
-     * @param AclHelper $aclHelper
-     */
     public function __construct(
         SegmentManager $segmentManager,
         WebsiteManager $websiteManager,
@@ -181,9 +170,6 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
         return $this->segmentManager;
     }
 
-    /**
-     * @return WebsiteManager
-     */
     protected function getWebsiteManager(): WebsiteManager
     {
         return $this->websiteManager;
@@ -260,11 +246,6 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
         return $result;
     }
 
-    /**
-     * @param array $data
-     *
-     * @return bool
-     */
     private function checkCacheDataConsistency(array $data): bool
     {
         if (!empty($data[self::DQL]) &&
@@ -283,13 +264,6 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
         return false;
     }
 
-    /**
-     * @param string $dql
-     * @param array $parameters
-     * @param array $queryHints
-     *
-     * @return string|null
-     */
     private function getEncryptedData(string $dql, array $parameters = [], array $queryHints = []): ?string
     {
         $data = $this->getHashData($dql, $parameters, $queryHints);
@@ -297,23 +271,11 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
         return $this->getEncryptedHash($data);
     }
 
-    /**
-     * @param $hash
-     *
-     * @return string|null
-     */
     private function getDecryptedData(string $hash): ?string
     {
         return $this->crypter->decryptData($hash);
     }
 
-    /**
-     * @param string $dql
-     * @param array $parameters
-     * @param array $queryHints
-     *
-     * @return string
-     */
     private function getHashData(string $dql, array $parameters = [], array $queryHints = []): string
     {
         return md5(serialize([
@@ -323,11 +285,6 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
         ]));
     }
 
-    /**
-     * @param string $data
-     *
-     * @return string|null
-     */
     private function getEncryptedHash(string $data): ?string
     {
         return $this->crypter->encryptData($data);

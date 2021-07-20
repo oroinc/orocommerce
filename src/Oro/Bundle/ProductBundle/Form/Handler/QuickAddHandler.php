@@ -65,16 +65,6 @@ class QuickAddHandler
      */
     protected $productGrouperFactory;
 
-    /**
-     * @param ProductFormProvider $productFormProvider
-     * @param QuickAddRowCollectionBuilder $quickAddRowCollectionBuilder
-     * @param ComponentProcessorRegistry $componentRegistry
-     * @param UrlGeneratorInterface $router
-     * @param TranslatorInterface $translator
-     * @param ValidatorInterface $validator
-     * @param ProductsGrouperFactory $productGrouperFactory
-     * @param EventDispatcherInterface $eventDispatcher
-     */
     public function __construct(
         ProductFormProvider $productFormProvider,
         QuickAddRowCollectionBuilder $quickAddRowCollectionBuilder,
@@ -266,7 +256,6 @@ class QuickAddHandler
     }
 
     /**
-     * @param QuickAddRowCollection $collection
      * @internal param bool $allowEmpty
      */
     protected function validateCollection(QuickAddRowCollection $collection)

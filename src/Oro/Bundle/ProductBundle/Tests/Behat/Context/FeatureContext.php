@@ -195,7 +195,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      * Example: I click info tooltip for enum value "Red"
      *
      * @When /^I click info tooltip for enum value "(?P<name>[\w\s]+)"$/
-     *
      */
     public function iClickTooltipOnEnumValue($name)
     {
@@ -225,7 +224,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      * Example: I should see info tooltip for enum value "Red"
      *
      * @Then /^(?:|I should )see info tooltip for enum value "(?P<name>[^"]+)"$/
-     *
      */
     public function iSeeTooltipForEnumValue($name)
     {
@@ -252,7 +250,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      * Example: I delete enum value by name "Green"
      *
      * @When /^I delete enum value by name "(?P<name>[\w\s]+)"$/
-     *
      */
     public function iDeleteEnumValueByName($name)
     {
@@ -281,7 +278,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      * Example: I should not see enum value "Green"
      *
      * @Then /^I should not see enum value "(?P<name>[\w\s]+)"$/
-     *
      */
     public function iShouldNotSeeEnumValue($name)
     {
@@ -438,8 +434,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      *            | AdditionalUnit      | set       |
      *            | AdditionalPrecision | 0         |
      * @Then I save product with next data:
-     *
-     * @param TableNode $table
      */
     public function saveProductWithNextData(TableNode $table)
     {
@@ -1757,8 +1751,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      *            | cat1.jpg | 1 | 1 | 1 |
      *            | cat2.jpg |   |   | 1 |
      *
-     * @param TableNode $table
-     *
      * @Then /^(?:|I )should see following product images:$/
      */
     public function iShouldSeeFollowingImages(TableNode $table)
@@ -1796,8 +1788,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      * Example: And I should see following product additional units:
      *            | item | 1 | 5  | Yes |
      *            | set  | 5 | 10 | No  |
-     *
-     * @param TableNode $table
      *
      * @Then /^(?:|I )should see following product additional units:$/
      */
@@ -1841,12 +1831,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         return $productItem;
     }
 
-    /**
-     * @param string $SKU
-     * @param Element|null $context
-     *
-     * @return Element
-     */
     private function findProductItemInShoppingList(string $SKU, Element $context = null): Element
     {
         $productItem = $this->findElementContains('Shopping list line item', $SKU, $context);
@@ -1857,7 +1841,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
     /**
      * @When /^(?:|I )attach "(?P<fileName>.*)" for Product Images/
-     * @param string $fileName
      */
     public function iAttachFileToField(string $fileName)
     {

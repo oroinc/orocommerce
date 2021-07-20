@@ -15,7 +15,7 @@ class OroSEOBundle implements Migration, ExtendExtensionAwareInterface
     const CATEGORY_TABLE_NAME = 'orob2b_catalog_category';
     const LANDING_PAGE_TABLE_NAME = 'orob2b_cms_page';
     const FALLBACK_LOCALE_VALUE_TABLE_NAME = 'oro_fallback_localization_val';
-    
+
     /** @var ExtendExtension */
     protected $extendExtension;
 

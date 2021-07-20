@@ -59,9 +59,6 @@ class UnitVisibilityModeDataGridListener
         $this->singleUnitModeService = $singleUnitModeService;
     }
 
-    /**
-     * @param BuildBefore $event
-     */
     public function onBuildBefore(BuildBefore $event)
     {
         if (!$this->singleUnitModeService->isSingleUnitMode()) {
@@ -74,9 +71,6 @@ class UnitVisibilityModeDataGridListener
         $this->addUnitLabelToQuantityColumn($config);
     }
 
-    /**
-     * @param DatagridConfiguration $configuration
-     */
     private function addUnitLabelToQuantityColumn(DatagridConfiguration $configuration)
     {
         $columnNamesContext = [

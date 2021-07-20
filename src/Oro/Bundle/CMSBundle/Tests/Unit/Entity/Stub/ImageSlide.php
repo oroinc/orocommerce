@@ -16,9 +16,6 @@ class ImageSlide extends BaseImageSlide
     /** @var File */
     private $smallImage;
 
-    /**
-     * @return null|File
-     */
     public function getMainImage(): ?File
     {
         return $this->mainImage;
@@ -35,9 +32,6 @@ class ImageSlide extends BaseImageSlide
         return $this;
     }
 
-    /**
-     * @return null|File
-     */
     public function getMediumImage(): ?File
     {
         return $this->mediumImage;
@@ -54,9 +48,6 @@ class ImageSlide extends BaseImageSlide
         return $this;
     }
 
-    /**
-     * @return null|File
-     */
     public function getSmallImage(): ?File
     {
         return $this->smallImage;

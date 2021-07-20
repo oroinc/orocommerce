@@ -23,9 +23,6 @@ class FedexResponseCache implements FedexResponseCacheInterface
      */
     private $cache;
 
-    /**
-     * @param CacheProvider $cache
-     */
     public function __construct(CacheProvider $cache)
     {
         $this->cache = $cache;
@@ -37,7 +34,7 @@ class FedexResponseCache implements FedexResponseCacheInterface
     public function has(FedexResponseCacheKeyInterface $key): bool
     {
         $this->setNamespace($key->getSettings());
-        
+
         return $this->cache->contains($key->getCacheKey());
     }
 
@@ -47,7 +44,7 @@ class FedexResponseCache implements FedexResponseCacheInterface
     public function get(FedexResponseCacheKeyInterface $key)
     {
         $this->setNamespace($key->getSettings());
-        
+
         $response = $this->cache->fetch($key->getCacheKey());
         if ($response === false) {
             return null;
@@ -62,7 +59,7 @@ class FedexResponseCache implements FedexResponseCacheInterface
     public function set(FedexResponseCacheKeyInterface $key, FedexRateServiceResponseInterface $response): bool
     {
         $this->setNamespace($key->getSettings());
-        
+
         $invalidateAt = $this->getInvalidateAt($key->getSettings());
 
         return $this->cache->save($key->getCacheKey(), $response, $invalidateAt);
@@ -74,11 +71,11 @@ class FedexResponseCache implements FedexResponseCacheInterface
     public function delete(FedexResponseCacheKeyInterface $key): bool
     {
         $this->setNamespace($key->getSettings());
-        
+
         if (!$this->has($key)) {
             return false;
         }
-        
+
         return $this->cache->delete($key->getCacheKey());
     }
 
@@ -88,15 +85,10 @@ class FedexResponseCache implements FedexResponseCacheInterface
     public function deleteAll(FedexIntegrationSettings $settings): bool
     {
         $this->setNamespace($settings);
-        
+
         return $this->cache->deleteAll();
     }
 
-    /**
-     * @param FedexIntegrationSettings $settings
-     *
-     * @return int
-     */
     private function getInvalidateAt(FedexIntegrationSettings $settings): int
     {
         $interval = 0;
@@ -113,9 +105,6 @@ class FedexResponseCache implements FedexResponseCacheInterface
         return $interval;
     }
 
-    /**
-     * @param FedexIntegrationSettings $settings
-     */
     private function setNamespace(FedexIntegrationSettings $settings)
     {
         $this->cache->setNamespace(self::NAMESPACE . $settings->getId());

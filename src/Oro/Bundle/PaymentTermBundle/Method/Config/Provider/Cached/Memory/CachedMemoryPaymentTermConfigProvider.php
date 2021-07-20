@@ -16,9 +16,6 @@ class CachedMemoryPaymentTermConfigProvider implements PaymentTermConfigProvider
      */
     private $paymentTermConfigProvider;
 
-    /**
-     * @param PaymentTermConfigProviderInterface $paymentTermConfigProvider
-     */
     public function __construct(PaymentTermConfigProviderInterface $paymentTermConfigProvider)
     {
         $this->paymentTermConfigProvider = $paymentTermConfigProvider;

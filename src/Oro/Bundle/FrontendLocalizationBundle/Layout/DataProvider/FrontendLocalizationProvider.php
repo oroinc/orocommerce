@@ -14,9 +14,6 @@ class FrontendLocalizationProvider
      */
     protected $userLocalizationManager;
 
-    /**
-     * @param UserLocalizationManagerInterface $userLocalizationManager
-     */
     public function __construct(UserLocalizationManagerInterface $userLocalizationManager)
     {
         $this->userLocalizationManager = $userLocalizationManager;

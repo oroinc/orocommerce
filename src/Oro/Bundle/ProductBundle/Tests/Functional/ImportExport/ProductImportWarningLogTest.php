@@ -77,9 +77,6 @@ class ProductImportWarningLogTest extends WebTestCase
             }));
     }
 
-    /**
-     * @param string $importFilePath
-     */
     private function assertImportOfInvalidFile(string $importFilePath)
     {
         $this->assertPreImportActionExecuted($importFilePath);
@@ -97,9 +94,6 @@ class ProductImportWarningLogTest extends WebTestCase
         $this->deleteImportFile($preImportMessageData['fileName']);
     }
 
-    /**
-     * @param string $importCsvFilePath
-     */
     private function assertPreImportActionExecuted(string $importCsvFilePath)
     {
         $file = new UploadedFile($importCsvFilePath, basename($importCsvFilePath));
@@ -136,10 +130,6 @@ class ProductImportWarningLogTest extends WebTestCase
         );
     }
 
-    /**
-     * @param string $topic
-     * @return array
-     */
     private function getOneSentMessageWithTopic(string $topic): array
     {
         $sentMessages = static::getSentMessages();
@@ -153,10 +143,6 @@ class ProductImportWarningLogTest extends WebTestCase
         return [];
     }
 
-    /**
-     * @param string $processorServiceName
-     * @param array $messageData
-     */
     private function assertMessageProcessorRejected(string $processorServiceName, array $messageData)
     {
         $processorResult = static::getContainer()
@@ -169,9 +155,6 @@ class ProductImportWarningLogTest extends WebTestCase
         static::assertEquals(MessageProcessorInterface::REJECT, $processorResult);
     }
 
-    /**
-     * @param string $filename
-     */
     private function deleteImportFile(string $filename)
     {
         self::assertFileDoesNotExist(FileManager::generateTmpFilePath($filename));
@@ -181,18 +164,11 @@ class ProductImportWarningLogTest extends WebTestCase
             ->deleteFile($filename);
     }
 
-    /**
-     * @return User
-     */
     private function getCurrentUser(): User
     {
         return $this->getSecurityToken()->getUser();
     }
 
-    /**
-     * @param array $messageData
-     * @return Message
-     */
     private function createMessage(array $messageData): Message
     {
         $message = new Message();
@@ -211,9 +187,6 @@ class ProductImportWarningLogTest extends WebTestCase
         return $this->getMockBuilder(SessionInterface::class)->getMock();
     }
 
-    /**
-     * @return UsernamePasswordOrganizationToken
-     */
     private function getSecurityToken(): UsernamePasswordOrganizationToken
     {
         return static::getContainer()

@@ -22,9 +22,6 @@ class FlatRateOptionsType extends AbstractType
      */
     protected $roundingService;
 
-    /**
-     * @param RoundingServiceInterface $roundingService
-     */
     public function __construct(RoundingServiceInterface $roundingService)
     {
         $this->roundingService = $roundingService;
@@ -63,8 +60,6 @@ class FlatRateOptionsType extends AbstractType
     }
 
     /**
-     * @param OptionsResolver $resolver
-     *
      * @throws AccessException
      */
     public function configureOptions(OptionsResolver $resolver)

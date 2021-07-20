@@ -42,12 +42,6 @@ class QuoteAddressType extends AbstractType
     /** @var Serializer */
     protected $serializer;
 
-    /**
-     * @param AddressFormatter $addressFormatter
-     * @param QuoteAddressManager $quoteAddressManager
-     * @param QuoteAddressSecurityProvider $quoteAddressSecurityProvider
-     * @param Serializer $serializer
-     */
     public function __construct(
         AddressFormatter $addressFormatter,
         QuoteAddressManager $quoteAddressManager,

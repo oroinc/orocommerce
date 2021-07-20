@@ -20,10 +20,6 @@ class TierPriceEventListener
     /** @var ProductPriceScopeCriteriaFactoryInterface */
     protected $priceScopeCriteriaFactory;
 
-    /**
-     * @param ProductPriceProviderInterface $productPriceProvider
-     * @param ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory
-     */
     public function __construct(
         ProductPriceProviderInterface $productPriceProvider,
         ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory
@@ -32,9 +28,6 @@ class TierPriceEventListener
         $this->priceScopeCriteriaFactory = $priceScopeCriteriaFactory;
     }
 
-    /**
-     * @param OrderEvent $event
-     */
     public function onOrderEvent(OrderEvent $event)
     {
         $order = $event->getOrder();

@@ -34,11 +34,6 @@ class ContentNodeTreeResolver implements ContentNodeTreeResolverInterface
     /** @var ScopeManager */
     private $scopeManager;
 
-    /**
-     * @param DoctrineHelper      $doctrineHelper
-     * @param ContentNodeProvider $contentNodeProvider
-     * @param ScopeManager        $scopeManager
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         ContentNodeProvider $contentNodeProvider,
@@ -49,12 +44,6 @@ class ContentNodeTreeResolver implements ContentNodeTreeResolverInterface
         $this->scopeManager = $scopeManager;
     }
 
-    /**
-     * @param ContentNode $node
-     * @param Scope       $scope
-     *
-     * @return ResolvedContentNode|null
-     */
     public function getResolvedContentNode(ContentNode $node, Scope $scope): ?ResolvedContentNode
     {
         $criteria = $this->getCriteriaByScope($scope);
@@ -192,12 +181,6 @@ class ContentNodeTreeResolver implements ContentNodeTreeResolverInterface
         );
     }
 
-    /**
-     * @param ContentVariant $variant
-     * @param ClassMetadata  $metadata
-     *
-     * @return ResolvedContentVariant
-     */
     private function createResolvedContentVariant(
         ContentVariant $variant,
         ClassMetadata $metadata
@@ -223,11 +206,6 @@ class ContentNodeTreeResolver implements ContentNodeTreeResolverInterface
         return $resolvedVariant;
     }
 
-    /**
-     * @param ContentNode $node
-     *
-     * @return string
-     */
     private function getIdentifier(ContentNode $node): string
     {
         /** @var LocalizedFallbackValue $localizedUrl */
@@ -271,11 +249,6 @@ class ContentNodeTreeResolver implements ContentNodeTreeResolverInterface
         }
     }
 
-    /**
-     * @param Scope $scope
-     *
-     * @return ScopeCriteria
-     */
     private function getCriteriaByScope(Scope $scope): ScopeCriteria
     {
         $context = [];

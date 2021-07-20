@@ -31,11 +31,6 @@ class ProductUnitExistsValidatorTest extends ConstraintValidatorTestCase
         $this->validator->validate(null, $this->createMock(Constraint::class));
     }
 
-    /**
-     * @param string $unitCode
-     *
-     * @return ProductUnitPrecision
-     */
     private function getUnitPrecision(string $unitCode, bool $isSell = false): ProductUnitPrecision
     {
         $unit = new ProductUnit();

@@ -49,9 +49,6 @@ class LoadShippingMethodsConfigsRulesWithConfigs extends AbstractFixture impleme
         $manager->flush();
     }
 
-    /**
-     * @return array
-     */
     protected function getShippingRuleData(): array
     {
         return Yaml::parse(file_get_contents(__DIR__.'/data/shipping_methods_configs_rules_with_configs.yml'));

@@ -48,9 +48,6 @@ class ProductImageHelperTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param array $productImages
-     * @param array $expectedResult
-     *
      * @dataProvider sortProductImagesProvider
      */
     public function testSortImages(array $productImages, array $expectedResult)
@@ -60,9 +57,6 @@ class ProductImageHelperTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedResult, array_values($actualResult));
     }
 
-    /**
-     * @return array
-     */
     public function sortProductImagesProvider(): array
     {
         $productImage1 = $this->createProductImage(1);
@@ -100,11 +94,6 @@ class ProductImageHelperTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param int $id
-     * @param array $imageTypes
-     * @return StubProductImage
-     */
     protected function createProductImage(int $id, array $imageTypes = []): StubProductImage
     {
         $productImage = new StubProductImage();

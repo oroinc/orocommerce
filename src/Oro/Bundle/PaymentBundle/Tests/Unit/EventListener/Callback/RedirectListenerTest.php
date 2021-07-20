@@ -26,7 +26,6 @@ class RedirectListenerTest extends \PHPUnit\Framework\TestCase
     /** @var PaymentResultMessageProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $messageProvider;
 
-
     protected function setUp(): void
     {
         $this->session = $this->createMock(Session::class);
@@ -167,10 +166,6 @@ class RedirectListenerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param Response $expectedResponse
-     * @param Response $actualResponse
-     */
     private function assertResponses(Response $expectedResponse, Response $actualResponse)
     {
         // Hack response datetime because of requests might have different datetime

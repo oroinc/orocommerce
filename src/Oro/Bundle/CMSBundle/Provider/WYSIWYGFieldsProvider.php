@@ -22,10 +22,6 @@ class WYSIWYGFieldsProvider
     /** @var ConfigManager */
     private $configManager;
 
-    /**
-     * @param ManagerRegistry $doctrine
-     * @param ConfigManager   $configManager
-     */
     public function __construct(ManagerRegistry $doctrine, ConfigManager $configManager)
     {
         $this->doctrine = $doctrine;
@@ -68,11 +64,6 @@ class WYSIWYGFieldsProvider
 
     /**
      * Checks whether the given field is a serialized WYSIWYG field.
-     *
-     * @param string $entityClass
-     * @param string $fieldName
-     *
-     * @return bool
      */
     public function isSerializedWysiwygField(string $entityClass, string $fieldName): bool
     {
@@ -111,11 +102,6 @@ class WYSIWYGFieldsProvider
 
     /**
      * Checks whether the given field is an WYSIWYG attributes.
-     *
-     * @param string $entityClass
-     * @param string $fieldName
-     *
-     * @return bool
      */
     public function isWysiwygAttribute(string $entityClass, string $fieldName): bool
     {
@@ -126,11 +112,6 @@ class WYSIWYGFieldsProvider
 
     /**
      * Gets the name of "style" additional field for the given WYSIWYG field.
-     *
-     * @param string $entityClass
-     * @param string $wysiwygFieldName
-     *
-     * @return string
      */
     public function getWysiwygStyleField(string $entityClass, string $wysiwygFieldName): string
     {
@@ -145,11 +126,6 @@ class WYSIWYGFieldsProvider
 
     /**
      * Gets the name of "properties" additional field for the given WYSIWYG field.
-     *
-     * @param string $entityClass
-     * @param string $wysiwygFieldName
-     *
-     * @return string
      */
     public function getWysiwygPropertiesField(string $entityClass, string $wysiwygFieldName): string
     {
@@ -162,15 +138,6 @@ class WYSIWYGFieldsProvider
         );
     }
 
-    /**
-     * @param string $entityClass
-     * @param string $wysiwygFieldName
-     * @param string $wysiwygAdditionalFieldSuffix
-     * @param string $wysiwygAdditionalFieldType
-     * @param string $wysiwygAdditionalFieldDescription
-     *
-     * @return string
-     */
     private function getWysiwygAdditionalField(
         string $entityClass,
         string $wysiwygFieldName,
@@ -211,24 +178,11 @@ class WYSIWYGFieldsProvider
         ));
     }
 
-    /**
-     * @param ClassMetadata $metadata
-     * @param string        $fieldName
-     * @param string        $fieldType
-     *
-     * @return bool
-     */
     private function isWysiwygAdditionalField(ClassMetadata $metadata, string $fieldName, string $fieldType): bool
     {
         return $this->getTypeOfField($metadata, $fieldName) === $fieldType;
     }
 
-    /**
-     * @param ClassMetadata $metadata
-     * @param string        $fieldName
-     *
-     * @return string|null
-     */
     private function getTypeOfField(ClassMetadata $metadata, string $fieldName): ?string
     {
         $entityClass = $metadata->getName();
@@ -247,10 +201,6 @@ class WYSIWYGFieldsProvider
 
     /**
      * Notes: should be the same as {@see \Symfony\Component\PropertyAccess\PropertyAccessor::camelize}.
-     *
-     * @param string $string
-     *
-     * @return string
      */
     private function camelize(string $string): string
     {

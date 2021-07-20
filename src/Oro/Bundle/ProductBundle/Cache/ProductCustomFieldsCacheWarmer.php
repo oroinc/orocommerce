@@ -14,9 +14,6 @@ class ProductCustomFieldsCacheWarmer extends CacheWarmer
     /** @var CustomFieldProvider */
     private $customFieldProvider;
 
-    /**
-     * @param CustomFieldProvider $customFieldProvider
-     */
     public function __construct(CustomFieldProvider $customFieldProvider)
     {
         $this->customFieldProvider = $customFieldProvider;

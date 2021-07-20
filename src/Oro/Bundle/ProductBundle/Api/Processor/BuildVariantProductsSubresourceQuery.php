@@ -21,9 +21,6 @@ class BuildVariantProductsSubresourceQuery implements ProcessorInterface
     /** @var DoctrineHelper */
     private $doctrineHelper;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(DoctrineHelper $doctrineHelper)
     {
         $this->doctrineHelper = $doctrineHelper;
@@ -61,11 +58,6 @@ class BuildVariantProductsSubresourceQuery implements ProcessorInterface
         $context->setQuery($query);
     }
 
-    /**
-     * @param EntityDefinitionConfig $config
-     *
-     * @return string
-     */
     private function getIdentifierFieldName(EntityDefinitionConfig $config): string
     {
         $idFieldNames = $config->getIdentifierFieldNames();

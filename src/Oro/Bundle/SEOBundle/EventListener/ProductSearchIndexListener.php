@@ -36,11 +36,6 @@ class ProductSearchIndexListener
      */
     private $websiteContextManager;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param AbstractWebsiteLocalizationProvider $websiteLocalizationProvider
-     * @param WebsiteContextManager $websiteContextManager
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         AbstractWebsiteLocalizationProvider $websiteLocalizationProvider,
@@ -83,9 +78,6 @@ class ProductSearchIndexListener
         );
     }
 
-    /**
-     * @param IndexEntityEvent $event
-     */
     public function onWebsiteSearchIndex(IndexEntityEvent $event)
     {
         $websiteId = $this->websiteContextManager->getWebsiteId($event->getContext());

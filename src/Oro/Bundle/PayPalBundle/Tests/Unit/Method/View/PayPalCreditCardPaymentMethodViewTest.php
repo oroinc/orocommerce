@@ -220,7 +220,6 @@ class PayPalCreditCardPaymentMethodViewTest extends \PHPUnit\Framework\TestCase
         return array($formView, $context);
     }
 
-
     public function testGetPaymentMethodIdentifier()
     {
         $this->paymentConfig->expects($this->once())

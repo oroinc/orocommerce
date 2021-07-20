@@ -29,10 +29,6 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtension extends AbstractTypeE
      */
     private $childName;
 
-    /**
-     * @param $childName
-     * @param ProductUnitFieldsSettingsInterface $productFormUnitFieldsSettings
-     */
     public function __construct($childName, ProductUnitFieldsSettingsInterface $productFormUnitFieldsSettings)
     {
         $this->childName = $childName;
@@ -47,9 +43,6 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtension extends AbstractTypeE
         $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'setAvailableUnits']);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function setAvailableUnits(FormEvent $event)
     {
         $form = $event->getForm();

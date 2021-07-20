@@ -13,9 +13,6 @@ class ContentVariantDataProvider
     /** @var RequestWebContentVariantProvider */
     private $requestWebContentVariantProvider;
 
-    /**
-     * @param RequestWebContentVariantProvider $requestWebContentVariantProvider
-     */
     public function __construct(RequestWebContentVariantProvider $requestWebContentVariantProvider)
     {
         $this->requestWebContentVariantProvider = $requestWebContentVariantProvider;
@@ -29,9 +26,6 @@ class ContentVariantDataProvider
         return $this->requestWebContentVariantProvider->getContentVariant();
     }
 
-    /**
-     * @return string|null
-     */
     public function getContentVariantType(): ?string
     {
         $contentVariant = $this->getFromRequest();

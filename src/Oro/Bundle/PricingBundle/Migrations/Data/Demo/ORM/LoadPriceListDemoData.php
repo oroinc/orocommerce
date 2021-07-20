@@ -51,11 +51,6 @@ class LoadPriceListDemoData extends AbstractFixture implements ContainerAwareInt
         $manager->flush();
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param array $row
-     * @param array $currencies
-     */
     protected function processRow(ObjectManager $manager, array $row, array $currencies)
     {
         $priceList = $this->getPriceList($manager, $row['name']);

@@ -21,11 +21,6 @@ class ShoppingListUrlProvider
     /** @var ShoppingListLimitManager */
     private $shoppingListLimitManager;
 
-    /**
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param UrlGeneratorInterface $urlGenerator
-     * @param ShoppingListLimitManager $shoppingListLimitManager
-     */
     public function __construct(
         AuthorizationCheckerInterface $authorizationChecker,
         UrlGeneratorInterface $urlGenerator,
@@ -36,10 +31,6 @@ class ShoppingListUrlProvider
         $this->shoppingListLimitManager = $shoppingListLimitManager;
     }
 
-    /**
-     * @param ShoppingList|null $shoppingList
-     * @return string
-     */
     public function getFrontendUrl(?ShoppingList $shoppingList = null): string
     {
         if (!$shoppingList || $this->shoppingListLimitManager->isOnlyOneEnabled()) {

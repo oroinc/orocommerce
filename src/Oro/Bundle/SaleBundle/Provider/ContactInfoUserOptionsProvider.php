@@ -26,11 +26,6 @@ class ContactInfoUserOptionsProvider implements OptionProviderWithDefaultValueIn
      */
     protected $availableUserOptionsProvider;
 
-    /**
-     * @param ConfigManager                           $configManager
-     * @param ContactInfoAvailableUserOptionsProvider $availableUserOptionsProvider
-     * @param ContactInfoSourceOptionsProvider        $contactInfoCustomerOptionsProvider
-     */
     public function __construct(
         ConfigManager $configManager,
         ContactInfoAvailableUserOptionsProvider $availableUserOptionsProvider,

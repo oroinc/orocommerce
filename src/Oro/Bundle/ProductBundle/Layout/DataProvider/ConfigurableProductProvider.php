@@ -79,11 +79,6 @@ class ConfigurableProductProvider
         return $parentProduct;
     }
 
-    /**
-     * @param bool $translateLabels
-     *
-     * @return array
-     */
     private function getProductCustomFields(bool $translateLabels): array
     {
         if (!$this->customFields) {

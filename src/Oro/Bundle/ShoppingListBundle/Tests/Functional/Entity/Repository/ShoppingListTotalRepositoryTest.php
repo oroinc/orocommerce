@@ -212,9 +212,6 @@ class ShoppingListTotalRepositoryTest extends WebTestCase
         return $total;
     }
 
-    /**
-     * @param ShoppingListTotal $shoppingListTotal
-     */
     private function preparePriceListRelationForCustomerGroupChecks(ShoppingListTotal $shoppingListTotal)
     {
         $shoppingList = $shoppingListTotal->getShoppingList();

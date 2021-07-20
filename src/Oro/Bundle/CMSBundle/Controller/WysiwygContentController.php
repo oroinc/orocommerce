@@ -18,10 +18,6 @@ class WysiwygContentController extends AbstractController
 {
     /**
      * @Route("/validate", name="oro_cms_wysiwyg_content_validate", methods={"POST"})
-     *
-     * @param Request $request
-     *
-     * @return Response
      */
     public function validateAction(Request $request): Response
     {
@@ -43,10 +39,6 @@ class WysiwygContentController extends AbstractController
 
     /**
      * @Route("/resolve", name="oro_cms_wysiwyg_content_resolve", methods={"POST"})
-     *
-     * @param Request $request
-     *
-     * @return Response
      */
     public function resolveAction(Request $request): Response
     {

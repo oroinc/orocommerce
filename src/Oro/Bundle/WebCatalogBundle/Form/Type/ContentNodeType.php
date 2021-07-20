@@ -28,18 +28,11 @@ class ContentNodeType extends AbstractType
      */
     private $router;
 
-    /**
-     * @param RouterInterface $router
-     */
     public function __construct(RouterInterface $router)
     {
         $this->router = $router;
     }
 
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         /** @var ContentNode $contentNode */
@@ -88,9 +81,6 @@ class ContentNodeType extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPreSubmit']);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function preSetData(FormEvent $event)
     {
         $data = $event->getData();
@@ -125,9 +115,6 @@ class ContentNodeType extends AbstractType
         }
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function onSubmit(FormEvent $event)
     {
         /** @var ContentNode $contentNode */
@@ -152,9 +139,6 @@ class ContentNodeType extends AbstractType
         }
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function onPreSubmit(FormEvent $event)
     {
         $data = $event->getData();

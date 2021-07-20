@@ -10,9 +10,5 @@ use Oro\Bundle\RedirectBundle\Entity\SlugAwareInterface;
  */
 interface SlugSourceEntityProviderInterface
 {
-    /**
-     * @param Slug $slug
-     * @return SlugAwareInterface|null
-     */
     public function getSourceEntityBySlug(Slug $slug): ?SlugAwareInterface;
 }

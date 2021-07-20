@@ -16,17 +16,11 @@ class DigitalResolver implements ResolverInterface
      */
     protected $resolver;
 
-    /**
-     * @param ResolverInterface $resolver
-     */
     public function __construct(ResolverInterface $resolver)
     {
         $this->resolver = $resolver;
     }
 
-    /**
-     * @param Taxable $taxable
-     */
     public function resolve(Taxable $taxable)
     {
         if ($taxable->getItems()->count() === 0) {

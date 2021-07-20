@@ -184,10 +184,6 @@ class UniqueSlugPrototypeTest extends ConstraintValidatorTestCase
             ->assertRaised();
     }
 
-    /**
-     * @param int $id
-     * @return ContentNode
-     */
     private function createContentNode(int $id): ContentNode
     {
         $node = new ContentNode();

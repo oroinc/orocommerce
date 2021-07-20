@@ -24,9 +24,6 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider configurationDataProvider
-     *
-     * @param $value
-     * @param array $expected
      */
     public function testProcessConfiguration($value, array $expected): void
     {

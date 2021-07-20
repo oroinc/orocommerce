@@ -41,9 +41,6 @@ abstract class AbstractTaxExtension extends AbstractTypeExtension
         $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'onPostSubmit'], 10);
     }
 
-    /**
-     * @param FormBuilderInterface $builder
-     */
     abstract protected function addTaxCodeField(FormBuilderInterface $builder);
 
     /**

@@ -45,7 +45,6 @@ class WebsiteSearchCompilerPassTest extends \PHPUnit\Framework\TestCase
         $container->register('service.name.3')
             ->addTag('website_search.placeholder');
 
-
         $this->compiler->process($container);
 
         self::assertEquals(

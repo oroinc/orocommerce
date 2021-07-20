@@ -20,27 +20,17 @@ class RedirectListener
     /** @var PaymentResultMessageProviderInterface */
     protected $messageProvider;
 
-    /**
-     * @param Session $session
-     * @param PaymentResultMessageProviderInterface $messageProvider
-     */
     public function __construct(Session $session, PaymentResultMessageProviderInterface $messageProvider)
     {
         $this->session = $session;
         $this->messageProvider = $messageProvider;
     }
 
-    /**
-     * @param CallbackReturnEvent $event
-     */
     public function onReturn(CallbackReturnEvent $event)
     {
         $this->handleEvent($event, self::SUCCESS_URL_KEY);
     }
 
-    /**
-     * @param CallbackErrorEvent $event
-     */
     public function onError(CallbackErrorEvent $event)
     {
         $this->handleEvent($event, self::FAILURE_URL_KEY);

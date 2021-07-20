@@ -14,9 +14,6 @@ class ContentWidgetTwigFunctionProcessor implements WYSIWYGTwigFunctionProcessor
     /** @var AclHelper */
     protected $aclHelper;
 
-    /**
-     * @param AclHelper $aclHelper
-     */
     public function __construct(AclHelper $aclHelper)
     {
         $this->aclHelper = $aclHelper;
@@ -81,11 +78,6 @@ class ContentWidgetTwigFunctionProcessor implements WYSIWYGTwigFunctionProcessor
         return $isFlushNeeded;
     }
 
-    /**
-     * @param WYSIWYGProcessedDTO $processedDTO
-     * @param array $names
-     * @return array
-     */
     protected function getContentWidgets(WYSIWYGProcessedDTO $processedDTO, array $names): array
     {
         return $processedDTO->getProcessedEntity()

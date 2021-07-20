@@ -14,9 +14,6 @@ class RfpProductPricesProvider
      */
     private $productPricesProvider;
 
-    /**
-     * @param FrontendProductPricesProvider $productPricesProvider
-     */
     public function __construct(FrontendProductPricesProvider $productPricesProvider)
     {
         $this->productPricesProvider = $productPricesProvider;

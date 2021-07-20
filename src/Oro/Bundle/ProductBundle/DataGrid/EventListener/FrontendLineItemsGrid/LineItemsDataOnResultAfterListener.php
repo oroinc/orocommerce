@@ -21,19 +21,12 @@ class LineItemsDataOnResultAfterListener
     /** @var EntityClassResolver */
     private $entityClassResolver;
 
-    /**
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param EntityClassResolver $entityClassResolver
-     */
     public function __construct(EventDispatcherInterface $eventDispatcher, EntityClassResolver $entityClassResolver)
     {
         $this->eventDispatcher = $eventDispatcher;
         $this->entityClassResolver = $entityClassResolver;
     }
 
-    /**
-     * @param OrmResultAfter $event
-     */
     public function onResultAfter(OrmResultAfter $event): void
     {
         $lineItemsByIds = $this->getLineItemsIndexedByIds($event);
@@ -54,19 +47,11 @@ class LineItemsDataOnResultAfterListener
         }
     }
 
-    /**
-     * @param ResultRecordInterface $record
-     * @return string
-     */
     private function getRowId(ResultRecordInterface $record): string
     {
         return (string)($record->getValue('allLineItemsIds') ?: $record->getValue('id'));
     }
 
-    /**
-     * @param DatagridInterface $datagrid
-     * @return bool
-     */
     private function isGrouped(DatagridInterface $datagrid): bool
     {
         $parameters = $datagrid->getParameters()->get('_parameters', []);
@@ -106,10 +91,6 @@ class LineItemsDataOnResultAfterListener
         return $lineItemsByIds;
     }
 
-    /**
-     * @param DatagridInterface $datagrid
-     * @return string
-     */
     private function getRootEntityClass(DatagridInterface $datagrid): string
     {
         $rootEntityClass = $datagrid->getConfig()->getOrmQuery()->getRootEntity($this->entityClassResolver);
@@ -126,11 +107,6 @@ class LineItemsDataOnResultAfterListener
         return $rootEntityClass;
     }
 
-    /**
-     * @param array $lineItems
-     * @param DatagridInterface $datagrid
-     * @return array
-     */
     private function getLineItemsData(
         array $lineItems,
         DatagridInterface $datagrid

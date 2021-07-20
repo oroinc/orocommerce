@@ -28,7 +28,6 @@ class FeatureContext extends OroFeatureContext implements KernelAwareContext
      *      | 12          | USD      | 77.0 |
      *
      * @Then /^(?:|I )expect the following shipping costs:$/
-     * @param TableNode $table
      */
     public function iExpectUPSShippingCosts(TableNode $table)
     {
@@ -38,10 +37,6 @@ class FeatureContext extends OroFeatureContext implements KernelAwareContext
         $this->writeFile($yamlDumper->dump($data));
     }
 
-    /**
-     * @param string $cacheDir
-     * @return string
-     */
     public static function getBehatYamlFilename(string $cacheDir): string
     {
         $behatCacheDir = $cacheDir . DIRECTORY_SEPARATOR . self::BEHAT_YAML_DIR_NAME;
@@ -53,10 +48,6 @@ class FeatureContext extends OroFeatureContext implements KernelAwareContext
         return $behatCacheDir . DIRECTORY_SEPARATOR . self::BEHAT_YAML_FILE_NAME;
     }
 
-    /**
-     * @param TableNode $table
-     * @return array
-     */
     private function parseShippingCostsTable(TableNode $table): array
     {
         $rows = $table->getRows();
@@ -89,10 +80,6 @@ class FeatureContext extends OroFeatureContext implements KernelAwareContext
         return $data;
     }
 
-    /**
-     * @param string $description
-     * @return string
-     */
     private function getMethodCodeByDescription(string $description): string
     {
         $entityManager = $this->getContainer()->get('doctrine')->getManagerForClass(ShippingService::class);
@@ -108,9 +95,6 @@ class FeatureContext extends OroFeatureContext implements KernelAwareContext
         return $shippingService->getCode();
     }
 
-    /**
-     * @param string $content
-     */
     private function writeFile(string $content)
     {
         $cacheDir = $this->getContainer()->getParameter('kernel.cache_dir');

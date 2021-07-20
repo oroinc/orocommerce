@@ -64,17 +64,11 @@ class ProductPriceImportStrategy extends ConfigurableAddOrReplaceStrategy
         return parent::afterProcessEntity($entity);
     }
 
-    /**
-     * @param ProductPrice $entity
-     */
     protected function refreshPrice(ProductPrice $entity)
     {
         $entity->loadPrice();
     }
 
-    /**
-     * @param ProductPrice $entity
-     */
     protected function loadProduct(ProductPrice $entity)
     {
         if ($entity->getProduct()) {
@@ -136,9 +130,6 @@ class ProductPriceImportStrategy extends ConfigurableAddOrReplaceStrategy
         );
     }
 
-    /**
-     * @param ProductPrice $entity
-     */
     protected function addEntityUniquenessViolation(ProductPrice $entity)
     {
         $uniqueConstraint = new UniqueProductPrices();

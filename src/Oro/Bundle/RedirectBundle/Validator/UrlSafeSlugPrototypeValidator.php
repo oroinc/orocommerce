@@ -20,9 +20,6 @@ class UrlSafeSlugPrototypeValidator extends ConstraintValidator
      */
     protected $validator;
 
-    /**
-     * @param ValidatorInterface $validator
-     */
     public function __construct(ValidatorInterface $validator)
     {
         $this->validator = $validator;

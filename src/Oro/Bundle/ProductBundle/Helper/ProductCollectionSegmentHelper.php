@@ -27,10 +27,6 @@ class ProductCollectionSegmentHelper
      */
     private $websiteIdsByWebCatalog;
 
-    /**
-     * @param ContentVariantSegmentProvider $contentVariantSegmentProvider
-     * @param WebCatalogUsageProviderInterface|null $webCatalogUsageProvider
-     */
     public function __construct(
         ContentVariantSegmentProvider $contentVariantSegmentProvider,
         WebCatalogUsageProviderInterface $webCatalogUsageProvider = null
@@ -44,9 +40,6 @@ class ProductCollectionSegmentHelper
      *
      * Website identifiers are collected by web catalog in which there are product collection
      * content variants assigned to given segment
-     *
-     * @param Segment $segment
-     * @return array
      */
     public function getWebsiteIdsBySegment(Segment $segment): array
     {
@@ -68,10 +61,6 @@ class ProductCollectionSegmentHelper
         return $websiteIds;
     }
 
-    /**
-     * @param WebCatalogInterface $webCatalog
-     * @return array
-     */
     private function getWebsiteIdsByWebCatalog(WebCatalogInterface $webCatalog): array
     {
         if (null === $this->websiteIdsByWebCatalog) {
@@ -86,9 +75,6 @@ class ProductCollectionSegmentHelper
         return $this->websiteIdsByWebCatalog[$webCatalog->getId()] ?? [];
     }
 
-    /**
-     * @return bool
-     */
     public function isEnabled(): bool
     {
         return (bool) $this->webCatalogUsageProvider;

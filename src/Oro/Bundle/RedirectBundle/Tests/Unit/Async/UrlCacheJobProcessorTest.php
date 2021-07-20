@@ -70,7 +70,6 @@ class UrlCacheJobProcessorTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider invalidMessageDataProvider
-     * @param array $data
      */
     public function testProcessInvalidMessage(array $data)
     {

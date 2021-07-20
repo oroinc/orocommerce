@@ -26,7 +26,6 @@ class ProductPriceRemove extends Event
 
     /**
      * ProductPriceRemove constructor.
-     * @param ProductPrice $price
      */
     public function __construct(ProductPrice $price)
     {
@@ -49,9 +48,6 @@ class ProductPriceRemove extends Event
         return $this->entityManager;
     }
 
-    /**
-     * @param EntityManager $entityManager
-     */
     public function setEntityManager(EntityManager $entityManager)
     {
         $this->entityManager = $entityManager;

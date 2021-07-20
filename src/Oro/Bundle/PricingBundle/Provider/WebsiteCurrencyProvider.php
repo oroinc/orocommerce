@@ -19,10 +19,6 @@ class WebsiteCurrencyProvider
      */
     protected $doctrineHelper;
 
-    /**
-     * @param CurrencyProviderInterface $currencyProvider
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(CurrencyProviderInterface $currencyProvider, DoctrineHelper $doctrineHelper)
     {
         $this->currencyProvider = $currencyProvider;

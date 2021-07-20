@@ -13,9 +13,6 @@ class CombinedPriceListsUpdateEvent extends Event
      */
     protected $combinedPriceListIds;
 
-    /**
-     * @param array $cplIds
-     */
     public function __construct(array $cplIds)
     {
         $this->combinedPriceListIds = $cplIds;

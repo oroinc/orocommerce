@@ -11,24 +11,14 @@ class AfterReindexEvent extends Event
 {
     public const EVENT_NAME = 'oro_website_search.after_reindex';
 
-    /** @var string */
     private string $entityClass;
 
-    /** @var array */
     private array $websiteContext;
 
-    /** @var array */
     private array $indexedEntityIds;
 
-    /** @var array */
     private array $removedEntityIds;
 
-    /**
-     * @param string $entityClass
-     * @param array $context
-     * @param array $indexedEntityIds
-     * @param array $removedEntityIds
-     */
     public function __construct(
         string $entityClass,
         array $context = [],
@@ -41,33 +31,21 @@ class AfterReindexEvent extends Event
         $this->removedEntityIds = $removedEntityIds;
     }
 
-    /**
-     * @return string
-     */
     public function getEntityClass(): string
     {
         return $this->entityClass;
     }
 
-    /**
-     * @return array
-     */
     public function getWebsiteContext(): array
     {
         return $this->websiteContext;
     }
 
-    /**
-     * @return array
-     */
     public function getIndexedEntityIds(): array
     {
         return $this->indexedEntityIds;
     }
 
-    /**
-     * @return array
-     */
     public function getRemovedEntityIds(): array
     {
         return $this->removedEntityIds;

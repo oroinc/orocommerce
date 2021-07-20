@@ -51,7 +51,6 @@ class OrderContext extends OroFeatureContext implements OroPageObjectAware, Kern
 
     /**
      * @Given /^There is "([^"]*)" status for new orders in the system configuration$/
-     * @param $statusName
      */
     public function thereIsStatusForNewOrdersInTheSystemConfiguration($statusName)
     {

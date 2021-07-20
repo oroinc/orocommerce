@@ -26,12 +26,6 @@ class FedexPackageSettingsByIntegrationSettingsAndRuleFactory implements
         );
     }
 
-    /**
-     * @param FedexIntegrationSettings $settings
-     * @param ShippingServiceRule      $rule
-     *
-     * @return string
-     */
     private function getLimitationExpression(FedexIntegrationSettings $settings, ShippingServiceRule $rule): string
     {
         if ($settings->getUnitOfWeight() === FedexIntegrationSettings::UNIT_OF_WEIGHT_LB) {

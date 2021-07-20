@@ -44,8 +44,6 @@ class OroRedirectBundle implements Migration, DatabasePlatformAwareInterface
 
     /**
      * Create oro_slug_scope table
-     *
-     * @param Schema $schema
      */
     protected function createOroSlugScopeTable(Schema $schema)
     {
@@ -57,8 +55,6 @@ class OroRedirectBundle implements Migration, DatabasePlatformAwareInterface
 
     /**
      * Add oro_slug_scope foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroSlugScopeForeignKeys(Schema $schema)
     {
@@ -77,10 +73,6 @@ class OroRedirectBundle implements Migration, DatabasePlatformAwareInterface
         );
     }
 
-    /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     */
     protected function updateSlugSchema(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('oro_redirect_slug');
@@ -91,7 +83,7 @@ class OroRedirectBundle implements Migration, DatabasePlatformAwareInterface
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
-        
+
         $table->addColumn('url_hash', 'string', ['length' => 32, 'notnull' => false]);
         $queries->addQuery(
             new ParametrizedSqlMigrationQuery(
@@ -107,19 +99,14 @@ class OroRedirectBundle implements Migration, DatabasePlatformAwareInterface
         }
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addUrlHashIndex(Schema $schema)
     {
         $table = $schema->getTable('oro_redirect_slug');
         $table->addIndex(['url_hash'], 'oro_redirect_slug_url_hash', []);
     }
-        
+
     /**
      * Create orob2b_redirect table
-     *
-     * @param Schema $schema
      */
     protected function createOroRedirectTable(Schema $schema)
     {
@@ -137,8 +124,6 @@ class OroRedirectBundle implements Migration, DatabasePlatformAwareInterface
 
     /**
      * Add oro_redirect foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroRedirectForeignKeys(Schema $schema)
     {

@@ -20,10 +20,6 @@ class ExpandProductSearchEntities implements ProcessorInterface
     /** @var DoctrineHelper */
     private $doctrineHelper;
 
-    /**
-     * @param EntitySerializer $entitySerializer
-     * @param DoctrineHelper   $doctrineHelper
-     */
     public function __construct(EntitySerializer $entitySerializer, DoctrineHelper $doctrineHelper)
     {
         $this->entitySerializer = $entitySerializer;
@@ -90,11 +86,6 @@ class ExpandProductSearchEntities implements ProcessorInterface
         return $expandedAssociationNames;
     }
 
-    /**
-     * @param EntityDefinitionConfig $config
-     *
-     * @return string|null
-     */
     private function getIdentifierFieldName(EntityDefinitionConfig $config): ?string
     {
         $idFieldNames = $config->getIdentifierFieldNames();
@@ -105,12 +96,6 @@ class ExpandProductSearchEntities implements ProcessorInterface
         return null;
     }
 
-    /**
-     * @param array  $data
-     * @param string $fieldName
-     *
-     * @return array
-     */
     private function getAssociationIds(array $data, string $fieldName): array
     {
         $targetIds = [];
@@ -124,13 +109,6 @@ class ExpandProductSearchEntities implements ProcessorInterface
         return $targetIds;
     }
 
-    /**
-     * @param array  $data
-     * @param string $fieldName
-     * @param array  $associationData
-     *
-     * @return array
-     */
     private function applyAssociationData(array $data, string $fieldName, array $associationData): array
     {
         foreach ($data as $key => $item) {

@@ -38,7 +38,6 @@ class UnitFieldsProviderTest extends AbstractFieldsProviderTest
 
     /**
      * @dataProvider getFieldsDataProvider
-     * @param array $fieldsData
      */
     public function testGetAutocompleteData(array $fieldsData)
     {

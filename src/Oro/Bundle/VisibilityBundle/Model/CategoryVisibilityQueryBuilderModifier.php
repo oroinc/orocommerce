@@ -33,11 +33,6 @@ class CategoryVisibilityQueryBuilderModifier
      */
     private $scopeManager;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param ConfigManager $configManager
-     * @param ScopeManager $scopeManager
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         ConfigManager $configManager,
@@ -48,9 +43,6 @@ class CategoryVisibilityQueryBuilderModifier
         $this->scopeManager = $scopeManager;
     }
 
-    /**
-     * @param QueryBuilder $queryBuilder
-     */
     public function restrictForAnonymous(QueryBuilder $queryBuilder)
     {
         $categoryVisibilityConfigValue = $this->getCategoryVisibilityConfigValue();

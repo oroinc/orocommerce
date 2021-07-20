@@ -22,10 +22,6 @@ class ExpandSystemPageContentVariant implements ProcessorInterface
     /** @var SystemPageRepository */
     private $systemPageRepository;
 
-    /**
-     * @param ObjectNormalizer     $objectNormalizer
-     * @param SystemPageRepository $systemPageRepository
-     */
     public function __construct(
         ObjectNormalizer $objectNormalizer,
         SystemPageRepository $systemPageRepository
@@ -59,11 +55,6 @@ class ExpandSystemPageContentVariant implements ProcessorInterface
         );
     }
 
-    /**
-     * @param CustomizeLoadedDataContext $context
-     *
-     * @return string
-     */
     private function getTargetEntityIdFieldName(CustomizeLoadedDataContext $context): string
     {
         $idFieldNames = $context->getConfig()->getIdentifierFieldNames();
@@ -90,13 +81,6 @@ class ExpandSystemPageContentVariant implements ProcessorInterface
         return $entities;
     }
 
-    /**
-     * @param array  $data
-     * @param array  $normalizedData
-     * @param string $targetEntityIdFieldName
-     *
-     * @return array
-     */
     private function buildResultData(array $data, array $normalizedData, string $targetEntityIdFieldName): array
     {
         $normalizedDataMap = [];

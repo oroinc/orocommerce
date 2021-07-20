@@ -229,12 +229,6 @@ class OrderContextDataConverterTest extends \PHPUnit\Framework\TestCase
         return $discountLineItems;
     }
 
-    /**
-     * @param Customer $customer
-     * @param CustomerGroup $customerGroup
-     * @param Website $website
-     * @return ScopeCriteria
-     */
     private function getScopeCriteria(Customer $customer, CustomerGroup $customerGroup, Website $website): ScopeCriteria
     {
         $scopeContext = [

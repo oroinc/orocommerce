@@ -26,9 +26,6 @@ class ProductPriceCollection extends CollectionField
         }
     }
 
-    /**
-     * @param array $values
-     */
     public function assertRows(array $values)
     {
         $rows = $this->findAll('css', '.product-price-collection .oro-multiselect-holder');
@@ -89,10 +86,6 @@ class ProductPriceCollection extends CollectionField
         ];
     }
 
-    /**
-     * @param NodeElement $row
-     * @param array $value
-     */
     private function changeRowValue(NodeElement $row, array $value)
     {
         $element = $this->elementFactory->wrapElement(

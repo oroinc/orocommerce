@@ -17,9 +17,6 @@ class CheckoutTransitionEventSubscriber implements EventSubscriberInterface
     /** @var CheckoutStateDiffManager */
     private $checkoutStateDiffManager;
 
-    /**
-     * @param CheckoutStateDiffManager $checkoutStateDiffManager
-     */
     public function __construct(CheckoutStateDiffManager $checkoutStateDiffManager)
     {
         $this->checkoutStateDiffManager = $checkoutStateDiffManager;
@@ -36,9 +33,6 @@ class CheckoutTransitionEventSubscriber implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param CheckoutTransitionBeforeEvent $event
-     */
     public function onBefore(CheckoutTransitionBeforeEvent $event): void
     {
         $workflowItem = $event->getWorkflowItem();
@@ -47,9 +41,6 @@ class CheckoutTransitionEventSubscriber implements EventSubscriberInterface
         $workflowItem->getResult()->set('currentCheckoutState', $currentState);
     }
 
-    /**
-     * @param CheckoutTransitionAfterEvent $event
-     */
     public function onAfter(CheckoutTransitionAfterEvent $event): void
     {
         $workflowItem = $event->getWorkflowItem();

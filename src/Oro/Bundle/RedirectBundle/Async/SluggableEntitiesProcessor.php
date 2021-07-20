@@ -54,13 +54,6 @@ class SluggableEntitiesProcessor implements MessageProcessorInterface, TopicSubs
      */
     private $batchSize = self::BATCH_SIZE;
 
-    /**
-     * @param ManagerRegistry $doctrine
-     * @param JobRunner $jobRunner
-     * @param MessageProducerInterface $producer
-     * @param LoggerInterface $logger
-     * @param MessageFactoryInterface $messageFactory
-     */
     public function __construct(
         ManagerRegistry $doctrine,
         JobRunner $jobRunner,

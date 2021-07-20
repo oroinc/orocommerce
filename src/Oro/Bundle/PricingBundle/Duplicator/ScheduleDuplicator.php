@@ -6,10 +6,6 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 
 class ScheduleDuplicator
 {
-    /**
-     * @param PriceList $sourcePriceList
-     * @param PriceList $duplicatedPriceList
-     */
     public function duplicateSchedule(PriceList $sourcePriceList, PriceList $duplicatedPriceList)
     {
         $duplicatedPriceList->setContainSchedule(false);

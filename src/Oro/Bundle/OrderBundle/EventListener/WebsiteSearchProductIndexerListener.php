@@ -23,10 +23,6 @@ class WebsiteSearchProductIndexerListener
      */
     protected $latestOrderedProductsInfoProvider;
 
-    /**
-     * @param WebsiteContextManager $websiteContextManager
-     * @param LatestOrderedProductsInfoProvider $latestOrderedProductsInfoProvider
-     */
     public function __construct(
         WebsiteContextManager $websiteContextManager,
         LatestOrderedProductsInfoProvider $latestOrderedProductsInfoProvider
@@ -35,9 +31,6 @@ class WebsiteSearchProductIndexerListener
         $this->latestOrderedProductsInfoProvider = $latestOrderedProductsInfoProvider;
     }
 
-    /**
-     * @param IndexEntityEvent $event
-     */
     public function onWebsiteSearchIndex(IndexEntityEvent $event)
     {
         $website = $this->websiteContextManager->getWebsite($event->getContext());

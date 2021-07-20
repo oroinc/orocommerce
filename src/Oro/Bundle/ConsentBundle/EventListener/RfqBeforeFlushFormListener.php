@@ -18,9 +18,6 @@ class RfqBeforeFlushFormListener
 {
     use FeatureCheckerHolderTrait;
 
-    /**
-     * @param AfterFormProcessEvent $event
-     */
     public function beforeFlush(AfterFormProcessEvent $event)
     {
         // No actions if consents feature disabled

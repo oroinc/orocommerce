@@ -32,11 +32,6 @@ class SoapClientStub implements SoapClientInterface
         return $this->createErrorResponse(FedexRateServiceResponse::CONNECTION_ERROR);
     }
 
-    /**
-     * @param int $code
-     *
-     * @return \StdClass
-     */
     private function createErrorResponse(int $code): \StdClass
     {
         return (object) [
@@ -47,9 +42,6 @@ class SoapClientStub implements SoapClientInterface
         ];
     }
 
-    /**
-     * @return \StdClass
-     */
     private function createOkResponse(): \StdClass
     {
         return (object) [

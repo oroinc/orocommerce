@@ -33,10 +33,6 @@ class PaymentMethodsConfigsRuleType extends AbstractType
      */
     protected $methodViewProvider;
 
-    /**
-     * @param PaymentMethodProviderInterface $paymentMethodProvider
-     * @param PaymentMethodViewProviderInterface      $methodViewProvider
-     */
     public function __construct(
         PaymentMethodProviderInterface $paymentMethodProvider,
         PaymentMethodViewProviderInterface $methodViewProvider
@@ -83,9 +79,6 @@ class PaymentMethodsConfigsRuleType extends AbstractType
         $view->vars['methods'] = array_flip($choices);
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([

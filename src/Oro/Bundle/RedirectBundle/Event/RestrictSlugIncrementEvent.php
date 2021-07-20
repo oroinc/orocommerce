@@ -20,27 +20,17 @@ class RestrictSlugIncrementEvent extends Event
     /** @var SluggableInterface */
     private $entity;
 
-    /**
-     * @param QueryBuilder $queryBuilder
-     * @param SluggableInterface $entity
-     */
     public function __construct(QueryBuilder $queryBuilder, SluggableInterface $entity)
     {
         $this->queryBuilder = $queryBuilder;
         $this->entity = $entity;
     }
 
-    /**
-     * @return SluggableInterface
-     */
     public function getEntity(): SluggableInterface
     {
         return $this->entity;
     }
 
-    /**
-     * @return QueryBuilder
-     */
     public function getQueryBuilder(): QueryBuilder
     {
         return $this->queryBuilder;

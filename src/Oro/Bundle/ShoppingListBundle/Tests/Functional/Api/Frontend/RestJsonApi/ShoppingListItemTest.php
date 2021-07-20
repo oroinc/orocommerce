@@ -70,17 +70,6 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
         $configManager->flush();
     }
 
-    /**
-     * @param LineItem    $lineItem
-     * @param int         $organizationId
-     * @param int         $userId
-     * @param int         $customerUserId
-     * @param float       $quantity
-     * @param string      $productUnitCode
-     * @param int         $productId
-     * @param string|null $notes
-     * @param int|null    $parentProductId
-     */
     private static function assertLineItem(
         LineItem $lineItem,
         int $organizationId,
@@ -110,14 +99,6 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
         }
     }
 
-    /**
-     * @param ShoppingList $shoppingList
-     * @param int          $organizationId
-     * @param int          $userId
-     * @param int          $customerId
-     * @param int          $customerUserId
-     * @param string|null  $notes
-     */
     private static function assertShoppingList(
         ShoppingList $shoppingList,
         int $organizationId,
@@ -139,11 +120,6 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
         }
     }
 
-    /**
-     * @param ShoppingList $shoppingList
-     * @param float        $total
-     * @param string       $currency
-     */
     private function assertShoppingListTotal(
         ShoppingList $shoppingList,
         float $total,

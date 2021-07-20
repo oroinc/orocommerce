@@ -22,10 +22,6 @@ class ContentWidgetLayoutSelectType extends AbstractType
     /** @var TranslatorInterface */
     private $translator;
 
-    /**
-     * @param ContentWidgetLayoutProvider $widgetLayoutProvider
-     * @param TranslatorInterface $translator
-     */
     public function __construct(ContentWidgetLayoutProvider $widgetLayoutProvider, TranslatorInterface $translator)
     {
         $this->widgetLayoutProvider = $widgetLayoutProvider;

@@ -53,8 +53,6 @@ class OroSaleBundle implements Migration, AttachmentExtensionAwareInterface, Act
 
     /**
      * Create orob2b_sale_quote table
-     *
-     * @param Schema $schema
      */
     protected function createOroSaleQuoteTable(Schema $schema)
     {
@@ -75,8 +73,6 @@ class OroSaleBundle implements Migration, AttachmentExtensionAwareInterface, Act
 
     /**
      * Create orob2b_sale_quote_prod_offer table
-     *
-     * @param Schema $schema
      */
     protected function createOroSaleQuoteProdOfferTable(Schema $schema)
     {
@@ -100,8 +96,6 @@ class OroSaleBundle implements Migration, AttachmentExtensionAwareInterface, Act
 
     /**
      * Create orob2b_sale_quote_prod_request table
-     *
-     * @param Schema $schema
      */
     protected function createOroSaleQuoteProdRequestTable(Schema $schema)
     {
@@ -124,8 +118,6 @@ class OroSaleBundle implements Migration, AttachmentExtensionAwareInterface, Act
 
     /**
      * Create orob2b_sale_quote_product table
-     *
-     * @param Schema $schema
      */
     protected function createOroSaleQuoteProductTable(Schema $schema)
     {
@@ -144,8 +136,6 @@ class OroSaleBundle implements Migration, AttachmentExtensionAwareInterface, Act
 
     /**
      * Add orob2b_sale_quote foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroSaleQuoteForeignKeys(Schema $schema)
     {
@@ -184,8 +174,6 @@ class OroSaleBundle implements Migration, AttachmentExtensionAwareInterface, Act
 
     /**
      * Add orob2b_sale_quote_prod_offer foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroSaleQuoteProdOfferForeignKeys(Schema $schema)
     {
@@ -206,8 +194,6 @@ class OroSaleBundle implements Migration, AttachmentExtensionAwareInterface, Act
 
     /**
      * Add orob2b_sale_quote_prod_request foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroSaleQuoteProdRequestForeignKeys(Schema $schema)
     {
@@ -234,8 +220,6 @@ class OroSaleBundle implements Migration, AttachmentExtensionAwareInterface, Act
 
     /**
      * Add orob2b_sale_quote_product foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroSaleQuoteProductForeignKeys(Schema $schema)
     {
@@ -262,8 +246,6 @@ class OroSaleBundle implements Migration, AttachmentExtensionAwareInterface, Act
 
     /**
      * Enable Attachment for Quote entity
-     *
-     * @param Schema $schema
      */
     protected function addAttachmentAssociations(Schema $schema)
     {
@@ -288,8 +270,6 @@ class OroSaleBundle implements Migration, AttachmentExtensionAwareInterface, Act
 
     /**
      * Enable Events for Quote entity
-     *
-     * @param Schema $schema
      */
     protected function addActivityAssociations(Schema $schema)
     {

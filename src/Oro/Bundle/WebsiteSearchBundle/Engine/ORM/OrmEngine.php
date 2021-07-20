@@ -19,9 +19,6 @@ class OrmEngine extends AbstractEngine
     /** @var Mapper */
     private $mapper;
 
-    /**
-     * @param Mapper $mapper
-     */
     public function setMapper(Mapper $mapper)
     {
         $this->mapper = $mapper;

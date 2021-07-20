@@ -33,10 +33,6 @@ class InventoryLevelGridType extends AbstractType
      */
     protected $doctrineHelper;
 
-    /**
-     * @param FormFactoryInterface $formFactory
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(FormFactoryInterface $formFactory, DoctrineHelper $doctrineHelper)
     {
         $this->formFactory = $formFactory;

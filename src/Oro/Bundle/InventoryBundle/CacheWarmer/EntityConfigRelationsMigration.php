@@ -119,10 +119,6 @@ class EntityConfigRelationsMigration
         );
     }
 
-    /**
-     * @param ParametrizedMigrationQuery $query
-     * @param Connection $connection
-     */
     protected function executeUpdateRelationsQuery(ParametrizedMigrationQuery $query, Connection $connection)
     {
         $query->setConnection($connection);

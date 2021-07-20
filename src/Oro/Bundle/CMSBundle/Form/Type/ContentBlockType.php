@@ -27,9 +27,6 @@ class ContentBlockType extends AbstractType
      */
     private $defaultVariantScopesResolver;
 
-    /**
-     * @param DefaultContentVariantScopesResolver $resolver
-     */
     public function __construct(DefaultContentVariantScopesResolver $resolver)
     {
         $this->defaultVariantScopesResolver = $resolver;

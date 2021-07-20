@@ -56,11 +56,6 @@ class MatcherForContentNodeProvider
         $this->scopeType = $scopeType;
     }
 
-    /**
-     * @param int $nodeId
-     *
-     * @return bool
-     */
     public function isContentNodeMatchCriteria(int $nodeId): bool
     {
         if (!isset($this->scopesToMatch[$nodeId])) {

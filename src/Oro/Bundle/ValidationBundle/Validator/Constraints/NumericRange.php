@@ -44,19 +44,11 @@ class NumericRange extends Range
         return NumericRangeValidator::class;
     }
 
-    /**
-     * @param array $options
-     * @return int
-     */
     private function getPrecision(array $options): int
     {
         return $options['precision'] ?? self::DEFAULT_PRECISION;
     }
 
-    /**
-     * @param array $options
-     * @return int
-     */
     private function getScale(array $options): int
     {
         return $options['scale'] ?? self::DEFAULT_SCALE;

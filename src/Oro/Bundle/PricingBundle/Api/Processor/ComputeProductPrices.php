@@ -51,16 +51,6 @@ class ComputeProductPrices implements ProcessorInterface
     /** @var ValueTransformer */
     private $valueTransformer;
 
-    /**
-     * @param ProductPriceStorageInterface              $priceStorage
-     * @param ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory
-     * @param CustomerUserRelationsProvider             $relationsProvider
-     * @param UserCurrencyManager                       $currencyManager
-     * @param TokenStorageInterface                     $tokenStorage
-     * @param WebsiteManager                            $websiteManager
-     * @param DoctrineHelper                            $doctrineHelper
-     * @param ValueTransformer                          $valueTransformer
-     */
     public function __construct(
         ProductPriceStorageInterface $priceStorage,
         ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory,
@@ -96,13 +86,6 @@ class ComputeProductPrices implements ProcessorInterface
         }
     }
 
-    /**
-     * @param CustomizeLoadedDataContext $context
-     * @param array                      $data
-     * @param string                     $productIdFieldName
-     *
-     * @return array
-     */
     private function applyPrices(
         CustomizeLoadedDataContext $context,
         array $data,

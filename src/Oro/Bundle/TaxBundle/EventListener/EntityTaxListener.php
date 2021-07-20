@@ -19,19 +19,12 @@ class EntityTaxListener
     /** @var string */
     private $entityClass;
 
-    /**
-     * @param TaxProviderRegistry $taxProviderRegistry
-     * @param string $entityClass
-     */
     public function __construct(TaxProviderRegistry $taxProviderRegistry, string $entityClass)
     {
         $this->taxProviderRegistry = $taxProviderRegistry;
         $this->entityClass = $entityClass;
     }
 
-    /**
-     * @param OnFlushEventArgs $event
-     */
     public function onFlush(OnFlushEventArgs $event)
     {
         $em = $event->getEntityManager();

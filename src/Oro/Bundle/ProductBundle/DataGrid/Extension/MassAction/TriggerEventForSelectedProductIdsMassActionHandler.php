@@ -27,9 +27,6 @@ class TriggerEventForSelectedProductIdsMassActionHandler implements MassActionHa
      */
     private $translator;
 
-    /**
-     * @param ConfigManager $configManager
-     */
     public function __construct(ConfigManager $configManager, TranslatorInterface $translator)
     {
         $this->configManager = $configManager;

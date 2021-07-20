@@ -34,10 +34,6 @@ class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerIn
         }
     }
 
-    /**
-     * @param Registry $doctrine
-     * @param Collection $referenceRepository
-     */
     private function setDefaultProductFamilyReference(Registry $doctrine, Collection $referenceRepository): void
     {
         $repository = $doctrine->getManager()->getRepository(AttributeFamily::class);
@@ -52,10 +48,6 @@ class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerIn
         $referenceRepository->set('defaultProductFamily', $attributeFamily);
     }
 
-    /**
-     * @param Registry $doctrine
-     * @param Collection $referenceRepository
-     */
     private function setProductUnitReferences(Registry $doctrine, Collection $referenceRepository): void
     {
         /** @var ProductUnitRepository $repository */
@@ -82,9 +74,6 @@ class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerIn
      * Adds to references for TranslationKey objects for product units.
      * Format: translation_key_%domain%_%translation_key_dots_replaced_by_underscores%
      * Example: translation_key_jsmessages_oro_product_product_unit_bottle_value_label
-     *
-     * @param Registry $doctrine
-     * @param Collection $referenceRepository
      */
     private function setProductUnitTranslationKeysReferences(
         Registry $doctrine,
@@ -108,10 +97,6 @@ class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerIn
         }
     }
 
-    /**
-     * @param Registry $doctrine
-     * @param Collection $referenceRepository
-     */
     private function setProductAttributesReferences(Registry $doctrine, Collection $referenceRepository): void
     {
         $repository = $doctrine->getManagerForClass(FieldConfigModel::class)->getRepository(FieldConfigModel::class);

@@ -26,10 +26,6 @@ class GenerateCheckoutStateSnapshotAction extends AbstractAction
     /** @var CheckoutStateDiffManager */
     protected $diffManager;
 
-    /**
-     * @param ContextAccessor $contextAccessor
-     * @param CheckoutStateDiffManager $diffManager
-     */
     public function __construct(ContextAccessor $contextAccessor, CheckoutStateDiffManager $diffManager)
     {
         $this->diffManager = $diffManager;

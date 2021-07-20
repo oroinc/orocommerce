@@ -107,9 +107,6 @@ class PriceMatcherTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider orderEventAddMatchedPricesDataProvider
-     * @param array $orderLineItems
-     * @param array $matchedPrices
-     * @param array $expectedLineItemsPrices
      */
     public function testAddMatchedPrices(
         array $orderLineItems = [],
@@ -188,9 +185,6 @@ class PriceMatcherTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider orderEventAddMatchedPricesDataProvider
-     * @param array $orderLineItems
-     * @param array $matchedPrices
-     * @param array $expectedLineItemsPrices
      */
     public function testFillMatchedPrices(
         array $orderLineItems = [],

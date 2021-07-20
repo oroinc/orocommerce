@@ -27,10 +27,6 @@ class FrontendProductListModifier implements FeatureCheckerAwareInterface
      */
     protected $priceListTreeHandler;
 
-    /**
-     * @param TokenStorageInterface $tokenStorage
-     * @param CombinedPriceListTreeHandler $priceListTreeHandler
-     */
     public function __construct(TokenStorageInterface $tokenStorage, CombinedPriceListTreeHandler $priceListTreeHandler)
     {
         $this->tokenStorage = $tokenStorage;

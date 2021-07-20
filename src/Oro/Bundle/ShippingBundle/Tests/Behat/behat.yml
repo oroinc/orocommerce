@@ -8,7 +8,6 @@ oro_behat_extension:
         - OroDataGridBundle::GridContext
         - OroFormBundle::FormContext
         - OroSecurityBundle::ACLContext
-        - OroSecurityBundle::PermissionContext
         - OroSearchBundle::SearchContext
         - OroConfigBundle::FeatureContext
         - OroAddressBundle::AddressContext

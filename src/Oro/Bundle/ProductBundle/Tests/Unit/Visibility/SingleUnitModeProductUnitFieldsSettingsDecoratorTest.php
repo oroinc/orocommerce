@@ -257,7 +257,6 @@ class SingleUnitModeProductUnitFieldsSettingsDecoratorTest extends \PHPUnit\Fram
 
     /**
      * @dataProvider productsDataProvider
-     * @param Product|null $product
      */
     public function testIsAddingAdditionalUnitsToProductAvailable(Product $product = null)
     {

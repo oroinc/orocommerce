@@ -29,10 +29,6 @@ class ResolveNodeSlugsMessageFactory
      */
     protected $configManager;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param ConfigManager $configManager
-     */
     public function __construct(DoctrineHelper $doctrineHelper, ConfigManager $configManager)
     {
         $this->doctrineHelper = $doctrineHelper;

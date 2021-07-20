@@ -52,11 +52,6 @@ abstract class AbstractContentWidgetType implements ContentWidgetTypeInterface
         return null;
     }
 
-    /**
-     * @param ContentWidget $contentWidget
-     * @param Environment $twig
-     * @return string
-     */
     protected function getAdditionalInformationBlock(ContentWidget $contentWidget, Environment $twig): string
     {
         return '';

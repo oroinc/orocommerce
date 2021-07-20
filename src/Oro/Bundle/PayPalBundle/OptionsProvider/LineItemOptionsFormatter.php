@@ -29,10 +29,6 @@ class LineItemOptionsFormatter
      */
     private $rounder;
 
-    /**
-     * @param NumberFormatter $currencyFormatter
-     * @param RoundingServiceInterface $rounder
-     */
     public function __construct(NumberFormatter $currencyFormatter, RoundingServiceInterface $rounder)
     {
         $this->currencyFormatter = $currencyFormatter;
@@ -82,11 +78,6 @@ class LineItemOptionsFormatter
         return $lineItemOptions;
     }
 
-    /**
-     * @param float $number
-     * @param int $precision
-     * @return bool
-     */
     private function isPrecisionMoreThan(float $number, int $precision): bool
     {
         return (bool) ($number - round($number, $precision));

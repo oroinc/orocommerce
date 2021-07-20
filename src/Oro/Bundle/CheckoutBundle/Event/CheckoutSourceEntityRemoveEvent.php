@@ -17,17 +17,11 @@ class CheckoutSourceEntityRemoveEvent extends Event
     /** @var CheckoutSourceEntityInterface */
     private $checkoutSourceEntity;
 
-    /**
-     * @param CheckoutSourceEntityInterface $checkoutSourceEntity
-     */
     public function __construct(CheckoutSourceEntityInterface $checkoutSourceEntity)
     {
         $this->checkoutSourceEntity = $checkoutSourceEntity;
     }
 
-    /**
-     * @return CheckoutSourceEntityInterface
-     */
     public function getCheckoutSourceEntity(): CheckoutSourceEntityInterface
     {
         return $this->checkoutSourceEntity;

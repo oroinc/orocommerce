@@ -77,9 +77,6 @@ class CustomerGroupCategoryRepository extends EntityRepository
             ->execute();
     }
 
-    /**
-     * @param InsertFromSelectQueryExecutor $insertExecutor
-     */
     public function insertStaticValues(InsertFromSelectQueryExecutor $insertExecutor)
     {
         $visibilityCondition = sprintf(
@@ -233,7 +230,6 @@ class CustomerGroupCategoryRepository extends EntityRepository
             'customerGroupIds' => $customerGroupIds
         ]);
         $scopeManager->getCriteriaForRelatedScopes(CustomerGroupCategoryVisibility::VISIBILITY_TYPE, []);
-
 
         $fallBackToGroupVisibilities = [];
         $arrayResult = $qb->getQuery()->getArrayResult();

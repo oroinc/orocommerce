@@ -21,10 +21,6 @@ class ProductVisibilityRestrictionListener
      */
     private $mappingProvider;
 
-    /**
-     * @param ProductManager                $productManager
-     * @param AbstractSearchMappingProvider $mappingProvider
-     */
     public function __construct(
         ProductManager $productManager,
         AbstractSearchMappingProvider $mappingProvider
@@ -33,9 +29,6 @@ class ProductVisibilityRestrictionListener
         $this->mappingProvider = $mappingProvider;
     }
 
-    /**
-     * @param BeforeSearchEvent $event
-     */
     public function process(BeforeSearchEvent $event)
     {
         $this->applyQueryRestrictions($event->getQuery());
@@ -43,8 +36,6 @@ class ProductVisibilityRestrictionListener
 
     /**
      * Run ProductsManager restriction over the search query
-     *
-     * @param Query $query
      */
     private function applyQueryRestrictions(Query $query)
     {

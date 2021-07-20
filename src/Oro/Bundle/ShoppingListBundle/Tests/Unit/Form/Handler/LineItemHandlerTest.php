@@ -223,9 +223,6 @@ class LineItemHandlerTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($this->getLineItemHandler($request)->process($lineItem));
     }
 
-    /**
-     * @return ConstraintViolationList
-     */
     private function createConstraintViolationList(): ConstraintViolationList
     {
         $constraintViolations = [

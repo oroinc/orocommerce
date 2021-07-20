@@ -46,9 +46,6 @@ class ZipCodeMatcher extends AbstractMatcher
         return $this->taxRulesCache[$cacheKey];
     }
 
-    /**
-     * @param MatcherInterface $regionMatcher
-     */
     public function setRegionMatcher(MatcherInterface $regionMatcher)
     {
         $this->regionMatcher = $regionMatcher;

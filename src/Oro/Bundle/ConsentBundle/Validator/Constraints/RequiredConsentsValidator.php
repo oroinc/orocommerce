@@ -20,10 +20,6 @@ class RequiredConsentsValidator extends ConstraintValidator
     /** @var LocalizationHelper */
     private $localizationHelper;
 
-    /**
-     * @param EnabledConsentProvider $enabledConsentProvider
-     * @param LocalizationHelper $localizationHelper
-     */
     public function __construct(
         EnabledConsentProvider $enabledConsentProvider,
         LocalizationHelper $localizationHelper

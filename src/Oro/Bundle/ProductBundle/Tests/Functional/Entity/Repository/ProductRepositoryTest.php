@@ -251,9 +251,6 @@ class ProductRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider getListingImagesFilesByProductIdsDataProvider
-     *
-     * @param array $products
-     * @param array $expectedImages
      */
     public function testGetListingImagesFilesByProductIds(array $products, array $expectedImages)
     {
@@ -302,9 +299,6 @@ class ProductRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider getListingAndMainImagesFilesByProductIdsDataProvider
-     *
-     * @param array $products
-     * @param array $expectedImages
      */
     public function testGetListingAndMainImagesFilesByProductIds(array $products, array $expectedImages): void
     {
@@ -317,9 +311,6 @@ class ProductRepositoryTest extends WebTestCase
         }
     }
 
-    /**
-     * @return array
-     */
     public function getListingAndMainImagesFilesByProductIdsDataProvider(): array
     {
         return [
@@ -424,8 +415,6 @@ class ProductRepositoryTest extends WebTestCase
     }
 
     /**
-     * @param array $criteria
-     * @param array $expectedSkus
      * @dataProvider findByCaseInsensitiveDataProvider
      */
     public function testFindByCaseInsensitive(array $criteria, array $expectedSkus)

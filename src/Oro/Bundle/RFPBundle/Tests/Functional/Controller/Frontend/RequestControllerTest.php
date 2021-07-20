@@ -157,9 +157,6 @@ class RequestControllerTest extends WebTestCase
     }
 
     /**
-     * @param array $inputData
-     * @param array $expectedData
-     *
      * @dataProvider viewProvider
      */
     public function testView(array $inputData, array $expectedData)
@@ -581,9 +578,6 @@ class RequestControllerTest extends WebTestCase
     }
 
     /**
-     * @param array $formData
-     * @param array $expected
-     *
      * @dataProvider createProvider
      */
     public function testCreate(array $formData, array $expected)
@@ -665,9 +659,6 @@ class RequestControllerTest extends WebTestCase
 
     /**
      * @dataProvider createQueryInitDataProvider
-     *
-     * @param array $productItems
-     * @param array $expectedData
      */
     public function testCreateQueryInit(array $productItems, array $expectedData)
     {

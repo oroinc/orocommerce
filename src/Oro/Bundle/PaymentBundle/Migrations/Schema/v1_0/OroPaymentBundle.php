@@ -39,8 +39,6 @@ class OroPaymentBundle implements Migration, ActivityExtensionAwareInterface
 
     /**
      * Create table for PaymentTerm entity
-     *
-     * @param Schema $schema
      */
     protected function createOroPaymentTermTable(Schema $schema)
     {
@@ -52,17 +50,12 @@ class OroPaymentBundle implements Migration, ActivityExtensionAwareInterface
 
     /**
      * Enable notes for PaymentTerm entity
-     *
-     * @param Schema $schema
      */
     protected function addNoteAssociations(Schema $schema)
     {
         $this->activityExtension->addActivityAssociation($schema, 'oro_note', self::TABLE_NAME);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function createOroPaymentIntersectionTables(Schema $schema)
     {
         $table = $schema->createTable(static::PAYMENT_TERM_TO_ACCOUNT_TABLE);
@@ -78,9 +71,6 @@ class OroPaymentBundle implements Migration, ActivityExtensionAwareInterface
         $table->addUniqueIndex(['account_group_id']);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addOroPaymentTermToAccountForeignKeys(Schema $schema)
     {
         $table = $schema->getTable(static::PAYMENT_TERM_TO_ACCOUNT_TABLE);
@@ -98,9 +88,6 @@ class OroPaymentBundle implements Migration, ActivityExtensionAwareInterface
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addOroPaymentTermToAccountGroupForeignKeys(Schema $schema)
     {
         $table = $schema->getTable(static::PAYMENT_TERM_TO_ACCOUNT_GROUP_TABLE);
@@ -120,8 +107,6 @@ class OroPaymentBundle implements Migration, ActivityExtensionAwareInterface
 
     /**
      * Sets the ActivityExtension
-     *
-     * @param ActivityExtension $activityExtension
      */
     public function setActivityExtension(ActivityExtension $activityExtension)
     {

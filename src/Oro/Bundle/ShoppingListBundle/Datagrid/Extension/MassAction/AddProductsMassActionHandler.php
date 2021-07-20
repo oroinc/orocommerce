@@ -34,13 +34,6 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
     /** @var AclHelper */
     private $aclHelper;
 
-    /**
-     * @param ShoppingListLineItemHandler $shoppingListLineItemHandler
-     * @param MessageGenerator $messageGenerator
-     * @param ManagerRegistry $managerRegistry
-     * @param ProductShoppingListsDataProvider $productShoppingListsDataProvider
-     * @param AclHelper $aclHelper
-     */
     public function __construct(
         ShoppingListLineItemHandler $shoppingListLineItemHandler,
         MessageGenerator $messageGenerator,

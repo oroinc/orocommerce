@@ -39,13 +39,6 @@ class ProductAttributeValueLoader
     /** @var EntityIdTransformerRegistry */
     private $entityIdTransformerRegistry;
 
-    /**
-     * @param DoctrineHelper              $doctrineHelper
-     * @param ActionProcessorInterface    $configProcessor
-     * @param EntitySerializer            $entitySerializer
-     * @param MetadataProvider            $metadataProvider
-     * @param EntityIdTransformerRegistry $entityIdTransformerRegistry
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         ActionProcessorInterface $configProcessor,

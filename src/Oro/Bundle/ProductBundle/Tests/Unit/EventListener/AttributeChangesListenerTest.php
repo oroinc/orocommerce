@@ -1147,14 +1147,6 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         return $fieldModel;
     }
 
-    /**
-     * @param array $extendConfigValues
-     * @param array $extendChangeSet
-     * @param array $attributeConfigValues
-     * @param array $attributeChangeSet
-     * @param array $frontendConfigValues
-     * @param array $frontendChangeSet
-     */
     protected function setUpConfigManager(
         array $extendConfigValues,
         array $extendChangeSet,

@@ -7,9 +7,6 @@ trait PaymentTermExtensionAwareTrait
     /** @var PaymentTermExtension */
     protected $paymentTermExtension;
 
-    /**
-     * @param PaymentTermExtension $paymentTermExtension
-     */
     public function setPaymentTermExtension(PaymentTermExtension $paymentTermExtension)
     {
         $this->paymentTermExtension = $paymentTermExtension;

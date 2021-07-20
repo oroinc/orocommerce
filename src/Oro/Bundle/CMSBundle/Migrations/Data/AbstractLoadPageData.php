@@ -131,13 +131,6 @@ abstract class AbstractLoadPageData extends AbstractFixture implements
         return $locator->locate($path);
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param FileManager $fileManager
-     * @param string $sourcePath
-     * @param string $title
-     * @return DigitalAsset
-     */
     protected function createDigitalAsset(
         ObjectManager $manager,
         FileManager $fileManager,

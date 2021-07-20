@@ -37,14 +37,6 @@ class UserCurrencyManager
     /** @var CurrentCurrencyProviderInterface */
     protected $currentCurrencyProvider;
 
-    /**
-     * @param Session $session
-     * @param TokenStorageInterface $tokenStorage
-     * @param ManagerRegistry $doctrine
-     * @param CurrencyProviderInterface $currencyProvider
-     * @param WebsiteManager $websiteManager
-     * @param CurrentCurrencyProviderInterface $currentCurrencyProvider
-     */
     public function __construct(
         Session $session,
         TokenStorageInterface $tokenStorage,

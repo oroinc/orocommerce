@@ -51,15 +51,6 @@ class UPSShippingMethodFactory implements IntegrationShippingMethodFactoryInterf
      */
     private $integrationIconProvider;
 
-    /**
-     * @param UPSTransport                            $transport
-     * @param PriceRequestFactory                     $priceRequestFactory
-     * @param LocalizationHelper                      $localizationHelper
-     * @param IntegrationIconProviderInterface        $integrationIconProvider
-     * @param ShippingPriceCache                      $shippingPriceCache
-     * @param IntegrationIdentifierGeneratorInterface $integrationIdentifierGenerator
-     * @param UPSShippingMethodTypeFactoryInterface   $methodTypeFactory
-     */
     public function __construct(
         UPSTransport $transport,
         PriceRequestFactory $priceRequestFactory,

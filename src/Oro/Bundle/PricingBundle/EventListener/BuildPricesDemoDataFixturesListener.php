@@ -30,12 +30,6 @@ class BuildPricesDemoDataFixturesListener extends AbstractDemoDataFixturesListen
     /** @var PriceListProductAssignmentBuilder */
     protected $assignmentBuilder;
 
-    /**
-     * @param OptionalListenerManager $listenerManager
-     * @param CombinedPriceListsBuilderFacade $builderFacade
-     * @param ProductPriceBuilder $priceBuilder
-     * @param PriceListProductAssignmentBuilder $assignmentBuilder
-     */
     public function __construct(
         OptionalListenerManager $listenerManager,
         CombinedPriceListsBuilderFacade $builderFacade,
@@ -66,9 +60,6 @@ class BuildPricesDemoDataFixturesListener extends AbstractDemoDataFixturesListen
         $this->listenerManager->enableListener('oro_website_search.reindex_request.listener');
     }
 
-    /**
-     * @param ObjectManager $manager
-     */
     protected function buildPrices(ObjectManager $manager)
     {
         $priceLists = $manager->getRepository(PriceList::class)->getPriceListsWithRules();

@@ -13,16 +13,10 @@ use Oro\Component\ConfigExpression\ContextAccessor;
  */
 class GetOrderLineItems extends AbstractAction
 {
-    /** @var array */
     protected array $options;
 
-    /** @var CheckoutLineItemsManager */
     private CheckoutLineItemsManager $checkoutLineItemsManager;
 
-    /**
-     * @param ContextAccessor $contextAccessor
-     * @param CheckoutLineItemsManager $checkoutLineItemsManager
-     */
     public function __construct(
         ContextAccessor $contextAccessor,
         CheckoutLineItemsManager $checkoutLineItemsManager

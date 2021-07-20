@@ -45,11 +45,6 @@ class CreateOrder extends AbstractAction
      */
     protected $paymentMethodsProvider;
 
-    /**
-     * @param ContextAccessor $contextAccessor
-     * @param MapperInterface $mapper
-     * @param EntityPaymentMethodsProvider $paymentMethodsProvider
-     */
     public function __construct(
         ContextAccessor $contextAccessor,
         MapperInterface $mapper,

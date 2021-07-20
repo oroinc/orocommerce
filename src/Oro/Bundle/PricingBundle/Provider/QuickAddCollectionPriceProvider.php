@@ -37,12 +37,6 @@ class QuickAddCollectionPriceProvider
      */
     private $rounding;
 
-    /**
-     * @param ProductPriceProviderInterface $productPriceProvider
-     * @param UserCurrencyManager $currencyManager
-     * @param DoctrineHelper $doctrineHelper
-     * @param RoundingServiceInterface $rounding
-     */
     public function __construct(
         ProductPriceProviderInterface $productPriceProvider,
         UserCurrencyManager $currencyManager,
@@ -56,8 +50,6 @@ class QuickAddCollectionPriceProvider
     }
 
     /**
-     * @param QuickAddRowCollection $quickAddRowCollection
-     * @param ProductPriceScopeCriteriaInterface $scopeCriteria
      * @throws \Oro\Bundle\CurrencyBundle\Exception\InvalidRoundingTypeException
      */
     public function addPrices(

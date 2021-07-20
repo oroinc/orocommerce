@@ -67,7 +67,6 @@ class RelatedItemsHandlerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider exceptionsProvider()
-     * @param \Exception $exception
      */
     public function testProcessErrorOnAddingProductToItself(\Exception $exception)
     {
@@ -187,9 +186,6 @@ class RelatedItemsHandlerTest extends \PHPUnit\Framework\TestCase
             ->with($product, $productsToRemove);
     }
 
-    /**
-     * @param \Exception $exception
-     */
     private function assignerShouldThrowException(\Exception $exception)
     {
         $this->relatedAssigner->expects($this->once())

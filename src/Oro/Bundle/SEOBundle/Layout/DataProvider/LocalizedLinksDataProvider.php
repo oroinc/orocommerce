@@ -37,12 +37,6 @@ class LocalizedLinksDataProvider
      */
     private $validator;
 
-    /**
-     * @param CanonicalUrlGenerator $urlGenerator
-     * @param ConfigManager $configManager
-     * @param UserLocalizationManagerInterface $userLocalizationManager
-     * @param ValidatorInterface $validator
-     */
     public function __construct(
         CanonicalUrlGenerator $urlGenerator,
         ConfigManager $configManager,

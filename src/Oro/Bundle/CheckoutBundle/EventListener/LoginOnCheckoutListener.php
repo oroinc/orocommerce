@@ -36,12 +36,6 @@ class LoginOnCheckoutListener
      */
     private $eventDispatcher;
 
-    /**
-     * @param LoggerInterface $logger
-     * @param ConfigManager $configManager
-     * @param CheckoutManager $checkoutManager
-     * @param EventDispatcherInterface $eventDispatcher
-     */
     public function __construct(
         LoggerInterface $logger,
         ConfigManager $configManager,
@@ -54,9 +48,6 @@ class LoginOnCheckoutListener
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    /**
-     * @param InteractiveLoginEvent $event
-     */
     public function onInteractiveLogin(InteractiveLoginEvent $event)
     {
         $user = $event->getAuthenticationToken()->getUser();
@@ -86,9 +77,6 @@ class LoginOnCheckoutListener
         $this->dispatchLoginOnCheckoutEvent($checkout);
     }
 
-    /**
-     * @param Checkout $checkout
-     */
     private function dispatchLoginOnCheckoutEvent(Checkout $checkout)
     {
         if (!$this->eventDispatcher->hasListeners(LoginOnCheckoutEvent::NAME)) {

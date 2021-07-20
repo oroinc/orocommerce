@@ -12,9 +12,6 @@ class BasicMethodTypeLabelsProvider implements MethodTypeLabelsProviderInterface
      */
     private $methodProvider;
 
-    /**
-     * @param ShippingMethodProviderInterface $methodProvider
-     */
     public function __construct(ShippingMethodProviderInterface $methodProvider)
     {
         $this->methodProvider = $methodProvider;

@@ -15,11 +15,6 @@ class ProductUnitStrategyHelper extends AbstractInventoryLevelStrategyHelper
     /** @var ProductUnitTransformer $productUnitTransformer */
     protected $productUnitTransformer;
 
-    /**
-     * @param DatabaseHelper $databaseHelper
-     * @param TranslatorInterface $translator
-     * @param ProductUnitTransformer $productUnitTransformer
-     */
     public function __construct(
         DatabaseHelper $databaseHelper,
         TranslatorInterface $translator,

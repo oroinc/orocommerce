@@ -18,9 +18,6 @@ abstract class AbstractTransactionEvent extends Event
         return $this->paymentTransaction;
     }
 
-    /**
-     * @param PaymentTransaction $paymentTransaction
-     */
     public function setPaymentTransaction(PaymentTransaction $paymentTransaction)
     {
         $this->paymentTransaction = $paymentTransaction;

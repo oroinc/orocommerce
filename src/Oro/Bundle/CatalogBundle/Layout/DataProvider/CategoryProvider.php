@@ -49,14 +49,6 @@ class CategoryProvider
     /** @var MasterCatalogRootProviderInterface */
     private $masterCatalogRootProvider;
 
-    /**
-     * @param RequestProductHandler  $requestProductHandler
-     * @param ManagerRegistry        $registry
-     * @param CategoryTreeProvider   $categoryTreeProvider
-     * @param TokenAccessorInterface $tokenAccessor
-     * @param LocalizationHelper     $localizationHelper
-     * @param MasterCatalogRootProviderInterface $masterCatalogRootProvider
-     */
     public function __construct(
         RequestProductHandler $requestProductHandler,
         ManagerRegistry $registry,
@@ -232,11 +224,6 @@ class CategoryProvider
         return $localization ? $localization->getId() : 0;
     }
 
-    /**
-     * @param CustomerUser|null $user
-     *
-     * @return string
-     */
     protected function getCacheKey(?CustomerUser $user): string
     {
         $customer = $user ? $user->getCustomer() : null;
@@ -253,9 +240,6 @@ class CategoryProvider
         );
     }
 
-    /**
-     * @return CategoryRepository
-     */
     private function getCategoryRepository(): CategoryRepository
     {
         return $this->registry->getManagerForClass(Category::class)->getRepository(Category::class);

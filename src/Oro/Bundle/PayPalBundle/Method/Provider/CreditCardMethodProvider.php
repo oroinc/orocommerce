@@ -19,10 +19,6 @@ class CreditCardMethodProvider extends AbstractPaymentMethodProvider
      */
     private $configProvider;
 
-    /**
-     * @param PayPalCreditCardConfigProviderInterface $configProvider
-     * @param PayPalCreditCardPaymentMethodFactoryInterface $factory
-     */
     public function __construct(
         PayPalCreditCardConfigProviderInterface $configProvider,
         PayPalCreditCardPaymentMethodFactoryInterface $factory
@@ -43,9 +39,6 @@ class CreditCardMethodProvider extends AbstractPaymentMethodProvider
         }
     }
 
-    /**
-     * @param PayPalCreditCardConfigInterface $config
-     */
     protected function addCreditCardMethod(PayPalCreditCardConfigInterface $config)
     {
         $this->addMethod(

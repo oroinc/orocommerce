@@ -12,9 +12,6 @@ class PaymentTransactionCaptureActionTest extends AbstractActionTest
 {
     /**
      * @dataProvider executeDataProvider
-     *
-     * @param array $data
-     * @param array $expected
      */
     public function testExecute(array $data, array $expected)
     {
@@ -130,7 +127,6 @@ class PaymentTransactionCaptureActionTest extends AbstractActionTest
 
     /**
      * @param array $options
-     *
      *
      * @dataProvider executeWrongOptionsDataProvider
      */

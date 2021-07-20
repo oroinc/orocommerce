@@ -20,11 +20,6 @@ class ExpressionLanguageRuleFiltrationServiceDecorator implements RuleFiltration
     /** @var RuleFiltrationServiceInterface */
     private $filtrationService;
 
-    /**
-     * @param ExpressionLanguage $expressionLanguage
-     * @param RuleFiltrationServiceInterface $filtrationService
-     * @param LoggerInterface $logger
-     */
     public function __construct(
         ExpressionLanguage $expressionLanguage,
         RuleFiltrationServiceInterface $filtrationService,

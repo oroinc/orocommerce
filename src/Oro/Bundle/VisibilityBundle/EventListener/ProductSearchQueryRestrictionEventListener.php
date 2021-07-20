@@ -19,19 +19,12 @@ class ProductSearchQueryRestrictionEventListener
      */
     private $frontendHelper;
 
-    /**
-     * @param FrontendHelper         $frontendHelper
-     * @param QueryModifierInterface $searchQueryModifier
-     */
     public function __construct(FrontendHelper $frontendHelper, QueryModifierInterface $searchQueryModifier)
     {
         $this->searchQueryModifier = $searchQueryModifier;
         $this->frontendHelper      = $frontendHelper;
     }
 
-    /**
-     * @param ProductSearchQueryRestrictionEvent $event
-     */
     public function onSearchQuery(ProductSearchQueryRestrictionEvent $event)
     {
         if ($this->frontendHelper->isFrontendRequest()) {

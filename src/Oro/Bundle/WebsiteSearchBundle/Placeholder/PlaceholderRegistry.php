@@ -9,9 +9,6 @@ class PlaceholderRegistry
      */
     private $placeholders = [];
 
-    /**
-     * @param PlaceholderInterface $placeholder
-     */
     public function addPlaceholder(PlaceholderInterface $placeholder)
     {
         $this->placeholders[$placeholder->getPlaceholder()] = $placeholder;

@@ -33,9 +33,6 @@ class CustomerProductRepository extends AbstractVisibilityRepository
         return $this->findOneBy(['scope' => $scope, 'product' => $product]);
     }
 
-    /**
-     * @param Product $product
-     */
     public function deleteByProduct(Product $product)
     {
         $this->createQueryBuilder('productVisibility')
@@ -46,11 +43,6 @@ class CustomerProductRepository extends AbstractVisibilityRepository
             ->execute();
     }
 
-    /**
-     * @param InsertFromSelectQueryExecutor $insertExecutor
-     * @param Product $product
-     * @param Category|null $category
-     */
     public function insertByProduct(
         InsertFromSelectQueryExecutor $insertExecutor,
         Product $product,
@@ -91,11 +83,6 @@ class CustomerProductRepository extends AbstractVisibilityRepository
         }
     }
 
-    /**
-     * @param InsertFromSelectQueryExecutor $insertExecutor
-     * @param ScopeManager $scopeManager
-     * @param Scope|null $scope
-     */
     public function insertByCategory(
         InsertFromSelectQueryExecutor $insertExecutor,
         ScopeManager $scopeManager,
@@ -117,10 +104,6 @@ class CustomerProductRepository extends AbstractVisibilityRepository
         );
     }
 
-    /**
-     * @param InsertFromSelectQueryExecutor $insertExecutor
-     * @param Scope|null $scope
-     */
     public function insertStatic(InsertFromSelectQueryExecutor $insertExecutor, Scope $scope = null)
     {
         $queryBuilder = $this->getInsertStaticQueryBuilder($scope);
@@ -138,12 +121,6 @@ class CustomerProductRepository extends AbstractVisibilityRepository
         );
     }
 
-    /**
-     * @param InsertFromSelectQueryExecutor $insertExecutor
-     * @param Product $product
-     * @param Category $category
-     * @param array $fields
-     */
     private function insertByCustomerCategoryVisibility(
         InsertFromSelectQueryExecutor $insertExecutor,
         Product $product,
@@ -155,12 +132,6 @@ class CustomerProductRepository extends AbstractVisibilityRepository
         $insertExecutor->execute($this->getEntityName(), $fields, $qb);
     }
 
-    /**
-     * @param InsertFromSelectQueryExecutor $insertExecutor
-     * @param Product $product
-     * @param Category $category
-     * @param array $fields
-     */
     private function insertByCustomerGroupCategoryVisibility(
         InsertFromSelectQueryExecutor $insertExecutor,
         Product $product,
@@ -172,12 +143,6 @@ class CustomerProductRepository extends AbstractVisibilityRepository
         $insertExecutor->execute($this->getEntityName(), $fields, $qb);
     }
 
-    /**
-     * @param InsertFromSelectQueryExecutor $insertExecutor
-     * @param Product $product
-     * @param Category $category
-     * @param array $fields
-     */
     private function insertByCategoryVisibility(
         InsertFromSelectQueryExecutor $insertExecutor,
         Product $product,

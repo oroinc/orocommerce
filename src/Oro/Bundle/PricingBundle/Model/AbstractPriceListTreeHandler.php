@@ -37,11 +37,6 @@ abstract class AbstractPriceListTreeHandler
      */
     protected $priceLists = [];
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param WebsiteManager $websiteManager
-     * @param ConfigManager $configManager
-     */
     public function __construct(
         ManagerRegistry $registry,
         WebsiteManager $websiteManager,

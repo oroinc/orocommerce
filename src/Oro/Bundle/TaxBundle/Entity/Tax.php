@@ -111,7 +111,6 @@ class Tax implements DatesAwareInterface
     protected $createdAt;
 
     /**
-     *
      * @ORM\Column(name="updated_at", type="datetime")
      * @ConfigField(
      *      defaultValues={

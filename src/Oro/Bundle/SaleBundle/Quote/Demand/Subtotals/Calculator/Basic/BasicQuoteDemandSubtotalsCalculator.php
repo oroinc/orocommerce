@@ -13,9 +13,6 @@ class BasicQuoteDemandSubtotalsCalculator implements QuoteDemandSubtotalsCalcula
      */
     private $totalProcessorProvider;
 
-    /**
-     * @param TotalProcessorProvider $totalProcessorProvider
-     */
     public function __construct(TotalProcessorProvider $totalProcessorProvider)
     {
         $this->totalProcessorProvider = $totalProcessorProvider;

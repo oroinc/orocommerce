@@ -152,13 +152,6 @@ class LoadProductCategoryDemoData extends AbstractFixture implements ContainerAw
         return $this->categoryRepository;
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param OrganizationInterface $organization
-     * @param string $title
-     *
-     * @return Category|null
-     */
     private function getCategory(ObjectManager $manager, OrganizationInterface $organization, string $title): ?Category
     {
         $queryBuilder = $this->getCategoryRepository($manager)->findOneByDefaultTitleQueryBuilder($title);

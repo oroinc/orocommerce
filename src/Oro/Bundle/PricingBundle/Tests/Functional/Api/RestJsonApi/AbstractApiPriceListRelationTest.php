@@ -12,14 +12,8 @@ abstract class AbstractApiPriceListRelationTest extends RestJsonApiTestCase
 {
     use MessageQueueExtension;
 
-    /**
-     * @return string
-     */
     abstract protected function getApiEntityName(): string;
 
-    /**
-     * @return string
-     */
     abstract protected function getAliceFilesFolderName(): string;
 
     /**
@@ -48,11 +42,6 @@ abstract class AbstractApiPriceListRelationTest extends RestJsonApiTestCase
         return parent::getResponseDataFolderName() . DIRECTORY_SEPARATOR . $this->getAliceFilesFolderName();
     }
 
-    /**
-     * @param string $entityId
-     * @param string $associationName
-     * @param string $associationId
-     */
     protected function assertGetSubResource(
         string $entityId,
         string $associationName,
@@ -69,20 +58,11 @@ abstract class AbstractApiPriceListRelationTest extends RestJsonApiTestCase
         self::assertEquals($associationId, $result['data']['id']);
     }
 
-    /**
-     * @param string $associationName
-     * @param string $associationId
-     */
     protected function assertGetSubResourceForFirstRelation(string $associationName, string $associationId)
     {
         $this->assertGetSubResource($this->getFirstRelation()->getId(), $associationName, $associationId);
     }
 
-    /**
-     * @param string $associationName
-     * @param string $associationClassName
-     * @param string $associationId
-     */
     protected function assertGetRelationshipForFirstRelation(
         string $associationName,
         string $associationClassName,
@@ -96,12 +76,6 @@ abstract class AbstractApiPriceListRelationTest extends RestJsonApiTestCase
         );
     }
 
-    /**
-     * @param $entityId
-     * @param string $associationName
-     * @param string $associationClassName
-     * @param string $associationId
-     */
     protected function assertGetRelationship(
         string $entityId,
         string $associationName,

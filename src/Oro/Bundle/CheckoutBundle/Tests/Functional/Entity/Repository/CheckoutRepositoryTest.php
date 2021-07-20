@@ -129,10 +129,6 @@ class CheckoutRepositoryTest extends FrontendWebTestCase
 
     /**
      * @dataProvider findCheckoutWithCurrencyDataProvider
-     *
-     * @param string $shoppingList
-     * @param string $currency
-     * @param string $expected
      */
     public function testFindCheckoutByCustomerUserAndSourceCriteriaWithCurrencyByShoppingList(
         string $shoppingList,
@@ -152,10 +148,6 @@ class CheckoutRepositoryTest extends FrontendWebTestCase
 
     /**
      * @dataProvider findCheckoutWithCurrencyDataProvider
-     *
-     * @param string $shoppingList
-     * @param string $currency
-     * @param string $expected
      */
     public function testFindCheckoutBySourceCriteriaWithCurrencyByShoppingList(
         string $shoppingList,

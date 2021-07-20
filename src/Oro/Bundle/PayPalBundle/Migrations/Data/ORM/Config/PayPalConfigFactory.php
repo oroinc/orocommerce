@@ -23,11 +23,6 @@ class PayPalConfigFactory
      */
     private $paymentActionsDataProvider;
 
-    /**
-     * @param PaymentActionsDataProviderInterface  $paymentActionsDataProvider
-     * @param CreditCardTypesDataProviderInterface $creditCardTypesDataProvider
-     * @param ConfigManager                        $configManager
-     */
     public function __construct(
         PaymentActionsDataProviderInterface $paymentActionsDataProvider,
         CreditCardTypesDataProviderInterface $creditCardTypesDataProvider,

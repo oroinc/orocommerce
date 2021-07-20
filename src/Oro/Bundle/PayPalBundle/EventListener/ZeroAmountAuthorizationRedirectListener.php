@@ -12,17 +12,11 @@ class ZeroAmountAuthorizationRedirectListener
      */
     private $configProvider;
 
-    /**
-     * @param PayPalCreditCardConfigProviderInterface $configProvider
-     */
     public function __construct(PayPalCreditCardConfigProviderInterface $configProvider)
     {
         $this->configProvider = $configProvider;
     }
 
-    /**
-     * @param RequirePaymentRedirectEvent $event
-     */
     public function onRequirePaymentRedirect(RequirePaymentRedirectEvent $event)
     {
         $paymentMethodIdentifier = $event->getPaymentMethod()->getIdentifier();

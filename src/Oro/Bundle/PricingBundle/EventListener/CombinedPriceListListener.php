@@ -14,17 +14,11 @@ class CombinedPriceListListener
     /** @var CombinedPriceListActivationPlanBuilder */
     private $activationPlanBuilder;
 
-    /**
-     * @param CombinedPriceListActivationPlanBuilder $activationPlanBuilder
-     */
     public function __construct(CombinedPriceListActivationPlanBuilder $activationPlanBuilder)
     {
         $this->activationPlanBuilder = $activationPlanBuilder;
     }
 
-    /**
-     * @param CombinedPriceListCreateEvent $event
-     */
     public function onCreate(CombinedPriceListCreateEvent $event)
     {
         // Skip CPLs that consists of Price Lists sub-chains that are not connected to any entity

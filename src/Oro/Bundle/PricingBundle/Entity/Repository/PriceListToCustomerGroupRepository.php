@@ -228,11 +228,6 @@ class PriceListToCustomerGroupRepository extends EntityRepository implements Pri
         $queryBuilder->setParameter($parameterName, $priceList);
     }
 
-    /**
-     * @param Website $website
-     * @param CustomerGroup $customerGroup
-     * @return bool
-     */
     public function hasAssignedPriceLists(Website $website, CustomerGroup $customerGroup): bool
     {
         $qb = $this->createQueryBuilder('p');
@@ -247,11 +242,6 @@ class PriceListToCustomerGroupRepository extends EntityRepository implements Pri
         return $qb->getQuery()->getOneOrNullResult() !== null;
     }
 
-    /**
-     * @param Website $website
-     * @param CustomerGroup $customerGroup
-     * @return PriceListToCustomerGroup|null
-     */
     public function getFirstRelation(Website $website, CustomerGroup $customerGroup): ?PriceListToCustomerGroup
     {
         $qb = $this->createQueryBuilder('rel');

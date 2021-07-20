@@ -44,13 +44,6 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
     /** @var ProductPriceScopeCriteriaFactoryInterface */
     protected $priceScopeCriteriaFactory;
 
-    /**
-     * @param TranslatorInterface                       $translator
-     * @param RoundingServiceInterface                  $rounding
-     * @param ProductPriceProviderInterface             $productPriceProvider
-     * @param SubtotalProviderConstructorArguments      $arguments
-     * @param ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory
-     */
     public function __construct(
         TranslatorInterface $translator,
         RoundingServiceInterface $rounding,

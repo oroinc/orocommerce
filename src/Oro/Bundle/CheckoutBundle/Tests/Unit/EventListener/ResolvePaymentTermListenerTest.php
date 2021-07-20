@@ -146,9 +146,6 @@ class ResolvePaymentTermListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($paymentTerm, $this->event->getPaymentTerm());
     }
 
-    /**
-     * @param Checkout|null $checkout
-     */
     protected function mockGetCurrentCheckout(Checkout $checkout = null)
     {
         $request = new Request();

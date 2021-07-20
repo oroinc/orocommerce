@@ -37,13 +37,6 @@ class PriceListBackgroundRecalculateAction extends AbstractAction
     /** @var PropertyPathInterface */
     protected $priceListOption;
 
-    /**
-     * @param ContextAccessor $contextAccessor
-     * @param PriceListProductAssignmentBuilder $assignmentBuilder
-     * @param ProductPriceBuilder $priceBuilder
-     * @param DependentPriceListProvider $dependentPriceListProvider
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(
         ContextAccessor $contextAccessor,
         PriceListProductAssignmentBuilder $assignmentBuilder,
@@ -90,9 +83,6 @@ class PriceListBackgroundRecalculateAction extends AbstractAction
         $this->recalculate($priceList);
     }
 
-    /**
-     * @param PriceList $rootPriceList
-     */
     protected function recalculate(PriceList $rootPriceList)
     {
         $priceLists = $this->dependentPriceListProvider->appendDependent([$rootPriceList]);

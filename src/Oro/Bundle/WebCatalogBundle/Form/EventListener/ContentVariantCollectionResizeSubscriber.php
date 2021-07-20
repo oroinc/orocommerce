@@ -21,10 +21,6 @@ class ContentVariantCollectionResizeSubscriber implements EventSubscriberInterfa
      */
     private $options = [];
 
-    /**
-     * @param ContentVariantTypeRegistry $variantTypeRegistry
-     * @param array $options
-     */
     public function __construct(ContentVariantTypeRegistry $variantTypeRegistry, array $options)
     {
         $this->variantTypeRegistry = $variantTypeRegistry;
@@ -43,9 +39,6 @@ class ContentVariantCollectionResizeSubscriber implements EventSubscriberInterfa
         ];
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function preSetData(FormEvent $event)
     {
         $form = $event->getForm();
@@ -76,9 +69,6 @@ class ContentVariantCollectionResizeSubscriber implements EventSubscriberInterfa
         }
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function preSubmit(FormEvent $event)
     {
         $form = $event->getForm();
@@ -107,9 +97,6 @@ class ContentVariantCollectionResizeSubscriber implements EventSubscriberInterfa
         }
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function onSubmit(FormEvent $event)
     {
         $form = $event->getForm();

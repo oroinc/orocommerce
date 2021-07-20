@@ -185,13 +185,6 @@ class PriceAttributeProductPriceExportTest extends AbstractImportExportTestCase
         );
     }
 
-    /**
-     * @param string $assertedPrice
-     * @param Product $product
-     * @param PriceAttributePriceList $priceList
-     * @param ProductUnit $unit
-     * @param string $currency
-     */
     protected function assertSamePriceByUniqueKey(
         string $assertedPrice,
         Product $product,
@@ -235,9 +228,6 @@ class PriceAttributeProductPriceExportTest extends AbstractImportExportTestCase
             );
     }
 
-    /**
-     * @return PriceAttributeProductPriceRepository
-     */
     private function getPriceAttributeProductPriceRepository(): PriceAttributeProductPriceRepository
     {
         return static::getContainer()
@@ -246,9 +236,6 @@ class PriceAttributeProductPriceExportTest extends AbstractImportExportTestCase
             ->getRepository(PriceAttributeProductPrice::class);
     }
 
-    /**
-     * @return ImportExportConfigurationInterface
-     */
     private function getPriceAttributeProductPriceConfiguration(): ImportExportConfigurationInterface
     {
         return static::getContainer()

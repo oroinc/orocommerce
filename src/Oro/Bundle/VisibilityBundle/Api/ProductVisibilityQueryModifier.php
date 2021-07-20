@@ -22,10 +22,6 @@ class ProductVisibilityQueryModifier implements QueryModifierInterface
     /** @var ProductVisibilityQueryBuilderModifier */
     private $modifier;
 
-    /**
-     * @param EntityClassResolver                   $entityClassResolver
-     * @param ProductVisibilityQueryBuilderModifier $modifier
-     */
     public function __construct(
         EntityClassResolver $entityClassResolver,
         ProductVisibilityQueryBuilderModifier $modifier

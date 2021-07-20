@@ -311,11 +311,6 @@ class AjaxLineItemController extends AbstractLineItemController
         );
     }
 
-    /**
-     * @param array $rawLineItems
-     *
-     * @return array
-     */
     private function getLineItemModels(array $rawLineItems): array
     {
         return array_filter(
@@ -357,10 +352,6 @@ class AjaxLineItemController extends AbstractLineItemController
         ];
     }
 
-    /**
-     * @param Request $request
-     * @return null|Product
-     */
     protected function getParentProduct(Request $request): ?Product
     {
         $parentProductId = $request->get('parentProductId');

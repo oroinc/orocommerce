@@ -27,12 +27,6 @@ class FedexPackageSettings implements FedexPackageSettingsInterface
      */
     private $ignorePackageDimensions;
 
-    /**
-     * @param string $unitOfWeight
-     * @param string $dimensionsUnit
-     * @param string $limitationExpression
-     * @param bool $ignorePackageDimensions
-     */
     public function __construct(
         string $unitOfWeight,
         string $dimensionsUnit,

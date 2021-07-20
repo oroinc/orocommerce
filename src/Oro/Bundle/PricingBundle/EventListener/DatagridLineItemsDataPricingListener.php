@@ -20,10 +20,6 @@ class DatagridLineItemsDataPricingListener
     /** @var NumberFormatter */
     private $numberFormatter;
 
-    /**
-     * @param FrontendProductPricesDataProvider $frontendProductPricesDataProvider
-     * @param NumberFormatter $numberFormatter
-     */
     public function __construct(
         FrontendProductPricesDataProvider $frontendProductPricesDataProvider,
         NumberFormatter $numberFormatter
@@ -32,9 +28,6 @@ class DatagridLineItemsDataPricingListener
         $this->numberFormatter = $numberFormatter;
     }
 
-    /**
-     * @param DatagridLineItemsDataEvent $event
-     */
     public function onLineItemData(DatagridLineItemsDataEvent $event): void
     {
         $lineItems = $event->getLineItems();
@@ -62,11 +55,6 @@ class DatagridLineItemsDataPricingListener
         }
     }
 
-    /**
-     * @param ProductLineItemInterface $lineItem
-     * @param array $matchedPrices
-     * @return Price|null
-     */
     private function getPrice(ProductLineItemInterface $lineItem, array $matchedPrices): ?Price
     {
         $productPrice = null;

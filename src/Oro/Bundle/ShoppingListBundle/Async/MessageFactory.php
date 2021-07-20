@@ -20,9 +20,6 @@ class MessageFactory
      */
     private $doctrineHelper;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(DoctrineHelper $doctrineHelper)
     {
         $this->doctrineHelper = $doctrineHelper;
@@ -42,10 +39,6 @@ class MessageFactory
         return null;
     }
 
-    /**
-     * @param array $data
-     * @return array
-     */
     public function getProductIds(array $data): array
     {
         return $data[self::PRODUCTS_KEY] ?? [];

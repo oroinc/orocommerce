@@ -45,10 +45,6 @@ class ProductImageExtensionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param Product $product
-     * @param array $imageTypes
-     * @param array $expectedResult
-     *
      * @dataProvider collectProductImageByTypesProvider
      */
     public function testCollectProductImagesByTypes(Product $product, array $imageTypes, array $expectedResult)
@@ -62,9 +58,6 @@ class ProductImageExtensionTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedResult, array_values($actualResult));
     }
 
-    /**
-     * @return array
-     */
     public function collectProductImageByTypesProvider(): array
     {
         $product = new Product();
@@ -161,11 +154,6 @@ class ProductImageExtensionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @param int $id
-     * @param array $imageTypes
-     * @return StubProductImage
-     */
     protected function createProductImage(int $id, array $imageTypes = []): StubProductImage
     {
         $productImage = new StubProductImage();

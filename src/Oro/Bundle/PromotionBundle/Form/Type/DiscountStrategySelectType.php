@@ -16,9 +16,6 @@ class DiscountStrategySelectType extends AbstractType
      */
     private $strategyRegistry;
 
-    /**
-     * @param StrategyRegistry $strategyRegistry
-     */
     public function __construct(StrategyRegistry $strategyRegistry)
     {
         $this->strategyRegistry = $strategyRegistry;

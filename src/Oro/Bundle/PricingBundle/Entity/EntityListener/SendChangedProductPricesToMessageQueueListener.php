@@ -68,16 +68,6 @@ class SendChangedProductPricesToMessageQueueListener implements OptionalListener
     /** @var bool */
     private $enabled = true;
 
-    /**
-     * @param MessageProducerInterface $messageProducer
-     * @param TokenStorageInterface $tokenStorage
-     * @param EntityToEntityChangeArrayConverter $entityToArrayConverter
-     * @param AuditConfigProvider $auditConfigProvider
-     * @param EntityNameResolver $entityNameResolver
-     * @param AuditMessageBodyProvider $auditMessageBodyProvider
-     * @param PropertyAccessor $propertyAccessor
-     * @param LoggerInterface $logger
-     */
     public function __construct(
         MessageProducerInterface $messageProducer,
         TokenStorageInterface $tokenStorage,
@@ -111,9 +101,6 @@ class SendChangedProductPricesToMessageQueueListener implements OptionalListener
         $this->enabled = $enabled;
     }
 
-    /**
-     * @param ProductPriceSaveAfterEvent $event
-     */
     public function onSave(ProductPriceSaveAfterEvent $event)
     {
         if (!$this->enabled || !$this->auditConfigProvider->isAuditableEntity(ProductPrice::class)) {
@@ -148,9 +135,6 @@ class SendChangedProductPricesToMessageQueueListener implements OptionalListener
         }
     }
 
-    /**
-     * @param ProductPriceRemove $event
-     */
     public function onRemove(ProductPriceRemove $event)
     {
         if (!$this->enabled || !$this->auditConfigProvider->isAuditableEntity(ProductPrice::class)) {
@@ -185,9 +169,6 @@ class SendChangedProductPricesToMessageQueueListener implements OptionalListener
         }
     }
 
-    /**
-     * @param ProductPricesUpdated $eventArgs
-     */
     public function onUpdated(ProductPricesUpdated $eventArgs)
     {
         if (!$this->enabled) {
@@ -225,21 +206,11 @@ class SendChangedProductPricesToMessageQueueListener implements OptionalListener
         }
     }
 
-    /**
-     * @param EntityManager $em
-     *
-     * @return TokenInterface|null
-     */
     private function getSecurityToken(EntityManager $em): ?TokenInterface
     {
         return $this->allTokens->contains($em) ? $this->allTokens[$em] : $this->tokenStorage->getToken();
     }
 
-    /**
-     * @param \SplObjectStorage $storage
-     * @param EntityManager     $em
-     * @param \SplObjectStorage $changes
-     */
     private function saveChanges(\SplObjectStorage $storage, EntityManager $em, \SplObjectStorage $changes)
     {
         if ($changes->count() > 0) {
@@ -358,19 +329,12 @@ class SendChangedProductPricesToMessageQueueListener implements OptionalListener
         return spl_object_hash($entity);
     }
 
-    /**
-     * @param EntityManager $manager
-     * @param ProductPrice $price
-     * @param bool $asNewValues
-     * @return array
-     */
     private function getChangeSet(EntityManager $manager, ProductPrice $price, bool $asNewValues): array
     {
         $changeSet = [];
 
         $uow = $manager->getUnitOfWork();
         $classMetadata = $manager->getClassMetadata(ProductPrice::class);
-
 
         $fields = $this->auditConfigProvider->getAuditableFields(ProductPrice::class);
         $fields[] = $classMetadata->getSingleIdentifierFieldName();

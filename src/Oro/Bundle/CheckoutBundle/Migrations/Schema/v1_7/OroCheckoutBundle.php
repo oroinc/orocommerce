@@ -29,8 +29,6 @@ class OroCheckoutBundle implements Migration
 
     /**
      * Create oro_checkout_line_item table
-     *
-     * @param Schema $schema
      */
     protected function createOroCheckoutLineItemTable(Schema $schema)
     {
@@ -59,8 +57,6 @@ class OroCheckoutBundle implements Migration
 
     /**
      * Create oro_checkout_subtotal table
-     *
-     * @param Schema $schema
      */
     protected function createOroCheckoutSubtotalTable(Schema $schema)
     {
@@ -80,8 +76,6 @@ class OroCheckoutBundle implements Migration
 
     /**
      * Add oro_checkout_line_item foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroCheckoutLineItemForeignKeys(Schema $schema)
     {
@@ -114,8 +108,6 @@ class OroCheckoutBundle implements Migration
 
     /**
      * Add oro_checkout_subtotal foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroCheckoutSubtotalForeignKeys(Schema $schema)
     {

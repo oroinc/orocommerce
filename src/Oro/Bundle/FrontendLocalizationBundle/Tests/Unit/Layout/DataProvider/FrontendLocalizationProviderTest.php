@@ -85,11 +85,6 @@ class FrontendLocalizationProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($expectedLanguageCode, $this->dataProvider->getCurrentLanguageCode());
     }
 
-    /**
-     * @param string $languageCode
-     *
-     * @return Localization
-     */
     private function getLocalizationWithLanguage(string $languageCode): Localization
     {
         $language = new Language();

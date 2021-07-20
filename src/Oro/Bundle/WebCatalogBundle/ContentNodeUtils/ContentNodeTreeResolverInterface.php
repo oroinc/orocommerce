@@ -11,11 +11,5 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
  */
 interface ContentNodeTreeResolverInterface
 {
-    /**
-     * @param ContentNode $node
-     * @param Scope       $scope
-     *
-     * @return ResolvedContentNode|null
-     */
     public function getResolvedContentNode(ContentNode $node, Scope $scope): ?ResolvedContentNode;
 }

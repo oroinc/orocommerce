@@ -338,13 +338,6 @@ class FrontendProductPricesProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider isPriceBlockVisibleByProductDataProvider
-     *
-     * @param Product $checkedProduct
-     * @param array $products
-     * @param array $variants
-     * @param array $prices
-     * @param bool $expected
-     * @param bool $expectedNoExternalServiceCalled
      */
     public function testIsShowProductPriceContainer(
         Product $checkedProduct,

@@ -27,11 +27,6 @@ class ProductUnitsProvider
     /** @var CacheProvider */
     protected $cache;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param UnitLabelFormatterInterface $formatter
-     * @param CacheProvider $cache
-     */
     public function __construct(ManagerRegistry $registry, UnitLabelFormatterInterface $formatter, CacheProvider $cache)
     {
         $this->registry = $registry;
@@ -39,9 +34,6 @@ class ProductUnitsProvider
         $this->cache = $cache;
     }
 
-    /**
-     * @return array
-     */
     public function getAvailableProductUnits(): array
     {
         $productUnitCodes = $this->cache->fetch(self::CACHE_KEY_CODES);
@@ -59,9 +51,6 @@ class ProductUnitsProvider
         return $unitsFull;
     }
 
-    /**
-     * @return array
-     */
     public function getAvailableProductUnitsWithPrecision(): array
     {
         $unitsWithPrecision = $this->cache->fetch(self::CACHE_KEY_CODES_WITH_PRECISION);

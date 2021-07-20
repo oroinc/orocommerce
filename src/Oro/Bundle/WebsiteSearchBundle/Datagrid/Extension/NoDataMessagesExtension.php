@@ -30,11 +30,6 @@ class NoDataMessagesExtension extends AbstractExtension
      */
     private $searchMappingProvider;
 
-    /**
-     * @param AbstractExtension $noDataMessagesExtension
-     * @param FrontendHelper $frontendHelper
-     * @param AbstractSearchMappingProvider $searchMappingProvider
-     */
     public function __construct(
         AbstractExtension $noDataMessagesExtension,
         FrontendHelper $frontendHelper,

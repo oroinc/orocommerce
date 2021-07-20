@@ -51,9 +51,6 @@ class FrontendQuotePermissionVoterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param string $internalStatus
-     * @param int $expectedResult
-     *
      * @dataProvider voteProvider
      */
     public function testVote(string $internalStatus, int $expectedResult)
@@ -70,9 +67,6 @@ class FrontendQuotePermissionVoterTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @return array
-     */
     public function voteProvider() : array
     {
         return [
@@ -135,10 +129,6 @@ class FrontendQuotePermissionVoterTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param string $status
-     * @return Quote
-     */
     private function getQuoteWithInternalStatus(string $status): Quote
     {
         $quote = new Quote();

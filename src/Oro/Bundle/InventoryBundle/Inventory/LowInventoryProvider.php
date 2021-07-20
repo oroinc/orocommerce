@@ -28,10 +28,6 @@ class LowInventoryProvider
      */
     protected $entityFallbackResolver;
 
-    /**
-     * @param EntityFallbackResolver $entityFallbackResolver
-     * @param DoctrineHelper         $doctrineHelper
-     */
     public function __construct(
         EntityFallbackResolver $entityFallbackResolver,
         DoctrineHelper $doctrineHelper
@@ -208,7 +204,6 @@ class LowInventoryProvider
      * @param Product $product
      *
      * @return null|ProductUnit returns ProductUnit or null in exceptional case
-     *
      */
     protected function getDefaultProductUnit(Product $product)
     {

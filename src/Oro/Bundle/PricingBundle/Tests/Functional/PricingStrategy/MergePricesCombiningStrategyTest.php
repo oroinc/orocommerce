@@ -48,6 +48,18 @@ class MergePricesCombiningStrategyTest extends WebTestCase
             ->get(MergePricesCombiningStrategy::NAME);
     }
 
+    public function testEmptyPriceLists()
+    {
+        /** @var CombinedPriceList $combinedPriceList */
+        $combinedPriceList = $this->getReference('1e');
+        $now = new \DateTime();
+
+        $this->resolver->combinePrices($combinedPriceList, [], $now->getTimestamp());
+        $actualPrices = $this->getCombinedPrices($combinedPriceList);
+
+        $this->assertEquals([], $actualPrices);
+    }
+
     /**
      * @dataProvider combinePricesDataProvider
      * @param string $combinedPriceList

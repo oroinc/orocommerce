@@ -18,17 +18,11 @@ class OrderPaymentTermEventListener
     /** @var PaymentTermProviderInterface */
     protected $provider;
 
-    /**
-     * @param PaymentTermProviderInterface $provider
-     */
     public function __construct(PaymentTermProviderInterface $provider)
     {
         $this->provider = $provider;
     }
 
-    /**
-     * @param OrderEvent $event
-     */
     public function onOrderEvent(OrderEvent $event)
     {
         $customerPaymentTerm = null;
@@ -56,7 +50,6 @@ class OrderPaymentTermEventListener
     /**
      * This method left for the BC
      *
-     * @param Order $order
      * @throws BadRequestHttpException
      */
     protected function validateRelation(Order $order)

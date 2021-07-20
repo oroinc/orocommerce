@@ -25,12 +25,6 @@ class RelatedItemDataProvider implements RelatedItemDataProviderInterface
     /** @var UserAgentProviderInterface */
     private $userAgentProvider;
 
-    /**
-     * @param FinderStrategyInterface           $finderStrategy
-     * @param AbstractRelatedItemConfigProvider $configProvider
-     * @param RestrictedProductRepository       $restrictedProductRepository
-     * @param UserAgentProviderInterface        $userAgentProvider
-     */
     public function __construct(
         FinderStrategyInterface $finderStrategy,
         AbstractRelatedItemConfigProvider $configProvider,

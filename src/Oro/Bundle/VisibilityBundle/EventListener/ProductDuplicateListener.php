@@ -26,17 +26,11 @@ class ProductDuplicateListener
     /** @var string */
     protected $visibilityCustomerGroupClassName;
 
-    /**
-     * @param ManagerRegistry $registry
-     */
     public function __construct(ManagerRegistry $registry)
     {
         $this->registry = $registry;
     }
 
-    /**
-     * @param ProductDuplicateAfterEvent $event
-     */
     public function onDuplicateProduct(ProductDuplicateAfterEvent $event)
     {
         $product = $event->getProduct();

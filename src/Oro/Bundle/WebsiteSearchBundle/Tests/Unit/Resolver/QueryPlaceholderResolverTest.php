@@ -135,10 +135,6 @@ class QueryPlaceholderResolverTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @param DoctrineComparison $expected
-     * @param DoctrineComparison $actual
-     */
     private function assertComparisonEquals(DoctrineComparison $expected, DoctrineComparison $actual)
     {
         $this->assertEquals($expected->getField(), $actual->getField());

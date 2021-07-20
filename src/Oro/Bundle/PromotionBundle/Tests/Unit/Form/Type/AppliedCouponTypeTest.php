@@ -19,10 +19,6 @@ class AppliedCouponTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitProvider
-     *
-     * @param AppliedCoupon $defaultData
-     * @param array $submittedData
-     * @param AppliedCoupon $expectedData
      */
     public function testSubmit(AppliedCoupon $defaultData, array $submittedData, AppliedCoupon $expectedData)
     {

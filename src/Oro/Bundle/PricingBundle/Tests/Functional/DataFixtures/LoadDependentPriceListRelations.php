@@ -62,11 +62,6 @@ class LoadDependentPriceListRelations extends AbstractFixture implements Depende
         $manager->flush();
     }
 
-    /**
-     * @param BasePriceListRelation $priceListToWebsite
-     * @param Website               $website
-     * @param array                 $priceListData
-     */
     protected function fillRelationData(
         BasePriceListRelation $priceListToWebsite,
         Website $website,

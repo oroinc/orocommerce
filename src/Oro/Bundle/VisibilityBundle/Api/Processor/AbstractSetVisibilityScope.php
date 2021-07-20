@@ -34,11 +34,6 @@ abstract class AbstractSetVisibilityScope implements ProcessorInterface
     /** @var TranslatorInterface */
     private $translator;
 
-    /**
-     * @param DoctrineHelper      $doctrineHelper
-     * @param WebsiteManager      $websiteManager
-     * @param TranslatorInterface $translator
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         WebsiteManager $websiteManager,
@@ -76,29 +71,10 @@ abstract class AbstractSetVisibilityScope implements ProcessorInterface
         }
     }
 
-    /**
-     * @param CustomizeFormDataContext $context
-     * @param WebsiteInterface         $website
-     *
-     * @return Scope
-     */
     abstract protected function getScope(CustomizeFormDataContext $context, WebsiteInterface $website): Scope;
 
-    /**
-     * @param VisibilityInterface $entity
-     * @param Scope               $scope
-     *
-     * @return array
-     */
     abstract protected function getExistingVisibilitySearchCriteria(VisibilityInterface $entity, Scope $scope): array;
 
-    /**
-     * @param string              $visibilityEntityClass
-     * @param VisibilityInterface $entity
-     * @param Scope               $scope
-     *
-     * @return bool
-     */
     private function isVisibilityExists(
         string $visibilityEntityClass,
         VisibilityInterface $entity,
@@ -114,11 +90,6 @@ abstract class AbstractSetVisibilityScope implements ProcessorInterface
         return (bool)$qb->getQuery()->getOneOrNullResult(Query::HYDRATE_ARRAY);
     }
 
-    /**
-     * @param CustomizeFormDataContext $context
-     *
-     * @return WebsiteInterface
-     */
     private function getWebsite(CustomizeFormDataContext $context): WebsiteInterface
     {
         $websiteField = $context->findFormField('website');

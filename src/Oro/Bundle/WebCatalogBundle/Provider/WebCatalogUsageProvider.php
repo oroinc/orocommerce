@@ -19,10 +19,6 @@ class WebCatalogUsageProvider implements WebCatalogUsageProviderInterface
     /** @var ManagerRegistry */
     private $doctrine;
 
-    /**
-     * @param ConfigManager   $configManager
-     * @param ManagerRegistry $doctrine
-     */
     public function __construct(ConfigManager $configManager, ManagerRegistry $doctrine)
     {
         $this->configManager = $configManager;

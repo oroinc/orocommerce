@@ -15,9 +15,6 @@ class CouponSearchHandler extends SearchHandler
      */
     private $modifier;
 
-    /**
-     * @param CouponApplicabilityQueryBuilderModifier $modifier
-     */
     public function setCouponApplicabilityQueryBuilderModifier(CouponApplicabilityQueryBuilderModifier $modifier)
     {
         $this->modifier = $modifier;

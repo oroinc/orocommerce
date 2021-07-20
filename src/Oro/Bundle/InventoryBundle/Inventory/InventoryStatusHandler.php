@@ -20,19 +20,12 @@ class InventoryStatusHandler
      */
     protected $doctrineHelper;
 
-    /**
-     * @param EntityFallbackResolver $entityFallbackResolver
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(EntityFallbackResolver $entityFallbackResolver, DoctrineHelper $doctrineHelper)
     {
         $this->entityFallbackResolver = $entityFallbackResolver;
         $this->doctrineHelper = $doctrineHelper;
     }
 
-    /**
-     * @param InventoryLevel $inventoryLevel
-     */
     public function changeInventoryStatusWhenDecrement(InventoryLevel $inventoryLevel)
     {
         $product = $inventoryLevel->getProduct();
@@ -42,9 +35,6 @@ class InventoryStatusHandler
         }
     }
 
-    /**
-     * @param Product $product
-     */
     protected function setInventoryStatusForDecrement(Product $product)
     {
         $inventoryStatusEntityName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');

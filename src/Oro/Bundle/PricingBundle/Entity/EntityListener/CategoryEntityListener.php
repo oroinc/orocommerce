@@ -17,10 +17,6 @@ class CategoryEntityListener extends AbstractRuleEntityListener implements Featu
 {
     use FeatureCheckerHolderTrait;
 
-    /**
-     * @param Category $category
-     * @param PreUpdateEventArgs $event
-     */
     public function preUpdate(Category $category, PreUpdateEventArgs $event)
     {
         if (!$this->isFeaturesEnabled()) {
@@ -44,9 +40,6 @@ class CategoryEntityListener extends AbstractRuleEntityListener implements Featu
         $this->recalculateByEntity();
     }
 
-    /**
-     * @param ProductsChangeRelationEvent $event
-     */
     public function onProductsChangeRelation(ProductsChangeRelationEvent $event)
     {
         if (!$this->isFeaturesEnabled()) {

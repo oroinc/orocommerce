@@ -82,8 +82,6 @@ class ProductControllerTest extends WebTestCase
 
     /**
      * @depends testUpdateProductWithNewUnit
-     *
-     * @param ProductShippingOptions $option
      */
     public function testViewProduct(ProductShippingOptions $option)
     {
@@ -99,8 +97,6 @@ class ProductControllerTest extends WebTestCase
 
     /**
      * @depends testUpdateProductWithNewUnit
-     *
-     * @param ProductShippingOptions $option
      */
     public function testIndexProduct(ProductShippingOptions $option)
     {

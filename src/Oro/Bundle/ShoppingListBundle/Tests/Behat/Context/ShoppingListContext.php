@@ -42,9 +42,6 @@ class ShoppingListContext extends OroFeatureContext implements OroPageObjectAwar
 
     /**
      * @When /^I set unit for shopping list line item with sku "(?P<sku>[\w\d\s]*)" to "(?P<unit>[\s\w]*)"/
-     *
-     * @param string $sku
-     * @param string $unit
      */
     public function setLineItemUnit(string $sku, string $unit): void
     {
@@ -52,10 +49,6 @@ class ShoppingListContext extends OroFeatureContext implements OroPageObjectAwar
         $form->typeInField('Unit', $unit);
     }
 
-    /**
-     * @param string $sku
-     * @return Form
-     */
     private function getLineItemForm(string $sku): Form
     {
         $shoppingListItem = $this->findElementContains('Shopping list line item', $sku);
@@ -112,8 +105,6 @@ class ShoppingListContext extends OroFeatureContext implements OroPageObjectAwar
 
     /**
      * @When /^(?:|I )save changes for "(?P<elementName>[^"]+)" row$/
-     *
-     * @param string $elementName
      */
     public function saveChangesForRow(string $elementName): void
     {

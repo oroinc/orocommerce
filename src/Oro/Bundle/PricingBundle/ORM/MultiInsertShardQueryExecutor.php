@@ -19,9 +19,6 @@ class MultiInsertShardQueryExecutor extends AbstractShardQueryExecutor implement
      */
     private $batchSize = 200; //use the same value as iterator
 
-    /**
-     * @param int $batchSize
-     */
     public function setBatchSize(int $batchSize)
     {
         $this->batchSize = $batchSize;

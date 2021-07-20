@@ -41,9 +41,6 @@ class MultipleChoice extends BaseMultipleChoice
         }
     }
 
-    /**
-     * @return array
-     */
     public function getChoices(): array
     {
         $this->open();

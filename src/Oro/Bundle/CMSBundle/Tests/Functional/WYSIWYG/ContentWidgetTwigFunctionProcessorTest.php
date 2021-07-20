@@ -36,9 +36,6 @@ class ContentWidgetTwigFunctionProcessorTest extends WebTestCase
         $this->usageRepository = $this->em->getRepository(ContentWidgetUsage::class);
     }
 
-    /**
-     * @return Page
-     */
     public function testPostPersist(): Page
     {
         /** @var ContentWidget $contentWidget1 */
@@ -78,9 +75,6 @@ class ContentWidgetTwigFunctionProcessorTest extends WebTestCase
 
     /**
      * @depends testPostPersist
-     *
-     * @param Page $page
-     * @return Page
      */
     public function testPreUpdate(Page $page): Page
     {
@@ -117,8 +111,6 @@ class ContentWidgetTwigFunctionProcessorTest extends WebTestCase
 
     /**
      * @depends testPreUpdate
-     *
-     * @param Page $page
      */
     public function testRemove(Page $page): void
     {
@@ -127,10 +119,6 @@ class ContentWidgetTwigFunctionProcessorTest extends WebTestCase
         $this->assertContentWidgets($page, []);
     }
 
-    /**
-     * @param Page $page
-     * @param array $contentWidgets
-     */
     private function assertContentWidgets(Page $page, array $contentWidgets): void
     {
         $this->em->flush();

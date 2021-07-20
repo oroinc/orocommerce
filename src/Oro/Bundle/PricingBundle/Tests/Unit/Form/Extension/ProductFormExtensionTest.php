@@ -104,7 +104,6 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider badProductDataProvider
-     * @param Product|null $product
      */
     public function testOnPreSubmitBadProduct(Product $product = null)
     {
@@ -171,9 +170,6 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider preSubmitPricesDataProvider
-     * @param array $existingPrices
-     * @param array $submittedPrices
-     * @param array $expectedPrices
      */
     public function testOnPreSubmitWithPrices(array $existingPrices, array $submittedPrices, array $expectedPrices)
     {
@@ -383,8 +379,6 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider addFormOnPreSetDataWithNoFieldAddedProviderAndUpdateProductProvider
-     *
-     * @param array $allowedPermissions
      */
     public function testAddFormOnPreSetDataWithNoFieldAddedAndUpdateProduct(array $allowedPermissions)
     {

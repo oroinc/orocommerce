@@ -52,11 +52,6 @@ class CustomerUserShoppingListsProvider
      */
     private $isShowAllShoppingLists;
 
-    /**
-     * @param RequestStack $requestStack
-     * @param ShoppingListTotalManager $totalManager
-     * @param CurrentShoppingListManager $currentShoppingListManager
-     */
     public function __construct(
         RequestStack $requestStack,
         ShoppingListTotalManager $totalManager,
@@ -79,10 +74,6 @@ class CustomerUserShoppingListsProvider
         return $this->currentShoppingListManager->getCurrent();
     }
 
-    /**
-     * @param ShoppingList $shoppingList
-     * @return bool
-     */
     public function isCurrent(ShoppingList $shoppingList): bool
     {
         $current = $this->getCurrent();
@@ -131,9 +122,6 @@ class CustomerUserShoppingListsProvider
         return $this->options['shoppingListsForWidget'];
     }
 
-    /**
-     * @return bool
-     */
     private function isShowAllInShoppingListWidget(): bool
     {
         if ($this->isShowAllShoppingLists === null) {

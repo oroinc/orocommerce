@@ -30,10 +30,6 @@ class PaymentMethodConfigType extends AbstractType
      */
     protected $methodViewProvider;
 
-    /**
-     * @param PaymentMethodProviderInterface $methodProvider
-     * @param PaymentMethodViewProviderInterface $methodViewProvider
-     */
     public function __construct(
         PaymentMethodProviderInterface $methodProvider,
         PaymentMethodViewProviderInterface $methodViewProvider
@@ -75,9 +71,6 @@ class PaymentMethodConfigType extends AbstractType
         $view->vars['methods_labels'] = $result;
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([

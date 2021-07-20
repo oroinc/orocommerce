@@ -68,9 +68,6 @@ class ProductFamilySearchHandlerTest extends WebTestCase
         );
     }
 
-    /**
-     * @param array $attributeFamilies
-     */
     private function assertResultContainsAttributeFamilies(array $attributeFamilies): void
     {
         $expected = \array_map(

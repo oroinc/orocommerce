@@ -47,13 +47,6 @@ class ManuallyAddedProductCollectionIndexerListener
      */
     private $productCollectionDefinitionConverter;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param ConfigManager $configManager
-     * @param WebsiteContextManager $websiteContextManager
-     * @param ContentVariantProviderInterface $contentVariantProvider
-     * @param ProductCollectionDefinitionConverter $productCollectionDefinitionConverter
-     */
     public function __construct(
         ManagerRegistry $registry,
         ConfigManager $configManager,
@@ -68,9 +61,6 @@ class ManuallyAddedProductCollectionIndexerListener
         $this->productCollectionDefinitionConverter = $productCollectionDefinitionConverter;
     }
 
-    /**
-     * @param IndexEntityEvent $event
-     */
     public function onWebsiteSearchIndex(IndexEntityEvent $event)
     {
         if (!$this->isApplicable($event)) {
@@ -103,10 +93,6 @@ class ManuallyAddedProductCollectionIndexerListener
         }
     }
 
-    /**
-     * @param IndexEntityEvent $event
-     * @return bool
-     */
     protected function isApplicable(IndexEntityEvent $event): bool
     {
         $websiteId = $this->websiteContextManager->getWebsiteId($event->getContext());
@@ -137,10 +123,6 @@ class ManuallyAddedProductCollectionIndexerListener
         return true;
     }
 
-    /**
-     * @param array $entitiesData
-     * @return array
-     */
     protected function collectVariantIdsByRecordId(array $entitiesData): array
     {
         $variantsByRecordId = [];
@@ -167,10 +149,6 @@ class ManuallyAddedProductCollectionIndexerListener
         return $variantsByRecordId;
     }
 
-    /**
-     * @param array $variantsByRecordId
-     * @return array
-     */
     protected function collectManuallyAddedByVariantId(array $variantsByRecordId): array
     {
         $variantIds = [];
@@ -200,10 +178,6 @@ class ManuallyAddedProductCollectionIndexerListener
         return $manuallyAddedByVariantId;
     }
 
-    /**
-     * @param array $variantsByRecordId
-     * @param array $manuallyAddedByVariantId
-     */
     protected function filterManuallyAddedRecords(array &$variantsByRecordId, array $manuallyAddedByVariantId)
     {
         // Filter out variants that were assigned not as manually added products or not for product collection variant.

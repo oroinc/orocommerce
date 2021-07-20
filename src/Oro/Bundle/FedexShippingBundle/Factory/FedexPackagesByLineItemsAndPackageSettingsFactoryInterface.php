@@ -7,12 +7,6 @@ use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollec
 
 interface FedexPackagesByLineItemsAndPackageSettingsFactoryInterface
 {
-    /**
-     * @param ShippingLineItemCollectionInterface $lineItemCollection
-     * @param FedexPackageSettingsInterface       $packageSettings
-     *
-     * @return array
-     */
     public function create(
         ShippingLineItemCollectionInterface $lineItemCollection,
         FedexPackageSettingsInterface $packageSettings

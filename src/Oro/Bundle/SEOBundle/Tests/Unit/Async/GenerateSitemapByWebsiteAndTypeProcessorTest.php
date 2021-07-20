@@ -61,19 +61,11 @@ class GenerateSitemapByWebsiteAndTypeProcessorTest extends \PHPUnit\Framework\Te
         );
     }
 
-    /**
-     * @return SessionInterface
-     */
     private function getSession(): SessionInterface
     {
         return $this->createMock(SessionInterface::class);
     }
 
-    /**
-     * @param array $body
-     *
-     * @return MessageInterface
-     */
     private function getMessage(array $body): MessageInterface
     {
         $message = new Message();

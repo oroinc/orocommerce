@@ -166,7 +166,6 @@ class CategoryRepositoryTest extends AbstractCategoryRepositoryTest
             $parentCategoryFallbackCategoryIds[] = $category->getId();
         }
 
-
         /** @var Category $staticCategory */
         $staticCategory = $this->getReference('category_1_2_3');
         $staticCategoryId = $staticCategory->getId();

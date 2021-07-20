@@ -107,10 +107,6 @@ class LoadFlatRateIntegration extends AbstractFixture implements
         return $channel;
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param Channel       $channel
-     */
     private function loadShippingRule(ObjectManager $manager, Channel $channel)
     {
         $typeConfig = new ShippingMethodTypeConfig();

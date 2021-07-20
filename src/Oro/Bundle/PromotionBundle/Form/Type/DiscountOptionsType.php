@@ -89,8 +89,6 @@ class DiscountOptionsType extends AbstractType
 
     /**
      * Based on the submission, mark as not required the Discount Type value that were hidden and is empty.
-     *
-     * @param FormEvent $event
      */
     public function preSubmit(FormEvent $event)
     {
@@ -122,8 +120,6 @@ class DiscountOptionsType extends AbstractType
 
     /**
      * Based on the available data hide Discount Type value field, that is empty.
-     *
-     * @param FormEvent $event
      */
     public function preSetData(FormEvent $event)
     {

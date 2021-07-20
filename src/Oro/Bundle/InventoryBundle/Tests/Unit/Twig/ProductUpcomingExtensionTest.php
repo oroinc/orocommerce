@@ -32,8 +32,6 @@ class ProductUpcomingExtensionTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider isUpcomingDataProvider
-     * @param bool $expected
-     * @param bool $isUpcoming
      */
     public function testIsUpcomingProduct(bool $expected, bool $isUpcoming): void
     {
@@ -50,9 +48,6 @@ class ProductUpcomingExtensionTest extends \PHPUnit\Framework\TestCase
         self::assertEquals($expected, $result);
     }
 
-    /**
-     * @return array
-     */
     public function isUpcomingDataProvider(): array
     {
         return [
@@ -69,8 +64,6 @@ class ProductUpcomingExtensionTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider upcomingAvailabilityDateDataProvider
-     * @param \DateTime|null $expected
-     * @param \DateTime|null $availabilityDate
      */
     public function testGetUpcomingAvailabilityDate(?\DateTime $expected, ?\DateTime $availabilityDate): void
     {
@@ -90,9 +83,6 @@ class ProductUpcomingExtensionTest extends \PHPUnit\Framework\TestCase
         self::assertEquals($expected, $result);
     }
 
-    /**
-     * @return array
-     */
     public function upcomingAvailabilityDateDataProvider(): array
     {
         $date = new \DateTime('2001-01-03');

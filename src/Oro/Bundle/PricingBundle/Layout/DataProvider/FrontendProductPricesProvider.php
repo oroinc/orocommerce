@@ -52,13 +52,6 @@ class FrontendProductPricesProvider
      */
     protected $productPriceProvider;
 
-    /**
-     * @param ProductPriceScopeCriteriaRequestHandler $scopeCriteriaRequestHandler
-     * @param ProductVariantAvailabilityProvider $productVariantAvailabilityProvider
-     * @param UserCurrencyManager $userCurrencyManager
-     * @param ProductPriceFormatter $productPriceFormatter
-     * @param ProductPriceProviderInterface $productPriceProvider
-     */
     public function __construct(
         ProductPriceScopeCriteriaRequestHandler $scopeCriteriaRequestHandler,
         ProductVariantAvailabilityProvider $productVariantAvailabilityProvider,

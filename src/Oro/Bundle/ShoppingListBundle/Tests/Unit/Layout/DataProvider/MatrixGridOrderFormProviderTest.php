@@ -43,8 +43,6 @@ class MatrixGridOrderFormProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param ShoppingList|null $shoppingList
-     *
      * @dataProvider getLineItemsDataProvider
      */
     public function testGetMatrixOrderForm(ShoppingList $shoppingList = null)
@@ -96,8 +94,6 @@ class MatrixGridOrderFormProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param ShoppingList|null $shoppingList
-     *
      * @dataProvider getLineItemsDataProvider
      */
     public function testGetMatrixOrderFormView(ShoppingList $shoppingList = null)
@@ -231,8 +227,6 @@ class MatrixGridOrderFormProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param ShoppingList|null $shoppingList
-     *
      * @dataProvider getLineItemsDataProvider
      */
     public function testGetMatrixOrderFormHtml(ShoppingList $shoppingList = null)
