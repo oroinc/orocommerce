@@ -17,6 +17,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 /**
  * Class is responsible for triggering all events during indexation
  * and returning all collected and prepared for saving event data
+ *
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class IndexDataProvider
 {
@@ -122,7 +124,7 @@ class IndexDataProvider
      * @param array $entityConfig
      * @return array Structured and cleared data ready to be saved
      */
-    private function prepareIndexData(array $indexData, array $entityConfig)
+    private function prepareIndexData(array $indexData, array $entityConfig): array
     {
         $preparedIndexData = [];
 
@@ -171,22 +173,45 @@ class IndexDataProvider
             }
 
             unset($allTextFieldNames[$allText]);
-
-            $allTextValue = $this->getIndexValue($preparedIndexData, $entityId, $allText);
-            foreach ($allTextFieldNames as $allTextFieldName) {
-                if ($this->enableAllText) {
-                    $fieldsValue = $this->getIndexValue($preparedIndexData, $entityId, $allTextFieldName);
-                    $this->setIndexValue($preparedIndexData, $entityId, $allText, $fieldsValue);
-                }
-                $this->setIndexValue($preparedIndexData, $entityId, $allTextFieldName, $allTextValue);
-            }
-
-            if (!$this->enableAllText) {
-                $preparedIndexData[$entityId] = $this->removeField($preparedIndexData[$entityId], $allText);
-            }
-
-            $preparedIndexData[$entityId] = $this->squashAllTextFields($preparedIndexData[$entityId]);
+            $preparedIndexData = $this->processAllTextFields(
+                $allTextFieldNames,
+                $preparedIndexData,
+                $entityId,
+                $allText
+            );
         }
+
+        return $preparedIndexData;
+    }
+
+    /**
+     * @param array $allTextFieldNames
+     * @param array $preparedIndexData
+     * @param int $entityId
+     * @param string $allText
+     * @return array
+     */
+    private function processAllTextFields(
+        array $allTextFieldNames,
+        array $preparedIndexData,
+        int $entityId,
+        string $allText
+    ): array {
+        $allTextValue = $this->getIndexValue($preparedIndexData, $entityId, $allText);
+
+        foreach ($allTextFieldNames as $allTextFieldName) {
+            if ($this->enableAllText) {
+                $fieldsValue = $this->getIndexValue($preparedIndexData, $entityId, $allTextFieldName);
+                $this->setIndexValue($preparedIndexData, $entityId, $allText, $fieldsValue);
+            }
+            $this->setIndexValue($preparedIndexData, $entityId, $allTextFieldName, $allTextValue);
+        }
+
+        if (!$this->enableAllText) {
+            $preparedIndexData[$entityId] = $this->removeField($preparedIndexData[$entityId], $allText);
+        }
+
+        $preparedIndexData[$entityId] = $this->squashAllTextFields($preparedIndexData[$entityId]);
 
         return $preparedIndexData;
     }
