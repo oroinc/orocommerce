@@ -29,13 +29,10 @@ class FedexRateServiceResponseFactory implements FedexRateServiceResponseFactory
         if ($this->isResponseHasPrices($severityType, $soapResponse)) {
             $prices = $this->createPricesByResponse($soapResponse);
         }
-        
+
         return new FedexRateServiceResponse($severityType, $severityCode, $prices);
     }
 
-    /**
-     * @return FedexRateServiceResponse
-     */
     private function createConnectionErrorResponse(): FedexRateServiceResponse
     {
         return new FedexRateServiceResponse(
@@ -80,11 +77,6 @@ class FedexRateServiceResponseFactory implements FedexRateServiceResponseFactory
         return $prices;
     }
 
-    /**
-     * @param \StdClass $rateReply
-     *
-     * @return Price
-     */
     private function createPriceByResponse(\StdClass $rateReply): Price
     {
         if ($rateReply->RatedShipmentDetails && is_array($rateReply->RatedShipmentDetails)) {

@@ -45,9 +45,6 @@ class CountryZipCodeMatcher extends AbstractMatcher
         return $this->taxRulesCache[$cacheKey];
     }
 
-    /**
-     * @param MatcherInterface $countryMatcher
-     */
     public function setCountryMatcher(MatcherInterface $countryMatcher)
     {
         $this->countryMatcher = $countryMatcher;

@@ -18,9 +18,6 @@ class PaymentTermProviderDecorator implements PaymentTermProviderInterface
      */
     protected $innerProvider;
 
-    /**
-     * @param PaymentTermProviderInterface $innerProvider
-     */
     public function __construct(PaymentTermProviderInterface $innerProvider)
     {
         $this->innerProvider = $innerProvider;

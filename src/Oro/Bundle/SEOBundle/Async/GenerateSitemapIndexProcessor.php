@@ -35,12 +35,6 @@ class GenerateSitemapIndexProcessor implements MessageProcessorInterface, TopicS
     /** @var LoggerInterface */
     private $logger;
 
-    /**
-     * @param JobRunner                $jobRunner
-     * @param DependentJobService      $dependentJob
-     * @param MessageProducerInterface $producer
-     * @param LoggerInterface          $logger
-     */
     public function __construct(
         JobRunner $jobRunner,
         DependentJobService $dependentJob,
@@ -96,11 +90,6 @@ class GenerateSitemapIndexProcessor implements MessageProcessorInterface, TopicS
         return $result ? self::ACK : self::REJECT;
     }
 
-    /**
-     * @param MessageInterface $message
-     *
-     * @return array|null
-     */
     private function resolveMessage(MessageInterface $message): ?array
     {
         try {
@@ -112,9 +101,6 @@ class GenerateSitemapIndexProcessor implements MessageProcessorInterface, TopicS
         return null;
     }
 
-    /**
-     * @return OptionsResolver
-     */
     private function getMessageResolver(): OptionsResolver
     {
         $resolver = new OptionsResolver();
@@ -141,11 +127,6 @@ class GenerateSitemapIndexProcessor implements MessageProcessorInterface, TopicS
         $this->dependentJob->saveDependentJob($context);
     }
 
-    /**
-     * @param JobRunner $jobRunner
-     * @param int       $version
-     * @param array     $websiteIds
-     */
     private function scheduleGeneratingSitemapIndex(JobRunner $jobRunner, int $version, array $websiteIds): void
     {
         foreach ($websiteIds as $websiteId) {

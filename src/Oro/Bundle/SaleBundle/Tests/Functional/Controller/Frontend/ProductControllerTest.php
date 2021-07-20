@@ -28,8 +28,6 @@ class ProductControllerTest extends WebTestCase
 
     /**
      * @dataProvider viewDataProvider
-     * @param $product
-     * @param $contains
      */
     public function testView($product, $contains)
     {

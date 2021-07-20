@@ -383,7 +383,6 @@ class SlugGeneratorTest extends \PHPUnit\Framework\TestCase
         $slugPrototype = new LocalizedFallbackValue();
         $slugPrototype->setString('test-url');
 
-
         $routeId = 'route_id';
         $routeParameters = [];
         $routData = new RouteData($routeId, $routeParameters);
@@ -461,10 +460,6 @@ class SlugGeneratorTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(0, $contentVariant->getSlugs());
     }
 
-    /**
-     * @param Localization $localization
-     * @param ContentNode $parentContentNode
-     */
     protected function doTestGenerate(Localization $localization, ContentNode $parentContentNode)
     {
         $slugPrototype = new LocalizedFallbackValue();

@@ -13,8 +13,6 @@ class LocalizationSwitcherContext extends OroFeatureContext implements OroPageOb
     use PageObjectDictionary;
 
     /**
-     * @param TableNode $table
-     *
      * @Then /^(?:|I )should see that localization switcher contains localizations:$/
      */
     public function iSeeThatLocalizationSwitcherContainLocalizations(TableNode $table)

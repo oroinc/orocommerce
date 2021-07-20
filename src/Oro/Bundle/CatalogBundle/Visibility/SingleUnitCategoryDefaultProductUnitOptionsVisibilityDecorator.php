@@ -17,10 +17,6 @@ class SingleUnitCategoryDefaultProductUnitOptionsVisibilityDecorator implements
      */
     private $singleUnitModeService;
 
-    /**
-     * @param CategoryDefaultProductUnitOptionsVisibilityInterface $optionsVisibility
-     * @param SingleUnitModeServiceInterface $singleUnitModeService
-     */
     public function __construct(
         CategoryDefaultProductUnitOptionsVisibilityInterface $optionsVisibility,
         SingleUnitModeServiceInterface $singleUnitModeService

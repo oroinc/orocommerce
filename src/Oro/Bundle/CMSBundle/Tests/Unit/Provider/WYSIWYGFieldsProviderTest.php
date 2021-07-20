@@ -38,14 +38,6 @@ class WYSIWYGFieldsProviderTest extends \PHPUnit\Framework\TestCase
         $this->wysiwygFieldsProvider = new WYSIWYGFieldsProvider($this->doctrine, $this->configManager);
     }
 
-    /**
-     * @param string $fieldName
-     * @param string $fieldType
-     * @param array  $properties
-     * @param string $scope
-     *
-     * @return Config
-     */
     private function getFieldConfig(
         string $fieldName,
         string $fieldType,

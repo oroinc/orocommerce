@@ -29,9 +29,6 @@ class Configuration implements ConfigurationInterface
     /** @var array */
     private $contentRestrictionModes = [];
 
-    /**
-     * @param array $contentRestrictionModes
-     */
     public function __construct(array $contentRestrictionModes)
     {
         $this->contentRestrictionModes = $contentRestrictionModes;

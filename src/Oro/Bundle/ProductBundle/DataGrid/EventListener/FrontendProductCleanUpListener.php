@@ -20,19 +20,12 @@ class FrontendProductCleanUpListener
     /** @var AclHelper */
     private $aclHelper;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param AclHelper $aclHelper
-     */
     public function __construct(DoctrineHelper $doctrineHelper, AclHelper $aclHelper)
     {
         $this->doctrineHelper = $doctrineHelper;
         $this->aclHelper = $aclHelper;
     }
 
-    /**
-     * @param SearchResultAfter $event
-     */
     public function onSearchResultAfter(SearchResultAfter $event)
     {
         /** @var ResultRecordInterface[] $records */

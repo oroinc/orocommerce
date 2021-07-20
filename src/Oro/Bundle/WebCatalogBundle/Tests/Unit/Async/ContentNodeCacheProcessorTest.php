@@ -100,10 +100,6 @@ class ContentNodeCacheProcessorTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param WebCatalog $webCatalog
-     * @param ContentNode $node
-     */
     private function assertProcessCalled(WebCatalog $webCatalog, ContentNode $node)
     {
         /** @var Scope $scope */
@@ -159,10 +155,6 @@ class ContentNodeCacheProcessorTest extends \PHPUnit\Framework\TestCase
             );
     }
 
-    /**
-     * @param Scope $scope
-     * @param ContentNode $node
-     */
     private function assertChildJobCreated(Scope $scope, ContentNode $node)
     {
         /** @var Job|\PHPUnit\Framework\MockObject\MockObject $job */

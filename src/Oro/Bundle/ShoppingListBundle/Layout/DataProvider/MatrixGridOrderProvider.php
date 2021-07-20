@@ -35,12 +35,6 @@ class MatrixGridOrderProvider
      */
     private $currentShoppingListManager;
 
-    /**
-     * @param MatrixGridOrderManager $matrixGridManager
-     * @param TotalProcessorProvider $totalProvider
-     * @param NumberFormatter $numberFormatter
-     * @param CurrentShoppingListManager $currentShoppingListManager
-     */
     public function __construct(
         MatrixGridOrderManager $matrixGridManager,
         TotalProcessorProvider $totalProvider,

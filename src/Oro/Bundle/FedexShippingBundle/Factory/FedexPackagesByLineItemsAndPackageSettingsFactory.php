@@ -21,10 +21,6 @@ class FedexPackagesByLineItemsAndPackageSettingsFactory implements
      */
     private $fedexPackageFactory;
 
-    /**
-     * @param ShippingPackagesByLineItemBuilderInterface           $packagesBuilder
-     * @param FedexPackageByShippingPackageOptionsFactoryInterface $fedexPackageFactory
-     */
     public function __construct(
         ShippingPackagesByLineItemBuilderInterface $packagesBuilder,
         FedexPackageByShippingPackageOptionsFactoryInterface $fedexPackageFactory

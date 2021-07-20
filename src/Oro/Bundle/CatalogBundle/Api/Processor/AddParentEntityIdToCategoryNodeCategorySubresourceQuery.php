@@ -19,9 +19,6 @@ class AddParentEntityIdToCategoryNodeCategorySubresourceQuery implements Process
     /** @var EntityIdHelper */
     private $entityIdHelper;
 
-    /**
-     * @param EntityIdHelper $entityIdHelper
-     */
     public function __construct(EntityIdHelper $entityIdHelper)
     {
         $this->entityIdHelper = $entityIdHelper;

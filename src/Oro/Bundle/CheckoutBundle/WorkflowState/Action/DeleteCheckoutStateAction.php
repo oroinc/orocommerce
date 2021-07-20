@@ -28,7 +28,6 @@ class DeleteCheckoutStateAction extends AbstractAction
 
     /**
      * {@inheritdoc}
-     * @param CheckoutDiffStorageInterface $diffStorage
      */
     public function __construct(ContextAccessor $contextAccessor, CheckoutDiffStorageInterface $diffStorage)
     {

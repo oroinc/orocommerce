@@ -82,11 +82,6 @@ class RequestTest extends RestJsonApiTestCase
         $this->assertUpdatedRequest($oldRequestEntity, $result, $data);
     }
 
-    /**
-     * @param Request $oldRequest
-     * @param array $result
-     * @param array $data
-     */
     protected function assertUpdatedRequest(Request $oldRequest, array $result, array $data)
     {
         /** @var Request $newRequest */
@@ -194,7 +189,6 @@ class RequestTest extends RestJsonApiTestCase
             ['entity' => 'rfqs'],
             $data
         );
-
 
         $result = $this->jsonToArray($response->getContent());
 

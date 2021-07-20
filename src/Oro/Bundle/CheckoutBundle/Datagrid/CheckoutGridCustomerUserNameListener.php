@@ -13,17 +13,11 @@ class CheckoutGridCustomerUserNameListener
      */
     private $customerUserProvider;
 
-    /**
-     * @param CustomerUserProvider $customerUserProvider
-     */
     public function __construct(CustomerUserProvider $customerUserProvider)
     {
         $this->customerUserProvider = $customerUserProvider;
     }
 
-    /**
-     * @param BuildBefore $event
-     */
     public function onBuildBefore(BuildBefore $event)
     {
         $config = $event->getConfig();

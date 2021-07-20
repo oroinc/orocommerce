@@ -52,12 +52,6 @@ class TaxationSettingsProvider
      */
     private $cacheProvider;
 
-    /**
-     * @param ConfigManager $configManager
-     * @param TaxBaseExclusionFactory $taxBaseExclusionFactory
-     * @param AddressModelFactory $addressModelFactory
-     * @param CacheProvider $cacheProvider
-     */
     public function __construct(
         ConfigManager $configManager,
         TaxBaseExclusionFactory $taxBaseExclusionFactory,

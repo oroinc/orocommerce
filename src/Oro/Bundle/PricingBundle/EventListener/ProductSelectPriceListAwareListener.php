@@ -30,19 +30,12 @@ class ProductSelectPriceListAwareListener
      */
     protected $registry;
 
-    /**
-     * @param FrontendProductListModifier $modifier
-     * @param Registry $registry
-     */
     public function __construct(FrontendProductListModifier $modifier, Registry $registry)
     {
         $this->modifier = $modifier;
         $this->registry = $registry;
     }
 
-    /**
-     * @param ProductDBQueryRestrictionEvent $event
-     */
     public function onDBQuery(ProductDBQueryRestrictionEvent $event)
     {
         $this->event = $event;
@@ -54,7 +47,7 @@ class ProductSelectPriceListAwareListener
         $priceList = $this->getPriceListParam() !== self::DEFAULT_ACCOUNT_USER
             ? $this->getPriceListById($this->getPriceListParam())
             : null;
-        
+
         $this->modifier->applyPriceListLimitations($this->event->getQueryBuilder(), null, $priceList);
     }
 

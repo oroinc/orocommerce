@@ -27,10 +27,6 @@ class CustomerConsentsTransformer implements DataTransformerInterface
     /** @var ConsentAcceptanceProvider */
     private $consentAcceptanceProvider;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param ConsentAcceptanceProvider $frontendConsentAcceptanceProvider
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         ConsentAcceptanceProvider $frontendConsentAcceptanceProvider

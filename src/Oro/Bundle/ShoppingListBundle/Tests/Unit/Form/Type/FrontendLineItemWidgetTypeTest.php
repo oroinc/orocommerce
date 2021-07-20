@@ -269,7 +269,6 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
         return $registry;
     }
 
-
     /**
      * @return array
      */

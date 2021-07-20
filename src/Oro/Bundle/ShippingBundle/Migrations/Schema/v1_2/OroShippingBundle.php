@@ -17,8 +17,6 @@ class OroShippingBundle implements Migration, OrderedMigrationInterface
     }
 
     /**
-     * @param Schema $schema
-     * @param QueryBag $queries
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     public function up(Schema $schema, QueryBag $queries)

@@ -112,7 +112,6 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider badProductDataProvider
-     * @param Product|null $product
      */
     public function testOnPreSubmitBadProduct(Product $product = null)
     {
@@ -193,9 +192,6 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider preSubmitPricesDataProvider
-     * @param array $existingPrices
-     * @param array $submittedPrices
-     * @param array $expectedPrices
      */
     public function testOnPreSubmitWithPrices(array $existingPrices, array $submittedPrices, array $expectedPrices)
     {
@@ -441,8 +437,6 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider addFormOnPreSetDataWithNoFieldAddedProviderAndUpdateProductProvider
-     *
-     * @param array $allowedPermissions
      */
     public function testAddFormOnPreSetDataWithNoFieldAddedAndUpdateProduct(array $allowedPermissions)
     {
@@ -810,10 +804,6 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
         return $this->getEntity(ProductPrice::class, ['id' => $id]);
     }
 
-    /**
-     * @param FormEvent $event
-     * @param array $prices
-     */
     protected function assertPriceAdd(FormEvent $event, array $prices)
     {
         /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $mainForm */

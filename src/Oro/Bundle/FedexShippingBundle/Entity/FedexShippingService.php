@@ -57,11 +57,6 @@ class FedexShippingService
         return $this->code;
     }
 
-    /**
-     * @param string $code
-     *
-     * @return self
-     */
     public function setCode(string $code): self
     {
         $this->code = $code;
@@ -77,11 +72,6 @@ class FedexShippingService
         return $this->description;
     }
 
-    /**
-     * @param string $description
-     *
-     * @return self
-     */
     public function setDescription(string $description): self
     {
         $this->description = $description;
@@ -97,11 +87,6 @@ class FedexShippingService
         return $this->rule;
     }
 
-    /**
-     * @param ShippingServiceRule $rule
-     *
-     * @return self
-     */
     public function setRule(ShippingServiceRule $rule): self
     {
         $this->rule = $rule;

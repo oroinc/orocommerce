@@ -17,9 +17,6 @@ class ZipCodeType extends AbstractType
      */
     protected $dataClass;
 
-    /**
-     * @param $dataClass
-     */
     public function setDataClass($dataClass)
     {
         $this->dataClass = $dataClass;

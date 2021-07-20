@@ -25,18 +25,8 @@ abstract class AbstractTaxCalculator implements TaxCalculatorInterface
         return clone $this->cache[$key];
     }
 
-    /**
-     * @param string $amount
-     * @param string $taxRate
-     * @return ResultElement
-     */
     abstract protected function doCalculate(string $amount, string $taxRate): ResultElement;
 
-    /**
-     * @param string $amount
-     * @param string $taxRate
-     * @return string
-     */
     private function getCacheKey(string $amount, string $taxRate): string
     {
         return sprintf('%s|%s', $amount, $taxRate);

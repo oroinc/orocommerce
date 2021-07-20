@@ -35,7 +35,7 @@ class OroProductBundle implements
      * @var ContainerInterface
      */
     protected $container;
-    
+
     /**
      * @var RenameExtension
      */
@@ -56,7 +56,7 @@ class OroProductBundle implements
     {
         $this->container = $container;
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -86,7 +86,7 @@ class OroProductBundle implements
         $this->updateOroProductUnitPrecisionTable($schema, $queries);
         $this->updateOroProductTable($schema);
         $this->addOroProductForeignKeys($schema);
-        
+
         $this->createOroProductImageTable($schema);
         $this->createOroProductImageTypeTable($schema);
 
@@ -119,9 +119,6 @@ class OroProductBundle implements
 
     /**
      * Update orob2b_product_unit_precision table
-     *
-     * @param Schema $schema
-     * @param QueryBag $queries
      */
     protected function updateOroProductUnitPrecisionTable(Schema $schema, QueryBag $queries)
     {
@@ -146,8 +143,6 @@ class OroProductBundle implements
 
     /**
      * Update orob2b_product table
-     *
-     * @param Schema $schema
      */
     protected function updateOroProductTable(Schema $schema)
     {
@@ -158,8 +153,6 @@ class OroProductBundle implements
 
     /**
      * Add orob2b_product foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroProductForeignKeys(Schema $schema)
     {
@@ -180,9 +173,6 @@ class OroProductBundle implements
         return 10;
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function createOroProductImageTable(Schema $schema)
     {
         $table = $schema->createTable(self::PRODUCT_IMAGE_TABLE_NAME);
@@ -191,9 +181,6 @@ class OroProductBundle implements
         $table->setPrimaryKey(['id']);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function createOroProductImageTypeTable(Schema $schema)
     {
         $table = $schema->createTable(self::PRODUCT_IMAGE_TYPE_TABLE_NAME);
@@ -203,9 +190,6 @@ class OroProductBundle implements
         $table->setPrimaryKey(['id']);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addOroProductImageForeignKeys(Schema $schema)
     {
         $table = $schema->getTable(self::PRODUCT_IMAGE_TABLE_NAME);
@@ -217,9 +201,6 @@ class OroProductBundle implements
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addOroProductImageTypeForeignKeys(Schema $schema)
     {
         $table = $schema->getTable(self::PRODUCT_IMAGE_TYPE_TABLE_NAME);
@@ -231,9 +212,6 @@ class OroProductBundle implements
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addAttachmentAssociations(Schema $schema)
     {
         $this->attachmentExtension->addImageRelation(
@@ -247,9 +225,6 @@ class OroProductBundle implements
         );
     }
 
-    /**
-     * @param QueryBag $queries
-     */
     protected function migrateImages(QueryBag $queries)
     {
         $migrateImagesSqlMask = 'INSERT INTO %1$s (product_id, %2$s)

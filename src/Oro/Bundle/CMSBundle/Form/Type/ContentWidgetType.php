@@ -31,11 +31,6 @@ class ContentWidgetType extends AbstractType
     /** @var ContentWidgetTypeRegistry */
     private $contentWidgetTypeRegistry;
 
-    /**
-     * @param TranslatorInterface $translator
-     * @param FormFactoryInterface $formFactory
-     * @param ContentWidgetTypeRegistry $contentWidgetTypeRegistry
-     */
     public function __construct(
         TranslatorInterface $translator,
         FormFactoryInterface $formFactory,
@@ -188,11 +183,6 @@ class ContentWidgetType extends AbstractType
         $this->updateBlockConfig($view);
     }
 
-    /**
-     * @param FormInterface $form
-     * @param ContentWidget $contentWidget
-     * @param string $widgetType
-     */
     private function buildSettingsField(FormInterface $form, ContentWidget $contentWidget, string $widgetType): void
     {
         $contentWidgetType = $this->contentWidgetTypeRegistry->getWidgetType($widgetType);
@@ -219,9 +209,6 @@ class ContentWidgetType extends AbstractType
         $settings->setData($settingsForm->getData());
     }
 
-    /**
-     * @param FormView $view
-     */
     private function updateBlockConfig(FormView $view): void
     {
         if (isset($view->vars['block_config'])) {

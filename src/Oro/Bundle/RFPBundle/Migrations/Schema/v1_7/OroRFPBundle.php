@@ -22,8 +22,6 @@ class OroRFPBundle implements Migration
 
     /**
      * Update oro_rfp_request table
-     *
-     * @param Schema $schema
      */
     protected function updateOroRfpRequestTable(Schema $schema)
     {
@@ -33,8 +31,6 @@ class OroRFPBundle implements Migration
 
     /**
      * Add oro_rfp_request foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroRfpRequestForeignKeys(Schema $schema)
     {

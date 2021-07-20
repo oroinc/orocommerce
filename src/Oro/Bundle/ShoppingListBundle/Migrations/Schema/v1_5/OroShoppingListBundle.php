@@ -41,8 +41,6 @@ class OroShoppingListBundle implements Migration
 
     /**
      * Update oro_shopping_list table
-     *
-     * @param Schema $schema
      */
     protected function updateOroShoppingListTable(Schema $schema)
     {

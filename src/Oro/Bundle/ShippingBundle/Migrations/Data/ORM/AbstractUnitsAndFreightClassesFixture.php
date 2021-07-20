@@ -10,10 +10,6 @@ use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
 
 abstract class AbstractUnitsAndFreightClassesFixture extends AbstractFixture
 {
-    /**
-     * @param ObjectManager $manager
-     * @param array $weightUnits
-     */
     protected function addUpdateWeightUnits(ObjectManager $manager, array $weightUnits)
     {
         $repository = $manager->getRepository('OroShippingBundle:WeightUnit');
@@ -28,10 +24,6 @@ abstract class AbstractUnitsAndFreightClassesFixture extends AbstractFixture
         }
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param array $lengthUnits
-     */
     protected function addUpdateLengthUnits(ObjectManager $manager, array $lengthUnits)
     {
         $repository = $manager->getRepository('OroShippingBundle:LengthUnit');
@@ -46,10 +38,6 @@ abstract class AbstractUnitsAndFreightClassesFixture extends AbstractFixture
         }
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param array $freightClasses
-     */
     protected function addUpdateFreightClasses(ObjectManager $manager, array $freightClasses)
     {
         $repository = $manager->getRepository('OroShippingBundle:FreightClass');

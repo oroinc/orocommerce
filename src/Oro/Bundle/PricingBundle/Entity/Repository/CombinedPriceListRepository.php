@@ -72,7 +72,6 @@ class CombinedPriceListRepository extends BasePriceListRepository
         return $qb->getQuery()->getOneOrNullResult();
     }
 
-
     /**
      * @param CustomerGroup $customerGroup
      * @param Website $website

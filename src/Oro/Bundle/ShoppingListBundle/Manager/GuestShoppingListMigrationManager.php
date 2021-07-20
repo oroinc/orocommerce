@@ -26,12 +26,6 @@ class GuestShoppingListMigrationManager
     /** @var CurrentShoppingListManager */
     private $currentShoppingListManager;
 
-    /**
-     * @param DoctrineHelper             $doctrineHelper
-     * @param ShoppingListLimitManager   $shoppingListLimitManager
-     * @param ShoppingListManager        $shoppingListManager
-     * @param CurrentShoppingListManager $currentShoppingListManager
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         ShoppingListLimitManager $shoppingListLimitManager,
@@ -46,10 +40,6 @@ class GuestShoppingListMigrationManager
 
     /**
      * Migrate guest-created shopping list to customer user
-     *
-     * @param CustomerVisitor $visitor
-     * @param CustomerUser    $customerUser
-     * @param ShoppingList    $shoppingList
      */
     public function migrateGuestShoppingList(
         CustomerVisitor $visitor,
@@ -65,10 +55,6 @@ class GuestShoppingListMigrationManager
 
     /**
      * Move shopping list from customer visitor to customer user and make new list current
-     *
-     * @param CustomerVisitor $visitor
-     * @param CustomerUser    $customerUser
-     * @param ShoppingList    $shoppingList
      */
     public function moveShoppingListToCustomerUser(
         CustomerVisitor $visitor,
@@ -91,8 +77,6 @@ class GuestShoppingListMigrationManager
 
     /**
      * Merge visitor shopping list with default customer user shopping list
-     *
-     * @param ShoppingList $shoppingList
      */
     public function mergeShoppingListWithCurrent(ShoppingList $shoppingList)
     {

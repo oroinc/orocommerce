@@ -14,9 +14,6 @@ class ShoppingListLineItemDeleteHandler extends AbstractEntityDeleteHandler
     /** @var ShoppingListTotalManager */
     private $totalManager;
 
-    /**
-     * @param ShoppingListTotalManager $totalManager
-     */
     public function __construct(ShoppingListTotalManager $totalManager)
     {
         $this->totalManager = $totalManager;

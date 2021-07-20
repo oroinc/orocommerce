@@ -26,7 +26,6 @@ class PayPalCATest extends \PHPUnit\Framework\TestCase
         $this->processor->configureOptions($resolver);
     }
 
-
     public function testConfigureOptionsRemoveSwipe()
     {
         $resolver = $this->createMock(OptionsResolver::class);

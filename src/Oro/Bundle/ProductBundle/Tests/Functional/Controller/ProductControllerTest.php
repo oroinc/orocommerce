@@ -678,9 +678,6 @@ class ProductControllerTest extends ProductHelperTestCase
         );
     }
 
-    /**
-     * @param Crawler $crawler
-     */
     protected function checkDuplicateProduct(Crawler $crawler)
     {
         $html = $crawler->html();

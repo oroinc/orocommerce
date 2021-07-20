@@ -22,9 +22,6 @@ class PricingStorageIsolator implements IsolatorInterface
      */
     protected $kernel;
 
-    /**
-     * @param KernelInterface $kernel
-     */
     public function __construct(KernelInterface $kernel)
     {
         $this->kernel = $kernel;

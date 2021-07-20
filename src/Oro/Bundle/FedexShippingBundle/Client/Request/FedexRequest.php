@@ -9,9 +9,6 @@ class FedexRequest implements FedexRequestInterface
      */
     private $requestData;
 
-    /**
-     * @param array $requestData
-     */
     public function __construct(array $requestData = [])
     {
         $this->requestData = $requestData;

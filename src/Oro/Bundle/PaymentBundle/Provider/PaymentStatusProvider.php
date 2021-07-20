@@ -27,10 +27,6 @@ class PaymentStatusProvider implements PaymentStatusProviderInterface
     /** @var TotalProcessorProvider */
     protected $totalProcessorProvider;
 
-    /**
-     * @param PaymentTransactionProvider $paymentTransactionProvider
-     * @param TotalProcessorProvider $totalProcessorProvider
-     */
     public function __construct(
         PaymentTransactionProvider $paymentTransactionProvider,
         TotalProcessorProvider $totalProcessorProvider

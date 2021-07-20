@@ -11,9 +11,6 @@ use Oro\Component\MessageQueue\Client\MessageProducerInterface;
  */
 class ProductVisibilityListener extends AbstractVisibilityListener
 {
-    /**
-     * @param MessageProducerInterface $messageProducer
-     */
     public function __construct(MessageProducerInterface $messageProducer)
     {
         parent::__construct($messageProducer, Topics::RESOLVE_PRODUCT_VISIBILITY);

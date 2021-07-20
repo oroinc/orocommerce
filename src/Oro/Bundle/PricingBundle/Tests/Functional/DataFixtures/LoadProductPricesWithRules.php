@@ -82,9 +82,6 @@ class LoadProductPricesWithRules extends AbstractFixture implements DependentFix
         $this->container = $container;
     }
 
-    /**
-     * @return array
-     */
     private function getData(): array
     {
         return [

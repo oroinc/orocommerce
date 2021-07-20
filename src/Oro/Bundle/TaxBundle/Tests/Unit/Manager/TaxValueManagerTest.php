@@ -98,7 +98,6 @@ class TaxValueManagerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider saveTaxValueProvider
-     * @param bool $flushInProgress
      */
     public function testSaveTaxValue(bool $flushInProgress)
     {
@@ -118,7 +117,6 @@ class TaxValueManagerTest extends \PHPUnit\Framework\TestCase
             ->method('isFlushInProgress')
             ->with($em)
             ->willReturn($flushInProgress);
-
 
         $classMetadata = $this->createMock(ClassMetadata::class);
 
@@ -156,8 +154,6 @@ class TaxValueManagerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider flushTaxValueIfAllowedDataProvider
-     * @param $flushInProgress
-     * @param $flushExpected
      */
     public function testFlushTaxValueIfAllowed(bool $flushInProgress, bool $flushExpected)
     {

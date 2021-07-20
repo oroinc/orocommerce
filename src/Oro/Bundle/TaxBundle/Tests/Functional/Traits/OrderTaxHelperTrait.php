@@ -50,9 +50,6 @@ trait OrderTaxHelperTrait
         return $order;
     }
 
-    /**
-     * @param Order $order
-     */
     protected function updateOrder(Order $order)
     {
         $order

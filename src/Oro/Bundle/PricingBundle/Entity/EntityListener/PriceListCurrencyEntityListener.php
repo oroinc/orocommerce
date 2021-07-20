@@ -32,10 +32,6 @@ class PriceListCurrencyEntityListener implements OptionalListenerInterface, Feat
     /** @var PriceListTriggerHandler */
     protected $priceListTriggerHandler;
 
-    /**
-     * @param Cache $cache
-     * @param PriceListTriggerHandler $priceListTriggerHandler
-     */
     public function __construct(
         Cache $cache,
         PriceListTriggerHandler $priceListTriggerHandler
@@ -44,9 +40,6 @@ class PriceListCurrencyEntityListener implements OptionalListenerInterface, Feat
         $this->priceListTriggerHandler = $priceListTriggerHandler;
     }
 
-    /**
-     * @param PriceListCurrency $priceListCurrency
-     */
     public function postPersist(PriceListCurrency $priceListCurrency)
     {
         if (!$this->enabled) {
@@ -57,9 +50,6 @@ class PriceListCurrencyEntityListener implements OptionalListenerInterface, Feat
         $this->scheduleRulesRecalculation($priceListCurrency);
     }
 
-    /**
-     * @param PriceListCurrency $priceListCurrency
-     */
     public function preRemove(PriceListCurrency $priceListCurrency)
     {
         if (!$this->enabled) {
@@ -70,17 +60,11 @@ class PriceListCurrencyEntityListener implements OptionalListenerInterface, Feat
         $this->scheduleRulesRecalculation($priceListCurrency);
     }
 
-    /**
-     * @param PriceRule $priceRule
-     */
     protected function clearPriceRuleCache(PriceRule $priceRule)
     {
         $this->cache->delete('pr_' . $priceRule->getId());
     }
 
-    /**
-     * @param PriceListCurrency $priceListCurrency
-     */
     protected function scheduleRulesRecalculation(PriceListCurrency $priceListCurrency)
     {
         $priceList = $priceListCurrency->getPriceList();
@@ -93,9 +77,6 @@ class PriceListCurrencyEntityListener implements OptionalListenerInterface, Feat
         }
     }
 
-    /**
-     * @param PriceListCurrency $priceListCurrency
-     */
     protected function scheduleCurrencyUpdate(PriceListCurrency $priceListCurrency)
     {
         if (!$this->isFeaturesEnabled()) {

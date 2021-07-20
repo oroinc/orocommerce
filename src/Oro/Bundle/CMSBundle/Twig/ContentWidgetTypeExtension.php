@@ -19,9 +19,6 @@ class ContentWidgetTypeExtension extends AbstractExtension implements ServiceSub
     /** @var ContainerInterface */
     private $container;
 
-    /**
-     * @param ContainerInterface $container
-     */
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
@@ -38,11 +35,6 @@ class ContentWidgetTypeExtension extends AbstractExtension implements ServiceSub
         ];
     }
 
-    /**
-     * @param string $widgetType
-     *
-     * @return string
-     */
     public function getContentWidgetTypeLabel(string $widgetType): string
     {
         if (!$widgetType) {
@@ -57,12 +49,6 @@ class ContentWidgetTypeExtension extends AbstractExtension implements ServiceSub
             : $widgetType;
     }
 
-    /**
-     * @param string $widgetType
-     * @param string $layout
-     *
-     * @return string
-     */
     public function getContentWidgetLayoutLabel(string $layout, string $widgetType): string
     {
         $label = $this->container->get(ContentWidgetLayoutProvider::class)->getWidgetLayoutLabel($widgetType, $layout);

@@ -18,9 +18,6 @@ class PriceRuleEditorType extends AbstractType
      */
     private $optionsConfigurator;
 
-    /**
-     * @param PriceRuleEditorOptionsConfigurator $optionsConfigurator
-     */
     public function __construct(PriceRuleEditorOptionsConfigurator $optionsConfigurator)
     {
         $this->optionsConfigurator = $optionsConfigurator;

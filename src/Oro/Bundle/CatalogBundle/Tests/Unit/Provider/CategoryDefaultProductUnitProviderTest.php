@@ -70,7 +70,7 @@ class CategoryDefaultProductUnitProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param CategoryUnitPrecision $categoryUnitPrecision,
+     * @param CategoryUnitPrecision $categoryUnitPrecision
      * @param Category $parent
      * @return  Category
      */

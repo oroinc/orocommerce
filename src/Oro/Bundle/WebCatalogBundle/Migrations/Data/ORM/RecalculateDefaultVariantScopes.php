@@ -44,10 +44,6 @@ class RecalculateDefaultVariantScopes extends AbstractFixture implements Contain
         }
     }
 
-    /**
-     * @param WebCatalog $webCatalog
-     * @param ContentNodeRepository $nodeRepository
-     */
     protected function updateVariantScopes(WebCatalog $webCatalog, ContentNodeRepository $nodeRepository)
     {
         $defaultVariantScopeResolver = $this->container->get('oro_web_catalog.resolver.default_variant_scope');

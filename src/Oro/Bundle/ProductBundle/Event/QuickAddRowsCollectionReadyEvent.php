@@ -14,9 +14,6 @@ class QuickAddRowsCollectionReadyEvent extends Event
      */
     private $collection;
 
-    /**
-     * @param QuickAddRowCollection $collection
-     */
     public function __construct(QuickAddRowCollection $collection)
     {
         $this->collection = $collection;

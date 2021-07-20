@@ -33,12 +33,6 @@ class HTMLPurifierScopeProvider
      */
     private $scopeMap = [];
 
-    /**
-     * @param TokenAccessor $tokenAccessor
-     * @param string $contentRestrictionsMode
-     * @param array $contentRestrictions
-     *
-     */
     public function __construct(
         TokenAccessor $tokenAccessor,
         string $contentRestrictionsMode,
@@ -49,21 +43,11 @@ class HTMLPurifierScopeProvider
         $this->contentRestrictions = $contentRestrictions;
     }
 
-    /**
-     * @param string $mode
-     * @param string|null $scope
-     */
     public function addScopeMapping(string $mode, ?string $scope)
     {
         $this->scopeMap[$mode] = $scope;
     }
 
-    /**
-     * @param string $entityName
-     * @param string $fieldName
-     *
-     * @return string|null
-     */
     public function getScope(string $entityName, string $fieldName): ?string
     {
         if ($this->contentRestrictionsMode === self::UNSECURE_MODE) {
@@ -107,11 +91,6 @@ class HTMLPurifierScopeProvider
         return $token ? $token->getRoles() : [];
     }
 
-    /**
-     * @param Role $role
-     *
-     * @return bool
-     */
     private function isRoleSupport(Role $role): bool
     {
         return array_key_exists($role->getRole(), $this->contentRestrictions);

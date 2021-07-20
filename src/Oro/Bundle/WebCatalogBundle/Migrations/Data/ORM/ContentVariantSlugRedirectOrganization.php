@@ -54,11 +54,6 @@ class ContentVariantSlugRedirectOrganization extends AbstractFixture
         }
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param Organization $organization
-     * @return BufferedQueryResultIterator
-     */
     private function getContentVariantSlugIdsIterator(
         ObjectManager $manager,
         Organization $organization

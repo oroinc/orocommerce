@@ -56,9 +56,6 @@ class OroConsentBundleInstaller implements Installation, ExtendExtensionAwareInt
         $table->addUniqueIndex(['consent_id','customerUser_id'], 'oro_customeru_consent_uidx');
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function createConsentTable(Schema $schema)
     {
         $table = $schema->createTable(self::CONSENT_TABLE_NAME);
@@ -75,9 +72,6 @@ class OroConsentBundleInstaller implements Installation, ExtendExtensionAwareInt
         $table->addIndex(['content_node_id'], 'oro_consent_content_node_id');
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function createOroConsentNameTable(Schema $schema)
     {
         $table = $schema->createTable(self::CONSENT_NAME_TABLE_NAME);
@@ -87,9 +81,6 @@ class OroConsentBundleInstaller implements Installation, ExtendExtensionAwareInt
         $table->addUniqueIndex(['localized_value_id'], 'oro_consent_name_trans_localized_value_id');
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function createOroConsentAcceptanceTable(Schema $schema)
     {
         $table = $schema->createTable(self::CONSENT_CUSTOMER_ACCEPTANCE_TABLE_NAME);
@@ -100,9 +91,6 @@ class OroConsentBundleInstaller implements Installation, ExtendExtensionAwareInt
         $table->setPrimaryKey(['id']);
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function addOroConsentForeignKeys(Schema $schema)
     {
         $table = $schema->getTable(self::CONSENT_TABLE_NAME);
@@ -126,9 +114,6 @@ class OroConsentBundleInstaller implements Installation, ExtendExtensionAwareInt
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function addOroConsentNameForeignKeys(Schema $schema)
     {
         $table = $schema->getTable(self::CONSENT_NAME_TABLE_NAME);
@@ -146,9 +131,6 @@ class OroConsentBundleInstaller implements Installation, ExtendExtensionAwareInt
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function addOroConsentAcceptanceForeignKeys(Schema $schema)
     {
         $table = $schema->getTable(self::CONSENT_CUSTOMER_ACCEPTANCE_TABLE_NAME);
@@ -168,7 +150,6 @@ class OroConsentBundleInstaller implements Installation, ExtendExtensionAwareInt
 
     /**
      * Adds CustomerUser.acceptedConsents and ConsentAcceptance.customerUser Many-To-One bidirectional relation
-     * @param Schema $schema
      */
     private function addConsentAcceptanceCustomerUserRelation(Schema $schema): void
     {

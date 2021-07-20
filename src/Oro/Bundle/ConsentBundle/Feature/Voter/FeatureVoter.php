@@ -20,10 +20,6 @@ class FeatureVoter implements VoterInterface
     /** @var FrontendHelper */
     private $frontendHelper;
 
-    /**
-     * @param ConfigManager $configManager
-     * @param FrontendHelper $frontendHelper
-     */
     public function __construct(ConfigManager $configManager, FrontendHelper $frontendHelper)
     {
         $this->configManager = $configManager;

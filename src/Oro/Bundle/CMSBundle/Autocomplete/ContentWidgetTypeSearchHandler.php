@@ -22,11 +22,6 @@ class ContentWidgetTypeSearchHandler implements SearchHandlerInterface
     /** @var PropertyAccessor */
     private $propertyAccessor;
 
-    /**
-     * @param ContentWidgetTypeRegistry $registry
-     * @param TranslatorInterface $translator
-     * @param PropertyAccessor $propertyAccessor
-     */
     public function __construct(
         ContentWidgetTypeRegistry $registry,
         TranslatorInterface $translator,

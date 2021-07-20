@@ -73,19 +73,11 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @return SessionInterface
-     */
     private function getSession(): SessionInterface
     {
         return $this->createMock(SessionInterface::class);
     }
 
-    /**
-     * @param string $messageId
-     *
-     * @return MessageInterface
-     */
     private function getMessage(string $messageId): MessageInterface
     {
         $message = new Message();
@@ -94,11 +86,6 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
         return $message;
     }
 
-    /**
-     * @param int $websiteId
-     *
-     * @return Website
-     */
     private function getWebsite(int $websiteId): Website
     {
         $website = $this->createMock(Website::class);
@@ -109,11 +96,6 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
         return $website;
     }
 
-    /**
-     * @param string $messageId
-     *
-     * @return Job
-     */
     private function getJobAndRunUnique(string $messageId): Job
     {
         $rootJob = new Job();

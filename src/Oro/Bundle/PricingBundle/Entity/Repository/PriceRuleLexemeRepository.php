@@ -10,9 +10,6 @@ class PriceRuleLexemeRepository extends EntityRepository
 {
     const LEXEMES_CACHE_KEY = 'oro_pricing_price_rule_lexemes_cache';
 
-    /**
-     * @param PriceList $priceList
-     */
     public function deleteByPriceList(PriceList $priceList)
     {
         $qb = $this->createQueryBuilder('lexeme');
@@ -20,7 +17,7 @@ class PriceRuleLexemeRepository extends EntityRepository
         $qb->delete()
             ->where($qb->expr()->eq('lexeme.priceList', ':priceList'))
             ->setParameter('priceList', $priceList);
-        
+
         $qb->getQuery()->execute();
     }
 

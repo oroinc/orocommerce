@@ -15,13 +15,6 @@ use Oro\Bundle\EntityConfigBundle\Form\Handler\CreateUpdateConfigFieldHandler as
  */
 class CreateUpdateConfigFieldHandler extends BaseCreateUpdateConfigFieldHandler
 {
-    /**
-     * @param string $entityClassName
-     * @param string $fieldName
-     * @param string $fieldType
-     * @param array $fieldOptions
-     * @return FieldConfigModel
-     */
     protected function createAndUpdateFieldModel(
         string $entityClassName,
         string $fieldName,
@@ -42,11 +35,6 @@ class CreateUpdateConfigFieldHandler extends BaseCreateUpdateConfigFieldHandler
         return $newFieldModel;
     }
 
-    /**
-     * @param string $entityClassName
-     * @param string $fieldName
-     * @param array $fieldOptions
-     */
     private function createWYSIWYGFieldModel(
         string $entityClassName,
         string $fieldName,
@@ -76,10 +64,6 @@ class CreateUpdateConfigFieldHandler extends BaseCreateUpdateConfigFieldHandler
         }
     }
 
-    /**
-     * @param array $fieldOptions
-     * @return bool
-     */
     private function isAttributeOptions(array $fieldOptions): bool
     {
         return array_key_exists('attribute', $fieldOptions)

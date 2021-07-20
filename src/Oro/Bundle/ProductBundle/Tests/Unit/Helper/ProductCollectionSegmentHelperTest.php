@@ -73,8 +73,6 @@ class ProductCollectionSegmentHelperTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider webCatalogsAssignmentDataProvider
-     * @param array $webCatalogAssignment
-     * @param array $expectedWebsiteIds
      */
     public function testGetWebsiteIdsBySegment(array $webCatalogAssignment, array $expectedWebsiteIds)
     {

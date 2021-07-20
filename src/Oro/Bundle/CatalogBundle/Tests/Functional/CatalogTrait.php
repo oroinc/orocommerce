@@ -9,10 +9,7 @@ use Oro\Bundle\CatalogBundle\Provider\MasterCatalogRootProviderInterface;
 trait CatalogTrait
 {
     /**
-     * @param string $title
-     *
      * @throws \Doctrine\ORM\NonUniqueResultException
-     * @return Category|null
      */
     protected function findCategory(string $title): ?Category
     {
@@ -25,9 +22,6 @@ trait CatalogTrait
         return $query->getOneOrNullResult();
     }
 
-    /**
-     * @return Category
-     */
     protected function getRootCategory(): Category
     {
         /** @var MasterCatalogRootProviderInterface $masterCatalogRootProvider */

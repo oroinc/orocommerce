@@ -21,10 +21,6 @@ class IndexerInputValidator
     /** @var SearchMappingProvider */
     protected $mappingProvider;
 
-    /**
-     * @param WebsiteProviderInterface $websiteProvider
-     * @param SearchMappingProvider $mappingProvider
-     */
     public function __construct(WebsiteProviderInterface $websiteProvider, SearchMappingProvider $mappingProvider)
     {
         $this->websiteProvider = $websiteProvider;
@@ -44,11 +40,6 @@ class IndexerInputValidator
         return [$parameters['class'], $parameters['context'][AbstractIndexer::CONTEXT_WEBSITE_IDS]];
     }
 
-    /**
-     * @param array $parameters
-     *
-     * @return array
-     */
     public function validateClassAndContext(array $parameters): array
     {
         $resolver = $this->getOptionResolver();
@@ -59,11 +50,6 @@ class IndexerInputValidator
         return $resolver->resolve($parameters);
     }
 
-    /**
-     * @param array $parameters
-     *
-     * @return array
-     */
     public function validateEntityAndContext(array $parameters): array
     {
         $resolver = $this->getOptionResolver();
@@ -73,9 +59,6 @@ class IndexerInputValidator
         return $resolver->resolve($parameters);
     }
 
-    /**
-     * @param OptionsResolver $optionsResolver
-     */
     public function configureContextOptions(OptionsResolver $optionsResolver): void
     {
         $optionsResolver->setRequired('context');
@@ -108,9 +91,6 @@ class IndexerInputValidator
         });
     }
 
-    /**
-     * @param OptionsResolver $optionsResolver
-     */
     private function configureClassOptions(OptionsResolver $optionsResolver)
     {
         $classesNormalizer = fn ($classes) => is_array($classes) ? $classes : array_filter([$classes]);
@@ -130,9 +110,6 @@ class IndexerInputValidator
         });
     }
 
-    /**
-     * @param OptionsResolver $optionsResolver
-     */
     private function configureEntityOptions(OptionsResolver $optionsResolver)
     {
         $optionsResolver->setRequired('entity');
@@ -144,9 +121,6 @@ class IndexerInputValidator
         });
     }
 
-    /**
-     * @param OptionsResolver $optionsResolver
-     */
     private function configureGranulizeOptions(OptionsResolver $optionsResolver)
     {
         $optionsResolver->setRequired('granulize');
@@ -156,9 +130,6 @@ class IndexerInputValidator
         });
     }
 
-    /**
-     * @return OptionsResolver
-     */
     protected function getOptionResolver(): OptionsResolver
     {
         return new OptionsResolver();

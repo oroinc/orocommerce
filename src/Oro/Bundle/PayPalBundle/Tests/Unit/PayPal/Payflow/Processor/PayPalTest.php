@@ -25,7 +25,6 @@ class PayPalTest extends \PHPUnit\Framework\TestCase
         $this->processor->configureOptions($resolver);
     }
 
-
     public function testConfigureOptionsRemoveSwipe()
     {
         $resolver = $this->createMock('Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver');

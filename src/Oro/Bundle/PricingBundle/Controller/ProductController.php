@@ -124,9 +124,6 @@ class ProductController extends AbstractController
         return $this->get(PriceListRequestHandlerInterface::class);
     }
 
-    /**
-     * @return bool
-     */
     protected function isPriceListsEnabled(): bool
     {
         return $this->container->get(FeatureChecker::class)->isFeatureEnabled('oro_price_lists');

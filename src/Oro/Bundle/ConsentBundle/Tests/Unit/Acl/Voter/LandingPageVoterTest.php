@@ -66,9 +66,6 @@ class LandingPageVoterTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param $assertHasConsents
-     */
     protected function assertHasConsents($assertHasConsents)
     {
         $landingPage = $this->createMock(Page::class);

@@ -32,19 +32,12 @@ class ContentWidgetTypeRegistryTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals([$this->widgetType], $this->registry->getTypes());
     }
 
-    /**
-     * @param array $data
-     * @return \IteratorAggregate
-     */
     private function getIteratorAggregate(array $data): \IteratorAggregate
     {
         return new class($data) implements \IteratorAggregate {
             /** @var array */
             private $data;
 
-            /**
-             * @param array $data
-             */
             public function __construct(array $data)
             {
                 $this->data = $data;

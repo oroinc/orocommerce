@@ -18,7 +18,6 @@ class CheckoutGridCustomerUserNameListenerTest extends \PHPUnit\Framework\TestCa
      */
     protected $provider;
 
-
     public function testOnBuildBefore()
     {
         $this->provider = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Security\CustomerUserProvider')

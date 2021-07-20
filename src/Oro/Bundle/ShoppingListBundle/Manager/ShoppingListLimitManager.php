@@ -38,12 +38,6 @@ class ShoppingListLimitManager
     /** @var bool */
     private $isOnlyOneEnabled;
 
-    /**
-     * @param ConfigManager $configManager
-     * @param TokenAccessor $tokenAccessor
-     * @param DoctrineHelper $doctrineHelper
-     * @param WebsiteManager $websiteManager
-     */
     public function __construct(
         ConfigManager $configManager,
         TokenAccessor $tokenAccessor,

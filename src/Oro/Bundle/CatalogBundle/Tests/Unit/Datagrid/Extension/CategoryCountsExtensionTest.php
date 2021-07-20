@@ -353,8 +353,6 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getAdditionalParameters
-     *
-     * @param array $additionalParameters
      */
     public function testVisitMetadataFromCache(array $additionalParameters): void
     {
@@ -440,8 +438,6 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider visitMetadataProvider
-     *
-     * @param array $parameters
      */
     public function testVisitMetadataWithoutCategory(array $parameters): void
     {
@@ -485,9 +481,6 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @return array
-     */
     public function visitMetadataProvider(): array
     {
         return [
@@ -517,9 +510,6 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @return array
-     */
     public function getAdditionalParameters(): array
     {
         return [

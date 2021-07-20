@@ -15,9 +15,6 @@ class ProductQuantityToOrderLimitValidator extends ConstraintValidator
      */
     private $validatorService;
 
-    /**
-     * @param QuantityToOrderValidatorService $validatorService
-     */
     public function __construct(QuantityToOrderValidatorService $validatorService)
     {
         $this->validatorService = $validatorService;

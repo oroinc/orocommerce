@@ -21,10 +21,6 @@ abstract class AbstractAssignerDatabaseStrategy implements AssignerStrategyInter
      */
     protected $doctrineHelper;
 
-    /**
-     * @param DoctrineHelper                    $doctrineHelper
-     * @param AbstractRelatedItemConfigProvider $configProvider
-     */
     public function __construct(DoctrineHelper $doctrineHelper, AbstractRelatedItemConfigProvider $configProvider)
     {
         $this->doctrineHelper = $doctrineHelper;
@@ -69,10 +65,6 @@ abstract class AbstractAssignerDatabaseStrategy implements AssignerStrategyInter
         $this->getEntityManager()->flush();
     }
 
-    /**
-     * @param Product $productFrom
-     * @param Product $productTo
-     */
     protected function removeRelation(Product $productFrom, Product $productTo)
     {
         $persistedRelation = $this->getRepository()
@@ -95,10 +87,6 @@ abstract class AbstractAssignerDatabaseStrategy implements AssignerStrategyInter
         return $this->getRepository()->exists($productFrom, $productTo);
     }
 
-    /**
-     * @param Product $productFrom
-     * @param Product $productTo
-     */
     protected function addRelation(Product $productFrom, Product $productTo)
     {
         $relatedItem = $this->createNewRelation();

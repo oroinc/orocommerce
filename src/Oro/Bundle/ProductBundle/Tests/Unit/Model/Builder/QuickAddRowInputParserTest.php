@@ -165,9 +165,6 @@ class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param $input
-     * @param $expected
-     *
      * @dataProvider exampleRow
      */
     public function testCreateFromRequest($input, $expected)
@@ -191,9 +188,6 @@ class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param $input
-     * @param $expected
-     *
      * @dataProvider exampleRow
      */
     public function testCreateFromPasteTextLine($input, $expected)

@@ -19,20 +19,12 @@ class ContentWidgetLayoutProvider
     /** @var Cache */
     private $cache;
 
-    /**
-     * @param ThemeManager $themeManager
-     * @param Cache $cache
-     */
     public function __construct(ThemeManager $themeManager, Cache $cache)
     {
         $this->themeManager = $themeManager;
         $this->cache = $cache;
     }
 
-    /**
-     * @param string $widgetType
-     * @return array
-     */
     public function getWidgetLayouts(string $widgetType): array
     {
         $widgets = $this->cache->fetch(self::WIDGETS_CACHE_KEY);
@@ -44,11 +36,6 @@ class ContentWidgetLayoutProvider
         return $widgets['layouts'][$widgetType] ?? [];
     }
 
-    /**
-     * @param string $widgetType
-     * @param string $layout
-     * @return string
-     */
     public function getWidgetLayoutLabel(string $widgetType, string $layout): string
     {
         $layouts = $this->getWidgetLayouts($widgetType);
@@ -56,9 +43,6 @@ class ContentWidgetLayoutProvider
         return $layouts[$layout] ?? $layout;
     }
 
-    /**
-     * @return array
-     */
     private function collectWidgets(): array
     {
         $widgets = [[]];

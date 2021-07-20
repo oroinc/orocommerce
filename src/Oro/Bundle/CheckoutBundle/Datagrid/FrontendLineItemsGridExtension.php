@@ -38,11 +38,6 @@ class FrontendLineItemsGridExtension extends AbstractExtension
     /** @var array */
     private $cache = [];
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param ConfigManager $configManager
-     * @param CheckoutLineItemsManager $checkoutLineItemsManager
-     */
     public function __construct(
         ManagerRegistry $registry,
         ConfigManager $configManager,
@@ -134,10 +129,6 @@ class FrontendLineItemsGridExtension extends AbstractExtension
         $this->parameters->set('unacceptable_ids', $ids);
     }
 
-    /**
-     * @param ProductLineItemInterface $item
-     * @return string
-     */
     private function getDataKey(ProductLineItemInterface $item): string
     {
         return implode(':', [$item->getProductSku(), $item->getProductUnitCode(), $item->getQuantity()]);
@@ -176,17 +167,11 @@ class FrontendLineItemsGridExtension extends AbstractExtension
         );
     }
 
-    /**
-     * @return int
-     */
     private function getCheckoutId(): int
     {
         return (int) $this->parameters->get('checkout_id');
     }
 
-    /**
-     * @return bool
-     */
     private function isLineItemsGrouped(): bool
     {
         $parameters = $this->parameters->get('_parameters', []);
@@ -194,10 +179,6 @@ class FrontendLineItemsGridExtension extends AbstractExtension
         return isset($parameters['group']) ? filter_var($parameters['group'], FILTER_VALIDATE_BOOLEAN) : false;
     }
 
-    /**
-     * @param int $checkoutId
-     * @return bool
-     */
     private function canBeGrouped(int $checkoutId): bool
     {
         if (!isset($this->cache['canBeGrouped'][$checkoutId])) {
@@ -210,10 +191,6 @@ class FrontendLineItemsGridExtension extends AbstractExtension
         return $this->cache['canBeGrouped'][$checkoutId];
     }
 
-    /**
-     * @param int $checkoutId
-     * @return Checkout|null
-     */
     private function getCheckout(int $checkoutId): ?Checkout
     {
         if (!isset($this->cache['checkouts'][$checkoutId])) {

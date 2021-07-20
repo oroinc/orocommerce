@@ -198,8 +198,6 @@ class ProductRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider productSearchOperatorDataProvider
-     *
-     * @param bool $isConfigEnabled
      */
     public function testGetSearchQueryBySkuOrName(bool $isConfigEnabled): void
     {
@@ -249,8 +247,6 @@ class ProductRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider productSearchOperatorDataProvider
-     *
-     * @param bool $isConfigEnabled
      */
     public function testGetAutocompleteSearchQuery(bool $isConfigEnabled): void
     {
@@ -300,9 +296,6 @@ class ProductRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider productSearchOperatorDataProvider
-     *
-     * @param bool $isConfigEnabled
-     * @param string $expected
      */
     public function testGetProductSearchOperator(bool $isConfigEnabled, string $expected): void
     {

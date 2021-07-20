@@ -128,14 +128,8 @@ abstract class UnitValueFormatterTestCase extends \PHPUnit\Framework\TestCase
             ->willReturn($outputNumber);
     }
 
-    /**
-     * @return UnitValueFormatterInterface
-     */
     abstract protected function createFormatter(): UnitValueFormatterInterface;
 
-    /**
-     * @return string
-     */
     abstract protected function getTranslationPrefix(): string;
 
     /**

@@ -26,12 +26,6 @@ class CustomerUserConsentProvider
     /** @var ConsentContextProviderInterface */
     private $consentContextProvider;
 
-    /**
-     * @param CmsPageHelper $cmsPageHelper
-     * @param EnabledConsentProvider $enabledConsentProvider
-     * @param ManagerRegistry $doctrine
-     * @param ConsentContextProviderInterface $consentContextProvider
-     */
     public function __construct(
         CmsPageHelper $cmsPageHelper,
         EnabledConsentProvider $enabledConsentProvider,

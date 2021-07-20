@@ -47,9 +47,6 @@ class LoadWebCatalogDemoData extends AbstractLoadWebCatalogDemoData implements D
         ];
     }
 
-    /**
-     * @param ObjectManager $manager
-     */
     public function load(ObjectManager $manager)
     {
         $webCatalog = $this->loadWebCatalogData($manager);
@@ -75,9 +72,6 @@ class LoadWebCatalogDemoData extends AbstractLoadWebCatalogDemoData implements D
         return $webCatalog;
     }
 
-    /**
-     * @param WebCatalog $webCatalog
-     */
     protected function enableWebCatalog(WebCatalog $webCatalog)
     {
         $configManager = $this->container->get('oro_config.global');

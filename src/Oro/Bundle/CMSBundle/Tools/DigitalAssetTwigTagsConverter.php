@@ -15,26 +15,16 @@ use Oro\Bundle\SecurityBundle\Tools\UUIDValidator;
  */
 class DigitalAssetTwigTagsConverter
 {
-    /** @var ManagerRegistry */
     private ManagerRegistry $managerRegistry;
 
-    /** @var FileUrlProviderInterface */
     private FileUrlProviderInterface $fileUrlProvider;
 
-    /**
-     * @param ManagerRegistry $managerRegistry
-     * @param FileUrlProviderInterface $fileUrlProvider
-     */
     public function __construct(ManagerRegistry $managerRegistry, FileUrlProviderInterface $fileUrlProvider)
     {
         $this->managerRegistry = $managerRegistry;
         $this->fileUrlProvider = $fileUrlProvider;
     }
 
-    /**
-     * @param string $data
-     * @return string
-     */
     public function convertToUrls(string $data): string
     {
         return preg_replace_callback(
@@ -47,10 +37,6 @@ class DigitalAssetTwigTagsConverter
         );
     }
 
-    /**
-     * @param string $data
-     * @return string
-     */
     public function convertToTwigTags(string $data): string
     {
         return preg_replace_callback_array(
@@ -66,10 +52,6 @@ class DigitalAssetTwigTagsConverter
         );
     }
 
-    /**
-     * @param array $matches
-     * @return string
-     */
     private function replaceToUrl(array $matches): string
     {
         $function = $matches['function'] ?? '';
@@ -99,10 +81,6 @@ class DigitalAssetTwigTagsConverter
         return $matches[0];
     }
 
-    /**
-     * @param string $uuid
-     * @return null|File
-     */
     private function getFileByUuid(string $uuid): ?File
     {
         if (!UUIDValidator::isValidV4($uuid)) {
@@ -120,29 +98,16 @@ class DigitalAssetTwigTagsConverter
         return $file;
     }
 
-    /**
-     * @param array $matches
-     * @return string
-     */
     private function replaceImageUrlToTwigTag(array $matches): string
     {
         return $this->replaceToTwigTag('wysiwyg_image', $matches);
     }
 
-    /**
-     * @param array $matches
-     * @return string
-     */
     private function replaceFileUrlToTwigTag(array $matches): string
     {
         return $this->replaceToTwigTag('wysiwyg_file', $matches);
     }
 
-    /**
-     * @param string $function
-     * @param array $matches
-     * @return string
-     */
     private function replaceToTwigTag(string $function, array $matches): string
     {
         if ($matches['schema']) {
@@ -173,9 +138,6 @@ class DigitalAssetTwigTagsConverter
         return $matches[0];
     }
 
-    /**
-     * @return string
-     */
     protected function generateUuid(): string
     {
         return UUIDGenerator::v4();

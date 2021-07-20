@@ -229,7 +229,6 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     *
      * @param string $unitCode
      * @param array $weight
      * @param array $dimensions

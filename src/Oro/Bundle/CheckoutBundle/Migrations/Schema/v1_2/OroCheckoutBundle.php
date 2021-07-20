@@ -74,9 +74,6 @@ class OroCheckoutBundle implements
         $queries->addPostQuery(new RenameConfigSectionQuery('oro_b2b_checkout', 'oro_checkout'));
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function updateCheckoutTable(Schema $schema)
     {
         $table = $schema->getTable('orob2b_checkout');
@@ -93,10 +90,6 @@ class OroCheckoutBundle implements
         $table->addUniqueIndex(['shipping_address_id'], 'uniq_checkout_shipp_addr');
     }
 
-    /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     */
     protected function addCheckoutTableForeignKeys(Schema $schema, QueryBag $queries)
     {
         $this->renameExtension->addForeignKeyConstraint(
@@ -119,9 +112,6 @@ class OroCheckoutBundle implements
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function dropDefaultCheckoutTable(Schema $schema)
     {
         $schema->dropTable('orob2b_default_checkout');

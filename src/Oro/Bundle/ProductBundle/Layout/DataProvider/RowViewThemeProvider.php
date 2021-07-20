@@ -11,9 +11,6 @@ class RowViewThemeProvider
      */
     protected $themeHelper;
 
-    /**
-     * @param DataGridThemeHelper $themeHelper
-     */
     public function __construct(DataGridThemeHelper $themeHelper)
     {
         $this->themeHelper = $themeHelper;

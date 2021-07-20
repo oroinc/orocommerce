@@ -37,12 +37,6 @@ class QuoteProductFormatter
      */
     protected $numberFormatter;
 
-    /**
-     * @param TranslatorInterface $translator
-     * @param NumberFormatter $numberFormatter
-     * @param UnitValueFormatterInterface $productUnitValueFormatter
-     * @param UnitLabelFormatterInterface $productUnitLabelFormatter
-     */
     public function __construct(
         TranslatorInterface $translator,
         NumberFormatter $numberFormatter,

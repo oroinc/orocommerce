@@ -55,12 +55,6 @@ class ContentWidgetExtension extends AbstractExtension
      */
     private $layoutUpdates;
 
-    /**
-     * @param LayoutUpdateLoaderInterface $loader
-     * @param DependencyInitializer $dependencyInitializer
-     * @param PathProviderInterface $pathProvider
-     * @param ResourceProviderInterface $resourceProvider
-     */
     public function __construct(
         LayoutUpdateLoaderInterface $loader,
         DependencyInitializer $dependencyInitializer,
@@ -73,9 +67,6 @@ class ContentWidgetExtension extends AbstractExtension
         $this->resourceProvider = $resourceProvider;
     }
 
-    /**
-     * @param VisitorInterface $visitor
-     */
     public function addVisitor(VisitorInterface $visitor)
     {
         $this->visitors[] = $visitor;
@@ -114,9 +105,6 @@ class ContentWidgetExtension extends AbstractExtension
     }
 
     /**
-     * @param ContextInterface $context
-     * @return array
-     *
      * @throws UnexpectedTypeException if any registered layout update is not an instance of LayoutUpdateInterface
      *                                 or layout item id is not a string
      */

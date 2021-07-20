@@ -31,9 +31,6 @@ class PriceListRepository extends BasePriceListRepository
             ->execute();
     }
 
-    /**
-     * @param PriceList $priceList
-     */
     public function setDefault(PriceList $priceList)
     {
         $this->dropDefaults();
@@ -166,7 +163,6 @@ class PriceListRepository extends BasePriceListRepository
 
         return $qb->getQuery()->getOneOrNullResult();
     }
-
 
     /**
      * @param CustomerGroup $customerGroup

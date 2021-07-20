@@ -15,9 +15,6 @@ class DuplicateFiltrationService extends AbstractSkippableFiltrationService
      */
     private $filtrationService;
 
-    /**
-     * @param RuleFiltrationServiceInterface $filtrationService
-     */
     public function __construct(RuleFiltrationServiceInterface $filtrationService)
     {
         $this->filtrationService = $filtrationService;

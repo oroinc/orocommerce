@@ -98,9 +98,6 @@ class PriceAttributePriceList extends BasePriceList implements OrganizationAware
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isEnabledInExport(): bool
     {
         return $this->enabledInExport;

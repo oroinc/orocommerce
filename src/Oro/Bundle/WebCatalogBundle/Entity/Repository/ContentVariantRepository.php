@@ -92,10 +92,6 @@ class ContentVariantRepository extends EntityRepository
         return $ids;
     }
 
-    /**
-     * @param Slug $slug
-     * @return ContentVariant|null
-     */
     public function findOneBySlug(Slug $slug): ?ContentVariant
     {
         $qb = $this->createQueryBuilder('c');

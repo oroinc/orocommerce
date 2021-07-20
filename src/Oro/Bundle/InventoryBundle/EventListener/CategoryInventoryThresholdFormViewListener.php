@@ -8,9 +8,6 @@ use Oro\Bundle\UIBundle\Fallback\AbstractFallbackFieldsFormView;
 
 class CategoryInventoryThresholdFormViewListener extends AbstractFallbackFieldsFormView
 {
-    /**
-     * @param BeforeListRenderEvent $event
-     */
     public function onCategoryEdit(BeforeListRenderEvent $event)
     {
         $category = $this->getEntityFromRequest(Category::class);

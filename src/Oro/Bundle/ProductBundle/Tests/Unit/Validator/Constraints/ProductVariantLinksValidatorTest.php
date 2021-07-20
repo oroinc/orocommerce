@@ -206,9 +206,6 @@ class ProductVariantLinksValidatorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param AttributeFamily|null $parentProductAttributeFamily
-     * @param AttributeFamily|null $variantLinkAttributeFamily
-     *
      * @dataProvider getProductAndVariantLinksWithDifferentFamilyDataProvider
      */
     public function testAddViolationWhenProductHasVariantLinksFromDifferentFamily(
@@ -243,9 +240,6 @@ class ProductVariantLinksValidatorTest extends \PHPUnit\Framework\TestCase
         $this->service->validate($product, $constraint);
     }
 
-    /**
-     * @return array
-     */
     public function getProductAndVariantLinksWithDifferentFamilyDataProvider(): array
     {
         $productAttributeFamily = new AttributeFamilyStub();
@@ -269,13 +263,6 @@ class ProductVariantLinksValidatorTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param array $variantFields
-     * @param array $variantLinkFields
-     * @param AttributeFamily|null $parentProductAttributeFamily
-     * @param AttributeFamily|null $variantLinkAttributeFamily
-     * @return Product
-     */
     private function prepareProduct(
         array $variantFields,
         array $variantLinkFields,

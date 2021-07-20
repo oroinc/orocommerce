@@ -19,9 +19,6 @@ class HandlePriceListStatusChange implements ProcessorInterface
     /** @var PriceListRelationTriggerHandler */
     private $priceListChangesHandler;
 
-    /**
-     * @param PriceListRelationTriggerHandler $priceListChangesHandler
-     */
     public function __construct(PriceListRelationTriggerHandler $priceListChangesHandler)
     {
         $this->priceListChangesHandler = $priceListChangesHandler;

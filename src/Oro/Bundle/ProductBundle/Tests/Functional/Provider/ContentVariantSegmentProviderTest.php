@@ -192,9 +192,6 @@ class ContentVariantSegmentProviderTest extends WebTestCase
         $this->assertNull($this->provider->getContentNode($this->getReference('segment_dynamic_with_filter')));
     }
 
-    /**
-     * @return ClassMetadata
-     */
     protected function getContentVariantMetadata(): ClassMetadata
     {
         $em = $this->getContainer()->get('doctrine')->getManagerForClass(Segment::class);

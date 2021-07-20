@@ -40,10 +40,6 @@ class OroShoppingListBundle implements
         $this->addShoppingListCustomerVisitorInverseRelation($schema, $queries);
     }
 
-    /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     */
     private function addShoppingListCustomerVisitorInverseRelation(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('oro_customer_visitor');

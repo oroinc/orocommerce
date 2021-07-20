@@ -15,10 +15,6 @@ class PageTemplateProvider
     /** @var EntityFallbackResolver */
     private $fallBackResolver;
 
-    /**
-     * @param ThemeManager $themeManager
-     * @param EntityFallbackResolver $fallbackResolver
-     */
     public function __construct(ThemeManager $themeManager, EntityFallbackResolver $fallbackResolver)
     {
         $this->themeManager = $themeManager;

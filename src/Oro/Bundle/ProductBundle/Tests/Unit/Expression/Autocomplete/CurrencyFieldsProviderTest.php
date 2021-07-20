@@ -38,7 +38,6 @@ class CurrencyFieldsProviderTest extends AbstractFieldsProviderTest
 
     /**
      * @dataProvider getFieldsDataProvider
-     * @param array $fieldsData
      */
     public function testGetAutocompleteData(array $fieldsData)
     {

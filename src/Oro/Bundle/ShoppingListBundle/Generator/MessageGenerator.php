@@ -21,11 +21,6 @@ class MessageGenerator
     /** @var DoctrineHelper */
     protected $doctrineHelper;
 
-    /**
-     * @param TranslatorInterface $translator
-     * @param ShoppingListUrlProvider $shoppingListUrlProvider
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(
         TranslatorInterface $translator,
         ShoppingListUrlProvider $shoppingListUrlProvider,

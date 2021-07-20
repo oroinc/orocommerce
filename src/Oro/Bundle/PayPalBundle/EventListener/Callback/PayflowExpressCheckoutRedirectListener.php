@@ -26,11 +26,6 @@ class PayflowExpressCheckoutRedirectListener
      */
     protected $messageProvider;
 
-    /**
-     * @param Session $session
-     * @param PaymentMethodProviderInterface $paymentMethodProvider
-     * @param PaymentResultMessageProviderInterface $messageProvider
-     */
     public function __construct(
         Session $session,
         PaymentMethodProviderInterface $paymentMethodProvider,
@@ -41,9 +36,6 @@ class PayflowExpressCheckoutRedirectListener
         $this->messageProvider = $messageProvider;
     }
 
-    /**
-     * @param AbstractCallbackEvent $event
-     */
     public function onReturn(AbstractCallbackEvent $event)
     {
         $paymentTransaction = $event->getPaymentTransaction();
@@ -62,9 +54,6 @@ class PayflowExpressCheckoutRedirectListener
         }
     }
 
-    /**
-     * @param AbstractCallbackEvent $event
-     */
     private function handleFundingSourceFailError(AbstractCallbackEvent $event): void
     {
         $paymentTransaction = $event->getPaymentTransaction();
@@ -75,9 +64,6 @@ class PayflowExpressCheckoutRedirectListener
         }
     }
 
-    /**
-     * @param AbstractCallbackEvent $event
-     */
     private function handleFailureUrl(AbstractCallbackEvent $event): void
     {
         $paymentTransaction = $event->getPaymentTransaction();

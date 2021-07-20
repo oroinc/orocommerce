@@ -7,16 +7,6 @@ namespace Oro\Bundle\PricingBundle\ORM;
  */
 interface ShardQueryExecutorNativeSqlInterface
 {
-    /**
-     * @param string $insertToTableName
-     * @param string $className
-     * @param string $sourceSql
-     * @param array $fields
-     * @param array $params
-     * @param array $types
-     * @param bool $applyOnDuplicateKeyUpdate
-     * @return int
-     */
     public function executeNative(
         string $insertToTableName,
         string $className,

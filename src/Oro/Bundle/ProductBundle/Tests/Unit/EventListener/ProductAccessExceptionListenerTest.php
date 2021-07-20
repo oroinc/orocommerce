@@ -70,7 +70,6 @@ class ProductAccessExceptionListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider exceptionDataProvider
-     * @param \Exception $exception
      */
     public function testAccessDeniedException(\Exception $exception)
     {

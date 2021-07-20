@@ -40,8 +40,6 @@ class IntegerExtensionTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider finishViewData
-     * @param FormView $view
-     * @param array $options
      */
     public function testFinishView(FormView $view, array $options)
     {

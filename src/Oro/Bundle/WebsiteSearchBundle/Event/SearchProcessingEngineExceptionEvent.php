@@ -19,35 +19,22 @@ class SearchProcessingEngineExceptionEvent
      */
     private $consumptionResult;
 
-    /**
-     * @param \Exception $exception
-     * @param null|string $consumptionResult
-     */
     public function __construct(\Exception $exception, ?string $consumptionResult = null)
     {
         $this->exception = $exception;
         $this->consumptionResult = $consumptionResult;
     }
 
-    /**
-     * @return \Exception
-     */
     public function getException(): \Exception
     {
         return $this->exception;
     }
 
-    /**
-     * @return null|string
-     */
     public function getConsumptionResult(): ?string
     {
         return $this->consumptionResult;
     }
 
-    /**
-     * @param null|string $consumptionResult
-     */
     public function setConsumptionResult(?string $consumptionResult): void
     {
         $this->consumptionResult = $consumptionResult;

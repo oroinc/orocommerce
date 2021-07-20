@@ -61,7 +61,6 @@ class DoctrinePostFlushListenerTest extends \PHPUnit\Framework\TestCase
             ->with(ClassUtils::getClass($testEntity3))
             ->willReturn($em2);
 
-
         $doctrineHelper = $this->getDoctrineHelper($registry);
         $listener = new DoctrinePostFlushListener($doctrineHelper, $storage);
         $listener->postFlush();

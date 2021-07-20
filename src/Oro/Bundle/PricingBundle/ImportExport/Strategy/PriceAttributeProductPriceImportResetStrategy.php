@@ -41,19 +41,11 @@ class PriceAttributeProductPriceImportResetStrategy extends PriceAttributeProduc
         return parent::beforeProcessEntity($entity);
     }
 
-    /**
-     * @param BasePriceList $priceList
-     *
-     * @return bool
-     */
     protected function isPriceListProcessed(BasePriceList $priceList): bool
     {
         return in_array($priceList->getId(), $this->processedPriceLists, true);
     }
 
-    /**
-     * @param BasePriceList $priceList
-     */
     protected function deletePricesByPriceList(BasePriceList $priceList)
     {
         $deletedCount = $this->getPriceAttributeProductPriceRepository()->deletePricesByPriceList($priceList);
@@ -62,9 +54,6 @@ class PriceAttributeProductPriceImportResetStrategy extends PriceAttributeProduc
         $this->processedPriceLists[] = $priceList->getId();
     }
 
-    /**
-     * @return PriceAttributeProductPriceRepository
-     */
     protected function getPriceAttributeProductPriceRepository(): PriceAttributeProductPriceRepository
     {
         return $this->doctrineHelper

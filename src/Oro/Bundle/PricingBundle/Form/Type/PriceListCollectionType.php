@@ -20,10 +20,6 @@ class PriceListCollectionType extends AbstractType
     const NAME = 'oro_pricing_price_list_collection';
     const DEFAULT_ORDER = Criteria::ASC;
 
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPreSubmit']);
@@ -80,9 +76,6 @@ class PriceListCollectionType extends AbstractType
         return self::NAME;
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function onPreSubmit(FormEvent $event)
     {
         $data = [];

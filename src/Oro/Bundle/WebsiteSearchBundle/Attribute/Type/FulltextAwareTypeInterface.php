@@ -10,8 +10,6 @@ interface FulltextAwareTypeInterface
 {
     /**
      * Whether attribute type supports fulltext search
-     *
-     * @return bool
      */
     public function isFulltextSearchSupported(): bool;
 }

@@ -7,10 +7,5 @@ use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 
 interface FedexRequestByIntegrationSettingsFactoryInterface
 {
-    /**
-     * @param FedexIntegrationSettings $settings
-     *
-     * @return FedexRequestInterface
-     */
     public function create(FedexIntegrationSettings $settings): FedexRequestInterface;
 }

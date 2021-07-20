@@ -23,10 +23,6 @@ class BlankOneOfValidator extends ConstraintValidator
      */
     private $propertyAccessor;
 
-    /**
-     * @param TranslatorInterface $translator
-     * @param PropertyAccessor    $propertyAccessor
-     */
     public function __construct(TranslatorInterface $translator, PropertyAccessor $propertyAccessor)
     {
         $this->translator = $translator;
@@ -73,10 +69,6 @@ class BlankOneOfValidator extends ConstraintValidator
         return false;
     }
 
-    /**
-     * @param array      $fieldGroup
-     * @param Constraint $constraint
-     */
     private function addViolation(array $fieldGroup, Constraint $constraint)
     {
         $fieldsTranslation = implode(', ', array_map(function ($value) {

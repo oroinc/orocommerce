@@ -18,9 +18,6 @@ abstract class ProductTemplate extends Element
      */
     abstract public function assertGroupWithValue($groupName, TableNode $table);
 
-    /**
-     * @param TableNode $table
-     */
     abstract public function assertPrices(TableNode $table);
 
     protected function getPricesElement()

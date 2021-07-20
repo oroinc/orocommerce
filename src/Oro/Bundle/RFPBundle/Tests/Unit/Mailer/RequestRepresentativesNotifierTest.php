@@ -204,8 +204,6 @@ class RequestRepresentativesNotifierTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider confirmationEmailIncorrectRequestDataProvider
-     *
-     * @param array $requestData
      */
     public function sendConfirmationEmailIncorrectRequest(array $requestData)
     {

@@ -20,10 +20,6 @@ class LogicalExpressionValidator extends ConstraintValidator
      */
     protected $preprocessor;
 
-    /**
-     * @param ExpressionParser $expressionParser
-     * @param ExpressionPreprocessorInterface $preprocessor
-     */
     public function __construct(ExpressionParser $expressionParser, ExpressionPreprocessorInterface $preprocessor)
     {
         $this->expressionParser = $expressionParser;

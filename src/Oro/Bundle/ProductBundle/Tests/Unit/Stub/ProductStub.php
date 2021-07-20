@@ -52,18 +52,11 @@ class ProductStub extends Product
         return $this;
     }
 
-    /**
-     * @return ProductName|null
-     */
     public function getDefaultName(): ?ProductName
     {
         return $this->getFallbackValue($this->names);
     }
 
-    /**
-     * @param Localization|null $localization
-     * @return ProductName|null
-     */
     public function getName(Localization $localization = null): ?ProductName
     {
         return $this->getFallbackValue($this->names, $localization);

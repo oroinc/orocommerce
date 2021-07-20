@@ -13,9 +13,6 @@ class InventoryQuantityManager
      */
     protected $entityFallbackResolver;
 
-    /**
-     * @param EntityFallbackResolver $entityFallbackResolver
-     */
     public function __construct(EntityFallbackResolver $entityFallbackResolver)
     {
         $this->entityFallbackResolver = $entityFallbackResolver;

@@ -34,11 +34,6 @@ abstract class ConfigureWYSIWYGFields implements ProcessorInterface
     /** @var DoctrineHelper */
     protected $doctrineHelper;
 
-    /**
-     * @param WYSIWYGFieldsProvider      $wysiwygFieldsProvider
-     * @param EntityFieldFilteringHelper $entityFieldFilteringHelper
-     * @param DoctrineHelper             $doctrineHelper
-     */
     public function __construct(
         WYSIWYGFieldsProvider $wysiwygFieldsProvider,
         EntityFieldFilteringHelper $entityFieldFilteringHelper,
@@ -75,12 +70,6 @@ abstract class ConfigureWYSIWYGFields implements ProcessorInterface
         return $definition->get(self::RENDERED_WYSIWYG_FIELDS);
     }
 
-    /**
-     * @param EntityDefinitionConfig $definition
-     * @param string                 $fieldName
-     *
-     * @return bool
-     */
     protected static function isWysiwygFieldProcessed(
         EntityDefinitionConfig $definition,
         string $fieldName
@@ -90,12 +79,6 @@ abstract class ConfigureWYSIWYGFields implements ProcessorInterface
         return $wysiwygFields && \in_array($fieldName, $wysiwygFields, true);
     }
 
-    /**
-     * @param EntityDefinitionConfig $definition
-     * @param string                 $fieldName
-     *
-     * @return bool
-     */
     protected static function isRenderedWysiwygFieldProcessed(
         EntityDefinitionConfig $definition,
         string $fieldName
@@ -105,10 +88,6 @@ abstract class ConfigureWYSIWYGFields implements ProcessorInterface
         return $renderedWysiwygFields && isset($renderedWysiwygFields[$fieldName]);
     }
 
-    /**
-     * @param EntityDefinitionConfig $definition
-     * @param string                 $fieldName
-     */
     protected static function registerWysiwygField(
         EntityDefinitionConfig $definition,
         string $fieldName
@@ -120,12 +99,6 @@ abstract class ConfigureWYSIWYGFields implements ProcessorInterface
         }
     }
 
-    /**
-     * @param EntityDefinitionConfig $definition
-     * @param string                 $fieldName
-     * @param string                 $valueFieldName
-     * @param string                 $styleFieldName
-     */
     protected static function registerRenderedWysiwygField(
         EntityDefinitionConfig $definition,
         string $fieldName,
@@ -175,12 +148,6 @@ abstract class ConfigureWYSIWYGFields implements ProcessorInterface
         }
     }
 
-    /**
-     * @param ConfigContext          $context
-     * @param EntityDefinitionConfig $definition
-     * @param string                 $fieldName
-     * @param bool                   $excluded
-     */
     abstract protected function configureWysiwygField(
         ConfigContext $context,
         EntityDefinitionConfig $definition,
@@ -189,14 +156,6 @@ abstract class ConfigureWYSIWYGFields implements ProcessorInterface
         bool $excluded
     ): void;
 
-    /**
-     * @param EntityDefinitionConfig $definition
-     * @param string                 $wysiwygFieldName
-     * @param bool                   $excluded
-     * @param string|null            $sourceWysiwygFieldName
-     *
-     * @return EntityDefinitionFieldConfig
-     */
     protected function createWysiwygField(
         EntityDefinitionConfig $definition,
         string $wysiwygFieldName,
@@ -225,20 +184,11 @@ abstract class ConfigureWYSIWYGFields implements ProcessorInterface
         return $wysiwygField;
     }
 
-    /**
-     * @param EntityDefinitionFieldConfig $wysiwygField
-     * @param string                      $fieldName
-     */
     protected function addNestedValueField(EntityDefinitionFieldConfig $wysiwygField, string $fieldName): void
     {
         $this->addNestedField($wysiwygField, self::FIELD_VALUE, $fieldName, DataType::STRING);
     }
 
-    /**
-     * @param EntityDefinitionFieldConfig $wysiwygField
-     * @param string                      $entityClass
-     * @param string                      $fieldName
-     */
     protected function addNestedStyleField(
         EntityDefinitionFieldConfig $wysiwygField,
         string $entityClass,
@@ -252,11 +202,6 @@ abstract class ConfigureWYSIWYGFields implements ProcessorInterface
         );
     }
 
-    /**
-     * @param EntityDefinitionFieldConfig $wysiwygField
-     * @param string                      $entityClass
-     * @param string                      $fieldName
-     */
     protected function addNestedPropertiesField(
         EntityDefinitionFieldConfig $wysiwygField,
         string $entityClass,
@@ -270,12 +215,6 @@ abstract class ConfigureWYSIWYGFields implements ProcessorInterface
         );
     }
 
-    /**
-     * @param EntityDefinitionFieldConfig $wysiwygField
-     * @param string                      $fieldName
-     * @param string                      $propertyPath
-     * @param string                      $dataType
-     */
     protected function addNestedField(
         EntityDefinitionFieldConfig $wysiwygField,
         string $fieldName,
@@ -290,11 +229,6 @@ abstract class ConfigureWYSIWYGFields implements ProcessorInterface
         }
     }
 
-    /**
-     * @param EntityDefinitionConfig $definition
-     * @param string                 $entityClass
-     * @param string                 $fieldName
-     */
     protected function configureSourceWysiwygFields(
         EntityDefinitionConfig $definition,
         string $entityClass,
@@ -309,11 +243,6 @@ abstract class ConfigureWYSIWYGFields implements ProcessorInterface
         $this->excludeField($definition, $entityClass, $this->getWysiwygPropertiesFieldName($entityClass, $fieldName));
     }
 
-    /**
-     * @param EntityDefinitionConfig $definition
-     * @param string                 $entityClass
-     * @param string                 $propertyPath
-     */
     protected function excludeField(
         EntityDefinitionConfig $definition,
         string $entityClass,
@@ -337,23 +266,11 @@ abstract class ConfigureWYSIWYGFields implements ProcessorInterface
         }
     }
 
-    /**
-     * @param string $entityClass
-     * @param string $fieldName
-     *
-     * @return string
-     */
     protected function getWysiwygStyleFieldName(string $entityClass, string $fieldName): string
     {
         return $this->wysiwygFieldsProvider->getWysiwygStyleField($entityClass, $fieldName);
     }
 
-    /**
-     * @param string $entityClass
-     * @param string $fieldName
-     *
-     * @return string
-     */
     protected function getWysiwygPropertiesFieldName(string $entityClass, string $fieldName): string
     {
         return $this->wysiwygFieldsProvider->getWysiwygPropertiesField($entityClass, $fieldName);

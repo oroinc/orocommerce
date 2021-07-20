@@ -115,10 +115,6 @@ class LayoutManagerPassTest extends \PHPUnit\Framework\TestCase
         $this->compilerPass->process($this->containerBuilder);
     }
 
-    /**
-     * @param string $layoutExtension
-     * @return Definition
-     */
     private function getLayoutFactoryBuilderDefinition(string $layoutExtension): Definition
     {
         $definition = new Definition(
@@ -132,10 +128,6 @@ class LayoutManagerPassTest extends \PHPUnit\Framework\TestCase
         return $definition;
     }
 
-    /**
-     * @param string $layoutFactoryBuilder
-     * @return Definition
-     */
     private function getLayoutManagerDefinition(string $layoutFactoryBuilder): Definition
     {
         return new Definition(

@@ -67,18 +67,6 @@ class CheckoutWorkflowHelper
     /** @var TranslatorInterface  */
     private $translator;
 
-    /**
-     * @param WorkflowManager $workflowManager
-     * @param ActionGroupRegistry $actionGroupRegistry
-     * @param TransitionProvider $transitionProvider
-     * @param TransitionFormProvider $transitionFormProvider
-     * @param CheckoutErrorHandler $errorHandler
-     * @param CheckoutLineItemsManager $lineItemsManager
-     * @param CustomerRegistrationHandler $registrationHandler
-     * @param ForgotPasswordHandler $forgotPasswordHandler
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param TranslatorInterface $translator
-     */
     public function __construct(
         WorkflowManager $workflowManager,
         ActionGroupRegistry $actionGroupRegistry,
@@ -173,9 +161,6 @@ class CheckoutWorkflowHelper
     }
 
     /**
-     * @param WorkflowItem $workflowItem
-     * @param CheckoutInterface $checkout
-     *
      * @throws ForbiddenActionGroupException
      * @throws \Exception
      */
@@ -191,10 +176,6 @@ class CheckoutWorkflowHelper
         $this->actionGroupRegistry->findByName('start_shoppinglist_checkout')->execute($actionData);
     }
 
-    /**
-     * @param CheckoutInterface $checkout
-     * @param Request $request
-     */
     protected function validateOrderLineItems(CheckoutInterface $checkout, Request $request)
     {
         $orderLineItemsCount = $this->lineItemsManager->getData($checkout, true)->count();
@@ -219,9 +200,6 @@ class CheckoutWorkflowHelper
     }
 
     /**
-     * @param WorkflowItem $workflowItem
-     * @param Request $request
-     *
      * @throws ForbiddenActionGroupException
      * @throws \Exception
      * @throws AlreadySubmittedException
@@ -270,9 +248,6 @@ class CheckoutWorkflowHelper
     }
 
     /**
-     * @param WorkflowItem $workflowItem
-     * @param string $transitionName
-     * @return Transition|null
      * @throws WorkflowException
      */
     private function getTransition(WorkflowItem $workflowItem, string $transitionName): ?Transition
@@ -287,9 +262,6 @@ class CheckoutWorkflowHelper
     }
 
     /**
-     * @param WorkflowItem $workflowItem
-     * @param string $transitionName
-     * @return Transition|null
      * @throws WorkflowException
      */
     private function getContinueTransition(WorkflowItem $workflowItem, string $transitionName): ?Transition
@@ -309,10 +281,6 @@ class CheckoutWorkflowHelper
         return $transition ?? null;
     }
 
-    /**
-     * @param WorkflowItem $workflowItem
-     * @param Request $request
-     */
     protected function handleGetTransition(WorkflowItem $workflowItem, Request $request)
     {
         if ($request->query->has('transition')) {
@@ -345,10 +313,6 @@ class CheckoutWorkflowHelper
         return $workflowItem->getCurrentStep();
     }
 
-    /**
-     * @param WorkflowItem $workflowItem
-     * @param Request $request
-     */
     protected function handleRegistration(WorkflowItem $workflowItem, Request $request)
     {
         if ($request->isMethod(Request::METHOD_POST)) {
@@ -385,10 +349,6 @@ class CheckoutWorkflowHelper
         return $stopPropagation;
     }
 
-    /**
-     * @param TransitionData $continueTransition
-     * @param Request        $request
-     */
     private function addTransitionErrors(TransitionData $continueTransition, Request $request)
     {
         $errors = $continueTransition->getErrors();
@@ -437,10 +397,6 @@ class CheckoutWorkflowHelper
         return true;
     }
 
-    /**
-     * @param WorkflowItem $workflowItem
-     * @param Request $request
-     */
     private function processHandlers(WorkflowItem $workflowItem, Request $request)
     {
         if ($this->registrationHandler->isRegistrationRequest($request)) {
@@ -453,9 +409,6 @@ class CheckoutWorkflowHelper
     }
 
     /**
-     * @param WorkflowItem $workflowItem
-     * @param Request $request
-     *
      * @throws ForbiddenActionGroupException
      * @throws \Exception
      * @throws AlreadySubmittedException

@@ -203,9 +203,6 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
         $this->assertSame('0 0 0 0 *', $commandSchedule->getDefinition());
     }
 
-    /**
-     * @return ClassMetadata
-     */
     protected function getContentVariantMetadata(): ClassMetadata
     {
         $em = $this->getContainer()->get('doctrine')->getManagerForClass(Segment::class);

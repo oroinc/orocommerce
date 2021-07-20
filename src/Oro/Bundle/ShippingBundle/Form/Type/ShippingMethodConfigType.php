@@ -28,10 +28,6 @@ class ShippingMethodConfigType extends AbstractType
      */
     protected $subscriber;
 
-    /**
-     * @param MethodConfigSubscriber          $subscriber
-     * @param ShippingMethodProviderInterface $shippingMethodProvider
-     */
     public function __construct(
         MethodConfigSubscriber $subscriber,
         ShippingMethodProviderInterface $shippingMethodProvider
@@ -68,9 +64,6 @@ class ShippingMethodConfigType extends AbstractType
         $view->vars['methods_icons'] = $methodsIcons;
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([

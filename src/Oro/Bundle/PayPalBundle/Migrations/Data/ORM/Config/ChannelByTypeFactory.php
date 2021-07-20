@@ -27,11 +27,6 @@ class ChannelByTypeFactory
      */
     private $translator;
 
-    /**
-     * @param PayPalPaymentsProChannelType    $paymentsProChannelType
-     * @param PayPalPayflowGatewayChannelType $payflowGatewayChannelType
-     * @param TranslatorInterface             $translator
-     */
     public function __construct(
         PayPalPaymentsProChannelType $paymentsProChannelType,
         PayPalPayflowGatewayChannelType $payflowGatewayChannelType,

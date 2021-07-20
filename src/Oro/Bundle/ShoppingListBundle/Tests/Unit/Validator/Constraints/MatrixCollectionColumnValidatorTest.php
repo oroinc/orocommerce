@@ -86,9 +86,6 @@ class MatrixCollectionColumnValidatorTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider validateDataProvider
-     *
-     * @param int $validPrecision
-     * @param float $quantity
      */
     public function testValidateCorrectPrecision(int $validPrecision, float $quantity): void
     {
@@ -156,9 +153,6 @@ class MatrixCollectionColumnValidatorTest extends \PHPUnit\Framework\TestCase
             ->willReturn($violationBuilder);
     }
 
-    /**
-     * @param $precision
-     */
     public function expectWrongPrecisionViolation($precision)
     {
         $violationBuilder = $this->createMock(ConstraintViolationBuilderInterface::class);

@@ -16,9 +16,6 @@ class BatchCollectPriceListInitialStatuses implements ProcessorInterface
     /** @var DoctrineHelper */
     private $doctrineHelper;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(DoctrineHelper $doctrineHelper)
     {
         $this->doctrineHelper = $doctrineHelper;
@@ -50,11 +47,6 @@ class BatchCollectPriceListInitialStatuses implements ProcessorInterface
         }
     }
 
-    /**
-     * @param PriceList $priceList
-     *
-     * @return bool
-     */
     private function getPriceListInitialStatus(PriceList $priceList): bool
     {
         $originalEntityData = $this->doctrineHelper

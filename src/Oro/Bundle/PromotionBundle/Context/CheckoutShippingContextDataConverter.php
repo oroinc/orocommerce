@@ -14,9 +14,6 @@ class CheckoutShippingContextDataConverter implements ContextDataConverterInterf
     /** @var ContextDataConverterInterface */
     private $checkoutContextDataConverter;
 
-    /**
-     * @param ContextDataConverterInterface $checkoutContextDataConverter
-     */
     public function __construct(ContextDataConverterInterface $checkoutContextDataConverter)
     {
         $this->checkoutContextDataConverter = $checkoutContextDataConverter;

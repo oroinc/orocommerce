@@ -24,11 +24,6 @@ class CheckoutTotalsProvider
      */
     protected $checkoutShippingMethodsProvider;
 
-    /**
-     * @param CheckoutToOrderConverter $checkoutToOrderConverter
-     * @param TotalProcessorProvider $totalsProvider
-     * @param CheckoutShippingMethodsProviderInterface $checkoutShippingMethodsProvider
-     */
     public function __construct(
         CheckoutToOrderConverter $checkoutToOrderConverter,
         TotalProcessorProvider $totalsProvider,

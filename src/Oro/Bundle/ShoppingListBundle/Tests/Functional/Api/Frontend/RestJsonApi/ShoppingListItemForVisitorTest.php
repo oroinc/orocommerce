@@ -41,14 +41,6 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
     }
 
     /**
-     * @param LineItem    $lineItem
-     * @param int         $organizationId
-     * @param int         $shoppingListId
-     * @param float       $quantity
-     * @param string      $productUnitCode
-     * @param int         $productId
-     * @param string|null $notes
-     * @param int|null    $parentProductId
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     private static function assertLineItem(

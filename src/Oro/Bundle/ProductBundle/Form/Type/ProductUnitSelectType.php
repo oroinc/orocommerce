@@ -27,9 +27,6 @@ class ProductUnitSelectType extends AbstractProductAwareType
      */
     private $productUnitFormatter;
 
-    /**
-     * @param UnitLabelFormatterInterface $productUnitLabelFormatter
-     */
     public function __construct(UnitLabelFormatterInterface $productUnitLabelFormatter)
     {
         $this->productUnitFormatter = $productUnitLabelFormatter;

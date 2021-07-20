@@ -77,9 +77,6 @@ class PageRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider getNonExistentPageIdsProvider
-     *
-     * @param callable $checkedPageIdsCallback
-     * @param array    $expectedNonExistentPageIds
      */
     public function testGetNonExistentPageIds(
         callable $checkedPageIdsCallback,

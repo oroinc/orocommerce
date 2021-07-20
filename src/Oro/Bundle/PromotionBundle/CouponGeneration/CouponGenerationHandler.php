@@ -17,9 +17,6 @@ class CouponGenerationHandler
      */
     protected $generator;
 
-    /**
-     * @param CouponGeneratorInterface $generator
-     */
     public function __construct(CouponGeneratorInterface $generator)
     {
         $this->generator = $generator;
@@ -27,8 +24,6 @@ class CouponGenerationHandler
 
     /**
      * Process Coupon Generation operation request
-     *
-     * @param CouponGenerationOptions $options
      */
     public function process(CouponGenerationOptions $options)
     {

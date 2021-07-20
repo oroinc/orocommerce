@@ -18,17 +18,11 @@ class RestrictProductViewByInventoryStatusListener
      */
     private $configManager;
 
-    /**
-     * @param ConfigManager $configManager
-     */
     public function __construct(ConfigManager $configManager)
     {
         $this->configManager = $configManager;
     }
 
-    /**
-     * @param ControllerEvent $event
-     */
     public function onKernelController(ControllerEvent $event)
     {
         $controller = $event->getController();

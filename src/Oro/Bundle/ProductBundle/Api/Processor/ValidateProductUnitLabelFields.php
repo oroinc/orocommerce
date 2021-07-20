@@ -26,10 +26,6 @@ class ValidateProductUnitLabelFields implements ProcessorInterface
         $this->validateField('shortPluralLabel', $context);
     }
 
-    /**
-     * @param string                   $fieldName
-     * @param CustomizeFormDataContext $context
-     */
     private function validateField(string $fieldName, CustomizeFormDataContext $context): void
     {
         $form = $context->findFormField($fieldName);

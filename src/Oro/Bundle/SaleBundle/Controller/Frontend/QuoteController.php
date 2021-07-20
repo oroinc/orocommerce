@@ -72,9 +72,6 @@ class QuoteController extends AbstractController
      *          "map_method_signature" = true
      *     }
      * )
-     *
-     * @param Quote $quote
-     * @return array
      */
     public function guestAccessAction(Quote $quote): array
     {

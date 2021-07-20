@@ -22,9 +22,6 @@ class ProductStickersFrontendDatagridListener
      */
     const GRID_NEW_ARRIVALS_FIELD_NAME = 'newArrival';
 
-    /**
-     * @param PreBuild $event
-     */
     public function onPreBuild(PreBuild $event)
     {
         $config = $event->getConfig();
@@ -40,9 +37,6 @@ class ProductStickersFrontendDatagridListener
         );
     }
 
-    /**
-     * @param SearchResultAfter $event
-     */
     public function onResultAfter(SearchResultAfter $event)
     {
         /** @var ResultRecord[] $records */
@@ -53,9 +47,6 @@ class ProductStickersFrontendDatagridListener
         }
     }
 
-    /**
-     * @param ResultRecord $record
-     */
     private function fillStickersField(ResultRecord $record)
     {
         $stickers = [];
@@ -65,10 +56,6 @@ class ProductStickersFrontendDatagridListener
         $record->addData([self::COLUMNS_PRODUCT_STICKERS => $stickers]);
     }
 
-    /**
-     * @param array        $stickers
-     * @param ResultRecord $record
-     */
     private function addNewArrivalSticker(array &$stickers, ResultRecord $record)
     {
         if ($record->getValue(self::GRID_NEW_ARRIVALS_FIELD_NAME)) {
@@ -76,10 +63,6 @@ class ProductStickersFrontendDatagridListener
         }
     }
 
-    /**
-     * @param array $stickers
-     * @param array $sticker
-     */
     private function addSticker(array &$stickers, array $sticker)
     {
         $stickers[] = $sticker;

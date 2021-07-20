@@ -21,8 +21,6 @@ class ShoppingListTotalRepository extends EntityRepository
 {
     /**
      * Invalidate ShoppingList subtotals by given Combined Price List ids
-     *
-     * @param array $combinedPriceListIds
      */
     public function invalidateByCombinedPriceList(array $combinedPriceListIds)
     {
@@ -31,8 +29,6 @@ class ShoppingListTotalRepository extends EntityRepository
 
     /**
      * Invalidate ShoppingList subtotals by given Price List ids
-     *
-     * @param array $priceListIds
      */
     public function invalidateByPriceList(array $priceListIds)
     {
@@ -41,9 +37,6 @@ class ShoppingListTotalRepository extends EntityRepository
 
     /**
      * Invalidate ShoppingList subtotals by given Base Price List ids
-     *
-     * @param array $priceListIds
-     * @param string $priceClass
      */
     protected function invalidateByBasePriceList(array $priceListIds, string $priceClass)
     {
@@ -142,9 +135,6 @@ class ShoppingListTotalRepository extends EntityRepository
         $updateQB->execute();
     }
 
-    /**
-     * @param array $websiteIds
-     */
     public function invalidateByWebsitesForFlatPricing(array $websiteIds)
     {
         if (empty($websiteIds)) {
@@ -208,9 +198,6 @@ class ShoppingListTotalRepository extends EntityRepository
 
     /**
      * Invalidate ShoppingList subtotals by given Product ids for website
-     *
-     * @param Website $website
-     * @param array $productIds
      */
     public function invalidateByProducts(Website $website, array $productIds)
     {
@@ -238,8 +225,6 @@ class ShoppingListTotalRepository extends EntityRepository
 
     /**
      * Invalidate ShoppingList subtotals by given website
-     *
-     * @param Website $website
      */
     public function invalidateByWebsite(Website $website)
     {
@@ -260,9 +245,6 @@ class ShoppingListTotalRepository extends EntityRepository
         return $updateQB;
     }
 
-    /**
-     * @return SqlQueryBuilder
-     */
     protected function getInvalidateQb(): SqlQueryBuilder
     {
         $expr = $this->getEntityManager()->getExpressionBuilder();

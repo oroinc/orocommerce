@@ -24,11 +24,6 @@ class RelatedProductsImportExportConfigurationProvider implements ImportExportCo
     /** @var RelatedItemConfigHelper */
     private $relatedItemConfigHelper;
 
-    /**
-     * @param TranslatorInterface $translator
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param RelatedItemConfigHelper $relatedItemConfigHelper
-     */
     public function __construct(
         TranslatorInterface $translator,
         AuthorizationCheckerInterface $authorizationChecker,

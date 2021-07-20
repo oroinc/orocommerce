@@ -79,9 +79,6 @@ class ProductShippingOptionsDatagridListenerTest extends \PHPUnit\Framework\Test
     }
 
     /**
-     * @param array $sourceResults
-     * @param array $expectedResults
-     *
      * @dataProvider onResultAfterDataProvider
      */
     public function testOnResultAfter(array $sourceResults = [], array $expectedResults = [])

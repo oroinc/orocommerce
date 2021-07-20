@@ -38,12 +38,6 @@ class TaxSubtotalProvider implements SubtotalProviderInterface, CacheAwareInterf
      */
     protected $taxationSettingsProvider;
 
-    /**
-     * @param TranslatorInterface $translator
-     * @param TaxProviderRegistry $taxProviderRegistry
-     * @param TaxFactory $taxFactory
-     * @param TaxationSettingsProvider $taxationSettingsProvider
-     */
     public function __construct(
         TranslatorInterface $translator,
         TaxProviderRegistry $taxProviderRegistry,

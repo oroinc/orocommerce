@@ -54,9 +54,6 @@ class Client extends BaseClient
 
     /**
      * Response from frontend must not contain backend url prefix
-     *
-     * @param $uri string
-     * @param $crawler
      */
     protected function checkForBackendUrls($uri, Crawler $crawler)
     {

@@ -19,9 +19,6 @@ class ComputeProductUnitLabel implements ProcessorInterface
     /** @var UnitLabelFormatterInterface */
     private $formatter;
 
-    /**
-     * @param UnitLabelFormatterInterface $formatter
-     */
     public function __construct(UnitLabelFormatterInterface $formatter)
     {
         $this->formatter = $formatter;

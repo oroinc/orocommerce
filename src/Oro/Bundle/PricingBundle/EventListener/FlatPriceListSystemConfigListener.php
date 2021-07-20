@@ -27,10 +27,6 @@ class FlatPriceListSystemConfigListener
      */
     private $triggerHandler;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param PriceListRelationTriggerHandlerInterface $triggerHandler
-     */
     public function __construct(
         ManagerRegistry $registry,
         PriceListRelationTriggerHandlerInterface $triggerHandler
@@ -39,9 +35,6 @@ class FlatPriceListSystemConfigListener
         $this->triggerHandler = $triggerHandler;
     }
 
-    /**
-     * @param ConfigSettingsUpdateEvent $event
-     */
     public function onFormPreSetData(ConfigSettingsUpdateEvent $event)
     {
         $settingsKey = implode(ConfigManager::SECTION_VIEW_SEPARATOR, ['oro_pricing', self::SETTING]);
@@ -54,9 +47,6 @@ class FlatPriceListSystemConfigListener
         }
     }
 
-    /**
-     * @param ConfigSettingsUpdateEvent $event
-     */
     public function onSettingsSaveBefore(ConfigSettingsUpdateEvent $event)
     {
         $settings = $event->getSettings();
@@ -74,9 +64,6 @@ class FlatPriceListSystemConfigListener
         $event->setSettings($settings);
     }
 
-    /**
-     * @param ConfigUpdateEvent $event
-     */
     public function updateAfter(ConfigUpdateEvent $event)
     {
         if ($event->isChanged('oro_pricing.default_price_list')) {

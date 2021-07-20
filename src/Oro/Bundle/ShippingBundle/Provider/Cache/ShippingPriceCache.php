@@ -27,10 +27,6 @@ class ShippingPriceCache
      */
     protected $cacheKeyGenerator;
 
-    /**
-     * @param CacheProvider $cacheProvider
-     * @param ShippingContextCacheKeyGenerator $cacheKeyGenerator
-     */
     public function __construct(
         CacheProvider $cacheProvider,
         ShippingContextCacheKeyGenerator $cacheKeyGenerator
@@ -88,7 +84,7 @@ class ShippingPriceCache
     {
         return $this->cacheKeyGenerator->generateKey($context).$methodId.$typeId;
     }
-    
+
     public function deleteAllPrices()
     {
         $this->cache->deleteAll();

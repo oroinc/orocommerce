@@ -9,9 +9,6 @@ use Oro\Bundle\TaxBundle\Model\TaxBaseExclusion;
 
 class TaxationAddressProvider
 {
-    /**
-     * @param TaxationSettingsProvider $settingsProvider
-     */
     public function __construct(TaxationSettingsProvider $settingsProvider)
     {
         $this->settingsProvider = $settingsProvider;

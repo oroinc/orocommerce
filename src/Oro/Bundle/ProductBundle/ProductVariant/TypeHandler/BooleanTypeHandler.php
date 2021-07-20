@@ -13,9 +13,6 @@ class BooleanTypeHandler implements ProductVariantTypeHandlerInterface
     /** @var FormFactory */
     protected $formFactory;
 
-    /**
-     * @param FormFactory $formFactory
-     */
     public function __construct(FormFactory $formFactory)
     {
         $this->formFactory = $formFactory;

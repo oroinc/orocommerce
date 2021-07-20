@@ -11,9 +11,6 @@ use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
  */
 class RestrictContentVariantByProductEventListener
 {
-    /**
-     * @param RestrictContentVariantByEntityEvent $event
-     */
     public function applyRestriction(RestrictContentVariantByEntityEvent $event): void
     {
         $entity = $event->getEntity();

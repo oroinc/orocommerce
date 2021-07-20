@@ -14,9 +14,6 @@ class DisabledDiscountDecorator implements DiscountInterface
      */
     private $discount;
 
-    /**
-     * @param DiscountInterface $discount
-     */
     public function __construct(DiscountInterface $discount)
     {
         $this->discount = $discount;

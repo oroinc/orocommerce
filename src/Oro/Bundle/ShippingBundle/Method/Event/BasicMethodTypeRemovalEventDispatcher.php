@@ -11,9 +11,6 @@ class BasicMethodTypeRemovalEventDispatcher implements MethodTypeRemovalEventDis
      */
     private $eventDispatcher;
 
-    /**
-     * @param EventDispatcherInterface $eventDispatcher
-     */
     public function __construct(EventDispatcherInterface $eventDispatcher)
     {
         $this->eventDispatcher = $eventDispatcher;

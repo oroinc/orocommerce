@@ -11,9 +11,6 @@ use Doctrine\ORM\QueryBuilder;
  */
 class CouponApplicabilityQueryBuilderModifier
 {
-    /**
-     * @param QueryBuilder $queryBuilder
-     */
     public function modify(QueryBuilder $queryBuilder)
     {
         $aliases = $queryBuilder->getRootAliases();

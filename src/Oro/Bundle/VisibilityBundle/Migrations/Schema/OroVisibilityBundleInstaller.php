@@ -43,8 +43,6 @@ class OroVisibilityBundleInstaller implements Installation
 
     /**
      * Sets the ExtendExtension
-     *
-     * @param ExtendExtension $extendExtension
      */
     public function setExtendExtension(ExtendExtension $extendExtension)
     {
@@ -91,8 +89,6 @@ class OroVisibilityBundleInstaller implements Installation
 
     /**
      * Create oro_prod_vsb_resolv table
-     *
-     * @param Schema $schema
      */
     protected function createOroProductVisibilityResolvedTable(Schema $schema)
     {
@@ -108,8 +104,6 @@ class OroVisibilityBundleInstaller implements Installation
 
     /**
      * Create oro_cus_grp_prod_vsb_resolv table
-     *
-     * @param Schema $schema
      */
     protected function createOroAccountGroupProductVisibilityResolvedTable(Schema $schema)
     {
@@ -125,8 +119,6 @@ class OroVisibilityBundleInstaller implements Installation
 
     /**
      * Create oro_cus_prod_vsb_resolv table
-     *
-     * @param Schema $schema
      */
     protected function createOroAccountProductVisibilityResolvedTable(Schema $schema)
     {
@@ -143,8 +135,6 @@ class OroVisibilityBundleInstaller implements Installation
 
     /**
      * Create oro_ctgr_vsb_resolv table
-     *
-     * @param Schema $schema
      */
     protected function createOroCategoryVisibilityResolvedTable(Schema $schema)
     {
@@ -159,8 +149,6 @@ class OroVisibilityBundleInstaller implements Installation
 
     /**
      * Create oro_cus_grp_ctgr_vsb_resolv table
-     *
-     * @param Schema $schema
      */
     protected function createOroAccountGroupCategoryVisibilityResolvedTable(Schema $schema)
     {
@@ -175,8 +163,6 @@ class OroVisibilityBundleInstaller implements Installation
 
     /**
      * Create oro_cus_ctgr_vsb_resolv table
-     *
-     * @param Schema $schema
      */
     protected function createOroAccountCategoryVisibilityResolvedTable(Schema $schema)
     {
@@ -189,11 +175,8 @@ class OroVisibilityBundleInstaller implements Installation
         $table->setPrimaryKey(['scope_id', 'category_id']);
     }
 
-
     /**
      * Create oro_category_visibility table
-     *
-     * @param Schema $schema
      */
     protected function createOroCategoryVisibilityTable(Schema $schema)
     {
@@ -208,8 +191,6 @@ class OroVisibilityBundleInstaller implements Installation
 
     /**
      * Create oro_cus_category_visibility table
-     *
-     * @param Schema $schema
      */
     protected function createOroAccountCategoryVisibilityTable(Schema $schema)
     {
@@ -224,8 +205,6 @@ class OroVisibilityBundleInstaller implements Installation
 
     /**
      * Create oro_cus_grp_ctgr_visibility table
-     *
-     * @param Schema $schema
      */
     protected function createOroAccountGroupCategoryVisibilityTable(Schema $schema)
     {
@@ -240,8 +219,6 @@ class OroVisibilityBundleInstaller implements Installation
 
     /**
      * Create oro_product_visibility table
-     *
-     * @param Schema $schema
      */
     protected function createOroProductVisibilityTable(Schema $schema)
     {
@@ -256,8 +233,6 @@ class OroVisibilityBundleInstaller implements Installation
 
     /**
      * Create oro_cus_product_visibility table
-     *
-     * @param Schema $schema
      */
     protected function createOroAccountProductVisibilityTable(Schema $schema)
     {
@@ -272,8 +247,6 @@ class OroVisibilityBundleInstaller implements Installation
 
     /**
      * Create oro_cus_grp_prod_visibility table
-     *
-     * @param Schema $schema
      */
     protected function createOroAccountGroupProductVisibilityTable(Schema $schema)
     {
@@ -288,8 +261,6 @@ class OroVisibilityBundleInstaller implements Installation
 
     /**
      * Add oro_category_visibility foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroCategoryVisibilityForeignKeys(Schema $schema)
     {
@@ -310,8 +281,6 @@ class OroVisibilityBundleInstaller implements Installation
 
     /**
      * Add oro_cus_category_visibility foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroAccountCategoryVisibilityForeignKeys(Schema $schema)
     {
@@ -332,8 +301,6 @@ class OroVisibilityBundleInstaller implements Installation
 
     /**
      * Add oro_cus_grp_ctgr_visibility foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroAccountGroupCategoryVisibilityForeignKeys(Schema $schema)
     {
@@ -354,8 +321,6 @@ class OroVisibilityBundleInstaller implements Installation
 
     /**
      * Add oro_product_visibility foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroProductVisibilityForeignKeys(Schema $schema)
     {
@@ -376,8 +341,6 @@ class OroVisibilityBundleInstaller implements Installation
 
     /**
      * Add oro_cus_product_visibility foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroAccountProductVisibilityForeignKeys(Schema $schema)
     {
@@ -398,8 +361,6 @@ class OroVisibilityBundleInstaller implements Installation
 
     /**
      * Add oro_cus_grp_prod_visibility foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroAccountGroupProductVisibilityForeignKeys(Schema $schema)
     {
@@ -420,8 +381,6 @@ class OroVisibilityBundleInstaller implements Installation
 
     /**
      * Add oro_prod_vsb_resolv foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroProductVisibilityResolvedForeignKeys(Schema $schema)
     {
@@ -454,8 +413,6 @@ class OroVisibilityBundleInstaller implements Installation
 
     /**
      * Add oro_cus_grp_prod_vsb_resolv foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroAccountGroupProductVisibilityResolvedForeignKeys(Schema $schema)
     {
@@ -488,8 +445,6 @@ class OroVisibilityBundleInstaller implements Installation
 
     /**
      * Add oro_cus_prod_vsb_resolv foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroAccountProductVisibilityResolvedForeignKeys(Schema $schema)
     {
@@ -522,8 +477,6 @@ class OroVisibilityBundleInstaller implements Installation
 
     /**
      * Add oro_ctgr_vsb_resolv foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroCategoryVisibilityResolvedForeignKeys(Schema $schema)
     {
@@ -550,8 +503,6 @@ class OroVisibilityBundleInstaller implements Installation
 
     /**
      * Add oro_cus_grp_ctgr_vsb_resolv foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroAccountGroupCategoryVisibilityResolvedForeignKeys(Schema $schema)
     {
@@ -578,8 +529,6 @@ class OroVisibilityBundleInstaller implements Installation
 
     /**
      * Add oro_cus_ctgr_vsb_resolv foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroAccountCategoryVisibilityResolvedForeignKeys(Schema $schema)
     {

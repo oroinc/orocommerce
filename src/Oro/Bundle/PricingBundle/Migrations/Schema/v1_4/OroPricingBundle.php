@@ -34,9 +34,6 @@ class OroPricingBundle implements Migration, RenameExtensionAwareInterface
         $queries->addPostQuery(new FillPriceListToProduct());
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function createOroPriceAttributeTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_price_attribute_pl');
@@ -47,9 +44,6 @@ class OroPricingBundle implements Migration, RenameExtensionAwareInterface
         $table->setPrimaryKey(['id']);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function createOroPriceAttributeCurrencyTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_product_attr_currency');
@@ -59,9 +53,6 @@ class OroPricingBundle implements Migration, RenameExtensionAwareInterface
         $table->setPrimaryKey(['id']);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function createOroPriceAttributeProductPriceTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_price_attribute_price');
@@ -80,9 +71,6 @@ class OroPricingBundle implements Migration, RenameExtensionAwareInterface
         $table->setPrimaryKey(['id']);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addOroPriceAttributeCurrencyForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_product_attr_currency');
@@ -94,10 +82,6 @@ class OroPricingBundle implements Migration, RenameExtensionAwareInterface
         );
     }
 
-    /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     */
     protected function addOroPriceAttributeProductPriceForeignKeys(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('orob2b_price_attribute_price');
@@ -129,8 +113,6 @@ class OroPricingBundle implements Migration, RenameExtensionAwareInterface
 
     /**
      * Create orob2b_price_list_to_product table
-     *
-     * @param Schema $schema
      */
     protected function createOroriceListToProductTable(Schema $schema)
     {
@@ -142,12 +124,9 @@ class OroPricingBundle implements Migration, RenameExtensionAwareInterface
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['product_id', 'price_list_id'], 'orob2b_price_list_to_product_uidx');
     }
-    
+
     /**
      * Add orob2b_price_list_to_product foreign keys.
-     *
-     * @param Schema $schema
-     * @param QueryBag $queries
      */
     protected function addOroriceListToProductForeignKeys(Schema $schema, QueryBag $queries)
     {

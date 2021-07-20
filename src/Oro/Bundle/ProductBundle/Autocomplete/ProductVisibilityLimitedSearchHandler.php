@@ -182,9 +182,6 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
         return $result->getElements();
     }
 
-    /**
-     * @return ProductRepository
-     */
     private function getProductRepository(): ProductRepository
     {
         return $this->entityRepository;

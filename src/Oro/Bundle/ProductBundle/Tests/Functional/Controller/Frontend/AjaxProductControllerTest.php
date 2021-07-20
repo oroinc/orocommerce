@@ -24,8 +24,6 @@ class AjaxProductControllerTest extends WebTestCase
 
     /**
      * @dataProvider productNamesBySkusDataProvider
-     * @param array $skus
-     * @param array $expectedData
      */
     public function testProductNamesBySkus(array $skus, array $expectedData)
     {

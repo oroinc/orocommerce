@@ -44,8 +44,6 @@ class CheckoutShippingDiscountContextConverterTest extends \PHPUnit\Framework\Te
     }
 
     /**
-     * @param object $entity
-     * @param bool $isSupported
      * @dataProvider supportsDataProvider
      */
     public function testSupports(object $entity, bool $isSupported): void
@@ -53,9 +51,6 @@ class CheckoutShippingDiscountContextConverterTest extends \PHPUnit\Framework\Te
         $this->assertEquals($isSupported, $this->converter->supports($entity));
     }
 
-    /**
-     * @return array
-     */
     public function supportsDataProvider(): array
     {
         return [
@@ -82,10 +77,6 @@ class CheckoutShippingDiscountContextConverterTest extends \PHPUnit\Framework\Te
         ];
     }
 
-    /**
-     * @param object|null $sourceEntity
-     * @return Checkout
-     */
     private function getCheckout(?object $sourceEntity): Checkout
     {
         $checkoutSource = $this->createMock(CheckoutSource::class);

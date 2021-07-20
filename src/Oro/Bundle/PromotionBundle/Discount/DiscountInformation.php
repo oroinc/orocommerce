@@ -24,17 +24,11 @@ class DiscountInformation
         $this->discountAmount = $amount;
     }
 
-    /**
-     * @return DiscountInterface
-     */
     public function getDiscount(): DiscountInterface
     {
         return $this->discount;
     }
 
-    /**
-     * @return float
-     */
     public function getDiscountAmount(): float
     {
         return $this->discountAmount;

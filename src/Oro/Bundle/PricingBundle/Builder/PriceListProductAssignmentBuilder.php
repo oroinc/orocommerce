@@ -44,13 +44,6 @@ class PriceListProductAssignmentBuilder
      */
     protected $eventDispatcher;
 
-    /**
-     * @param ManagerRegistry               $registry
-     * @param InsertQueryExecutorInterface  $insertQueryExecutor
-     * @param ProductAssignmentRuleCompiler $ruleCompiler
-     * @param EventDispatcherInterface      $eventDispatcher
-     * @param ShardManager                  $shardManager
-     */
     public function __construct(
         ManagerRegistry $registry,
         InsertQueryExecutorInterface $insertQueryExecutor,
@@ -65,9 +58,6 @@ class PriceListProductAssignmentBuilder
         $this->shardManager = $shardManager;
     }
 
-    /**
-     * @param InsertQueryExecutorInterface $insertQueryExecutor
-     */
     public function setInsertQueryExecutor(InsertQueryExecutorInterface $insertQueryExecutor)
     {
         $this->insertQueryExecutor = $insertQueryExecutor;

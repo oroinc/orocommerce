@@ -221,10 +221,6 @@ class EmptyVariantFieldInSimpleProductForVariantLinksValidatorTest extends \PHPU
         return $product;
     }
 
-    /**
-     * @param Product $product
-     * @param array $attributeInfo
-     */
     private function assertAttributeInfoCalls(Product $product, array $attributeInfo): void
     {
         $repo = $this->createMock(ProductRepository::class);

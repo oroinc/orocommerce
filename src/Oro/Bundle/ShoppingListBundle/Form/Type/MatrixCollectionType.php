@@ -57,13 +57,6 @@ class MatrixCollectionType extends AbstractType
         $view->vars['rowsQty'] = $rowsQty;
     }
 
-    /**
-     * @param array $data
-     * @param int $key
-     * @param float $quantity
-     *
-     * @return array
-     */
     private function getQtyByKey(array $data, int $key, float $quantity): array
     {
         if (isset($data[$key])) {

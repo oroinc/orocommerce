@@ -32,9 +32,6 @@ abstract class AbstractLoadPromotionData extends AbstractFixture implements
         $this->container = $container;
     }
 
-    /**
-     * @param ObjectManager $manager
-     */
     public function load(ObjectManager $manager)
     {
         $userRepository = $manager->getRepository(User::class);
@@ -45,7 +42,6 @@ abstract class AbstractLoadPromotionData extends AbstractFixture implements
             $rule->setName($promotionData['rule']['name']);
             $rule->setSortOrder($promotionData['rule']['sortOrder']);
             $rule->setEnabled($promotionData['rule']['enabled']);
-
 
             $promotion = new Promotion();
             $promotion->setOwner($user);

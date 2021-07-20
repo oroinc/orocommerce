@@ -25,9 +25,6 @@ class CustomerGroupChangesListenerTest extends WebTestCase
         $this->loadFixtures([LoadPriceListRelations::class]);
     }
 
-    /**
-     * @return EntityManagerInterface
-     */
     private function getEntityManager(): EntityManagerInterface
     {
         return $this->getContainer()->get('doctrine')->getManagerForClass(CustomerGroup::class);
@@ -58,9 +55,6 @@ class CustomerGroupChangesListenerTest extends WebTestCase
         return $tokenData;
     }
 
-    /**
-     * @param CustomerGroup $group
-     */
     private function sendDeleteCustomerGroupRequest(CustomerGroup $group)
     {
         $groupId = $group->getId();

@@ -77,8 +77,6 @@ class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInter
 
     /**
      * Create oro_rfp_assigned_cus_users table
-     *
-     * @param Schema $schema
      */
     protected function createOroRfpAssignedAccUsersTable(Schema $schema)
     {
@@ -90,8 +88,6 @@ class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInter
 
     /**
      * Create oro_rfp_assigned_users table
-     *
-     * @param Schema $schema
      */
     protected function createOroRfpAssignedUsersTable(Schema $schema)
     {
@@ -103,8 +99,6 @@ class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInter
 
     /**
      * Create oro_rfp_request table
-     *
-     * @param Schema $schema
      */
     protected function createOroRfpRequestTable(Schema $schema)
     {
@@ -134,9 +128,6 @@ class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInter
         $this->addOroRfpRequestEnumField($schema);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addOroRfpRequestEnumField(Schema $schema)
     {
         $customerStatusEnumTable = $this->extendExtension->addEnumField(
@@ -180,8 +171,6 @@ class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInter
 
     /**
      * Create oro_rfp_request_product table
-     *
-     * @param Schema $schema
      */
     protected function createOroRfpRequestProductTable(Schema $schema)
     {
@@ -196,8 +185,6 @@ class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInter
 
     /**
      * Create oro_rfp_request_prod_item table
-     *
-     * @param Schema $schema
      */
     protected function createOroRfpRequestProductItemTable(Schema $schema)
     {
@@ -221,9 +208,6 @@ class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInter
         $table->setPrimaryKey(['id']);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function createOroRfpRequestAddNoteTable(Schema $schema)
     {
         $table = $schema->createTable('oro_rfp_request_add_note');
@@ -240,8 +224,6 @@ class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInter
 
     /**
      * Add oro_rfp_assigned_cus_users foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroRfpAssignedAccUsersForeignKeys(Schema $schema)
     {
@@ -262,8 +244,6 @@ class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInter
 
     /**
      * Add oro_rfp_assigned_users foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroRfpAssignedUsersForeignKeys(Schema $schema)
     {
@@ -284,8 +264,6 @@ class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInter
 
     /**
      * Add oro_rfp_request foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroRfpRequestForeignKeys(Schema $schema)
     {
@@ -324,8 +302,6 @@ class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInter
 
     /**
      * Add oro_rfp_request_product foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroRfpRequestProductForeignKeys(Schema $schema)
     {
@@ -346,8 +322,6 @@ class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInter
 
     /**
      * Add oro_rfp_request_prod_item foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroRfpRequestProductItemForeignKeys(Schema $schema)
     {
@@ -366,9 +340,6 @@ class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInter
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addOroRfpRequestAddNoteForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('oro_rfp_request_add_note');
@@ -382,8 +353,6 @@ class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInter
 
     /**
      * Enables Email activity for RFP entity
-     *
-     * @param Schema $schema
      */
     protected function addActivityAssociations(Schema $schema)
     {
@@ -392,7 +361,6 @@ class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInter
     }
 
     /**
-     * @param Schema $schema
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     protected function addOwnerToOroEmailAddress(Schema $schema)

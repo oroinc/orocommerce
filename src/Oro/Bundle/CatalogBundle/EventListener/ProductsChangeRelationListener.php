@@ -13,17 +13,11 @@ class ProductsChangeRelationListener
     /** @var EventDispatcherInterface */
     private $eventDispatcher;
 
-    /**
-     * @param EventDispatcherInterface $eventDispatcher
-     */
     public function __construct(EventDispatcherInterface $eventDispatcher)
     {
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    /**
-     * @param OnFlushEventArgs $event
-     */
     public function onFlush(OnFlushEventArgs $event)
     {
         $unitOfWork = $event->getEntityManager()->getUnitOfWork();

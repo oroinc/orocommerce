@@ -19,9 +19,6 @@ class ContentWidgetControllerTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
     }
 
-    /**
-     * @return ContentWidget
-     */
     public function testCreate(): ContentWidget
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_cms_content_widget_create'));
@@ -50,9 +47,6 @@ class ContentWidgetControllerTest extends WebTestCase
 
     /**
      * @depends testCreate
-     *
-     * @param ContentWidget $contentWidget
-     * @return ContentWidget
      */
     public function testUpdate(ContentWidget $contentWidget): ContentWidget
     {
@@ -84,9 +78,6 @@ class ContentWidgetControllerTest extends WebTestCase
 
     /**
      * @depends testUpdate
-     *
-     * @param ContentWidget $contentWidget
-     * @return ContentWidget
      */
     public function testView(ContentWidget $contentWidget): ContentWidget
     {
@@ -116,8 +107,6 @@ class ContentWidgetControllerTest extends WebTestCase
 
     /**
      * @depends testView
-     *
-     * @param ContentWidget $contentWidget
      */
     public function testGrid(ContentWidget $contentWidget): void
     {
@@ -140,9 +129,6 @@ class ContentWidgetControllerTest extends WebTestCase
         $this->assertEquals($contentWidget->getWidgetType(), $data['widgetType']);
     }
 
-    /**
-     * @return int
-     */
     private function getContentWidgetCount(): int
     {
         $qb = $this->getContainer()->get('doctrine')

@@ -26,11 +26,6 @@ class WatermarkImageFilterProvider implements CustomImageFilterProviderInterface
     /** @var FileManager */
     private $fileManager;
 
-    /**
-     * @param ConfigManager $configManager
-     * @param DoctrineHelper $doctrineHelper
-     * @param FileManager $fileManager
-     */
     public function __construct(ConfigManager $configManager, DoctrineHelper $doctrineHelper, FileManager $fileManager)
     {
         $this->configManager = $configManager;

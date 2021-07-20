@@ -35,12 +35,6 @@ class GenerateSitemapIndexByWebsiteProcessor implements MessageProcessorInterfac
     /** @var LoggerInterface */
     private $logger;
 
-    /**
-     * @param JobRunner              $jobRunner
-     * @param ManagerRegistry        $doctrine
-     * @param SitemapDumperInterface $sitemapDumper
-     * @param LoggerInterface        $logger
-     */
     public function __construct(
         JobRunner $jobRunner,
         ManagerRegistry $doctrine,
@@ -93,11 +87,6 @@ class GenerateSitemapIndexByWebsiteProcessor implements MessageProcessorInterfac
         return $result ? self::ACK : self::REJECT;
     }
 
-    /**
-     * @param MessageInterface $message
-     *
-     * @return array|null
-     */
     private function resolveMessage(MessageInterface $message): ?array
     {
         try {
@@ -109,9 +98,6 @@ class GenerateSitemapIndexByWebsiteProcessor implements MessageProcessorInterfac
         return null;
     }
 
-    /**
-     * @return OptionsResolver
-     */
     private function getMessageResolver(): OptionsResolver
     {
         $resolver = new OptionsResolver();
@@ -123,11 +109,6 @@ class GenerateSitemapIndexByWebsiteProcessor implements MessageProcessorInterfac
         return $resolver;
     }
 
-    /**
-     * @param int $websiteId
-     *
-     * @return Website|null
-     */
     private function getWebsite(int $websiteId): ?Website
     {
         return $this->doctrine->getManagerForClass(Website::class)->find(Website::class, $websiteId);

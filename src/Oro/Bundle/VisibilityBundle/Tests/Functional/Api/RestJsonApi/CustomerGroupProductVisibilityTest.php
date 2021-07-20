@@ -32,12 +32,6 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
         ]);
     }
 
-    /**
-     * @param string $product
-     * @param string $customerGroup
-     *
-     * @return string
-     */
     private function getId(string $product, string $customerGroup): string
     {
         return sprintf(
@@ -55,7 +49,6 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
 
         $this->assertResponseContains('cget_customer_group_product_visibility.yml', $response);
     }
-
 
     public function testTryToGetListSortById()
     {

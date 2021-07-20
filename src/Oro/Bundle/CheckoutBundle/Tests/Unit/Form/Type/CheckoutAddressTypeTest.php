@@ -142,9 +142,6 @@ class CheckoutAddressTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider preSetDataDataProvider
-     *
-     * @param OrderAddress|null $orderAddress
-     * @param OrderAddress|null $expectedAddress
      */
     public function testPreSetData(?OrderAddress $orderAddress, ?OrderAddress $expectedAddress): void
     {
@@ -156,9 +153,6 @@ class CheckoutAddressTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedAddress, $form->getData());
     }
 
-    /**
-     * @return array
-     */
     public function preSetDataDataProvider(): array
     {
         $orderAddress = $this->getOrderAddress('sample address');

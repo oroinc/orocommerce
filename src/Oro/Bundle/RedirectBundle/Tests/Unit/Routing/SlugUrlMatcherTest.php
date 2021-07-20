@@ -828,16 +828,6 @@ class SlugUrlMatcherTest extends \PHPUnit\Framework\TestCase
         return $baseMatcher;
     }
 
-    /**
-     * @param $contextRouteName
-     * @param $contextRouteParameters
-     * @param $routeName
-     * @param $routeParameters
-     * @param $realContextUrl
-     * @param $realUrl
-     * @param $fullRealContextUrl
-     * @param $fullRealUrl
-     */
     private function assertRouterCalls(
         $contextRouteName,
         $contextRouteParameters,

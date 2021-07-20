@@ -15,17 +15,11 @@ class ProductVisibilityCacheListener
     /** @var ResolvedProductVisibilityProvider */
     private $resolvedProductVisibilityProvider;
 
-    /**
-     * @param ResolvedProductVisibilityProvider $resolvedProductVisibilityProvider
-     */
     public function __construct(ResolvedProductVisibilityProvider $resolvedProductVisibilityProvider)
     {
         $this->resolvedProductVisibilityProvider = $resolvedProductVisibilityProvider;
     }
 
-    /**
-     * @param OnFlushEventArgs $args
-     */
     public function onFlush(OnFlushEventArgs $args): void
     {
         $unitOfWork = $args->getEntityManager()->getUnitOfWork();

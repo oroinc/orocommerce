@@ -24,10 +24,6 @@ class OrderAddressToAddressIdentifierViewTransformerTest extends \PHPUnit\Framew
         $this->addressManager = $this->createMock(OrderAddressManager::class);
     }
 
-    /**
-     * @param array $requiredFields
-     * @return OrderAddressToAddressIdentifierViewTransformer
-     */
     private function getTransformer(array $requiredFields): OrderAddressToAddressIdentifierViewTransformer
     {
         return new OrderAddressToAddressIdentifierViewTransformer(
@@ -60,9 +56,6 @@ class OrderAddressToAddressIdentifierViewTransformerTest extends \PHPUnit\Framew
         $this->assertSame($expectedIdentifier, $this->getTransformer($requiredFields)->transform($address));
     }
 
-    /**
-     * @return array
-     */
     public function transformDataProvider(): array
     {
         $orderAddressWithCustomerAddress = new OrderAddress();

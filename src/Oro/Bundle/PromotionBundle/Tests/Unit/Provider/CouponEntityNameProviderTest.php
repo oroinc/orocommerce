@@ -62,9 +62,6 @@ class CouponEntityNameProviderTest extends TestCase
         }
     }
 
-    /**
-     * @return array
-     */
     private function getFormats(): array
     {
         return [

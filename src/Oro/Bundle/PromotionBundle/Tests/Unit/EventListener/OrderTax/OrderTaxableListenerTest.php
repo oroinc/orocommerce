@@ -22,7 +22,6 @@ class OrderTaxableListenerTest extends \PHPUnit\Framework\TestCase
     /** @var UnitOfWork|\PHPUnit\Framework\MockObject\MockObject */
     private $unitOfWork;
 
-    /** @var OrderTaxableListener */
     private OrderTaxableListener $listener;
 
     protected function setUp(): void

@@ -18,10 +18,6 @@ class MethodRenamingListener
      */
     private $paymentTransactionRepository;
 
-    /**
-     * @param PaymentMethodConfigRepository $paymentMethodConfigRepository
-     * @param PaymentTransactionRepository  $paymentTransactionRepository
-     */
     public function __construct(
         PaymentMethodConfigRepository $paymentMethodConfigRepository,
         PaymentTransactionRepository $paymentTransactionRepository
@@ -30,9 +26,6 @@ class MethodRenamingListener
         $this->paymentTransactionRepository = $paymentTransactionRepository;
     }
 
-    /**
-     * @param MethodRenamingEvent $event
-     */
     public function onMethodRename(MethodRenamingEvent $event)
     {
         $this->updateRuleConfigs($event->getOldMethodIdentifier(), $event->getNewMethodIdentifier());

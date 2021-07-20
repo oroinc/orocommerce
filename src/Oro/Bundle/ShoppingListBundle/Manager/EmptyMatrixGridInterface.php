@@ -8,10 +8,6 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 interface EmptyMatrixGridInterface
 {
-    /**
-     * @param ShoppingList $shoppingList
-     * @param Product $product
-     */
     public function addEmptyMatrix(ShoppingList $shoppingList, Product $product);
 
     /**
@@ -20,9 +16,5 @@ interface EmptyMatrixGridInterface
      */
     public function isAddEmptyMatrixAllowed(array $lineItems): bool;
 
-    /**
-     * @param ShoppingList $shoppingList
-     * @return bool
-     */
     public function hasEmptyMatrix(ShoppingList $shoppingList): bool;
 }

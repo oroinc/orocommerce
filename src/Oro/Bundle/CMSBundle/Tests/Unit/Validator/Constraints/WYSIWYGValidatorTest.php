@@ -169,7 +169,6 @@ class WYSIWYGValidatorTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getTestValidateByPropertyPathDataProvider
-     * @param string $propertyPath
      */
     public function testValidateByPropertyPath(string $propertyPath): void
     {
@@ -225,9 +224,6 @@ class WYSIWYGValidatorTest extends \PHPUnit\Framework\TestCase
         $this->validator->validate($value, $constraint);
     }
 
-    /**
-     * @return array
-     */
     public function getTestValidateByPropertyPathDataProvider(): array
     {
         return [

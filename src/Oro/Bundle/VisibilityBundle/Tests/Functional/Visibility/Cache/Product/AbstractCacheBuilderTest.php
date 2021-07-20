@@ -25,7 +25,6 @@ abstract class AbstractCacheBuilderTest extends WebTestCase
         $this->registry = $this->client->getContainer()->get('doctrine');
     }
 
-
     protected function tearDown(): void
     {
         $this->getContainer()->get('doctrine')->getManager()->clear();
@@ -34,9 +33,6 @@ abstract class AbstractCacheBuilderTest extends WebTestCase
 
     /**
      * @dataProvider buildCacheDataProvider
-     *
-     * @param $expectedStaticCount
-     * @param $expectedCategoryCount
      */
     public function testBuildCache($expectedStaticCount, $expectedCategoryCount)
     {

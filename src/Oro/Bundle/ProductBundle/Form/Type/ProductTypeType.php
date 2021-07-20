@@ -17,9 +17,6 @@ class ProductTypeType extends AbstractType
      */
     private $provider;
 
-    /**
-     * @param ProductTypeProvider $provider
-     */
     public function __construct(ProductTypeProvider $provider)
     {
         $this->provider = $provider;

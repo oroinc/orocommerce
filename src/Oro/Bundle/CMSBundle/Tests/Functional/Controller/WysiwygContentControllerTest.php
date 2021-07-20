@@ -30,7 +30,6 @@ HTML;
     }
 
     /**
-     * @param string|null $content
      * @dataProvider getValidateActionDataProvider
      */
     public function testValidateAction(?string $content): void
@@ -41,9 +40,6 @@ HTML;
         $this->assertEquals(['success' => true, 'errors' => []], \json_decode($response->getContent(), true));
     }
 
-    /**
-     * @return array
-     */
     public function getValidateActionDataProvider(): array
     {
         return [
@@ -165,12 +161,6 @@ HTML;
         );
     }
 
-    /**
-     * @param string|null $content
-     * @param string|null $className
-     * @param string|null $fieldName
-     * @return Response
-     */
     private function doValidateRequest(?string $content, ?string $className, ?string $fieldName): Response
     {
         $params = [];
@@ -195,10 +185,6 @@ HTML;
         return $this->client->getResponse();
     }
 
-    /**
-     * @param string|null $content
-     * @return Response
-     */
     private function doResolveRequest(?string $content): Response
     {
         $params = [];

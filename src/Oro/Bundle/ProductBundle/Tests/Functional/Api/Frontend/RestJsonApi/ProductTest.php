@@ -33,9 +33,6 @@ class ProductTest extends FrontendRestJsonApiTestCase
         ]);
     }
 
-    /**
-     * @return bool
-     */
     private function isPostgreSql(): bool
     {
         return $this->getEntityManager()->getConnection()->getDatabasePlatform() instanceof PostgreSqlPlatform;

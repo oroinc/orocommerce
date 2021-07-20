@@ -94,9 +94,6 @@ class ProductPriceDatagridExtensionTest extends AbstractProductsGridPricesExtens
         parent::testIsApplicableWhenAlreadyApplied();
     }
 
-    /**
-     * @param bool $isViewGranted
-     */
     private function mockAuthorizationChecker(bool $isViewGranted): void
     {
         $this->authorizationChecker
@@ -242,12 +239,6 @@ class ProductPriceDatagridExtensionTest extends AbstractProductsGridPricesExtens
 
     /**
      * @dataProvider processConfigsWhenSelectedFieldPresentDataProvider
-     *
-     * @param string $selectedField
-     * @param string $selectedTable
-     * @param bool $showTierPrices
-     * @param array $selectExpressions
-     * @param string $joinExpression
      */
     public function testProcessConfigsWhenSelectedFieldPresent(
         string $selectedField,
@@ -273,8 +264,6 @@ class ProductPriceDatagridExtensionTest extends AbstractProductsGridPricesExtens
     }
 
     /**
-     * @return array
-     *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function processConfigsWhenSelectedFieldPresentDataProvider(): array
@@ -386,13 +375,6 @@ class ProductPriceDatagridExtensionTest extends AbstractProductsGridPricesExtens
         ];
     }
 
-    /**
-     * @param string $selectedField
-     * @param string $selectedTable
-     * @param bool $showTierPrices
-     * @param array $selectExpressions
-     * @param string $joinExpression
-     */
     private function assertColumnsAddedToQueryConfig(
         string $selectedField,
         string $selectedTable,
@@ -451,10 +433,6 @@ class ProductPriceDatagridExtensionTest extends AbstractProductsGridPricesExtens
 
     /**
      * @dataProvider visitResultDataProvider
-     *
-     * @param bool $showTierPrices
-     * @param string $rawPrices
-     * @param array $unpackedPrices
      */
     public function testVisitResult(bool $showTierPrices, string $rawPrices, array $unpackedPrices): void
     {
@@ -506,9 +484,6 @@ class ProductPriceDatagridExtensionTest extends AbstractProductsGridPricesExtens
         $this->extension->visitResult($this->datagridConfiguration, $resultsObject);
     }
 
-    /**
-     * @return array
-     */
     public function visitResultDataProvider(): array
     {
         return [

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Oro\Bundle\ProductBundle\Form\DataTransformer;
 
 use Doctrine\Common\Collections\ArrayCollection;

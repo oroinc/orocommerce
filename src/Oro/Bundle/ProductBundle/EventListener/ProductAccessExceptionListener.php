@@ -21,17 +21,11 @@ class ProductAccessExceptionListener
      */
     private $requestStack;
 
-    /**
-     * @param RequestStack $requestStack
-     */
     public function __construct(RequestStack $requestStack)
     {
         $this->requestStack = $requestStack;
     }
 
-    /**
-     * @param GetResponseForExceptionEvent $event
-     */
     public function onAccessException(GetResponseForExceptionEvent $event)
     {
         $exception = $event->getThrowable();

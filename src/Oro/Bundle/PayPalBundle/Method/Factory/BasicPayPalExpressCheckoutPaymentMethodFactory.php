@@ -47,14 +47,6 @@ class BasicPayPalExpressCheckoutPaymentMethodFactory implements PayPalExpressChe
      */
     private $propertyAccessor;
 
-    /**
-     * @param Gateway $gateway
-     * @param RouterInterface $router
-     * @param DoctrineHelper $doctrineHelper
-     * @param OptionsProviderInterface $optionsProvider
-     * @param SurchargeProvider $surchargeProvider
-     * @param PropertyAccessor $propertyAccessor
-     */
     public function __construct(
         Gateway $gateway,
         RouterInterface $router,

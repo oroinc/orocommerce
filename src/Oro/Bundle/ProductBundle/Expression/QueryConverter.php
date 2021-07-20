@@ -17,19 +17,11 @@ class QueryConverter extends QueryBuilderGroupingOrmQueryConverter
     /** @var QueryConverterExtensionInterface[] */
     private $converterExtensions = [];
 
-    /**
-     * @param QueryConverterExtensionInterface $extension
-     */
     public function addExtension(QueryConverterExtensionInterface $extension): void
     {
         $this->converterExtensions[] = $extension;
     }
 
-    /**
-     * @param AbstractQueryDesigner $source
-     *
-     * @return QueryBuilder
-     */
     public function convert(AbstractQueryDesigner $source): QueryBuilder
     {
         $this->tableAliasByColumn = [];
@@ -54,9 +46,6 @@ class QueryConverter extends QueryBuilderGroupingOrmQueryConverter
         return $qb;
     }
 
-    /**
-     * @return array
-     */
     public function getTableAliasByColumn(): array
     {
         return $this->tableAliasByColumn;

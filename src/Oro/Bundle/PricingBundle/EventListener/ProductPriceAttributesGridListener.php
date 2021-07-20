@@ -29,10 +29,6 @@ class ProductPriceAttributesGridListener
      */
     protected $priceAttributePricesProvider;
 
-    /**
-     * @param DoctrineHelper $helper
-     * @param PriceAttributePricesProvider $provider
-     */
     public function __construct(
         DoctrineHelper $helper,
         PriceAttributePricesProvider $provider
@@ -42,7 +38,6 @@ class ProductPriceAttributesGridListener
     }
 
     /**
-     * @param BuildBefore $event
      * @throws \LogicException
      */
     public function onBuildBefore(BuildBefore $event)
@@ -75,7 +70,6 @@ class ProductPriceAttributesGridListener
     }
 
     /**
-     * @param BuildAfter $event
      * @throws \LogicException
      */
     public function onBuildAfter(BuildAfter $event)

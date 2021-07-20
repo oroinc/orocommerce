@@ -46,10 +46,6 @@ class FrontendShoppingListGridExtensionTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(DatagridConfiguration::create(['name' => 'test-grid-1', 'actions' => []]), $config);
     }
 
-    /**
-     * @param int $priority
-     * @return FrontendShoppingListGridExtension
-     */
     private function createExtension(int $priority): FrontendShoppingListGridExtension
     {
         $extension = new FrontendShoppingListGridExtension(self::GRIDS, self::ACTIONS, $priority);

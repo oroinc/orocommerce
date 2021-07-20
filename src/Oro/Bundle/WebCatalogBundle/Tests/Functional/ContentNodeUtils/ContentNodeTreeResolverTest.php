@@ -20,12 +20,6 @@ class ContentNodeTreeResolverTest extends WebTestCase
         ]);
     }
 
-    /**
-     * @param ContentNode $node
-     * @param Scope       $scope
-     *
-     * @return ResolvedContentNode|null
-     */
     private function getResolvedContentNode(ContentNode $node, Scope $scope): ?ResolvedContentNode
     {
         /** @var ContentNodeTreeResolverInterface $resolver */
@@ -38,11 +32,6 @@ class ContentNodeTreeResolverTest extends WebTestCase
         return $resolver->getResolvedContentNode($node, $scope);
     }
 
-    /**
-     * @param ResolvedContentNode $node
-     *
-     * @return array
-     */
     private function convertResolvedContentNodeToArray(ResolvedContentNode $node): array
     {
         $result = [
@@ -58,11 +47,6 @@ class ContentNodeTreeResolverTest extends WebTestCase
         return $result;
     }
 
-    /**
-     * @param ResolvedContentVariant $variant
-     *
-     * @return array
-     */
     private function convertResolvedContentVariantToArray(ResolvedContentVariant $variant): array
     {
         return [
@@ -71,19 +55,12 @@ class ContentNodeTreeResolverTest extends WebTestCase
         ];
     }
 
-    /**
-     * @param array               $expected
-     * @param ResolvedContentNode $node
-     */
     private function assertResolvedContentNodeEquals(array $expected, ResolvedContentNode $node)
     {
         $this->resolveIds($expected);
         self::assertEquals($expected, $this->convertResolvedContentNodeToArray($node));
     }
 
-    /**
-     * @param array $item
-     */
     private function resolveIds(array &$item)
     {
         $item['id'] = $this->getReference($item['id'])->getId();

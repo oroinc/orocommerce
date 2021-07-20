@@ -31,19 +31,12 @@ class PriceListSystemConfigSubscriber
      */
     protected $triggerHandler;
 
-    /**
-     * @param PriceListConfigConverter $converter
-     * @param PriceListRelationTriggerHandler $triggerHandler
-     */
     public function __construct(PriceListConfigConverter $converter, PriceListRelationTriggerHandler $triggerHandler)
     {
         $this->converter = $converter;
         $this->triggerHandler = $triggerHandler;
     }
 
-    /**
-     * @param ConfigSettingsUpdateEvent $event
-     */
     public function formPreSet(ConfigSettingsUpdateEvent $event)
     {
         $settingKey = $this->getSettingsKey(ConfigManager::SECTION_VIEW_SEPARATOR);
@@ -54,9 +47,6 @@ class PriceListSystemConfigSubscriber
         }
     }
 
-    /**
-     * @param ConfigSettingsUpdateEvent $event
-     */
     public function beforeSave(ConfigSettingsUpdateEvent $event)
     {
         $settings = $event->getSettings();
@@ -70,9 +60,6 @@ class PriceListSystemConfigSubscriber
         $this->wasChanged = true;
     }
 
-    /**
-     * @param ConfigUpdateEvent $event
-     */
     public function updateAfter(ConfigUpdateEvent $event)
     {
         if (!$this->wasChanged) {
@@ -90,9 +77,6 @@ class PriceListSystemConfigSubscriber
         $this->wasChanged = false;
     }
 
-    /**
-     * @return array
-     */
     protected function getConfigNamesRelatedToCombinedPls(): array
     {
         return [

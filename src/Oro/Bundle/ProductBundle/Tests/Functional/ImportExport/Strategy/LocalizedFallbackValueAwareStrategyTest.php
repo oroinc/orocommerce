@@ -57,11 +57,6 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
     }
 
     /**
-     * @param array $entityData
-     * @param array $expectedNames
-     * @param array $itemData
-     * @param array $expectedSlugPrototypes
-     *
      * @dataProvider processDataProvider
      */
     public function testProcess(
@@ -216,8 +211,6 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
     }
 
     /**
-     * @param array $entityData
-     * @param callable $resultCallback
      * @dataProvider skippedDataProvider
      */
     public function testProcessSkipped(array $entityData, callable $resultCallback)

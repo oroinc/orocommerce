@@ -18,10 +18,6 @@ class ContentNodeTreeResolver implements ContentNodeTreeResolverInterface
     /** @var ContentNodeTreeCache */
     private $cache;
 
-    /**
-     * @param ContentNodeTreeResolverInterface $innerResolver
-     * @param ContentNodeTreeCache             $cache
-     */
     public function __construct(
         ContentNodeTreeResolverInterface $innerResolver,
         ContentNodeTreeCache $cache

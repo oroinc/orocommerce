@@ -18,9 +18,6 @@ class ProductListener implements OptionalListenerInterface
     /** @var bool */
     private $enabled = true;
 
-    /**
-     * @param MessageProducerInterface $messageProducer
-     */
     public function __construct(MessageProducerInterface $messageProducer)
     {
         $this->messageProducer = $messageProducer;
@@ -34,9 +31,6 @@ class ProductListener implements OptionalListenerInterface
         $this->enabled = $enabled;
     }
 
-    /**
-     * @param Product $product
-     */
     public function postPersist(Product $product): void
     {
         if (!$this->enabled) {

@@ -95,8 +95,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Create oro_price_list table
-     *
-     * @param Schema $schema
      */
     protected function createOroPriceListTable(Schema $schema)
     {
@@ -117,8 +115,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Create oro_price_list_currency table
-     *
-     * @param Schema $schema
      */
     protected function createOroPriceListCurrencyTable(Schema $schema)
     {
@@ -131,8 +127,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Create oro_price_list_to_cus_group table
-     *
-     * @param Schema $schema
      */
     protected function createOroPriceListToCustomerGroupTable(Schema $schema)
     {
@@ -149,8 +143,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Create oro_price_list_to_customer table
-     *
-     * @param Schema $schema
      */
     protected function createOroPriceListToCustomerTable(Schema $schema)
     {
@@ -167,8 +159,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Create oro_price_list_to_website table
-     *
-     * @param Schema $schema
      */
     protected function createOroPriceListToWebsiteTable(Schema $schema)
     {
@@ -184,8 +174,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Create oro_price_product table
-     *
-     * @param Schema $schema
      */
     protected function createOroPriceProductTable(Schema $schema)
     {
@@ -210,8 +198,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Create oro_price_list_combined table
-     *
-     * @param Schema $schema
      */
     protected function createOroPriceListCombinedTable(Schema $schema)
     {
@@ -227,8 +213,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Create oro_price_product_combined table
-     *
-     * @param Schema $schema
      */
     protected function createOroPriceProductCombinedTable(Schema $schema)
     {
@@ -266,8 +250,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Create oro_plist_curr_combined table
-     *
-     * @param Schema $schema
      */
     protected function createOroPlistCurrCombinedTable(Schema $schema)
     {
@@ -280,8 +262,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Create oro_price_list_customer_fallback table
-     *
-     * @param Schema $schema
      */
     protected function createOroPriceListAccountFallbackTable(Schema $schema)
     {
@@ -296,8 +276,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Create oro_price_list_cus_gr_fb table
-     *
-     * @param Schema $schema
      */
     protected function createOroPriceListAccGroupFallbackTable(Schema $schema)
     {
@@ -312,8 +290,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Create oro_price_list_website_fb table
-     *
-     * @param Schema $schema
      */
     protected function createOroPriceListWebsiteFallbackTable(Schema $schema)
     {
@@ -327,8 +303,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Create oro_cmb_price_list_to_cus table
-     *
-     * @param Schema $schema
      */
     protected function createOroCmbPriceListToAccTable(Schema $schema)
     {
@@ -344,8 +318,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Create oro_cmb_plist_to_cus_gr table
-     *
-     * @param Schema $schema
      */
     protected function createOroCmbPriceListToAccGrTable(Schema $schema)
     {
@@ -361,8 +333,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Create oro_cmb_price_list_to_ws table
-     *
-     * @param Schema $schema
      */
     protected function createOroCmbPriceListToWsTable(Schema $schema)
     {
@@ -377,8 +347,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Create oro_cmb_pl_to_pl table
-     *
-     * @param Schema $schema
      */
     protected function createOroCmbPlToPlTable(Schema $schema)
     {
@@ -392,11 +360,8 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         $table->addIndex(['combined_price_list_id', 'sort_order'], 'cmb_pl_to_pl_cmb_prod_sort_idx', []);
     }
 
-
     /**
      * Create oro_price_list_schedule table
-     *
-     * @param Schema $schema
      */
     protected function createOroPriceListScheduleTable(Schema $schema)
     {
@@ -411,8 +376,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Create oro_cpl_activation_rule table
-     *
-     * @param Schema $schema
      */
     protected function createOroCplActivationRuleTable(Schema $schema)
     {
@@ -428,9 +391,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         $table->addIndex(['full_combined_price_list_id'], 'IDX_E71CEADA579D9EF', []);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function createOroPriceAttributeTable(Schema $schema)
     {
         $table = $schema->createTable('oro_price_attribute_pl');
@@ -443,9 +403,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         $table->setPrimaryKey(['id']);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function createOroPriceAttributeCurrencyTable(Schema $schema)
     {
         $table = $schema->createTable('oro_product_attr_currency');
@@ -455,9 +412,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         $table->setPrimaryKey(['id']);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function createOroPriceAttributeProductPriceTable(Schema $schema)
     {
         $table = $schema->createTable('oro_price_attribute_price');
@@ -478,8 +432,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Create oro_price_list_to_product table
-     *
-     * @param Schema $schema
      */
     protected function createOroriceListToProductTable(Schema $schema)
     {
@@ -494,8 +446,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Add oro_price_list_currency foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPriceListCurrencyForeignKeys(Schema $schema)
     {
@@ -510,8 +460,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Add oro_price_list_to_cus_group foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPriceListToAccGrForeignKeys(Schema $schema)
     {
@@ -538,8 +486,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Add oro_price_list_to_customer foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPriceListToAccountForeignKeys(Schema $schema)
     {
@@ -566,8 +512,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Add oro_price_list_to_website foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPriceListToWebsiteForeignKeys(Schema $schema)
     {
@@ -588,8 +532,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Add oro_price_product foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPriceProductForeignKeys(Schema $schema)
     {
@@ -622,8 +564,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Add oro_price_product_combined foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPriceProductCombinedForeignKeys(Schema $schema)
     {
@@ -650,8 +590,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Add oro_plist_curr_combined foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPlistCurrCombinedForeignKeys(Schema $schema)
     {
@@ -666,8 +604,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Add oro_price_list_customer_fallback foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPriceListAccountFallbackForeignKeys(Schema $schema)
     {
@@ -688,8 +624,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Add oro_price_list_cus_gr_fb foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPriceListAccGroupFallbackForeignKeys(Schema $schema)
     {
@@ -710,8 +644,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Add oro_price_list_website_fb foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPriceListWebsiteFallbackForeignKeys(Schema $schema)
     {
@@ -726,8 +658,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Add oro_cmb_plist_to_cus_gr foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroCmbPriceListToAccGrForeignKeys(Schema $schema)
     {
@@ -760,8 +690,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Add oro_cmb_price_list_to_ws foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroCmbPriceListToWsForeignKeys(Schema $schema)
     {
@@ -788,8 +716,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Add oro_cmb_price_list_to_cus foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroCmbPriceListToAccForeignKeys(Schema $schema)
     {
@@ -822,8 +748,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Add oro_cmb_pl_to_pl foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroCmbPlToPlForeignKeys(Schema $schema)
     {
@@ -844,8 +768,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Add oro_price_list_schedule foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPriceListScheduleForeignKeys(Schema $schema)
     {
@@ -860,8 +782,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Add oro_cpl_activation_rule foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroCplActivationRuleForeignKeys(Schema $schema)
     {
@@ -880,9 +800,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addOroPriceAttributeCurrencyForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('oro_product_attr_currency');
@@ -894,9 +811,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addOroPriceAttributeProductPriceForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('oro_price_attribute_price');
@@ -922,8 +836,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Add oro_price_list_to_product foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroriceListToProductForeignKeys(Schema $schema)
     {
@@ -944,8 +856,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Create oro_price_rule table
-     *
-     * @param Schema $schema
      */
     protected function createOroPriceRuleTable(Schema $schema)
     {
@@ -966,8 +876,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Create oro_price_rule_lexeme table
-     *
-     * @param Schema $schema
      */
     protected function createOroPriceRuleLexemeTable(Schema $schema)
     {
@@ -983,8 +891,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Create oro_notification_message table
-     *
-     * @param Schema $schema
      */
     protected function createOroNotificationMessageTable(Schema $schema)
     {
@@ -1006,8 +912,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Add oro_price_rule foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPriceRuleForeignKeys(Schema $schema)
     {
@@ -1028,8 +932,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Add oro_price_rule_lexeme foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPriceRuleLexemeForeignKeys(Schema $schema)
     {
@@ -1048,9 +950,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function addOroPriceAttributeOrganizationForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_price_attribute_pl');

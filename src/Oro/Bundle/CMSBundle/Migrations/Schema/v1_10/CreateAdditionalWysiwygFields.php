@@ -113,10 +113,6 @@ class CreateAdditionalWysiwygFields implements Migration, ConnectionAwareInterfa
 
     /**
      * Decodes serialized option data.
-     *
-     * @param string $data
-     *
-     * @return array
      */
     private function decodeData(string $data): array
     {

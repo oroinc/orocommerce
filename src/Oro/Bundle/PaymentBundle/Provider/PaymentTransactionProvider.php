@@ -32,12 +32,6 @@ class PaymentTransactionProvider
     /** @var EventDispatcherInterface */
     protected $dispatcher;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param CustomerUserProvider $customerUserProvider
-     * @param EventDispatcherInterface $dispatcher
-     * @param string $paymentTransactionClass
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         CustomerUserProvider $customerUserProvider,
@@ -142,10 +136,6 @@ class PaymentTransactionProvider
         return $this->getPaymentTransaction($object, $criteria);
     }
 
-    /**
-     * @param string|null $paymentMethod
-     * @return PaymentTransaction|null
-     */
     public function getActiveValidatePaymentTransaction(?string $paymentMethod): ?PaymentTransaction
     {
         $customerUser = $this->customerUserProvider->getLoggedUser(true);
@@ -186,12 +176,6 @@ class PaymentTransactionProvider
         return $paymentTransaction;
     }
 
-    /**
-     * @param string $action
-     * @param PaymentTransaction $parentPaymentTransaction
-     *
-     * @return PaymentTransaction
-     */
     public function createPaymentTransactionByParentTransaction(
         string $action,
         PaymentTransaction $parentPaymentTransaction
@@ -210,7 +194,6 @@ class PaymentTransactionProvider
     }
 
     /**
-     * @param PaymentTransaction $paymentTransaction
      * @throws \Throwable
      */
     public function savePaymentTransaction(PaymentTransaction $paymentTransaction): void
@@ -237,9 +220,6 @@ class PaymentTransactionProvider
         }
     }
 
-    /**
-     * @return PaymentTransaction
-     */
     private function createEmptyPaymentTransaction(): PaymentTransaction
     {
         return new $this->paymentTransactionClass();

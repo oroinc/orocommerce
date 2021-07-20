@@ -15,7 +15,6 @@ class PlaceholderHelperTest extends \PHPUnit\Framework\TestCase
     /** @var AbstractSearchMappingProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $searchMappingProvider;
 
-    /** @var PlaceholderHelper */
     private PlaceholderHelper $helper;
 
     /**
@@ -54,9 +53,6 @@ class PlaceholderHelperTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $this->helper->isNameMatch($name, $nameValue));
     }
 
-    /**
-     * @return array
-     */
     public function isNameMatchDataProvider(): array
     {
         return [
@@ -80,10 +76,6 @@ class PlaceholderHelperTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getEntityClassByResolvedIndexAliasDataProvider
-     *
-     * @param string $indexAlias
-     * @param array $aliases
-     * @param string $expected
      */
     public function testGetEntityClassByResolvedIndexAlias(string $indexAlias, array $aliases, string $expected): void
     {
@@ -107,9 +99,6 @@ class PlaceholderHelperTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $this->helper->getEntityClassByResolvedIndexAlias($indexAlias));
     }
 
-    /**
-     * @return array
-     */
     public function getEntityClassByResolvedIndexAliasDataProvider(): array
     {
         return [

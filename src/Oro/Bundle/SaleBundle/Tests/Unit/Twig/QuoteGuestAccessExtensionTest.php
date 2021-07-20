@@ -45,10 +45,6 @@ class QuoteGuestAccessExtensionTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider guestAccessLinkProvider
-     *
-     * @param bool $withWebsite
-     * @param bool $isEnabled
-     * @param null|string $expected
      */
     public function testGetGuestAccessLink(bool $withWebsite, bool $isEnabled, ?string $expected): void
     {
@@ -79,9 +75,6 @@ class QuoteGuestAccessExtensionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @return array
-     */
     public function guestAccessLinkProvider(): array
     {
         return [

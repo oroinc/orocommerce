@@ -12,9 +12,6 @@ class CompositeCacheBuilder implements CacheBuilderInterface
      */
     protected $builders = [];
 
-    /**
-     * @param CacheBuilderInterface $cacheBuilder
-     */
     public function addBuilder(CacheBuilderInterface $cacheBuilder)
     {
         if (!in_array($cacheBuilder, $this->builders, true)) {

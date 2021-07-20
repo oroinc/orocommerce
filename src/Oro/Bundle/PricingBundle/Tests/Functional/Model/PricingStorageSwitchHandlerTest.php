@@ -112,10 +112,6 @@ class PricingStorageSwitchHandlerTest extends WebTestCase
         );
     }
 
-    /**
-     * @param array $relations
-     * @param string $priceListReference
-     */
     protected function assertPriceListRelation(array $relations, string $priceListReference)
     {
         $this->assertCount(1, $relations);

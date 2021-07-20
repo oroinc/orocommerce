@@ -17,10 +17,6 @@ class SitemapFileWriter implements SitemapFileWriterInterface
     /** @var LoggerInterface */
     private $logger;
 
-    /**
-     * @param FileManager     $fileManager
-     * @param LoggerInterface $logger
-     */
     public function __construct(FileManager $fileManager, LoggerInterface $logger)
     {
         $this->fileManager = $fileManager;

@@ -49,10 +49,6 @@ class ProductCollectionSegmentType extends AbstractType implements DataMapperInt
      */
     private $propertyPathMapper;
 
-    /**
-     * @param ProductCollectionDefinitionConverter $definitionConverter
-     * @param PropertyAccessor $propertyAccessor
-     */
     public function __construct(
         ProductCollectionDefinitionConverter $definitionConverter,
         PropertyAccessor $propertyAccessor

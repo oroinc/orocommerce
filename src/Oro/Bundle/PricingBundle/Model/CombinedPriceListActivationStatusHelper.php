@@ -23,10 +23,6 @@ class CombinedPriceListActivationStatusHelper implements CombinedPriceListActiva
      */
     private $configManager;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param ConfigManager $configManager
-     */
     public function __construct(
         ManagerRegistry $registry,
         ConfigManager $configManager

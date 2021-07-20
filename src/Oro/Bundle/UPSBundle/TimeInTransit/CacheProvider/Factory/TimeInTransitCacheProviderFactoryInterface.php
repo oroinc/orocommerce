@@ -7,10 +7,5 @@ use Oro\Bundle\UPSBundle\TimeInTransit\CacheProvider\TimeInTransitCacheProviderI
 
 interface TimeInTransitCacheProviderFactoryInterface
 {
-    /**
-     * @param UPSSettings $settings
-     *
-     * @return TimeInTransitCacheProviderInterface
-     */
     public function createCacheProviderForTransport(UPSSettings $settings): TimeInTransitCacheProviderInterface;
 }

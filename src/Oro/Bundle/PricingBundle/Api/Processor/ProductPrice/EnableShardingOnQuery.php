@@ -17,9 +17,6 @@ class EnableShardingOnQuery implements ProcessorInterface
     /** @var ShardManager */
     private $shardManager;
 
-    /**
-     * @param ShardManager $shardManager
-     */
     public function __construct(ShardManager $shardManager)
     {
         $this->shardManager = $shardManager;

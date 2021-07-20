@@ -52,9 +52,6 @@ class CategoryDataConverter extends LocalizedFallbackValueAwareDataConverter
         return $header;
     }
 
-    /**
-     * @return bool
-     */
     protected function isOrganizationColumnAllowed(): bool
     {
         return false;

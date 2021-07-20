@@ -16,17 +16,11 @@ class VisibilityPostSetDataListener
      */
     protected $fieldDataProvider;
 
-    /**
-     * @param VisibilityFormFieldDataProvider $fieldDataProvider
-     */
     public function __construct(VisibilityFormFieldDataProvider $fieldDataProvider)
     {
         $this->fieldDataProvider = $fieldDataProvider;
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function onPostSetData(FormEvent $event)
     {
         $form = $event->getForm();
@@ -40,9 +34,6 @@ class VisibilityPostSetDataListener
         $this->setFormCustomerData($form);
     }
 
-    /**
-     * @param FormInterface $form
-     */
     protected function setFormAllData(FormInterface $form)
     {
         $visibility = $this->fieldDataProvider
@@ -59,9 +50,6 @@ class VisibilityPostSetDataListener
         $form->get(EntityVisibilityType::ALL_FIELD)->setData($data);
     }
 
-    /**
-     * @param FormInterface $form
-     */
     protected function setFormCustomerGroupData(FormInterface $form)
     {
         $visibilities = $this->fieldDataProvider
@@ -86,9 +74,6 @@ class VisibilityPostSetDataListener
         $form->get(EntityVisibilityType::ACCOUNT_GROUP_FIELD)->setData($data);
     }
 
-    /**
-     * @param FormInterface $form
-     */
     protected function setFormCustomerData(FormInterface $form)
     {
         $visibilities = $this->fieldDataProvider

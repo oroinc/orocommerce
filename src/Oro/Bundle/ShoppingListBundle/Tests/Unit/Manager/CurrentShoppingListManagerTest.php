@@ -100,9 +100,6 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         return $this->getEntity(CustomerUser::class, ['id' => $id]);
     }
 
-    /**
-     * @param ShoppingList|null $shoppingList
-     */
     private function expectGetCurrentShoppingList(?ShoppingList $shoppingList)
     {
         $customerUserId = 234;
@@ -173,9 +170,6 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             ->method('save');
     }
 
-    /**
-     * @param ShoppingList|null $shoppingList
-     */
     private function expectGetGuestShoppingList(?ShoppingList $shoppingList)
     {
         $this->guestShoppingListManager->expects($this->once())
@@ -188,9 +182,6 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             ->method('createAndGetShoppingListForCustomerVisitor');
     }
 
-    /**
-     * @param ShoppingList $shoppingList
-     */
     private function expectCreateGuestShoppingList(ShoppingList $shoppingList)
     {
         $this->guestShoppingListManager->expects($this->once())

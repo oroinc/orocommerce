@@ -11,9 +11,6 @@ class ExpressionPreprocessor implements ExpressionPreprocessorInterface
      */
     protected $preprocessors = [];
 
-    /**
-     * @param ExpressionPreprocessorInterface $preprocessor
-     */
     public function registerPreprocessor(ExpressionPreprocessorInterface $preprocessor)
     {
         $this->preprocessors[] = $preprocessor;

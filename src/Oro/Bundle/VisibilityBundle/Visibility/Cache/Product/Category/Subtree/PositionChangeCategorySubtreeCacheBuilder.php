@@ -216,9 +216,6 @@ class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategory
         );
     }
 
-    /**
-     * @param Category $category
-     */
     protected function updateConfigVisibilityRelatedEntities(Category $category)
     {
         $this->updateCustomerGroupsCategoryVisibility(
@@ -253,9 +250,6 @@ class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategory
         );
     }
 
-    /**
-     * @param EntityRepository $repositoryHolder
-     */
     public function setCustomerCategoryRepository(EntityRepository $repositoryHolder)
     {
         $this->customerCategoryRepository = $repositoryHolder;

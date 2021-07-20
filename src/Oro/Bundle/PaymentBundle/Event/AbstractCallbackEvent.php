@@ -12,9 +12,6 @@ abstract class AbstractCallbackEvent extends AbstractTransactionEvent
     /** @var Response */
     protected $response;
 
-    /**
-     * @param array $data
-     */
     public function __construct(array $data = [])
     {
         $this->data = $data;
@@ -38,9 +35,6 @@ abstract class AbstractCallbackEvent extends AbstractTransactionEvent
         return $this->response;
     }
 
-    /**
-     * @param Response $response
-     */
     public function setResponse(Response $response)
     {
         $this->response = $response;

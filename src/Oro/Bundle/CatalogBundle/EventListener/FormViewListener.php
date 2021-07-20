@@ -28,10 +28,6 @@ class FormViewListener
      */
     protected $doctrineHelper;
 
-    /**
-     * @param TranslatorInterface $translator
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(
         TranslatorInterface $translator,
         DoctrineHelper $doctrineHelper
@@ -40,9 +36,6 @@ class FormViewListener
         $this->doctrineHelper = $doctrineHelper;
     }
 
-    /**
-     * @param BeforeListRenderEvent $event
-     */
     public function onProductView(BeforeListRenderEvent $event)
     {
         $product = $event->getEntity();
@@ -67,9 +60,6 @@ class FormViewListener
         $this->prependCategoryBlock($event->getScrollData(), $template);
     }
 
-    /**
-     * @param BeforeListRenderEvent $event
-     */
     public function onProductEdit(BeforeListRenderEvent $event)
     {
         $template = $event->getEnvironment()->render(

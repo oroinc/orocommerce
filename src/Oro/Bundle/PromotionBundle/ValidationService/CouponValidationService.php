@@ -20,19 +20,11 @@ class CouponValidationService
      */
     private $couponUsageManager;
 
-    /**
-     * @param CouponUsageManager $couponUsageManager
-     */
     public function __construct(CouponUsageManager $couponUsageManager)
     {
         $this->couponUsageManager = $couponUsageManager;
     }
 
-    /**
-     * @param Coupon $coupon
-     * @param CustomerUser|null $customerUser
-     * @return bool
-     */
     public function isValid(Coupon $coupon, CustomerUser $customerUser = null): bool
     {
         return !$this->getViolations($coupon, $customerUser);
@@ -74,28 +66,16 @@ class CouponValidationService
         return $violations;
     }
 
-    /**
-     * @param Coupon $coupon
-     * @return bool
-     */
     private function isCouponNotStarted(Coupon $coupon): bool
     {
         return $coupon->getValidFrom() && $coupon->getValidFrom() > new \DateTime('now', new \DateTimeZone('UTC'));
     }
 
-    /**
-     * @param Coupon $coupon
-     * @return bool
-     */
     private function isCouponExpired(Coupon $coupon): bool
     {
         return $coupon->getValidUntil() && $coupon->getValidUntil() < new \DateTime('now', new \DateTimeZone('UTC'));
     }
 
-    /**
-     * @param Coupon $coupon
-     * @return bool
-     */
     private function isCouponUsageLimitExceeded(Coupon $coupon): bool
     {
         return $coupon->getUsesPerCoupon() !== null

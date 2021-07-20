@@ -23,7 +23,6 @@ class HasApplicableShippingMethodsTest extends \PHPUnit\Framework\TestCase
     /** @var ShippingPriceProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $shippingPriceProvider;
 
-
     protected function setUp(): void
     {
         $this->shippingMethodProvider = $this->createMock(ShippingMethodProviderInterface::class);

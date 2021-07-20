@@ -36,9 +36,6 @@ abstract class BaseCategoryVisibilityResolved extends BaseVisibilityResolved
      */
     protected $category;
 
-    /**
-     * @param Category $category
-     */
     public function __construct(Category $category)
     {
         $this->category = $category;
@@ -60,9 +57,6 @@ abstract class BaseCategoryVisibilityResolved extends BaseVisibilityResolved
         return $this->scope;
     }
 
-    /**
-     * @param Scope $scope
-     */
     public function setCope(Scope $scope)
     {
         $this->scope = $scope;

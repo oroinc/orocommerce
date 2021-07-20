@@ -19,9 +19,6 @@ class ProductPriceHandler extends FormHandler
 
     /**
      * ProductPriceHandler constructor.
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param DoctrineHelper $doctrineHelper
-     * @param PriceManager $priceManager
      */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
@@ -32,10 +29,6 @@ class ProductPriceHandler extends FormHandler
         $this->priceManager = $priceManager;
     }
 
-    /**
-     * @param $data
-     * @param FormInterface $form
-     */
     protected function saveData($data, FormInterface $form)
     {
         $this->priceManager->persist($data);

@@ -35,9 +35,6 @@ class ContactInfoWidgetProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param ContactInfo $contactInfo
-     * @param array       $expectedResult
-     *
      * @dataProvider contactInfoBlockDataProvider
      */
     public function testGetContactInfoBlock(ContactInfo $contactInfo, array $expectedResult)

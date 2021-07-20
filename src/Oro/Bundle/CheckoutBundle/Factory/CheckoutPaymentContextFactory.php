@@ -48,14 +48,6 @@ class CheckoutPaymentContextFactory
      */
     private $shippingOriginProvider;
 
-    /**
-     * @param CheckoutLineItemsManager $checkoutLineItemsManager
-     * @param SubtotalProviderInterface $checkoutSubtotalProvider
-     * @param TotalProcessorProvider $totalProcessor
-     * @param OrderPaymentLineItemConverterInterface $paymentLineItemConverter
-     * @param ShippingOriginProvider $shippingOriginProvider
-     * @param null|PaymentContextBuilderFactoryInterface $paymentContextBuilderFactory
-     */
     public function __construct(
         CheckoutLineItemsManager $checkoutLineItemsManager,
         SubtotalProviderInterface $checkoutSubtotalProvider,
@@ -130,10 +122,6 @@ class CheckoutPaymentContextFactory
         return $paymentContextBuilder->getResult();
     }
 
-    /**
-     * @param PaymentContextBuilderInterface $paymentContextBuilder
-     * @param Checkout $checkout
-     */
     private function addAddresses(
         PaymentContextBuilderInterface $paymentContextBuilder,
         Checkout $checkout

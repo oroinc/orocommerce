@@ -26,10 +26,6 @@ class CategoryFallbackProvider extends AbstractEntityFallbackProvider
      */
     protected $systemConfigFallbackProvider;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param SystemConfigFallbackProvider $systemConfigFallbackProvider
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         SystemConfigFallbackProvider $systemConfigFallbackProvider

@@ -28,17 +28,11 @@ class PriceListShardingListener
      */
     protected $priceListsDelete = [];
 
-    /**
-     * @param ShardManager $shardManager
-     */
     public function __construct(ShardManager $shardManager)
     {
         $this->shardManager = $shardManager;
     }
 
-    /**
-     * @param LifecycleEventArgs $args
-     */
     public function postPersist(LifecycleEventArgs $args)
     {
         $entity = $args->getEntity();
@@ -47,9 +41,6 @@ class PriceListShardingListener
         }
     }
 
-    /**
-     * @param LifecycleEventArgs $args
-     */
     public function preRemove(LifecycleEventArgs $args)
     {
         $entity = $args->getEntity();
@@ -58,9 +49,6 @@ class PriceListShardingListener
         }
     }
 
-    /**
-     * @param PostFlushEventArgs $args
-     */
     public function postFlush(PostFlushEventArgs $args)
     {
         foreach ($this->priceListsCreate as $priceList) {

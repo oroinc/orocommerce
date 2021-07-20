@@ -21,11 +21,6 @@ class CategoryCountsCache
     /** @var WebsiteManager */
     private $websiteManager;
 
-    /**
-     * @param CacheProvider $cacheProvider
-     * @param TokenAccessor $tokenAccessor
-     * @param WebsiteManager $websiteManager
-     */
     public function __construct(
         CacheProvider $cacheProvider,
         TokenAccessor $tokenAccessor,

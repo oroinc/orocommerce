@@ -19,8 +19,6 @@ class AddWebsitesToShippingMethodsConfigsRule implements Migration
 
     /**
      * Create oro_ship_mtds_rule_website table
-     *
-     * @param Schema $schema
      */
     protected function createOroShipMtdsRuleWebsiteTable(Schema $schema)
     {
@@ -33,8 +31,6 @@ class AddWebsitesToShippingMethodsConfigsRule implements Migration
 
     /**
      * Add oro_ship_mtds_rule_website foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroShipMtdsRuleWebsiteForeignKeys(Schema $schema)
     {

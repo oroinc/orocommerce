@@ -21,10 +21,6 @@ class ChannelFactory
      */
     private $translator;
 
-    /**
-     * @param MoneyOrderChannelType $moneyOrderChannelType
-     * @param TranslatorInterface   $translator
-     */
     public function __construct(
         MoneyOrderChannelType $moneyOrderChannelType,
         TranslatorInterface $translator

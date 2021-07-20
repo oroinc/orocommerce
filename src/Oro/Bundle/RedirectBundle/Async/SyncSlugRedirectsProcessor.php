@@ -31,10 +31,6 @@ class SyncSlugRedirectsProcessor implements MessageProcessorInterface, TopicSubs
      */
     protected $logger;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param LoggerInterface $logger
-     */
     public function __construct(
         ManagerRegistry $registry,
         LoggerInterface $logger
@@ -108,10 +104,6 @@ class SyncSlugRedirectsProcessor implements MessageProcessorInterface, TopicSubs
         return [Topics::SYNC_SLUG_REDIRECTS];
     }
 
-    /**
-     * @param array $message
-     * @return array
-     */
     private function getResolvedMessageData(array $message): array
     {
         $optionsResolver = new OptionsResolver();

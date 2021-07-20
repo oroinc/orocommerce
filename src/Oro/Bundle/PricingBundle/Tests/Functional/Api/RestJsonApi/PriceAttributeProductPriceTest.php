@@ -392,11 +392,6 @@ class PriceAttributeProductPriceTest extends RestJsonApiTestCase
         );
     }
 
-    /**
-     * @param int    $entityId
-     * @param string $associationName
-     * @param string $associationId
-     */
     private function assertGetSubResource(int $entityId, string $associationName, string $associationId)
     {
         $response = $this->getSubresource([

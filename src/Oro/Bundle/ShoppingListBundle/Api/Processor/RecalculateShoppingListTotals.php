@@ -20,9 +20,6 @@ class RecalculateShoppingListTotals implements ProcessorInterface
     /** @var ShoppingListTotalManager */
     private $totalManager;
 
-    /**
-     * @param ShoppingListTotalManager $totalManager
-     */
     public function __construct(ShoppingListTotalManager $totalManager)
     {
         $this->totalManager = $totalManager;
@@ -46,10 +43,6 @@ class RecalculateShoppingListTotals implements ProcessorInterface
         }
     }
 
-    /**
-     * @param ShoppingList             $shoppingList
-     * @param CustomizeFormDataContext $context
-     */
     private function recalculateTotals(
         ShoppingList $shoppingList,
         CustomizeFormDataContext $context
@@ -66,12 +59,6 @@ class RecalculateShoppingListTotals implements ProcessorInterface
         }
     }
 
-    /**
-     * @param ShoppingList             $shoppingList
-     * @param CustomizeFormDataContext $context
-     *
-     * @return bool
-     */
     private function isTotalsRecalculationRequired(
         ShoppingList $shoppingList,
         CustomizeFormDataContext $context

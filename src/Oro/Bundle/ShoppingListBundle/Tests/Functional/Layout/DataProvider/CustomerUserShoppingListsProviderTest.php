@@ -58,8 +58,6 @@ class CustomerUserShoppingListsProviderTest extends WebTestCase
 
     /**
      * @dataProvider ACLProvider
-     * @param array $shoppingLists
-     * @param string $user
      */
     public function testGetShoppingLists(array $shoppingLists, string $user): void
     {
@@ -78,9 +76,6 @@ class CustomerUserShoppingListsProviderTest extends WebTestCase
         $this->assertEquals($shoppingLists, $actual);
     }
 
-    /**
-     * @return array
-     */
     public function ACLProvider(): array
     {
         return [
@@ -123,8 +118,6 @@ class CustomerUserShoppingListsProviderTest extends WebTestCase
 
     /**
      * @dataProvider getShoppingListsForWidgetWhenNotShowAllProvider
-     * @param array $shoppingLists
-     * @param string $user
      */
     public function testGetShoppingListsForWidgetWhenNotShowAll(array $shoppingLists, string $user): void
     {
@@ -147,9 +140,6 @@ class CustomerUserShoppingListsProviderTest extends WebTestCase
         $this->assertEquals($shoppingLists, $actual);
     }
 
-    /**
-     * @return array
-     */
     public function getShoppingListsForWidgetWhenNotShowAllProvider(): array
     {
         return [

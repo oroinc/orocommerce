@@ -24,10 +24,6 @@ class AddParentEntityIdToCategoryNodeSubresourceQuery implements ProcessorInterf
     /** @var string */
     private $entityAssociationName;
 
-    /**
-     * @param EntityIdHelper $entityIdHelper
-     * @param string         $entityAssociationName
-     */
     public function __construct(EntityIdHelper $entityIdHelper, string $entityAssociationName)
     {
         $this->entityIdHelper = $entityIdHelper;

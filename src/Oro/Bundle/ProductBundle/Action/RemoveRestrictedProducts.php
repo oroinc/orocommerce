@@ -33,12 +33,6 @@ class RemoveRestrictedProducts extends AbstractAction
     /** @var AclHelper */
     private $aclHelper;
 
-    /**
-     * @param ProductRepository $productRepository
-     * @param ProductManager $productManager
-     * @param AclHelper $aclHelper
-     * @param ContextAccessor $contextAccessor
-     */
     public function __construct(
         ProductRepository $productRepository,
         ProductManager $productManager,
@@ -114,10 +108,6 @@ class RemoveRestrictedProducts extends AbstractAction
         return $this;
     }
 
-    /**
-     * @param array $products
-     * @return array
-     */
     private function getAllowedProductsIds(array $products): array
     {
         $queryBuilder = $this->productRepository->getProductsQueryBuilder($products);

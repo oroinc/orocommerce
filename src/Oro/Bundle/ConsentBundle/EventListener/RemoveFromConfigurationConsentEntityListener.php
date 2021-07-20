@@ -22,10 +22,6 @@ class RemoveFromConfigurationConsentEntityListener
      */
     private $doctrine;
 
-    /**
-     * @param ManagerRegistry $doctrine
-     * @param ConsentConfigManager $consentConfigManager
-     */
     public function __construct(
         ManagerRegistry $doctrine,
         ConsentConfigManager $consentConfigManager
@@ -34,9 +30,6 @@ class RemoveFromConfigurationConsentEntityListener
         $this->consentConfigManager = $consentConfigManager;
     }
 
-    /**
-     * @param Consent $consent
-     */
     public function preRemove(Consent $consent)
     {
         $websiteRepository = $this->doctrine

@@ -106,9 +106,6 @@ class QuoteFormSubscriberTest extends FormIntegrationTestCase
         $this->assertNull($quote->getWebsite());
     }
 
-    /**
-     * @return array
-     */
     public function noWebsiteDataProvider(): array
     {
         return [
@@ -164,9 +161,6 @@ class QuoteFormSubscriberTest extends FormIntegrationTestCase
         $this->assertNull($quote->getCustomer());
     }
 
-    /**
-     * @return array
-     */
     public function noCustomerDataProvider(): array
     {
         return [

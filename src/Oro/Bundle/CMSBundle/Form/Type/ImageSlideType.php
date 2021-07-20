@@ -21,10 +21,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class ImageSlideType extends AbstractType
 {
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add(
@@ -115,9 +111,6 @@ class ImageSlideType extends AbstractType
         $builder->addEventListener(FormEvents::SUBMIT, [$this, 'setContentWidget']);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function setContentWidget(FormEvent $event): void
     {
         $data = $event->getData();

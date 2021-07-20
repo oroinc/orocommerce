@@ -39,11 +39,6 @@ class PayPalCreditCardPaymentMethod implements PaymentMethodInterface
     /** @var PayPalCreditCardConfigInterface */
     protected $config;
 
-    /**
-     * @param Gateway $gateway
-     * @param PayPalCreditCardConfigInterface $config
-     * @param RouterInterface $router
-     */
     public function __construct(Gateway $gateway, PayPalCreditCardConfigInterface $config, RouterInterface $router)
     {
         $this->gateway = $gateway;
@@ -68,9 +63,6 @@ class PayPalCreditCardPaymentMethod implements PaymentMethodInterface
         return $this->{$action}($paymentTransaction) ?: [];
     }
 
-    /**
-     * @param PaymentTransaction $paymentTransaction
-     */
     public function authorize(PaymentTransaction $paymentTransaction)
     {
         $sourcePaymentTransaction = $paymentTransaction->getSourcePaymentTransaction();
@@ -93,10 +85,6 @@ class PayPalCreditCardPaymentMethod implements PaymentMethodInterface
             ->setResponse($response->getData());
     }
 
-    /**
-     * @param PaymentTransaction $paymentTransaction
-     * @param PaymentTransaction $sourcePaymentTransaction
-     */
     protected function useValidateTransactionData(
         PaymentTransaction $paymentTransaction,
         PaymentTransaction $sourcePaymentTransaction
@@ -356,9 +344,6 @@ class PayPalCreditCardPaymentMethod implements PaymentMethodInterface
         );
     }
 
-    /**
-     * @param PaymentTransaction $paymentTransaction
-     */
     public function complete(PaymentTransaction $paymentTransaction)
     {
         $response = new Response($paymentTransaction->getResponse());

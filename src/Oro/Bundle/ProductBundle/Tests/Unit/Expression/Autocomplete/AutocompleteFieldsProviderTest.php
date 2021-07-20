@@ -24,7 +24,6 @@ class AutocompleteFieldsProviderTest extends AbstractFieldsProviderTest
 
     /**
      * @dataProvider getFieldsDataProvider
-     * @param array $fieldsData
      */
     public function testGetAutocompleteDataNumericOnly(array $fieldsData)
     {
@@ -197,7 +196,6 @@ class AutocompleteFieldsProviderTest extends AbstractFieldsProviderTest
                         ]
                     ],
                     [
-
 
                         self::CLASS_NAME => 'UnitClass',
                         self::IS_RELATION => true,

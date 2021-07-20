@@ -26,11 +26,6 @@ class ShoppingListLineItemBatchUpdateHandler
     /** @var ValidatorInterface */
     private $validator;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param ShoppingListManager $shoppingListManager
-     * @param ValidatorInterface $validator
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         ShoppingListManager $shoppingListManager,
@@ -108,11 +103,6 @@ class ShoppingListLineItemBatchUpdateHandler
         return $data;
     }
 
-    /**
-     * @param ShoppingList $shoppingList
-     *
-     * @return array
-     */
     private function getShoppingListErrors(ShoppingList $shoppingList): array
     {
         $constraintViolationList = $this->validator->validate($shoppingList);

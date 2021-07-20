@@ -58,11 +58,6 @@ class ContentBlockDataProvider
         $this->scopeType = $scopeType;
     }
 
-    /**
-     * @param string $alias
-     *
-     * @return ContentBlockView|null
-     */
     public function getContentBlockView(string $alias): ?ContentBlockView
     {
         $criteria = $this->scopeManager->getCriteria($this->scopeType);
@@ -77,10 +72,6 @@ class ContentBlockDataProvider
         return $this->contentBlockResolver->getContentBlockViewByCriteria($contentBlock, $criteria);
     }
 
-    /**
-     * @param string $alias
-     * @return ContentBlock|null
-     */
     private function getContentBlock(string $alias): ?ContentBlock
     {
         $repo = $this->registry->getManagerForClass($this->entityClass)->getRepository($this->entityClass);

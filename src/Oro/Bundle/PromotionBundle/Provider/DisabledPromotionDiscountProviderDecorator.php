@@ -17,9 +17,6 @@ class DisabledPromotionDiscountProviderDecorator implements PromotionDiscountsPr
      */
     private $promotionDiscountProvider;
 
-    /**
-     * @param PromotionDiscountsProviderInterface $promotionDiscountsProvider
-     */
     public function __construct(PromotionDiscountsProviderInterface $promotionDiscountsProvider)
     {
         $this->promotionDiscountProvider = $promotionDiscountsProvider;

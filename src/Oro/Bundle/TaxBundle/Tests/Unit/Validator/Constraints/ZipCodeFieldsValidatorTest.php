@@ -41,10 +41,6 @@ class ZipCodeFieldsValidatorTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider validateProvider
-     *
-     * @param ZipCode $zipCode
-     * @param array $violationContext
-     * @param array $violationCounts
      */
     public function testValidate(ZipCode $zipCode, array $violationContext = [], array $violationCounts = [])
     {

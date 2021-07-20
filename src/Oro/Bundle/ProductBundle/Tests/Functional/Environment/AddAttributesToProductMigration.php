@@ -78,10 +78,6 @@ class AddAttributesToProductMigration implements Migration, ExtendExtensionAware
         );
     }
 
-    /**
-     * @param Schema $schema
-     * @param Table  $table
-     */
     private function addEnumAttribute(Schema $schema, Table $table)
     {
         $this->extendExtension->addEnumField(
@@ -98,10 +94,6 @@ class AddAttributesToProductMigration implements Migration, ExtendExtensionAware
         );
     }
 
-    /**
-     * @param Schema $schema
-     * @param Table  $table
-     */
     private function addMultiEnumAttribute(Schema $schema, Table $table)
     {
         $this->extendExtension->addEnumField(
@@ -117,10 +109,6 @@ class AddAttributesToProductMigration implements Migration, ExtendExtensionAware
         );
     }
 
-    /**
-     * @param Schema $schema
-     * @param Table  $table
-     */
     private function addManyToOneAttribute(Schema $schema, Table $table)
     {
         $this->extendExtension->addManyToOneRelation(
@@ -136,10 +124,6 @@ class AddAttributesToProductMigration implements Migration, ExtendExtensionAware
         );
     }
 
-    /**
-     * @param Schema $schema
-     * @param Table  $table
-     */
     private function addManyToOneAttributeWithIdentifiedFieldAsTitle(Schema $schema, Table $table)
     {
         $this->extendExtension->addManyToOneRelation(
@@ -168,10 +152,6 @@ class AddAttributesToProductMigration implements Migration, ExtendExtensionAware
         );
     }
 
-    /**
-     * @param Schema $schema
-     * @param Table  $table
-     */
     private function addManyToManyAttribute(Schema $schema, Table $table)
     {
         $this->extendExtension->addManyToManyRelation(
@@ -188,10 +168,6 @@ class AddAttributesToProductMigration implements Migration, ExtendExtensionAware
         );
     }
 
-    /**
-     * @param Schema $schema
-     * @param Table  $table
-     */
     private function addManyToManyAttributeWithIdentifiedFieldAsTitle(Schema $schema, Table $table)
     {
         $this->extendExtension->addManyToManyRelation(
@@ -208,9 +184,6 @@ class AddAttributesToProductMigration implements Migration, ExtendExtensionAware
         );
     }
 
-    /**
-     * @param Table $table
-     */
     private function addInvisibleAttribute(Table $table)
     {
         $table->addColumn(
@@ -225,9 +198,6 @@ class AddAttributesToProductMigration implements Migration, ExtendExtensionAware
         );
     }
 
-    /**
-     * @param Table $table
-     */
     private function addBooleanAttribute(Table $table)
     {
         $table->addColumn(
@@ -241,9 +211,6 @@ class AddAttributesToProductMigration implements Migration, ExtendExtensionAware
         );
     }
 
-    /**
-     * @param Table $table
-     */
     private function addStringAttribute(Table $table)
     {
         $table->addColumn(
@@ -257,9 +224,6 @@ class AddAttributesToProductMigration implements Migration, ExtendExtensionAware
         );
     }
 
-    /**
-     * @param Table $table
-     */
     private function addIntegerAttribute(Table $table)
     {
         $table->addColumn(
@@ -274,9 +238,6 @@ class AddAttributesToProductMigration implements Migration, ExtendExtensionAware
         );
     }
 
-    /**
-     * @param Table $table
-     */
     private function addFloatAttribute(Table $table)
     {
         $table->addColumn(
@@ -291,9 +252,6 @@ class AddAttributesToProductMigration implements Migration, ExtendExtensionAware
         );
     }
 
-    /**
-     * @param Table $table
-     */
     private function addDateTimeAttribute(Table $table)
     {
         $table->addColumn(
@@ -307,9 +265,6 @@ class AddAttributesToProductMigration implements Migration, ExtendExtensionAware
         );
     }
 
-    /**
-     * @param Table $table
-     */
     private function addMoneyAttribute(Table $table)
     {
         $table->addColumn(

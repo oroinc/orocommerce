@@ -21,9 +21,6 @@ class ProductCollectionExtension extends AbstractTypeExtension
      */
     private $translator;
 
-    /**
-     * @param TranslatorInterface $translator
-     */
     public function __construct(TranslatorInterface $translator)
     {
         $this->translator = $translator;
@@ -37,9 +34,6 @@ class ProductCollectionExtension extends AbstractTypeExtension
         $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'onPostSubmit']);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function onPostSubmit(FormEvent $event)
     {
         $form = $event->getForm();

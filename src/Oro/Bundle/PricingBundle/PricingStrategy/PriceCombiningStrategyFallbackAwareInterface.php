@@ -20,10 +20,6 @@ interface PriceCombiningStrategyFallbackAwareInterface
         $startTimestamp = null
     );
 
-    /**
-     * @param CombinedPriceList $combinedPriceList
-     * @param CombinedPriceList $relatedCombinedPriceList
-     */
     public function processCombinedPriceListRelation(
         CombinedPriceList $combinedPriceList,
         CombinedPriceList $relatedCombinedPriceList

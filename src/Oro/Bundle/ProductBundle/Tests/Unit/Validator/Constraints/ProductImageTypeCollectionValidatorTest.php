@@ -23,7 +23,6 @@ class ProductImageTypeCollectionValidatorTest extends ConstraintValidatorTestCas
      */
     protected $translator;
 
-
     protected function setUp(): void
     {
         parent::setUp();

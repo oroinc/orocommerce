@@ -21,9 +21,6 @@ class OrderWithChangedLineItemsCollectionSpecification implements SpecificationI
      */
     protected $specification;
 
-    /**
-     * @param UnitOfWork $unitOfWork
-     */
     public function __construct(UnitOfWork $unitOfWork)
     {
         $this->unitOfWork = $unitOfWork;
@@ -58,11 +55,6 @@ class OrderWithChangedLineItemsCollectionSpecification implements SpecificationI
 
     /**
      * Check if some item removed or added to the collection
-     *
-     * @param Collection                $orderLineItems
-     * @param PersistentCollection|null $originalCollection
-     *
-     * @return bool
      */
     protected function isCollectionChanged(Collection $orderLineItems, ?PersistentCollection $originalCollection): bool
     {

@@ -545,10 +545,6 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($data->offsetGetByPath('[metadata][hasEmptyMatrix]'));
     }
 
-    /**
-     * @param int $lineItemsCount
-     * @return ShoppingList
-     */
     private function createShoppingList(int $lineItemsCount): ShoppingList
     {
         $shoppingList = new ShoppingList();

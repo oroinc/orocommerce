@@ -72,10 +72,6 @@ class DatagridLineItemsDataListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider onLineItemDataDataProvider
-     *
-     * @param ProductLineItemStub $lineItem
-     * @param array $productConfiguration
-     * @param array $expectedData
      */
     public function testOnLineItemData(
         ProductLineItemStub $lineItem,
@@ -100,7 +96,6 @@ class DatagridLineItemsDataListenerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return array
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function onLineItemDataDataProvider(): array

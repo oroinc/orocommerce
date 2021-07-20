@@ -51,13 +51,6 @@ class ContentNodeProvider
      */
     private $treeListener;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param ScopeManager $scopeManager
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param WebCatalogProvider $webCatalogProvider
-     * @param TreeListener $treeListener
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         ScopeManager $scopeManager,
@@ -239,11 +232,6 @@ class ContentNodeProvider
         return $result;
     }
 
-    /**
-     * @param object $entity
-     * @param WebsiteInterface|null $website
-     * @return ContentVariant|null
-     */
     public function getFirstMatchingVariantForEntity(
         object $entity,
         WebsiteInterface $website = null
@@ -312,12 +300,6 @@ class ContentNodeProvider
         return $nodeIds;
     }
 
-    /**
-     * @param ContentNode $node
-     * @param ScopeCriteria $criteria
-     *
-     * @return bool
-     */
     private function isContentNodeMatchCriteria(ContentNode $node, ScopeCriteria $criteria): bool
     {
         $scopesToMatchQb = $this->doctrineHelper
@@ -382,11 +364,6 @@ class ContentNodeProvider
         );
     }
 
-    /**
-     * @param ScopeCriteria $criteria
-     *
-     * @return WebCatalog|null
-     */
     private function getWebCatalog(ScopeCriteria $criteria): ?WebCatalog
     {
         $parameters = $criteria->toArray();

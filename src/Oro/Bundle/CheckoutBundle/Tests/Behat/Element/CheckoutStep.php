@@ -50,9 +50,6 @@ class CheckoutStep extends Element implements LineItemsAwareInterface, SubtotalA
         );
     }
 
-    /**
-     * @return string
-     */
     public function getStepTitle(): string
     {
         $currentTitle = $this->getElement('CheckoutStepTitle');

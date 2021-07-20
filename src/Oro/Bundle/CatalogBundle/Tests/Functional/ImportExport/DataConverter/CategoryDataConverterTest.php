@@ -67,9 +67,6 @@ class CategoryDataConverterTest extends WebTestCase
     }
 
     /**
-     * @param array $data
-     * @param array $expected
-     *
      * @dataProvider exportDataProvider
      */
     public function testConvertToExportFormat(array $data, array $expected): void
@@ -77,9 +74,6 @@ class CategoryDataConverterTest extends WebTestCase
         $this->assertEquals($expected, $this->converter->convertToExportFormat($data));
     }
 
-    /**
-     * @return array
-     */
     public function exportDataProvider(): array
     {
         return [
@@ -99,9 +93,6 @@ class CategoryDataConverterTest extends WebTestCase
     }
 
     /**
-     * @param array $data
-     * @param array $expected
-     *
      * @dataProvider importDataProvider
      */
     public function testConvertToImportFormat(array $data, array $expected): void
@@ -109,9 +100,6 @@ class CategoryDataConverterTest extends WebTestCase
         $this->assertEquals($expected, $this->converter->convertToImportFormat($data));
     }
 
-    /**
-     * @return array
-     */
     public function importDataProvider(): array
     {
         return [

@@ -79,9 +79,6 @@ class OroCatalogBundle implements Migration, RenameExtensionAwareInterface
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function createOroCategoryDefaultProductOptionsTable(Schema $schema)
     {
         $table = $schema->createTable(self::ORO_B2B_CATEGORY_DEFAULT_PRODUCT_OPTIONS_TABLE_NAME);
@@ -91,9 +88,6 @@ class OroCatalogBundle implements Migration, RenameExtensionAwareInterface
         $table->setPrimaryKey(['id']);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function updateOroCategoryTable(Schema $schema)
     {
         $table = $schema->getTable(self::ORO_B2B_CATALOG_CATEGORY_TABLE_NAME);
@@ -101,9 +95,6 @@ class OroCatalogBundle implements Migration, RenameExtensionAwareInterface
         $table->addUniqueIndex(['default_product_options_id']);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addOroCategoryDefaultProductOptionsForeignKeys(Schema $schema, QueryBag $queries)
     {
         $this->renameExtension->addForeignKeyConstraint(
@@ -117,9 +108,6 @@ class OroCatalogBundle implements Migration, RenameExtensionAwareInterface
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addOroCategoryForeignKeys(Schema $schema)
     {
         $table = $schema->getTable(self::ORO_B2B_CATALOG_CATEGORY_TABLE_NAME);

@@ -61,17 +61,6 @@ class CombinedPriceListsBuilderFacade
     /** @var array  */
     private $rebuiltCombinedPriceListsIds = [];
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param CustomerCombinedPriceListsBuilder $customerCombinedPriceListBuilder
-     * @param CustomerGroupCombinedPriceListsBuilder $customerGroupCombinedPriceListBuilder
-     * @param WebsiteCombinedPriceListsBuilder $websiteCombinedPriceListBuilder
-     * @param CombinedPriceListsBuilder $combinedPriceListBuilder
-     * @param EventDispatcherInterface $dispatcher
-     * @param StrategyRegister $strategyRegister
-     * @param CombinedPriceListGarbageCollector $garbageCollector
-     * @param ConfigManager $configManager
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         CustomerCombinedPriceListsBuilder $customerCombinedPriceListBuilder,

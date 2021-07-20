@@ -20,10 +20,6 @@ class RedirectExceptionListener
     /** @var MatchedUrlDecisionMaker */
     private $matchedUrlDecisionMaker;
 
-    /**
-     * @param SlugRedirectMatcher     $redirectMatcher
-     * @param MatchedUrlDecisionMaker $matchedUrlDecisionMaker
-     */
     public function __construct(
         SlugRedirectMatcher $redirectMatcher,
         MatchedUrlDecisionMaker $matchedUrlDecisionMaker
@@ -32,9 +28,6 @@ class RedirectExceptionListener
         $this->matchedUrlDecisionMaker = $matchedUrlDecisionMaker;
     }
 
-    /**
-     * @param GetResponseForExceptionEvent $event
-     */
     public function onKernelException(GetResponseForExceptionEvent $event): void
     {
         if (!$this->isRedirectRequired($event)) {
@@ -51,11 +44,6 @@ class RedirectExceptionListener
         }
     }
 
-    /**
-     * @param GetResponseForExceptionEvent $event
-     *
-     * @return bool
-     */
     private function isRedirectRequired(GetResponseForExceptionEvent $event): bool
     {
         return

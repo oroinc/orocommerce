@@ -72,9 +72,6 @@ class DropShippingRuleTable implements
         $schema->dropTable(self::SHIPPING_RULE_TABLE);
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function removeNotesAssociation(Schema $schema)
     {
         $notes = $schema->getTable(self::NOTE_TABLE);

@@ -62,9 +62,6 @@ class PageControllerTest extends WebTestCase
         return $this->getReference(LoadPageData::PAGE_1)->getId();
     }
 
-    /**
-     * @param Crawler $crawler
-     */
     public function checkSeoSectionExistence(Crawler $crawler)
     {
         $result = $this->client->getResponse();

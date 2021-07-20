@@ -33,14 +33,6 @@ class RemoveSearchBoostAttributeExtensionTest extends \PHPUnit\Framework\TestCas
     }
 
     /**
-     * @param \PHPUnit\Framework\MockObject\Rule\InvokedCount $expected
-     * @param                                                    $attributeConfigModel
-     * @param                                                    $formHasAttribute
-     * @param                                                    $attributeType
-     * @param                                                    $searchEngine
-     * @param array                                              $classConfigValues
-     * @param array                                              $attributeConfigValues
-     *
      * @dataProvider buildFormDataProvider
      */
     public function testBuildForm(

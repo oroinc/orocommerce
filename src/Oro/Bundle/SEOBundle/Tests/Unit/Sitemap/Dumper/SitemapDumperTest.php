@@ -49,11 +49,6 @@ class SitemapDumperTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @param int $id
-     *
-     * @return WebsiteInterface
-     */
     private function getWebsite(int $id): WebsiteInterface
     {
         $website = $this->createMock(WebsiteInterface::class);

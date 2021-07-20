@@ -55,10 +55,6 @@ abstract class AbstractMoveConfigValuesToSettings extends AbstractFixture implem
         }
     }
 
-    /**
-     * @param ObjectManager         $manager
-     * @param OrganizationInterface $organization
-     */
     abstract protected function moveConfigFromSystemConfigToIntegration(
         ObjectManager $manager,
         OrganizationInterface $organization

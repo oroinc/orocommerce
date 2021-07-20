@@ -23,10 +23,6 @@ class EnsureDefaultShoppingListExistsForRequestData implements ProcessorInterfac
     /** @var RequestDataAccessor */
     private $requestDataAccessor;
 
-    /**
-     * @param DefaultShoppingListFactory $defaultShoppingListFactory
-     * @param RequestDataAccessor        $requestDataAccessor
-     */
     public function __construct(
         DefaultShoppingListFactory $defaultShoppingListFactory,
         RequestDataAccessor $requestDataAccessor

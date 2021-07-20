@@ -21,10 +21,6 @@ class BeforeImportChunksListener
     /** @var ShardManager */
     private $shardManager;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param ShardManager $shardManager
-     */
     public function __construct(
         ManagerRegistry $registry,
         ShardManager $shardManager
@@ -33,9 +29,6 @@ class BeforeImportChunksListener
         $this->shardManager = $shardManager;
     }
 
-    /**
-     * @param BeforeImportChunksEvent $event
-     */
     public function onBeforeImportChunks(BeforeImportChunksEvent $event)
     {
         $body = $event->getBody();

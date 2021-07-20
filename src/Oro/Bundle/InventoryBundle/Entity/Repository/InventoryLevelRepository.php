@@ -42,10 +42,6 @@ class InventoryLevelRepository extends EntityRepository
         return $qb->getQuery()->getArrayResult();
     }
 
-    /**
-     * @param Product $product
-     * @param ProductUnitPrecision $productUnitPrecision
-     */
     public function deleteInventoryLevelByProductAndProductUnitPrecision(
         Product $product,
         ProductUnitPrecision $productUnitPrecision

@@ -88,11 +88,6 @@ class LoadProductPriceDemoData extends AbstractLoadProductPriceDemoData
         $manager->flush();
     }
 
-    /**
-     * @param PriceManager $priceManager
-     * @param ProductPrice $productPrice
-     * @param Price $unitPrice
-     */
     protected function createPriceTiers(
         PriceManager $priceManager,
         ProductPrice $productPrice,

@@ -69,10 +69,6 @@ class OroPricingBundle implements
         $queries->addQuery(new OroPriceListPriorityQuery());
     }
 
-    /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     */
     private function alterOroPriceAttributeTable(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('orob2b_price_attribute_pl');
@@ -93,8 +89,6 @@ class OroPricingBundle implements
 
     /**
      * Create oro_price_rule table
-     *
-     * @param Schema $schema
      */
     private function createOroPriceRuleTable(Schema $schema)
     {
@@ -112,8 +106,6 @@ class OroPricingBundle implements
 
     /**
      * Create oro_price_rule_lexeme table
-     *
-     * @param Schema $schema
      */
     private function createOroPriceRuleLexemeTable(Schema $schema)
     {
@@ -129,9 +121,6 @@ class OroPricingBundle implements
 
     /**
      * Add oro_price_rule foreign keys.
-     *
-     * @param Schema $schema
-     * @param QueryBag $queries
      */
     private function addOroPriceRuleForeignKeys(Schema $schema, QueryBag $queries)
     {
@@ -155,8 +144,6 @@ class OroPricingBundle implements
 
     /**
      * Add oro_price_rule_lexeme foreign keys.
-     *
-     * @param Schema $schema
      */
     private function addOroPriceRuleLexemeForeignKeys(Schema $schema)
     {
@@ -176,9 +163,6 @@ class OroPricingBundle implements
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function updateProductPriceTable(Schema $schema)
     {
         $table = $schema->getTable('orob2b_price_product');
@@ -191,9 +175,6 @@ class OroPricingBundle implements
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function updatePriceListTable(Schema $schema)
     {
         $table = $schema->getTable('orob2b_price_list');
@@ -214,8 +195,6 @@ class OroPricingBundle implements
 
     /**
      * Create oro_notification_message table
-     *
-     * @param Schema $schema
      */
     private function createOroNotificationMessageTable(Schema $schema)
     {
@@ -234,11 +213,7 @@ class OroPricingBundle implements
         $table->addIndex(['receiver_entity_fqcn', 'receiver_entity_id'], 'oro_notif_msg_entity', []);
         $table->setPrimaryKey(['id']);
     }
-    
-    /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     */
+
     private function renameColumnsAndTables(Schema $schema, QueryBag $queries)
     {
         $extension = $this->renameExtension;
@@ -272,9 +247,6 @@ class OroPricingBundle implements
     }
 
     /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     private function renameIndexes(Schema $schema, QueryBag $queries)

@@ -80,9 +80,6 @@ class AjaxPriceListController extends AbstractController
         return new JsonResponse($currencies);
     }
 
-    /**
-     * @return PriceListRepository
-     */
     protected function getRepository(): PriceListRepository
     {
         return $this->container
@@ -90,9 +87,6 @@ class AjaxPriceListController extends AbstractController
             ->getRepository(PriceList::class);
     }
 
-    /**
-     * @return TranslatorInterface
-     */
     protected function getTranslator(): TranslatorInterface
     {
         return $this->container->get(TranslatorInterface::class);

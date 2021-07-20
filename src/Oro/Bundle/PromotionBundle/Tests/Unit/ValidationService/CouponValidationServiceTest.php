@@ -93,7 +93,6 @@ class CouponValidationServiceTest extends \PHPUnit\Framework\TestCase
             ->method('getCouponUsageCount')
             ->willReturn(1);
 
-
         $violations = $this->couponValidationService->getViolations($coupon);
 
         $this->assertCount(1, $violations);

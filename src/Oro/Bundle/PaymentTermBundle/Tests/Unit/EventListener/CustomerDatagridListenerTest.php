@@ -310,11 +310,6 @@ class CustomerDatagridListenerTest extends \PHPUnit\Framework\TestCase
         ], $config->toArray());
     }
 
-    /**
-     * @param array $selectedFields
-     * @param DatagridConfiguration $configuration
-     * @param ParameterBag $parameters
-     */
     private function configureSelectedFields(
         array $selectedFields,
         DatagridConfiguration $configuration,
@@ -327,10 +322,6 @@ class CustomerDatagridListenerTest extends \PHPUnit\Framework\TestCase
             ->willReturn($selectedFields);
     }
 
-    /**
-     * @param ParameterBag $datagridParameters
-     * @return DatagridInterface
-     */
     private function configureDataGrid(ParameterBag $datagridParameters): DatagridInterface
     {
         /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $datagrid */

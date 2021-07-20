@@ -60,11 +60,6 @@ class ProductType extends AbstractType
      */
     private $productImageHelper;
 
-    /**
-     * @param DefaultProductUnitProviderInterface $provider
-     * @param UrlGeneratorInterface $urlGenerator
-     * @param ProductImageHelper $productImageHelper
-     */
     public function __construct(
         DefaultProductUnitProviderInterface $provider,
         UrlGeneratorInterface $urlGenerator,
@@ -216,9 +211,6 @@ class ProductType extends AbstractType
             ->addModelTransformer(new PageTemplateEntityFieldFallbackValueTransformer(self::PAGE_TEMPLATE_ROUTE_NAME));
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function preSetDataListener(FormEvent $event)
     {
         /** @var Product $product */
@@ -291,9 +283,6 @@ class ProductType extends AbstractType
         }
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function postSetDataListener(FormEvent $event)
     {
         /** @var Product $product */
@@ -311,9 +300,6 @@ class ProductType extends AbstractType
         $form->get('additionalUnitPrecisions')->setData($product->getAdditionalUnitPrecisions());
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function submitListener(FormEvent $event)
     {
         /** @var Product $product */

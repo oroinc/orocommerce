@@ -18,9 +18,6 @@ class UpdatePriceListCustomerGroups implements ProcessorInterface
     /** @var PriceListRelationTriggerHandler */
     private $relationChangesHandler;
 
-    /**
-     * @param PriceListRelationTriggerHandler $relationChangesHandler
-     */
     public function __construct(PriceListRelationTriggerHandler $relationChangesHandler)
     {
         $this->relationChangesHandler = $relationChangesHandler;

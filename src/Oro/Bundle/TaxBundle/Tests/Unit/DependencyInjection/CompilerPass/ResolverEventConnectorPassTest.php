@@ -46,8 +46,6 @@ class ResolverEventConnectorPassTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider emptyTagsDataProvider
-     * @param array $tags
-     * @param array $exception
      */
     public function testEmptyTags(array $tags, array $exception = [])
     {

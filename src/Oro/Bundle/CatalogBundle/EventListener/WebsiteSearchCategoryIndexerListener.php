@@ -47,11 +47,6 @@ class WebsiteSearchCategoryIndexerListener
      */
     private $websiteContextManager;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param AbstractWebsiteLocalizationProvider $websiteLocalizationProvider
-     * @param WebsiteContextManager $websiteContextManager
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         AbstractWebsiteLocalizationProvider $websiteLocalizationProvider,
@@ -62,9 +57,6 @@ class WebsiteSearchCategoryIndexerListener
         $this->websiteContextManager = $websiteContextManager;
     }
 
-    /**
-     * @param IndexEntityEvent $event
-     */
     public function onWebsiteSearchIndex(IndexEntityEvent $event)
     {
         $websiteId = $this->websiteContextManager->getWebsiteId($event->getContext());
@@ -122,11 +114,6 @@ class WebsiteSearchCategoryIndexerListener
         }
     }
 
-    /**
-     * @param IndexEntityEvent $event
-     * @param Product $product
-     * @param Category $category
-     */
     protected function addCategoryPathInformation(IndexEntityEvent $event, Product $product, Category $category)
     {
         $event->addField($product->getId(), 'category_path', $category->getMaterializedPath());

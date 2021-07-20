@@ -33,11 +33,6 @@ class HasPriceInShoppingLineItemsListener
      */
     private $scopeCriteriaRequestHandler;
 
-    /**
-     * @param ProductPriceProviderInterface $productPriceProvider
-     * @param UserCurrencyManager $userCurrencyManager
-     * @param ProductPriceScopeCriteriaRequestHandler $scopeCriteriaRequestHandler
-     */
     public function __construct(
         ProductPriceProviderInterface $productPriceProvider,
         UserCurrencyManager $userCurrencyManager,
@@ -48,9 +43,6 @@ class HasPriceInShoppingLineItemsListener
         $this->scopeCriteriaRequestHandler = $scopeCriteriaRequestHandler;
     }
 
-    /**
-     * @param ExtendableConditionEvent $conditionEvent
-     */
     public function onStartCheckoutConditionCheck(ExtendableConditionEvent $conditionEvent)
     {
         /** @var ActionData $context */

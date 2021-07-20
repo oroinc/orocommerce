@@ -16,9 +16,6 @@ class WebsiteLocalizationConfigListener
      */
     private $eventDispatcher;
 
-    /**
-     * @param EventDispatcherInterface $eventDispatcher
-     */
     public function __construct(EventDispatcherInterface $eventDispatcher)
     {
         $this->eventDispatcher = $eventDispatcher;
@@ -26,8 +23,6 @@ class WebsiteLocalizationConfigListener
 
     /**
      * Trigger full reindex if localizations were changed.
-     *
-     * @param ConfigUpdateEvent $event
      */
     public function onLocalizationSettingsChange(ConfigUpdateEvent $event)
     {

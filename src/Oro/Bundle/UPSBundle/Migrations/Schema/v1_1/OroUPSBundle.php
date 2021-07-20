@@ -17,9 +17,6 @@ class OroUPSBundle implements Migration
         $this->addOroUpsTransportLabelForeignKeys($schema);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function createOroUPSTransportLabelTable(Schema $schema)
     {
         $table = $schema->createTable('oro_ups_transport_label');
@@ -30,9 +27,6 @@ class OroUPSBundle implements Migration
         $table->addUniqueIndex(['localized_value_id'], 'UNIQ_1554DDE37CA9B1F', []);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addOroUpsTransportLabelForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('oro_ups_transport_label');

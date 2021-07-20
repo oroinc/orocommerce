@@ -36,12 +36,6 @@ class WebsiteSearchMappingListener
     /** @var SearchableInformationProvider */
     protected $searchableInformationProvider;
 
-    /**
-     * @param AttributeManager $attributeManager
-     * @param AttributeTypeRegistry $attributeTypeRegistry
-     * @param AttributeConfigurationProviderInterface $configurationProvider
-     * @param ProductIndexFieldsProvider $fieldsProvider
-     */
     public function __construct(
         AttributeManager $attributeManager,
         AttributeTypeRegistry $attributeTypeRegistry,
@@ -54,9 +48,6 @@ class WebsiteSearchMappingListener
         $this->fieldsProvider = $fieldsProvider;
     }
 
-    /**
-     * @param SearchMappingCollectEvent $event
-     */
     public function onWebsiteSearchMapping(SearchMappingCollectEvent $event)
     {
         $attributes = $this->attributeManager->getAttributesByClass(Product::class);
@@ -131,14 +122,6 @@ class WebsiteSearchMappingListener
         return $attributeType;
     }
 
-    /**
-     * @param SearchAttributeTypeInterface $attributeType
-     * @param FieldConfigModel             $attribute
-     * @param array                        $fields
-     * @param int|null                     $organizationId
-     *
-     * @return array
-     */
     protected function getFilterableFields(
         SearchAttributeTypeInterface $attributeType,
         FieldConfigModel $attribute,
@@ -165,9 +148,6 @@ class WebsiteSearchMappingListener
 
     /**
      * Merge the config with the existing one.
-     *
-     * @param SearchMappingCollectEvent $event
-     * @param array $fields
      */
     private function setConfiguration(SearchMappingCollectEvent $event, array $fields)
     {
@@ -207,12 +187,6 @@ class WebsiteSearchMappingListener
             ($force || $this->configurationProvider->isAttributeSortable($attribute));
     }
 
-    /**
-     * @param FieldConfigModel $attribute
-     * @param SearchAttributeTypeInterface $type
-     *
-     * @return bool
-     */
     private function isBoostable(FieldConfigModel $attribute, SearchAttributeTypeInterface $type): bool
     {
         return $type->isSearchable($attribute)
@@ -220,9 +194,6 @@ class WebsiteSearchMappingListener
             && $this->getSearchableInformationProvider()->getAttributeSearchBoost($attribute);
     }
 
-    /**
-     * @return SearchableInformationProvider
-     */
     public function getSearchableInformationProvider(): SearchableInformationProvider
     {
         if (!$this->searchableInformationProvider) {
@@ -232,9 +203,6 @@ class WebsiteSearchMappingListener
         return $this->searchableInformationProvider;
     }
 
-    /**
-     * @param SearchableInformationProvider $searchableInformationProvider
-     */
     public function setSearchableInformationProvider(SearchableInformationProvider $searchableInformationProvider): void
     {
         $this->searchableInformationProvider = $searchableInformationProvider;

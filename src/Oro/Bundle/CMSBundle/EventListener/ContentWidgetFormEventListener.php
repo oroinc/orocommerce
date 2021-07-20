@@ -17,17 +17,11 @@ class ContentWidgetFormEventListener
     /** @var ManagerRegistry */
     private $registry;
 
-    /**
-     * @param ManagerRegistry $registry
-     */
     public function __construct(ManagerRegistry $registry)
     {
         $this->registry = $registry;
     }
 
-    /**
-     * @param AfterFormProcessEvent $args
-     */
     public function onBeforeFlush(AfterFormProcessEvent $args): void
     {
         $contentWidget = $args->getData();

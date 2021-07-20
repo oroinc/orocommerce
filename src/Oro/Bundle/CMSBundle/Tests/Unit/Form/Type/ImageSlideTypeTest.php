@@ -53,9 +53,6 @@ class ImageSlideTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedData, $form->getData());
     }
 
-    /**
-     * @return array
-     */
     public function submitDataProviderNew(): array
     {
         $mainImage = $this->getEntity(File::class, ['id' => 1001]);

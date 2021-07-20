@@ -74,9 +74,6 @@ class CategoryLongDescription extends AbstractLocalizedFallbackValue
      */
     protected $wysiwygProperties;
 
-    /**
-     * @return null|Category
-     */
     public function getCategory(): ?Category
     {
         return $this->category;
@@ -93,9 +90,6 @@ class CategoryLongDescription extends AbstractLocalizedFallbackValue
         return $this;
     }
 
-    /**
-     * @return null|string
-     */
     public function getWysiwyg(): ?string
     {
         return $this->wysiwyg;
@@ -112,9 +106,6 @@ class CategoryLongDescription extends AbstractLocalizedFallbackValue
         return $this;
     }
 
-    /**
-     * @return null|string
-     */
     public function getWysiwygStyle(): ?string
     {
         return $this->wysiwygStyle;
@@ -131,9 +122,6 @@ class CategoryLongDescription extends AbstractLocalizedFallbackValue
         return $this;
     }
 
-    /**
-     * @return null|array
-     */
     public function getWysiwygProperties(): ?array
     {
         return $this->wysiwygProperties;

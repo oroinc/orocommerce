@@ -14,9 +14,6 @@ class RememberMeSlugRequestFactory implements SlugRequestFactoryInterface
     /** @var SlugRequestFactoryInterface */
     private $innerFactory;
 
-    /**
-     * @param SlugRequestFactoryInterface $innerFactory
-     */
     public function __construct(SlugRequestFactoryInterface $innerFactory)
     {
         $this->innerFactory = $innerFactory;

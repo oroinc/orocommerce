@@ -121,8 +121,6 @@ class OroCatalogBundleInstaller implements
 
     /**
      * Create oro_catalog_category table
-     *
-     * @param Schema $schema
      */
     protected function createOroCatalogCategoryTable(Schema $schema)
     {
@@ -152,8 +150,6 @@ class OroCatalogBundleInstaller implements
 
     /**
      * Create oro_catalog_cat_title table
-     *
-     * @param Schema $schema
      */
     protected function createOroCatalogCategoryTitleTable(Schema $schema)
     {
@@ -168,9 +164,6 @@ class OroCatalogBundleInstaller implements
         $table->addIndex(['string'], 'idx_cat_cat_title_string', []);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function createOroCategoryDefaultProductOptionsTable(Schema $schema)
     {
         $table = $schema->createTable(self::ORO_CATEGORY_DEFAULT_PRODUCT_OPTIONS_TABLE_NAME);
@@ -182,8 +175,6 @@ class OroCatalogBundleInstaller implements
 
     /**
      * Create oro_catalog_cat_slug table
-     *
-     * @param Schema $schema
      */
     protected function createOroCategorySlugTable(Schema $schema)
     {
@@ -197,8 +188,6 @@ class OroCatalogBundleInstaller implements
 
     /**
      * Create oro_catalog_cat_slug_prototype table
-     *
-     * @param Schema $schema
      */
     protected function createOroCategorySlugPrototypeTable(Schema $schema)
     {
@@ -212,8 +201,6 @@ class OroCatalogBundleInstaller implements
 
     /**
      * Add oro_catalog_category foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroCatalogCategoryForeignKeys(Schema $schema)
     {
@@ -241,8 +228,6 @@ class OroCatalogBundleInstaller implements
 
     /**
      * Add oro_catalog_cat_title foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroCatalogCategoryTitleForeignKeys(Schema $schema)
     {
@@ -263,8 +248,6 @@ class OroCatalogBundleInstaller implements
 
     /**
      * Create oro_catalog_cat_s_descr table
-     *
-     * @param Schema $schema
      */
     protected function createOroCatalogCategoryShortDescriptionTable(Schema $schema)
     {
@@ -280,8 +263,6 @@ class OroCatalogBundleInstaller implements
 
     /**
      * Create oro_catalog_cat_l_descr table
-     *
-     * @param Schema $schema
      */
     protected function createOroCatalogCategoryLongDescriptionTable(Schema $schema)
     {
@@ -299,8 +280,6 @@ class OroCatalogBundleInstaller implements
 
     /**
      * Add oro_catalog_cat_s_descr foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroCatalogCategoryShortDescriptionForeignKeys(Schema $schema)
     {
@@ -321,8 +300,6 @@ class OroCatalogBundleInstaller implements
 
     /**
      * Add oro_catalog_cat_l_descr foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroCatalogCategoryLongDescriptionForeignKeys(Schema $schema)
     {
@@ -341,9 +318,6 @@ class OroCatalogBundleInstaller implements
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addOroCategoryDefaultProductOptionsForeignKeys(Schema $schema)
     {
         $table = $schema->getTable(self::ORO_CATEGORY_DEFAULT_PRODUCT_OPTIONS_TABLE_NAME);
@@ -379,9 +353,6 @@ class OroCatalogBundleInstaller implements
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     public function addContentVariantTypes(Schema $schema)
     {
         if ($schema->hasTable('oro_web_catalog_variant')) {
@@ -439,9 +410,6 @@ class OroCatalogBundleInstaller implements
         }
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addCategoryProductRelation(Schema $schema)
     {
         $table = $schema->getTable(OroCatalogBundleInstaller::ORO_CATALOG_CATEGORY_TABLE_NAME);

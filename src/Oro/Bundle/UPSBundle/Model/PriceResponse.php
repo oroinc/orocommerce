@@ -52,9 +52,6 @@ class PriceResponse
         }
     }
 
-    /**
-     * @param array $rateShipment
-     */
     private function addRatedShipment(array $rateShipment)
     {
         if (array_key_exists(self::TOTAL_CHARGES, $rateShipment)) {

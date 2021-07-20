@@ -21,11 +21,6 @@ class ProductRepository extends AbstractVisibilityRepository
 {
     use BasicOperationRepositoryTrait;
 
-    /**
-     * @param InsertFromSelectQueryExecutor $insertExecutor
-     * @param Scope $scope
-     * @param Scope $categoryScope
-     */
     public function insertByCategory(InsertFromSelectQueryExecutor $insertExecutor, Scope $scope, Scope $categoryScope)
     {
         $qb = $this->getProductVisibilityResolvedQueryBuilder($scope, $categoryScope);
@@ -66,9 +61,6 @@ class ProductRepository extends AbstractVisibilityRepository
         return $this->findOneBy(['scope' => $scope, 'product' => $product]);
     }
 
-    /**
-     * @param Product $product
-     */
     public function deleteByProduct(Product $product)
     {
         $this->createQueryBuilder('productVisibility')
@@ -79,14 +71,6 @@ class ProductRepository extends AbstractVisibilityRepository
             ->execute();
     }
 
-
-    /**
-     * @param InsertFromSelectQueryExecutor $insertExecutor
-     * @param Product $product
-     * @param $visibility
-     * @param Scope $scope
-     * @param Category|null $category
-     */
     public function insertByProduct(
         InsertFromSelectQueryExecutor $insertExecutor,
         Product $product,

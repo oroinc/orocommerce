@@ -29,10 +29,6 @@ class ProductImageTypeCollectionValidator extends ConstraintValidator
      */
     protected $context;
 
-    /**
-     * @param ImageTypeProvider $imageTypeProvider
-     * @param TranslatorInterface $translator
-     */
     public function __construct(
         ImageTypeProvider $imageTypeProvider,
         TranslatorInterface $translator

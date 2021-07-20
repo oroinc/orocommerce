@@ -62,7 +62,6 @@ class ZipCodeTypeTest extends FormIntegrationTestCase
         $this->assertCount(1, $transformers);
         $this->assertInstanceOf('Oro\Bundle\TaxBundle\Form\DataTransformer\ZipCodeTransformer', $transformers[0]);
 
-
         $form->submit($submittedData);
         $this->assertEquals($valid, $form->isValid());
         $this->assertTrue($form->isSynchronized());

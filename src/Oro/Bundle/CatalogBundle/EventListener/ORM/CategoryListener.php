@@ -22,19 +22,12 @@ class CategoryListener
     /** @var \SplObjectStorage */
     private $scheduled;
 
-    /**
-     * @param CategoryMaterializedPathModifier $modifier
-     */
     public function __construct(CategoryMaterializedPathModifier $modifier)
     {
         $this->modifier = $modifier;
         $this->scheduled = new \SplObjectStorage();
     }
 
-    /**
-     * @param Category $category
-     * @param LifecycleEventArgs $event
-     */
     public function postPersist(Category $category, LifecycleEventArgs $event)
     {
         $entityManager = $event->getEntityManager();
@@ -59,11 +52,6 @@ class CategoryListener
         }
     }
 
-    /**
-     * @param EntityManager $entityManager
-     * @param Category $category
-     * @param string $materializedPath
-     */
     private function scheduleExtraUpdate(
         EntityManager $entityManager,
         Category $category,
@@ -78,8 +66,6 @@ class CategoryListener
     }
 
     /**
-     * @param OnFlushEventArgs $event
-     *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function onFlush(OnFlushEventArgs $event)

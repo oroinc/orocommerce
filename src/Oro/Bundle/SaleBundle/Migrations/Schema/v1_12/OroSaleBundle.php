@@ -37,10 +37,6 @@ class OroSaleBundle implements
         $this->updateAccountRelations($schema, $queries);
     }
 
-    /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     */
     private function updateOroQuoteAddressTable(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('oro_quote_address');
@@ -68,10 +64,6 @@ class OroSaleBundle implements
         );
     }
 
-    /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     */
     private function updateAccountRelations(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('oro_sale_quote');
@@ -144,8 +136,6 @@ class OroSaleBundle implements
 
     /**
      * Sets the RenameExtension
-     *
-     * @param RenameExtension $renameExtension
      */
     public function setRenameExtension(RenameExtension $renameExtension)
     {

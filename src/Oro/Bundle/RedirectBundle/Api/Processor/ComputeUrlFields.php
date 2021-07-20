@@ -36,14 +36,6 @@ class ComputeUrlFields implements ProcessorInterface
     /** @var string */
     protected $urlsField;
 
-    /**
-     * @param DoctrineHelper        $doctrineHelper
-     * @param LocalizationHelper    $localizationHelper
-     * @param ConfigManager         $configManager
-     * @param UrlGeneratorInterface $urlGenerator
-     * @param string                $urlField
-     * @param string                $urlsField
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         LocalizationHelper $localizationHelper,
@@ -161,12 +153,6 @@ class ComputeUrlFields implements ProcessorInterface
         return [$currentUrl ?? $notLocalizedUrl, $otherUrls];
     }
 
-    /**
-     * @param string $url
-     * @param int    $localizationId
-     *
-     * @return array
-     */
     protected function getUrlData(string $url, int $localizationId): array
     {
         return [

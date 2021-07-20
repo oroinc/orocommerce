@@ -95,9 +95,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
     /**
      * @Then /^tree level of category "(?P<title>[^"]*)" is (?P<level>[0-9]+)$/
-     *
-     * @param string $title
-     * @param int $level
      */
     public function treeLevelOfCategoryIs(string $title, int $level): void
     {
@@ -115,12 +112,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @param ObjectManager $manager
-     * @param string $title
-     * @param OrganizationInterface $organization
-     *
      * @throws \Doctrine\ORM\NonUniqueResultException
-     * @return Category
      */
     private function getCategory(ObjectManager $manager, string $title, OrganizationInterface $organization): Category
     {
@@ -157,10 +149,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $this->assertCanonicalUrlForCategory($categoryName, 0);
     }
 
-    /**
-     * @param string $categoryName
-     * @param int $includingSubcategories
-     */
     private function assertCanonicalUrlForCategory(string $categoryName, int $includingSubcategories)
     {
         /** @var ObjectManager $manager */

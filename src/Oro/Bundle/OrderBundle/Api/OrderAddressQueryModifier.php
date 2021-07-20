@@ -18,9 +18,6 @@ class OrderAddressQueryModifier implements QueryModifierInterface
     /** @var EntityClassResolver */
     private $entityClassResolver;
 
-    /**
-     * @param EntityClassResolver $entityClassResolver
-     */
     public function __construct(EntityClassResolver $entityClassResolver)
     {
         $this->entityClassResolver = $entityClassResolver;
@@ -52,10 +49,6 @@ class OrderAddressQueryModifier implements QueryModifierInterface
         }
     }
 
-    /**
-     * @param QueryBuilder $qb
-     * @param string $addressAlias
-     */
     private function addOrderSubquery(QueryBuilder $qb, string $addressAlias)
     {
         $subquery = sprintf(

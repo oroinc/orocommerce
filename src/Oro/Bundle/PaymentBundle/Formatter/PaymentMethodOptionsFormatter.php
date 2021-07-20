@@ -21,10 +21,6 @@ class PaymentMethodOptionsFormatter
      */
     protected $eventDispatcher;
 
-    /**
-     * @param PaymentMethodViewProviderInterface $paymentMethodViewProvider
-     * @param EventDispatcherInterface $eventDispatcher
-     */
     public function __construct(
         PaymentMethodViewProviderInterface $paymentMethodViewProvider,
         EventDispatcherInterface $eventDispatcher

@@ -17,19 +17,11 @@ class NodeToQueryDesignerConverter
     /** @var ColumnInformationProviderInterface[] */
     private $columnInformationProviders = [];
 
-    /**
-     * @param ColumnInformationProviderInterface $provider
-     */
     public function addColumnInformationProvider(ColumnInformationProviderInterface $provider): void
     {
         array_unshift($this->columnInformationProviders, $provider);
     }
 
-    /**
-     * @param NodeInterface $node
-     *
-     * @return AbstractQueryDesigner
-     */
     public function convert(NodeInterface $node): AbstractQueryDesigner
     {
         return new QueryDesigner(
@@ -38,11 +30,6 @@ class NodeToQueryDesignerConverter
         );
     }
 
-    /**
-     * @param NodeInterface $node
-     *
-     * @return array
-     */
     private function getDefinitionByNode(NodeInterface $node): array
     {
         $definition = [

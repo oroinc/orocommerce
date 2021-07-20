@@ -64,9 +64,6 @@ class FrontendVariantFiledType extends AbstractType
         $this->productClass = (string)$productClass;
     }
 
-    /**
-     * @param UserLocalizationManagerInterface $userLocalizationManager
-     */
     public function setUserLocalizationManager(UserLocalizationManagerInterface $userLocalizationManager): void
     {
         $this->userLocalizationManager = $userLocalizationManager;
@@ -86,17 +83,11 @@ class FrontendVariantFiledType extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function preSetData(FormEvent $event)
     {
         $this->addVariantFields($event);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     private function addVariantFields(FormEvent $event)
     {
         /** @var Product|null $data */

@@ -128,9 +128,6 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
         return $entity;
     }
 
-    /**
-     * @param Product $entity
-     */
     protected function populateOwner(Product $entity)
     {
         if (false === $this->owner) {

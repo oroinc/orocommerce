@@ -185,9 +185,6 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit\Fram
             ->method('remove');
     }
 
-    /**
-     * @param Product $product
-     */
     protected function assertProductRepositoryCalled(Product $product)
     {
         $qb = $this->createMock(QueryBuilder::class);
@@ -213,9 +210,6 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit\Fram
             ->willReturn($query);
     }
 
-    /**
-     * @param array $mappings
-     */
     protected function assertMetadataCalled(array $mappings = [])
     {
         /** @var ClassMetadata|\PHPUnit\Framework\MockObject\MockObject $metadata */
@@ -245,9 +239,6 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit\Fram
             ->willReturnCallback([$this, 'getEntity']);
     }
 
-    /**
-     * @param array $mappings
-     */
     public function initEntityMetadata(array $mappings = [])
     {
         $this->doctrineHelper->expects($this->any())

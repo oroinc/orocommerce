@@ -16,10 +16,6 @@ class BatchProductPriceFlushDataHandler implements BatchFlushDataHandlerInterfac
     /** @var PriceManager */
     private $priceManager;
 
-    /**
-     * @param BatchFlushDataHandlerInterface $innerHandler
-     * @param PriceManager                   $priceManager
-     */
     public function __construct(
         BatchFlushDataHandlerInterface $innerHandler,
         PriceManager $priceManager

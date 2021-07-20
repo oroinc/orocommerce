@@ -44,7 +44,7 @@ class CompositePaymentMethodProvider implements PaymentMethodProviderInterface
                 return $provider->getPaymentMethod($identifier);
             }
         }
-        
+
         throw new \InvalidArgumentException('There is no payment method for "' . $identifier . '" identifier');
     }
 

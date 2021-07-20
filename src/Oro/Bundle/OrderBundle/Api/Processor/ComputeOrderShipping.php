@@ -18,9 +18,6 @@ class ComputeOrderShipping implements ProcessorInterface
     /** @var ShippingMethodLabelTranslator|null */
     private $shippingMethodLabelTranslator;
 
-    /**
-     * @param ShippingMethodLabelTranslator|null $shippingMethodLabelTranslator
-     */
     public function __construct(ShippingMethodLabelTranslator $shippingMethodLabelTranslator = null)
     {
         $this->shippingMethodLabelTranslator = $shippingMethodLabelTranslator;
@@ -58,12 +55,6 @@ class ComputeOrderShipping implements ProcessorInterface
         $context->setData($data);
     }
 
-    /**
-     * @param string|null $code
-     * @param string|null $type
-     *
-     * @return string|null
-     */
     private function getShippingMethodLabel(?string $code, ?string $type): ?string
     {
         if (null === $code || null === $type) {

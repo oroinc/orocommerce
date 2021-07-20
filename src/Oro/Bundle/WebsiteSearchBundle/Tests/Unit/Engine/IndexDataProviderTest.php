@@ -121,9 +121,6 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider entitiesDataProvider
-     * @param array $entityConfig
-     * @param array $indexData
-     * @param array $expected
      */
     public function testGetEntitiesData(array $entityConfig, array $indexData, array $expected)
     {

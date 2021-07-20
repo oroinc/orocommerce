@@ -25,9 +25,6 @@ class PaymentTransactionOwnerListener
 
     /**
      * Sets the owner information for a payment transaction from current security context.
-     *
-     * @param PaymentTransaction $entity
-     * @param LifecycleEventArgs $args
      */
     public function prePersist(PaymentTransaction $entity, LifecycleEventArgs $args)
     {

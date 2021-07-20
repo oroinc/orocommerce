@@ -29,18 +29,11 @@ class ProductEntityListenerTest extends WebTestCase
         $this->enableMessageBuffering();
     }
 
-    /**
-     * @return EntityManagerInterface
-     */
     private function getEntityManager(): EntityManagerInterface
     {
         return $this->getContainer()->get('doctrine')->getManagerForClass(Product::class);
     }
 
-    /**
-     * @param Product $product
-     * @param string $name
-     */
     private function addDefaultName(Product $product, string $name)
     {
         $defaultName = new ProductName();

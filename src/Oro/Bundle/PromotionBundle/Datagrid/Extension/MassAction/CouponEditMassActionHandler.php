@@ -27,17 +27,11 @@ class CouponEditMassActionHandler extends AbstractCouponMassActionHandler
      */
     private $formData;
 
-    /**
-     * @param TranslatorInterface $translator
-     */
     public function setTranslator(TranslatorInterface $translator)
     {
         $this->translator = $translator;
     }
 
-    /**
-     * @param FormFactoryInterface $formFactory
-     */
     public function setFormFactory(FormFactoryInterface $formFactory)
     {
         $this->formFactory = $formFactory;

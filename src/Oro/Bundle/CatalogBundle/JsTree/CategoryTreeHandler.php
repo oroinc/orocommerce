@@ -25,10 +25,6 @@ class CategoryTreeHandler extends AbstractTreeHandler
 
     /**
      * {@inheritdoc}
-     *
-     * @param TokenAccessorInterface $tokenAccessor
-     * @param CategoryTreeProvider $categoryTreeProvider
-     * @param MasterCatalogRootProviderInterface $masterCatalogRootProvider
      */
     public function __construct(
         $entityClass,

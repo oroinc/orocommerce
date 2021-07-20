@@ -13,10 +13,6 @@ class SubcategoryProvider
     /** @var CategoryTreeProvider */
     protected $categoryProvider;
 
-    /**
-     * @param TokenAccessorInterface $tokenAccessor
-     * @param CategoryTreeProvider $categoryProvider
-     */
     public function __construct(TokenAccessorInterface $tokenAccessor, CategoryTreeProvider $categoryProvider)
     {
         $this->tokenAccessor = $tokenAccessor;

@@ -34,9 +34,6 @@ class DiscountFormTypeProvider
         $this->defaultDiscountFormType = $defaultDiscountFormType;
     }
 
-    /**
-     * @return string
-     */
     public function getDefaultFormType(): string
     {
         if (!$this->defaultDiscountFormType) {
@@ -55,9 +52,6 @@ class DiscountFormTypeProvider
         return $this->formTypes[$discountType] ?? null;
     }
 
-    /**
-     * @return array
-     */
     public function getFormTypes(): array
     {
         return $this->formTypes;

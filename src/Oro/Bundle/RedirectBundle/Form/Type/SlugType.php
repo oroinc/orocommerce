@@ -18,9 +18,6 @@ class SlugType extends AbstractType
      */
     private $slugifyFormHelper;
 
-    /**
-     * @param SlugifyFormHelper $slugifyFormHelper
-     */
     public function __construct(SlugifyFormHelper $slugifyFormHelper)
     {
         $this->slugifyFormHelper = $slugifyFormHelper;

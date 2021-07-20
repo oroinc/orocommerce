@@ -23,10 +23,6 @@ class EntityDependenciesResolver implements EntityDependenciesResolverInterface
     /** @var array */
     private $classesDependencies;
 
-    /**
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param SearchMappingProvider    $mappingProvider
-     */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
         SearchMappingProvider $mappingProvider

@@ -32,11 +32,6 @@ class ProductProcessor implements MessageProcessorInterface, TopicSubscriberInte
     /** @var LoggerInterface */
     private $logger;
 
-    /**
-     * @param ManagerRegistry $doctrine
-     * @param LoggerInterface $logger
-     * @param CacheBuilderInterface $cacheBuilder
-     */
     public function __construct(
         ManagerRegistry $doctrine,
         LoggerInterface $logger,

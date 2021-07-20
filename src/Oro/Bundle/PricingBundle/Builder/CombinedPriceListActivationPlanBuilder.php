@@ -83,12 +83,6 @@ class CombinedPriceListActivationPlanBuilder
      */
     protected $processedCPLs = [];
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param PriceListScheduleResolver $schedulerResolver
-     * @param CombinedPriceListProvider $combinedPriceListProvider
-     * @param CombinedPriceListRelationHelperInterface $relationHelper
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         PriceListScheduleResolver $schedulerResolver,
@@ -101,9 +95,6 @@ class CombinedPriceListActivationPlanBuilder
         $this->relationHelper = $relationHelper;
     }
 
-    /**
-     * @param PriceList $priceList
-     */
     public function buildByPriceList(PriceList $priceList)
     {
         if ($this->isPriceListProcessed($priceList)) {
@@ -120,9 +111,6 @@ class CombinedPriceListActivationPlanBuilder
         $this->addPriceListProcessed($priceList);
     }
 
-    /**
-     * @param CombinedPriceList $cpl
-     */
     public function buildByCombinedPriceList(CombinedPriceList $cpl)
     {
         if ($this->isCPLProcessed($cpl)) {
@@ -133,9 +121,6 @@ class CombinedPriceListActivationPlanBuilder
         $this->addCPLProcessed($cpl);
     }
 
-    /**
-     * @param CombinedPriceList $cpl
-     */
     protected function generateActivationRules(CombinedPriceList $cpl)
     {
         $now = new \DateTime('now', new \DateTimeZone('UTC'));
@@ -274,17 +259,11 @@ class CombinedPriceListActivationPlanBuilder
         return !empty($this->processedCPLs[$cpl->getId()]);
     }
 
-    /**
-     * @param PriceList $priceList
-     */
     protected function addPriceListProcessed(PriceList $priceList)
     {
         $this->processedPriceLists[$priceList->getId()] = true;
     }
 
-    /**
-     * @param CombinedPriceList $cpl
-     */
     protected function addCPLProcessed(CombinedPriceList $cpl)
     {
         $this->processedCPLs[$cpl->getId()] = true;

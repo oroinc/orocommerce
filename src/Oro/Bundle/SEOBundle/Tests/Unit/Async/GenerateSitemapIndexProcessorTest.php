@@ -50,20 +50,11 @@ class GenerateSitemapIndexProcessorTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @return SessionInterface
-     */
     private function getSession(): SessionInterface
     {
         return $this->createMock(SessionInterface::class);
     }
 
-    /**
-     * @param string $messageId
-     * @param array  $body
-     *
-     * @return MessageInterface
-     */
     private function getMessage(string $messageId, array $body): MessageInterface
     {
         $message = new Message();
@@ -73,12 +64,6 @@ class GenerateSitemapIndexProcessorTest extends \PHPUnit\Framework\TestCase
         return $message;
     }
 
-
-    /**
-     * @param string $messageId
-     *
-     * @return Job
-     */
     private function getJobAndRunUnique(string $messageId): Job
     {
         $rootJob = new Job();

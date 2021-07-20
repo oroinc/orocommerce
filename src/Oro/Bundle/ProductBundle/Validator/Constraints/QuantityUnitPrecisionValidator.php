@@ -21,9 +21,6 @@ class QuantityUnitPrecisionValidator extends ConstraintValidator
     /** @var RoundingServiceInterface */
     private $roundingService;
 
-    /**
-     * @param RoundingServiceInterface $roundingService
-     */
     public function __construct(RoundingServiceInterface $roundingService)
     {
         $this->roundingService = $roundingService;

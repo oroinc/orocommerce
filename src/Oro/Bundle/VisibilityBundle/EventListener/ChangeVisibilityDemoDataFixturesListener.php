@@ -13,10 +13,6 @@ class ChangeVisibilityDemoDataFixturesListener extends AbstractDemoDataFixturesL
     /** @var CustomerPartialUpdateDriverInterface */
     protected $partialUpdateDriver;
 
-    /**
-     * @param OptionalListenerManager $listenerManager
-     * @param CustomerPartialUpdateDriverInterface $partialUpdateDriver
-     */
     public function __construct(
         OptionalListenerManager $listenerManager,
         CustomerPartialUpdateDriverInterface $partialUpdateDriver

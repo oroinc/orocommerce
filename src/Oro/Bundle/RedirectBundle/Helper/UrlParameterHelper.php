@@ -16,9 +16,6 @@ class UrlParameterHelper
         return md5(base64_encode(serialize($parameters)));
     }
 
-    /**
-     * @param array $data
-     */
     public static function normalizeNumericTypes(array &$data)
     {
         array_walk_recursive(

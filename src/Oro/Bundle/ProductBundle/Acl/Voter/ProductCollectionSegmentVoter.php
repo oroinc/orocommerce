@@ -28,10 +28,6 @@ class ProductCollectionSegmentVoter extends AbstractEntityVoter
      */
     private $contentVariantSegmentProvider;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param ContentVariantSegmentProvider $contentVariantSegmentProvider
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         ContentVariantSegmentProvider $contentVariantSegmentProvider

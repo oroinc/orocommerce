@@ -178,9 +178,6 @@ class ProductSegmentContentWidgetTypeTest extends FormIntegrationTestCase
         $this->assertEquals('', $this->contentWidgetType->getDefaultTemplate($contentWidget, $twig));
     }
 
-    /**
-     * @return array
-     */
     protected function getExtensions(): array
     {
         return [

@@ -35,13 +35,6 @@ class GuestShoppingListManager
     /** @var ConfigManager */
     private $configManager;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param TokenStorageInterface $tokenStorage
-     * @param WebsiteManager $websiteManager
-     * @param TranslatorInterface $translator
-     * @param ConfigManager $configManager
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         TokenStorageInterface $tokenStorage,
@@ -79,9 +72,6 @@ class GuestShoppingListManager
         return $this->tokenStorage->getToken() instanceof AnonymousCustomerUserToken && $this->isFeaturesEnabled();
     }
 
-    /**
-     * @return ShoppingList|null
-     */
     public function findExistingShoppingListForCustomerVisitor(): ?ShoppingList
     {
         $token = $this->tokenStorage->getToken();

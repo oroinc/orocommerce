@@ -49,7 +49,6 @@ class PaymentMethodWidgetProviderTest extends \PHPUnit\Framework\TestCase
             ->with(self::PAYMENT_METHOD_IDENTIFIER)
             ->willReturn($paymentMethodView);
 
-
         $prefix = 'test_prefix';
 
         static::assertSame(

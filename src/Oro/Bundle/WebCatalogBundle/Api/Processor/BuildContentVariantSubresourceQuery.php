@@ -17,9 +17,6 @@ class BuildContentVariantSubresourceQuery implements ProcessorInterface
     /** @var DoctrineHelper */
     private $doctrineHelper;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(DoctrineHelper $doctrineHelper)
     {
         $this->doctrineHelper = $doctrineHelper;

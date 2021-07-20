@@ -82,8 +82,6 @@ class ProductControllerTest extends WebTestCase
 
     /**
      * @dataProvider indexDataProvider
-     * @param $category
-     * @param array $metaTags
      */
     public function testIndex($category, array $metaTags)
     {

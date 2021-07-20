@@ -40,13 +40,6 @@ class ChangedSlugsHelper
      */
     private $draftHelper;
 
-    /**
-     * @param FormFactoryInterface $formFactory
-     * @param RequestStack $requestStack
-     * @param SlugEntityGenerator $slugGenerator
-     * @param SlugUrlDiffer $slugUrlDiffer
-     * @param DraftHelper $draftHelper
-     */
     public function __construct(
         FormFactoryInterface $formFactory,
         RequestStack $requestStack,
@@ -99,11 +92,6 @@ class ChangedSlugsHelper
         return $this->slugUrlDiffer->getSlugUrlsChanges($oldSlugs, $newSlugs);
     }
 
-    /**
-     * @param SluggableInterface $entity
-     *
-     * @return bool
-     */
     private function isUnsupportedEntity(SluggableInterface $entity): bool
     {
         return ($entity instanceof DraftableInterface && DraftHelper::isDraft($entity))

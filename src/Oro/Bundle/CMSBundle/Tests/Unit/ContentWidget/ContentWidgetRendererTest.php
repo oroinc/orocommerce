@@ -130,9 +130,6 @@ class ContentWidgetRendererTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @param ContentWidget|null $contentWidget
-     */
     private function mockFindOneByName(?ContentWidget $contentWidget): void
     {
         $this->doctrine

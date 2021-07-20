@@ -31,11 +31,6 @@ class DeleteMessageTextGenerator
     /** @var PaymentTermManager */
     private $paymentTermManager;
 
-    /**
-     * @param RouterInterface $router
-     * @param Environment $twig
-     * @param PaymentTermManager $paymentTermManager
-     */
     public function __construct(
         RouterInterface $router,
         Environment $twig,

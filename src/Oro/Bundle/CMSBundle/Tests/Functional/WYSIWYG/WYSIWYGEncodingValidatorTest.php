@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Validator\Constraints;
 
 use Oro\Bundle\CMSBundle\Entity\Page;

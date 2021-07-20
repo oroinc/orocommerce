@@ -9,14 +9,7 @@ use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
  */
 interface CombinedPriceListActivationStatusHelperInterface
 {
-    /**
-     * @param CombinedPriceList $cpl
-     * @return bool
-     */
     public function isReadyForBuild(CombinedPriceList $cpl): bool;
 
-    /**
-     * @return \DateTime
-     */
     public function getActivateDate(): \DateTime;
 }

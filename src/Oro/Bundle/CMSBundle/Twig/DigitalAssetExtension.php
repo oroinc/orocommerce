@@ -21,9 +21,6 @@ class DigitalAssetExtension extends AbstractExtension implements ServiceSubscrib
     /** @var ContainerInterface */
     private $container;
 
-    /**
-     * @param ContainerInterface $container
-     */
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
@@ -64,13 +61,6 @@ class DigitalAssetExtension extends AbstractExtension implements ServiceSubscrib
         }
     }
 
-    /**
-     * @param int $digitalAssetId
-     * @param string $fileUuid
-     * @param string $action
-     * @param int $referenceType
-     * @return string
-     */
     public function getWysiwygFileUrl(
         int $digitalAssetId,
         string $fileUuid,

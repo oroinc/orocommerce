@@ -36,10 +36,6 @@ class PriceListsSettingsType extends AbstractType
         return self::NAME;
     }
 
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add(

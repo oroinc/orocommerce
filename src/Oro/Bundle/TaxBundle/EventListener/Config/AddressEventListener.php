@@ -12,17 +12,11 @@ class AddressEventListener
 {
     const KEY = 'origin_address';
 
-    /**
-     * @param AddressModelFactory $addressModelFactory
-     */
     public function __construct(AddressModelFactory $addressModelFactory)
     {
         $this->addressModelFactory = $addressModelFactory;
     }
 
-    /**
-     * @param ConfigSettingsUpdateEvent $event
-     */
     public function formPreSet(ConfigSettingsUpdateEvent $event)
     {
         $settings = $event->getSettings();
@@ -36,9 +30,6 @@ class AddressEventListener
         $event->setSettings($settings);
     }
 
-    /**
-     * @param ConfigSettingsUpdateEvent $event
-     */
     public function beforeSave(ConfigSettingsUpdateEvent $event)
     {
         $settings = $event->getSettings();

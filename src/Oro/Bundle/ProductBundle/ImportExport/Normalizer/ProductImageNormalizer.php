@@ -27,9 +27,6 @@ class ProductImageNormalizer extends ConfigurableEntityNormalizer
      */
     protected $fileLocator;
 
-    /**
-     * @param ImageTypeProvider $imageTypeProvider
-     */
     public function setImageTypeProvider(ImageTypeProvider $imageTypeProvider)
     {
         $this->imageTypeProvider = $imageTypeProvider;
@@ -43,9 +40,6 @@ class ProductImageNormalizer extends ConfigurableEntityNormalizer
         $this->productImageClass = $productImageClass;
     }
 
-    /**
-     * @param FileLocator $fileLocator
-     */
     public function setFileLocator(FileLocator $fileLocator)
     {
         $this->fileLocator = $fileLocator;

@@ -12,17 +12,11 @@ class ScheduleSitemapGenerationOnGuestAccessChangeListener
      */
     private $sitemapGenerationScheduler;
 
-    /**
-     * @param SitemapGenerationScheduler $sitemapGenerationScheduler
-     */
     public function __construct(SitemapGenerationScheduler $sitemapGenerationScheduler)
     {
         $this->sitemapGenerationScheduler = $sitemapGenerationScheduler;
     }
 
-    /**
-     * @param ConfigUpdateEvent $event
-     */
     public function onConfigUpdate(ConfigUpdateEvent $event)
     {
         if (!$event->isChanged('oro_frontend.guest_access_enabled')) {

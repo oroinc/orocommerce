@@ -16,9 +16,6 @@ class UPSTransportMock extends UPSTransport
      */
     private $cacheDir;
 
-    /**
-     * @param string $cacheDir
-     */
     public function setCacheDir(string $cacheDir)
     {
         $this->cacheDir = $cacheDir;

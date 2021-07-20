@@ -23,9 +23,6 @@ class ProductPricesTypeTest extends BlockTypeTestCase
     /** @var AttributeManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $attributeManager;
 
-    /**
-     * @param LayoutFactoryBuilderInterface $layoutFactoryBuilder
-     */
     protected function initializeLayoutFactoryBuilder(LayoutFactoryBuilderInterface $layoutFactoryBuilder)
     {
         $this->attributeRenderRegistry = new AttributeRenderRegistry();

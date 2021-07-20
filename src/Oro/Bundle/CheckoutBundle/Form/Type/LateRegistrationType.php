@@ -87,7 +87,6 @@ class LateRegistrationType extends AbstractType
 
     /**
      * PreSet event handler
-     * @param FormEvent $event
      */
     public function preSet(FormEvent $event)
     {

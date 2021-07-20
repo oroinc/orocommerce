@@ -12,17 +12,11 @@ class OrderTotalEventListener
     /** @var TotalProvider */
     protected $provider;
 
-    /**
-     * @param TotalProvider $provider
-     */
     public function __construct(TotalProvider $provider)
     {
         $this->provider = $provider;
     }
 
-    /**
-     * @param OrderEvent $event
-     */
     public function onOrderEvent(OrderEvent $event)
     {
         $order = $event->getOrder();

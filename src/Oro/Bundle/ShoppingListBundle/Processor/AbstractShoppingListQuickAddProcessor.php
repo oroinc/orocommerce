@@ -47,12 +47,6 @@ abstract class AbstractShoppingListQuickAddProcessor implements ComponentProcess
      */
     protected $aclHelper;
 
-    /**
-     * @param ShoppingListLineItemHandler $shoppingListLineItemHandler
-     * @param ManagerRegistry $registry
-     * @param MessageGenerator $messageGenerator
-     * @param AclHelper $aclHelper
-     */
     public function __construct(
         ShoppingListLineItemHandler $shoppingListLineItemHandler,
         ManagerRegistry $registry,

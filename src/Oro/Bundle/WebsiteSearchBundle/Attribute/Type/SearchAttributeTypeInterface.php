@@ -49,11 +49,6 @@ interface SearchAttributeTypeInterface extends AttributeTypeInterface
      */
     public function getFilterType(): string;
 
-    /**
-     * @param FieldConfigModel $attribute
-     *
-     * @return bool
-     */
     public function isLocalizable(FieldConfigModel $attribute): bool;
 
     /**
@@ -72,10 +67,5 @@ interface SearchAttributeTypeInterface extends AttributeTypeInterface
      */
     public function getFilterableFieldNames(FieldConfigModel $attribute): array;
 
-    /**
-     * @param FieldConfigModel $attribute
-     *
-     * @return string
-     */
     public function getSortableFieldName(FieldConfigModel $attribute): string;
 }

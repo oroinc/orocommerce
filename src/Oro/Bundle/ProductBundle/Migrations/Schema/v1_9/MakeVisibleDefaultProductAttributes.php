@@ -22,9 +22,6 @@ class MakeVisibleDefaultProductAttributes implements Migration
         $this->makeSeoAttributeGroupInvisible($queries);
     }
 
-    /**
-     * @param QueryBag $queries
-     */
     public function makeSeoAttributeGroupInvisible(QueryBag $queries)
     {
         $queries->addPostQuery(new ParametrizedSqlMigrationQuery(
@@ -40,9 +37,6 @@ class MakeVisibleDefaultProductAttributes implements Migration
         ));
     }
 
-    /**
-     * @param QueryBag $queries
-     */
     public function makeAttributesVisible(QueryBag $queries)
     {
         $defaultProductFields = [

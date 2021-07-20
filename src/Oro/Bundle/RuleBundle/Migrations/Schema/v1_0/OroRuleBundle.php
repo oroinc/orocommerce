@@ -16,9 +16,6 @@ class OroRuleBundle implements Migration
         $this->createOroRuleTable($schema);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function createOroRuleTable(Schema $schema)
     {
         $table = $schema->createTable('oro_rule');

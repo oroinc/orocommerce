@@ -36,9 +36,6 @@ class ProductExportNormalizerEvent extends Event
         return $this->data;
     }
 
-    /**
-     * @return Product
-     */
     public function getProduct(): Product
     {
         return $this->product;

@@ -269,7 +269,6 @@ class CustomerGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
     }
 
     /**
-     * @param array $expectedVisibilities
      * @dataProvider getParentCategoryVisibilitiesDataProvider
      */
     public function testGetParentCategoryVisibilities(array $expectedVisibilities)

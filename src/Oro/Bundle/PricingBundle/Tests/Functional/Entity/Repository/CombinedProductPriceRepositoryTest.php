@@ -63,7 +63,6 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider copyDataProvider
-     * @param array $products
      */
     public function testCopyPricesByPriceList(array $products = [])
     {
@@ -115,9 +114,6 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
         }
     }
 
-    /**
-     * @return array
-     */
     public function copyDataProvider(): array
     {
         return [
@@ -437,7 +433,6 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
 
         $this->assertEquals($expected, $actual);
     }
-
 
     /**
      * @dataProvider insertMinimalPricesByPriceListDataProvider

@@ -37,11 +37,6 @@ class UrlKeyValueCache implements UrlCacheInterface, ClearableCache, FlushableCa
      */
     private $changedKeys = [];
 
-    /**
-     * @param Cache $persistentCache
-     * @param Cache $localCache
-     * @param Filesystem $filesystem
-     */
     public function __construct(Cache $persistentCache, Cache $localCache, Filesystem $filesystem)
     {
         $this->persistentCache = $persistentCache;
@@ -138,9 +133,6 @@ class UrlKeyValueCache implements UrlCacheInterface, ClearableCache, FlushableCa
         return $changes;
     }
 
-    /**
-     * @param array $values
-     */
     protected function saveMultiToPersistentCache(array $values)
     {
         if (empty($values)) {

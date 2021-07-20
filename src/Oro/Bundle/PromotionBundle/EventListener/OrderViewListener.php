@@ -17,17 +17,11 @@ class OrderViewListener
      */
     protected $translator;
 
-    /**
-     * @param TranslatorInterface $translator
-     */
     public function __construct(TranslatorInterface $translator)
     {
         $this->translator = $translator;
     }
 
-    /**
-     * @param BeforeListRenderEvent $event
-     */
     public function onView(BeforeListRenderEvent $event)
     {
         if (!$this->isApplicable($event)) {
@@ -42,9 +36,6 @@ class OrderViewListener
         $this->addPromotionsSubBlock($event, $template);
     }
 
-    /**
-     * @param BeforeListRenderEvent $event
-     */
     public function onEdit(BeforeListRenderEvent $event)
     {
         if (!$this->isApplicable($event)) {
@@ -59,19 +50,11 @@ class OrderViewListener
         $this->addPromotionsSubBlock($event, $template);
     }
 
-    /**
-     * @param BeforeListRenderEvent $event
-     * @return bool
-     */
     private function isApplicable(BeforeListRenderEvent $event): bool
     {
         return $event->getScrollData()->hasBlock(self::DISCOUNTS_BLOCK_ID);
     }
 
-    /**
-     * @param BeforeListRenderEvent $event
-     * @param string $template
-     */
     private function addPromotionsSubBlock(BeforeListRenderEvent $event, string $template)
     {
         $scrollData = $event->getScrollData();

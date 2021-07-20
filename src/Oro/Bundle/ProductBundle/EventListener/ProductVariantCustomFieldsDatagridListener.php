@@ -69,8 +69,6 @@ class ProductVariantCustomFieldsDatagridListener
 
     /**
      * Add restriction to show only products that have all variant fields values set
-     *
-     * @param BuildBefore $event
      */
     public function onBuildBeforeHideUnsuitable(BuildBefore $event)
     {
@@ -128,10 +126,6 @@ class ProductVariantCustomFieldsDatagridListener
         $query->addOrWhere(sprintf('%s.id IS NOT NULL', $variantLinkLeftJoin['alias']));
     }
 
-    /**
-     * @param BuildAfter $event
-     * @param array $variantFields
-     */
     private function removeExtendFields(BuildAfter $event, array  $variantFields)
     {
         $datagridConfig = $event->getDatagrid()->getConfig();
@@ -148,9 +142,6 @@ class ProductVariantCustomFieldsDatagridListener
         }
     }
 
-    /**
-     * @param BuildAfter $event
-     */
     public function onBuildAfterEditGrid(BuildAfter $event)
     {
         $parameters = $event->getDatagrid()->getParameters();
@@ -165,9 +156,6 @@ class ProductVariantCustomFieldsDatagridListener
         }
     }
 
-    /**
-     * @param BuildAfter $event
-     */
     public function onBuildAfter(BuildAfter $event)
     {
         $productRepository = $this->getProductRepository();

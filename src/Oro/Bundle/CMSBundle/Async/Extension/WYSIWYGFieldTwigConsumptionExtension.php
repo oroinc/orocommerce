@@ -15,9 +15,6 @@ class WYSIWYGFieldTwigConsumptionExtension extends AbstractExtension
     /** @var WYSIWYGFieldTwigListener */
     private $wysiwygFieldTwigListener;
 
-    /**
-     * @param WYSIWYGFieldTwigListener $wysiwygFieldTwigListener
-     */
     public function __construct(WYSIWYGFieldTwigListener $wysiwygFieldTwigListener)
     {
         $this->wysiwygFieldTwigListener = $wysiwygFieldTwigListener;

@@ -279,9 +279,6 @@ abstract class BaseQuoteBackofficeWorkflowTestCase extends WebTestCase
         return $crawler;
     }
 
-    /**
-     * @param array $buttonTitles
-     */
     protected function assertButtonsAvailable(array $buttonTitles)
     {
         $crawler = $this->openQuoteWorkflowWidget();

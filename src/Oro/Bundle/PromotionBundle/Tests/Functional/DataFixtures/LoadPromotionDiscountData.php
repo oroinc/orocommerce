@@ -42,9 +42,6 @@ class LoadPromotionDiscountData extends AbstractFixture implements ContainerAwar
         ];
     }
 
-    /**
-     * @param ObjectManager $manager
-     */
     public function load(ObjectManager $manager)
     {
         $userRepository = $manager->getRepository(User::class);

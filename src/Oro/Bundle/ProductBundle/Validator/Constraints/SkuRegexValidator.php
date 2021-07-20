@@ -17,9 +17,6 @@ class SkuRegexValidator extends ConstraintValidator
      */
     private $pattern;
 
-    /**
-     * @param string $pattern
-     */
     public function __construct(string $pattern)
     {
         $this->pattern = $pattern;

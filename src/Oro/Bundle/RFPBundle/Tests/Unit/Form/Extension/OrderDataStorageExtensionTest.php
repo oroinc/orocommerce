@@ -79,10 +79,6 @@ class OrderDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider buildFormDataProvider
-     *
-     * @param array $lineItemsInfo
-     * @param array $lineItemToMatchedPrices
-     * @param array $matchedPrices
      */
     public function testBuildForm(
         array $lineItemsInfo,

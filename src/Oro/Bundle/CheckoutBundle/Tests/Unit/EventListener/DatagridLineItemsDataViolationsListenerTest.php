@@ -187,10 +187,6 @@ class DatagridLineItemsDataViolationsListenerTest extends \PHPUnit\Framework\Tes
         );
     }
 
-    /**
-     * @param Checkout $checkout
-     * @return DatagridInterface
-     */
     private function getDatagridMock(Checkout $checkout): DatagridInterface
     {
         $repository = $this->createMock(ObjectRepository::class);

@@ -14,9 +14,6 @@ class RequestUpdateHandler extends UpdateHandler
      */
     protected $representativesNotifier;
 
-    /**
-     * @param RequestRepresentativesNotifier $representativesNotifier
-     */
     public function setRepresentativesNotifier(RequestRepresentativesNotifier $representativesNotifier)
     {
         $this->representativesNotifier = $representativesNotifier;

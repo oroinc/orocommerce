@@ -15,9 +15,6 @@ class PriceAttributeProductPriceImportExportConfigurationProvider implements Imp
      */
     private $translator;
 
-    /**
-     * @param TranslatorInterface $translator
-     */
     public function __construct(TranslatorInterface $translator)
     {
         $this->translator = $translator;

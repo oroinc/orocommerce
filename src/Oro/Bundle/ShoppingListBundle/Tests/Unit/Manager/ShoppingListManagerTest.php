@@ -309,8 +309,6 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param LineItem $lineItem
-     *
      * @dataProvider addLineItemDataProvider
      */
     public function testAddLineItem(LineItem $lineItem)
@@ -323,9 +321,6 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($lineItem->getOrganization());
     }
 
-    /**
-     * @return array
-     */
     public function addLineItemDataProvider(): array
     {
         $configurableLineItem = new LineItem();

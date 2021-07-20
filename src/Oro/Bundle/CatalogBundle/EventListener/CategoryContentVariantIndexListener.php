@@ -45,12 +45,6 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
      */
     protected $fieldsChangesListenTo = ['titles'];
 
-    /**
-     * @param ProductIndexScheduler $indexScheduler
-     * @param PropertyAccessorInterface $accessor
-     * @param FieldUpdatesChecker       $fieldUpdatesChecker
-     * @param WebCatalogUsageProviderInterface|null $webCatalogUsageProvider
-     */
     public function __construct(
         ProductIndexScheduler $indexScheduler,
         PropertyAccessorInterface $accessor,
@@ -83,9 +77,6 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
         return $this->fieldsChangesListenTo;
     }
 
-    /**
-     * @param OnFlushEventArgs $event
-     */
     public function onFlush(OnFlushEventArgs $event)
     {
         $unitOfWork = $event->getEntityManager()->getUnitOfWork();

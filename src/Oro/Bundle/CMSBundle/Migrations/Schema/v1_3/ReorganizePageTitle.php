@@ -44,8 +44,6 @@ class ReorganizePageTitle implements Migration, DatabasePlatformAwareInterface
 
     /**
      * Create oro_cms_page_title table
-     *
-     * @param Schema $schema
      */
     protected function createOroCmsPageTitleTable(Schema $schema)
     {
@@ -58,8 +56,6 @@ class ReorganizePageTitle implements Migration, DatabasePlatformAwareInterface
 
     /**
      * Add oro_cms_page_title foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroCmsPageTitleForeignKeys(Schema $schema)
     {
@@ -90,10 +86,6 @@ class ReorganizePageTitle implements Migration, DatabasePlatformAwareInterface
         return $comparator->compare($schema, $toSchema)->toSql($this->platform);
     }
 
-    /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     */
     protected function dropTitleColumn(Schema $schema, QueryBag $queries)
     {
         $preSchema = clone $schema;

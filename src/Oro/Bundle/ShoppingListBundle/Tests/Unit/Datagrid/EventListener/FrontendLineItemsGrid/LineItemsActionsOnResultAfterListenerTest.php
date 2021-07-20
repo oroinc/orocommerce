@@ -43,9 +43,6 @@ class LineItemsActionsOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
 
     /**
      * @dataProvider onResultAfterWhenNoEditPermissionDataProvider
-     *
-     * @param ResultRecordInterface $record
-     * @param ResultRecordInterface $expectedRecord
      */
     public function testOnResultAfterWhenNoShoppingList(
         ResultRecordInterface $record,
@@ -73,9 +70,6 @@ class LineItemsActionsOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
 
     /**
      * @dataProvider onResultAfterWhenNoEditPermissionDataProvider
-     *
-     * @param ResultRecordInterface $record
-     * @param ResultRecordInterface $expectedRecord
      */
     public function testOnResultAfterWhenEditNotGranted(
         ResultRecordInterface $record,
@@ -124,8 +118,6 @@ class LineItemsActionsOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
     }
 
     /**
-     * @return array
-     *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function onResultAfterWhenNoEditPermissionDataProvider(): array
@@ -247,9 +239,6 @@ class LineItemsActionsOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
 
     /**
      * @dataProvider onResultAfterWhenShoppingListDataProvider
-     *
-     * @param ResultRecordInterface $record
-     * @param ResultRecordInterface $expectedRecord
      */
     public function testOnResultAfterWhenShoppingList(
         ResultRecordInterface $record,
@@ -298,8 +287,6 @@ class LineItemsActionsOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
     }
 
     /**
-     * @return array
-     *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function onResultAfterWhenShoppingListDataProvider(): array
@@ -419,10 +406,6 @@ class LineItemsActionsOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
         ];
     }
 
-    /**
-     * @param array $parameters
-     * @return Datagrid
-     */
     private function getDatagrid(array $parameters = []): Datagrid
     {
         return new Datagrid(

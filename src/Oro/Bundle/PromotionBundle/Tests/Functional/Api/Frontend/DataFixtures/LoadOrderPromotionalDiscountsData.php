@@ -89,10 +89,6 @@ class LoadOrderPromotionalDiscountsData extends AbstractFixture implements Depen
         $manager->flush();
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param Order         $order
-     */
     private function assertOrderAppliedDiscountNotExists(ObjectManager $manager, Order $order)
     {
         /** @var EntityRepository $repo */
@@ -113,10 +109,6 @@ class LoadOrderPromotionalDiscountsData extends AbstractFixture implements Depen
         }
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param OrderLineItem $lineItem
-     */
     private function assertLineItemAppliedDiscountNotExists(ObjectManager $manager, OrderLineItem $lineItem)
     {
         /** @var EntityRepository $repo */
@@ -131,14 +123,6 @@ class LoadOrderPromotionalDiscountsData extends AbstractFixture implements Depen
         }
     }
 
-    /**
-     * @param Order  $order
-     * @param string $type
-     * @param float  $amount
-     * @param int    $promotionId
-     *
-     * @return AppliedDiscount
-     */
     private function createOrderAppliedDiscount(
         Order $order,
         string $type,
@@ -158,13 +142,6 @@ class LoadOrderPromotionalDiscountsData extends AbstractFixture implements Depen
         return $appliedDiscount;
     }
 
-    /**
-     * @param OrderLineItem $lineItem
-     * @param float         $amount
-     * @param int           $promotionId
-     *
-     * @return AppliedDiscount
-     */
     private function createLineItemAppliedDiscount(
         OrderLineItem $lineItem,
         float $amount,

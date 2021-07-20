@@ -66,9 +66,6 @@ class OrderDiscountTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($expected, $this->discount->calculate($entity));
     }
 
-    /**
-     * @return array
-     */
     public function calculateDataProvider(): array
     {
         return [

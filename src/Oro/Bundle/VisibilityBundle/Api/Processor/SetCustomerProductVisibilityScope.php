@@ -19,12 +19,6 @@ class SetCustomerProductVisibilityScope extends AbstractSetVisibilityScope
     /** @var VisibilityScopeProvider */
     private $visibilityProvider;
 
-    /**
-     * @param DoctrineHelper          $doctrineHelper
-     * @param WebsiteManager          $websiteManager
-     * @param TranslatorInterface     $translator
-     * @param VisibilityScopeProvider $visibilityProvider
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         WebsiteManager $websiteManager,

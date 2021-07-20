@@ -18,10 +18,6 @@ class BasicShippingMethodChoicesProvider implements ShippingMethodChoicesProvide
      */
     protected $translator;
 
-    /**
-     * @param ShippingMethodProviderInterface $shippingMethodProvider
-     * @param TranslatorInterface             $translator
-     */
     public function __construct(
         ShippingMethodProviderInterface $shippingMethodProvider,
         TranslatorInterface $translator

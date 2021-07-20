@@ -12,17 +12,11 @@ class DefaultShippingMethodSetter
      */
     private $checkoutShippingMethodsProvider;
 
-    /**
-     * @param CheckoutShippingMethodsProviderInterface $checkoutShippingMethodsProvider
-     */
     public function __construct(CheckoutShippingMethodsProviderInterface $checkoutShippingMethodsProvider)
     {
         $this->checkoutShippingMethodsProvider = $checkoutShippingMethodsProvider;
     }
 
-    /**
-     * @param Checkout $checkout
-     */
     public function setDefaultShippingMethod(Checkout $checkout)
     {
         if ($checkout->getShippingMethod()) {

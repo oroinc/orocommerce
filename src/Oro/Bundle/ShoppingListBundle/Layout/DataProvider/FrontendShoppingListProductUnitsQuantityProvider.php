@@ -17,9 +17,6 @@ class FrontendShoppingListProductUnitsQuantityProvider
      */
     protected $productShoppingListsDataProvider;
 
-    /**
-     * @param ProductShoppingListsDataProvider $productShoppingListsDataProvider
-     */
     public function __construct(ProductShoppingListsDataProvider $productShoppingListsDataProvider)
     {
         $this->productShoppingListsDataProvider = $productShoppingListsDataProvider;

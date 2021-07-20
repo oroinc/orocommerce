@@ -16,9 +16,6 @@ class ProductPriceEntityListener extends BaseProductPriceEntityListener
         return ProductPrice::class;
     }
 
-    /**
-     * @param ProductPriceSaveAfterEvent $event
-     */
     public function onSave(ProductPriceSaveAfterEvent $event)
     {
         /** @var ProductPrice  $price */
@@ -33,9 +30,6 @@ class ProductPriceEntityListener extends BaseProductPriceEntityListener
         }
     }
 
-    /**
-     * @param ProductPriceRemove $event
-     */
     public function onRemove(ProductPriceRemove $event)
     {
         $this->preRemove($event->getPrice());

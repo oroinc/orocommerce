@@ -26,11 +26,6 @@ class FormViewListener
      */
     protected $requestStack;
 
-    /**
-     * @param TranslatorInterface $translator
-     * @param DoctrineHelper $doctrineHelper
-     * @param RequestStack $requestStack
-     */
     public function __construct(
         TranslatorInterface $translator,
         DoctrineHelper $doctrineHelper,
@@ -41,9 +36,6 @@ class FormViewListener
         $this->requestStack = $requestStack;
     }
 
-    /**
-     * @param BeforeListRenderEvent $event
-     */
     public function onCategoryEdit(BeforeListRenderEvent $event)
     {
         $request = $this->requestStack->getCurrentRequest();

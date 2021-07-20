@@ -20,9 +20,6 @@ class CategoryImageExtension extends AbstractExtension implements ServiceSubscri
     /** @var ContainerInterface */
     private $container;
 
-    /**
-     * @param ContainerInterface $container
-     */
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
@@ -39,11 +36,6 @@ class CategoryImageExtension extends AbstractExtension implements ServiceSubscri
         ];
     }
 
-    /**
-     * @param File|null $file
-     * @param string $filter
-     * @return string
-     */
     public function getCategoryFilteredImage(?File $file, string $filter): string
     {
         if ($file) {
@@ -55,10 +47,6 @@ class CategoryImageExtension extends AbstractExtension implements ServiceSubscri
         return $this->getCategoryImagePlaceholder($filter);
     }
 
-    /**
-     * @param string $filter
-     * @return string
-     */
     public function getCategoryImagePlaceholder(string $filter): string
     {
         $imagePlaceholderProvider = $this->container->get('oro_catalog.provider.category_image_placeholder');

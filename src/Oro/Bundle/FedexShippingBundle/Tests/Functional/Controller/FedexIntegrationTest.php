@@ -77,12 +77,6 @@ class FedexIntegrationTest extends WebTestCase
         static::assertStringContainsString('FedEx', $crawler->html());
     }
 
-    /**
-     * @param Form  $form
-     * @param array $settings
-     *
-     * @return array
-     */
     private function createFormValues(Form $form, array $settings): array
     {
         $formValues = $form->getPhpValues();
@@ -94,10 +88,6 @@ class FedexIntegrationTest extends WebTestCase
         return $formValues;
     }
 
-    /**
-     * @param FedexIntegrationSettings $settings
-     * @param array                    $settingsData
-     */
     private function assertSettingsCorrect(FedexIntegrationSettings $settings, array $settingsData)
     {
         static::assertSame($settingsData['key'], $settings->getKey());

@@ -18,9 +18,6 @@ class DefaultCategoryVisibilityListener
      */
     protected $eventDispatcher;
 
-    /**
-     * @param EventDispatcherInterface $eventDispatcher
-     */
     public function __construct(EventDispatcherInterface $eventDispatcher)
     {
         $this->eventDispatcher = $eventDispatcher;
@@ -28,8 +25,6 @@ class DefaultCategoryVisibilityListener
 
     /**
      * Trigger full reindex if default category visibility was changed.
-     *
-     * @param ConfigUpdateEvent $event
      */
     public function onUpdateAfter(ConfigUpdateEvent $event)
     {

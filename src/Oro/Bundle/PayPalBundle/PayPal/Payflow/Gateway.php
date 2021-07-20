@@ -37,12 +37,6 @@ class Gateway
     /** @var HostAddressProviderInterface */
     protected $hostAddressProvider;
 
-    /**
-     * @param HostAddressProviderInterface $hostAddressProvider
-     * @param ClientInterface $client
-     * @param RequestRegistry $requestRegistry
-     * @param ProcessorRegistry $processorRegistry
-     */
     public function __construct(
         HostAddressProviderInterface $hostAddressProvider,
         ClientInterface $client,

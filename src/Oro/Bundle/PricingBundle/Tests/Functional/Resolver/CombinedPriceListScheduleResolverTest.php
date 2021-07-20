@@ -59,9 +59,6 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
 
     /**
      * @dataProvider cplSwitchingDataProvider
-     * @param array $cplRelationsExpected
-     * @param array $cplConfig
-     * @param \DateTime $now
      */
     public function testCPLSwitching(array $cplRelationsExpected, array $cplConfig, \DateTime $now)
     {
@@ -211,9 +208,6 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
         return $qb->getQuery()->getResult();
     }
 
-    /**
-     * @param array $cplConfig
-     */
     private function setConfigCPL(array $cplConfig)
     {
         $actualCPLConfigKey = Configuration::getConfigKeyToPriceList();
@@ -232,9 +226,6 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
         $this->configManager->flush();
     }
 
-    /**
-     * @param array $cplConfig
-     */
     private function checkConfigCPL(array $cplConfig)
     {
         $this->configManager->reload();

@@ -31,11 +31,6 @@ class AdminConsentContentNodeValidFilter implements ConsentFilterInterface
      */
     private $consentAcceptanceProvider;
 
-    /**
-     * @param FrontendHelper $frontendHelper
-     * @param ConsentContentNodeValidator $contentNodeValidator
-     * @param ConsentAcceptanceProvider $consentAcceptanceProvider
-     */
     public function __construct(
         FrontendHelper $frontendHelper,
         ConsentContentNodeValidator $contentNodeValidator,
@@ -83,7 +78,6 @@ class AdminConsentContentNodeValidFilter implements ConsentFilterInterface
             $this->isLogErrorsEnabled($params)
         );
     }
-
 
     /**
      * @param array $params

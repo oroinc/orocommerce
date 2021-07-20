@@ -16,17 +16,11 @@ use Oro\Bundle\TaxBundle\Entity\Repository\ProductTaxCodeRepository;
  */
 class SplitProductTaxCodeBetweenOrganizations extends AbstractFixture implements DependentFixtureInterface
 {
-    /**
-     * @return array
-     */
     public function getDependencies(): array
     {
         return [LoadProductTaxCodeOrganizationData::class];
     }
 
-    /**
-     * @param ObjectManager $manager
-     */
     public function load(ObjectManager $manager): void
     {
         $productTaxCodes = $this->getProductTaxCodes($manager);
@@ -58,12 +52,6 @@ class SplitProductTaxCodeBetweenOrganizations extends AbstractFixture implements
         }
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param OrganizationInterface|null $organization
-     *
-     * @return array
-     */
     private function getProductTaxCodes(ObjectManager $manager, OrganizationInterface $organization = null): array
     {
         /** @var ProductTaxCodeRepository $priceAttributeRepository */
@@ -79,11 +67,7 @@ class SplitProductTaxCodeBetweenOrganizations extends AbstractFixture implements
         }
         return $qb->getQuery()->getResult();
     }
-    /**
-     * @param ObjectManager $manager
-     *
-     * @return array
-     */
+
     private function getOrganizations(ObjectManager $manager): array
     {
         return $manager->getRepository(Organization::class)->findAll();

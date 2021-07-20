@@ -31,11 +31,6 @@ class RowTotalResolver
     /** @var RoundingResolver */
     protected $roundingResolver;
 
-    /**
-     * @param TaxationSettingsProvider $settingsProvider
-     * @param TaxCalculatorInterface   $calculator
-     * @param RoundingResolver $roundingResolver
-     */
     public function __construct(
         TaxationSettingsProvider $settingsProvider,
         TaxCalculatorInterface $calculator,
@@ -64,7 +59,7 @@ class RowTotalResolver
         $taxResults = [];
         foreach ($taxRules as $taxRule) {
             $currentTaxRate = BigDecimal::of($taxRule->getTax()->getRate());
-            
+
             if (BigDecimal::zero()->isEqualTo($totalTaxRate->toScale(TaxationSettingsProvider::CALCULATION_SCALE))) {
                 $currentTaxAmount = BigDecimal::zero();
             } else {

@@ -25,11 +25,6 @@ class PlaceOrder implements ProcessorInterface
     /** @var string */
     private $orderPurchaseActionGroupName;
 
-    /**
-     * @param ActionGroupExecutor $actionGroupExecutor
-     * @param DoctrineHelper      $doctrineHelper
-     * @param string              $orderPurchaseActionGroupName
-     */
     public function __construct(
         ActionGroupExecutor $actionGroupExecutor,
         DoctrineHelper $doctrineHelper,
@@ -62,10 +57,6 @@ class PlaceOrder implements ProcessorInterface
         $context->setProcessed(SaveEntity::OPERATION_NAME);
     }
 
-    /**
-     * @param Order         $order
-     * @param CreateContext $context
-     */
     private function processOrder(Order $order, CreateContext $context): void
     {
         /** @var EntityManagerInterface $em */
@@ -84,13 +75,6 @@ class PlaceOrder implements ProcessorInterface
         }
     }
 
-    /**
-     * @param Order                  $order
-     * @param EntityManagerInterface $em
-     * @param CreateContext          $context
-     *
-     * @return bool
-     */
     private function placeOrder(Order $order, EntityManagerInterface $em, CreateContext $context): bool
     {
         $em->persist($order);
@@ -105,12 +89,6 @@ class PlaceOrder implements ProcessorInterface
         return true;
     }
 
-    /**
-     * @param Order         $order
-     * @param CreateContext $context
-     *
-     * @return bool
-     */
     private function purchaseOrder(Order $order, CreateContext $context): bool
     {
         $paymentOptions = PaymentOptionsContextUtil::all($context->getSharedData(), $order);

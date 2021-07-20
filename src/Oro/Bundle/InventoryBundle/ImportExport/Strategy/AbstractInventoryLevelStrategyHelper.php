@@ -19,10 +19,6 @@ abstract class AbstractInventoryLevelStrategyHelper implements InventoryLevelStr
     /** @var array $errors */
     protected $errors = [];
 
-    /**
-     * @param DatabaseHelper $databaseHelper
-     * @param TranslatorInterface $translator
-     */
     public function __construct(DatabaseHelper $databaseHelper, TranslatorInterface $translator)
     {
         $this->databaseHelper = $databaseHelper;

@@ -22,9 +22,6 @@ class EntityCouponsProvider implements EntityCouponsProviderInterface
      */
     private $doctrineHelper;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(DoctrineHelper $doctrineHelper)
     {
         $this->doctrineHelper = $doctrineHelper;

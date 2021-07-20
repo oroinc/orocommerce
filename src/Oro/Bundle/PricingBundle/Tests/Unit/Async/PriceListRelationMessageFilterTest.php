@@ -77,12 +77,6 @@ class PriceListRelationMessageFilterTest extends \PHPUnit\Framework\TestCase
             ->willReturn($fallback);
     }
 
-    /**
-     * @param int $websiteId
-     * @param int $customerId
-     *
-     * @return PriceListCustomerFallback
-     */
     private function getPriceListCustomerFallback(
         int $websiteId,
         int $customerId
@@ -94,12 +88,6 @@ class PriceListRelationMessageFilterTest extends \PHPUnit\Framework\TestCase
         return $fallback;
     }
 
-    /**
-     * @param int $websiteId
-     * @param int $customerGroupId
-     *
-     * @return PriceListCustomerGroupFallback
-     */
     private function getPriceListCustomerGroupFallback(
         int $websiteId,
         int $customerGroupId

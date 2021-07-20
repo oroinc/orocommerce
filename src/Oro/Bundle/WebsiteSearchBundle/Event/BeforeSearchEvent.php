@@ -23,10 +23,6 @@ class BeforeSearchEvent extends Event implements SearchQueryAwareEventInterface
      */
     protected $context;
 
-    /**
-     * @param Query $query
-     * @param array $context
-     */
     public function __construct(Query $query, array $context = [])
     {
         $this->query = $query;

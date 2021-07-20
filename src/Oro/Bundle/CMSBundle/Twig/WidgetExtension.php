@@ -15,9 +15,6 @@ class WidgetExtension extends AbstractExtension
     /** @var ContentWidgetRenderer */
     private $contentWidgetRenderer;
 
-    /**
-     * @param ContentWidgetRenderer $contentWidgetRenderer
-     */
     public function __construct(ContentWidgetRenderer $contentWidgetRenderer)
     {
         $this->contentWidgetRenderer = $contentWidgetRenderer;

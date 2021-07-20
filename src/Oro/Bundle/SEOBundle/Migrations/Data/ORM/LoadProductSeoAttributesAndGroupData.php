@@ -60,9 +60,6 @@ class LoadProductSeoAttributesAndGroupData extends AbstractFixture implements
         return $attributeHelper->isFieldAttribute(Product::class, 'metaKeywords');
     }
 
-    /**
-     * @param ObjectManager $manager
-     */
     private function addSeoGroup(ObjectManager $manager)
     {
         $attributeFamilyRepository = $manager->getRepository(AttributeFamily::class);

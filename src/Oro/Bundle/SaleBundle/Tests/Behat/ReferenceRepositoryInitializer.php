@@ -23,10 +23,6 @@ class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerIn
         $this->setCustomerStatusesReference($doctrine, $referenceRepository);
     }
 
-    /**
-     * @param Registry $doctrine
-     * @param Collection $referenceRepository
-     */
     private function setWorkflowsReference(Registry $doctrine, Collection $referenceRepository): void
     {
         $workflowDefinitionRepo = $doctrine->getManager()->getRepository(WorkflowDefinition::class);
@@ -44,10 +40,6 @@ class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerIn
         }
     }
 
-    /**
-     * @param Registry $doctrine
-     * @param Collection $referenceRepository
-     */
     private function setInternalStatusesReference(Registry $doctrine, Collection $referenceRepository): void
     {
         $enumClass = ExtendHelper::buildEnumValueClassName(Quote::INTERNAL_STATUS_CODE);
@@ -59,10 +51,6 @@ class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerIn
         }
     }
 
-    /**
-     * @param Registry $doctrine
-     * @param Collection $referenceRepository
-     */
     private function setCustomerStatusesReference(Registry $doctrine, Collection $referenceRepository): void
     {
         $enumClass = ExtendHelper::buildEnumValueClassName(Quote::CUSTOMER_STATUS_CODE);

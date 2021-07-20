@@ -69,11 +69,6 @@ class FixDuplicatedProducts extends AbstractFixture implements ContainerAwareInt
         }
     }
 
-    /**
-     * @param Connection $connection
-     * @param string $associationName
-     * @return array
-     */
     private function getAffectedProductIds(Connection $connection, string $associationName): array
     {
         $tableName = $this->getAssociationTableName($associationName);
@@ -107,12 +102,6 @@ SQL,
         return $productIds;
     }
 
-    /**
-     * @param Connection $connection
-     * @param string $query
-     * @param string $delimiter
-     * @return array
-     */
     private function prepareProductIds(Connection $connection, string $query, string $delimiter): array
     {
         $queryResult = $connection->executeQuery($query)->fetchAll(\PDO::FETCH_ASSOC);
@@ -129,11 +118,6 @@ SQL,
         return $productIds;
     }
 
-    /**
-     * @param string $associationName
-     *
-     * @return string
-     */
     private function getAssociationTableName(string $associationName): string
     {
         return $this->nameGenerator->generateManyToManyJoinTableName(

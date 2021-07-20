@@ -23,11 +23,6 @@ class UpdateFallbackEntitySystemOptionConfig extends ParametrizedMigrationQuery
      */
     protected $systemOption;
 
-    /**
-     * @param $entityName
-     * @param $fieldName
-     * @param $systemOption
-     */
     public function __construct($entityName, $fieldName, $systemOption)
     {
         $this->entityName = $entityName;
@@ -52,7 +47,6 @@ class UpdateFallbackEntitySystemOptionConfig extends ParametrizedMigrationQuery
     }
 
     /**
-     * @param LoggerInterface $logger
      * @throws \Doctrine\DBAL\DBALException
      */
     protected function updateEntityConfig(LoggerInterface $logger)

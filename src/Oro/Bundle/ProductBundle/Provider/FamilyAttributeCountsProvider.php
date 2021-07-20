@@ -17,21 +17,12 @@ class FamilyAttributeCountsProvider
     /** @var ProductRepository */
     private $productRepository;
 
-    /**
-     * @param ManagerInterface $datagridManager
-     * @param ProductRepository $productRepository
-     */
     public function __construct(ManagerInterface $datagridManager, ProductRepository $productRepository)
     {
         $this->datagridManager = $datagridManager;
         $this->productRepository = $productRepository;
     }
 
-    /**
-     * @param string $datagridName
-     *
-     * @return array
-     */
     public function getFamilyAttributeCounts(string $datagridName): array
     {
         /** @var SearchDatasource $datasource */

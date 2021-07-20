@@ -211,17 +211,11 @@ class Product extends BaseProduct
         return $this->pageTemplate;
     }
 
-    /**
-     * @param EntityFieldFallbackValue $pageTemplate
-     */
     public function setPageTemplate(EntityFieldFallbackValue $pageTemplate)
     {
         $this->pageTemplate = $pageTemplate;
     }
 
-    /**
-     * @param ProductUnitPrecision $primaryUnitPrecision
-     */
     public function setDirectlyPrimaryUnitPrecision(ProductUnitPrecision $primaryUnitPrecision)
     {
         $this->primaryUnitPrecision = $primaryUnitPrecision;
@@ -251,25 +245,16 @@ class Product extends BaseProduct
         return $this->category;
     }
 
-    /**
-     * @param Category $category
-     */
     public function setCategory(Category $category)
     {
         $this->category = $category;
     }
 
-    /**
-     * @param Collection $collection
-     */
     public function setParentVariantLinks(Collection $collection)
     {
         $this->parentVariantLinks = $collection;
     }
 
-    /**
-     * @param Collection $collection
-     */
     public function setVariantLinks(Collection $collection)
     {
         $this->variantLinks = $collection;

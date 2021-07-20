@@ -17,9 +17,6 @@ class ProductInventoryStatusProvider
     /** @var array */
     private $inventoryStatuses;
 
-    /**
-     * @param ManagerRegistry $doctrine
-     */
     public function __construct(ManagerRegistry $doctrine)
     {
         $this->doctrine = $doctrine;
@@ -37,9 +34,6 @@ class ProductInventoryStatusProvider
         return $this->inventoryStatuses;
     }
 
-    /**
-     * @return array
-     */
     private function getInventoryStatusesList(): array
     {
         $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');

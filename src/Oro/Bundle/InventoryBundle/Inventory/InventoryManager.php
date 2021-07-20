@@ -19,9 +19,6 @@ class InventoryManager
      */
     protected $doctrineHelper;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(DoctrineHelper $doctrineHelper)
     {
         $this->doctrineHelper = $doctrineHelper;
@@ -48,9 +45,6 @@ class InventoryManager
         return $inventoryLevel;
     }
 
-    /**
-     * @param ProductUnitPrecision $productUnitPrecision
-     */
     public function deleteInventoryLevel(ProductUnitPrecision $productUnitPrecision)
     {
         /** @var InventoryLevelRepository $inventoryLevelRepository */

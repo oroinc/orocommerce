@@ -37,8 +37,6 @@ class SkipOrderTaxRecalculationResolverTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider resolveWhenNoIdentifierOrClassNameDataProvider
-     *
-     * @param Taxable $taxable
      */
     public function testResolveWhenNoIdentifierOrClassName(Taxable $taxable): void
     {
@@ -49,9 +47,6 @@ class SkipOrderTaxRecalculationResolverTest extends \PHPUnit\Framework\TestCase
         $this->resolver->resolve($taxable);
     }
 
-    /**
-     * @return array
-     */
     public function resolveWhenNoIdentifierOrClassNameDataProvider(): array
     {
         return [

@@ -95,7 +95,6 @@ class MoneyOrderConfigFactoryTest extends \PHPUnit\Framework\TestCase
             ->method('getPayTo')
             ->willReturn($payTo);
 
-
         $paymentSettingsMock
             ->expects(static::once())
             ->method('getSendTo')

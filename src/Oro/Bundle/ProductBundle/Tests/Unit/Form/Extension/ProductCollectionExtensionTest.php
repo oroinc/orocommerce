@@ -49,7 +49,6 @@ class ProductCollectionExtensionTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider productCollectionFormsDataProvider
-     * @param array $forms
      */
     public function testOnPostSubmitNoValidationError(array $forms)
     {

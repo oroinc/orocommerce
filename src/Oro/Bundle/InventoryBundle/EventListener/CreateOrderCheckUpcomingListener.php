@@ -14,17 +14,11 @@ class CreateOrderCheckUpcomingListener
      */
     protected $validator;
 
-    /**
-     * @param ValidatorInterface $validator
-     */
     public function __construct(ValidatorInterface $validator)
     {
         $this->validator = $validator;
     }
 
-    /**
-     * @param ExtendableConditionEvent $event
-     */
     public function onBeforeOrderCreate(ExtendableConditionEvent $event)
     {
         /** @var Checkout $checkout */

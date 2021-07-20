@@ -22,9 +22,6 @@ class LoginPageProvider
      */
     protected $loginPageClass;
 
-    /**
-     * @param ManagerRegistry $managerRegistry
-     */
     public function __construct(ManagerRegistry $managerRegistry)
     {
         $this->managerRegistry = $managerRegistry;

@@ -23,9 +23,6 @@ class QueryTracker
      */
     protected $previousLogger;
 
-    /**
-     * @param EntityManagerInterface $em
-     */
     public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;

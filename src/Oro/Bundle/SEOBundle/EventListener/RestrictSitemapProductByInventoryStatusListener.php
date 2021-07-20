@@ -16,17 +16,11 @@ class RestrictSitemapProductByInventoryStatusListener
      */
     private $configManager;
 
-    /**
-     * @param ConfigManager $configManager
-     */
     public function __construct(ConfigManager $configManager)
     {
         $this->configManager = $configManager;
     }
 
-    /**
-     * @param RestrictSitemapEntitiesEvent $event
-     */
     public function restrictQueryBuilder(RestrictSitemapEntitiesEvent $event)
     {
         $allowedStatuses = $this->configManager->get(

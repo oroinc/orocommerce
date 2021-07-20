@@ -146,8 +146,6 @@ final class Result extends AbstractResult implements \JsonSerializable
 
     /**
      * Proxy method to call parent::__serialize method in cloned object
-     *
-     * @return array
      */
     private function __parentSerialize(): array
     {
@@ -194,9 +192,6 @@ final class Result extends AbstractResult implements \JsonSerializable
         $this->unlockResult();
     }
 
-    /**
-     * @param array $serialized
-     */
     protected function deserializeTaxesAsTaxResultElement(array $serialized)
     {
         if (isset($serialized[self::TAXES]) && is_array($serialized[self::TAXES])) {

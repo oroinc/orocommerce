@@ -380,11 +380,6 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit\Framework\TestCase
         $this->service->validate($product, new UniqueProductVariantLinks());
     }
 
-    /**
-     * @param array $variantFields
-     * @param array $variantLinkFields
-     * @return Product
-     */
     private function prepareProduct(array $variantFields, array $variantLinkFields): Product
     {
         $product = new Product();
@@ -399,10 +394,6 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit\Framework\TestCase
         return $product;
     }
 
-    /**
-     * @param array $variantLinkFields
-     * @return array
-     */
     private function prepareSimpleProducts(array $variantLinkFields): array
     {
         $products = [];
@@ -427,10 +418,6 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit\Framework\TestCase
         return $products;
     }
 
-    /**
-     * @param Product $product
-     * @param array $simpleProducts
-     */
     private function assertRepositoryCallsProductVariantLinks(Product $product, array $simpleProducts): void
     {
         $variantLink1 = $this->getEntity(ProductVariantLink::class, [

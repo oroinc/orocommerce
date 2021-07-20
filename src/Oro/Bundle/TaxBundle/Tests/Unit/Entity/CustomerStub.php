@@ -20,9 +20,6 @@ class CustomerStub extends Customer
         return $this->taxCode;
     }
 
-    /**
-     * @param CustomerTaxCode|null $taxCode
-     */
     public function setTaxCode(CustomerTaxCode $taxCode = null)
     {
         $this->taxCode = $taxCode;

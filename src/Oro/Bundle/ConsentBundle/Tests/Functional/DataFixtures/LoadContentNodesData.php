@@ -128,11 +128,6 @@ class LoadContentNodesData extends AbstractFixture implements DependentFixtureIn
         $manager->flush();
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param ContentNode   $contentNode
-     * @param array         $nodeData
-     */
     private function setSystemPageContentVariant(ObjectManager $manager, ContentNode $contentNode, array $nodeData)
     {
         $contentVariant = new ContentVariant();
@@ -144,11 +139,6 @@ class LoadContentNodesData extends AbstractFixture implements DependentFixtureIn
         $manager->persist($contentVariant);
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param ContentNode   $contentNode
-     * @param array         $nodeData
-     */
     private function setLandingPageContentVariant(ObjectManager $manager, ContentNode $contentNode, array $nodeData)
     {
         $contentVariant = new ContentVariant();

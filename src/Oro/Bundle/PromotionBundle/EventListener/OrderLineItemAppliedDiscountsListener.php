@@ -36,12 +36,6 @@ class OrderLineItemAppliedDiscountsListener
      */
     protected $appliedDiscountsProvider;
 
-    /**
-     * @param TaxProviderRegistry $taxProviderRegistry
-     * @param TaxationSettingsProvider $taxationSettingsProvider
-     * @param LineItemSubtotalProvider $lineItemSubtotalProvider
-     * @param AppliedDiscountsProvider $appliedDiscountsProvider
-     */
     public function __construct(
         TaxProviderRegistry $taxProviderRegistry,
         TaxationSettingsProvider $taxationSettingsProvider,
@@ -54,9 +48,6 @@ class OrderLineItemAppliedDiscountsListener
         $this->appliedDiscountsProvider = $appliedDiscountsProvider;
     }
 
-    /**
-     * @param OrderEvent $event
-     */
     public function onOrderEvent(OrderEvent $event)
     {
         $order = $event->getEntity();
@@ -119,11 +110,6 @@ class OrderLineItemAppliedDiscountsListener
         ];
     }
 
-    /**
-     * @param OrderLineItem $lineItem
-     *
-     * @return string
-     */
     private function getLineItemCurrency(OrderLineItem $lineItem): string
     {
         return $lineItem->getOrder() && $lineItem->getOrder()->getCurrency()

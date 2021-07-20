@@ -42,10 +42,6 @@ class ProductPricesExportFormatter
         return implode(PHP_EOL, array_map(fn ($price) => $this->formatTierPrice($price), $prices));
     }
 
-    /**
-     * @param ProductPriceInterface $price
-     * @return string
-     */
     private function formatTierPrice(ProductPriceInterface $price): string
     {
         return sprintf(
@@ -69,10 +65,6 @@ class ProductPricesExportFormatter
         );
     }
 
-    /**
-     * @param ProductPriceInterface $price
-     * @return string
-     */
     public function formatPrice(ProductPriceInterface $price): string
     {
         return sprintf(

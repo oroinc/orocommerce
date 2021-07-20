@@ -113,7 +113,6 @@ abstract class AbstractImportExportTestCase extends WebTestCase
         $productUnitPrecisionRepository = $this->client->getContainer()->get('oro_entity.doctrine_helper')
             ->getEntityRepository(ProductUnitPrecision::class);
 
-
         /** @var EntityRepository $warehouseInventoryRepository */
         $warehouseInventoryRepository = $this->client->getContainer()->get('oro_entity.doctrine_helper')
             ->getEntityRepository(InventoryLevel::class);

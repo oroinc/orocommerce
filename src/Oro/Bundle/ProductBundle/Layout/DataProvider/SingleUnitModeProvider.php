@@ -11,9 +11,6 @@ class SingleUnitModeProvider
     /** @var SingleUnitModeService */
     private $singleUnitService;
 
-    /**
-     * @param SingleUnitModeServiceInterface $singleUnitService
-     */
     public function __construct(SingleUnitModeServiceInterface $singleUnitService)
     {
         $this->singleUnitService = $singleUnitService;

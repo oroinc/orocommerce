@@ -9,9 +9,6 @@ class ContextEventDispatcher
     /** @var EventDispatcherInterface */
     protected $eventDispatcher;
 
-    /**
-     * @param EventDispatcherInterface $eventDispatcher
-     */
     public function __construct(EventDispatcherInterface $eventDispatcher)
     {
         $this->eventDispatcher = $eventDispatcher;

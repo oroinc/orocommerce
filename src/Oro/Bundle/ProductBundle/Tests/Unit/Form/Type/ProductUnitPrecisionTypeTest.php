@@ -100,10 +100,6 @@ class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedData, $form->getData());
     }
 
-    /**
-     * @param array $expectedConfig
-     * @param FormConfigInterface $actualConfig
-     */
     protected function assertFormConfig(array $expectedConfig, FormConfigInterface $actualConfig)
     {
         foreach ($expectedConfig as $key => $value) {

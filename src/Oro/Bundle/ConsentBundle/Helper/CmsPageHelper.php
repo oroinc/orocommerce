@@ -24,10 +24,6 @@ class CmsPageHelper
     /** @var ConsentContextProviderInterface */
     protected $consentContextProvider;
 
-    /**
-     * @param ContentNodeTreeResolverInterface $contentNodeTreeResolver
-     * @param ConsentContextProviderInterface $consentContextProvider
-     */
     public function __construct(
         ContentNodeTreeResolverInterface $contentNodeTreeResolver,
         ConsentContextProviderInterface $consentContextProvider

@@ -28,11 +28,6 @@ class CategoryVisibilityQueryModifier implements QueryModifierInterface
     /** @var TokenAccessorInterface */
     private $tokenAccessor;
 
-    /**
-     * @param EntityClassResolver        $entityClassResolver
-     * @param CategoryVisibilityProvider $categoryVisibilityProvider
-     * @param TokenAccessorInterface     $tokenAccessor
-     */
     public function __construct(
         EntityClassResolver $entityClassResolver,
         CategoryVisibilityProvider $categoryVisibilityProvider,
@@ -85,9 +80,6 @@ class CategoryVisibilityQueryModifier implements QueryModifierInterface
             ->setParameter($paramName, $hiddenCategoryIds);
     }
 
-    /**
-     * @return CustomerUser|null
-     */
     private function getCustomerUser(): ?CustomerUser
     {
         $customerUser = null;

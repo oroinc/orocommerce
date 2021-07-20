@@ -16,9 +16,6 @@ class LoadDraftablePageConfig extends AbstractFixture implements ContainerAwareI
 {
     use ContainerAwareTrait;
 
-    /**
-     * @param ObjectManager $manager
-     */
     public function load(ObjectManager $manager): void
     {
         $configManager = $this->getConfigManager();
@@ -28,10 +25,6 @@ class LoadDraftablePageConfig extends AbstractFixture implements ContainerAwareI
         $configManager->flush();
     }
 
-    /**
-     * @param ConfigManager $configManager
-     * @param string $fieldName
-     */
     private function updatePropertyConfig(ConfigManager $configManager, string $fieldName): void
     {
         $draftProvider = $configManager->getProvider('draft');
@@ -40,9 +33,6 @@ class LoadDraftablePageConfig extends AbstractFixture implements ContainerAwareI
         $configManager->persist($config);
     }
 
-    /**
-     * @return ConfigManager
-     */
     private function getConfigManager(): ConfigManager
     {
         return $this->container->get('oro_entity_config.config_manager');

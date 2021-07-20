@@ -29,11 +29,6 @@ class CategoryTreeProvider
      */
     private $masterCatalogRootProvider;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param MasterCatalogRootProviderInterface $masterCatalogRootProvider
-     */
     public function __construct(
         ManagerRegistry $registry,
         EventDispatcherInterface $eventDispatcher,

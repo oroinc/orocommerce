@@ -186,10 +186,6 @@ class AbstractProductAwareTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param Product|null $formProduct
-     * @param Product|null $viewProduct
-     * @param Product|null $product
-     *
      * @dataProvider getProductFromFormOrViewDataProvider
      */
     public function testGetProductFromFormOrView(

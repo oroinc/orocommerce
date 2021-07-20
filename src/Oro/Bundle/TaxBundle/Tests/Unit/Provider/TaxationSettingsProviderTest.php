@@ -515,9 +515,6 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param bool $isEnabled
-     * @param bool $expected
-     *
      * @dataProvider getIsCalculateAfterPromotionsEnabledDataProvider
      */
     public function testIsCalculateAfterPromotionsEnabled(bool $isEnabled, bool $expected): void

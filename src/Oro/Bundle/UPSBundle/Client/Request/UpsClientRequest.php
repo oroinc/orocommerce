@@ -9,9 +9,6 @@ class UpsClientRequest extends ParameterBag implements UpsClientRequestInterface
     const FIELD_URL = 'url';
     const FIELD_REQUEST_DATA = 'requestData';
 
-    /**
-     * @param array $params
-     */
     public function __construct(array $params)
     {
         parent::__construct($params);

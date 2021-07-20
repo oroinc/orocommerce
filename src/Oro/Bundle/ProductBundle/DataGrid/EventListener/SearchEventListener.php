@@ -20,10 +20,6 @@ class SearchEventListener
     /** @var ProductRepository */
     private $searchRepository;
 
-    /**
-     * @param SearchProductHandler $searchProductHandler
-     * @param ProductRepository $searchRepository
-     */
     public function __construct(
         SearchProductHandler $searchProductHandler,
         ProductRepository $searchRepository
@@ -32,9 +28,6 @@ class SearchEventListener
         $this->searchRepository = $searchRepository;
     }
 
-    /**
-     * @param PreBuild $event
-     */
     public function onPreBuild(PreBuild $event): void
     {
         $parameterBag = $event->getParameters();
@@ -51,9 +44,6 @@ class SearchEventListener
         $event->getConfig()->offsetUnsetByPath($this->getConfigPath());
     }
 
-    /**
-     * @param BuildAfter $event
-     */
     public function onBuildAfter(BuildAfter $event): void
     {
         $dataSource = $event->getDatagrid()->getDatasource();
@@ -69,9 +59,6 @@ class SearchEventListener
         $query->addWhere(Criteria::expr()->$operator('all_text_LOCALIZATION_ID', $searchString));
     }
 
-    /**
-     * @return string
-     */
     private function getConfigPath(): string
     {
         return sprintf('[options][urlParams][%s]', SearchProductHandler::SEARCH_KEY);

@@ -20,10 +20,6 @@ class ConsentAcceptanceProvider
     /** @var ManagerRegistry */
     private $doctrine;
 
-    /**
-     * @param TokenAccessorInterface $tokenAccessor
-     * @param ManagerRegistry        $doctrine
-     */
     public function __construct(TokenAccessorInterface $tokenAccessor, ManagerRegistry $doctrine)
     {
         $this->tokenAccessor = $tokenAccessor;

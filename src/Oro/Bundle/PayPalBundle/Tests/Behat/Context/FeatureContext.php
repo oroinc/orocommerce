@@ -26,9 +26,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      * @Given /^(?:I )?create PayPal Payflow integration$/
      * @Given /^(?:I )?create "(?P<name>(?:[^"]+))" PayPal Payflow integration with following settings:$/
      * @Given /^(?:I )?create PayPal Payflow integration with following settings:$/
-     *
-     * @param string $name
-     * @param TableNode|null $settingsTable
      */
     public function iCreatePayPalPayflowIntegration(string $name = 'PayPalFlow', ?TableNode $settingsTable = null)
     {
@@ -40,20 +37,12 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      * @Given /^(?:I )?create PayPal PaymentsPro integration$/
      * @Given /^(?:I )?create "(?P<name>(?:[^"]+))" PayPal PaymentsPro integration with following settings:$/
      * @Given /^(?:I )?create PayPal PaymentsPro integration with following settings:$/
-     *
-     * @param string $name
-     * @param TableNode|null $settingsTable
      */
     public function iCreatePayPalPaymentsProIntegration(string $name = 'PayPalPro', ?TableNode $settingsTable = null)
     {
         $this->createPayPalIntegration('paypal_payments_pro', $name, $settingsTable);
     }
 
-    /**
-     * @param string $type
-     * @param string $name
-     * @param TableNode|null $settingsTable
-     */
     private function createPayPalIntegration(string $type, string $name, ?TableNode $settingsTable = null)
     {
         $settings = $this->getIntegrationSettings($type);
@@ -71,11 +60,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $entityManager->flush();
     }
 
-    /**
-     * @param string $type
-     *
-     * @return array
-     */
     private function getIntegrationSettings(string $type): array
     {
         $baseSettings = [
@@ -119,11 +103,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         return $settings[$type];
     }
 
-    /**
-     * @param array $settings
-     *
-     * @return PayPalSettings
-     */
     private function createTransport(array $settings): PayPalSettings
     {
         $propertyAccessor = new PropertyAccessor();
@@ -139,13 +118,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         return $transport;
     }
 
-    /**
-     * @param string $name
-     * @param string $type
-     * @param $transport
-     *
-     * @return Channel
-     */
     protected function createChannel(string $name, string $type, $transport): Channel
     {
         $doctrineHelper = $this->getContainer()->get('oro_entity.doctrine_helper');
@@ -229,8 +201,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      * | NAME        | DESCRIPTION        |
      * | Item Name 1 | Item Description 1 |
      * @Then /^(?:|I )should see the following products before pay:$/
-     *
-     * @param TableNode $table
      */
     public function assertExistsProductDataBeforePay(TableNode $table)
     {
@@ -249,8 +219,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      * | NAME        | DESCRIPTION        |
      * | Item Name 1 | Item Description 1 |
      * @Then /^(?:|I )should not see the following products before pay:$/
-     *
-     * @param TableNode $table
      */
     public function assertNotExistsProductDataBeforePay(TableNode $table)
     {

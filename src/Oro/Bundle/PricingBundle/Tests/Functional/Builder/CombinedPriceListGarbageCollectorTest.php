@@ -47,7 +47,6 @@ class CombinedPriceListGarbageCollectorTest extends WebTestCase
             ->get('doctrine')
             ->getManagerForClass(CombinedPriceList::class);
 
-
         /** @var CombinedPriceList $fullCpl */
         $fullCpl = $this->getReference('cpl_conf_f');
         /** @var CombinedPriceList $cpl */

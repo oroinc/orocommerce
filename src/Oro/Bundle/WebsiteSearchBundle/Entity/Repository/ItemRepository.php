@@ -70,7 +70,6 @@ class ItemRepository extends EntityRepository
     /**
      * We need to remove data manually as fulltext index in MySQL is only available in MyISAM engine which doesn't
      * support cascade deletes by a foreign key.
-     * @param QueryBuilder $subQueryBuilder
      */
     private function deleteFromIndexTextTable(QueryBuilder $subQueryBuilder)
     {

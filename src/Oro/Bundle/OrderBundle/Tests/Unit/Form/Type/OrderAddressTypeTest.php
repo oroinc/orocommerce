@@ -187,7 +187,6 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
         );
         $addressTypeStub = new AddressTypeStub();
 
-
         return [
             new PreloadedExtension([
                 OrderAddressType::class => $formType,

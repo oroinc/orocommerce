@@ -27,9 +27,6 @@ class DriverDecorator implements DriverInterface
     /** @var EntityManagerInterface */
     private $entityManager;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(DoctrineHelper $doctrineHelper)
     {
         $this->doctrineHelper = $doctrineHelper;

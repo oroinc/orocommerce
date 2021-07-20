@@ -59,11 +59,6 @@ class LoadTextContentVariantsData extends AbstractFixture implements DependentFi
         ];
     }
 
-    /**
-     * @param string $alias
-     * @param bool $default
-     * @return TextContentVariant
-     */
     protected function createContentVariant(string $alias, bool $default): TextContentVariant
     {
         $contentVariant = new TextContentVariant();

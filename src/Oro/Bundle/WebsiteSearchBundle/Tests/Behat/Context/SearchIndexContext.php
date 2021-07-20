@@ -14,9 +14,6 @@ class SearchIndexContext extends OroFeatureContext
      * Given should be 30 items in "oro_product" website search index
      *
      * @Given /^should be (?P<count>\d+) items in "(?P<index>[^']+)" website search index$/
-     *
-     * @param int $count
-     * @param string $index
      */
     public function shouldBeItemsInSearchIndex(int $count, string $index): void
     {
@@ -55,9 +52,6 @@ class SearchIndexContext extends OroFeatureContext
         );
     }
 
-    /**
-     * @return Website
-     */
     private function getWebsite(): Website
     {
         $repository = $this->getContainer()

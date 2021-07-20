@@ -59,8 +59,6 @@ class OroProductBundle implements
 
     /**
      * Create orob2b_product table
-     *
-     * @param Schema $schema
      */
     protected function createOroProductTable(Schema $schema)
     {
@@ -79,8 +77,6 @@ class OroProductBundle implements
 
     /**
      * Create orob2b_product_unit table
-     *
-     * @param Schema $schema
      */
     protected function createOroProductUnitTable(Schema $schema)
     {
@@ -92,8 +88,6 @@ class OroProductBundle implements
 
     /**
      * Create orob2b_product_unit_precision table
-     *
-     * @param Schema $schema
      */
     protected function createOroProductUnitPrecisionTable(Schema $schema)
     {
@@ -106,9 +100,6 @@ class OroProductBundle implements
         $table->addUniqueIndex(['product_id', 'unit_code'], 'product_unit_precision__product_id__unit_code__uidx');
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function createOrob2BProductNameTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_product_name');
@@ -118,9 +109,6 @@ class OroProductBundle implements
         $table->addUniqueIndex(['localized_value_id'], 'uniq_ba57d521eb576e89');
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function createOrob2BProductDescriptionTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_product_description');
@@ -132,8 +120,6 @@ class OroProductBundle implements
 
     /**
      * Add orob2b_product foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroProductForeignKeys(Schema $schema)
     {
@@ -154,8 +140,6 @@ class OroProductBundle implements
 
     /**
      * Add orob2b_product_unit_precision foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroProductUnitPrecisionForeignKeys(Schema $schema)
     {
@@ -174,9 +158,6 @@ class OroProductBundle implements
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addOrob2BProductNameForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_product_name');
@@ -194,9 +175,6 @@ class OroProductBundle implements
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addOrob2BProductDescriptionForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_product_description');
@@ -214,9 +192,6 @@ class OroProductBundle implements
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function updateProductTable(Schema $schema)
     {
         $this->extendExtension->addEnumField(
@@ -241,17 +216,11 @@ class OroProductBundle implements
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addNoteAssociations(Schema $schema)
     {
         $this->activityExtension->addActivityAssociation($schema, 'oro_note', self::PRODUCT_TABLE_NAME);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addAttachmentAssociations(Schema $schema)
     {
         $this->attachmentExtension->addImageRelation(

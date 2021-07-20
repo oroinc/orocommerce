@@ -140,10 +140,6 @@ class LoadRequestDemoData extends AbstractEntityReferenceFixture implements
         return array_merge([null], $manager->getRepository('OroCustomerBundle:CustomerUser')->findBy([], null, 10));
     }
 
-    /**
-     * @param Request $request
-     * @param ObjectManager $manager
-     */
     protected function processRequestProducts(Request $request, ObjectManager $manager)
     {
         $products = $this->getProducts($manager);

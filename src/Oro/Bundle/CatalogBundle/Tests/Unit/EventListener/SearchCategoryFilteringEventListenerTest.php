@@ -156,10 +156,6 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
 
     /**
      * @dataProvider preBuildWithCategoryIdDataProvider
-     *
-     * @param array $parameters
-     * @param array $expectedParameters
-     * @param array $expectedConfig
      */
     public function testPreBuildWithCategoryId(
         array $parameters,
@@ -273,10 +269,6 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
 
     /**
      * @dataProvider preBuildWithCategoryInRequestDataProvider
-     *
-     * @param array $parameters
-     * @param array $expectedParameters
-     * @param array $expectedConfig
      */
     public function testPreBuildWithCategoryInRequest(
         array $parameters,
@@ -433,10 +425,6 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
 
     /**
      * @dataProvider preBuildWithContentVariantIdDataProvider
-     *
-     * @param array $parameters
-     * @param array $expectedParameters
-     * @param array $expectedConfig
      */
     public function testPreBuildWithContentVariantId(
         array $parameters,
@@ -573,12 +561,6 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
 
     /**
      * @dataProvider preBuildWithContentVariantIdInRequestDataProvider
-     *
-     * @param array $parameters
-     * @param int $contentVariantId
-     * @param bool $overrideVariantConfiguration
-     * @param array $expectedParameters
-     * @param array $expectedConfig
      */
     public function testPreBuildWithContentVariantIdInRequest(
         array $parameters,

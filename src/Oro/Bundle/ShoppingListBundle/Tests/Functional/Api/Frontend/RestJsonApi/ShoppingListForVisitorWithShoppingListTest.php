@@ -43,14 +43,6 @@ class ShoppingListForVisitorWithShoppingListTest extends FrontendRestJsonApiTest
     }
 
     /**
-     * @param LineItem    $lineItem
-     * @param int         $organizationId
-     * @param int         $shoppingListId
-     * @param float       $quantity
-     * @param string      $productUnitCode
-     * @param int         $productId
-     * @param string|null $notes
-     * @param int|null    $parentProductId
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     private static function assertLineItem(
@@ -82,12 +74,6 @@ class ShoppingListForVisitorWithShoppingListTest extends FrontendRestJsonApiTest
         }
     }
 
-    /**
-     * @param ShoppingList $shoppingList
-     * @param int          $lineItemId
-     *
-     * @return LineItem
-     */
     private function getLineItemById(ShoppingList $shoppingList, int $lineItemId): LineItem
     {
         /** @var LineItem $lineItem */

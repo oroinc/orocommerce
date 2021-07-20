@@ -27,11 +27,6 @@ class PossibleShippingMethodEventListener
      */
     protected $priceConverter;
 
-    /**
-     * @param ShippingContextFactoryInterface $factory
-     * @param ShippingPricesConverter $priceConverter
-     * @param ShippingPriceProviderInterface|null $priceProvider
-     */
     public function __construct(
         ShippingContextFactoryInterface $factory,
         ShippingPricesConverter $priceConverter,
@@ -42,9 +37,6 @@ class PossibleShippingMethodEventListener
         $this->priceProvider = $priceProvider;
     }
 
-    /**
-     * @param EntityDataAwareEventInterface $event
-     */
     public function onEvent(EntityDataAwareEventInterface $event)
     {
         $submittedData = $event->getSubmittedData();

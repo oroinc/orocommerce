@@ -22,9 +22,6 @@ class Scope extends StubScope
         return $this->id;
     }
 
-    /**
-     * @return null|Customer
-     */
     public function getCustomer(): ?Customer
     {
         return $this->attributes['customer'] ?? null;
@@ -41,9 +38,6 @@ class Scope extends StubScope
         return $this;
     }
 
-    /**
-     * @return null|CustomerGroup
-     */
     public function getCustomerGroup(): ?CustomerGroup
     {
         return $this->attributes['customerGroup'] ?? null;

@@ -21,10 +21,6 @@ class FedexRateServiceValidateConnectionRequestFactory implements FedexRequestBy
      */
     private $shippingOriginProvider;
 
-    /**
-     * @param SymmetricCrypterInterface $crypter
-     * @param ShippingOriginProvider    $shippingOriginProvider
-     */
     public function __construct(SymmetricCrypterInterface $crypter, ShippingOriginProvider $shippingOriginProvider)
     {
         $this->crypter = $crypter;

@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\InventoryBundle\Form\Handler;
 
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\FormBundle\Form\DataTransformer\DataChangesetTransformer;
@@ -43,13 +42,6 @@ class InventoryLevelHandler
      */
     private $inventoryManager;
 
-    /**
-     * @param FormInterface $form
-     * @param ObjectManager $manager
-     * @param Request $request
-     * @param RoundingServiceInterface $rounding
-     * @param InventoryManager $inventoryManager
-     */
     public function __construct(
         FormInterface $form,
         ObjectManager $manager,
@@ -87,9 +79,6 @@ class InventoryLevelHandler
         return false;
     }
 
-    /**
-     * @param $levelsData array|Collection
-     */
     protected function handleInventoryLevels($levelsData)
     {
         foreach ($levelsData as $levelData) {

@@ -29,9 +29,6 @@ class CategoryImportExportHelperTest extends WebTestCase
 
     /**
      * @dataProvider findCategoryByPathDataProvider
-     *
-     * @param string $categoryPath
-     * @param string|null $expectedCategory
      */
     public function testFindCategoryByPath(string $categoryPath, ?string $expectedCategory): void
     {
@@ -41,9 +38,6 @@ class CategoryImportExportHelperTest extends WebTestCase
         );
     }
 
-    /**
-     * @return array
-     */
     public function findCategoryByPathDataProvider(): array
     {
         return [

@@ -102,9 +102,6 @@ class ProductImage extends ExtendProductImage
         return $this->product;
     }
 
-    /**
-     * @param Product $product
-     */
     public function setProduct(Product $product)
     {
         $this->product = $product;
@@ -186,9 +183,6 @@ class ProductImage extends ExtendProductImage
         return $this->types->containsKey($type);
     }
 
-    /**
-     * @param $updatedAt
-     */
     public function setUpdatedAt($updatedAt)
     {
         $this->updatedAt = $updatedAt;

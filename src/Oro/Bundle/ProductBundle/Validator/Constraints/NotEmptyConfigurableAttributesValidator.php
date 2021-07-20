@@ -17,9 +17,6 @@ class NotEmptyConfigurableAttributesValidator extends ConstraintValidator
     /** @var VariantFieldProvider */
     private $provider;
 
-    /**
-     * @param VariantFieldProvider $provider
-     */
     public function __construct(VariantFieldProvider $provider)
     {
         $this->provider = $provider;

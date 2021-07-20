@@ -14,8 +14,6 @@ class FedexPackageByShippingPackageOptionsFactoryTest extends TestCase
 {
     /**
      * @dataProvider optionsDataProvider
-     * @param ShippingPackageOptions $packageOptions
-     * @param array $expected
      */
     public function testCreate(ShippingPackageOptions $packageOptions, array $expected)
     {
@@ -25,9 +23,6 @@ class FedexPackageByShippingPackageOptionsFactoryTest extends TestCase
         );
     }
 
-    /**
-     * @return array
-     */
     public function optionsDataProvider(): array
     {
         return [

@@ -55,10 +55,6 @@ class FixDuplicatedProducts extends AbstractFixture implements ContainerAwareInt
         }
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @return array
-     */
     private function getAffectedProductIds(ObjectManager $manager): array
     {
         $productIds = [];

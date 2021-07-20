@@ -22,9 +22,6 @@ class CategoryImportExportHelper
     /** @var string */
     private $escapedDelimiter;
 
-    /**
-     * @param ManagerRegistry $doctrine
-     */
     public function __construct(ManagerRegistry $doctrine)
     {
         $this->doctrine = $doctrine;
@@ -32,11 +29,6 @@ class CategoryImportExportHelper
         $this->escapedDelimiter = $this->unescapedDelimiter.$this->unescapedDelimiter;
     }
 
-    /**
-     * @param Category $category
-     *
-     * @return string
-     */
     public function getCategoryPath(Category $category): string
     {
         // Collects categories titles path.
@@ -50,11 +42,6 @@ class CategoryImportExportHelper
         return implode(Category::CATEGORY_PATH_DELIMITER, $categoryPath);
     }
 
-    /**
-     * @param Category $category
-     *
-     * @return string
-     */
     public function getPersistedCategoryPath(Category $category): string
     {
         $categoryPath = array_map([$this, 'escapeTitle'], $this->getRepository()->getCategoryPath($category));
@@ -106,10 +93,6 @@ class CategoryImportExportHelper
 
     /**
      * Get root category by organization(do not use organization from session or check from acl!)
-     *
-     * @param Organization $organization
-     *
-     * @return Category
      */
     public function getRootCategory(Organization $organization): Category
     {
@@ -121,37 +104,21 @@ class CategoryImportExportHelper
         return $queryBuilder->getQuery()->getSingleResult();
     }
 
-    /**
-     * @return int
-     */
     public function getMaxLeft(): int
     {
         return $this->getRepository()->getMaxLeft();
     }
 
-    /**
-     * @param string $title
-     *
-     * @return string
-     */
     private function escapeTitle(string $title): string
     {
         return str_replace($this->unescapedDelimiter, $this->escapedDelimiter, $title);
     }
 
-    /**
-     * @param string $title
-     *
-     * @return string
-     */
     private function unescapeTitle(string $title): string
     {
         return str_replace($this->escapedDelimiter, $this->unescapedDelimiter, $title);
     }
 
-    /**
-     * @return CategoryRepository
-     */
     private function getRepository(): CategoryRepository
     {
         return $this->doctrine

@@ -17,10 +17,6 @@ class VariantFieldProvider
     /** @var array */
     private $allowedAttributeTypes = ['boolean', 'enum'];
 
-    /**
-     * @param AttributeManager $attributeManager
-     * @param SerializedFieldProvider $serializedFieldProvider
-     */
     public function __construct(AttributeManager $attributeManager, SerializedFieldProvider $serializedFieldProvider)
     {
         $this->attributeManager = $attributeManager;
