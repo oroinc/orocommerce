@@ -109,11 +109,10 @@ class IndexDataProvider
      * @param array $entityConfig
      * @return array Structured and cleared data ready to be saved
      */
-    private function prepareIndexData(array $indexData, array $entityConfig)
+    private function prepareIndexData(array $indexData, array $entityConfig): array
     {
         $preparedIndexData = [];
 
-        $allText = $this->getFieldConfig($entityConfig, self::ALL_TEXT_FIELD, 'name', self::ALL_TEXT_FIELD);
         $allTextL10N = $this->getFieldConfig(
             $entityConfig,
             self::ALL_TEXT_L10N_FIELD,
@@ -128,7 +127,7 @@ class IndexDataProvider
                 $type = $this->getFieldConfig($entityConfig, $fieldName, 'type');
 
                 foreach ($this->toArray($values) as $value) {
-                    $allTextFieldName = $allText;
+                    $allTextFieldName = $allTextL10N;
                     $singleValueFieldName = $fieldName;
                     $addToAllText = $value['all_text'];
                     $value = $value['value'];
@@ -137,7 +136,6 @@ class IndexDataProvider
                     if ($value instanceof PlaceholderValue) {
                         $placeholders = $value->getPlaceholders();
                         $value = $value->getValue();
-                        $allTextFieldName = $allTextL10N;
                     }
 
                     if ($this->isAllTextCollected($type, $addToAllText)) {
@@ -146,22 +144,21 @@ class IndexDataProvider
                         $this->setIndexValue($preparedIndexData, $entityId, $allTextFieldName, $value, $type);
                     }
 
-                    if (strpos($fieldName, $allText) !== 0) {
+                    if (strpos($fieldName, self::ALL_TEXT_FIELD) !== 0) {
                         $singleValueFieldName = $this->placeholder->replace($singleValueFieldName, $placeholders);
                         $this->setIndexValue($preparedIndexData, $entityId, $singleValueFieldName, $value, $type);
                     }
                 }
             }
 
-            unset($allTextFieldNames[$allText]);
+            unset($allTextFieldNames[$allTextL10N]);
 
-            $allTextValue = $this->getIndexValue($preparedIndexData, $entityId, $allText);
+            $allTextValue = $this->getIndexValue($preparedIndexData, $entityId, $allTextL10N);
             foreach ($allTextFieldNames as $allTextFieldName) {
-                $fieldsValue = $this->getIndexValue($preparedIndexData, $entityId, $allTextFieldName);
-                $this->setIndexValue($preparedIndexData, $entityId, $allText, $fieldsValue);
                 $this->setIndexValue($preparedIndexData, $entityId, $allTextFieldName, $allTextValue);
             }
 
+            $preparedIndexData[$entityId] = $this->removeField($preparedIndexData[$entityId], $allTextL10N);
             $preparedIndexData[$entityId] = $this->squashAllTextFields($preparedIndexData[$entityId]);
         }
 
@@ -203,6 +200,20 @@ class IndexDataProvider
                     $fieldsValues[Query::TYPE_TEXT][$fieldName] = $this->updateAllTextFieldValue($fieldValue);
                 }
             }
+        }
+
+        return $fieldsValues;
+    }
+
+    /**
+     * @param array $fieldsValues
+     * @param string $fieldName
+     * @return array
+     */
+    private function removeField(array $fieldsValues, string $fieldName)
+    {
+        if (isset($fieldsValues[Query::TYPE_TEXT][$fieldName])) {
+            unset($fieldsValues[Query::TYPE_TEXT][$fieldName]);
         }
 
         return $fieldsValues;

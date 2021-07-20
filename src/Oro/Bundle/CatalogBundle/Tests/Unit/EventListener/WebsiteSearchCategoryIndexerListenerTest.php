@@ -236,7 +236,7 @@ class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit\Framework\TestCa
                         $this->prepareLocalizedValue($customLocale, self::NAME_CUSTOM_LOCALE, null),
                         [LocalizationIdPlaceholder::NAME => $customLocale->getId()]
                     ),
-                    'all_text' => true,
+                    'all_text' => false,
                 ]
             ],
         ];

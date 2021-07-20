@@ -23,14 +23,10 @@ Oro\Bundle\ProductBundle\Entity\Product:
             name: is_variant
             type: integer
         -
-            name:  all_text
-            type:  text
-            store: false
-            default_search_field: true
-        -
             name:  all_text_LOCALIZATION_ID
             type:  text
             store: false
+            default_search_field: true
         -
             name: assigned_to_ASSIGN_TYPE_ASSIGN_ID
             type: integer
