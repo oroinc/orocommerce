@@ -49,15 +49,23 @@ class MergePricesCombiningStrategy extends AbstractPriceCombiningStrategy
         array $products = [],
         ProgressBar $progressBar = null
     ) {
-        $progress = 0;
-        $this->moveFirstPriceListPrices($combinedPriceList, $priceLists, $products, $progress, $progressBar);
+        if (count($priceLists) > 0) {
+            $progress = 0;
+            $this->moveFirstPriceListPrices($combinedPriceList, $priceLists, $products, $progress, $progressBar);
 
-        if ($this->canUseTempTable($priceLists, $combinedPriceList)) {
-            $this->processPriceListsWithTempTable($combinedPriceList, $priceLists, $products, $progress, $progressBar);
-        } else {
-            foreach ($priceLists as $priceListRelation) {
-                $this->moveProgress($progressBar, $progress, $priceListRelation);
-                $this->processRelation($combinedPriceList, $priceListRelation, $products);
+            if ($this->canUseTempTable($priceLists, $combinedPriceList)) {
+                $this->processPriceListsWithTempTable(
+                    $combinedPriceList,
+                    $priceLists,
+                    $products,
+                    $progress,
+                    $progressBar
+                );
+            } else {
+                foreach ($priceLists as $priceListRelation) {
+                    $this->moveProgress($progressBar, $progress, $priceListRelation);
+                    $this->processRelation($combinedPriceList, $priceListRelation, $products);
+                }
             }
         }
     }
