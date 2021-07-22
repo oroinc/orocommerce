@@ -115,9 +115,4 @@ class ProductUnitLabelExtensionTest extends \PHPUnit\Framework\TestCase
             ],
         ];
     }
-
-    public function testGetName()
-    {
-        $this->assertEquals(ProductUnitLabelExtension::NAME, $this->extension->getName());
-    }
 }

@@ -16,8 +16,6 @@ use Twig\TwigFunction;
  */
 class PaymentStatusExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    const PAYMENT_STATUS_EXTENSION_NAME = 'oro_payment_status';
-
     /** @var ContainerInterface */
     protected $container;
 
@@ -40,14 +38,6 @@ class PaymentStatusExtension extends AbstractExtension implements ServiceSubscri
     protected function getPaymentStatusProvider()
     {
         return $this->container->get('oro_payment.provider.payment_status');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return static::PAYMENT_STATUS_EXTENSION_NAME;
     }
 
     /**

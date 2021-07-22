@@ -17,22 +17,12 @@ use Twig\TwigFunction;
  */
 class CategoryExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    const NAME = 'oro_catalog_category_extension';
-
     /** @var ContainerInterface */
     protected $container;
 
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return self::NAME;
     }
 
     /**

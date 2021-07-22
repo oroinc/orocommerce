@@ -23,8 +23,6 @@ use Twig\TwigFunction;
  */
 class ProductImageExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    const NAME = 'oro_product_image';
-
     /** @var ContainerInterface */
     private $container;
 
@@ -105,14 +103,6 @@ class ProductImageExtension extends AbstractExtension implements ServiceSubscrib
         $imagePlaceholderProvider = $this->container->get('oro_product.provider.product_image_placeholder');
 
         return $imagePlaceholderProvider->getPath($filter);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return self::NAME;
     }
 
     /**

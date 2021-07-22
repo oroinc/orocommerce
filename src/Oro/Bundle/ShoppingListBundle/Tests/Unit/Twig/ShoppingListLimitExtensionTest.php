@@ -27,11 +27,6 @@ class ShoppingListLimitExtensionTest extends \PHPUnit\Framework\TestCase
         $this->extension = new ShoppingListLimitExtension($container);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(ShoppingListLimitExtension::NAME, $this->extension->getName());
-    }
-
     public function testIsConfigurableSimple()
     {
         $this->shoppingListLimitManager->expects($this->once())

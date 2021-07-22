@@ -92,9 +92,4 @@ class CategoryImageExtensionTest extends \PHPUnit\Framework\TestCase
             self::callTwigFunction($this->extension, 'category_image_placeholder', [$filter])
         );
     }
-
-    public function testGetName(): void
-    {
-        $this->assertEquals('oro_catalog_category_image_extension', $this->extension->getName());
-    }
 }

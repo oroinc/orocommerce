@@ -31,11 +31,6 @@ class CategoryExtensionTest extends \PHPUnit\Framework\TestCase
         $this->extension = new CategoryExtension($container);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(CategoryExtension::NAME, $this->extension->getName());
-    }
-
     public function testGetCategoryList()
     {
         $tree = [

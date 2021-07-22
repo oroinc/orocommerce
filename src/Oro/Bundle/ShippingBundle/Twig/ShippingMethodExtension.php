@@ -21,7 +21,6 @@ use Twig\TwigFunction;
  */
 class ShippingMethodExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    const SHIPPING_METHOD_EXTENSION_NAME = 'oro_shipping_method';
     const DEFAULT_METHOD_CONFIG_TEMPLATE
         = '@OroShipping/ShippingMethodsConfigsRule/shippingMethodWithOptions.html.twig';
 
@@ -34,14 +33,6 @@ class ShippingMethodExtension extends AbstractExtension implements ServiceSubscr
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return static::SHIPPING_METHOD_EXTENSION_NAME;
     }
 
     /**

@@ -22,8 +22,6 @@ use Twig\TwigFunction;
  */
 class ProductExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    const NAME = 'oro_product';
-
     /** @var ContainerInterface */
     protected $container;
 
@@ -110,14 +108,6 @@ class ProductExtension extends AbstractExtension implements ServiceSubscriberInt
             $product,
             $this->container->get('oro_product.related_item.upsell_product.finder_strategy')
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return self::NAME;
     }
 
     /**

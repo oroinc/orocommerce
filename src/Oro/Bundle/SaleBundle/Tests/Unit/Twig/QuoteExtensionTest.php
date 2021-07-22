@@ -46,11 +46,6 @@ class QuoteExtensionTest extends \PHPUnit\Framework\TestCase
         $this->extension = new QuoteExtension($container);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(QuoteExtension::NAME, $this->extension->getName());
-    }
-
     public function testFormatProductType()
     {
         $type = 123;

@@ -28,11 +28,6 @@ class WeightUnitValueExtensionTest extends \PHPUnit\Framework\TestCase
         $this->extension = new WeightUnitValueExtension($container);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(WeightUnitValueExtension::NAME, $this->extension->getName());
-    }
-
     public function testFormat()
     {
         $value = 42;

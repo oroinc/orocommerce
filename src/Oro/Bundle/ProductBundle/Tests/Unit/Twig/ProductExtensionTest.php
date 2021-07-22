@@ -50,11 +50,6 @@ class ProductExtensionTest extends \PHPUnit\Framework\TestCase
         $this->extension = new ProductExtension($container);
     }
 
-    public function testGetName(): void
-    {
-        $this->assertEquals(ProductExtension::NAME, $this->extension->getName());
-    }
-
     public function testIsConfigurableSimple(): void
     {
         $this->assertFalse(

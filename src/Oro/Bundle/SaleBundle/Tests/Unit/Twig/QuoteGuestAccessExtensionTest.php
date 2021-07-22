@@ -38,11 +38,6 @@ class QuoteGuestAccessExtensionTest extends \PHPUnit\Framework\TestCase
         $this->extension = new QuoteGuestAccessExtension($container);
     }
 
-    public function testGetName(): void
-    {
-        $this->assertEquals(QuoteGuestAccessExtension::NAME, $this->extension->getName());
-    }
-
     /**
      * @dataProvider guestAccessLinkProvider
      */

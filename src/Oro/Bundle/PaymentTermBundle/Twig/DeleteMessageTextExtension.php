@@ -16,8 +16,6 @@ use Twig\TwigFunction;
  */
 class DeleteMessageTextExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    const DELETE_MESSAGE_TEXT_EXTENSION_NAME = 'oro_payment_term_delete_message';
-
     /** @var ContainerInterface */
     protected $container;
 
@@ -32,14 +30,6 @@ class DeleteMessageTextExtension extends AbstractExtension implements ServiceSub
     protected function getDeleteMessageGenerator()
     {
         return $this->container->get('oro_payment_term.payment_term.delete_message_generator');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return static::DELETE_MESSAGE_TEXT_EXTENSION_NAME;
     }
 
     /**

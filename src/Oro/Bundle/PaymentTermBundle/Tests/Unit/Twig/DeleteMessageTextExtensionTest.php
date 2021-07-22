@@ -35,14 +35,6 @@ class DeleteMessageTextExtensionTest extends \PHPUnit\Framework\TestCase
         unset($this->deleteMessageTextGenerator);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(
-            DeleteMessageTextExtension::DELETE_MESSAGE_TEXT_EXTENSION_NAME,
-            $this->extension->getName()
-        );
-    }
-
     public function testGetDeleteMessageText()
     {
         $message = 'Delete message for payment term';

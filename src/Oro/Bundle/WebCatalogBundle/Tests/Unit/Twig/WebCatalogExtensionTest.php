@@ -40,11 +40,6 @@ class WebCatalogExtensionTest extends \PHPUnit\Framework\TestCase
         $this->extension = new WebCatalogExtension($container);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(WebCatalogExtension::NAME, $this->extension->getName());
-    }
-
     public function testGetNodesTree()
     {
         $root = new ContentNode();

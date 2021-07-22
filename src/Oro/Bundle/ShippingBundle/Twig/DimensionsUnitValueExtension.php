@@ -17,8 +17,6 @@ use Twig\TwigFilter;
  */
 class DimensionsUnitValueExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    const NAME = 'oro_dimensions_unit_value';
-
     /** @var ContainerInterface */
     protected $container;
 
@@ -54,14 +52,6 @@ class DimensionsUnitValueExtension extends AbstractExtension implements ServiceS
                 [$this, 'formatCode']
             ),
         ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return static::NAME;
     }
 
     /**

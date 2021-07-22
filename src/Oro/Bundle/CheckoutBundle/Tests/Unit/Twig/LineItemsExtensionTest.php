@@ -55,12 +55,6 @@ class LineItemsExtensionTest extends \PHPUnit\Framework\TestCase
         $this->extension = new LineItemsExtension($container);
     }
 
-    public function testGetName()
-    {
-        self::assertEquals('oro_checkout_order_line_items', LineItemsExtension::NAME);
-        self::assertEquals('oro_checkout_order_line_items', $this->extension->getName());
-    }
-
     /**
      * @dataProvider productDataProvider
      * @param boolean $freeForm

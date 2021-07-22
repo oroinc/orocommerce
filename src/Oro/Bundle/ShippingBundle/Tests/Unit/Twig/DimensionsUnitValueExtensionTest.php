@@ -28,11 +28,6 @@ class DimensionsUnitValueExtensionTest extends \PHPUnit\Framework\TestCase
         $this->extension = new DimensionsUnitValueExtension($container);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(DimensionsUnitValueExtension::NAME, $this->extension->getName());
-    }
-
     public function testFormat()
     {
         $value = 42;

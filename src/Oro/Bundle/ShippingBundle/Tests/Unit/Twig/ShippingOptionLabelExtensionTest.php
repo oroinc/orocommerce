@@ -47,11 +47,6 @@ class ShippingOptionLabelExtensionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(ShippingOptionLabelExtension::NAME, $this->extension->getName());
-    }
-
     /**
      * @dataProvider formatProvider
      *

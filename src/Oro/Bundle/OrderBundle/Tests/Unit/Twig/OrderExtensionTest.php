@@ -46,11 +46,6 @@ class OrderExtensionTest extends \PHPUnit\Framework\TestCase
         $this->assertInstanceOf(TwigFunction::class, $filters[2]);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals('oro_order_order', $this->orderExtension->getName());
-    }
-
     public function testGetTemplateContent()
     {
         /** @var Environment|\PHPUnit\Framework\MockObject\MockObject $environment **/

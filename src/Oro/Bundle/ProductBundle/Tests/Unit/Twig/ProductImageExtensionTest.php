@@ -39,11 +39,6 @@ class ProductImageExtensionTest extends \PHPUnit\Framework\TestCase
         $this->extension = new ProductImageExtension($container);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(ProductImageExtension::NAME, $this->extension->getName());
-    }
-
     /**
      * @dataProvider collectProductImageByTypesProvider
      */

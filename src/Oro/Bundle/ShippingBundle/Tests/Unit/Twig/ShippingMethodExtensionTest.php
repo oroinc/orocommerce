@@ -78,11 +78,6 @@ class ShippingMethodExtensionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(ShippingMethodExtension::SHIPPING_METHOD_EXTENSION_NAME, $this->extension->getName());
-    }
-
     public function testGetShippingMethodConfigRenderDataDefault()
     {
         $methodName = 'method_1';

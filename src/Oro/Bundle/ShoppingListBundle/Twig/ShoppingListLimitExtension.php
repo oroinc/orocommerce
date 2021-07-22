@@ -14,8 +14,6 @@ use Twig\TwigFunction;
  */
 class ShoppingListLimitExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    const NAME = 'oro_shopping_list_limit';
-
     /** @var ContainerInterface */
     private $container;
 
@@ -35,14 +33,6 @@ class ShoppingListLimitExtension extends AbstractExtension implements ServiceSub
                 [$this->container->get('oro_shopping_list.manager.shopping_list_limit'), 'isOnlyOneEnabled']
             ),
         ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return self::NAME;
     }
 
     /**

@@ -16,8 +16,6 @@ use Twig\TwigFilter;
  */
 class ShippingOptionLabelExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    const NAME = 'oro_shipping_option_label';
-
     /** @var ContainerInterface */
     protected $container;
 
@@ -69,14 +67,6 @@ class ShippingOptionLabelExtension extends AbstractExtension implements ServiceS
                 [$this, 'formatFreightClass']
             ),
         ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return static::NAME;
     }
 
     /**

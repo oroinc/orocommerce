@@ -33,11 +33,6 @@ class PaymentStatusExtensionTest extends \PHPUnit\Framework\TestCase
         $this->extension = new PaymentStatusExtension($container);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(PaymentStatusExtension::PAYMENT_STATUS_EXTENSION_NAME, $this->extension->getName());
-    }
-
     public function testFormatPaymentStatusLabel()
     {
         $formattedValue = 'formattedValue';

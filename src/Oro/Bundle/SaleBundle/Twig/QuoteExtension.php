@@ -24,7 +24,6 @@ use Twig\TwigFunction;
  */
 class QuoteExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    const NAME = 'oro_sale_quote';
     const FRONTEND_SYSTEM_CONFIG_PATH = 'oro_rfp.frontend_product_visibility';
 
     /** @var ContainerInterface */
@@ -119,14 +118,6 @@ class QuoteExtension extends AbstractExtension implements ServiceSubscriberInter
         $inventoryStatus = $product->getInventoryStatus();
 
         return $inventoryStatus && in_array($inventoryStatus->getId(), $supportedStatuses);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return static::NAME;
     }
 
     /**

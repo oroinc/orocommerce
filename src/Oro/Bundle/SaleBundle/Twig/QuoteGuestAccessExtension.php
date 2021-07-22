@@ -16,8 +16,6 @@ use Twig\TwigFunction;
  */
 class QuoteGuestAccessExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    const NAME = 'oro_sale_quote_guest_access';
-
     /** @var ContainerInterface */
     private $container;
 
@@ -48,14 +46,6 @@ class QuoteGuestAccessExtension extends AbstractExtension implements ServiceSubs
                 ['guest_access_id' => $quote->getGuestAccessId()],
                 $quote->getWebsite()
             );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return static::NAME;
     }
 
     private function getFeatureChecker(): FeatureChecker

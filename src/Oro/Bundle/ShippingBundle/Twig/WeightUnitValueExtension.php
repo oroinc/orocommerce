@@ -17,8 +17,6 @@ use Twig\TwigFilter;
  */
 class WeightUnitValueExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    const NAME = 'oro_weight_unit_value';
-
     /** @var ContainerInterface */
     protected $container;
 
@@ -54,14 +52,6 @@ class WeightUnitValueExtension extends AbstractExtension implements ServiceSubsc
                 [$this, 'formatCode']
             ),
         ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return static::NAME;
     }
 
     /**

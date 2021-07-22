@@ -15,8 +15,6 @@ use Twig\TwigFilter;
  */
 class ProductUnitLabelExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    const NAME = 'oro_product_unit_label';
-
     /** @var ContainerInterface */
     private $container;
 
@@ -62,14 +60,6 @@ class ProductUnitLabelExtension extends AbstractExtension implements ServiceSubs
     public function formatShort($unitCode, $isPlural = false)
     {
         return $this->format($unitCode, true, $isPlural);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return static::NAME;
     }
 
     /**
