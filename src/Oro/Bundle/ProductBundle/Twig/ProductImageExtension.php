@@ -23,20 +23,11 @@ use Twig\TwigFunction;
  */
 class ProductImageExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    /** @var ContainerInterface */
-    private $container;
+    private ContainerInterface $container;
 
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
-    }
-
-    /**
-     * @return ProductImageHelper
-     */
-    protected function getProductImageHelper()
-    {
-        return $this->container->get('oro_product.helper.product_image_helper');
     }
 
     /**
@@ -45,10 +36,7 @@ class ProductImageExtension extends AbstractExtension implements ServiceSubscrib
     public function getFunctions()
     {
         return [
-            new TwigFunction(
-                'collect_product_images_by_types',
-                [$this, 'collectProductImagesByTypes']
-            ),
+            new TwigFunction('collect_product_images_by_types', [$this, 'collectProductImagesByTypes']),
             new TwigFunction('sort_product_images', [$this, 'sortProductImages']),
             new TwigFunction('product_filtered_image', [$this, 'getProductFilteredImage']),
             new TwigFunction('product_image_placeholder', [$this, 'getProductImagePlaceholder'])
@@ -90,9 +78,7 @@ class ProductImageExtension extends AbstractExtension implements ServiceSubscrib
     public function getProductFilteredImage(?File $file, string $filter): string
     {
         if ($file) {
-            $attachmentManager = $this->container->get('oro_attachment.manager');
-
-            return $attachmentManager->getFilteredImageUrl($file, $filter);
+            return $this->getAttachmentManager()->getFilteredImageUrl($file, $filter);
         }
 
         return $this->getProductImagePlaceholder($filter);
@@ -100,9 +86,7 @@ class ProductImageExtension extends AbstractExtension implements ServiceSubscrib
 
     public function getProductImagePlaceholder(string $filter): string
     {
-        $imagePlaceholderProvider = $this->container->get('oro_product.provider.product_image_placeholder');
-
-        return $imagePlaceholderProvider->getPath($filter);
+        return $this->getImagePlaceholderProvider()->getPath($filter);
     }
 
     /**
@@ -115,5 +99,20 @@ class ProductImageExtension extends AbstractExtension implements ServiceSubscrib
             'oro_product.provider.product_image_placeholder' => ImagePlaceholderProviderInterface::class,
             'oro_product.helper.product_image_helper' => ProductImageHelper::class,
         ];
+    }
+
+    private function getAttachmentManager(): AttachmentManager
+    {
+        return $this->container->get('oro_attachment.manager');
+    }
+
+    private function getImagePlaceholderProvider(): ImagePlaceholderProviderInterface
+    {
+        return $this->container->get('oro_product.provider.product_image_placeholder');
+    }
+
+    private function getProductImageHelper(): ProductImageHelper
+    {
+        return $this->container->get('oro_product.helper.product_image_helper');
     }
 }

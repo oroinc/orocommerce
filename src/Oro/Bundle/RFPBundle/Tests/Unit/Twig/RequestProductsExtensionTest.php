@@ -3,7 +3,6 @@
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Twig;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\LocaleBundle\Twig\AddressExtension;
 use Oro\Bundle\ProductBundle\Entity\ProductName;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use Oro\Bundle\RFPBundle\Entity\Request;
@@ -11,26 +10,17 @@ use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 use Oro\Bundle\RFPBundle\Twig\RequestProductsExtension;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
-use Twig\TwigFunction;
 
 class RequestProductsExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    /** @var AddressExtension */
+    /** @var RequestProductsExtension */
     private $extension;
 
     protected function setUp(): void
     {
         $this->extension = new RequestProductsExtension();
-    }
-
-    public function testGetFunctions(): void
-    {
-        $functions = $this->extension->getFunctions();
-
-        $this->assertCount(1, $functions);
-        $this->assertInstanceOf(TwigFunction::class, $functions[0]);
     }
 
     /**

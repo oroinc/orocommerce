@@ -96,14 +96,12 @@ class ProductImageExtensionTest extends \PHPUnit\Framework\TestCase
         $file = new File();
         $filter = 'product_small';
 
-        $this->attachmentManager
-            ->expects($this->once())
+        $this->attachmentManager->expects($this->once())
             ->method('getFilteredImageUrl')
             ->with($file, $filter)
             ->willReturn('/path/to/filtered/image');
 
-        $this->imagePlaceholderProvider
-            ->expects($this->never())
+        $this->imagePlaceholderProvider->expects($this->never())
             ->method('getPath');
 
         $this->assertEquals(
@@ -117,12 +115,10 @@ class ProductImageExtensionTest extends \PHPUnit\Framework\TestCase
         $filter = 'product_small';
         $path = '/some/test/path.npg';
 
-        $this->attachmentManager
-            ->expects($this->never())
+        $this->attachmentManager->expects($this->never())
             ->method('getFilteredImageUrl');
 
-        $this->imagePlaceholderProvider
-            ->expects($this->once())
+        $this->imagePlaceholderProvider->expects($this->once())
             ->method('getPath')
             ->with($filter)
             ->willReturn($path);
@@ -149,7 +145,7 @@ class ProductImageExtensionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    protected function createProductImage(int $id, array $imageTypes = []): StubProductImage
+    private function createProductImage(int $id, array $imageTypes = []): StubProductImage
     {
         $productImage = new StubProductImage();
         $productImage->setId($id);

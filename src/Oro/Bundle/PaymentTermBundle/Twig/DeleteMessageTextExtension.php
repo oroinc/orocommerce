@@ -33,7 +33,7 @@ class DeleteMessageTextExtension extends AbstractExtension implements ServiceSub
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function getFunctions()
     {

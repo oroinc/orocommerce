@@ -36,7 +36,7 @@ class OrderShippingExtension extends AbstractExtension implements ServiceSubscri
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function getFunctions()
     {

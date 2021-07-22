@@ -50,8 +50,8 @@ services:
         calls:
             - [setTranslationPrefix, ['oro.product_unit']]
 
-    oro_product.twig.product_unit_value:
-        class: 'Oro\Bundle\ProductBundle\Twig\ProductUnitValueExtension'
+    oro_product.twig.product_unit_extension:
+        class: 'Oro\Bundle\ProductBundle\Twig\ProductUnitExtension'
         public: false
         arguments:
             - "@oro_platform.twig.service_locator"
@@ -63,22 +63,6 @@ services:
         public: false
         arguments:
             - "@oro_platform.twig.service_locator"
-        tags:
-            - { name: twig.extension }
-
-    oro_product.twig.unit_visibility:
-        class: 'Oro\Bundle\ProductBundle\Twig\UnitVisibilityExtension'
-        public: false
-        arguments:
-            - "@oro_platform.twig.service_locator"
-        tags:
-            - { name: twig.extension }
-
-    oro_product.twig.product_unit_label:
-        class: 'Oro\Bundle\ProductBundle\Twig\ProductUnitLabelExtension'
-        public: false
-        arguments:
-            - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
 

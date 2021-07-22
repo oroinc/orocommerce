@@ -2,40 +2,49 @@
 
 namespace Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass;
 
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Reference;
+use Oro\Bundle\EmailBundle\DependencyInjection\Compiler\AbstractTwigSandboxConfigurationPass;
 
 /**
- * Adds TWIG filters to the list of TWIG filters allowed for execution during email templates rendering.
+ * Registers the following Twig filters for the email templates rendering sandbox:
+ * * oro_format_short_product_unit_value
+ * * oro_format_product_unit_label
  */
-class TwigSandboxConfigurationPass implements CompilerPassInterface
+class TwigSandboxConfigurationPass extends AbstractTwigSandboxConfigurationPass
 {
-    const EMAIL_TEMPLATE_SANDBOX_SECURITY_POLICY_SERVICE_KEY = 'oro_email.twig.email_security_policy';
-    const EMAIL_TEMPLATE_RENDERER_SERVICE_KEY = 'oro_email.email_renderer';
+    /**
+     * {@inheritdoc}
+     */
+    protected function getFunctions(): array
+    {
+        return [];
+    }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    public function process(ContainerBuilder $container)
+    protected function getFilters(): array
     {
-        if ($container->has(self::EMAIL_TEMPLATE_SANDBOX_SECURITY_POLICY_SERVICE_KEY) &&
-            $container->has(self::EMAIL_TEMPLATE_RENDERER_SERVICE_KEY)
-        ) {
-            $securityPolicyDef = $container->getDefinition(self::EMAIL_TEMPLATE_SANDBOX_SECURITY_POLICY_SERVICE_KEY);
-            $filters = $securityPolicyDef->getArgument(1);
-            $filters = array_merge(
-                $filters,
-                [
-                    'oro_format_short_product_unit_value',
-                    'oro_format_product_unit_label',
-                ]
-            );
-            $securityPolicyDef->replaceArgument(1, $filters);
+        return [
+            'oro_format_short_product_unit_value',
+            'oro_format_product_unit_label'
+        ];
+    }
 
-            $rendererDef = $container->getDefinition(self::EMAIL_TEMPLATE_RENDERER_SERVICE_KEY);
-            $rendererDef->addMethodCall('addExtension', [new Reference('oro_product.twig.product_unit_value')]);
-            $rendererDef->addMethodCall('addExtension', [new Reference('oro_product.twig.product_unit_label')]);
-        }
+    /**
+     * {@inheritdoc}
+     */
+    protected function getTags(): array
+    {
+        return [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getExtensions(): array
+    {
+        return [
+            'oro_product.twig.product_unit_extension'
+        ];
     }
 }

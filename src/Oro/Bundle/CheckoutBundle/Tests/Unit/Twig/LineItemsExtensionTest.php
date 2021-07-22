@@ -19,19 +19,19 @@ class LineItemsExtensionTest extends \PHPUnit\Framework\TestCase
     use TwigExtensionTestCaseTrait;
 
     /** @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $totalsProvider;
+    private $totalsProvider;
 
     /** @var LineItemSubtotalProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $lineItemSubtotalProvider;
+    private $lineItemSubtotalProvider;
 
     /** @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject */
-    protected $localizedHelper;
+    private $localizedHelper;
 
     /** @var EntityNameResolver|\PHPUnit\Framework\MockObject\MockObject */
-    protected $entityNameResolver;
+    private $entityNameResolver;
 
     /** @var LineItemsExtension */
-    protected $extension;
+    private $extension;
 
     protected function setUp(): void
     {
@@ -39,7 +39,7 @@ class LineItemsExtensionTest extends \PHPUnit\Framework\TestCase
         $this->lineItemSubtotalProvider = $this->createMock(LineItemSubtotalProvider::class);
         $this->localizedHelper = $this->createMock(LocalizationHelper::class);
         $this->entityNameResolver = $this->createMock(EntityNameResolver::class);
-        $this->entityNameResolver
+        $this->entityNameResolver->expects($this->any())
             ->method('getName')
             ->willReturnCallback(function ($param) {
                 return $param ? 'Item Sku' : 'Item Name';
@@ -77,8 +77,12 @@ class LineItemsExtensionTest extends \PHPUnit\Framework\TestCase
                 ->setCurrency('UAH'),
             (new Subtotal())->setLabel('label1')->setAmount(123)->setCurrency('USD')
         ];
-        $this->totalsProvider->expects($this->once())->method('getSubtotals')->willReturn($subtotals);
-        $this->lineItemSubtotalProvider->expects($this->any())->method('getRowTotal')->willReturn(321);
+        $this->totalsProvider->expects($this->once())
+            ->method('getSubtotals')
+            ->willReturn($subtotals);
+        $this->lineItemSubtotalProvider->expects($this->any())
+            ->method('getRowTotal')
+            ->willReturn(321);
         $order = new Order();
         $order->setCurrency($currency);
 
@@ -169,7 +173,7 @@ class LineItemsExtensionTest extends \PHPUnit\Framework\TestCase
      * @param Product|null $product
      * @return OrderLineItem
      */
-    protected function createLineItem(
+    private function createLineItem(
         $currency,
         $quantity,
         $priceValue,

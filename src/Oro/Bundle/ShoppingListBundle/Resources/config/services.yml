@@ -445,22 +445,8 @@ services:
     Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager:
         alias: 'oro_shopping_list.manager.shopping_list_limit'
 
-    oro_shopping_list.twig.shopping_list_limit_extension:
-        class: 'Oro\Bundle\ShoppingListBundle\Twig\ShoppingListLimitExtension'
-        arguments:
-            - "@oro_platform.twig.service_locator"
-        tags:
-            - { name: twig.extension }
-
-    oro_shopping_list.twig.shopping_list_widget_extension:
-        class: Oro\Bundle\ShoppingListBundle\Twig\ShoppingListWidgetExtension
-        arguments:
-            - "@oro_platform.twig.service_locator"
-        tags:
-            - { name: twig.extension }
-
-    oro_shopping_list.twig.shopping_list_url_extension:
-        class: Oro\Bundle\ShoppingListBundle\Twig\ShoppingListUrlExtension
+    oro_shopping_list.twig.shopping_list_extension:
+        class: Oro\Bundle\ShoppingListBundle\Twig\ShoppingListExtension
         arguments:
             - "@oro_platform.twig.service_locator"
         tags:

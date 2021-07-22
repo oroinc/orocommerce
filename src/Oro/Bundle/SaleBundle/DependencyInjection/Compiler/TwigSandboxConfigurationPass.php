@@ -5,14 +5,14 @@ namespace Oro\Bundle\SaleBundle\DependencyInjection\Compiler;
 use Oro\Bundle\EmailBundle\DependencyInjection\Compiler\AbstractTwigSandboxConfigurationPass;
 
 /**
- * Compiler pass that allows twig functions `oro_email.email_renderer` service.
+ * Registers the "quote_guest_access_link" Twig function for the email templates rendering sandbox:
  */
 class TwigSandboxConfigurationPass extends AbstractTwigSandboxConfigurationPass
 {
     /**
      * {@inheritdoc}
      */
-    protected function getFunctions()
+    protected function getFunctions(): array
     {
         return [
             'quote_guest_access_link'
@@ -22,7 +22,7 @@ class TwigSandboxConfigurationPass extends AbstractTwigSandboxConfigurationPass
     /**
      * {@inheritdoc}
      */
-    protected function getFilters()
+    protected function getFilters(): array
     {
         return [];
     }
@@ -30,10 +30,18 @@ class TwigSandboxConfigurationPass extends AbstractTwigSandboxConfigurationPass
     /**
      * {@inheritdoc}
      */
-    protected function getExtensions()
+    protected function getTags(): array
+    {
+        return [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getExtensions(): array
     {
         return [
-            'oro_sale.twig.quote_guest_access'
+            'oro_sale.twig.quote'
         ];
     }
 }
