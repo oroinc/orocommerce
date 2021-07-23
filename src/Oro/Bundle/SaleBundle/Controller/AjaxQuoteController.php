@@ -125,9 +125,6 @@ class AjaxQuoteController extends AbstractController
     }
 
     /**
-     * @param CustomerUser $customerUser
-     * @param Customer $customer
-     *
      * @throws BadRequestHttpException
      */
     protected function validateRelation(CustomerUser $customerUser, Customer $customer)

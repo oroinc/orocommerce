@@ -10,9 +10,6 @@ use Oro\Bundle\MigrationBundle\Event\PostMigrationEvent;
  */
 class PostUpMigrationListener
 {
-    /**
-     * @param PostMigrationEvent $event
-     */
     public function onPostUp(PostMigrationEvent $event)
     {
         $event->addMigration(new RemoveWorkflowFieldsMigration(), true);

@@ -111,7 +111,6 @@ class FedexRateServiceRequestFactoryTest extends TestCase
 
     /**
      * @dataProvider brokenContextDataProvider
-     * @param ShippingContext $context
      */
     public function testCreateNotAllDataFilled(ShippingContext $context)
     {
@@ -217,17 +216,11 @@ class FedexRateServiceRequestFactoryTest extends TestCase
         static::assertEquals($this->getExpectedRequest(), $this->factory->create($settings));
     }
 
-    /**
-     * @return array
-     */
     private function createPackages(): array
     {
         return ['1', '2'];
     }
 
-    /**
-     * @return ShippingContextInterface
-     */
     private function createContext(): ShippingContextInterface
     {
         $context = new ShippingContext([
@@ -273,9 +266,6 @@ class FedexRateServiceRequestFactoryTest extends TestCase
         return $address;
     }
 
-    /**
-     * @return FedexIntegrationSettings
-     */
     private function createIntegrationSettings(): FedexIntegrationSettings
     {
         $settings = new FedexIntegrationSettings();
@@ -290,11 +280,6 @@ class FedexRateServiceRequestFactoryTest extends TestCase
         return $settings;
     }
 
-    /**
-     * @param Address $address
-     *
-     * @return array
-     */
     private function getExpectedAddress(Address $address): array
     {
         return [

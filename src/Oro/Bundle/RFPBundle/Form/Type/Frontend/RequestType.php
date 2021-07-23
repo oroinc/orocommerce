@@ -81,8 +81,6 @@ class RequestType extends AbstractType
 
     /**
      * Remove empty requestProducts
-     *
-     * @param FormEvent $event
      */
     public function onPreSubmit(FormEvent $event)
     {

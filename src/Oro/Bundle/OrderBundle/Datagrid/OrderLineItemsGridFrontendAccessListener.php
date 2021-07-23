@@ -20,9 +20,6 @@ class OrderLineItemsGridFrontendAccessListener
         $this->tokenStorage = $tokenStorage;
     }
 
-    /**
-     * @param BuildBefore $event
-     */
     public function onBuildBefore(BuildBefore $event)
     {
         if ($this->tokenStorage->getToken() instanceof AnonymousCustomerUserToken) {

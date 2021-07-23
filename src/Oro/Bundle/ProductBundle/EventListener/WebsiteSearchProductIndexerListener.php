@@ -43,14 +43,6 @@ class WebsiteSearchProductIndexerListener
     /** @var ProductIndexDataProviderInterface */
     private $dataProvider;
 
-    /**
-     * @param AbstractWebsiteLocalizationProvider   $websiteLocalizationProvider
-     * @param WebsiteContextManager                 $websiteContextManager
-     * @param ManagerRegistry                       $registry
-     * @param AttachmentManager                     $attachmentManager
-     * @param AttributeManager                      $attributeManager
-     * @param ProductIndexDataProviderInterface $dataProvider
-     */
     public function __construct(
         AbstractWebsiteLocalizationProvider $websiteLocalizationProvider,
         WebsiteContextManager $websiteContextManager,
@@ -67,9 +59,6 @@ class WebsiteSearchProductIndexerListener
         $this->dataProvider = $dataProvider;
     }
 
-    /**
-     * @param IndexEntityEvent $event
-     */
     public function onWebsiteSearchIndex(IndexEntityEvent $event)
     {
         $website = $this->getWebsite($event);
@@ -150,10 +139,6 @@ class WebsiteSearchProductIndexerListener
         }
     }
 
-    /**
-     * @param IndexEntityEvent $event
-     * @return Website|null
-     */
     private function getWebsite(IndexEntityEvent $event): ?Website
     {
         $websiteId = $this->websiteContextManager->getWebsiteId($event->getContext());

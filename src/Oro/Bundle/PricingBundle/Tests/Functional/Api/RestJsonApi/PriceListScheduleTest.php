@@ -45,37 +45,21 @@ class PriceListScheduleTest extends RestJsonApiTestCase
         return parent::getResponseDataFolderName() . DIRECTORY_SEPARATOR . 'price_list_schedule';
     }
 
-    /**
-     * @return PriceListRepository
-     */
     private function getPriceListRepository(): PriceListRepository
     {
         return $this->getEntityManager()->getRepository(PriceList::class);
     }
 
-    /**
-     * @return PriceListScheduleRepository
-     */
     private function getSchedulesRepository(): PriceListScheduleRepository
     {
         return $this->getEntityManager()->getRepository(PriceListSchedule::class);
     }
 
-    /**
-     * @return CombinedPriceListActivationRuleRepository
-     */
     private function getCombinedPriceListActivationRuleRepository(): CombinedPriceListActivationRuleRepository
     {
         return $this->getEntityManager()->getRepository(CombinedPriceListActivationRule::class);
     }
 
-    /**
-     * @param \DateTime $activateAt
-     * @param \DateTime $deactivateAt
-     * @param PriceList $priceList
-     *
-     * @return Response
-     */
     private function sendCreateScheduleRequest(
         \DateTime $activateAt,
         \DateTime $deactivateAt,
@@ -103,13 +87,6 @@ class PriceListScheduleTest extends RestJsonApiTestCase
         );
     }
 
-    /**
-     * @param PriceListSchedule $schedule
-     * @param \DateTime         $activateAt
-     * @param \DateTime         $deactivateAt
-     *
-     * @return Response
-     */
     private function sendUpdateScheduleRequest(
         PriceListSchedule $schedule,
         \DateTime $activateAt,

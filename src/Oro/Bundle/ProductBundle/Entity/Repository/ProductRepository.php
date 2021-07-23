@@ -111,11 +111,6 @@ class ProductRepository extends EntityRepository
         return $productsQueryBuilder;
     }
 
-    /**
-     * @param string $sku
-     *
-     * @return QueryBuilder
-     */
     public function getProductIdBySkuQueryBuilder(string $sku): QueryBuilder
     {
         $qb = $this->createQueryBuilder('p')
@@ -172,10 +167,6 @@ class ProductRepository extends EntityRepository
         return $qb;
     }
 
-    /**
-     * @param array $productIds
-     * @return QueryBuilder
-     */
     private function getImagesQueryBuilder(array $productIds): QueryBuilder
     {
         $qb = $this->_em->createQueryBuilder()
@@ -509,7 +500,6 @@ class ProductRepository extends EntityRepository
         return $mapping;
     }
 
-
     /**
      * @param Product $configurableProduct
      *
@@ -574,9 +564,6 @@ class ProductRepository extends EntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    /**
-     * @param QueryBuilder $queryBuilder
-     */
     private function filterByImageType(QueryBuilder $queryBuilder)
     {
         $parentAlias = $queryBuilder->getRootAliases()[0];
@@ -588,16 +575,11 @@ class ProductRepository extends EntityRepository
             ->where($subQuery->expr()->eq('pi.product', $parentAlias))
             ->andWhere($subQuery->expr()->eq('types.type', ':imageType'));
 
-
         $queryBuilder
             ->andWhere($queryBuilder->expr()->exists($subQuery->getDQL()))
             ->setParameter('imageType', ProductImageType::TYPE_LISTING);
     }
 
-    /**
-     * @param Slug $slug
-     * @return Product|null
-     */
     public function findOneBySlug(Slug $slug): ?Product
     {
         $qb = $this->createQueryBuilder('p');

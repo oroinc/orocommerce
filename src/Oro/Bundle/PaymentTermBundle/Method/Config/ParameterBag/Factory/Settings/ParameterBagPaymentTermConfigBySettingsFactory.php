@@ -20,10 +20,6 @@ class ParameterBagPaymentTermConfigBySettingsFactory implements PaymentTermConfi
      */
     private $integrationIdentifierGenerator;
 
-    /**
-     * @param LocalizationHelper $localizationHelper
-     * @param IntegrationIdentifierGeneratorInterface $integrationIdentifierGenerator
-     */
     public function __construct(
         LocalizationHelper $localizationHelper,
         IntegrationIdentifierGeneratorInterface $integrationIdentifierGenerator

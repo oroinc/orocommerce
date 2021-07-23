@@ -25,11 +25,6 @@ class OrderMapper implements MapperInterface
     /** @var PaymentTermAssociationProvider */
     private $paymentTermAssociationProvider;
 
-    /**
-     * @param FieldHelper $entityFieldHelper
-     * @param PropertyAccessorInterface $propertyAccessor
-     * @param PaymentTermAssociationProvider $paymentTermAssociationProvider
-     */
     public function __construct(
         FieldHelper $entityFieldHelper,
         PropertyAccessorInterface $propertyAccessor,
@@ -93,11 +88,6 @@ class OrderMapper implements MapperInterface
         return $result;
     }
 
-    /**
-     * @param Order $entity
-     * @param array $data
-     * @param array $skipped
-     */
     protected function assignData(Order $entity, array $data, array $skipped)
     {
         foreach ($data as $name => $value) {
@@ -131,10 +121,6 @@ class OrderMapper implements MapperInterface
         return array_merge($fieldsNames, $staticFields);
     }
 
-    /**
-     * @param Order $order
-     * @param PaymentTerm $paymentTerm
-     */
     protected function assignPaymentTerm(Order $order, PaymentTerm $paymentTerm)
     {
         $this->paymentTermAssociationProvider->setPaymentTerm($order, $paymentTerm);

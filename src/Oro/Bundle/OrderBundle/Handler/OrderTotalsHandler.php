@@ -13,11 +13,6 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
  */
 class OrderTotalsHandler
 {
-    /**
-     * @param TotalProcessorProvider $totalProvider
-     * @param LineItemSubtotalProvider $lineItemSubtotalProvider
-     * @param RateConverterInterface $rateConverter
-     */
     public function __construct(
         TotalProcessorProvider $totalProvider,
         LineItemSubtotalProvider $lineItemSubtotalProvider,
@@ -28,9 +23,6 @@ class OrderTotalsHandler
         $this->rateConverter = $rateConverter;
     }
 
-    /**
-     * @param Order $order
-     */
     public function fillSubtotals(Order $order)
     {
         $subtotal = $this->lineItemSubtotalProvider->getSubtotal($order);

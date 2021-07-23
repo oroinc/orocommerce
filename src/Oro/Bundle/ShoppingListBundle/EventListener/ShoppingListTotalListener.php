@@ -38,19 +38,12 @@ class ShoppingListTotalListener
      */
     private $anonymousCustomerGroupId;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param ConfigManager $configManager
-     */
     public function __construct(ManagerRegistry $registry, ConfigManager $configManager)
     {
         $this->registry = $registry;
         $this->configManager = $configManager;
     }
 
-    /**
-     * @param CombinedPriceListsUpdateEvent $event
-     */
     public function onPriceListUpdate(CombinedPriceListsUpdateEvent $event)
     {
         $this->registry->getManagerForClass('OroShoppingListBundle:ShoppingListTotal')
@@ -58,9 +51,6 @@ class ShoppingListTotalListener
             ->invalidateByCombinedPriceList($event->getCombinedPriceListIds());
     }
 
-    /**
-     * @param CustomerCPLUpdateEvent $event
-     */
     public function onCustomerPriceListUpdate(CustomerCPLUpdateEvent $event)
     {
         $customersData = $event->getCustomersData();
@@ -72,9 +62,6 @@ class ShoppingListTotalListener
         }
     }
 
-    /**
-     * @param CustomerGroupCPLUpdateEvent $event
-     */
     public function onCustomerGroupPriceListUpdate(CustomerGroupCPLUpdateEvent $event)
     {
         $customersData = $event->getCustomerGroupsData();
@@ -104,10 +91,6 @@ class ShoppingListTotalListener
         }
     }
 
-    /**
-     * @param ShoppingListTotalRepository $repository
-     * @param array $data
-     */
     private function handleGuestShoppingLists(ShoppingListTotalRepository $repository, array $data)
     {
         $anonymousCustomerGroupId = $this->getAnonymousCustomerGroupId();
@@ -140,9 +123,6 @@ class ShoppingListTotalListener
         return $this->anonymousCustomerGroupId;
     }
 
-    /**
-     * @param WebsiteCPLUpdateEvent $event
-     */
     public function onWebsitePriceListUpdate(WebsiteCPLUpdateEvent $event)
     {
         $websiteIds = $event->getWebsiteIds();
@@ -170,9 +150,6 @@ class ShoppingListTotalListener
         }
     }
 
-    /**
-     * @param ConfigCPLUpdateEvent $event
-     */
     public function onConfigPriceListUpdate(ConfigCPLUpdateEvent $event)
     {
         /** @var PriceListWebsiteFallbackRepository $fallbackWebsiteRepository */

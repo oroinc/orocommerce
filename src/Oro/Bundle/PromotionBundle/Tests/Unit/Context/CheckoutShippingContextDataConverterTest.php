@@ -23,8 +23,6 @@ class CheckoutShippingContextDataConverterTest extends \PHPUnit\Framework\TestCa
     }
 
     /**
-     * @param bool $isSupported
-     * @param bool $expectedResult
      * @dataProvider getSupportsDataProvider
      */
     public function testSupports(bool $isSupported, bool $expectedResult): void
@@ -39,9 +37,6 @@ class CheckoutShippingContextDataConverterTest extends \PHPUnit\Framework\TestCa
         $this->assertEquals($expectedResult, $this->converter->supports($entity));
     }
 
-    /**
-     * @return array
-     */
     public function getSupportsDataProvider(): array
     {
         return [
@@ -88,9 +83,6 @@ class CheckoutShippingContextDataConverterTest extends \PHPUnit\Framework\TestCa
         $this->assertEquals(array_merge($context, $shippingContextData), $this->converter->getContextData($checkout));
     }
 
-    /**
-     * @return Checkout
-     */
     private function getCheckout(): Checkout
     {
         $checkout = new Checkout();

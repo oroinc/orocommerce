@@ -67,9 +67,6 @@ class ProductPriceWriterTest extends WebTestCase
         $this->assertEmpty($value);
     }
 
-    /**
-     * @return ProductPrice
-     */
     private function createPrice(): ProductPrice
     {
         $priceList = $this->getReference('price_list_2');

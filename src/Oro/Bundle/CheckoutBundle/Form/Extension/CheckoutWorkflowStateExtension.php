@@ -14,9 +14,6 @@ class CheckoutWorkflowStateExtension extends AbstractTypeExtension
     /** @var CheckoutErrorHandler */
     protected $checkoutErrorHandler;
 
-    /**
-     * @param CheckoutErrorHandler $checkoutErrorHandler
-     */
     public function __construct(CheckoutErrorHandler $checkoutErrorHandler)
     {
         $this->checkoutErrorHandler = $checkoutErrorHandler;

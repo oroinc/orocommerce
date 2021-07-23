@@ -31,11 +31,6 @@ class VisibilityGridListener
      */
     protected $scopeManager;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param VisibilityChoicesProvider $visibilityChoicesProvider
-     * @param ScopeManager $scopeManager
-     */
     public function __construct(
         ManagerRegistry $registry,
         VisibilityChoicesProvider $visibilityChoicesProvider,
@@ -60,9 +55,6 @@ class VisibilityGridListener
         ];
     }
 
-    /**
-     * @param PreBuild $event
-     */
     public function onPreBuild(PreBuild $event)
     {
         $config = $event->getConfig();
@@ -107,9 +99,6 @@ class VisibilityGridListener
         $config->offsetSetByPath($path, $pathConfig);
     }
 
-    /**
-     * @param BuildAfter $event
-     */
     public function onDatagridBuildAfter(BuildAfter $event)
     {
         $datasource = $event->getDatagrid()->getDatasource();

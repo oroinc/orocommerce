@@ -39,12 +39,6 @@ class CheckoutLineItemsDataProvider extends AbstractCheckoutProvider
      */
     private $resolvedProductVisibilityProvider;
 
-    /**
-     * @param FrontendProductPricesDataProvider $frontendProductPricesDataProvider
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param CacheProvider $productAvailabilityCache
-     * @param ResolvedProductVisibilityProvider $resolvedProductVisibilityProvider
-     */
     public function __construct(
         FrontendProductPricesDataProvider $frontendProductPricesDataProvider,
         AuthorizationCheckerInterface $authorizationChecker,
@@ -96,11 +90,6 @@ class CheckoutLineItemsDataProvider extends AbstractCheckoutProvider
         return $data;
     }
 
-    /**
-     * @param Collection $lineItems
-     *
-     * @return array
-     */
     private function getLineItemsPrices(Collection $lineItems): array
     {
         $lineItemsWithoutPrice = [];
@@ -116,9 +105,6 @@ class CheckoutLineItemsDataProvider extends AbstractCheckoutProvider
             ->getProductsMatchedPrice($lineItemsWithoutPrice) : [];
     }
 
-    /**
-     * @param Collection $lineItems
-     */
     private function prefetchProductsVisibility(Collection $lineItems): void
     {
         $productIds = [];

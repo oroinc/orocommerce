@@ -19,9 +19,6 @@ class ProductMatrixAvailabilityProvider
     /** @var array */
     private $cache;
 
-    /**
-     * @param ProductVariantAvailabilityProvider $variantAvailability
-     */
     public function __construct(ProductVariantAvailabilityProvider $variantAvailability)
     {
         $this->variantAvailability = $variantAvailability;
@@ -62,10 +59,6 @@ class ProductMatrixAvailabilityProvider
         return $this->isUnitSupportedBySimpleProducts($product, $simpleProducts);
     }
 
-    /**
-     * @param Product $configurableProduct
-     * @return bool
-     */
     private function isVariantsCountAcceptable(Product $configurableProduct): bool
     {
         $variantsCount = count($configurableProduct->getVariantFields());
@@ -92,11 +85,6 @@ class ProductMatrixAvailabilityProvider
         return $isMatrixFormAvailableProducts;
     }
 
-    /**
-     * @param Product $configurableProduct
-     * @param array $simpleProducts
-     * @return bool
-     */
     private function isUnitSupportedBySimpleProducts(Product $configurableProduct, array $simpleProducts): bool
     {
         if (!$simpleProducts) {

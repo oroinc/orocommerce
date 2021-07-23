@@ -12,9 +12,6 @@ class PaymentStatusLabelFormatter
      */
     protected $translator;
 
-    /**
-     * @param TranslatorInterface $translator
-     */
     public function __construct(TranslatorInterface $translator)
     {
         $this->translator = $translator;
@@ -28,7 +25,7 @@ class PaymentStatusLabelFormatter
     {
         return $this->translator->trans(sprintf('oro.payment.status.%s', $paymentStatus));
     }
-    
+
     /**
      * @return array
      */

@@ -24,9 +24,6 @@ class DropTreeStructure implements Migration
         $queries->addQuery(new DropEntityConfigFieldQuery(Page::class, 'left'));
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function dropTreeColumns(Schema $schema)
     {
         $table = $schema->getTable('oro_cms_page');

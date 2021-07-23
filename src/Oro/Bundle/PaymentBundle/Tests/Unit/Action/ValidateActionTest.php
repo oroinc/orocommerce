@@ -14,8 +14,6 @@ class ValidateActionTest extends AbstractActionTest
 
     /**
      * @dataProvider executeDataProvider
-     * @param array $data
-     * @param array $expected
      */
     public function testExecuteAction(array $data, array $expected)
     {

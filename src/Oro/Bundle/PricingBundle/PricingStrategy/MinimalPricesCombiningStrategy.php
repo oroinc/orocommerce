@@ -23,12 +23,6 @@ class MinimalPricesCombiningStrategy extends AbstractPriceCombiningStrategy impl
      */
     protected $shardManager;
 
-    /**
-     * @param Registry $registry
-     * @param ShardQueryExecutorInterface $insertFromSelectQueryExecutor
-     * @param CombinedPriceListTriggerHandler $triggerHandler
-     * @param ShardManager $shardManager
-     */
     public function __construct(
         Registry $registry,
         ShardQueryExecutorInterface $insertFromSelectQueryExecutor,

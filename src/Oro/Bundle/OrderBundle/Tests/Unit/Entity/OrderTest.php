@@ -185,9 +185,6 @@ class OrderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider shippingCostDataProvider
-     * @param $estimated
-     * @param $overridden
-     * @param $expected
      */
     public function testGetShippingCost($estimated, $overridden, $expected)
     {

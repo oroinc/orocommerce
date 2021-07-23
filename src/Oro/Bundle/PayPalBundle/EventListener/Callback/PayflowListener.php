@@ -22,19 +22,12 @@ class PayflowListener
      */
     protected $paymentMethodProvider;
 
-    /**
-     * @param Session $session
-     * @param PaymentMethodProviderInterface $paymentMethodProvider
-     */
     public function __construct(Session $session, PaymentMethodProviderInterface $paymentMethodProvider)
     {
         $this->session = $session;
         $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
-    /**
-     * @param AbstractCallbackEvent $event
-     */
     public function onError(AbstractCallbackEvent $event)
     {
         $paymentTransaction = $event->getPaymentTransaction();
@@ -54,9 +47,6 @@ class PayflowListener
         }
     }
 
-    /**
-     * @param AbstractCallbackEvent $event
-     */
     public function onNotify(AbstractCallbackEvent $event)
     {
         $paymentTransaction = $event->getPaymentTransaction();

@@ -18,9 +18,6 @@ class ValidateParentCategoryNodeAccess implements ProcessorInterface
     /** @var CategoryNodeRepository */
     private $categoryNodeRepository;
 
-    /**
-     * @param CategoryNodeRepository $categoryNodeRepository
-     */
     public function __construct(CategoryNodeRepository $categoryNodeRepository)
     {
         $this->categoryNodeRepository = $categoryNodeRepository;

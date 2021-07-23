@@ -18,11 +18,6 @@ class OrderAppliedPromotionEventListener extends AbstractFormEventListener
      */
     private $appliedPromotionManager;
 
-    /**
-     * @param EngineInterface $engine
-     * @param FormFactoryInterface $formFactory
-     * @param AppliedPromotionManager $appliedPromotionManager
-     */
     public function __construct(
         EngineInterface $engine,
         FormFactoryInterface $formFactory,

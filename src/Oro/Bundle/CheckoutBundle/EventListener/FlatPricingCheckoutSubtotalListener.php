@@ -28,10 +28,6 @@ class FlatPricingCheckoutSubtotalListener
      */
     private $messageProducer;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param MessageProducerInterface $messageProducer
-     */
     public function __construct(
         ManagerRegistry $registry,
         MessageProducerInterface $messageProducer
@@ -40,9 +36,6 @@ class FlatPricingCheckoutSubtotalListener
         $this->messageProducer = $messageProducer;
     }
 
-    /**
-     * @param MassStorageUpdateEvent $event
-     */
     public function onPriceListUpdate(MassStorageUpdateEvent $event)
     {
         $this->getRepository()->invalidateByPriceList($event->getPriceListIds());
@@ -50,9 +43,6 @@ class FlatPricingCheckoutSubtotalListener
         $this->recalculateSubtotals();
     }
 
-    /**
-     * @param CustomerRelationUpdateEvent $event
-     */
     public function onCustomerPriceListUpdate(CustomerRelationUpdateEvent $event)
     {
         $customersData = $event->getCustomersData();
@@ -65,9 +55,6 @@ class FlatPricingCheckoutSubtotalListener
         $this->recalculateSubtotals();
     }
 
-    /**
-     * @param CustomerGroupRelationUpdateEvent $event
-     */
     public function onCustomerGroupPriceListUpdate(CustomerGroupRelationUpdateEvent $event)
     {
         $customerGroupsData = $event->getCustomerGroupsData();
@@ -80,9 +67,6 @@ class FlatPricingCheckoutSubtotalListener
         $this->recalculateSubtotals();
     }
 
-    /**
-     * @param WebsiteRelationUpdateEvent $event
-     */
     public function onWebsitePriceListUpdate(WebsiteRelationUpdateEvent $event)
     {
         $websiteIds = $event->getWebsiteIds();

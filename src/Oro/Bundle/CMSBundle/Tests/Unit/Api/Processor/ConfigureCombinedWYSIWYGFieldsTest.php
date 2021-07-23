@@ -42,9 +42,6 @@ class ConfigureCombinedWYSIWYGFieldsTest extends ConfigProcessorTestCase
         );
     }
 
-    /**
-     * @param bool $isSerializedWysiwygField
-     */
     private function setWysiwygFieldsExpectation(bool $isSerializedWysiwygField = false): void
     {
         $this->doctrineHelper->expects(self::once())

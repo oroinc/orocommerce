@@ -34,11 +34,6 @@ class FlatPriceListRelationTriggerHandler implements PriceListRelationTriggerHan
      */
     private $configManager;
 
-    /**
-     * @param WebsiteProviderInterface $websiteProvider
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param ConfigManager $configManager
-     */
     public function __construct(
         WebsiteProviderInterface $websiteProvider,
         EventDispatcherInterface $eventDispatcher,
@@ -72,9 +67,6 @@ class FlatPriceListRelationTriggerHandler implements PriceListRelationTriggerHan
         }
     }
 
-    /**
-     * @param Website $website
-     */
     public function handleWebsiteChange(Website $website): void
     {
         if ($website->getId()) {
@@ -83,10 +75,6 @@ class FlatPriceListRelationTriggerHandler implements PriceListRelationTriggerHan
         }
     }
 
-    /**
-     * @param CustomerGroup $customerGroup
-     * @param Website $website
-     */
     public function handleCustomerGroupChange(CustomerGroup $customerGroup, Website $website): void
     {
         if ($customerGroup->getId()) {
@@ -97,9 +85,6 @@ class FlatPriceListRelationTriggerHandler implements PriceListRelationTriggerHan
         }
     }
 
-    /**
-     * @param CustomerGroup $customerGroup
-     */
     public function handleCustomerGroupRemove(CustomerGroup $customerGroup): void
     {
         $eventData = [];
@@ -110,10 +95,6 @@ class FlatPriceListRelationTriggerHandler implements PriceListRelationTriggerHan
         $this->eventDispatcher->dispatch($event, CustomerGroupRelationUpdateEvent::NAME);
     }
 
-    /**
-     * @param Customer $customer
-     * @param Website $website
-     */
     public function handleCustomerChange(Customer $customer, Website $website): void
     {
         if ($customer->getId()) {
@@ -124,9 +105,6 @@ class FlatPriceListRelationTriggerHandler implements PriceListRelationTriggerHan
         }
     }
 
-    /**
-     * @param PriceList $priceList
-     */
     public function handlePriceListStatusChange(PriceList $priceList): void
     {
         $event = new MassStorageUpdateEvent([$priceList->getId()]);

@@ -23,10 +23,6 @@ class PaymentOrderLineItemOptionsProvider
      */
     private $userLocalizationManager;
 
-    /**
-     * @param HtmlTagHelper $htmlTagHelper
-     * @param UserLocalizationManagerInterface $userLocalizationManager
-     */
     public function __construct(HtmlTagHelper $htmlTagHelper, UserLocalizationManagerInterface $userLocalizationManager)
     {
         $this->htmlTagHelper = $htmlTagHelper;

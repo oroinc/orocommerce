@@ -23,9 +23,6 @@ interface InventoryLevelStrategyHelperInterface
         array $errors = []
     );
 
-    /**
-     * @param InventoryLevelStrategyHelperInterface $successor
-     */
     public function setSuccessor(InventoryLevelStrategyHelperInterface $successor);
 
     /**

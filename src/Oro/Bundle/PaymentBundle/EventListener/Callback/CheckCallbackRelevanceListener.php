@@ -37,11 +37,6 @@ class CheckCallbackRelevanceListener
      */
     private $doctrineHelper;
 
-    /**
-     * @param PaymentMethodProviderInterface $paymentMethodProvider
-     * @param PaymentStatusProviderInterface $paymentStatusProvider
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(
         PaymentMethodProviderInterface $paymentMethodProvider,
         PaymentStatusProviderInterface $paymentStatusProvider,
@@ -52,25 +47,16 @@ class CheckCallbackRelevanceListener
         $this->doctrineHelper = $doctrineHelper;
     }
 
-    /**
-     * @param CallbackErrorEvent $event
-     */
     public function onError(CallbackErrorEvent $event): void
     {
         $this->handleEvent($event);
     }
 
-    /**
-     * @param CallbackReturnEvent $event
-     */
     public function onReturn(CallbackReturnEvent $event): void
     {
         $this->handleEvent($event);
     }
 
-    /**
-     * @param AbstractCallbackEvent $event
-     */
     private function handleEvent(AbstractCallbackEvent $event): void
     {
         $paymentTransaction = $event->getPaymentTransaction();
@@ -104,19 +90,11 @@ class CheckCallbackRelevanceListener
         $this->redirectToFailureUrl($paymentTransaction, $event);
     }
 
-    /**
-     * @param string $orderPaymentStatus
-     * @return bool
-     */
     protected function isPaymentStatusAllowed(string $orderPaymentStatus): bool
     {
         return $orderPaymentStatus === PaymentStatusProvider::PENDING;
     }
 
-    /**
-     * @param PaymentTransaction $paymentTransaction
-     * @param AbstractCallbackEvent $event
-     */
     private function redirectToFailureUrl(PaymentTransaction $paymentTransaction, AbstractCallbackEvent $event): void
     {
         $event->stopPropagation();

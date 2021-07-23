@@ -529,9 +529,6 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit\Framework\
         return $datagrid;
     }
 
-    /**
-     * @param Product|null $product
-     */
     private function prepareRepositoryProduct(Product $product = null)
     {
         $this->doctrineHelper->expects($this->any())

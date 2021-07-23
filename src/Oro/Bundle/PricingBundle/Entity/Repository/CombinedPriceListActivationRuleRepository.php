@@ -14,9 +14,6 @@ use Oro\Bundle\PricingBundle\Model\CombinedPriceListRelationHelper;
  */
 class CombinedPriceListActivationRuleRepository extends EntityRepository
 {
-    /**
-     * @param CombinedPriceList $cpl
-     */
     public function deleteRulesByCPL(CombinedPriceList $cpl)
     {
         $qb = $this->_em->createQueryBuilder();
@@ -54,11 +51,6 @@ class CombinedPriceListActivationRuleRepository extends EntityRepository
         return $qb->getQuery()->getOneOrNullResult();
     }
 
-    /**
-     * @param CombinedPriceList $cpl
-     * @param \DateTime $activateDate
-     * @return CombinedPriceListActivationRule|null
-     */
     public function getActiveRuleByScheduledCpl(
         CombinedPriceList $cpl,
         \DateTime $activateDate
@@ -70,10 +62,6 @@ class CombinedPriceListActivationRuleRepository extends EntityRepository
         return $qb->getQuery()->getOneOrNullResult();
     }
 
-    /**
-     * @param CombinedPriceList $cpl
-     * @return bool
-     */
     public function hasActivationRules(CombinedPriceList $cpl): bool
     {
         $existenceQB = $this->createQueryBuilder('rule')
@@ -99,9 +87,6 @@ class CombinedPriceListActivationRuleRepository extends EntityRepository
         return $qb;
     }
 
-    /**
-     * @param \DateTime $now
-     */
     public function deleteExpiredRules(\DateTime $now)
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
@@ -112,9 +97,6 @@ class CombinedPriceListActivationRuleRepository extends EntityRepository
             ->execute();
     }
 
-    /**
-     * @param array $exceptPriceLists
-     */
     public function deleteUnlinkedRules(array $exceptPriceLists = []): void
     {
         $brokenRulesQB = $this->createQueryBuilder('r')

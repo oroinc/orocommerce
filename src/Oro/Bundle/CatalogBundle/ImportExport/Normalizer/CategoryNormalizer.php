@@ -16,9 +16,6 @@ class CategoryNormalizer extends ConfigurableEntityNormalizer
     /** @var CategoryImportExportHelper */
     private $categoryImportExportHelper;
 
-    /**
-     * @param CategoryImportExportHelper $categoryImportExportHelper
-     */
     public function setCategoryImportExportHelper(CategoryImportExportHelper $categoryImportExportHelper): void
     {
         $this->categoryImportExportHelper = $categoryImportExportHelper;
@@ -67,13 +64,6 @@ class CategoryNormalizer extends ConfigurableEntityNormalizer
             || $this->isOrganizationSkippedForNormalization($entityName, $fieldName, $context);
     }
 
-    /**
-     * @param string $entityName
-     * @param string $fieldName
-     * @param array $context
-     *
-     * @return bool
-     */
     protected function isOrganizationSkippedForNormalization(
         string $entityName,
         string $fieldName,

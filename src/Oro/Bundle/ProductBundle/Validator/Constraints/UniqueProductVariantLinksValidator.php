@@ -30,9 +30,6 @@ class UniqueProductVariantLinksValidator extends ConstraintValidator
      */
     private $registry;
 
-    /**
-     * @param PropertyAccessor $propertyAccessor
-     */
     public function __construct(PropertyAccessor $propertyAccessor, ManagerRegistry $registry)
     {
         $this->propertyAccessor = $propertyAccessor;
@@ -55,10 +52,6 @@ class UniqueProductVariantLinksValidator extends ConstraintValidator
         $this->validateUniqueVariantLinks($product, $constraint);
     }
 
-    /**
-     * @param Product $value
-     * @param UniqueProductVariantLinks $constraint
-     */
     private function validateUniqueVariantLinks(Product $value, UniqueProductVariantLinks $constraint)
     {
         $variantHashes = [];

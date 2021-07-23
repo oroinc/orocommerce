@@ -22,10 +22,6 @@ class DateTimeFormatterDecorator implements DateTimeFormatterInterface
      */
     private $frontendHelper;
 
-    /**
-     * @param DateTimeFormatterInterface $dateTimeFormatter
-     * @param FrontendHelper $frontendHelper
-     */
     public function __construct(
         DateTimeFormatterInterface $dateTimeFormatter,
         FrontendHelper $frontendHelper

@@ -51,7 +51,6 @@ class CheckoutWorkflowStateRepository extends EntityRepository
                 'entityClass' => $entityClass
             ]);
 
-
         if ($token) {
             $qb
                 ->andWhere($qb->expr()->eq('t.token', ':token'))

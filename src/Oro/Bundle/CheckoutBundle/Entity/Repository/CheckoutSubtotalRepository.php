@@ -16,8 +16,6 @@ class CheckoutSubtotalRepository extends EntityRepository
 {
     /**
      * Invalidate checkout subtotals by given Combined Price List ids
-     *
-     * @param array $combinedPriceListIds
      */
     public function invalidateByCombinedPriceList(array $combinedPriceListIds)
     {
@@ -26,8 +24,6 @@ class CheckoutSubtotalRepository extends EntityRepository
 
     /**
      * Invalidate checkout subtotals by given Price List ids
-     *
-     * @param array $priceListIds
      */
     public function invalidateByPriceList(array $priceListIds)
     {
@@ -106,9 +102,6 @@ class CheckoutSubtotalRepository extends EntityRepository
         $updateQB->getQuery()->execute();
     }
 
-    /**
-     * @param array $websiteIds
-     */
     public function invalidateByWebsites(array $websiteIds)
     {
         if (empty($websiteIds)) {
@@ -151,8 +144,6 @@ class CheckoutSubtotalRepository extends EntityRepository
     }
 
     /**
-     * @param string $relationColumn
-     * @param array $priceListIds
      * @throws \Doctrine\DBAL\DBALException
      */
     private function invalidateByPriceListRelation(string $relationColumn, array $priceListIds)

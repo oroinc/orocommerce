@@ -64,8 +64,6 @@ class ModifyTableStructure implements
 
     /**
      * Create oro_promotion_applied_coupon table
-     *
-     * @param Schema $schema
      */
     protected function createOroPromotionAppliedCouponTable(Schema $schema)
     {
@@ -82,8 +80,6 @@ class ModifyTableStructure implements
 
     /**
      * Create oro_promotion_applied table
-     *
-     * @param Schema $schema
      */
     protected function createOroPromotionAppliedTable(Schema $schema)
     {
@@ -102,8 +98,6 @@ class ModifyTableStructure implements
 
     /**
      * Create oro_promotion_coupon table
-     *
-     * @param Schema $schema
      */
     protected function createOroPromotionCouponTable(Schema $schema)
     {
@@ -126,8 +120,6 @@ class ModifyTableStructure implements
 
     /**
      * Create oro_promotion_coupon_usage table
-     *
-     * @param Schema $schema
      */
     protected function createOroPromotionCouponUsageTable(Schema $schema)
     {
@@ -139,9 +131,6 @@ class ModifyTableStructure implements
         $table->setPrimaryKey(['id']);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function modifyAppliedDiscountTable(Schema $schema)
     {
         $table = $schema->getTable('oro_promotion_applied_discount');
@@ -150,8 +139,6 @@ class ModifyTableStructure implements
 
     /**
      * Add oro_promotion_coupon_usage foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPromotionCouponUsageForeignKeys(Schema $schema)
     {
@@ -178,8 +165,6 @@ class ModifyTableStructure implements
 
     /**
      * Add oro_promotion_coupon foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPromotionCouponForeignKeys(Schema $schema)
     {
@@ -206,8 +191,6 @@ class ModifyTableStructure implements
 
     /**
      * Add oro_promotion_applied foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPromotionAppliedCouponForeignKeys(Schema $schema)
     {
@@ -220,9 +203,6 @@ class ModifyTableStructure implements
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addAppliedCouponsToOrder(Schema $schema)
     {
         $this->extendExtension->addManyToOneRelation(
@@ -265,9 +245,6 @@ class ModifyTableStructure implements
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addAppliedPromotionsToOrder(Schema $schema)
     {
         $this->extendExtension->addManyToOneRelation(

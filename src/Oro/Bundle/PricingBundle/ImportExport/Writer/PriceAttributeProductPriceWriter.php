@@ -30,21 +30,11 @@ class PriceAttributeProductPriceWriter extends PersistentBatchWriter
         $em->flush();
     }
 
-    /**
-     * @param PriceAttributeProductPrice $price
-     *
-     * @return bool
-     */
     private function priceShouldBeDeleted(PriceAttributeProductPrice $price): bool
     {
         return $price->getId() !== null && $price->getPrice() === null;
     }
 
-    /**
-     * @param PriceAttributeProductPrice $price
-     *
-     * @return bool
-     */
     private function priceShouldBeSaved(PriceAttributeProductPrice $price): bool
     {
         return $price->getPrice() !== null;

@@ -21,10 +21,6 @@ class RequestWebContentVariantProvider
     /** @var ManagerRegistry */
     private $doctrine;
 
-    /**
-     * @param RequestStack    $requestStack
-     * @param ManagerRegistry $doctrine
-     */
     public function __construct(
         RequestStack $requestStack,
         ManagerRegistry $doctrine
@@ -33,9 +29,6 @@ class RequestWebContentVariantProvider
         $this->doctrine = $doctrine;
     }
 
-    /**
-     * @return ContentVariant|null
-     */
     public function getContentVariant(): ?ContentVariant
     {
         $request = $this->requestStack->getCurrentRequest();
@@ -57,9 +50,6 @@ class RequestWebContentVariantProvider
         return $contentVariant;
     }
 
-    /**
-     * @return ContentVariantRepository
-     */
     private function getContentVariantRepository(): ContentVariantRepository
     {
         return $this->doctrine->getRepository(ContentVariant::class);

@@ -111,7 +111,6 @@ class RouterTest extends \PHPUnit\Framework\TestCase
                 $this->getLoaderMock()
             );
 
-
         $generator = $this->router->getGenerator();
 
         $this->assertInstanceOf(UrlGeneratorInterface::class, $generator);

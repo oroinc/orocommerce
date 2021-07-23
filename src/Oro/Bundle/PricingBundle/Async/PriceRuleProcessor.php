@@ -42,13 +42,6 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
     /** @var PriceListTriggerHandler */
     private $triggerHandler;
 
-    /**
-     * @param ManagerRegistry $doctrine
-     * @param LoggerInterface $logger
-     * @param ProductPriceBuilder $priceBuilder
-     * @param Messenger $messenger
-     * @param TranslatorInterface $translator
-     */
     public function __construct(
         ManagerRegistry $doctrine,
         LoggerInterface $logger,
@@ -63,9 +56,6 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
         $this->translator = $translator;
     }
 
-    /**
-     * @param PriceListTriggerHandler $triggerHandler
-     */
     public function setTriggerHandler(PriceListTriggerHandler $triggerHandler)
     {
         $this->triggerHandler = $triggerHandler;
@@ -160,9 +150,6 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
         $this->updatePriceListActuality($em, $priceList, $startTime);
     }
 
-    /**
-     * @param int $priceListId
-     */
     private function onFailedPriceListId(int $priceListId): void
     {
         $this->messenger->send(
@@ -175,11 +162,6 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
         );
     }
 
-    /**
-     * @param EntityManagerInterface $em
-     * @param PriceList $priceList
-     * @param \DateTime $startTime
-     */
     private function updatePriceListActuality(
         EntityManagerInterface $em,
         PriceList $priceList,

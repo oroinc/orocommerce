@@ -369,9 +369,6 @@ class PriceRuleTest extends RestJsonApiTestCase
         return $this->getReference(LoadPriceRules::PRICE_RULE_1);
     }
 
-    /**
-     * @param PriceList $priceList
-     */
     private function assertLexemesCreated(PriceList $priceList)
     {
         $lexeme = $this->getEntityManager()
@@ -381,11 +378,6 @@ class PriceRuleTest extends RestJsonApiTestCase
         static::assertNotNull($lexeme);
     }
 
-    /**
-     * @param int    $entityId
-     * @param string $associationName
-     * @param string $expectedAssociationId
-     */
     private function assertGetSubResource(
         int $entityId,
         string $associationName,

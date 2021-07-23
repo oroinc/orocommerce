@@ -34,10 +34,6 @@ class AbstractAddressManager
     /** @var PropertyAccessor */
     protected $propertyAccessor;
 
-    /**
-     * @param AddressProviderInterface $addressProvider
-     * @param ManagerRegistry $registry
-     */
     public function __construct(
         AddressProviderInterface $addressProvider,
         ManagerRegistry $registry

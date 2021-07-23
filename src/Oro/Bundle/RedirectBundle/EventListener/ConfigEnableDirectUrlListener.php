@@ -31,11 +31,6 @@ class ConfigEnableDirectUrlListener
      */
     private $messageFactory;
 
-    /**
-     * @param MessageProducerInterface $messageProducer
-     * @param RoutingInformationProvider $provider
-     * @param MessageFactoryInterface $messageFactory
-     */
     public function __construct(
         MessageProducerInterface $messageProducer,
         RoutingInformationProvider $provider,
@@ -46,9 +41,6 @@ class ConfigEnableDirectUrlListener
         $this->messageFactory = $messageFactory;
     }
 
-    /**
-     * @param ConfigUpdateEvent $event
-     */
     public function onUpdateAfter(ConfigUpdateEvent $event)
     {
         if ($event->isChanged(self::ORO_REDIRECT_ENABLE_DIRECT_URL)) {

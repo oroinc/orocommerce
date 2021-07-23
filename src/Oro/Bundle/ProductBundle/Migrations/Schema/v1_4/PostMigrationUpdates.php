@@ -26,7 +26,6 @@ class PostMigrationUpdates implements Migration, OrderedMigrationInterface
     }
 
     /**
-     * @param Schema $schema
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     protected function updateProductUnitPrecisionTable(Schema $schema)

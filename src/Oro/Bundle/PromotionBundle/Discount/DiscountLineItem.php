@@ -52,7 +52,6 @@ class DiscountLineItem implements DiscountLineItemInterface, DiscountLineItemSub
      */
     protected $subtotal = 0.0;
 
-    /** @var float|null */
     protected ?float $subtotalAfterDiscounts = null;
 
     /**
@@ -109,9 +108,6 @@ class DiscountLineItem implements DiscountLineItemInterface, DiscountLineItemSub
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getProductSku(): string
     {
         if ($this->getProduct()) {
@@ -151,9 +147,6 @@ class DiscountLineItem implements DiscountLineItemInterface, DiscountLineItemSub
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getProductUnitCode(): string
     {
         if ($this->productUnit) {
@@ -193,9 +186,6 @@ class DiscountLineItem implements DiscountLineItemInterface, DiscountLineItemSub
         return $this;
     }
 
-    /**
-     * @return float
-     */
     public function getSubtotal(): float
     {
         return $this->subtotal;
@@ -287,9 +277,6 @@ class DiscountLineItem implements DiscountLineItemInterface, DiscountLineItemSub
         return $this->discountsInformation;
     }
 
-    /**
-     * @return float
-     */
     public function getDiscountTotal(): float
     {
         $value = 0.0;

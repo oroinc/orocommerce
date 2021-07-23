@@ -26,9 +26,6 @@ class UpdatePaymentTermAssociationsFormTypes implements Migration, PaymentTermEx
     }
 
     /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     * @param string $entity
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     private function updateFormTypeForEntity(Schema $schema, QueryBag $queries, string $entity)

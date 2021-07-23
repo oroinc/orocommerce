@@ -49,12 +49,6 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
     }
 
     /**
-     * @param AbstractAddress $address
-     * @param OrderAddress|null $expected
-     * @param AbstractAddress|null $expectedCustomerAddress
-     * @param AbstractAddress|null $expectedCustomerUserAddress
-     * @param OrderAddress|null $orderAddress
-     *
      * @dataProvider orderDataProvider
      */
     public function testUpdateFromAbstract(
@@ -154,11 +148,6 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
     }
 
     /**
-     * @param Order $order
-     * @param array $customerAddresses
-     * @param array $customerUserAddresses
-     * @param array $expected
-     *
      * @dataProvider groupedAddressDataProvider
      */
     public function testGetGroupedAddresses(
@@ -263,11 +252,6 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
     }
 
     /**
-     * @param Order $order
-     * @param array $customerAddresses
-     * @param array $customerUserAddresses
-     * @param array $addresses
-     *
      * @dataProvider groupedAddressDataProvider
      */
     public function testGetAddressTypes(

@@ -10,9 +10,6 @@ class CustomerAddressResolver implements ResolverInterface
     /** @var CustomerAddressItemResolver */
     protected $itemResolver;
 
-    /**
-     * @param CustomerAddressItemResolver $itemResolver
-     */
     public function __construct(CustomerAddressItemResolver $itemResolver)
     {
         $this->itemResolver = $itemResolver;

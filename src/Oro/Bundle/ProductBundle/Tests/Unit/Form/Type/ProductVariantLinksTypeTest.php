@@ -51,10 +51,6 @@ class ProductVariantLinksTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitProvider
-     *
-     * @param $submittedData
-     * @param $expectedData
-     * @param $transformerCalls
      */
     public function testSubmit($submittedData, $expectedData, $transformerCalls)
     {
@@ -156,9 +152,6 @@ class ProductVariantLinksTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * @param array $transformerCalls
-     */
     private function addTransformerCalls(array $transformerCalls)
     {
         $index = 0;

@@ -23,9 +23,6 @@ class CustomerGroupProductVisibilityRepository extends AbstractProductVisibility
         }
     }
 
-    /**
-     * @param Product $product
-     */
     public function setToDefaultWithoutCategoryByProduct(Product $product)
     {
         $qb = $this->createQueryBuilder('entity');

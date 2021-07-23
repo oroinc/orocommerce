@@ -29,9 +29,6 @@ class AddDefaultProductNameColumn implements
         $this->addDenormalizedDefaultNameColumnUppercase($schema);
     }
 
-    /**
-     * @param $schema
-     */
     protected function addDenormalizedDefaultNameColumn(Schema $schema)
     {
         $table = $schema->getTable(OroProductBundleInstaller::PRODUCT_TABLE_NAME);
@@ -40,9 +37,6 @@ class AddDefaultProductNameColumn implements
         $table->addIndex(['name'], 'idx_oro_product_default_name', []);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addDenormalizedDefaultNameColumnUppercase(Schema $schema)
     {
         $table = $schema->getTable(OroProductBundleInstaller::PRODUCT_TABLE_NAME);

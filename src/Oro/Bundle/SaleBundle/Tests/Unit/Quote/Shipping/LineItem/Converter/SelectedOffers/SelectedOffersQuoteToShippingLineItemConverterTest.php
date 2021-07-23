@@ -56,7 +56,6 @@ class SelectedOffersQuoteToShippingLineItemConverterTest extends AbstractOffersQ
             ->getMock();
     }
 
-
     public function testConvertItems()
     {
         $quantity = 12;

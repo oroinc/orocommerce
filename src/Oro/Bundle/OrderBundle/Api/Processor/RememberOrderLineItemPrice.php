@@ -35,11 +35,6 @@ class RememberOrderLineItemPrice implements ProcessorInterface
         $lineItem->setCurrency(null);
     }
 
-    /**
-     * @param OrderLineItem $lineItem
-     *
-     * @return array|null
-     */
     private function getPrice(OrderLineItem $lineItem): ?array
     {
         $value = $lineItem->getValue();

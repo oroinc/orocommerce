@@ -381,9 +381,6 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
         $this->assertSame($expectedResult, $this->extension->isAllowedRFP([['productSku' => $sku]]));
     }
 
-    /**
-     * @return array
-     */
     public function isAllowedRFPDataProvider(): array
     {
         return [

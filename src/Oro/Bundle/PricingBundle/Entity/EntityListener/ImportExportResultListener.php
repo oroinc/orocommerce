@@ -33,12 +33,6 @@ class ImportExportResultListener implements FeatureToggleableInterface
     /** @var ShardManager */
     private $shardManager;
 
-    /**
-     * @param ManagerRegistry               $doctrine
-     * @param PriceRuleLexemeTriggerHandler $lexemeTriggerHandler
-     * @param PriceListTriggerHandler       $priceListTriggerHandler
-     * @param ShardManager                  $shardManager
-     */
     public function __construct(
         ManagerRegistry $doctrine,
         PriceRuleLexemeTriggerHandler $lexemeTriggerHandler,
@@ -51,9 +45,6 @@ class ImportExportResultListener implements FeatureToggleableInterface
         $this->shardManager = $shardManager;
     }
 
-    /**
-     * @param ImportExportResult $importExportResult
-     */
     public function postPersist(ImportExportResult $importExportResult)
     {
         $options = $importExportResult->getOptions();
@@ -68,10 +59,6 @@ class ImportExportResultListener implements FeatureToggleableInterface
         }
     }
 
-    /**
-     * @param PriceList $priceList
-     * @param int|null  $version
-     */
     private function handlePriceListPricesMassUpdate(PriceList $priceList, ?int $version = null)
     {
         $lexemes = $this->lexemeTriggerHandler->findEntityLexemes(
@@ -86,12 +73,6 @@ class ImportExportResultListener implements FeatureToggleableInterface
         }
     }
 
-    /**
-     * @param PriceList $priceList
-     * @param int|null  $version
-     *
-     * @return iterable
-     */
     private function getProductBatches(PriceList $priceList, ?int $version = null): iterable
     {
         if (!$version) {
@@ -105,18 +86,11 @@ class ImportExportResultListener implements FeatureToggleableInterface
         }
     }
 
-    /**
-     * @return ProductPriceRepository
-     */
     private function getProductPriceRepository(): ProductPriceRepository
     {
         return $this->doctrine->getRepository(ProductPrice::class);
     }
 
-    /**
-     * @param PriceList $priceList
-     * @param array $products
-     */
     private function emitCplTriggers(PriceList $priceList, array $products): void
     {
         if (!$this->isFeaturesEnabled()) {

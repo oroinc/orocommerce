@@ -18,33 +18,21 @@ class WebsiteReindexationOnCreateDeleteListener
      */
     private $dispatcher;
 
-    /**
-     * @param EventDispatcherInterface $dispatcher
-     */
     public function __construct(EventDispatcherInterface $dispatcher)
     {
         $this->dispatcher = $dispatcher;
     }
 
-    /**
-     * @param Website $website
-     */
     public function postPersist(Website $website)
     {
         $this->dispatchReindexationRequestEvent($website);
     }
 
-    /**
-     * @param Website $website
-     */
     public function preRemove(Website $website)
     {
         $this->dispatchReindexationRequestEvent($website);
     }
 
-    /**
-     * @param Website $website
-     */
     protected function dispatchReindexationRequestEvent(Website $website)
     {
         $event = new ReindexationRequestEvent([], [$website->getId()]);

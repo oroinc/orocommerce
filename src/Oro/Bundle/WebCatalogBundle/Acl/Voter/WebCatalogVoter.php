@@ -23,10 +23,6 @@ class WebCatalogVoter extends AbstractEntityVoter
     /** @var WebCatalogUsageProviderInterface */
     protected $usageProvider;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param WebCatalogUsageProviderInterface $usageProvider
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         WebCatalogUsageProviderInterface $usageProvider

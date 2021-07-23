@@ -24,9 +24,6 @@ class ProductDataConverter extends LocalizedFallbackValueAwareDataConverter impl
      */
     protected $context;
 
-    /**
-     * @param EventDispatcherInterface $eventDispatcher
-     */
     public function setEventDispatcher(EventDispatcherInterface $eventDispatcher)
     {
         $this->eventDispatcher = $eventDispatcher;
@@ -113,9 +110,6 @@ class ProductDataConverter extends LocalizedFallbackValueAwareDataConverter impl
         return $data;
     }
 
-    /**
-     * @param RelationCalculatorInterface $relationCalculator
-     */
     public function setRelationCalculator(RelationCalculatorInterface $relationCalculator)
     {
         $this->relationCalculator = $relationCalculator;

@@ -97,7 +97,6 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
             )
             ->willReturn('rendered');
 
-
         $this->listener->onCategoryEdit($event);
 
         $expectedData = [

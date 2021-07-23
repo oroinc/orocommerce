@@ -19,17 +19,11 @@ class ProductFormListener implements FeatureToggleableInterface
      */
     private $priceManager;
 
-    /**
-     * @param PriceManager $priceManager
-     */
     public function __construct(PriceManager $priceManager)
     {
         $this->priceManager = $priceManager;
     }
 
-    /**
-     * @param AfterFormProcessEvent $event
-     */
     public function onBeforeFlush(AfterFormProcessEvent $event)
     {
         if (!$this->isFeaturesEnabled()) {

@@ -11,11 +11,6 @@ use Oro\Bundle\QueryDesignerBundle\QueryDesigner\QueryBuilderGroupingOrmQueryCon
  */
 class VirtualFieldsSelectQueryConverter extends QueryBuilderGroupingOrmQueryConverter
 {
-    /**
-     * @param AbstractQueryDesigner $source
-     *
-     * @return QueryBuilder
-     */
     public function convert(AbstractQueryDesigner $source): QueryBuilder
     {
         $qb = $this->doctrineHelper->getEntityManagerForClass($source->getEntity())->createQueryBuilder();

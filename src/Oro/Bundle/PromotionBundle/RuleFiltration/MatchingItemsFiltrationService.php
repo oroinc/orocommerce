@@ -26,10 +26,6 @@ class MatchingItemsFiltrationService extends AbstractSkippableFiltrationService
      */
     private $matchingProductsProvider;
 
-    /**
-     * @param RuleFiltrationServiceInterface $filtrationService
-     * @param MatchingProductsProvider $matchingProductsProvider
-     */
     public function __construct(
         RuleFiltrationServiceInterface $filtrationService,
         MatchingProductsProvider $matchingProductsProvider

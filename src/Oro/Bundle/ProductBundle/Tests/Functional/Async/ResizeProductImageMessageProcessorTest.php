@@ -36,19 +36,11 @@ class ResizeProductImageMessageProcessorTest extends WebTestCase
         $this->processor = self::getContainer()->get('oro_product.async.resize_product_image_processor');
     }
 
-    /**
-     * @return SessionInterface
-     */
     private function getSession(): SessionInterface
     {
         return $this->createMock(SessionInterface::class);
     }
 
-    /**
-     * @param array $body
-     *
-     * @return MessageInterface
-     */
     private function getMessage(array $body): MessageInterface
     {
         $message = new Message();
@@ -57,9 +49,6 @@ class ResizeProductImageMessageProcessorTest extends WebTestCase
         return $message;
     }
 
-    /**
-     * @return ProductImage
-     */
     private function createProductImage(): ProductImage
     {
         $productImage = new ProductImage();
@@ -81,10 +70,6 @@ class ResizeProductImageMessageProcessorTest extends WebTestCase
         return $productImage;
     }
 
-    /**
-     * @param ProductImage $productImage
-     * @param string $filterName
-     */
     private function assertValidImage(ProductImage $productImage, string $filterName): void
     {
         $dimensions = $this->getAllDimensions();
@@ -128,9 +113,6 @@ class ResizeProductImageMessageProcessorTest extends WebTestCase
         );
     }
 
-    /**
-     * @return array
-     */
     private function getAllDimensions(): array
     {
         $dimensions = [];

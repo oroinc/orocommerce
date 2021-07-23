@@ -99,11 +99,6 @@ abstract class AbstractTaxExtensionTest extends \PHPUnit\Framework\TestCase
      */
     abstract protected function createTaxCode($id = null);
 
-
-    /**
-     * @param FormEvent $event
-     * @param AbstractTaxCode $taxCode
-     */
     protected function assertTaxCodeAdd(FormEvent $event, AbstractTaxCode $taxCode)
     {
         /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $mainForm */
@@ -129,7 +124,6 @@ abstract class AbstractTaxExtensionTest extends \PHPUnit\Framework\TestCase
 
         $this->getExtension()->onPostSubmit($event);
     }
-
 
     public function testOnPostSubmitInvalidForm()
     {

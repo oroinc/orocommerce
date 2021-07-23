@@ -19,9 +19,6 @@ class ConsentCollectionTransformer implements DataTransformerInterface
     /** @var ConsentConfigConverter */
     protected $converter;
 
-    /**
-     * @param ConsentConfigConverter $converter
-     */
     public function __construct(ConsentConfigConverter $converter)
     {
         $this->converter = $converter;

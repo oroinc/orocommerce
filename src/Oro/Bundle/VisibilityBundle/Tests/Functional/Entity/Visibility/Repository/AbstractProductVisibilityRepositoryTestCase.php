@@ -55,9 +55,6 @@ abstract class AbstractProductVisibilityRepositoryTestCase extends WebTestCase
         );
     }
 
-    /**
-     * @param Category $category
-     */
     protected function deleteCategory(Category $category)
     {
         /* @var $em EntityManager */

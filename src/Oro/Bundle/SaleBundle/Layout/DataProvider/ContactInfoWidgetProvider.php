@@ -22,10 +22,6 @@ class ContactInfoWidgetProvider
      */
     protected $contactInfoProvider;
 
-    /**
-     * @param TokenAccessorInterface       $tokenAccessor
-     * @param ContactInfoProviderInterface $contactInfoProvider
-     */
     public function __construct(
         TokenAccessorInterface $tokenAccessor,
         ContactInfoProviderInterface $contactInfoProvider

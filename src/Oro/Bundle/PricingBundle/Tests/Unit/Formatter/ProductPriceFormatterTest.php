@@ -70,8 +70,6 @@ class ProductPriceFormatterTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider formatProductsDataProvider
-     * @param array $products
-     * @param array $expectedData
      */
     public function testFormatProducts(array $products, array $expectedData)
     {

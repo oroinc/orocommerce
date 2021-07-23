@@ -55,14 +55,6 @@ class MinimalStrategyNamingMigration
      */
     private $relationHelper;
 
-    /**
-     * @param ConfigManager $configManager
-     * @param ManagerRegistry $registry
-     * @param StrategyRegister $strategyRegistry
-     * @param CombinedPriceListGarbageCollector $garbageCollector
-     * @param CombinedPriceListActivationPlanBuilder $activationPlanBuilder
-     * @param CombinedPriceListRelationHelperInterface $relationHelper
-     */
     public function __construct(
         ConfigManager $configManager,
         ManagerRegistry $registry,
@@ -118,11 +110,6 @@ class MinimalStrategyNamingMigration
         $this->garbageCollector->cleanCombinedPriceLists();
     }
 
-    /**
-     * @param CombinedPriceList $baseCpl
-     * @param array $cpls
-     * @param ObjectManager $manager
-     */
     private function migrateRelations(CombinedPriceList $baseCpl, array $cpls, ObjectManager $manager): void
     {
         $relations = [
@@ -201,9 +188,6 @@ class MinimalStrategyNamingMigration
         return $hasConfigChanges;
     }
 
-    /**
-     * @return array
-     */
     private function getCplsByIdentifier(): array
     {
         $strategy = $this->strategyRegistry->getCurrentStrategy();
@@ -234,11 +218,6 @@ class MinimalStrategyNamingMigration
         );
     }
 
-    /**
-     * @param array $cpls
-     * @param string $identifier
-     * @return CombinedPriceList
-     */
     private function getBaseCpl(array &$cpls, string $identifier): CombinedPriceList
     {
         $baseCpl = null;

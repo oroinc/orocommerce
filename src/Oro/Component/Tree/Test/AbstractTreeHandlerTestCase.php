@@ -35,11 +35,6 @@ abstract class AbstractTreeHandlerTestCase extends WebTestCase
      */
     abstract protected function getHandlerId();
 
-    /**
-     * @param array $expectedData
-     * @param $root
-     * @param $includeRoot
-     */
     protected function assertTreeCreated(array $expectedData, $root, $includeRoot)
     {
         $actualTree = $this->handler->createTree($root, $includeRoot);

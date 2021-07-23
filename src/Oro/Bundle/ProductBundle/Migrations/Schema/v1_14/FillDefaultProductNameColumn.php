@@ -51,8 +51,6 @@ class FillDefaultProductNameColumn implements
 
     /**
      * Fill default product name column with value.
-     *
-     * @param QueryBag $queries
      */
     private function doPostgreSql(QueryBag $queries)
     {
@@ -76,8 +74,6 @@ SQL
 
     /**
      * Fill default product name column with value.
-     *
-     * @param QueryBag $queries
      */
     private function doMySql(QueryBag $queries)
     {

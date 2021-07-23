@@ -292,11 +292,6 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
         $this->assertPriceListToProductCount($priceList, $product, 0);
     }
 
-    /**
-     * @param PriceList $priceList
-     * @param Product   $product
-     * @param int       $count
-     */
     private function assertPriceListToProductCount(PriceList $priceList, Product $product, int $count)
     {
         $this->assertCount(
@@ -351,33 +346,21 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
         $this->getContainer()->get('oro_pricing.entity_listener.product_price_cpl')->setEnabled(false);
     }
 
-    /**
-     * @return PriceManager
-     */
     private function getPriceManager(): PriceManager
     {
         return $this->getContainer()->get('oro_pricing.manager.price_manager');
     }
 
-    /**
-     * @return ShardManager
-     */
     private function getShardManager(): ShardManager
     {
         return $this->getContainer()->get('oro_pricing.shard_manager');
     }
 
-    /**
-     * @return ProductPriceRepository
-     */
     private function getProductPriceRepository(): ProductPriceRepository
     {
         return $this->getContainer()->get('doctrine')->getRepository(ProductPrice::class);
     }
 
-    /**
-     * @return PriceListToProductRepository
-     */
     private function getPriceListToProductRepository(): PriceListToProductRepository
     {
         return $this->getContainer()->get('doctrine')->getRepository(PriceListToProduct::class);

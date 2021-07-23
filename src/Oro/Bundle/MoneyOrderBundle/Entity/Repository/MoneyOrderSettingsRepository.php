@@ -13,9 +13,6 @@ class MoneyOrderSettingsRepository extends EntityRepository
      */
     private $aclHelper;
 
-    /**
-     * @param AclHelper $aclHelper
-     */
     public function setAclHelper(AclHelper $aclHelper)
     {
         $this->aclHelper = $aclHelper;

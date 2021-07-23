@@ -20,9 +20,6 @@ class ProductDataConverterEvent extends Event
     /** @var ContextInterface */
     protected $context;
 
-    /**
-     * @param array $data
-     */
     public function __construct(array $data = [])
     {
         $this->data = $data;
@@ -36,25 +33,16 @@ class ProductDataConverterEvent extends Event
         return $this->data;
     }
 
-    /**
-     * @param array $data
-     */
     public function setData(array $data)
     {
         $this->data = $data;
     }
 
-    /**
-     * @return null|ContextInterface
-     */
     public function getContext(): ?ContextInterface
     {
         return $this->context;
     }
 
-    /**
-     * @param null|ContextInterface $context
-     */
     public function setContext(?ContextInterface $context): void
     {
         $this->context = $context;

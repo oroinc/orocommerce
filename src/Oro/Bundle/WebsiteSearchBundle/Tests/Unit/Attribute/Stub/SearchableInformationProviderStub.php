@@ -16,19 +16,11 @@ class SearchableInformationProviderStub extends SearchableInformationProvider
     {
     }
 
-    /**
-     * @return float|null
-     */
     public function getAttributeSearchBoost(FieldConfigModel $attribute): ?float
     {
         return $this->searchBoost;
     }
 
-    /**
-     * @param float|null $searchBoost
-     *
-     * @return float|null
-     */
     public function setSearchBoost(?float $searchBoost): ?float
     {
         return $this->searchBoost = $searchBoost;

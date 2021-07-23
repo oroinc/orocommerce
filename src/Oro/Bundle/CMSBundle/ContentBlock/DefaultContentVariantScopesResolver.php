@@ -9,9 +9,6 @@ use Oro\Bundle\CMSBundle\Entity\ContentBlock;
  */
 class DefaultContentVariantScopesResolver
 {
-    /**
-     * @param ContentBlock $contentBlock
-     */
     public function resolve(ContentBlock $contentBlock)
     {
         $defaultVariant = $contentBlock->getDefaultVariant();

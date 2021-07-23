@@ -7,10 +7,5 @@ use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 
 interface LineItemBuilderByLineItemFactoryInterface
 {
-    /**
-     * @param ShippingLineItemInterface $lineItem
-     *
-     * @return ShippingLineItemBuilderInterface
-     */
     public function createBuilder(ShippingLineItemInterface $lineItem): ShippingLineItemBuilderInterface;
 }

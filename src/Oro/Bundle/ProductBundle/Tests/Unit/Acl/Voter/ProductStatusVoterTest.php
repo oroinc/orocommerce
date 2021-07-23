@@ -120,7 +120,6 @@ class ProductStatusVoterTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-
     /**
      * @dataProvider supportedAttributesDataProvider
      * @param array $attributes

@@ -74,10 +74,6 @@ class FrontendQuoteDemandPermissionVoterTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider voteProvider
-     *
-     * @param TokenInterface $token
-     * @param QuoteDemand $quoteDemand
-     * @param int $expected
      */
     public function testVote(TokenInterface $token, QuoteDemand $quoteDemand, int $expected): void
     {
@@ -88,9 +84,6 @@ class FrontendQuoteDemandPermissionVoterTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $this->voter->vote($token, $quoteDemand, ['VIEW']));
     }
 
-    /**
-     * @return array
-     */
     public function voteProvider(): array
     {
         return [
@@ -187,12 +180,6 @@ class FrontendQuoteDemandPermissionVoterTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param null|CustomerVisitor $visitor
-     * @param null|CustomerUser $user
-     * @param null|Quote $quote
-     * @return QuoteDemand
-     */
     private function getQuoteDemand(
         ?CustomerVisitor $visitor = null,
         ?CustomerUser $user = null,
@@ -218,10 +205,6 @@ class FrontendQuoteDemandPermissionVoterTest extends \PHPUnit\Framework\TestCase
         return $quoteDemand;
     }
 
-    /**
-     * @param null|CustomerUser $customerUser
-     * @return TokenInterface
-     */
     private function getToken(?CustomerUser $customerUser = null): TokenInterface
     {
         /** @var TokenInterface|\PHPUnit\Framework\MockObject\MockObject $token */

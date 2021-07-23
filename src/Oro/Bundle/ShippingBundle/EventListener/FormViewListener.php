@@ -23,11 +23,6 @@ class FormViewListener
     /** @var RequestStack */
     protected $requestStack;
 
-    /**
-     * @param TranslatorInterface $translator
-     * @param DoctrineHelper $doctrineHelper
-     * @param RequestStack $requestStack
-     */
     public function __construct(
         TranslatorInterface $translator,
         DoctrineHelper $doctrineHelper,
@@ -38,9 +33,6 @@ class FormViewListener
         $this->requestStack = $requestStack;
     }
 
-    /**
-     * @param BeforeListRenderEvent $event
-     */
     public function onProductView(BeforeListRenderEvent $event)
     {
         $request = $this->requestStack->getCurrentRequest();
@@ -77,9 +69,6 @@ class FormViewListener
         $this->addBlock($event->getScrollData(), $template, 'oro.shipping.product.section.shipping_options', 1800);
     }
 
-    /**
-     * @param BeforeListRenderEvent $event
-     */
     public function onProductEdit(BeforeListRenderEvent $event)
     {
         $template = $event->getEnvironment()->render(

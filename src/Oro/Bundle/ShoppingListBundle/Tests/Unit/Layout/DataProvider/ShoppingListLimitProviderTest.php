@@ -25,7 +25,6 @@ class ShoppingListLimitProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider isOnlyOneEnabledProvider
-     * @param bool $result
      */
     public function testIsOnlyOneEnabled(bool $result)
     {

@@ -17,9 +17,6 @@ class ComputeRenderedWYSIWYGFields implements ProcessorInterface
     /** @var WYSIWYGValueRenderer */
     private $wysiwygValueRenderer;
 
-    /**
-     * @param WYSIWYGValueRenderer $wysiwygValueRenderer
-     */
     public function __construct(WYSIWYGValueRenderer $wysiwygValueRenderer)
     {
         $this->wysiwygValueRenderer = $wysiwygValueRenderer;
@@ -53,11 +50,6 @@ class ComputeRenderedWYSIWYGFields implements ProcessorInterface
         $context->setData($data);
     }
 
-    /**
-     * @param CustomizeLoadedDataContext $context
-     *
-     * @return array|null
-     */
     private function getRenderedWysiwygFields(CustomizeLoadedDataContext $context): ?array
     {
         $config = $context->getConfig();

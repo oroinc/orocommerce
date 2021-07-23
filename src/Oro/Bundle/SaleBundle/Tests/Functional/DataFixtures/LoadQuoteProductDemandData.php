@@ -75,8 +75,6 @@ class LoadQuoteProductDemandData extends AbstractFixture implements FixtureInter
 
     /**
      * Load data fixtures with the passed EntityManager
-     *
-     * @param ObjectManager $manager
      */
     public function load(ObjectManager $manager)
     {

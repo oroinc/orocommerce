@@ -19,9 +19,6 @@ class SluggableUrlCacheAwareProvider implements SluggableUrlProviderInterface
      */
     protected $contextUrl;
 
-    /**
-     * @param UrlCacheInterface $cache
-     */
     public function __construct(UrlCacheInterface $cache)
     {
         $this->cache = $cache;

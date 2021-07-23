@@ -32,9 +32,6 @@ class OroOrderBundle implements Migration, ExtendExtensionAwareInterface
         $this->addOrderInternalStatusField($schema);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addOrderInternalStatusField(Schema $schema)
     {
         $internalStatusOptions = new OroOptions();

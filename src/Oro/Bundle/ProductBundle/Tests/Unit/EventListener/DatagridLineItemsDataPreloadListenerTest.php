@@ -123,8 +123,6 @@ class DatagridLineItemsDataPreloadListenerTest extends \PHPUnit\Framework\TestCa
 
     /**
      * @dataProvider onLineItemDataWhenUngroupedDataProvider
-     *
-     * @param array $context
      */
     public function testOnLineItemDataWhenUngrouped(array $context): void
     {
@@ -212,9 +210,6 @@ class DatagridLineItemsDataPreloadListenerTest extends \PHPUnit\Framework\TestCa
         $this->listener->onLineItemData($event);
     }
 
-    /**
-     * @return array
-     */
     public function onLineItemDataWhenUngroupedDataProvider(): array
     {
         return [

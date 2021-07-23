@@ -34,12 +34,6 @@ class TotalProcessorProvider extends AbstractSubtotalProvider
     /** @var bool */
     protected $recalculationEnabled = false;
 
-    /**
-     * @param SubtotalProviderRegistry $subtotalProviderRegistry
-     * @param TranslatorInterface $translator
-     * @param RoundingServiceInterface $rounding
-     * @param SubtotalProviderConstructorArguments $arguments
-     */
     public function __construct(
         SubtotalProviderRegistry $subtotalProviderRegistry,
         TranslatorInterface $translator,

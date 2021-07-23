@@ -86,7 +86,6 @@ class ShippingMethodEnabledMapperTest extends AbstractCheckoutDiffMapperTest
         ];
     }
 
-
     /**
      * {@inheritdoc}
      */

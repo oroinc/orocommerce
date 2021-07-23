@@ -39,8 +39,6 @@ class OroRedirectBundleInstaller implements Installation
 
     /**
      * Create oro_redirect_slug table
-     *
-     * @param Schema $schema
      */
     protected function createOroRedirectSlugTable(Schema $schema)
     {
@@ -74,8 +72,6 @@ class OroRedirectBundleInstaller implements Installation
 
     /**
      * Create oro_slug_scope table
-     *
-     * @param Schema $schema
      */
     protected function createOroSlugScopeTable(Schema $schema)
     {
@@ -87,8 +83,6 @@ class OroRedirectBundleInstaller implements Installation
 
     /**
      * Create oro_redirect_scope table
-     *
-     * @param Schema $schema
      */
     protected function createOroRedirectScopeTable(Schema $schema)
     {
@@ -100,8 +94,6 @@ class OroRedirectBundleInstaller implements Installation
 
     /**
      * Add oro_slug_scope foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroSlugScopeForeignKeys(Schema $schema)
     {
@@ -122,8 +114,6 @@ class OroRedirectBundleInstaller implements Installation
 
     /**
      * Add oro_redirect_scope foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroRedirectScopeForeignKeys(Schema $schema)
     {
@@ -144,8 +134,6 @@ class OroRedirectBundleInstaller implements Installation
 
     /**
      * Create orob2b_redirect table
-     *
-     * @param Schema $schema
      */
     protected function createOroRedirectTable(Schema $schema)
     {
@@ -165,8 +153,6 @@ class OroRedirectBundleInstaller implements Installation
 
     /**
      * Create oro_slug_redirect table
-     *
-     * @param Schema $schema
      */
     protected function createOroSlugRedirectTable(Schema $schema)
     {
@@ -180,8 +166,6 @@ class OroRedirectBundleInstaller implements Installation
 
     /**
      * Add oro_slug_redirect foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroSlugRedirectForeignKeys(Schema $schema)
     {
@@ -202,8 +186,6 @@ class OroRedirectBundleInstaller implements Installation
 
     /**
      * Add oro_redirect foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroRedirectForeignKeys(Schema $schema)
     {
@@ -218,8 +200,6 @@ class OroRedirectBundleInstaller implements Installation
 
     /**
      * Add oro_redirect_slug foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroRedirectSlugForeignKeys(Schema $schema)
     {

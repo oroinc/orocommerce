@@ -113,9 +113,6 @@ class LineItemsDataOnResultAfterListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider onResultAfterDataProvider
      *
-     * @param array $datagridParameters
-     * @param bool $isGrouped
-     *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function testOnResultAfter(array $datagridParameters, bool $isGrouped): void
@@ -224,9 +221,6 @@ class LineItemsDataOnResultAfterListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertSame([3003 => $lineItems[3003]], $record2->getValue('lineItemsByIds'));
     }
 
-    /**
-     * @return array
-     */
     public function onResultAfterDataProvider(): array
     {
         return [

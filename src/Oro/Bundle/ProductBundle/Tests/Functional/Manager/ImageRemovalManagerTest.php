@@ -31,9 +31,6 @@ class ImageRemovalManagerTest extends WebTestCase
         $this->setOriginalFileNames($this->initialOriginalFileNames);
     }
 
-    /**
-     * @param bool $enabled
-     */
     private function setOriginalFileNames(bool $enabled): void
     {
         $configManager = self::getConfigManager(null);

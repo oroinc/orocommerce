@@ -33,9 +33,6 @@ class ApplicableMethodsEvent extends Event
         $this->sourceEntity = $sourceEntity;
     }
 
-    /**
-     * @return ShippingMethodViewCollection
-     */
     public function getMethodCollection(): ShippingMethodViewCollection
     {
         return $this->methodCollection;

@@ -12,17 +12,11 @@ class MethodRenamingListener
      */
     private $checkoutRepository;
 
-    /**
-     * @param CheckoutRepository $checkoutRepository
-     */
     public function __construct(CheckoutRepository $checkoutRepository)
     {
         $this->checkoutRepository = $checkoutRepository;
     }
 
-    /**
-     * @param MethodRenamingEvent $event
-     */
     public function onMethodRename(MethodRenamingEvent $event)
     {
         $this->updateCheckouts($event->getOldMethodIdentifier(), $event->getNewMethodIdentifier());

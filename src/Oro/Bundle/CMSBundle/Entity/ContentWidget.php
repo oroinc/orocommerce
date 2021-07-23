@@ -121,17 +121,11 @@ class ContentWidget implements DatesAwareInterface, OrganizationAwareInterface, 
      */
     protected $settings = [];
 
-    /**
-     * @return null|int
-     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @return null|string
-     */
     public function getName(): ?string
     {
         return $this->name;
@@ -148,9 +142,6 @@ class ContentWidget implements DatesAwareInterface, OrganizationAwareInterface, 
         return $this;
     }
 
-    /**
-     * @return null|string
-     */
     public function getDescription(): ?string
     {
         return $this->description;
@@ -167,9 +158,6 @@ class ContentWidget implements DatesAwareInterface, OrganizationAwareInterface, 
         return $this;
     }
 
-    /**
-     * @return null|string
-     */
     public function getWidgetType(): ?string
     {
         return $this->widgetType;
@@ -186,9 +174,6 @@ class ContentWidget implements DatesAwareInterface, OrganizationAwareInterface, 
         return $this;
     }
 
-    /**
-     * @return null|string
-     */
     public function getLayout(): ?string
     {
         return $this->layout;
@@ -205,9 +190,6 @@ class ContentWidget implements DatesAwareInterface, OrganizationAwareInterface, 
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getSettings(): array
     {
         return $this->settings;

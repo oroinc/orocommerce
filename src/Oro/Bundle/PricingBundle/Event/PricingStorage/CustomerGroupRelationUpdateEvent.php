@@ -16,17 +16,11 @@ class CustomerGroupRelationUpdateEvent extends Event
      */
     protected $customerGroupsData;
 
-    /**
-     * @param array $customerGroupsData
-     */
     public function __construct(array $customerGroupsData)
     {
         $this->customerGroupsData = $customerGroupsData;
     }
 
-    /**
-     * @return array
-     */
     public function getCustomerGroupsData(): array
     {
         return $this->customerGroupsData;

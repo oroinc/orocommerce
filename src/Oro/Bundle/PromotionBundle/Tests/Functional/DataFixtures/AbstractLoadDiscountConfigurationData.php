@@ -8,9 +8,6 @@ use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
 
 abstract class AbstractLoadDiscountConfigurationData extends AbstractFixture
 {
-    /**
-     * @param ObjectManager $manager
-     */
     public function load(ObjectManager $manager)
     {
         foreach ($this->getDiscountConfiguration() as $reference => $configurationData) {

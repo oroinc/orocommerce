@@ -414,9 +414,6 @@ class ShoppingList extends ExtendShoppingList implements
         return $this->subtotal;
     }
 
-    /**
-     * @param Subtotal $subtotal
-     */
     public function setSubtotal(Subtotal $subtotal)
     {
         $this->subtotal = $subtotal;

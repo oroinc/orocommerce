@@ -17,10 +17,6 @@ class AppliedPromotionRepository extends EntityRepository
         return $this->findBy(['order' => $order]);
     }
 
-    /**
-     * @param Order $order
-     * @return array
-     */
     public function getAppliedPromotionsInfo(Order $order): array
     {
         $queryBuilder = $this->createQueryBuilder('appliedPromotion');
@@ -54,9 +50,6 @@ class AppliedPromotionRepository extends EntityRepository
         return $queryBuilder->getQuery()->getArrayResult();
     }
 
-    /**
-     * @param Order $order
-     */
     public function removeAppliedPromotionsByOrder(Order $order)
     {
         $queryBuilder = $this->createQueryBuilder('appliedPromotion');

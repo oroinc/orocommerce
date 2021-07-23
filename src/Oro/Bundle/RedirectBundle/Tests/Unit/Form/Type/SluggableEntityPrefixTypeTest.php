@@ -78,10 +78,6 @@ class SluggableEntityPrefixTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitDataProvider
-     *
-     * @param PrefixWithRedirect|null $defaultData
-     * @param array $submittedData
-     * @param PrefixWithRedirect $expectedData
      */
     public function testSubmit(
         PrefixWithRedirect $defaultData = null,

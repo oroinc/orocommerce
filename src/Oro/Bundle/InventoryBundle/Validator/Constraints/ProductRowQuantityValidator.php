@@ -31,11 +31,6 @@ class ProductRowQuantityValidator extends ConstraintValidator
      */
     private $aclHelper;
 
-    /**
-     * @param QuantityToOrderValidatorService $quantityValidatorService
-     * @param DoctrineHelper $doctrineHelper
-     * @param AclHelper $aclHelper
-     */
     public function __construct(
         QuantityToOrderValidatorService $quantityValidatorService,
         DoctrineHelper $doctrineHelper,

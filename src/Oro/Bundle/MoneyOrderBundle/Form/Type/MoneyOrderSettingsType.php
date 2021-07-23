@@ -20,9 +20,6 @@ class MoneyOrderSettingsType extends AbstractType
     const BLOCK_PREFIX = 'oro_money_order_settings';
 
     /**
-     * @param FormBuilderInterface $builder
-     * @param array                $options
-     *
      * @throws ConstraintDefinitionException
      * @throws InvalidOptionsException
      * @throws MissingOptionsException
@@ -67,8 +64,6 @@ class MoneyOrderSettingsType extends AbstractType
     }
 
     /**
-     * @param OptionsResolver $resolver
-     *
      * @throws AccessException
      */
     public function configureOptions(OptionsResolver $resolver)

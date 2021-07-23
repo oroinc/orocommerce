@@ -31,11 +31,6 @@ class ResizeProductImageMessageProcessor implements MessageProcessorInterface, T
     /** @var ImageResizeManagerInterface */
     private $imageResizeManager;
 
-    /**
-     * @param ManagerRegistry                 $doctrine
-     * @param ProductImagesDimensionsProvider $imageDimensionsProvider
-     * @param ImageResizeManagerInterface     $imageResizeManager
-     */
     public function __construct(
         ManagerRegistry $doctrine,
         ProductImagesDimensionsProvider $imageDimensionsProvider,
@@ -78,11 +73,6 @@ class ResizeProductImageMessageProcessor implements MessageProcessorInterface, T
         return [Topics::PRODUCT_IMAGE_RESIZE];
     }
 
-    /**
-     * @param MessageInterface $message
-     *
-     * @return array
-     */
     private function getMessageData(MessageInterface $message): array
     {
         try {
@@ -94,9 +84,6 @@ class ResizeProductImageMessageProcessor implements MessageProcessorInterface, T
         }
     }
 
-    /**
-     * @return OptionsResolver
-     */
     private function getOptionsResolver(): OptionsResolver
     {
         $resolver = new OptionsResolver();
@@ -113,11 +100,6 @@ class ResizeProductImageMessageProcessor implements MessageProcessorInterface, T
         return $resolver;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return ProductImage|null
-     */
     private function getProductImage(int $id): ?ProductImage
     {
         return $this->doctrine->getManagerForClass(ProductImage::class)->find(ProductImage::class, $id);

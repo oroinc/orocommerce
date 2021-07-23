@@ -18,9 +18,6 @@ class CronSegmentsProvider
      */
     private $contentVariantSegmentProvider;
 
-    /**
-     * @param ContentVariantSegmentProvider $contentVariantSegmentProvider
-     */
     public function __construct(ContentVariantSegmentProvider $contentVariantSegmentProvider)
     {
         $this->contentVariantSegmentProvider = $contentVariantSegmentProvider;
@@ -44,11 +41,6 @@ class CronSegmentsProvider
         }
     }
 
-    /**
-     * @param array $filters
-     * @param JoinIdentifierHelper $joinIdentifierHelper
-     * @return bool
-     */
     private function hasRelationOrCriteriaInFilters(array $filters, JoinIdentifierHelper $joinIdentifierHelper): bool
     {
         foreach ($filters as $filter) {

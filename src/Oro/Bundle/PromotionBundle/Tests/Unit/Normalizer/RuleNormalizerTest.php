@@ -40,9 +40,6 @@ class RuleNormalizerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider denormalizeDataProvider
-     *
-     * @param $ruleData
-     * @param $expectedRule
      */
     public function testDenormalize($ruleData, $expectedRule)
     {

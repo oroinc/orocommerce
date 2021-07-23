@@ -173,14 +173,6 @@ class PaymentOrderLineItemOptionsProviderTest extends TestCase
         return $userLocalizationManager;
     }
 
-    /**
-     * @param Product|null $product
-     * @param float|null $value
-     * @param float|null $quantity
-     * @param string|null $currency
-     * @param string|null $productUnitCode
-     * @return OrderLineItem
-     */
     private function createOrderLineItem(
         ?Product $product = null,
         ?float $value = null,

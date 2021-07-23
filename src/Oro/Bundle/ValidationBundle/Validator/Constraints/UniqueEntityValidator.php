@@ -56,9 +56,6 @@ class UniqueEntityValidator extends ConstraintValidator
         $this->buildViolationAtEntityLevel($constraint);
     }
 
-    /**
-     * @param UniqueEntity $constraint
-     */
     protected function buildViolationAtPath(UniqueEntity $constraint, $criteria)
     {
         $fields = (array)$constraint->fields;
@@ -73,9 +70,6 @@ class UniqueEntityValidator extends ConstraintValidator
             ->addViolation();
     }
 
-    /**
-     * @param UniqueEntity $constraint
-     */
     protected function buildViolationAtEntityLevel(UniqueEntity $constraint)
     {
         $this->context->buildViolation($constraint->message)
@@ -85,11 +79,6 @@ class UniqueEntityValidator extends ConstraintValidator
     }
 
     /**
-     * @param $entity
-     * @param Constraint $constraint
-     *
-     * @return ObjectManager
-     *
      * @throws ConstraintDefinitionException
      */
     protected function getEm($entity, Constraint $constraint) : ObjectManager
@@ -121,8 +110,6 @@ class UniqueEntityValidator extends ConstraintValidator
     }
 
     /**
-     * @param Constraint $constraint
-     *
      * @throws UnexpectedTypeException
      */
     protected function validateConstraintOptions(Constraint $constraint)
@@ -214,12 +201,6 @@ class UniqueEntityValidator extends ConstraintValidator
         return $result;
     }
 
-    /**
-     * @param $result
-     * @param $entity
-     *
-     * @return bool
-     */
     protected function isNoDuplicates($result, $entity) : bool
     {
         if (0 === count($result) ||

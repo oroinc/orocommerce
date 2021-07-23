@@ -17,18 +17,12 @@ class OroCheckoutBundle implements Migration
         $this->updateCheckoutSourceTable($schema);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function updateCheckoutTable(Schema $schema)
     {
         $table = $schema->getTable('oro_checkout');
         $table->addColumn('deleted', 'boolean', ['default' => false]);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function updateCheckoutSourceTable(Schema $schema)
     {
         $table = $schema->getTable('oro_checkout_source');

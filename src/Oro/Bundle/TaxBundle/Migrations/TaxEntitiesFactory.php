@@ -180,7 +180,6 @@ class TaxEntitiesFactory
      * @param AbstractFixture $addReferenceTo (optional)
      *
      * @return TaxRule
-     *
      */
     public function createTaxRule(
         CustomerTaxCode $customerTaxCode,

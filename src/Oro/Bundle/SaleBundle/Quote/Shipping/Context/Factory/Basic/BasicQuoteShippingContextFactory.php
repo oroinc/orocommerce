@@ -35,12 +35,6 @@ class BasicQuoteShippingContextFactory implements ShippingContextFactoryInterfac
      */
     private $calculableQuoteFactory;
 
-    /**
-     * @param ShippingContextBuilderFactoryInterface $shippingContextBuilderFactory
-     * @param QuoteToShippingLineItemConverterInterface $quoteToShippingLineItemConverter
-     * @param TotalProcessorProvider $totalProcessorProvider
-     * @param CalculableQuoteFactoryInterface $calculableQuoteFactory
-     */
     public function __construct(
         ShippingContextBuilderFactoryInterface $shippingContextBuilderFactory,
         QuoteToShippingLineItemConverterInterface $quoteToShippingLineItemConverter,

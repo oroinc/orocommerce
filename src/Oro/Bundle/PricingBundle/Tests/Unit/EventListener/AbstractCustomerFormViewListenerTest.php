@@ -63,9 +63,6 @@ abstract class AbstractCustomerFormViewListenerTest extends \PHPUnit\Framework\T
      */
     abstract protected function getListener();
 
-    /**
-     * @param BeforeListRenderEvent $event
-     */
     abstract protected function processEvent(BeforeListRenderEvent $event);
 
     /**

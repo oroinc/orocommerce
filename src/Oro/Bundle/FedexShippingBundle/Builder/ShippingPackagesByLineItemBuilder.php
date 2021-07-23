@@ -42,10 +42,6 @@ class ShippingPackagesByLineItemBuilder implements ShippingPackagesByLineItemBui
      */
     private $currentPackage;
 
-    /**
-     * @param ShippingPackageOptionsFactoryInterface $packageOptionsFactory
-     * @param ExpressionLanguage $expressionLanguage
-     */
     public function __construct(
         ShippingPackageOptionsFactoryInterface $packageOptionsFactory,
         ExpressionLanguage $expressionLanguage
@@ -97,9 +93,6 @@ class ShippingPackagesByLineItemBuilder implements ShippingPackagesByLineItemBui
         return $this->packages;
     }
 
-    /**
-     * @param ShippingPackageOptionsInterface $itemOptions
-     */
     private function addItemToCurrentPackage(ShippingPackageOptionsInterface $itemOptions)
     {
         $weight = $this->currentPackage->getWeight() + $itemOptions->getWeight();
@@ -113,11 +106,6 @@ class ShippingPackagesByLineItemBuilder implements ShippingPackagesByLineItemBui
         $this->currentPackage = $this->createPackageOptions($weight, $dimensions);
     }
 
-    /**
-     * @param ShippingPackageOptionsInterface $itemOptions
-     *
-     * @return bool
-     */
     private function itemCanFitInCurrentPackage(ShippingPackageOptionsInterface $itemOptions): bool
     {
         return $this->expressionLanguage->evaluate(
@@ -131,11 +119,6 @@ class ShippingPackagesByLineItemBuilder implements ShippingPackagesByLineItemBui
         );
     }
 
-    /**
-     * @param ShippingPackageOptionsInterface $itemOptions
-     *
-     * @return bool
-     */
     private function itemCanFit(ShippingPackageOptionsInterface $itemOptions): bool
     {
         return $this->expressionLanguage->evaluate(
@@ -161,11 +144,6 @@ class ShippingPackagesByLineItemBuilder implements ShippingPackagesByLineItemBui
         $this->currentPackage = $this->createPackageOptions(0, Dimensions::create(0, 0, 0, null));
     }
 
-    /**
-     * @param float $weight
-     * @param Dimensions $dimensions
-     * @return ShippingPackageOptionsInterface
-     */
     private function createPackageOptions(
         float $weight,
         Dimensions $dimensions
@@ -181,10 +159,6 @@ class ShippingPackagesByLineItemBuilder implements ShippingPackagesByLineItemBui
         );
     }
 
-    /**
-     * @param ShippingPackageOptionsInterface $itemOptions
-     * @return Dimensions
-     */
     private function getNewPackageDimensions(ShippingPackageOptionsInterface $itemOptions): Dimensions
     {
         $length = $this->currentPackage->getLength() + $itemOptions->getLength();

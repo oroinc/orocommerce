@@ -81,7 +81,6 @@ class CustomerGroupFlatPricingRelationFormListenerTest extends AbstractFlatPrici
         $this->listener->onPostSetData($formEvent);
     }
 
-
     /**
      * @dataProvider wrongEntityDataProvider
      */

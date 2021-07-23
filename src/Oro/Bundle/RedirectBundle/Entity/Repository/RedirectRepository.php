@@ -79,9 +79,6 @@ class RedirectRepository extends EntityRepository
         return null;
     }
 
-    /**
-     * @param Slug $slug
-     */
     public function updateRedirectsBySlug(Slug $slug)
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
@@ -94,9 +91,6 @@ class RedirectRepository extends EntityRepository
         $qb->getQuery()->execute();
     }
 
-    /**
-     * @param Slug $slug
-     */
     public function deleteCyclicRedirects(Slug $slug)
     {
         $qb = $this->getEntityManager()->createQueryBuilder();

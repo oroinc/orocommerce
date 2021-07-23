@@ -33,9 +33,6 @@ class OrderPromotionDiscountsTest extends FrontendRestJsonApiTestCase
         return $value;
     }
 
-    /**
-     * @return array
-     */
     private function getOrder1Discounts(): array
     {
         return [

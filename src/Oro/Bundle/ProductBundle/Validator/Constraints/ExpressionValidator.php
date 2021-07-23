@@ -33,12 +33,6 @@ class ExpressionValidator extends ConstraintValidator
      */
     protected $translator;
 
-    /**
-     * @param ExpressionParser $parser
-     * @param ExpressionPreprocessorInterface $preprocessor
-     * @param FieldsProviderInterface $fieldsProvider
-     * @param TranslatorInterface $translator
-     */
     public function __construct(
         ExpressionParser $parser,
         ExpressionPreprocessorInterface $preprocessor,
@@ -113,10 +107,6 @@ class ExpressionValidator extends ConstraintValidator
         return $supportedFields;
     }
 
-    /**
-     * @param Node\NodeInterface $rootNode
-     * @param Expression $constraint
-     */
     protected function validateSupportedFields(Node\NodeInterface $rootNode, Expression $constraint)
     {
         $unsupportedFields = [];
@@ -143,10 +133,6 @@ class ExpressionValidator extends ConstraintValidator
         }
     }
 
-    /**
-     * @param Node\NodeInterface $rootNode
-     * @param Expression $constraint
-     */
     protected function validateDivisionByZero(Node\NodeInterface $rootNode, Expression $constraint)
     {
         foreach ($rootNode->getNodes() as $node) {

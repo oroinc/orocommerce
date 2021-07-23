@@ -10,9 +10,6 @@ class ConfigurationProviderDecorator implements ConfigurationProviderInterface
     /** @var ConfigurationProviderInterface */
     private $configurationProvider;
 
-    /**
-     * @param ConfigurationProviderInterface $configurationProvider
-     */
     public function __construct(ConfigurationProviderInterface $configurationProvider)
     {
         $this->configurationProvider = $configurationProvider;

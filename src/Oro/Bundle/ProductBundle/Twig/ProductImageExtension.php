@@ -28,9 +28,6 @@ class ProductImageExtension extends AbstractExtension implements ServiceSubscrib
     /** @var ContainerInterface */
     private $container;
 
-    /**
-     * @param ContainerInterface $container
-     */
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
@@ -92,11 +89,6 @@ class ProductImageExtension extends AbstractExtension implements ServiceSubscrib
         return $this->getProductImageHelper()->sortImages($productImages->toArray());
     }
 
-    /**
-     * @param File|null $file
-     * @param string $filter
-     * @return string
-     */
     public function getProductFilteredImage(?File $file, string $filter): string
     {
         if ($file) {
@@ -108,10 +100,6 @@ class ProductImageExtension extends AbstractExtension implements ServiceSubscrib
         return $this->getProductImagePlaceholder($filter);
     }
 
-    /**
-     * @param string $filter
-     * @return string
-     */
     public function getProductImagePlaceholder(string $filter): string
     {
         $imagePlaceholderProvider = $this->container->get('oro_product.provider.product_image_placeholder');

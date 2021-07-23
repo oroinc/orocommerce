@@ -41,12 +41,6 @@ class ContactInfoProvider implements ContactInfoProviderInterface
      */
     protected $contactInfoFactory;
 
-    /**
-     * @param ConfigManager $configManager
-     * @param ContactInfoSourceOptionsProvider $sourceOptionsProvider
-     * @param ContactInfoUserOptionsProvider $userContactInfoProvider
-     * @param ContactInfoFactoryInterface $contactInfoFactory
-     */
     public function __construct(
         ConfigManager $configManager,
         ContactInfoSourceOptionsProvider $sourceOptionsProvider,
@@ -99,9 +93,6 @@ class ContactInfoProvider implements ContactInfoProviderInterface
         return $contactInfo;
     }
 
-    /**
-     * @return bool
-     */
     private function isUserConfigurationAllowed(): bool
     {
         $configKey = Configuration::getConfigKeyByName(Configuration::ALLOW_USER_CONFIGURATION);
@@ -109,10 +100,6 @@ class ContactInfoProvider implements ContactInfoProviderInterface
         return (bool)$this->configManager->get($configKey);
     }
 
-    /**
-     * @param CustomerUserInterface|null $customerUser
-     * @return ContactInfo|null
-     */
     private function getContactInformationByUserConfiguration(CustomerUserInterface $customerUser = null): ?ContactInfo
     {
         if ($customerUser && $this->isUserConfigurationAllowed()) {
@@ -131,10 +118,6 @@ class ContactInfoProvider implements ContactInfoProviderInterface
         return null;
     }
 
-    /**
-     * @param CustomerUserInterface|null $customerUser
-     * @return ContactInfo|null
-     */
     private function getContactInformationByDisplaySettings(CustomerUserInterface $customerUser = null): ?ContactInfo
     {
         $selectedOption = $this->sourceOptionsProvider->getSelectedOption();
@@ -165,11 +148,6 @@ class ContactInfoProvider implements ContactInfoProviderInterface
         return $contactInfo;
     }
 
-    /**
-     * @param User $user
-     * @param string $selectedOption
-     * @return ContactInfo
-     */
     private function createContactInfoByUserAndSelectedOption(User $user, string $selectedOption): ContactInfo
     {
         switch ($selectedOption) {
@@ -190,10 +168,6 @@ class ContactInfoProvider implements ContactInfoProviderInterface
         return $contactInfo;
     }
 
-    /**
-     * @param string $selectedOption
-     * @return bool
-     */
     private function isUserConfigRelatedOption(string $selectedOption): bool
     {
         return \in_array($selectedOption, self::USER_CONFIG_RELATED_OPTIONS, true);

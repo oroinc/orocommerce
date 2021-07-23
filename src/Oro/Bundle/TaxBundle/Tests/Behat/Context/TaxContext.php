@@ -15,7 +15,6 @@ class TaxContext extends OroFeatureContext implements OroPageObjectAware
 
     /**
      * @Then /^(?:|I )see next line item taxes for backoffice order:$/
-     * @param TableNode $table
      */
     public function assertBackendOrderLineItemDiscount(TableNode $table)
     {

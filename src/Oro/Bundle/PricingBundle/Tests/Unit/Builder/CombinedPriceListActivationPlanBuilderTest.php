@@ -142,13 +142,6 @@ class CombinedPriceListActivationPlanBuilderTest extends \PHPUnit\Framework\Test
         $this->builder->buildByCombinedPriceList($cpl);
     }
 
-    /**
-     * @param PriceList         $priceList
-     * @param CombinedPriceList $cpl
-     * @param MockObject        $cplActivationRuleRepository
-     * @param MockObject        $priceListScheduleRepository
-     * @param MockObject        $cplToPriceListRepository
-     */
     private function assertBuildByCombinedPriceList(
         PriceList $priceList,
         CombinedPriceList $cpl,

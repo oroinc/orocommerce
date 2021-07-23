@@ -246,8 +246,6 @@ class TempTableManipulatorTest extends WebTestCase
     }
 
     /**
-     * @param int $count
-     * @param string $tableName
      * @throws \Doctrine\DBAL\DBALException
      */
     private function assertTableRecordsCount(int $count, string $tableName): void

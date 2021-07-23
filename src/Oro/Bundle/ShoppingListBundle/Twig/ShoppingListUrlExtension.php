@@ -17,9 +17,6 @@ class ShoppingListUrlExtension extends AbstractExtension implements ServiceSubsc
     /** @var ContainerInterface */
     private $container;
 
-    /**
-     * @param ContainerInterface $container
-     */
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;

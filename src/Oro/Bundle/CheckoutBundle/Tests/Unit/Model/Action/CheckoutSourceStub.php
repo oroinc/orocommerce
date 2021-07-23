@@ -21,19 +21,11 @@ class CheckoutSourceStub extends CheckoutSource
         return $this;
     }
 
-    /**
-     * @return ShoppingList|null
-     */
     public function getShoppingList(): ?ShoppingList
     {
         return $this->shoppingList;
     }
 
-    /**
-     * @param ShoppingList $shoppingList
-     *
-     * @return CheckoutSourceStub
-     */
     public function setShoppingList(ShoppingList $shoppingList): CheckoutSourceStub
     {
         $this->shoppingList = $shoppingList;

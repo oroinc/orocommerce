@@ -37,12 +37,6 @@ abstract class AbstractPaymentMethodAction extends AbstractAction
     /** @var array */
     protected $options = [];
 
-    /**
-     * @param ContextAccessor $contextAccessor
-     * @param PaymentMethodProviderInterface $paymentMethodProvider
-     * @param PaymentTransactionProvider $paymentTransactionProvider
-     * @param RouterInterface $router
-     */
     public function __construct(
         ContextAccessor $contextAccessor,
         PaymentMethodProviderInterface $paymentMethodProvider,
@@ -82,9 +76,6 @@ abstract class AbstractPaymentMethodAction extends AbstractAction
         return $this->optionsResolver;
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
     protected function configureOptionsResolver(OptionsResolver $resolver)
     {
         $propertyPathType = 'Symfony\Component\PropertyAccess\PropertyPathInterface';
@@ -102,9 +93,6 @@ abstract class AbstractPaymentMethodAction extends AbstractAction
             ->setAllowedTypes('attribute', ['null', $propertyPathType]);
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
     protected function configureValuesResolver(OptionsResolver $resolver)
     {
         $resolver

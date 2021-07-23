@@ -53,16 +53,6 @@ class ShoppingListManager
     private $deleteHandlerRegistry;
 
     /**
-     * @param ManagerRegistry                    $doctrine
-     * @param TokenAccessorInterface             $tokenAccessor
-     * @param TranslatorInterface                $translator
-     * @param QuantityRoundingService            $rounding
-     * @param WebsiteManager                     $websiteManager
-     * @param ShoppingListTotalManager           $totalManager
-     * @param ProductVariantAvailabilityProvider $productVariantProvider
-     * @param ConfigManager                      $configManager
-     * @param EntityDeleteHandlerRegistry        $deleteHandlerRegistry
-     *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
@@ -143,10 +133,6 @@ class ShoppingListManager
         }
     }
 
-    /**
-     * @param LineItem     $lineItem
-     * @param ShoppingList $shoppingList
-     */
     public function updateLineItem(LineItem $lineItem, ShoppingList $shoppingList)
     {
         $func = function (LineItem $duplicate) use ($lineItem) {
@@ -164,12 +150,6 @@ class ShoppingListManager
         $this->getEntityManager()->flush();
     }
 
-    /**
-     * @param int          $lineItemId
-     * @param ShoppingList $shoppingList
-     *
-     * @return LineItem|null
-     */
     public function getLineItem(int $lineItemId, ShoppingList $shoppingList): ?LineItem
     {
         $lineItems = $shoppingList->getLineItems();
@@ -278,8 +258,6 @@ class ShoppingListManager
     /**
      * Removes shopping list line items containing products with unavailable inventory statuses.
      * Recalculates subtotals if line items were removed.
-     *
-     * @param ShoppingList $shoppingList
      */
     public function actualizeLineItems(ShoppingList $shoppingList)
     {
@@ -316,9 +294,6 @@ class ShoppingListManager
 
     /**
      * Set new quantity for $duplicate line item based on quantity value from $lineItem
-     *
-     * @param LineItem $lineItem
-     * @param LineItem $duplicate
      */
     private function updateLineItemQuantity(LineItem $lineItem, LineItem $duplicate)
     {

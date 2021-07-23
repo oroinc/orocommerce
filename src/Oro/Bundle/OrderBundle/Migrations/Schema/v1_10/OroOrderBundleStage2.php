@@ -22,9 +22,6 @@ class OroOrderBundleStage2 implements Migration, OrderedMigrationInterface
         $this->addOroOrderLineItemForeignKeys($schema);
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function addOroOrderAddressForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('oro_order_address');
@@ -43,18 +40,12 @@ class OroOrderBundleStage2 implements Migration, OrderedMigrationInterface
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function updateOroOrderListLineItemTable(Schema $schema)
     {
         $table = $schema->getTable('oro_order_line_item');
         $table->addColumn('parent_product_id', 'integer', ['notnull' => false]);
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function addOroOrderLineItemForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('oro_order_line_item');

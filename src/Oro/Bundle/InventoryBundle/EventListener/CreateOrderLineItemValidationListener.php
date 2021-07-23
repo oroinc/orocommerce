@@ -46,12 +46,6 @@ class CreateOrderLineItemValidationListener
      */
     protected static $allowedValidationSteps = ['order_review', 'checkout', 'request_approval', 'approve_request'];
 
-    /**
-     * @param InventoryQuantityManager $inventoryQuantityManager
-     * @param DoctrineHelper $doctrineHelper
-     * @param TranslatorInterface $translator
-     * @param CheckoutLineItemsManager $checkoutLineItemsManager
-     */
     public function __construct(
         InventoryQuantityManager $inventoryQuantityManager,
         DoctrineHelper $doctrineHelper,
@@ -65,7 +59,6 @@ class CreateOrderLineItemValidationListener
     }
 
     /**
-     * @param LineItemValidateEvent $event
      * @throws InventoryLevelNotFoundException
      */
     public function onLineItemValidate(LineItemValidateEvent $event)

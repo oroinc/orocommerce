@@ -29,10 +29,6 @@ class ProductImageTypeValidator extends ConstraintValidator
      */
     protected $context;
 
-    /**
-     * @param ImageTypeProvider $imageTypeProvider
-     * @param TranslatorInterface $translator
-     */
     public function __construct(
         ImageTypeProvider $imageTypeProvider,
         TranslatorInterface $translator
@@ -57,11 +53,6 @@ class ProductImageTypeValidator extends ConstraintValidator
         $this->validateDuplicateType($value, $constraint, $validTypes);
     }
 
-    /**
-     * @param EntityProductImageType $value
-     * @param Constraint $constraint
-     * @param $validTypes
-     */
     private function validateType(EntityProductImageType $value, Constraint $constraint, $validTypes)
     {
         $validTypeNames = array_keys($validTypes);
@@ -78,11 +69,6 @@ class ProductImageTypeValidator extends ConstraintValidator
         }
     }
 
-    /**
-     * @param EntityProductImageType $value
-     * @param $constraint
-     * @param $validTypes
-     */
     private function validateDuplicateType(EntityProductImageType $value, $constraint, $validTypes)
     {
         if (null === $value->getProductImage() ||

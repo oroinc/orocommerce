@@ -91,10 +91,6 @@ class TierPriceEventListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals([TierPriceEventListener::TIER_PRICES_KEY => $prices], $actualResult);
     }
 
-    /**
-     * @param Order $order
-     * @return ProductPriceScopeCriteria
-     */
     private function getScopeCriteriaByOrder(Order $order) : ProductPriceScopeCriteria
     {
         $criteria = new ProductPriceScopeCriteria();

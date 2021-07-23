@@ -21,11 +21,6 @@ class ValueRenderEventListener
     /** @var PaymentTermAssociationProvider */
     private $paymentTermAssociationProvider;
 
-    /**
-     * @param PaymentTermAssociationProvider $paymentTermAssociationProvider
-     * @param TranslatorInterface $translator
-     * @param RouterInterface $router
-     */
     public function __construct(
         PaymentTermAssociationProvider $paymentTermAssociationProvider,
         TranslatorInterface $translator,

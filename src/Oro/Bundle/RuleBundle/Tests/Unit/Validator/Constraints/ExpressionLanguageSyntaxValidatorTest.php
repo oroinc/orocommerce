@@ -69,9 +69,6 @@ class ExpressionLanguageSyntaxValidatorTest extends \PHPUnit\Framework\TestCase
         $this->expressionLanguageSyntaxValidator->validate($expression, $constraint);
     }
 
-    /**
-     * @return array
-     */
     public function expressionsProvider(): array
     {
         return [

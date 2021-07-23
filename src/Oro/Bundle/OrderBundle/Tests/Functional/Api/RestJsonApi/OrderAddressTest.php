@@ -40,11 +40,6 @@ class OrderAddressTest extends RestJsonApiTestCase
         ]);
     }
 
-    /**
-     * @param int $orderId
-     *
-     * @return Order
-     */
     private function getOrder(int $orderId): Order
     {
         return $this->getEntityManager()->find(Order::class, $orderId);

@@ -21,9 +21,6 @@ class LoadProductCollectionContentVariantSubresource implements ProcessorInterfa
     /** @var SerializationHelper */
     private $serializationHelper;
 
-    /**
-     * @param SerializationHelper $serializationHelper
-     */
     public function __construct(SerializationHelper $serializationHelper)
     {
         $this->serializationHelper = $serializationHelper;
@@ -46,11 +43,6 @@ class LoadProductCollectionContentVariantSubresource implements ProcessorInterfa
         $context->skipGroup(ApiActionGroup::NORMALIZE_DATA);
     }
 
-    /**
-     * @param SubresourceContext $context
-     *
-     * @return array
-     */
     private function getNormalizedData(SubresourceContext $context): array
     {
         $item = [

@@ -98,9 +98,6 @@ class ProductControllerTest extends WebTestCase
 
     /**
      * @dataProvider navigationBarTestDataProvider
-     *
-     * @param $category
-     * @param array $expectedParts
      */
     public function testNavigationBar($category, array $expectedParts)
     {

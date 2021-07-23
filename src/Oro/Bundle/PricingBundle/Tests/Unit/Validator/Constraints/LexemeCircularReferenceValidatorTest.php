@@ -513,10 +513,6 @@ class LexemeCircularReferenceValidatorTest extends \PHPUnit\Framework\TestCase
         $this->validator->validate($priceRule1, $constraint);
     }
 
-    /**
-     * @param PriceList $priceList2
-     * @param PriceList $priceList3
-     */
     protected function prepareEntityRepository(PriceList $priceList2, PriceList $priceList3)
     {
         $this->entityRepository->expects($this->exactly(2))

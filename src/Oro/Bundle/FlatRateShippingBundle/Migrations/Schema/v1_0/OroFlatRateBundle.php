@@ -10,9 +10,6 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 class OroFlatRateBundle implements Migration
 {
     /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     *
      * @throws SchemaException
      */
     public function up(Schema $schema, QueryBag $queries)
@@ -21,9 +18,6 @@ class OroFlatRateBundle implements Migration
         $this->addOroFlatRateTransportLabelForeignKeys($schema);
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function createOroFlatRateTransportLabelTable(Schema $schema)
     {
         if (!$schema->hasTable('oro_flat_rate_transport_label')) {
@@ -39,8 +33,6 @@ class OroFlatRateBundle implements Migration
     }
 
     /**
-     * @param Schema $schema
-     *
      * @throws SchemaException
      */
     private function addOroFlatRateTransportLabelForeignKeys(Schema $schema)

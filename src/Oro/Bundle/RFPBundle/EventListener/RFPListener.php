@@ -25,11 +25,6 @@ class RFPListener
     /** @var GuestCustomerUserManager */
     private $guestCustomerUserManager;
 
-    /**
-     * @param DefaultUserProvider $defaultUserProvider
-     * @param TokenAccessorInterface $tokenAccessor
-     * @param GuestCustomerUserManager $guestCustomerUserManager
-     */
     public function __construct(
         DefaultUserProvider $defaultUserProvider,
         TokenAccessorInterface $tokenAccessor,
@@ -40,9 +35,6 @@ class RFPListener
         $this->guestCustomerUserManager = $guestCustomerUserManager;
     }
 
-    /**
-     * @param Request $request
-     */
     public function prePersist(Request $request)
     {
         $token = $this->tokenAccessor->getToken();
@@ -53,9 +45,6 @@ class RFPListener
         }
     }
 
-    /**
-     * @param Request $request
-     */
     protected function setOwner(Request $request)
     {
         if (null === $request->getOwner()) {
@@ -70,7 +59,6 @@ class RFPListener
 
     /**
      * Always generates new CustomerUser for RFQ which is not assigned to visitor
-     * @param Request $request
      */
     private function setCustomerUser(Request $request)
     {

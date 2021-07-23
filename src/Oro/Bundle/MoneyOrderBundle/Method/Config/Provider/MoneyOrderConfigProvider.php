@@ -30,11 +30,6 @@ class MoneyOrderConfigProvider implements MoneyOrderConfigProviderInterface
      */
     protected $logger;
 
-    /**
-     * @param ManagerRegistry                  $doctrine
-     * @param LoggerInterface                  $logger
-     * @param MoneyOrderConfigFactoryInterface $configFactory
-     */
     public function __construct(
         ManagerRegistry $doctrine,
         LoggerInterface $logger,

@@ -31,8 +31,6 @@ class OroShippingBundle implements Migration
 
     /**
      * Create oro_shipping_rule table
-     *
-     * @param Schema $schema
      */
     protected function createOroShippingRuleTable(Schema $schema)
     {
@@ -50,8 +48,6 @@ class OroShippingBundle implements Migration
 
     /**
      * Create oro_shipping_rule_mthd_config table
-     *
-     * @param Schema $schema
      */
     protected function createOroShippingRuleMthdConfigTable(Schema $schema)
     {
@@ -65,8 +61,6 @@ class OroShippingBundle implements Migration
 
     /**
      * Create oro_shipping_rule_mthd_tp_cnfg table
-     *
-     * @param Schema $schema
      */
     protected function createOroShippingRuleMthdTpCnfgTable(Schema $schema)
     {
@@ -81,8 +75,6 @@ class OroShippingBundle implements Migration
 
     /**
      * Create oro_shipping_rule_destination table
-     *
-     * @param Schema $schema
      */
     protected function createOroShippingRuleDestinationTable(Schema $schema)
     {
@@ -98,8 +90,6 @@ class OroShippingBundle implements Migration
 
     /**
      * Add oro_shipping_rule_mthd_config foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroShippingRuleMthdConfigForeignKeys(Schema $schema)
     {
@@ -114,8 +104,6 @@ class OroShippingBundle implements Migration
 
     /**
      * Add oro_shipping_rule_mthd_tp_cnfg foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroShippingRuleMthdTpCnfgForeignKeys(Schema $schema)
     {
@@ -130,8 +118,6 @@ class OroShippingBundle implements Migration
 
     /**
      * Add oro_shipping_rule_destination foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroShippingRuleDestinationForeignKeys(Schema $schema)
     {

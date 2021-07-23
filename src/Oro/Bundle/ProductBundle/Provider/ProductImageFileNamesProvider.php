@@ -20,10 +20,6 @@ class ProductImageFileNamesProvider implements FileNamesProviderInterface
     /** @var ConfigManager */
     private $configManager;
 
-    /**
-     * @param FileNamesProviderInterface $innerProvider
-     * @param ConfigManager              $configManager
-     */
     public function __construct(
         FileNamesProviderInterface $innerProvider,
         ConfigManager $configManager
@@ -53,11 +49,6 @@ class ProductImageFileNamesProvider implements FileNamesProviderInterface
         return array_values(array_unique(array_merge(...$fileNames)));
     }
 
-    /**
-     * @param File $file
-     *
-     * @return bool
-     */
     private function isApplicable(File $file): bool
     {
         return

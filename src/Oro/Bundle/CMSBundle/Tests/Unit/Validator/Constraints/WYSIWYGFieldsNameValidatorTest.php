@@ -31,10 +31,6 @@ class WYSIWYGFieldsNameValidatorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param string $fieldName
-     * @param string $fieldType
-     * @param int $countError
-     *
      * @dataProvider fieldDataProvider
      */
     public function testValidateWysiwygField(string $fieldName, string $fieldType, int $countError): void
@@ -66,9 +62,6 @@ class WYSIWYGFieldsNameValidatorTest extends \PHPUnit\Framework\TestCase
         $validator->validate($field, $constraint);
     }
 
-    /**
-     * @return array
-     */
     public function fieldDataProvider(): array
     {
         return [
@@ -105,11 +98,6 @@ class WYSIWYGFieldsNameValidatorTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param int $expect
-     *
-     * @return ExecutionContextInterface
-     */
     private function createValidationContext(int $expect = 0): ExecutionContextInterface
     {
         $constraintViolationBuilder = $this->createMock(ConstraintViolationBuilderInterface::class);

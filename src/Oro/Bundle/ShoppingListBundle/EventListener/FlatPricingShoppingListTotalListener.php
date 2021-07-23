@@ -21,26 +21,17 @@ class FlatPricingShoppingListTotalListener
      */
     protected $registry;
 
-    /**
-     * @param ManagerRegistry $registry
-     */
     public function __construct(ManagerRegistry $registry)
     {
         $this->registry = $registry;
     }
 
-    /**
-     * @param MassStorageUpdateEvent $event
-     */
     public function onPriceListUpdate(MassStorageUpdateEvent $event)
     {
         $repository = $this->getRepository();
         $repository->invalidateByPriceList($event->getPriceListIds());
     }
 
-    /**
-     * @param CustomerRelationUpdateEvent $event
-     */
     public function onCustomerPriceListUpdate(CustomerRelationUpdateEvent $event)
     {
         $customersData = $event->getCustomersData();
@@ -50,9 +41,6 @@ class FlatPricingShoppingListTotalListener
         }
     }
 
-    /**
-     * @param CustomerGroupRelationUpdateEvent $event
-     */
     public function onCustomerGroupPriceListUpdate(CustomerGroupRelationUpdateEvent $event)
     {
         $customerGroupsData = $event->getCustomerGroupsData();
@@ -63,18 +51,12 @@ class FlatPricingShoppingListTotalListener
         }
     }
 
-    /**
-     * @param WebsiteRelationUpdateEvent $event
-     */
     public function onWebsitePriceListUpdate(WebsiteRelationUpdateEvent $event)
     {
         $websiteIds = $event->getWebsiteIds();
         $this->getRepository()->invalidateByWebsitesForFlatPricing($websiteIds);
     }
 
-    /**
-     * @return ShoppingListTotalRepository
-     */
     private function getRepository(): ShoppingListTotalRepository
     {
         return $this->registry

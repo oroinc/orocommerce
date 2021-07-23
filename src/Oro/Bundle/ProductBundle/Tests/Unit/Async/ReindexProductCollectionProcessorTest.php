@@ -373,11 +373,6 @@ class ReindexProductCollectionProcessorTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @param array $messageBody
-     * @param Segment $segment
-     * @param array $websiteIds
-     */
     private function expectedMessageFactory(array $messageBody, Segment $segment, array $websiteIds)
     {
         $this->messageFactory->expects($this->once())

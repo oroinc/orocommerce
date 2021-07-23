@@ -26,11 +26,6 @@ class PromotionDiscountsProvider implements PromotionDiscountsProviderInterface
      */
     private $matchingProductsProvider;
 
-    /**
-     * @param PromotionProvider $promotionProvider
-     * @param DiscountFactory $discountFactory
-     * @param MatchingProductsProvider $matchingProductsProvider
-     */
     public function __construct(
         PromotionProvider $promotionProvider,
         DiscountFactory $discountFactory,

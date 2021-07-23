@@ -27,10 +27,6 @@ class VisibilityFormPostSubmitDataHandler
      */
     protected $formFieldDataProvider;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param VisibilityFormFieldDataProvider $formFieldDataProvider
-     */
     public function __construct(ManagerRegistry $registry, VisibilityFormFieldDataProvider $formFieldDataProvider)
     {
         $this->registry = $registry;
@@ -56,9 +52,6 @@ class VisibilityFormPostSubmitDataHandler
         $this->saveFormCustomerData($visibilityForm);
     }
 
-    /**
-     * @param FormInterface $form
-     */
     protected function saveFormAllData(FormInterface $form)
     {
         $targetEntity = $form->getData();
@@ -82,17 +75,11 @@ class VisibilityFormPostSubmitDataHandler
         $this->saveVisibility($targetEntity, $visibilityEntity, $visibility);
     }
 
-    /**
-     * @param FormInterface $form
-     */
     protected function saveFormCustomerGroupData(FormInterface $form)
     {
         $this->saveFormFieldData($form, EntityVisibilityType::ACCOUNT_GROUP_FIELD);
     }
 
-    /**
-     * @param FormInterface $form
-     */
     protected function saveFormCustomerData(FormInterface $form)
     {
         $this->saveFormFieldData($form, EntityVisibilityType::ACCOUNT_FIELD);

@@ -29,11 +29,6 @@ class FillOrderLineItemPrice implements ProcessorInterface
     /** @var TranslatorInterface */
     private $translator;
 
-    /**
-     * @param MatchingPriceProvider                     $priceProvider
-     * @param ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory
-     * @param TranslatorInterface                       $translator
-     */
     public function __construct(
         MatchingPriceProvider $priceProvider,
         ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory,
@@ -74,11 +69,6 @@ class FillOrderLineItemPrice implements ProcessorInterface
         }
     }
 
-    /**
-     * @param OrderLineItem $lineItem
-     *
-     * @return bool
-     */
     private function isPriceCanBeCalculated(OrderLineItem $lineItem): bool
     {
         return
@@ -87,11 +77,6 @@ class FillOrderLineItemPrice implements ProcessorInterface
             && null !== $lineItem->getQuantity();
     }
 
-    /**
-     * @param OrderLineItem $lineItem
-     *
-     * @return array|null
-     */
     private function calculatePrice(OrderLineItem $lineItem): ?array
     {
         $product = $lineItem->getProduct();
@@ -113,13 +98,6 @@ class FillOrderLineItemPrice implements ProcessorInterface
         return reset($prices);
     }
 
-    /**
-     * @param array                    $calculatedPrice
-     * @param OrderLineItem            $lineItem
-     * @param CustomizeFormDataContext $context
-     *
-     * @return bool
-     */
     private function validateSubmittedPrice(
         array $calculatedPrice,
         OrderLineItem $lineItem,
@@ -171,9 +149,6 @@ class FillOrderLineItemPrice implements ProcessorInterface
         return $isValid;
     }
 
-    /**
-     * @return float|null
-     */
     private function normalizePriceValue($value): ?float
     {
         try {

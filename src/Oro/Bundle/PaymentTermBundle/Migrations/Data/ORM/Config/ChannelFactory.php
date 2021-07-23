@@ -21,10 +21,6 @@ class ChannelFactory
      */
     private $translator;
 
-    /**
-     * @param PaymentTermChannelType $paymentTermChannelType
-     * @param TranslatorInterface    $translator
-     */
     public function __construct(
         PaymentTermChannelType $paymentTermChannelType,
         TranslatorInterface $translator

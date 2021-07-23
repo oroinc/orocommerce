@@ -19,19 +19,12 @@ class OrderLineItemsOrderObjectAccessListener
     /** @var ManagerRegistry */
     private $registry;
 
-    /**
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param ManagerRegistry $registry
-     */
     public function __construct(AuthorizationCheckerInterface $authorizationChecker, ManagerRegistry $registry)
     {
         $this->authorizationChecker = $authorizationChecker;
         $this->registry = $registry;
     }
 
-    /**
-     * @param BuildBefore $event
-     */
     public function onBuildBefore(BuildBefore $event)
     {
         $order = $this->registry->getRepository(Order::class)->find(

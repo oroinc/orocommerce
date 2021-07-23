@@ -80,10 +80,6 @@ abstract class AbstractProductsGridPricesExtensionTest extends \PHPUnit\Framewor
         self::assertFalse($this->extension->isApplicable($this->datagridConfiguration));
     }
 
-    /**
-     * @param null|PriceList $priceList
-     * @param array $currencies
-     */
     protected function mockPriceListCurrencies(?PriceList $priceList, array $currencies): void
     {
         $this->priceListRequestHandler
@@ -98,9 +94,6 @@ abstract class AbstractProductsGridPricesExtensionTest extends \PHPUnit\Framewor
             ->willReturn($currencies);
     }
 
-    /**
-     * @param string $name
-     */
     protected function mockDatagridName(string $name): void
     {
         $this->datagridConfiguration

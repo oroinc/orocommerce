@@ -70,9 +70,6 @@ class CustomerGroupCombinedPriceListsBuilderTest extends AbstractCombinedPriceLi
         $this->configureBuilderClasses($this->builder);
     }
 
-    /**
-     * @param CustomerGroupCombinedPriceListsBuilder $builder
-     */
     protected function configureBuilderClasses(CustomerGroupCombinedPriceListsBuilder $builder)
     {
         $builder->setPriceListToEntityClassName($this->priceListToEntityClass);
@@ -579,10 +576,6 @@ class CustomerGroupCombinedPriceListsBuilderTest extends AbstractCombinedPriceLi
             ->with($website, $customerGroup, $force);
     }
 
-    /**
-     * @param CustomerGroup $customerGroup
-     * @param Website $website
-     */
     protected function configurePriceListToEntityRepositoryMock(CustomerGroup $customerGroup, Website $website)
     {
         $this->priceListToEntityRepository->expects($this->any())
@@ -607,12 +600,6 @@ class CustomerGroupCombinedPriceListsBuilderTest extends AbstractCombinedPriceLi
             ->willReturn($hasFallback);
     }
 
-    /**
-     * @param $priceListByCustomerGroup
-     * @param $force
-     * @param Website $website
-     * @param CustomerGroup $customerGroup
-     */
     protected function assertBuilderCallsWithoutFallback(
         $priceListByCustomerGroup,
         $force,

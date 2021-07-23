@@ -10,7 +10,6 @@ class ProductUnitTransformerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider productUnitsProvider
-     * @param $unit
      */
     public function testTransformToProductUnit($unit, $expected)
     {

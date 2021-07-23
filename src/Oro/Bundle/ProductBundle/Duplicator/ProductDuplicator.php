@@ -39,12 +39,6 @@ class ProductDuplicator
      */
     protected $attachmentProvider;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param FileManager $fileManager
-     * @param AttachmentProvider $attachmentProvider
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         EventDispatcherInterface $eventDispatcher,
@@ -87,9 +81,6 @@ class ProductDuplicator
         return $productCopy;
     }
 
-    /**
-     * @param SkuIncrementorInterface $skuIncrementor
-     */
     public function setSkuIncrementor(SkuIncrementorInterface $skuIncrementor)
     {
         $this->skuIncrementor = $skuIncrementor;
@@ -111,10 +102,6 @@ class ProductDuplicator
         return $productCopy;
     }
 
-    /**
-     * @param Product $product
-     * @param Product $productCopy
-     */
     protected function cloneChildObjects(Product $product, Product $productCopy)
     {
         $this->cloneUnitPrecisions($product, $productCopy);
@@ -128,10 +115,6 @@ class ProductDuplicator
         }
     }
 
-    /**
-     * @param Product $product
-     * @param Product $productCopy
-     */
     private function cloneUnitPrecisions(Product $product, Product $productCopy)
     {
         $primaryPrecision = $product->getPrimaryUnitPrecision();
@@ -144,10 +127,6 @@ class ProductDuplicator
         }
     }
 
-    /**
-     * @param Product $product
-     * @param Product $productCopy
-     */
     private function cloneFallbackValues(Product $product, Product $productCopy)
     {
         foreach ($product->getNames() as $name) {
@@ -163,10 +142,6 @@ class ProductDuplicator
         }
     }
 
-    /**
-     * @param Product $product
-     * @param Product $productCopy
-     */
     private function cloneImages(Product $product, Product $productCopy)
     {
         foreach ($product->getImages() as $productImage) {
@@ -183,10 +158,6 @@ class ProductDuplicator
         }
     }
 
-    /**
-     * @param Product $product
-     * @param Product $productCopy
-     */
     private function cloneAttachments(Product $product, Product $productCopy)
     {
         $attachments = $this->attachmentProvider->getEntityAttachments($product);

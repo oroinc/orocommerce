@@ -14,9 +14,6 @@ class PriceListToProductSaveAfterEvent extends Event
      */
     protected $priceListToProduct;
 
-    /**
-     * @param PriceListToProduct $priceListToProduct
-     */
     public function __construct(PriceListToProduct $priceListToProduct)
     {
         $this->priceListToProduct = $priceListToProduct;

@@ -33,11 +33,6 @@ class AtLeastOneAvailableProduct extends AbstractCondition implements ContextAcc
     /** @var AclHelper */
     private $aclHelper;
 
-    /**
-     * @param ProductRepository $productRepository
-     * @param ProductManager $productManager
-     * @param AclHelper $aclHelper
-     */
     public function __construct(
         ProductRepository $productRepository,
         ProductManager $productManager,
@@ -65,7 +60,7 @@ class AtLeastOneAvailableProduct extends AbstractCondition implements ContextAcc
         if ($propertyPath instanceof PropertyPathInterface) {
             $this->productIteratorPath = $propertyPath;
         }
-        
+
         return $this;
     }
 

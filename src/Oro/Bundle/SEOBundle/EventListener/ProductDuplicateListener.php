@@ -22,19 +22,12 @@ class ProductDuplicateListener
     /** @var DoctrineHelper */
     private $doctrineHelper;
 
-    /**
-     * @param PropertyAccessor $propertyAccessor
-     * @param array $metaFields
-     */
     public function __construct(PropertyAccessor $propertyAccessor, array $metaFields = [])
     {
         $this->propertyAccessor = $propertyAccessor;
         $this->metaFields = $metaFields;
     }
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function setDoctrineHelper(DoctrineHelper $doctrineHelper)
     {
         $this->doctrineHelper = $doctrineHelper;
@@ -42,8 +35,6 @@ class ProductDuplicateListener
 
     /**
      * Link new product with cloned meta fields from source product
-     *
-     * @param ProductDuplicateAfterEvent $event
      */
     public function onDuplicateAfter(ProductDuplicateAfterEvent $event)
     {

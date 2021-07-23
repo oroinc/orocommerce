@@ -22,10 +22,6 @@ class CheckoutContextDataConverter implements ContextDataConverterInterface
      */
     private $orderContextDataConverter;
 
-    /**
-     * @param CheckoutToOrderConverter $checkoutToOrderConverter
-     * @param ContextDataConverterInterface $orderContextDataConverter
-     */
     public function __construct(
         CheckoutToOrderConverter $checkoutToOrderConverter,
         ContextDataConverterInterface $orderContextDataConverter

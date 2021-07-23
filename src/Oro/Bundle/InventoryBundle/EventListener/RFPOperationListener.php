@@ -20,17 +20,11 @@ class RFPOperationListener
      */
     protected $collectionProvider;
 
-    /**
-     * @param QuickAddCollectionProvider $collectionProvider
-     */
     public function __construct(QuickAddCollectionProvider $collectionProvider)
     {
         $this->collectionProvider = $collectionProvider;
     }
 
-    /**
-     * @param FormSubmitCheckEvent $event
-     */
     public function onCopyPasteRFPFormSubmitCheck(FormSubmitCheckEvent $event)
     {
         $collection = $this->collectionProvider->processCopyPaste();
@@ -42,9 +36,6 @@ class RFPOperationListener
         $event->setShouldSubmitOnError($this->shouldSubmitOnError($collection));
     }
 
-    /**
-     * @param FormSubmitCheckEvent $event
-     */
     public function onQuickAddImportRFPFormSubmitCheck(FormSubmitCheckEvent $event)
     {
         $collection = $this->collectionProvider->processImport();

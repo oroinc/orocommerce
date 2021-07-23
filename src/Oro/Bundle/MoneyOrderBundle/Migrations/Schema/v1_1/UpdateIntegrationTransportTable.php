@@ -10,9 +10,6 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 class UpdateIntegrationTransportTable implements Migration
 {
     /**
-     * @param Schema   $schema
-     * @param QueryBag $queries
-     *
      * @throws SchemaException
      */
     public function up(Schema $schema, QueryBag $queries)
@@ -21,8 +18,6 @@ class UpdateIntegrationTransportTable implements Migration
     }
 
     /**
-     * @param Schema $schema
-     *
      * @throws SchemaException
      */
     private function updateOroIntegrationTransportTable(Schema $schema)

@@ -71,10 +71,6 @@ class RemovedConsentsValidatorTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider validateProvider
-     *
-     * @param array $value
-     * @param array $checkedConsentIds
-     * @param array $nonExistentConsentIds
      */
     public function testValidate(array $value, array $checkedConsentIds, array $nonExistentConsentIds)
     {

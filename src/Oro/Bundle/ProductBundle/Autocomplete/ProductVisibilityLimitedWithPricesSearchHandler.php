@@ -19,10 +19,6 @@ class ProductVisibilityLimitedWithPricesSearchHandler implements SearchHandlerIn
      */
     protected $productVisibilityLimitedSearchHandler;
 
-    /**
-     * @param SearchHandlerInterface $productWithPricesSearchHandler
-     * @param SearchHandlerInterface $productVisibilityLimitedSearchHandler
-     */
     public function __construct(
         SearchHandlerInterface $productWithPricesSearchHandler,
         SearchHandlerInterface $productVisibilityLimitedSearchHandler

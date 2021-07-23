@@ -51,8 +51,6 @@ class FieldsProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider ruleFieldsDataProvider
-     * @param array $fields
-     * @param array $expectedFields
      * @throws \Exception
      */
     public function testFieldsForRule(array $fields, array $expectedFields)
@@ -90,8 +88,6 @@ class FieldsProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider conditionalFieldsDataProvider
-     * @param array $fields
-     * @param array $expectedFields
      * @throws \Exception
      */
     public function testFieldsForCondition(array $fields, array $expectedFields)

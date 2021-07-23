@@ -30,12 +30,6 @@ class ProductShippingOptionsGroupedByProductAndUnitCollectionTest extends TestCa
         static::assertSame($options[2], $collection->get(2, 'set'));
     }
 
-    /**
-     * @param int    $productId
-     * @param string $unitCode
-     *
-     * @return ProductShippingOptions
-     */
     private function createShippingOption(int $productId, string $unitCode): ProductShippingOptions
     {
         $option = new ProductShippingOptions();
@@ -47,11 +41,6 @@ class ProductShippingOptionsGroupedByProductAndUnitCollectionTest extends TestCa
         return $option;
     }
 
-    /**
-     * @param string $code
-     *
-     * @return ProductUnit
-     */
     private function createProductUnit(string $code): ProductUnit
     {
         return (new ProductUnit())->setCode($code);

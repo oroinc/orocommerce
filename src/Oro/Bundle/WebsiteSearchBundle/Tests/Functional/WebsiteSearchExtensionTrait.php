@@ -20,11 +20,6 @@ trait WebsiteSearchExtensionTrait
         );
     }
 
-    /**
-     * @param string $className
-     * @param array $placeholders
-     * @return string
-     */
     private function getIndexAlias(string $className, array $placeholders): string
     {
         $indexAliasTemplate = $this->getContainer()

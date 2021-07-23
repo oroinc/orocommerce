@@ -94,10 +94,6 @@ class ProductExportNormalizer extends ConfigurableEntityNormalizer
         return $config->has('use_in_export') ? !$config->get('use_in_export', false, false) : true;
     }
 
-    /**
-     * @param array $context
-     * @return Localization|null
-     */
     private function getCurrentLocalization(array $context): ?Localization
     {
         if (null === $this->currentLocalization) {

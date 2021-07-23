@@ -17,17 +17,11 @@ class SystemConfigListener
      */
     protected $registry;
 
-    /**
-     * @param ManagerRegistry $registry
-     */
     public function __construct(ManagerRegistry $registry)
     {
         $this->registry = $registry;
     }
 
-    /**
-     * @param ConfigSettingsUpdateEvent $event
-     */
     public function onFormPreSetData(ConfigSettingsUpdateEvent $event)
     {
         $settingsKey = implode(ConfigManager::SECTION_VIEW_SEPARATOR, [OroWebCatalogExtension::ALIAS, self::SETTING]);
@@ -40,9 +34,6 @@ class SystemConfigListener
         }
     }
 
-    /**
-     * @param ConfigSettingsUpdateEvent $event
-     */
     public function onSettingsSaveBefore(ConfigSettingsUpdateEvent $event)
     {
         $settings = $event->getSettings();

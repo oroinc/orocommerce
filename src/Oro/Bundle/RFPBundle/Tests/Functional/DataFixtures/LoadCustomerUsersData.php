@@ -91,9 +91,6 @@ class LoadCustomerUsersData extends AbstractFixture implements ContainerAwareInt
         ]
     ];
 
-    /**
-     * @param ObjectManager $manager
-     */
     public function load(ObjectManager $manager)
     {
         /* @var $userManager BaseUserManager */

@@ -43,13 +43,6 @@ class SubtotalProvider extends AbstractSubtotalProvider implements SubtotalProvi
      */
     private $translator;
 
-    /**
-     * @param SubtotalProviderConstructorArguments $arguments
-     * @param PromotionExecutor $promotionExecutor
-     * @param AppliedDiscountsProvider $appliedDiscountsProvider
-     * @param RoundingServiceInterface $roundingService
-     * @param TranslatorInterface $translator
-     */
     public function __construct(
         SubtotalProviderConstructorArguments $arguments,
         PromotionExecutor $promotionExecutor,

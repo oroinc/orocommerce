@@ -125,10 +125,6 @@ class RestrictProductVariationsEventListenerTest extends \PHPUnit\Framework\Test
 
     /**
      * @dataProvider dataProviderDb
-     *
-     * @param $configValue
-     * @param $isFrontendRequest
-     * @param $isRestrictionApplicable
      */
     public function testOnDBQuery($configValue, $isFrontendRequest, $isRestrictionApplicable)
     {

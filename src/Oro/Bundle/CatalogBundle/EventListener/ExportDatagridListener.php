@@ -21,16 +21,12 @@ class ExportDatagridListener
     /** @var CategoryRepository */
     private $repository = null;
 
-    /**
-     * @param ManagerRegistry $registry
-     */
     public function __construct(ManagerRegistry $registry)
     {
         $this->registry = $registry;
     }
 
     /**
-     * @param ExportPreGetIds $event
      * @throws \InvalidArgumentException
      */
     public function onBeforeExportGetIds(ExportPreGetIds $event)
@@ -110,9 +106,6 @@ class ExportDatagridListener
         return $categoryExpression;
     }
 
-    /**
-     * @return CategoryRepository
-     */
     private function getRepository(): CategoryRepository
     {
         if (null === $this->repository) {

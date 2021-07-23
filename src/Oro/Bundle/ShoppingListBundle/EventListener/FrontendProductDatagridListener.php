@@ -25,8 +25,6 @@ class FrontendProductDatagridListener
 
     /**
      * FrontendProductDatagridListener constructor.
-     * @param ProductShoppingListsDataProvider $productShoppingListsDataProvider
-     * @param DoctrineHelper $doctrineHelper
      */
     public function __construct(
         ProductShoppingListsDataProvider $productShoppingListsDataProvider,
@@ -36,9 +34,6 @@ class FrontendProductDatagridListener
         $this->doctrineHelper = $doctrineHelper;
     }
 
-    /**
-     * @param PreBuild $event
-     */
     public function onPreBuild(PreBuild $event)
     {
         $config = $event->getConfig();
@@ -54,9 +49,6 @@ class FrontendProductDatagridListener
         );
     }
 
-    /**
-     * @param SearchResultAfter $event
-     */
     public function onResultAfter(SearchResultAfter $event)
     {
         /** @var ResultRecord[] $records */

@@ -23,10 +23,6 @@ class ResolvedProductVisibilityProvider
     /** @var array */
     private $cache = [];
 
-    /**
-     * @param ManagerRegistry $doctrine
-     * @param ProductVisibilityQueryBuilderModifier $queryBuilderModifier
-     */
     public function __construct(
         ManagerRegistry $doctrine,
         ProductVisibilityQueryBuilderModifier $queryBuilderModifier
@@ -35,11 +31,6 @@ class ResolvedProductVisibilityProvider
         $this->queryBuilderModifier = $queryBuilderModifier;
     }
 
-    /**
-     * @param int $productId
-     *
-     * @return bool|null
-     */
     public function isVisible(int $productId): ?bool
     {
         if (!isset($this->cache[$productId])) {
@@ -51,8 +42,6 @@ class ResolvedProductVisibilityProvider
 
     /**
      * Prefetches visibility state for given products ids.
-     *
-     * @param array $productIds
      */
     public function prefetch(array $productIds): void
     {

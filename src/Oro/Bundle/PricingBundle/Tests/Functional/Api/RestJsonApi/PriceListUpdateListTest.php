@@ -27,11 +27,6 @@ class PriceListUpdateListTest extends RestJsonApiUpdateListTestCase
         ]);
     }
 
-    /**
-     * @param string $name
-     *
-     * @return int
-     */
     private function getPriceListId(string $name): int
     {
         $priceList = $this->getEntityManager()
@@ -44,11 +39,6 @@ class PriceListUpdateListTest extends RestJsonApiUpdateListTestCase
         return $priceList->getId();
     }
 
-    /**
-     * @param int $priceListId
-     *
-     * @return PriceRuleLexeme|null
-     */
     private function getPriceRuleLexeme(int $priceListId): ?PriceRuleLexeme
     {
         return $this->getEntityManager()

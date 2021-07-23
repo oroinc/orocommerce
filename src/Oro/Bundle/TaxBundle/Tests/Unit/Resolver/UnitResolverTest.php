@@ -38,10 +38,6 @@ class UnitResolverTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider unitPriceDataProvider
-     * @param array      $taxRules
-     * @param BigDecimal $amount
-     * @param            $taxRate
-     * @param            $expected
      */
     public function testResolveUnitPrice(array $taxRules, BigDecimal $amount, $taxRate, ResultElement $expected)
     {

@@ -22,10 +22,6 @@ abstract class AbstractVisibilityListener implements OptionalListenerInterface
     /** @var bool */
     private $enabled = true;
 
-    /**
-     * @param MessageProducerInterface $messageProducer
-     * @param string                   $topic
-     */
     protected function __construct(MessageProducerInterface $messageProducer, string $topic)
     {
         $this->messageProducer = $messageProducer;
@@ -40,9 +36,6 @@ abstract class AbstractVisibilityListener implements OptionalListenerInterface
         $this->enabled = $enabled;
     }
 
-    /**
-     * @param VisibilityInterface $entity
-     */
     public function postPersist(VisibilityInterface $entity): void
     {
         if (!$this->enabled) {
@@ -58,9 +51,6 @@ abstract class AbstractVisibilityListener implements OptionalListenerInterface
         );
     }
 
-    /**
-     * @param VisibilityInterface $entity
-     */
     public function preUpdate(VisibilityInterface $entity): void
     {
         if (!$this->enabled) {
@@ -76,9 +66,6 @@ abstract class AbstractVisibilityListener implements OptionalListenerInterface
         );
     }
 
-    /**
-     * @param VisibilityInterface $entity
-     */
     public function preRemove(VisibilityInterface $entity): void
     {
         if (!$this->enabled) {

@@ -92,9 +92,6 @@ class PromotionTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitDataProvider
-     * @param Promotion $defaultData
-     * @param array $submittedData
-     * @param Promotion $expectedData
      */
     public function testSubmit(Promotion $defaultData, array $submittedData, Promotion $expectedData)
     {

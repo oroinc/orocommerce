@@ -12,9 +12,6 @@ class ContextUrlProviderRegistry
     /** @var ContainerInterface */
     private $providers;
 
-    /**
-     * @param ContainerInterface $providers
-     */
     public function __construct(ContainerInterface $providers)
     {
         $this->providers = $providers;

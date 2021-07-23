@@ -16,10 +16,6 @@ class UnitValueFormatter extends AbstractUnitFormatter implements UnitValueForma
      */
     protected $numberFormatter;
 
-    /**
-     * @param TranslatorInterface $translator
-     * @param NumberFormatter $numberFormatter
-     */
     public function __construct(TranslatorInterface $translator, NumberFormatter $numberFormatter)
     {
         parent::__construct($translator);

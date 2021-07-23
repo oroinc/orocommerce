@@ -40,13 +40,6 @@ class ShoppingListContextDataConverter implements ContextDataConverterInterface
      */
     private $shoppingListTotalManager;
 
-    /**
-     * @param CriteriaDataProvider $criteriaDataProvider
-     * @param LineItemsToDiscountLineItemsConverter $lineItemsConverter
-     * @param UserCurrencyManager $userCurrencyManager
-     * @param ScopeManager $scopeManager
-     * @param ShoppingListTotalManager $shoppingListTotalManager
-     */
     public function __construct(
         CriteriaDataProvider $criteriaDataProvider,
         LineItemsToDiscountLineItemsConverter $lineItemsConverter,
@@ -113,12 +106,6 @@ class ShoppingListContextDataConverter implements ContextDataConverterInterface
         return $this->lineItemsConverter->convert($entity->getLineItems()->toArray());
     }
 
-    /**
-     * @param ShoppingList $sourceEntity
-     * @param string $currency
-     *
-     * @return float
-     */
     private function getSubtotalAmount(ShoppingList $sourceEntity, string $currency): float
     {
         return $this->shoppingListTotalManager

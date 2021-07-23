@@ -85,12 +85,6 @@ class UrlItemsProvider implements UrlItemsProviderInterface
      */
     private $entitySitemapPriority;
 
-    /**
-     * @param CanonicalUrlGenerator $canonicalUrlGenerator
-     * @param ConfigManager $configManager
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param ManagerRegistry $registry
-     */
     public function __construct(
         CanonicalUrlGenerator $canonicalUrlGenerator,
         ConfigManager $configManager,
@@ -325,9 +319,6 @@ class UrlItemsProvider implements UrlItemsProviderInterface
         );
     }
 
-    /**
-     * @param WebsiteInterface $website
-     */
     private function loadConfigs(WebsiteInterface $website)
     {
         $this->isDirectUrlEnabled = $this->canonicalUrlGenerator->isDirectUrlEnabled($website);

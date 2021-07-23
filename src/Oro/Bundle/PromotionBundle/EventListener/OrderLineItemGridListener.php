@@ -16,9 +16,6 @@ class OrderLineItemGridListener
      */
     protected $taxationSettingsProvider;
 
-    /**
-     * @param TaxationSettingsProvider $taxationSettingsProvider
-     */
     public function __construct(TaxationSettingsProvider $taxationSettingsProvider)
     {
         $this->taxationSettingsProvider = $taxationSettingsProvider;
@@ -34,8 +31,6 @@ class OrderLineItemGridListener
      *      Row Total After Discount Exclude Tax (if Taxes are enabled)
      *      Row Total After Discount (if Taxes are disabled)
      * data to the grid
-     *
-     * @param BuildBefore $event
      */
     public function onBuildBefore(BuildBefore $event)
     {
@@ -44,9 +39,6 @@ class OrderLineItemGridListener
         $this->addColumns($configuration);
     }
 
-    /**
-     * @param DatagridConfiguration $config
-     */
     protected function addSelect(DatagridConfiguration $config)
     {
         // TODO: Fix this
@@ -57,9 +49,6 @@ class OrderLineItemGridListener
         );
     }
 
-    /**
-     * @param DatagridConfiguration $datagridConfiguration
-     */
     protected function addColumns(DatagridConfiguration $datagridConfiguration)
     {
         $datagridConfiguration->offsetSetByPath(
@@ -114,8 +103,6 @@ class OrderLineItemGridListener
 
     /**
      * Check if Taxes are enabled
-     *
-     * @return bool
      */
     protected function isTaxesEnabled(): bool
     {

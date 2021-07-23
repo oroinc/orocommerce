@@ -27,8 +27,6 @@ class OroOrderBundle implements Migration, RenameExtensionAwareInterface
     }
 
     /**
-     * @param Schema $schema
-     *
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     protected function addOverriddenShippingCostColumn(Schema $schema)
@@ -43,9 +41,6 @@ class OroOrderBundle implements Migration, RenameExtensionAwareInterface
     }
 
     /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     *
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     protected function renameShippingCostColumn(Schema $schema, QueryBag $queries)

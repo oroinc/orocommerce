@@ -19,9 +19,6 @@ class NormalizeProductPriceId implements ProcessorInterface
     /** @var ValueNormalizer */
     private $valueNormalizer;
 
-    /**
-     * @param ValueNormalizer $valueNormalizer
-     */
     public function __construct(ValueNormalizer $valueNormalizer)
     {
         $this->valueNormalizer = $valueNormalizer;
@@ -56,12 +53,6 @@ class NormalizeProductPriceId implements ProcessorInterface
         PriceListIdContextUtil::storePriceListId($context, $priceListId);
     }
 
-    /**
-     * @param string      $value
-     * @param RequestType $requestType
-     *
-     * @return string|null
-     */
     private function normalizeProductPriceId(string $value, RequestType $requestType): ?string
     {
         try {
@@ -71,12 +62,6 @@ class NormalizeProductPriceId implements ProcessorInterface
         }
     }
 
-    /**
-     * @param string      $value
-     * @param RequestType $requestType
-     *
-     * @return int|null
-     */
     private function normalizePriceListId(string $value, RequestType $requestType): ?int
     {
         try {

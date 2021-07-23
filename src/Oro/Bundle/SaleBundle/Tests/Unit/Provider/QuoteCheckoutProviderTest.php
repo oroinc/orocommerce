@@ -44,8 +44,6 @@ class QuoteCheckoutProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider quoteDemandDataProvider
-     *
-     * @param QuoteDemand|null $quoteDemand
      */
     public function testGetCheckoutByQuote(QuoteDemand $quoteDemand = null)
     {

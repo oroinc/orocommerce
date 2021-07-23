@@ -184,9 +184,6 @@ class SubtotalSubscriberTest extends \PHPUnit\Framework\TestCase
             ->willReturn($total);
     }
 
-    /**
-     * @return Order
-     */
     protected function prepareOrder(): Order
     {
         $order = new Order();

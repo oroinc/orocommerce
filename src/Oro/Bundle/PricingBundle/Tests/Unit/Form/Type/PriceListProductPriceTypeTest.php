@@ -99,7 +99,6 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-
         $productSelect = new ProductSelectTypeStub();
 
         $priceType = PriceTypeGenerator::createPriceType($this);
@@ -126,9 +125,6 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param ProductPrice $defaultData
-     * @param array        $submittedData
-     * @param ProductPrice $expectedData
      * @dataProvider submitProvider
      */
     public function testSubmit(

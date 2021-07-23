@@ -14,17 +14,11 @@ class ShoppingListLimitProvider
      */
     private $manager;
 
-    /**
-     * @param ShoppingListLimitManager $manager
-     */
     public function __construct(ShoppingListLimitManager $manager)
     {
         $this->manager = $manager;
     }
 
-    /**
-     * @return bool
-     */
     public function isOnlyOneEnabled(): bool
     {
         return $this->manager->isOnlyOneEnabled();

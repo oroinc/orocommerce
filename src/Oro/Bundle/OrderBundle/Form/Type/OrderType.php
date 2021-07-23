@@ -45,11 +45,6 @@ class OrderType extends AbstractType
     /** @var SubtotalSubscriber */
     protected $subtotalSubscriber;
 
-    /**
-     * @param OrderAddressSecurityProvider $orderAddressSecurityProvider
-     * @param OrderCurrencyHandler $orderCurrencyHandler
-     * @param SubtotalSubscriber $subtotalSubscriber
-     */
     public function __construct(
         OrderAddressSecurityProvider $orderAddressSecurityProvider,
         OrderCurrencyHandler $orderCurrencyHandler,

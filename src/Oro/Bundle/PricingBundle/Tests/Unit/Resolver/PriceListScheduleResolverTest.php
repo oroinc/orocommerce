@@ -21,9 +21,6 @@ class PriceListScheduleResolverTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider dataProviderMergeSchedule
-     * @param array $priceListSchedules
-     * @param array $priceListRelations
-     * @param array $expectedResult
      */
     public function testMergeSchedule(array $priceListSchedules, array $priceListRelations, array $expectedResult)
     {

@@ -62,7 +62,6 @@ class ShippingPriceCacheTest extends \PHPUnit\Framework\TestCase
         static::assertEquals($hasPrice, $this->cache->hasPrice($context, 'flat_rate', 'primary'));
     }
 
-
     public function hasPriceDataProvider()
     {
         return [

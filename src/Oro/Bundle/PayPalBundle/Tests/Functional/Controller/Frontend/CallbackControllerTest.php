@@ -24,8 +24,6 @@ class CallbackControllerTest extends WebTestCase
 
     /**
      * @dataProvider allowedIPsDataProvider
-     *
-     * @param string $remoteAddress
      */
     public function testNotifyChangeState(string $remoteAddress)
     {

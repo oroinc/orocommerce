@@ -26,10 +26,6 @@ class PriceRuleExpressionsValidator extends ConstraintValidator
      */
     private $isDebug;
 
-    /**
-     * @param PriceListRuleCompiler $compiler
-     * @param bool $isDebug
-     */
     public function __construct(
         PriceListRuleCompiler $compiler,
         bool $isDebug = false

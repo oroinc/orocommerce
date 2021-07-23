@@ -17,7 +17,6 @@ class CheckoutTransitionEventSubscriberTest extends \PHPUnit\Framework\TestCase
     /** @var CheckoutStateDiffManager|\PHPUnit\Framework\MockObject\MockObject */
     private $checkoutStateDiffManager;
 
-    /** @var CheckoutTransitionEventSubscriber */
     private CheckoutTransitionEventSubscriber $eventSubscriber;
 
     protected function setUp(): void

@@ -145,7 +145,6 @@ class CustomerListenerTest extends AbstractPriceListCollectionAwareListenerTest
             ->method('getForm')
             ->willReturn($form);
 
-
         $this->listener->onPostSetData($formEvent);
     }
 

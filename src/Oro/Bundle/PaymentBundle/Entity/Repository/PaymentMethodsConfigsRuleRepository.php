@@ -19,9 +19,6 @@ class PaymentMethodsConfigsRuleRepository extends EntityRepository
      */
     private $aclHelper;
 
-    /**
-     * @param AclHelper $aclHelper
-     */
     public function setAclHelper(AclHelper $aclHelper)
     {
         $this->aclHelper = $aclHelper;
@@ -99,12 +96,6 @@ class PaymentMethodsConfigsRuleRepository extends EntityRepository
             ->setParameter('currency', $currency);
     }
 
-    /**
-     * @param string       $currency
-     * @param Website|null $website
-     *
-     * @return QueryBuilder
-     */
     private function getByCurrencyAndWebsiteQueryBuilder(string $currency, Website $website = null): QueryBuilder
     {
         $queryBuilder = $this->getByCurrencyQueryBuilder($currency);

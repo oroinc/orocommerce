@@ -32,18 +32,12 @@ class CategoryImportExportHelperTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getCategoryPathDataProvider
-     *
-     * @param Category $category
-     * @param string $expectedResult
      */
     public function testGetCategoryPath(Category $category, string $expectedResult): void
     {
         $this->assertEquals($expectedResult, $this->helper->getCategoryPath($category));
     }
 
-    /**
-     * @return array
-     */
     public function getCategoryPathDataProvider(): array
     {
         return [
@@ -63,11 +57,6 @@ class CategoryImportExportHelperTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param string $title
-     *
-     * @return CategoryStub
-     */
     private function createCategory(string $title): CategoryStub
     {
         return (new CategoryStub())->addTitle((new CategoryTitle())->setString($title));
@@ -75,9 +64,6 @@ class CategoryImportExportHelperTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getPersistedCategoryPathDataProvider
-     *
-     * @param array $categoryPath
-     * @param string $expectedResult
      */
     public function testGetPersistedCategoryPath(array $categoryPath, string $expectedResult): void
     {
@@ -112,9 +98,6 @@ class CategoryImportExportHelperTest extends \PHPUnit\Framework\TestCase
         return $repo;
     }
 
-    /**
-     * @return array
-     */
     public function getPersistedCategoryPathDataProvider(): array
     {
         return [

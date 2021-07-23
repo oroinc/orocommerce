@@ -33,14 +33,6 @@ class CurrentShoppingListManager
     /** @var TokenAccessorInterface */
     private $tokenAccessor;
 
-    /**
-     * @param ShoppingListManager        $shoppingListManager
-     * @param GuestShoppingListManager   $guestShoppingListManager
-     * @param CurrentShoppingListStorage $currentShoppingListStorage
-     * @param ManagerRegistry            $doctrine
-     * @param AclHelper                  $aclHelper
-     * @param TokenAccessorInterface     $tokenAccessor
-     */
     public function __construct(
         ShoppingListManager $shoppingListManager,
         GuestShoppingListManager $guestShoppingListManager,
@@ -72,10 +64,6 @@ class CurrentShoppingListManager
         return $shoppingList;
     }
 
-    /**
-     * @param CustomerUser $customerUser
-     * @param ShoppingList $shoppingList
-     */
     public function setCurrent(CustomerUser $customerUser, ShoppingList $shoppingList)
     {
         $customerUserId = $customerUser->getId();

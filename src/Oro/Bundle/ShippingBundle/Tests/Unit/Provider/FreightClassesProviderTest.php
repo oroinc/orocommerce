@@ -28,9 +28,6 @@ class FreightClassesProviderTest extends MeasureUnitProviderTest
     }
 
     /**
-     * @param array $inputData
-     * @param array $expectedData
-     *
      * @dataProvider getFreightClassesProvider
      */
     public function testGetFreightClasses(array $inputData, array $expectedData)

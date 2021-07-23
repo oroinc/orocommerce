@@ -152,7 +152,6 @@ class FeatureContext extends OroFeatureContext implements
      * Example: I visit guest quote link for quote 123
      *
      * @When /^I visit guest quote link for quote (?P<qid>[\w\s]+)$/
-     * @param string $qid
      */
     public function iVisitGuestQuoteLinkForQuote(string $qid): void
     {
@@ -163,8 +162,6 @@ class FeatureContext extends OroFeatureContext implements
      * Example: Then Guest Quote "123" email has been sent to "somebody@examle.com"
      *
      * @Then /^Guest Quote "(?P<qid>[\w\s]+)" email has been sent to "(?P<email>\S+)"/
-     * @param string $qid
-     * @param string $email
      */
     public function guestQuoteEmailHasBeenSend(string $qid, string $email): void
     {
@@ -208,8 +205,6 @@ class FeatureContext extends OroFeatureContext implements
      * Example: When Quote "9" is marked as accepted by customer
      *
      * @When /^Quote "(?P<quoteId>(?:\d+))" is marked as accepted by customer/
-     *
-     * @param int $quoteId
      */
     public function markQuoteAsAcceptedByCustomer(int $quoteId)
     {
@@ -248,7 +243,6 @@ class FeatureContext extends OroFeatureContext implements
             ->getRepository($className);
     }
 
-
     /**
      * @param string $qid
      * @param integer $truncateTo
@@ -261,10 +255,6 @@ class FeatureContext extends OroFeatureContext implements
         return substr($guestLink, 0, $truncateTo);
     }
 
-    /**
-     * @param string $qid
-     * @return string
-     */
     private function getGuestLink(string $qid): string
     {
         $quote = $this->getQuote($qid);

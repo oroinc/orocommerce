@@ -15,9 +15,6 @@ abstract class AbstractSearchableAttributeType implements SearchAttributeTypeInt
     /** @var AttributeTypeInterface */
     protected $attributeType;
 
-    /**
-     * @param AttributeTypeInterface $attributeType
-     */
     public function __construct(AttributeTypeInterface $attributeType)
     {
         $this->attributeType = $attributeType;
@@ -94,10 +91,6 @@ abstract class AbstractSearchableAttributeType implements SearchAttributeTypeInt
 
     /**
      * Returns main filterable field name which is used for filtering.
-     *
-     * @param FieldConfigModel $attribute
-     *
-     * @return string
      */
     protected function getFilterableFieldNameMain(FieldConfigModel $attribute): string
     {
@@ -107,10 +100,6 @@ abstract class AbstractSearchableAttributeType implements SearchAttributeTypeInt
     /**
      * Returns aggregate filterable field name which is used for aggregation.
      * Empty by default, which means aggregation is not supported by default.
-     *
-     * @param FieldConfigModel $attribute
-     *
-     * @return string
      */
     protected function getFilterableFieldNameAggregate(FieldConfigModel $attribute): string
     {
@@ -140,8 +129,6 @@ abstract class AbstractSearchableAttributeType implements SearchAttributeTypeInt
 
     /**
      * Returns main filter storage field type which is used for filtering.
-     *
-     * @return string
      */
     protected function getFilterStorageFieldTypeMain(): string
     {
@@ -151,8 +138,6 @@ abstract class AbstractSearchableAttributeType implements SearchAttributeTypeInt
     /**
      * Returns aggregate filter storage field type which is used for aggregation.
      * Empty by default, which means aggregation is not supported by default.
-     *
-     * @return string
      */
     protected function getFilterStorageFieldTypeAggregate(): string
     {

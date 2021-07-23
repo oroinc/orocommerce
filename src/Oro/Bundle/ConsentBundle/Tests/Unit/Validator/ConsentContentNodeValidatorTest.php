@@ -55,16 +55,6 @@ class ConsentContentNodeValidatorTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider isValidProvider
-     *
-     * @param Consent                $consent
-     * @param ContentNode            $contentNode
-     * @param Scope|null             $scope
-     * @param bool                   $logErrorsEnabled
-     * @param bool                   $isContentNodeResolved
-     * @param ResolvedContentVariant $contentVariant
-     * @param bool                   $expectedError
-     * @param string                 $errorMsg
-     * @param bool                   $expectedResult
      */
     public function testIsValid(
         Consent $consent,

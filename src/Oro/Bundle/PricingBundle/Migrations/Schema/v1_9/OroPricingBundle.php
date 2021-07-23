@@ -56,8 +56,6 @@ class OroPricingBundle implements Migration, ConnectionAwareInterface, Container
 
     /**
      * Sets the database connection
-     *
-     * @param Connection $connection
      */
     public function setConnection(Connection $connection)
     {

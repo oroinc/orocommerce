@@ -27,10 +27,6 @@ class CategoryPageContentVariantType implements ContentVariantTypeInterface, Con
     /** @var PropertyAccessor */
     private $propertyAccessor;
 
-    /**
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param PropertyAccessor              $propertyAccessor
-     */
     public function __construct(
         AuthorizationCheckerInterface $authorizationChecker,
         PropertyAccessor $propertyAccessor

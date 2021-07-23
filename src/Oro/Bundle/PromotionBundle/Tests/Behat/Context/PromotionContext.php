@@ -42,8 +42,6 @@ class PromotionContext extends OroFeatureContext implements OroPageObjectAware
 
     /**
      * @BeforeScenario
-     *
-     * @param BeforeScenarioScope $scope
      */
     public function gatherContexts(BeforeScenarioScope $scope)
     {
@@ -70,8 +68,6 @@ class PromotionContext extends OroFeatureContext implements OroPageObjectAware
 
     /**
      * @Then /^(?:|I )see next line item discounts for checkout:$/
-     *
-     * @param TableNode $table
      */
     public function assertCheckoutStepLineItemDiscount(TableNode $table)
     {
@@ -83,8 +79,6 @@ class PromotionContext extends OroFeatureContext implements OroPageObjectAware
 
     /**
      * @Then /^(?:|I )see next line item discounts for order:$/
-     *
-     * @param TableNode $table
      */
     public function assertOrderLineItemDiscount(TableNode $table)
     {
@@ -96,7 +90,6 @@ class PromotionContext extends OroFeatureContext implements OroPageObjectAware
 
     /**
      * @Then /^(?:|I )see next line item discounts for backoffice order:$/
-     * @param TableNode $table
      */
     public function assertBackendOrderLineItemDiscount(TableNode $table)
     {

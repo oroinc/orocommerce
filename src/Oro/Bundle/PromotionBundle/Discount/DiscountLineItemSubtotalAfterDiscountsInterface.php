@@ -7,9 +7,6 @@ namespace Oro\Bundle\PromotionBundle\Discount;
  */
 interface DiscountLineItemSubtotalAfterDiscountsInterface
 {
-    /**
-     * @return float
-     */
     public function getSubtotalAfterDiscounts(): float;
 
     /**

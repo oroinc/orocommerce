@@ -38,18 +38,12 @@ class ProductUpcomingExtension extends AbstractExtension
         ];
     }
 
-    /**
-     * @param Product $product
-     * @return bool
-     */
     public function isUpcomingProduct(Product $product): bool
     {
         return $this->provider->isUpcoming($product);
     }
 
     /**
-     * @param Product $product
-     * @return \DateTime|null
      * @throws \LogicException
      */
     public function getUpcomingAvailabilityDate(Product $product): ?\DateTime

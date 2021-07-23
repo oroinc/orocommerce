@@ -42,12 +42,6 @@ class ContentWidgetTypeSearchHandlerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider searchDataProvider
-     *
-     * @param string $query
-     * @param int $page
-     * @param int $perPage
-     * @param bool $searchById
-     * @param bool $expected
      */
     public function testSearch(string $query, int $page, int $perPage, bool $searchById, bool $expected): void
     {
@@ -65,9 +59,6 @@ class ContentWidgetTypeSearchHandlerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($results, $this->searchHandler->search($query, $page, $perPage, $searchById));
     }
 
-    /**
-     * @return array
-     */
     public function searchDataProvider(): array
     {
         return [

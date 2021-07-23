@@ -126,9 +126,6 @@ abstract class AbstractContentVariantStub implements
         return $this->node;
     }
 
-    /**
-     * @param ContentNodeInterface $node
-     */
     public function setNode(ContentNodeInterface $node)
     {
         $this->node = $node;
@@ -153,18 +150,11 @@ abstract class AbstractContentVariantStub implements
         return $this->default;
     }
 
-    /**
-     * @return bool
-     */
     public function isOverrideVariantConfiguration(): bool
     {
         return $this->overrideVariantConfiguration;
     }
 
-    /**
-     * @param bool $overrideVariantConfiguration
-     * @return self
-     */
     public function setOverrideVariantConfiguration(bool $overrideVariantConfiguration): self
     {
         $this->overrideVariantConfiguration = $overrideVariantConfiguration;

@@ -165,9 +165,6 @@ class PriceListToCustomerGroupTest extends AbstractApiPriceListRelationTest
         return $this->getReference(LoadPriceListRelations::PRICE_LIST_TO_CUSTOMER_GROUP_1);
     }
 
-    /**
-     * @return Website
-     */
     protected function getWebsiteForCreateAction(): Website
     {
         return $this->getEntityManager()->getRepository(Website::class)->getDefaultWebsite();

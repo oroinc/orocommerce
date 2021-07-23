@@ -61,15 +61,6 @@ class SearchMessageProcessor implements MessageProcessorInterface
      */
     private $eventDispatcher;
 
-    /**
-     * @param IndexerInterface $indexer
-     * @param MessageProducerInterface $messageProducer
-     * @param IndexerInputValidator $indexerInputValidator
-     * @param ReindexMessageGranularizer $reindexMessageGranularizer
-     * @param JobRunner $jobRunner
-     * @param LoggerInterface $logger
-     * @param EventDispatcherInterface $eventDispatcher
-     */
     public function __construct(
         IndexerInterface $indexer,
         MessageProducerInterface $messageProducer,
@@ -107,13 +98,8 @@ class SearchMessageProcessor implements MessageProcessorInterface
     }
 
     /**
-     * @param MessageInterface $message
-     * @param SessionInterface $session
-     *
      * @throws \UnexpectedValueException
      * @throws InvalidArgumentException
-     *
-     * @return string
      */
     private function doProcess(MessageInterface $message, SessionInterface $session): string
     {
@@ -132,13 +118,8 @@ class SearchMessageProcessor implements MessageProcessorInterface
     }
 
     /**
-     * @param string $topicName
-     * @param array $data
-     *
      * @throws \UnexpectedValueException
      * @throws InvalidArgumentException
-     *
-     * @return bool
      */
     private function processMessage(string $topicName, array $data): bool
     {
@@ -176,9 +157,6 @@ class SearchMessageProcessor implements MessageProcessorInterface
         return true;
     }
 
-    /**
-     * @param array $parameters
-     */
     private function processReindex(array $parameters): void
     {
         if ($parameters['granulize']) {
@@ -234,10 +212,6 @@ class SearchMessageProcessor implements MessageProcessorInterface
         }
     }
 
-    /**
-     * @param string $result
-     * @param \Exception $exception
-     */
     private function logException(string $result, \Exception $exception): void
     {
         $message = 'An unexpected exception occurred during indexation';
@@ -248,20 +222,12 @@ class SearchMessageProcessor implements MessageProcessorInterface
         }
     }
 
-    /**
-     * @param array $parameters
-     */
     private function dispatchReindexEvent(array $parameters): void
     {
         $event = new BeforeReindexEvent($parameters['class'], $parameters['context']);
         $this->eventDispatcher->dispatch($event, BeforeReindexEvent::EVENT_NAME);
     }
 
-    /**
-     * @param \Exception $exception
-     *
-     * @return null|string
-     */
     private function dispatchExceptionEvent(\Exception $exception): ?string
     {
         $event = new SearchProcessingEngineExceptionEvent($exception);

@@ -51,10 +51,6 @@ class Configuration implements ConfigurationInterface
         return $treeBuilder;
     }
 
-    /**
-     * @param string $key
-     * @return string
-     */
     public static function getConfigKey(string $key): string
     {
         return sprintf('%s%s%s', OroRedirectExtension::ALIAS, ConfigManager::SECTION_MODEL_SEPARATOR, $key);

@@ -23,9 +23,6 @@ class OrderRequiredTaxRecalculationSpecification implements SpecificationInterfa
      */
     protected $orderLineItemsCollectionChangedSpecification;
 
-    /**
-     * @param UnitOfWork $unitOfWork
-     */
     public function __construct(UnitOfWork $unitOfWork)
     {
         $this->unitOfWork = $unitOfWork;
@@ -112,12 +109,6 @@ class OrderRequiredTaxRecalculationSpecification implements SpecificationInterfa
         return $this->isAddressChanged($newAddress, $oldAddress);
     }
 
-    /**
-     * @param OrderAddress $newAddress
-     * @param OrderAddress $oldAddress
-     *
-     * @return bool
-     */
     private function isCustomerUserAddressChanged(OrderAddress $newAddress, OrderAddress $oldAddress): bool
     {
         $newCustomerUserAddressId = $newAddress->getCustomerUserAddress()
@@ -185,11 +176,6 @@ class OrderRequiredTaxRecalculationSpecification implements SpecificationInterfa
         return $newAddress->getCountryIso2() != $oldAddressCountryIso2;
     }
 
-    /**
-     * @param array $originalAddressData
-     *
-     * @return string|null
-     */
     private function getOriginalRegionName(array $originalAddressData): ?string
     {
         $originalRegionName = null;

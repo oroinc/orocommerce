@@ -201,9 +201,6 @@ class ProductVariantIndexDataProviderDecoratorTest extends WebTestCase
     }
 
     /**
-     * @param array $multiEnumCodes
-     * @param array $expectedSkus
-     *
      * @dataProvider multiEnumVariantDataProvider
      */
     public function testMultiEnumVariantSearch(array $multiEnumCodes, array $expectedSkus)

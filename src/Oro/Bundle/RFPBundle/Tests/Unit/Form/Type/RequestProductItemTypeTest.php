@@ -59,9 +59,6 @@ class RequestProductItemTypeTest extends AbstractTest
     }
 
     /**
-     * @param RequestProductItem $inputData
-     * @param array $expectedData
-     *
      * @dataProvider postSetDataProvider
      */
     public function testPostSetData(RequestProductItem $inputData, array $expectedData = [])

@@ -452,10 +452,6 @@ class AjaxLineItemControllerTest extends WebTestCase
         return $this->getContainer()->get('doctrine')->getRepository('OroShoppingListBundle:ShoppingList');
     }
 
-    /**
-     * @param array $expectedSubtotals
-     * @param ShoppingList $shoppingList
-     */
     protected function assertSubtotals(array $expectedSubtotals, ShoppingList $shoppingList)
     {
         foreach ($expectedSubtotals as $currency => $value) {

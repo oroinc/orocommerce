@@ -72,9 +72,6 @@ class ShippingCostQuoteDemandSubtotalsCalculatorDecoratorTest extends \PHPUnit\F
     }
 
     /**
-     * @param $priceAmount
-     * @param Price|null $price
-     *
      * @dataProvider calculateSubtotalsProvider
      */
     public function testCalculateSubtotals($priceAmount, Price $price = null)

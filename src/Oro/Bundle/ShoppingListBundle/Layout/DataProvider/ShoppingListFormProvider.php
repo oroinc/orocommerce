@@ -29,11 +29,6 @@ class ShoppingListFormProvider extends AbstractFormProvider
         return $this->getFormView(ShoppingListType::class, $shoppingList, $options);
     }
 
-    /**
-     * @param ShoppingList $shoppingList
-     *
-     * @return FormView
-     */
     public function getShoppingListNotesFormView(ShoppingList $shoppingList): FormView
     {
         return $this->getFormView(ShoppingListNotesType::class, $shoppingList);

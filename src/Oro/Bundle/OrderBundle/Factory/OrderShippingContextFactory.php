@@ -28,11 +28,6 @@ class OrderShippingContextFactory implements ShippingContextFactoryInterface
      */
     private $shippingContextBuilderFactory;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param OrderShippingLineItemConverterInterface $shippingLineItemConverter
-     * @param null|ShippingContextBuilderFactoryInterface $shippingContextBuilderFactory
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         OrderShippingLineItemConverterInterface $shippingLineItemConverter,

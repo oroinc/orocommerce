@@ -29,11 +29,6 @@ class ConsentDataBuilder
      */
     protected $cmsPageDataBuilder;
 
-    /**
-     * @param ConsentAcceptanceProvider $consentAcceptanceProvider
-     * @param LocalizationHelper  $localizationHelper
-     * @param CmsPageDataBuilder  $cmsPageDataBuilder
-     */
     public function __construct(
         ConsentAcceptanceProvider $consentAcceptanceProvider,
         LocalizationHelper $localizationHelper,

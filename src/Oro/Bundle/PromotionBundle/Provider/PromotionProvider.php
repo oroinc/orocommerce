@@ -33,12 +33,6 @@ class PromotionProvider
      */
     private $promotionMapper;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param RuleFiltrationServiceInterface $ruleFiltrationService
-     * @param ContextDataConverterInterface $contextDataConverter
-     * @param AppliedPromotionMapper $promotionMapper
-     */
     public function __construct(
         ManagerRegistry $registry,
         RuleFiltrationServiceInterface $ruleFiltrationService,

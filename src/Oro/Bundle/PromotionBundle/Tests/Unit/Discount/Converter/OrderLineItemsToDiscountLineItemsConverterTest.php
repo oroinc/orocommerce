@@ -26,8 +26,6 @@ class OrderLineItemsToDiscountLineItemsConverterTest extends \PHPUnit\Framework\
 
     /**
      * @dataProvider converterDataProvider
-     * @param array $lineItems
-     * @param array $expected
      */
     public function testConvert(array $lineItems, array $expected)
     {

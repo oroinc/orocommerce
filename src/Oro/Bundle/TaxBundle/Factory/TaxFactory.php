@@ -17,9 +17,6 @@ class TaxFactory
     /** @var ContainerInterface */
     private $mappers;
 
-    /**
-     * @param ContainerInterface $mappers
-     */
     public function __construct(ContainerInterface $mappers)
     {
         $this->mappers = $mappers;

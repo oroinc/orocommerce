@@ -16,9 +16,6 @@ use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
  */
 trait BasicOperationRepositoryTrait
 {
-    /**
-     * @param array $data
-     */
     public function insertEntity(array $data)
     {
         $metadata = $this->getClassMetadata();
@@ -49,10 +46,6 @@ trait BasicOperationRepositoryTrait
             ->execute();
     }
 
-    /**
-     * @param array $set
-     * @param array $where
-     */
     public function updateEntity(array $set, array $where)
     {
         $queryBuilder = $this->createQueryBuilder('entity')
@@ -75,9 +68,6 @@ trait BasicOperationRepositoryTrait
             ->execute();
     }
 
-    /**
-     * @param array $where
-     */
     public function deleteEntity(array $where)
     {
         $queryBuilder = $this->createQueryBuilder('entity')

@@ -20,19 +20,12 @@ class RemoveFromConfigurationPriceListEntityListener
      */
     protected $configConverter;
 
-    /**
-     * @param ConfigManager            $configManager
-     * @param PriceListConfigConverter $configConverter
-     */
     public function __construct(ConfigManager $configManager, PriceListConfigConverter $configConverter)
     {
         $this->configManager = $configManager;
         $this->configConverter = $configConverter;
     }
 
-    /**
-     * @param PriceList $priceList
-     */
     public function preRemove(PriceList $priceList)
     {
         $configKey = Configuration::getConfigKeyByName(Configuration::DEFAULT_PRICE_LISTS);

@@ -25,8 +25,6 @@ class OroOrderBundle implements Migration
 
     /**
      * Create field total_discounts_amount
-     *
-     * @param Schema $schema
      */
     protected function createFieldTotalDiscountsAmount(Schema $schema)
     {
@@ -41,7 +39,6 @@ class OroOrderBundle implements Migration
 
     /**
      * Create orob2b_order_discount table
-     * @param Schema $schema
      */
     protected function createOrob2BOrderDiscountTable(Schema $schema)
     {
@@ -66,8 +63,6 @@ class OroOrderBundle implements Migration
 
     /**
      * Add orob2b_order_discount foreign keys.
-     *
-     * @param Schema $schema
      *
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */

@@ -18,10 +18,6 @@ class ContentWidgetTypeRegistry
         $this->types = $types;
     }
 
-    /**
-     * @param string $name
-     * @return ContentWidgetTypeInterface|null
-     */
     public function getWidgetType(string $name): ?ContentWidgetTypeInterface
     {
         foreach ($this->types as $type) {

@@ -11,9 +11,6 @@ class ShippingRuleEnabledChecker implements ShippingRuleEnabledCheckerInterface
      */
     private $methodEnabledChecker;
 
-    /**
-     * @param ShippingMethodEnabledByIdentifierCheckerInterface $methodEnabledChecker
-     */
     public function __construct(ShippingMethodEnabledByIdentifierCheckerInterface $methodEnabledChecker)
     {
         $this->methodEnabledChecker = $methodEnabledChecker;

@@ -23,10 +23,6 @@ class SaveShoppingListDefault implements ProcessorInterface
     /** @var CurrentShoppingListStorage */
     private $currentShoppingListStorage;
 
-    /**
-     * @param TokenAccessorInterface     $tokenAccessor
-     * @param CurrentShoppingListStorage $currentShoppingListStorage
-     */
     public function __construct(
         TokenAccessorInterface $tokenAccessor,
         CurrentShoppingListStorage $currentShoppingListStorage

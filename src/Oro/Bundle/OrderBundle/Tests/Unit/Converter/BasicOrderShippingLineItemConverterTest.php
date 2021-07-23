@@ -67,8 +67,6 @@ class BasicOrderShippingLineItemConverterTest extends \PHPUnit\Framework\TestCas
 
     /**
      * @dataProvider missingDependenciesDataProvider
-     * @param DoctrineShippingLineItemCollectionFactory|null $collectionFactory
-     * @param BasicShippingLineItemBuilderFactory|null $shippingLineItemBuilderFactory
      */
     public function testConvertLineItemsWhenSomeDependencyMissing(
         DoctrineShippingLineItemCollectionFactory $collectionFactory = null,
@@ -84,8 +82,6 @@ class BasicOrderShippingLineItemConverterTest extends \PHPUnit\Framework\TestCas
 
     /**
      * @dataProvider lineItemsDataProvider
-     * @param array $lineItems
-     * @param array $expectetdShippingLineItems
      */
     public function testConvertLineItems(array $lineItems, array $expectetdShippingLineItems)
     {

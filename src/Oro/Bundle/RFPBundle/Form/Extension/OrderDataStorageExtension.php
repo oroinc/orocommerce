@@ -49,11 +49,6 @@ class OrderDataStorageExtension extends AbstractTypeExtension implements Feature
      */
     protected $priceScopeCriteriaFactory;
 
-    /**
-     * @param RequestStack $requestStack
-     * @param ProductPriceProviderInterface $productPriceProvider
-     * @param ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory
-     */
     public function __construct(
         RequestStack $requestStack,
         ProductPriceProviderInterface $productPriceProvider,
@@ -133,9 +128,6 @@ class OrderDataStorageExtension extends AbstractTypeExtension implements Feature
         }
     }
 
-    /**
-     * @return bool
-     */
     protected function isApplicable(): bool
     {
         $request = $this->requestStack->getCurrentRequest();

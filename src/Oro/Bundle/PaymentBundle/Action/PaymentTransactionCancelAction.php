@@ -14,9 +14,6 @@ class PaymentTransactionCancelAction extends AbstractPaymentMethodAction
 {
     const OPTION_PAYMENT_TRANSACTION = 'paymentTransaction';
 
-    /**
-     * @param OptionsResolver $resolver
-     */
     protected function configureOptionsResolver(OptionsResolver $resolver)
     {
         parent::configureOptionsResolver($resolver);
@@ -30,9 +27,6 @@ class PaymentTransactionCancelAction extends AbstractPaymentMethodAction
             );
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
     protected function configureValuesResolver(OptionsResolver $resolver)
     {
         parent::configureValuesResolver($resolver);

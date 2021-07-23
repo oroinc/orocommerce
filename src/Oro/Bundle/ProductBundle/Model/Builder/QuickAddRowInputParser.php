@@ -31,12 +31,6 @@ class QuickAddRowInputParser
      */
     private $numberFormatter;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param ProductUnitsProvider $productUnitsProvider
-     * @param AclHelper $aclHelper
-     * @param NumberFormatter $numberFormatter
-     */
     public function __construct(
         ManagerRegistry $registry,
         ProductUnitsProvider $productUnitsProvider,
@@ -49,11 +43,6 @@ class QuickAddRowInputParser
         $this->numberFormatter = $numberFormatter;
     }
 
-    /**
-     * @param array $product
-     * @param int $lineNumber
-     * @return QuickAddRow
-     */
     public function createFromFileLine(array $product, int $lineNumber): QuickAddRow
     {
         $sku = isset($product[0]) ? trim($product[0]) : null;
@@ -73,11 +62,6 @@ class QuickAddRowInputParser
         return new QuickAddRow($lineNumber, $sku, $parsedQty, $this->resolveUnit($sku, $unit));
     }
 
-    /**
-     * @param array $product
-     * @param int $index
-     * @return QuickAddRow
-     */
     public function createFromRequest(array $product, int $index): QuickAddRow
     {
         $sku = trim($product[ProductDataStorage::PRODUCT_SKU_KEY]);
@@ -88,11 +72,6 @@ class QuickAddRowInputParser
         return new QuickAddRow($index, $sku, $quantity, $this->resolveUnit($sku, $unit));
     }
 
-    /**
-     * @param array $product
-     * @param int $lineNumber
-     * @return QuickAddRow
-     */
     public function createFromCopyPasteTextLine(array $product, int $lineNumber): QuickAddRow
     {
         $sku = trim($product[0]);
@@ -102,11 +81,6 @@ class QuickAddRowInputParser
         return new QuickAddRow($lineNumber, $sku, $quantity, $this->resolveUnit($sku, $unit));
     }
 
-    /**
-     * @param string $sku
-     * @param string|null $unitName
-     * @return null|string
-     */
     private function resolveUnit(string $sku, ?string $unitName = null): ?string
     {
         if (!$unitName) {
@@ -132,9 +106,6 @@ class QuickAddRowInputParser
         return null;
     }
 
-    /**
-     * @return array
-     */
     private function getAvailableProductUnitCodes(): array
     {
         $units = $this->productUnitsProvider->getAvailableProductUnits();
@@ -145,9 +116,6 @@ class QuickAddRowInputParser
         );
     }
 
-    /**
-     * @return ProductRepository
-     */
     private function getProductRepository(): ProductRepository
     {
         return $this->registry->getRepository(Product::class);

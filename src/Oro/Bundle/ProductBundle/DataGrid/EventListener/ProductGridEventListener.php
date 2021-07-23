@@ -21,19 +21,12 @@ class ProductGridEventListener
     /** @var SelectedFieldsProviderInterface */
     private $selectedFieldsProvider;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param SelectedFieldsProviderInterface $selectedFieldsProvider
-     */
     public function __construct(ManagerRegistry $registry, SelectedFieldsProviderInterface $selectedFieldsProvider)
     {
         $this->registry = $registry;
         $this->selectedFieldsProvider = $selectedFieldsProvider;
     }
 
-    /**
-     * @param OrmResultAfter $event
-     */
     public function onResultAfter(OrmResultAfter $event): void
     {
         $datagrid = $event->getDatagrid();

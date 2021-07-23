@@ -72,9 +72,6 @@ class ProductControllerTest extends FrontendWebTestCase
     }
 
     /**
-     * @param array $gridParam
-     * @param array $expected
-     *
      * @dataProvider gridParamDataProvider
      */
     public function testSortPreviouslyPurchasedGrid(array $gridParam, array $expected)

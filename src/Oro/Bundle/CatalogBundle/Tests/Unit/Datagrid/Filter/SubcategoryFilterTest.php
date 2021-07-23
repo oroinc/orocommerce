@@ -35,12 +35,6 @@ class SubcategoryFilterTest extends \PHPUnit\Framework\TestCase
         $this->filter = new SubcategoryFilter($this->formFactory, new FilterUtility());
     }
 
-    /**
-     * @param int    $id
-     * @param string $path
-     *
-     * @return Category
-     */
     private function getCategory(int $id, string $path): Category
     {
         return $this->getEntity(Category::class, ['id' => $id, 'materializedPath' => $path]);

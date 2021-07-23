@@ -17,10 +17,6 @@ class CustomerWebsiteDTO
      */
     protected $website;
 
-    /**
-     * @param Customer $customer
-     * @param Website $website
-     */
     public function __construct(Customer $customer, Website $website)
     {
         $this->customer = $customer;

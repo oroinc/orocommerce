@@ -47,13 +47,6 @@ class QuoteProductPriceProvider
      */
     private $aclHelper;
 
-    /**
-     * @param ProductPriceProviderInterface $productPriceProvider
-     * @param ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory
-     * @param CurrencyProviderInterface $currencyProvider
-     * @param DoctrineHelper $doctrineHelper
-     * @param AclHelper $aclHelper
-     */
     public function __construct(
         ProductPriceProviderInterface $productPriceProvider,
         ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory,

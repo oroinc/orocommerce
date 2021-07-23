@@ -40,10 +40,6 @@ class ModifyPricingTables implements Migration
         }
     }
 
-    /**
-     * @param \Doctrine\DBAL\Schema\Table $table
-     * @param string $idxName
-     */
     private function addVersionToPricingTable(\Doctrine\DBAL\Schema\Table $table, string $idxName): void
     {
         if (!$table->hasColumn('version')) {

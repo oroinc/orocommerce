@@ -63,9 +63,6 @@ class DefaultPriceListFilterTypeTest extends AbstractTypeTestCase
 
     /**
      * @dataProvider configureOptionsDataProvider
-     *
-     * @param array $parentDefaultOptions
-     * @param array $requiredOptions
      */
     public function testConfigureOptions(array $parentDefaultOptions, array $requiredOptions = array())
     {
@@ -92,11 +89,8 @@ class DefaultPriceListFilterTypeTest extends AbstractTypeTestCase
         $this->getTestFormType()->configureOptions($resolver);
     }
 
-
     /**
      * @dataProvider configureOptionsDataProvider
-     *
-     * @param array $parentDefaultOptions
      */
     public function testConfigureOptionsWhenEntityNotSharded(array $parentDefaultOptions)
     {
@@ -142,10 +136,6 @@ class DefaultPriceListFilterTypeTest extends AbstractTypeTestCase
 
     /**
      * @dataProvider bindDataProvider
-     * @param array $bindData
-     * @param array $formData
-     * @param array $viewData
-     * @param array $customOptions
      */
     public function testBindData(
         array $bindData,

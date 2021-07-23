@@ -34,8 +34,6 @@ class CheckoutLineItemsConverterTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider convertDataProvider
-     * @param array $data
-     * @param ArrayCollection $expected
      */
     public function testConvert(array $data, ArrayCollection $expected)
     {

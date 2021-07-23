@@ -37,7 +37,6 @@ class OroPayPalBundleInstaller implements Installation
 
     /**
      * Update oro_integration_transport table
-     * @param Schema $schema
      */
     protected function updateOroIntegrationTransportTable(Schema $schema)
     {
@@ -87,7 +86,6 @@ class OroPayPalBundleInstaller implements Installation
 
     /**
      * Create oro_paypal_credit_card_lbl table
-     * @param Schema $schema
      */
     protected function createOroPaypalCreditCardLblTable(Schema $schema)
     {
@@ -100,7 +98,6 @@ class OroPayPalBundleInstaller implements Installation
 
     /**
      * Create oro_paypal_credit_card_sh_lbl table
-     * @param Schema $schema
      */
     protected function createOroPaypalCreditCardShLblTable(Schema $schema)
     {
@@ -113,7 +110,6 @@ class OroPayPalBundleInstaller implements Installation
 
     /**
      * Create oro_paypal_xprss_chkt_lbl table
-     * @param Schema $schema
      */
     protected function createOroPaypalXprssChktLblTable(Schema $schema)
     {
@@ -126,7 +122,6 @@ class OroPayPalBundleInstaller implements Installation
 
     /**
      * Create oro_paypal_xprss_chkt_shrt_lbl table
-     * @param Schema $schema
      */
     protected function createOroPaypalXprssChktShrtLblTable(Schema $schema)
     {
@@ -139,7 +134,6 @@ class OroPayPalBundleInstaller implements Installation
 
     /**
      * Add oro_paypal_credit_card_lbl foreign keys.
-     * @param Schema $schema
      */
     protected function addOroPaypalCreditCardLblForeignKeys(Schema $schema)
     {
@@ -160,7 +154,6 @@ class OroPayPalBundleInstaller implements Installation
 
     /**
      * Add oro_paypal_credit_card_sh_lbl foreign keys.
-     * @param Schema $schema
      */
     protected function addOroPaypalCreditCardShLblForeignKeys(Schema $schema)
     {
@@ -181,7 +174,6 @@ class OroPayPalBundleInstaller implements Installation
 
     /**
      * Add oro_paypal_xprss_chkt_lbl foreign keys.
-     * @param Schema $schema
      */
     protected function addOroPaypalXprssChktLblForeignKeys(Schema $schema)
     {
@@ -202,7 +194,6 @@ class OroPayPalBundleInstaller implements Installation
 
     /**
      * Add oro_paypal_xprss_chkt_shrt_lbl foreign keys.
-     * @param Schema $schema
      */
     protected function addOroPaypalXprssChktShrtLblForeignKeys(Schema $schema)
     {

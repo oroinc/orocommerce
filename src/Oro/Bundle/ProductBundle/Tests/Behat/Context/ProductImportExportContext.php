@@ -27,8 +27,6 @@ class ProductImportExportContext extends OroFeatureContext implements KernelAwar
 
     /**
      * @BeforeScenario
-     *
-     * @param BeforeScenarioScope $scope
      */
     public function gatherContexts(BeforeScenarioScope $scope)
     {
@@ -42,8 +40,6 @@ class ProductImportExportContext extends OroFeatureContext implements KernelAwar
      * Checks whether the listed columns (in any order) and corresponding data is present.
      *
      * @Given /^Exported file with Products contains at least the following data:$/
-     *
-     * @param TableNode $expectedEntities
      */
     public function exportedFileWithProductsContainsAtLeastFollowingData(TableNode $expectedEntities)
     {
@@ -91,9 +87,6 @@ class ProductImportExportContext extends OroFeatureContext implements KernelAwar
      * Example: Given I copy product fixture "000.png" to import upload dir as "091.png"
      *
      * @Given /^I copy product fixture "(?P<filename>(?:[^"]|\\")*)" to import upload dir as "(?P<newFilename>(?:[^"]|\\")*)"$/
-     *
-     * @param string $filename
-     * @param string $newFilename
      */
     //@codingStandardsIgnoreEnd
     public function copyProductFixtureFileToImportFilesDir(string $filename, string $newFilename): void
@@ -132,11 +125,6 @@ class ProductImportExportContext extends OroFeatureContext implements KernelAwar
         $this->importExportContext->setAbsoluteUrl(null);
     }
 
-    /**
-     * @param string      $filesPath
-     * @param FileManager $fileManager
-     * @param string|null $directory
-     */
     private function copyFilesToStorage(string $filesPath, FileManager $fileManager, string $directory = null): void
     {
         $finder = new Finder();
@@ -151,17 +139,11 @@ class ProductImportExportContext extends OroFeatureContext implements KernelAwar
         }
     }
 
-    /**
-     * @return FileManager
-     */
     private function getProductImportImagesFileManager(): FileManager
     {
         return $this->getContainer()->get('oro_product.importexport.file_manager.product_images');
     }
 
-    /**
-     * @return FileManager
-     */
     private function getPublicMediaCacheFileManager(): FileManager
     {
         return $this->getContainer()->get('oro_attachment.manager.public_mediacache');

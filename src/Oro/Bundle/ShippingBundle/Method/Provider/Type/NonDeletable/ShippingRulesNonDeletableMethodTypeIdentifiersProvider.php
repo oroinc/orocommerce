@@ -15,9 +15,6 @@ class ShippingRulesNonDeletableMethodTypeIdentifiersProvider implements
      */
     private $methodTypeConfigRepository;
 
-    /**
-     * @param ShippingMethodTypeConfigRepository $methodTypeConfigRepository
-     */
     public function __construct(ShippingMethodTypeConfigRepository $methodTypeConfigRepository)
     {
         $this->methodTypeConfigRepository = $methodTypeConfigRepository;

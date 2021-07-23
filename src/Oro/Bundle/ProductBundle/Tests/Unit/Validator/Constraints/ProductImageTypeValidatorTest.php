@@ -83,7 +83,6 @@ class ProductImageTypeValidatorTest extends ConstraintValidatorTestCase
             ->method('containsKey')
             ->willReturn(true);
 
-
         $productImage = new ProductImage();
         $productImage->setTypes($productImageTypesCollection);
 
@@ -103,7 +102,6 @@ class ProductImageTypeValidatorTest extends ConstraintValidatorTestCase
             ->willReturn('Main');
 
         $this->validator->validate($value, $this->constraint);
-
 
         $this->buildViolation('oro.product.product_image_type.already_exists')
             ->setParameters(

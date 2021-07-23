@@ -55,9 +55,6 @@ class FrontendConsentProviderTest extends WebTestCase
 
     /**
      * @dataProvider getAllConsentDataProvider
-     *
-     * @param string $customerUserReference
-     * @param array  $expectedConsentReferences
      */
     public function testGetAllConsentData(string $customerUserReference, array $expectedConsentReferences)
     {
@@ -104,9 +101,6 @@ class FrontendConsentProviderTest extends WebTestCase
 
     /**
      * @dataProvider getNotAcceptedRequiredConsentDataProvider
-     *
-     * @param string $customerUserReference
-     * @param array  $expectedConsentReferences
      */
     public function testGetNotAcceptedRequiredConsentData(
         string $customerUserReference,

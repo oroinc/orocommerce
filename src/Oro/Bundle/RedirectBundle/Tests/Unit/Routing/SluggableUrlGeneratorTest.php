@@ -225,7 +225,6 @@ class SluggableUrlGeneratorTest extends \PHPUnit\Framework\TestCase
             ->method('setContextUrl')
             ->with('context');
 
-
         $this->assertEquals(
             '/base/context/_item/slug',
             $this->generator->generate($routeName, $routeParameters, $referenceType)
@@ -278,7 +277,6 @@ class SluggableUrlGeneratorTest extends \PHPUnit\Framework\TestCase
         $this->sluggableUrlProvider->expects($this->once())
             ->method('setContextUrl')
             ->with('context');
-
 
         $this->assertEquals(
             '/base/context/_item/slug',
@@ -517,11 +515,6 @@ class SluggableUrlGeneratorTest extends \PHPUnit\Framework\TestCase
             ->willReturn($context);
     }
 
-    /**
-     * @param $contextType
-     * @param $contextData
-     * @param $contextUrl
-     */
     private function initCommonMocks($contextType, $contextData, $contextUrl)
     {
         $localizationId = 1;

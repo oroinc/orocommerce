@@ -61,10 +61,6 @@ class EntityFieldFallbackValueRepositoryTest extends WebTestCase
         ]);
     }
 
-    /**
-     * @param string $fieldName
-     * @return EntityFieldFallbackValue
-     */
     private function getFallbackValue(string $fieldName): EntityFieldFallbackValue
     {
         return $this->getReference(LoadProductRelatedFallbackValuesData::getReferenceName(

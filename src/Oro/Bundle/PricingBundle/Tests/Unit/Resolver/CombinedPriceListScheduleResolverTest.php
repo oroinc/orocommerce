@@ -159,10 +159,6 @@ class CombinedPriceListScheduleResolverTest extends \PHPUnit\Framework\TestCase
         $this->resolver->updateRelations();
     }
 
-    /**
-     * @param array $actualityPerRepo
-     * @param CombinedPriceListActivationRule $rule
-     */
     private function configureRepositories(array $actualityPerRepo, CombinedPriceListActivationRule $rule): void
     {
         $CPLCustomerGroupRepositoryMock = $this->createMock(CombinedPriceListToCustomerGroupRepository::class);

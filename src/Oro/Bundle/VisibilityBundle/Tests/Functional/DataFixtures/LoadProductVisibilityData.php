@@ -68,11 +68,6 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
         $manager->flush();
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param Product $product
-     * @param array $data
-     */
     protected function createProductVisibilities(ObjectManager $manager, Product $product, array $data)
     {
         $productVisibility = new ProductVisibility();
@@ -91,11 +86,6 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
         $this->createCustomerVisibilities($manager, $product, $data['customers']);
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param Product $product
-     * @param array $customerGroupsData
-     */
     protected function createCustomerGroupVisibilities(
         ObjectManager $manager,
         Product $product,
@@ -119,11 +109,6 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
         }
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param Product $product
-     * @param array $customersData
-     */
     protected function createCustomerVisibilities(
         ObjectManager $manager,
         Product $product,

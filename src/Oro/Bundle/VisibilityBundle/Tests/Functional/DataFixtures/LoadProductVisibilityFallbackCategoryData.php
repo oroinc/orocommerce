@@ -119,10 +119,6 @@ class LoadProductVisibilityFallbackCategoryData extends AbstractFixture implemen
         $this->em->flush();
     }
 
-
-    /**
-     * @param Product $product
-     */
     protected function createProductVisibility(Product $product)
     {
         $scope = $this->scopeManager->findOrCreate(ProductVisibility::VISIBILITY_TYPE);
@@ -134,10 +130,6 @@ class LoadProductVisibilityFallbackCategoryData extends AbstractFixture implemen
         $this->em->persist($productVisibility);
     }
 
-    /**
-     * @param CustomerGroup $customerGroup
-     * @param Product $product
-     */
     protected function createCustomerGroupProductVisibilityResolved(CustomerGroup $customerGroup, Product $product)
     {
         $scope = $this->scopeManager->findOrCreate(
@@ -152,10 +144,6 @@ class LoadProductVisibilityFallbackCategoryData extends AbstractFixture implemen
         $this->em->persist($customerGroupVisibility);
     }
 
-    /**
-     * @param Customer $customer
-     * @param Product $product
-     */
     protected function createCustomerProductVisibilityResolved(Customer $customer, Product $product)
     {
         $scope = $this->scopeManager->findOrCreate(

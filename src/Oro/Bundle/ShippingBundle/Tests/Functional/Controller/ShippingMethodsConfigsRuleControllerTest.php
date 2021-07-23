@@ -329,8 +329,6 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
 
     /**
      * @depends testUpdate
-     *
-     * @param ShippingMethodsConfigsRule $shippingRule
      */
     public function testCancel(ShippingMethodsConfigsRule $shippingRule)
     {

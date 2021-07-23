@@ -23,10 +23,6 @@ class CustomerListener implements OptionalListenerInterface
     /** @var CustomerPartialUpdateDriverInterface */
     private $partialUpdateDriver;
 
-    /**
-     * @param MessageProducerInterface             $messageProducer
-     * @param CustomerPartialUpdateDriverInterface $partialUpdateDriver
-     */
     public function __construct(
         MessageProducerInterface $messageProducer,
         CustomerPartialUpdateDriverInterface $partialUpdateDriver
@@ -35,9 +31,6 @@ class CustomerListener implements OptionalListenerInterface
         $this->partialUpdateDriver = $partialUpdateDriver;
     }
 
-    /**
-     * @param Customer $customer
-     */
     public function postPersist(Customer $customer): void
     {
         if ($customer->getGroup()) {
@@ -47,18 +40,11 @@ class CustomerListener implements OptionalListenerInterface
         }
     }
 
-    /**
-     * @param Customer $customer
-     */
     public function preRemove(Customer $customer): void
     {
         $this->partialUpdateDriver->deleteCustomerVisibility($customer);
     }
 
-    /**
-     * @param Customer           $customer
-     * @param PreUpdateEventArgs $args
-     */
     public function preUpdate(Customer $customer, PreUpdateEventArgs $args): void
     {
         if ($args->hasChangedField('group')) {
@@ -66,9 +52,6 @@ class CustomerListener implements OptionalListenerInterface
         }
     }
 
-    /**
-     * @param Customer $customer
-     */
     private function sendMessageToProducer(Customer $customer): void
     {
         if (!$this->enabled) {

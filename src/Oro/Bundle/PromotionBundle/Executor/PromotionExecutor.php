@@ -40,11 +40,6 @@ class PromotionExecutor
      */
     private $objectCacheKeyGenerator;
 
-    /**
-     * @param DiscountContextConverterInterface $discountContextConverter
-     * @param StrategyProvider $discountStrategyProvider
-     * @param PromotionDiscountsProviderInterface $promotionDiscountsProvider
-     */
     public function __construct(
         DiscountContextConverterInterface $discountContextConverter,
         StrategyProvider $discountStrategyProvider,
@@ -55,17 +50,11 @@ class PromotionExecutor
         $this->promotionDiscountsProvider = $promotionDiscountsProvider;
     }
 
-    /**
-     * @param Cache $cache
-     */
     public function setCache(Cache $cache): void
     {
         $this->cache = $cache;
     }
 
-    /**
-     * @param ObjectCacheKeyGenerator $objectCacheKeyGenerator
-     */
     public function setObjectCacheKeyGenerator(ObjectCacheKeyGenerator $objectCacheKeyGenerator): void
     {
         $this->objectCacheKeyGenerator = $objectCacheKeyGenerator;

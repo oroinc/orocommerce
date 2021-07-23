@@ -19,9 +19,6 @@ class OrderConfigurationProviderStub extends OrderConfigurationProvider
     /** @var callable|null */
     private $getTargetInternalStatusCallback;
 
-    /**
-     * @param callable|null $getNewOrderInternalStatusCallback
-     */
     public function setGetNewOrderInternalStatusCallback(?callable $getNewOrderInternalStatusCallback): void
     {
         $this->getNewOrderInternalStatusCallback = $getNewOrderInternalStatusCallback;
@@ -37,9 +34,6 @@ class OrderConfigurationProviderStub extends OrderConfigurationProvider
             : parent::getNewOrderInternalStatus($order);
     }
 
-    /**
-     * @param callable|null $isAutomaticCancellationEnabledCallback
-     */
     public function setIsAutomaticCancellationEnabledCallback(?callable $isAutomaticCancellationEnabledCallback): void
     {
         $this->isAutomaticCancellationEnabledCallback = $isAutomaticCancellationEnabledCallback;
@@ -55,9 +49,6 @@ class OrderConfigurationProviderStub extends OrderConfigurationProvider
             : parent::isAutomaticCancellationEnabled($identifier);
     }
 
-    /**
-     * @param callable|null $getApplicableInternalStatusesCallback
-     */
     public function setGetApplicableInternalStatusesCallback(?callable $getApplicableInternalStatusesCallback): void
     {
         $this->getApplicableInternalStatusesCallback = $getApplicableInternalStatusesCallback;
@@ -73,9 +64,6 @@ class OrderConfigurationProviderStub extends OrderConfigurationProvider
             : parent::getApplicableInternalStatuses($identifier);
     }
 
-    /**
-     * @param callable|null $getTargetInternalStatusCallback
-     */
     public function setGetTargetInternalStatusCallback(?callable $getTargetInternalStatusCallback): void
     {
         $this->getTargetInternalStatusCallback = $getTargetInternalStatusCallback;

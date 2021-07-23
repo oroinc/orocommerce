@@ -18,8 +18,6 @@ class TriggerEventForSelectedProductIdsMassActionTest extends \PHPUnit\Framework
     }
 
     /**
-     * @param array $source
-     * @param array $expected
      * @dataProvider setOptionsDataProvider
      */
     public function testSetOptions(array $source, array $expected)

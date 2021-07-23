@@ -23,11 +23,6 @@ class SeoDataProvider
     /** @var PropertyAccessor */
     private $propertyAccessor;
 
-    /**
-     * @param LocalizationHelper               $localizationHelper
-     * @param RequestWebContentVariantProvider $requestWebContentVariantProvider
-     * @param PropertyAccessor                 $propertyAccessor
-     */
     public function __construct(
         LocalizationHelper $localizationHelper,
         RequestWebContentVariantProvider $requestWebContentVariantProvider,

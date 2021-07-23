@@ -19,9 +19,6 @@ class UniqueSlugPrototypeValidator extends ConstraintValidator
      */
     private $registry;
 
-    /**
-     * @param ManagerRegistry $registry
-     */
     public function __construct(ManagerRegistry $registry)
     {
         $this->registry = $registry;
@@ -61,11 +58,6 @@ class UniqueSlugPrototypeValidator extends ConstraintValidator
         }
     }
 
-    /**
-     * @param ContentNode $parentNode
-     * @param ContentNode $currentNode
-     * @return array
-     */
     private function getPersistedSlugPrototypes(ContentNode $parentNode, ContentNode $currentNode): array
     {
         $repository = $this->registry

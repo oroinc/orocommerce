@@ -36,12 +36,6 @@ class ProductCategoriesContextConfigurator implements ContextConfiguratorInterfa
      */
     protected $categoryProvider;
 
-
-    /**
-     * @param RequestStack $requestStack
-     * @param ManagerRegistry $registry
-     * @param CategoryProvider $categoryProvider
-     */
     public function __construct(
         RequestStack $requestStack,
         ManagerRegistry $registry,

@@ -16,17 +16,11 @@ class OpenOrdersDatagridListener
      */
     private $configManager;
 
-    /**
-     * @param ConfigManager $configManager
-     */
     public function __construct(ConfigManager $configManager)
     {
         $this->configManager = $configManager;
     }
 
-    /**
-     * @param PreBuild $event
-     */
     public function onPreBuild(PreBuild $event)
     {
         if (!$this->configManager->get('oro_checkout.frontend_show_open_orders')) {

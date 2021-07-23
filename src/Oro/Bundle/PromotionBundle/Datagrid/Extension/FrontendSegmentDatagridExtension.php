@@ -26,10 +26,6 @@ class FrontendSegmentDatagridExtension extends AbstractExtension
      */
     protected $frontendHelper;
 
-    /**
-     * @param TokenStorageInterface $tokenStorage
-     * @param FrontendHelper $frontendHelper
-     */
     public function __construct(
         TokenStorageInterface $tokenStorage,
         FrontendHelper $frontendHelper

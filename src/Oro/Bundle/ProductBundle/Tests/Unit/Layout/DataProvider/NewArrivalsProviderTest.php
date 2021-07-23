@@ -52,9 +52,6 @@ class NewArrivalsProviderTest extends AbstractSegmentProductsProviderTest
         $this->getProductsQueryBuilderIsNull();
     }
 
-    /**
-     * @param ManagerRegistry $registry
-     */
     protected function createSegmentProvider(ManagerRegistry $registry)
     {
         $this->segmentProductsProvider = new NewArrivalsProvider(

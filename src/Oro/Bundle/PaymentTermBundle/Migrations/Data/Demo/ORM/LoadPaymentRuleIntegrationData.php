@@ -81,10 +81,6 @@ class LoadPaymentRuleIntegrationData extends AbstractFixture implements Containe
         return $channel;
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param Channel       $channel
-     */
     private function loadShippingRule(ObjectManager $manager, Channel $channel)
     {
         $methodConfig = new PaymentMethodConfig();

@@ -32,11 +32,6 @@ class CheckoutShipUntilFormExtension extends AbstractTypeExtension
      */
     protected $dateTimeFormatter;
 
-    /**
-     * @param UpcomingProductProvider $provider
-     * @param CheckoutLineItemsManager $checkoutLineItemsManager
-     * @param DateTimeFormatterInterface $dateTimeFormatter
-     */
     public function __construct(
         UpcomingProductProvider $provider,
         CheckoutLineItemsManager $checkoutLineItemsManager,

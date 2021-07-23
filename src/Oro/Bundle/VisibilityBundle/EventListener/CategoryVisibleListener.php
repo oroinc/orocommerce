@@ -41,12 +41,6 @@ class CategoryVisibleListener
      */
     private $tokenStorage;
 
-    /**
-     * @param ManagerRegistry                     $registry
-     * @param CategoryVisibilityResolverInterface $categoryVisibilityResolver
-     * @param CustomerUserRelationsProvider        $customerUserRelationsProvider
-     * @param TokenStorageInterface               $tokenStorage
-     */
     public function __construct(
         ManagerRegistry $registry,
         CategoryVisibilityResolverInterface $categoryVisibilityResolver,
@@ -60,7 +54,6 @@ class CategoryVisibleListener
     }
 
     /**
-     * @param FilterControllerEvent $event
      * @throws NotFoundHttpException
      */
     public function onKernelController(FilterControllerEvent $event)
@@ -139,7 +132,6 @@ class CategoryVisibleListener
     }
 
     /**
-     * @param $request
      * @throws NotFoundHttpException
      */
     private function throwCategoryNotFound($request)

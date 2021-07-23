@@ -25,10 +25,6 @@ class ProductNormalizerEventListenerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param array $plainData
-     * @param array $context
-     * @param array $expectedPlainData
-     *
      * @dataProvider normalizerDataProvider
      */
     public function testOnNormalize(array $plainData = [], array $context = [], array $expectedPlainData = [])
@@ -66,10 +62,6 @@ class ProductNormalizerEventListenerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param array $plainData
-     * @param array $context
-     * @param array $expectedVariantFields
-     *
      * @dataProvider denormalizerDataProvider
      */
     public function testOnDenormalize(array $plainData = [], array $context = [], array $expectedVariantFields = [])

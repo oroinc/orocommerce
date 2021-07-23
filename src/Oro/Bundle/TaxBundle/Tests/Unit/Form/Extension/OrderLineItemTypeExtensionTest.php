@@ -100,7 +100,6 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit\Framework\TestCase
 
         $this->taxProvider->expects($this->never())->method('getTax');
 
-
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->once())->method('getData')->willReturn(null);
         $view = new FormView();

@@ -30,10 +30,6 @@ class TimeInTransitCacheProviderFactory implements TimeInTransitCacheProviderFac
      */
     private $lifetimeProvider;
 
-    /**
-     * @param CacheProvider             $cacheProvider
-     * @param LifetimeProviderInterface $lifetimeProvider
-     */
     public function __construct(CacheProvider $cacheProvider, LifetimeProviderInterface $lifetimeProvider)
     {
         $this->cacheProviderPrototype = $cacheProvider;
@@ -54,11 +50,6 @@ class TimeInTransitCacheProviderFactory implements TimeInTransitCacheProviderFac
         return $this->cacheProviderInstances[$settingsId];
     }
 
-    /**
-     * @param UPSSettings $settings
-     *
-     * @return TimeInTransitCacheProviderInterface
-     */
     private function createCacheProvider(UPSSettings $settings): TimeInTransitCacheProviderInterface
     {
         $cacheProvider = clone $this->cacheProviderPrototype;

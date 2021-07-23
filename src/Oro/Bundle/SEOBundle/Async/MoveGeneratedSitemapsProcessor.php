@@ -25,10 +25,6 @@ class MoveGeneratedSitemapsProcessor implements MessageProcessorInterface, Topic
     /** @var LoggerInterface */
     private $logger;
 
-    /**
-     * @param PublicSitemapFilesystemAdapter $fileSystemAdapter
-     * @param LoggerInterface                $logger
-     */
     public function __construct(
         PublicSitemapFilesystemAdapter $fileSystemAdapter,
         LoggerInterface $logger
@@ -69,11 +65,6 @@ class MoveGeneratedSitemapsProcessor implements MessageProcessorInterface, Topic
         return self::ACK;
     }
 
-    /**
-     * @param MessageInterface $message
-     *
-     * @return array|null
-     */
     private function resolveMessage(MessageInterface $message): ?array
     {
         try {
@@ -85,9 +76,6 @@ class MoveGeneratedSitemapsProcessor implements MessageProcessorInterface, Topic
         return null;
     }
 
-    /**
-     * @return OptionsResolver
-     */
     private function getMessageResolver(): OptionsResolver
     {
         $resolver = new OptionsResolver();

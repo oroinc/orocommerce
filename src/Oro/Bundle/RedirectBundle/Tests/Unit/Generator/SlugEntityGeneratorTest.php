@@ -73,8 +73,6 @@ class SlugEntityGeneratorTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider generationDataProvider
-     * @param SluggableInterface $entity
-     * @param SluggableInterface $expected
      */
     public function testGenerate(SluggableInterface $entity, SluggableInterface $expected)
     {

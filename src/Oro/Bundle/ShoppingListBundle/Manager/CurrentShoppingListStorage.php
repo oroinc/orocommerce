@@ -12,19 +12,11 @@ class CurrentShoppingListStorage
     /** @var Cache */
     private $cache;
 
-    /**
-     * @param Cache $cache
-     */
     public function __construct(Cache $cache)
     {
         $this->cache = $cache;
     }
 
-    /**
-     * @param int $customerUserId
-     *
-     * @return int|null
-     */
     public function get(int $customerUserId): ?int
     {
         $shoppingListId = $this->cache->fetch($customerUserId);
@@ -35,10 +27,6 @@ class CurrentShoppingListStorage
         return $shoppingListId;
     }
 
-    /**
-     * @param int      $customerUserId
-     * @param int|null $shoppingListId
-     */
     public function set(int $customerUserId, ?int $shoppingListId): void
     {
         if (null === $shoppingListId) {

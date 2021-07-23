@@ -12,9 +12,6 @@ abstract class AbstractUnitFormatter
     /** @var string */
     private $translationPrefix;
 
-    /**
-     * @param TranslatorInterface $translator
-     */
     public function __construct(TranslatorInterface $translator)
     {
         $this->translator = $translator;

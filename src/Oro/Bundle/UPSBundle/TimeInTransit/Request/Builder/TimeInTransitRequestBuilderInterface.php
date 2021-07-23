@@ -6,9 +6,6 @@ use Oro\Bundle\UPSBundle\Client\Request\UpsClientRequestInterface;
 
 interface TimeInTransitRequestBuilderInterface
 {
-    /**
-     * @return UpsClientRequestInterface
-     */
     public function createRequest(): UpsClientRequestInterface;
 
     /**

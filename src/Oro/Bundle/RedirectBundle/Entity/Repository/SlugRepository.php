@@ -233,11 +233,6 @@ class SlugRepository extends EntityRepository
         return $qb->execute()->fetch(\PDO::FETCH_ASSOC);
     }
 
-    /**
-     * @param string $routeName
-     *
-     * @return bool
-     */
     public function isSlugForRouteExists(string $routeName): bool
     {
         /** @var Connection $connection */
@@ -394,10 +389,6 @@ class SlugRepository extends EntityRepository
         }
     }
 
-    /**
-     * @param QueryBuilder $qb
-     * @param ScopeCriteria|null $scopeCriteria
-     */
     private function applyDirectUrlScopeCriteria(QueryBuilder $qb, ScopeCriteria $scopeCriteria = null)
     {
         if (null === $scopeCriteria) {

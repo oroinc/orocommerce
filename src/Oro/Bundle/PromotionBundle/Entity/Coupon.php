@@ -296,9 +296,6 @@ class Coupon implements
         return $this->codeUppercase;
     }
 
-    /**
-     * @return bool
-     */
     public function isEnabled(): bool
     {
         return $this->enabled;

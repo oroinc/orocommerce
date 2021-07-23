@@ -11,7 +11,6 @@ class WebsiteLocalizationConfigListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider dataProviderForListenerWillProcessOnlyLocalizationChanges
-     * @param ConfigUpdateEvent $eventWithLocalizationChange
      */
     public function testListenerWillProcessOnlyLocalizationChanges(ConfigUpdateEvent $eventWithLocalizationChange)
     {
@@ -33,7 +32,6 @@ class WebsiteLocalizationConfigListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider dataProviderForListenerWillNotProcessOnOtherConfigChanges
-     * @param ConfigUpdateEvent $eventWithConfigChange
      */
     public function testListenerWillNotProcessOnOtherConfigChanges(ConfigUpdateEvent $eventWithConfigChange)
     {

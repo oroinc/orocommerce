@@ -46,13 +46,6 @@ class CategoryCanonicalUrlDataProvider implements FeatureToggleableInterface
      */
     private $routingInformationProvider;
 
-    /**
-     * @param ConfigManager $configManager
-     * @param WebsiteUrlResolver $websiteSystemUrlResolver
-     * @param ContentNodeProvider $contentNodeProvider
-     * @param CanonicalUrlGenerator $canonicalUrlGenerator
-     * @param CategoryRoutingInformationProvider $routingInformationProvider
-     */
     public function __construct(
         ConfigManager $configManager,
         WebsiteUrlResolver $websiteSystemUrlResolver,
@@ -97,11 +90,6 @@ class CategoryCanonicalUrlDataProvider implements FeatureToggleableInterface
         return $this->getSystemUrl($routingInformation, $includeSubcategories);
     }
 
-    /**
-     * @param RouteData $routeData
-     * @param bool $includeSubcategories
-     * @return string
-     */
     private function getSystemUrl(RouteData $routeData, bool $includeSubcategories): string
     {
         $routeName = $routeData->getRoute();
@@ -116,9 +104,6 @@ class CategoryCanonicalUrlDataProvider implements FeatureToggleableInterface
         return $this->websiteSystemUrlResolver->getWebsitePath($routeName, $routeParameters);
     }
 
-    /**
-     * @return string
-     */
     private function getCanonicalUrlSecurityType(): string
     {
         $configKey = $this->getConfigKey(Configuration::CANONICAL_URL_SECURITY_TYPE);
@@ -126,10 +111,6 @@ class CategoryCanonicalUrlDataProvider implements FeatureToggleableInterface
         return $this->configManager->get($configKey);
     }
 
-    /**
-     * @param string $configField
-     * @return string
-     */
     private function getConfigKey(string $configField): string
     {
         return sprintf('%s.%s', OroRedirectExtension::ALIAS, $configField);

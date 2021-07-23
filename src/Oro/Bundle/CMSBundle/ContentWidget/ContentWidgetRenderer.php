@@ -28,11 +28,6 @@ class ContentWidgetRenderer implements LoggerAwareInterface
     /** @var ContentWidgetTypeRegistry */
     private $contentWidgetTypeRegistry;
 
-    /**
-     * @param ManagerRegistry $doctrine
-     * @param LayoutManager $layoutManager
-     * @param ContentWidgetTypeRegistry $contentWidgetTypeRegistry
-     */
     public function __construct(
         ManagerRegistry $doctrine,
         LayoutManager $layoutManager,
@@ -44,20 +39,11 @@ class ContentWidgetRenderer implements LoggerAwareInterface
         $this->logger = new NullLogger();
     }
 
-    /**
-     * @param LoggerInterface $logger
-     */
     public function setLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
     }
 
-    /**
-     * @param string $widgetName
-     * @param Organization|null $organization
-     *
-     * @return string
-     */
     public function render(string $widgetName, Organization $organization = null): string
     {
         $contentWidget = $this->getContentWidget($widgetName, $organization);
@@ -72,11 +58,6 @@ class ContentWidgetRenderer implements LoggerAwareInterface
         return $this->renderWidget($contentWidget);
     }
 
-    /**
-     * @param string $widgetName
-     * @param Organization|null $organization
-     * @return ContentWidget|null
-     */
     protected function getContentWidget(string $widgetName, Organization $organization = null): ?ContentWidget
     {
         return $this->doctrine->getManagerForClass(ContentWidget::class)
@@ -84,11 +65,6 @@ class ContentWidgetRenderer implements LoggerAwareInterface
             ->findOneBy(['name' => $widgetName]);
     }
 
-    /**
-     * @param ContentWidget $contentWidget
-     *
-     * @return string
-     */
     private function renderWidget(ContentWidget $contentWidget): string
     {
         $type = $this->contentWidgetTypeRegistry->getWidgetType($contentWidget->getWidgetType());

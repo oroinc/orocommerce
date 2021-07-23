@@ -15,9 +15,6 @@ class BuiltInTaxProvider implements TaxProviderInterface
     /** @var TaxManager $taxManager */
     private $taxManager;
 
-    /**
-     * @param TaxManager $taxManager
-     */
     public function __construct(TaxManager $taxManager)
     {
         $this->taxManager = $taxManager;

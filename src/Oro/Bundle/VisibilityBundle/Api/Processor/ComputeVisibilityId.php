@@ -15,9 +15,6 @@ class ComputeVisibilityId implements ProcessorInterface
     /** @var VisibilityIdHelper */
     private $visibilityIdHelper;
 
-    /**
-     * @param VisibilityIdHelper $visibilityIdHelper
-     */
     public function __construct(VisibilityIdHelper $visibilityIdHelper)
     {
         $this->visibilityIdHelper = $visibilityIdHelper;

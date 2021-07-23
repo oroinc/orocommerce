@@ -78,13 +78,6 @@ class CheckoutLineItemsManager
         );
     }
 
-    /**
-     * @param CheckoutInterface $checkout
-     * @param bool $disablePriceFilter
-     * @param string $configVisibilityPath
-     *
-     * @return Collection
-     */
     protected function getOrderLineItems(
         CheckoutInterface $checkout,
         bool $disablePriceFilter = false,

@@ -50,7 +50,6 @@ class ProductNormalizerEventListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->productUpcomingProvider->expects($this->never())->method('getAvailabilityDate');
 
-
         $this->listener->normalize($event);
 
         $this->assertEquals([], $event->getPlainData());

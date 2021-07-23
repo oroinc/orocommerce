@@ -22,11 +22,6 @@ class ComputeWYSIWYGAttributes implements ProcessorInterface
     /** @var string */
     private $attributesFieldName;
 
-    /**
-     * @param WYSIWYGFieldsProvider $wysiwygFieldsProvider
-     * @param WYSIWYGValueRenderer  $wysiwygValueRenderer
-     * @param string                $attributesFieldName
-     */
     public function __construct(
         WYSIWYGFieldsProvider $wysiwygFieldsProvider,
         WYSIWYGValueRenderer $wysiwygValueRenderer,
@@ -77,11 +72,6 @@ class ComputeWYSIWYGAttributes implements ProcessorInterface
         $context->setData($data);
     }
 
-    /**
-     * @param CustomizeLoadedDataContext $context
-     *
-     * @return array|null
-     */
     private function getRenderedWysiwygFields(CustomizeLoadedDataContext $context): ?array
     {
         $config = $context->getConfig();
@@ -91,12 +81,6 @@ class ComputeWYSIWYGAttributes implements ProcessorInterface
             : null;
     }
 
-    /**
-     * @param CustomizeLoadedDataContext $context
-     * @param string                     $propertyPath
-     *
-     * @return string
-     */
     private function getWysiwygFieldName(CustomizeLoadedDataContext $context, string $propertyPath): string
     {
         $fieldName = $context->getResultFieldName($propertyPath);
@@ -107,14 +91,6 @@ class ComputeWYSIWYGAttributes implements ProcessorInterface
         return $fieldName;
     }
 
-    /**
-     * @param CustomizeLoadedDataContext $context
-     * @param array                      $data
-     * @param string                     $valuePropertyName
-     * @param string                     $stylePropertyName
-     *
-     * @return string|null
-     */
     private function computeWysiwygAttributeValue(
         CustomizeLoadedDataContext $context,
         array $data,

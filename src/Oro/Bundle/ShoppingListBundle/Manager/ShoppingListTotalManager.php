@@ -36,11 +36,6 @@ class ShoppingListTotalManager
      */
     protected $em;
 
-    /**
-     * @param ManagerRegistry $managerRegistry
-     * @param LineItemNotPricedSubtotalProvider $lineItemNotPricedSubtotalProvider
-     * @param UserCurrencyManager $currencyManager
-     */
     public function __construct(
         ManagerRegistry $managerRegistry,
         LineItemNotPricedSubtotalProvider $lineItemNotPricedSubtotalProvider,
@@ -105,13 +100,6 @@ class ShoppingListTotalManager
         $this->getTotalsForCurrencies($shoppingList, $enabledCurrencies, true, $doFlush);
     }
 
-    /**
-     * @param ShoppingList $shoppingList
-     * @param string $currency
-     * @param bool $doFlush
-     *
-     * @return ShoppingListTotal
-     */
     public function getShoppingListTotalForCurrency(
         ShoppingList $shoppingList,
         string $currency,
@@ -120,14 +108,6 @@ class ShoppingListTotalManager
         return $this->getTotalsForCurrencies($shoppingList, [$currency], false, $doFlush)[$currency];
     }
 
-    /**
-     * @param ShoppingList $shoppingList
-     * @param array $currencies
-     * @param bool $recalculate
-     * @param bool $doFlush
-     *
-     * @return array
-     */
     private function getTotalsForCurrencies(
         ShoppingList $shoppingList,
         array $currencies,

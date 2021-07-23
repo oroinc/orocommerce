@@ -143,10 +143,7 @@ class ProductWithPricesSearchHandlerTest extends FrontendWebTestCase
 
         return $this->getReference($localizationCode);
     }
-    /**
-     * @param array $currentPricesToFind
-     * @param array $item
-     */
+
     private function findPriceInItem(array $currentPricesToFind, array $item)
     {
         foreach ($currentPricesToFind as $priceToFind) {

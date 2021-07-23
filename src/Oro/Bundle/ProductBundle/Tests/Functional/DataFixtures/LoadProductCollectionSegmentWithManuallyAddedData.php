@@ -124,14 +124,6 @@ class LoadProductCollectionSegmentWithManuallyAddedData extends AbstractFixture 
         $manager->flush();
     }
 
-    /**
-     * @param SegmentType $type
-     * @param string $name
-     * @param string $definition
-     * @param BusinessUnit $owner
-     * @param Organization $organization
-     * @return Segment
-     */
     private function createSegment(
         SegmentType $type,
         string $name,

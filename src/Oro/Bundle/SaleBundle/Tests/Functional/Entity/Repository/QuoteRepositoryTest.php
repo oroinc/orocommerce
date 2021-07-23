@@ -90,9 +90,6 @@ class QuoteRepositoryTest extends WebTestCase
         $this->assertQuoteFetchedInOneQuery($loadedQuote);
     }
 
-    /**
-     * @param Quote $loadedQuote
-     */
     private function assertQuoteFetchedInOneQuery(Quote $loadedQuote): void
     {
         // iterate collections to run additional queries if not fetched at once

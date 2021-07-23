@@ -15,14 +15,12 @@ class OroShoppingListBundle implements Migration
     {
         $this->createOrob2BShoppingListTotalTable($schema);
         $this->addOrob2BShoppingListTotalForeignKeys($schema);
-        
+
         $this->updateShoppingListTable($schema);
     }
 
     /**
      * Create orob2b_shopping_list_total table
-     *
-     * @param Schema $schema
      */
     protected function createOrob2BShoppingListTotalTable(Schema $schema)
     {
@@ -42,8 +40,6 @@ class OroShoppingListBundle implements Migration
 
     /**
      * Add orob2b_shopping_list_total foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOrob2BShoppingListTotalForeignKeys(Schema $schema)
     {
@@ -55,10 +51,7 @@ class OroShoppingListBundle implements Migration
             ['onDelete' => 'CASCADE']
         );
     }
-    
-    /**
-     * @param Schema $schema
-     */
+
     protected function updateShoppingListTable(Schema $schema)
     {
         $table = $schema->getTable('orob2b_shopping_list');

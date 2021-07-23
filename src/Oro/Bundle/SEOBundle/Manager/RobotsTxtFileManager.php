@@ -22,11 +22,6 @@ class RobotsTxtFileManager
     /** @var LoggerInterface */
     private $logger;
 
-    /**
-     * @param FileManager           $fileManager
-     * @param CanonicalUrlGenerator $urlGenerator
-     * @param LoggerInterface       $logger
-     */
     public function __construct(
         FileManager $fileManager,
         CanonicalUrlGenerator $urlGenerator,
@@ -37,21 +32,12 @@ class RobotsTxtFileManager
         $this->logger = $logger;
     }
 
-    /**
-     * @param WebsiteInterface $website
-     *
-     * @return bool
-     */
     public function isContentFileExist(WebsiteInterface $website): bool
     {
         return $this->fileManager->hasFile($this->getFileNameByWebsite($website));
     }
 
     /**
-     * @param WebsiteInterface $website
-     *
-     * @return string|null
-     *
      * @throws RobotsTxtFileManagerException
      */
     public function getContent(WebsiteInterface $website): ?string
@@ -71,9 +57,6 @@ class RobotsTxtFileManager
     /**
      * Dumps content of robots.txt file to robots.{website_host}.txt file.
      *
-     * @param string           $content
-     * @param WebsiteInterface $website
-     *
      * @throws RobotsTxtFileManagerException
      */
     public function dumpContent(string $content, WebsiteInterface $website): void
@@ -81,21 +64,11 @@ class RobotsTxtFileManager
         $this->dumpToFile($this->getFileNameByWebsite($website), $content);
     }
 
-    /**
-     * @param WebsiteInterface $website
-     *
-     * @return string
-     */
     public function getFileNameByWebsite(WebsiteInterface $website): string
     {
         return 'robots.' . $this->getWebsiteHost($website) . '.txt';
     }
 
-    /**
-     * @param WebsiteInterface $website
-     *
-     * @return string
-     */
     private function getWebsiteHost(WebsiteInterface $website): string
     {
         $websiteUrl = $this->urlGenerator->getCanonicalDomainUrl($website);
@@ -105,9 +78,6 @@ class RobotsTxtFileManager
     }
 
     /**
-     * @param string $filePath
-     * @param string $content
-     *
      * @throws RobotsTxtFileManagerException
      */
     private function dumpToFile(string $filePath, string $content): void

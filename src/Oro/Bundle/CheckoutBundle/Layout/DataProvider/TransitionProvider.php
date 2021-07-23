@@ -29,9 +29,6 @@ class TransitionProvider implements TransitionProviderInterface
      */
     private $workflowManager;
 
-    /**
-     * @param WorkflowManager $workflowManager
-     */
     public function __construct(WorkflowManager $workflowManager)
     {
         $this->workflowManager = $workflowManager;

@@ -20,9 +20,6 @@ class ConsentAcceptanceType extends AbstractType
      */
     private $transformer;
 
-    /**
-     * @param CustomerConsentsTransformer $transformer
-     */
     public function __construct(CustomerConsentsTransformer $transformer)
     {
         $this->transformer = $transformer;

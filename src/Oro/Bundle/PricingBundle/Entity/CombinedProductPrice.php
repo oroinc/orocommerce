@@ -79,9 +79,6 @@ class CombinedProductPrice extends BaseProductPrice
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isMergeAllowed(): bool
     {
         return $this->mergeAllowed;

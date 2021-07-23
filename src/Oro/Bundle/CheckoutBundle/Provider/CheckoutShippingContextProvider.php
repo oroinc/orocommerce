@@ -17,19 +17,11 @@ class CheckoutShippingContextProvider
     /** @var CheckoutShippingContextFactory */
     private $checkoutShippingContextFactory;
 
-    /**
-     * @param CheckoutShippingContextFactory $checkoutShippingContextFactory
-     */
     public function __construct(CheckoutShippingContextFactory $checkoutShippingContextFactory)
     {
         $this->checkoutShippingContextFactory = $checkoutShippingContextFactory;
     }
 
-    /**
-     * @param Checkout $entity
-     *
-     * @return ShippingContextInterface|null
-     */
     public function getContext(Checkout $entity): ?ShippingContextInterface
     {
         return $this->getMemoryCacheProvider()->get(

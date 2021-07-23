@@ -36,11 +36,6 @@ class CombinedPriceListRelationTriggerHandler implements PriceListRelationTrigge
     /** @var ConfigManager */
     private $configManager;
 
-    /**
-     * @param MessageProducerInterface $messageProducer
-     * @param ManagerRegistry          $doctrine
-     * @param ConfigManager            $configManager
-     */
     public function __construct(
         MessageProducerInterface $messageProducer,
         ManagerRegistry $doctrine,
@@ -61,9 +56,6 @@ class CombinedPriceListRelationTriggerHandler implements PriceListRelationTrigge
         $this->sendMessage(['force' => true]);
     }
 
-    /**
-     * @param Website $website
-     */
     public function handleWebsiteChange(Website $website): void
     {
         if (null === $website->getId()) {
@@ -75,10 +67,6 @@ class CombinedPriceListRelationTriggerHandler implements PriceListRelationTrigge
         }
     }
 
-    /**
-     * @param CustomerGroup $customerGroup
-     * @param Website       $website
-     */
     public function handleCustomerGroupChange(CustomerGroup $customerGroup, Website $website): void
     {
         if (null === $customerGroup->getId()) {
@@ -96,9 +84,6 @@ class CombinedPriceListRelationTriggerHandler implements PriceListRelationTrigge
         }
     }
 
-    /**
-     * @param CustomerGroup $customerGroup
-     */
     public function handleCustomerGroupRemove(CustomerGroup $customerGroup): void
     {
         $customerGroupId = $customerGroup->getId();
@@ -110,10 +95,6 @@ class CombinedPriceListRelationTriggerHandler implements PriceListRelationTrigge
         }
     }
 
-    /**
-     * @param Customer $customer
-     * @param Website  $website
-     */
     public function handleCustomerChange(Customer $customer, Website $website): void
     {
         if (null === $customer->getId()) {
@@ -136,9 +117,6 @@ class CombinedPriceListRelationTriggerHandler implements PriceListRelationTrigge
         }
     }
 
-    /**
-     * @param PriceList $priceList
-     */
     public function handlePriceListStatusChange(PriceList $priceList): void
     {
         if ($this->isDefaultPriceList($priceList->getId())) {
@@ -159,9 +137,6 @@ class CombinedPriceListRelationTriggerHandler implements PriceListRelationTrigge
         }
     }
 
-    /**
-     * @param array $message
-     */
     private function sendMessage(array $message): void
     {
         $this->messageProducer->send(
@@ -170,19 +145,11 @@ class CombinedPriceListRelationTriggerHandler implements PriceListRelationTrigge
         );
     }
 
-    /**
-     * @param callable $callback
-     */
     private function sendMessageWithCallback(callable $callback): void
     {
         $this->messageProducer->send(Topics::REBUILD_COMBINED_PRICE_LISTS, new CallbackMessageBuilder($callback));
     }
 
-    /**
-     * @param array $message
-     *
-     * @return array
-     */
     private function normalizeMessage(array $message): array
     {
         foreach (self::ENTITIES as $propertyName) {
@@ -198,11 +165,6 @@ class CombinedPriceListRelationTriggerHandler implements PriceListRelationTrigge
         return $message;
     }
 
-    /**
-     * @param int $priceListId
-     *
-     * @return bool
-     */
     private function isDefaultPriceList(int $priceListId): bool
     {
         $defaultPriceListsConfig = $this->configManager->get('oro_pricing.default_price_lists');

@@ -144,11 +144,6 @@ class FedexIntegrationSettings extends Transport
         return $this->fedexTestMode;
     }
 
-    /**
-     * @param bool $testMode
-     *
-     * @return self
-     */
     public function setFedexTestMode(bool $testMode): self
     {
         $this->fedexTestMode = $testMode;
@@ -164,11 +159,6 @@ class FedexIntegrationSettings extends Transport
         return $this->key;
     }
 
-    /**
-     * @param string $key
-     *
-     * @return self
-     */
     public function setKey(string $key): self
     {
         $this->key = $key;
@@ -184,11 +174,6 @@ class FedexIntegrationSettings extends Transport
         return $this->password;
     }
 
-    /**
-     * @param string $password
-     *
-     * @return self
-     */
     public function setPassword(string $password): self
     {
         $this->password = $password;
@@ -204,11 +189,6 @@ class FedexIntegrationSettings extends Transport
         return $this->accountNumber;
     }
 
-    /**
-     * @param string $accountNumber
-     *
-     * @return self
-     */
     public function setAccountNumber(string $accountNumber): self
     {
         $this->accountNumber = $accountNumber;
@@ -224,11 +204,6 @@ class FedexIntegrationSettings extends Transport
         return $this->meterNumber;
     }
 
-    /**
-     * @param string $meterNumber
-     *
-     * @return self
-     */
     public function setMeterNumber(string $meterNumber): self
     {
         $this->meterNumber = $meterNumber;
@@ -244,11 +219,6 @@ class FedexIntegrationSettings extends Transport
         return $this->pickupType;
     }
 
-    /**
-     * @param string $pickupType
-     *
-     * @return self
-     */
     public function setPickupType(string $pickupType): self
     {
         $this->pickupType = $pickupType;
@@ -264,11 +234,6 @@ class FedexIntegrationSettings extends Transport
         return $this->unitOfWeight;
     }
 
-    /**
-     * @param string $unitOfWeight
-     *
-     * @return self
-     */
     public function setUnitOfWeight(string $unitOfWeight): self
     {
         $this->unitOfWeight = $unitOfWeight;
@@ -284,11 +249,6 @@ class FedexIntegrationSettings extends Transport
         return $this->labels;
     }
 
-    /**
-     * @param LocalizedFallbackValue $label
-     *
-     * @return self
-     */
     public function addLabel(LocalizedFallbackValue $label): self
     {
         if (!$this->labels->contains($label)) {
@@ -298,11 +258,6 @@ class FedexIntegrationSettings extends Transport
         return $this;
     }
 
-    /**
-     * @param LocalizedFallbackValue $label
-     *
-     * @return self
-     */
     public function removeLabel(LocalizedFallbackValue $label): self
     {
         if ($this->labels->contains($label)) {
@@ -320,11 +275,6 @@ class FedexIntegrationSettings extends Transport
         return $this->shippingServices;
     }
 
-    /**
-     * @param FedexShippingService $service
-     *
-     * @return self
-     */
     public function addShippingService(FedexShippingService $service): self
     {
         if (!$this->shippingServices->contains($service)) {
@@ -334,11 +284,6 @@ class FedexIntegrationSettings extends Transport
         return $this;
     }
 
-    /**
-     * @param FedexShippingService $service
-     *
-     * @return self
-     */
     public function removeShippingService(FedexShippingService $service): self
     {
         if ($this->shippingServices->contains($service)) {
@@ -356,9 +301,6 @@ class FedexIntegrationSettings extends Transport
         return new ParameterBag();
     }
 
-    /**
-     * @return string
-     */
     public function getDimensionsUnit(): string
     {
         if ($this->getUnitOfWeight() === FedexIntegrationSettings::UNIT_OF_WEIGHT_LB) {
@@ -368,11 +310,6 @@ class FedexIntegrationSettings extends Transport
         return self::DIMENSION_CM;
     }
 
-    /**
-     * @param \DateTime|null $invalidateCacheAt
-     *
-     * @return self
-     */
     public function setInvalidateCacheAt(\DateTime $invalidateCacheAt = null): self
     {
         $this->invalidateCacheAt = $invalidateCacheAt;
@@ -388,18 +325,11 @@ class FedexIntegrationSettings extends Transport
         return $this->invalidateCacheAt;
     }
 
-    /**
-     * @return bool
-     */
     public function isIgnorePackageDimensions(): bool
     {
         return $this->ignorePackageDimensions;
     }
 
-    /**
-     * @param bool $ignorePackageDimensions
-     * @return self
-     */
     public function setIgnorePackageDimensions(bool $ignorePackageDimensions): self
     {
         $this->ignorePackageDimensions = $ignorePackageDimensions;

@@ -9,8 +9,6 @@ class TaxBaseExclusionTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider propertiesDataProvider
-     * @param array $data
-     * @param array $replaceWith
      */
     public function testProperties(array $data, array $replaceWith)
     {

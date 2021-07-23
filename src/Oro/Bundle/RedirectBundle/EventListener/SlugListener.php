@@ -26,19 +26,12 @@ class SlugListener implements OptionalListenerInterface
      */
     protected $messageProducer;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param MessageProducerInterface $messageProducer
-     */
     public function __construct(ManagerRegistry $registry, MessageProducerInterface $messageProducer)
     {
         $this->registry = $registry;
         $this->messageProducer = $messageProducer;
     }
 
-    /**
-     * @param OnFlushEventArgs $event
-     */
     public function onFlush(OnFlushEventArgs $event)
     {
         if (!$this->enabled) {
@@ -67,9 +60,6 @@ class SlugListener implements OptionalListenerInterface
         return $updatedSlugs;
     }
 
-    /**
-     * @param Slug $slug
-     */
     protected function synchronizeRedirectScopes(Slug $slug)
     {
         $this->messageProducer->send(

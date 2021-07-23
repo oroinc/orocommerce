@@ -296,8 +296,6 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
 
     /**
      * @depends testUpdate
-     *
-     * @param PaymentMethodsConfigsRule $paymentRule
      */
     public function testCancel(PaymentMethodsConfigsRule $paymentRule)
     {
@@ -452,7 +450,6 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
 
         static::assertJsonResponseStatusCodeEquals($this->client->getResponse(), 403);
     }
-
 
     public function testDeleteButtonNotVisible()
     {

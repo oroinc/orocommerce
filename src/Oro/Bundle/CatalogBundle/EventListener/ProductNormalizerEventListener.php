@@ -6,9 +6,6 @@ use Oro\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent;
 
 class ProductNormalizerEventListener extends AbstractProductImportEventListener
 {
-    /**
-     * @param ProductNormalizerEvent $event
-     */
     public function onNormalize(ProductNormalizerEvent $event)
     {
         $context = $event->getContext();

@@ -159,9 +159,6 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
         return new ScrollData($data);
     }
 
-    /**
-     * @param ScrollData $scrollData
-     */
     private function assertScrollData(ScrollData $scrollData)
     {
         $data = $scrollData->getData();

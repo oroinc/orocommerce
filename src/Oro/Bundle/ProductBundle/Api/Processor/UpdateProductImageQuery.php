@@ -19,9 +19,6 @@ class UpdateProductImageQuery implements ProcessorInterface
     /** @var QueryModifierRegistry */
     private $queryModifier;
 
-    /**
-     * @param QueryModifierRegistry $queryModifier
-     */
     public function __construct(QueryModifierRegistry $queryModifier)
     {
         $this->queryModifier = $queryModifier;

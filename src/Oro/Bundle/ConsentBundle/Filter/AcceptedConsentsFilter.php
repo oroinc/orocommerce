@@ -17,11 +17,6 @@ class AcceptedConsentsFilter extends DictionaryFilter
     /** @var ManagerRegistry */
     private $doctrine;
 
-    /**
-     * @param FormFactoryInterface $factory
-     * @param FilterUtility        $util
-     * @param ManagerRegistry      $doctrine
-     */
     public function __construct(
         FormFactoryInterface $factory,
         FilterUtility $util,

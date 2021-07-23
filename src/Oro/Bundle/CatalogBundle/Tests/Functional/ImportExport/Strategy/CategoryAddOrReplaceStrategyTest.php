@@ -83,9 +83,6 @@ class CategoryAddOrReplaceStrategyTest extends WebTestCase
 
     /**
      * @dataProvider parentCategoryDataProvider
-     *
-     * @param string|null $parentCategory
-     * @param string|null $expectedParentCategory
      */
     public function testProcessWhenParentCategoryLoadedByPath(
         ?string $parentCategory,
@@ -102,9 +99,6 @@ class CategoryAddOrReplaceStrategyTest extends WebTestCase
         );
     }
 
-    /**
-     * @return array
-     */
     public function parentCategoryDataProvider(): array
     {
         return [
@@ -250,11 +244,6 @@ class CategoryAddOrReplaceStrategyTest extends WebTestCase
         );
     }
 
-    /**
-     * @param string $title
-     *
-     * @return Category
-     */
     private function createCategoryWithTitle(string $title): Category
     {
         return (new Category())->addTitle(
@@ -262,9 +251,6 @@ class CategoryAddOrReplaceStrategyTest extends WebTestCase
         );
     }
 
-    /**
-     * @return CategoryRepository
-     */
     private function getCategoryRepository(): CategoryRepository
     {
         /** @var CategoryRepository $categoryRepo */

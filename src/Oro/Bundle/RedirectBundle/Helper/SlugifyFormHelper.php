@@ -6,19 +6,11 @@ use Symfony\Component\Form\FormView;
 
 class SlugifyFormHelper
 {
-    /**
-     * @param FormView $view
-     * @param array $options
-     */
     public function addSlugifyOptionsLocalized(FormView $view, array $options)
     {
         $this->addSlugifyComponentOptions($view, $options, '[name^="%s[values]"]');
     }
 
-    /**
-     * @param FormView $view
-     * @param array $options
-     */
     public function addSlugifyOptions(FormView $view, array $options)
     {
         $this->addSlugifyComponentOptions($view, $options, '[name^="%s"]');

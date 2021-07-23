@@ -35,9 +35,6 @@ class MatrixGridOrderFormProvider extends AbstractFormProvider
         $this->matrixOrderManager = $matrixOrderManager;
     }
 
-    /**
-     * @param FormRenderer $twigRenderer
-     */
     public function setTwigRenderer(FormRenderer $twigRenderer)
     {
         $this->twigRenderer = $twigRenderer;

@@ -51,9 +51,6 @@ class ProductNormalizerEvent extends Event
         return $this->plainData;
     }
 
-    /**
-     * @param array $plainData
-     */
     public function setPlainData(array $plainData)
     {
         $this->plainData = $plainData;

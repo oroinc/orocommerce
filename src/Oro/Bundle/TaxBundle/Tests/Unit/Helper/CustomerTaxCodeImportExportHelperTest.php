@@ -81,8 +81,6 @@ class CustomerTaxCodeImportExportHelperTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider denormalizeCustomerTaxCodeDataProvider
-     * @param CustomerTaxCode|null $expectedTaxCode
-     * @param array $data
      */
     public function testDenormalizeCustomerTaxCode(CustomerTaxCode $expectedTaxCode = null, array $data)
     {
@@ -94,7 +92,6 @@ class CustomerTaxCodeImportExportHelperTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider testDenormalizeCustomerTaxCodeShouldThrowExceptionDataProvider
-     * @param array $data
      */
     public function testDenormalizeCustomerTaxCodeShouldThrowException(array $data)
     {

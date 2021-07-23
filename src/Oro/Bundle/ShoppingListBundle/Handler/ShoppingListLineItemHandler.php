@@ -59,16 +59,6 @@ class ShoppingListLineItemHandler
     /** @var AclHelper */
     private $aclHelper;
 
-    /**
-     * @param ManagerRegistry $managerRegistry
-     * @param ShoppingListManager $shoppingListManager
-     * @param CurrentShoppingListManager $currentShoppingListManager
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param TokenAccessorInterface $tokenAccessor
-     * @param FeatureChecker $featureChecker
-     * @param ProductManager $productManager
-     * @param AclHelper $aclHelper
-     */
     public function __construct(
         ManagerRegistry $managerRegistry,
         ShoppingListManager $shoppingListManager,
@@ -202,10 +192,6 @@ class ShoppingListLineItemHandler
         return $lineItem;
     }
 
-    /**
-     * @param LineItem $lineItem
-     * @param Form $form
-     */
     public function processLineItem(LineItem $lineItem, Form $form)
     {
         $shoppingList = $form->get('lineItem')->get('shoppingList')->getData();

@@ -42,10 +42,6 @@ class QuantityToOrderConditionListener
     /** @var array */
     private $localCache = [];
 
-    /**
-     * @param QuantityToOrderValidatorService $validatorService
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(QuantityToOrderValidatorService $validatorService, DoctrineHelper $doctrineHelper)
     {
         $this->validatorService = $validatorService;
@@ -53,7 +49,6 @@ class QuantityToOrderConditionListener
     }
 
     /**
-     * @param CheckoutValidateEvent $event
      * @throws InvalidTransitionException
      */
     public function onCheckoutValidate(CheckoutValidateEvent $event)
@@ -70,9 +65,6 @@ class QuantityToOrderConditionListener
         }
     }
 
-    /**
-     * @param ExtendableConditionEvent $event
-     */
     public function onStartCheckoutConditionCheck(ExtendableConditionEvent $event)
     {
         /** @var ActionData $context */
@@ -90,8 +82,6 @@ class QuantityToOrderConditionListener
 
     /**
      * Event listener to check if shopping list actions can be run (ex. used to show/hide shopping list trigger buttons)
-     *
-     * @param ExtendableConditionEvent $event
      */
     public function onShoppingListStart(ExtendableConditionEvent $event)
     {
@@ -110,9 +100,6 @@ class QuantityToOrderConditionListener
         }
     }
 
-    /**
-     * @param ExtendableConditionEvent $event
-     */
     public function onCheckoutConditionCheck(ExtendableConditionEvent $event)
     {
         $context = $event->getContext();
@@ -127,9 +114,6 @@ class QuantityToOrderConditionListener
         }
     }
 
-    /**
-     * @param QuickAddRowCollectionValidateEvent $event
-     */
     public function onQuickAddRowCollectionValidate(QuickAddRowCollectionValidateEvent $event)
     {
         $collection = $event->getQuickAddRowCollection();
@@ -184,11 +168,6 @@ class QuantityToOrderConditionListener
         return ($checkout instanceof Checkout && !$checkout->getSourceEntity() instanceof QuoteDemand);
     }
 
-    /**
-     * @param ProductLineItemsHolderInterface $holder
-     * @param null|CheckoutSourceEntityInterface $sourceEntity
-     * @return bool
-     */
     private function isLineItemListValid(
         ProductLineItemsHolderInterface $holder,
         ?CheckoutSourceEntityInterface $sourceEntity

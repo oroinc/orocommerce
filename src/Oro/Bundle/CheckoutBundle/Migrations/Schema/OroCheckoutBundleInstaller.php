@@ -58,8 +58,6 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
 
     /**
      * Create oro_checkout_source table
-     *
-     * @param Schema $schema
      */
     protected function createOroCheckoutSourceTable(Schema $schema)
     {
@@ -71,8 +69,6 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
 
     /**
      * Create oro_checkout table
-     *
-     * @param Schema $schema
      */
     protected function createOroCheckoutTable(Schema $schema)
     {
@@ -118,8 +114,6 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
 
     /**
      * Add oro_checkout foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroCheckoutForeignKeys(Schema $schema)
     {
@@ -180,9 +174,6 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function createCheckoutWorkflowStateTable(Schema $schema)
     {
         $table = $schema->createTable('oro_checkout_workflow_state');
@@ -199,8 +190,6 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
 
     /**
      * Create oro_checkout_subtotal table
-     *
-     * @param Schema $schema
      */
     protected function createOroCheckoutSubtotalTable(Schema $schema)
     {
@@ -223,8 +212,6 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
 
     /**
      * Create oro_checkout_line_item table
-     *
-     * @param Schema $schema
      */
     protected function createOroCheckoutLineItemTable(Schema $schema)
     {
@@ -253,8 +240,6 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
 
     /**
      * Add oro_checkout_line_item foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroCheckoutLineItemForeignKeys(Schema $schema)
     {
@@ -287,8 +272,6 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
 
     /**
      * Add oro_checkout_subtotal foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroCheckoutSubtotalForeignKeys(Schema $schema)
     {
@@ -313,9 +296,6 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addOrderCheckoutSource(Schema $schema)
     {
         if (class_exists('Oro\Bundle\OrderBundle\Entity\Order')) {

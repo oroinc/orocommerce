@@ -37,9 +37,6 @@ class AddSeoToWebCatalog implements Migration, ExtendExtensionAwareInterface
         }
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function addMetaInformationToWebCatalogNode(Schema $schema)
     {
         $this->addMetaInformationField($schema, self::WEB_CATALOG_NODE_TABLE_NAME, 'metaDescriptions');

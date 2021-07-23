@@ -45,9 +45,6 @@ class AddUpcomingOptions implements Migration, ExtendExtensionAwareInterface
         $this->addAvailabilityDateToCategory($schema);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addUpcomingFieldToProduct(Schema $schema)
     {
         $this->addFallbackRelation(
@@ -65,9 +62,6 @@ class AddUpcomingOptions implements Migration, ExtendExtensionAwareInterface
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addUpcomingFieldToCategory(Schema $schema)
     {
         $this->addFallbackRelation(
@@ -85,9 +79,6 @@ class AddUpcomingOptions implements Migration, ExtendExtensionAwareInterface
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addAvailabilityDateToProduct(Schema $schema)
     {
         $table = $schema->getTable(OroProductBundleInstaller::PRODUCT_TABLE_NAME);
@@ -114,9 +105,6 @@ class AddUpcomingOptions implements Migration, ExtendExtensionAwareInterface
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addAvailabilityDateToCategory(Schema $schema)
     {
         $table = $schema->getTable(OroCatalogBundleInstaller::ORO_CATALOG_CATEGORY_TABLE_NAME);

@@ -101,12 +101,6 @@ class LoadProductAttributesData extends AbstractFixture implements
         return $result;
     }
 
-    /**
-     * @param string $label
-     * @param bool   $visible
-     *
-     * @return AttributeGroup
-     */
     private function createAttributeGroup(string $label, bool $visible = true): AttributeGroup
     {
         $group = new AttributeGroup();

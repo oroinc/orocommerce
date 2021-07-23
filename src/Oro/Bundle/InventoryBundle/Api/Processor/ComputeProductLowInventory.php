@@ -20,10 +20,6 @@ class ComputeProductLowInventory implements ProcessorInterface
     /** @var LowInventoryProvider */
     private $lowInventoryProvider;
 
-    /**
-     * @param DoctrineHelper       $doctrineHelper
-     * @param LowInventoryProvider $lowInventoryProvider
-     */
     public function __construct(DoctrineHelper $doctrineHelper, LowInventoryProvider $lowInventoryProvider)
     {
         $this->doctrineHelper = $doctrineHelper;

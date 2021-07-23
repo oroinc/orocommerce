@@ -46,10 +46,6 @@ class SearchableInformationProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param SearchAttributeTypeInterface $attributeType
-     * @param FieldConfigModel             $attribute
-     * @param string                       $expectedFieldName
-     *
      * @dataProvider getSearchableFieldNameDataProvider
      */
     public function testGetSearchableFieldName(
@@ -62,9 +58,6 @@ class SearchableInformationProviderTest extends \PHPUnit\Framework\TestCase
         self::assertEquals($expectedFieldName, $boostedFieldName);
     }
 
-    /**
-     * @return array
-     */
     public function getSearchableFieldNameDataProvider(): array
     {
         return [

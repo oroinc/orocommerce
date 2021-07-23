@@ -50,11 +50,6 @@ class CombinedPriceListProvider
      */
     protected $cpls = [];
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param StrategyRegister $strategyRegister
-     */
     public function __construct(
         ManagerRegistry $registry,
         EventDispatcherInterface $eventDispatcher,
@@ -118,10 +113,6 @@ class CombinedPriceListProvider
         return $this->getDefaultCombinedPriceListIdentifier($priceListsRelations);
     }
 
-    /**
-     * @param array $priceListsRelations
-     * @return string
-     */
     private function getDefaultCombinedPriceListIdentifier(array $priceListsRelations): string
     {
         $key = [];

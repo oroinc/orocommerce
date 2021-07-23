@@ -25,11 +25,6 @@ class RouterSitemapUrlsProvider implements UrlItemsProviderInterface
      */
     private $routes;
 
-    /**
-     * @param Router                $router
-     * @param CanonicalUrlGenerator $canonicalUrlGenerator
-     * @param array $routes
-     */
     public function __construct(Router $router, CanonicalUrlGenerator $canonicalUrlGenerator, array $routes)
     {
         $this->router = $router;

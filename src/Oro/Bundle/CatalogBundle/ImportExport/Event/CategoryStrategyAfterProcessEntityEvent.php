@@ -16,27 +16,17 @@ class CategoryStrategyAfterProcessEntityEvent extends Event
     /** @var array */
     protected $rawData;
 
-    /**
-     * @param Category $category
-     * @param array $rawData
-     */
     public function __construct(Category $category, array $rawData)
     {
         $this->category = $category;
         $this->rawData = $rawData;
     }
 
-    /**
-     * @return Category
-     */
     public function getCategory(): Category
     {
         return $this->category;
     }
 
-    /**
-     * @return array
-     */
     public function getRawData(): array
     {
         return $this->rawData;

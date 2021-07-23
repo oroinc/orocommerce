@@ -27,11 +27,6 @@ class InventoryLevelNormalizer extends ConfigurableEntityNormalizer
      */
     private $roundingService;
 
-    /**
-     * @param FieldHelper $fieldHelper
-     * @param UnitLabelFormatterInterface $formatter
-     * @param QuantityRoundingService $roundingService
-     */
     public function __construct(
         FieldHelper $fieldHelper,
         UnitLabelFormatterInterface $formatter,
@@ -167,10 +162,6 @@ class InventoryLevelNormalizer extends ConfigurableEntityNormalizer
         return $this->dispatchDenormalizeEvent($data, $inventoryLevel, Events::AFTER_DENORMALIZE_ENTITY);
     }
 
-    /**
-     * @param InventoryLevel $inventoryLevel
-     * @param array $data
-     */
     protected function determineQuantity(InventoryLevel $inventoryLevel, array $data)
     {
         if (array_key_exists('quantity', $data)) {

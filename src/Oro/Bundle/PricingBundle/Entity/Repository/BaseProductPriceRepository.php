@@ -23,11 +23,6 @@ use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
  */
 abstract class BaseProductPriceRepository extends EntityRepository
 {
-    /**
-     * @param ShardManager $shardManager
-     * @param Product $product
-     * @param ProductUnit $unit
-     */
     public function deleteByProductUnit(
         ShardManager $shardManager,
         Product $product,
@@ -91,11 +86,6 @@ abstract class BaseProductPriceRepository extends EntityRepository
         $this->_em->getConnection()->executeQuery($sql, $parameters, $types);
     }
 
-    /**
-     * @param BasePriceList $priceList
-     *
-     * @return int
-     */
     public function deletePricesByPriceList(BasePriceList $priceList): int
     {
         return $this->getDeleteQbByPriceList($priceList)
@@ -339,11 +329,6 @@ abstract class BaseProductPriceRepository extends EntityRepository
         return $query->getResult('ProductPriceDTOHydrator');
     }
 
-    /**
-     * @param BasePriceList $sourcePriceList
-     * @param BasePriceList $targetPriceList
-     * @param ShardQueryExecutorInterface $insertQueryExecutor
-     */
     public function copyPrices(
         BasePriceList $sourcePriceList,
         BasePriceList $targetPriceList,
@@ -458,27 +443,18 @@ abstract class BaseProductPriceRepository extends EntityRepository
         return $query->getResult();
     }
 
-
     /**
      * @param Product $product
      * @return array|int[]
      */
     abstract protected function getPriceListIdsByProduct(Product $product);
 
-    /**
-     * @param ShardManager $shardManager
-     * @param BaseProductPrice $price
-     */
     public function save(ShardManager $shardManager, BaseProductPrice $price)
     {
         $this->_em->persist($price);
         $this->_em->flush($price);
     }
 
-    /**
-     * @param ShardManager $shardManager
-     * @param BaseProductPrice $price
-     */
     public function remove(ShardManager $shardManager, BaseProductPrice $price)
     {
         $this->_em->remove($price);

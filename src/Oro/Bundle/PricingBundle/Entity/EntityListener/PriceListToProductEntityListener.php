@@ -36,11 +36,6 @@ class PriceListToProductEntityListener implements OptionalListenerInterface
     /** @var PriceRuleLexemeTriggerHandler */
     protected $priceRuleLexemeTriggerHandler;
 
-    /**
-     * @param PriceListTriggerHandler $priceListTriggerHandler
-     * @param PriceRuleLexemeTriggerHandler $priceRuleLexemeTriggerHandler
-     * @param ShardManager $shardManager
-     */
     public function __construct(
         PriceListTriggerHandler $priceListTriggerHandler,
         PriceRuleLexemeTriggerHandler $priceRuleLexemeTriggerHandler,
@@ -51,9 +46,6 @@ class PriceListToProductEntityListener implements OptionalListenerInterface
         $this->shardManager = $shardManager;
     }
 
-    /**
-     * @param PriceListToProduct $priceListToProduct
-     */
     public function postPersist(PriceListToProduct $priceListToProduct)
     {
         $this->schedulePriceListRecalculations(
@@ -62,18 +54,11 @@ class PriceListToProductEntityListener implements OptionalListenerInterface
         );
     }
 
-    /**
-     * @param PriceListToProductSaveAfterEvent $event
-     */
     public function onPriceListToProductSave(PriceListToProductSaveAfterEvent $event)
     {
         $this->postPersist($event->getPriceListToProduct());
     }
 
-    /**
-     * @param PriceListToProduct $priceListToProduct
-     * @param PreUpdateEventArgs $event
-     */
     public function preUpdate(PriceListToProduct $priceListToProduct, PreUpdateEventArgs $event)
     {
         $this->recalculateForOldValues($priceListToProduct, $event);
@@ -83,10 +68,6 @@ class PriceListToProductEntityListener implements OptionalListenerInterface
         );
     }
 
-    /**
-     * @param PriceListToProduct $priceListToProduct
-     * @param LifecycleEventArgs $event
-     */
     public function postRemove(PriceListToProduct $priceListToProduct, LifecycleEventArgs $event)
     {
         $this->schedulePriceListRecalculations(
@@ -103,9 +84,6 @@ class PriceListToProductEntityListener implements OptionalListenerInterface
             );
     }
 
-    /**
-     * @param AssignmentBuilderBuildEvent $event
-     */
     public function onAssignmentRuleBuilderBuild(AssignmentBuilderBuildEvent $event)
     {
         $this->schedulePriceListRecalculations($event->getPriceList(), $event->getProducts());
@@ -143,10 +121,6 @@ class PriceListToProductEntityListener implements OptionalListenerInterface
         $this->scheduleDependentPriceListsUpdate($priceList, $products);
     }
 
-    /**
-     * @param PriceListToProduct $priceListToProduct
-     * @param PreUpdateEventArgs $event
-     */
     protected function recalculateForOldValues(PriceListToProduct $priceListToProduct, PreUpdateEventArgs $event)
     {
         $oldProduct = $priceListToProduct->getProduct();

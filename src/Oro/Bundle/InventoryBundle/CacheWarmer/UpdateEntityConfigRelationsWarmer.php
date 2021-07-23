@@ -16,9 +16,6 @@ class UpdateEntityConfigRelationsWarmer implements CacheWarmerInterface
      */
     private $entityConfigRelationsMigration;
 
-    /**
-     * @param EntityConfigRelationsMigration $entityConfigRelationsMigration
-     */
     public function __construct(EntityConfigRelationsMigration $entityConfigRelationsMigration)
     {
         $this->entityConfigRelationsMigration = $entityConfigRelationsMigration;

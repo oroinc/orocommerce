@@ -23,12 +23,6 @@ class SwitchableUrlItemsProvider extends UrlItemsProvider
      */
     private $configManager;
 
-    /**
-     * @param CanonicalUrlGenerator $canonicalUrlGenerator
-     * @param ConfigManager $configManager
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param ManagerRegistry $registry
-     */
     public function __construct(
         CanonicalUrlGenerator $canonicalUrlGenerator,
         ConfigManager $configManager,
@@ -40,9 +34,6 @@ class SwitchableUrlItemsProvider extends UrlItemsProvider
         parent::__construct($canonicalUrlGenerator, $configManager, $eventDispatcher, $registry);
     }
 
-    /**
-     * @param string $excludeProviderKey
-     */
     public function setExcludeProviderKey(string $excludeProviderKey)
     {
         $this->excludeProviderKey = $excludeProviderKey;

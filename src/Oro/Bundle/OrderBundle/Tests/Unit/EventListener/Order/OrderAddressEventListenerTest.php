@@ -66,7 +66,6 @@ class OrderAddressEventListenerTest extends \PHPUnit\Framework\TestCase
 
         $oldForm->expects($this->once())->method('get')->with($billingAddressField)->willReturn($field1);
 
-
         $field1->expects($this->any())->method('getConfig')->willReturn($formConfig);
         $field1->expects($this->any())->method('getName')->willReturn('name');
         $field1->expects($this->any())->method('getData')->willReturn([]);

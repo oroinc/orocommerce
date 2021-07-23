@@ -93,10 +93,6 @@ class GetNodeDefaultVariantUrlTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider executeDataProvider
-     *
-     * @param string $slugUrl
-     * @param string $absoluteUrl
-     * @param array $contentVariants
      */
     public function testExecute(
         string $slugUrl,
@@ -144,9 +140,6 @@ class GetNodeDefaultVariantUrlTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($expectedResult, $context->get('attribute'));
     }
 
-    /**
-     * @return array
-     */
     public function executeDataProvider(): array
     {
         $slugUrl = '/test-url';
@@ -207,10 +200,6 @@ class GetNodeDefaultVariantUrlTest extends \PHPUnit\Framework\TestCase
         $this->action->execute($context);
     }
 
-    /**
-     * @param array $websites
-     * @param Organization $organization
-     */
     private function mockRegistry(array $websites, Organization $organization): void
     {
         $repository = $this->createMock(WebsiteRepository::class);

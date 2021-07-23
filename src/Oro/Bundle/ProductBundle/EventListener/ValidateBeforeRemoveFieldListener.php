@@ -15,19 +15,12 @@ class ValidateBeforeRemoveFieldListener
     /** @var TranslatorInterface */
     protected $translator;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param TranslatorInterface $translator
-     */
     public function __construct(DoctrineHelper $doctrineHelper, TranslatorInterface $translator)
     {
         $this->doctrineHelper = $doctrineHelper;
         $this->translator = $translator;
     }
 
-    /**
-     * @param ValidateBeforeRemoveFieldEvent $event
-     */
     public function onValidateBeforeRemoveField(ValidateBeforeRemoveFieldEvent $event)
     {
         $field = $event->getFieldConfig();

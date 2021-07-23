@@ -101,8 +101,6 @@ class TranslatorTest extends FrontendWebTestCase
      *
      * @depends testGetCatalogueWhenNoCacheExists
      * @ticket BB-14803
-     *
-     * @param array $data
      */
     public function testTransWithDifferentLocaleAfterSomeLocaleIsLoadedFromCache(array $data)
     {
@@ -156,9 +154,6 @@ class TranslatorTest extends FrontendWebTestCase
         );
     }
 
-    /**
-     * @return TranslationStrategyInterface
-     */
     private function createStrategy(): TranslationStrategyInterface
     {
         return new TranslationStrategy('strategy1', [

@@ -34,11 +34,6 @@ class EmptyMatrixGridManager implements EmptyMatrixGridInterface
      */
     private $configManager;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param LineItemByShoppingListAndProductFactoryInterface $lineItemFactory
-     * @param ConfigManager $configManager
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         LineItemByShoppingListAndProductFactoryInterface $lineItemFactory,
@@ -65,11 +60,6 @@ class EmptyMatrixGridManager implements EmptyMatrixGridInterface
         $this->addConfigurableProductToShoppingList($shoppingList, $product);
     }
 
-    /**
-     * @param ShoppingList $shoppingList
-     * @param Product $product
-     * @return bool
-     */
     private function isShoppingListHasProductVariants(ShoppingList $shoppingList, Product $product): bool
     {
         return $this->doctrineHelper->getEntityRepository(LineItem::class)->findOneBy([
@@ -79,11 +69,6 @@ class EmptyMatrixGridManager implements EmptyMatrixGridInterface
         ]) !== null;
     }
 
-    /**
-     * @param ShoppingList $shoppingList
-     * @param Product $product
-     * @return bool
-     */
     private function isShoppingListHasConfigurableProduct(ShoppingList $shoppingList, Product $product): bool
     {
         return $this->doctrineHelper->getEntityRepository(LineItem::class)->findOneBy([
@@ -93,10 +78,6 @@ class EmptyMatrixGridManager implements EmptyMatrixGridInterface
         ]) !== null;
     }
 
-    /**
-     * @param ShoppingList $shoppingList
-     * @param Product $product
-     */
     private function addConfigurableProductToShoppingList(ShoppingList $shoppingList, Product $product)
     {
         $entityManager = $this->doctrineHelper->getEntityManagerForClass(LineItem::class);
@@ -132,9 +113,6 @@ class EmptyMatrixGridManager implements EmptyMatrixGridInterface
         return true;
     }
 
-    /**
-     * @return bool
-     */
     private function isEmptyMatrixConfig(): bool
     {
         return $this->configManager
@@ -164,10 +142,6 @@ class EmptyMatrixGridManager implements EmptyMatrixGridInterface
         return $result;
     }
 
-    /**
-     * @param Collection $lineItemsCollection
-     * @return bool
-     */
     private function isTooManyUninitializedProducts(Collection $lineItemsCollection): bool
     {
         $result = false;

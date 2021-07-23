@@ -249,9 +249,6 @@ class FedexShippingMethod implements
         return null;
     }
 
-    /**
-     * @return array
-     */
     private function getTrackingRegexList(): array
     {
         return [
@@ -261,11 +258,6 @@ class FedexShippingMethod implements
         ];
     }
 
-    /**
-     * @param array $option
-     *
-     * @return float
-     */
     private function getSurchargeFromOptions(array $option): float
     {
         return (float)$option[static::OPTION_SURCHARGE];
@@ -316,12 +308,6 @@ class FedexShippingMethod implements
         return $prices;
     }
 
-    /**
-     * @param ShippingContextInterface $context
-     * @param ShippingServiceRule      $rule
-     *
-     * @return array
-     */
     private function getPricesForRule(ShippingContextInterface $context, ShippingServiceRule $rule): array
     {
         $request = $this->rateServiceRequestFactory->create(

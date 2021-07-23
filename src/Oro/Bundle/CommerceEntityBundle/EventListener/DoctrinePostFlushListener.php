@@ -30,10 +30,6 @@ class DoctrinePostFlushListener implements OptionalListenerInterface
      */
     protected $managers;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param ExtraActionEntityStorageInterface $storage
-     */
     public function __construct(DoctrineHelper $doctrineHelper, ExtraActionEntityStorageInterface $storage)
     {
         $this->doctrineHelper = $doctrineHelper;

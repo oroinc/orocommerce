@@ -28,19 +28,12 @@ class RedirectListener
      */
     protected $paymentMethodProvider;
 
-    /**
-     * @param Session $session
-     * @param PaymentMethodProviderInterface $paymentMethodProvider
-     */
     public function __construct(Session $session, PaymentMethodProviderInterface $paymentMethodProvider)
     {
         $this->session = $session;
         $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
-    /**
-     * @param CallbackErrorEvent $event
-     */
     public function onError(CallbackErrorEvent $event)
     {
         $paymentTransaction = $event->getPaymentTransaction();

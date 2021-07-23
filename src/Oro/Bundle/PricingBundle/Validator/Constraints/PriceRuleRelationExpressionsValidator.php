@@ -39,11 +39,6 @@ class PriceRuleRelationExpressionsValidator extends ConstraintValidator
      */
     protected $translator;
 
-    /**
-     * @param ExpressionParser $parser
-     * @param FieldsProviderInterface $fieldsProvider
-     * @param TranslatorInterface $translator
-     */
     public function __construct(
         ExpressionParser $parser,
         FieldsProviderInterface $fieldsProvider,
@@ -71,10 +66,6 @@ class PriceRuleRelationExpressionsValidator extends ConstraintValidator
         $this->validateQuantity($value, $constraint);
     }
 
-    /**
-     * @param PriceRule $rule
-     * @param PriceRuleRelationExpressions $constraint
-     */
     protected function validateCurrency(PriceRule $rule, PriceRuleRelationExpressions $constraint)
     {
         $inputName = $this->translator->trans(self::CURRENCY_FIELD_NAME);
@@ -305,10 +296,6 @@ class PriceRuleRelationExpressionsValidator extends ConstraintValidator
         $node->getField() === $other->getField();
     }
 
-    /**
-     * @param PriceRule $rule
-     * @param PriceRuleRelationExpressions $constraint
-     */
     protected function validateProductUnit(PriceRule $rule, PriceRuleRelationExpressions $constraint)
     {
         $inputName = $this->translator->trans(self::PRODUCT_UNIT_FIELD_NAME);
@@ -344,10 +331,6 @@ class PriceRuleRelationExpressionsValidator extends ConstraintValidator
         }
     }
 
-    /**
-     * @param PriceRule $rule
-     * @param PriceRuleRelationExpressions $constraint
-     */
     protected function validateQuantity(PriceRule $rule, PriceRuleRelationExpressions $constraint)
     {
         $fieldName = $this->translator->trans(self::QUANTITY_FIELD_NAME);

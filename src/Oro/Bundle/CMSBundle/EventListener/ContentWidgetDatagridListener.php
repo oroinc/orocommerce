@@ -16,19 +16,12 @@ class ContentWidgetDatagridListener
     /** @var bool */
     private $isInline;
 
-    /**
-     * @param ContentWidgetTypeRegistry $contentWidgetTypeRegistry
-     * @param bool $isInline
-     */
     public function __construct(ContentWidgetTypeRegistry $contentWidgetTypeRegistry, bool $isInline)
     {
         $this->contentWidgetTypeRegistry = $contentWidgetTypeRegistry;
         $this->isInline = $isInline;
     }
 
-    /**
-     * @param PreBuild $event
-     */
     public function onPreBuild(PreBuild $event): void
     {
         $types = [];

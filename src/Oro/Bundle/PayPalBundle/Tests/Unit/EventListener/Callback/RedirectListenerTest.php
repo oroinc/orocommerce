@@ -167,10 +167,6 @@ class RedirectListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertNotInstanceOf(RedirectResponse::class, $event->getResponse());
     }
 
-    /**
-     * @param Response $expectedResponse
-     * @param Response $actualResponse
-     */
     private function assertResponses(Response $expectedResponse, Response $actualResponse)
     {
         // Hack response datetime because of requests might have different datetime

@@ -18,10 +18,6 @@ class SlugRedirectMatcher
     /** @var ScopeManager */
     private $scopeManager;
 
-    /**
-     * @param ManagerRegistry $doctrine
-     * @param ScopeManager    $scopeManager
-     */
     public function __construct(ManagerRegistry $doctrine, ScopeManager $scopeManager)
     {
         $this->doctrine = $doctrine;
@@ -83,9 +79,6 @@ class SlugRedirectMatcher
         return $repository->findByUrl($url, $scopeCriteria);
     }
 
-    /**
-     * @return RedirectRepository
-     */
     private function getRedirectRepository(): RedirectRepository
     {
         return $this->doctrine

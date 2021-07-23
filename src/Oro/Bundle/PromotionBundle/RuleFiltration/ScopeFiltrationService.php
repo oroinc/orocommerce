@@ -22,10 +22,6 @@ class ScopeFiltrationService extends AbstractSkippableFiltrationService
      */
     private $scopeManager;
 
-    /**
-     * @param RuleFiltrationServiceInterface $filtrationService
-     * @param ScopeManager $scopeManager
-     */
     public function __construct(RuleFiltrationServiceInterface $filtrationService, ScopeManager $scopeManager)
     {
         $this->filtrationService = $filtrationService;

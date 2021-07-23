@@ -63,9 +63,6 @@ class SecureArrayType extends JsonArrayType
         return self::TYPE;
     }
 
-    /**
-     * @param SymmetricCrypterInterface $crypter
-     */
     public function setCrypter(SymmetricCrypterInterface $crypter)
     {
         $this->crypter = $crypter;

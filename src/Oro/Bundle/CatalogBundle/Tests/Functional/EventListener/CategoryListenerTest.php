@@ -38,9 +38,6 @@ class CategoryListenerTest extends WebTestCase
         $this->entityManager = $this->doctrine->getManagerForClass(Category::class);
     }
 
-    /**
-     * @return Category
-     */
     public function testPostPersist(): Category
     {
         $category1 = $this->createCategory('Sample Category 1', $this->rootCategory);
@@ -61,10 +58,6 @@ class CategoryListenerTest extends WebTestCase
 
     /**
      * @depends testPostPersist
-     *
-     * @param Category $category2
-     *
-     * @return Category
      */
     public function testOnFlushWhenParentDoesNotHaveId(Category $category2): Category
     {
@@ -92,8 +85,6 @@ class CategoryListenerTest extends WebTestCase
 
     /**
      * @depends testOnFlushWhenParentDoesNotHaveId
-     *
-     * @param Category $category2
      */
     public function testOnFlush(Category $category2): void
     {
@@ -105,12 +96,6 @@ class CategoryListenerTest extends WebTestCase
         $this->assertEquals($this->rootCategory->getId().'_'.$category2->getId(), $category2->getMaterializedPath());
     }
 
-    /**
-     * @param string $title
-     * @param Category $parentCategory
-     *
-     * @return Category
-     */
     private function createCategory(string $title, Category $parentCategory): Category
     {
         $category = new Category();

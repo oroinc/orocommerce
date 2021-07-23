@@ -110,7 +110,7 @@ class PaymentTermSettings extends Transport
     {
         return $this->shortLabels;
     }
-    
+
     /**
      * @param LocalizedFallbackValue $label
      *

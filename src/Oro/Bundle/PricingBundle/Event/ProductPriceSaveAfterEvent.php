@@ -14,9 +14,6 @@ class ProductPriceSaveAfterEvent extends Event
      */
     protected $eventArgs;
 
-    /**
-     * @param PreUpdateEventArgs $eventArgs
-     */
     public function __construct(PreUpdateEventArgs $eventArgs)
     {
         $this->eventArgs = $eventArgs;

@@ -20,10 +20,6 @@ class CheckoutForgotPasswordCheckEmailProvider
      */
     private $session;
 
-    /**
-     * @param RequestStack $requestStack
-     * @param Session $session
-     */
     public function __construct(
         RequestStack $requestStack,
         Session $session

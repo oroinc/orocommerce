@@ -44,13 +44,6 @@ class CategoryProcessor implements MessageProcessorInterface, TopicSubscriberInt
     /** @var ScopeManager */
     private $scopeManager;
 
-    /**
-     * @param ManagerRegistry               $doctrine
-     * @param InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor
-     * @param LoggerInterface               $logger
-     * @param CacheBuilder                  $cacheBuilder
-     * @param ScopeManager                  $scopeManager
-     */
     public function __construct(
         ManagerRegistry $doctrine,
         InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor,
@@ -116,10 +109,6 @@ class CategoryProcessor implements MessageProcessorInterface, TopicSubscriberInt
     }
 
     /**
-     * @param array $body
-     *
-     * @return Category|null
-     *
      * @throws EntityNotFoundException if a category with ID specified in the message body does not exist
      */
     public function getCategory(array $body): ?Category

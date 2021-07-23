@@ -28,10 +28,6 @@ class PriceRuleType extends AbstractType
     const QUANTITY_EXPRESSION = 'quantityExpression';
     const PRIORITY = 'priority';
 
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder

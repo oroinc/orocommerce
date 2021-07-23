@@ -52,9 +52,6 @@ class CategoryControllerTest extends WebTestCase
         static::assertStringContainsString(LoadCategoryMetaData::META_KEYWORDS, $html);
     }
 
-    /**
-     * @param Crawler $crawler
-     */
     public function checkSeoSectionExistence(Crawler $crawler)
     {
         $result = $this->client->getResponse();

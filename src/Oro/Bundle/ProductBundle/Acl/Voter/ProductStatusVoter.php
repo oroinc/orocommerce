@@ -54,9 +54,6 @@ class ProductStatusVoter extends AbstractEntityVoter
         return $product->getStatus() === Product::STATUS_ENABLED ? self::ACCESS_GRANTED : self::ACCESS_DENIED;
     }
 
-    /**
-     * @param FrontendHelper $frontendHelper
-     */
     public function setFrontendHelper(FrontendHelper $frontendHelper)
     {
         $this->frontendHelper = $frontendHelper;

@@ -11,19 +11,12 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
  */
 class CreateOroCmsPageDraftColumns implements Migration
 {
-    /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     */
     public function up(Schema $schema, QueryBag $queries): void
     {
         $this->createOroCmsPageDraftColumns($schema);
         $this->addOroCmsPageForeignKeys($schema);
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function createOroCmsPageDraftColumns(Schema $schema): void
     {
         $table = $schema->getTable('oro_cms_page');
@@ -36,9 +29,6 @@ class CreateOroCmsPageDraftColumns implements Migration
         $table->addIndex(['draft_owner_id'], 'IDX_BCE4CB4ADCA3D9F3');
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function addOroCmsPageForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_cms_page');

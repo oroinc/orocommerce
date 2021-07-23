@@ -23,11 +23,6 @@ class FedexRateServiceRequestSettings implements FedexRateServiceRequestSettings
      */
     private $rule;
 
-    /**
-     * @param FedexIntegrationSettings $integrationSettings
-     * @param ShippingContextInterface $shippingContext
-     * @param ShippingServiceRule      $rule
-     */
     public function __construct(
         FedexIntegrationSettings $integrationSettings,
         ShippingContextInterface $shippingContext,

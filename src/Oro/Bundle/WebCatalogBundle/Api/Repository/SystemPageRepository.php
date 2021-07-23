@@ -21,10 +21,6 @@ class SystemPageRepository
     /** @var FrontendHelper */
     private $frontendHelper;
 
-    /**
-     * @param RouterInterface $router
-     * @param FrontendHelper  $frontendHelper
-     */
     public function __construct(
         RouterInterface $router,
         FrontendHelper $frontendHelper
@@ -35,10 +31,6 @@ class SystemPageRepository
 
     /**
      * Gets a system page by its route if the given route is available on the storefront.
-     *
-     * @param string $routeName
-     *
-     * @return SystemPage|null
      */
     public function findSystemPage(string $routeName): ?SystemPage
     {
@@ -52,10 +44,6 @@ class SystemPageRepository
     }
 
     /**
-     * @param string $routeName
-     *
-     * @return string
-     *
      * @throws RoutingException if the URL cannot be retrieved
      */
     private function getUrl(string $routeName): string
@@ -71,11 +59,6 @@ class SystemPageRepository
         return $url;
     }
 
-    /**
-     * @param string $pathInfo
-     *
-     * @return bool
-     */
     private function isFrontendUrl(string $pathInfo): bool
     {
         return
@@ -83,11 +66,6 @@ class SystemPageRepository
             && $this->isGetMethodAllowed($pathInfo);
     }
 
-    /**
-     * @param string $pathInfo
-     *
-     * @return bool
-     */
     private function isGetMethodAllowed(string $pathInfo): bool
     {
         try {

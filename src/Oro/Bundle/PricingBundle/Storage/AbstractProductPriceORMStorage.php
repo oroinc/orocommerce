@@ -24,10 +24,6 @@ abstract class AbstractProductPriceORMStorage implements ProductPriceStorageInte
      */
     protected $registry;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param ShardManager $shardManager
-     */
     public function __construct(
         ManagerRegistry $registry,
         ShardManager $shardManager
@@ -83,9 +79,6 @@ abstract class AbstractProductPriceORMStorage implements ProductPriceStorageInte
         return $priceList->getCurrencies();
     }
 
-    /**
-     * @return BaseProductPriceRepository
-     */
     abstract protected function getRepository(): BaseProductPriceRepository;
 
     /**

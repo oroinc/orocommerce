@@ -47,9 +47,6 @@ class PriceListProductPricesReader extends EntityReader
         return $qb;
     }
 
-    /**
-     * @param Query $query
-     */
     public function setSourceQuery(Query $query)
     {
         $query->useQueryCache(false);
@@ -67,21 +64,11 @@ class PriceListProductPricesReader extends EntityReader
         parent::initializeFromContext($context);
     }
 
-    /**
-     * @param ShardManager $shardManager
-     */
     public function setShardManager(ShardManager $shardManager)
     {
         $this->shardManager = $shardManager;
     }
 
-    /**
-     * @param ObjectManager $entityManager
-     * @param string $entityName
-     * @param array $options
-     *
-     * @return QueryBuilder
-     */
     protected function createQueryBuilderByEntityNameAndIdentifier(
         ObjectManager $entityManager,
         string $entityName,

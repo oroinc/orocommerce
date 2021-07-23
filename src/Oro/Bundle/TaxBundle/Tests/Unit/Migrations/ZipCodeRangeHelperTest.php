@@ -23,9 +23,6 @@ class ZipCodeRangeHelperTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param array $zipCodes
-     * @param array $expectedData
-     *
      * @dataProvider zipCodesDataProvider
      */
     public function testZipCodes(array $zipCodes, array $expectedData)

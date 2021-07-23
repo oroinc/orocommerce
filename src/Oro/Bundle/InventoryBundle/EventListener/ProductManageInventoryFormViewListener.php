@@ -8,9 +8,6 @@ use Oro\Bundle\UIBundle\Fallback\AbstractFallbackFieldsFormView;
 
 class ProductManageInventoryFormViewListener extends AbstractFallbackFieldsFormView
 {
-    /**
-     * @param BeforeListRenderEvent $event
-     */
     public function onProductView(BeforeListRenderEvent $event)
     {
         $product = $this->getEntityFromRequest(Product::class);
@@ -26,9 +23,6 @@ class ProductManageInventoryFormViewListener extends AbstractFallbackFieldsFormV
         );
     }
 
-    /**
-     * @param BeforeListRenderEvent $event
-     */
     public function onProductEdit(BeforeListRenderEvent $event)
     {
         $this->addBlockToEntityEdit(

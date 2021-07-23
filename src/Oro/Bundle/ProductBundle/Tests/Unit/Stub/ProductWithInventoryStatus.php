@@ -10,17 +10,11 @@ class ProductWithInventoryStatus extends Product
     /** @var AbstractEnumValue */
     private $inventoryStatus;
 
-    /**
-     * @return AbstractEnumValue
-     */
     public function getInventoryStatus(): AbstractEnumValue
     {
         return $this->inventoryStatus;
     }
 
-    /**
-     * @param AbstractEnumValue $inventoryStatus
-     */
     public function setInventoryStatus(AbstractEnumValue $inventoryStatus): void
     {
         $this->inventoryStatus = $inventoryStatus;

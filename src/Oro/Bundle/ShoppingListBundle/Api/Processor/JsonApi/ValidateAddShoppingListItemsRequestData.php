@@ -38,11 +38,6 @@ class ValidateAddShoppingListItemsRequestData extends ValidateRequestData
         return $errors;
     }
 
-    /**
-     * @param int $itemIndex
-     *
-     * @return Error
-     */
     private function createIdValidationError(int $itemIndex): Error
     {
         return Error::createValidationError(Constraint::REQUEST_DATA, 'The identifier should not be specified')

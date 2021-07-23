@@ -78,10 +78,6 @@ class ProductTest extends RestJsonApiTestCase
         );
     }
 
-    /**
-     * @param array $expected
-     * @param array $slugs
-     */
     private function assertSlugsPrototype(array $expected, array $slugs): void
     {
         $actual = array_map(fn (LocalizedFallbackValue $value) => $value->getString(), $slugs);

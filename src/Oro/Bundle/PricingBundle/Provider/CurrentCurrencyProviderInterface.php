@@ -9,8 +9,6 @@ interface CurrentCurrencyProviderInterface
 {
     /**
      * Gets a current currency.
-     *
-     * @return string|null
      */
     public function getCurrentCurrency(): ?string;
 }

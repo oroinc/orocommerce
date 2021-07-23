@@ -20,10 +20,6 @@ class ResolvableMatcher implements MatcherInterface
     /** @var MatcherInterface */
     protected $matcher;
 
-    /**
-     * @param AddressMatcherRegistry          $addressMatcherRegistry
-     * @param AddressResolverSettingsProvider $taxationSettingsProvider
-     */
     public function __construct(
         AddressMatcherRegistry $addressMatcherRegistry,
         AddressResolverSettingsProvider $taxationSettingsProvider

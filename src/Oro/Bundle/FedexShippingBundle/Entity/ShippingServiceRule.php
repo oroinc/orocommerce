@@ -63,11 +63,6 @@ class ShippingServiceRule
         return $this->limitationExpressionLbs;
     }
 
-    /**
-     * @param string $limitationExpressionLbs
-     *
-     * @return self
-     */
     public function setLimitationExpressionLbs(string $limitationExpressionLbs): self
     {
         $this->limitationExpressionLbs = $limitationExpressionLbs;
@@ -83,11 +78,6 @@ class ShippingServiceRule
         return $this->limitationExpressionKg;
     }
 
-    /**
-     * @param string $limitationExpressionKg
-     *
-     * @return self
-     */
     public function setLimitationExpressionKg(string $limitationExpressionKg): self
     {
         $this->limitationExpressionKg = $limitationExpressionKg;
@@ -115,19 +105,11 @@ class ShippingServiceRule
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isResidentialAddress(): bool
     {
         return $this->residentialAddress;
     }
 
-    /**
-     * @param bool $residentialAddress
-     *
-     * @return self
-     */
     public function setResidentialAddress(bool $residentialAddress): self
     {
         $this->residentialAddress = $residentialAddress;

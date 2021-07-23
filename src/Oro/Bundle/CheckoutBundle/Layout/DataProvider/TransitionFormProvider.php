@@ -28,10 +28,6 @@ class TransitionFormProvider extends AbstractFormProvider
     }
 
     /**
-     * @param WorkflowItem $workflowItem
-     * @param Transition $transition
-     *
-     * @return FormInterface|null
      * @throws WorkflowException
      */
     public function getTransitionFormByTransition(WorkflowItem $workflowItem, Transition $transition): ?FormInterface
@@ -89,12 +85,6 @@ class TransitionFormProvider extends AbstractFormProvider
         );
     }
 
-    /**
-     * @param WorkflowItem $workflowItem
-     * @param Transition $transition
-     *
-     * @return array
-     */
     private function getFormOptions(WorkflowItem $workflowItem, Transition $transition): array
     {
         return array_merge(

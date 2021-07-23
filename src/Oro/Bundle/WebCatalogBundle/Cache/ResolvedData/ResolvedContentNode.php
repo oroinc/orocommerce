@@ -103,9 +103,6 @@ class ResolvedContentNode implements ContentNodeInterface
         return new ArrayCollection([$this->getResolvedContentVariant()]);
     }
 
-    /**
-     * @param ResolvedContentNode $childNode
-     */
     public function addChildNode(ResolvedContentNode $childNode)
     {
         $this->childNodes->add($childNode);
@@ -129,7 +126,6 @@ class ResolvedContentNode implements ContentNodeInterface
 
         return $this;
     }
-
 
     /**
      * {@inheritdoc}

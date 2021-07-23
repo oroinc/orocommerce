@@ -295,10 +295,6 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
         return new BeforeListRenderEvent($environment, new ScrollData($defaultData), $entity, $formView);
     }
 
-    /**
-     * @param $product
-     * @param $templateHtmlProductAttributePrice
-     */
     private function assertPriceAttributeViewRendered($product, $templateHtmlProductAttributePrice)
     {
         $priceList = new PriceAttributePriceList();

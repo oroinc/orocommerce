@@ -57,7 +57,6 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
     const ORDER_WAREHOUSE_ASSOCIATION = 'warehouse';
     const ORDER_WAREHOUSE_ASSOCIATION_COLUMN = 'warehouse_id';
 
-
     /** @var ExtendExtension */
     protected $extendExtension;
 
@@ -136,8 +135,6 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
     }
 
     /**
-     * @param Schema $schema
-     * @param QueryBag $queries
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     protected function renameTablesUpdateRelation(Schema $schema, QueryBag $queries)
@@ -169,9 +166,6 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
         $this->addEntityConfigUpdateQueries($queries);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function updateWarehouseEntityRelations(Schema $schema)
     {
         if (class_exists('Oro\Bundle\WarehouseBundle\Entity\Warehouse')) {
@@ -242,8 +236,6 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
 
     /**
      * Create oro_inventory_level table
-     *
-     * @param Schema $schema
      */
     protected function createOroInventoryLevelTable(Schema $schema)
     {
@@ -258,8 +250,6 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
 
     /**
      * Add oro_inventory_level foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroInventoryLevelForeignKeys(Schema $schema)
     {
@@ -290,9 +280,6 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
         );
     }
 
-    /**
-     * @param QueryBag $queries
-     */
     protected function addEntityConfigUpdateQueries(QueryBag $queries)
     {
         $configData = [
@@ -303,7 +290,6 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
             'warehouse' => 'oro.inventory.inventorylevel.warehouse.label',
         ];
         $this->addEntityFieldLabelConfigs($queries, InventoryLevel::class, $configData);
-
 
         $configData = ['manageInventory' => 'oro.inventory.manage_inventory.label'];
         $this->addEntityFieldLabelConfigs($queries, Product::class, $configData);
@@ -341,11 +327,6 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
         ));
     }
 
-    /**
-     * @param QueryBag $queries
-     * @param $class
-     * @param $data
-     */
     protected function addEntityFieldLabelConfigs(QueryBag $queries, $class, $data)
     {
         foreach ($data as $fieldName => $value) {
@@ -359,9 +340,6 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
         }
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addManageInventoryFieldToProduct(Schema $schema)
     {
         if ($schema->getTable('oro_product')->hasColumn('manageinventory_id')) {
@@ -382,9 +360,6 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addHighlightLowInventoryFieldToProduct(Schema $schema)
     {
         if ($schema->getTable('oro_product')->hasColumn('highlightlowinventory_id')) {
@@ -407,9 +382,6 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addManageInventoryFieldToCategory(Schema $schema)
     {
         if ($schema->getTable('oro_catalog_category')->hasColumn('manageinventory_id')) {
@@ -429,9 +401,6 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addHighlightLowInventoryFieldToCategory(Schema $schema)
     {
         if ($schema->getTable('oro_catalog_category')->hasColumn('highlightlowinventory_id')) {
@@ -453,9 +422,6 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     public function addInventoryThresholdFieldToProduct(Schema $schema)
     {
         if ($schema->getTable('oro_product')->hasColumn('inventoryThreshold_id')) {
@@ -478,9 +444,6 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addLowInventoryThresholdFieldToProduct(Schema $schema)
     {
         if ($schema->getTable('oro_product')->hasColumn('lowInventoryThreshold_id')) {
@@ -505,9 +468,6 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     public function addInventoryThresholdFieldToCategory(Schema $schema)
     {
         if ($schema->getTable('oro_catalog_category')->hasColumn('inventoryThreshold_id')) {
@@ -529,9 +489,6 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     public function addLowInventoryThresholdFieldToCategory(Schema $schema)
     {
         if ($schema->getTable('oro_catalog_category')->hasColumn('lowInventoryThreshold_id')) {
@@ -555,9 +512,6 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addQuantityToOrderFieldsToProduct(Schema $schema)
     {
         $this->addFallbackRelation(
@@ -595,9 +549,6 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addQuantityToOrderFieldsToCategory(Schema $schema)
     {
         $this->addFallbackRelation(
@@ -626,9 +577,6 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addDecrementQuantityFieldToProduct(Schema $schema)
     {
         if ($schema->getTable('oro_product')->hasColumn('decrementQuantity_id')) {
@@ -649,9 +597,6 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     public function addDecrementQuantityFieldToCategory(Schema $schema)
     {
         if ($schema->getTable('oro_catalog_category')->hasColumn('decrementQuantity_id')) {
@@ -671,9 +616,6 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addBackOrderFieldToProduct(Schema $schema)
     {
         if ($schema->getTable('oro_product')->hasColumn('backOrder_id')) {
@@ -694,9 +636,6 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     public function addBackOrderFieldToCategory(Schema $schema)
     {
         if ($schema->getTable('oro_catalog_category')->hasColumn('backOrder_id')) {
@@ -716,9 +655,6 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addUpcomingFieldToProduct(Schema $schema)
     {
         $this->addFallbackRelation(
@@ -737,9 +673,6 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addUpcomingFieldToCategory(Schema $schema)
     {
         $this->addFallbackRelation(
@@ -757,9 +690,6 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addAvailabilityDateToProduct(Schema $schema)
     {
         $table = $schema->getTable(OroProductBundleInstaller::PRODUCT_TABLE_NAME);
@@ -786,9 +716,6 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addAvailabilityDateToCategory(Schema $schema)
     {
         $table = $schema->getTable(OroCatalogBundleInstaller::ORO_CATALOG_CATEGORY_TABLE_NAME);

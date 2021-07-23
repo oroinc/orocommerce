@@ -18,10 +18,6 @@ class PriceListType extends AbstractType
     const NAME = 'oro_pricing_price_list';
     const SCHEDULES_FIELD = 'schedules';
 
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         /** @var PriceList $priceList */

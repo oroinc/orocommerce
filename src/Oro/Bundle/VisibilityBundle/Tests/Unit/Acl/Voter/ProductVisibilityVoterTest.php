@@ -41,7 +41,6 @@ class ProductVisibilityVoterTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider unsupportedAttributesDataProvider
-     * @param $attributes
      */
     public function testAbstainOnUnsupportedAttribute($attributes): void
     {
@@ -56,9 +55,6 @@ class ProductVisibilityVoterTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @return array
-     */
     public function unsupportedAttributesDataProvider(): array
     {
         return [
@@ -86,9 +82,6 @@ class ProductVisibilityVoterTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider voteDataProvider
-     *
-     * @param bool $isVisible
-     * @param int $expected
      */
     public function testVote(bool $isVisible, int $expected): void
     {
@@ -115,9 +108,6 @@ class ProductVisibilityVoterTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $this->voter->vote($token, $product, ['VIEW']));
     }
 
-    /**
-     * @return array
-     */
     public function voteDataProvider(): array
     {
         return [

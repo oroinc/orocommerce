@@ -10,9 +10,6 @@ class CustomerGroupStub extends CustomerGroup
     /** @var CustomerTaxCode */
     protected $taxCode;
 
-    /**
-     * @param CustomerTaxCode|null $taxCode
-     */
     public function setTaxCode(CustomerTaxCode $taxCode = null)
     {
         $this->taxCode = $taxCode;

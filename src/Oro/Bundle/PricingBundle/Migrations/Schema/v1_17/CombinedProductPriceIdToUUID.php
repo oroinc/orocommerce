@@ -67,8 +67,6 @@ class CombinedProductPriceIdToUUID implements Migration, ConnectionAwareInterfac
 
     /**
      * Sets the database connection
-     *
-     * @param Connection $connection
      */
     public function setConnection(Connection $connection)
     {

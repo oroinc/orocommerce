@@ -117,7 +117,6 @@ class OrderShippingTrackingCollectionTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider finishViewDataProvider
-     * @param array $options
      */
     public function testFinishView(array $options)
     {

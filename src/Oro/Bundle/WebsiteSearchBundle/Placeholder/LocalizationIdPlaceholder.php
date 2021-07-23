@@ -16,9 +16,6 @@ class LocalizationIdPlaceholder extends AbstractPlaceholder
      */
     private $localizationProvider;
 
-    /**
-     * @param CurrentLocalizationProvider $localizationProvider
-     */
     public function __construct(CurrentLocalizationProvider $localizationProvider)
     {
         $this->localizationProvider = $localizationProvider;

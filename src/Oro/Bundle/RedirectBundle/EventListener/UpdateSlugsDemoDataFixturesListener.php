@@ -25,12 +25,6 @@ class UpdateSlugsDemoDataFixturesListener extends AbstractDemoDataFixturesListen
     /** @var UrlStorageCache */
     protected $urlStorageCache;
 
-    /**
-     * @param OptionalListenerManager $listenerManager
-     * @param ConfigManager $configManager
-     * @param SlugEntityGenerator $generator
-     * @param UrlStorageCache $urlStorageCache
-     */
     public function __construct(
         OptionalListenerManager $listenerManager,
         ConfigManager $configManager,
@@ -57,9 +51,6 @@ class UpdateSlugsDemoDataFixturesListener extends AbstractDemoDataFixturesListen
         $this->updateSlugs($event->getObjectManager());
     }
 
-    /**
-     * @param ObjectManager $manager
-     */
     protected function updateSlugEntities(ObjectManager $manager)
     {
         foreach ($this->getSluggableClasses($manager) as $class) {
@@ -74,9 +65,6 @@ class UpdateSlugsDemoDataFixturesListener extends AbstractDemoDataFixturesListen
         $this->urlStorageCache->flushAll();
     }
 
-    /**
-     * @param ObjectManager $manager
-     */
     protected function updateSlugs(ObjectManager $manager)
     {
         $repository = $manager->getRepository(Redirect::class);

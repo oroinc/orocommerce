@@ -207,7 +207,6 @@ class DatagridListenerTest extends \PHPUnit\Framework\TestCase
         $this->requestProductHandler->expects($this->never())
             ->method('getIncludeSubcategoriesChoice');
 
-
         $repo = $this->getMockBuilder('Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository')
             ->disableOriginalConstructor()
             ->getMock();

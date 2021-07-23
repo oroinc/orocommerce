@@ -43,10 +43,6 @@ class PromotionSchedule implements ScheduleIntervalInterface
      */
     protected $deactivateAt;
 
-    /**
-     * @param \DateTime|null $activeAt
-     * @param \DateTime|null $deactivateAt
-     */
     public function __construct(\DateTime $activeAt = null, \DateTime $deactivateAt = null)
     {
         $this->activeAt = $activeAt;

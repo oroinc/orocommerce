@@ -179,9 +179,6 @@ class WebsiteCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
         ];
     }
 
-    /**
-     * @param Website $website
-     */
     protected function assertRebuild(Website $website)
     {
         $priceListCollection = [$this->getPriceListSequenceMember()];

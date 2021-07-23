@@ -35,11 +35,6 @@ class AppliedPromotionNormalizer implements NormalizerInterface
      */
     private $segmentNormalizer;
 
-    /**
-     * @param NormalizerInterface $ruleNormalizer
-     * @param NormalizerInterface $scopeNormalizer
-     * @param NormalizerInterface $segmentNormalizer
-     */
     public function __construct(
         NormalizerInterface $ruleNormalizer,
         NormalizerInterface $scopeNormalizer,

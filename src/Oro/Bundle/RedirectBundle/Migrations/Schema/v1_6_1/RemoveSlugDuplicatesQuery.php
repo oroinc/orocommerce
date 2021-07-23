@@ -23,18 +23,11 @@ class RemoveSlugDuplicatesQuery extends ParametrizedSqlMigrationQuery
         return $logger->getMessages();
     }
 
-    /**
-     * @param LoggerInterface $logger
-     */
     public function execute(LoggerInterface $logger)
     {
         $this->doExecute($logger);
     }
 
-    /**
-     * @param LoggerInterface $logger
-     * @param bool $dryRun
-     */
     private function doExecute(LoggerInterface $logger, bool $dryRun = false): void
     {
         $this->fillScopeHashes($logger, $dryRun);
@@ -42,8 +35,6 @@ class RemoveSlugDuplicatesQuery extends ParametrizedSqlMigrationQuery
     }
 
     /**
-     * @param LoggerInterface $logger
-     * @param bool $dryRun
      * @throws \Doctrine\DBAL\DBALException
      */
     private function fillScopeHashes(LoggerInterface $logger, bool $dryRun): void
@@ -97,8 +88,6 @@ SQL;
     }
 
     /**
-     * @param LoggerInterface $logger
-     * @param bool $dryRun
      * @throws \Doctrine\DBAL\DBALException
      */
     private function removeDuplicates(LoggerInterface $logger, bool $dryRun): void

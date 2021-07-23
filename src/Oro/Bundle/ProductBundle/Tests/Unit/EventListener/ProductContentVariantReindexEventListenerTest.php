@@ -277,7 +277,6 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit\Framework\T
 
     /**
      * @dataProvider dataProviderForNotWebCatalogAwareEntities
-     * @param ContentVariantInterface $contentVariant
      */
     public function testReindexationWillNotBeTriggeredWhenThereAreNotWebCatalogAwareEntitiesChanged(
         ContentVariantInterface $contentVariant
@@ -394,10 +393,6 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit\Framework\T
         return $product;
     }
 
-    /**
-     * @param array $productIds
-     * @param array $websiteIds
-     */
     private function assertReindexEvent(array $productIds = [], array $websiteIds = [])
     {
         $this->eventDispatcher

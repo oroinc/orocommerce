@@ -62,12 +62,6 @@ class ContentVariantListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider positiveScenarioDataProvider
-     *
-     * @param ContentVariant $contentVariant
-     * @param object $attachedEntity
-     * @param int $ownership
-     * @param object|null $expectedOwner
-     * @param Organization|null $expectedOrganization
      */
     public function testPrePersist(
         ContentVariant $contentVariant,
@@ -90,12 +84,6 @@ class ContentVariantListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider positiveScenarioDataProvider
-     *
-     * @param ContentVariant $contentVariant
-     * @param object $attachedEntity
-     * @param int $ownership
-     * @param object|null $expectedOwner
-     * @param Organization|null $expectedOrganization
      */
     public function testPreUpdate(
         ContentVariant $contentVariant,
@@ -212,9 +200,6 @@ class ContentVariantListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->prePersist($contentVariant);
     }
 
-    /**
-     * @return array
-     */
     public function positiveScenarioDataProvider(): array
     {
         /** @var Organization $organization */
@@ -258,11 +243,6 @@ class ContentVariantListenerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param ContentVariant $contentVariant
-     * @param object $attachedEntity
-     * @param int $ownership
-     */
     private function assertFillOwnershipForNewEntitiesCalls(
         ContentVariant $contentVariant,
         object $attachedEntity,
@@ -318,12 +298,6 @@ class ContentVariantListenerTest extends \PHPUnit\Framework\TestCase
         }
     }
 
-    /**
-     * @param int $ownership
-     * @param object|null $expectedOwner
-     * @param object $attachedEntity
-     * @param Organization|null $expectedOrganization
-     */
     private function assertOwnership(
         int $ownership,
         ?object $expectedOwner,
@@ -357,9 +331,6 @@ class ContentVariantListenerTest extends \PHPUnit\Framework\TestCase
         return $attachedEntity;
     }
 
-    /**
-     * @return ContentVariant
-     */
     private function createContentVariant(): ContentVariant
     {
         /** @var Organization $organization */

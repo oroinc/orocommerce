@@ -30,10 +30,6 @@ class ProductPriceProvider implements ProductPriceProviderInterface
      */
     protected $currencyManager;
 
-    /**
-     * @param ProductPriceStorageInterface $priceStorage
-     * @param UserCurrencyManager $currencyManager
-     */
     public function __construct(
         ProductPriceStorageInterface $priceStorage,
         UserCurrencyManager $currencyManager
@@ -207,13 +203,6 @@ class ProductPriceProvider implements ProductPriceProviderInterface
         );
     }
 
-    /**
-     * @param Product $product
-     * @param MeasureUnitInterface $unit
-     * @param string $currency
-     *
-     * @return string
-     */
     private function getKey(Product $product, MeasureUnitInterface $unit, string $currency): string
     {
         return sprintf('%s|%s|%s', $product->getId(), $unit->getCode(), $currency);
@@ -245,10 +234,6 @@ class ProductPriceProvider implements ProductPriceProviderInterface
 
     /**
      * Restrict currencies list to getSupportedCurrencies
-     *
-     * @param ProductPriceScopeCriteriaInterface $scopeCriteria
-     * @param array $currencies
-     * @return array
      */
     protected function getAllowedCurrencies(ProductPriceScopeCriteriaInterface $scopeCriteria, array $currencies): array
     {

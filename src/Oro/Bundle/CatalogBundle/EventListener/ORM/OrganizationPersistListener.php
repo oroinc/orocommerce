@@ -17,17 +17,11 @@ class OrganizationPersistListener
     /** @var DoctrineHelper */
     private $doctrineHelper;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(DoctrineHelper $doctrineHelper)
     {
         $this->doctrineHelper = $doctrineHelper;
     }
 
-    /**
-     * @param Organization $organization
-     */
     public function prePersist(Organization $organization)
     {
         $title = new CategoryTitle();

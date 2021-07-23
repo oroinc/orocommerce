@@ -14,9 +14,6 @@ class ProductDuplicateListener
     /** @var string */
     protected $productShippingOptionsClass;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(DoctrineHelper $doctrineHelper)
     {
         $this->doctrineHelper = $doctrineHelper;
@@ -30,9 +27,6 @@ class ProductDuplicateListener
         $this->productShippingOptionsClass = $productShippingOptionsClass;
     }
 
-    /**
-     * @param ProductDuplicateAfterEvent $event
-     */
     public function onDuplicateAfter(ProductDuplicateAfterEvent $event)
     {
         $product = $event->getProduct();

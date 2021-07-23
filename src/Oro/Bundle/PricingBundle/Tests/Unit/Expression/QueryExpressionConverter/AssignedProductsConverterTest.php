@@ -43,8 +43,6 @@ class AssignedProductsConverterTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider invalidLeftOperandsDataProvider
-     *
-     * @param BinaryNode $node
      */
     public function testConvertInvalidLeftOperand(BinaryNode $node)
     {

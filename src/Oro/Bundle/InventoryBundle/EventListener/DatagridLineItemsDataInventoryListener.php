@@ -25,12 +25,6 @@ class DatagridLineItemsDataInventoryListener
     /** @var LocaleSettings */
     private $localeSettings;
 
-    /**
-     * @param UpcomingProductProvider $upcomingProductProvider
-     * @param LowInventoryProvider $lowInventoryProvider
-     * @param DateTimeFormatterInterface $formatter
-     * @param LocaleSettings $localeSettings
-     */
     public function __construct(
         UpcomingProductProvider $upcomingProductProvider,
         LowInventoryProvider $lowInventoryProvider,
@@ -43,9 +37,6 @@ class DatagridLineItemsDataInventoryListener
         $this->localeSettings = $localeSettings;
     }
 
-    /**
-     * @param DatagridLineItemsDataEvent $event
-     */
     public function onLineItemData(DatagridLineItemsDataEvent $event): void
     {
         foreach ($event->getLineItems() as $lineItem) {

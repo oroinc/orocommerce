@@ -26,11 +26,6 @@ class TempTableManipulator implements TempTableManipulatorInterface
      */
     private $mySqlManipulator;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param TempTableManipulatorInterface $postgreSqlManipulator
-     * @param TempTableManipulatorInterface $mySqlManipulator
-     */
     public function __construct(
         ManagerRegistry $registry,
         TempTableManipulatorInterface $postgreSqlManipulator,
@@ -120,9 +115,6 @@ class TempTableManipulator implements TempTableManipulatorInterface
         );
     }
 
-    /**
-     * @return TempTableManipulatorInterface
-     */
     private function getManipulator(): TempTableManipulatorInterface
     {
         if ($this->registry->getConnection()->getDatabasePlatform() instanceof PostgreSqlPlatform) {

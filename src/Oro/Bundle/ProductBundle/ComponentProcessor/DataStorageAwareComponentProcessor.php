@@ -52,14 +52,6 @@ class DataStorageAwareComponentProcessor implements ComponentProcessorInterface
     /** @var TranslatorInterface */
     protected $translator;
 
-    /**
-     * @param UrlGeneratorInterface $router
-     * @param ProductDataStorage $storage
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param TokenAccessorInterface $tokenAccessor
-     * @param Session $session
-     * @param TranslatorInterface $translator
-     */
     public function __construct(
         UrlGeneratorInterface $router,
         ProductDataStorage $storage,
@@ -216,10 +208,6 @@ class DataStorageAwareComponentProcessor implements ComponentProcessorInterface
         );
     }
 
-    /**
-     * @param array $inputProductSkus
-     * @param array $allowedProductSkus
-     */
     protected function checkNotAllowedProducts(array $inputProductSkus, array $allowedProductSkus)
     {
         $notAllowedProductSkus = array_diff($inputProductSkus, $allowedProductSkus);
@@ -229,9 +217,6 @@ class DataStorageAwareComponentProcessor implements ComponentProcessorInterface
         }
     }
 
-    /**
-     * @param array $skus
-     */
     protected function addFlashMessage(array $skus)
     {
         $skus = array_unique($skus);

@@ -7,8 +7,5 @@ namespace Oro\Bundle\PaymentTermBundle\Migration\Extension;
  */
 interface PaymentTermExtensionAwareInterface
 {
-    /**
-     * @param PaymentTermExtension $paymentTermExtension
-     */
     public function setPaymentTermExtension(PaymentTermExtension $paymentTermExtension);
 }

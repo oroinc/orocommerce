@@ -28,10 +28,6 @@ class ShoppingListNotesTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitDataProvider
-     *
-     * @param ShoppingList|null $defaultData
-     * @param array $submittedData
-     * @param ShoppingList $expectedData
      */
     public function testSubmit(?ShoppingList $defaultData, array $submittedData, ShoppingList $expectedData): void
     {
@@ -47,9 +43,6 @@ class ShoppingListNotesTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedData, $form->getData());
     }
 
-    /**
-     * @return array
-     */
     public function submitDataProvider(): array
     {
         return [

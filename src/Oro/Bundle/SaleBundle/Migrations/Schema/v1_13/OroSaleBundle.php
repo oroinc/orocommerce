@@ -35,9 +35,6 @@ class OroSaleBundle implements Migration, RenameExtensionAwareInterface
         $this->addAllowUnlistedAndLockedColumns($schema);
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function addAllowUnlistedAndLockedColumns(Schema $schema)
     {
         $table = $schema->getTable('oro_sale_quote');
@@ -46,8 +43,6 @@ class OroSaleBundle implements Migration, RenameExtensionAwareInterface
     }
 
     /**
-     * @param Schema $schema
-     *
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     protected function addOverriddenShippingCostColumn(Schema $schema)
@@ -64,8 +59,6 @@ class OroSaleBundle implements Migration, RenameExtensionAwareInterface
     /**
      * Add shipping_method, shipping_method_type columns
      *
-     * @param Schema $schema
-     *
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     protected function addShippingMethodColumns(Schema $schema)
@@ -76,9 +69,6 @@ class OroSaleBundle implements Migration, RenameExtensionAwareInterface
     }
 
     /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     *
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     protected function renameShippingEstimateAmountColumn(Schema $schema, QueryBag $queries)
@@ -94,9 +84,6 @@ class OroSaleBundle implements Migration, RenameExtensionAwareInterface
     }
 
     /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     *
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     protected function renameShippingEstimateCurrencyColumn(Schema $schema, QueryBag $queries)

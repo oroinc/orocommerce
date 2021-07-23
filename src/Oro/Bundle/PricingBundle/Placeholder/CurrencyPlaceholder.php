@@ -14,9 +14,6 @@ class CurrencyPlaceholder extends AbstractPlaceholder
      */
     private $currencyManager;
 
-    /**
-     * @param UserCurrencyManager $currencyManager
-     */
     public function __construct(UserCurrencyManager $currencyManager)
     {
         $this->currencyManager = $currencyManager;

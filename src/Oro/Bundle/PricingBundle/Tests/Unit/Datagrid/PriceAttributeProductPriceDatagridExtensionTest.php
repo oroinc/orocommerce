@@ -48,10 +48,6 @@ class PriceAttributeProductPriceDatagridExtensionTest extends AbstractProductsGr
         $this->extension->processConfigs($this->datagridConfiguration);
     }
 
-    /**
-     * @param array $attributesWithCurrencies
-     * @param array $currencies
-     */
     private function mockAttributesWithCurrencies(array $attributesWithCurrencies, array $currencies): void
     {
         $this->mockPriceListCurrencies($this->createMock(PriceList::class), $currencies);
@@ -161,11 +157,6 @@ class PriceAttributeProductPriceDatagridExtensionTest extends AbstractProductsGr
         $this->extension->processConfigs($this->datagridConfiguration);
     }
 
-    /**
-     * @param string $selectedField
-     * @param string $selectExpression
-     * @param string $joinExpression
-     */
     private function assertColumnsAddedToQueryConfig(
         string $selectedField,
         string $selectExpression,
@@ -210,9 +201,6 @@ class PriceAttributeProductPriceDatagridExtensionTest extends AbstractProductsGr
 
     /**
      * @dataProvider visitResultDataProvider
-     *
-     * @param string $rawPrices
-     * @param array $unpackedPrices
      */
     public function testVisitResult(string $rawPrices, array $unpackedPrices): void
     {
@@ -252,9 +240,6 @@ class PriceAttributeProductPriceDatagridExtensionTest extends AbstractProductsGr
         $this->extension->visitResult($this->datagridConfiguration, $resultsObject);
     }
 
-    /**
-     * @return array
-     */
     public function visitResultDataProvider(): array
     {
         return [

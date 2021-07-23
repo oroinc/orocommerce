@@ -56,9 +56,6 @@ interface DiscountContextInterface extends SubtotalAwareInterface, LineItemsAwar
      */
     public function getLineItemDiscounts();
 
-    /**
-     * @return float
-     */
     public function getShippingCost(): float;
 
     /**
@@ -89,19 +86,10 @@ interface DiscountContextInterface extends SubtotalAwareInterface, LineItemsAwar
      */
     public function getShippingDiscountsInformation(): array;
 
-    /**
-     * @return float
-     */
     public function getShippingDiscountTotal(): float;
 
-    /**
-     * @return float
-     */
     public function getSubtotalDiscountTotal(): float;
 
-    /**
-     * @return float
-     */
     public function getTotalLineItemsDiscount(): float;
 
     /**
@@ -110,8 +98,5 @@ interface DiscountContextInterface extends SubtotalAwareInterface, LineItemsAwar
      */
     public function getDiscountByLineItem($lineItem): float;
 
-    /**
-     * @return float
-     */
     public function getTotalDiscountAmount(): float;
 }

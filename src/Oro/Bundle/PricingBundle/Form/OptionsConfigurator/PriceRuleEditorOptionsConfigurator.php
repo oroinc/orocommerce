@@ -31,11 +31,6 @@ class PriceRuleEditorOptionsConfigurator
      */
     private $twig;
 
-    /**
-     * @param AutocompleteFieldsProviderInterface $autocompleteFieldsProvider
-     * @param FormFactoryInterface $formFactory
-     * @param Environment $environment
-     */
     public function __construct(
         AutocompleteFieldsProviderInterface $autocompleteFieldsProvider,
         FormFactoryInterface $formFactory,
@@ -92,10 +87,6 @@ class PriceRuleEditorOptionsConfigurator
         });
     }
 
-    /**
-     * @param FormView $view
-     * @param array $options
-     */
     public function limitNumericOnlyRules(FormView $view, array $options)
     {
         if ($options['numericOnly']) {

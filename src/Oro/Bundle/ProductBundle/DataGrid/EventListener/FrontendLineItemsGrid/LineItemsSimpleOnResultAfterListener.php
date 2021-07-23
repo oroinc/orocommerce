@@ -10,9 +10,6 @@ use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
  */
 class LineItemsSimpleOnResultAfterListener
 {
-    /**
-     * @param OrmResultAfter $event
-     */
     public function onResultAfter(OrmResultAfter $event): void
     {
         foreach ($event->getRecords() as $record) {

@@ -23,10 +23,6 @@ class ProductVariantLinksType extends AbstractType
         $this->transformer = $transformer ?: new ProductVariantLinksDataTransformer();
     }
 
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -70,9 +66,6 @@ class ProductVariantLinksType extends AbstractType
         return self::NAME;
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([

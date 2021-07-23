@@ -151,7 +151,6 @@ class CheckoutSubtotalRepositoryTest extends FrontendWebTestCase
     }
 
     /**
-     * @param CheckoutSubtotal $checkoutSubtotal
      * @throws \Doctrine\DBAL\DBALException
      */
     protected function preparePriceListRelationForCustomerGroupChecks(CheckoutSubtotal $checkoutSubtotal): void

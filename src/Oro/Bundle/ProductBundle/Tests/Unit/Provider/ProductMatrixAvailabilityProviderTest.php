@@ -120,18 +120,12 @@ class ProductMatrixAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider isMatrixFormAvailableForProductsDataProvider
-     *
-     * @param Product $configurableProduct
-     * @param array $expectedResult
      */
     public function testIsMatrixFormAvailableForProducts(Product $configurableProduct, array $expectedResult): void
     {
         $this->assertSame($expectedResult, $this->provider->isMatrixFormAvailableForProducts([$configurableProduct]));
     }
 
-    /**
-     * @return array
-     */
     public function isMatrixFormAvailableForProductsDataProvider(): array
     {
         $productWith0VariantFields = (new ProductStub())

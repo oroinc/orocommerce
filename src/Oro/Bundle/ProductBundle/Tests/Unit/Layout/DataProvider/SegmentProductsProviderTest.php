@@ -347,10 +347,6 @@ class SegmentProductsProviderTest extends \PHPUnit\Framework\TestCase
         return $queryBuilder;
     }
 
-    /**
-     * @param int $id
-     * @return Segment
-     */
     private function getSegment(int $id): Segment
     {
         $segment = $this->getEntity(Segment::class, ['id' => $id]);
@@ -359,12 +355,6 @@ class SegmentProductsProviderTest extends \PHPUnit\Framework\TestCase
         return $segment;
     }
 
-    /**
-     * @param string $dql
-     * @param array $parameters
-     * @param array $queryHints
-     * @return string
-     */
     private function getHashData(string $dql, array $parameters, array $queryHints): string
     {
         return md5(serialize([

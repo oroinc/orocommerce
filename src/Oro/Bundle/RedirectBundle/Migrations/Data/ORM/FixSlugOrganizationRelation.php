@@ -48,9 +48,6 @@ class FixSlugOrganizationRelation extends AbstractFixture implements ContainerAw
         $this->fillLostSlugOrganization($manager);
     }
 
-    /**
-     * @param EntityManagerInterface $manager
-     */
     private function fillLostSlugOrganization(EntityManagerInterface $manager): void
     {
         foreach ($manager->getMetadataFactory()->getAllMetadata() as $metadata) {
@@ -178,9 +175,6 @@ class FixSlugOrganizationRelation extends AbstractFixture implements ContainerAw
             ->getSourceEntityBySlug($slug);
     }
 
-    /**
-     * @param SlugAwareInterface $entity
-     */
     private function updateEntitySlugs(SlugAwareInterface $entity)
     {
         if (!$entity instanceof SluggableInterface) {
@@ -191,9 +185,6 @@ class FixSlugOrganizationRelation extends AbstractFixture implements ContainerAw
     }
 
     /**
-     * @param $manager
-     * @param $slug
-     * @return array
      * @throws \Doctrine\DBAL\Exception
      * @throws \Doctrine\ORM\Mapping\MappingException
      */

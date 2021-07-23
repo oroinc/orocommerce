@@ -32,9 +32,6 @@ class OroFedexShippingBundleInstaller implements Installation
         $this->createOroFedexShippingServiceTable($schema);
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function createShippingServiceRuleTable(Schema $schema)
     {
         $table = $schema->createTable('oro_fedex_ship_service_rule');
@@ -48,9 +45,6 @@ class OroFedexShippingBundleInstaller implements Installation
         $table->setPrimaryKey(['id']);
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function createShippingServiceTable(Schema $schema)
     {
         $table = $schema->createTable('oro_fedex_shipping_service');
@@ -71,8 +65,6 @@ class OroFedexShippingBundleInstaller implements Installation
     }
 
     /**
-     * @param Schema $schema
-     *
      * @throws SchemaException
      */
     private function createOroFedexTransportLabelTable(Schema $schema)
@@ -102,8 +94,6 @@ class OroFedexShippingBundleInstaller implements Installation
     }
 
     /**
-     * @param Schema $schema
-     *
      * @throws SchemaException
      */
     private function updateOroIntegrationTransportTable(Schema $schema)
@@ -125,9 +115,6 @@ class OroFedexShippingBundleInstaller implements Installation
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function createOroFedexShippingServiceTable(Schema $schema)
     {
         $table = $schema->createTable('oro_fedex_transp_ship_service');
@@ -144,7 +131,6 @@ class OroFedexShippingBundleInstaller implements Installation
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
-
 
         $table->addIndex(['ship_service_id'], 'oro_fedex_transp_ship_service_id');
         $table->addForeignKeyConstraint(

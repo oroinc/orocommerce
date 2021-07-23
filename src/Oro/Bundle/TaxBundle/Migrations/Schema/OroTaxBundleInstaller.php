@@ -57,8 +57,6 @@ class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterfa
 
     /**
      * Create oro_tax table
-     *
-     * @param Schema $schema
      */
     protected function createOroTaxTable(Schema $schema)
     {
@@ -75,8 +73,6 @@ class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterfa
 
     /**
      * Create oro_tax_customer_tax_code table
-     *
-     * @param Schema $schema
      */
     protected function createOroTaxCustomerTaxCodeTable(Schema $schema)
     {
@@ -94,8 +90,6 @@ class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterfa
 
     /**
      * Create oro_tax_jurisdiction table
-     *
-     * @param Schema $schema
      */
     protected function createOroTaxJurisdictionTable(Schema $schema)
     {
@@ -114,8 +108,6 @@ class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterfa
 
     /**
      * Create oro_tax_prod_tax_code_prod table
-     *
-     * @param Schema $schema
      */
     protected function createOroTaxProdTaxCodeProdTable(Schema $schema)
     {
@@ -128,8 +120,6 @@ class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterfa
 
     /**
      * Create oro_tax_product_tax_code table
-     *
-     * @param Schema $schema
      */
     protected function createOroTaxProductTaxCodeTable(Schema $schema)
     {
@@ -146,8 +136,6 @@ class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterfa
 
     /**
      * Create oro_tax_rule table
-     *
-     * @param Schema $schema
      */
     protected function createOroTaxRuleTable(Schema $schema)
     {
@@ -165,8 +153,6 @@ class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterfa
 
     /**
      * Create oro_tax_zip_code table
-     *
-     * @param Schema $schema
      */
     protected function createOroTaxZipCodeTable(Schema $schema)
     {
@@ -183,8 +169,6 @@ class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterfa
 
     /**
      * Create oro_tax_value table
-     *
-     * @param Schema $schema
      */
     protected function createOroTaxValueTable(Schema $schema)
     {
@@ -202,8 +186,6 @@ class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterfa
 
     /**
      * Add oro_tax_jurisdiction foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroTaxJurisdictionForeignKeys(Schema $schema)
     {
@@ -224,8 +206,6 @@ class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterfa
 
     /**
      * Add oro_tax_prod_tax_code_prod foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroTaxProdTaxCodeProdForeignKeys(Schema $schema)
     {
@@ -246,8 +226,6 @@ class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterfa
 
     /**
      * Add oro_tax_rule foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroTaxRuleForeignKeys(Schema $schema)
     {
@@ -280,8 +258,6 @@ class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterfa
 
     /**
      * Add oro_tax_zip_code foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroTaxZipCodeForeignKeys(Schema $schema)
     {
@@ -296,7 +272,6 @@ class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterfa
 
     /**
      * Add oro_tax_customer_tax_code foreign keys.
-     * @param Schema $schema
      */
     protected function addOroCustomerTaxCodeForeignKeys(Schema $schema)
     {
@@ -315,9 +290,6 @@ class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterfa
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function addOroProductTaxCodeForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_tax_product_tax_code');
@@ -331,17 +303,12 @@ class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterfa
 
     /**
      * Sets the ExtendExtension
-     *
-     * @param ExtendExtension $extendExtension
      */
     public function setExtendExtension(ExtendExtension $extendExtension)
     {
         $this->extendExtension = $extendExtension;
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addCustomerExtendFields(Schema $schema)
     {
         $this->extendExtension->addManyToOneRelation(

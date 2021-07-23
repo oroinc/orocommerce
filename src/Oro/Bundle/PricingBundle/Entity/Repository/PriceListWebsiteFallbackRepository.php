@@ -38,10 +38,6 @@ class PriceListWebsiteFallbackRepository extends EntityRepository
         return $qb->getQuery()->getResult(Query::HYDRATE_SCALAR);
     }
 
-    /**
-     * @param Website $website
-     * @return bool
-     */
     public function hasFallbackOnNextLevel(Website $website): bool
     {
         $qb = $this->createQueryBuilder('f');

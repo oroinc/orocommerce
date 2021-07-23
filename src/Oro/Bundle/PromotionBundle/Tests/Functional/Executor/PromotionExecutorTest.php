@@ -83,7 +83,6 @@ class PromotionExecutorTest extends FrontendWebTestCase
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     * @return array
      */
     public function executeDataProvider(): array
     {
@@ -618,7 +617,6 @@ class PromotionExecutorTest extends FrontendWebTestCase
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     * @return array
      */
     public function executeAppliedPromotionsDataProvider(): array
     {
@@ -827,8 +825,6 @@ class PromotionExecutorTest extends FrontendWebTestCase
 
     /**
      * @dataProvider executeAppliedPromotionsDataDataProvider
-     * @param array $appliedPromotions
-     * @param array $expected
      */
     public function testExecuteWithAppliedPromotionsData(array $appliedPromotions, array $expected)
     {
@@ -863,7 +859,6 @@ class PromotionExecutorTest extends FrontendWebTestCase
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     * @return array
      */
     public function executeAppliedPromotionsDataDataProvider(): array
     {
@@ -1065,10 +1060,6 @@ class PromotionExecutorTest extends FrontendWebTestCase
 
     /**
      * @dataProvider executeWithCouponsDataProvider
-     * @param array $enabledPromotions
-     * @param array $orderCoupons
-     * @param array $appliedPromotions
-     * @param array $expected
      */
     public function testExecuteWithCoupons(
         array $enabledPromotions,
@@ -1110,7 +1101,6 @@ class PromotionExecutorTest extends FrontendWebTestCase
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     * @return array
      */
     public function executeWithCouponsDataProvider(): array
     {
@@ -1222,10 +1212,6 @@ class PromotionExecutorTest extends FrontendWebTestCase
         ];
     }
 
-    /**
-     * @param DiscountContextInterface $discountContext
-     * @param array $expected
-     */
     private function assertDiscountContextTotals(DiscountContextInterface $discountContext, array $expected)
     {
         // Check totals
@@ -1235,9 +1221,6 @@ class PromotionExecutorTest extends FrontendWebTestCase
         static::assertSame($expected['shippingDiscountTotal'], $discountContext->getShippingDiscountTotal());
     }
 
-    /**
-     * @param array $enabledPromotions
-     */
     private function enablePromotions(array $enabledPromotions)
     {
         // Enable only necessary promotions
@@ -1249,11 +1232,6 @@ class PromotionExecutorTest extends FrontendWebTestCase
         }
     }
 
-    /**
-     * @param Order $order
-     * @param array $data
-     * @return AppliedPromotion
-     */
     private function createAppliedPromotionWithDiscount(Order $order, array $data): AppliedPromotion
     {
         /** @var AppliedPromotionMapper $appliedPromotionMapper */
@@ -1283,9 +1261,6 @@ class PromotionExecutorTest extends FrontendWebTestCase
         return $appliedPromotion;
     }
 
-    /**
-     * @param string $strategy
-     */
     private function setStrategy(string $strategy)
     {
         // Change calculation strategy

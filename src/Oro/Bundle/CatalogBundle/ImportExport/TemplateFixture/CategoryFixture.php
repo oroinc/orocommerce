@@ -23,17 +23,11 @@ class CategoryFixture extends AbstractTemplateRepository implements TemplateFixt
     /** @var LocalizationManager */
     private $localizationManager;
 
-    /**
-     * @param LocalizationManager $localizationManager
-     */
     public function __construct(LocalizationManager $localizationManager)
     {
         $this->localizationManager = $localizationManager;
     }
 
-    /**
-     * @param MasterCatalogRootProviderInterface $masterCatalogRootProvider
-     */
     public function setMasterCatalogRootProvider(MasterCatalogRootProviderInterface $masterCatalogRootProvider): void
     {
         $this->masterCatalogRootProvider = $masterCatalogRootProvider;

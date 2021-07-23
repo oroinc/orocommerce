@@ -48,10 +48,6 @@ class UPSTransportSettingsType extends AbstractType
      */
     protected $shippingOriginProvider;
 
-    /**
-     * @param TransportInterface        $transport
-     * @param ShippingOriginProvider    $shippingOriginProvider
-     */
     public function __construct(TransportInterface $transport, ShippingOriginProvider $shippingOriginProvider)
     {
         $this->transport = $transport;
@@ -171,7 +167,6 @@ class UPSTransportSettingsType extends AbstractType
     }
 
     /**
-     * @param FormEvent $event
      * @throws NotManageableEntityException
      */
     public function onPreSetData(FormEvent $event)
@@ -181,9 +176,6 @@ class UPSTransportSettingsType extends AbstractType
         $this->setApplicableShippingServicesChoicesByCountry($event);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     protected function setDefaultCountry(FormEvent $event)
     {
         /** @var UPSTransport $transport */
@@ -205,9 +197,6 @@ class UPSTransportSettingsType extends AbstractType
         }
     }
 
-    /**
-     * @param FormEvent $event
-     */
     protected function setApplicableShippingServicesChoicesByCountry(FormEvent $event)
     {
         /** @var UPSTransport $transport */

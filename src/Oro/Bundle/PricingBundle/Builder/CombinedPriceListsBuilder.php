@@ -52,7 +52,7 @@ class CombinedPriceListsBuilder
      * @var ConfigManager
      */
     protected $configManager;
-    
+
     /**
      * @var CombinedPriceListScheduleResolver
      */
@@ -73,16 +73,6 @@ class CombinedPriceListsBuilder
      */
     protected $triggerHandler;
 
-    /**
-     * @param Registry $registry
-     * @param ConfigManager                     $configManager
-     * @param PriceListCollectionProvider       $priceListCollectionProvider
-     * @param CombinedPriceListProvider         $combinedPriceListProvider
-     * @param CombinedPriceListScheduleResolver $scheduleResolver
-     * @param StrategyRegister                  $priceStrategyRegister
-     * @param CombinedPriceListTriggerHandler   $triggerHandler
-     * @param WebsiteCombinedPriceListsBuilder  $builder
-     */
     public function __construct(
         Registry $registry,
         ConfigManager $configManager,

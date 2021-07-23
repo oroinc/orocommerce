@@ -28,10 +28,6 @@ class PriceListStrategySelectType extends AbstractType
      */
     protected $strategies = [];
 
-    /**
-     * @param StrategyRegister $priceStrategyRegister
-     * @param TranslatorInterface $translator
-     */
     public function __construct(StrategyRegister $priceStrategyRegister, TranslatorInterface $translator)
     {
         $this->strategyRegister = $priceStrategyRegister;

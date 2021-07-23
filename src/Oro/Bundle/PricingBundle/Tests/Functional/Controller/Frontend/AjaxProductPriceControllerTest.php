@@ -134,10 +134,6 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
         ];
     }
 
-    /**
-     * @param CombinedPriceList $combinedPriceList
-     * @param Website $website
-     */
     protected function setPriceListToDefaultWebsite(CombinedPriceList $combinedPriceList, Website $website)
     {
         $priceListToWebsite = $this->priceListToWebsiteRepository

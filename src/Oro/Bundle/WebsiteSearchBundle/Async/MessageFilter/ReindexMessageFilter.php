@@ -17,9 +17,6 @@ class ReindexMessageFilter implements MessageFilterInterface
     /** @var string */
     private $topic;
 
-    /**
-     * @param string $topic
-     */
     public function __construct(string $topic)
     {
         $this->topic = $topic;
@@ -53,8 +50,6 @@ class ReindexMessageFilter implements MessageFilterInterface
 
     /**
      * Aggregates messages from the same topic into one message.
-     *
-     * @param MessageBuffer $buffer
      */
     private function aggregateMessages(MessageBuffer $buffer): void
     {
@@ -97,27 +92,17 @@ class ReindexMessageFilter implements MessageFilterInterface
         }
     }
 
-    /**
-     * @param array $entityIds
-     *
-     * @return array
-     */
     private function mergeEntityIds(array $entityIds): array
     {
         return array_values(array_unique(array_merge(...$entityIds)));
     }
 
-    /**
-     * @param array $messageData
-     *
-     * @return string
-     */
     private function getMessageKey(array $messageData): string
     {
         if (!empty($messageData['jobId'])) {
             return $messageData['jobId'];
         }
-        
+
         return sprintf(
             '%s|%s|%s|%s',
             $messageData['jobId'] ?? '',

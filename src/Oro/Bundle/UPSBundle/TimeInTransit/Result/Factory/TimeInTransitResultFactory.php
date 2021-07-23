@@ -20,9 +20,6 @@ class TimeInTransitResultFactory implements TimeInTransitResultFactoryInterface
      */
     private $estimatedArrivalFactory;
 
-    /**
-     * @param EstimatedArrivalFactoryInterface $estimatedArrivalFactory
-     */
     public function __construct(EstimatedArrivalFactoryInterface $estimatedArrivalFactory)
     {
         $this->estimatedArrivalFactory = $estimatedArrivalFactory;

@@ -20,10 +20,6 @@ class LineItemRepository extends EntityRepository
 {
     /**
      * Find line item with the same product and unit in the specified shopping list
-     *
-     * @param LineItem $lineItem
-     * @param null|ShoppingList $shoppingList
-     * @return LineItem|null
      */
     public function findDuplicateInShoppingList(LineItem $lineItem, ?ShoppingList $shoppingList): ?LineItem
     {
@@ -77,10 +73,6 @@ class LineItemRepository extends EntityRepository
         return $aclHelper->apply($qb, BasicPermission::EDIT)->getResult();
     }
 
-    /**
-     * @param int $shoppingListId
-     * @return bool
-     */
     public function hasEmptyMatrix(int $shoppingListId): bool
     {
         $qb = $this->createQueryBuilder('li');
@@ -114,10 +106,6 @@ class LineItemRepository extends EntityRepository
         return false;
     }
 
-    /**
-     * @param int $shoppingListId
-     * @return bool
-     */
     public function canBeGrouped(int $shoppingListId): bool
     {
         $qb = $this->createQueryBuilder('li');
@@ -307,12 +295,6 @@ class LineItemRepository extends EntityRepository
         return $deletedCount;
     }
 
-    /**
-     * @param int $shoppingListId
-     * @param int $productId
-     * @param string $unitCode
-     * @return array
-     */
     public function findLineItemsByParentProductAndUnit(int $shoppingListId, int $productId, string $unitCode): array
     {
         $expr = $this->getEntityManager()->getExpressionBuilder();

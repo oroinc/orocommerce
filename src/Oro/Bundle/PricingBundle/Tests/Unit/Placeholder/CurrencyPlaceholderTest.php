@@ -23,7 +23,6 @@ class CurrencyPlaceholderTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-
         $this->placeholder = new CurrencyPlaceholder($this->currencyManager);
     }
 

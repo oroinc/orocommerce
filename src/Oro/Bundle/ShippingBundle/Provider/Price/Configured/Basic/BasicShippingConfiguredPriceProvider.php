@@ -14,9 +14,6 @@ class BasicShippingConfiguredPriceProvider implements ShippingConfiguredPricePro
      */
     private $shippingPriceProvider;
 
-    /**
-     * @param ShippingPriceProviderInterface $shippingPriceProvider
-     */
     public function __construct(ShippingPriceProviderInterface $shippingPriceProvider)
     {
         $this->shippingPriceProvider = $shippingPriceProvider;

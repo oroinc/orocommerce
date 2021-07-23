@@ -33,11 +33,6 @@ abstract class AbstractProductImportEventListener
     /** @var AclHelper */
     private $aclHelper;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param AclHelper $aclHelper
-     * @param string $categoryClass
-     */
     public function __construct(ManagerRegistry $registry, AclHelper $aclHelper, string $categoryClass)
     {
         $this->registry = $registry;
@@ -114,10 +109,7 @@ abstract class AbstractProductImportEventListener
     }
 
     /**
-     * @param $queryBuilder
-     *
      * @throws \Doctrine\ORM\NonUniqueResultException
-     * @return Category|null
      */
     private function getCategory($queryBuilder): ?Category
     {

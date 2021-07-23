@@ -17,17 +17,11 @@ class LineItemsActionsOnResultAfterListener
     /** @var AuthorizationCheckerInterface */
     private $authorizationChecker;
 
-    /**
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     */
     public function __construct(AuthorizationCheckerInterface $authorizationChecker)
     {
         $this->authorizationChecker = $authorizationChecker;
     }
 
-    /**
-     * @param OrmResultAfter $event
-     */
     public function onResultAfter(OrmResultAfter $event): void
     {
         $records = $event->getRecords();
@@ -68,10 +62,6 @@ class LineItemsActionsOnResultAfterListener
         }
     }
 
-    /**
-     * @param OrmResultAfter $event
-     * @return bool
-     */
     private function isEditGranted(OrmResultAfter $event): bool
     {
         $shoppingList = $this->getShoppingList($event);
@@ -79,10 +69,6 @@ class LineItemsActionsOnResultAfterListener
         return $shoppingList ? $this->isEditPermissionGrantedForShoppingList($shoppingList) : false;
     }
 
-    /**
-     * @param OrmResultAfter $event
-     * @return ShoppingList|null
-     */
     private function getShoppingList(OrmResultAfter $event): ?ShoppingList
     {
         $shoppingListId = $event->getDatagrid()->getParameters()->get('shopping_list_id');
@@ -94,10 +80,6 @@ class LineItemsActionsOnResultAfterListener
         return $shoppingList ?? null;
     }
 
-    /**
-     * @param ShoppingList $shoppingList
-     * @return bool
-     */
     private function isEditPermissionGrantedForShoppingList(ShoppingList $shoppingList): bool
     {
         $shoppingListId = $shoppingList->getId();

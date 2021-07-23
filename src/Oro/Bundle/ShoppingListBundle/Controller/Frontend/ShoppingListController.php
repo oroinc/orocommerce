@@ -52,8 +52,6 @@ class ShoppingListController extends AbstractController
      * @Route("/all", name="oro_shopping_list_frontend_index")
      * @Layout
      * @AclAncestor("oro_shopping_list_frontend_view")
-     *
-     * @return array
      */
     public function indexAction(): array
     {
@@ -73,10 +71,6 @@ class ShoppingListController extends AbstractController
      * )
      * @Layout
      * @AclAncestor("oro_shopping_list_frontend_update")
-     *
-     * @param null|ShoppingList $shoppingList
-     *
-     * @return array
      */
     public function updateAction(ShoppingList $shoppingList = null): array
     {
@@ -136,9 +130,6 @@ class ShoppingListController extends AbstractController
      * @Route("/{id}/assign", name="oro_shopping_list_frontend_assign", requirements={"id"="\d+"})
      * @Layout
      * @AclAncestor("oro_shopping_list_frontend_assign")
-     *
-     * @param ShoppingList $shoppingList
-     * @return array
      */
     public function assignAction(ShoppingList $shoppingList): array
     {

@@ -20,9 +20,6 @@ class ContentNodeFromWebCatalogSelectType extends AbstractType
      */
     private $treeHandler;
 
-    /**
-     * @param ContentNodeTreeHandler $treeHandler
-     */
     public function __construct(ContentNodeTreeHandler $treeHandler)
     {
         $this->treeHandler = $treeHandler;

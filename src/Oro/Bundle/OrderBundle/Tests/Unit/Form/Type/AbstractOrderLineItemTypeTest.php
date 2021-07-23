@@ -104,11 +104,6 @@ abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitDataProvider
-     *
-     * @param array $options
-     * @param array $submittedData
-     * @param OrderLineItem $expectedData
-     * @param OrderLineItem|null $data
      */
     public function testSubmit(
         array $options,
@@ -179,10 +174,6 @@ abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
      */
     abstract protected function getExpectedSections();
 
-    /**
-     * @param FormView $view
-     * @param array $expectedVars
-     */
     public function assertBuildView(FormView $view, array $expectedVars)
     {
         foreach ($expectedVars as $key => $val) {

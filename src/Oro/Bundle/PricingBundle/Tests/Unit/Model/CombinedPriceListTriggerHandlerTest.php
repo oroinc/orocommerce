@@ -71,11 +71,6 @@ class CombinedPriceListTriggerHandlerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider processDataProvider
-     *
-     * @param array $combinedPriceList
-     * @param array $productIds
-     * @param array $expectedEvents
-     * @param array|null $website
      */
     public function testProcess(
         array $combinedPriceList,
@@ -99,11 +94,6 @@ class CombinedPriceListTriggerHandlerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider processDataProvider
-     *
-     * @param array $combinedPriceList
-     * @param array $productIds
-     * @param array $expectedEvents
-     * @param array|null $website
      */
     public function testProcessWithCommit(
         array $combinedPriceList,
@@ -130,11 +120,6 @@ class CombinedPriceListTriggerHandlerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider processDataProvider
-     *
-     * @param array $combinedPriceList
-     * @param array $productIds
-     * @param array $expectedEvents
-     * @param array|null $website
      */
     public function testProcessWithNestedCommits(
         array $combinedPriceList,
@@ -179,11 +164,6 @@ class CombinedPriceListTriggerHandlerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider processDataProvider
-     *
-     * @param array $combinedPriceList
-     * @param array $productIds
-     * @param array $expectedEvents
-     * @param array|null $website
      */
     public function testMassProcess(
         array $combinedPriceList,

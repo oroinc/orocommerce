@@ -42,14 +42,6 @@ class UserLocalizationManager implements UserLocalizationManagerInterface
     /** @var array */
     private $currentLocalizations = [];
 
-    /**
-     * @param Session $session
-     * @param TokenStorageInterface $tokenStorage
-     * @param ManagerRegistry $doctrine
-     * @param ConfigManager $configManager
-     * @param WebsiteManager $websiteManager
-     * @param LocalizationManager $localizationManager
-     */
     public function __construct(
         Session $session,
         TokenStorageInterface $tokenStorage,
@@ -212,20 +204,11 @@ class UserLocalizationManager implements UserLocalizationManagerInterface
         return (array)$this->session->get(self::SESSION_LOCALIZATIONS);
     }
 
-    /**
-     * @param int $websiteId
-     *
-     * @return int
-     */
     private function getSessionLocalizationIdByWebsiteId(int $websiteId): int
     {
         return $this->getSessionLocalizations()[$websiteId] ?? 0;
     }
 
-    /**
-     * @param Website $website
-     * @return Localization|null
-     */
     private function getWebsiteDefaultLocalization(Website $website): ?Localization
     {
         $localization = $this->localizationManager->getLocalization(

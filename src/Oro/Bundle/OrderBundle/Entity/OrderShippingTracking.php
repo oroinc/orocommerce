@@ -88,7 +88,7 @@ class OrderShippingTracking
     public function setNumber($number)
     {
         $this->number = $number;
-        
+
         return $this;
     }
 
@@ -108,7 +108,7 @@ class OrderShippingTracking
     public function setOrder($order)
     {
         $this->order = $order;
-        
+
         return $this;
     }
 

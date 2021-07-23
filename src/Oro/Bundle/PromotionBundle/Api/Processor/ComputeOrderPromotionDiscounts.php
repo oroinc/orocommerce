@@ -51,11 +51,6 @@ class ComputeOrderPromotionDiscounts implements ProcessorInterface
 
     /**
      * @see \Oro\Bundle\PromotionBundle\Provider\AppliedDiscountsProvider::getDiscountsAmountByOrder
-     *
-     * @param array                      $order
-     * @param CustomizeLoadedDataContext $context
-     *
-     * @return float
      */
     private function getDiscountsAmountByOrder(array $order, CustomizeLoadedDataContext $context): float
     {
@@ -73,11 +68,6 @@ class ComputeOrderPromotionDiscounts implements ProcessorInterface
 
     /**
      * @see \Oro\Bundle\PromotionBundle\Provider\AppliedDiscountsProvider::getShippingDiscountsAmountByOrder
-     *
-     * @param array                      $order
-     * @param CustomizeLoadedDataContext $context
-     *
-     * @return float
      */
     private function getShippingDiscountsAmountByOrder(array $order, CustomizeLoadedDataContext $context): float
     {
@@ -93,11 +83,6 @@ class ComputeOrderPromotionDiscounts implements ProcessorInterface
         return $amount;
     }
 
-    /**
-     * @param array $appliedPromotion
-     *
-     * @return float
-     */
     private function getDiscountsSum(array $appliedPromotion): float
     {
         $amount = 0.0;

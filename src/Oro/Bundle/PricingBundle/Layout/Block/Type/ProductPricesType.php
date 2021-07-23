@@ -31,10 +31,6 @@ class ProductPricesType extends AbstractContainerType
     /** @var array */
     private $fetchedAttributes = [];
 
-    /**
-     * @param AttributeRenderRegistry $attributeRenderRegistry
-     * @param AttributeManager $attributeManager
-     */
     public function __construct(AttributeRenderRegistry $attributeRenderRegistry, AttributeManager $attributeManager)
     {
         $this->attributeRenderRegistry = $attributeRenderRegistry;

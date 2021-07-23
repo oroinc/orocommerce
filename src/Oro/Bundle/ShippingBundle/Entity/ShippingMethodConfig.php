@@ -83,7 +83,6 @@ class ShippingMethodConfig extends ExtendShippingMethodConfig
      */
     protected $methodConfigsRule;
 
-
     public function __construct()
     {
         parent::__construct();

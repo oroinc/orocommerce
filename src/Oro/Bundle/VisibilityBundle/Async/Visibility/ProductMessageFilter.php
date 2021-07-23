@@ -14,9 +14,6 @@ class ProductMessageFilter implements MessageFilterInterface
     /** @var string */
     private $topic;
 
-    /**
-     * @param string $topic
-     */
     public function __construct(string $topic)
     {
         $this->topic = $topic;
@@ -36,8 +33,6 @@ class ProductMessageFilter implements MessageFilterInterface
 
     /**
      * Aggregates messages from the same topic into one message.
-     *
-     * @param MessageBuffer $buffer
      */
     private function aggregateMessages(MessageBuffer $buffer): void
     {

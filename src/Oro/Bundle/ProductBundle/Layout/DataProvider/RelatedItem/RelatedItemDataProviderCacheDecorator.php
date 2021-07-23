@@ -20,11 +20,6 @@ class RelatedItemDataProviderCacheDecorator implements RelatedItemDataProviderIn
     /** @var string */
     private $cacheKey;
 
-    /**
-     * @param RelatedItemDataProviderInterface $dataProvider
-     * @param Cache                            $cache
-     * @param string                           $cacheKey
-     */
     public function __construct(RelatedItemDataProviderInterface $dataProvider, Cache $cache, string $cacheKey)
     {
         $this->dataProvider = $dataProvider;

@@ -145,7 +145,6 @@ class LoadNotificationMessages extends AbstractFixture
                 $message->setResolvedAt($now);
             }
 
-
             $manager->persist($message);
             $this->setReference($item['reference'], $message);
         }

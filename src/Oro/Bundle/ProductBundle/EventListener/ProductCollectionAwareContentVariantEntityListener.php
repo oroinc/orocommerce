@@ -22,10 +22,6 @@ class ProductCollectionAwareContentVariantEntityListener
      */
     private $productCollectionDefinitionConverter;
 
-    /**
-     * @param ProductCollectionVariantReindexMessageSendListener $reindexEventListener
-     * @param ProductCollectionDefinitionConverter $productCollectionDefinitionConverter
-     */
     public function __construct(
         ProductCollectionVariantReindexMessageSendListener $reindexEventListener,
         ProductCollectionDefinitionConverter $productCollectionDefinitionConverter
@@ -34,18 +30,11 @@ class ProductCollectionAwareContentVariantEntityListener
         $this->productCollectionDefinitionConverter = $productCollectionDefinitionConverter;
     }
 
-    /**
-     * @param Segment $segment
-     */
     public function postPersist(Segment $segment)
     {
         $this->reindexEventListener->scheduleSegment($segment);
     }
 
-    /**
-     * @param Segment $segment
-     * @param PreUpdateEventArgs $args
-     */
     public function preUpdate(Segment $segment, PreUpdateEventArgs $args)
     {
         if ($args->hasChangedField('definition')) {
@@ -60,18 +49,11 @@ class ProductCollectionAwareContentVariantEntityListener
         }
     }
 
-    /**
-     * @param Segment $segment
-     */
     public function preRemove(Segment $segment)
     {
         $this->reindexEventListener->scheduleMessageBySegmentDefinition($segment);
     }
 
-    /**
-     * @param string $definition
-     * @return array
-     */
     protected function getIncludedIds(string $definition): array
     {
         $definitionParts = $this->productCollectionDefinitionConverter->getDefinitionParts($definition);
