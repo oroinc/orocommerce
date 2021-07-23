@@ -15,8 +15,7 @@ use Twig\TwigFunction;
  */
 class PaymentTermExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    /** @var ContainerInterface */
-    private $container;
+    private ContainerInterface $container;
 
     public function __construct(ContainerInterface $container)
     {
@@ -28,7 +27,9 @@ class PaymentTermExtension extends AbstractExtension implements ServiceSubscribe
      */
     public function getFunctions()
     {
-        return [new TwigFunction('get_payment_term', [$this, 'getPaymentTerm'])];
+        return [
+            new TwigFunction('get_payment_term', [$this, 'getPaymentTerm'])
+        ];
     }
 
     /**
@@ -38,8 +39,7 @@ class PaymentTermExtension extends AbstractExtension implements ServiceSubscribe
      */
     public function getPaymentTerm($object)
     {
-        return $this->container->get('oro_payment_term.provider.payment_term')
-            ->getObjectPaymentTerm($object);
+        return $this->getPaymentTermProvider()->getObjectPaymentTerm($object);
     }
 
     /**
@@ -50,5 +50,10 @@ class PaymentTermExtension extends AbstractExtension implements ServiceSubscribe
         return [
             'oro_payment_term.provider.payment_term' => PaymentTermProviderInterface::class,
         ];
+    }
+
+    private function getPaymentTermProvider(): PaymentTermProviderInterface
+    {
+        return $this->container->get('oro_payment_term.provider.payment_term');
     }
 }

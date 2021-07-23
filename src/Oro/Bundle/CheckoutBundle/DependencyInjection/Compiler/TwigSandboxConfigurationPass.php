@@ -2,35 +2,51 @@
 
 namespace Oro\Bundle\CheckoutBundle\DependencyInjection\Compiler;
 
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Reference;
+use Oro\Bundle\EmailBundle\DependencyInjection\Compiler\AbstractTwigSandboxConfigurationPass;
 
-class TwigSandboxConfigurationPass implements CompilerPassInterface
+/**
+ * Registers the "order_line_items" Twig function, the "join" Twig filter
+ * and the "set" Twig tag for the email templates rendering sandbox.
+ */
+class TwigSandboxConfigurationPass extends AbstractTwigSandboxConfigurationPass
 {
-    const EMAIL_TEMPLATE_SANDBOX_SECURITY_POLICY_SERVICE_KEY = 'oro_email.twig.email_security_policy';
-    const EMAIL_TEMPLATE_RENDERER_SERVICE_KEY = 'oro_email.email_renderer';
+    /**
+     * {@inheritDoc}
+     */
+    protected function getFunctions(): array
+    {
+        return [
+            'order_line_items'
+        ];
+    }
 
     /**
      * {@inheritDoc}
      */
-    public function process(ContainerBuilder $container)
+    protected function getFilters(): array
     {
-        if ($container->hasDefinition(self::EMAIL_TEMPLATE_SANDBOX_SECURITY_POLICY_SERVICE_KEY)
-            && $container->hasDefinition(self::EMAIL_TEMPLATE_RENDERER_SERVICE_KEY)
-        ) {
-            $securityPolicyDef = $container->getDefinition(self::EMAIL_TEMPLATE_SANDBOX_SECURITY_POLICY_SERVICE_KEY);
+        return [
+            'join'
+        ];
+    }
 
-            $functions = array_merge($securityPolicyDef->getArgument(4), ['order_line_items']);
-            $tags = array_merge($securityPolicyDef->getArgument(0), ['set']);
-            $filters = $securityPolicyDef->getArgument(1);
-            $filters = array_merge($filters, ['join']);
-            $securityPolicyDef->replaceArgument(0, $tags);
-            $securityPolicyDef->replaceArgument(1, $filters);
-            $securityPolicyDef->replaceArgument(4, $functions);
+    /**
+     * {@inheritdoc}
+     */
+    protected function getTags(): array
+    {
+        return [
+            'set'
+        ];
+    }
 
-            $rendererDef = $container->getDefinition(self::EMAIL_TEMPLATE_RENDERER_SERVICE_KEY);
-            $rendererDef->addMethodCall('addExtension', [new Reference('oro_checkout.twig.line_items')]);
-        }
+    /**
+     * {@inheritDoc}
+     */
+    protected function getExtensions(): array
+    {
+        return [
+            'oro_checkout.twig.line_items'
+        ];
     }
 }

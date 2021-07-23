@@ -15,22 +15,18 @@ class WebCatalogExtensionTest extends \PHPUnit\Framework\TestCase
     use TwigExtensionTestCaseTrait;
 
     /** @var ContentNodeTreeHandler|\PHPUnit\Framework\MockObject\MockObject */
-    protected $treeHandler;
+    private $treeHandler;
 
     /** @var ContentVariantTypeRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    protected $contentVariantTypeRegistry;
+    private $contentVariantTypeRegistry;
 
     /** @var WebCatalogExtension */
-    protected $extension;
+    private $extension;
 
     protected function setUp(): void
     {
-        $this->treeHandler = $this->getMockBuilder(ContentNodeTreeHandler::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->contentVariantTypeRegistry = $this->getMockBuilder(ContentVariantTypeRegistry::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->treeHandler = $this->createMock(ContentNodeTreeHandler::class);
+        $this->contentVariantTypeRegistry = $this->createMock(ContentVariantTypeRegistry::class);
 
         $container = self::getContainerBuilder()
             ->add(ContentNodeTreeHandler::class, $this->treeHandler)
@@ -38,11 +34,6 @@ class WebCatalogExtensionTest extends \PHPUnit\Framework\TestCase
             ->getContainer($this);
 
         $this->extension = new WebCatalogExtension($container);
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(WebCatalogExtension::NAME, $this->extension->getName());
     }
 
     public function testGetNodesTree()

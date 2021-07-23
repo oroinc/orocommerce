@@ -5,59 +5,122 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\Twig;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\PromotionBundle\CouponGeneration\Code\CodeGenerator;
+use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CodeGenerationOptions;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
 use Oro\Bundle\PromotionBundle\Entity\AppliedDiscount;
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
 use Oro\Bundle\PromotionBundle\Entity\Repository\AppliedPromotionRepository;
-use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Order;
-use Oro\Bundle\PromotionBundle\Twig\AppliedPromotionsExtension;
+use Oro\Bundle\PromotionBundle\Layout\DataProvider\DiscountsInformationDataProvider;
+use Oro\Bundle\PromotionBundle\Layout\DataProvider\DTO\ObjectStorage;
+use Oro\Bundle\PromotionBundle\Twig\PromotionExtension;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
-use Twig\TwigFunction;
 
-class AppliedPromotionsExtensionTest extends \PHPUnit\Framework\TestCase
+class PromotionExtensionTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
     use TwigExtensionTestCaseTrait;
+    use EntityTrait;
 
-    const CURRENCY_CODE = 'USD';
-    const DISCOUNT_TYPE = 'line_item';
-    const FIRST_NAME = 'First promotion name';
-    const SECOND_NAME = 'Second promotion name';
-    const COUPON_CODE = 'code123';
-    const PROMOTION_ID = 37;
-    const AMOUNT = 68.90;
-    const CURRENCY = 'USD';
-    const TYPE = 'order';
+    private const CURRENCY_CODE = 'USD';
+    private const DISCOUNT_TYPE = 'line_item';
+    private const FIRST_NAME = 'First promotion name';
+    private const SECOND_NAME = 'Second promotion name';
+    private const COUPON_CODE = 'code123';
+    private const PROMOTION_ID = 37;
+    private const AMOUNT = 68.90;
+    private const CURRENCY = 'USD';
+    private const TYPE = 'order';
 
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $registry;
+    /** @var DiscountsInformationDataProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $discountsInformationDataProvider;
 
-    /**
-     * @var AppliedPromotionsExtension
-     */
-    private $appliedDiscountsExtension;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrine;
+
+    /** @var CodeGenerator|\PHPUnit\Framework\MockObject\MockObject */
+    private $couponCodeGenerator;
+
+    /** @var PromotionExtension */
+    private $extension;
 
     protected function setUp(): void
     {
-        $this->registry = $this->createMock(ManagerRegistry::class);
+        $this->discountsInformationDataProvider = $this->createMock(DiscountsInformationDataProvider::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
+        $this->couponCodeGenerator = $this->createMock(CodeGenerator::class);
 
         $container = self::getContainerBuilder()
-            ->add('doctrine', $this->registry)
+            ->add('oro_promotion.layout.discount_information_data_provider', $this->discountsInformationDataProvider)
+            ->add(ManagerRegistry::class, $this->doctrine)
+            ->add('oro_promotion.coupon_generation.code_generator', $this->couponCodeGenerator)
             ->getContainer($this);
 
-        $this->appliedDiscountsExtension = new AppliedPromotionsExtension($container);
+        $this->extension = new PromotionExtension($container);
     }
 
-    public function testGetFunctions()
+    public function testGetEmptyLineItemsDiscounts()
     {
-        $extensionFunctions = $this->appliedDiscountsExtension->getFunctions();
+        $lineItem = $this->getEntity(OrderLineItem::class, ['id' => 1]);
+        $sourceEntity = $this->getEntity(
+            Order::class,
+            [
+                'id' => 1,
+                'lineItems' => [$lineItem]
+            ]
+        );
 
-        static::assertCount(2, $extensionFunctions);
-        static::assertInstanceOf(TwigFunction::class, $extensionFunctions[0]);
-        static::assertInstanceOf(TwigFunction::class, $extensionFunctions[1]);
+        $this->discountsInformationDataProvider->expects($this->once())
+            ->method('getDiscountLineItemDiscounts')
+            ->with($sourceEntity)
+            ->willReturn(new ObjectStorage());
+
+        $this->assertEquals(
+            [1 => null],
+            self::callTwigFunction($this->extension, 'line_items_discounts', [$sourceEntity])
+        );
+    }
+
+    public function testGetLineItemsDiscounts()
+    {
+        $lineItem1Id = 1;
+        $lineItem2Id = 2;
+        $lineItem1 = $this->getEntity(OrderLineItem::class, ['id' => $lineItem1Id]);
+        $lineItem2 = $this->getEntity(OrderLineItem::class, ['id' => $lineItem2Id]);
+        $sourceEntity = $this->getEntity(
+            Order::class,
+            [
+                'id' => 2,
+                'lineItems' => [$lineItem1, $lineItem2]
+            ]
+        );
+
+        $priceData = ['value' => 3, 'currency' => 'USD'];
+        $price = $this->getEntity(Price::class, $priceData);
+        $lineItemsDiscounts = new ObjectStorage();
+        $lineItemsDiscounts->attach(
+            $lineItem1,
+            [
+                'total' => $price
+            ]
+        );
+
+        $this->discountsInformationDataProvider->expects($this->once())
+            ->method('getDiscountLineItemDiscounts')
+            ->with($sourceEntity)
+            ->willReturn($lineItemsDiscounts);
+
+        $expectedDiscounts = [
+            $lineItem1Id => $priceData,
+            $lineItem2Id => null
+        ];
+        $this->assertEquals(
+            $expectedDiscounts,
+            self::callTwigFunction($this->extension, 'line_items_discounts', [$sourceEntity])
+        );
     }
 
     public function testPrepareAppliedPromotionsInfo()
@@ -117,9 +180,14 @@ class AppliedPromotionsExtensionTest extends \PHPUnit\Framework\TestCase
             ]
         ];
 
-        $this->assertEquals($expectedItems, $this->appliedDiscountsExtension->prepareAppliedPromotionsInfo(
-            new ArrayCollection([$firstAppliedPromotion, $secondAppliedPromotion])
-        ));
+        $this->assertEquals(
+            $expectedItems,
+            self::callTwigFunction(
+                $this->extension,
+                'oro_promotion_prepare_applied_promotions_info',
+                [new ArrayCollection([$firstAppliedPromotion, $secondAppliedPromotion])]
+            )
+        );
     }
 
     public function testPrepareAppliedPromotionsInfoWithGrouping()
@@ -154,9 +222,14 @@ class AppliedPromotionsExtensionTest extends \PHPUnit\Framework\TestCase
             ],
         ];
 
-        $this->assertEquals($expectedItems, $this->appliedDiscountsExtension->prepareAppliedPromotionsInfo(
-            new ArrayCollection([$appliedPromotion])
-        ));
+        $this->assertEquals(
+            $expectedItems,
+            self::callTwigFunction(
+                $this->extension,
+                'oro_promotion_prepare_applied_promotions_info',
+                [new ArrayCollection([$appliedPromotion])]
+            )
+        );
     }
 
     public function testPrepareAppliedPromotionsOrdering()
@@ -235,14 +308,19 @@ class AppliedPromotionsExtensionTest extends \PHPUnit\Framework\TestCase
             ],
         ];
 
-        $this->assertEquals($expectedItems, $this->appliedDiscountsExtension->prepareAppliedPromotionsInfo(
-            new ArrayCollection([$newAppliedPromotion, $firstAppliedPromotion, $secondAppliedPromotion])
-        ));
+        $this->assertEquals(
+            $expectedItems,
+            self::callTwigFunction(
+                $this->extension,
+                'oro_promotion_prepare_applied_promotions_info',
+                [new ArrayCollection([$newAppliedPromotion, $firstAppliedPromotion, $secondAppliedPromotion])]
+            )
+        );
     }
 
     public function testGetAppliedPromotionsInfo()
     {
-        $order = new Order();
+        $order = new \Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Order();
 
         $info = [
             [
@@ -257,25 +335,41 @@ class AppliedPromotionsExtensionTest extends \PHPUnit\Framework\TestCase
         ];
 
         $entityRepository = $this->createMock(AppliedPromotionRepository::class);
-        $entityRepository
-            ->expects($this->once())
+        $entityRepository->expects($this->once())
             ->method('getAppliedPromotionsInfo')
             ->with($order)
             ->willReturn($info);
 
         $entityManager = $this->createMock(EntityManager::class);
-        $entityManager
-            ->expects($this->once())
+        $entityManager->expects($this->once())
             ->method('getRepository')
             ->with(AppliedPromotion::class)
             ->willReturn($entityRepository);
 
-        $this->registry
-            ->expects($this->once())
+        $this->doctrine->expects($this->once())
             ->method('getManagerForClass')
             ->with(AppliedPromotion::class)
             ->willReturn($entityManager);
 
-        $this->assertEquals($info, $this->appliedDiscountsExtension->getAppliedPromotionsInfo($order));
+        $this->assertEquals(
+            $info,
+            self::callTwigFunction($this->extension, 'oro_promotion_get_applied_promotions_info', [$order])
+        );
+    }
+
+    public function testGenerateCouponCode()
+    {
+        $options = new CodeGenerationOptions();
+        $generatedCode = 'coupon-code';
+
+        $this->couponCodeGenerator->expects($this->once())
+            ->method('generateOne')
+            ->with($options)
+            ->willReturn($generatedCode);
+
+        $this->assertEquals(
+            $generatedCode,
+            self::callTwigFunction($this->extension, 'oro_promotion_generate_coupon_code', [$options])
+        );
     }
 }

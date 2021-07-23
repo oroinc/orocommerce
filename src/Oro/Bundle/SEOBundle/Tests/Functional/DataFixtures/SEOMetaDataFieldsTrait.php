@@ -5,10 +5,12 @@ namespace Oro\Bundle\SEOBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use Symfony\Component\Inflector\Inflector as SymfonyInflector;
+use Symfony\Component\String\Inflector\EnglishInflector;
 
 trait SEOMetaDataFieldsTrait
 {
+    private ?EnglishInflector $symfonyInflector = null;
+
     public function loadLocalizedFallbackValues(
         ObjectManager $manager,
         object $entity,
@@ -19,7 +21,7 @@ trait SEOMetaDataFieldsTrait
             $localizedFallbackValue->setString($metadataField);
 
             // see \Oro\Bundle\EntityExtendBundle\Tools\GeneratorExtensions\ExtendEntityGeneratorExtension
-            $singular = SymfonyInflector::singularize($fieldName);
+            $singular = $this->getInflector()->singularize($fieldName);
             if (\is_array($singular)) {
                 $singular = \reset($singular);
             }
@@ -28,5 +30,14 @@ trait SEOMetaDataFieldsTrait
             $entity->$adderMethod($localizedFallbackValue);
             $manager->persist($localizedFallbackValue);
         }
+    }
+
+    private function getInflector(): EnglishInflector
+    {
+        if (!$this->symfonyInflector) {
+            $this->symfonyInflector = new EnglishInflector();
+        }
+
+        return $this->symfonyInflector;
     }
 }

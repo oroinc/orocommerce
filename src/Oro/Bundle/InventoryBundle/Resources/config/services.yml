@@ -115,19 +115,10 @@ services:
         tags:
             - { name: layout.data_provider, alias: upcoming_product }
 
-    oro_inventory.twig.low_inventory_extension:
-        class: Oro\Bundle\InventoryBundle\Twig\LowInventoryExtension
-        public: false
+    oro_inventory.twig.inventory_extension:
+        class: Oro\Bundle\InventoryBundle\Twig\InventoryExtension
         arguments:
             - '@oro_platform.twig.service_locator'
-        tags:
-            - { name: twig.extension }
-
-    oro_inventory.twig.product_upcoming:
-        class: Oro\Bundle\InventoryBundle\Twig\ProductUpcomingExtension
-        public: false
-        arguments:
-            - "@oro_inventory.provider.upcoming_product_provider"
         tags:
             - { name: twig.extension }
 

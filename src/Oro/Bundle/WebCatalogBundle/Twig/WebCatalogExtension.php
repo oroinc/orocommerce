@@ -17,8 +17,6 @@ use Twig\TwigFunction;
  */
 class WebCatalogExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    const NAME = 'oro_web_catalog_extension';
-
     /** @var ContainerInterface */
     protected $container;
 
@@ -41,14 +39,6 @@ class WebCatalogExtension extends AbstractExtension implements ServiceSubscriber
     protected function getContentVariantTypeRegistry()
     {
         return $this->container->get(ContentVariantTypeRegistry::class);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return self::NAME;
     }
 
     /**

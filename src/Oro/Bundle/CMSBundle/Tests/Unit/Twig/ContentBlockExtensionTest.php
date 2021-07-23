@@ -20,7 +20,11 @@ class ContentBlockExtensionTest extends \PHPUnit\Framework\TestCase
     {
         $this->renderer = $this->createMock(ContentBlockRenderer::class);
 
-        $this->extension = new ContentBlockExtension($this->renderer);
+        $container = self::getContainerBuilder()
+            ->add('oro_cms.content_block.renderer', $this->renderer)
+            ->getContainer($this);
+
+        $this->extension = new ContentBlockExtension($container);
     }
 
     public function testContentBlockFunction(): void

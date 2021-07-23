@@ -74,25 +74,8 @@ services:
         calls:
             - [setTranslationPrefix, ['oro.length_unit']]
 
-    # twig extensions
-    oro_shipping.twig.shipping_option_label:
-        class: Oro\Bundle\ShippingBundle\Twig\ShippingOptionLabelExtension
-        public: false
-        arguments:
-            - '@oro_platform.twig.service_locator'
-        tags:
-            - { name: twig.extension }
-
-    oro_shipping.twig.weight_unit_value:
-        class: Oro\Bundle\ShippingBundle\Twig\WeightUnitValueExtension
-        public: false
-        arguments:
-            - '@oro_platform.twig.service_locator'
-        tags:
-            - { name: twig.extension }
-
-    oro_shipping.twig.dimensions_unit_value:
-        class: Oro\Bundle\ShippingBundle\Twig\DimensionsUnitValueExtension
+    oro_shipping.twig.shipping_extension:
+        class: Oro\Bundle\ShippingBundle\Twig\ShippingExtension
         public: false
         arguments:
             - '@oro_platform.twig.service_locator'

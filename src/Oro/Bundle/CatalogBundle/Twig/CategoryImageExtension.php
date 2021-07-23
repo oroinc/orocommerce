@@ -57,14 +57,6 @@ class CategoryImageExtension extends AbstractExtension implements ServiceSubscri
     /**
      * {@inheritdoc}
      */
-    public function getName()
-    {
-        return 'oro_catalog_category_image_extension';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedServices()
     {
         return [
