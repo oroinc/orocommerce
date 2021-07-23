@@ -48,13 +48,6 @@ class IndexDataProvider
     /** @var bool */
     private $enableAllText = true;
 
-    /**
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param EntityAliasResolver $entityAliasResolver
-     * @param PlaceholderInterface $placeholder
-     * @param HtmlTagHelper $htmlTagHelper
-     * @param PlaceholderHelper $placeholderHelper
-     */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
         EntityAliasResolver $entityAliasResolver,
