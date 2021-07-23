@@ -158,7 +158,7 @@ class IndexDataProvider
                 $this->setIndexValue($preparedIndexData, $entityId, $allTextFieldName, $allTextValue);
             }
 
-            $preparedIndexData[$entityId] = $this->removeField($preparedIndexData[$entityId], $allTextL10N);
+            unset($preparedIndexData[$entityId][Query::TYPE_TEXT][$allTextL10N]);
             $preparedIndexData[$entityId] = $this->squashAllTextFields($preparedIndexData[$entityId]);
         }
 
@@ -200,20 +200,6 @@ class IndexDataProvider
                     $fieldsValues[Query::TYPE_TEXT][$fieldName] = $this->updateAllTextFieldValue($fieldValue);
                 }
             }
-        }
-
-        return $fieldsValues;
-    }
-
-    /**
-     * @param array $fieldsValues
-     * @param string $fieldName
-     * @return array
-     */
-    private function removeField(array $fieldsValues, string $fieldName)
-    {
-        if (isset($fieldsValues[Query::TYPE_TEXT][$fieldName])) {
-            unset($fieldsValues[Query::TYPE_TEXT][$fieldName]);
         }
 
         return $fieldsValues;

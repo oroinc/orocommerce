@@ -212,7 +212,7 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
                 'indexData' => [
                     [1, 'title', '<p>SKU-01</p>', true],
                 ],
-                'expected' => [1 => ['text' => ['title' => '<p>SKU-01</p>', 'all_text' => 'SKU-01']]],
+                'expected' => [1 => ['text' => ['title' => '<p>SKU-01</p>']]],
             ],
             'simple field with integer' => [
                 'entityConfig' => ['fields' => [['name' => 'qty', 'type' => Query::TYPE_INTEGER]]],
@@ -240,7 +240,6 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
                     1 => [
                         'text' => [
                             'title_1' => '<p>SKU-01</p>',
-                            'all_text' => 'SKU-01',
                             'all_text_5' => 'SKU-01',
                         ],
                         'integer' => [
@@ -272,7 +271,6 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
                     1 => [
                         'text' => [
                             'title_1' => '<p>SKU-01</p> <p>SKU-01-gb</p>',
-                            'all_text' => 'SKU-01 en_US SKU-01-gb en_GB',
                             'all_text_5' => 'SKU-01 en_US',
                             'all_text_6' => 'SKU-01-gb en_GB',
                             'descr_5' => '<p>en_US</p>',
@@ -297,7 +295,7 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
                     ],
                 ],
             ],
-            'do not drop value in all_text and all_text_localization fields, like metadata' => [
+            'do not drop value in all_text_localization fields, like metadata' => [
                 'entityConfig' => [
                     'fields' => [
                         [
@@ -327,8 +325,6 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
                     1 => [
                         'text' => [
                             'title_1' => '<p>SKU-01</p> <p>SKU-01-gb</p>',
-                            'all_text' => 'for_all_text SKU-01 en_US title5 descr5 keywords5 SKU-01-gb en_GB ' .
-                                'title6 descr6 keywords6',
                             'all_text_5' => 'SKU-01 en_US title5 descr5 keywords5 for_all_text',
                             'all_text_6' => 'SKU-01-gb en_GB title6 descr6 keywords6 for_all_text',
                             'descr_5' => '<p>en_US</p>',
@@ -387,15 +383,15 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
                     ],
                 ],
                 'indexData' => [
-                    [1, 'title', 'The fox', true],
-                    [1, 'description', 'The quick brown fox jumps over the lazy dog', true],
+                    [1, 'title', 'The fox', ['LOCALIZATION_ID' => 5], true],
+                    [1, 'description', 'The quick brown fox jumps over the lazy dog', ['LOCALIZATION_ID' => 5], true],
                 ],
                 'expected' => [
                     1 => [
                         'text' => [
                             'title' => 'The fox',
                             'description' => 'The quick brown fox jumps over the lazy dog',
-                            'all_text' => 'The fox quick brown jumps over the lazy dog',
+                            'all_text_5' => 'The fox quick brown jumps over the lazy dog',
                         ],
                     ],
                 ],
@@ -414,7 +410,7 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
                     ],
                 ],
                 'indexData' => [
-                    [1, 'title', 'The long entry', true],
+                    [1, 'title', 'The long entry', ['LOCALIZATION_ID' => 5], true],
                     [
                         1,
                         'description',
@@ -425,6 +421,7 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
                         'QJfPB2teh0ukQN46FehTdiMRMMGGlaNvQvB4ymJq49zUWidBOhT9IzqNyPhYvchY1234' .
                         ' ' .
                         'zUWidBOhT9IzqNyPhYvchY QJfPB2teh0ukQ',
+                        ['LOCALIZATION_ID' => 5],
                         true
                     ],
                 ],
@@ -440,7 +437,7 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
                                 'QJfPB2teh0ukQN46FehTdiMRMMGGlaNvQvB4ymJq49zUWidBOhT9IzqNyPhYvchY1234' .
                                 ' ' .
                                 'zUWidBOhT9IzqNyPhYvchY QJfPB2teh0ukQ',
-                            'all_text' => 'The long entry zUWidBOhT9IzqNyPhYvchY QJfPB2teh0ukQ',
+                            'all_text_5' => 'The long entry zUWidBOhT9IzqNyPhYvchY QJfPB2teh0ukQ',
                         ],
                     ],
                 ],
@@ -459,15 +456,15 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
                     ],
                 ],
                 'indexData' => [
-                    [1, 'title', 'The fox', true],
-                    [1, 'color', ['red', 'green', 'blue'], false],
+                    [1, 'title', 'The fox', ['LOCALIZATION_ID' => 5], true],
+                    [1, 'color', ['red', 'green', 'blue'], ['LOCALIZATION_ID' => 5], false],
                 ],
                 'expected' => [
                     1 => [
                         'text' => [
                             'title' => 'The fox',
                             'color' => ['red', 'green', 'blue'],
-                            'all_text' => 'The fox',
+                            'all_text_5' => 'The fox',
                         ],
                     ],
                 ],
@@ -486,16 +483,16 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
                     ],
                 ],
                 'indexData' => [
-                    [1, 'title', 'The fox', true],
-                    [1, 'color', ['Red', 'Green', 'Blue'], true],
-                    [1, 'color', ['Red', 'White', 'Black'], true],
+                    [1, 'title', 'The fox', ['LOCALIZATION_ID' => 5], true],
+                    [1, 'color', ['Red', 'Green', 'Blue'], ['LOCALIZATION_ID' => 5], true],
+                    [1, 'color', ['Red', 'White', 'Black'], ['LOCALIZATION_ID' => 5], true],
                 ],
                 'expected' => [
                     1 => [
                         'text' => [
                             'title' => 'The fox',
                             'color' => ['Red', 'Green', 'Blue', 'White', 'Black'],
-                            'all_text' => 'The fox Red Green Blue White Black',
+                            'all_text_5' => 'The fox Red Green Blue White Black',
                         ],
                     ],
                 ],
