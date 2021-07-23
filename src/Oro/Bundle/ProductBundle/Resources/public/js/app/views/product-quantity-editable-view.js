@@ -278,7 +278,9 @@ define(function(require) {
                 .done(_.bind(this.onSaveSuccess, this))
                 .fail(_.bind(this.onSaveError, this))
                 .always(_.bind(function() {
-                    this._isSaving = false;
+                    if (!this.disposed) {
+                        this._isSaving = false;
+                    }
                 }, this));
         },
 
