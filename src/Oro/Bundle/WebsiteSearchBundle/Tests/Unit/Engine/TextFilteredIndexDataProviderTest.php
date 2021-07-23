@@ -34,9 +34,9 @@ class TextFilteredIndexDataProviderTest extends IndexDataProviderTest
                 'simple field with html' => [
                     'entityConfig' => ['fields' => [['name' => 'title', 'type' => Query::TYPE_TEXT]]],
                     'indexData' => [
-                        [1, 'title', '<p>SKU-01</p>', true],
+                        [1, 'title', '<p>SKU-01</p>', ['LOCALIZATION_ID' => 5], true],
                     ],
-                    'expected' => [1 => ['text' => ['title' => 'SKU-01', 'all_text' => 'SKU-01']]],
+                    'expected' => [1 => ['text' => ['title' => 'SKU-01', 'all_text_5' => 'SKU-01']]],
                 ],
                 'placeholder field' => [
                     'entityConfig' => [
@@ -59,7 +59,6 @@ class TextFilteredIndexDataProviderTest extends IndexDataProviderTest
                         1 => [
                             'text' => [
                                 'title_1' => 'SKU-01',
-                                'all_text' => 'SKU-01',
                                 'all_text_5' => 'SKU-01',
                             ],
                             'integer' => [
@@ -91,7 +90,6 @@ class TextFilteredIndexDataProviderTest extends IndexDataProviderTest
                         1 => [
                             'text' => [
                                 'title_1' => 'SKU-01 SKU-01-gb',
-                                'all_text' => 'SKU-01 en_US SKU-01-gb en_GB',
                                 'all_text_5' => 'SKU-01 en_US',
                                 'all_text_6' => 'SKU-01-gb en_GB',
                                 'descr_5' => 'en_US',
@@ -100,7 +98,7 @@ class TextFilteredIndexDataProviderTest extends IndexDataProviderTest
                         ],
                     ],
                 ],
-                'do not drop value in all_text and all_text_localization fields, like metadata' => [
+                'do not drop value in all_text_localization fields, like metadata' => [
                     'entityConfig' => [
                         'fields' => [
                             [
@@ -130,8 +128,6 @@ class TextFilteredIndexDataProviderTest extends IndexDataProviderTest
                         1 => [
                             'text' => [
                                 'title_1' => 'SKU-01 SKU-01-gb',
-                                'all_text' => 'for_all_text SKU-01 en_US title5 descr5 keywords5 SKU-01-gb en_GB '.
-                                    'title6 descr6 keywords6',
                                 'all_text_5' => 'SKU-01 en_US title5 descr5 keywords5 for_all_text',
                                 'all_text_6' => 'SKU-01-gb en_GB title6 descr6 keywords6 for_all_text',
                                 'descr_5' => 'en_US',
@@ -165,6 +161,7 @@ class TextFilteredIndexDataProviderTest extends IndexDataProviderTest
                             'QJfPB2teh0ukQN46FehTdiMRMMGGlaNvQvB4ymJq49zUWidBOhT9IzqNyPhYvchY1234' .
                             ' ' .
                             'zUWidBOhT9IzqNyPhYvchY QJfPB2teh0ukQ',
+                            ['LOCALIZATION_ID' => 5],
                             true
                         ],
                     ],
@@ -174,7 +171,7 @@ class TextFilteredIndexDataProviderTest extends IndexDataProviderTest
                                 'title' => 'The long entry',
                                 'description' =>
                                     'zUWidBOhT9IzqNyPhYvchY QJfPB2teh0ukQ',
-                                'all_text' => 'The long entry zUWidBOhT9IzqNyPhYvchY QJfPB2teh0ukQ',
+                                'all_text_5' => 'zUWidBOhT9IzqNyPhYvchY QJfPB2teh0ukQ The long entry',
                             ],
                         ],
                     ],
