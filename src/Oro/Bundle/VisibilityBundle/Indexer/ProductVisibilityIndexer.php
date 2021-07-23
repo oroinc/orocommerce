@@ -13,7 +13,7 @@ class ProductVisibilityIndexer
 
     const FIELD_VISIBILITY_NEW = 'visibility_new';
 
-    const FIELD_VISIBILITY_ACCOUNT = 'visibility_customer_CUSTOMER_ID';
+    const FIELD_VISIBILITY_ACCOUNT = 'visibility_customer.CUSTOMER_ID';
 
     const FIELD_IS_VISIBLE_BY_DEFAULT = 'is_visible_by_default';
 
