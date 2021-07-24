@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\CMSBundle\Provider;
 
-use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CMSBundle\Entity\Page;
-use Oro\Bundle\CMSBundle\Entity\Repository\PageRepository;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SlugAwareInterface;
+use Oro\Bundle\RedirectBundle\Provider\SluggableEntityFinder;
 use Oro\Bundle\RedirectBundle\Provider\SlugSourceEntityProviderInterface;
 
 /**
@@ -16,19 +15,12 @@ use Oro\Bundle\RedirectBundle\Provider\SlugSourceEntityProviderInterface;
  */
 class PageSlugSourceEntityProvider implements SlugSourceEntityProviderInterface
 {
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
+    private SluggableEntityFinder $sluggableEntityFinder;
+    private ConfigManager $configManager;
 
-    /**
-     * @var ConfigManager
-     */
-    protected $configManager;
-
-    public function __construct(ManagerRegistry $registry, ConfigManager $configManager)
+    public function __construct(SluggableEntityFinder $sluggableEntityFinder, ConfigManager $configManager)
     {
-        $this->registry = $registry;
+        $this->sluggableEntityFinder = $sluggableEntityFinder;
         $this->configManager = $configManager;
     }
 
@@ -41,9 +33,6 @@ class PageSlugSourceEntityProvider implements SlugSourceEntityProviderInterface
             return null;
         }
 
-        /** @var PageRepository $repository */
-        $repository = $this->registry->getManagerForClass(Page::class)->getRepository(Page::class);
-
-        return $repository->findOneBySlug($slug);
+        return $this->sluggableEntityFinder->findEntityBySlug(Page::class, $slug);
     }
 }

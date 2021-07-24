@@ -8,7 +8,6 @@ use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Component\Tree\Entity\Repository\NestedTreeRepository;
 
 /**
@@ -275,15 +274,5 @@ class CategoryRepository extends NestedTreeRepository
             ->select($qb->expr()->max('category.left'))
             ->getQuery()
             ->getSingleScalarResult();
-    }
-
-    public function findOneBySlug(Slug $slug): ?Category
-    {
-        $qb = $this->createQueryBuilder('c');
-        $qb
-            ->where($qb->expr()->isMemberOf(':slug', 'c.slugs'))
-            ->setParameter('slug', $slug);
-
-        return $qb->getQuery()->getOneOrNullResult();
     }
 }

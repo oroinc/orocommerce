@@ -336,6 +336,11 @@ services:
             - ['registerProvider', ['cache', '@oro_redirect.provider.sluggable_url_cache'] ]
             - ['registerProvider', ['database', '@oro_redirect.provider.sluggable_url_database'] ]
 
+    oro_redirect.sluggable_entity_finder:
+        class: Oro\Bundle\RedirectBundle\Provider\SluggableEntityFinder
+        arguments:
+            - '@doctrine'
+
     oro_redirect.url_provider:
         public: false
         class: Oro\Bundle\RedirectBundle\Provider\SluggableUrlCacheAwareProvider
