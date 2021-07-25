@@ -13,15 +13,13 @@ use Oro\Bundle\CMSBundle\Parser\TwigParser;
 use Oro\Bundle\CMSBundle\WYSIWYG\WYSIWYGProcessedDTO;
 use Oro\Bundle\CMSBundle\WYSIWYG\WYSIWYGProcessedEntityDTO;
 use Oro\Bundle\CMSBundle\WYSIWYG\WYSIWYGTwigFunctionProcessorInterface;
-use Oro\Bundle\EntityBundle\ORM\Event\PreClearEventArgs;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager as EntityConfigManager;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\LocaleBundle\Entity\AbstractLocalizedFallbackValue;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerTrait;
 use Psr\Container\ContainerInterface;
-use Psr\Log\LoggerAwareTrait;
-use Psr\Log\NullLogger;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
 
@@ -35,34 +33,15 @@ use Symfony\Contracts\Service\ServiceSubscriberInterface;
 class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubscriberInterface
 {
     use OptionalListenerTrait;
-    use LoggerAwareTrait;
 
-    /** @var ContainerInterface */
-    private $container;
-
+    private ContainerInterface $container;
     /** @var string[][] */
-    private $fieldLists = [];
-
-    /** @var array */
-    private $scheduled = [];
+    private array $fieldLists = [];
+    private array $scheduled = [];
 
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
-        $this->logger = new NullLogger();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public static function getSubscribedServices()
-    {
-        return [
-            'oro_cms.parser.twig' => TwigParser::class,
-            'oro_cms.wysiwyg.chain_twig_function_processor' => WYSIWYGTwigFunctionProcessorInterface::class,
-            EntityConfigManager::class,
-            PropertyAccessorInterface::class
-        ];
     }
 
     public function postPersist(LifecycleEventArgs $args): void
@@ -161,7 +140,7 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
     public function onTerminate(): void
     {
         try {
-            foreach ($this->scheduled as $hash => $managerWithScheduledEntities) {
+            foreach ($this->scheduled as $managerWithScheduledEntities) {
                 /** @var EntityManager $entityManager */
                 $entityManager = $managerWithScheduledEntities['em'];
                 $unitOfWork = $entityManager->getUnitOfWork();
@@ -181,7 +160,7 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
                 }
             }
         } catch (\Throwable $throwable) {
-            $this->logger->error(
+            $this->getLogger()->error(
                 sprintf(
                     'Failed to execute pending %s of %s - entity manager might has been untimely cleared',
                     strtolower(substr($operation, -6)),
@@ -194,7 +173,7 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
         }
     }
 
-    public function preClear(PreClearEventArgs $preClearEventArgs): void
+    public function preClear(): void
     {
         $this->onTerminate();
     }
@@ -368,6 +347,20 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return [
+            'oro_cms.parser.twig' => TwigParser::class,
+            'oro_cms.wysiwyg.chain_twig_function_processor' => WYSIWYGTwigFunctionProcessorInterface::class,
+            EntityConfigManager::class,
+            PropertyAccessorInterface::class,
+            LoggerInterface::class
+        ];
+    }
+
     private function getTwigParser(): TwigParser
     {
         return $this->container->get('oro_cms.parser.twig');
@@ -386,5 +379,10 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
     private function getPropertyAccessor(): PropertyAccessorInterface
     {
         return $this->container->get(PropertyAccessorInterface::class);
+    }
+
+    private function getLogger(): LoggerInterface
+    {
+        return $this->container->get(LoggerInterface::class);
     }
 }
