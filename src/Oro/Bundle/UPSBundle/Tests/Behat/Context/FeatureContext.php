@@ -3,13 +3,12 @@
 namespace Oro\Bundle\UPSBundle\Tests\Behat\Context;
 
 use Behat\Gherkin\Node\TableNode;
-use Behat\Symfony2Extension\Context\KernelAwareContext;
-use Behat\Symfony2Extension\Context\KernelDictionary;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Symfony\Component\Yaml\Dumper;
 
-class FeatureContext extends OroFeatureContext implements KernelAwareContext
+class FeatureContext extends OroFeatureContext
 {
     const BEHAT_YAML_DIR_NAME = 'behat';
     const BEHAT_YAML_FILE_NAME = 'ups_shipping_costs_data.yml';
@@ -17,7 +16,15 @@ class FeatureContext extends OroFeatureContext implements KernelAwareContext
     const HEADER_CURRENCY = 'Currency';
     const HEADER_COST = 'Cost';
 
-    use KernelDictionary;
+    private ManagerRegistry $managerRegistry;
+
+    private string $cacheDir;
+
+    public function __construct(ManagerRegistry $managerRegistry, string $cacheDir)
+    {
+        $this->managerRegistry = $managerRegistry;
+        $this->cacheDir = $cacheDir;
+    }
 
     /**
      * Configures UPS with expected costs.
@@ -82,7 +89,7 @@ class FeatureContext extends OroFeatureContext implements KernelAwareContext
 
     private function getMethodCodeByDescription(string $description): string
     {
-        $entityManager = $this->getContainer()->get('doctrine')->getManagerForClass(ShippingService::class);
+        $entityManager = $this->managerRegistry->getManagerForClass(ShippingService::class);
         $repository = $entityManager->getRepository(ShippingService::class);
 
         /** @var ShippingService $shippingService */
@@ -97,8 +104,7 @@ class FeatureContext extends OroFeatureContext implements KernelAwareContext
 
     private function writeFile(string $content)
     {
-        $cacheDir = $this->getContainer()->getParameter('kernel.cache_dir');
-        $yamlFile = fopen(self::getBehatYamlFilename($cacheDir), 'wt');
+        $yamlFile = fopen(self::getBehatYamlFilename($this->cacheDir), 'wt');
         fwrite($yamlFile, $content);
         fclose($yamlFile);
     }

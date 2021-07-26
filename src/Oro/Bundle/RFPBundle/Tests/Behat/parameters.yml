@@ -1,0 +1,6 @@
+services:
+    Oro\Bundle\RFPBundle\Tests\Behat\Context\FeatureContext:
+        public: true
+        arguments:
+            - '@router'
+            - '@oro_entity.doctrine_helper'

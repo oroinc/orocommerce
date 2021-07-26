@@ -3,8 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Behat\Context;
 
 use Behat\Gherkin\Node\TableNode;
-use Behat\Symfony2Extension\Context\KernelAwareContext;
-use Behat\Symfony2Extension\Context\KernelDictionary;
+use Oro\Bundle\DataGridBundle\Tools\DatagridRouteHelper;
 use Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGrid;
 use Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGridFilters;
 use Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGridRow;
@@ -13,9 +12,16 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\Form;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 
-class FrontendProductGridContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
+class FrontendProductGridContext extends OroFeatureContext implements OroPageObjectAware
 {
-    use PageObjectDictionary, KernelDictionary;
+    use PageObjectDictionary;
+
+    private DatagridRouteHelper $datagridRouteHelper;
+
+    public function __construct(DatagridRouteHelper $datagridRouteHelper)
+    {
+        $this->datagridRouteHelper = $datagridRouteHelper;
+    }
 
     /**
      * Updates line item form for a given row in frontend product grid.
@@ -124,8 +130,7 @@ class FrontendProductGridContext extends OroFeatureContext implements OroPageObj
      */
     public function generateUrlForFrontendProductSearchGrid($pageNumber)
     {
-        $path = $this->getContainer()
-            ->get('oro_datagrid.helper.route')
+        $path = $this->datagridRouteHelper
             ->generate(
                 'oro_product_frontend_product_index',
                 'frontend-product-search-grid',

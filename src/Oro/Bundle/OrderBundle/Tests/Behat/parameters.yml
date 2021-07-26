@@ -1,0 +1,15 @@
+services:
+    Oro\Bundle\OrderBundle\Tests\Behat\Context\FeatureContext:
+        public: true
+        arguments:
+            - '@doctrine'
+            - '@oro_config.global'
+            - '@oro_entity.doctrine_helper'
+            - '@oro_featuretoggle.configuration.manager'
+
+    Oro\Bundle\OrderBundle\Tests\Behat\Context\OrderContext:
+        public: true
+        arguments:
+            - '@doctrine'
+            - '@router'
+            - '@oro_config.global'

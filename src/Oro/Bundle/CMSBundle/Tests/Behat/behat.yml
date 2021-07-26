@@ -220,26 +220,24 @@ oro_behat_extension:
     suites:
         OroCMSBundle:
             contexts:
-                - OroDataGridBundle::GridContext
-                - OroFormBundle::FormContext
-                - OroRedirectBundle::SlugPrototypesContext
-                - OroCMSBundle::FeatureContext
-                - OroCMSBundle::ImportExportFeatureContext
-                - OroWebCatalogBundle::FeatureContext
-                - OroApplicationBundle::CommerceMainContext
+                - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
+                - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
+                - Oro\Bundle\RedirectBundle\Tests\Behat\Context\SlugPrototypesContext
+                - Oro\Bundle\CMSBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\CMSBundle\Tests\Behat\Context\ImportExportFeatureContext
+                - Oro\Bundle\WebCatalogBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext
                 - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
-                - OroNavigationBundle::TabContext
-                - OroNavigationBundle::FeatureContext
-                - OroSecurityBundle::ACLContext
-                - OroUserBundle::FeatureContext
-                - OroActionBundle::OroActionContext
-                - OroConfigBundle::FeatureContext
-                - OroFrontendBundle::FrontendMenuContext
-                - OroSearchBundle::SearchContext
-                - OroEmailBundle::EmailContext
-                - OroImportExportBundle::ImportExportContext:
-                    - '@oro_entity.entity_alias_resolver'
-                    - '@oro_importexport.processor.registry'
-                - OroAttachmentBundle::AttachmentImageContext
+                - Oro\Bundle\NavigationBundle\Tests\Behat\Context\TabContext
+                - Oro\Bundle\NavigationBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\SecurityBundle\Tests\Behat\Context\ACLContext
+                - Oro\Bundle\UserBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\ActionBundle\Tests\Behat\Context\OroActionContext
+                - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\FrontendBundle\Tests\Behat\Context\FrontendMenuContext
+                - Oro\Bundle\SearchBundle\Tests\Behat\Context\SearchContext
+                - Oro\Bundle\EmailBundle\Tests\Behat\Context\EmailContext
+                - Oro\Bundle\ImportExportBundle\Tests\Behat\Context\ImportExportContext
+                - Oro\Bundle\AttachmentBundle\Tests\Behat\Context\AttachmentImageContext
             paths:
                 - '@OroCMSBundle/Tests/Behat/Features'

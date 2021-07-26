@@ -1,0 +1,7 @@
+services:
+    Oro\Bundle\WebsiteSearchBundle\Tests\Behat\Context\SearchIndexContext:
+        public: true
+        arguments:
+            - '@doctrine'
+            - '@oro_website.manager'
+            - '@oro_website_search.query_factory'

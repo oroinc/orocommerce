@@ -9,3 +9,9 @@ services:
     oro_pricing.behat.pricing_storage_switch_handler:
         alias: oro_pricing.pricing_storage_switch_handler
         public: true
+
+    Oro\Bundle\PricingBundle\Tests\Behat\Context\FeatureContext:
+        public: true
+        arguments:
+            - '@doctrine'
+            - '@oro_pricing.pricing_strategy.strategy_register'

@@ -2,19 +2,22 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Behat\Context;
 
-use Behat\Symfony2Extension\Context\KernelAwareContext;
-use Behat\Symfony2Extension\Context\KernelDictionary;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 
-/**
- * @SuppressWarnings(PHPMD.TooManyMethods)
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
- */
-class FeatureContext extends OroFeatureContext implements KernelAwareContext
+class FeatureContext extends OroFeatureContext
 {
-    use KernelDictionary;
+    private ConfigManager $configManager;
+
+    private DoctrineHelper $doctrineHelper;
+
+    public function __construct(ConfigManager $configManager, DoctrineHelper $doctrineHelper)
+    {
+        $this->configManager = $configManager;
+        $this->doctrineHelper = $doctrineHelper;
+    }
 
     /**
      * @Given /^I set "(?P<webCatalogName>[\w\s]+)" as default web catalog$/
@@ -23,17 +26,13 @@ class FeatureContext extends OroFeatureContext implements KernelAwareContext
      */
     public function setDefaultWebCatalog($webCatalogName)
     {
-        $webCatalogRepository = $this->getContainer()
-            ->get('oro_entity.doctrine_helper')
-            ->getEntityRepository(WebCatalog::class);
+        $webCatalogRepository = $this->doctrineHelper->getEntityRepository(WebCatalog::class);
 
         $webCatalog = $webCatalogRepository->findOneBy(['name' => $webCatalogName]);
 
         static::assertNotNull($webCatalog, sprintf('Web Catalog with name "%s" not found', $webCatalogName));
 
-        /** @var ConfigManager $configManager */
-        $configManager = $this->getContainer()->get('oro_config.global');
-        $configManager->set('oro_web_catalog.web_catalog', $webCatalog->getId());
-        $configManager->flush();
+        $this->configManager->set('oro_web_catalog.web_catalog', $webCatalog->getId());
+        $this->configManager->flush();
     }
 }

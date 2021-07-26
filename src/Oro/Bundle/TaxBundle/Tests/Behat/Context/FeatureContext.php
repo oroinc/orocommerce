@@ -2,14 +2,18 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Behat\Context;
 
-use Behat\Symfony2Extension\Context\KernelAwareContext;
-use Behat\Symfony2Extension\Context\KernelDictionary;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 
-class FeatureContext extends OroFeatureContext implements KernelAwareContext
+class FeatureContext extends OroFeatureContext
 {
-    use KernelDictionary;
+    private ConfigManager $configManager;
+
+    public function __construct(ConfigManager $configManager)
+    {
+        $this->configManager = $configManager;
+    }
 
     /**
      * @Given Base tax value is set to "Shipping Origin"
@@ -32,8 +36,7 @@ class FeatureContext extends OroFeatureContext implements KernelAwareContext
      */
     private function thereIsUseAsBaseByDefaultInTheSystemConfiguration($value): void
     {
-        $configManager = $this->getContainer()->get('oro_config.global');
-        $configManager->set('oro_tax.use_as_base_by_default', $value);
-        $configManager->flush();
+        $this->configManager->set('oro_tax.use_as_base_by_default', $value);
+        $this->configManager->flush();
     }
 }

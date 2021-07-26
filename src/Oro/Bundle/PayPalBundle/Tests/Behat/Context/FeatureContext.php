@@ -3,8 +3,8 @@
 namespace Oro\Bundle\PayPalBundle\Tests\Behat\Context;
 
 use Behat\Gherkin\Node\TableNode;
-use Behat\Symfony2Extension\Context\KernelAwareContext;
-use Behat\Symfony2Extension\Context\KernelDictionary;
+use Doctrine\Common\Cache\Cache;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
@@ -17,9 +17,29 @@ use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Oro\Bundle\UserBundle\Entity\User;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
-class FeatureContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
+class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 {
-    use PageObjectDictionary, KernelDictionary, UserUtilityTrait;
+    use PageObjectDictionary, UserUtilityTrait;
+
+    private DoctrineHelper $doctrineHelper;
+
+    private Cache $cache;
+
+    private string $paymentsProType;
+
+    private string $payflowGatewayType;
+
+    public function __construct(
+        Cache $cache,
+        DoctrineHelper $doctrineHelper,
+        string $paymentsProType,
+        string $payflowGatewayType
+    ) {
+        $this->cache = $cache;
+        $this->doctrineHelper = $doctrineHelper;
+        $this->paymentsProType = $paymentsProType;
+        $this->payflowGatewayType = $payflowGatewayType;
+    }
 
     /**
      * @Given /^(?:I )?create "(?P<name>(?:[^"]+))" PayPal Payflow integration$/
@@ -54,8 +74,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $channel = $this->createChannel($name, $type, $transport);
         $transport->setChannel($channel);
 
-        $entityManager = $this->getContainer()->get('oro_entity.doctrine_helper')
-            ->getEntityManagerForClass(Channel::class);
+        $entityManager = $this->doctrineHelper->getEntityManagerForClass(Channel::class);
         $entityManager->persist($channel);
         $entityManager->flush();
     }
@@ -78,14 +97,14 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         ];
 
         $settings = [
-            $this->getContainer()->getParameter('oro_paypal.method.paypal_payflow_gateway') => array_merge(
+            $this->payflowGatewayType => array_merge(
                 $baseSettings,
                 [
                     'creditCardLabels' => 'PayPalFlow',
                     'creditCardShortLabels' => 'PPlFlow',
                 ]
             ),
-            $this->getContainer()->getParameter('oro_paypal.method.paypal_payments_pro') => array_merge(
+            $this->paymentsProType => array_merge(
                 $baseSettings,
                 [
                     'creditCardLabels' => 'PayPalPro',
@@ -120,8 +139,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
     protected function createChannel(string $name, string $type, $transport): Channel
     {
-        $doctrineHelper = $this->getContainer()->get('oro_entity.doctrine_helper');
-        $owner = $this->getFirstUser($doctrineHelper->getEntityManagerForClass(User::class));
+        $owner = $this->getFirstUser($this->doctrineHelper->getEntityManagerForClass(User::class));
 
         $channel = new Channel();
         $channel->setName($name)
@@ -204,9 +222,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     public function assertExistsProductDataBeforePay(TableNode $table)
     {
-        $lineItems = $this->getContainer()
-            ->get('oro_paypal.test.express_payment.cache')
-            ->fetch(NVPClientMock::LINE_ITEM_CACHE_KEY);
+        $lineItems = $this->cache->fetch(NVPClientMock::LINE_ITEM_CACHE_KEY);
         foreach ($table as $row) {
             foreach ($row as $columnName => $rowValue) {
                 self::assertTrue(in_array($rowValue, $lineItems, true));
@@ -222,9 +238,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     public function assertNotExistsProductDataBeforePay(TableNode $table)
     {
-        $lineItems = $this->getContainer()
-            ->get('oro_paypal.test.express_payment.cache')
-            ->fetch(NVPClientMock::LINE_ITEM_CACHE_KEY);
+        $lineItems = $this->cache->fetch(NVPClientMock::LINE_ITEM_CACHE_KEY);
         foreach ($table as $row) {
             foreach ($row as $columnName => $rowValue) {
                 self::assertFalse(in_array($rowValue, $lineItems, true));

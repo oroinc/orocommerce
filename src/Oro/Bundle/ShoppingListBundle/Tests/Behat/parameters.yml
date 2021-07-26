@@ -1,0 +1,6 @@
+services:
+    Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\FeatureContext:
+        public: true
+        arguments:
+            - '@router'
+            - '@doctrine'
