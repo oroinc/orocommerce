@@ -373,7 +373,7 @@ class LoadProductDemoData extends AbstractFixture implements
         $filters = array_keys($this->container->getParameter('liip_imagine.filter_sets'));
 
         foreach ($filters as $filter) {
-            if (strpos($filter, 'digital_asset_') !== 0) {
+            if (!str_starts_with($filter, 'digital_asset_')) {
                 continue;
             }
 

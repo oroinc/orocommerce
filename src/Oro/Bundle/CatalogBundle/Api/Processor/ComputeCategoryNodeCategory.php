@@ -66,10 +66,10 @@ class ComputeCategoryNodeCategory implements ProcessorInterface
             $category = $categoryAssociationData[$item[self::ID_FIELD]] ?? null;
             $data[$key][self::CATEGORY_FIELD] = $category;
             if ($category) {
-                $categoryPrefixLength = strlen($categoryPrefix);
+                $categoryPrefixLength = \strlen($categoryPrefix);
                 foreach ($fields as $fieldName => $field) {
                     $propertyPath = $field->getPropertyPath();
-                    if ($propertyPath && 0 === strpos($propertyPath, $categoryPrefix)) {
+                    if ($propertyPath && str_starts_with($propertyPath, $categoryPrefix)) {
                         $categoryPropertyPath = substr($propertyPath, $categoryPrefixLength);
                         $value = null;
                         if ($this->dataAccessor->tryGetValue($category, $categoryPropertyPath, $value)) {
@@ -123,13 +123,13 @@ class ComputeCategoryNodeCategory implements ProcessorInterface
                 continue;
             }
             $propertyPath = $field->getPropertyPath();
-            if ($propertyPath && 0 === strpos($propertyPath, $categoryPrefix)) {
+            if ($propertyPath && str_starts_with($propertyPath, $categoryPrefix)) {
                 $dependedFieldNames[] = $fieldName;
             }
             $dependsOn = $field->getDependsOn();
             if ($dependsOn) {
                 foreach ($dependsOn as $propertyPath) {
-                    if (0 === strpos($propertyPath, $categoryPrefix)) {
+                    if (str_starts_with($propertyPath, $categoryPrefix)) {
                         $dependedFieldNames[] = $fieldName;
                         break;
                     }
@@ -190,13 +190,13 @@ class ComputeCategoryNodeCategory implements ProcessorInterface
                 continue;
             }
             $propertyPath = $field->getPropertyPath();
-            if ($propertyPath && 0 === strpos($propertyPath, $categoryPrefix)) {
+            if ($propertyPath && str_starts_with($propertyPath, $categoryPrefix)) {
                 $categoryDependsOn[] = substr($propertyPath, $categoryPrefixLength);
             }
             $dependsOn = $field->getDependsOn();
             if ($dependsOn) {
                 foreach ($dependsOn as $propertyPath) {
-                    if (0 === strpos($propertyPath, $categoryPrefix)) {
+                    if (str_starts_with($propertyPath, $categoryPrefix)) {
                         $categoryDependsOn[] = substr($propertyPath, $categoryPrefixLength);
                     }
                 }

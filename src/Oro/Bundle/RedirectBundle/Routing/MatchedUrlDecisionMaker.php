@@ -54,7 +54,7 @@ class MatchedUrlDecisionMaker
         if (null === $result) {
             $result = false;
             foreach ($this->skippedUrlPatterns as $pattern) {
-                if (strpos($url, $pattern) === 0) {
+                if (str_starts_with($url, $pattern)) {
                     $result = true;
                     break;
                 }

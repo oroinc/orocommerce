@@ -60,7 +60,7 @@ class FrontendSegmentDatagridExtension extends AbstractExtension
      */
     private function isSegmentGrid(DatagridConfiguration $config)
     {
-        return strpos($config->offsetGet('name'), Segment::GRID_PREFIX) === 0;
+        return str_starts_with($config->offsetGet('name'), Segment::GRID_PREFIX);
     }
 
     /**

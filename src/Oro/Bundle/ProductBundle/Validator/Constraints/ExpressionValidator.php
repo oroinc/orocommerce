@@ -11,6 +11,9 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * This validator is used to check whether a string represents a valid expression.
+ */
 class ExpressionValidator extends ConstraintValidator
 {
     /**
@@ -116,14 +119,14 @@ class ExpressionValidator extends ConstraintValidator
                 $supportedFields = $this->getSupportedFields($constraint, $class);
                 $unsupportedFields = array_merge($unsupportedFields, array_diff($fields, $supportedFields));
             } catch (\InvalidArgumentException $ex) {
-                if (strpos($class, '::') !== false) {
+                if (str_contains($class, '::')) {
                     $relationInfo = explode('::', $class);
                     $unsupportedFields[] = $relationInfo[1];
                 }
             }
         }
         if (count($unsupportedFields) > 0) {
-            list($message, $parameters) = $this->getErrorData($constraint);
+            [$message, $parameters] = $this->getErrorData($constraint);
 
             foreach ($unsupportedFields as $invalidField) {
                 $this->context->addViolation($message, array_merge($parameters, [

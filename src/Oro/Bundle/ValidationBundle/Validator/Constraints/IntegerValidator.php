@@ -6,6 +6,9 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
+/**
+ * Validates that a value is an integer number.
+ */
 class IntegerValidator extends ConstraintValidator
 {
     /**
@@ -33,7 +36,7 @@ class IntegerValidator extends ConstraintValidator
         $formatter->parse($value, PHP_INT_SIZE == 8 ? $formatter::TYPE_INT64 : $formatter::TYPE_INT32, $position);
 
         if (intl_is_failure($formatter->getErrorCode())
-            || strpos($value, $decimalSeparator) !== false
+            || str_contains($value, $decimalSeparator)
             || $position < strlen($value)
         ) {
             /** @var Integer $constraint */

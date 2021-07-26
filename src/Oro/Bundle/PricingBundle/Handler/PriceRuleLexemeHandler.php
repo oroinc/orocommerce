@@ -104,12 +104,12 @@ class PriceRuleLexemeHandler
          */
         foreach ($lexemes as $class => $fieldNames) {
             $containerId = null;
-            if (strpos($class, '|') !== false) {
-                list($class, $containerId) = explode('|', $class);
+            if (str_contains($class, '|')) {
+                [$class, $containerId] = explode('|', $class);
             }
 
-            if (strpos($class, '::') !== false) {
-                list($containerClass, $fieldName) = explode('::', $class);
+            if (str_contains($class, '::')) {
+                [$containerClass, $fieldName] = explode('::', $class);
                 $lexeme = new PriceRuleLexeme();
                 $lexeme->setPriceRule($priceRule);
                 $lexeme->setPriceList($priceList);

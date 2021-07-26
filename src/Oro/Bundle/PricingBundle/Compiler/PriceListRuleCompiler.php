@@ -392,10 +392,10 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
 
         $generatedConditions = [];
         foreach ($this->usedPriceRelations as $alias => $relationFields) {
-            list($root, $field) = explode('::', $alias);
+            [$root, $field] = explode('::', $alias);
             $containerId = null;
-            if (strpos($field, '|') !== false) {
-                list($field, $containerId) = explode('|', $field);
+            if (str_contains($field, '|')) {
+                [$field, $containerId] = explode('|', $field);
             }
             $root = $reverseNameMapping[$root];
 

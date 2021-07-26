@@ -112,7 +112,7 @@ class FieldsProvider implements FieldsProviderInterface
      */
     public function getRealClassName($className, $fieldName = null)
     {
-        if (!$fieldName && strpos($className, '::') !== false) {
+        if (!$fieldName && str_contains($className, '::')) {
             [$className, $fieldName] = explode('::', $className);
         }
 
@@ -120,7 +120,7 @@ class FieldsProvider implements FieldsProviderInterface
             $numericOnly = false;
             $withRelations = true;
             $fields = $this->getDetailedFieldsInformation($className, $numericOnly, $withRelations);
-            if (array_key_exists($fieldName, $fields)) {
+            if (\array_key_exists($fieldName, $fields)) {
                 $className = $fields[$fieldName]['related_entity_name'];
             } else {
                 throw new \InvalidArgumentException(

@@ -143,11 +143,11 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
         );
         if ($select->filter('option')->count() === 1) {
             return null;
-        } else {
-            $value = $select->filter('optgroup')->filter('option[selected="selected"]')->attr('value');
-
-            return (int)substr($value, strpos($value, '_') + 1);
         }
+
+        $value = $select->filter('optgroup')->filter('option[selected="selected"]')->attr('value');
+
+        return (int)substr($value, strpos($value, '_') + 1);
     }
 
     /**
@@ -184,7 +184,8 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
         $accessor = PropertyAccess::createPropertyAccessor();
         $parameters = [];
         foreach ($values as $key => $val) {
-            if (!$pos = strpos($key, '[')) {
+            $pos = strpos($key, '[');
+            if (!$pos) {
                 continue;
             }
             $key = '[' . substr($key, 0, $pos) . ']' . substr($key, $pos);

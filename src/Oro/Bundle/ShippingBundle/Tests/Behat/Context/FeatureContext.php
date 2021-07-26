@@ -71,7 +71,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     {
         $elements = $this->findAllElements('CheckoutFormRow');
         foreach ($elements as $element) {
-            if (strpos($element->getText(), $shippingType) !== false) {
+            if (str_contains($element->getText(), $shippingType)) {
                 return;
             }
         }
@@ -183,7 +183,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $form->fillField('Name', $shoppingRuleName);
 
         foreach ($table->getColumn(0) as $columnItem) {
-            if (false !== strpos($columnItem, 'Country')) {
+            if (str_contains($columnItem, 'Country')) {
                 $destinationAdd = $form->find('css', '.add-list-item');
                 $destinationAdd->click();
             }

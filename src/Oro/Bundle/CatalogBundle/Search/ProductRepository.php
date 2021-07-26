@@ -104,7 +104,7 @@ class ProductRepository extends WebsiteSearchRepository
         $counts = array_filter(
             $counts,
             function ($path) use ($rootCategoryPath) {
-                return strpos($path, $rootCategoryPath) === 0;
+                return str_starts_with($path, $rootCategoryPath);
             },
             ARRAY_FILTER_USE_KEY
         );

@@ -70,11 +70,11 @@ class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
         $this->numberFormatter->expects($this->once())
             ->method('parseFormattedDecimal')
             ->willReturnCallback(function ($value) {
-                if (strpos($value, ',') !== false) {
+                if (str_contains($value, ',')) {
                     return (float)str_replace(',', '.', $value);
                 }
 
-                if (strpos($value, '.') !== false) {
+                if (str_contains($value, '.')) {
                     return false;
                 }
 

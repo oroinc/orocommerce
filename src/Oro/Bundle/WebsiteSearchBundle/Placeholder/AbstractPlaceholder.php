@@ -7,20 +7,24 @@ namespace Oro\Bundle\WebsiteSearchBundle\Placeholder;
  */
 abstract class AbstractPlaceholder implements PlaceholderInterface
 {
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function replaceDefault($string)
     {
-        if (strpos($string, $this->getPlaceholder()) !== false) {
+        if (str_contains($string, $this->getPlaceholder())) {
             return $this->replaceValue($string, $this->getDefaultValue());
         }
 
         return $string;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function replace($string, array $values)
     {
-        if (!array_key_exists($this->getPlaceholder(), $values)) {
+        if (!\array_key_exists($this->getPlaceholder(), $values)) {
             return $string;
         }
 

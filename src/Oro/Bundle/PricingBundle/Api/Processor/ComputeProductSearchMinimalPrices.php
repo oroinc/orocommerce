@@ -76,9 +76,9 @@ class ComputeProductSearchMinimalPrices implements ProcessorInterface
     private function getPriceFieldNameForProductUnit(array $data, string $unitName): ?string
     {
         $suffix = '_' . $unitName;
-        $suffixOffset = -strlen($suffix);
+        $suffixOffset = -\strlen($suffix);
         foreach ($data as $name => $val) {
-            if (0 === strpos($name, 'decimal_minimal_price_') && substr($name, $suffixOffset) === $suffix) {
+            if (str_starts_with($name, 'decimal_minimal_price_') && substr($name, $suffixOffset) === $suffix) {
                 return $name;
             }
         }
