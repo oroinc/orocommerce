@@ -566,14 +566,14 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
                     ],
                 ],
                 'indexData' => [
-                    [1, 'title_WEBSITE_ID', '<p>SKU-01</p>', ['WEBSITE_ID' => 1], true],
-                    [1, 'title_WEBSITE_ID', '<p>SKU-01-us</p>', ['WEBSITE_ID' => 1, 'LOCALIZATION_ID' => 5], true],
-                    [1, 'title_WEBSITE_ID', '<p>SKU-01-gb</p>', ['WEBSITE_ID' => 1, 'LOCALIZATION_ID' => 6], true],
+                    [1, 'title_WEBSITE_ID', 'SKU-01', ['WEBSITE_ID' => 1], true],
+                    [1, 'title_WEBSITE_ID', 'SKU-01-us', ['WEBSITE_ID' => 1, 'LOCALIZATION_ID' => 5], true],
+                    [1, 'title_WEBSITE_ID', 'SKU-01-gb', ['WEBSITE_ID' => 1, 'LOCALIZATION_ID' => 6], true],
                 ],
                 'expected' => [
                     1 => [
                         'text' => [
-                            'title_1' => '<p>SKU-01</p> <p>SKU-01-us</p> <p>SKU-01-gb</p>',
+                            'title_1' => 'SKU-01 SKU-01-us SKU-01-gb',
                             'all_text_5' => 'SKU-01-us SKU-01',
                             'all_text_6' => 'SKU-01-gb SKU-01',
                         ]
