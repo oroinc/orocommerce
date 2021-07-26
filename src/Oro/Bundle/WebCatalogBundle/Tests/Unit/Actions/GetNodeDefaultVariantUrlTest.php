@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Acl\Actions;
+namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Actions;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ManagerRegistry;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PaymentTermBundle\Tests\Unit\Method\View;
+namespace Oro\Bundle\PaymentTermBundle\Tests\Unit\Method\View\Provider;
 
 use Oro\Bundle\PaymentBundle\Tests\Unit\Method\View\Provider\AbstractMethodViewProviderTest;
 use Oro\Bundle\PaymentTermBundle\Method\Config\PaymentTermConfigInterface;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\UnitProvider;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\ProductBundle\Form\Handler\QuickAddHandler;
 use Oro\Bundle\ProductBundle\Provider\QuickAddCollectionProvider;

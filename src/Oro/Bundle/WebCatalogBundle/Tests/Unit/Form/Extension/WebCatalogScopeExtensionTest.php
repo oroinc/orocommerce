@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WebCatalog\Tests\Unit\Form\Extension;
+namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Extension;
 
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\FormBundle\Tests\Unit\Form\Stub\EntityIdentifierType as EntityIdentifierTypeStub;

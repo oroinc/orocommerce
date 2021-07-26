@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PaymentTermBundle\Tests\Unit\Method\Config;
+namespace Oro\Bundle\PaymentTermBundle\Tests\Unit\Method\Config\ParameterBag;
 
 use Oro\Bundle\PaymentTermBundle\Method\Config\ParameterBag\ParameterBagPaymentTermConfig;
 

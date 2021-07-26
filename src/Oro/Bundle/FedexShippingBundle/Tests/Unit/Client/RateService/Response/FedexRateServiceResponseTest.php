@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\FedexShippingBundle\Tests\Unit\Client\RateService\Response\Factory;
+namespace Oro\Bundle\FedexShippingBundle\Tests\Unit\Client\RateService\Response;
 
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Response\FedexRateServiceResponse;
 use PHPUnit\Framework\TestCase;

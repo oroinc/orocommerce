@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CatalogBundle\Tests\Unit\ImportExport\EventListener;
+namespace Oro\Bundle\CatalogBundle\Tests\Unit\ImportExport\Helper;
 
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManager;

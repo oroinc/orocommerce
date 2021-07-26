@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PaymentBundle\Tests\Unit\Payment\Method\EventListener;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Method\EventListener;
 
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;

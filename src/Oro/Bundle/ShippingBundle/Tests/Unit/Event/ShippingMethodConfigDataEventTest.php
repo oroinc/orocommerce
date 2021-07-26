@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Event;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Event;
 
 use Oro\Bundle\ShippingBundle\Event\ShippingMethodConfigDataEvent;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;

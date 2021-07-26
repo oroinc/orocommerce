@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\DataTransformer;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\ProductVariant\Form\Type\DataTransformer;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ProductVariant\Form\Type\DataTransformer\ProductVariantFieldsToProductVariantTransformer;

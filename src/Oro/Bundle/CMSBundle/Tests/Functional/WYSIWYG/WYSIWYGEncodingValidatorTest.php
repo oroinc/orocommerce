@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CMSBundle\Tests\Unit\Validator\Constraints;
+namespace Oro\Bundle\CMSBundle\Tests\Functional\WYSIWYG;
 
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;

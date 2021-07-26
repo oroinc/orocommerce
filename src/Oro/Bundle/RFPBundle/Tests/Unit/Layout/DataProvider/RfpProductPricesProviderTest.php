@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\RFPBundle\Tests\Unit\Factory;
+namespace Oro\Bundle\RFPBundle\Tests\Unit\Layout\DataProvider;
 
 use Oro\Bundle\PricingBundle\Layout\DataProvider\FrontendProductPricesProvider;
 use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;

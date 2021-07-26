@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Method\EventListener;
 
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Event\Action\ChannelDisableEvent;

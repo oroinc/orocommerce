@@ -1,7 +1,9 @@
 <?php
 
-namespace Oro\Bundle\CatalogBundle\Visibility;
+namespace Oro\Bundle\CatalogBundle\Tests\Unit\Visibility;
 
+use Oro\Bundle\CatalogBundle\Visibility\CategoryDefaultProductUnitOptionsVisibilityInterface;
+use Oro\Bundle\CatalogBundle\Visibility\SingleUnitCategoryDefaultProductUnitOptionsVisibilityDecorator;
 use Oro\Bundle\ProductBundle\Service\SingleUnitModeServiceInterface;
 
 class SingleUnitCategoryDefaultProductUnitOptionsVisibilityDecoratorTest extends \PHPUnit\Framework\TestCase
