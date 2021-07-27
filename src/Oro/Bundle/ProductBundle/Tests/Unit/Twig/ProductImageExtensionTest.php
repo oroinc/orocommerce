@@ -31,7 +31,7 @@ class ProductImageExtensionTest extends \PHPUnit\Framework\TestCase
         $this->imagePlaceholderProvider = $this->createMock(ImagePlaceholderProviderInterface::class);
 
         $container = self::getContainerBuilder()
-            ->add('oro_attachment.manager', $this->attachmentManager)
+            ->add(AttachmentManager::class, $this->attachmentManager)
             ->add('oro_product.provider.product_image_placeholder', $this->imagePlaceholderProvider)
             ->add('oro_product.helper.product_image_helper', new ProductImageHelper())
             ->getContainer($this);

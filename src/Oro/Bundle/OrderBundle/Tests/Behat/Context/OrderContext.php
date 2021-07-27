@@ -3,8 +3,7 @@
 namespace Oro\Bundle\OrderBundle\Tests\Behat\Context;
 
 use Behat\Gherkin\Node\TableNode;
-use Behat\Symfony2Extension\Context\KernelAwareContext;
-use Behat\Symfony2Extension\Context\KernelDictionary;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
@@ -12,11 +11,27 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
+use Symfony\Component\Routing\RouterInterface;
 
-class OrderContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
+class OrderContext extends OroFeatureContext implements OroPageObjectAware
 {
-    use PageObjectDictionary, KernelDictionary;
+    use PageObjectDictionary;
+
+    private ManagerRegistry $managerRegistry;
+
+    private RouterInterface $router;
+
+    private ConfigManager $configManager;
+
+    public function __construct(
+        ManagerRegistry $managerRegistry,
+        RouterInterface $router,
+        ConfigManager $configManager
+    ) {
+        $this->managerRegistry = $managerRegistry;
+        $this->router = $router;
+        $this->configManager = $configManager;
+    }
 
     /**
      * @When /^I open Order History page on the store frontend$/
@@ -34,7 +49,7 @@ class OrderContext extends OroFeatureContext implements OroPageObjectAware, Kern
      */
     protected function getUrl($path)
     {
-        return $this->getContainer()->get('router')->generate($path);
+        return $this->router->generate($path);
     }
 
     /**
@@ -54,13 +69,10 @@ class OrderContext extends OroFeatureContext implements OroPageObjectAware, Kern
      */
     public function thereIsStatusForNewOrdersInTheSystemConfiguration($statusName)
     {
-        /** @var ConfigManager $configManager */
-        $configManager = $this->getContainer()->get('oro_config.global');
-
         $status = $this->getInternalStatus($statusName);
 
-        $configManager->set('oro_order.order_creation_new_internal_order_status', $status->getId());
-        $configManager->flush();
+        $this->configManager->set('oro_order.order_creation_new_internal_order_status', $status->getId());
+        $this->configManager->flush();
     }
 
     /**
@@ -102,10 +114,11 @@ class OrderContext extends OroFeatureContext implements OroPageObjectAware, Kern
      */
     protected function getInternalStatus($statusName)
     {
-        /** @var ManagerRegistry $registry */
-        $registry = $this->getContainer()->get('doctrine');
         $className = ExtendHelper::buildEnumValueClassName(Order::INTERNAL_STATUS_CODE);
 
-        return $registry->getManagerForClass($className)->getRepository($className)->findOneBy(['name' => $statusName]);
+        return $this->managerRegistry
+            ->getManagerForClass($className)
+            ->getRepository($className)
+            ->findOneBy(['name' => $statusName]);
     }
 }

@@ -1,0 +1,5 @@
+services:
+    Oro\Bundle\CatalogBundle\Tests\Behat\Context\FeatureContext:
+        public: true
+        arguments:
+            - '@doctrine'

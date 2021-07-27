@@ -3,8 +3,6 @@
 namespace Oro\Bundle\ApplicationBundle\Tests\Behat\Context;
 
 use Behat\Gherkin\Node\TableNode;
-use Behat\Symfony2Extension\Context\KernelAwareContext;
-use Behat\Symfony2Extension\Context\KernelDictionary;
 use Oro\Bundle\FormBundle\Tests\Behat\Element\OroForm;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\SessionAliasProviderAwareInterface;
@@ -13,13 +11,20 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\EntityPage;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Tabs;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
+use Symfony\Component\Routing\RouterInterface;
 
 class CommerceMainContext extends OroFeatureContext implements
     OroPageObjectAware,
-    KernelAwareContext,
     SessionAliasProviderAwareInterface
 {
-    use PageObjectDictionary, KernelDictionary, SessionAliasProviderAwareTrait;
+    use PageObjectDictionary, SessionAliasProviderAwareTrait;
+
+    private RouterInterface $router;
+
+    public function __construct(RouterInterface $router)
+    {
+        $this->router = $router;
+    }
 
     /**
      * This step used for login bayer from frontend of commerce
@@ -128,7 +133,7 @@ class CommerceMainContext extends OroFeatureContext implements
      */
     protected function getUrl($path)
     {
-        return $this->getContainer()->get('router')->generate($path);
+        return $this->router->generate($path);
     }
 
     /**

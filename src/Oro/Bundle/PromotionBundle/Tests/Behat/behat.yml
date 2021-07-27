@@ -3,30 +3,28 @@ oro_behat_extension:
     OroPromotionBundle:
       contexts:
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
-        - OroCheckoutBundle::FeatureContext
-        - OroConfigBundle::FeatureContext
-        - OroShoppingListBundle::ShoppingListContext
-        - OroDataGridBundle::GridContext
-        - OroFormBundle::FormContext
-        - OroPromotionBundle::PromotionContext
-        - OroEmailBundle::EmailContext
-        - OroApplicationBundle::CommerceMainContext
-        - OroActivityListBundle::ActivityContext
-        - OroCustomerBundle::FrontendGridContext
-        - OroQueryDesignerBundle::QueryDesignerContext
-        - OroFilterBundle::FilterContext
-        - OroOrderBundle::OrderContext
-        - OroShippingBundle::FeatureContext
-        - OroShoppingListBundle::FeatureContext
-        - OroWorkflowBundle::FeatureContext
-        - OroSearchBundle::SearchContext
-        - OroImportExportBundle::ImportExportContext:
-          - '@oro_entity.entity_alias_resolver'
-          - '@oro_importexport.processor.registry'
-        - OroSecurityBundle::ACLContext
+        - Oro\Bundle\CheckoutBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\ShoppingListContext
+        - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
+        - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
+        - Oro\Bundle\PromotionBundle\Tests\Behat\Context\PromotionContext
+        - Oro\Bundle\EmailBundle\Tests\Behat\Context\EmailContext
+        - Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext
+        - Oro\Bundle\ActivityListBundle\Tests\Behat\Context\ActivityContext
+        - Oro\Bundle\CustomerBundle\Tests\Behat\Context\FrontendGridContext
+        - Oro\Bundle\QueryDesignerBundle\Tests\Behat\Context\QueryDesignerContext
+        - Oro\Bundle\FilterBundle\Tests\Behat\Context\FilterContext
+        - Oro\Bundle\OrderBundle\Tests\Behat\Context\OrderContext
+        - Oro\Bundle\ShippingBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\WorkflowBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\SearchBundle\Tests\Behat\Context\SearchContext
+        - Oro\Bundle\ImportExportBundle\Tests\Behat\Context\ImportExportContext
+        - Oro\Bundle\SecurityBundle\Tests\Behat\Context\ACLContext
         - Oro\Bundle\UserBundle\Tests\Behat\Context\FeatureContext
-        - OroPayPalBundle::FeatureContext
-        - OroPaymentBundle::FeatureContext
+        - Oro\Bundle\PayPalBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\PaymentBundle\Tests\Behat\Context\FeatureContext
       paths:
         - '@OroPromotionBundle/Tests/Behat/Features'
 

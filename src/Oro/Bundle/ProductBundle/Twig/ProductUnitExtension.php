@@ -26,6 +26,9 @@ use Twig\TwigFunction;
 class ProductUnitExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
     private ContainerInterface $container;
+    private ?UnitLabelFormatterInterface $unitLabelFormatter = null;
+    private ?UnitValueFormatterInterface $unitValueFormatter = null;
+    private ?UnitVisibilityInterface $unitVisibility = null;
 
     public function __construct(ContainerInterface $container)
     {
@@ -135,16 +138,28 @@ class ProductUnitExtension extends AbstractExtension implements ServiceSubscribe
 
     private function getLabelFormatter(): UnitLabelFormatterInterface
     {
-        return $this->container->get('oro_product.formatter.product_unit_label');
+        if (null === $this->unitLabelFormatter) {
+            $this->unitLabelFormatter = $this->container->get('oro_product.formatter.product_unit_label');
+        }
+
+        return $this->unitLabelFormatter;
     }
 
     private function getValueFormatter(): UnitValueFormatterInterface
     {
-        return $this->container->get('oro_product.formatter.product_unit_value');
+        if (null === $this->unitValueFormatter) {
+            $this->unitValueFormatter = $this->container->get('oro_product.formatter.product_unit_value');
+        }
+
+        return $this->unitValueFormatter;
     }
 
     private function getUnitVisibility(): UnitVisibilityInterface
     {
-        return $this->container->get('oro_product.visibility.unit');
+        if (null === $this->unitVisibility) {
+            $this->unitVisibility = $this->container->get('oro_product.visibility.unit');
+        }
+
+        return $this->unitVisibility;
     }
 }
