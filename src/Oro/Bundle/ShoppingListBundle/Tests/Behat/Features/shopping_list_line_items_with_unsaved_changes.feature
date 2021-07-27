@@ -38,7 +38,7 @@ Feature: Shopping List Line Items With Unsaved Changes
     And I click on "Shopping Lists Navigation Link"
     And I click Edit "List 2" in grid
     Then I should see following grid:
-      | SKU    | QtyUpdate All |
+      | SKU    | Qty Update All |
       | SKU123 | 10 item        |
 
   Scenario: Discard order transaction with unsaved changed

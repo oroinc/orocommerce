@@ -73,6 +73,6 @@ Feature: Guest shopping list merging functionality
     And I open shopping list widget
     And I click "View List"
     And I should see following grid:
-      | SKU      | QtyUpdate All |
-      | PSKU1    | 2 each        |
-      | CONTROL1 | 1 each        |
+      | SKU      | Qty Update All |
+      | PSKU1    | 2 each         |
+      | CONTROL1 | 1 each         |

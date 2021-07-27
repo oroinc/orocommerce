@@ -18,6 +18,7 @@ const ShoppingListItemCell = HtmlTemplateCell.extend({
                 .html(html)
                 .trigger('content:changed');
             this.appendEditNotesAction();
+            this.setAriaAttrs();
         }
 
         return this;
