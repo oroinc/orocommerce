@@ -21,6 +21,8 @@ use Twig\TwigFunction;
 class InventoryExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
     private ContainerInterface $container;
+    private ?UpcomingProductProvider $upcomingProductProvider = null;
+    private ?LowInventoryProvider $lowInventoryProvider = null;
 
     public function __construct(ContainerInterface $container)
     {
@@ -76,11 +78,19 @@ class InventoryExtension extends AbstractExtension implements ServiceSubscriberI
 
     private function getUpcomingProductProvider(): UpcomingProductProvider
     {
-        return $this->container->get('oro_inventory.provider.upcoming_product_provider');
+        if (null === $this->upcomingProductProvider) {
+            $this->upcomingProductProvider = $this->container->get('oro_inventory.provider.upcoming_product_provider');
+        }
+
+        return $this->upcomingProductProvider;
     }
 
     private function getLowInventoryProvider(): LowInventoryProvider
     {
-        return $this->container->get('oro_inventory.inventory.low_inventory_provider');
+        if (null === $this->lowInventoryProvider) {
+            $this->lowInventoryProvider = $this->container->get('oro_inventory.inventory.low_inventory_provider');
+        }
+
+        return $this->lowInventoryProvider;
     }
 }

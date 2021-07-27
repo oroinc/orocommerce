@@ -24,6 +24,9 @@ use Twig\TwigFunction;
 class ProductImageExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
     private ContainerInterface $container;
+    private ?AttachmentManager $attachmentManager = null;
+    private ?ImagePlaceholderProviderInterface $imagePlaceholderProvider = null;
+    private ?ProductImageHelper $productImageHelper = null;
 
     public function __construct(ContainerInterface $container)
     {
@@ -95,7 +98,7 @@ class ProductImageExtension extends AbstractExtension implements ServiceSubscrib
     public static function getSubscribedServices()
     {
         return [
-            'oro_attachment.manager' => AttachmentManager::class,
+            AttachmentManager::class,
             'oro_product.provider.product_image_placeholder' => ImagePlaceholderProviderInterface::class,
             'oro_product.helper.product_image_helper' => ProductImageHelper::class,
         ];
@@ -103,16 +106,28 @@ class ProductImageExtension extends AbstractExtension implements ServiceSubscrib
 
     private function getAttachmentManager(): AttachmentManager
     {
-        return $this->container->get('oro_attachment.manager');
+        if (null === $this->attachmentManager) {
+            $this->attachmentManager = $this->container->get(AttachmentManager::class);
+        }
+
+        return $this->attachmentManager;
     }
 
     private function getImagePlaceholderProvider(): ImagePlaceholderProviderInterface
     {
-        return $this->container->get('oro_product.provider.product_image_placeholder');
+        if (null === $this->imagePlaceholderProvider) {
+            $this->imagePlaceholderProvider = $this->container->get('oro_product.provider.product_image_placeholder');
+        }
+
+        return $this->imagePlaceholderProvider;
     }
 
     private function getProductImageHelper(): ProductImageHelper
     {
-        return $this->container->get('oro_product.helper.product_image_helper');
+        if (null === $this->productImageHelper) {
+            $this->productImageHelper = $this->container->get('oro_product.helper.product_image_helper');
+        }
+
+        return $this->productImageHelper;
     }
 }
