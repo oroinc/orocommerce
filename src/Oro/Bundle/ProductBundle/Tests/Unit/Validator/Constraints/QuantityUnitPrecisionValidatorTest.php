@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\Validator\Constraints;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Validator\Constraints;
 
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;

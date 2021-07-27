@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Autocomlete;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Form\Type;
 
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\Form\Type\AbstractScopedProductSelectTypeTest;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\Functional\Form\Type;
+namespace Oro\Bundle\SEOBundle\Tests\Functional\Form\Type;
 
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;

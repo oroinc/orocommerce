@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\RedirectBundle\Tests\Functional\Entity\Repository;
+namespace Oro\Bundle\RedirectBundle\Tests\Functional\Entity\Hydrator;
 
 use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;

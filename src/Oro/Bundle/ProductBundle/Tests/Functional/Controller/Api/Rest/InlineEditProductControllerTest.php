@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller\Api\Rest;
 
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;

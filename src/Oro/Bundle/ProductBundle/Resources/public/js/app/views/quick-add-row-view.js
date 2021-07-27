@@ -160,7 +160,8 @@ const QuickAddRowView = BaseView.extend({
     onQuantityChange() {
         const quantity = this._readDOMValue('quantity');
         this.model.set({
-            quantity
+            quantity,
+            quantity_changed_manually: true
         });
     },
 

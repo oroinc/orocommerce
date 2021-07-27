@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\InventoryBundle\Tests\Inventory;
+namespace Oro\Bundle\InventoryBundle\Tests\Functional\Inventory;
 
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\LocaleBundle\Entity\Localization;

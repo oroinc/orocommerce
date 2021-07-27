@@ -505,6 +505,12 @@ oro_behat_extension:
             type: 'css'
             locator: 'select[name="oro_product_quick_add[products][1][productUnit]"]'
             element: Select
+          SUBTOTAL1:
+            type: 'css'
+            locator: 'div[data-ftid="oro_product_quick_add_products_0"] input[data-name="field__product-subtotal"]'
+          SUBTOTAL2:
+            type: 'css'
+            locator: 'div[data-ftid="oro_product_quick_add_products_1"] input[data-name="field__product-subtotal"]'
 
     Quick Order Form > QTY1:
       selector:
