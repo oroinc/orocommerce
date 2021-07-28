@@ -24,7 +24,7 @@ class ReturnUrlTest extends AbstractOptionTest
                 [
                     'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
                     'The option "RETURNURL" with value 123 is expected to be of type "string", but is of ' .
-                    'type "integer".',
+                    'type "int".',
                 ],
             ],
             'not allowed for non SET_EC' => [

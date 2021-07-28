@@ -24,7 +24,7 @@ class CodeTest extends AbstractOptionTest
                 [
                     'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
                     'The option "CVV2" with value 123 is expected to be of type "string", but is of ' .
-                    'type "integer".',
+                    'type "int".',
                 ],
             ],
             'valid' => [['CVV2' => '123'], ['CVV2' => '123']],

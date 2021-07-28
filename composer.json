@@ -64,7 +64,7 @@
             "@oroinc/elevatezoom": "3.0.81"
         },
         "symfony": {
-            "require": "4.4.*"
+            "require": ">4.4,<5.4"
         },
         "branch-alias": {
             "dev-master": "5.0-dev"

@@ -112,7 +112,7 @@ class LineItemsTest extends AbstractOptionTest
                 [],
                 [
                     'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
-                    'The option "L_NAME1" with value 123 is expected to be of type "string", but is of type "integer".'
+                    'The option "L_NAME1" with value 123 is expected to be of type "string", but is of type "int".'
                 ],
             ],
             'invalid L_DESCn type' => [
@@ -125,7 +125,7 @@ class LineItemsTest extends AbstractOptionTest
                 [],
                 [
                     'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
-                    'The option "L_DESC1" with value 123 is expected to be of type "string", but is of type "integer".'
+                    'The option "L_DESC1" with value 123 is expected to be of type "string", but is of type "int".'
                 ],
             ],
             'invalid L_QTYn type' => [
@@ -138,7 +138,7 @@ class LineItemsTest extends AbstractOptionTest
                 [],
                 [
                     'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
-                    'The option "L_QTY1" with value 0.5 is expected to be of type "integer", but is of type "double".'
+                    'The option "L_QTY1" with value 0.5 is expected to be of type "integer", but is of type "float".'
                 ],
             ],
             'valid' => [
