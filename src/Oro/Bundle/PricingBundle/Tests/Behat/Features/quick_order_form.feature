@@ -1,6 +1,7 @@
 @regression
 @ticket-BB-19138
 @ticket-BB-20670
+@ticket-BB-20731
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroCheckoutBundle:Payment.yml
@@ -36,5 +37,21 @@ Feature: Quick order form
   Scenario: Check products markup result in autocomplete drop down list
     When I click "Quick Order Form"
     And I type "class" in "QuickOrderFirstSkuField"
-    And I wait 2 seconds
-    And I should see exact "classPSKU - Product6Class" in the "QuickOrderFirstSkuFieldTypeahead" element
+    And I wait for products to load
+    Then I should see exact "classPSKU - Product6Class" in the "QuickOrderFirstSkuFieldTypeahead" element
+
+  Scenario: Check products subtotal calculation with minimal tier of quantity
+    Given I click "Quick Order Form"
+    And I fill "QuickAddForm" with:
+      | SKU1 | classPSKU |
+    And I wait for products to load
+    When I type "3" in "Quick Order Form > QTY1"
+    Then "QuickAddForm" must contains values:
+      | SKU1      | classPSKU - Product6Class |
+      | QTY1      | 3                         |
+      | SUBTOTAL1 | N/A                       |
+    When I type "13" in "Quick Order Form > QTY1"
+    Then "QuickAddForm" must contains values:
+      | SKU1      | classPSKU - Product6Class |
+      | QTY1      | 13                        |
+      | SUBTOTAL1 | $130.00                   |

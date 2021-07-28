@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Tests\Unit\Helper;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Tools;
 
 use Oro\Bundle\DataGridBundle\Tools\DatagridRouteHelper;
 use Oro\Bundle\ShippingBundle\Tools\FilteredDatagridRouteHelper;

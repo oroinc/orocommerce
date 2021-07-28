@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\SaleBundle\Bundle\Tests\Unit\DependencyInjection;
+namespace Oro\Bundle\SaleBundle\Tests\Unit\DependencyInjection;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SaleBundle\DependencyInjection\Configuration;

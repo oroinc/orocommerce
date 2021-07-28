@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\TaxBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Event;
 
 use Oro\Bundle\TaxBundle\Event\ResolverEventConnector;
 use Oro\Bundle\TaxBundle\Event\ResolveTaxEvent;

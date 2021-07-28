@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\RuleBundle\Tests;
+namespace Oro\Bundle\RuleBundle\Tests\Unit;
 
 use Oro\Bundle\RuleBundle\DependencyInjection\CompilerPass\ExpressionLanguageFunctionCompilerPass;
 use Oro\Bundle\RuleBundle\OroRuleBundle;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\FlatRateShippingBundle\Tests\Unit\Builder;
+namespace Oro\Bundle\FlatRateShippingBundle\Tests\Unit\Factory;
 
 use Oro\Bundle\FlatRateShippingBundle\Entity\FlatRateSettings;
 use Oro\Bundle\FlatRateShippingBundle\Factory\FlatRateMethodFromChannelFactory;

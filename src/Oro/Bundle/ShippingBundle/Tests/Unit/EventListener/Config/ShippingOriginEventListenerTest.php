@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Bundle\Tests\Unit\EventListener\Config;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\EventListener\Config;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;

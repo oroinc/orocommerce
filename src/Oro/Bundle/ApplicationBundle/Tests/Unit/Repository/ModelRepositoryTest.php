@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ApplicationBundle\Tests\Unit\Model;
+namespace Oro\Bundle\ApplicationBundle\Tests\Unit\Repository;
 
 use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\Persistence\ManagerRegistry;

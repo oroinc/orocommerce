@@ -1,10 +1,11 @@
 <?php
 
-namespace Oro\Bundle\PricingBundle\EventListener;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
+use Oro\Bundle\PricingBundle\EventListener\DatagridLineItemsDataPricingListener;
 use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
 use Oro\Bundle\PricingBundle\Tests\Unit\Stub\LineItemPriceAwareStub;
 use Oro\Bundle\ProductBundle\Entity\Product;

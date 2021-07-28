@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Bundle\Tests\Unit\EventListener\Cache;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\EventListener\Cache;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
