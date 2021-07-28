@@ -6,7 +6,6 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
-use Oro\Bundle\RedirectBundle\Entity\Slug;
 
 /**
  * Doctrine repository for Page entity
@@ -63,15 +62,5 @@ class PageRepository extends EntityRepository
         $existedPageIds = array_column($result, 'id');
 
         return array_diff($pageIds, $existedPageIds);
-    }
-
-    public function findOneBySlug(Slug $slug): ?Page
-    {
-        $qb = $this->createQueryBuilder('p');
-        $qb
-            ->where($qb->expr()->isMemberOf(':slug', 'p.slugs'))
-            ->setParameter('slug', $slug);
-
-        return $qb->getQuery()->getOneOrNullResult();
     }
 }

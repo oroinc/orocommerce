@@ -31,7 +31,7 @@ class CustomerTest extends AbstractOptionTest
                 [
                     'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
                     'The option "ACCT" with value 1234567890123456 is expected to be of type "string", but is of ' .
-                    'type "integer".',
+                    'type "int".',
                 ],
             ],
             'valid' => [['ACCT' => '4111111111111111'], ['ACCT' => '4111111111111111']],

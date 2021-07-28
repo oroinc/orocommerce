@@ -27,7 +27,7 @@ class CategoryImageExtensionTest extends \PHPUnit\Framework\TestCase
         $this->imagePlaceholderProvider = $this->createMock(ImagePlaceholderProviderInterface::class);
 
         $container = self::getContainerBuilder()
-            ->add('oro_attachment.manager', $this->attachmentManager)
+            ->add(AttachmentManager::class, $this->attachmentManager)
             ->add('oro_catalog.provider.category_image_placeholder', $this->imagePlaceholderProvider)
             ->getContainer($this);
 

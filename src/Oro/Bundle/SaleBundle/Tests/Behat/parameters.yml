@@ -1,0 +1,7 @@
+services:
+    Oro\Bundle\SaleBundle\Tests\Behat\Context\FeatureContext:
+        public: true
+        arguments:
+            - '@router'
+            - '@doctrine'
+            - '@oro_website.resolver.website_url_resolver'

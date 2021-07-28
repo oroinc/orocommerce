@@ -5,8 +5,13 @@ namespace Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerCategoryVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerGroupCategoryVisibilityResolved;
 
+/**
+ * Provides a set of methods to simplify building ORM queries with CategoryVisibilityResolved entity.
+ */
 trait CategoryVisibilityResolvedTermTrait
 {
     /**
@@ -17,7 +22,7 @@ trait CategoryVisibilityResolvedTermTrait
     protected function getCategoryVisibilityResolvedTerm(QueryBuilder $qb, $configValue)
     {
         $qb->leftJoin(
-            'Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved',
+            CategoryVisibilityResolved::class,
             'cvr',
             Join::WITH,
             $qb->expr()->eq($this->getRootAlias($qb), 'cvr.category')
@@ -38,7 +43,7 @@ trait CategoryVisibilityResolvedTermTrait
         $configValue
     ) {
         $qb->leftJoin(
-            'Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerGroupCategoryVisibilityResolved',
+            CustomerGroupCategoryVisibilityResolved::class,
             'agcvr',
             Join::WITH,
             $qb->expr()->andX(
@@ -65,7 +70,7 @@ trait CategoryVisibilityResolvedTermTrait
     protected function getCustomerCategoryVisibilityResolvedTerm(QueryBuilder $qb, Scope $scope, $configValue)
     {
         $qb->leftJoin(
-            'Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerCategoryVisibilityResolved',
+            CustomerCategoryVisibilityResolved::class,
             'acvr',
             Join::WITH,
             $qb->expr()->andX(
@@ -100,7 +105,7 @@ trait CategoryVisibilityResolvedTermTrait
     protected function formatConfigFallback($select, $configValue)
     {
         // wrap into COALESCE in case of multiple fields
-        if (strpos($select, ',') !== false) {
+        if (str_contains($select, ',')) {
             $select = sprintf('COALESCE(%s)', $select);
         }
 

@@ -107,7 +107,7 @@ class CompleteWYSIWYGFieldsDescriptions implements ProcessorInterface
         ?string $targetAction
     ): void {
         foreach ($renderedWysiwygFields as $fieldName => $info) {
-            if (false !== strpos($fieldName, ConfigUtil::PATH_DELIMITER)) {
+            if (str_contains($fieldName, ConfigUtil::PATH_DELIMITER)) {
                 continue;
             }
             $field = $definition->getField($fieldName);

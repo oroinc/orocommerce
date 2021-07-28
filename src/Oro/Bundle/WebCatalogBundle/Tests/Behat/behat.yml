@@ -186,15 +186,15 @@ oro_behat_extension:
     suites:
         OroWebCatalogBundle:
             contexts:
-                - OroSecurityBundle::ACLContext
-                - OroApplicationBundle::CommerceMainContext
-                - OroProductBundle::FeatureContext
-                - OroConfigBundle::FeatureContext
-                - OroDataGridBundle::GridContext
-                - OroFormBundle::FormContext
-                - OroWebCatalogBundle::FeatureContext
-                - OroCustomerBundle::FrontendGridContext
-                - OroFrontendBundle::FrontendMenuContext
+                - Oro\Bundle\SecurityBundle\Tests\Behat\Context\ACLContext
+                - Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext
+                - Oro\Bundle\ProductBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
+                - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
+                - Oro\Bundle\WebCatalogBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\CustomerBundle\Tests\Behat\Context\FrontendGridContext
+                - Oro\Bundle\FrontendBundle\Tests\Behat\Context\FrontendMenuContext
                 - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
             paths:
                 - '@OroWebCatalogBundle/Tests/Behat/Features'

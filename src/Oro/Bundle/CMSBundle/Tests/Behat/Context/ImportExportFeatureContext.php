@@ -3,20 +3,21 @@
 namespace Oro\Bundle\CMSBundle\Tests\Behat\Context;
 
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
-use Behat\Symfony2Extension\Context\KernelAwareContext;
-use Behat\Symfony2Extension\Context\KernelDictionary;
+use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ImportExportBundle\Tests\Behat\Context\ImportExportContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 
-class ImportExportFeatureContext extends OroFeatureContext implements KernelAwareContext
+class ImportExportFeatureContext extends OroFeatureContext
 {
-    use KernelDictionary;
+    private ?ImportExportContext $importExportContext;
 
-    /**
-     * @var ImportExportContext
-     */
-    private $importExportContext;
+    private ConfigManager $entityConfigManager;
+
+    public function __construct(ConfigManager $entityConfigManager)
+    {
+        $this->entityConfigManager = $entityConfigManager;
+    }
 
     /**
      * @BeforeScenario
@@ -35,9 +36,8 @@ class ImportExportFeatureContext extends OroFeatureContext implements KernelAwar
      */
     public function iDownloadDataTemplateFileForExtendEntity($className)
     {
-        $entityConfigManager = $this->getContainer()->get('oro_entity_config.config_manager');
         $className = sprintf('%s%s', ExtendHelper::ENTITY_NAMESPACE, $className);
-        $entityModel = $entityConfigManager->getConfigEntityModel($className);
+        $entityModel = $this->entityConfigManager->getConfigEntityModel($className);
         static::assertNotNull($entityModel, sprintf('No entity model found for class "%s"', $className));
 
         $this->importExportContext->downloadTemplateFileByProcessor(

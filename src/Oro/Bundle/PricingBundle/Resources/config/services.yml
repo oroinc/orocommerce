@@ -35,15 +35,12 @@ services:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision', event: postRemove }
             - { name: oro_featuretogle.feature, feature: oro_price_lists }
 
-    oro_pricing.listener.product_unit_precision_on_post_remove:
-        class: 'Oro\Bundle\PricingBundle\EventListener\ProductUnitPrecisionPostRemoveListener'
-        public: false
+    oro_pricing.listener.product_unit_precision.remove_product_price_attributes:
+        class: Oro\Bundle\PricingBundle\EventListener\ProductUnitPrecisionPostRemoveListener
         arguments:
             - '@oro_pricing.shard_manager'
-        calls:
-            - [setPriceAttributeClass, ['Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice']]
         tags:
-            - { name: doctrine.event_listener, event: postRemove }
+            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision, event: postRemove }
             - { name: oro_featuretogle.feature, feature: oro_price_lists }
 
     oro_pricing.user_currency_manager:
@@ -1314,12 +1311,12 @@ services:
         alias: 'oro_pricing.shard_manager'
 
     oro_pricing.entity_listener.price_list_sharding:
-        class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\PriceListShardingListener'
+        class: Oro\Bundle\PricingBundle\Entity\EntityListener\PriceListShardingListener
         arguments:
             - '@oro_pricing.shard_manager'
         tags:
-            - { name: doctrine.event_listener, event: postPersist }
-            - { name: doctrine.event_listener, event: preRemove }
+            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\PricingBundle\Entity\PriceList, event: postPersist}
+            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\PricingBundle\Entity\PriceList, event: preRemove}
             - { name: doctrine.event_listener, event: postFlush }
 
     oro_pricing.orm.abstract_shard_query_executor:

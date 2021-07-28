@@ -381,7 +381,7 @@ class ImportExportTest extends AbstractImportExportTestCase
         $errors = array_filter(
             $jobResult->getContext()->getErrors(),
             function ($error) {
-                return strpos($error, 'owner: This value should not be blank.') === false;
+                return !str_contains($error, 'owner: This value should not be blank.');
             }
         );
         $this->assertEquals($contextErrors, array_values($errors), implode(PHP_EOL, $errors));

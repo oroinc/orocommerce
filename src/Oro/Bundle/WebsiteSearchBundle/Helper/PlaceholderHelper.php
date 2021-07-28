@@ -46,7 +46,7 @@ class PlaceholderHelper
             $placeholderNames[] = $placeholderToken;
             $placeholderPatterns[] = PlaceholderDecorator::DEFAULT_PLACEHOLDER_VALUE;
 
-            if (strpos($name, $placeholderToken) !== false) {
+            if (str_contains($name, $placeholderToken)) {
                 $withPlaceholders = true;
             }
         }

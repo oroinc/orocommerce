@@ -74,7 +74,7 @@ class OrderMapper implements MapperInterface
         $result = [];
         $mapFields = $this->getMapFields();
         foreach ($mapFields as $field) {
-            if (false !== strpos($field, ':')) {// Bypass relations in form ClassName::fieldName.
+            if (str_contains($field, ':')) {// Bypass relations in form ClassName::fieldName.
                 continue;
             }
 

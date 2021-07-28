@@ -23,7 +23,7 @@ class SearchQueryCriteriaVisitor extends ExpressionVisitor
     public function walkComparison(Comparison $comparison)
     {
         $field = $comparison->getField();
-        if (false !== strpos($field, '_' . EnumIdPlaceholder::NAME)) {
+        if (str_contains($field, '_' . EnumIdPlaceholder::NAME)) {
             return $this->buildEnumComparison($comparison);
         }
 

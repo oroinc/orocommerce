@@ -34,7 +34,7 @@ class CommonUnitValueType extends AbstractType
 
     public function format(string $value, string $separator): string
     {
-        if (false !== strpos($value, $separator)) {
+        if (str_contains($value, $separator)) {
             [$whole, $fraction] = explode($separator, $value);
             $fraction = rtrim($fraction, 0);
 

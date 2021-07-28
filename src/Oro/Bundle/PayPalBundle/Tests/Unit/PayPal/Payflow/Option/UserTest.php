@@ -30,7 +30,7 @@ class UserTest extends AbstractOptionTest
                 [
                     'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
                     'The option "USER" with value 123 is expected to be of type "string", but is of ' .
-                    'type "integer".',
+                    'type "int".',
                 ],
             ],
             'valid' => [['USER' => 'username'], ['USER' => 'username']],

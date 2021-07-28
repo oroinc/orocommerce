@@ -2,18 +2,16 @@ oro_behat_extension:
     suites:
         OroSEOBundle:
             contexts:
-                - OroApplicationBundle::CommerceMainContext
-                - OroProductBundle::FeatureContext
-                - OroConfigBundle::FeatureContext
-                - OroDataGridBundle::GridContext
-                - OroFormBundle::FormContext
-                - OroSEOBundle::FeatureContext
-                - OroWebCatalogBundle::FeatureContext
+                - Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext
+                - Oro\Bundle\ProductBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
+                - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
+                - Oro\Bundle\SEOBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\WebCatalogBundle\Tests\Behat\Context\FeatureContext
                 - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
-                - OroEmailBundle::EmailContext
-                - OroImportExportBundle::ImportExportContext:
-                      - '@oro_entity.entity_alias_resolver'
-                      - '@oro_importexport.processor.registry'
+                - Oro\Bundle\EmailBundle\Tests\Behat\Context\EmailContext
+                - Oro\Bundle\ImportExportBundle\Tests\Behat\Context\ImportExportContext
             paths:
                 - '@OroSEOBundle/Tests/Behat/Features'
     elements:

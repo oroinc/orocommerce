@@ -288,7 +288,8 @@ class CategoryControllerTest extends WebTestCase
         $accessor = PropertyAccess::createPropertyAccessor();
         $parameters = [];
         foreach ($values as $key => $val) {
-            if (!$pos = strpos($key, '[')) {
+            $pos = strpos($key, '[');
+            if (!$pos) {
                 continue;
             }
             $key = '['.substr($key, 0, $pos).']'.substr($key, $pos);

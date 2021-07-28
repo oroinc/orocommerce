@@ -4,8 +4,7 @@ namespace Oro\Bundle\ShippingBundle\Tests\Behat\Context;
 
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
-use Behat\Symfony2Extension\Context\KernelAwareContext;
-use Behat\Symfony2Extension\Context\KernelDictionary;
+use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid;
@@ -22,14 +21,21 @@ use Symfony\Component\DomCrawler\Crawler;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class FeatureContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
+class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 {
-    use PageObjectDictionary, KernelDictionary;
+    use PageObjectDictionary;
 
     /**
      * @var OroMainContext
      */
     private $oroMainContext;
+
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
 
     /**
      * @BeforeScenario
@@ -71,7 +77,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     {
         $elements = $this->findAllElements('CheckoutFormRow');
         foreach ($elements as $element) {
-            if (strpos($element->getText(), $shippingType) !== false) {
+            if (str_contains($element->getText(), $shippingType)) {
                 return;
             }
         }
@@ -183,7 +189,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $form->fillField('Name', $shoppingRuleName);
 
         foreach ($table->getColumn(0) as $columnItem) {
-            if (false !== strpos($columnItem, 'Country')) {
+            if (str_contains($columnItem, 'Country')) {
                 $destinationAdd = $form->find('css', '.add-list-item');
                 $destinationAdd->click();
             }
@@ -233,7 +239,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     protected function createOrderFromShoppingList($shoppingListName)
     {
         /** @var ObjectManager $manager */
-        $manager = $this->getContainer()->get('doctrine')->getManagerForClass(ShoppingList::class);
+        $manager = $this->managerRegistry->getManagerForClass(ShoppingList::class);
         /** @var ShoppingList $shoppingList */
         $shoppingList = $manager->getRepository(ShoppingList::class)->findOneBy(['label' => $shoppingListName]);
         $this->visitPath('customer/shoppinglist/'.$shoppingList->getId());

@@ -197,8 +197,8 @@ class MoveProductsMassActionHandler implements MassActionHandlerInterface
 
         // if we ask identifier that's means that we have plain data in array
         // so we will just use column name without entity alias
-        if (strpos('.', $identifier) !== -1) {
-            $parts      = explode('.', $identifier);
+        if (str_contains($identifier, '.')) {
+            $parts = explode('.', $identifier);
             $identifier = end($parts);
         }
 

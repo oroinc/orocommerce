@@ -24,6 +24,7 @@ use Twig\TwigFunction;
 class ShoppingListExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
     private ContainerInterface $container;
+    private ?ShoppingListLimitManager $shoppingListLimitManager = null;
 
     public function __construct(ContainerInterface $container)
     {
@@ -85,7 +86,11 @@ class ShoppingListExtension extends AbstractExtension implements ServiceSubscrib
 
     private function getShoppingListLimitManager(): ShoppingListLimitManager
     {
-        return $this->container->get('oro_shopping_list.manager.shopping_list_limit');
+        if (null === $this->shoppingListLimitManager) {
+            $this->shoppingListLimitManager = $this->container->get('oro_shopping_list.manager.shopping_list_limit');
+        }
+
+        return $this->shoppingListLimitManager;
     }
 
     private function getShoppingListUrlProvider(): ShoppingListUrlProvider

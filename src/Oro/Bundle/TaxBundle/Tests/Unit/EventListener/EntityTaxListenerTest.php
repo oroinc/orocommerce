@@ -19,6 +19,7 @@ class EntityTaxListenerTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->taxProvider = $this->createMock(BuiltInTaxProvider::class);
+
         $taxProviderRegistry = $this->createMock(TaxProviderRegistry::class);
         $taxProviderRegistry->expects($this->any())
             ->method('getEnabledProvider')

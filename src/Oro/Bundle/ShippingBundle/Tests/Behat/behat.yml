@@ -4,20 +4,20 @@ oro_behat_extension:
       contexts:
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\FixturesContext
-        - OroActivityListBundle::ActivityContext
-        - OroDataGridBundle::GridContext
-        - OroFormBundle::FormContext
-        - OroSecurityBundle::ACLContext
-        - OroSearchBundle::SearchContext
-        - OroConfigBundle::FeatureContext
-        - OroAddressBundle::AddressContext
-        - OroApplicationBundle::CommerceMainContext
-        - OroCustomerBundle::CustomerUserContext
-        - OroOrderBundle::OrderContext
-        - OroLocaleBundle::LocalizationContext
-        - OroShippingBundle::FeatureContext
-        - OroShoppingListBundle::ShoppingListContext
-        - OroRedirectBundle::SlugPrototypesContext
+        - Oro\Bundle\ActivityListBundle\Tests\Behat\Context\ActivityContext
+        - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
+        - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
+        - Oro\Bundle\SecurityBundle\Tests\Behat\Context\ACLContext
+        - Oro\Bundle\SearchBundle\Tests\Behat\Context\SearchContext
+        - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\AddressBundle\Tests\Behat\Context\AddressContext
+        - Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext
+        - Oro\Bundle\CustomerBundle\Tests\Behat\Context\CustomerUserContext
+        - Oro\Bundle\OrderBundle\Tests\Behat\Context\OrderContext
+        - Oro\Bundle\LocaleBundle\Tests\Behat\Context\LocalizationContext
+        - Oro\Bundle\ShippingBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\ShoppingListContext
+        - Oro\Bundle\RedirectBundle\Tests\Behat\Context\SlugPrototypesContext
       paths:
         - '@OroShippingBundle/Tests/Behat/Features'
 

@@ -16,3 +16,9 @@ services:
             - !service
                 class: Oro\Bundle\IntegrationBundle\Test\FakeRestClientFactory
             - '@oro_ups.client.url_provider_basic'
+
+    Oro\Bundle\UPSBundle\Tests\Behat\Context\FeatureContext:
+        public: true
+        arguments:
+            - '@doctrine'
+            - '%kernel.cache_dir%'

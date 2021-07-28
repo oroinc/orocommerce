@@ -448,7 +448,7 @@ class ShardManager implements \Serializable
             $createQuery = $createQueries[0];
             $constraints = [];
             foreach ($createQueries as $query) {
-                if (strpos($query, 'ALTER TABLE') === 0) {
+                if (str_starts_with($query, 'ALTER TABLE')) {
                     $constraints[] = substr($query, strpos($query, 'CONSTRAINT'));
                 }
             }

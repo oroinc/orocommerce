@@ -4,3 +4,25 @@ services:
         class: Oro\Bundle\ProductBundle\Tests\Behat\Mock\Provider\ConfigurationProviderDecorator
         arguments:
             - '@oro_datagrid.configuration.provider.decorator.inner'
+
+    Oro\Bundle\ProductBundle\Tests\Behat\Context\FrontendProductGridContext:
+        public: true
+        arguments:
+            - '@oro_datagrid.helper.route'
+
+    Oro\Bundle\ProductBundle\Tests\Behat\Context\ProductImportExportContext:
+        public: true
+        arguments:
+            - '%kernel.project_dir%'
+            - '@oro_website.resolver.website_url_resolver'
+            - '@oro_product.importexport.file_manager.product_images'
+            - '@oro_attachment.manager.public_mediacache'
+
+    Oro\Bundle\ProductBundle\Tests\Behat\Context\FeatureContext:
+        public: true
+        arguments:
+            - '@router'
+            - '@doctrine'
+            - '@oro_entity.doctrine_helper'
+            - '@oro_inventory.manager.inventory_manager'
+            - '@oro_config.global'

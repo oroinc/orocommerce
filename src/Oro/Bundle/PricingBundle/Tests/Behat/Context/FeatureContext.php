@@ -3,8 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Behat\Context;
 
 use Behat\Gherkin\Node\TableNode;
-use Behat\Symfony2Extension\Context\KernelAwareContext;
-use Behat\Symfony2Extension\Context\KernelDictionary;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\FormBundle\Tests\Behat\Element\Select2Entity;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
@@ -12,6 +11,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
+use Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister;
 use Oro\Bundle\PricingBundle\Provider\CombinedPriceListIdentifierProviderInterface;
 use Oro\Bundle\PricingBundle\Provider\PriceListSequenceMember;
 use Oro\Bundle\ProductBundle\Tests\Behat\Element\ProductPriceCollection;
@@ -20,9 +20,19 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\Form;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 
-class FeatureContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
+class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 {
-    use PageObjectDictionary, KernelDictionary;
+    use PageObjectDictionary;
+
+    private ManagerRegistry $managerRegistry;
+
+    private StrategyRegister $strategyRegister;
+
+    public function __construct(ManagerRegistry $managerRegistry, StrategyRegister $strategyRegister)
+    {
+        $this->managerRegistry = $managerRegistry;
+        $this->strategyRegister = $strategyRegister;
+    }
 
     /**
      * @Then /^(?:|I )set (?P<collectionFieldName>[^"]+) collection element values in (?P<number>\d+) row:$/
@@ -79,7 +89,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     public function combinedPriceListPricesCount($count, TableNode $table)
     {
-        $em = $this->getKernel()->getContainer()->get('doctrine')->getManagerForClass(CombinedPriceList::class);
+        $em = $this->managerRegistry->getManagerForClass(CombinedPriceList::class);
 
         $priceLists = [];
         /** @var PriceListRepository $plRepo */
@@ -110,11 +120,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     private function getCplIdentifier(array $priceLists): string
     {
-        $strategy = $this
-            ->getKernel()
-            ->getContainer()
-            ->get('oro_pricing.pricing_strategy.strategy_register')
-            ->getCurrentStrategy();
+        $strategy = $this->strategyRegister->getCurrentStrategy();
 
         if ($strategy instanceof CombinedPriceListIdentifierProviderInterface) {
             return $strategy->getCombinedPriceListIdentifier($priceLists);

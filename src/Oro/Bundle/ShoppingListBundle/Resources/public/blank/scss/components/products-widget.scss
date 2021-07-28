@@ -92,6 +92,8 @@
     }
 
     .items-group {
+        list-style: none;
+
         &:not(:first-of-type) {
             margin-top: $offset-y-m;
 

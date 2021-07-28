@@ -24,7 +24,7 @@ class PurchaseTest extends AbstractOptionTest
                 [
                     'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
                     'The option "PONUM" with value 100001 is expected to be of type "string", but is of ' .
-                    'type "integer".',
+                    'type "int".',
                 ],
             ],
             'valid' => [['PONUM' => '100001'], ['PONUM' => '100001']],

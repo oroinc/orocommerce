@@ -112,8 +112,8 @@ class WYSIWYGValidator extends ConstraintValidator
     {
         $fieldName = $propertyPath;
         // here we will have data.fieldName in case we validate the data against its own constraints
-        if (\strpos($propertyPath, 'data.') === 0) {
-            list(, $fieldName) = \explode('data.', $propertyPath, 2);
+        if (str_starts_with($propertyPath, 'data.')) {
+            [, $fieldName] = \explode('data.', $propertyPath, 2);
         }
 
         return $fieldName;

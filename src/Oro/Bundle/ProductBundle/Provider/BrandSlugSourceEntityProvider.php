@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\ProductBundle\Provider;
 
-use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\Entity\Brand;
-use Oro\Bundle\ProductBundle\Entity\Repository\BrandRepository;
 use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SlugAwareInterface;
+use Oro\Bundle\RedirectBundle\Provider\SluggableEntityFinder;
 use Oro\Bundle\RedirectBundle\Provider\SlugSourceEntityProviderInterface;
 
 /**
@@ -16,19 +15,12 @@ use Oro\Bundle\RedirectBundle\Provider\SlugSourceEntityProviderInterface;
  */
 class BrandSlugSourceEntityProvider implements SlugSourceEntityProviderInterface
 {
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
+    private SluggableEntityFinder $sluggableEntityFinder;
+    private ConfigManager $configManager;
 
-    /**
-     * @var ConfigManager
-     */
-    protected $configManager;
-
-    public function __construct(ManagerRegistry $registry, ConfigManager $configManager)
+    public function __construct(SluggableEntityFinder $sluggableEntityFinder, ConfigManager $configManager)
     {
-        $this->registry = $registry;
+        $this->sluggableEntityFinder = $sluggableEntityFinder;
         $this->configManager = $configManager;
     }
 
@@ -41,9 +33,6 @@ class BrandSlugSourceEntityProvider implements SlugSourceEntityProviderInterface
             return null;
         }
 
-        /** @var BrandRepository $repository */
-        $repository = $this->registry->getManagerForClass(Brand::class)->getRepository(Brand::class);
-
-        return $repository->findOneBySlug($slug);
+        return $this->sluggableEntityFinder->findEntityBySlug(Brand::class, $slug);
     }
 }

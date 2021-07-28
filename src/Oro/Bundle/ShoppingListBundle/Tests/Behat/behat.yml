@@ -446,28 +446,28 @@ oro_behat_extension:
   suites:
     OroShoppingListBundle:
       contexts:
-        - OroApplicationBundle::CommerceMainContext
-        - OroDataGridBundle::GridContext
-        - OroFormBundle::FormContext
-        - OroProductBundle::FeatureContext
-        - OroProductBundle::FrontendProductGridContext
-        - OroProductBundle::QuickOrderFormContext
-        - OroRedirectBundle::SlugPrototypesContext
-        - OroSEOBundle::FeatureContext
+        - Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext
+        - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
+        - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
+        - Oro\Bundle\ProductBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ProductBundle\Tests\Behat\Context\FrontendProductGridContext
+        - Oro\Bundle\ProductBundle\Tests\Behat\Context\QuickOrderFormContext
+        - Oro\Bundle\RedirectBundle\Tests\Behat\Context\SlugPrototypesContext
+        - Oro\Bundle\SEOBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
-        - OroWebCatalogBundle::FeatureContext
-        - OroConfigBundle::FeatureContext
-        - OroShoppingListBundle::FeatureContext
-        - OroNavigationBundle::FeatureContext
-        - OroCustomerBundle::ACLContext
-        - OroShoppingListBundle::ShoppingListContext
-        - OroCustomerBundle::RegistrationInstructionFeatureContext
-        - OroLocaleBundle::LocalizationContext
-        - OroFrontendLocalizationBundle::LocalizationSwitcherContext
-        - OroCustomerBundle::CustomerUserContext
-        - OroCheckoutBundle::FeatureContext
-        - OroQueryDesignerBundle::QueryDesignerContext
-        - OroEmailBundle::EmailContext
-        - OroCustomerBundle::FrontendGridContext
+        - Oro\Bundle\WebCatalogBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\NavigationBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\CustomerBundle\Tests\Behat\Context\ACLContext
+        - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\ShoppingListContext
+        - Oro\Bundle\CustomerBundle\Tests\Behat\Context\RegistrationInstructionFeatureContext
+        - Oro\Bundle\LocaleBundle\Tests\Behat\Context\LocalizationContext
+        - Oro\Bundle\FrontendLocalizationBundle\Tests\Behat\Context\LocalizationSwitcherContext
+        - Oro\Bundle\CustomerBundle\Tests\Behat\Context\CustomerUserContext
+        - Oro\Bundle\CheckoutBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\QueryDesignerBundle\Tests\Behat\Context\QueryDesignerContext
+        - Oro\Bundle\EmailBundle\Tests\Behat\Context\EmailContext
+        - Oro\Bundle\CustomerBundle\Tests\Behat\Context\FrontendGridContext
       paths:
         - '@OroShoppingListBundle/Tests/Behat/Features'

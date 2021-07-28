@@ -161,7 +161,7 @@ class GenerateSitemapIndexProcessorTest extends \PHPUnit\Framework\TestCase
         ]);
 
         $exception = new InvalidOptionsException(
-            'The option "websiteIds" with value 123 is expected to be of type "array", but is of type "integer".'
+            'The option "websiteIds" with value 123 is expected to be of type "array", but is of type "int".'
         );
         $this->logger->expects(self::once())
             ->method('critical')

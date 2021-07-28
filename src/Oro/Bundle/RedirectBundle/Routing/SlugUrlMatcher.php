@@ -244,7 +244,7 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
     protected function getAttributesWithContext($url)
     {
         $delimiter = '/' . SluggableUrlGenerator::CONTEXT_DELIMITER . '/';
-        if (strpos($url, $delimiter) !== false) {
+        if (str_contains($url, $delimiter)) {
             [$contextUrl, $url] = explode($delimiter, $url, 2);
 
             $contextAttributes = $this->match($contextUrl);
@@ -254,9 +254,9 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
             }
 
             return $urlAttributes;
-        } else {
-            return $this->getAttributes($url);
         }
+
+        return $this->getAttributes($url);
     }
 
     /**

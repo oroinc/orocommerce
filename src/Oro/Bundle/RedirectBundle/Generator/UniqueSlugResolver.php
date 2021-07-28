@@ -172,7 +172,7 @@ class UniqueSlugResolver
         $foundUrls = [];
         $currentEntityId = $this->getEntityIdentifier($entity);
         foreach ($this->processedUrls as $url => $entityId) {
-            if ($entityId !== $currentEntityId && strpos($url, $slug . '-') === 0) {
+            if ($entityId !== $currentEntityId && str_starts_with($url, $slug . '-')) {
                 $foundUrls[] = $url;
             }
         }

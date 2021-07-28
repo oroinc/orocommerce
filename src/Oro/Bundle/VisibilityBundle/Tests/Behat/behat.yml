@@ -4,20 +4,18 @@ oro_behat_extension:
       contexts:
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
         - Oro\Bundle\FormBundle\Tests\Behat\Context\FeatureContext
-        - OroDataGridBundle::GridContext
-        - OroUserBundle::FeatureContext
-        - OroFormBundle::FormContext
-        - OroFormBundle::FeatureContext
-        - OroApplicationBundle::CommerceMainContext
-        - OroConfigBundle::FeatureContext
-        - OroUIBundle::TypeaheadContext
-        - OroNavigationBundle::ScrollspyContext
-        - OroNavigationBundle::TabContext
-        - OroWebsiteSearchBundle::SearchIndexContext
-        - OroEmailBundle::EmailContext
-        - OroImportExportBundle::ImportExportContext:
-            - '@oro_entity.entity_alias_resolver'
-            - '@oro_importexport.processor.registry'
+        - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
+        - Oro\Bundle\UserBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
+        - Oro\Bundle\FormBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext
+        - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\UIBundle\Tests\Behat\Context\TypeaheadContext
+        - Oro\Bundle\NavigationBundle\Tests\Behat\Context\ScrollspyContext
+        - Oro\Bundle\NavigationBundle\Tests\Behat\Context\TabContext
+        - Oro\Bundle\WebsiteSearchBundle\Tests\Behat\Context\SearchIndexContext
+        - Oro\Bundle\EmailBundle\Tests\Behat\Context\EmailContext
+        - Oro\Bundle\ImportExportBundle\Tests\Behat\Context\ImportExportContext
       paths:
         - '@OroVisibilityBundle/Tests/Behat/Features'
   elements:

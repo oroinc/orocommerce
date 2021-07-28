@@ -51,7 +51,7 @@ class RouteRepository
     public function findRoute(string $id): ?Route
     {
         $url = str_replace(':', '/', $id);
-        if (strpos($url, '/') !== 0) {
+        if (!str_starts_with($url, '/')) {
             return null;
         }
 
@@ -95,7 +95,7 @@ class RouteRepository
                 unset($params[$name]);
             }
             foreach (array_keys($attributes) as $name) {
-                if (strpos($name, '_') === 0) {
+                if (str_starts_with($name, '_')) {
                     unset($params[$name]);
                 }
             }

@@ -29,13 +29,13 @@ oro_behat_extension:
     OroPaymentTermBundle:
       contexts:
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
-        - OroApplicationBundle::CommerceMainContext
-        - OroCheckoutBundle::FeatureContext
-        - OroConfigBundle::FeatureContext
-        - OroDataGridBundle::GridContext
-        - OroFormBundle::FormContext
-        - OroProductBundle::FeatureContext
-        - OroShoppingListBundle::ShoppingListContext
-        - OroActivityListBundle::ActivityContext
+        - Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext
+        - Oro\Bundle\CheckoutBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
+        - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
+        - Oro\Bundle\ProductBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\ShoppingListContext
+        - Oro\Bundle\ActivityListBundle\Tests\Behat\Context\ActivityContext
       paths:
         - '@OroPaymentTermBundle/Tests/Behat/Features'

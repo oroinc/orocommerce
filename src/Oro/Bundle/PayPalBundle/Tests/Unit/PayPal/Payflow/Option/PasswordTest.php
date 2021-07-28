@@ -30,7 +30,7 @@ class PasswordTest extends AbstractOptionTest
                 [
                     'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
                     'The option "PWD" with value 123 is expected to be of type "string", but is of ' .
-                    'type "integer".',
+                    'type "int".',
                 ],
             ],
             'valid' => [['PWD' => '123'], ['PWD' => '123']],

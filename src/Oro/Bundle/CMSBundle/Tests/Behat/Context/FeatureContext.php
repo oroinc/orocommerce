@@ -2,17 +2,15 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Behat\Context;
 
-use Behat\Symfony2Extension\Context\KernelAwareContext;
-use Behat\Symfony2Extension\Context\KernelDictionary;
 use Oro\Bundle\CMSBundle\Tests\Behat\Element\WysiwygCodeTypeBlockEditor;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Element;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 
-class FeatureContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
+class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 {
-    use PageObjectDictionary, KernelDictionary;
+    use PageObjectDictionary;
 
     /**
      * @When /^(?:|I )type "(?P<value>(?:[^"]|\\")*)" in Landing Page Titles field$/
