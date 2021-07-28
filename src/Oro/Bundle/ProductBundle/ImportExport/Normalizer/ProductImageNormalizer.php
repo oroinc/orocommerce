@@ -85,12 +85,12 @@ class ProductImageNormalizer extends ConfigurableEntityNormalizer
     /**
      * {@inheritdoc}
      */
-    public function denormalize($productImageData, $class, $format = null, array $context = [])
+    public function denormalize($productImageData, $type, $format = null, array $context = [])
     {
         $imageTypes = $this->imageTypeProvider->getImageTypes();
-        foreach ($productImageData['types'] as $type => $value) {
-            if (!array_key_exists($type, $imageTypes) || !boolval($value)) {
-                unset($imageTypes[$type]);
+        foreach ($productImageData['types'] as $imageType => $value) {
+            if (!array_key_exists($imageType, $imageTypes) || !boolval($value)) {
+                unset($imageTypes[$imageType]);
             }
         }
 
@@ -102,13 +102,13 @@ class ProductImageNormalizer extends ConfigurableEntityNormalizer
         $productImageData['image'] = $imagePath;
         $productImageData['types'] = array_keys($imageTypes);
 
-        return parent::denormalize($productImageData, $class, $format, $context);
+        return parent::denormalize($productImageData, $type, $format, $context);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function supportsNormalization($data, $format = null, array $context = [])
+    public function supportsNormalization($data, string $format = null, array $context = []): bool
     {
         return is_a($data, $this->productImageClass);
     }
@@ -116,8 +116,8 @@ class ProductImageNormalizer extends ConfigurableEntityNormalizer
     /**
      * {@inheritdoc}
      */
-    public function supportsDenormalization($data, $type, $format = null, array $context = [])
+    public function supportsDenormalization($data, string $type, string $format = null, array $context = []): bool
     {
-        return is_a($type, $this->productImageClass, true);
+        return is_array($data) && is_a($type, $this->productImageClass, true);
     }
 }

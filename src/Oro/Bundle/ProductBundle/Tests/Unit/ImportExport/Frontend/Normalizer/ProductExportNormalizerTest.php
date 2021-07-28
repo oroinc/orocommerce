@@ -57,8 +57,8 @@ class ProductExportNormalizerTest extends \PHPUnit\Framework\TestCase
                     [
                         'name' => 'type',
                         'type' => 'string',
-                        'label' => 'type'
-                    ]
+                        'label' => 'type',
+                    ],
                 ]
             );
 
@@ -110,7 +110,7 @@ class ProductExportNormalizerTest extends \PHPUnit\Framework\TestCase
                         'name' => 'sku',
                         'type' => 'string',
                         'label' => 'sku',
-                    ]
+                    ],
                 ]
             );
 
@@ -168,7 +168,7 @@ class ProductExportNormalizerTest extends \PHPUnit\Framework\TestCase
                         'name' => 'sku',
                         'type' => 'string',
                         'label' => 'sku',
-                    ]
+                    ],
                 ]
             );
 
@@ -227,7 +227,7 @@ class ProductExportNormalizerTest extends \PHPUnit\Framework\TestCase
                         'name' => 'sku',
                         'type' => 'string',
                         'label' => 'sku',
-                    ]
+                    ],
                 ]
             );
 
@@ -295,9 +295,16 @@ class ProductExportNormalizerTest extends \PHPUnit\Framework\TestCase
 
     public function testSupportsDenormalization(): void
     {
-        self::assertFalse($this->productNormalizer->supportsDenormalization(new Product(), null, [
-            'processorAlias' => 'oro_product_frontend_product_listing'
-        ]));
+        self::assertFalse(
+            $this->productNormalizer->supportsDenormalization(
+                new Product(),
+                '',
+                null,
+                [
+                    'processorAlias' => 'oro_product_frontend_product_listing',
+                ]
+            )
+        );
     }
 
     private function getConfig(string $className, array $values): Config

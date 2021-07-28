@@ -95,12 +95,10 @@ class ProductImageNormalizerTest extends \PHPUnit\Framework\TestCase
 
         $this->fieldHelper->expects($this->once())
             ->method('setObjectValue')
-            ->will(
-                $this->returnCallback(
-                    function (ProductImage $result, $fieldName, $value) {
-                        return $result->{'add' . ucfirst(substr($fieldName, 0, -1))}(reset($value));
-                    }
-                )
+            ->willReturnCallback(
+                function (ProductImage $result, $fieldName, $value) {
+                    return $result->{'add' . ucfirst(substr($fieldName, 0, -1))}(reset($value));
+                }
             );
 
         $productImage = $this->productImageNormalizer->denormalize(
@@ -126,7 +124,7 @@ class ProductImageNormalizerTest extends \PHPUnit\Framework\TestCase
     {
         $result = $this->productImageNormalizer->supportsDenormalization(
             [],
-            new StubProductImage(),
+            StubProductImage::class,
             null
         );
 

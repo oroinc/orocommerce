@@ -3,24 +3,26 @@
 namespace Oro\Bundle\InventoryBundle\ImportExport\Serializer;
 
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
-use Oro\Bundle\ImportExportBundle\Serializer\Normalizer\DenormalizerInterface;
 use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Symfony\Component\Serializer\Normalizer\ContextAwareDenormalizerInterface;
 
-/** This class is used to transform scalar value from csv file to fallback value */
-class ProductUpcomingNormalizer implements DenormalizerInterface
+/**
+ * Transforms scalar value from csv file to fallback value.
+ */
+class ProductUpcomingNormalizer implements ContextAwareDenormalizerInterface
 {
-    /** @var UpcomingProductProvider */
-    protected $productUpcomingProvider;
+    protected UpcomingProductProvider $productUpcomingProvider;
 
-    /** @param UpcomingProductProvider $productUpcomingProvider */
     public function __construct(UpcomingProductProvider $productUpcomingProvider)
     {
         $this->productUpcomingProvider = $productUpcomingProvider;
     }
 
-    /** {@inheritdoc} */
-    public function supportsDenormalization($data, $type, $format = null, array $context = array())
+    /**
+     * {@inheritdoc}
+     */
+    public function supportsDenormalization($data, string $type, string $format = null, array $context = []): bool
     {
         return is_a($type, EntityFieldFallbackValue::class, true) &&
             $context['entityName'] === Product::class &&
@@ -28,8 +30,10 @@ class ProductUpcomingNormalizer implements DenormalizerInterface
             $context['fieldName'] === UpcomingProductProvider::IS_UPCOMING;
     }
 
-    /** {@inheritdoc} */
-    public function denormalize($data, $class, $format = null, array $context = array())
+    /**
+     * {@inheritdoc}
+     */
+    public function denormalize($data, string $type, string $format = null, array $context = [])
     {
         if ($data === '1') {
             $fallbackEntity = new EntityFieldFallbackValue();

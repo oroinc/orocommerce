@@ -7,6 +7,7 @@ use Oro\Bundle\ImportExportBundle\Serializer\Normalizer\ScalarFieldDenormalizer;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ImportExport\Normalizer\ProductNormalizer;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Oro\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent;
 
 class ProductNormalizerTest extends \PHPUnit\Framework\TestCase
 {
@@ -32,13 +33,13 @@ class ProductNormalizerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->fieldHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\Helper\FieldHelper')
+        $this->fieldHelper = $this->getMockBuilder(FieldHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->eventDispatcher = $this->createMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
-        $this->productClass = 'Oro\Bundle\ProductBundle\Entity\Product';
+        $this->productClass = Product::class;
         $this->productNormalizer = new ProductNormalizer($this->fieldHelper);
         $this->productNormalizer->setProductClass($this->productClass);
         $this->productNormalizer->setEventDispatcher($this->eventDispatcher);
@@ -74,7 +75,7 @@ class ProductNormalizerTest extends \PHPUnit\Framework\TestCase
         $this->eventDispatcher->expects($this->once())->method('dispatch')
             ->withConsecutive(
                 [
-                    $this->isInstanceOf('Oro\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent'),
+                    $this->isInstanceOf(ProductNormalizerEvent::class),
                     $this->logicalAnd(
                         $this->isType('string'),
                         $this->equalTo('oro_product.normalizer.normalizer')
@@ -84,7 +85,7 @@ class ProductNormalizerTest extends \PHPUnit\Framework\TestCase
 
         $result = $this->productNormalizer->normalize($product);
         $this->assertArrayHasKey('sku', $result);
-        $this->assertEquals($result['sku'], 'SKU-1');
+        $this->assertEquals('SKU-1', $result['sku']);
     }
 
     public function testDenormalize()
@@ -116,7 +117,7 @@ class ProductNormalizerTest extends \PHPUnit\Framework\TestCase
         $this->eventDispatcher->expects($this->once())->method('dispatch')
             ->withConsecutive(
                 [
-                    $this->isInstanceOf('Oro\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent'),
+                    $this->isInstanceOf(ProductNormalizerEvent::class),
                     $this->logicalAnd(
                         $this->isType('string'),
                         $this->equalTo('oro_product.normalizer.denormalizer')
@@ -126,7 +127,7 @@ class ProductNormalizerTest extends \PHPUnit\Framework\TestCase
 
         $result = $this->productNormalizer->denormalize($data, $this->productClass);
         $this->assertInstanceOf($this->productClass, $result);
-        $this->assertEquals($result->getSku(), 'SKU-1');
+        $this->assertEquals('SKU-1', $result->getSku());
     }
 
     /**
@@ -174,10 +175,10 @@ class ProductNormalizerTest extends \PHPUnit\Framework\TestCase
     public function denormalizationDataProvider()
     {
         return [
-            ['\stdClass', false],
+            [\stdClass::class, false],
             ['string', false],
             ['', false],
-            ['Oro\Bundle\ProductBundle\Entity\Product', true],
+            [Product::class, true],
         ];
     }
 }

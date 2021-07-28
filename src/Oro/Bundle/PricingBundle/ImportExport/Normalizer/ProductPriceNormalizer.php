@@ -12,7 +12,7 @@ class ProductPriceNormalizer extends ConfigurableEntityNormalizer
      *
      * {@inheritDoc}
      */
-    public function normalize($object, $format = null, array $context = array())
+    public function normalize($object, string $format = null, array $context = [])
     {
         $data = parent::normalize($object, $format, $context);
 
@@ -26,7 +26,7 @@ class ProductPriceNormalizer extends ConfigurableEntityNormalizer
     /**
      * {@inheritDoc}
      */
-    public function supportsNormalization($data, $format = null, array $context = array())
+    public function supportsNormalization($data, string $format = null, array $context = []): bool
     {
         return $data instanceof ProductPrice;
     }
@@ -34,7 +34,7 @@ class ProductPriceNormalizer extends ConfigurableEntityNormalizer
     /**
      * {@inheritDoc}
      */
-    public function supportsDenormalization($data, $type, $format = null, array $context = [])
+    public function supportsDenormalization($data, string $type, string $format = null, array $context = []): bool
     {
         return false;
     }

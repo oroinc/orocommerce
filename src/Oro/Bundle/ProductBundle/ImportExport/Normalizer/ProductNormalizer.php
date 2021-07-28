@@ -37,7 +37,7 @@ class ProductNormalizer extends ConfigurableEntityNormalizer
      *
      * {@inheritdoc}
      */
-    public function normalize($object, $format = null, array $context = [])
+    public function normalize($object, string $format = null, array $context = [])
     {
         $data = parent::normalize($object, $format, $context);
 
@@ -62,7 +62,7 @@ class ProductNormalizer extends ConfigurableEntityNormalizer
     /**
      * {@inheritdoc}
      */
-    public function denormalize($data, $class, $format = null, array $context = [])
+    public function denormalize($data, string $type, string $format = null, array $context = [])
     {
         if (array_key_exists('additionalUnitPrecisions', $data)) {
             $data['unitPrecisions'] = $data['additionalUnitPrecisions'];
@@ -76,7 +76,7 @@ class ProductNormalizer extends ConfigurableEntityNormalizer
         /**
          * @var Product $object
          */
-        $object = parent::denormalize($data, $class, $format, $context);
+        $object = parent::denormalize($data, $type, $format, $context);
 
         if ($this->eventDispatcher) {
             $event = new ProductNormalizerEvent($object, $data, $context);
@@ -90,7 +90,7 @@ class ProductNormalizer extends ConfigurableEntityNormalizer
     /**
      * {@inheritdoc}
      */
-    public function supportsNormalization($data, $format = null, array $context = [])
+    public function supportsNormalization($data, string $format = null, array $context = []): bool
     {
         return is_a($data, $this->productClass);
     }
@@ -98,7 +98,7 @@ class ProductNormalizer extends ConfigurableEntityNormalizer
     /**
      * {@inheritdoc}
      */
-    public function supportsDenormalization($data, $type, $format = null, array $context = [])
+    public function supportsDenormalization($data, string $type, string $format = null, array $context = []): bool
     {
         return is_a($type, $this->productClass, true);
     }
