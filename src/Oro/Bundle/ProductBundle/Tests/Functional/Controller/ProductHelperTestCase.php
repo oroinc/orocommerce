@@ -351,13 +351,13 @@ class ProductHelperTestCase extends WebTestCase
                 ->html(),
             'precision' => $crawler
                 ->filter('input[name="oro_product[additionalUnitPrecisions][' . $position . '][precision]"]')
-                ->extract('value')[0],
+                ->extract(['value'])[0],
             'conversionRate' => $crawler
                 ->filter('input[name="oro_product[additionalUnitPrecisions][' . $position . '][conversionRate]"]')
-                ->extract('value')[0],
+                ->extract(['value'])[0],
             'sell' => (bool)$crawler
                 ->filter('input[name="oro_product[additionalUnitPrecisions][' . $position . '][sell]"]')
-                ->extract('checked')[0],
+                ->extract(['checked'])[0],
         ];
     }
 

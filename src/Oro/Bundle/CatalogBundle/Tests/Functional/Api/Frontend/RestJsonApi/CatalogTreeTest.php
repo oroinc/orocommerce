@@ -165,8 +165,7 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
     public function testGetListFilteredByParentWithNotExistsOperator()
     {
         $response = $this->cget(
-            ['entity' => 'mastercatalogtree'],
-            ['filter[parent]' => ['exists' => false]]
+            ['entity' => 'mastercatalogtree', 'filter[parent]' => ['exists' => false]]
         );
         $this->assertResponseContains(
             [

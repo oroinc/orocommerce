@@ -33,7 +33,7 @@ class BrandApiTest extends WebTestCase
 
         $this->assertGreaterThan(0, $id);
 
-        $this->client->request('GET', $this->getUrl('oro_api_get_brand', ['id' => $id]));
+        $this->client->jsonRequest('GET', $this->getUrl('oro_api_get_brand', ['id' => $id]));
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
     }
 
@@ -50,13 +50,13 @@ class BrandApiTest extends WebTestCase
 
         $this->assertGreaterThan(0, $id);
 
-        $this->client->request('GET', $this->getUrl('oro_api_get_brand', ['id' => $id]));
+        $this->client->jsonRequest('GET', $this->getUrl('oro_api_get_brand', ['id' => $id]));
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
 
-        $this->client->request('DELETE', $this->getUrl('oro_api_delete_brand', ['id' => $id]));
+        $this->client->jsonRequest('DELETE', $this->getUrl('oro_api_delete_brand', ['id' => $id]));
         $this->assertEquals(204, $this->client->getResponse()->getStatusCode());
 
-        $this->client->request('GET', $this->getUrl('oro_api_get_brand', ['id' => $id]));
+        $this->client->jsonRequest('GET', $this->getUrl('oro_api_get_brand', ['id' => $id]));
         $this->assertEquals(404, $this->client->getResponse()->getStatusCode());
     }
 }

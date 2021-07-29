@@ -25,7 +25,7 @@ class RedirectControllerTest extends WebTestCase
      */
     public function testSlugifyAction($string, $slug)
     {
-        $this->client->request(
+        $this->client->jsonRequest(
             'GET',
             $this->getUrl('oro_api_slugify_slug', ['string' => $string])
         );

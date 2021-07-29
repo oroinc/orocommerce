@@ -13,7 +13,7 @@ trait SEOFrontendTrait
             $tagCrawler = $metaCrawler->reduce(function (Crawler $node) use ($metaTag) {
                 return $metaTag['name'] === $node->attr('name');
             });
-            $actualContent = $tagCrawler->extract('content');
+            $actualContent = $tagCrawler->extract(['content']);
             $this->assertEquals($metaTag['content'], reset($actualContent));
         }
     }

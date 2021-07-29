@@ -97,7 +97,7 @@ class InlineEditProductControllerTest extends WebTestCase
         $configManager->flush();
         $configManager->reload();
 
-        $this->client->request(
+        $this->client->jsonRequest(
             'PATCH',
             $this->getUrl('oro_api_patch_product_inline_edit_name', ['id' => $product1->getId()]),
             [
@@ -119,7 +119,7 @@ class InlineEditProductControllerTest extends WebTestCase
         $product8 = $this->getReference(LoadProductData::PRODUCT_8);
         $id = $product8->getId() + 999999;
 
-        $this->client->request(
+        $this->client->jsonRequest(
             'PATCH',
             $this->getUrl('oro_api_patch_product_inline_edit_name', ['id' => $id]),
             [
@@ -138,7 +138,7 @@ class InlineEditProductControllerTest extends WebTestCase
         $product8 = $this->getReference(LoadProductData::PRODUCT_8);
         $id = $product8->getId() + 999999;
 
-        $this->client->request(
+        $this->client->jsonRequest(
             'PATCH',
             $this->getUrl('oro_api_patch_product_inline_edit_name', ['id' => $id])
         );
@@ -155,7 +155,7 @@ class InlineEditProductControllerTest extends WebTestCase
         $this->assertEquals(LoadProductData::PRODUCT_1_DEFAULT_SLUG_PROTOTYPE, $product1->getDefaultSlugPrototype());
         $this->assertTrue($product1->getSlugPrototypesWithRedirect()->getCreateRedirect());
 
-        $this->client->request(
+        $this->client->jsonRequest(
             'PATCH',
             $this->getUrl('oro_api_patch_product_inline_edit_name', ['id' => $product1->getId()]),
             [
@@ -176,7 +176,7 @@ class InlineEditProductControllerTest extends WebTestCase
         $product1 = $this->getReference(LoadProductData::PRODUCT_1);
         $this->assertEquals(Product::INVENTORY_STATUS_IN_STOCK, $product1->getInventoryStatus()->getId());
 
-        $this->client->request(
+        $this->client->jsonRequest(
             'PATCH',
             $this->getUrl('oro_api_patch_product_inline_edit_inventory_status', ['id' => $product1->getId()]),
             [
@@ -194,7 +194,7 @@ class InlineEditProductControllerTest extends WebTestCase
         /** @var Product $product1 */
         $product1 = $this->getReference(LoadProductData::PRODUCT_1);
 
-        $this->client->request(
+        $this->client->jsonRequest(
             'PATCH',
             $this->getUrl('oro_api_patch_product_inline_edit_inventory_status', ['id' => $product1->getId()])
         );
@@ -209,7 +209,7 @@ class InlineEditProductControllerTest extends WebTestCase
         $product8 = $this->getReference(LoadProductData::PRODUCT_8);
         $id = $product8->getId() + 999999;
 
-        $this->client->request(
+        $this->client->jsonRequest(
             'PATCH',
             $this->getUrl('oro_api_patch_product_inline_edit_inventory_status', ['id' => $id])
         );
@@ -223,7 +223,7 @@ class InlineEditProductControllerTest extends WebTestCase
         /** @var Product $product1 */
         $product1 = $this->getReference(LoadProductData::PRODUCT_1);
 
-        $this->client->request(
+        $this->client->jsonRequest(
             'PATCH',
             $this->getUrl('oro_api_patch_product_inline_edit_inventory_status', ['id' => $product1->getId()]),
             [
