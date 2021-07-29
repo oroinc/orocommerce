@@ -5,9 +5,9 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\ImportExport\Normalizer;
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 use Oro\Bundle\ImportExportBundle\Serializer\Normalizer\ScalarFieldDenormalizer;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent;
 use Oro\Bundle\ProductBundle\ImportExport\Normalizer\ProductNormalizer;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Oro\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent;
 
 class ProductNormalizerTest extends \PHPUnit\Framework\TestCase
 {
