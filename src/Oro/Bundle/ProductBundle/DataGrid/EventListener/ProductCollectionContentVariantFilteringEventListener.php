@@ -108,7 +108,7 @@ class ProductCollectionContentVariantFilteringEventListener
 
         $datasource
             ->getSearchQuery()
-            ->addWhere(Criteria::expr()->eq(sprintf('integer.assigned_to_variant_%s', $contentVariantId), 1));
+            ->addWhere(Criteria::expr()->eq(sprintf('integer.assigned_to.variant_%s', $contentVariantId), 1));
 
         $overrideVariantConfiguration = $event->getDatagrid()
             ->getConfig()

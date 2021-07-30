@@ -32,7 +32,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
             type:  text
             store: false
         -
-            name: assigned_to_ASSIGN_TYPE_ASSIGN_ID
+            name: assigned_to.ASSIGN_TYPE_ASSIGN_ID
             type: integer
         -
             name: image_product_large
