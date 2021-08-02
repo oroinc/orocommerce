@@ -81,10 +81,17 @@
         bottom: auto;
     }
 
-    .sub-row-last .select-row-cell:after {
-        top: 0;
-        height: $responsive-shopping-sub-row-cell-inner-offset +  $responsive-shopping-list-edit-action-in-desktop-height / 2;
-        bottom: auto;
+    .sub-row-last {
+        .select-row-cell:after {
+            top: 0;
+            height: $responsive-shopping-sub-row-cell-inner-offset +  $responsive-shopping-list-edit-action-in-desktop-height / 2;
+            bottom: auto;
+        }
+
+        // hide vertical line
+        &.notification-row .select-row-cell::after {
+            content: none;
+        }
     }
 
     .grid-header-cell-quantity {
