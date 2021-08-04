@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\ValidationBundle\Tests\Unit\Validator\Constraints;
 
-use Oro\Bundle\ValidationBundle\Validator\Constraints\Letters;
+use Oro\Bundle\ValidationBundle\Validator\Constraints\AlphanumericDashUnderscore;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\RegexValidator;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class LettersTest extends ConstraintValidatorTestCase
+class AlphanumericDashUnderscoreTest extends ConstraintValidatorTestCase
 {
     protected function createValidator()
     {
@@ -16,7 +16,7 @@ class LettersTest extends ConstraintValidatorTestCase
 
     protected function createContext()
     {
-        $this->constraint = new Letters();
+        $this->constraint = new AlphanumericDashUnderscore();
 
         return parent::createContext();
     }
@@ -29,7 +29,7 @@ class LettersTest extends ConstraintValidatorTestCase
 
     public function testGetAlias(): void
     {
-        self::assertEquals(Letters::ALIAS, $this->constraint->getAlias());
+        self::assertEquals(AlphanumericDashUnderscore::ALIAS, $this->constraint->getAlias());
     }
 
     public function testGetDefaultOption(): void
@@ -51,8 +51,20 @@ class LettersTest extends ConstraintValidatorTestCase
     public function validateCorrectValueDataProvider(): array
     {
         return [
-            'correct' => [
-                'data' => 'AbcAbc',
+            'alphanumeric dash underscore' => [
+                'data' => '10ten-_',
+            ],
+            'int number' => [
+                'data' => 10,
+            ],
+            'alphabet' => [
+                'data' => 'abcdefg',
+            ],
+            'dash' => [
+                'data' => '-',
+            ],
+            'underscore' => [
+                'data' => '_',
             ],
         ];
     }
@@ -67,15 +79,21 @@ class LettersTest extends ConstraintValidatorTestCase
 
         $this->buildViolation($this->constraint->message)
             ->setParameter('{{ value }}', '"' . $data . '"')
-            ->setCode(Letters::REGEX_FAILED_ERROR)
+            ->setCode(AlphanumericDashUnderscore::REGEX_FAILED_ERROR)
             ->assertRaised();
     }
 
     public function validateWrongValueDataProvider(): array
     {
         return [
-            'not correct' => [
-                'data' => 'Abc Abc',
+            'decimal' => [
+                'data' => 3.14,
+            ],
+            'symbols' => [
+                'data' => '!@#test',
+            ],
+            'alphanumeric with space' => [
+                'data' => '10 ten',
             ]
         ];
     }

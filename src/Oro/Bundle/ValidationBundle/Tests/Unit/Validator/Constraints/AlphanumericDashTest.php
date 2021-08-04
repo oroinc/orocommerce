@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\ValidationBundle\Tests\Unit\Validator\Constraints;
 
-use Oro\Bundle\ValidationBundle\Validator\Constraints\Letters;
+use Oro\Bundle\ValidationBundle\Validator\Constraints\AlphanumericDash;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\RegexValidator;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class LettersTest extends ConstraintValidatorTestCase
+class AlphanumericDashTest extends ConstraintValidatorTestCase
 {
     protected function createValidator()
     {
@@ -16,7 +16,7 @@ class LettersTest extends ConstraintValidatorTestCase
 
     protected function createContext()
     {
-        $this->constraint = new Letters();
+        $this->constraint = new AlphanumericDash();
 
         return parent::createContext();
     }
@@ -29,7 +29,7 @@ class LettersTest extends ConstraintValidatorTestCase
 
     public function testGetAlias(): void
     {
-        self::assertEquals(Letters::ALIAS, $this->constraint->getAlias());
+        self::assertEquals(AlphanumericDash::ALIAS, $this->constraint->getAlias());
     }
 
     public function testGetDefaultOption(): void
@@ -51,8 +51,17 @@ class LettersTest extends ConstraintValidatorTestCase
     public function validateCorrectValueDataProvider(): array
     {
         return [
-            'correct' => [
-                'data' => 'AbcAbc',
+            'alphanumeric dash' => [
+                'data' => '10ten-',
+            ],
+            'int number' => [
+                'data' => 10,
+            ],
+            'alphabet' => [
+                'data' => 'abcdefg',
+            ],
+            'dash' => [
+                'data' => '-',
             ],
         ];
     }
@@ -67,15 +76,21 @@ class LettersTest extends ConstraintValidatorTestCase
 
         $this->buildViolation($this->constraint->message)
             ->setParameter('{{ value }}', '"' . $data . '"')
-            ->setCode(Letters::REGEX_FAILED_ERROR)
+            ->setCode(AlphanumericDash::REGEX_FAILED_ERROR)
             ->assertRaised();
     }
 
     public function validateWrongValueDataProvider(): array
     {
         return [
-            'not correct' => [
-                'data' => 'Abc Abc',
+            'decimal' => [
+                'data' => 3.14,
+            ],
+            'symbols' => [
+                'data' => '!@#test',
+            ],
+            'alphanumeric with space' => [
+                'data' => '10 ten',
             ]
         ];
     }
