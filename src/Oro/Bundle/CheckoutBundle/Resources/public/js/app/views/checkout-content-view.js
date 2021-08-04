@@ -10,14 +10,14 @@ define(function(require) {
 
     const CheckoutContentView = BaseView.extend({
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function CheckoutContentView(options) {
             CheckoutContentView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function() {
             mediator.on('checkout-content:updated', this._onContentUpdated, this);
@@ -54,7 +54,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed) {

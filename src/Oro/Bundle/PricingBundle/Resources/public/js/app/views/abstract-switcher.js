@@ -27,14 +27,14 @@ define(function(require) {
         fieldLink: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function AbstractSwitcher(options) {
             AbstractSwitcher.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.visibleClass = 'visible';
@@ -132,7 +132,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function(options) {
             if (this.disposed) {

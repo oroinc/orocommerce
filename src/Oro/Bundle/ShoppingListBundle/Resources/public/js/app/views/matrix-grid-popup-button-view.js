@@ -6,7 +6,7 @@ define(function(require) {
 
     const MatrixGridPopupButtonView = ProductAddToShoppingListView.extend({
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function MatrixGridPopupButtonView(options) {
             MatrixGridPopupButtonView.__super__.constructor.call(this, options);

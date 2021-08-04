@@ -19,14 +19,14 @@ define(function(require) {
         currentTotals: {},
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function TotalsComponent(options) {
             TotalsComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this._deferredInit();
@@ -86,14 +86,14 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         updateTotals: function() {
             mediator.trigger('entry-point:order:trigger');
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed) {

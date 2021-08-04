@@ -8,6 +8,7 @@ import filtersContainerTemplate from 'tpl-loader!oroproduct/templates/sidebar-fi
 export default {
     processDatagridOptions(deferred, options) {
         options.filterContainerSelector = '[data-role="sidebar-filter-container"]';
+        options.metadata.options.enableFiltersNavigation = false;
         if (!options.metadata.options.filtersManager) {
             options.metadata.options.filtersManager = {};
         }

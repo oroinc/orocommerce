@@ -16,14 +16,14 @@ const VariantBodyView = BaseView.extend({
     $container: null,
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     constructor: function VariantBodyView(options) {
         VariantBodyView.__super__.constructor.call(this, options);
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize(options) {
         this.options = _.defaults(options || {}, this.options);

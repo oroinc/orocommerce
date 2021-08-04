@@ -59,7 +59,7 @@ const BaseTypeBuilder = BaseClass.extend({
     },
 
     /**
-      * @inheritDoc
+      * @inheritdoc
       */
     initialize(options) {
         BaseTypeBuilder.__super__.initialize.call(this, options);

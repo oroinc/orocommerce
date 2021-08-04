@@ -47,14 +47,14 @@ const SearchAutocompleteView = BaseView.extend({
     previousValue: '',
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     constructor: function SearchAutocompleteView(options) {
         SearchAutocompleteView.__super__.constructor.call(this, options);
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize(options) {
         this.$el.attr('autocomplete', 'off');
@@ -71,7 +71,7 @@ const SearchAutocompleteView = BaseView.extend({
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     getTemplateData: function(data = {}) {
         return Object.assign(data, {
@@ -80,7 +80,7 @@ const SearchAutocompleteView = BaseView.extend({
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     dispose() {
         if (this.disposed) {
@@ -114,7 +114,7 @@ const SearchAutocompleteView = BaseView.extend({
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     render(suggestions) {
         this.close();

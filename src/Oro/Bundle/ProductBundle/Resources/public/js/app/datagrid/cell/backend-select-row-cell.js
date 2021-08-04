@@ -31,14 +31,14 @@ define(function(require) {
         text: __('oro.product.grid.select_product'),
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function BackendSelectRowCell(options) {
             BackendSelectRowCell.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             const o = {};
@@ -67,7 +67,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         render: function() {
             const visibleState = {};

@@ -60,14 +60,14 @@ define(function(require) {
         rendered: false,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function BaseProductPricesView(options) {
             BaseProductPricesView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             BaseProductPricesView.__super__.initialize.call(this, options);

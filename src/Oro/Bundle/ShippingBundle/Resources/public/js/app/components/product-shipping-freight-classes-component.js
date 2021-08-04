@@ -48,14 +48,14 @@ define(function(require) {
         timeoutId: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function ProductShippingFreightClassesComponent(options) {
             ProductShippingFreightClassesComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});

@@ -35,7 +35,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function DiscountCollectionView(options) {
             this.options = $.extend(true, {}, this.options, options || {});
@@ -43,7 +43,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         events: function() {
             const events = {};
@@ -53,7 +53,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function() {
             const handlers = {};

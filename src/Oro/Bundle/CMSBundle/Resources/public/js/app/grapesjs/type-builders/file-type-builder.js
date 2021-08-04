@@ -144,7 +144,7 @@ const FileTypeBuilder = BaseTypeBuilder.extend({
                     },
 
                     /**
-                     * @inheritDoc
+                     * @inheritdoc
                      */
                     openAssetManager: function() {
                         self.editor.Commands.run(
@@ -167,7 +167,7 @@ const FileTypeBuilder = BaseTypeBuilder.extend({
                     },
 
                     /**
-                     * @inheritDoc
+                     * @inheritdoc
                      */
                     setValue: function(value, f) {
                         DefaultView.prototype.setValue.apply(this, [value, f]);

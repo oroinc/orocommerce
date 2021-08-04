@@ -18,14 +18,14 @@ define(function(require) {
         settingsTemplate: settingsTemplate,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function PanelManagerModule(options) {
             PanelManagerModule.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             _.extend(this, _.pick(options, ['builder', 'themes']));

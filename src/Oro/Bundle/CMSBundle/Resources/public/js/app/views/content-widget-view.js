@@ -30,7 +30,7 @@ define([
         requiredOptions: ['formSelector', 'typeSelector'],
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function ContentWidgetView(options) {
             ContentWidgetView.__super__.constructor.call(this, options);

@@ -28,14 +28,14 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function ShoppingListCreateOrderButtonComponent(options) {
             ShoppingListCreateOrderButtonComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.hasEmptyMatrix = options.hasEmptyMatrix;
@@ -55,7 +55,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         _onClickButtonExecutor: function(clickedButton) {
             this.showConfirmation(ShoppingListCreateOrderButtonComponent.__super__
@@ -63,7 +63,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         _onClickButtonRedirect: function(clickedButton) {
             this.showConfirmation(ShoppingListCreateOrderButtonComponent.__super__

@@ -86,7 +86,7 @@ const LinkTypeBuilder = BaseTypeBuilder.extend({
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize(options) {
         _.extend(this, _.pick(options, 'editor', 'componentType'));

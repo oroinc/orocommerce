@@ -40,7 +40,7 @@ define(function(require) {
         ],
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function CouponAddView(options) {
             this.options = $.extend(true, {}, this.options, options || {});
@@ -49,14 +49,14 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function() {
             this._updateApplyButtonState();
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         events: function() {
             const events = {};

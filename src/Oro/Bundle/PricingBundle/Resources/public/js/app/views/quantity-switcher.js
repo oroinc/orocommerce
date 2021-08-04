@@ -22,14 +22,14 @@ define(function(require) {
         fieldInput: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function QuantitySwitcher(options) {
             QuantitySwitcher.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             QuantitySwitcher.__super__.initialize.call(this, options);
@@ -97,7 +97,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function(options) {
             if (this.disposed) {

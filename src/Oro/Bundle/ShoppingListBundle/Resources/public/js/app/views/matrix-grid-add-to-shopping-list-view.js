@@ -6,7 +6,7 @@ define(function(require) {
 
     const MatrixGridAddToShoppingListView = ProductAddToShoppingListView.extend({
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function MatrixGridAddToShoppingListView(options) {
             MatrixGridAddToShoppingListView.__super__.constructor.call(this, options);
