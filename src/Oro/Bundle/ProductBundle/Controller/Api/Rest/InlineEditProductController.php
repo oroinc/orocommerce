@@ -2,10 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Controller\Api\Rest;
 
-use FOS\RestBundle\Controller\Annotations\NamePrefix;
-use FOS\RestBundle\Controller\Annotations\Patch;
-use FOS\RestBundle\Controller\Annotations\RouteResource;
-use FOS\RestBundle\Controller\FOSRestController;
+use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -15,13 +12,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * @RouteResource("product_inline_edit")
- * @NamePrefix("oro_api_")
+ * REST API controller for product inline editing.
  */
-class InlineEditProductController extends FOSRestController
+class InlineEditProductController extends AbstractFOSRestController
 {
     /**
-     * @Patch("inline-edit/product/{id}/name/patch")
      * @AclAncestor("oro_product_update")
      *
      * @param Request $request
@@ -64,7 +59,6 @@ class InlineEditProductController extends FOSRestController
     }
 
     /**
-     * @Patch("inline-edit/product/{id}/inventory-status/patch")
      * @AclAncestor("oro_product_update")
      *
      * @param Request $request

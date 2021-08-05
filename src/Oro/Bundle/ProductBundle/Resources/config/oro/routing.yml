@@ -55,15 +55,6 @@ oro_product_frontend_quick_add:
     options:
         frontend: true
 
-oro_product_inline_edit_api:
-    resource:     "@OroProductBundle/Resources/config/oro/routing_api.yml"
-    type:         rest
-    prefix:       api/rest/{version}
-    requirements:
-        version:  latest|v1
-        _format:  json
-    defaults:
-        version:  latest
 oro_brand:
     resource:     "@OroProductBundle/Controller/BrandController.php"
     type:         annotation
@@ -75,3 +66,70 @@ oro_product_frontend_export:
     prefix: /export/products
     options:
         frontend: true
+
+
+#
+# DEPRECATED OLD REST API ROUTES
+#
+
+oro_api_options_brands:
+    path: '/api/rest/{version}/brands.{_format}'
+    methods: [OPTIONS]
+    defaults:
+        _controller: 'Oro\Bundle\ProductBundle\Controller\Api\Rest\BrandController::optionsAction'
+        _format: json
+        version: latest
+    requirements:
+        _format: json
+        version: latest|v1
+
+
+#
+# OLD REST API ROUTES
+#
+
+oro_api_patch_product_inline_edit_name:
+    path: '/api/rest/{version}/inline-edit/product/{id}/name/patch.{_format}'
+    methods: [PATCH]
+    defaults:
+        _controller: 'Oro\Bundle\ProductBundle\Controller\Api\Rest\InlineEditProductController::patchNameAction'
+        _format: json
+        version: latest
+    requirements:
+        _format: json
+        version: latest|v1
+
+oro_api_patch_product_inline_edit_inventory_status:
+    path: '/api/rest/{version}/inline-edit/product/{id}/inventory-status/patch.{_format}'
+    methods: [PATCH]
+    defaults:
+        _controller: 'Oro\Bundle\ProductBundle\Controller\Api\Rest\InlineEditProductController::patchInventoryStatusAction'
+        _format: json
+        version: latest
+    requirements:
+        _format: json
+        version: latest|v1
+
+oro_api_get_brand:
+    path: '/api/rest/{version}/brands/{id}.{_format}'
+    methods: [GET]
+    defaults:
+        _controller: 'Oro\Bundle\ProductBundle\Controller\Api\Rest\BrandController::getAction'
+        _format: json
+        version: latest
+    requirements:
+        id: \d+
+        _format: json
+        version: latest|v1
+
+oro_api_delete_brand:
+    path: '/api/rest/{version}/brands/{id}.{_format}'
+    methods: [DELETE]
+    defaults:
+        _controller: 'Oro\Bundle\ProductBundle\Controller\Api\Rest\BrandController::deleteAction'
+        _format: json
+        version: latest
+    requirements:
+        id: \d+
+        _format: json
+        version: latest|v1

@@ -1,9 +1,15 @@
-oro_redirect_bundle_api:
-    resource:     "@OroRedirectBundle/Resources/config/oro/routing_api.yml"
-    type: rest
-    prefix: api/rest/{version}
-    requirements:
-        version:  latest|v1
-        _format:  json
+#
+# OLD REST API ROUTES
+#
+
+oro_api_slugify_slug:
+    path: '/api/rest/{version}/redirect/slugify/{string}.{_format}'
+    methods: [GET]
     defaults:
-        version:  latest
+        _controller: 'Oro\Bundle\RedirectBundle\Controller\Api\Rest\RedirectController::slugifyAction'
+        _format: json
+        version: latest
+    requirements:
+        string: .+
+        _format: json
+        version: latest|v1

@@ -3,8 +3,6 @@
 namespace Oro\Bundle\PaymentBundle\Controller\Api\Rest;
 
 use Doctrine\Persistence\ObjectManager;
-use FOS\RestBundle\Controller\Annotations as Rest;
-use FOS\RestBundle\Routing\ClassResourceInterface;
 use FOS\RestBundle\View\View;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
@@ -14,10 +12,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * REST API Payment Methods Configs Rule Controller
- * @Rest\RouteResource("paymentmethodsconfigsrules")
- * @Rest\NamePrefix("oro_api_")
  */
-class PaymentMethodsConfigsRuleController extends RestController implements ClassResourceInterface
+class PaymentMethodsConfigsRuleController extends RestController
 {
     /**
      * Enable payment rule
@@ -25,11 +21,6 @@ class PaymentMethodsConfigsRuleController extends RestController implements Clas
      * Returns
      * - HTTP_OK (200)
      *
-     * @Rest\Post(
-     *      "/paymentrules/{id}/enable",
-     *      requirements={"version"="latest|v1", "id"="\d+"},
-     *      defaults={"version"="latest", "_format"="json"}
-     * )
      * @ApiDoc(description="Enable Payment Rule", resource=true)
      * @AclAncestor("oro_payment_methods_configs_rule_update")
      *
@@ -71,11 +62,6 @@ class PaymentMethodsConfigsRuleController extends RestController implements Clas
      * Returns
      * - HTTP_OK (200)
      *
-     * @Rest\Post(
-     *      "/paymentrules/{id}/disable",
-     *      requirements={"version"="latest|v1", "id"="\d+"},
-     *      defaults={"version"="latest", "_format"="json"}
-     * )
      * @ApiDoc(description="Disable Payment Rule", resource=true)
      * @AclAncestor("oro_payment_methods_configs_rule_update")
      *

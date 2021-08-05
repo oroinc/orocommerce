@@ -6,7 +6,7 @@ use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserD
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadBrandData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-class BrandController extends WebTestCase
+class BrandControllerTest extends WebTestCase
 {
     protected function setUp(): void
     {
