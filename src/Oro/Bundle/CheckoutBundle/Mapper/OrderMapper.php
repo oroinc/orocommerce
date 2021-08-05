@@ -4,6 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\Mapper;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
+use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
@@ -106,7 +107,11 @@ class OrderMapper implements MapperInterface
      */
     protected function getMapFields()
     {
-        $fields = $this->entityFieldHelper->getFields(Order::class, true, false, false, true, true, false);
+        $fields = $this->entityFieldHelper->getEntityFields(
+            Order::class,
+            EntityFieldProvider::OPTION_WITH_RELATIONS | EntityFieldProvider::OPTION_WITH_UNIDIRECTIONAL
+            | EntityFieldProvider::OPTION_APPLY_EXCLUSIONS
+        );
 
         $withoutIds = array_filter(
             $fields,

@@ -38,7 +38,7 @@ class ProductExportDataConverterTest extends \PHPUnit\Framework\TestCase
         $typeField = ['name' => 'type', 'type' => 'string', 'label' => 'Type'];
         $nameField = ['name' => 'names', 'type' => 'ref-many', 'label' => 'Names'];
         $this->fieldHelper->expects(self::exactly(2))
-            ->method('getFields')
+            ->method('getEntityFields')
             ->willReturn([$skuField, $typeField, $nameField]);
 
         $this->fieldHelper->expects(self::any())
@@ -68,7 +68,7 @@ class ProductExportDataConverterTest extends \PHPUnit\Framework\TestCase
         $skuField = ['name' => 'sku', 'type' => 'string', 'label' => 'Sku'];
         $nameField = ['name' => 'names', 'type' => 'ref-many', 'label' => 'Names'];
         $this->fieldHelper->expects(self::exactly(2))
-            ->method('getFields')
+            ->method('getEntityFields')
             ->willReturn([$skuField, $nameField]);
 
         $this->fieldHelper->expects(self::any())
