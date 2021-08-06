@@ -36,5 +36,6 @@ oro_api_patch_product_tax_code:
         _format: json
         version: latest
     requirements:
+        id: \d+
         _format: json
         version: latest|v1

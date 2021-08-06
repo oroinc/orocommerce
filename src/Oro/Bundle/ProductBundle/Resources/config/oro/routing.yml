@@ -96,6 +96,7 @@ oro_api_patch_product_inline_edit_name:
         _format: json
         version: latest
     requirements:
+        id: \d+
         _format: json
         version: latest|v1
 
@@ -107,6 +108,7 @@ oro_api_patch_product_inline_edit_inventory_status:
         _format: json
         version: latest
     requirements:
+        id: \d+
         _format: json
         version: latest|v1
 

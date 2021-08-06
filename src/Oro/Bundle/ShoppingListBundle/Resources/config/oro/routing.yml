@@ -106,6 +106,7 @@ oro_api_shopping_list_frontend_delete_line_item_configurable:
         _format: json
         version: latest
     requirements:
+        shoppingListId: \d+
         productId: \d+
         _format: json
         version: latest|v1
