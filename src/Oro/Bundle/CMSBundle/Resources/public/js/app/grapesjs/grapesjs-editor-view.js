@@ -36,7 +36,7 @@ const config = {
  */
 const GrapesjsEditorView = BaseView.extend({
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     optionNames: BaseView.prototype.optionNames.concat([
         'autoRender', 'allow_tags', 'allowed_iframe_domains', 'builderPlugins', 'currentTheme', 'canvasConfig',
@@ -45,7 +45,7 @@ const GrapesjsEditorView = BaseView.extend({
     ]),
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     autoRender: true,
 
@@ -271,14 +271,14 @@ const GrapesjsEditorView = BaseView.extend({
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     constructor: function GrapesjsEditorView(options) {
         GrapesjsEditorView.__super__.constructor.call(this, options);
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      * @param options
      */
     initialize: function(options = {}) {
@@ -314,7 +314,7 @@ const GrapesjsEditorView = BaseView.extend({
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     render: function() {
         if (_.isMobile() || _.isTouchDevice()) {
@@ -333,7 +333,7 @@ const GrapesjsEditorView = BaseView.extend({
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     dispose: function() {
         if (this.disposed) {

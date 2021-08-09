@@ -29,37 +29,43 @@
             </div>
         </div>
     <% } else if (renderMode == 'collapse-mode') { %>
+        <% var collapseId = _.uniqueId('criteria-');  %>
+        <% var collapseContainerId = _.uniqueId('criteria-container-');  %>
         <div class="filter-box collapse-mode" <%= attributes %> >
             <div class="filters-box-collapse"
                  data-page-component-module="oroui/js/app/components/jquery-widget-component"
                  data-page-component-options="{&quot;widgetModule&quot;:&quot;oroui/js/widget/collapse-widget&quot;,&quot;open&quot;:false}"
             >
-                <div class="filters-box-collapse__trigger" data-collapse-trigger>
-                    <%- _.__('oro.product.product_filters.collapse.label')  %>
-                    <div class="filters-box-collapse__icon" aria-hidden="true">
-                        <span class="fa-plus"></span>
-                        <span class="fa-minus"></span>
-                    </div>
+                <div class="filters-box-collapse__header">
+                    <button id="<%- collapseId %>"
+                            class="filters-box-collapse__trigger btn btn--default btn--size-s btn--full"
+                            data-collapse-trigger
+                            aria-controls="<%- collapseContainerId %>"
+                            type="button"
+                    ><%- _.__('oro.product.product_filters.collapse.label')  %>
+                        <span class="filters-box-collapse__icon" aria-hidden="true">
+                            <span class="fa-plus"></span>
+                            <span class="fa-minus"></span>
+                        </span>
+                    </button>
                 </div>
-                <div class="filter-container">
-                    <div class="dropdown-mode">
-                        <div class="filters-box-collapse__container" data-collapse-container>
-                            <% if (obj.enableMultiselectWidget) { %>
-                            <select data-action="add-filter-select"
-                                    data-skip-input-widgets
-                                    multiple
-                            >
-                                <% _.each(filters, function (filter, name) { %>
-                                    <% if (filter.visible) { %>
-                                        <option title="<%- filter.label %>" value="<%- name %>" <% if (filter.enabled) { %>selected<% } %>>
-                                            <%- filter.label %>
-                                        </option>
-                                    <% } %>
-                                <% }); %>
-                            </select>
-                            <% } %>
-                            <div class="filter-items"></div>
-                        </div>
+                <div id="<%- collapseContainerId %>" class="filters-box-collapse__container" aria-labelledby="<%- collapseId %>" data-collapse-container>
+                    <div class="filter-container dropdown-mode">
+                        <% if (obj.enableMultiselectWidget) { %>
+                        <select data-action="add-filter-select"
+                                data-skip-input-widgets
+                                multiple
+                        >
+                            <% _.each(filters, function (filter, name) { %>
+                                <% if (filter.visible) { %>
+                                    <option title="<%- filter.label %>" value="<%- name %>" <% if (filter.enabled) { %>selected<% } %>>
+                                        <%- filter.label %>
+                                    </option>
+                                <% } %>
+                            <% }); %>
+                        </select>
+                        <% } %>
+                        <div class="filter-items"></div>
                     </div>
                     <div class="filter-items-hint">
                         <button type="button"

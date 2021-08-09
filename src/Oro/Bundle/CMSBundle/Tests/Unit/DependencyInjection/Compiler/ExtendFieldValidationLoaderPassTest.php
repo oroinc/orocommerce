@@ -5,19 +5,19 @@ namespace Oro\Bundle\CMSBundle\Tests\Unit\DependencyInjection\Compiler;
 use Oro\Bundle\CMSBundle\DependencyInjection\Compiler\ExtendFieldValidationLoaderPass;
 use Oro\Bundle\CMSBundle\Validator\Constraints\TwigContent;
 use Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYG;
+use Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYGStyle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class ExtendFieldValidationLoaderPassTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ExtendFieldValidationLoaderPass */
-    private $compiler;
+    private ExtendFieldValidationLoaderPass $compiler;
 
     protected function setUp(): void
     {
         $this->compiler = new ExtendFieldValidationLoaderPass();
     }
 
-    public function testProcessWithoutTargerServices(): void
+    public function testProcessWithoutTargetServices(): void
     {
         $container = new ContainerBuilder();
 
@@ -32,15 +32,17 @@ class ExtendFieldValidationLoaderPassTest extends \PHPUnit\Framework\TestCase
 
         $this->compiler->process($container);
 
-        $this->assertEquals(
+        self::assertEquals(
             [
-                ['addConstraints', ['wysiwyg', [[TwigContent::class => null], [WYSIWYG::class => null]]]]
+                ['addConstraints', ['wysiwyg', [[TwigContent::class => null], [WYSIWYG::class => null]]]],
+                ['addConstraints', ['wysiwyg_style', [[TwigContent::class => null], [WYSIWYGStyle::class => null]]]],
             ],
             $validationLoaderDef->getMethodCalls()
         );
-        $this->assertEquals(
+        self::assertEquals(
             [
-                ['addConstraints', ['wysiwyg', [[TwigContent::class => null], [WYSIWYG::class => null]]]]
+                ['addConstraints', ['wysiwyg', [[TwigContent::class => null], [WYSIWYG::class => null]]]],
+                ['addConstraints', ['wysiwyg_style', [[TwigContent::class => null], [WYSIWYGStyle::class => null]]]],
             ],
             $validatorDef->getMethodCalls()
         );

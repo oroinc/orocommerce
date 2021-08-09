@@ -51,14 +51,14 @@ define(function(require) {
         $amountInputElement: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function DiscountItemView(options) {
             DiscountItemView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
@@ -179,7 +179,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed) {

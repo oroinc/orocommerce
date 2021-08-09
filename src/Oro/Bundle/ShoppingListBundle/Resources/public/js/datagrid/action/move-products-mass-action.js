@@ -22,14 +22,14 @@ define(function(require) {
         reloadData: false,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function MoveProductsMassAction(options) {
             MoveProductsMassAction.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             MoveProductsMassAction.__super__.initialize.call(this, options);
@@ -38,7 +38,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             this.datagrid.off(null, null, this);
@@ -46,7 +46,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         _handleWidget: function() {
             if (this.dispatched) {
@@ -70,7 +70,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         getActionParameters: function() {
             const params = MoveProductsMassAction.__super__.getActionParameters.call(this);
@@ -79,7 +79,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         _onAjaxSuccess: function(data) {
             this.datagrid.collection.fetch({
@@ -93,7 +93,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          * @private
          */
         _doAjaxRequest() {

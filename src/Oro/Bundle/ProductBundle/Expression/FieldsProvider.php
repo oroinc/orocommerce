@@ -142,15 +142,11 @@ class FieldsProvider implements FieldsProviderInterface
     {
         $cacheKey = $this->getCacheKey($className, $numericOnly, $withRelations);
         if (!array_key_exists($cacheKey, $this->entityFields)) {
-            $fields = $this->entityFieldProvider->getFields(
-                $className,
-                $withRelations,
-                $withRelations,
-                false,
-                false,
-                true,
-                false
-            );
+            $options = EntityFieldProvider::OPTION_APPLY_EXCLUSIONS | EntityFieldProvider::OPTION_TRANSLATE;
+            $options |= $withRelations
+                ? EntityFieldProvider::OPTION_WITH_RELATIONS | EntityFieldProvider::OPTION_WITH_VIRTUAL_FIELDS
+                : 0;
+            $fields = $this->entityFieldProvider->getEntityFields($className, $options);
             $this->entityFields[$cacheKey] = [];
             foreach ($fields as $field) {
                 $fieldName = $field['name'];

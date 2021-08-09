@@ -11,14 +11,14 @@ define(function(require) {
      */
     const PaymentTermView = BasePaymentTermView.extend({
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function PaymentTermView(options) {
             PaymentTermView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             PaymentTermView.__super__.initialize.call(this, options);
@@ -27,7 +27,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed) {

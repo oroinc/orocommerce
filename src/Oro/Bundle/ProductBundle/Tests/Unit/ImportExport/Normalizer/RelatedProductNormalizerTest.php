@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\ImportExport\Normalizer;
 
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
+use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\ImportExportBundle\Serializer\Normalizer\ScalarFieldDenormalizer;
 use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
 use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
@@ -10,58 +11,48 @@ use Oro\Bundle\ProductBundle\ImportExport\Normalizer\RelatedProductNormalizer;
 
 class RelatedProductNormalizerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var FieldHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $fieldHelper;
+    private FieldHelper|\PHPUnit\Framework\MockObject\MockObject $fieldHelper;
 
-    /** @var Serializer|\PHPUnit\Framework\MockObject\MockObject */
-    private $serializer;
-
-    /** @var RelatedProductNormalizer */
-    private $normalizer;
+    private RelatedProductNormalizer $normalizer;
 
     protected function setUp(): void
     {
         $this->fieldHelper = $this->createMock(FieldHelper::class);
-        $this->serializer = $this->createMock(Serializer::class);
+        $serializer = $this->createMock(Serializer::class);
 
         $this->normalizer = new RelatedProductNormalizer($this->fieldHelper);
-        $this->normalizer->setSerializer($this->serializer);
+        $this->normalizer->setSerializer($serializer);
         $this->normalizer->setScalarFieldDenormalizer(new ScalarFieldDenormalizer());
     }
 
     public function testSupportsNormalization(): void
     {
-        $this->assertFalse($this->normalizer->supportsNormalization(new RelatedProduct()));
+        self::assertFalse($this->normalizer->supportsNormalization(new RelatedProduct()));
     }
 
     public function testSupportsDenormalization(): void
     {
-        $this->assertTrue($this->normalizer->supportsDenormalization([], RelatedProduct::class));
+        self::assertTrue($this->normalizer->supportsDenormalization([], RelatedProduct::class));
     }
 
     public function testDenormalize(): void
     {
         $expected = new RelatedProduct();
 
-        $this->fieldHelper->expects($this->atLeastOnce())
+        $this->fieldHelper->expects(self::atLeastOnce())
             ->method('setObjectValue')
             ->withConsecutive(
                 [$expected, 'product', ['sku' => 'sku-1']],
                 [$expected, 'relatedItem', ['sku' => 'sku-2']]
             );
 
-        $this->fieldHelper->expects($this->any())
-            ->method('getFields')
+        $this->fieldHelper->expects(self::any())
+            ->method('getEntityFields')
             ->willReturnMap(
                 [
                     [
                         RelatedProduct::class,
-                        true,
-                        false,
-                        false,
-                        false,
-                        false,
-                        true,
+                        EntityFieldProvider::OPTION_WITH_RELATIONS,
                         [
                             'product' => [
                                 'name' => 'product',
@@ -76,7 +67,7 @@ class RelatedProductNormalizerTest extends \PHPUnit\Framework\TestCase
                 ]
             );
 
-        $this->assertEquals(
+        self::assertEquals(
             $expected,
             $this->normalizer->denormalize(
                 [

@@ -2,9 +2,6 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend\Api\Rest;
 
-use FOS\RestBundle\Controller\Annotations\NamePrefix;
-use FOS\RestBundle\Controller\Annotations\Put;
-use FOS\RestBundle\Routing\ClassResourceInterface;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -16,16 +13,10 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * Controller for shopping list REST API requests.
- * @NamePrefix("oro_api_")
  */
-class ShoppingListController extends RestController implements ClassResourceInterface
+class ShoppingListController extends RestController
 {
     /**
-     * @Put(
-     *     "/shoppinglists/current/{id}",
-     *     requirements={"id"="\d+"}
-     * )
-     *
      * @ApiDoc(
      *      description="Set current Shopping List",
      *      resource=true
@@ -49,11 +40,6 @@ class ShoppingListController extends RestController implements ClassResourceInte
     }
 
     /**
-     * @Put(
-     *     "/shoppinglists/{id}/owner",
-     *     requirements={"id"="\d+"}
-     * )
-     *
      * @ApiDoc(
      *      description="Set Shopping List Owner",
      *      resource=true

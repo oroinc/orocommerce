@@ -72,14 +72,14 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function ProductPricesEditableView(options) {
             ProductPricesEditableView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, _.pick(options, _.keys(this.options)));
@@ -89,14 +89,14 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         deferredInitialize: function(options) {
             ProductPricesEditableView.__super__.deferredInitialize.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function(options) {
             delete this.templates;
@@ -104,7 +104,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         findPrice: function(...args) {
             const price = ProductPricesEditableView.__super__.findPrice.apply(this, args);
@@ -114,7 +114,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         setFoundPrice: function() {
             this.findPrice();

@@ -91,7 +91,7 @@ oro_behat_extension:
         selector: 'div[data-page-component-name="product-prices-grid"] div.toolbar div.actions-panel'
         class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
     ProductPricesGridFiltersState:
-        selector: 'div[data-page-component-name="product-prices-grid"] div.filters-state'
+        selector: 'div[data-page-component-name="product-prices-grid"] .filters-state'
     ProductPricesGridFilterItem:
       selector: 'div.filter-item'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilterItem

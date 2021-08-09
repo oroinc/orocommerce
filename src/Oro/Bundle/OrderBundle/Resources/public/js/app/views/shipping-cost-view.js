@@ -32,14 +32,14 @@ define(function(require) {
         fieldsByName: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function ShippingCostView(options) {
             ShippingCostView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});

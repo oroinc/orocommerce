@@ -7,7 +7,7 @@ define(function(require) {
 
     const LineItemOfferView = BaseProductView.extend({
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function LineItemOfferView(options) {
             LineItemOfferView.__super__.constructor.call(this, options);

@@ -22,14 +22,14 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function QuickAddImportFormView(options) {
             QuickAddImportFormView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             _.extend(this, _.pick(options, 'droppableContainer', 'productsCollection'));
@@ -41,7 +41,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         delegateEvents: function() {
             QuickAddImportFormView.__super__.delegateEvents.call(this);
@@ -64,7 +64,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         undelegateEvents: function() {
             QuickAddImportFormView.__super__.undelegateEvents.call(this);

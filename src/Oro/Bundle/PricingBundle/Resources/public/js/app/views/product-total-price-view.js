@@ -19,14 +19,14 @@ define(function(require) {
         prices: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function ProductTotalPriceView(options) {
             ProductTotalPriceView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             ProductTotalPriceView.__super__.initialize.call(this, options);

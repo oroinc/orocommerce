@@ -2,10 +2,7 @@
 
 namespace Oro\Bundle\TaxBundle\Controller\Api\Rest;
 
-use FOS\RestBundle\Controller\Annotations\NamePrefix;
-use FOS\RestBundle\Controller\Annotations\Patch;
-use FOS\RestBundle\Controller\Annotations\RouteResource;
-use FOS\RestBundle\Controller\FOSRestController;
+use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
@@ -14,13 +11,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * @RouteResource("product_tax_code")
- * @NamePrefix("oro_api_")
+ * REST API controller to update product TAX code.
  */
-class ProductTaxCodeController extends FOSRestController
+class ProductTaxCodeController extends AbstractFOSRestController
 {
     /**
-     * @Patch("taxcode/product/{id}/patch")
      * @AclAncestor("oro_product_update")
      *
      * @param Request $request

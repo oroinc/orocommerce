@@ -21,7 +21,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function LineItemsView(options) {
             LineItemsView.__super__.constructor.call(this, options);
@@ -95,7 +95,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed) {

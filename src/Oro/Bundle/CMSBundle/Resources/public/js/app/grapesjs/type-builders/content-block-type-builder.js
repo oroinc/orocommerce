@@ -152,7 +152,7 @@ const ContentBlockTypeBuilder = BaseTypeBuilder.extend({
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     constructor: function ContentBlockTypeBuilder(options) {
         ContentBlockTypeBuilder.__super__.constructor.call(this, options);

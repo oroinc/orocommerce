@@ -2,11 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Controller\Api\Rest;
 
-use FOS\RestBundle\Controller\Annotations\Delete;
-use FOS\RestBundle\Controller\Annotations\Get;
-use FOS\RestBundle\Controller\Annotations\NamePrefix;
-use FOS\RestBundle\Controller\Annotations\RouteResource;
-use FOS\RestBundle\Routing\ClassResourceInterface;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
@@ -15,24 +10,18 @@ use Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager;
 use Oro\Bundle\SoapBundle\Form\Handler\ApiFormHandler;
 
 /**
- * API CRUD controller for Brand entity
- *
- * @RouteResource("brand")
- * @NamePrefix("oro_api_")
+ * REST API CRUD controller for Brand entity
  */
-class BrandController extends RestController implements ClassResourceInterface
+class BrandController extends RestController
 {
     /**
      * @param int $id Brand id
-     *
-     * @Get(requirements={"id"="\d+"})
      *
      * @ApiDoc(
      *     description="Get sissue",
      *     resource=true
      * )
      * @AclAncestor("oro_product_brand_view")
-     * @Get(requirements={"id"="\d+"})
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
@@ -45,8 +34,6 @@ class BrandController extends RestController implements ClassResourceInterface
      * Delete brand
      *
      * @param int $id Brand id
-     *
-     * @Delete(requirements={"id"="\d+"})
      *
      * @ApiDoc(
      *      description="Delete brand",
@@ -61,7 +48,6 @@ class BrandController extends RestController implements ClassResourceInterface
      *      class="OroProductBundle:Brand",
      *      permission="DELETE"
      * )
-     * @Delete(requirements={"id"="\d+"})
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */

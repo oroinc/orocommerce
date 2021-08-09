@@ -46,7 +46,7 @@ class ProductExportNormalizerTest extends \PHPUnit\Framework\TestCase
         $product = new Product();
 
         $this->fieldHelper->expects(self::once())
-            ->method('getFields')
+            ->method('getEntityFields')
             ->willReturn(
                 [
                     [
@@ -103,7 +103,7 @@ class ProductExportNormalizerTest extends \PHPUnit\Framework\TestCase
         $product = new Product();
 
         $this->fieldHelper->expects(self::once())
-            ->method('getFields')
+            ->method('getEntityFields')
             ->willReturn(
                 [
                     [
@@ -161,7 +161,7 @@ class ProductExportNormalizerTest extends \PHPUnit\Framework\TestCase
         $product = new Product();
 
         $this->fieldHelper->expects(self::once())
-            ->method('getFields')
+            ->method('getEntityFields')
             ->willReturn(
                 [
                     [
@@ -220,7 +220,7 @@ class ProductExportNormalizerTest extends \PHPUnit\Framework\TestCase
         $product = new Product();
 
         $this->fieldHelper->expects(self::once())
-            ->method('getFields')
+            ->method('getEntityFields')
             ->willReturn(
                 [
                     [

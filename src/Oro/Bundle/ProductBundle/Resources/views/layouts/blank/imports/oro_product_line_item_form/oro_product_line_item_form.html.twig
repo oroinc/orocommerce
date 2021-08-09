@@ -142,7 +142,7 @@
     {% if is_configurable_product_type(product.type) and matrixFormType == 'none' %}
         {% set path = product.view_link|default(path('oro_product_frontend_product_view', {id: product.id})) %}
         {% set attr = layout_attr_defaults(attr, {
-            '~class': " btn btn--info full"
+            '~class': " btn btn--info btn--block"
         }) %}
 
         {{ parent_block_widget(block) }}

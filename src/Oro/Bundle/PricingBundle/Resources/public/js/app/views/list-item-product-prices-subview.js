@@ -16,14 +16,14 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function ListItemProductPricesSubview(options) {
             ListItemProductPricesSubview.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             ListItemProductPricesSubview.__super__.initialize.call(this, options);
@@ -42,7 +42,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             if (this.model) {
@@ -53,7 +53,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         getTemplateData: function() {
             return {
@@ -88,7 +88,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         render: function() {
             ListItemProductPricesSubview.__super__.render.call(this);

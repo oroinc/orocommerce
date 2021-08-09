@@ -33,14 +33,14 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function ListItemProductPricesView(options) {
             ListItemProductPricesView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             ListItemProductPricesView.__super__.initialize.call(this, options);
@@ -48,7 +48,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         deferredInitialize: function(options) {
             options = _.defaults(options, this.defaultOptions);
@@ -68,7 +68,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             this.disposeElements();
@@ -81,7 +81,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         render: function() {
             if (this.doUpdateQtyForUnit) {
