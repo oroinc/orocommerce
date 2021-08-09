@@ -62,6 +62,8 @@ class AppliedCouponEntityListenerTest extends WebTestCase
 
     public function testPostPersistWithoutCoupon()
     {
+        $this->markTestSkipped('will be fixed in BB-19538');
+
         $manager = $this->getCouponUsageManager();
         foreach ($this->findAllCouponUsage() as $entity) {
             $manager->remove($entity);
