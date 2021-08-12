@@ -24,7 +24,7 @@ class RateLookupTest extends AbstractOptionTest
                 [
                     'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
                     'The option "RATELOOKUPID" with value 12345 is expected to be of type "string", but is of ' .
-                    'type "integer".',
+                    'type "int".',
                 ],
             ],
             'valid' => [['RATELOOKUPID' => 'A10A9A919311'], ['RATELOOKUPID' => 'A10A9A919311']],

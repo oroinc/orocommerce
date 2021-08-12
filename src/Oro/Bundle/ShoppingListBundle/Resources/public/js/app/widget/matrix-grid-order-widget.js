@@ -15,14 +15,14 @@ define(function(require) {
         shoppingListId: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function MatrixGridOrderWidget(options) {
             MatrixGridOrderWidget.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.model = this.model || options.productModel;

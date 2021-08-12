@@ -194,7 +194,7 @@ class OrderControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertEquals(
             self::ORDER_PO_NUMBER,
-            $crawler->filter('input[name="oro_order_type[poNumber]"]')->extract('value')[0]
+            $crawler->filter('input[name="oro_order_type[poNumber]"]')->extract(['value'])[0]
         );
 
         $this->assertNotEquals('N/A', $crawler->filter('.page-title__entity-title')->text());
@@ -571,27 +571,27 @@ class OrderControllerTest extends WebTestCase
         for ($i = 0; $i < $count; $i++) {
             $result[] = [
                 'product' => $crawler->filter('input[name="oro_order_type[lineItems]['. $i .'][product]"]')
-                    ->extract('value')[0],
+                    ->extract(['value'])[0],
                 'freeFormProduct' => $crawler
                     ->filter('input[name="oro_order_type[lineItems]['. $i .'][freeFormProduct]"]')
-                    ->extract('value')[0],
+                    ->extract(['value'])[0],
                 'quantity' => $crawler->filter('input[name="oro_order_type[lineItems]['. $i .'][quantity]"]')
-                    ->extract('value')[0],
+                    ->extract(['value'])[0],
                 'productUnit' => $crawler
                     ->filter('select[name="oro_order_type[lineItems]['. $i .'][productUnit]"] :selected')
                     ->html(),
                 'price' => [
                     'value' => $crawler->filter('input[name="oro_order_type[lineItems]['. $i .'][price][value]"]')
-                        ->extract('value')[0],
+                        ->extract(['value'])[0],
                     'currency' => $crawler
                         ->filter('input[name="oro_order_type[lineItems]['. $i .'][price][currency]"]')
-                        ->extract('value')[0],
+                        ->extract(['value'])[0],
                 ],
                 'priceType' => $crawler
                     ->filter('input[name="oro_order_type[lineItems]['. $i .'][priceType]"]')
-                    ->extract('value')[0],
+                    ->extract(['value'])[0],
                 'shipBy' => $crawler->filter('input[name="oro_order_type[lineItems]['. $i .'][shipBy]"]')
-                    ->extract('value')[0]
+                    ->extract(['value'])[0]
             ];
         }
 
@@ -611,14 +611,14 @@ class OrderControllerTest extends WebTestCase
             $result[] = [
                 'percent' => $crawler
                     ->filter('input[name="oro_order_type[discounts]['. $i .'][percent]"]')
-                    ->extract('value')[0],
+                    ->extract(['value'])[0],
                 'amount' => $crawler->filter('input[name="oro_order_type[discounts]['. $i .'][amount]"]')
-                    ->extract('value')[0],
+                    ->extract(['value'])[0],
                 'type' => $crawler
                     ->filter('input[name="oro_order_type[discounts]['. $i .'][type]"]')
-                    ->extract('value')[0],
+                    ->extract(['value'])[0],
                 'description' => $crawler->filter('input[name="oro_order_type[discounts]['. $i .'][description]"]')
-                    ->extract('value')[0]
+                    ->extract(['value'])[0]
             ];
         }
 

@@ -46,7 +46,7 @@ class LineItemControllerAclTest extends WebTestCase
         /* @var LineItem $lineItem */
         $lineItem = $this->getReference('shopping_list_line_item.1');
 
-        $this->client->request(
+        $this->client->jsonRequest(
             'DELETE',
             $this->getUrl('oro_api_shopping_list_frontend_delete_line_item', ['id' => $lineItem->getId()])
         );
@@ -61,7 +61,7 @@ class LineItemControllerAclTest extends WebTestCase
         $productUnit = $this->getReference('product_unit.bottle');
         $updatedLineItem = [FrontendLineItemType::NAME => ['unit' => $productUnit->getCode(), 'quantity' => 2]];
 
-        $this->client->request(
+        $this->client->jsonRequest(
             'PUT',
             $this->getUrl('oro_api_shopping_list_frontend_put_line_item', ['id' => $lineItem->getId()]),
             $updatedLineItem
@@ -75,10 +75,9 @@ class LineItemControllerAclTest extends WebTestCase
         /* @var LineItem $lineItem */
         $lineItem = $this->getReference('shopping_list_line_item.1');
 
-        $this->client->request(
+        $this->client->jsonRequest(
             'DELETE',
             $this->getUrl('oro_api_shopping_list_frontend_delete_line_item', ['id' => $lineItem->getId()]),
-            [],
             [],
             $this->generateBasicAuthHeader(
                 LoadCustomerUserACLData::USER_ACCOUNT_1_ROLE_LOCAL,
@@ -96,11 +95,10 @@ class LineItemControllerAclTest extends WebTestCase
         $productUnit = $this->getReference('product_unit.bottle');
         $updatedLineItem = [FrontendLineItemType::NAME => ['unit' => $productUnit->getCode(), 'quantity' => 2]];
 
-        $this->client->request(
+        $this->client->jsonRequest(
             'PUT',
             $this->getUrl('oro_api_shopping_list_frontend_put_line_item', ['id' => $lineItem->getId()]),
             $updatedLineItem,
-            [],
             $this->generateBasicAuthHeader(
                 LoadCustomerUserACLData::USER_ACCOUNT_1_ROLE_LOCAL,
                 LoadCustomerUserACLData::USER_ACCOUNT_1_ROLE_LOCAL
@@ -117,7 +115,7 @@ class LineItemControllerAclTest extends WebTestCase
         $role = $lineItem->getCustomerUser()->getUserRoles()[0];
 
         $this->updateRolePermission($role->getRole(), LineItem::class, AccessLevel::NONE_LEVEL, 'DELETE');
-        $this->client->request(
+        $this->client->jsonRequest(
             'DELETE',
             $this->getUrl('oro_api_shopping_list_frontend_delete_line_item', ['id' => $lineItem->getId()])
         );
@@ -134,7 +132,7 @@ class LineItemControllerAclTest extends WebTestCase
         $updatedLineItem = [FrontendLineItemType::NAME => ['unit' => $productUnit->getCode(), 'quantity' => 2]];
 
         $this->updateRolePermission($role->getRole(), LineItem::class, AccessLevel::NONE_LEVEL, 'DELETE');
-        $this->client->request(
+        $this->client->jsonRequest(
             'PUT',
             $this->getUrl('oro_api_shopping_list_frontend_put_line_item', ['id' => $lineItem->getId()]),
             $updatedLineItem

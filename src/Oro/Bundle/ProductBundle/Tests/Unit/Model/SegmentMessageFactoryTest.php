@@ -209,7 +209,7 @@ class SegmentMessageFactoryTest extends \PHPUnit\Framework\TestCase
                     SegmentMessageFactory::ADDITIONAL_PRODUCTS => [42],
                 ],
                 'message' => 'The option "definition" with value true is expected to be of type "null" or "string",'
-                    .' but is of type "boolean".',
+                    .' but is of type "bool".',
             ],
             'wrong data type for website_id' => [
                 'data' => [

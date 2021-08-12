@@ -36,7 +36,7 @@ function messageCheck(str) {
 
 const ImportDialogView = BaseView.extend({
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     optionNames: BaseView.prototype.optionNames.concat([
         'editor', 'importViewerOptions',
@@ -45,7 +45,7 @@ const ImportDialogView = BaseView.extend({
     ]),
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     autoRender: true,
 
@@ -154,7 +154,7 @@ const ImportDialogView = BaseView.extend({
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      * @param options
      */
     initialize(options) {
@@ -176,7 +176,7 @@ const ImportDialogView = BaseView.extend({
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      * @returns {{modalImportButton: ImportDialogView.modalImportButton}}
      */
     getTemplateData() {
@@ -186,7 +186,7 @@ const ImportDialogView = BaseView.extend({
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     render() {
         ImportDialogView.__super__.render.call(this);
@@ -253,7 +253,7 @@ const ImportDialogView = BaseView.extend({
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     dispose: function() {
         if (this.disposed) {

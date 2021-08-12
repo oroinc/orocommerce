@@ -6,14 +6,14 @@ define(function(require) {
 
     const ProductQuickAddToShoppingListView = ProductAddToShoppingListView.extend({
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function ProductQuickAddToShoppingListView(options) {
             ProductQuickAddToShoppingListView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             ProductQuickAddToShoppingListView.__super__.initialize.call(this, options);

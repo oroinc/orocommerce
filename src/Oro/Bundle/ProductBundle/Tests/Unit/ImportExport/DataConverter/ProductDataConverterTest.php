@@ -13,20 +13,13 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ProductDataConverterTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ProductDataConverter */
-    private $dataConverter;
+    private ProductDataConverter $dataConverter;
 
-    /** @var FieldHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $fieldHelper;
+    private FieldHelper|\PHPUnit\Framework\MockObject\MockObject $fieldHelper;
 
-    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $eventDispatcher;
+    private EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject $eventDispatcher;
 
-    /** @var LocaleSettings|\PHPUnit\Framework\MockObject\MockObject */
-    private $localeSettings;
-
-    /** @var ContextInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $context;
+    private ContextInterface|\PHPUnit\Framework\MockObject\MockObject $context;
 
     protected function setUp(): void
     {
@@ -36,29 +29,29 @@ class ProductDataConverterTest extends \PHPUnit\Framework\TestCase
         $relationCalculator = $this->createMock(RelationCalculator::class);
 
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
-        $this->localeSettings = $this->createMock(LocaleSettings::class);
+        $localeSettings = $this->createMock(LocaleSettings::class);
         $this->context = $this->createMock(ContextInterface::class);
 
-        $this->dataConverter = new ProductDataConverter($this->fieldHelper, $relationCalculator, $this->localeSettings);
+        $this->dataConverter = new ProductDataConverter($this->fieldHelper, $relationCalculator, $localeSettings);
         $this->dataConverter->setEntityName(Product::class);
         $this->dataConverter->setImportExportContext($this->context);
     }
 
     public function testConvertToExportFormat(): void
     {
-        $this->fieldHelper->expects($this->exactly(2))
-            ->method('getFields')
+        $this->fieldHelper->expects(self::exactly(2))
+            ->method('getEntityFields')
             ->willReturn([['name' => 'sku', 'type' => 'string', 'label' => 'sku']]);
 
         $result = $this->dataConverter->convertToExportFormat(['sku' => 'test']);
-        $this->assertArrayHasKey('sku', $result);
-        $this->assertEquals('test', $result['sku']);
+        self::assertArrayHasKey('sku', $result);
+        self::assertEquals('test', $result['sku']);
     }
 
     public function testConvertToExportFormatWithEventDispatcher(): void
     {
-        $this->fieldHelper->expects($this->exactly(2))
-            ->method('getFields')
+        $this->fieldHelper->expects(self::exactly(2))
+            ->method('getEntityFields')
             ->willReturn([['name' => 'sku', 'type' => 'string', 'label' => 'sku']]);
 
         $this->dataConverter->setEventDispatcher($this->eventDispatcher);
@@ -69,7 +62,7 @@ class ProductDataConverterTest extends \PHPUnit\Framework\TestCase
         $eventExport = new ProductDataConverterEvent(['sku' => 'test']);
         $eventExport->setContext($this->context);
 
-        $this->eventDispatcher->expects($this->exactly(2))
+        $this->eventDispatcher->expects(self::exactly(2))
             ->method('dispatch')
             ->withConsecutive(
                 [$eventBackendHeader, 'oro_product.data_converter.backend_header'],
@@ -77,25 +70,25 @@ class ProductDataConverterTest extends \PHPUnit\Framework\TestCase
             );
 
         $result = $this->dataConverter->convertToExportFormat(['sku' => 'test']);
-        $this->assertArrayHasKey('sku', $result);
-        $this->assertEquals('test', $result['sku']);
+        self::assertArrayHasKey('sku', $result);
+        self::assertEquals('test', $result['sku']);
     }
 
     public function testConvertToImportFormat(): void
     {
-        $this->fieldHelper->expects($this->once())
-            ->method('getFields')
+        $this->fieldHelper->expects(self::once())
+            ->method('getEntityFields')
             ->willReturn([['name' => 'sku', 'type' => 'string', 'label' => 'sku']]);
 
         $result = $this->dataConverter->convertToImportFormat(['sku' => 'test']);
-        $this->assertArrayHasKey('sku', $result);
-        $this->assertEquals('test', $result['sku']);
+        self::assertArrayHasKey('sku', $result);
+        self::assertEquals('test', $result['sku']);
     }
 
     public function testConvertToImportFormatWithEventDispatcher(): void
     {
-        $this->fieldHelper->expects($this->once())
-            ->method('getFields')
+        $this->fieldHelper->expects(self::once())
+            ->method('getEntityFields')
             ->willReturn([['name' => 'sku', 'type' => 'string', 'label' => 'sku']]);
 
         $this->dataConverter->setEventDispatcher($this->eventDispatcher);
@@ -103,12 +96,12 @@ class ProductDataConverterTest extends \PHPUnit\Framework\TestCase
         $event = new ProductDataConverterEvent(['sku' => 'test']);
         $event->setContext($this->context);
 
-        $this->eventDispatcher->expects($this->once())
+        $this->eventDispatcher->expects(self::once())
             ->method('dispatch')
             ->with($event, 'oro_product.data_converter.convert_to_import');
 
         $result = $this->dataConverter->convertToImportFormat(['sku' => 'test']);
-        $this->assertArrayHasKey('sku', $result);
-        $this->assertEquals('test', $result['sku']);
+        self::assertArrayHasKey('sku', $result);
+        self::assertEquals('test', $result['sku']);
     }
 }

@@ -4,6 +4,7 @@ import unitTemplate from 'tpl-loader!oropricing/templates/product/pricing-range-
 import localeSettings from 'orolocale/js/locale-settings';
 import tools from 'oroui/js/tools';
 import error from 'oroui/js/error';
+import __ from 'orotranslation/js/translator';
 
 /**
  * Frontend product price filter
@@ -14,17 +15,17 @@ import error from 'oroui/js/error';
  */
 const FrontendProductPriceFilter = ProductPriceFilter.extend({
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     template: template,
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     unitTemplate: unitTemplate,
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     criteriaValueSelectors: {
         ...ProductPriceFilter.prototype.criteriaValueSelectors,
@@ -66,7 +67,7 @@ const FrontendProductPriceFilter = ProductPriceFilter.extend({
 
     /**
      * @constructor
-     * @inheritDoc
+     * @inheritdoc
      */
     constructor: function FrontendProductPriceFilter(options) {
         if (this.singleUnitMode && !this.defaultUnitCode) {
@@ -149,8 +150,20 @@ const FrontendProductPriceFilter = ProductPriceFilter.extend({
     getUnitTemplateData() {
         return {
             ...FrontendProductPriceFilter.__super__.getUnitTemplateData.call(this),
+            ...this.getTemplateDataProps(),
             singleUnitMode: this.singleUnitMode,
             defaultUnitCode: this.defaultUnitCode
+        };
+    },
+
+    getTemplateDataProps() {
+        const data = FrontendProductPriceFilter.__super__.getTemplateDataProps.call(this);
+
+        return {
+            ...data,
+            unitsListAriaLabel: __('oro.pricing.filter.product_price.units_list.aria_label', {
+                label: this.label
+            })
         };
     }
 });

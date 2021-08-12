@@ -36,14 +36,14 @@ define(function(require) {
         $currency: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function LineItemsView(options) {
             LineItemsView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
@@ -95,7 +95,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed) {

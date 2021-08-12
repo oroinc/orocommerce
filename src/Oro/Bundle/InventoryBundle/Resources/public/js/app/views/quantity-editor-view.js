@@ -10,14 +10,14 @@ define(function(require) {
         numberOfDecimals: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function DecimalsNumberEditorView(options) {
             DecimalsNumberEditorView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             if (typeof options.decimalsField !== 'undefined') {

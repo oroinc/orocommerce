@@ -6,10 +6,9 @@ use Doctrine\DBAL\Types\Type;
 use Oro\Bundle\CMSBundle\DBAL\Types\WYSIWYGStyleType;
 use Oro\Component\TestUtils\ORM\Mocks\DatabasePlatformMock;
 
-class WYSIWYGTypeStyleTest extends \PHPUnit\Framework\TestCase
+class WYSIWYGStyleTypeTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var Type */
-    private $type;
+    private Type $type;
 
     public static function setUpBeforeClass(): void
     {
@@ -23,12 +22,12 @@ class WYSIWYGTypeStyleTest extends \PHPUnit\Framework\TestCase
 
     public function testPrefixConst(): void
     {
-        $this->assertEquals('_style', WYSIWYGStyleType::TYPE_SUFFIX);
+        self::assertEquals('_style', WYSIWYGStyleType::TYPE_SUFFIX);
     }
 
     public function testGetName(): void
     {
-        $this->assertEquals('wysiwyg_style', $this->type->getName());
+        self::assertEquals('wysiwyg_style', $this->type->getName());
     }
 
     public function testRequiresSQLCommentHint(): void
@@ -36,6 +35,6 @@ class WYSIWYGTypeStyleTest extends \PHPUnit\Framework\TestCase
         /** @var DatabasePlatformMock $platform */
         $platform = $this->createMock(DatabasePlatformMock::class);
 
-        $this->assertTrue($this->type->requiresSQLCommentHint($platform));
+        self::assertTrue($this->type->requiresSQLCommentHint($platform));
     }
 }

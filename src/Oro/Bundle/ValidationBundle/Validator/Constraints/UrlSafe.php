@@ -30,6 +30,8 @@ class UrlSafe extends Regex implements AliasAwareConstraintInterface
 
         unset($options['allowSlashes']);
 
+        $options['pattern'] = $options['pattern'] ?? $this->pattern;
+
         parent::__construct($options);
     }
 

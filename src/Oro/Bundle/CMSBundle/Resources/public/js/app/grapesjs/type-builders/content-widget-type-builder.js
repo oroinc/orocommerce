@@ -230,7 +230,7 @@ const ContentWidgetTypeBuilder = BaseTypeBuilder.extend({
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     constructor: function ContentWidgetTypeBuilder(options) {
         ContentWidgetTypeBuilder.__super__.constructor.call(this, options);

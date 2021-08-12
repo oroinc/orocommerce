@@ -24,7 +24,7 @@ define(function(require) {
         currencies: {},
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         events: function() {
             const events = {};
@@ -33,14 +33,14 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function PriceListCurrencyLimitationView(options) {
             PriceListCurrencyLimitationView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
@@ -51,7 +51,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         delegateEvents: function(events) {
             PriceListCurrencyLimitationView.__super__.delegateEvents.call(this, events);

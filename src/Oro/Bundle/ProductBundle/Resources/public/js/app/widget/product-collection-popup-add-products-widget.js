@@ -17,19 +17,19 @@ define(function(require) {
         requiredOptions: ['gridName', 'hiddenProductsSelector'],
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         options: _.extend({}, DialogWidget.prototype.options, {triggerEventOnMessagesRemoved: false}),
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function ProductCollectionPopupAddProductsWidget(options) {
             ProductCollectionPopupAddProductsWidget.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
@@ -86,7 +86,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         loadContent: function(...args) {
             if (args.length) {
@@ -100,7 +100,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed) {

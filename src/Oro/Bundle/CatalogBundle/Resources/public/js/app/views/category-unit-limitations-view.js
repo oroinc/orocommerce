@@ -15,14 +15,14 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function CategoryUnitLimitationsView(options) {
             CategoryUnitLimitationsView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
@@ -46,7 +46,7 @@ define(function(require) {
         },
 
         /**
-         * {@inheritDoc}
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed) {

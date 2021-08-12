@@ -21,43 +21,26 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PriceAttributeProductPriceImportResetStrategyTest extends TestCase
 {
-    const DELETED_COUNT = 5;
+    private const DELETED_COUNT = 5;
 
-    /**
-     * @var FieldHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $fieldHelper;
+    private DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject $doctrineHelper;
 
-    /**
-     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $doctrineHelper;
+    private ContextInterface|\PHPUnit\Framework\MockObject\MockObject $context;
 
-    /**
-     * @var ContextInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $context;
+    private DatabaseHelper|\PHPUnit\Framework\MockObject\MockObject $databaseHelper;
 
-    /**
-     * @var DatabaseHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $databaseHelper;
-
-    /**
-     * @var PriceAttributeProductPriceImportResetStrategy
-     */
-    private $strategy;
+    private PriceAttributeProductPriceImportResetStrategy $strategy;
 
     protected function setUp(): void
     {
-        $this->fieldHelper = $this->createMock(FieldHelper::class);
-        $this->fieldHelper
+        $fieldHelper = $this->createMock(FieldHelper::class);
+        $fieldHelper
             ->expects(static::any())
             ->method('getIdentityValues')
             ->willReturn(['value']);
-        $this->fieldHelper
+        $fieldHelper
             ->expects(static::any())
-            ->method('getFields')
+            ->method('getEntityFields')
             ->willReturn([]);
 
         $strategyHelper = $this->createMock(ImportStrategyHelper::class);
@@ -73,7 +56,7 @@ class PriceAttributeProductPriceImportResetStrategyTest extends TestCase
         $this->strategy = new PriceAttributeProductPriceImportResetStrategy(
             $this->createMock(EventDispatcherInterface::class),
             $strategyHelper,
-            $this->fieldHelper,
+            $fieldHelper,
             $this->databaseHelper,
             $this->createMock(EntityClassNameProviderInterface::class),
             $this->createMock(TranslatorInterface::class),
@@ -85,12 +68,12 @@ class PriceAttributeProductPriceImportResetStrategyTest extends TestCase
         $this->strategy->setEntityName(PriceAttributeProductPrice::class);
     }
 
-    public function testProcessForNoPriceList()
+    public function testProcessForNoPriceList(): void
     {
         $this->strategy->process(new PriceAttributeProductPrice());
     }
 
-    public function testProcessForNewPriceList()
+    public function testProcessForNewPriceList(): void
     {
         $entity = new PriceAttributeProductPrice();
         $entity->setPriceList(new PriceAttributePriceList());
@@ -98,7 +81,7 @@ class PriceAttributeProductPriceImportResetStrategyTest extends TestCase
         $this->strategy->process($entity);
     }
 
-    public function testProcessResetsPricesOnlyOnce()
+    public function testProcessResetsPricesOnlyOnce(): void
     {
         $priceListName = 'msrp';
 
@@ -117,12 +100,10 @@ class PriceAttributeProductPriceImportResetStrategyTest extends TestCase
         $this->databaseHelper
             ->expects(static::any())
             ->method('findOneBy')
-            ->will(
-                $this->returnValueMap(
-                    array(
-                        array(PriceAttributePriceList::class, ['name' => $priceListName], $priceList),
-                    )
-                )
+            ->willReturnMap(
+                [
+                    [PriceAttributePriceList::class, ['name' => $priceListName], $priceList],
+                ]
             );
 
         $entityManager = $this->createMock(EntityManagerInterface::class);

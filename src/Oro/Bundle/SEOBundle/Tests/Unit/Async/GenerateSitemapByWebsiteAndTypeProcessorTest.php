@@ -178,7 +178,7 @@ class GenerateSitemapByWebsiteAndTypeProcessorTest extends \PHPUnit\Framework\Te
         ]);
 
         $exception = new InvalidOptionsException(
-            'The option "type" with value 0 is expected to be of type "string", but is of type "integer".'
+            'The option "type" with value 0 is expected to be of type "string", but is of type "int".'
         );
         $this->logger->expects(self::once())
             ->method('critical')

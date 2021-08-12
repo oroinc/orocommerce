@@ -8,14 +8,14 @@ define(function(require) {
     const ProductTaxCodeEditorView =
         AbstractRelationEditorView.extend(/** @exports ProductTaxCodeEditorView.prototype */{
             /**
-             * @inheritDoc
+             * @inheritdoc
              */
             constructor: function ProductTaxCodeEditorView(options) {
                 ProductTaxCodeEditorView.__super__.constructor.call(this, options);
             },
 
             /**
-             * @inheritDoc
+             * @inheritdoc
              */
             initialize: function(options) {
                 ProductTaxCodeEditorView.__super__.initialize.call(this, options);

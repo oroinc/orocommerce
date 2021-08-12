@@ -27,12 +27,12 @@ class PrimaryProductUnitPrecisionValidatorTest extends ConstraintValidatorTestCa
     protected function createContext()
     {
         $this->constraint = new PrimaryProductUnitPrecision();
-        $this->propertyPath = null;
+        $this->propertyPath = '';
 
         return parent::createContext();
     }
 
-    public function testValidateWithWrongConstraint()
+    public function testValidateWithWrongConstraint(): void
     {
         $this->expectException(\Symfony\Component\Validator\Exception\UnexpectedTypeException::class);
         $this->expectExceptionMessage(\sprintf(
@@ -45,7 +45,7 @@ class PrimaryProductUnitPrecisionValidatorTest extends ConstraintValidatorTestCa
         $this->validator->validate(new Product(), $constraint);
     }
 
-    public function testValidateWithNotTheProductUnitPrecisionEntity()
+    public function testValidateWithNotTheProductUnitPrecisionEntity(): void
     {
         $this->expectException(\Symfony\Component\Validator\Exception\UnexpectedTypeException::class);
         $this->expectExceptionMessage(
@@ -55,7 +55,7 @@ class PrimaryProductUnitPrecisionValidatorTest extends ConstraintValidatorTestCa
         $this->validator->validate(new \stdClass(), $this->constraint);
     }
 
-    public function testValidateWithEmptyPrimaryProductUnitPrecision()
+    public function testValidateWithEmptyPrimaryProductUnitPrecision(): void
     {
         $value = new Product();
         $this->validator->validate($value, $this->constraint);
@@ -63,7 +63,7 @@ class PrimaryProductUnitPrecisionValidatorTest extends ConstraintValidatorTestCa
         $this->assertNoViolation();
     }
 
-    public function testValidateWithAbsentPrimaryPrecision()
+    public function testValidateWithAbsentPrimaryPrecision(): void
     {
         $value = new Product();
         $precision = new ProductUnitPrecision();
@@ -75,7 +75,7 @@ class PrimaryProductUnitPrecisionValidatorTest extends ConstraintValidatorTestCa
         $this->assertNoViolation();
     }
 
-    public function testValidateWithCorrectData()
+    public function testValidateWithCorrectData(): void
     {
         $value = new Product();
         $precision = new ProductUnitPrecision();
@@ -88,7 +88,7 @@ class PrimaryProductUnitPrecisionValidatorTest extends ConstraintValidatorTestCa
         $this->assertNoViolation();
     }
 
-    public function testValidateWithAbsentPrimaryUnitPrecisionInCollection()
+    public function testValidateWithAbsentPrimaryUnitPrecisionInCollection(): void
     {
         $value = new Product();
         $precision = new ProductUnitPrecision();

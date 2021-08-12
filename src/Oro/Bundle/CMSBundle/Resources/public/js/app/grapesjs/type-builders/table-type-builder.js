@@ -5,7 +5,7 @@ import BaseTypeBuilder from 'orocms/js/app/grapesjs/type-builders/base-type-buil
  */
 const TableTypeBuilder = BaseTypeBuilder.extend({
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     constructor: function TableTypeBuilder(options) {
         TableTypeBuilder.__super__.constructor.call(this, options);

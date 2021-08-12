@@ -8,15 +8,9 @@ use Oro\Bundle\ProductBundle\ImportExport\Normalizer\ProductImageTypeNormalizer;
 
 class ProductImageTypeNormalizerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var FieldHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $fieldHelper;
+    private FieldHelper|\PHPUnit\Framework\MockObject\MockObject $fieldHelper;
 
-    /**
-     * @var ProductImageTypeNormalizer
-     */
-    protected $productImageTypeNormalizer;
+    private ProductImageTypeNormalizer $productImageTypeNormalizer;
 
     protected function setUp(): void
     {
@@ -45,7 +39,7 @@ class ProductImageTypeNormalizerTest extends \PHPUnit\Framework\TestCase
     {
         $result = $this->productImageTypeNormalizer->supportsDenormalization(
             [],
-            new ProductImageType(ProductImageType::TYPE_MAIN),
+            ProductImageType::class,
             null,
             []
         );

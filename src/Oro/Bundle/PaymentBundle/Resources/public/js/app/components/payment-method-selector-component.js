@@ -37,14 +37,14 @@ define(function(require) {
         disposable: true,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function PaymentMethodSelectorComponent(options) {
             PaymentMethodSelectorComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = _.extend(this.options, options);
@@ -76,7 +76,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed || !this.disposable) {

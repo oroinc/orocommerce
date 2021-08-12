@@ -50,7 +50,7 @@ class BillingAddressTest extends AbstractOptionTest
                 [
                     'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
                     'The option "BILLTOFIRSTNAME" with value 1 is expected to be of type "string", but is of type ' .
-                    '"integer".',
+                    '"int".',
                 ],
             ],
             'invalid BILLTOLASTNAME' => [
@@ -59,7 +59,7 @@ class BillingAddressTest extends AbstractOptionTest
                 [
                     'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
                     'The option "BILLTOLASTNAME" with value 1 is expected to be of type "string", but is of type ' .
-                    '"integer".',
+                    '"int".',
                 ],
             ],
             'invalid BILLTOSTREET' => [
@@ -68,7 +68,7 @@ class BillingAddressTest extends AbstractOptionTest
                 [
                     'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
                     'The option "BILLTOSTREET" with value 1 is expected to be of type "string", but is of type ' .
-                    '"integer".',
+                    '"int".',
                 ],
             ],
             'invalid BILLTOSTREET2' => [
@@ -77,7 +77,7 @@ class BillingAddressTest extends AbstractOptionTest
                 [
                     'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
                     'The option "BILLTOSTREET2" with value 1 is expected to be of type "string", but is of type ' .
-                    '"integer".',
+                    '"int".',
                 ],
             ],
             'invalid BILLTOCITY' => [
@@ -86,7 +86,7 @@ class BillingAddressTest extends AbstractOptionTest
                 [
                     'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
                     'The option "BILLTOCITY" with value 1 is expected to be of type "string", but is of type ' .
-                    '"integer".',
+                    '"int".',
                 ],
             ],
             'invalid BILLTOSTATE' => [
@@ -95,7 +95,7 @@ class BillingAddressTest extends AbstractOptionTest
                 [
                     'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
                     'The option "BILLTOSTATE" with value 1 is expected to be of type "string", but is of type ' .
-                    '"integer".',
+                    '"int".',
                 ],
             ],
             'invalid BILLTOZIP' => [
@@ -104,7 +104,7 @@ class BillingAddressTest extends AbstractOptionTest
                 [
                     'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
                     'The option "BILLTOZIP" with value 12345 is expected to be of type "string", but is of type ' .
-                    '"integer".',
+                    '"int".',
                 ],
             ],
             'invalid BILLTOCOUNTRY' => [
@@ -113,7 +113,7 @@ class BillingAddressTest extends AbstractOptionTest
                 [
                     'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
                     'The option "BILLTOCOUNTRY" with value 840 is expected to be of type "string", but is of type ' .
-                    '"integer".',
+                    '"int".',
                 ],
             ],
         ];

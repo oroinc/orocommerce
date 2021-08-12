@@ -12,14 +12,14 @@ define([
      */
     const RelatedItemsListener = AbstractListener.extend({
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function RelatedItemsListener(...args) {
             RelatedItemsListener.__super__.constructor.apply(this, args);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.grid = options.grid;
@@ -38,14 +38,14 @@ define([
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         _processValue: function(id, model) {
             // it's not being used
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed) {

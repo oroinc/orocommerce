@@ -17,7 +17,7 @@ define(function(require) {
         shoppingLists: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function AddProductsAction(options) {
             AddProductsAction.__super__.constructor.call(this, options);
@@ -25,7 +25,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             AddProductsAction.__super__.initialize.call(this, options);
@@ -34,7 +34,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             this.datagrid.off(null, null, this);
@@ -44,7 +44,7 @@ define(function(require) {
         /**
          * Override function to change URL
          *
-         * @inheritDoc
+         * @inheritdoc
          */
         _handleWidget: function() {
             if (this.dispatched) {

@@ -366,13 +366,13 @@ class ProductControllerTest extends ProductHelperTestCase
                     ->html(),
                 'precision' => $crawler
                     ->filter('input[name="oro_product[primaryUnitPrecision][precision]"]')
-                    ->extract('value')[0],
+                    ->extract(['value'])[0],
                 'conversionRate' => $crawler
                     ->filter('input[name="oro_product[primaryUnitPrecision][conversionRate]"]')
-                    ->extract('value')[0],
+                    ->extract(['value'])[0],
                 'sell' => $crawler
                     ->filter('input[name="oro_product[primaryUnitPrecision][sell]"]')
-                    ->extract('value')[0],
+                    ->extract(['value'])[0],
             ],
             $this->getActualAdditionalUnitPrecision($crawler, 0),
             $this->getActualAdditionalUnitPrecision($crawler, 1),

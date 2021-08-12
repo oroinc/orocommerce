@@ -64,14 +64,14 @@ define(function(require) {
         $valueField: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function BaseConsentItemView(options) {
             return BaseConsentItemView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.$form = this.$el.closest('form');

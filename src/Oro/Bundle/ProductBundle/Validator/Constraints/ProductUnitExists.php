@@ -11,21 +11,21 @@ use Symfony\Component\Validator\Constraint;
 class ProductUnitExists extends Constraint
 {
     /** @var string */
-    public $message = 'oro.product.productunit.invalid';
+    public string $message = 'oro.product.productunit.invalid';
 
     /**
      * Defines whether the "sell" flag of the product unit precision should be checked or not.
      *
      * @var bool
      */
-    public $sell = false;
+    public bool $sell = false;
 
     /**
      * The path to the product unit field.
      *
-     * @var string|null
+     * @var string
      */
-    public $path;
+    public string $path = '';
 
     /**
      * {@inheritdoc}

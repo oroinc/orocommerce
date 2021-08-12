@@ -52,14 +52,14 @@ define(function(require) {
         fieldsByName: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function LineItemView(options) {
             LineItemView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});

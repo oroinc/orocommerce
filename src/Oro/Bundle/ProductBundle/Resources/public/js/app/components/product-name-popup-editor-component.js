@@ -30,14 +30,14 @@ define(function(require) {
             confirmModalOpened: false,
 
             /**
-             * @inheritDoc
+             * @inheritdoc
              */
             constructor: function ProductNamePopupEditorComponent(options) {
                 ProductNamePopupEditorComponent.__super__.constructor.call(this, options);
             },
 
             /**
-             * @inheritDoc
+             * @inheritdoc
              */
             initialize: function(options) {
                 this.options = _.defaults(options || {}, this.options);
@@ -46,7 +46,7 @@ define(function(require) {
             },
 
             /**
-             * @inheritDoc
+             * @inheritdoc
              */
             saveCurrentCell: function() {
                 if (!this.view.isChanged()) {

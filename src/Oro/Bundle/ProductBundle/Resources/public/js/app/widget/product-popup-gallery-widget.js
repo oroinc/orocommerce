@@ -6,7 +6,7 @@ define(function(require) {
 
     const ProductPopupGalleryWidget = PopupGalleryWidget.extend({
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function PopupGalleryWidget(options) {
             ProductPopupGalleryWidget.__super__.constructor.call(this, options);

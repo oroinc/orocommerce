@@ -19,7 +19,7 @@ const TableResponsiveTypeBuilder = BaseTypeBuilder.extend({
     template: tableResponsiveTemplate,
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     constructor: function TableResponsiveTypeBuilder(options) {
         TableResponsiveTypeBuilder.__super__.constructor.call(this, options);

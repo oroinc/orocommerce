@@ -391,7 +391,7 @@ oro_behat_extension:
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
 
     Shopping List Action Reassign GridFiltersState:
-      selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-assign-grid"] div.filters-state'
+      selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-assign-grid"] .filters-state'
 
     Shopping List Action Reassign Radio:
       selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-assign-grid"] input[name="assigned"]'

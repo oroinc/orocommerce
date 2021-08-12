@@ -6,7 +6,7 @@ define(function(require) {
 
     const CheckoutInnerContentView = CheckoutContentView.extend({
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function CheckoutInnerContentView(options) {
             CheckoutInnerContentView.__super__.constructor.call(this, options);

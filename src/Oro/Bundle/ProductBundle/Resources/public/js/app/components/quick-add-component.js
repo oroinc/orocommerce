@@ -23,14 +23,14 @@ define(function(require) {
         $form: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function QuickAddComponent(options) {
             QuickAddComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
@@ -58,7 +58,7 @@ define(function(require) {
         },
 
         /**
-         * {@inheritDoc}
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed) {

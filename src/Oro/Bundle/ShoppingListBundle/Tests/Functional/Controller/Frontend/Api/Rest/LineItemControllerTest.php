@@ -39,7 +39,7 @@ class LineItemControllerTest extends WebTestCase
         /** @var LineItem $lineItem */
         $lineItem = $this->getReference('shopping_list_configurable_line_item.4');
 
-        $this->client->request(
+        $this->client->jsonRequest(
             'DELETE',
             $this->getUrl('oro_api_shopping_list_frontend_delete_line_item', ['id' => $lineItem->getId()])
         );
@@ -61,7 +61,7 @@ class LineItemControllerTest extends WebTestCase
         /** @var LineItem $lineItem */
         $lineItem = $this->getReference('shopping_list_configurable_line_item.4');
 
-        $this->client->request(
+        $this->client->jsonRequest(
             'DELETE',
             $this->getUrl(
                 'oro_api_shopping_list_frontend_delete_line_item',
@@ -86,7 +86,7 @@ class LineItemControllerTest extends WebTestCase
         /** @var LineItem $lineItem */
         $lineItem = $this->getReference('shopping_list_configurable_line_item.4');
 
-        $this->client->request(
+        $this->client->jsonRequest(
             'DELETE',
             $this->getUrl(
                 'oro_api_shopping_list_frontend_delete_line_item_configurable',
@@ -112,7 +112,7 @@ class LineItemControllerTest extends WebTestCase
 
     public function testDeleteWhenNoLineItem(): void
     {
-        $this->client->request(
+        $this->client->jsonRequest(
             'DELETE',
             $this->getUrl('oro_api_shopping_list_frontend_delete_line_item', ['id' => 99999999])
         );

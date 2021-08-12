@@ -133,11 +133,11 @@ class ProductWithPricesTest extends WebTestCase
 
         $this->assertEquals(
             $priceList->getId(),
-            $crawler->filter('input[name="oro_product[prices][0][priceList]"]')->extract('value')[0]
+            $crawler->filter('input[name="oro_product[prices][0][priceList]"]')->extract(['value'])[0]
         );
         $this->assertEquals(
             self::FIRST_QUANTITY,
-            $crawler->filter('input[name="oro_product[prices][0][quantity]"]')->extract('value')[0]
+            $crawler->filter('input[name="oro_product[prices][0][quantity]"]')->extract(['value'])[0]
         );
         $this->assertEquals(
             self::FIRST_UNIT_FULL_NAME,
@@ -145,12 +145,12 @@ class ProductWithPricesTest extends WebTestCase
         );
         $this->assertEquals(
             self::FIRST_PRICE_VALUE,
-            $crawler->filter('input[name="oro_product[prices][0][price][value]"]')->extract('value')[0]
+            $crawler->filter('input[name="oro_product[prices][0][price][value]"]')->extract(['value'])[0]
         );
         $this->assertEquals(
             self::FIRST_PRICE_CURRENCY,
             $crawler->filter('select[name="oro_product[prices][0][price][currency]"] :selected')
-                ->extract('value')[0]
+                ->extract(['value'])[0]
         );
 
         /** @var Product $product */
@@ -196,11 +196,11 @@ class ProductWithPricesTest extends WebTestCase
 
         $this->assertEquals(
             $priceList->getId(),
-            $crawler->filter('input[name="oro_product[prices][0][priceList]"]')->extract('value')[0]
+            $crawler->filter('input[name="oro_product[prices][0][priceList]"]')->extract(['value'])[0]
         );
         $this->assertEquals(
             self::EXPECTED_SECOND_QUANTITY,
-            $crawler->filter('input[name="oro_product[prices][0][quantity]"]')->extract('value')[0]
+            $crawler->filter('input[name="oro_product[prices][0][quantity]"]')->extract(['value'])[0]
         );
         $this->assertEquals(
             self::SECOND_UNIT_FULL_NAME,
@@ -208,12 +208,12 @@ class ProductWithPricesTest extends WebTestCase
         );
         $this->assertEquals(
             self::SECOND_PRICE_VALUE,
-            $crawler->filter('input[name="oro_product[prices][0][price][value]"]')->extract('value')[0]
+            $crawler->filter('input[name="oro_product[prices][0][price][value]"]')->extract(['value'])[0]
         );
         $this->assertEquals(
             self::SECOND_PRICE_CURRENCY,
             $crawler->filter('select[name="oro_product[prices][0][price][currency]"] :selected')
-                ->extract('value')[0]
+                ->extract(['value'])[0]
         );
 
         return $id;

@@ -37,14 +37,14 @@ define(function(require) {
         $excluded: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function InclusionExclusionSubComponent(options) {
             InclusionExclusionSubComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});

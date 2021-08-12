@@ -202,29 +202,36 @@ abstract class InventoryFallbackTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $product->getId()]));
 
         $form = $crawler->selectButton('Save and Close')->form();
-        $form['input_action'] = 'save_and_close';
+        $formValues = $form->getPhpValues();
+
+        $highlightLowInventoryOption = LowInventoryProvider::HIGHLIGHT_LOW_INVENTORY_OPTION;
+
+        $formValues['input_action'] = 'save_and_close';
         if (is_null($ownValue)) {
-            unset($form['oro_product[manageInventory][scalarValue]']);
-            unset($form['oro_product[highlightLowInventory][scalarValue]']);
+            unset($formValues['oro_product']['manageInventory']['scalarValue']);
+            unset($formValues['oro_product'][$highlightLowInventoryOption]['scalarValue']);
         } else {
-            $form['oro_product[manageInventory][scalarValue]'] = $ownValue;
-            $form['oro_product[highlightLowInventory][scalarValue]'] = $ownValue;
+            $formValues['oro_product']['manageInventory']['scalarValue'] = $ownValue;
+            $formValues['oro_product'][$highlightLowInventoryOption]['scalarValue'] = $ownValue;
         }
         if (!is_null($useFallbackValue)) {
-            $form['oro_product[manageInventory][useFallback]'] = $useFallbackValue;
-            $form['oro_product[highlightLowInventory][useFallback]'] = $useFallbackValue;
+            $formValues['oro_product']['manageInventory']['useFallback'] = $useFallbackValue;
+            $formValues['oro_product'][$highlightLowInventoryOption]['useFallback'] = $useFallbackValue;
         }
         if (is_null($fallbackValue)) {
-            unset($form['oro_product[manageInventory][fallback]']);
-            unset($form['oro_product[highlightLowInventory][fallback]']);
+            unset($formValues['oro_product']['manageInventory']['fallback']);
+            unset($formValues['oro_product'][$highlightLowInventoryOption]['fallback']);
         } else {
-            $form['oro_product[manageInventory][fallback]'] = $fallbackValue;
-            $form['oro_product[highlightLowInventory][fallback]'] = $fallbackValue;
+            $formValues['oro_product']['manageInventory']['fallback'] = $fallbackValue;
+            $formValues['oro_product'][$highlightLowInventoryOption]['fallback'] = $fallbackValue;
         }
+
+        $formValues['oro_product']['_token'] =
+            $this->getContainer()->get('security.csrf.token_manager')->getToken('product')->getValue();
 
         $this->client->followRedirects(true);
 
-        return $this->client->submit($form);
+        return $this->client->request($form->getMethod(), $form->getUri(), $formValues);
     }
 
     /**

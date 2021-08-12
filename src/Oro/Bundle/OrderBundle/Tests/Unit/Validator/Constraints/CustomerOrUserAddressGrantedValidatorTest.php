@@ -24,8 +24,7 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
  */
 class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestCase
 {
-    /** @var AddressProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $addressProvider;
+    private AddressProviderInterface|\PHPUnit\Framework\MockObject\MockObject $addressProvider;
 
     protected function setUp(): void
     {
@@ -33,27 +32,27 @@ class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestC
 
         parent::setUp();
 
-        $this->setPropertyPath(null);
+        $this->setPropertyPath('');
     }
 
-    protected function createValidator()
+    protected function createValidator(): CustomerOrUserAddressGrantedValidator
     {
         return new CustomerOrUserAddressGrantedValidator($this->addressProvider);
     }
 
-    public function testWithInvalidConstraint()
+    public function testWithInvalidConstraint(): void
     {
         $this->expectException(UnexpectedTypeException::class);
         $this->validator->validate(new Order(), $this->createMock(Constraint::class));
     }
 
-    public function testWithInvalidEntity()
+    public function testWithInvalidEntity(): void
     {
         $this->validator->validate(new \stdClass(), new CustomerOrUserAddressGranted());
         $this->assertNoViolation();
     }
 
-    public function testWithEmptyBillingAddress()
+    public function testWithEmptyBillingAddress(): void
     {
         $constraint = new CustomerOrUserAddressGranted();
         $constraint->addressType = 'billing';
@@ -61,7 +60,7 @@ class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestC
         $this->assertNoViolation();
     }
 
-    public function testWithEmptyShippingAddress()
+    public function testWithEmptyShippingAddress(): void
     {
         $constraint = new CustomerOrUserAddressGranted();
         $constraint->addressType = 'shipping';
@@ -69,7 +68,7 @@ class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestC
         $this->assertNoViolation();
     }
 
-    public function testWithNotValidBilllingCustomerUserAddress()
+    public function testWithNotValidBilllingCustomerUserAddress(): void
     {
         $order = new Order();
 
@@ -87,7 +86,7 @@ class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestC
         $currentUserAddresses2 = new CustomerUserAddress();
         ReflectionUtil::setId($currentUserAddresses2, 2);
 
-        $this->addressProvider->expects($this->once())
+        $this->addressProvider->expects(self::once())
             ->method('getCustomerUserAddresses')
             ->with($customerUser, 'billing')
             ->willReturn([$currentUserAddresses1, $currentUserAddresses2]);
@@ -100,7 +99,7 @@ class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestC
             ->assertRaised();
     }
 
-    public function testWithNotValidBilllingCustomerAddress()
+    public function testWithNotValidBilllingCustomerAddress(): void
     {
         $order = new Order();
 
@@ -118,7 +117,7 @@ class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestC
         $currentAddresses2 = new CustomerAddress();
         ReflectionUtil::setId($currentAddresses2, 2);
 
-        $this->addressProvider->expects($this->once())
+        $this->addressProvider->expects(self::once())
             ->method('getCustomerAddresses')
             ->with($customer, 'billing')
             ->willReturn([$currentAddresses1, $currentAddresses2]);
@@ -131,7 +130,7 @@ class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestC
             ->assertRaised();
     }
 
-    public function testWithNotValidShippinggCustomerUserAddress()
+    public function testWithNotValidShippinggCustomerUserAddress(): void
     {
         $order = new Order();
 
@@ -149,7 +148,7 @@ class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestC
         $currentUserAddresses2 = new CustomerUserAddress();
         ReflectionUtil::setId($currentUserAddresses2, 2);
 
-        $this->addressProvider->expects($this->once())
+        $this->addressProvider->expects(self::once())
             ->method('getCustomerUserAddresses')
             ->with($customerUser, 'shipping')
             ->willReturn([$currentUserAddresses1, $currentUserAddresses2]);
@@ -162,7 +161,7 @@ class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestC
             ->assertRaised();
     }
 
-    public function testWithNotValidShippingCustomerAddress()
+    public function testWithNotValidShippingCustomerAddress(): void
     {
         $order = new Order();
 
@@ -180,7 +179,7 @@ class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestC
         $currentAddresses2 = new CustomerAddress();
         ReflectionUtil::setId($currentAddresses2, 2);
 
-        $this->addressProvider->expects($this->once())
+        $this->addressProvider->expects(self::once())
             ->method('getCustomerAddresses')
             ->with($customer, 'shipping')
             ->willReturn([$currentAddresses1, $currentAddresses2]);
@@ -193,7 +192,7 @@ class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestC
             ->assertRaised();
     }
 
-    public function testWithValidBilllingCustomerUserAddress()
+    public function testWithValidBilllingCustomerUserAddress(): void
     {
         $order = new Order();
 
@@ -211,7 +210,7 @@ class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestC
         $currentUserAddresses2 = new CustomerUserAddress();
         ReflectionUtil::setId($currentUserAddresses2, 2);
 
-        $this->addressProvider->expects($this->once())
+        $this->addressProvider->expects(self::once())
             ->method('getCustomerUserAddresses')
             ->with($customerUser, 'billing')
             ->willReturn([$currentUserAddresses1, $currentUserAddresses2]);
@@ -222,7 +221,7 @@ class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestC
         $this->assertNoViolation();
     }
 
-    public function testWithValidBilllingCustomerAddress()
+    public function testWithValidBilllingCustomerAddress(): void
     {
         $order = new Order();
 
@@ -240,7 +239,7 @@ class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestC
         $currentAddresses2 = new CustomerAddress();
         ReflectionUtil::setId($currentAddresses2, 2);
 
-        $this->addressProvider->expects($this->once())
+        $this->addressProvider->expects(self::once())
             ->method('getCustomerAddresses')
             ->with($customer, 'billing')
             ->willReturn([$currentAddresses1, $currentAddresses2]);
@@ -251,7 +250,7 @@ class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestC
         $this->assertNoViolation();
     }
 
-    public function testWithValidShippinggCustomerUserAddress()
+    public function testWithValidShippinggCustomerUserAddress(): void
     {
         $order = new Order();
 
@@ -269,7 +268,7 @@ class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestC
         $currentUserAddresses2 = new CustomerUserAddress();
         ReflectionUtil::setId($currentUserAddresses2, 2);
 
-        $this->addressProvider->expects($this->once())
+        $this->addressProvider->expects(self::once())
             ->method('getCustomerUserAddresses')
             ->with($customerUser, 'shipping')
             ->willReturn([$currentUserAddresses1, $currentUserAddresses2]);
@@ -280,7 +279,7 @@ class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestC
         $this->assertNoViolation();
     }
 
-    public function testWithValidShippingCustomerAddress()
+    public function testWithValidShippingCustomerAddress(): void
     {
         $order = new Order();
 
@@ -298,7 +297,7 @@ class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestC
         $currentAddresses2 = new CustomerAddress();
         ReflectionUtil::setId($currentAddresses2, 2);
 
-        $this->addressProvider->expects($this->once())
+        $this->addressProvider->expects(self::once())
             ->method('getCustomerAddresses')
             ->with($customer, 'shipping')
             ->willReturn([$currentAddresses1, $currentAddresses2]);
@@ -309,7 +308,7 @@ class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestC
         $this->assertNoViolation();
     }
 
-    public function testForOrderWithoutCustomerUser()
+    public function testForOrderWithoutCustomerUser(): void
     {
         $order = new Order();
 
@@ -319,7 +318,7 @@ class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestC
         $orderAddress->setCustomerUserAddress($customerUserAddress);
         $order->setBillingAddress($orderAddress);
 
-        $this->addressProvider->expects($this->never())
+        $this->addressProvider->expects(self::never())
             ->method('getCustomerUserAddresses');
 
         $constraint = new CustomerOrUserAddressGranted();
@@ -328,7 +327,7 @@ class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestC
         $this->assertNoViolation();
     }
 
-    public function testForOrderWithoutCustomer()
+    public function testForOrderWithoutCustomer(): void
     {
         $order = new Order();
 
@@ -338,7 +337,7 @@ class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestC
         $orderAddress->setCustomerAddress($customerAddress);
         $order->setBillingAddress($orderAddress);
 
-        $this->addressProvider->expects($this->never())
+        $this->addressProvider->expects(self::never())
             ->method('getCustomerAddresses');
 
         $constraint = new CustomerOrUserAddressGranted();
