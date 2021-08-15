@@ -5,52 +5,40 @@ namespace Oro\Bundle\ShoppingListBundle\Manager;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\SecurityBundle\Authentication\TokenAccessor;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\UserBundle\Entity\AbstractUser;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 /**
- * Maintains shopping lists limit for user
+ * Provides a set of methods to check the limit for the number of shopping lists for a customer user or a visitor.
  */
 class ShoppingListLimitManager
 {
-    /** @var ConfigManager */
-    private $configManager;
-
-    /** @var TokenAccessor */
-    protected $tokenAccessor;
-
-    /** @var DoctrineHelper */
-    private $doctrineHelper;
-
-    /** @var WebsiteManager */
-    private $websiteManager;
-
-    /** @var bool */
-    private $isCreateEnabled;
-
-    /** @var bool */
-    private $isCreateEnabledForCustomerUser;
-
-    /** @var bool */
-    private $isOnlyOneEnabled;
+    private ConfigManager $configManager;
+    private TokenStorageInterface $tokenStorage;
+    private DoctrineHelper $doctrineHelper;
+    private WebsiteManager $websiteManager;
+    private ?bool $isCreateEnabled = null;
+    private ?bool $isCreateEnabledForCustomerUser = null;
+    private ?bool $isOnlyOneEnabled = null;
 
     public function __construct(
         ConfigManager $configManager,
-        TokenAccessor $tokenAccessor,
+        TokenStorageInterface $tokenStorage,
         DoctrineHelper $doctrineHelper,
         WebsiteManager $websiteManager
     ) {
-        $this->configManager  = $configManager;
-        $this->tokenAccessor = $tokenAccessor;
+        $this->configManager = $configManager;
+        $this->tokenStorage = $tokenStorage;
         $this->doctrineHelper = $doctrineHelper;
         $this->websiteManager = $websiteManager;
     }
 
-    public function resetState()
+    public function resetState(): void
     {
         $this->isCreateEnabled = null;
         $this->isCreateEnabledForCustomerUser = null;
@@ -58,135 +46,111 @@ class ShoppingListLimitManager
     }
 
     /**
-     * Check if shopping list configuration limit is reached for logged customer user
-     *
-     * @return bool
+     * Checks whether the configured limit for the number of shopping lists is reached
+     * for the current logged in customer user or a visitor.
      */
-    public function isReachedLimit()
+    public function isReachedLimit(): bool
     {
         return !$this->isCreateEnabled();
     }
 
     /**
-     * Restricts creating new shopping list if configuration limit is reached / or Customer is not logged in
-     * @return bool
+     * Checks whether a new shopping list can be created by the current logged in customer user or a visitor.
      */
-    public function isCreateEnabled()
+    public function isCreateEnabled(): bool
     {
-        //Shopping list create disabled for not logged users not depending n limit setting
-        if (!$this->tokenAccessor->hasUser()) {
+        $user = $this->getUser();
+        if (null === $user) {
+            // the creation of shopping lists is not allowed for visitors
+            // and it does not depend on the configured limit
             return false;
         }
 
-        if (null !== $this->isCreateEnabled) {
-            return $this->isCreateEnabled;
-        }
-
-        $limitConfig = $this->getShoppingListLimit();
-        $this->isCreateEnabled = true;
-
-        if ($limitConfig) {
-            $user = $this->tokenAccessor->getUser();
-            // Limit of created shopping lists is already reached
-            if ($this->countUserShoppingLists($user) >= $limitConfig) {
-                $this->isCreateEnabled = false;
-            }
+        if (null === $this->isCreateEnabled) {
+            $shoppingListLimit = $this->getShoppingListLimit();
+            $this->isCreateEnabled =
+                !$shoppingListLimit
+                || $this->countUserShoppingLists($user) < $shoppingListLimit;
         }
 
         return $this->isCreateEnabled;
     }
 
     /**
-     * @param CustomerUser $user
-     *
-     * @return bool
+     * Checks whether it is allowed to create a new shopping list for the given customer user.
      */
-    public function isCreateEnabledForCustomerUser(CustomerUser $user)
+    public function isCreateEnabledForCustomerUser(CustomerUser $user): bool
     {
-        if (null !== $this->isCreateEnabledForCustomerUser) {
-            return $this->isCreateEnabledForCustomerUser;
-        }
-
-        $limitConfig = $this->getShoppingListLimit($user->getWebsite());
-
-        $this->isCreateEnabledForCustomerUser = true;
-        if ($limitConfig) {
-            // Limit of created shopping lists is already reached
-            if ($this->countUserShoppingLists($user) >= $limitConfig) {
-                $this->isCreateEnabledForCustomerUser = false;
-            }
+        if (null === $this->isCreateEnabledForCustomerUser) {
+            $shoppingListLimit = $this->getShoppingListLimit($user->getWebsite());
+            $this->isCreateEnabledForCustomerUser =
+                !$shoppingListLimit
+                || $this->countUserShoppingLists($user) < $shoppingListLimit;
         }
 
         return $this->isCreateEnabledForCustomerUser;
     }
 
     /**
-     * Checks is only one shopping list is available for a user
-     * @return bool
+     * Checks whether only one shopping list is available for the current logged in customer user or a visitor.
      */
-    public function isOnlyOneEnabled()
+    public function isOnlyOneEnabled(): bool
     {
-        if (!$this->tokenAccessor->hasUser()) {
+        $user = $this->getUser();
+        if (null === $user) {
             return true;
         }
 
-        if (null !== $this->isOnlyOneEnabled) {
-            return $this->isOnlyOneEnabled;
-        }
-
-        $limitConfig = $this->getShoppingListLimit();
-
-        $this->isOnlyOneEnabled = false;
-        if ($limitConfig) {
-            $user = $this->tokenAccessor->getUser();
-            // Limit set to one and user has one shopping list
-            if ($limitConfig === 1 && $this->countUserShoppingLists($user) === 1) {
-                $this->isOnlyOneEnabled = true;
-            }
+        if (null === $this->isOnlyOneEnabled) {
+            $this->isOnlyOneEnabled =
+                1 === $this->getShoppingListLimit()
+                && 1 === $this->countUserShoppingLists($user);
         }
 
         return $this->isOnlyOneEnabled;
     }
 
     /**
-     * @param AbstractUser $user
-     * @return int
+     * Gets the maximum number of shopping lists that can be created by the current logged in user or a visitor.
      */
-    private function countUserShoppingLists(AbstractUser $user)
+    public function getShoppingListLimitForUser(): int
+    {
+        $user = $this->getUser();
+        if (null === $user) {
+            return 1;
+        }
+
+        return $this->getShoppingListLimit($user->getWebsite());
+    }
+
+    private function countUserShoppingLists(AbstractUser $user): int
     {
         /** @var ShoppingListRepository $repository */
         $repository = $this->doctrineHelper->getEntityRepository(ShoppingList::class);
 
-        $currentWebsite = $this->websiteManager->getCurrentWebsite();
-
         return $repository->countUserShoppingLists(
             $user->getId(),
             $user->getOrganization()->getId(),
-            $currentWebsite
+            $this->websiteManager->getCurrentWebsite()
         );
     }
 
-    /**
-     * @param Website|null $website
-     * @return integer
-     */
-    private function getShoppingListLimit(Website $website = null)
+    private function getShoppingListLimit(Website $website = null): int
     {
-        return (int) $this->configManager->get('oro_shopping_list.shopping_list_limit', false, false, $website);
+        return (int)$this->configManager->get('oro_shopping_list.shopping_list_limit', false, false, $website);
     }
 
-    /**
-     * @return integer
-     */
-    public function getShoppingListLimitForUser()
+    private function getUser(): ?CustomerUser
     {
-        if (!$this->tokenAccessor->hasUser()) {
-            return 1;
+        $token = $this->tokenStorage->getToken();
+        if (!$token instanceof TokenInterface) {
+            return null;
         }
-        $user = $this->tokenAccessor->getUser();
+        $user = $token->getUser();
+        if (!$user instanceof CustomerUser) {
+            return null;
+        }
 
-        return $this->getShoppingListLimit(
-            $user->getWebsite()
-        );
+        return $user;
     }
 }
