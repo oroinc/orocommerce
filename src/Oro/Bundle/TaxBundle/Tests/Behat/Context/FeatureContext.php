@@ -2,19 +2,11 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Behat\Context;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 
 class FeatureContext extends OroFeatureContext
 {
-    private ConfigManager $configManager;
-
-    public function __construct(ConfigManager $configManager)
-    {
-        $this->configManager = $configManager;
-    }
-
     /**
      * @Given Base tax value is set to "Shipping Origin"
      */
@@ -36,7 +28,8 @@ class FeatureContext extends OroFeatureContext
      */
     private function thereIsUseAsBaseByDefaultInTheSystemConfiguration($value): void
     {
-        $this->configManager->set('oro_tax.use_as_base_by_default', $value);
-        $this->configManager->flush();
+        $configManager = $this->getAppContainer()->get('oro_config.global');
+        $configManager->set('oro_tax.use_as_base_by_default', $value);
+        $configManager->flush();
     }
 }

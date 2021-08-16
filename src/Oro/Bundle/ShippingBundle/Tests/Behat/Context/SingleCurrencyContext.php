@@ -2,25 +2,19 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Behat\Context;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 
 class SingleCurrencyContext extends OroFeatureContext
 {
-    private ConfigManager $configManager;
-
-    public function __construct(ConfigManager $configManager)
-    {
-        $this->configManager = $configManager;
-    }
 
     /**
      * @Given There is :currency currency in the system configuration
      */
     public function thereIsEurCurrencyInTheSystemConfiguration($currency)
     {
-        $this->configManager->set('oro_currency.default_currency', $currency);
-        $this->configManager->flush();
+        $configManager = $this->getAppContainer()->get('oro_config.global');
+        $configManager->set('oro_currency.default_currency', $currency);
+        $configManager->flush();
     }
 
     /**
