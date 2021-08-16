@@ -438,7 +438,7 @@ services:
         public: true
         arguments:
             - '@oro_config.manager'
-            - '@oro_security.token_accessor'
+            - '@security.token_storage'
             - '@oro_entity.doctrine_helper'
             - '@oro_website.manager'
 

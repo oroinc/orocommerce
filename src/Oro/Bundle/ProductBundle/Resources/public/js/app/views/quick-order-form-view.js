@@ -38,6 +38,8 @@ const QuickOrderFromView = BaseView.extend({
         'update collection': 'checkRowsQuantity'
     },
 
+    topButtons: null,
+
     constructor: function QuickOrderFromView(options) {
         QuickOrderFromView.__super__.constructor.call(this, options);
     },
@@ -55,6 +57,8 @@ const QuickOrderFromView = BaseView.extend({
             }
         }, _.pick(this.options, 'productBySkuRoute'));
         this.collection = new QuickAddCollection([], collectionOptions);
+
+        this.createTopButtonCache();
 
         this.initLayout({
             productsCollection: this.collection
@@ -105,10 +109,10 @@ const QuickOrderFromView = BaseView.extend({
     },
 
     onContentInitialized() {
+        this.checkRowsCount();
         if (this._initProgress) {
             this._initProgress.step();
         }
-        this.checkRowsCount();
     },
 
     checkRowsCount() {
@@ -120,21 +124,35 @@ const QuickOrderFromView = BaseView.extend({
         }
     },
 
-    showTopButtons() {
+    createTopButtonCache() {
         const $buttons = this.$(this.elem.buttons);
-        const $form = this.$(this.elem.form);
 
+        this.topButtons = $buttons[0].outerHTML
+            .replace(/\sid="[\w\-]+|#[\w\-]+/gm, '$&-clone');
+    },
+
+    showTopButtons() {
+        let contentShouldUpdate = false;
+        if (typeof this.topButtons === 'string') {
+            this.topButtons = $(this.topButtons);
+            contentShouldUpdate = true;
+        }
+
+        this.$(this.elem.form).prepend(this.topButtons);
         this.$(this.elem.clear).removeClass('hidden');
-        this.$buttonsCopy = this.$buttonsCopy ? this.$buttonsCopy : $($buttons, $form).clone(true, true);
-        this.$buttonsCopy.prependTo($form);
+
+        if (contentShouldUpdate) {
+            this.topButtons.trigger('content:changed');
+        }
     },
 
     hideTopButtons() {
-        if (!this.$buttonsCopy) {
+        this.$(this.elem.clear).addClass('hidden');
+
+        if (!this.topButtons || !this.topButtons instanceof $) {
             return;
         }
-        this.$buttonsCopy.detach();
-        this.$(this.elem.clear).addClass('hidden');
+        this.topButtons.detach();
     },
 
     async clearRows() {
