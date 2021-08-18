@@ -132,8 +132,8 @@ class SubcategoryFilterTest extends \PHPUnit\Framework\TestCase
                 new CompositeExpression(
                     CompositeExpression::TYPE_OR,
                     [
-                        new Comparison('integer.field_1_42_100', Comparison::EXISTS, null),
-                        new Comparison('integer.field_1_42_200', Comparison::EXISTS, null),
+                        new Comparison('integer.field.1_42_100', Comparison::EXISTS, null),
+                        new Comparison('integer.field.1_42_200', Comparison::EXISTS, null),
                     ]
                 )
             );

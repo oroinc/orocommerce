@@ -66,7 +66,7 @@ abstract class AbstractCustomerPartialUpdateDriverTest extends WebTestCase
      */
     private function getVisibilityCustomerFieldName(Customer $customer)
     {
-        return 'integer.visibility_customer_' . $customer->getId();
+        return 'integer.visibility_customer.' . $customer->getId();
     }
 
     /**
