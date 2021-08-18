@@ -126,7 +126,7 @@ services:
         calls:
             - [setActionGroupRegistry, ['@oro_action.action_group_registry']]
             - [setTranslator, ['@translator']]
-            - [setRouter, ['@router']]
+            - [setUrlGenerator, ['@router']]
             - [setRelatedItemsHandler, ['@oro_product.service.related_items_handler']]
 
     Oro\Bundle\ProductBundle\Form\Handler\ProductUpdateHandler:

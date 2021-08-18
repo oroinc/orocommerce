@@ -18,7 +18,6 @@ use Oro\Bundle\ProductBundle\Form\Handler\RelatedItemsHandler;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product as ProductStub;
 use Oro\Bundle\UIBundle\Route\Router;
 use PHPUnit\Framework\MockObject\Stub\ReturnCallback;
-use Symfony\Bundle\FrameworkBundle\Routing\Router as SymfonyRouter;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormErrorIterator;
@@ -30,6 +29,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -101,8 +101,8 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('getCurrentRequest')
             ->willReturn($this->request);
 
-        $symfonyRouter = $this->createMock(SymfonyRouter::class);
-        $symfonyRouter->expects($this->any())
+        $urlGenerator = $this->createMock(UrlGeneratorInterface::class);
+        $urlGenerator->expects($this->any())
             ->method('generate')
             ->willReturn('generated_redirect_url');
 
@@ -115,7 +115,7 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
         );
         $this->handler->setTranslator($this->translator);
         $this->handler->setActionGroupRegistry($this->actionGroupRegistry);
-        $this->handler->setRouter($symfonyRouter);
+        $this->handler->setUrlGenerator($urlGenerator);
         $this->handler->setRelatedItemsHandler($this->relatedItemsHandler);
     }
 
