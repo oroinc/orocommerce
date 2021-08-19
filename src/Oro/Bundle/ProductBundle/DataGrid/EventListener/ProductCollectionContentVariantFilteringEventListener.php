@@ -121,7 +121,7 @@ class ProductCollectionContentVariantFilteringEventListener
             $datasource
                 ->getSearchQuery()
                 ->addWhere(Criteria::expr()->orX(
-                    Criteria::expr()->eq(sprintf('integer.manually_added_to_variant_%s', $contentVariantId), 1),
+                    Criteria::expr()->eq(sprintf('integer.manually_added_to.variant_%s', $contentVariantId), 1),
                     Criteria::expr()->eq('integer.is_variant', 0)
                 ));
         }

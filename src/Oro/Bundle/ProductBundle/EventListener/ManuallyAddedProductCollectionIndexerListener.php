@@ -82,7 +82,7 @@ class ManuallyAddedProductCollectionIndexerListener
             foreach ($variantIds as $variantId) {
                 $event->addPlaceholderField(
                     $recordId,
-                    'manually_added_to_ASSIGN_TYPE_ASSIGN_ID',
+                    'manually_added_to.ASSIGN_TYPE_ASSIGN_ID',
                     1,
                     [
                         AssignTypePlaceholder::NAME => WebCatalogEntityIndexerListener::ASSIGN_TYPE_CONTENT_VARIANT,
