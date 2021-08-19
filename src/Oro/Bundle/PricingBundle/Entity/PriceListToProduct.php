@@ -6,6 +6,9 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
+ * Stores relation between price list and product entities
+ * with additional information about type of assignment (auto or manual).
+ *
  * @ORM\Entity(repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository")
  * @ORM\Table(
  *      name="oro_price_list_to_product",
@@ -20,11 +23,11 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 class PriceListToProduct
 {
     /**
-     * @var integer
+     * @var string
      *
-     * @ORM\Column(name="id", type="integer")
+     * @ORM\Column(name="id", type="guid")
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\GeneratedValue(strategy="UUID")
      */
     protected $id;
 
@@ -52,7 +55,7 @@ class PriceListToProduct
     protected $manual = true;
 
     /**
-     * @return int
+     * @return string
      */
     public function getId()
     {
