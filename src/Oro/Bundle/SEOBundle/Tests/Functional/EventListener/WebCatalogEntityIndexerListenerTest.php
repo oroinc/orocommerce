@@ -6,6 +6,7 @@ use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SEOBundle\Tests\Functional\DataFixtures\LoadWebCatalogWithContentNodes;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
@@ -66,8 +67,10 @@ class WebCatalogEntityIndexerListenerTest extends FrontendWebTestCase
             ReindexationRequestEvent::EVENT_NAME
         );
 
+        /** @var Query $query */
         $query = $container->get('oro_product.website_search.repository.product')
-            ->getSearchQuery(self::QUERY, 0, 1)
+            ->getSearchQuery(self::QUERY, 0, 1);
+        $query
             ->addSelect(sprintf(
                 'integer.assigned_to.%s_%s as assigned',
                 WebCatalogEntityIndexerListener::ASSIGN_TYPE_CONTENT_VARIANT,

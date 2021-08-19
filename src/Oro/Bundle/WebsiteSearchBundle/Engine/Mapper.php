@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 
+use Oro\Bundle\SearchBundle\Engine\Orm\BaseDriver;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
 
@@ -46,6 +47,7 @@ class Mapper
 
             $result[$resultName] = '';
 
+            $name = str_replace('.', BaseDriver::SPECIAL_SEPARATOR, $name);
             if (isset($item[$name])) {
                 $result[$resultName] = $this->parseValue($item[$name], $type);
             }
