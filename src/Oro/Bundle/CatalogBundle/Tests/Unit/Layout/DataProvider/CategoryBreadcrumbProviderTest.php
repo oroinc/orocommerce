@@ -14,7 +14,7 @@ use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Routing\Router;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class CategoryBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
 {
@@ -24,8 +24,8 @@ class CategoryBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
     /** @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $localizationHelper;
 
-    /** @var Router|\PHPUnit\Framework\MockObject\MockObject */
-    private $router;
+    /** @var UrlGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $urlGenerator;
 
     /** @var Category|\PHPUnit\Framework\MockObject\MockObject */
     private $category;
@@ -40,7 +40,7 @@ class CategoryBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
     {
         $this->categoryProvider = $this->createMock(CategoryProvider::class);
         $this->localizationHelper = $this->createMock(LocalizationHelper::class);
-        $this->router = $this->createMock(Router::class);
+        $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
         $this->requestStack = $this->createMock(RequestStack::class);
 
         $this->category = $this->createMock(Category::class);
@@ -65,7 +65,7 @@ class CategoryBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
         $this->categoryBreadcrumbProvider = new CategoryBreadcrumbProvider(
             $this->categoryProvider,
             $this->localizationHelper,
-            $this->router,
+            $this->urlGenerator,
             $this->requestStack
         );
     }
@@ -74,7 +74,7 @@ class CategoryBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
     {
         $collection = $this->createMock(Collection::class);
 
-        $this->router->expects($this->once())
+        $this->urlGenerator->expects($this->once())
             ->method('generate')
             ->willReturn('/');
 
@@ -129,7 +129,7 @@ class CategoryBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getIncludeSubcategoriesChoice')
             ->willReturn(1);
 
-        $this->router->expects($this->exactly(2))
+        $this->urlGenerator->expects($this->exactly(2))
             ->method('generate')
             ->withConsecutive(
                 ['oro_product_frontend_product_index'],
@@ -194,7 +194,7 @@ class CategoryBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getIncludeSubcategoriesChoice')
             ->willReturn(1);
 
-        $this->router->expects($this->exactly(2))
+        $this->urlGenerator->expects($this->exactly(2))
             ->method('generate')
             ->withConsecutive(
                 ['oro_product_frontend_product_index'],

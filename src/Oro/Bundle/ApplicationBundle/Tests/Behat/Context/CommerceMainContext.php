@@ -11,20 +11,12 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\EntityPage;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Tabs;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
-use Symfony\Component\Routing\RouterInterface;
 
 class CommerceMainContext extends OroFeatureContext implements
     OroPageObjectAware,
     SessionAliasProviderAwareInterface
 {
     use PageObjectDictionary, SessionAliasProviderAwareTrait;
-
-    private RouterInterface $router;
-
-    public function __construct(RouterInterface $router)
-    {
-        $this->router = $router;
-    }
 
     /**
      * This step used for login bayer from frontend of commerce
@@ -121,7 +113,7 @@ class CommerceMainContext extends OroFeatureContext implements
         $entityPage = $this->createElement($entity);
 
         foreach ($table->getRows() as $row) {
-            list($label, $value) = $row;
+            [$label, $value] = $row;
 
             $entityPage->assertPageContainsValue($label, $value);
         }
@@ -133,7 +125,7 @@ class CommerceMainContext extends OroFeatureContext implements
      */
     protected function getUrl($path)
     {
-        return $this->router->generate($path);
+        return $this->getAppContainer()->get('router')->generate($path);
     }
 
     /**

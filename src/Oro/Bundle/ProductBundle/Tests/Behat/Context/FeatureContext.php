@@ -7,9 +7,7 @@ use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Element\NodeElement;
 use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\MinkExtension\Context\MinkAwareContext;
-use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectRepository;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext as ConfigContext;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid;
@@ -32,7 +30,6 @@ use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
 use Oro\Bundle\WarehouseBundle\SystemConfig\WarehouseConfig;
 use PHPUnit\Framework\AssertionFailedError;
 use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\Routing\RouterInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -45,43 +42,19 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 {
     use PageObjectDictionary;
 
-    const PRODUCT_SKU = 'SKU123';
-    const PRODUCT_INVENTORY_QUANTITY = 100;
-    const IMAGES_ORDER_REMEMBER_KEY = 'images_order';
+    private const PRODUCT_SKU = 'SKU123';
+    private const PRODUCT_INVENTORY_QUANTITY = 100;
+    private const IMAGES_ORDER_REMEMBER_KEY = 'images_order';
 
-    private ?OroMainContext $oroMainContext;
+    private ?OroMainContext $oroMainContext = null;
 
-    private ?GridContext $gridContext;
+    private ?GridContext $gridContext = null;
 
-    private ?ConfigContext $configContext;
+    private ?ConfigContext $configContext = null;
 
-    private ?FormContext $formContext;
+    private ?FormContext $formContext = null;
 
-    private array $rememberedData;
-
-    private RouterInterface $router;
-
-    private ManagerRegistry $managerRegistry;
-
-    private DoctrineHelper $doctrineHelper;
-
-    private InventoryManager $inventoryManager;
-
-    private ConfigManager $configManager;
-
-    public function __construct(
-        RouterInterface $router,
-        ManagerRegistry $managerRegistry,
-        DoctrineHelper $doctrineHelper,
-        InventoryManager $inventoryManager,
-        ConfigManager $configManager
-    ) {
-        $this->router = $router;
-        $this->managerRegistry = $managerRegistry;
-        $this->doctrineHelper = $doctrineHelper;
-        $this->inventoryManager = $inventoryManager;
-        $this->configManager = $configManager;
-    }
+    private array $rememberedData = [];
 
     /**
      * @BeforeScenario
@@ -100,23 +73,28 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
      */
     public function thereAreProductsAvailableForOrder()
     {
+        /** @var DoctrineHelper $doctrineHelper */
+        $doctrineHelper = $this->getAppContainer()->get('oro_entity.doctrine_helper');
+
         /** @var Product $product */
-        $product = $this->doctrineHelper->getEntityRepositoryForClass(Product::class)
+        $product = $doctrineHelper->getEntityRepositoryForClass(Product::class)
             ->findOneBy(['sku' => self::PRODUCT_SKU]);
 
-        $inventoryLevelEntityManager = $this->doctrineHelper->getEntityManagerForClass(InventoryLevel::class);
+        $inventoryLevelEntityManager = $doctrineHelper->getEntityManagerForClass(InventoryLevel::class);
         $inventoryLevelRepository = $inventoryLevelEntityManager->getRepository(InventoryLevel::class);
 
         /** @var InventoryLevel $inventoryLevel */
         $inventoryLevel = $inventoryLevelRepository->findOneBy(['product' => $product]);
         if (!$inventoryLevel) {
-            $inventoryLevel = $this->inventoryManager->createInventoryLevel($product->getPrimaryUnitPrecision());
+            /** @var InventoryManager $inventoryManager */
+            $inventoryManager = $this->getAppContainer()->get('oro_inventory.manager.inventory_manager');
+            $inventoryLevel = $inventoryManager->createInventoryLevel($product->getPrimaryUnitPrecision());
         }
         $inventoryLevel->setQuantity(self::PRODUCT_INVENTORY_QUANTITY);
 
         // package commerce-ee available
         if (method_exists($inventoryLevel, 'setWarehouse')) {
-            $warehouseEntityManager = $this->doctrineHelper->getEntityManagerForClass(Warehouse::class);
+            $warehouseEntityManager = $doctrineHelper->getEntityManagerForClass(Warehouse::class);
             $warehouseRepository = $warehouseEntityManager->getRepository(Warehouse::class);
 
             $warehouse = $warehouseRepository->findOneBy([]);
@@ -136,9 +114,10 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
             $inventoryLevelEntityManager->flush();
 
             $warehouseConfig = new WarehouseConfig($warehouse, 1);
-            $this->configManager->set('oro_warehouse.enabled_warehouses', [$warehouseConfig]);
-            $this->configManager->set('oro_inventory.manage_inventory', true);
-            $this->configManager->flush();
+            $configManager = $this->getAppContainer()->get('oro_config.global');
+            $configManager->set('oro_warehouse.enabled_warehouses', [$warehouseConfig]);
+            $configManager->set('oro_inventory.manage_inventory', true);
+            $configManager->flush();
         } else {
             $inventoryLevelEntityManager->persist($inventoryLevel);
             $inventoryLevelEntityManager->flush();
@@ -615,7 +594,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
      */
     protected function getUrl($route, $params = [])
     {
-        return $this->router->generate($route, $params);
+        return $this->getAppContainer()->get('router')->generate($route, $params);
     }
 
     /**
@@ -624,7 +603,8 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
      */
     protected function getRepository($className)
     {
-        return $this->managerRegistry
+        return $this->getAppContainer()
+            ->get('doctrine')
             ->getManagerForClass($className)
             ->getRepository($className);
     }
@@ -670,8 +650,9 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
                 throw new \InvalidArgumentException(sprintf('There is no mapping to `%s` options', $option));
         }
 
-        $this->configManager->set($option, 1);
-        $this->configManager->flush();
+        $configManager = $this->getAppContainer()->get('oro_config.global');
+        $configManager->set($option, 1);
+        $configManager->flush();
     }
 
     /**

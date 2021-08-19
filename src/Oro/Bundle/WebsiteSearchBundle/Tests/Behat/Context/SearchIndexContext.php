@@ -2,29 +2,11 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Behat\Context;
 
-use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\SearchBundle\Query\Factory\QueryFactoryInterface;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 class SearchIndexContext extends OroFeatureContext
 {
-    private ManagerRegistry $managerRegistry;
-
-    private WebsiteManager $websiteManager;
-
-    private QueryFactoryInterface $queryFactory;
-
-    public function __construct(
-        ManagerRegistry $managerRegistry,
-        WebsiteManager $websiteManager,
-        QueryFactoryInterface $queryFactory
-    ) {
-        $this->managerRegistry = $managerRegistry;
-        $this->websiteManager = $websiteManager;
-        $this->queryFactory = $queryFactory;
-    }
 
     /**
      * Given should be 30 items in "oro_product" website search index
@@ -33,11 +15,16 @@ class SearchIndexContext extends OroFeatureContext
      */
     public function shouldBeItemsInSearchIndex(int $count, string $index): void
     {
-        $this->websiteManager->setCurrentWebsite($this->getWebsite());
+        $this->getAppContainer()
+            ->get('oro_website.manager')
+            ->setCurrentWebsite($this->getWebsite());
+
+        $queryFactory = $this->getAppContainer()
+            ->get('oro_website_search.query_factory');
 
         $result = $this->spin(
-            function () use ($count, $index) {
-                $query = $this->queryFactory->create(
+            static function () use ($count, $queryFactory, $index) {
+                $query = $queryFactory->create(
                     [
                         'search_index' => 'website',
                         'query' => [
@@ -65,7 +52,8 @@ class SearchIndexContext extends OroFeatureContext
 
     private function getWebsite(): Website
     {
-        $repository = $this->managerRegistry
+        $repository = $this->getAppContainer()
+            ->get('doctrine')
             ->getManagerForClass(Website::class)
             ->getRepository(Website::class);
 

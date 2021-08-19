@@ -16,6 +16,7 @@ class ProductAssignmentRuleCompiler extends AbstractRuleCompiler
      * @var array
      */
     protected $fieldsOrder = [
+        'id',
         'product',
         'priceList',
         'manual'
@@ -89,6 +90,7 @@ class ProductAssignmentRuleCompiler extends AbstractRuleCompiler
         $this->addSelectInOrder(
             $qb,
             [
+                'id' => 'UUID()',
                 'product' => $rootAlias . '.id',
                 'priceList' => (string)$qb->expr()->literal($priceList->getId()),
                 'manual' => 'CAST(0 as boolean)'

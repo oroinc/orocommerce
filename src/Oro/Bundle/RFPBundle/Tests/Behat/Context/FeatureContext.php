@@ -2,28 +2,16 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Behat\Context;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Tests\Behat\Element\RequestForQuote;
 use Oro\Bundle\RFPBundle\Tests\Behat\Page\RequestViewPage;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
-use Symfony\Component\Routing\RouterInterface;
 
 class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 {
     use PageObjectDictionary;
-
-    private RouterInterface $router;
-
-    private DoctrineHelper $doctrineHelper;
-
-    public function __construct(RouterInterface $router, DoctrineHelper $doctrineHelper)
-    {
-        $this->router = $router;
-        $this->doctrineHelper = $doctrineHelper;
-    }
 
     /**
      * Mapping of RFQ view pages by application name
@@ -68,7 +56,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     {
         $urlPath = parse_url($this->getSession()->getCurrentUrl(), PHP_URL_PATH);
         $urlPath = preg_replace('/^.*\.php/', '', $urlPath);
-        $route = $this->router->match($urlPath);
+        $route = $this->getAppContainer()->get('router')->match($urlPath);
 
         $page = $this->getRequestViewPageByRoute($route['_route']);
         self::assertInstanceOf(RequestViewPage::class, $page, 'Can not get ID. Not on a Request page.');
@@ -111,7 +99,8 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     {
         $value = isset($this->variablesMapping[$value]) ? $this->variablesMapping[$value] : $value;
         /** @var Request $request */
-        $request = $this->doctrineHelper->getEntityRepository(Request::class)->findOneBy(['id' => $value]);
+        $request = $this->getAppContainer()->get('oro_entity.doctrine_helper')
+            ->getEntityRepository(Request::class)->findOneBy(['id' => $value]);
 
         self::assertInstanceOf(
             Request::class,
@@ -121,7 +110,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 
         $page = $this->getPage($this->RFQViewPages[$application]);
 
-        $path = $this->router->generate($page->getRoute(), ['id' => $request->getId()]);
+        $path = $this->getAppContainer()->get('router')->generate($page->getRoute(), ['id' => $request->getId()]);
 
         $this->visitPath($path);
 

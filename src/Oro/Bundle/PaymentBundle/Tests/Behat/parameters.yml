@@ -1,8 +1,0 @@
-services:
-    Oro\Bundle\PaymentBundle\Tests\Behat\Context\FeatureContext:
-        public: true
-        arguments:
-            - '@oro_currency.config.currency'
-            - '@oro_entity.doctrine_helper'
-            - '@oro_payment.payment_method.composite_provider'
-            - '@oro_payment.payment_method_view.composite_provider'

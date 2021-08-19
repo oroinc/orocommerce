@@ -3,21 +3,13 @@
 namespace Oro\Bundle\CMSBundle\Tests\Behat\Context;
 
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
-use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ImportExportBundle\Tests\Behat\Context\ImportExportContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 
 class ImportExportFeatureContext extends OroFeatureContext
 {
-    private ?ImportExportContext $importExportContext;
-
-    private ConfigManager $entityConfigManager;
-
-    public function __construct(ConfigManager $entityConfigManager)
-    {
-        $this->entityConfigManager = $entityConfigManager;
-    }
+    private ?ImportExportContext $importExportContext = null;
 
     /**
      * @BeforeScenario
@@ -36,8 +28,9 @@ class ImportExportFeatureContext extends OroFeatureContext
      */
     public function iDownloadDataTemplateFileForExtendEntity($className)
     {
+        $entityConfigManager = $this->getAppContainer()->get('oro_entity_config.config_manager');
         $className = sprintf('%s%s', ExtendHelper::ENTITY_NAMESPACE, $className);
-        $entityModel = $this->entityConfigManager->getConfigEntityModel($className);
+        $entityModel = $entityConfigManager->getConfigEntityModel($className);
         static::assertNotNull($entityModel, sprintf('No entity model found for class "%s"', $className));
 
         $this->importExportContext->downloadTemplateFileByProcessor(
