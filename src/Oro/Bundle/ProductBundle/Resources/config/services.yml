@@ -1180,6 +1180,20 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.controller, method: onKernelController, priority: -100 }
 
+    oro_product.feature.voter.feature_simple_variations_view_restriction:
+        class: Oro\Bundle\ProductBundle\Feature\Voter\SimpleVariationsRestrictionFeatureVoter
+        arguments:
+            - '@oro_config.manager'
+        tags:
+            - { name: oro_featuretogle.voter }
+
+    oro_product.event_listener.restrict_variant_product_view:
+        class: Oro\Bundle\ProductBundle\EventListener\RestrictVariantProductViewListener
+        public: false
+        tags:
+            - { name: oro_featuretogle.feature, feature: 'simple_variations_view_restriction' }
+            - { name: kernel.event_listener, event: kernel.controller, method: onKernelController, priority: -100 }
+
     oro_product.provider.content_variant_segment_provider:
         class: Oro\Bundle\ProductBundle\Provider\ContentVariantSegmentProvider
         public: true
