@@ -1,5 +1,0 @@
-services:
-    Oro\Bundle\TaxBundle\Tests\Behat\Context\FeatureContext:
-        public: true
-        arguments:
-            - '@oro_config.global'

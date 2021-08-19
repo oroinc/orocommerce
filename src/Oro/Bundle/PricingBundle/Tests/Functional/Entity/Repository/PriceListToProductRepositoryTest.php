@@ -14,6 +14,9 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+/**
+ * @dbIsolationPerTest
+ */
 class PriceListToProductRepositoryTest extends WebTestCase
 {
     /**
@@ -174,7 +177,7 @@ class PriceListToProductRepositoryTest extends WebTestCase
 
     public function testCreateRelation()
     {
-        $this->assertCount(16, $this->repository->findAll());
+        $this->assertCount(10, $this->repository->findAll());
 
         /** @var EntityManager $em */
         $em = $this->getContainer()->get('doctrine')->getManager();
@@ -188,11 +191,11 @@ class PriceListToProductRepositoryTest extends WebTestCase
         $product = $this->getReference(LoadProductData::PRODUCT_5);
 
         $this->assertEquals(1, $this->repository->createRelation($priceList, $product));
-        $this->assertCount(17, $this->repository->findAll());
+        $this->assertCount(11, $this->repository->findAll());
 
         // try to add relation with duplicated values
         $this->assertEquals(0, $this->repository->createRelation($priceList, $product));
-        $this->assertCount(17, $this->repository->findAll());
+        $this->assertCount(11, $this->repository->findAll());
     }
 
     /**

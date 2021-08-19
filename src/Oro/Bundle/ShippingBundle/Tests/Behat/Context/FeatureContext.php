@@ -4,7 +4,6 @@ namespace Oro\Bundle\ShippingBundle\Tests\Behat\Context;
 
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
-use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid;
@@ -25,17 +24,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 {
     use PageObjectDictionary;
 
-    /**
-     * @var OroMainContext
-     */
-    private $oroMainContext;
-
-    private ManagerRegistry $managerRegistry;
-
-    public function __construct(ManagerRegistry $managerRegistry)
-    {
-        $this->managerRegistry = $managerRegistry;
-    }
+    private ?OroMainContext $oroMainContext = null;
 
     /**
      * @BeforeScenario
@@ -239,7 +228,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     protected function createOrderFromShoppingList($shoppingListName)
     {
         /** @var ObjectManager $manager */
-        $manager = $this->managerRegistry->getManagerForClass(ShoppingList::class);
+        $manager = $this->getAppContainer()->get('doctrine')->getManagerForClass(ShoppingList::class);
         /** @var ShoppingList $shoppingList */
         $shoppingList = $manager->getRepository(ShoppingList::class)->findOneBy(['label' => $shoppingListName]);
         $this->visitPath('customer/shoppinglist/'.$shoppingList->getId());

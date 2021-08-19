@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PricingBundle\Tests\Behat\Context;
 
 use Behat\Gherkin\Node\TableNode;
-use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\FormBundle\Tests\Behat\Element\Select2Entity;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
@@ -11,7 +10,6 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
-use Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister;
 use Oro\Bundle\PricingBundle\Provider\CombinedPriceListIdentifierProviderInterface;
 use Oro\Bundle\PricingBundle\Provider\PriceListSequenceMember;
 use Oro\Bundle\ProductBundle\Tests\Behat\Element\ProductPriceCollection;
@@ -23,16 +21,6 @@ use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 {
     use PageObjectDictionary;
-
-    private ManagerRegistry $managerRegistry;
-
-    private StrategyRegister $strategyRegister;
-
-    public function __construct(ManagerRegistry $managerRegistry, StrategyRegister $strategyRegister)
-    {
-        $this->managerRegistry = $managerRegistry;
-        $this->strategyRegister = $strategyRegister;
-    }
 
     /**
      * @Then /^(?:|I )set (?P<collectionFieldName>[^"]+) collection element values in (?P<number>\d+) row:$/
@@ -89,7 +77,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
      */
     public function combinedPriceListPricesCount($count, TableNode $table)
     {
-        $em = $this->managerRegistry->getManagerForClass(CombinedPriceList::class);
+        $em = $this->getAppContainer()->get('doctrine')->getManagerForClass(CombinedPriceList::class);
 
         $priceLists = [];
         /** @var PriceListRepository $plRepo */
@@ -120,7 +108,10 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
      */
     private function getCplIdentifier(array $priceLists): string
     {
-        $strategy = $this->strategyRegister->getCurrentStrategy();
+        $strategy = $this
+            ->getAppContainer()
+            ->get('oro_pricing.pricing_strategy.strategy_register')
+            ->getCurrentStrategy();
 
         if ($strategy instanceof CombinedPriceListIdentifierProviderInterface) {
             return $strategy->getCombinedPriceListIdentifier($priceLists);

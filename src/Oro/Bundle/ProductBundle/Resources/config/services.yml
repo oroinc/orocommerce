@@ -126,7 +126,7 @@ services:
         calls:
             - [setActionGroupRegistry, ['@oro_action.action_group_registry']]
             - [setTranslator, ['@translator']]
-            - [setRouter, ['@router']]
+            - [setUrlGenerator, ['@router']]
             - [setRelatedItemsHandler, ['@oro_product.service.related_items_handler']]
 
     Oro\Bundle\ProductBundle\Form\Handler\ProductUpdateHandler:
@@ -1767,7 +1767,7 @@ services:
             - '@oro_redirect.sluggable_entity_finder'
             - '@oro_config.manager'
         tags:
-            - { name: oro_redirect.slug_source_entity_provider }
+            - { name: oro_redirect.slug_source_entity_provider, priority: -20 }
 
     oro_product.provider.product_slug_source_entity:
         class: Oro\Bundle\ProductBundle\Provider\ProductSlugSourceEntityProvider
@@ -1775,7 +1775,7 @@ services:
             - '@oro_redirect.sluggable_entity_finder'
             - '@oro_config.manager'
         tags:
-            - { name: oro_redirect.slug_source_entity_provider }
+            - { name: oro_redirect.slug_source_entity_provider, priority: 10 }
 
     oro_product.provider.family_attribute_counts:
         class: Oro\Bundle\ProductBundle\Provider\FamilyAttributeCountsProvider

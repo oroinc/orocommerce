@@ -7,7 +7,6 @@ use Behat\Gherkin\Node\TableNode;
 use Oro\Bundle\GaufretteBundle\FileManager;
 use Oro\Bundle\ImportExportBundle\Tests\Behat\Context\ImportExportContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
-use Oro\Bundle\WebsiteBundle\Resolver\WebsiteUrlResolver;
 use Symfony\Component\Finder\Finder;
 
 /**
@@ -19,28 +18,7 @@ class ProductImportExportContext extends OroFeatureContext
     private const PRODUCT_PROCESSOR = 'oro_product_product';
     private const PRODUCT_ATTRIBUTES_PROCESSOR = 'oro_entity_config_attribute.export_template';
 
-    private ?ImportExportContext $importExportContext;
-
-    private string $projectDir;
-
-    private WebsiteUrlResolver $websiteUrlResolver;
-
-    private FileManager $productImportImagesFileManager;
-
-    private FileManager $publicMediaCacheFileManager;
-
-    public function __construct(
-        string $projectDir,
-        WebsiteUrlResolver $websiteUrlResolver,
-        FileManager $productImportImagesFileManager,
-        FileManager $publicMediaCacheFileManager
-    ) {
-        $this->projectDir = $projectDir;
-        $this->websiteUrlResolver = $websiteUrlResolver;
-        $this->productImportImagesFileManager = $productImportImagesFileManager;
-        $this->publicMediaCacheFileManager = $publicMediaCacheFileManager;
-    }
-
+    private ?ImportExportContext $importExportContext = null;
 
     /**
      * @BeforeScenario
@@ -76,7 +54,7 @@ class ProductImportExportContext extends OroFeatureContext
     {
         $this->copyFilesToStorage(
             __DIR__ . '/../Features/Fixtures/product_images_import',
-            $this->productImportImagesFileManager
+            $this->getProductImportImagesFileManager()
         );
     }
 
@@ -89,13 +67,13 @@ class ProductImportExportContext extends OroFeatureContext
     {
         $sourcePath = sprintf('%s%s', __DIR__, '/../Features/Fixtures/files_import');
         // used for test a relative path
-        $this->copyFilesToStorage($sourcePath, $this->productImportImagesFileManager);
+        $this->copyFilesToStorage($sourcePath, $this->getProductImportImagesFileManager());
         // used for test an URL
-        $this->copyFilesToStorage($sourcePath, $this->publicMediaCacheFileManager, 'test_import');
+        $this->copyFilesToStorage($sourcePath, $this->getPublicMediaCacheFileManager(), 'test_import');
         // used for test an absolute path
         $this->copyFiles(
             $sourcePath,
-            $this->projectDir . '/var/data/test_import/'
+            $this->getAppContainer()->getParameter('kernel.project_dir') . '/var/data/test_import/'
         );
     }
 
@@ -108,7 +86,7 @@ class ProductImportExportContext extends OroFeatureContext
     //@codingStandardsIgnoreEnd
     public function copyProductFixtureFileToImportFilesDir(string $filename, string $newFilename): void
     {
-        $this->productImportImagesFileManager->writeFileToStorage(
+        $this->getProductImportImagesFileManager()->writeFileToStorage(
             __DIR__ . '/../Features/Fixtures/files_import/' . $this->fixStepArgument($filename),
             $newFilename
         );
@@ -135,7 +113,7 @@ class ProductImportExportContext extends OroFeatureContext
      */
     public function iFillImportFileWithData(TableNode $table)
     {
-        $websiteUrl = $this->websiteUrlResolver->getWebsiteUrl();
+        $websiteUrl = $this->getAppContainer()->get('oro_website.resolver.website_url_resolver')->getWebsiteUrl();
 
         $this->importExportContext->setAbsoluteUrl($websiteUrl);
         $this->importExportContext->iFillImportFileWithData($table);
@@ -154,5 +132,15 @@ class ProductImportExportContext extends OroFeatureContext
             }
             $fileManager->writeFileToStorage($file->getPathname(), $fileName);
         }
+    }
+
+    private function getProductImportImagesFileManager(): FileManager
+    {
+        return $this->getAppContainer()->get('oro_product.importexport.file_manager.product_images');
+    }
+
+    private function getPublicMediaCacheFileManager(): FileManager
+    {
+        return $this->getAppContainer()->get('oro_attachment.manager.public_mediacache');
     }
 }

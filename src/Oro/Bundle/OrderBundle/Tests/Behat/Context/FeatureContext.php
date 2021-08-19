@@ -5,9 +5,7 @@ namespace Oro\Bundle\OrderBundle\Tests\Behat\Context;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
-use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FeatureToggleBundle\Checker\Voter\ConfigVoter;
 use Oro\Bundle\FeatureToggleBundle\Configuration\ConfigurationManager as FeatureConfigurationManager;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -18,26 +16,6 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Fixtures\FixtureLoaderDictionary;
 class FeatureContext extends OroFeatureContext implements FixtureLoaderAwareInterface
 {
     use FixtureLoaderDictionary;
-
-    private ManagerRegistry $managerRegistry;
-
-    private ConfigManager $configManager;
-
-    private DoctrineHelper $doctrineHelper;
-
-    private FeatureConfigurationManager $featureConfigManager;
-
-    public function __construct(
-        ManagerRegistry $managerRegistry,
-        ConfigManager $configManager,
-        DoctrineHelper $doctrineHelper,
-        FeatureConfigurationManager $featureConfigManager
-    ) {
-        $this->managerRegistry = $managerRegistry;
-        $this->configManager = $configManager;
-        $this->doctrineHelper = $doctrineHelper;
-        $this->featureConfigManager = $featureConfigManager;
-    }
 
     /**
      * Load "BestSelling.yml" alice fixture from OrderBundle suite
@@ -64,7 +42,7 @@ class FeatureContext extends OroFeatureContext implements FixtureLoaderAwareInte
      */
     private function getMetadata()
     {
-        $manager = $this->managerRegistry->getManagerForClass(Order::class);
+        $manager = $this->getAppContainer()->get('doctrine')->getManagerForClass(Order::class);
 
         return $manager->getClassMetadata(Order::class);
     }
@@ -79,7 +57,8 @@ class FeatureContext extends OroFeatureContext implements FixtureLoaderAwareInte
     public function thereAnOrderCreatedAt($orderIdentifier, $createdAt)
     {
         /** @var EntityManager $em */
-        $em = $this->doctrineHelper->getEntityManager(Order::class);
+        $em = $this->getAppContainer()
+            ->get('oro_entity.doctrine_helper')->getEntityManager(Order::class);
 
         $order = $em->getRepository(Order::class)
             ->findOneBy(['identifier' => $orderIdentifier]);
@@ -106,9 +85,13 @@ class FeatureContext extends OroFeatureContext implements FixtureLoaderAwareInte
      */
     public function thereEnabledFeature($feature)
     {
-        $toggleConfigOption = $this->featureConfigManager->get($feature, ConfigVoter::TOGGLE_KEY);
+        /** @var FeatureConfigurationManager $featureConfigManager */
+        $featureConfigManager = $this->getAppContainer()->get('oro_featuretoggle.configuration.manager');
+        $toggleConfigOption = $featureConfigManager->get($feature, ConfigVoter::TOGGLE_KEY);
 
-        $this->configManager->set($toggleConfigOption, true);
-        $this->configManager->flush();
+        /* @var ConfigManager $configManager */
+        $configManager = $this->getAppContainer()->get('oro_config.global');
+        $configManager->set($toggleConfigOption, true);
+        $configManager->flush();
     }
 }

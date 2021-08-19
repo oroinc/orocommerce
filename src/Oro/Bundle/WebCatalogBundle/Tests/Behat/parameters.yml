@@ -1,6 +1,0 @@
-services:
-    Oro\Bundle\WebCatalogBundle\Tests\Behat\Context\FeatureContext:
-        public: true
-        arguments:
-            - '@oro_config.global'
-            - '@oro_entity.doctrine_helper'

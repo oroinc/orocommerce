@@ -9,14 +9,11 @@ use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
  */
 class MatchedUrlDecisionMaker
 {
-    /** @var FrontendHelper */
-    private $frontendHelper;
-
+    private FrontendHelper $frontendHelper;
     /** @var string[] */
-    private $skippedUrlPatterns;
-
-    /** @var array */
-    private $checkedUrls = [];
+    private array $skippedUrlPatterns;
+    /** @var bool[] [pathinfo => check result, ...] */
+    private array $checkedUrls = [];
 
     /**
      * @param string[]       $skippedUrlPatterns
@@ -41,25 +38,25 @@ class MatchedUrlDecisionMaker
         }
     }
 
-    public function matches(string $url): bool
+    public function matches(string $pathinfo): bool
     {
         return
-            $this->frontendHelper->isFrontendUrl($url)
-            && !$this->isSkippedUrl($url);
+            $this->frontendHelper->isFrontendUrl($pathinfo)
+            && !$this->isSkippedUrl($pathinfo);
     }
 
-    private function isSkippedUrl(string $url): bool
+    private function isSkippedUrl(string $pathinfo): bool
     {
-        $result = $this->checkedUrls[$url] ?? null;
+        $result = $this->checkedUrls[$pathinfo] ?? null;
         if (null === $result) {
             $result = false;
             foreach ($this->skippedUrlPatterns as $pattern) {
-                if (str_starts_with($url, $pattern)) {
+                if (str_starts_with($pathinfo, $pattern)) {
                     $result = true;
                     break;
                 }
             }
-            $this->checkedUrls[$url] = $result;
+            $this->checkedUrls[$pathinfo] = $result;
         }
 
         return $result;

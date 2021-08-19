@@ -2,12 +2,8 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Behat\Context;
 
-use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
-use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
-use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProviderInterface;
 use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
@@ -17,26 +13,6 @@ class FeatureContext extends OroFeatureContext
 {
     use UserUtilityTrait;
 
-    private CurrencyProviderInterface $currencyProvider;
-
-    private DoctrineHelper $doctrineHelper;
-
-    private PaymentMethodProviderInterface $paymentMethodProvider;
-
-    private PaymentMethodViewProviderInterface $paymentMethodViewProvider;
-
-    public function __construct(
-        CurrencyProviderInterface $currencyProvider,
-        DoctrineHelper $doctrineHelper,
-        PaymentMethodProviderInterface $paymentMethodProvider,
-        PaymentMethodViewProviderInterface $paymentMethodViewProvider
-    ) {
-        $this->currencyProvider = $currencyProvider;
-        $this->doctrineHelper = $doctrineHelper;
-        $this->paymentMethodProvider = $paymentMethodProvider;
-        $this->paymentMethodViewProvider = $paymentMethodViewProvider;
-    }
-
     /**
      * @Given /^(?:I )?create payment rule with "(?P<paymentMethodName>(?:[^"]+))" payment method$/
      */
@@ -44,7 +20,7 @@ class FeatureContext extends OroFeatureContext
     {
         $paymentMethodIdentifier = $this->getPaymentMethodIdentifier($paymentMethodName);
 
-        $currency = $this->currencyProvider->getDefaultCurrency();
+        $currency = $this->getAppContainer()->get('oro_currency.config.currency')->getDefaultCurrency();
 
         $rule = (new Rule())
             ->setSortOrder(1)
@@ -53,7 +29,9 @@ class FeatureContext extends OroFeatureContext
 
         $paymentMethodConfig = (new PaymentMethodConfig())->setType($paymentMethodIdentifier);
 
-        $organization = $this->getFirstUser($this->doctrineHelper->getEntityManagerForClass(User::class))
+        $doctrineHelper = $this->getAppContainer()->get('oro_entity.doctrine_helper');
+
+        $organization = $this->getFirstUser($doctrineHelper->getEntityManagerForClass(User::class))
             ->getOrganization();
 
         $paymentMethodsConfigsRule = (new PaymentMethodsConfigsRule())
@@ -62,15 +40,18 @@ class FeatureContext extends OroFeatureContext
             ->addMethodConfig($paymentMethodConfig)
             ->setOrganization($organization);
 
-        $entityManager = $this->doctrineHelper->getEntityManagerForClass(PaymentMethodsConfigsRule::class);
+        $entityManager = $doctrineHelper->getEntityManagerForClass(PaymentMethodsConfigsRule::class);
         $entityManager->persist($paymentMethodsConfigsRule);
         $entityManager->flush();
     }
 
     private function getPaymentMethodIdentifier(string $paymentMethodName): string
     {
-        foreach ($this->paymentMethodProvider->getPaymentMethods() as $identifier => $paymentMethod) {
-            $paymentMethodView = $this->paymentMethodViewProvider->getPaymentMethodView($identifier);
+        $paymentMethodProvider = $this->getAppContainer()->get('oro_payment.payment_method.composite_provider');
+        $paymentMethodViewProvider = $this->getAppContainer()
+            ->get('oro_payment.payment_method_view.composite_provider');
+        foreach ($paymentMethodProvider->getPaymentMethods() as $identifier => $paymentMethod) {
+            $paymentMethodView = $paymentMethodViewProvider->getPaymentMethodView($identifier);
             if (!$paymentMethodView) {
                 continue;
             }

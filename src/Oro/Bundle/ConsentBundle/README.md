@@ -6,5 +6,5 @@ This bundle includes the UI for admin users to create and manage the consents an
 
 The entire functionality of this bundle can be disabled through a feature toggle in the System Configuration UI.
 
-For more information on consents, see [Oro website documentation](https://doc.oroinc.com/backend/bundles/commerce/ConsentBundle).
+For more information on consents, see [Oro website documentation](https://doc.oroinc.com/bundles/commerce/ConsentBundle).
 

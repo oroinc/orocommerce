@@ -453,7 +453,7 @@ services:
             - '@oro_redirect.sluggable_entity_finder'
             - '@oro_config.manager'
         tags:
-            - { name: oro_redirect.slug_source_entity_provider }
+            - { name: oro_redirect.slug_source_entity_provider, priority: -10 }
 
     oro_cms.tools.digital_asset_twig_tags_converter:
         class: Oro\Bundle\CMSBundle\Tools\DigitalAssetTwigTagsConverter
