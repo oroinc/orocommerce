@@ -556,6 +556,14 @@ system_configuration:
                     oro.product.system_configuration.fields.display_simple_variations.hide_catalog.label: hide_catalog
                     oro.product.system_configuration.fields.display_simple_variations.hide_completely.label: hide_completely
 
+        oro_product.display_simple_variations_hide_completely_bc:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            priority: 10
+            options:
+                label: oro.product.system_configuration.fields.display_simple_variations_hide_completely_bc.label
+                tooltip: oro.product.system_configuration.fields.display_simple_variations_hide_completely_bc.tooltip
+
         oro_product.limit_filters_sorters_on_product_listing:
             data_type: boolean
             type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
@@ -761,6 +769,7 @@ system_configuration:
                                     configurable_products_variations:
                                         children:
                                             - oro_product.display_simple_variations
+                                            - oro_product.display_simple_variations_hide_completely_bc
                             product_collections:
                                 priority: 0
                                 children:

@@ -201,6 +201,10 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                     'value' => true,
                     'scope' => 'app',
                 ],
+                Configuration::DISPLAY_SIMPLE_VARIATIONS_HIDE_COMPLETELY_BC => [
+                    'value' => false,
+                    'scope' => 'app',
+                ],
                 Configuration::DISPLAY_SIMPLE_VARIATIONS => [
                     'value' => Configuration::DISPLAY_SIMPLE_VARIATIONS_HIDE_COMPLETELY,
                     'scope' => 'app',
