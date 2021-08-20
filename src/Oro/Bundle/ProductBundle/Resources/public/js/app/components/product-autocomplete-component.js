@@ -160,6 +160,10 @@ define(function(require) {
                     this.$el.trigger({type: 'productNotFound.autocomplete', item: {sku: val}});
                 }
                 this.updateProduct();
+            } else if (this.hasChanged(val)) {
+                // Clear state when value changed and empty
+                this.previousValue = val;
+                this.resetProduct();
             }
         },
 
