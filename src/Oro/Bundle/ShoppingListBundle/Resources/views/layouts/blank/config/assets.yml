@@ -41,3 +41,7 @@ styles:
         - 'bundles/oroshoppinglist/blank/scss/components/shopping-list-move-action.scss'
 
         - 'bundles/oroshoppinglist/blank/scss/styles.scss'
+
+print_styles:
+    inputs:
+        - 'bundles/oroshoppinglist/blank/scss/components/shopping-list-widget-print.scss'
