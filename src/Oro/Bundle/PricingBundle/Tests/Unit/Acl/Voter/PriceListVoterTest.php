@@ -6,84 +6,70 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Acl\Voter\PriceListVoter;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Model\PriceListReferenceChecker;
+use Oro\Component\Testing\Unit\TestContainerBuilder;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
 class PriceListVoterTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var PriceListVoter
-     */
-    protected $voter;
+    /** @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper */
+    private $doctrineHelper;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper
-     */
-    protected $doctrineHelper;
+    /** @var PriceListReferenceChecker|\PHPUnit\Framework\MockObject\MockObject */
+    private $priceListReferenceChecker;
 
-    /**
-     * @var PriceListReferenceChecker|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $priceListReferenceChecker;
+    /** @var PriceListVoter */
+    private $voter;
 
     protected function setUp(): void
     {
-        $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->priceListReferenceChecker = $this->getMockBuilder(PriceListReferenceChecker::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->voter = new PriceListVoter($this->doctrineHelper, $this->priceListReferenceChecker);
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->priceListReferenceChecker = $this->createMock(PriceListReferenceChecker::class);
+
+        $container = TestContainerBuilder::create()
+            ->add('oro_pricing.price_list_reference_checker', $this->priceListReferenceChecker)
+            ->getContainer($this);
+
+        $this->voter = new PriceListVoter($this->doctrineHelper, $container);
     }
 
-    protected function tearDown(): void
+    private function getPriceList(bool $isDefault): PriceList
     {
-        unset($this->voter, $this->doctrineHelper);
+        $priceList = new PriceList();
+        $priceList->setDefault($isDefault);
+
+        return $priceList;
     }
 
     /**
-     * @param object $object
-     * @param int $expected
-     *
      * @dataProvider attributesDataProvider
      */
-    public function testVote($object, $expected)
+    public function testVote(object $object, bool $isReferential, int $expected)
     {
         $this->voter->setClassName(get_class($object));
 
-        $this->doctrineHelper->expects($this->any())
+        $this->doctrineHelper->expects($this->once())
             ->method('getSingleEntityIdentifier')
             ->with($object, false)
-            ->will($this->returnValue(1));
+            ->willReturn(1);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|TokenInterface $token */
-        $token = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $this->priceListReferenceChecker->expects($this->once())
+            ->method('isReferential')
+            ->willReturn($isReferential);
+
+        $token = $this->createMock(TokenInterface::class);
         $this->assertEquals(
             $expected,
             $this->voter->vote($token, $object, ['DELETE'])
         );
     }
 
-    /**
-     * @return array
-     */
-    public function attributesDataProvider()
+    public function attributesDataProvider(): array
     {
         return [
-            [$this->getPriceList(false), 0],
-            [$this->getPriceList(true), -1]
+            [$this->getPriceList(false), false, VoterInterface::ACCESS_ABSTAIN],
+            [$this->getPriceList(true), false, VoterInterface::ACCESS_DENIED],
+            [$this->getPriceList(false), true, VoterInterface::ACCESS_DENIED]
         ];
-    }
-
-    /**
-     * @param bool $isDefault
-     * @return PriceList
-     */
-    protected function getPriceList($isDefault)
-    {
-        $priceList = new PriceList();
-        $priceList->setDefault($isDefault);
-
-        return $priceList;
     }
 }

@@ -5,16 +5,14 @@ namespace Oro\Bundle\SaleBundle\Acl\Voter;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
 /**
- * Checks if given Quote contains frontend internal status.
- * Triggered only for Commerce Application
+ * On the storefront, denies access to not available on the storefront quotes.
  */
-class FrontendQuotePermissionVoter extends Voter
+class FrontendQuotePermissionVoter implements VoterInterface
 {
-    /** @var FrontendHelper */
-    private $frontendHelper;
+    private FrontendHelper $frontendHelper;
 
     public function __construct(FrontendHelper $frontendHelper)
     {
@@ -22,19 +20,16 @@ class FrontendQuotePermissionVoter extends Voter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function supports($attribute, $subject)
+    public function vote(TokenInterface $token, $subject, array $attributes)
     {
-        return $subject instanceof Quote && $this->frontendHelper->isFrontendRequest();
-    }
+        if (!$subject instanceof Quote || !$this->frontendHelper->isFrontendRequest()) {
+            return self::ACCESS_ABSTAIN;
+        }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
-    {
-        /** @var $subject Quote */
-        return $subject->isAvailableOnFrontend();
+        return $subject->isAvailableOnFrontend()
+            ? self::ACCESS_GRANTED
+            : self::ACCESS_DENIED;
     }
 }

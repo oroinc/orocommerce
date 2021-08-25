@@ -11,7 +11,7 @@ services:
         class: Oro\Bundle\PromotionBundle\Acl\Voter\PromotionMatchedProductSegmentVoter
         public: false
         arguments:
-            - "@oro_entity.doctrine_helper"
+            - '@oro_entity.doctrine_helper'
         calls:
             - [setClassName, ['Oro\Bundle\SegmentBundle\Entity\Segment']]
         tags:

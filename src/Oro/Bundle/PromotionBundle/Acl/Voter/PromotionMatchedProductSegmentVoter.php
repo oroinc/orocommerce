@@ -13,18 +13,13 @@ use Oro\Bundle\SegmentBundle\Entity\Segment;
  */
 class PromotionMatchedProductSegmentVoter extends AbstractEntityVoter
 {
-    /**
-     * @var array
-     */
+    /** {@inheritDoc} */
     protected $supportedAttributes = [BasicPermission::EDIT, BasicPermission::DELETE];
 
-    /**
-     * @var array
-     */
-    private $segmentsStateToPromotions = [];
+    private array $segmentsStateToPromotions = [];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function getPermissionForAttribute($class, $identifier, $attribute)
     {
@@ -35,13 +30,9 @@ class PromotionMatchedProductSegmentVoter extends AbstractEntityVoter
         return self::ACCESS_ABSTAIN;
     }
 
-    /**
-     * @param int $segmentId
-     * @return bool
-     */
-    protected function isSegmentAttachedToPromotion($segmentId)
+    private function isSegmentAttachedToPromotion(int $segmentId): bool
     {
-        if (!array_key_exists($segmentId, $this->segmentsStateToPromotions)) {
+        if (!\array_key_exists($segmentId, $this->segmentsStateToPromotions)) {
             /** @var Segment $segment */
             $segment = $this->doctrineHelper->getEntityReference($this->className, $segmentId);
 

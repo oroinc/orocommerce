@@ -13,24 +13,24 @@ use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
  */
 class ConsentVoter extends AbstractEntityVoter
 {
-    /** @var array */
+    /** {@inheritDoc} */
     protected $supportedAttributes = [BasicPermission::EDIT, BasicPermission::DELETE];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function getPermissionForAttribute($class, $identifier, $attribute)
     {
-        /** @var ConsentAcceptanceRepository $repository */
-        $repository = $this->doctrineHelper->getEntityRepository(ConsentAcceptance::class);
-
         /** @var Consent $consent */
         $consent = $this->doctrineHelper->getEntityReference($this->className, $identifier);
 
-        if ($repository->hasConsentAcceptancesByConsent($consent)) {
-            return self::ACCESS_DENIED;
-        }
+        return $this->getConsentAcceptanceRepository()->hasConsentAcceptancesByConsent($consent)
+            ? self::ACCESS_DENIED
+            : self::ACCESS_ABSTAIN;
+    }
 
-        return self::ACCESS_ABSTAIN;
+    private function getConsentAcceptanceRepository(): ConsentAcceptanceRepository
+    {
+        return $this->doctrineHelper->getEntityRepository(ConsentAcceptance::class);
     }
 }

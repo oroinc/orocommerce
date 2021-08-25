@@ -1154,21 +1154,22 @@ services:
         class: Oro\Bundle\ProductBundle\Acl\Voter\ProductCollectionSegmentVoter
         public: false
         arguments:
-            - "@oro_entity.doctrine_helper"
-            - "@oro_product.provider.content_variant_segment_provider"
+            - '@oro_entity.doctrine_helper'
+            - '@Psr\Container\ContainerInterface'
         calls:
             - [setClassName, ['Oro\Bundle\SegmentBundle\Entity\Segment']]
         tags:
             - { name: security.voter, priority: 500 }
+            - { name: container.service_subscriber, id: oro_product.provider.content_variant_segment_provider }
 
     oro_product.security.acl.voter.product_status:
         class: Oro\Bundle\ProductBundle\Acl\Voter\ProductStatusVoter
         public: false
         arguments:
-            - "@oro_entity.doctrine_helper"
+            - '@oro_entity.doctrine_helper'
+            - '@oro_frontend.request.frontend_helper'
         calls:
             - [setClassName, ['Oro\Bundle\ProductBundle\Entity\Product']]
-            - [setFrontendHelper, ["@oro_frontend.request.frontend_helper"]]
         tags:
             - { name: security.voter, priority: 100 }
 
