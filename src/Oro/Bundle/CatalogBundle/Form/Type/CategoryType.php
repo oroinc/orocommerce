@@ -113,7 +113,8 @@ class CategoryType extends AbstractType
                     'field' => ['wysiwyg', 'wysiwyg_style', 'wysiwyg_properties'],
                     'entry_type' => WYSIWYGValueType::class,
                     'entry_options' => [
-                        'entity_class' => CategoryLongDescription::class
+                        'entity_class' => CategoryLongDescription::class,
+                        'error_mapping' => ['wysiwygStyle' => 'wysiwyg_style'],
                     ],
                     'use_tabs' => true,
                 ]
