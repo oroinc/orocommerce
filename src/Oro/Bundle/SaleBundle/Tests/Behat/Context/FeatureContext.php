@@ -4,7 +4,6 @@ namespace Oro\Bundle\SaleBundle\Tests\Behat\Context;
 
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
-use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid;
@@ -18,8 +17,6 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Fixtures\FixtureLoaderAwareInterface;
 use Oro\Bundle\TestFrameworkBundle\Behat\Fixtures\FixtureLoaderDictionary;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
-use Oro\Bundle\WebsiteBundle\Resolver\WebsiteUrlResolver;
-use Symfony\Component\Routing\RouterInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -44,22 +41,6 @@ class FeatureContext extends OroFeatureContext implements
      * @var \Oro\Bundle\WorkflowBundle\Tests\Behat\Context\FeatureContext
      */
     private $workflowContext;
-
-    private RouterInterface $router;
-
-    private ManagerRegistry $managerRegistry;
-
-    private WebsiteUrlResolver $websiteUrlResolver;
-
-    public function __construct(
-        RouterInterface $router,
-        ManagerRegistry $managerRegistry,
-        WebsiteUrlResolver $websiteUrlResolver
-    ) {
-        $this->router = $router;
-        $this->managerRegistry = $managerRegistry;
-        $this->websiteUrlResolver = $websiteUrlResolver;
-    }
 
     /**
      * @BeforeScenario
@@ -125,7 +106,9 @@ class FeatureContext extends OroFeatureContext implements
      */
     public function openQuote($qid)
     {
-        $url = $this->router->generate('oro_sale_quote_view', ['id' => $qid]);
+        $url = $this->getAppContainer()
+            ->get('router')
+            ->generate('oro_sale_quote_view', ['id' => $qid]);
 
         $this->visitPath($url);
         $this->waitForAjax();
@@ -222,7 +205,8 @@ class FeatureContext extends OroFeatureContext implements
      */
     public function markQuoteAsAcceptedByCustomer(int $quoteId)
     {
-        $manager = $this->managerRegistry->getManagerForClass(Quote::class);
+        $managerRegistry = $this->getAppContainer()->get('doctrine');
+        $manager = $managerRegistry->getManagerForClass(Quote::class);
 
         $className = ExtendHelper::buildEnumValueClassName(Quote::CUSTOMER_STATUS_CODE);
         $enumValue = $manager->getReference($className, 'accepted');
@@ -250,7 +234,8 @@ class FeatureContext extends OroFeatureContext implements
      */
     protected function getRepository($className)
     {
-        return $this->managerRegistry
+        return $this->getAppContainer()
+            ->get('doctrine')
             ->getManagerForClass($className)
             ->getRepository($className);
     }
@@ -271,7 +256,8 @@ class FeatureContext extends OroFeatureContext implements
     {
         $quote = $this->getQuote($qid);
 
-        return $this->websiteUrlResolver
+        return $this->getAppContainer()
+            ->get('oro_website.resolver.website_url_resolver')
             ->getWebsitePath(
                 'oro_sale_quote_frontend_view_guest',
                 ['guest_access_id' => $quote->getGuestAccessId()],

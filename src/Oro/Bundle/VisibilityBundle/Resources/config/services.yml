@@ -12,16 +12,16 @@ services:
             - { name: doctrine.event_listener, event: onFlush }
 
     oro_visibility.acl.voter.customer:
-        class: 'Oro\Bundle\VisibilityBundle\Acl\Voter\ProductVisibilityVoter'
-        public: false
+        class: Oro\Bundle\VisibilityBundle\Acl\Voter\ProductVisibilityVoter
         arguments:
-            - "@oro_entity.doctrine_helper"
+            - '@oro_entity.doctrine_helper'
+            - '@oro_frontend.request.frontend_helper'
+            - '@Psr\Container\ContainerInterface'
         calls:
             - [setClassName, ['Oro\Bundle\ProductBundle\Entity\Product']]
-            - [setFrontendHelper, ["@oro_frontend.request.frontend_helper"]]
-            - [setResolvedProductVisibilityProvider, ['@oro_visibility.provider.resolved_product_visibility_provider']]
         tags:
             - { name: security.voter }
+            - { name: container.service_subscriber, id: oro_visibility.provider.resolved_product_visibility_provider }
 
     oro_visibility.event_listener.visibility_grid_listener:
         class: 'Oro\Bundle\VisibilityBundle\EventListener\VisibilityGridListener'

@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Acl\Voter;
 
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
 use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -14,22 +14,23 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
  */
 class ProductStatusVoter extends AbstractEntityVoter
 {
-    /**
-     * @var array
-     */
+    /** {@inheritDoc} */
     protected $supportedAttributes = [BasicPermission::VIEW];
 
-    /**
-     * @var FrontendHelper
-     */
-    protected $frontendHelper;
+    private FrontendHelper $frontendHelper;
+
+    public function __construct(DoctrineHelper $doctrineHelper, FrontendHelper $frontendHelper)
+    {
+        parent::__construct($doctrineHelper);
+        $this->frontendHelper = $frontendHelper;
+    }
 
     /**
      * {@inheritDoc}
      */
     public function vote(TokenInterface $token, $object, array $attributes)
     {
-        if ($this->frontendHelper && $this->frontendHelper->isFrontendRequest()) {
+        if ($this->frontendHelper->isFrontendRequest()) {
             return parent::vote($token, $object, $attributes);
         }
 
@@ -41,21 +42,14 @@ class ProductStatusVoter extends AbstractEntityVoter
      */
     protected function getPermissionForAttribute($class, $identifier, $attribute)
     {
-        /** @var $repository ProductRepository */
-        $repository = $this->doctrineHelper->getEntityRepository($class);
-
-        /** @var Product $product */
-        $product = $repository->find($identifier);
-
-        if (!$product) {
+        /** @var Product|null $product */
+        $product = $this->doctrineHelper->getEntityRepository($class)->find($identifier);
+        if (null === $product) {
             return self::ACCESS_ABSTAIN;
         }
 
-        return $product->getStatus() === Product::STATUS_ENABLED ? self::ACCESS_GRANTED : self::ACCESS_DENIED;
-    }
-
-    public function setFrontendHelper(FrontendHelper $frontendHelper)
-    {
-        $this->frontendHelper = $frontendHelper;
+        return $product->getStatus() === Product::STATUS_ENABLED
+            ? self::ACCESS_GRANTED
+            : self::ACCESS_DENIED;
     }
 }

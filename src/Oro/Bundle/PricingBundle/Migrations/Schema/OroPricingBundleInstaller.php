@@ -33,7 +33,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
      */
     public function getMigrationVersion()
     {
-        return 'v1_19';
+        return 'v1_20';
     }
 
     /**
@@ -436,7 +436,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
     protected function createOroriceListToProductTable(Schema $schema)
     {
         $table = $schema->createTable('oro_price_list_to_product');
-        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('id', 'guid', ['notnull' => false]);
         $table->addColumn('product_id', 'integer', []);
         $table->addColumn('price_list_id', 'integer', []);
         $table->addColumn('is_manual', 'boolean', []);

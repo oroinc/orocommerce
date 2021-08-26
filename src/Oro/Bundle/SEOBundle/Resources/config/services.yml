@@ -386,6 +386,14 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_seo.event.restrict_sitemap_entity.product, method: restrictQueryBuilder }
 
+    oro_seo.event_listener.restrict_sitemap_simple_product:
+        class: Oro\Bundle\SEOBundle\EventListener\RestrictSitemapSimpleProductListener
+        arguments:
+            - '@oro_product.model.restrict_display_product_variants_query_builder_modifier'
+        tags:
+            - { name: oro_featuretogle.feature, feature: 'simple_variations_view_restriction' }
+            - { name: kernel.event_listener, event: oro_seo.event.restrict_sitemap_entity.product, method: restrictQueryBuilder }
+
     oro_seo.event_listener.restrict_sitemap_product_by_inventory_status:
         class: Oro\Bundle\SEOBundle\EventListener\RestrictSitemapProductByInventoryStatusListener
         arguments:

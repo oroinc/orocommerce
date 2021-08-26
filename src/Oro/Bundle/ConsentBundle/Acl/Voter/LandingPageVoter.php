@@ -13,25 +13,24 @@ use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
  */
 class LandingPageVoter extends AbstractEntityVoter
 {
-    /**
-     * @var array
-     */
+    /** {@inheritDoc} */
     protected $supportedAttributes = [BasicPermission::EDIT, BasicPermission::DELETE];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function getPermissionForAttribute($class, $identifier, $attribute)
     {
-        /** @var ConsentAcceptanceRepository $consentAcceptanceRepository */
-        $consentAcceptanceRepository = $this->doctrineHelper->getEntityRepository(ConsentAcceptance::class);
         /** @var Page $page */
         $page = $this->doctrineHelper->getEntityReference($this->className, $identifier);
 
-        if ($consentAcceptanceRepository->hasLandingPageAcceptedConsents($page)) {
-            return self::ACCESS_DENIED;
-        }
+        return $this->getConsentAcceptanceRepository()->hasLandingPageAcceptedConsents($page)
+            ? self::ACCESS_DENIED
+            : self::ACCESS_ABSTAIN;
+    }
 
-        return self::ACCESS_ABSTAIN;
+    private function getConsentAcceptanceRepository(): ConsentAcceptanceRepository
+    {
+        return $this->doctrineHelper->getEntityRepository(ConsentAcceptance::class);
     }
 }

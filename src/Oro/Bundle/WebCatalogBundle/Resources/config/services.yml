@@ -24,14 +24,14 @@ services:
 
     oro_web_catalog.acl.voter.web_catalog:
         class: Oro\Bundle\WebCatalogBundle\Acl\Voter\WebCatalogVoter
-        public: false
         arguments:
             - '@oro_entity.doctrine_helper'
-            - '@oro_web_catalog.provider.web_catalog_usage_provider'
+            - '@Psr\Container\ContainerInterface'
         calls:
             - [setClassName, ['Oro\Bundle\WebCatalogBundle\Entity\WebCatalog']]
         tags:
             - { name: security.voter, priority: 10 }
+            - { name: container.service_subscriber, id: oro_web_catalog.provider.web_catalog_usage_provider }
 
     oro_web_catalog.content_variant_type.registry:
         class: 'Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry'

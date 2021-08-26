@@ -58,11 +58,3 @@ services:
             - '%kernel.cache_dir%/oro_data'
         calls:
             - [ setNamespace, [ 'oro_paypal_express' ] ]
-
-    Oro\Bundle\PayPalBundle\Tests\Behat\Context\FeatureContext:
-        public: true
-        arguments:
-            - '@oro_paypal.test.express_payment.cache'
-            - '@oro_entity.doctrine_helper'
-            - '%oro_paypal.method.paypal_payments_pro%'
-            - '%oro_paypal.method.paypal_payflow_gateway%'

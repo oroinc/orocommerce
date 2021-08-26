@@ -1,5 +1,0 @@
-services:
-    Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext:
-        public: true
-        arguments:
-            - '@router'

@@ -425,13 +425,13 @@ services:
     oro_shopping_list.voter.shopping_list_voter:
         class: Oro\Bundle\ShoppingListBundle\Voter\ShoppingListVoter
         arguments:
-            - "@oro_entity.doctrine_helper"
-        public: false
+            - '@oro_entity.doctrine_helper'
+            - '@Psr\Container\ContainerInterface'
         calls:
-            - [setWebsiteManager, ['@oro_website.manager']]
             - [setClassName, ['Oro\Bundle\ShoppingListBundle\Entity\ShoppingList']]
         tags:
             - { name: security.voter }
+            - { name: container.service_subscriber, id: oro_website.manager }
 
     oro_shopping_list.manager.shopping_list_limit:
         class: 'Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager'

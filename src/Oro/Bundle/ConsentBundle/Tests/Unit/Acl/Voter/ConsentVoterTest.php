@@ -8,31 +8,28 @@ use Oro\Bundle\ConsentBundle\Entity\Consent;
 use Oro\Bundle\ConsentBundle\Entity\ConsentAcceptance;
 use Oro\Bundle\ConsentBundle\Entity\Repository\ConsentAcceptanceRepository;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
 class ConsentVoterTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrineHelper;
+
+    /** @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject */
+    private $repository;
 
     /** @var ConsentVoter */
-    protected $voter;
+    private $voter;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper */
-    protected $doctrineHelper;
-
-    /** @var \PHPUnit\Framework\MockObject\MockObject|EntityRepository */
-    protected $repository;
-
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->repository = $this->createMock(ConsentAcceptanceRepository::class);
 
         $this->voter = new ConsentVoter($this->doctrineHelper);
+        $this->voter->setClassName(Consent::class);
     }
 
     /**
@@ -40,9 +37,8 @@ class ConsentVoterTest extends \PHPUnit\Framework\TestCase
      */
     public function testVoteForNotExistingConsent(string $attribute, int $expected)
     {
-        $this->voter->setClassName(Consent::class);
-
-        $consent = $this->getEntity(Consent::class, ['id' => 32]);
+        $consent = new Consent();
+        ReflectionUtil::setId($consent, 32);
 
         $this->doctrineHelper->expects($this->once())
             ->method('getSingleEntityIdentifier')
@@ -64,7 +60,6 @@ class ConsentVoterTest extends \PHPUnit\Framework\TestCase
             ->with($consent)
             ->willReturn(false);
 
-        /** @var TokenInterface $token */
         $token = $this->createMock(TokenInterface::class);
         $this->assertEquals(
             $expected,
@@ -72,28 +67,19 @@ class ConsentVoterTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @return array
-     */
-    public function voteForNotExistingConsentDataProvider()
+    public function voteForNotExistingConsentDataProvider(): array
     {
         return [
-            'EDIT' => ['EDIT', ConsentVoter::ACCESS_ABSTAIN],
-            'DELETE' => ['DELETE', ConsentVoter::ACCESS_ABSTAIN]
+            'EDIT' => ['EDIT', VoterInterface::ACCESS_ABSTAIN],
+            'DELETE' => ['DELETE', VoterInterface::ACCESS_ABSTAIN]
         ];
     }
 
     /**
-     * @param string $attribute
-     * @param Consent $consent
-     * @param bool $hasConsentAcceptances
-     * @param int $expected
      * @dataProvider attributesDataProvider
      */
-    public function testVote($attribute, $consent, $hasConsentAcceptances, $expected)
+    public function testVote(string $attribute, Consent $consent, bool $hasConsentAcceptances, int $expected)
     {
-        $this->voter->setClassName(Consent::class);
-
         $this->doctrineHelper->expects($this->once())
             ->method('getSingleEntityIdentifier')
             ->with($consent, false)
@@ -114,7 +100,6 @@ class ConsentVoterTest extends \PHPUnit\Framework\TestCase
             ->with($consent)
             ->willReturn($hasConsentAcceptances);
 
-        /** @var TokenInterface $token */
         $token = $this->createMock(TokenInterface::class);
         $this->assertEquals(
             $expected,
@@ -122,38 +107,35 @@ class ConsentVoterTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @return array
-     */
-    public function attributesDataProvider()
+    public function attributesDataProvider(): array
     {
-        /** @var Consent $consent */
-        $consent = $this->getEntity(Consent::class, ['id' => 32]);
+        $consent = new Consent();
+        ReflectionUtil::setId($consent, 32);
 
         return [
             'edit without accepted consents' => [
                 'attribute' => 'EDIT',
                 'consent' => $consent,
                 'hasConsentAcceptances' => false,
-                'expected' => ConsentVoter::ACCESS_ABSTAIN,
+                'expected' => VoterInterface::ACCESS_ABSTAIN,
             ],
             'edit with accepted consents' => [
                 'attribute' => 'EDIT',
                 'consent' => $consent,
                 'hasConsentAcceptances' => true,
-                'expected' => ConsentVoter::ACCESS_DENIED,
+                'expected' => VoterInterface::ACCESS_DENIED,
             ],
             'delete without accepted consents' => [
                 'attribute' => 'DELETE',
                 'consent' => $consent,
                 'hasConsentAcceptances' => false,
-                'expected' => ConsentVoter::ACCESS_ABSTAIN,
+                'expected' => VoterInterface::ACCESS_ABSTAIN,
             ],
             'delete with accepted consents' => [
                 'attribute' => 'DELETE',
                 'consent' => $consent,
                 'hasConsentAcceptances' => true,
-                'expected' => ConsentVoter::ACCESS_DENIED,
+                'expected' => VoterInterface::ACCESS_DENIED,
             ]
         ];
     }

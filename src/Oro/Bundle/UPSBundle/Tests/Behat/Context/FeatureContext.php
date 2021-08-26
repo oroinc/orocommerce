@@ -3,28 +3,17 @@
 namespace Oro\Bundle\UPSBundle\Tests\Behat\Context;
 
 use Behat\Gherkin\Node\TableNode;
-use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Symfony\Component\Yaml\Dumper;
 
 class FeatureContext extends OroFeatureContext
 {
-    const BEHAT_YAML_DIR_NAME = 'behat';
-    const BEHAT_YAML_FILE_NAME = 'ups_shipping_costs_data.yml';
-    const HEADER_METHOD = 'Method';
-    const HEADER_CURRENCY = 'Currency';
-    const HEADER_COST = 'Cost';
-
-    private ManagerRegistry $managerRegistry;
-
-    private string $cacheDir;
-
-    public function __construct(ManagerRegistry $managerRegistry, string $cacheDir)
-    {
-        $this->managerRegistry = $managerRegistry;
-        $this->cacheDir = $cacheDir;
-    }
+    private const BEHAT_YAML_DIR_NAME = 'behat';
+    private const BEHAT_YAML_FILE_NAME = 'ups_shipping_costs_data.yml';
+    private const HEADER_METHOD = 'Method';
+    private const HEADER_CURRENCY = 'Currency';
+    private const HEADER_COST = 'Cost';
 
     /**
      * Configures UPS with expected costs.
@@ -89,7 +78,7 @@ class FeatureContext extends OroFeatureContext
 
     private function getMethodCodeByDescription(string $description): string
     {
-        $entityManager = $this->managerRegistry->getManagerForClass(ShippingService::class);
+        $entityManager = $this->getAppContainer()->get('doctrine')->getManagerForClass(ShippingService::class);
         $repository = $entityManager->getRepository(ShippingService::class);
 
         /** @var ShippingService $shippingService */
@@ -104,7 +93,8 @@ class FeatureContext extends OroFeatureContext
 
     private function writeFile(string $content)
     {
-        $yamlFile = fopen(self::getBehatYamlFilename($this->cacheDir), 'wt');
+        $cacheDir = $this->getAppContainer()->getParameter('kernel.cache_dir');
+        $yamlFile = fopen(self::getBehatYamlFilename($cacheDir), 'wt');
         fwrite($yamlFile, $content);
         fclose($yamlFile);
     }

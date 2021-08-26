@@ -5,7 +5,6 @@ namespace Oro\Bundle\CatalogBundle\Tests\Behat\Context;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Element\NodeElement;
 use Doctrine\ORM\QueryBuilder;
-use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -17,13 +16,6 @@ use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 {
     use PageObjectDictionary;
-
-    private ManagerRegistry $managerRegistry;
-
-    public function __construct(ManagerRegistry $managerRegistry)
-    {
-        $this->managerRegistry = $managerRegistry;
-    }
 
     /**
      * Checks, that category elements displayed on the page in the same order
@@ -104,10 +96,11 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
      */
     public function treeLevelOfCategoryIs(string $title, int $level): void
     {
-        $manager = $this->managerRegistry->getManagerForClass(Category::class);
+        $doctrine = $this->getAppContainer()->get('doctrine');
+        $manager = $doctrine->getManagerForClass(Category::class);
 
         /** @var Organization $organization */
-        $organization = $this->managerRegistry
+        $organization = $doctrine
             ->getManagerForClass(Organization::class)
             ->getRepository(Organization::class)
             ->getFirst();
@@ -157,7 +150,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     private function assertCanonicalUrlForCategory(string $categoryName, int $includingSubcategories)
     {
         /** @var ObjectManager $manager */
-        $manager = $this->managerRegistry->getManagerForClass(Category::class);
+        $manager = $this->getAppContainer()->get('doctrine')->getManagerForClass(Category::class);
         /** @var Category $category */
         $category = $manager->getRepository(Category::class)->findOneBy(['denormalizedDefaultTitle' => $categoryName]);
 

@@ -41,3 +41,7 @@ features:
         configuration:
             - 'oro_product.product_prices_export_enabled'
             - 'oro_product.product_price_tiers_export_enabled'
+
+    simple_variations_view_restriction:
+        label: oro.product.feature.simple_variations_view_restriction.label
+        description: oro.product.feature.simple_variations_view_restriction.description

@@ -4,7 +4,6 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Behat\Context;
 
 use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Element\NodeElement;
-use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\RFPBundle\Tests\Behat\Element\RequestForQuote;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\ConfigurableProductTableRowAwareInterface;
@@ -16,7 +15,6 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Table;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\TableRow;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
-use Symfony\Component\Routing\RouterInterface;
 
 /**
  * The context for testing Shopping List related features.
@@ -26,16 +24,6 @@ use Symfony\Component\Routing\RouterInterface;
 class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 {
     use PageObjectDictionary;
-
-    private RouterInterface $router;
-
-    private ManagerRegistry $managerRegistry;
-
-    public function __construct(RouterInterface $router, ManagerRegistry $managerRegistry)
-    {
-        $this->router = $router;
-        $this->managerRegistry = $managerRegistry;
-    }
 
     /**
      * @When /^Buyer is on "(?P<shoppingListLabel>[\w\s]+)" shopping list$/
@@ -257,7 +245,8 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
      */
     protected function getShoppingListByLabel($label)
     {
-        return $this->managerRegistry
+        return $this->getAppContainer()
+            ->get('doctrine')
             ->getManagerForClass(ShoppingList::class)
             ->getRepository(ShoppingList::class)
             ->findOneBy(['label' => $label]);
@@ -269,7 +258,9 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
      */
     protected function getShoppingListViewUrl(ShoppingList $shoppingList)
     {
-        return $this->router->generate('oro_shopping_list_frontend_view', ['id' => $shoppingList->getId()]);
+        return $this->getAppContainer()
+            ->get('router')
+            ->generate('oro_shopping_list_frontend_view', ['id' => $shoppingList->getId()]);
     }
 
     /**

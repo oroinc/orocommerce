@@ -6,54 +6,44 @@ use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
 use Oro\Bundle\SEOBundle\Model\DTO\UrlItem;
 use Oro\Bundle\SEOBundle\Sitemap\Provider\RouterSitemapUrlsProvider;
 use Oro\Component\Website\WebsiteInterface;
-use Symfony\Component\Routing\Router;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class SitemapLoginUrlsProviderTest extends \PHPUnit\Framework\TestCase
+class RouterSitemapUrlsProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var Router|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $router;
-
-    /**
-     * @var CanonicalUrlGenerator|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $canonicalUrlGenerator;
-
-    /**
-     * @var array
-     */
-    protected $routes = [
-        "oro_customer_customer_user_security_login",
-        "oro_customer_frontend_customer_user_reset_request",
-        "oro_customer_frontend_customer_user_register"
+    private const ROUTES = [
+        'oro_customer_customer_user_security_login',
+        'oro_customer_frontend_customer_user_reset_request',
+        'oro_customer_frontend_customer_user_register'
     ];
 
-    /**
-     * @var RouterSitemapUrlsProvider
-     */
+    /** @var UrlGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $urlGenerator;
+
+    /** @var CanonicalUrlGenerator|\PHPUnit\Framework\MockObject\MockObject */
+    private $canonicalUrlGenerator;
+
+    /** @var RouterSitemapUrlsProvider */
     private $sitemapLoginUrlsProvider;
 
     protected function setUp(): void
     {
-        $this->router = $this->createMock(Router::class);
+        $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
         $this->canonicalUrlGenerator = $this->createMock(CanonicalUrlGenerator::class);
 
         $this->sitemapLoginUrlsProvider = new RouterSitemapUrlsProvider(
-            $this->router,
+            $this->urlGenerator,
             $this->canonicalUrlGenerator,
-            $this->routes
+            self::ROUTES
         );
     }
 
     public function testGetUrlItems()
     {
-        /** @var WebsiteInterface|\PHPUnit\Framework\MockObject\MockObject $website */
         $website = $this->createMock(WebsiteInterface::class);
         $version = '1';
         $url = '/sitemaps/1/actual/test.xml';
         $absoluteUrl = 'http://test.com/sitemaps/1/actual/test.xml';
-        $this->router->expects(static::any())
+        $this->urlGenerator->expects(static::any())
             ->method('generate')
             ->willReturn($url);
         $this->canonicalUrlGenerator->expects(static::any())

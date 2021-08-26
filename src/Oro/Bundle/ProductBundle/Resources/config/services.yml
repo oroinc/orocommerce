@@ -126,7 +126,7 @@ services:
         calls:
             - [setActionGroupRegistry, ['@oro_action.action_group_registry']]
             - [setTranslator, ['@translator']]
-            - [setRouter, ['@router']]
+            - [setUrlGenerator, ['@router']]
             - [setRelatedItemsHandler, ['@oro_product.service.related_items_handler']]
 
     Oro\Bundle\ProductBundle\Form\Handler\ProductUpdateHandler:
@@ -1154,21 +1154,22 @@ services:
         class: Oro\Bundle\ProductBundle\Acl\Voter\ProductCollectionSegmentVoter
         public: false
         arguments:
-            - "@oro_entity.doctrine_helper"
-            - "@oro_product.provider.content_variant_segment_provider"
+            - '@oro_entity.doctrine_helper'
+            - '@Psr\Container\ContainerInterface'
         calls:
             - [setClassName, ['Oro\Bundle\SegmentBundle\Entity\Segment']]
         tags:
             - { name: security.voter, priority: 500 }
+            - { name: container.service_subscriber, id: oro_product.provider.content_variant_segment_provider }
 
     oro_product.security.acl.voter.product_status:
         class: Oro\Bundle\ProductBundle\Acl\Voter\ProductStatusVoter
         public: false
         arguments:
-            - "@oro_entity.doctrine_helper"
+            - '@oro_entity.doctrine_helper'
+            - '@oro_frontend.request.frontend_helper'
         calls:
             - [setClassName, ['Oro\Bundle\ProductBundle\Entity\Product']]
-            - [setFrontendHelper, ["@oro_frontend.request.frontend_helper"]]
         tags:
             - { name: security.voter, priority: 100 }
 
@@ -1178,6 +1179,20 @@ services:
         arguments:
             - "@oro_config.manager"
         tags:
+            - { name: kernel.event_listener, event: kernel.controller, method: onKernelController, priority: -100 }
+
+    oro_product.feature.voter.feature_simple_variations_view_restriction:
+        class: Oro\Bundle\ProductBundle\Feature\Voter\SimpleVariationsRestrictionFeatureVoter
+        arguments:
+            - '@oro_config.manager'
+        tags:
+            - { name: oro_featuretogle.voter }
+
+    oro_product.event_listener.restrict_variant_product_view:
+        class: Oro\Bundle\ProductBundle\EventListener\RestrictVariantProductViewListener
+        public: false
+        tags:
+            - { name: oro_featuretogle.feature, feature: 'simple_variations_view_restriction' }
             - { name: kernel.event_listener, event: kernel.controller, method: onKernelController, priority: -100 }
 
     oro_product.provider.content_variant_segment_provider:

@@ -7,18 +7,15 @@ use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\VisibilityBundle\Acl\Voter\ProductVisibilityVoter;
 use Oro\Bundle\VisibilityBundle\Provider\ResolvedProductVisibilityProvider;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
+use Oro\Component\Testing\Unit\TestContainerBuilder;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
 class ProductVisibilityVoterTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
     /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
-
-    /** @var ProductVisibilityVoter */
-    private $voter;
 
     /** @var FrontendHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $frontendHelper;
@@ -26,30 +23,37 @@ class ProductVisibilityVoterTest extends \PHPUnit\Framework\TestCase
     /** @var ResolvedProductVisibilityProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $resolvedProductVisibilityProvider;
 
+    /** @var ProductVisibilityVoter */
+    private $voter;
+
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
-        $this->voter = new ProductVisibilityVoter($this->doctrineHelper);
-        $this->voter->setClassName(Product::class);
-
         $this->frontendHelper = $this->createMock(FrontendHelper::class);
-        $this->voter->setFrontendHelper($this->frontendHelper);
-
         $this->resolvedProductVisibilityProvider = $this->createMock(ResolvedProductVisibilityProvider::class);
-        $this->voter->setResolvedProductVisibilityProvider($this->resolvedProductVisibilityProvider);
+
+        $container = TestContainerBuilder::create()
+            ->add(
+                'oro_visibility.provider.resolved_product_visibility_provider',
+                $this->resolvedProductVisibilityProvider
+            )
+            ->getContainer($this);
+
+        $this->voter = new ProductVisibilityVoter($this->doctrineHelper, $this->frontendHelper, $container);
+        $this->voter->setClassName(Product::class);
     }
 
     /**
      * @dataProvider unsupportedAttributesDataProvider
      */
-    public function testAbstainOnUnsupportedAttribute($attributes): void
+    public function testAbstainOnUnsupportedAttribute(array $attributes): void
     {
         $product = new Product();
 
         $token = $this->createMock(TokenInterface::class);
 
         $this->assertEquals(
-            ProductVisibilityVoter::ACCESS_ABSTAIN,
+            VoterInterface::ACCESS_ABSTAIN,
             $this->voter->vote($token, $product, $attributes)
         );
     }
@@ -76,7 +80,7 @@ class ProductVisibilityVoterTest extends \PHPUnit\Framework\TestCase
 
         $token = $this->createMock(TokenInterface::class);
         $product = $this->createMock(Product::class);
-        $this->assertEquals(ProductVisibilityVoter::ACCESS_ABSTAIN, $this->voter->vote($token, $product, ['VIEW']));
+        $this->assertEquals(VoterInterface::ACCESS_ABSTAIN, $this->voter->vote($token, $product, ['VIEW']));
     }
 
     /**
@@ -85,8 +89,8 @@ class ProductVisibilityVoterTest extends \PHPUnit\Framework\TestCase
     public function testVote(bool $isVisible, int $expected): void
     {
         $productId = 42;
-        /** @var Product $product */
-        $product = $this->getEntity(Product::class, ['id' => $productId]);
+        $product = new Product();
+        ReflectionUtil::setId($product, $productId);
 
         $this->frontendHelper->expects($this->once())
             ->method('isFrontendRequest')
@@ -112,11 +116,11 @@ class ProductVisibilityVoterTest extends \PHPUnit\Framework\TestCase
         return [
             'access granted' => [
                 'isVisible' => true,
-                'expected' => ProductVisibilityVoter::ACCESS_GRANTED,
+                'expected' => VoterInterface::ACCESS_GRANTED,
             ],
             'access denied' => [
                 'isVisible' => false,
-                'expected' => ProductVisibilityVoter::ACCESS_DENIED,
+                'expected' => VoterInterface::ACCESS_DENIED,
             ],
         ];
     }
