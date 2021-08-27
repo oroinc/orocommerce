@@ -5,6 +5,8 @@ namespace Oro\Bundle\PricingBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
+ * Stores relation between combining price list and source price list.
+ *
  * @ORM\Table(
  *      name="oro_cmb_pl_to_pl",
  *      indexes={
@@ -55,7 +57,7 @@ class CombinedPriceListToPriceList
      *
      * @ORM\Column(name="merge_allowed", type="boolean", nullable=false)
      */
-    protected $mergeAllowed;
+    protected $mergeAllowed = false;
 
     /**
      * @return int
@@ -93,12 +95,12 @@ class CombinedPriceListToPriceList
     }
 
     /**
-     * @param boolean $mergeAllowed
+     * @param bool $mergeAllowed
      * @return CombinedPriceListToPriceList
      */
     public function setMergeAllowed($mergeAllowed)
     {
-        $this->mergeAllowed = $mergeAllowed;
+        $this->mergeAllowed = (bool) $mergeAllowed;
 
         return $this;
     }
