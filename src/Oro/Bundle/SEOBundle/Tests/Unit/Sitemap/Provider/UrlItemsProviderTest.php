@@ -17,29 +17,16 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class UrlItemsProviderTest extends OrmTestCase
 {
-    /**
-     * @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $eventDispatcher;
 
-    /**
-     * @var CanonicalUrlGenerator|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var CanonicalUrlGenerator|\PHPUnit\Framework\MockObject\MockObject */
     private $canonicalUrlGenerator;
 
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $registry;
-
-    /**
-     * @var UrlItemsProvider
-     */
+    /** @var UrlItemsProvider */
     private $urlItemsProvider;
 
     protected function setUp(): void
@@ -47,13 +34,23 @@ class UrlItemsProviderTest extends OrmTestCase
         $this->canonicalUrlGenerator = $this->createMock(CanonicalUrlGenerator::class);
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
-        $this->registry = $this->createMock(ManagerRegistry::class);
+
+        $entityManager = $this->getTestEntityManager();
+        $entityManager->getConfiguration()->setMetadataDriverImpl(new AnnotationDriver(
+            new AnnotationReader(),
+            'Oro\Bundle\BatchBundle\Tests\Unit\ORM\Query\Stub'
+        ));
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects($this->any())
+            ->method('getManagerForClass')
+            ->with(Product::class)
+            ->willReturn($entityManager);
 
         $this->urlItemsProvider = new UrlItemsProvider(
             $this->canonicalUrlGenerator,
             $this->configManager,
             $this->eventDispatcher,
-            $this->registry
+            $doctrine
         );
         $this->urlItemsProvider->setEntityClass(Product::class);
         $this->urlItemsProvider->setType('test');
@@ -63,8 +60,6 @@ class UrlItemsProviderTest extends OrmTestCase
 
     public function testItDispatchEvent()
     {
-        $this->prepareEntityManager();
-
         /** @var WebsiteInterface $website */
         $website = $this->createMock(WebsiteInterface::class);
         $version = '1';
@@ -99,25 +94,5 @@ class UrlItemsProviderTest extends OrmTestCase
             );
 
         $this->urlItemsProvider->getUrlItems($website, $version)->current();
-    }
-
-    private function prepareEntityManager()
-    {
-        $reader = new AnnotationReader();
-        $metadataDriver = new AnnotationDriver(
-            $reader,
-            'Oro\Bundle\BatchBundle\Tests\Unit\ORM\Query\Stub'
-        );
-        $entityManager = $this->getTestEntityManager();
-        $entityManager->getConfiguration()->setMetadataDriverImpl($metadataDriver);
-        $entityManager->getConfiguration()->setEntityNamespaces(
-            array(
-                'Product' => Product::class
-            )
-        );
-        $this->registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->with(Product::class)
-            ->willReturn($entityManager);
     }
 }
