@@ -31,45 +31,47 @@ about:
         <h3>H3. How Do You Choose an RV?</h3>
         
         <p> There are different types of RVs for weekends, travelling, and living. We can <a href="#">help you</a> find your dream RV in minutes. You could also read some of our articles to educate yourself on different aspects of RV as well as email us call our office to ask all the questions you may have.</p>
-    
-        <div class="row">
-            <div class="col-md">
-                <p>
-                    <strong>Popular RV types</strong>
-                </p>
 
-                <ul>
-                    <li>Pop up</li>
-                    <li>Small camper</li>
-                    <li>Fifth wheel</li>
-                    <li>Class C</li>
-                </ul>
-            </div>
+        <div class="grid">
+            <div class="grid__row">
+                <div class="grid__column grid__column--4 grid__column--no-gutters-l">
+                    <p>
+                        <strong>Popular RV types</strong>
+                    </p>
 
-            <div class="col-md">
-                <p>
-                    <strong>Our recommended top gear</strong>
-                </p>
+                    <ul>
+                        <li>Pop up</li>
+                        <li>Small camper</li>
+                        <li>Fifth wheel</li>
+                        <li>Class C</li>
+                    </ul>
+                </div>
 
-                <ol>
-                    <li>Camp kitchen</li>
-                    <li>RV cover</li>
-                    <li>GPS accessories</li>
-                    <li>Power generator</li>
-                </ol>
-            </div>
+                <div class="grid__column grid__column--4">
+                    <p>
+                        <strong>Our recommended top gear</strong>
+                    </p>
 
-            <div class="col-md">
-                <p>
-                    <strong>Our popular membership programs</strong>
-                </p>
+                    <ol>
+                        <li>Camp kitchen</li>
+                        <li>RV cover</li>
+                        <li>GPS accessories</li>
+                        <li>Power generator</li>
+                    </ol>
+                </div>
 
-                <dl>
-                    <dt>Travel assistance</dt>
-                    <dd>Emergency medical evacuation and home transportation</dd>
-                    <dt>Roadside assistance</dt>
-                    <dd>Emergency fuel delivery, towing, flat tyre and low battery service</dd>
-                </dl>
+                <div class="grid__column grid__column--4 grid__column--no-gutters-r">
+                    <p>
+                        <strong>Our popular membership programs</strong>
+                    </p>
+
+                    <dl>
+                        <dt>Travel assistance</dt>
+                        <dd>Emergency medical evacuation and home transportation</dd>
+                        <dt>Roadside assistance</dt>
+                        <dd>Emergency fuel delivery, towing, flat tyre and low battery service</dd>
+                    </dl>
+                </div>
             </div>
         </div>
         
@@ -133,6 +135,6 @@ about:
             </table>
         </div>
         
-        <div class="d-flex justify-content-end">
+        <div class="cms-panel-end">
             <a href="#" class="btn btn--info" title="We offer a variety of services for all types of RVs">Select Your RV Now</a>
         </div>
