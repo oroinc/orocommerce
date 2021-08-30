@@ -1,7 +1,9 @@
 import __ from 'orotranslation/js/translator';
+import {isObject} from 'underscore';
 import BaseClass from 'oroui/js/base-class';
 import idCollision from './id-colision';
 import reservedId from './reserved-id.js';
+import cssValidation from './css-validation.js';
 
 const HTMLValidator = BaseClass.extend({
     /**
@@ -9,51 +11,65 @@ const HTMLValidator = BaseClass.extend({
      */
     constraints: [
         idCollision,
-        reservedId
+        reservedId,
+        cssValidation
     ],
+
+    editor: null,
 
     lineMessage: 'oro.htmlpurifier.formatted_error_line',
 
-    constructor: function HTMLValidator(options) {
-        HTMLValidator.__super__.constructor.call(this, options);
+    constructor: function HTMLValidator({editor, ...rest}) {
+        this.editor = editor;
+        HTMLValidator.__super__.constructor.call(this, {editor, ...rest});
     },
 
-    validate(htmlString) {
+    validate(htmlString, options = {}) {
         const errors = [];
         const domParser = new DOMParser();
-        const htmlFragment = domParser.parseFromString(htmlString, 'text/html');
         const htmlStringLines = htmlString.split('\n');
+        const htmlFragment = domParser.parseFromString(htmlString, 'text/html');
 
         const constraints = this.constraints.map(constraint => {
             const cache = {};
             return params => constraint({cache, ...params});
         });
 
-        htmlStringLines.forEach((htmlStringLine, index) => {
-            const lineNumber = index + 1;
+        for (const index in htmlStringLines) {
+            if (htmlStringLines.hasOwnProperty(index)) {
+                const lineNumber = parseInt(index) + 1;
 
-            for (const constraint of constraints) {
-                const errorMessage = constraint({
-                    htmlStringLine,
-                    htmlString,
-                    htmlStringLines,
-                    htmlFragment,
-                    lineNumber
-                });
+                for (const constraint of constraints) {
+                    const errorMessage = constraint({
+                        htmlStringLine: htmlStringLines[index],
+                        htmlString,
+                        htmlStringLines,
+                        htmlFragment,
+                        lineNumber,
+                        editor: this.editor
+                    });
 
-                if (errorMessage) {
-                    errors.push(this.prepareErrorData(lineNumber, errorMessage));
+                    if (typeof errorMessage === 'string') {
+                        errors.push(this.prepareErrorData(lineNumber, errorMessage, options));
+                    } else if (isObject(errorMessage)) {
+                        const {lineNumber: errorLineNumber, message} = errorMessage;
+                        errors.push(this.prepareErrorData(errorLineNumber, message, options));
+                    }
                 }
             }
-        });
+        }
 
         return errors;
     },
 
-    prepareErrorData(lineNumber, subMessage) {
+    prepareErrorData(lineNumber, subMessage, {lineMessage}) {
+        if (!lineMessage) {
+            lineMessage = this.lineMessage;
+        }
+
         return {
             line: lineNumber,
-            message: __(this.lineMessage, {
+            message: __(lineMessage, {
                 line: lineNumber,
                 message: subMessage
             })
