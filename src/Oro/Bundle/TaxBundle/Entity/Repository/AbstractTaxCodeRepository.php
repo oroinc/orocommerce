@@ -2,14 +2,14 @@
 
 namespace Oro\Bundle\TaxBundle\Entity\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\TaxBundle\Entity\AbstractTaxCode;
 
 /**
  * Repository for Tax Code entities
  */
-abstract class AbstractTaxCodeRepository extends EntityRepository
+abstract class AbstractTaxCodeRepository extends ServiceEntityRepository
 {
     const ALIAS_SUFFIX = 'TaxCode';
 

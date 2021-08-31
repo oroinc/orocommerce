@@ -2,11 +2,14 @@
 
 namespace Oro\Bundle\MoneyOrderBundle\Entity\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Oro\Bundle\MoneyOrderBundle\Entity\MoneyOrderSettings;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
-class MoneyOrderSettingsRepository extends EntityRepository
+/**
+ * Doctrine repository for MoneyOrderSettings entity
+ */
+class MoneyOrderSettingsRepository extends ServiceEntityRepository
 {
     /**
      * @var AclHelper

@@ -38,7 +38,7 @@ class QuickAddCollectionPriceProviderTest extends WebTestCase
         $this->getClientInstance()->getContainer()->get('request_stack')->push($request);
 
         /** @var ProductRepository $productRepository */
-        $this->productRepository = $this->getClientInstance()->getContainer()->get('oro_product.repository.product');
+        $this->productRepository = $this->getContainer()->get('oro_product.repository.product');
     }
 
     public function testIfCorrectPricesAreBeingAddedToRowItems()

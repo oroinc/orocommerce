@@ -589,16 +589,31 @@ services:
             - { name: kernel.event_listener, event: oro_product.product_search_query.restriction, method: onSearchQuery }
 
     oro_product.repository.product:
-        class: 'Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository'
+        alias: Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository
+
+    Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository:
         parent: oro_entity.abstract_repository
         arguments:
             - 'Oro\Bundle\ProductBundle\Entity\Product'
+        tags:
+            - { name: doctrine.repository_service }
 
     oro_product.repository.product_unit:
-        class: 'Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository'
+        alias: Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository
+
+    Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository:
         parent: oro_entity.abstract_repository
         arguments:
             - 'Oro\Bundle\ProductBundle\Entity\ProductUnit'
+        tags:
+            - { name: doctrine.repository_service }
+
+    Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitPrecisionRepository:
+        parent: oro_entity.abstract_repository
+        arguments:
+            - 'Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision'
+        tags:
+            - { name: doctrine.repository_service }
 
     oro_product.restricted_repository.product:
         class: Oro\Bundle\ProductBundle\Entity\Repository\Restriction\RestrictedProductRepository
@@ -612,6 +627,8 @@ services:
         parent: oro_entity.abstract_repository
         arguments:
             - 'Oro\Bundle\ProductBundle\Entity\ProductImage'
+        tags:
+            - { name: doctrine.repository_service }
 
     oro_product.model.builder.quick_add_row_input_parser:
         class: 'Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowInputParser'

@@ -284,16 +284,24 @@ services:
             - { name: layout.data_provider, alias: shopping_list_limit_provider }
 
     oro_shopping_list.repository.shopping_list:
-        class: 'Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository'
+        alias: Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository
+
+    Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository:
         parent: oro_entity.abstract_repository
         arguments:
             - 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList'
+        tags:
+            - { name: doctrine.repository_service }
 
     oro_shopping_list.repository.line_item:
-        class: 'Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository'
+        alias: Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository
+
+    Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository:
         parent: oro_entity.abstract_repository
         arguments:
             - 'Oro\Bundle\ShoppingListBundle\Entity\LineItem'
+        tags:
+            - { name: doctrine.repository_service }
 
     oro_shopping_list.data_provider.shopping_list_line_items:
         class: 'Oro\Bundle\ShoppingListBundle\DataProvider\ShoppingListLineItemsDataProvider'

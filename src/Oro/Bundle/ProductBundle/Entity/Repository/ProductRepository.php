@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Entity\Repository;
 
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Connection;
-use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\AttachmentBundle\Entity\File;
@@ -16,7 +16,7 @@ use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 /**
  * Contains business specific methods for retrieving product entities.
  */
-class ProductRepository extends EntityRepository
+class ProductRepository extends ServiceEntityRepository
 {
     /**
      * @param mixed $skus

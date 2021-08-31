@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PaymentBundle\Entity\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
@@ -12,7 +12,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 /**
  * Returns payment method config rules by destination, currency and website
  */
-class PaymentMethodsConfigsRuleRepository extends EntityRepository
+class PaymentMethodsConfigsRuleRepository extends ServiceEntityRepository
 {
     /**
      * @var AclHelper

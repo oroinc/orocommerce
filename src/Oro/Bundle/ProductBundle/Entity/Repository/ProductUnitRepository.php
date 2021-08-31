@@ -2,14 +2,17 @@
 
 namespace Oro\Bundle\ProductBundle\Entity\Repository;
 
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityNotFoundException;
-use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
-class ProductUnitRepository extends EntityRepository
+/**
+ * Doctrine repository for ProductUnit entity
+ */
+class ProductUnitRepository extends ServiceEntityRepository
 {
     /**
      * @param Product $product
