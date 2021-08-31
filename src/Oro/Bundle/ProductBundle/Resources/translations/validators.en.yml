@@ -20,6 +20,9 @@ oro:
                 {1} Row contains a non-empty value in "%attributes%" column. This product does not have "%attributes%" attribute and this value was ignored.|
                 ]1,Inf[ Row contains a non-empty values in "%attributes%" columns. This product does not have "%attributes%" attributes and this values were ignored.
 
+        attribute_value:
+            used_in_product_variant_field.message: "The \"%optionLabels%\" options cannot be deleted because they are used in the following configurable products: %productSkus%"
+
         product_variant_field:
             unique_variants_combination_simple_product.message: "The values of additional fields provided cannot be saved because they will violate unique constraint of variant fields in these configurable products: %products%"
             message: "Can't save configurable attribute. Field \"{{ field }}\" doesn't exist in product"

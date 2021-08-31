@@ -464,6 +464,14 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: oro_product_attribute_family_usage_in_variant_field }
 
+    oro_product.validator.attribute_value_usages_product_variant_field:
+        class: 'Oro\Bundle\ProductBundle\Validator\Constraints\AttributeValueUsageInVariantValidator'
+        arguments:
+            - '@doctrine'
+            - '@oro_entity_extend.enum_synchronizer'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_product_attribute_value_usage_in_variant_field }
+
     oro_product.event_listener.restricted_products_datagrid:
         class: 'Oro\Bundle\ProductBundle\EventListener\RestrictedProductsDatagridEventListener'
         arguments:
