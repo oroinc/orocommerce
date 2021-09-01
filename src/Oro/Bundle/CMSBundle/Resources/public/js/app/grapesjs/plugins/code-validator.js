@@ -67,6 +67,9 @@ const CodeValidator = BaseClass.extend({
         this.$stylesInputElement.data('validation',
             Object.assign({...this.validation.rules.styles, ...styleDataValidation})
         );
+
+        this.$textInputElement.valid();
+        this.$stylesInputElement.valid();
     },
 
     /**
@@ -185,7 +188,7 @@ const CodeValidator = BaseClass.extend({
      * @returns {(string|Array)}
      */
     contentValidate() {
-        return this.validate(this.getRawContent()).map(({message}) => message);
+        return this.validate(this.getRawContent()).map(({shortMessage}) => shortMessage);
     },
 
     /**

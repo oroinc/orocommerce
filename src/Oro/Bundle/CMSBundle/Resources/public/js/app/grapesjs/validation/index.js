@@ -52,8 +52,8 @@ const HTMLValidator = BaseClass.extend({
                     if (typeof errorMessage === 'string') {
                         errors.push(this.prepareErrorData(lineNumber, errorMessage, options));
                     } else if (isObject(errorMessage)) {
-                        const {lineNumber: errorLineNumber, message} = errorMessage;
-                        errors.push(this.prepareErrorData(errorLineNumber, message, options));
+                        const {lineNumber: errorLineNumber, message, shortMessage} = errorMessage;
+                        errors.push(this.prepareErrorData(errorLineNumber, message, {...options, shortMessage}));
                     }
                 }
             }
@@ -62,13 +62,14 @@ const HTMLValidator = BaseClass.extend({
         return errors;
     },
 
-    prepareErrorData(lineNumber, subMessage, {lineMessage}) {
+    prepareErrorData(lineNumber, subMessage, {lineMessage, shortMessage = ''}) {
         if (!lineMessage) {
             lineMessage = this.lineMessage;
         }
 
         return {
             line: lineNumber,
+            shortMessage,
             message: __(lineMessage, {
                 line: lineNumber,
                 message: subMessage

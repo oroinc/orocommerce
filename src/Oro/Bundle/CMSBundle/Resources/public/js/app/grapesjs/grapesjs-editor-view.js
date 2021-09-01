@@ -765,10 +765,18 @@ const GrapesjsEditorView = BaseView.extend({
 
         if (this.$el.val() !== htmlContent) {
             this.$el.val(htmlContent).trigger('change');
+
+            if (this.$el.hasClass('error')) {
+                this.$el.valid();
+            }
         }
 
         if (this.$stylesInputElement.val() !== cssContent) {
             this.$stylesInputElement.val(cssContent).trigger('change');
+
+            if (this.$stylesInputElement.hasClass('error')) {
+                this.$stylesInputElement.valid();
+            }
         }
     },
 

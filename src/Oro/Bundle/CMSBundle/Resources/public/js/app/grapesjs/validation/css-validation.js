@@ -26,6 +26,9 @@ function cssValidation(parameters) {
                 reason: cache[htmlStringLine].reason,
                 column: cache[htmlStringLine].column
             }),
+            shortMessage: __('oro.htmlpurifier.messages.invalid_styles_short', {
+                reason: cache[htmlStringLine].reason
+            }),
             lineNumber: lineNumber + cache[htmlStringLine].line - 1
         };
     }
