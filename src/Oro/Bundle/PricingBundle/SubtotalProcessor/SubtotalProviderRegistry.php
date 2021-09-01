@@ -30,9 +30,6 @@ class SubtotalProviderRegistry implements ResetInterface
         $this->providerContainer = $providerContainer;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function reset()
     {
         $this->providers = null;
@@ -81,7 +78,7 @@ class SubtotalProviderRegistry implements ResetInterface
      *
      * @return SubtotalProviderInterface|null
      */
-    public function getProviderByName($name)
+    public function getProviderByName(string $name)
     {
         $provider = null;
         if (null === $this->providers) {
@@ -102,7 +99,7 @@ class SubtotalProviderRegistry implements ResetInterface
      *
      * @return bool
      */
-    public function hasProvider($name)
+    public function hasProvider(string $name)
     {
         return $this->providerContainer->has($name);
     }

@@ -22,7 +22,7 @@ class ContextUrlProviderRegistry
      * @param mixed $data
      * @return null|string
      */
-    public function getUrl($type, $data)
+    public function getUrl(string $type, $data)
     {
         if (!$this->providers->has($type)) {
             return null;

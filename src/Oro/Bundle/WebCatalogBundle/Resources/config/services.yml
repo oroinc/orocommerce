@@ -37,7 +37,7 @@ services:
         class: 'Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry'
         public: true
         arguments:
-            - [] # content variant types
+            - !tagged_iterator oro_web_catalog.content_variant_type
 
     Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry:
         alias: 'oro_web_catalog.content_variant_type.registry'
@@ -51,7 +51,7 @@ services:
     oro_web_catalog.content_variant_provider:
         class: Oro\Bundle\WebCatalogBundle\Provider\ContentVariantProvider
         arguments:
-            - [] # content variant providers
+            - !tagged_iterator oro_web_catalog.content_variant_provider
         public: false
 
     oro_web_catalog.content_node_tree_handler:

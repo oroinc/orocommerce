@@ -138,7 +138,7 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
         tags:
-            - { name: oro_entity.virtual_relation_provider, priority: 120 }
+            - { name: oro_entity.virtual_relation_provider, priority: -120 }
 
     oro_pricing.provider.frontend_product_prices:
         class: 'Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider'

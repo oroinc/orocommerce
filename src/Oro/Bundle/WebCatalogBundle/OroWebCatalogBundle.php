@@ -5,7 +5,6 @@ namespace Oro\Bundle\WebCatalogBundle;
 use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\DefaultFallbackExtensionPass;
 use Oro\Bundle\WebCatalogBundle\DependencyInjection\Compiler\WebCatalogDependenciesCompilerPass;
 use Oro\Bundle\WebCatalogBundle\DependencyInjection\OroWebCatalogExtension;
-use Oro\Component\DependencyInjection\Compiler\InverseTaggedIteratorCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
@@ -31,14 +30,6 @@ class OroWebCatalogBundle extends Bundle
      */
     public function build(ContainerBuilder $container)
     {
-        $container->addCompilerPass(new InverseTaggedIteratorCompilerPass(
-            'oro_web_catalog.content_variant_type.registry',
-            'oro_web_catalog.content_variant_type'
-        ));
-        $container->addCompilerPass(new InverseTaggedIteratorCompilerPass(
-            'oro_web_catalog.content_variant_provider',
-            'oro_web_catalog.content_variant_provider'
-        ));
         $container->addCompilerPass(new WebCatalogDependenciesCompilerPass());
 
         $container->addCompilerPass(new DefaultFallbackExtensionPass([

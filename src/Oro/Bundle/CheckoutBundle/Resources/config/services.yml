@@ -229,7 +229,7 @@ services:
     oro_checkout.workflow_state.mapper.registry.checkout_state_diff:
         class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\CheckoutStateDiffMapperRegistry'
         arguments:
-            - [] # mappers
+            - !tagged_iterator checkout.workflow_state.mapper
 
     oro_checkout.workflow_state.mapper.workflow_step:
         class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\WorkflowStepMapper'
