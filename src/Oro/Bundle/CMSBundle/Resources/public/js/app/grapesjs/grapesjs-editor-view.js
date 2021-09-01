@@ -19,6 +19,7 @@ import 'orocms/js/app/grapesjs/plugins/panel-scrolling-hints';
 import {escapeWrapper, getWrapperAttrs} from 'orocms/js/app/grapesjs/plugins/grapesjs-style-isolation';
 import i18nMessages from 'orocms/js/app/grapesjs/plugins/i18n-messages';
 import ContentParser from 'orocms/js/app/grapesjs/plugins/grapesjs-content-parser';
+import CodeValidator from 'orocms/js/app/grapesjs/plugins/code-validator';
 import moduleConfig from 'module-config';
 
 const MIN_EDITOR_WIDTH = 1100;
@@ -286,6 +287,7 @@ const GrapesjsEditorView = BaseView.extend({
         this.setCurrentContentAlias();
         this.$parent = this.$el.closest(this.wrapperSelector);
         this.$stylesInputElement = this.$parent.find(this.stylesInputSelector);
+
         this.setAlternativeFields();
         this.setActiveTheme(this.getCurrentTheme());
 
@@ -389,7 +391,7 @@ const GrapesjsEditorView = BaseView.extend({
      */
     initContainer: function() {
         this.$container = $('<div class="grapesjs" data-skip-input-widgets />');
-        this.$container.insertAfter(this.$el);
+        this.$container.appendTo(this.$el.parent());
     },
 
     /**
@@ -402,6 +404,8 @@ const GrapesjsEditorView = BaseView.extend({
             ...this._prepareBuilderOptions()
         });
 
+        this.builder.parentView = this;
+
         this.builder.setComponents(escapeWrapper(this.$el.val()));
 
         const wrapperAttrs = getWrapperAttrs(this.$el.val());
@@ -411,9 +415,9 @@ const GrapesjsEditorView = BaseView.extend({
 
         this.rte = this.builder.RichTextEditor;
 
-        const pureStyles = this.builder.getPureStyle(this.$stylesInputElement.val());
-
-        this.builder.setStyle(pureStyles);
+        this.builder.setStyle(
+            this.builder.getPureStyle(this.$stylesInputElement.val())
+        );
 
         if (_.isRTL()) {
             this.rtlFallback();
@@ -429,18 +433,15 @@ const GrapesjsEditorView = BaseView.extend({
      */
     builderDelegateEvents: function() {
         const canvas = this.builder.Canvas;
+        const $form = this.$el.closest('form');
 
-        this.$el.closest('form')
-            .on(
-                'keyup' + this.eventNamespace() + ' keypress' + this.eventNamespace()
-                , e => {
-                    const keyCode = e.keyCode || e.which;
-                    if (keyCode === 13 && this.$container.get(0).contains(e.target)) {
-                        e.preventDefault();
-                        return false;
-                    }
-                })
-            .on('submit', this.contentValidate.bind(this));
+        $form.on(`keyup${this.eventNamespace()} keydown${this.eventNamespace()}`, e => {
+            const keyCode = e.keyCode || e.which;
+            if (keyCode === 13 && this.$container.get(0).contains(e.target)) {
+                e.preventDefault();
+                return false;
+            }
+        });
 
         this.$el.closest('.scrollable-container').on(`scroll${this.eventNamespace()}`, () => {
             this.builder.trigger('change:canvasOffset');
@@ -497,6 +498,8 @@ const GrapesjsEditorView = BaseView.extend({
     builderUndelegateEvents: function() {
         this.$el.closest('form').off(this.eventNamespace());
         this.$el.closest('.scrollable-container').off(this.eventNamespace());
+        this.$stylesInputElement.off(this.eventNamespace());
+
         mediator.off('dropdown-button:click');
 
         const canvas = this.builder.Canvas;
@@ -519,6 +522,14 @@ const GrapesjsEditorView = BaseView.extend({
         return _.find(this.themes, function(theme) {
             return theme.active;
         });
+    },
+
+    /**
+     * Check if editor has enabled
+     * @returns {boolean}
+     */
+    isEnabled() {
+        return !!this.builder;
     },
 
     /**
@@ -548,28 +559,8 @@ const GrapesjsEditorView = BaseView.extend({
         if (!this.$stylesInputElement.length) {
             this.$stylesInputElement = this.form.find('[data-ftid="' + styleFiledName + '"]');
         }
-    },
 
-    /**
-     * Validation by tags
-     * @param e {Object}
-     */
-    contentValidate: function(e) {
-        if (!this.allow_tags) {
-            return;
-        }
-
-        const _res = this.builder.ComponentRestriction.validate(this.$el.val());
-        const validationMessage = __('oro.cms.wysiwyg.validation.import', {tags: _res.join(', ')});
-
-        if (_res.length) {
-            e.preventDefault();
-            mediator.execute('showFlashMessage', 'error', validationMessage, {
-                delay: 5000
-            });
-
-            return false;
-        }
+        this.$stylesInputElement.attr('data-editor-field-name', this.$el.attr('name'));
     },
 
     /**
@@ -745,7 +736,7 @@ const GrapesjsEditorView = BaseView.extend({
         const styleClone = style.cloneNode();
 
         styleClone.setAttribute('href', this.activeTheme.stylesheet);
-        styleClone.onload = function(e) {
+        styleClone.onload = function() {
             style.remove();
             mediator.trigger('grapesjs:theme:change', activeTheme);
         };
@@ -769,15 +760,27 @@ const GrapesjsEditorView = BaseView.extend({
      * @private
      */
     _updateInitialField: function() {
+        if (this.builder.CodeValidator.isInvalid()) {
+            return;
+        }
+
         const htmlContent = this.getEditorContent();
         const cssContent = this.getEditorStyles();
 
         if (this.$el.val() !== htmlContent) {
             this.$el.val(htmlContent).trigger('change');
+
+            if (this.$el.hasClass('error')) {
+                this.$el.valid();
+            }
         }
 
         if (this.$stylesInputElement.val() !== cssContent) {
             this.$stylesInputElement.val(cssContent).trigger('change');
+
+            if (this.$stylesInputElement.hasClass('error')) {
+                this.$stylesInputElement.valid();
+            }
         }
     },
 
@@ -867,7 +870,13 @@ const GrapesjsEditorView = BaseView.extend({
      */
     _getPlugins: function() {
         return {
-            plugins: [i18nMessages, ContentParser, parserPostCSS, ...Object.keys(this.builderPlugins)],
+            plugins: [
+                i18nMessages,
+                CodeValidator,
+                ContentParser,
+                parserPostCSS,
+                ...Object.keys(this.builderPlugins)
+            ],
             pluginsOpts: this.builderPlugins
         };
     },

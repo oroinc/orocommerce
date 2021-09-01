@@ -7,6 +7,7 @@ aliases:
     spectrum-colorpicker/spectrum$: spectrum-colorpicker/spectrum.css
 app-modules:
     - orocms/js/app/modules/grapesjs-module
+    - orocms/js/app/modules/editor-validation-module
 configs:
     orocms/js/app/grapesjs/grapesjs-editor-view: {}
 dynamic-imports:
@@ -16,3 +17,5 @@ dynamic-imports:
         - orocms/js/app/views/content-widget-view
         - orocms/js/app/views/default-variant-collection-view
         - orocms/js/app/views/variants-collection-view
+        - orocms/js/app/validator/wysiwyg
+        - orocms/js/app/validator/wysiwyg-style
