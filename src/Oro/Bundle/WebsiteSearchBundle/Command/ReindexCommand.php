@@ -102,6 +102,8 @@ HELP
         }
 
         $output->writeln('Reindex finished successfully.');
+
+        return 0;
     }
 
     private function getStartingMessage(?string $class, $websiteId): string

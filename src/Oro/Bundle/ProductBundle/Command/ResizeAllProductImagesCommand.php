@@ -88,6 +88,8 @@ HELP
         }
 
         $output->writeln(sprintf('%d product image(s) queued for resize.', $entitiesProcessed));
+
+        return 0;
     }
 
     protected function getEventDispatcher(): EventDispatcherInterface
