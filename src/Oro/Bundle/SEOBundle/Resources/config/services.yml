@@ -149,6 +149,8 @@ services:
             - '@oro_seo.file_manager.tmp_data'
             - '@oro_seo.manager.robots_txt_file_manager'
             - '@doctrine'
+        calls:
+            - ['setLogger', ['@logger']]
 
     oro_seo.sitemap.sitemap_url_dumper:
         class: Oro\Bundle\SEOBundle\Sitemap\Dumper\SitemapDumper
@@ -284,19 +286,9 @@ services:
     oro_seo.async.generate_sitemap_index:
         class: Oro\Bundle\SEOBundle\Async\GenerateSitemapIndexProcessor
         arguments:
-            - '@oro_message_queue.job.runner'
-            - '@oro_message_queue.job.dependent_job_service'
-            - '@oro_message_queue.client.message_producer'
-            - '@logger'
-        tags:
-            - { name: oro_message_queue.client.message_processor }
-
-    oro_seo.async.generate_sitemap_index_by_website:
-        class: Oro\Bundle\SEOBundle\Async\GenerateSitemapIndexByWebsiteProcessor
-        arguments:
-            - '@oro_message_queue.job.runner'
             - '@doctrine'
             - '@oro_seo.sitemap.sitemap_index_dumper'
+            - '@oro_seo.sitemap.public_filesystem_adapter'
             - '@logger'
         tags:
             - { name: oro_message_queue.client.message_processor }
@@ -308,14 +300,6 @@ services:
             - '@doctrine'
             - '@oro_seo.sitemap.provider.full_list_urls_provider_registry'
             - '@oro_seo.sitemap.sitemap_url_dumper'
-            - '@logger'
-        tags:
-            - { name: oro_message_queue.client.message_processor }
-
-    oro_seo.async.move_generated_sitemaps:
-        class: Oro\Bundle\SEOBundle\Async\MoveGeneratedSitemapsProcessor
-        arguments:
-            - '@oro_seo.sitemap.public_filesystem_adapter'
             - '@logger'
         tags:
             - { name: oro_message_queue.client.message_processor }

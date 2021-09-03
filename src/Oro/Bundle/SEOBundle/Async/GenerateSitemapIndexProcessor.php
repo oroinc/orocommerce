@@ -2,15 +2,15 @@
 
 namespace Oro\Bundle\SEOBundle\Async;
 
-use Oro\Component\MessageQueue\Client\MessageProducerInterface;
+use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\SEOBundle\Sitemap\Filesystem\PublicSitemapFilesystemAdapter;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
-use Oro\Component\MessageQueue\Job\DependentJobService;
-use Oro\Component\MessageQueue\Job\Job;
-use Oro\Component\MessageQueue\Job\JobRunner;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
+use Oro\Component\SEO\Tools\SitemapDumperInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -19,31 +19,31 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class GenerateSitemapIndexProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
-    private const JOB_ID      = 'jobId';
-    private const VERSION     = 'version';
+    private const JOB_ID = 'jobId';
+    private const VERSION = 'version';
     private const WEBSITE_IDS = 'websiteIds';
 
-    /** @var JobRunner */
-    private $jobRunner;
+    /** @var ManagerRegistry */
+    private $doctrine;
 
-    /** @var DependentJobService */
-    private $dependentJob;
+    /** @var SitemapDumperInterface */
+    private $sitemapDumper;
 
-    /** @var MessageProducerInterface */
-    private $producer;
+    /** @var PublicSitemapFilesystemAdapter */
+    private $fileSystemAdapter;
 
     /** @var LoggerInterface */
     private $logger;
 
     public function __construct(
-        JobRunner $jobRunner,
-        DependentJobService $dependentJob,
-        MessageProducerInterface $producer,
+        ManagerRegistry $doctrine,
+        SitemapDumperInterface $sitemapDumper,
+        PublicSitemapFilesystemAdapter $fileSystemAdapter,
         LoggerInterface $logger
     ) {
-        $this->jobRunner = $jobRunner;
-        $this->dependentJob = $dependentJob;
-        $this->producer = $producer;
+        $this->doctrine = $doctrine;
+        $this->sitemapDumper = $sitemapDumper;
+        $this->fileSystemAdapter = $fileSystemAdapter;
         $this->logger = $logger;
     }
 
@@ -67,27 +67,18 @@ class GenerateSitemapIndexProcessor implements MessageProcessorInterface, TopicS
 
         $version = $body[self::VERSION];
         $websiteIds = $body[self::WEBSITE_IDS];
-        try {
-            $result = $this->jobRunner->runUnique(
-                $message->getMessageId(),
-                Topics::GENERATE_SITEMAP . ':index',
-                function (JobRunner $jobRunner, Job $job) use ($version, $websiteIds) {
-                    $this->createFinishJob($job, $version, $websiteIds);
-                    $this->scheduleGeneratingSitemapIndex($jobRunner, $version, $websiteIds);
 
-                    return true;
-                }
-            );
-        } catch (\Exception $e) {
-            $this->logger->error(
-                'Unexpected exception occurred during generating sitemap indexes.',
-                ['exception' => $e]
-            );
-
+        $processedWebsiteIds = $this->generateSitemapIndexFiles($websiteIds, $version);
+        if (!$processedWebsiteIds || !$this->moveSitemaps($processedWebsiteIds)) {
             return self::REJECT;
         }
 
-        return $result ? self::ACK : self::REJECT;
+        return self::ACK;
+    }
+
+    private function getWebsite(int $websiteId): ?Website
+    {
+        return $this->doctrine->getManagerForClass(Website::class)->find(Website::class, $websiteId);
     }
 
     private function resolveMessage(MessageInterface $message): ?array
@@ -104,43 +95,62 @@ class GenerateSitemapIndexProcessor implements MessageProcessorInterface, TopicS
     private function getMessageResolver(): OptionsResolver
     {
         $resolver = new OptionsResolver();
-        $resolver->setRequired([self::JOB_ID, self::VERSION, self::WEBSITE_IDS]);
-        $resolver->setAllowedTypes(self::JOB_ID, ['int']);
+        $resolver->setDefined(self::JOB_ID);
+        $resolver->setRequired([self::VERSION, self::WEBSITE_IDS]);
         $resolver->setAllowedTypes(self::VERSION, ['int']);
         $resolver->setAllowedTypes(self::WEBSITE_IDS, ['array']);
 
         return $resolver;
     }
 
-    /**
-     * @param Job   $job
-     * @param int   $version
-     * @param int[] $websiteIds
-     */
-    private function createFinishJob(Job $job, int $version, array $websiteIds): void
+    private function generateSitemapIndexFiles(array $websiteIds, int $version): array
     {
-        $context = $this->dependentJob->createDependentJobContext($job->getRootJob());
-        $context->addDependentJob(
-            Topics::GENERATE_SITEMAP_MOVE_GENERATED_FILES,
-            ['version' => $version, 'websiteIds' => $websiteIds]
-        );
-        $this->dependentJob->saveDependentJob($context);
+        $processedWebsiteIds = [];
+        foreach ($websiteIds as $websiteId) {
+            $website = $this->getWebsite($websiteId);
+            if (null === $website) {
+                $this->logger->warning(
+                    sprintf('The website with %d was not found during generating a sitemap index', $websiteId)
+                );
+
+                continue;
+            }
+
+            try {
+                $this->sitemapDumper->dump($website, $version, 'index');
+                $processedWebsiteIds[] = $websiteId;
+            } catch (\Exception $e) {
+                $this->logger->error(
+                    'Unexpected exception occurred during generating a sitemap index for a website.',
+                    [
+                        'websiteId' => $websiteId,
+                        'exception' => $e
+                    ]
+                );
+
+                continue;
+            }
+        }
+
+        return $processedWebsiteIds;
     }
 
-    private function scheduleGeneratingSitemapIndex(JobRunner $jobRunner, int $version, array $websiteIds): void
+    private function moveSitemaps(array $websiteIds): bool
     {
-        foreach ($websiteIds as $websiteId) {
-            $jobRunner->createDelayed(
-                sprintf('%s:%s:%s', Topics::GENERATE_SITEMAP_INDEX_BY_WEBSITE, $websiteId, $version),
-                function (JobRunner $jobRunner, Job $job) use ($version, $websiteId) {
-                    $this->producer->send(
-                        Topics::GENERATE_SITEMAP_INDEX_BY_WEBSITE,
-                        ['jobId' => $job->getId(), 'version' => $version, 'websiteId' => $websiteId]
-                    );
+        try {
+            $this->fileSystemAdapter->moveSitemaps($websiteIds);
 
-                    return true;
-                }
+            return true;
+        } catch (\Exception $e) {
+            $this->logger->error(
+                'Unexpected exception occurred during moving the generated sitemaps.',
+                [
+                    'websiteIds' => $websiteIds,
+                    'exception' => $e
+                ]
             );
+
+            return false;
         }
     }
 }
