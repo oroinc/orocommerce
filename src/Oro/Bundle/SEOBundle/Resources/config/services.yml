@@ -1,5 +1,6 @@
 parameters:
     oro_seo.sitemap_directory: 'media/sitemaps'
+    oro_seo.sitemap_index_generate_single_thread: true
 
 services:
     oro_seo.event_listener.product_form_view:
@@ -277,6 +278,18 @@ services:
             - '@oro_seo.provider.website_provider'
             - '@oro_seo.sitemap.public_filesystem_adapter'
             - '@oro_redirect.generator.canonical_url'
+            - '@logger'
+        calls:
+            - ['setUseSingleThreadIndexGeneration', ['%oro_seo.sitemap_index_generate_single_thread%']]
+        tags:
+            - { name: oro_message_queue.client.message_processor }
+
+    oro_seo.async.generate_sitemap_index.single_thread:
+        class: Oro\Bundle\SEOBundle\Async\GenerateSitemapIndexSingleThreadProcessor
+        arguments:
+            - '@doctrine'
+            - '@oro_seo.sitemap.sitemap_index_dumper'
+            - '@oro_seo.sitemap.public_filesystem_adapter'
             - '@logger'
         tags:
             - { name: oro_message_queue.client.message_processor }

@@ -46,6 +46,9 @@ class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscr
     /** @var LoggerInterface */
     private $logger;
 
+    /** @var bool */
+    private $useSingleThreadIndexGeneration = true;
+
     public function __construct(
         JobRunner $jobRunner,
         DependentJobService $dependentJob,
@@ -64,6 +67,14 @@ class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscr
         $this->fileSystemAdapter = $fileSystemAdapter;
         $this->canonicalUrlGenerator = $canonicalUrlGenerator;
         $this->logger = $logger;
+    }
+
+    /**
+     * @param bool $useSingleThreadIndexGeneration
+     */
+    public function setUseSingleThreadIndexGeneration(bool $useSingleThreadIndexGeneration): void
+    {
+        $this->useSingleThreadIndexGeneration = $useSingleThreadIndexGeneration;
     }
 
     /**
@@ -123,7 +134,7 @@ class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscr
 
         $context = $this->dependentJob->createDependentJobContext($job->getRootJob());
         $context->addDependentJob(
-            Topics::GENERATE_SITEMAP_INDEX,
+            $this->useSingleThreadIndexGeneration ? Topics::GENERATE_SITEMAP_INDEX_ST : Topics::GENERATE_SITEMAP_INDEX,
             ['jobId' => $job->getId(), 'version' => $version, 'websiteIds' => $websiteIds]
         );
         $this->dependentJob->saveDependentJob($context);

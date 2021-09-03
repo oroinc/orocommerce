@@ -174,8 +174,14 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testProcess(): void
+    /**
+     * @dataProvider optionsDataProvider
+     * @param bool $useSingleThread
+     * @param string $expectedIndexTopic
+     */
+    public function testProcess(bool $useSingleThread, string $expectedIndexTopic): void
     {
+        $this->processor->setUseSingleThreadIndexGeneration($useSingleThread);
         $messageId = '1000';
         $message = $this->getMessage($messageId);
         /** @var Website[] $websites */
@@ -201,10 +207,10 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
         $this->dependentJob->expects(self::once())
             ->method('saveDependentJob')
             ->with(self::identicalTo($dependentJobContext))
-            ->willReturnCallback(function (DependentJobContext $context) use ($job) {
+            ->willReturnCallback(function (DependentJobContext $context) use ($job, $expectedIndexTopic) {
                 $dependentJobs = $context->getDependentJobs();
                 self::assertCount(1, $dependentJobs);
-                self::assertEquals(Topics::GENERATE_SITEMAP_INDEX, $dependentJobs[0]['topic']);
+                self::assertEquals($expectedIndexTopic, $dependentJobs[0]['topic']);
                 self::assertEquals($job->getId(), $dependentJobs[0]['message']['jobId']);
                 self::assertGreaterThan(0, $dependentJobs[0]['message']['version']);
                 self::assertEquals([123, 234], $dependentJobs[0]['message']['websiteIds']);
@@ -244,5 +250,11 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
             MessageProcessorInterface::ACK,
             $this->processor->process($message, $this->getSession())
         );
+    }
+
+    public function optionsDataProvider(): \Generator
+    {
+        yield [false, Topics::GENERATE_SITEMAP_INDEX];
+        yield [true, Topics::GENERATE_SITEMAP_INDEX_ST];
     }
 }
