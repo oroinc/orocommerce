@@ -103,7 +103,7 @@ abstract class AbstractCanonicalUrlGeneratorTestCase extends \PHPUnit\Framework\
             ->method('getBaseUrl')
             ->willReturn($expectedBaseUrl);
         $this->requestStack->expects($this->atMost(1))
-            ->method('getMasterRequest')
+            ->method('getMainRequest')
             ->willReturn($request);
 
         $this->routingInformationProvider->expects($this->never())

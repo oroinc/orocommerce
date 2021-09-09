@@ -9,20 +9,11 @@ use Symfony\Component\HttpFoundation\Session\Session;
 
 class CheckoutForgotPasswordCheckEmailProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var RequestStack|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $requestStack;
+    private RequestStack|\PHPUnit\Framework\MockObject\MockObject $requestStack;
 
-    /**
-     * @var Session|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $session;
+    private Session|\PHPUnit\Framework\MockObject\MockObject $session;
 
-    /**
-     * @var CheckoutForgotPasswordCheckEmailProvider
-     */
-    private $provider;
+    private CheckoutForgotPasswordCheckEmailProvider $provider;
 
     protected function setUp(): void
     {
@@ -35,43 +26,43 @@ class CheckoutForgotPasswordCheckEmailProviderTest extends \PHPUnit\Framework\Te
         );
     }
 
-    public function testIsCheckEmailWithoutParameter()
+    public function testIsCheckEmailWithoutParameter(): void
     {
         $email = '...@example.org';
-        $this->session->expects($this->once())
+        $this->session->expects(self::once())
             ->method('get')
             ->with('oro_customer_user_reset_email')
             ->willReturn($email);
-        $this->session->expects($this->once())
+        $this->session->expects(self::once())
             ->method('remove')
             ->with('oro_customer_user_reset_email');
 
-        $this->requestStack->expects($this->once())
-            ->method('getMasterRequest')
+        $this->requestStack->expects(self::once())
+            ->method('getMainRequest')
             ->willReturn(new Request());
 
-        $this->assertEquals($email, $this->provider->getCheckEmail());
+        self::assertEquals($email, $this->provider->getCheckEmail());
     }
 
-    public function testIsCheckEmailWithoutEmail()
+    public function testIsCheckEmailWithoutEmail(): void
     {
         $email = null;
-        $this->session->expects($this->once())
+        $this->session->expects(self::once())
             ->method('get')
             ->with('oro_customer_user_reset_email')
             ->willReturn($email);
-        $this->session->expects($this->once())
+        $this->session->expects(self::once())
             ->method('remove')
             ->with('oro_customer_user_reset_email');
 
         $request = new Request();
         $request->query->add(['isCheckEmail' => true]);
-        $this->requestStack->expects($this->once())
-            ->method('getMasterRequest')
+        $this->requestStack->expects(self::once())
+            ->method('getMainRequest')
             ->willReturn($request);
 
-        $this->assertEquals($email, $this->provider->getCheckEmail());
-        $this->assertNull($request->query->get('isCheckEmail'));
-        $this->assertTrue($request->query->get('isForgotPassword'));
+        self::assertEquals($email, $this->provider->getCheckEmail());
+        self::assertNull($request->query->get('isCheckEmail'));
+        self::assertTrue($request->query->get('isForgotPassword'));
     }
 }

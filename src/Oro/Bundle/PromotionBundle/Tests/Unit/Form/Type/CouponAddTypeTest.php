@@ -102,7 +102,7 @@ class CouponAddTypeTest extends FormIntegrationTestCase
             'empty data' => [
                 'submittedData' => [
                     'coupon' => 'coupon1',
-                    'addedCoupons' => '',
+                    'addedCoupons' => [],
                 ],
                 'expectedData' => [],
             ],

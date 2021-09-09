@@ -31,7 +31,7 @@ class RequestCurrentLocalizationExtension implements CurrentLocalizationExtensio
      */
     public function getCurrentLocalization()
     {
-        $request = $this->requestStack->getMasterRequest();
+        $request = $this->requestStack->getMainRequest();
         if (null === $request) {
             return null;
         }

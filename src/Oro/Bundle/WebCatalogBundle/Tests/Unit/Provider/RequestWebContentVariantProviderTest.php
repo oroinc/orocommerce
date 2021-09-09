@@ -12,14 +12,11 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class RequestWebContentVariantProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject */
-    private $requestStack;
+    private RequestStack|\PHPUnit\Framework\MockObject\MockObject $requestStack;
 
-    /** @var ContentVariantRepository|\PHPUnit\Framework\MockObject\MockObject */
-    private $contentVariantRepository;
+    private ContentVariantRepository|\PHPUnit\Framework\MockObject\MockObject $contentVariantRepository;
 
-    /** @var RequestWebContentVariantProvider */
-    private $provider;
+    private RequestWebContentVariantProvider $provider;
 
     protected function setUp(): void
     {
@@ -38,34 +35,34 @@ class RequestWebContentVariantProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetContentVariantWhenNoRequest()
+    public function testGetContentVariantWhenNoRequest(): void
     {
         $this->requestStack->expects($this->once())
             ->method('getCurrentRequest')
             ->willReturn(null);
         $this->requestStack->expects($this->never())
-            ->method('getMasterRequest');
+            ->method('getMainRequest');
         $this->contentVariantRepository->expects($this->never())
             ->method('findVariantBySlug');
 
-        $this->assertNull($this->provider->getContentVariant());
+        self::assertNull($this->provider->getContentVariant());
     }
 
-    public function testGetContentVariantForSubRequest()
+    public function testGetContentVariantForSubRequest(): void
     {
         $this->requestStack->expects($this->once())
             ->method('getCurrentRequest')
             ->willReturn($this->createMock(Request::class));
         $this->requestStack->expects($this->once())
-            ->method('getMasterRequest')
+            ->method('getMainRequest')
             ->willReturn($this->createMock(Request::class));
         $this->contentVariantRepository->expects($this->never())
             ->method('findVariantBySlug');
 
-        $this->assertNull($this->provider->getContentVariant());
+        self::assertNull($this->provider->getContentVariant());
     }
 
-    public function testGetContentVariantWhenNotSlug()
+    public function testGetContentVariantWhenNotSlug(): void
     {
         $request = Request::create('/');
 
@@ -73,17 +70,17 @@ class RequestWebContentVariantProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getCurrentRequest')
             ->willReturn($request);
         $this->requestStack->expects($this->once())
-            ->method('getMasterRequest')
+            ->method('getMainRequest')
             ->willReturn($request);
         $this->contentVariantRepository->expects($this->never())
             ->method('findVariantBySlug');
 
-        $this->assertNull($this->provider->getContentVariant());
-        $this->assertTrue($request->attributes->has('_content_variant'));
-        $this->assertNull($request->attributes->get('_content_variant'));
+        self::assertNull($this->provider->getContentVariant());
+        self::assertTrue($request->attributes->has('_content_variant'));
+        self::assertNull($request->attributes->get('_content_variant'));
     }
 
-    public function testGetContentVariant()
+    public function testGetContentVariant(): void
     {
         $request = Request::create('/');
 
@@ -96,19 +93,19 @@ class RequestWebContentVariantProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getCurrentRequest')
             ->willReturn($request);
         $this->requestStack->expects($this->once())
-            ->method('getMasterRequest')
+            ->method('getMainRequest')
             ->willReturn($request);
         $this->contentVariantRepository->expects($this->once())
             ->method('findVariantBySlug')
             ->with($slug)
             ->willReturn($variant);
 
-        $this->assertSame($variant, $this->provider->getContentVariant());
-        $this->assertTrue($request->attributes->has('_content_variant'));
-        $this->assertSame($variant, $request->attributes->get('_content_variant'));
+        self::assertSame($variant, $this->provider->getContentVariant());
+        self::assertTrue($request->attributes->has('_content_variant'));
+        self::assertSame($variant, $request->attributes->get('_content_variant'));
     }
 
-    public function testGetContentVariantWhenVariantNotAttachedToSlug()
+    public function testGetContentVariantWhenVariantNotAttachedToSlug(): void
     {
         $request = Request::create('/');
 
@@ -119,15 +116,15 @@ class RequestWebContentVariantProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getCurrentRequest')
             ->willReturn($request);
         $this->requestStack->expects($this->once())
-            ->method('getMasterRequest')
+            ->method('getMainRequest')
             ->willReturn($request);
         $this->contentVariantRepository->expects($this->once())
             ->method('findVariantBySlug')
             ->with($slug)
             ->willReturn(null);
 
-        $this->assertNull($this->provider->getContentVariant());
-        $this->assertTrue($request->attributes->has('_content_variant'));
-        $this->assertNull($request->attributes->get('_content_variant'));
+        self::assertNull($this->provider->getContentVariant());
+        self::assertTrue($request->attributes->has('_content_variant'));
+        self::assertNull($request->attributes->get('_content_variant'));
     }
 }

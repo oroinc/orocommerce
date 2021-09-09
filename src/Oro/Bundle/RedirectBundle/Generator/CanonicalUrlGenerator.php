@@ -245,7 +245,7 @@ class CanonicalUrlGenerator
     {
         $domainUrl = rtrim($domainUrl, ' /');
         $baseUrl = '';
-        if ($masterRequest = $this->requestStack->getMasterRequest()) {
+        if ($masterRequest = $this->requestStack->getMainRequest()) {
             $baseUrl = $masterRequest->getBaseUrl();
             $baseUrl = trim($baseUrl, '/');
         }

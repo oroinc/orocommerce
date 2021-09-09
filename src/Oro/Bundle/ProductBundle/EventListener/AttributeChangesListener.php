@@ -233,7 +233,7 @@ class AttributeChangesListener
 
     private function isPostFlushApplicable(): bool
     {
-        if (!empty($this->fieldNamesForIndexation) || $this->requestStack->getMasterRequest()) {
+        if (!empty($this->fieldNamesForIndexation) || $this->requestStack->getMainRequest()) {
             return true;
         }
 

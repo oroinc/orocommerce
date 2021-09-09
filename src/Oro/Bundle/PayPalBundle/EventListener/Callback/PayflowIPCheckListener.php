@@ -70,7 +70,7 @@ class PayflowIPCheckListener
             return;
         }
 
-        $masterRequest = $this->requestStack->getMasterRequest();
+        $masterRequest = $this->requestStack->getMainRequest();
         if (null === $masterRequest) {
             $event->markFailed();
 

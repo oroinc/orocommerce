@@ -25,32 +25,23 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $doctrineHelper;
+    private DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject $doctrineHelper;
 
-    /** @var CurrentShoppingListManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $currentShoppingListManager;
+    private CurrentShoppingListManager|\PHPUnit\Framework\MockObject\MockObject $currentShoppingListManager;
 
-    /** @var MatrixGridOrderFormProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $matrixGridOrderFormProvider;
+    private MatrixGridOrderFormProvider|\PHPUnit\Framework\MockObject\MockObject $matrixGridOrderFormProvider;
 
-    /** @var ProductFormAvailabilityProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $productFormAvailabilityProvider;
+    private ProductFormAvailabilityProvider|\PHPUnit\Framework\MockObject\MockObject $productFormAvailabilityProvider;
 
-    /** @var FrontendProductPricesProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $frontendProductPricesProvider;
+    private FrontendProductPricesProvider|\PHPUnit\Framework\MockObject\MockObject $frontendProductPricesProvider;
 
-    /** @var FrontendMatrixProductGridExtension */
-    private $gridExtension;
+    private FrontendMatrixProductGridExtension $gridExtension;
 
-    /** @var DatagridConfiguration|\PHPUnit\Framework\MockObject\MockObject */
-    private $datagridConfiguration;
+    private DatagridConfiguration|\PHPUnit\Framework\MockObject\MockObject $datagridConfiguration;
 
-    /** @var MatrixGridOrderProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $matrixGridOrderProvider;
+    private MatrixGridOrderProvider|\PHPUnit\Framework\MockObject\MockObject $matrixGridOrderProvider;
 
-    /** @var DataGridThemeHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $dataGridThemeHelper;
+    private DataGridThemeHelper|\PHPUnit\Framework\MockObject\MockObject $dataGridThemeHelper;
 
     /**
      * {@inheritdoc}
@@ -68,7 +59,7 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit\Framework\TestCase
         $this->matrixGridOrderProvider = $this->createMock(MatrixGridOrderProvider::class);
         $this->dataGridThemeHelper = $this->createMock(DataGridThemeHelper::class);
 
-        $this->dataGridThemeHelper->expects($this->any())
+        $this->dataGridThemeHelper->expects(self::any())
             ->method('getTheme')
             ->willReturn('list-view');
 
@@ -84,27 +75,27 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit\Framework\TestCase
         $this->gridExtension->setParameters(new ParameterBag());
     }
 
-    public function testGetPriority()
+    public function testGetPriority(): void
     {
-        $this->assertSame(10, $this->gridExtension->getPriority());
+        self::assertSame(10, $this->gridExtension->getPriority());
     }
 
-    public function testIsApplicable()
+    public function testIsApplicable(): void
     {
-        $this->assertFalse($this->gridExtension->isApplicable(DatagridConfiguration::create([
+        self::assertFalse($this->gridExtension->isApplicable(DatagridConfiguration::create([
             DatagridConfiguration::NAME_KEY => 'some-unsupported-grid-name'
         ])));
 
-        $this->assertTrue($this->gridExtension->isApplicable(DatagridConfiguration::create([
+        self::assertTrue($this->gridExtension->isApplicable(DatagridConfiguration::create([
             DatagridConfiguration::NAME_KEY => FrontendMatrixProductGridExtension::SUPPORTED_GRID
         ])));
 
-        $this->assertFalse($this->gridExtension->isApplicable(DatagridConfiguration::create([
+        self::assertFalse($this->gridExtension->isApplicable(DatagridConfiguration::create([
             DatagridConfiguration::NAME_KEY => 'some-unsupported-grid-name',
             SystemAwareResolver::KEY_EXTENDED_FROM => ['some-other-unsupported-datagrid']
         ])));
 
-        $this->assertTrue($this->gridExtension->isApplicable(DatagridConfiguration::create([
+        self::assertTrue($this->gridExtension->isApplicable(DatagridConfiguration::create([
             DatagridConfiguration::NAME_KEY => 'some-unsupported-grid-name',
             SystemAwareResolver::KEY_EXTENDED_FROM => [
                 'some-other-unsupported-datagrid',
@@ -113,17 +104,17 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit\Framework\TestCase
         ])));
     }
 
-    public function testIsNotApplicable()
+    public function testIsNotApplicable(): void
     {
         $config = DatagridConfiguration::create(
             [
                 DatagridConfiguration::NAME_KEY => 'frontend-product-grid'
             ]
         );
-        $this->assertFalse($this->gridExtension->isApplicable($config));
+        self::assertFalse($this->gridExtension->isApplicable($config));
     }
 
-    public function testVisitResult()
+    public function testVisitResult(): void
     {
         $resultObject = ResultsObject::create([
             'data' => [
@@ -147,22 +138,22 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit\Framework\TestCase
 
         $repository = $this->createMock(EntityRepository::class);
 
-        $this->doctrineHelper->expects($this->once())
+        $this->doctrineHelper->expects(self::once())
             ->method('getEntityRepositoryForClass')
             ->with(Product::class)
             ->willReturn($repository);
 
-        $this->currentShoppingListManager->expects($this->once())
+        $this->currentShoppingListManager->expects(self::once())
             ->method('getCurrent')
             ->willReturn($shoppingList);
 
-        $repository->expects($this->exactly(3))
+        $repository->expects(self::exactly(3))
             ->method('find')
             ->willReturnCallback(function ($productId) use ($products) {
                 return $products[$productId];
             });
 
-        $this->productFormAvailabilityProvider->expects($this->exactly(1))
+        $this->productFormAvailabilityProvider->expects(self::once())
             ->method('getAvailableMatrixFormType')
             ->withConsecutive([$product1], [$product2], [$product3])
             ->willReturnOnConsecutiveCalls(
@@ -171,50 +162,50 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit\Framework\TestCase
                 Configuration::MATRIX_FORM_NONE
             );
 
-        $this->productFormAvailabilityProvider->expects($this->exactly(3))
+        $this->productFormAvailabilityProvider->expects(self::exactly(3))
             ->method('isMatrixFormAvailable')
             ->withConsecutive([$product1], [$product2], [$product3])
             ->willReturnOnConsecutiveCalls(true, false, false);
 
-        $this->matrixGridOrderProvider->expects($this->once())
+        $this->matrixGridOrderProvider->expects(self::once())
             ->method('getTotalQuantity')
             ->with($product1)
             ->willReturn(5);
 
-        $this->matrixGridOrderProvider->expects($this->once())
+        $this->matrixGridOrderProvider->expects(self::once())
             ->method('getTotalPriceFormatted')
             ->with($product1)
             ->willReturn('$12.34');
 
-        $this->matrixGridOrderFormProvider->expects($this->once())
+        $this->matrixGridOrderFormProvider->expects(self::once())
             ->method('getMatrixOrderFormHtml')
             ->with($product1, $shoppingList)
             ->willReturn('form html');
 
-        $this->frontendProductPricesProvider->expects($this->once())
+        $this->frontendProductPricesProvider->expects(self::once())
             ->method('getVariantsPricesByProduct')
             ->with($product1)
             ->willReturn([
                 '1' => ['unit' => 1],
             ]);
 
-        $this->datagridConfiguration->expects($this->exactly(2))
+        $this->datagridConfiguration->expects(self::exactly(2))
             ->method('offsetAddToArrayByPath');
+        $this->datagridConfiguration->expects(self::any())
+            ->method('getName')
+            ->willReturn('gridName');
 
         $this->gridExtension->visitResult($this->datagridConfiguration, $resultObject);
 
         $expectedData = $this->getVisitResultExpectedData();
 
         foreach ($resultObject->getData() as $data) {
-            $this->assertEquals($data->getValue('matrixForm'), $expectedData[$data->getValue('id')]['matrixForm']);
-            $this->assertEquals($data->getValue('prices'), $expectedData[$data->getValue('id')]['prices']);
+            self::assertEquals($data->getValue('matrixForm'), $expectedData[$data->getValue('id')]['matrixForm']);
+            self::assertEquals($data->getValue('prices'), $expectedData[$data->getValue('id')]['prices']);
         }
     }
 
-    /**
-     * @return array
-     */
-    private function getVisitResultExpectedData()
+    private function getVisitResultExpectedData(): array
     {
         return [
             '1' => [
@@ -244,7 +235,7 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testVisitResultWhenCanNotGetProduct()
+    public function testVisitResultWhenCanNotGetProduct(): void
     {
         $resultObject = ResultsObject::create([
             'data' => [
@@ -255,23 +246,23 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit\Framework\TestCase
         $shoppingList = $this->getEntity(ShoppingList::class, ['id' => 1]);
         $repository = $this->createMock(EntityRepository::class);
 
-        $this->doctrineHelper->expects($this->once())
+        $this->doctrineHelper->expects(self::once())
             ->method('getEntityRepositoryForClass')
             ->with(Product::class)
             ->willReturn($repository);
 
-        $this->currentShoppingListManager->expects($this->once())
+        $this->currentShoppingListManager->expects(self::once())
             ->method('getCurrent')
             ->willReturn($shoppingList);
 
-        $repository->expects($this->once())
+        $repository->expects(self::once())
             ->method('find')
             ->willReturn(null);
 
-        $this->productFormAvailabilityProvider->expects($this->never())
+        $this->productFormAvailabilityProvider->expects(self::never())
             ->method('getAvailableMatrixFormType');
 
-        $this->datagridConfiguration->expects($this->exactly(2))
+        $this->datagridConfiguration->expects(self::exactly(2))
             ->method('offsetAddToArrayByPath');
 
         $this->gridExtension->visitResult($this->datagridConfiguration, $resultObject);
@@ -286,18 +277,18 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit\Framework\TestCase
         ];
 
         foreach ($resultObject->getData() as $data) {
-            $this->assertEquals(
+            self::assertEquals(
                 $data->getValue('matrixForm'),
                 $expectedData[$data->getValue('id')]['matrixForm']
             );
-            $this->assertEquals(
+            self::assertEquals(
                 $data->getValue('prices'),
                 $expectedData[$data->getValue('id')]['prices']
             );
         }
     }
 
-    public function testVisitResultWhenAllSimpleProducts()
+    public function testVisitResultWhenAllSimpleProducts(): void
     {
         $resultObject = ResultsObject::create([
             'data' => [
@@ -320,33 +311,33 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit\Framework\TestCase
             3 => $product3
         ];
 
-        $this->doctrineHelper->expects($this->once())
+        $this->doctrineHelper->expects(self::once())
             ->method('getEntityRepositoryForClass')
             ->with(Product::class)
             ->willReturn($repository);
 
-        $this->currentShoppingListManager->expects($this->once())
+        $this->currentShoppingListManager->expects(self::once())
             ->method('getCurrent')
             ->willReturn($shoppingList);
 
-        $repository->expects($this->exactly(3))
+        $repository->expects(self::exactly(3))
             ->method('find')
             ->willReturnCallback(function ($productId) use ($products) {
                 return $products[$productId];
             });
 
-        $this->productFormAvailabilityProvider->expects($this->exactly(3))
+        $this->productFormAvailabilityProvider->expects(self::exactly(3))
             ->method('isMatrixFormAvailable')
             ->withConsecutive([$product1], [$product2], [$product3])
             ->willReturnOnConsecutiveCalls(false, false, false);
 
-        $this->matrixGridOrderFormProvider->expects($this->never())
+        $this->matrixGridOrderFormProvider->expects(self::never())
             ->method('getMatrixOrderFormHtml');
 
-        $this->frontendProductPricesProvider->expects($this->never())
+        $this->frontendProductPricesProvider->expects(self::never())
             ->method('getByProducts');
 
-        $this->datagridConfiguration->expects($this->exactly(2))
+        $this->datagridConfiguration->expects(self::exactly(2))
             ->method('offsetAddToArrayByPath');
 
         $this->gridExtension->visitResult($this->datagridConfiguration, $resultObject);
@@ -373,11 +364,11 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit\Framework\TestCase
         ];
 
         foreach ($resultObject->getData() as $data) {
-            $this->assertEquals(
+            self::assertEquals(
                 $data->getValue('matrixForm'),
                 $expectedData[$data->getValue('id')]['matrixForm']
             );
-            $this->assertEquals(
+            self::assertEquals(
                 $data->getValue('prices'),
                 $expectedData[$data->getValue('id')]['prices']
             );
