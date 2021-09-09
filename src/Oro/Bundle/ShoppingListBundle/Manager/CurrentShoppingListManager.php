@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ShoppingListBundle\Manager;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
@@ -32,6 +33,9 @@ class CurrentShoppingListManager
 
     /** @var TokenAccessorInterface */
     private $tokenAccessor;
+
+    /** @var ConfigManager */
+    private $configManager;
 
     public function __construct(
         ShoppingListManager $shoppingListManager,
@@ -103,6 +107,17 @@ class CurrentShoppingListManager
      */
     public function getForCurrentUser($shoppingListId = null)
     {
+        return $this->getShoppingListForCurrentUser($shoppingListId);
+    }
+
+    /**
+     * @param int $shoppingListId
+     * @param bool $create
+     * @param string $label
+     * @return ShoppingList|null
+     */
+    public function getShoppingListForCurrentUser($shoppingListId = null, $create = true, $label = '')
+    {
         if ($this->guestShoppingListManager->isGuestShoppingListAvailable()) {
             return $this->guestShoppingListManager->createAndGetShoppingListForCustomerVisitor();
         }
@@ -113,7 +128,11 @@ class CurrentShoppingListManager
                 ->findByUserAndId($this->aclHelper, $shoppingListId);
         }
         if (null === $shoppingList) {
-            $shoppingList = $this->getCurrentShoppingList(true);
+            $shoppingList = $this->getCurrentShoppingList();
+        }
+
+        if (!$this->shoppingListAvailableForCurrentUser($shoppingList)) {
+            $shoppingList = $create ? $this->createCurrent($label) : null;
         }
 
         return $shoppingList;
@@ -270,5 +289,42 @@ class CurrentShoppingListManager
         return $this->doctrine
             ->getManagerForClass(ShoppingList::class)
             ->getRepository(ShoppingList::class);
+    }
+
+    /**
+     * @param ConfigManager $configManager
+     */
+    public function setConfigManager(ConfigManager $configManager): void
+    {
+        $this->configManager = $configManager;
+    }
+
+    /**
+     * @return bool
+     */
+    private function isShowAllInShoppingListWidget(): bool
+    {
+        return (bool)$this->configManager->get('oro_shopping_list.show_all_in_shopping_list_widget');
+    }
+
+    /**
+     * @param ShoppingList|null $shoppingList
+     * @return bool
+     */
+    private function shoppingListAvailableForCurrentUser(?ShoppingList $shoppingList): bool
+    {
+        if (is_null($shoppingList)) {
+            return false;
+        }
+
+        if ($this->isShowAllInShoppingListWidget()) {
+            return true;
+        }
+
+        if (!$shoppingList->getCustomerUser() || !$this->getCustomerUser()) {
+            return true;
+        }
+
+        return $shoppingList->getCustomerUser()->getId() === $this->getCustomerUser()->getId();
     }
 }
