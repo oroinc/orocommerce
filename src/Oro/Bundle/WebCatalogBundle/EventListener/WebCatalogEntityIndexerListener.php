@@ -19,6 +19,9 @@ use Oro\Bundle\WebsiteSearchBundle\Placeholder\AssignTypePlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 use Oro\Component\WebCatalog\ContentVariantProviderInterface;
 
+/**
+ * This class adds information about web catalog association to website search index
+ */
 class WebCatalogEntityIndexerListener
 {
     const ASSIGN_TYPE_CONTENT_VARIANT = 'variant';

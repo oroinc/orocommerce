@@ -131,5 +131,4 @@ class MapperTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($expectedResult, $this->mapper->mapSelectedData($query, $item2));
         $this->assertSame($expectedResult, $this->mapper->mapSelectedData($query, $item3));
     }
-
 }

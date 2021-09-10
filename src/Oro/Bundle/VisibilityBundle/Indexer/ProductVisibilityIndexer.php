@@ -7,6 +7,9 @@ use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseVisibilityResolved
 use Oro\Bundle\VisibilityBundle\Visibility\Provider\ProductVisibilityProvider;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 
+/**
+ * This class adds information about product visibilty to website search index
+ */
 class ProductVisibilityIndexer
 {
     const FIELD_VISIBILITY_ANONYMOUS = 'visibility_anonymous';
