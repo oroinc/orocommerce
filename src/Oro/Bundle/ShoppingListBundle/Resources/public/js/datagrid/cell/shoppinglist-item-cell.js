@@ -6,14 +6,8 @@ const ShoppingListItemCell = HtmlTemplateCell.extend({
         this.listenTo(this.model, 'change', this.render);
     },
 
-    attributes() {
-        let attrs = ShoppingListItemCell.__super__.attributes || {};
-
-        if (typeof attrs === 'function') {
-            attrs = attrs.call(this);
-        }
-
-        attrs = {...attrs};
+    _attributes() {
+        const attrs = {};
 
         if (this.model.get('isMessage')) {
             attrs['id'] = this.model.get('id');
