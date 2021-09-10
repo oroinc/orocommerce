@@ -391,6 +391,11 @@
     &.editor-unavailable {
         margin: 0;
     }
+
+    .validation-failed {
+        margin-left: $grapesjs-content-editor-offset;
+        margin-right: $grapesjs-content-editor-offset;
+    }
 }
 
 .content-variant-item-content__body {
@@ -473,5 +478,16 @@
             // stylelint-disable-next-line declaration-no-important
             background-color: $codemirror-selected-background !important;
         }
+    }
+}
+
+.editor-lock-overlay {
+    position: absolute;
+    display: block;
+    background-color: rgba($primary-inverse, .7);
+    z-index: 1000;
+
+    .close {
+        display: none;
     }
 }

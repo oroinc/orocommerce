@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Entity\Repository;
 
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CustomerBundle\Entity\Repository\ResetCustomerUserTrait;
 use Oro\Bundle\CustomerBundle\Entity\Repository\ResettableCustomerUserRepositoryInterface;
@@ -18,7 +18,7 @@ use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 /**
  * A repository for ShoppingList entities.
  */
-class ShoppingListRepository extends EntityRepository implements ResettableCustomerUserRepositoryInterface
+class ShoppingListRepository extends ServiceEntityRepository implements ResettableCustomerUserRepositoryInterface
 {
     use ResetCustomerUserTrait;
 

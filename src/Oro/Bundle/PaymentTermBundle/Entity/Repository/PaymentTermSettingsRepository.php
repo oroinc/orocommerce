@@ -2,11 +2,14 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Entity\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTermSettings;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
-class PaymentTermSettingsRepository extends EntityRepository
+/**
+ * Doctrine repository for PaymentTermSettings entity
+ */
+class PaymentTermSettingsRepository extends ServiceEntityRepository
 {
     /**
      * @var AclHelper

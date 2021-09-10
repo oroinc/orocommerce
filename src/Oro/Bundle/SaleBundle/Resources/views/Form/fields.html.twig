@@ -192,7 +192,7 @@
     {% if prototype is defined %}
         {% set prototype_html = fields.oro_sale_quote_product_offer_prototype(form, true, widgetContainerAttributes) %}
     {% endif %}
-    {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container d-none' }) %}
+    {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container hide' }) %}
     {% set id = id ~ '_collection' %}
     <div class="row-oro">
         {% set prototype_name = form.vars.prototype_name %}
@@ -217,7 +217,7 @@
                 </tbody>
             </table>
         </div>
-        <a class="btn add-list-item quote-lineitem-offers-item-add d-none" data-container=".oro-item-collection tbody" href="#">{{ 'oro.sale.quote.lineitem.offers.add'|trans }}</a>
+        <a class="btn add-list-item quote-lineitem-offers-item-add hide" data-container=".oro-item-collection tbody" href="#">{{ 'oro.sale.quote.lineitem.offers.add'|trans }}</a>
     </div>
 {% endblock %}
 

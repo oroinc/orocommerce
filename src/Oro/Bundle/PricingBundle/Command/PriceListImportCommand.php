@@ -115,6 +115,8 @@ HELP
         );
 
         $output->writeln('Scheduled successfully. The result will be sent to the email');
+
+        return 0;
     }
 
     private function getImportOwner(InputInterface $input): User

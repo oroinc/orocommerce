@@ -67,7 +67,7 @@ class MoveProductsMassActionHandler implements MassActionHandlerInterface
      */
     public function handle(MassActionHandlerArgs $args)
     {
-        $request = $this->requestStack->getMasterRequest();
+        $request = $this->requestStack->getMainRequest();
         if ($request->getMethod() === 'POST') {
             $result = $this->doHandle($args);
         } else {

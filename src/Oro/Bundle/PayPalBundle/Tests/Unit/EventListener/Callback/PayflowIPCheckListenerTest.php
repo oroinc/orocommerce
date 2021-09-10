@@ -12,17 +12,13 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class PayflowIPCheckListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var PaymentMethodProviderInterface|MockObject */
-    protected $paymentMethodProvider;
+    private PaymentMethodProviderInterface|MockObject $paymentMethodProvider;
 
     protected function setUp(): void
     {
         $this->paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
     }
 
-    /**
-     * @return array[]
-     */
     public function returnConfiguredAllowedIPs(): array
     {
         return [
@@ -32,9 +28,6 @@ class PayflowIPCheckListenerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @return array[]
-     */
     public function returnAllowedIPs(): array
     {
         return [
@@ -45,9 +38,6 @@ class PayflowIPCheckListenerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @return array[]
-     */
     public function returnNotAllowedIPs(): array
     {
         return [
@@ -77,7 +67,7 @@ class PayflowIPCheckListenerTest extends \PHPUnit\Framework\TestCase
         $requestStack = $this->createMock(RequestStack::class);
         $requestStack
             ->expects($this->once())
-            ->method('getMasterRequest')
+            ->method('getMainRequest')
             ->willReturn($masterRequest);
 
         /** @var CallbackNotifyEvent|MockObject $event */
@@ -121,7 +111,7 @@ class PayflowIPCheckListenerTest extends \PHPUnit\Framework\TestCase
         $requestStack = $this->createMock(RequestStack::class);
         $requestStack
             ->expects($this->once())
-            ->method('getMasterRequest')
+            ->method('getMainRequest')
             ->willReturn($masterRequest);
 
         /** @var CallbackNotifyEvent|MockObject $event */
@@ -169,7 +159,7 @@ class PayflowIPCheckListenerTest extends \PHPUnit\Framework\TestCase
         $requestStack = $this->createMock(RequestStack::class);
         $requestStack
             ->expects($this->once())
-            ->method('getMasterRequest')
+            ->method('getMainRequest')
             ->willReturn($masterRequest);
 
         /** @var CallbackNotifyEvent|MockObject $event */
@@ -192,7 +182,7 @@ class PayflowIPCheckListenerTest extends \PHPUnit\Framework\TestCase
         $listener->onNotify($event);
     }
 
-    public function testOnNotifyDontAllowIfMasterRequestEmpty()
+    public function testOnNotifyDontAllowIfMasterRequestEmpty(): void
     {
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction
@@ -206,7 +196,7 @@ class PayflowIPCheckListenerTest extends \PHPUnit\Framework\TestCase
         $requestStack = $this->createMock(RequestStack::class);
         $requestStack
             ->expects($this->once())
-            ->method('getMasterRequest')
+            ->method('getMainRequest')
             ->willReturn($masterRequest);
 
         /** @var CallbackNotifyEvent|MockObject $event */

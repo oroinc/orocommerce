@@ -13,20 +13,15 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 class RequestProductHandlerTest extends \PHPUnit\Framework\TestCase
 {
-    const ROOT_CATEGORY_ID = 1;
+    private Request|\PHPUnit\Framework\MockObject\MockObject $request;
 
-    /** @var Request|\PHPUnit\Framework\MockObject\MockObject */
-    protected $request;
-
-    /** @var RequestProductHandler|\PHPUnit\Framework\MockObject\MockObject */
-    protected $requestProductHandler;
+    private RequestProductHandler|\PHPUnit\Framework\MockObject\MockObject $requestProductHandler;
 
     protected function setUp(): void
     {
-        $this->request = $this->createMock('Symfony\Component\HttpFoundation\Request');
+        $this->request = $this->createMock(Request::class);
 
-        /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject $requestStack */
-        $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack = $this->createMock(RequestStack::class);
         $requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
 
         $this->requestProductHandler = new RequestProductHandler($requestStack);
@@ -34,46 +29,40 @@ class RequestProductHandlerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider idDataProvider
-     *
-     * @param string|int|bool|null $value
-     * @param int $expected
      */
-    public function testGetCategoryId($value, int $expected): void
+    public function testGetCategoryId(string|int|bool|null $value, int $expected): void
     {
         $this->request->expects($this->once())
             ->method('get')
             ->with(RequestProductHandler::CATEGORY_ID_KEY)
             ->willReturn($value);
         $actual = $this->requestProductHandler->getCategoryId();
-        $this->assertSame($expected, $actual);
+        self::assertSame($expected, $actual);
     }
 
     /**
      * @dataProvider idDataProvider
-     *
-     * @param string|int|bool|null $value
-     * @param int $expected
      */
-    public function testGetContentVariantId($value, int $expected): void
+    public function testGetContentVariantId(string|int|bool|null $value, int $expected): void
     {
         $this->request->expects($this->once())
             ->method('get')
             ->with(CategoryPageContentVariantType::CATEGORY_CONTENT_VARIANT_ID_KEY)
             ->willReturn($value);
         $actual = $this->requestProductHandler->getCategoryContentVariantId();
-        $this->assertSame($expected, $actual);
+        self::assertSame($expected, $actual);
     }
 
     public function testGetCategoryIdWithoutRequest(): void
     {
         $requestProductHandler = new RequestProductHandler(new RequestStack());
-        $this->assertSame(0, $requestProductHandler->getCategoryId());
+        self::assertSame(0, $requestProductHandler->getCategoryId());
     }
 
     public function testGetContentVariantIdWithoutRequest(): void
     {
         $requestProductHandler = new RequestProductHandler(new RequestStack());
-        $this->assertSame(0, $requestProductHandler->getCategoryContentVariantId());
+        self::assertSame(0, $requestProductHandler->getCategoryContentVariantId());
     }
 
     public function idDataProvider(): array
@@ -129,20 +118,17 @@ class RequestProductHandlerTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider getIncludeSubcategoriesChoiceDataProvider
      */
-    public function testGetIncludeSubcategoriesChoice($value, $expected)
+    public function testGetIncludeSubcategoriesChoice(string|int|bool|null $value, bool $expected): void
     {
         $this->request->expects($this->once())
             ->method('get')
             ->with(RequestProductHandler::INCLUDE_SUBCATEGORIES_KEY, false)
             ->willReturn($value);
         $actual = $this->requestProductHandler->getIncludeSubcategoriesChoice();
-        $this->assertEquals($expected, $actual);
+        self::assertEquals($expected, $actual);
     }
 
-    /**
-     * @return array
-     */
-    public function getIncludeSubcategoriesChoiceDataProvider()
+    public function getIncludeSubcategoriesChoiceDataProvider(): array
     {
         return [
             [
@@ -196,36 +182,20 @@ class RequestProductHandlerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testGetIncludeSubcategoriesChoiceWithTrueOption()
-    {
-        // string value is used only for showing correct value passing
-        $trueValue = 'trueValue';
-
-        $this->request->expects($this->once())
-            ->method('get')
-            ->with(RequestProductHandler::INCLUDE_SUBCATEGORIES_KEY, $trueValue)
-            ->willReturn(true);
-        $actual = $this->requestProductHandler->getIncludeSubcategoriesChoice($trueValue);
-        $this->assertTrue($actual);
-    }
-
     /**
      * @dataProvider getIncludeNotCategorizedProductsChoiceDataProvider
      */
-    public function testGetIncludeNotCategorizedProductsChoice($value, $expected)
+    public function testGetIncludeNotCategorizedProductsChoice($value, $expected): void
     {
         $this->request->expects($this->once())
             ->method('get')
             ->with(RequestProductHandler::INCLUDE_NOT_CATEGORIZED_PRODUCTS_KEY)
             ->willReturn($value);
         $actual = $this->requestProductHandler->getIncludeNotCategorizedProductsChoice();
-        $this->assertEquals($expected, $actual);
+        self::assertEquals($expected, $actual);
     }
 
-    /**
-     * @return array
-     */
-    public function getIncludeNotCategorizedProductsChoiceDataProvider()
+    public function getIncludeNotCategorizedProductsChoiceDataProvider(): array
     {
         return [
             [
@@ -281,24 +251,18 @@ class RequestProductHandlerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getOverrideVariantConfigurationDataProvider
-     *
-     * @param string|int|bool $value
-     * @param bool $expected
      */
-    public function testGetOverrideVariantConfiguration($value, $expected)
+    public function testGetOverrideVariantConfiguration(string|int|bool|null $value, bool $expected): void
     {
         $this->request->expects($this->once())
             ->method('get')
             ->with(CategoryPageContentVariantType::OVERRIDE_VARIANT_CONFIGURATION_KEY)
             ->willReturn($value);
         $actual = $this->requestProductHandler->getOverrideVariantConfiguration();
-        $this->assertEquals($expected, $actual);
+        self::assertEquals($expected, $actual);
     }
 
-    /**
-     * @return array
-     */
-    public function getOverrideVariantConfigurationDataProvider()
+    public function getOverrideVariantConfigurationDataProvider(): array
     {
         return [
             [
@@ -352,27 +316,27 @@ class RequestProductHandlerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testGetIncludeSubcategoriesChoiceWithEmptyRequest()
+    public function testGetIncludeSubcategoriesChoiceWithEmptyRequest(): void
     {
         $requestProductHandler = new RequestProductHandler(new RequestStack());
-        $this->assertEquals(
+        self::assertEquals(
             RequestProductHandler::INCLUDE_SUBCATEGORIES_DEFAULT_VALUE,
             $requestProductHandler->getIncludeSubcategoriesChoice()
         );
     }
 
-    public function testGetIncludeNotCategorizedProductsChoiceWithEmptyRequest()
+    public function testGetIncludeNotCategorizedProductsChoiceWithEmptyRequest(): void
     {
         $requestProductHandler = new RequestProductHandler(new RequestStack());
-        $this->assertEquals(
+        self::assertEquals(
             RequestProductHandler::INCLUDE_NOT_CATEGORIZED_PRODUCTS_DEFAULT_VALUE,
             $requestProductHandler->getIncludeNotCategorizedProductsChoice()
         );
     }
 
-    public function testGetOverrideVariantConfigurationWithEmptyRequest()
+    public function testGetOverrideVariantConfigurationWithEmptyRequest(): void
     {
         $requestProductHandler = new RequestProductHandler(new RequestStack());
-        $this->assertFalse($requestProductHandler->getOverrideVariantConfiguration());
+        self::assertFalse($requestProductHandler->getOverrideVariantConfiguration());
     }
 }

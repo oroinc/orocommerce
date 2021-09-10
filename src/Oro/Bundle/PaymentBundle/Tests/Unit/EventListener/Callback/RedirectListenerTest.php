@@ -14,17 +14,13 @@ use Symfony\Component\HttpFoundation\Session\Session;
 
 class RedirectListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var RedirectListener */
-    protected $listener;
+    private RedirectListener $listener;
 
-    /** @var Session|\PHPUnit\Framework\MockObject\MockObject */
-    protected $session;
+    private Session|\PHPUnit\Framework\MockObject\MockObject $session;
 
-    /** @var PaymentTransaction */
-    protected $paymentTransaction;
+    private PaymentTransaction $paymentTransaction;
 
-    /** @var PaymentResultMessageProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $messageProvider;
+    private PaymentResultMessageProviderInterface|\PHPUnit\Framework\MockObject\MockObject $messageProvider;
 
     protected function setUp(): void
     {
@@ -45,7 +41,7 @@ class RedirectListenerTest extends \PHPUnit\Framework\TestCase
      * @param array $options
      * @param RedirectResponse|response $expectedResponse
      */
-    public function testOnReturn($options, $expectedResponse)
+    public function testOnReturn($options, $expectedResponse): void
     {
         $this->paymentTransaction
             ->setTransactionOptions($options);
@@ -58,19 +54,16 @@ class RedirectListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertResponses($expectedResponse, $event->getResponse());
     }
 
-    public function testOnReturnWithoutTransaction()
+    public function testOnReturnWithoutTransaction(): void
     {
         $event = new CallbackReturnEvent();
 
         $this->listener->onReturn($event);
 
-        $this->assertNotInstanceOf('Symfony\Component\HttpFoundation\RedirectResponse', $event->getResponse());
+        self::assertNotInstanceOf('Symfony\Component\HttpFoundation\RedirectResponse', $event->getResponse());
     }
 
-    /**
-     * @return array
-     */
-    public function onReturnProvider()
+    public function onReturnProvider(): array
     {
         return [
             [
@@ -79,7 +72,7 @@ class RedirectListenerTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 'options' => ['someAnotherValue'],
-                'expectedResponse' => Response::create(null, Response::HTTP_FORBIDDEN)
+                'expectedResponse' => new Response(null, Response::HTTP_FORBIDDEN)
             ],
         ];
     }
@@ -96,7 +89,7 @@ class RedirectListenerTest extends \PHPUnit\Framework\TestCase
         $options,
         $expectedResponse,
         $expectedFlashError = null
-    ) {
+    ): void {
         $this->paymentTransaction->setTransactionOptions($options);
 
         $this->messageProvider->expects($this->once())
@@ -127,10 +120,7 @@ class RedirectListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertResponses($expectedResponse, $event->getResponse());
     }
 
-    /**
-     * @return array
-     */
-    public function onErrorProvider()
+    public function onErrorProvider(): array
     {
         return [
             [
@@ -142,7 +132,7 @@ class RedirectListenerTest extends \PHPUnit\Framework\TestCase
             [
                 'errorAlreadyInFlashBag' => true,
                 'options' => ['someAnotherValue'],
-                'expectedResponse' => Response::create(null, Response::HTTP_FORBIDDEN),
+                'expectedResponse' => new Response(null, Response::HTTP_FORBIDDEN),
                 'expectedFlashError' => null
             ],
             [
@@ -166,10 +156,10 @@ class RedirectListenerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    private function assertResponses(Response $expectedResponse, Response $actualResponse)
+    private function assertResponses(Response $expectedResponse, Response $actualResponse): void
     {
         // Hack response datetime because of requests might have different datetime
         $expectedResponse->setDate($actualResponse->getDate());
-        $this->assertEquals($expectedResponse, $actualResponse);
+        self::assertEquals($expectedResponse, $actualResponse);
     }
 }

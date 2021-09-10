@@ -80,7 +80,7 @@ class CategoryProvider
      */
     public function getCurrentCategory()
     {
-        return $this->loadCategory((int)$this->requestProductHandler->getCategoryId());
+        return $this->loadCategory($this->requestProductHandler->getCategoryId());
     }
 
     /**
@@ -145,11 +145,7 @@ class CategoryProvider
         return $this->tree[$userId];
     }
 
-    /**
-     * @param null|bool $defaultValue
-     * @return bool
-     */
-    public function getIncludeSubcategoriesChoice($defaultValue = null)
+    public function getIncludeSubcategoriesChoice(bool $defaultValue = null): bool
     {
         return $this->requestProductHandler->getIncludeSubcategoriesChoice($defaultValue);
     }

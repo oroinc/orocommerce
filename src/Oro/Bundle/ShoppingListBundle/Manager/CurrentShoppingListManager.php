@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ShoppingListBundle\Manager;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
@@ -33,13 +34,17 @@ class CurrentShoppingListManager
     /** @var TokenAccessorInterface */
     private $tokenAccessor;
 
+    /** @var ConfigManager */
+    private $configManager;
+
     public function __construct(
         ShoppingListManager $shoppingListManager,
         GuestShoppingListManager $guestShoppingListManager,
         CurrentShoppingListStorage $currentShoppingListStorage,
         ManagerRegistry $doctrine,
         AclHelper $aclHelper,
-        TokenAccessorInterface $tokenAccessor
+        TokenAccessorInterface $tokenAccessor,
+        ConfigManager $configManager
     ) {
         $this->shoppingListManager = $shoppingListManager;
         $this->guestShoppingListManager = $guestShoppingListManager;
@@ -47,6 +52,7 @@ class CurrentShoppingListManager
         $this->doctrine = $doctrine;
         $this->aclHelper = $aclHelper;
         $this->tokenAccessor = $tokenAccessor;
+        $this->configManager = $configManager;
     }
 
     /**
@@ -99,9 +105,9 @@ class CurrentShoppingListManager
     /**
      * @param int $shoppingListId
      *
-     * @return ShoppingList
+     * @return ShoppingList|null
      */
-    public function getForCurrentUser($shoppingListId = null)
+    public function getForCurrentUser($shoppingListId = null, $create = false, $label = '')
     {
         if ($this->guestShoppingListManager->isGuestShoppingListAvailable()) {
             return $this->guestShoppingListManager->createAndGetShoppingListForCustomerVisitor();
@@ -113,7 +119,11 @@ class CurrentShoppingListManager
                 ->findByUserAndId($this->aclHelper, $shoppingListId);
         }
         if (null === $shoppingList) {
-            $shoppingList = $this->getCurrentShoppingList(true);
+            $shoppingList = $this->getCurrentShoppingList();
+        }
+
+        if (!$this->shoppingListAvailableForCurrentUser($shoppingList)) {
+            $shoppingList = $create ? $this->createCurrent($label) : null;
         }
 
         return $shoppingList;
@@ -270,5 +280,34 @@ class CurrentShoppingListManager
         return $this->doctrine
             ->getManagerForClass(ShoppingList::class)
             ->getRepository(ShoppingList::class);
+    }
+
+    /**
+     * @return bool
+     */
+    private function isShowAllInShoppingListWidget(): bool
+    {
+        return (bool)$this->configManager->get('oro_shopping_list.show_all_in_shopping_list_widget');
+    }
+
+    /**
+     * @param ShoppingList|null $shoppingList
+     * @return bool
+     */
+    private function shoppingListAvailableForCurrentUser(?ShoppingList $shoppingList): bool
+    {
+        if (is_null($shoppingList)) {
+            return false;
+        }
+
+        if ($this->isShowAllInShoppingListWidget()) {
+            return true;
+        }
+
+        if (!$shoppingList->getCustomerUser() || !$this->getCustomerUser()) {
+            return true;
+        }
+
+        return $shoppingList->getCustomerUser()->getId() === $this->getCustomerUser()->getId();
     }
 }

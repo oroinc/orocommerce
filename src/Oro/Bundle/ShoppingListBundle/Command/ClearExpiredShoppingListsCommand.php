@@ -91,6 +91,8 @@ HELP
         } while ($deletedCount > 0);
 
         $output->writeln('<info>Clear expired guest shopping lists completed</info>');
+
+        return 0;
     }
 
     protected function getExpiredLastVisitDate(): \DateTime

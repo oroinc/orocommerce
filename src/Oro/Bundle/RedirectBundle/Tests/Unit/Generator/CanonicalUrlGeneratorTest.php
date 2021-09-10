@@ -480,7 +480,7 @@ class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
             ->method('getBaseUrl')
             ->willReturn('base');
         $this->requestStack->expects($this->atMost(1))
-            ->method('getMasterRequest')
+            ->method('getMainRequest')
             ->willReturn($request);
 
         $host = 'https://host.domain/';
@@ -495,7 +495,7 @@ class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
     public function testCreateUrlWithoutMasterRequest()
     {
         $this->requestStack->expects($this->atMost(1))
-            ->method('getMasterRequest')
+            ->method('getMainRequest')
             ->willReturn(null);
 
         $host = 'https://host.domain/';

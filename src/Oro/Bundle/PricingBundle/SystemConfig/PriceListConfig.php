@@ -5,6 +5,9 @@ namespace Oro\Bundle\PricingBundle\SystemConfig;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListAwareInterface;
 
+/**
+ * DTO that contains the configuration of a single default price list
+ */
 class PriceListConfig implements PriceListAwareInterface
 {
     /**
@@ -18,7 +21,7 @@ class PriceListConfig implements PriceListAwareInterface
     protected $sortOrder;
 
     /**
-     * @var boolean|null
+     * @var bool|null
      */
     protected $mergeAllowed;
 
@@ -73,17 +76,17 @@ class PriceListConfig implements PriceListAwareInterface
     }
 
     /**
-     * @return boolean|null
+     * @return bool|null
      */
-    public function isMergeAllowed()
+    public function isMergeAllowed(): ?bool
     {
         return $this->mergeAllowed;
     }
 
     /**
-     * @param boolean|null $mergeAllowed
+     * @param bool|null $mergeAllowed
      */
-    public function setMergeAllowed($mergeAllowed)
+    public function setMergeAllowed(?bool $mergeAllowed)
     {
         $this->mergeAllowed = $mergeAllowed;
     }
